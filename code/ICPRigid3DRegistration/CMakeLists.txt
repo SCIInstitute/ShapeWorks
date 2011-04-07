@@ -1,0 +1,3 @@
+ADD_EXECUTABLE(ICPRigid3DRegistration ICPRigid3DRegistration.cxx)
+TARGET_LINK_LIBRARIES(ICPRigid3DRegistration ITKIO ITKBasicFilters vtkRendering vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon)
+INSTALL(TARGETS ICPRigid3DRegistration   RUNTIME DESTINATION .)

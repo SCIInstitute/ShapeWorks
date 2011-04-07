@@ -1,0 +1,9 @@
+ifdef MAKERULESDIR
+        include $(MAKERULESDIR)/Makedefs.Linux
+else
+        include Makedefs.Linux
+endif
+
+COPTS := $(COPTS:-m32=-m64)
+XLIBDIR = /usr/X11R6/lib64
+
