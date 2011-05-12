@@ -4,8 +4,6 @@ itkParticleSystem.cxx
 itkParticleProcrustesRegistration.cxx
 )
 
-IF(NOT APPLE)
-TARGET_LINK_LIBRARIES(ITKParticleSystem fim_lib trimesh freeglut_static)
-ELSE(NOT APPLE)
-TARGET_LINK_LIBRARIES(ITKParticleSystem fim_lib trimesh)
-ENDIF(NOT APPLE)
+if(FIM_FOUND AND BUILD_MeshSupport)
+  target_link_libraries(ITKParticleSystem ${FIM_LIB})
+endif(FIM_FOUND AND BUILD_MeshSupport)
