@@ -117,14 +117,17 @@ int main(int argc, char *argv[])
     //
     //    std::cout << "scale " << i << " = " << transforms[i].scale <<
     //    std::endl;
-    std::cout << 1.0 / transforms[i].scale << std::endl;
     
+    std::cout << "Shape " << i << std::endl;
+    std::cout << "Scale = " << 1.0 / transforms[i].scale << std::endl;
+
     ParticleSystemType::TransformType R;
+    
     R(0,0) =  transforms[i].rotation(0,0) * transforms[i].scale;
     R(1,0) =  transforms[i].rotation(1,0) * transforms[i].scale;
     R(2,0) =  transforms[i].rotation(2,0) * transforms[i].scale;
     R(3,0) =  0.0;
-
+    
     R(0,1) =  transforms[i].rotation(0,1) * transforms[i].scale;
     R(1,1) =  transforms[i].rotation(1,1) * transforms[i].scale;
     R(2,1) =  transforms[i].rotation(2,1) * transforms[i].scale;
@@ -134,12 +137,17 @@ int main(int argc, char *argv[])
     R(1,2) =  transforms[i].rotation(1,2) * transforms[i].scale;
     R(2,2) =  transforms[i].rotation(2,2) * transforms[i].scale;
     R(3,2) =  0.0;
-
-    R(0,3) =  transforms[i].translation(0);
-    R(1,3) =  transforms[i].translation(1);
-    R(2,3) =  transforms[i].translation(2);
+    
+    R(0,3) =  transforms[i].translation(0) * R(0,0) + transforms[i].translation(1) * R(0,1) + transforms[i].translation(2) * R(0,2);
+    R(1,3) =  transforms[i].translation(0) * R(1,0) + transforms[i].translation(1) * R(1,1) + transforms[i].translation(2) * R(1,2);
+    R(2,3) =  transforms[i].translation(0) * R(2,0) + transforms[i].translation(1) * R(2,1) + transforms[i].translation(2) * R(2,2);
     R(3,3) =  1.0;
-
+        
+    std::cout << R(0,0) << "\t" << R(0,1) << "\t" << R(0,2) << "\t" << R(0,3) << std::endl;
+    std::cout << R(1,0) << "\t" << R(1,1) << "\t" << R(1,2) << "\t" << R(1,3) << std::endl;
+    std::cout << R(2,0) << "\t" << R(2,1) << "\t" << R(2,2) << "\t" << R(2,3) << std::endl;
+    std::cout << R(3,0) << "\t" << R(3,1) << "\t" << R(3,2) << "\t" << R(3,3) << std::endl;
+    
     transform_matrices.push_back(R);
     }
 
