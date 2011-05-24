@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
   
  // Assume all domains have the same number of particles.
-  const int numShapes = inputfiles.size();
+  const unsigned int numShapes = inputfiles.size();
   //  const int numPoints = 
 
   
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     reader->SetFileName(inputfiles[d].c_str());
     reader->Update();
 
-    for(int j = 0; j < reader->GetOutput().size(); j++)
+    for(unsigned int j = 0; j < reader->GetOutput().size(); j++)
       {
       point(0) = (reader->GetOutput()[j])[0];
       point(1) = (reader->GetOutput()[j])[1];

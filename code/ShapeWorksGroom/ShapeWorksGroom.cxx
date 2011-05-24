@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
     // Set up the batch filter.
     // Apply tools.
-    for (unsigned int i = 2; i < argc; i++)
+    for (int i = 2; i < argc; i++)
       {
       //      shapetools::tool<int, ST_DIM> *t;
 

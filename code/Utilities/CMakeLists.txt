@@ -1,7 +1,6 @@
 ADD_LIBRARY (Utilities STATIC
 string_io.cxx
 filenameFactory.cxx
-shape_statistics.cxx
 )
 
 IF(USE_VTK)
