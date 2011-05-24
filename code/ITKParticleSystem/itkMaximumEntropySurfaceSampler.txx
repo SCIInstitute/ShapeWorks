@@ -94,7 +94,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
   // Allocate all the necessary domains and neighborhoods. This must be done
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
-  for (int i = 0; i < this->GetNumberOfInputs(); i++)
+  for (unsigned int i = 0; i < this->GetNumberOfInputs(); i++)
     { 
     m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
                             ImageType::PixelType, Dimension>::New() );

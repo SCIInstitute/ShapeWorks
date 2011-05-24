@@ -143,7 +143,7 @@ class ShapeWorksShopApp : public CorrespondenceGUI
 
   void SetParticleCounter()
   {
-    int minparticles = m_Sampler->GetParticleSystem()->GetNumberOfParticles(0);
+    unsigned int minparticles = m_Sampler->GetParticleSystem()->GetNumberOfParticles(0);
     for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
       {
       if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < minparticles)

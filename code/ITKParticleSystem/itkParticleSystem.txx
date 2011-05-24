@@ -52,7 +52,7 @@ void ParticleSystem<VDimension>::AddDomain( DomainType *input, int threadId)
 {
   this->Modified();
   
-  for (int idx = 0; idx < m_Domains.size(); ++idx)
+  for (unsigned int idx = 0; idx < m_Domains.size(); ++idx)
     {
     if (!m_Domains[idx])
       {

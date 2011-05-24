@@ -96,7 +96,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
     {
     m_ProcrustesCounter++;
 
-    if (m_ProcrustesCounter > m_procrustes_interval)
+    if (m_ProcrustesCounter > (int)m_procrustes_interval)
       {
       m_ProcrustesCounter = 0;
       m_Procrustes->RunRegistration();
@@ -108,7 +108,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
     {
     
     m_CheckpointCounter++;
-    if (m_CheckpointCounter > m_checkpointing_interval)
+    if (m_CheckpointCounter > (int)m_checkpointing_interval)
       {
       m_CheckpointCounter = 0;
       this->WritePointFiles();
@@ -232,9 +232,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(param::parameterFile &pf)
       //      bool sph = true;
       bool cp = true;
       double cpa;
-      m_spheres_per_domain  = 0;
+      m_spheres_per_domain = 0;
       PARAMSET(pf, m_spheres_per_domain, "spheres_per_domain", 0, cp, 0);
-      for (unsigned int j = 0; j < m_spheres_per_domain; j++)
+      for (unsigned int j = 0; j < (unsigned int)m_spheres_per_domain; j++)
         {
         vnl_vector_fixed<double,3> vec;
         double rad;
@@ -432,10 +432,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles()
       throw param::Exception("EnsembleSystem()::Error opening output file");
       }
     
-    for (int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+    for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
       {
       PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
-     PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+      PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
       
       for (unsigned int k = 0; k < 3; k++)
         {        out << pos[k] << " ";        }

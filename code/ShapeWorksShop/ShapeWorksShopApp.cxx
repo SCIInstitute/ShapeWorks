@@ -178,7 +178,7 @@ ShapeWorksShopApp
                                      itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData);
     
   // Split and optimize until the target number of particles is reached.
-  unsigned int N = 0;
+  //  unsigned int N = 0;
   while ( me->GetSampler()->GetParticleSystem()->GetNumberOfParticles(0)
           < (unsigned int)( me->init_count_spinner->value()) ) 
     {
@@ -217,7 +217,7 @@ void ShapeWorksShopApp::WritePointFiles()
   fnw.number_of_files(n);
   fnw.prefix(pointfile_prefix_input->value());
   fnw.file_format("wpts");
-  int counter;
+  int counter = 0;
   for (int i = 0; i < n; i++)
     {
     counter = 0;
@@ -231,7 +231,7 @@ void ShapeWorksShopApp::WritePointFiles()
       throw param::Exception("EnsembleSystem()::Error opening output file");
       }
     
-    for (int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+    for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
       {
       PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
       PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -239,7 +239,7 @@ void ShapeWorksShopApp::WritePointFiles()
       for (unsigned int k = 0; k < 3; k++)
         {        out << pos[k] << " ";        }
       out << std::endl;
-
+      
       for (unsigned int k = 0; k < 3; k++)
         {        outw << wpos[k] << " ";        }
       outw << std::endl;
@@ -260,7 +260,7 @@ void ShapeWorksShopApp::ViewerSelectDomain()
 
   if (m_ShowSpheres)
     {
-    for (unsigned int i = 0; i < m_SpheresPerDomain; i++)
+    for (int i = 0; i < m_SpheresPerDomain; i++)
       {
       m_Renderer1->RemoveActor( m_SphereWidgetPipelines[m_Viewer1Domain][i]->output() );
       }
@@ -274,7 +274,7 @@ void ShapeWorksShopApp::ViewerSelectDomain()
 
   if (m_ShowSpheres)
     {
-    for (unsigned int i = 0; i < m_SpheresPerDomain; i++)
+    for (int i = 0; i < m_SpheresPerDomain; i++)
       {
       m_Renderer1->AddActor( m_SphereWidgetPipelines[(int)(this->viewer1_domain_spinner->value())][i]->output() );
       }
@@ -420,8 +420,8 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
         origin[D] = reader->GetOutput()->GetOrigin()[D];
         if (size[D] > maxsz) maxsz = size[D];
         }
-      double min = 5.0 * spacing;
-      double max = (static_cast<double>(maxsz) - 1.0) * spacing;
+      //      double min = 5.0 * spacing;
+      ///  double max = (static_cast<double>(maxsz) - 1.0) * spacing;
       
       this->glyph_scale_spinner->value(spacing * 0.5);
       //      std::cout << "SetMinimum = " << min << std::endl;
@@ -457,7 +457,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       double cpa;
       m_SpheresPerDomain = 0;
       PARAMSET(pf, m_SpheresPerDomain, "spheres_per_domain", 0, cp, 0);
-      for (unsigned int j = 0; j < m_SpheresPerDomain; j++)
+      for (int j = 0; j < m_SpheresPerDomain; j++)
         {
         m_ShowSpheres = true;
         vnl_vector_fixed<double,3> vec;
@@ -487,7 +487,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
         m_Sampler->AddSphere(i, vec,rad);
 
         // Set up a sphere widget for this domain
-        if (m_SphereWidgetPipelines.size() <= i)
+        if (m_SphereWidgetPipelines.size() <= (unsigned int)i)
           {
           std::cout << "Adding new sphere viz list for " << i << std::endl;
           m_SphereWidgetPipelines.push_back( std::vector< sphere_widget_pipeline * >());
@@ -660,17 +660,17 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       if (ok2 == true)
         {
         general_entropy_choice->activate();
-
+        
         double sc;
         std::vector<double> attr_scales;
-        for (unsigned int kk = 0; kk < apd; kk++)
+        for (int kk = 0; kk < apd; kk++)
           {
           PARAMSET(pf, sc, "attribute_scales", 0, ok2, 1.0);
-         attr_scales.push_back(sc);
+          attr_scales.push_back(sc);
           }
         m_Sampler->SetAttributeScales(attr_scales);
         
-        for (unsigned int kk = 0; kk < apd; kk++)
+        for (int kk = 0; kk < apd; kk++)
           {
           PARAMSET(pf, attribute_file, "attribute_files", i*apd + kk, ok2, "");
           if (ok1 == true)
@@ -728,7 +728,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   if (m_ShowCuttingPlanes == true) m_Renderer1->AddActor( m_PlaneWidgetPipelines[0]->output());
   if (m_ShowSpheres == true)
     {
-    for (unsigned int qq = 0; qq < m_SpheresPerDomain; qq++)
+    for (int qq = 0; qq < m_SpheresPerDomain; qq++)
       {
       m_Renderer1->AddActor( m_SphereWidgetPipelines[0][qq]->output());
       }
@@ -879,7 +879,7 @@ ShapeWorksShopApp::~ShapeWorksShopApp()
     { delete m_PlaneWidgetPipelines[i]; }
   for (unsigned int i = 0; i < m_SphereWidgetPipelines.size(); i++)
     {
-    for (unsigned int j = 0; j < m_SpheresPerDomain; j++)
+    for (int j = 0; j < m_SpheresPerDomain; j++)
       {    delete m_SphereWidgetPipelines[i][j]; }
     }
 }
