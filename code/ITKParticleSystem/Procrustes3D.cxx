@@ -122,19 +122,19 @@ TransformShape(ShapeType & shape, SimilarityTransform3D & transform)
   }
 }
 
-// void
-// Procrustes3D::
-// TransformShapeDebug(ShapeType & shape, SimilarityTransform3D & transform)
-// {
-//   ShapeIteratorType shapeIt;
+void
+Procrustes3D::
+TransformShapeDebug(ShapeType & shape, SimilarityTransform3D & transform)
+{
+  ShapeIteratorType shapeIt;
   
-//   for(shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++)
-//     {
-//     PointType & point = (*shapeIt);
-//     vnl_vector_fixed<double,3> p;
-//     p[0] = point[0]; p[1] = point[1]; p[2] = point[2];
+  for(shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++)
+    {
+    PointType & point = (*shapeIt);
+    vnl_vector_fixed<double,3> p;
+    p[0] = point[0]; p[1] = point[1]; p[2] = point[2];
     
-//     vnl_matrix_fixed<double,4,4> R;
+ //    vnl_matrix_fixed<double,4,4> R;
 //     R(0,0) =  transform.rotation(0,0) * transform.scale;
 //     R(1,0) =  transform.rotation(1,0) * transform.scale;
 //     R(2,0) =  transform.rotation(2,0) * transform.scale;
@@ -154,19 +154,19 @@ TransformShape(ShapeType & shape, SimilarityTransform3D & transform)
 //     R(1,3) =  transform.translation(0) * R(1,0) + transform.translation(1) * R(1,1) + transform.translation(2) * R(1,2);
 //     R(2,3) =  transform.translation(0) * R(2,0) + transform.translation(1) * R(2,1) + transform.translation(2) * R(2,2);
 //     R(3,3) =  1.0;
-
-//     //    point[0] = R[0][0] * p[0] + R[0][1] * p[1] + R[0][2] * p[2];
-//     //  point[1] = R[1][0] * p[0] + R[1][1] * p[1] + R[1][2] * p[2];
-//     //  point[2] = R[2][0] * p[0] + R[2][1] * p[1] + R[2][2] * p[2];
     
-//     // std::cout << "POINT " << point << std::endl;
-//     // std::cout << "transform.translation = " << transform.translation << std::endl << std::endl;
-
-//     point += transform.translation;
-//     point = transform.rotation * point;
-//     point = point * transform.scale;
-//     }
-// }
+    //    point[0] = R[0][0] * p[0] + R[0][1] * p[1] + R[0][2] * p[2];
+    //  point[1] = R[1][0] * p[0] + R[1][1] * p[1] + R[1][2] * p[2];
+    //  point[2] = R[2][0] * p[0] + R[2][1] * p[1] + R[2][2] * p[2];
+    
+    // std::cout << "POINT " << point << std::endl;
+    // std::cout << "transform.translation = " << transform.translation << std::endl << std::endl;
+    
+    point += transform.translation;
+    point = transform.rotation * point;
+    point = point * transform.scale;
+    }
+}
 
 
 void
@@ -182,7 +182,7 @@ TransformShapes(ShapeListType & shapes,
   while(shapeListIt != shapes.end() && transformListIt != transforms.end())
   {
     // TransformShape((*shapeListIt), (*transformListIt));
-  TransformShape((*shapeListIt), (*transformListIt));
+  TransformShapeDebug((*shapeListIt), (*transformListIt));
 
     shapeListIt++;
     transformListIt++;

@@ -51,8 +51,8 @@ public:
   // Helper function to transform a shape by a similarity transform
   static void TransformShape(ShapeType & shape,
                              SimilarityTransform3D & transform);
-  //  static void TransformShapeDebug(ShapeType & shape,
-  //                           SimilarityTransform3D & transform);
+  static void TransformShapeDebug(ShapeType & shape,
+                                  SimilarityTransform3D & transform);
 
   // Helper function to transform a list of shapes by a list of transforms
   static void TransformShapes(ShapeListType & shapes,
