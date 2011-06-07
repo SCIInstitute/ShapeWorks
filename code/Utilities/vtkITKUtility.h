@@ -1,129 +1,65 @@
 /*=========================================================================
-
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-
   Module:    $RCSfile: vtkITKUtility.h,v $
-
   Date:      $Date: 2011/03/24 15:50:09 $
-
   Version:   $Revision: 1.3 $
-
   Author:    $Author: wmartin $
 
-
-
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
-
   See ShapeWorksLicense.txt for details.
 
-
-
      This software is distributed WITHOUT ANY WARRANTY; without even 
-
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-
      PURPOSE.  See the above copyright notices for more information.
-
 =========================================================================*/
-
 #ifndef __vtkITKUtility_h
-
 #define __vtkITKUtility_h
 
 
-
-
-
 #include "vtkObjectFactory.h"
-
 #include "vtkSetGet.h"
 
-
-
 /**
-
  * This function will connect the given itk::VTKImageExport filter to
-
  * the given vtkImageImport filter.
-
  */
-
 template <typename ITK_Exporter, typename VTK_Importer>
-
 void ConnectPipelines(ITK_Exporter exporter, VTK_Importer* importer)
-
 {
-
   importer->SetUpdateInformationCallback(exporter->GetUpdateInformationCallback());
-
   importer->SetPipelineModifiedCallback(exporter->GetPipelineModifiedCallback());
-
   importer->SetWholeExtentCallback(exporter->GetWholeExtentCallback());
-
   importer->SetSpacingCallback(exporter->GetSpacingCallback());
-
   importer->SetOriginCallback(exporter->GetOriginCallback());
-
   importer->SetScalarTypeCallback(exporter->GetScalarTypeCallback());
-
   importer->SetNumberOfComponentsCallback(exporter->GetNumberOfComponentsCallback());
-
   importer->SetPropagateUpdateExtentCallback(exporter->GetPropagateUpdateExtentCallback());
-
   importer->SetUpdateDataCallback(exporter->GetUpdateDataCallback());
-
   importer->SetDataExtentCallback(exporter->GetDataExtentCallback());
-
   importer->SetBufferPointerCallback(exporter->GetBufferPointerCallback());
-
   importer->SetCallbackUserData(exporter->GetCallbackUserData());
-
 }
-
-
 
 /**
-
  * This function will connect the given vtkImageExport filter to
-
  * the given itk::VTKImageImport filter.
-
  */
-
 template <typename VTK_Exporter, typename ITK_Importer>
-
 void ConnectPipelines(VTK_Exporter* exporter, ITK_Importer importer)
-
 {
-
   importer->SetUpdateInformationCallback(exporter->GetUpdateInformationCallback());
-
   importer->SetPipelineModifiedCallback(exporter->GetPipelineModifiedCallback());
-
   importer->SetWholeExtentCallback(exporter->GetWholeExtentCallback());
-
   importer->SetSpacingCallback(exporter->GetSpacingCallback());
-
   importer->SetOriginCallback(exporter->GetOriginCallback());
-
   importer->SetScalarTypeCallback(exporter->GetScalarTypeCallback());
-
   importer->SetNumberOfComponentsCallback(exporter->GetNumberOfComponentsCallback());
-
   importer->SetPropagateUpdateExtentCallback(exporter->GetPropagateUpdateExtentCallback());
-
   importer->SetUpdateDataCallback(exporter->GetUpdateDataCallback());
-
   importer->SetDataExtentCallback(exporter->GetDataExtentCallback());
-
   importer->SetBufferPointerCallback(exporter->GetBufferPointerCallback());
-
   importer->SetCallbackUserData(exporter->GetCallbackUserData());
-
 }
-
-
-
 
 
 #define DelegateSetMacro(name,arg) DelegateITKInputMacro(Set##name,arg)
@@ -161,54 +97,28 @@ if ( 1 ) { \
 
 
 // struct vtkITKProgressDisplay
-
 // {
-
 //   ProgressDisplay(vtkObject* obj, itk::ProcessObject* process): m_Process(process), m_Object(obj) {}
-
   
-
 //   void Display()
-
 //   {
-
 //     m_Object->SetProgress ( m_Process->GetProgress() );
-
 //     }
-
   
-
 //   itk::ProcessObject::Pointer m_Process;
-
 //   vtkObject* m_Object();
-
 // };
 
-
-
 //   // Add a progress observer for the itk::CurvatureFlowImageFilter.
-
 //   // This will make it clear when this part of the ITK pipeline
-
 //   // executes.
-
 //   ProgressDisplay progressDisplay(denoiser);
-
 //   itk::SimpleMemberCommand<ProgressDisplay>::Pointer progressEvent =
-
 //     itk::SimpleMemberCommand<ProgressDisplay>::New();
-
 //   progressEvent->SetCallbackFunction(&progressDisplay,
-
 //                                      &ProgressDisplay::Display);
-
 //   denoiser->AddObserver(itk::ProgressEvent(), progressEvent);
 
 
 
-
-
-
-
 #endif
-
