@@ -1,9 +1,9 @@
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
   Module:    $RCSfile: Procrustes3D.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
+  Date:      $Date: 2009/05/06 21:49:15 $
+  Version:   $Revision: 1.1.1.1 $
+  Author:    $Author: cates $
 
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
@@ -12,7 +12,6 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-// -*- Mode: C++ -*-
 #ifndef __Procrustes3D_h
 #define __Procrustes3D_h
 
@@ -51,8 +50,6 @@ public:
   // Helper function to transform a shape by a similarity transform
   static void TransformShape(ShapeType & shape,
                              SimilarityTransform3D & transform);
-  static void TransformShapeDebug(ShapeType & shape,
-                                  SimilarityTransform3D & transform);
 
   // Helper function to transform a list of shapes by a list of transforms
   static void TransformShapes(ShapeListType & shapes,

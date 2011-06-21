@@ -51,6 +51,8 @@ class alignshapesApp : public alignshapesGUI
     else m_axes_actor->VisibilityOn();
   }
   
+  void Hide() {}
+
   virtual void Show()
   {
     mainWindow->show();
