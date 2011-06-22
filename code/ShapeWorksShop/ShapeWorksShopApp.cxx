@@ -798,8 +798,18 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
     if (ok == true) m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f);
     }
 
-  
-
+   // SET UP ANY FIXED DOMAINS
+   ok = true;
+   for (unsigned int i = 0; ok == true; i++)
+     {
+       unsigned int f;
+       PARAMSET(pf, f, "fixed_domains", i, ok, 0);
+       if (ok == true) 
+	 {
+	   if (f >0.0) m_Sampler->GetParticleSystem()->FlagDomain(true);
+	 }
+     }
+   
   this->toggle_correspondence_button->value(1);
   this->toggle_sampling_button->value(1);
   this->SetParticleCounter();  
