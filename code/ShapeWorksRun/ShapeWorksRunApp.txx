@@ -77,6 +77,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   this->SetIterationCommand();
   this->InitializeSampler();
   this->ReadExplanatoryVariables(pf);
+  this->FlagDomainFct(pf);
   
   // Now read the transform file if present.
   if ( m_transform_file != "" )       this->ReadTransformFile();
@@ -165,6 +166,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(param::parameterFile &pf)
       reader->UpdateLargestPossibleRegion();
       m_Sampler->SetInput(i, reader->GetOutput()); // set the ith input
 
+
       // Use the first loaded image to set some numerical constants
       if (i == 0)
         {
@@ -179,7 +181,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(param::parameterFile &pf)
         //        std::cout << point_file << std::endl;
         m_Sampler->SetPointsFile(i, point_file);
         }
-      
+  
 
 #ifdef SW_USE_MESH
       // Tell the sampler about the corresponding list of points.
@@ -202,7 +204,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(param::parameterFile &pf)
           PARAMSET(pf, sc, "attribute_scales", 0, ok1, 1.0);
           attr_scales.push_back(sc);
           }
-        m_Sampler->SetAttributeScales(attr_scales);
+        m_Sampler->SetAttributeScales(attr_scales);std::cout << "e "  << std::endl;
 
         for (unsigned int kk = 0; kk < m_attributes_per_domain; kk++)
           {
@@ -226,6 +228,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(param::parameterFile &pf)
             }
           }
         } // done read attribute block      
+
 
 
       // Read sphere data if present
@@ -767,5 +770,36 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters()
   //writer2.SetInput(intercept);
   //writer2.Update();
 
+}
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(param::parameterFile &pf)
+{
+
+
+ // ET UP ANY FIXED LANDMARK POSITIOSNS
+  bool ok1 = true;
+  for (unsigned int i = 0; ok1 == true; i++)
+    {
+    unsigned int f;
+    PARAMSET(pf, f, "fixed_landmarks", i, ok1, 0);
+
+    if (ok1 == true) m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f);
+    }
+
+   // SET UP ANY FIXED DOMAINS
+   ok1 = true;
+   for (unsigned int i = 0; ok1 == true; i++)
+     {
+       unsigned int f;
+       PARAMSET(pf, f, "fixed_domains", i, ok1, 0);
+       if (ok1 == true) 
+	 {
+	   if (f >0.0){m_Sampler->GetParticleSystem()->FlagDomain(i);
+     			 }
+  	
+	 }
+     }
 }
 

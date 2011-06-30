@@ -19,6 +19,7 @@
 #pragma warning( disable: 4996 )
 #endif
 
+#include "itkParticleSystem.h"
 #include <cstdio>
 #include "itkImage.h"
 #include "itkMaximumEntropyCorrespondenceSampler.h"
@@ -99,6 +100,8 @@ class ShapeWorksRunApp
   virtual void WriteTransformFile() const;
 	virtual void WriteParameters();  
   void ReadExplanatoryVariables(param::parameterFile &);
+void FlagDomainFct(param::parameterFile &pf);
+
 
   typename itk::MemberCommand< ShapeWorksRunApp<SamplerType> >::Pointer m_Iteratecmd;
   
