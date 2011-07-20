@@ -19,7 +19,7 @@
 
 #ifdef SW_USE_MESH
 #include "TriMesh.h"
-#include "meshFIM.h"
+#include "../../meshFIM.h"
 #endif
 
 namespace itk

@@ -191,12 +191,12 @@ double
 ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const PointType &b) const
 {
   // Check to see if the normals are >= 90 degrees apart.
-  if ( dot_product(this->SampleGradientVnl(a), this->SampleGradientVnl(b) ) <= 0.0  )
-  {
-    return -1.0;
-  }
-  else  // Return distance
-    {
+  //if ( dot_product(this->SampleGradientVnl(a), this->SampleGradientVnl(b) ) <= 0.0  )
+  //{
+  //  return -1.0;
+  //}
+  //else  // Return distance
+  //  {
 #ifdef SW_USE_MESH
     if (m_mesh != NULL)
       {
@@ -223,7 +223,7 @@ ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const
 #ifdef SW_USE_MESH
       }
 #endif
-    }
+    //}
 }
 
 } // end namespace

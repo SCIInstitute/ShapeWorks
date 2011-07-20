@@ -17,6 +17,12 @@
 
 #include "itkParticleVectorFunction.h"
 #include <vector>
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkDerivativeOperator.h"
+#include "itkNeighborhoodIterator.h"
+#include "itkImageDuplicator.h"
+#include "itkImageRegionIterator.h"
+
 
 namespace itk
 {
@@ -42,6 +48,12 @@ public:
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
   typedef typename ParticleSystemType::PointType PointType;
+
+  // Normal Penalty related classes
+  typedef typename itk::Image<float,VDimension> NormalComponentImageType;
+  typedef typename itk::NeighborhoodIterator<NormalComponentImageType> NeighborhoodIteratorType;
+  typedef typename itk::ImageRegionIterator<NormalComponentImageType> ImageIteratorType;
+  typedef typename itk::DerivativeOperator<float, VDimension> DerivativeOperatorType;
   
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -77,17 +89,37 @@ public:
   { m_DomainsPerShape = i; }
   int GetDomainsPerShape() const
   { return m_DomainsPerShape; }
-  
+
 protected:
-  ParticleEnsembleNormalPenaltyFunction() : m_DomainsPerShape(1) {}
+  ParticleEnsembleNormalPenaltyFunction()
+  {
+    m_DomainsPerShape = 1;
+
+    imgDuplicator = itk::ImageDuplicator<NormalComponentImageType>::New();
+
+    normComp = NormalComponentImageType::New();
+    typename NormalComponentImageType::SizeType tmpSize; tmpSize.Fill(VDimension);
+    typename NormalComponentImageType::IndexType tmpIndex; tmpIndex.Fill(0);
+    typename NormalComponentImageType::RegionType tmpRegion; tmpRegion.SetSize(tmpSize); tmpRegion.SetIndex(tmpIndex);
+    normComp->SetRegions(tmpRegion); normComp->Allocate(); normComp->FillBuffer(0.0f);
+
+    radius.Fill(1);
+  }
+
   virtual ~ParticleEnsembleNormalPenaltyFunction() {}
-  void operator=(const ParticleEnsembleNormalPenaltyFunction &);
+  //void operator=(const ParticleEnsembleNormalPenaltyFunction &);
   ParticleEnsembleNormalPenaltyFunction(const ParticleEnsembleNormalPenaltyFunction &);
 
-  int m_DomainsPerShape;
+  int m_DomainsPerShape;  
   
-};
+  typename itk::ImageDuplicator<NormalComponentImageType>::Pointer imgDuplicator;
 
+  typename NormalComponentImageType::Pointer normComp;
+
+  typename NeighborhoodIteratorType::RadiusType radius; 
+
+  typename itk::NeighborhoodInnerProduct<NormalComponentImageType> inprod;
+};
 
 } //end namespace
 
