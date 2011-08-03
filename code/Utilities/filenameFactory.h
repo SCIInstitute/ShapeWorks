@@ -20,6 +20,7 @@
 #endif
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <cstdio>
 
@@ -51,6 +52,9 @@ public:
   { return m_prefix; }
 
   std::string filename(unsigned int) const;
+
+  // record the iteration info
+  std::string filename(unsigned int, unsigned int) const; 
   
 private:
   unsigned int m_number_of_files;

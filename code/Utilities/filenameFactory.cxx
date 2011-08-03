@@ -42,3 +42,15 @@ std::string filenameFactory::filename(unsigned int n) const
   std::string fn = m_prefix + "." + buf + "." + m_file_format;
   return fn;
 }
+
+std::string filenameFactory::filename(unsigned int n, unsigned int it) const
+{
+	char buf[32];
+	::sprintf(buf, m_file_pattern.c_str(), n);
+
+	std::stringstream out;
+	out << it;
+
+	std::string fn = m_prefix + "." + buf + ".it" + out.str() + "." + m_file_format;
+	return fn;
+}

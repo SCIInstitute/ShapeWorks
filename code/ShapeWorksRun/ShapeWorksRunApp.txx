@@ -33,6 +33,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   m_disable_checkpointing = true;
   m_optimizing = false;
   m_use_regression = false;
+  m_use_iteration_info = false;
 
   // Read parameter file
   param::parameterFile pf(fn);
@@ -104,21 +105,39 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
       }
     }
   
+  static unsigned int iteration_no = 0;
   // Checkpointing
   if (m_checkpointing_interval != 0 && m_disable_checkpointing == false)
     {
     
-    m_CheckpointCounter++;
-    if (m_CheckpointCounter > (int)m_checkpointing_interval)
-      {
-      m_CheckpointCounter = 0;
-      this->WritePointFiles();
-      this->WriteTransformFile();
-      this->WriteModes();
-			if (m_use_regression == true) this->WriteParameters();
-      }
-    }
-  
+		m_CheckpointCounter++;
+   // if (m_CheckpointCounter > (int)m_checkpointing_interval)
+   //   {
+   //   m_CheckpointCounter = 0;
+   //   this->WritePointFiles();
+   //   this->WriteTransformFile();
+   //   this->WriteModes();
+			//if (m_use_regression == true) this->WriteParameters();
+   //   }
+
+		if (m_CheckpointCounter == (int)m_checkpointing_interval)
+		{
+		  iteration_no += m_checkpointing_interval;
+		  m_CheckpointCounter = 0;
+
+		  this->WritePointFiles();
+		  this->WriteTransformFile();
+		  this->WriteModes();
+		  if (m_use_regression == true) this->WriteParameters();
+
+		  if ( m_use_iteration_info )
+		  {
+			this->WritePointFiles( iteration_no );
+			this->WriteTransformFile( iteration_no );
+			if (m_use_regression == true) this->WriteParameters( iteration_no );
+		  }
+		}
+     }
 
   if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
     {
@@ -374,6 +393,36 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile() const
 
 template < class SAMPLERTYPE>
 void
+ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( unsigned int it ) const
+{
+  std::string::size_type idx = m_output_transform_file.rfind('.');
+  if (idx == std::string::npos)
+  {
+	  return;
+  }
+
+  std::string output_file_name = m_output_transform_file.substr( 0, idx-1 );
+  std::string file_format = m_output_transform_file.substr( idx + 1, m_output_transform_file.length() );
+  std::stringstream out;
+  out << it;
+
+  output_file_name +=  ".it" + out.str() + "." + file_format;
+  std::vector< itk::ParticleSystem<3>::TransformType > tlist;
+
+  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+       i++)
+    {
+    tlist.push_back(m_Sampler->GetParticleSystem()->GetTransform(i));
+    }
+
+  object_writer< itk::ParticleSystem<3>::TransformType > writer;
+  writer.SetFileName( output_file_name );
+  writer.SetInput(tlist);
+  writer.Update();
+}
+
+template < class SAMPLERTYPE>
+void
 ShapeWorksRunApp<SAMPLERTYPE>::ReadTransformFile()
 {
   object_reader< itk::ParticleSystem<3>::TransformType > reader;
@@ -421,9 +470,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles()
   fnw.number_of_files(n);
   fnw.prefix(m_output_points_prefix);
   fnw.file_format("wpts");
+
   int counter;
+
   for (int i = 0; i < n; i++)
-    {
+  {
     counter = 0;
     std::ofstream out( fn.filename(i).c_str() );
     std::ofstream outw( fnw.filename(i).c_str() );
@@ -447,15 +498,74 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles()
       for (unsigned int k = 0; k < 3; k++)
         {        outw << wpos[k] << " ";        }
       outw << std::endl;
-      counter ++;
-      } // end for points
+
+	  counter ++;
+	  }  // end for points
+      
     
     out.close();
     outw.close();
-    std::cout << " with " << counter << "points" << std::endl;
-    } // end for files
-  }
+	std::cout << " with " << counter << "points" << std::endl;
+  } // end for files
+} 
 
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( unsigned int it )
+{
+	typedef  itk::MaximumEntropyCorrespondenceSampler<ImageType>::PointType PointType;
+	const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+
+	// Write points in both local and global coordinate system
+	int counter;
+
+	filenameFactory it_fn;
+	filenameFactory it_fnw;
+
+	it_fn.number_of_files(n);
+	it_fn.prefix(m_output_points_prefix);
+	it_fn.file_format("lpts");
+
+	it_fnw.number_of_files(n);
+	it_fnw.prefix(m_output_points_prefix);
+	it_fnw.file_format("lpts");
+
+	for (int i = 0; i < n; i++)
+	{
+		counter = 0;
+		std::ofstream out( it_fn.filename(i, it).c_str() );
+		std::ofstream outw( it_fnw.filename(i, it).c_str() );
+
+		std::cout << "Writing " << it_fnw.filename(i) << " ";
+
+		if ( !out || !outw )
+		  { 
+		  throw param::Exception("EnsembleSystem()::Error opening output file");
+		  }
+
+		for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+		  {
+		  PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
+		  PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+		  
+		  for (unsigned int k = 0; k < 3; k++)
+			{        out << pos[k] << " ";        }
+		  out << std::endl;
+
+		  for (unsigned int k = 0; k < 3; k++)
+			{        outw << wpos[k] << " ";        }
+		  outw << std::endl;
+          counter ++;
+		  } // end for points
+
+		  
+		  out.close();
+		  outw.close();
+		  std::cout << " with " << counter << "points" << std::endl;
+    } // end for files
+	
+} 
 
 template < class SAMPLERTYPE>
 void
@@ -484,6 +594,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   PARAMSET(pf, m_recompute_regularization_interval, "recompute_regularization_interval", 0, ok, 1);
   PARAMSET(pf, m_procrustes_scaling, "procrustes_scaling", 0, ok, 1);
   PARAMSET(pf, m_adaptivity_mode, "adaptivity_mode", 0, ok, 0);
+  PARAMSET(pf, m_iteration_on, "iteration_on", 0, ok, 0);
 
 
   // Write out the parameters
@@ -507,6 +618,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   std::cout << "m_recompute_regularization_interval = " << m_recompute_regularization_interval << std::endl;
   std::cout << "m_procrustes_scaling = " << m_procrustes_scaling << std::endl;
   std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
+  std::cout << "m_iteration_on = " << m_iteration_on << std::endl;
+
+  m_use_iteration_info = m_iteration_on == 0 ? false : true;
 }
 
 
@@ -770,6 +884,48 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters()
   //writer2.SetInput(intercept);
   //writer2.Update();
 
+}
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( unsigned int it )
+{
+  std::stringstream out_it;
+  out_it << it;
+
+  std::string slopename     = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".slope");
+  std::string interceptname = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".intercept");
+
+  std::cout << "writing " << slopename << std::endl;
+  std::cout << "writing " << interceptname << std::endl;
+
+  std::vector< double > slope;
+  vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
+      (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetSlope();
+
+  for (unsigned int i = 0; i < slopevec.size(); i++)
+    {    slope.push_back(slopevec[i]);    }
+
+  std::ofstream out( slopename.c_str() );
+  for (unsigned int i = 0; i < slope.size(); i++)
+  {
+    out << slope[i] << "\n";
+  }
+  out.close();
+  
+  std::vector< double > intercept;
+  vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
+    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetIntercept();
+  
+  for (unsigned int i = 0; i < slopevec.size(); i++)
+    {    intercept.push_back(interceptvec[i]);    }
+
+  out.open(interceptname.c_str());
+  for (unsigned int i = 0; i < slope.size(); i++)
+    {
+    out << intercept[i] << "\n";
+    }
+  out.close();
 }
 
 template < class SAMPLERTYPE>

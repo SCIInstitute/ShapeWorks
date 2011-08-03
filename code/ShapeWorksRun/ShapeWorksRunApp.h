@@ -98,9 +98,14 @@ class ShapeWorksRunApp
   }
   virtual void WritePointFiles();  
   virtual void WriteTransformFile() const;
-	virtual void WriteParameters();  
+  virtual void WriteParameters();  
+
+  virtual void WritePointFiles( unsigned int it );  
+  virtual void WriteTransformFile( unsigned int it ) const;
+  virtual void WriteParameters( unsigned int it );  
+
   void ReadExplanatoryVariables(param::parameterFile &);
-void FlagDomainFct(param::parameterFile &pf);
+  void FlagDomainFct(param::parameterFile &pf);
 
 
   typename itk::MemberCommand< ShapeWorksRunApp<SamplerType> >::Pointer m_Iteratecmd;
@@ -145,6 +150,9 @@ protected:
   bool m_disable_procrustes;
   int m_spheres_per_domain;
   int m_adaptivity_mode;
+  int m_iteration_on;
+
+  bool m_use_iteration_info;
 };
 
 #if ITK_TEMPLATE_EXPLICIT
