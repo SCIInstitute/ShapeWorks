@@ -529,7 +529,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( unsigned int it )
 
 	it_fnw.number_of_files(n);
 	it_fnw.prefix(m_output_points_prefix);
-	it_fnw.file_format("lpts");
+	it_fnw.file_format("wpts");
 
 	for (int i = 0; i < n; i++)
 	{
