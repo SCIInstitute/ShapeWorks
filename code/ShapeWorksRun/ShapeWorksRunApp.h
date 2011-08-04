@@ -150,9 +150,7 @@ protected:
   bool m_disable_procrustes;
   int m_spheres_per_domain;
   int m_adaptivity_mode;
-  int m_iteration_on;
-
-  bool m_use_iteration_info;
+  int m_overwrite_checkpoints;
 };
 
 #if ITK_TEMPLATE_EXPLICIT
