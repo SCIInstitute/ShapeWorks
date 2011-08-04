@@ -129,7 +129,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 		  this->WriteModes();
 		  if (m_use_regression == true) this->WriteParameters();
 
-		  if ( !m_overwrite_checkpoints )
+		  if ( m_keep_checkpoints )
 		  {
 			this->WritePointFiles( iteration_no );
 			this->WriteTransformFile( iteration_no );
@@ -599,7 +599,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   PARAMSET(pf, m_recompute_regularization_interval, "recompute_regularization_interval", 0, ok, 1);
   PARAMSET(pf, m_procrustes_scaling, "procrustes_scaling", 0, ok, 1);
   PARAMSET(pf, m_adaptivity_mode, "adaptivity_mode", 0, ok, 0);
-  PARAMSET(pf, m_overwrite_checkpoints, "overwrite_checkpoints", 0, ok, 1);
+  PARAMSET(pf, m_keep_checkpoints, "keep_checkpoints", 0, ok, 0);
 
 
   // Write out the parameters
@@ -623,7 +623,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   std::cout << "m_recompute_regularization_interval = " << m_recompute_regularization_interval << std::endl;
   std::cout << "m_procrustes_scaling = " << m_procrustes_scaling << std::endl;
   std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
-  std::cout << "m_overwrite_checkpoints = " << m_overwrite_checkpoints << std::endl;
+  std::cout << "m_keep_checkpoints = " << m_keep_checkpoints << std::endl;
 }
 
 

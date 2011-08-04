@@ -150,7 +150,7 @@ protected:
   bool m_disable_procrustes;
   int m_spheres_per_domain;
   int m_adaptivity_mode;
-  int m_overwrite_checkpoints;
+  int m_keep_checkpoints;
 };
 
 #if ITK_TEMPLATE_EXPLICIT
