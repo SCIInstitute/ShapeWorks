@@ -374,38 +374,26 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
 
 template < class SAMPLERTYPE>
 void
-ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile() const
+ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( int iter ) const
 {
-  std::vector< itk::ParticleSystem<3>::TransformType > tlist;
-
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
-       i++)
-    {
-    tlist.push_back(m_Sampler->GetParticleSystem()->GetTransform(i));
-    }
-
-  object_writer< itk::ParticleSystem<3>::TransformType > writer;
-  writer.SetFileName(m_output_transform_file);
-  writer.SetInput(tlist);
-  writer.Update();
-}
-
-template < class SAMPLERTYPE>
-void
-ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( unsigned int it ) const
-{
-  std::string::size_type idx = m_output_transform_file.rfind('.');
-  if (idx == std::string::npos)
+  std::string output_file = m_output_transform_file;
+  
+  if( iter >= 0 )
   {
+    std::string::size_type idx = m_output_transform_file.rfind('.');
+    if (idx == std::string::npos)
+    {
 	  return;
+    }
+   
+    output_file = m_output_transform_file.substr( 0, idx-1 );
+    std::string file_format = m_output_transform_file.substr( idx + 1, m_output_transform_file.length() );
+    std::stringstream out;
+    out << static_cast< unsigned int >( iter );
+
+    output_file +=  ".it" + out.str() + "." + file_format;
   }
-
-  std::string output_file_name = m_output_transform_file.substr( 0, idx-1 );
-  std::string file_format = m_output_transform_file.substr( idx + 1, m_output_transform_file.length() );
-  std::stringstream out;
-  out << it;
-
-  output_file_name +=  ".it" + out.str() + "." + file_format;
+  
   std::vector< itk::ParticleSystem<3>::TransformType > tlist;
 
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -415,7 +403,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( unsigned int it ) const
     }
 
   object_writer< itk::ParticleSystem<3>::TransformType > writer;
-  writer.SetFileName( output_file_name );
+  writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();
 }
@@ -454,7 +442,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadPrefixTransformFile(const std::string &fn)
 
 template < class SAMPLERTYPE>
 void
-ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles()
+ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
 {
   typedef  itk::MaximumEntropyCorrespondenceSampler<ImageType>::PointType PointType;
   const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -475,8 +463,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles()
   for (int i = 0; i < n; i++)
   {
     counter = 0;
-    std::ofstream out( fn.filename(i).c_str() );
-    std::ofstream outw( fnw.filename(i).c_str() );
+    unsigned int u_iter = static_cast< unsigned int >( iter );
+    std::string local_file = iter >= 0 ? fn.filename(i, u_iter) : fn.filename(i);
+    std::string world_file = iter >= 0 ? fnw.filename(i, u_iter) : fnw.filename(i);
+    
+    std::ofstream out( local_file.c_str() );
+    std::ofstream outw( world_file.c_str() );
 
     std::cout << "Writing " << fnw.filename(i) << " ";
     
@@ -506,70 +498,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles()
     outw.close();
 	std::cout << " with " << counter << "points" << std::endl;
   } // end for files
-} 
-
-
-template < class SAMPLERTYPE>
-void
-ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( unsigned int it )
-{
-	typedef  itk::MaximumEntropyCorrespondenceSampler<ImageType>::PointType PointType;
-	const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
-
-	// Write points in both local and global coordinate system
-	int counter;
-
-	filenameFactory it_fn;
-	filenameFactory it_fnw;
-
-	it_fn.number_of_files(n);
-	it_fn.prefix(m_output_points_prefix);
-	it_fn.file_format("lpts");
-
-	it_fnw.number_of_files(n);
-	it_fnw.prefix(m_output_points_prefix);
-	it_fnw.file_format("wpts");
-
-	for (int i = 0; i < n; i++)
-	{
-		counter = 0;
-		std::ofstream out( it_fn.filename(i, it).c_str() );
-		std::ofstream outw( it_fnw.filename(i, it).c_str() );
-
-		std::cout << "Writing " << it_fnw.filename(i) << " ";
-
-		if ( !out || !outw )
-		  { 
-		  throw param::Exception("EnsembleSystem()::Error opening output file");
-		  }
-
-		for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
-		  {
-		  PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
-		  PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
-		  
-		  for (unsigned int k = 0; k < 3; k++)
-			{        out << pos[k] << " ";        }
-		  out << std::endl;
-
-		  for (unsigned int k = 0; k < 3; k++)
-			{        outw << wpos[k] << " ";        }
-		  outw << std::endl;
-          counter ++;
-		  } // end for points
-
-		  
-		  out.close();
-		  outw.close();
-		  std::cout << " with " << counter << "points" << std::endl;
-    } // end for files
-    
+  
+  if( iter >= 0 )
+  {
     // Write final file signifying that the checkpoints from this iteration are ready for 
     // consumption by an external process.
     std::ostringstream final_file;
-	final_file << "iter." << it;
+	final_file << "iter." << static_cast< unsigned int >( iter );
     std::ofstream final_out( final_file.str().c_str() );
 	final_out.close();
+  }
 } 
 
 template < class SAMPLERTYPE>
@@ -817,7 +755,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadExplanatoryVariables(param::parameterFile &pf
         evars.push_back(etmp);
       }
     }
-
+  
   dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
     (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
     ->SetExplanatory(evars);
@@ -841,11 +779,24 @@ ShapeWorksRunApp<SAMPLERTYPE>::~ShapeWorksRunApp()
 
 template < class SAMPLERTYPE>
 void
-ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters()
+ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( int iter )
 {
-  std::string slopename     = std::string( m_output_points_prefix ) + std::string(".slope");
-  std::string interceptname = std::string( m_output_points_prefix ) + std::string(".intercept");
+  std::string slopename, interceptname;
+  
+  if( iter >= 0 )
+  {
+    std::stringstream out_it;
+    out_it << static_cast< unsigned int >( iter );
 
+    slopename = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".slope");
+    interceptname = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".intercept");
+  }
+  else
+  {
+    slopename = std::string( m_output_points_prefix ) + std::string(".slope");
+    interceptname = std::string( m_output_points_prefix ) + std::string(".intercept");
+  }
+  
   std::cout << "writing " << slopename << std::endl;
   std::cout << "writing " << interceptname << std::endl;
 
@@ -887,48 +838,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters()
   //writer2.SetInput(intercept);
   //writer2.Update();
 
-}
-
-template < class SAMPLERTYPE>
-void
-ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( unsigned int it )
-{
-  std::stringstream out_it;
-  out_it << it;
-
-  std::string slopename     = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".slope");
-  std::string interceptname = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".intercept");
-
-  std::cout << "writing " << slopename << std::endl;
-  std::cout << "writing " << interceptname << std::endl;
-
-  std::vector< double > slope;
-  vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-      (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetSlope();
-
-  for (unsigned int i = 0; i < slopevec.size(); i++)
-    {    slope.push_back(slopevec[i]);    }
-
-  std::ofstream out( slopename.c_str() );
-  for (unsigned int i = 0; i < slope.size(); i++)
-  {
-    out << slope[i] << "\n";
-  }
-  out.close();
-  
-  std::vector< double > intercept;
-  vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetIntercept();
-  
-  for (unsigned int i = 0; i < slopevec.size(); i++)
-    {    intercept.push_back(interceptvec[i]);    }
-
-  out.open(interceptname.c_str());
-  for (unsigned int i = 0; i < slope.size(); i++)
-    {
-    out << intercept[i] << "\n";
-    }
-  out.close();
 }
 
 template < class SAMPLERTYPE>

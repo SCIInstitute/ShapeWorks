@@ -96,13 +96,11 @@ class ShapeWorksRunApp
   {
     m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_points_prefix,5);
   }
-  virtual void WritePointFiles();  
-  virtual void WriteTransformFile() const;
-  virtual void WriteParameters();  
 
-  virtual void WritePointFiles( unsigned int it );  
-  virtual void WriteTransformFile( unsigned int it ) const;
-  virtual void WriteParameters( unsigned int it );  
+  // "iter" param used if "keep_checkpoints" param is set to 1.
+  virtual void WritePointFiles( int iter = -1 );  
+  virtual void WriteTransformFile( int iter = -1 ) const;
+  virtual void WriteParameters( int iter = -1 );  
 
   void ReadExplanatoryVariables(param::parameterFile &);
   void FlagDomainFct(param::parameterFile &pf);
