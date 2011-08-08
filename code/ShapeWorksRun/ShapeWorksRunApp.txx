@@ -377,21 +377,21 @@ void
 ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( int iter ) const
 {
   std::string output_file = m_output_transform_file;
-  
+ 
   if( iter >= 0 )
   {
+    std::string file_ext = "";
+  
     std::string::size_type idx = m_output_transform_file.rfind('.');
-    if (idx == std::string::npos)
+    if (idx != std::string::npos)
     {
-	  return;
+	  output_file = m_output_transform_file.substr( 0, idx );
+      file_ext = "." + m_output_transform_file.substr( idx + 1, m_output_transform_file.length() );
     }
-   
-    output_file = m_output_transform_file.substr( 0, idx-1 );
-    std::string file_format = m_output_transform_file.substr( idx + 1, m_output_transform_file.length() );
     std::stringstream out;
     out << static_cast< unsigned int >( iter );
 
-    output_file +=  ".it" + out.str() + "." + file_format;
+    output_file +=  ".it" + out.str() + file_ext;
   }
   
   std::vector< itk::ParticleSystem<3>::TransformType > tlist;
