@@ -1,0 +1,121 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+class alignshapesGUI {open
+} {
+  Function {alignshapesGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {Align Shapes} open
+      xywh {468 77 808 881} type Double box PLASTIC_UP_BOX color 10 labelfont 8 labelsize 12 align 5 resizable visible
+    } {
+      Fl_Box imageView {
+        xywh {10 10 785 730} box PLASTIC_DOWN_BOX color 0 align 2 resizable
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Button {} {
+        label exit
+        callback {this->Quit();}
+        tooltip {Quit the application.} xywh {740 805 35 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 1 selection_color 3 labeltype ENGRAVED_LABEL labelsize 20 labelcolor 8
+      }
+      Fl_Output matrixDisplay {
+        label {transform matrix / axis-angle}
+        xywh {26 752 260 70} type Multiline box PLASTIC_UP_BOX color 78 selection_color 0 labeltype ENGRAVED_LABEL labelcolor 8 align 2 textfont 13 textsize 12 textcolor 8
+      }
+      Fl_Button writeButton {
+        label {2. save}
+        callback {this->Write();}
+        xywh {540 752 75 43} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 1 selection_color 3 labeltype ENGRAVED_LABEL labelsize 20 labelcolor 8 align 16
+      }
+      Fl_Light_Button boxOn {
+        label {1. adjust}
+        callback {this->BoxOn();}
+        xywh {403 751 122 45} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 134 selection_color 0 labeltype ENGRAVED_LABEL labelsize 20 labelcolor 8 align 144
+      }
+      Fl_Roller refOpacity {
+        label opacity
+        callback {this->ReferenceOpacity()}
+        xywh {375 750 18 95} box PLASTIC_THIN_UP_BOX color 193 labeltype NO_LABEL labelcolor 8 align 138 step 0.01 value 1
+      }
+      Fl_Roller movOpacity {
+        label {moving opacity}
+        callback {this->MovingOpacity();}
+        xywh {350 750 18 95} box PLASTIC_THIN_UP_BOX color 93 labeltype NO_LABEL labelcolor 8 align 8 step 0.01 value 1
+      }
+      Fl_Value_Input defaultValue {
+        label {outside value}
+        xywh {620 799 35 20} box PLASTIC_UP_BOX color 9 labeltype ENGRAVED_LABEL labelsize 12 labelcolor 8 align 132 textfont 13 textsize 12 textcolor 8
+      }
+      Fl_Light_Button axisAngle {
+        label {matrix view}
+        xywh {291 752 25 70} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX value 1 color 78 selection_color 0 labeltype NO_LABEL labelcolor 8 align 4
+      }
+      Fl_Check_Button linearInterpolate {
+        label {linear interpolation}
+        xywh {620 752 20 43} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX value 1 color 9 labeltype ENGRAVED_LABEL labelsize 12 labelcolor 8 align 148
+      }
+      Fl_Input outputFilename {
+        label {file name}
+        xywh {540 822 118 20} box PLASTIC_UP_BOX color 9 labeltype EMBOSSED_LABEL labelsize 12 labelcolor 8 align 8 textsize 12 textcolor 8
+      }
+      Fl_Input pointsFilename {
+        label {points file}
+        xywh {540 845 118 20} box PLASTIC_UP_BOX color 9 labeltype EMBOSSED_LABEL labelsize 12 labelcolor 8 align 8 textsize 12 textcolor 8
+      }
+      Fl_Dial m_moving_scale {
+        callback {this->moving_scale()}
+        xywh {350 845 18 18} type Line box ROUND_UP_BOX color 93 step 0.01 value 0.25
+      }
+      Fl_Dial m_reference_scale {
+        callback {this->reference_scale()}
+        xywh {375 845 18 18} type Line box ROUND_UP_BOX color 193 step 0.01 value 0.25
+      }
+      Fl_Button testProcrustes {
+        label {do not push}
+        callback {this->Procrustes();}
+        xywh {740 765 35 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 3 selection_color 1 labeltype ENGRAVED_LABEL labelsize 9 labelcolor 7 align 144
+      }
+      Fl_Check_Button toggleAxesButton {
+        callback {this->toggleAxes();}
+        xywh {290 825 27 25} box PLASTIC_THIN_UP_BOX down_box PLASTIC_DOWN_BOX color 3 selection_color 3 labeltype NO_LABEL
+      }
+      Fl_Value_Input isovalue_input {
+        label isovalue
+        callback {this->SetIsovalue();}
+        xywh {475 820 35 20} box PLASTIC_UP_BOX color 9 labeltype ENGRAVED_LABEL labelsize 12 labelcolor 8 align 132 minimum -1e+006 maximum 1e+006 textfont 13 textsize 12 textcolor 8
+      }
+    }
+  }
+  Function {~alignshapesGUI()} {return_type virtual
+  } {}
+  Function {Quit()} {return_type {virtual void}
+  } {}
+  Function {Load()} {return_type {virtual void}
+  } {}
+  Function {Show()} {return_type {virtual void}
+  } {}
+  Function {Hide()} {return_type {virtual void}
+  } {}
+  Function {Write()} {return_type {virtual void}
+  } {}
+  Function {BoxOn()} {return_type {virtual void}
+  } {}
+  Function {Next()} {open return_type {virtual void}
+  } {}
+  Function {ReferenceOpacity()} {open return_type {virtual void}
+  } {}
+  Function {MovingOpacity()} {open return_type {virtual void}
+  } {}
+  Function {moving_scale()} {open return_type void
+  } {}
+  Function {reference_scale()} {open return_type void
+  } {}
+  Function {Procrustes()} {open return_type {virtual void}
+  } {}
+  Function {toggleAxes()} {open return_type {virtual void}
+  } {}
+  Function {SetIsovalue()} {open selected return_type {virtual void}
+  } {}
+} 

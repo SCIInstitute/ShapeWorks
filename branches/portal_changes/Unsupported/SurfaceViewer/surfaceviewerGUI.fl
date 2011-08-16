@@ -1,0 +1,59 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+class surfaceviewerGUI {open
+} {
+  Function {surfaceviewerGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {Align Shapes} open
+      xywh {133 62 808 881} type Double box PLASTIC_UP_BOX color 10 labelfont 8 labelsize 12 align 5 resizable visible
+    } {
+      Fl_Box imageView {
+        xywh {10 10 785 730} box PLASTIC_DOWN_BOX color 0 align 2 resizable
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Button {} {
+        label exit
+        callback {this->Quit();}
+        tooltip {Quit the application.} xywh {740 805 35 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 1 selection_color 3 labeltype ENGRAVED_LABEL labelsize 20 labelcolor 8
+      }
+      Fl_Roller refOpacity {
+        label opacity
+        callback {this->ReferenceOpacity()}
+        xywh {375 750 55 115} box PLASTIC_THIN_UP_BOX color 193 labeltype NO_LABEL labelcolor 8 align 138 step 0.01 value 1
+      }
+      Fl_Value_Input defaultValue {
+        label {outside value}
+        xywh {545 840 35 20} box PLASTIC_UP_BOX color 9 labeltype ENGRAVED_LABEL labelsize 12 labelcolor 8 align 132 textfont 13 textsize 12 textcolor 8
+      }
+      Fl_Value_Input isovalue_input {
+        label isovalue
+        callback {this->SetIsovalue();}
+        xywh {540 785 35 20} box PLASTIC_UP_BOX color 9 labeltype ENGRAVED_LABEL labelsize 12 labelcolor 8 align 132 minimum -1e+06 maximum 1e+06 textfont 13 textsize 12 textcolor 8
+      }
+    }
+  }
+  Function {~surfaceviewerGUI()} {return_type virtual
+  } {}
+  Function {Quit()} {return_type {virtual void}
+  } {}
+  Function {Load()} {return_type {virtual void}
+  } {}
+  Function {Show()} {return_type {virtual void}
+  } {}
+  Function {Hide()} {return_type {virtual void}
+  } {}
+  Function {Write()} {return_type {virtual void}
+  } {}
+  Function {Next()} {open return_type {virtual void}
+  } {}
+  Function {ReferenceOpacity()} {open return_type {virtual void}
+  } {}
+  Function {toggleAxes()} {open return_type {virtual void}
+  } {}
+  Function {SetIsovalue()} {selected return_type {virtual void}
+  } {}
+} 
