@@ -25,6 +25,9 @@
 #ifdef _WIN32
 #include <direct.h>
 #define mkdir _mkdir
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
 #endif
 
 template <class SAMPLERTYPE>
@@ -139,8 +142,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 			  ss << iteration_no;
 			  std::string dir_name = "iter" + ss.str();
 			  std::string tmp_dir_name = dir_name + "_tmp";
-			  mkdir( tmp_dir_name.c_str() );
 
+#ifdef _WIN32
+			  mkdir( tmp_dir_name.c_str() );
+#else
+			  mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
 			this->WritePointFiles( iteration_no );
 			this->WriteTransformFile( iteration_no );
 			/*if (m_use_regression == true) */this->WriteParameters( iteration_no );
