@@ -28,12 +28,23 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-fastmarching<T,D>::fastmarching(param::parameterFile &pf)
+fastmarching<T,D>::fastmarching(const char *fname)
 {
-  // Set some parameters.
-  bool ok;
-  PARAMSET(pf, m_levelset_value, "fastmarching_isovalue", 0, ok, 0.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, m_levelset_value, "fastmarching_isovalue", 0, ok, 0.0);
+    this->m_levelset_value = 0.0;
+    elem = docHandle.FirstChild( "fastmarching_isovalue" ).Element();
+    if (elem) this->m_levelset_value = atof(elem->GetText());
+  }
 }
+
 
 template <class T, unsigned int D> 
 void fastmarching<T,D>::operator()(typename image_type::Pointer img)

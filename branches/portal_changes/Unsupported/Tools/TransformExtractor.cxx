@@ -15,7 +15,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "itkParticleSystem.h"
 #include "object_reader.h"
 #include "object_writer.h"
@@ -35,38 +36,54 @@ int main(int argc, char *argv[])
   
 
   // READ PARAMETERS
-  param::parameterFile pf(argv[1]);
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
 
-  PARAMSET(pf, input, "input", 0, ok, "");
-  PARAMSET(pf, output, "output", 0, ok, "");
-  
-   if (ok != true)
-    {
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
+
+  //PARAMSET(pf, input, "input", 0, ok, "");
+  input = "";
+  elem = docHandle.FirstChild( "input" ).Element();
+  if (elem)
+    input = elem->GetText();
+  else
+  {
     std::cerr << "Missing parameters" << std::endl;
     return 1;
+  }
+
+  //PARAMSET(pf, output, "output", 0, ok, "");
+  output = "";
+  elem = docHandle.FirstChild( "output" ).Element();
+  if (elem)
+    output = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  // Collect a list of indices
+  unsigned int a;
+  elem = docHandle.FirstChild( "indices" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No indices" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> a)
+    {
+      indices.push_back(a);
     }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
-   // Collect a list of indices
-   int i = 0;
-   ok = true;
-   unsigned int a;
-   while (ok == true)
-     {
-     // Record the mean point file input and output names.
-     PARAMSET(pf, a, "indices", i, ok, 0);
-     if (i==0 && ok != true)
-       {
-       std::cerr << "No indices" << std::endl;
-       throw 1;
-       }
-     if (ok == true)
-       {
-       indices.push_back(a);
-       } // if ok == true
-     i++;
-     } // while ok == true
-
-   
   // Read the rotation matrices
    object_reader< itk::ParticleSystem<3>::TransformType > rotreader;
    rotreader.SetFileName(input.c_str());
@@ -89,3 +106,4 @@ std::cout << "aouttrans size = " << outtrans.size() << std::endl;
    
   return 0;
 }
+

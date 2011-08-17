@@ -30,22 +30,37 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-align_principal<T,D>::align_principal(param::parameterFile &pf)
+align_principal<T,D>::align_principal(const char * fname)
 {
-  // Set some parameters.
-  double g;
-  bool ok = true;
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
-  m_background = static_cast<T>(g);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  PARAMSET(pf, m_transform_file, "transform_file", 0, ok, "/dev/null\0");
-  
-  if (ok == false)
-    { throw param::Exception("align_principal:: missing parameters"); }
-  
-  vnl_vector<double> tmp(3);
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
+    // Set some parameters.
+     this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem) this->m_background = static_cast<T>(atof(elem->GetText()));
+
+    this->m_transform_file = "/dev/null\0";
+    elem = docHandle.FirstChild( "transform_file" ).Element();
+    if (elem)
+    {
+      this->m_transform_file = elem->GetText();
+    }
+    else
+    {
+      std::cerr << "align_principal:: missing parameters" << std::endl;    
+    }
+
+    vnl_vector<double> tmp(3);
+  }
 }
+
+
 
 template <class T, unsigned int D> 
 void align_principal<T,D>::operator()()
@@ -59,7 +74,10 @@ void align_principal<T,D>::operator()()
   
   // (only implemented for 3D right now)
   if (D != 3)
-    throw param::Exception("align_principal: this tool is only implemented for 3D");
+  {
+    std::cerr <<"align_principal: this tool is only implemented for 3D" << std::endl;
+    throw 1;
+  }
 
   typename itk::ImageFileReader<image_type>::Pointer reader =
     itk::ImageFileReader<image_type>::New();

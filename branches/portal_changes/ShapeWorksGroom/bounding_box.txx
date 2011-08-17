@@ -22,15 +22,30 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-bounding_box<T,D>::bounding_box(param::parameterFile &pf)
+bounding_box<T,D>::bounding_box(const char *fname)
 {
-  // Set some parameters.
-  bool ok = true;
-  PARAMSET(pf, m_background, "background", 0, ok, static_cast<T>(1));
-  
-  if (ok == false)
-    {  throw param::Exception("bounding_box:: missing parameters"); }
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, m_background, "background", 0, ok, static_cast<T>(1));
+    this->m_background = static_cast<T>(1);
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "bounding_box:: missing parameters" << std::endl;
+    }
+  }
 }
+
 
 template <class T, unsigned int D> 
 void bounding_box<T,D>::operator()(typename image_type::Pointer img)

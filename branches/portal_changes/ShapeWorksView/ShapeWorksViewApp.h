@@ -22,7 +22,10 @@
 #include "FL/Fl_File_Chooser.H"
 
 #include "AnalyzeCorrespondenceGUI.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
+#include <iostream>
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticlePositionReader.h"
 #include "object_reader.h"
@@ -172,8 +175,9 @@ protected:
   void set_color_list(const std::vector<rgb> &c)
   { m_color_list = c; }
 
-  virtual void ReadExplanatoryVariables(param::parameterFile &);
-  virtual void ReadSimpleRegressionParameters(param::parameterFile &);
+  virtual void ReadExplanatoryVariables(const char *fname);
+
+  virtual void ReadSimpleRegressionParameters(const char *fname);
 
   void DisplayShape( const vnl_vector<double> &);
   void ZeroAllVTK()

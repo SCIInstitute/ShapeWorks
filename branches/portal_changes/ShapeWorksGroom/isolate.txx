@@ -24,20 +24,42 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-isolate<T,D>::isolate(param::parameterFile &pf)
+isolate<T,D>::isolate(const char *fname)
 {
- // Set some parameters.
-  double f,g;
-  bool ok = true;
-  PARAMSET(pf, f, "foreground", 0, ok, 0.0);
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  m_foreground = static_cast<T>(f);
-  m_background = static_cast<T>(g);
-  
-  if (ok == false)
-    {  throw param::Exception("isolate:: missing parameters"); }
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, f, "foreground", 0, ok, 0.0);
+    this->m_foreground = 0.0;
+    elem = docHandle.FirstChild( "foreground" ).Element();
+    if (elem)
+    {
+      this->m_foreground = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "isolate:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "isolate:: missing parameters" << std::endl;
+    }
+  }
 }
+
 
 template <class T, unsigned int D> 
 void isolate<T,D>::operator()(typename image_type::Pointer img)

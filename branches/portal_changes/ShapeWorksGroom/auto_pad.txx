@@ -23,22 +23,47 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-auto_pad<T,D>::auto_pad(param::parameterFile &pf)
+auto_pad<T,D>::auto_pad(const char *fname)
 {
-  // Set some parameters.
-  double f,g;
-  bool ok = true;
-  PARAMSET(pf, f, "foreground", 0, ok, 0.0);
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  m_foreground = static_cast<T>(f);
-  m_background = static_cast<T>(g);
-  
-  if (ok == false)
-    { throw param::Exception("align_principal:: missing parameters"); }
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
-  PARAMSET(pf, m_pad, "pad", 0, ok, 0);
+    //PARAMSET(pf, f, "foreground", 0, ok, 0.0);
+    this->m_foreground = 0.0;
+    elem = docHandle.FirstChild( "foreground" ).Element();
+    if (elem)
+    {
+      this->m_foreground = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "auto_pad:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "auto_pad:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, m_pad, "pad", 0, ok, 0);
+    this->m_pad = 0;
+    elem = docHandle.FirstChild( "pad" ).Element();
+    if (elem) this->m_pad = atoi(elem->GetText());
+  }
 }
+
 
 template <class T, unsigned int D> 
 void auto_pad<T,D>::operator()()
@@ -150,7 +175,9 @@ void auto_pad<T,D>::operator()()
        diff[i] = (upper[i] - lower[i])
          - reader->GetOutput()->GetBufferedRegion().GetSize()[i];
        if (diff[i] < 0)
-         {  throw param::Exception("auto_pad:: negative pad");  }
+       {  std::cerr << "auto_pad:: negative pad" << std::endl;
+          throw 1;
+       }
        lowpad[i] = diff[i] / 2;
        hipad[i]  = diff[i] - lowpad[i];
        if (lowpad[i] != 0 || hipad[i] != 0) flag = true;

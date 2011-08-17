@@ -24,29 +24,46 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-surface_point<T,D>::surface_point(param::parameterFile &pf)
+surface_point<T,D>::surface_point(const char *fname)
 {
-  // Set some parameters.
-  bool ok = true;
-  PARAMSET(pf, m_isovalue, "surface_isovalue", 0, ok, 0.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  // Compile the list of input files.
-  ok = true;
-  for (unsigned int i = 0; ok == true; i++)
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //  PARAMSET(pf, m_isovalue, "surface_isovalue", 0, ok, 0.0);
+    this->m_isovalue = 0.0;
+    elem = docHandle.FirstChild( "surface_isovalue" ).Element();
+    if (elem) this->m_isovalue = atof(elem->GetText());
+
+    //PARAMSET(pf, tmp, "point_files", i, ok, "/dev/null\0");
+    std::istringstream inputsBuffer;
+    std::string filename("/dev/null\0");
+    elem = docHandle.FirstChild( "point_files" ).Element();
+    if (elem)
     {
-    std::string tmp;
-    PARAMSET(pf, tmp, "point_files", i, ok, "/dev/null\0");
-    if (ok == true) { m_point_files.push_back(tmp); }
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> filename)
+      {
+        this->m_point_files.push_back(filename);        
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
     }
-  
+  }  
 }
+
 
 template <class T, unsigned int D> 
 void surface_point<T,D>::operator()()
 {
   if (m_point_files.size() < this->input_filenames().size())
     {
-    throw param::Exception("surface_point:: output list size does not match input list size");
+      std::cerr << "surface_point:: output list size does not match input list size" << std::endl;
+      throw 1;
     }
   // const pixel_type epsilon = static_cast<pixel_type>(0.3);
   typename itk::ImageFileReader<image_type>::Pointer reader =
@@ -86,7 +103,10 @@ void surface_point<T,D>::operator()()
     // Write the point file.
     std::ofstream out( (*oit).c_str() );
     if ( !out )
-      { throw param::Exception("surface_point:: could not open output file"); }
+      { 
+        std::cerr << "surface_point:: could not open output file" << std::endl;
+        throw 1;
+      }
 
     //    out << 1 << std::endl; // number of points
     for (unsigned int i = 0; i < D; i++)

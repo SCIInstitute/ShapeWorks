@@ -20,7 +20,8 @@
 #include <fstream>
 #include "itkImageFileReader.h"
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "itkImageRegionConstIterator.h"
 
 
@@ -34,34 +35,45 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  param::parameterFile pf(argv[1]);
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
+
   std::string outputfile;
-  
-  bool ok = true;
   int background = 0;
-  PARAMSET(pf, background, "background", 0, ok, 0);
-  PARAMSET(pf, outputfile, "output", 0, ok, "volumes.txt");
+
+  //PARAMSET(pf, background, "background", 0, ok, 0);
+  background = 0;
+  elem = docHandle.FirstChild( "background" ).Element();
+  if (elem) background = atoi(elem->GetText());
+
+  //PARAMSET(pf, outputfile, "output", 0, ok, "volumes.txt");
+  outputfile = "volumes.txt";
+  elem = docHandle.FirstChild( "output" ).Element();
+  if (elem) outputfile = elem->GetText();
 
   // Collect a list of input file names
   std::vector< std::string > inputfiles;
   std::string tmp;
-  int ii = 0;
-  ok = true;
-  while (ok == true)
+
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmp)
     {
-    // Record the point file names.
-    PARAMSET(pf, tmp, "inputs", ii, ok, "");
-    if (ii==0 && ok != true)
-      {
-      std::cerr << "No input files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
       inputfiles.push_back(tmp);
-      } // if ok == true
-    ii++;
-    } // while ok == true
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   std::vector<unsigned int> volumes;
   std::vector<double> scales;
@@ -155,3 +167,4 @@ int main(int argc, char *argv[])
   
   return 0;
 }
+

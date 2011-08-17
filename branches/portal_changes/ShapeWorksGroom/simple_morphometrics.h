@@ -16,7 +16,9 @@
 #define __st_simple_morphometrics_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 #include "itkParticleSystem.h"
 #include <string>
@@ -34,7 +36,8 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
 
-  simple_morphometrics(param::parameterFile &);
+  simple_morphometrics(const char *fname);
+
   simple_morphometrics() {};// { m_principal_axis = 0;}
   virtual ~simple_morphometrics() {}
   

@@ -41,12 +41,23 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-icp<T,D>::icp(param::parameterFile &pf)
+icp<T,D>::icp(const char *fname)
 {
-  // Set some parameters.
-  bool ok;
-  PARAMSET(pf, m_iterations, "icp_iterations", 0, ok, 50);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, m_iterations, "icp_iterations", 0, ok, 50);
+    this->m_iterations = 50;
+    elem = docHandle.FirstChild( "icp_iterations" ).Element();
+    if (elem) this->m_iterations = atoi(elem->GetText());
+  }
 }
+
 
 template <class T, unsigned int D> 
 void icp<T,D>::operator()()

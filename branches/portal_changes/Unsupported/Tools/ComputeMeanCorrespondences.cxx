@@ -17,7 +17,9 @@
 #include <string>
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include <iostream>
 #include <fstream>
 
@@ -30,34 +32,37 @@ int main(int argc, char *argv[])
     }
   typedef itk::ParticlePositionReader<3>::PointType PointType;
   
-  param::parameterFile pf(argv[1]);
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
+
   std::string outputfile;  
   std::vector< std::string > inputfiles;
-  //  std::cout << pf << std::endl;
   std::string tmpa, outfile;
-  int ii = 0;
-  bool ok = true;
-  PARAMSET(pf, outfile, "output", 0, ok, "outputfile.txt");
 
-  
-  while (ok == true)
-  {
-  // Record the point file names.
-  PARAMSET(pf, tmpa, "point_files", ii, ok, "");
+  outfile = "outputfile.txt";
+  elem = docHandle.FirstChild( "output" ).Element();
+  if (elem) outfile = elem->GetText();
  
-  if (ii==0 && ok != true)
-    {
+  elem = docHandle.FirstChild( "point_files" ).Element();
+  if (!elem)
+  {
     std::cerr << "No input/output files have been specified" << std::endl;
     throw 1;
-    }
-  if (ok == true)
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpa)
     {
-    inputfiles.push_back(tmpa);
-    //    std::cout << tmpa << std::endl;
-    } // if ok == true
-  ii++;
-  } // while ok == true
-  
+      inputfiles.push_back(tmpa);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
   itk::ParticlePositionReader<3>::Pointer readerA
     = itk::ParticlePositionReader<3>::New();
   readerA->SetFileName(inputfiles[0].c_str());
@@ -106,3 +111,4 @@ int main(int argc, char *argv[])
   
   return 0;
 }
+

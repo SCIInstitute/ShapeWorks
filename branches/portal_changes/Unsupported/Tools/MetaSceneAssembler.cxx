@@ -23,7 +23,8 @@
 #include "string_io.h"
 #include <fstream>
 #include "itkParticleSystem.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "object_reader.h"
 
 struct point_type
@@ -51,81 +52,111 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  param::parameterFile pf(argv[1]);
-
-  bool ok = true;
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
 
   unsigned int domains_per_shape, points_per_file;
   std::string transfn;
+
+  //PARAMSET(pf, shift, "shift", 0, ok, 0);
   int shift = 0;
-  PARAMSET(pf, shift, "shift", 0, ok, 0);
-  PARAMSET(pf, points_per_file, "points_per_file", 0, ok, 1);
-  PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
-  PARAMSET(pf, transfn, "transform_file", 0, ok, "");
+  elem = docHandle.FirstChild( "shift" ).Element();
+  if (elem)
+    shift = atoi(elem->GetText());
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  //PARAMSET(pf, points_per_file, "points_per_file", 0, ok, 1);
+  points_per_file = 1;
+  elem = docHandle.FirstChild( "points_per_file" ).Element();
+  if (elem)
+    points_per_file = atoi(elem->GetText());
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  //PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
+  domains_per_shape = 1;
+  elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+  if (elem)
+    domains_per_shape = atoi(elem->GetText());
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  //PARAMSET(pf, transfn, "transform_file", 0, ok, "");
+  transfn = "";
+  elem = docHandle.FirstChild( "transform_file" ).Element();
+  if (elem)
+    transfn = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
 
   std::cout << "Domains per shape = " << domains_per_shape << std::endl;
   std::cout << "Points per file = " << points_per_file << std::endl;  
 
-  if (ok != true)
-    {
-    std::cerr << "Missing parameters" << std::endl;
-    return 1;
-    }
-
-  
+ 
   // Collect a list of point file names and output file names
-  int i=0;
   std::vector< std::string > metafiles;
   std::vector< std::string > outputfiles;
   std::string tmp;
-  while (ok == true)
-    {
-    // Record the point file names.
-    PARAMSET(pf, tmp, "inputs", i, ok, "");
-    if (i==0 && ok != true)
-      {
-      std::cerr << "No input files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
-      std::cout << i << "\t" << tmp <<  std::endl;
-      metafiles.push_back(tmp);
-      } // if ok == true
-    i++;
-    } // while ok == true
 
-  i--;
-  unsigned int num_files = i;
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmp)
+    {
+      metafiles.push_back(tmp);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  unsigned int num_files = metafiles.size();
   double num_samples = ((double)(num_files)) /((double)(domains_per_shape));
   std::cout << "Read " << num_files << " files " << std::endl;
-  if ( i % domains_per_shape != 0)
+  if ( num_files % domains_per_shape != 0)
     {
     std::cerr << "Not a multiple of domains per shape! Exiting." << std::endl;
     return 1;
     }
 
 
-  ok = true;
-  i = 0;
-  while (ok == true)
+  elem = docHandle.FirstChild( "outputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No output files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmp)
     {
-    // Record the outputfiles
-    PARAMSET(pf, tmp, "outputs", i, ok, "");
-    if (i==0 && ok != true)
-      {
-      std::cerr << "No output files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
-      std::cout << i << "\t" << tmp <<  std::endl;
       outputfiles.push_back(tmp);
-      } // if ok == true
-    i++;
-    } // while ok == true
-
-
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   // Compute the average translations.
   object_reader< itk::ParticleSystem<3>::TransformType > transreader;
@@ -307,3 +338,4 @@ int main(int argc, char *argv[])
   
   return 0;
 }
+

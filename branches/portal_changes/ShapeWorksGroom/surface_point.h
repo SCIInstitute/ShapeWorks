@@ -16,7 +16,9 @@
 #define __st_surface_point_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 
 namespace shapetools
@@ -36,7 +38,8 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  surface_point(param::parameterFile &);
+  surface_point(const char *fname);
+
   surface_point() {m_isovalue = 0.0;}
   virtual ~surface_point() {}
   

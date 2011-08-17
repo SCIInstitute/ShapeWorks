@@ -22,27 +22,56 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-extract_centers<T,D>::extract_centers(param::parameterFile &pf)
+extract_centers<T,D>::extract_centers(const char *fname)
 {
-  // Set some parameters.
-  double f,g;
-  bool ok = true;
-  PARAMSET(pf, f, "foreground", 0, ok, 0.0);
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  m_foreground = static_cast<T>(f);
-  m_background = static_cast<T>(g);
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
-  int s;
-  for (unsigned int i = 0; i < D; i++)
+    //PARAMSET(pf, f, "foreground", 0, ok, 0.0);
+    this->m_foreground = 0.0;
+    elem = docHandle.FirstChild( "foreground" ).Element();
+    if (elem)
     {
-    PARAMSET(pf, s, "center_size", i, ok, 0);
-    m_center_size[i] = s;
+      this->m_foreground = static_cast<T>(atof(elem->GetText()));
     }
-  
-  if (ok == false)
-    { throw param::Exception("extract_centers:: missing parameters"); }
+    else
+    {
+      std::cerr << "extract_centers:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "extract_centers:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, s, "center_size", i, ok, 0);
+    std::istringstream inputsBuffer;    
+    double s;
+    elem = docHandle.FirstChild( "center_size" ).Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+      for (unsigned int i = 0; i < D; i++)
+      {
+        inputsBuffer >> s;
+        m_center_size[i] = s;
+      }
+    }
+  }
 }
+
 
 template <class T, unsigned int D> 
 void extract_centers<T,D>::operator()()

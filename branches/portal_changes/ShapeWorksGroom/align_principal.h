@@ -16,10 +16,12 @@
 #define __st_align_principal_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
 #include "tool.h"
 #include "itkParticleSystem.h"
 #include <string>
+#include <sstream>
+#include <iostream>
 
 namespace shapetools
 {
@@ -37,7 +39,8 @@ public:
   typedef itk::Image<T, D> image_type;
   typedef typename  itk::ParticleSystem<D>::TransformType TransformType;
 
-  align_principal(param::parameterFile &);
+  align_principal(const char *);
+
   align_principal() {};// { m_principal_axis = 0;}
   virtual ~align_principal() {}
   

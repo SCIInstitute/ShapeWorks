@@ -22,15 +22,30 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-pca<T,D>::pca(param::parameterFile &pf)
+pca<T,D>::pca(const char *fname)
 {
-  // Set some parameters.
-  bool ok = true;
-  PARAMSET(pf, m_background, "background", 0, ok, static_cast<T>(1));
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  if (ok == false)
-    {  throw param::Exception("pca:: missing parameters"); }
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = static_cast<T>(1);
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "pca:: missing parameters" << std::endl;
+    }
+  }
 }
+
 
 template <class T, unsigned int D> 
 void pca<T,D>::operator()(typename image_type::Pointer img)

@@ -16,7 +16,9 @@
 #define __st_relabel_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 #include "itkConnectedThresholdImageFilter.h"
 
@@ -38,7 +40,8 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  relabel(param::parameterFile &);
+  relabel(const char *fname);
+
   relabel() {}
   virtual ~relabel() {}
   

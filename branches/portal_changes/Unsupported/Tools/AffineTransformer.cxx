@@ -18,13 +18,15 @@
 #include <vector>
 #include <string>
 #include "itkParticleSystem.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
+#include <iostream>
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkResampleImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +39,11 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  param::parameterFile pf(argv[1]);
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
   std::string outputfile;
 
   // Collect a list of input file names
@@ -46,51 +52,67 @@ int main(int argc, char *argv[])
   std::string tmpa;
   std::string tmpb;
 
-  int ii = 0;
-  bool ok = true;  
-  while (ok == true)
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpa)
     {
-    // Record the point file names.
-    PARAMSET(pf, tmpa, "inputs", ii, ok, "");
-    PARAMSET(pf, tmpb, "outputs", ii, ok, "");
-    if (ii==0 && ok != true)
-      {
-      std::cerr << "No input/output files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
       inputfiles.push_back(tmpa);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild( "outputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No output files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpb)
+    {
       outputfiles.push_back(tmpb);
-      } // if ok == true
-    ii++;
-    } // while ok == true
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   // Assume all domains have the same number of particles.
   const int numShapes = inputfiles.size();
   
   // Read the transforms
-  ii = 0;
-  std::vector<ParticleSystemType::TransformType> transform_params;
-  for (int i = 0; i < numShapes; i++)
-    { 
-    // DO NOT DO SCALING
-    //    transforms[i].scale = 1.0;
-    //
-    double tmp;
-
-    ParticleSystemType::TransformType R;
-    for (int k = 0; k < 4; k++)
-      for (int j = 0; j < 4; j++)
+  std::vector<ParticleSystemType::TransformType> transform_params; 
+  ParticleSystemType::TransformType R;
+  double tmp;
+  elem = docHandle.FirstChild( "transforms" ).Element();
+  if (elem)
+  {
+    inputsBuffer.str(elem->GetText());
+    for (unsigned int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+    {
+      for (unsigned int i = 0; i < 4; i++)
+      {
+        for (unsigned int j = 0; j < 4; j++)
         {
-        PARAMSET(pf, tmp, "transforms", ii, ok, 0.0);
-        R(k,j) = tmp;
-        ii++;
+          inputsBuffer >> tmp;
+          R(i,j) = tmp;
         }
-    transform_params.push_back(R);
-    std::cout << R << std::endl;
-    
+      }
+      transform_params.push_back(R);
+      std::cout << R << std::endl;
     }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   // Apply transforms to each image
 

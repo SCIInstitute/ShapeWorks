@@ -14,7 +14,10 @@
 =========================================================================*/
 #include "itkImageFileReader.h"
 #include "itkMultiThreader.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
+#include <iostream>
 #include "itkMacro.h"
 #include "filenameFactory.h"
 #include <vector>
@@ -35,8 +38,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   m_use_regression = false;
   
   // Read parameter file
-  param::parameterFile pf(fn);
-  this->SetUserParameters(pf);
+  this->SetUserParameters(fn);
 
   // Set up the optimization process
   m_Sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();  
@@ -73,11 +75,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   //    ok = true;
   // SCALE ON OR OFF
   
-  this->ReadInputs(pf);
+  //this->ReadInputs(pf);
+  this->ReadInputs(fn);
   this->SetIterationCommand();
   this->InitializeSampler();
-  this->ReadExplanatoryVariables(pf);
-  this->FlagDomainFct(pf);
+  this->ReadExplanatoryVariables(fn);
+  this->FlagDomainFct(fn);
   
   // Now read the transform file if present.
   if ( m_transform_file != "" )       this->ReadTransformFile();
@@ -154,183 +157,299 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 
 template < class SAMPLERTYPE>
 void
-ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(param::parameterFile &pf)
+ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 {
-  // Read each input filename and add its image domain
-  bool ok = true;
-  std::string shape_file;
-  std::string point_file;
-#ifdef SW_USE_MESH
-  std::string mesh_file;
-#endif
-  std::string attribute_file;
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  int i=0;
-  while (ok == true)
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    std::istringstream inputsBuffer;
+    std::string filename;
+    int numShapes = 0;
+
+    // load input shapes
+    std::vector<std::string> shapeFiles;
+    elem = docHandle.FirstChild( "inputs" ).Element();
+    if (!elem)
     {
-    // First load the surface image data.
-    PARAMSET(pf, shape_file, "inputs", i, ok, "");
-    if (i==0 && ok != true)
-      {
       std::cerr << "No input files have been specified" << std::endl;
       throw 1;
-      }
-    if (ok == true)
+    }
+    else
+    {
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> filename)
       {
-      std::cout << "Read file " << shape_file << std::endl;
-      // Read surface image data.
-      typename itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
-      reader->SetFileName(shape_file.c_str());
-      reader->UpdateLargestPossibleRegion();
-      m_Sampler->SetInput(i, reader->GetOutput()); // set the ith input
+        shapeFiles.push_back(filename);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
 
+      numShapes = shapeFiles.size();
 
-      // Use the first loaded image to set some numerical constants
-      if (i == 0)
+      for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+      {
+        typename itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
+        reader->SetFileName(shapeFiles[shapeCount].c_str());
+        reader->UpdateLargestPossibleRegion();
+        m_Sampler->SetInput(shapeCount, reader->GetOutput()); // set the ith input
+
+        // Use the first loaded image to set some numerical constants
+        if (shapeCount == 0)
         {
-        m_spacing = reader->GetOutput()->GetSpacing()[0];
+          m_spacing = reader->GetOutput()->GetSpacing()[0];
         }
+      }
 
-      // Tell the sampler about the corresponding list of points.
-      bool ok1 = true;
-      PARAMSET(pf, point_file, "point_files", i, ok1, "");
-      if (ok1 == true)
+      shapeFiles.clear();
+    }
+
+    // load point files
+    std::vector<std::string> pointFiles;
+    elem = docHandle.FirstChild( "point_files" ).Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> filename)
+      {
+        pointFiles.push_back(filename);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+
+      // read point files only if they are all present
+      if (pointFiles.size() < numShapes)
+      {
+        std::cerr << "not enough point files, none will be loaded" << std::endl;
+      }
+      else
+      {
+        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
         {
-        //        std::cout << point_file << std::endl;
-        m_Sampler->SetPointsFile(i, point_file);
+          m_Sampler->SetPointsFile(shapeCount, pointFiles[shapeCount]);
         }
-  
+      }
+
+      pointFiles.clear();
+    }   
+
 
 #ifdef SW_USE_MESH
-      // Tell the sampler about the corresponding list of points.
-      bool ok2 = true;
-      PARAMSET(pf, mesh_file, "mesh_files", i, ok2, "");
-      if (ok2 == true)
+    // load mesh files
+    std::vector<std::string> meshFiles;
+    elem = docHandle.FirstChild( "mesh_files" ).Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> filename)
+      {
+        meshFiles.push_back(filename);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+
+      // read mesh files only if they are all present
+      if (meshFiles.size() < numShapes)
+      {
+        std::cerr << "not enough mesh files, none will be loaded" << std::endl;
+      }
+      else
+      {
+        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
         {
-        //        std::cout << point_file << std::endl;
-        m_Sampler->SetMeshFile(i, mesh_file);
+          m_Sampler->SetMeshFile(shapeCount, meshFiles[shapeCount]);
         }
+      }
+
+      meshFiles.clear();
+    }
 #endif
 
-      // Tell the sampler about the corresponding list of attributes
-      if (m_attributes_per_domain >= 1)
-        {
-        double sc;
-        std::vector<double> attr_scales;
-        for (unsigned int kk = 0; kk < m_attributes_per_domain; kk++)
-          {          
-          PARAMSET(pf, sc, "attribute_scales", 0, ok1, 1.0);
-          attr_scales.push_back(sc);
-          }
-        m_Sampler->SetAttributeScales(attr_scales);std::cout << "e "  << std::endl;
+    // read geometric constraints, if present
+    // cutting planes
+    elem = docHandle.FirstChild( "cutting_planes" ).Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
 
-        for (unsigned int kk = 0; kk < m_attributes_per_domain; kk++)
-          {
-          ok1=true;
-          PARAMSET(pf, attribute_file, "attribute_files",
-                   i*m_attributes_per_domain + kk, ok1, "");
-          if (ok1 == true)
-            {
-            std::cout << "Reading attribute file: " << attribute_file << std::endl;
-            
-            // Read attribute file
-            typename itk::ImageFileReader<ImageType>::Pointer reader2
-              = itk::ImageFileReader<ImageType>::New();
-            reader2->SetFileName(attribute_file.c_str());
-            reader2->Update();
-            m_Sampler->AddAttributeImage(i, reader2->GetOutput());
-            }
-          else
-            {
-            std::cerr << "Missing an attribute file for shape file " << shape_file << std::endl;
-            }
-          }
-        } // done read attribute block      
+      std::vector<double> cpVals;
+      double pt;
 
+      while (inputsBuffer >> pt)
+      {
+        cpVals.push_back(pt);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
 
-
-      // Read sphere data if present
-      //      bool sph = true;
-      bool cp = true;
-      double cpa;
-      m_spheres_per_domain = 0;
-      PARAMSET(pf, m_spheres_per_domain, "spheres_per_domain", 0, cp, 0);
-      for (unsigned int j = 0; j < (unsigned int)m_spheres_per_domain; j++)
-        {
-        vnl_vector_fixed<double,3> vec;
-        double rad;
-        int idx = i*m_spheres_per_domain*3;
-        PARAMSET(pf, rad, "sphere_radii", i*m_spheres_per_domain + j, cp, 0.0);
-        std::cout << "domain " << i << " sphere " << j
-                  << " radius = " << rad << " center = (";
-
-       
-        PARAMSET(pf, cpa, "sphere_centers", idx + j*3 , cp, 0.0);
-        std::cout << cpa << ", ";
-        vec[0] = cpa;
-        
-        PARAMSET(pf, cpa, "sphere_centers", idx + j*3 + 1, cp, 0.0);
-        std::cout << cpa << ", ";
-        vec[1] = cpa;
-        
-        PARAMSET(pf, cpa, "sphere_centers", idx + j*3 + 2, cp, 0.0);
-        std::cout << cpa << ") " << std::endl;
-        vec[2] = cpa;        
-        
-        if (cp == false)
-          {
-          std::cerr << "WARNING: ERROR READING THE SPHERE INFORMATION" << std::endl;
-          }
-        m_Sampler->AddSphere(i, vec,rad);
-        }
-
-      // Read cutting plane data if present
-      cp = true;
-      PARAMSET(pf, cpa, "cutting_planes", i * 9, cp, 0.0);
-      std::cout << "cp = " << cp << std::endl;
-      if (cp == true)
-        {
+      if (cpVals.size() < 9*numShapes)
+      {
+        std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" << std::endl;
+      }
+      else
+      {
         vnl_vector_fixed<double,3> a,b,c;
-       
-        a[0] = cpa;
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 1, cp, 0.0);
-        if (cp == true) a[1] = cpa;
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 2, cp, 0.0);
-        if (cp == true) a[2] = cpa;
-        
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 3, cp, 0.0);
-        if (cp == true) b[0] = cpa;
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 4, cp, 0.0);
-        if (cp == true) b[1] = cpa;
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 5, cp, 1.0);
-        if (cp == true) b[2] = cpa;
-        
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 6, cp, 1.0);
-        if (cp == true) c[0] = cpa;
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 7, cp, 0.0);
-        if (cp == true) c[1] = cpa;
-        PARAMSET(pf, cpa, "cutting_planes", (i * 9) + 8, cp, 0.0);
-        if (cp == true) c[2] = cpa;
-        
-        if (cp == false)
-          {
-          std::cerr << "ERROR: Incomplete cutting plane data!" << std::endl;
-          }
-        
-        std::cout << "CorrespondenceApp-> Setting Cutting Plane "
-                  << i << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
-        
-        m_Sampler->SetCuttingPlane(i,a,b,c);
+        int ctr = 0;
+
+        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+        {
+          a[0] = cpVals[ctr++];
+          a[1] = cpVals[ctr++];
+          a[2] = cpVals[ctr++];
+
+          b[0] = cpVals[ctr++];
+          b[1] = cpVals[ctr++];
+          b[2] = cpVals[ctr++];
+
+          c[0] = cpVals[ctr++];
+          c[1] = cpVals[ctr++];
+          c[2] = cpVals[ctr++];
+
+          std::cout << "CorrespondenceApp-> Setting Cutting Plane "
+                    << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
+          
+          m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
         }
-      
+      }
+    }
 
-      
-      } // if ok == true
-    i++;
-    } // while ok == true
+    // sphere radii and centers
+    this->m_spheres_per_domain = 0;
+    elem = docHandle.FirstChild( "spheres_per_domain" ).Element();
+    if (elem) this->m_spheres_per_domain = atoi(elem->GetText());
 
+    int numSpheres = numShapes * this->m_spheres_per_domain;
+    std::vector<double> radList;
+    double r;
 
+    elem = docHandle.FirstChild( "sphere_radii" ).Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+
+      while (inputsBuffer >> r)
+      {
+        radList.push_back(r);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+
+      if (radList.size() < numSpheres)
+      {
+        std::cerr << "ERROR: Incomplete sphere radius data! No spheres will be loaded!!" << std::endl;
+      }
+      else
+      {
+        elem = docHandle.FirstChild( "sphere_centers" ).Element();
+        if (elem)
+        {
+          inputsBuffer.str(elem->GetText());
+
+          std::vector<double> spVals;
+          double pt;
+
+          while (inputsBuffer >> pt)
+          {
+            spVals.push_back(pt);
+          }
+          inputsBuffer.clear();
+          inputsBuffer.str("");
+
+          if (spVals.size() < 3*numSpheres)
+          {
+            std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" << std::endl;
+          }
+          else
+          {
+            vnl_vector_fixed<double,3> center;
+            double rad;
+            int c_ctr = 0;
+            int r_ctr = 0;
+
+            for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+            {
+              for (int sphereCount = 0; sphereCount < m_spheres_per_domain; sphereCount++)
+              {
+                center[0] = spVals[c_ctr++];
+                center[1] = spVals[c_ctr++];
+                center[2] = spVals[c_ctr++];
+
+                rad = radList[r_ctr++];
+
+                m_Sampler->AddSphere(shapeCount,center,rad);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // attributes
+    if (this->m_attributes_per_domain >= 1)
+    {
+      // attribute scales
+      double sc;
+      std::vector<double> attr_scales;
+
+      elem = docHandle.FirstChild( "attribute_scales" ).Element();
+      if (elem)
+      {
+        inputsBuffer.str(elem->GetText());
+
+        while (inputsBuffer >> sc)
+        {
+          attr_scales.push_back(sc);
+        }
+        inputsBuffer.clear();
+        inputsBuffer.str("");
+      }
+
+      // attribute files
+      std::vector<std::string> attrFiles;
+      elem = docHandle.FirstChild( "attribute_files" ).Element();
+      if (elem)
+      {
+        inputsBuffer.str(elem->GetText());
+
+        while (inputsBuffer >> filename)
+        {
+          attrFiles.push_back(filename);
+        }
+
+        inputsBuffer.clear();
+        inputsBuffer.str("");
+
+        if ( (attr_scales.size() < m_attributes_per_domain) || (attrFiles.size() < numShapes*m_attributes_per_domain) )
+        {
+          std::cerr << "ERROR: Incomplete attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
+        }
+        else
+        {
+          m_Sampler->SetAttributeScales(attr_scales);
+
+          int ctr = 0;
+
+          for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+          {
+            for (int attrCount = 0; attrCount < m_attributes_per_domain; attrCount++)
+            {
+              typename itk::ImageFileReader<ImageType>::Pointer reader2 = itk::ImageFileReader<ImageType>::New();
+              reader2->SetFileName(attrFiles[ctr++].c_str());
+              reader2->Update();
+              m_Sampler->AddAttributeImage(shapeCount, reader2->GetOutput());
+            }
+          }
+        }
+      }
+    }
+
+  } // end: document check
 } // end ReadInputs
+
 
 template < class SAMPLERTYPE>
 void
@@ -473,8 +592,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     std::cout << "Writing " << fnw.filename(i) << " ";
     
     if ( !out || !outw )
-      { 
-      throw param::Exception("EnsembleSystem()::Error opening output file");
+      {
+        std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
+        throw 1;
       }
     
     for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
@@ -512,40 +632,110 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
 
 template < class SAMPLERTYPE>
 void
-ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
+ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
 {
-  bool ok = true;
-  
-  // Parameters with defaults
-  PARAMSET(pf, m_processing_mode, "processing_mode", 0, ok, 3);
-  PARAMSET(pf, m_number_of_particles, "number_of_particles", 0, ok, 1024);
-  PARAMSET(pf, m_optimization_iterations, "optimization_iterations", 0, ok, -1);
-  PARAMSET(pf, m_output_points_prefix, "output_points_prefix", 0, ok, "output_points");
-  PARAMSET(pf, m_output_transform_file, "output_transform_file", 0, ok, "output_transform_file");
-  PARAMSET(pf, m_domains_per_shape, "domains_per_shape", 0, ok, 1);
-  PARAMSET(pf, m_starting_regularization, "starting_regularization", 0, ok, 500.0);
-  PARAMSET(pf, m_ending_regularization, "ending_regularization", 0, ok, 500.0);
-  PARAMSET(pf, m_iterations_per_split, "iterations_per_split", 0, ok, 0);
-  PARAMSET(pf, m_relative_weighting, "relative_weighting", 0, ok, 1.0);
-  PARAMSET(pf, m_norm_penalty_weighting, "norm_penalty_weighting", 0, ok, 0.0);
-  PARAMSET(pf, m_adaptivity_strength, "adaptivity_strength", 0, ok, 0.0);
-  PARAMSET(pf, m_attributes_per_domain, "attributes_per_domain", 0, ok, 0);
-  PARAMSET(pf, m_checkpointing_interval, "checkpointing_interval", 0, ok, 0);
-  PARAMSET(pf, m_transform_file, "transform_file", 0, ok, "");
-  PARAMSET(pf, m_prefix_transform_file, "prefix_transform_file", 0, ok, "");
-  PARAMSET(pf, m_procrustes_interval, "procrustes_interval", 0, ok, 0);
-  PARAMSET(pf, m_recompute_regularization_interval, "recompute_regularization_interval", 0, ok, 1);
-  PARAMSET(pf, m_procrustes_scaling, "procrustes_scaling", 0, ok, 1);
-  PARAMSET(pf, m_adaptivity_mode, "adaptivity_mode", 0, ok, 0);
-  PARAMSET(pf, m_keep_checkpoints, "keep_checkpoints", 0, ok, 0);
 
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    // read values from parameter file: 1. set default value, 2. try to read XML tag, 3. if present, set new value
+    this->m_processing_mode = 3;
+    elem = docHandle.FirstChild( "processing_mode" ).Element();
+    if (elem) this->m_processing_mode = atoi(elem->GetText());
+
+    this->m_number_of_particles = 1024;
+    elem = docHandle.FirstChild( "number_of_particles" ).Element();
+    if (elem) this->m_number_of_particles = atoi(elem->GetText());
+
+    // Parameters with defaults
+    this->m_optimization_iterations = -1;
+    elem = docHandle.FirstChild( "optimization_iterations" ).Element();
+    if (elem) this->m_optimization_iterations = atoi(elem->GetText());
+
+    this->m_output_points_prefix = "output_points";
+    elem = docHandle.FirstChild( "output_points_prefix" ).Element();
+    if (elem) this->m_output_points_prefix = elem->GetText();
+
+    this->m_output_transform_file = "output_transform_file";
+    elem = docHandle.FirstChild( "output_transform_file" ).Element();
+    if (elem) this->m_output_transform_file = elem->GetText();
+
+    this->m_domains_per_shape = 1;
+    elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+    if (elem) this->m_domains_per_shape = atoi(elem->GetText());
+
+    this->m_starting_regularization = 500.0;
+    elem = docHandle.FirstChild( "starting_regularization" ).Element();
+    if (elem) this->m_starting_regularization = atof(elem->GetText());
+
+    this->m_ending_regularization = 500.0;
+    elem = docHandle.FirstChild( "ending_regularization" ).Element();
+    if (elem) this->m_ending_regularization = atof(elem->GetText());
+
+    this->m_iterations_per_split = 0;
+    elem = docHandle.FirstChild( "iterations_per_split" ).Element();
+    if (elem) this->m_iterations_per_split = atoi(elem->GetText());
+
+    this->m_relative_weighting = 1.0;
+    elem = docHandle.FirstChild( "relative_weighting" ).Element();
+    if (elem) this->m_relative_weighting = atof(elem->GetText());
+
+    this->m_norm_penalty_weighting = 0.0;
+    elem = docHandle.FirstChild( "norm_penalty_weighting" ).Element();
+    if (elem) this->m_norm_penalty_weighting = atof(elem->GetText());
+
+    this->m_adaptivity_strength = 0.0;
+    elem = docHandle.FirstChild( "adaptivity_strength" ).Element();
+    if (elem) this->m_adaptivity_strength = atof(elem->GetText());
+
+    this->m_attributes_per_domain = 0;
+    elem = docHandle.FirstChild( "attributes_per_domain" ).Element();
+    if (elem) this->m_attributes_per_domain = atoi(elem->GetText());
+
+    this->m_checkpointing_interval = 0;
+    elem = docHandle.FirstChild( "checkpointing_interval" ).Element();
+    if (elem) this->m_checkpointing_interval = atoi(elem->GetText());
+
+    this->m_transform_file = "";
+    elem = docHandle.FirstChild( "transform_file" ).Element();
+    if (elem) this->m_transform_file = elem->GetText();
+
+    this->m_prefix_transform_file = "";
+    elem = docHandle.FirstChild( "prefix_transform_file" ).Element();
+    if (elem) this->m_prefix_transform_file = elem->GetText();
+
+    this->m_procrustes_interval = 0;
+    elem = docHandle.FirstChild( "procrustes_interval" ).Element();
+    if (elem) this->m_procrustes_interval = atoi(elem->GetText());
+
+    this->m_recompute_regularization_interval = 1;
+    elem = docHandle.FirstChild( "recompute_regularization_interval" ).Element();
+    if (elem) this->m_recompute_regularization_interval = atoi(elem->GetText());
+
+    this->m_procrustes_scaling = 1;
+    elem = docHandle.FirstChild( "procrustes_scaling" ).Element();
+    if (elem) this->m_procrustes_scaling = atoi(elem->GetText());
+
+    this->m_adaptivity_mode = 0;
+    elem = docHandle.FirstChild( "adaptivity_mode" ).Element();
+    if (elem) this->m_adaptivity_mode = atoi(elem->GetText());
+
+    this->m_keep_checkpoints = 0;
+    elem = docHandle.FirstChild( "keep_checkpoints" ).Element();
+    if (elem) this->m_keep_checkpoints = atoi(elem->GetText());
+  }
 
   // Write out the parameters
   std::cout << "m_processing_mode = " << m_processing_mode << std::endl;
   std::cout << "m_number_of_particles = " << m_number_of_particles << std::endl;
   std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
   std::cout << "m_output_points_prefix = " << m_output_points_prefix << std::endl;
- std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
+  std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
   std::cout << "m_domains_per_shape = " << m_domains_per_shape << std::endl;
   std::cout << "m_starting_regularization = " << m_starting_regularization << std::endl;
   std::cout << "m_ending_regularization = " << m_ending_regularization << std::endl;
@@ -563,7 +753,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
   std::cout << "m_keep_checkpoints = " << m_keep_checkpoints << std::endl;
 }
-
 
 
 template < class SAMPLERTYPE>
@@ -740,27 +929,37 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
 
 template < class SAMPLERTYPE >
 void
-ShapeWorksRunApp<SAMPLERTYPE>::ReadExplanatoryVariables(param::parameterFile &pf)
+ShapeWorksRunApp<SAMPLERTYPE>::ReadExplanatoryVariables(const char *fname)
 {
- // Read explanatory variables if present
-  std::vector<double> evars;
-  double etmp;
-  bool ok = true;
-  for (unsigned int i = 0; ok == true; i++)
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    std::istringstream inputsBuffer;
+    std::vector<double> evars;
+    double etmp;
+
+    elem = docHandle.FirstChild( "explanatory_variable" ).Element();
+    if (elem)
     {
-    PARAMSET(pf, etmp, "explanatory_variable", i, ok, 1.0);
-    if (ok == true)
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> etmp)
       {
-        m_use_regression = true;
         evars.push_back(etmp);
       }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+
+      dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
+        (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(evars);
     }
-  
-  dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
-    ->SetExplanatory(evars);
-  
+  } 
 }
+
 
 template < class SAMPLERTYPE>
 void
@@ -842,32 +1041,54 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( int iter )
 
 template < class SAMPLERTYPE>
 void
-ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(param::parameterFile &pf)
+ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
 {
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
- // ET UP ANY FIXED LANDMARK POSITIOSNS
-  bool ok1 = true;
-  for (unsigned int i = 0; ok1 == true; i++)
+    std::istringstream inputsBuffer;
+    std::vector<int> f;
+    int ftmp;
+
+    // set up fixed landmark positions
+
+    elem = docHandle.FirstChild( "fixed_landmarks" ).Element();
+    if (elem)
     {
-    unsigned int f;
-    PARAMSET(pf, f, "fixed_landmarks", i, ok1, 0);
+      while (inputsBuffer >> ftmp)
+      {
+        f.push_back(ftmp);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
 
-    if (ok1 == true) m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f);
+      for (unsigned int i = 0; i < f.size(); i++)
+      {
+        m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f[i]);
+      }
     }
 
-   // SET UP ANY FIXED DOMAINS
-   ok1 = true;
-   for (unsigned int i = 0; ok1 == true; i++)
-     {
-       unsigned int f;
-       PARAMSET(pf, f, "fixed_domains", i, ok1, 0);
-       if (ok1 == true) 
-	 {
-	   if (f >0.0){m_Sampler->GetParticleSystem()->FlagDomain(i);
-     			 }
-  	
-	 }
-     }
+    f.clear();
+    elem = docHandle.FirstChild( "fixed_domains" ).Element();
+    if (elem)
+    {
+      while (inputsBuffer >> ftmp)
+      {
+        f.push_back(ftmp);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+
+      for (unsigned int i = 0; i < f.size(); i++)
+      {
+        if (f[i] > 0.0) m_Sampler->GetParticleSystem()->FlagDomain(f[i]);
+      }
+    }
+  }
 }
 

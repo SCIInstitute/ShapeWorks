@@ -15,7 +15,9 @@
 #include <iostream>
 #include "CS6350.h"
 #include <vector>
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include <iostream>
 #include <fstream>
 
@@ -31,20 +33,31 @@ int main(int argc, char *argv[])
                 << std::endl;
       return 1;
       }
-    param::parameterFile pf(argv[1]);
+
+    TiXmlDocument doc(argv[1]);
+    bool loadOkay = doc.LoadFile();
+
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+    std::istringstream inputsBuffer;
+
     ParticleShapeStatistics<3> stats;
     int nummodes;
-    bool ok=true;
-    PARAMSET(pf, nummodes, "lda_modes", 0, ok, 1);
 
-    if (ok==false)
-      {
+    //PARAMSET(pf, nummodes, "lda_modes", 0, ok, 1);
+    nummodes = 1;
+    elem = docHandle.FirstChild( "lda_modes" ).Element();
+    if (elem)
+    {
+      nummodes = atoi(elem->GetText());
+    }
+    else
+    {
       std::cerr << "Need to specify the number of modes for LDA" << std::endl;
       return 1;
-      }
-    
-    
-    stats.ReadPointFiles(pf);
+    }
+        
+    stats.ReadPointFiles(argv[1]);
     stats.ComputeModes();
     stats.PrincipalComponentProjections();
     stats.FisherLinearDiscriminant(nummodes);

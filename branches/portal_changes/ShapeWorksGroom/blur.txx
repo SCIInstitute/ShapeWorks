@@ -23,12 +23,23 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-blur<T,D>::blur(param::parameterFile &pf)
+blur<T,D>::blur(const char *fname)
 {
-  // Set some parameters.
-  bool ok;
-  PARAMSET(pf, m_sigma, "blur_sigma", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, m_sigma, "blur_sigma", 0, ok, 1.0);
+    this->m_sigma = 1.0;
+    elem = docHandle.FirstChild( "blur_sigma" ).Element();
+    if (elem) this->m_sigma = atof(elem->GetText());
+  }
 }
+
 
 template <class T, unsigned int D> 
 void blur<T,D>::operator()(typename image_type::Pointer img)

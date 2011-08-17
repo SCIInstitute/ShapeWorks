@@ -15,7 +15,6 @@
 #ifndef _ParticleShapeStatistics_h
 #define _ParticleShapeStatistics_h
 
-#include "param.h"
 #include <iostream>
 #include <vector>
 #include "vnl/vnl_vector.h"
@@ -46,7 +45,7 @@ public:
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
   
   /** Loads a set of point files and pre-computes some statistics. */
-  int ReadPointFiles(param::parameterFile &);
+  int ReadPointFiles(const char *fname);
 
   /** Writes a text file in comma-separated format.  Suitable for reading into
       excel or R or Matlab for analysis. */

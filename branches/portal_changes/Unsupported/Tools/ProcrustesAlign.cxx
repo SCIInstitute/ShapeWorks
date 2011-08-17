@@ -20,7 +20,8 @@
 #include "Procrustes3D.h"
 #include "itkParticleSystem.h"
 #include "object_writer.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 
 // Computes procrustes alignment for a set of point files and also reports the
 // scaling
@@ -36,50 +37,66 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  param::parameterFile pf(argv[1]);
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
+  
   std::string outputfile;
 
   // Collect a list of input file names
   std::vector< std::string > inputfiles;
   std::vector< std::string > outputfiles;
-  //  std::vector< std::string > outputfiles2;
+
   std::string tmpa;
   std::string tmpb;
-  // std::string tmpc;
-  std::string transform_filename, scale_filename, quat_filename;
-  int ii = 0;
-  bool ok = true;
-  PARAMSET(pf, transform_filename, "transformfile", 0, ok, "transforms");
-  //  PARAMSET(pf, scale_filename, "scalefile", 0, ok, "scales");
-  //  PARAMSET(pf, quat_filename, "quaternionfile", 0, ok, "quats");
-  
-  ok=true;
-  while (ok == true)
-    {
-    // Record the point file names.
-    PARAMSET(pf, tmpa, "inputs", ii, ok, "");
-    PARAMSET(pf, tmpb, "outputs", ii, ok, "");
-    //    PARAMSET(pf, tmpc, "outputs2", ii, ok, "");
-    if (ii==0 && ok != true)
-      {
-      std::cerr << "No input/output files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
-      inputfiles.push_back(tmpa);
-      outputfiles.push_back(tmpb);
-      //    outputfiles2.push_back(tmpc);
-      } // if ok == true
-    ii++;
-    } // while ok == true
 
-  
+  std::string transform_filename, scale_filename, quat_filename;
+
+  //PARAMSET(pf, transform_filename, "transformfile", 0, ok, "transforms");
+  transform_filename = "transforms";
+  elem = docHandle.FirstChild( "transformfile" ).Element();
+  if (elem) transform_filename = elem->GetText();
+
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpa)
+    {
+      inputfiles.push_back(tmpa);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild( "outputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No output files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpb)
+    {
+      outputfiles.push_back(tmpb);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
  // Assume all domains have the same number of particles.
   const unsigned int numShapes = inputfiles.size();
   //  const int numPoints = 
 
-  
   Procrustes3D::ShapeListType shapelist;
   Procrustes3D::ShapeListType shapelist_copy; // Because procrustes modifies its input
   Procrustes3D::ShapeType     shapevector;
@@ -210,3 +227,4 @@ int main(int argc, char *argv[])
   
   return 0;
 }
+

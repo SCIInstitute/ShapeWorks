@@ -16,7 +16,9 @@
 #define __st_pca_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_matrix.h"
@@ -36,7 +38,8 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  pca(param::parameterFile &);
+  pca(const char *fname);
+
   pca()  { }
   virtual ~pca() {}
   

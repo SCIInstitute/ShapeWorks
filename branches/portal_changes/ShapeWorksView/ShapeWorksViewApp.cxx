@@ -438,14 +438,18 @@ ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
   this->ZeroAllVTK();
 
   // Read parameter file
-  param::parameterFile pf(fn);
+  TiXmlDocument doc(fn);
+  bool loadOkay = doc.LoadFile();
+  if (!loadOkay) std::cerr << "invalid parameter file..." << std::endl;
 
-  // Hide group menus if no groups are present
-  bool ok = true;
-  int tmp;  
-  PARAMSET(pf, tmp, "group_ids", 0, ok, 1.0);
-  if (!ok)
-    {
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
+
+  // Hide group menus if no groups are present 
+  elem = docHandle.FirstChild( "group_ids" ).Element();
+  if (!elem)
+  {
     this->menuGroup1Mean->hide();
     this->menuGroup2Mean->hide();
     this->menuGroup1Median->hide();
@@ -454,17 +458,12 @@ ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
     this->group2LabelBox->hide();
     this->group1LabelBox->hide();
     this->group_display->hide();
-    }
-  
+  }
 
   // Run statistics
-  m_Stats.ReadPointFiles(pf);
+  m_Stats.ReadPointFiles(fn);
   m_Stats.ComputeModes();
   m_Stats.PrincipalComponentProjections();
-  //  m_Stats.FisherLinearDiscriminant(nummodes);
-  //  m_Stats.WriteCSVFile("modelengths.txt");
-
-  
 
   unsigned int num_points = m_Stats.Mean().size();
 
@@ -484,10 +483,10 @@ ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
   m_Regression->SetMatrix( m_Stats.ShapeMatrix() );
 
   // Look for user-supplied simple linear regression parameters
-  this->ReadSimpleRegressionParameters(pf);
+  this->ReadSimpleRegressionParameters(fn);
   
   // Load the explanatory variables
-  this->ReadExplanatoryVariables(pf);
+  this->ReadExplanatoryVariables(fn);
   m_Regression->ResizeParameters( m_Stats.ShapeMatrix().rows());
   m_Regression->ResizeMeanMatrix( m_Stats.ShapeMatrix().rows(), m_Stats.ShapeMatrix().cols());
   m_Regression->Initialize();
@@ -539,6 +538,10 @@ ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
   this->HideGroups();
   m_Initialized = true;
 }
+
+
+
+
 
 void ShapeWorksViewApp::ChangeColorScheme()
 {
@@ -866,60 +869,85 @@ void ShapeWorksViewApp::InitializeGlyphs()
   this->ShowSpheres();
 }
 
-void ShapeWorksViewApp::ReadSimpleRegressionParameters(param::parameterFile &pf)
+void ShapeWorksViewApp::ReadSimpleRegressionParameters(const char *fname)
 {
-  // Read simple regression parameters if present
-  std::vector<double> evars;
-  double startT, endT;
-  startT = 1.0e16;
-  endT = -1.0e16;
-  double etmp = 0.0;
-  bool ok = true;
-  for (unsigned int i = 0; ok == true; i++)
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    std::istringstream inputsBuffer;
+    std::vector<double> evars;
+    double startT, endT;
+    startT = 1.0e16;
+    endT = -1.0e16;
+    double etmp = 0.0;
+
+    elem = docHandle.FirstChild( "simple_regression_slopes" ).Element();
+    if (elem)
     {
-    PARAMSET(pf, etmp, "simple_regression_slopes", i, ok, 1.0);
-
-    if (ok == true)
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> etmp)
       {
-      if (etmp > endT)   endT = ceil(etmp);
-      if (etmp < startT) startT = floor(etmp);
-      
-      m_SimpleRegressionSlopes.push_back(etmp);
+        if (etmp > endT)   endT = ceil(etmp);
+        if (etmp < startT) startT = floor(etmp);
+        
+        m_SimpleRegressionSlopes.push_back(etmp);
       }
-
-    PARAMSET(pf, etmp, "simple_regression_intercepts", i, ok, 1.0);
-    if (ok == true)
-      {
-      if (etmp > endT)   endT = ceil(etmp);
-      if (etmp < startT) startT = floor(etmp);
-      
-      m_SimpleRegressionIntercepts.push_back(etmp);      
-      }        
+      inputsBuffer.clear();
+      inputsBuffer.str("");
     }
+
+    elem = docHandle.FirstChild( "simple_regression_intercepts" ).Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> etmp)
+      {
+        if (etmp > endT)   endT = ceil(etmp);
+        if (etmp < startT) startT = floor(etmp);
+        
+        m_SimpleRegressionIntercepts.push_back(etmp);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+  }
 }
 
 
-void ShapeWorksViewApp::ReadExplanatoryVariables(param::parameterFile &pf)
+void ShapeWorksViewApp::ReadExplanatoryVariables(const char *fname)
 {
- // Read explanatory variables if present
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+
+  std::istringstream inputsBuffer;
   std::vector<double> evars;
   double startT, endT;
   startT = 1.0e16;
   endT = -1.0e16;
   double etmp = 0.0;
-  bool ok = true;
-  for (unsigned int i = 0; ok == true; i++)
-    {
-    PARAMSET(pf, etmp, "explanatory_variable", i, ok, 1.0);
 
-    if (ok == true)
-      {
+  elem = docHandle.FirstChild( "explanatory_variable" ).Element();
+  if (elem)
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> etmp)
+    {
       if (etmp > endT)   endT = ceil(etmp);
       if (etmp < startT) startT = floor(etmp);
       
       evars.push_back(etmp);
-      }
     }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   // Hide simple regression functionality unless parameters have been supplied
   // by the user and there enough explanatory vars to specify a range (needs
@@ -960,6 +988,8 @@ void ShapeWorksViewApp::ReadExplanatoryVariables(param::parameterFile &pf)
   this->mode->value(0);
   this->ComputeSimpleRegressionParameters();
 }
+
+
 
 void ShapeWorksViewApp::WritePCALoadings()
 {

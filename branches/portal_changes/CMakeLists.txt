@@ -16,23 +16,10 @@ endif(ITK_FOUND)
 option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
 
 # Optionally build programs with GUIs.
-option(BUILD_32BIT_PARAMS "You MUST select either 32-bit or 64-bit")
-option(BUILD_64BIT_PARAMS "You MUST select either 32-bit or 64-bit")
 option(BUILD_ShapeWorksView "Build ShapeWorksView (requires FLTK & VTK)" OFF)
 option(BUILD_ShapeWorksShop "Build ShapeWorksShop (requires FLTK & VTK)" OFF)
 option(BUILD_Unsupported "Build unsupported tools (NOT recommended, requires FLTK & VTK)" OFF)
 option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)" OFF)
-
-
-# This is a crude way of forcing a manual choice of 32 or 64-bit for the params
-# library, which requires different files depending on the choice.
-# Unfortunately once it is configured, you can't switch options.
-if (NOT BUILD_32BIT_PARAMS AND NOT BUILD_64BIT_PARAMS)
-    message(FATAL_ERROR "You must select either a 32-bit or 64-bit build for the params library.  This is because it needs different files depending on the architecture and we don't want to write all of the checks to figure out when you are building 32-bit on a 64-bit system")
-endif (NOT BUILD_32BIT_PARAMS AND NOT BUILD_64BIT_PARAMS)
-if (BUILD_32BIT_PARAMS AND BUILD_64BIT_PARAMS)
- message(FATAL_ERROR "You cannot select both a 32-bit and 64-bit build for the params library.")
-endif (BUILD_32BIT_PARAMS AND BUILD_64BIT_PARAMS)
 
 # Configure Mesh support
 if(BUILD_MeshSupport)
@@ -47,17 +34,16 @@ endif(FIM_FOUND)
 
 endif(BUILD_MeshSupport)
 
-
 # Set up the include directories
 include_directories ( 
 ${SHAPEWORKS_SOURCE_DIR}/Utilities
 ${SHAPEWORKS_SOURCE_DIR}/ITKParticleSystem 
-${SHAPEWORKS_SOURCE_DIR}/params
+${SHAPEWORKS_SOURCE_DIR}/tinyxml
 )
 
 
 # Command-line tools are built by default.
-subdirs(params ITKParticleSystem Utilities ShapeWorksRun ShapeWorksGroom)
+subdirs(tinyxml ITKParticleSystem Utilities ShapeWorksRun ShapeWorksGroom)
 
 if (BUILD_ShapeWorksShop OR BUILD_ShapeWorksView OR BUILD_Unsupported) 
  set(USE_VTK 1)

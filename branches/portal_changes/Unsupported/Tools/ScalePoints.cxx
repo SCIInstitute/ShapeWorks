@@ -17,7 +17,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
 
@@ -29,71 +30,71 @@ int main(int argc, char *argv[])
     return 1;
     }
 
- param::parameterFile pf(argv[1]);
- // Collect a list of point file names and output file names
-  int i=0;
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
+
+  // Collect a list of point file names and output file names
   std::vector< std::string > inputfiles;
   std::vector< std::string > outputfiles;
   std::vector< float > scales;
   std::string tmp;
-  bool ok = true;
-  while (ok == true)
+
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmp)
     {
-    // Record the point file names.
-    PARAMSET(pf, tmp, "inputs", i, ok, "");
-    if (i==0 && ok != true)
-      {
-      std::cerr << "No input files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
-      //      std::cout << i << "\t" << tmp <<  std::endl;
       inputfiles.push_back(tmp);
-      } // if ok == true
-    i++;
-    } // while ok == true
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
-
-  ok = true;
-  i = 0;
-  while (ok == true)
+  elem = docHandle.FirstChild( "outputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No output files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmp)
     {
-    // Record the outputfiles
-    PARAMSET(pf, tmp, "outputs", i, ok, "");
-    if (i==0 && ok != true)
-      {
-      std::cerr << "No output files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
       outputfiles.push_back(tmp);
-      } // if ok == true
-    i++;
-    } // while ok == true
-
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   // Read the scales
-  ok = true;
-  i = 0;
-  while (ok == true)
+  float s;
+
+  elem = docHandle.FirstChild( "scales" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No scales have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> s)
     {
-    float s;
-    // Record the outputfiles
-    PARAMSET(pf, s, "scales", i, ok, 0.0);
-    if (i==0 && ok != true)
-      {
-      std::cerr << "No scales have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
       scales.push_back(s);
-      } // if ok == true
-    i++;
-    } // while ok == true
-  
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   if (scales.size() != outputfiles.size() || outputfiles.size() != inputfiles.size())
     {
@@ -127,3 +128,4 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+

@@ -118,25 +118,35 @@ double ParticleShapeStatistics<VDimension>
 }
 
 
-
 template <unsigned int VDimension>
 int ParticleShapeStatistics<VDimension>
-::ReadPointFiles(param::parameterFile &pf)
+::ReadPointFiles(const char * fname)
 {
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+  if (!loadOkay) std::cerr << "invalid parameter file..." << std::endl;
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::stringstream inputsBuffer;
+
   // Collect point file names and group id's
   std::vector< std::string > pointsfiles;
-  bool ok = true;
-  
-  for (unsigned int i = 0; ok == true; i++)
+  std::string ptFileName;
+  elem = docHandle.FirstChild( "point_files" ).Element();
+  if (elem)
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> ptFileName)
     {
-    std::string tmp;
-    PARAMSET(pf, tmp, "point_files", i, ok, "");
-    if (ok == true)
-      {
-      pointsfiles.push_back(tmp);
-      }
+      pointsfiles.push_back(ptFileName);
     }
-  PARAMSET(pf, m_domainsPerShape, "domains_per_shape", 0, ok, 1);
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  this->m_domainsPerShape = 1;
+  elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+  if (elem) this->m_domainsPerShape = atoi(elem->GetText());
 
   // Read the point files.  Assumes all the same size.
   typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
@@ -148,18 +158,19 @@ int ParticleShapeStatistics<VDimension>
   m_numDimensions = reader1->GetOutput().size() * VDimension * m_domainsPerShape;
 
   // Read the group ids
-  ok = true;
-  for (unsigned int i = 0; i < m_numSamples; i++)
+  int tmpID;
+  elem = docHandle.FirstChild( "group_ids" ).Element();
+  if (elem)
+  {
+    inputsBuffer.str(elem->GetText());
+    for (unsigned int shapeCount = 0; shapeCount < m_numSamples; shapeCount++)
     {
-    int g;
-    PARAMSET(pf, g, "group_ids", i, ok, 0);
-    if (ok == true)
-      {
-      m_groupIDs.push_back(g);
-      if (g == 1) m_numSamples1++;
+      inputsBuffer >> tmpID;
+      m_groupIDs.push_back(tmpID);
+      if (tmpID == 1) m_numSamples1++;
       else m_numSamples2++;
-      }
     }
+  }
 
   // If there are no group IDs, make up some bogus ones
   if (m_groupIDs.size() != m_numSamples)
@@ -253,6 +264,8 @@ int ParticleShapeStatistics<VDimension>
   
   return 0;
 } // end ReadPointFiles
+
+
 
 template <unsigned int VDimension>
 int ParticleShapeStatistics<VDimension>::ComputeModes()
