@@ -22,6 +22,10 @@
 #include "object_writer.h"
 #include "itkZeroCrossingImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#ifdef _WIN32
+#include <direct.h>
+#define mkdir _mkdir
+#endif
 
 template <class SAMPLERTYPE>
 ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
@@ -131,9 +135,17 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 
 		  if ( m_keep_checkpoints )
 		  {
+			  std::stringstream ss;
+			  ss << iteration_no;
+			  std::string dir_name = "iter" + ss.str();
+			  std::string tmp_dir_name = dir_name + "_tmp";
+			  mkdir( tmp_dir_name.c_str() );
+
 			this->WritePointFiles( iteration_no );
 			this->WriteTransformFile( iteration_no );
-			if (m_use_regression == true) this->WriteParameters( iteration_no );
+			/*if (m_use_regression == true) */this->WriteParameters( iteration_no );
+
+			rename( tmp_dir_name.c_str(), dir_name.c_str() );
 		  }
 		}
      }
@@ -380,18 +392,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( int iter ) const
  
   if( iter >= 0 )
   {
-    std::string file_ext = "";
-  
-    std::string::size_type idx = m_output_transform_file.rfind('.');
-    if (idx != std::string::npos)
-    {
-	  output_file = m_output_transform_file.substr( 0, idx );
-      file_ext = "." + m_output_transform_file.substr( idx + 1, m_output_transform_file.length() );
-    }
-    std::stringstream out;
-    out << static_cast< unsigned int >( iter );
-
-    output_file +=  ".it" + out.str() + file_ext;
+    std::stringstream ss;
+    ss << iter;
+	output_file = "./iter" + ss.str() + "_tmp/" + output_file;
   }
   
   std::vector< itk::ParticleSystem<3>::TransformType > tlist;
@@ -458,19 +461,22 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
   fnw.prefix(m_output_points_prefix);
   fnw.file_format("wpts");
 
+  std::stringstream ss;
+  ss << iter;
+
   int counter;
 
   for (int i = 0; i < n; i++)
   {
     counter = 0;
     unsigned int u_iter = static_cast< unsigned int >( iter );
-    std::string local_file = iter >= 0 ? fn.filename(i, u_iter) : fn.filename(i);
-    std::string world_file = iter >= 0 ? fnw.filename(i, u_iter) : fnw.filename(i);
+	std::string local_file = iter >= 0 ? "./iter" + ss.str() + "_tmp/" + fn.filename(i) : fn.filename(i);
+    std::string world_file = iter >= 0 ? "./iter" + ss.str() + "_tmp/" + fnw.filename(i) : fnw.filename(i);
     
     std::ofstream out( local_file.c_str() );
     std::ofstream outw( world_file.c_str() );
 
-    std::cout << "Writing " << fnw.filename(i) << " ";
+    std::cout << "Writing " << world_file << " ";
     
     if ( !out || !outw )
       { 
@@ -498,16 +504,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     outw.close();
 	std::cout << " with " << counter << "points" << std::endl;
   } // end for files
-  
-  if( iter >= 0 )
-  {
-    // Write final file signifying that the checkpoints from this iteration are ready for 
-    // consumption by an external process.
-    std::ostringstream final_file;
-	final_file << "iter." << static_cast< unsigned int >( iter );
-    std::ofstream final_out( final_file.str().c_str() );
-	final_out.close();
-  }
 } 
 
 template < class SAMPLERTYPE>
@@ -783,18 +779,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( int iter )
 {
   std::string slopename, interceptname;
   
+  slopename = std::string( m_output_points_prefix ) + std::string(".slope");
+  interceptname = std::string( m_output_points_prefix ) + std::string(".intercept");
+	
   if( iter >= 0 )
   {
-    std::stringstream out_it;
-    out_it << static_cast< unsigned int >( iter );
+    std::stringstream ss;
+    ss << iter;
 
-    slopename = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".slope");
-    interceptname = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".intercept");
-  }
-  else
-  {
-    slopename = std::string( m_output_points_prefix ) + std::string(".slope");
-    interceptname = std::string( m_output_points_prefix ) + std::string(".intercept");
+    slopename = "./iter" + ss.str() + "_tmp/" + slopename;
+    interceptname = "./iter" + ss.str() + "_tmp/" + interceptname;
   }
   
   std::cout << "writing " << slopename << std::endl;
