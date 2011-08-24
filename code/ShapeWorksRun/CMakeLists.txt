@@ -1,3 +1,7 @@
 ADD_EXECUTABLE(ShapeWorksRun ShapeWorksRun.cxx)
 TARGET_LINK_LIBRARIES(ShapeWorksRun ITKParticleSystem Utilities ITKIO ITKNumerics ITKBasicFilters ITKCommon params)
 INSTALL(TARGETS ShapeWorksRun   RUNTIME DESTINATION .)
+
+ADD_CUSTOM_COMMAND(TARGET ShapeWorksRun 
+  POST_BUILD 
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ShapeWorksRun> ${CMAKE_BINARY_DIR} VERBATIM)
