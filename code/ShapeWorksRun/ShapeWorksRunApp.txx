@@ -141,7 +141,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 			  std::stringstream ss;
 			  ss << iteration_no;
 			  std::string dir_name = "iter" + ss.str();
-			  std::string tmp_dir_name = dir_name + "_tmp";
+			  std::string tmp_dir_name = std::string(".") + dir_name;
 
 #ifdef _WIN32
 			  mkdir( tmp_dir_name.c_str() );
@@ -401,7 +401,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( int iter ) const
   {
     std::stringstream ss;
     ss << iter;
-	output_file = "./iter" + ss.str() + "_tmp/" + output_file;
+	output_file = "./.iter" + ss.str() + "/" + output_file;
   }
   
   std::vector< itk::ParticleSystem<3>::TransformType > tlist;
@@ -477,8 +477,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
   {
     counter = 0;
     unsigned int u_iter = static_cast< unsigned int >( iter );
-	std::string local_file = iter >= 0 ? "./iter" + ss.str() + "_tmp/" + fn.filename(i) : fn.filename(i);
-    std::string world_file = iter >= 0 ? "./iter" + ss.str() + "_tmp/" + fnw.filename(i) : fnw.filename(i);
+	std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
+    std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
     
     std::ofstream out( local_file.c_str() );
     std::ofstream outw( world_file.c_str() );
@@ -794,8 +794,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( int iter )
     std::stringstream ss;
     ss << iter;
 
-    slopename = "./iter" + ss.str() + "_tmp/" + slopename;
-    interceptname = "./iter" + ss.str() + "_tmp/" + interceptname;
+    slopename = "./.iter" + ss.str() + "/" + slopename;
+    interceptname = "./.iter" + ss.str() + "/" + interceptname;
   }
   
   std::cout << "writing " << slopename << std::endl;
