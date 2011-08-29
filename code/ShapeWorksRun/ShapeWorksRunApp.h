@@ -94,7 +94,11 @@ class ShapeWorksRunApp
   
   virtual void WriteModes()
   {
-    m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_points_prefix,5);
+	const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    if ( n >= 5 )
+	{
+		m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_points_prefix,5);
+	}
   }
 
   // "iter" param used if "keep_checkpoints" param is set to 1.
