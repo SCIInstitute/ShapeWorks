@@ -48,6 +48,9 @@ public:
   /** Loads a set of point files and pre-computes some statistics. */
   int ReadPointFiles(param::parameterFile &);
 
+  /** Reloads a set of point files and recomputes some statistics. */
+  int ReloadPointFiles( );
+
   /** Writes a text file in comma-separated format.  Suitable for reading into
       excel or R or Matlab for analysis. */
   int WriteCSVFile(const char *s);
@@ -169,6 +172,9 @@ protected:
 
   vnl_vector<double> m_groupdiff;
   vnl_vector<double> m_groupdiffnorm;
+
+  // used to keep the points' files that needs to be reloaded when new updates come in.
+  std::vector< std::string > m_pointsfiles; 
 };
 
 #if ITK_TEMPLATE_EXPLICIT

@@ -20,9 +20,18 @@
 
 void InitializeCallback(void *gui)
 {
+  // add a new callback to check updates
+  // static_cast<ShapeWorksViewApp *>(gui)->InitCheck();
+
   static_cast<ShapeWorksViewApp *>(gui)->HideGroups();
   static_cast<ShapeWorksViewApp *>(gui)->ViewMeanGroup->show();  
   static_cast<ShapeWorksViewApp *>(gui)->DisplayMean(0);
+}
+
+void InitializeCheckUpdatesCallback(void *gui)
+{
+	// add a new callback to check updates
+	static_cast<ShapeWorksViewApp *>(gui)->InitCheck();
 }
 
 int main(int argc, char *argv[])
@@ -40,6 +49,18 @@ int main(int argc, char *argv[])
     //    Fl::check();
 
     gui.Show();
+
+	// The default setting is viewer not checking 
+	if ( argc == 3 )
+	{
+		std::string option = argv[2];
+		if ( option == "enable_check_update" )
+		{
+			Fl::add_timeout(0.1, &InitializeCheckUpdatesCallback, &gui);  
+		}
+
+	}
+
     Fl::add_timeout(0.1, &InitializeCallback, &gui);   
     Fl::run();
     }

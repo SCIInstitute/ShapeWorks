@@ -73,6 +73,8 @@ void ShapeWorksViewApp::PointFileDiff()
     }
   
   this->DisplayVectorField(vecs);
+
+  this->m_displayIndicator = PointFileDiff_E;
 }
 
 
@@ -97,6 +99,7 @@ void ShapeWorksViewApp::LoadVectorField()
   reader->Update();
   
   this->DisplayVectorField(reader->GetOutput());   
+  this->m_displayIndicator = LoadVectorField_E;
 }
 
 void ShapeWorksViewApp::ShowSpheres()
@@ -147,6 +150,8 @@ void ShapeWorksViewApp::LoadPointFile()
     }
 
   this->DisplayShape(pos);
+
+  this->m_displayIndicator = LoadPointFile_E;
 }
 
 void ShapeWorksViewApp::LoadPCAShape()
@@ -171,21 +176,27 @@ void ShapeWorksViewApp::LoadPCAShape()
   // Each position in reader correspondends to a PCA loading.  Missing PCA
   // components are filled in with 0s.
 
-  unsigned int numModes = reader1->GetOutput().size();
+  //unsigned int numModes = reader1->GetOutput().size();
+  m_numModes = reader1->GetOutput().size();	// To support the check update scheme
   vnl_vector<double> wext(m_NumberOfSamples);
+  m_wext = vnl_vector<double>(m_NumberOfSamples);
   //  std::cout << "PCAShape is ";
   for (unsigned int i = 0; i < m_NumberOfSamples; i++)
     {    
-    if (i >= numModes)
+    //if (i >= numModes)
+	if (i >= m_numModes)
       {
       wext[i] = 0.0;
+	  m_wext[i] = 0.0;	
       }
     else
       {
       wext[i] = reader1->GetOutput()[i][0];
+	  m_wext[i] = reader1->GetOutput()[i][0];
       }
     //    std::cout << wext[i] << " ";
     }
+
   //  std::cout <<  std::endl;
 
    // Rotate the LD back into the full dimensional space
@@ -196,9 +207,38 @@ void ShapeWorksViewApp::LoadPCAShape()
 
   // Load the points
   this->DisplayShape(bigLD + m_Stats.Mean());  
+  this->m_displayIndicator = LoadPCAShape_E;
 }
 
+// This is for refresh the scene when user is in load PCA mode
+void ShapeWorksViewApp::LoadPCAShapeCheckUpdate()
+{
+	// Rotate the LD back into the full dimensional space
+	// Rearrange the eigenvectors:     
+	vnl_matrix<double> tmpeigs = m_Stats.Eigenvectors();
+	tmpeigs.fliplr();  
 
+	vnl_vector<double> wext(m_NumberOfSamples);
+	wext = vnl_vector<double>(m_NumberOfSamples);
+	//  std::cout << "PCAShape is ";
+	for (unsigned int i = 0; i < m_NumberOfSamples; i++)
+	{    
+		if (i >= m_numModes)
+		{
+			wext[i] = 0.0;	
+		}
+		else
+		{
+			wext[i] = m_wext[i];
+		}
+	}
+	vnl_vector<double> bigLD = wext.post_multiply(tmpeigs.transpose());
+
+	// Load the points
+	this->DisplayShape(bigLD + m_Stats.Mean());  
+	this->m_displayIndicator = LoadPCAShape_E;
+	
+}
 void ShapeWorksViewApp::generate_color_list(int n)
 {
   m_color_list.resize(n);
@@ -317,6 +357,8 @@ void ShapeWorksViewApp::DisplayMeanDifference()
     vecs.push_back(tmp);
     }
   this->DisplayVectorField(vecs);
+
+  this->m_displayIndicator = DisplayMeanDifference_E;
 }
 
 void ShapeWorksViewApp
@@ -429,8 +471,102 @@ void ShapeWorksViewApp
   if (m_Initialized) this->m_render_window->Render();
 }
 
+/****
+	CheckUpdates : If new updates come in, recompute the statistics
+*****/
+
+void ShapeWorksViewApp::CheckUpdates( void* gui )
+{
+	ShapeWorksViewApp *me = static_cast<ShapeWorksViewApp *>(gui);
+	
+	bool has_updates = false;
+	try
+	{
+		// Use STL instead of using boost
+		std::cout << "Check updates... \n";
+		has_updates = std::ifstream( me->lock_file_.c_str() );
+		if ( !has_updates )
+		{
+			
+		}
+		else
+		{	
+			std::cout << me->iteration_ << ": " << "Found updates! \n" ;
+
+			// Rerun statistics
+			me->m_Stats.ReloadPointFiles( );
+			me->m_Stats.ComputeModes();
+			me->m_Stats.PrincipalComponentProjections();
+
+			// To support linear regression and group analysis will be the future task.
+			// Compute the linear regression
+			//me->m_Regression = itk::ParticleShapeLinearRegressionMatrixAttribute<double,3>::New();
+			me->ComputeSimpleRegressionParameters();
+			me->m_Regression->SetMatrix( me->m_Stats.ShapeMatrix() );
+
+			me->m_Regression->ResizeParameters( me->m_Stats.ShapeMatrix().rows());
+			me->m_Regression->ResizeMeanMatrix( me->m_Stats.ShapeMatrix().rows(), me->m_Stats.ShapeMatrix().cols());
+			me->m_Regression->Initialize();
+			me->m_Regression->EstimateParameters();
+
+			// Check which mode the displayer is
+			if ( me->m_displayIndicator == LoadPointFile_E 
+				|| me->m_displayIndicator == LoadVectorField_E
+				|| me->m_displayIndicator == PointFileDiff_E )
+			{
+				// In these modes, only needs to update m_Stats. 
+				// No need to call callback function.
+			} 
+			else
+			{
+				void (*callbackPtr)( void * ) = me->m_callbackPtrVec[ me->m_displayIndicator ];
+				callbackPtr( me );
+			}
+
+			if ( remove( me->lock_file_.c_str() ) != 0 )
+			{
+				// LOG
+				std::cerr << "Viewer cannot delete the lock file, Ignore it! \n";
+			}
+			else
+			{
+				me->iteration_++;
+			}
+			
+		}
+	}
+	catch ( ... )
+	{
+	}
+
+	 Fl::repeat_timeout( 5.0, &ShapeWorksViewApp::CheckUpdates, gui );
+	 return;
+}
+
 ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
 {
+  this->iteration_ = 0;
+
+  this->lock_file_ = "iteration_lock.txt";
+
+  // Register functions that will be called when a new updates arrive.
+
+  // Group and linear regression will be the future task.
+ 
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::LoadPCAShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayMeanDifferenceCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayStatsMeanCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup1MeanCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup2MeanCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplaySamplesCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::ComputeRegressionShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::ComputeModeShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::ComputeGroupMeanDifferenceShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup1MedianCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup2MedianCallBack );
+
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroupMedianCallBack );
+
   this->generate_color_list(1024);
   m_Initialized = false;
   m_CurrentDirectory = ".";
@@ -538,6 +674,8 @@ ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
   this->ComputeSurface();
   this->HideGroups();
   m_Initialized = true;
+
+  m_displayIndicator = DisplayStatsMean_E; // record which mode the view is in.
 }
 
 void ShapeWorksViewApp::ChangeColorScheme()
@@ -581,6 +719,8 @@ void ShapeWorksViewApp::ComputeRegressionShape()
 {
   vnl_vector<double> pos = m_Regression->ComputeMean(this->position->value());
   this->DisplayShape(pos);
+
+  this->m_displayIndicator = ComputeRegressionShape_E;
 }
 
 void ShapeWorksViewApp::ComputeSimpleRegressionParameters()
@@ -593,7 +733,7 @@ void ShapeWorksViewApp::ComputeSimpleRegressionParameters()
     {    
     m_SimpleRegressionA =  m_SimpleRegressionIntercepts[m];
     m_SimpleRegressionB =  m_SimpleRegressionSlopes[m];
-    std::cout << "Found user-supplied paramters for mode = " << m << std::endl;
+    std::cout << "Found user-supplied parameters for mode = " << m << std::endl;
     std::cout << "a = " << m_SimpleRegressionA << std::endl;
     std::cout << "b = " << m_SimpleRegressionB << std::endl;
     return;
@@ -635,12 +775,16 @@ void ShapeWorksViewApp::ComputeModeShape()
   
   this->DisplayShape(m_Stats.Mean() + (e * (s * lambda)));
 
+  this->m_displayIndicator = ComputeModeShape_E;
+
 }
 
 void ShapeWorksViewApp::ComputeGroupMeanDifferenceShape()
 {
   double s = this->groupdiff_position->value();
   this->DisplayShape(m_Stats.Group1Mean() + (m_Stats.GroupDifference() *s));
+
+  this->m_displayIndicator = ComputeGroupMeanDifferenceShape_E;
 }
 
 void ShapeWorksViewApp::DisplayShape(const vnl_vector<double> &pos)
@@ -668,6 +812,7 @@ void ShapeWorksViewApp::DisplayShape(const vnl_vector<double> &pos)
     
     this->m_render_window->Render();
     }  
+
 }
 
 void ShapeWorksViewApp::InitializeRenderer()

@@ -134,6 +134,8 @@ int ParticleShapeStatistics<VDimension>
     if (ok == true)
       {
       pointsfiles.push_back(tmp);
+
+	  m_pointsfiles.push_back( tmp ); // Keep the points' files to reload.
       }
     }
   PARAMSET(pf, m_domainsPerShape, "domains_per_shape", 0, ok, 1);
@@ -253,6 +255,80 @@ int ParticleShapeStatistics<VDimension>
   
   return 0;
 } // end ReadPointFiles
+
+
+/** Reloads a set of point files and recomputes some statistics. */
+
+template <unsigned int VDimension>
+int ParticleShapeStatistics<VDimension>
+::ReloadPointFiles( )
+{
+  
+  m_mean.fill(0);
+  m_mean1.fill(0);
+  m_mean2.fill(0);
+
+  // Compile the "meta shapes"
+  for (unsigned int i = 0; i < m_numSamples; i++) 
+    {
+    for (unsigned int k = 0; k < m_domainsPerShape; k++) 
+      {
+      // read file
+      typename itk::ParticlePositionReader<VDimension>::Pointer reader
+        = itk::ParticlePositionReader<VDimension>::New();
+      reader->SetFileName( m_pointsfiles[i*m_domainsPerShape + k].c_str() );
+      reader->Update();
+      unsigned int q = reader->GetOutput().size();  
+      for (unsigned int j = 0; j < q; j++)
+        {
+        m_mean(q*k*VDimension +(VDimension*j)+0) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+0, i)
+          = reader->GetOutput()[j][0];
+        m_mean(q*k*VDimension +(VDimension*j)+1) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+1, i)
+          = reader->GetOutput()[j][1];
+        m_mean(q*k*VDimension +(VDimension*j)+2) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+2, i)
+          = reader->GetOutput()[j][2];
+
+        if (m_groupIDs[i] == 1)
+          {
+          m_mean1(q*k*VDimension +(VDimension*j)+0) += reader->GetOutput()[j][0];
+          m_mean1(q*k*VDimension +(VDimension*j)+1) += reader->GetOutput()[j][1];
+          m_mean1(q*k*VDimension +(VDimension*j)+2) += reader->GetOutput()[j][2];
+          }
+        else
+          {
+          m_mean2(q*k*VDimension +(VDimension*j)+0) += reader->GetOutput()[j][0];
+          m_mean2(q*k*VDimension +(VDimension*j)+1) += reader->GetOutput()[j][1];
+          m_mean2(q*k*VDimension +(VDimension*j)+2) += reader->GetOutput()[j][2];
+          }
+        
+        m_shapes(q*k*VDimension +(VDimension*j)+0,i) = reader->GetOutput()[j][0];
+        m_shapes(q*k*VDimension +(VDimension*j)+1,i) = reader->GetOutput()[j][1];
+        m_shapes(q*k*VDimension +(VDimension*j)+2,i) = reader->GetOutput()[j][2];
+                
+        }
+      }
+    }
+
+  for (unsigned int i = 0; i < m_numDimensions; i++)
+    {
+    m_mean(i)  /= (double)m_numSamples;
+    m_mean1(i) /= (double)m_numSamples1;
+    m_mean2(i) /= (double)m_numSamples2;
+    }
+  
+  for (unsigned int j = 0; j < m_numDimensions; j++)
+    {
+    for (unsigned int i = 0; i < m_numSamples; i++)
+      {
+      m_pointsMinusMean(j, i) -= m_mean(j);
+      }
+    }
+
+  m_groupdiff = m_mean2 - m_mean1;
+  
+  return 0;
+} // end ReloadPointFiles
+
 
 template <unsigned int VDimension>
 int ParticleShapeStatistics<VDimension>::ComputeModes()
