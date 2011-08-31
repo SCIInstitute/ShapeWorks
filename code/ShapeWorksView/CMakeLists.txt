@@ -1,26 +1,21 @@
-INCLUDE_DIRECTORIES(${SCI_BOOST_INCLUDE})
+IF(NOT APPLE)
+FLTK_WRAP_UI(ShapeWorksView AnalyzeCorrespondenceGUI.fl)
 
-# Set some Win32 Specific Settings
-IF(WIN32)
-	SET(GUI_TYPE WIN32)
-	FLTK_WRAP_UI(ShapeWorksView AnalyzeCorrespondenceGUI.fl)
-ENDIF(WIN32)
-# Set some Apple MacOS Specific settings
-IF (APPLE)
-	SET(GUI_TYPE MACOSX_BUNDLE)
-ENDIF (APPLE)
+TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
 
-ADD_EXECUTABLE(ShapeWorksView ${GUI_TYPE} ShapeWorksView.cxx ShapeWorksViewApp.cxx AnalyzeCorrespondenceGUI.cxx)
-#ADD_EXECUTABLE(ShapeWorksView  ShapeWorksView.cxx ShapeWorksViewApp.cxx AnalyzeCorrespondenceGUI.cxx)
-TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities 
-	Utilities ITKParticleSystem ITKIO ITKNumerics
-	ITKBasicFilters ITKCommon params 
-	ITKVtkFltk vtkIO vtkWidgets vtkRendering 
-	vtkImaging vtkFiltering vtkHybrid vtkGraphics 
-	vtkCommon ${FLTK_LIBRARIES} 
-#	${SCI_BOOST_LIBRARY}
-	)
+ELSE(NOT APPLE)
 
-IF(WIN32)	
-	INSTALL(TARGETS ShapeWorksView   RUNTIME DESTINATION .)
-ENDIF(WIN32)
+OPTION( BUILD_OSX_APP "Build ShapeWorksView as an application." OFF )
+
+IF ( BUILD_OSX_APP )
+	ADD_EXECUTABLE(ShapeWorksView MACOSX_BUNDLE ShapeWorksView.cxx ShapeWorksViewApp.cxx AnalyzeCorrespondenceGUI.cxx)
+ELSE( BUILD_OSX_APP )
+	ADD_EXECUTABLE(ShapeWorksView ShapeWorksView.cxx ShapeWorksViewApp.cxx AnalyzeCorrespondenceGUI.cxx)
+ENDIF ( BUILD_OSX_APP )
+
+TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
+
+ENDIF(NOT APPLE)
+
+INSTALL(TARGETS ShapeWorksView   RUNTIME DESTINATION . BUNDLE DESTINATION . )
+
