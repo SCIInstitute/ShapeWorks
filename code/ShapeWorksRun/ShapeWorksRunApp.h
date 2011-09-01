@@ -130,6 +130,7 @@ protected:
 
   // User-specified parameters
   int m_optimization_iterations;
+  int m_optimization_iterations_completed;
   int m_iterations_per_split;
   int m_processing_mode;
   int m_procrustes_scaling; 

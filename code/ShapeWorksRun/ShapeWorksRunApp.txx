@@ -400,7 +400,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( int iter ) const
   if( iter >= 0 )
   {
     std::stringstream ss;
-    ss << iter;
+    ss << iter + m_optimization_iterations_completed;
 	output_file = "./.iter" + ss.str() + "/" + output_file;
   }
   
@@ -469,7 +469,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
   fnw.file_format("wpts");
 
   std::stringstream ss;
-  ss << iter;
+  ss << iter+m_optimization_iterations_completed;
 
   int counter;
 
@@ -541,6 +541,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   PARAMSET(pf, m_procrustes_scaling, "procrustes_scaling", 0, ok, 1);
   PARAMSET(pf, m_adaptivity_mode, "adaptivity_mode", 0, ok, 0);
   PARAMSET(pf, m_keep_checkpoints, "keep_checkpoints", 0, ok, 0);
+  PARAMSET(pf, m_optimization_iterations_completed, "optimization_iterations_completed", 0, ok, 0);
 
 
   // Write out the parameters
@@ -548,7 +549,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   std::cout << "m_number_of_particles = " << m_number_of_particles << std::endl;
   std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
   std::cout << "m_output_points_prefix = " << m_output_points_prefix << std::endl;
- std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
+  std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
   std::cout << "m_domains_per_shape = " << m_domains_per_shape << std::endl;
   std::cout << "m_starting_regularization = " << m_starting_regularization << std::endl;
   std::cout << "m_ending_regularization = " << m_ending_regularization << std::endl;
@@ -565,6 +566,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(param::parameterFile &pf)
   std::cout << "m_procrustes_scaling = " << m_procrustes_scaling << std::endl;
   std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
   std::cout << "m_keep_checkpoints = " << m_keep_checkpoints << std::endl;
+  std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed << std::endl;
+
 }
 
 
@@ -699,13 +702,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
   // Set up the minimum variance decay
   m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                    m_ending_regularization,
-                                                                   m_optimization_iterations);
+                                                                   m_optimization_iterations-
+																   m_optimization_iterations_completed);
   m_Sampler->GetGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                           m_ending_regularization,
-                                                                          m_optimization_iterations);
+                                                                          m_optimization_iterations-
+																		  m_optimization_iterations_completed);
   m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                              m_ending_regularization,
-                                                                             m_optimization_iterations);
+                                                                             m_optimization_iterations-
+																			 m_optimization_iterations_completed);
   
   std::cout << "Optimizing correspondences." << std::endl;
   if (m_attributes_per_domain > 0)
@@ -725,8 +731,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     m_Sampler->SetCorrespondenceMode(1); // Normal
     }
                                                         
-  if (m_optimization_iterations > 0)
-    m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations);
+  if (m_optimization_iterations-m_optimization_iterations_completed > 0)
+    m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations-m_optimization_iterations_completed);
   else m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);
 
   
@@ -792,7 +798,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( int iter )
   if( iter >= 0 )
   {
     std::stringstream ss;
-    ss << iter;
+    ss << iter+m_optimization_iterations_completed;
 
     slopename = "./.iter" + ss.str() + "/" + slopename;
     interceptname = "./.iter" + ss.str() + "/" + interceptname;
