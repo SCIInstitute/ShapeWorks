@@ -139,7 +139,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 		  if ( m_keep_checkpoints )
 		  {
 			  std::stringstream ss;
-			  ss << iteration_no;
+			  ss << iteration_no + m_optimization_iterations_completed;
 			  std::string dir_name = "iter" + ss.str();
 			  std::string tmp_dir_name = std::string(".") + dir_name;
 
