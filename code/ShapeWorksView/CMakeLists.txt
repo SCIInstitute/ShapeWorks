@@ -7,15 +7,18 @@ ELSE( BUILD_OSX_APP )
 ENDIF ( BUILD_OSX_APP )
 
 IF(NOT APPLE)
-FLTK_WRAP_UI(ShapeWorksView AnalyzeCorrespondenceGUI.fl)
-
-TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
-
+	FLTK_WRAP_UI(ShapeWorksView AnalyzeCorrespondenceGUI.fl)
+	IF(POWERCRUST_FOUND AND BUILD_PowerCrust)
+	  TARGET_LINK_LIBRARIES(ShapeWorksView ${POWERCRUST_LIB} VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon 	params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
+	ELSE(POWERCRUST_FOUND AND BUILD_PowerCrust)
+	  TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})	
+	ENDIF(POWERCRUST_FOUND AND BUILD_PowerCrust)	
 ELSE(NOT APPLE)
-
-TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
-
+	IF(POWERCRUST_FOUND AND BUILD_PowerCrust)
+	  TARGET_LINK_LIBRARIES(ShapeWorksView ${POWERCRUST_LIB} VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon Xinerama Xft ${FLTK_LIBRARIES})
+	ELSE(POWERCRUST_FOUND AND BUILD_PowerCrust)
+	  TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon params ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon Xinerama Xft ${FLTK_LIBRARIES})	
+	ENDIF(POWERCRUST_FOUND AND BUILD_PowerCrust)
 ENDIF(NOT APPLE)
 
 INSTALL(TARGETS ShapeWorksView   RUNTIME DESTINATION . BUNDLE DESTINATION . )
-

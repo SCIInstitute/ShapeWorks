@@ -364,6 +364,213 @@ void ShapeWorksViewApp::DisplayMeanDifference()
 void ShapeWorksViewApp
 ::DisplayVectorField(const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs)
 {
+#ifdef SW_USE_POWERCRUST
+  if (vecs.size() <  m_glyphPoints->GetNumberOfPoints() )
+    {
+    std::cerr << vecs.size() << ": " << m_glyphPoints->GetNumberOfPoints() << std::endl;
+    std::cerr << "Error: not enough vectors" << std::endl;
+    return;
+    }
+   
+  double minmag = 1.0e20;
+  double maxmag = 0.0;
+  this->ComputeSurface(); // need the surface information for the normals
+
+  vtkFloatArray *vectors = vtkFloatArray::New() ;
+  vtkFloatArray *vectors2= vtkFloatArray::New() ;
+    
+  vectors->SetNumberOfComponents(3);
+  vectors2->SetNumberOfComponents(3);
+    
+	vtkSmoothPolyDataFilter *polySmoother = vtkSmoothPolyDataFilter::New();
+	polySmoother->SetInputConnection(m_surf->GetOutputPort());
+	polySmoother->SetNumberOfIterations(10);
+	polySmoother->SetFeatureAngle(90.0);  
+	polySmoother->BoundarySmoothingOn();
+	polySmoother->Update();                               
+                              
+  vtkPolyDataNormals *normFilter = vtkPolyDataNormals::New();
+  normFilter->SetInputConnection(polySmoother->GetOutputPort());
+ 	normFilter->ComputePointNormalsOn();
+ 	normFilter->Update(); 
+ 	
+ 	vtkPolyData *m_surfNormals = normFilter->GetOutput(); 	  
+     
+  // Dot product difference vectors with the surface normals.
+  vtkFloatArray *mags = vtkFloatArray::New();
+  mags->SetNumberOfComponents(1);
+  mags->SetNumberOfTuples(m_glyphPoints->GetNumberOfPoints());
+  
+  vtkFloatArray *smags = vtkFloatArray::New();
+  smags->SetNumberOfComponents(1);
+  smags->SetNumberOfTuples(m_surf->GetOutput()->GetPoints()->GetNumberOfPoints());  
+  for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+  {
+  	smags->InsertTuple1(i,0.0);
+  }
+  
+  vtkFloatArray *svecs = vtkFloatArray::New();
+  svecs->SetNumberOfComponents(3);
+  svecs->SetNumberOfTuples(m_surf->GetOutput()->GetPoints()->GetNumberOfPoints());  
+  for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+  {
+  	svecs->InsertTuple3(i,0.0,0.0,0.0);
+  } 
+   
+  vnl_vector_fixed<double,3> n;
+	
+	// for each particle position,
+  // Compute difference vector dot product with normal.  Length of vector is
+  // stored in the "scalars" so that the vtk color mapping and glyph scaling
+  // happens properly.
+  
+	vtkPointLocator *pointLocator = vtkPointLocator::New();
+	pointLocator->SetDataSet(polySmoother->GetOutput());
+	pointLocator->BuildLocator();
+	   
+  for (unsigned int i = 0; i < m_glyphPoints->GetNumberOfPoints(); i++)
+    {
+    float dv[3];
+    dv[0] = vecs[i][0];
+    dv[1] = vecs[i][1];
+    dv[2] = vecs[i][2];
+       
+		vtkIdType idx = pointLocator->FindClosestPoint(m_glyphPoints->GetPoint(i)); 
+    double *n_tmp = m_surfNormals->GetPointData()->GetNormals()->GetTuple3(idx);
+    n(0) = n_tmp[0];
+    n(1) = n_tmp[1];
+    n(2) = n_tmp[2];
+    
+    float mag =  dv[0]*n(0) + dv[1]*n(1) + dv[2]*n(2);
+    
+    if (mag < minmag) minmag = mag;
+    if (mag > maxmag) maxmag = mag;
+    
+    vectors2->InsertNextTuple3(n(0) * mag, n(1) * mag, n(2) * mag);
+    mags->InsertTuple1(i, mag) ; 
+       
+    //smags->SetValue(idx,mag);
+    
+    //svecs->SetComponent(idx,0,n(0) * mag);
+		//svecs->SetComponent(idx,1,n(1) * mag);
+		//svecs->SetComponent(idx,2,n(2) * mag);       
+    }
+    
+	vtkPolyData *pdata = vtkPolyData::New();
+	pdata->SetPoints(m_glyphPoints);
+	pdata->GetPointData()->SetScalars(mags);
+	pdata->GetPointData()->SetVectors(vectors2);
+	
+	pointLocator->SetDataSet(pdata);
+	pointLocator->SetDivisions(100,100,100);
+	pointLocator->BuildLocator();
+	
+	//for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+	//{
+		//vtkIdType pId = pointLocator->FindClosestPoint(polySmoother->GetOutput()->GetPoint(i));
+		
+		//smags->SetValue(i,mags->GetValue(pId));
+		
+    //svecs->SetComponent(i,0,vectors2->GetComponent(pId,0));
+		//svecs->SetComponent(i,1,vectors2->GetComponent(pId,1));
+		//svecs->SetComponent(i,2,vectors2->GetComponent(pId,2));
+	//}	
+	
+	for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+	{
+		// find particle (p) closest to current point (v)
+		vtkIdType pId = pointLocator->FindClosestPoint(polySmoother->GetOutput()->GetPoint(i));
+				
+		// use d(p,v) as a radius to find other particles close by
+		double x = polySmoother->GetOutput()->GetPoint(i)[0] - pdata->GetPoint(pId)[0];
+		double y = polySmoother->GetOutput()->GetPoint(i)[1] - pdata->GetPoint(pId)[1];
+		double z = polySmoother->GetOutput()->GetPoint(i)[2] - pdata->GetPoint(pId)[2];
+		double rad = sqrt(x*x + y*y + z*z);
+				
+		vtkIdList *pInRadius = vtkIdList::New();	
+		pointLocator->FindClosestNPoints(8,polySmoother->GetOutput()->GetPoint(i),pInRadius);
+			
+		// assign scalar value based on a weighted scheme
+		//float x;
+		//float y;
+		//float z;
+		float wtScalar = 0.0f;
+		float radSum = 0.0f;
+		float r[8];
+		float vecX = 0.0f;
+		float vecY = 0.0f;
+		float vecZ = 0.0f;
+		for (unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++)
+		{
+			// get a particle position
+			vtkIdType currID = pInRadius->GetId(p);
+			
+			// compute distance to current particle
+			x = polySmoother->GetOutput()->GetPoint(i)[0] - pdata->GetPoint(currID)[0];
+			y = polySmoother->GetOutput()->GetPoint(i)[1] - pdata->GetPoint(currID)[1];
+			z = polySmoother->GetOutput()->GetPoint(i)[2] - pdata->GetPoint(currID)[2];
+			r[p] = 1.0f/(x*x + y*y + z*z);			
+			
+			// multiply scalar value by weight and add to running sum
+			radSum += r[p];
+		}
+		
+		for (unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++)
+		{
+			vtkIdType currID = pInRadius->GetId(p);		
+			wtScalar += r[p]/radSum * mags->GetValue(currID);
+			vecX += r[p]/radSum * vectors2->GetComponent(currID,0);
+			vecY += r[p]/radSum * vectors2->GetComponent(currID,1);
+			vecZ += r[p]/radSum * vectors2->GetComponent(currID,2);
+		}				
+		
+		smags->SetValue(i,wtScalar);
+		
+    svecs->SetComponent(i,0,vecX);
+		svecs->SetComponent(i,1,vecY);
+		svecs->SetComponent(i,2,vecZ);
+				
+		pInRadius->Delete();				
+	}
+	
+	polySmoother->GetOutput()->GetPointData()->SetScalars(smags);
+	polySmoother->GetOutput()->GetPointData()->SetVectors(svecs);
+		
+	vtkPolyDataWriter *m_surfWriter = vtkPolyDataWriter::New();
+	m_surfWriter->SetInputConnection(polySmoother->GetOutputPort());
+	m_surfWriter->SetFileName("gmd.vtk");
+	m_surfWriter->Write();	
+ 	
+  this->UpdateDifferenceLUT(minmag, maxmag);
+  m_glyphMapper->SetLookupTable(m_differenceLUT);
+  m_arrowGlyphMapper->SetLookupTable(m_differenceLUT);
+  
+	m_surf->GetOutput()->GetPointData()->SetScalars(smags);
+	m_surf->GetOutput()->GetPointData()->SetVectors(svecs); 	
+ 	m_surfMap->SetLookupTable(m_differenceLUT);
+ 	m_surfMap->InterpolateScalarsBeforeMappingOn();
+  m_surfMap->SetColorModeToMapScalars();
+  m_surfMap->ScalarVisibilityOn();    
+		  
+	m_glyphs->SetSourceConnection(m_arrowSource->GetOutputPort());
+  m_glyphPointset->GetPointData()->SetVectors(vectors2);
+  m_glyphPointset->GetPointData()->SetScalars(mags);
+
+  m_glyphs->SetScaleModeToScaleByVector();
+  //m_glyphs->SetVectorModeToUseVector();
+  
+  m_renderer->AddActor(m_arrowGlyphActor);
+  
+  vectors->Delete();
+  mags->Delete();
+  smags->Delete();
+  m_surfWriter->Delete();
+
+  m_showingArrowGlyphs = true;
+  
+  if (m_Initialized) this->m_render_window->Render();  
+
+#else
   if (vecs.size() <  m_glyphPoints->GetNumberOfPoints() )
     {
     std::cerr << "Error: not enough vectors" << std::endl;
@@ -469,6 +676,7 @@ void ShapeWorksViewApp
   m_showingArrowGlyphs = true;
   
   if (m_Initialized) this->m_render_window->Render();
+#endif
 }
 
 /****
@@ -701,10 +909,12 @@ void ShapeWorksViewApp::ChangeColorScheme()
 }
 void ShapeWorksViewApp::ComputeSurface()
 {
+#ifndef SW_USE_POWERCRUST
   m_surf->SetNeighborhoodSize(this->neighborhoodsize->value());
   m_surf->SetSampleSpacing(this->samplespacing->value());
-  m_renderer->AddActor(m_surfActor);
+#endif
 
+  m_renderer->AddActor(m_surfActor);
   if (m_Initialized) this->m_render_window->Render();
 }
 
@@ -841,6 +1051,28 @@ void ShapeWorksViewApp::InitializeRenderer()
 
 void ShapeWorksViewApp::InitializeSurface()
 {
+#ifdef SW_USE_POWERCRUST
+  m_surf = vtkPowerCrustSurfaceReconstruction::New();
+  m_surf->SetInput(m_glyphPointset);
+  
+  m_surfReverse = vtkReverseSense::New();
+  m_surfReverse->SetInputConnection(m_surf->GetOutputPort());
+  m_surfReverse->ReverseCellsOn();
+  m_surfReverse->ReverseNormalsOn();
+
+  m_surfSmoother = vtkSmoothPolyDataFilter::New();
+  m_surfSmoother->SetInputConnection(m_surfReverse->GetOutputPort());
+  m_surfSmoother->SetNumberOfIterations(0);
+  
+  m_surfMap = vtkPolyDataMapper::New();
+  m_surfMap->SetInputConnection(m_surfSmoother->GetOutputPort());
+  m_surfMap->ScalarVisibilityOn();
+  
+  m_surfActor = vtkActor::New();
+  m_surfActor->SetMapper(m_surfMap);
+  m_surfActor->GetProperty()->SetSpecular(.4);
+  m_surfActor->GetProperty()->SetSpecularPower(50);
+#else
   m_surf = vtkSurfaceReconstructionFilter::New();
   m_surf->SetInput(m_glyphPointset);
   m_surf->SetNeighborhoodSize(this->neighborhoodsize->value());
@@ -856,14 +1088,6 @@ void ShapeWorksViewApp::InitializeSurface()
   m_surfReverse->ReverseCellsOn();
   m_surfReverse->ReverseNormalsOn();
 
-  //  m_surfDecimate = vtkDecimatePro::New();  
-  //  m_surfDecimate->SetInputConnection(m_surfReverse->GetOutputPort());
-  //  m_surfDecimate->SetTargetReduction(0.0);
-  //  m_surfDecimate->PreserveTopologyOff();
-
-  //  m_surfNormals = vtkPolyDataNormals::New();
-  //  m_surfNormals->SetInputConnection(m_surfDecimate->GetOutputPort());
-  
   m_surfSmoother = vtkSmoothPolyDataFilter::New();
   m_surfSmoother->SetInputConnection(m_surfReverse->GetOutputPort());
   m_surfSmoother->SetNumberOfIterations(0);
@@ -876,6 +1100,7 @@ void ShapeWorksViewApp::InitializeSurface()
   m_surfActor->SetMapper(m_surfMap);
   m_surfActor->GetProperty()->SetSpecular(.4);
   m_surfActor->GetProperty()->SetSpecularPower(50);
+#endif
 }
 
 void ShapeWorksViewApp::SetGlyphScale()

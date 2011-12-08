@@ -51,7 +51,6 @@
 #include "vtkLookupTable.h"
 #include "vtkUnsignedLongArray.h"
 #include "vtkPointData.h"
-#include "vtkSurfaceReconstructionFilter.h"
 #include "vtkImageGaussianSmooth.h"
 #include "vtkSmoothPolyDataFilter.h"
 #include "vtkContourFilter.h"
@@ -62,6 +61,25 @@
 #include "vtkImageGradient.h"
 #include "vtkImageData.h"
 #include "vtkDecimatePro.h"
+
+#ifdef SW_USE_POWERCRUST
+  #include "vtkPowerCrustSurfaceReconstruction.h"
+  #include "vtkPolyDataToImageStencil.h"
+  #include "vtkPolyDataWriter.h"
+  #include "vtkDataSetWriter.h"
+  #include "vtkImageStencil.h"
+  #include "vtkDataArray.h"
+  #include "vtkMath.h"
+  #include "vtkPointLocator.h"
+  #include "vtkDelaunay3D.h"
+  #include "vtkProbeFilter.h"
+  #include "vtkThinPlateSplineTransform.h"
+  #include "vtkGeneralTransform.h"
+  #include "vtkTransformPolyDataFilter.h"
+#else
+  #include "vtkSurfaceReconstructionFilter.h"
+#endif
+
 
 
 class ShapeWorksViewApp : public AnalyzeCorrespondenceGUI
@@ -458,7 +476,12 @@ protected:
   
   
   // VTK Surface reconstruction classes
+#ifdef SW_USE_POWERCRUST
+  vtkPowerCrustSurfaceReconstruction *m_surf;
+#else
   vtkSurfaceReconstructionFilter *m_surf;
+#endif
+
   vtkPolyDataMapper              *m_surfMap;
   vtkActor                       *m_surfActor;
   vtkContourFilter               *m_surfContour;
