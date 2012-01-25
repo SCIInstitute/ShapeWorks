@@ -16,7 +16,9 @@
 #define __st_isolate_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 
 namespace shapetools
@@ -35,7 +37,8 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  isolate(param::parameterFile &);
+  isolate(const char *fname);
+
   isolate() {}
   virtual ~isolate() {}
   

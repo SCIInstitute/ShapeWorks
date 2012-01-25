@@ -27,19 +27,31 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-split_segmentations<T,D>::split_segmentations(param::parameterFile &pf)
+split_segmentations<T,D>::split_segmentations(const char *fname)
 {
-  // Set some parameters.
-  double g;
-  bool ok = true;
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  m_background = static_cast<T>(g);
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
-  if (ok == false)
-    { throw param::Exception("split_segmentations:: missing parameters"); }
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "split_segmentations:: missing parameters" << std::endl;
+    }
 
+  }
 }
+
 
 template <class T, unsigned int D> 
 void split_segmentations<T,D>::operator()()

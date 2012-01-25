@@ -357,7 +357,7 @@ public:
   /** Flag/Unflag a domain.  Flagging a domain has different meanings according
       to the application using this particle system. */
   void FlagDomain(unsigned int i)
-  { m_DomainFlags[i] = true; }
+  {std::cout<<"in flag domain  "<<i<<" "<<m_DomainFlags.size()<<std::endl; m_DomainFlags[i] = true;std::cout<<"end flad domain"<<std::endl; }
   void UnflagDomain(unsigned int i)
   { m_DomainFlags[i] = false; }
   bool GetDomainFlag(unsigned int i) const

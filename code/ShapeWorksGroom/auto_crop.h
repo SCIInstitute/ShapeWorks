@@ -16,7 +16,9 @@
 #define __st_auto_crop_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 
 namespace shapetools
@@ -32,7 +34,8 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  auto_crop(param::parameterFile &);
+  auto_crop(const char *fname);
+
   auto_crop() {}
   virtual ~auto_crop() {}
   

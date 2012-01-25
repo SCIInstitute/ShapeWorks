@@ -16,7 +16,9 @@
 #define __st_center_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "transform_tool.h"
 
 namespace shapetools
@@ -40,7 +42,7 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  center(param::parameterFile &);
+  center(const char *fname);
   center() {}
   virtual ~center() {}
   

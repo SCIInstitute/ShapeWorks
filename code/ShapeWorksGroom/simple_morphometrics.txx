@@ -21,26 +21,39 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-simple_morphometrics<T,D>::simple_morphometrics(param::parameterFile &pf)
+simple_morphometrics<T,D>::simple_morphometrics(const char *fname)
 {
-  // Set some parameters.
-  double g;
-  bool ok = true;
-  //  PARAMSET(pf, g, "background", 0, ok, 0.0);
-  //  m_background = static_cast<T>(g);
-  
-  PARAMSET(pf, g, "foreground", 0, ok, 1.0);
-  m_foreground = static_cast<T>(g);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  if (ok == false)
-    { throw param::Exception("simple_morphometrics:: missing parameters"); }
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+ 
+    //PARAMSET(pf, g, "foreground", 0, ok, 1.0);
+    this->m_foreground = 1.0;
+    elem = docHandle.FirstChild( "foreground" ).Element();
+    if (elem)
+    {
+      this->m_foreground = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "auto_pad:: missing parameters" << std::endl;
+    }  
+  }
 }
+
 
 template <class T, unsigned int D> 
 void simple_morphometrics<T,D>::operator()()
 {
   if (D != 3)
-    throw param::Exception("simple_morphometrics: this tool is only implemented for 3D");
+  {
+    std::cerr << "simple_morphometrics: this tool is only implemented for 3D" << std::endl;
+    throw 1;
+  }
 
   typename itk::ImageFileReader<image_type>::Pointer reader =
     itk::ImageFileReader<image_type>::New();

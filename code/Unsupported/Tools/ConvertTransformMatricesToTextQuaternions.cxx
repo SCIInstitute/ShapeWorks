@@ -15,7 +15,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "itkParticleSystem.h"
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
@@ -37,28 +38,48 @@ int main(int argc, char *argv[])
   RotationGeometry<double> geom;
   RiemannianStatistics<QuaternionType, VectorType, double> stats(&geom);
   
-  bool ok = true;
   std::string tmpa, tmpb, trans_file, rot_file;
-  //  std::vector< std::string > inputfiles;
-  //  std::vector< std::string > outputfiles;
   unsigned int domains_per_shape;
 
   // READ PARAMETERS
-  param::parameterFile pf(argv[1]);
-  PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
-  PARAMSET(pf, trans_file, "local_translations", 0, ok, "");
-  PARAMSET(pf, rot_file, "transform_file", 0, ok, "");
-  
-   if (ok != true)
-    {
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+
+  //PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
+  domains_per_shape = 1;
+  elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+  if (elem)
+    domains_per_shape = atoi(elem->GetText());
+  else
+  {
     std::cerr << "Missing parameters" << std::endl;
     return 1;
-    }
-   //   std::vector< double> scales;
-   
-   //   unsigned int num_shapes = inputfiles.size();
-   //   unsigned int num_domains = num_samples * domains_per_shape;
-   
+  }
+
+  //PARAMSET(pf, trans_file, "local_translations", 0, ok, "");
+  trans_file = "";
+  elem = docHandle.FirstChild( "local_translations" ).Element();
+  if (elem)
+    trans_file = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  //PARAMSET(pf, rot_file, "transform_file", 0, ok, "");
+  rot_file = "";
+  elem = docHandle.FirstChild( "transform_file" ).Element();
+  if (elem)
+    rot_file = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
    // Read the translations.
    object_reader< itk::ParticleSystem<3>::TransformType > transreader;
    transreader.SetFileName(trans_file.c_str());

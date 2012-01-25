@@ -16,7 +16,9 @@
 #define __st_extract_centers_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 
 namespace shapetools
@@ -33,7 +35,7 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  extract_centers(param::parameterFile &);
+  extract_centers(const char *fname);
   extract_centers() {}
   virtual ~extract_centers() {}
   

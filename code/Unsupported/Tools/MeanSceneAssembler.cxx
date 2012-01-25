@@ -23,7 +23,8 @@
 #include "string_io.h"
 #include <fstream>
 #include "itkParticleSystem.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "object_reader.h"
 
 struct point_type
@@ -51,48 +52,61 @@ int main(int argc, char *argv[])
     return 1;
     }
 
-  param::parameterFile pf(argv[1]);
-
-  bool ok = true;
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
 
   std::string outputfile;
   unsigned int points_per_file;
-  PARAMSET(pf, points_per_file, "points_per_file", 0, ok, 1);
-  PARAMSET(pf, outputfile, "output", 0, ok,"bogus");
 
-
-  if (ok != true)
-    {
+  //PARAMSET(pf, points_per_file, "points_per_file", 0, ok, 1);
+  points_per_file = 1;
+  elem = docHandle.FirstChild( "points_per_file" ).Element();
+  if (elem)
+    points_per_file = atoi(elem->GetText());
+  else
+  {
     std::cerr << "Missing parameters" << std::endl;
     return 1;
-    }
+  }
 
+  //PARAMSET(pf, outputfile, "output", 0, ok,"bogus");
+  outputfile = "bogus";
+  elem = docHandle.FirstChild( "output" ).Element();
+  if (elem)
+    outputfile = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
   
   // Collect a list of point file names and output file names
   int i=0;
   std::vector< std::string > metafiles;
   std::string tmp;
-  while (ok == true)
+
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmp)
     {
-    // Record the point file names.
-    PARAMSET(pf, tmp, "inputs", i, ok, "");
-    if (i==0 && ok != true)
-      {
-      std::cerr << "No input files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
-      std::cout << i << "\t" << tmp <<  std::endl;
       metafiles.push_back(tmp);
-      } // if ok == true
-    i++;
-    } // while ok == true
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
-  i--;
-  unsigned int num_files = i;
+  unsigned int num_files = metafiles.size();
   std::cout << "Read " << num_files << " files " << std::endl;
-
   
   const std::string pointstring("Points");
   const std::string endofpointstring("CellType");

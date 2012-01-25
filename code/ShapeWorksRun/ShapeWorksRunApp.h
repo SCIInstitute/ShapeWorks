@@ -25,7 +25,7 @@
 #include "itkMaximumEntropyCorrespondenceSampler.h"
 #include "itkCommand.h"
 #include <vector>
-#include "param.h"
+#include "tinyxml.h"
 #include "itkParticleProcrustesRegistration.h"
 #include <sstream>
 #include <string>
@@ -41,7 +41,7 @@ class ShapeWorksRunApp
  public:
   typedef itk::Image<float, 3> ImageType;
   typedef SAMPLERTYPE SamplerType;
-  
+
   ShapeWorksRunApp(const char *);
   virtual ~ShapeWorksRunApp();
 
@@ -59,7 +59,8 @@ class ShapeWorksRunApp
   virtual void optimize_start();
   virtual void optimize_stop();
 
-  virtual void ReadInputs(param::parameterFile &pf);
+  virtual void ReadInputs(const char *fname);
+
   virtual void ReadPrefixTransformFile(const std::string &s);
   virtual void ReadTransformFile();
   virtual void Run()
@@ -84,8 +85,9 @@ class ShapeWorksRunApp
     m_Iteratecmd->SetCallbackFunction(this, &ShapeWorksRunApp::IterateCallback);
     m_Sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_Iteratecmd);
   }
-  void SetUserParameters( param::parameterFile &);
-
+  
+  void SetUserParameters(const char *fname);
+  
   virtual void SplitAllParticles()
   {
    this->optimize_stop();
@@ -106,9 +108,9 @@ class ShapeWorksRunApp
   virtual void WriteTransformFile( int iter = -1 ) const;
   virtual void WriteParameters( int iter = -1 );  
 
-  void ReadExplanatoryVariables(param::parameterFile &);
-  void FlagDomainFct(param::parameterFile &pf);
+  void ReadExplanatoryVariables(const char *fname);
 
+  void FlagDomainFct(const char *fname);
 
   typename itk::MemberCommand< ShapeWorksRunApp<SamplerType> >::Pointer m_Iteratecmd;
   

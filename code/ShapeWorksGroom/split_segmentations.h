@@ -16,7 +16,9 @@
 #define __st_split_segmentations_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 
 namespace shapetools
@@ -32,7 +34,8 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  split_segmentations(param::parameterFile &);
+  split_segmentations(const char *fname);
+
   split_segmentations() {}
   virtual ~split_segmentations() {m_background = 0;}
   

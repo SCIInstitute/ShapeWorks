@@ -21,9 +21,9 @@
 #include "itkParticleSystem.h"
 #include "object_writer.h"
 #include "object_reader.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "RotationGeometry.hxx"
-#include <iostream>
 #include <fstream>
 
 int main(int argc, char *argv[])
@@ -34,16 +34,18 @@ int main(int argc, char *argv[])
   typedef itk::ParticleSystem<3>::TransformType TransformType;
   typedef vnl_vector_fixed<double, 3> vectype;
 
- 
-
-  
   if (argc != 2)
     {
     std::cerr << "Use: " << argv[0] << "paramfile" << std::endl;
     return 1;
     }
 
-  param::parameterFile pf(argv[1]);
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
+
   std::string outputfile;
 
   std::vector< std::string > inputfiles;
@@ -56,74 +58,75 @@ int main(int argc, char *argv[])
   std::string tmpa;
   std::string transforms_output, localtrans_filename;
   unsigned int domains_per_shape;
-  int ii = 0;
-  bool ok = true;
-  PARAMSET(pf, transforms_output, "transforms_output", 0, ok, "");
-  //  PARAMSET(pf, log_filename, "logfile", 0, ok, "");
-  PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
 
-  
-  if (ok != true)
-    {
+  //PARAMSET(pf, transforms_output, "transforms_output", 0, ok, "");
+  transforms_output = "";
+  elem = docHandle.FirstChild( "transforms_output" ).Element();
+  if (elem)
+    transforms_output = elem->GetText();
+  else
+  {
     std::cerr << "Missing parameters" << std::endl;
     return 1;
-    }
+  }
 
-  ok= true;
-  bool readtrans=true;
-  PARAMSET(pf, localtrans_filename, "local_translations", 0, ok, "");
-  if (ok != true)
-    {
-    readtrans=false;
-    }
-  
-  
-  ok=true;
-  while (ok == true)
-    {
-    // Record the point file names.
-    PARAMSET(pf, tmpa, "inputs", ii, ok, "");
+  //PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
+  domains_per_shape = 1;
+  elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+  if (elem)
+    domains_per_shape = atoi(elem->GetText());
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
 
-    if (ii==0 && ok != true)
-      {
-      std::cerr << "No input/output files have been specified" << std::endl;
-      throw 1;
-      }
-    if (ok == true)
-      {
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpa)
+    {
       inputfiles.push_back(tmpa);
-      } // if ok == true
-    ii++;
-    } // while ok == true
-
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   // Read the translations.
+  //PARAMSET(pf, localtrans_filename, "local_translations", 0, ok, "");
   object_reader< itk::ParticleSystem<3>::TransformType > transreader;
-  if (readtrans == true)
-    {
+  localtrans_filename = "";
+  bool readtrans = false;
+  elem = docHandle.FirstChild( "local_translations" ).Element();
+  if (elem)
+  {
+    readtrans = true;
+    localtrans_filename = elem->GetText();
     transreader.SetFileName(localtrans_filename.c_str());
     transreader.Update();
-    }
-  
+  }
+
   const int numShapes = inputfiles.size() / domains_per_shape;
 
- // Read the group ids
-  ok = true;
-  for (unsigned int i = 0; i < numShapes; i++)
+  // Read the group ids
+  int g;
+  elem = docHandle.FirstChild( "group_ids" ).Element();
+  if (elem)
+  {
+    inputsBuffer.str(elem->GetText());
+    for (unsigned int i = 0; i < numShapes; i++)
     {
-    int g;
-    PARAMSET(pf, g,   "group_ids", i, ok, 0);
-    
-    if (ok == true)
-      {
-      groups.push_back(g);
-      }
+      if (inputsBuffer >> g) groups.push_back(g);
     }
-
-
-  
-
-
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
   // Run procrustes on each structure (domain) individually
   for (unsigned int s = 0; s < domains_per_shape ; s++)
@@ -333,33 +336,6 @@ int main(int argc, char *argv[])
   
   outfile.close();
   
- //  // Write transforms
-//   object_writer< ParticleSystemType::TransformType > transwriter;
-//   transwriter.SetFileName( transform_filename.c_str() );
-//   transwriter.SetInput(transform_matrices);
-//   transwriter.Update();
-
-//   // Now write all of the transformed points.
-//   ParticleSystemType::PointType pos;
-//   for (unsigned int i = 0; i < numShapes; i++)
-//     {
-//     std::vector< ParticleSystemType::PointType > pointlist;
-//     pointlist.clear();
-
-//     for (unsigned int k = 0; k < shapelist[i].size(); k++)
-//       {
-//       pos[0] = (shapelist[i][k])[0];
-//       pos[1] = (shapelist[i][k])[1];
-//       pos[2] = (shapelist[i][k])[2];
-
-//       pointlist.push_back(pos);      
-//       }
-
-//     itk::ParticlePositionWriter<3>::Pointer writer = itk::ParticlePositionWriter<3>::New();
-//     writer->SetFileName(outputfiles[i].c_str());    
-//     writer->SetInput(pointlist);
-//     writer->Update();
-//     }
-  
   return 0;
 }
+

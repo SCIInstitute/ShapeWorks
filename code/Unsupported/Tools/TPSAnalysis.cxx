@@ -20,7 +20,6 @@
 #include "itkParticleSystem.h"
 #include "object_writer.h"
 #include "object_reader.h"
-#include "param.h"
 #include <iostream>
 #include <fstream>
 #include <vnl/vnl_vector.h>

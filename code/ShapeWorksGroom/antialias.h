@@ -16,7 +16,9 @@
 #define __st_antialias_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 
 namespace shapetools
@@ -33,7 +35,7 @@ public:
   typedef T pixel_type;
   typedef itk::Image<T, D> image_type;
   
-  antialias(param::parameterFile &);
+  antialias(const char *);
   antialias() { m_iterations = 50; }
   virtual ~antialias() {}
   

@@ -25,7 +25,10 @@
 #include "FL/Fl_File_Chooser.H"
 
 #include "AnalyzeCorrespondenceGUI.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
+#include <iostream>
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticlePositionReader.h"
 #include "object_reader.h"
@@ -206,10 +209,10 @@ public:
 	}
 	else
 	{
-		this->DisplaySamples();
+    this->DisplaySamples();
 		this->m_displayIndicator = DisplayGroupMedian_E;
-	}
-	
+  }
+
 	
 	//this->DisplaySamples();
   }
@@ -251,7 +254,7 @@ public:
 	  Fl::add_timeout( 5.0, &ShapeWorksViewApp::CheckUpdates, this );
 	 // Fl::repeat_timeout( 1.0, &ShapeWorksViewApp::CheckUpdates, this );
   }
-
+  
 
   //static void callback(void*) {
 	 // std::cout << "TICK\n";
@@ -365,8 +368,9 @@ protected:
   void set_color_list(const std::vector<rgb> &c)
   { m_color_list = c; }
 
-  virtual void ReadExplanatoryVariables(param::parameterFile &);
-  virtual void ReadSimpleRegressionParameters(param::parameterFile &);
+  virtual void ReadExplanatoryVariables(const char *fname);
+
+  virtual void ReadSimpleRegressionParameters(const char *fname);
 
   void DisplayShape( const vnl_vector<double> &);
   void ZeroAllVTK()
@@ -385,7 +389,7 @@ protected:
   void UpdateDifferenceLUT(float, float);
 
   void ResetPointScalars();
-
+  
   std::string lock_file_; // This file is used to check if updates available.
 
   // Iteration # is used to indicate that new updates arrive.

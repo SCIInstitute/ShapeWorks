@@ -15,7 +15,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
 #include "itkParticleSystem.h"
 #include "object_reader.h"
 #include "object_writer.h"
@@ -35,56 +36,72 @@ int main(int argc, char *argv[])
   std::vector< unsigned int> indices;
 
   // READ PARAMETERS
-  param::parameterFile pf(argv[1]);
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
 
-  PARAMSET(pf, input, "input", 0, ok, "");
-  //  PARAMSET(pf, replacefile, "replacefile", 0, ok, "");
-  PARAMSET(pf, output, "output", 0, ok, "");
-  
-   if (ok != true)
-    {
+  //PARAMSET(pf, input, "input", 0, ok, "");
+  input = "";
+  elem = docHandle.FirstChild( "input" ).Element();
+  if (elem)
+    input = elem->GetText();
+  else
+  {
     std::cerr << "Missing parameters" << std::endl;
     return 1;
+  }
+
+  //PARAMSET(pf, output, "output", 0, ok, "");
+  output = "";
+  elem = docHandle.FirstChild( "output" ).Element();
+  if (elem)
+    output = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  // Read the transforms
+  object_reader< itk::ParticleSystem<3>::TransformType > rotreader;
+  rotreader.SetFileName(input.c_str());
+  rotreader.Update();
+
+  // replace transforms
+  int idx = 0;
+  float tmp;
+  itk::ParticleSystem<3>::TransformType T;
+
+  elem = docHandle.FirstChild( "replacements" ).Element();
+  if (elem)
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmp)
+    {
+      idx = tmp;
+      for (unsigned int i = 0; i < 4; i++)
+      {
+        for (unsigned int j = 0; j < 4; j++)
+        {
+          inputsBuffer >> tmp;
+          T(i,j) = tmp;
+        }
+      }
+      std::cout << T << std::endl;
+      rotreader.GetOutput()[idx] = T;
     }
-
-   // Read the transforms
-   object_reader< itk::ParticleSystem<3>::TransformType > rotreader;
-   rotreader.SetFileName(input.c_str());
-   rotreader.Update();
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
    
-   // replace transforms
-   int idx = 0;
-   ok = true;
-
-   for (unsigned int i = 0; ok == true; )
-     {
-     float tmp;
-     ok = true;
-     PARAMSET(pf, tmp, "replacements", i, ok, 0);
-     if (ok != true) break;
-     
-     std::cout << "tmp = " << tmp << std::endl;
-     idx = (int)tmp;
-     itk::ParticleSystem<3>::TransformType T;
-     i++;
-     for (unsigned int j = 0; j < 4; j++)
-       for (unsigned int k = 0; k < 4; k++, i++)
-         {
-
-         PARAMSET(pf, tmp, "replacements", i, ok, 0);
-         T(j,k) = tmp;
-         }
-     
-     std::cout << T << std::endl;
-     rotreader.GetOutput()[idx] = T;
-     
-     }
-   
-   // Write the output
-   object_writer< itk::ParticleSystem<3>::TransformType > rotwriter;
-   rotwriter.SetFileName(output.c_str());
-   rotwriter.SetInput(rotreader.GetOutput());
-   rotwriter.Update();
+  // Write the output
+  object_writer< itk::ParticleSystem<3>::TransformType > rotwriter;
+  rotwriter.SetFileName(output.c_str());
+  rotwriter.SetInput(rotreader.GetOutput());
+  rotwriter.Update();
    
   return 0;
 }
+

@@ -27,12 +27,23 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-isocontour_distance<T,D>::isocontour_distance(param::parameterFile &pf)
+isocontour_distance<T,D>::isocontour_distance(const char *fname)
 {
-  // Set some parameters.
-  bool ok;
-  PARAMSET(pf, m_levelset_value, "isocontour_distance_isovalue", 0, ok, 0.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, m_levelset_value, "isocontour_distance_isovalue", 0, ok, 0.0);
+    this->m_levelset_value = 0.0;
+    elem = docHandle.FirstChild( "isocontour_distance_isovalue" ).Element();
+    if (elem) this->m_levelset_value = atof(elem->GetText());
+  }
 }
+
 
 template <class T, unsigned int D> 
 void isocontour_distance<T,D>::operator()(typename image_type::Pointer img)

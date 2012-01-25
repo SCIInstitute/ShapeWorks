@@ -15,7 +15,6 @@
 #include <iostream>
 #include "ShapeWorksRunApp.h"
 #include "CS6350.h"
-#include "param.h"
 
 int main(int argc, char *argv[])
 {
@@ -46,11 +45,6 @@ int main(int argc, char *argv[])
     std::cerr << ex.what() << std::endl;
     return 3;
     }
-	catch (param::Exception & e)
-		{
-			std::cerr << e << std::endl;
-			return 4;
-		}
   catch( ... )
     {
     std::cerr << "Unknown exception" << std::endl;

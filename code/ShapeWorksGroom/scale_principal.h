@@ -16,7 +16,9 @@
 #define __st_scale_principal_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 #include "itkParticleSystem.h"
 #include <string>
@@ -37,7 +39,8 @@ public:
   typedef itk::Image<T, D> image_type;
   typedef typename  itk::ParticleSystem<D>::TransformType TransformType;
 
-  scale_principal(param::parameterFile &);
+  scale_principal(const char *fname);
+
   scale_principal() {};// { m_principal_axis = 0;}
   virtual ~scale_principal() {}
   

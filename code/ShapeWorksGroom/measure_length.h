@@ -16,7 +16,9 @@
 #define __st_measure_length_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 #include "itkParticleSystem.h"
 #include <string>
@@ -35,7 +37,8 @@ public:
   typedef itk::Image<T, D> image_type;
   typedef typename  itk::ParticleSystem<D>::TransformType TransformType;
 
-  measure_length(param::parameterFile &);
+  measure_length(const char *fname);
+
   measure_length() {};// { m_principal_axis = 0;}
   virtual ~measure_length() {}
   

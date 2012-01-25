@@ -23,20 +23,36 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-auto_crop<T,D>::auto_crop(param::parameterFile &pf)
+auto_crop<T,D>::auto_crop(const char *fname)
 {
-  // Set some parameters.
-  double g;
-  bool ok = true;
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  m_background = static_cast<T>(g);
-  
-  if (ok == false)
-    { throw param::Exception("auto_crop:: missing parameters"); }
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
-  PARAMSET(pf, m_pad, "pad", 0, ok, 0);
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "auto_crop:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, m_pad, "pad", 0, ok, 0);
+    this->m_pad = 0;
+    elem = docHandle.FirstChild( "pad" ).Element();
+    if (elem) this->m_pad = atoi(elem->GetText());
+  }
 }
+
+
 
 template <class T, unsigned int D> 
 void auto_crop<T,D>::operator()()

@@ -16,7 +16,9 @@
 #define __st_bounding_box_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 #include "itkImageRegion.h"
 
@@ -35,7 +37,7 @@ public:
   typedef itk::Image<T, D> image_type;
   typedef typename image_type::RegionType region_type;
   
-  bounding_box(param::parameterFile &);
+  bounding_box(const char *fname);
   bounding_box() {}
   virtual ~bounding_box() {}
   

@@ -23,12 +23,24 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-antialias<T,D>::antialias(param::parameterFile &pf)
+antialias<T,D>::antialias(const char *fname)
 {
-  // Set some parameters.
-  bool ok;
-  PARAMSET(pf, m_iterations, "antialias_iterations", 0, ok, 50);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, m_iterations, "antialias_iterations", 0, ok, 50);
+    this->m_iterations = 50;
+    elem = docHandle.FirstChild( "antialias_iterations" ).Element();
+    if (elem) this->m_iterations = atoi(elem->GetText());
+  }
 }
+
+
 
 template <class T, unsigned int D> 
 void antialias<T,D>::operator()(typename image_type::Pointer img)

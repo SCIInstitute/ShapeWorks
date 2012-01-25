@@ -29,20 +29,32 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-center<T,D>::center(param::parameterFile &pf)
+center<T,D>::center(const char *fname)
 {
-  // Set some parameters.
-  bool ok = true;
-  double f;
-  PARAMSET(pf, f, "background", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  m_center_origin = true;
-  m_background = static_cast<T>(f);
-  
-  if (ok == false)
-    {  throw param::Exception("center:: missing parameters"); }
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
+    m_center_origin = true;
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "center:: missing parameters" << std::endl;
+    }
+  }
 }
+
 
 template <class T, unsigned int D> 
 void center<T,D>::operator()(typename image_type::Pointer img)

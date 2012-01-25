@@ -32,24 +32,44 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-measure_length<T,D>::measure_length(param::parameterFile &pf)
+measure_length<T,D>::measure_length(const char *fname)
 {
-  // Set some parameters.
-  double g;
-  bool ok = true;
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
-  PARAMSET(pf, m_length_file, "length_file", 0, ok, "");
-  m_background = static_cast<T>(g);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  if (ok == false)
-    { throw param::Exception("measure_length:: missing parameters"); }
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "measure_length:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, m_length_file, "length_file", 0, ok, "");
+    this->m_length_file = "";
+    elem = docHandle.FirstChild( "length_file" ).Element();
+    if (elem) this->m_length_file = elem->GetText();
+  }
 }
+
 
 template <class T, unsigned int D> 
 void measure_length<T,D>::operator()()
 {
   if (D != 3)
-    throw param::Exception("measure_length: this tool is only implemented for 3D");
+  {
+    std::cerr << "measure_length: this tool is only implemented for 3D" << std::endl;
+    throw 1;
+  }
 
   double sum = 0.0;
   double count = 0.0;

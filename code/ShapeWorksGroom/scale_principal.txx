@@ -31,28 +31,50 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-scale_principal<T,D>::scale_principal(param::parameterFile &pf)
+scale_principal<T,D>::scale_principal(const char *fname)
 {
-  // Set some parameters.
-  double g;
-  bool ok = true;
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
-  m_background = static_cast<T>(g);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  PARAMSET(pf, m_transform_file, "scale_transform_file", 0, ok, "/dev/null\0");
-  PARAMSET(pf, m_length_file, "scale_length_file", 0, ok, "/dev/null\0");
-  
-  if (ok == false)
-    { throw param::Exception("scale_principal:: missing parameters"); }
-  
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "auto_pad:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, m_transform_file, "scale_transform_file", 0, ok, "/dev/null\0");
+    this->m_transform_file = "/dev/null\0";
+    elem = docHandle.FirstChild( "scale_transform_file" ).Element();
+    if (elem) this->m_transform_file = elem->GetText();
+
+    //PARAMSET(pf, m_length_file, "scale_length_file", 0, ok, "/dev/null\0");
+    this->m_length_file = "/dev/null\0";
+    elem = docHandle.FirstChild( "scale_length_file" ).Element();
+    if (elem) this->m_length_file = elem->GetText();
+  }
 }
+
 
 template <class T, unsigned int D> 
 void scale_principal<T,D>::operator()()
 {
   // (only implemented for 3D right now)
   if (D != 3)
-    throw param::Exception("scale_principal: this tool is only implemented for 3D");
+  {
+    std::cerr << "scale_principal: this tool is only implemented for 3D" << std::endl;
+    throw 1;
+  }
 
   typename itk::ImageFileReader<image_type>::Pointer reader =
     itk::ImageFileReader<image_type>::New();

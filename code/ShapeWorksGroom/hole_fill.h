@@ -16,7 +16,9 @@
 #define __st_hole_fill_h
 
 #include "itkImage.h"
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
 #include "tool.h"
 #include "itkConnectedThresholdImageFilter.h"
 
@@ -43,7 +45,8 @@ public:
   typedef itk::ConnectedThresholdImageFilter<image_type, image_type> flood_fill_filter_type;
 
   
-  hole_fill(param::parameterFile &);
+  hole_fill(const char *fname);
+
   hole_fill() {}
   virtual ~hole_fill() {}
   

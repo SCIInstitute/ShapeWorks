@@ -15,7 +15,10 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "param.h"
+#include "tinyxml.h"
+#include <sstream>
+#include <string>
+#include <iostream>
 #include "itkParticleSystem.h"
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
@@ -37,94 +40,151 @@ int main(int argc, char *argv[])
   RotationGeometry<double> geom;
   RiemannianStatistics<QuaternionType, VectorType, double> stats(&geom);
   
-  bool ok = true;
   std::string tmpa, tmpb, trans_file, rot_file;
   std::vector< std::string > inputfiles;
   std::vector< std::string > outputfiles;
   unsigned int domains_per_shape;
 
   // READ PARAMETERS
-  param::parameterFile pf(argv[1]);
-  unsigned int num_samples;
-  PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
-  PARAMSET(pf, num_samples, "number_samples", 0, ok, 1);
-  PARAMSET(pf, trans_file, "local_translations", 0, ok, "");
-  PARAMSET(pf, rot_file, "transform_file", 0, ok, "");
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+  std::istringstream inputsBuffer;
 
-  if (ok != true)
-    {
+  unsigned int num_samples;
+  //PARAMSET(pf, domains_per_shape, "domains_per_shape", 0, ok, 1);
+  domains_per_shape = 1;
+  elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+  if (elem)
+    domains_per_shape = atoi(elem->GetText());
+  else
+  {
     std::cerr << "Missing parameters" << std::endl;
     return 1;
+  }
+
+  //PARAMSET(pf, num_samples, "number_samples", 0, ok, 1);
+  num_samples = 1;
+  elem = docHandle.FirstChild( "num_samples" ).Element();
+  if (elem)
+    num_samples = atoi(elem->GetText());
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  //PARAMSET(pf, trans_file, "local_translations", 0, ok, "");
+  trans_file = "";
+  elem = docHandle.FirstChild( "local_translations" ).Element();
+  if (elem)
+    trans_file = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  //PARAMSET(pf, rot_file, "transform_file", 0, ok, "");
+  rot_file = "";
+  elem = docHandle.FirstChild( "transform_file" ).Element();
+  if (elem)
+    rot_file = elem->GetText();
+  else
+  {
+    std::cerr << "Missing parameters" << std::endl;
+    return 1;
+  }
+
+  std::vector< double> scales;
+
+  // Collect a list of point file names and output file names
+  elem = docHandle.FirstChild( "inputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No input files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpa)
+    {
+      inputfiles.push_back(tmpa);
     }
-   std::vector< double> scales;
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
-   // Collect a list of point file names and output file names
-   int i = 0;
-   ok = true;
-   double s;
-   while (ok == true)
-     {
-     // Record the mean point file input and output names.
-     PARAMSET(pf, tmpa, "inputs", i, ok, "bogus");
-     PARAMSET(pf, tmpb, "outputs", i, ok, "bogus");
-     PARAMSET(pf, s, "scales", i, ok, 1.0);
-     if (i==0 && ok != true)
-       {
-       std::cerr << "No input files have been specified" << std::endl;
-       throw 1;
-       }
-     if (ok == true)
-       {
-       scales.push_back(s);
-       inputfiles.push_back(tmpa);
-       outputfiles.push_back(tmpb);
-       } // if ok == true
-     i++;
-     } // while ok == true
+  elem = docHandle.FirstChild( "outputs" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No output files have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> tmpb)
+    {
+      outputfiles.push_back(tmpb);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
 
-   unsigned int num_shapes = inputfiles.size();
-   unsigned int num_domains = num_samples * domains_per_shape;
-   
-   // Read the translations.
-   object_reader< itk::ParticleSystem<3>::TransformType > transreader;
-   transreader.SetFileName(trans_file.c_str());
-   transreader.Update();
-   
+  double s;
+  elem = docHandle.FirstChild( "scales" ).Element();
+  if (!elem)
+  {
+    std::cerr << "No scales have been specified" << std::endl;
+    throw 1;
+  }
+  else
+  {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> s)
+    {
+      scales.push_back(s);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  unsigned int num_shapes = inputfiles.size();
+  unsigned int num_domains = num_samples * domains_per_shape;
+
+  // Read the translations.
+  object_reader< itk::ParticleSystem<3>::TransformType > transreader;
+  transreader.SetFileName(trans_file.c_str());
+  transreader.Update();
+
   // Read the rotation matrices
-   object_reader< itk::ParticleSystem<3>::TransformType > rotreader;
-   rotreader.SetFileName(rot_file.c_str());
-   rotreader.Update();
-   //   std::cout << "Num shapes = " << num_shapes << std::endl;
-   //   std::cout << "Num samples = " << num_samples<< std::endl;
-   //   std::cout << "transreader.size = " << transreader.GetOutput().size()<< std::endl;
-   //   std::cout << "rotreader.size = " << rotreader.GetOutput().size()<< std::endl;
-   //   std::cout << "num_domains = " << num_domains << std::endl;
+  object_reader< itk::ParticleSystem<3>::TransformType > rotreader;
+  rotreader.SetFileName(rot_file.c_str());
+  rotreader.Update();
 
-   if (outputfiles.size() != num_shapes
-       || transreader.GetOutput().size() != num_domains
-       || rotreader.GetOutput().size() != num_domains)
-     {
-     std::cerr << "Mismatch in number of files and transforms" << std::endl;
-     return 1;
-     }
+  if (outputfiles.size() != num_shapes
+     || transreader.GetOutput().size() != num_domains
+     || rotreader.GetOutput().size() != num_domains)
+   {
+   std::cerr << "Mismatch in number of files and transforms" << std::endl;
+   return 1;
+   }
    
-   // Separate translation and rotation from matices, compute mean translation.
-   // Translation comes from both files.
+  // Separate translation and rotation from matices, compute mean translation.
+  // Translation comes from both files.
 
-   std::vector< std::vector<QuaternionType> > poseLists(num_shapes);
-   std::vector< VectorType > transList(num_shapes);
-   std::vector< VectorType > rotTransList(num_shapes);
-   std::vector< QuaternionType > rotList;
-   for (unsigned int i = 0; i < transList.size(); i++) { transList[i].fill(0.0); }
+  std::vector< std::vector<QuaternionType> > poseLists(num_shapes);
+  std::vector< VectorType > transList(num_shapes);
+  std::vector< VectorType > rotTransList(num_shapes);
+  std::vector< QuaternionType > rotList;
+  for (unsigned int i = 0; i < transList.size(); i++) { transList[i].fill(0.0); }
    
    for (unsigned int i = 0; i < num_domains; i++)
      {
      unsigned int idx = i % num_shapes;
-     //     std::cout << "Translation " << i << std::endl;
-     //     std::cout << transreader.GetOutput()[i] << std::endl;
-//      transList[idx][0] += (transreader.GetOutput()[i])(0,3) -(rotreader.GetOutput()[i])(0,3);
-//      transList[idx][1] += (transreader.GetOutput()[i])(1,3) -(rotreader.GetOutput()[i])(1,3);
-//      transList[idx][2] += (transreader.GetOutput()[i])(2,3) -(rotreader.GetOutput()[i])(2,3);
      transList[idx][0] += (transreader.GetOutput()[i])(0,3);
      transList[idx][1] += (transreader.GetOutput()[i])(1,3);
      transList[idx][2] += (transreader.GetOutput()[i])(2,3);
@@ -173,10 +233,6 @@ int main(int argc, char *argv[])
     reader->SetFileName(inputfiles[i].c_str());
     reader->Update();
 
-    //    std::cout << inputfiles[i] << std::endl;
-    //    std::cout << "Translation: " << transList[i] << std::endl;
-    //    std::cout << "Rotation (axis, angle):  " << rotList[i].axis()
-    //              << "\t" << rotList[i].angle() << std::endl;
     
     for (unsigned int q = 0; q < reader->GetOutput().size(); q++)
       {
@@ -213,3 +269,4 @@ int main(int argc, char *argv[])
  
   return 0;
 }
+

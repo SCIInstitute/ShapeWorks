@@ -23,23 +23,45 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-hole_fill<T,D>::hole_fill(param::parameterFile &pf)
+hole_fill<T,D>::hole_fill(const char *fname)
 {
- // Set some parameters.
-  double f,g;
-  bool ok = true;
-  PARAMSET(pf, f, "foreground", 0, ok, 0.0);
-  PARAMSET(pf, g, "background", 0, ok, 1.0);
+  TiXmlDocument doc(fname);
+  bool loadOkay = doc.LoadFile();
 
-  m_foreground = static_cast<T>(f);
-  m_background = static_cast<T>(g);
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle( &doc );
+    TiXmlElement *elem;
 
-  // NOTE: this method always sets the background seed point to 0, 0, 0.
-  m_seed.Fill(0);
-  
-  if (ok == false)
-    {  throw param::Exception("hole_fill:: missing parameters"); }
+    //PARAMSET(pf, f, "foreground", 0, ok, 0.0);
+    this->m_foreground = 0.0;
+    elem = docHandle.FirstChild( "foreground" ).Element();
+    if (elem)
+    {
+      this->m_foreground = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "hole_fill:: missing parameters" << std::endl;
+    }
+
+    //PARAMSET(pf, g, "background", 0, ok, 1.0);
+    this->m_background = 1.0;
+    elem = docHandle.FirstChild( "background" ).Element();
+    if (elem)
+    {
+      this->m_background = static_cast<T>(atof(elem->GetText()));
+    }
+    else
+    {
+      std::cerr << "hole_fill:: missing parameters" << std::endl;
+    }
+
+    // NOTE: this method always sets the background seed point to 0, 0, 0.
+    this->m_seed.Fill(0);
+  }
 }
+
 
 template <class T, unsigned int D> 
 void hole_fill<T,D>::operator()(typename image_type::Pointer img)
