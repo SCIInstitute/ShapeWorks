@@ -25,6 +25,13 @@
 #include "object_writer.h"
 #include "itkZeroCrossingImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#ifdef _WIN32
+#include <direct.h>
+#define mkdir _mkdir
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
 
 template <class SAMPLERTYPE>
 ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
@@ -134,9 +141,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 
 		  if ( m_keep_checkpoints )
 		  {
+			  std::stringstream ss;
+			  ss << iteration_no + m_optimization_iterations_completed;
+			  std::string dir_name = "iter" + ss.str();
+			  std::string tmp_dir_name = std::string(".") + dir_name;
+
+#ifdef _WIN32
+			  mkdir( tmp_dir_name.c_str() );
+#else
+			  mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
 			this->WritePointFiles( iteration_no );
 			this->WriteTransformFile( iteration_no );
-			if (m_use_regression == true) this->WriteParameters( iteration_no );
+			/*if (m_use_regression == true) */this->WriteParameters( iteration_no );
+
+			rename( tmp_dir_name.c_str(), dir_name.c_str() );
 		  }
 		}
      }
@@ -499,20 +518,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( int iter ) const
  
   if( iter >= 0 )
   {
-    std::string file_ext = "";
-  
-    std::string::size_type idx = m_output_transform_file.rfind('.');
-    if (idx != std::string::npos)
-    {
-	  output_file = m_output_transform_file.substr( 0, idx );
-      file_ext = "." + m_output_transform_file.substr( idx + 1, m_output_transform_file.length() );
+    std::stringstream ss;
+    ss << iter + m_optimization_iterations_completed;
+	output_file = "./.iter" + ss.str() + "/" + output_file;
     }
-    std::stringstream out;
-    out << static_cast< unsigned int >( iter );
 
-    output_file +=  ".it" + out.str() + file_ext;
-  }
-  
   std::vector< itk::ParticleSystem<3>::TransformType > tlist;
 
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -577,19 +587,22 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
   fnw.prefix(m_output_points_prefix);
   fnw.file_format("wpts");
 
+  std::stringstream ss;
+  ss << iter+m_optimization_iterations_completed;
+
   int counter;
 
   for (int i = 0; i < n; i++)
   {
     counter = 0;
     unsigned int u_iter = static_cast< unsigned int >( iter );
-    std::string local_file = iter >= 0 ? fn.filename(i, u_iter) : fn.filename(i);
-    std::string world_file = iter >= 0 ? fnw.filename(i, u_iter) : fnw.filename(i);
+	std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
+    std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
     
     std::ofstream out( local_file.c_str() );
     std::ofstream outw( world_file.c_str() );
 
-    std::cout << "Writing " << fnw.filename(i) << " ";
+    std::cout << "Writing " << world_file << " ";
     
     if ( !out || !outw )
       {
@@ -618,17 +631,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     outw.close();
 	std::cout << " with " << counter << "points" << std::endl;
   } // end for files
-  
-  if( iter >= 0 )
-  {
-    // Write final file signifying that the checkpoints from this iteration are ready for 
-    // consumption by an external process.
-    std::ostringstream final_file;
-	final_file << "iter." << static_cast< unsigned int >( iter );
-    std::ofstream final_out( final_file.str().c_str() );
-	final_out.close();
   }
-} 
 
 template < class SAMPLERTYPE>
 void
@@ -656,6 +659,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     this->m_optimization_iterations = -1;
     elem = docHandle.FirstChild( "optimization_iterations" ).Element();
     if (elem) this->m_optimization_iterations = atoi(elem->GetText());
+      
+	this->m_optimization_iterations_completed = 0;
+	elem = docHandle.FirstChild( "optimization_iterations_completed" ).Element();
+	if (elem) this->m_optimization_iterations_completed = atoi(elem->GetText());
 
     this->m_output_points_prefix = "output_points";
     elem = docHandle.FirstChild( "output_points_prefix" ).Element();
@@ -752,6 +759,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
   std::cout << "m_procrustes_scaling = " << m_procrustes_scaling << std::endl;
   std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
   std::cout << "m_keep_checkpoints = " << m_keep_checkpoints << std::endl;
+  std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed << std::endl;
+
 }
 
 
@@ -885,13 +894,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
   // Set up the minimum variance decay
   m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                    m_ending_regularization,
-                                                                   m_optimization_iterations);
+                                                                   m_optimization_iterations-
+																   m_optimization_iterations_completed);
   m_Sampler->GetGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                           m_ending_regularization,
-                                                                          m_optimization_iterations);
+                                                                          m_optimization_iterations-
+																		  m_optimization_iterations_completed);
   m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                              m_ending_regularization,
-                                                                             m_optimization_iterations);
+                                                                             m_optimization_iterations-
+																			 m_optimization_iterations_completed);
   
   std::cout << "Optimizing correspondences." << std::endl;
   if (m_attributes_per_domain > 0)
@@ -911,8 +923,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     m_Sampler->SetCorrespondenceMode(1); // Normal
     }
                                                         
-  if (m_optimization_iterations > 0)
-    m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations);
+  if (m_optimization_iterations-m_optimization_iterations_completed > 0)
+    m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations-m_optimization_iterations_completed);
   else m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);
 
   
@@ -982,18 +994,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( int iter )
 {
   std::string slopename, interceptname;
   
+  slopename = std::string( m_output_points_prefix ) + std::string(".slope");
+  interceptname = std::string( m_output_points_prefix ) + std::string(".intercept");
+	
   if( iter >= 0 )
   {
-    std::stringstream out_it;
-    out_it << static_cast< unsigned int >( iter );
+    std::stringstream ss;
+    ss << iter+m_optimization_iterations_completed;
 
-    slopename = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".slope");
-    interceptname = std::string( m_output_points_prefix ) + ".it" + out_it.str() + std::string(".intercept");
-  }
-  else
-  {
-    slopename = std::string( m_output_points_prefix ) + std::string(".slope");
-    interceptname = std::string( m_output_points_prefix ) + std::string(".intercept");
+    slopename = "./.iter" + ss.str() + "/" + slopename;
+    interceptname = "./.iter" + ss.str() + "/" + interceptname;
   }
   
   std::cout << "writing " << slopename << std::endl;

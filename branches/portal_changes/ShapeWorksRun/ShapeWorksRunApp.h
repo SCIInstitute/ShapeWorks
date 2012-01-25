@@ -96,7 +96,11 @@ class ShapeWorksRunApp
   
   virtual void WriteModes()
   {
-    m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_points_prefix,5);
+	const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    if ( n >= 5 )
+	{
+		m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_points_prefix,5);
+	}
   }
 
   // "iter" param used if "keep_checkpoints" param is set to 1.
@@ -128,6 +132,7 @@ protected:
 
   // User-specified parameters
   int m_optimization_iterations;
+  int m_optimization_iterations_completed;
   int m_iterations_per_split;
   int m_processing_mode;
   int m_procrustes_scaling; 

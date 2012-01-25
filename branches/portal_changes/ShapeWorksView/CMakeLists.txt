@@ -1,17 +1,24 @@
+OPTION( BUILD_OSX_APP "Build ShapeWorksView as an application." OFF )
+
+IF ( BUILD_OSX_APP )
+	ADD_EXECUTABLE(ShapeWorksView MACOSX_BUNDLE ShapeWorksView.cxx ShapeWorksViewApp.cxx AnalyzeCorrespondenceGUI.cxx)
+ELSE( BUILD_OSX_APP )
+	ADD_EXECUTABLE(ShapeWorksView ShapeWorksView.cxx ShapeWorksViewApp.cxx AnalyzeCorrespondenceGUI.cxx)
+ENDIF ( BUILD_OSX_APP )
+
 IF(NOT APPLE)
 FLTK_WRAP_UI(ShapeWorksView AnalyzeCorrespondenceGUI.fl)
-
-
-
-ADD_EXECUTABLE(ShapeWorksView ShapeWorksView.cxx ShapeWorksViewApp.cxx ${ShapeWorksView_FLTK_UI_SRCS})
-
+	IF(POWERCRUST_FOUND AND BUILD_PowerCrust)
+	  TARGET_LINK_LIBRARIES(ShapeWorksView ${POWERCRUST_LIB} VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
+	ELSE(POWERCRUST_FOUND AND BUILD_PowerCrust)
 TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
-
+	ENDIF(POWERCRUST_FOUND AND BUILD_PowerCrust)	
 ELSE(NOT APPLE)
-ADD_EXECUTABLE(ShapeWorksView ShapeWorksView.cxx ShapeWorksViewApp.cxx AnalyzeCorrespondenceGUI.cxx)
-TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})
-
+	IF(POWERCRUST_FOUND AND BUILD_PowerCrust)
+	  TARGET_LINK_LIBRARIES(ShapeWorksView ${POWERCRUST_LIB} VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon Xinerama Xft ${FLTK_LIBRARIES})
+	ELSE(POWERCRUST_FOUND AND BUILD_PowerCrust)
+	  TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon Xinerama Xft ${FLTK_LIBRARIES})	
+	ENDIF(POWERCRUST_FOUND AND BUILD_PowerCrust)
 ENDIF(NOT APPLE)
 
-INSTALL(TARGETS ShapeWorksView   RUNTIME DESTINATION .)
-
+INSTALL(TARGETS ShapeWorksView   RUNTIME DESTINATION . BUNDLE DESTINATION . )

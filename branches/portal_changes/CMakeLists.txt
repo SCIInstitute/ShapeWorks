@@ -1,6 +1,12 @@
 PROJECT(SHAPEWORKS)
 cmake_minimum_required(VERSION 2.6)
 
+SET(BUILD_EXECS_AT_SAME_LEVEL FALSE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
+IF (BUILD_EXECS_AT_SAME_LEVEL)
+  SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
+  SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
+ENDIF (BUILD_EXECS_AT_SAME_LEVEL)
+
 #Match everything when analyzing dependencies
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
@@ -88,6 +94,17 @@ IF (VTK_FOUND)
   ENDIF(BUILD_ShapeWorksShop)
   IF(BUILD_ShapeWorksView)
    SUBDIRS(ShapeWorksView)
+	# optionally build with powercrust reconstruction
+	OPTION(BUILD_PowerCrust "Build with powercrust reconstruction (requires powercrust library)" OFF)
+	IF(BUILD_PowerCrust)
+		INCLUDE(FindPowerCrust.cmake)
+		IF(POWERCRUST_FOUND)
+			INCLUDE_DIRECTORIES(${POWERCRUST_INCLUDE})
+			ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
+		ELSE(POWERCRUST_FOUND)
+			MESSAGE(FATAL_ERROR "POWERCRUST library is required, but could not be found.")   
+		ENDIF(POWERCRUST_FOUND)
+	ENDIF(BUILD_PowerCrust)  
   ENDIF(BUILD_ShapeWorksView)
   IF(BUILD_Unsupported)
    SUBDIRS(Unsupported)
@@ -102,5 +119,7 @@ IF (VTK_FOUND)
  ENDIF(BUILD_ICPRigid3DRegistration)
 ENDIF(VTK_FOUND)
 
-
+IF (WIN32 AND MSVC)
+  ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
+ENDIF (WIN32 AND MSVC)
 

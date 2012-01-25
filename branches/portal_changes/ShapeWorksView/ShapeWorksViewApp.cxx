@@ -73,6 +73,8 @@ void ShapeWorksViewApp::PointFileDiff()
     }
   
   this->DisplayVectorField(vecs);
+
+  this->m_displayIndicator = PointFileDiff_E;
 }
 
 
@@ -97,6 +99,7 @@ void ShapeWorksViewApp::LoadVectorField()
   reader->Update();
   
   this->DisplayVectorField(reader->GetOutput());   
+  this->m_displayIndicator = LoadVectorField_E;
 }
 
 void ShapeWorksViewApp::ShowSpheres()
@@ -147,6 +150,8 @@ void ShapeWorksViewApp::LoadPointFile()
     }
 
   this->DisplayShape(pos);
+
+  this->m_displayIndicator = LoadPointFile_E;
 }
 
 void ShapeWorksViewApp::LoadPCAShape()
@@ -171,21 +176,27 @@ void ShapeWorksViewApp::LoadPCAShape()
   // Each position in reader correspondends to a PCA loading.  Missing PCA
   // components are filled in with 0s.
 
-  unsigned int numModes = reader1->GetOutput().size();
+  //unsigned int numModes = reader1->GetOutput().size();
+  m_numModes = reader1->GetOutput().size();	// To support the check update scheme
   vnl_vector<double> wext(m_NumberOfSamples);
+  m_wext = vnl_vector<double>(m_NumberOfSamples);
   //  std::cout << "PCAShape is ";
   for (unsigned int i = 0; i < m_NumberOfSamples; i++)
     {    
-    if (i >= numModes)
+    //if (i >= numModes)
+	if (i >= m_numModes)
       {
       wext[i] = 0.0;
+	  m_wext[i] = 0.0;	
       }
     else
       {
       wext[i] = reader1->GetOutput()[i][0];
+	  m_wext[i] = reader1->GetOutput()[i][0];
       }
     //    std::cout << wext[i] << " ";
     }
+
   //  std::cout <<  std::endl;
 
    // Rotate the LD back into the full dimensional space
@@ -196,9 +207,38 @@ void ShapeWorksViewApp::LoadPCAShape()
 
   // Load the points
   this->DisplayShape(bigLD + m_Stats.Mean());  
+  this->m_displayIndicator = LoadPCAShape_E;
 }
 
+// This is for refresh the scene when user is in load PCA mode
+void ShapeWorksViewApp::LoadPCAShapeCheckUpdate()
+{
+	// Rotate the LD back into the full dimensional space
+	// Rearrange the eigenvectors:     
+	vnl_matrix<double> tmpeigs = m_Stats.Eigenvectors();
+	tmpeigs.fliplr();  
 
+	vnl_vector<double> wext(m_NumberOfSamples);
+	wext = vnl_vector<double>(m_NumberOfSamples);
+	//  std::cout << "PCAShape is ";
+	for (unsigned int i = 0; i < m_NumberOfSamples; i++)
+	{    
+		if (i >= m_numModes)
+		{
+			wext[i] = 0.0;	
+		}
+		else
+		{
+			wext[i] = m_wext[i];
+		}
+	}
+	vnl_vector<double> bigLD = wext.post_multiply(tmpeigs.transpose());
+
+	// Load the points
+	this->DisplayShape(bigLD + m_Stats.Mean());  
+	this->m_displayIndicator = LoadPCAShape_E;
+	
+}
 void ShapeWorksViewApp::generate_color_list(int n)
 {
   m_color_list.resize(n);
@@ -317,11 +357,220 @@ void ShapeWorksViewApp::DisplayMeanDifference()
     vecs.push_back(tmp);
     }
   this->DisplayVectorField(vecs);
+
+  this->m_displayIndicator = DisplayMeanDifference_E;
 }
 
 void ShapeWorksViewApp
 ::DisplayVectorField(const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs)
 {
+#ifdef SW_USE_POWERCRUST
+  if (vecs.size() <  m_glyphPoints->GetNumberOfPoints() )
+    {
+    std::cerr << vecs.size() << ": " << m_glyphPoints->GetNumberOfPoints() << std::endl;
+    std::cerr << "Error: not enough vectors" << std::endl;
+    return;
+    }
+   
+  double minmag = 1.0e20;
+  double maxmag = 0.0;
+  this->ComputeSurface(); // need the surface information for the normals
+
+  vtkFloatArray *vectors = vtkFloatArray::New() ;
+  vtkFloatArray *vectors2= vtkFloatArray::New() ;
+  
+  vectors->SetNumberOfComponents(3);
+  vectors2->SetNumberOfComponents(3);
+
+	vtkSmoothPolyDataFilter *polySmoother = vtkSmoothPolyDataFilter::New();
+	polySmoother->SetInputConnection(m_surf->GetOutputPort());
+	polySmoother->SetNumberOfIterations(10);
+	polySmoother->SetFeatureAngle(90.0);  
+	polySmoother->BoundarySmoothingOn();
+	polySmoother->Update();                               
+                              
+  vtkPolyDataNormals *normFilter = vtkPolyDataNormals::New();
+  normFilter->SetInputConnection(polySmoother->GetOutputPort());
+ 	normFilter->ComputePointNormalsOn();
+ 	normFilter->Update(); 
+ 	
+ 	vtkPolyData *m_surfNormals = normFilter->GetOutput(); 	  
+     
+  // Dot product difference vectors with the surface normals.
+  vtkFloatArray *mags = vtkFloatArray::New();
+  mags->SetNumberOfComponents(1);
+  mags->SetNumberOfTuples(m_glyphPoints->GetNumberOfPoints());
+  
+  vtkFloatArray *smags = vtkFloatArray::New();
+  smags->SetNumberOfComponents(1);
+  smags->SetNumberOfTuples(m_surf->GetOutput()->GetPoints()->GetNumberOfPoints());  
+  for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+  {
+  	smags->InsertTuple1(i,0.0);
+  }
+  
+  vtkFloatArray *svecs = vtkFloatArray::New();
+  svecs->SetNumberOfComponents(3);
+  svecs->SetNumberOfTuples(m_surf->GetOutput()->GetPoints()->GetNumberOfPoints());  
+  for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+  {
+  	svecs->InsertTuple3(i,0.0,0.0,0.0);
+  } 
+   
+  vnl_vector_fixed<double,3> n;
+	
+	// for each particle position,
+  // Compute difference vector dot product with normal.  Length of vector is
+  // stored in the "scalars" so that the vtk color mapping and glyph scaling
+  // happens properly.
+  
+	vtkPointLocator *pointLocator = vtkPointLocator::New();
+	pointLocator->SetDataSet(polySmoother->GetOutput());
+	pointLocator->BuildLocator();
+	   
+  for (unsigned int i = 0; i < m_glyphPoints->GetNumberOfPoints(); i++)
+    {
+    float dv[3];
+    dv[0] = vecs[i][0];
+    dv[1] = vecs[i][1];
+    dv[2] = vecs[i][2];
+       
+		vtkIdType idx = pointLocator->FindClosestPoint(m_glyphPoints->GetPoint(i)); 
+    double *n_tmp = m_surfNormals->GetPointData()->GetNormals()->GetTuple3(idx);
+    n(0) = n_tmp[0];
+    n(1) = n_tmp[1];
+    n(2) = n_tmp[2];
+    
+    float mag =  dv[0]*n(0) + dv[1]*n(1) + dv[2]*n(2);
+    
+    if (mag < minmag) minmag = mag;
+    if (mag > maxmag) maxmag = mag;
+    
+    vectors2->InsertNextTuple3(n(0) * mag, n(1) * mag, n(2) * mag);
+    mags->InsertTuple1(i, mag) ; 
+       
+    //smags->SetValue(idx,mag);
+    
+    //svecs->SetComponent(idx,0,n(0) * mag);
+		//svecs->SetComponent(idx,1,n(1) * mag);
+		//svecs->SetComponent(idx,2,n(2) * mag);       
+    }
+    
+	vtkPolyData *pdata = vtkPolyData::New();
+	pdata->SetPoints(m_glyphPoints);
+	pdata->GetPointData()->SetScalars(mags);
+	pdata->GetPointData()->SetVectors(vectors2);
+	
+	pointLocator->SetDataSet(pdata);
+	pointLocator->SetDivisions(100,100,100);
+	pointLocator->BuildLocator();
+	
+	//for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+	//{
+		//vtkIdType pId = pointLocator->FindClosestPoint(polySmoother->GetOutput()->GetPoint(i));
+		
+		//smags->SetValue(i,mags->GetValue(pId));
+		
+    //svecs->SetComponent(i,0,vectors2->GetComponent(pId,0));
+		//svecs->SetComponent(i,1,vectors2->GetComponent(pId,1));
+		//svecs->SetComponent(i,2,vectors2->GetComponent(pId,2));
+	//}	
+	
+	for (unsigned int i = 0; i < smags->GetNumberOfTuples(); i++)
+	{
+		// find particle (p) closest to current point (v)
+		vtkIdType pId = pointLocator->FindClosestPoint(polySmoother->GetOutput()->GetPoint(i));
+				
+		// use d(p,v) as a radius to find other particles close by
+		double x = polySmoother->GetOutput()->GetPoint(i)[0] - pdata->GetPoint(pId)[0];
+		double y = polySmoother->GetOutput()->GetPoint(i)[1] - pdata->GetPoint(pId)[1];
+		double z = polySmoother->GetOutput()->GetPoint(i)[2] - pdata->GetPoint(pId)[2];
+		double rad = sqrt(x*x + y*y + z*z);
+				
+		vtkIdList *pInRadius = vtkIdList::New();	
+		pointLocator->FindClosestNPoints(8,polySmoother->GetOutput()->GetPoint(i),pInRadius);
+			
+		// assign scalar value based on a weighted scheme
+		//float x;
+		//float y;
+		//float z;
+		float wtScalar = 0.0f;
+		float radSum = 0.0f;
+		float r[8];
+		float vecX = 0.0f;
+		float vecY = 0.0f;
+		float vecZ = 0.0f;
+		for (unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++)
+		{
+			// get a particle position
+			vtkIdType currID = pInRadius->GetId(p);
+			
+			// compute distance to current particle
+			x = polySmoother->GetOutput()->GetPoint(i)[0] - pdata->GetPoint(currID)[0];
+			y = polySmoother->GetOutput()->GetPoint(i)[1] - pdata->GetPoint(currID)[1];
+			z = polySmoother->GetOutput()->GetPoint(i)[2] - pdata->GetPoint(currID)[2];
+			r[p] = 1.0f/(x*x + y*y + z*z);			
+			
+			// multiply scalar value by weight and add to running sum
+			radSum += r[p];
+		}
+		
+		for (unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++)
+		{
+			vtkIdType currID = pInRadius->GetId(p);		
+			wtScalar += r[p]/radSum * mags->GetValue(currID);
+			vecX += r[p]/radSum * vectors2->GetComponent(currID,0);
+			vecY += r[p]/radSum * vectors2->GetComponent(currID,1);
+			vecZ += r[p]/radSum * vectors2->GetComponent(currID,2);
+		}				
+		
+		smags->SetValue(i,wtScalar);
+		
+    svecs->SetComponent(i,0,vecX);
+		svecs->SetComponent(i,1,vecY);
+		svecs->SetComponent(i,2,vecZ);
+				
+		pInRadius->Delete();				
+	}
+	
+	polySmoother->GetOutput()->GetPointData()->SetScalars(smags);
+	polySmoother->GetOutput()->GetPointData()->SetVectors(svecs);
+		
+	vtkPolyDataWriter *m_surfWriter = vtkPolyDataWriter::New();
+	m_surfWriter->SetInputConnection(polySmoother->GetOutputPort());
+	m_surfWriter->SetFileName("gmd.vtk");
+	m_surfWriter->Write();	
+ 	
+  this->UpdateDifferenceLUT(minmag, maxmag);
+  m_glyphMapper->SetLookupTable(m_differenceLUT);
+  m_arrowGlyphMapper->SetLookupTable(m_differenceLUT);
+  
+	m_surf->GetOutput()->GetPointData()->SetScalars(smags);
+	m_surf->GetOutput()->GetPointData()->SetVectors(svecs); 	
+ 	m_surfMap->SetLookupTable(m_differenceLUT);
+ 	m_surfMap->InterpolateScalarsBeforeMappingOn();
+  m_surfMap->SetColorModeToMapScalars();
+  m_surfMap->ScalarVisibilityOn();    
+		  
+	m_glyphs->SetSourceConnection(m_arrowSource->GetOutputPort());
+  m_glyphPointset->GetPointData()->SetVectors(vectors2);
+  m_glyphPointset->GetPointData()->SetScalars(mags);
+
+  m_glyphs->SetScaleModeToScaleByVector();
+  //m_glyphs->SetVectorModeToUseVector();
+  
+  m_renderer->AddActor(m_arrowGlyphActor);
+  
+  vectors->Delete();
+  mags->Delete();
+  smags->Delete();
+  m_surfWriter->Delete();
+
+  m_showingArrowGlyphs = true;
+  
+  if (m_Initialized) this->m_render_window->Render();  
+
+#else
   if (vecs.size() <  m_glyphPoints->GetNumberOfPoints() )
     {
     std::cerr << "Error: not enough vectors" << std::endl;
@@ -427,10 +676,105 @@ void ShapeWorksViewApp
   m_showingArrowGlyphs = true;
   
   if (m_Initialized) this->m_render_window->Render();
+#endif
+}
+
+/****
+	CheckUpdates : If new updates come in, recompute the statistics
+*****/
+
+void ShapeWorksViewApp::CheckUpdates( void* gui )
+{
+	ShapeWorksViewApp *me = static_cast<ShapeWorksViewApp *>(gui);
+	
+	bool has_updates = false;
+	try
+	{
+		// Use STL instead of using boost
+		std::cout << "Check updates... \n";
+		has_updates = std::ifstream( me->lock_file_.c_str() );
+		if ( !has_updates )
+		{
+			
+		}
+		else
+		{	
+			std::cout << me->iteration_ << ": " << "Found updates! \n" ;
+
+			// Rerun statistics
+			me->m_Stats.ReloadPointFiles( );
+			me->m_Stats.ComputeModes();
+			me->m_Stats.PrincipalComponentProjections();
+
+			// To support linear regression and group analysis will be the future task.
+			// Compute the linear regression
+			//me->m_Regression = itk::ParticleShapeLinearRegressionMatrixAttribute<double,3>::New();
+			me->ComputeSimpleRegressionParameters();
+			me->m_Regression->SetMatrix( me->m_Stats.ShapeMatrix() );
+
+			me->m_Regression->ResizeParameters( me->m_Stats.ShapeMatrix().rows());
+			me->m_Regression->ResizeMeanMatrix( me->m_Stats.ShapeMatrix().rows(), me->m_Stats.ShapeMatrix().cols());
+			me->m_Regression->Initialize();
+			me->m_Regression->EstimateParameters();
+
+			// Check which mode the displayer is
+			if ( me->m_displayIndicator == LoadPointFile_E 
+				|| me->m_displayIndicator == LoadVectorField_E
+				|| me->m_displayIndicator == PointFileDiff_E )
+			{
+				// In these modes, only needs to update m_Stats. 
+				// No need to call callback function.
+			} 
+			else
+			{
+				void (*callbackPtr)( void * ) = me->m_callbackPtrVec[ me->m_displayIndicator ];
+				callbackPtr( me );
+			}
+
+			if ( remove( me->lock_file_.c_str() ) != 0 )
+			{
+				// LOG
+				std::cerr << "Viewer cannot delete the lock file, Ignore it! \n";
+			}
+			else
+			{
+				me->iteration_++;
+			}
+			
+		}
+	}
+	catch ( ... )
+	{
+	}
+
+	 Fl::repeat_timeout( 5.0, &ShapeWorksViewApp::CheckUpdates, gui );
+	 return;
 }
 
 ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
 {
+  this->iteration_ = 0;
+
+  this->lock_file_ = "iteration_lock.txt";
+
+  // Register functions that will be called when a new updates arrive.
+
+  // Group and linear regression will be the future task.
+ 
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::LoadPCAShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayMeanDifferenceCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayStatsMeanCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup1MeanCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup2MeanCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplaySamplesCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::ComputeRegressionShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::ComputeModeShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::ComputeGroupMeanDifferenceShapeCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup1MedianCallBack );
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroup2MedianCallBack );
+
+  m_callbackPtrVec.push_back( &ShapeWorksViewApp::DisplayGroupMedianCallBack );
+
   this->generate_color_list(1024);
   m_Initialized = false;
   m_CurrentDirectory = ".";
@@ -537,6 +881,8 @@ ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
   this->ComputeSurface();
   this->HideGroups();
   m_Initialized = true;
+
+  m_displayIndicator = DisplayStatsMean_E; // record which mode the view is in.
 }
 
 
@@ -566,10 +912,12 @@ void ShapeWorksViewApp::ChangeColorScheme()
 }
 void ShapeWorksViewApp::ComputeSurface()
 {
+#ifndef SW_USE_POWERCRUST
   m_surf->SetNeighborhoodSize(this->neighborhoodsize->value());
   m_surf->SetSampleSpacing(this->samplespacing->value());
-  m_renderer->AddActor(m_surfActor);
+#endif
 
+  m_renderer->AddActor(m_surfActor);
   if (m_Initialized) this->m_render_window->Render();
 }
 
@@ -584,6 +932,8 @@ void ShapeWorksViewApp::ComputeRegressionShape()
 {
   vnl_vector<double> pos = m_Regression->ComputeMean(this->position->value());
   this->DisplayShape(pos);
+
+  this->m_displayIndicator = ComputeRegressionShape_E;
 }
 
 void ShapeWorksViewApp::ComputeSimpleRegressionParameters()
@@ -596,7 +946,7 @@ void ShapeWorksViewApp::ComputeSimpleRegressionParameters()
     {    
     m_SimpleRegressionA =  m_SimpleRegressionIntercepts[m];
     m_SimpleRegressionB =  m_SimpleRegressionSlopes[m];
-    std::cout << "Found user-supplied paramters for mode = " << m << std::endl;
+    std::cout << "Found user-supplied parameters for mode = " << m << std::endl;
     std::cout << "a = " << m_SimpleRegressionA << std::endl;
     std::cout << "b = " << m_SimpleRegressionB << std::endl;
     return;
@@ -638,12 +988,16 @@ void ShapeWorksViewApp::ComputeModeShape()
   
   this->DisplayShape(m_Stats.Mean() + (e * (s * lambda)));
 
+  this->m_displayIndicator = ComputeModeShape_E;
+
 }
 
 void ShapeWorksViewApp::ComputeGroupMeanDifferenceShape()
 {
   double s = this->groupdiff_position->value();
   this->DisplayShape(m_Stats.Group1Mean() + (m_Stats.GroupDifference() *s));
+
+  this->m_displayIndicator = ComputeGroupMeanDifferenceShape_E;
 }
 
 void ShapeWorksViewApp::DisplayShape(const vnl_vector<double> &pos)
@@ -671,6 +1025,7 @@ void ShapeWorksViewApp::DisplayShape(const vnl_vector<double> &pos)
     
     this->m_render_window->Render();
     }  
+
 }
 
 void ShapeWorksViewApp::InitializeRenderer()
@@ -699,6 +1054,28 @@ void ShapeWorksViewApp::InitializeRenderer()
 
 void ShapeWorksViewApp::InitializeSurface()
 {
+#ifdef SW_USE_POWERCRUST
+  m_surf = vtkPowerCrustSurfaceReconstruction::New();
+  m_surf->SetInput(m_glyphPointset);
+  
+  m_surfReverse = vtkReverseSense::New();
+  m_surfReverse->SetInputConnection(m_surf->GetOutputPort());
+  m_surfReverse->ReverseCellsOn();
+  m_surfReverse->ReverseNormalsOn();
+
+  m_surfSmoother = vtkSmoothPolyDataFilter::New();
+  m_surfSmoother->SetInputConnection(m_surfReverse->GetOutputPort());
+  m_surfSmoother->SetNumberOfIterations(0);
+  
+  m_surfMap = vtkPolyDataMapper::New();
+  m_surfMap->SetInputConnection(m_surfSmoother->GetOutputPort());
+  m_surfMap->ScalarVisibilityOn();
+  
+  m_surfActor = vtkActor::New();
+  m_surfActor->SetMapper(m_surfMap);
+  m_surfActor->GetProperty()->SetSpecular(.4);
+  m_surfActor->GetProperty()->SetSpecularPower(50);
+#else
   m_surf = vtkSurfaceReconstructionFilter::New();
   m_surf->SetInput(m_glyphPointset);
   m_surf->SetNeighborhoodSize(this->neighborhoodsize->value());
@@ -714,14 +1091,6 @@ void ShapeWorksViewApp::InitializeSurface()
   m_surfReverse->ReverseCellsOn();
   m_surfReverse->ReverseNormalsOn();
 
-  //  m_surfDecimate = vtkDecimatePro::New();  
-  //  m_surfDecimate->SetInputConnection(m_surfReverse->GetOutputPort());
-  //  m_surfDecimate->SetTargetReduction(0.0);
-  //  m_surfDecimate->PreserveTopologyOff();
-
-  //  m_surfNormals = vtkPolyDataNormals::New();
-  //  m_surfNormals->SetInputConnection(m_surfDecimate->GetOutputPort());
-  
   m_surfSmoother = vtkSmoothPolyDataFilter::New();
   m_surfSmoother->SetInputConnection(m_surfReverse->GetOutputPort());
   m_surfSmoother->SetNumberOfIterations(0);
@@ -734,6 +1103,7 @@ void ShapeWorksViewApp::InitializeSurface()
   m_surfActor->SetMapper(m_surfMap);
   m_surfActor->GetProperty()->SetSpecular(.4);
   m_surfActor->GetProperty()->SetSpecularPower(50);
+#endif
 }
 
 void ShapeWorksViewApp::SetGlyphScale()
