@@ -1,0 +1,762 @@
+#ifndef TRIMESH_H
+#define TRIMESH_H
+/*
+Szymon Rusinkiewicz
+Princeton University
+
+TriMesh.h
+Class for triangle meshes.
+*/
+
+#define  LARGENUM  10000000.0
+#define  ONE       1 
+#define  CURVATURE 2 
+#define  NOISE     3
+//#define SPEEDTYPE ONE
+
+#include "Vec.h"
+#include "Color.h"
+#include "math.h"
+#include <vector>
+#include <list>
+#include <map>
+#include <limits>
+#include <iostream>
+
+using std::vector;
+using std::map;
+
+#define  PI 3.141592653589793
+
+#ifndef MIN
+  #define MIN(a,b) ((a)<(b))?(a):(b) 
+#endif
+
+#ifndef MAX
+  #define MAX(a,b) ((a)>(b))?(a):(b)
+#endif
+
+
+class TriMesh {
+protected:
+	static bool read_helper(const char *filename, TriMesh *mesh);
+
+public:
+	// Types
+	struct Face {
+		int v[3];
+		double speedInv;
+		double T[3];
+		vec3 edgeLens;  // edge length for 01, 12, 20
+
+		Face() {}
+		Face(const int &v0, const int &v1, const int &v2)
+		{
+			v[0] = v0; v[1] = v1; v[2] = v2;
+		}
+		Face(const int *v_)
+		{
+			v[0] = v_[0]; v[1] = v_[1]; v[2] = v_[2];
+		}
+		int &operator[] (int i) { return v[i]; }
+		const int &operator[] (int i) const { return v[i]; }
+		operator const int * () const { return &(v[0]); }
+		operator const int * () { return &(v[0]); }
+		operator int * () { return &(v[0]); }
+		int indexof(int v_) const
+		{
+			return (v[0] == v_) ? 0 :
+			       (v[1] == v_) ? 1 :
+			       (v[2] == v_) ? 2 : -1;
+		}
+	};
+
+	class BBox {
+  public:
+    point min, max;
+    bool valid;
+    
+    // Construct as empty
+	BBox() : min(point(std::numeric_limits<float>::max(),
+										 std::numeric_limits<float>::max(),
+										 std::numeric_limits<float>::max())),
+      max(point(std::numeric_limits<float>::min(),
+								std::numeric_limits<float>::min(),
+								std::numeric_limits<float>::min())),
+      valid(false)
+				{}
+    
+    // Initialize to one point or two points
+  BBox(const point &p) : min(p), max(p), valid(true)
+      {}
+  BBox(const point &min_, const point &max_) :
+    min(min_), max(max_), valid(true)
+      {}
+    
+    // Mark invalid
+    void clear()
+    {
+      min = point(std::numeric_limits<float>::max(),
+									std::numeric_limits<float>::max(),
+		  std::numeric_limits<float>::max());
+      max = point(std::numeric_limits<float>::min(),
+									std::numeric_limits<float>::min(),
+									std::numeric_limits<float>::min());
+      valid = false;
+    }
+    
+    // Return center point and (vector) diagonal
+    point center() const { return 0.5f * (min+max); }
+    vec size() const { return max - min; }
+    
+    // Grow a bounding box to encompass a point
+    BBox &operator += (const point &p)
+      { min.min(p); max.max(p); return *this; }
+    BBox &operator += (const BBox &b)
+      { min.min(b.min); max.max(b.max); return *this; }
+    
+    // The following appear to be necessary for Visual Studio,
+    // despite the fact that the operators shouldn't need
+    // to be friends...
+    friend const TriMesh::BBox operator + (const TriMesh::BBox &b, const point &p);
+    friend const TriMesh::BBox operator + (const point &p, const TriMesh::BBox &b);
+    friend const TriMesh::BBox operator + (const TriMesh::BBox &b1, const TriMesh::BBox &b2);
+  };
+	/*
+		struct BBox {
+		point min, max;
+		point center() const { return 0.5f * (min+max); }
+		vec size() const { return max - min; }
+		bool valid;
+		BBox() : valid(false)
+			{}
+	};
+	*/
+
+	struct BSphere {
+		point center;
+		float r;
+		bool valid;
+		BSphere() : valid(false)
+			{}
+	};
+
+	// Enums
+	enum tstrip_rep { TSTRIP_LENGTH, TSTRIP_TERM };
+	enum { GRID_INVALID = -1 };
+	//enum speed_type { ONE = 0, CURVATURE, NOISE };
+
+	// The basics: vertices and faces
+	vector< point > vertices;
+	vector<Face> faces;
+
+	int speedType;
+
+ 
+	// Triangle strips
+	vector<int> tstrips;
+
+	// Grid, if present
+	vector<int> grid;
+	int grid_width, grid_height;
+
+	// Other per-vertex properties
+	vector<Color> colors;
+	vector<float> confidences;
+	vector<unsigned> flags;
+	unsigned flag_curr;
+
+	// Computed per-vertex properties
+	vector<vec> normals;
+	vector<vec> pdir1, pdir2;
+	vector<float> curv1, curv2;
+	vector<float> abs_curv;
+	vector< Vec<4,float> > dcurv;
+	vector<vec> cornerareas;
+	vector<float> pointareas;
+  //	vector< vector<double> > vertT;
+	//vector< vector<int> > geoIndex;
+	//vector< vector<double> > geoMap;
+  vector< map<unsigned int, unsigned int> > geodesicMap;
+	//vector< vector<int> > adaptIndex;
+	//vector< vector<double> > adaptMap;
+	//vector< vector<int> > *iMap;
+	//vector< vector<double> > *dMap;
+	double *geodesic;
+
+  unsigned int scaleFactor;
+
+
+	// Bounding structures
+	BBox bbox;
+	BSphere bsphere;
+
+	// Connectivity structures:
+	//  For each vertex, all neighboring vertices
+	vector< vector<int> > neighbors;
+	//  For each vertex, all neighboring faces
+	vector< vector<int> > adjacentfaces;
+
+	vector<double> radiusInscribe;
+
+	vector<int>  getTwoNeighbors(int v){
+		vector<int> twoNeighbors;
+		
+		// for each neighbor
+		for(int i=0; i < this->neighbors[v].size(); i++){
+			// add self
+			int n = this->neighbors[v][i];
+			twoNeighbors.push_back(n);
+			
+			// add neighbors
+			for(int j=0; j < this->neighbors[n].size(); j++)
+				twoNeighbors.push_back( this->neighbors[n][j] );
+		}
+
+
+		return twoNeighbors;
+	}
+
+
+	vector< vector<Face> > vertOneringFaces;
+	//  For each face, the three faces attached to its edges
+	//  (for example, across_edge[3][2] is the number of the face
+	//   that's touching the edge opposite vertex 2 of face 3)
+	vector<Face> across_edge;
+
+	vector<float> noiseOnVert;
+	
+   //JAL: Geodesic Voronoi Info
+   //for each vertex, which voronoi cell it is in
+   vector<int> vor_cell_of_vert;
+   vector<int> faces_spanning_voronoi;
+
+
+	 int getSpeedType(){
+		 return speedType;
+	 }
+	//int SPEEDTYPE;
+	// Compute all this stuff...
+	void setSpeedType(int st)
+	{
+		//ST = st;
+		speedType = st;
+		if(st == ONE){
+			//iMap = &geoIndex;
+			//dMap = &geoMap;
+		}
+		else if(st == CURVATURE){
+			//iMap = &adaptIndex;
+			//dMap = &adaptMap;
+		}
+		else{
+			std::cout  << "Impossible SpeedType set" << std::endl;
+			exit(1337);
+		}
+	}
+	void need_tstrips();
+	void convert_strips(tstrip_rep rep);
+	void unpack_tstrips();
+	void triangulate_grid();
+	void need_faces()
+	{
+		if (!faces.empty())
+			return;
+		if (!tstrips.empty())
+			unpack_tstrips();
+		else if (!grid.empty())
+			triangulate_grid();
+	}
+
+	void need_faceedges();
+	void need_speed();
+	void need_noise(int nNoiseIter);
+	void need_oneringfaces();
+	void need_normals();
+	void need_pointareas();
+	void need_curvatures();
+	void need_abs_curvatures();
+	void need_dcurv();
+	void need_bbox();
+	void need_bsphere();
+	void need_neighbors();
+	void need_adjacentfaces();
+	void need_across_edge();
+	void need_meshinfo();
+	void need_Rinscribe();
+
+	// Input and output
+	static TriMesh *read(const char *filename);
+	bool write(const char *filename);
+
+	// Statistics
+	// XXX - Add stuff here
+	float feature_size();
+
+	// Useful queries
+	// XXX - Add stuff here
+	bool is_bdy(int v)
+	{
+		if (neighbors.empty()) need_neighbors();
+		if (adjacentfaces.empty()) need_adjacentfaces();
+		return neighbors[v].size() != adjacentfaces[v].size();
+	}
+
+
+vec trinorm(int f)
+{
+	if (faces.empty()) need_faces();
+	return ::trinorm(vertices[faces[f][0]], vertices[faces[f][1]],
+		vertices[faces[f][2]]);
+}
+
+// FIM: check angle for at a given vertex, for a given face
+bool IsNonObtuse(int v, Face f)
+{		
+	int iV = f.indexof(v);
+
+	point A = this->vertices[v];
+	point B = this->vertices[f[(iV+1)%3]];
+	point C = this->vertices[f[(iV+2)%3]];
+
+	float a = dist(B,C);
+	float b = dist(A,C);
+	float c = dist(A,B);
+
+	float angA = 0.0; /* = acos( (b*b + c*c - a*a) / (2*b*c) )*/
+
+	if ((a > 0) && (b > 0) && (c > 0))//  Manasi stack overflow
+	{//  Manasi stack overflow
+		angA = acos( (b*b + c*c - a*a) / (2*b*c) );//  Manasi stack overflow
+	}//  Manasi stack overflow
+
+	//return ( angA - PI/2.0f < -0.00001 );
+	return ( angA < M_PI/2.0f );
+}
+
+// FIM: given a vertex, find an all-acute neighborhood of faces
+void SplitFace(vector<Face> &acFaces, int v, Face cf, int nfAdj/*, int currentVert*/)
+{		
+	// get all the four vertices in order
+	/* v1         v4
+	+-------+
+	\     . \
+	\   .   \
+	\ .     \
+	+-------+
+	v2         v3 */
+
+	int iV = cf.indexof(v);											// get index of v in terms of cf
+	int v1 = v;
+	int v2 = cf[(iV+1)%3];
+	int v4 = cf[(iV+2)%3];
+	iV = this->faces[nfAdj].indexof(v2);				// get index of v in terms of adjacent face
+	int v3 = this->faces[nfAdj][(iV+1)%3];
+
+	// create faces (v1,v3,v4) and (v1,v2,v3), check angle at v1
+	Face f1(v1,v3,v4);													
+	//f1.T[f1.indexof(v1)] = this->vertT[currentVert][v1];
+	//f1.T[f1.indexof(v3)] = this->vertT[currentVert][v3];
+	//f1.T[f1.indexof(v4)] = this->vertT[currentVert][v4];
+	
+
+	Face f2(v1,v2,v3);
+	//f2.T[f2.indexof(v1)] = this->vertT[currentVert][v1];
+	//f2.T[f2.indexof(v2)] = this->vertT[currentVert][v2];
+	//f2.T[f2.indexof(v3)] = this->vertT[currentVert][v3];
+	
+	
+	if (IsNonObtuse(v,f1))
+	{
+		//switch (SPEEDTYPE)
+		switch(speedType)
+		{
+		case CURVATURE:
+			/*
+			f1.speedInv = ( abs(curv1[f1[0]] + curv2[f1[0]]) + 
+											abs(curv1[f1[1]] + curv2[f1[1]]) + 
+											abs(curv1[f1[2]] + curv2[f1[2]]) ) / 6;
+			*/
+			f1.speedInv = ( abs_curv[f1[0]] + 
+               abs_curv[f1[1]] + 
+               abs_curv[f1[2]] ) / 3.0;
+               
+			break;
+		case ONE:
+			f1.speedInv = 1.0;
+			break;
+		case NOISE:
+			f1.speedInv = (noiseOnVert[f1[0]] + 
+										 noiseOnVert[f1[1]] + 
+										 noiseOnVert[f1[2]]) / 3;
+		default:
+			f1.speedInv = 1.0;
+			break;
+		}
+		
+		vec3 edge01 = (vec3)(vertices[f1[1]] - vertices[f1[0]]);
+		vec3 edge12 = (vec3)(vertices[f1[2]] - vertices[f1[1]]);
+		vec3 edge20 = (vec3)(vertices[f1[0]] - vertices[f1[2]]);
+		f1.edgeLens[0] =sqrt(edge01[0]*edge01[0] + edge01[1]*edge01[1] + edge01[2]*edge01[2]);
+		f1.edgeLens[1] =sqrt(edge12[0]*edge12[0] + edge12[1]*edge12[1] + edge12[2]*edge12[2]);
+		f1.edgeLens[2] =sqrt(edge20[0]*edge20[0] + edge20[1]*edge20[1] + edge20[2]*edge20[2]);
+		acFaces.push_back(f1);
+	}
+	else
+	{
+		int nfAdj_new = this->across_edge[nfAdj][this->faces[nfAdj].indexof(v2)];
+		if (nfAdj_new > -1)
+		{
+			SplitFace(acFaces,v,f1,nfAdj_new/*, currentVert*/);
+		}
+		else
+		{
+			//printf("NO cross edge!!! Maybe a hole!!\n");
+		}
+		//SplitFace(acFaces,v,f1,nfAdj_new, currentVert);
+	}
+
+	if (IsNonObtuse(v,f2))
+	{
+		//switch (SPEEDTYPE)
+		switch(speedType)
+		{
+		case CURVATURE:
+			/*
+			f2.speedInv = ( abs(curv1[f2[0]] + curv2[f2[0]]) + 
+												abs( curv1[f2[1]] + curv2[f2[1]]) + 
+												abs(curv1[f2[2]] + curv2[f2[2]]) ) / 6;
+			*/
+			f2.speedInv = ( abs_curv[f2[0]] + 
+               abs_curv[f2[1]] + 
+               abs_curv[f2[2]] ) / 3.0;
+
+			break;
+		case ONE:
+			f2.speedInv = 1.0;
+			break;
+		case NOISE:
+			f2.speedInv = (noiseOnVert[f2[0]] + 
+										 noiseOnVert[f2[1]] + 
+
+										 noiseOnVert[f2[2]]) / 3;
+
+			break;
+		default:
+			f2.speedInv = 1.0;
+			break;
+		}
+
+
+		vec3 edge01 = (vec3)(vertices[f2[1]] - vertices[f2[0]]);
+		vec3 edge12 = (vec3)(vertices[f2[2]] - vertices[f2[1]]);
+		vec3 edge20 = (vec3)(vertices[f2[0]] - vertices[f2[2]]);
+		f2.edgeLens[0] =sqrt(edge01[0]*edge01[0] + edge01[1]*edge01[1] + edge01[2]*edge01[2]);
+		f2.edgeLens[1] =sqrt(edge12[0]*edge12[0] + edge12[1]*edge12[1] + edge12[2]*edge12[2]);
+		f2.edgeLens[2] =sqrt(edge20[0]*edge20[0] + edge20[1]*edge20[1] + edge20[2]*edge20[2]);
+		acFaces.push_back(f2);
+	}
+	else
+	{
+		int nfAdj_new = this->across_edge[nfAdj][this->faces[nfAdj].indexof(v4)];
+		if (nfAdj_new > -1)
+		{
+			SplitFace(acFaces,v,f2,nfAdj_new/*,currentVert*/);
+		}
+		else
+		{
+			//printf("NO cross edge!!! Maybe a hole!!\n");
+		}
+		//SplitFace(acFaces,v,f2,nfAdj_new,currentVert);
+	}
+}
+
+
+// FIM: one ring function
+vector<Face> GetOneRing(int v/*, int currentVert*/)
+{
+  // make sure we have the across-edge map
+	if (this->across_edge.empty())
+		this->need_across_edge();
+
+	// variables required
+	vector<Face> oneRingFaces;
+	vector<Face> t_faces;
+
+	// get adjacent faces
+	int naf = this->adjacentfaces[v].size();
+
+	if (!naf)
+	{
+		std::cout << "vertex " << v << " has 0 adjacent faces..." << std::endl;
+	}
+	else
+	{
+		for (int af = 0; af < naf; af++)
+		{
+			Face cf = this->faces[adjacentfaces[v][af]];
+
+			t_faces.clear();
+			if(IsNonObtuse(v,cf))// check angle: if non-obtuse, return existing face
+			{
+				//this->colors[cf[0]] = Color::red();
+				//this->colors[cf[1]] = Color::red();
+				//this->colors[cf[2]] = Color::red();
+				t_faces.push_back(cf);					
+			}
+			else
+			{
+				//t_faces.push_back(cf);
+				int nfae = this->across_edge[this->adjacentfaces[v][af]][cf.indexof(v)];
+				if (nfae > -1)
+				{
+					SplitFace(t_faces,v,cf,nfae/*,currentVert*/);// if obtuse, split face till we get all acute angles
+				}
+				else
+				{
+					//printf("NO cross edge!!! Maybe a hole!!\n");
+				}
+				//SplitFace(t_faces,v,cf,nfae,currentVert);// if obtuse, split face till we get all acute angles
+			}
+
+			for (int tf = 0; tf < t_faces.size(); tf++)
+			{					
+				//this->colors[t_faces[tf][0]] = Color::red();
+				//this->colors[t_faces[tf][1]] = Color::red();
+				//this->colors[t_faces[tf][2]] = Color::red();
+				oneRingFaces.push_back(t_faces[tf]);
+			}
+		}				
+	}
+	//this->colors[v] = Color::green();
+	return oneRingFaces;
+}
+
+
+	// FIM: initialize attributes
+	//typedef std::<int> ListType;
+void InitializeAttributes(int currentVert , std::vector<int> seeds = vector<int>() )
+{
+	// initialize the travel times over all vertices...
+	/*
+	int nv = this->vertices.size();
+
+ 	for (int v = 0; v < nv; v++){			
+		this->vertT[currentVert].push_back(LARGENUM);  //modified from this->vertT[v] = 1000000.0)
+	}
+	*/
+	//vector<int> nb;
+	
+	int nv = this->vertices.size();
+	this->geodesic = new double[nv];
+	
+	for(int v= 0; v < nv; v++){
+		geodesic[v] = LARGENUM;
+	}
+
+	
+
+  // initialize seed points if present...
+	if (!seeds.empty()){
+		int ns = seeds.size();
+		for (int s = 0; s < ns; s++){
+			//this->vertMap[currentVert][seeds[s]].d = 0;
+			geodesic[seeds[s]] = 0;
+		}
+	}
+
+
+  // pre-compute faces, normals, and other per-vertex properties that may be needed
+	this->need_neighbors();
+	this->need_normals();
+	this->need_adjacentfaces();
+	this->need_across_edge();		
+	this->need_faces();
+
+	/* HOW DO WE DO THIS USING NEW GEODESIC DATA STRUCTURE?
+	// for all faces: initialize per-vertex travel time and face-speed		
+	int nf = this->faces.size();
+	for (int f = 0; f < nf; f++)
+	{
+		Face cf = this->faces[f];
+		
+		// travel time
+		faces[f].T[0] = this->vertT[currentVert][cf[0]];
+		faces[f].T[1] = this->vertT[currentVert][cf[1]];
+		faces[f].T[2] = this->vertT[currentVert][cf[2]];
+	}
+	*/
+}
+
+// FIM:  Remove data lingering from computation
+void CleanupAttributes(int currentVert)
+{
+	delete [] this->geodesic;
+}
+
+double GetEuclideanDistance(int v1,int v2)
+{
+	double d = 0.0;
+	point p1, p2;
+	
+	p1 = this->vertices[v1];
+	p2 = this->vertices[v2];
+
+	d = dist(p1,p2);
+
+	return d;
+}
+
+
+double GetGeodesicDistance(int v1,int v2)
+{
+  double gDist = 0.0;
+
+  if (v1 == v2) return gDist;
+
+  int vert = v1;
+  int key = v2;
+
+  if (v2 > v1)
+  {
+    vert = v2;
+    key = v1;
+  }
+
+  std::map<unsigned int,unsigned int>::iterator geoIter = this->geodesicMap[vert].find(key);
+  if (geoIter != this->geodesicMap[vert].end())
+  {
+    gDist = geoIter->second;
+  }
+  else
+  {
+    gDist = LARGENUM;
+  }
+
+  return (gDist/(float)(this->scaleFactor));
+}
+
+
+int FindNearestVertex(point pt)
+{
+	int id = 0;
+	float minD = LARGENUM;
+
+  for (int i = 0; i < vertices.size(); i++)
+  {
+    float d = dist(pt, vertices[i]);
+    if (d < minD)
+    {
+      minD = d;
+      id = i;
+    }
+  }
+	return id;
+}
+
+
+//int FindNearestVertex(point p)
+//{
+//  // find which face p belongs to using barycentric co-ordinates
+//  int id = 0;
+//  bool found_face = false;
+//  for (int f = 0;f < this->faces.size(); f++)
+//  {
+//    if (!found_face)
+//    {
+//      point a = this->vertices[this->faces[f].v[0]];
+//      point b = this->vertices[this->faces[f].v[1]];
+//      point c = this->vertices[this->faces[f].v[2]];
+//
+//      // Compute vectors        
+//      point v0 = c - a;
+//      point v1 = b - a;
+//      point v2 = p - a;
+//
+
+//      // Compute dot products
+//      float dot00 = v0 DOT v0;
+//      float dot01 = v0 DOT v1;
+//      float dot02 = v0 DOT v2;
+//      float dot11 = v1 DOT v1;
+//      float dot12 = v1 DOT v2;
+//      
+//      // Compute barycentric coordinates
+//      float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
+//      float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+//      float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+//
+//      // Check if point is in triangle
+//      if ( (u >= 0) && (v >= 0) && ((u + v) <= 1) )
+//      {
+//        id = f;
+//        found_face = true;
+//      }
+//    }
+//
+//  }
+//
+//	int vid = 0;
+//	float minD = LARGENUM;
+//
+//  for (int i = 0; i < 2; i++)
+//  {
+//    point v = this->vertices[this->faces[id].v[i]];
+//    float d = dist(p,v);
+//    if (d < minD)
+//    {
+//      minD = d;
+//      vid = this->faces[id].v[i];
+//    }
+//  }
+//	return vid;
+//}
+//
+//
+//
+//
+//
+//
+//
+// Debugging printout, controllable by a "verbose"ness parameter
+
+static int verbose;
+static void set_verbose(int);
+static void (*dprintf_hook)(const char *);
+static void set_dprintf_hook(void (*hook)(const char *));
+static void dprintf(const char *format, ...);
+
+// Same as above, but fatal-error printout
+static void (*eprintf_hook)(const char *);
+static void set_eprintf_hook(void (*hook)(const char *));
+static void eprintf(const char *format, ...);
+
+// Constructor
+ TriMesh() : grid_width(-1), grid_height(-1), flag_curr(0), speedType(ONE)
+{
+  scaleFactor = 1000;
+	//iMap = &geoIndex;
+	//dMap = &geoMap;		
+}
+};
+
+
+inline const TriMesh::BBox operator + (const TriMesh::BBox &b, const point &p)
+{
+  return TriMesh::BBox(b) += p;
+}
+
+
+inline const TriMesh::BBox operator + (const point &p, const TriMesh::BBox &b)
+{
+  return TriMesh::BBox(b) += p;
+}
+
+
+inline const TriMesh::BBox operator + (const TriMesh::BBox &b1, const TriMesh::BBox &b2)
+{
+  return TriMesh::BBox(b1) += b2;
+}
+
+#endif
+

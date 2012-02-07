@@ -73,7 +73,7 @@ SetMesh(TriMesh *mesh, const char *gfile)
   m_mesh->need_speed();
   m_mesh->setSpeedType(1);
 
-  double d = m_mesh->bsphere.r * PI * 2.0f * 0.05f;
+  double d = m_mesh->bsphere.r * PI * 2.0f * 0.1f;
   m_fim->SetStopDistance(d);
 
   m_fim->loadGeodesicFile(m_mesh, gfile);

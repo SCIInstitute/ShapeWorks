@@ -29,16 +29,24 @@ option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)
 
 # Configure Mesh support
 if(BUILD_MeshSupport)
-include(FindFIM.cmake)
-
-if(FIM_FOUND)
-  include_directories(${FIM_INCLUDE})
+  SUBDIRS(fim)
+  INCLUDE_DIRECTORIES(fim/trimesh2/include)
   add_definitions(-DSW_USE_MESH)
-else(FIM_FOUND)
- message(FATAL_ERROR "FIM library is required for mesh support, but could not be found.")   
-endif(FIM_FOUND)
-
 endif(BUILD_MeshSupport)
+
+
+# # Configure Mesh support
+# if(BUILD_MeshSupport)
+# include(FindFIM.cmake)
+
+# if(FIM_FOUND)
+  # include_directories(${FIM_INCLUDE})
+  # add_definitions(-DSW_USE_MESH)
+# else(FIM_FOUND)
+ # message(FATAL_ERROR "FIM library is required for mesh support, but could not be found.")   
+# endif(FIM_FOUND)
+
+# endif(BUILD_MeshSupport)
 
 # Set up the include directories
 include_directories ( 

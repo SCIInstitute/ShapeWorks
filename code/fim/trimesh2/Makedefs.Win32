@@ -1,0 +1,72 @@
+ifneq (,$(findstring CYGWIN,$(shell uname)))
+  # Cygwin
+  CC = gcc
+  CXX = g++
+  AR = ar
+else
+  # Mingw32 cross compiler
+  CC = i686-pc-mingw32-gcc
+  CXX = i686-pc-mingw32-g++
+  AR = i686-pc-mingw32-ar
+endif
+
+EXE = .exe
+
+
+COPTS = -march=pentium3 -mfpmath=sse
+ifdef DEBUG
+	COPTS = -mno-cygwin
+	COPTS += -ggdb3
+	COPTS += -Wall -W -Wno-unused -Wno-sign-compare -Wno-unknown-pragmas
+	CXXOPTS = $(COPTS)
+else
+	COPTS = -mno-cygwin
+	#COPTS += -mwindows # No commandline window
+	COPTS += -O3 -funroll-loops -fomit-frame-pointer
+	#COPTS += -ffast-math
+	COPTS += -fno-math-errno -funsafe-math-optimizations
+	COPTS += -Wall -W -Wno-unused -Wno-sign-compare -Wno-unknown-pragmas
+	CXXOPTS = $(COPTS)
+	LDOPTS = -s
+endif
+
+CFLAGS = $(INCLUDES) $(DEFINES) $(COPTS)
+CXXFLAGS = $(INCLUDES) $(DEFINES) $(CXXOPTS)
+LDFLAGS = $(LIBDIR) $(LDOPTS)
+
+
+LIBS = -lm
+GLLIBS = -lgluit -lwinmm -lopengl32 -lglu32 -lgdi32
+CHOLMODLIBS = -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis -llapack -lf77blas -lcblas -latlas -lg2c
+
+
+$(OBJDIR)/%.o: %.c
+	@ echo "Compiling $<"
+	@ rm -f "$(@:.o=.d)" && env DEPENDENCIES_OUTPUT="$(@:.o=.d) $@" $(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: %.cc
+	@ echo "Compiling $<"
+	@ rm -f "$(@:.o=.d)" && env DEPENDENCIES_OUTPUT="$(@:.o=.d) $@" $(CXX) $(CXXFLAGS) -c $< -o $@
+
+
+define LINK
+	@ echo "Linking $@"
+	@ rm -f $@
+	@ $(CXX) $(CXXFLAGS) $^ $(LDFLAGS) $(LIBS) -o $@
+endef
+
+define STATICLIB
+	@ echo "Creating library $@"
+	@ rm -f $@
+	@ $(AR) -rcs $@ $^
+endef
+
+define SHAREDLIB
+	@ echo "Creating library $@"
+	@ rm -f $@
+	@ $(CXX) $(CXXFLAGS) -shared $^ -o $@
+endef
+
+
+-include $(OBJDIR)/*.d
+
