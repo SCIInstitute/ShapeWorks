@@ -926,6 +926,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   elem = docHandle.FirstChild( "fixed_landmarks" ).Element();
   if (elem)
   {
+    inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> ftmp)
     {
       f.push_back(ftmp);
@@ -944,6 +945,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   elem = docHandle.FirstChild( "fixed_domains" ).Element();
   if (elem)
   {
+    inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> ftmp)
     {
       f.push_back(ftmp);
