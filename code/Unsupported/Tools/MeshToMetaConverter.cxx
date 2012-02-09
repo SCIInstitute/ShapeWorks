@@ -19,6 +19,7 @@
 #include <string>
 #include "string_io.h"
 #include <fstream>
+#include <stdlib.h>
 
 
 struct point_type
