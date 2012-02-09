@@ -836,8 +836,8 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   }
 
   // Set the extent of the viewer selectors
-  viewer1_domain_spinner->maximum(numShapes-2);
-  viewer2_domain_spinner->maximum(numShapes-2);
+  viewer1_domain_spinner->maximum(numShapes-1);
+  viewer2_domain_spinner->maximum(numShapes-1);
 
   // Set extent of number of mode selector
   number_of_modes_spinner->maximum(numShapes-2);
