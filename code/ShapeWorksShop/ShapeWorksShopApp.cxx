@@ -840,7 +840,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   viewer2_domain_spinner->maximum(numShapes-1);
 
   // Set extent of number of mode selector
-  number_of_modes_spinner->maximum(numShapes-2);
+  number_of_modes_spinner->maximum(numShapes-1);
 
   m_Iteratecmd  = itk::MemberCommand<ShapeWorksShopApp>::New();
   m_Iteratecmd->SetCallbackFunction(this, &ShapeWorksShopApp::IterateCallback);
