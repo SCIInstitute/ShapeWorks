@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+
+<point_files>  
+torus.0.wpts
+torus.1.wpts 
+torus.2.wpts
+</point_files>		  <!-- Set of correspondence points -->
+                     <!-- in "world" coordinate space. -->
