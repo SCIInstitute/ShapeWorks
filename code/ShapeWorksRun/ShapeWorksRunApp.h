@@ -129,6 +129,7 @@ protected:
   double m_spacing;
   bool m_optimizing;
   bool m_use_regression;
+  bool m_use_mixed_effects;
 
   // User-specified parameters
   int m_optimization_iterations;
@@ -148,6 +149,7 @@ protected:
   unsigned int m_attributes_per_domain;
   unsigned int m_checkpointing_interval;
   unsigned int m_domains_per_shape;
+  unsigned int m_timepts_per_subject;
   std::string m_transform_file;
   std::string m_prefix_transform_file;
   unsigned int m_procrustes_interval;

@@ -27,16 +27,20 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   m_GeneralEntropyGradientFunction = ParticleGeneralEntropyGradientFunction<Dimension>::New();
   m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_ShapeMatrix = ParticleShapeMatrixAttribute<double, Dimension>::New();
   m_LinearRegressionShapeMatrix = ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
+  m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
   m_FunctionShapeData = ParticleFunctionBasedShapeSpaceData<float, Dimension>::New();
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
   
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
     //  m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+  m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
   m_GeneralEntropyGradientFunction->SetShapeData(m_FunctionShapeData);
   Superclass::m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
+  Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_FunctionShapeData);
   m_CorrespondenceMode = 0;
 }
@@ -87,6 +91,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::InitializeOptimizationFunctions()
 {
   Superclass::InitializeOptimizationFunctions();
   m_LinearRegressionShapeMatrix->Initialize();
+  m_MixedEffectsShapeMatrix->Initialize();
 }
 
 } // end namespace

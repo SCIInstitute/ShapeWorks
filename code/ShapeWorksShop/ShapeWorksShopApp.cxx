@@ -350,7 +350,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   int domPerShape = 1;
   elem = docHandle.FirstChild( "domains_per_shape" ).Element();
   if (elem) domPerShape = atoi(elem->GetText());
-  
+
   m_Sampler->SetDomainsPerShape(domPerShape);
 
   // Set up the procrustes registration object.

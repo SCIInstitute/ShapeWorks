@@ -43,6 +43,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   m_disable_checkpointing = true;
   m_optimizing = false;
   m_use_regression = false;
+  m_use_mixed_effects = false;
   
   // Read parameter file
   this->SetUserParameters(fn);
@@ -50,6 +51,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   // Set up the optimization process
   m_Sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();  
   m_Sampler->SetDomainsPerShape(m_domains_per_shape); // must be done first!
+  m_Sampler->SetTimeptsPerIndividual(m_timepts_per_subject);
 
   // Set up the procrustes registration object.
   m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
@@ -676,6 +678,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     elem = docHandle.FirstChild( "domains_per_shape" ).Element();
     if (elem) this->m_domains_per_shape = atoi(elem->GetText());
 
+    this->m_timepts_per_subject = 1;
+    elem = docHandle.FirstChild( "timepts_per_subject" ).Element();
+    if (elem) this->m_timepts_per_subject = atoi(elem->GetText());
+
     this->m_starting_regularization = 500.0;
     elem = docHandle.FirstChild( "starting_regularization" ).Element();
     if (elem) this->m_starting_regularization = atof(elem->GetText());
@@ -744,6 +750,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
   std::cout << "m_output_points_prefix = " << m_output_points_prefix << std::endl;
   std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
   std::cout << "m_domains_per_shape = " << m_domains_per_shape << std::endl;
+  std::cout << "m_timepts_per_subject = " << m_timepts_per_subject << std::endl;
   std::cout << "m_starting_regularization = " << m_starting_regularization << std::endl;
   std::cout << "m_ending_regularization = " << m_ending_regularization << std::endl;
   std::cout << "m_iterations_per_split = " << m_iterations_per_split << std::endl;
@@ -791,6 +798,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
   m_Sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_Sampler->GetEnsembleRegressionEntropyFunction()->SetHoldMinimumVariance(false);
 
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
+
   m_Sampler->GetOptimizer()->SetTimeStep(1.0);
   m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
   //  m_Sampler->GetOptimizer()->SetModeToJacobi();
@@ -804,6 +815,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_Sampler->GetEnsembleRegressionEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()
+    ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+
   
   m_Sampler->Initialize();
   m_Sampler->GetOptimizer()->SetTolerance(0.0);
@@ -824,11 +838,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
   m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(0.0);
   m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(0.0);
 
-  if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
-    {  this->AddSinglePoint(); }
+  //if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
+  //  {  this->AddSinglePoint(); }
+
+  if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 1)
+  {
+    this->AddSinglePoint();
+  }
 
   while (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
-    {
+  {
     this->SplitAllParticles();
     std::cout << std::endl << "Particle count: "
               << m_Sampler->GetParticleSystem()->GetNumberOfParticles() << std::endl;
@@ -837,8 +856,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
     m_Sampler->Modified();
     m_Sampler->Update();
-    }
 
+    this->WritePointFiles();
+    this->WriteTransformFile();
+  }
   this->WritePointFiles();
   this->WriteTransformFile();
 }
@@ -874,7 +895,7 @@ template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
 {
-  m_optimizing = true;
+  m_optimizing = true;  
   m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
   m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
   m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
@@ -895,33 +916,45 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
   m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                    m_ending_regularization,
                                                                    m_optimization_iterations-
-																   m_optimization_iterations_completed);
+																                                   m_optimization_iterations_completed);
   m_Sampler->GetGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                           m_ending_regularization,
                                                                           m_optimization_iterations-
-																		  m_optimization_iterations_completed);
+																		                                      m_optimization_iterations_completed);
   m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                              m_ending_regularization,
                                                                              m_optimization_iterations-
-																			 m_optimization_iterations_completed);
-  
+																			                                       m_optimization_iterations_completed);
+
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                             m_ending_regularization,
+                                                                             m_optimization_iterations-
+																			                                       m_optimization_iterations_completed);
+
   std::cout << "Optimizing correspondences." << std::endl;
   if (m_attributes_per_domain > 0)
-    {
+  {
     m_Sampler->SetCorrespondenceMode(2); // General entropy
-    }
+  }
   else if (m_use_regression == true)
+  {
+    if (m_use_mixed_effects == true)
     {
-    m_Sampler->SetCorrespondenceMode(3); // Regression
+      m_Sampler->SetCorrespondenceMode(4); // MixedEffects
     }
+    else
+    {
+      m_Sampler->SetCorrespondenceMode(3); // Regression
+    }
+  }
   else if (m_starting_regularization == m_ending_regularization)
-    {
+  {
       m_Sampler->SetCorrespondenceMode(0); // mean force
-    }
+  }
   else
-    {
+  {
     m_Sampler->SetCorrespondenceMode(1); // Normal
-    }
+  }
                                                         
   if (m_optimization_iterations-m_optimization_iterations_completed > 0)
     m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations-m_optimization_iterations_completed);
@@ -968,6 +1001,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadExplanatoryVariables(const char *fname)
 
       dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
         (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(evars);
+
+      dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double,3> *>
+        (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->SetExplanatory(evars);
+
+      m_use_regression = true;
+      if (this->m_timepts_per_subject > 1) m_use_mixed_effects = true;
     }
   } 
 }
@@ -1010,43 +1049,116 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteParameters( int iter )
   std::cout << "writing " << interceptname << std::endl;
 
   std::vector< double > slope;
-  vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-      (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetSlope();
-
-  for (unsigned int i = 0; i < slopevec.size(); i++)
-    {    slope.push_back(slopevec[i]);    }
-
-  std::ofstream out( slopename.c_str() );
-  for (unsigned int i = 0; i < slope.size(); i++)
-  {
-    out << slope[i] << "\n";
-  }
-  out.close();
-   
-  //object_writer< double > writer;
-  //writer.SetFileName(slopename);
-  //writer.SetInput(slope);
-  //writer.Update();
-  
   std::vector< double > intercept;
-  vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetIntercept();
-  
-  for (unsigned int i = 0; i < slopevec.size(); i++)
-    {    intercept.push_back(interceptvec[i]);    }
 
-  out.open(interceptname.c_str());
-  for (unsigned int i = 0; i < slope.size(); i++)
+  if (m_use_mixed_effects == true)
+  {
+    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double,3> *>
+        (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetSlope();
+
+    for (unsigned int i = 0; i < slopevec.size(); i++)
     {
-    out << intercept[i] << "\n";
+      slope.push_back(slopevec[i]);
     }
-  out.close();
-  
-  //object_writer< double > writer2;
-  //writer2.SetFileName(interceptname);
-  //writer2.SetInput(intercept);
-  //writer2.Update();
 
+    std::ofstream out( slopename.c_str() );
+    for (unsigned int i = 0; i < slope.size(); i++)
+    {
+      out << slope[i] << "\n";
+    }
+    out.close();
+     
+    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double,3> *>
+      (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetIntercept();
+    
+    for (unsigned int i = 0; i < slopevec.size(); i++)
+    {
+      intercept.push_back(interceptvec[i]);
+    }
+
+    out.open(interceptname.c_str());
+    for (unsigned int i = 0; i < slope.size(); i++)
+    {
+      out << intercept[i] << "\n";
+    }
+    out.close();
+
+    slopename     = std::string( m_output_points_prefix ) + std::string(".sloperand");
+    interceptname = std::string( m_output_points_prefix ) + std::string(".interceptrand");
+
+    if( iter >= 0 )
+    {
+      std::stringstream ss;
+      ss << iter+m_optimization_iterations_completed;
+
+      slopename = "./.iter" + ss.str() + "/" + slopename;
+      interceptname = "./.iter" + ss.str() + "/" + interceptname;
+    }
+
+    std::cout << "writing " << slopename << std::endl;
+    std::cout << "writing " << interceptname << std::endl;
+
+    vnl_matrix<double> sloperand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double,3> *>
+        (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetSlopeRandom();
+    
+    out.open(slopename.c_str());
+    for (unsigned int i = 0; i < sloperand_mat.rows(); i++)
+    {
+      for (unsigned int j = 0; j < sloperand_mat.cols(); j++)
+      {
+        out << sloperand_mat.get(i,j) << " ";
+      }
+      out << "\n";
+    }
+    out.close();
+      
+    vnl_matrix<double> interceptrand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double,3> *>
+        (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetInterceptRandom();
+    
+    out.open(interceptname.c_str());
+    for (unsigned int i = 0; i < interceptrand_mat.rows(); i++)
+    {
+      for (unsigned int j = 0; j < interceptrand_mat.cols(); j++)
+      {
+        out << interceptrand_mat.get(i,j) << " ";
+      }
+      out << "\n";
+    }
+    out.close();
+  }
+  else
+  {
+    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
+        (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetSlope();
+
+    for (unsigned int i = 0; i < slopevec.size(); i++)
+    {
+      slope.push_back(slopevec[i]);
+    }
+
+    std::ofstream out( slopename.c_str() );
+    for (unsigned int i = 0; i < slope.size(); i++)
+    {
+      out << slope[i] << "\n";
+    }
+    out.close();
+     
+    std::vector< double > intercept;
+    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
+      (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetIntercept();
+    
+    for (unsigned int i = 0; i < slopevec.size(); i++)
+    {
+      intercept.push_back(interceptvec[i]);
+    }
+
+    out.open(interceptname.c_str());
+    for (unsigned int i = 0; i < slope.size(); i++)
+    {
+      out << intercept[i] << "\n";
+    }
+    out.close();   
+  }
 }
 
 template < class SAMPLERTYPE>

@@ -22,6 +22,7 @@
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleGeneralEntropyGradientFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
+#include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 
 namespace itk
 {
@@ -131,6 +132,10 @@ public:
       {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
       }
+    else if (mode == 4)
+      {
+      m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
+      }
     else
       {
       m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
@@ -161,6 +166,8 @@ public:
   { return m_EnsembleEntropyFunction.GetPointer(); }
   ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+  ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction()
+  { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
   ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction()
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
 
@@ -175,6 +182,8 @@ public:
   { return m_EnsembleEntropyFunction.GetPointer(); }
   const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+  const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction() const
+  { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
   const ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction() const
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
   
@@ -183,10 +192,17 @@ public:
   void SetDomainsPerShape(int n)
   {
     m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
+    m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
     m_ShapeMatrix->SetDomainsPerShape(n);
     m_EnsembleMeanFunction->SetDomainsPerShape(n);
     m_EnsembleNormalPenaltyFunction->SetDomainsPerShape(n);
   }
+
+  void SetTimeptsPerIndividual(int n)
+  {
+    m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n);
+  }
+
 
   int GetCorrespondenceMode() const
   { return m_CorrespondenceMode; }
@@ -215,10 +231,13 @@ private:
   typename ParticleEnsembleMeanFunction<Dimension>::Pointer m_EnsembleMeanFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
+  typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
   typename ParticleGeneralEntropyGradientFunction<Dimension>::Pointer m_GeneralEntropyGradientFunction;
   typename ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
   typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::Pointer m_FunctionShapeData;
   typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
+  typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
+
 };
 
 } // end namespace itk
