@@ -907,7 +907,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
   m_disable_procrustes = false;
 
   if (m_procrustes_interval != 0) // Initial registration
-    {      m_Procrustes->RunRegistration();      }
+  {
+    m_Procrustes->RunRegistration();
+    this->WritePointFiles();
+    this->WriteTransformFile();
+  }
   
   //  m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
   m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
