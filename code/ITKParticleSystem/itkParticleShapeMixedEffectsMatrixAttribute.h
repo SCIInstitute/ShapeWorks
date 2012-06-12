@@ -413,8 +413,8 @@ protected:
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
     m_UpdateCounter = 0;
     m_RegressionInterval = 1;
-	//num_groups = 12;
-	//shapes_pergroup = 2;
+	  m_NumIndividuals = 26;
+	  m_TimeptsPerIndividual = 3;
   }
   virtual ~ParticleShapeMixedEffectsMatrixAttribute() {};
 

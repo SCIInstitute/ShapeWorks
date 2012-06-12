@@ -128,6 +128,7 @@ protected:
   unsigned int m_mode;
   double m_spacing;
   bool m_optimizing;
+  bool m_use_normal_penalty;
   bool m_use_regression;
   bool m_use_mixed_effects;
 
@@ -145,6 +146,8 @@ protected:
   int m_recompute_regularization_interval;
   double m_relative_weighting;
   double m_norm_penalty_weighting;
+  double m_initial_relative_weighting;
+  double m_initial_norm_penalty_weighting;
   double m_adaptivity_strength;
   unsigned int m_attributes_per_domain;
   unsigned int m_checkpointing_interval;

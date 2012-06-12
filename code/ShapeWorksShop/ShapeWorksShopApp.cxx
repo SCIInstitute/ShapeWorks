@@ -323,6 +323,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   m_ProcessingThread = -1;
   // Initialize sampler/particle system
   m_Sampler  = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
+  m_use_normal_penalty = false;
   
   m_Viewer1Domain = 0;
   //m_Viewer2Domain = 0;
@@ -352,6 +353,15 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   if (elem) domPerShape = atoi(elem->GetText());
 
   m_Sampler->SetDomainsPerShape(domPerShape);
+
+  this->m_norm_penalty_weighting = 0.0;
+  elem = docHandle.FirstChild( "norm_penalty_weighting" ).Element();
+  if (elem)
+  {
+    this->m_norm_penalty_weighting = atof(elem->GetText());
+    this->m_use_normal_penalty = true;
+  }
+
 
   // Set up the procrustes registration object.
   m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
@@ -910,6 +920,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   // Intitialize the solver without actually doing any iterations.
   this->SetNumericalParameter();
   this->SetAdaptivityMode();
+  if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
   this->SetCorrespondenceMode();
   this->SetOptimizationMode();
 
@@ -918,6 +929,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   m_Sampler->Initialize();
   std::cout << "DONE Initializing SOLVER" << std::endl;
   m_Sampler->SetCorrespondenceOn();
+  if (this->m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
 
   // SET UP ANY FIXED LANDMARK POSITIONS
   std::vector<int> f;

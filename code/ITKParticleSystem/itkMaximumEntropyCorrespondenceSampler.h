@@ -70,6 +70,18 @@ public:
     this->Modified();
   }
 
+  void SetNormalEnergyOn()
+  {
+    m_LinkingFunction->SetCOn();
+    this->Modified();
+  }
+
+  void SetNormalEnergyOff()
+  {
+    m_LinkingFunction->SetCOff();
+    this->Modified();
+  }
+
   void SetSamplingOn()
   {
     m_LinkingFunction->SetAOn();
@@ -121,26 +133,30 @@ public:
   virtual void SetCorrespondenceMode(int mode)
   {
     if (mode == 1)
-      {
+    {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
-      }
+    }
     else if (mode == 2)
-      {
+    {
       m_LinkingFunction->SetFunctionB(m_GeneralEntropyGradientFunction);
-      }
+    }
     else if (mode == 3)
-      {
+    {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
-      }
+    }
+    else if (mode == 4)
+    {
+      m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
+    }
     else if (mode == 4)
       {
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
       }
     else
-      {
+    {
       m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
-      }
-    m_LinkingFunction->SetFunctionC(m_EnsembleNormalPenaltyFunction);
+    }
+    if (m_LinkingFunction->GetCOn() == true) m_LinkingFunction->SetFunctionC(m_EnsembleNormalPenaltyFunction);
     m_CorrespondenceMode = mode;
   }
 

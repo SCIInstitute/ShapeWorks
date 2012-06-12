@@ -42,6 +42,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   m_disable_procrustes = true;
   m_disable_checkpointing = true;
   m_optimizing = false;
+  m_use_normal_penalty = false;
   m_use_regression = false;
   m_use_mixed_effects = false;
   
@@ -109,7 +110,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
     {
     m_ProcrustesCounter++;
 
-    if (m_ProcrustesCounter > (int)m_procrustes_interval)
+    if (m_ProcrustesCounter >= (int)m_procrustes_interval)
       {
       m_ProcrustesCounter = 0;
       m_Procrustes->RunRegistration();
@@ -700,7 +701,23 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
 
     this->m_norm_penalty_weighting = 0.0;
     elem = docHandle.FirstChild( "norm_penalty_weighting" ).Element();
-    if (elem) this->m_norm_penalty_weighting = atof(elem->GetText());
+    if (elem)
+    {
+      this->m_norm_penalty_weighting = atof(elem->GetText());
+      this->m_use_normal_penalty = true;
+    }
+
+    this->m_initial_relative_weighting = 0.05;
+    elem = docHandle.FirstChild( "initial_relative_weighting" ).Element();
+    if (elem) this->m_initial_relative_weighting = atof(elem->GetText());
+
+    this->m_initial_norm_penalty_weighting = 0.0;
+    elem = docHandle.FirstChild( "initial_norm_penalty_weighting" ).Element();
+    if (elem)
+    {
+      this->m_initial_norm_penalty_weighting = atof(elem->GetText());
+      this->m_use_normal_penalty = true;
+    }
 
     this->m_adaptivity_strength = 0.0;
     elem = docHandle.FirstChild( "adaptivity_strength" ).Element();
@@ -756,6 +773,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
   std::cout << "m_iterations_per_split = " << m_iterations_per_split << std::endl;
   std::cout << "m_relative_weighting = " << m_relative_weighting << std::endl;
   std::cout << "m_norm_penalty_weighting = " << m_norm_penalty_weighting << std::endl;
+  std::cout << "m_initial_relative_weighting = " << m_initial_relative_weighting << std::endl;
+  std::cout << "m_initial_norm_penalty_weighting = " << m_initial_norm_penalty_weighting << std::endl;
   std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
   std::cout << "m_attributes_per_domain = " << m_attributes_per_domain << std::endl;
   std::cout << "m_checkpointing_interval = " << m_checkpointing_interval << std::endl;
@@ -806,14 +825,17 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
   m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
   //  m_Sampler->GetOptimizer()->SetModeToJacobi();
   
-  m_Sampler->SetCorrespondenceOn();
   m_Sampler->SetSamplingOn();
+  m_Sampler->SetCorrespondenceOn();
+  if (this->m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
   m_Sampler->SetAdaptivityMode(m_adaptivity_mode);
   m_Sampler->GetEnsembleEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_Sampler->GetGeneralEntropyGradientFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_Sampler->GetEnsembleRegressionEntropyFunction()
+    ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_Sampler->GetEnsembleMixedEffectsEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
@@ -832,11 +854,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
   m_Sampler->GetCurvatureGradientFunction()->SetRho(0.0);
   m_Sampler->GetOmegaGradientFunction()->SetRho(0.0);
   m_Sampler->SetCorrespondenceOn();
+  if (this->m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
   m_Sampler->SetCorrespondenceMode(0);
-  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(0.050);
-  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(0.050);
-  m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(0.0);
-  m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(0.0);
+  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(m_initial_norm_penalty_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_initial_norm_penalty_weighting);
 
   //if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
   //  {  this->AddSinglePoint(); }
@@ -875,10 +898,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
   std::cout << "Adding adaptivity." << std::endl;
   m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
   m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
-  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(0.05);
-  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(0.05);
-  m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(0.0);
-  m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(0.0);
+  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(m_initial_norm_penalty_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_initial_norm_penalty_weighting);
+
+  //m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(0.05);
+  //m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(0.05);
+  //m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(0.0);
+  //m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(0.0);
 
   //  if (tmpNoAdaptivityFlag == true) return;
   
@@ -931,11 +959,18 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
 																			                                       m_optimization_iterations_completed);
 
   m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                               m_ending_regularization,
+                                                                               m_optimization_iterations-
+																			                                         m_optimization_iterations_completed);
+
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                              m_ending_regularization,
                                                                              m_optimization_iterations-
 																			                                       m_optimization_iterations_completed);
-
+  
   std::cout << "Optimizing correspondences." << std::endl;
+
+  if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
   if (m_attributes_per_domain > 0)
   {
     m_Sampler->SetCorrespondenceMode(2); // General entropy

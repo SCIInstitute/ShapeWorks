@@ -67,8 +67,10 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
     this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
     this->SetCorrespondenceMode(m_CorrespondenceMode);
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
-    m_LinkingFunction->SetBOn();
     m_LinkingFunction->SetAOn();
+    m_LinkingFunction->SetBOn();
+    m_LinkingFunction->SetCOff();
+
     this->AllocateDomainsAndNeighborhoods();
 
     // Point the optimizer to the particle system.

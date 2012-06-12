@@ -64,40 +64,72 @@ public:
                               double &maxmove) const
   {
     double maxA, maxB, maxC;
-    VectorType ansA;
-    ansA.fill(0.0);
+    VectorType ansA; ansA.fill(0.0);
+    VectorType ansB; ansB.fill(0.0);
+    VectorType ansC; ansC.fill(0.0);
+
     const_cast<ParticleDualVectorFunction *>(this)->m_Counter = m_Counter + 1.0;
+
+    // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
     if (m_AOn == true)
-      {
+    {
       ansA = m_FunctionA->Evaluate(idx, d, system, maxA);
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
-      }
+    }
     
     if (m_BOn == true)
-      {
-      VectorType ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
+    {
+      ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+    }
 
-      VectorType ansC = m_FunctionC->Evaluate(idx, d, system, maxC);
+    if (m_COn == true)
+    {
+      ansC = m_FunctionC->Evaluate(idx, d, system, maxC);
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagC = m_AverageGradMagC + ansC.magnitude();
-      
+    }
+
+    // get maxmove and predicted move for current configuration
+    VectorType predictedMove; predictedMove.fill(0.0);
+    if (m_BOn == true)
+    {      
       if (m_AOn == true)  // both A and B are active
-        {
-        if (maxA > maxB) { maxmove = maxB + m_RelativeNormEnergyScaling * maxC; }
-        else { maxmove = maxA; }
-        return (ansA + m_RelativeGradientScaling * ansB + m_RelativeNormGradientScaling * ansC);
-        }
-      else // only B is active
-        {
-        maxmove = maxB + m_RelativeNormEnergyScaling * maxC;
-        return ansB + ansC;
-        }
-      }
-    else  // only A is active
       {
+        if (maxA > maxB)
+        {
+          maxmove = maxB;
+          if ( (m_COn == true) && (maxmove > maxC) ) // C is active as well
+          {
+            maxmove = maxC;
+          }
+        }
+        else
+        {
+          maxmove = maxA;
+        }
+
+        predictedMove = ansA + m_RelativeGradientScaling * ansB;
+        if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
+        return (predictedMove);
+      }
+      else // B is active, A is not active
+      {
+        maxmove = maxB;
+        if ( (m_COn == true) && (maxmove > maxC) ) // C is active
+        {
+          maxmove = maxC;
+        }
+
+        predictedMove = ansB;
+        if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
+        return (predictedMove);
+      }
+    }
+    else  // only A is active
+    {
       maxmove = maxA;
       return ansA;
-      }
+    }
     
     // If nothing is turned on, then return a max time
     // step of 0 and a bogus vector.
@@ -108,95 +140,147 @@ public:
   virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
   {
     double ansA = 0.0;
+    double ansB = 0.0;
+    double ansC = 0.0;
+    double finalEnergy = 0.0;
+
+    // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
     if (m_AOn == true)
-      {
+    {
       ansA = m_FunctionA->Energy(idx, d, system);
-      }
+    }
 
     if (m_BOn == true)
-      {
-      double ansB = m_FunctionB->Energy(idx, d, system);
-      double ansC = m_FunctionC->Energy(idx, d, system);
+    {
+      ansB = m_FunctionB->Energy(idx, d, system);
+    }
 
+    if (m_COn == true)
+    {
+      ansC = m_FunctionC->Energy(idx, d, system);
+    }
+
+    // compute final energy for current configuration
+    if (m_BOn == true)
+    {
       if (m_AOn == true)  // both A and B are active
-        {
+      {
 //         if (idx == 0 && d == 0)
 //           std::cout << "Energy = " <<  ansA << " + " << m_RelativeEnergyScaling * ansB
 //                     << " = " << ansA + m_RelativeEnergyScaling * ansB << std::endl;
-        
-        return (ansA + m_RelativeEnergyScaling * ansB + m_RelativeNormEnergyScaling * ansC);
-        }
-      else // only B is active
+        finalEnergy = ansA + m_RelativeEnergyScaling * ansB;
+        if (m_COn == true) // if C is also active
         {
-        return ansB + m_RelativeNormEnergyScaling * ansC;
+          finalEnergy += m_RelativeNormEnergyScaling * ansC;
         }
+        return (finalEnergy);
       }
-    else  // only A is active
+      else // B is active, A is not active
       {
-      return ansA;
+        finalEnergy = ansB;
+        if (m_COn == true) // C is active
+        {
+          finalEnergy += m_RelativeNormEnergyScaling * ansC;
+        }
+        return finalEnergy ;
       }
+    }
+    else  // only A is active
+    {
+      return ansA;
+    }
 
-    return 0.0;;
+    return 0.0;
   }
   
   virtual VectorType Evaluate(unsigned int idx, unsigned int d,
                               const ParticleSystemType *system,
                               double &maxmove, double &energy) const
   {
-    double maxA, maxB, maxC;
+    double maxA = 0.0;
+    double maxB = 0.0;
+    double maxC = 0.0;
     double energyA = 0.0;
     double energyB = 0.0;
     double energyC = 0.0;
-    VectorType ansA;
+    VectorType ansA; ansA.fill(0.0);
+    VectorType ansB; ansB.fill(0.0);
+    VectorType ansC; ansC.fill(0.0);
+
     const_cast<ParticleDualVectorFunction *>(this)->m_Counter = m_Counter + 1.0;
+
+    // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
     if (m_AOn == true)
-      {
+    {
       ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
 
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
-      }
+    }
 
     if (m_BOn == true)
-      {
-      VectorType ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
+    {
+      ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
 
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
+    }
 
-      VectorType ansC = m_FunctionC->Evaluate(idx, d, system, maxC, energyC);
+    if (m_COn == true)
+    {
+      ansC = m_FunctionC->Evaluate(idx, d, system, maxC, energyC);
 
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagC = m_AverageGradMagC + ansC.magnitude();
       const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyC = m_AverageEnergyC + energyC;
+    }
 
+    // compute final energy, maxmove and predicted move based on current configuration
+    VectorType predictedMove; predictedMove.fill(0.0);
+    if (m_BOn == true)
+    {
       if (m_AOn == true)  // both A and B are active
-        {
-
-//         if (idx == 0 && d == 0)
-//           {
-//           std::cout << "Gradient = " << ansA << " + " << m_RelativeGradientScaling * ansB << std::endl;
-//           std::cout << "Energy = " << ansA << " + " << m_RelativeEnergyScaling * ansB << " = " <<
-//             energyA + m_RelativeEnergyScaling * energyB << std::endl;
-//           }
-
-        if (maxA > maxB) { maxmove = maxB + m_RelativeNormEnergyScaling * maxC; }
-        else { maxmove = maxA; }
-        energy = energyA + m_RelativeEnergyScaling * energyB + m_RelativeNormEnergyScaling * energyC;
-        return (ansA + m_RelativeGradientScaling * ansB + m_RelativeNormGradientScaling * ansC);
-        }
-      else // only B is active
-        {
-        maxmove = maxB + m_RelativeNormEnergyScaling * maxC ;
-        energy = energyB + m_RelativeNormEnergyScaling * energyC;
-        return (ansB + m_RelativeNormGradientScaling * ansC);
-        }
-      }
-    else  // only A is active
       {
+        if (maxA > maxB)
+        {
+          maxmove = maxB;
+          if ( (m_COn == true) && (maxmove > maxB) ) // C is also active
+          {
+            maxmove = maxC;
+          }
+        }
+        else
+        {
+          maxmove = maxA;
+        }
+
+        energy = energyA + m_RelativeEnergyScaling * energyB;
+        if (m_COn == true) energy += m_RelativeNormEnergyScaling * energyC;
+
+        predictedMove = ansA + m_RelativeGradientScaling * ansB;
+        if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
+        return (predictedMove);
+      }
+      else // only B is active, A is not active
+      {
+        maxmove = maxB;
+        energy = energyB;
+        predictedMove = ansB;
+
+        if (m_COn == true) // if C is also active
+        {
+          if (maxmove > maxC) maxmove = maxC;
+          energy += m_RelativeNormEnergyScaling * energyC;
+          predictedMove += m_RelativeNormGradientScaling * ansC;
+        }
+        return (predictedMove);
+      }
+    }
+    else  // only A is active
+    {
       maxmove = maxA;
       energy = energyA;
       return ansA;
-      }
+    }
 
     // If nothing is turned on, then return a max time
     // step of 0 and a bogus vector.
@@ -208,15 +292,15 @@ public:
                               const ParticleSystemType *system)
   {
     if (m_AOn == true)
-      {
+    {
       m_FunctionA->BeforeEvaluate(idx, d, system);
-      }
+    }
     
     if (m_BOn == true)
-      {
+    {
       m_FunctionB->BeforeEvaluate(idx, d, system);
-      m_FunctionC->BeforeEvaluate(idx, d, system);
-      }
+      if (m_COn == true) m_FunctionC->BeforeEvaluate(idx, d, system);
+    }
   }
 
   /** This method is called by a solver after each iteration.  Subclasses may
@@ -227,7 +311,7 @@ public:
     if (m_BOn)
     {
       m_FunctionB->AfterIteration();
-      m_FunctionC->AfterIteration();
+      if (m_COn == true) m_FunctionC->AfterIteration();
     }
   }
 
@@ -239,7 +323,7 @@ public:
     if (m_BOn)
     {
       m_FunctionB->BeforeIteration();
-      m_FunctionC->BeforeIteration();
+      if (m_COn == true) m_FunctionC->BeforeIteration();
     }
     m_AverageGradMagA = 0.0;
     m_AverageGradMagB = 0.0;
@@ -299,6 +383,10 @@ public:
   void SetBOff() {  m_BOn = false;  }
   void SetBOn(bool s) {  m_BOn = s;  }
   bool GetBOn() const { return m_BOn;  }
+  void SetCOn()   { m_COn = true;  }
+  void SetCOff() { m_COn = false;  }
+  void SetCOn(bool s)  {    m_COn = s;  }
+  bool GetCOn() const {  return m_COn;  }
 
   /** The relative scaling scales the gradient B relative to A.  By default
       this value is 1.0. */
@@ -369,7 +457,7 @@ public:
   }
   
 protected:
-  ParticleDualVectorFunction() : m_AOn(true), m_BOn(false),
+  ParticleDualVectorFunction() : m_AOn(true), m_BOn(false), m_COn(false),
                                  m_RelativeGradientScaling(1.0),
                                  m_RelativeEnergyScaling(1.0),
                                  m_RelativeNormGradientScaling(0.0),
@@ -381,6 +469,7 @@ protected:
 
   bool m_AOn;
   bool m_BOn;
+  bool m_COn;
   double m_RelativeGradientScaling;
   double m_RelativeEnergyScaling;
   double m_RelativeNormGradientScaling;

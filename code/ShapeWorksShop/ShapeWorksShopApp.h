@@ -267,6 +267,7 @@ class ShapeWorksShopApp : public CorrespondenceGUI
     if (m_Sampler->GetCorrespondenceOn() == false)
       {
       m_Sampler->SetCorrespondenceOn();
+      if (this->m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
       }
     else
       {
@@ -398,8 +399,8 @@ class ShapeWorksShopApp : public CorrespondenceGUI
     m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(relative_gradient_scaling_spinner->value());
     m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(relative_gradient_scaling_spinner->value());
 
-    m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(1.0);
-    m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(1.0);
+    m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(norm_penalty_weight_spinner->value());
+    m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(norm_penalty_weight_spinner->value());
 
     //    m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(min_variance_spinner->value());
     //    m_Sampler->GetGeneralEntropyGradientFunction()->SetMinimumVariance(min_variance_spinner->value());
@@ -448,6 +449,7 @@ class ShapeWorksShopApp : public CorrespondenceGUI
   
   virtual void SetCorrespondenceMode()
   {
+    if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
     std::cout << "Correspondence mode = " << correspondence_mode_choice->value() << std::endl;
     m_Sampler->SetCorrespondenceMode(correspondence_mode_choice->value());
   }
@@ -526,6 +528,9 @@ class ShapeWorksShopApp : public CorrespondenceGUI
 protected:
   itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_Sampler;
   itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
+
+  double m_norm_penalty_weighting;
+  bool m_use_normal_penalty;
   
   itk::MultiThreader::Pointer m_Threader;
   int m_ProcessingThread;
