@@ -64,6 +64,7 @@ public:
                               double &maxmove) const
   {
     double maxA, maxB, maxC;
+    maxA = 0; maxB = 0; maxC = 0;
     VectorType ansA; ansA.fill(0.0);
     VectorType ansB; ansB.fill(0.0);
     VectorType ansC; ansC.fill(0.0);
