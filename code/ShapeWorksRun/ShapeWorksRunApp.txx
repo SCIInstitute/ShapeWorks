@@ -837,9 +837,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_Sampler->GetEnsembleMixedEffectsEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
-  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()
-    ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
-
   
   m_Sampler->Initialize();
   m_Sampler->GetOptimizer()->SetTolerance(0.0);
@@ -971,6 +968,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
   std::cout << "Optimizing correspondences." << std::endl;
 
   if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+    
   if (m_attributes_per_domain > 0)
   {
     m_Sampler->SetCorrespondenceMode(2); // General entropy
