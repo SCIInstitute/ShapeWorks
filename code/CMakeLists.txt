@@ -34,27 +34,12 @@ if(BUILD_MeshSupport)
   add_definitions(-DSW_USE_MESH)
 endif(BUILD_MeshSupport)
 
-
-# # Configure Mesh support
-# if(BUILD_MeshSupport)
-# include(FindFIM.cmake)
-
-# if(FIM_FOUND)
-  # include_directories(${FIM_INCLUDE})
-  # add_definitions(-DSW_USE_MESH)
-# else(FIM_FOUND)
- # message(FATAL_ERROR "FIM library is required for mesh support, but could not be found.")   
-# endif(FIM_FOUND)
-
-# endif(BUILD_MeshSupport)
-
 # Set up the include directories
 include_directories ( 
 ${SHAPEWORKS_SOURCE_DIR}/Utilities
 ${SHAPEWORKS_SOURCE_DIR}/ITKParticleSystem 
 ${SHAPEWORKS_SOURCE_DIR}/tinyxml
 )
-
 
 # Command-line tools are built by default.
 subdirs(tinyxml ITKParticleSystem Utilities ShapeWorksRun ShapeWorksGroom)
@@ -69,7 +54,6 @@ if (BUILD_ICPRigid3DRegistration)
 endif(BUILD_ICPRigid3DRegistration)
 
 # Optionally configure VTK
-
 # OPTION(USE_VTK "Use VTK (The Visualization Toolkit). VTK is required to build ShapeWorksView and ShapeWorksShop." OFF)
 IF(USE_VTK)
   FIND_PACKAGE(VTK REQUIRED)
