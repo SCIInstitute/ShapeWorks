@@ -1,7 +1,7 @@
 # POWERCRUST_PATH = path to the source of the fim library
 
 file(GLOB POWERCRUST_INCL_PATH_1 "../powercrust*")
-set(FIM_INCL_PATHS ${POWERCRUST_INCL_PATH_1})
+set(POWERCRUST_INCL_PATHS ${POWERCRUST_INCL_PATH_1})
 
 find_path(POWERCRUST_PATH vtkPowerCrustSurfaceReconstruction.h ${POWERCRUST_INCL_PATHS})       
 
