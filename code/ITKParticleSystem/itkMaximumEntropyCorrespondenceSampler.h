@@ -148,10 +148,6 @@ public:
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
     }
-    else if (mode == 4)
-    {
-      m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
-    }
     else
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
