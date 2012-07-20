@@ -138,6 +138,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
               // Make a move and compute new energy
               for (unsigned int i = 0; i < VDimension; i++)
                 {  newpoint[i] = pt[i] - gradient[i]; }
+              dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
               newenergy = m_GradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
               
@@ -153,6 +154,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                 {// bad move, reset point position and back off on timestep            
                 if (m_TimeSteps[dom][k] > mintime[dom])
                   {
+                  dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(pt);
                   m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
 
                   m_TimeSteps[dom][k] /= factor;
@@ -253,6 +255,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
              }
            
            // Apply update
+           dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
            m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
            } // for each particle
          } // if not flagged
@@ -353,6 +356,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         for (typename ParticleSystemType::PointContainerType::ConstIterator it
                = m_ParticleSystem->GetPositions(dom)->GetBegin();  it != endit; it++, k++)
           {
+          dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(updates[dom][k]);
           m_ParticleSystem->SetPosition(updates[dom][k], it.GetIndex(), dom);
           } // for each particle
         } // if not flagged
