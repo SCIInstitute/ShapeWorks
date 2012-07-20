@@ -374,6 +374,7 @@ void ShapeWorksViewApp
    
   double minmag = 1.0e20;
   double maxmag = 0.0;
+  this->DisplayGroup1Mean();
   this->ComputeSurface(); // need the surface information for the normals
 
   vtkFloatArray *vectors = vtkFloatArray::New() ;
@@ -812,6 +813,25 @@ ShapeWorksViewApp::ShapeWorksViewApp(const char *fn)
   unsigned int num_points = m_Stats.Mean().size();
 
   m_NumberOfSamples = m_Stats.ShapeMatrix().cols();
+
+  // load mesh files
+  m_useMesh = 0;
+  std::string filename;
+  elem = docHandle.FirstChild( "mesh_files" ).Element();
+  if (elem)
+  {
+    m_useMesh = 1;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> filename)
+    {
+      meshFiles.push_back(filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+
+    m_meshReader = vtkPLYReader::New();
+  }
+
                                           
   // Set some gui variables
   this->sample_selector->minimum(0);
@@ -985,8 +1005,16 @@ void ShapeWorksViewApp::ComputeModeShape()
   double lambda = sqrt(m_Stats.Eigenvalues()[m]);
   this->lambda_display->value(m_Stats.Eigenvalues()[m]);
   this->loading_display->value(s*lambda);
-  
-  this->DisplayShape(m_Stats.Mean() + (e * (s * lambda)));
+
+  if (this->m_Stats.GroupID().size() >  0)
+  {
+    double g = this->groupdiff_position->value();    
+    this->DisplayShape(m_Stats.Group1Mean() + (m_Stats.GroupDifference() *g) + (e * (s * lambda)));
+  }
+  else
+  {
+    this->DisplayShape(m_Stats.Mean() + (e * (s * lambda)));
+  }
 
   this->m_displayIndicator = ComputeModeShape_E;
 
@@ -1378,6 +1406,34 @@ void ShapeWorksViewApp::WritePCALoadings()
   m_Stats.WriteCSVFile2(chooser.value());
   
 }
+
+void ShapeWorksViewApp::WriteMesh()
+{
+  // Get a file name
+  Fl_File_Chooser chooser(m_CurrentDirectory.c_str(), ".vtk", Fl_File_Chooser::CREATE, "Write mesh");
+  chooser.show();
+  while(chooser.shown()) { Fl::wait(); }
+  // User hit cancel?
+  if ( chooser.value() == NULL ) { return; }
+  m_CurrentDirectory = std::string(chooser.directory());
+
+  std::cout << "writing " << chooser.value() << "... ";
+	vtkSmoothPolyDataFilter *polySmoother = vtkSmoothPolyDataFilter::New();
+	polySmoother->SetInputConnection(m_surf->GetOutputPort());
+	polySmoother->SetNumberOfIterations(10);
+	polySmoother->SetFeatureAngle(90.0);  
+	polySmoother->BoundarySmoothingOn();
+	polySmoother->Update();
+
+	vtkPolyDataWriter *m_surfWriter = vtkPolyDataWriter::New();
+	m_surfWriter->SetInputConnection(polySmoother->GetOutputPort());
+
+  
+	m_surfWriter->SetFileName(chooser.value());
+	m_surfWriter->Write();
+  std::cout << "done !" << std::endl;
+}
+
 void ShapeWorksViewApp::WritePoints()
 {
   typedef itk::ParticlePositionWriter<3>::PointType PointType;

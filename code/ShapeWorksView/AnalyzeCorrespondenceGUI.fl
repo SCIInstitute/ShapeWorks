@@ -53,7 +53,8 @@ this->LoadVectorField();}
           }
           MenuItem {} {
             label {Write Surface Mesh}
-            xywh {5 5 30 20} deactivate
+            callback {this->WriteMesh()}
+            xywh {5 5 30 20}
           }
           MenuItem {} {
             label {Write Level Set}
@@ -285,7 +286,7 @@ this->OptionsGlyphGroup->show();}
         }
         Fl_Slider groupdiff_position {
           label {slider:}
-          callback {this->ComputeGroupMeanDifferenceShape();}
+          callback {this->ComputeModeShape();} selected
           xywh {195 668 213 15} type {Horz Knob} box PLASTIC_THIN_DOWN_BOX color 17 selection_color 1 labeltype NO_LABEL align 22 step 0.01
         }
         Fl_Box group1LabelBox {
@@ -397,6 +398,8 @@ this->ComputeSimpleRegressionParameters();}
   } {}
   Function {ShowGlyphs()} {open return_type {virtual void}
   } {}
-  Function {RemoveGlyphs()} {open selected return_type {virtual void}
+  Function {RemoveGlyphs()} {open return_type {virtual void}
+  } {}
+  Function {WriteMesh()} {open return_type {virtual void}
   } {}
 } 

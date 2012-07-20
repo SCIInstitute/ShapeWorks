@@ -64,6 +64,8 @@
 #include "vtkImageGradient.h"
 #include "vtkImageData.h"
 #include "vtkDecimatePro.h"
+#include "vtkPLYReader.h"
+#include "vtkSmartPointer.h"
 
 #ifdef SW_USE_POWERCRUST
   #include "vtkPowerCrustSurfaceReconstruction.h"
@@ -114,6 +116,7 @@ public:
   virtual void LoadPCAShape();
   virtual void LoadPointFile();
   virtual void WritePCALoadings();
+  virtual void WriteMesh();
   virtual void LoadScalars();
   virtual void DisplayMeanDifference();
   virtual void ShowSpheres();
@@ -188,7 +191,45 @@ public:
 
   virtual void DisplaySamples()
   {
-    this->DisplayShape(m_Stats.ShapeMatrix().get_column(this->sample_selector->value()));
+    if (m_useMesh == 1)
+    {
+      vnl_vector<double> &pos = m_Stats.ShapeMatrix().get_column(this->sample_selector->value());
+      unsigned int k = 0;
+      for (unsigned int i = 0; i < this->m_Stats.ShapeMatrix().rows() / 3; i++)
+      {
+        double x = pos[k];
+        k++;
+        double y = pos[k];
+        k++;
+        double z = pos[k];
+        k++;
+        m_glyphPoints->SetPoint(i, x,y,z);
+      }
+      m_glyphPoints->Modified();
+
+      m_meshReader->SetFileName( meshFiles[this->sample_selector->value()].c_str() );
+      m_surfReverse->SetInputConnection(m_meshReader->GetOutputPort());
+      m_surfReverse->ReverseCellsOn();
+      m_surfReverse->ReverseNormalsOn();
+
+      m_surfSmoother->SetInputConnection(m_surfReverse->GetOutputPort());
+      m_surfSmoother->SetNumberOfIterations(50);
+
+      m_surfMap->SetInputConnection(m_surfSmoother->GetOutputPort());
+      
+      if (m_Initialized)
+      {
+        // The following two lines overcome some wierd pipeline updating bug I
+        // can't figure out.  The origin information propagating from the surface
+        // reconstruction somehow does not get updated correctly until run twice.
+        if (m_surfActor) this->m_surfActor->Render(m_renderer, m_surfMap);
+        this->m_render_window->Render();
+      }  
+    }
+    else
+    {
+      this->DisplayShape(m_Stats.ShapeMatrix().get_column(this->sample_selector->value()));
+    }
     this->group_display->value(m_Stats.GroupID(this->sample_selector->value()));
 
 	this->m_displayIndicator = DisplaySamples_E;
@@ -374,7 +415,7 @@ protected:
 
   void DisplayShape( const vnl_vector<double> &);
   void ZeroAllVTK()
-  { m_surf = 0; m_surfMap = 0; m_surfActor = 0; m_surfReverse = 0; m_surfContour = 0;  }
+  { m_surf = 0; m_surfMap = 0; m_surfActor = 0; m_surfReverse = 0; m_surfContour = 0; m_meshReader = 0; }
   void DisplayVectorField(const std::vector<itk::ParticlePositionReader<3>::PointType > &);
   virtual void LoadVectorField();
   void TrilinearInterpolate(vtkImageData *,double,double, double,
@@ -485,6 +526,11 @@ protected:
 #else
   vtkSurfaceReconstructionFilter *m_surf;
 #endif
+
+  // if meshes are available, skip reconstruction
+  vtkPLYReader                   *m_meshReader;
+  std::vector<std::string>       meshFiles;
+  unsigned int                   m_useMesh;
 
   vtkPolyDataMapper              *m_surfMap;
   vtkActor                       *m_surfActor;
