@@ -121,21 +121,21 @@ PowerOfTwoPointTree<VDimension>::AddPoint(const PointType &point,
   NodePointerType it = this->m_Root;
   
   if ( ! it->Contains(point))
-    {
+  {
     itkExceptionMacro("Point " << point << " is not contained within tree domain " << it->GetLowerBound() << " - " << it->GetUpperBound());
-    }
+  }
 
   while (! it->IsLeaf() )
-    {
+  {
     for (unsigned int i = 0; i < BranchesPerNode; i++)
-      {
+    {
       if (it->GetBranch(i)->Contains(point))
-        {
+      {
         it = it->GetBranch(i);
         break;
-        }
       }
     }
+  }
   node = it;
   return it->InsertElement( ParticlePointIndexPair<VDimension>(point, idx) );
 }

@@ -100,7 +100,7 @@ public:
   {
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      if (p[i] < m_LowerBound[i] || p[i] >= m_UpperBound[i]) return false;
+      if (p[i] < m_LowerBound[i] || p[i] > m_UpperBound[i]) return false;
       }
     return true;
   }
