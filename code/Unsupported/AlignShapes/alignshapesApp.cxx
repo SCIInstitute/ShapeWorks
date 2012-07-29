@@ -181,8 +181,8 @@ alignshapesApp::alignshapesApp(const char *ref, const char *mov, const char *poi
 {
   // Initialize GUI variables
   this->defaultValue->value(0);
-  this->linearInterpolate->value(0);
   this->isovalue_input->value(1.0);
+  this->linearInterpolate->value(0);
   this->outputFilename->value(mov);
   if (load_points == true)  this->pointsFilename->value(points_moving);
 
@@ -191,14 +191,14 @@ alignshapesApp::alignshapesApp(const char *ref, const char *mov, const char *poi
 
   m_reference.filename( ref);
   m_reference.color(0.5, 0.3, 0.5);
-  m_reference.opacity(1.0);
+  m_reference.opacity(0.5);
 
   // Pipeline creating the reference shape isosurface.
   m_moving.SetIsoValue(1.0);
   
   m_moving.filename( mov);
   m_moving.color(1.0, 0.49, 0.33);
-  m_moving.opacity(1.0);
+  m_moving.opacity(0.5);
 
   // Optionally create pipelines for glyphs
   if (load_points == true)
