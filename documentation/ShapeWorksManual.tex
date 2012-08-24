@@ -461,69 +461,172 @@ system path. This preprocessing step should take less than 5 minutes to run,
 depending on the speed of your computer.  The parameter file for this step is
 shown in Figure~\ref{fig:preprocessing1}, and contains all of the required parameters
 for each stage of processing.
+%\begin{Verbatim}[frame=single]
+%ShapeWorksGroom torus.preprocess1.params isolate hole_fill center auto_crop
+%\end{Verbatim}
+%\begin{figure}[t]
+%\centering
+%\begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
+%// torus.preprocess1.params
+%// Preprocessing parameters 1 for Torus example
+%(background 0.0) // Value of background pixels in the image
+%(foreground 1.0) // Value of foreground pixels in the image
+%(pad 10)         // Number of background pixels to pad the edges of
+%                 // the cropped volume
+%
+%(verbose 1)      // Output progress information
+%
+%(inputs          // Set of input files to process
+%"torus.00.mha"  "torus.01.mha"  "torus.02.mha"  "torus.03.mha"
+%"torus.04.mha"  "torus.05.mha"  "torus.06.mha"  "torus.07.mha"
+%"torus.08.mha"  "torus.09.mha"  "torus.10.mha"  "torus.11.mha"
+%"torus.12.mha"  "torus.13.mha"  "torus.14.mha"  "torus.15.mha"
+%"torus.16.mha"  "torus.17.mha"  "torus.18.mha"  "torus.19.mha"
+%)
+%
+%(outputs            // Output filenames to use
+%"torusDT.00.mha"  "torusDT.01.mha"  "torusDT.02.mha"  "torusDT.03.mha"
+%"torusDT.04.mha"  "torusDT.05.mha"  "torusDT.06.mha"  "torusDT.07.mha"
+%"torusDT.08.mha"  "torusDT.09.mha"  "torusDT.10.mha"  "torusDT.11.mha"
+%"torusDT.12.mha"  "torusDT.13.mha"  "torusDT.14.mha"  "torusDT.15.mha"
+%"torusDT.16.mha"  "torusDT.17.mha"  "torusDT.18.mha"  "torusDT.19.mha"
+%)
+%\end{Verbatim}
+%\caption{\label{fig:preprocessing1}Parameter file for the first stage of torus preprocessing
+%with ShapeWorksGroom: foreground isolation,
+%hole-filling, and automatic volume cropping.}
+%\end{figure}
+
 \begin{Verbatim}[frame=single]
-ShapeWorksGroom torus.preprocess1.params isolate hole_fill center auto_crop
+ShapeWorksGroom torus.preprocess1.xml isolate hole_fill center auto_crop
 \end{Verbatim}
 \begin{figure}[t]
 \centering
 \begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
-// torus.preprocess1.params
-// Preprocessing parameters 1 for Torus example
-(background 0.0) // Value of background pixels in the image
-(foreground 1.0) // Value of foreground pixels in the image
-(pad 10)         // Number of background pixels to pad the edges of
-                 // the cropped volume
+<!-- torus.preprocess1.xml -->
+<!-- Preprocessing parameters 1 for Torus example -->
 
-(verbose 1)      // Output progress information
+<!-- Value of background pixels in the image -->
+<background> 0.0 </background>
 
-(inputs          // Set of input files to process
-"torus.00.mha"  "torus.01.mha"  "torus.02.mha"  "torus.03.mha"
-"torus.04.mha"  "torus.05.mha"  "torus.06.mha"  "torus.07.mha"
-"torus.08.mha"  "torus.09.mha"  "torus.10.mha"  "torus.11.mha"
-"torus.12.mha"  "torus.13.mha"  "torus.14.mha"  "torus.15.mha"
-"torus.16.mha"  "torus.17.mha"  "torus.18.mha"  "torus.19.mha"
-)
+ <!-- Value of foreground pixels in the image -->
+<foreground> 1.0 </foreground> 
 
-(outputs            // Output filenames to use
-"torusDT.00.mha"  "torusDT.01.mha"  "torusDT.02.mha"  "torusDT.03.mha"
-"torusDT.04.mha"  "torusDT.05.mha"  "torusDT.06.mha"  "torusDT.07.mha"
-"torusDT.08.mha"  "torusDT.09.mha"  "torusDT.10.mha"  "torusDT.11.mha"
-"torusDT.12.mha"  "torusDT.13.mha"  "torusDT.14.mha"  "torusDT.15.mha"
-"torusDT.16.mha"  "torusDT.17.mha"  "torusDT.18.mha"  "torusDT.19.mha"
-)
+<!-- Number of background pixels to pad the edges of the cropped volume -->
+<pad> 10 </pad> 
+
+<!-- filename to store transforms generated during preprocessing -->        
+<transform_file> torus.translations </transform_file> 
+
+                              
+<!-- Output progress information -->
+<verbose> 1 </verbose>      
+
+<!-- Set of input files to process -->
+<inputs>          
+torus.00.mha
+torus.01.mha
+torus.02.mha
+torus.03.mha
+torus.04.mha
+:
+.
+torus.19.mha
+</inputs>		
+
+<!-- Output filenames to use -->
+<outputs>           
+torusDT.00.mha
+torusDT.01.mha
+torusDT.02.mha
+torusDT.03.mha
+torusDT.04.mha
+:
+.
+torusDT.19.mha
+</outputs>		
 \end{Verbatim}
 \caption{\label{fig:preprocessing1}Parameter file for the first stage of torus preprocessing
-with ShapeWorksGroom: foreground isolation,
-hole-filling, and automatic volume cropping.}
+with ShapeWorksGroom: foreground isolation, hole-filling, and automatic volume cropping.}
 \end{figure}
+
+%\begin{figure}
+%\centering
+%\begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
+%// torus.preprocess2.params
+%// Preprocessing parameters 2 for Torus example
+%
+%(background 0.0) // Value of background pixels in image
+%(foreground 1.0) // Value of foreground pixels in image
+%(antialias_iterations 20) // Number of anti-aliasing iterations
+%(blur_sigma 2.0) // Size of Gaussian blurring kernel for smoothing
+%(fastmarching_isovalue 0.0)  // Pixel value associated with shape surfaces
+%
+%(inputs                         // Name of input files
+%"torusDT.00.mha" "torusDT.01.mha" "torusDT.02.mha" "torusDT.03.mha"
+%"torusDT.04.mha" "torusDT.05.mha" "torusDT.06.mha" "torusDT.07.mha"
+%"torusDT.08.mha" "torusDT.09.mha" "torusDT.10.mha" "torusDT.11.mha"
+%"torusDT.12.mha" "torusDT.13.mha" "torusDT.14.mha" "torusDT.15.mha"
+%"torusDT.16.mha" "torusDT.17.mha" "torusDT.18.mha" "torusDT.19.mha"
+%)
+%
+%(outputs                        // Name of output files
+%"torusDT.00.mha" "torusDT.01.mha" "torusDT.02.mha" "torusDT.03.mha"
+%"torusDT.04.mha" "torusDT.05.mha" "torusDT.06.mha" "torusDT.07.mha"
+%"torusDT.08.mha" "torusDT.09.mha" "torusDT.10.mha" "torusDT.11.mha"
+%"torusDT.12.mha" "torusDT.13.mha" "torusDT.14.mha" "torusDT.15.mha"
+%"torusDT.16.mha" "torusDT.17.mha" "torusDT.18.mha" "torusDT.19.mha"
+%)
+%\end{Verbatim}
+%\caption{\label{fig:preprocessing2}Parameter file for the second stage of torus preprocessing
+%with ShapeWorksGroom: antialiasing,
+%distance transform computation, and slight blurring.}
+%\end{figure}
 
 \begin{figure}
 \centering
 \begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
-// torus.preprocess2.params
-// Preprocessing parameters 2 for Torus example
+<!-- torus.preprocess2.params -->
+<!-- Preprocessing parameters 2 for Torus example -->
 
-(background 0.0) // Value of background pixels in image
-(foreground 1.0) // Value of foreground pixels in image
-(antialias_iterations 20) // Number of anti-aliasing iterations
-(blur_sigma 2.0) // Size of Gaussian blurring kernel for smoothing
-(fastmarching_isovalue 0.0)  // Pixel value associated with shape surfaces
+<!-- Value of background pixels in image -->
+<background> 0.0 </background> 
 
-(inputs                         // Name of input files
-"torusDT.00.mha" "torusDT.01.mha" "torusDT.02.mha" "torusDT.03.mha"
-"torusDT.04.mha" "torusDT.05.mha" "torusDT.06.mha" "torusDT.07.mha"
-"torusDT.08.mha" "torusDT.09.mha" "torusDT.10.mha" "torusDT.11.mha"
-"torusDT.12.mha" "torusDT.13.mha" "torusDT.14.mha" "torusDT.15.mha"
-"torusDT.16.mha" "torusDT.17.mha" "torusDT.18.mha" "torusDT.19.mha"
-)
+<!-- Value of foreground pixels in image -->
+<foreground> 1.0 </foreground> 
 
-(outputs                        // Name of output files
-"torusDT.00.mha" "torusDT.01.mha" "torusDT.02.mha" "torusDT.03.mha"
-"torusDT.04.mha" "torusDT.05.mha" "torusDT.06.mha" "torusDT.07.mha"
-"torusDT.08.mha" "torusDT.09.mha" "torusDT.10.mha" "torusDT.11.mha"
-"torusDT.12.mha" "torusDT.13.mha" "torusDT.14.mha" "torusDT.15.mha"
-"torusDT.16.mha" "torusDT.17.mha" "torusDT.18.mha" "torusDT.19.mha"
-)
+<!-- Number of anti-aliasing iterations -->
+<antialias_iterations> 20 </antialias_iterations> 
+
+<!-- Size of Gaussian blurring kernel for smoothing -->
+<blur_sigma> 2.0 </blur_sigma> 
+
+<!-- Pixel value associated with shape surfaces -->
+<fastmarching_isovalue> 0.0 </fastmarching_isovalue>  
+
+<!-- Name of input files -->
+<inputs>                        
+torusDT.00.mha
+torusDT.01.mha
+torusDT.02.mha
+torusDT.03.mha
+torusDT.04.mha
+:
+.
+torusDT.19.mha
+</inputs>		
+
+<!-- Name of output files -->
+<outputs>                        
+torusDT.00.mha
+torusDT.01.mha
+torusDT.02.mha
+torusDT.03.mha
+torusDT.04.mha
+:
+.
+torusDT.19.mha
+</outputs>		
 \end{Verbatim}
 \caption{\label{fig:preprocessing2}Parameter file for the second stage of torus preprocessing
 with ShapeWorksGroom: antialiasing,
@@ -536,8 +639,11 @@ we blur the distance transform slightly to get rid of high-frequency artifacts.
 Type the following command.  This step should also take less than 5 minutes to 
 complete.  The parameter file for this step is given in Figure~\ref{fig:preprocessing2}.
 Type the following command.
+%\begin{Verbatim}[frame=single]
+%ShapeWorksGroom torus.preprocess2.params antialias fastmarching blur
+%\end{Verbatim}
 \begin{Verbatim}[frame=single]
-ShapeWorksGroom torus.preprocess2.params antialias fastmarching blur
+ShapeWorksGroom torus.preprocess2.xml antialias fastmarching blur
 \end{Verbatim}
 At this stage, you should have a set of implicit surface volumes labeled
 \texttt{torusDT.00.mha, torusDT.01.mha, ..., torusDT.19.mha}.  These new
@@ -555,53 +661,109 @@ Section~\ref{sec:optimization}.  We will save the progress of the optimization
 every 20 iterations by setting the checkpointing option.  A full parameter file
 for this step is shown in Figure~\ref{fig:correspondence}.  The command to 
 start the optimization is as follows.
+%\begin{Verbatim}[frame=single]
+%ShapeWorksRun torus.correspondence.params
+%\end{Verbatim}
+%\begin{figure}
+%\centering
+%\begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
+%// torus.correspondence.params
+%// Parameters for the correspondence point optimization with ShapeWorksRun 
+%// (or ShapeWorksShop)
+%(inputs  // List of files containing the set of shape surfaces (distance transforms)
+%"torusDT.00.mha" "torusDT.01.mha" "torusDT.02.mha" "torusDT.03.mha"
+%"torusDT.04.mha" "torusDT.05.mha" "torusDT.06.mha" "torusDT.07.mha"
+%"torusDT.08.mha" "torusDT.09.mha" "torusDT.10.mha" "torusDT.11.mha"
+%"torusDT.12.mha" "torusDT.13.mha" "torusDT.14.mha" "torusDT.15.mha"
+%"torusDT.16.mha" "torusDT.17.mha" "torusDT.18.mha" "torusDT.19.mha"
+%)
+%
+%// OPTIONALLY we could specify a set of point files to initialize
+%// the optimization like this:
+%// (point_files torusDT.00.lpts torusDT.01.lpts ... torusDT.19.lpts)
+%
+%(number_of_particles 256) // If point files are not specified, then
+%                          // the application will initialize particles
+%                          // by splitting until each shape has this 
+%                          // total number of particles.
+%
+%(iterations_per_split 200) // Iterations between splitting during
+%                          // initialization phase.
+%
+%(starting_regularization 10.0) // Starting regularization for the
+%                                // entropy-based correspondence
+%                                // optimization.
+%
+%(ending_regularization 0.1) // Final regularization for the entropy-
+%                            // based correspondence.
+%
+%(optimization_iterations 200) // Number of iterations for the entropy-
+%                              // based correspondence.
+%
+%(checkpointing_interval 20) // Number of iterations between checkpoints
+%                            // (iterations at which results are saved)
+%
+%(output_points_prefix "torus") // Prefix for the output files.
+%\end{Verbatim}
+%\caption{\label{fig:correspondence}Parameter file for the correspondence point optimization
+%of the torus data using ShapeWorksRun.}
+%\end{figure}
 \begin{Verbatim}[frame=single]
-ShapeWorksRun torus.correspondence.params
+ShapeWorksRun torus.correspondence.xml
 \end{Verbatim}
 \begin{figure}
 \centering
 \begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
-// torus.correspondence.params
-// Parameters for the correspondence point optimization with ShapeWorksRun 
-// (or ShapeWorksShop)
-(inputs  // List of files containing the set of shape surfaces (distance transforms)
-"torusDT.00.mha" "torusDT.01.mha" "torusDT.02.mha" "torusDT.03.mha"
-"torusDT.04.mha" "torusDT.05.mha" "torusDT.06.mha" "torusDT.07.mha"
-"torusDT.08.mha" "torusDT.09.mha" "torusDT.10.mha" "torusDT.11.mha"
-"torusDT.12.mha" "torusDT.13.mha" "torusDT.14.mha" "torusDT.15.mha"
-"torusDT.16.mha" "torusDT.17.mha" "torusDT.18.mha" "torusDT.19.mha"
-)
+<!-- torus.correspondence.xml -->
+<!-- List of files containing the set of shape surfaces. -->
+<inputs>        
+torusDT.00.mha  
+torusDT.01.mha  
+torusDT.02.mha
+torusDT.03.mha
+torusDT.04.mha
+:
+.
+torusDT.19.mha
+ </inputs>		
+ 
+<!-- 
+OPTIONALLY we could specify a set of point files to initialize the optimization like this: 
+<point_files> 
+torusDT.00.lpts 
+torusDT.01.lpts 
+:
+.
+torusDT.19.lpts
+</point_files>
+-->
 
-// OPTIONALLY we could specify a set of point files to initialize
-// the optimization like this:
-// (point_files torusDT.00.lpts torusDT.01.lpts ... torusDT.19.lpts)
+<!-- If point files are not specified, then the application will initialize particles 
+     by splitting until each shape has this total number of particles. -->
+<number_of_particles> 256 </number_of_particles> 
 
-(number_of_particles 256) // If point files are not specified, then
-                          // the application will initialize particles
-                          // by splitting until each shape has this 
-                          // total number of particles.
+<!-- Iterations between splitting during initialization phase. -->
+<iterations_per_split> 200 </iterations_per_split> 
 
-(iterations_per_split 200) // Iterations between splitting during
-                          // initialization phase.
+<!-- Starting regularization for the entropy-based correspondence optimization. -->
+<starting_regularization> 10.0 </starting_regularization> 
 
-(starting_regularization 10.0) // Starting regularization for the
-                                // entropy-based correspondence
-                                // optimization.
+<!-- Final regularization for the entropy-based correspondence. -->
+<ending_regularization> 0.1 </ending_regularization> 
 
-(ending_regularization 0.1) // Final regularization for the entropy-
-                            // based correspondence.
+<!-- Number of iterations for the entropy-based correspondence. -->
+<optimization_iterations> 200 </optimization_iterations> 
 
-(optimization_iterations 200) // Number of iterations for the entropy-
-                              // based correspondence.
+<!-- Number of iterations between checkpoints (iterations at which results are saved) -->
+<checkpointing_interval> 20 </checkpointing_interval> 
 
-(checkpointing_interval 20) // Number of iterations between checkpoints
-                            // (iterations at which results are saved)
-
-(output_points_prefix "torus") // Prefix for the output files.
+<!-- Prefix for the output files. -->
+<output_points_prefix> torus </output_points_prefix> 
 \end{Verbatim}
 \caption{\label{fig:correspondence}Parameter file for the correspondence point optimization
 of the torus data using ShapeWorksRun.}
 \end{figure}
+
 During the optimization, ShapeWorksRun outputs the variance associated with each
 of the orthogonal modes of variation in the data, obtained via principal
 component analysis (PCA).  As the optimization proceeds, notice how almost all of the
@@ -624,25 +786,48 @@ supplied parameter file, as given in Figure~\ref{fig:visualization}.  Note that 
 parameter file load the \texttt{*.wpts} files, which are the correspondences
 in the common (world) coordinate space.  To start the ShapeWorksView application, type the
 following command.
+%\begin{Verbatim}[frame=single]
+%ShapeWorksView torus.analyze.params
+%\end{Verbatim}
+%\begin{figure}
+%\centering
+%\begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
+%// torus.analyze.params
+%// Parameters for viewing correspondence points using ShapeWorksView
+%(point_files    // Set of correspondence points in the common coordinate space.
+%"torus.00.wpts" "torus.01.wpts" "torus.02.wpts" "torus.03.wpts"
+%"torus.04.wpts" "torus.05.wpts" "torus.06.wpts" "torus.07.wpts"
+%"torus.08.wpts" "torus.09.wpts" "torus.10.wpts" "torus.11.wpts"
+%"torus.12.wpts" "torus.13.wpts" "torus.14.wpts" "torus.15.wpts"
+%"torus.16.wpts" "torus.17.wpts" "torus.18.wpts" "torus.19.wpts"
+%)
+%\end{Verbatim}
+%\caption{\label{fig:visualization}Parameter file for visualizing optimized correspondence
+%points on the torus data using ShapeWorksView.}
+%\end{figure}
 \begin{Verbatim}[frame=single]
-ShapeWorksView torus.analyze.params
+ShapeWorksView torus.analyze.xml
 \end{Verbatim}
 \begin{figure}
 \centering
 \begin{Verbatim}[fontsize=\small,frame=single,framerule=1mm]
-// torus.analyze.params
-// Parameters for viewing correspondence points using ShapeWorksView
-(point_files    // Set of correspondence points in the common coordinate space.
-"torus.00.wpts" "torus.01.wpts" "torus.02.wpts" "torus.03.wpts"
-"torus.04.wpts" "torus.05.wpts" "torus.06.wpts" "torus.07.wpts"
-"torus.08.wpts" "torus.09.wpts" "torus.10.wpts" "torus.11.wpts"
-"torus.12.wpts" "torus.13.wpts" "torus.14.wpts" "torus.15.wpts"
-"torus.16.wpts" "torus.17.wpts" "torus.18.wpts" "torus.19.wpts"
-)
+<!-- torus.analyze.xml -->
+<!-- Set of correspondence points in "world" coordinate space. -->
+<point_files>  
+torus.00.wpts
+torus.01.wpts 
+torus.02.wpts 
+torus.03.wpts
+torus.04.wpts
+:
+.
+torus.19.wpts
+</point_files>		  
 \end{Verbatim}
 \caption{\label{fig:visualization}Parameter file for visualizing optimized correspondence
 points on the torus data using ShapeWorksView.}
 \end{figure}
+
 Once the applications starts, you will see the mean correspondence positions
 for the ensemble of tori, and a surface reconstruction of the mean.  Let's
 start by adjusting the reconstruction parameters for a better visualization.
@@ -675,17 +860,27 @@ variation in those remaining modes.
 \label{sec:reference}
 \subsection{Parameter Files}
 \label{sec:params}
-Parameter files for each of the ShapeWorks applications are text files
-consisting of a list of parameters, enclosed in parentheses, and separated by
-white space or a new line..  Each parameter has an associated list of values.
+Parameter files for each of the ShapeWorks applications are XML files
+consisting of a list of parameters, enclosed in XML tag syntax, and separated by
+a new line. Each parameter has an associated list of values.
 Parameter values can be integer (\texttt{<int>}), floating-point
-(\texttt<float>), or string (\texttt<string>), and are also separated by white
-space or new lines.  Strings must be enclosed by quotation marks.  An example
-parameter with an associated list of three values (one integer, one floating
+(\texttt{<float>}), or string (\texttt{<string>}), and are also separated by new lines.
+An example parameter with an associated list of three values (one integer, one floating
 point and one string), is as follows\\
-\texttt{(example\_parameter 10 10.0 ``ten'')   // here is a comment} \\
-As shown in the previous example, single lines of a  parameter file may be commented using C++ comment syntax.
-Several examples of full parameter files are given in Figures~\ref{fig:preprocessing1}--\ref{fig:visualization}.
+\texttt{<example\_parameter> \\ 10 \\ 10.0 \\ ten \\</example\_parameter>   <!-- here is a comment -->} \\
+As shown in the previous example, single lines of a  parameter file may be commented using XML comment syntax.
+Several examples of parameter files are given in Figures~\ref{fig:preprocessing1}--\ref{fig:visualization}.
+%Parameter files for each of the ShapeWorks applications are text files
+%consisting of a list of parameters, enclosed in parentheses, and separated by
+%white space or a new line..  Each parameter has an associated list of values.
+%Parameter values can be integer (\texttt{<int>}), floating-point
+%(\texttt<float>), or string (\texttt<string>), and are also separated by white
+%space or new lines.  Strings must be enclosed by quotation marks.  An example
+%parameter with an associated list of three values (one integer, one floating
+%point and one string), is as follows\\
+%\texttt{(example\_parameter 10 10.0 ``ten'')   // here is a comment} \\
+%As shown in the previous example, single lines of a  parameter file may be commented using C++ comment syntax.
+%Several examples of full parameter files are given in Figures~\ref{fig:preprocessing1}--\ref{fig:visualization}.
 \subsection{ShapeWorksGroom}
 % command to invoke
 
@@ -706,8 +901,10 @@ ShapeWorksGroom <parameterfile> <options>
 Example parameter files are given in Figures~\ref{fig:preprocessing1}--\ref{fig:preprocessing2}.  All filtering
 operations must specify a list of inputs and outputs in the parameter file.  The size of the input list must
 match the size of the output list.\\
-\texttt{(inputs \\"torus.00.mha" \\"torus.01.mha"\\\vdots \\"torus.19.mha" \\)}\\
-\texttt{(outputs \\"torus.00.mha" \\"torus.01.mha" \\\vdots \\"torus.19.mha" \\)}
+\texttt{<inputs> \\torus.00.mha \\torus.01.mha\\\vdots \\torus.19.mha \\</inputs>}\\ \\
+\texttt{<outputs> \\torus.00.mha \\torus.01.mha\\\vdots \\torus.19.mha \\</outputs>}
+%\texttt{(inputs \\"torus.00.mha" \\"torus.01.mha"\\\vdots \\"torus.19.mha" \\)}\\
+%\texttt{(outputs \\"torus.00.mha" \\"torus.01.mha" \\\vdots \\"torus.19.mha" \\)}
 
 The following is a list of valid command-line options that specify filtering
 operations, followed by any additional parameters that must be present
@@ -717,13 +914,17 @@ they are specified on the command line.
 \begin{description}
 \item[isolate] Find and isolate the largest connected component. The foreground and background intensity 
 values must be specified in the parameter file.\\
-\texttt{(background <float>) \\
-(foreground <float>)}
+\texttt{<background> <float> </background>} \\
+\texttt{<foreground> <float> </foreground>}
+%\texttt{(background <float>) \\
+%(foreground <float>)}
 
 \item[hole\_fill] Fill any holes in the binary segmentation of interest. The background and foreground 
 intensity values must be specified in the parameter file.\\
-\texttt{(background <float>) \\
-(foreground <float>)}
+\texttt{<background> <float> </background>} \\
+\texttt{<foreground> <float> </foreground>}
+%\texttt{(background <float>) \\
+%(foreground <float>)}
 
 \item[auto\_crop] Use this option to find the largest bounding box containing all input shapes, and crop all 
 input volumes accordingly. No additional parameters are required. \\
@@ -732,38 +933,51 @@ input volumes accordingly. No additional parameters are required. \\
 \item[antialias] Antialias the binary input volumes. The number of antialiasing iterations can be set in 
 the parameter file.  The output of this operation is 
 an image volume containing a distance transform in a narrow band around the binary surface.\\
-\texttt{(antialias\_iterations <int>)}.
+\texttt{<antialias\_iterations> <int> </antialias\_iterations>}.
+%\texttt{(antialias\_iterations <int>)}.
 
 \item[fastmarching] Levelset-based computation of a distance transform volume from a specified isovalue.
 The isovalue corresponding to the surface of interest in the input volume must be specified in the 
 parameter file using the syntax \\
-\texttt{(fastmarching\_isovalue <float>)} \\
+\texttt{<fastmarching\_isovalue> <float> </fastmarching\_isovalue>}
+%\texttt{(fastmarching\_isovalue <float>)} \\
 \textbf{Note:} If fastmarching is carried out after antialiasing, the isovalue should be set to $0.0$
 
 \item[blur] Gaussian blurring to remove high-frequency artifacts as described in~\ref{sec:pipeline}. 
 The standard deviation (in voxel-space units) for the blurring kernel can be
-set in the parameter file using the parameter\\\texttt{(blur\_sigma <float>)}.
+set in the parameter file using the parameter\\
+\texttt{<blur\_sigma> <float> </blur\_sigma>}.
+%\texttt{(blur\_sigma <float>)}.
 
 \item[icp] Iterative closest point 3D rigid registration to align two datasets as described in~\ref{sec:pipeline}. 
 If present, icp should be the last option passed to ShapeWorksGroom. 
-The number of ICP iterations can be set in the parameter file using the parameter\\\texttt{(icp\_iterations <int>)}.
+The number of ICP iterations can be set in the parameter file using the parameter\\
+\texttt{<icp\_iterations> <int> </icp\_iterations>}.
+%\texttt{(icp\_iterations <int>)}.
 \end{description}
 
 \subsection{ShapeWorksRun}
 \begin{Verbatim}[frame=single]
-ShapeWorksRun <parameterfile>}
+ShapeWorksRun <parameterfile>
 \end{Verbatim}
 An example parameter file is given in Figure~\ref{fig:correspondence}. The following is a partial list
 of valid parameters that will affect the optimization.
 \begin{description}
 \item The input to the particle system is a set of implicit surfaces (e.g. distance transforms).\\
-\texttt{(inputs \\
-"./ExampleData/preprocessed/torus.00.mha" \\
-"./ExampleData/preprocessed/torus.01.mha" \\
+\texttt{<inputs> \\
+./ExampleData/preprocessed/torus.00.mha \\
+./ExampleData/preprocessed/torus.01.mha \\
 \vdots \\
-'./ExampleData/preprocessed/torus.19.mha" \\
-)
+./ExampleData/preprocessed/torus.19.mha \\
+</inputs>
 }
+%\texttt{(inputs \\
+%"./ExampleData/preprocessed/torus.00.mha" \\
+%"./ExampleData/preprocessed/torus.01.mha" \\
+%\vdots \\
+%'./ExampleData/preprocessed/torus.19.mha" \\
+%)
+%}
 
 %\paragraph{\texttt{processing\_mode}} The processing mode determines the algorithm used to initialize and 
 %optimize particles positions. There are three possible modes: 0-initialization only, 1-add adaptivity, 
@@ -835,36 +1049,59 @@ produces point files in both the local and common coordinate frames.  Typically,
 you will want to input the point files from the {\em common} coordinate frame
 as inputs to ShapeWorksView (the \texttt{*.wpts} files).
 Point files are specified in the parameter file as follows:\\
-\texttt{(point\_files \\
-"./ExampleData/torus.00.wpts" \\
-"./ExampleData/torus.01.wpts" \\
+\texttt{<point\_files> \\
+./ExampleData/torus.00.wpts \\
+./ExampleData/torus.01.wpts \\
 \vdots \\
-"./ExampleData/torus.19.wpts" \\
-)
+./ExampleData/torus.19.wpts \\
+</point\_files>
 }
+
+%\texttt{(point\_files \\
+%"./ExampleData/torus.00.wpts" \\
+%"./ExampleData/torus.01.wpts" \\
+%\vdots \\
+%"./ExampleData/torus.19.wpts" \\
+%)
+%}
 
 You may optionally also input a set of group IDs for each input file as follows.  You must specify one
 group id per input file. Groups {\em must} be labeled as either ``1'' or ``2''.  Currently, arbitrary
 group labels are recognized and may cause runtime errors.\\
-\texttt{(group\_ids \\
+\texttt{<group\_ids> \\
 1\\
 1\\
 \vdots\\
 2\\
 2\\
-)
+</group\_ids>
 }
+%\texttt{(group\_ids \\
+%1\\
+%1\\
+%\vdots\\
+%2\\
+%2\\
+%)
+%}
 
 ShapeWorksView can also compute a linear regression in shape space with respect to an independent scalar
 variable.  To enable this option, specify the independent variable values in the parameter file as follows.  There
 must be one floating-point value per input file. When regression is indicated, a new menu option will appear
 under the ``View'' menu, allowing you to view shape variation along the regression line.\\
-\texttt{(explanatory\_variable
+\texttt{<explanatory\_variable>
 <float>\\
 <float>\\
 \vdots\\
-\\<float>
-)}
+\\<float>\\
+</explanatory\_variable>
+}
+%\texttt{(explanatory\_variable
+%<float>\\
+%<float>\\
+%\vdots\\
+%\\<float>
+%)}
 
 
 \subsection{ShapeWorksShop}
