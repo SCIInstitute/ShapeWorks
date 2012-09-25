@@ -93,21 +93,21 @@ ParticleRegionNeighborhood<VDimension>
   // list.
   for (typename PointTreeType::PointIteratorListType::const_iterator it = pointlist.begin();
        it != pointlist.end(); it++)
-    {
+  {
     //    double dist = this->GetDomain()->Distance(center, (*it)->Point);
     double sum = 0.0;
     for (unsigned int i = 0; i < VDimension; i++)
-      {
+    {
       double q = center[i] - (*it)->Point[i];
       sum += q*q;
-      }
+    }
     sum = sqrt(sum);
     
     if ( sum < radius && sum >0 )
-      {
+    {
       ret.push_back( **it );
-      }
     }
+  }
    
   return ret;
 }
