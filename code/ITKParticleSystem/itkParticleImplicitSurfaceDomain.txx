@@ -190,40 +190,37 @@ template <class T, unsigned int VDimension>
 double
 ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const PointType &b) const
 {
+#ifndef SW_USE_MESH
   // Check to see if the normals are >= 90 degrees apart.
-  //if ( dot_product(this->SampleGradientVnl(a), this->SampleGradientVnl(b) ) <= 0.0  )
-  //{
-  //  return -1.0;
-  //}
-  //else  // Return distance
-  //  {
-#ifdef SW_USE_MESH
-    if (m_mesh != NULL)
-      {
-      point pt;
-      pt[0] = a[0]; // + (this->GetImage()->GetOrigin())[0];
-      pt[1] = a[1]; // + (this->GetImage()->GetOrigin())[1];
-      pt[2] = a[2]; // + (this->GetImage()->GetOrigin())[2];
-      int v1 = m_mesh->FindNearestVertex(pt);
-      
-      pt[0] = b[0]; // + (this->GetImage()->GetOrigin())[0];
-      pt[1] = b[1]; // + (this->GetImage()->GetOrigin())[1];
-      pt[2] = b[2]; // + (this->GetImage()->GetOrigin())[2];
-      int v2 = m_mesh->FindNearestVertex(pt);
-      
-      return (m_mesh->GetGeodesicDistance(v1,v2));
-      }
-    else
-      {
-#endif
-      double sum = 0.0;
-      for (unsigned int i = 0; i < VDimension; i++)
-        {      sum += (b[i]-a[i]) * (b[i]-a[i]);      }
-      return sqrt(sum);
-#ifdef SW_USE_MESH
-      }
-#endif
-    //}
+  if ( dot_product(this->SampleGradientVnl(a), this->SampleGradientVnl(b) ) <= 0.0  )
+  {
+    return -1.0;
+  }
+  else  // Return distance
+  {
+    double sum = 0.0;
+    for (unsigned int i = 0; i < VDimension; i++)
+    {
+      sum += (b[i]-a[i]) * (b[i]-a[i]);
+    }
+    return sqrt(sum);
+  }
+#else
+  if (m_mesh != NULL)
+  {
+    point p1;
+    p1[0] = a[0];
+    p1[1] = a[1];
+    p1[2] = a[2];    
+    
+    point p2;
+    p2[0] = b[0];
+    p2[1] = b[1];
+    p2[2] = b[2];
+
+    return ( m_mesh->GetGeodesicDistance(p1,p2) );
+  }
+#endif   
 }
 
 } // end namespace
