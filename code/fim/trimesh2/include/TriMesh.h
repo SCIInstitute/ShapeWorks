@@ -636,6 +636,73 @@ double GetGeodesicDistance(int v1,int v2)
   return (gDist/(float)(this->scaleFactor));
 }
 
+double GetGeodesicDistance(point x, point y)
+{
+  // get vertex closest to first point - x
+  int vertX = this->FindNearestVertex(x);
+
+  // scan all adjacent faces to see which face (f) includes point x
+  float alphaX, betaX, gammaX;
+  Face triangleX;
+  for (unsigned int fNumber = 0; fNumber < this->adjacentfaces[vertX].size(); fNumber++)
+  {
+    // check if face contains x and store barycentric coordinates for x in face f
+    triangleX = this->faces[ this->adjacentfaces[vertX][fNumber] ];
+    vec barycentric = this->ComputeBarycentricCoordinates(x,triangleX);
+    alphaX = barycentric[0];
+    betaX = barycentric[1];
+    gammaX = barycentric[2];
+
+    if ( ( ( barycentric[0] >= 0 ) && ( barycentric[0] <= 1 ) ) &&
+         ( ( barycentric[1] >= 0 ) && ( barycentric[1] <= 1 ) ) &&
+         ( ( barycentric[2] >= 0 ) && ( barycentric[2] <= 1 ) ) )
+    {
+      fNumber = this->adjacentfaces[vertX].size();
+    }
+  }
+
+  // repeat this process for point y
+  int vertY = this->FindNearestVertex(y);
+
+  // scan all adjacent faces to see which face (f) includes point y
+  float alphaY, betaY, gammaY;
+  Face triangleY;
+  for (unsigned int fNumber = 0; fNumber < this->adjacentfaces[vertY].size(); fNumber++)
+  {
+    // check if face contains y and store barycentric coordinates for y in face f
+    triangleY = this->faces[ this->adjacentfaces[vertY][fNumber] ];
+    vec barycentric = this->ComputeBarycentricCoordinates(y,triangleY);
+    alphaY = barycentric[0];
+    betaY = barycentric[1];
+    gammaY = barycentric[2];
+
+    if ( ( barycentric[0] >= 0 ) && ( barycentric[0] <= 1 ) &&
+         ( barycentric[1] >= 0 ) && ( barycentric[1] <= 1 ) &&
+         ( barycentric[2] >= 0 ) && ( barycentric[2] <= 1 ) )
+    {
+      fNumber = this->adjacentfaces[vertY].size();
+    }
+  }
+
+  // compute geodesic distance by interpolation
+  // level one, interpolate distance from source triangle to distination point (i.e. D(triangleX, y))
+  float dx0y = ( alphaY * this->GetGeodesicDistance( triangleX.v[0], triangleY.v[0] ) ) +
+               ( betaY  * this->GetGeodesicDistance( triangleX.v[0], triangleY.v[1] ) ) +
+               ( gammaY * this->GetGeodesicDistance( triangleX.v[0], triangleY.v[2] ) );
+
+  float dx1y = ( alphaY * this->GetGeodesicDistance( triangleX.v[1], triangleY.v[0] ) ) +
+               ( betaY  * this->GetGeodesicDistance( triangleX.v[1], triangleY.v[1] ) ) +
+               ( gammaY * this->GetGeodesicDistance( triangleX.v[1], triangleY.v[2] ) );
+
+  float dx2y = ( alphaY * this->GetGeodesicDistance( triangleX.v[2], triangleY.v[0] ) ) +
+               ( betaY  * this->GetGeodesicDistance( triangleX.v[2], triangleY.v[1] ) ) +
+               ( gammaY * this->GetGeodesicDistance( triangleX.v[2], triangleY.v[2] ) );
+
+  // level 2, interpolate distance between x & y
+  float dxy = (alphaX * dx0y) + (betaX * dx1y) + (gammaX * dx2y);
+
+  return dxy;
+}
 
 int FindNearestVertex(point pt)
 {
@@ -654,70 +721,28 @@ int FindNearestVertex(point pt)
 	return id;
 }
 
+vec3 ComputeBarycentricCoordinates(point p, Face f)
+{
+  vec3 bCoords; bCoords.clear();
+  point a,b,c;
+  a = this->vertices[ f.v[0] ];
+  b = this->vertices[ f.v[1] ];
+  c = this->vertices[ f.v[2] ];
 
-//int FindNearestVertex(point p)
-//{
-//  // find which face p belongs to using barycentric co-ordinates
-//  int id = 0;
-//  bool found_face = false;
-//  for (int f = 0;f < this->faces.size(); f++)
-//  {
-//    if (!found_face)
-//    {
-//      point a = this->vertices[this->faces[f].v[0]];
-//      point b = this->vertices[this->faces[f].v[1]];
-//      point c = this->vertices[this->faces[f].v[2]];
-//
-//      // Compute vectors        
-//      point v0 = c - a;
-//      point v1 = b - a;
-//      point v2 = p - a;
-//
+  point n = (b - a) CROSS (c - a);
+  point na = (c - b) CROSS (p - b);
+  point nb = (a - c) CROSS (p - c);
+  point nc = (b - a) CROSS (p - a);
 
-//      // Compute dot products
-//      float dot00 = v0 DOT v0;
-//      float dot01 = v0 DOT v1;
-//      float dot02 = v0 DOT v2;
-//      float dot11 = v1 DOT v1;
-//      float dot12 = v1 DOT v2;
-//      
-//      // Compute barycentric coordinates
-//      float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
-//      float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-//      float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
-//
-//      // Check if point is in triangle
-//      if ( (u >= 0) && (v >= 0) && ((u + v) <= 1) )
-//      {
-//        id = f;
-//        found_face = true;
-//      }
-//    }
-//
-//  }
-//
-//	int vid = 0;
-//	float minD = LARGENUM;
-//
-//  for (int i = 0; i < 2; i++)
-//  {
-//    point v = this->vertices[this->faces[id].v[i]];
-//    float d = dist(p,v);
-//    if (d < minD)
-//    {
-//      minD = d;
-//      vid = this->faces[id].v[i];
-//    }
-//  }
-//	return vid;
-//}
-//
-//
-//
-//
-//
-//
-//
+  float normNSqr = len(n) * len (n);
+
+  bCoords[0] = ( n DOT na ) / normNSqr;
+  bCoords[1] = ( n DOT nb ) / normNSqr;
+  bCoords[2] = ( n DOT nc ) / normNSqr;
+
+  return bCoords;
+}
+
 // Debugging printout, controllable by a "verbose"ness parameter
 
 static int verbose;
