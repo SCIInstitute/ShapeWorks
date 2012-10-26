@@ -148,18 +148,18 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
         themesh->need_bsphere();
 
         point c = themesh->bsphere.center;
-        vec t(0.0f,0.0f,0.0f);
+        //vec t(0.0f,0.0f,0.0f);
 
-        t[0] = -c[0];
-        t[1] = -c[1];
-        t[2] = -c[2];
+        //t[0] = -c[0];
+        //t[1] = -c[1];
+        //t[2] = -c[2];
 
-        trans(themesh, t);
+        //trans(themesh, t);
 
-        themesh->bsphere.valid = false;
-        themesh->need_bsphere();
+        //themesh->bsphere.valid = false;
+        //themesh->need_bsphere();
 
-        c = themesh->bsphere.center;
+        //c = themesh->bsphere.center;
         
         themesh->need_normals();
         themesh->need_tstrips();
