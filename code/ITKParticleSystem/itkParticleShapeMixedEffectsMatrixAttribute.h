@@ -39,12 +39,13 @@ public:
   {
     // for each sample
     vnl_vector<double> tempvect;
-	tempvect.set_size(m_MeanMatrix.rows());
+    tempvect.set_size(m_MeanMatrix.rows());
+    tempvect.fill(0.0);
     for (unsigned int i = 0; i < m_MeanMatrix.cols(); i++)
       {
-		  int group_indx = i / m_TimeptsPerIndividual;
-		  tempvect = m_Intercept + m_Slope * m_Expl(i);
-		  tempvect = tempvect + m_InterceptRand.get_row(group_indx);
+        int group_indx = i / m_TimeptsPerIndividual;
+        tempvect = m_Intercept + m_Slope * m_Expl(i);
+        tempvect = tempvect + m_InterceptRand.get_row(group_indx);
 		  tempvect = tempvect + m_SlopeRand.get_row(group_indx) * m_Expl(i);
       // compute the mean
 		  m_MeanMatrix.set_column(i, tempvect);
@@ -142,8 +143,7 @@ public:
     const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
     
     // Make sure we have enough rows.
-    if ((ps->GetNumberOfParticles(d) * VDimension * this->m_DomainsPerShape)
-        > this->rows())
+    if ( (ps->GetNumberOfParticles(d) * VDimension * this->m_DomainsPerShape) > this->rows() )
       {
       this->ResizeParameters(PointsPerDomain * VDimension * this->m_DomainsPerShape);
       this->ResizeMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
@@ -263,16 +263,17 @@ public:
     //    std::cout << "Explanatory: " << m_Expl << std::endl;
 
     vnl_matrix<double> X = *this + m_MeanMatrix;
-	
+    	
     // Number of samples
-    int num_shapes = static_cast<double>(X.cols());
-    this->m_NumIndividuals = num_shapes / (this->GetDomainsPerShape()*this->GetTimeptsPerIndividual());
+    //int num_shapes = static_cast<double>(X.cols());
+    //this->m_NumIndividuals = num_shapes / (this->GetDomainsPerShape()*this->GetTimeptsPerIndividual());
+    this->m_NumIndividuals = static_cast<double>(X.cols());
 	  int nr = X.rows(); //number of points*3
-	
+    	
 	//set the sizes of random slope and intercept matrix
 	m_SlopeRand.set_size(m_NumIndividuals, nr); //num_groups X num_points*3
 	m_InterceptRand.set_size(m_NumIndividuals, nr); //num_groups X num_points*3
-	
+  	
 	vnl_matrix<double> fixed; //slopes + intercepts for all points
 	vnl_matrix<double> random; //slopes + intercepts for all groups, for all points
 	fixed.set_size(2, nr);
@@ -349,7 +350,7 @@ public:
 				bscorr = bscorr + outer_product(random.get_column(i*m_NumIndividuals + k), random.get_column(i*m_NumIndividuals + k));
 				bsvar = bsvar + (identity_2 - (vnl_transpose(Xp) * Ws[k] * Xp * Ds));
 			}
-			sigma2s = (ecorr + sigma2s * tracevar) / (num_shapes);
+			sigma2s = (ecorr + sigma2s * tracevar) / (m_NumIndividuals);
 			Ds = (bscorr + Ds * bsvar) / m_NumIndividuals;
 		}//endfor EM iterations
 		//printf ("point #%d\n", i);
@@ -413,7 +414,7 @@ protected:
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
     m_UpdateCounter = 0;
     m_RegressionInterval = 1;
-	  m_NumIndividuals = 26;
+	  m_NumIndividuals = 13;
 	  m_TimeptsPerIndividual = 3;
   }
   virtual ~ParticleShapeMixedEffectsMatrixAttribute() {};
