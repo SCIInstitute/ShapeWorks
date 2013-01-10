@@ -265,10 +265,9 @@ public:
     vnl_matrix<double> X = *this + m_MeanMatrix;
     	
     // Number of samples
-    //int num_shapes = static_cast<double>(X.cols());
-    //this->m_NumIndividuals = num_shapes / (this->GetDomainsPerShape()*this->GetTimeptsPerIndividual());
-    this->m_NumIndividuals = static_cast<double>(X.cols());
-	  int nr = X.rows(); //number of points*3
+    int num_shapes = static_cast<double>(X.cols());
+    this->m_NumIndividuals = num_shapes / this->GetTimeptsPerIndividual();
+    int nr = X.rows(); //number of points*3
     	
 	//set the sizes of random slope and intercept matrix
 	m_SlopeRand.set_size(m_NumIndividuals, nr); //num_groups X num_points*3
@@ -350,7 +349,7 @@ public:
 				bscorr = bscorr + outer_product(random.get_column(i*m_NumIndividuals + k), random.get_column(i*m_NumIndividuals + k));
 				bsvar = bsvar + (identity_2 - (vnl_transpose(Xp) * Ws[k] * Xp * Ds));
 			}
-			sigma2s = (ecorr + sigma2s * tracevar) / (m_NumIndividuals);
+			sigma2s = (ecorr + sigma2s * tracevar) / (num_shapes);
 			Ds = (bscorr + Ds * bsvar) / m_NumIndividuals;
 		}//endfor EM iterations
 		//printf ("point #%d\n", i);
