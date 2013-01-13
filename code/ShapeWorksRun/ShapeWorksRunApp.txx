@@ -43,6 +43,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
   m_disable_checkpointing = true;
   m_optimizing = false;
   m_use_normal_penalty = false;
+  m_use_initial_normal_penalty = false;
   m_use_regression = false;
   m_use_mixed_effects = false;
   
@@ -289,6 +290,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
       meshFiles.clear();
     }
+
 
 #endif
 
@@ -726,11 +728,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
       this->m_initial_norm_penalty_weighting = atof(elem->GetText());
       if (this->m_initial_norm_penalty_weighting > 0.0)
       {
-        this->m_use_normal_penalty = true;
+        this->m_use_initial_normal_penalty = true;
       }
       else
       {
-        this->m_use_normal_penalty = false;
+        this->m_use_initial_normal_penalty = false;
       }
     }
 
@@ -842,7 +844,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
   
   m_Sampler->SetSamplingOn();
   m_Sampler->SetCorrespondenceOn();
-  if (this->m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+  if (this->m_use_initial_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
   m_Sampler->SetAdaptivityMode(m_adaptivity_mode);
   m_Sampler->GetEnsembleEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
@@ -866,7 +868,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
   m_Sampler->GetCurvatureGradientFunction()->SetRho(0.0);
   m_Sampler->GetOmegaGradientFunction()->SetRho(0.0);
   m_Sampler->SetCorrespondenceOn();
-  if (this->m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+  if (this->m_use_initial_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
   m_Sampler->SetCorrespondenceMode(0);
   m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
