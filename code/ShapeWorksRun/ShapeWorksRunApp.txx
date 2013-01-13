@@ -289,6 +289,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
       meshFiles.clear();
     }
+
 #endif
 
     // read geometric constraints, if present
@@ -704,7 +705,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     if (elem)
     {
       this->m_norm_penalty_weighting = atof(elem->GetText());
-      this->m_use_normal_penalty = true;
+      if (this->m_norm_penalty_weighting > 0.0)
+      {
+        this->m_use_normal_penalty = true;
+      }
+      else
+      {
+        this->m_use_normal_penalty = false;
+      }
     }
 
     this->m_initial_relative_weighting = 0.05;
@@ -716,7 +724,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     if (elem)
     {
       this->m_initial_norm_penalty_weighting = atof(elem->GetText());
-      this->m_use_normal_penalty = true;
+      if (this->m_initial_norm_penalty_weighting > 0.0)
+      {
+        this->m_use_normal_penalty = true;
+      }
+      else
+      {
+        this->m_use_normal_penalty = false;
+      }
     }
 
     this->m_adaptivity_strength = 0.0;
