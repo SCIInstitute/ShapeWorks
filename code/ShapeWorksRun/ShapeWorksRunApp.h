@@ -129,6 +129,7 @@ protected:
   double m_spacing;
   bool m_optimizing;
   bool m_use_normal_penalty;
+  bool m_use_inital_normal_penalty;
   bool m_use_regression;
   bool m_use_mixed_effects;
 
