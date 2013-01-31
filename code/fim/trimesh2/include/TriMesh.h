@@ -22,6 +22,7 @@ Class for triangle meshes.
 #include <map>
 #include <limits>
 #include <iostream>
+#include <fstream>
 
 using std::vector;
 using std::map;
@@ -45,8 +46,8 @@ public:
 	// Types
 	struct Face {
 		int v[3];
-		double speedInv;
-		double T[3];
+		float speedInv;
+		float T[3];
 		vec3 edgeLens;  // edge length for 01, 12, 20
 
 		Face() {}
@@ -152,6 +153,8 @@ public:
 
 	int speedType;
 
+
+
  
 	// Triangle strips
 	vector<int> tstrips;
@@ -174,18 +177,11 @@ public:
 	vector< Vec<4,float> > dcurv;
 	vector<vec> cornerareas;
 	vector<float> pointareas;
-  //	vector< vector<double> > vertT;
-	//vector< vector<int> > geoIndex;
-	//vector< vector<double> > geoMap;
-  vector< map<unsigned int, unsigned int> > geodesicMap;
-	//vector< vector<int> > adaptIndex;
-	//vector< vector<double> > adaptMap;
-	//vector< vector<int> > *iMap;
-	//vector< vector<double> > *dMap;
-	double *geodesic;
 
-  unsigned int scaleFactor;
+  vector< map<unsigned int, float> > geodesicMap;
+	float *geodesic;
 
+  vector< vector<float> > features;
 
 	// Bounding structures
 	BBox bbox;
@@ -226,12 +222,6 @@ public:
 
 	vector<float> noiseOnVert;
 	
-   //JAL: Geodesic Voronoi Info
-   //for each vertex, which voronoi cell it is in
-   vector<int> vor_cell_of_vert;
-   vector<int> faces_spanning_voronoi;
-
-
 	 int getSpeedType(){
 		 return speedType;
 	 }
@@ -537,26 +527,14 @@ vector<Face> GetOneRing(int v/*, int currentVert*/)
 	//typedef std::<int> ListType;
 void InitializeAttributes(int currentVert , std::vector<int> seeds = vector<int>() )
 {
-	// initialize the travel times over all vertices...
-	/*
 	int nv = this->vertices.size();
-
- 	for (int v = 0; v < nv; v++){			
-		this->vertT[currentVert].push_back(LARGENUM);  //modified from this->vertT[v] = 1000000.0)
-	}
-	*/
-	//vector<int> nb;
-	
-	int nv = this->vertices.size();
-	this->geodesic = new double[nv];
+	this->geodesic = new float[nv];
 	
 	for(int v= 0; v < nv; v++){
 		geodesic[v] = LARGENUM;
 	}
 
-	
-
-  // initialize seed points if present...
+	// initialize seed points if present...
 	if (!seeds.empty()){
 		int ns = seeds.size();
 		for (int s = 0; s < ns; s++){
@@ -594,9 +572,9 @@ void CleanupAttributes(int currentVert)
 	delete [] this->geodesic;
 }
 
-double GetEuclideanDistance(int v1,int v2)
+float GetEuclideanDistance(int v1,int v2)
 {
-	double d = 0.0;
+	float d = 0.000001f;
 	point p1, p2;
 	
 	p1 = this->vertices[v1];
@@ -608,9 +586,9 @@ double GetEuclideanDistance(int v1,int v2)
 }
 
 
-double GetGeodesicDistance(int v1,int v2)
+float GetGeodesicDistance(int v1,int v2)
 {
-  double gDist = 0.0;
+  float gDist = 0.000001f;
 
   if (v1 == v2) return gDist;
 
@@ -623,7 +601,7 @@ double GetGeodesicDistance(int v1,int v2)
     key = v1;
   }
 
-  std::map<unsigned int,unsigned int>::iterator geoIter = this->geodesicMap[vert].find(key);
+  std::map<unsigned int,float>::iterator geoIter = this->geodesicMap[vert].find(key);
   if (geoIter != this->geodesicMap[vert].end())
   {
     gDist = geoIter->second;
@@ -633,7 +611,7 @@ double GetGeodesicDistance(int v1,int v2)
     gDist = LARGENUM;
   }
 
-  return (gDist/(float)(this->scaleFactor));
+  return gDist;
 }
 
 double GetGeodesicDistance(point x, point y)
@@ -743,6 +721,103 @@ vec3 ComputeBarycentricCoordinates(point p, Face f)
   return bCoords;
 }
 
+void ReadFeatureFromFile(const char *infilename)
+{
+  std::ifstream infile(infilename, std::ios::binary);
+	if (!infile.is_open())
+  {
+    std::cout << "File Not Found" << std::endl;
+	}
+  else
+  {
+    // read # vertices
+    unsigned int numVert;
+    infile.read(reinterpret_cast<char *>(&numVert), sizeof(unsigned int));
+
+    if ( numVert != this->vertices.size() )
+    {
+      std::cout << "size of feature vector does not match # vertices in mesh" << std::endl;      
+    }
+    else
+    {
+      vector< float > tmpFeatureVec;
+      // loop over vertices
+      for (int i = 0; i < numVert; i++)
+      {
+        // read feature value
+        float value;
+        infile.read( reinterpret_cast<char *>(&value), sizeof(float) );
+        tmpFeatureVec.push_back(value);
+      }
+
+      this->features.push_back( tmpFeatureVec );
+    }
+
+		infile.close();
+  }
+
+}
+
+void WriteFeatureToFile(int featureIndex, const char *outfilename)
+{
+  //std::ofstream outfile(outfilename, std::ios::binary);
+
+  //// write numVertices to facilitate reading later
+  //int numVert = this->vertices.size();
+  //outfile.write( reinterpret_cast<char *>(&numVert), sizeof(int) );
+
+  //// loop over each vertex
+  //for (int i = 0; i < numVert; i++)
+  //{
+  //  // write distance to curve
+  //  unsigned short value = this->(features[featureIndex])[i];
+  //  outfile.write( reinterpret_cast<char *>(&value), sizeof(unsigned short) );
+  //}
+
+  //outfile.close();
+}
+
+float GetFeatureValue(point x, int featureIndex)
+{
+  // find vertex nearest to x
+  int vertX = this->FindNearestVertex(x);
+
+  // check one-ring to see which triangle contains x
+  float alphaX, betaX, gammaX;
+  Face triangleX;
+  for (unsigned int fNumber = 0; fNumber < this->adjacentfaces[vertX].size(); fNumber++)
+  {
+    // check if face contains x and store barycentric coordinates for x in face f
+    triangleX = this->faces[ this->adjacentfaces[vertX][fNumber] ];
+    vec barycentric = this->ComputeBarycentricCoordinates(x,triangleX);
+    alphaX = barycentric[0];
+    betaX = barycentric[1];
+    gammaX = barycentric[2];
+
+    if ( ( ( barycentric[0] >= 0 ) && ( barycentric[0] <= 1 ) ) &&
+         ( ( barycentric[1] >= 0 ) && ( barycentric[1] <= 1 ) ) &&
+         ( ( barycentric[2] >= 0 ) && ( barycentric[2] <= 1 ) ) )
+    {
+      fNumber = this->adjacentfaces[vertX].size();
+    }
+  }
+
+  // interpolate feature values on triangle face
+  float f0 = this->features[featureIndex][ triangleX.v[0] ];
+  float f1 = this->features[featureIndex][ triangleX.v[1] ];
+  float f2 = this->features[featureIndex][ triangleX.v[2] ];
+  float featureValue = (alphaX * f0) + (betaX * f1) + (gammaX * f2);
+
+  return featureValue;
+}
+
+int GetNumberOfFeatures()
+{
+  return this->features.size();  
+}
+
+
+
 // Debugging printout, controllable by a "verbose"ness parameter
 
 static int verbose;
@@ -759,7 +834,6 @@ static void eprintf(const char *format, ...);
 // Constructor
  TriMesh() : grid_width(-1), grid_height(-1), flag_curr(0), speedType(ONE)
 {
-  scaleFactor = 1000;
 	//iMap = &geoIndex;
 	//dMap = &geoMap;		
 }
