@@ -365,14 +365,13 @@ void meshFIM::GenerateReducedData()
 
 		// Loop Through And Copy Only Values < than m_StopDistance
 		int nv = m_meshPtr->vertices.size();
-    int s = m_meshPtr->scaleFactor;
 		for(int v= 0; v < currentVert; v++){
 			if ((m_meshPtr->geodesic[v] <= m_StopDistance) && (m_meshPtr->geodesic[v] > 0))
       {
 				//m_meshPtr->geoMap[currentVert][v] = m_meshPtr->geodesic[v];
 				//(*(m_meshPtr->dMap))[currentVert].push_back(m_meshPtr->geodesic[v]);
 				//(*(m_meshPtr->iMap))[currentVert].push_back(v);
-        (m_meshPtr->geodesicMap[currentVert])[v] = (int)(m_meshPtr->geodesic[v]*s);       
+        (m_meshPtr->geodesicMap[currentVert])[v] = m_meshPtr->geodesic[v];       
 			}
 		}
 
@@ -427,11 +426,10 @@ void meshFIM::loadGeodesicFile(TriMesh *mesh, const char *geoFileName)
 	int numVert = mesh->vertices.size();
 	//mesh->geoMap.resize(numVert);
 	//mesh->geoIndex.resize(numVert);
-  unsigned int s = mesh->scaleFactor;
 
   mesh->geodesicMap.resize(numVert);
 
-	ifstream infile(geoFileName, ifstream::in);
+  ifstream infile(geoFileName, std::ios::binary);
 	if (!infile.is_open())
   {
 		cout << "File Not Found" << endl;
@@ -439,40 +437,65 @@ void meshFIM::loadGeodesicFile(TriMesh *mesh, const char *geoFileName)
 	}
 	else
   {
-		int vertex = 0;
-		unsigned int distance;
-		string line;
+    // read stop distance
+    float distance;
+    infile.read(reinterpret_cast<char *>(&distance), sizeof(float));
+		this->SetStopDistance(distance);
 
-		// First Line In File Is Stop Distance
-		getline(infile, line);
-		stringstream str(line);
-		str >> distance;
-
-    this->SetStopDistance((float)distance/(float)s);
-		cout << "Found it!" << endl << "Loading " << geoFileName << endl;
-    
-    distance = 0;
-		for(int i=0; i < numVert; i++)
+    // loop over vertices
+    for (int i = 0; i < numVert; i++)
     {
-      line.clear();
-		  getline(infile, line);
-      str.clear();
-      str.str(line);
-			str >> vertex >> distance;
-			while(!str.eof())
-      {
-				//mesh->geoMap[i].push_back(distance);
-				//mesh->geoIndex[i].push_back(vertex);
-        (mesh->geodesicMap[i])[vertex] = distance;
-				str >> vertex >> distance;
-			}
+      // read map size for vertex
+      unsigned int dLength;
+      infile.read( reinterpret_cast<char *>(&dLength), sizeof(unsigned int) );
 
-			//printf("\r                                              \r");
-			//printf("Progress %.1f%%", (i+1.0f)/(numVert)*100);
-			//fflush(stdout);
-				
-		}
-		cout << endl;
+      // read key and distance pair
+      for (int j = 0; j < dLength; j++)
+      {
+        unsigned int index;
+        infile.read( reinterpret_cast<char *>(&index), sizeof(unsigned int) );
+
+        float dist;
+        infile.read( reinterpret_cast<char *>(&dist), sizeof(float) );
+
+        (mesh->geodesicMap[i])[index] = dist;
+      }
+    }
+
+		//int vertex = 0;
+		//unsigned int distance;
+		//string line;
+
+		//// First Line In File Is Stop Distance
+		//getline(infile, line);
+		//stringstream str(line);
+		//str >> distance;
+
+  //  this->SetStopDistance((float)distance/(float)s);
+		//cout << "Found it!" << endl << "Loading " << geoFileName << endl;
+  //  
+  //  distance = 0;
+		//for(int i=0; i < numVert; i++)
+  //  {
+  //    line.clear();
+		//  getline(infile, line);
+  //    str.clear();
+  //    str.str(line);
+		//	str >> vertex >> distance;
+		//	while(!str.eof())
+  //    {
+		//		//mesh->geoMap[i].push_back(distance);
+		//		//mesh->geoIndex[i].push_back(vertex);
+  //      (mesh->geodesicMap[i])[vertex] = distance;
+		//		str >> vertex >> distance;
+		//	}
+
+		//	//printf("\r                                              \r");
+		//	//printf("Progress %.1f%%", (i+1.0f)/(numVert)*100);
+		//	//fflush(stdout);
+		//		
+		//}
+		//cout << endl;
 		infile.close();
 	}	
 	
@@ -482,9 +505,9 @@ void meshFIM::computeFIM(TriMesh *mesh, const char *vertT_filename)
 {
 	cout << "Trying to load: " << vertT_filename << endl;
   //	FILE* vertTFile = fopen(vertT_filename, "r+");
-	ifstream infile(vertT_filename, ifstream::in);
+  ifstream infile(vertT_filename, std::ios::binary);
 	
-	int numVert = mesh->vertices.size();
+	unsigned int numVert = mesh->vertices.size();
 	//(mesh->dMap)->resize(numVert);
 	//(mesh->iMap)->resize(numVert);
 
@@ -492,82 +515,229 @@ void meshFIM::computeFIM(TriMesh *mesh, const char *vertT_filename)
 
 	this->SetMesh(mesh);
 
-  unsigned int s = mesh->scaleFactor;
-	
-	if (!infile.is_open()){
+	if (!infile.is_open())
+  {
 		//vertTFile = fopen(vertT_filename, "w+");
-		ofstream outfile(vertT_filename, ifstream::out);
+    ofstream outfile(vertT_filename, std::ios::binary);
 		cout << "No vertT file!!!\n Writing..." << endl;
 		cout << "stop distance = " << this->GetStopDistance() << endl;
 		cout << "# vertices in mesh: " << numVert << endl;
 				
-		this->GenerateReducedData();   
+		this->GenerateReducedData();  
 
-		// First Line In File Is Stop Distance
-		outfile << this->GetStopDistance() * s << endl;
+    // write stop distance
+    float dStop = this->GetStopDistance();
+    outfile.write( reinterpret_cast<char *>(&dStop), sizeof(float) );
+
+    // loop over each vertex
+    for (int i = 0; i < numVert; i++)
+    {
+      // write map size for vertex
+      unsigned int dLength = mesh->geodesicMap[i].size();
+      outfile.write( reinterpret_cast<char *>(&dLength), sizeof(unsigned int) );
+
+      // write key and distance pair
+      for (std::map<unsigned int,float>::iterator it= mesh->geodesicMap[i].begin(); it != mesh->geodesicMap[i].end(); it++)
+      {
+        unsigned int index = (*it).first;
+        outfile.write( reinterpret_cast<char *>(&index), sizeof(unsigned int) );
+
+        float dist = (*it).second;
+        outfile.write( reinterpret_cast<char *>(&dist), sizeof(float) );
+      }
+    }
+
+		//// First Line In File Is Stop Distance
+		//outfile << this->GetStopDistance() * s << endl;
 
 		//// Loop Over Each Vertex
 		//for (int i = 0; i < numVert; i++)
 		//{
-		//	// Loop Over Each (Vertex,Distance) pair			
-		//	for(int j=0; j < (*(mesh->dMap))[i].size(); j++){
-		//		outfile << (*(mesh->iMap))[i][j] << " " << (*(mesh->dMap))[i][j] << " ";
+  //    std::map<unsigned int,unsigned int>::iterator mIter; 
+		//			
+  //    for(mIter = mesh->geodesicMap[i].begin(); mIter != mesh->geodesicMap[i].end(); mIter++)
+  //    {
+  //      outfile << (*mIter).first << " " << (*mIter).second << " ";
 		//	}
 
 		//	outfile << endl;
 		//}
 
-		// Loop Over Each Vertex
-		for (int i = 0; i < numVert; i++)
-		{
-      std::map<unsigned int,unsigned int>::iterator mIter; 
-					
-      for(mIter = mesh->geodesicMap[i].begin(); mIter != mesh->geodesicMap[i].end(); mIter++)
-      {
-        outfile << (*mIter).first << " " << (*mIter).second << " ";
-			}
-
-			outfile << endl;
-		}
-
 		outfile.close();
 	}
-	else{
-		unsigned int vertex;
-		unsigned int distance;
-		string line;
+	else
+  {
+    // read stop distance
+    float distance;
+    infile.read(reinterpret_cast<char *>(&distance), sizeof(float));
+		this->SetStopDistance(distance);
 
-		// First Line In File Is Stop Distance
-		getline(infile, line);
-		stringstream str(line);
-		str >> distance;
-    		
-		this->SetStopDistance((float)distance/(float)s);
-    cout << "Loading " << vertT_filename << endl;
+    // loop over vertices
+    for (int i = 0; i < numVert; i++)
+    {
+      // read map size for vertex
+      unsigned int dLength;
+      infile.read( reinterpret_cast<char *>(&dLength), sizeof(unsigned int) );
 
-		for(int i=0; i < numVert; i++){
-			
-			string line;
-			getline(infile, line);
-			stringstream str(line);
-			
-			str >> vertex >> distance;
-			while(!str.eof())
+      // read key and distance pair
+      for (int j = 0; j < dLength; j++)
       {
-				//mesh->geoMap[i].push_back(distance);
-				//mesh->geoIndex[i].push_back(vertex);
-        (mesh->geodesicMap[i])[vertex] = distance;
-				str >> vertex >> distance;
-			}
+        unsigned int index;
+        infile.read( reinterpret_cast<char *>(&index), sizeof(unsigned int) );
 
-			//printf("\r                                              \r");
-			//printf("progress %.1f%%", (i+1.0f)/(numVert)*100);
-			//fflush(stdout);
-				
-		}
-		cout << endl;
+        float dist;
+        infile.read( reinterpret_cast<char *>(&dist), sizeof(float) );
+
+        (mesh->geodesicMap[i])[index] = dist;
+      }
+    }
+
+		//unsigned int vertex;
+		//unsigned int distance;
+		//string line;
+
+		//// First Line In File Is Stop Distance
+		//getline(infile, line);
+		//stringstream str(line);
+		//str >> distance;
+  //  		
+		//this->SetStopDistance((float)distance/(float)s);
+  //  cout << "Loading " << vertT_filename << endl;
+
+		//for(int i=0; i < numVert; i++){
+		//	
+		//	string line;
+		//	getline(infile, line);
+		//	stringstream str(line);
+		//	
+		//	str >> vertex >> distance;
+		//	while(!str.eof())
+  //    {
+		//		//mesh->geoMap[i].push_back(distance);
+		//		//mesh->geoIndex[i].push_back(vertex);
+  //      (mesh->geodesicMap[i])[vertex] = distance;
+		//		str >> vertex >> distance;
+		//	}
+
+		//	//printf("\r                                              \r");
+		//	//printf("progress %.1f%%", (i+1.0f)/(numVert)*100);
+		//	//fflush(stdout);
+		//		
+		//}
+		//cout << endl;
 		infile.close();
 	}	
 	
 	
+}
+
+void meshFIM::ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints, const char *outfilename)
+{
+	std::list<index>::iterator iter = m_ActivePoints.begin();
+	float oldT1 , newT1, oldT2, newT2;
+	index tmpIndex1, tmpIndex2;
+	vector<int>  nb; 
+	NumComputation = 0;
+	double total_duration = 0;
+
+  int numVert = mesh->vertices.size();
+  mesh->geodesicMap.resize(numVert);
+	SetMesh(mesh);
+
+	char c;  
+  int i=0;  
+  	
+	std::vector<int> seedPointList;
+  for (int pIndex = 0; pIndex < curvePoints.size(); pIndex++)
+  {
+    seedPointList.push_back( mesh->FindNearestVertex(curvePoints[pIndex]) );
+  }
+	SetSeedPoint(seedPointList);
+
+	m_meshPtr->InitializeAttributes(0, m_SeedPoints);
+
+	InitializeLabels();
+	InitializeActivePoints();
+
+  SetStopDistance(LARGENUM);
+
+	while (!m_ActivePoints.empty())
+	{
+		//printf("Size of Activelist is: %d \n", m_ActivePoints.size());
+		iter = m_ActivePoints.begin();
+		
+		while(iter != m_ActivePoints.end())
+    {
+			tmpIndex1 = *iter;
+			nb = m_meshPtr->neighbors[tmpIndex1];
+			oldT1 = m_meshPtr->geodesic[tmpIndex1];
+
+			newT1 = Upwind(0,tmpIndex1);
+
+			if (abs(oldT1-newT1)<_EPS)    //if converges
+			{
+				if (oldT1>newT1)
+        {
+					m_meshPtr->geodesic[tmpIndex1] = newT1;
+				}
+
+				if(m_meshPtr->geodesic[tmpIndex1] < m_StopDistance)
+				{
+					for (i=0;i<nb.size();i++)
+					{
+						tmpIndex2 = nb[i];
+						if (m_Label[tmpIndex2]==AlivePoint || m_Label[tmpIndex2]==FarPoint)
+						{
+							oldT2 = m_meshPtr->geodesic[tmpIndex2];
+
+							newT2 = Upwind(0,tmpIndex2);
+							if (oldT2>newT2)
+							{
+								m_meshPtr->geodesic[tmpIndex2] = newT2;
+
+								if (m_Label[tmpIndex2]!=ActivePoint)
+								{
+									m_ActivePoints.insert(iter, tmpIndex2);
+									m_Label[tmpIndex2] = ActivePoint;
+								}
+							}
+						}
+					}
+				}
+							
+				iter =  m_ActivePoints.erase(iter);
+				m_Label[tmpIndex1] = AlivePoint;
+
+			}
+			else   // if not converge
+			{
+				if(newT1 < oldT1)
+        {
+					m_meshPtr->geodesic[tmpIndex1] = newT1;
+				}
+
+				iter++;					
+			}
+		}
+	}
+
+  // write out distance to curve
+	ofstream outfile(outfilename, std::ios::binary);
+
+  // write numVertices to facilitate reading later
+  outfile.write( reinterpret_cast<char *>(&numVert), sizeof(unsigned int) );
+
+  // loop over each vertex
+  for (int i = 0; i < numVert; i++)
+  {
+    // write distance to curve
+    float distToCurve;
+    distToCurve = (mesh->geodesic[i] > 0.0f) ?  mesh->geodesic[i] : 0.000001f;
+    outfile.write( reinterpret_cast<char *>(&distToCurve), sizeof(float) );
+  }
+
+  outfile.close();
+
+	// Now Erase the duplicate data
+	m_meshPtr->CleanupAttributes(0);
 }
