@@ -169,6 +169,8 @@ public:
 
 	void loadGeodesicFile(TriMesh *mesh, const char *geoFilename);
   void computeFIM(TriMesh *mesh, const char *vertT_filename);
+
+  void ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints, const char *outfilename);
 	
 	meshFIM(){
 		m_meshPtr = NULL;
