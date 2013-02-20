@@ -633,17 +633,17 @@ void meshFIM::computeFIM(TriMesh *mesh, const char *vertT_filename)
 
 void meshFIM::ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints, const char *outfilename)
 {
+  int numVert = mesh->vertices.size();
+  mesh->geodesicMap.resize(numVert);
+	SetMesh(mesh);
+
 	std::list<index>::iterator iter = m_ActivePoints.begin();
 	float oldT1 , newT1, oldT2, newT2;
 	index tmpIndex1, tmpIndex2;
 	vector<int>  nb; 
 	NumComputation = 0;
+
 	double total_duration = 0;
-
-  int numVert = mesh->vertices.size();
-  mesh->geodesicMap.resize(numVert);
-	SetMesh(mesh);
-
 	char c;  
   int i=0;  
   	
@@ -732,7 +732,7 @@ void meshFIM::ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePo
   {
     // write distance to curve
     float distToCurve;
-    distToCurve = (mesh->geodesic[i] > 0.0f) ?  mesh->geodesic[i] : 0.000001f;
+    distToCurve = mesh->geodesic[i] + 0.0001f;    
     outfile.write( reinterpret_cast<char *>(&distToCurve), sizeof(float) );
   }
 
