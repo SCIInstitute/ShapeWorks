@@ -740,6 +740,8 @@ void ReadFeatureFromFile(const char *infilename)
     }
     else
     {
+      std::cout << "reading feature from file " << infilename << std::endl;
+
       vector< float > tmpFeatureVec;
       // loop over vertices
       for (int i = 0; i < numVert; i++)
