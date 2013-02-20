@@ -16,6 +16,7 @@ Class for triangle meshes.
 
 #include "Vec.h"
 #include "Color.h"
+#include "KDtree.h"
 #include "math.h"
 #include <vector>
 #include <list>
@@ -178,6 +179,7 @@ public:
 	vector<vec> cornerareas;
 	vector<float> pointareas;
 
+  KDtree *kd;
   vector< map<unsigned int, float> > geodesicMap;
 	float *geodesic;
 
@@ -262,6 +264,7 @@ public:
 	void need_speed();
 	void need_noise(int nNoiseIter);
 	void need_oneringfaces();
+  void need_kdtree();
 	void need_normals();
 	void need_pointareas();
 	void need_curvatures();
@@ -621,7 +624,7 @@ double GetGeodesicDistance(point x, point y)
 
   // scan all adjacent faces to see which face (f) includes point x
   float alphaX, betaX, gammaX;
-  Face triangleX;
+  Face triangleX = this->faces[ this->adjacentfaces[vertX][0] ];
   for (unsigned int fNumber = 0; fNumber < this->adjacentfaces[vertX].size(); fNumber++)
   {
     // check if face contains x and store barycentric coordinates for x in face f
@@ -644,7 +647,7 @@ double GetGeodesicDistance(point x, point y)
 
   // scan all adjacent faces to see which face (f) includes point y
   float alphaY, betaY, gammaY;
-  Face triangleY;
+  Face triangleY = this->faces[ this->adjacentfaces[vertY][0] ];
   for (unsigned int fNumber = 0; fNumber < this->adjacentfaces[vertY].size(); fNumber++)
   {
     // check if face contains y and store barycentric coordinates for y in face f
@@ -684,19 +687,21 @@ double GetGeodesicDistance(point x, point y)
 
 int FindNearestVertex(point pt)
 {
-	int id = 0;
-	float minD = LARGENUM;
+	if ( !kd )
+	{
+    kd = new KDtree(this->vertices);
+  }	
 
-  for (int i = 0; i < vertices.size(); i++)
+  const float *match = kd->closest_to_pt(pt,100.0);
+  int imatch = 0;
+  if (!match)
   {
-    float d = dist(pt, vertices[i]);
-    if (d < minD)
-    {
-      minD = d;
-      id = i;
-    }
+    std::cout << "failed to find vertex within 100.0 for point " << pt << ". using vertex 0" << std::endl;
+    return imatch;
   }
-	return id;
+
+  imatch = (match - (const float *) &(vertices[0][0])) / 3;
+  return imatch;
 }
 
 vec3 ComputeBarycentricCoordinates(point p, Face f)
@@ -708,15 +713,13 @@ vec3 ComputeBarycentricCoordinates(point p, Face f)
   c = this->vertices[ f.v[2] ];
 
   point n = (b - a) CROSS (c - a);
-  point na = (c - b) CROSS (p - b);
-  point nb = (a - c) CROSS (p - c);
-  point nc = (b - a) CROSS (p - a);
+  normalize(n);
 
-  float normNSqr = len(n) * len (n);
+  float denominator = ( (b - a) CROSS (c - a) ) DOT n;
 
-  bCoords[0] = ( n DOT na ) / normNSqr;
-  bCoords[1] = ( n DOT nb ) / normNSqr;
-  bCoords[2] = ( n DOT nc ) / normNSqr;
+  bCoords[0] = ( ( (c - b) CROSS (p - b) ) DOT n ) / denominator;
+  bCoords[1] = ( ( (a - c) CROSS (p - c) ) DOT n ) / denominator;
+  bCoords[2] = ( ( (b - a) CROSS (p - a) ) DOT n ) / denominator;
 
   return bCoords;
 }
@@ -786,7 +789,7 @@ float GetFeatureValue(point x, int featureIndex)
 
   // check one-ring to see which triangle contains x
   float alphaX, betaX, gammaX;
-  Face triangleX;
+  Face triangleX = this->faces[ this->adjacentfaces[vertX][0] ];
   for (unsigned int fNumber = 0; fNumber < this->adjacentfaces[vertX].size(); fNumber++)
   {
     // check if face contains x and store barycentric coordinates for x in face f
@@ -800,7 +803,7 @@ float GetFeatureValue(point x, int featureIndex)
          ( ( barycentric[1] >= 0 ) && ( barycentric[1] <= 1 ) ) &&
          ( ( barycentric[2] >= 0 ) && ( barycentric[2] <= 1 ) ) )
     {
-      fNumber = this->adjacentfaces[vertX].size();
+      fNumber = this->adjacentfaces[vertX].size() + 1;
     }
   }
 
@@ -837,7 +840,8 @@ static void eprintf(const char *format, ...);
  TriMesh() : grid_width(-1), grid_height(-1), flag_curr(0), speedType(ONE)
 {
 	//iMap = &geoIndex;
-	//dMap = &geoMap;		
+	//dMap = &geoMap;
+  kd = NULL;
 }
 };
 
