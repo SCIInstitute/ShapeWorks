@@ -392,6 +392,14 @@ void TriMesh::need_oneringfaces()
 	
 }
 
+void TriMesh::need_kdtree()
+{
+	if ( !kd )
+	{
+    kd = new KDtree(this->vertices);
+  }	
+}
+
 
 // Find the faces touching each vertex
 void TriMesh::need_adjacentfaces()
