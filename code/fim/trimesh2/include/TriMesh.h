@@ -816,6 +816,83 @@ float GetFeatureValue(point x, int featureIndex)
   return featureValue;
 }
 
+point GetFeatureDrivative(point p, int fIndex = 0)
+{
+  point dP; dP.clear();
+  dP[0] = 0.0f; dP[1] = 0.0f; dP[2] = 0.0f;
+
+  // find nearest vertex
+  int vertP = this->FindNearestVertex(p);
+
+  // find triangle where point belongs
+  float alphaP, betaP, gammaP;
+  Face triangleP = this->faces[ this->adjacentfaces[vertP][0] ];
+  for (unsigned int fNumber = 0; fNumber < this->adjacentfaces[vertP].size(); fNumber++)
+  {
+    // check if face contains x and store barycentric coordinates for x in face f
+    triangleP = this->faces[ this->adjacentfaces[vertP][fNumber] ];
+    vec barycentric = this->ComputeBarycentricCoordinates(p,triangleP);
+    alphaP = barycentric[0];
+    betaP = barycentric[1];
+    gammaP = barycentric[2];
+
+    if ( ( ( barycentric[0] >= 0 ) && ( barycentric[0] <= 1 ) ) &&
+         ( ( barycentric[1] >= 0 ) && ( barycentric[1] <= 1 ) ) &&
+         ( ( barycentric[2] >= 0 ) && ( barycentric[2] <= 1 ) ) )
+    {
+      fNumber = this->adjacentfaces[vertP].size() + 1;
+    }
+  }
+
+  // compute derivative at 3 vertices (A,B,C)
+  int A = triangleP.v[0];
+  int B = triangleP.v[1];
+  int C = triangleP.v[2];
+
+  point dA = ComputeFeatureDerivative(A,fIndex);
+  point dB = ComputeFeatureDerivative(B,fIndex);
+  point dC = ComputeFeatureDerivative(C,fIndex);
+
+
+  // interpolate
+   dP[0] = ( alphaP * dA[0] ) + ( betaP * dB[0] ) + ( gammaP * dC[0] );
+   dP[1] = ( alphaP * dA[1] ) + ( betaP * dB[1] ) + ( gammaP * dC[1] );
+   dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] );
+
+  return dP;
+}
+
+point ComputeFeatureDerivative(int v,int nFeature = 0)
+{
+  point df; df.clear();
+  df[0] = 0.0f; df[1] = 0.0f; df[2] = 0.0f;
+
+  // feature value at v
+  float valueV = this->features[nFeature][v];
+  point ptV = this->vertices[v];
+
+  // iterate over neighbors of v to compute derivative as central difference
+  for (unsigned int n = 0; n < this->neighbors[v].size(); n++)
+  {
+    int indexN = this->neighbors[v][n];
+    float valueN = this->features[nFeature][indexN];
+    point ptN = this->vertices[indexN];
+
+    float valueDiff = valueN - valueV;
+    point ptDiff = ptN - ptV;
+
+    df[0] = df[0] + (valueDiff / ptDiff[0]) + 0.0001f;
+    df[1] = df[1] + (valueDiff / ptDiff[1]) + 0.0001f;
+    df[2] = df[2] + (valueDiff / ptDiff[2]) + 0.0001f;
+  }
+
+  df[0] = df[0] / (float) ( this->neighbors[v].size() );
+  df[1] = df[1] / (float) ( this->neighbors[v].size() );
+  df[2] = df[2] / (float) ( this->neighbors[v].size() );
+  
+  return df;
+}
+
 int GetNumberOfFeatures()
 {
   return this->features.size();  
