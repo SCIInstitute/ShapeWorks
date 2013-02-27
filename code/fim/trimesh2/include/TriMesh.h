@@ -863,7 +863,7 @@ float GetFeatureValue(point x, int featureIndex)
   return featureValue;
 }
 
-point GetFeatureDrivative(point p, int fIndex = 0)
+point GetFeatureDerivative(point p, int fIndex = 0)
 {
   point dP; dP.clear();
   dP[0] = 0.0f; dP[1] = 0.0f; dP[2] = 0.0f;
