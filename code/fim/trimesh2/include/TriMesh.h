@@ -699,11 +699,11 @@ int FindNearestVertex(point pt)
     need_maxedgelength();
   }
 
-  const float *match = kd->closest_to_pt(pt,sqr(maxEdgeLength/2.0));
+  const float *match = kd->closest_to_pt(pt,sqr(maxEdgeLength));
   int imatch = 0;
   if (!match)
   {
-    std::cout << "failed to find vertex within " << maxEdgeLength/2.0 << " for point " << pt << ". using vertex 0" << std::endl;
+    std::cout << "failed to find vertex within " << maxEdgeLength << " for point " << pt << ". using vertex 0" << std::endl;
     return imatch;
   }
 
