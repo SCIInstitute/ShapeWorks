@@ -398,6 +398,26 @@ void TriMesh::need_kdtree()
 	{
     kd = new KDtree(this->vertices);
   }	
+
+  if (maxEdgeLength == 0.0)
+  {
+    need_maxedgelength();
+  }
+}
+
+void TriMesh::need_maxedgelength()
+{
+  need_faceedges();
+  for (unsigned int f = 0; f < faces.size(); f++)
+  {
+    for (unsigned int d = 0; d < 3; d++)
+    {
+      if (faces[f].edgeLens[d] >= maxEdgeLength)
+      {
+        maxEdgeLength = faces[f].edgeLens[d];
+      }
+    }
+  }
 }
 
 
