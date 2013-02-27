@@ -180,6 +180,7 @@ public:
 	vector<float> pointareas;
 
   KDtree *kd;
+  double maxEdgeLength;
   vector< map<unsigned int, float> > geodesicMap;
 	float *geodesic;
 
@@ -265,6 +266,7 @@ public:
 	void need_noise(int nNoiseIter);
 	void need_oneringfaces();
   void need_kdtree();
+  void need_maxedgelength();
 	void need_normals();
 	void need_pointareas();
 	void need_curvatures();
@@ -692,11 +694,16 @@ int FindNearestVertex(point pt)
     kd = new KDtree(this->vertices);
   }	
 
-  const float *match = kd->closest_to_pt(pt,100.0);
+  if (maxEdgeLength == 0.0)
+  {
+    need_maxedgelength();
+  }
+
+  const float *match = kd->closest_to_pt(pt,sqr(maxEdgeLength/2.0));
   int imatch = 0;
   if (!match)
   {
-    std::cout << "failed to find vertex within 100.0 for point " << pt << ". using vertex 0" << std::endl;
+    std::cout << "failed to find vertex within " << maxEdgeLength/2.0 << " for point " << pt << ". using vertex 0" << std::endl;
     return imatch;
   }
 
@@ -762,6 +769,46 @@ void ReadFeatureFromFile(const char *infilename)
   }
 
 }
+
+
+void ReadFeatureFromList(const char *infilename)
+{
+  std::ifstream infile(infilename);
+	if (!infile.is_open())
+  {
+    std::cout << "File Not Found" << std::endl;
+	}
+  else
+  {
+    std::cout << "reading feature from file " << infilename << std::endl;
+
+    vector< float > tmpFeatureVec;
+    float value;
+    // loop over vertices
+    while (infile)
+    {
+      // read feature value
+      infile >> value;
+      tmpFeatureVec.push_back(value);
+    }
+    tmpFeatureVec.pop_back();
+
+    if ( tmpFeatureVec.size() == this->vertices.size() )
+    {
+      this->features.push_back( tmpFeatureVec );
+    }
+    else
+    {
+      std::cout << "size of feature vector does not match # vertices in the mesh ! Aborting..." << std::endl;
+      exit(1);
+    }
+
+		infile.close();
+  }
+
+}
+
+
 
 void WriteFeatureToFile(int featureIndex, const char *outfilename)
 {
@@ -914,7 +961,7 @@ static void set_eprintf_hook(void (*hook)(const char *));
 static void eprintf(const char *format, ...);
 
 // Constructor
- TriMesh() : grid_width(-1), grid_height(-1), flag_curr(0), speedType(ONE)
+ TriMesh() : grid_width(-1), grid_height(-1), flag_curr(0), speedType(ONE), maxEdgeLength(0.0)
 {
 	//iMap = &geoIndex;
 	//dMap = &geoMap;
