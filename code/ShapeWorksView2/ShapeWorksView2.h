@@ -1,5 +1,7 @@
 #include <QMainWindow>
 
+#include <vtkSmartPointer.h>
+
 #include "tinyxml.h"
 
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
@@ -7,8 +9,7 @@
 #include "itkParticleShapeStatistics.h"
 #include "itkParticlePositionWriter.h"
 
-#include <vtkSmartPointer.h>
-
+#include <ColorSchemes.h>
 #include <ModelCache.h>
 
 class vtkRenderer;
@@ -81,6 +82,8 @@ public Q_SLOTS:
   void on_neighborhoodSpinBox_valueChanged();
   void on_spacingSpinBox_valueChanged();
 
+  void colorSchemeChanged();
+
 private:
 
   void initializeRenderer();
@@ -90,6 +93,7 @@ private:
   void updateShapeMode();
   void updateSurfaceSettings();
   void updateActors();
+  void updateColorScheme();
 
   void redraw();
 
@@ -138,4 +142,6 @@ private:
 
   // cache of shape models
   ModelCache modelCache;
+
+  ColorSchemes m_ColorSchemes;
 };

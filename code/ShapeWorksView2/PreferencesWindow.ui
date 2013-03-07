@@ -15,6 +15,66 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Visualization</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Color Scheme</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="colorScheme">
+        <item>
+         <property name="text">
+          <string>Orange on Grey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Orange on White</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Purple on Grey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Blue on White</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Grey on White</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Grey on Black</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Orange on Blue</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Yellow on Grey</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Model Cache</string>

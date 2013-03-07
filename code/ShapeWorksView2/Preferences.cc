@@ -39,3 +39,19 @@ void Preferences::setCacheMemory( int value )
 {
   this->settings.setValue( "ModelCache/memory", value );
 }
+
+int Preferences::colorScheme()
+{
+  return this->settings.value( "Visualization/ColorScheme", 0 ).toInt();
+}
+
+void Preferences::setColorScheme( int value )
+{
+  this->settings.setValue( "Visualization/ColorScheme", value );
+  this->colorSchemeChanged( value );
+}
+
+PreferencesWindow* Preferences::getWindow()
+{
+  return &( this->preferencesWindow );
+}

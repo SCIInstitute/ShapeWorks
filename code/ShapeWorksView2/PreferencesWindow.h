@@ -15,7 +15,8 @@ public:
 public Q_SLOTS:
   void on_modelCacheEnabled_stateChanged( int state );
   void on_modelCacheMemory_valueChanged( int value );
-
+  void on_colorScheme_currentIndexChanged( int index );
+  
 private:
   Ui_PreferencesWindow* ui;
 };

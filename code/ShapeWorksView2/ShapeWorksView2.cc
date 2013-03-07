@@ -64,6 +64,11 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
     exit( -1 );
   }
 
+  QObject::connect(
+    &Preferences::Instance(), SIGNAL(colorSchemeChanged(int)), 
+    this, SLOT(colorSchemeChanged()));
+
+  this->updateColorScheme();
   this->updateShapeMode();
 }
 
@@ -195,6 +200,12 @@ void ShapeWorksView2::on_spacingSpinBox_valueChanged()
 {
   this->updateSurfaceSettings();
   this->redraw();
+}
+
+
+void ShapeWorksView2::colorSchemeChanged()
+{
+  this->updateColorScheme();
 }
 
 /********************************************************************/
@@ -446,6 +457,29 @@ void ShapeWorksView2::updateActors()
 
   this->redraw();
 }
+
+
+void ShapeWorksView2::updateColorScheme()
+{
+  int scheme = Preferences::Instance().colorScheme();
+
+  this->surfaceActor->GetProperty()->SetDiffuseColor(m_ColorSchemes[scheme].foreground.r,
+    m_ColorSchemes[scheme].foreground.g,
+    m_ColorSchemes[scheme].foreground.b);
+
+/*
+  this->RecolorGlyphs(m_ColorSchemes[scheme].alt.r,
+    m_ColorSchemes[scheme].alt.g,
+    m_ColorSchemes[scheme].alt.b);
+*/
+  this->renderer->SetBackground(m_ColorSchemes[scheme].background.r,
+    m_ColorSchemes[scheme].background.g,
+    m_ColorSchemes[scheme].background.b);
+
+
+  this->redraw();
+}
+
 
 void ShapeWorksView2::redraw()
 {

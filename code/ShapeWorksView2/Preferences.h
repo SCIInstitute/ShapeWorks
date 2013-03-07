@@ -4,13 +4,18 @@
 #include <QSettings>
 #include <PreferencesWindow.h>
 
-class Preferences
+class Preferences : public QObject
 {
+  Q_OBJECT;
+
 public:
+
 
   static Preferences& Instance();
 
   QSettings& getSettings();
+
+  PreferencesWindow *getWindow();
 
   void showWindow();
 
@@ -19,6 +24,14 @@ public:
 
   int cacheMemory();
   void setCacheMemory( int value );
+
+  int colorScheme();
+  void setColorScheme( int value );
+
+
+Q_SIGNALS:
+  void colorSchemeChanged(int newIndex);
+
 
 private:
 
