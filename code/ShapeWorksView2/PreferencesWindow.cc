@@ -12,8 +12,6 @@ PreferencesWindow::PreferencesWindow( QWidget* parent /*= 0 */ )
 
   QPushButton* resetButton = this->ui->buttonBox->button( QDialogButtonBox::RestoreDefaults );
   QObject::connect( resetButton, SIGNAL( clicked() ), this, SLOT( restoreDefaults() ) );
-
-  this->setValuesFromPreferences();
 }
 
 void PreferencesWindow::updateLabels()

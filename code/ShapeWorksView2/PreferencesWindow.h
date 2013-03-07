@@ -13,6 +13,8 @@ class PreferencesWindow : public QDialog
 public:
   PreferencesWindow( QWidget* parent = 0 );
 
+  void setValuesFromPreferences();
+
 public Q_SLOTS:
   void on_modelCacheEnabled_stateChanged( int state );
   void on_modelCacheMemory_valueChanged( int value );
@@ -23,7 +25,6 @@ public Q_SLOTS:
   void restoreDefaults();
 
 private:
-  void setValuesFromPreferences();
   void updateLabels();
   Ui_PreferencesWindow* ui;
 };

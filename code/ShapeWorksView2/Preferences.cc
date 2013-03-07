@@ -23,6 +23,7 @@ QSettings& Preferences::getSettings()
 
 void Preferences::showWindow()
 {
+  this->preferencesWindow.setValuesFromPreferences();
   this->preferencesWindow.show();
 }
 
