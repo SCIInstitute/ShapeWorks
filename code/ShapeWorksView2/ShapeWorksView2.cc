@@ -392,7 +392,7 @@ void ShapeWorksView2::updateSurfaceSettings()
   this->surface->Modified();
 
   // clear the cache since the surface reconstruction parameters have changed
-  this->meshCache.clear();
+  this->modelCache.clear();
 
   bool powercrust = this->ui->usePowerCrustCheckBox->isChecked();
 
@@ -528,10 +528,8 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &pos )
 
   if ( surface && surfaceActor && this->ui->showSurface->isChecked() )
   {
-    // search the cache for this shape
-    CacheMap::iterator it = this->meshCache.find( pos );
 
-    if ( it == this->meshCache.end() )
+    if ( !this->modelCache.getModel( pos ) )
     {
       if ( !this->ui->usePowerCrustCheckBox->isChecked() )
       {
@@ -545,13 +543,11 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &pos )
       // make a copy of the vtkPolyData output and place it in the cache
       vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
       polyData->DeepCopy( this->polydataNormals->GetOutput() );
-      meshCache[pos] = polyData;
-
-      std::cerr << "Cache now holds " << meshCache.size() << " items\n";
+      this->modelCache.insertModel( pos, polyData );
     }
 
     // retrieve the model from the cache and set it for display
-    this->surfaceMapper->SetInput( meshCache[pos] );
+    this->surfaceMapper->SetInput( this->modelCache.getModel( pos ) );
   }
 }
 

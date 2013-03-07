@@ -1,4 +1,5 @@
 #include <QMainWindow>
+
 #include "tinyxml.h"
 
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
@@ -7,6 +8,8 @@
 #include "itkParticlePositionWriter.h"
 
 #include <vtkSmartPointer.h>
+
+#include <ModelCache.h>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -34,36 +37,6 @@ class vtkPowerCrustSurfaceReconstruction;
 class Ui_ShapeWorksView2;
 
 class ViewerLayout;
-
-// comparison class for vnl_vectors (for cache)
-class vnl_vector_compare
-{
-public:
-  bool operator()( const vnl_vector<double> &x, const vnl_vector<double> &y ) const
-  {
-    if ( x.size() < y.size() )
-    {
-      return true;
-    }
-
-    for ( unsigned i = 0; i < x.size(); i++ )
-    {
-      if ( x[i] < y[i] )
-      {
-        return true;
-      }
-      else if ( y[i] < x[i] )
-      {
-        return false;
-      }
-    }
-
-    return false;
-  }
-};
-
-// mesh cache type
-typedef std::map< const vnl_vector<double>, vtkSmartPointer<vtkPolyData>, vnl_vector_compare > CacheMap;
 
 class ShapeWorksView2 : public QMainWindow
 {
@@ -160,6 +133,6 @@ private:
   // a copy of the current shape mesh
   vnl_vector<double> currentShape;
 
-  // mesh cache
-  CacheMap meshCache;
+  // cache of shape models
+  ModelCache modelCache;
 };
