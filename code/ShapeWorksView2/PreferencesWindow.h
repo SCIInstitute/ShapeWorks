@@ -21,7 +21,6 @@ public Q_SLOTS:
   void on_glyphQuality_valueChanged( int value );
 
   void restoreDefaults();
-  void buttonBoxClicked( QAbstractButton *button);
 
 private:
   void setValuesFromPreferences();
