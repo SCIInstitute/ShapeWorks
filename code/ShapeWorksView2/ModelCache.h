@@ -1,3 +1,6 @@
+#ifndef MODEL_CACHE_H
+#define MODEL_CACHE_H
+
 #include <vtkSmartPointer.h>
 
 #include "tinyxml.h"
@@ -77,5 +80,6 @@ private:
 
   // maximum memory
   long long maxMemory;
-
 };
+
+#endif // ifndef MODEL_CACHE_H

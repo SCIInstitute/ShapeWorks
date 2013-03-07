@@ -1,6 +1,6 @@
 // Includes for platform specific functions
 #ifdef _WIN32
-#include <shlobj.h>    
+#include <shlobj.h>
 #include <tlhelp32.h>
 #include <windows.h>
 #include <LMCons.h>
@@ -17,8 +17,8 @@
 #include <sys/sysctl.h>
 #include <sys/param.h>
 #include <sys/mount.h>
-#endif
-#endif
+#endif // ifndef __APPLE__
+#endif // ifdef _WIN32
 
 #include <ModelCache.h>
 #include <Preferences.h>
