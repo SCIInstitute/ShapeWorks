@@ -987,6 +987,9 @@ QToolButton:pressed{
    <property name="text">
     <string>Preferences</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+,</string>
+   </property>
   </action>
  </widget>
  <customwidgets>

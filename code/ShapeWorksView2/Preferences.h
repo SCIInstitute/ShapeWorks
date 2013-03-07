@@ -1,7 +1,6 @@
 #ifndef PREFERENCES_H
 #define PREFERENCES_H
 
-
 #include <QSettings>
 #include <PreferencesWindow.h>
 
@@ -14,6 +13,12 @@ public:
   QSettings& getSettings();
 
   void showWindow();
+
+  bool cacheEnabled();
+  void setCacheEnabled( bool enabled );
+
+  int cacheMemory();
+  void setCacheMemory( int value );
 
 private:
 
@@ -29,4 +34,4 @@ private:
   PreferencesWindow preferencesWindow;
 };
 
-#endif
+#endif // ifndef PREFERENCES_H

@@ -12,14 +12,12 @@ class PreferencesWindow : public QDialog
 public:
   PreferencesWindow( QWidget* parent = 0 );
 
-
-  public Q_SLOTS:
-    void on_modelCacheEnabled_stateChanged( int state );
-    void on_modelCacheMemory_valueChanged( int value );
-
+public Q_SLOTS:
+  void on_modelCacheEnabled_stateChanged( int state );
+  void on_modelCacheMemory_valueChanged( int value );
 
 private:
   Ui_PreferencesWindow* ui;
 };
 
-#endif 
+#endif // ifndef PREFERENCES_WINDOW_H

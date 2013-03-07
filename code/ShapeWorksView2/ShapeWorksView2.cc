@@ -519,22 +519,22 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   return true;
 }
 
-void ShapeWorksView2::displayShape( const vnl_vector<double> &pos )
+void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 {
-  if ( pos.size() == 0 )
+  if ( shape.size() == 0 )
   {
     return;
   }
 
   // make a copy of the shape
-  this->currentShape = pos;
+  this->currentShape = shape;
 
   unsigned int k = 0;
   for ( unsigned int i = 0; i < this->stats.ShapeMatrix().rows() / 3; i++ )
   {
-    double x = pos[k++];
-    double y = pos[k++];
-    double z = pos[k++];
+    double x = shape[k++];
+    double y = shape[k++];
+    double z = shape[k++];
     this->glyphPoints->SetPoint( i, x, y, z );
   }
   this->glyphPoints->Modified();
@@ -542,7 +542,13 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &pos )
   if ( surface && surfaceActor && this->ui->showSurface->isChecked() )
   {
 
-    if ( !this->modelCache.getModel( pos ) )
+    vtkSmartPointer<vtkPolyData> polyData;
+
+    if ( this->modelCache.getModel( shape ) )
+    {
+      polyData = this->modelCache.getModel( shape );
+    }
+    else
     {
       if ( !this->ui->usePowerCrustCheckBox->isChecked() )
       {
@@ -554,13 +560,13 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &pos )
       this->polydataNormals->Update();
 
       // make a copy of the vtkPolyData output and place it in the cache
-      vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+      polyData = vtkSmartPointer<vtkPolyData>::New();
       polyData->DeepCopy( this->polydataNormals->GetOutput() );
-      this->modelCache.insertModel( pos, polyData );
+      this->modelCache.insertModel( shape, polyData );
     }
 
     // retrieve the model from the cache and set it for display
-    this->surfaceMapper->SetInput( this->modelCache.getModel( pos ) );
+    this->surfaceMapper->SetInput( polyData );
   }
 }
 
