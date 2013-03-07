@@ -1,5 +1,8 @@
 #include <vtkSmartPointer.h>
 
+#include "tinyxml.h"
+#include "itkParticleShapeStatistics.h"
+
 class vtkPolyData;
 
 class CacheListItem
