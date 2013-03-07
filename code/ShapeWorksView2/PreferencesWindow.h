@@ -4,10 +4,11 @@
 #include <QDialog>
 
 class Ui_PreferencesWindow;
+class QAbstractButton;
 
 class PreferencesWindow : public QDialog
 {
-  Q_OBJECT;
+  Q_OBJECT
 
 public:
   PreferencesWindow( QWidget* parent = 0 );
@@ -20,6 +21,7 @@ public Q_SLOTS:
   void on_glyphQuality_valueChanged( int value );
 
   void restoreDefaults();
+  void buttonBoxClicked( QAbstractButton *button);
 
 private:
   void setValuesFromPreferences();

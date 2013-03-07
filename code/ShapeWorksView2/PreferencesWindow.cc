@@ -9,8 +9,11 @@ PreferencesWindow::PreferencesWindow( QWidget* parent /*= 0 */ )
   this->ui = new Ui_PreferencesWindow;
   this->ui->setupUi( this );
 
-  QPushButton* resetButton = this->ui->buttonBox->button( QDialogButtonBox::RestoreDefaults );
-  connect( resetButton, SIGNAL( clicked() ), this, SLOT( restoreDefaults() ) );
+  //QPushButton* resetButton = this->ui->buttonBox->button( QDialogButtonBox::RestoreDefaults );
+  //QObject::connect( resetButton, SIGNAL( clicked() ), this, SLOT( restoreDefaults() ) );
+  
+  QObject::connect( this->ui->buttonBox, SIGNAL( clicked(QAbstractButton*) ), 
+    this, SLOT( buttonBoxClicked(QAbstractButton*) ) );
 
   this->setValuesFromPreferences();
 }
@@ -65,4 +68,12 @@ void PreferencesWindow::setValuesFromPreferences()
   this->ui->glyphQuality->setValue( Preferences::Instance().getGlyphQuality() );
   this->ui->glyphSize->setValue( Preferences::Instance().getGlyphSize() * 10 );
   this->updateLabels();
+}
+
+void PreferencesWindow::buttonBoxClicked( QAbstractButton *button )
+{
+  if (this->ui->buttonBox->buttonRole(button) == QMessageBox::ResetRole)
+  {
+    this->restoreDefaults();
+  }
 }
