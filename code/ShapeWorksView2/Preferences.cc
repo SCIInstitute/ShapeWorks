@@ -1,5 +1,11 @@
 #include <Preferences.h>
 
+const bool DEFAULT_CACHE_ENABLED = true;
+const int DEFAULT_CACHE_MEMORY = 25;
+const int DEFAULT_COLOR_SCHEME = 0;
+const float DEFAULT_GLYPH_SIZE = 1.0f;
+const float DEFAULT_GLYPH_QUALITY = 5.0f;
+
 Preferences& Preferences::Instance()
 {
   static Preferences instance;
@@ -20,9 +26,9 @@ void Preferences::showWindow()
   this->preferencesWindow.show();
 }
 
-bool Preferences::cacheEnabled()
+bool Preferences::getCacheEnabled()
 {
-  return this->settings.value( "ModelCache/enabled", true ).toBool();
+  return this->settings.value( "ModelCache/enabled", DEFAULT_CACHE_ENABLED ).toBool();
 }
 
 void Preferences::setCacheEnabled( bool enabled )
@@ -30,9 +36,9 @@ void Preferences::setCacheEnabled( bool enabled )
   this->settings.setValue( "ModelCache/enabled", enabled );
 }
 
-int Preferences::cacheMemory()
+int Preferences::getCacheMemory()
 {
-  return this->settings.value( "ModelCache/memory", 25 ).toInt();
+  return this->settings.value( "ModelCache/memory", DEFAULT_CACHE_MEMORY ).toInt();
 }
 
 void Preferences::setCacheMemory( int value )
@@ -40,9 +46,9 @@ void Preferences::setCacheMemory( int value )
   this->settings.setValue( "ModelCache/memory", value );
 }
 
-int Preferences::colorScheme()
+int Preferences::getColorScheme()
 {
-  return this->settings.value( "Visualization/ColorScheme", 0 ).toInt();
+  return this->settings.value( "Visualization/ColorScheme", DEFAULT_COLOR_SCHEME ).toInt();
 }
 
 void Preferences::setColorScheme( int value )
@@ -53,7 +59,7 @@ void Preferences::setColorScheme( int value )
 
 float Preferences::getGlyphSize()
 {
-  return this->settings.value( "Visualization/GlyphSize", 1.0f ).toFloat();
+  return this->settings.value( "Visualization/GlyphSize", DEFAULT_GLYPH_SIZE ).toFloat();
 }
 
 void Preferences::setGlyphSize( float value )
@@ -64,11 +70,20 @@ void Preferences::setGlyphSize( float value )
 
 float Preferences::getGlyphQuality()
 {
-  return this->settings.value( "Visualization/GlyphQuality", 5.0f ).toFloat();
+  return this->settings.value( "Visualization/GlyphQuality", DEFAULT_GLYPH_QUALITY ).toFloat();
 }
 
 void Preferences::setGlyphQuality( float value )
 {
   this->settings.setValue( "Visualization/GlyphQuality", value );
   this->glyphPropertiesChanged();
+}
+
+void Preferences::restoreDefaults()
+{
+  this->settings.setValue( "ModelCache/enabled", DEFAULT_CACHE_ENABLED );
+  this->settings.setValue( "ModelCache/memory", DEFAULT_CACHE_MEMORY );
+  this->settings.setValue( "Visualization/ColorScheme", DEFAULT_COLOR_SCHEME );
+  this->settings.setValue( "Visualization/GlyphSize", DEFAULT_GLYPH_SIZE );
+  this->settings.setValue( "Visualization/GlyphQuality", DEFAULT_GLYPH_QUALITY );
 }

@@ -16,13 +16,13 @@ public:
 
   void showWindow();
 
-  bool cacheEnabled();
+  bool getCacheEnabled();
   void setCacheEnabled( bool enabled );
 
-  int cacheMemory();
+  int getCacheMemory();
   void setCacheMemory( int value );
 
-  int colorScheme();
+  int getColorScheme();
   void setColorScheme( int value );
 
   float getGlyphQuality();
@@ -30,6 +30,8 @@ public:
 
   float getGlyphSize();
   void setGlyphSize( float value );
+
+  void restoreDefaults();
 
 Q_SIGNALS:
   void colorSchemeChanged( int newIndex );

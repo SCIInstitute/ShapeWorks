@@ -1,5 +1,3 @@
-
-
 // standard includes
 #include <iostream>
 #include <sstream>
@@ -43,7 +41,6 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
-
 
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticlePositionReader.h"

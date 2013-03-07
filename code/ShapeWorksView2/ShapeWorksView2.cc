@@ -469,7 +469,7 @@ void ShapeWorksView2::updateActors()
 
 void ShapeWorksView2::updateColorScheme()
 {
-  int scheme = Preferences::Instance().colorScheme();
+  int scheme = Preferences::Instance().getColorScheme();
 
   this->surfaceActor->GetProperty()->SetDiffuseColor( m_ColorSchemes[scheme].foreground.r,
                                                       m_ColorSchemes[scheme].foreground.g,

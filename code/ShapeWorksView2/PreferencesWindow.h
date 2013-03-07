@@ -19,8 +19,10 @@ public Q_SLOTS:
   void on_glyphSize_valueChanged( int value );
   void on_glyphQuality_valueChanged( int value );
 
-private:
+  void restoreDefaults();
 
+private:
+  void setValuesFromPreferences();
   void updateLabels();
   Ui_PreferencesWindow* ui;
 };

@@ -79,7 +79,7 @@ ModelCache::ModelCache()
 
 vtkSmartPointer<vtkPolyData> ModelCache::getModel( const vnl_vector<double>& shape )
 {
-  if ( !Preferences::Instance().cacheEnabled() )
+  if ( !Preferences::Instance().getCacheEnabled() )
   {
     return NULL;
   }
@@ -96,7 +96,7 @@ vtkSmartPointer<vtkPolyData> ModelCache::getModel( const vnl_vector<double>& sha
 
 void ModelCache::insertModel( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> model )
 {
-  if ( !Preferences::Instance().cacheEnabled() )
+  if ( !Preferences::Instance().getCacheEnabled() )
   {
     return;
   }
@@ -127,7 +127,7 @@ void ModelCache::clear()
 
 void ModelCache::freeSpaceForAmount( size_t allocation )
 {
-  size_t memoryLimit = ( Preferences::Instance().cacheMemory() / 100.0 ) * this->maxMemory;
+  size_t memoryLimit = ( Preferences::Instance().getCacheMemory() / 100.0 ) * this->maxMemory;
 
   while ( !this->cacheList.empty() && this->memorySize + allocation > memoryLimit )
   {

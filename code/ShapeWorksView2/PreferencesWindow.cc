@@ -9,13 +9,10 @@ PreferencesWindow::PreferencesWindow( QWidget* parent /*= 0 */ )
   this->ui = new Ui_PreferencesWindow;
   this->ui->setupUi( this );
 
-  this->ui->modelCacheEnabled->setChecked( Preferences::Instance().cacheEnabled() );
-  this->ui->modelCacheMemory->setValue( Preferences::Instance().cacheMemory() );
-  this->ui->colorScheme->setCurrentIndex( Preferences::Instance().colorScheme() );
+  QPushButton* resetButton = this->ui->buttonBox->button( QDialogButtonBox::RestoreDefaults );
+  connect( resetButton, SIGNAL( clicked() ), this, SLOT( restoreDefaults() ) );
 
-  this->ui->glyphQuality->setValue( Preferences::Instance().getGlyphQuality() );
-  this->ui->glyphSize->setValue( Preferences::Instance().getGlyphSize() * 10 );
-  this->updateLabels();
+  this->setValuesFromPreferences();
 }
 
 void PreferencesWindow::updateLabels()
@@ -50,5 +47,22 @@ void PreferencesWindow::on_glyphQuality_valueChanged( int value )
 {
   //QCoreApplication::processEvents();
   Preferences::Instance().setGlyphQuality( value );
+  this->updateLabels();
+}
+
+void PreferencesWindow::restoreDefaults()
+{
+  Preferences::Instance().restoreDefaults();
+  this->setValuesFromPreferences();
+}
+
+void PreferencesWindow::setValuesFromPreferences()
+{
+  this->ui->modelCacheEnabled->setChecked( Preferences::Instance().getCacheEnabled() );
+  this->ui->modelCacheMemory->setValue( Preferences::Instance().getCacheMemory() );
+  this->ui->colorScheme->setCurrentIndex( Preferences::Instance().getColorScheme() );
+
+  this->ui->glyphQuality->setValue( Preferences::Instance().getGlyphQuality() );
+  this->ui->glyphSize->setValue( Preferences::Instance().getGlyphSize() * 10 );
   this->updateLabels();
 }
