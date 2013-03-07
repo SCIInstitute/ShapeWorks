@@ -51,7 +51,24 @@ void Preferences::setColorScheme( int value )
   this->colorSchemeChanged( value );
 }
 
-PreferencesWindow* Preferences::getWindow()
+float Preferences::getGlyphSize()
 {
-  return &( this->preferencesWindow );
+  return this->settings.value( "Visualization/GlyphSize", 1.0f ).toFloat();
+}
+
+void Preferences::setGlyphSize( float value )
+{
+  this->settings.setValue( "Visualization/GlyphSize", value );
+  this->glyphPropertiesChanged();
+}
+
+float Preferences::getGlyphQuality()
+{
+  return this->settings.value( "Visualization/GlyphQuality", 5.0f ).toFloat();
+}
+
+void Preferences::setGlyphQuality( float value )
+{
+  this->settings.setValue( "Visualization/GlyphQuality", value );
+  this->glyphPropertiesChanged();
 }

@@ -10,12 +10,9 @@ class Preferences : public QObject
 
 public:
 
-
   static Preferences& Instance();
 
   QSettings& getSettings();
-
-  PreferencesWindow *getWindow();
 
   void showWindow();
 
@@ -28,10 +25,15 @@ public:
   int colorScheme();
   void setColorScheme( int value );
 
+  float getGlyphQuality();
+  void setGlyphQuality( float value );
+
+  float getGlyphSize();
+  void setGlyphSize( float value );
 
 Q_SIGNALS:
-  void colorSchemeChanged(int newIndex);
-
+  void colorSchemeChanged( int newIndex );
+  void glyphPropertiesChanged();
 
 private:
 

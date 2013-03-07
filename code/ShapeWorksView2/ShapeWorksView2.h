@@ -83,6 +83,7 @@ public Q_SLOTS:
   void on_spacingSpinBox_valueChanged();
 
   void colorSchemeChanged();
+  void glyphPropertiesChanged();
 
 private:
 
@@ -94,6 +95,7 @@ private:
   void updateSurfaceSettings();
   void updateActors();
   void updateColorScheme();
+  void updateGlyphProperties();
 
   void redraw();
 

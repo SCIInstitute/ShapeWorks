@@ -65,10 +65,15 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   }
 
   QObject::connect(
-    &Preferences::Instance(), SIGNAL(colorSchemeChanged(int)), 
-    this, SLOT(colorSchemeChanged()));
+    &Preferences::Instance(), SIGNAL( colorSchemeChanged( int ) ),
+    this, SLOT( colorSchemeChanged() ) );
+
+  QObject::connect(
+    &Preferences::Instance(), SIGNAL( glyphPropertiesChanged() ),
+    this, SLOT( glyphPropertiesChanged() ) );
 
   this->updateColorScheme();
+  this->updateGlyphProperties();
   this->updateShapeMode();
 }
 
@@ -202,10 +207,14 @@ void ShapeWorksView2::on_spacingSpinBox_valueChanged()
   this->redraw();
 }
 
-
 void ShapeWorksView2::colorSchemeChanged()
 {
   this->updateColorScheme();
+}
+
+void ShapeWorksView2::glyphPropertiesChanged()
+{
+  this->updateGlyphProperties();
 }
 
 /********************************************************************/
@@ -458,28 +467,42 @@ void ShapeWorksView2::updateActors()
   this->redraw();
 }
 
-
 void ShapeWorksView2::updateColorScheme()
 {
   int scheme = Preferences::Instance().colorScheme();
 
-  this->surfaceActor->GetProperty()->SetDiffuseColor(m_ColorSchemes[scheme].foreground.r,
-    m_ColorSchemes[scheme].foreground.g,
-    m_ColorSchemes[scheme].foreground.b);
+  this->surfaceActor->GetProperty()->SetDiffuseColor( m_ColorSchemes[scheme].foreground.r,
+                                                      m_ColorSchemes[scheme].foreground.g,
+                                                      m_ColorSchemes[scheme].foreground.b );
 
 /*
-  this->RecolorGlyphs(m_ColorSchemes[scheme].alt.r,
+   this->RecolorGlyphs(m_ColorSchemes[scheme].alt.r,
     m_ColorSchemes[scheme].alt.g,
     m_ColorSchemes[scheme].alt.b);
-*/
-  this->renderer->SetBackground(m_ColorSchemes[scheme].background.r,
-    m_ColorSchemes[scheme].background.g,
-    m_ColorSchemes[scheme].background.b);
-
+ */
+  this->renderer->SetBackground( m_ColorSchemes[scheme].background.r,
+                                 m_ColorSchemes[scheme].background.g,
+                                 m_ColorSchemes[scheme].background.b );
 
   this->redraw();
 }
 
+void ShapeWorksView2::updateGlyphProperties()
+{
+  this->glyphs->SetScaleFactor( Preferences::Instance().getGlyphSize() );
+  //m_arrowGlyphs->SetScaleFactor(this->glyph_scale->value());
+
+  this->sphereSource->SetThetaResolution( Preferences::Instance().getGlyphQuality() );
+  this->sphereSource->SetPhiResolution( Preferences::Instance().getGlyphQuality() );
+
+  //m_arrowSource->SetTipResolution(this->glyph_quality->value());
+  //m_arrowSource->SetShaftResolution(this->glyph_quality->value());
+
+  this->glyphs->Update();
+  //m_arrowGlyphs->Update();
+
+  this->redraw();
+}
 
 void ShapeWorksView2::redraw()
 {
