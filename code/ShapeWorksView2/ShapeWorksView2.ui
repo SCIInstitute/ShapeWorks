@@ -242,7 +242,14 @@ QToolButton:pressed{
     </property>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionPreferences"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
   </widget>
   <widget class="QDockWidget" name="controlsDockWidget">
    <property name="windowTitle">
@@ -974,6 +981,11 @@ QToolButton:pressed{
    </property>
    <property name="shortcut">
     <string>Alt+6</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>

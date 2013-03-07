@@ -66,6 +66,7 @@
 #include "vtkDecimatePro.h"
 #include "vtkPLYReader.h"
 #include "vtkSmartPointer.h"
+#include "vtkPolyDataWriter.h"
 
 #ifdef SW_USE_POWERCRUST
   #include "vtkPowerCrustSurfaceReconstruction.h"

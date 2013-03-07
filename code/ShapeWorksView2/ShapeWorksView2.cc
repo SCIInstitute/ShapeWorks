@@ -44,6 +44,7 @@
 // local libraries
 #include "tinyxml.h"
 #include "CustomSurfaceReconstructionFilter.h"
+#include <Preferences.h>
 
 // local files
 #ifdef SW_USE_POWERCRUST
@@ -54,7 +55,9 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
 {
   this->ui = new Ui_ShapeWorksView2;
   this->ui->setupUi( this );
-  this->resize( 1280, 720 );
+
+  QSize size = Preferences::Instance().getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
+  this->resize( size );
 
   if ( !this->readParameterFile( argv[1] ) )
   {
@@ -71,9 +74,19 @@ ShapeWorksView2::~ShapeWorksView2()
 /* Qt event handling                                                */
 /********************************************************************/
 
+void ShapeWorksView2::closeEvent( QCloseEvent* event )
+{
+  Preferences::Instance().getSettings().setValue( "mainwindow/size", this->size() );
+}
+
 void ShapeWorksView2::on_actionQuit_triggered()
 {
   this->close();
+}
+
+void ShapeWorksView2::on_actionPreferences_triggered()
+{
+  Preferences::Instance().showWindow();
 }
 
 void ShapeWorksView2::on_meanButton_clicked()

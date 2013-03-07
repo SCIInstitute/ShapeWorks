@@ -46,9 +46,12 @@ public:
   ShapeWorksView2( int argc, char** argv );
   ~ShapeWorksView2();
 
+  virtual void closeEvent( QCloseEvent* event );
+
 public Q_SLOTS:
 
   void on_actionQuit_triggered();
+  void on_actionPreferences_triggered();
 
   // display modes
   void on_meanButton_clicked();
