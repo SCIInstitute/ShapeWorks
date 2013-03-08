@@ -33,6 +33,8 @@ class vtkPolyDataNormals;
 class vtkDecimatePro;
 class vtkImageConstantPad;
 class vtkPowerCrustSurfaceReconstruction;
+class vtkImageData;
+class vtkTransformPolyDataFilter;
 
 // Forward Qt class declarations
 class Ui_ShapeWorksView2;
@@ -61,6 +63,7 @@ public Q_SLOTS:
   void on_meanOverallButton_clicked();
   void on_meanGroup1Button_clicked();
   void on_meanGroup2Button_clicked();
+  void on_meanDifferenceButton_clicked();
 
   // sample mode
   void on_sampleSpinBox_valueChanged();
@@ -97,6 +100,7 @@ private:
   void updateActors();
   void updateColorScheme();
   void updateGlyphProperties();
+  void updateDifferenceLUT( float r0, float r1 );
 
   void redraw();
 
@@ -104,10 +108,18 @@ private:
   bool readExplanatoryVariables( char* filename );
 
   void displayShape( const vnl_vector<double> &pos );
+  void displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs );
+  void displayMeanDifference();
+  void displaySpheres();
+  void resetPointScalars();
+
   void computeModeShape();
   void computeRegressionShape();
 
   double getRegressionValue();
+
+  void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
+                             vnl_vector_fixed<double, 3> &ans ) const;
 
   // designer form
   Ui_ShapeWorksView2* ui;
@@ -131,14 +143,17 @@ private:
   vtkSmartPointer<CustomSurfaceReconstructionFilter>  surface;
   vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust;
 
-  //vtkSmartPointer<vtkColorTransferFunction>   differenceLUT;
+  vtkSmartPointer<vtkColorTransferFunction>   differenceLUT;
+  vtkSmartPointer<vtkArrowSource>             arrowSource;
+  vtkSmartPointer<vtkTransformPolyDataFilter> arrowFlipFilter;
+  vtkSmartPointer<vtkGlyph3D>                 arrowGlyphs;
+  vtkSmartPointer<vtkPolyDataMapper>          arrowGlyphMapper;
+  vtkSmartPointer<vtkActor>                   arrowGlyphActor;
+
+  vtkSmartPointer<vtkTransform>               transform180;
   //vtkSmartPointer<vtkColorTransferFunction>   pValueTFunc;
-  //vtkSmartPointer<vtkTransformPolyDataFilter> arrowFlipFilter;
-  //vtkSmartPointer<vtkGlyph3D>                 arrowGlyphs;
   //vtkSmartPointer<vtkPolyDataNormals>         m_surfNormals;
   //vtkSmartPointer<vtkDecimatePro>             m_surfDecimate;
-  //vtkSmartPointer<vtkTransform>               transform180;
-  //vtkSmartPointer<vtkArrowSource>             arrowSource;
 
   ParticleShapeStatistics<3> stats;
   itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::Pointer regression;

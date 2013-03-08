@@ -61,7 +61,6 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->ui->tabWidget->setStyleSheet( QString( "QTabWidget::pane { border: 2px solid rgb( 80, 80, 80 ); }" ) );
 #endif
 
-
   QSize size = Preferences::Instance().getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
   this->resize( size );
 
@@ -137,6 +136,11 @@ void ShapeWorksView2::on_meanGroup1Button_clicked()
 }
 
 void ShapeWorksView2::on_meanGroup2Button_clicked()
+{
+  this->updateAnalysisMode();
+}
+
+void ShapeWorksView2::on_meanDifferenceButton_clicked()
 {
   this->updateAnalysisMode();
 }
@@ -280,7 +284,6 @@ void ShapeWorksView2::initializeGlyphs()
   this->glyphs->ClampingOff();
   this->glyphs->SetScaleModeToDataScalingOff();
   this->glyphs->SetSourceConnection( this->sphereSource->GetOutputPort() );
-  this->glyphs->SetScaleModeToDataScalingOff();
 
   this->glyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->glyphMapper->SetInputConnection( this->glyphs->GetOutputPort() );
@@ -293,64 +296,62 @@ void ShapeWorksView2::initializeGlyphs()
   this->glyphActor->GetProperty()->SetSpecularPower( 10.0 );
   this->glyphActor->SetMapper( this->glyphMapper );
 
-  //arrowFlipFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  //arrowGlyphs = vtkGlyph3D::New();
-  //arrowGlyphMapper = vtkPolyDataMapper::New();
-  //arrowGlyphActor = vtkActor::New();
+  this->arrowFlipFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->arrowGlyphs = vtkGlyph3D::New();
+  this->arrowGlyphMapper = vtkPolyDataMapper::New();
+  this->arrowGlyphActor = vtkActor::New();
 
-  //this->pValueTFunc = vtkSmartPointer<vtkColorTransferFunction>::New();
-  //this->pValueTFunc->SetColorSpaceToHSV();
-  //this->pValueTFunc->AddHSVPoint( 0, 0, 1, 1 );
-  //this->pValueTFunc->AddHSVPoint( 0.05, 1, .40, 1 );
-  //this->pValueTFunc->AddHSVPoint( 0.05 + 0.00001, 1, 0.0, 1 );
-  //this->pValueTFunc->AddHSVPoint( 1, 1, 0.0, 1 );
+  /*this->pValueTFunc = vtkSmartPointer<vtkColorTransferFunction>::New();
+     this->pValueTFunc->SetColorSpaceToHSV();
+     this->pValueTFunc->AddHSVPoint( 0, 0, 1, 1 );
+     this->pValueTFunc->AddHSVPoint( 0.05, 1, .40, 1 );
+     this->pValueTFunc->AddHSVPoint( 0.05 + 0.00001, 1, 0.0, 1 );
+     this->pValueTFunc->AddHSVPoint( 1, 1, 0.0, 1 );*/
 
-  //this->differenceLUT = vtkSmartPointer<vtkColorTransferFunction>::New();
-  //this->differenceLUT->SetColorSpaceToHSV();
+  this->differenceLUT = vtkSmartPointer<vtkColorTransferFunction>::New();
+  this->differenceLUT->SetColorSpaceToHSV();
 
   // Arrow glyphs
-  //this->arrowSource = vtkSmartPointer<vtkArrowSource>::New();
-  //this->arrowSource->SetTipResolution( 6 );
-  //this->arrowSource->SetShaftResolution( 6 );
+  this->arrowSource = vtkSmartPointer<vtkArrowSource>::New();
+  this->arrowSource->SetTipResolution( 6 );
+  this->arrowSource->SetShaftResolution( 6 );
 
-  //vtkTransform* t1 = vtkTransform::New();
-  //vtkTransform* t2 = vtkTransform::New();
-  //vtkTransform* t3 = vtkTransform::New();
-  //vtkTransform* t4 = vtkTransform::New();
-  //t1->Translate( -0.5, 0.0, 0.0 );
-  //t2->RotateY( 180 );
-  //t3->Translate( 0.5, 0.0, 0.0 );
-  //t4->RotateY( 180 );
-  //t3->Concatenate( t4 );
-  //t2->Concatenate( t3 );
-  //t1->Concatenate( t2 );
-  //this->transform180 = vtkSmartPointer<vtkTransform>::New();
-  //this->transform180->Concatenate( t1 );
-  //t1->Delete();
-  //t2->Delete();
-  //t3->Delete();
-  //t4->Delete();
+  vtkTransform* t1 = vtkTransform::New();
+  vtkTransform* t2 = vtkTransform::New();
+  vtkTransform* t3 = vtkTransform::New();
+  vtkTransform* t4 = vtkTransform::New();
+  t1->Translate( -0.5, 0.0, 0.0 );
+  t2->RotateY( 180 );
+  t3->Translate( 0.5, 0.0, 0.0 );
+  t4->RotateY( 180 );
+  t3->Concatenate( t4 );
+  t2->Concatenate( t3 );
+  t1->Concatenate( t2 );
+  this->transform180 = vtkSmartPointer<vtkTransform>::New();
+  this->transform180->Concatenate( t1 );
+  t1->Delete();
+  t2->Delete();
+  t3->Delete();
+  t4->Delete();
 
-  /*
-     m_arrowFlipFilter->SetTransform(m_transform180);
-     m_arrowFlipFilter->SetInputConnection(m_arrowSource->GetOutputPort());
+  this->arrowFlipFilter->SetTransform( this->transform180 );
+  this->arrowFlipFilter->SetInputConnection( this->arrowSource->GetOutputPort() );
 
-     m_arrowGlyphs->SetSourceConnection(m_arrowFlipFilter->GetOutputPort());
-     m_arrowGlyphs->SetInput(m_glyphPointset);
-     m_arrowGlyphs->ScalingOn();
-     m_arrowGlyphs->ClampingOff();
+  this->arrowGlyphs->SetSourceConnection( this->arrowFlipFilter->GetOutputPort() );
+  this->arrowGlyphs->SetInput( this->glyphPointSet );
+  this->arrowGlyphs->ScalingOn();
+  this->arrowGlyphs->ClampingOff();
 
-     m_arrowGlyphs->SetVectorModeToUseVector();
-     m_arrowGlyphs->SetScaleModeToScaleByVector();
+  this->arrowGlyphs->SetVectorModeToUseVector();
+  this->arrowGlyphs->SetScaleModeToScaleByVector();
 
-     m_arrowGlyphMapper->SetInputConnection(m_arrowGlyphs->GetOutputPort());
+  this->arrowGlyphMapper->SetInputConnection( this->arrowGlyphs->GetOutputPort() );
 
-     m_arrowGlyphActor->GetProperty()->SetSpecularColor(1.0, 1.0, 1.0);
-     m_arrowGlyphActor->GetProperty()->SetDiffuse(0.8);
-     m_arrowGlyphActor->GetProperty()->SetSpecular(0.3);
-     m_arrowGlyphActor->GetProperty()->SetSpecularPower(10.0);
-     m_arrowGlyphActor->SetMapper(m_arrowGlyphMapper);
-   */
+  this->arrowGlyphActor->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
+  this->arrowGlyphActor->GetProperty()->SetDiffuse( 0.8 );
+  this->arrowGlyphActor->GetProperty()->SetSpecular( 0.3 );
+  this->arrowGlyphActor->GetProperty()->SetSpecularPower( 10.0 );
+  this->arrowGlyphActor->SetMapper( this->arrowGlyphMapper );
 }
 
 void ShapeWorksView2::initializeSurface()
@@ -414,6 +415,9 @@ void ShapeWorksView2::updateAnalysisMode()
   this->ui->usePowerCrustCheckBox->hide();
 #endif
 
+  // switch back to spheres
+  this->displaySpheres();
+
   if ( this->ui->tabWidget->currentWidget() == this->ui->meanTab )
   {
     if ( this->ui->meanGroup1Button->isChecked() )
@@ -423,6 +427,11 @@ void ShapeWorksView2::updateAnalysisMode()
     else if ( this->ui->meanGroup2Button->isChecked() )
     {
       this->displayShape( this->stats.Group2Mean() );
+    }
+    else if ( this->ui->meanDifferenceButton->isChecked() )
+    {
+      this->displayShape( this->stats.Mean() );
+      this->displayMeanDifference();
     }
     else
     {
@@ -517,17 +526,20 @@ void ShapeWorksView2::updateColorScheme()
 
 void ShapeWorksView2::updateGlyphProperties()
 {
-  this->glyphs->SetScaleFactor( Preferences::Instance().getGlyphSize() );
-  //m_arrowGlyphs->SetScaleFactor(this->glyph_scale->value());
+  float size = Preferences::Instance().getGlyphSize();
+  float quality = Preferences::Instance().getGlyphQuality();
 
-  this->sphereSource->SetThetaResolution( Preferences::Instance().getGlyphQuality() );
-  this->sphereSource->SetPhiResolution( Preferences::Instance().getGlyphQuality() );
+  this->glyphs->SetScaleFactor( size );
+  this->arrowGlyphs->SetScaleFactor( size );
 
-  //m_arrowSource->SetTipResolution(this->glyph_quality->value());
-  //m_arrowSource->SetShaftResolution(this->glyph_quality->value());
+  this->sphereSource->SetThetaResolution( quality );
+  this->sphereSource->SetPhiResolution( quality );
+
+  this->arrowSource->SetTipResolution( quality );
+  this->arrowSource->SetShaftResolution( quality );
 
   this->glyphs->Update();
-  //m_arrowGlyphs->Update();
+  this->arrowGlyphs->Update();
 
   this->redraw();
 }
@@ -584,6 +596,14 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   }
 
   this->glyphPoints->Modified();
+
+  // Set the color modes
+  this->arrowGlyphs->SetColorModeToColorByScalar();
+  this->glyphs->SetColorModeToColorByScalar();
+  this->glyphMapper->SetColorModeToMapScalars();
+  this->arrowGlyphMapper->SetColorModeToMapScalars();
+  this->glyphMapper->ScalarVisibilityOn();
+  this->arrowGlyphMapper->ScalarVisibilityOn();
 
   this->displayShape( this->stats.Mean() );
 
@@ -712,6 +732,128 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   }
 }
 
+void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs )
+{
+  if ( vecs.size() < this->glyphPoints->GetNumberOfPoints() )
+  {
+    std::cerr << "Error: not enough vectors" << std::endl;
+    return;
+  }
+
+  double minmag = 1.0e20;
+  double maxmag = 0.0;
+
+  vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
+  vtkSmartPointer<vtkFloatArray> vectors2 = vtkSmartPointer<vtkFloatArray>::New();
+
+  vectors->SetNumberOfComponents( 3 );
+  vectors2->SetNumberOfComponents( 3 );
+
+  this->surface->Update();
+
+  vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+  // smoother->SetStandardDeviations(1.0,1.0,1.0);
+  smoother->SetStandardDeviations( this->surface->GetOutput()->GetSpacing()[0],
+                                   this->surface->GetOutput()->GetSpacing()[1],
+                                   this->surface->GetOutput()->GetSpacing()[2] );
+
+  smoother->SetInputConnection( this->surface->GetOutputPort() );
+
+  // Compute normals from the isosurface volume
+  vtkSmartPointer<vtkImageGradient> grad = vtkSmartPointer<vtkImageGradient>::New();
+  grad->SetDimensionality( 3 );
+  grad->SetInputConnection( smoother->GetOutputPort() );
+  grad->Update();
+
+  // Dot product difference vectors with the surface normals.
+  vtkSmartPointer<vtkFloatArray> mags = vtkSmartPointer<vtkFloatArray>::New();
+  mags->SetNumberOfComponents( 1 );
+  mags->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
+
+  vnl_vector_fixed<double, 3> n;
+
+  // Compute difference vector dot product with normal.  Length of vector is
+  // stored in the "scalars" so that the vtk color mapping and glyph scaling
+  // happens properly.
+  for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
+  {
+    double x = this->glyphPoints->GetPoint( i )[0];
+    double y = this->glyphPoints->GetPoint( i )[1];
+    double z = this->glyphPoints->GetPoint( i )[2];
+
+    float xd = vecs[i][0];
+    float yd = vecs[i][1];
+    float zd = vecs[i][2];
+
+    this->trilinearInterpolate( grad->GetOutput(), x, y, z, n );
+
+    float mag = xd * n( 0 ) + yd * n( 1 ) + zd * n( 2 );
+
+    if ( mag < minmag ) {minmag = mag; }
+    if ( mag > maxmag ) {maxmag = mag; }
+
+    vectors2->InsertNextTuple3( n( 0 ) * mag, n( 1 ) * mag, n( 2 ) * mag );
+    mags->InsertTuple1( i, mag );
+  }
+
+  this->glyphMapper->SetLookupTable( this->differenceLUT );
+  this->arrowGlyphMapper->SetLookupTable( this->differenceLUT );
+
+  this->glyphs->SetSourceConnection( this->arrowSource->GetOutputPort() );
+  this->glyphPointSet->GetPointData()->SetVectors( vectors2 );
+  this->glyphPointSet->GetPointData()->SetScalars( mags );
+
+  this->glyphs->SetScaleModeToScaleByVector();
+
+  this->updateDifferenceLUT( minmag, maxmag );
+
+  this->renderer->AddActor( this->arrowGlyphActor );
+
+  //m_showingArrowGlyphs = true;
+
+  this->redraw();
+}
+
+void ShapeWorksView2::displayMeanDifference()
+{
+  std::vector< itk::ParticlePositionReader<3>::PointType > vecs;
+
+  for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
+  {
+    itk::ParticlePositionReader<3>::PointType tmp;
+    tmp[0] = this->stats.Group2Mean()[i * 3] - this->stats.Group1Mean()[i * 3];
+    tmp[1] = this->stats.Group2Mean()[i * 3 + 1] - this->stats.Group1Mean()[i * 3 + 1];
+    tmp[2] = this->stats.Group2Mean()[i * 3 + 2] - this->stats.Group1Mean()[i * 3 + 2];
+    vecs.push_back( tmp );
+  }
+  this->displayVectorField( vecs );
+}
+
+void ShapeWorksView2::displaySpheres()
+{
+  this->renderer->RemoveActor( this->arrowGlyphActor );
+
+  this->resetPointScalars();
+  this->glyphMapper->SetLookupTable( this->lut );
+  this->glyphs->SetSourceConnection( this->sphereSource->GetOutputPort() );
+  this->glyphs->SetScaleModeToDataScalingOff();
+
+  this->updateGlyphProperties();
+}
+
+void ShapeWorksView2::resetPointScalars()
+{
+  vtkSmartPointer<vtkUnsignedLongArray> mags = vtkSmartPointer<vtkUnsignedLongArray>::New();
+  mags->SetNumberOfComponents( 1 );
+  mags->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
+
+  for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
+  {
+    mags->InsertTuple1( i, i );
+  }
+  this->glyphPointSet->GetPointData()->SetScalars( mags );
+  this->glyphPoints->Modified();
+}
 void ShapeWorksView2::computeModeShape()
 {
   double pcaSliderValue = this->ui->pcaSlider->value() / 10.0;
@@ -752,4 +894,48 @@ double ShapeWorksView2::getRegressionValue()
   value = ( value / this->ui->regressionSlider->maximum() * this->regressionRange ) + this->regressionMin;
 
   return value;
+}
+
+void ShapeWorksView2::trilinearInterpolate( vtkImageData* grad, double x, double y, double z, vnl_vector_fixed<double, 3> &ans ) const
+{
+  // Access gradient image information.
+  const double* gradData = (const double*)( grad->GetScalarPointer() );
+  const double* spacing = grad->GetSpacing();
+
+  // See, e.g. http://en.wikipedia.org/wiki/Trilinear_interpolation for description
+  // Identify the surrounding 8 points (corners).  c is the closest grid point.
+  vtkIdType idx = grad->FindPoint( x, y, z );
+  const double* c = grad->GetPoint( idx );
+
+  //std::cout << "idx = " << idx << std::endl;
+  //std::cout << "c = " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+
+  ans[0] = gradData[idx * 3];
+  ans[1] = gradData[idx * 3 + 1];
+  ans[2] = gradData[idx * 3 + 2];
+  return;
+}
+
+void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
+{
+  this->differenceLUT->RemoveAllPoints();
+
+  const float yellow = 0.16666;
+  const float blue = 0.66666;
+  const unsigned int res = 100;
+  const float resinv = 1.0 / static_cast<float>( res );
+  float maxrange;
+  if ( fabs( r0 ) > fabs( r1 ) ) {maxrange = fabs( r0 ); }
+  else {maxrange = fabs( r1 ); }
+
+  const float pip = fabs( maxrange ) * resinv;
+  for ( unsigned int i = 0; i < res; i++ )
+  {
+    float fi = static_cast<float>( i );
+
+    this->differenceLUT->AddHSVPoint( -maxrange + ( fi * pip ), yellow, 1.0 - ( fi * resinv ), 1.0 );
+    this->differenceLUT->AddHSVPoint( maxrange - ( fi * pip ), blue, 1.0 - ( fi * resinv ), 1.0 );
+  }
+
+  this->differenceLUT->AddHSVPoint( 0.0, 0.0, 0.0, 1.0 );
 }
