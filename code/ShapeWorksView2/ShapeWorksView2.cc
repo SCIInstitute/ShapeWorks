@@ -61,6 +61,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->ui->tabWidget->setStyleSheet( QString( "QTabWidget::pane { border: 2px solid rgb( 80, 80, 80 ); }" ) );
 #endif
 
+
   QSize size = Preferences::Instance().getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
   this->resize( size );
 
@@ -91,9 +92,11 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
     this->regression->EstimateParameters();
   }
 
+  this->ui->tabWidget->setCurrentIndex( 0 );
+
   this->updateColorScheme();
   this->updateGlyphProperties();
-  this->updateShapeMode();
+  this->updateAnalysisMode();
 }
 
 ShapeWorksView2::~ShapeWorksView2()
@@ -120,22 +123,22 @@ void ShapeWorksView2::on_actionPreferences_triggered()
 
 void ShapeWorksView2::on_tabWidget_currentChanged()
 {
-  this->updateShapeMode();
+  this->updateAnalysisMode();
 }
 
 void ShapeWorksView2::on_meanOverallButton_clicked()
 {
-  this->updateShapeMode();
+  this->updateAnalysisMode();
 }
 
 void ShapeWorksView2::on_meanGroup1Button_clicked()
 {
-  this->updateShapeMode();
+  this->updateAnalysisMode();
 }
 
 void ShapeWorksView2::on_meanGroup2Button_clicked()
 {
-  this->updateShapeMode();
+  this->updateAnalysisMode();
 }
 
 void ShapeWorksView2::on_sampleSpinBox_valueChanged()
@@ -143,7 +146,7 @@ void ShapeWorksView2::on_sampleSpinBox_valueChanged()
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();
 
-  this->updateShapeMode();
+  this->updateAnalysisMode();
 }
 
 void ShapeWorksView2::on_medianButton_clicked()
@@ -390,7 +393,7 @@ void ShapeWorksView2::initializeSurface()
   this->updateSurfaceSettings();
 }
 
-void ShapeWorksView2::updateShapeMode()
+void ShapeWorksView2::updateAnalysisMode()
 {
   // update UI
   this->ui->meanGroup1Button->setVisible( this->groupsAvailable );
@@ -400,6 +403,8 @@ void ShapeWorksView2::updateShapeMode()
   this->ui->pcaGroup1Label->setVisible( this->groupsAvailable );
   this->ui->pcaGroup2Label->setVisible( this->groupsAvailable );
   this->ui->pcaGroupSlider->setVisible( this->groupsAvailable );
+
+  this->ui->tabWidget->setTabEnabled( 3, this->regressionAvailable );
 
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();

@@ -92,7 +92,7 @@ private:
   void initializeGlyphs();
   void initializeSurface();
 
-  void updateShapeMode();
+  void updateAnalysisMode();
   void updateSurfaceSettings();
   void updateActors();
   void updateColorScheme();
