@@ -54,10 +54,8 @@ public Q_SLOTS:
   void on_actionQuit_triggered();
   void on_actionPreferences_triggered();
 
-  // display modes
-  void on_meanButton_clicked();
-  void on_sampleButton_clicked();
-  void on_pcaButton_clicked();
+  // analysis mode
+  void on_tabWidget_currentChanged();
 
   // mean mode
   void on_meanOverallButton_clicked();
@@ -74,6 +72,9 @@ public Q_SLOTS:
   void on_pcaSlider_valueChanged();
   void on_pcaModeSpinBox_valueChanged();
   void on_pcaGroupSlider_valueChanged();
+
+  // Regression mode
+  void on_regressionSlider_valueChanged();
 
   // visualization
   void on_showGlyphs_stateChanged();
@@ -100,8 +101,13 @@ private:
   void redraw();
 
   bool readParameterFile( char* filename );
+  bool readExplanatoryVariables( char* filename );
+
   void displayShape( const vnl_vector<double> &pos );
   void computeModeShape();
+  void computeRegressionShape();
+
+  double getRegressionValue();
 
   // designer form
   Ui_ShapeWorksView2* ui;
@@ -135,9 +141,15 @@ private:
   //vtkSmartPointer<vtkArrowSource>             arrowSource;
 
   ParticleShapeStatistics<3> stats;
+  itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::Pointer regression;
 
   int numSamples;
   bool groupsAvailable;
+  bool regressionAvailable;
+
+  double regressionMin;
+  double regressionMax;
+  double regressionRange;
 
   // a copy of the current shape mesh
   vnl_vector<double> currentShape;

@@ -56,13 +56,13 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->ui = new Ui_ShapeWorksView2;
   this->ui->setupUi( this );
 
+#ifdef _WIN32
+  // only want to do this on windows.  On apple, the default is better
+  this->ui->tabWidget->setStyleSheet( QString( "QTabWidget::pane { border: 2px solid rgb( 80, 80, 80 ); }" ) );
+#endif
+
   QSize size = Preferences::Instance().getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
   this->resize( size );
-
-  if ( !this->readParameterFile( argv[1] ) )
-  {
-    exit( -1 );
-  }
 
   QObject::connect(
     &Preferences::Instance(), SIGNAL( colorSchemeChanged( int ) ),
@@ -71,6 +71,25 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   QObject::connect(
     &Preferences::Instance(), SIGNAL( glyphPropertiesChanged() ),
     this, SLOT( glyphPropertiesChanged() ) );
+
+  if ( !this->readParameterFile( argv[1] ) )
+  {
+    exit( -1 );
+  }
+
+  // Compute the linear regression
+  this->regression = itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::New();
+  this->regression->SetMatrix( this->stats.ShapeMatrix() );
+
+  // Load the explanatory variables
+  this->readExplanatoryVariables( argv[1] );
+  if ( this->regressionAvailable )
+  {
+    this->regression->ResizeParameters( stats.ShapeMatrix().rows() );
+    this->regression->ResizeMeanMatrix( stats.ShapeMatrix().rows(), stats.ShapeMatrix().cols() );
+    this->regression->Initialize();
+    this->regression->EstimateParameters();
+  }
 
   this->updateColorScheme();
   this->updateGlyphProperties();
@@ -99,17 +118,7 @@ void ShapeWorksView2::on_actionPreferences_triggered()
   Preferences::Instance().showWindow();
 }
 
-void ShapeWorksView2::on_meanButton_clicked()
-{
-  this->updateShapeMode();
-}
-
-void ShapeWorksView2::on_sampleButton_clicked()
-{
-  this->updateShapeMode();
-}
-
-void ShapeWorksView2::on_pcaButton_clicked()
+void ShapeWorksView2::on_tabWidget_currentChanged()
 {
   this->updateShapeMode();
 }
@@ -176,6 +185,17 @@ void ShapeWorksView2::on_pcaGroupSlider_valueChanged()
   QCoreApplication::processEvents();
 
   this->computeModeShape();
+  this->redraw();
+}
+
+void ShapeWorksView2::on_regressionSlider_valueChanged()
+{
+  this->ui->regressionLabel->setText( QString::number( this->getRegressionValue() ) );
+
+  // this will make the UI appear more responsive
+  QCoreApplication::processEvents();
+
+  this->computeRegressionShape();
   this->redraw();
 }
 
@@ -373,9 +393,8 @@ void ShapeWorksView2::initializeSurface()
 void ShapeWorksView2::updateShapeMode()
 {
   // update UI
-  this->ui->meanWidget->setVisible( this->groupsAvailable && this->ui->meanButton->isChecked() );
-  this->ui->sampleWidget->setVisible( this->ui->sampleButton->isChecked() );
-  this->ui->pcaWidget->setVisible( this->ui->pcaButton->isChecked() );
+  this->ui->meanGroup1Button->setVisible( this->groupsAvailable );
+  this->ui->meanGroup2Button->setVisible( this->groupsAvailable );
   this->ui->medianGroup1Button->setVisible( this->groupsAvailable );
   this->ui->medianGroup2Button->setVisible( this->groupsAvailable );
   this->ui->pcaGroup1Label->setVisible( this->groupsAvailable );
@@ -390,7 +409,7 @@ void ShapeWorksView2::updateShapeMode()
   this->ui->usePowerCrustCheckBox->hide();
 #endif
 
-  if ( this->ui->meanButton->isChecked() )
+  if ( this->ui->tabWidget->currentWidget() == this->ui->meanTab )
   {
     if ( this->ui->meanGroup1Button->isChecked() )
     {
@@ -405,14 +424,18 @@ void ShapeWorksView2::updateShapeMode()
       this->displayShape( this->stats.Mean() );
     }
   }
-  else if ( this->ui->sampleButton->isChecked() )
+  else if ( this->ui->tabWidget->currentWidget() == this->ui->samplesTab )
   {
     int sampleNumber = this->ui->sampleSpinBox->value();
     this->displayShape( this->stats.ShapeMatrix().get_column( sampleNumber ) );
   }
-  else if ( this->ui->pcaButton->isChecked() )
+  else if ( this->ui->tabWidget->currentWidget() == this->ui->pcaTab )
   {
     this->computeModeShape();
+  }
+  else if ( this->ui->tabWidget->currentWidget() == this->ui->regressionTab )
+  {
+    this->computeRegressionShape();
   }
 
   this->redraw();
@@ -521,18 +544,9 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   }
 
   TiXmlHandle docHandle( &doc );
-  TiXmlElement*      elem;
   std::istringstream inputsBuffer;
 
-  elem = docHandle.FirstChild( "group_ids" ).Element();
-  if ( elem )
-  {
-    this->groupsAvailable = true;
-  }
-  else
-  {
-    this->groupsAvailable = false;
-  }
+  this->groupsAvailable = ( docHandle.FirstChild( "group_ids" ).Element() != NULL );
 
   // Run statistics
   this->stats.ReadPointFiles( filename );
@@ -573,6 +587,72 @@ bool ShapeWorksView2::readParameterFile( char* filename )
 
   this->updateActors();
 
+  return true;
+}
+
+bool ShapeWorksView2::readExplanatoryVariables( char* filename )
+{
+  TiXmlDocument doc( filename );
+  bool loadOkay = doc.LoadFile();
+
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement* elem;
+
+  std::istringstream inputBuffer;
+  std::vector<double> evars;
+  double startT, endT;
+  startT = 1.0e16;
+  endT = -1.0e16;
+  double etmp = 0.0;
+
+  elem = docHandle.FirstChild( "explanatory_variable" ).Element();
+  if ( elem )
+  {
+    inputBuffer.str( elem->GetText() );
+    while ( inputBuffer >> etmp )
+    {
+      if ( etmp > endT ) {endT = ceil( etmp ); }
+      if ( etmp < startT ) {startT = floor( etmp ); }
+
+      evars.push_back( etmp );
+    }
+    inputBuffer.clear();
+    inputBuffer.str( "" );
+  }
+  else
+  {
+    this->regressionAvailable = false;
+    return false;
+  }
+
+  // Hide simple regression functionality unless parameters have been supplied
+  // by the user and there enough explanatory vars to specify a range (needs
+  // 2).  This assumes ReadSimpleRegressionParameters has been already been
+  // called.
+  if ( evars.size() < 2 || ( evars.size() < this->numSamples ) )
+  {
+    this->regressionAvailable = false;
+    return false;
+  }
+
+  this->regression->SetExplanatory( evars );
+
+  // Initialize range of explanatory variable.
+  this->regressionMin = startT;
+  this->regressionMax = endT;
+  this->regressionRange = endT - startT;
+  double middle = startT + ( ( endT - startT ) / 2.0 );
+  this->ui->regressionSlider->setValue( ( middle - this->regressionMin ) / this->regressionRange * this->ui->regressionSlider->maximum() );
+
+/*
+   this->simple_regression->minimum(startT);
+   this->simple_regression->maximum(endT);
+   this->simple_regression->step((endT - startT) / 100.0);
+   //  this->simple_regression->value(startT);
+   this->simple_regression->value(startT + ((endT - startT) / 2.0));
+ */
+//this->mode->value(0);
+//this->ComputeSimpleRegressionParameters();
   return true;
 }
 
@@ -651,4 +731,20 @@ void ShapeWorksView2::computeModeShape()
   {
     this->displayShape( this->stats.Mean() + ( e * ( pcaSliderValue * lambda ) ) );
   }
+}
+
+void ShapeWorksView2::computeRegressionShape()
+{
+  vnl_vector<double> pos = this->regression->ComputeMean( this->getRegressionValue() );
+  this->displayShape( pos );
+}
+
+double ShapeWorksView2::getRegressionValue()
+{
+  double value = this->ui->regressionSlider->value();
+
+  // scale value back to range
+  value = ( value / this->ui->regressionSlider->maximum() * this->regressionRange ) + this->regressionMin;
+
+  return value;
 }
