@@ -46,6 +46,8 @@
 #include "CustomSurfaceReconstructionFilter.h"
 #include <Preferences.h>
 
+//#define SW_USE_POWERCRUST
+
 // local files
 #ifdef SW_USE_POWERCRUST
 #include "vtkPowerCrustSurfaceReconstruction.h"
@@ -487,11 +489,16 @@ void ShapeWorksView2::updateSurfaceSettings()
 void ShapeWorksView2::updateActors()
 {
   this->renderer->RemoveActor( this->glyphActor );
+  this->renderer->RemoveActor( this->arrowGlyphActor );
   this->renderer->RemoveActor( this->surfaceActor );
 
   if ( this->ui->showGlyphs->isChecked() )
   {
     this->renderer->AddActor( this->glyphActor );
+    if ( this->arrowsVisible )
+    {
+      this->renderer->AddActor( this->arrowGlyphActor );
+    }
   }
 
   if ( this->ui->showSurface->isChecked() )
@@ -809,7 +816,7 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
 
   this->renderer->AddActor( this->arrowGlyphActor );
 
-  //m_showingArrowGlyphs = true;
+  this->arrowsVisible = true;
 
   this->redraw();
 }
@@ -831,6 +838,8 @@ void ShapeWorksView2::displayMeanDifference()
 
 void ShapeWorksView2::displaySpheres()
 {
+  this->arrowsVisible = false;
+
   this->renderer->RemoveActor( this->arrowGlyphActor );
 
   this->resetPointScalars();

@@ -169,6 +169,8 @@ private:
   // a copy of the current shape mesh
   vnl_vector<double> currentShape;
 
+  bool arrowsVisible;
+
   // cache of shape models
   ModelCache modelCache;
 
