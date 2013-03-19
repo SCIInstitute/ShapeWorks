@@ -40,6 +40,7 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
+#include <vtkPointLocator.h>
 
 // local libraries
 #include "tinyxml.h"
@@ -737,6 +738,12 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
     // retrieve the model from the cache and set it for display
     this->surfaceMapper->SetInput( polyData );
   }
+
+  if (this->arrowsVisible)
+  {
+    this->displayMeanDifference();
+  }
+
 }
 
 void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs )
@@ -777,6 +784,26 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
   mags->SetNumberOfComponents( 1 );
   mags->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
 
+
+  //vtkPolyData* polyData = this->polydataNormals->GetOutput();
+  vtkPolyData* polyData = this->surfaceMapper->GetInput();
+
+  vtkFloatArray* smags = vtkFloatArray::New();
+  smags->SetNumberOfComponents( 1 );
+  smags->SetNumberOfTuples( polyData->GetPoints()->GetNumberOfPoints() );
+  for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
+  {
+    smags->InsertTuple1( i, 0.0 );
+  }
+
+  vtkFloatArray* svecs = vtkFloatArray::New();
+  svecs->SetNumberOfComponents( 3 );
+  svecs->SetNumberOfTuples( polyData->GetPoints()->GetNumberOfPoints() );
+  for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
+  {
+    svecs->InsertTuple3( i, 0.0, 0.0, 0.0 );
+  }
+
   vnl_vector_fixed<double, 3> n;
 
   // Compute difference vector dot product with normal.  Length of vector is
@@ -803,13 +830,80 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
     mags->InsertTuple1( i, mag );
   }
 
+  vtkSmartPointer<vtkPolyData> pdata = vtkSmartPointer<vtkPolyData>::New();
+  pdata->SetPoints( this->glyphPoints );
+  pdata->GetPointData()->SetScalars( mags );
+  pdata->GetPointData()->SetVectors( vectors2 );
+
+  vtkPointLocator* pointLocator = vtkPointLocator::New();
+  pointLocator->SetDataSet( pdata );
+  pointLocator->SetDivisions( 100, 100, 100 );
+  pointLocator->BuildLocator();
+
+  for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
+  {
+    // find particle (p) closest to current point (v)
+    vtkIdType pId = pointLocator->FindClosestPoint( polyData->GetPoint( i ) );
+
+    // use d(p,v) as a radius to find other particles close by
+    double x = polyData->GetPoint( i )[0] - pdata->GetPoint( pId )[0];
+    double y = polyData->GetPoint( i )[1] - pdata->GetPoint( pId )[1];
+    double z = polyData->GetPoint( i )[2] - pdata->GetPoint( pId )[2];
+    double rad = sqrt( x * x + y * y + z * z );
+
+    vtkIdList* pInRadius = vtkIdList::New();
+    pointLocator->FindClosestNPoints( 8, polyData->GetPoint( i ), pInRadius );
+
+    // assign scalar value based on a weighted scheme
+    //float x;
+    //float y;
+    //float z;
+    float wtScalar = 0.0f;
+    float radSum = 0.0f;
+    float r[8];
+    float vecX = 0.0f;
+    float vecY = 0.0f;
+    float vecZ = 0.0f;
+    for ( unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++ )
+    {
+      // get a particle position
+      vtkIdType currID = pInRadius->GetId( p );
+
+      // compute distance to current particle
+      x = polyData->GetPoint( i )[0] - pdata->GetPoint( currID )[0];
+      y = polyData->GetPoint( i )[1] - pdata->GetPoint( currID )[1];
+      z = polyData->GetPoint( i )[2] - pdata->GetPoint( currID )[2];
+      r[p] = 1.0f / ( x * x + y * y + z * z );
+
+      // multiply scalar value by weight and add to running sum
+      radSum += r[p];
+    }
+
+    for ( unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++ )
+    {
+      vtkIdType currID = pInRadius->GetId( p );
+      wtScalar += r[p] / radSum * mags->GetValue( currID );
+      vecX += r[p] / radSum * vectors2->GetComponent( currID, 0 );
+      vecY += r[p] / radSum * vectors2->GetComponent( currID, 1 );
+      vecZ += r[p] / radSum * vectors2->GetComponent( currID, 2 );
+    }
+
+    smags->SetValue( i, wtScalar );
+
+    svecs->SetComponent( i, 0, vecX );
+    svecs->SetComponent( i, 1, vecY );
+    svecs->SetComponent( i, 2, vecZ );
+
+    pInRadius->Delete();
+  }
+
   this->glyphMapper->SetLookupTable( this->differenceLUT );
   this->arrowGlyphMapper->SetLookupTable( this->differenceLUT );
 
-  this->glyphs->SetSourceConnection( this->arrowSource->GetOutputPort() );
   this->glyphPointSet->GetPointData()->SetVectors( vectors2 );
   this->glyphPointSet->GetPointData()->SetScalars( mags );
 
+  this->glyphs->SetSourceConnection( this->arrowSource->GetOutputPort() );
   this->glyphs->SetScaleModeToScaleByVector();
 
   this->updateDifferenceLUT( minmag, maxmag );
@@ -817,6 +911,14 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
   this->renderer->AddActor( this->arrowGlyphActor );
 
   this->arrowsVisible = true;
+
+  // surface coloring
+  polyData->GetPointData()->SetScalars( smags );
+  polyData->GetPointData()->SetVectors( svecs );
+  this->surfaceMapper->SetLookupTable( this->differenceLUT );
+  this->surfaceMapper->InterpolateScalarsBeforeMappingOn();
+  this->surfaceMapper->SetColorModeToMapScalars();
+  this->surfaceMapper->ScalarVisibilityOn();
 
   this->redraw();
 }
@@ -862,6 +964,11 @@ void ShapeWorksView2::resetPointScalars()
   }
   this->glyphPointSet->GetPointData()->SetScalars( mags );
   this->glyphPoints->Modified();
+
+  this->surfaceMapper->SetColorModeToDefault();
+  this->surfaceMapper->ScalarVisibilityOff();
+
+
 }
 void ShapeWorksView2::computeModeShape()
 {
