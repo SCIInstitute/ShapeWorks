@@ -12,6 +12,7 @@
 
 #include <ColorSchemes.h>
 #include <MeshCache.h>
+#include <MeshGenerator.h>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -27,13 +28,7 @@ class vtkArrowSource;
 class vtkTransform;
 
 class CustomSurfaceReconstructionFilter;
-class vtkContourFilter;
-class vtkReverseSense;
-class vtkSmoothPolyDataFilter;
-class vtkPolyDataNormals;
-class vtkDecimatePro;
 class vtkImageConstantPad;
-class vtkPowerCrustSurfaceReconstruction;
 class vtkImageData;
 class vtkTransformPolyDataFilter;
 
@@ -142,13 +137,8 @@ private:
   vtkSmartPointer<vtkUnsignedLongArray>    scalars;
   vtkSmartPointer<vtkPolyDataMapper>       surfaceMapper;
   vtkSmartPointer<vtkActor>                surfaceActor;
-  vtkSmartPointer<vtkContourFilter>        surfaceContourFilter;
-  vtkSmartPointer<vtkReverseSense>         surfaceReverseSense;
-  vtkSmartPointer<vtkSmoothPolyDataFilter> surfaceSmoothFilter;
-  vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
 
   vtkSmartPointer<CustomSurfaceReconstructionFilter>  surface;
-  vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust;
 
   vtkSmartPointer<vtkColorTransferFunction>   differenceLUT;
   vtkSmartPointer<vtkArrowSource>             arrowSource;
@@ -180,6 +170,8 @@ private:
 
   // cache of shape meshs
   MeshCache meshCache;
+
+  MeshGenerator meshGenerator;
 
   ColorSchemes m_ColorSchemes;
 

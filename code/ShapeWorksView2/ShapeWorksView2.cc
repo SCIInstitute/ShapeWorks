@@ -445,31 +445,8 @@ void ShapeWorksView2::initializeSurface()
   this->surface = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   this->surface->SetInput( this->glyphPointSet );
 
-#ifdef SW_USE_POWERCRUST
-  this->powercrust = vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
-  this->powercrust->SetInput( this->glyphPointSet );
-#endif
-
-  this->surfaceContourFilter = vtkSmartPointer<vtkContourFilter>::New();
-  this->surfaceContourFilter->SetInputConnection( this->surface->GetOutputPort() );
-  this->surfaceContourFilter->SetValue( 0, 0.0 );
-  this->surfaceContourFilter->ComputeNormalsOn();
-
-  this->surfaceReverseSense = vtkSmartPointer<vtkReverseSense>::New();
-  this->surfaceReverseSense->SetInputConnection( this->surfaceContourFilter->GetOutputPort() );
-  this->surfaceReverseSense->ReverseCellsOn();
-  this->surfaceReverseSense->ReverseNormalsOn();
-
-  this->surfaceSmoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-  this->surfaceSmoothFilter->SetInputConnection( this->surfaceReverseSense->GetOutputPort() );
-  this->surfaceSmoothFilter->SetNumberOfIterations( 0 );
-
-  this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
-  this->polydataNormals->SplittingOff();
-  this->polydataNormals->SetInputConnection( this->surfaceSmoothFilter->GetOutputPort() );
-
   this->surfaceMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->surfaceMapper->SetInputConnection( this->polydataNormals->GetOutputPort() );
+  //this->surfaceMapper->SetInputConnection( this->polydataNormals->GetOutputPort() );
   this->surfaceMapper->ScalarVisibilityOff();
 
   this->surfaceActor = vtkSmartPointer<vtkActor>::New();
@@ -547,6 +524,10 @@ void ShapeWorksView2::updateSurfaceSettings()
   this->surface->SetSampleSpacing( this->ui->spacingSpinBox->value() );
   this->surface->Modified();
 
+  this->meshGenerator.setNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
+  this->meshGenerator.setSampleSpacing( this->ui->spacingSpinBox->value() );
+  this->meshGenerator.setUsePowerCrust( this->ui->usePowerCrustCheckBox->isChecked() );
+
   // clear the cache since the surface reconstruction parameters have changed
   this->meshCache.clear();
 
@@ -555,17 +536,6 @@ void ShapeWorksView2::updateSurfaceSettings()
   // update UI
   this->ui->neighborhoodSpinBox->setEnabled( !powercrust );
   this->ui->spacingSpinBox->setEnabled( !powercrust );
-
-  if ( powercrust )
-  {
-#ifdef SW_USE_POWERCRUST
-    this->surfaceReverseSense->SetInputConnection( this->powercrust->GetOutputPort() );
-#endif
-  }
-  else
-  {
-    this->surfaceReverseSense->SetInputConnection( this->surfaceContourFilter->GetOutputPort() );
-  }
 
   this->displayShape( this->currentShape );
 }
@@ -795,28 +765,7 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   if ( surface && surfaceActor && this->ui->showSurface->isChecked() )
   {
 
-    vtkSmartPointer<vtkPolyData> polyData;
-
-    if ( this->meshCache.getMesh( shape ) )
-    {
-      polyData = this->meshCache.getMesh( shape );
-    }
-    else
-    {
-      if ( !this->ui->usePowerCrustCheckBox->isChecked() )
-      {
-        this->surface->Modified();
-        this->surface->Update();
-        this->surfaceContourFilter->Update();
-      }
-
-      this->polydataNormals->Update();
-
-      // make a copy of the vtkPolyData output and place it in the cache
-      polyData = vtkSmartPointer<vtkPolyData>::New();
-      polyData->DeepCopy( this->polydataNormals->GetOutput() );
-      this->meshCache.insertMesh( shape, polyData );
-    }
+    vtkSmartPointer<vtkPolyData> polyData = this->meshGenerator.buildMesh( shape );
 
     // retrieve the mesh from the cache and set it for display
     this->surfaceMapper->SetInput( polyData );
