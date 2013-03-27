@@ -60,6 +60,8 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->ui = new Ui_ShapeWorksView2;
   this->ui->setupUi( this );
 
+  this->pcaAnimateDirection = true;
+
 #ifdef _WIN32
   // only want to do this on windows.  On apple, the default is better
   this->ui->tabWidget->setStyleSheet( QString( "QTabWidget::pane { border: 2px solid rgb( 80, 80, 80 ); }" ) );
@@ -75,6 +77,10 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   QObject::connect(
     &Preferences::Instance(), SIGNAL( glyphPropertiesChanged() ),
     this, SLOT( glyphPropertiesChanged() ) );
+
+  QObject::connect(
+    &this->pcaAnimateTimer, SIGNAL( timeout() ),
+    this, SLOT( handlePcaTimer() ) );
 
   if ( !this->readParameterFile( argv[1] ) )
   {
@@ -240,6 +246,39 @@ void ShapeWorksView2::on_pcaGroupSlider_valueChanged()
 
   this->computeModeShape();
   this->redraw();
+}
+
+void ShapeWorksView2::on_pcaAnimateCheckBox_stateChanged()
+{
+  if ( this->ui->pcaAnimateCheckBox->isChecked() )
+  {
+    this->pcaAnimateTimer.setInterval( 10 );
+    this->pcaAnimateTimer.start();
+  }
+  else
+  {
+    this->pcaAnimateTimer.stop();
+  }
+}
+
+void ShapeWorksView2::handlePcaTimer()
+{
+  int value = this->ui->pcaSlider->value();
+  if ( this->pcaAnimateDirection )
+  {
+    value += this->ui->pcaSlider->singleStep();
+  }
+  else
+  {
+    value -= this->ui->pcaSlider->singleStep();
+  }
+
+  if ( value >= this->ui->pcaSlider->maximum() || value <= this->ui->pcaSlider->minimum() )
+  {
+    this->pcaAnimateDirection = !this->pcaAnimateDirection;
+  }
+
+  this->ui->pcaSlider->setValue( value );
 }
 
 void ShapeWorksView2::on_regressionSlider_valueChanged()

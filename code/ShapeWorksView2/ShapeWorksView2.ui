@@ -418,7 +418,7 @@ QToolButton:pressed{
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>2</number>
              </property>
              <property name="documentMode">
               <bool>false</bool>
@@ -603,7 +603,7 @@ QToolButton:pressed{
                   <widget class="QLabel" name="pcaValueLabel">
                    <property name="minimumSize">
                     <size>
-                     <width>0</width>
+                     <width>35</width>
                      <height>0</height>
                     </size>
                    </property>
@@ -648,6 +648,13 @@ QToolButton:pressed{
                   <widget class="QLabel" name="pcaGroup2Label">
                    <property name="text">
                     <string>Group2</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="QCheckBox" name="pcaAnimateCheckBox">
+                   <property name="text">
+                    <string>Animate</string>
                    </property>
                   </widget>
                  </item>

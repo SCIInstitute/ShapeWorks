@@ -1,4 +1,5 @@
 #include <QMainWindow>
+#include <QTimer>
 
 #include <vtkSmartPointer.h>
 
@@ -79,6 +80,8 @@ public Q_SLOTS:
   void on_pcaSlider_valueChanged();
   void on_pcaModeSpinBox_valueChanged();
   void on_pcaGroupSlider_valueChanged();
+  void on_pcaAnimateCheckBox_stateChanged();
+  void handlePcaTimer();
 
   // Regression mode
   void on_regressionSlider_valueChanged();
@@ -179,4 +182,7 @@ private:
   ModelCache modelCache;
 
   ColorSchemes m_ColorSchemes;
+
+  bool pcaAnimateDirection;
+  QTimer pcaAnimateTimer;
 };
