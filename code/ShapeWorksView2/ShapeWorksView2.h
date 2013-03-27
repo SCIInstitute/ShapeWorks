@@ -1,3 +1,13 @@
+/*
+ * Shapeworks license
+ */
+
+/**
+ * @file ShapeWorksView2.h
+ * @brief Main application
+ *
+ */
+
 #include <QMainWindow>
 #include <QTimer>
 
@@ -11,8 +21,7 @@
 #include "itkParticlePositionWriter.h"
 
 #include <ColorSchemes.h>
-#include <MeshCache.h>
-#include <MeshGenerator.h>
+#include <MeshManager.h>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -168,10 +177,7 @@ private:
 
   bool arrowsVisible;
 
-  // cache of shape meshs
-  MeshCache meshCache;
-
-  MeshGenerator meshGenerator;
+  MeshManager meshManager;
 
   ColorSchemes m_ColorSchemes;
 

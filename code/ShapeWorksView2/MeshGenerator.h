@@ -1,9 +1,21 @@
+/*
+ * Shapeworks license
+ */
+
+/**
+ * @file MeshGenerator.h
+ * @brief Mesh generation
+ *
+ * The MeshGenerator performs the actual work of reconstructing
+ * a mesh from a shape (list of points).
+ */
+
 #ifndef MESH_GENERATOR_H
 #define MESH_GENERATOR_H
 
-#include <vtkSmartPointer.h>
+#include "vnl/vnl_vector.h"
 
-#include <MeshCache.h>
+#include <vtkSmartPointer.h>
 
 //#define SW_USE_POWERCRUST
 
@@ -13,7 +25,6 @@ class vtkContourFilter;
 class vtkReverseSense;
 class vtkSmoothPolyDataFilter;
 class vtkPolyDataNormals;
-class vtkUnsignedLongArray;
 class vtkPoints;
 class vtkPolyData;
 
@@ -31,19 +42,15 @@ public:
 
 private:
 
-  vtkSmartPointer<CustomSurfaceReconstructionFilter>  surface;
+  vtkSmartPointer<CustomSurfaceReconstructionFilter>  surfaceReconstruction;
   vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust;
 
-  vtkSmartPointer<vtkContourFilter>        surfaceContourFilter;
-  vtkSmartPointer<vtkReverseSense>         surfaceReverseSense;
-  vtkSmartPointer<vtkSmoothPolyDataFilter> surfaceSmoothFilter;
+  vtkSmartPointer<vtkPoints>               points;
+  vtkSmartPointer<vtkPolyData>             pointSet;
+  vtkSmartPointer<vtkContourFilter>        contourFilter;
+  vtkSmartPointer<vtkReverseSense>         reverseSense;
+  vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
   vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
-  vtkSmartPointer<vtkUnsignedLongArray>    scalars;
-  vtkSmartPointer<vtkPoints>               glyphPoints;
-  vtkSmartPointer<vtkPolyData>             glyphPointSet;
-
-  // cache of shape meshes
-  MeshCache meshCache;
 
   bool usePowerCrust;
 };

@@ -1,4 +1,16 @@
+/*
+ * Shapeworks license
+ */
+
 #include <MeshGenerator.h>
+
+// vtk
+#include <vtkContourFilter.h>
+#include <vtkPointData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkReverseSense.h>
+#include <vtkSmoothPolyDataFilter.h>
+#include <vtkUnsignedLongArray.h>
 
 #include "CustomSurfaceReconstructionFilter.h"
 
@@ -11,39 +23,36 @@ MeshGenerator::MeshGenerator()
 {
   this->usePowerCrust = false;
 
-  this->scalars = vtkSmartPointer<vtkUnsignedLongArray>::New();
+  this->points = vtkSmartPointer<vtkPoints>::New();
+  this->points->SetDataTypeToDouble();
+  this->pointSet = vtkSmartPointer<vtkPolyData>::New();
+  this->pointSet->SetPoints( this->points );
 
-  this->glyphPoints = vtkSmartPointer<vtkPoints>::New();
-  this->glyphPoints->SetDataTypeToDouble();
-  this->glyphPointSet = vtkSmartPointer<vtkPolyData>::New();
-  this->glyphPointSet->SetPoints( this->glyphPoints );
-  this->glyphPointSet->GetPointData()->SetScalars( this->scalars );
-
-  this->surface = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-  this->surface->SetInput( this->glyphPointSet );
+  this->surfaceReconstruction = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
+  this->surfaceReconstruction->SetInput( this->pointSet );
 
 #ifdef SW_USE_POWERCRUST
   this->powercrust = vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
-  this->powercrust->SetInput( this->glyphPointSet );
+  this->powercrust->SetInput( this->pointSet );
 #endif
 
-  this->surfaceContourFilter = vtkSmartPointer<vtkContourFilter>::New();
-  this->surfaceContourFilter->SetInputConnection( this->surface->GetOutputPort() );
-  this->surfaceContourFilter->SetValue( 0, 0.0 );
-  this->surfaceContourFilter->ComputeNormalsOn();
+  this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
+  this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
+  this->contourFilter->SetValue( 0, 0.0 );
+  this->contourFilter->ComputeNormalsOn();
 
-  this->surfaceReverseSense = vtkSmartPointer<vtkReverseSense>::New();
-  this->surfaceReverseSense->SetInputConnection( this->surfaceContourFilter->GetOutputPort() );
-  this->surfaceReverseSense->ReverseCellsOn();
-  this->surfaceReverseSense->ReverseNormalsOn();
+  this->reverseSense = vtkSmartPointer<vtkReverseSense>::New();
+  this->reverseSense->SetInputConnection( this->contourFilter->GetOutputPort() );
+  this->reverseSense->ReverseCellsOn();
+  this->reverseSense->ReverseNormalsOn();
 
-  this->surfaceSmoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-  this->surfaceSmoothFilter->SetInputConnection( this->surfaceReverseSense->GetOutputPort() );
-  this->surfaceSmoothFilter->SetNumberOfIterations( 0 );
+  this->smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+  this->smoothFilter->SetInputConnection( this->reverseSense->GetOutputPort() );
+  this->smoothFilter->SetNumberOfIterations( 0 );
 
   this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->polydataNormals->SplittingOff();
-  this->polydataNormals->SetInputConnection( this->surfaceSmoothFilter->GetOutputPort() );
+  this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort() );
 }
 
 MeshGenerator::~MeshGenerator()
@@ -51,73 +60,56 @@ MeshGenerator::~MeshGenerator()
 
 void MeshGenerator::setNeighborhoodSize( int size )
 {
-  this->surface->SetNeighborhoodSize( size );
-  this->meshCache.clear();
+  this->surfaceReconstruction->SetNeighborhoodSize( size );
 }
 
 void MeshGenerator::setSampleSpacing( double spacing )
 {
-  this->surface->SetSampleSpacing( spacing );
-  this->meshCache.clear();
+  this->surfaceReconstruction->SetSampleSpacing( spacing );
 }
 
 void MeshGenerator::setUsePowerCrust( bool enabled )
 {
   this->usePowerCrust = enabled;
-  this->meshCache.clear();
 
   if ( this->usePowerCrust )
   {
 #ifdef SW_USE_POWERCRUST
-    this->surfaceReverseSense->SetInputConnection( this->powercrust->GetOutputPort() );
+    this->reverseSense->SetInputConnection( this->powercrust->GetOutputPort() );
 #endif
   }
   else
   {
-    this->surfaceReverseSense->SetInputConnection( this->surfaceContourFilter->GetOutputPort() );
+    this->reverseSense->SetInputConnection( this->contourFilter->GetOutputPort() );
   }
 }
 
 vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
-  // check cache....
-
-  vtkSmartPointer<vtkPolyData> polyData;
-
-  if ( this->meshCache.getMesh( shape ) )
+  // copy shape points into point set
+  int numPoints = shape.size() / 3;
+  this->points->SetNumberOfPoints( numPoints );
+  unsigned int k = 0;
+  for ( unsigned int i = 0; i < numPoints; i++ )
   {
-    polyData = this->meshCache.getMesh( shape );
+    double x = shape[k++];
+    double y = shape[k++];
+    double z = shape[k++];
+    this->points->SetPoint( i, x, y, z );
   }
-  else
+  this->points->Modified();
+
+  if ( !this->usePowerCrust )
   {
-    int numPoints = shape.size() / 3;
-
-    this->glyphPoints->SetNumberOfPoints( numPoints );
-    // copy shape into point set
-    unsigned int k = 0;
-    for ( unsigned int i = 0; i < numPoints; i++ )
-    {
-      double x = shape[k++];
-      double y = shape[k++];
-      double z = shape[k++];
-      this->glyphPoints->SetPoint( i, x, y, z );
-    }
-    this->glyphPoints->Modified();
-
-    if ( !this->usePowerCrust )
-    {
-      this->surface->Modified();
-      this->surface->Update();
-      this->surfaceContourFilter->Update();
-    }
-
-    this->polydataNormals->Update();
-
-    // make a copy of the vtkPolyData output and place it in the cache
-    polyData = vtkSmartPointer<vtkPolyData>::New();
-    polyData->DeepCopy( this->polydataNormals->GetOutput() );
-    this->meshCache.insertMesh( shape, polyData );
+    this->surfaceReconstruction->Modified();
+    this->surfaceReconstruction->Update();
+    this->contourFilter->Update();
   }
 
+  this->polydataNormals->Update();
+
+  // make a copy of the vtkPolyData output to return
+  vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+  polyData->DeepCopy( this->polydataNormals->GetOutput() );
   return polyData;
 }

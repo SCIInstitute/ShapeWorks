@@ -1,6 +1,7 @@
 // standard includes
 #include <iostream>
 #include <sstream>
+#include <list>
 
 // vnl
 #include "vnl/vnl_vector.h"
@@ -9,6 +10,11 @@
 
 // qt
 #include <QtGui>
+#include <QSettings>
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
+#include <QTimer>
 
 // vtk
 #include <vtkSmartPointer.h>
@@ -21,6 +27,7 @@
 #include <vtkDecimatePro.h>
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
+#include <vtkIdList.h>
 #include <vtkImageConstantPad.h>
 #include <vtkImageData.h>
 #include <vtkImageGaussianSmooth.h>

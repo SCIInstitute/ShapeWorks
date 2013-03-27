@@ -1,3 +1,13 @@
+/*
+ * Shapeworks license
+ */
+
+/**
+ * @file PreferencesWindow.h
+ * @brief Qt UI dialog to control preferences
+ *
+ */
+
 #ifndef PREFERENCES_WINDOW_H
 #define PREFERENCES_WINDOW_H
 
@@ -21,6 +31,8 @@ public Q_SLOTS:
   void on_colorScheme_currentIndexChanged( int index );
   void on_glyphSize_valueChanged( int value );
   void on_glyphQuality_valueChanged( int value );
+  void on_numThreadsSlider_valueChanged( int value );
+  void on_parallelEnabled_stateChanged( int state );
 
   void restoreDefaults();
 

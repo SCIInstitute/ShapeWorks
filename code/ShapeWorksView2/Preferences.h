@@ -1,3 +1,13 @@
+/*
+ * Shapeworks license
+ */
+
+/**
+ * @file Preferences.h
+ * @brief Houses and controls application preferences.
+ *
+ */
+
 #ifndef PREFERENCES_H
 #define PREFERENCES_H
 
@@ -15,6 +25,7 @@ public:
   QSettings& getSettings();
 
   void showWindow();
+  void closeWindow();
 
   bool getCacheEnabled();
   void setCacheEnabled( bool enabled );
@@ -31,11 +42,18 @@ public:
   float getGlyphSize();
   void setGlyphSize( float value );
 
+  int getNumThreads();
+  void setNumThreads( int value );
+
+  bool getParallelEnabled();
+  void setParallelEnabled( bool enabled );
+
   void restoreDefaults();
 
 Q_SIGNALS:
   void colorSchemeChanged( int newIndex );
   void glyphPropertiesChanged();
+  void threadingChangedSignal();
 
 private:
 

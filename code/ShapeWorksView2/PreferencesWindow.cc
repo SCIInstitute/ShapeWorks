@@ -1,4 +1,10 @@
+/*
+ * Shapeworks license
+ */
+
+// qt
 #include <QtGui>
+
 #include <PreferencesWindow.h>
 #include <Preferences.h>
 
@@ -9,6 +15,9 @@ PreferencesWindow::PreferencesWindow( QWidget* parent /*= 0 */ )
 {
   this->ui = new Ui_PreferencesWindow;
   this->ui->setupUi( this );
+
+  this->ui->numThreadsSlider->setMaximum( QThread::idealThreadCount() );
+  this->ui->numThreadsMaxLabel->setText( QString::number( QThread::idealThreadCount() ) );
 
   QPushButton* resetButton = this->ui->buttonBox->button( QDialogButtonBox::RestoreDefaults );
   QObject::connect( resetButton, SIGNAL( clicked() ), this, SLOT( restoreDefaults() ) );
@@ -49,6 +58,16 @@ void PreferencesWindow::on_glyphQuality_valueChanged( int value )
   this->updateLabels();
 }
 
+void PreferencesWindow::on_numThreadsSlider_valueChanged( int value )
+{
+  Preferences::Instance().setNumThreads( value );
+}
+
+void PreferencesWindow::on_parallelEnabled_stateChanged( int state )
+{
+  Preferences::Instance().setParallelEnabled( this->ui->parallelEnabled->isChecked() );
+}
+
 void PreferencesWindow::restoreDefaults()
 {
   Preferences::Instance().restoreDefaults();
@@ -63,5 +82,9 @@ void PreferencesWindow::setValuesFromPreferences()
 
   this->ui->glyphQuality->setValue( Preferences::Instance().getGlyphQuality() );
   this->ui->glyphSize->setValue( Preferences::Instance().getGlyphSize() * 10 );
+
+  this->ui->numThreadsSlider->setValue( Preferences::Instance().getNumThreads() );
+  this->ui->parallelEnabled->setChecked( Preferences::Instance().getParallelEnabled() );
+
   this->updateLabels();
 }

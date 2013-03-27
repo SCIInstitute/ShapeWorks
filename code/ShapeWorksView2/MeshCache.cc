@@ -1,3 +1,8 @@
+/*
+ * Shapeworks license
+ */
+
+
 // Includes for platform specific functions
 #ifdef _WIN32
 #include <shlobj.h>
@@ -79,6 +84,8 @@ MeshCache::MeshCache()
 
 vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape )
 {
+  QMutexLocker locker( &mutex );
+
   if ( !Preferences::Instance().getCacheEnabled() )
   {
     return NULL;
@@ -101,6 +108,8 @@ void MeshCache::insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtk
     return;
   }
 
+  QMutexLocker locker( &mutex );
+
   // compute the memory size of this shape
   size_t shapeSize = shape.size() * sizeof( double );
   size_t meshSize = mesh->GetActualMemorySize() * 1024; // given in kb
@@ -110,9 +119,9 @@ void MeshCache::insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtk
 
   this->meshCache[shape] = mesh;
   this->memorySize += combinedSize;
-  std::cerr << "Cache now holds " << this->meshCache.size() << " items\n";
+  //std::cerr << "Cache now holds " << this->meshCache.size() << " items\n";
 
-  // add to LRU list
+  // add to LRC list
   CacheListItem item;
   item.key = shape;
   item.memorySize = combinedSize;
@@ -121,6 +130,8 @@ void MeshCache::insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtk
 
 void MeshCache::clear()
 {
+  QMutexLocker locker( &mutex );
+
   this->meshCache.clear();
   this->memorySize = 0;
 }

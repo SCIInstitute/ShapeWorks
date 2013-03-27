@@ -263,7 +263,7 @@ QToolButton:pressed{
      <x>0</x>
      <y>0</y>
      <width>971</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -612,7 +612,7 @@ QToolButton:pressed{
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
+                 <item row="2" column="0">
                   <widget class="QLabel" name="pcaGroup1Label">
                    <property name="minimumSize">
                     <size>
@@ -625,7 +625,7 @@ QToolButton:pressed{
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
+                 <item row="2" column="1">
                   <widget class="QSlider" name="pcaGroupSlider">
                    <property name="minimum">
                     <number>0</number>
@@ -644,18 +644,56 @@ QToolButton:pressed{
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="2">
+                 <item row="2" column="2">
                   <widget class="QLabel" name="pcaGroup2Label">
                    <property name="text">
                     <string>Group2</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="3">
-                  <widget class="QCheckBox" name="pcaAnimateCheckBox">
-                   <property name="text">
-                    <string>Animate</string>
-                   </property>
+                 <item row="1" column="1">
+                  <widget class="QWidget" name="widget_23" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_7">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <spacer name="horizontalSpacer_3">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="pcaAnimateCheckBox">
+                      <property name="text">
+                       <string>Animate</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
                 </layout>

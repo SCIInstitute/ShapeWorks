@@ -1,5 +1,19 @@
+/*
+ * Shapeworks license
+ */
+
+/**
+ * @file MeshCache.h
+ * @brief Thread safe cache for meshes index by shape
+ *
+ * The MeshCache implements a std::map keyed by shape (list of points) with vtkPolyData values.
+ * It is thread-safe and can be used from any thread.
+ */
+
 #ifndef MESH_CACHE_H
 #define MESH_CACHE_H
+
+#include <QMutex>
 
 #include <vtkSmartPointer.h>
 
@@ -45,7 +59,7 @@ public:
 // mesh cache type
 typedef std::map< const vnl_vector<double>, vtkSmartPointer<vtkPolyData>, vnl_vector_compare > CacheMap;
 
-// LRU list
+// LRC list
 typedef std::list< CacheListItem > CacheList;
 
 class MeshCache
@@ -72,7 +86,7 @@ private:
   // mesh cache
   CacheMap meshCache;
 
-  // lru list
+  // lrc list
   CacheList cacheList;
 
   // size of memory in use by the cache
@@ -80,6 +94,9 @@ private:
 
   // maximum memory
   long long maxMemory;
+
+  // for concurrent access
+  QMutex mutex;
 };
 
 #endif // ifndef MESH_CACHE_H

@@ -1,11 +1,13 @@
-/* ShapeWorks License */
-
-#include <ShapeWorksView2.h>
-#include <ui_ShapeWorksView2.h>
+/*
+ * Shapeworks license
+ */
 
 // standard includes
 #include <iostream>
 #include <sstream>
+
+// qt
+#include <QFileDialog>
 
 // vnl
 #include "vnl/vnl_vector.h"
@@ -13,14 +15,13 @@
 #include "vnl/vnl_matrix.h"
 
 // vtk
+#include <vtkIdList.h>
 #include <vtkActor.h>
 #include <vtkArrowSource.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkContourFilter.h>
-#include <vtkDecimatePro.h>
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
-#include <vtkImageConstantPad.h>
 #include <vtkImageData.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkImageGradient.h>
@@ -30,12 +31,9 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkPolyDataNormals.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
-#include <vtkReverseSense.h>
-#include <vtkSmoothPolyDataFilter.h>
 #include <vtkSphereSource.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -43,15 +41,11 @@
 #include <vtkPointLocator.h>
 #include <vtkPolyDataWriter.h>
 
-// local libraries
+#include <ShapeWorksView2.h>
+#include <ui_ShapeWorksView2.h>
 #include "tinyxml.h"
 #include "CustomSurfaceReconstructionFilter.h"
 #include <Preferences.h>
-
-// local files
-#ifdef SW_USE_POWERCRUST
-#include "vtkPowerCrustSurfaceReconstruction.h"
-#endif
 
 ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
 {
@@ -115,6 +109,10 @@ ShapeWorksView2::~ShapeWorksView2()
 
 void ShapeWorksView2::closeEvent( QCloseEvent* event )
 {
+  // close the preferences window in case it is open
+  Preferences::Instance().closeWindow();
+
+  // save the size of the window to preferences
   Preferences::Instance().getSettings().setValue( "mainwindow/size", this->size() );
 }
 
@@ -502,6 +500,17 @@ void ShapeWorksView2::updateAnalysisMode()
   else if ( this->ui->tabWidget->currentWidget() == this->ui->samplesTab )
   {
     int sampleNumber = this->ui->sampleSpinBox->value();
+
+    // pre-generate
+    for ( int addition = -16; addition <= 16; addition++ )
+    {
+      int pregenSample = sampleNumber + addition;
+      if ( pregenSample >= this->ui->sampleSpinBox->minimum() && pregenSample <= this->ui->sampleSpinBox->maximum() )
+      {
+        this->meshManager.generateMesh( this->stats.ShapeMatrix().get_column( pregenSample ) );
+      }
+    }
+
     this->displayShape( this->stats.ShapeMatrix().get_column( sampleNumber ) );
   }
   else if ( this->ui->tabWidget->currentWidget() == this->ui->pcaTab )
@@ -522,12 +531,9 @@ void ShapeWorksView2::updateSurfaceSettings()
   this->surface->SetSampleSpacing( this->ui->spacingSpinBox->value() );
   this->surface->Modified();
 
-  this->meshGenerator.setNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
-  this->meshGenerator.setSampleSpacing( this->ui->spacingSpinBox->value() );
-  this->meshGenerator.setUsePowerCrust( this->ui->usePowerCrustCheckBox->isChecked() );
-
-  // clear the cache since the surface reconstruction parameters have changed
-  this->meshCache.clear();
+  this->meshManager.setNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
+  this->meshManager.setSampleSpacing( this->ui->spacingSpinBox->value() );
+  this->meshManager.setUsePowerCrust( this->ui->usePowerCrustCheckBox->isChecked() );
 
   bool powercrust = this->ui->usePowerCrustCheckBox->isChecked();
 
@@ -762,10 +768,9 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 
   if ( surface && surfaceActor && this->ui->showSurface->isChecked() )
   {
+    vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( shape );
 
-    vtkSmartPointer<vtkPolyData> polyData = this->meshGenerator.buildMesh( shape );
-
-    // retrieve the mesh from the cache and set it for display
+    // retrieve the mesh and set it for display
     this->surfaceMapper->SetInput( polyData );
   }
 
@@ -1010,14 +1015,38 @@ void ShapeWorksView2::computeModeShape()
   this->ui->pcaEigenValueLabel->setText( QString::number( this->stats.Eigenvalues()[m] ) );
   this->ui->pcaLambdaLabel->setText( QString::number( pcaSliderValue * lambda ) );
 
+  //std::cerr << "size = " << this->stats.GroupID().size() << "\n";
   if ( this->stats.GroupID().size() > 0 )
   {
     double groupSliderValue = this->ui->pcaGroupSlider->value();
     double ratio = groupSliderValue / static_cast<double>( this->ui->pcaGroupSlider->maximum() );
+
+    // pre-generate
+    for ( int addition = -16; addition <= 16; addition++ )
+    {
+      int pregenValue = this->ui->pcaSlider->value() + addition;
+
+      if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
+      {
+        double pcaValue = pregenValue / 10.0;
+        this->meshManager.generateMesh( this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) ) );
+      }
+    }
+
     this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaSliderValue * lambda ) ) );
   }
   else
   {
+    // pre-generate
+    int pregenValue = this->ui->pcaSlider->value();
+    int addition = 0;
+    while ( addition <= 4 && pregenValue < this->ui->pcaSlider->maximum() )
+    {
+      pregenValue += addition++;
+      double pcaValue = pregenValue / 10.0;
+      this->meshManager.generateMesh( this->stats.Mean() + ( e * ( pcaValue * lambda ) ) );
+    }
+
     this->displayShape( this->stats.Mean() + ( e * ( pcaSliderValue * lambda ) ) );
   }
 }

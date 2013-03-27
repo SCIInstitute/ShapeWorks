@@ -153,7 +153,7 @@ int CustomSurfaceReconstructionFilter::RequestData(
   vtkInformationVector* outputVector)
 {
 
-  std::cerr << "vtkSurfaceReconstructionFilter running\n";
+  //std::cerr << "vtkSurfaceReconstructionFilter running\n";
 
   // get the input
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
