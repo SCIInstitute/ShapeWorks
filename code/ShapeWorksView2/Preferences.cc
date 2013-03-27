@@ -29,22 +29,22 @@ void Preferences::showWindow()
 
 bool Preferences::getCacheEnabled()
 {
-  return this->settings.value( "ModelCache/enabled", DEFAULT_CACHE_ENABLED ).toBool();
+  return this->settings.value( "MeshCache/enabled", DEFAULT_CACHE_ENABLED ).toBool();
 }
 
 void Preferences::setCacheEnabled( bool enabled )
 {
-  this->settings.setValue( "ModelCache/enabled", enabled );
+  this->settings.setValue( "MeshCache/enabled", enabled );
 }
 
 int Preferences::getCacheMemory()
 {
-  return this->settings.value( "ModelCache/memory", DEFAULT_CACHE_MEMORY ).toInt();
+  return this->settings.value( "MeshCache/memory", DEFAULT_CACHE_MEMORY ).toInt();
 }
 
 void Preferences::setCacheMemory( int value )
 {
-  this->settings.setValue( "ModelCache/memory", value );
+  this->settings.setValue( "MeshCache/memory", value );
 }
 
 int Preferences::getColorScheme()
@@ -82,8 +82,8 @@ void Preferences::setGlyphQuality( float value )
 
 void Preferences::restoreDefaults()
 {
-  this->settings.setValue( "ModelCache/enabled", DEFAULT_CACHE_ENABLED );
-  this->settings.setValue( "ModelCache/memory", DEFAULT_CACHE_MEMORY );
+  this->settings.setValue( "MeshCache/enabled", DEFAULT_CACHE_ENABLED );
+  this->settings.setValue( "MeshCache/memory", DEFAULT_CACHE_MEMORY );
   this->settings.setValue( "Visualization/ColorScheme", DEFAULT_COLOR_SCHEME );
   this->settings.setValue( "Visualization/GlyphSize", DEFAULT_GLYPH_SIZE );
   this->settings.setValue( "Visualization/GlyphQuality", DEFAULT_GLYPH_QUALITY );

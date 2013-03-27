@@ -20,12 +20,12 @@ void PreferencesWindow::updateLabels()
   this->ui->glyphSizeLabel->setText( QString::number( Preferences::Instance().getGlyphSize() ) );
 }
 
-void PreferencesWindow::on_modelCacheEnabled_stateChanged( int state )
+void PreferencesWindow::on_meshCacheEnabled_stateChanged( int state )
 {
-  Preferences::Instance().setCacheEnabled( this->ui->modelCacheEnabled->isChecked() );
+  Preferences::Instance().setCacheEnabled( this->ui->meshCacheEnabled->isChecked() );
 }
 
-void PreferencesWindow::on_modelCacheMemory_valueChanged( int value )
+void PreferencesWindow::on_meshCacheMemory_valueChanged( int value )
 {
   Preferences::Instance().setCacheMemory( value );
 }
@@ -57,8 +57,8 @@ void PreferencesWindow::restoreDefaults()
 
 void PreferencesWindow::setValuesFromPreferences()
 {
-  this->ui->modelCacheEnabled->setChecked( Preferences::Instance().getCacheEnabled() );
-  this->ui->modelCacheMemory->setValue( Preferences::Instance().getCacheMemory() );
+  this->ui->meshCacheEnabled->setChecked( Preferences::Instance().getCacheEnabled() );
+  this->ui->meshCacheMemory->setValue( Preferences::Instance().getCacheMemory() );
   this->ui->colorScheme->setCurrentIndex( Preferences::Instance().getColorScheme() );
 
   this->ui->glyphQuality->setValue( Preferences::Instance().getGlyphQuality() );

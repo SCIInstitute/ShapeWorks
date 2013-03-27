@@ -11,7 +11,7 @@
 #include "itkParticlePositionWriter.h"
 
 #include <ColorSchemes.h>
-#include <ModelCache.h>
+#include <MeshCache.h>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -178,8 +178,8 @@ private:
 
   bool arrowsVisible;
 
-  // cache of shape models
-  ModelCache modelCache;
+  // cache of shape meshs
+  MeshCache meshCache;
 
   ColorSchemes m_ColorSchemes;
 

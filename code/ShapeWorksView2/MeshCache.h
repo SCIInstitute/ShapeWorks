@@ -1,5 +1,5 @@
-#ifndef MODEL_CACHE_H
-#define MODEL_CACHE_H
+#ifndef MESH_CACHE_H
+#define MESH_CACHE_H
 
 #include <vtkSmartPointer.h>
 
@@ -48,16 +48,16 @@ typedef std::map< const vnl_vector<double>, vtkSmartPointer<vtkPolyData>, vnl_ve
 // LRU list
 typedef std::list< CacheListItem > CacheList;
 
-class ModelCache
+class MeshCache
 {
 
 public:
 
-  ModelCache();
+  MeshCache();
 
-  vtkSmartPointer<vtkPolyData> getModel( const vnl_vector<double>& vector );
+  vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& vector );
 
-  void insertModel( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> model );
+  void insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh );
 
   void clear();
 
@@ -82,4 +82,4 @@ private:
   long long maxMemory;
 };
 
-#endif // ifndef MODEL_CACHE_H
+#endif // ifndef MESH_CACHE_H

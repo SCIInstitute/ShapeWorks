@@ -164,11 +164,11 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Model Cache</string>
+      <string>Mesh Cache</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QCheckBox" name="modelCacheEnabled">
+       <widget class="QCheckBox" name="meshCacheEnabled">
         <property name="text">
          <string>Enabled</string>
         </property>
@@ -201,7 +201,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QSlider" name="modelCacheMemory">
+         <widget class="QSlider" name="meshCacheMemory">
           <property name="maximum">
            <number>50</number>
           </property>

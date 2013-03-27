@@ -48,7 +48,7 @@
 #include "CustomSurfaceReconstructionFilter.h"
 #include <Preferences.h>
 
-//#define SW_USE_POWERCRUST
+#define SW_USE_POWERCRUST
 
 // local files
 #ifdef SW_USE_POWERCRUST
@@ -548,7 +548,7 @@ void ShapeWorksView2::updateSurfaceSettings()
   this->surface->Modified();
 
   // clear the cache since the surface reconstruction parameters have changed
-  this->modelCache.clear();
+  this->meshCache.clear();
 
   bool powercrust = this->ui->usePowerCrustCheckBox->isChecked();
 
@@ -797,9 +797,9 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 
     vtkSmartPointer<vtkPolyData> polyData;
 
-    if ( this->modelCache.getModel( shape ) )
+    if ( this->meshCache.getMesh( shape ) )
     {
-      polyData = this->modelCache.getModel( shape );
+      polyData = this->meshCache.getMesh( shape );
     }
     else
     {
@@ -815,10 +815,10 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
       // make a copy of the vtkPolyData output and place it in the cache
       polyData = vtkSmartPointer<vtkPolyData>::New();
       polyData->DeepCopy( this->polydataNormals->GetOutput() );
-      this->modelCache.insertModel( shape, polyData );
+      this->meshCache.insertMesh( shape, polyData );
     }
 
-    // retrieve the model from the cache and set it for display
+    // retrieve the mesh from the cache and set it for display
     this->surfaceMapper->SetInput( polyData );
   }
 
