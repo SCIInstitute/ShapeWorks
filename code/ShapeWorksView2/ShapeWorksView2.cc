@@ -113,6 +113,20 @@ void ShapeWorksView2::closeEvent( QCloseEvent* event )
   Preferences::Instance().getSettings().setValue( "mainwindow/size", this->size() );
 }
 
+void ShapeWorksView2::on_actionWritePcaLoadings_triggered()
+{
+  // open the file dialog
+  QString filename = QFileDialog::getSaveFileName( this, "Write PCA loadings to... ",
+                                                   QString(), "CSV files (*.csv)" );
+
+  if ( filename.isEmpty() )
+  {
+    return;
+  }
+
+  this->stats.WriteCSVFile2( filename.toStdString() );
+}
+
 void ShapeWorksView2::on_actionQuit_triggered()
 {
   this->close();
@@ -739,11 +753,10 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
     this->surfaceMapper->SetInput( polyData );
   }
 
-  if (this->arrowsVisible)
+  if ( this->arrowsVisible )
   {
     this->displayMeanDifference();
   }
-
 }
 
 void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs )
@@ -783,7 +796,6 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
   vtkSmartPointer<vtkFloatArray> mags = vtkSmartPointer<vtkFloatArray>::New();
   mags->SetNumberOfComponents( 1 );
   mags->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
-
 
   //vtkPolyData* polyData = this->polydataNormals->GetOutput();
   vtkPolyData* polyData = this->surfaceMapper->GetInput();
@@ -967,8 +979,6 @@ void ShapeWorksView2::resetPointScalars()
 
   this->surfaceMapper->SetColorModeToDefault();
   this->surfaceMapper->ScalarVisibilityOff();
-
-
 }
 void ShapeWorksView2::computeModeShape()
 {

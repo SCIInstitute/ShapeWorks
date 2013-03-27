@@ -270,6 +270,8 @@ QToolButton:pressed{
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionWritePcaLoadings"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -1127,6 +1129,11 @@ QToolButton:pressed{
    </property>
    <property name="shortcut">
     <string>Ctrl+,</string>
+   </property>
+  </action>
+  <action name="actionWritePcaLoadings">
+   <property name="text">
+    <string>Write PCA Loadings</string>
    </property>
   </action>
  </widget>
