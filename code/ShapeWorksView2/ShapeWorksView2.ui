@@ -270,7 +270,9 @@ QToolButton:pressed{
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionWritePcaLoadings"/>
+    <addaction name="actionExportPoints"/>
+    <addaction name="actionExportSurfaceMesh"/>
+    <addaction name="actionExportPcaLoadings"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -1131,9 +1133,19 @@ QToolButton:pressed{
     <string>Ctrl+,</string>
    </property>
   </action>
-  <action name="actionWritePcaLoadings">
+  <action name="actionExportPcaLoadings">
    <property name="text">
-    <string>Write PCA Loadings</string>
+    <string>Export PCA Loadings</string>
+   </property>
+  </action>
+  <action name="actionExportPoints">
+   <property name="text">
+    <string>Export Points</string>
+   </property>
+  </action>
+  <action name="actionExportSurfaceMesh">
+   <property name="text">
+    <string>Export Surface Mesh</string>
    </property>
   </action>
  </widget>

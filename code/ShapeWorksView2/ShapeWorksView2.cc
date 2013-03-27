@@ -41,6 +41,7 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
 #include <vtkPointLocator.h>
+#include <vtkPolyDataWriter.h>
 
 // local libraries
 #include "tinyxml.h"
@@ -113,18 +114,47 @@ void ShapeWorksView2::closeEvent( QCloseEvent* event )
   Preferences::Instance().getSettings().setValue( "mainwindow/size", this->size() );
 }
 
-void ShapeWorksView2::on_actionWritePcaLoadings_triggered()
+void ShapeWorksView2::on_actionExportPcaLoadings_triggered()
 {
-  // open the file dialog
-  QString filename = QFileDialog::getSaveFileName( this, "Write PCA loadings to... ",
+  QString filename = QFileDialog::getSaveFileName( this, "Export PCA Loadings As... ",
                                                    QString(), "CSV files (*.csv)" );
-
-  if ( filename.isEmpty() )
-  {
-    return;
-  }
+  if ( filename.isEmpty() ) {return; }
 
   this->stats.WriteCSVFile2( filename.toStdString() );
+}
+
+void ShapeWorksView2::on_actionExportPoints_triggered()
+{
+  QString filename = QFileDialog::getSaveFileName( this, "Export Points As... ",
+                                                   QString(), QString() );
+  if ( filename.isEmpty() ) {return; }
+
+  itk::ParticlePositionReader<3>::PointType p;
+  std::vector<itk::ParticlePositionReader<3>::PointType> plist;
+  for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
+  {
+    p[0] = this->glyphPoints->GetPoint( i )[0];
+    p[1] = this->glyphPoints->GetPoint( i )[1];
+    p[2] = this->glyphPoints->GetPoint( i )[2];
+    plist.push_back( p );
+  }
+
+  itk::ParticlePositionWriter<3>::Pointer writer = itk::ParticlePositionWriter<3>::New();
+  writer->SetFileName( filename.toStdString() );
+  writer->SetInput( plist );
+  writer->Write();
+}
+
+void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
+{
+  QString filename = QFileDialog::getSaveFileName( this, "Export Surface Mesh As... ",
+                                                   QString(), "VTK files (*.vtk)" );
+  if ( filename.isEmpty() ) {return; }
+
+  vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
+  surfaceWriter->SetInput( this->surfaceMapper->GetInput() );
+  surfaceWriter->SetFileName( filename.toStdString().c_str() );
+  surfaceWriter->Write();
 }
 
 void ShapeWorksView2::on_actionQuit_triggered()

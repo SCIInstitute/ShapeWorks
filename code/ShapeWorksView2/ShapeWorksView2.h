@@ -53,7 +53,10 @@ public:
 
 public Q_SLOTS:
 
-  void on_actionWritePcaLoadings_triggered();
+  void on_actionExportPcaLoadings_triggered();
+  void on_actionExportPoints_triggered();
+  void on_actionExportSurfaceMesh_triggered();
+
   void on_actionQuit_triggered();
   void on_actionPreferences_triggered();
 
