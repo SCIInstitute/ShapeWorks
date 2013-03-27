@@ -2,8 +2,6 @@
 
 #include "CustomSurfaceReconstructionFilter.h"
 
-#define SW_USE_POWERCRUST
-
 // local files
 #ifdef SW_USE_POWERCRUST
 #include "vtkPowerCrustSurfaceReconstruction.h"
@@ -63,6 +61,23 @@ void MeshGenerator::setSampleSpacing( double spacing )
   this->meshCache.clear();
 }
 
+void MeshGenerator::setUsePowerCrust( bool enabled )
+{
+  this->usePowerCrust = enabled;
+  this->meshCache.clear();
+
+  if ( this->usePowerCrust )
+  {
+#ifdef SW_USE_POWERCRUST
+    this->surfaceReverseSense->SetInputConnection( this->powercrust->GetOutputPort() );
+#endif
+  }
+  else
+  {
+    this->surfaceReverseSense->SetInputConnection( this->surfaceContourFilter->GetOutputPort() );
+  }
+}
+
 vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
   // check cache....
@@ -105,21 +120,4 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   }
 
   return polyData;
-}
-
-void MeshGenerator::setUsePowerCrust( bool enabled )
-{
-  this->usePowerCrust = enabled;
-  this->meshCache.clear();
-
-  if ( this->usePowerCrust )
-  {
-#ifdef SW_USE_POWERCRUST
-    this->surfaceReverseSense->SetInputConnection( this->powercrust->GetOutputPort() );
-#endif
-  }
-  else
-  {
-    this->surfaceReverseSense->SetInputConnection( this->surfaceContourFilter->GetOutputPort() );
-  }
 }

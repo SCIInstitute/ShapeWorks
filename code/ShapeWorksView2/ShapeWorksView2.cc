@@ -48,8 +48,6 @@
 #include "CustomSurfaceReconstructionFilter.h"
 #include <Preferences.h>
 
-#define SW_USE_POWERCRUST
-
 // local files
 #ifdef SW_USE_POWERCRUST
 #include "vtkPowerCrustSurfaceReconstruction.h"
