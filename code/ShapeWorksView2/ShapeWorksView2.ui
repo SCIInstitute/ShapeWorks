@@ -583,10 +583,10 @@ QToolButton:pressed{
                  <item row="0" column="1">
                   <widget class="QSlider" name="pcaSlider">
                    <property name="minimum">
-                    <number>-30</number>
+                    <number>-20</number>
                    </property>
                    <property name="maximum">
-                    <number>30</number>
+                    <number>20</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
