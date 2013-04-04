@@ -153,8 +153,9 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
                                                    QString(), "VTK files (*.vtk)" );
   if ( filename.isEmpty() ) {return; }
 
+  /// TODO only writes the first domain
   vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-  surfaceWriter->SetInput( this->surfaceMapper->GetInput() );
+  surfaceWriter->SetInput( this->surfaceMappers[0]->GetInput() );
   surfaceWriter->SetFileName( filename.toStdString().c_str() );
   surfaceWriter->Write();
 }
@@ -436,19 +437,27 @@ void ShapeWorksView2::initializeGlyphs()
   this->arrowGlyphActor->SetMapper( this->arrowGlyphMapper );
 }
 
-void ShapeWorksView2::initializeSurface()
+void ShapeWorksView2::initializeSurfaces()
 {
   this->surface = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   this->surface->SetInput( this->glyphPointSet );
 
-  this->surfaceMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  //this->surfaceMapper->SetInputConnection( this->polydataNormals->GetOutputPort() );
-  this->surfaceMapper->ScalarVisibilityOff();
 
-  this->surfaceActor = vtkSmartPointer<vtkActor>::New();
-  this->surfaceActor->SetMapper( this->surfaceMapper );
-  this->surfaceActor->GetProperty()->SetSpecular( .4 );
-  this->surfaceActor->GetProperty()->SetSpecularPower( 25 );
+  this->surfaceMappers.resize( this->numDomains );
+  this->surfaceActors.resize( this->numDomains );
+
+
+  for (int i = 0; i < this->numDomains; i++)
+  {
+    this->surfaceMappers[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+    //this->surfaceMapper->SetInputConnection( this->polydataNormals->GetOutputPort() );
+    this->surfaceMappers[i]->ScalarVisibilityOff();
+
+    this->surfaceActors[i] = vtkSmartPointer<vtkActor>::New();
+    this->surfaceActors[i]->SetMapper( this->surfaceMappers[i] );
+    this->surfaceActors[i]->GetProperty()->SetSpecular( .4 );
+    this->surfaceActors[i]->GetProperty()->SetSpecularPower( 25 );
+  }
   this->updateSurfaceSettings();
 }
 
@@ -506,7 +515,11 @@ void ShapeWorksView2::updateAnalysisMode()
       int pregenSample = sampleNumber + addition;
       if ( pregenSample >= this->ui->sampleSpinBox->minimum() && pregenSample <= this->ui->sampleSpinBox->maximum() )
       {
-        this->meshManager.generateMesh( this->stats.ShapeMatrix().get_column( pregenSample ) );
+        vnl_vector<double> shape = this->stats.ShapeMatrix().get_column( pregenSample );
+        for (int i = 0; i < this->numDomains; i++)
+        {
+          this->meshManager.generateMesh( this->getDomain(shape, i) );
+        }
       }
     }
 
@@ -547,7 +560,11 @@ void ShapeWorksView2::updateActors()
 {
   this->renderer->RemoveActor( this->glyphActor );
   this->renderer->RemoveActor( this->arrowGlyphActor );
-  this->renderer->RemoveActor( this->surfaceActor );
+
+  for (int i = 0; i < this->numDomains; i++)
+  {
+    this->renderer->RemoveActor( this->surfaceActors[i] );
+  }
 
   if ( this->ui->showGlyphs->isChecked() )
   {
@@ -560,7 +577,10 @@ void ShapeWorksView2::updateActors()
 
   if ( this->ui->showSurface->isChecked() )
   {
-    this->renderer->AddActor( this->surfaceActor );
+    for (int i = 0; i < this->numDomains; i++)
+    {
+      this->renderer->AddActor( this->surfaceActors[i] );
+    }
   }
 
   this->displayShape( this->currentShape );
@@ -572,9 +592,13 @@ void ShapeWorksView2::updateColorScheme()
 {
   int scheme = Preferences::Instance().getColorScheme();
 
-  this->surfaceActor->GetProperty()->SetDiffuseColor( m_ColorSchemes[scheme].foreground.r,
-                                                      m_ColorSchemes[scheme].foreground.g,
-                                                      m_ColorSchemes[scheme].foreground.b );
+  for (int i = 0; i < this->numDomains; i++)
+  {
+    int domainScheme = ( scheme + i ) % m_ColorSchemes.size();
+    this->surfaceActors[i]->GetProperty()->SetDiffuseColor( m_ColorSchemes[domainScheme].foreground.r,
+      m_ColorSchemes[domainScheme].foreground.g,
+      m_ColorSchemes[domainScheme].foreground.b );
+  }
 
 /*
    this->RecolorGlyphs(m_ColorSchemes[scheme].alt.r,
@@ -629,6 +653,11 @@ bool ShapeWorksView2::readParameterFile( char* filename )
 
   this->groupsAvailable = ( docHandle.FirstChild( "group_ids" ).Element() != NULL );
 
+  // number of domains (objects) per patient/shape
+  this->numDomains = 1;
+  TiXmlElement *elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+  if (elem) this->numDomains = atoi(elem->GetText());
+
   // Run statistics
   this->stats.ReadPointFiles( filename );
   this->stats.ComputeModes();
@@ -640,7 +669,9 @@ bool ShapeWorksView2::readParameterFile( char* filename )
 
   this->initializeRenderer();
   this->initializeGlyphs();
-  this->initializeSurface();
+  this->initializeSurfaces();
+
+  std::cerr << "numPoints = " << numPoints << "\n";
 
   // Create numPoints glyphs
   for ( unsigned int i = 0; i < numPoints / 3; i++ )
@@ -765,12 +796,25 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   }
   this->glyphPoints->Modified();
 
-  if ( surface && surfaceActor && this->ui->showSurface->isChecked() )
+  if ( this->surface && this->surfaceActors[0] && this->ui->showSurface->isChecked() )
   {
-    vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( shape );
+   
+    int pointsPerDomain = shape.size() / this->numDomains;
 
-    // retrieve the mesh and set it for display
-    this->surfaceMapper->SetInput( polyData );
+    for (int i = 0; i < this->numDomains; i++)
+    {
+      vnl_vector<double> domainShape(pointsPerDomain);
+
+      for (int j = 0; j < pointsPerDomain; j++)
+      {
+        domainShape[j] = shape[i*pointsPerDomain+j];
+      }
+
+      vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( domainShape );
+
+      // retrieve the mesh and set it for display
+      this->surfaceMappers[i]->SetInput( polyData );
+    }
   }
 
   if ( this->arrowsVisible )
@@ -818,7 +862,8 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
   mags->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
 
   //vtkPolyData* polyData = this->polydataNormals->GetOutput();
-  vtkPolyData* polyData = this->surfaceMapper->GetInput();
+  /// TODO, only have first domain!
+  vtkPolyData* polyData = this->surfaceMappers[0]->GetInput();
 
   vtkFloatArray* smags = vtkFloatArray::New();
   smags->SetNumberOfComponents( 1 );
@@ -947,10 +992,11 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
   // surface coloring
   polyData->GetPointData()->SetScalars( smags );
   polyData->GetPointData()->SetVectors( svecs );
-  this->surfaceMapper->SetLookupTable( this->differenceLUT );
-  this->surfaceMapper->InterpolateScalarsBeforeMappingOn();
-  this->surfaceMapper->SetColorModeToMapScalars();
-  this->surfaceMapper->ScalarVisibilityOn();
+  /// TODO only have first domain
+  this->surfaceMappers[0]->SetLookupTable( this->differenceLUT );
+  this->surfaceMappers[0]->InterpolateScalarsBeforeMappingOn();
+  this->surfaceMappers[0]->SetColorModeToMapScalars();
+  this->surfaceMappers[0]->ScalarVisibilityOn();
 
   this->redraw();
 }
@@ -992,13 +1038,16 @@ void ShapeWorksView2::resetPointScalars()
 
   for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
   {
-    mags->InsertTuple1( i, i );
+    mags->InsertTuple1( i, (i * this->numDomains) % (this->glyphPoints->GetNumberOfPoints()) );
   }
   this->glyphPointSet->GetPointData()->SetScalars( mags );
   this->glyphPoints->Modified();
 
-  this->surfaceMapper->SetColorModeToDefault();
-  this->surfaceMapper->ScalarVisibilityOff();
+  for (int i = 0; i < this->numDomains; i++)
+  {
+    this->surfaceMappers[i]->SetColorModeToDefault();
+    this->surfaceMappers[i]->ScalarVisibilityOff();
+  }
 }
 void ShapeWorksView2::computeModeShape()
 {
@@ -1028,7 +1077,13 @@ void ShapeWorksView2::computeModeShape()
       if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
       {
         double pcaValue = pregenValue / 10.0;
-        this->meshManager.generateMesh( this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) ) );
+
+        vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) ) ;
+
+        for (int i = 0; i < this->numDomains; i++)
+        {
+          this->meshManager.generateMesh( this->getDomain(shape, i) );
+        }
       }
     }
 
@@ -1108,4 +1163,18 @@ void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
   }
 
   this->differenceLUT->AddHSVPoint( 0.0, 0.0, 0.0, 1.0 );
+}
+
+vnl_vector<double> ShapeWorksView2::getDomain( const vnl_vector<double> &shape, int domain )
+{
+  int pointsPerDomain = shape.size() / this->numDomains;
+
+  vnl_vector<double> domainShape(pointsPerDomain);
+
+  for (int j = 0; j < pointsPerDomain; j++)
+  {
+    domainShape[j] = shape[domain*pointsPerDomain+j];
+  }
+
+  return domainShape;
 }

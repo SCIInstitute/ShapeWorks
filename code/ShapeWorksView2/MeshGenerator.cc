@@ -60,8 +60,8 @@ MeshGenerator::MeshGenerator()
 
   this->smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   this->smoothFilter->SetInputConnection( this->reverseSense->GetOutputPort() );
-  //this->smoothFilter->SetNumberOfIterations( 50 );
-  //this->smoothFilter->SetRelaxationFactor( 0.05 );
+  this->smoothFilter->SetNumberOfIterations( 50 );
+  this->smoothFilter->SetRelaxationFactor( 0.05 );
 
   this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->polydataNormals->SplittingOff();

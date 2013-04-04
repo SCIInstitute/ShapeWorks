@@ -104,7 +104,7 @@ private:
 
   void initializeRenderer();
   void initializeGlyphs();
-  void initializeSurface();
+  void initializeSurfaces();
 
   void updateAnalysisMode();
   void updateSurfaceSettings();
@@ -132,6 +132,8 @@ private:
   void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
                              vnl_vector_fixed<double, 3> &ans ) const;
 
+  vnl_vector<double> getDomain( const vnl_vector<double> &shape, int domain);
+
   // designer form
   Ui_ShapeWorksView2* ui;
 
@@ -144,8 +146,9 @@ private:
   vtkSmartPointer<vtkActor>                glyphActor;
   vtkSmartPointer<vtkSphereSource>         sphereSource;
   vtkSmartPointer<vtkUnsignedLongArray>    scalars;
-  vtkSmartPointer<vtkPolyDataMapper>       surfaceMapper;
-  vtkSmartPointer<vtkActor>                surfaceActor;
+
+  std::vector< vtkSmartPointer<vtkPolyDataMapper> >      surfaceMappers;
+  std::vector< vtkSmartPointer<vtkActor> >               surfaceActors;
 
   vtkSmartPointer<CustomSurfaceReconstructionFilter>  surface;
 
@@ -165,6 +168,8 @@ private:
   itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::Pointer regression;
 
   int numSamples;
+  int numDomains;
+
   bool groupsAvailable;
   bool regressionAvailable;
 
