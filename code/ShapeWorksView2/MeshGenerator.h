@@ -27,6 +27,8 @@ class vtkSmoothPolyDataFilter;
 class vtkPolyDataNormals;
 class vtkPoints;
 class vtkPolyData;
+class vtkTriangleFilter;
+class vtkCleanPolyData;
 
 class MeshGenerator
 {
@@ -51,6 +53,8 @@ private:
   vtkSmartPointer<vtkReverseSense>         reverseSense;
   vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
   vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
+  vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
+  vtkSmartPointer<vtkCleanPolyData>        cleanPolyData;
 
   bool usePowerCrust;
 };

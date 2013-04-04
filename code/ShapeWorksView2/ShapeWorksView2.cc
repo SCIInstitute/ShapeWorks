@@ -448,8 +448,7 @@ void ShapeWorksView2::initializeSurface()
   this->surfaceActor = vtkSmartPointer<vtkActor>::New();
   this->surfaceActor->SetMapper( this->surfaceMapper );
   this->surfaceActor->GetProperty()->SetSpecular( .4 );
-  this->surfaceActor->GetProperty()->SetSpecularPower( 50 );
-
+  this->surfaceActor->GetProperty()->SetSpecularPower( 25 );
   this->updateSurfaceSettings();
 }
 

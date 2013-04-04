@@ -11,6 +11,8 @@
 #include <vtkReverseSense.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
+#include <vtkTriangleFilter.h>
+#include <vtkCleanPolyData.h>
 
 #include "CustomSurfaceReconstructionFilter.h"
 
@@ -34,6 +36,15 @@ MeshGenerator::MeshGenerator()
 #ifdef SW_USE_POWERCRUST
   this->powercrust = vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
   this->powercrust->SetInput( this->pointSet );
+
+/*
+  this->triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+  this->triangleFilter->SetInputConnection( this->powercrust->GetOutputPort() );
+  //this->triangleFilter->SetInputConnection( this->cleanPolyData->GetOutputPort() );
+
+  this->cleanPolyData = vtkSmartPointer<vtkCleanPolyData>::New();
+  this->cleanPolyData->SetInputConnection( this->triangleFilter->GetOutputPort() );
+*/
 #endif
 
   this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
@@ -46,13 +57,16 @@ MeshGenerator::MeshGenerator()
   this->reverseSense->ReverseCellsOn();
   this->reverseSense->ReverseNormalsOn();
 
+
   this->smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   this->smoothFilter->SetInputConnection( this->reverseSense->GetOutputPort() );
-  this->smoothFilter->SetNumberOfIterations( 0 );
+  //this->smoothFilter->SetNumberOfIterations( 50 );
+  //this->smoothFilter->SetRelaxationFactor( 0.05 );
 
   this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->polydataNormals->SplittingOff();
   this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort() );
+  //this->polydataNormals->SetInputConnection( this->reverseSense->GetOutputPort() );
 }
 
 MeshGenerator::~MeshGenerator()
@@ -76,6 +90,8 @@ void MeshGenerator::setUsePowerCrust( bool enabled )
   {
 #ifdef SW_USE_POWERCRUST
     this->reverseSense->SetInputConnection( this->powercrust->GetOutputPort() );
+    //this->reverseSense->SetInputConnection( this->triangleFilter->GetOutputPort() );
+    //this->reverseSense->SetInputConnection( this->cleanPolyData->GetOutputPort() );
 #endif
   }
   else
