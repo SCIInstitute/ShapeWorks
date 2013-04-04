@@ -65,8 +65,8 @@ MeshGenerator::MeshGenerator()
 
   this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->polydataNormals->SplittingOff();
-  this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort() );
-  //this->polydataNormals->SetInputConnection( this->reverseSense->GetOutputPort() );
+  //this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort() );
+  this->polydataNormals->SetInputConnection( this->reverseSense->GetOutputPort() );
 }
 
 MeshGenerator::~MeshGenerator()
