@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>420</width>
-    <height>336</height>
+    <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,6 +67,11 @@
         <item>
          <property name="text">
           <string>Yellow on Grey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Blue on Black</string>
          </property>
         </item>
        </widget>
