@@ -36,11 +36,6 @@
         </item>
         <item>
          <property name="text">
-          <string>Orange on White</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
           <string>Purple on Grey</string>
          </property>
         </item>
@@ -51,12 +46,12 @@
         </item>
         <item>
          <property name="text">
-          <string>Grey on White</string>
+          <string>Orange on White</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Grey on Black</string>
+          <string>Grey on White</string>
          </property>
         </item>
         <item>
@@ -67,6 +62,11 @@
         <item>
          <property name="text">
           <string>Yellow on Grey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Grey on Black</string>
          </property>
         </item>
         <item>

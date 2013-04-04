@@ -33,47 +33,58 @@ public:
   ColorSchemes()
   {
     ColorScheme a;
+
+    // orange on grey
     a.foreground = ColorScheme::rgb( 255, 191, 0 );
     a.background = ColorScheme::rgb( 25, 25, 25 );
     a.alt = ColorScheme::rgb( 245, 245, 220 );
     this->push_back( a );
 
-    a.foreground = ColorScheme::rgb( 255, 191, 0 );
-    a.background = ColorScheme::rgb( 255, 255, 255 );
-    a.alt = ColorScheme::rgb( 0, 223, 22 );
-    this->push_back( a );
 
+    // purple on grey
     a.foreground = ColorScheme::rgb( 128, 0, 32.0 );
     a.background = ColorScheme::rgb( 25, 25, 25 );
     a.alt = ColorScheme::rgb( 245, 245, 220 );
     this->push_back( a );
 
+    // blue on white
     a.foreground = ColorScheme::rgb( 0, 71, 171 );
     a.background = ColorScheme::rgb( 245, 245, 245 );
     a.alt = ColorScheme::rgb( 175, 64, 53 );
     this->push_back( a );
 
+    // orange on white
+    a.foreground = ColorScheme::rgb( 255, 191, 0 );
+    a.background = ColorScheme::rgb( 255, 255, 255 );
+    a.alt = ColorScheme::rgb( 0, 223, 22 );
+    this->push_back( a );
+
+    // grey on white
     // For Black and White figures
     a.foreground = ColorScheme::rgb( 200, 200, 200 );
     a.background = ColorScheme::rgb( 255, 255, 255 );
     a.alt = ColorScheme::rgb( 80, 80, 80 );
     this->push_back( a );
 
-    a.foreground = ColorScheme::rgb( 200, 200, 200 );
-    a.background = ColorScheme::rgb( 0, 0, 0 );
-    a.alt = ColorScheme::rgb( 100, 100, 100 );
-    this->push_back( a );
-
+    // orange on blue
     a.foreground = ColorScheme::rgb( 255, 219, 88 );
     a.background = ColorScheme::rgb( 0, 0, 128 );
     a.alt = ColorScheme::rgb( 173, 255, 47 );
     this->push_back( a );
 
+    // yellow on grey
     a.foreground = ColorScheme::rgb( 240, 220, 130 );
     a.background = ColorScheme::rgb( 25, 25, 25 );
     a.alt = ColorScheme::rgb( 0, 223, 22 );
     this->push_back( a );
 
+    // grey on black
+    a.foreground = ColorScheme::rgb( 200, 200, 200 );
+    a.background = ColorScheme::rgb( 0, 0, 0 );
+    a.alt = ColorScheme::rgb( 100, 100, 100 );
+    this->push_back( a );
+
+    // blue on black
     a.foreground = ColorScheme::rgb( 0, 71, 171 );
     a.background = ColorScheme::rgb( 0, 0, 0 );
     a.alt = ColorScheme::rgb( 175, 64, 53 );

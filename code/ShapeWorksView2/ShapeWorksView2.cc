@@ -671,8 +671,6 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   this->initializeGlyphs();
   this->initializeSurfaces();
 
-  std::cerr << "numPoints = " << numPoints << "\n";
-
   // Create numPoints glyphs
   for ( unsigned int i = 0; i < numPoints / 3; i++ )
   {
