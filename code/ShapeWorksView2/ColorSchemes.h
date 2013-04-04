@@ -73,6 +73,11 @@ public:
     a.background = ColorScheme::rgb( 25, 25, 25 );
     a.alt = ColorScheme::rgb( 0, 223, 22 );
     this->push_back( a );
+
+    a.foreground = ColorScheme::rgb( 0, 71, 171 );
+    a.background = ColorScheme::rgb( 0, 0, 0 );
+    a.alt = ColorScheme::rgb( 175, 64, 53 );
+    this->push_back( a );
   }
   ~ColorSchemes() {}
 };
