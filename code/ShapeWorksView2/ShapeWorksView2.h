@@ -132,7 +132,7 @@ private:
   void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
                              vnl_vector_fixed<double, 3> &ans ) const;
 
-  vnl_vector<double> getDomain( const vnl_vector<double> &shape, int domain);
+  vnl_vector<double> getDomainShape( const vnl_vector<double> &shape, int domain);
 
   // designer form
   Ui_ShapeWorksView2* ui;

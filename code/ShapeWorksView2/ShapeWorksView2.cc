@@ -442,12 +442,10 @@ void ShapeWorksView2::initializeSurfaces()
   this->surface = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   this->surface->SetInput( this->glyphPointSet );
 
-
   this->surfaceMappers.resize( this->numDomains );
   this->surfaceActors.resize( this->numDomains );
 
-
-  for (int i = 0; i < this->numDomains; i++)
+  for ( int i = 0; i < this->numDomains; i++ )
   {
     this->surfaceMappers[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
     //this->surfaceMapper->SetInputConnection( this->polydataNormals->GetOutputPort() );
@@ -473,6 +471,8 @@ void ShapeWorksView2::updateAnalysisMode()
   this->ui->pcaGroupSlider->setVisible( this->groupsAvailable );
 
   this->ui->tabWidget->setTabEnabled( 3, this->regressionAvailable );
+
+  this->ui->pcaAnimateCheckBox->setChecked( false );
 
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();
@@ -516,9 +516,9 @@ void ShapeWorksView2::updateAnalysisMode()
       if ( pregenSample >= this->ui->sampleSpinBox->minimum() && pregenSample <= this->ui->sampleSpinBox->maximum() )
       {
         vnl_vector<double> shape = this->stats.ShapeMatrix().get_column( pregenSample );
-        for (int i = 0; i < this->numDomains; i++)
+        for ( int i = 0; i < this->numDomains; i++ )
         {
-          this->meshManager.generateMesh( this->getDomain(shape, i) );
+          this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
         }
       }
     }
@@ -561,7 +561,7 @@ void ShapeWorksView2::updateActors()
   this->renderer->RemoveActor( this->glyphActor );
   this->renderer->RemoveActor( this->arrowGlyphActor );
 
-  for (int i = 0; i < this->numDomains; i++)
+  for ( int i = 0; i < this->numDomains; i++ )
   {
     this->renderer->RemoveActor( this->surfaceActors[i] );
   }
@@ -577,7 +577,7 @@ void ShapeWorksView2::updateActors()
 
   if ( this->ui->showSurface->isChecked() )
   {
-    for (int i = 0; i < this->numDomains; i++)
+    for ( int i = 0; i < this->numDomains; i++ )
     {
       this->renderer->AddActor( this->surfaceActors[i] );
     }
@@ -592,12 +592,12 @@ void ShapeWorksView2::updateColorScheme()
 {
   int scheme = Preferences::Instance().getColorScheme();
 
-  for (int i = 0; i < this->numDomains; i++)
+  for ( int i = 0; i < this->numDomains; i++ )
   {
     int domainScheme = ( scheme + i ) % m_ColorSchemes.size();
     this->surfaceActors[i]->GetProperty()->SetDiffuseColor( m_ColorSchemes[domainScheme].foreground.r,
-      m_ColorSchemes[domainScheme].foreground.g,
-      m_ColorSchemes[domainScheme].foreground.b );
+                                                            m_ColorSchemes[domainScheme].foreground.g,
+                                                            m_ColorSchemes[domainScheme].foreground.b );
   }
 
 /*
@@ -655,8 +655,8 @@ bool ShapeWorksView2::readParameterFile( char* filename )
 
   // number of domains (objects) per patient/shape
   this->numDomains = 1;
-  TiXmlElement *elem = docHandle.FirstChild( "domains_per_shape" ).Element();
-  if (elem) this->numDomains = atoi(elem->GetText());
+  TiXmlElement* elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+  if ( elem ) {this->numDomains = atoi( elem->GetText() ); }
 
   // Run statistics
   this->stats.ReadPointFiles( filename );
@@ -796,16 +796,16 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 
   if ( this->surface && this->surfaceActors[0] && this->ui->showSurface->isChecked() )
   {
-   
+
     int pointsPerDomain = shape.size() / this->numDomains;
 
-    for (int i = 0; i < this->numDomains; i++)
+    for ( int i = 0; i < this->numDomains; i++ )
     {
-      vnl_vector<double> domainShape(pointsPerDomain);
+      vnl_vector<double> domainShape( pointsPerDomain );
 
-      for (int j = 0; j < pointsPerDomain; j++)
+      for ( int j = 0; j < pointsPerDomain; j++ )
       {
-        domainShape[j] = shape[i*pointsPerDomain+j];
+        domainShape[j] = shape[i * pointsPerDomain + j];
       }
 
       vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( domainShape );
@@ -1036,12 +1036,12 @@ void ShapeWorksView2::resetPointScalars()
 
   for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
   {
-    mags->InsertTuple1( i, (i * this->numDomains) % (this->glyphPoints->GetNumberOfPoints()) );
+    mags->InsertTuple1( i, ( i * this->numDomains ) % ( this->glyphPoints->GetNumberOfPoints() ) );
   }
   this->glyphPointSet->GetPointData()->SetScalars( mags );
   this->glyphPoints->Modified();
 
-  for (int i = 0; i < this->numDomains; i++)
+  for ( int i = 0; i < this->numDomains; i++ )
   {
     this->surfaceMappers[i]->SetColorModeToDefault();
     this->surfaceMappers[i]->ScalarVisibilityOff();
@@ -1076,11 +1076,11 @@ void ShapeWorksView2::computeModeShape()
       {
         double pcaValue = pregenValue / 10.0;
 
-        vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) ) ;
+        vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) );
 
-        for (int i = 0; i < this->numDomains; i++)
+        for ( int i = 0; i < this->numDomains; i++ )
         {
-          this->meshManager.generateMesh( this->getDomain(shape, i) );
+          this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
         }
       }
     }
@@ -1163,15 +1163,15 @@ void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
   this->differenceLUT->AddHSVPoint( 0.0, 0.0, 0.0, 1.0 );
 }
 
-vnl_vector<double> ShapeWorksView2::getDomain( const vnl_vector<double> &shape, int domain )
+vnl_vector<double> ShapeWorksView2::getDomainShape( const vnl_vector<double> &shape, int domain )
 {
   int pointsPerDomain = shape.size() / this->numDomains;
 
-  vnl_vector<double> domainShape(pointsPerDomain);
+  vnl_vector<double> domainShape( pointsPerDomain );
 
-  for (int j = 0; j < pointsPerDomain; j++)
+  for ( int j = 0; j < pointsPerDomain; j++ )
   {
-    domainShape[j] = shape[domain*pointsPerDomain+j];
+    domainShape[j] = shape[domain * pointsPerDomain + j];
   }
 
   return domainShape;
