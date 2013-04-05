@@ -525,6 +525,12 @@ void ShapeWorksView2::updateAnalysisMode()
   this->ui->pcaAnimateCheckBox->setChecked( false );
   this->ui->regressionAnimateCheckBox->setChecked( false );
 
+  // update tabs for hiding/showing
+  this->ui->meanTab->adjustSize();
+  this->ui->samplesTab->adjustSize();
+  this->ui->pcaTab->adjustSize();
+  this->ui->regressionTab->adjustSize();
+
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();
 
@@ -1157,12 +1163,11 @@ void ShapeWorksView2::computeRegressionShape()
 {
 
   // pre-generate
-  for ( int step = -16; step <= 16; step++ )
+  for ( int step = 0; step < this->pregenSteps.size(); step++ )
   {
-    int pregenValue = this->ui->regressionSlider->value() + step;
+    int pregenValue = this->ui->regressionSlider->value() + this->pregenSteps[step];
     if ( pregenValue >= this->ui->regressionSlider->minimum() && pregenValue <= this->ui->regressionSlider->maximum() )
     {
-
       // scale value back to range
       double value = this->getRegressionValue( pregenValue );
 
@@ -1260,8 +1265,8 @@ void ShapeWorksView2::setPregenSteps()
     direction = this->regressionAnimateDirection;
   }
 
-  const int size = 50;
-  const int half = 25;
+  const int size = 100;
+  const int half = 50;
 
   this->pregenSteps.resize( size );
 
