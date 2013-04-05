@@ -79,6 +79,8 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
     &this->regressionAnimateTimer, SIGNAL( timeout() ),
     this, SLOT( handleRegressionTimer() ) );
 
+  this->setPregenSteps();
+
   if ( !this->readParameterFile( argv[1] ) )
   {
     exit( -1 );
@@ -255,6 +257,7 @@ void ShapeWorksView2::on_pcaAnimateCheckBox_stateChanged()
 {
   if ( this->ui->pcaAnimateCheckBox->isChecked() )
   {
+    this->setPregenSteps();
     this->pcaAnimateTimer.setInterval( 10 );
     this->pcaAnimateTimer.start();
   }
@@ -279,6 +282,7 @@ void ShapeWorksView2::handlePcaTimer()
   if ( value >= this->ui->pcaSlider->maximum() || value <= this->ui->pcaSlider->minimum() )
   {
     this->pcaAnimateDirection = !this->pcaAnimateDirection;
+    this->setPregenSteps();
   }
 
   this->ui->pcaSlider->setValue( value );
@@ -304,6 +308,7 @@ void ShapeWorksView2::on_regressionAnimateCheckBox_stateChanged()
 {
   if ( this->ui->regressionAnimateCheckBox->isChecked() )
   {
+    this->setPregenSteps();
     this->regressionAnimateTimer.setInterval( 10 );
     this->regressionAnimateTimer.start();
   }
@@ -328,6 +333,7 @@ void ShapeWorksView2::handleRegressionTimer()
   if ( value >= this->ui->regressionSlider->maximum() || value <= this->ui->regressionSlider->minimum() )
   {
     this->regressionAnimateDirection = !this->regressionAnimateDirection;
+    this->setPregenSteps();
   }
 
   this->ui->regressionSlider->setValue( value );
@@ -555,9 +561,9 @@ void ShapeWorksView2::updateAnalysisMode()
     int sampleNumber = this->ui->sampleSpinBox->value();
 
     // pre-generate
-    for ( int addition = -16; addition <= 16; addition++ )
+    for ( int step = 0; step < this->pregenSteps.size(); step++ )
     {
-      int pregenSample = sampleNumber + addition;
+      int pregenSample = sampleNumber + this->pregenSteps[step];
       if ( pregenSample >= this->ui->sampleSpinBox->minimum() && pregenSample <= this->ui->sampleSpinBox->maximum() )
       {
         vnl_vector<double> shape = this->stats.ShapeMatrix().get_column( pregenSample );
@@ -1114,9 +1120,9 @@ void ShapeWorksView2::computeModeShape()
     double ratio = groupSliderValue / static_cast<double>( this->ui->pcaGroupSlider->maximum() );
 
     // pre-generate
-    for ( int addition = -16; addition <= 16; addition++ )
+    for ( int step = 0; step < this->pregenSteps.size(); step++ )
     {
-      int pregenValue = this->ui->pcaSlider->value() + addition;
+      int pregenValue = this->ui->pcaSlider->value() + this->pregenSteps[step];
       if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
       {
         double pcaValue = pregenValue / 10.0;
@@ -1234,4 +1240,55 @@ vnl_vector<double> ShapeWorksView2::getDomainShape( const vnl_vector<double> &sh
   }
 
   return domainShape;
+}
+
+void ShapeWorksView2::setPregenSteps()
+{
+  // when animating, we want to pre-generate in a specific direction first
+  // otherwise, we want to pre-generate alternating left and right from the current position
+  bool animate = false;
+  bool direction = false;
+
+  if ( this->ui->pcaAnimateCheckBox->isChecked() )
+  {
+    animate = true;
+    direction = this->pcaAnimateDirection;
+  }
+  else if ( this->ui->regressionAnimateCheckBox->isChecked() )
+  {
+    animate = true;
+    direction = this->regressionAnimateDirection;
+  }
+
+  const int size = 50;
+  const int half = 25;
+
+  this->pregenSteps.resize( size );
+
+  if ( animate )
+  {
+    int idx = 0;
+    for ( int i = 0; i < half; i++ )
+    {
+      if ( direction )
+      {
+        this->pregenSteps[i] = i;
+        this->pregenSteps[i + half] = -i;
+      }
+      else
+      {
+        this->pregenSteps[i] = -i;
+        this->pregenSteps[i + half] = i;
+      }
+    }
+  }
+  else
+  {
+    int idx = 0;
+    for ( int i = 0; i < half; i++ )
+    {
+      this->pregenSteps[idx++] = i;
+      this->pregenSteps[idx++] = -i;
+    }
+  }
 }

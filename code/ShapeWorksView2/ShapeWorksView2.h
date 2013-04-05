@@ -129,12 +129,15 @@ private:
   void computeModeShape();
   void computeRegressionShape();
 
+
   double getRegressionValue(int sliderValue);
 
   void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
                              vnl_vector_fixed<double, 3> &ans ) const;
 
   vnl_vector<double> getDomainShape( const vnl_vector<double> &shape, int domain);
+
+  void setPregenSteps();
 
   // designer form
   Ui_ShapeWorksView2* ui;
@@ -182,6 +185,9 @@ private:
   // a copy of the current shape mesh
   vnl_vector<double> currentShape;
 
+  // step values for pregenerating meshes
+  std::vector< int > pregenSteps;
+
   bool arrowsVisible;
 
   MeshManager meshManager;
@@ -190,7 +196,6 @@ private:
 
   bool pcaAnimateDirection;
   QTimer pcaAnimateTimer;
-
 
   bool regressionAnimateDirection;
   QTimer regressionAnimateTimer;
