@@ -53,6 +53,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->ui->setupUi( this );
 
   this->pcaAnimateDirection = true;
+  this->regressionAnimateDirection = true;
 
 #ifdef _WIN32
   // only want to do this on windows.  On apple, the default is better
@@ -74,10 +75,17 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
     &this->pcaAnimateTimer, SIGNAL( timeout() ),
     this, SLOT( handlePcaTimer() ) );
 
+  QObject::connect(
+    &this->regressionAnimateTimer, SIGNAL( timeout() ),
+    this, SLOT( handleRegressionTimer() ) );
+
   if ( !this->readParameterFile( argv[1] ) )
   {
     exit( -1 );
   }
+
+  // set to mean
+  this->ui->tabWidget->setCurrentIndex( 0 );
 
   // Compute the linear regression
   this->regression = itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::New();
@@ -92,8 +100,6 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
     this->regression->Initialize();
     this->regression->EstimateParameters();
   }
-
-  this->ui->tabWidget->setCurrentIndex( 0 );
 
   this->updateColorScheme();
   this->updateGlyphProperties();
@@ -280,13 +286,51 @@ void ShapeWorksView2::handlePcaTimer()
 
 void ShapeWorksView2::on_regressionSlider_valueChanged()
 {
-  this->ui->regressionLabel->setText( QString::number( this->getRegressionValue() ) );
+  this->ui->regressionLabel->setText( QString::number( this->getRegressionValue( this->ui->regressionSlider->value() ) ) );
+
+  if ( this->ui->tabWidget->currentWidget() != this->ui->regressionTab )
+  {
+    return;
+  }
 
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();
 
   this->computeRegressionShape();
   this->redraw();
+}
+
+void ShapeWorksView2::on_regressionAnimateCheckBox_stateChanged()
+{
+  if ( this->ui->regressionAnimateCheckBox->isChecked() )
+  {
+    this->regressionAnimateTimer.setInterval( 10 );
+    this->regressionAnimateTimer.start();
+  }
+  else
+  {
+    this->regressionAnimateTimer.stop();
+  }
+}
+
+void ShapeWorksView2::handleRegressionTimer()
+{
+  int value = this->ui->regressionSlider->value();
+  if ( this->regressionAnimateDirection )
+  {
+    value += this->ui->regressionSlider->singleStep();
+  }
+  else
+  {
+    value -= this->ui->regressionSlider->singleStep();
+  }
+
+  if ( value >= this->ui->regressionSlider->maximum() || value <= this->ui->regressionSlider->minimum() )
+  {
+    this->regressionAnimateDirection = !this->regressionAnimateDirection;
+  }
+
+  this->ui->regressionSlider->setValue( value );
 }
 
 void ShapeWorksView2::on_showGlyphs_stateChanged()
@@ -473,6 +517,7 @@ void ShapeWorksView2::updateAnalysisMode()
   this->ui->tabWidget->setTabEnabled( 3, this->regressionAvailable );
 
   this->ui->pcaAnimateCheckBox->setChecked( false );
+  this->ui->regressionAnimateCheckBox->setChecked( false );
 
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();
@@ -1062,6 +1107,7 @@ void ShapeWorksView2::computeModeShape()
   this->ui->pcaLambdaLabel->setText( QString::number( pcaSliderValue * lambda ) );
 
   //std::cerr << "size = " << this->stats.GroupID().size() << "\n";
+
   if ( this->stats.GroupID().size() > 0 )
   {
     double groupSliderValue = this->ui->pcaGroupSlider->value();
@@ -1071,13 +1117,10 @@ void ShapeWorksView2::computeModeShape()
     for ( int addition = -16; addition <= 16; addition++ )
     {
       int pregenValue = this->ui->pcaSlider->value() + addition;
-
       if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
       {
         double pcaValue = pregenValue / 10.0;
-
         vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) );
-
         for ( int i = 0; i < this->numDomains; i++ )
         {
           this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
@@ -1089,6 +1132,7 @@ void ShapeWorksView2::computeModeShape()
   }
   else
   {
+    std::cerr << "*** I don't think this ever happens!\n";
     // pre-generate
     int pregenValue = this->ui->pcaSlider->value();
     int addition = 0;
@@ -1105,18 +1149,33 @@ void ShapeWorksView2::computeModeShape()
 
 void ShapeWorksView2::computeRegressionShape()
 {
-  vnl_vector<double> pos = this->regression->ComputeMean( this->getRegressionValue() );
-  this->displayShape( pos );
+
+  // pre-generate
+  for ( int step = -16; step <= 16; step++ )
+  {
+    int pregenValue = this->ui->regressionSlider->value() + step;
+    if ( pregenValue >= this->ui->regressionSlider->minimum() && pregenValue <= this->ui->regressionSlider->maximum() )
+    {
+
+      // scale value back to range
+      double value = this->getRegressionValue( pregenValue );
+
+      vnl_vector<double> shape = this->regression->ComputeMean( value );
+      for ( int i = 0; i < this->numDomains; i++ )
+      {
+        this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
+      }
+    }
+  }
+
+  vnl_vector<double> shape = this->regression->ComputeMean( this->getRegressionValue( this->ui->regressionSlider->value() ) );
+  this->displayShape( shape );
 }
 
-double ShapeWorksView2::getRegressionValue()
+double ShapeWorksView2::getRegressionValue( int sliderValue )
 {
-  double value = this->ui->regressionSlider->value();
-
   // scale value back to range
-  value = ( value / this->ui->regressionSlider->maximum() * this->regressionRange ) + this->regressionMin;
-
-  return value;
+  return ( (double)sliderValue / this->ui->regressionSlider->maximum() * this->regressionRange ) + this->regressionMin;
 }
 
 void ShapeWorksView2::trilinearInterpolate( vtkImageData* grad, double x, double y, double z, vnl_vector_fixed<double, 3> &ans ) const

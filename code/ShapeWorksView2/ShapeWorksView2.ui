@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>971</width>
-    <height>674</height>
+    <width>799</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -262,7 +262,7 @@ QToolButton:pressed{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>971</width>
+     <width>799</width>
      <height>21</height>
     </rect>
    </property>
@@ -418,7 +418,7 @@ QToolButton:pressed{
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="documentMode">
               <bool>false</bool>
@@ -853,6 +853,51 @@ QToolButton:pressed{
                  <property name="tickInterval">
                   <number>5</number>
                  </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QWidget" name="widget_24" native="true">
+                 <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <property name="margin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer name="horizontalSpacer_5">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="regressionAnimateCheckBox">
+                    <property name="text">
+                     <string>Animate</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_6">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>

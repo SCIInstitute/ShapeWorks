@@ -89,6 +89,8 @@ public Q_SLOTS:
 
   // Regression mode
   void on_regressionSlider_valueChanged();
+  void on_regressionAnimateCheckBox_stateChanged();
+  void handleRegressionTimer();
 
   // visualization
   void on_showGlyphs_stateChanged();
@@ -127,7 +129,7 @@ private:
   void computeModeShape();
   void computeRegressionShape();
 
-  double getRegressionValue();
+  double getRegressionValue(int sliderValue);
 
   void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
                              vnl_vector_fixed<double, 3> &ans ) const;
@@ -188,4 +190,8 @@ private:
 
   bool pcaAnimateDirection;
   QTimer pcaAnimateTimer;
+
+
+  bool regressionAnimateDirection;
+  QTimer regressionAnimateTimer;
 };
