@@ -834,7 +834,8 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 
   // make a copy of the shape
   this->currentShape = shape;
-
+ 
+  // assign shape points to the glyph point set
   unsigned int k = 0;
   for ( unsigned int i = 0; i < this->stats.ShapeMatrix().rows() / 3; i++ )
   {
@@ -847,19 +848,9 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 
   if ( this->surfaceActors[0] && this->ui->showSurface->isChecked() )
   {
-
-    int pointsPerDomain = shape.size() / this->numDomains;
-
     for ( int i = 0; i < this->numDomains; i++ )
     {
-      vnl_vector<double> domainShape( pointsPerDomain );
-
-      for ( int j = 0; j < pointsPerDomain; j++ )
-      {
-        domainShape[j] = shape[i * pointsPerDomain + j];
-      }
-
-      vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( domainShape );
+      vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( this->getDomainShape(shape, i) );
 
       // retrieve the mesh and set it for display
       this->surfaceMappers[i]->SetInput( polyData );
@@ -1112,45 +1103,29 @@ void ShapeWorksView2::computeModeShape()
   this->ui->pcaEigenValueLabel->setText( QString::number( this->stats.Eigenvalues()[m] ) );
   this->ui->pcaLambdaLabel->setText( QString::number( pcaSliderValue * lambda ) );
 
-  //std::cerr << "size = " << this->stats.GroupID().size() << "\n";
+  std::cerr << "size = " << this->stats.GroupID().size() << "\n";
 
-  if ( this->stats.GroupID().size() > 0 )
+  double groupSliderValue = this->ui->pcaGroupSlider->value();
+  double ratio = groupSliderValue / static_cast<double>( this->ui->pcaGroupSlider->maximum() );
+
+  std::cerr << "ratio = " << ratio << "\n";
+
+  // pre-generate
+  for ( int step = 0; step < this->pregenSteps.size(); step++ )
   {
-    double groupSliderValue = this->ui->pcaGroupSlider->value();
-    double ratio = groupSliderValue / static_cast<double>( this->ui->pcaGroupSlider->maximum() );
-
-    // pre-generate
-    for ( int step = 0; step < this->pregenSteps.size(); step++ )
+    int pregenValue = this->ui->pcaSlider->value() + this->pregenSteps[step];
+    if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
     {
-      int pregenValue = this->ui->pcaSlider->value() + this->pregenSteps[step];
-      if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
+      double pcaValue = pregenValue / 10.0;
+      vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) );
+      for ( int i = 0; i < this->numDomains; i++ )
       {
-        double pcaValue = pregenValue / 10.0;
-        vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) );
-        for ( int i = 0; i < this->numDomains; i++ )
-        {
-          this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
-        }
+        this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
       }
     }
-
-    this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaSliderValue * lambda ) ) );
   }
-  else
-  {
-    std::cerr << "*** I don't think this ever happens!\n";
-    // pre-generate
-    int pregenValue = this->ui->pcaSlider->value();
-    int addition = 0;
-    while ( addition <= 4 && pregenValue < this->ui->pcaSlider->maximum() )
-    {
-      pregenValue += addition++;
-      double pcaValue = pregenValue / 10.0;
-      this->meshManager.generateMesh( this->stats.Mean() + ( e * ( pcaValue * lambda ) ) );
-    }
 
-    this->displayShape( this->stats.Mean() + ( e * ( pcaSliderValue * lambda ) ) );
-  }
+  this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaSliderValue * lambda ) ) );
 }
 
 void ShapeWorksView2::computeRegressionShape()
@@ -1234,11 +1209,13 @@ vnl_vector<double> ShapeWorksView2::getDomainShape( const vnl_vector<double> &sh
     return shape;
   }
 
-  vnl_vector<double> domainShape( this->pointsPerDomain );
+  int numCoords = this->pointsPerDomain * 3;
 
-  for ( int j = 0; j < this->pointsPerDomain; j++ )
+  vnl_vector<double> domainShape( numCoords );
+
+  for ( int j = 0; j < numCoords; j++ )
   {
-    domainShape[j] = shape[domain * this->pointsPerDomain + j];
+    domainShape[j] = shape[domain * numCoords + j];
   }
 
   return domainShape;
