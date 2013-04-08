@@ -5,9 +5,9 @@
 /**
  * @file MeshManager.h
  * @brief Class to manage meshes
- * 
- * The MeshManager handles all aspects of mesh generation and caching.  
- * It houses the cache and manages threads to work on mesh generation 
+ *
+ * The MeshManager handles all aspects of mesh generation and caching.
+ * It houses the cache and manages threads to work on mesh generation
  * in the background.
  */
 
@@ -33,7 +33,11 @@ public:
 
   // mesh generation settings
   void setNeighborhoodSize( int size );
+  int getNeighborhoodSize();
+
   void setSampleSpacing( double spacing );
+  double getSampleSpacing();
+
   void setUsePowerCrust( bool enabled );
 
   // pre-generate and cache a mesh for this shape
@@ -56,7 +60,7 @@ private:
 
   // queue of meshes to build
   MeshWorkQueue workQueue;
-  
+
   // list of meshes that are currently being worked on in other threads
   MeshWorkQueue workingQueue;
 

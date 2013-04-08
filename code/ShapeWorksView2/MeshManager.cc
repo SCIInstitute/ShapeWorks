@@ -32,12 +32,22 @@ void MeshManager::setNeighborhoodSize( int size )
   this->meshGenerator.setNeighborhoodSize( size );
 }
 
+int MeshManager::getNeighborhoodSize()
+{
+  return this->neighborhoodSize;
+}
+
 void MeshManager::setSampleSpacing( double spacing )
 {
   this->sampleSpacing = spacing;
   this->initializeThreads();
   this->meshCache.clear();
   this->meshGenerator.setSampleSpacing( spacing );
+}
+
+double MeshManager::getSampleSpacing()
+{
+  return this->sampleSpacing;
 }
 
 void MeshManager::setUsePowerCrust( bool enabled )

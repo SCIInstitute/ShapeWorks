@@ -53,6 +53,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->ui = new Ui_ShapeWorksView2;
   this->ui->setupUi( this );
 
+  this->arrowsVisible = false;
   this->pcaAnimateDirection = true;
   this->regressionAnimateDirection = true;
 
@@ -409,14 +410,13 @@ void ShapeWorksView2::initializeRenderer()
 void ShapeWorksView2::initializeGlyphs()
 {
   this->lut = vtkSmartPointer<vtkLookupTable>::New();
-  this->scalars = vtkSmartPointer<vtkUnsignedLongArray>::New();
   this->sphereSource = vtkSmartPointer<vtkSphereSource>::New();
 
   this->glyphPoints = vtkSmartPointer<vtkPoints>::New();
   this->glyphPoints->SetDataTypeToDouble();
   this->glyphPointSet = vtkSmartPointer<vtkPolyData>::New();
   this->glyphPointSet->SetPoints( this->glyphPoints );
-  this->glyphPointSet->GetPointData()->SetScalars( this->scalars );
+  this->glyphPointSet->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
 
   this->glyphs = vtkSmartPointer<vtkGlyph3D>::New();
   this->glyphs->SetInput( this->glyphPointSet );
@@ -496,16 +496,12 @@ void ShapeWorksView2::initializeGlyphs()
 
 void ShapeWorksView2::initializeSurfaces()
 {
-  this->surface = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-  this->surface->SetInput( this->glyphPointSet );
-
   this->surfaceMappers.resize( this->numDomains );
   this->surfaceActors.resize( this->numDomains );
 
   for ( int i = 0; i < this->numDomains; i++ )
   {
     this->surfaceMappers[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
-    //this->surfaceMapper->SetInputConnection( this->polydataNormals->GetOutputPort() );
     this->surfaceMappers[i]->ScalarVisibilityOff();
 
     this->surfaceActors[i] = vtkSmartPointer<vtkActor>::New();
@@ -600,10 +596,6 @@ void ShapeWorksView2::updateAnalysisMode()
 
 void ShapeWorksView2::updateSurfaceSettings()
 {
-  this->surface->SetNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
-  this->surface->SetSampleSpacing( this->ui->spacingSpinBox->value() );
-  this->surface->Modified();
-
   this->meshManager.setNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
   this->meshManager.setSampleSpacing( this->ui->spacingSpinBox->value() );
   this->meshManager.setUsePowerCrust( this->ui->usePowerCrustCheckBox->isChecked() );
@@ -724,7 +716,9 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   this->stats.ComputeModes();
   this->stats.PrincipalComponentProjections();
 
-  unsigned int numPoints = this->stats.Mean().size();
+  this->numPoints = this->stats.Mean().size() / 3;
+
+  this->pointsPerDomain = numPoints / this->numDomains;
 
   this->numSamples = this->stats.ShapeMatrix().cols();
 
@@ -733,7 +727,7 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   this->initializeSurfaces();
 
   // Create numPoints glyphs
-  for ( unsigned int i = 0; i < numPoints / 3; i++ )
+  for ( unsigned int i = 0; i < this->numPoints; i++ )
   {
     this->glyphs->SetRange( 0.0, (double) i + 1 );
     this->glyphMapper->SetScalarRange( 0.0, (double) i + 1.0 );
@@ -855,7 +849,7 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   }
   this->glyphPoints->Modified();
 
-  if ( this->surface && this->surfaceActors[0] && this->ui->showSurface->isChecked() )
+  if ( this->surfaceActors[0] && this->ui->showSurface->isChecked() )
   {
 
     int pointsPerDomain = shape.size() / this->numDomains;
@@ -882,7 +876,8 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   }
 }
 
-void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs )
+void ShapeWorksView2::displayVectorField(
+  const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs )
 {
   if ( vecs.size() < this->glyphPoints->GetNumberOfPoints() )
   {
@@ -893,150 +888,159 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
   double minmag = 1.0e20;
   double maxmag = 0.0;
 
-  vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
-  vtkSmartPointer<vtkFloatArray> vectors2 = vtkSmartPointer<vtkFloatArray>::New();
-
-  vectors->SetNumberOfComponents( 3 );
-  vectors2->SetNumberOfComponents( 3 );
-
-  this->surface->Update();
-
-  vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
-  // smoother->SetStandardDeviations(1.0,1.0,1.0);
-  smoother->SetStandardDeviations( this->surface->GetOutput()->GetSpacing()[0],
-                                   this->surface->GetOutput()->GetSpacing()[1],
-                                   this->surface->GetOutput()->GetSpacing()[2] );
-
-  smoother->SetInputConnection( this->surface->GetOutputPort() );
-
-  // Compute normals from the isosurface volume
-  vtkSmartPointer<vtkImageGradient> grad = vtkSmartPointer<vtkImageGradient>::New();
-  grad->SetDimensionality( 3 );
-  grad->SetInputConnection( smoother->GetOutputPort() );
-  grad->Update();
-
   // Dot product difference vectors with the surface normals.
   vtkSmartPointer<vtkFloatArray> mags = vtkSmartPointer<vtkFloatArray>::New();
   mags->SetNumberOfComponents( 1 );
-  mags->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
 
-  //vtkPolyData* polyData = this->polydataNormals->GetOutput();
-  /// TODO, only have first domain!
-  vtkPolyData* polyData = this->surfaceMappers[0]->GetInput();
+  vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
+  vectors->SetNumberOfComponents( 3 );
 
-  vtkFloatArray* smags = vtkFloatArray::New();
-  smags->SetNumberOfComponents( 1 );
-  smags->SetNumberOfTuples( polyData->GetPoints()->GetNumberOfPoints() );
-  for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
+  for ( int domain = 0; domain < this->numDomains; domain++ )
   {
-    smags->InsertTuple1( i, 0.0 );
-  }
+    vtkSmartPointer<vtkPolyData> pointSet = this->getDomainPoints( domain );
 
-  vtkFloatArray* svecs = vtkFloatArray::New();
-  svecs->SetNumberOfComponents( 3 );
-  svecs->SetNumberOfTuples( polyData->GetPoints()->GetNumberOfPoints() );
-  for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
-  {
-    svecs->InsertTuple3( i, 0.0, 0.0, 0.0 );
-  }
+    vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
+      vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
+    surfaceReconstruction->SetInput( pointSet );
+    surfaceReconstruction->SetNeighborhoodSize( this->meshManager.getNeighborhoodSize() );
+    surfaceReconstruction->SetSampleSpacing( this->meshManager.getSampleSpacing() );
+    surfaceReconstruction->Update();
 
-  vnl_vector_fixed<double, 3> n;
+    vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+    // smoother->SetStandardDeviations(1.0,1.0,1.0);
+    smoother->SetStandardDeviations( surfaceReconstruction->GetOutput()->GetSpacing()[0],
+                                     surfaceReconstruction->GetOutput()->GetSpacing()[1],
+                                     surfaceReconstruction->GetOutput()->GetSpacing()[2] );
 
-  // Compute difference vector dot product with normal.  Length of vector is
-  // stored in the "scalars" so that the vtk color mapping and glyph scaling
-  // happens properly.
-  for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
-  {
-    double x = this->glyphPoints->GetPoint( i )[0];
-    double y = this->glyphPoints->GetPoint( i )[1];
-    double z = this->glyphPoints->GetPoint( i )[2];
+    smoother->SetInputConnection( surfaceReconstruction->GetOutputPort() );
 
-    float xd = vecs[i][0];
-    float yd = vecs[i][1];
-    float zd = vecs[i][2];
+    // Compute normals from the isosurface volume
+    vtkSmartPointer<vtkImageGradient> grad = vtkSmartPointer<vtkImageGradient>::New();
+    grad->SetDimensionality( 3 );
+    grad->SetInputConnection( smoother->GetOutputPort() );
+    grad->Update();
 
-    this->trilinearInterpolate( grad->GetOutput(), x, y, z, n );
+    vnl_vector_fixed<double, 3> normal;
 
-    float mag = xd * n( 0 ) + yd * n( 1 ) + zd * n( 2 );
+    // Compute difference vector dot product with normal.  Length of vector is
+    // stored in the "scalars" so that the vtk color mapping and glyph scaling
+    // happens properly.
+    for ( unsigned int i = 0; i < pointSet->GetNumberOfPoints(); i++ )
+    {
+      double x = pointSet->GetPoint( i )[0];
+      double y = pointSet->GetPoint( i )[1];
+      double z = pointSet->GetPoint( i )[2];
 
-    if ( mag < minmag ) {minmag = mag; }
-    if ( mag > maxmag ) {maxmag = mag; }
+      float xd = vecs[i][0];
+      float yd = vecs[i][1];
+      float zd = vecs[i][2];
 
-    vectors2->InsertNextTuple3( n( 0 ) * mag, n( 1 ) * mag, n( 2 ) * mag );
-    mags->InsertTuple1( i, mag );
+      this->trilinearInterpolate( grad->GetOutput(), x, y, z, normal );
+
+      float mag = xd * normal( 0 ) + yd * normal( 1 ) + zd * normal( 2 );
+
+      if ( mag < minmag ) {minmag = mag; }
+      if ( mag > maxmag ) {maxmag = mag; }
+
+      vectors->InsertNextTuple3( normal( 0 ) * mag, normal( 1 ) * mag, normal( 2 ) * mag );
+      mags->InsertNextTuple1( mag );
+    }
   }
 
   vtkSmartPointer<vtkPolyData> pdata = vtkSmartPointer<vtkPolyData>::New();
   pdata->SetPoints( this->glyphPoints );
+
   pdata->GetPointData()->SetScalars( mags );
-  pdata->GetPointData()->SetVectors( vectors2 );
+  pdata->GetPointData()->SetVectors( vectors );
 
   vtkPointLocator* pointLocator = vtkPointLocator::New();
   pointLocator->SetDataSet( pdata );
   pointLocator->SetDivisions( 100, 100, 100 );
   pointLocator->BuildLocator();
 
-  for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
+  for ( int domain = 0; domain < this->numDomains; domain++ )
   {
-    // find particle (p) closest to current point (v)
-    vtkIdType pId = pointLocator->FindClosestPoint( polyData->GetPoint( i ) );
+    vtkPolyData* polyData = this->surfaceMappers[domain]->GetInput();
 
-    // use d(p,v) as a radius to find other particles close by
-    double x = polyData->GetPoint( i )[0] - pdata->GetPoint( pId )[0];
-    double y = polyData->GetPoint( i )[1] - pdata->GetPoint( pId )[1];
-    double z = polyData->GetPoint( i )[2] - pdata->GetPoint( pId )[2];
-    double rad = sqrt( x * x + y * y + z * z );
-
-    vtkIdList* pInRadius = vtkIdList::New();
-    pointLocator->FindClosestNPoints( 8, polyData->GetPoint( i ), pInRadius );
-
-    // assign scalar value based on a weighted scheme
-    //float x;
-    //float y;
-    //float z;
-    float wtScalar = 0.0f;
-    float radSum = 0.0f;
-    float r[8];
-    float vecX = 0.0f;
-    float vecY = 0.0f;
-    float vecZ = 0.0f;
-    for ( unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++ )
+    vtkFloatArray* smags = vtkFloatArray::New();
+    smags->SetNumberOfComponents( 1 );
+    smags->SetNumberOfTuples( polyData->GetPoints()->GetNumberOfPoints() );
+    for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
     {
-      // get a particle position
-      vtkIdType currID = pInRadius->GetId( p );
-
-      // compute distance to current particle
-      x = polyData->GetPoint( i )[0] - pdata->GetPoint( currID )[0];
-      y = polyData->GetPoint( i )[1] - pdata->GetPoint( currID )[1];
-      z = polyData->GetPoint( i )[2] - pdata->GetPoint( currID )[2];
-      r[p] = 1.0f / ( x * x + y * y + z * z );
-
-      // multiply scalar value by weight and add to running sum
-      radSum += r[p];
+      smags->InsertTuple1( i, 0.0 );
     }
 
-    for ( unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++ )
+    vtkFloatArray* svecs = vtkFloatArray::New();
+    svecs->SetNumberOfComponents( 3 );
+    svecs->SetNumberOfTuples( polyData->GetPoints()->GetNumberOfPoints() );
+    for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
     {
-      vtkIdType currID = pInRadius->GetId( p );
-      wtScalar += r[p] / radSum * mags->GetValue( currID );
-      vecX += r[p] / radSum * vectors2->GetComponent( currID, 0 );
-      vecY += r[p] / radSum * vectors2->GetComponent( currID, 1 );
-      vecZ += r[p] / radSum * vectors2->GetComponent( currID, 2 );
+      svecs->InsertTuple3( i, 0.0, 0.0, 0.0 );
     }
 
-    smags->SetValue( i, wtScalar );
+    for ( unsigned int i = 0; i < smags->GetNumberOfTuples(); i++ )
+    {
+      // find particle (p) closest to current point (v)
+      vtkIdType pId = pointLocator->FindClosestPoint( polyData->GetPoint( i ) );
 
-    svecs->SetComponent( i, 0, vecX );
-    svecs->SetComponent( i, 1, vecY );
-    svecs->SetComponent( i, 2, vecZ );
+      // use d(p,v) as a radius to find other particles close by
+      double x = polyData->GetPoint( i )[0] - pdata->GetPoint( pId )[0];
+      double y = polyData->GetPoint( i )[1] - pdata->GetPoint( pId )[1];
+      double z = polyData->GetPoint( i )[2] - pdata->GetPoint( pId )[2];
+      double rad = sqrt( x * x + y * y + z * z );
 
-    pInRadius->Delete();
+      vtkIdList* pInRadius = vtkIdList::New();
+      pointLocator->FindClosestNPoints( 8, polyData->GetPoint( i ), pInRadius );
+
+      // assign scalar value based on a weighted scheme
+      float wtScalar = 0.0f;
+      float radSum = 0.0f;
+      float r[8];
+      float vecX = 0.0f;
+      float vecY = 0.0f;
+      float vecZ = 0.0f;
+      for ( unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++ )
+      {
+        // get a particle position
+        vtkIdType currID = pInRadius->GetId( p );
+
+        // compute distance to current particle
+        x = polyData->GetPoint( i )[0] - pdata->GetPoint( currID )[0];
+        y = polyData->GetPoint( i )[1] - pdata->GetPoint( currID )[1];
+        z = polyData->GetPoint( i )[2] - pdata->GetPoint( currID )[2];
+        r[p] = 1.0f / ( x * x + y * y + z * z );
+
+        // multiply scalar value by weight and add to running sum
+        radSum += r[p];
+      }
+
+      for ( unsigned int p = 0; p < pInRadius->GetNumberOfIds(); p++ )
+      {
+        vtkIdType currID = pInRadius->GetId( p );
+        wtScalar += r[p] / radSum * mags->GetValue( currID );
+        vecX += r[p] / radSum * vectors->GetComponent( currID, 0 );
+        vecY += r[p] / radSum * vectors->GetComponent( currID, 1 );
+        vecZ += r[p] / radSum * vectors->GetComponent( currID, 2 );
+      }
+
+      smags->SetValue( i, wtScalar );
+
+      svecs->SetComponent( i, 0, vecX );
+      svecs->SetComponent( i, 1, vecY );
+      svecs->SetComponent( i, 2, vecZ );
+
+      pInRadius->Delete();
+    }
+
+    // surface coloring
+    polyData->GetPointData()->SetScalars( smags );
+    polyData->GetPointData()->SetVectors( svecs );
   }
 
   this->glyphMapper->SetLookupTable( this->differenceLUT );
   this->arrowGlyphMapper->SetLookupTable( this->differenceLUT );
 
-  this->glyphPointSet->GetPointData()->SetVectors( vectors2 );
+  this->glyphPointSet->GetPointData()->SetVectors( vectors );
   this->glyphPointSet->GetPointData()->SetScalars( mags );
 
   this->glyphs->SetSourceConnection( this->arrowSource->GetOutputPort() );
@@ -1048,14 +1052,13 @@ void ShapeWorksView2::displayVectorField( const std::vector<itk::ParticlePositio
 
   this->arrowsVisible = true;
 
-  // surface coloring
-  polyData->GetPointData()->SetScalars( smags );
-  polyData->GetPointData()->SetVectors( svecs );
-  /// TODO only have first domain
-  this->surfaceMappers[0]->SetLookupTable( this->differenceLUT );
-  this->surfaceMappers[0]->InterpolateScalarsBeforeMappingOn();
-  this->surfaceMappers[0]->SetColorModeToMapScalars();
-  this->surfaceMappers[0]->ScalarVisibilityOn();
+  for ( int i = 0; i < this->numDomains; i++ )
+  {
+    this->surfaceMappers[i]->SetLookupTable( this->differenceLUT );
+    this->surfaceMappers[i]->InterpolateScalarsBeforeMappingOn();
+    this->surfaceMappers[i]->SetColorModeToMapScalars();
+    this->surfaceMappers[i]->ScalarVisibilityOn();
+  }
 
   this->redraw();
 }
@@ -1091,15 +1094,15 @@ void ShapeWorksView2::displaySpheres()
 
 void ShapeWorksView2::resetPointScalars()
 {
-  vtkSmartPointer<vtkUnsignedLongArray> mags = vtkSmartPointer<vtkUnsignedLongArray>::New();
-  mags->SetNumberOfComponents( 1 );
-  mags->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
+  vtkSmartPointer<vtkUnsignedLongArray> scalars = vtkSmartPointer<vtkUnsignedLongArray>::New();
+  scalars->SetNumberOfComponents( 1 );
+  scalars->SetNumberOfTuples( this->glyphPoints->GetNumberOfPoints() );
 
   for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
   {
-    mags->InsertTuple1( i, ( i * this->numDomains ) % ( this->glyphPoints->GetNumberOfPoints() ) );
+    scalars->InsertTuple1( i, ( i * this->numDomains ) % ( this->glyphPoints->GetNumberOfPoints() ) );
   }
-  this->glyphPointSet->GetPointData()->SetScalars( mags );
+  this->glyphPointSet->GetPointData()->SetScalars( scalars );
   this->glyphPoints->Modified();
 
   for ( int i = 0; i < this->numDomains; i++ )
@@ -1239,16 +1242,41 @@ void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
 
 vnl_vector<double> ShapeWorksView2::getDomainShape( const vnl_vector<double> &shape, int domain )
 {
-  int pointsPerDomain = shape.size() / this->numDomains;
-
-  vnl_vector<double> domainShape( pointsPerDomain );
-
-  for ( int j = 0; j < pointsPerDomain; j++ )
+  if ( numDomains == 1 )
   {
-    domainShape[j] = shape[domain * pointsPerDomain + j];
+    return shape;
+  }
+
+  vnl_vector<double> domainShape( this->pointsPerDomain );
+
+  for ( int j = 0; j < this->pointsPerDomain; j++ )
+  {
+    domainShape[j] = shape[domain * this->pointsPerDomain + j];
   }
 
   return domainShape;
+}
+
+vtkSmartPointer<vtkPolyData> ShapeWorksView2::getDomainPoints( int domain )
+{
+  if ( numDomains == 1 )
+  {
+    return this->glyphPointSet;
+  }
+
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  points->SetDataTypeToDouble();
+
+  for ( int j = 0; j < this->pointsPerDomain; j++ )
+  {
+    double p[3];
+    this->glyphPoints->GetPoint( domain * this->pointsPerDomain + j, p );
+    points->InsertNextPoint( p );
+  }
+
+  vtkSmartPointer<vtkPolyData> pointSet = vtkSmartPointer<vtkPolyData>::New();
+  pointSet->SetPoints( points );
+  return pointSet;
 }
 
 void ShapeWorksView2::setPregenSteps()

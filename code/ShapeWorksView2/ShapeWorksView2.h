@@ -32,12 +32,9 @@ class vtkGlyph3D;
 class vtkPolyDataMapper;
 class vtkActor;
 class vtkSphereSource;
-class vtkUnsignedLongArray;
 class vtkArrowSource;
 class vtkTransform;
 
-class CustomSurfaceReconstructionFilter;
-class vtkImageConstantPad;
 class vtkImageData;
 class vtkTransformPolyDataFilter;
 
@@ -129,13 +126,14 @@ private:
   void computeModeShape();
   void computeRegressionShape();
 
-
-  double getRegressionValue(int sliderValue);
+  double getRegressionValue( int sliderValue );
 
   void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
                              vnl_vector_fixed<double, 3> &ans ) const;
 
-  vnl_vector<double> getDomainShape( const vnl_vector<double> &shape, int domain);
+  vnl_vector<double> getDomainShape( const vnl_vector<double> &shape, int domain );
+
+  vtkSmartPointer<vtkPolyData> getDomainPoints( int domain );
 
   void setPregenSteps();
 
@@ -150,12 +148,9 @@ private:
   vtkSmartPointer<vtkPolyDataMapper>       glyphMapper;
   vtkSmartPointer<vtkActor>                glyphActor;
   vtkSmartPointer<vtkSphereSource>         sphereSource;
-  vtkSmartPointer<vtkUnsignedLongArray>    scalars;
 
   std::vector< vtkSmartPointer<vtkPolyDataMapper> >      surfaceMappers;
   std::vector< vtkSmartPointer<vtkActor> >               surfaceActors;
-
-  vtkSmartPointer<CustomSurfaceReconstructionFilter>  surface;
 
   vtkSmartPointer<vtkColorTransferFunction>   differenceLUT;
   vtkSmartPointer<vtkArrowSource>             arrowSource;
@@ -174,6 +169,8 @@ private:
 
   int numSamples;
   int numDomains;
+  int numPoints;
+  int pointsPerDomain;
 
   bool groupsAvailable;
   bool regressionAvailable;
