@@ -17,6 +17,7 @@
 // vtk
 #include <vtkIdList.h>
 #include <vtkActor.h>
+#include <vtkAppendPolyData.h>
 #include <vtkArrowSource.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkContourFilter.h>
@@ -161,9 +162,15 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
                                                    QString(), "VTK files (*.vtk)" );
   if ( filename.isEmpty() ) {return; }
 
-  /// TODO only writes the first domain
+  // combine polydata from each domain
+  vtkSmartPointer<vtkAppendPolyData> appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
+  for ( int i = 0; i < this->numDomains; i++ )
+  {
+    appendPolyData->AddInput( this->surfaceMappers[i]->GetInput() );
+  }
+
   vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-  surfaceWriter->SetInput( this->surfaceMappers[0]->GetInput() );
+  surfaceWriter->SetInput( appendPolyData->GetOutput() );
   surfaceWriter->SetFileName( filename.toStdString().c_str() );
   surfaceWriter->Write();
 }
