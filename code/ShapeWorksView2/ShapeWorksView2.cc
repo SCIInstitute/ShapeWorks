@@ -526,10 +526,7 @@ void ShapeWorksView2::updateAnalysisMode()
   this->ui->regressionAnimateCheckBox->setChecked( false );
 
   // update tabs for hiding/showing
-  this->ui->meanTab->adjustSize();
-  this->ui->samplesTab->adjustSize();
-  this->ui->pcaTab->adjustSize();
-  this->ui->regressionTab->adjustSize();
+  this->ui->pcaGridLayout->invalidate();
 
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();
