@@ -75,6 +75,10 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
     this, SLOT( glyphPropertiesChanged() ) );
 
   QObject::connect(
+    &Preferences::Instance(), SIGNAL( slidersChangedSignal() ),
+    this, SLOT( handleSliderPreferencesChanged() ) );
+
+  QObject::connect(
     &this->pcaAnimateTimer, SIGNAL( timeout() ),
     this, SLOT( handlePcaTimer() ) );
 
@@ -83,6 +87,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
     this, SLOT( handleRegressionTimer() ) );
 
   this->setPregenSteps();
+  this->updateSliders();
 
   if ( !this->readParameterFile( argv[1] ) )
   {
@@ -424,6 +429,12 @@ void ShapeWorksView2::glyphPropertiesChanged()
   this->updateGlyphProperties();
 }
 
+//---------------------------------------------------------------------------
+void ShapeWorksView2::handleSliderPreferencesChanged()
+{
+  this->updateSliders();
+}
+
 /********************************************************************/
 /* private methods                                                  */
 /********************************************************************/
@@ -730,6 +741,24 @@ void ShapeWorksView2::updateGlyphProperties()
   this->arrowGlyphs->Update();
 
   this->redraw();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::updateSliders()
+{
+  int numPcaSteps = Preferences::Instance().getNumPcaSteps();
+  int numRegressionSteps = Preferences::Instance().getNumRegressionSteps();
+
+  // integer math to get even sides regardless of the setting
+  int quarterRange = numPcaSteps / 4;
+  int halfRange = quarterRange * 2;
+
+  this->ui->pcaSlider->setMinimum( -halfRange );
+  this->ui->pcaSlider->setMaximum( halfRange );
+  this->ui->pcaSlider->setTickInterval(halfRange / 2);
+
+  this->ui->regressionSlider->setMinimum( 0 );
+  this->ui->regressionSlider->setMaximum( numRegressionSteps );
 }
 
 //---------------------------------------------------------------------------
@@ -1166,7 +1195,9 @@ void ShapeWorksView2::resetPointScalars()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::computeModeShape()
 {
-  double pcaSliderValue = this->ui->pcaSlider->value() / 10.0;
+  double pcaSliderValue = this->getPcaValue( this->ui->pcaSlider->value() );
+
+  std::cerr << this->ui->pcaSlider->value() << " => " << pcaSliderValue << "\n";
 
   unsigned int m = this->stats.Eigenvectors().columns() - ( this->ui->pcaModeSpinBox->value() + 1 );
 
@@ -1174,7 +1205,7 @@ void ShapeWorksView2::computeModeShape()
 
   double lambda = sqrt( this->stats.Eigenvalues()[m] );
 
-  this->ui->pcaValueLabel->setText( QString::number( pcaSliderValue ) );
+  this->ui->pcaValueLabel->setText( QString::number( pcaSliderValue, 'g', 2 ) );
   this->ui->pcaEigenValueLabel->setText( QString::number( this->stats.Eigenvalues()[m] ) );
   this->ui->pcaLambdaLabel->setText( QString::number( pcaSliderValue * lambda ) );
 
@@ -1187,7 +1218,7 @@ void ShapeWorksView2::computeModeShape()
     int pregenValue = this->ui->pcaSlider->value() + this->pregenSteps[step];
     if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
     {
-      double pcaValue = pregenValue / 10.0;
+      double pcaValue = this->getPcaValue( pregenValue );
       vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaValue * lambda ) );
       for ( int i = 0; i < this->numDomains; i++ )
       {
@@ -1227,7 +1258,17 @@ void ShapeWorksView2::computeRegressionShape()
 double ShapeWorksView2::getRegressionValue( int sliderValue )
 {
   // scale value back to range
-  return ( (double)sliderValue / this->ui->regressionSlider->maximum() * this->regressionRange ) + this->regressionMin;
+  return ( (double)sliderValue / (double)this->ui->regressionSlider->maximum() * this->regressionRange ) + this->regressionMin;
+}
+
+//---------------------------------------------------------------------------
+double ShapeWorksView2::getPcaValue( int sliderValue )
+{
+  float range = Preferences::Instance().getPcaRange();
+  int halfRange = this->ui->pcaSlider->maximum();
+
+  double value = (double)sliderValue / (double)halfRange * range;
+  return value;
 }
 
 //---------------------------------------------------------------------------

@@ -15,6 +15,9 @@ const int DEFAULT_COLOR_SCHEME = 0;
 const float DEFAULT_GLYPH_SIZE = 1.0f;
 const float DEFAULT_GLYPH_QUALITY = 5.0f;
 const float DEFAULT_NUM_THREADS = 100.0f;
+const float DEFAULT_PCA_RANGE = 2.0f;
+const int DEFAULT_PCA_STEPS = 40;
+const int DEFAULT_REGRESSION_STEPS = 50;
 
 Preferences& Preferences::Instance()
 {
@@ -108,7 +111,7 @@ void Preferences::setNumThreads( int value )
 {
   float ratio = (float) value / (float) QThread::idealThreadCount() * 100.0f;
   this->settings.setValue( "MeshCache/NumThreads", ratio );
-  this->threadingChangedSignal();
+  emit this->threadingChangedSignal();
 }
 
 bool Preferences::getParallelEnabled()
@@ -119,7 +122,40 @@ bool Preferences::getParallelEnabled()
 void Preferences::setParallelEnabled( bool enabled )
 {
   this->settings.setValue( "MeshCache/Parallel", enabled );
-  this->threadingChangedSignal();
+  emit this->threadingChangedSignal();
+}
+
+float Preferences::getPcaRange()
+{
+  return this->settings.value( "Sliders/PcaRange", DEFAULT_PCA_RANGE ).toFloat();
+}
+
+void Preferences::setPcaRange( float value )
+{
+  this->settings.setValue( "Sliders/PcaRange", value );
+  emit this->slidersChangedSignal();
+}
+
+int Preferences::getNumPcaSteps()
+{
+  return this->settings.value( "Sliders/PcaSteps", DEFAULT_PCA_STEPS ).toInt();
+}
+
+void Preferences::setNumPcaSteps( int value )
+{
+  this->settings.setValue( "Sliders/PcaSteps", value );
+  emit this->slidersChangedSignal();
+}
+
+int Preferences::getNumRegressionSteps()
+{
+  return this->settings.value( "Sliders/RegressionSteps", DEFAULT_REGRESSION_STEPS ).toInt();
+}
+
+void Preferences::setNumRegressionSteps( int value )
+{
+  this->settings.setValue( "Sliders/RegressionSteps", value );
+  emit this->slidersChangedSignal();
 }
 
 void Preferences::restoreDefaults()
@@ -131,4 +167,7 @@ void Preferences::restoreDefaults()
   this->settings.setValue( "Visualization/ColorScheme", DEFAULT_COLOR_SCHEME );
   this->settings.setValue( "Visualization/GlyphSize", DEFAULT_GLYPH_SIZE );
   this->settings.setValue( "Visualization/GlyphQuality", DEFAULT_GLYPH_QUALITY );
+  this->settings.setValue( "Sliders/PcaRange", DEFAULT_PCA_RANGE );
+  this->settings.setValue( "Sliders/PcaSteps", DEFAULT_PCA_STEPS );
+  this->settings.setValue( "Sliders/RegressionSteps", DEFAULT_REGRESSION_STEPS );
 }

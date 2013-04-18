@@ -41,42 +41,6 @@ MeshGenerator::MeshGenerator()
   this->powercrust = vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
   this->powercrust->SetInput( this->pointSet );
 
-  //this->cleanPolyData = vtkSmartPointer<vtkCleanPolyData>::New();
-  //this->cleanPolyData->SetInputConnection( this->powercrust->GetOutputPort() );
-/*
-   this->triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-   this->triangleFilter->SetInputConnection( this->powercrust->GetOutputPort() );
-   //this->triangleFilter->SetInputConnection( this->cleanPolyData->GetOutputPort() );
-
-   this->cleanPolyData = vtkSmartPointer<vtkCleanPolyData>::New();
-   this->cleanPolyData->SetInputConnection( this->triangleFilter->GetOutputPort() );
-   //  this->cleanPolyData->SetTolerance(0.5);
-
-
-
-   this->decimate = vtkSmartPointer<vtkDecimatePro>::New();
-   //this->decimate->SetInputConnection(this->butterfly->GetOutputPort());
-   //this->decimate->SetInputConnection(this->cleanPolyData->GetOutputPort());
-   this->decimate->SetInputConnection(this->triangleFilter->GetOutputPort());
-   this->decimate->SetTargetReduction(0.90);
-   this->decimate->PreserveTopologyOff();
-   this->decimate->BoundaryVertexDeletionOff();
-   this->decimate->SplittingOn();
-
-   this->butterfly = vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
-   this->butterfly->SetInputConnection(this->decimate->GetOutputPort());
-   this->butterfly->SetNumberOfSubdivisions(1);
-
-
-   this->powerPolydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
-   this->powerPolydataNormals->SplittingOff();
-   this->powerPolydataNormals->SetInputConnection( this->butterfly->GetOutputPort() );
-   //this->powerPolydataNormals->SetInputConnection( this->triangleFilter->GetOutputPort() );
-   //this->powerPolydataNormals->SetInputConnection( this->cleanPolyData->GetOutputPort() );
-   
- */
-
-  //this->powerCrustTail = this->powercrust->GetOutputPort();
 #endif // ifdef SW_USE_POWERCRUST
 
   this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
@@ -87,30 +51,12 @@ MeshGenerator::MeshGenerator()
   this->windowSincFilter = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
   this->windowSincFilter->SetInputConnection( this->contourFilter->GetOutputPort() );
 
-
-  //this->regularTail = this->contourFilter->GetOutputPort();
-
-  //this->windowSincFilter->BoundarySmoothingOff();
-  //this->windowSincFilter->FeatureEdgeSmoothingOff();
-  //this->windowSincFilter->SetFeatureAngle(120.0);
-  //this->windowSincFilter->NonManifoldSmoothingOn();
-  //this->windowSincFilter->NormalizeCoordinatesOn();
-
-  //this->reverseSense = vtkSmartPointer<vtkReverseSense>::New();
-//  this->reverseSense->SetInputConnection( this->contourFilter->GetOutputPort() );
-//this->reverseSense->ReverseCellsOn();
-//this->reverseSense->ReverseNormalsOn();
-
-  //this->smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-  //this->smoothFilter->SetInputConnection( this->reverseSense->GetOutputPort() );
-  //this->smoothFilter->SetNumberOfIterations( 50 );
-  //this->smoothFilter->SetRelaxationFactor( 0.05 );
+  this->smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+  this->smoothFilter->SetInputConnection( this->contourFilter->GetOutputPort() );
 
   this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->polydataNormals->SplittingOff();
-  //this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort() );
-  //this->polydataNormals->SetInputConnection( this->reverseSense->GetOutputPort() );
-  // 
+
   this->updatePipeline();
 }
 
@@ -135,7 +81,7 @@ void MeshGenerator::setUsePowerCrust( bool enabled )
 
 void MeshGenerator::setSmoothingAmount( float amount )
 {
-  if (amount <= 0)
+  if ( amount <= 0 )
   {
     this->smoothingEnabled = false;
   }
@@ -144,6 +90,9 @@ void MeshGenerator::setSmoothingAmount( float amount )
     this->smoothingEnabled = true;
     this->windowSincFilter->SetNumberOfIterations( amount );
     this->windowSincFilter->SetPassBand( 0.05 );
+
+    //this->smoothFilter->SetNumberOfIterations( amount );
+    //this->smoothFilter->SetRelaxationFactor(0.05);
   }
 
   this->updatePipeline();
@@ -180,7 +129,6 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   return polyData;
 }
 
-
 void MeshGenerator::updatePipeline()
 {
   if ( this->usePowerCrust )
@@ -191,9 +139,10 @@ void MeshGenerator::updatePipeline()
   }
   else
   {
-    if (smoothingEnabled)
+    if ( smoothingEnabled )
     {
-      this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort());
+      this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
+      //this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort());
     }
     else
     {

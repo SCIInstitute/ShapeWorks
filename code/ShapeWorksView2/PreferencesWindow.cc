@@ -68,6 +68,23 @@ void PreferencesWindow::on_parallelEnabled_stateChanged( int state )
   Preferences::Instance().setParallelEnabled( this->ui->parallelEnabled->isChecked() );
 }
 
+
+void PreferencesWindow::on_pcaRangeSpinBox_valueChanged( double value )
+{
+  Preferences::Instance().setPcaRange(this->ui->pcaRangeSpinBox->value());
+}
+
+void PreferencesWindow::on_pcaStepsSpinBox_valueChanged( int value )
+{
+  Preferences::Instance().setNumPcaSteps(this->ui->pcaStepsSpinBox->value());
+}
+
+void PreferencesWindow::on_regressionStepsSpinBox_valueChanged( int value )
+{
+  Preferences::Instance().setNumRegressionSteps(this->ui->regressionStepsSpinBox->value());
+}
+
+
 void PreferencesWindow::restoreDefaults()
 {
   Preferences::Instance().restoreDefaults();
@@ -85,6 +102,10 @@ void PreferencesWindow::setValuesFromPreferences()
 
   this->ui->numThreadsSlider->setValue( Preferences::Instance().getNumThreads() );
   this->ui->parallelEnabled->setChecked( Preferences::Instance().getParallelEnabled() );
+
+  this->ui->pcaRangeSpinBox->setValue( Preferences::Instance().getPcaRange() );
+  this->ui->pcaStepsSpinBox->setValue( Preferences::Instance().getNumPcaSteps() );
+  this->ui->regressionStepsSpinBox->setValue( Preferences::Instance().getNumRegressionSteps() );
 
   this->updateLabels();
 }

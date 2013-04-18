@@ -34,6 +34,10 @@ public Q_SLOTS:
   void on_numThreadsSlider_valueChanged( int value );
   void on_parallelEnabled_stateChanged( int state );
 
+  void on_pcaRangeSpinBox_valueChanged( double value );
+  void on_pcaStepsSpinBox_valueChanged( int value );
+  void on_regressionStepsSpinBox_valueChanged( int value );
+
   void restoreDefaults();
 
 private:

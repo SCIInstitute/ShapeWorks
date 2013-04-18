@@ -63,10 +63,6 @@ private:
   vtkSmartPointer<vtkCleanPolyData>        cleanPolyData;
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
 
-  vtkSmartPointer<vtkDecimatePro>          decimate;
-  vtkSmartPointer<vtkPolyDataNormals>      powerPolydataNormals;
-  vtkSmartPointer<vtkButterflySubdivisionFilter> butterfly;
-
   bool usePowerCrust;
   bool smoothingEnabled;
 };

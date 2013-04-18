@@ -48,12 +48,22 @@ public:
   bool getParallelEnabled();
   void setParallelEnabled( bool enabled );
 
+  float getPcaRange();
+  void setPcaRange( float value );
+
+  int getNumPcaSteps();
+  void setNumPcaSteps( int value );
+
+  int getNumRegressionSteps();
+  void setNumRegressionSteps( int value );
+
   void restoreDefaults();
 
 Q_SIGNALS:
   void colorSchemeChanged( int newIndex );
   void glyphPropertiesChanged();
   void threadingChangedSignal();
+  void slidersChangedSignal();
 
 private:
 

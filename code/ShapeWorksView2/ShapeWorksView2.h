@@ -100,6 +100,7 @@ public Q_SLOTS:
 
   void colorSchemeChanged();
   void glyphPropertiesChanged();
+  void handleSliderPreferencesChanged();
 
 private:
 
@@ -112,7 +113,10 @@ private:
   void updateActors();
   void updateColorScheme();
   void updateGlyphProperties();
+  void updateSliders();
   void updateDifferenceLUT( float r0, float r1 );
+
+  
 
   void redraw();
 
@@ -134,6 +138,7 @@ private:
   void computeRegressionShape();
 
   double getRegressionValue( int sliderValue );
+  double getPcaValue( int sliderValue );
 
   void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
                              vnl_vector_fixed<double, 3> &ans ) const;
