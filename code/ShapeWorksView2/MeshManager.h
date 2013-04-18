@@ -38,6 +38,9 @@ public:
   void setSampleSpacing( double spacing );
   double getSampleSpacing();
 
+  void setSmoothingAmount( float amount);
+  float getSmoothing();
+
   void setUsePowerCrust( bool enabled );
 
   // pre-generate and cache a mesh for this shape
@@ -76,6 +79,7 @@ private:
   int neighborhoodSize;
   double sampleSpacing;
   bool usePowerCrust;
+  float smoothingAmount;
 };
 
 #endif // ifndef MESH_Manager_H

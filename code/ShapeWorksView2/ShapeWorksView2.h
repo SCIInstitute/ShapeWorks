@@ -96,6 +96,7 @@ public Q_SLOTS:
   void on_usePowerCrustCheckBox_stateChanged();
   void on_neighborhoodSpinBox_valueChanged();
   void on_spacingSpinBox_valueChanged();
+  void on_smoothingSlider_valueChanged();
 
   void colorSchemeChanged();
   void glyphPropertiesChanged();

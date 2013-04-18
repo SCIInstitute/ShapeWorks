@@ -17,7 +17,7 @@
 
 #include <vtkSmartPointer.h>
 
-//#define SW_USE_POWERCRUST
+#define SW_USE_POWERCRUST
 
 class CustomSurfaceReconstructionFilter;
 class vtkPowerCrustSurfaceReconstruction;
@@ -29,6 +29,9 @@ class vtkPoints;
 class vtkPolyData;
 class vtkTriangleFilter;
 class vtkCleanPolyData;
+class vtkWindowedSincPolyDataFilter;
+class vtkDecimatePro;
+class vtkButterflySubdivisionFilter;
 
 class MeshGenerator
 {
@@ -39,10 +42,13 @@ public:
   void setNeighborhoodSize( int size );
   void setSampleSpacing( double spacing );
   void setUsePowerCrust( bool enabled );
+  void setSmoothingAmount( float amount ); // 0-100
 
   vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
 
 private:
+
+  void updatePipeline();
 
   vtkSmartPointer<CustomSurfaceReconstructionFilter>  surfaceReconstruction;
   vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust;
@@ -55,8 +61,14 @@ private:
   vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
   vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
   vtkSmartPointer<vtkCleanPolyData>        cleanPolyData;
+  vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
+
+  vtkSmartPointer<vtkDecimatePro>          decimate;
+  vtkSmartPointer<vtkPolyDataNormals>      powerPolydataNormals;
+  vtkSmartPointer<vtkButterflySubdivisionFilter> butterfly;
 
   bool usePowerCrust;
+  bool smoothingEnabled;
 };
 
 #endif // ifndef MESH_GENERATOR_H

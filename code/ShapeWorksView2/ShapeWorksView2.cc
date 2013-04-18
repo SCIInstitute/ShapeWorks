@@ -406,6 +406,13 @@ void ShapeWorksView2::on_spacingSpinBox_valueChanged()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksView2::on_smoothingSlider_valueChanged()
+{
+  this->updateSurfaceSettings();
+  this->redraw();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksView2::colorSchemeChanged()
 {
   this->updateColorScheme();
@@ -539,6 +546,7 @@ void ShapeWorksView2::initializeSurfaces()
     this->surfaceActors[i]->SetMapper( this->surfaceMappers[i] );
     this->surfaceActors[i]->GetProperty()->SetSpecular( .4 );
     this->surfaceActors[i]->GetProperty()->SetSpecularPower( 25 );
+    //this->surfaceActors[i]->GetProperty()->SetRepresentationToWireframe();
   }
   this->updateSurfaceSettings();
 }
@@ -631,6 +639,8 @@ void ShapeWorksView2::updateSurfaceSettings()
 {
   this->meshManager.setNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
   this->meshManager.setSampleSpacing( this->ui->spacingSpinBox->value() );
+  float smoothingAmount = (float)this->ui->smoothingSlider->value() / (float)this->ui->smoothingSlider->maximum() * 100.0f;
+  this->meshManager.setSmoothingAmount( smoothingAmount );
   this->meshManager.setUsePowerCrust( this->ui->usePowerCrustCheckBox->isChecked() );
 
   bool powercrust = this->ui->usePowerCrustCheckBox->isChecked();
@@ -638,6 +648,7 @@ void ShapeWorksView2::updateSurfaceSettings()
   // update UI
   this->ui->neighborhoodSpinBox->setEnabled( !powercrust );
   this->ui->spacingSpinBox->setEnabled( !powercrust );
+  this->ui->smoothingSlider->setEnabled( !powercrust );
 
   this->displayShape( this->currentShape );
 }

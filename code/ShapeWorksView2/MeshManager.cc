@@ -13,6 +13,8 @@
 
 MeshManager::MeshManager()
 {
+  this->smoothingAmount = 0;
+
   // monitor changes to threading preferences
   QObject::connect(
     &Preferences::Instance(), SIGNAL( threadingChangedSignal() ),
@@ -48,6 +50,19 @@ void MeshManager::setSampleSpacing( double spacing )
 double MeshManager::getSampleSpacing()
 {
   return this->sampleSpacing;
+}
+
+void MeshManager::setSmoothingAmount( float amount )
+{
+  this->smoothingAmount = amount;
+  this->initializeThreads();
+  this->meshCache.clear();
+  this->meshGenerator.setSmoothingAmount( amount );
+}
+
+float MeshManager::getSmoothing()
+{
+  return this->smoothingAmount;
 }
 
 void MeshManager::setUsePowerCrust( bool enabled )
@@ -119,7 +134,9 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
 
 void MeshManager::initializeThreads()
 {
+  //std::cerr << "shutting down threads\n";
   this->shutdownThreads();
+  //std::cerr << "done shutting down threads\n";
 
   if ( !Preferences::Instance().getParallelEnabled() )
   {
@@ -147,6 +164,7 @@ void MeshManager::initializeThreads()
 
       workers[i]->getMeshGenerator()->setNeighborhoodSize( this->neighborhoodSize );
       workers[i]->getMeshGenerator()->setSampleSpacing( this->sampleSpacing );
+      workers[i]->getMeshGenerator()->setSmoothingAmount( this->smoothingAmount );
       workers[i]->getMeshGenerator()->setUsePowerCrust( this->usePowerCrust );
       workers[i]->moveToThread( threads[i] );
       threads[i]->start();
@@ -165,12 +183,11 @@ void MeshManager::shutdownThreads()
   {
     for ( size_t i = 0; i < this->threads.size(); i++ )
     {
-      this->threads[i]->exit();
-    }
-
-    for ( size_t i = 0; i < this->threads.size(); i++ )
-    {
-      this->threads[i]->wait();
+      while( this->threads[i]->isRunning() )
+      {
+        this->threads[i]->exit();
+        this->threads[i]->wait(1000);
+      }
     }
 
     for ( size_t i = 0; i < this->threads.size(); i++ )
