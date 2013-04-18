@@ -48,6 +48,7 @@
 #include "CustomSurfaceReconstructionFilter.h"
 #include <Preferences.h>
 
+//---------------------------------------------------------------------------
 ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
 {
   this->ui = new Ui_ShapeWorksView2;
@@ -110,6 +111,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->updateAnalysisMode();
 }
 
+//---------------------------------------------------------------------------
 ShapeWorksView2::~ShapeWorksView2()
 {}
 
@@ -117,6 +119,7 @@ ShapeWorksView2::~ShapeWorksView2()
 /* Qt event handling                                                */
 /********************************************************************/
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::closeEvent( QCloseEvent* event )
 {
   // close the preferences window in case it is open
@@ -126,6 +129,7 @@ void ShapeWorksView2::closeEvent( QCloseEvent* event )
   Preferences::Instance().getSettings().setValue( "mainwindow/size", this->size() );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionExportPcaLoadings_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, "Export PCA Loadings As... ",
@@ -135,6 +139,7 @@ void ShapeWorksView2::on_actionExportPcaLoadings_triggered()
   this->stats.WriteCSVFile2( filename.toStdString() );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionExportPoints_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, "Export Points As... ",
@@ -157,6 +162,7 @@ void ShapeWorksView2::on_actionExportPoints_triggered()
   writer->Write();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, "Export Surface Mesh As... ",
@@ -176,41 +182,49 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
   surfaceWriter->Write();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionQuit_triggered()
 {
   this->close();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionPreferences_triggered()
 {
   Preferences::Instance().showWindow();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_tabWidget_currentChanged()
 {
   this->updateAnalysisMode();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_meanOverallButton_clicked()
 {
   this->updateAnalysisMode();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_meanGroup1Button_clicked()
 {
   this->updateAnalysisMode();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_meanGroup2Button_clicked()
 {
   this->updateAnalysisMode();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_meanDifferenceButton_clicked()
 {
   this->updateAnalysisMode();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_sampleSpinBox_valueChanged()
 {
   // this will make the UI appear more responsive
@@ -219,24 +233,28 @@ void ShapeWorksView2::on_sampleSpinBox_valueChanged()
   this->updateAnalysisMode();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_medianButton_clicked()
 {
   int sampleNumber = this->stats.ComputeMedianShape( -32 );       // -32 means use both groups
   this->ui->sampleSpinBox->setValue( sampleNumber );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_medianGroup1Button_clicked()
 {
   int sampleNumber = this->stats.ComputeMedianShape( 1 );
   this->ui->sampleSpinBox->setValue( sampleNumber );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_medianGroup2Button_clicked()
 {
   int sampleNumber = this->stats.ComputeMedianShape( 2 );
   this->ui->sampleSpinBox->setValue( sampleNumber );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_pcaSlider_valueChanged()
 {
   // this will make the slider handle redraw making the UI appear more responsive
@@ -246,12 +264,14 @@ void ShapeWorksView2::on_pcaSlider_valueChanged()
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_pcaModeSpinBox_valueChanged()
 {
   this->computeModeShape();
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_pcaGroupSlider_valueChanged()
 {
   // this will make the UI appear more responsive
@@ -261,6 +281,7 @@ void ShapeWorksView2::on_pcaGroupSlider_valueChanged()
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_pcaAnimateCheckBox_stateChanged()
 {
   if ( this->ui->pcaAnimateCheckBox->isChecked() )
@@ -275,6 +296,7 @@ void ShapeWorksView2::on_pcaAnimateCheckBox_stateChanged()
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::handlePcaTimer()
 {
   int value = this->ui->pcaSlider->value();
@@ -296,6 +318,7 @@ void ShapeWorksView2::handlePcaTimer()
   this->ui->pcaSlider->setValue( value );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_regressionSlider_valueChanged()
 {
   this->ui->regressionLabel->setText( QString::number( this->getRegressionValue( this->ui->regressionSlider->value() ) ) );
@@ -312,6 +335,7 @@ void ShapeWorksView2::on_regressionSlider_valueChanged()
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_regressionAnimateCheckBox_stateChanged()
 {
   if ( this->ui->regressionAnimateCheckBox->isChecked() )
@@ -326,6 +350,7 @@ void ShapeWorksView2::on_regressionAnimateCheckBox_stateChanged()
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::handleRegressionTimer()
 {
   int value = this->ui->regressionSlider->value();
@@ -347,39 +372,46 @@ void ShapeWorksView2::handleRegressionTimer()
   this->ui->regressionSlider->setValue( value );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_showGlyphs_stateChanged()
 {
   this->updateActors();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_showSurface_stateChanged()
 {
   this->updateActors();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_usePowerCrustCheckBox_stateChanged()
 {
   this->updateSurfaceSettings();
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_neighborhoodSpinBox_valueChanged()
 {
   this->updateSurfaceSettings();
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_spacingSpinBox_valueChanged()
 {
   this->updateSurfaceSettings();
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::colorSchemeChanged()
 {
   this->updateColorScheme();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::glyphPropertiesChanged()
 {
   this->updateGlyphProperties();
@@ -389,6 +421,7 @@ void ShapeWorksView2::glyphPropertiesChanged()
 /* private methods                                                  */
 /********************************************************************/
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::initializeRenderer()
 {
   // Set up renderer and interactor.
@@ -407,6 +440,7 @@ void ShapeWorksView2::initializeRenderer()
   this->renderer->SetBackground( col[0], col[1], col[2] );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::initializeGlyphs()
 {
   this->lut = vtkSmartPointer<vtkLookupTable>::New();
@@ -490,6 +524,7 @@ void ShapeWorksView2::initializeGlyphs()
   this->arrowGlyphActor->SetMapper( this->arrowGlyphMapper );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::initializeSurfaces()
 {
   this->surfaceMappers.resize( this->numDomains );
@@ -508,6 +543,7 @@ void ShapeWorksView2::initializeSurfaces()
   this->updateSurfaceSettings();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::updateAnalysisMode()
 {
   // update UI
@@ -590,6 +626,7 @@ void ShapeWorksView2::updateAnalysisMode()
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::updateSurfaceSettings()
 {
   this->meshManager.setNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
@@ -605,6 +642,7 @@ void ShapeWorksView2::updateSurfaceSettings()
   this->displayShape( this->currentShape );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::updateActors()
 {
   this->renderer->RemoveActor( this->glyphActor );
@@ -637,6 +675,7 @@ void ShapeWorksView2::updateActors()
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::updateColorScheme()
 {
   int scheme = Preferences::Instance().getColorScheme();
@@ -661,6 +700,7 @@ void ShapeWorksView2::updateColorScheme()
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::updateGlyphProperties()
 {
   float size = Preferences::Instance().getGlyphSize();
@@ -681,11 +721,13 @@ void ShapeWorksView2::updateGlyphProperties()
   this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::redraw()
 {
   this->renderer->GetRenderWindow()->Render();
 }
 
+//---------------------------------------------------------------------------
 bool ShapeWorksView2::readParameterFile( char* filename )
 {
   // Read parameter file
@@ -759,6 +801,7 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   return true;
 }
 
+//---------------------------------------------------------------------------
 bool ShapeWorksView2::readExplanatoryVariables( char* filename )
 {
   TiXmlDocument doc( filename );
@@ -825,6 +868,7 @@ bool ShapeWorksView2::readExplanatoryVariables( char* filename )
   return true;
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 {
   if ( shape.size() == 0 )
@@ -834,7 +878,7 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
 
   // make a copy of the shape
   this->currentShape = shape;
- 
+
   // assign shape points to the glyph point set
   unsigned int k = 0;
   for ( unsigned int i = 0; i < this->stats.ShapeMatrix().rows() / 3; i++ )
@@ -850,7 +894,7 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   {
     for ( int i = 0; i < this->numDomains; i++ )
     {
-      vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( this->getDomainShape(shape, i) );
+      vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( this->getDomainShape( shape, i ) );
 
       // retrieve the mesh and set it for display
       this->surfaceMappers[i]->SetInput( polyData );
@@ -863,6 +907,7 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::displayVectorField(
   const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs )
 {
@@ -873,11 +918,8 @@ void ShapeWorksView2::displayVectorField(
   }
 
   /////////////////////////////////////////////////////////////////////////////////
-  // First, assign values at each correspondence point based on the image gradient
+  // Step 1. Assign values at each correspondence point based on the image gradient
   /////////////////////////////////////////////////////////////////////////////////
-
-  double minmag = 1.0e20;
-  double maxmag = 0.0;
 
   // Dot product difference vectors with the surface normals.
   vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
@@ -885,6 +927,50 @@ void ShapeWorksView2::displayVectorField(
 
   vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
   vectors->SetNumberOfComponents( 3 );
+
+  this->computePointDifferences( vecs, magnitudes, vectors );
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Step 2. Assign values at each mesh point based on the closest correspondence points
+  this->computeSurfaceDifferences( magnitudes, vectors );
+  /////////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Step 3. Assign the vectors and magnitudes to the glyphs and surface
+  /////////////////////////////////////////////////////////////////////////////////
+
+  // assign glyph vectors and magnitudes
+  this->glyphPointSet->GetPointData()->SetVectors( vectors );
+  this->glyphPointSet->GetPointData()->SetScalars( magnitudes );
+
+  this->glyphs->SetSourceConnection( this->arrowSource->GetOutputPort() );
+  this->glyphs->SetScaleModeToScaleByVector();
+
+  // update glyph rendering
+  this->glyphMapper->SetLookupTable( this->differenceLUT );
+  this->arrowGlyphMapper->SetLookupTable( this->differenceLUT );
+  this->arrowsVisible = true;
+  this->renderer->AddActor( this->arrowGlyphActor );
+
+  // update surface rendering
+  for ( int i = 0; i < this->numDomains; i++ )
+  {
+    this->surfaceMappers[i]->SetLookupTable( this->differenceLUT );
+    this->surfaceMappers[i]->InterpolateScalarsBeforeMappingOn();
+    this->surfaceMappers[i]->SetColorModeToMapScalars();
+    this->surfaceMappers[i]->ScalarVisibilityOn();
+  }
+
+  this->redraw();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::computePointDifferences(
+  const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs,
+  vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors )
+{
+  double minmag = 1.0e20;
+  double maxmag = 0.0;
 
   for ( int domain = 0; domain < this->numDomains; domain++ )
   {
@@ -936,11 +1022,13 @@ void ShapeWorksView2::displayVectorField(
       magnitudes->InsertNextTuple1( mag );
     }
   }
+  this->updateDifferenceLUT( minmag, maxmag );
+}
 
-  /////////////////////////////////////////////////////////////////////////////////////
-  // Next, assign values at each mesh point based on the closest correspondence points
-  /////////////////////////////////////////////////////////////////////////////////////
-
+//---------------------------------------------------------------------------
+void ShapeWorksView2::computeSurfaceDifferences( vtkSmartPointer<vtkFloatArray> magnitudes,
+                                                 vtkSmartPointer<vtkFloatArray> vectors )
+{
   vtkSmartPointer<vtkPolyData> pointData = vtkSmartPointer<vtkPolyData>::New();
   pointData->SetPoints( this->glyphPoints );
 
@@ -1010,37 +1098,9 @@ void ShapeWorksView2::displayVectorField(
     polyData->GetPointData()->SetScalars( surfaceMagnitudes );
     polyData->GetPointData()->SetVectors( surfaceVectors );
   }
-
-  /////////////////////////////////////////////////////////////////////////////////////
-  // Finally, assign the vectors and magnitudes to the glyphs and surface
-  /////////////////////////////////////////////////////////////////////////////////////
-
-  this->glyphMapper->SetLookupTable( this->differenceLUT );
-  this->arrowGlyphMapper->SetLookupTable( this->differenceLUT );
-
-  this->glyphPointSet->GetPointData()->SetVectors( vectors );
-  this->glyphPointSet->GetPointData()->SetScalars( magnitudes );
-
-  this->glyphs->SetSourceConnection( this->arrowSource->GetOutputPort() );
-  this->glyphs->SetScaleModeToScaleByVector();
-
-  this->updateDifferenceLUT( minmag, maxmag );
-
-  this->renderer->AddActor( this->arrowGlyphActor );
-
-  this->arrowsVisible = true;
-
-  for ( int i = 0; i < this->numDomains; i++ )
-  {
-    this->surfaceMappers[i]->SetLookupTable( this->differenceLUT );
-    this->surfaceMappers[i]->InterpolateScalarsBeforeMappingOn();
-    this->surfaceMappers[i]->SetColorModeToMapScalars();
-    this->surfaceMappers[i]->ScalarVisibilityOn();
-  }
-
-  this->redraw();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::displayMeanDifference()
 {
   std::vector< itk::ParticlePositionReader<3>::PointType > vecs;
@@ -1056,6 +1116,7 @@ void ShapeWorksView2::displayMeanDifference()
   this->displayVectorField( vecs );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::displaySpheres()
 {
   this->arrowsVisible = false;
@@ -1070,6 +1131,7 @@ void ShapeWorksView2::displaySpheres()
   this->updateGlyphProperties();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::resetPointScalars()
 {
   vtkSmartPointer<vtkUnsignedLongArray> scalars = vtkSmartPointer<vtkUnsignedLongArray>::New();
@@ -1089,6 +1151,8 @@ void ShapeWorksView2::resetPointScalars()
     this->surfaceMappers[i]->ScalarVisibilityOff();
   }
 }
+
+//---------------------------------------------------------------------------
 void ShapeWorksView2::computeModeShape()
 {
   double pcaSliderValue = this->ui->pcaSlider->value() / 10.0;
@@ -1103,12 +1167,8 @@ void ShapeWorksView2::computeModeShape()
   this->ui->pcaEigenValueLabel->setText( QString::number( this->stats.Eigenvalues()[m] ) );
   this->ui->pcaLambdaLabel->setText( QString::number( pcaSliderValue * lambda ) );
 
-  std::cerr << "size = " << this->stats.GroupID().size() << "\n";
-
   double groupSliderValue = this->ui->pcaGroupSlider->value();
-  double ratio = groupSliderValue / static_cast<double>( this->ui->pcaGroupSlider->maximum() );
-
-  std::cerr << "ratio = " << ratio << "\n";
+  double groupRatio = groupSliderValue / static_cast<double>( this->ui->pcaGroupSlider->maximum() );
 
   // pre-generate
   for ( int step = 0; step < this->pregenSteps.size(); step++ )
@@ -1117,7 +1177,7 @@ void ShapeWorksView2::computeModeShape()
     if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
     {
       double pcaValue = pregenValue / 10.0;
-      vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaValue * lambda ) );
+      vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaValue * lambda ) );
       for ( int i = 0; i < this->numDomains; i++ )
       {
         this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
@@ -1125,12 +1185,12 @@ void ShapeWorksView2::computeModeShape()
     }
   }
 
-  this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * ratio ) + ( e * ( pcaSliderValue * lambda ) ) );
+  this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaSliderValue * lambda ) ) );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::computeRegressionShape()
 {
-
   // pre-generate
   for ( int step = 0; step < this->pregenSteps.size(); step++ )
   {
@@ -1152,12 +1212,14 @@ void ShapeWorksView2::computeRegressionShape()
   this->displayShape( shape );
 }
 
+//---------------------------------------------------------------------------
 double ShapeWorksView2::getRegressionValue( int sliderValue )
 {
   // scale value back to range
   return ( (double)sliderValue / this->ui->regressionSlider->maximum() * this->regressionRange ) + this->regressionMin;
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::trilinearInterpolate( vtkImageData* grad, double x, double y, double z, vnl_vector_fixed<double, 3> &ans ) const
 {
   // Access gradient image information.
@@ -1178,6 +1240,7 @@ void ShapeWorksView2::trilinearInterpolate( vtkImageData* grad, double x, double
   return;
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
 {
   this->differenceLUT->RemoveAllPoints();
@@ -1202,6 +1265,7 @@ void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
   this->differenceLUT->AddHSVPoint( 0.0, 0.0, 0.0, 1.0 );
 }
 
+//---------------------------------------------------------------------------
 vnl_vector<double> ShapeWorksView2::getDomainShape( const vnl_vector<double> &shape, int domain )
 {
   if ( numDomains == 1 )
@@ -1221,6 +1285,7 @@ vnl_vector<double> ShapeWorksView2::getDomainShape( const vnl_vector<double> &sh
   return domainShape;
 }
 
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> ShapeWorksView2::getDomainPoints( int domain )
 {
   if ( numDomains == 1 )
@@ -1243,6 +1308,7 @@ vtkSmartPointer<vtkPolyData> ShapeWorksView2::getDomainPoints( int domain )
   return pointSet;
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksView2::setPregenSteps()
 {
   // when animating, we want to pre-generate in a specific direction first

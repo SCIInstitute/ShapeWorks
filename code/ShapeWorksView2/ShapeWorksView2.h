@@ -34,6 +34,7 @@ class vtkActor;
 class vtkSphereSource;
 class vtkArrowSource;
 class vtkTransform;
+class vtkFloatArray;
 
 class vtkImageData;
 class vtkTransformPolyDataFilter;
@@ -119,6 +120,11 @@ private:
 
   void displayShape( const vnl_vector<double> &pos );
   void displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs );
+  void computePointDifferences( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs,
+    vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors );
+  void computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes, 
+    vtkSmartPointer<vtkFloatArray> vectors);
+
   void displayMeanDifference();
   void displaySpheres();
   void resetPointScalars();
