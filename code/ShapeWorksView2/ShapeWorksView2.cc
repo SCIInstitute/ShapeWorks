@@ -15,19 +15,21 @@
 #include "vnl/vnl_matrix.h"
 
 // vtk
-#include <vtkIdList.h>
 #include <vtkActor.h>
+#include <vtkAnnotatedCubeActor.h>
 #include <vtkAppendPolyData.h>
 #include <vtkArrowSource.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkContourFilter.h>
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
+#include <vtkIdList.h>
 #include <vtkImageData.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkImageGradient.h>
 #include <vtkImageWriter.h>
 #include <vtkLookupTable.h>
+#include <vtkOrientationMarkerWidget.h>
 #include <vtkPLYReader.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
@@ -114,6 +116,11 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->updateColorScheme();
   this->updateGlyphProperties();
   this->updateAnalysisMode();
+
+  this->orientationMarkerWidget = this->createOrientationMarker();
+  this->orientationMarkerWidget->SetInteractor( this->ui->view->GetRenderWindow()->GetInteractor() );
+  this->orientationMarkerWidget->EnabledOn();
+  this->orientationMarkerWidget->InteractiveOff();
 }
 
 //---------------------------------------------------------------------------
@@ -755,7 +762,7 @@ void ShapeWorksView2::updateSliders()
 
   this->ui->pcaSlider->setMinimum( -halfRange );
   this->ui->pcaSlider->setMaximum( halfRange );
-  this->ui->pcaSlider->setTickInterval(halfRange / 2);
+  this->ui->pcaSlider->setTickInterval( halfRange / 2 );
 
   this->ui->regressionSlider->setMinimum( 0 );
   this->ui->regressionSlider->setMaximum( numRegressionSteps );
@@ -1408,4 +1415,39 @@ void ShapeWorksView2::setPregenSteps()
       this->pregenSteps[idx++] = -i;
     }
   }
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkOrientationMarkerWidget> ShapeWorksView2::createOrientationMarker()
+{
+  // create the orientation cube
+  vtkSmartPointer<vtkAnnotatedCubeActor> cubeActor = vtkSmartPointer<vtkAnnotatedCubeActor>::New();
+  cubeActor->SetXPlusFaceText( "L" );
+  cubeActor->SetXMinusFaceText( "R" );
+  cubeActor->SetYPlusFaceText( "P" );
+  cubeActor->SetYMinusFaceText( "A" );
+  cubeActor->SetZPlusFaceText( "S" );
+  cubeActor->SetZMinusFaceText( "I" );
+  cubeActor->SetFaceTextScale( 0.67 );
+  cubeActor->GetTextEdgesProperty()->SetColor( 0.5, 0.5, 0.5 );
+  cubeActor->SetTextEdgesVisibility( 1 );
+  cubeActor->SetCubeVisibility( 1 );
+  cubeActor->SetFaceTextVisibility( 1 );
+  vtkProperty* prop = cubeActor->GetXPlusFaceProperty();
+  prop->SetColor( 0, 0, 1 );
+  prop = cubeActor->GetXMinusFaceProperty();
+  prop->SetColor( 0, 0, 1 );
+  prop = cubeActor->GetYPlusFaceProperty();
+  prop->SetColor( 0, 1, 0 );
+  prop = cubeActor->GetYMinusFaceProperty();
+  prop->SetColor( 0, 1, 0 );
+  prop = cubeActor->GetZPlusFaceProperty();
+  prop->SetColor( 1, 0, 0 );
+  prop = cubeActor->GetZMinusFaceProperty();
+  prop->SetColor( 1, 0, 0 );
+  vtkSmartPointer<vtkOrientationMarkerWidget> orientationMarketWidget =
+    vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+  orientationMarketWidget->SetOrientationMarker( cubeActor );
+  orientationMarketWidget->SetViewport( 0.85, 0.85, 1, 1 );
+  return orientationMarketWidget;
 }

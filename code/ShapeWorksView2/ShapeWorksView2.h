@@ -35,7 +35,7 @@ class vtkSphereSource;
 class vtkArrowSource;
 class vtkTransform;
 class vtkFloatArray;
-
+class vtkOrientationMarkerWidget;
 class vtkImageData;
 class vtkTransformPolyDataFilter;
 
@@ -116,8 +116,6 @@ private:
   void updateSliders();
   void updateDifferenceLUT( float r0, float r1 );
 
-  
-
   void redraw();
 
   bool readParameterFile( char* filename );
@@ -126,9 +124,9 @@ private:
   void displayShape( const vnl_vector<double> &pos );
   void displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs );
   void computePointDifferences( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs,
-    vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors );
-  void computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes, 
-    vtkSmartPointer<vtkFloatArray> vectors);
+                                vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors );
+  void computeSurfaceDifferences( vtkSmartPointer<vtkFloatArray> magnitudes,
+                                  vtkSmartPointer<vtkFloatArray> vectors );
 
   void displayMeanDifference();
   void displaySpheres();
@@ -149,10 +147,13 @@ private:
 
   void setPregenSteps();
 
+  vtkSmartPointer<vtkOrientationMarkerWidget> createOrientationMarker();
+
   // designer form
   Ui_ShapeWorksView2* ui;
 
   vtkSmartPointer<vtkRenderer>             renderer;
+  vtkSmartPointer<vtkOrientationMarkerWidget> orientationMarkerWidget;
   vtkSmartPointer<vtkLookupTable>          lut;
   vtkSmartPointer<vtkPoints>               glyphPoints;
   vtkSmartPointer<vtkPolyData>             glyphPointSet;
