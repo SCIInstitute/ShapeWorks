@@ -1197,8 +1197,6 @@ void ShapeWorksView2::computeModeShape()
 {
   double pcaSliderValue = this->getPcaValue( this->ui->pcaSlider->value() );
 
-  std::cerr << this->ui->pcaSlider->value() << " => " << pcaSliderValue << "\n";
-
   unsigned int m = this->stats.Eigenvectors().columns() - ( this->ui->pcaModeSpinBox->value() + 1 );
 
   vnl_vector<double> e = this->stats.Eigenvectors().get_column( m );
