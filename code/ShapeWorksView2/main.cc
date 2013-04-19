@@ -75,6 +75,7 @@ int main( int argc, char** argv )
   ::SetErrorMode( 0 );
   RedirectIOToConsole2();
 #endif
+  QApplication app( argc, argv );
 
   if ( argc < 2 )
   {
@@ -82,7 +83,6 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  QApplication app( argc, argv );
   ShapeWorksView2 shapeWorksView2( argc, argv );
   shapeWorksView2.show();
   return app.exec();
