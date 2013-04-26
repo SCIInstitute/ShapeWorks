@@ -177,21 +177,49 @@ void ShapeWorksView2::on_actionExportPoints_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
 {
+  bool seperateFilesForDomains = false;
+  if ( this->numDomains > 1 )
+  {
+    if ( QMessageBox::Yes == QMessageBox::question( this, "Write domains in separate files?",
+                                                    "Multiple domains are present, would you like them written in separate files?",
+                                                    QMessageBox::Yes | QMessageBox::No ) )
+    {
+      seperateFilesForDomains = true;
+    }
+  }
+
   QString filename = QFileDialog::getSaveFileName( this, "Export Surface Mesh As... ",
                                                    QString(), "VTK files (*.vtk)" );
   if ( filename.isEmpty() ) {return; }
 
-  // combine polydata from each domain
-  vtkSmartPointer<vtkAppendPolyData> appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
-  for ( int i = 0; i < this->numDomains; i++ )
+  if ( seperateFilesForDomains )
   {
-    appendPolyData->AddInput( this->surfaceMappers[i]->GetInput() );
-  }
+    for ( int i = 0; i < this->numDomains; i++ )
+    {
+      QFileInfo fi( filename );
+      QString base = fi.baseName();
+      QString domainFilename = base + QString::number( i + 1 ) + ".vtk";
 
-  vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-  surfaceWriter->SetInput( appendPolyData->GetOutput() );
-  surfaceWriter->SetFileName( filename.toStdString().c_str() );
-  surfaceWriter->Write();
+      vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
+      surfaceWriter->SetInput( this->surfaceMappers[i]->GetInput() );
+      surfaceWriter->SetFileName( domainFilename.toStdString().c_str() );
+      surfaceWriter->Write();
+    }
+  }
+  else
+  {
+    // combine polydata from each domain
+    vtkSmartPointer<vtkAppendPolyData> appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
+    for ( int i = 0; i < this->numDomains; i++ )
+    {
+      appendPolyData->AddInput( this->surfaceMappers[i]->GetInput() );
+    }
+
+    vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
+    surfaceWriter->SetInput( appendPolyData->GetOutput() );
+    surfaceWriter->SetFileName( filename.toStdString().c_str() );
+    surfaceWriter->Write();
+  }
 }
 
 //---------------------------------------------------------------------------
