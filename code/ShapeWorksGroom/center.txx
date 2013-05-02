@@ -1,17 +1,17 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: center.txx,v $
-  Date:      $Date: 2011/03/24 01:17:36 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
+   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+   Module:    $RCSfile: center.txx,v $
+   Date:      $Date: 2011/03/24 01:17:36 $
+   Version:   $Revision: 1.3 $
+   Author:    $Author: wmartin $
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
+   Copyright (c) 2009 Scientific Computing and Imaging Institute.
+   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
+   =========================================================================*/
 #ifndef __st_center_txx
 #define __st_center_txx
 
@@ -29,24 +29,25 @@ namespace shapetools
 {
 
 template <class T, unsigned int D>
-center<T,D>::center(const char *fname)
+center<T, D>::center( const char* fname )
 {
-  TiXmlDocument doc(fname);
+  TiXmlDocument doc( fname );
   bool loadOkay = doc.LoadFile();
 
-  if (loadOkay)
+  if ( loadOkay )
   {
     TiXmlHandle docHandle( &doc );
-    TiXmlElement *elem;
+    TiXmlElement* elem;
 
-    m_center_origin = true;
+    //m_center_origin = true;
+    m_center_origin = false;
 
     //PARAMSET(pf, g, "background", 0, ok, 1.0);
     this->m_background = 1.0;
     elem = docHandle.FirstChild( "background" ).Element();
-    if (elem)
+    if ( elem )
     {
-      this->m_background = static_cast<T>(atof(elem->GetText()));
+      this->m_background = static_cast<T>( atof( elem->GetText() ) );
     }
     else
     {
@@ -55,94 +56,114 @@ center<T,D>::center(const char *fname)
   }
 }
 
+template <class T, unsigned int D>
+void center<T, D>::operator() ( typename image_type::Pointer img ) {
 
-template <class T, unsigned int D> 
-void center<T,D>::operator()(typename image_type::Pointer img)
-{
+  std::cerr << "origin = " << img->GetOrigin() << "\n";
+
   // If center_origin is true, reset the origin of the image to the very center
   // of the image.
-  if ( m_center_origin )
-    {
+  if ( 1 == 0 && m_center_origin )
+  {
     double orig[D];
-    for (unsigned int i = 0; i < D; i++)
-      {
-      orig[i] = -(static_cast<double>(img->GetBufferedRegion().GetIndex()[i])
-                  + ( static_cast<double>(img->GetBufferedRegion().GetSize()[i]) / 2.0 ));
-      }
-
-    img->SetOrigin(orig);
+    for ( unsigned int i = 0; i < D; i++ )
+    {
+      orig[i] = -( static_cast<double>( img->GetLargestPossibleRegion().GetIndex()[i] )
+                   + ( static_cast<double>( img->GetLargestPossibleRegion().GetSize()[i] ) / 2.0 ) );
     }
-  
+
+    img->SetOrigin( orig );
+  }
+
   // Copy the original image and find the center of mass.
   typename image_type::Pointer simg = image_type::New();
-  simg->CopyInformation(img);
-  simg->SetRegions(img->GetBufferedRegion());
+  simg->CopyInformation( img );
+  simg->SetRegions( img->GetLargestPossibleRegion() );
   simg->Allocate();
-  
-  itk::ImageRegionIteratorWithIndex<image_type> oit(img, img->GetBufferedRegion());
-  itk::ImageRegionIteratorWithIndex<image_type> sit(simg, img->GetBufferedRegion());
+
+  itk::ImageRegionIteratorWithIndex<image_type> oit( img, img->GetLargestPossibleRegion() );
+  itk::ImageRegionIteratorWithIndex<image_type> sit( simg, img->GetLargestPossibleRegion() );
   sit.GoToBegin();
   oit.GoToBegin();
 
-  itk::Array<double> params(D);
-  params.Fill(0.0);
+  itk::Array<double> params( D );
+  params.Fill( 0.0 );
   double count = 0.0;
   itk::Point<double, D> point;
-  for (; ! oit.IsAtEnd(); ++oit, ++sit)
+  for (; !oit.IsAtEnd(); ++oit, ++sit )
+  {
+    if ( oit.Get() != m_background )
     {
-    if (oit.Get() != m_background)
-      {
-      sit.Set(oit.Get());
-      
+      sit.Set( oit.Get() );
+
       // Get the physical index from the image index.
-      img->TransformIndexToPhysicalPoint(oit.GetIndex(), point);
-      for (unsigned int i = 0; i < D; i++) { params[i] += point[i]; }
-      count += 1.0;
+      img->TransformIndexToPhysicalPoint( oit.GetIndex(), point );
+      for ( unsigned int i = 0; i < D; i++ )
+      {
+        params[i] += point[i];
       }
-    else { sit.Set(m_background); }
+      //std::cerr << "point[2] = " << point[2] << "\n";
+      //return;
+      count += 1.0;
     }
-  
+    else { sit.Set( m_background ); }
+  }
+
   // Compute center of mass.
-  for (unsigned int i = 0; i < D; i++)
-    {
+  for ( unsigned int i = 0; i < D; i++ )
+  {
     params[i] = params[i] / count;
-    }
+  }
+
+  double new_origin[3];
+  new_origin[0] = -( img->GetLargestPossibleRegion().GetSize()[0] / 2.0 ) * img->GetSpacing()[0];
+  new_origin[1] = -( img->GetLargestPossibleRegion().GetSize()[1] / 2.0 ) * img->GetSpacing()[1];
+  new_origin[2] = -( img->GetLargestPossibleRegion().GetSize()[2] / 2.0 ) * img->GetSpacing()[2];
+
+  img->SetOrigin( new_origin );
+
+  std::cerr << "new origin = " << img->GetOrigin() << "\n";
+
+  //simg->SetOrigin( new_origin );
 
   // Zero out the original image.
-  for (oit.GoToBegin(); ! oit.IsAtEnd(); ++oit)  { oit.Set(m_background); }
+  for ( oit.GoToBegin(); !oit.IsAtEnd(); ++oit )
+  {
+    oit.Set( m_background );
+  }
 
   // Translate the segmentation back into the original image.
-  typename itk::TranslationTransform<double,D>::Pointer trans
-    = itk::TranslationTransform<double,D>::New();
-  trans->SetParameters(params);
-  
-  typename itk::NearestNeighborInterpolateImageFunction<image_type,double>::Pointer
-    interp = itk::NearestNeighborInterpolateImageFunction<image_type,double>::New();
-  
+  typename itk::TranslationTransform<double, D>::Pointer trans
+    = itk::TranslationTransform<double, D>::New();
+  trans->SetParameters( params );
+
+  typename itk::NearestNeighborInterpolateImageFunction<image_type, double>::Pointer
+    interp = itk::NearestNeighborInterpolateImageFunction<image_type, double>::New();
+
   typename itk::ResampleImageFilter<image_type, image_type>::Pointer resampler
     = itk::ResampleImageFilter<image_type, image_type>::New();
-  resampler->SetOutputParametersFromImage(img);
-  resampler->SetTransform(trans);
-  resampler->SetInterpolator(interp);
-  resampler->SetInput(simg);
+  resampler->SetOutputParametersFromImage( img );
+  resampler->SetTransform( trans );
+  resampler->SetInterpolator( interp );
+  resampler->SetInput( simg );
 
   resampler->Update();
 
   // Copy resampled image back to the original image (probably can do this
   // more efficiently --jc).
   oit.GoToBegin();
-  itk::ImageRegionIterator<image_type> it(resampler->GetOutput(), img->GetBufferedRegion());
-  for ( ; ! it.IsAtEnd(); ++it, ++oit)  { oit.Set(it.Get()); }
+  itk::ImageRegionIterator<image_type> it( resampler->GetOutput(), img->GetLargestPossibleRegion() );
+  for (; !it.IsAtEnd(); ++it, ++oit )
+  {
+    oit.Set( it.Get() );
+  }
 
   this->m_transform.set_identity();
-  for (unsigned int i =0; i < D; i++)
-    {
+  for ( unsigned int i = 0; i < D; i++ )
+  {
     this->m_transform[i][D] = params[i];
-    }
-
-
+  }
 }
-
 } // end namespace
 
-#endif
+#endif /* ifndef __st_center_txx */
