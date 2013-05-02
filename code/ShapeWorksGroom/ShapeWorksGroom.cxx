@@ -39,6 +39,7 @@
 #include "simple_morphometrics.h"
 #include "scale_principal.h"
 #include "metaCommand.h"
+#include "isotropic.h"
 //#include "icp.h"
 
 #define ST_DIM 3 // change to 2 for a 2D build
@@ -165,31 +166,39 @@ int main(int argc, char *argv[])
           filter();
           }
         else if (std::string(argv[i]) == "center")
-          {
+        {
           if (verbose == 1) std::cout << "center" << std::endl;
           // set up tool
           shapetools::center<int, ST_DIM> t(argv[1]);
           t.center_origin() = true;
-          
+
           // batch filter
           shapetools::transformbatchtool<int, ST_DIM> filter;
           filter.input_filenames()  = inputs;
           filter.output_filenames() = outputs;
 
-	        filter.transform_file("/dev/null\0");
+          filter.transform_file("/dev/null\0");
           elem = docHandle.FirstChild( "transform_file" ).Element();
           if (elem) 
             filter.transform_file(elem->GetText());
           else
-            {
+          {
             std::cerr << "Misssing transform file parameter" << std::endl;
             return 1; 
-            }
+          }
 
           //        filter.tool_to_use() = &t;
           filter.set_tool(reinterpret_cast<shapetools::tool<int, ST_DIM> *>(&t));
           filter();
-          }
+        }
+        else if (std::string(argv[i]) == "isotropic")
+        {
+          if (verbose == 1) std::cout << "isotropic" << std::endl;
+          shapetools::isotropic<unsigned char, ST_DIM> filter(argv[1]);
+          filter.input_filenames()  = inputs;
+          filter.output_filenames() = outputs;
+          filter();
+        }
         else if (std::string(argv[i]) == "antialias")
           {
           if (verbose == 1) std::cout << "antialias" << std::endl;
@@ -401,7 +410,7 @@ int main(int argc, char *argv[])
         else if (std::string(argv[i]) == "auto_pad")
           {
           if (verbose == 1) std::cout << "auto_pad" << std::endl;
-          shapetools::auto_pad<float, ST_DIM> filter(argv[1]);
+          shapetools::auto_pad<unsigned char, ST_DIM> filter(argv[1]);
           filter.input_filenames()  = inputs;
           filter.output_filenames() = outputs;
           filter();
