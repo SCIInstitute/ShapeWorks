@@ -194,7 +194,7 @@ public:
   {
     if (m_useMesh == 1)
     {
-      vnl_vector<double> &pos = m_Stats.ShapeMatrix().get_column(this->sample_selector->value());
+      const vnl_vector<double> &pos = m_Stats.ShapeMatrix().get_column(this->sample_selector->value());
       unsigned int k = 0;
       for (unsigned int i = 0; i < this->m_Stats.ShapeMatrix().rows() / 3; i++)
       {

@@ -15,9 +15,9 @@ TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem IT
 	ENDIF(POWERCRUST_FOUND AND BUILD_PowerCrust)	
 ELSE(NOT APPLE)
 	IF(POWERCRUST_FOUND AND BUILD_PowerCrust)
-	  TARGET_LINK_LIBRARIES(ShapeWorksView ${POWERCRUST_LIB} VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon Xinerama Xft ${FLTK_LIBRARIES})
+	  TARGET_LINK_LIBRARIES(ShapeWorksView ${POWERCRUST_LIB} VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon Xft ${FLTK_LIBRARIES})
 	ELSE(POWERCRUST_FOUND AND BUILD_PowerCrust)
-	  TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon Xinerama Xft ${FLTK_LIBRARIES})	
+	  TARGET_LINK_LIBRARIES(ShapeWorksView VtkUtilities Utilities ITKParticleSystem ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml ITKVtkFltk vtkIO vtkWidgets vtkRendering vtkImaging vtkFiltering vtkHybrid vtkGraphics vtkCommon ${FLTK_LIBRARIES})	
 	ENDIF(POWERCRUST_FOUND AND BUILD_PowerCrust)
 ENDIF(NOT APPLE)
 
