@@ -55,7 +55,7 @@ void isotropic<T, D>::operator() () {
       itk::ImageFileReader<image_type>::New();
     reader->SetFileName( ( *it ).c_str() );
     reader->UpdateLargestPossibleRegion();
-    image_type::Pointer img = reader->GetOutput();
+    typename image_type::Pointer img = reader->GetOutput();
     const typename image_type::SpacingType& input_spacing = img->GetSpacing();
     for ( unsigned int i = 0; i < D; i++ )
     {
@@ -76,7 +76,7 @@ void isotropic<T, D>::operator() () {
     reader->UpdateLargestPossibleRegion();
     std::cout << "resample to isotropic: " << *it << std::endl;
 
-    image_type::Pointer img = reader->GetOutput();
+    typename image_type::Pointer img = reader->GetOutput();
 
     const typename image_type::RegionType& inputRegion = img->GetLargestPossibleRegion();
     const typename image_type::SizeType& inputSize = inputRegion.GetSize();
@@ -95,7 +95,6 @@ void isotropic<T, D>::operator() () {
 
     typedef itk::NearestNeighborInterpolateImageFunction<image_type> NearestNeighborInterpolatorType;
     typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
-
     typename itk::ResampleImageFilter<image_type, image_type>::Pointer resampler
       = itk::ResampleImageFilter<image_type, image_type>::New();
 
