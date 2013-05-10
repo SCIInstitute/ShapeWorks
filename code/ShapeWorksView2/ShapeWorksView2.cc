@@ -8,6 +8,7 @@
 
 // qt
 #include <QFileDialog>
+#include <QMessageBox>
 
 // vnl
 #include "vnl/vnl_vector.h"
