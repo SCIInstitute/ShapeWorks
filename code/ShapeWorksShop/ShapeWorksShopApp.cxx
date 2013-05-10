@@ -34,23 +34,43 @@ void ShapeWorksShopApp::AddSinglePoint()
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
        i++)
     {
+
+      bool done = false;
+
+      // first attempt to find the surface moving from the center out in the y direction
+      ImageType::Pointer img = dynamic_cast<itk::ParticleImageDomain<float, 3> *>(
+        m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage();
+      ImageType::IndexType center;
+      center[0] = img->GetLargestPossibleRegion().GetSize()[0] / 2;
+      center[1] = img->GetLargestPossibleRegion().GetSize()[1] / 2;
+      center[2] = img->GetLargestPossibleRegion().GetSize()[2] / 2;
+
+      while ( !done && center[1] > 0 )
+      {
+        if ( img->GetPixel(center) < 1.0 && img->GetPixel( center ) > -1.0 )
+        {
+          PointType pos;
+          img->TransformIndexToPhysicalPoint( center, pos );
+          m_Sampler->GetParticleSystem()->AddPosition( pos, i );
+          done = true;
+        }
+        center[1]--;
+      }
+
+    // couldn't find it, try the old method
     itk::ZeroCrossingImageFilter<ImageType, ImageType>::Pointer zc =
       itk::ZeroCrossingImageFilter<ImageType, ImageType>::New();
-    zc->SetInput( dynamic_cast<itk::ParticleImageDomain<float, 3> *>(
-                       m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage());
+    zc->SetInput( img );
     zc->Update();
     itk::ImageRegionConstIteratorWithIndex<ImageType> it(zc->GetOutput(),
                                            zc->GetOutput()->GetRequestedRegion());
-    bool done = false;
-    //    for (; !it.IsAtEnd() && done == false; ++it)
+    //for (; !it.IsAtEnd() && done == false; ++it)
     for (it.GoToReverseBegin(); !it.IsAtReverseEnd() && done == false; --it)
       {
       if (it.Get() == 1.0)
         {
         PointType pos;
-        dynamic_cast<itk::ParticleImageDomain<float, 3> *>(
-                     m_Sampler->GetParticleSystem()->GetDomain(i))
-                    ->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
+        img->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
         done = true;
         try
           {
@@ -331,6 +351,14 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   viewer2_domain_spinner->value(0);
   rho_spinner->value(0.0);
   
+  correspondence_mode_choice->value(1);
+  hold_min_variance_button->value(1);
+  initial_min_variance_spinner->value(40);
+  final_min_variance_spinner->value(40);
+  min_variance_spinner->value(40);
+  this->SetMinimumVarianceDecay();
+
+
   // Read each filename and add its image domain
   TiXmlDocument doc(fn);
   bool loadOkay = doc.LoadFile();
@@ -464,7 +492,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
         if (size[D] > maxsz) maxsz = size[D];
       }
       
-      this->glyph_scale_spinner->value(spacing * 0.5);
+      this->glyph_scale_spinner->value(spacing * 10.0);
 
       // Use the first loaded image to set some numerical constants
       if (shapeCount == 0)
