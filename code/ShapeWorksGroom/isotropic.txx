@@ -65,6 +65,9 @@ void isotropic<T, D>::operator() () {
 
   std::cout << "Minimum Spacing: " << min_spacing << "\n";
 
+  //std::cout << "Overriding spacing to 1.0\n";
+  //min_spacing = 1.0;
+
   it = this->input_filenames().begin();
   oit = this->output_filenames().begin();
   for (; it != this->input_filenames().end(); it++, oit++ )

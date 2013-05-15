@@ -59,6 +59,7 @@ center<T, D>::center( const char* fname )
 template <class T, unsigned int D>
 void center<T, D>::operator() ( typename image_type::Pointer img ) {
 
+  ImageType::PointType origin = img->GetOrigin();
   std::cerr << "origin = " << img->GetOrigin() << "\n";
 
   // If center_origin is true, reset the origin of the image to the very center
@@ -146,8 +147,21 @@ void center<T, D>::operator() ( typename image_type::Pointer img ) {
   resampler->SetTransform( trans );
   resampler->SetInterpolator( interp );
   resampler->SetInput( simg );
-
   resampler->Update();
+
+
+  //new_origin[0] = origin[0] + new_origin[0] + (params[0] - origin[0]);
+  //new_origin[1] = origin[1] + new_origin[1] + (params[1] - origin[1]);
+  //new_origin[2] = origin[2] + new_origin[2] + (params[2] - origin[2]);
+
+  // set the origin back so that the image will line up with the original one
+  new_origin[0] = new_origin[0] + params[0];
+  new_origin[1] = new_origin[1] + params[1];
+  new_origin[2] = new_origin[2] + params[2];
+
+  img->SetOrigin( new_origin );
+
+  std::cerr << "new new origin = " << img->GetOrigin() << "\n";
 
   // Copy resampled image back to the original image (probably can do this
   // more efficiently --jc).

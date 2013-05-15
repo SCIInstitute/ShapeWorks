@@ -31,11 +31,6 @@ template <class T, unsigned int D>
 void transformbatchtool<T,D>::operator()()
 {
   
-  typename itk::ImageFileReader<image_type>::Pointer reader =
-    itk::ImageFileReader<image_type>::New();
-  typename itk::ImageFileWriter<image_type>::Pointer writer =
-    itk::ImageFileWriter<image_type>::New();
-
   std::vector< TransformType >  transforms;
   
   typename std::vector<std::string>::const_iterator it  = this->m_input_filenames.begin();
@@ -43,6 +38,12 @@ void transformbatchtool<T,D>::operator()()
   
   for (; it != this->m_input_filenames.end(); it++, oit++)
     {
+  
+      typename itk::ImageFileReader<image_type>::Pointer reader =
+        itk::ImageFileReader<image_type>::New();
+      typename itk::ImageFileWriter<image_type>::Pointer writer =
+        itk::ImageFileWriter<image_type>::New();
+
     std::cout << *it << std::endl;
     reader->SetFileName( (*it).c_str() );
     reader->Update();
@@ -52,6 +53,7 @@ void transformbatchtool<T,D>::operator()()
 
     writer->SetFileName( (*oit).c_str() );
     writer->SetInput( reader->GetOutput() );
+    writer->SetUseCompression( true );
     writer->Update();
     }
 

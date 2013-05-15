@@ -47,6 +47,7 @@ void batchtool<T,D>::operator()()
 
     writer->SetFileName( (*oit).c_str() );
     writer->SetInput( reader->GetOutput() );
+    writer->SetUseCompression( true );
     writer->Update();
     }
 }

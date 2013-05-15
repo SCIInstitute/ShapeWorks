@@ -254,6 +254,7 @@ void auto_crop<T, D>::operator() () {
     typename itk::ImageFileWriter<image_type>::Pointer writer =
       itk::ImageFileWriter<image_type>::New();
     writer->SetFileName( ( *oit ).c_str() );
+    writer->SetUseCompression( true );
     writer->SetInput( extractor->GetOutput() );
     writer->Update();
   }

@@ -102,12 +102,12 @@ void auto_pad<T, D>::operator() () {
         if ( lowerTmp[i] < lower[i] )
         {
           lower[i] = lowerTmp[i];
-          std::cout << *it << std::endl;
+          std::cout << "lower: " << *it << std::endl;
         }
         if ( upperTmp[i] > upper[i] )
         {
           upper[i] = upperTmp[i];
-          std::cout << *it << std::endl;
+          std::cout << "upper: " << *it << std::endl;
         }
       }
     }

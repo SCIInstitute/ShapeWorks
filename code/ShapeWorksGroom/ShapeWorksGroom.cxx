@@ -169,11 +169,11 @@ int main(int argc, char *argv[])
         {
           if (verbose == 1) std::cout << "center" << std::endl;
           // set up tool
-          shapetools::center<int, ST_DIM> t(argv[1]);
+          shapetools::center<unsigned char, ST_DIM> t(argv[1]);
           t.center_origin() = true;
 
           // batch filter
-          shapetools::transformbatchtool<int, ST_DIM> filter;
+          shapetools::transformbatchtool<unsigned char, ST_DIM> filter;
           filter.input_filenames()  = inputs;
           filter.output_filenames() = outputs;
 
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
           }
 
           //        filter.tool_to_use() = &t;
-          filter.set_tool(reinterpret_cast<shapetools::tool<int, ST_DIM> *>(&t));
+          filter.set_tool(reinterpret_cast<shapetools::tool<unsigned char, ST_DIM> *>(&t));
           filter();
         }
         else if (std::string(argv[i]) == "isotropic")
