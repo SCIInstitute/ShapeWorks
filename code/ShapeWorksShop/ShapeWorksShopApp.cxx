@@ -73,16 +73,16 @@ void ShapeWorksShopApp::AddSinglePoint()
         img->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
         done = true;
         try
-          {
-          m_Sampler->GetParticleSystem()->AddPosition(pos, i);
-          }
-        catch(itk::ExceptionObject &)
-          {
+        {
+          m_Sampler->GetParticleSystem()->AddPosition( pos, i );
+        }
+        catch ( itk::ExceptionObject & )
+        {
           done = false;
-          }
         }
       }
     }
+  }
 }
 
 void ShapeWorksShopApp::WriteParameters()
@@ -94,14 +94,15 @@ void ShapeWorksShopApp::WriteParameters()
   std::cout << "writing " << interceptname << std::endl;
 
   std::vector< double > slope;
-  vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-      (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
-    ->GetSlope();
+  vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>*>
+                                ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix() )
+                                ->GetSlope();
 
+  for ( unsigned int i = 0; i < slopevec.size(); i++ )
+  {
+    slope.push_back( slopevec[i] );
+  }
 
- for (unsigned int i = 0; i < slopevec.size(); i++)
-    {    slope.push_back(slopevec[i]);    }
-   
   object_writer< double > writer;
   writer.SetFileName(slopename);
   writer.SetInput(slope);
@@ -109,13 +110,15 @@ void ShapeWorksShopApp::WriteParameters()
 
   
   std::vector< double > intercept;
-  vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
-    ->GetIntercept();
-  
-  for (unsigned int i = 0; i < slopevec.size(); i++)
-    {    intercept.push_back(interceptvec[i]);    }
-   
+  vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>*>
+                                    ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix() )
+                                    ->GetIntercept();
+
+  for ( unsigned int i = 0; i < slopevec.size(); i++ )
+  {
+    intercept.push_back( interceptvec[i] );
+  }
+
   object_writer< double > writer2;
   writer2.SetFileName(interceptname);
   writer2.SetInput(intercept);
@@ -128,11 +131,11 @@ void ShapeWorksShopApp::WriteTransformFile() const
 {
   std::vector< itk::ParticleSystem<3>::TransformType > tlist;
 
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
-       i++)
-   {
-    tlist.push_back(m_Sampler->GetParticleSystem()->GetTransform(i));
-    }
+  for ( unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+        i++ )
+  {
+    tlist.push_back( m_Sampler->GetParticleSystem()->GetTransform( i ) );
+  }
 
   object_writer< itk::ParticleSystem<3>::TransformType > writer;
   writer.SetFileName(this->transform_filename_input->value());
@@ -186,36 +189,35 @@ void ShapeWorksShopApp::AutoInitialize()
   this->optimize_stop();
   
   this->SetNumericalParameter();
-  m_Threader->SetNumberOfThreads(2);
-  m_ProcessingThread =  m_Threader->SpawnThread(this->auto_init_callback, this);
-  
+  m_Threader->SetNumberOfThreads( 2 );
+  m_ProcessingThread = m_Threader->SpawnThread( this->auto_init_callback, this );
+
   this->auto_initialize_button->activate();
   this->optimize_start_button->activate();
 }
 
-ITK_THREAD_RETURN_TYPE 
-ShapeWorksShopApp
-::auto_init_callback( void *arg )
+ITK_THREAD_RETURN_TYPE ShapeWorksShopApp
+::auto_init_callback( void* arg )
 {
-  ShapeWorksShopApp *me = static_cast<ShapeWorksShopApp *>(((
-                                     itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData);
-    
+  ShapeWorksShopApp* me = static_cast<ShapeWorksShopApp*>( ( (
+                                                               itk::MultiThreader::ThreadInfoStruct*)( arg ) )->UserData );
+
   // Split and optimize until the target number of particles is reached.
   //  unsigned int N = 0;
-  while ( me->GetSampler()->GetParticleSystem()->GetNumberOfParticles(0)
-          < (unsigned int)( me->init_count_spinner->value()) ) 
-    {
+  while ( me->GetSampler()->GetParticleSystem()->GetNumberOfParticles( 0 )
+          < (unsigned int)( me->init_count_spinner->value() ) )
+  {
     // Cancel the process?
-    if (me->cancel_auto_initialize_button->value() == 1)
-      {
-      me->cancel_auto_initialize_button->value(0);
+    if ( me->cancel_auto_initialize_button->value() == 1 )
+    {
+      me->cancel_auto_initialize_button->value( 0 );
       return ITK_THREAD_RETURN_VALUE;
       }
 
     me->GetSampler()->GetOptimizer()->SetMaximumNumberOfIterations(
-                                          (unsigned int)(me->split_interval_spinner->value()));
-    me->GetSampler()->GetOptimizer()->SetNumberOfIterations(0);
-    me->GetSampler()->GetParticleSystem()->SplitAllParticles(me->split_radius_spinner->value());
+      (unsigned int)( me->split_interval_spinner->value() ) );
+    me->GetSampler()->GetOptimizer()->SetNumberOfIterations( 0 );
+    me->GetSampler()->GetParticleSystem()->SplitAllParticles( me->split_radius_spinner->value() );
     me->SetParticleCounter();
 
     me->GetSampler()->Modified();
@@ -232,47 +234,57 @@ void ShapeWorksShopApp::WritePointFiles()
 
   // Write points in both local and global coordinate system
   filenameFactory fn;
-  fn.number_of_files(n);
-  fn.prefix(pointfile_prefix_input->value());
-  fn.file_format("lpts");
+  fn.number_of_files( n );
+  fn.prefix( pointfile_prefix_input->value() );
+  fn.file_format( "lpts" );
 
   filenameFactory fnw;
-  fnw.number_of_files(n);
-  fnw.prefix(pointfile_prefix_input->value());
-  fnw.file_format("wpts");
+  fnw.number_of_files( n );
+  fnw.prefix( pointfile_prefix_input->value() );
+  fnw.file_format( "wpts" );
   int counter = 0;
-  for (int i = 0; i < n; i++)
-    {
+  for ( int i = 0; i < n; i++ )
+  {
     counter = 0;
-    std::ofstream out( fn.filename(i).c_str() );
-    std::ofstream outw( fnw.filename(i).c_str() );
+    std::ofstream out( fn.filename( i ).c_str() );
+    std::ofstream outw( fnw.filename( i ).c_str() );
 
-    std::cout << "Writing " << fnw.filename(i);
-    
+    std::cout << "Writing " << fnw.filename( i );
+
     if ( !out || !outw )
       { 
         std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
       throw 1;
-      }
-    
-    for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+    }
+
+    for ( unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles( i ); j++ )
+    {
+      PointType pos = m_Sampler->GetParticleSystem()->GetPosition( j, i );
+      PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition( j, i );
+
+      pos[0] = pos[0] + this->transforms[i][0];
+      pos[1] = pos[1] + this->transforms[i][1];
+      pos[2] = pos[2] + this->transforms[i][2];
+
+      wpos[0] = wpos[0] + this->transforms[i][0];
+      wpos[1] = wpos[1] + this->transforms[i][1];
+      wpos[2] = wpos[2] + this->transforms[i][2];
+
+      for ( unsigned int k = 0; k < 3; k++ )
       {
-      PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
-      PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
-      
-      for (unsigned int k = 0; k < 3; k++)
-        {        out << pos[k] << " ";        }
+        out << pos[k] << " ";
+      }
       out << std::endl;
       
       for (unsigned int k = 0; k < 3; k++)
         {        outw << wpos[k] << " ";        }
       outw << std::endl;
-      counter ++;
-      } // end for points
-    
+      counter++;
+    }   // end for points
+
     out.close();
     outw.close();
-    } // end for files
+  }   // end for files
 
   std::cout << " with " << counter << "points" << std::endl;
   }
@@ -282,34 +294,34 @@ void ShapeWorksShopApp::ViewerSelectDomain()
   m_Renderer1->RemoveActor( m_IsosurfacePipelines[m_Viewer1Domain]->output() );
   m_Renderer1->RemoveActor( m_GlyphPipelines[m_Viewer1Domain]->output());
 
-  if (m_ShowSpheres)
+  if ( m_ShowSpheres )
+  {
+    for ( int i = 0; i < m_SpheresPerDomain; i++ )
     {
-    for (int i = 0; i < m_SpheresPerDomain; i++)
-      {
       m_Renderer1->RemoveActor( m_SphereWidgetPipelines[m_Viewer1Domain][i]->output() );
-      }
     }
-  
-  if (m_ShowCuttingPlanes)
-    { m_Renderer1->RemoveActor( m_PlaneWidgetPipelines[m_Viewer1Domain]->output() ); }
-  
-  m_Renderer1->AddActor( m_IsosurfacePipelines[(int)(this->viewer1_domain_spinner->value())]->output() );
-  m_Renderer1->AddActor( m_GlyphPipelines[(int)(this->viewer1_domain_spinner->value())]->output());
+  }
 
-  if (m_ShowSpheres)
+  if ( m_ShowCuttingPlanes )
+  { m_Renderer1->RemoveActor( m_PlaneWidgetPipelines[m_Viewer1Domain]->output() ); }
+
+  m_Renderer1->AddActor( m_IsosurfacePipelines[(int)( this->viewer1_domain_spinner->value() )]->output() );
+  m_Renderer1->AddActor( m_GlyphPipelines[(int)( this->viewer1_domain_spinner->value() )]->output() );
+
+  if ( m_ShowSpheres )
+  {
+    for ( int i = 0; i < m_SpheresPerDomain; i++ )
     {
-    for (int i = 0; i < m_SpheresPerDomain; i++)
-      {
-      m_Renderer1->AddActor( m_SphereWidgetPipelines[(int)(this->viewer1_domain_spinner->value())][i]->output() );
-      }
+      m_Renderer1->AddActor( m_SphereWidgetPipelines[(int)( this->viewer1_domain_spinner->value() )][i]->output() );
     }
-  
-  if (m_ShowCuttingPlanes)
-    {
-    m_Renderer1->AddActor( m_PlaneWidgetPipelines[(int)(this->viewer1_domain_spinner->value())]->output() );
-    }
-  
-  m_Viewer1Domain = (int)(this->viewer1_domain_spinner->value());
+  }
+
+  if ( m_ShowCuttingPlanes )
+  {
+    m_Renderer1->AddActor( m_PlaneWidgetPipelines[(int)( this->viewer1_domain_spinner->value() )]->output() );
+  }
+
+  m_Viewer1Domain = (int)( this->viewer1_domain_spinner->value() );
   //  m_RenderWindow1->Render();
   //  m_Viewer1->Render();
   
@@ -322,17 +334,17 @@ void ShapeWorksShopApp::ViewerSelectDomain()
   //m_RenderWindow2->Render();
   //  m_Viewer2->Render();
 
-  if (m_Sampler->GetParticleSystem()->GetDomainFlag((int)(this->viewer1_domain_spinner->value())) == true)
-    {
-    this->toggle_domain_lock_button->value(1);
-    }
-  else 
-    {
-    this->toggle_domain_lock_button->value(0);
-    }
+  if ( m_Sampler->GetParticleSystem()->GetDomainFlag( (int)( this->viewer1_domain_spinner->value() ) ) == true )
+  {
+    this->toggle_domain_lock_button->value( 1 );
+  }
+  else
+  {
+    this->toggle_domain_lock_button->value( 0 );
+  }
 }
 
-ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
+ShapeWorksShopApp::ShapeWorksShopApp( const char* fn )
 {
   m_ShowCuttingPlanes = false;
   m_ShowSpheres = false;
@@ -360,25 +372,25 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
 
   // Read each filename and add its image domain
-  TiXmlDocument doc(fn);
+  TiXmlDocument doc( fn );
   bool loadOkay = doc.LoadFile();
-  if (!loadOkay) std::cerr << "invalid parameter file..." << std::endl;
+  if ( !loadOkay ) {std::cerr << "invalid parameter file..." << std::endl; }
   TiXmlHandle docHandle( &doc );
-  TiXmlElement *elem;
+  TiXmlElement* elem;
   std::istringstream inputsBuffer;
 
   this->pointfile_prefix_input->value("checkpoint");
   elem = docHandle.FirstChild( "output_points_prefix" ).Element();
-  if (elem) this->pointfile_prefix_input->value(elem->GetText());
+  if ( elem ) {this->pointfile_prefix_input->value( elem->GetText() ); }
 
   this->transform_filename_input->value("checkpoint_trans");
   elem = docHandle.FirstChild( "output_transform_file" ).Element();
-  if (elem) this->transform_filename_input->value(elem->GetText());
+  if ( elem ) {this->transform_filename_input->value( elem->GetText() ); }
 
   // The domains per shape MUST be initialized FIRST!
   int domPerShape = 1;
   elem = docHandle.FirstChild( "domains_per_shape" ).Element();
-  if (elem) domPerShape = atoi(elem->GetText());
+  if ( elem ) {domPerShape = atoi( elem->GetText() ); }
 
   m_Sampler->SetDomainsPerShape(domPerShape);
 
@@ -393,9 +405,9 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
   // Set up the procrustes registration object.
   m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
-  m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
-  m_Procrustes->SetDomainsPerShape(domPerShape);
-  
+  m_Procrustes->SetParticleSystem( m_Sampler->GetParticleSystem() );
+  m_Procrustes->SetDomainsPerShape( domPerShape );
+
   // Read fixed scales if present
   std::vector<double> fs;
   double stemp;
@@ -409,18 +421,18 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       fs.push_back(stemp);
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
     if (fs.size() > 0)
     {
-      m_Procrustes->SetFixedScales(fs);
+      m_Procrustes->SetFixedScales( fs );
     }
   }
     
   // SCALE ON OR OFF -- this is also a toggle button in the GUI
   //m_Procrustes->ScalingOff();
   m_Procrustes->ScalingOn();
-  this->use_procrustes_scaling_button->value(1);
+  this->use_procrustes_scaling_button->value( 1 );
 
   // Read explanatory variables if present
   std::vector<double> evars;
@@ -435,11 +447,11 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       evars.push_back(etmp);
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
-  dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double,3> *>
-    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
-    ->SetExplanatory(evars);
+    dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>*>
+    ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix() )
+    ->SetExplanatory( evars );
   }
 
   // First load the surface image data. 
@@ -466,13 +478,13 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       shapeFiles.push_back(shape_file);
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
     numShapes = shapeFiles.size();
 
     for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
     {
-      std::cout << "Read file " << shapeFiles[shapeCount] << std::endl;
+      std::cout << "Reading file " << shapeFiles[shapeCount] << std::endl;
 
       // Read surface image data.
       itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
@@ -489,11 +501,25 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
         size[D] = reader->GetOutput()->GetRequestedRegion().GetSize()[D];
         index[D] = reader->GetOutput()->GetRequestedRegion().GetIndex()[D];
         origin[D] = reader->GetOutput()->GetOrigin()[D];
-        if (size[D] > maxsz) maxsz = size[D];
+        if ( size[D] > maxsz ) {maxsz = size[D]; }
+        std::cerr << "origin[" << D << "] = " << origin[D] << "\n";
       }
       
       this->glyph_scale_spinner->value(spacing * 10.0);
 
+      // center
+      ImageType::Pointer img = reader->GetOutput();
+      ImageType::PointType transform, new_origin;
+      for ( unsigned int D = 0; D < 3; D++ )
+      {
+        new_origin[D] = -( img->GetLargestPossibleRegion().GetSize()[D] / 2.0 ) * img->GetSpacing()[D];
+        transform[D] = img->GetOrigin()[D] - new_origin[D];
+      }
+
+      this->transforms.push_back(transform);
+      img->SetOrigin(new_origin);
+
+      this->glyph_scale_spinner->value( spacing * 5.0 );
       // Use the first loaded image to set some numerical constants
       if (shapeCount == 0)
       {
@@ -520,20 +546,20 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       }
 
       // Set up an isosurface pipeline for this surface data
-      m_IsosurfacePipelines.push_back(new isosurface_pipeline());
-      m_IsosurfacePipelines[shapeCount]->filename(shapeFiles[shapeCount].c_str());
-      m_IsosurfacePipelines[shapeCount]->color(0.9, 0.7, 0.2);
-      m_IsosurfacePipelines[shapeCount]->opacity(1.0);
+      m_IsosurfacePipelines.push_back( new isosurface_pipeline() );
+      m_IsosurfacePipelines[shapeCount]->filename( shapeFiles[shapeCount].c_str() );
+      m_IsosurfacePipelines[shapeCount]->color( 0.9, 0.7, 0.2 );
+      m_IsosurfacePipelines[shapeCount]->opacity( 1.0 );
 
       m_IsosurfacePipelines[shapeCount]->MyDomain(shapeCount);
       itk::MemberCommand< isosurface_pipeline >::Pointer tmpcmd4
         = itk::MemberCommand< isosurface_pipeline >::New();
       itk::MemberCommand< isosurface_pipeline >::Pointer tmpcmd14
         = itk::MemberCommand< isosurface_pipeline >::New();
-      tmpcmd4->SetCallbackFunction( m_IsosurfacePipelines[shapeCount], &isosurface_pipeline::SetTransformCallback);
-      tmpcmd14->SetCallbackFunction( m_IsosurfacePipelines[shapeCount], &isosurface_pipeline::SetPrefixTransformCallback);
-      m_Sampler->GetParticleSystem()->AddObserver(itk::ParticleTransformSetEvent(), tmpcmd4);
-      m_Sampler->GetParticleSystem()->AddObserver(itk::ParticlePrefixTransformSetEvent(), tmpcmd14); 
+      tmpcmd4->SetCallbackFunction( m_IsosurfacePipelines[shapeCount], &isosurface_pipeline::SetTransformCallback );
+      tmpcmd14->SetCallbackFunction( m_IsosurfacePipelines[shapeCount], &isosurface_pipeline::SetPrefixTransformCallback );
+      m_Sampler->GetParticleSystem()->AddObserver( itk::ParticleTransformSetEvent(), tmpcmd4 );
+      m_Sampler->GetParticleSystem()->AddObserver( itk::ParticlePrefixTransformSetEvent(), tmpcmd14 );
 
       // Set up a glyph pipeline and register it as an observer of the
       // particle system
@@ -574,10 +600,15 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
     shapeFiles.clear();
   }
 
+  std::cerr << "Finished reading files\n";
+
   // sphere radii and centers
   this->m_SpheresPerDomain = 0;
   elem = docHandle.FirstChild( "spheres_per_domain" ).Element();
-  if (elem) this->m_SpheresPerDomain = atoi(elem->GetText());
+  if ( elem ) {this->m_SpheresPerDomain = atoi( elem->GetText() ); }
+
+  std::cerr << "Spheres per domain: " << this->m_SpheresPerDomain << "\n";
+
 
   int numSpheres = numShapes * this->m_SpheresPerDomain;
   std::vector<double> radList;
@@ -590,10 +621,10 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
     while (inputsBuffer >> r)
     {
-      radList.push_back(r);
+      radList.push_back( r );
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
     if (radList.size() < numSpheres)
     {
@@ -611,12 +642,12 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
         while (inputsBuffer >> pt)
         {
-          spVals.push_back(pt);
+          spVals.push_back( pt );
         }
         inputsBuffer.clear();
-        inputsBuffer.str("");
+        inputsBuffer.str( "" );
 
-        if (spVals.size() < 3*numSpheres)
+        if ( spVals.size() < 3 * numSpheres )
         {
           std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" << std::endl;
         }
@@ -636,13 +667,18 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
               center[1] = spVals[c_ctr++];
               center[2] = spVals[c_ctr++];
 
+              // now transform
+              center[0] = center[0] - this->transforms[shapeCount][0];
+              center[1] = center[1] - this->transforms[shapeCount][1];
+              center[2] = center[2] - this->transforms[shapeCount][2];
+
               rad = radList[r_ctr++];
 
-              std::cout << "domain " << shapeCount << " sphere " << sphereCount
-                << " radius = " << rad << " center = (" << center[0] 
-                << ", " << center[1] << ", " << center[2] << ")" << std::endl;
+              //std::cout << "domain " << shapeCount << " sphere " << sphereCount
+              //<< " radius = " << rad << " center = (" << center[0] 
+              //<< ", " << center[1] << ", " << center[2] << ")" << std::endl;
 
-              m_Sampler->AddSphere(shapeCount,center,rad);
+              m_Sampler->AddSphere( shapeCount, center, rad );
 
               // Set up a sphere widget for this domain
               if (m_SphereWidgetPipelines.size() <= (unsigned int)shapeCount)
@@ -651,14 +687,14 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
                 m_SphereWidgetPipelines.push_back( std::vector< sphere_widget_pipeline * >());
               }
 
-              std::cout << "Adding new sphere pipeline " << sphereCount << std::endl;
-              m_SphereWidgetPipelines[shapeCount].push_back(new sphere_widget_pipeline);
-              m_SphereWidgetPipelines[shapeCount][sphereCount]->color(0.0, 0.4, 0.2);
-              m_SphereWidgetPipelines[shapeCount][sphereCount]->opacity(0.5);
-              m_SphereWidgetPipelines[shapeCount][sphereCount]->MyDomain(shapeCount);
-              m_SphereWidgetPipelines[shapeCount][sphereCount]->SetRadius(rad);
-              m_SphereWidgetPipelines[shapeCount][sphereCount]->SetCenter(center);
-                                    
+              //std::cout << "Adding new sphere pipeline " << sphereCount << std::endl;
+              m_SphereWidgetPipelines[shapeCount].push_back( new sphere_widget_pipeline );
+              m_SphereWidgetPipelines[shapeCount][sphereCount]->color( 0.0, 0.4, 0.2 );
+              m_SphereWidgetPipelines[shapeCount][sphereCount]->opacity( 0.5 );
+              m_SphereWidgetPipelines[shapeCount][sphereCount]->MyDomain( shapeCount );
+              m_SphereWidgetPipelines[shapeCount][sphereCount]->SetRadius( rad );
+              m_SphereWidgetPipelines[shapeCount][sphereCount]->SetCenter( center );
+
               itk::MemberCommand< sphere_widget_pipeline >::Pointer tmpcmd84
                 = itk::MemberCommand< sphere_widget_pipeline >::New();
               itk::MemberCommand< sphere_widget_pipeline >::Pointer tmpcmd814
@@ -685,12 +721,12 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
     while (inputsBuffer >> pt)
     {
-      cpVals.push_back(pt);
+      cpVals.push_back( pt );
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
-    if (cpVals.size() < 9*numShapes)
+    if ( cpVals.size() < 9 * numShapes )
     {
       std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" << std::endl;
     }
@@ -698,7 +734,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
     {
       m_ShowCuttingPlanes = true;
 
-      vnl_vector_fixed<double,3> a,b,c;
+      vnl_vector_fixed<double, 3> a, b, c;
       int ctr = 0;
 
       for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
@@ -716,27 +752,27 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
         c[2] = cpVals[ctr++];
 
         std::cout << "ShapeWorksShopApp-> Setting Cutting Plane "
-                  << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
-        
-        m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
+                  << shapeCount << " (" << a << ") (" << b << ") (" << c << ")" << std::endl;
+
+        m_Sampler->SetCuttingPlane( shapeCount, a, b, c );
 
         // Set up a plane widget for this domain
         m_PlaneWidgetPipelines.push_back(new plane_widget_pipeline);
 
         double extent = spacing * size[0];
-        m_PlaneWidgetPipelines[shapeCount]->SetPoints(a, b, c, extent,extent);
-        m_PlaneWidgetPipelines[shapeCount]->color(0.0, 0.4, 0.2);
-        m_PlaneWidgetPipelines[shapeCount]->opacity(0.5);
-        m_PlaneWidgetPipelines[shapeCount]->MyDomain(shapeCount);
+        m_PlaneWidgetPipelines[shapeCount]->SetPoints( a, b, c, extent, extent );
+        m_PlaneWidgetPipelines[shapeCount]->color( 0.0, 0.4, 0.2 );
+        m_PlaneWidgetPipelines[shapeCount]->opacity( 0.5 );
+        m_PlaneWidgetPipelines[shapeCount]->MyDomain( shapeCount );
 
         itk::MemberCommand< plane_widget_pipeline >::Pointer tmpcmd84
           = itk::MemberCommand< plane_widget_pipeline >::New();
         itk::MemberCommand< plane_widget_pipeline >::Pointer tmpcmd814
           = itk::MemberCommand< plane_widget_pipeline >::New();
-        tmpcmd84->SetCallbackFunction( m_PlaneWidgetPipelines[shapeCount], &plane_widget_pipeline::SetTransformCallback);
-        tmpcmd814->SetCallbackFunction( m_PlaneWidgetPipelines[shapeCount], &plane_widget_pipeline::SetPrefixTransformCallback);
-        m_Sampler->GetParticleSystem()->AddObserver(itk::ParticleTransformSetEvent(), tmpcmd84);
-        m_Sampler->GetParticleSystem()->AddObserver(itk::ParticlePrefixTransformSetEvent(), tmpcmd814);      
+        tmpcmd84->SetCallbackFunction( m_PlaneWidgetPipelines[shapeCount], &plane_widget_pipeline::SetTransformCallback );
+        tmpcmd814->SetCallbackFunction( m_PlaneWidgetPipelines[shapeCount], &plane_widget_pipeline::SetPrefixTransformCallback );
+        m_Sampler->GetParticleSystem()->AddObserver( itk::ParticleTransformSetEvent(), tmpcmd84 );
+        m_Sampler->GetParticleSystem()->AddObserver( itk::ParticlePrefixTransformSetEvent(), tmpcmd814 );
       }
     }
   }
@@ -753,7 +789,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       pointFiles.push_back(point_file);
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
     // read point files only if they are all present
     if (pointFiles.size() < numShapes)
@@ -786,7 +822,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       meshFiles.push_back(mesh_file);
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
     // read mesh files only if they are all present
     if (meshFiles.size() < numShapes)
@@ -803,7 +839,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
     meshFiles.clear();
   }
-#endif
+#endif // ifdef SW_USE_MESH
 
   // attributes
   int apd = 0;
@@ -827,10 +863,10 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
       while (inputsBuffer >> sc)
       {
-        attr_scales.push_back(sc);
+        attr_scales.push_back( sc );
       }
       inputsBuffer.clear();
-      inputsBuffer.str("");
+      inputsBuffer.str( "" );
     }
 
     // attribute files
@@ -847,9 +883,9 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       }
 
       inputsBuffer.clear();
-      inputsBuffer.str("");
+      inputsBuffer.str( "" );
 
-      if ( (attr_scales.size() < apd) || (attrFiles.size() < numShapes*apd) )
+      if ( ( attr_scales.size() < apd ) || ( attrFiles.size() < numShapes * apd ) )
       {
         std::cerr << "ERROR: Incomplete attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
       }
@@ -874,11 +910,11 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   }
 
   // Set the extent of the viewer selectors
-  viewer1_domain_spinner->maximum(numShapes-1);
-  viewer2_domain_spinner->maximum(numShapes-1);
+  viewer1_domain_spinner->maximum( numShapes - 1 );
+  viewer2_domain_spinner->maximum( numShapes - 1 );
 
   // Set extent of number of mode selector
-  number_of_modes_spinner->maximum(numShapes-1);
+  number_of_modes_spinner->maximum( numShapes - 1 );
 
   m_Iteratecmd  = itk::MemberCommand<ShapeWorksShopApp>::New();
   m_Iteratecmd->SetCallbackFunction(this, &ShapeWorksShopApp::IterateCallback);
@@ -902,24 +938,24 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   m_Renderer1->AddActor( m_GlyphPipelines[0]->output());
   //  m_Renderer2->AddActor( m_GlyphPipelines[0]->output());
 
-  if (m_ShowCuttingPlanes == true) m_Renderer1->AddActor( m_PlaneWidgetPipelines[0]->output());
-  if (m_ShowSpheres == true)
+  if ( m_ShowCuttingPlanes == true ) {m_Renderer1->AddActor( m_PlaneWidgetPipelines[0]->output() ); }
+  if ( m_ShowSpheres == true )
+  {
+    for ( int qq = 0; qq < m_SpheresPerDomain; qq++ )
     {
-    for (int qq = 0; qq < m_SpheresPerDomain; qq++)
-      {
-      m_Renderer1->AddActor( m_SphereWidgetPipelines[0][qq]->output());
-      }
+      m_Renderer1->AddActor( m_SphereWidgetPipelines[0][qq]->output() );
     }
-  
-  m_Renderer1->SetBackground(0.6, 0.6, 0.6);
+  }
+
+  m_Renderer1->SetBackground( 0.6, 0.6, 0.6 );
   //  m_Renderer2->SetBackground(0.5, 0.5, 0.5);
 
 //   m_RenderWindow1->SetSize(600, 700);
 //   m_RenderWindow2->SetSize(600, 700);
 
   // Change to trackball style interaction.
-  vtkInteractorStyleSwitch *iass1 =
-    dynamic_cast<vtkInteractorStyleSwitch*>(this->m_Viewer1->GetInteractorStyle());
+  vtkInteractorStyleSwitch* iass1 =
+    dynamic_cast<vtkInteractorStyleSwitch*>( this->m_Viewer1->GetInteractorStyle() );
   iass1->SetCurrentStyleToTrackballCamera();
 
   //  vtkInteractorStyleSwitch *iass2 =
@@ -943,12 +979,12 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
 
   // Now read the fixed transform file if present.
   elem = docHandle.FirstChild( "prefix_transform_file" ).Element();
-  if (elem) m_Sampler->SetPrefixTransformFile(elem->GetText());
-  
+  if ( elem ) {m_Sampler->SetPrefixTransformFile( elem->GetText() ); }
+
   // Intitialize the solver without actually doing any iterations.
   this->SetNumericalParameter();
   this->SetAdaptivityMode();
-  if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+  if ( m_use_normal_penalty == true ) {m_Sampler->SetNormalEnergyOn(); }
   this->SetCorrespondenceMode();
   this->SetOptimizationMode();
 
@@ -957,7 +993,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   m_Sampler->Initialize();
   std::cout << "DONE Initializing SOLVER" << std::endl;
   m_Sampler->SetCorrespondenceOn();
-  if (this->m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+  if ( this->m_use_normal_penalty == true ) {m_Sampler->SetNormalEnergyOn(); }
 
   // SET UP ANY FIXED LANDMARK POSITIONS
   std::vector<int> f;
@@ -972,7 +1008,7 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       f.push_back(ftmp);
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
     for (unsigned int i = 0; i < f.size(); i++)
     {
@@ -991,17 +1027,17 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
       f.push_back(ftmp);
     }
     inputsBuffer.clear();
-    inputsBuffer.str("");
+    inputsBuffer.str( "" );
 
     for (unsigned int i = 0; i < f.size(); i++)
     {
-      if (f[i] > 0.0) m_Sampler->GetParticleSystem()->FlagDomain(true);
+      if ( f[i] > 0.0 ) {m_Sampler->GetParticleSystem()->FlagDomain( true ); }
     }
   }
-  
-  this->toggle_correspondence_button->value(1);
-  this->toggle_sampling_button->value(1);
-  this->SetParticleCounter();  
+
+  this->toggle_correspondence_button->value( 1 );
+  this->toggle_sampling_button->value( 1 );
+  this->SetParticleCounter();
   this->m_Viewer1->Initialize();
 
   RecolorGlyphs();
@@ -1010,25 +1046,24 @@ ShapeWorksShopApp::ShapeWorksShopApp(const char *fn)
   //  m_Renderer2->SetActiveCamera(m_Renderer1->GetActiveCamera());
 }
 
-ITK_THREAD_RETURN_TYPE 
-ShapeWorksShopApp
-::optimize_callback( void *arg )
+ITK_THREAD_RETURN_TYPE ShapeWorksShopApp
+::optimize_callback( void* arg )
 {
   try {
-  static_cast<ShapeWorksShopApp *>(((itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData)->GetSampler()->Modified();
-  static_cast<ShapeWorksShopApp *>(((itk::MultiThreader::ThreadInfoStruct *)(arg))->UserData)->GetSampler()->Update();
+    static_cast<ShapeWorksShopApp*>( ( (itk::MultiThreader::ThreadInfoStruct*)( arg ) )->UserData )->GetSampler()->Modified();
+    static_cast<ShapeWorksShopApp*>( ( (itk::MultiThreader::ThreadInfoStruct*)( arg ) )->UserData )->GetSampler()->Update();
   }
-  catch (itk::ExceptionObject &e)
-    {
-    std::cerr << "Caught itk Exception: " <<  e << std::endl;
+  catch ( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught itk Exception: " << e << std::endl;
     std::cout << "Optimize failed. " << std::endl;
     }
  catch ( ... )
     {
     std::cerr << "Caught unknown exception. " << std::endl;
     std::cout << "Optimize Failed." << std::endl;
-    }
-     
+  }
+
   return ITK_THREAD_RETURN_VALUE;
 }
 
@@ -1070,15 +1105,23 @@ ShapeWorksShopApp::~ShapeWorksShopApp()
   //  m_Renderer2->Delete();
   //  m_RenderWindow2->Delete();
 
-  for (unsigned int i = 0; i < m_GlyphPipelines.size(); i++)
-    { delete m_GlyphPipelines[i]; }
-  for (unsigned int i = 0; i < m_IsosurfacePipelines.size(); i++)
-    { delete m_IsosurfacePipelines[i]; }
-  for (unsigned int i = 0; i < m_PlaneWidgetPipelines.size(); i++)
-    { delete m_PlaneWidgetPipelines[i]; }
-  for (unsigned int i = 0; i < m_SphereWidgetPipelines.size(); i++)
+  for ( unsigned int i = 0; i < m_GlyphPipelines.size(); i++ )
+  {
+    delete m_GlyphPipelines[i];
+  }
+  for ( unsigned int i = 0; i < m_IsosurfacePipelines.size(); i++ )
+  {
+    delete m_IsosurfacePipelines[i];
+  }
+  for ( unsigned int i = 0; i < m_PlaneWidgetPipelines.size(); i++ )
+  {
+    delete m_PlaneWidgetPipelines[i];
+  }
+  for ( unsigned int i = 0; i < m_SphereWidgetPipelines.size(); i++ )
+  {
+    for ( int j = 0; j < m_SpheresPerDomain; j++ )
     {
-    for (int j = 0; j < m_SpheresPerDomain; j++)
-      {    delete m_SphereWidgetPipelines[i][j]; }
+      delete m_SphereWidgetPipelines[i][j];
     }
+  }
 }

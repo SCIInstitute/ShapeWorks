@@ -95,6 +95,12 @@ public:
   virtual int GetDomainNumber() const
   { return m_DomainNumber; }
 
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    std::cerr << "error: base clone called!\n";
+    return NULL;
+  }
+
 protected:
   ParticleVectorFunction() : m_ParticleSystem(0), m_DomainNumber(0) {}
   virtual ~ParticleVectorFunction() {}

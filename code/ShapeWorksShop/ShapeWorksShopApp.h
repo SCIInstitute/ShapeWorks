@@ -556,6 +556,7 @@ protected:
   vtkTubeFilter *m_tube_filter;
   vtkAxes *m_axes;
 
+  std::vector<ImageType::PointType> transforms;
   
   static ITK_THREAD_RETURN_TYPE optimize_callback( void *arg );
   static ITK_THREAD_RETURN_TYPE auto_init_callback( void *arg );  

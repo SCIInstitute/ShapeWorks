@@ -188,6 +188,8 @@ public:
 
   //  void ComputeNeighborho0d();
   
+
+
 protected:
   
   ParticleEntropyGradientFunction() : m_FlatCutoff(0.05), m_NeighborhoodToSigmaRatio(3.0) {}

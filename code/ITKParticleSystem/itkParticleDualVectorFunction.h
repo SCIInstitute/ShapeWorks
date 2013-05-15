@@ -457,6 +457,40 @@ public:
     else return 0.0;
   }
   
+
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    ParticleDualVectorFunction<VDimension>::Pointer copy = ParticleDualVectorFunction<VDimension>::New();
+    copy->m_AOn = this->m_AOn;
+    copy->m_BOn = this->m_BOn;
+    copy->m_COn = this->m_COn;
+
+    copy->m_RelativeGradientScaling = this->m_RelativeGradientScaling;
+    copy->m_RelativeEnergyScaling = this->m_RelativeEnergyScaling;
+    copy->m_RelativeNormGradientScaling = this->m_RelativeNormGradientScaling;
+    copy->m_RelativeNormEnergyScaling = this->m_RelativeNormEnergyScaling;
+    copy->m_AverageGradMagA = this->m_AverageGradMagA;
+    copy->m_AverageGradMagB = this->m_AverageGradMagB;
+    copy->m_AverageGradMagC = this->m_AverageGradMagC;
+    copy->m_AverageEnergyA = this->m_AverageEnergyA;
+    copy->m_AverageEnergyB = this->m_AverageEnergyB;
+    copy->m_AverageEnergyC = this->m_AverageEnergyC;
+    copy->m_Counter = this->m_Counter;
+
+    if (this->m_FunctionA) copy->m_FunctionA = this->m_FunctionA->Clone();
+    if (this->m_FunctionB) copy->m_FunctionB = this->m_FunctionB->Clone();
+    if (this->m_FunctionC) copy->m_FunctionC = this->m_FunctionC->Clone();
+
+    if (!copy->m_FunctionA) copy->m_AOn = false;
+    if (!copy->m_FunctionB) copy->m_BOn = false;
+    if (!copy->m_FunctionC) copy->m_COn = false;
+
+    copy->m_DomainNumber = this->m_DomainNumber;
+    copy->m_ParticleSystem = this->m_ParticleSystem;
+
+    return (ParticleVectorFunction<VDimension>::Pointer)copy;
+  }
+
 protected:
   ParticleDualVectorFunction() : m_AOn(true), m_BOn(false), m_COn(false),
                                  m_RelativeGradientScaling(1.0),

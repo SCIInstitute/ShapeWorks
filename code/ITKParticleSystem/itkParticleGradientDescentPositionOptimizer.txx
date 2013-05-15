@@ -15,6 +15,8 @@
 #ifndef __itkParticleGradientDescentPositionOptimizer_txx
 #define __itkParticleGradientDescentPositionOptimizer_txx
 
+#include <omp.h>
+
 namespace itk
 {
 template <class TGradientNumericType, unsigned int VDimension>
@@ -28,6 +30,23 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   m_TimeStep = 1.0;
   m_OptimizationMode = 0;
 }
+
+
+
+template <class TGradientNumericType, unsigned int VDimension>
+typename 
+ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::GradientFunctionType::Pointer 
+itk::ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::DuplicateGradientFunction()
+{
+
+
+  //dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))
+
+
+  return m_GradientFunction->Clone();
+}
+
+
 
 /*** ADAPTIVE GAUSS SEIDEL ***/
 template <class TGradientNumericType, unsigned int VDimension>
@@ -69,14 +88,13 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
   //  if (reset == true) m_GradientFunction->ResetBuffers();
   
-  VectorType gradient;
-  VectorType original_gradient;
-  PointType newpoint;
 
   unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
   std::vector<double> meantime(numdomains);
   std::vector<double> maxtime(numdomains);
   std::vector<double> mintime(numdomains);
+
+  int counter = 0;
 
   for (unsigned int q = 0; q < numdomains; q++)
     {
@@ -88,18 +106,47 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   double maxchange = 0.0;
   while (m_StopOptimization == false)
     {
-    m_GradientFunction->BeforeIteration();
-    double maxdt;
+      if (counter % 25 == 0)
+      //if (counter == 0)
+      {
+        m_GradientFunction->BeforeIteration();
+      }
+      counter++;
+
+    omp_set_num_threads(4);
+
+    std::cerr << "numthreads = " << omp_get_num_threads() << "\n";
+
+    int dom;
+    int tid;
+
+#pragma omp parallel private(dom,tid)
+{
+  tid = omp_get_thread_num();
 
     // Iterate over each domain
-    for (unsigned int dom = 0; dom < numdomains; dom++)
+#pragma omp for
+    for (dom = 0; dom < numdomains; dom++)
       {
+        std::cerr << "[" << tid << "] iterating on domain " << dom << "\n";
       meantime[dom] = 0.0;
       // skip any flagged domains
       if (m_ParticleSystem->GetDomainFlag(dom) == false)
         {
+          double maxdt;
+
+          VectorType gradient;
+          VectorType original_gradient;
+          PointType newpoint;
+
+          typename GradientFunctionType::Pointer localGradientFunction;
+
+          localGradientFunction = this->DuplicateGradientFunction();
+          //localGradientFunction = m_GradientFunction;
+
+
         // Tell function which domain we are working on.
-        m_GradientFunction->SetDomainNumber(dom);
+        localGradientFunction->SetDomainNumber(dom);
      
         // Iterate over each particle position
         unsigned int k = 0;
@@ -113,8 +160,8 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
           // Compute gradient update.
           double energy = 0.0;
-          m_GradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
-          original_gradient = m_GradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem,
+          localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
+          original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem,
                                                            maxdt, energy);
           PointType pt = *it;
 
@@ -140,7 +187,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                 {  newpoint[i] = pt[i] - gradient[i]; }
               dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
-              newenergy = m_GradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
+              newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
               
               if (newenergy < energy) // good move, increase timestep for next time
                 {
@@ -181,6 +228,8 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         } // if not flagged
       }// for each domain
     
+}
+
     m_NumberOfIterations++;
     m_GradientFunction->AfterIteration();
     this->InvokeEvent(itk::IterationEvent());

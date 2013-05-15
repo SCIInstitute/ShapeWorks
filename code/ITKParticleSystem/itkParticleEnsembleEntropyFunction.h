@@ -146,6 +146,27 @@ public:
   int GetRecomputeCovarianceInterval() const
   { return m_RecomputeCovarianceInterval; }
 
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    ParticleEnsembleEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleEntropyFunction<VDimension>::New();
+
+    copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_MinimumVariance = this->m_MinimumVariance;
+    copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
+    copy->m_CurrentEnergy = this->m_CurrentEnergy;
+    copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
+    copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
+    copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
+    copy->m_Counter = m_Counter;
+
+    copy->m_DomainNumber = this->m_DomainNumber;
+    copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->m_ShapeMatrix = this->m_ShapeMatrix;
+
+    return (ParticleVectorFunction<VDimension>::Pointer)copy;
+
+  }
+
 protected:
   ParticleEnsembleEntropyFunction()
   {

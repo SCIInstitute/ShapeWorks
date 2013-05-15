@@ -142,6 +142,8 @@ private:
 
   std::vector< std::vector<double> > m_TimeSteps;
   
+  typename GradientFunctionType::Pointer DuplicateGradientFunction();
+
 };
 
 
