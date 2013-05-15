@@ -31,7 +31,7 @@
 
 
 class isosurface_pipeline
-{
+{ 
  public:
   typedef itk::Image<float, 3> ImageType;
   
@@ -44,6 +44,17 @@ class isosurface_pipeline
   {
     this->m_filename = std::string(fn);
     m_reader->SetFileName(fn);
+
+
+    m_reader->Update();
+    // center
+    ImageType::Pointer img = m_reader->GetOutput();
+    double new_origin[3];
+    new_origin[0] = -( img->GetLargestPossibleRegion().GetSize()[0] / 2.0 ) * img->GetSpacing()[0];
+    new_origin[1] = -( img->GetLargestPossibleRegion().GetSize()[1] / 2.0 ) * img->GetSpacing()[1];
+    new_origin[2] = -( img->GetLargestPossibleRegion().GetSize()[2] / 2.0 ) * img->GetSpacing()[2];
+    img->SetOrigin(new_origin);
+
   }
 
   ImageType::Pointer input()
