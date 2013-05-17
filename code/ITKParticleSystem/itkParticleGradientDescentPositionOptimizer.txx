@@ -99,26 +99,25 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
       }
       counter++;
 
-#ifdef SW_USE_OPENMP
-      //omp_set_num_threads(1);
-      std::cerr << "Number of OpenMP Threads = " << omp_get_num_threads() << std::endl;
-#endif /* SW_USE_OPENMP */
 
 
 #pragma omp parallel
 {
-  int tid = 1;
-  int num_threads = 1;
-
-#ifdef SW_USE_OPENMP
-  tid = omp_get_thread_num() + 1;
-  num_threads = omp_get_num_threads();
-#endif /* SW_USE_OPENMP */
 
     // Iterate over each domain
 #pragma omp for
     for (int dom = 0; dom < numdomains; dom++)
       {
+
+				int tid = 1;
+				int num_threads = 1;
+				
+#ifdef SW_USE_OPENMP
+				tid = omp_get_thread_num() + 1;
+				num_threads = omp_get_num_threads();
+#endif /* SW_USE_OPENMP */
+
+
         std::cerr << "[" << tid << "/" << num_threads << "] iterating on domain " << dom << "\n";
       meantime[dom] = 0.0;
       // skip any flagged domains
