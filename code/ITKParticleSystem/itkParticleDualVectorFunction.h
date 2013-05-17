@@ -460,7 +460,7 @@ public:
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
-    ParticleDualVectorFunction<VDimension>::Pointer copy = ParticleDualVectorFunction<VDimension>::New();
+    typename ParticleDualVectorFunction<VDimension>::Pointer copy = ParticleDualVectorFunction<VDimension>::New();
     copy->m_AOn = this->m_AOn;
     copy->m_BOn = this->m_BOn;
     copy->m_COn = this->m_COn;
@@ -488,7 +488,7 @@ public:
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
 
-    return (ParticleVectorFunction<VDimension>::Pointer)copy;
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
   }
 
 protected:

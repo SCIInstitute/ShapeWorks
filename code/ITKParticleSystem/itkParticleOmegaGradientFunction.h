@@ -194,7 +194,7 @@ public:
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
 
-    return (ParticleVectorFunction<VDimension>::Pointer)copy;
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
   }
 
 protected:

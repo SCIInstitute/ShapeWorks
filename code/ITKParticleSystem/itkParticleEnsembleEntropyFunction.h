@@ -148,7 +148,7 @@ public:
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
-    ParticleEnsembleEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleEntropyFunction<VDimension>::New();
+    typename ParticleEnsembleEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleEntropyFunction<VDimension>::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
     copy->m_MinimumVariance = this->m_MinimumVariance;
@@ -163,7 +163,7 @@ public:
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
-    return (ParticleVectorFunction<VDimension>::Pointer)copy;
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 
   }
 

@@ -59,7 +59,7 @@ center<T, D>::center( const char* fname )
 template <class T, unsigned int D>
 void center<T, D>::operator() ( typename image_type::Pointer img ) {
 
-  ImageType::PointType origin = img->GetOrigin();
+		 typename image_type::PointType origin = img->GetOrigin();
   std::cerr << "origin = " << img->GetOrigin() << "\n";
 
   // If center_origin is true, reset the origin of the image to the very center
