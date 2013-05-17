@@ -97,7 +97,8 @@ public:
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
-    std::cerr << "error: base clone called!\n";
+    std::cerr << "Error: base class ParticleVectorFunction Clone method called!\n";
+    std::cerr << "Threaded run of current parameters not supported!\n";
     return NULL;
   }
 

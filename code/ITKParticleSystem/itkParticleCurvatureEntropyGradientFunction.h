@@ -158,6 +158,31 @@ public:
   double GetRho() const
   { return m_Rho; }
 
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    typename ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer copy = ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::New();
+    copy->SetParticleSystem(this->GetParticleSystem());
+    copy->m_Counter = this->m_Counter;
+    copy->m_Rho = this->m_Rho;
+    copy->m_avgKappa = this->m_avgKappa;
+    copy->m_CurrentSigma = this->m_CurrentSigma;
+    copy->m_CurrentWeights = this->m_CurrentWeights;
+    copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
+
+    copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
+    copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
+    copy->m_FlatCutoff = this->m_FlatCutoff;
+    copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
+
+    copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
+    copy->m_MeanCurvatureCache = this->m_MeanCurvatureCache;
+
+    copy->m_DomainNumber = this->m_DomainNumber;
+    copy->m_ParticleSystem = this->m_ParticleSystem;
+
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+  }
+
 protected:
   ParticleCurvatureEntropyGradientFunction() :  m_Counter(0),
                                                m_Rho(1.0) {}
