@@ -28,6 +28,19 @@ option(BUILD_ShapeWorksShop "Build ShapeWorksShop (requires FLTK & VTK)" OFF)
 option(BUILD_Unsupported "Build unsupported tools (NOT recommended, requires FLTK & VTK)" OFF)
 option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)" OFF)
 
+# Optionally use OpenMP
+option(USE_OPENMP "Build parallel optimization using OpenMP" OFF)
+if(USE_OPENMP)
+  FIND_PACKAGE( OpenMP REQUIRED)
+  if(OPENMP_FOUND)
+    message("Found OpenMP")
+    add_definitions(-DSW_USE_OPENMP)
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+  endif()
+endif(USE_OPENMP)
+
 # Configure Mesh support
 if(BUILD_MeshSupport)
   SUBDIRS(fim)

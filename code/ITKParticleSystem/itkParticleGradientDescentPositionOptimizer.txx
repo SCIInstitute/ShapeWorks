@@ -15,7 +15,9 @@
 #ifndef __itkParticleGradientDescentPositionOptimizer_txx
 #define __itkParticleGradientDescentPositionOptimizer_txx
 
+#ifdef SW_USE_OPENMP
 #include <omp.h>
+#endif /* SW_USE_OPENMP */
 
 namespace itk
 {
@@ -30,22 +32,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   m_TimeStep = 1.0;
   m_OptimizationMode = 0;
 }
-
-
-
-template <class TGradientNumericType, unsigned int VDimension>
-typename 
-ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::GradientFunctionType::Pointer 
-itk::ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::DuplicateGradientFunction()
-{
-
-
-  //dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))
-
-
-  return m_GradientFunction->Clone();
-}
-
 
 
 /*** ADAPTIVE GAUSS SEIDEL ***/
@@ -113,22 +99,27 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
       }
       counter++;
 
-    omp_set_num_threads(4);
+#ifdef SW_USE_OPENMP
+      //omp_set_num_threads(1);
+      std::cerr << "Number of OpenMP Threads = " << omp_get_num_threads() << std::endl;
+#endif /* SW_USE_OPENMP */
 
-    std::cerr << "numthreads = " << omp_get_num_threads() << "\n";
 
-    int dom;
-    int tid;
-
-#pragma omp parallel private(dom,tid)
+#pragma omp parallel
 {
-  tid = omp_get_thread_num();
+  int tid = 1;
+  int num_threads = 1;
+
+#ifdef SW_USE_OPENMP
+  tid = omp_get_thread_num() + 1;
+  num_threads = omp_get_num_threads();
+#endif /* SW_USE_OPENMP */
 
     // Iterate over each domain
 #pragma omp for
-    for (dom = 0; dom < numdomains; dom++)
+    for (int dom = 0; dom < numdomains; dom++)
       {
-        std::cerr << "[" << tid << "] iterating on domain " << dom << "\n";
+        std::cerr << "[" << tid << "/" << num_threads << "] iterating on domain " << dom << "\n";
       meantime[dom] = 0.0;
       // skip any flagged domains
       if (m_ParticleSystem->GetDomainFlag(dom) == false)
@@ -141,8 +132,11 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
           typename GradientFunctionType::Pointer localGradientFunction;
 
-          localGradientFunction = this->DuplicateGradientFunction();
-          //localGradientFunction = m_GradientFunction;
+          localGradientFunction = m_GradientFunction;
+
+#ifdef SW_USE_OPENMP
+          localGradientFunction = m_GradientFunction->Clone();
+#endif /* SW_USE_OPENMP */
 
 
         // Tell function which domain we are working on.
