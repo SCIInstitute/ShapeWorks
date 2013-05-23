@@ -17,6 +17,9 @@
 
 #ifdef SW_USE_OPENMP
 #include <omp.h>
+const int global_iteration = 25;
+#else /* SW_USE_OPENMP */
+const int global_iteration = 1;
 #endif /* SW_USE_OPENMP */
 
 namespace itk
@@ -92,14 +95,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   double maxchange = 0.0;
   while (m_StopOptimization == false)
     {
-      if (counter % 25 == 0)
-      //if (counter == 0)
+      if (counter % global_iteration == 0)
       {
+        std::cerr << "Performing global step\n";
         m_GradientFunction->BeforeIteration();
       }
       counter++;
-
-
 
 #pragma omp parallel
 {
@@ -118,7 +119,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 #endif /* SW_USE_OPENMP */
 
 
-        std::cerr << "[" << tid << "/" << num_threads << "] iterating on domain " << dom << "\n";
+        std::cerr << "[thread " << tid << "/" << num_threads << "] iterating on domain " << dom << "\n";
       meantime[dom] = 0.0;
       // skip any flagged domains
       if (m_ParticleSystem->GetDomainFlag(dom) == false)
