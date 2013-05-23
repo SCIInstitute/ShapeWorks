@@ -262,6 +262,8 @@ void ShapeWorksShopApp::WritePointFiles()
       PointType pos = m_Sampler->GetParticleSystem()->GetPosition( j, i );
       PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition( j, i );
 
+      // AKM : auto centering
+/*
       pos[0] = pos[0] + this->transforms[i][0];
       pos[1] = pos[1] + this->transforms[i][1];
       pos[2] = pos[2] + this->transforms[i][2];
@@ -269,11 +271,9 @@ void ShapeWorksShopApp::WritePointFiles()
       wpos[0] = wpos[0] + this->transforms[i][0];
       wpos[1] = wpos[1] + this->transforms[i][1];
       wpos[2] = wpos[2] + this->transforms[i][2];
-
+*/
       for ( unsigned int k = 0; k < 3; k++ )
-      {
-        out << pos[k] << " ";
-      }
+        {        out << pos[k] << " ";        }
       out << std::endl;
       
       for (unsigned int k = 0; k < 3; k++)
@@ -507,7 +507,8 @@ ShapeWorksShopApp::ShapeWorksShopApp( const char* fn )
       
       this->glyph_scale_spinner->value(spacing * 10.0);
 
-      // center
+      // AKM : auto-center on import
+      /*
       ImageType::Pointer img = reader->GetOutput();
       ImageType::PointType transform, new_origin;
       for ( unsigned int D = 0; D < 3; D++ )
@@ -518,6 +519,7 @@ ShapeWorksShopApp::ShapeWorksShopApp( const char* fn )
 
       this->transforms.push_back(transform);
       img->SetOrigin(new_origin);
+      */
 
       this->glyph_scale_spinner->value( spacing * 5.0 );
       // Use the first loaded image to set some numerical constants
@@ -667,11 +669,12 @@ ShapeWorksShopApp::ShapeWorksShopApp( const char* fn )
               center[1] = spVals[c_ctr++];
               center[2] = spVals[c_ctr++];
 
-              // now transform
+              // AKM : auto-centering
+              /*
               center[0] = center[0] - this->transforms[shapeCount][0];
               center[1] = center[1] - this->transforms[shapeCount][1];
               center[2] = center[2] - this->transforms[shapeCount][2];
-
+              */
               rad = radList[r_ctr++];
 
               //std::cout << "domain " << shapeCount << " sphere " << sphereCount

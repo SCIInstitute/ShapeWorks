@@ -21,7 +21,8 @@
 namespace itk {
 
 template <class TGradientNumericType, unsigned int VDimension>
-double ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
+double
+ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 ::EstimateSigma( unsigned int idx,
                  unsigned int dom,
                  const typename ParticleSystemType::PointVectorType &neighborhood,
@@ -47,6 +48,15 @@ double ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
   double sigma, prev_sigma;
   sigma = initial_sigma;
 
+  // Distance to plane is distance to last neighbor in the list
+  double planeDist = 0.0;
+  /* AKM : Cutting Plane Disabled
+  for (unsigned int i = 0; i < VDimension; i++)
+  {
+    planeDist += (pos[i] - neighborhood[neighborhood.size()-(numspheres+1)].Point[i]) *
+      (pos[i] - neighborhood[neighborhood.size()-(numspheres+1)].Point[i]);
+  }
+  */
 
   while ( error > precision )
   {
@@ -61,8 +71,9 @@ double ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
     for ( unsigned int i = 0; i < neighborhood.size(); i++ )
     {
-      if ( weights[i] < epsilon ) {continue; }
-      double mc;
+      if (weights[i] < epsilon) continue;      
+      double mc; 
+      // AKM : Cutting Plane Disabled
       //if ( i >= ( neighborhood.size() - ( numspheres + 1 ) ) ) // special cases
       if ( i >= ( neighborhood.size() - ( numspheres ) ) ) // special cases
       {                                     // has no valid particle index
@@ -75,7 +86,7 @@ double ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
       // Curvature half-way between me and neighbor
       double Dij = ( mymc + mc ) * 0.5;
-      double kappa = this->ComputeKappa( Dij, dom, 0.0 );
+      double kappa = this->ComputeKappa(Dij, dom,sqrt(planeDist));
 
       avgKappa += kappa;
 
@@ -103,7 +114,7 @@ double ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
       err = 1;
       avgKappa = 1.0;
       return sigma;
-    }    // results are not meaningful
+      }; // results are not meaningful
 
     // // First order convergence update.
     // sigma = sqrt(( 1.0 / DIM ) * ( B / A));
@@ -127,8 +138,9 @@ double ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     }
     else
     {
-      if ( sigma < 0.0 ) {sigma = min_sigma; }
+      if (sigma < 0.0) sigma = min_sigma;
     }
+    
   }   // end while (error > precision)
 
   err = 0;
@@ -136,7 +148,8 @@ double ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 }
 
 template <class TGradientNumericType, unsigned int VDimension>
-void ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
+void
+ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate( unsigned int idx, unsigned int d, const ParticleSystemType* system )
 {
   // Compute the neighborhood size and the optimal sigma.
@@ -156,24 +169,22 @@ void ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
   // neighborhood radius.
   m_CurrentSigma = this->GetSpatialSigmaCache()->operator[] ( d )->operator[] ( idx );
 
-  
-  //vnl_vector_fixed<double, VDimension> x;
-  //vnl_vector_fixed<float, VDimension> grad = domain->SampleGradientVnl( pos );
-  //for ( unsigned int i = 0; i < VDimension; i++ )
-  //{
-  //x[i] = pos[i];
-  //}
-  //const double D = dot_product( domain->GetCuttingPlaneNormal(),
-  //x - domain->GetCuttingPlanePoint() );
-  //itk::Point<double, VDimension> planept;
-  //  for ( unsigned int i = 0; i < VDimension; i++ )
-  //{
-  //planept[i] = x[i] - ( domain->GetCuttingPlaneNormal()[i] * D );
-  //}
+  // AKM : Cutting Plane Disabled
+  /*
+  vnl_vector_fixed<double, VDimension> x;
+  vnl_vector_fixed<float, VDimension> grad = domain->SampleGradientVnl( pos );
+  for (unsigned int i = 0; i < VDimension; i++)  { x[i] = pos[i]; }
+  const double D = dot_product( domain->GetCuttingPlaneNormal(),
+  x - domain->GetCuttingPlanePoint() );
+  itk::Point<double, VDimension> planept;
+    for ( unsigned int i = 0; i < VDimension; i++ )
+    { planept[i] = x[i] - (domain->GetCuttingPlaneNormal()[i] * D); }
 
-  //std::cerr << "planept = " << planept << "\n";
+    double myKappa = this->ComputeKappa( m_MeanCurvatureCache->operator[] ( this->GetDomainNumber() )->operator[] ( idx ), d, D );
+  */
 
   double myKappa = this->ComputeKappa( m_MeanCurvatureCache->operator[] ( this->GetDomainNumber() )->operator[] ( idx ), d, 0.0 );
+
 
   if ( m_CurrentSigma < epsilon )
   {
@@ -184,7 +195,8 @@ void ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
   // windowing estimation.  The neighborhood extent is based on the optimal
   // sigma calculation and limited to a user supplied maximum radius (probably
   // the size of the domain).
-  double neighborhood_radius = ( m_CurrentSigma / myKappa ) * 1.3 * this->GetNeighborhoodToSigmaRatio();
+  double neighborhood_radius = (m_CurrentSigma / myKappa) * 1.3
+    * this->GetNeighborhoodToSigmaRatio();
 
   if ( neighborhood_radius > this->GetMaximumNeighborhoodRadius() )
   {
@@ -192,13 +204,18 @@ void ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
   }
 
   // Get the neighborhood surrounding the point "pos".
-  m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, m_CurrentWeights, neighborhood_radius, d );
-
+  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,
+                                                         neighborhood_radius, d);
   // Add the closest point on the plane as another neighbor.
   // See http://mathworld.wolfram.com/Point-PlaneDistance.html, for example
   //  std::cout << planept << "\t" << D << std::endl;
-  //m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
-  //m_CurrentWeights.push_back( 1.0 );
+  
+
+  // AKM : Cutting Plane Disabled
+  /*
+  m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
+  m_CurrentWeights.push_back( 1.0 );
+  */
 
   // Add the closest points on any spheres that are defined in the domain.
   std::vector<itk::Point<double, VDimension> > spherepoints;
@@ -218,11 +235,22 @@ void ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     }
     spherepoints.push_back( spherept );
     m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherept, 0 ) );
+   
+    // AKM : Changed weight from 1.0 to 0.01
     m_CurrentWeights.push_back( 0.01 );
   }
 
 
+  // DEBUG
 
+  //   std::cout << domain->GetCuttingPlaneNormal() << "\t" <<  planept << "\t" << pos << std::endl;
+  //    for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
+  //   {
+  //    std::cout << m_CurrentNeighborhood[i].Point << std::endl;
+  //    }
+  //  std::cout << std::endl;
+  // end debug
+  
   //    m_CurrentNeighborhood
   //   = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
 
@@ -257,11 +285,16 @@ void ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, m_CurrentWeights,
                                                             neighborhood_radius, d );
 
-    //m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
-    //m_CurrentWeights.push_back( 1.0 );
+
+    // AKM : Cutting Plane Disabled
+    /*
+    m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
+    m_CurrentWeights.push_back( 1.0 );
+    */
     for ( unsigned int i = 0; i < spherepoints.size(); i++ )
     {
       m_CurrentNeighborhood.push_back( spherepoints[i] );
+      // AKM : Changed weight from 1.0 to 0.01
       m_CurrentWeights.push_back( 0.01 );
     }
 
@@ -281,11 +314,15 @@ void ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     m_CurrentNeighborhood = system->FindNeighborhoodPoints( pos, m_CurrentWeights,
                                                             neighborhood_radius, d );
 
-    //m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
-    //m_CurrentWeights.push_back( 1.0 );
+    // AKM : Cutting Plane Disabled
+    /*
+    m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
+    m_CurrentWeights.push_back( 1.0 );
+    */
     for ( unsigned int i = 0; i < spherepoints.size(); i++ )
     {
       m_CurrentNeighborhood.push_back( spherepoints[i] );
+      // AKM : Changed weight from 1.0 to 0.01
       m_CurrentWeights.push_back( 0.01 );
     }
     //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
@@ -331,10 +368,22 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
   double mymc = m_MeanCurvatureCache->operator[] ( d )->operator[] ( idx );
   double A = 0.0;
 
- 
+  // AKM : Cutting Plane Disabled
+  /*
+
+  // Distance to plane is distance to last neighbor in the list
+  double planeDist = 0.0;
+  for (unsigned int i = 0; i < VDimension; i++)
+  {
+    planeDist += (pos[i] - m_CurrentNeighborhood[m_CurrentNeighborhood.size()-(numspheres+1)].Point[i]) *
+      (pos[i] - m_CurrentNeighborhood[m_CurrentNeighborhood.size()-(numspheres+1)].Point[i]);
+  } 
+  */
+
   for ( unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++ )
   {
     double mc;
+    // AKM : Cutting Plane Disabled
     //if ( i >= ( m_CurrentNeighborhood.size() - ( numspheres + 1 ) ) )
     if ( i >= ( m_CurrentNeighborhood.size() - ( numspheres ) ) )
     {
@@ -347,6 +396,8 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
 
     // Curvature btwn me and my neighbor
     double Dij = ( mymc + mc ) * 0.5;
+    // AKM : Cutting Plane Disabled
+    //double kappa = this->ComputeKappa(Dij, d,sqrt(planeDist));
     double kappa = this->ComputeKappa( Dij, d, sqrt( 0.0 ) );
 
     for ( unsigned int n = 0; n < VDimension; n++ )
@@ -372,9 +423,7 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
   {    p = -1.0 / ( A * m_CurrentSigma * m_CurrentSigma );    }
 
   for ( unsigned int n = 0; n < VDimension; n++ )
-  {
-    gradE[n] *= p;
-  }
+    {    gradE[n] *= p;    }
 
   // Prevents unstable moves in degenerate cases
   //  if (m_CurrentNeighborhood.size() < 4)

@@ -149,15 +149,14 @@ void center<T, D>::operator() ( typename image_type::Pointer img ) {
   resampler->SetInput( simg );
   resampler->Update();
 
-
-  //new_origin[0] = origin[0] + new_origin[0] + (params[0] - origin[0]);
-  //new_origin[1] = origin[1] + new_origin[1] + (params[1] - origin[1]);
-  //new_origin[2] = origin[2] + new_origin[2] + (params[2] - origin[2]);
+  new_origin[0] = origin[0] + new_origin[0] + (params[0] - origin[0]);
+  new_origin[1] = origin[1] + new_origin[1] + (params[1] - origin[1]);
+  new_origin[2] = origin[2] + new_origin[2] + (params[2] - origin[2]);
 
   // set the origin back so that the image will line up with the original one
-  new_origin[0] = new_origin[0] + params[0];
-  new_origin[1] = new_origin[1] + params[1];
-  new_origin[2] = new_origin[2] + params[2];
+  //new_origin[0] = new_origin[0] + params[0];
+  //new_origin[1] = new_origin[1] + params[1];
+  //new_origin[2] = new_origin[2] + params[2];
 
   img->SetOrigin( new_origin );
 
