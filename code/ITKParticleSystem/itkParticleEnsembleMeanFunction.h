@@ -78,6 +78,20 @@ public:
   int GetDomainsPerShape() const
   { return m_DomainsPerShape; }
   
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    typename ParticleEnsembleMeanFunction<VDimension>::Pointer copy = ParticleEnsembleMeanFunction<VDimension>::New();
+
+    // from itkParticleVectorFunction
+    copy->m_DomainNumber = this->m_DomainNumber;
+    copy->m_ParticleSystem = this->m_ParticleSystem;
+
+    // local
+    copy->m_DomainsPerShape = this->m_DomainsPerShape;
+
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+
+  }
 protected:
   ParticleEnsembleMeanFunction() : m_DomainsPerShape(1) {}
   virtual ~ParticleEnsembleMeanFunction() {}
