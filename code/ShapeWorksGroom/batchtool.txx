@@ -15,6 +15,10 @@
 #ifndef __st__batchtool_txx
 #define __st__batchtool_txx
 
+#ifdef SW_USE_OPENMP
+#include <omp.h>
+#endif /* SW_USE_OPENMP */
+
 #include <string>
 #include <vector>
 #include "tool.h"
@@ -28,28 +32,29 @@ namespace shapetools
 template <class T, unsigned int D>
 void batchtool<T,D>::operator()()
 {
-  typename itk::ImageFileReader<image_type>::Pointer reader =
-    itk::ImageFileReader<image_type>::New();
-  typename itk::ImageFileWriter<image_type>::Pointer writer =
-    itk::ImageFileWriter<image_type>::New();
 
-  typename std::vector<std::string>::const_iterator it
-    = m_input_filenames.begin();
-  typename std::vector<std::string>::const_iterator oit
-    = m_output_filenames.begin();
-  
-  for (; it != m_input_filenames.end(); it++, oit++)
+#pragma omp parallel
+  {
+
+#pragma omp for
+  for (int i=0; i < m_input_filenames.size(); i++)
     {
-    std::cout << *it << std::endl;
-    reader->SetFileName( (*it).c_str() );
-    reader->Update();
-    this->m_tool->operator()(reader->GetOutput());
+      typename itk::ImageFileReader<image_type>::Pointer reader =
+        itk::ImageFileReader<image_type>::New();
+      typename itk::ImageFileWriter<image_type>::Pointer writer =
+        itk::ImageFileWriter<image_type>::New();
 
-    writer->SetFileName( (*oit).c_str() );
-    writer->SetInput( reader->GetOutput() );
-    writer->SetUseCompression( true );
-    writer->Update();
+      std::cout << m_input_filenames[i] << std::endl;
+      reader->SetFileName( m_input_filenames[i].c_str() );
+      reader->Update();
+      this->m_tool->operator()(reader->GetOutput());
+
+      writer->SetFileName( m_output_filenames[i].c_str() );
+      writer->SetInput( reader->GetOutput() );
+      writer->SetUseCompression( true );
+      writer->Update();
     }
+  }
 }
 
 }  // end namespace

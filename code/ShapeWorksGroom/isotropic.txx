@@ -15,6 +15,10 @@
 #ifndef __st__isotropic_txx
 #define __st__isotropic_txx
 
+#ifdef SW_USE_OPENMP
+#include <omp.h>
+#endif /* SW_USE_OPENMP */
+
 #include "itkExtractImageFilter.h"
 #include "itkConstantPadImageFilter.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
@@ -39,21 +43,14 @@ isotropic<T, D>::isotropic( const char* fname )
 
 template <class T, unsigned int D>
 void isotropic<T, D>::operator() () {
-  typename std::vector<std::string>::const_iterator it
-    = this->input_filenames().begin();
-  typename std::vector<std::string>::const_iterator oit
-    = this->output_filenames().begin();
-
 
   // first find the minimim spacing in all the images
   double min_spacing = 1.0;
-  it = this->input_filenames().begin();
-  oit = this->output_filenames().begin();
-  for (; it != this->input_filenames().end(); it++, oit++ )
+  for (int i=0; i < this->input_filenames().size(); i++)
   {
     typename itk::ImageFileReader<image_type>::Pointer reader =
       itk::ImageFileReader<image_type>::New();
-    reader->SetFileName( ( *it ).c_str() );
+    reader->SetFileName( this->input_filenames()[i].c_str() );
     reader->UpdateLargestPossibleRegion();
     typename image_type::Pointer img = reader->GetOutput();
     const typename image_type::SpacingType& input_spacing = img->GetSpacing();
@@ -68,16 +65,18 @@ void isotropic<T, D>::operator() () {
   //std::cout << "Overriding spacing to 1.0\n";
   //min_spacing = 1.0;
 
-  it = this->input_filenames().begin();
-  oit = this->output_filenames().begin();
-  for (; it != this->input_filenames().end(); it++, oit++ )
+#pragma omp parallel
+  {
+
+#pragma omp for
+  for (int i=0; i < this->input_filenames().size(); i++)
   {
     typename itk::ImageFileReader<image_type>::Pointer reader =
       itk::ImageFileReader<image_type>::New();
 
-    reader->SetFileName( ( *it ).c_str() );
+    reader->SetFileName( this->input_filenames()[i].c_str() );
     reader->UpdateLargestPossibleRegion();
-    std::cout << "resample to isotropic: " << *it << std::endl;
+    std::cout << "resample to isotropic: " << this->input_filenames()[i] << std::endl;
 
     typename image_type::Pointer img = reader->GetOutput();
 
@@ -118,9 +117,10 @@ void isotropic<T, D>::operator() () {
 
     typename itk::ImageFileWriter<image_type>::Pointer writer =
       itk::ImageFileWriter<image_type>::New();
-    writer->SetFileName( ( *oit ).c_str() );
+    writer->SetFileName( this->output_filenames()[i].c_str() );
     writer->SetInput( resampler->GetOutput() );
     writer->Update();
+  }
   }
 }
 } // end namespace
