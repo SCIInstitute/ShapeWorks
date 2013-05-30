@@ -130,11 +130,6 @@ void auto_pad<T, D>::operator() () {
 //   padRegion.SetSize(size);
 //   padRegion.SetIndex(corner);
 
-  typename itk::ConstantPadImageFilter<image_type, image_type>::Pointer padder
-    = itk::ConstantPadImageFilter<image_type, image_type>::New();
-
-  padder->SetConstant( 0 );
-
   // Make sure the origin is at the center of the image.
   double orig[D];
   for ( unsigned int i = 0; i < D; i++ )
@@ -142,67 +137,64 @@ void auto_pad<T, D>::operator() () {
     orig[i] = -static_cast<double>( upper[i] - lower[i] ) / 2.0;
   }
 
-  it = this->input_filenames().begin();
-  oit = this->output_filenames().begin();
-  for (; it != this->input_filenames().end(); it++, oit++ )
+#pragma omp parallel
   {
-    typename itk::ImageFileWriter<image_type>::Pointer writer =
-      itk::ImageFileWriter<image_type>::New();
-    typename itk::ChangeInformationImageFilter<image_type>::Pointer changer =
-      itk::ChangeInformationImageFilter<image_type>::New();
 
-    changer->ChangeOriginOff();
-    changer->ChangeRegionOff();
-    changer->ChangeSpacingOff();
-    changer->UseReferenceImageOff();
-
-    typename itk::ImageFileReader<image_type>::Pointer reader =
-      itk::ImageFileReader<image_type>::New();
-
-    reader->SetFileName( ( *it ).c_str() );
-    reader->UpdateLargestPossibleRegion();
-
-    padder->SetInput( reader->GetOutput() );
-    //changer->SetOutputOrigin(orig);
-    changer->SetInput( padder->GetOutput() );
-
-    // Find the necessary padding
-    int diff[D];
-    unsigned long lowpad[D];
-    unsigned long hipad[D];
-    bool flag = false;
-    for ( unsigned int i = 0; i < D; i++ )
+#pragma omp for
+    for ( int i = 0; i < m_input_filenames.size(); i++ )
     {
-      diff[i] = ( upper[i] - lower[i] )
-                - reader->GetOutput()->GetBufferedRegion().GetSize()[i];
-      if ( diff[i] < 0 )
+      typename itk::ImageFileWriter<image_type>::Pointer writer =
+        itk::ImageFileWriter<image_type>::New();
+
+      typename itk::ImageFileReader<image_type>::Pointer reader =
+        itk::ImageFileReader<image_type>::New();
+
+      reader->SetFileName( m_input_filenames[i].c_str() );
+      reader->UpdateLargestPossibleRegion();
+
+      typename itk::ConstantPadImageFilter<image_type, image_type>::Pointer padder
+        = itk::ConstantPadImageFilter<image_type, image_type>::New();
+      padder->SetConstant( 0 );
+      padder->SetInput( reader->GetOutput() );
+
+      // Find the necessary padding
+      int diff[D];
+      unsigned long lowpad[D];
+      unsigned long hipad[D];
+      bool flag = false;
+      for ( unsigned int i = 0; i < D; i++ )
       {
-        std::cerr << "auto_pad:: negative pad" << std::endl;
-        throw 1;
+        diff[i] = ( upper[i] - lower[i] )
+                  - reader->GetOutput()->GetBufferedRegion().GetSize()[i];
+        if ( diff[i] < 0 )
+        {
+          std::cerr << "auto_pad:: negative pad" << std::endl;
+          throw 1;
+        }
+        lowpad[i] = diff[i] / 2;
+        hipad[i] = diff[i] - lowpad[i];
+        if ( lowpad[i] != 0 || hipad[i] != 0 ) { flag = true; }
       }
-      lowpad[i] = diff[i] / 2;
-      hipad[i] = diff[i] - lowpad[i];
-      if ( lowpad[i] != 0 || hipad[i] != 0 ) { flag = true; }
+
+      padder->SetPadUpperBound( hipad );
+      padder->SetPadLowerBound( lowpad );
+      padder->UpdateLargestPossibleRegion();
+
+      std::cout << "input region = "
+                << reader->GetOutput()->GetBufferedRegion().GetSize()
+                << std::endl;
+      std::cout << "lowpad: " << lowpad[0] << " " << lowpad[1] << " " << lowpad[2]
+                << std::endl;
+      std::cout << "hipad: " << hipad[0] << " " << hipad[1] << " " << hipad[2]
+                << std::endl;
+
+      //std::cout << "Changer origin = " << changer->GetOutput()->GetOrigin() << std::endl;
+
+      writer->SetInput( padder->GetOutput() );
+      writer->SetUseCompression( true );
+      writer->SetFileName( m_output_filenames[i].c_str() );
+      writer->Update();
     }
-
-    padder->SetPadUpperBound( hipad );
-    padder->SetPadLowerBound( lowpad );
-    padder->UpdateLargestPossibleRegion();
-    changer->UpdateLargestPossibleRegion();
-
-    std::cout << "input region = "
-              << reader->GetOutput()->GetBufferedRegion().GetSize()
-              << std::endl;
-    std::cout << "lowpad: " << lowpad[0] << " " << lowpad[1] << " " << lowpad[2]
-              << std::endl;
-    std::cout << "hipad: " << hipad[0] << " " << hipad[1] << " " << hipad[2]
-              << std::endl;
-
-    //std::cout << "Changer origin = " << changer->GetOutput()->GetOrigin() << std::endl;
-
-    writer->SetInput( changer->GetOutput() );
-    writer->SetFileName( ( *oit ).c_str() );
-    writer->Update();
   }
 }
 } // end namespace
