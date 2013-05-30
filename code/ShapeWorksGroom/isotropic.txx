@@ -46,11 +46,14 @@ void isotropic<T, D>::operator() () {
 
   // first find the minimim spacing in all the images
   double min_spacing = 1.0;
+  std::cerr << "Finding the minimum spacing\n";
   for (int i=0; i < this->input_filenames().size(); i++)
   {
+    std::cerr << "Checking " << this->input_filenames()[i] << "...\n";
     typename itk::ImageFileReader<image_type>::Pointer reader =
       itk::ImageFileReader<image_type>::New();
     reader->SetFileName( this->input_filenames()[i].c_str() );
+    reader->Update();
     reader->UpdateLargestPossibleRegion();
     typename image_type::Pointer img = reader->GetOutput();
     const typename image_type::SpacingType& input_spacing = img->GetSpacing();
@@ -112,13 +115,13 @@ void isotropic<T, D>::operator() () {
     resampler->SetOutputSpacing( output_spacing );
     resampler->SetOutputDirection( img->GetDirection() );
     resampler->SetSize( output_size );
-
     resampler->Update();
 
     typename itk::ImageFileWriter<image_type>::Pointer writer =
       itk::ImageFileWriter<image_type>::New();
     writer->SetFileName( this->output_filenames()[i].c_str() );
     writer->SetInput( resampler->GetOutput() );
+    writer->SetUseCompression( true );
     writer->Update();
   }
   }
