@@ -51,9 +51,16 @@ public:
   void transform_file(const char *s)
   { m_transform_file = s ; }
   
+  void set_individual_transform(bool value)
+  {
+    this->m_write_individual_transform = value;
+  }
+
   std::string m_transform_file;
 private:
   
+  bool m_write_individual_transform;
+
   transformbatchtool &operator=(const transformbatchtool &); // purposely unimplemented
   transformbatchtool(const transformbatchtool &); // purposely unimplemented
 };

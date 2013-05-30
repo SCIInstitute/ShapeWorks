@@ -183,9 +183,19 @@ int main(int argc, char *argv[])
             filter.transform_file(elem->GetText());
           else
           {
-            std::cerr << "Misssing transform file parameter" << std::endl;
+            std::cerr << "Missing transform file parameter" << std::endl;
             return 1; 
           }
+
+
+          bool write_individual_transform = false;
+          elem = docHandle.FirstChild( "individual_transform" ).Element();
+          if ( elem )
+          {
+            write_individual_transform = atoi( elem->GetText() );
+          }
+          filter.set_individual_transform( write_individual_transform );
+
 
           //        filter.tool_to_use() = &t;
           filter.set_tool(reinterpret_cast<shapetools::tool<unsigned char, ST_DIM> *>(&t));
