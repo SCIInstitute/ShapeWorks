@@ -38,12 +38,14 @@ void transformbatchtool<T, D>::operator() () {
 
   transforms.resize( m_input_filenames.size() );
 
-#pragma omp parallel
+//#pragma omp parallel
   {
 
-#pragma omp for
+//#pragma omp for
     for ( int i = 0; i < m_input_filenames.size(); i++ )
     {
+
+//      transform_tool<T, D> tool = *(reinterpret_cast<transform_tool<T, D>*>( this->m_tool ));
       typename itk::ImageFileReader<image_type>::Pointer reader =
         itk::ImageFileReader<image_type>::New();
       typename itk::ImageFileWriter<image_type>::Pointer writer =
