@@ -36,13 +36,13 @@ void transformbatchtool<T, D>::operator() () {
 
   std::vector< TransformType >  transforms;
 
-  transforms.resize( m_input_filenames.size() );
+  transforms.resize( this->m_input_filenames.size() );
 
 //#pragma omp parallel
   {
 
 //#pragma omp for
-    for ( int i = 0; i < m_input_filenames.size(); i++ )
+    for ( int i = 0; i < this->m_input_filenames.size(); i++ )
     {
 
 //      transform_tool<T, D> tool = *(reinterpret_cast<transform_tool<T, D>*>( this->m_tool ));
@@ -51,8 +51,8 @@ void transformbatchtool<T, D>::operator() () {
       typename itk::ImageFileWriter<image_type>::Pointer writer =
         itk::ImageFileWriter<image_type>::New();
 
-      std::cout << m_input_filenames[i] << std::endl;
-      reader->SetFileName( m_input_filenames[i].c_str() );
+      std::cout << this->m_input_filenames[i] << std::endl;
+      reader->SetFileName( this->m_input_filenames[i].c_str() );
       reader->Update();
       this->m_tool->operator() ( reader->GetOutput() );
 
@@ -62,13 +62,13 @@ void transformbatchtool<T, D>::operator() () {
       if ( this->m_write_individual_transform )
       {
         // write out each transform separately
-        std::string transform_filename = m_input_filenames[i] + ".transform";
+        std::string transform_filename = this->m_input_filenames[i] + ".transform";
         std::ofstream out( transform_filename.c_str() );
         out << transform;
         out.close();
       }
 
-      writer->SetFileName( m_output_filenames[i].c_str() );
+      writer->SetFileName( this->m_output_filenames[i].c_str() );
       writer->SetInput( reader->GetOutput() );
       writer->SetUseCompression( true );
       writer->Update();
