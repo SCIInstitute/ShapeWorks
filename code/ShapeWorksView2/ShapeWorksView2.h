@@ -83,7 +83,9 @@ public Q_SLOTS:
   void on_pcaModeSpinBox_valueChanged();
   void on_pcaGroupSlider_valueChanged();
   void on_pcaAnimateCheckBox_stateChanged();
+  void on_pcaGroupAnimateCheckBox_stateChanged();
   void handlePcaTimer();
+  void handleGroupTimer();
 
   // Regression mode
   void on_regressionSlider_valueChanged();
@@ -209,4 +211,7 @@ private:
 
   bool regressionAnimateDirection;
   QTimer regressionAnimateTimer;
+
+  bool groupAnimateDirection;
+  QTimer groupAnimateTimer;
 };

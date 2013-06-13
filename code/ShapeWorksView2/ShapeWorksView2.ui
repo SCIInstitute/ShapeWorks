@@ -245,6 +245,18 @@ QToolButton:pressed{
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>6</number>
+    </property>
+    <property name="bottomMargin">
+     <number>6</number>
+    </property>
     <item>
      <widget class="QVTKWidget" name="view" native="true">
       <property name="minimumSize">
@@ -418,7 +430,7 @@ QToolButton:pressed{
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>0</number>
+              <number>2</number>
              </property>
              <property name="documentMode">
               <bool>false</bool>
@@ -682,6 +694,51 @@ QToolButton:pressed{
                     </item>
                     <item>
                      <spacer name="horizontalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QWidget" name="widget_25" native="true">
+                   <layout class="QHBoxLayout" name="horizontalLayout_9">
+                    <property name="spacing">
+                     <number>0</number>
+                    </property>
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <spacer name="horizontalSpacer_7">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="pcaGroupAnimateCheckBox">
+                      <property name="text">
+                       <string>Animate</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_8">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>

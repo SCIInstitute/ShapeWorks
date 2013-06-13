@@ -60,6 +60,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->arrowsVisible = false;
   this->pcaAnimateDirection = true;
   this->regressionAnimateDirection = true;
+  this->groupAnimateDirection = true;
 
 #ifdef _WIN32
   // only want to do this on windows.  On apple, the default is better
@@ -84,6 +85,10 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   QObject::connect(
     &this->pcaAnimateTimer, SIGNAL( timeout() ),
     this, SLOT( handlePcaTimer() ) );
+
+  QObject::connect(
+    &this->groupAnimateTimer, SIGNAL( timeout() ),
+    this, SLOT( handleGroupTimer() ) );
 
   QObject::connect(
     &this->regressionAnimateTimer, SIGNAL( timeout() ),
@@ -338,6 +343,21 @@ void ShapeWorksView2::on_pcaAnimateCheckBox_stateChanged()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksView2::on_pcaGroupAnimateCheckBox_stateChanged()
+{
+  if ( this->ui->pcaGroupAnimateCheckBox->isChecked() )
+  {
+    this->setPregenSteps();
+    this->groupAnimateTimer.setInterval( 10 );
+    this->groupAnimateTimer.start();
+  }
+  else
+  {
+    this->groupAnimateTimer.stop();
+  }
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksView2::handlePcaTimer()
 {
   int value = this->ui->pcaSlider->value();
@@ -357,6 +377,28 @@ void ShapeWorksView2::handlePcaTimer()
   }
 
   this->ui->pcaSlider->setValue( value );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::handleGroupTimer()
+{
+  int value = this->ui->pcaGroupSlider->value();
+  if ( this->groupAnimateDirection )
+  {
+    value += this->ui->pcaGroupSlider->singleStep();
+  }
+  else
+  {
+    value -= this->ui->pcaGroupSlider->singleStep();
+  }
+
+  if ( value >= this->ui->pcaGroupSlider->maximum() || value <= this->ui->pcaGroupSlider->minimum() )
+  {
+    this->groupAnimateDirection = !this->groupAnimateDirection;
+    this->setPregenSteps();
+  }
+
+  this->ui->pcaGroupSlider->setValue( value );
 }
 
 //---------------------------------------------------------------------------
@@ -609,10 +651,12 @@ void ShapeWorksView2::updateAnalysisMode()
   this->ui->pcaGroup1Label->setVisible( this->groupsAvailable );
   this->ui->pcaGroup2Label->setVisible( this->groupsAvailable );
   this->ui->pcaGroupSlider->setVisible( this->groupsAvailable );
+  this->ui->pcaGroupAnimateCheckBox->setVisible( this->groupsAvailable );
 
   this->ui->tabWidget->setTabEnabled( 3, this->regressionAvailable );
 
   this->ui->pcaAnimateCheckBox->setChecked( false );
+  this->ui->pcaGroupAnimateCheckBox->setChecked( false );
   this->ui->regressionAnimateCheckBox->setChecked( false );
 
   // update tabs for hiding/showing
@@ -906,6 +950,7 @@ bool ShapeWorksView2::readExplanatoryVariables( char* filename )
     }
     inputBuffer.clear();
     inputBuffer.str( "" );
+    this->regressionAvailable = true;
   }
   else
   {
@@ -1411,6 +1456,11 @@ void ShapeWorksView2::setPregenSteps()
   {
     animate = true;
     direction = this->regressionAnimateDirection;
+  }
+  else if ( this->ui->pcaGroupAnimateCheckBox->isChecked() )
+  {
+    animate = true;
+    direction = this->groupAnimateDirection;
   }
 
   const int size = 100;
