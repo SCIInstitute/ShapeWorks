@@ -74,6 +74,11 @@
           <string>Blue on Black</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Green on Black</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>

@@ -85,10 +85,20 @@ public:
     this->push_back( a );
 
     // blue on black
-    a.foreground = ColorScheme::rgb( 0, 71, 171 );
+    a.foreground = ColorScheme::rgb( 0, 191, 255 );
     a.background = ColorScheme::rgb( 0, 0, 0 );
     a.alt = ColorScheme::rgb( 175, 64, 53 );
     this->push_back( a );
+
+    // green on black
+    //a.foreground = ColorScheme::rgb( 71, 171, 71 );
+    //a.foreground = ColorScheme::rgb( 152, 251, 152 );
+    //a.foreground = ColorScheme::rgb( 60, 184, 120 );
+    a.foreground = ColorScheme::rgb( 137, 232, 148 );
+    a.background = ColorScheme::rgb( 0, 0, 0 );
+    a.alt = ColorScheme::rgb( 175, 64, 53 );
+    this->push_back( a );
+
   }
   ~ColorSchemes() {}
 };
