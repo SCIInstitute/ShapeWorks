@@ -32,6 +32,7 @@ class vtkCleanPolyData;
 class vtkWindowedSincPolyDataFilter;
 class vtkDecimatePro;
 class vtkButterflySubdivisionFilter;
+class vtkPolyDataToImageData;
 
 class MeshGenerator
 {
@@ -62,6 +63,7 @@ private:
   vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
   vtkSmartPointer<vtkCleanPolyData>        cleanPolyData;
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
+  vtkSmartPointer<vtkPolyDataToImageData>  polydataToImageData;
 
   bool usePowerCrust;
   bool smoothingEnabled;

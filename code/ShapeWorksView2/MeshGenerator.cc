@@ -16,6 +16,11 @@
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkDecimatePro.h>
 #include <vtkButterflySubdivisionFilter.h>
+#include <vtkPolyDataToImageData.h>
+
+
+#include <vtkMetaImageWriter.h>
+#include <vtkPolyDataWriter.h>
 
 #include "CustomSurfaceReconstructionFilter.h"
 
@@ -37,11 +42,17 @@ MeshGenerator::MeshGenerator()
   this->surfaceReconstruction = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   this->surfaceReconstruction->SetInput( this->pointSet );
 
+
+
 #ifdef SW_USE_POWERCRUST
+  this->polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
+  this->triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   this->powercrust = vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
   this->powercrust->SetInput( this->pointSet );
-
+  this->triangleFilter->SetInputConnection( this->powercrust->GetOutputPort() );
+  this->polydataToImageData->SetInputConnection( this->triangleFilter->GetOutputPort() );
 #endif // ifdef SW_USE_POWERCRUST
+
 
   this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
   this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
@@ -118,14 +129,43 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   {
     this->surfaceReconstruction->Modified();
     this->surfaceReconstruction->Update();
-    this->contourFilter->Update();
   }
+  else
+  {
+    this->polydataToImageData->Update();
+
+
+
+    vtkSmartPointer<vtkPolyDataWriter> polywriter =
+      vtkSmartPointer<vtkPolyDataWriter>::New();
+    polywriter->SetFileName("h:\\output.vtk");
+    polywriter->SetInputConnection(this->powercrust->GetOutputPort());
+    polywriter->Update();
+
+ 
+   }
+
+  this->contourFilter->Update();
+
+  vtkSmartPointer<vtkMetaImageWriter> writer = 
+    vtkSmartPointer<vtkMetaImageWriter>::New();
+  writer->SetFileName("h:\\output.mhd");
+  writer->SetInput(this->contourFilter->GetInput());
+  writer->Write();  
+
+
+  std::cerr << "contour points: " << contourFilter->GetOutput()->GetNumberOfPoints() << "\n";
+
 
   this->polydataNormals->Update();
+
 
   // make a copy of the vtkPolyData output to return
   vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
   polyData->DeepCopy( this->polydataNormals->GetOutput() );
+
+  std::cerr << "polydata points: " << polyData->GetNumberOfPoints() << "\n";
+
   return polyData;
 }
 
@@ -133,20 +173,23 @@ void MeshGenerator::updatePipeline()
 {
   if ( this->usePowerCrust )
   {
-#ifdef SW_USE_POWERCRUST
-    this->polydataNormals->SetInputConnection( this->powercrust->GetOutputPort() );
-#endif
+    this->contourFilter->SetInputConnection( this->polydataToImageData->GetOutputPort() );
+    this->contourFilter->SetValue( 0, 0.5 );
   }
   else
   {
-    if ( smoothingEnabled )
-    {
-      this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
-      //this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort());
-    }
-    else
-    {
-      this->polydataNormals->SetInputConnection( this->contourFilter->GetOutputPort() );
-    }
+    this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
+    this->contourFilter->SetValue( 0, 0.0 );
   }
+
+  if ( smoothingEnabled )
+  {
+    this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
+    //this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort());
+  }
+  else
+  {
+    this->polydataNormals->SetInputConnection( this->contourFilter->GetOutputPort() );
+  }
+
 }

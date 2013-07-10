@@ -63,7 +63,7 @@ endfunction(enable_precompiled_headers)
 
 
 
-FILE(GLOB SHAPEWORKSVIEW_HDRS "*.h")
+FILE(GLOB SHAPEWORKSVIEW_HDRS "*.h" "*.hxx")
 FILE(GLOB SHAPEWORKSVIEW_SRCS "*.cc" "*.cxx")
 FILE(GLOB SHAPEWORKSVIEW_UIS  "*.ui")
 

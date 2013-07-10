@@ -737,9 +737,9 @@ void ShapeWorksView2::updateSurfaceSettings()
   bool powercrust = this->ui->usePowerCrustCheckBox->isChecked();
 
   // update UI
-  this->ui->neighborhoodSpinBox->setEnabled( !powercrust );
-  this->ui->spacingSpinBox->setEnabled( !powercrust );
-  this->ui->smoothingSlider->setEnabled( !powercrust );
+  //this->ui->neighborhoodSpinBox->setEnabled( !powercrust );
+  //this->ui->spacingSpinBox->setEnabled( !powercrust );
+  //this->ui->smoothingSlider->setEnabled( !powercrust );
 
   this->displayShape( this->currentShape );
 }
