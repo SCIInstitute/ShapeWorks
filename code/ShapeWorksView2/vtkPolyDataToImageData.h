@@ -60,8 +60,15 @@ protected:
                                   vtkInformationVector* outputVector );
 
   virtual int RequestData( vtkInformation* request,
-                           vtkInformationVector** inputVector,
-                           vtkInformationVector* outputVector );
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector );
+
+  virtual int RequestUpdateExtent( vtkInformation* request,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector );
+
+
+
 
 private:
   vtkPolyDataToImageData( const vtkPolyDataToImageData& );  // Not implemented.

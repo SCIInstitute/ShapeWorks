@@ -247,9 +247,14 @@ int vtkPolyDataToImageData::RequestInformation( vtkInformation* request, vtkInfo
   vtkDataObject::SetPointDataActiveScalarInfo( outInfo, VTK_UNSIGNED_CHAR, 1 );
 
   outInfo->Set( vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
-                0, dim[0] - 1,
-                0, dim[1] - 1,
-                0, dim[2] - 1 );
+    0, dim[0] - 1,
+    0, dim[1] - 1,
+    0, dim[2] - 1 );
+
+  outInfo->Set( vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+    0, dim[0] - 1,
+    0, dim[1] - 1,
+    0, dim[2] - 1 );
 
   outInfo->Set( vtkDataObject::ORIGIN(), origin, 3 );
   outInfo->Set( vtkDataObject::SPACING(), spacing, 3 );
@@ -296,4 +301,11 @@ void vtkPolyDataToImageData::GetOutputInfo( vtkInformationVector** inputVector, 
   spacing[0] = this->Spacing;
   spacing[1] = this->Spacing;
   spacing[2] = this->Spacing;
+}
+
+int vtkPolyDataToImageData::RequestUpdateExtent( vtkInformation* request, 
+                                                vtkInformationVector** inputVector, 
+                                                vtkInformationVector* outputVector )
+{
+  return this->RequestInformation(request, inputVector, outputVector);
 }
