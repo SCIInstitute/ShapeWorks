@@ -1071,7 +1071,11 @@ void ShapeWorksView2::displayVectorField(
   this->glyphMapper->SetLookupTable( this->differenceLUT );
   this->arrowGlyphMapper->SetLookupTable( this->differenceLUT );
   this->arrowsVisible = true;
-  this->renderer->AddActor( this->arrowGlyphActor );
+
+  if ( this->ui->showGlyphs->isChecked() )
+  {
+    this->renderer->AddActor( this->arrowGlyphActor );
+  }
 
   // update surface rendering
   for ( int i = 0; i < this->numDomains; i++ )
