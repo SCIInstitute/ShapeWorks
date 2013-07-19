@@ -28,10 +28,7 @@ class vtkPolyDataNormals;
 class vtkPoints;
 class vtkPolyData;
 class vtkTriangleFilter;
-class vtkCleanPolyData;
 class vtkWindowedSincPolyDataFilter;
-class vtkDecimatePro;
-class vtkButterflySubdivisionFilter;
 class vtkPolyDataToImageData;
 
 class MeshGenerator
@@ -61,7 +58,6 @@ private:
   vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
   vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
   vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
-  vtkSmartPointer<vtkCleanPolyData>        cleanPolyData;
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
   vtkSmartPointer<vtkPolyDataToImageData>  polydataToImageData;
 

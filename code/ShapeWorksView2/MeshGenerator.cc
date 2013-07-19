@@ -18,7 +18,6 @@
 #include <vtkButterflySubdivisionFilter.h>
 #include <vtkPolyDataToImageData.h>
 
-
 #include <vtkMetaImageWriter.h>
 #include <vtkPolyDataWriter.h>
 
@@ -42,8 +41,6 @@ MeshGenerator::MeshGenerator()
   this->surfaceReconstruction = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   this->surfaceReconstruction->SetInput( this->pointSet );
 
-
-
 #ifdef SW_USE_POWERCRUST
   this->polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
   this->triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
@@ -52,7 +49,6 @@ MeshGenerator::MeshGenerator()
   this->triangleFilter->SetInputConnection( this->powercrust->GetOutputPort() );
   this->polydataToImageData->SetInputConnection( this->triangleFilter->GetOutputPort() );
 #endif // ifdef SW_USE_POWERCRUST
-
 
   this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
   this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
@@ -101,9 +97,6 @@ void MeshGenerator::setSmoothingAmount( float amount )
     this->smoothingEnabled = true;
     this->windowSincFilter->SetNumberOfIterations( amount );
     this->windowSincFilter->SetPassBand( 0.05 );
-
-    //this->smoothFilter->SetNumberOfIterations( amount );
-    //this->smoothFilter->SetRelaxationFactor(0.05);
   }
 
   this->updatePipeline();
@@ -111,7 +104,6 @@ void MeshGenerator::setSmoothingAmount( float amount )
 
 vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
-
   // copy shape points into point set
   int numPoints = shape.size() / 3;
   this->points->SetNumberOfPoints( numPoints );
@@ -125,55 +117,52 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   }
   this->points->Modified();
 
-  if ( !this->usePowerCrust )
+  if ( this->usePowerCrust )
   {
-    this->surfaceReconstruction->Modified();
-    this->surfaceReconstruction->Update();
+    if ( this->smoothingEnabled )
+    {
+      this->polydataToImageData->Update();
+      this->contourFilter->Update();
+    }
   }
   else
   {
-    this->polydataToImageData->Update();
+    this->surfaceReconstruction->Modified();
+    this->surfaceReconstruction->Update();
+    this->contourFilter->Update();
   }
 
-  this->contourFilter->Update();
-
-
-  std::cerr << "contour points: " << contourFilter->GetOutput()->GetNumberOfPoints() << "\n";
-
-
   this->polydataNormals->Update();
-
 
   // make a copy of the vtkPolyData output to return
   vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
   polyData->DeepCopy( this->polydataNormals->GetOutput() );
-
-  std::cerr << "polydata points: " << polyData->GetNumberOfPoints() << "\n";
 
   return polyData;
 }
 
 void MeshGenerator::updatePipeline()
 {
-  if ( this->usePowerCrust )
+  if ( this->usePowerCrust && this->smoothingEnabled )
   {
     this->contourFilter->SetInputConnection( this->polydataToImageData->GetOutputPort() );
     this->contourFilter->SetValue( 0, 0.5 );
+    this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
   }
-  else
+  else if ( this->usePowerCrust && !this->smoothingEnabled )
+  {
+#ifdef SW_USE_POWERCRUST
+    this->polydataNormals->SetInputConnection( this->powercrust->GetOutputPort() );
+#endif
+  }
+  else if ( !this->usePowerCrust && this->smoothingEnabled )
   {
     this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
     this->contourFilter->SetValue( 0, 0.0 );
-  }
-
-  if ( smoothingEnabled )
-  {
     this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
-    //this->polydataNormals->SetInputConnection( this->smoothFilter->GetOutputPort());
   }
-  else
+  else if ( !this->usePowerCrust && !this->smoothingEnabled )
   {
     this->polydataNormals->SetInputConnection( this->contourFilter->GetOutputPort() );
   }
-
 }
