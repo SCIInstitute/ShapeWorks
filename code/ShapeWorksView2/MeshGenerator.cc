@@ -133,25 +133,9 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   else
   {
     this->polydataToImageData->Update();
-
-
-
-    vtkSmartPointer<vtkPolyDataWriter> polywriter =
-      vtkSmartPointer<vtkPolyDataWriter>::New();
-    polywriter->SetFileName("h:\\output.vtk");
-    polywriter->SetInputConnection(this->powercrust->GetOutputPort());
-    polywriter->Update();
-
- 
-   }
+  }
 
   this->contourFilter->Update();
-
-  vtkSmartPointer<vtkMetaImageWriter> writer = 
-    vtkSmartPointer<vtkMetaImageWriter>::New();
-  writer->SetFileName("h:\\output.mhd");
-  writer->SetInput(this->contourFilter->GetInput());
-  writer->Write();  
 
 
   std::cerr << "contour points: " << contourFilter->GetOutput()->GetNumberOfPoints() << "\n";
