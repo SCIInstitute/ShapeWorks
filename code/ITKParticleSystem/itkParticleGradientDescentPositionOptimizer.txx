@@ -119,7 +119,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 #endif /* SW_USE_OPENMP */
 
 
-        std::cerr << "[thread " << tid << "/" << num_threads << "] iterating on domain " << dom << "\n";
+        //std::cerr << "[thread " << tid << "/" << num_threads << "] iterating on domain " << dom << "\n";
       meantime[dom] = 0.0;
       // skip any flagged domains
       if (m_ParticleSystem->GetDomainFlag(dom) == false)
@@ -233,7 +233,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     // particle is less than the specified precision.
     //    std::cout << "maxchange = " << maxchange << std::endl;
     if ((m_NumberOfIterations == m_MaximumNumberOfIterations)
-      || (m_Tolerance > 0.0 &&  maxchange <  m_Tolerance) )
+      || (m_Tolerance > 0.0 && maxchange < m_Tolerance) )
       {
       m_StopOptimization = true;
       }
