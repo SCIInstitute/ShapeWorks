@@ -616,14 +616,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
   std::stringstream ss;
   ss << iter+m_optimization_iterations_completed;
 
+  //// to suffix with # of points
+  //std::stringstream points_ss;
+  //points_ss << m_Sampler->GetParticleSystem()->GetNumberOfParticles(0);
+
   int counter;
 
   for (int i = 0; i < n; i++)
   {
     counter = 0;
     unsigned int u_iter = static_cast< unsigned int >( iter );
-	std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
+    std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
     std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
+    //// to suffix with # of points
+    //std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i) + "." + points_ss.str();
+    //std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i) + "." + points_ss.str();
     
     std::ofstream out( local_file.c_str() );
     std::ofstream outw( world_file.c_str() );
@@ -883,6 +890,10 @@ template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 {
+  std::cerr << "------------------------------\n";
+  std::cerr << "*** Initialize Step\n";
+  std::cerr << "------------------------------\n";
+
   m_disable_checkpointing = true;
   m_disable_procrustes = true;
   m_Sampler->GetCurvatureGradientFunction()->SetRho(0.0);
@@ -925,6 +936,9 @@ template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
 {
+  std::cerr << "------------------------------\n";
+  std::cerr << "*** AddAdaptivity Step\n";
+  std::cerr << "------------------------------\n";
 
   if (m_adaptivity_strength == 0.0) return;
   m_disable_checkpointing = true;
@@ -957,6 +971,10 @@ template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
 {
+  std::cerr << "------------------------------\n";
+  std::cerr << "*** Optimize Step\n";
+  std::cerr << "------------------------------\n";
+
   m_optimizing = true;  
   m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
   m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
@@ -1284,7 +1302,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
 
       for (unsigned int i = 0; i < f.size(); i++)
       {
-        if (f[i] > 0.0) m_Sampler->GetParticleSystem()->FlagDomain(f[i]);
+        //if (f[i] > 0.0)
+        {
+          std::cerr << "domain " << f[i] << " is flagged!\n";
+          m_Sampler->GetParticleSystem()->FlagDomain(f[i]);
+        }
       }
     }
   }
