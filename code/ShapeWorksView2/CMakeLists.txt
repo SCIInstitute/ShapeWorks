@@ -62,6 +62,13 @@ function(enable_precompiled_headers PRECOMPILED_HEADER SOURCES)
 endfunction(enable_precompiled_headers)
 
 
+SET(SHAPEWORKSVIEW_MOC_HDRS
+  MeshManager.h
+  MeshWorker.h
+  Preferences.h
+  PreferencesWindow.h
+  ShapeWorksView2.h
+)
 
 FILE(GLOB SHAPEWORKSVIEW_HDRS "*.h" "*.hxx")
 FILE(GLOB SHAPEWORKSVIEW_SRCS "*.cc" "*.cxx")
@@ -83,7 +90,7 @@ QT4_ADD_RESOURCES( SHAPEWORKSVIEW_RC_SRCS ${SHAPEWORKSVIEW_RCS} )
 QT4_WRAP_UI( SHAPEWORKSVIEW_UI_HDRS ${SHAPEWORKSVIEW_UIS} )
 
 # and finally this will run moc:
-QT4_WRAP_CPP( SHAPEWORKSVIEW_MOC_SRCS ${SHAPEWORKSVIEW_HDRS} )
+QT4_WRAP_CPP( SHAPEWORKSVIEW_MOC_SRCS ${SHAPEWORKSVIEW_MOC_HDRS} )
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)

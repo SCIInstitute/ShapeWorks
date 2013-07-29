@@ -3,7 +3,7 @@
  */
 
 // qt
-#include <QThread.h>
+#include <QThread>
 
 #include <Preferences.h>
 
