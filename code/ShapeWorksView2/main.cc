@@ -77,13 +77,32 @@ int main( int argc, char** argv )
 #endif
   QApplication app( argc, argv );
 
-  if ( argc < 2 )
+
+  try {
+
+#ifdef WIN32
+    ::SetErrorMode( 0 );
+#endif
+
+
+    if ( argc < 2 )
+    {
+      std::cerr << "Usage: " << argv[0] << " parameterfile.xml" << std::endl;
+      return 1;
+    }
+
+    ShapeWorksView2 shapeWorksView2( argc, argv );
+    shapeWorksView2.show();
+    return app.exec();
+  }
+  catch ( itk::ExceptionObject & excep )
   {
-    std::cerr << "Usage: " << argv[0] << " parameterfile.xml" << std::endl;
-    return 1;
+    std::cerr << excep << std::endl;
+  }
+  catch ( std::exception e )
+  {
+    std::cerr << "Exception caught!" << std::endl;
+    std::cerr << e.what() << "\n";
   }
 
-  ShapeWorksView2 shapeWorksView2( argc, argv );
-  shapeWorksView2.show();
-  return app.exec();
 }
