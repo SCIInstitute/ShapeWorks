@@ -44,6 +44,7 @@
 #include <vtkUnsignedLongArray.h>
 #include <vtkPointLocator.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkSTLWriter.h>
 
 #include <ShapeWorksView2.h>
 #include <ui_ShapeWorksView2.h>
@@ -155,6 +156,28 @@ void ShapeWorksView2::on_actionExportPcaLoadings_triggered()
   if ( filename.isEmpty() ) {return; }
 
   this->stats.WriteCSVFile2( filename.toStdString() );
+
+  // write out eigenvectors
+  /*
+
+     std::cerr << this->stats.Eigenvectors().columns() << "\n";
+     std::cerr << this->stats.Eigenvectors().rows() << "\n";
+
+     // Write eigen csv file
+     std::ofstream outfile;
+     outfile.open( "eigen.csv" );
+
+     for ( int c = 0; c < this->stats.Eigenvectors().columns(); c++ )
+     {
+     for ( int r = 0; r < this->stats.Eigenvectors().rows(); r++ )
+     {
+      outfile << this->stats.Eigenvectors()(r,c) << ",";
+     }
+     outfile << "\n";
+     }
+
+     outfile.close();
+   */
 }
 
 //---------------------------------------------------------------------------
@@ -195,7 +218,7 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
   }
 
   QString filename = QFileDialog::getSaveFileName( this, "Export Surface Mesh As... ",
-                                                   QString(), "VTK files (*.vtk)" );
+                                                   QString(), "VTK files (*.vtk);;STL files (*.stl)" );
   if ( filename.isEmpty() ) {return; }
 
   if ( seperateFilesForDomains )
@@ -204,12 +227,24 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
     {
       QFileInfo fi( filename );
       QString base = fi.baseName();
-      QString domainFilename = base + QString::number( i + 1 ) + ".vtk";
 
-      vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-      surfaceWriter->SetInput( this->surfaceMappers[i]->GetInput() );
-      surfaceWriter->SetFileName( domainFilename.toStdString().c_str() );
-      surfaceWriter->Write();
+      if ( fi.suffix() == "stl" )
+      {
+        QString domainFilename = fi.dir().path() + QDir::separator() + base + QString::number( i + 1 ) + ".stl";
+        vtkSmartPointer<vtkSTLWriter> stlWriter = vtkSmartPointer<vtkSTLWriter>::New();
+        stlWriter->SetInput( this->surfaceMappers[i]->GetInput() );
+        stlWriter->SetFileName( domainFilename.toStdString().c_str() );
+        stlWriter->Write();
+      }
+      else
+      {
+        QString domainFilename = fi.dir().path() + QDir::separator() + base + QString::number( i + 1 ) + ".vtk";
+
+        vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
+        surfaceWriter->SetInput( this->surfaceMappers[i]->GetInput() );
+        surfaceWriter->SetFileName( domainFilename.toStdString().c_str() );
+        surfaceWriter->Write();
+      }
     }
   }
   else
@@ -221,10 +256,21 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
       appendPolyData->AddInput( this->surfaceMappers[i]->GetInput() );
     }
 
-    vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-    surfaceWriter->SetInput( appendPolyData->GetOutput() );
-    surfaceWriter->SetFileName( filename.toStdString().c_str() );
-    surfaceWriter->Write();
+    QFileInfo fi( filename );
+    if ( fi.suffix() == "stl" )
+    {
+      vtkSmartPointer<vtkSTLWriter> stlWriter = vtkSmartPointer<vtkSTLWriter>::New();
+      stlWriter->SetInput( appendPolyData->GetOutput() );
+      stlWriter->SetFileName( filename.toStdString().c_str() );
+      stlWriter->Write();
+    }
+    else
+    {
+      vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
+      surfaceWriter->SetInput( appendPolyData->GetOutput() );
+      surfaceWriter->SetFileName( filename.toStdString().c_str() );
+      surfaceWriter->Write();
+    }
   }
 }
 
@@ -636,6 +682,7 @@ void ShapeWorksView2::initializeSurfaces()
     this->surfaceActors[i]->GetProperty()->SetSpecular( .4 );
     this->surfaceActors[i]->GetProperty()->SetSpecularPower( 25 );
     //this->surfaceActors[i]->GetProperty()->SetRepresentationToWireframe();
+    //this->surfaceActors[i]->GetProperty()->SetOpacity( 0.5 + ( ( 1 - i ) * 0.5 ) );
   }
   this->updateSurfaceSettings();
 }
