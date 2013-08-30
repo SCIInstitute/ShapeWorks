@@ -1349,7 +1349,15 @@ void ShapeWorksView2::computeModeShape()
     if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
     {
       double pcaValue = this->getPcaValue( pregenValue );
-      vnl_vector<double> shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaValue * lambda ) );
+      vnl_vector<double> shape;
+      if (this->groupsAvailable)
+      {
+        shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaValue * lambda ) );
+      }
+      else
+      {
+        shape = this->stats.Mean() + ( e * ( pcaValue * lambda ) );
+      }
       for ( int i = 0; i < this->numDomains; i++ )
       {
         this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
@@ -1357,7 +1365,14 @@ void ShapeWorksView2::computeModeShape()
     }
   }
 
-  this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaSliderValue * lambda ) ) );
+  if (this->groupsAvailable)
+  {
+    this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaSliderValue * lambda ) ) );
+  } 
+  else
+  {
+    this->displayShape( this->stats.Mean() + ( e * ( pcaSliderValue * lambda ) ) );
+  }
 }
 
 //---------------------------------------------------------------------------
