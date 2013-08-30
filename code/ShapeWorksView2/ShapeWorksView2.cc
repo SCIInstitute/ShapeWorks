@@ -874,16 +874,21 @@ void ShapeWorksView2::updateGlyphProperties()
 void ShapeWorksView2::updateSliders()
 {
   int numPcaSteps = Preferences::Instance().getNumPcaSteps();
-  int numRegressionSteps = Preferences::Instance().getNumRegressionSteps();
 
-  // integer math to get even sides regardless of the setting
-  int quarterRange = numPcaSteps / 4;
-  int halfRange = quarterRange * 2;
+  if (numPcaSteps % 2 == 0)
+  {
+    numPcaSteps++;
+  }
+  int halfRange = (numPcaSteps-1) / 2;
 
   this->ui->pcaSlider->setMinimum( -halfRange );
   this->ui->pcaSlider->setMaximum( halfRange );
   this->ui->pcaSlider->setTickInterval( halfRange / 2 );
+  this->ui->pcaSlider->setSingleStep(1);
+  this->ui->pcaSlider->setPageStep(1);
 
+  // regression slider
+  int numRegressionSteps = Preferences::Instance().getNumRegressionSteps();
   this->ui->regressionSlider->setMinimum( 0 );
   this->ui->regressionSlider->setMaximum( numRegressionSteps );
 }
