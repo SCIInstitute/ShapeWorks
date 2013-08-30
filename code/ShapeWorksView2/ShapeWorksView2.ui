@@ -645,6 +645,9 @@ QToolButton:pressed{
                    <property name="maximum">
                     <number>20</number>
                    </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
                    <property name="orientation">
                     <enum>Qt::Horizontal</enum>
                    </property>
