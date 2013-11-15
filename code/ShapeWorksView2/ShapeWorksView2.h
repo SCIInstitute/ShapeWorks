@@ -38,6 +38,7 @@ class vtkFloatArray;
 class vtkOrientationMarkerWidget;
 class vtkImageData;
 class vtkTransformPolyDataFilter;
+class vtkScalarBarActor;
 
 // Forward Qt class declarations
 class Ui_ShapeWorksView2;
@@ -59,6 +60,7 @@ public Q_SLOTS:
   void on_actionExportPcaLoadings_triggered();
   void on_actionExportPoints_triggered();
   void on_actionExportSurfaceMesh_triggered();
+  void on_actionExportVarianceReport_triggered();
 
   void on_actionQuit_triggered();
   void on_actionPreferences_triggered();
@@ -214,4 +216,9 @@ private:
 
   bool groupAnimateDirection;
   QTimer groupAnimateTimer;
+
+
+
+  vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
+
 };

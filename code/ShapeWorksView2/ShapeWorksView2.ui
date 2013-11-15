@@ -285,6 +285,7 @@ QToolButton:pressed{
     <addaction name="actionExportPoints"/>
     <addaction name="actionExportSurfaceMesh"/>
     <addaction name="actionExportPcaLoadings"/>
+    <addaction name="actionExportVarianceReport"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -1325,6 +1326,11 @@ QToolButton:pressed{
   <action name="actionExportSurfaceMesh">
    <property name="text">
     <string>Export Surface Mesh</string>
+   </property>
+  </action>
+  <action name="actionExportVarianceReport">
+   <property name="text">
+    <string>Export Variance Report</string>
    </property>
   </action>
  </widget>

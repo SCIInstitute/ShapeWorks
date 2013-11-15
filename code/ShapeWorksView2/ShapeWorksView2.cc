@@ -45,6 +45,8 @@
 #include <vtkPointLocator.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkSTLWriter.h>
+#include <vtkScalarBarActor.h>
+#include <vtkTextProperty.h>
 
 #include <ShapeWorksView2.h>
 #include <ui_ShapeWorksView2.h>
@@ -128,6 +130,25 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->orientationMarkerWidget->SetInteractor( this->ui->view->GetRenderWindow()->GetInteractor() );
   this->orientationMarkerWidget->EnabledOn();
   this->orientationMarkerWidget->InteractiveOff();
+
+  this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
+  this->scalar_bar_actor_->SetTitle( "" );
+  this->scalar_bar_actor_->SetLookupTable( this->differenceLUT );
+  this->scalar_bar_actor_->SetOrientationToHorizontal();
+  this->scalar_bar_actor_->SetMaximumNumberOfColors( 1000 );
+  this->scalar_bar_actor_->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
+  this->scalar_bar_actor_->GetPositionCoordinate()->SetValue( .2, .05 );
+  this->scalar_bar_actor_->SetWidth( 0.8 );
+  this->scalar_bar_actor_->SetHeight( 0.1 );
+  this->scalar_bar_actor_->SetPosition( 0.1, 0.01 );
+  this->scalar_bar_actor_->SetLabelFormat( "%.0f" );
+  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
+  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize( 12 );
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontFamilyToArial();
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize( 10 );
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetColor( 0, 0, 0 );
+  //this->renderer->AddActor( this->scalar_bar_actor_ );
 }
 
 //---------------------------------------------------------------------------
@@ -272,6 +293,39 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
       surfaceWriter->Write();
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::on_actionExportVarianceReport_triggered()
+{
+  QString filename = QFileDialog::getSaveFileName( this, "Export PCA Loadings As... ",
+                                                   QString(), "CSV files (*.csv)" );
+  if ( filename.isEmpty() ) {return; }
+
+  // Write eigen csv file
+  std::ofstream outfile;
+  outfile.open( filename.toStdString().c_str() );
+  outfile << "pca mode, variance, percent variance, sum percent\n";
+
+  double totalVariance = 0;
+  for ( int c = 0; c < this->stats.Eigenvectors().columns(); c++ )
+  {
+    totalVariance += this->stats.Eigenvalues()[this->stats.Eigenvectors().columns() - ( c + 1 )];
+  }
+
+  double sum_variance = 0;
+  for ( int c = 0; c < this->stats.Eigenvectors().columns(); c++ )
+  {
+    double variance = this->stats.Eigenvalues()[this->stats.Eigenvectors().columns() - ( c + 1 )];
+    sum_variance += variance;
+    outfile << c << ",";
+    outfile << variance << ",";
+    outfile << variance / totalVariance * 100.0 << "%,";
+    outfile << sum_variance / totalVariance * 100.0 << "%";
+    outfile << "\n";
+  }
+
+  outfile.close();
 }
 
 //---------------------------------------------------------------------------
@@ -679,8 +733,10 @@ void ShapeWorksView2::initializeSurfaces()
 
     this->surfaceActors[i] = vtkSmartPointer<vtkActor>::New();
     this->surfaceActors[i]->SetMapper( this->surfaceMappers[i] );
-    this->surfaceActors[i]->GetProperty()->SetSpecular( .4 );
-    this->surfaceActors[i]->GetProperty()->SetSpecularPower( 25 );
+    //this->surfaceActors[i]->GetProperty()->SetSpecular( .4 );
+    //this->surfaceActors[i]->GetProperty()->SetSpecularPower( 25 );
+    this->surfaceActors[i]->GetProperty()->SetSpecular( .2 );
+    this->surfaceActors[i]->GetProperty()->SetSpecularPower( 15 );
     //this->surfaceActors[i]->GetProperty()->SetRepresentationToWireframe();
     //this->surfaceActors[i]->GetProperty()->SetOpacity( 0.5 + ( ( 1 - i ) * 0.5 ) );
   }
@@ -875,17 +931,17 @@ void ShapeWorksView2::updateSliders()
 {
   int numPcaSteps = Preferences::Instance().getNumPcaSteps();
 
-  if (numPcaSteps % 2 == 0)
+  if ( numPcaSteps % 2 == 0 )
   {
     numPcaSteps++;
   }
-  int halfRange = (numPcaSteps-1) / 2;
+  int halfRange = ( numPcaSteps - 1 ) / 2;
 
   this->ui->pcaSlider->setMinimum( -halfRange );
   this->ui->pcaSlider->setMaximum( halfRange );
   this->ui->pcaSlider->setTickInterval( halfRange / 2 );
-  this->ui->pcaSlider->setSingleStep(1);
-  this->ui->pcaSlider->setPageStep(1);
+  this->ui->pcaSlider->setSingleStep( 1 );
+  this->ui->pcaSlider->setPageStep( 1 );
 
   // regression slider
   int numRegressionSteps = Preferences::Instance().getNumRegressionSteps();
@@ -1355,7 +1411,7 @@ void ShapeWorksView2::computeModeShape()
     {
       double pcaValue = this->getPcaValue( pregenValue );
       vnl_vector<double> shape;
-      if (this->groupsAvailable)
+      if ( this->groupsAvailable )
       {
         shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaValue * lambda ) );
       }
@@ -1370,10 +1426,10 @@ void ShapeWorksView2::computeModeShape()
     }
   }
 
-  if (this->groupsAvailable)
+  if ( this->groupsAvailable )
   {
     this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaSliderValue * lambda ) ) );
-  } 
+  }
   else
   {
     this->displayShape( this->stats.Mean() + ( e * ( pcaSliderValue * lambda ) ) );
@@ -1445,23 +1501,59 @@ void ShapeWorksView2::trilinearInterpolate( vtkImageData* grad, double x, double
 //---------------------------------------------------------------------------
 void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
 {
+
+  double black[3] = { 0.0, 0.0, 0.0 };
+  double white[3] = { 1.0, 1.0, 1.0 };
+  double red[3] = { 1.0, 0.3, 0.3 };
+  double red_pure[3] = { 1.0, 0.0, 0.0 };
+  double green[3] = { 0.3, 1.0, 0.3 };
+  double green_pure[3] = { 0.0, 1.0, 0.0 };
+  double blue[3] = { 0.3, 0.3, 1.0 };
+  double blue_pure[3] = { 0.0, 0.0, 1.0 };
+  double yellow[3] = { 1.0, 1.0, 0.3 };
+  double yellow_pure[3] = { 1.0, 1.0, 0.0 };
+  double magenta[3] = { 1.0, 0.3, 1.0 };
+  double cyan[3] = { 0.3, 1.0, 1.0 };
+  double orange[3] = { 1.0, 0.5, 0.0 };
+  double violet[3] = { 2.0 / 3.0, 0.0, 1.0 };
+
   this->differenceLUT->RemoveAllPoints();
 
-  const float yellow = 0.16666;
-  const float blue = 0.66666;
-  const unsigned int res = 100;
-  const float resinv = 1.0 / static_cast<float>( res );
+  //const float yellow = 0.86666;
+  //const float blue = 0.66666;
+  //const float yellow = 0.33;
+  //const float blue = 0.66;
+  const unsigned int resolution = 100;
+  const float resinv = 1.0 / static_cast<float>( resolution );
   float maxrange;
   if ( fabs( r0 ) > fabs( r1 ) ) {maxrange = fabs( r0 ); }
   else {maxrange = fabs( r1 ); }
 
+  std::cerr << "r0 = " << r0 << "\n";
+  std::cerr << "r1 = " << r1 << "\n";
+  std::cerr << "maxrange = " << maxrange << "\n";
+  //this->differenceLUT->SetScalarRange(-maxrange, maxrange);
+
+  //this->differenceLUT->SetColorSpaceToHSV();
+  //this->differenceLUT->AddHSVPoint(-maxrange, 0.33, 1.0, 1.0);
+  //this->differenceLUT->AddHSVPoint(maxrange, 0.66, 1.0, 1.0);
+
+  double rd = r1 - r0;
+
+  this->differenceLUT->SetColorSpaceToHSV();
+  this->differenceLUT->AddRGBPoint( r0, blue[0], blue[1], blue[2] );
+  this->differenceLUT->AddRGBPoint( r0 + rd * 0.5, green[0], green[1], green[2] );
+  this->differenceLUT->AddRGBPoint( r1, red[0], red[1], red[2] );
+
+  return;
+
   const float pip = fabs( maxrange ) * resinv;
-  for ( unsigned int i = 0; i < res; i++ )
+  for ( unsigned int i = 0; i < resolution; i++ )
   {
     float fi = static_cast<float>( i );
 
-    this->differenceLUT->AddHSVPoint( -maxrange + ( fi * pip ), yellow, 1.0 - ( fi * resinv ), 1.0 );
-    this->differenceLUT->AddHSVPoint( maxrange - ( fi * pip ), blue, 1.0 - ( fi * resinv ), 1.0 );
+    //this->differenceLUT->AddHSVPoint( -maxrange + ( fi * pip ), yellow, 1.0 - ( fi * resinv ), 1.0 );
+    //this->differenceLUT->AddHSVPoint( maxrange - ( fi * pip ), blue, 1.0 - ( fi * resinv ), 1.0 );
   }
 
   this->differenceLUT->AddHSVPoint( 0.0, 0.0, 0.0, 1.0 );
