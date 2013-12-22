@@ -90,6 +90,22 @@ public:
   int GetDomainsPerShape() const
   { return m_DomainsPerShape; }
 
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    typename ParticleEnsembleNormalPenaltyFunction<VDimension>::Pointer copy = ParticleEnsembleNormalPenaltyFunction<VDimension>::New();
+
+    // from itkParticleVectorFunction
+    copy->m_DomainNumber = this->m_DomainNumber;
+    copy->m_ParticleSystem = this->m_ParticleSystem;
+
+    // local
+    copy->m_DomainsPerShape = this->m_DomainsPerShape;
+
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+
+  }
+
+
 protected:
   ParticleEnsembleNormalPenaltyFunction()
   {
