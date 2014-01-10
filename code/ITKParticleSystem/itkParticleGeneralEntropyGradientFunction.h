@@ -144,6 +144,31 @@ public:
   {
     m_AttributeScales = s;
   }
+
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    typename ParticleGeneralEntropyGradientFunction<VDimension>::Pointer copy =
+      ParticleGeneralEntropyGradientFunction<VDimension>::New();
+
+    // from itkParticleVectorFunction
+    copy->m_DomainNumber = this->m_DomainNumber;
+    copy->m_ParticleSystem = this->m_ParticleSystem;
+
+    // local
+    copy->m_AttributeScales = this->m_AttributeScales;
+    copy->m_Counter = this->m_Counter;
+    copy->m_CurrentEnergy = this->m_CurrentEnergy;
+    copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
+    copy->m_MinimumEigenValue  = this->m_MinimumEigenValue;
+    copy->m_MinimumVariance = this->m_MinimumVariance;
+    copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
+    copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
+    copy->m_ShapeData = this->m_ShapeData;
+
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+
+  }
   
 protected:
   ParticleGeneralEntropyGradientFunction()
@@ -169,7 +194,7 @@ protected:
   //  double m_MinimumVarianceBase;
   bool m_HoldMinimumVariance;
   int m_RecomputeCovarianceInterval;
-   double m_MinimumVarianceDecayConstant;
+  double m_MinimumVarianceDecayConstant;
   int m_Counter;
   std::vector<double> m_AttributeScales;
 

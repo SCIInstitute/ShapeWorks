@@ -189,6 +189,25 @@ public:
   //  void ComputeNeighborho0d();
   
 
+  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  {
+    typename ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer copy =
+      ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::New();
+
+    // from itkParticleVectorFunction
+    copy->m_DomainNumber = this->m_DomainNumber;
+    copy->m_ParticleSystem = this->m_ParticleSystem;
+
+    // local
+    copy->m_FlatCutoff = this->m_FlatCutoff;
+    copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
+    copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
+    copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
+    copy->m_SpatialSigmaCache =  this->m_SpatialSigmaCache;
+
+    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+
+  }
 
 protected:
   
