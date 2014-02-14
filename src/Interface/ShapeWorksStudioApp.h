@@ -1,6 +1,11 @@
 #include <QMainWindow>
 #include <QTimer>
 
+
+#include <vtkSmartPointer.h>
+class vtkQtTableView;
+
+
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -26,8 +31,8 @@ private:
   // designer form
   Ui_ShapeWorksStudioApp* ui;
 
-  ViewerLayout* viewerLayout;
 
-  QTimer eventTimer;
+  vtkSmartPointer<vtkQtTableView>         TableView;                                  
+
 
 };

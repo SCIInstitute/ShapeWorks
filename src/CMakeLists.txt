@@ -36,6 +36,11 @@ ENDIF (WIN32 AND MSVC)
 
 FIND_PACKAGE(VTK COMPONENTS
   vtkCommonCore
+  vtkInfovisCore
+  vtkInteractionStyle
+  vtkRenderingFreeTypeOpenGL
+  vtkViewsQt
+  vtkFiltersCore
   vtkGUISupportQt
 )
 
