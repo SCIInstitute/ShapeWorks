@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="Cifer">
+    <file>Images/studio.png</file>
+  </qresource>
+</RCC>
