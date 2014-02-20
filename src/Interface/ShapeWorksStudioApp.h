@@ -1,10 +1,10 @@
 #include <QMainWindow>
 #include <QTimer>
 
-
 #include <vtkSmartPointer.h>
-class vtkQtTableView;
 
+#include <itkImage.h>
+#include <itkImageFileReader.h>
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -22,7 +22,7 @@ public:
 public Q_SLOTS:
 
   void on_actionQuit_triggered();
-
+  void on_actionImport_triggered();
 
 private:
 
@@ -31,8 +31,9 @@ private:
   // designer form
   Ui_ShapeWorksStudioApp* ui;
 
+  typedef float PixelType;
+  typedef itk::Image< PixelType, 3 > ImageType;
+  typedef itk::ImageFileReader< ImageType > ReaderType;
 
-  vtkSmartPointer<vtkQtTableView>         TableView;                                  
-
-
+  std::vector<ImageType::Pointer> images;
 };
