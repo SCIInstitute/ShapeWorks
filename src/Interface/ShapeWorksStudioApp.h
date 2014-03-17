@@ -6,6 +6,8 @@
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 
+#include <Visualization/Viewer.h>
+
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -36,4 +38,6 @@ private:
   typedef itk::ImageFileReader< ImageType > ReaderType;
 
   std::vector<ImageType::Pointer> images;
+
+  Viewer *viewer;
 };

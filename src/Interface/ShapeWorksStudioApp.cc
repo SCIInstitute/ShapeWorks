@@ -13,6 +13,8 @@
 #include <vtkRenderWindow.h>
 #include <vtkVectorText.h>
 
+#include <itkImageToVTKImageFilter.h>
+
 #include "vtkSmartPointer.h"
 #define VTK_CREATE( type, name ) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
@@ -40,13 +42,17 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   actor->SetMapper( mapper );
 
   // VTK Renderer
-  VTK_CREATE( vtkRenderer, ren );
+  //VTK_CREATE( vtkRenderer, ren );
+
+  this->viewer = new Viewer();
 
   // Add Actor to renderer
-  ren->AddActor( actor );
+  //ren->AddActor( actor );
 
   // VTK/Qt wedded
-  this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( ren );
+  //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( ren );
+  this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( this->viewer->getRenderer() );
+ // this->viewer->setInteractor( this->ui->qvtkWidget->GetRenderWindow()->GetInteractor() );
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
@@ -79,5 +85,12 @@ void ShapeWorksStudioApp::on_actionImport_triggered()
     ImageType::Pointer image = reader->GetOutput();
     this->images.push_back( image );
     this->ui->listWidget->addItem( fileNames[i] );
+
+    typedef itk::ImageToVTKImageFilter<ImageType> ConnectorType;
+    ConnectorType::Pointer connector = ConnectorType::New();
+    connector->SetInput( image );
+    connector->Update();
+
+    this->viewer->addInput( connector->GetOutput() );
   }
 }
