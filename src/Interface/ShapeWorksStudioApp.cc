@@ -45,13 +45,18 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   //VTK_CREATE( vtkRenderer, ren );
 
   this->viewer = new Viewer();
+  this->dataManager = new DataManager();
 
   // Add Actor to renderer
   //ren->AddActor( actor );
 
   // VTK/Qt wedded
   //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( ren );
-  this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( this->viewer->getRenderer() );
+  // 
+
+  this->viewer->setRenderWindow(this->ui->qvtkWidget->GetRenderWindow());
+
+  //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( this->viewer->getRenderer() );
  // this->viewer->setInteractor( this->ui->qvtkWidget->GetRenderWindow()->GetInteractor() );
 }
 
@@ -79,18 +84,18 @@ void ShapeWorksStudioApp::on_actionImport_triggered()
   {
     std::cerr << fileNames[i].toStdString() << "\n";
 
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( fileNames[i].toStdString() );
-    reader->Update();
-    ImageType::Pointer image = reader->GetOutput();
-    this->images.push_back( image );
-    this->ui->listWidget->addItem( fileNames[i] );
+    this->dataManager->importFile( fileNames[i].toStdString());
 
-    typedef itk::ImageToVTKImageFilter<ImageType> ConnectorType;
-    ConnectorType::Pointer connector = ConnectorType::New();
-    connector->SetInput( image );
-    connector->Update();
-
-    this->viewer->addInput( connector->GetOutput() );
   }
+
+
+  std::vector<vtkSmartPointer<vtkPolyData> > meshes = this->dataManager->getMeshes();
+
+  for ( int i = 0; i < meshes.size(); i++)
+  {
+    this->viewer->addInput( meshes[i] );
+
+  }
+
+
 }

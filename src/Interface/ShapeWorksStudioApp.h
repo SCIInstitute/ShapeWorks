@@ -6,6 +6,7 @@
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 
+#include <Data/DataManager.h>
 #include <Visualization/Viewer.h>
 
 // Forward Qt class declarations
@@ -40,4 +41,7 @@ private:
   std::vector<ImageType::Pointer> images;
 
   Viewer *viewer;
+
+  DataManager *dataManager;
+
 };
