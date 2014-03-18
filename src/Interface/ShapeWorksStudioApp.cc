@@ -52,12 +52,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   // VTK/Qt wedded
   //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( ren );
-  // 
+  //
 
-  this->viewer->setRenderWindow(this->ui->qvtkWidget->GetRenderWindow());
+  this->viewer->set_render_window( this->ui->qvtkWidget->GetRenderWindow() );
 
   //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( this->viewer->getRenderer() );
- // this->viewer->setInteractor( this->ui->qvtkWidget->GetRenderWindow()->GetInteractor() );
+  // this->viewer->setInteractor( this->ui->qvtkWidget->GetRenderWindow()->GetInteractor() );
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
@@ -80,22 +80,19 @@ void ShapeWorksStudioApp::on_actionImport_triggered()
     fileNames = dialog.selectedFiles();
   }
 
+  int oldCount = this->dataManager->getMeshes().size();
+
   for ( int i = 0; i < fileNames.size(); i++ )
   {
     std::cerr << fileNames[i].toStdString() << "\n";
 
-    this->dataManager->importFile( fileNames[i].toStdString());
-
+    this->dataManager->importFile( fileNames[i].toStdString() );
   }
-
 
   std::vector<vtkSmartPointer<vtkPolyData> > meshes = this->dataManager->getMeshes();
 
-  for ( int i = 0; i < meshes.size(); i++)
+  for ( int i = oldCount; i < meshes.size(); i++ )
   {
-    this->viewer->addInput( meshes[i] );
-
+    this->viewer->add_input( meshes[i] );
   }
-
-
 }

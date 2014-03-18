@@ -2,3 +2,5 @@
 Windows:
 
 cmake ../src -G "Visual Studio 9 2008" -DVTK_DIR="C:/Users/amorris/carma/packages/vtk-6.1.0-x86" -DITK_DIR="C:/Users/amorris/carma/packages/itk-4.5.0-x86"
+
+...

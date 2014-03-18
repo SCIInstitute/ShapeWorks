@@ -15,31 +15,33 @@ public:
   Viewer();
   ~Viewer();
 
-  vtkRenderer *getRenderer();
-  void setInteractor(vtkRenderWindowInteractor *interactor);
+  vtkRenderer *get_renderer();
+  void set_interactor(vtkRenderWindowInteractor *interactor);
 
-  void addInput(vtkSmartPointer<vtkPolyData> polyData);
+  void add_input(vtkSmartPointer<vtkPolyData> poly_data);
 
 
-  void setRenderWindow(vtkRenderWindow *renderWindow);
+  void set_render_window(vtkRenderWindow *render_window);
 
 private:
 
-  bool initialized;
-  vtkSmartPointer<vtkRenderer> renderer;
 
-  std::vector<vtkSmartPointer<vtkRenderer> > renderers;
+  void setup_renderers();
 
-  vtkRenderWindow *renderWindow_;
+  vtkSmartPointer<vtkRenderer> renderer_;
 
-  vtkRenderWindowInteractor* interactor;
-  std::vector<vtkImageData*> inputs;
+  std::vector<vtkSmartPointer<vtkRenderer> > renderers_;
 
-  vtkSmartPointer<vtkPolyDataMapper> mapper;
-  vtkSmartPointer<vtkActor>          actor;
+  vtkRenderWindow *render_window_;
+
+  vtkRenderWindowInteractor* interactor_;
+
+  vtkSmartPointer<vtkPolyDataMapper> mapper_;
+  vtkSmartPointer<vtkActor>          actor_;
+
 
   vtkCamera *camera_;
 
-  int count;
+  int count_;
 
 };
