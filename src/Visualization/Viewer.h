@@ -23,10 +23,13 @@ public:
 
   void set_render_window(vtkRenderWindow *render_window);
 
+  void set_tile_layout(int width, int height);
+
+  void setup_renderers();
+
 private:
 
 
-  void setup_renderers();
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
@@ -43,5 +46,10 @@ private:
   vtkCamera *camera_;
 
   int count_;
+
+  int tile_layout_width_;
+  int tile_layout_height_;
+
+
 
 };

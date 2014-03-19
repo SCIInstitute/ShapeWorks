@@ -26,6 +26,7 @@ public Q_SLOTS:
 
   void on_actionQuit_triggered();
   void on_actionImport_triggered();
+  void on_thumbnail_size_slider_valueChanged();
 
 private:
 

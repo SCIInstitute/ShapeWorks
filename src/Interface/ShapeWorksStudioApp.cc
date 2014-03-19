@@ -96,3 +96,20 @@ void ShapeWorksStudioApp::on_actionImport_triggered()
     this->viewer->add_input( meshes[i] );
   }
 }
+
+void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
+{
+  int value = this->ui->thumbnail_size_slider->value();
+  std::cerr << "thumbnail = " << this->ui->thumbnail_size_slider->value() << "\n";
+
+  this->viewer->set_tile_layout( value, value);
+  this->viewer->setup_renderers();
+
+  std::vector<vtkSmartPointer<vtkPolyData> > meshes = this->dataManager->getMeshes();
+
+  for ( int i = 0; i < meshes.size(); i++ )
+  {
+    this->viewer->add_input( meshes[i] );
+  }
+  this->ui->qvtkWidget->GetRenderWindow()->Render();
+}

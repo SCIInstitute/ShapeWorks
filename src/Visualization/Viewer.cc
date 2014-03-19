@@ -13,7 +13,9 @@ Viewer::Viewer()
 {
 
   this->renderer_ = vtkSmartPointer<vtkRenderer>::New();
-  count_ = 0;
+  this->count_ = 0;
+  this->tile_layout_width_ = 4;
+  this->tile_layout_height_ = 4;
   this->camera_ = this->renderer_->GetActiveCamera();
 }
 
@@ -24,7 +26,13 @@ void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
 
 void Viewer::add_input( vtkSmartPointer<vtkPolyData> polyData )
 {
-  std::cerr << polyData->GetNumberOfVerts() << "\n";
+  std::cerr << polyData->GetNumberOfPoints() << "\n";
+
+  if ( this->count_ >= this->renderers_.size() )
+  {
+    std::cerr << "aborting\n";
+    return;
+  }
 
   this->mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->actor_ = vtkSmartPointer<vtkActor>::New();
@@ -68,11 +76,20 @@ void Viewer::set_render_window( vtkRenderWindow* renderWindow )
 
 void Viewer::setup_renderers()
 {
+  for ( int i = 0; i < this->renderers_.size(); i++ )
+  {
+    this->render_window_->RemoveRenderer( this->renderers_[i] );
+  }
+
+  this->renderers_.clear();
+
+  this->count_ = 0;
+
   int* size = this->render_window_->GetSize();
   std::cerr << "window size = " << size[0] << " x " << size[1] << "\n";
 
-  int width = 4;
-  int height = 4;
+  int width = this->tile_layout_width_;
+  int height = this->tile_layout_height_;
   int total = width * height;
 
   float margin = 0.005;
@@ -111,11 +128,36 @@ void Viewer::setup_renderers()
       ren->SetViewport( viewport );
       //ren->SetBackground( .2, .2 * count, .1 * count );
 
-      float color = 0.2 + ( 0.1 * ( i % 3 ) );
+      int mod = 3;
+      int mod2 = 2;
+      int mod3 = 1;
+
+      if (width == 6)
+      {
+        mod = 4;
+        mod2 = 3;
+        mod3 = 2;
+      }
+
+      float color = 0.2 + ( 0.04 * (i % mod) );
+
+
+      color = color - (0.02 * (i % mod2));
+
+      color = color + (0.04 * (i % mod3));
 
       ren->SetBackground( color, color, color );
 
       this->render_window_->AddRenderer( ren );
+      //ren->Render();
     }
   }
+
+  this->render_window_->Render();
+}
+
+void Viewer::set_tile_layout( int width, int height )
+{
+  this->tile_layout_width_ = width;
+  this->tile_layout_height_ = height;
 }
