@@ -71,15 +71,20 @@ void Viewer::setup_renderers()
   int* size = this->render_window_->GetSize();
   std::cerr << "window size = " << size[0] << " x " << size[1] << "\n";
 
-  int width = 6;
-  int height = 7;
+  int width = 4;
+  int height = 4;
   int total = width * height;
 
-  float height_ratio = 1.0f / height;
-  float width_ratio = 1.0f / width;
+  float margin = 0.005;
 
-  std::cerr << "width_ratio = " << width_ratio << "\n";
-  std::cerr << "height_ratio = " << height_ratio << "\n";
+  float tile_height = ( 1.0f - ( margin * ( height + 1 ) ) ) / height;
+  float tile_width = ( 1.0f - ( margin * ( width + 1 ) ) ) / width;
+
+  std::cerr << "width_ratio = " << tile_width << "\n";
+  std::cerr << "height_ratio = " << tile_height << "\n";
+
+  float step_x = tile_width + margin;
+  float step_y = tile_height + margin;
 
   for ( int y = 0; y < height; y++ )
   {
@@ -94,18 +99,12 @@ void Viewer::setup_renderers()
       double viewport[4] = {0.0, 0.0, 0.0, 0.0};
 
       // horizontal
-      viewport[0] = x * width_ratio;
-      viewport[2] = viewport[0] + width_ratio;
+      viewport[0] = margin + ( x * step_x );
+      viewport[2] = viewport[0] + tile_width;
 
       // vertical
-      viewport[1] = ( ( height - 1 ) - y ) * height_ratio;
-      viewport[3] = viewport[1] + height_ratio;
-
-      // margins
-      viewport[0] += 0.005;
-      viewport[1] += 0.005;
-      viewport[2] -= 0.005;
-      viewport[3] -= 0.005;
+      viewport[1] = margin + ( ( ( height - 1 ) - y ) * step_y );
+      viewport[3] = viewport[1] + tile_height;
 
       std::cerr << "viewport = {" << viewport[0] << ", " << viewport[1] << ", " << viewport[2] << ", " << viewport[3] << "}\n";
 
