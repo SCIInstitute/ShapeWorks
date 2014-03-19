@@ -17,6 +17,8 @@ Viewer::Viewer()
   this->tile_layout_width_ = 4;
   this->tile_layout_height_ = 4;
   this->camera_ = this->renderer_->GetActiveCamera();
+
+  this->start_row_ = 0;
 }
 
 void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
@@ -24,9 +26,10 @@ void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
   this->interactor_ = interactor;
 }
 
-void Viewer::add_input( vtkSmartPointer<vtkPolyData> polyData )
+
+void Viewer::insert_model_into_view(vtkSmartPointer<vtkPolyData> poly_data)
 {
-  std::cerr << polyData->GetNumberOfPoints() << "\n";
+  std::cerr << poly_data->GetNumberOfPoints() << "\n";
 
   if ( this->count_ >= this->renderers_.size() )
   {
@@ -37,29 +40,44 @@ void Viewer::add_input( vtkSmartPointer<vtkPolyData> polyData )
   this->mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->actor_ = vtkSmartPointer<vtkActor>::New();
 
-  this->mapper_->SetInputData( polyData );
+  this->mapper_->SetInputData( poly_data );
   this->actor_->SetMapper( this->mapper_ );
-
   this->actor_->GetProperty()->SetDiffuseColor( 1, 191.0 / 255.0, 0 );
-
-  //this->actor->GetProperty()->SetDiffuseColor( 1.0000, 0.3882, 0.2784 );
-  //this->actor->GetProperty()->SetAmbientColor( 1.0000, 0.3882, 0.2784 );
   this->actor_->GetProperty()->SetSpecular( 0.2 );
   this->actor_->GetProperty()->SetSpecularPower( 15 );
-
-  //this->actor->GetProperty()->SetDiffuse( 1 );
-  //this->actor->GetProperty()->SetAmbient( 1 );
-//  this->actor->GetProperty()->SetRepresentationToWireframe();
   this->mapper_->ScalarVisibilityOff();
 
   vtkSmartPointer<vtkRenderer> ren = this->renderers_[this->count_];
 
+  ren->RemoveAllViewProps();
   ren->AddActor( this->actor_ );
   ren->ResetCamera();
-  //double viewport[4] = {0.0, 0.0, 0.5, 1.0};
 
   this->count_++;
+
 }
+
+void Viewer::add_input( vtkSmartPointer<vtkPolyData> poly_data )
+{
+  this->models_.push_back( poly_data );
+  this->insert_models();
+}
+
+
+void Viewer::insert_models()
+{
+  int num_models = this->models_.size();
+
+  int start_model = this->start_row_ * this->tile_layout_width_;
+
+  this->count_ = 0;
+  for (int i=start_model; i < num_models; i++)
+  {
+    this->insert_model_into_view(this->models_[i]);
+  }
+
+}
+
 
 vtkRenderer* Viewer::get_renderer()
 {
@@ -132,19 +150,18 @@ void Viewer::setup_renderers()
       int mod2 = 2;
       int mod3 = 1;
 
-      if (width == 6)
+      if ( width == 6 )
       {
         mod = 4;
         mod2 = 3;
         mod3 = 2;
       }
 
-      float color = 0.2 + ( 0.04 * (i % mod) );
+      float color = 0.2 + ( 0.04 * ( i % mod ) );
 
+      color = color - ( 0.02 * ( i % mod2 ) );
 
-      color = color - (0.02 * (i % mod2));
-
-      color = color + (0.04 * (i % mod3));
+      color = color + ( 0.04 * ( i % mod3 ) );
 
       ren->SetBackground( color, color, color );
 
@@ -160,4 +177,24 @@ void Viewer::set_tile_layout( int width, int height )
 {
   this->tile_layout_width_ = width;
   this->tile_layout_height_ = height;
+
+  this->setup_renderers();
+  this->insert_models();
+}
+
+int Viewer::get_num_rows()
+{
+  return std::ceil((float)this->models_.size() / (float)this->tile_layout_width_);
+}
+
+int Viewer::get_num_rows_visible()
+{
+  return this->tile_layout_height_;
+}
+
+void Viewer::set_start_row(int row)
+{
+  this->start_row_ = row;
+  this->insert_models();
+  this->render_window_->Render();
 }

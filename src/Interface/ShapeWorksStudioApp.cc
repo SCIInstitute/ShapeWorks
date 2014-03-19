@@ -95,21 +95,52 @@ void ShapeWorksStudioApp::on_actionImport_triggered()
   {
     this->viewer->add_input( meshes[i] );
   }
+
+  this->update_scrollbar();
 }
 
 void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
-  int value = this->ui->thumbnail_size_slider->value();
-  std::cerr << "thumbnail = " << this->ui->thumbnail_size_slider->value() << "\n";
+  int value = this->ui->thumbnail_size_slider->maximum() - this->ui->thumbnail_size_slider->value() + 1;
 
-  this->viewer->set_tile_layout( value, value);
-  this->viewer->setup_renderers();
+  this->viewer->set_tile_layout( value, value );
+  //this->viewer->setup_renderers();
 
-  std::vector<vtkSmartPointer<vtkPolyData> > meshes = this->dataManager->getMeshes();
-
-  for ( int i = 0; i < meshes.size(); i++ )
-  {
+  //std::vector<vtkSmartPointer<vtkPolyData> > meshes = this->dataManager->getMeshes();
+/*
+   for ( int i = 0; i < meshes.size(); i++ )
+   {
     this->viewer->add_input( meshes[i] );
-  }
+   }
+ */
+  this->update_scrollbar();
+
   this->ui->qvtkWidget->GetRenderWindow()->Render();
+}
+
+void ShapeWorksStudioApp::update_scrollbar()
+{
+  int num_rows = this->viewer->get_num_rows();
+  int num_visible = this->viewer->get_num_rows_visible();
+  std::cerr << "num_rows = " << num_rows << "\n";
+  std::cerr << "num_visible = " << num_visible << "\n";
+  if ( num_visible >= num_rows )
+  {
+    this->ui->vertical_scroll_bar->setMaximum( 0 );
+    this->ui->vertical_scroll_bar->setEnabled( false );
+  }
+  else
+  {
+    this->ui->vertical_scroll_bar->setEnabled( true );
+    this->ui->vertical_scroll_bar->setMaximum( num_rows - num_visible );
+    this->ui->vertical_scroll_bar->setPageStep( num_visible );
+  }
+}
+
+void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
+{
+  int value = this->ui->vertical_scroll_bar->value();
+
+  std::cerr << "vertical scrollbar value = " << value << "\n";
+  this->viewer->set_start_row( value );
 }

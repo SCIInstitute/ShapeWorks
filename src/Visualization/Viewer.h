@@ -27,9 +27,17 @@ public:
 
   void setup_renderers();
 
+  int get_num_rows();
+  int get_num_rows_visible();
+
+  void set_start_row(int row);
+
 private:
 
+  void insert_models();
 
+
+  void insert_model_into_view(vtkSmartPointer<vtkPolyData> poly_data);
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
@@ -43,12 +51,16 @@ private:
   vtkSmartPointer<vtkActor>          actor_;
 
 
+  std::vector<vtkSmartPointer<vtkPolyData> > models_;
+
   vtkCamera *camera_;
 
   int count_;
 
   int tile_layout_width_;
   int tile_layout_height_;
+
+  int start_row_;
 
 
 

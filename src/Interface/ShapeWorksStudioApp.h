@@ -22,15 +22,20 @@ public:
   ShapeWorksStudioApp( int argc, char** argv );
   ~ShapeWorksStudioApp();
 
+
+
 public Q_SLOTS:
 
   void on_actionQuit_triggered();
   void on_actionImport_triggered();
   void on_thumbnail_size_slider_valueChanged();
+  void on_vertical_scroll_bar_valueChanged();
 
 private:
 
   void createMenu();
+
+  void update_scrollbar();
 
   // designer form
   Ui_ShapeWorksStudioApp* ui;
