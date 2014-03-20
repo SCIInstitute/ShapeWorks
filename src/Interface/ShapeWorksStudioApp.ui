@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>890</width>
+    <width>751</width>
     <height>559</height>
    </rect>
   </property>
@@ -19,6 +19,45 @@
   </property>
   <property name="styleSheet">
    <string notr="true">
+/*
+ QToolBar {
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+}
+*/
+
+QToolBar {
+	background-color: white
+	border: grey
+}
+
+QStatusBar {
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+}
+
+QMainWindow {
+	background-color: grey
+}
+
+
+/*
+QMainWindow {background: qradialgradient(spread:pad, cx:0.9, cy:0.12, radius:0.5, fx:0.93, fy:0.07, stop:0 rgba(0, 92, 169, 255), stop:0.3 rgba(0, 92, 169, 255), stop:0.5 rgba(0, 92, 169, 80), stop:0.6 rgba(0, 92, 169, 30), stop:1 rgba(0, 92, 169, 0))}
+*/
+/*
+ QMainWindow {
+	background-color: rgba( 70, 0, 0, 0 );
+
+}
+*/
+
+/*
+QWidget {
+	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
+}
+*/
+
+/*	background-color: red;
+*/
+
 
 /********************** DATA ***********************/
 
@@ -573,7 +612,7 @@ QWidget#slice_content_{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>890</width>
+     <width>751</width>
      <height>21</height>
     </rect>
    </property>
@@ -596,13 +635,22 @@ QWidget#slice_content_{
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="controlsDockWidget_2">
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Tools</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QListWidget" name="listWidget"/>
+      <widget class="QTableWidget" name="tableWidget"/>
      </item>
      <item>
       <widget class="QWidget" name="layers_widget_" native="true">
@@ -794,12 +842,29 @@ QWidget#slice_content_{
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>42</width>
+     <height>42</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
    <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
+    <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionImportMode"/>
+   <addaction name="actionGroom_Mode"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -879,6 +944,30 @@ QWidget#slice_content_{
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionGroom_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+     <normaloff>:/Cifer/Images/studio.png</normaloff>:/Cifer/Images/studio.png</iconset>
+   </property>
+   <property name="text">
+    <string>Groom</string>
+   </property>
+  </action>
+  <action name="actionImportMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+     <normaloff>:/Cifer/Images/studio.png</normaloff>:/Cifer/Images/studio.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import</string>
    </property>
   </action>
  </widget>

@@ -21,19 +21,19 @@ Viewer::Viewer()
   this->start_row_ = 0;
 }
 
+//-----------------------------------------------------------------------------
 void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
 {
   this->interactor_ = interactor;
 }
 
-
-void Viewer::insert_model_into_view(vtkSmartPointer<vtkPolyData> poly_data)
+//-----------------------------------------------------------------------------
+void Viewer::insert_model_into_view( vtkSmartPointer<vtkPolyData> poly_data )
 {
   std::cerr << poly_data->GetNumberOfPoints() << "\n";
 
   if ( this->count_ >= this->renderers_.size() )
   {
-    std::cerr << "aborting\n";
     return;
   }
 
@@ -54,16 +54,16 @@ void Viewer::insert_model_into_view(vtkSmartPointer<vtkPolyData> poly_data)
   ren->ResetCamera();
 
   this->count_++;
-
 }
 
+//-----------------------------------------------------------------------------
 void Viewer::add_input( vtkSmartPointer<vtkPolyData> poly_data )
 {
   this->models_.push_back( poly_data );
   this->insert_models();
 }
 
-
+//-----------------------------------------------------------------------------
 void Viewer::insert_models()
 {
   int num_models = this->models_.size();
@@ -71,19 +71,19 @@ void Viewer::insert_models()
   int start_model = this->start_row_ * this->tile_layout_width_;
 
   this->count_ = 0;
-  for (int i=start_model; i < num_models; i++)
+  for ( int i = start_model; i < num_models; i++ )
   {
-    this->insert_model_into_view(this->models_[i]);
+    this->insert_model_into_view( this->models_[i] );
   }
-
 }
 
-
+//-----------------------------------------------------------------------------
 vtkRenderer* Viewer::get_renderer()
 {
   return this->renderer_;
 }
 
+//-----------------------------------------------------------------------------
 void Viewer::set_render_window( vtkRenderWindow* renderWindow )
 {
   this->render_window_ = renderWindow;
@@ -92,6 +92,7 @@ void Viewer::set_render_window( vtkRenderWindow* renderWindow )
   this->setup_renderers();
 }
 
+//-----------------------------------------------------------------------------
 void Viewer::setup_renderers()
 {
   for ( int i = 0; i < this->renderers_.size(); i++ )
@@ -173,6 +174,7 @@ void Viewer::setup_renderers()
   this->render_window_->Render();
 }
 
+//-----------------------------------------------------------------------------
 void Viewer::set_tile_layout( int width, int height )
 {
   this->tile_layout_width_ = width;
@@ -182,17 +184,20 @@ void Viewer::set_tile_layout( int width, int height )
   this->insert_models();
 }
 
+//-----------------------------------------------------------------------------
 int Viewer::get_num_rows()
 {
-  return std::ceil((float)this->models_.size() / (float)this->tile_layout_width_);
+  return std::ceil( (float)this->models_.size() / (float)this->tile_layout_width_ );
 }
 
+//-----------------------------------------------------------------------------
 int Viewer::get_num_rows_visible()
 {
   return this->tile_layout_height_;
 }
 
-void Viewer::set_start_row(int row)
+//-----------------------------------------------------------------------------
+void Viewer::set_start_row( int row )
 {
   this->start_row_ = row;
   this->insert_models();
