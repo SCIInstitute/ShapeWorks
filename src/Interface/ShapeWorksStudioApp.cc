@@ -24,40 +24,20 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui = new Ui_ShapeWorksStudioApp;
   this->ui->setupUi( this );
 
-  // Geometry
-  VTK_CREATE( vtkVectorText, text );
-  text->SetText( "VTK and Qt!" );
-  VTK_CREATE( vtkElevationFilter, elevation );
-  elevation->SetInputConnection( text->GetOutputPort() );
-  elevation->SetLowPoint( 0, 0, 0 );
-  elevation->SetHighPoint( 10, 0, 0 );
+  this->ui->actionImportMode->setChecked( true );
 
-  // Mapper
-  VTK_CREATE( vtkPolyDataMapper, mapper );
-  mapper->ImmediateModeRenderingOn();
-  mapper->SetInputConnection( elevation->GetOutputPort() );
+  this->action_group_ = new QActionGroup( this );
+  this->action_group_->addAction( this->ui->actionImportMode );
+  this->action_group_->addAction( this->ui->actionGroomMode );
+  this->action_group_->addAction( this->ui->actionActionOptimizeMode );
+  this->action_group_->addAction( this->ui->actionAnalysisMode );
 
-  // Actor in scene
-  VTK_CREATE( vtkActor, actor );
-  actor->SetMapper( mapper );
-
-  // VTK Renderer
-  //VTK_CREATE( vtkRenderer, ren );
+  this->ui->statusbar->showMessage( "All Systems Nominal!" );
 
   this->viewer = new Viewer();
   this->dataManager = new DataManager();
 
-  // Add Actor to renderer
-  //ren->AddActor( actor );
-
-  // VTK/Qt wedded
-  //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( ren );
-  //
-
   this->viewer->set_render_window( this->ui->qvtkWidget->GetRenderWindow() );
-
-  //this->ui->qvtkWidget->GetRenderWindow()->AddRenderer( this->viewer->getRenderer() );
-  // this->viewer->setInteractor( this->ui->qvtkWidget->GetRenderWindow()->GetInteractor() );
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
@@ -82,11 +62,23 @@ void ShapeWorksStudioApp::on_actionImport_triggered()
 
   int oldCount = this->dataManager->getMeshes().size();
 
+  this->ui->tableWidget->setRowCount( fileNames.size() );
+  this->ui->tableWidget->setColumnCount( 1 );
+
+  //this->ui->tableWidget->setItem(0, 1, new QTableWidgetItem("Hello"));
+
   for ( int i = 0; i < fileNames.size(); i++ )
   {
     std::cerr << fileNames[i].toStdString() << "\n";
 
     this->dataManager->importFile( fileNames[i].toStdString() );
+
+    QString name = fileNames[i];
+    QFileInfo qfi( name );
+
+    QTableWidgetItem* newItem = new QTableWidgetItem( qfi.baseName() );
+
+    this->ui->tableWidget->setItem( i, 0, newItem );
   }
 
   std::vector<vtkSmartPointer<vtkPolyData> > meshes = this->dataManager->getMeshes();
@@ -143,4 +135,9 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 
   std::cerr << "vertical scrollbar value = " << value << "\n";
   this->viewer->set_start_row( value );
+}
+
+void ShapeWorksStudioApp::on_addButton_clicked()
+{
+  this->on_actionImport_triggered();
 }

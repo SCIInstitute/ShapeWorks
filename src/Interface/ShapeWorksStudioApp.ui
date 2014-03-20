@@ -18,519 +18,35 @@
     <normaloff>:/ShapeWorksStudio/Images/cifer.png</normaloff>:/ShapeWorksStudio/Images/cifer.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-/*
- QToolBar {
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-}
-*/
-
-QToolBar {
-	background-color: white
-	border: grey
-}
-
-QStatusBar {
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-}
-
-QMainWindow {
-	background-color: grey
-}
-
-
-/*
-QMainWindow {background: qradialgradient(spread:pad, cx:0.9, cy:0.12, radius:0.5, fx:0.93, fy:0.07, stop:0 rgba(0, 92, 169, 255), stop:0.3 rgba(0, 92, 169, 255), stop:0.5 rgba(0, 92, 169, 80), stop:0.6 rgba(0, 92, 169, 30), stop:1 rgba(0, 92, 169, 0))}
-*/
-/*
- QMainWindow {
-	background-color: rgba( 70, 0, 0, 0 );
-
-}
-*/
-
-/*
-QWidget {
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-}
-*/
-
-/*	background-color: red;
-*/
-
-
-/********************** DATA ***********************/
-
-QLabel#dataLabel{
-	color: white;
-	font: bold;
-}
-QWidget#dataWidget{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#dataOpenButton{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#dataOpenButton:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#dataHeader{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#dataHeaderBackground{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#dataWidget{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#dataContent{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-/********************** DATA ***********************/
-
-
-
-
-QTabWidget{
-    background-color: rgba( 0, 0, 1, 0 );
-	border: 1px solid rgba( 0, 0, 0, 0 );
-	margin: 0, 0, 0, 0;
-	padding: 0, 0, 0, 0;
-}
-
-
-QTabBar::tab {
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-
-/*  background: lightgray;
-*/
-
-  color: white;
- }
-
-
-QWidget#controlsDockContents {
-/*	background-color: rgb(0,0,1);
-*/
-
-/*
-background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(1, 0, 0, 0), stop:0.45 rgba(0, 0, 1, 30), stop:1 rgba(0, 1, 0, 25));
-*/
-
-/*	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(69, 168, 212, 255), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(60, 60, 60, 255));
-*/   
- border-radius: 3px;
-
-background: rgb(90,90,90);
-
-/*
-	background: grey
-*/
-
-/*	color: red;	
-*/
-}
-
-
-
-QWidget#widget {
- background-color: rgba(0,0,255,255);
-
-
-/*
-background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(1, 0, 0, 0), stop:0.45 rgba(0, 0, 1, 30), stop:1 rgba(0, 1, 0, 25));
-*/
-
-/*
-	background: grey
-*/
-
-/*	color: red;	
-*/
-}
-
-
- QTabBar::tab:selected {
-  background-color: rgb( 84, 168, 212 );
- }
-
-QToolButton{
-	border: 1px solid rgba( 0, 0, 0, 0 );
-	margin: 0, 0, 0, 0;
-	padding: 0, 0, 0, 0;
-}
-
-QToolButton:hover{
-	background-color: rgba( 140, 140, 140, 50 );
-}
-
-QToolButton:pressed{
-	border: 1px solid rgba( 100, 100, 100, 120 );
-	background-color: rgba( 100, 100, 100, 200 );
-}
-
-
-QLabel#basic_options_label_{
-	color: white;
-	font: bold;
-}
-QWidget#basic_options_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#basic_options_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#basic_options_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#basic_options_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#basic_options_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#basic_options_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#basic_options_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-
-QLabel#layers_label_{
-	color: white;
-	font: bold;
-}
-
-QWidget#layers_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#layers_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#layers_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#layers_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#layers_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#layers_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#layers_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-
-QLabel#advanced_label_{
-	color: white;
-	font: bold;
-}
-QWidget#advanced_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#advanced_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#advanced_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#advanced_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#advanced_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#advanced_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#advanced_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-
-QLabel#info_label_{
-	color: white;
-	font: bold;
-}
-QWidget#info_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#info_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#info_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#info_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#info_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#info_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#info_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-
-/********************** ANALYSIS ***********************/
-
-QLabel#analysis_label_{
-	color: white;
-	font: bold;
-}
-QWidget#analysis_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#analysis_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#analysis_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#analysis_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#analysis_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#analysis_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#analysis_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-/********************** ANALYSIS ***********************/
-
-/********************** ISOSURFACE ***********************/
-
-QLabel#isosurface_label_{
-	color: white;
-	font: bold;
-}
-QWidget#isosurface_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#isosurface_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#isosurface_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#isosurface_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#isosurface_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#isosurface_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#isosurface_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-/********************** ISOSURFACE ***********************/
-
-/********************** VOLUME_RENDERING ***********************/
-
-QLabel#volume_rendering_label_{
-	color: white;
-	font: bold;
-}
-QWidget#volume_rendering_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
-
-QToolButton#volume_rendering_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
-}
-
-QToolButton#volume_rendering_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
-
-QWidget#volume_rendering_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
-
-QWidget#volume_rendering_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
-}
-
-QWidget#volume_rendering_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
-
-QWidget#volume_rendering_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-/********************** VOLUME_RENDERING ***********************/
-
-/********************** SLICE ***********************/
-
-QLabel#slice_label_{
-	color: white;
-	font: bold;
-}
-QWidget#slice_widget_{
-	background-color: rgba( 0, 0, 0, 0 );
-}
+   <string notr="true">QWidget#dockWidgetContents
+{
 
-QToolButton#slice_open_button_{
-	background-color: rgba(0, 0, 0, 0);
-	border-radius: 4px;
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(225, 225, 225, 255), stop:1 rgba(195, 195, 195, 255));
+border: 1px solid rgb(60, 60, 60);
+border-radius: 3px;
 }
 
-QToolButton#slice_open_button_:hover{
-	background-color: rgba( 0, 0, 0, 30 ); border-radius: 3px;
-}
+QWidget#statusbar
+{
 
-QWidget#slice_header_{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(0, 0, 0, 0), stop:0.45 rgba(0, 0, 0, 30), stop:1 rgba(0, 0, 0, 25));
-    border-radius: 3px;
-}
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(225, 225, 225, 255), stop:1 rgba(195, 195, 195, 255));
 
-QWidget#slice_header_bkg_{
-	background-color: rgb( 84, 168, 212 );
-    border-radius: 3px;
-	border: 1px solid rgb(90, 90, 90);
 }
 
-QWidget#slice_widget_{
-	background-color: rgb( 90, 90, 90 );
-	border-radius:4px;
-	border: 1px solid rgb(60, 60, 60);
-	color: rgb(90, 90, 90);
-}
+QWidget#zoomWidget
+{
 
-QWidget#slice_content_{
-	border-radius: 3px;
-	border: 1px solid rgb(80, 80,80);
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(225, 225, 225, 255), stop:1 rgba(195, 195, 195, 255));
+border: 1px solid rgb(60, 60, 60);
+border-radius: 3px;
 }
-/********************** SLICE ***********************/
-
-
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <property name="bottomMargin">
+     <number>4</number>
+    </property>
     <item row="0" column="0">
      <widget class="QVTKWidget" name="qvtkWidget" native="true">
       <property name="sizePolicy">
@@ -555,7 +71,7 @@ QWidget#slice_content_{
      </widget>
     </item>
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
@@ -570,37 +86,71 @@ QWidget#slice_content_{
        </spacer>
       </item>
       <item>
-       <widget class="QSlider" name="thumbnail_size_slider">
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>16777215</height>
-         </size>
+       <widget class="QWidget" name="zoomWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>8</number>
-        </property>
-        <property name="pageStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>5</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="invertedAppearance">
-         <bool>false</bool>
-        </property>
-        <property name="invertedControls">
-         <bool>false</bool>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksBelow</enum>
-        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Zoom:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="thumbnail_size_slider">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>8</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>5</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="invertedAppearance">
+            <bool>false</bool>
+           </property>
+           <property name="invertedControls">
+            <bool>false</bool>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -642,198 +192,83 @@ QWidget#slice_content_{
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Tools</string>
+    <string/>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>3</number>
+     </property>
+     <property name="bottomMargin">
+      <number>3</number>
+     </property>
      <item>
       <widget class="QTableWidget" name="tableWidget"/>
      </item>
      <item>
-      <widget class="QWidget" name="layers_widget_" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
-        <property name="spacing">
-         <number>2</number>
-        </property>
-        <property name="margin">
-         <number>2</number>
-        </property>
-        <item>
-         <widget class="QWidget" name="layers_header_bkg_" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QWidget" name="layers_header_" native="true">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>215</width>
-               <height>21</height>
-              </size>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <property name="spacing">
-               <number>2</number>
-              </property>
-              <property name="margin">
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QToolButton" name="layers_open_button_">
-                <property name="minimumSize">
-                 <size>
-                  <width>21</width>
-                  <height>21</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>21</width>
-                  <height>21</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>...</string>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normaloff>:/Images/RightArrowWhite.png</normaloff>
-                  <normalon>:/Images/DownArrowWhite.png</normalon>:/Images/RightArrowWhite.png</iconset>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="layers_label_">
-                <property name="text">
-                 <string>Controls</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="layers_content_" native="true">
-          <layout class="QVBoxLayout" name="verticalLayout_19">
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <property name="margin">
-            <number>4</number>
-           </property>
-           <item>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <property name="spacing">
-              <number>6</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="minimumSize">
-                <size>
-                 <width>50</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="text">
-                <string>Data</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="data_combo_box_">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>Endo</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="endo_combo_box_"/>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_4">
-               <property name="text">
-                <string>Wall</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QComboBox" name="wall_combo_box_"/>
-             </item>
-             <item row="3" column="1">
-              <widget class="QComboBox" name="vr_combo_box_"/>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_19">
-               <property name="text">
-                <string>VR</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QToolButton" name="inhomogeneity_warning_button_">
-               <property name="toolTip">
-                <string>Intensity inhomogeneity detected</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset>
-                 <normaloff>:/Corview/Toolbar/warning.png</normaloff>:/Corview/Toolbar/warning.png</iconset>
-               </property>
-               <property name="checkable">
-                <bool>false</bool>
-               </property>
-               <property name="autoRaise">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout2">
+       <item>
+        <widget class="QToolButton" name="deleteButton">
+         <property name="minimumSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Remove</string>
+         </property>
+         <property name="statusTip">
+          <string>Remove images</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../Resources/ShapeWorksStudio.qrc">
+           <normaloff>:/Studio/Images/remove.png</normaloff>:/Studio/Images/remove.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="addButton">
+         <property name="minimumSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Add</string>
+         </property>
+         <property name="statusTip">
+          <string>Add images</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../Resources/ShapeWorksStudio.qrc">
+           <normaloff>:/Studio/Images/add.png</normaloff>:/Studio/Images/add.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>
@@ -864,7 +299,9 @@ QWidget#slice_content_{
     <bool>false</bool>
    </attribute>
    <addaction name="actionImportMode"/>
-   <addaction name="actionGroom_Mode"/>
+   <addaction name="actionGroomMode"/>
+   <addaction name="actionActionOptimizeMode"/>
+   <addaction name="actionAnalysisMode"/>
   </widget>
   <action name="actionQuit">
    <property name="text">
@@ -946,13 +383,13 @@ QWidget#slice_content_{
     <string>Ctrl+I</string>
    </property>
   </action>
-  <action name="actionGroom_Mode">
+  <action name="actionGroomMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../Resources/ShapeWorksStudio.qrc">
-     <normaloff>:/Cifer/Images/studio.png</normaloff>:/Cifer/Images/studio.png</iconset>
+     <normaloff>:/Studio/Images/tools.png</normaloff>:/Studio/Images/tools.png</iconset>
    </property>
    <property name="text">
     <string>Groom</string>
@@ -964,10 +401,34 @@ QWidget#slice_content_{
    </property>
    <property name="icon">
     <iconset resource="../Resources/ShapeWorksStudio.qrc">
-     <normaloff>:/Cifer/Images/studio.png</normaloff>:/Cifer/Images/studio.png</iconset>
+     <normaloff>:/Studio/Images/data.png</normaloff>:/Studio/Images/data.png</iconset>
    </property>
    <property name="text">
     <string>Import</string>
+   </property>
+  </action>
+  <action name="actionActionOptimizeMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+     <normaloff>:/Studio/Images/gear.png</normaloff>:/Studio/Images/gear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Optimize</string>
+   </property>
+  </action>
+  <action name="actionAnalysisMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+     <normaloff>:/Studio/Images/chart.png</normaloff>:/Studio/Images/chart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Analysis</string>
    </property>
   </action>
  </widget>

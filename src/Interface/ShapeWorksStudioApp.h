@@ -1,5 +1,6 @@
 #include <QMainWindow>
 #include <QTimer>
+#include <QActionGroup>
 
 #include <vtkSmartPointer.h>
 
@@ -30,6 +31,7 @@ public Q_SLOTS:
   void on_actionImport_triggered();
   void on_thumbnail_size_slider_valueChanged();
   void on_vertical_scroll_bar_valueChanged();
+  void on_addButton_clicked();
 
 private:
 
@@ -39,6 +41,8 @@ private:
 
   // designer form
   Ui_ShapeWorksStudioApp* ui;
+
+  QActionGroup *action_group_;
 
   typedef float PixelType;
   typedef itk::Image< PixelType, 3 > ImageType;

@@ -1,5 +1,13 @@
 <RCC>
-  <qresource prefix="Cifer">
+  <qresource prefix="Studio">
+    <file>Images/add.png</file>
+    <file>Images/remove.png</file>
+    <file>Images/select.png</file>
+    <file>Images/unselect.png</file>
+    <file>Images/data.png</file>
+    <file>Images/chart.png</file>
+    <file>Images/gear.png</file>
+    <file>Images/tools.png</file>
     <file>Images/studio.png</file>
   </qresource>
 </RCC>
