@@ -1,5 +1,4 @@
 #include <QMainWindow>
-#include <QTimer>
 #include <QActionGroup>
 
 #include <vtkSmartPointer.h>
@@ -23,8 +22,6 @@ public:
   ShapeWorksStudioApp( int argc, char** argv );
   ~ShapeWorksStudioApp();
 
-
-
 public Q_SLOTS:
 
   void on_actionQuit_triggered();
@@ -38,20 +35,14 @@ private:
   void createMenu();
 
   void update_scrollbar();
+  void import_files( QStringList fileNames );
 
   // designer form
   Ui_ShapeWorksStudioApp* ui;
 
-  QActionGroup *action_group_;
+  QActionGroup* action_group_;
 
-  typedef float PixelType;
-  typedef itk::Image< PixelType, 3 > ImageType;
-  typedef itk::ImageFileReader< ImageType > ReaderType;
+  Viewer* viewer_;
 
-  std::vector<ImageType::Pointer> images;
-
-  Viewer *viewer;
-
-  DataManager *dataManager;
-
+  DataManager* data_manager_;
 };
