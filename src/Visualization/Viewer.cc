@@ -4,13 +4,11 @@
 
 #include <vtkRenderer.h>
 #include <vtkImageActor.h>
-//#include <vtkImageViewer2.h>
-#include <vtkContourFilter.h>
 #include <vtkImageData.h>
-#include <vtkSphereSource.h>
 #include <vtkRenderWindow.h>
 #include <vtkProperty.h>
 
+//-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
 
@@ -19,9 +17,12 @@ Viewer::Viewer()
   this->tile_layout_width_ = 4;
   this->tile_layout_height_ = 4;
   this->camera_ = this->renderer_->GetActiveCamera();
-
   this->start_row_ = 0;
 }
+
+//-----------------------------------------------------------------------------
+Viewer::~Viewer()
+{}
 
 //-----------------------------------------------------------------------------
 void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
@@ -39,20 +40,20 @@ void Viewer::insert_model_into_view( vtkSmartPointer<vtkPolyData> poly_data )
     return;
   }
 
-  this->mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->actor_ = vtkSmartPointer<vtkActor>::New();
+  vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 
-  this->mapper_->SetInputData( poly_data );
-  this->actor_->SetMapper( this->mapper_ );
-  this->actor_->GetProperty()->SetDiffuseColor( 1, 191.0 / 255.0, 0 );
-  this->actor_->GetProperty()->SetSpecular( 0.2 );
-  this->actor_->GetProperty()->SetSpecularPower( 15 );
-  this->mapper_->ScalarVisibilityOff();
+  mapper->SetInputData( poly_data );
+  actor->SetMapper( mapper );
+  actor->GetProperty()->SetDiffuseColor( 1, 191.0 / 255.0, 0 );
+  actor->GetProperty()->SetSpecular( 0.2 );
+  actor->GetProperty()->SetSpecularPower( 15 );
+  mapper->ScalarVisibilityOff();
 
   vtkSmartPointer<vtkRenderer> ren = this->renderers_[this->count_];
 
   ren->RemoveAllViewProps();
-  ren->AddActor( this->actor_ );
+  ren->AddActor( actor );
   ren->ResetCamera();
 
   this->count_++;

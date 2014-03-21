@@ -1,10 +1,6 @@
 #include <QMainWindow>
 #include <QActionGroup>
 
-#include <vtkSmartPointer.h>
-
-#include <itkImage.h>
-#include <itkImageFileReader.h>
 
 #include <Data/DataManager.h>
 #include <Visualization/Viewer.h>
@@ -42,7 +38,7 @@ private:
 
   QActionGroup* action_group_;
 
-  Viewer* viewer_;
+  QSharedPointer<Viewer> viewer_;
 
-  DataManager* data_manager_;
+  QSharedPointer<DataManager> data_manager_;
 };

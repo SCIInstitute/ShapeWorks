@@ -47,8 +47,6 @@ private:
 
   vtkRenderWindowInteractor* interactor_;
 
-  vtkSmartPointer<vtkPolyDataMapper> mapper_;
-  vtkSmartPointer<vtkActor>          actor_;
 
 
   std::vector<vtkSmartPointer<vtkPolyData> > models_;

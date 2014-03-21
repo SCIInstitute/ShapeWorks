@@ -22,14 +22,14 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->ui->statusbar->showMessage( "All Systems Nominal!" );
 
-  this->viewer_ = new Viewer();
-  this->data_manager_ = new DataManager();
+  this->viewer_ = QSharedPointer<Viewer>(new Viewer());
+  this->data_manager_ = QSharedPointer<DataManager>(new DataManager());
 
   this->data_manager_->set_table_widget( this->ui->tableWidget );
   this->data_manager_->set_viewer( this->viewer_ );
 
   this->viewer_->set_render_window( this->ui->qvtkWidget->GetRenderWindow() );
-
+/*
   QStringList files;
   files << "z:\\shared\\laatee\\laa_0_DT.nrrd";
   files << "z:\\shared\\laatee\\laa_1_DT.nrrd";
@@ -37,6 +37,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   files << "z:\\shared\\laatee\\laa_3_DT.nrrd";
   files << "z:\\shared\\laatee\\laa_4_DT.nrrd";
   this->import_files( files );
+*/
+
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()

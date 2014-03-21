@@ -1,6 +1,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+//! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file.
  * It is responsible for loading the image and generating a mesh from it.
@@ -11,11 +12,9 @@ class Mesh
 
 public:
 
-  Mesh();
-  ~Mesh();
-
   /// Load an image into this mesh
-  void load_file( std::string filename );
+  Mesh( std::string filename );
+  ~Mesh();
 
   /// Get the dimensions as a string for display
   std::string get_dimension_string();

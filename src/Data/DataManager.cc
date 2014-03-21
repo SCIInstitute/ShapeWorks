@@ -22,8 +22,8 @@ DataManager::~DataManager()
 void DataManager::import_file( std::string file )
 {
 
-  Shape new_shape;
-  new_shape.import_initial_file( file );
+  QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
+  new_shape->import_initial_file( file );
   this->shapes_.push_back( new_shape );
 }
 
@@ -37,7 +37,7 @@ void DataManager::set_table_widget( QTableWidget* table_widget )
   this->table_widget_ = table_widget;
 }
 
-void DataManager::set_viewer( Viewer* viewer )
+void DataManager::set_viewer( QSharedPointer<Viewer> viewer )
 {
   this->viewer_ = viewer;
 }
@@ -55,7 +55,7 @@ void DataManager::import_files( QStringList file_names )
 
   for ( int i = oldCount; i < this->shapes_.size(); i++ )
   {
-    this->viewer_->add_input( this->shapes_[i].get_initial_mesh().get_poly_data() );
+    this->viewer_->add_input( this->shapes_[i]->get_initial_mesh()->get_poly_data() );
   }
 
   this->update_table();
@@ -76,9 +76,9 @@ void DataManager::update_table()
 
   for ( int i = 0; i < this->shapes_.size(); i++ )
   {
-    Mesh initial_mesh = this->shapes_[i].get_initial_mesh();
+    QSharedPointer<Mesh> initial_mesh = this->shapes_[i]->get_initial_mesh();
 
-    QString name = QString::fromStdString( initial_mesh.get_filename() );
+    QString name = QString::fromStdString( initial_mesh->get_filename() );
     QFileInfo qfi( name );
 
     QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i ) );
@@ -87,7 +87,7 @@ void DataManager::update_table()
     new_item = new QTableWidgetItem( qfi.fileName() );
     this->table_widget_->setItem( i, 1, new_item );
 
-    new_item = new QTableWidgetItem( QString::fromStdString( initial_mesh.get_dimension_string() ) );
+    new_item = new QTableWidgetItem( QString::fromStdString( initial_mesh->get_dimension_string() ) );
     this->table_widget_->setItem( i, 2, new_item );
   }
 

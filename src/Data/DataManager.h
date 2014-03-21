@@ -21,7 +21,7 @@ public:
   std::vector<vtkSmartPointer<vtkPolyData> > get_meshes();
 
   void set_table_widget( QTableWidget* table_widget );
-  void set_viewer( Viewer* viewer );
+  void set_viewer( QSharedPointer<Viewer> viewer );
 
   void import_files( QStringList file_names );
 
@@ -31,8 +31,8 @@ private:
   int num_shapes_;
   std::vector<vtkSmartPointer<vtkPolyData> > meshes_;
 
-  std::vector<Shape> shapes_;
+  std::vector<QSharedPointer<Shape> > shapes_;
 
   QTableWidget* table_widget_;
-  Viewer* viewer_;
+  QSharedPointer<Viewer> viewer_;
 };
