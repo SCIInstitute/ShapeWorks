@@ -9,6 +9,12 @@ typedef float PixelType;
 typedef itk::Image< PixelType, 3 > ImageType;
 typedef itk::ImageFileReader< ImageType > ReaderType;
 
+Mesh::Mesh()
+{}
+
+Mesh::~Mesh()
+{}
+
 void Mesh::load_file( std::string filename )
 {
   this->filename_ = filename;
@@ -47,4 +53,14 @@ std::string Mesh::get_dimension_string()
   std::stringstream ss;
   ss << "[" << this->dimensions_[0] << ", " << this->dimensions_[1] << ", " << this->dimensions_[2] << "]";
   return ss.str();
+}
+
+std::string Mesh::get_filename()
+{
+  return this->filename_;
+}
+
+vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
+{
+  return this->poly_data_;
 }

@@ -52,7 +52,7 @@ void DataManager::import_files( QStringList file_names )
 
   for ( int i = oldCount; i < this->shapes_.size(); i++ )
   {
-    this->viewer_->add_input( this->shapes_[i].get_initial_mesh().poly_data_ );
+    this->viewer_->add_input( this->shapes_[i].get_initial_mesh().get_poly_data() );
   }
 
   this->update_table();
@@ -75,7 +75,7 @@ void DataManager::update_table()
   {
     Mesh initial_mesh = this->shapes_[i].get_initial_mesh();
 
-    QString name = QString::fromStdString( initial_mesh.filename_ );
+    QString name = QString::fromStdString( initial_mesh.get_filename() );
     QFileInfo qfi( name );
 
     QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i ) );
