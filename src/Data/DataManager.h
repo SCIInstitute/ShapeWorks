@@ -1,5 +1,7 @@
 #include <vtkSmartPointer.h>
 
+#include <QStringList>
+
 #include <Data/Shape.h>
 
 class vtkPolyData;

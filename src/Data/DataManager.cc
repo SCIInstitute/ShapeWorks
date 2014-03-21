@@ -1,3 +1,6 @@
+#include <QtGui>
+
+
 #include <vtkMarchingCubes.h>
 
 #include <itkImageToVTKImageFilter.h>
