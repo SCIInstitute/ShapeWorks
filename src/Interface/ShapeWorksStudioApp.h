@@ -2,8 +2,8 @@
 #include <QActionGroup>
 
 
-#include <Data/DataManager.h>
-#include <Visualization/Viewer.h>
+class DataManager;
+class Viewer;
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -28,9 +28,11 @@ public Q_SLOTS:
 
 private:
 
-  void createMenu();
 
   void update_scrollbar();
+
+  void update_table();
+
   void import_files( QStringList fileNames );
 
   // designer form

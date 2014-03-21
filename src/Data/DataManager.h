@@ -9,8 +9,9 @@ class QTableWidget;
 class Viewer;
 class Shape;
 
-class DataManager
+class DataManager : public QObject
 {
+  Q_OBJECT;
 
 public:
   DataManager();
@@ -25,11 +26,12 @@ public:
 
   void import_files( QStringList file_names );
 
-  void update_table();
+  std::vector<QSharedPointer<Shape> > get_shapes();
+
+Q_SIGNALS:
+  void data_changed();
 
 private:
-  int num_shapes_;
-  std::vector<vtkSmartPointer<vtkPolyData> > meshes_;
 
   std::vector<QSharedPointer<Shape> > shapes_;
 

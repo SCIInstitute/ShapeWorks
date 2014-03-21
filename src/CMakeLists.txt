@@ -173,6 +173,10 @@ SET( STUDIO_HDRS
      ${STUDIO_VISUALIZATION_HDRS}
 )
 
+SET ( STUDIO_MOC_HDRS
+     Data/DataManager.h
+)
+
 SET( STUDIO_RCS
      Resources/ShapeWorksStudio.qrc
 )
@@ -190,7 +194,6 @@ SOURCE_GROUP("Data" FILES ${STUDIO_DATA_SRCS} ${STUDIO_DATA_HDRS})
 enable_precompiled_headers(PrefixHeader.h STUDIO_SRCS)
 
 
-
 # this command will generate rules that will run rcc on all files from STUDIO_RCS
 # in result STUDIO_RC_SRCS variable will contain paths to files produced by rcc
 QT4_ADD_RESOURCES( STUDIO_RC_SRCS ${STUDIO_RCS} )
@@ -199,7 +202,7 @@ QT4_ADD_RESOURCES( STUDIO_RC_SRCS ${STUDIO_RCS} )
 QT4_WRAP_UI( STUDIO_UI_HDRS ${STUDIO_INTERFACE_UIS} )
 
 # and finally this will run moc:
-QT4_WRAP_CPP( STUDIO_MOC_SRCS ${STUDIO_INTERFACE_HDRS} )
+QT4_WRAP_CPP( STUDIO_MOC_SRCS ${STUDIO_INTERFACE_HDRS} ${STUDIO_MOC_HDRS} )
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)

@@ -1,5 +1,3 @@
-#include <Visualization/Viewer.h>
-
 #include <cmath>
 
 #include <vtkRenderer.h>
@@ -8,12 +6,15 @@
 #include <vtkRenderWindow.h>
 #include <vtkProperty.h>
 
+#include <Visualization/Viewer.h>
+
+#include <Data/Mesh.h>
+
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
 
   this->renderer_ = vtkSmartPointer<vtkRenderer>::New();
-  this->count_ = 0;
   this->tile_layout_width_ = 4;
   this->tile_layout_height_ = 4;
   this->camera_ = this->renderer_->GetActiveCamera();
@@ -31,11 +32,9 @@ void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::insert_model_into_view( vtkSmartPointer<vtkPolyData> poly_data )
+void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position )
 {
-  std::cerr << poly_data->GetNumberOfPoints() << "\n";
-
-  if ( this->count_ >= this->renderers_.size() )
+  if ( position >= this->renderers_.size() )
   {
     return;
   }
@@ -50,40 +49,25 @@ void Viewer::insert_model_into_view( vtkSmartPointer<vtkPolyData> poly_data )
   actor->GetProperty()->SetSpecularPower( 15 );
   mapper->ScalarVisibilityOff();
 
-  vtkSmartPointer<vtkRenderer> ren = this->renderers_[this->count_];
+  vtkSmartPointer<vtkRenderer> ren = this->renderers_[position];
 
   ren->RemoveAllViewProps();
   ren->AddActor( actor );
   ren->ResetCamera();
-
-  this->count_++;
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::add_input( vtkSmartPointer<vtkPolyData> poly_data )
+void Viewer::display_meshes()
 {
-  this->models_.push_back( poly_data );
-  this->insert_models();
-}
+  // skip based on scrollbar
+  int start_mesh = this->start_row_ * this->tile_layout_width_;
 
-//-----------------------------------------------------------------------------
-void Viewer::insert_models()
-{
-  int num_models = this->models_.size();
-
-  int start_model = this->start_row_ * this->tile_layout_width_;
-
-  this->count_ = 0;
-  for ( int i = start_model; i < num_models; i++ )
+  int position = 0;
+  for ( int i = start_mesh; i < this->meshes_.size(); i++ )
   {
-    this->insert_model_into_view( this->models_[i] );
+    this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position );
+    position++;
   }
-}
-
-//-----------------------------------------------------------------------------
-vtkRenderer* Viewer::get_renderer()
-{
-  return this->renderer_;
 }
 
 //-----------------------------------------------------------------------------
@@ -104,8 +88,6 @@ void Viewer::setup_renderers()
   }
 
   this->renderers_.clear();
-
-  this->count_ = 0;
 
   int* size = this->render_window_->GetSize();
   std::cerr << "window size = " << size[0] << " x " << size[1] << "\n";
@@ -145,10 +127,7 @@ void Viewer::setup_renderers()
       viewport[1] = margin + ( ( ( height - 1 ) - y ) * step_y );
       viewport[3] = viewport[1] + tile_height;
 
-      std::cerr << "viewport = {" << viewport[0] << ", " << viewport[1] << ", " << viewport[2] << ", " << viewport[3] << "}\n";
-
       ren->SetViewport( viewport );
-      //ren->SetBackground( .2, .2 * count, .1 * count );
 
       int mod = 3;
       int mod2 = 2;
@@ -184,13 +163,13 @@ void Viewer::set_tile_layout( int width, int height )
   this->tile_layout_height_ = height;
 
   this->setup_renderers();
-  this->insert_models();
+  this->display_meshes();
 }
 
 //-----------------------------------------------------------------------------
 int Viewer::get_num_rows()
 {
-  return std::ceil( (float)this->models_.size() / (float)this->tile_layout_width_ );
+  return std::ceil( (float)this->meshes_.size() / (float)this->tile_layout_width_ );
 }
 
 //-----------------------------------------------------------------------------
@@ -203,6 +182,13 @@ int Viewer::get_num_rows_visible()
 void Viewer::set_start_row( int row )
 {
   this->start_row_ = row;
-  this->insert_models();
+  this->display_meshes();
   this->render_window_->Render();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_meshes( std::vector<QSharedPointer<Mesh> > meshes )
+{
+  this->meshes_ = meshes;
+  this->display_meshes();
 }

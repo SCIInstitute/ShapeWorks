@@ -1,4 +1,7 @@
+#include <QSharedPointer>
+
 #include <Data/Mesh.h>
+
 
 //! Representation of a single shape/patient.
 class Shape
