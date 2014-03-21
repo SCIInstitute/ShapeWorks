@@ -1,5 +1,7 @@
 #include <Visualization/Viewer.h>
 
+#include <cmath>
+
 #include <vtkRenderer.h>
 #include <vtkImageActor.h>
 //#include <vtkImageViewer2.h>
