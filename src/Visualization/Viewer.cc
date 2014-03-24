@@ -19,6 +19,7 @@ Viewer::Viewer()
   this->tile_layout_height_ = 4;
   this->camera_ = this->renderer_->GetActiveCamera();
   this->start_row_ = 0;
+  this->first_draw_ = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -53,12 +54,28 @@ void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int 
 
   ren->RemoveAllViewProps();
   ren->AddActor( actor );
-  ren->ResetCamera();
+
+  if ( this->first_draw_ )
+  {
+    this->first_draw_ = false;
+    ren->ResetCamera();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::clear_renderers()
+{
+  for ( int i = 0; i < this->renderers_.size(); i++ )
+  {
+    this->renderers_[i]->RemoveAllViewProps();
+  }
 }
 
 //-----------------------------------------------------------------------------
 void Viewer::display_meshes()
 {
+  this->clear_renderers();
+
   // skip based on scrollbar
   int start_mesh = this->start_row_ * this->tile_layout_width_;
 
@@ -68,6 +85,7 @@ void Viewer::display_meshes()
     this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position );
     position++;
   }
+  this->render_window_->Render();
 }
 
 //-----------------------------------------------------------------------------

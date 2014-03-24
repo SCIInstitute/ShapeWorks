@@ -26,7 +26,11 @@ public:
 
   void import_files( QStringList file_names );
 
+  void remove_shape( int i );
+
   std::vector<QSharedPointer<Shape> > get_shapes();
+
+  void update_shapes();
 
 Q_SIGNALS:
   void data_changed();

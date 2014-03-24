@@ -33,6 +33,7 @@ public:
 
 private:
 
+  void clear_renderers();
   void display_meshes();
 
   void insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position );
@@ -53,4 +54,6 @@ private:
   int tile_layout_height_;
 
   int start_row_;
+
+  bool first_draw_;
 };

@@ -45,7 +45,20 @@ void DataManager::import_files( QStringList file_names )
 
     this->import_file( file_names[i].toStdString() );
   }
+}
 
+std::vector<QSharedPointer<Shape> > DataManager::get_shapes()
+{
+  return this->shapes_;
+}
+
+void DataManager::remove_shape( int i )
+{
+  this->shapes_.erase( this->shapes_.begin() + i );
+}
+
+void DataManager::update_shapes()
+{
   std::vector<QSharedPointer<Mesh> > meshes;
 
   for ( int i = 0; i < this->shapes_.size(); i++ )
@@ -54,9 +67,4 @@ void DataManager::import_files( QStringList file_names )
   }
 
   this->viewer_->set_meshes( meshes );
-}
-
-std::vector<QSharedPointer<Shape> > DataManager::get_shapes()
-{
-  return this->shapes_;
 }

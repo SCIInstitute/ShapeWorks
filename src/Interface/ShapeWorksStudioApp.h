@@ -1,7 +1,6 @@
 #include <QMainWindow>
 #include <QActionGroup>
 
-
 class DataManager;
 class Viewer;
 
@@ -25,9 +24,9 @@ public Q_SLOTS:
   void on_thumbnail_size_slider_valueChanged();
   void on_vertical_scroll_bar_valueChanged();
   void on_addButton_clicked();
+  void on_deleteButton_clicked();
 
 private:
-
 
   void update_scrollbar();
 

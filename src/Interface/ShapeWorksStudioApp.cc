@@ -32,15 +32,14 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->data_manager_->set_viewer( this->viewer_ );
 
   this->viewer_->set_render_window( this->ui->qvtkWidget->GetRenderWindow() );
-/*
-   QStringList files;
-   files << "z:\\shared\\laatee\\laa_0_DT.nrrd";
-   files << "z:\\shared\\laatee\\laa_1_DT.nrrd";
-   files << "z:\\shared\\laatee\\laa_2_DT.nrrd";
-   files << "z:\\shared\\laatee\\laa_3_DT.nrrd";
-   files << "z:\\shared\\laatee\\laa_4_DT.nrrd";
-   this->import_files( files );
- */
+
+  QStringList files;
+  files << "z:\\shared\\laatee\\laa_0_DT.nrrd";
+  files << "z:\\shared\\laatee\\laa_1_DT.nrrd";
+  files << "z:\\shared\\laatee\\laa_2_DT.nrrd";
+  files << "z:\\shared\\laatee\\laa_3_DT.nrrd";
+  files << "z:\\shared\\laatee\\laa_4_DT.nrrd";
+  this->import_files( files );
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
@@ -69,6 +68,7 @@ void ShapeWorksStudioApp::on_actionImport_triggered()
 void ShapeWorksStudioApp::import_files( QStringList file_names )
 {
   this->data_manager_->import_files( file_names );
+  this->data_manager_->update_shapes();
   this->update_table();
   this->update_scrollbar();
 }
@@ -114,6 +114,22 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 void ShapeWorksStudioApp::on_addButton_clicked()
 {
   this->on_actionImport_triggered();
+}
+
+void ShapeWorksStudioApp::on_deleteButton_clicked()
+{
+
+  QModelIndexList list = this->ui->tableWidget->selectionModel()->selectedRows();
+
+  for ( int i = list.size() - 1; i >= 0; i-- )
+  {
+    std::cerr << list[i].row() << "\n";
+    this->data_manager_->remove_shape( list[i].row() );
+  }
+
+  this->data_manager_->update_shapes();
+  this->update_table();
+  this->update_scrollbar();
 }
 
 void ShapeWorksStudioApp::update_table()
