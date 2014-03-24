@@ -5,6 +5,9 @@
 #include <vtkImageData.h>
 #include <vtkRenderWindow.h>
 #include <vtkProperty.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
+#include <vtkCornerAnnotation.h>
 
 #include <Visualization/Viewer.h>
 
@@ -33,7 +36,7 @@ void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position )
+void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id )
 {
   if ( position >= this->renderers_.size() )
   {
@@ -60,6 +63,16 @@ void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int 
     this->first_draw_ = false;
     ren->ResetCamera();
   }
+
+  vtkSmartPointer<vtkCornerAnnotation> cornerAnnotation =
+    vtkSmartPointer<vtkCornerAnnotation>::New();
+  cornerAnnotation->SetLinearFontScaleFactor( 2 );
+  cornerAnnotation->SetNonlinearFontScaleFactor( 1 );
+  cornerAnnotation->SetMaximumFontSize( 20 );
+  cornerAnnotation->SetText( 2, QString::number( id ).toStdString().c_str() );
+  cornerAnnotation->GetTextProperty()->SetColor( 0.50, 0.5, 0.5 );
+
+  ren->AddViewProp( cornerAnnotation );
 }
 
 //-----------------------------------------------------------------------------
@@ -82,7 +95,8 @@ void Viewer::display_meshes()
   int position = 0;
   for ( int i = start_mesh; i < this->meshes_.size(); i++ )
   {
-    this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position );
+    int id = i + 1;
+    this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position, id );
     position++;
   }
   this->render_window_->Render();

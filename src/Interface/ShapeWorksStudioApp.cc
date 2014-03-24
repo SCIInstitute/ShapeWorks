@@ -155,7 +155,7 @@ void ShapeWorksStudioApp::update_table()
     QString name = QString::fromStdString( initial_mesh->get_filename() );
     QFileInfo qfi( name );
 
-    QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i ) );
+    QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i + 1 ) );
     this->ui->tableWidget->setItem( i, 0, new_item );
 
     new_item = new QTableWidgetItem( qfi.fileName() );
