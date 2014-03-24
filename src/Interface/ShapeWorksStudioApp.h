@@ -26,6 +26,11 @@ public Q_SLOTS:
   void on_addButton_clicked();
   void on_deleteButton_clicked();
 
+  void on_actionGroomMode_triggered();
+  void on_actionImportMode_triggered();
+
+  void mode_changed();
+
 private:
 
   void update_scrollbar();

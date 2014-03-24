@@ -23,7 +23,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->action_group_->addAction( this->ui->actionActionOptimizeMode );
   this->action_group_->addAction( this->ui->actionAnalysisMode );
 
-  this->ui->statusbar->showMessage( "All Systems Nominal!" );
+  this->ui->statusbar->showMessage( "ShapeWorksStudio" );
 
   this->viewer_ = QSharedPointer<Viewer>( new Viewer() );
   this->data_manager_ = QSharedPointer<DataManager>( new DataManager() );
@@ -170,4 +170,21 @@ void ShapeWorksStudioApp::update_table()
   this->ui->tableWidget->horizontalHeader()->setStretchLastSection( true );
 
   this->ui->tableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
+}
+
+void ShapeWorksStudioApp::mode_changed()
+{}
+
+void ShapeWorksStudioApp::on_actionGroomMode_triggered()
+{
+  std::cerr << "groom!\n";
+
+  this->ui->stackedWidget->setCurrentIndex( 1 );
+}
+
+void ShapeWorksStudioApp::on_actionImportMode_triggered()
+{
+  std::cerr << "import!\n";
+
+  this->ui->stackedWidget->setCurrentIndex( 0 );
 }
