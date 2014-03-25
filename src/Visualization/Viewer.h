@@ -1,3 +1,5 @@
+#include <QSharedPointer>
+
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
