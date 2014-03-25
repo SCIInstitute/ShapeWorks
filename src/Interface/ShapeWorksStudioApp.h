@@ -31,6 +31,13 @@ public Q_SLOTS:
 
   void mode_changed();
 
+
+  void on_toolListWidget_currentRowChanged(int row);
+
+  void on_addToolButton_clicked();
+  void on_deleteToolButton_clicked();
+
+
 private:
 
   void update_scrollbar();
