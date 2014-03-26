@@ -9,6 +9,7 @@
 
 #include <Visualization/Viewer.h>
 #include <Data/DataManager.h>
+#include <Groom/GroomTool.h>
 
 ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 {
@@ -18,7 +19,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   // set to import
   this->ui->actionImportMode->setChecked( true );
   this->ui->stackedWidget->setCurrentIndex( 0 );
-  this->ui->toolListWidget->setCurrentRow(0);
 
   this->action_group_ = new QActionGroup( this );
   this->action_group_->addAction( this->ui->actionImportMode );
@@ -30,13 +30,15 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->viewer_ = QSharedPointer<Viewer>( new Viewer() );
   this->data_manager_ = QSharedPointer<DataManager>( new DataManager() );
+  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool() );
+  this->ui->stackedWidget->addWidget(this->groom_tool_.data());
 
   this->data_manager_->set_table_widget( this->ui->tableWidget );
   this->data_manager_->set_viewer( this->viewer_ );
 
   this->viewer_->set_render_window( this->ui->qvtkWidget->GetRenderWindow() );
 
-/*
+
   QStringList files;
   files << "z:\\shared\\laatee\\laa_0_DT.nrrd";
   files << "z:\\shared\\laatee\\laa_1_DT.nrrd";
@@ -44,7 +46,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   files << "z:\\shared\\laatee\\laa_3_DT.nrrd";
   files << "z:\\shared\\laatee\\laa_4_DT.nrrd";
   this->import_files( files );
-*/
+
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
@@ -183,52 +185,12 @@ void ShapeWorksStudioApp::mode_changed()
 void ShapeWorksStudioApp::on_actionGroomMode_triggered()
 {
   std::cerr << "groom!\n";
-
   //this->ui->stackedWidget->setCurrentIndex( 1 );
+this->ui->stackedWidget->setCurrentWidget(this->groom_tool_.data());
 }
 
 void ShapeWorksStudioApp::on_actionImportMode_triggered()
 {
   std::cerr << "import!\n";
-
-  //this->ui->stackedWidget->setCurrentIndex( 0 );
-}
-
-void ShapeWorksStudioApp::on_toolListWidget_currentRowChanged( int row )
-{
-  std::cerr << "row: " << row << "\n";
-  if ( row < 3 )
-  {
-    this->ui->toolStackedWidget->setCurrentIndex( row );
-  }
-}
-
-void ShapeWorksStudioApp::on_addToolButton_clicked()
-{
-
-  QListWidgetItem* selected_tool = this->ui->toolListWidget->currentItem();
-  QString tool_string = selected_tool->text();
-
-  if (selected_tool->text() == "Antialias")
-  {
-    tool_string = tool_string + " (iterations: " + QString::number(this->ui->antialiasIterations->value()) + ")";
-  }
-
-  if (selected_tool->text() == "Blur")
-  {
-    tool_string = tool_string + " (sigma: " + QString::number(this->ui->blurSigma->value()) + ")";
-  }
-
-
-
-  QListWidgetItem* item = new QListWidgetItem( tool_string );
-
-  this->ui->groomPipelineListWidget->addItem( item );
-}
-
-void ShapeWorksStudioApp::on_deleteToolButton_clicked()
-{
-  //this->ui->groomPipelineListWidget->removeItemWidget(this->ui->groomPipelineListWidget->selectedItems());
-
-  qDeleteAll(this->ui->groomPipelineListWidget->selectedItems());
+  this->ui->stackedWidget->setCurrentIndex( 0 );
 }

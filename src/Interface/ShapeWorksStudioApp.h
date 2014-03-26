@@ -3,6 +3,8 @@
 
 class DataManager;
 class Viewer;
+class GroomTool;
+
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -32,10 +34,6 @@ public Q_SLOTS:
   void mode_changed();
 
 
-  void on_toolListWidget_currentRowChanged(int row);
-
-  void on_addToolButton_clicked();
-  void on_deleteToolButton_clicked();
 
 
 private:
@@ -54,4 +52,6 @@ private:
   QSharedPointer<Viewer> viewer_;
 
   QSharedPointer<DataManager> data_manager_;
+
+  QSharedPointer<GroomTool> groom_tool_;
 };
