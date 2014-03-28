@@ -186,6 +186,5 @@ void ShapeWorksStudioApp::on_actionGroomMode_triggered()
 
 void ShapeWorksStudioApp::on_actionImportMode_triggered()
 {
-  std::cerr << "import!\n";
   this->ui->stackedWidget->setCurrentIndex( 0 );
 }

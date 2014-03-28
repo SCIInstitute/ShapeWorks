@@ -11,6 +11,8 @@ typedef itk::ImageFileReader< ImageType > ReaderType;
 
 Mesh::Mesh( QString filename )
 {
+  try
+    {
   this->filename_ = filename;
 
   // read file using ITK
@@ -41,6 +43,13 @@ Mesh::Mesh( QString filename )
 
   // store isosurface polydata
   this->poly_data_ = marching->GetOutput();
+    }
+  catch( itk::ExceptionObject & excep )
+    {
+      std::cerr << "Exception caught!" << std::endl;
+      std::cerr << excep << std::endl;
+    }
+
 }
 
 Mesh::~Mesh()
