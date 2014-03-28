@@ -1,3 +1,5 @@
+#include <QFileInfo>
+
 #include <vtkMarchingCubes.h>
 
 #include <itkImageToVTKImageFilter.h>
