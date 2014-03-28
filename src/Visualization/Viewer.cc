@@ -1,5 +1,7 @@
 #include <cmath>
 
+#include <QFileInfo>
+
 #include <vtkRenderer.h>
 #include <vtkImageActor.h>
 #include <vtkImageData.h>

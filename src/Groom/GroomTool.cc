@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <Groom/GroomTool.h>
 
 #include <ui_GroomTool.h>
