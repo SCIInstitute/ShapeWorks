@@ -9,13 +9,13 @@ typedef float PixelType;
 typedef itk::Image< PixelType, 3 > ImageType;
 typedef itk::ImageFileReader< ImageType > ReaderType;
 
-Mesh::Mesh( std::string filename )
+Mesh::Mesh( QString filename )
 {
   this->filename_ = filename;
 
   // read file using ITK
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( filename );
+  reader->SetFileName( filename.toStdString() );
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
 
@@ -46,19 +46,26 @@ Mesh::Mesh( std::string filename )
 Mesh::~Mesh()
 {}
 
-std::string Mesh::get_dimension_string()
+QString Mesh::get_dimension_string()
 {
-  std::stringstream ss;
-  ss << "[" << this->dimensions_[0] << ", " << this->dimensions_[1] << ", " << this->dimensions_[2] << "]";
-  return ss.str();
+  QString str = "[" + QString::number( this->dimensions_[0] ) +
+                ", " + QString::number( this->dimensions_[1] ) +
+                ", " + QString::number( this->dimensions_[2] ) + "]";
+  return str;
 }
 
-std::string Mesh::get_filename()
+QString Mesh::get_filename()
 {
-  return this->filename_;
+  QFileInfo qfi( this->filename_ );
+  return qfi.fileName();
 }
 
 vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 {
   return this->poly_data_;
+}
+
+QString Mesh::get_filename_with_path()
+{
+  return this->filename_;
 }

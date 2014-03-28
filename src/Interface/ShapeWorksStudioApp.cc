@@ -30,14 +30,13 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->viewer_ = QSharedPointer<Viewer>( new Viewer() );
   this->data_manager_ = QSharedPointer<DataManager>( new DataManager() );
-  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool() );
-  this->ui->stackedWidget->addWidget(this->groom_tool_.data());
+  this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
+  this->ui->stackedWidget->addWidget( this->groom_tool_.data() );
 
   this->data_manager_->set_table_widget( this->ui->tableWidget );
   this->data_manager_->set_viewer( this->viewer_ );
 
   this->viewer_->set_render_window( this->ui->qvtkWidget->GetRenderWindow() );
-
 
   QStringList files;
   files << "z:\\shared\\laatee\\laa_0_DT.nrrd";
@@ -46,7 +45,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   files << "z:\\shared\\laatee\\laa_3_DT.nrrd";
   files << "z:\\shared\\laatee\\laa_4_DT.nrrd";
   this->import_files( files );
-
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
@@ -159,16 +157,13 @@ void ShapeWorksStudioApp::update_table()
   {
     QSharedPointer<Mesh> initial_mesh = shapes[i]->get_initial_mesh();
 
-    QString name = QString::fromStdString( initial_mesh->get_filename() );
-    QFileInfo qfi( name );
-
     QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i + 1 ) );
     this->ui->tableWidget->setItem( i, 0, new_item );
 
-    new_item = new QTableWidgetItem( qfi.fileName() );
+    new_item = new QTableWidgetItem( initial_mesh->get_filename() );
     this->ui->tableWidget->setItem( i, 1, new_item );
 
-    new_item = new QTableWidgetItem( QString::fromStdString( initial_mesh->get_dimension_string() ) );
+    new_item = new QTableWidgetItem( initial_mesh->get_dimension_string() );
     this->ui->tableWidget->setItem( i, 2, new_item );
   }
 
@@ -186,7 +181,7 @@ void ShapeWorksStudioApp::on_actionGroomMode_triggered()
 {
   std::cerr << "groom!\n";
   //this->ui->stackedWidget->setCurrentIndex( 1 );
-this->ui->stackedWidget->setCurrentWidget(this->groom_tool_.data());
+  this->ui->stackedWidget->setCurrentWidget( this->groom_tool_.data() );
 }
 
 void ShapeWorksStudioApp::on_actionImportMode_triggered()

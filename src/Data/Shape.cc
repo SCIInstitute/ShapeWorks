@@ -15,7 +15,7 @@ Shape::Shape()
 Shape::~Shape()
 {}
 
-void Shape::import_initial_file( std::string filename )
+void Shape::import_initial_file( QString filename )
 {
   this->initial_mesh_ = QSharedPointer<Mesh>( new Mesh( filename ) );
 }

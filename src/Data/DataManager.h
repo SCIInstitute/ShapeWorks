@@ -17,7 +17,7 @@ public:
   DataManager();
   ~DataManager();
 
-  void import_file( std::string file );
+  void import_file( QString file );
 
   std::vector<vtkSmartPointer<vtkPolyData> > get_meshes();
 

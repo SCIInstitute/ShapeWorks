@@ -18,7 +18,7 @@ DataManager::DataManager()
 DataManager::~DataManager()
 {}
 
-void DataManager::import_file( std::string file )
+void DataManager::import_file( QString file )
 {
 
   QSharedPointer<Shape> new_shape = QSharedPointer<Shape>( new Shape );
@@ -43,7 +43,7 @@ void DataManager::import_files( QStringList file_names )
   {
     std::cerr << file_names[i].toStdString() << "\n";
 
-    this->import_file( file_names[i].toStdString() );
+    this->import_file( file_names[i] );
   }
 }
 

@@ -38,7 +38,7 @@ private:
   void clear_renderers();
   void display_meshes();
 
-  void insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, std::string note );
+  void insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, QString note );
 
   std::vector<QSharedPointer<Mesh> > meshes_;
 

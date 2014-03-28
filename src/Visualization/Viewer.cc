@@ -36,7 +36,7 @@ void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, std::string note )
+void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, QString note )
 {
   if ( position >= this->renderers_.size() )
   {
@@ -64,15 +64,13 @@ void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int 
     ren->ResetCamera();
   }
 
-  std::string id_string = QString::number( id ).toStdString();
-
   vtkSmartPointer<vtkCornerAnnotation> cornerAnnotation =
     vtkSmartPointer<vtkCornerAnnotation>::New();
   cornerAnnotation->SetLinearFontScaleFactor( 2 );
   cornerAnnotation->SetNonlinearFontScaleFactor( 1 );
   cornerAnnotation->SetMaximumFontSize( 16 );
-  cornerAnnotation->SetText( 2, id_string.c_str() );
-  cornerAnnotation->SetText( 0, note.c_str() );
+  cornerAnnotation->SetText( 2, QString::number( id ).toStdString().c_str() );
+  cornerAnnotation->SetText( 0, note.toStdString().c_str() );
   cornerAnnotation->GetTextProperty()->SetColor( 0.50, 0.5, 0.5 );
 
   ren->AddViewProp( cornerAnnotation );
@@ -99,12 +97,7 @@ void Viewer::display_meshes()
   for ( int i = start_mesh; i < this->meshes_.size(); i++ )
   {
     int id = i + 1;
-
-    QString name = QString::fromStdString( this->meshes_[i]->get_filename() );
-    QFileInfo qfi( name );
-
-    std::string fname = qfi.fileName().toStdString();
-    this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position, id, fname.c_str() );
+    this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position, id, this->meshes_[i]->get_filename() );
     position++;
   }
   this->render_window_->Render();
