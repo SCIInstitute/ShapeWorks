@@ -5,7 +5,6 @@ class DataManager;
 class Viewer;
 class GroomTool;
 
-
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
@@ -33,9 +32,6 @@ public Q_SLOTS:
 
   void mode_changed();
 
-
-
-
 private:
 
   void update_scrollbar();
@@ -45,7 +41,7 @@ private:
   void import_files( QStringList fileNames );
 
   // designer form
-  Ui_ShapeWorksStudioApp* ui;
+  Ui_ShapeWorksStudioApp* ui_;
 
   QActionGroup* action_group_;
 

@@ -12,12 +12,10 @@ public:
 
 public Q_SLOTS:
 
-  void on_toolListWidget_currentRowChanged(int row);
-  void on_addToolButton_clicked();
-  void on_deleteToolButton_clicked();
-
+  void on_antialias_checkbox_stateChanged( int state );
+  void on_blur_checkbox_stateChanged( int state );
 
 private:
 
-  Ui_GroomTool *ui;
+  Ui_GroomTool* ui_;
 };

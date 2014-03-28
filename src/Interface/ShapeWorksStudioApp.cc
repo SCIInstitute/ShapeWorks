@@ -13,30 +13,30 @@
 
 ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 {
-  this->ui = new Ui_ShapeWorksStudioApp;
-  this->ui->setupUi( this );
+  this->ui_ = new Ui_ShapeWorksStudioApp;
+  this->ui_->setupUi( this );
 
   // set to import
-  this->ui->actionImportMode->setChecked( true );
-  this->ui->stackedWidget->setCurrentIndex( 0 );
+  this->ui_->actionImportMode->setChecked( true );
+  this->ui_->stackedWidget->setCurrentIndex( 0 );
 
   this->action_group_ = new QActionGroup( this );
-  this->action_group_->addAction( this->ui->actionImportMode );
-  this->action_group_->addAction( this->ui->actionGroomMode );
-  this->action_group_->addAction( this->ui->actionActionOptimizeMode );
-  this->action_group_->addAction( this->ui->actionAnalysisMode );
+  this->action_group_->addAction( this->ui_->actionImportMode );
+  this->action_group_->addAction( this->ui_->actionGroomMode );
+  this->action_group_->addAction( this->ui_->actionActionOptimizeMode );
+  this->action_group_->addAction( this->ui_->actionAnalysisMode );
 
-  this->ui->statusbar->showMessage( "ShapeWorksStudio" );
+  this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
 
   this->viewer_ = QSharedPointer<Viewer>( new Viewer() );
   this->data_manager_ = QSharedPointer<DataManager>( new DataManager() );
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
-  this->ui->stackedWidget->addWidget( this->groom_tool_.data() );
+  this->ui_->stackedWidget->addWidget( this->groom_tool_.data() );
 
-  this->data_manager_->set_table_widget( this->ui->tableWidget );
+  this->data_manager_->set_table_widget( this->ui_->tableWidget );
   this->data_manager_->set_viewer( this->viewer_ );
 
-  this->viewer_->set_render_window( this->ui->qvtkWidget->GetRenderWindow() );
+  this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
 
   QStringList files;
   files << "z:\\shared\\laatee\\laa_0_DT.nrrd";
@@ -80,13 +80,13 @@ void ShapeWorksStudioApp::import_files( QStringList file_names )
 
 void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
-  int value = this->ui->thumbnail_size_slider->maximum() - this->ui->thumbnail_size_slider->value() + 1;
+  int value = this->ui_->thumbnail_size_slider->maximum() - this->ui_->thumbnail_size_slider->value() + 1;
 
   this->viewer_->set_tile_layout( value, value );
 
   this->update_scrollbar();
 
-  this->ui->qvtkWidget->GetRenderWindow()->Render();
+  this->ui_->qvtkWidget->GetRenderWindow()->Render();
 }
 
 void ShapeWorksStudioApp::update_scrollbar()
@@ -97,20 +97,20 @@ void ShapeWorksStudioApp::update_scrollbar()
   std::cerr << "num_visible = " << num_visible << "\n";
   if ( num_visible >= num_rows )
   {
-    this->ui->vertical_scroll_bar->setMaximum( 0 );
-    this->ui->vertical_scroll_bar->setEnabled( false );
+    this->ui_->vertical_scroll_bar->setMaximum( 0 );
+    this->ui_->vertical_scroll_bar->setEnabled( false );
   }
   else
   {
-    this->ui->vertical_scroll_bar->setEnabled( true );
-    this->ui->vertical_scroll_bar->setMaximum( num_rows - num_visible );
-    this->ui->vertical_scroll_bar->setPageStep( num_visible );
+    this->ui_->vertical_scroll_bar->setEnabled( true );
+    this->ui_->vertical_scroll_bar->setMaximum( num_rows - num_visible );
+    this->ui_->vertical_scroll_bar->setPageStep( num_visible );
   }
 }
 
 void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 {
-  int value = this->ui->vertical_scroll_bar->value();
+  int value = this->ui_->vertical_scroll_bar->value();
 
   std::cerr << "vertical scrollbar value = " << value << "\n";
   this->viewer_->set_start_row( value );
@@ -124,7 +124,7 @@ void ShapeWorksStudioApp::on_addButton_clicked()
 void ShapeWorksStudioApp::on_deleteButton_clicked()
 {
 
-  QModelIndexList list = this->ui->tableWidget->selectionModel()->selectedRows();
+  QModelIndexList list = this->ui_->tableWidget->selectionModel()->selectedRows();
 
   for ( int i = list.size() - 1; i >= 0; i-- )
   {
@@ -142,36 +142,36 @@ void ShapeWorksStudioApp::update_table()
 
   std::vector<QSharedPointer<Shape> > shapes = this->data_manager_->get_shapes();
 
-  this->ui->tableWidget->clear();
+  this->ui_->tableWidget->clear();
 
-  this->ui->tableWidget->setRowCount( shapes.size() );
-  this->ui->tableWidget->setColumnCount( 3 );
+  this->ui_->tableWidget->setRowCount( shapes.size() );
+  this->ui_->tableWidget->setColumnCount( 3 );
 
   QStringList table_header;
   table_header << "#" << "Name" << "Size";
-  this->ui->tableWidget->setHorizontalHeaderLabels( table_header );
+  this->ui_->tableWidget->setHorizontalHeaderLabels( table_header );
 
-  this->ui->tableWidget->verticalHeader()->setVisible( false );
+  this->ui_->tableWidget->verticalHeader()->setVisible( false );
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
     QSharedPointer<Mesh> initial_mesh = shapes[i]->get_initial_mesh();
 
     QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i + 1 ) );
-    this->ui->tableWidget->setItem( i, 0, new_item );
+    this->ui_->tableWidget->setItem( i, 0, new_item );
 
     new_item = new QTableWidgetItem( initial_mesh->get_filename() );
-    this->ui->tableWidget->setItem( i, 1, new_item );
+    this->ui_->tableWidget->setItem( i, 1, new_item );
 
     new_item = new QTableWidgetItem( initial_mesh->get_dimension_string() );
-    this->ui->tableWidget->setItem( i, 2, new_item );
+    this->ui_->tableWidget->setItem( i, 2, new_item );
   }
 
-  this->ui->tableWidget->resizeColumnsToContents();
+  this->ui_->tableWidget->resizeColumnsToContents();
   //this->ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-  this->ui->tableWidget->horizontalHeader()->setStretchLastSection( true );
+  this->ui_->tableWidget->horizontalHeader()->setStretchLastSection( true );
 
-  this->ui->tableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
+  this->ui_->tableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
 }
 
 void ShapeWorksStudioApp::mode_changed()
@@ -181,10 +181,10 @@ void ShapeWorksStudioApp::on_actionGroomMode_triggered()
 {
   std::cerr << "groom!\n";
   //this->ui->stackedWidget->setCurrentIndex( 1 );
-  this->ui->stackedWidget->setCurrentWidget( this->groom_tool_.data() );
+  this->ui_->stackedWidget->setCurrentWidget( this->groom_tool_.data() );
 }
 
 void ShapeWorksStudioApp::on_actionImportMode_triggered()
 {
-  this->ui->stackedWidget->setCurrentIndex( 0 );
+  this->ui_->stackedWidget->setCurrentIndex( 0 );
 }

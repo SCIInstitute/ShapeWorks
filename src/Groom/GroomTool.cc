@@ -7,56 +7,19 @@
 GroomTool::GroomTool()
 {
 
-  this->ui = new Ui_GroomTool;
-  this->ui->setupUi( this );
-
-
-  this->ui->toolListWidget->setCurrentRow(0);
-
+  this->ui_ = new Ui_GroomTool;
+  this->ui_->setupUi( this );
 }
-
 
 GroomTool::~GroomTool()
-{
+{}
 
+void GroomTool::on_antialias_checkbox_stateChanged( int state )
+{
+  this->ui_->antialias_groupbox->setEnabled( state );
 }
 
-
-void GroomTool::on_toolListWidget_currentRowChanged( int row )
+void GroomTool::on_blur_checkbox_stateChanged( int state )
 {
-  std::cerr << "row: " << row << "\n";
-  if ( row < 3 )
-  {
-    this->ui->toolStackedWidget->setCurrentIndex( row );
-  }
+  this->ui_->blur_groupbox->setEnabled( state );
 }
-
-void GroomTool::on_addToolButton_clicked()
-{
-
-  QListWidgetItem* selected_tool = this->ui->toolListWidget->currentItem();
-  QString tool_string = selected_tool->text();
-
-  if (selected_tool->text() == "Antialias")
-  {
-    tool_string = tool_string + " (iterations: " + QString::number(this->ui->antialiasIterations->value()) + ")";
-  }
-
-  if (selected_tool->text() == "Blur")
-  {
-    tool_string = tool_string + " (sigma: " + QString::number(this->ui->blurSigma->value()) + ")";
-  }
-
-
-
-  QListWidgetItem* item = new QListWidgetItem( tool_string );
-
-  this->ui->groomPipelineListWidget->addItem( item );
-}
-
-void GroomTool::on_deleteToolButton_clicked()
-{
-  qDeleteAll(this->ui->groomPipelineListWidget->selectedItems());
-}
-
-
