@@ -14,8 +14,8 @@
    <string>ShapeWorksStudio</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/ShapeWorksStudio/Images/cifer.png</normaloff>:/ShapeWorksStudio/Images/cifer.png</iconset>
+   <iconset resource="../Resources/ShapeWorksStudio.qrc">
+    <normaloff>:/Studio/Images/shapes-icon.png</normaloff>:/Studio/Images/shapes-icon.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget#dockWidgetContents

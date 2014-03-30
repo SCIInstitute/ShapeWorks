@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="Studio">
+    <file>Images/shapes-icon.png</file>
     <file>Images/acorn.png</file>
     <file>Images/circle.png</file>
     <file>Images/hammer.png</file>
