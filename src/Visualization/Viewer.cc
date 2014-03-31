@@ -125,7 +125,6 @@ void Viewer::setup_renderers()
   this->renderers_.clear();
 
   int* size = this->render_window_->GetSize();
-  std::cerr << "window size = " << size[0] << " x " << size[1] << "\n";
 
   int width = this->tile_layout_width_;
   int height = this->tile_layout_height_;
@@ -135,9 +134,6 @@ void Viewer::setup_renderers()
 
   float tile_height = ( 1.0f - ( margin * ( height + 1 ) ) ) / height;
   float tile_width = ( 1.0f - ( margin * ( width + 1 ) ) ) / width;
-
-  std::cerr << "width_ratio = " << tile_width << "\n";
-  std::cerr << "height_ratio = " << tile_height << "\n";
 
   float step_x = tile_width + margin;
   float step_y = tile_height + margin;
@@ -164,27 +160,11 @@ void Viewer::setup_renderers()
 
       ren->SetViewport( viewport );
 
-      int mod = 3;
-      int mod2 = 2;
-      int mod3 = 1;
-
-      if ( width == 6 )
-      {
-        mod = 4;
-        mod2 = 3;
-        mod3 = 2;
-      }
-
-      float color = 0.2 + ( 0.04 * ( i % mod ) );
-
-      color = color - ( 0.02 * ( i % mod2 ) );
-
-      color = color + ( 0.04 * ( i % mod3 ) );
+      double color = 0.2f;
 
       ren->SetBackground( color, color, color );
 
       this->render_window_->AddRenderer( ren );
-      //ren->Render();
     }
   }
 
