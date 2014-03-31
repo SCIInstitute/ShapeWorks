@@ -45,7 +45,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   //files << "z:/shared/laatee/laa_2_DT.nrrd";
   //files << "z:/shared/laatee/laa_3_DT.nrrd";
   //files << "z:/shared/laatee/laa_4_DT.nrrd";
-  this->import_files( files );
+
+  //this->import_files( files );
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()

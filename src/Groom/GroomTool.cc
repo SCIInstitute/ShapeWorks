@@ -48,13 +48,16 @@ void GroomTool::on_run_groom_button_clicked()
 
   QTemporaryFile file;
   file.open();
-  this->export_xml(file.fileName());
+
+  QString temp_file_name = file.fileName() + ".xml";
+
+  this->export_xml(temp_file_name);
   file.close();
 
 
   QStringList args;
 
-  args << file.fileName();
+  args << temp_file_name;
 
   if (this->ui_->center_checkbox->isChecked())
   {
@@ -67,7 +70,8 @@ void GroomTool::on_run_groom_button_clicked()
 
   QProcess *groom = new QProcess(this);
   groom->setProcessChannelMode(QProcess::MergedChannels);
-  groom->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom", args);
+  //groom->start("C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
+  groom->start("C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
   if (!groom->waitForStarted())
   {
     std::cerr << "failed to start shapeworksgroom\n";
@@ -76,9 +80,14 @@ void GroomTool::on_run_groom_button_clicked()
 
   //groom.closeWriteChannel();
 
+
   std::cerr << "running...";
 
-  groom->waitForReadyRead();
+  if (!groom->waitForFinished()) {
+    std::cerr << "error running shapeworksgroom\n";
+
+    return;
+  }
 
   QByteArray result = groom->readAll();
   std::cerr << "output: " << result.data() << "\n";
@@ -90,16 +99,10 @@ void GroomTool::on_run_groom_button_clicked()
   std::cerr << strOut.toStdString() << "\n";
 
 
-  if (!groom->waitForFinished()) {
-    std::cerr << "error running shapeworksgroom\n";
-
-    return;
-  }
 
 
   std::cerr << "Finished running!\n";
 
-  //qDebug(result.data());
 
   delete groom;
 }
