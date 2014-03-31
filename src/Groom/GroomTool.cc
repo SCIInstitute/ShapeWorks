@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <QXmlStreamWriter>
+#include <QTemporaryFile>
 
 #include <Groom/GroomTool.h>
 #include <Data/DataManager.h>
@@ -44,10 +45,69 @@ void GroomTool::on_export_xml_button_clicked()
 void GroomTool::on_run_groom_button_clicked()
 {
   std::cerr << "Groom!\n";
+
+  QTemporaryFile file;
+  file.open();
+  this->export_xml(file.fileName());
+  file.close();
+
+
+  QStringList args;
+
+  args << file.fileName();
+
+  if (this->ui_->center_checkbox->isChecked())
+  {
+    args << "center";
+  }
+  if (this->ui_->antialias_checkbox->isChecked())
+  {
+    args << "antialias";
+  }
+
+  QProcess *groom = new QProcess(this);
+  groom->setProcessChannelMode(QProcess::MergedChannels);
+  groom->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom", args);
+  if (!groom->waitForStarted())
+  {
+    std::cerr << "failed to start shapeworksgroom\n";
+    return;
+  }
+
+  //groom.closeWriteChannel();
+
+  std::cerr << "running...";
+
+  groom->waitForReadyRead();
+
+  QByteArray result = groom->readAll();
+  std::cerr << "output: " << result.data() << "\n";
+
+  QString strOut = groom->readAllStandardOutput();
+  std::cerr << strOut.toStdString() << "\n";
+
+  strOut = groom->readAllStandardError();
+  std::cerr << strOut.toStdString() << "\n";
+
+
+  if (!groom->waitForFinished()) {
+    std::cerr << "error running shapeworksgroom\n";
+
+    return;
+  }
+
+
+  std::cerr << "Finished running!\n";
+
+  //qDebug(result.data());
+
+  delete groom;
 }
 
 bool GroomTool::export_xml( QString filename )
 {
+  std::cerr << "export to " << filename.toStdString() << "\n";
+
   QFile file( filename );
 
   if ( !file.open( QIODevice::WriteOnly ) )
