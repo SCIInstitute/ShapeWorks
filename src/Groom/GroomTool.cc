@@ -2,6 +2,9 @@
 
 #include <QXmlStreamWriter>
 #include <QTemporaryFile>
+#include <QFileDialog>
+#include <QProcess>
+#include <QMessageBox>
 
 #include <Groom/GroomTool.h>
 #include <Data/DataManager.h>
