@@ -51,28 +51,27 @@ void GroomTool::on_run_groom_button_clicked()
 
   QString temp_file_name = file.fileName() + ".xml";
 
-  this->export_xml(temp_file_name);
+  this->export_xml( temp_file_name );
   file.close();
-
 
   QStringList args;
 
   args << temp_file_name;
 
-  if (this->ui_->center_checkbox->isChecked())
+  if ( this->ui_->center_checkbox->isChecked() )
   {
     args << "center";
   }
-  if (this->ui_->antialias_checkbox->isChecked())
+  if ( this->ui_->antialias_checkbox->isChecked() )
   {
     args << "antialias";
   }
 
-  QProcess *groom = new QProcess(this);
-  groom->setProcessChannelMode(QProcess::MergedChannels);
+  QProcess* groom = new QProcess( this );
+  groom->setProcessChannelMode( QProcess::MergedChannels );
   //groom->start("C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
-  groom->start("C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
-  if (!groom->waitForStarted())
+  groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
+  if ( !groom->waitForStarted() )
   {
     std::cerr << "failed to start shapeworksgroom\n";
     return;
@@ -80,10 +79,10 @@ void GroomTool::on_run_groom_button_clicked()
 
   //groom.closeWriteChannel();
 
-
   std::cerr << "running...";
 
-  if (!groom->waitForFinished()) {
+  if ( !groom->waitForFinished() )
+  {
     std::cerr << "error running shapeworksgroom\n";
 
     return;
@@ -98,11 +97,7 @@ void GroomTool::on_run_groom_button_clicked()
   strOut = groom->readAllStandardError();
   std::cerr << strOut.toStdString() << "\n";
 
-
-
-
   std::cerr << "Finished running!\n";
-
 
   delete groom;
 }
