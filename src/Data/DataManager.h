@@ -19,8 +19,6 @@ public:
 
   void import_file( QString file );
 
-  std::vector<vtkSmartPointer<vtkPolyData> > get_meshes();
-
   void set_table_widget( QTableWidget* table_widget );
   void set_viewer( QSharedPointer<Viewer> viewer );
 

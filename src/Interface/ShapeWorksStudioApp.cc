@@ -35,15 +35,16 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->data_manager_->set_table_widget( this->ui_->tableWidget );
   this->data_manager_->set_viewer( this->viewer_ );
+  this->groom_tool_->set_data_manager( this->data_manager_ );
 
   this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
 
   QStringList files;
-  files << "z:\\shared\\laatee\\laa_0_DT.nrrd";
-  files << "z:\\shared\\laatee\\laa_1_DT.nrrd";
-  files << "z:\\shared\\laatee\\laa_2_DT.nrrd";
-  files << "z:\\shared\\laatee\\laa_3_DT.nrrd";
-  files << "z:\\shared\\laatee\\laa_4_DT.nrrd";
+  files << "z:/shared/laatee/laa_0_DT.nrrd";
+  files << "z:/shared/laatee/laa_1_DT.nrrd";
+  files << "z:/shared/laatee/laa_2_DT.nrrd";
+  files << "z:/shared/laatee/laa_3_DT.nrrd";
+  files << "z:/shared/laatee/laa_4_DT.nrrd";
   this->import_files( files );
 }
 
