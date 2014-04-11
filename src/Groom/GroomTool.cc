@@ -47,7 +47,6 @@ void GroomTool::on_export_xml_button_clicked()
 
 void GroomTool::on_run_groom_button_clicked()
 {
-  std::cerr << "Groom!\n";
 
   QTemporaryFile file;
   file.open();
@@ -72,13 +71,15 @@ void GroomTool::on_run_groom_button_clicked()
 
   QProcess* groom = new QProcess( this );
   groom->setProcessChannelMode( QProcess::MergedChannels );
-  //groom->start("C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
-  groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
+  groom->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
+  //groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
   if ( !groom->waitForStarted() )
   {
-    std::cerr << "failed to start shapeworksgroom\n";
+    std::cerr << "Error: failed to start ShapeWorksGroom\n";
+    QMessageBox::critical( 0, "Error", "Failed to start ShapeWorksGroom" );
     return;
   }
+
 
   //groom.closeWriteChannel();
 
@@ -86,7 +87,8 @@ void GroomTool::on_run_groom_button_clicked()
 
   if ( !groom->waitForFinished() )
   {
-    std::cerr << "error running shapeworksgroom\n";
+    std::cerr << "Error running ShapeWorksGroom\n";
+    QMessageBox::critical( 0, "Error", "Error running ShapeWorksGroom" );
 
     return;
   }

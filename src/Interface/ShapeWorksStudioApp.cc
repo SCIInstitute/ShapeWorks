@@ -42,11 +42,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   QStringList files;
   files << "z:/shared/laatee/laa_0_DT.nrrd";
   files << "z:/shared/laatee/laa_1_DT.nrrd";
-  //files << "z:/shared/laatee/laa_2_DT.nrrd";
-  //files << "z:/shared/laatee/laa_3_DT.nrrd";
-  //files << "z:/shared/laatee/laa_4_DT.nrrd";
+  files << "z:/shared/laatee/laa_2_DT.nrrd";
+  files << "z:/shared/laatee/laa_3_DT.nrrd";
+  files << "z:/shared/laatee/laa_4_DT.nrrd";
 
-  //this->import_files( files );
+  this->import_files( files );
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
