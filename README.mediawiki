@@ -1,2 +1,4 @@
-ShapeWorksStudio
-================
+=ShapeWorksStudio=
+
+A new GUI environment for ShapeWorks preprocessing, optimization, and analysis.
+
