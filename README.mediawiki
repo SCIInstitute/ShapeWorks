@@ -3,3 +3,5 @@
 A new GUI environment for ShapeWorks preprocessing, optimization, and analysis.
 
 [[File:http://sciinstitute.github.io/ShapeWorksStudio/screenshots/studio_thumb.png]]
+
+* [[http://sciinstitute.github.io/ShapeWorksStudio/doxygen/|Doxygen Documentation]]
