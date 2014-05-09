@@ -1,3 +1,7 @@
+#ifndef STUDIO_GROOM_GROOMTOOL_H
+#define STUDIO_GROOM_GROOMTOOL_H
+
+
 #include <QSharedPointer>
 #include <QWidget>
 
@@ -14,7 +18,8 @@ public:
   
   /// export XML for ShapeWorksGroom
   bool export_xml(QString filename);
-
+  
+  /// set the pointer to the data manager
   void set_data_manager(QSharedPointer<DataManager> data_manager);
 
 public Q_SLOTS:
@@ -34,3 +39,5 @@ private:
   Ui_GroomTool* ui_;
   QSharedPointer<DataManager> data_manager_;
 };
+
+#endif /* STUDIO_GROOM_GROOMTOOL_H */

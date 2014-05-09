@@ -1,3 +1,7 @@
+#ifndef STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H
+#define STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H
+
+
 #include <QMainWindow>
 #include <QActionGroup>
 
@@ -51,3 +55,5 @@ private:
 
   QSharedPointer<GroomTool> groom_tool_;
 };
+
+#endif /* STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H */

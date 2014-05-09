@@ -1,3 +1,6 @@
+#ifndef STUDIO_DATA_DATAMANAGER_H
+#define STUDIO_DATA_DATAMANAGER_H
+
 #include <vtkSmartPointer.h>
 
 #include <QStringList>
@@ -40,3 +43,5 @@ private:
   QTableWidget* table_widget_;
   QSharedPointer<Viewer> viewer_;
 };
+
+#endif /* STUDIO_DATA_DATAMANAGER_H */

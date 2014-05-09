@@ -1,13 +1,4 @@
-#include <vtkMarchingCubes.h>
-
-#include <itkImageToVTKImageFilter.h>
-#include <itkImageFileReader.h>
-
 #include <Data/Shape.h>
-
-typedef float PixelType;
-typedef itk::Image< PixelType, 3 > ImageType;
-typedef itk::ImageFileReader< ImageType > ReaderType;
 
 Shape::Shape()
 {}

@@ -48,7 +48,11 @@ void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int 
   vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 
+#if VTK_MAJOR_VERSION <= 5
+  mapper->SetInput( poly_data );
+#else
   mapper->SetInputData( poly_data );
+#endif
   actor->SetMapper( mapper );
   actor->GetProperty()->SetDiffuseColor( 1, 191.0 / 255.0, 0 );
   actor->GetProperty()->SetSpecular( 0.2 );

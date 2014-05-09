@@ -1,8 +1,10 @@
 #include <QFileInfo>
 
 #include <vtkMarchingCubes.h>
+#include <vtkImageImport.h>
 
 #include <itkImageFileReader.h>
+#include <itkVTKImageExport.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
@@ -40,7 +42,7 @@ Mesh::Mesh( QString filename )
 
     // create isosurface
     vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
-    marching->SetInputData( vtk_image->GetOutput() );
+    marching->SetInputConnection( vtk_image->GetOutputPort() );
     marching->SetNumberOfContours( 1 );
     marching->SetValue( 0, 0.5 );
     marching->Update();

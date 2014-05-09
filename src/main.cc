@@ -77,9 +77,7 @@ int main( int argc, char** argv )
 
 #ifdef WIN32
   ::SetErrorMode( 0 );
-//# ifdef CORVIEW_SHOW_CONSOLE
   RedirectIOToConsole2();
-//# endif
 #endif
 
   std::cerr << "ShapeWorksStudio initializing...\n";

@@ -11,6 +11,7 @@
 
 #include <ui_GroomTool.h>
 
+//---------------------------------------------------------------------------
 GroomTool::GroomTool()
 {
 
@@ -18,19 +19,23 @@ GroomTool::GroomTool()
   this->ui_->setupUi( this );
 }
 
+//---------------------------------------------------------------------------
 GroomTool::~GroomTool()
 {}
 
+//---------------------------------------------------------------------------
 void GroomTool::on_antialias_checkbox_stateChanged( int state )
 {
   this->ui_->antialias_groupbox->setEnabled( state );
 }
 
+//---------------------------------------------------------------------------
 void GroomTool::on_blur_checkbox_stateChanged( int state )
 {
   this->ui_->blur_groupbox->setEnabled( state );
 }
 
+//---------------------------------------------------------------------------
 void GroomTool::on_export_xml_button_clicked()
 {
   std::cerr << "Export XML\n";
@@ -45,6 +50,7 @@ void GroomTool::on_export_xml_button_clicked()
   this->export_xml( filename );
 }
 
+//---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked()
 {
 
@@ -107,6 +113,7 @@ void GroomTool::on_run_groom_button_clicked()
   delete groom;
 }
 
+//---------------------------------------------------------------------------
 bool GroomTool::export_xml( QString filename )
 {
   std::cerr << "export to " << filename.toStdString() << "\n";
@@ -188,6 +195,7 @@ bool GroomTool::export_xml( QString filename )
   return true;
 }
 
+//---------------------------------------------------------------------------
 void GroomTool::set_data_manager( QSharedPointer<DataManager> data_manager )
 {
   this->data_manager_ = data_manager;

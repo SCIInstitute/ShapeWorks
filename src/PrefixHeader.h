@@ -9,8 +9,6 @@
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 
-#include <itkImageToVTKImageFilter.h>
-#include <itkImageFileReader.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>

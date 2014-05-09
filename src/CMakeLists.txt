@@ -136,13 +136,15 @@ endfunction(enable_precompiled_headers)
 
 
 ### Interface
-FILE(GLOB STUDIO_INTERFACE_HDRS "Interface/*.h")
-FILE(GLOB STUDIO_INTERFACE_SRCS "Interface/*.cc")
-FILE(GLOB STUDIO_INTERFACE_UIS  "Interface/*.ui")
-
-### Application
-FILE(GLOB STUDIO_APPLICATION_HDRS "Application/*.h")
-FILE(GLOB STUDIO_APPLICATION_SRCS "Application/*.cc")
+SET(STUDIO_INTERFACE_HDRS
+  Interface/ShapeWorksStudioApp.h
+)
+SET(STUDIO_INTERFACE_SRCS
+  Interface/ShapeWorksStudioApp.cc
+)
+SET(STUDIO_INTERFACE_UIS
+  Interface/ShapeWorksStudioApp.ui
+)
 
 ### Data
 SET(STUDIO_DATA_HDRS
@@ -151,7 +153,6 @@ SET(STUDIO_DATA_HDRS
   Data/Shape.h
   Data/ItkToVtk.h
 )
-
 SET(STUDIO_DATA_SRCS
   Data/DataManager.cc
   Data/Mesh.cc
@@ -159,18 +160,29 @@ SET(STUDIO_DATA_SRCS
 )
 
 ### Groom
-FILE(GLOB STUDIO_GROOM_HDRS "Groom/*.h")
-FILE(GLOB STUDIO_GROOM_SRCS "Groom/*.cc")
-FILE(GLOB STUDIO_GROOM_UIS  "Groom/*.ui")
+SET(STUDIO_GROOM_HDRS
+  Groom/GroomTool.h
+  Groom/GroomToolManager.h
+)
+SET(STUDIO_GROOM_SRCS
+  Groom/GroomTool.cc
+)
+SET(STUDIO_GROOM_UIS
+  Groom/GroomTool.ui
+)
 
 ### Visualization
-FILE(GLOB STUDIO_VISUALIZATION_HDRS "Visualization/*.h")
-FILE(GLOB STUDIO_VISUALIZATION_SRCS "Visualization/*.cc")
+SET(STUDIO_VISUALIZATION_HDRS
+  "Visualization/Viewer.h"
+)
+SET(STUDIO_VISUALIZATION_SRCS
+  "Visualization/Viewer.cc"
+)
 
+### Studio
 SET( STUDIO_SRCS
      main.cc
      ${STUDIO_INTERFACE_SRCS}
-     ${STUDIO_APPLICATION_SRCS}
      ${STUDIO_DATA_SRCS}
      ${STUDIO_GROOM_SRCS}
      ${STUDIO_VISUALIZATION_SRCS}
@@ -178,7 +190,6 @@ SET( STUDIO_SRCS
 
 SET( STUDIO_HDRS
      ${STUDIO_INTERFACE_HDRS}
-     ${STUDIO_APPLICATION_HDRS}
      ${STUDIO_DATA_HDRS}
      ${STUDIO_GROOM_HDRS}
      ${STUDIO_VISUALIZATION_HDRS}
@@ -194,16 +205,12 @@ SET( STUDIO_RCS
 )
 
 SOURCE_GROUP("Interface" FILES ${STUDIO_INTERFACE_SRCS} ${STUDIO_INTERFACE_HDRS} ${STUDIO_INTERFACE_UIS})
-
 SOURCE_GROUP("Visualization" FILES ${STUDIO_VISUALIZATION_SRCS} ${STUDIO_VISUALIZATION_HDRS})
-SOURCE_GROUP("Application" FILES ${STUDIO_APPLICATION_SRCS} ${STUDIO_APPLICATION_HDRS})
 SOURCE_GROUP("Data" FILES ${STUDIO_DATA_SRCS} ${STUDIO_DATA_HDRS})
 SOURCE_GROUP("Groom" FILES ${STUDIO_GROOM_SRCS} ${STUDIO_GROOM_HDRS} ${STUDIO_GROOM_UIS})
 
-
 # Turn on precompiled headers
 enable_precompiled_headers(PrefixHeader.h STUDIO_SRCS)
-
 
 # this command will generate rules that will run rcc on all files from STUDIO_RCS
 # in result STUDIO_RC_SRCS variable will contain paths to files produced by rcc

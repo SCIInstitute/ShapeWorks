@@ -1,7 +1,9 @@
+#ifndef STUDIO_DATA_SHAPE_H
+#define STUDIO_DATA_SHAPE_H
+
 #include <QSharedPointer>
 
 #include <Data/Mesh.h>
-
 
 //! Representation of a single shape/patient.
 class Shape
@@ -23,3 +25,5 @@ private:
   QSharedPointer<Mesh> groomed_mesh_;
   QSharedPointer<Mesh> reconstructed_mesh_;
 };
+
+#endif /* STUDIO_DATA_SHAPE_H */
