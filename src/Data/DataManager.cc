@@ -1,10 +1,5 @@
 #include <QtGui>
 
-#include <vtkMarchingCubes.h>
-
-#include <itkImageToVTKImageFilter.h>
-#include <itkImageFileReader.h>
-
 #include <Data/DataManager.h>
 #include <Visualization/Viewer.h>
 

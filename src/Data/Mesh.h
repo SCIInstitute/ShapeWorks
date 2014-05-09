@@ -1,3 +1,6 @@
+#ifndef STUDIO_DATA_MESH_H
+#define STUDIO_DATA_MESH_H
+
 #include <QString>
 
 #include <vtkPolyData.h>
@@ -38,3 +41,5 @@ private:
   vtkSmartPointer<vtkPolyData> poly_data_;
   int dimensions_[3];
 };
+
+#endif /* STUDIO_DATA_MESH_H */
