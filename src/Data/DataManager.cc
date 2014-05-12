@@ -3,10 +3,6 @@
 #include <Data/DataManager.h>
 #include <Visualization/Viewer.h>
 
-typedef float PixelType;
-typedef itk::Image< PixelType, 3 > ImageType;
-typedef itk::ImageFileReader< ImageType > ReaderType;
-
 DataManager::DataManager()
 {}
 
