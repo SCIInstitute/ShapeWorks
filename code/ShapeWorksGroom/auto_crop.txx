@@ -185,6 +185,7 @@ void auto_crop<T, D>::operator() () {
     bool pad = false;
     for ( unsigned int i = 0; i < D; i++ )
     {
+      extra[i] = 0;
       idx[i] = ( ( thisidx[i] + thissz[i] / 2 ) - maxsize[i] / 2 );
       if ( idx[i] < 0 )
       {
@@ -192,6 +193,7 @@ void auto_crop<T, D>::operator() () {
         //                  << std::endl;
         pad = true;
         extra[i] = -idx[i];
+        std::cerr << "extra[" << i << "] = " << extra[i] << "\n";
       }
     }
     typename itk::ConstantPadImageFilter<image_type, image_type>::Pointer padder
@@ -199,13 +201,16 @@ void auto_crop<T, D>::operator() () {
 
     if ( pad == true )
     {
+      std::cout << "Needs padding: " << *it << std::endl;
+
       unsigned long lb[D];
       unsigned long up[D];
       for ( unsigned int i = 0; i < D; i++ )
       {
         lb[i] = extra[i] * 2;
-        std::cout << "lb = " << lb[i] << std::endl;
         up[i] = extra[i] * 2;
+        std::cout << "pad lower bound [" << i << "] = " << lb[i] << std::endl;
+        std::cout << "pad upper bound [" << i << "] = " << up[i] << std::endl;
       }
       padder->SetConstant( m_background );
       padder->SetPadLowerBound( lb );
@@ -225,12 +230,17 @@ void auto_crop<T, D>::operator() () {
     reg.SetSize( maxsize );
     reg.SetIndex( idx );
 
-    std::cout << "siz = " << maxsize << std::endl;
-    std::cout << "index = " << idx << std::endl;
-    if ( pad == true ) { extractor->SetInput( padder->GetOutput() ); }
-    else { extractor->SetInput( reader->GetOutput() ); }
+    std::cout << "extract maxsize = " << maxsize << std::endl;
+    std::cout << "extract index = " << idx << std::endl;
+    if ( pad == true )
+    {
+      extractor->SetInput( padder->GetOutput() );
+    }
+    else
+    {
+      extractor->SetInput( reader->GetOutput() );
+    }
     extractor->SetExtractionRegion( reg );
-
     extractor->Update();
 
     // Make sure the image information is correct.
@@ -238,15 +248,16 @@ void auto_crop<T, D>::operator() () {
     I.SetIdentity();
     extractor->GetOutput()->SetDirection( I );
 
-    double ss[3];
-    ss[0] = ss[1] = ss[2] = 1.0;
+    /*
+       double ss[3];
+       ss[0] = ss[1] = ss[2] = 1.0;
 
-    float o[3];
-    o[0] = -( extractor->GetOutput()->GetBufferedRegion().GetSize()[0] / 2.0 );
-    o[1] = -( extractor->GetOutput()->GetBufferedRegion().GetSize()[1] / 2.0 );
-    o[2] = -( extractor->GetOutput()->GetBufferedRegion().GetSize()[2] / 2.0 );
-
-    std::cout << "---" << o[0] << " " << o[1] << " " << o[2] << std::endl;
+       float o[3];
+       o[0] = -( extractor->GetOutput()->GetBufferedRegion().GetSize()[0] / 2.0 );
+       o[1] = -( extractor->GetOutput()->GetBufferedRegion().GetSize()[1] / 2.0 );
+       o[2] = -( extractor->GetOutput()->GetBufferedRegion().GetSize()[2] / 2.0 );
+       std::cout << "New Origin: " << o[0] << " " << o[1] << " " << o[2] << std::endl;
+     */
 
     //extractor->GetOutput()->SetOrigin( o );
     //extractor->GetOutput()->SetSpacing( ss );
