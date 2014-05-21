@@ -8,9 +8,10 @@
 #include <vtkRenderWindow.h>
 
 #include <Visualization/Viewer.h>
-#include <Data/DataManager.h>
-#include <Data/Project.h>
 #include <Groom/GroomTool.h>
+#include <Data/Project.h>
+#include <Data/Shape.h>
+#include <Data/Mesh.h>
 
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
@@ -43,11 +44,26 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
 
   QStringList files;
-  files << "z:/shared/laatee/laa_0_DT.nrrd";
-  files << "z:/shared/laatee/laa_1_DT.nrrd";
-  files << "z:/shared/laatee/laa_2_DT.nrrd";
-  files << "z:/shared/laatee/laa_3_DT.nrrd";
-  files << "z:/shared/laatee/laa_4_DT.nrrd";
+
+/*
+   files << "z:/shared/laatee/laa_0_DT.nrrd";
+   files << "z:/shared/laatee/laa_1_DT.nrrd";
+   files << "z:/shared/laatee/laa_2_DT.nrrd";
+   files << "z:/shared/laatee/laa_3_DT.nrrd";
+   files << "z:/shared/laatee/laa_4_DT.nrrd";
+ */
+
+/*
+   files << "h:/projects/laa_tee/groomed/interface_0_DT.nrrd";
+   files << "h:/projects/laa_tee/groomed/interface_1_DT.nrrd";
+   files << "h:/projects/laa_tee/groomed/interface_2_DT.nrrd";
+ */
+  files << "h:/projects/laa_tee/data/interface_0.nrrd";
+  files << "h:/projects/laa_tee/data/interface_1.nrrd";
+  files << "h:/projects/laa_tee/data/interface_2.nrrd";
+  files << "h:/projects/laa_tee/data/interface_3.nrrd";
+  files << "h:/projects/laa_tee/data/interface_4.nrrd";
+  files << "h:/projects/laa_tee/data/interface_5.nrrd";
 
   //this->import_files( files );
 }
@@ -244,4 +260,11 @@ void ShapeWorksStudioApp::handle_project_changed()
 
   this->update_table();
   this->update_scrollbar();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
+{
+  this->viewer_->set_auto_center( this->ui_->center_checkbox->isChecked() );
+  this->handle_project_changed();
 }

@@ -80,7 +80,17 @@ border-radius: 3px;
      </widget>
     </item>
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
+      <item>
+       <widget class="QCheckBox" name="center_checkbox">
+        <property name="text">
+         <string>Center</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">

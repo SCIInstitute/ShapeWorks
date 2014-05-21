@@ -28,13 +28,16 @@ public Q_SLOTS:
   void on_actionSaveProjectAs_triggered();
   void on_actionQuit_triggered();
   void on_actionImport_triggered();
-  void on_thumbnail_size_slider_valueChanged();
   void on_vertical_scroll_bar_valueChanged();
   void on_addButton_clicked();
   void on_deleteButton_clicked();
 
   void on_actionGroomMode_triggered();
   void on_actionImportMode_triggered();
+
+  void on_center_checkbox_stateChanged();
+  void on_thumbnail_size_slider_valueChanged();
+
 
   void mode_changed();
 

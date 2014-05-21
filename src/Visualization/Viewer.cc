@@ -11,6 +11,10 @@
 #include <vtkTextProperty.h>
 #include <vtkCornerAnnotation.h>
 
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTransform.h>
+#include <vtkCenterOfMass.h>
+
 #include <Visualization/Viewer.h>
 
 #include <Data/Mesh.h>
@@ -25,6 +29,8 @@ Viewer::Viewer()
   this->camera_ = this->renderer_->GetActiveCamera();
   this->start_row_ = 0;
   this->first_draw_ = true;
+
+  this->auto_center_ = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -47,6 +53,31 @@ void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int 
 
   vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+
+  if ( this->auto_center_ )
+  {
+    // Compute the center of mass
+    vtkSmartPointer<vtkCenterOfMass> center_of_mass_filter = vtkSmartPointer<vtkCenterOfMass>::New();
+    center_of_mass_filter->SetInputData( poly_data );
+    center_of_mass_filter->SetUseScalarsAsWeights( false );
+    center_of_mass_filter->Update();
+
+    double center[3];
+    center_of_mass_filter->GetCenter( center );
+    double tx = -center[0];
+    double ty = -center[1];
+    double tz = -center[2];
+
+    vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
+    translation->Translate( tx, ty, tz );
+
+    vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter =
+      vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+    transformFilter->SetInputData( poly_data );
+    transformFilter->SetTransform( translation );
+    transformFilter->Update();
+    poly_data = transformFilter->GetOutput();
+  }
 
 #if VTK_MAJOR_VERSION <= 5
   mapper->SetInput( poly_data );
@@ -210,4 +241,11 @@ void Viewer::set_meshes( std::vector<QSharedPointer<Mesh> > meshes )
 {
   this->meshes_ = meshes;
   this->display_meshes();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_auto_center( bool center )
+{
+  this->auto_center_ = center;
+  this->first_draw_ = true;
 }
