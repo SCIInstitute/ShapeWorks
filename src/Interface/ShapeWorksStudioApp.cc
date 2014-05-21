@@ -9,8 +9,10 @@
 
 #include <Visualization/Viewer.h>
 #include <Data/DataManager.h>
+#include <Data/Project.h>
 #include <Groom/GroomTool.h>
 
+//---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 {
   this->ui_ = new Ui_ShapeWorksStudioApp;
@@ -28,14 +30,15 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
 
+  this->project_ = QSharedPointer<Project>( new Project() );
+
+  connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
+
   this->viewer_ = QSharedPointer<Viewer>( new Viewer() );
-  this->data_manager_ = QSharedPointer<DataManager>( new DataManager() );
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
   this->ui_->stackedWidget->addWidget( this->groom_tool_.data() );
 
-  this->data_manager_->set_table_widget( this->ui_->tableWidget );
-  this->data_manager_->set_viewer( this->viewer_ );
-  this->groom_tool_->set_data_manager( this->data_manager_ );
+  this->groom_tool_->set_project( this->project_ );
 
   this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
 
@@ -52,34 +55,62 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
 {}
 
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_actionOpenProject_triggered()
+{
+  QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
+                                                   QString(), tr( "XML files (*.xml)" ) );
+  if ( filename.isEmpty() )
+  {
+    return;
+  }
+
+  this->project_->open_project( filename );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_actionSaveProjectAs_triggered()
+{
+  QString filename = QFileDialog::getSaveFileName( this, tr( "Save Project As..." ),
+                                                   QString(), tr( "XML files (*.xml)" ) );
+  if ( filename.isEmpty() )
+  {
+    return;
+  }
+
+  this->project_->save_project( filename );
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionQuit_triggered()
 {
   this->close();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionImport_triggered()
 {
-  QFileDialog dialog( this );
-  //dialog.setDirectory(QDir::homePath());
-  dialog.setFileMode( QFileDialog::ExistingFiles );
-  dialog.setNameFilter( trUtf8( "NRRD (*.nrrd)" ) );
-  QStringList fileNames;
-  if ( dialog.exec() )
+
+  QStringList filenames;
+
+  filenames = QFileDialog::getOpenFileNames( this, tr( "Import Files..." ),
+                                             QString(), tr( "NRRD files (*.nrrd)" ) );
+
+  if ( filenames.size() == 0 )
   {
-    fileNames = dialog.selectedFiles();
+    return;
   }
 
-  this->import_files( fileNames );
+  this->import_files( filenames );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::import_files( QStringList file_names )
 {
-  this->data_manager_->import_files( file_names );
-  this->data_manager_->update_shapes();
-  this->update_table();
-  this->update_scrollbar();
+  this->project_->import_files( file_names );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
   int value = this->ui_->thumbnail_size_slider->maximum() - this->ui_->thumbnail_size_slider->value() + 1;
@@ -91,6 +122,7 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
   this->ui_->qvtkWidget->GetRenderWindow()->Render();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_scrollbar()
 {
   int num_rows = this->viewer_->get_num_rows();
@@ -110,6 +142,7 @@ void ShapeWorksStudioApp::update_scrollbar()
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 {
   int value = this->ui_->vertical_scroll_bar->value();
@@ -118,31 +151,33 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
   this->viewer_->set_start_row( value );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_addButton_clicked()
 {
   this->on_actionImport_triggered();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_deleteButton_clicked()
 {
 
   QModelIndexList list = this->ui_->tableWidget->selectionModel()->selectedRows();
 
+  QList<int> index_list;
+
   for ( int i = list.size() - 1; i >= 0; i-- )
   {
-    std::cerr << list[i].row() << "\n";
-    this->data_manager_->remove_shape( list[i].row() );
+    index_list << list[i].row();
   }
 
-  this->data_manager_->update_shapes();
-  this->update_table();
-  this->update_scrollbar();
+  this->project_->remove_shapes( index_list );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_table()
 {
 
-  std::vector<QSharedPointer<Shape> > shapes = this->data_manager_->get_shapes();
+  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
   this->ui_->tableWidget->clear();
 
@@ -176,9 +211,11 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->tableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::mode_changed()
 {}
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionGroomMode_triggered()
 {
   std::cerr << "groom!\n";
@@ -186,7 +223,25 @@ void ShapeWorksStudioApp::on_actionGroomMode_triggered()
   this->ui_->stackedWidget->setCurrentWidget( this->groom_tool_.data() );
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionImportMode_triggered()
 {
   this->ui_->stackedWidget->setCurrentIndex( 0 );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_project_changed()
+{
+  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+
+  std::vector<QSharedPointer<Mesh> > meshes;
+  for ( int i = 0; i < shapes.size(); i++ )
+  {
+    meshes.push_back( shapes[i]->get_initial_mesh() );
+  }
+
+  this->viewer_->set_meshes( meshes );
+
+  this->update_table();
+  this->update_scrollbar();
 }

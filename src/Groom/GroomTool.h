@@ -5,7 +5,7 @@
 #include <QSharedPointer>
 #include <QWidget>
 
-class DataManager;
+class Project;
 class Ui_GroomTool;
 
 class GroomTool : public QWidget
@@ -19,8 +19,8 @@ public:
   /// export XML for ShapeWorksGroom
   bool export_xml(QString filename);
   
-  /// set the pointer to the data manager
-  void set_data_manager(QSharedPointer<DataManager> data_manager);
+  /// set the pointer to the project
+  void set_project(QSharedPointer<Project> project);
 
 public Q_SLOTS:
 
@@ -37,7 +37,7 @@ public Q_SLOTS:
 private:
 
   Ui_GroomTool* ui_;
-  QSharedPointer<DataManager> data_manager_;
+  QSharedPointer<Project> project_;
 };
 
 #endif /* STUDIO_GROOM_GROOMTOOL_H */

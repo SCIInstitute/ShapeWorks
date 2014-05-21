@@ -7,7 +7,9 @@
 #include <QMessageBox>
 
 #include <Groom/GroomTool.h>
-#include <Data/DataManager.h>
+#include <Data/Project.h>
+#include <Data/Mesh.h>
+#include <Data/Shape.h>
 
 #include <ui_GroomTool.h>
 
@@ -162,7 +164,7 @@ bool GroomTool::export_xml( QString filename )
   // inputs
   xml_writer->writeStartElement( "inputs" );
   xml_writer->writeCharacters( "\n" );
-  std::vector<QSharedPointer<Shape> > shapes = this->data_manager_->get_shapes();
+  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
@@ -175,7 +177,7 @@ bool GroomTool::export_xml( QString filename )
   // outputs
   xml_writer->writeStartElement( "outputs" );
   xml_writer->writeCharacters( "\n" );
-  shapes = this->data_manager_->get_shapes();
+  shapes = this->project_->get_shapes();
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
@@ -196,7 +198,7 @@ bool GroomTool::export_xml( QString filename )
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::set_data_manager( QSharedPointer<DataManager> data_manager )
+void GroomTool::set_project( QSharedPointer<Project> project )
 {
-  this->data_manager_ = data_manager;
+  this->project_ = project;
 }

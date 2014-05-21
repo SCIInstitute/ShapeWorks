@@ -26,6 +26,8 @@ OPTION (BUILD_SHARED_LIBS "Build shared libraries" OFF)
 OPTION (BUILD_TESTS "Build ShapeWorksStudio test applications." ON)
 OPTION (INSTALL_TEST_FILES "Include ShapeWorksStudio test images and help files in the install." OFF)
 OPTION (INSTALL_SOURCE  "Install ShapeWorksStudio source code." OFF)
+OPTION(USE_PRECOMPILED_HEADERS "Use precompiled headers to speed up compilation" ON)
+
 
 set(CMAKE_BUILD_TYPE Release)
 
@@ -119,13 +121,21 @@ function(enable_precompiled_headers PRECOMPILED_HEADER SOURCES)
     foreach(source_file ${files} )
       get_filename_component(extension ${source_file} EXT)
       if ("${extension}" STREQUAL ".cc")
-        #message ("setting property on ${source_file}")
+        message ("setting property on ${source_file}")
         set_source_files_properties(
           ${source_file}
           PROPERTIES COMPILE_FLAGS
           "/Yu\"${pch_header}\" /FI\"${pch_header}\""
           )
       endif("${extension}" STREQUAL ".cc")
+      if ("${extension}" STREQUAL ".cxx")
+        message ("setting property on ${source_file}")
+        set_source_files_properties(
+          ${source_file}
+          PROPERTIES COMPILE_FLAGS
+          "/Yu\"${pch_header}\" /FI\"${pch_header}\""
+          )
+      endif("${extension}" STREQUAL ".cxx")
     endforeach(source_file)
 
     # Finally, update the source file collection to contain the precompiled header translation unit
@@ -148,15 +158,15 @@ SET(STUDIO_INTERFACE_UIS
 
 ### Data
 SET(STUDIO_DATA_HDRS
-  Data/DataManager.h
   Data/Mesh.h
   Data/Shape.h
   Data/ItkToVtk.h
+  Data/Project.h
 )
 SET(STUDIO_DATA_SRCS
-  Data/DataManager.cc
   Data/Mesh.cc
   Data/Shape.cc
+  Data/Project.cc
 )
 
 ### Groom
@@ -173,10 +183,10 @@ SET(STUDIO_GROOM_UIS
 
 ### Visualization
 SET(STUDIO_VISUALIZATION_HDRS
-  "Visualization/Viewer.h"
+  Visualization/Viewer.h
 )
 SET(STUDIO_VISUALIZATION_SRCS
-  "Visualization/Viewer.cc"
+  Visualization/Viewer.cc
 )
 
 ### Studio
@@ -196,8 +206,8 @@ SET( STUDIO_HDRS
 )
 
 SET ( STUDIO_MOC_HDRS
-     Data/DataManager.h
      Groom/GroomTool.h
+     Data/Project.h
 )
 
 SET( STUDIO_RCS
@@ -209,9 +219,6 @@ SOURCE_GROUP("Visualization" FILES ${STUDIO_VISUALIZATION_SRCS} ${STUDIO_VISUALI
 SOURCE_GROUP("Data" FILES ${STUDIO_DATA_SRCS} ${STUDIO_DATA_HDRS})
 SOURCE_GROUP("Groom" FILES ${STUDIO_GROOM_SRCS} ${STUDIO_GROOM_HDRS} ${STUDIO_GROOM_UIS})
 
-# Turn on precompiled headers
-enable_precompiled_headers(PrefixHeader.h STUDIO_SRCS)
-
 # this command will generate rules that will run rcc on all files from STUDIO_RCS
 # in result STUDIO_RC_SRCS variable will contain paths to files produced by rcc
 QT4_ADD_RESOURCES( STUDIO_RC_SRCS ${STUDIO_RCS} )
@@ -221,6 +228,14 @@ QT4_WRAP_UI( STUDIO_UI_HDRS ${STUDIO_INTERFACE_UIS} ${STUDIO_GROOM_UIS} )
 
 # and finally this will run moc:
 QT4_WRAP_CPP( STUDIO_MOC_SRCS ${STUDIO_INTERFACE_HDRS} ${STUDIO_MOC_HDRS} )
+
+
+# Turn on precompiled headers
+IF(USE_PRECOMPILED_HEADERS)
+  enable_precompiled_headers(PrefixHeader.h STUDIO_SRCS)
+  enable_precompiled_headers(PrefixHeader.h STUDIO_MOC_SRCS)
+ENDIF(USE_PRECOMPILED_HEADERS)
+
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)

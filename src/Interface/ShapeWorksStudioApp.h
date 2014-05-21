@@ -5,9 +5,9 @@
 #include <QMainWindow>
 #include <QActionGroup>
 
-class DataManager;
 class Viewer;
 class GroomTool;
+class Project;
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -24,6 +24,8 @@ public:
 
 public Q_SLOTS:
 
+  void on_actionOpenProject_triggered();
+  void on_actionSaveProjectAs_triggered();
   void on_actionQuit_triggered();
   void on_actionImport_triggered();
   void on_thumbnail_size_slider_valueChanged();
@@ -35,6 +37,8 @@ public Q_SLOTS:
   void on_actionImportMode_triggered();
 
   void mode_changed();
+
+  void handle_project_changed();
 
 private:
 
@@ -51,9 +55,10 @@ private:
 
   QSharedPointer<Viewer> viewer_;
 
-  QSharedPointer<DataManager> data_manager_;
-
   QSharedPointer<GroomTool> groom_tool_;
+
+  QSharedPointer<Project> project_;
+
 };
 
 #endif /* STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H */
