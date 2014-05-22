@@ -88,6 +88,8 @@ int main( int argc, char** argv )
 
   studioApp.show();
 
-  studioApp.init_vtk();
+  // do this after "show" for mac initialization
+  studioApp.initialize_vtk();
+
   return app.exec();
 }

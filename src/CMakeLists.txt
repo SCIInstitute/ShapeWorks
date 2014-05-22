@@ -121,7 +121,7 @@ function(enable_precompiled_headers PRECOMPILED_HEADER SOURCES)
     foreach(source_file ${files} )
       get_filename_component(extension ${source_file} EXT)
       if ("${extension}" STREQUAL ".cc")
-        message ("setting property on ${source_file}")
+#        message ("Setting property on ${source_file}")
         set_source_files_properties(
           ${source_file}
           PROPERTIES COMPILE_FLAGS
@@ -129,7 +129,7 @@ function(enable_precompiled_headers PRECOMPILED_HEADER SOURCES)
           )
       endif("${extension}" STREQUAL ".cc")
       if ("${extension}" STREQUAL ".cxx")
-        message ("setting property on ${source_file}")
+#        message ("setting property on ${source_file}")
         set_source_files_properties(
           ${source_file}
           PROPERTIES COMPILE_FLAGS
