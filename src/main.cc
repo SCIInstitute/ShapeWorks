@@ -87,5 +87,7 @@ int main( int argc, char** argv )
   ShapeWorksStudioApp studioApp( argc, argv );
 
   studioApp.show();
+
+  studioApp.init_vtk();
   return app.exec();
 }

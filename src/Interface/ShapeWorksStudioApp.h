@@ -21,6 +21,7 @@ public:
 
   ShapeWorksStudioApp( int argc, char** argv );
   ~ShapeWorksStudioApp();
+  void init_vtk();
 
 public Q_SLOTS:
 

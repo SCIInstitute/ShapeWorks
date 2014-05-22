@@ -41,7 +41,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->groom_tool_->set_project( this->project_ );
 
-  this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
 
   QStringList files;
 
@@ -271,6 +270,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 }
 
 //---------------------------------------------------------------------------
+<<<<<<< HEAD
 void ShapeWorksStudioApp::update_meshes()
 {
 
@@ -298,4 +298,10 @@ void ShapeWorksStudioApp::update_meshes()
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
   this->update_meshes();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::init_vtk()
+{
+  this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
 }

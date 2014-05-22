@@ -136,6 +136,7 @@ void Viewer::display_meshes()
     this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position, id, this->meshes_[i]->get_filename() );
     position++;
   }
+
   this->render_window_->Render();
 }
 
@@ -202,7 +203,11 @@ void Viewer::setup_renderers()
     }
   }
 
-  this->render_window_->Render();
+
+  if ( this->render_window_->IsDrawable() )
+  {
+    this->render_window_->Render();
+  }
 }
 
 //-----------------------------------------------------------------------------
