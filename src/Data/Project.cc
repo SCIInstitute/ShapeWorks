@@ -2,6 +2,8 @@
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
 
+#include <QFile>
+#include <QMessageBox>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 
