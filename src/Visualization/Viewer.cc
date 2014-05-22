@@ -29,7 +29,6 @@ Viewer::Viewer()
   this->camera_ = this->renderer_->GetActiveCamera();
   this->start_row_ = 0;
   this->first_draw_ = true;
-
   this->auto_center_ = true;
 }
 

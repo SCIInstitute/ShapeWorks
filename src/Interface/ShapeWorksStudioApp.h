@@ -37,7 +37,7 @@ public Q_SLOTS:
 
   void on_center_checkbox_stateChanged();
   void on_thumbnail_size_slider_valueChanged();
-
+  void on_view_mode_combobox_currentIndexChanged();
 
   void mode_changed();
 
@@ -48,6 +48,8 @@ private:
   void update_scrollbar();
 
   void update_table();
+
+  void update_meshes();
 
   void import_files( QStringList fileNames );
 

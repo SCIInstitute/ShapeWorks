@@ -38,18 +38,30 @@ public:
   /// import files
   void import_files( QStringList file_names );
 
+  /// load groomed files
+  void load_groomed_files( QStringList file_names );
+
   /// remove shapes
   void remove_shapes( QList<int> list );
 
   /// return all shapes
   std::vector<QSharedPointer<Shape> > get_shapes();
 
-  /// empty the project
-  void clear();
+  /// reset the project
+  void reset();
+
+  /// get the current pipeline state
+  QString get_pipeline_state();
 
 Q_SIGNALS:
   /// signal that the data has changed
   void data_changed();
+
+public:
+  // constants
+  const static QString INITIAL_C;
+  const static QString GROOMED_C;
+  const static QString OPTIMIZED_C;
 
 private:
 
@@ -58,6 +70,11 @@ private:
 
   /// collection of shapes
   std::vector<QSharedPointer<Shape> > shapes_;
+
+
+  QString pipeline_state_;
+
+
 };
 
 #endif /* STUDIO_DATA_PROJECT_H */

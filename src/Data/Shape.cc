@@ -15,3 +15,13 @@ QSharedPointer<Mesh> Shape::get_initial_mesh()
 {
   return this->initial_mesh_;
 }
+
+void Shape::import_groomed_file( QString filename )
+{
+  this->groomed_mesh_ = QSharedPointer<Mesh>( new Mesh( filename ) );
+}
+
+QSharedPointer<Mesh> Shape::get_groomed_mesh()
+{
+  return this->groomed_mesh_;
+}

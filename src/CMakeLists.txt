@@ -172,7 +172,6 @@ SET(STUDIO_DATA_SRCS
 ### Groom
 SET(STUDIO_GROOM_HDRS
   Groom/GroomTool.h
-  Groom/GroomToolManager.h
 )
 SET(STUDIO_GROOM_SRCS
   Groom/GroomTool.cc

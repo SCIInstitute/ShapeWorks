@@ -65,7 +65,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   files << "h:/projects/laa_tee/data/interface_4.nrrd";
   files << "h:/projects/laa_tee/data/interface_5.nrrd";
 
-  //this->import_files( files );
+  this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
+  this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
+
+  this->import_files( files );
 }
 
 ShapeWorksStudioApp::~ShapeWorksStudioApp()
@@ -250,14 +253,12 @@ void ShapeWorksStudioApp::handle_project_changed()
 {
   std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
-  std::vector<QSharedPointer<Mesh> > meshes;
-  for ( int i = 0; i < shapes.size(); i++ )
+  if ( this->project_->get_pipeline_state() == Project::GROOMED_C )
   {
-    meshes.push_back( shapes[i]->get_initial_mesh() );
+    this->ui_->view_mode_combobox->setItemData( 1, 33, Qt::UserRole - 1 );
   }
 
-  this->viewer_->set_meshes( meshes );
-
+  this->update_meshes();
   this->update_table();
   this->update_scrollbar();
 }
@@ -267,4 +268,34 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->viewer_->set_auto_center( this->ui_->center_checkbox->isChecked() );
   this->handle_project_changed();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_meshes()
+{
+
+  QString mode = this->ui_->view_mode_combobox->currentText();
+
+  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  std::vector<QSharedPointer<Mesh> > meshes;
+
+  for ( int i = 0; i < shapes.size(); i++ )
+  {
+    if ( mode == "Original" )
+    {
+      meshes.push_back( shapes[i]->get_initial_mesh() );
+    }
+    else if ( mode == "Groomed" )
+    {
+      meshes.push_back( shapes[i]->get_groomed_mesh() );
+    }
+  }
+
+  this->viewer_->set_meshes( meshes );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
+{
+  this->update_meshes();
 }

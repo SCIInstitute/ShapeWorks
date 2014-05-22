@@ -19,6 +19,12 @@ public:
   /// Retrieve the initial mesh
   QSharedPointer<Mesh> get_initial_mesh();
 
+  /// Import the groomed raw image file
+  void import_groomed_file( QString filename );
+
+  /// Retrieve the groomed mesh
+  QSharedPointer<Mesh> get_groomed_mesh();
+
 private:
 
   QSharedPointer<Mesh> initial_mesh_;

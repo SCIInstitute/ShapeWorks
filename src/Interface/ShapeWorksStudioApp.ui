@@ -42,9 +42,16 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgb
 
 }
 
+
 QWidget#zoomWidget
 {
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(225, 225, 225, 255), stop:1 rgba(205, 205, 205, 255));
+border: 1px solid rgb(60, 60, 60);
+border-radius: 3px;
+}
 
+QWidget#control_widget
+{
 background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(225, 225, 225, 255), stop:1 rgba(205, 205, 205, 255));
 border: 1px solid rgb(60, 60, 60);
 border-radius: 3px;
@@ -82,13 +89,59 @@ border-radius: 3px;
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
       <item>
-       <widget class="QCheckBox" name="center_checkbox">
-        <property name="text">
-         <string>Center</string>
+       <widget class="QWidget" name="control_widget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>3</number>
+         </property>
+         <item>
+          <widget class="QComboBox" name="view_mode_combobox">
+           <item>
+            <property name="text">
+             <string>Original</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Groomed</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Reconstruction</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="center_checkbox">
+           <property name="text">
+            <string>Center</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>

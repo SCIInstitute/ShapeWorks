@@ -79,8 +79,8 @@ void GroomTool::on_run_groom_button_clicked()
 
   QProcess* groom = new QProcess( this );
   groom->setProcessChannelMode( QProcess::MergedChannels );
-  groom->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
-  //groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
+  //groom->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
+  groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
   if ( !groom->waitForStarted() )
   {
     std::cerr << "Error: failed to start ShapeWorksGroom\n";
@@ -113,6 +113,23 @@ void GroomTool::on_run_groom_button_clicked()
   std::cerr << "Finished running!\n";
 
   delete groom;
+
+
+  QStringList list;
+
+  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  for ( int i = 0; i < shapes.size(); i++ )
+  {
+    QSharedPointer<Mesh> initial_mesh = shapes[i]->get_initial_mesh();
+    QString path = initial_mesh->get_filename_with_path();
+    QFileInfo fi( path );
+    QString outfile = fi.dir().absolutePath() + QDir::separator() + fi.completeBaseName() + "_DT.nrrd";
+
+    list << outfile;
+  }
+
+  this->project_->load_groomed_files(list);
+
 }
 
 //---------------------------------------------------------------------------
@@ -135,15 +152,19 @@ bool GroomTool::export_xml( QString filename )
 
   // background
   xml_writer->writeComment( "Value of background pixels in image" );
-  xml_writer->writeStartElement( "background" );
-  xml_writer->writeCharacters( "0.0" );
-  xml_writer->writeEndElement();
+  xml_writer->writeTextElement( "background", "0.0" );
 
   // foreground
   xml_writer->writeComment( "Value of foreground pixels in image" );
-  xml_writer->writeStartElement( "foreground" );
-  xml_writer->writeCharacters( "1.0" );
-  xml_writer->writeEndElement();
+  xml_writer->writeTextElement( "foreground", "1.0" );
+
+  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+
+  QFileInfo fi(shapes[0]->get_initial_mesh()->get_filename_with_path());
+  QString project_path = fi.dir().absolutePath();
+
+  // output transform
+  xml_writer->writeTextElement( "transform_file", project_path + QDir::separator() + "studio.transform" );
 
   if ( this->ui_->antialias_checkbox->isChecked() )
   {
@@ -164,7 +185,6 @@ bool GroomTool::export_xml( QString filename )
   // inputs
   xml_writer->writeStartElement( "inputs" );
   xml_writer->writeCharacters( "\n" );
-  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
