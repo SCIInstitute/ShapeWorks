@@ -1,3 +1,6 @@
+#ifndef STUDIO_VISUALIZATION_VIEWER_H
+#define STUDIO_VISUALIZATION_VIEWER_H
+
 #include <QSharedPointer>
 
 #include <vtkSmartPointer.h>
@@ -63,3 +66,5 @@ private:
 
   bool auto_center_;
 };
+
+#endif /* STUDIO_VISUALIZATION_VIEWER_H */

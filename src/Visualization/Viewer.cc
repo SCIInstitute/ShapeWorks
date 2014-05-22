@@ -203,7 +203,6 @@ void Viewer::setup_renderers()
     }
   }
 
-
   if ( this->render_window_->IsDrawable() )
   {
     this->render_window_->Render();

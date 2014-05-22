@@ -1,7 +1,6 @@
 #ifndef STUDIO_GROOM_GROOMTOOL_H
 #define STUDIO_GROOM_GROOMTOOL_H
 
-
 #include <QSharedPointer>
 #include <QWidget>
 
@@ -15,18 +14,17 @@ public:
 
   GroomTool();
   ~GroomTool();
-  
+
   /// export XML for ShapeWorksGroom
-  bool export_xml(QString filename);
-  
+  bool export_xml( QString filename );
+
   /// set the pointer to the project
-  void set_project(QSharedPointer<Project> project);
+  void set_project( QSharedPointer<Project> project );
 
 public Q_SLOTS:
 
   void on_antialias_checkbox_stateChanged( int state );
   void on_blur_checkbox_stateChanged( int state );
-
 
   /// Export XML
   void on_export_xml_button_clicked();

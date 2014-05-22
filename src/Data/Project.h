@@ -71,10 +71,7 @@ private:
   /// collection of shapes
   std::vector<QSharedPointer<Shape> > shapes_;
 
-
   QString pipeline_state_;
-
-
 };
 
 #endif /* STUDIO_DATA_PROJECT_H */

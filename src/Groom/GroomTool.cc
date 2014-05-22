@@ -88,7 +88,6 @@ void GroomTool::on_run_groom_button_clicked()
     return;
   }
 
-
   //groom.closeWriteChannel();
 
   std::cerr << "running...";
@@ -114,7 +113,6 @@ void GroomTool::on_run_groom_button_clicked()
 
   delete groom;
 
-
   QStringList list;
 
   std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
@@ -128,8 +126,7 @@ void GroomTool::on_run_groom_button_clicked()
     list << outfile;
   }
 
-  this->project_->load_groomed_files(list);
-
+  this->project_->load_groomed_files( list );
 }
 
 //---------------------------------------------------------------------------
@@ -160,7 +157,7 @@ bool GroomTool::export_xml( QString filename )
 
   std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
-  QFileInfo fi(shapes[0]->get_initial_mesh()->get_filename_with_path());
+  QFileInfo fi( shapes[0]->get_initial_mesh()->get_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
 
   // output transform

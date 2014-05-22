@@ -84,12 +84,36 @@ int main( int argc, char** argv )
 
   QApplication app( argc, argv );
 
-  ShapeWorksStudioApp studioApp( argc, argv );
+  ShapeWorksStudioApp studio_app( argc, argv );
 
-  studioApp.show();
+  studio_app.show();
 
   // do this after "show" for mac initialization
-  studioApp.initialize_vtk();
+  studio_app.initialize_vtk();
+
+  QStringList files;
+
+/*
+   files << "z:/shared/laatee/laa_0_DT.nrrd";
+   files << "z:/shared/laatee/laa_1_DT.nrrd";
+   files << "z:/shared/laatee/laa_2_DT.nrrd";
+   files << "z:/shared/laatee/laa_3_DT.nrrd";
+   files << "z:/shared/laatee/laa_4_DT.nrrd";
+ */
+
+/*
+   files << "h:/projects/laa_tee/groomed/interface_0_DT.nrrd";
+   files << "h:/projects/laa_tee/groomed/interface_1_DT.nrrd";
+   files << "h:/projects/laa_tee/groomed/interface_2_DT.nrrd";
+ */
+  files << "h:/projects/laa_tee/data/interface_0.nrrd";
+  files << "h:/projects/laa_tee/data/interface_1.nrrd";
+  files << "h:/projects/laa_tee/data/interface_2.nrrd";
+  files << "h:/projects/laa_tee/data/interface_3.nrrd";
+  files << "h:/projects/laa_tee/data/interface_4.nrrd";
+  files << "h:/projects/laa_tee/data/interface_5.nrrd";
+
+  studio_app->import_files( files );
 
   return app.exec();
 }

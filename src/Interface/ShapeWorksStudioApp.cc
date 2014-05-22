@@ -40,6 +40,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_->stackedWidget->addWidget( this->groom_tool_.data() );
 
   this->groom_tool_->set_project( this->project_ );
+
+  this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
+  this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
 }
 
 //---------------------------------------------------------------------------
@@ -50,33 +53,6 @@ ShapeWorksStudioApp::~ShapeWorksStudioApp()
 void ShapeWorksStudioApp::initialize_vtk()
 {
   this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
-
-  QStringList files;
-
-/*
-   files << "z:/shared/laatee/laa_0_DT.nrrd";
-   files << "z:/shared/laatee/laa_1_DT.nrrd";
-   files << "z:/shared/laatee/laa_2_DT.nrrd";
-   files << "z:/shared/laatee/laa_3_DT.nrrd";
-   files << "z:/shared/laatee/laa_4_DT.nrrd";
- */
-
-/*
-   files << "h:/projects/laa_tee/groomed/interface_0_DT.nrrd";
-   files << "h:/projects/laa_tee/groomed/interface_1_DT.nrrd";
-   files << "h:/projects/laa_tee/groomed/interface_2_DT.nrrd";
- */
-  files << "h:/projects/laa_tee/data/interface_0.nrrd";
-  files << "h:/projects/laa_tee/data/interface_1.nrrd";
-  files << "h:/projects/laa_tee/data/interface_2.nrrd";
-  files << "h:/projects/laa_tee/data/interface_3.nrrd";
-  files << "h:/projects/laa_tee/data/interface_4.nrrd";
-  files << "h:/projects/laa_tee/data/interface_5.nrrd";
-
-  this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
-  this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
-
-  this->import_files( files );
 }
 
 //---------------------------------------------------------------------------
