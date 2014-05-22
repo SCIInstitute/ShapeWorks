@@ -113,7 +113,7 @@ int main( int argc, char** argv )
   files << "h:/projects/laa_tee/data/interface_4.nrrd";
   files << "h:/projects/laa_tee/data/interface_5.nrrd";
 
-  studio_app->import_files( files );
+  //studio_app->import_files( files );
 
   return app.exec();
 }
