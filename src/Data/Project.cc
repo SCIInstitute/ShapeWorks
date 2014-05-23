@@ -49,9 +49,6 @@ bool Project::save_project( QString filename /* = "" */ )
   xml->writeStartElement( "project" );
   xml->writeAttribute( "version", "1" );
 
-  // pipeline state
-  xml->writeTextElement( "pipeline_state", this->pipeline_state_ );
-
   // shapes
   xml->writeStartElement( "shapes" );
   for ( int i = 0; i < this->shapes_.size(); i++ )
@@ -61,7 +58,7 @@ bool Project::save_project( QString filename /* = "" */ )
 
     xml->writeTextElement( "initial_mesh", this->shapes_[i]->get_initial_mesh()->get_filename_with_path() );
 
-    if ( this->pipeline_state_ == Project::GROOMED_C || this->pipeline_state_ == Project::OPTIMIZED_C )
+    if ( this->groomed_present() )
     {
       xml->writeTextElement( "groomed_mesh", this->shapes_[i]->get_groomed_mesh()->get_filename_with_path() );
     }
@@ -114,13 +111,6 @@ bool Project::open_project( QString filename )
       if ( xml->name() == "shape" )
       {}
 
-      if ( xml->name() == "pipeline_state" )
-      {
-        this->pipeline_state_ = xml->readElementText();
-
-        /// TODO : validation
-      }
-
       if ( xml->name() == "initial_mesh" )
       {
         QString value = xml->readElementText();
@@ -143,10 +133,7 @@ bool Project::open_project( QString filename )
 
   this->import_files( import_files );
 
-  if ( this->pipeline_state_ == Project::GROOMED_C || this->pipeline_state_ == Project::OPTIMIZED_C )
-  {
-    this->load_groomed_files( groomed_files );
-  }
+  this->load_groomed_files( groomed_files );
 
   return true;
 }
@@ -164,7 +151,12 @@ void Project::import_files( QStringList file_names )
     this->shapes_.push_back( new_shape );
   }
 
-  emit data_changed();
+  if ( file_names.size() > 0 )
+  {
+    this->originals_present_ = true;
+    emit data_changed();
+  }
+
 }
 
 //---------------------------------------------------------------------------
@@ -177,9 +169,27 @@ void Project::load_groomed_files( QStringList file_names )
     this->shapes_[i]->import_groomed_file( file_names[i] );
   }
 
-  this->pipeline_state_ = GROOMED_C;
-  emit data_changed();
+  if ( file_names.size() > 0 )
+  {
+    this->groomed_present_ = true;
+    emit data_changed();
+  }
 }
+
+//---------------------------------------------------------------------------
+void Project::load_point_files( QStringList file_names )
+{
+  for ( int i = 0; i < file_names.size(); i++ )
+  {
+    std::cerr << file_names[i].toStdString() << "\n";
+  }
+  if ( file_names.size() > 0 )
+  {
+    this->reconstructed_present_ = true;
+    emit data_changed();
+  }
+}
+
 
 //---------------------------------------------------------------------------
 std::vector<QSharedPointer<Shape> > Project::get_shapes()
@@ -202,10 +212,33 @@ void Project::reset()
 {
   this->pipeline_state_ = INITIAL_C;
   this->shapes_.clear();
+
+  this->originals_present_ = false;
+  this->groomed_present_ = false;
+  this->reconstructed_present_ = false;
 }
 
 //---------------------------------------------------------------------------
-QString Project::get_pipeline_state()
+//QString Project::get_pipeline_state()
+//{
+//  return this->pipeline_state_;
+//}
+
+//---------------------------------------------------------------------------
+bool Project::originals_present()
 {
-  return this->pipeline_state_;
+  return this->originals_present_;
 }
+
+//---------------------------------------------------------------------------
+bool Project::groomed_present()
+{
+  return this->groomed_present_;
+}
+
+//---------------------------------------------------------------------------
+bool Project::reconstructed_present()
+{
+  return this->reconstructed_present_;
+}
+

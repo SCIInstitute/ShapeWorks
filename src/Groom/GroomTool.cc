@@ -11,6 +11,8 @@
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
+#include <Interface/ShapeWorksStudioApp.h>
+
 #include <ui_GroomTool.h>
 
 //---------------------------------------------------------------------------
@@ -55,6 +57,7 @@ void GroomTool::on_export_xml_button_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked()
 {
+  this->app_->set_status_bar( "Please wait: running groom step..." );
 
   QTemporaryFile file;
   file.open();
@@ -72,14 +75,38 @@ void GroomTool::on_run_groom_button_clicked()
   {
     args << "center";
   }
+
+  if ( this->ui_->autocrop_checkbox->isChecked() )
+  {
+    args << "auto_crop";
+  }
+
+  if ( this->ui_->auto_pad_checkbox_->isChecked() )
+  {
+    args << "auto_pad";
+  }
+
   if ( this->ui_->antialias_checkbox->isChecked() )
   {
     args << "antialias";
   }
 
+  if ( this->ui_->fastmarching_checkbox->isChecked() )
+  {
+    args << "fastmarching";
+  }
+
+  if ( this->ui_->blur_checkbox->isChecked() )
+  {
+    args << "blur";
+  }
+
   QProcess* groom = new QProcess( this );
   groom->setProcessChannelMode( QProcess::MergedChannels );
   //groom->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
+
+  //std::cerr << "Running groom with " << args.toStdList() << "\n";
+
   groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
   if ( !groom->waitForStarted() )
   {
@@ -127,6 +154,8 @@ void GroomTool::on_run_groom_button_clicked()
   }
 
   this->project_->load_groomed_files( list );
+
+  this->app_->set_status_bar( "Groom complete" );
 }
 
 //---------------------------------------------------------------------------
@@ -154,6 +183,10 @@ bool GroomTool::export_xml( QString filename )
   // foreground
   xml_writer->writeComment( "Value of foreground pixels in image" );
   xml_writer->writeTextElement( "foreground", "1.0" );
+
+  // pad
+  /// TODO: hook up a UI element to control
+  xml_writer->writeTextElement( "pad", "5" );
 
   std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
@@ -218,4 +251,10 @@ bool GroomTool::export_xml( QString filename )
 void GroomTool::set_project( QSharedPointer<Project> project )
 {
   this->project_ = project;
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::set_app( ShapeWorksStudioApp* app )
+{
+  this->app_ = app;
 }

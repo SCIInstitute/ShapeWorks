@@ -1,22 +1,22 @@
-#ifndef STUDIO_GROOM_GROOMTOOL_H
-#define STUDIO_GROOM_GROOMTOOL_H
+#ifndef STUDIO_OPTIMIZE_OPTIMIZETOOL_H
+#define STUDIO_OPTIMIZE_OPTIMIZETOOL_H
 
 #include <QSharedPointer>
 #include <QWidget>
 
 class Project;
-class Ui_GroomTool;
 class ShapeWorksStudioApp;
+class Ui_OptimizeTool;
 
-class GroomTool : public QWidget
+class OptimizeTool : public QWidget
 {
   Q_OBJECT;
 public:
 
-  GroomTool();
-  ~GroomTool();
+  OptimizeTool();
+  ~OptimizeTool();
 
-  /// export XML for ShapeWorksGroom
+  /// export XML for ShapeWorksOptimize
   bool export_xml( QString filename );
 
   /// set the pointer to the project
@@ -27,20 +27,17 @@ public:
 
 public Q_SLOTS:
 
-  void on_antialias_checkbox_stateChanged( int state );
-  void on_blur_checkbox_stateChanged( int state );
-
   /// Export XML
   void on_export_xml_button_clicked();
 
-  /// Run groom tool
-  void on_run_groom_button_clicked();
+  /// Run optimize tool
+  void on_run_optimize_button_clicked();
 
 private:
 
-  Ui_GroomTool* ui_;
+  Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
   ShapeWorksStudioApp* app_;
 };
 
-#endif /* STUDIO_GROOM_GROOMTOOL_H */
+#endif /* STUDIO_OPTIMIZE_OPTIMIZETOOL_H */

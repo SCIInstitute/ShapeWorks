@@ -9,6 +9,7 @@
 
 #include <Visualization/Viewer.h>
 #include <Groom/GroomTool.h>
+#include <Optimize/OptimizeTool.h>
 #include <Data/Project.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
@@ -26,7 +27,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->action_group_ = new QActionGroup( this );
   this->action_group_->addAction( this->ui_->actionImportMode );
   this->action_group_->addAction( this->ui_->actionGroomMode );
-  this->action_group_->addAction( this->ui_->actionActionOptimizeMode );
+  this->action_group_->addAction( this->ui_->actionOptimizeMode );
   this->action_group_->addAction( this->ui_->actionAnalysisMode );
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
@@ -36,10 +37,16 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
 
   this->viewer_ = QSharedPointer<Viewer>( new Viewer() );
+
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
+  this->groom_tool_->set_project( this->project_ );
+  this->groom_tool_->set_app( this );
   this->ui_->stackedWidget->addWidget( this->groom_tool_.data() );
 
-  this->groom_tool_->set_project( this->project_ );
+  this->optimize_tool_ = QSharedPointer<OptimizeTool>( new OptimizeTool() );
+  this->optimize_tool_->set_project( this->project_ );
+  this->optimize_tool_->set_app( this );
+  this->ui_->stackedWidget->addWidget( this->optimize_tool_.data() );
 
   this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
@@ -65,7 +72,7 @@ void ShapeWorksStudioApp::on_actionOpenProject_triggered()
     return;
   }
 
-  this->project_->open_project( filename );
+  this->open_project( filename );
 }
 
 //---------------------------------------------------------------------------
@@ -230,13 +237,33 @@ void ShapeWorksStudioApp::on_actionImportMode_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_actionOptimizeMode_triggered()
+{
+  std::cerr << "optimize\n";
+  this->ui_->stackedWidget->setCurrentWidget( this->optimize_tool_.data() );
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
   std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
-  if ( this->project_->get_pipeline_state() == Project::GROOMED_C )
+  if ( this->project_->groomed_present() )
   {
     this->ui_->view_mode_combobox->setItemData( 1, 33, Qt::UserRole - 1 );
+  }
+  else
+  {
+    this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
+  }
+
+  if ( this->project_->reconstructed_present() )
+  {
+    this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
+  }
+  else
+  {
+    this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
   }
 
   this->update_meshes();
@@ -279,4 +306,16 @@ void ShapeWorksStudioApp::update_meshes()
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
   this->update_meshes();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::open_project( QString filename )
+{
+  this->project_->open_project( filename );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::set_status_bar( QString status )
+{
+  this->ui_->statusbar->showMessage( status );
 }

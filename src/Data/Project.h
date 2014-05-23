@@ -41,6 +41,9 @@ public:
   /// load groomed files
   void load_groomed_files( QStringList file_names );
 
+  /// load point files
+  void load_point_files( QStringList file_names );
+
   /// remove shapes
   void remove_shapes( QList<int> list );
 
@@ -51,7 +54,12 @@ public:
   void reset();
 
   /// get the current pipeline state
-  QString get_pipeline_state();
+  //QString get_pipeline_state();
+
+
+  bool originals_present();
+  bool groomed_present();
+  bool reconstructed_present();
 
 Q_SIGNALS:
   /// signal that the data has changed
@@ -70,6 +78,12 @@ private:
 
   /// collection of shapes
   std::vector<QSharedPointer<Shape> > shapes_;
+
+
+  bool originals_present_;
+  bool groomed_present_;
+  bool reconstructed_present_;
+
 
   QString pipeline_state_;
 };

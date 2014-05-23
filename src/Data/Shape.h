@@ -25,6 +25,12 @@ public:
   /// Retrieve the groomed mesh
   QSharedPointer<Mesh> get_groomed_mesh();
 
+  /// Import correspondence point file
+  void import_point_file( QString filename );
+
+  /// Retrieve the reconstructed mesh
+  QSharedPointer<Mesh> get_reconstructed_mesh();
+
 private:
 
   QSharedPointer<Mesh> initial_mesh_;

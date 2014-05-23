@@ -84,12 +84,13 @@ int main( int argc, char** argv )
 
   QApplication app( argc, argv );
 
-  ShapeWorksStudioApp studio_app( argc, argv );
+  QSharedPointer<ShapeWorksStudioApp> studio_app =
+    QSharedPointer<ShapeWorksStudioApp>( new ShapeWorksStudioApp( argc, argv ) );
 
-  studio_app.show();
+  studio_app->show();
 
   // do this after "show" for mac initialization
-  studio_app.initialize_vtk();
+  studio_app->initialize_vtk();
 
   QStringList files;
 
@@ -113,7 +114,9 @@ int main( int argc, char** argv )
   files << "h:/projects/laa_tee/data/interface_4.nrrd";
   files << "h:/projects/laa_tee/data/interface_5.nrrd";
 
-  //studio_app->import_files( files );
+  //studio_app.import_files( files );
+
+  studio_app->open_project( "c:/users/amorris/desktop/studio.xml" );
 
   return app.exec();
 }

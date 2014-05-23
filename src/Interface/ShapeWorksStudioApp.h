@@ -6,6 +6,7 @@
 
 class Viewer;
 class GroomTool;
+class OptimizeTool;
 class Project;
 
 // Forward Qt class declarations
@@ -20,7 +21,12 @@ public:
 
   ShapeWorksStudioApp( int argc, char** argv );
   ~ShapeWorksStudioApp();
+
   void initialize_vtk();
+  void import_files( QStringList file_names );
+  void open_project( QString filename );
+
+  void set_status_bar( QString status );
 
 public Q_SLOTS:
 
@@ -34,6 +40,7 @@ public Q_SLOTS:
 
   void on_actionGroomMode_triggered();
   void on_actionImportMode_triggered();
+  void on_actionOptimizeMode_triggered();
 
   void on_center_checkbox_stateChanged();
   void on_thumbnail_size_slider_valueChanged();
@@ -51,7 +58,6 @@ private:
 
   void update_meshes();
 
-  void import_files( QStringList fileNames );
 
   // designer form
   Ui_ShapeWorksStudioApp* ui_;
@@ -61,8 +67,10 @@ private:
   QSharedPointer<Viewer> viewer_;
 
   QSharedPointer<GroomTool> groom_tool_;
+  QSharedPointer<OptimizeTool> optimize_tool_;
 
   QSharedPointer<Project> project_;
+
 };
 
 #endif /* STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H */

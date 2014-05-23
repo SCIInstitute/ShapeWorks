@@ -399,7 +399,7 @@ border-radius: 3px;
    </attribute>
    <addaction name="actionImportMode"/>
    <addaction name="actionGroomMode"/>
-   <addaction name="actionActionOptimizeMode"/>
+   <addaction name="actionOptimizeMode"/>
    <addaction name="actionAnalysisMode"/>
   </widget>
   <action name="actionQuit">
@@ -450,7 +450,7 @@ border-radius: 3px;
     <string>Import</string>
    </property>
   </action>
-  <action name="actionActionOptimizeMode">
+  <action name="actionOptimizeMode">
    <property name="checkable">
     <bool>true</bool>
    </property>

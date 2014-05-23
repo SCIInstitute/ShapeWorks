@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GroomTool</class>
- <widget class="QWidget" name="GroomTool">
+ <class>OptimizeTool</class>
+ <widget class="QWidget" name="OptimizeTool">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -25,68 +25,7 @@ background: rgb(255, 255, 127)
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="6" column="0">
-      <widget class="QCheckBox" name="autocrop_checkbox">
-       <property name="text">
-        <string>Autocrop</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QCheckBox" name="center_checkbox">
-       <property name="text">
-        <string>Center</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="0">
-      <widget class="QCheckBox" name="fastmarching_checkbox">
-       <property name="text">
-        <string>Fastmarching</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="Line" name="line_5">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
-      <widget class="Line" name="line_6">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
-      <widget class="QCheckBox" name="antialias_checkbox">
-       <property name="text">
-        <string>Antialias</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0">
+     <item row="0" column="0">
       <widget class="QGroupBox" name="antialias_groupbox">
        <property name="title">
         <string/>
@@ -95,14 +34,47 @@ background: rgb(255, 255, 127)
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Iterations</string>
+           <string>Number of points</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="antialias_iterations">
+         <widget class="QSpinBox" name="number_of_points_">
           <property name="maximum">
-           <number>500</number>
+           <number>20000</number>
+          </property>
+          <property name="value">
+           <number>128</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QGroupBox" name="blur_groupbox">
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Iterations per split</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="iterations_per_split_">
+          <property name="maximum">
+           <number>20000</number>
           </property>
           <property name="value">
            <number>100</number>
@@ -112,93 +84,107 @@ background: rgb(255, 255, 127)
        </layout>
       </widget>
      </item>
-     <item row="17" column="0">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="0">
-      <widget class="QCheckBox" name="blur_checkbox">
-       <property name="text">
-        <string>Blur</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="0">
-      <widget class="QGroupBox" name="blur_groupbox">
+     <item row="2" column="0">
+      <widget class="QGroupBox" name="blur_groupbox_2">
        <property name="title">
         <string/>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>Sigma</string>
+           <string>Starting Regularization</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="blur_sigma">
+         <widget class="QDoubleSpinBox" name="starting_regularization_">
+          <property name="maximum">
+           <double>999999.000000000000000</double>
+          </property>
           <property name="value">
-           <double>2.000000000000000</double>
+           <double>1000.000000000000000</double>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="fill_holes_checkbox">
-       <property name="text">
-        <string>Fill Holes</string>
+     <item row="4" column="0">
+      <widget class="QGroupBox" name="blur_groupbox_3">
+       <property name="title">
+        <string/>
        </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QCheckBox" name="isolate_checkbox">
-       <property name="text">
-        <string>Isolate</string>
-       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Ending Regularization</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="ending_regularization_">
+          <property name="maximum">
+           <double>999999.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>10.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="14" column="0">
-      <widget class="Line" name="line_7">
+     <item row="3" column="0">
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="Line" name="line_5">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item row="8" column="0">
-      <widget class="QCheckBox" name="auto_pad_checkbox_">
-       <property name="text">
-        <string>Autopad</string>
+      <widget class="QGroupBox" name="blur_groupbox_4">
+       <property name="title">
+        <string/>
        </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Optimization iterations</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="optimization_iterations_">
+          <property name="maximum">
+           <number>20000</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item row="7" column="0">
-      <widget class="Line" name="line_22">
+      <widget class="Line" name="line_7">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -216,9 +202,9 @@ background: rgb(255, 255, 127)
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="run_groom_button">
+      <widget class="QPushButton" name="run_optimize_button">
        <property name="text">
-        <string>Run Groom</string>
+        <string>Run Optimize</string>
        </property>
       </widget>
      </item>
