@@ -182,6 +182,12 @@ void Project::load_point_files( QStringList file_names )
   for ( int i = 0; i < file_names.size(); i++ )
   {
     std::cerr << file_names[i].toStdString() << "\n";
+    if (!this->shapes_[i]->import_point_file( file_names[i] ))
+    {
+      std::cerr << "error!\n";
+      // error
+      return;
+    }
   }
   if ( file_names.size() > 0 )
   {

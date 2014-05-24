@@ -194,9 +194,11 @@ SET(STUDIO_OPTIMIZE_UIS
 ### Visualization
 SET(STUDIO_VISUALIZATION_HDRS
   Visualization/Viewer.h
+  Visualization/CustomSurfaceReconstructionFilter.h
 )
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Viewer.cc
+  Visualization/CustomSurfaceReconstructionFilter.cc
 )
 
 ### Studio

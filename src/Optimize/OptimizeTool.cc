@@ -137,9 +137,9 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    QString number = QString("%1").arg(i, pad, pad, QChar('0')).toUpper();
+    QString number = QString("%1").arg(i, pad, 'd', QChar('0')).toUpper();
 
-    list << prefix + "_" + number + ".wpts";
+    list << prefix + "." + number + ".wpts";
   }
 
   this->project_->load_point_files( list );

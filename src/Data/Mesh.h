@@ -2,6 +2,7 @@
 #define STUDIO_DATA_MESH_H
 
 #include <QString>
+#include <QSharedPointer>
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
@@ -17,11 +18,17 @@ class Mesh
 
 public:
 
-  /// Load an image into this mesh
-  Mesh( QString filename );
+  /// Constructor
+  Mesh();
 
   /// Destructor
   ~Mesh();
+
+  /// Create a mesh from an image
+  void create_from_image( QString filename );
+
+  /// Create a mesh from an image
+  bool create_from_pointset( QString filename );
 
   /// Get the dimensions as a string for display
   QString get_dimension_string();

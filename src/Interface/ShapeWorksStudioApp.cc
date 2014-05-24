@@ -297,6 +297,10 @@ void ShapeWorksStudioApp::update_meshes()
     {
       meshes.push_back( shapes[i]->get_groomed_mesh() );
     }
+    else if ( mode == "Reconstruction" )
+    {
+      meshes.push_back( shapes[i]->get_reconstructed_mesh() );
+    }
   }
 
   this->viewer_->set_meshes( meshes );
