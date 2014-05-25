@@ -1,4 +1,6 @@
 #include <QFileInfo>
+#include <QMessageBox>
+#include <QTextStream>
 
 #include <vtkMarchingCubes.h>
 #include <vtkImageImport.h>
