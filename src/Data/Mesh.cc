@@ -98,43 +98,27 @@ void Mesh::create_from_image( QString filename )
 }
 
 //---------------------------------------------------------------------------
-bool Mesh::create_from_pointset( QString filename )
+
+bool Mesh::create_from_pointset( QString filename, const vnl_vector<double>& vnl_points )
 {
   try
   {
     this->filename_ = filename;
 
-    QFile file( filename );
-    if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
-    {
-      QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
-      return false;
-    }
-
-    QTextStream stream( &file );
-
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
-    int num_points = 0;
-    //points->SetNumberOfPoints(128);
-    while ( !stream.atEnd() )
+    int num_points = vnl_points.size() / 3;
+    points->SetNumberOfPoints( num_points );
+
+    unsigned int k = 0;
+    for ( unsigned int i = 0; i < num_points; i++ )
     {
-      QString line = stream.readLine();
-      QStringList list = line.split( ' ' );
-      if ( list.size() != 4 ) // sanity check
-      {
-        std::cerr << "Error, line " << line.toStdString() << " does not contain 3 fields\n";
-        std::cerr << "list.size = " << list.size() << "\n";
-        return false;
-      }
-
-      float x = list[0].toFloat();
-      float y = list[1].toFloat();
-      float z = list[2].toFloat();
-
-      points->InsertNextPoint( x, y, z );
-      num_points++;
+      double x = vnl_points[k++];
+      double y = vnl_points[k++];
+      double z = vnl_points[k++];
+      points->SetPoint( i, x, y, z );
     }
+    points->Modified();
 
     std::cerr << "found " << num_points << " points\n";
 

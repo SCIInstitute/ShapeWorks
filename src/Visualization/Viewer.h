@@ -12,14 +12,32 @@ class CustomImagePlaneWidget;
 class vtkRenderWindowInteractor;
 class vtkImageData;
 class vtkCamera;
+class vtkGlyph3D;
 
 class Mesh;
+class Shape;
+
+class MiniViewer
+{
+public:
+  vtkSmartPointer<vtkRenderer>             renderer_;
+  vtkSmartPointer<vtkPoints>               glyphPoints;
+  vtkSmartPointer<vtkPolyData>             glyphPointSet;
+  vtkSmartPointer<vtkGlyph3D>              glyphs;
+  vtkSmartPointer<vtkPolyDataMapper>       glyphMapper;
+  vtkSmartPointer<vtkActor>                glyphActor;
+
+  vtkSmartPointer<vtkPolyDataMapper> mapper;
+  vtkSmartPointer<vtkActor> actor;
+};
 
 class Viewer
 {
 public:
   Viewer();
   ~Viewer();
+
+  void set_shapes(std::vector<QSharedPointer<Shape> > shapes );
 
   void set_meshes( std::vector<QSharedPointer<Mesh> > meshes );
 
@@ -45,11 +63,12 @@ private:
 
   void insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, QString note );
 
-  std::vector<QSharedPointer<Mesh> > meshes_;
-
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  std::vector<vtkSmartPointer<vtkRenderer> > renderers_;
+  std::vector< QSharedPointer < Mesh > > meshes_;
+  std::vector< QSharedPointer < Shape > > shapes_;
+
+  std::vector< QSharedPointer < MiniViewer > > mini_viewers_;
 
   vtkRenderWindow* render_window_;
 

@@ -31,11 +31,16 @@ public:
   /// Retrieve the reconstructed mesh
   QSharedPointer<Mesh> get_reconstructed_mesh();
 
+  /// Get the correspondence points
+  vnl_vector<double> get_correspondence_points();
+
 private:
 
   QSharedPointer<Mesh> initial_mesh_;
   QSharedPointer<Mesh> groomed_mesh_;
   QSharedPointer<Mesh> reconstructed_mesh_;
+
+  vnl_vector<double> correspondence_points_;
 };
 
 #endif /* STUDIO_DATA_SHAPE_H */

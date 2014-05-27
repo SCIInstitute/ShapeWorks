@@ -63,7 +63,7 @@ bool Project::save_project( QString filename /* = "" */ )
       xml->writeTextElement( "groomed_mesh", this->shapes_[i]->get_groomed_mesh()->get_filename_with_path() );
     }
 
-    if ( this->reconstructed_present())
+    if ( this->reconstructed_present() )
     {
       xml->writeTextElement( "point_file", this->shapes_[i]->get_reconstructed_mesh()->get_filename_with_path() );
     }
@@ -119,9 +119,7 @@ bool Project::load_project( QString filename )
 
       if ( xml->name() == "initial_mesh" )
       {
-        QString value = xml->readElementText();
-        std::cerr << "value = " << value.toStdString() << "\n";
-        import_files << value;
+        import_files << xml->readElementText();
       }
 
       if ( xml->name() == "groomed_mesh" )
@@ -169,7 +167,6 @@ void Project::import_files( QStringList file_names )
     this->originals_present_ = true;
     emit data_changed();
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -195,7 +192,7 @@ void Project::load_point_files( QStringList file_names )
   for ( int i = 0; i < file_names.size(); i++ )
   {
     std::cerr << file_names[i].toStdString() << "\n";
-    if (!this->shapes_[i]->import_point_file( file_names[i] ))
+    if ( !this->shapes_[i]->import_point_file( file_names[i] ) )
     {
       std::cerr << "error!\n";
       // error
@@ -208,7 +205,6 @@ void Project::load_point_files( QStringList file_names )
     emit data_changed();
   }
 }
-
 
 //---------------------------------------------------------------------------
 std::vector<QSharedPointer<Shape> > Project::get_shapes()
@@ -260,4 +256,3 @@ bool Project::reconstructed_present()
 {
   return this->reconstructed_present_;
 }
-

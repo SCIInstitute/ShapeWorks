@@ -45,13 +45,14 @@ void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
 //-----------------------------------------------------------------------------
 void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, QString note )
 {
-  if ( position >= this->renderers_.size() )
+  if ( position >= this->mini_viewers_.size() )
   {
     return;
   }
 
-  vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+  vtkSmartPointer<vtkPolyDataMapper> mapper = this->mini_viewers_[position]->mapper;
+  vtkSmartPointer<vtkActor> actor = this->mini_viewers_[position]->actor;
+  vtkSmartPointer<vtkRenderer> ren = this->mini_viewers_[position]->renderer_;
 
   if ( this->auto_center_ )
   {
@@ -89,8 +90,6 @@ void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int 
   actor->GetProperty()->SetSpecularPower( 15 );
   mapper->ScalarVisibilityOff();
 
-  vtkSmartPointer<vtkRenderer> ren = this->renderers_[position];
-
   ren->RemoveAllViewProps();
   ren->AddActor( actor );
 
@@ -100,24 +99,24 @@ void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int 
     ren->ResetCamera();
   }
 
-  vtkSmartPointer<vtkCornerAnnotation> cornerAnnotation =
+  vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
     vtkSmartPointer<vtkCornerAnnotation>::New();
-  cornerAnnotation->SetLinearFontScaleFactor( 2 );
-  cornerAnnotation->SetNonlinearFontScaleFactor( 1 );
-  cornerAnnotation->SetMaximumFontSize( 16 );
-  cornerAnnotation->SetText( 2, QString::number( id ).toStdString().c_str() );
-  cornerAnnotation->SetText( 0, note.toStdString().c_str() );
-  cornerAnnotation->GetTextProperty()->SetColor( 0.50, 0.5, 0.5 );
+  corner_annotation->SetLinearFontScaleFactor( 2 );
+  corner_annotation->SetNonlinearFontScaleFactor( 1 );
+  corner_annotation->SetMaximumFontSize( 16 );
+  corner_annotation->SetText( 2, QString::number( id ).toStdString().c_str() );
+  corner_annotation->SetText( 0, note.toStdString().c_str() );
+  corner_annotation->GetTextProperty()->SetColor( 0.50, 0.5, 0.5 );
 
-  ren->AddViewProp( cornerAnnotation );
+  ren->AddViewProp( corner_annotation );
 }
 
 //-----------------------------------------------------------------------------
 void Viewer::clear_renderers()
 {
-  for ( int i = 0; i < this->renderers_.size(); i++ )
+  for ( int i = 0; i < this->mini_viewers_.size(); i++ )
   {
-    this->renderers_[i]->RemoveAllViewProps();
+    this->mini_viewers_[i]->renderer_->RemoveAllViewProps();
   }
 }
 
@@ -152,12 +151,12 @@ void Viewer::set_render_window( vtkRenderWindow* renderWindow )
 //-----------------------------------------------------------------------------
 void Viewer::setup_renderers()
 {
-  for ( int i = 0; i < this->renderers_.size(); i++ )
+  for ( int i = 0; i < this->mini_viewers_.size(); i++ )
   {
-    this->render_window_->RemoveRenderer( this->renderers_[i] );
+    this->render_window_->RemoveRenderer( this->mini_viewers_[i]->renderer_ );
   }
 
-  this->renderers_.clear();
+  this->mini_viewers_.clear();
 
   int* size = this->render_window_->GetSize();
 
@@ -181,7 +180,14 @@ void Viewer::setup_renderers()
 
       vtkSmartPointer<vtkRenderer> ren = vtkSmartPointer<vtkRenderer>::New();
       ren->SetActiveCamera( this->camera_ );
-      this->renderers_.push_back( ren );
+
+      QSharedPointer<MiniViewer> mini_viewer = QSharedPointer<MiniViewer>(new MiniViewer());
+      mini_viewer->renderer_ = ren;
+
+      mini_viewer->actor = vtkSmartPointer<vtkActor>::New();
+      mini_viewer->mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+
+      this->mini_viewers_.push_back(mini_viewer);
 
       double viewport[4] = {0.0, 0.0, 0.0, 0.0};
 
@@ -251,4 +257,10 @@ void Viewer::set_auto_center( bool center )
 {
   this->auto_center_ = center;
   this->first_draw_ = true;
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_shapes( std::vector<QSharedPointer<Shape> > shapes )
+{
+  this->shapes_ = shapes;
 }

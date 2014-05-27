@@ -27,8 +27,8 @@ public:
   /// Create a mesh from an image
   void create_from_image( QString filename );
 
-  /// Create a mesh from an image
-  bool create_from_pointset( QString filename );
+  /// Create a mesh from a point set
+  bool create_from_pointset( QString filename, const vnl_vector<double>& vnl_points );
 
   /// Get the dimensions as a string for display
   QString get_dimension_string();
