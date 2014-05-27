@@ -7,6 +7,8 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+#include <vnl/vnl_vector.h>
+
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file.

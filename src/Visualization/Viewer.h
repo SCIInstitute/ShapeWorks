@@ -6,6 +6,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
+#include <vtkPoints.h>
 
 class vtkRenderer;
 class CustomImagePlaneWidget;

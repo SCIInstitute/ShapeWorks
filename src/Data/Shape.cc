@@ -1,5 +1,9 @@
 #include <Data/Shape.h>
 
+#include <QFile>
+#include <QMessageBox>
+#include <QTextStream>
+
 //---------------------------------------------------------------------------
 Shape::Shape()
 {}
