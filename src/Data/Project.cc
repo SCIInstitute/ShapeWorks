@@ -63,6 +63,11 @@ bool Project::save_project( QString filename /* = "" */ )
       xml->writeTextElement( "groomed_mesh", this->shapes_[i]->get_groomed_mesh()->get_filename_with_path() );
     }
 
+    if ( this->reconstructed_present())
+    {
+      xml->writeTextElement( "point_file", this->shapes_[i]->get_reconstructed_mesh()->get_filename_with_path() );
+    }
+
     xml->writeEndElement(); // shape
   }
   xml->writeEndElement(); // shapes
@@ -73,7 +78,7 @@ bool Project::save_project( QString filename /* = "" */ )
 }
 
 //---------------------------------------------------------------------------
-bool Project::open_project( QString filename )
+bool Project::load_project( QString filename )
 {
   // clear the project out first
   this->reset();
@@ -94,6 +99,7 @@ bool Project::open_project( QString filename )
 
   QStringList import_files;
   QStringList groomed_files;
+  QStringList point_files;
 
   while ( !xml->atEnd() && !xml->hasError() )
   {
@@ -122,6 +128,11 @@ bool Project::open_project( QString filename )
       {
         groomed_files << xml->readElementText();
       }
+
+      if ( xml->name() == "point_file" )
+      {
+        point_files << xml->readElementText();
+      }
     }
   }
   /* Error handling. */
@@ -134,6 +145,8 @@ bool Project::open_project( QString filename )
   this->import_files( import_files );
 
   this->load_groomed_files( groomed_files );
+
+  this->load_point_files( point_files );
 
   return true;
 }

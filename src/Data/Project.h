@@ -30,7 +30,7 @@ public:
   bool save_project( QString filename = "" );
 
   /// save project to file
-  bool open_project( QString filename );
+  bool load_project( QString filename );
 
   /// get the pointer to the data manager
   QSharedPointer<DataManager> get_data_manager();

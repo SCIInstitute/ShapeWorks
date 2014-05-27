@@ -315,7 +315,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project( QString filename )
 {
-  this->project_->open_project( filename );
+  this->project_->load_project( filename );
 }
 
 //---------------------------------------------------------------------------
