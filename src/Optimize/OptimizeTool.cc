@@ -60,8 +60,11 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   QProcess* optimize = new QProcess( this );
   optimize->setProcessChannelMode( QProcess::MergedChannels );
-  //optimize->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksOptimize/Release/ShapeWorksOptimize.exe", args);
-  optimize->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
+  //optimize->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
+
+  optimize->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
+
+
   if ( !optimize->waitForStarted() )
   {
     std::cerr << "Error: failed to start ShapeWorksRun\n";
@@ -126,11 +129,11 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
 
   int pad = 1;
-  if (shapes.size() > 10 && shapes.size() <= 100)
+  if (shapes.size() >= 10 && shapes.size() < 100)
   {
     pad = 2;
   } 
-  else if (shapes.size() > 100 && shapes.size() <= 1000)
+  else if (shapes.size() >= 100 && shapes.size() < 1000)
   {
     pad = 3;
   }
