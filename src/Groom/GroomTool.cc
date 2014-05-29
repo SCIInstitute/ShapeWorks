@@ -11,7 +11,8 @@
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
-#include <Interface/ShapeWorksStudioApp.h>
+#include <Application/ShapeWorksStudioApp.h>
+#include <Application/Preferences.h>
 
 #include <ui_GroomTool.h>
 
@@ -106,8 +107,9 @@ void GroomTool::on_run_groom_button_clicked()
 
   //std::cerr << "Running groom with " << args.toStdList() << "\n";
 
-  groom->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
+  //groom->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
   //groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
+  groom->start( Preferences::Instance().get_groom_location(), args );
   if ( !groom->waitForStarted() )
   {
     std::cerr << "Error: failed to start ShapeWorksGroom\n";

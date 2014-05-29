@@ -146,15 +146,20 @@ endfunction(enable_precompiled_headers)
 
 
 
-### Interface
-SET(STUDIO_INTERFACE_HDRS
-  Interface/ShapeWorksStudioApp.h
+### Application
+SET(STUDIO_APPLICATION_HDRS
+  Application/ShapeWorksStudioApp.h
+  Application/Preferences.h
+  Application/PreferencesWindow.h
 )
-SET(STUDIO_INTERFACE_SRCS
-  Interface/ShapeWorksStudioApp.cc
+SET(STUDIO_APPLICATION_SRCS
+  Application/ShapeWorksStudioApp.cc
+  Application/Preferences.cc
+  Application/PreferencesWindow.cc
 )
-SET(STUDIO_INTERFACE_UIS
-  Interface/ShapeWorksStudioApp.ui
+SET(STUDIO_APPLICATION_UIS
+  Application/ShapeWorksStudioApp.ui
+  Application/PreferencesWindow.ui
 )
 
 ### Data
@@ -205,7 +210,7 @@ SET(STUDIO_VISUALIZATION_SRCS
 ### Studio
 SET( STUDIO_SRCS
      main.cc
-     ${STUDIO_INTERFACE_SRCS}
+     ${STUDIO_APPLICATION_SRCS}
      ${STUDIO_DATA_SRCS}
      ${STUDIO_GROOM_SRCS}
      ${STUDIO_OPTIMIZE_SRCS}
@@ -213,14 +218,14 @@ SET( STUDIO_SRCS
 )
 
 SET( STUDIO_HDRS
-     ${STUDIO_INTERFACE_HDRS}
+     ${STUDIO_APPLICATION_HDRS}
      ${STUDIO_DATA_HDRS}
      ${STUDIO_GROOM_HDRS}
      ${STUDIO_OPTIMIZE_HDRS}
      ${STUDIO_VISUALIZATION_HDRS}
 )
 
-SET ( STUDIO_MOC_HDRS
+SET( STUDIO_MOC_HDRS
      Groom/GroomTool.h
      Optimize/OptimizeTool.h
      Data/Project.h
@@ -230,7 +235,7 @@ SET( STUDIO_RCS
      Resources/ShapeWorksStudio.qrc
 )
 
-SOURCE_GROUP("Interface" FILES ${STUDIO_INTERFACE_SRCS} ${STUDIO_INTERFACE_HDRS} ${STUDIO_INTERFACE_UIS})
+SOURCE_GROUP("Application" FILES ${STUDIO_APPLICATION_SRCS} ${STUDIO_APPLICATION_HDRS} ${STUDIO_APPLICATION_UIS})
 SOURCE_GROUP("Visualization" FILES ${STUDIO_VISUALIZATION_SRCS} ${STUDIO_VISUALIZATION_HDRS})
 SOURCE_GROUP("Data" FILES ${STUDIO_DATA_SRCS} ${STUDIO_DATA_HDRS})
 SOURCE_GROUP("Groom" FILES ${STUDIO_GROOM_SRCS} ${STUDIO_GROOM_HDRS} ${STUDIO_GROOM_UIS})
@@ -241,13 +246,13 @@ SOURCE_GROUP("Optimize" FILES ${STUDIO_OPTIMIZE_SRCS} ${STUDIO_OPTIMIZE_HDRS} ${
 QT4_ADD_RESOURCES( STUDIO_RC_SRCS ${STUDIO_RCS} )
 
 # this will run uic on .ui files:
-QT4_WRAP_UI( STUDIO_UI_HDRS ${STUDIO_INTERFACE_UIS} 
+QT4_WRAP_UI( STUDIO_UI_HDRS ${STUDIO_APPLICATION_UIS} 
   ${STUDIO_GROOM_UIS}
   ${STUDIO_OPTIMIZE_UIS} 
 )
 
 # and finally this will run moc:
-QT4_WRAP_CPP( STUDIO_MOC_SRCS ${STUDIO_INTERFACE_HDRS} ${STUDIO_MOC_HDRS} )
+QT4_WRAP_CPP( STUDIO_MOC_SRCS ${STUDIO_APPLICATION_HDRS} ${STUDIO_MOC_HDRS} )
 
 
 # Turn on precompiled headers

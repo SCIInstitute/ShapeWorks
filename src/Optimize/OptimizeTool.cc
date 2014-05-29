@@ -6,7 +6,9 @@
 #include <QProcess>
 #include <QMessageBox>
 
-#include <Interface/ShapeWorksStudioApp.h>
+#include <Application/ShapeWorksStudioApp.h>
+#include <Application/Preferences.h>
+
 #include <Optimize/OptimizeTool.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
@@ -62,7 +64,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
   optimize->setProcessChannelMode( QProcess::MergedChannels );
   //optimize->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
 
-  optimize->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
+  //optimize->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
+  optimize->start( Preferences::Instance().get_optimize_location(), args );
 
   if ( !optimize->waitForStarted() )
   {
