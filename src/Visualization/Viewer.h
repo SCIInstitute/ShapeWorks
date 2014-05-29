@@ -23,14 +23,15 @@ class MiniViewer
 {
 public:
   vtkSmartPointer<vtkRenderer>             renderer_;
-  vtkSmartPointer<vtkPoints>               glyphPoints;
-  vtkSmartPointer<vtkPolyData>             glyphPointSet;
-  vtkSmartPointer<vtkGlyph3D>              glyphs;
-  vtkSmartPointer<vtkPolyDataMapper>       glyphMapper;
-  vtkSmartPointer<vtkActor>                glyphActor;
 
-  vtkSmartPointer<vtkPolyDataMapper> mapper;
-  vtkSmartPointer<vtkActor> actor;
+  vtkSmartPointer<vtkPoints>               glyph_points_;
+  vtkSmartPointer<vtkPolyData>             glyph_point_set_;
+  vtkSmartPointer<vtkGlyph3D>              glyphs_;
+  vtkSmartPointer<vtkPolyDataMapper>       glyph_mapper_;
+  vtkSmartPointer<vtkActor>                glyph_actor;
+
+  vtkSmartPointer<vtkPolyDataMapper>       surface_mapper_;
+  vtkSmartPointer<vtkActor>                surface_actor_;
 };
 
 class Viewer

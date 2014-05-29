@@ -28,6 +28,7 @@ OPTION (INSTALL_TEST_FILES "Include ShapeWorksStudio test images and help files 
 OPTION (INSTALL_SOURCE  "Install ShapeWorksStudio source code." OFF)
 OPTION(USE_PRECOMPILED_HEADERS "Use precompiled headers to speed up compilation" ON)
 
+MESSAGE(STATUS "** PRECOMPILED_HEADERS: ${USE_PRECOMPILED_HEADERS}")
 
 set(CMAKE_BUILD_TYPE Release)
 

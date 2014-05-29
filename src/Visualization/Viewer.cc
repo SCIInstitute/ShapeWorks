@@ -80,8 +80,8 @@ void Viewer::insert_shape_into_view( QSharedPointer<Shape> shape, int position, 
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
   QString note = mesh->get_filename();
 
-  vtkSmartPointer<vtkPolyDataMapper> mapper = this->mini_viewers_[position]->mapper;
-  vtkSmartPointer<vtkActor> actor = this->mini_viewers_[position]->actor;
+  vtkSmartPointer<vtkPolyDataMapper> mapper = this->mini_viewers_[position]->surface_mapper_;
+  vtkSmartPointer<vtkActor> actor = this->mini_viewers_[position]->surface_actor_;
   vtkSmartPointer<vtkRenderer> ren = this->mini_viewers_[position]->renderer_;
 
   vnl_vector<double> correspondence_points = shape->get_correspondence_points();
@@ -92,28 +92,26 @@ void Viewer::insert_shape_into_view( QSharedPointer<Shape> shape, int position, 
 
   if ( num_points > 0 )
   {
-    mini_viewer->glyphs->SetRange( 0.0, (double) num_points + 1 );
-    mini_viewer->glyphMapper->SetScalarRange( 0.0, (double) num_points + 1.0 );
+    mini_viewer->glyphs_->SetRange( 0.0, (double) num_points + 1 );
+    mini_viewer->glyph_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
     this->lut_->SetNumberOfTableValues( num_points + 1 );
     this->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
 
-    mini_viewer->glyphPoints->SetNumberOfPoints( num_points );
+    mini_viewer->glyph_points_->SetNumberOfPoints( num_points );
 
-    ( (vtkUnsignedLongArray*)( mini_viewer->glyphPointSet->GetPointData()->GetScalars() ) )->SetNumberOfTuples( num_points );
+    ( (vtkUnsignedLongArray*)( mini_viewer->glyph_point_set_->GetPointData()->GetScalars() ) )->SetNumberOfTuples( num_points );
 
     unsigned int idx = 0;
     for ( int i = 0; i < num_points; i++ )
     {
-      ( (vtkUnsignedLongArray*)( mini_viewer->glyphPointSet->GetPointData()->GetScalars() ) )->InsertValue( i, i );
+      ( (vtkUnsignedLongArray*)( mini_viewer->glyph_point_set_->GetPointData()->GetScalars() ) )->InsertValue( i, i );
       double x = correspondence_points[idx++];
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
 
-      mini_viewer->glyphPoints->InsertPoint( i, x, y, z );
+      mini_viewer->glyph_points_->InsertPoint( i, x, y, z );
     }
   }
-
-//this->mini_viewers_[position]->glyphPoints
 
   if ( this->auto_center_ )
   {
@@ -138,6 +136,18 @@ void Viewer::insert_shape_into_view( QSharedPointer<Shape> shape, int position, 
     transformFilter->SetTransform( translation );
     transformFilter->Update();
     poly_data = transformFilter->GetOutput();
+
+    /*    // translate correspondence points
+       for ( int i = 0; i < num_points; i++ )
+       {
+       double pos[3];
+       mini_viewer->glyph_points_->GetPoint( i, pos );
+       pos[0] += center[0];
+       pos[1] += center[1];
+       pos[2] += center[2];
+       mini_viewer->glyph_points_->InsertPoint( i, pos );
+       }
+     */
   }
 
 #if VTK_MAJOR_VERSION <= 5
@@ -153,7 +163,7 @@ void Viewer::insert_shape_into_view( QSharedPointer<Shape> shape, int position, 
 
   ren->RemoveAllViewProps();
   ren->AddActor( actor );
-  ren->AddActor( mini_viewer->glyphActor );
+  ren->AddActor( mini_viewer->glyph_actor );
 
   if ( this->first_draw_ )
   {
@@ -249,39 +259,39 @@ void Viewer::setup_renderers()
       QSharedPointer<MiniViewer> mini_viewer = QSharedPointer<MiniViewer>( new MiniViewer() );
       mini_viewer->renderer_ = ren;
 
-      mini_viewer->actor = vtkSmartPointer<vtkActor>::New();
-      mini_viewer->mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+      mini_viewer->surface_actor_ = vtkSmartPointer<vtkActor>::New();
+      mini_viewer->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
-      mini_viewer->glyphPoints = vtkSmartPointer<vtkPoints>::New();
-      mini_viewer->glyphPoints->SetDataTypeToDouble();
-      mini_viewer->glyphPointSet = vtkSmartPointer<vtkPolyData>::New();
-      mini_viewer->glyphPointSet->SetPoints( mini_viewer->glyphPoints );
-      mini_viewer->glyphPointSet->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
+      mini_viewer->glyph_points_ = vtkSmartPointer<vtkPoints>::New();
+      mini_viewer->glyph_points_->SetDataTypeToDouble();
+      mini_viewer->glyph_point_set_ = vtkSmartPointer<vtkPolyData>::New();
+      mini_viewer->glyph_point_set_->SetPoints( mini_viewer->glyph_points_ );
+      mini_viewer->glyph_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
 
-      mini_viewer->glyphs = vtkSmartPointer<vtkGlyph3D>::New();
-      mini_viewer->glyphs->SetInputData( mini_viewer->glyphPointSet );
-      mini_viewer->glyphs->ScalingOn();
-      mini_viewer->glyphs->ClampingOff();
-      mini_viewer->glyphs->SetScaleModeToDataScalingOff();
-      mini_viewer->glyphs->SetSourceConnection( sphereSource->GetOutputPort() );
+      mini_viewer->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
+      mini_viewer->glyphs_->SetInputData( mini_viewer->glyph_point_set_ );
+      mini_viewer->glyphs_->ScalingOn();
+      mini_viewer->glyphs_->ClampingOff();
+      mini_viewer->glyphs_->SetScaleModeToDataScalingOff();
+      mini_viewer->glyphs_->SetSourceConnection( sphereSource->GetOutputPort() );
 
-      mini_viewer->glyphs = vtkSmartPointer<vtkGlyph3D>::New();
-      mini_viewer->glyphs->SetInputData( mini_viewer->glyphPointSet );
-      mini_viewer->glyphs->ScalingOn();
-      mini_viewer->glyphs->ClampingOff();
-      mini_viewer->glyphs->SetScaleModeToDataScalingOff();
-      mini_viewer->glyphs->SetSourceConnection( sphereSource->GetOutputPort() );
+      mini_viewer->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
+      mini_viewer->glyphs_->SetInputData( mini_viewer->glyph_point_set_ );
+      mini_viewer->glyphs_->ScalingOn();
+      mini_viewer->glyphs_->ClampingOff();
+      mini_viewer->glyphs_->SetScaleModeToDataScalingOff();
+      mini_viewer->glyphs_->SetSourceConnection( sphereSource->GetOutputPort() );
 
-      mini_viewer->glyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-      mini_viewer->glyphMapper->SetInputConnection( mini_viewer->glyphs->GetOutputPort() );
-      mini_viewer->glyphMapper->SetLookupTable( this->lut_ );
+      mini_viewer->glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
+      mini_viewer->glyph_mapper_->SetInputConnection( mini_viewer->glyphs_->GetOutputPort() );
+      mini_viewer->glyph_mapper_->SetLookupTable( this->lut_ );
 
-      mini_viewer->glyphActor = vtkSmartPointer<vtkActor>::New();
-      mini_viewer->glyphActor->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
-      mini_viewer->glyphActor->GetProperty()->SetDiffuse( 0.8 );
-      mini_viewer->glyphActor->GetProperty()->SetSpecular( 0.3 );
-      mini_viewer->glyphActor->GetProperty()->SetSpecularPower( 10.0 );
-      mini_viewer->glyphActor->SetMapper( mini_viewer->glyphMapper );
+      mini_viewer->glyph_actor = vtkSmartPointer<vtkActor>::New();
+      mini_viewer->glyph_actor->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
+      mini_viewer->glyph_actor->GetProperty()->SetDiffuse( 0.8 );
+      mini_viewer->glyph_actor->GetProperty()->SetSpecular( 0.3 );
+      mini_viewer->glyph_actor->GetProperty()->SetSpecularPower( 10.0 );
+      mini_viewer->glyph_actor->SetMapper( mini_viewer->glyph_mapper_ );
 
       this->mini_viewers_.push_back( mini_viewer );
 
