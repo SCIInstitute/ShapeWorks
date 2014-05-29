@@ -9,6 +9,7 @@
 #include <vtkPoints.h>
 
 class vtkRenderer;
+class vtkLookupTable;
 class CustomImagePlaneWidget;
 class vtkRenderWindowInteractor;
 class vtkImageData;
@@ -65,6 +66,8 @@ private:
   void insert_shape_into_view( QSharedPointer<Shape> shape, int position, int id );
 
   vtkSmartPointer<vtkRenderer> renderer_;
+
+  vtkSmartPointer<vtkLookupTable> lut_;
 
   std::vector< QSharedPointer < Shape > > shapes_;
 
