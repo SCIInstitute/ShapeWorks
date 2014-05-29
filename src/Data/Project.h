@@ -56,7 +56,6 @@ public:
   /// get the current pipeline state
   //QString get_pipeline_state();
 
-
   bool originals_present();
   bool groomed_present();
   bool reconstructed_present();
@@ -79,11 +78,9 @@ private:
   /// collection of shapes
   std::vector<QSharedPointer<Shape> > shapes_;
 
-
   bool originals_present_;
   bool groomed_present_;
   bool reconstructed_present_;
-
 
   QString pipeline_state_;
 };

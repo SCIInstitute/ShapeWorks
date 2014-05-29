@@ -18,6 +18,11 @@
 #include <Visualization/Viewer.h>
 
 #include <Data/Mesh.h>
+#include <Data/Shape.h>
+
+const QString Viewer::INITIAL_C( "initial" );
+const QString Viewer::GROOMED_C( "groomed" );
+const QString Viewer::RECONSTRUCTED_C( "reconstructed" );
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
@@ -30,6 +35,7 @@ Viewer::Viewer()
   this->start_row_ = 0;
   this->first_draw_ = true;
   this->auto_center_ = true;
+  this->mesh_mode_ = Viewer::INITIAL_C;
 }
 
 //-----------------------------------------------------------------------------
@@ -43,12 +49,30 @@ void Viewer::set_interactor( vtkRenderWindowInteractor* interactor )
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, QString note )
+void Viewer::insert_shape_into_view( QSharedPointer<Shape> shape, int position, int id )
 {
   if ( position >= this->mini_viewers_.size() )
   {
     return;
   }
+
+  QSharedPointer<Mesh> mesh;
+
+  if ( this->mesh_mode_ == Viewer::INITIAL_C )
+  {
+    mesh = shape->get_initial_mesh();
+  }
+  else if ( this->mesh_mode_ == Viewer::GROOMED_C )
+  {
+    mesh = shape->get_groomed_mesh();
+  }
+  else if ( this->mesh_mode_ == Viewer::RECONSTRUCTED_C )
+  {
+    mesh = shape->get_reconstructed_mesh();
+  }
+
+  vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+  QString note = mesh->get_filename();
 
   vtkSmartPointer<vtkPolyDataMapper> mapper = this->mini_viewers_[position]->mapper;
   vtkSmartPointer<vtkActor> actor = this->mini_viewers_[position]->actor;
@@ -129,10 +153,10 @@ void Viewer::display_meshes()
   int start_mesh = this->start_row_ * this->tile_layout_width_;
 
   int position = 0;
-  for ( int i = start_mesh; i < this->meshes_.size(); i++ )
+  for ( int i = start_mesh; i < this->shapes_.size(); i++ )
   {
     int id = i + 1;
-    this->insert_mesh_into_view( this->meshes_[i]->get_poly_data(), position, id, this->meshes_[i]->get_filename() );
+    this->insert_shape_into_view( shapes_[i], position, id );
     position++;
   }
 
@@ -181,13 +205,13 @@ void Viewer::setup_renderers()
       vtkSmartPointer<vtkRenderer> ren = vtkSmartPointer<vtkRenderer>::New();
       ren->SetActiveCamera( this->camera_ );
 
-      QSharedPointer<MiniViewer> mini_viewer = QSharedPointer<MiniViewer>(new MiniViewer());
+      QSharedPointer<MiniViewer> mini_viewer = QSharedPointer<MiniViewer>( new MiniViewer() );
       mini_viewer->renderer_ = ren;
 
       mini_viewer->actor = vtkSmartPointer<vtkActor>::New();
       mini_viewer->mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 
-      this->mini_viewers_.push_back(mini_viewer);
+      this->mini_viewers_.push_back( mini_viewer );
 
       double viewport[4] = {0.0, 0.0, 0.0, 0.0};
 
@@ -228,7 +252,7 @@ void Viewer::set_tile_layout( int width, int height )
 //-----------------------------------------------------------------------------
 int Viewer::get_num_rows()
 {
-  return std::ceil( (float)this->meshes_.size() / (float)this->tile_layout_width_ );
+  return std::ceil( (float)this->shapes_.size() / (float)this->tile_layout_width_ );
 }
 
 //-----------------------------------------------------------------------------
@@ -246,13 +270,6 @@ void Viewer::set_start_row( int row )
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_meshes( std::vector<QSharedPointer<Mesh> > meshes )
-{
-  this->meshes_ = meshes;
-  this->display_meshes();
-}
-
-//-----------------------------------------------------------------------------
 void Viewer::set_auto_center( bool center )
 {
   this->auto_center_ = center;
@@ -263,4 +280,12 @@ void Viewer::set_auto_center( bool center )
 void Viewer::set_shapes( std::vector<QSharedPointer<Shape> > shapes )
 {
   this->shapes_ = shapes;
+  this->display_meshes();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_mesh_mode( QString mode )
+{
+  this->mesh_mode_ = mode;
+  this->display_meshes();
 }

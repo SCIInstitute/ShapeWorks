@@ -281,35 +281,26 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_meshes()
 {
-
-  QString mode = this->ui_->view_mode_combobox->currentText();
-
-  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  std::vector<QSharedPointer<Mesh> > meshes;
-
-  for ( int i = 0; i < shapes.size(); i++ )
-  {
-    if ( mode == "Original" )
-    {
-      meshes.push_back( shapes[i]->get_initial_mesh() );
-    }
-    else if ( mode == "Groomed" )
-    {
-      meshes.push_back( shapes[i]->get_groomed_mesh() );
-    }
-    else if ( mode == "Reconstruction" )
-    {
-      meshes.push_back( shapes[i]->get_reconstructed_mesh() );
-    }
-  }
-
-  this->viewer_->set_meshes( meshes );
+  this->viewer_->set_shapes( this->project_->get_shapes() );
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
-  this->update_meshes();
+  QString mode = this->ui_->view_mode_combobox->currentText();
+
+  if ( mode == "Original" )
+  {
+    this->viewer_->set_mesh_mode( Viewer::INITIAL_C );
+  }
+  else if ( mode == "Groomed" )
+  {
+    this->viewer_->set_mesh_mode( Viewer::GROOMED_C );
+  }
+  else if ( mode == "Reconstruction" )
+  {
+    this->viewer_->set_mesh_mode( Viewer::RECONSTRUCTED_C );
+  }
 }
 
 //---------------------------------------------------------------------------

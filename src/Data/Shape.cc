@@ -51,7 +51,6 @@ bool Shape::import_point_file( QString filename )
 
   QTextStream stream( &file );
 
-
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
   int num_points = 0;
@@ -75,17 +74,16 @@ bool Shape::import_point_file( QString filename )
   }
 
   this->correspondence_points_.clear();
-  this->correspondence_points_.set_size(num_points * 3);
+  this->correspondence_points_.set_size( num_points * 3 );
 
   int idx = 0;
-  for (int i=0; i < num_points; i++)
+  for ( int i = 0; i < num_points; i++ )
   {
-    double *pos = points->GetPoint(i);
+    double* pos = points->GetPoint( i );
     this->correspondence_points_[idx++] = pos[0];
     this->correspondence_points_[idx++] = pos[1];
     this->correspondence_points_[idx++] = pos[2];
   }
-
 
   this->reconstructed_mesh_ = QSharedPointer<Mesh> ( new Mesh() );
   return this->reconstructed_mesh_->create_from_pointset( filename, this->correspondence_points_ );

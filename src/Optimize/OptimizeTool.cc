@@ -64,7 +64,6 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   optimize->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
 
-
   if ( !optimize->waitForStarted() )
   {
     std::cerr << "Error: failed to start ShapeWorksRun\n";
@@ -114,7 +113,6 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   delete optimize;
 
-
   // load files!
 
   std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
@@ -123,24 +121,21 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   QString prefix = project_path + QDir::separator() + "studio_run";
 
-
-
   QStringList list;
 
-
   int pad = 1;
-  if (shapes.size() >= 10 && shapes.size() < 100)
+  if ( shapes.size() >= 10 && shapes.size() < 100 )
   {
     pad = 2;
-  } 
-  else if (shapes.size() >= 100 && shapes.size() < 1000)
+  }
+  else if ( shapes.size() >= 100 && shapes.size() < 1000 )
   {
     pad = 3;
   }
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    QString number = QString("%1").arg(i, pad, 'd', QChar('0')).toUpper();
+    QString number = QString( "%1" ).arg( i, pad, 'd', QChar( '0' ) ).toUpper();
 
     list << prefix + "." + number + ".wpts";
   }

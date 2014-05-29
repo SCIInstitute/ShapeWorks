@@ -103,11 +103,11 @@ void GroomTool::on_run_groom_button_clicked()
 
   QProcess* groom = new QProcess( this );
   groom->setProcessChannelMode( QProcess::MergedChannels );
-  //groom->start("C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args);
 
   //std::cerr << "Running groom with " << args.toStdList() << "\n";
 
-  groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
+  groom->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
+  //groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
   if ( !groom->waitForStarted() )
   {
     std::cerr << "Error: failed to start ShapeWorksGroom\n";

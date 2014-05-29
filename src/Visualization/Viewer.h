@@ -38,9 +38,7 @@ public:
   Viewer();
   ~Viewer();
 
-  void set_shapes(std::vector<QSharedPointer<Shape> > shapes );
-
-  void set_meshes( std::vector<QSharedPointer<Mesh> > meshes );
+  void set_shapes( std::vector<QSharedPointer<Shape> > shapes );
 
   void set_interactor( vtkRenderWindowInteractor* interactor );
 
@@ -57,16 +55,17 @@ public:
 
   void set_auto_center( bool center );
 
+  void set_mesh_mode( QString mode );
+
 private:
 
   void clear_renderers();
   void display_meshes();
 
-  void insert_mesh_into_view( vtkSmartPointer<vtkPolyData> poly_data, int position, int id, QString note );
+  void insert_shape_into_view( QSharedPointer<Shape> shape, int position, int id );
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  std::vector< QSharedPointer < Mesh > > meshes_;
   std::vector< QSharedPointer < Shape > > shapes_;
 
   std::vector< QSharedPointer < MiniViewer > > mini_viewers_;
@@ -85,6 +84,15 @@ private:
   bool first_draw_;
 
   bool auto_center_;
+
+  QString mesh_mode_;
+
+public:
+
+  // constants
+  const static QString INITIAL_C;
+  const static QString GROOMED_C;
+  const static QString RECONSTRUCTED_C;
 };
 
 #endif /* STUDIO_VISUALIZATION_VIEWER_H */
