@@ -211,10 +211,12 @@ SET(STUDIO_ANALYSIS_UIS
 ### Visualization
 SET(STUDIO_VISUALIZATION_HDRS
   Visualization/Lightbox.h
+  Visualization/Viewer.h
   Visualization/CustomSurfaceReconstructionFilter.h
 )
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cc
+  Visualization/Viewer.cc
   Visualization/CustomSurfaceReconstructionFilter.cc
 )
 

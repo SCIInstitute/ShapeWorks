@@ -15,14 +15,12 @@
 #include <vtkTransform.h>
 #include <vtkCenterOfMass.h>
 
-#include <vtkSphereSource.h>
 #include <vtkPointData.h>
 #include <vtkUnsignedLongArray.h>
 #include <vtkGlyph3D.h>
 #include <vtkLookupTable.h>
 
 #include <Visualization/Lightbox.h>
-
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
@@ -57,7 +55,7 @@ void Lightbox::set_interactor( vtkRenderWindowInteractor* interactor )
 //-----------------------------------------------------------------------------
 void Lightbox::insert_shape_into_view( QSharedPointer<Shape> shape, int position, int id )
 {
-  if ( position >= this->mini_lightboxs_.size() )
+  if ( position >= this->viewers_.size() )
   {
     return;
   }
@@ -80,11 +78,11 @@ void Lightbox::insert_shape_into_view( QSharedPointer<Shape> shape, int position
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
   QString note = mesh->get_filename();
 
-  QSharedPointer<MiniLightbox> mini_lightbox = this->mini_lightboxs_[position];
+  QSharedPointer<Viewer> viewer = this->viewers_[position];
 
-  vtkSmartPointer<vtkPolyDataMapper> mapper = mini_lightbox->surface_mapper_;
-  vtkSmartPointer<vtkActor> actor = mini_lightbox->surface_actor_;
-  vtkSmartPointer<vtkRenderer> ren = mini_lightbox->renderer_;
+  vtkSmartPointer<vtkPolyDataMapper> mapper = viewer->surface_mapper_;
+  vtkSmartPointer<vtkActor> actor = viewer->surface_actor_;
+  vtkSmartPointer<vtkRenderer> ren = viewer->renderer_;
 
   vnl_vector<double> correspondence_points = shape->get_correspondence_points();
 
@@ -93,24 +91,24 @@ void Lightbox::insert_shape_into_view( QSharedPointer<Shape> shape, int position
 
   if ( num_points > 0 )
   {
-    mini_lightbox->glyphs_->SetRange( 0.0, (double) num_points + 1 );
-    mini_lightbox->glyph_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
-    this->lut_->SetNumberOfTableValues( num_points + 1 );
-    this->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
+    viewer->glyphs_->SetRange( 0.0, (double) num_points + 1 );
+    viewer->glyph_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
+    viewer->lut_->SetNumberOfTableValues( num_points + 1 );
+    viewer->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
 
-    mini_lightbox->glyph_points_->SetNumberOfPoints( num_points );
+    viewer->glyph_points_->SetNumberOfPoints( num_points );
 
-    ( (vtkUnsignedLongArray*)( mini_lightbox->glyph_point_set_->GetPointData()->GetScalars() ) )->SetNumberOfTuples( num_points );
+    ( (vtkUnsignedLongArray*)( viewer->glyph_point_set_->GetPointData()->GetScalars() ) )->SetNumberOfTuples( num_points );
 
     unsigned int idx = 0;
     for ( int i = 0; i < num_points; i++ )
     {
-      ( (vtkUnsignedLongArray*)( mini_lightbox->glyph_point_set_->GetPointData()->GetScalars() ) )->InsertValue( i, i );
+      ( (vtkUnsignedLongArray*)( viewer->glyph_point_set_->GetPointData()->GetScalars() ) )->InsertValue( i, i );
       double x = correspondence_points[idx++];
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
 
-      mini_lightbox->glyph_points_->InsertPoint( i, x, y, z );
+      viewer->glyph_points_->InsertPoint( i, x, y, z );
     }
   }
 
@@ -164,7 +162,7 @@ void Lightbox::insert_shape_into_view( QSharedPointer<Shape> shape, int position
 
   ren->RemoveAllViewProps();
   ren->AddActor( actor );
-  ren->AddActor( mini_lightbox->glyph_actor );
+  ren->AddActor( viewer->glyph_actor );
 
   if ( this->first_draw_ )
   {
@@ -187,9 +185,9 @@ void Lightbox::insert_shape_into_view( QSharedPointer<Shape> shape, int position
 //-----------------------------------------------------------------------------
 void Lightbox::clear_renderers()
 {
-  for ( int i = 0; i < this->mini_lightboxs_.size(); i++ )
+  for ( int i = 0; i < this->viewers_.size(); i++ )
   {
-    this->mini_lightboxs_[i]->renderer_->RemoveAllViewProps();
+    this->viewers_[i]->renderer_->RemoveAllViewProps();
   }
 }
 
@@ -224,12 +222,12 @@ void Lightbox::set_render_window( vtkRenderWindow* renderWindow )
 //-----------------------------------------------------------------------------
 void Lightbox::setup_renderers()
 {
-  for ( int i = 0; i < this->mini_lightboxs_.size(); i++ )
+  for ( int i = 0; i < this->viewers_.size(); i++ )
   {
-    this->render_window_->RemoveRenderer( this->mini_lightboxs_[i]->renderer_ );
+    this->render_window_->RemoveRenderer( this->viewers_[i]->renderer_ );
   }
 
-  this->mini_lightboxs_.clear();
+  this->viewers_.clear();
 
   int* size = this->render_window_->GetSize();
 
@@ -245,8 +243,6 @@ void Lightbox::setup_renderers()
   float step_x = tile_width + margin;
   float step_y = tile_height + margin;
 
-  vtkSmartPointer<vtkSphereSource> sphere_source = vtkSmartPointer<vtkSphereSource>::New();
-  this->lut_ = vtkSmartPointer<vtkLookupTable>::New();
 
   for ( int y = 0; y < height; y++ )
   {
@@ -257,44 +253,13 @@ void Lightbox::setup_renderers()
       vtkSmartPointer<vtkRenderer> ren = vtkSmartPointer<vtkRenderer>::New();
       ren->SetActiveCamera( this->camera_ );
 
-      QSharedPointer<MiniLightbox> mini_lightbox = QSharedPointer<MiniLightbox>( new MiniLightbox() );
-      mini_lightbox->renderer_ = ren;
+      QSharedPointer<Viewer> viewer = QSharedPointer<Viewer>( new Viewer() );
+      viewer->renderer_ = ren;
 
-      mini_lightbox->surface_actor_ = vtkSmartPointer<vtkActor>::New();
-      mini_lightbox->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
-      mini_lightbox->glyph_points_ = vtkSmartPointer<vtkPoints>::New();
-      mini_lightbox->glyph_points_->SetDataTypeToDouble();
-      mini_lightbox->glyph_point_set_ = vtkSmartPointer<vtkPolyData>::New();
-      mini_lightbox->glyph_point_set_->SetPoints( mini_lightbox->glyph_points_ );
-      mini_lightbox->glyph_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
 
-      mini_lightbox->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
-      mini_lightbox->glyphs_->SetInputData( mini_lightbox->glyph_point_set_ );
-      mini_lightbox->glyphs_->ScalingOn();
-      mini_lightbox->glyphs_->ClampingOff();
-      mini_lightbox->glyphs_->SetScaleModeToDataScalingOff();
-      mini_lightbox->glyphs_->SetSourceConnection( sphere_source->GetOutputPort() );
 
-      mini_lightbox->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
-      mini_lightbox->glyphs_->SetInputData( mini_lightbox->glyph_point_set_ );
-      mini_lightbox->glyphs_->ScalingOn();
-      mini_lightbox->glyphs_->ClampingOff();
-      mini_lightbox->glyphs_->SetScaleModeToDataScalingOff();
-      mini_lightbox->glyphs_->SetSourceConnection( sphere_source->GetOutputPort() );
-
-      mini_lightbox->glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-      mini_lightbox->glyph_mapper_->SetInputConnection( mini_lightbox->glyphs_->GetOutputPort() );
-      mini_lightbox->glyph_mapper_->SetLookupTable( this->lut_ );
-
-      mini_lightbox->glyph_actor = vtkSmartPointer<vtkActor>::New();
-      mini_lightbox->glyph_actor->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
-      mini_lightbox->glyph_actor->GetProperty()->SetDiffuse( 0.8 );
-      mini_lightbox->glyph_actor->GetProperty()->SetSpecular( 0.3 );
-      mini_lightbox->glyph_actor->GetProperty()->SetSpecularPower( 10.0 );
-      mini_lightbox->glyph_actor->SetMapper( mini_lightbox->glyph_mapper_ );
-
-      this->mini_lightboxs_.push_back( mini_lightbox );
+      this->viewers_.push_back( viewer );
 
       double viewport[4] = {0.0, 0.0, 0.0, 0.0};
 

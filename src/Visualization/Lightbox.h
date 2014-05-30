@@ -8,31 +8,10 @@
 #include <vtkActor.h>
 #include <vtkPoints.h>
 
-class vtkRenderer;
-class vtkLookupTable;
-class CustomImagePlaneWidget;
-class vtkRenderWindowInteractor;
-class vtkImageData;
-class vtkCamera;
-class vtkGlyph3D;
+#include <Visualization/Viewer.h>
 
 class Mesh;
 class Shape;
-
-class MiniLightbox
-{
-public:
-  vtkSmartPointer<vtkRenderer>             renderer_;
-
-  vtkSmartPointer<vtkPoints>               glyph_points_;
-  vtkSmartPointer<vtkPolyData>             glyph_point_set_;
-  vtkSmartPointer<vtkGlyph3D>              glyphs_;
-  vtkSmartPointer<vtkPolyDataMapper>       glyph_mapper_;
-  vtkSmartPointer<vtkActor>                glyph_actor;
-
-  vtkSmartPointer<vtkPolyDataMapper>       surface_mapper_;
-  vtkSmartPointer<vtkActor>                surface_actor_;
-};
 
 class Lightbox
 {
@@ -68,11 +47,9 @@ private:
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  vtkSmartPointer<vtkLookupTable> lut_;
-
   std::vector< QSharedPointer < Shape > > shapes_;
 
-  std::vector< QSharedPointer < MiniLightbox > > mini_lightboxs_;
+  std::vector< QSharedPointer < Viewer > > viewers_;
 
   vtkRenderWindow* render_window_;
 
