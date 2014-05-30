@@ -22,18 +22,18 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi( this );
 
-  QSize size = Preferences::Instance().getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
-  this->resize( size );
+  // resize from preferences
+  this->resize( Preferences::Instance().get_main_window_size() );
 
   // set to import
-  this->ui_->actionImportMode->setChecked( true );
-  this->ui_->stackedWidget->setCurrentIndex( 0 );
+  this->ui_->action_import_mode->setChecked( true );
+  this->ui_->stacked_widget->setCurrentIndex( 0 );
 
   this->action_group_ = new QActionGroup( this );
-  this->action_group_->addAction( this->ui_->actionImportMode );
-  this->action_group_->addAction( this->ui_->actionGroomMode );
-  this->action_group_->addAction( this->ui_->actionOptimizeMode );
-  this->action_group_->addAction( this->ui_->actionAnalysisMode );
+  this->action_group_->addAction( this->ui_->action_import_mode );
+  this->action_group_->addAction( this->ui_->action_groom_mode );
+  this->action_group_->addAction( this->ui_->action_optimize_mode );
+  this->action_group_->addAction( this->ui_->action_analysis_mode );
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
 
@@ -46,12 +46,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
   this->groom_tool_->set_project( this->project_ );
   this->groom_tool_->set_app( this );
-  this->ui_->stackedWidget->addWidget( this->groom_tool_.data() );
+  this->ui_->stacked_widget->addWidget( this->groom_tool_.data() );
 
   this->optimize_tool_ = QSharedPointer<OptimizeTool>( new OptimizeTool() );
   this->optimize_tool_->set_project( this->project_ );
   this->optimize_tool_->set_app( this );
-  this->ui_->stackedWidget->addWidget( this->optimize_tool_.data() );
+  this->ui_->stacked_widget->addWidget( this->optimize_tool_.data() );
 
   this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
@@ -68,7 +68,7 @@ void ShapeWorksStudioApp::initialize_vtk()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionOpenProject_triggered()
+void ShapeWorksStudioApp::on_action_open_project_triggered()
 {
   QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
                                                    QString(), tr( "XML files (*.xml)" ) );
@@ -81,7 +81,7 @@ void ShapeWorksStudioApp::on_actionOpenProject_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionSaveProjectAs_triggered()
+void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, tr( "Save Project As..." ),
                                                    QString(), tr( "XML files (*.xml)" ) );
@@ -94,13 +94,13 @@ void ShapeWorksStudioApp::on_actionSaveProjectAs_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionQuit_triggered()
+void ShapeWorksStudioApp::on_action_quit_triggered()
 {
   this->close();
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionImport_triggered()
+void ShapeWorksStudioApp::on_action_import_triggered()
 {
 
   QStringList filenames;
@@ -164,16 +164,16 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_addButton_clicked()
+void ShapeWorksStudioApp::on_add_button_clicked()
 {
-  this->on_actionImport_triggered();
+  this->on_action_import_triggered();
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_deleteButton_clicked()
+void ShapeWorksStudioApp::on_delete_button_clicked()
 {
 
-  QModelIndexList list = this->ui_->tableWidget->selectionModel()->selectedRows();
+  QModelIndexList list = this->ui_->table_widget->selectionModel()->selectedRows();
 
   QList<int> index_list;
 
@@ -191,36 +191,36 @@ void ShapeWorksStudioApp::update_table()
 
   std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
-  this->ui_->tableWidget->clear();
+  this->ui_->table_widget->clear();
 
-  this->ui_->tableWidget->setRowCount( shapes.size() );
-  this->ui_->tableWidget->setColumnCount( 3 );
+  this->ui_->table_widget->setRowCount( shapes.size() );
+  this->ui_->table_widget->setColumnCount( 3 );
 
   QStringList table_header;
   table_header << "#" << "Name" << "Size";
-  this->ui_->tableWidget->setHorizontalHeaderLabels( table_header );
+  this->ui_->table_widget->setHorizontalHeaderLabels( table_header );
 
-  this->ui_->tableWidget->verticalHeader()->setVisible( false );
+  this->ui_->table_widget->verticalHeader()->setVisible( false );
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
     QSharedPointer<Mesh> initial_mesh = shapes[i]->get_initial_mesh();
 
     QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i + 1 ) );
-    this->ui_->tableWidget->setItem( i, 0, new_item );
+    this->ui_->table_widget->setItem( i, 0, new_item );
 
     new_item = new QTableWidgetItem( initial_mesh->get_filename() );
-    this->ui_->tableWidget->setItem( i, 1, new_item );
+    this->ui_->table_widget->setItem( i, 1, new_item );
 
     new_item = new QTableWidgetItem( initial_mesh->get_dimension_string() );
-    this->ui_->tableWidget->setItem( i, 2, new_item );
+    this->ui_->table_widget->setItem( i, 2, new_item );
   }
 
-  this->ui_->tableWidget->resizeColumnsToContents();
-  //this->ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-  this->ui_->tableWidget->horizontalHeader()->setStretchLastSection( true );
+  this->ui_->table_widget->resizeColumnsToContents();
+  //this->ui->table_widget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+  this->ui_->table_widget->horizontalHeader()->setStretchLastSection( true );
 
-  this->ui_->tableWidget->setSelectionBehavior( QAbstractItemView::SelectRows );
+  this->ui_->table_widget->setSelectionBehavior( QAbstractItemView::SelectRows );
 }
 
 //---------------------------------------------------------------------------
@@ -228,24 +228,24 @@ void ShapeWorksStudioApp::mode_changed()
 {}
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionGroomMode_triggered()
+void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
   std::cerr << "groom!\n";
   //this->ui->stackedWidget->setCurrentIndex( 1 );
-  this->ui_->stackedWidget->setCurrentWidget( this->groom_tool_.data() );
+  this->ui_->stacked_widget->setCurrentWidget( this->groom_tool_.data() );
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionImportMode_triggered()
+void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
-  this->ui_->stackedWidget->setCurrentIndex( 0 );
+  this->ui_->stacked_widget->setCurrentIndex( 0 );
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionOptimizeMode_triggered()
+void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
   std::cerr << "optimize\n";
-  this->ui_->stackedWidget->setCurrentWidget( this->optimize_tool_.data() );
+  this->ui_->stacked_widget->setCurrentWidget( this->optimize_tool_.data() );
 }
 
 //---------------------------------------------------------------------------
@@ -321,17 +321,17 @@ void ShapeWorksStudioApp::set_status_bar( QString status )
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionPreferences_triggered()
+void ShapeWorksStudioApp::on_action_preferences_triggered()
 {
-  Preferences::Instance().showWindow();
+  Preferences::Instance().show_window();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 {
   // close the preferences window in case it is open
-  Preferences::Instance().closeWindow();
+  Preferences::Instance().close_window();
 
   // save the size of the window to preferences
-  Preferences::Instance().getSettings().setValue( "mainwindow/size", this->size() );
+  Preferences::Instance().set_main_window_size( this->size() );
 }

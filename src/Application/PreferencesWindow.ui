@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -82,7 +82,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>338</height>
+           <height>315</height>
           </size>
          </property>
         </spacer>
@@ -108,7 +108,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="colorScheme">
+           <widget class="QComboBox" name="color_scheme">
             <item>
              <property name="text">
               <string>Orange on Grey</string>
@@ -191,7 +191,7 @@
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QSlider" name="glyphQuality">
+           <widget class="QSlider" name="glyph_quality">
             <property name="minimum">
              <number>1</number>
             </property>
@@ -230,7 +230,7 @@
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QSlider" name="glyphSize">
+           <widget class="QSlider" name="glyph_size">
             <property name="minimum">
              <number>1</number>
             </property>
@@ -258,7 +258,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QCheckBox" name="meshCacheEnabled">
+           <widget class="QCheckBox" name="mesh_cache_enabled">
             <property name="text">
              <string>Enabled</string>
             </property>
@@ -291,7 +291,7 @@
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QSlider" name="meshCacheMemory">
+             <widget class="QSlider" name="mesh_cache_memory">
               <property name="maximum">
                <number>100</number>
               </property>
@@ -306,13 +306,6 @@
               </property>
               <property name="tickInterval">
                <number>5</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="parallelEnabled">
-              <property name="text">
-               <string>Parallel Reconstruction</string>
               </property>
              </widget>
             </item>
@@ -331,7 +324,7 @@
              </widget>
             </item>
             <item row="3" column="2">
-             <widget class="QSlider" name="numThreadsSlider">
+             <widget class="QSlider" name="num_threads">
               <property name="minimum">
                <number>1</number>
               </property>
@@ -353,9 +346,16 @@
              </widget>
             </item>
             <item row="3" column="3">
-             <widget class="QLabel" name="numThreadsMaxLabel">
+             <widget class="QLabel" name="num_threads_max_label">
               <property name="text">
                <string>max</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="parallel_enabled">
+              <property name="text">
+               <string>Parallel Reconstruction</string>
               </property>
              </widget>
             </item>
@@ -380,7 +380,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="pcaRangeSpinBox">
+             <widget class="QDoubleSpinBox" name="pca_range">
               <property name="decimals">
                <number>1</number>
               </property>
@@ -407,7 +407,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QSpinBox" name="pcaStepsSpinBox">
+             <widget class="QSpinBox" name="pca_steps">
               <property name="minimum">
                <number>3</number>
               </property>
@@ -417,7 +417,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="regressionStepsSpinBox">
+             <widget class="QSpinBox" name="regression_steps">
               <property name="minimum">
                <number>3</number>
               </property>
@@ -449,7 +449,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="button_box">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -463,7 +463,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>button_box</sender>
    <signal>accepted()</signal>
    <receiver>PreferencesWindow</receiver>
    <slot>accept()</slot>
@@ -479,7 +479,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>button_box</sender>
    <signal>rejected()</signal>
    <receiver>PreferencesWindow</receiver>
    <slot>reject()</slot>

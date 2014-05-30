@@ -1,5 +1,5 @@
-#ifndef STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H
-#define STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H
+#ifndef STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H
+#define STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H
 
 #include <QMainWindow>
 #include <QActionGroup>
@@ -14,6 +14,10 @@ class Ui_ShapeWorksStudioApp;
 
 class ViewerLayout;
 
+//! Main ShapeWorksStudio window
+/*!
+ * This class represents the primary ShapeWorksStudio window interface
+ */
 class ShapeWorksStudioApp : public QMainWindow
 {
   Q_OBJECT
@@ -32,19 +36,19 @@ public:
 
 public Q_SLOTS:
 
-  void on_actionOpenProject_triggered();
-  void on_actionSaveProjectAs_triggered();
-  void on_actionQuit_triggered();
-  void on_actionImport_triggered();
+  void on_action_open_project_triggered();
+  void on_action_save_project_as_triggered();
+  void on_action_quit_triggered();
+  void on_action_import_triggered();
   void on_vertical_scroll_bar_valueChanged();
-  void on_addButton_clicked();
-  void on_deleteButton_clicked();
+  void on_add_button_clicked();
+  void on_delete_button_clicked();
 
-  void on_actionGroomMode_triggered();
-  void on_actionImportMode_triggered();
-  void on_actionOptimizeMode_triggered();
+  void on_action_import_mode_triggered();
+  void on_action_groom_mode_triggered();
+  void on_action_optimize_mode_triggered();
 
-  void on_actionPreferences_triggered();
+  void on_action_preferences_triggered();
 
   void on_center_checkbox_stateChanged();
   void on_thumbnail_size_slider_valueChanged();
@@ -63,7 +67,7 @@ private:
   void update_meshes();
 
 
-  // designer form
+  /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
   QActionGroup* action_group_;
@@ -77,4 +81,4 @@ private:
 
 };
 
-#endif /* STUDIO_INTERFACE_SHAPEWORKSSTUDIOAPP_H */
+#endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

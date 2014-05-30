@@ -1,21 +1,16 @@
-/*
- * Shapeworks license
- */
-
-/**
- * @file PreferencesWindow.h
- * @brief Qt UI dialog to control preferences
- *
- */
-
-#ifndef PREFERENCES_WINDOW_H
-#define PREFERENCES_WINDOW_H
+#ifndef STUDIO_APPLICATION_PREFERENCES_WINDOW_H
+#define STUDIO_APPLICATION_PREFERENCES_WINDOW_H
 
 #include <QDialog>
 
 class Ui_PreferencesWindow;
 class QAbstractButton;
 
+//! Qt UI dialog to control preferences
+/*!
+ * The PreferenceWindow provides controls over preferences for the
+ * application.  It is synchronized with the singleton Preference object
+ */
 class PreferencesWindow : public QDialog
 {
   Q_OBJECT
@@ -23,33 +18,32 @@ class PreferencesWindow : public QDialog
 public:
   PreferencesWindow( QWidget* parent = 0 );
 
-  void setValuesFromPreferences();
+  void set_values_from_preferences();
 
 public Q_SLOTS:
 
-  void on_groom_location_textChanged(const QString& text);
-  void on_optimize_location_textChanged(const QString& text);
+  void on_groom_location_textChanged( const QString& text );
+  void on_optimize_location_textChanged( const QString& text );
   void on_locate_groom_button_clicked();
   void on_locate_optimize_button_clicked();
 
+  void on_mesh_cache_enabled_stateChanged( int state );
+  void on_mesh_cache_memory_valueChanged( int value );
+  void on_color_scheme_currentIndexChanged( int index );
+  void on_glyph_size_valueChanged( int value );
+  void on_glyph_quality_valueChanged( int value );
+  void on_num_threads_valueChanged( int value );
+  void on_parallel_enabled_stateChanged( int state );
 
-  void on_meshCacheEnabled_stateChanged( int state );
-  void on_meshCacheMemory_valueChanged( int value );
-  void on_colorScheme_currentIndexChanged( int index );
-  void on_glyphSize_valueChanged( int value );
-  void on_glyphQuality_valueChanged( int value );
-  void on_numThreadsSlider_valueChanged( int value );
-  void on_parallelEnabled_stateChanged( int state );
+  void on_pca_range_valueChanged( double value );
+  void on_pca_steps_valueChanged( int value );
+  void on_regression_steps_valueChanged( int value );
 
-  void on_pcaRangeSpinBox_valueChanged( double value );
-  void on_pcaStepsSpinBox_valueChanged( int value );
-  void on_regressionStepsSpinBox_valueChanged( int value );
-
-  void restoreDefaults();
+  void restore_defaults();
 
 private:
-  void updateLabels();
-  Ui_PreferencesWindow* ui;
+  void update_labels();
+  Ui_PreferencesWindow* ui_;
 };
 
-#endif // ifndef PREFERENCES_WINDOW_H
+#endif // STUDIO_APPLICATION_PREFERENCES_WINDOW_H
