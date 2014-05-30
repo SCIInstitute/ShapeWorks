@@ -1,20 +1,25 @@
+// std
 #include <iostream>
 
+// qt
 #include <QFileDialog>
 
-#include <Application/ShapeWorksStudioApp.h>
-#include <Application/Preferences.h>
-
-#include <ui_ShapeWorksStudioApp.h>
-
+// vtk
 #include <vtkRenderWindow.h>
 
+// studio
+#include <Application/ShapeWorksStudioApp.h>
+#include <Application/Preferences.h>
 #include <Visualization/Viewer.h>
 #include <Groom/GroomTool.h>
 #include <Optimize/OptimizeTool.h>
+#include <Analysis/AnalysisTool.h>
 #include <Data/Project.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
+
+// ui
+#include <ui_ShapeWorksStudioApp.h>
 
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
@@ -52,6 +57,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->optimize_tool_->set_project( this->project_ );
   this->optimize_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->optimize_tool_.data() );
+
+  this->analysis_tool_ = QSharedPointer<AnalysisTool>( new AnalysisTool() );
+  this->analysis_tool_->set_project( this->project_ );
+  this->analysis_tool_->set_app( this );
+  this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
 
   this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
@@ -230,8 +240,6 @@ void ShapeWorksStudioApp::mode_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
-  std::cerr << "groom!\n";
-  //this->ui->stackedWidget->setCurrentIndex( 1 );
   this->ui_->stacked_widget->setCurrentWidget( this->groom_tool_.data() );
 }
 
@@ -244,8 +252,13 @@ void ShapeWorksStudioApp::on_action_import_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
-  std::cerr << "optimize\n";
   this->ui_->stacked_widget->setCurrentWidget( this->optimize_tool_.data() );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
+{
+  this->ui_->stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
 }
 
 //---------------------------------------------------------------------------

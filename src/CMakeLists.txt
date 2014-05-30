@@ -197,6 +197,17 @@ SET(STUDIO_OPTIMIZE_UIS
   Optimize/OptimizeTool.ui
 )
 
+### Analyis
+SET(STUDIO_ANALYSIS_HDRS
+  Analysis/AnalysisTool.h
+)
+SET(STUDIO_ANALYSIS_SRCS
+  Analysis/AnalysisTool.cc
+)
+SET(STUDIO_ANALYSIS_UIS
+  Analysis/AnalysisTool.ui
+)
+
 ### Visualization
 SET(STUDIO_VISUALIZATION_HDRS
   Visualization/Viewer.h
@@ -214,6 +225,7 @@ SET( STUDIO_SRCS
      ${STUDIO_DATA_SRCS}
      ${STUDIO_GROOM_SRCS}
      ${STUDIO_OPTIMIZE_SRCS}
+     ${STUDIO_ANALYSIS_SRCS}
      ${STUDIO_VISUALIZATION_SRCS}
 )
 
@@ -222,12 +234,14 @@ SET( STUDIO_HDRS
      ${STUDIO_DATA_HDRS}
      ${STUDIO_GROOM_HDRS}
      ${STUDIO_OPTIMIZE_HDRS}
+     ${STUDIO_ANALYSIS_HDRS}
      ${STUDIO_VISUALIZATION_HDRS}
 )
 
 SET( STUDIO_MOC_HDRS
      Groom/GroomTool.h
      Optimize/OptimizeTool.h
+     Analysis/AnalysisTool.h
      Data/Project.h
 )
 
@@ -240,6 +254,7 @@ SOURCE_GROUP("Visualization" FILES ${STUDIO_VISUALIZATION_SRCS} ${STUDIO_VISUALI
 SOURCE_GROUP("Data" FILES ${STUDIO_DATA_SRCS} ${STUDIO_DATA_HDRS})
 SOURCE_GROUP("Groom" FILES ${STUDIO_GROOM_SRCS} ${STUDIO_GROOM_HDRS} ${STUDIO_GROOM_UIS})
 SOURCE_GROUP("Optimize" FILES ${STUDIO_OPTIMIZE_SRCS} ${STUDIO_OPTIMIZE_HDRS} ${STUDIO_OPTIMIZE_UIS})
+SOURCE_GROUP("Analysis" FILES ${STUDIO_ANALYSIS_SRCS} ${STUDIO_ANALYSIS_HDRS} ${STUDIO_ANALYSIS_UIS})
 
 # this command will generate rules that will run rcc on all files from STUDIO_RCS
 # in result STUDIO_RC_SRCS variable will contain paths to files produced by rcc
@@ -249,6 +264,7 @@ QT4_ADD_RESOURCES( STUDIO_RC_SRCS ${STUDIO_RCS} )
 QT4_WRAP_UI( STUDIO_UI_HDRS ${STUDIO_APPLICATION_UIS} 
   ${STUDIO_GROOM_UIS}
   ${STUDIO_OPTIMIZE_UIS} 
+  ${STUDIO_ANALYSIS_UIS} 
 )
 
 # and finally this will run moc:

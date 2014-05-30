@@ -7,6 +7,7 @@
 class Viewer;
 class GroomTool;
 class OptimizeTool;
+class AnalysisTool;
 class Project;
 
 // Forward Qt class declarations
@@ -47,6 +48,7 @@ public Q_SLOTS:
   void on_action_import_mode_triggered();
   void on_action_groom_mode_triggered();
   void on_action_optimize_mode_triggered();
+  void on_action_analysis_mode_triggered();
 
   void on_action_preferences_triggered();
 
@@ -76,6 +78,7 @@ private:
 
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
+  QSharedPointer<AnalysisTool> analysis_tool_;
 
   QSharedPointer<Project> project_;
 
