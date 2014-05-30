@@ -162,6 +162,8 @@ void Project::import_files( QStringList file_names )
     this->shapes_.push_back( new_shape );
   }
 
+  this->renumber_shapes();
+
   if ( file_names.size() > 0 )
   {
     this->originals_present_ = true;
@@ -215,10 +217,11 @@ std::vector<QSharedPointer<Shape> > Project::get_shapes()
 //---------------------------------------------------------------------------
 void Project::remove_shapes( QList<int> list )
 {
-
   foreach( int i, list ) {
     this->shapes_.erase( this->shapes_.begin() + i );
   }
+  this->renumber_shapes();
+
   emit data_changed();
 }
 
@@ -255,4 +258,13 @@ bool Project::groomed_present()
 bool Project::reconstructed_present()
 {
   return this->reconstructed_present_;
+}
+
+//---------------------------------------------------------------------------
+void Project::renumber_shapes()
+{
+  for ( int i = 0; i < this->shapes_.size(); i++ )
+  {
+    this->shapes_[i]->set_id( i + 1 );
+  }
 }

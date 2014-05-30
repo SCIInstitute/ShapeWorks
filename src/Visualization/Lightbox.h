@@ -41,7 +41,7 @@ public:
 private:
 
   void clear_renderers();
-  void display_meshes();
+  void display_shapes();
 
   void insert_shape_into_view( QSharedPointer<Shape> shape, int position, int id );
 

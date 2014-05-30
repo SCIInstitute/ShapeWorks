@@ -34,7 +34,15 @@ public:
   /// Get the correspondence points
   vnl_vector<double> get_correspondence_points();
 
+  /// Get the id of this shape
+  int get_id();
+
+  /// Set the id of this shape
+  void set_id(int id);
+
 private:
+
+  int id_;
 
   QSharedPointer<Mesh> initial_mesh_;
   QSharedPointer<Mesh> groomed_mesh_;

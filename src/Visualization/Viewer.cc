@@ -4,7 +4,21 @@
 #include <vtkGlyph3D.h>
 #include <vtkProperty.h>
 #include <vtkLookupTable.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTransform.h>
+#include <vtkCenterOfMass.h>
+#include <vtkRenderer.h>
+#include <vtkImageActor.h>
+#include <vtkImageData.h>
+#include <vtkRenderWindow.h>
+#include <vtkProperty.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
+#include <vtkCornerAnnotation.h>
 
+
+#include <Data/Shape.h>
+#include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
 
 //-----------------------------------------------------------------------------
@@ -55,5 +69,142 @@ Viewer::Viewer()
 Viewer::~Viewer()
 {
 
+}
+
+//-----------------------------------------------------------------------------
+
+void Viewer::display_shape( QSharedPointer<Shape> shape, QString mode, bool auto_center )
+{
+  QSharedPointer<Mesh> mesh;
+
+  if ( mode == Lightbox::INITIAL_C )
+  {
+    mesh = shape->get_initial_mesh();
+  }
+  else if ( mode == Lightbox::GROOMED_C )
+  {
+    mesh = shape->get_groomed_mesh();
+  }
+  else if ( mode == Lightbox::RECONSTRUCTED_C )
+  {
+    mesh = shape->get_reconstructed_mesh();
+  }
+
+  vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+  QString note = mesh->get_filename();
+
+
+  vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
+  vtkSmartPointer<vtkActor> actor = this->surface_actor_;
+  vtkSmartPointer<vtkRenderer> ren = this->renderer_;
+
+  vnl_vector<double> correspondence_points = shape->get_correspondence_points();
+
+  int num_points = correspondence_points.size() / 3;
+
+  if ( num_points > 0 )
+  {
+    this->glyphs_->SetRange( 0.0, (double) num_points + 1 );
+    this->glyph_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
+    this->lut_->SetNumberOfTableValues( num_points + 1 );
+    this->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
+
+    this->glyph_points_->SetNumberOfPoints( num_points );
+
+    ( (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() ) )->SetNumberOfTuples( num_points );
+
+    unsigned int idx = 0;
+    for ( int i = 0; i < num_points; i++ )
+    {
+      ( (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() ) )->InsertValue( i, i );
+      double x = correspondence_points[idx++];
+      double y = correspondence_points[idx++];
+      double z = correspondence_points[idx++];
+
+      this->glyph_points_->InsertPoint( i, x, y, z );
+    }
+  }
+
+  if ( auto_center )
+  {
+    // Compute the center of mass
+    vtkSmartPointer<vtkCenterOfMass> center_of_mass_filter = vtkSmartPointer<vtkCenterOfMass>::New();
+    center_of_mass_filter->SetInputData( poly_data );
+    center_of_mass_filter->SetUseScalarsAsWeights( false );
+    center_of_mass_filter->Update();
+
+    double center[3];
+    center_of_mass_filter->GetCenter( center );
+    double tx = -center[0];
+    double ty = -center[1];
+    double tz = -center[2];
+
+    vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
+    translation->Translate( tx, ty, tz );
+
+    vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter =
+      vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+    transformFilter->SetInputData( poly_data );
+    transformFilter->SetTransform( translation );
+    transformFilter->Update();
+    poly_data = transformFilter->GetOutput();
+
+    /*    // translate correspondence points
+       for ( int i = 0; i < num_points; i++ )
+       {
+       double pos[3];
+       mini_lightbox->glyph_points_->GetPoint( i, pos );
+       pos[0] += center[0];
+       pos[1] += center[1];
+       pos[2] += center[2];
+       mini_lightbox->glyph_points_->InsertPoint( i, pos );
+       }
+     */
+  }
+
+#if VTK_MAJOR_VERSION <= 5
+  mapper->SetInput( poly_data );
+#else
+  mapper->SetInputData( poly_data );
+#endif
+  actor->SetMapper( mapper );
+  actor->GetProperty()->SetDiffuseColor( 1, 191.0 / 255.0, 0 );
+  actor->GetProperty()->SetSpecular( 0.2 );
+  actor->GetProperty()->SetSpecularPower( 15 );
+  mapper->ScalarVisibilityOff();
+
+  ren->RemoveAllViewProps();
+  ren->AddActor( actor );
+  ren->AddActor( this->glyph_actor );
+
+
+  vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
+    vtkSmartPointer<vtkCornerAnnotation>::New();
+  corner_annotation->SetLinearFontScaleFactor( 2 );
+  corner_annotation->SetNonlinearFontScaleFactor( 1 );
+  corner_annotation->SetMaximumFontSize( 16 );
+  corner_annotation->SetText( 2, QString::number( shape->get_id() ).toStdString().c_str() );
+  corner_annotation->SetText( 0, note.toStdString().c_str() );
+  corner_annotation->GetTextProperty()->SetColor( 0.50, 0.5, 0.5 );
+
+  ren->AddViewProp( corner_annotation );
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::reset_camera()
+{
+  this->renderer_->ResetCamera();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_renderer( vtkSmartPointer<vtkRenderer> renderer )
+{
+  this->renderer_ = renderer;
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkRenderer> Viewer::get_renderer()
+{
+  return this->renderer_;
 }
 

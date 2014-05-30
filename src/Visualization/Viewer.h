@@ -1,3 +1,7 @@
+#ifndef STUDIO_VISUALIZATION_VIEWER_H
+#define STUDIO_VISUALIZATION_VIEWER_H
+
+#include <QSharedPointer>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -7,16 +11,24 @@ class vtkImageData;
 class vtkCamera;
 class vtkGlyph3D;
 
+class Shape;
 
 class Viewer
 {
-
-
 
 public:
 
   Viewer();
   ~Viewer();
+
+  void set_renderer( vtkSmartPointer<vtkRenderer> renderer );
+  vtkSmartPointer<vtkRenderer> get_renderer();
+
+  void display_shape( QSharedPointer<Shape> shape, QString mode, bool auto_center );
+
+  void reset_camera();
+
+private:
 
   vtkSmartPointer<vtkRenderer>             renderer_;
 
@@ -29,7 +41,7 @@ public:
   vtkSmartPointer<vtkPolyDataMapper>       surface_mapper_;
   vtkSmartPointer<vtkActor>                surface_actor_;
 
-
   vtkSmartPointer<vtkLookupTable> lut_;
-
 };
+
+#endif /* STUDIO_VISUALIZATION_VIEWER_H */

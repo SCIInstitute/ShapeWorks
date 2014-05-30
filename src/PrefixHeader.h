@@ -15,3 +15,9 @@
 #include <vtkMarchingCubes.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
+#include <vtkSphereSource.h>
+#include <vtkGlyph3D.h>
+#include <vtkProperty.h>
+#include <vtkLookupTable.h>
+#include <vtkUnsignedLongArray.h>
+

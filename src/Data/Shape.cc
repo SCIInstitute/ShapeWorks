@@ -6,7 +6,9 @@
 
 //---------------------------------------------------------------------------
 Shape::Shape()
-{}
+{
+  this->id_ = 0;
+}
 
 //---------------------------------------------------------------------------
 Shape::~Shape()
@@ -99,4 +101,16 @@ QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 vnl_vector<double> Shape::get_correspondence_points()
 {
   return this->correspondence_points_;
+}
+
+//---------------------------------------------------------------------------
+int Shape::get_id()
+{
+  return this->id_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_id( int id )
+{
+  this->id_ = id;
 }

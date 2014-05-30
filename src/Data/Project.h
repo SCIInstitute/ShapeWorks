@@ -72,6 +72,8 @@ public:
 
 private:
 
+  void renumber_shapes();
+
   /// project filename
   QString filename_;
 
