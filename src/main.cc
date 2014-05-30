@@ -1,5 +1,5 @@
 #include <QApplication>
-#include <Interface/ShapeWorksStudioApp.h>
+#include <Application/ShapeWorksStudioApp.h>
 #include <iostream>
 
 #ifdef _WIN32
