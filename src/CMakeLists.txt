@@ -210,11 +210,11 @@ SET(STUDIO_ANALYSIS_UIS
 
 ### Visualization
 SET(STUDIO_VISUALIZATION_HDRS
-  Visualization/Viewer.h
+  Visualization/Lightbox.h
   Visualization/CustomSurfaceReconstructionFilter.h
 )
 SET(STUDIO_VISUALIZATION_SRCS
-  Visualization/Viewer.cc
+  Visualization/Lightbox.cc
   Visualization/CustomSurfaceReconstructionFilter.cc
 )
 

@@ -10,7 +10,7 @@
 // studio
 #include <Application/ShapeWorksStudioApp.h>
 #include <Application/Preferences.h>
-#include <Visualization/Viewer.h>
+#include <Visualization/Lightbox.h>
 #include <Groom/GroomTool.h>
 #include <Optimize/OptimizeTool.h>
 #include <Analysis/AnalysisTool.h>
@@ -46,7 +46,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
 
-  this->viewer_ = QSharedPointer<Viewer>( new Viewer() );
+  this->lightbox_ = QSharedPointer<Lightbox>( new Lightbox() );
 
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
   this->groom_tool_->set_project( this->project_ );
@@ -74,7 +74,7 @@ ShapeWorksStudioApp::~ShapeWorksStudioApp()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::initialize_vtk()
 {
-  this->viewer_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
+  this->lightbox_->set_render_window( this->ui_->qvtkWidget->GetRenderWindow() );
 }
 
 //---------------------------------------------------------------------------
@@ -137,7 +137,7 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
   int value = this->ui_->thumbnail_size_slider->maximum() - this->ui_->thumbnail_size_slider->value() + 1;
 
-  this->viewer_->set_tile_layout( value, value );
+  this->lightbox_->set_tile_layout( value, value );
 
   this->update_scrollbar();
 
@@ -147,8 +147,8 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_scrollbar()
 {
-  int num_rows = this->viewer_->get_num_rows();
-  int num_visible = this->viewer_->get_num_rows_visible();
+  int num_rows = this->lightbox_->get_num_rows();
+  int num_visible = this->lightbox_->get_num_rows_visible();
   std::cerr << "num_rows = " << num_rows << "\n";
   std::cerr << "num_visible = " << num_visible << "\n";
   if ( num_visible >= num_rows )
@@ -170,7 +170,7 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
   int value = this->ui_->vertical_scroll_bar->value();
 
   std::cerr << "vertical scrollbar value = " << value << "\n";
-  this->viewer_->set_start_row( value );
+  this->lightbox_->set_start_row( value );
 }
 
 //---------------------------------------------------------------------------
@@ -292,14 +292,14 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
-  this->viewer_->set_auto_center( this->ui_->center_checkbox->isChecked() );
+  this->lightbox_->set_auto_center( this->ui_->center_checkbox->isChecked() );
   this->handle_project_changed();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_meshes()
 {
-  this->viewer_->set_shapes( this->project_->get_shapes() );
+  this->lightbox_->set_shapes( this->project_->get_shapes() );
 }
 
 //---------------------------------------------------------------------------
@@ -309,15 +309,15 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 
   if ( mode == "Original" )
   {
-    this->viewer_->set_mesh_mode( Viewer::INITIAL_C );
+    this->lightbox_->set_mesh_mode( Lightbox::INITIAL_C );
   }
   else if ( mode == "Groomed" )
   {
-    this->viewer_->set_mesh_mode( Viewer::GROOMED_C );
+    this->lightbox_->set_mesh_mode( Lightbox::GROOMED_C );
   }
   else if ( mode == "Reconstruction" )
   {
-    this->viewer_->set_mesh_mode( Viewer::RECONSTRUCTED_C );
+    this->lightbox_->set_mesh_mode( Lightbox::RECONSTRUCTED_C );
   }
 }
 

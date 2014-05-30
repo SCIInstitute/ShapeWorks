@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QActionGroup>
 
-class Viewer;
+class Lightbox;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
@@ -13,7 +13,7 @@ class Project;
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
 
-class ViewerLayout;
+class LightboxLayout;
 
 //! Main ShapeWorksStudio window
 /*!
@@ -74,7 +74,7 @@ private:
 
   QActionGroup* action_group_;
 
-  QSharedPointer<Viewer> viewer_;
+  QSharedPointer<Lightbox> lightbox_;
 
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;

@@ -1,5 +1,5 @@
-#ifndef STUDIO_VISUALIZATION_VIEWER_H
-#define STUDIO_VISUALIZATION_VIEWER_H
+#ifndef STUDIO_VISUALIZATION_LIGHTBOX_H
+#define STUDIO_VISUALIZATION_LIGHTBOX_H
 
 #include <QSharedPointer>
 
@@ -19,7 +19,7 @@ class vtkGlyph3D;
 class Mesh;
 class Shape;
 
-class MiniViewer
+class MiniLightbox
 {
 public:
   vtkSmartPointer<vtkRenderer>             renderer_;
@@ -34,11 +34,11 @@ public:
   vtkSmartPointer<vtkActor>                surface_actor_;
 };
 
-class Viewer
+class Lightbox
 {
 public:
-  Viewer();
-  ~Viewer();
+  Lightbox();
+  ~Lightbox();
 
   void set_shapes( std::vector<QSharedPointer<Shape> > shapes );
 
@@ -72,7 +72,7 @@ private:
 
   std::vector< QSharedPointer < Shape > > shapes_;
 
-  std::vector< QSharedPointer < MiniViewer > > mini_viewers_;
+  std::vector< QSharedPointer < MiniLightbox > > mini_lightboxs_;
 
   vtkRenderWindow* render_window_;
 
@@ -99,4 +99,4 @@ public:
   const static QString RECONSTRUCTED_C;
 };
 
-#endif /* STUDIO_VISUALIZATION_VIEWER_H */
+#endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */
