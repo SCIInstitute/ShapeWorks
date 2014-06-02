@@ -2,6 +2,7 @@
 #define STUDIO_DATA_SHAPE_H
 
 #include <QSharedPointer>
+#include <QString>
 
 #include <Data/Mesh.h>
 
@@ -40,6 +41,17 @@ public:
   /// Set the id of this shape
   void set_id(int id);
 
+
+  QString get_initial_filename();
+  QString get_initial_filename_with_path();
+
+  QString get_groomed_filename();
+  QString get_groomed_filename_with_path();
+
+  QString get_point_filename();
+  QString get_point_filename_with_path();
+
+
 private:
 
   int id_;
@@ -47,6 +59,10 @@ private:
   QSharedPointer<Mesh> initial_mesh_;
   QSharedPointer<Mesh> groomed_mesh_;
   QSharedPointer<Mesh> reconstructed_mesh_;
+
+  QString initial_mesh_filename_;
+  QString groomed_mesh_filename_;
+  QString point_filename_;
 
   vnl_vector<double> correspondence_points_;
 };

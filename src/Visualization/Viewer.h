@@ -11,8 +11,13 @@ class vtkImageData;
 class vtkCamera;
 class vtkGlyph3D;
 
-class Shape;
+class DisplayObject;
 
+//! 3D Viewer
+/*!
+ * The Viewer class encapsulates all the functionality for visualizing a single DisplayObject
+ *
+ */
 class Viewer
 {
 
@@ -24,7 +29,9 @@ public:
   void set_renderer( vtkSmartPointer<vtkRenderer> renderer );
   vtkSmartPointer<vtkRenderer> get_renderer();
 
-  void display_shape( QSharedPointer<Shape> shape, QString mode, bool auto_center );
+  //void display_shape( QSharedPointer<Shape> shape, QString mode, bool auto_center );
+
+  void display_object( QSharedPointer<DisplayObject> object, bool auto_center );
 
   void reset_camera();
 

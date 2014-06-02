@@ -1,4 +1,3 @@
-#include <QFileInfo>
 #include <QMessageBox>
 #include <QTextStream>
 
@@ -35,22 +34,9 @@ QString Mesh::get_dimension_string()
 }
 
 //---------------------------------------------------------------------------
-QString Mesh::get_filename()
-{
-  QFileInfo qfi( this->filename_ );
-  return qfi.fileName();
-}
-
-//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 {
   return this->poly_data_;
-}
-
-//---------------------------------------------------------------------------
-QString Mesh::get_filename_with_path()
-{
-  return this->filename_;
 }
 
 //---------------------------------------------------------------------------
@@ -58,7 +44,6 @@ void Mesh::create_from_image( QString filename )
 {
   try
   {
-    this->filename_ = filename;
 
     // read file using ITK
     ReaderType::Pointer reader = ReaderType::New();
@@ -98,55 +83,43 @@ void Mesh::create_from_image( QString filename )
 }
 
 //---------------------------------------------------------------------------
-
 bool Mesh::create_from_pointset( QString filename, const vnl_vector<double>& vnl_points )
 {
-  try
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+
+  int num_points = vnl_points.size() / 3;
+  points->SetNumberOfPoints( num_points );
+
+  unsigned int k = 0;
+  for ( unsigned int i = 0; i < num_points; i++ )
   {
-    this->filename_ = filename;
-
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-
-    int num_points = vnl_points.size() / 3;
-    points->SetNumberOfPoints( num_points );
-
-    unsigned int k = 0;
-    for ( unsigned int i = 0; i < num_points; i++ )
-    {
-      double x = vnl_points[k++];
-      double y = vnl_points[k++];
-      double z = vnl_points[k++];
-      points->SetPoint( i, x, y, z );
-    }
-    points->Modified();
-
-    std::cerr << "found " << num_points << " points\n";
-
-    points->Modified();
-
-    vtkSmartPointer<vtkPolyData>pointSet = vtkSmartPointer<vtkPolyData>::New();
-    pointSet->SetPoints( points );
-
-    vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-    surfaceReconstruction->SetInputData( pointSet );
-
-    // create isosurface
-    vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
-    marching->SetInputConnection( surfaceReconstruction->GetOutputPort() );
-    marching->SetNumberOfContours( 1 );
-    marching->SetValue( 0, 0.5 );
-    marching->Update();
-
-    // store isosurface polydata
-    this->poly_data_ = marching->GetOutput();
+    double x = vnl_points[k++];
+    double y = vnl_points[k++];
+    double z = vnl_points[k++];
+    points->SetPoint( i, x, y, z );
   }
-  catch ( itk::ExceptionObject & excep )
-  {
-    std::cerr << "Exception caught!" << std::endl;
-    std::cerr << excep << std::endl;
-    return false;
-  }
+  points->Modified();
 
-  std::cerr << "true!\n";
+  std::cerr << "found " << num_points << " points\n";
+
+  points->Modified();
+
+  vtkSmartPointer<vtkPolyData>pointSet = vtkSmartPointer<vtkPolyData>::New();
+  pointSet->SetPoints( points );
+
+  vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
+    vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
+  surfaceReconstruction->SetInputData( pointSet );
+
+  // create isosurface
+  vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
+  marching->SetInputConnection( surfaceReconstruction->GetOutputPort() );
+  marching->SetNumberOfContours( 1 );
+  marching->SetValue( 0, 0.5 );
+  marching->Update();
+
+  // store isosurface polydata
+  this->poly_data_ = marching->GetOutput();
+
   return true;
 }

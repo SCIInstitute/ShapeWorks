@@ -2,6 +2,7 @@
 #define STUDIO_VISUALIZATION_LIGHTBOX_H
 
 #include <QSharedPointer>
+#include <QVector>
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataMapper.h>
@@ -12,14 +13,19 @@
 
 class Mesh;
 class Shape;
+class DisplayObject;
 
+//! Display multiple Viewers in a tiled display
+/*!
+ * The LightBox class displays multiple Viewers in a tiled display
+ */
 class Lightbox
 {
 public:
   Lightbox();
   ~Lightbox();
 
-  void set_shapes( std::vector<QSharedPointer<Shape> > shapes );
+  void set_display_objects( QVector < QSharedPointer < DisplayObject >> objects );
 
   void set_interactor( vtkRenderWindowInteractor* interactor );
 
@@ -36,20 +42,18 @@ public:
 
   void set_auto_center( bool center );
 
-  void set_mesh_mode( QString mode );
-
 private:
 
   void clear_renderers();
-  void display_shapes();
+  void display_objects();
 
-  void insert_shape_into_view( QSharedPointer<Shape> shape, int position, int id );
+  void insert_object_into_viewer( QSharedPointer<DisplayObject> object, int position );
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  std::vector< QSharedPointer < Shape > > shapes_;
+  QVector < QSharedPointer < DisplayObject > > objects_;
 
-  std::vector< QSharedPointer < Viewer > > viewers_;
+  QVector < QSharedPointer < Viewer > > viewers_;
 
   vtkRenderWindow* render_window_;
 
@@ -65,15 +69,6 @@ private:
   bool first_draw_;
 
   bool auto_center_;
-
-  QString mesh_mode_;
-
-public:
-
-  // constants
-  const static QString INITIAL_C;
-  const static QString GROOMED_C;
-  const static QString RECONSTRUCTED_C;
 };
 
 #endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */

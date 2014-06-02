@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <QSharedPointer>
+#include <QVector>
 
 class DataManager;
 class Shape;
@@ -48,7 +49,7 @@ public:
   void remove_shapes( QList<int> list );
 
   /// return all shapes
-  std::vector<QSharedPointer<Shape> > get_shapes();
+  QVector<QSharedPointer<Shape> > get_shapes();
 
   /// reset the project
   void reset();
@@ -78,7 +79,7 @@ private:
   QString filename_;
 
   /// collection of shapes
-  std::vector<QSharedPointer<Shape> > shapes_;
+  QVector<QSharedPointer<Shape> > shapes_;
 
   bool originals_present_;
   bool groomed_present_;

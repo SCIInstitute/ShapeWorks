@@ -1,0 +1,40 @@
+#ifndef STUDIO_VISUALIZATION_DISPLAYOBJECT_H
+#define STUDIO_VISUALIZATION_DISPLAYOBJECT_H
+
+#include <QSharedPointer>
+#include <QStringList>
+
+#include <vnl/vnl_vector.h>
+
+class Mesh;
+
+//! Representation of everything displayed in a single Viewer
+/*!
+ * The DisplayObject class encapsulates all the data displayed by a single viewer
+ *
+ */
+class DisplayObject
+{
+public:
+  DisplayObject();
+  ~DisplayObject();
+
+  void set_mesh( QSharedPointer<Mesh> mesh );
+  QSharedPointer<Mesh> get_mesh();
+
+  void set_annotations( QStringList annotations );
+  QStringList get_annotations();
+
+  void set_correspondence_points( vnl_vector<double> points );
+  vnl_vector<double> get_correspondence_points();
+
+  /// center the mesh
+  void center();
+
+private:
+  QSharedPointer<Mesh> mesh_;
+  vnl_vector<double> correspondence_points_;
+  QStringList corner_annotations_;
+};
+
+#endif /* STUDIO_VISUALIZATION_DISPLAYOBJECT_H */

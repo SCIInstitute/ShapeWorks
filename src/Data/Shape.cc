@@ -1,6 +1,7 @@
 #include <Data/Shape.h>
 
 #include <QFile>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QTextStream>
 
@@ -19,6 +20,7 @@ void Shape::import_initial_file( QString filename )
 {
   this->initial_mesh_ = QSharedPointer<Mesh>( new Mesh() );
   this->initial_mesh_->create_from_image( filename );
+  this->initial_mesh_filename_ = filename;
 }
 
 //---------------------------------------------------------------------------
@@ -32,6 +34,7 @@ void Shape::import_groomed_file( QString filename )
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>( new Mesh() );
   this->groomed_mesh_->create_from_image( filename );
+  this->groomed_mesh_filename_ = filename;
 }
 
 //---------------------------------------------------------------------------
@@ -88,6 +91,8 @@ bool Shape::import_point_file( QString filename )
   }
 
   this->reconstructed_mesh_ = QSharedPointer<Mesh> ( new Mesh() );
+  this->point_filename_ = filename;
+
   return this->reconstructed_mesh_->create_from_pointset( filename, this->correspondence_points_ );
 }
 
@@ -113,4 +118,42 @@ int Shape::get_id()
 void Shape::set_id( int id )
 {
   this->id_ = id;
+}
+
+//---------------------------------------------------------------------------
+QString Shape::get_initial_filename()
+{
+  QFileInfo qfi( this->initial_mesh_filename_ );
+  return qfi.fileName();
+}
+
+//---------------------------------------------------------------------------
+QString Shape::get_initial_filename_with_path()
+{
+  return this->initial_mesh_filename_;
+}
+//---------------------------------------------------------------------------
+QString Shape::get_groomed_filename()
+{
+  QFileInfo qfi( this->groomed_mesh_filename_ );
+  return qfi.fileName();
+}
+
+//---------------------------------------------------------------------------
+QString Shape::get_groomed_filename_with_path()
+{
+  return this->groomed_mesh_filename_;
+}
+
+//---------------------------------------------------------------------------
+QString Shape::get_point_filename()
+{
+  QFileInfo qfi( this->point_filename_ );
+  return qfi.fileName();
+}
+
+//---------------------------------------------------------------------------
+QString Shape::get_point_filename_with_path()
+{
+  return this->point_filename_;
 }

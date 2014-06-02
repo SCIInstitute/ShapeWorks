@@ -2,12 +2,9 @@
 #include <vtkRenderWindow.h>
 
 #include <Visualization/Lightbox.h>
+#include <Visualization/DisplayObject.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
-
-const QString Lightbox::INITIAL_C( "initial" );
-const QString Lightbox::GROOMED_C( "groomed" );
-const QString Lightbox::RECONSTRUCTED_C( "reconstructed" );
 
 //-----------------------------------------------------------------------------
 Lightbox::Lightbox()
@@ -21,7 +18,6 @@ Lightbox::Lightbox()
 
   this->first_draw_ = true;
   this->auto_center_ = true;
-  this->mesh_mode_ = Lightbox::INITIAL_C;
 }
 
 //-----------------------------------------------------------------------------
@@ -35,7 +31,7 @@ void Lightbox::set_interactor( vtkRenderWindowInteractor* interactor )
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::insert_shape_into_view( QSharedPointer<Shape> shape, int position, int id )
+void Lightbox::insert_object_into_viewer( QSharedPointer<DisplayObject> object, int position )
 {
   if ( position >= this->viewers_.size() )
   {
@@ -44,7 +40,7 @@ void Lightbox::insert_shape_into_view( QSharedPointer<Shape> shape, int position
 
   QSharedPointer<Viewer> viewer = this->viewers_[position];
 
-  viewer->display_shape( shape, this->mesh_mode_, this->auto_center_ );
+  viewer->display_object( object, this->auto_center_ );
 
   if ( this->first_draw_ )
   {
@@ -63,7 +59,7 @@ void Lightbox::clear_renderers()
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::display_shapes()
+void Lightbox::display_objects()
 {
   this->clear_renderers();
 
@@ -71,10 +67,9 @@ void Lightbox::display_shapes()
   int start_mesh = this->start_row_ * this->tile_layout_width_;
 
   int position = 0;
-  for ( int i = start_mesh; i < this->shapes_.size(); i++ )
+  for ( int i = start_mesh; i < this->objects_.size(); i++ )
   {
-    int id = i + 1;
-    this->insert_shape_into_view( shapes_[i], position, id );
+    this->insert_object_into_viewer( this->objects_[i], position );
     position++;
   }
 
@@ -163,13 +158,13 @@ void Lightbox::set_tile_layout( int width, int height )
   this->tile_layout_height_ = height;
 
   this->setup_renderers();
-  this->display_shapes();
+  this->display_objects();
 }
 
 //-----------------------------------------------------------------------------
 int Lightbox::get_num_rows()
 {
-  return std::ceil( (float)this->shapes_.size() / (float)this->tile_layout_width_ );
+  return std::ceil( (float)this->objects_.size() / (float)this->tile_layout_width_ );
 }
 
 //-----------------------------------------------------------------------------
@@ -182,7 +177,7 @@ int Lightbox::get_num_rows_visible()
 void Lightbox::set_start_row( int row )
 {
   this->start_row_ = row;
-  this->display_shapes();
+  this->display_objects();
   this->render_window_->Render();
 }
 
@@ -194,15 +189,8 @@ void Lightbox::set_auto_center( bool center )
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_shapes( std::vector<QSharedPointer<Shape> > shapes )
+void Lightbox::set_display_objects( QVector < QSharedPointer < DisplayObject >> objects )
 {
-  this->shapes_ = shapes;
-  this->display_shapes();
-}
-
-//-----------------------------------------------------------------------------
-void Lightbox::set_mesh_mode( QString mode )
-{
-  this->mesh_mode_ = mode;
-  this->display_shapes();
+  this->objects_ = objects;
+  this->display_objects();
 }

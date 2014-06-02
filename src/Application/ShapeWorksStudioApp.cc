@@ -10,13 +10,14 @@
 // studio
 #include <Application/ShapeWorksStudioApp.h>
 #include <Application/Preferences.h>
-#include <Visualization/Lightbox.h>
 #include <Groom/GroomTool.h>
 #include <Optimize/OptimizeTool.h>
 #include <Analysis/AnalysisTool.h>
 #include <Data/Project.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
+#include <Visualization/Lightbox.h>
+#include <Visualization/DisplayObject.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -199,7 +200,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 void ShapeWorksStudioApp::update_table()
 {
 
-  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
   this->ui_->table_widget->clear();
 
@@ -219,7 +220,7 @@ void ShapeWorksStudioApp::update_table()
     QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i + 1 ) );
     this->ui_->table_widget->setItem( i, 0, new_item );
 
-    new_item = new QTableWidgetItem( initial_mesh->get_filename() );
+    new_item = new QTableWidgetItem( shapes[i]->get_initial_filename() );
     this->ui_->table_widget->setItem( i, 1, new_item );
 
     new_item = new QTableWidgetItem( initial_mesh->get_dimension_string() );
@@ -264,7 +265,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
-  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
   if ( this->project_->groomed_present() )
   {
@@ -284,7 +285,7 @@ void ShapeWorksStudioApp::handle_project_changed()
     this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
   }
 
-  this->update_meshes();
+  this->update_display_objects();
   this->update_table();
   this->update_scrollbar();
 }
@@ -297,28 +298,55 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_meshes()
+void ShapeWorksStudioApp::update_display_objects()
 {
-  this->lightbox_->set_shapes( this->project_->get_shapes() );
+  QVector < QSharedPointer < DisplayObject >> display_objects;
+
+  QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
+
+  QString mode = this->ui_->view_mode_combobox->currentText();
+
+  for ( int i = 0; i < shapes.size(); i++ )
+  {
+    QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>( new DisplayObject() );
+
+    QSharedPointer<Mesh> mesh;
+    QString filename;
+    if ( mode == "Original" )
+    {
+      mesh = shapes[i]->get_initial_mesh();
+      filename = shapes[i]->get_initial_filename();
+    }
+    else if ( mode == "Groomed" )
+    {
+      mesh = shapes[i]->get_groomed_mesh();
+      filename = shapes[i]->get_groomed_filename();
+    }
+    else if ( mode == "Reconstruction" )
+    {
+      mesh = shapes[i]->get_reconstructed_mesh();
+      filename = shapes[i]->get_point_filename();
+    }
+    object->set_mesh( mesh );
+    object->set_correspondence_points( shapes[i]->get_correspondence_points() );
+
+    QStringList annotations;
+    annotations << filename;
+    annotations << "";
+    annotations << QString::number( shapes[i]->get_id() );
+    annotations << "";
+    object->set_annotations( annotations );
+
+    display_objects << object;
+  }
+
+  this->lightbox_->set_display_objects( display_objects );
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
-  QString mode = this->ui_->view_mode_combobox->currentText();
-
-  if ( mode == "Original" )
-  {
-    this->lightbox_->set_mesh_mode( Lightbox::INITIAL_C );
-  }
-  else if ( mode == "Groomed" )
-  {
-    this->lightbox_->set_mesh_mode( Lightbox::GROOMED_C );
-  }
-  else if ( mode == "Reconstruction" )
-  {
-    this->lightbox_->set_mesh_mode( Lightbox::RECONSTRUCTED_C );
-  }
+  this->update_display_objects();
 }
 
 //---------------------------------------------------------------------------

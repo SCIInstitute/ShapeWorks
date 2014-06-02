@@ -66,7 +66,7 @@ private:
 
   void update_table();
 
-  void update_meshes();
+  void update_display_objects();
 
 
   /// designer form

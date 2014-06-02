@@ -5,10 +5,12 @@
 #include <QMainWindow>
 #include <QActionGroup>
 #include <QFileDialog>
+#include <QVector>
+#include <QSharedPointer>
+#include <QString>
 
 #include <itkImage.h>
 #include <itkImageFileReader.h>
-
 
 #include <vtkSmartPointer.h>
 #include <vtkRenderer.h>

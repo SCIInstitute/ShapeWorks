@@ -118,8 +118,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   // load files!
 
-  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  QFileInfo fi( shapes[0]->get_initial_mesh()->get_filename_with_path() );
+  QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  QFileInfo fi( shapes[0]->get_initial_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
 
   QString prefix = project_path + QDir::separator() + "studio_run";
@@ -181,8 +181,8 @@ bool OptimizeTool::export_xml( QString filename )
   xml_writer->writeTextElement( "optimization_iterations",
                                 QString::number( this->ui_->optimization_iterations_->value() ) );
 
-  std::vector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  QFileInfo fi( shapes[0]->get_initial_mesh()->get_filename_with_path() );
+  QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  QFileInfo fi( shapes[0]->get_initial_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
 
   xml_writer->writeTextElement( "output_points_prefix",
@@ -194,9 +194,7 @@ bool OptimizeTool::export_xml( QString filename )
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    QSharedPointer<Mesh> groomed_mesh = shapes[i]->get_groomed_mesh();
-
-    xml_writer->writeCharacters( groomed_mesh->get_filename_with_path() + "\n" );
+    xml_writer->writeCharacters( shapes[i]->get_groomed_filename_with_path() + "\n" );
   }
   xml_writer->writeEndElement(); // inputs
 

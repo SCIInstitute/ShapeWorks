@@ -56,16 +56,16 @@ bool Project::save_project( QString filename /* = "" */ )
     xml->writeStartElement( "shape" );
     xml->writeAttribute( "id", QString::number( i ) );
 
-    xml->writeTextElement( "initial_mesh", this->shapes_[i]->get_initial_mesh()->get_filename_with_path() );
+    xml->writeTextElement( "initial_mesh", this->shapes_[i]->get_initial_filename_with_path() );
 
     if ( this->groomed_present() )
     {
-      xml->writeTextElement( "groomed_mesh", this->shapes_[i]->get_groomed_mesh()->get_filename_with_path() );
+      xml->writeTextElement( "groomed_mesh", this->shapes_[i]->get_groomed_filename_with_path() );
     }
 
     if ( this->reconstructed_present() )
     {
-      xml->writeTextElement( "point_file", this->shapes_[i]->get_reconstructed_mesh()->get_filename_with_path() );
+      xml->writeTextElement( "point_file", this->shapes_[i]->get_point_filename_with_path() );
     }
 
     xml->writeEndElement(); // shape
@@ -209,7 +209,7 @@ void Project::load_point_files( QStringList file_names )
 }
 
 //---------------------------------------------------------------------------
-std::vector<QSharedPointer<Shape> > Project::get_shapes()
+QVector<QSharedPointer<Shape> > Project::get_shapes()
 {
   return this->shapes_;
 }

@@ -16,10 +16,10 @@
 #include <vtkTextProperty.h>
 #include <vtkCornerAnnotation.h>
 
-
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
+#include <Visualization/DisplayObject.h>
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
@@ -32,7 +32,6 @@ Viewer::Viewer()
   this->glyph_point_set_ = vtkSmartPointer<vtkPolyData>::New();
   this->glyph_point_set_->SetPoints( this->glyph_points_ );
   this->glyph_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
-
 
   vtkSmartPointer<vtkSphereSource> sphere_source = vtkSmartPointer<vtkSphereSource>::New();
 
@@ -62,43 +61,25 @@ Viewer::Viewer()
   this->glyph_actor->GetProperty()->SetSpecular( 0.3 );
   this->glyph_actor->GetProperty()->SetSpecularPower( 10.0 );
   this->glyph_actor->SetMapper( this->glyph_mapper_ );
-
 }
 
 //-----------------------------------------------------------------------------
 Viewer::~Viewer()
-{
-
-}
+{}
 
 //-----------------------------------------------------------------------------
-
-void Viewer::display_shape( QSharedPointer<Shape> shape, QString mode, bool auto_center )
+void Viewer::display_object( QSharedPointer<DisplayObject> object, bool auto_center )
 {
-  QSharedPointer<Mesh> mesh;
-
-  if ( mode == Lightbox::INITIAL_C )
-  {
-    mesh = shape->get_initial_mesh();
-  }
-  else if ( mode == Lightbox::GROOMED_C )
-  {
-    mesh = shape->get_groomed_mesh();
-  }
-  else if ( mode == Lightbox::RECONSTRUCTED_C )
-  {
-    mesh = shape->get_reconstructed_mesh();
-  }
+  std::cerr << "display\n";
+  QSharedPointer<Mesh> mesh = object->get_mesh();
 
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
-  QString note = mesh->get_filename();
-
 
   vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
   vtkSmartPointer<vtkActor> actor = this->surface_actor_;
   vtkSmartPointer<vtkRenderer> ren = this->renderer_;
 
-  vnl_vector<double> correspondence_points = shape->get_correspondence_points();
+  vnl_vector<double> correspondence_points = object->get_correspondence_points();
 
   int num_points = correspondence_points.size() / 3;
 
@@ -177,14 +158,19 @@ void Viewer::display_shape( QSharedPointer<Shape> shape, QString mode, bool auto
   ren->AddActor( actor );
   ren->AddActor( this->glyph_actor );
 
-
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
     vtkSmartPointer<vtkCornerAnnotation>::New();
   corner_annotation->SetLinearFontScaleFactor( 2 );
   corner_annotation->SetNonlinearFontScaleFactor( 1 );
   corner_annotation->SetMaximumFontSize( 16 );
-  corner_annotation->SetText( 2, QString::number( shape->get_id() ).toStdString().c_str() );
-  corner_annotation->SetText( 0, note.toStdString().c_str() );
+
+  QStringList annotations = object->get_annotations();
+
+  corner_annotation->SetText( 0, ( annotations[0] ).toStdString().c_str() );
+  corner_annotation->SetText( 1, ( annotations[1] ).toStdString().c_str() );
+  corner_annotation->SetText( 2, ( annotations[2] ).toStdString().c_str() );
+  corner_annotation->SetText( 3, ( annotations[3] ).toStdString().c_str() );
+
   corner_annotation->GetTextProperty()->SetColor( 0.50, 0.5, 0.5 );
 
   ren->AddViewProp( corner_annotation );
@@ -207,4 +193,3 @@ vtkSmartPointer<vtkRenderer> Viewer::get_renderer()
 {
   return this->renderer_;
 }
-
