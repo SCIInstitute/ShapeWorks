@@ -25,7 +25,7 @@ public:
   Lightbox();
   ~Lightbox();
 
-  void set_display_objects( QVector < QSharedPointer < DisplayObject >> objects );
+  void set_display_objects( QVector < QSharedPointer < DisplayObject > > objects );
 
   void set_interactor( vtkRenderWindowInteractor* interactor );
 

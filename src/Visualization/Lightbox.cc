@@ -189,7 +189,7 @@ void Lightbox::set_auto_center( bool center )
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_display_objects( QVector < QSharedPointer < DisplayObject >> objects )
+void Lightbox::set_display_objects( QVector < QSharedPointer < DisplayObject > > objects )
 {
   this->objects_ = objects;
   this->display_objects();

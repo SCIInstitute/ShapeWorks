@@ -300,9 +300,9 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display_objects()
 {
-  QVector < QSharedPointer < DisplayObject >> display_objects;
+  QVector < QSharedPointer < DisplayObject > > display_objects;
 
-  QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
+  QVector < QSharedPointer < Shape > > shapes = this->project_->get_shapes();
 
   QString mode = this->ui_->view_mode_combobox->currentText();
 
