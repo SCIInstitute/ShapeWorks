@@ -60,7 +60,7 @@ void AnalysisTool::update_shape_stats()
 
   this->set_shapes( this->project_->get_shapes() );
 
-  std::vector < vnl_vector < double >> points;
+  std::vector < vnl_vector < double > > points;
   foreach( ShapeHandle shape, this->shapes_ ) {
     points.push_back( shape->get_correspondence_points() );
   }

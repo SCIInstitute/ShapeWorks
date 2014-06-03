@@ -208,7 +208,7 @@ int ParticleShapeStatistics<VDimension>::ImportPoints( std::vector<vnl_vector<do
   m_groupdiff = m_mean2 - m_mean1;
   return 0;
 }
-
+/*
 template <unsigned int VDimension>
 int ParticleShapeStatistics<VDimension>
 ::ReadPointFiles( const char* fname )
@@ -356,7 +356,7 @@ int ParticleShapeStatistics<VDimension>
 
   return 0;
 } // end ReadPointFiles
-
+*/
 /** Reloads a set of point files and recomputes some statistics. */
 
 template <unsigned int VDimension>
