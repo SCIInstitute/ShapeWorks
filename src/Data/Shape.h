@@ -6,6 +6,11 @@
 
 #include <Data/Mesh.h>
 
+
+class Shape;
+typedef QSharedPointer< Shape > ShapeHandle;
+typedef QVector< ShapeHandle > ShapeList;
+
 //! Representation of a single shape/patient.
 class Shape
 {

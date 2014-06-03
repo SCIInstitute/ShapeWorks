@@ -344,7 +344,7 @@ QToolButton:pressed{
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
-              <widget class="QPushButton" name="meanOverallButton">
+              <widget class="QPushButton" name="mean_overall">
                <property name="text">
                 <string>Overall</string>
                </property>

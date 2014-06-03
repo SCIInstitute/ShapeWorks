@@ -200,6 +200,8 @@ SET(STUDIO_OPTIMIZE_UIS
 ### Analyis
 SET(STUDIO_ANALYSIS_HDRS
   Analysis/AnalysisTool.h
+  Analysis/itkParticleShapeStatistics.h
+  Analysis/itkParticleShapeStatistics.txx
 )
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cc

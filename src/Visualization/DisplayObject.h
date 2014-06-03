@@ -8,6 +8,10 @@
 
 class Mesh;
 
+class DisplayObject;
+typedef QSharedPointer< DisplayObject > DisplayObjectHandle;
+
+
 //! Representation of everything displayed in a single Viewer
 /*!
  * The DisplayObject class encapsulates all the data displayed by a single viewer

@@ -83,7 +83,7 @@ void Mesh::create_from_image( QString filename )
 }
 
 //---------------------------------------------------------------------------
-bool Mesh::create_from_pointset( QString filename, const vnl_vector<double>& vnl_points )
+bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
 {
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 

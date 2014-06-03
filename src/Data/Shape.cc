@@ -93,7 +93,7 @@ bool Shape::import_point_file( QString filename )
   this->reconstructed_mesh_ = QSharedPointer<Mesh> ( new Mesh() );
   this->point_filename_ = filename;
 
-  return this->reconstructed_mesh_->create_from_pointset( filename, this->correspondence_points_ );
+  return this->reconstructed_mesh_->create_from_pointset( this->correspondence_points_ );
 }
 
 //---------------------------------------------------------------------------

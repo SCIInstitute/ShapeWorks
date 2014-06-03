@@ -90,14 +90,18 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object, bool auto_cen
     this->lut_->SetNumberOfTableValues( num_points + 1 );
     this->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
 
+    this->glyph_points_->Reset();
     this->glyph_points_->SetNumberOfPoints( num_points );
 
-    ( (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() ) )->SetNumberOfTuples( num_points );
+    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() );
+
+    scalars->Reset();
+    scalars->SetNumberOfTuples( num_points );
 
     unsigned int idx = 0;
     for ( int i = 0; i < num_points; i++ )
     {
-      ( (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() ) )->InsertValue( i, i );
+      scalars->InsertValue( i, i );
       double x = correspondence_points[idx++];
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
@@ -105,6 +109,7 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object, bool auto_cen
       this->glyph_points_->InsertPoint( i, x, y, z );
     }
   }
+  this->glyph_points_->Modified();
 
   if ( auto_center )
   {

@@ -62,6 +62,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->analysis_tool_ = QSharedPointer<AnalysisTool>( new AnalysisTool() );
   this->analysis_tool_->set_project( this->project_ );
   this->analysis_tool_->set_app( this );
+  this->analysis_tool_->set_lightbox( this->lightbox_ );
   this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
 
   this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );

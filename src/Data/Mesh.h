@@ -9,6 +9,10 @@
 
 #include <vnl/vnl_vector.h>
 
+
+class Mesh;
+typedef QSharedPointer< Mesh > MeshHandle;
+
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file.
@@ -30,7 +34,7 @@ public:
   void create_from_image( QString filename );
 
   /// Create a mesh from a point set
-  bool create_from_pointset( QString filename, const vnl_vector<double>& vnl_points );
+  bool create_from_pointset( const vnl_vector<double>& vnl_points );
 
   /// Get the dimensions as a string for display (if loaded from an image)
   QString get_dimension_string();
