@@ -17,7 +17,6 @@ Lightbox::Lightbox()
   this->start_row_ = 0;
 
   this->first_draw_ = true;
-  this->auto_center_ = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -40,7 +39,7 @@ void Lightbox::insert_object_into_viewer( QSharedPointer<DisplayObject> object, 
 
   QSharedPointer<Viewer> viewer = this->viewers_[position];
 
-  viewer->display_object( object, this->auto_center_ );
+  viewer->display_object( object );
 
   if ( this->first_draw_ )
   {
@@ -179,13 +178,6 @@ void Lightbox::set_start_row( int row )
   this->start_row_ = row;
   this->display_objects();
   this->render_window_->Render();
-}
-
-//-----------------------------------------------------------------------------
-void Lightbox::set_auto_center( bool center )
-{
-  this->auto_center_ = center;
-  this->first_draw_ = true;
 }
 
 //-----------------------------------------------------------------------------

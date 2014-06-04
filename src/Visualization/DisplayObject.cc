@@ -46,7 +46,13 @@ vnl_vector<double> DisplayObject::get_correspondence_points()
 }
 
 //-----------------------------------------------------------------------------
-void DisplayObject::center()
+void DisplayObject::set_transform( const vnl_vector<double>& transform )
 {
+  this->transform_ = transform;
+}
 
+//-----------------------------------------------------------------------------
+vnl_vector<double> DisplayObject::get_transform()
+{
+  return this->transform_;
 }

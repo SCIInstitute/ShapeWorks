@@ -40,8 +40,6 @@ public:
 
   void set_start_row( int row );
 
-  void set_auto_center( bool center );
-
 private:
 
   void clear_renderers();
@@ -67,8 +65,6 @@ private:
   int start_row_;
 
   bool first_draw_;
-
-  bool auto_center_;
 };
 
 #endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */

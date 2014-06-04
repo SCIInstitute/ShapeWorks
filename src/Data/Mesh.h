@@ -42,10 +42,16 @@ public:
   /// Get the mesh polydata
   vtkSmartPointer<vtkPolyData> get_poly_data();
 
+  /// Get the center transform
+  vnl_vector<double> get_center_transform();
+
 private:
 
   vtkSmartPointer<vtkPolyData> poly_data_;
   int dimensions_[3];
+
+  vnl_vector<double> center_transform_;
+
 };
 
 #endif /* STUDIO_DATA_MESH_H */

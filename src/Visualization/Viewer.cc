@@ -6,7 +6,6 @@
 #include <vtkLookupTable.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
-#include <vtkCenterOfMass.h>
 #include <vtkRenderer.h>
 #include <vtkImageActor.h>
 #include <vtkImageData.h>
@@ -68,7 +67,7 @@ Viewer::~Viewer()
 {}
 
 //-----------------------------------------------------------------------------
-void Viewer::display_object( QSharedPointer<DisplayObject> object, bool auto_center )
+void Viewer::display_object( QSharedPointer<DisplayObject> object )
 {
   std::cerr << "display\n";
   QSharedPointer<Mesh> mesh = object->get_mesh();
@@ -111,19 +110,13 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object, bool auto_cen
   }
   this->glyph_points_->Modified();
 
-  if ( auto_center )
-  {
-    // Compute the center of mass
-    vtkSmartPointer<vtkCenterOfMass> center_of_mass_filter = vtkSmartPointer<vtkCenterOfMass>::New();
-    center_of_mass_filter->SetInputData( poly_data );
-    center_of_mass_filter->SetUseScalarsAsWeights( false );
-    center_of_mass_filter->Update();
+  vnl_vector<double> transform = object->get_transform();
 
-    double center[3];
-    center_of_mass_filter->GetCenter( center );
-    double tx = -center[0];
-    double ty = -center[1];
-    double tz = -center[2];
+  if ( transform.size() == 3 )
+  {
+    double tx = -transform[0];
+    double ty = -transform[1];
+    double tz = -transform[2];
 
     vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
     translation->Translate( tx, ty, tz );
@@ -134,18 +127,6 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object, bool auto_cen
     transformFilter->SetTransform( translation );
     transformFilter->Update();
     poly_data = transformFilter->GetOutput();
-
-    /*    // translate correspondence points
-       for ( int i = 0; i < num_points; i++ )
-       {
-       double pos[3];
-       mini_lightbox->glyph_points_->GetPoint( i, pos );
-       pos[0] += center[0];
-       pos[1] += center[1];
-       pos[2] += center[2];
-       mini_lightbox->glyph_points_->InsertPoint( i, pos );
-       }
-     */
   }
 
 #if VTK_MAJOR_VERSION <= 5

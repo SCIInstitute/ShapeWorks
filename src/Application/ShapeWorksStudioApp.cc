@@ -294,7 +294,6 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
-  this->lightbox_->set_auto_center( this->ui_->center_checkbox->isChecked() );
   this->handle_project_changed();
 }
 
@@ -338,6 +337,10 @@ void ShapeWorksStudioApp::update_display_objects()
     annotations << "";
     object->set_annotations( annotations );
 
+    if ( this->ui_->center_checkbox->isChecked() )
+    {
+      object->set_transform( mesh->get_center_transform() );
+    }
     display_objects << object;
   }
 

@@ -11,7 +11,6 @@ class Mesh;
 class DisplayObject;
 typedef QSharedPointer< DisplayObject > DisplayObjectHandle;
 
-
 //! Representation of everything displayed in a single Viewer
 /*!
  * The DisplayObject class encapsulates all the data displayed by a single viewer
@@ -32,13 +31,14 @@ public:
   void set_correspondence_points( vnl_vector<double> points );
   vnl_vector<double> get_correspondence_points();
 
-  /// center the mesh
-  void center();
+  void set_transform( const vnl_vector<double>& transform );
+  vnl_vector<double> get_transform();
 
 private:
   QSharedPointer<Mesh> mesh_;
   vnl_vector<double> correspondence_points_;
   QStringList corner_annotations_;
+  vnl_vector<double> transform_;
 };
 
 #endif /* STUDIO_VISUALIZATION_DISPLAYOBJECT_H */

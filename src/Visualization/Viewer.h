@@ -29,9 +29,7 @@ public:
   void set_renderer( vtkSmartPointer<vtkRenderer> renderer );
   vtkSmartPointer<vtkRenderer> get_renderer();
 
-  //void display_shape( QSharedPointer<Shape> shape, QString mode, bool auto_center );
-
-  void display_object( QSharedPointer<DisplayObject> object, bool auto_center );
+  void display_object( QSharedPointer<DisplayObject> object );
 
   void reset_camera();
 
