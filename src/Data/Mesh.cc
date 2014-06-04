@@ -115,7 +115,7 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
   marching->SetInputConnection( surfaceReconstruction->GetOutputPort() );
   marching->SetNumberOfContours( 1 );
-  marching->SetValue( 0, 0.5 );
+  marching->SetValue( 0, 0.0 );
   marching->Update();
 
   // store isosurface polydata

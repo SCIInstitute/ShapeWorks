@@ -33,6 +33,12 @@ CustomSurfaceReconstructionFilter::CustomSurfaceReconstructionFilter()
   this->NeighborhoodSize = 20;
   // negative values cause the algorithm to make a reasonable guess
   this->SampleSpacing = -1.0; 
+
+
+  this->NeighborhoodSize = 5;
+  // negative values cause the algorithm to make a reasonable guess
+  this->SampleSpacing = 1.0; 
+
 }
 
 // some simple routines for vector math

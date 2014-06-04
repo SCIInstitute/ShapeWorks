@@ -70,9 +70,9 @@ bool Shape::import_point_file( QString filename )
       return false;
     }
 
-    float x = list[0].toFloat();
-    float y = list[1].toFloat();
-    float z = list[2].toFloat();
+    double x = list[0].toDouble();
+    double y = list[1].toDouble();
+    double z = list[2].toDouble();
 
     points->InsertNextPoint( x, y, z );
     num_points++;
