@@ -158,7 +158,7 @@ void Project::import_files( QStringList file_names )
     std::cerr << file_names[i].toStdString() << "\n";
 
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>( new Shape );
-    new_shape->import_initial_file( file_names[i] );
+    new_shape->import_initial_file( file_names[i], 0.5 );
     this->shapes_.push_back( new_shape );
   }
 

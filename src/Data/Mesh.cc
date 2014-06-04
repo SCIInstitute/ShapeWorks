@@ -41,11 +41,10 @@ vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 }
 
 //---------------------------------------------------------------------------
-void Mesh::create_from_image( QString filename )
+void Mesh::create_from_image( QString filename, float iso_value )
 {
   try
   {
-
     // read file using ITK
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( filename.toStdString() );
@@ -98,7 +97,7 @@ void Mesh::create_from_image( QString filename )
     vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
     marching->SetInputConnection( vtk_image->GetOutputPort() );
     marching->SetNumberOfContours( 1 );
-    marching->SetValue( 0, 0.5 );
+    marching->SetValue( 0, iso_value );
     marching->Update();
 
     // store isosurface polydata

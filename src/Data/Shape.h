@@ -20,7 +20,7 @@ public:
   ~Shape();
 
   /// Import the initial raw image file
-  void import_initial_file( QString filename );
+  void import_initial_file( QString filename, float iso_value );
 
   /// Retrieve the initial mesh
   QSharedPointer<Mesh> get_initial_mesh();

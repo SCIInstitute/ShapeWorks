@@ -31,7 +31,7 @@ public:
   ~Mesh();
 
   /// Create a mesh from an image
-  void create_from_image( QString filename );
+  void create_from_image( QString filename, float iso_value );
 
   /// Create a mesh from a point set
   bool create_from_pointset( const vnl_vector<double>& vnl_points );

@@ -16,10 +16,10 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-void Shape::import_initial_file( QString filename )
+void Shape::import_initial_file( QString filename, float iso_value )
 {
   this->initial_mesh_ = QSharedPointer<Mesh>( new Mesh() );
-  this->initial_mesh_->create_from_image( filename );
+  this->initial_mesh_->create_from_image( filename, iso_value );
   this->initial_mesh_filename_ = filename;
 }
 
@@ -33,7 +33,7 @@ QSharedPointer<Mesh> Shape::get_initial_mesh()
 void Shape::import_groomed_file( QString filename )
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>( new Mesh() );
-  this->groomed_mesh_->create_from_image( filename );
+  this->groomed_mesh_->create_from_image( filename, 0.0 );
   this->groomed_mesh_filename_ = filename;
 }
 
