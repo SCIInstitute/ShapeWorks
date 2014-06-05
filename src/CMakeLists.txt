@@ -253,7 +253,6 @@ SET( STUDIO_MOC_HDRS
      Data/Project.h
      Application/Preferences.h
      Visualization/Visualizer.h
-     Visualization/Viewer.h
 )
 
 SET( STUDIO_RCS
