@@ -1003,14 +1003,14 @@ QToolButton:pressed{
            <property name="spacing">
             <number>6</number>
            </property>
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>Show Correspondence Points</string>
+              <string>Show Glyphs</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="2">
             <widget class="QCheckBox" name="show_glyphs">
              <property name="text">
               <string/>
@@ -1020,20 +1020,86 @@ QToolButton:pressed{
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="0" column="0">
             <widget class="QLabel" name="label_15">
              <property name="text">
               <string>Show Surface</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="0" column="2">
             <widget class="QCheckBox" name="show_surface">
              <property name="text">
               <string/>
              </property>
              <property name="checked">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Glyph Size</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Glyph Quality</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="glyph_size_label">
+             <property name="text">
+              <string>_size_</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="glyph_quality_label">
+             <property name="text">
+              <string>_quality_</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QSlider" name="glyph_quality">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>20</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QSlider" name="glyph_size">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>10</number>
              </property>
             </widget>
            </item>

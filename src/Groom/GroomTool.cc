@@ -188,7 +188,7 @@ bool GroomTool::export_xml( QString filename )
 
   // pad
   /// TODO: hook up a UI element to control
-  xml_writer->writeTextElement( "pad", "5" );
+  xml_writer->writeTextElement( "pad", QString::number( this->ui_->padding_amount->value() ) );
 
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
