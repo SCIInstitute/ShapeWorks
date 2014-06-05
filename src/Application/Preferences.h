@@ -39,6 +39,10 @@ public:
   QString get_optimize_location();
   void set_optimize_location( QString location );
 
+  /// last directory used (open/save)
+  QString get_last_directory();
+  void set_last_directory(QString location);
+  
   //--- analysis preferences
 
   bool get_cache_enabled();

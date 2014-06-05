@@ -55,6 +55,12 @@ void AnalysisTool::set_shapes( ShapeList shapes )
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::set_lightbox(QSharedPointer<Lightbox> lightbox)
+{
+  this->lightbox_ = lightbox;
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::update_shape_stats()
 {
 
@@ -95,12 +101,11 @@ void AnalysisTool::update_shape_stats()
 //---------------------------------------------------------------------------
 void AnalysisTool::on_mean_overall_clicked()
 {
-  std::cerr << "mean overall!\n";
   this->update_shape_stats();
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_lightbox(QSharedPointer<Lightbox> lightbox)
+void AnalysisTool::on_show_glyphs_stateChanged()
 {
-  this->lightbox_ = lightbox;
+
 }

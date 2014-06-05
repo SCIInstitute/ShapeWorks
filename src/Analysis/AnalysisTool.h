@@ -38,6 +38,8 @@ public:
 public Q_SLOTS:
   void on_mean_overall_clicked();
 
+  void on_show_glyphs_stateChanged();
+
 private:
 
   void update_shape_stats();

@@ -269,7 +269,7 @@ border-radius: 3px;
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string/>
+    <string>   Tools</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -439,7 +439,7 @@ border-radius: 3px;
      <normaloff>:/Studio/Images/data.png</normaloff>:/Studio/Images/data.png</iconset>
    </property>
    <property name="text">
-    <string>Import</string>
+    <string>Data</string>
    </property>
   </action>
   <action name="action_optimize_mode">

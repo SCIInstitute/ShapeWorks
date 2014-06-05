@@ -81,6 +81,18 @@ void Preferences::set_optimize_location( QString location )
 }
 
 //-----------------------------------------------------------------------------
+QString Preferences::get_last_directory()
+{
+  return this->settings.value( "General/LastDirectory", "" ).toString();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_last_directory( QString location )
+{
+  this->settings.setValue( "General/LastDirectory", location );
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::get_cache_enabled()
 {
   return this->settings.value( "MeshCache/Enabled", DEFAULT_CACHE_ENABLED ).toBool();

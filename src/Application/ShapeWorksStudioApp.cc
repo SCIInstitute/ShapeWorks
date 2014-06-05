@@ -118,12 +118,15 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   QStringList filenames;
 
   filenames = QFileDialog::getOpenFileNames( this, tr( "Import Files..." ),
-                                             QString(), tr( "NRRD files (*.nrrd)" ) );
+                                             Preferences::Instance().get_last_directory(), 
+                                             tr( "NRRD files (*.nrrd)" ) );
 
   if ( filenames.size() == 0 )
   {
     return;
   }
+
+  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filenames[0] ) );
 
   this->import_files( filenames );
 }
