@@ -214,12 +214,14 @@ SET(STUDIO_ANALYSIS_UIS
 SET(STUDIO_VISUALIZATION_HDRS
   Visualization/Lightbox.h
   Visualization/Viewer.h
+  Visualization/Visualizer.h
   Visualization/DisplayObject.h
   Visualization/CustomSurfaceReconstructionFilter.h
 )
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cc
   Visualization/Viewer.cc
+  Visualization/Visualizer.cc
   Visualization/DisplayObject.cc
   Visualization/CustomSurfaceReconstructionFilter.cc
 )
@@ -249,6 +251,9 @@ SET( STUDIO_MOC_HDRS
      Optimize/OptimizeTool.h
      Analysis/AnalysisTool.h
      Data/Project.h
+     Application/Preferences.h
+     Visualization/Visualizer.h
+     Visualization/Viewer.h
 )
 
 SET( STUDIO_RCS

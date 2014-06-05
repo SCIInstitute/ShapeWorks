@@ -13,8 +13,6 @@
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
-
-
 #include <Analysis/AnalysisTool.h>
 
 #include <Analysis/itkParticleShapeStatistics.h>
@@ -30,6 +28,7 @@ AnalysisTool::AnalysisTool()
 
   this->ui_ = new Ui_AnalysisTool;
   this->ui_->setupUi( this );
+  this->update_from_preferences();
 }
 
 //---------------------------------------------------------------------------
@@ -49,63 +48,48 @@ void AnalysisTool::set_app( ShapeWorksStudioApp* app )
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_shapes( ShapeList shapes )
-{
-  this->shapes_ = shapes;
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::set_lightbox(QSharedPointer<Lightbox> lightbox)
-{
-  this->lightbox_ = lightbox;
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::update_shape_stats()
-{
-
-  this->set_shapes( this->project_->get_shapes() );
-
-  std::vector < vnl_vector < double > > points;
-  foreach( ShapeHandle shape, this->shapes_ ) {
-    points.push_back( shape->get_correspondence_points() );
-  }
-
-  this->stats.ImportPoints( points );
-
-  this->stats.ComputeModes();
-
-  vnl_vector<double> mean_shape = this->stats.Mean();
-
-  MeshHandle mesh = MeshHandle( new Mesh() );
-  mesh->create_from_pointset( mean_shape );
-
-  DisplayObjectHandle object = DisplayObjectHandle( new DisplayObject() );
-
-  object->set_mesh( mesh );
-  object->set_correspondence_points( mean_shape );
-
-  QStringList annotations;
-  annotations << "mean";
-  annotations << "";
-  annotations << "";
-  annotations << "";
-  object->set_annotations( annotations );
-
-  QVector<DisplayObjectHandle> list;
-  list << object;
-  this->lightbox_->set_display_objects(list);
-
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::on_mean_overall_clicked()
 {
-  this->update_shape_stats();
+  this->visualizer_->display_mean();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_show_surface_stateChanged()
+{
+  this->visualizer_->set_show_surface(this->ui_->show_surface->isChecked());
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_show_glyphs_stateChanged()
 {
+  this->visualizer_->set_show_glyphs(this->ui_->show_glyphs->isChecked());
+}
 
+//---------------------------------------------------------------------------
+void AnalysisTool::on_glyph_size_valueChanged( int value )
+{
+  Preferences::Instance().set_glyph_size( value / 10.0 );
+  this->update_from_preferences();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_glyph_quality_valueChanged( int value )
+{
+  Preferences::Instance().set_glyph_quality( value );
+  this->update_from_preferences();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::set_visualizer( VisualizerHandle visualizer )
+{
+  this->visualizer_ = visualizer;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::update_from_preferences()
+{
+  this->ui_->glyph_quality->setValue(Preferences::Instance().get_glyph_quality());
+  this->ui_->glyph_quality_label->setText( QString::number( Preferences::Instance().get_glyph_quality() ) );
+  this->ui_->glyph_size->setValue(Preferences::Instance().get_glyph_size() * 10.0);
+  this->ui_->glyph_size_label->setText( QString::number( Preferences::Instance().get_glyph_size() ) );
 }

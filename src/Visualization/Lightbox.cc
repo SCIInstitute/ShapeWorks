@@ -11,6 +11,7 @@ Lightbox::Lightbox()
 {
   this->renderer_ = vtkSmartPointer<vtkRenderer>::New();
   this->camera_ = this->renderer_->GetActiveCamera();
+  this->render_window_ = NULL;
 
   this->tile_layout_width_ = 4;
   this->tile_layout_height_ = 4;
@@ -63,16 +64,14 @@ void Lightbox::display_objects()
   this->clear_renderers();
 
   // skip based on scrollbar
-  int start_mesh = this->start_row_ * this->tile_layout_width_;
+  int start_object = this->start_row_ * this->tile_layout_width_;
 
   int position = 0;
-  for ( int i = start_mesh; i < this->objects_.size(); i++ )
+  for ( int i = start_object; i < this->objects_.size(); i++ )
   {
     this->insert_object_into_viewer( this->objects_[i], position );
     position++;
   }
-
-  this->render_window_->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -185,4 +184,19 @@ void Lightbox::set_display_objects( QVector < QSharedPointer < DisplayObject > >
 {
   this->objects_ = objects;
   this->display_objects();
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::redraw()
+{
+  if ( this->render_window_ )
+  {
+    this->render_window_->Render();
+  }
+}
+
+//-----------------------------------------------------------------------------
+ViewerList Lightbox::get_viewers()
+{
+  return this->viewers_;
 }

@@ -1010,7 +1010,7 @@ QToolButton:pressed{
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
+           <item row="1" column="3">
             <widget class="QCheckBox" name="show_glyphs">
              <property name="text">
               <string/>
@@ -1027,7 +1027,7 @@ QToolButton:pressed{
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
+           <item row="0" column="3">
             <widget class="QCheckBox" name="show_surface">
              <property name="text">
               <string/>
@@ -1053,6 +1053,12 @@ QToolButton:pressed{
            </item>
            <item row="2" column="1">
             <widget class="QLabel" name="glyph_size_label">
+             <property name="minimumSize">
+              <size>
+               <width>50</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
               <string>_size_</string>
              </property>
@@ -1060,37 +1066,27 @@ QToolButton:pressed{
            </item>
            <item row="3" column="1">
             <widget class="QLabel" name="glyph_quality_label">
+             <property name="minimumSize">
+              <size>
+               <width>50</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
               <string>_quality_</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QSlider" name="glyph_quality">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>20</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="tickPosition">
-              <enum>QSlider::TicksBelow</enum>
-             </property>
-             <property name="tickInterval">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
+           <item row="2" column="3">
             <widget class="QSlider" name="glyph_size">
              <property name="minimum">
               <number>1</number>
              </property>
              <property name="maximum">
               <number>100</number>
+             </property>
+             <property name="pageStep">
+              <number>10</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -1100,6 +1096,28 @@ QToolButton:pressed{
              </property>
              <property name="tickInterval">
               <number>10</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QSlider" name="glyph_quality">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>20</number>
+             </property>
+             <property name="pageStep">
+              <number>3</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::TicksBelow</enum>
+             </property>
+             <property name="tickInterval">
+              <number>1</number>
              </property>
             </widget>
            </item>

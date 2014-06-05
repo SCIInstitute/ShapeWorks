@@ -15,6 +15,7 @@
 #include <vtkTextProperty.h>
 #include <vtkCornerAnnotation.h>
 
+#include <Application/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
@@ -32,7 +33,7 @@ Viewer::Viewer()
   this->glyph_point_set_->SetPoints( this->glyph_points_ );
   this->glyph_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
 
-  vtkSmartPointer<vtkSphereSource> sphere_source = vtkSmartPointer<vtkSphereSource>::New();
+  this->sphere_source = vtkSmartPointer<vtkSphereSource>::New();
 
   this->lut_ = vtkSmartPointer<vtkLookupTable>::New();
 
@@ -54,12 +55,16 @@ Viewer::Viewer()
   this->glyph_mapper_->SetInputConnection( this->glyphs_->GetOutputPort() );
   this->glyph_mapper_->SetLookupTable( this->lut_ );
 
-  this->glyph_actor = vtkSmartPointer<vtkActor>::New();
-  this->glyph_actor->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
-  this->glyph_actor->GetProperty()->SetDiffuse( 0.8 );
-  this->glyph_actor->GetProperty()->SetSpecular( 0.3 );
-  this->glyph_actor->GetProperty()->SetSpecularPower( 10.0 );
-  this->glyph_actor->SetMapper( this->glyph_mapper_ );
+  this->glyph_actor_ = vtkSmartPointer<vtkActor>::New();
+  this->glyph_actor_->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
+  this->glyph_actor_->GetProperty()->SetDiffuse( 0.8 );
+  this->glyph_actor_->GetProperty()->SetSpecular( 0.3 );
+  this->glyph_actor_->GetProperty()->SetSpecularPower( 10.0 );
+  this->glyph_actor_->SetMapper( this->glyph_mapper_ );
+
+  this->glyph_size_ = 1.0f;
+  this->glyph_quality_ = 5.0f;
+  this->update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------
@@ -69,7 +74,6 @@ Viewer::~Viewer()
 //-----------------------------------------------------------------------------
 void Viewer::display_object( QSharedPointer<DisplayObject> object )
 {
-  std::cerr << "display\n";
   QSharedPointer<Mesh> mesh = object->get_mesh();
 
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
@@ -82,6 +86,8 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
 
   int num_points = correspondence_points.size() / 3;
 
+  vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() );
+
   if ( num_points > 0 )
   {
     this->glyphs_->SetRange( 0.0, (double) num_points + 1 );
@@ -92,7 +98,6 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
     this->glyph_points_->Reset();
     this->glyph_points_->SetNumberOfPoints( num_points );
 
-    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() );
 
     scalars->Reset();
     scalars->SetNumberOfTuples( num_points );
@@ -107,6 +112,11 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
 
       this->glyph_points_->InsertPoint( i, x, y, z );
     }
+  }
+  else
+  {
+    this->glyph_points_->Reset();
+    scalars->Reset();
   }
   this->glyph_points_->Modified();
 
@@ -142,7 +152,7 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
 
   ren->RemoveAllViewProps();
   ren->AddActor( actor );
-  ren->AddActor( this->glyph_actor );
+  ren->AddActor( this->glyph_actor_ );
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
     vtkSmartPointer<vtkCornerAnnotation>::New();
@@ -178,4 +188,83 @@ void Viewer::set_renderer( vtkSmartPointer<vtkRenderer> renderer )
 vtkSmartPointer<vtkRenderer> Viewer::get_renderer()
 {
   return this->renderer_;
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_glyph_size_and_quality( double size, double quality )
+{
+  this->glyph_size_ = size;
+  this->glyph_quality_ = quality;
+  this->update_glyph_properties();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_glyph_properties()
+{
+  std::cerr << "update glyph props\n";
+  this->glyphs_->SetScaleFactor( this->glyph_size_ );
+  //this->arrowGlayphs->SetScaleFactor( this->glyph_size_ );
+
+  this->sphere_source->SetThetaResolution( this->glyph_quality_ );
+  this->sphere_source->SetPhiResolution( this->glyph_quality_ );
+
+  //this->arrowSource->SetTipResolution( this->glyph_quality_ );
+  //this->arrowSource->SetShaftResolution( this->glyph_quality_ );
+
+  this->glyphs_->Update();
+  //this->arrowGlyphs->Update();
+
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_show_glyphs( bool show )
+{
+  this->show_glyphs_ = show;
+  this->update_actors();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_show_surface( bool show )
+{
+  this->show_surface_ = show;
+  this->update_actors();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_actors()
+{
+  this->renderer_->RemoveActor( this->glyph_actor_ );
+  //this->renderer_->RemoveActor( this->arrowGlyphActor );
+
+  this->renderer_->RemoveActor( this->surface_actor_ );
+
+/*
+  for ( int i = 0; i < this->numDomains; i++ )
+  {
+    this->renderer->RemoveActor( this->surfaceActors[i] );
+  }
+*/
+
+  if ( this->show_glyphs_ )
+  {
+    this->renderer_->AddActor( this->glyph_actor_ );
+/*    if ( this->arrowsVisible )
+    {
+      this->renderer->AddActor( this->arrowGlyphActor );
+    }*/
+  }
+
+  if ( this->show_surface_ )
+  {
+/*    for ( int i = 0; i < this->numDomains; i++ )
+    {
+      this->renderer->AddActor( this->surfaceActors[i] );
+    }*/
+    this->renderer_->AddActor( this->surface_actor_ );
+  }
+
+  //this->displayShape( this->currentShape );
+
+  //this->renderer_->Render();
+
 }

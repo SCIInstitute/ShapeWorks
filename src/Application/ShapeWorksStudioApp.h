@@ -9,6 +9,7 @@ class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
 class Project;
+class Visualizer;
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -66,8 +67,7 @@ private:
 
   void update_table();
 
-  void update_display_objects();
-
+  void update_display();
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
@@ -79,9 +79,9 @@ private:
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
+  QSharedPointer<Visualizer> visualizer_;
 
   QSharedPointer<Project> project_;
-
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

@@ -113,23 +113,7 @@ border-radius: 3px;
           <number>3</number>
          </property>
          <item>
-          <widget class="QComboBox" name="view_mode_combobox">
-           <item>
-            <property name="text">
-             <string>Original</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Groomed</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Reconstruction</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="view_mode_combobox"/>
          </item>
          <item>
           <widget class="QCheckBox" name="center_checkbox">

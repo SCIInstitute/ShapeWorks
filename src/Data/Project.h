@@ -9,12 +9,14 @@
 class DataManager;
 class Shape;
 
+class Project;
+typedef QSharedPointer< Project > ProjectHandle;
+
 //! Representation of a project.
 /*!
  * The Project class encapsulates everything about a project.
  *
  */
-
 class Project : public QObject
 {
   Q_OBJECT;

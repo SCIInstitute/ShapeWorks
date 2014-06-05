@@ -18,6 +18,7 @@
 #include <Data/Mesh.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
+#include <Visualization/Visualizer.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -27,6 +28,14 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 {
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi( this );
+
+  // setup modes
+  this->ui_->view_mode_combobox->addItem( Visualizer::MODE_ORIGINAL_C );
+  this->ui_->view_mode_combobox->addItem( Visualizer::MODE_GROOMED_C );
+  this->ui_->view_mode_combobox->addItem( Visualizer::MODE_RECONSTRUCTION_C );
+  this->ui_->view_mode_combobox->setCurrentIndex(0);
+  this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
+  this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
 
   // resize from preferences
   this->resize( Preferences::Instance().get_main_window_size() );
@@ -47,7 +56,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
 
-  this->lightbox_ = QSharedPointer<Lightbox>( new Lightbox() );
+  this->lightbox_ = LightboxHandle( new Lightbox() );
+
+  this->visualizer_ = QSharedPointer<Visualizer> ( new Visualizer() );
+  this->visualizer_->set_lightbox( this->lightbox_ );
+  this->visualizer_->set_project( this->project_ );
 
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
   this->groom_tool_->set_project( this->project_ );
@@ -62,11 +75,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->analysis_tool_ = QSharedPointer<AnalysisTool>( new AnalysisTool() );
   this->analysis_tool_->set_project( this->project_ );
   this->analysis_tool_->set_app( this );
-  this->analysis_tool_->set_lightbox( this->lightbox_ );
+  this->analysis_tool_->set_visualizer( this->visualizer_ );
   this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
 
-  this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
-  this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
 }
 
 //---------------------------------------------------------------------------
@@ -118,7 +129,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   QStringList filenames;
 
   filenames = QFileDialog::getOpenFileNames( this, tr( "Import Files..." ),
-                                             Preferences::Instance().get_last_directory(), 
+                                             Preferences::Instance().get_last_directory(),
                                              tr( "NRRD files (*.nrrd)" ) );
 
   if ( filenames.size() == 0 )
@@ -143,6 +154,7 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
   int value = this->ui_->thumbnail_size_slider->maximum() - this->ui_->thumbnail_size_slider->value() + 1;
 
   this->lightbox_->set_tile_layout( value, value );
+  this->visualizer_->update_viewer_properties();
 
   this->update_scrollbar();
 
@@ -289,7 +301,7 @@ void ShapeWorksStudioApp::handle_project_changed()
     this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
   }
 
-  this->update_display_objects();
+  this->update_display();
   this->update_table();
   this->update_scrollbar();
 }
@@ -301,59 +313,21 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_display_objects()
+void ShapeWorksStudioApp::update_display()
 {
-  QVector < QSharedPointer < DisplayObject > > display_objects;
-
-  QVector < QSharedPointer < Shape > > shapes = this->project_->get_shapes();
-
-  QString mode = this->ui_->view_mode_combobox->currentText();
-
-  for ( int i = 0; i < shapes.size(); i++ )
+  if ( !this->visualizer_ )
   {
-    QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>( new DisplayObject() );
-
-    QSharedPointer<Mesh> mesh;
-    QString filename;
-    if ( mode == "Original" )
-    {
-      mesh = shapes[i]->get_initial_mesh();
-      filename = shapes[i]->get_initial_filename();
-    }
-    else if ( mode == "Groomed" )
-    {
-      mesh = shapes[i]->get_groomed_mesh();
-      filename = shapes[i]->get_groomed_filename();
-    }
-    else if ( mode == "Reconstruction" )
-    {
-      mesh = shapes[i]->get_reconstructed_mesh();
-      filename = shapes[i]->get_point_filename();
-    }
-    object->set_mesh( mesh );
-    object->set_correspondence_points( shapes[i]->get_correspondence_points() );
-
-    QStringList annotations;
-    annotations << filename;
-    annotations << "";
-    annotations << QString::number( shapes[i]->get_id() );
-    annotations << "";
-    object->set_annotations( annotations );
-
-    if ( this->ui_->center_checkbox->isChecked() )
-    {
-      object->set_transform( mesh->get_center_transform() );
-    }
-    display_objects << object;
+    return;
   }
-
-  this->lightbox_->set_display_objects( display_objects );
+  this->visualizer_->set_center( this->ui_->center_checkbox->isChecked() );
+  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
+  this->visualizer_->update_display();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
-  this->update_display_objects();
+  this->update_display();
 }
 
 //---------------------------------------------------------------------------

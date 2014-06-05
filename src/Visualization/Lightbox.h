@@ -15,6 +15,9 @@ class Mesh;
 class Shape;
 class DisplayObject;
 
+class Lightbox;
+typedef QSharedPointer< Lightbox > LightboxHandle;
+
 //! Display multiple Viewers in a tiled display
 /*!
  * The LightBox class displays multiple Viewers in a tiled display
@@ -40,6 +43,9 @@ public:
 
   void set_start_row( int row );
 
+  ViewerList get_viewers();
+  void redraw();
+
 private:
 
   void clear_renderers();
@@ -51,7 +57,7 @@ private:
 
   QVector < QSharedPointer < DisplayObject > > objects_;
 
-  QVector < QSharedPointer < Viewer > > viewers_;
+  ViewerList viewers_;
 
   vtkRenderWindow* render_window_;
 

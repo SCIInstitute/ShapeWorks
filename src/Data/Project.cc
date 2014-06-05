@@ -89,7 +89,7 @@ bool Project::load_project( QString filename )
   QFile file( filename );
   if ( !file.open( QIODevice::ReadOnly ) )
   {
-    QMessageBox::warning( 0, "Unable to open file", "Error opening file" );
+    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
     return false;
   }
 
