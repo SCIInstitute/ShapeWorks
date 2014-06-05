@@ -121,12 +121,17 @@ void GroomTool::on_run_groom_button_clicked()
 
   std::cerr << "running...";
 
-  if ( !groom->waitForFinished() )
-  {
-    std::cerr << "Error running ShapeWorksGroom\n";
-    QMessageBox::critical( 0, "Error", "Error running ShapeWorksGroom" );
 
-    return;
+  while ( !groom->waitForFinished( 1000 ) )
+  {
+    QByteArray result = groom->readAll();
+    std::cerr << "output: " << result.data() << "\n";
+
+    QString strOut = groom->readAllStandardOutput();
+    std::cerr << strOut.toStdString() << "\n";
+
+    strOut = groom->readAllStandardError();
+    std::cerr << strOut.toStdString() << "\n";
   }
 
   QByteArray result = groom->readAll();
