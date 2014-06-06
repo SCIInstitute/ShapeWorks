@@ -151,8 +151,8 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
   mapper->ScalarVisibilityOff();
 
   ren->RemoveAllViewProps();
-  ren->AddActor( actor );
-  ren->AddActor( this->glyph_actor_ );
+  //ren->AddActor( actor );
+  //ren->AddActor( this->glyph_actor_ );
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
     vtkSmartPointer<vtkCornerAnnotation>::New();
@@ -170,6 +170,9 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
   corner_annotation->GetTextProperty()->SetColor( 0.50, 0.5, 0.5 );
 
   ren->AddViewProp( corner_annotation );
+
+  this->update_actors();
+  this->update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------
