@@ -98,7 +98,6 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
     this->glyph_points_->Reset();
     this->glyph_points_->SetNumberOfPoints( num_points );
 
-
     scalars->Reset();
     scalars->SetNumberOfTuples( num_points );
 
@@ -204,7 +203,7 @@ void Viewer::set_glyph_size_and_quality( double size, double quality )
 //-----------------------------------------------------------------------------
 void Viewer::update_glyph_properties()
 {
-  std::cerr << "update glyph props\n";
+//  std::cerr << "update glyph props\n";
   this->glyphs_->SetScaleFactor( this->glyph_size_ );
   //this->arrowGlayphs->SetScaleFactor( this->glyph_size_ );
 
@@ -216,7 +215,6 @@ void Viewer::update_glyph_properties()
 
   this->glyphs_->Update();
   //this->arrowGlyphs->Update();
-
 }
 
 //-----------------------------------------------------------------------------
@@ -242,11 +240,11 @@ void Viewer::update_actors()
   this->renderer_->RemoveActor( this->surface_actor_ );
 
 /*
-  for ( int i = 0; i < this->numDomains; i++ )
-  {
+   for ( int i = 0; i < this->numDomains; i++ )
+   {
     this->renderer->RemoveActor( this->surfaceActors[i] );
-  }
-*/
+   }
+ */
 
   if ( this->show_glyphs_ )
   {
@@ -269,5 +267,4 @@ void Viewer::update_actors()
   //this->displayShape( this->currentShape );
 
   //this->renderer_->Render();
-
 }

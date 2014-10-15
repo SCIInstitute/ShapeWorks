@@ -56,11 +56,26 @@ public:
   /// reset the project
   void reset();
 
-  /// get the current pipeline state
-  //QString get_pipeline_state();
+  /// set the current tool state
+  void set_tool_state( QString tool );
+
+  /// get the current tool state
+  QString get_tool_state();
 
   /// get the filename
   QString get_filename();
+
+  /// get the display mode
+  void set_display_state( QString mode );
+
+  /// set the display mode
+  QString get_display_state();
+
+  /// set the zoom state
+  void set_zoom_state( int zoom );
+
+  /// get the zoom state
+  int get_zoom_state();
 
   bool originals_present();
   bool groomed_present();
@@ -72,9 +87,10 @@ Q_SIGNALS:
 
 public:
   // constants
-  const static QString INITIAL_C;
-  const static QString GROOMED_C;
-  const static QString OPTIMIZED_C;
+  const static QString DATA_C;
+  const static QString GROOM_C;
+  const static QString OPTIMIZE_C;
+  const static QString ANALYSIS_C;
 
 private:
 
@@ -90,8 +106,9 @@ private:
   bool groomed_present_;
   bool reconstructed_present_;
 
-  QString pipeline_state_;
-
+  QString tool_state_;
+  QString display_state_;
+  int zoom_state_;
 };
 
 #endif /* STUDIO_DATA_PROJECT_H */

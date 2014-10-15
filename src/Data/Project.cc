@@ -2,14 +2,17 @@
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
 
+#include <Visualization/Visualizer.h>
+
 #include <QFile>
 #include <QMessageBox>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 
-const QString Project::INITIAL_C( "initial" );
-const QString Project::GROOMED_C( "groomed" );
-const QString Project::OPTIMIZED_C( "optimized" );
+const QString Project::DATA_C( "data" );
+const QString Project::GROOM_C( "groom" );
+const QString Project::OPTIMIZE_C( "optimize" );
+const QString Project::ANALYSIS_C( "analysis" );
 
 //---------------------------------------------------------------------------
 Project::Project()
@@ -48,6 +51,10 @@ bool Project::save_project( QString filename /* = "" */ )
 
   xml->writeStartElement( "project" );
   xml->writeAttribute( "version", "1" );
+
+  xml->writeTextElement( "tool_state", this->tool_state_ );
+  xml->writeTextElement( "display_state", this->display_state_ );
+  xml->writeTextElement( "zoom_state", QString::number( this->zoom_state_ ) );
 
   // shapes
   xml->writeStartElement( "shapes" );
@@ -110,6 +117,20 @@ bool Project::load_project( QString filename )
     }
     if ( token == QXmlStreamReader::StartElement )
     {
+      if ( xml->name() == "tool_state" )
+      {
+        this->tool_state_ = xml->readElementText();
+      }
+
+      if ( xml->name() == "display_state" )
+      {
+        this->display_state_ = xml->readElementText();
+      }
+      if ( xml->name() == "zoom_state" )
+      {
+        this->zoom_state_ = xml->readElementText().toInt();
+      }
+
       if ( xml->name() == "shapes" )
       {
         continue;
@@ -133,6 +154,9 @@ bool Project::load_project( QString filename )
       }
     }
   }
+
+  std::cerr << "tool state = " << this->tool_state_.toStdString() << "\n";
+
   /* Error handling. */
   if ( xml->hasError() )
   {
@@ -228,7 +252,10 @@ void Project::remove_shapes( QList<int> list )
 //---------------------------------------------------------------------------
 void Project::reset()
 {
-  this->pipeline_state_ = INITIAL_C;
+  this->tool_state_ = DATA_C;
+  this->display_state_ = Visualizer::MODE_ORIGINAL_C;
+  this->zoom_state_ = 5;
+
   this->shapes_.clear();
 
   this->originals_present_ = false;
@@ -237,10 +264,16 @@ void Project::reset()
 }
 
 //---------------------------------------------------------------------------
-//QString Project::get_pipeline_state()
-//{
-//  return this->pipeline_state_;
-//}
+void Project::set_tool_state( QString tool )
+{
+  this->tool_state_ = tool;
+}
+
+//---------------------------------------------------------------------------
+QString Project::get_tool_state()
+{
+  return this->tool_state_;
+}
 
 //---------------------------------------------------------------------------
 bool Project::originals_present()
@@ -273,4 +306,28 @@ void Project::renumber_shapes()
 QString Project::get_filename()
 {
   return this->filename_;
+}
+
+//---------------------------------------------------------------------------
+void Project::set_display_state( QString mode )
+{
+  this->display_state_ = mode;
+}
+
+//---------------------------------------------------------------------------
+QString Project::get_display_state()
+{
+  return this->display_state_;
+}
+
+//---------------------------------------------------------------------------
+void Project::set_zoom_state( int zoom )
+{
+  this->zoom_state_ = zoom;
+}
+
+//---------------------------------------------------------------------------
+int Project::get_zoom_state()
+{
+  return this->zoom_state_;
 }

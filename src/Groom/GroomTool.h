@@ -25,7 +25,6 @@ public:
   /// set the pointer to the application
   void set_app( ShapeWorksStudioApp* app );
 
-
 Q_SIGNALS:
   void groom_complete();
 

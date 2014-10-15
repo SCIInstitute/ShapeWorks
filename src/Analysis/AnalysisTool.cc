@@ -56,13 +56,13 @@ void AnalysisTool::on_mean_overall_clicked()
 //---------------------------------------------------------------------------
 void AnalysisTool::on_show_surface_stateChanged()
 {
-  this->visualizer_->set_show_surface(this->ui_->show_surface->isChecked());
+  this->visualizer_->set_show_surface( this->ui_->show_surface->isChecked() );
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_show_glyphs_stateChanged()
 {
-  this->visualizer_->set_show_glyphs(this->ui_->show_glyphs->isChecked());
+  this->visualizer_->set_show_glyphs( this->ui_->show_glyphs->isChecked() );
 }
 
 //---------------------------------------------------------------------------
@@ -88,8 +88,8 @@ void AnalysisTool::set_visualizer( VisualizerHandle visualizer )
 //---------------------------------------------------------------------------
 void AnalysisTool::update_from_preferences()
 {
-  this->ui_->glyph_quality->setValue(Preferences::Instance().get_glyph_quality());
+  this->ui_->glyph_quality->setValue( Preferences::Instance().get_glyph_quality() );
   this->ui_->glyph_quality_label->setText( QString::number( Preferences::Instance().get_glyph_quality() ) );
-  this->ui_->glyph_size->setValue(Preferences::Instance().get_glyph_size() * 10.0);
+  this->ui_->glyph_size->setValue( Preferences::Instance().get_glyph_size() * 10.0 );
   this->ui_->glyph_size_label->setText( QString::number( Preferences::Instance().get_glyph_size() ) );
 }

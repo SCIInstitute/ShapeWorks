@@ -34,10 +34,10 @@ public:
 
   /// turn automatic centering on/off
   void set_center( bool center );
- 
+
   /// turn on/off glyph display
   void set_show_glyphs( bool show );
- 
+
   /// turn on/off surface display
   void set_show_surface( bool show );
 

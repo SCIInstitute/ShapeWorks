@@ -41,8 +41,8 @@ public:
 
   /// last directory used (open/save)
   QString get_last_directory();
-  void set_last_directory(QString location);
-  
+  void set_last_directory( QString location );
+
   //--- analysis preferences
 
   bool get_cache_enabled();

@@ -29,6 +29,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi( this );
 
+  this->project_ = QSharedPointer<Project>( new Project() );
+
+  connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
+
   // setup modes
   this->ui_->view_mode_combobox->addItem( Visualizer::MODE_ORIGINAL_C );
   this->ui_->view_mode_combobox->addItem( Visualizer::MODE_GROOMED_C );
@@ -51,10 +55,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->action_group_->addAction( this->ui_->action_analysis_mode );
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
-
-  this->project_ = QSharedPointer<Project>( new Project() );
-
-  connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
 
   this->lightbox_ = LightboxHandle( new Lightbox() );
 
@@ -171,6 +171,8 @@ void ShapeWorksStudioApp::import_files( QStringList file_names )
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
+  this->project_->set_zoom_state( this->ui_->thumbnail_size_slider->value() );
+
   int value = this->ui_->thumbnail_size_slider->maximum() - this->ui_->thumbnail_size_slider->value() + 1;
 
   this->lightbox_->set_tile_layout( value, value );
@@ -277,24 +279,28 @@ void ShapeWorksStudioApp::mode_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
+  this->project_->set_tool_state( Project::GROOM_C );
   this->ui_->stacked_widget->setCurrentWidget( this->groom_tool_.data() );
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
+  this->project_->set_tool_state( Project::DATA_C );
   this->ui_->stacked_widget->setCurrentIndex( 0 );
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
+  this->project_->set_tool_state( Project::OPTIMIZE_C );
   this->ui_->stacked_widget->setCurrentWidget( this->optimize_tool_.data() );
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
+  this->project_->set_tool_state( Project::ANALYSIS_C );
   this->ui_->stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
 }
 
@@ -354,6 +360,7 @@ void ShapeWorksStudioApp::update_display()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
+  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
   this->update_display();
 }
 
@@ -361,6 +368,41 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 void ShapeWorksStudioApp::open_project( QString filename )
 {
   this->project_->load_project( filename );
+
+  // set UI state based on project
+  if ( this->project_->get_tool_state() == Project::DATA_C )
+  {
+    this->ui_->action_import_mode->trigger();
+  }
+  else if ( this->project_->get_tool_state() == Project::GROOM_C )
+  {
+    this->ui_->action_groom_mode->trigger();
+  }
+  else if ( this->project_->get_tool_state() == Project::OPTIMIZE_C )
+  {
+    this->ui_->action_optimize_mode->trigger();
+  }
+  else if ( this->project_->get_tool_state() == Project::ANALYSIS_C )
+  {
+    this->ui_->action_analysis_mode->trigger();
+  }
+
+  // load display mode
+  if ( this->project_->get_display_state() == Visualizer::MODE_ORIGINAL_C )
+  {
+    this->ui_->view_mode_combobox->setCurrentIndex( 0 );
+  }
+  else if ( this->project_->get_display_state() == Visualizer::MODE_GROOMED_C )
+  {
+    this->ui_->view_mode_combobox->setCurrentIndex( 1 );
+  }
+  else if ( this->project_->get_display_state() == Visualizer::MODE_RECONSTRUCTION_C )
+  {
+    this->ui_->view_mode_combobox->setCurrentIndex( 2 );
+  }
+
+  // set the zoom state
+  this->ui_->thumbnail_size_slider->setValue( this->project_->get_zoom_state() );
 }
 
 //---------------------------------------------------------------------------
