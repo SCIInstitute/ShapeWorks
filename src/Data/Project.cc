@@ -268,3 +268,9 @@ void Project::renumber_shapes()
     this->shapes_[i]->set_id( i + 1 );
   }
 }
+
+//---------------------------------------------------------------------------
+QString Project::get_filename()
+{
+  return this->filename_;
+}

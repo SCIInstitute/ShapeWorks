@@ -116,7 +116,7 @@ int main( int argc, char** argv )
 
   //studio_app.import_files( files );
 
-  studio_app->open_project( "c:/users/amorris/desktop/studio.xml" );
+  //studio_app->open_project( "h:/projects/studio/studio.xml" );
 
   return app.exec();
 }

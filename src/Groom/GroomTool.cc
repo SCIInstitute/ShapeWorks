@@ -162,7 +162,7 @@ void GroomTool::on_run_groom_button_clicked()
 
   this->project_->load_groomed_files( list );
 
-  this->app_->set_status_bar( "Groom complete" );
+  emit groom_complete();
 }
 
 //---------------------------------------------------------------------------

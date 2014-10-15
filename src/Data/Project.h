@@ -59,6 +59,9 @@ public:
   /// get the current pipeline state
   //QString get_pipeline_state();
 
+  /// get the filename
+  QString get_filename();
+
   bool originals_present();
   bool groomed_present();
   bool reconstructed_present();
@@ -88,6 +91,7 @@ private:
   bool reconstructed_present_;
 
   QString pipeline_state_;
+
 };
 
 #endif /* STUDIO_DATA_PROJECT_H */

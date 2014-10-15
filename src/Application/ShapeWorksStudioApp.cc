@@ -33,7 +33,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_->view_mode_combobox->addItem( Visualizer::MODE_ORIGINAL_C );
   this->ui_->view_mode_combobox->addItem( Visualizer::MODE_GROOMED_C );
   this->ui_->view_mode_combobox->addItem( Visualizer::MODE_RECONSTRUCTION_C );
-  this->ui_->view_mode_combobox->setCurrentIndex(0);
+  this->ui_->view_mode_combobox->setCurrentIndex( 0 );
   this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
 
@@ -67,6 +67,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->groom_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->groom_tool_.data() );
 
+  connect( this->groom_tool_.data(), SIGNAL( groom_complete() ), this, SLOT( handle_groom_complete() ) );
+
   this->optimize_tool_ = QSharedPointer<OptimizeTool>( new OptimizeTool() );
   this->optimize_tool_->set_project( this->project_ );
   this->optimize_tool_->set_app( this );
@@ -77,7 +79,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->analysis_tool_->set_app( this );
   this->analysis_tool_->set_visualizer( this->visualizer_ );
   this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
-
 }
 
 //---------------------------------------------------------------------------
@@ -104,6 +105,22 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_save_project_triggered()
+{
+  if ( this->project_->get_filename() == "" )
+  {
+    this->on_action_save_project_as_triggered();
+  }
+  else
+  {
+    if ( this->project_->save_project() )
+    {
+      this->set_status_bar( "Project Saved" );
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, tr( "Save Project As..." ),
@@ -113,7 +130,10 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
     return;
   }
 
-  this->project_->save_project( filename );
+  if ( this->project_->save_project( filename ) )
+  {
+    this->set_status_bar( "Project Saved" );
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -304,6 +324,13 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->update_display();
   this->update_table();
   this->update_scrollbar();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_groom_complete()
+{
+  this->set_status_bar( "Groom complete" );
+  this->ui_->view_mode_combobox->setCurrentIndex( 1 );
 }
 
 //---------------------------------------------------------------------------
