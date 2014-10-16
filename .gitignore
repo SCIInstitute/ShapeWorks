@@ -1,0 +1,5 @@
+*.swp
+*~
+*/bin/*
+bin*
+/build-*/
