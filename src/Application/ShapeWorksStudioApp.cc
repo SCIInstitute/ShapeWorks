@@ -52,7 +52,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->action_group_->addAction( this->ui_->action_import_mode );
   this->action_group_->addAction( this->ui_->action_groom_mode );
   this->action_group_->addAction( this->ui_->action_optimize_mode );
-  this->action_group_->addAction( this->ui_->action_analysis_mode );
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
 
@@ -73,12 +72,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->optimize_tool_->set_project( this->project_ );
   this->optimize_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->optimize_tool_.data() );
-
-  this->analysis_tool_ = QSharedPointer<AnalysisTool>( new AnalysisTool() );
-  this->analysis_tool_->set_project( this->project_ );
-  this->analysis_tool_->set_app( this );
-  this->analysis_tool_->set_visualizer( this->visualizer_ );
-  this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
 
   this->update_from_preferences();
 }
@@ -185,7 +178,6 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
   this->ui_->qvtkWidget->GetRenderWindow()->Render();
 }
 
-
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_from_preferences()
 {
@@ -194,7 +186,6 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->ui_->glyph_size->setValue( Preferences::Instance().get_glyph_size() * 10.0 );
   this->ui_->glyph_size_label->setText( QString::number( Preferences::Instance().get_glyph_size() ) );
 }
-
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_scrollbar()
@@ -311,14 +302,6 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
-{
-  this->project_->set_tool_state( Project::ANALYSIS_C );
-  this->ui_->stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
-  this->analysis_tool_->activate();
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
@@ -396,10 +379,6 @@ void ShapeWorksStudioApp::open_project( QString filename )
   {
     this->ui_->action_optimize_mode->trigger();
   }
-  else if ( this->project_->get_tool_state() == Project::ANALYSIS_C )
-  {
-    this->ui_->action_analysis_mode->trigger();
-  }
 
   // load display mode
   if ( this->project_->get_display_state() == Visualizer::MODE_ORIGINAL_C )
@@ -465,4 +444,75 @@ void ShapeWorksStudioApp::on_glyph_quality_valueChanged( int value )
 {
   Preferences::Instance().set_glyph_quality( value );
   this->update_from_preferences();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_samples_button_clicked()
+{
+  this->ui_->pcaPanel->setVisible( false );
+  this->update_tools();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_stats_button_clicked()
+{
+  this->visualizer_->display_mean();
+  this->update_tools();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_pca_button_clicked()
+{
+  this->update_tools();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_tools()
+{
+  if ( this->ui_->samples_button->isChecked() )
+  {
+    this->ui_->pcaPanel->setVisible( false );
+  }
+  else if ( this->ui_->stats_button->isChecked() )
+  {
+    this->ui_->pcaPanel->setVisible( false );
+  }
+  else if ( this->ui_->pca_button->isChecked() )
+  {
+    this->compute_mode_shape();
+    this->ui_->pcaPanel->setVisible( true );
+  }
+}
+
+//---------------------------------------------------------------------------
+double ShapeWorksStudioApp::get_pca_value( int slider_value )
+{
+  float range = Preferences::Instance().get_pca_range();
+  int halfRange = this->ui_->pcaSlider->maximum();
+
+  double value = (double)slider_value / (double)halfRange * range;
+  return value;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::compute_mode_shape()
+{
+  double pcaSliderValue = this->get_pca_value( this->ui_->pcaSlider->value() );
+  int mode = this->ui_->pcaModeSpinBox->value() + 1;
+  this->visualizer_->display_pca( mode, pcaSliderValue );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_pcaSlider_valueChanged()
+{
+  // this will make the slider handle redraw making the UI appear more responsive
+  QCoreApplication::processEvents();
+
+  this->compute_mode_shape();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_pcaModeSpinBox_valueChanged()
+{
+  this->compute_mode_shape();
 }

@@ -50,7 +50,6 @@ public Q_SLOTS:
   void on_action_import_mode_triggered();
   void on_action_groom_mode_triggered();
   void on_action_optimize_mode_triggered();
-  void on_action_analysis_mode_triggered();
 
   void on_action_preferences_triggered();
 
@@ -63,6 +62,13 @@ public Q_SLOTS:
   void handle_project_changed();
   void handle_groom_complete();
 
+  void on_samples_button_clicked();
+  void on_stats_button_clicked();
+  void on_pca_button_clicked();
+
+  // PCA
+  void on_pcaSlider_valueChanged();
+  void on_pcaModeSpinBox_valueChanged();
 
   //--------------------------------------------------
   // visualization panel
@@ -73,13 +79,19 @@ public Q_SLOTS:
   void on_glyph_quality_valueChanged( int value );
 
 private:
-  void update_from_preferences();  
+  void update_from_preferences();
 
   void update_scrollbar();
 
   void update_table();
 
   void update_display();
+
+  void update_tools();
+
+  double get_pca_value( int slider_value );
+
+  void compute_mode_shape();
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
