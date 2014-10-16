@@ -121,7 +121,6 @@ void GroomTool::on_run_groom_button_clicked()
 
   std::cerr << "running...";
 
-
   while ( !groom->waitForFinished( 1000 ) )
   {
     QByteArray result = groom->readAll();

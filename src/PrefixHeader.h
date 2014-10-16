@@ -22,4 +22,3 @@
 #include <vtkProperty.h>
 #include <vtkLookupTable.h>
 #include <vtkUnsignedLongArray.h>
-

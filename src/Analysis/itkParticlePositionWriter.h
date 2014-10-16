@@ -1,17 +1,17 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticlePositionWriter.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
+   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+   Module:    $RCSfile: itkParticlePositionWriter.h,v $
+   Date:      $Date: 2011/03/24 01:17:33 $
+   Version:   $Revision: 1.2 $
+   Author:    $Author: wmartin $
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
+   Copyright (c) 2009 Scientific Computing and Imaging Institute.
+   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
+   =========================================================================*/
 #ifndef __itkParticlePositionWriter_h
 #define __itkParticlePositionWriter_h
 
@@ -51,48 +51,46 @@ public:
 
   /** The point type that this class reads. */
   typedef Point<double, VDimension> PointType;
-  
+
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticlePositionWriter, DataObject);
+  itkTypeMacro( ParticlePositionWriter, DataObject );
 
   /** Set the input vector.  The input is a reference to a std::vector of PointType. */
-  void SetInput( const std::vector<PointType> &p)
+  void SetInput( const std::vector<PointType> &p )
   {
-   m_Input = p;
+    m_Input = p;
   }
 
   /** Set/Get the filename. */
-  itkSetStringMacro(FileName);
-  itkGetStringMacro(FileName);
+  itkSetStringMacro( FileName );
+  itkGetStringMacro( FileName );
 
   /** Write the file. */
   inline void Write()
   { this->Update(); }
   void Update();
-  
+
 protected:
-  ParticlePositionWriter()  { }
-  void PrintSelf(std::ostream& os, Indent indent) const
+  ParticlePositionWriter() { }
+  void PrintSelf( std::ostream& os, Indent indent ) const
   {
-    Superclass::PrintSelf(os,indent);
-  
+    Superclass::PrintSelf( os, indent );
+
     os << indent << "ParticlePositionWriter: " << std::endl;
   }
-  virtual ~ParticlePositionWriter() {};
+  virtual ~ParticlePositionWriter() {}
 
- private:
-  ParticlePositionWriter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+private:
+  ParticlePositionWriter( const Self& ); //purposely not implemented
+  void operator=( const Self& ); //purposely not implemented
 
   std::vector<PointType> m_Input;
   std::string m_FileName;
 };
-
 } // end namespace itk
-
 
 #if ITK_TEMPLATE_EXPLICIT
 # include "Templates/itkParticlePositionWriter+-.h"
@@ -102,4 +100,4 @@ protected:
 # include "itkParticlePositionWriter.txx"
 #endif
 
-#endif
+#endif // ifndef __itkParticlePositionWriter_h

@@ -209,23 +209,23 @@ int ParticleShapeStatistics<VDimension>::ImportPoints( std::vector<vnl_vector<do
   return 0;
 }
 /*
-template <unsigned int VDimension>
-int ParticleShapeStatistics<VDimension>
-::ReadPointFiles( const char* fname )
-{
-  TiXmlDocument doc( fname );
-  bool loadOkay = doc.LoadFile();
-  if ( !loadOkay ) {std::cerr << "invalid parameter file..." << std::endl; }
-  TiXmlHandle docHandle( &doc );
-  TiXmlElement* elem;
-  std::stringstream inputsBuffer;
+   template <unsigned int VDimension>
+   int ParticleShapeStatistics<VDimension>
+   ::ReadPointFiles( const char* fname )
+   {
+   TiXmlDocument doc( fname );
+   bool loadOkay = doc.LoadFile();
+   if ( !loadOkay ) {std::cerr << "invalid parameter file..." << std::endl; }
+   TiXmlHandle docHandle( &doc );
+   TiXmlElement* elem;
+   std::stringstream inputsBuffer;
 
-  // Collect point file names and group id's
-  std::vector< std::string > pointsfiles;
-  std::string ptFileName;
-  elem = docHandle.FirstChild( "point_files" ).Element();
-  if ( elem )
-  {
+   // Collect point file names and group id's
+   std::vector< std::string > pointsfiles;
+   std::string ptFileName;
+   elem = docHandle.FirstChild( "point_files" ).Element();
+   if ( elem )
+   {
     inputsBuffer.str( elem->GetText() );
     while ( inputsBuffer >> ptFileName )
     {
@@ -235,26 +235,26 @@ int ParticleShapeStatistics<VDimension>
     }
     inputsBuffer.clear();
     inputsBuffer.str( "" );
-  }
+   }
 
-  this->m_domainsPerShape = 1;
-  elem = docHandle.FirstChild( "domains_per_shape" ).Element();
-  if ( elem ) {this->m_domainsPerShape = atoi( elem->GetText() ); }
+   this->m_domainsPerShape = 1;
+   elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+   if ( elem ) {this->m_domainsPerShape = atoi( elem->GetText() ); }
 
-  // Read the point files.  Assumes all the same size.
-  typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
-  reader1->SetFileName( pointsfiles[0].c_str() );
-  reader1->Update();
-  m_numSamples1 = 0;
-  m_numSamples2 = 0;
-  m_numSamples = pointsfiles.size() / m_domainsPerShape;
-  m_numDimensions = reader1->GetOutput().size() * VDimension * m_domainsPerShape;
+   // Read the point files.  Assumes all the same size.
+   typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
+   reader1->SetFileName( pointsfiles[0].c_str() );
+   reader1->Update();
+   m_numSamples1 = 0;
+   m_numSamples2 = 0;
+   m_numSamples = pointsfiles.size() / m_domainsPerShape;
+   m_numDimensions = reader1->GetOutput().size() * VDimension * m_domainsPerShape;
 
-  // Read the group ids
-  int tmpID;
-  elem = docHandle.FirstChild( "group_ids" ).Element();
-  if ( elem )
-  {
+   // Read the group ids
+   int tmpID;
+   elem = docHandle.FirstChild( "group_ids" ).Element();
+   if ( elem )
+   {
     inputsBuffer.str( elem->GetText() );
     for ( unsigned int shapeCount = 0; shapeCount < m_numSamples; shapeCount++ )
     {
@@ -263,11 +263,11 @@ int ParticleShapeStatistics<VDimension>
       if ( tmpID == 1 ) {m_numSamples1++; }
       else {m_numSamples2++; }
     }
-  }
+   }
 
-  // If there are no group IDs, make up some bogus ones
-  if ( m_groupIDs.size() != m_numSamples )
-  {
+   // If there are no group IDs, make up some bogus ones
+   if ( m_groupIDs.size() != m_numSamples )
+   {
     if ( m_groupIDs.size() > 0 )
     {
       std::cerr << "Group ID list does not match shape list in size." << std::endl;
@@ -285,21 +285,21 @@ int ParticleShapeStatistics<VDimension>
       m_groupIDs[k] = 2;
       m_numSamples2++;
     }
-  }
+   }
 
-  m_pointsMinusMean.set_size( m_numDimensions, m_numSamples );
-  m_shapes.set_size( m_numDimensions, m_numSamples );
-  m_mean.set_size( m_numDimensions );
-  m_mean.fill( 0 );
+   m_pointsMinusMean.set_size( m_numDimensions, m_numSamples );
+   m_shapes.set_size( m_numDimensions, m_numSamples );
+   m_mean.set_size( m_numDimensions );
+   m_mean.fill( 0 );
 
-  m_mean1.set_size( m_numDimensions );
-  m_mean1.fill( 0 );
-  m_mean2.set_size( m_numDimensions );
-  m_mean2.fill( 0 );
+   m_mean1.set_size( m_numDimensions );
+   m_mean1.fill( 0 );
+   m_mean2.set_size( m_numDimensions );
+   m_mean2.fill( 0 );
 
-  // Compile the "meta shapes"
-  for ( unsigned int i = 0; i < m_numSamples; i++ )
-  {
+   // Compile the "meta shapes"
+   for ( unsigned int i = 0; i < m_numSamples; i++ )
+   {
     for ( unsigned int k = 0; k < m_domainsPerShape; k++ )
     {
       // read file
@@ -335,28 +335,28 @@ int ParticleShapeStatistics<VDimension>
         m_shapes( q * k * VDimension + ( VDimension * j ) + 2, i ) = reader->GetOutput()[j][2];
       }
     }
-  }
+   }
 
-  for ( unsigned int i = 0; i < m_numDimensions; i++ )
-  {
+   for ( unsigned int i = 0; i < m_numDimensions; i++ )
+   {
     m_mean( i ) /= (double)m_numSamples;
     m_mean1( i ) /= (double)m_numSamples1;
     m_mean2( i ) /= (double)m_numSamples2;
-  }
+   }
 
-  for ( unsigned int j = 0; j < m_numDimensions; j++ )
-  {
+   for ( unsigned int j = 0; j < m_numDimensions; j++ )
+   {
     for ( unsigned int i = 0; i < m_numSamples; i++ )
     {
       m_pointsMinusMean( j, i ) -= m_mean( j );
     }
-  }
+   }
 
-  m_groupdiff = m_mean2 - m_mean1;
+   m_groupdiff = m_mean2 - m_mean1;
 
-  return 0;
-} // end ReadPointFiles
-*/
+   return 0;
+   } // end ReadPointFiles
+ */
 /** Reloads a set of point files and recomputes some statistics. */
 
 template <unsigned int VDimension>

@@ -8,7 +8,6 @@
 
 #include <Data/Shape.h>
 
-
 class Project;
 class Lightbox;
 class ShapeWorksStudioApp;
@@ -31,14 +30,11 @@ public:
   /// set the pointer to the application
   void set_app( ShapeWorksStudioApp* app );
 
-
-  void set_visualizer( VisualizerHandle visualizer);
+  void set_visualizer( VisualizerHandle visualizer );
 
   void set_shapes( ShapeList shapes );
 
-
   void activate();
-
 
 public Q_SLOTS:
   void on_mean_overall_clicked();
@@ -48,9 +44,7 @@ public Q_SLOTS:
   void on_pcaSlider_valueChanged();
   void on_pcaModeSpinBox_valueChanged();
 
-
 private:
-
 
   double get_pca_value( int slider_value );
 
@@ -66,10 +60,6 @@ private:
 
   /// itk particle shape statistics
   ParticleShapeStatistics<3> stats;
-
-
-
-
 };
 
 #endif /* STUDIO_ANALYSIS_ANALYSISTOOL_H */

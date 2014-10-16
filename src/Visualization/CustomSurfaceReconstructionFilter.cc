@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Visualization Toolkit
-  Module:    CustomSurfaceReconstructionFilter.cxx
+   Program:   Visualization Toolkit
+   Module:    CustomSurfaceReconstructionFilter.cxx
 
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+   All rights reserved.
+   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notice for more information.
 
-=========================================================================*/
+   =========================================================================*/
 #include "CustomSurfaceReconstructionFilter.h"
 
 #include "vtkFloatArray.h"
@@ -26,129 +26,127 @@
 #include "vtkPointLocator.h"
 #include "vtkPoints.h"
 
-vtkStandardNewMacro(CustomSurfaceReconstructionFilter);
+vtkStandardNewMacro( CustomSurfaceReconstructionFilter );
 
 CustomSurfaceReconstructionFilter::CustomSurfaceReconstructionFilter()
 {
   this->NeighborhoodSize = 20;
   // negative values cause the algorithm to make a reasonable guess
-  this->SampleSpacing = -1.0; 
-
+  this->SampleSpacing = -1.0;
 
   this->NeighborhoodSize = 5;
   // negative values cause the algorithm to make a reasonable guess
-  this->SampleSpacing = 1.0; 
-
+  this->SampleSpacing = 1.0;
 }
 
 // some simple routines for vector math
-void CustomCopyBToA(double* a,double* b) 
-{ 
-  for(int i=0;i<3;i++) 
-    {
-    a[i] = b[i]; 
-    }
+void CustomCopyBToA( double* a, double* b )
+{
+  for ( int i = 0; i < 3; i++ )
+  {
+    a[i] = b[i];
+  }
 }
-void CustomSubtractBFromA(double* a,double* b) 
-{ 
-  for(int i=0;i<3;i++) 
-    {
-    a[i] -= b[i]; 
-    }
+void CustomSubtractBFromA( double* a, double* b )
+{
+  for ( int i = 0; i < 3; i++ )
+  {
+    a[i] -= b[i];
+  }
 }
-void CustomAddBToA(double* a,double* b) 
-{ 
-  for(int i=0;i<3;i++) 
-    {
-    a[i] += b[i]; 
-    }
+void CustomAddBToA( double* a, double* b )
+{
+  for ( int i = 0; i < 3; i++ )
+  {
+    a[i] += b[i];
+  }
 }
-void CustomMultiplyBy(double* a,double f) 
-{ 
-  for(int i=0;i<3;i++) 
-    {
-    a[i] *= f; 
-    }
+void CustomMultiplyBy( double* a, double f )
+{
+  for ( int i = 0; i < 3; i++ )
+  {
+    a[i] *= f;
+  }
 }
-void CustomDivideBy(double* a,double f) 
-{ 
-  for(int i=0;i<3;i++) 
-    {
-    a[i] /= f; 
-    }
+void CustomDivideBy( double* a, double f )
+{
+  for ( int i = 0; i < 3; i++ )
+  {
+    a[i] /= f;
+  }
 }
 
 // Routines for matrix creation
-void CustomSRFreeMatrix(double **m, long nrl, long nrh, long ncl, long nch);
-double **CustomSRMatrix(long nrl, long nrh, long ncl, long nch);
-void CustomSRFreeVector(double *v, long nl, long nh);
-double *CustomSRVector(long nl, long nh);
+void CustomSRFreeMatrix( double** m, long nrl, long nrh, long ncl, long nch );
+double** CustomSRMatrix( long nrl, long nrh, long ncl, long nch );
+void CustomSRFreeVector( double* v, long nl, long nh );
+double* CustomSRVector( long nl, long nh );
 
 // set a matrix to zero
-void CustomSRMakeZero(double **m,long nrl, long nrh, long ncl, long nch) 
-{ 
-  int i,j; 
-  for(i=nrl;i<=nrh;i++) 
+void CustomSRMakeZero( double** m, long nrl, long nrh, long ncl, long nch )
+{
+  int i, j;
+  for ( i = nrl; i <= nrh; i++ )
+  {
+    for ( j = ncl; j <= nch; j++ )
     {
-    for(j=ncl;j<=nch;j++) 
-      {
-      m[i][j] = 0.0; 
-      }
+      m[i][j] = 0.0;
     }
+  }
 }
 
 // add v*Transpose(v) to m, where v is 3x1 and m is 3x3
-void CustomSRAddOuterProduct(double **m,double *v);
+void CustomSRAddOuterProduct( double** m, double* v );
 
 // scalar multiply a matrix
-void CustomSRMultiply(double **m,double f,long nrl, long nrh, long ncl, long nch)
-{ 
-  int i,j; 
-  for(i=nrl;i<=nrh;i++) 
+void CustomSRMultiply( double** m, double f, long nrl, long nrh, long ncl, long nch )
+{
+  int i, j;
+  for ( i = nrl; i <= nrh; i++ )
+  {
+    for ( j = ncl; j <= nch; j++ )
     {
-    for(j=ncl;j<=nch;j++) 
-      {
-      m[i][j] *= f; 
-      }
+      m[i][j] *= f;
     }
+  }
 }
 
 //----------------------------------------------------------------------------
 int CustomSurfaceReconstructionFilter::FillInputPortInformation(
-  int vtkNotUsed( port ), vtkInformation* info)
+  int vtkNotUsed( port ), vtkInformation* info )
 {
-  info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataSet");
+  info->Set( vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataSet" );
   return 1;
 }
 
-int CustomSurfaceReconstructionFilter::RequestInformation (
-  vtkInformation * vtkNotUsed(request),
-  vtkInformationVector ** vtkNotUsed( inputVector ),
-  vtkInformationVector *outputVector)
+int CustomSurfaceReconstructionFilter::RequestInformation(
+  vtkInformation* vtkNotUsed( request ),
+  vtkInformationVector** vtkNotUsed( inputVector ),
+  vtkInformationVector* outputVector )
 {
   // get the info objects
-  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject( 0 );
 
   // would be nice to compute the whole extent but we need more info to
   // compute it.
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),0,1,0,1,0,1);
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),0,1,0,1,0,1);
+  outInfo->Set( vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), 0, 1, 0, 1, 0, 1 );
+  outInfo->Set( vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), 0, 1, 0, 1, 0, 1 );
 
-  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_FLOAT, 1);
+  vtkDataObject::SetPointDataActiveScalarInfo( outInfo, VTK_FLOAT, 1 );
   return 1;
 }
 
 //-----------------------------------------------------------------------------
-struct SurfacePoint 
+struct SurfacePoint
 {
   double loc[3];
-  double o[3],n[3]; // plane centre and normal
-  vtkIdList *neighbors; // id's of points within LocalRadius of this point
-  double *costs; // should have same length as neighbors, cost for corresponding points
+  double o[3], n[3]; // plane centre and normal
+  vtkIdList* neighbors; // id's of points within LocalRadius of this point
+  double* costs; // should have same length as neighbors, cost for corresponding points
   char isVisited;
 
   // simple constructor to initialise the members
-  SurfacePoint() : neighbors(vtkIdList::New()), isVisited(0) {}
+  SurfacePoint() : neighbors( vtkIdList::New() ), isVisited( 0 ) {}
   ~SurfacePoint() { delete []costs; neighbors->Delete(); }
 };
 
@@ -156,35 +154,35 @@ struct SurfacePoint
 int CustomSurfaceReconstructionFilter::RequestData(
   vtkInformation* vtkNotUsed( request ),
   vtkInformationVector** inputVector,
-  vtkInformationVector* outputVector)
+  vtkInformationVector* outputVector )
 {
 
   //std::cerr << "vtkSurfaceReconstructionFilter running\n";
 
   // get the input
-  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
-  vtkDataSet *input = vtkDataSet::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject( 0 );
+  vtkDataSet* input = vtkDataSet::SafeDownCast(
+    inInfo->Get( vtkDataObject::DATA_OBJECT() ) );
+
   // get the output
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  vtkImageData *output = vtkImageData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
-  
+  vtkInformation* outInfo = outputVector->GetInformationObject( 0 );
+  vtkImageData* output = vtkImageData::SafeDownCast(
+    outInfo->Get( vtkDataObject::DATA_OBJECT() ) );
+
   const vtkIdType COUNT = input->GetNumberOfPoints();
-  SurfacePoint *surfacePoints;
+  SurfacePoint* surfacePoints;
 
   vtkIdType i, j;
   int k;
 
   if ( COUNT < 1 )
-    {
-    vtkErrorMacro(<<"No points to reconstruct");
+  {
+    vtkErrorMacro( << "No points to reconstruct" );
     return 1;
-    }
+  }
   surfacePoints = new SurfacePoint[COUNT];
-  
-  vtkDebugMacro(<<"Reconstructing " << COUNT << " points");
+
+  vtkDebugMacro( << "Reconstructing " << COUNT << " points" );
 
   //time_t start_time,t1,t2,t3,t4;
   //time(&start_time);
@@ -193,28 +191,28 @@ int CustomSurfaceReconstructionFilter::RequestData(
   // 1. Build local connectivity graph
   // -------------------------------------------------------------------------
   {
-  vtkPointLocator *locator = vtkPointLocator::New();
-  locator->SetDataSet(input);
-  vtkIdList *locals = vtkIdList::New();
-  // if a pair is close, add each one as a neighbor of the other
-  for(i=0;i<COUNT;i++)
+    vtkPointLocator* locator = vtkPointLocator::New();
+    locator->SetDataSet( input );
+    vtkIdList* locals = vtkIdList::New();
+    // if a pair is close, add each one as a neighbor of the other
+    for ( i = 0; i < COUNT; i++ )
     {
-    SurfacePoint *p = &surfacePoints[i];
-    CustomCopyBToA(p->loc,input->GetPoint(i));
-        locator->FindClosestNPoints(this->NeighborhoodSize,p->loc,locals);
-    int iNeighbor;
-    for(j=0;j<locals->GetNumberOfIds();j++)
+      SurfacePoint* p = &surfacePoints[i];
+      CustomCopyBToA( p->loc, input->GetPoint( i ) );
+      locator->FindClosestNPoints( this->NeighborhoodSize, p->loc, locals );
+      int iNeighbor;
+      for ( j = 0; j < locals->GetNumberOfIds(); j++ )
       {
-      iNeighbor = locals->GetId(j);
-      if(iNeighbor!=i)
+        iNeighbor = locals->GetId( j );
+        if ( iNeighbor != i )
         {
-        p->neighbors->InsertNextId(iNeighbor);
-        surfacePoints[iNeighbor].neighbors->InsertNextId(i);
+          p->neighbors->InsertNextId( iNeighbor );
+          surfacePoints[iNeighbor].neighbors->InsertNextId( i );
         }
       }
     }
-  locator->Delete();
-  locals->Delete();
+    locator->Delete();
+    locals->Delete();
   }
 
   //time(&t1);
@@ -222,56 +220,58 @@ int CustomSurfaceReconstructionFilter::RequestData(
   // 2. Estimate a plane at each point using local points
   // --------------------------------------------------------------------------
   {
-  double *pointi;
-  double **covar,*v3d,*eigenvalues,**eigenvectors;
-  covar = CustomSRMatrix(0,2,0,2);
-  v3d = CustomSRVector(0,2);
-  eigenvalues = CustomSRVector(0,2);
-  eigenvectors = CustomSRMatrix(0,2,0,2);
-  for(i=0;i<COUNT;i++)
+    double* pointi;
+    double** covar, * v3d, * eigenvalues, ** eigenvectors;
+    covar = CustomSRMatrix( 0, 2, 0, 2 );
+    v3d = CustomSRVector( 0, 2 );
+    eigenvalues = CustomSRVector( 0, 2 );
+    eigenvectors = CustomSRMatrix( 0, 2, 0, 2 );
+    for ( i = 0; i < COUNT; i++ )
     {
-    SurfacePoint *p = &surfacePoints[i];
-    
-    // first find the centroid of the neighbors
-    CustomCopyBToA(p->o,p->loc);
-    int number=1;
-    vtkIdType neighborIndex;
-    for(j=0;j<p->neighbors->GetNumberOfIds();j++)
+      SurfacePoint* p = &surfacePoints[i];
+
+      // first find the centroid of the neighbors
+      CustomCopyBToA( p->o, p->loc );
+      int number = 1;
+      vtkIdType neighborIndex;
+      for ( j = 0; j < p->neighbors->GetNumberOfIds(); j++ )
       {
-      neighborIndex = p->neighbors->GetId(j);
-      pointi = input->GetPoint(neighborIndex);
-      CustomAddBToA(p->o,pointi);
-      number++;
+        neighborIndex = p->neighbors->GetId( j );
+        pointi = input->GetPoint( neighborIndex );
+        CustomAddBToA( p->o, pointi );
+        number++;
       }
-    CustomDivideBy(p->o,number);
-    // then compute the covariance matrix
-    CustomSRMakeZero(covar,0,2,0,2);
-    for(k=0;k<3;k++)
-      v3d[k] = p->loc[k] - p->o[k];
-    CustomSRAddOuterProduct(covar,v3d);
-    for(j=0;j<p->neighbors->GetNumberOfIds();j++)
+      CustomDivideBy( p->o, number );
+      // then compute the covariance matrix
+      CustomSRMakeZero( covar, 0, 2, 0, 2 );
+      for ( k = 0; k < 3; k++ )
       {
-      neighborIndex = p->neighbors->GetId(j);
-      pointi = input->GetPoint(neighborIndex);
-      for(k=0;k<3;k++)
+        v3d[k] = p->loc[k] - p->o[k];
+      }
+      CustomSRAddOuterProduct( covar, v3d );
+      for ( j = 0; j < p->neighbors->GetNumberOfIds(); j++ )
+      {
+        neighborIndex = p->neighbors->GetId( j );
+        pointi = input->GetPoint( neighborIndex );
+        for ( k = 0; k < 3; k++ )
         {
-        v3d[k] = pointi[k] - p->o[k];
+          v3d[k] = pointi[k] - p->o[k];
         }
-      CustomSRAddOuterProduct(covar,v3d);
+        CustomSRAddOuterProduct( covar, v3d );
       }
-    CustomSRMultiply(covar,1.0/number,0,2,0,2);
-    // then extract the third eigenvector
-    vtkMath::Jacobi(covar,eigenvalues,eigenvectors);
-    // third eigenvector (column 2, ordered by eigenvalue magnitude) is plane normal
-    for(k=0;k<3;k++)
+      CustomSRMultiply( covar, 1.0 / number, 0, 2, 0, 2 );
+      // then extract the third eigenvector
+      vtkMath::Jacobi( covar, eigenvalues, eigenvectors );
+      // third eigenvector (column 2, ordered by eigenvalue magnitude) is plane normal
+      for ( k = 0; k < 3; k++ )
       {
-      p->n[k] = eigenvectors[k][2];
+        p->n[k] = eigenvectors[k][2];
       }
     }
-  CustomSRFreeMatrix(covar,0,2,0,2);
-  CustomSRFreeVector(v3d,0,2);
-  CustomSRFreeVector(eigenvalues,0,2);
-  CustomSRFreeMatrix(eigenvectors,0,2,0,2);
+    CustomSRFreeMatrix( covar, 0, 2, 0, 2 );
+    CustomSRFreeVector( v3d, 0, 2 );
+    CustomSRFreeVector( eigenvalues, 0, 2 );
+    CustomSRFreeMatrix( eigenvectors, 0, 2, 0, 2 );
   }
 
   //time(&t2);
@@ -280,19 +280,19 @@ int CustomSurfaceReconstructionFilter::RequestData(
   // --------------------------------------------------------------------------
   // cost = 1 - |normal1.normal2|
   // ie. cost is 0 if planes are parallel, 1 if orthogonal (least parallel)
-  for(i=0;i<COUNT;i++)
-    {
-    SurfacePoint *p = &surfacePoints[i];
+  for ( i = 0; i < COUNT; i++ )
+  {
+    SurfacePoint* p = &surfacePoints[i];
     p->costs = new double[p->neighbors->GetNumberOfIds()];
 
     // compute cost between all its neighbors
     // (bit inefficient to do this for every point, as cost is symmetric)
-    for(j=0;j<p->neighbors->GetNumberOfIds();j++)
-      {
-      p->costs[j] = 1.0 - 
-        fabs(vtkMath::Dot(p->n,surfacePoints[p->neighbors->GetId(j)].n));
-      }
+    for ( j = 0; j < p->neighbors->GetNumberOfIds(); j++ )
+    {
+      p->costs[j] = 1.0 -
+                    fabs( vtkMath::Dot( p->n, surfacePoints[p->neighbors->GetId( j )].n ) );
     }
+  }
 
   // --------------------------------------------------------------------------
   // 3b. Ensure consistency in plane direction between neighbors
@@ -306,91 +306,91 @@ int CustomSurfaceReconstructionFilter::RequestData(
   // that has the lowest cost connection with a visited vertex. Record this
   // vertex as visited, add any new neighbors to the neighbors list.
 
-  int orientationPropagation=1;
-  if(orientationPropagation) 
-    {// set to false if you don't want orientation propagation (for testing)
-    vtkIdList *nearby = vtkIdList::New(); // list of nearby, unvisited points
-    
+  int orientationPropagation = 1;
+  if ( orientationPropagation )
+  {  // set to false if you don't want orientation propagation (for testing)
+    vtkIdList* nearby = vtkIdList::New(); // list of nearby, unvisited points
+
     // start with some vertex
-    int first=0; // index of starting vertex
+    int first = 0; // index of starting vertex
     surfacePoints[first].isVisited = 1;
     // add all the neighbors of the starting vertex into nearby
-    for(j=0;j<surfacePoints[first].neighbors->GetNumberOfIds();j++)
-      {
-      nearby->InsertNextId(surfacePoints[first].neighbors->GetId(j));
-      }
-    
-    double cost,lowestCost;
+    for ( j = 0; j < surfacePoints[first].neighbors->GetNumberOfIds(); j++ )
+    {
+      nearby->InsertNextId( surfacePoints[first].neighbors->GetId( j ) );
+    }
+
+    double cost, lowestCost;
     int cheapestNearby = 0, connectedVisited = 0;
-    
+
     // repeat until nearby is empty:
-    while(nearby->GetNumberOfIds()>0)
-      {
+    while ( nearby->GetNumberOfIds() > 0 )
+    {
       // for each nearby point:
-      vtkIdType iNearby,iNeighbor;
+      vtkIdType iNearby, iNeighbor;
       lowestCost = VTK_DOUBLE_MAX;
-      for(i=0;i<nearby->GetNumberOfIds();i++)
-        {
-        iNearby = nearby->GetId(i);
+      for ( i = 0; i < nearby->GetNumberOfIds(); i++ )
+      {
+        iNearby = nearby->GetId( i );
         // test cost against all neighbors that are members of visited
-        for(j=0;j<surfacePoints[iNearby].neighbors->GetNumberOfIds();j++)
+        for ( j = 0; j < surfacePoints[iNearby].neighbors->GetNumberOfIds(); j++ )
+        {
+          iNeighbor = surfacePoints[iNearby].neighbors->GetId( j );
+          if ( surfacePoints[iNeighbor].isVisited )
           {
-          iNeighbor = surfacePoints[iNearby].neighbors->GetId(j);
-          if(surfacePoints[iNeighbor].isVisited)
-            {
             cost = surfacePoints[iNearby].costs[j];
             // pick lowest cost for this nearby point
-            if(cost<lowestCost) 
-              {
+            if ( cost < lowestCost )
+            {
               lowestCost = cost;
               cheapestNearby = iNearby;
               connectedVisited = iNeighbor;
               // optional: can break out if satisfied with parallelness
-              if(lowestCost<0.1)
-                {
+              if ( lowestCost < 0.1 )
+              {
                 i = nearby->GetNumberOfIds();
                 break;
-                }
               }
             }
           }
         }
-      if(connectedVisited == cheapestNearby)
-        {
-        vtkErrorMacro (<< "Internal error in CustomSurfaceReconstructionFilter");
+      }
+      if ( connectedVisited == cheapestNearby )
+      {
+        vtkErrorMacro( << "Internal error in CustomSurfaceReconstructionFilter" );
         return 0;
-        }
-      
+      }
+
       // correct the orientation of the point if necessary
-      if(vtkMath::Dot(surfacePoints[cheapestNearby].n,
-                      surfacePoints[connectedVisited].n)<0.0F)
-        {
+      if ( vtkMath::Dot( surfacePoints[cheapestNearby].n,
+                         surfacePoints[connectedVisited].n ) < 0.0F )
+      {
         // flip this normal
-        CustomMultiplyBy(surfacePoints[cheapestNearby].n,-1);
-        }
+        CustomMultiplyBy( surfacePoints[cheapestNearby].n, -1 );
+      }
       // add this nearby point to visited
-      if(surfacePoints[cheapestNearby].isVisited != 0)
-        {
-        vtkErrorMacro (<< "Internal error in CustomSurfaceReconstructionFilter");
+      if ( surfacePoints[cheapestNearby].isVisited != 0 )
+      {
+        vtkErrorMacro( << "Internal error in CustomSurfaceReconstructionFilter" );
         return 0;
-        }
-      
+      }
+
       surfacePoints[cheapestNearby].isVisited = 1;
       // remove from nearby
-      nearby->DeleteId(cheapestNearby);
+      nearby->DeleteId( cheapestNearby );
       // add all new nearby points to nearby
-      for(j=0;j<surfacePoints[cheapestNearby].neighbors->GetNumberOfIds();j++)
+      for ( j = 0; j < surfacePoints[cheapestNearby].neighbors->GetNumberOfIds(); j++ )
+      {
+        iNeighbor = surfacePoints[cheapestNearby].neighbors->GetId( j );
+        if ( surfacePoints[iNeighbor].isVisited == 0 )
         {
-        iNeighbor = surfacePoints[cheapestNearby].neighbors->GetId(j);
-        if(surfacePoints[iNeighbor].isVisited == 0)
-          {
-          nearby->InsertUniqueId(iNeighbor);
-          }
+          nearby->InsertUniqueId( iNeighbor );
         }
       }
-    
-    nearby->Delete();
     }
+
+    nearby->Delete();
+  }
 
   //time(&t3);
 
@@ -398,114 +398,112 @@ int CustomSurfaceReconstructionFilter::RequestData(
   // 4. Compute signed distance to surface for every point on a 3D grid
   // --------------------------------------------------------------------------
   {
-  // need to know the bounding rectangle
-  double bounds[6];
-  for(i=0;i<3;i++)
+    // need to know the bounding rectangle
+    double bounds[6];
+    for ( i = 0; i < 3; i++ )
     {
-    bounds[i*2]=input->GetBounds()[i*2];
-    bounds[i*2+1]=input->GetBounds()[i*2+1];
+      bounds[i * 2] = input->GetBounds()[i * 2];
+      bounds[i * 2 + 1] = input->GetBounds()[i * 2 + 1];
     }
 
-
-  // estimate the spacing if required
-  if(this->SampleSpacing<=0.0)
+    // estimate the spacing if required
+    if ( this->SampleSpacing <= 0.0 )
     {
-    // spacing guessed as cube root of (volume divided by number of points)
-    this->SampleSpacing = pow(static_cast<double>(bounds[1]-bounds[0])*
-                              (bounds[3]-bounds[2])*(bounds[5]-bounds[4]) /
-                              static_cast<double>(COUNT),
-                              static_cast<double>(1.0/3.0));
- 
-    vtkDebugMacro(<<"Estimated sample spacing as: " << this->SampleSpacing );
+      // spacing guessed as cube root of (volume divided by number of points)
+      this->SampleSpacing = pow( static_cast<double>( bounds[1] - bounds[0] ) *
+                                 ( bounds[3] - bounds[2] ) * ( bounds[5] - bounds[4] ) /
+                                 static_cast<double>( COUNT ),
+                                 static_cast<double>( 1.0 / 3.0 ) );
+
+      vtkDebugMacro( << "Estimated sample spacing as: " << this->SampleSpacing );
     }
 
-  // allow a border around the volume to allow sampling around the extremes
-  for(i=0;i<3;i++)
+    // allow a border around the volume to allow sampling around the extremes
+    for ( i = 0; i < 3; i++ )
     {
-    // AKM : I've increased the border so that the vtkContourFilter doesn't have holes at the edges
-    bounds[i*2]-=this->SampleSpacing*3;
-    bounds[i*2+1]+=this->SampleSpacing*3;
+      // AKM : I've increased the border so that the vtkContourFilter doesn't have holes at the edges
+      bounds[i * 2] -= this->SampleSpacing * 3;
+      bounds[i * 2 + 1] += this->SampleSpacing * 3;
     }
 
-  double topleft[3] = {bounds[0],bounds[2],bounds[4]};
-  double bottomright[3] = {bounds[1],bounds[3],bounds[5]};
-  int dim[3];
-  for(i=0;i<3;i++)
+    double topleft[3] = {bounds[0], bounds[2], bounds[4]};
+    double bottomright[3] = {bounds[1], bounds[3], bounds[5]};
+    int dim[3];
+    for ( i = 0; i < 3; i++ )
     {
-    dim[i] = static_cast<int>((bottomright[i]-topleft[i])/this->SampleSpacing);
-    }
-  
-  vtkDebugMacro(<<"Created output volume of dimensions: ("
-                << dim[0] << ", " << dim[1] << ", " << dim[2] << ")" );
-
-  // initialise the output volume
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
-               0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
-  output->SetExtent(0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
-  output->AllocateScalars(outInfo);
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
-               0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
-
-  //output->SetUpdateExtent(0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
-
-  
-  vtkFloatArray *newScalars = 
-    vtkFloatArray::SafeDownCast(output->GetPointData()->GetScalars());
-  outInfo->Set(vtkDataObject::SPACING(),
-               this->SampleSpacing, this->SampleSpacing, this->SampleSpacing);
-  outInfo->Set(vtkDataObject::ORIGIN(),topleft,3);
-  
-  //AKM : Set the origin and spacing on the output image
-  output->SetOrigin(topleft);
-  output->SetSpacing(this->SampleSpacing, this->SampleSpacing, this->SampleSpacing);
-
-  // initialise the point locator (have to use point insertion because we
-  // need to set our own bounds, slightly larger than the dataset to allow
-  // for sampling around the edge)
-  vtkPointLocator *locator = vtkPointLocator::New();
-  vtkPoints *newPts = vtkPoints::New();
-  locator->InitPointInsertion(newPts,bounds,static_cast<int>(COUNT));
-  for(i=0;i<COUNT;i++)
-    {
-    locator->InsertPoint(i,surfacePoints[i].loc);
+      dim[i] = static_cast<int>( ( bottomright[i] - topleft[i] ) / this->SampleSpacing );
     }
 
-  // go through the array probing the values
-  int x,y,z;
-  int iClosestPoint;
-  int zOffset,yOffset,offset;
-  double probeValue;
-  double point[3],temp[3];
-  for(z=0;z<dim[2];z++)
+    vtkDebugMacro( << "Created output volume of dimensions: ("
+                   << dim[0] << ", " << dim[1] << ", " << dim[2] << ")" );
+
+    // initialise the output volume
+    outInfo->Set( vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
+                  0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1 );
+    output->SetExtent( 0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1 );
+    output->AllocateScalars( outInfo );
+    outInfo->Set( vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+                  0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1 );
+
+    //output->SetUpdateExtent(0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
+
+    vtkFloatArray* newScalars =
+      vtkFloatArray::SafeDownCast( output->GetPointData()->GetScalars() );
+    outInfo->Set( vtkDataObject::SPACING(),
+                  this->SampleSpacing, this->SampleSpacing, this->SampleSpacing );
+    outInfo->Set( vtkDataObject::ORIGIN(), topleft, 3 );
+
+    //AKM : Set the origin and spacing on the output image
+    output->SetOrigin( topleft );
+    output->SetSpacing( this->SampleSpacing, this->SampleSpacing, this->SampleSpacing );
+
+    // initialise the point locator (have to use point insertion because we
+    // need to set our own bounds, slightly larger than the dataset to allow
+    // for sampling around the edge)
+    vtkPointLocator* locator = vtkPointLocator::New();
+    vtkPoints* newPts = vtkPoints::New();
+    locator->InitPointInsertion( newPts, bounds, static_cast<int>( COUNT ) );
+    for ( i = 0; i < COUNT; i++ )
     {
-    zOffset = z*dim[1]*dim[0];
-    point[2] = topleft[2] + z*this->SampleSpacing;
-    for(y=0;y<dim[1];y++)
+      locator->InsertPoint( i, surfacePoints[i].loc );
+    }
+
+    // go through the array probing the values
+    int x, y, z;
+    int iClosestPoint;
+    int zOffset, yOffset, offset;
+    double probeValue;
+    double point[3], temp[3];
+    for ( z = 0; z < dim[2]; z++ )
+    {
+      zOffset = z * dim[1] * dim[0];
+      point[2] = topleft[2] + z * this->SampleSpacing;
+      for ( y = 0; y < dim[1]; y++ )
       {
-      yOffset = y*dim[0] + zOffset;
-      point[1] = topleft[1] + y*this->SampleSpacing;
-      for(x=0;x<dim[0];x++)
+        yOffset = y * dim[0] + zOffset;
+        point[1] = topleft[1] + y * this->SampleSpacing;
+        for ( x = 0; x < dim[0]; x++ )
         {
-        offset = x + yOffset;
-        point[0] = topleft[0] + x*this->SampleSpacing;
-        // find the distance from the probe to the plane of the nearest point
-        iClosestPoint = locator->FindClosestInsertedPoint(point);
-        if(iClosestPoint==-1) 
+          offset = x + yOffset;
+          point[0] = topleft[0] + x * this->SampleSpacing;
+          // find the distance from the probe to the plane of the nearest point
+          iClosestPoint = locator->FindClosestInsertedPoint( point );
+          if ( iClosestPoint == -1 )
           {
-          vtkErrorMacro (<< "Internal error");
-          return 0;
+            vtkErrorMacro( << "Internal error" );
+            return 0;
           }
-        CustomCopyBToA(temp,point);
-        CustomSubtractBFromA(temp,surfacePoints[iClosestPoint].loc);
-        probeValue = vtkMath::Dot(temp,surfacePoints[iClosestPoint].n);
-        newScalars->SetValue(offset,probeValue);
+          CustomCopyBToA( temp, point );
+          CustomSubtractBFromA( temp, surfacePoints[iClosestPoint].loc );
+          probeValue = vtkMath::Dot( temp, surfacePoints[iClosestPoint].n );
+          newScalars->SetValue( offset, probeValue );
         }
       }
     }
-  locator->Delete();
-  newPts->Delete();
+    locator->Delete();
+    newPts->Delete();
   }
-  
+
   //time(&t4);
   // Clear up everything
   delete [] surfacePoints;
@@ -513,97 +511,93 @@ int CustomSurfaceReconstructionFilter::RequestData(
   return 1;
 }
 
-void CustomSurfaceReconstructionFilter::PrintSelf(ostream& os, vtkIndent indent)
+void CustomSurfaceReconstructionFilter::PrintSelf( ostream& os, vtkIndent indent )
 {
-  this->Superclass::PrintSelf(os,indent);
-  
+  this->Superclass::PrintSelf( os, indent );
+
   os << indent << "Neighborhood Size:" << this->NeighborhoodSize << "\n";
   os << indent << "Sample Spacing:" << this->SampleSpacing << "\n";
 }
 
-void CustomSRAddOuterProduct(double **m,double *v)
+void CustomSRAddOuterProduct( double** m, double* v )
 {
-  int i,j;
-  for(i=0;i<3;i++)
+  int i, j;
+  for ( i = 0; i < 3; i++ )
+  {
+    for ( j = 0; j < 3; j++ )
     {
-    for(j=0;j<3;j++)
-      {
-      m[i][j] += v[i]*v[j];
-      }
+      m[i][j] += v[i] * v[j];
     }
+  }
 }
 
 #define VTK_NR_END 1
 #define VTK_FREE_ARG char*
 
 // allocate a float vector with subscript range v[nl..nh]
-double *CustomSRVector(long nl, long nh)        
-{ 
-  double *v;
+double* CustomSRVector( long nl, long nh )
+{
+  double* v;
 
-  v = new double [nh-nl+1+VTK_NR_END];
-  if (!v) 
-    {
-    vtkGenericWarningMacro(<<"allocation failure in vector()");
+  v = new double [nh - nl + 1 + VTK_NR_END];
+  if ( !v )
+  {
+    vtkGenericWarningMacro( << "allocation failure in vector()" );
     return NULL;
-    }
-  
-  return (v-nl+VTK_NR_END); 
+  }
+
+  return v - nl + VTK_NR_END;
 }
 
 // allocate a float matrix with subscript range m[nrl..nrh][ncl..nch]
-double **CustomSRMatrix(long nrl, long nrh, long ncl, long nch)        
+double** CustomSRMatrix( long nrl, long nrh, long ncl, long nch )
 {
-  long i, nrow=nrh-nrl+1,ncol=nch-ncl+1;
-  double **m;
+  long i, nrow = nrh - nrl + 1, ncol = nch - ncl + 1;
+  double** m;
 
   // allocate pointers to rows
-  m = new double * [nrow+VTK_NR_END];
-  if (!m) 
-    {
-    vtkGenericWarningMacro(<<"allocation failure 1 in Matrix()");
+  m = new double* [nrow + VTK_NR_END];
+  if ( !m )
+  {
+    vtkGenericWarningMacro( << "allocation failure 1 in Matrix()" );
     return NULL;
-    }
-  
+  }
+
   m += VTK_NR_END;
   m -= nrl;
 
   // allocate rows and set pointers to them
-  m[nrl] = new double[nrow*ncol+VTK_NR_END];
-  if (!m[nrl]) 
-    {
-    vtkGenericWarningMacro("allocation failure 2 in Matrix()");
+  m[nrl] = new double[nrow * ncol + VTK_NR_END];
+  if ( !m[nrl] )
+  {
+    vtkGenericWarningMacro( "allocation failure 2 in Matrix()" );
     return NULL;
-    }
-  
+  }
+
   m[nrl] += VTK_NR_END;
   m[nrl] -= ncl;
-  for(i=nrl+1;i<=nrh;i++) 
-    {
-    m[i] = m[i-1]+ncol;
-    }
+  for ( i = nrl + 1; i <= nrh; i++ )
+  {
+    m[i] = m[i - 1] + ncol;
+  }
 
   // return pointer to array of pointers to rows
   return m;
 }
 
 // free a double vector allocated with SRVector()
-void CustomSRFreeVector(double *v, long nl, long vtkNotUsed(nh))
-{ 
-  delete [] (v+nl-VTK_NR_END);
+void CustomSRFreeVector( double* v, long nl, long vtkNotUsed( nh ) )
+{
+  delete [] ( v + nl - VTK_NR_END );
 }
 
 // free a double matrix allocated by Matrix()
-void CustomSRFreeMatrix(double **m, long nrl, long vtkNotUsed(nrh),
-                     long ncl, long vtkNotUsed(nch))
-        
+void CustomSRFreeMatrix( double** m, long nrl, long vtkNotUsed( nrh ),
+                         long ncl, long vtkNotUsed( nch ) )
 {
-  delete [] (m[nrl]+ncl-VTK_NR_END);
-  delete [] (m+nrl-VTK_NR_END);
+  delete [] ( m[nrl] + ncl - VTK_NR_END );
+  delete [] ( m + nrl - VTK_NR_END );
 }
 
 #undef VTK_NR_END
 #undef VTK_FREE_ARG
-
-
-

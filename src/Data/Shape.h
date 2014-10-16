@@ -6,7 +6,6 @@
 
 #include <Data/Mesh.h>
 
-
 class Shape;
 typedef QSharedPointer< Shape > ShapeHandle;
 typedef QVector< ShapeHandle > ShapeList;
@@ -44,8 +43,7 @@ public:
   int get_id();
 
   /// Set the id of this shape
-  void set_id(int id);
-
+  void set_id( int id );
 
   QString get_initial_filename();
   QString get_initial_filename_with_path();
@@ -55,7 +53,6 @@ public:
 
   QString get_point_filename();
   QString get_point_filename_with_path();
-
 
 private:
 

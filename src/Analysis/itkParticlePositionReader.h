@@ -1,17 +1,17 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticlePositionReader.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
+   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+   Module:    $RCSfile: itkParticlePositionReader.h,v $
+   Date:      $Date: 2011/03/24 01:17:33 $
+   Version:   $Revision: 1.2 $
+   Author:    $Author: wmartin $
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
+   Copyright (c) 2009 Scientific Computing and Imaging Institute.
+   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
+   =========================================================================*/
 #ifndef __itkParticlePositionReader_h
 #define __itkParticlePositionReader_h
 
@@ -51,12 +51,12 @@ public:
 
   /** The point type that this class reads. */
   typedef Point<double, VDimension> PointType;
-  
+
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticlePositionReader, DataObject);
+  itkTypeMacro( ParticlePositionReader, DataObject );
 
   /** Get the output of the reader.  The output is a std::vector of PointType. */
   const std::vector<PointType> &GetOutput() const
@@ -65,34 +65,32 @@ public:
   }
 
   /** Set/Get the filename. */
-  itkSetStringMacro(FileName);
-  itkGetStringMacro(FileName);
+  itkSetStringMacro( FileName );
+  itkGetStringMacro( FileName );
 
   /** Read the file. */
   inline void Read()
   { this->Update(); }
   void Update();
-  
+
 protected:
   ParticlePositionReader() { }
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf( std::ostream& os, Indent indent ) const
   {
-    Superclass::PrintSelf(os,indent);
-  
+    Superclass::PrintSelf( os, indent );
+
     os << indent << "ParticlePositionReader: " << std::endl;
   }
-  virtual ~ParticlePositionReader() {};
+  virtual ~ParticlePositionReader() {}
 
- private:
-  ParticlePositionReader(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+private:
+  ParticlePositionReader( const Self& ); //purposely not implemented
+  void operator=( const Self& ); //purposely not implemented
 
   std::vector<PointType> m_Output;
   std::string m_FileName;
 };
-
 } // end namespace itk
-
 
 #if ITK_TEMPLATE_EXPLICIT
 # include "Templates/itkParticlePositionReader+-.h"
@@ -102,4 +100,4 @@ protected:
 # include "itkParticlePositionReader.txx"
 #endif
 
-#endif
+#endif // ifndef __itkParticlePositionReader_h

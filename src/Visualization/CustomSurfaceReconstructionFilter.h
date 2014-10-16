@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Visualization Toolkit
-  Module:    CustomSurfaceReconstructionFilter.h
+   Program:   Visualization Toolkit
+   Module:    CustomSurfaceReconstructionFilter.h
 
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+   All rights reserved.
+   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notice for more information.
 
-=========================================================================*/
+   =========================================================================*/
 // .NAME CustomSurfaceReconstructionFilter - reconstructs a surface from unorganized points
 // .SECTION Description
 // CustomSurfaceReconstructionFilter takes a list of points assumed to lie on
@@ -30,49 +30,48 @@
 class CustomSurfaceReconstructionFilter : public vtkImageAlgorithm
 {
 public:
-  vtkTypeMacro(CustomSurfaceReconstructionFilter,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeMacro( CustomSurfaceReconstructionFilter, vtkImageAlgorithm );
+  void PrintSelf( ostream& os, vtkIndent indent );
 
   // Description:
   // Construct with NeighborhoodSize=20.
   static CustomSurfaceReconstructionFilter* New();
 
-  // Description: 
+  // Description:
   // Specify the number of neighbors each point has, used for estimating the
   // local surface orientation.  The default value of 20 should be OK for
   // most applications, higher values can be specified if the spread of
   // points is uneven. Values as low as 10 may yield adequate results for
   // some surfaces. Higher values cause the algorithm to take longer. Higher
   // values will cause errors on sharp boundaries.
-  vtkGetMacro(NeighborhoodSize,int);
-  vtkSetMacro(NeighborhoodSize,int);
+  vtkGetMacro( NeighborhoodSize, int );
+  vtkSetMacro( NeighborhoodSize, int );
 
-  // Description: 
+  // Description:
   // Specify the spacing of the 3D sampling grid. If not set, a
   // reasonable guess will be made.
-  vtkGetMacro(SampleSpacing,double);
-  vtkSetMacro(SampleSpacing,double);
+  vtkGetMacro( SampleSpacing, double );
+  vtkSetMacro( SampleSpacing, double );
 
 protected:
   CustomSurfaceReconstructionFilter();
-  ~CustomSurfaceReconstructionFilter() {};
+  ~CustomSurfaceReconstructionFilter() {}
 
-  virtual int RequestInformation (vtkInformation *, 
-                                  vtkInformationVector **, 
-                                  vtkInformationVector *);
-  virtual int RequestData (vtkInformation *, 
-                           vtkInformationVector **, 
-                           vtkInformationVector *);
+  virtual int RequestInformation( vtkInformation*,
+                                  vtkInformationVector**,
+                                  vtkInformationVector* );
+  virtual int RequestData( vtkInformation*,
+                           vtkInformationVector**,
+                           vtkInformationVector* );
 
   int NeighborhoodSize;
   double SampleSpacing;
 
-  virtual int FillInputPortInformation(int, vtkInformation*);
+  virtual int FillInputPortInformation( int, vtkInformation* );
 
 private:
-  CustomSurfaceReconstructionFilter(const CustomSurfaceReconstructionFilter&);  // Not implemented.
-  void operator=(const CustomSurfaceReconstructionFilter&);  // Not implemented.
+  CustomSurfaceReconstructionFilter( const CustomSurfaceReconstructionFilter& );  // Not implemented.
+  void operator=( const CustomSurfaceReconstructionFilter& );  // Not implemented.
 };
 
-#endif
-
+#endif // ifndef __CustomSurfaceReconstructionFilter_h

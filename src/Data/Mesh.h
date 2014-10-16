@@ -9,7 +9,6 @@
 
 #include <vnl/vnl_vector.h>
 
-
 class Mesh;
 typedef QSharedPointer< Mesh > MeshHandle;
 
@@ -51,7 +50,6 @@ private:
   int dimensions_[3];
 
   vnl_vector<double> center_transform_;
-
 };
 
 #endif /* STUDIO_DATA_MESH_H */
