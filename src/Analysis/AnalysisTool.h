@@ -48,13 +48,6 @@ public Q_SLOTS:
   void on_pcaSlider_valueChanged();
   void on_pcaModeSpinBox_valueChanged();
 
-  //--------------------------------------------------
-  // visualization panel
-  //--------------------------------------------------
-  void on_show_surface_stateChanged();
-  void on_show_glyphs_stateChanged();
-  void on_glyph_size_valueChanged( int value );
-  void on_glyph_quality_valueChanged( int value );
 
 private:
 
@@ -62,8 +55,6 @@ private:
   double get_pca_value( int slider_value );
 
   void compute_mode_shape();
-
-  void update_from_preferences();  
 
   void update_analysis_mode();
 

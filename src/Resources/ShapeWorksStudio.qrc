@@ -34,5 +34,10 @@
     <file>Images/gear.png</file>
     <file>Images/tools.png</file>
     <file>Images/studio.png</file>
+	<file>Images/DownArrow.png</file>
+    <file>Images/DownArrowWhite.png</file>
+	<file>Images/RightArrow.png</file>
+    <file>Images/RightArrowWhite.png</file>
+
   </qresource>
 </RCC>

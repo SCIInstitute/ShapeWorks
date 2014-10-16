@@ -79,6 +79,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->analysis_tool_->set_app( this );
   this->analysis_tool_->set_visualizer( this->visualizer_ );
   this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
+
+  this->update_from_preferences();
 }
 
 //---------------------------------------------------------------------------
@@ -182,6 +184,17 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 
   this->ui_->qvtkWidget->GetRenderWindow()->Render();
 }
+
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_from_preferences()
+{
+  this->ui_->glyph_quality->setValue( Preferences::Instance().get_glyph_quality() );
+  this->ui_->glyph_quality_label->setText( QString::number( Preferences::Instance().get_glyph_quality() ) );
+  this->ui_->glyph_size->setValue( Preferences::Instance().get_glyph_size() * 10.0 );
+  this->ui_->glyph_size_label->setText( QString::number( Preferences::Instance().get_glyph_size() ) );
+}
+
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_scrollbar()
@@ -426,4 +439,30 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 
   // save the size of the window to preferences
   Preferences::Instance().set_main_window_size( this->size() );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_show_surface_stateChanged()
+{
+  this->visualizer_->set_show_surface( this->ui_->show_surface->isChecked() );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_show_glyphs_stateChanged()
+{
+  this->visualizer_->set_show_glyphs( this->ui_->show_glyphs->isChecked() );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_glyph_size_valueChanged( int value )
+{
+  Preferences::Instance().set_glyph_size( value / 10.0 );
+  this->update_from_preferences();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_glyph_quality_valueChanged( int value )
+{
+  Preferences::Instance().set_glyph_quality( value );
+  this->update_from_preferences();
 }

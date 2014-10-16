@@ -115,8 +115,9 @@ int main( int argc, char** argv )
   files << "h:/projects/laa_tee/data/interface_5.nrrd";
 
   //studio_app.import_files( files );
-
-  //studio_app->open_project( "h:/projects/studio/studio.xml" );
+#ifdef LOAD_DEFAULT_PROJECT
+  studio_app->open_project( "h:/projects/studio/studio.xml" );
+#endif
 
   return app.exec();
 }

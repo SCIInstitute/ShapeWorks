@@ -105,10 +105,7 @@ void Visualizer::update_display()
 //-----------------------------------------------------------------------------
 void Visualizer::display_mean()
 {
-  if ( !stats_ready_ )
-  {
-    this->compute_stats();
-  }
+  this->compute_stats();
 
   this->display_shape( this->stats.Mean() );
 }
@@ -174,6 +171,10 @@ void Visualizer::update_viewer_properties()
 //-----------------------------------------------------------------------------
 void Visualizer::compute_stats()
 {
+  if ( this->stats_ready_ )
+  {
+    return;
+  }
   std::vector < vnl_vector < double > > points;
   foreach( ShapeHandle shape, this->project_->get_shapes() ) {
     points.push_back( shape->get_correspondence_points() );
@@ -187,6 +188,8 @@ void Visualizer::compute_stats()
 //-----------------------------------------------------------------------------
 void Visualizer::display_pca( int mode, double value )
 {
+  this->compute_stats();
+
   double pcaSliderValue = value;
 
   unsigned int m = this->stats.Eigenvectors().columns() - ( mode );
@@ -194,7 +197,6 @@ void Visualizer::display_pca( int mode, double value )
   vnl_vector<double> e = this->stats.Eigenvectors().get_column( m );
 
   double lambda = sqrt( this->stats.Eigenvalues()[m] );
-
 
   ///this->ui->pcaValueLabel->setText( QString::number( pcaSliderValue, 'g', 2 ) );
   ///this->ui->pcaEigenValueLabel->setText( QString::number( this->stats.Eigenvalues()[m] ) );

@@ -63,7 +63,17 @@ public Q_SLOTS:
   void handle_project_changed();
   void handle_groom_complete();
 
+
+  //--------------------------------------------------
+  // visualization panel
+  //--------------------------------------------------
+  void on_show_surface_stateChanged();
+  void on_show_glyphs_stateChanged();
+  void on_glyph_size_valueChanged( int value );
+  void on_glyph_quality_valueChanged( int value );
+
 private:
+  void update_from_preferences();  
 
   void update_scrollbar();
 
