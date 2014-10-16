@@ -63,6 +63,11 @@ void Lightbox::display_objects()
 {
   //this->clear_renderers();
 
+  for ( int i = 0; i < this->viewers_.size(); i++ )
+  {
+    this->viewers_[i]->clear_viewer();
+  }
+
   // skip based on scrollbar
   int start_object = this->start_row_ * this->tile_layout_width_;
 

@@ -65,6 +65,8 @@ Viewer::Viewer()
   this->glyph_size_ = 1.0f;
   this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
+
+  this->visible_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -74,8 +76,9 @@ Viewer::~Viewer()
 //-----------------------------------------------------------------------------
 void Viewer::display_object( QSharedPointer<DisplayObject> object )
 {
-  QSharedPointer<Mesh> mesh = object->get_mesh();
+  this->visible_ = true;
 
+  QSharedPointer<Mesh> mesh = object->get_mesh();
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
 
   vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
@@ -175,6 +178,13 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::clear_viewer()
+{
+  this->renderer_->RemoveAllViewProps();
+  this->visible_ = false;
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::reset_camera()
 {
   this->renderer_->ResetCamera();
@@ -234,6 +244,11 @@ void Viewer::set_show_surface( bool show )
 //-----------------------------------------------------------------------------
 void Viewer::update_actors()
 {
+  if ( !this->visible_ )
+  {
+    return;
+  }
+
   this->renderer_->RemoveActor( this->glyph_actor_ );
   //this->renderer_->RemoveActor( this->arrowGlyphActor );
 

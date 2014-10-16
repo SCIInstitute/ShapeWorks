@@ -302,6 +302,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
   this->project_->set_tool_state( Project::ANALYSIS_C );
   this->ui_->stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
+  this->analysis_tool_->activate();
 }
 
 //---------------------------------------------------------------------------

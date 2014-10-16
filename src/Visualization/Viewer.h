@@ -36,6 +36,8 @@ public:
 
   void display_object( QSharedPointer<DisplayObject> object );
 
+  void clear_viewer();
+
   void reset_camera();
 
   void set_glyph_size_and_quality( double size, double quality );
@@ -45,6 +47,8 @@ public:
   void update_glyph_properties();
 
 private:
+
+  bool visible_;
 
   void update_actors();
 

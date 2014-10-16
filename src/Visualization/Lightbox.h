@@ -57,6 +57,7 @@ private:
 
   QVector < QSharedPointer < DisplayObject > > objects_;
 
+  // there is one viewer for every tile in the lightbox display
   ViewerList viewers_;
 
   vtkRenderWindow* render_window_;

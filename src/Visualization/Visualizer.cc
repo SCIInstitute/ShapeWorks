@@ -19,6 +19,7 @@ Visualizer::Visualizer()
 
   this->show_glyphs_ = true;
   this->show_surface_ = true;
+  this->stats_ready_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -104,27 +105,27 @@ void Visualizer::update_display()
 //-----------------------------------------------------------------------------
 void Visualizer::display_mean()
 {
-  std::vector < vnl_vector < double > > points;
-  foreach( ShapeHandle shape, this->project_->get_shapes() ) {
-    points.push_back( shape->get_correspondence_points() );
+  if ( !stats_ready_ )
+  {
+    this->compute_stats();
   }
 
-  this->stats.ImportPoints( points );
+  this->display_shape( this->stats.Mean() );
+}
 
-  this->stats.ComputeModes();
-
-  vnl_vector<double> mean_shape = this->stats.Mean();
-
+//-----------------------------------------------------------------------------
+void Visualizer::display_shape( const vnl_vector<double> &points )
+{
   MeshHandle mesh = MeshHandle( new Mesh() );
-  mesh->create_from_pointset( mean_shape );
+  mesh->create_from_pointset( points );
 
   DisplayObjectHandle object = DisplayObjectHandle( new DisplayObject() );
 
   object->set_mesh( mesh );
-  object->set_correspondence_points( mean_shape );
+  object->set_correspondence_points( points );
 
   QStringList annotations;
-  annotations << "mean";
+  annotations << "computed shape";
   annotations << "";
   annotations << "";
   annotations << "";
@@ -133,6 +134,7 @@ void Visualizer::display_mean()
   QVector<DisplayObjectHandle> list;
   list << object;
   this->lightbox_->set_display_objects( list );
+  this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
@@ -167,4 +169,40 @@ void Visualizer::update_viewer_properties()
 
     this->lightbox_->redraw();
   }
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::compute_stats()
+{
+  std::vector < vnl_vector < double > > points;
+  foreach( ShapeHandle shape, this->project_->get_shapes() ) {
+    points.push_back( shape->get_correspondence_points() );
+  }
+
+  this->stats.ImportPoints( points );
+  this->stats.ComputeModes();
+  this->stats_ready_ = true;
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::display_pca( int mode, double value )
+{
+  double pcaSliderValue = value;
+
+  unsigned int m = this->stats.Eigenvectors().columns() - ( mode );
+
+  vnl_vector<double> e = this->stats.Eigenvectors().get_column( m );
+
+  double lambda = sqrt( this->stats.Eigenvalues()[m] );
+
+
+  ///this->ui->pcaValueLabel->setText( QString::number( pcaSliderValue, 'g', 2 ) );
+  ///this->ui->pcaEigenValueLabel->setText( QString::number( this->stats.Eigenvalues()[m] ) );
+  ///this->ui->pcaLambdaLabel->setText( QString::number( pcaSliderValue * lambda ) );
+
+  vnl_vector<double> shape;
+
+  shape = this->stats.Mean() + ( e * ( value * lambda ) );
+
+  this->display_shape( this->stats.Mean() + ( e * ( pcaSliderValue * lambda ) ) );
 }

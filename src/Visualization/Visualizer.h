@@ -47,6 +47,11 @@ public:
   /// tmp: compute and display the mean shape
   void display_mean();
 
+  void display_shape( const vnl_vector<double> &points );
+
+  void display_pca(int mode, double value);
+
+
   static const QString MODE_ORIGINAL_C;
   static const QString MODE_GROOMED_C;
   static const QString MODE_RECONSTRUCTION_C;
@@ -57,6 +62,9 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
+
+  void compute_stats();
+
 
   QString display_mode_;
   bool center_;
@@ -69,6 +77,12 @@ private:
 
   /// itk particle shape statistics
   ParticleShapeStatistics<3> stats;
+  bool stats_ready_;
+
+
+  int pca_mode;
+  double pca_value;
+
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */
