@@ -74,6 +74,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_->stacked_widget->addWidget( this->optimize_tool_.data() );
 
   this->update_from_preferences();
+  this->update_tools();
 }
 
 //---------------------------------------------------------------------------
@@ -471,6 +472,7 @@ void ShapeWorksStudioApp::update_tools()
 {
   if ( this->ui_->samples_button->isChecked() )
   {
+    this->update_display();
     this->ui_->pcaPanel->setVisible( false );
   }
   else if ( this->ui_->stats_button->isChecked() )
