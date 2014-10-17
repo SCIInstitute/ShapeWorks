@@ -69,16 +69,18 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   layout->addWidget( this->glyph_quality_slider_, 1, 2, 1, 1 );
   widget->setLayout( layout );
 
-  QWidgetAction* originSliceModelAction = new QWidgetAction( widget );
-  originSliceModelAction->setDefaultWidget( widget );
-  menu->addAction( originSliceModelAction );
+  QWidgetAction* widget_action = new QWidgetAction( widget );
+  widget_action->setDefaultWidget( widget );
+  menu->addAction( widget_action );
 
-  QToolButton* toolButton = new QToolButton();
-  toolButton->setMaximumWidth( 15 );
-  toolButton->setMenu( menu );
-  toolButton->setPopupMode( QToolButton::InstantPopup );
-  this->ui_->glyph_layout->addWidget( toolButton );
 
+  
+  QToolButton* tool_button = new QToolButton();
+  tool_button->setMaximumWidth( 15 );
+  tool_button->setMenu( menu );
+  tool_button->setPopupMode( QToolButton::InstantPopup );
+  this->ui_->glyph_layout->addWidget( tool_button );
+  
 ///
 
   this->project_ = QSharedPointer<Project>( new Project() );
