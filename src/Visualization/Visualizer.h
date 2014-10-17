@@ -55,9 +55,8 @@ public:
   static const QString MODE_GROOMED_C;
   static const QString MODE_RECONSTRUCTION_C;
 
-
 Q_SIGNALS:
-  void pca_labels_changed(QString value, QString eigen, QString lambda);
+  void pca_labels_changed( QString value, QString eigen, QString lambda );
 
 public Q_SLOTS:
 
