@@ -3,6 +3,7 @@
 
 // qt
 #include <QFileDialog>
+#include <QWidgetAction>
 
 // vtk
 #include <vtkRenderWindow.h>
@@ -34,15 +35,15 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   QWidget* widget = new QWidget();
   QGridLayout* layout = new QGridLayout( widget );
 
-  QLabel* size_label = new QLabel( "Glyph Size" );
+  QLabel* size_label = new QLabel( "Glyph Size: " );
   layout->addWidget( size_label, 0, 0, 1, 1 );
-  size_label = new QLabel( "Glyph Detail" );
+  size_label = new QLabel( "Glyph Detail: " );
   layout->addWidget( size_label, 1, 0, 1, 1 );
 
   this->glyph_quality_label_ = new QLabel( "...." );
-  //this->glyph_quality_label_->setMinimumWidth(50);
+  this->glyph_quality_label_->setMinimumWidth(50);
   this->glyph_size_label_ = new QLabel( "...." );
-  //this->glyph_size_label_->setMinimumWidth(50);
+  this->glyph_size_label_->setMinimumWidth(50);
   layout->addWidget( this->glyph_size_label_, 0, 1, 1, 1 );
   layout->addWidget( this->glyph_quality_label_, 1, 1, 1, 1 );
 

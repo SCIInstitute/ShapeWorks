@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+#include <QSlider>
+#include <QLabel>
 
 class Lightbox;
 class GroomTool;
