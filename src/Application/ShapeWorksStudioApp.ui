@@ -593,6 +593,12 @@ QToolButton:pressed{
     </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
+      <property name="horizontalSpacing">
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>0</number>
+      </property>
       <item row="0" column="0">
        <widget class="QPushButton" name="samples_button">
         <property name="text">
