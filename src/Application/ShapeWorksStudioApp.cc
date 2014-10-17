@@ -29,6 +29,57 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi( this );
 
+/// move this out
+  QMenu* menu = new QMenu();
+  QWidget* widget = new QWidget();
+  QGridLayout* layout = new QGridLayout( widget );
+
+  QLabel* size_label = new QLabel( "Glyph Size" );
+  layout->addWidget( size_label, 0, 0, 1, 1 );
+  size_label = new QLabel( "Glyph Detail" );
+  layout->addWidget( size_label, 1, 0, 1, 1 );
+
+  this->glyph_quality_label_ = new QLabel( "...." );
+  //this->glyph_quality_label_->setMinimumWidth(50);
+  this->glyph_size_label_ = new QLabel( "...." );
+  //this->glyph_size_label_->setMinimumWidth(50);
+  layout->addWidget( this->glyph_size_label_, 0, 1, 1, 1 );
+  layout->addWidget( this->glyph_quality_label_, 1, 1, 1, 1 );
+
+  this->glyph_size_slider_ = new QSlider( widget );
+  this->glyph_size_slider_->setOrientation( Qt::Horizontal );
+  this->glyph_size_slider_->setMinimum( 1 );
+  this->glyph_size_slider_->setMaximum( 100 );
+  this->glyph_size_slider_->setPageStep( 10 );
+  this->glyph_size_slider_->setTickPosition( QSlider::TicksBelow );
+  this->glyph_size_slider_->setTickInterval( 10 );
+  this->glyph_size_slider_->setMinimumWidth( 200 );
+
+  this->glyph_quality_slider_ = new QSlider( widget );
+  this->glyph_quality_slider_->setMinimum( 1 );
+  this->glyph_quality_slider_->setMaximum( 20 );
+  this->glyph_quality_slider_->setPageStep( 3 );
+  this->glyph_quality_slider_->setOrientation( Qt::Horizontal );
+  this->glyph_quality_slider_->setTickPosition( QSlider::TicksBelow );
+  this->glyph_quality_slider_->setTickInterval( 1 );
+  this->glyph_quality_slider_->setMinimumWidth( 200 );
+
+  layout->addWidget( this->glyph_size_slider_, 0, 2, 1, 1 );
+  layout->addWidget( this->glyph_quality_slider_, 1, 2, 1, 1 );
+  widget->setLayout( layout );
+
+  QWidgetAction* originSliceModelAction = new QWidgetAction( widget );
+  originSliceModelAction->setDefaultWidget( widget );
+  menu->addAction( originSliceModelAction );
+
+  QToolButton* toolButton = new QToolButton();
+  toolButton->setMaximumWidth( 15 );
+  toolButton->setMenu( menu );
+  toolButton->setPopupMode( QToolButton::InstantPopup );
+  this->ui_->glyph_layout->addWidget( toolButton );
+
+///
+
   this->project_ = QSharedPointer<Project>( new Project() );
 
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
@@ -78,6 +129,29 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_toolbar_items_changed() ) );
   connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_toolbar_items_changed() ) );
+  connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_toolbar_items_changed() ) );
+  connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_toolbar_items_changed() ) );
+
+/*
+
+   QMenu *menu = new QMenu();
+   QAction *testAction = new QAction("test menu item", this);
+   menu->addAction(testAction);
+   testAction = new QAction("test menu item2", this);
+   menu->addAction(testAction);
+   testAction = new QAction("test menu item2", this);
+   menu->addAction(testAction);
+   testAction = new QAction("test menu item2", this);
+   menu->addAction(testAction);
+   testAction = new QAction("test menu item2", this);
+   menu->addAction(testAction);
+   QToolButton* toolButton = new QToolButton();
+   toolButton->setMenu(menu);
+   toolButton->setPopupMode(QToolButton::InstantPopup);
+   //toolBar->addWidget(toolButton);
+   this->ui_->horizontalLayout_3->addWidget(toolButton);
+
+ */
 }
 
 //---------------------------------------------------------------------------
@@ -185,17 +259,22 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_toolbar_items_changed()
 {
+  std::cerr << "handle_toolbar...\n";
+
   this->visualizer_->set_show_surface( this->ui_->surface_visible_button->isChecked() );
   this->visualizer_->set_show_glyphs( this->ui_->glyphs_visible_button->isChecked() );
+  Preferences::Instance().set_glyph_size( this->glyph_size_slider_->value() / 10.0 );
+  Preferences::Instance().set_glyph_quality( this->glyph_quality_slider_->value() );
+  this->update_from_preferences();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_from_preferences()
 {
-  this->ui_->glyph_quality->setValue( Preferences::Instance().get_glyph_quality() );
-  this->ui_->glyph_quality_label->setText( QString::number( Preferences::Instance().get_glyph_quality() ) );
-  this->ui_->glyph_size->setValue( Preferences::Instance().get_glyph_size() * 10.0 );
-  this->ui_->glyph_size_label->setText( QString::number( Preferences::Instance().get_glyph_size() ) );
+  this->glyph_quality_slider_->setValue( Preferences::Instance().get_glyph_quality() );
+  this->glyph_quality_label_->setText( QString::number( Preferences::Instance().get_glyph_quality() ) );
+  this->glyph_size_slider_->setValue( Preferences::Instance().get_glyph_size() * 10.0 );
+  this->glyph_size_label_->setText( QString::number( Preferences::Instance().get_glyph_size() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -432,24 +511,14 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_show_surface_stateChanged()
-{}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_show_glyphs_stateChanged()
-{}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_glyph_size_valueChanged( int value )
 {
-  Preferences::Instance().set_glyph_size( value / 10.0 );
   this->update_from_preferences();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_glyph_quality_valueChanged( int value )
 {
-  Preferences::Instance().set_glyph_quality( value );
   this->update_from_preferences();
 }
 

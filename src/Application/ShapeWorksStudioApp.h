@@ -73,8 +73,6 @@ public Q_SLOTS:
   //--------------------------------------------------
   // visualization panel
   //--------------------------------------------------
-  void on_show_surface_stateChanged();
-  void on_show_glyphs_stateChanged();
   void on_glyph_size_valueChanged( int value );
   void on_glyph_quality_valueChanged( int value );
 
@@ -113,6 +111,12 @@ private:
   QSharedPointer<Visualizer> visualizer_;
 
   QSharedPointer<Project> project_;
+
+  // programatic UI elements
+  QSlider* glyph_size_slider_;
+  QSlider* glyph_quality_slider_;
+  QLabel* glyph_size_label_;
+  QLabel* glyph_quality_label_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

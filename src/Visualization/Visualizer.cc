@@ -138,14 +138,12 @@ void Visualizer::display_shape( const vnl_vector<double> &points )
 void Visualizer::set_show_glyphs( bool show )
 {
   this->show_glyphs_ = show;
-  this->update_viewer_properties();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_show_surface( bool show )
 {
   this->show_surface_ = show;
-  this->update_viewer_properties();
 }
 
 //-----------------------------------------------------------------------------
