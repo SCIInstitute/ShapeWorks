@@ -38,6 +38,12 @@
     <file>Images/DownArrowWhite.png</file>
 	<file>Images/RightArrow.png</file>
     <file>Images/RightArrowWhite.png</file>
-
+	<file>Images/AutoView.png</file>
+	<file>Images/AutoViewOff.png</file>
+	<file>Images/IsosurfaceVisible.png</file>
+	<file>Images/IsosurfaceVisibleOff.png</file>
+	<file>Images/Visible.png</file>
+	<file>Images/VisibleOff.png</file>
+	
   </qresource>
 </RCC>

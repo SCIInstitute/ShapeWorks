@@ -75,6 +75,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->update_from_preferences();
   this->update_tools();
+
+  connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_toolbar_items_changed() ) );
+  connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_toolbar_items_changed() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -177,6 +180,13 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
   this->update_scrollbar();
 
   this->ui_->qvtkWidget->GetRenderWindow()->Render();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_toolbar_items_changed()
+{
+  this->visualizer_->set_show_surface( this->ui_->surface_visible_button->isChecked() );
+  this->visualizer_->set_show_glyphs( this->ui_->glyphs_visible_button->isChecked() );
 }
 
 //---------------------------------------------------------------------------
@@ -423,15 +433,11 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_show_surface_stateChanged()
-{
-  this->visualizer_->set_show_surface( this->ui_->show_surface->isChecked() );
-}
+{}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_show_glyphs_stateChanged()
-{
-  this->visualizer_->set_show_glyphs( this->ui_->show_glyphs->isChecked() );
-}
+{}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_glyph_size_valueChanged( int value )

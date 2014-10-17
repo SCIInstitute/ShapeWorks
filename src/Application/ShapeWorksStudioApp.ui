@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>954</width>
-    <height>818</height>
+    <width>757</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -397,7 +397,7 @@ QToolButton:pressed{
      </widget>
     </item>
     <item row="2" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
       <item>
        <widget class="QWidget" name="control_widget" native="true">
         <property name="sizePolicy">
@@ -423,6 +423,99 @@ QToolButton:pressed{
           <number>3</number>
          </property>
          <item>
+          <widget class="QToolButton" name="auto_view_button">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Autoview</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../Resources/ShapeWorksStudio.qrc">
+             <normaloff>:/Studio/Images/AutoViewOff.png</normaloff>
+             <normalon>:/Studio/Images/AutoView.png</normalon>:/Studio/Images/AutoViewOff.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="glyphs_visible_button">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Show this slice in volume viewer</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../Resources/ShapeWorksStudio.qrc">
+             <normaloff>:/Studio/Images/VisibleOff.png</normaloff>
+             <normalon>:/Studio/Images/Visible.png</normalon>:/Studio/Images/VisibleOff.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="surface_visible_button">
+           <property name="minimumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Show isosurface</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../Resources/ShapeWorksStudio.qrc">
+             <normaloff>:/Studio/Images/IsosurfaceVisibleOff.png</normaloff>
+             <normalon>:/Studio/Images/IsosurfaceVisible.png</normalon>:/Studio/Images/IsosurfaceVisibleOff.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QComboBox" name="view_mode_combobox"/>
          </item>
          <item>
@@ -435,46 +528,19 @@ QToolButton:pressed{
            </property>
           </widget>
          </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QWidget" name="zoomWidget" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <property name="leftMargin">
-          <number>6</number>
-         </property>
-         <property name="topMargin">
-          <number>3</number>
-         </property>
-         <property name="rightMargin">
-          <number>6</number>
-         </property>
-         <property name="bottomMargin">
-          <number>3</number>
-         </property>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
@@ -587,7 +653,7 @@ QToolButton:pressed{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>954</width>
+     <width>757</width>
      <height>21</height>
     </rect>
    </property>
@@ -1151,55 +1217,21 @@ QToolButton:pressed{
              <property name="spacing">
               <number>6</number>
              </property>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Show Glyphs</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <widget class="QCheckBox" name="show_glyphs">
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_15">
-               <property name="text">
-                <string>Show Surface</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QCheckBox" name="show_surface">
-               <property name="text">
-                <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
               <widget class="QLabel" name="label_3">
                <property name="text">
                 <string>Glyph Size</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="1" column="0">
               <widget class="QLabel" name="label_4">
                <property name="text">
                 <string>Glyph Quality</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="0" column="1">
               <widget class="QLabel" name="glyph_size_label">
                <property name="minimumSize">
                 <size>
@@ -1212,7 +1244,7 @@ QToolButton:pressed{
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="1" column="1">
               <widget class="QLabel" name="glyph_quality_label">
                <property name="minimumSize">
                 <size>
@@ -1225,7 +1257,7 @@ QToolButton:pressed{
                </property>
               </widget>
              </item>
-             <item row="2" column="3">
+             <item row="0" column="3">
               <widget class="QSlider" name="glyph_size">
                <property name="minimum">
                 <number>1</number>
@@ -1247,7 +1279,7 @@ QToolButton:pressed{
                </property>
               </widget>
              </item>
-             <item row="3" column="3">
+             <item row="1" column="3">
               <widget class="QSlider" name="glyph_quality">
                <property name="minimum">
                 <number>1</number>
@@ -1431,7 +1463,6 @@ QToolButton:pressed{
  </customwidgets>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>
-  <include location="../../../shapeworks/code/ShapeWorksView2/ShapeWorksView2.qrc"/>
  </resources>
  <connections/>
 </ui>

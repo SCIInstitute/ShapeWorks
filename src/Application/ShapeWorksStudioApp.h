@@ -78,7 +78,14 @@ public Q_SLOTS:
   void on_glyph_size_valueChanged( int value );
   void on_glyph_quality_valueChanged( int value );
 
+  //--------------------------------------------------
+  // visualization panel
+  //--------------------------------------------------
+
+  void handle_toolbar_items_changed();
+
 private:
+
   void update_from_preferences();
 
   void update_scrollbar();
