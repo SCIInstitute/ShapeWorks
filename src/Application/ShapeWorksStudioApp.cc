@@ -41,9 +41,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   layout->addWidget( size_label, 1, 0, 1, 1 );
 
   this->glyph_quality_label_ = new QLabel( "...." );
-  this->glyph_quality_label_->setMinimumWidth(50);
+  this->glyph_quality_label_->setMinimumWidth( 50 );
   this->glyph_size_label_ = new QLabel( "...." );
-  this->glyph_size_label_->setMinimumWidth(50);
+  this->glyph_size_label_->setMinimumWidth( 50 );
   layout->addWidget( this->glyph_size_label_, 0, 1, 1, 1 );
   layout->addWidget( this->glyph_quality_label_, 1, 1, 1, 1 );
 
@@ -73,14 +73,15 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   widget_action->setDefaultWidget( widget );
   menu->addAction( widget_action );
 
+  /*
+     QToolButton* tool_button = new QToolButton();
+     tool_button->setMaximumWidth( 15 );
+     tool_button->setMenu( menu );
+     tool_button->setPopupMode( QToolButton::InstantPopup );
+     this->ui_->glyph_layout->addWidget( tool_button );
+   */
 
-  
-  QToolButton* tool_button = new QToolButton();
-  tool_button->setMaximumWidth( 15 );
-  tool_button->setMenu( menu );
-  tool_button->setPopupMode( QToolButton::InstantPopup );
-  this->ui_->glyph_layout->addWidget( tool_button );
-  
+  this->ui_->glyphs_visible_button->setMenu( menu );
 ///
 
   this->project_ = QSharedPointer<Project>( new Project() );

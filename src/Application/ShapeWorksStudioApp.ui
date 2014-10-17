@@ -347,7 +347,7 @@ background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227,
 }
 
 
-
+/*
 QToolButton{
 	border: 1px solid rgba( 0, 0, 0, 0 );
 	margin: 0, 0, 0, 0;
@@ -363,7 +363,7 @@ QToolButton:pressed{
 	background-color: rgba( 100, 100, 100, 200 );
 }
 
-
+*/
 
 
 </string>
@@ -430,18 +430,6 @@ QToolButton:pressed{
          </property>
          <item>
           <widget class="QToolButton" name="auto_view_button">
-           <property name="minimumSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Autoview</string>
            </property>
@@ -456,56 +444,37 @@ QToolButton:pressed{
            <property name="checkable">
             <bool>false</bool>
            </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="glyph_layout">
-           <item>
-            <widget class="QToolButton" name="glyphs_visible_button">
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Show this slice in volume viewer</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../Resources/ShapeWorksStudio.qrc">
-               <normaloff>:/Studio/Images/VisibleOff.png</normaloff>
-               <normalon>:/Studio/Images/Visible.png</normalon>:/Studio/Images/VisibleOff.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QToolButton" name="glyphs_visible_button">
+           <property name="toolTip">
+            <string>Show this slice in volume viewer</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../Resources/ShapeWorksStudio.qrc">
+             <normaloff>:/Studio/Images/VisibleOff.png</normaloff>
+             <normalon>:/Studio/Images/Visible.png</normalon>:/Studio/Images/VisibleOff.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="surface_visible_button">
-           <property name="minimumSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Show isosurface</string>
            </property>
@@ -521,6 +490,9 @@ QToolButton:pressed{
             <bool>true</bool>
            </property>
            <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
@@ -670,7 +642,7 @@ QToolButton:pressed{
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
