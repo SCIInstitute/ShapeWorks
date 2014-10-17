@@ -73,6 +73,10 @@ public Q_SLOTS:
   void on_pcaModeSpinBox_valueChanged();
 
   void handle_toolbar_items_changed();
+  void handle_pca_animate_state_changed();
+  void handle_pca_timer();
+  void handle_pca_labels_changed(QString value, QString eigen, QString lambda);
+
 
 private:
 
@@ -109,6 +113,11 @@ private:
   QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
+
+
+  bool pcaAnimateDirection;
+  QTimer pcaAnimateTimer;
+
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

@@ -202,7 +202,7 @@ void Visualizer::display_pca( int mode, double value )
     return;
   }
 
-  double pcaSliderValue = value;
+  double pca_slider_value = value;
 
   unsigned int m = this->stats.Eigenvectors().columns() - ( mode );
 
@@ -210,13 +210,13 @@ void Visualizer::display_pca( int mode, double value )
 
   double lambda = sqrt( this->stats.Eigenvalues()[m] );
 
-  ///this->ui->pcaValueLabel->setText( QString::number( pcaSliderValue, 'g', 2 ) );
-  ///this->ui->pcaEigenValueLabel->setText( QString::number( this->stats.Eigenvalues()[m] ) );
-  ///this->ui->pcaLambdaLabel->setText( QString::number( pcaSliderValue * lambda ) );
+  emit pca_labels_changed( QString::number( pca_slider_value, 'g', 2 ),
+                           QString::number( this->stats.Eigenvalues()[m] ),
+                           QString::number( pca_slider_value * lambda ) );
 
   vnl_vector<double> shape;
 
   shape = this->stats.Mean() + ( e * ( value * lambda ) );
 
-  this->display_shape( this->stats.Mean() + ( e * ( pcaSliderValue * lambda ) ) );
+  this->display_shape( this->stats.Mean() + ( e * ( pca_slider_value * lambda ) ) );
 }

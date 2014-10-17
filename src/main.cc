@@ -119,7 +119,7 @@ int main( int argc, char** argv )
   studio_app->open_project( "h:/projects/studio/studio.xml" );
 #endif
 
-  //studio_app->open_project( "c:/Users/amorris/Desktop/studio.xml" );
+  studio_app->open_project( "c:/Users/amorris/Desktop/studio.xml" );
 
   return app.exec();
 }

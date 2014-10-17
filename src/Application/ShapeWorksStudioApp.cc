@@ -84,6 +84,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_->glyphs_visible_button->setMenu( menu );
 ///
 
+  this->pcaAnimateDirection = true;
+
   this->project_ = QSharedPointer<Project>( new Project() );
 
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
@@ -115,6 +117,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->visualizer_ = QSharedPointer<Visualizer> ( new Visualizer() );
   this->visualizer_->set_lightbox( this->lightbox_ );
   this->visualizer_->set_project( this->project_ );
+  connect( this->visualizer_.data(), SIGNAL( pca_labels_changed( QString, QString, QString ) ),
+           this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
 
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
   this->groom_tool_->set_project( this->project_ );
@@ -136,26 +140,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_toolbar_items_changed() ) );
   connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_toolbar_items_changed() ) );
 
-/*
+  QObject::connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
 
-   QMenu *menu = new QMenu();
-   QAction *testAction = new QAction("test menu item", this);
-   menu->addAction(testAction);
-   testAction = new QAction("test menu item2", this);
-   menu->addAction(testAction);
-   testAction = new QAction("test menu item2", this);
-   menu->addAction(testAction);
-   testAction = new QAction("test menu item2", this);
-   menu->addAction(testAction);
-   testAction = new QAction("test menu item2", this);
-   menu->addAction(testAction);
-   QToolButton* toolButton = new QToolButton();
-   toolButton->setMenu(menu);
-   toolButton->setPopupMode(QToolButton::InstantPopup);
-   //toolBar->addWidget(toolButton);
-   this->ui_->horizontalLayout_3->addWidget(toolButton);
-
- */
+  QObject::connect(
+    &this->pcaAnimateTimer, SIGNAL( timeout() ),
+    this, SLOT( handle_pca_timer() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -364,7 +353,7 @@ void ShapeWorksStudioApp::update_table()
   }
 
   this->ui_->table_widget->resizeColumnsToContents();
-  //this->ui->table_widget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+  //this->ui_->table_widget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
   this->ui_->table_widget->horizontalHeader()->setStretchLastSection( true );
 
   this->ui_->table_widget->setSelectionBehavior( QAbstractItemView::SelectRows );
@@ -584,4 +573,50 @@ void ShapeWorksStudioApp::on_pcaSlider_valueChanged()
 void ShapeWorksStudioApp::on_pcaModeSpinBox_valueChanged()
 {
   this->compute_mode_shape();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_pca_animate_state_changed()
+{
+  std::cerr << "here1\n";
+  if ( this->ui_->pcaAnimateCheckBox->isChecked() )
+  {
+    //this->setPregenSteps();
+    this->pcaAnimateTimer.setInterval( 10 );
+    this->pcaAnimateTimer.start();
+  }
+  else
+  {
+    this->pcaAnimateTimer.stop();
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_pca_timer()
+{
+  int value = this->ui_->pcaSlider->value();
+  if ( this->pcaAnimateDirection )
+  {
+    value += this->ui_->pcaSlider->singleStep();
+  }
+  else
+  {
+    value -= this->ui_->pcaSlider->singleStep();
+  }
+
+  if ( value >= this->ui_->pcaSlider->maximum() || value <= this->ui_->pcaSlider->minimum() )
+  {
+    this->pcaAnimateDirection = !this->pcaAnimateDirection;
+    //this->setPregenSteps();
+  }
+
+  this->ui_->pcaSlider->setValue( value );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_pca_labels_changed( QString value, QString eigen, QString lambda )
+{
+  this->ui_->pcaValueLabel->setText( value );
+  this->ui_->pcaEigenValueLabel->setText( eigen );
+  this->ui_->pcaLambdaLabel->setText( lambda );
 }
