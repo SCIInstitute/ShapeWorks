@@ -105,7 +105,10 @@ void Visualizer::update_display()
 //-----------------------------------------------------------------------------
 void Visualizer::display_mean()
 {
-  this->compute_stats();
+  if ( !this->compute_stats() )
+  {
+    return;
+  }
 
   this->display_shape( this->stats.Mean() );
 }
@@ -167,12 +170,18 @@ void Visualizer::update_viewer_properties()
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::compute_stats()
+bool Visualizer::compute_stats()
 {
   if ( this->stats_ready_ )
   {
-    return;
+    return true;
   }
+
+  if ( this->project_->get_shapes().size() == 0 )
+  {
+    return false;
+  }
+
   std::vector < vnl_vector < double > > points;
   foreach( ShapeHandle shape, this->project_->get_shapes() ) {
     points.push_back( shape->get_correspondence_points() );
@@ -181,12 +190,17 @@ void Visualizer::compute_stats()
   this->stats.ImportPoints( points );
   this->stats.ComputeModes();
   this->stats_ready_ = true;
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_pca( int mode, double value )
 {
-  this->compute_stats();
+  if ( !this->compute_stats() )
+  {
+    return;
+  }
 
   double pcaSliderValue = value;
 

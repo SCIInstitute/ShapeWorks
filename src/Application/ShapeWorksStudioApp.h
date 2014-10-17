@@ -72,16 +72,6 @@ public Q_SLOTS:
   void on_pcaSlider_valueChanged();
   void on_pcaModeSpinBox_valueChanged();
 
-  //--------------------------------------------------
-  // visualization panel
-  //--------------------------------------------------
-  void on_glyph_size_valueChanged( int value );
-  void on_glyph_quality_valueChanged( int value );
-
-  //--------------------------------------------------
-  // visualization panel
-  //--------------------------------------------------
-
   void handle_toolbar_items_changed();
 
 private:

@@ -62,7 +62,7 @@ public Q_SLOTS:
 
 private:
 
-  void compute_stats();
+  bool compute_stats();
 
   QString display_mode_;
   bool center_;

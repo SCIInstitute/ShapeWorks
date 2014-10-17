@@ -515,18 +515,6 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_glyph_size_valueChanged( int value )
-{
-  this->update_from_preferences();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_glyph_quality_valueChanged( int value )
-{
-  this->update_from_preferences();
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_samples_button_clicked()
 {
   this->ui_->pcaPanel->setVisible( false );
