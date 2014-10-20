@@ -65,15 +65,12 @@ public Q_SLOTS:
   void handle_project_changed();
   void handle_groom_complete();
 
-  void on_samples_button_clicked();
-  void on_stats_button_clicked();
-  void on_pca_button_clicked();
+  void handle_display_setting_changed();
 
   // PCA
   void on_pcaSlider_valueChanged();
   void on_pcaModeSpinBox_valueChanged();
 
-  void handle_toolbar_items_changed();
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
   void handle_pca_labels_changed( QString value, QString eigen, QString lambda );
@@ -87,8 +84,6 @@ private:
   void update_table();
 
   void update_display();
-
-  void update_tools();
 
   double get_pca_value( int slider_value );
 

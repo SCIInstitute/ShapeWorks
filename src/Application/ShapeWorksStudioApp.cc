@@ -133,18 +133,22 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_->stacked_widget->addWidget( this->optimize_tool_.data() );
 
   this->update_from_preferences();
-  this->update_tools();
+  this->update_display();
 
-  connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_toolbar_items_changed() ) );
-  connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_toolbar_items_changed() ) );
-  connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_toolbar_items_changed() ) );
-  connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_toolbar_items_changed() ) );
+  connect( this->ui_->samples_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->ui_->stats_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->ui_->pca_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->ui_->regression_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
 
-  QObject::connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
+  connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
 
-  QObject::connect(
-    &this->pcaAnimateTimer, SIGNAL( timeout() ),
-    this, SLOT( handle_pca_timer() ) );
+  connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
+
+  connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -247,18 +251,6 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
   this->update_scrollbar();
 
   this->ui_->qvtkWidget->GetRenderWindow()->Render();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_toolbar_items_changed()
-{
-  std::cerr << "handle_toolbar...\n";
-
-  this->visualizer_->set_show_surface( this->ui_->surface_visible_button->isChecked() );
-  this->visualizer_->set_show_glyphs( this->ui_->glyphs_visible_button->isChecked() );
-  Preferences::Instance().set_glyph_size( this->glyph_size_slider_->value() / 10.0 );
-  Preferences::Instance().set_glyph_quality( this->glyph_quality_slider_->value() );
-  this->update_from_preferences();
 }
 
 //---------------------------------------------------------------------------
@@ -420,6 +412,12 @@ void ShapeWorksStudioApp::handle_groom_complete()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_display_setting_changed()
+{
+  this->update_display();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
   this->handle_project_changed();
@@ -432,15 +430,37 @@ void ShapeWorksStudioApp::update_display()
   {
     return;
   }
+
+  this->visualizer_->set_show_surface( this->ui_->surface_visible_button->isChecked() );
+  this->visualizer_->set_show_glyphs( this->ui_->glyphs_visible_button->isChecked() );
+  Preferences::Instance().set_glyph_size( this->glyph_size_slider_->value() / 10.0 );
+  Preferences::Instance().set_glyph_quality( this->glyph_quality_slider_->value() );
+  this->update_from_preferences();
+
   this->visualizer_->set_center( this->ui_->center_checkbox->isChecked() );
+  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
   this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
-  this->visualizer_->update_display();
+
+  if ( this->ui_->samples_button->isChecked() )
+  {
+    this->visualizer_->update_display();
+    this->ui_->pcaPanel->setVisible( false );
+  }
+  else if ( this->ui_->stats_button->isChecked() )
+  {
+    this->visualizer_->display_mean();
+    this->ui_->pcaPanel->setVisible( false );
+  }
+  else if ( this->ui_->pca_button->isChecked() )
+  {
+    this->compute_mode_shape();
+    this->ui_->pcaPanel->setVisible( true );
+  }
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
-  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
   this->update_display();
 }
 
@@ -501,45 +521,6 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 
   // save the size of the window to preferences
   Preferences::Instance().set_main_window_size( this->size() );
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_samples_button_clicked()
-{
-  this->ui_->pcaPanel->setVisible( false );
-  this->update_tools();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_stats_button_clicked()
-{
-  this->visualizer_->display_mean();
-  this->update_tools();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_pca_button_clicked()
-{
-  this->update_tools();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_tools()
-{
-  if ( this->ui_->samples_button->isChecked() )
-  {
-    this->update_display();
-    this->ui_->pcaPanel->setVisible( false );
-  }
-  else if ( this->ui_->stats_button->isChecked() )
-  {
-    this->ui_->pcaPanel->setVisible( false );
-  }
-  else if ( this->ui_->pca_button->isChecked() )
-  {
-    this->compute_mode_shape();
-    this->ui_->pcaPanel->setVisible( true );
-  }
 }
 
 //---------------------------------------------------------------------------
