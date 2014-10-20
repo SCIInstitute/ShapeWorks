@@ -5,6 +5,7 @@
 #include <QActionGroup>
 #include <QSlider>
 #include <QLabel>
+#include <QTimer>
 
 class Lightbox;
 class GroomTool;
