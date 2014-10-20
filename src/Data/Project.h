@@ -32,8 +32,11 @@ public:
   /// save project to file
   bool save_project( QString filename = "" );
 
-  /// save project to file
+  /// load project from file
   bool load_project( QString filename );
+
+  /// load legacy ShapeWorks parameter file
+  bool load_legacy( QString filename );
 
   /// get the pointer to the data manager
   QSharedPointer<DataManager> get_data_manager();

@@ -359,7 +359,7 @@ QToolButton { /* all types of tool button */
                                        stop: 0 #f6f7fa, stop: 1 #dadbde);
  }
 
- QToolButton[popupMode="1"] { /* only for MenuButtonPopup */
+ QToolButton[popupMode=&quot;1&quot;] { /* only for MenuButtonPopup */
      padding-right: 20px; /* make way for the popup button */
  }
 
@@ -402,7 +402,7 @@ QPushButton:pressed {
 }
 
 
- QPushButton[popupMode="1"] { /* only for MenuButtonPopup */
+ QPushButton[popupMode=&quot;1&quot;] { /* only for MenuButtonPopup */
      padding-right: 20px; /* make way for the popup button */
  }
 */
@@ -694,7 +694,7 @@ QPushButton {
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -707,6 +707,7 @@ QPushButton {
     <addaction name="action_save_project_as"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
+    <addaction name="action_import_legacy"/>
     <addaction name="separator"/>
     <addaction name="action_quit"/>
    </widget>
@@ -1209,7 +1210,7 @@ QPushButton {
   </action>
   <action name="action_import">
    <property name="text">
-    <string>Import...</string>
+    <string>Import Images...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -1301,6 +1302,11 @@ QPushButton {
    </property>
    <property name="shortcut">
     <string>Ctrl+,</string>
+   </property>
+  </action>
+  <action name="action_import_legacy">
+   <property name="text">
+    <string>Import Legacy ShapeWorks</string>
    </property>
   </action>
  </widget>

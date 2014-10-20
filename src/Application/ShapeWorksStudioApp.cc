@@ -233,6 +233,22 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_import_legacy_triggered()
+{
+  QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
+                                                   Preferences::Instance().get_last_directory(),
+                                                   tr( "XML files (*.xml)" ) );
+  if ( filename.isEmpty() )
+  {
+    return;
+  }
+
+  Preferences::Instance().set_last_directory( QFileInfo( filename ).absolutePath() );
+
+  this->import_legacy( filename );
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::import_files( QStringList file_names )
 {
   this->project_->import_files( file_names );
@@ -340,8 +356,11 @@ void ShapeWorksStudioApp::update_table()
     new_item = new QTableWidgetItem( shapes[i]->get_initial_filename() );
     this->ui_->table_widget->setItem( i, 1, new_item );
 
-    new_item = new QTableWidgetItem( initial_mesh->get_dimension_string() );
-    this->ui_->table_widget->setItem( i, 2, new_item );
+    if ( initial_mesh )
+    {
+      new_item = new QTableWidgetItem( initial_mesh->get_dimension_string() );
+      this->ui_->table_widget->setItem( i, 2, new_item );
+    }
   }
 
   this->ui_->table_widget->resizeColumnsToContents();
@@ -443,7 +462,7 @@ void ShapeWorksStudioApp::update_display()
 
   if ( this->ui_->samples_button->isChecked() )
   {
-    this->visualizer_->update_display();
+    this->visualizer_->display_samples();
     this->ui_->pcaPanel->setVisible( false );
   }
   else if ( this->ui_->stats_button->isChecked() )
@@ -499,6 +518,16 @@ void ShapeWorksStudioApp::open_project( QString filename )
 
   // set the zoom state
   this->ui_->thumbnail_size_slider->setValue( this->project_->get_zoom_state() );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::import_legacy( QString filename )
+{
+  // tmp
+  this->ui_->view_mode_combobox->setCurrentIndex( 2 );
+
+  this->project_->load_legacy( filename );
+  // set tool states
 }
 
 //---------------------------------------------------------------------------
@@ -559,7 +588,6 @@ void ShapeWorksStudioApp::on_pcaModeSpinBox_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_animate_state_changed()
 {
-  std::cerr << "here1\n";
   if ( this->ui_->pcaAnimateCheckBox->isChecked() )
   {
     //this->setPregenSteps();

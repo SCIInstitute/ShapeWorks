@@ -51,7 +51,7 @@ void Visualizer::set_center( bool center )
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::update_display()
+void Visualizer::display_samples()
 {
   this->update_viewer_properties();
 

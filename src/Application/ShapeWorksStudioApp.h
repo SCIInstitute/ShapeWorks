@@ -36,6 +36,7 @@ public:
   void initialize_vtk();
   void import_files( QStringList file_names );
   void open_project( QString filename );
+  void import_legacy( QString filename );
 
   void set_status_bar( QString status );
 
@@ -46,6 +47,8 @@ public Q_SLOTS:
   void on_action_save_project_as_triggered();
   void on_action_quit_triggered();
   void on_action_import_triggered();
+  void on_action_import_legacy_triggered();
+
   void on_vertical_scroll_bar_valueChanged();
   void on_add_button_clicked();
   void on_delete_button_clicked();

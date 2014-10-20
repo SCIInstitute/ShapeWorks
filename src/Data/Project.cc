@@ -173,6 +173,78 @@ bool Project::load_project( QString filename )
 }
 
 //---------------------------------------------------------------------------
+bool Project::load_legacy( QString filename )
+{
+  std::cerr << "\nLoading legacy file: " << filename.toStdString() << "\n";
+  // Need to identify type of parameter file (e.g. groom, optimization, analysis)
+
+  // clear the project out first
+  this->reset();
+
+  // open file
+  QFile file( filename );
+  if ( !file.open( QIODevice::ReadOnly ) )
+  {
+    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
+    return false;
+  }
+
+  QFileInfo qfi( filename );
+  QString path = qfi.absolutePath();
+
+  // setup XML
+  QSharedPointer<QXmlStreamReader> xml = QSharedPointer<QXmlStreamReader>( new QXmlStreamReader() );
+  xml->setDevice( &file );
+
+  QStringList import_files;
+  QStringList groomed_files;
+  QStringList point_files;
+
+  while ( !xml->atEnd() && !xml->hasError() )
+  {
+    QXmlStreamReader::TokenType token = xml->readNext();
+    if ( token == QXmlStreamReader::StartDocument )
+    {
+      continue;
+    }
+    if ( token == QXmlStreamReader::StartElement )
+    {
+      if ( xml->name() == "point_files" )
+      {
+        QString str = xml->readElementText();
+        std::cerr << "got string: " << str.toStdString() << "\n";
+        QStringList list = str.split( "\n" );
+        list.replaceInStrings( QRegExp( "^\\s*" ), "" );
+        list.replaceInStrings( QRegExp( "\\s*$" ), "" );
+        list.removeAll( "" );
+
+        foreach( QString s, list ) {
+
+          s = path + QDir::separator() + s;
+          std::cerr << "file: \"" << s.toStdString() << "\"\n";
+          point_files << s;
+        }
+      }
+    }
+  }
+
+  /* Error handling. */
+  if ( xml->hasError() )
+  {
+    QMessageBox::critical( NULL, "ShapeWorksStudio", xml->errorString(), QMessageBox::Ok );
+    return false;
+  }
+
+  //this->import_files( import_files );
+
+  //this->load_groomed_files( groomed_files );
+
+  this->load_point_files( point_files );
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
 void Project::import_files( QStringList file_names )
 {
 
@@ -216,8 +288,23 @@ void Project::load_point_files( QStringList file_names )
 {
   for ( int i = 0; i < file_names.size(); i++ )
   {
+
     std::cerr << file_names[i].toStdString() << "\n";
-    if ( !this->shapes_[i]->import_point_file( file_names[i] ) )
+
+    QSharedPointer<Shape> shape;
+
+    if (this->shapes_.size() > i)
+    {
+      shape = this->shapes_[i];
+    }
+    else
+    {
+      shape = QSharedPointer<Shape>( new Shape );
+      this->shapes_.push_back( shape );
+
+    }
+
+    if ( !shape->import_point_file( file_names[i] ) )
     {
       std::cerr << "error!\n";
       // error
@@ -251,6 +338,7 @@ void Project::remove_shapes( QList<int> list )
 //---------------------------------------------------------------------------
 void Project::reset()
 {
+  this->filename_ = "";
   this->tool_state_ = DATA_C;
   this->display_state_ = Visualizer::MODE_ORIGINAL_C;
   this->zoom_state_ = 5;

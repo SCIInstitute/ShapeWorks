@@ -42,7 +42,7 @@ public:
   void set_show_surface( bool show );
 
   /// update the display using the current settings
-  void update_display();
+  void display_samples();
 
   /// tmp: compute and display the mean shape
   void display_mean();
