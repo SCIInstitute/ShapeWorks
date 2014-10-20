@@ -42,7 +42,7 @@ public:
   QSharedPointer<DataManager> get_data_manager();
 
   /// import files
-  void import_files( QStringList file_names );
+  void load_original_files( QStringList file_names );
 
   /// load groomed files
   void load_groomed_files( QStringList file_names );
@@ -80,7 +80,7 @@ public:
   /// get the zoom state
   int get_zoom_state();
 
-  bool originals_present();
+  bool original_present();
   bool groomed_present();
   bool reconstructed_present();
 
@@ -104,7 +104,7 @@ private:
   /// collection of shapes
   QVector<QSharedPointer<Shape> > shapes_;
 
-  bool originals_present_;
+  bool original_present_;
   bool groomed_present_;
   bool reconstructed_present_;
 

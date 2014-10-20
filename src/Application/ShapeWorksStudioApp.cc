@@ -257,7 +257,7 @@ void ShapeWorksStudioApp::on_action_import_legacy_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::import_files( QStringList file_names )
 {
-  this->project_->import_files( file_names );
+  this->project_->load_original_files( file_names );
 }
 
 //---------------------------------------------------------------------------
@@ -354,17 +354,17 @@ void ShapeWorksStudioApp::update_table()
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    QSharedPointer<Mesh> initial_mesh = shapes[i]->get_initial_mesh();
+    QSharedPointer<Mesh> original_mesh = shapes[i]->get_original_mesh();
 
     QTableWidgetItem* new_item = new QTableWidgetItem( QString::number( i + 1 ) );
     this->ui_->table_widget->setItem( i, 0, new_item );
 
-    new_item = new QTableWidgetItem( shapes[i]->get_initial_filename() );
+    new_item = new QTableWidgetItem( shapes[i]->get_original_filename() );
     this->ui_->table_widget->setItem( i, 1, new_item );
 
-    if ( initial_mesh )
+    if ( original_mesh )
     {
-      new_item = new QTableWidgetItem( initial_mesh->get_dimension_string() );
+      new_item = new QTableWidgetItem( original_mesh->get_dimension_string() );
       this->ui_->table_widget->setItem( i, 2, new_item );
     }
   }

@@ -16,21 +16,21 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-void Shape::import_initial_file( QString filename, float iso_value )
+void Shape::import_original_image( QString filename, float iso_value )
 {
-  this->initial_mesh_ = QSharedPointer<Mesh>( new Mesh() );
-  this->initial_mesh_->create_from_image( filename, iso_value );
-  this->initial_mesh_filename_ = filename;
+  this->original_mesh_ = QSharedPointer<Mesh>( new Mesh() );
+  this->original_mesh_->create_from_image( filename, iso_value );
+  this->original_mesh_filename_ = filename;
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_initial_mesh()
+QSharedPointer<Mesh> Shape::get_original_mesh()
 {
-  return this->initial_mesh_;
+  return this->original_mesh_;
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_file( QString filename )
+void Shape::import_groomed_image( QString filename )
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>( new Mesh() );
   this->groomed_mesh_->create_from_image( filename, 0.0 );
@@ -121,16 +121,16 @@ void Shape::set_id( int id )
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_initial_filename()
+QString Shape::get_original_filename()
 {
-  QFileInfo qfi( this->initial_mesh_filename_ );
+  QFileInfo qfi( this->original_mesh_filename_ );
   return qfi.fileName();
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_initial_filename_with_path()
+QString Shape::get_original_filename_with_path()
 {
-  return this->initial_mesh_filename_;
+  return this->original_mesh_filename_;
 }
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()

@@ -18,14 +18,14 @@ public:
   Shape();
   ~Shape();
 
-  /// Import the initial raw image file
-  void import_initial_file( QString filename, float iso_value );
+  /// Import the original raw image file
+  void import_original_image( QString filename, float iso_value );
 
-  /// Retrieve the initial mesh
-  QSharedPointer<Mesh> get_initial_mesh();
+  /// Retrieve the original mesh
+  QSharedPointer<Mesh> get_original_mesh();
 
   /// Import the groomed raw image file
-  void import_groomed_file( QString filename );
+  void import_groomed_image( QString filename );
 
   /// Retrieve the groomed mesh
   QSharedPointer<Mesh> get_groomed_mesh();
@@ -45,8 +45,8 @@ public:
   /// Set the id of this shape
   void set_id( int id );
 
-  QString get_initial_filename();
-  QString get_initial_filename_with_path();
+  QString get_original_filename();
+  QString get_original_filename_with_path();
 
   QString get_groomed_filename();
   QString get_groomed_filename_with_path();
@@ -58,11 +58,11 @@ private:
 
   int id_;
 
-  QSharedPointer<Mesh> initial_mesh_;
+  QSharedPointer<Mesh> original_mesh_;
   QSharedPointer<Mesh> groomed_mesh_;
   QSharedPointer<Mesh> reconstructed_mesh_;
 
-  QString initial_mesh_filename_;
+  QString original_mesh_filename_;
   QString groomed_mesh_filename_;
   QString point_filename_;
 

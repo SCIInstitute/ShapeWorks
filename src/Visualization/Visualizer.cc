@@ -65,17 +65,19 @@ void Visualizer::display_samples()
 
     QSharedPointer<Mesh> mesh;
     QString filename;
-    if ( this->display_mode_ == Visualizer::MODE_ORIGINAL_C )
-    {
-      mesh = shapes[i]->get_initial_mesh();
-      filename = shapes[i]->get_initial_filename();
-    }
-    else if ( this->display_mode_ == Visualizer::MODE_GROOMED_C )
+
+    //load based on preference, but always load something
+
+    mesh = shapes[i]->get_original_mesh();
+    filename = shapes[i]->get_original_filename();
+
+    if ( !mesh || this->display_mode_ == Visualizer::MODE_GROOMED_C )
     {
       mesh = shapes[i]->get_groomed_mesh();
       filename = shapes[i]->get_groomed_filename();
     }
-    else if ( this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C )
+    
+    if ( !mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C )
     {
       mesh = shapes[i]->get_reconstructed_mesh();
       filename = shapes[i]->get_point_filename();

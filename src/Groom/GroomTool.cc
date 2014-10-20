@@ -151,8 +151,8 @@ void GroomTool::on_run_groom_button_clicked()
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    QSharedPointer<Mesh> initial_mesh = shapes[i]->get_initial_mesh();
-    QString path = shapes[i]->get_initial_filename_with_path();
+    QSharedPointer<Mesh> initial_mesh = shapes[i]->get_original_mesh();
+    QString path = shapes[i]->get_original_filename_with_path();
     QFileInfo fi( path );
     QString outfile = fi.dir().absolutePath() + QDir::separator() + fi.completeBaseName() + "_DT.nrrd";
 
@@ -196,7 +196,7 @@ bool GroomTool::export_xml( QString filename )
 
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
-  QFileInfo fi( shapes[0]->get_initial_filename_with_path() );
+  QFileInfo fi( shapes[0]->get_original_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
 
   // output transform
@@ -224,7 +224,7 @@ bool GroomTool::export_xml( QString filename )
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    xml_writer->writeCharacters( shapes[i]->get_initial_filename_with_path() + "\n" );
+    xml_writer->writeCharacters( shapes[i]->get_original_filename_with_path() + "\n" );
   }
   xml_writer->writeEndElement();
 
@@ -235,7 +235,7 @@ bool GroomTool::export_xml( QString filename )
 
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    QString path = shapes[i]->get_initial_filename_with_path();
+    QString path = shapes[i]->get_original_filename_with_path();
 
     QFileInfo fi( path );
     QString outfile = fi.dir().absolutePath() + QDir::separator() + fi.completeBaseName() + "_DT.nrrd";

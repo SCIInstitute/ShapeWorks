@@ -64,7 +64,10 @@ bool Project::save_project( QString filename /* = "" */ )
     xml->writeStartElement( "shape" );
     xml->writeAttribute( "id", QString::number( i ) );
 
-    xml->writeTextElement( "initial_mesh", this->shapes_[i]->get_initial_filename_with_path() );
+    if ( this->original_present() )
+    {
+      xml->writeTextElement( "initial_mesh", this->shapes_[i]->get_original_filename_with_path() );
+    }
 
     if ( this->groomed_present() )
     {
@@ -165,7 +168,7 @@ bool Project::load_project( QString filename )
     return false;
   }
 
-  this->import_files( import_files );
+  this->load_original_files( import_files );
 
   this->load_groomed_files( groomed_files );
 
@@ -247,7 +250,7 @@ bool Project::load_legacy( QString filename )
 }
 
 //---------------------------------------------------------------------------
-void Project::import_files( QStringList file_names )
+void Project::load_original_files( QStringList file_names )
 {
 
   for ( int i = 0; i < file_names.size(); i++ )
@@ -255,7 +258,7 @@ void Project::import_files( QStringList file_names )
     std::cerr << file_names[i].toStdString() << "\n";
 
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>( new Shape );
-    new_shape->import_initial_file( file_names[i], 0.5 );
+    new_shape->import_original_image( file_names[i], 0.5 );
     this->shapes_.push_back( new_shape );
   }
 
@@ -263,7 +266,7 @@ void Project::import_files( QStringList file_names )
 
   if ( file_names.size() > 0 )
   {
-    this->originals_present_ = true;
+    this->original_present_ = true;
     emit data_changed();
   }
 }
@@ -275,7 +278,7 @@ void Project::load_groomed_files( QStringList file_names )
   for ( int i = 0; i < file_names.size(); i++ )
   {
     std::cerr << file_names[i].toStdString() << "\n";
-    this->shapes_[i]->import_groomed_file( file_names[i] );
+    this->shapes_[i]->import_groomed_image( file_names[i] );
   }
 
   if ( file_names.size() > 0 )
@@ -347,7 +350,7 @@ void Project::reset()
 
   this->shapes_.clear();
 
-  this->originals_present_ = false;
+  this->original_present_ = false;
   this->groomed_present_ = false;
   this->reconstructed_present_ = false;
 }
@@ -365,9 +368,9 @@ QString Project::get_tool_state()
 }
 
 //---------------------------------------------------------------------------
-bool Project::originals_present()
+bool Project::original_present()
 {
-  return this->originals_present_;
+  return this->original_present_;
 }
 
 //---------------------------------------------------------------------------

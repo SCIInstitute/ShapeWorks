@@ -119,7 +119,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   // load files!
 
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  QFileInfo fi( shapes[0]->get_initial_filename_with_path() );
+  QFileInfo fi( shapes[0]->get_original_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
 
   QString prefix = project_path + QDir::separator() + "studio_run";
@@ -182,7 +182,7 @@ bool OptimizeTool::export_xml( QString filename )
                                 QString::number( this->ui_->optimization_iterations_->value() ) );
 
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  QFileInfo fi( shapes[0]->get_initial_filename_with_path() );
+  QFileInfo fi( shapes[0]->get_original_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
 
   xml_writer->writeTextElement( "output_points_prefix",
