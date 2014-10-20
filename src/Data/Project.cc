@@ -4,7 +4,9 @@
 
 #include <Visualization/Visualizer.h>
 
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
