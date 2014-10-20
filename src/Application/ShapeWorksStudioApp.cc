@@ -165,11 +165,14 @@ void ShapeWorksStudioApp::initialize_vtk()
 void ShapeWorksStudioApp::on_action_open_project_triggered()
 {
   QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
-                                                   QString(), tr( "XML files (*.xml)" ) );
+                                                   Preferences::Instance().get_last_directory(), 
+                                                   tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
     return;
   }
+
+  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filename ) );
 
   this->open_project( filename );
 }
@@ -194,11 +197,14 @@ void ShapeWorksStudioApp::on_action_save_project_triggered()
 void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, tr( "Save Project As..." ),
-                                                   QString(), tr( "XML files (*.xml)" ) );
+                                                   Preferences::Instance().get_last_directory(), 
+                                                   tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
     return;
   }
+
+  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filename ) );
 
   if ( this->project_->save_project( filename ) )
   {
@@ -243,7 +249,7 @@ void ShapeWorksStudioApp::on_action_import_legacy_triggered()
     return;
   }
 
-  Preferences::Instance().set_last_directory( QFileInfo( filename ).absolutePath() );
+  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filename ) );
 
   this->import_legacy( filename );
 }
