@@ -87,6 +87,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->pcaAnimateDirection = true;
 
   this->project_ = QSharedPointer<Project>( new Project() );
+  this->project_->set_parent( this );
 
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
 

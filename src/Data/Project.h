@@ -29,6 +29,9 @@ public:
   /// destructor
   ~Project();
 
+  /// set QWidget parent
+  void set_parent(QWidget *parent);
+
   /// save project to file
   bool save_project( QString filename = "" );
 
@@ -97,6 +100,8 @@ public:
 private:
 
   void renumber_shapes();
+
+  QWidget *parent_;
 
   /// project filename
   QString filename_;

@@ -18,12 +18,19 @@ const QString Project::OPTIMIZE_C( "optimize" );
 //---------------------------------------------------------------------------
 Project::Project()
 {
+  this->parent_ = NULL;
   this->reset();
 }
 
 //---------------------------------------------------------------------------
 Project::~Project()
 {}
+
+//---------------------------------------------------------------------------
+void Project::set_parent( QWidget* parent )
+{
+  this->parent_ = parent;
+}
 
 //---------------------------------------------------------------------------
 bool Project::save_project( QString filename /* = "" */ )
@@ -253,14 +260,27 @@ bool Project::load_legacy( QString filename )
 void Project::load_original_files( QStringList file_names )
 {
 
+  QProgressDialog progress( "Loading images...", "Abort", 0, file_names.size(), this->parent_ );
+  progress.setWindowModality( Qt::WindowModal );
+
   for ( int i = 0; i < file_names.size(); i++ )
   {
+
+    progress.setValue( i );
+
+    if ( progress.wasCanceled() )
+    {
+      break;
+    }
+
     std::cerr << file_names[i].toStdString() << "\n";
 
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>( new Shape );
     new_shape->import_original_image( file_names[i], 0.5 );
     this->shapes_.push_back( new_shape );
   }
+
+  progress.setValue( file_names.size() );
 
   this->renumber_shapes();
 
@@ -298,7 +318,7 @@ void Project::load_point_files( QStringList file_names )
 
     QSharedPointer<Shape> shape;
 
-    if (this->shapes_.size() > i)
+    if ( this->shapes_.size() > i )
     {
       shape = this->shapes_[i];
     }
@@ -306,7 +326,6 @@ void Project::load_point_files( QStringList file_names )
     {
       shape = QSharedPointer<Shape>( new Shape );
       this->shapes_.push_back( shape );
-
     }
 
     if ( !shape->import_point_file( file_names[i] ) )
