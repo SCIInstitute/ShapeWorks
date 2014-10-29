@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QProgressDialog>
 
 const QString Project::DATA_C( "data" );
 const QString Project::GROOM_C( "groom" );
