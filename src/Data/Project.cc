@@ -206,12 +206,11 @@ bool Project::load_legacy( QString filename )
 
   int numShapes = 0;
 
-  QStringList import_files;
-  QStringList groomed_files;
+  QStringList input_files;
+  QStringList output_files;
   QStringList point_files;
 
   // point files
-  //std::vector<std::string> point_files;
   elem = doc_handle.FirstChild( "point_files" ).Element();
   if ( elem )
   {
@@ -226,7 +225,6 @@ bool Project::load_legacy( QString filename )
   }
 
   // input files
-  std::vector<std::string> input_files;
   elem = doc_handle.FirstChild( "inputs" ).Element();
   if ( elem )
   {
@@ -236,12 +234,11 @@ bool Project::load_legacy( QString filename )
     while ( buffer >> name )
     {
       std::cerr << "tinyxml: found input file: " << name << "\n";
-      input_files.push_back( name );
+      input_files.push_back( QString::fromStdString( name ) );
     }
   }
 
   // output files
-  std::vector<std::string> output_files;
   elem = doc_handle.FirstChild( "outputs" ).Element();
   if ( elem )
   {
@@ -251,7 +248,7 @@ bool Project::load_legacy( QString filename )
     while ( buffer >> name )
     {
       std::cerr << "tinyxml: found output file: " << name << "\n";
-      output_files.push_back( name );
+      output_files.push_back( QString::fromStdString( name ) );
     }
   }
 
@@ -265,11 +262,20 @@ bool Project::load_legacy( QString filename )
   {
     // must be a groom file
     std::cerr << "Identified as a groom file\n";
+
+    this->load_original_files( input_files );
+    this->load_groomed_files( output_files );
   }
   else if ( has_inputs && is_correspondence )
   {
     // must be a optimization file
     std::cerr << "Identified as an optimize file\n";
+
+    this->load_original_files( input_files );
+    if ( has_points )
+    {
+      this->load_point_files( point_files );
+    }
   }
   else if ( has_points )
   {
@@ -421,7 +427,6 @@ void Project::load_point_files( QStringList file_names )
 {
   for ( int i = 0; i < file_names.size(); i++ )
   {
-
     std::cerr << file_names[i].toStdString() << "\n";
 
     QSharedPointer<Shape> shape;

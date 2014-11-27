@@ -166,7 +166,7 @@ void ShapeWorksStudioApp::initialize_vtk()
 void ShapeWorksStudioApp::on_action_open_project_triggered()
 {
   QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
-                                                   Preferences::Instance().get_last_directory(), 
+                                                   Preferences::Instance().get_last_directory(),
                                                    tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
@@ -198,7 +198,7 @@ void ShapeWorksStudioApp::on_action_save_project_triggered()
 void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, tr( "Save Project As..." ),
-                                                   Preferences::Instance().get_last_directory(), 
+                                                   Preferences::Instance().get_last_directory(),
                                                    tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
@@ -531,7 +531,7 @@ void ShapeWorksStudioApp::open_project( QString filename )
 void ShapeWorksStudioApp::import_legacy( QString filename )
 {
   // tmp
-  this->ui_->view_mode_combobox->setCurrentIndex( 2 );
+  //this->ui_->view_mode_combobox->setCurrentIndex( 2 );
 
   this->project_->load_legacy( filename );
   // set tool states

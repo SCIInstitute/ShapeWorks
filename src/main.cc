@@ -122,7 +122,7 @@ int main( int argc, char** argv )
   //  studio_app->open_project( "c:/Users/amorris/Desktop/studio.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/groom.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/optimize.xml" );
-  studio_app->import_legacy( "c:/Users/amorris/Desktop/analysis.xml" );
+  //studio_app->import_legacy( "c:/Users/amorris/Desktop/analysis.xml" );
 
 
 
