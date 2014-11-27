@@ -232,6 +232,19 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/CustomSurfaceReconstructionFilter.cc
 )
 
+### TinyXML
+SET (TINYXML_SRCS
+  TinyXML/tinystr.cpp
+  TinyXML/tinyxml.cpp
+  TinyXML/tinyxmlparser.cpp
+  TinyXML/tinyxmlerror.cpp
+)
+SET (TINYXML_HDRS
+  TinyXML/tinystr.h
+  TinyXML/tinyxml.h
+)
+
+
 ### Studio
 SET( STUDIO_SRCS
      main.cc
@@ -241,6 +254,7 @@ SET( STUDIO_SRCS
      ${STUDIO_OPTIMIZE_SRCS}
      ${STUDIO_ANALYSIS_SRCS}
      ${STUDIO_VISUALIZATION_SRCS}
+     ${TINYXML_SRCS}
 )
 
 SET( STUDIO_HDRS
@@ -250,6 +264,7 @@ SET( STUDIO_HDRS
      ${STUDIO_OPTIMIZE_HDRS}
      ${STUDIO_ANALYSIS_HDRS}
      ${STUDIO_VISUALIZATION_HDRS}
+     ${TINYXML_HDRS}
 )
 
 SET( STUDIO_MOC_HDRS
@@ -271,6 +286,7 @@ SOURCE_GROUP("Data" FILES ${STUDIO_DATA_SRCS} ${STUDIO_DATA_HDRS})
 SOURCE_GROUP("Groom" FILES ${STUDIO_GROOM_SRCS} ${STUDIO_GROOM_HDRS} ${STUDIO_GROOM_UIS})
 SOURCE_GROUP("Optimize" FILES ${STUDIO_OPTIMIZE_SRCS} ${STUDIO_OPTIMIZE_HDRS} ${STUDIO_OPTIMIZE_UIS})
 SOURCE_GROUP("Analysis" FILES ${STUDIO_ANALYSIS_SRCS} ${STUDIO_ANALYSIS_HDRS} ${STUDIO_ANALYSIS_UIS})
+SOURCE_GROUP("TinyXML" FILES ${TINYXML_SRCS} ${TINYXML_HRDS})
 
 # this command will generate rules that will run rcc on all files from STUDIO_RCS
 # in result STUDIO_RC_SRCS variable will contain paths to files produced by rcc

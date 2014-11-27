@@ -12,6 +12,8 @@
 #include <QXmlStreamReader>
 #include <QProgressDialog>
 
+#include <TinyXML/tinyxml.h>
+
 const QString Project::DATA_C( "data" );
 const QString Project::GROOM_C( "groom" );
 const QString Project::OPTIMIZE_C( "optimize" );
@@ -188,40 +190,144 @@ bool Project::load_project( QString filename )
 //---------------------------------------------------------------------------
 bool Project::load_legacy( QString filename )
 {
-  std::cerr << "\nLoading legacy file: " << filename.toStdString() << "\n";
-  // Need to identify type of parameter file (e.g. groom, optimization, analysis)
+  std::cerr << "load_legacy(" << filename.toStdString() << ")\n";
+  TiXmlDocument doc( filename.toStdString().c_str() );
+  bool loadOkay = doc.LoadFile();
 
-  // clear the project out first
-  this->reset();
-
-  // open file
-  QFile file( filename );
-  if ( !file.open( QIODevice::ReadOnly ) )
+  if ( !loadOkay )
   {
-    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
+    std::cerr << "Failed to load!\n";
+    QMessageBox::critical( NULL, "ShapeWorksStudio", "Error parsing XML", QMessageBox::Ok );
     return false;
   }
 
-  QFileInfo qfi( filename );
-  QString path = qfi.absolutePath();
+  TiXmlHandle doc_handle( &doc );
+  TiXmlElement* elem;
 
-  // setup XML
-  QSharedPointer<QXmlStreamReader> xml = QSharedPointer<QXmlStreamReader>( new QXmlStreamReader() );
-  xml->setDevice( &file );
+  int numShapes = 0;
 
   QStringList import_files;
   QStringList groomed_files;
   QStringList point_files;
 
-  while ( !xml->atEnd() && !xml->hasError() )
+  // point files
+  //std::vector<std::string> point_files;
+  elem = doc_handle.FirstChild( "point_files" ).Element();
+  if ( elem )
   {
+    std::istringstream buffer;
+    std::string name;
+    buffer.str( elem->GetText() );
+    while ( buffer >> name )
+    {
+      std::cerr << "tinyxml: found point file: " << name << "\n";
+      point_files.push_back( QString::fromStdString( name ) );
+    }
+  }
+
+  // input files
+  std::vector<std::string> input_files;
+  elem = doc_handle.FirstChild( "inputs" ).Element();
+  if ( elem )
+  {
+    std::istringstream buffer;
+    std::string name;
+    buffer.str( elem->GetText() );
+    while ( buffer >> name )
+    {
+      std::cerr << "tinyxml: found input file: " << name << "\n";
+      input_files.push_back( name );
+    }
+  }
+
+  // output files
+  std::vector<std::string> output_files;
+  elem = doc_handle.FirstChild( "outputs" ).Element();
+  if ( elem )
+  {
+    std::istringstream buffer;
+    std::string name;
+    buffer.str( elem->GetText() );
+    while ( buffer >> name )
+    {
+      std::cerr << "tinyxml: found output file: " << name << "\n";
+      output_files.push_back( name );
+    }
+  }
+
+  bool is_correspondence = doc_handle.FirstChild( "number_of_particles" ).Element() != 0;
+
+  bool has_points = doc_handle.FirstChild( "point_files" ).Element() != 0;
+  bool has_inputs = doc_handle.FirstChild( "inputs" ).Element() != 0;
+  bool has_outputs = doc_handle.FirstChild( "outputs" ).Element() != 0;
+
+  if ( has_inputs && !is_correspondence )
+  {
+    // must be a groom file
+    std::cerr << "Identified as a groom file\n";
+  }
+  else if ( has_inputs && is_correspondence )
+  {
+    // must be a optimization file
+    std::cerr << "Identified as an optimize file\n";
+  }
+  else if ( has_points )
+  {
+    // must be an analysis file
+    std::cerr << "Identified as an analysis file\n";
+
+    this->load_point_files( point_files );
+  }
+
+  return true;
+/*
+   std::cerr << "\nLoading legacy file: " << filename.toStdString() << "\n";
+   // Need to identify type of parameter file (e.g. groom, optimization, analysis)
+
+   // clear the project out first
+   this->reset();
+
+   // open file
+   QFile file( filename );
+   if ( !file.open( QIODevice::ReadOnly ) )
+   {
+    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
+    return false;
+   }
+
+   QFileInfo qfi( filename );
+   QString path = qfi.absolutePath();
+
+   // setup XML
+   QSharedPointer<QXmlStreamReader> xml = QSharedPointer<QXmlStreamReader>( new QXmlStreamReader() );
+   xml->setDevice( &file );
+
+   QStringList import_files;
+   QStringList groomed_files;
+   QStringList point_files;
+
+   while ( !xml->atEnd() && !xml->hasError() )
+   {
     QXmlStreamReader::TokenType token = xml->readNext();
+
     if ( token == QXmlStreamReader::StartDocument )
     {
       continue;
     }
     if ( token == QXmlStreamReader::StartElement )
     {
+      std::cerr << "tag: " << xml->name().toString().toStdString() << "\n";
+
+      if ( xml->name() == "inputs" )
+      {
+        std::cerr << "found inputs tag\n";
+      }
+
+      if ( xml->name() == "outputs" )
+      {
+        std::cerr << "found outputs tag\n";
+      }
+
       if ( xml->name() == "point_files" )
       {
         QString str = xml->readElementText();
@@ -239,22 +345,23 @@ bool Project::load_legacy( QString filename )
         }
       }
     }
-  }
+   }
 
-  /* Error handling. */
-  if ( xml->hasError() )
-  {
-    QMessageBox::critical( NULL, "ShapeWorksStudio", xml->errorString(), QMessageBox::Ok );
-    return false;
-  }
 
-  //this->import_files( import_files );
+   if ( xml->hasError() )
+   {
+   QMessageBox::critical( NULL, "ShapeWorksStudio", xml->errorString(), QMessageBox::Ok );
+   return false;
+   }
 
-  //this->load_groomed_files( groomed_files );
+   //this->import_files( import_files );
 
-  this->load_point_files( point_files );
+   //this->load_groomed_files( groomed_files );
 
-  return true;
+   this->load_point_files( point_files );
+
+   return true;
+ */
 }
 
 //---------------------------------------------------------------------------
