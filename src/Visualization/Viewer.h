@@ -49,19 +49,27 @@ public:
 
   void update_glyph_properties();
 
-  void handle_pick( int* click_pos );
+  int handle_pick( int* click_pos );
+
+  void set_selected_point( int id );
 
 private:
 
   bool visible_;
 
+  QSharedPointer<DisplayObject> object_;
+
   void update_actors();
+
+  void update_colors();
 
   bool show_glyphs_;
   bool show_surface_;
 
   double glyph_size_;
   double glyph_quality_;
+
+  int selected_point_;
 
   vtkSmartPointer<vtkRenderer>             renderer_;
 
@@ -78,6 +86,8 @@ private:
   vtkSmartPointer<vtkLookupTable>          lut_;
 
   vtkSmartPointer<StudioInteractorStyle>   style_;
+
+
 };
 
 #endif /* STUDIO_VISUALIZATION_VIEWER_H */

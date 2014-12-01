@@ -23,70 +23,6 @@
 #include <Visualization/Viewer.h>
 #include <Visualization/DisplayObject.h>
 
-/*
-
-   class ScenePickCallback : public vtkCommand
-   {
-   public:
-   static ScenePickCallback *New();
-   virtual void Execute(vtkObject *caller, unsigned long eventId, void* data);
-
-   vtkSmartPointer<vtkActor> actorToPick;
-   vtkSmartPointer<vtkGlyph3D> glyphsToPick;
-   vtkSmartPointer<vtkRenderWindowInteractor> sceneRenderWindowInteractor;
-
-   private:
-   ScenePickCallback();
-   };
-
-
-   void ScenePickCallback::Execute(vtkObject *caller, unsigned long eventId, void* data)
-   {
-   if(eventId == vtkCommand::LeftButtonReleaseEvent)
-   {
-    int pickPosition[2];
-    sceneRenderWindowInteractor->GetEventPosition(pickPosition);
-
-    sceneRenderWindowInteractor->GetPicker()->Pick(pickPosition[0], pickPosition[1], 0, sceneRenderer);
-
-    vtkCellPicker *cellPicker = reinterpret_cast<vtkCellPicker*>(picker.GetPointer());
-    if(cellPicker)
-    {
-      // Check if correct actor was picked
-      if(cellPicker->GetActor() == actorToPick.GetPointer())
-      {
-        vtkDataArray *inputIds = glyphsToPick->GetOutput()->GetPointData()->GetArray("InputPointIds");
-
-        if(inputIds)
-        {
-          vtkCell *cell = glyphsToPick->GetOutput()->GetCell(cellPicker->GetCellId());
-
-          if(cell && cell->GetNumberOfPoints() > 0)
-          {
-            // get first PointId from picked cell
-            vtkIdType inputId = cell->GetPointId(0);
-
-            // get matching Id from "InputPointIds" array
-            vtkIdType selectedPointId = inputIds->GetTuple1(inputId);
-
-            if(selectedPointId >= 0)
-            {
-              // POINT PICKED!
-              // selectedPointId = Picked PointID (original input points)
-            }
-          }
-        }
-
-      }
-      else
-      {
-        // NONE PICKED
-      }
-    }
-   }
-   }
- */
-
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
@@ -126,6 +62,8 @@ Viewer::Viewer()
   this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
 
+  this->selected_point_ = -1;
+
   this->visible_ = false;
 }
 
@@ -137,6 +75,8 @@ Viewer::~Viewer()
 void Viewer::display_object( QSharedPointer<DisplayObject> object )
 {
   this->visible_ = true;
+
+  this->object_ = object;
 
   QSharedPointer<Mesh> mesh = object->get_mesh();
   vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
@@ -167,7 +107,22 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
     unsigned int idx = 0;
     for ( int i = 0; i < num_points; i++ )
     {
-      scalars->InsertValue( i, i );
+      if ( selected_point_ < 0 )
+      {
+        scalars->InsertValue( i, i );
+      }
+      else
+      {
+        if ( i == selected_point_ )
+        {
+          std::cerr << "selected point!\n";
+          scalars->InsertValue( i, 1 );
+        }
+        else
+        {
+          scalars->InsertValue( i, 0 );
+        }
+      }
       double x = correspondence_points[idx++];
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
@@ -344,12 +299,12 @@ void Viewer::update_actors()
   //this->renderer_->Render();
 }
 
-void Viewer::handle_pick( int* click_pos )
+int Viewer::handle_pick( int* click_pos )
 {
   vtkSmartPointer<vtkPointPicker> picker = vtkSmartPointer<vtkPointPicker>::New();
 
-  picker->AddPickList( this->glyph_actor_ );
-  picker->PickFromListOn();
+  //picker->AddPickList( this->glyph_actor_ );
+  //picker->PickFromListOn();
 
   picker->Pick( click_pos[0],
                 click_pos[1],
@@ -361,11 +316,72 @@ void Viewer::handle_pick( int* click_pos )
   if ( id == -1 )
   {
     // miss
-    return;
+    return -1;
   }
+
+  /// need to handle when it hits the surface and not a glyph
+
 
   vtkIdType glyph_id = vtkIdTypeArray::SafeDownCast(
     this->glyphs_->GetOutput()->GetPointData()->GetArray( "InputPointIds" ) )->GetValue( id );
 
   std::cerr << "picked correspondence point :" << glyph_id << "\n";
+
+  return glyph_id;
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_selected_point( int id )
+{
+  this->selected_point_ = id;
+  this->update_colors();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_colors()
+{
+  std::cerr << "update colors, selected point: " << this->selected_point_ << "\n";
+  vnl_vector<double> correspondence_points = this->object_->get_correspondence_points();
+
+  int num_points = correspondence_points.size() / 3;
+
+  vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() );
+
+  if ( num_points > 0 )
+  {
+    this->glyphs_->SetRange( 0.0, (double) num_points + 1 );
+    this->glyph_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
+    this->lut_->SetNumberOfTableValues( num_points + 1 );
+    this->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
+
+    scalars->Reset();
+    scalars->SetNumberOfTuples( num_points );
+
+    unsigned int idx = 0;
+    for ( int i = 0; i < num_points; i++ )
+    {
+      if ( selected_point_ == -1 )
+      {
+        scalars->InsertValue( i, i );
+      }
+      else
+      {
+        if ( i == selected_point_ )
+        {
+          std::cerr << "selected point!\n";
+          scalars->InsertValue( i, 0 );
+        }
+        else
+        {
+          scalars->InsertValue( i, num_points - 1 );
+        }
+      }
+    }
+  }
+  else
+  {
+    this->glyph_points_->Reset();
+    scalars->Reset();
+  }
+  this->glyph_points_->Modified();
 }
