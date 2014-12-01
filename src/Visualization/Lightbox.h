@@ -14,6 +14,7 @@
 class Mesh;
 class Shape;
 class DisplayObject;
+class StudioInteractorStyle;
 
 class Lightbox;
 typedef QSharedPointer< Lightbox > LightboxHandle;
@@ -46,6 +47,8 @@ public:
   ViewerList get_viewers();
   void redraw();
 
+  void handle_pick( int* click_pos );
+
 private:
 
   void clear_renderers();
@@ -72,6 +75,8 @@ private:
   int start_row_;
 
   bool first_draw_;
+
+  vtkSmartPointer<StudioInteractorStyle> style_;
 };
 
 #endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */

@@ -76,7 +76,7 @@ void Visualizer::display_samples()
       mesh = shapes[i]->get_groomed_mesh();
       filename = shapes[i]->get_groomed_filename();
     }
-    
+
     if ( !mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C )
     {
       mesh = shapes[i]->get_reconstructed_mesh();

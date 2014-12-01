@@ -3,6 +3,7 @@
 
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
+#include <Visualization/StudioInteractorStyle.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
@@ -18,6 +19,9 @@ Lightbox::Lightbox()
   this->start_row_ = 0;
 
   this->first_draw_ = true;
+
+  this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
+  this->style_->set_lightbox( this );
 }
 
 //-----------------------------------------------------------------------------
@@ -85,6 +89,10 @@ void Lightbox::set_render_window( vtkRenderWindow* renderWindow )
   this->render_window_ = renderWindow;
   this->render_window_->AddRenderer( this->renderer_ );
 
+  this->style_->SetDefaultRenderer( this->renderer_ );
+
+  this->renderer_->GetRenderWindow()->GetInteractor()->SetInteractorStyle( this->style_ );
+
   this->setup_renderers();
 }
 
@@ -144,7 +152,6 @@ void Lightbox::setup_renderers()
       double color = 0.2f;
 
       renderer->SetBackground( color, color, color );
-
     }
   }
 
@@ -204,4 +211,13 @@ void Lightbox::redraw()
 ViewerList Lightbox::get_viewers()
 {
   return this->viewers_;
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::handle_pick( int* click_pos )
+{
+
+  foreach( ViewerHandle viewer, this->viewers_ ) {
+    viewer->handle_pick( click_pos );
+  }
 }

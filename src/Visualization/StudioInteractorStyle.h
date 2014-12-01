@@ -5,7 +5,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkPropPicker.h>
 
-class Viewer;
+class Lightbox;
 
 // Handle mouse events
 class StudioInteractorStyle : public vtkInteractorStyleTrackballCamera
@@ -14,7 +14,7 @@ public:
   static StudioInteractorStyle* New();
   vtkTypeMacro( StudioInteractorStyle, vtkInteractorStyleTrackballCamera );
 
-  void set_viewer( Viewer *viewer );
+  void set_lightbox( Lightbox* lightbox );
 
   StudioInteractorStyle();
 
@@ -24,10 +24,8 @@ public:
   virtual void OnRightButtonDown();
 
 private:
-  vtkActor* LastPickedActor;
-  vtkProperty* LastPickedProperty;
 
-  Viewer *viewer_;
+  Lightbox* lightbox_;
 };
 
 #endif /* STUDIO_VISUALIZATION_STUDIOINTERACTORSTYLE_H */

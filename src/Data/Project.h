@@ -30,7 +30,7 @@ public:
   ~Project();
 
   /// set QWidget parent
-  void set_parent(QWidget *parent);
+  void set_parent( QWidget* parent );
 
   /// save project to file
   bool save_project( QString filename = "" );
@@ -101,7 +101,7 @@ private:
 
   void renumber_shapes();
 
-  QWidget *parent_;
+  QWidget* parent_;
 
   /// project filename
   QString filename_;

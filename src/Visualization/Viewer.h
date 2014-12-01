@@ -49,7 +49,7 @@ public:
 
   void update_glyph_properties();
 
-  void handle_pick(int* click_pos);
+  void handle_pick( int* click_pos );
 
 private:
 

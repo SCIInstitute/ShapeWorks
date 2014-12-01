@@ -22,7 +22,6 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
 #include <Visualization/DisplayObject.h>
-#include <Visualization/StudioInteractorStyle.h>
 
 /*
 
@@ -126,9 +125,6 @@ Viewer::Viewer()
   this->glyph_size_ = 1.0f;
   this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
-
-  this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
-  this->style_->set_viewer( this );
 
   this->visible_ = false;
 }
@@ -258,10 +254,6 @@ void Viewer::reset_camera()
 void Viewer::set_renderer( vtkSmartPointer<vtkRenderer> renderer )
 {
   this->renderer_ = renderer;
-
-  this->style_->SetDefaultRenderer( this->renderer_ );
-
-  this->renderer_->GetRenderWindow()->GetInteractor()->SetInteractorStyle( this->style_ );
 }
 
 //-----------------------------------------------------------------------------
@@ -354,8 +346,6 @@ void Viewer::update_actors()
 
 void Viewer::handle_pick( int* click_pos )
 {
-  std::cerr << "handle pick!\n";
-
   vtkSmartPointer<vtkPointPicker> picker = vtkSmartPointer<vtkPointPicker>::New();
 
   picker->AddPickList( this->glyph_actor_ );
@@ -374,9 +364,8 @@ void Viewer::handle_pick( int* click_pos )
     return;
   }
 
-  vtkIdType glyph_id = vtkIdTypeArray::SafeDownCast(this->glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds"))
-    ->GetValue(id);
+  vtkIdType glyph_id = vtkIdTypeArray::SafeDownCast(
+    this->glyphs_->GetOutput()->GetPointData()->GetArray( "InputPointIds" ) )->GetValue( id );
 
-
-  std::cerr << "picked point :" << glyph_id << "\n";
+  std::cerr << "picked correspondence point :" << glyph_id << "\n";
 }
