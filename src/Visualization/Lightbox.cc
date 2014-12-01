@@ -121,6 +121,7 @@ void Lightbox::setup_renderers()
       // create a renderer for the viewer
       vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
       renderer->SetActiveCamera( this->camera_ );
+      this->render_window_->AddRenderer( renderer );
 
       // create the viewer
       QSharedPointer<Viewer> viewer = QSharedPointer<Viewer>( new Viewer() );
@@ -144,7 +145,6 @@ void Lightbox::setup_renderers()
 
       renderer->SetBackground( color, color, color );
 
-      this->render_window_->AddRenderer( renderer );
     }
   }
 

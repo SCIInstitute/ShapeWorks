@@ -14,12 +14,79 @@
 #include <vtkTextActor.h>
 #include <vtkTextProperty.h>
 #include <vtkCornerAnnotation.h>
+#include <vtkPointPicker.h>
+#include <vtkIdTypeArray.h>
 
 #include <Application/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
 #include <Visualization/DisplayObject.h>
+#include <Visualization/StudioInteractorStyle.h>
+
+/*
+
+   class ScenePickCallback : public vtkCommand
+   {
+   public:
+   static ScenePickCallback *New();
+   virtual void Execute(vtkObject *caller, unsigned long eventId, void* data);
+
+   vtkSmartPointer<vtkActor> actorToPick;
+   vtkSmartPointer<vtkGlyph3D> glyphsToPick;
+   vtkSmartPointer<vtkRenderWindowInteractor> sceneRenderWindowInteractor;
+
+   private:
+   ScenePickCallback();
+   };
+
+
+   void ScenePickCallback::Execute(vtkObject *caller, unsigned long eventId, void* data)
+   {
+   if(eventId == vtkCommand::LeftButtonReleaseEvent)
+   {
+    int pickPosition[2];
+    sceneRenderWindowInteractor->GetEventPosition(pickPosition);
+
+    sceneRenderWindowInteractor->GetPicker()->Pick(pickPosition[0], pickPosition[1], 0, sceneRenderer);
+
+    vtkCellPicker *cellPicker = reinterpret_cast<vtkCellPicker*>(picker.GetPointer());
+    if(cellPicker)
+    {
+      // Check if correct actor was picked
+      if(cellPicker->GetActor() == actorToPick.GetPointer())
+      {
+        vtkDataArray *inputIds = glyphsToPick->GetOutput()->GetPointData()->GetArray("InputPointIds");
+
+        if(inputIds)
+        {
+          vtkCell *cell = glyphsToPick->GetOutput()->GetCell(cellPicker->GetCellId());
+
+          if(cell && cell->GetNumberOfPoints() > 0)
+          {
+            // get first PointId from picked cell
+            vtkIdType inputId = cell->GetPointId(0);
+
+            // get matching Id from "InputPointIds" array
+            vtkIdType selectedPointId = inputIds->GetTuple1(inputId);
+
+            if(selectedPointId >= 0)
+            {
+              // POINT PICKED!
+              // selectedPointId = Picked PointID (original input points)
+            }
+          }
+        }
+
+      }
+      else
+      {
+        // NONE PICKED
+      }
+    }
+   }
+   }
+ */
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
@@ -43,13 +110,7 @@ Viewer::Viewer()
   this->glyphs_->ClampingOff();
   this->glyphs_->SetScaleModeToDataScalingOff();
   this->glyphs_->SetSourceConnection( sphere_source->GetOutputPort() );
-
-  this->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
-  this->glyphs_->SetInputData( this->glyph_point_set_ );
-  this->glyphs_->ScalingOn();
-  this->glyphs_->ClampingOff();
-  this->glyphs_->SetScaleModeToDataScalingOff();
-  this->glyphs_->SetSourceConnection( sphere_source->GetOutputPort() );
+  this->glyphs_->GeneratePointIdsOn();
 
   this->glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->glyph_mapper_->SetInputConnection( this->glyphs_->GetOutputPort() );
@@ -65,6 +126,9 @@ Viewer::Viewer()
   this->glyph_size_ = 1.0f;
   this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
+
+  this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
+  this->style_->set_viewer( this );
 
   this->visible_ = false;
 }
@@ -194,6 +258,10 @@ void Viewer::reset_camera()
 void Viewer::set_renderer( vtkSmartPointer<vtkRenderer> renderer )
 {
   this->renderer_ = renderer;
+
+  this->style_->SetDefaultRenderer( this->renderer_ );
+
+  this->renderer_->GetRenderWindow()->GetInteractor()->SetInteractorStyle( this->style_ );
 }
 
 //-----------------------------------------------------------------------------
@@ -282,4 +350,33 @@ void Viewer::update_actors()
   //this->displayShape( this->currentShape );
 
   //this->renderer_->Render();
+}
+
+void Viewer::handle_pick( int* click_pos )
+{
+  std::cerr << "handle pick!\n";
+
+  vtkSmartPointer<vtkPointPicker> picker = vtkSmartPointer<vtkPointPicker>::New();
+
+  picker->AddPickList( this->glyph_actor_ );
+  picker->PickFromListOn();
+
+  picker->Pick( click_pos[0],
+                click_pos[1],
+                0, // always zero.
+                this->renderer_ );
+
+  int id = picker->GetPointId();
+
+  if ( id == -1 )
+  {
+    // miss
+    return;
+  }
+
+  vtkIdType glyph_id = vtkIdTypeArray::SafeDownCast(this->glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds"))
+    ->GetValue(id);
+
+
+  std::cerr << "picked point :" << glyph_id << "\n";
 }

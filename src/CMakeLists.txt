@@ -223,6 +223,7 @@ SET(STUDIO_VISUALIZATION_HDRS
   Visualization/Visualizer.h
   Visualization/DisplayObject.h
   Visualization/CustomSurfaceReconstructionFilter.h
+  Visualization/StudioInteractorStyle.h
 )
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cc
@@ -230,6 +231,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Visualizer.cc
   Visualization/DisplayObject.cc
   Visualization/CustomSurfaceReconstructionFilter.cc
+  Visualization/StudioInteractorStyle.cc
 )
 
 ### TinyXML

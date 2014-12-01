@@ -15,6 +15,9 @@ class vtkSphereSource;
 class DisplayObject;
 
 class Viewer;
+
+class StudioInteractorStyle;
+
 typedef QSharedPointer< Viewer > ViewerHandle;
 typedef QVector< ViewerHandle > ViewerList;
 
@@ -46,6 +49,8 @@ public:
 
   void update_glyph_properties();
 
+  void handle_pick(int* click_pos);
+
 private:
 
   bool visible_;
@@ -71,6 +76,8 @@ private:
   vtkSmartPointer<vtkActor>                surface_actor_;
 
   vtkSmartPointer<vtkLookupTable>          lut_;
+
+  vtkSmartPointer<StudioInteractorStyle>   style_;
 };
 
 #endif /* STUDIO_VISUALIZATION_VIEWER_H */
