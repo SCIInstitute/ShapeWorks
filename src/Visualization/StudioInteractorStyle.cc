@@ -14,6 +14,12 @@ StudioInteractorStyle::~StudioInteractorStyle()
 void StudioInteractorStyle::OnLeftButtonDown()
 {
 
+  if (this->Interactor->GetControlKey())
+  {
+    int* clickPos = this->GetInteractor()->GetEventPosition();
+    this->lightbox_->handle_pick( clickPos );
+  }
+
   // Forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
@@ -21,10 +27,6 @@ void StudioInteractorStyle::OnLeftButtonDown()
 void StudioInteractorStyle::OnRightButtonDown()
 {
   std::cerr << "Right button down!\n";
-  int* clickPos = this->GetInteractor()->GetEventPosition();
-  //this->viewer_->handle_pick( clickPos );
-
-  this->lightbox_->handle_pick( clickPos );
 
   // Forward events
   vtkInteractorStyleTrackballCamera::OnRightButtonDown();

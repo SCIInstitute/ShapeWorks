@@ -1,3 +1,5 @@
+#include <vtkMath.h>
+
 #include <Visualization/Visualizer.h>
 #include <Visualization/DisplayObject.h>
 #include <Data/Shape.h>
@@ -248,12 +250,51 @@ void Visualizer::update_lut()
   }
   else
   {
+
+
+
+    double p1[3];
+    p1[0] = mean_shape[ this->selected_point_ * 3 + 0];
+    p1[1] = mean_shape[ this->selected_point_ * 3 + 1];
+    p1[2] = mean_shape[ this->selected_point_ * 3 + 2];
+
+    std::vector<double> distances;
+    double max_distance = 0;
     for ( int i = 0; i < num_points; i++ )
     {
-      this->glyph_lut_->SetTableValue( i, 0, 0, 1 );
+
+      double p2[3];
+      p2[0] = mean_shape[ i * 3 + 0];
+      p2[1] = mean_shape[ i * 3 + 1];
+      p2[2] = mean_shape[ i * 3 + 2];
+
+      double distance = sqrt( vtkMath::Distance2BetweenPoints( p1, p2 ) );
+      distances.push_back( distance );
+      if ( distance > max_distance )
+      {
+        max_distance = distance;
+      }
+    }
+
+    vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+    lut->SetTableRange(0,max_distance);
+    lut->SetHueRange (0, 1);
+    lut->SetSaturationRange (1, 1);
+    lut->SetValueRange (1, 1);
+    lut->Build();
+
+    for ( int i = 0; i < num_points; i++ )
+    {
+
+      unsigned char *color = lut->MapValue(max_distance - distances[i]);
+
+      //this->glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
+      this->glyph_lut_->SetTableValue( i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f);
+
+
       if ( this->selected_point_ == i )
       {
-        this->glyph_lut_->SetTableValue( i, 1, 0, 0 );
+        this->glyph_lut_->SetTableValue( i, 1, 1, 1 );
       }
     }
   }
