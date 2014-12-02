@@ -51,7 +51,6 @@ public:
 
   void display_pca( int mode, double value );
 
-
   void set_selected_point( int id );
 
   static const QString MODE_ORIGINAL_C;
@@ -90,7 +89,6 @@ private:
 
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
   int selected_point_;
-
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */

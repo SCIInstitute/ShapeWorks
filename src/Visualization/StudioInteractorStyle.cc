@@ -14,7 +14,7 @@ StudioInteractorStyle::~StudioInteractorStyle()
 void StudioInteractorStyle::OnLeftButtonDown()
 {
 
-  if (this->Interactor->GetControlKey())
+  if ( this->Interactor->GetControlKey() )
   {
     int* clickPos = this->GetInteractor()->GetEventPosition();
     this->lightbox_->handle_pick( clickPos );

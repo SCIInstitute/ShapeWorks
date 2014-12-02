@@ -135,13 +135,13 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   vtkSmartPointer<vtkPolyData>pointSet = vtkSmartPointer<vtkPolyData>::New();
   pointSet->SetPoints( points );
 
-  vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
+  vtkSmartPointer<CustomSurfaceReconstructionFilter> surface_reconstruction =
     vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-  surfaceReconstruction->SetInputData( pointSet );
+  surface_reconstruction->SetInputData( pointSet );
 
   // create isosurface
   vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
-  marching->SetInputConnection( surfaceReconstruction->GetOutputPort() );
+  marching->SetInputConnection( surface_reconstruction->GetOutputPort() );
   marching->SetNumberOfContours( 1 );
   marching->SetValue( 0, 0.0 );
   marching->Update();
