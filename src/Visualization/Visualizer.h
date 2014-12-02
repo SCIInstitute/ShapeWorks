@@ -51,6 +51,9 @@ public:
 
   void display_pca( int mode, double value );
 
+
+  void set_selected_point( int id );
+
   static const QString MODE_ORIGINAL_C;
   static const QString MODE_GROOMED_C;
   static const QString MODE_RECONSTRUCTION_C;
@@ -67,6 +70,8 @@ private:
 
   bool compute_stats();
 
+  void update_lut();
+
   QString display_mode_;
   bool center_;
 
@@ -82,6 +87,10 @@ private:
 
   int pca_mode;
   double pca_value;
+
+  vtkSmartPointer<vtkLookupTable> glyph_lut_;
+  int selected_point_;
+
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */

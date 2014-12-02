@@ -16,6 +16,7 @@
 #include <vtkCornerAnnotation.h>
 #include <vtkPointPicker.h>
 #include <vtkIdTypeArray.h>
+#include <vtkPropPicker.h>
 
 #include <Application/Preferences.h>
 #include <Data/Shape.h>
@@ -37,8 +38,6 @@ Viewer::Viewer()
 
   this->sphere_source = vtkSmartPointer<vtkSphereSource>::New();
 
-  this->lut_ = vtkSmartPointer<vtkLookupTable>::New();
-
   this->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
   this->glyphs_->SetInputData( this->glyph_point_set_ );
   this->glyphs_->ScalingOn();
@@ -49,7 +48,6 @@ Viewer::Viewer()
 
   this->glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->glyph_mapper_->SetInputConnection( this->glyphs_->GetOutputPort() );
-  this->glyph_mapper_->SetLookupTable( this->lut_ );
 
   this->glyph_actor_ = vtkSmartPointer<vtkActor>::New();
   this->glyph_actor_->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
@@ -61,8 +59,6 @@ Viewer::Viewer()
   this->glyph_size_ = 1.0f;
   this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
-
-  this->selected_point_ = -1;
 
   this->visible_ = false;
 }
@@ -95,8 +91,6 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
   {
     this->glyphs_->SetRange( 0.0, (double) num_points + 1 );
     this->glyph_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
-    this->lut_->SetNumberOfTableValues( num_points + 1 );
-    this->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
 
     this->glyph_points_->Reset();
     this->glyph_points_->SetNumberOfPoints( num_points );
@@ -107,22 +101,7 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
     unsigned int idx = 0;
     for ( int i = 0; i < num_points; i++ )
     {
-      if ( selected_point_ < 0 )
-      {
-        scalars->InsertValue( i, i );
-      }
-      else
-      {
-        if ( i == selected_point_ )
-        {
-          std::cerr << "selected point!\n";
-          scalars->InsertValue( i, 1 );
-        }
-        else
-        {
-          scalars->InsertValue( i, 0 );
-        }
-      }
+      scalars->InsertValue( i, i );
       double x = correspondence_points[idx++];
       double y = correspondence_points[idx++];
       double z = correspondence_points[idx++];
@@ -301,13 +280,18 @@ void Viewer::update_actors()
 
 int Viewer::handle_pick( int* click_pos )
 {
+
+  // First determine what was picked
+  vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
+  prop_picker->Pick( click_pos[0], click_pos[1], 0, this->renderer_ );
+  if ( prop_picker->GetActor() != this->glyph_actor_ )
+  {
+    return -1;
+  }
+
   vtkSmartPointer<vtkPointPicker> picker = vtkSmartPointer<vtkPointPicker>::New();
 
-  //picker->AddPickList( this->glyph_actor_ );
-  //picker->PickFromListOn();
-
-  picker->Pick( click_pos[0],
-                click_pos[1],
+  picker->Pick( click_pos[0], click_pos[1],
                 0, // always zero.
                 this->renderer_ );
 
@@ -321,7 +305,6 @@ int Viewer::handle_pick( int* click_pos )
 
   /// need to handle when it hits the surface and not a glyph
 
-
   vtkIdType glyph_id = vtkIdTypeArray::SafeDownCast(
     this->glyphs_->GetOutput()->GetPointData()->GetArray( "InputPointIds" ) )->GetValue( id );
 
@@ -331,57 +314,8 @@ int Viewer::handle_pick( int* click_pos )
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_selected_point( int id )
+void Viewer::set_lut( vtkSmartPointer<vtkLookupTable> lut )
 {
-  this->selected_point_ = id;
-  this->update_colors();
-}
-
-//-----------------------------------------------------------------------------
-void Viewer::update_colors()
-{
-  std::cerr << "update colors, selected point: " << this->selected_point_ << "\n";
-  vnl_vector<double> correspondence_points = this->object_->get_correspondence_points();
-
-  int num_points = correspondence_points.size() / 3;
-
-  vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)( this->glyph_point_set_->GetPointData()->GetScalars() );
-
-  if ( num_points > 0 )
-  {
-    this->glyphs_->SetRange( 0.0, (double) num_points + 1 );
-    this->glyph_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
-    this->lut_->SetNumberOfTableValues( num_points + 1 );
-    this->lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
-
-    scalars->Reset();
-    scalars->SetNumberOfTuples( num_points );
-
-    unsigned int idx = 0;
-    for ( int i = 0; i < num_points; i++ )
-    {
-      if ( selected_point_ == -1 )
-      {
-        scalars->InsertValue( i, i );
-      }
-      else
-      {
-        if ( i == selected_point_ )
-        {
-          std::cerr << "selected point!\n";
-          scalars->InsertValue( i, 0 );
-        }
-        else
-        {
-          scalars->InsertValue( i, num_points - 1 );
-        }
-      }
-    }
-  }
-  else
-  {
-    this->glyph_points_->Reset();
-    scalars->Reset();
-  }
-  this->glyph_points_->Modified();
+  this->lut_ = lut;
+  this->glyph_mapper_->SetLookupTable( this->lut_ );
 }

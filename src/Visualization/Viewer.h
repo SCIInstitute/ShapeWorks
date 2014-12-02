@@ -53,6 +53,8 @@ public:
 
   void set_selected_point( int id );
 
+  void set_lut( vtkSmartPointer<vtkLookupTable> lut );
+
 private:
 
   bool visible_;
@@ -61,15 +63,11 @@ private:
 
   void update_actors();
 
-  void update_colors();
-
   bool show_glyphs_;
   bool show_surface_;
 
   double glyph_size_;
   double glyph_quality_;
-
-  int selected_point_;
 
   vtkSmartPointer<vtkRenderer>             renderer_;
 
@@ -86,8 +84,6 @@ private:
   vtkSmartPointer<vtkLookupTable>          lut_;
 
   vtkSmartPointer<StudioInteractorStyle>   style_;
-
-
 };
 
 #endif /* STUDIO_VISUALIZATION_VIEWER_H */

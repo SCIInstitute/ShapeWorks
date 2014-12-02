@@ -15,6 +15,7 @@ class Mesh;
 class Shape;
 class DisplayObject;
 class StudioInteractorStyle;
+class Visualizer;
 
 class Lightbox;
 typedef QSharedPointer< Lightbox > LightboxHandle;
@@ -49,6 +50,10 @@ public:
 
   void handle_pick( int* click_pos );
 
+  void set_glyph_lut( vtkSmartPointer<vtkLookupTable> lut );
+
+  void set_visualizer( Visualizer* visualizer );
+
 private:
 
   void clear_renderers();
@@ -77,6 +82,8 @@ private:
   bool first_draw_;
 
   vtkSmartPointer<StudioInteractorStyle> style_;
+
+  Visualizer* visualizer_;
 };
 
 #endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */

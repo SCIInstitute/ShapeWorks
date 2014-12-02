@@ -20,6 +20,9 @@ Visualizer::Visualizer()
   this->show_glyphs_ = true;
   this->show_surface_ = true;
   this->stats_ready_ = false;
+
+  this->glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
+  this->selected_point_ = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -30,6 +33,7 @@ Visualizer::~Visualizer()
 void Visualizer::set_lightbox( LightboxHandle lightbox )
 {
   this->lightbox_ = lightbox;
+  this->lightbox_->set_visualizer( this );
 }
 
 //-----------------------------------------------------------------------------
@@ -221,4 +225,46 @@ void Visualizer::display_pca( int mode, double value )
   shape = this->stats.Mean() + ( e * ( value * lambda ) );
 
   this->display_shape( this->stats.Mean() + ( e * ( pca_slider_value * lambda ) ) );
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_lut()
+{
+  if ( !this->compute_stats() )
+  {
+    return;
+  }
+
+  vnl_vector<double> mean_shape = this->stats.Mean();
+
+  int num_points = mean_shape.size() / 3;
+
+  this->glyph_lut_->SetNumberOfTableValues( num_points + 1 );
+  this->glyph_lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
+
+  if ( this->selected_point_ < 0 )
+  {
+    this->glyph_lut_->ForceBuild();
+  }
+  else
+  {
+    for ( int i = 0; i < num_points; i++ )
+    {
+      this->glyph_lut_->SetTableValue( i, 0, 0, 1 );
+      if ( this->selected_point_ == i )
+      {
+        this->glyph_lut_->SetTableValue( i, 1, 0, 0 );
+      }
+    }
+  }
+
+  this->glyph_lut_->Modified();
+  this->lightbox_->set_glyph_lut( this->glyph_lut_ );
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_selected_point( int id )
+{
+  this->selected_point_ = id;
+  this->update_lut();
 }

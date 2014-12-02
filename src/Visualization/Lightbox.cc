@@ -4,6 +4,7 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
 #include <Visualization/StudioInteractorStyle.h>
+#include <Visualization/Visualizer.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
@@ -219,14 +220,25 @@ void Lightbox::handle_pick( int* click_pos )
   int id = -1;
   foreach( ViewerHandle viewer, this->viewers_ ) {
     int vid = viewer->handle_pick( click_pos );
-    if (vid != -1)
+    if ( vid != -1 )
     {
       id = vid;
     }
   }
 
-  foreach( ViewerHandle viewer, this->viewers_ ) {
-    viewer->set_selected_point(id);
-  }
+  this->visualizer_->set_selected_point( id );
+}
 
+//-----------------------------------------------------------------------------
+void Lightbox::set_glyph_lut( vtkSmartPointer<vtkLookupTable> lut )
+{
+  foreach( ViewerHandle viewer, this->viewers_ ) {
+    viewer->set_lut( lut );
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::set_visualizer( Visualizer* visualizer )
+{
+  this->visualizer_ = visualizer;
 }
