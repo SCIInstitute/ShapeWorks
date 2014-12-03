@@ -116,7 +116,7 @@ int main( int argc, char** argv )
 
   //studio_app.import_files( files );
 #ifdef LOAD_DEFAULT_PROJECT
-  //studio_app->open_project( "h:/projects/studio/studio.xml" );
+  studio_app->open_project( "h:/projects/studio/studio.xml" );
   //studio_app->open_project( "c:/Users/amorris/Desktop/studio2.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/groom.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/optimize.xml" );

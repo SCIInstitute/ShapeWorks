@@ -22,6 +22,7 @@ Lightbox::Lightbox()
   this->first_draw_ = true;
 
   this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
+  this->style_->AutoAdjustCameraClippingRangeOn();
   this->style_->set_lightbox( this );
 }
 
@@ -90,9 +91,7 @@ void Lightbox::set_render_window( vtkRenderWindow* renderWindow )
   this->render_window_ = renderWindow;
   this->render_window_->AddRenderer( this->renderer_ );
 
-  this->style_->SetDefaultRenderer( this->renderer_ );
-
-  this->renderer_->GetRenderWindow()->GetInteractor()->SetInteractorStyle( this->style_ );
+  this->render_window_->GetInteractor()->SetInteractorStyle( this->style_ );
 
   this->setup_renderers();
 }
