@@ -122,6 +122,8 @@ bool Project::load_project( QString filename )
   QStringList groomed_files;
   QStringList point_files;
 
+  QString display_state;
+
   while ( !xml->atEnd() && !xml->hasError() )
   {
     QXmlStreamReader::TokenType token = xml->readNext();
@@ -138,7 +140,7 @@ bool Project::load_project( QString filename )
 
       if ( xml->name() == "display_state" )
       {
-        this->display_state_ = xml->readElementText();
+        display_state = xml->readElementText();
       }
       if ( xml->name() == "zoom_state" )
       {
@@ -183,6 +185,9 @@ bool Project::load_project( QString filename )
   this->load_groomed_files( groomed_files );
 
   this->load_point_files( point_files );
+
+  // set this after loading files so it doesn't get fiddled with
+  this->display_state_ = display_state;
 
   return true;
 }
@@ -376,6 +381,7 @@ void Project::load_original_files( QStringList file_names )
 
   QProgressDialog progress( "Loading images...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
+  progress.setMinimumDuration(2000);
 
   for ( int i = 0; i < file_names.size(); i++ )
   {
@@ -408,12 +414,24 @@ void Project::load_original_files( QStringList file_names )
 //---------------------------------------------------------------------------
 void Project::load_groomed_files( QStringList file_names )
 {
+  QProgressDialog progress( "Loading groomed images...", "Abort", 0, file_names.size(), this->parent_ );
+  progress.setWindowModality( Qt::WindowModal );
+  progress.setMinimumDuration(2000);
 
   for ( int i = 0; i < file_names.size(); i++ )
   {
+    progress.setValue( i );
+
+    if ( progress.wasCanceled() )
+    {
+      break;
+    }
+
     std::cerr << file_names[i].toStdString() << "\n";
     this->shapes_[i]->import_groomed_image( file_names[i] );
   }
+
+  progress.setValue( file_names.size() );
 
   if ( file_names.size() > 0 )
   {
@@ -425,8 +443,19 @@ void Project::load_groomed_files( QStringList file_names )
 //---------------------------------------------------------------------------
 void Project::load_point_files( QStringList file_names )
 {
+  QProgressDialog progress( "Loading point files...", "Abort", 0, file_names.size(), this->parent_ );
+  progress.setWindowModality( Qt::WindowModal );
+  progress.setMinimumDuration(2000);
+
   for ( int i = 0; i < file_names.size(); i++ )
   {
+    progress.setValue( i );
+
+    if ( progress.wasCanceled() )
+    {
+      break;
+    }
+
     std::cerr << file_names[i].toStdString() << "\n";
 
     QSharedPointer<Shape> shape;
@@ -448,6 +477,10 @@ void Project::load_point_files( QStringList file_names )
       return;
     }
   }
+
+  progress.setValue( file_names.size() );
+
+
   if ( file_names.size() > 0 )
   {
     this->reconstructed_present_ = true;

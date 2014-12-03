@@ -4,6 +4,7 @@
 #include <vtkMarchingCubes.h>
 #include <vtkImageImport.h>
 #include <vtkTriangleFilter.h>
+#include <vtkPolyDataNormals.h>
 
 #include <itkImageFileReader.h>
 #include <itkImageRegionIteratorWithIndex.h>
@@ -151,14 +152,30 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
     vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
   powercrust->SetInputData( pointSet );
   powercrust->Update();
-  this->poly_data_ = powercrust->GetOutput();
+
 /*
-  vtkSmartPointer<vtkPolyDataToImageData> polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
+  vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+  normals->SetInputData(powercrust->GetOutput());
+  normals->Update();
+  this->poly_data_ = normals->GetOutput();
+*/
+
+
+  this->poly_data_ = powercrust->GetOutput();
+
+/*
   vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangleFilter->SetInputConnection( powercrust->GetOutputPort() );
+  triangleFilter->SetInputData( powercrust->GetOutput() );
+  triangleFilter->Update();
+  
+  vtkSmartPointer<vtkPolyDataToImageData> polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
   polydataToImageData->SetInputConnection( triangleFilter->GetOutputPort() );
+  polydataToImageData->Update();
+  
   marching->SetInputConnection( polydataToImageData->GetOutputPort() );
   marching->SetValue( 0, 0.5 );
+  marching->Update();
+  this->poly_data_ = marching->GetOutput();
 */
 
 #else
