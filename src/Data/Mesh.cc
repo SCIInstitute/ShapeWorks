@@ -3,15 +3,21 @@
 
 #include <vtkMarchingCubes.h>
 #include <vtkImageImport.h>
+#include <vtkTriangleFilter.h>
 
 #include <itkImageFileReader.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
+#include <Visualization/vtkPolyDataToImageData.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
 
 #include <Visualization/CustomSurfaceReconstructionFilter.h>
+
+#ifdef POWERCRUST
+#include <Visualization/vtkPowerCrustSurfaceReconstruction.h>
+#endif /* POWERCRUST */
 
 typedef float PixelType;
 typedef itk::Image< PixelType, 3 > ImageType;
@@ -135,19 +141,38 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   vtkSmartPointer<vtkPolyData>pointSet = vtkSmartPointer<vtkPolyData>::New();
   pointSet->SetPoints( points );
 
+  // create isosurface
+  vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
+  marching->SetNumberOfContours( 1 );
+  marching->SetValue( 0, 0.0 );
+
+#ifdef POWERCRUST
+  vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust =
+    vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
+  powercrust->SetInputData( pointSet );
+  powercrust->Update();
+  this->poly_data_ = powercrust->GetOutput();
+/*
+  vtkSmartPointer<vtkPolyDataToImageData> polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
+  vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangleFilter->SetInputConnection( powercrust->GetOutputPort() );
+  polydataToImageData->SetInputConnection( triangleFilter->GetOutputPort() );
+  marching->SetInputConnection( polydataToImageData->GetOutputPort() );
+  marching->SetValue( 0, 0.5 );
+*/
+
+#else
   vtkSmartPointer<CustomSurfaceReconstructionFilter> surface_reconstruction =
     vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   surface_reconstruction->SetInputData( pointSet );
-
-  // create isosurface
-  vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
   marching->SetInputConnection( surface_reconstruction->GetOutputPort() );
-  marching->SetNumberOfContours( 1 );
-  marching->SetValue( 0, 0.0 );
   marching->Update();
 
   // store isosurface polydata
   this->poly_data_ = marching->GetOutput();
+
+#endif // ifdef POWERCRUST
+
 
   return true;
 }

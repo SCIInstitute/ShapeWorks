@@ -26,9 +26,12 @@ OPTION (BUILD_SHARED_LIBS "Build shared libraries" OFF)
 OPTION (BUILD_TESTS "Build ShapeWorksStudio test applications." ON)
 OPTION (INSTALL_TEST_FILES "Include ShapeWorksStudio test images and help files in the install." OFF)
 OPTION (INSTALL_SOURCE  "Install ShapeWorksStudio source code." OFF)
-OPTION(USE_PRECOMPILED_HEADERS "Use precompiled headers to speed up compilation" ON)
+OPTION (USE_PRECOMPILED_HEADERS "Use precompiled headers to speed up compilation" ON)
 
-OPTION(LOAD_DEFAULT_PROJECT "Load default project" OFF)
+OPTION (LOAD_DEFAULT_PROJECT "Load default project" OFF)
+
+OPTION (POWERCRUST "Use PowerCrust" OFF)
+
 
 MESSAGE(STATUS "** PRECOMPILED_HEADERS: ${USE_PRECOMPILED_HEADERS}")
 
@@ -224,6 +227,9 @@ SET(STUDIO_VISUALIZATION_HDRS
   Visualization/DisplayObject.h
   Visualization/CustomSurfaceReconstructionFilter.h
   Visualization/StudioInteractorStyle.h
+  Visualization/vtkPolyDataToImageData.h
+  Visualization/itkImageToVTKImageFilter.h
+  Visualization/itkImageToVTKImageFilter.hxx
 )
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cc
@@ -232,7 +238,17 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/DisplayObject.cc
   Visualization/CustomSurfaceReconstructionFilter.cc
   Visualization/StudioInteractorStyle.cc
+  Visualization/vtkPolyDataToImageData.cxx
 )
+
+
+
+IF(POWERCRUST)
+  ADD_DEFINITIONS(-DPOWERCRUST)
+  SET(STUDIO_VISUALIZATION_HDRS ${STUDIO_VISUALIZATION_HDRS} Visualization/vtkPowerCrustSurfaceReconstruction.h)
+  SET(STUDIO_VISUALIZATION_SRCS ${STUDIO_VISUALIZATION_SRCS} Visualization/vtkPowerCrustSurfaceReconstruction.cxx)
+ENDIF(POWERCRUST)
+
 
 ### TinyXML
 SET (TINYXML_SRCS
