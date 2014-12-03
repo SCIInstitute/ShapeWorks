@@ -1,4 +1,5 @@
 #include <vtkMath.h>
+#include <vtkLookupTable.h>
 
 #include <Visualization/Visualizer.h>
 #include <Visualization/DisplayObject.h>
