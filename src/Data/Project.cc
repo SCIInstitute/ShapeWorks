@@ -195,6 +195,8 @@ bool Project::load_project( QString filename )
 //---------------------------------------------------------------------------
 bool Project::load_legacy( QString filename )
 {
+  QString xml_path = QFileInfo(filename).absolutePath();
+
   std::cerr << "load_legacy(" << filename.toStdString() << ")\n";
   TiXmlDocument doc( filename.toStdString().c_str() );
   bool loadOkay = doc.LoadFile();
@@ -263,6 +265,33 @@ bool Project::load_legacy( QString filename )
   bool has_inputs = doc_handle.FirstChild( "inputs" ).Element() != 0;
   bool has_outputs = doc_handle.FirstChild( "outputs" ).Element() != 0;
 
+
+
+  // fix up file locations, if necessary
+
+  QStringList fixed_point_files;
+
+  foreach( QString file, point_files ) {
+    if (!QFile::exists(file))
+    {
+      // needs fixing
+      // 1. try appending the parent dir of the project file
+
+      QString test_file = xml_path + QDir::separator() + file;
+      if (QFile::exists(test_file))
+      {
+        std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
+        fixed_point_files << test_file;
+      }
+      else
+      {
+        fixed_point_files << file;
+      }
+    }
+  }
+
+
+
   if ( has_inputs && !is_correspondence )
   {
     // must be a groom file
@@ -287,92 +316,11 @@ bool Project::load_legacy( QString filename )
     // must be an analysis file
     std::cerr << "Identified as an analysis file\n";
 
-    this->load_point_files( point_files );
+    this->load_point_files( fixed_point_files );
   }
 
   return true;
-/*
-   std::cerr << "\nLoading legacy file: " << filename.toStdString() << "\n";
-   // Need to identify type of parameter file (e.g. groom, optimization, analysis)
 
-   // clear the project out first
-   this->reset();
-
-   // open file
-   QFile file( filename );
-   if ( !file.open( QIODevice::ReadOnly ) )
-   {
-    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
-    return false;
-   }
-
-   QFileInfo qfi( filename );
-   QString path = qfi.absolutePath();
-
-   // setup XML
-   QSharedPointer<QXmlStreamReader> xml = QSharedPointer<QXmlStreamReader>( new QXmlStreamReader() );
-   xml->setDevice( &file );
-
-   QStringList import_files;
-   QStringList groomed_files;
-   QStringList point_files;
-
-   while ( !xml->atEnd() && !xml->hasError() )
-   {
-    QXmlStreamReader::TokenType token = xml->readNext();
-
-    if ( token == QXmlStreamReader::StartDocument )
-    {
-      continue;
-    }
-    if ( token == QXmlStreamReader::StartElement )
-    {
-      std::cerr << "tag: " << xml->name().toString().toStdString() << "\n";
-
-      if ( xml->name() == "inputs" )
-      {
-        std::cerr << "found inputs tag\n";
-      }
-
-      if ( xml->name() == "outputs" )
-      {
-        std::cerr << "found outputs tag\n";
-      }
-
-      if ( xml->name() == "point_files" )
-      {
-        QString str = xml->readElementText();
-        std::cerr << "got string: " << str.toStdString() << "\n";
-        QStringList list = str.split( "\n" );
-        list.replaceInStrings( QRegExp( "^\\s*" ), "" );
-        list.replaceInStrings( QRegExp( "\\s*$" ), "" );
-        list.removeAll( "" );
-
-        foreach( QString s, list ) {
-
-          s = path + QDir::separator() + s;
-          std::cerr << "file: \"" << s.toStdString() << "\"\n";
-          point_files << s;
-        }
-      }
-    }
-   }
-
-
-   if ( xml->hasError() )
-   {
-   QMessageBox::critical( NULL, "ShapeWorksStudio", xml->errorString(), QMessageBox::Ok );
-   return false;
-   }
-
-   //this->import_files( import_files );
-
-   //this->load_groomed_files( groomed_files );
-
-   this->load_point_files( point_files );
-
-   return true;
- */
 }
 
 //---------------------------------------------------------------------------
