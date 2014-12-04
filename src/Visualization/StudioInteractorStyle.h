@@ -23,6 +23,9 @@ public:
   virtual void OnLeftButtonDown();
   virtual void OnRightButtonDown();
 
+  virtual void OnMouseWheelForward();
+  virtual void OnMouseWheelBackward();
+
 private:
 
   Lightbox* lightbox_;

@@ -121,6 +121,7 @@ int main( int argc, char** argv )
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/groom.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/optimize.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/analysis.xml" );
+  //studio_app->import_legacy( "c:/Users/amorris/Sync/carma/projects/shape_prediction/param/analysis.decaaf.xml" );
 #endif // ifdef LOAD_DEFAULT_PROJECT
 
   return app.exec();

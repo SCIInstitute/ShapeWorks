@@ -18,6 +18,7 @@ class Visualizer;
 class Ui_ShapeWorksStudioApp;
 
 class LightboxLayout;
+class WheelEventForwarder;
 
 //! Main ShapeWorksStudio window
 /*!
@@ -105,6 +106,8 @@ private:
   QSharedPointer<Visualizer> visualizer_;
 
   QSharedPointer<Project> project_;
+
+  QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 
   // programatic UI elements
   QSlider* glyph_size_slider_;

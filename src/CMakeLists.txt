@@ -241,6 +241,14 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/vtkPolyDataToImageData.cxx
 )
 
+### Util
+SET(STUDIO_UTIL_HDRS
+  Util/WheelEventForwarder.h
+  )
+SET(STUDIO_UTIL_SRCS
+  Util/WheelEventForwarder.cc
+  )
+
 
 
 IF(POWERCRUST)
@@ -272,6 +280,7 @@ SET( STUDIO_SRCS
      ${STUDIO_OPTIMIZE_SRCS}
      ${STUDIO_ANALYSIS_SRCS}
      ${STUDIO_VISUALIZATION_SRCS}
+     ${STUDIO_UTIL_SRCS}
      ${TINYXML_SRCS}
 )
 
@@ -282,6 +291,7 @@ SET( STUDIO_HDRS
      ${STUDIO_OPTIMIZE_HDRS}
      ${STUDIO_ANALYSIS_HDRS}
      ${STUDIO_VISUALIZATION_HDRS}
+     ${STUDIO_UTIL_HDRS}
      ${TINYXML_HDRS}
 )
 
@@ -292,6 +302,7 @@ SET( STUDIO_MOC_HDRS
      Data/Project.h
      Application/Preferences.h
      Visualization/Visualizer.h
+     Util/WheelEventForwarder.h
 )
 
 SET( STUDIO_RCS

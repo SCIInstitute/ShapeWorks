@@ -20,6 +20,7 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
 #include <Visualization/Visualizer.h>
+#include <Util/WheelEventForwarder.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -29,6 +30,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 {
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi( this );
+
+  this->wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>
+                                   ( new WheelEventForwarder( this->ui_->vertical_scroll_bar ) );
+  this->ui_->qvtkWidget->installEventFilter( this->wheel_event_forwarder_.data() );
 
 /// move this out
   QMenu* menu = new QMenu();

@@ -195,6 +195,13 @@ bool Project::load_project( QString filename )
 //---------------------------------------------------------------------------
 bool Project::load_legacy( QString filename )
 {
+
+  if (!QFile::exists(filename))
+  {
+    QMessageBox::critical( NULL, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok );
+    return false;
+  }
+
   QString xml_path = QFileInfo(filename).absolutePath();
 
   std::cerr << "load_legacy(" << filename.toStdString() << ")\n";
@@ -278,15 +285,23 @@ bool Project::load_legacy( QString filename )
       // 1. try appending the parent dir of the project file
 
       QString test_file = xml_path + QDir::separator() + file;
-      if (QFile::exists(test_file))
+
+      if (!QFile::exists(test_file))
       {
-        std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
-        fixed_point_files << test_file;
+        // 2. Try xml directory's parent
+        test_file = QFileInfo(xml_path).dir().absolutePath() + QDir::separator() + file;
       }
-      else
+
+      std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
+
+      if (!QFile::exists(test_file))
       {
-        fixed_point_files << file;
+        std::cerr << "Could not find file: " << file.toStdString() << "\n";
+        QMessageBox::critical( NULL, "ShapeWorksStudio", "File does not exist: " + file, QMessageBox::Ok );
+        return false;
       }
+
+      fixed_point_files << test_file;
     }
   }
 

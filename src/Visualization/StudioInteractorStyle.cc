@@ -26,8 +26,6 @@ void StudioInteractorStyle::OnLeftButtonDown()
 
 void StudioInteractorStyle::OnRightButtonDown()
 {
-  std::cerr << "Right button down!\n";
-
   // Forward events
   vtkInteractorStyleTrackballCamera::OnRightButtonDown();
 }
@@ -35,4 +33,14 @@ void StudioInteractorStyle::OnRightButtonDown()
 void StudioInteractorStyle::set_lightbox( Lightbox* lightbox )
 {
   this->lightbox_ = lightbox;
+}
+
+void StudioInteractorStyle::OnMouseWheelForward()
+{
+  // do nothing so that it will be passed on to Qt
+}
+
+void StudioInteractorStyle::OnMouseWheelBackward()
+{
+  // do nothing so that it will be passed on to Qt
 }
