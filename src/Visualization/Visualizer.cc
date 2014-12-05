@@ -25,7 +25,8 @@ Visualizer::Visualizer()
   this->stats_ready_ = false;
 
   this->glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
-  this->selected_point_ = -1;
+  this->selected_point_one_ = -1;
+  this->selected_point_two_ = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -245,54 +246,83 @@ void Visualizer::update_lut()
   this->glyph_lut_->SetNumberOfTableValues( num_points + 1 );
   this->glyph_lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
 
-  if ( this->selected_point_ < 0 )
+  if ( this->selected_point_one_ < 0 )
   {
     this->glyph_lut_->ForceBuild();
   }
   else
   {
 
-    double p1[3];
-    p1[0] = mean_shape[ this->selected_point_ * 3 + 0];
-    p1[1] = mean_shape[ this->selected_point_ * 3 + 1];
-    p1[2] = mean_shape[ this->selected_point_ * 3 + 2];
-
-    std::vector<double> distances;
-    double max_distance = 0;
-    for ( int i = 0; i < num_points; i++ )
+    if ( this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0 )
     {
+      // measurement mode
 
-      double p2[3];
-      p2[0] = mean_shape[ i * 3 + 0];
-      p2[1] = mean_shape[ i * 3 + 1];
-      p2[2] = mean_shape[ i * 3 + 2];
-
-      double distance = sqrt( vtkMath::Distance2BetweenPoints( p1, p2 ) );
-      distances.push_back( distance );
-      if ( distance > max_distance )
+      for ( int i = 0; i < num_points; i++ )
       {
-        max_distance = distance;
+        this->glyph_lut_->SetTableValue( i, 0, 0, 0 );
+
+        if ( this->selected_point_one_ == i )
+        {
+          this->glyph_lut_->SetTableValue( i, 1, 1, 1 );
+        }
+
+        if ( this->selected_point_two_ == i )
+        {
+          this->glyph_lut_->SetTableValue( i, 1, 1, 0 );
+        }
       }
     }
-
-    vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
-    lut->SetTableRange( 0, max_distance );
-    lut->SetHueRange( 0, 1 );
-    lut->SetSaturationRange( 1, 1 );
-    lut->SetValueRange( 1, 1 );
-    lut->Build();
-
-    for ( int i = 0; i < num_points; i++ )
+    else
     {
+      // color by distance from the selected point
 
-      unsigned char* color = lut->MapValue( max_distance - distances[i] );
+      double p1[3];
+      p1[0] = mean_shape[ this->selected_point_one_ * 3 + 0];
+      p1[1] = mean_shape[ this->selected_point_one_ * 3 + 1];
+      p1[2] = mean_shape[ this->selected_point_one_ * 3 + 2];
 
-      //this->glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
-      this->glyph_lut_->SetTableValue( i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f );
-
-      if ( this->selected_point_ == i )
+      std::vector<double> distances;
+      double max_distance = 0;
+      for ( int i = 0; i < num_points; i++ )
       {
-        this->glyph_lut_->SetTableValue( i, 1, 1, 1 );
+
+        double p2[3];
+        p2[0] = mean_shape[ i * 3 + 0];
+        p2[1] = mean_shape[ i * 3 + 1];
+        p2[2] = mean_shape[ i * 3 + 2];
+
+        double distance = sqrt( vtkMath::Distance2BetweenPoints( p1, p2 ) );
+        distances.push_back( distance );
+        if ( distance > max_distance )
+        {
+          max_distance = distance;
+        }
+      }
+
+      vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+      lut->SetTableRange( 0, max_distance );
+      lut->SetHueRange( 0, 1 );
+      lut->SetSaturationRange( 1, 1 );
+      lut->SetValueRange( 1, 1 );
+      lut->Build();
+
+      for ( int i = 0; i < num_points; i++ )
+      {
+
+        unsigned char* color = lut->MapValue( max_distance - distances[i] );
+
+        //this->glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
+        this->glyph_lut_->SetTableValue( i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f );
+
+        if ( this->selected_point_one_ == i )
+        {
+          this->glyph_lut_->SetTableValue( i, 1, 1, 1 );
+        }
+
+        if ( this->selected_point_two_ == i )
+        {
+          this->glyph_lut_->SetTableValue( i, 0, 0, 0 );
+        }
       }
     }
   }
@@ -302,8 +332,24 @@ void Visualizer::update_lut()
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_selected_point( int id )
+void Visualizer::set_selected_point_one( int id )
 {
-  this->selected_point_ = id;
+  this->selected_point_one_ = id;
   this->update_lut();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_selected_point_two( int id )
+{
+  this->selected_point_two_ = id;
+  this->update_lut();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::compute_measurements()
+{
+  if ( this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0 )
+  {
+
+  }
 }

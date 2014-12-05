@@ -214,7 +214,7 @@ ViewerList Lightbox::get_viewers()
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::handle_pick( int* click_pos )
+void Lightbox::handle_pick( int* click_pos, bool one )
 {
   int id = -1;
   foreach( ViewerHandle viewer, this->viewers_ ) {
@@ -225,7 +225,14 @@ void Lightbox::handle_pick( int* click_pos )
     }
   }
 
-  this->visualizer_->set_selected_point( id );
+  if ( one )
+  {
+    this->visualizer_->set_selected_point_one( id );
+  }
+  else
+  {
+    this->visualizer_->set_selected_point_two( id );
+  }
 }
 
 //-----------------------------------------------------------------------------

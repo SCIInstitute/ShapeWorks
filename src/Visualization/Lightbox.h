@@ -48,7 +48,7 @@ public:
   ViewerList get_viewers();
   void redraw();
 
-  void handle_pick( int* click_pos );
+  void handle_pick( int* click_pos, bool one );
 
   void set_glyph_lut( vtkSmartPointer<vtkLookupTable> lut );
 
