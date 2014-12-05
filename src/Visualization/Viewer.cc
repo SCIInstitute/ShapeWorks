@@ -17,6 +17,8 @@
 #include <vtkPointPicker.h>
 #include <vtkIdTypeArray.h>
 #include <vtkPropPicker.h>
+#include <vtkCellPicker.h>
+#include <vtkCell.h>
 
 #include <Application/Preferences.h>
 #include <Data/Shape.h>
@@ -289,28 +291,32 @@ int Viewer::handle_pick( int* click_pos )
     return -1;
   }
 
-  vtkSmartPointer<vtkPointPicker> picker = vtkSmartPointer<vtkPointPicker>::New();
+  vtkSmartPointer<vtkCellPicker> cell_picker = vtkSmartPointer<vtkCellPicker>::New();
+  cell_picker->Pick( click_pos[0], click_pos[1], 0, this->renderer_ );
 
-  picker->Pick( click_pos[0], click_pos[1],
-                0, // always zero.
-                this->renderer_ );
+  vtkDataArray* input_ids = this->glyphs_->GetOutput()->GetPointData()->GetArray( "InputPointIds" );
 
-  int id = picker->GetPointId();
-
-  if ( id == -1 )
+  if ( input_ids )
   {
-    // miss
-    return -1;
+    vtkCell* cell = this->glyphs_->GetOutput()->GetCell( cell_picker->GetCellId() );
+
+    if ( cell && cell->GetNumberOfPoints() > 0 )
+    {
+      // get first PointId from picked cell
+      vtkIdType input_id = cell->GetPointId( 0 );
+
+      // get matching Id from "InputPointIds" array
+      vtkIdType glyph_id = input_ids->GetTuple1( input_id );
+
+      if ( glyph_id >= 0 )
+      {
+        std::cerr << "picked correspondence point :" << glyph_id << "\n";
+        return glyph_id;
+      }
+    }
   }
 
-  /// need to handle when it hits the surface and not a glyph
-
-  vtkIdType glyph_id = vtkIdTypeArray::SafeDownCast(
-    this->glyphs_->GetOutput()->GetPointData()->GetArray( "InputPointIds" ) )->GetValue( id );
-
-  std::cerr << "picked correspondence point :" << glyph_id << "\n";
-
-  return glyph_id;
+  return -1;
 }
 
 //-----------------------------------------------------------------------------
