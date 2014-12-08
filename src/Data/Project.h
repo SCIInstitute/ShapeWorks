@@ -101,6 +101,8 @@ private:
 
   void renumber_shapes();
 
+  static bool check_if_legacy( QString filename );
+
   QWidget* parent_;
 
   /// project filename

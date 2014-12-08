@@ -101,10 +101,21 @@ bool Project::save_project( QString filename /* = "" */ )
 //---------------------------------------------------------------------------
 bool Project::load_project( QString filename )
 {
+  if ( !QFile::exists( filename ) )
+  {
+    QMessageBox::critical( NULL, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok );
+    return false;
+  }
+
   // clear the project out first
   this->reset();
 
   this->filename_ = filename;
+
+  if ( check_if_legacy( filename ) )
+  {
+    return this->load_legacy( filename );
+  }
 
   // open file
   QFile file( filename );
@@ -196,13 +207,13 @@ bool Project::load_project( QString filename )
 bool Project::load_legacy( QString filename )
 {
 
-  if (!QFile::exists(filename))
+  if ( !QFile::exists( filename ) )
   {
     QMessageBox::critical( NULL, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok );
     return false;
   }
 
-  QString xml_path = QFileInfo(filename).absolutePath();
+  QString xml_path = QFileInfo( filename ).absolutePath();
 
   std::cerr << "load_legacy(" << filename.toStdString() << ")\n";
   TiXmlDocument doc( filename.toStdString().c_str() );
@@ -272,40 +283,36 @@ bool Project::load_legacy( QString filename )
   bool has_inputs = doc_handle.FirstChild( "inputs" ).Element() != 0;
   bool has_outputs = doc_handle.FirstChild( "outputs" ).Element() != 0;
 
-
-
   // fix up file locations, if necessary
 
   QStringList fixed_point_files;
 
   foreach( QString file, point_files ) {
-    if (!QFile::exists(file))
+    QString test_file = file;
+    if ( !QFile::exists( test_file ) )
     {
       // needs fixing
       // 1. try appending the parent dir of the project file
 
-      QString test_file = xml_path + QDir::separator() + file;
+      test_file = xml_path + QDir::separator() + file;
 
-      if (!QFile::exists(test_file))
+      if ( !QFile::exists( test_file ) )
       {
         // 2. Try xml directory's parent
-        test_file = QFileInfo(xml_path).dir().absolutePath() + QDir::separator() + file;
+        test_file = QFileInfo( xml_path ).dir().absolutePath() + QDir::separator() + file;
       }
 
-      std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
-
-      if (!QFile::exists(test_file))
+      if ( !QFile::exists( test_file ) )
       {
         std::cerr << "Could not find file: " << file.toStdString() << "\n";
         QMessageBox::critical( NULL, "ShapeWorksStudio", "File does not exist: " + file, QMessageBox::Ok );
         return false;
       }
 
-      fixed_point_files << test_file;
+      std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
     }
+    fixed_point_files << test_file;
   }
-
-
 
   if ( has_inputs && !is_correspondence )
   {
@@ -335,7 +342,6 @@ bool Project::load_legacy( QString filename )
   }
 
   return true;
-
 }
 
 //---------------------------------------------------------------------------
@@ -344,7 +350,7 @@ void Project::load_original_files( QStringList file_names )
 
   QProgressDialog progress( "Loading images...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
-  progress.setMinimumDuration(2000);
+  progress.setMinimumDuration( 2000 );
 
   for ( int i = 0; i < file_names.size(); i++ )
   {
@@ -379,7 +385,7 @@ void Project::load_groomed_files( QStringList file_names )
 {
   QProgressDialog progress( "Loading groomed images...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
-  progress.setMinimumDuration(2000);
+  progress.setMinimumDuration( 2000 );
 
   for ( int i = 0; i < file_names.size(); i++ )
   {
@@ -408,10 +414,13 @@ void Project::load_point_files( QStringList file_names )
 {
   QProgressDialog progress( "Loading point files...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
-  progress.setMinimumDuration(2000);
+  progress.setMinimumDuration( 2000 );
+
+  std::cerr << "num file = " << file_names.size() << "\n";
 
   for ( int i = 0; i < file_names.size(); i++ )
   {
+    std::cerr << "Loading file " << file_names[i].toStdString() << "\n";
     progress.setValue( i );
 
     if ( progress.wasCanceled() )
@@ -442,7 +451,6 @@ void Project::load_point_files( QStringList file_names )
   }
 
   progress.setValue( file_names.size() );
-
 
   if ( file_names.size() > 0 )
   {
@@ -550,4 +558,29 @@ void Project::set_zoom_state( int zoom )
 int Project::get_zoom_state()
 {
   return this->zoom_state_;
+}
+
+//---------------------------------------------------------------------------
+bool Project::check_if_legacy( QString filename )
+{
+  TiXmlDocument doc( filename.toStdString().c_str() );
+
+  if ( !doc.LoadFile() )
+  {
+    return false;
+  }
+
+  TiXmlHandle doc_handle( &doc );
+
+  if ( doc_handle.FirstChild( "point_files" ).Element() )
+  {
+    return true;
+  }
+
+  if ( doc_handle.FirstChild( "inputs" ).Element() )
+  {
+    return true;
+  }
+
+  return false;
 }

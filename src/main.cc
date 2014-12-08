@@ -79,20 +79,21 @@ int main( int argc, char** argv )
   ::SetErrorMode( 0 );
   RedirectIOToConsole2();
 #endif
+  try {
 
-  std::cerr << "ShapeWorksStudio initializing...\n";
+    std::cerr << "ShapeWorksStudio initializing...\n";
 
-  QApplication app( argc, argv );
+    QApplication app( argc, argv );
 
-  QSharedPointer<ShapeWorksStudioApp> studio_app =
-    QSharedPointer<ShapeWorksStudioApp>( new ShapeWorksStudioApp( argc, argv ) );
+    QSharedPointer<ShapeWorksStudioApp> studio_app =
+      QSharedPointer<ShapeWorksStudioApp>( new ShapeWorksStudioApp( argc, argv ) );
 
-  studio_app->show();
+    studio_app->show();
 
-  // do this after "show" for mac initialization
-  studio_app->initialize_vtk();
+    // do this after "show" for mac initialization
+    studio_app->initialize_vtk();
 
-  QStringList files;
+    QStringList files;
 
 /*
    files << "z:/shared/laatee/laa_0_DT.nrrd";
@@ -107,14 +108,22 @@ int main( int argc, char** argv )
    files << "h:/projects/laa_tee/groomed/interface_1_DT.nrrd";
    files << "h:/projects/laa_tee/groomed/interface_2_DT.nrrd";
  */
-  files << "h:/projects/laa_tee/data/interface_0.nrrd";
-  files << "h:/projects/laa_tee/data/interface_1.nrrd";
-  files << "h:/projects/laa_tee/data/interface_2.nrrd";
-  files << "h:/projects/laa_tee/data/interface_3.nrrd";
-  files << "h:/projects/laa_tee/data/interface_4.nrrd";
-  files << "h:/projects/laa_tee/data/interface_5.nrrd";
 
-  //studio_app.import_files( files );
+/*
+   files << "h:/projects/laa_tee/data/interface_0.nrrd";
+   files << "h:/projects/laa_tee/data/interface_1.nrrd";
+   files << "h:/projects/laa_tee/data/interface_2.nrrd";
+   files << "h:/projects/laa_tee/data/interface_3.nrrd";
+   files << "h:/projects/laa_tee/data/interface_4.nrrd";
+   files << "h:/projects/laa_tee/data/interface_5.nrrd";
+ */
+
+    if ( argc == 2 )
+    {
+      studio_app->open_project( QString( argv[1] ) );
+    }
+
+    //studio_app.import_files( files );
 #ifdef LOAD_DEFAULT_PROJECT
   //studio_app->open_project( "h:/projects/studio/studio.xml" );
   studio_app->open_project( "c:/Users/amorris/Desktop/studio2.xml" );
@@ -122,7 +131,17 @@ int main( int argc, char** argv )
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/optimize.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Desktop/analysis.xml" );
   //studio_app->import_legacy( "c:/Users/amorris/Sync/carma/projects/shape_prediction/param/analysis.decaaf.xml" );
-#endif // ifdef LOAD_DEFAULT_PROJECT
+ #endif // ifdef LOAD_DEFAULT_PROJECT
 
-  return app.exec();
+    return app.exec();
+  }
+  catch ( itk::ExceptionObject & excep )
+  {
+    std::cerr << excep << std::endl;
+  }
+  catch ( std::exception e )
+  {
+    std::cerr << "Exception caught!" << std::endl;
+    std::cerr << e.what() << "\n";
+  }
 }

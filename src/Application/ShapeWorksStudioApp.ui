@@ -627,7 +627,7 @@ QPushButton {
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -640,7 +640,6 @@ QPushButton {
     <addaction name="action_save_project_as"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
-    <addaction name="action_import_legacy"/>
     <addaction name="separator"/>
     <addaction name="action_quit"/>
    </widget>

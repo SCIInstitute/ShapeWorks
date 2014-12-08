@@ -245,22 +245,6 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_import_legacy_triggered()
-{
-  QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
-                                                   Preferences::Instance().get_last_directory(),
-                                                   tr( "XML files (*.xml)" ) );
-  if ( filename.isEmpty() )
-  {
-    return;
-  }
-
-  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filename ) );
-
-  this->import_legacy( filename );
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::import_files( QStringList file_names )
 {
   this->project_->load_original_files( file_names );
@@ -530,16 +514,6 @@ void ShapeWorksStudioApp::open_project( QString filename )
 
   // set the zoom state
   this->ui_->thumbnail_size_slider->setValue( this->project_->get_zoom_state() );
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::import_legacy( QString filename )
-{
-  // tmp
-  //this->ui_->view_mode_combobox->setCurrentIndex( 2 );
-
-  this->project_->load_legacy( filename );
-  // set tool states
 }
 
 //---------------------------------------------------------------------------
