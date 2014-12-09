@@ -30,8 +30,11 @@ public:
   /// Retrieve the groomed mesh
   QSharedPointer<Mesh> get_groomed_mesh();
 
-  /// Import correspondence point file
-  bool import_point_file( QString filename );
+  /// Import global correspondence point file
+  bool import_global_point_file( QString filename );
+
+  /// Import local correspondence point file
+  bool import_local_point_file( QString filename );
 
   /// Retrieve the reconstructed mesh
   QSharedPointer<Mesh> get_reconstructed_mesh();
@@ -51,10 +54,15 @@ public:
   QString get_groomed_filename();
   QString get_groomed_filename_with_path();
 
-  QString get_point_filename();
-  QString get_point_filename_with_path();
+  QString get_global_point_filename();
+  QString get_global_point_filename_with_path();
+
+  QString get_local_point_filename();
+  QString get_local_point_filename_with_path();
 
 private:
+
+  static bool import_point_file(QString filename, vnl_vector<double> &points);
 
   int id_;
 
@@ -64,9 +72,12 @@ private:
 
   QString original_mesh_filename_;
   QString groomed_mesh_filename_;
-  QString point_filename_;
+  QString global_point_filename_;
+  QString local_point_filename_;
 
-  vnl_vector<double> correspondence_points_;
+  vnl_vector<double> global_correspondence_points_;
+  vnl_vector<double> local_correspondence_points_;
+
 };
 
 #endif /* STUDIO_DATA_SHAPE_H */

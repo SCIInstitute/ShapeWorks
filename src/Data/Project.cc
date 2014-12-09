@@ -86,7 +86,7 @@ bool Project::save_project( QString filename /* = "" */ )
 
     if ( this->reconstructed_present() )
     {
-      xml->writeTextElement( "point_file", this->shapes_[i]->get_point_filename_with_path() );
+      xml->writeTextElement( "point_file", this->shapes_[i]->get_global_point_filename_with_path() );
     }
 
     xml->writeEndElement(); // shape
@@ -284,33 +284,21 @@ bool Project::load_legacy( QString filename )
 
   // fix up file locations, if necessary
 
+  QStringList fixed_input_files;
+  QStringList fixed_output_files;
   QStringList fixed_point_files;
 
-  foreach( QString file, point_files ) {
-    QString test_file = file;
-    if ( !QFile::exists( test_file ) )
-    {
-      // needs fixing
-      // 1. try appending the parent dir of the project file
-
-      test_file = xml_path + QDir::separator() + file;
-
-      if ( !QFile::exists( test_file ) )
-      {
-        // 2. Try xml directory's parent
-        test_file = QFileInfo( xml_path ).dir().absolutePath() + QDir::separator() + file;
-      }
-
-      if ( !QFile::exists( test_file ) )
-      {
-        std::cerr << "Could not find file: " << file.toStdString() << "\n";
-        QMessageBox::critical( NULL, "ShapeWorksStudio", "File does not exist: " + file, QMessageBox::Ok );
-        return false;
-      }
-
-      std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
-    }
-    fixed_point_files << test_file;
+  if ( !Project::find_files( point_files, filename, fixed_point_files ) )
+  {
+    return false;
+  }
+  if ( !Project::find_files( input_files, filename, fixed_input_files ) )
+  {
+    return false;
+  }
+  if ( !Project::find_files( output_files, filename, fixed_output_files ) )
+  {
+    return false;
   }
 
   if ( has_inputs && !is_correspondence )
@@ -318,8 +306,8 @@ bool Project::load_legacy( QString filename )
     // must be a groom file
     std::cerr << "Identified as a groom file\n";
 
-    this->load_original_files( input_files );
-    this->load_groomed_files( output_files );
+    this->load_original_files( fixed_input_files );
+    this->load_groomed_files( fixed_output_files );
   }
   else if ( has_inputs && is_correspondence )
   {
@@ -329,7 +317,7 @@ bool Project::load_legacy( QString filename )
     this->load_original_files( input_files );
     if ( has_points )
     {
-      this->load_point_files( point_files );
+      this->load_point_files( fixed_point_files );
     }
   }
   else if ( has_points )
@@ -337,15 +325,14 @@ bool Project::load_legacy( QString filename )
     // must be an analysis file
     std::cerr << "Identified as an analysis file\n";
 
-    if (this->reconstructed_present())
+    if ( this->reconstructed_present() )
     {
       // we already have point files loaded
 
-      if (this->get_num_shapes() != fixed_point_files.size())
+      if ( this->get_num_shapes() != fixed_point_files.size() )
       {
         // what to do?
         std::cerr << "different number of shapes!\n";
-
       }
       else
       {
@@ -357,7 +344,6 @@ bool Project::load_legacy( QString filename )
     {
       this->load_point_files( fixed_point_files );
     }
-
   }
 
   return true;
@@ -429,7 +415,7 @@ void Project::load_groomed_files( QStringList file_names )
 }
 
 //---------------------------------------------------------------------------
-void Project::load_point_files( QStringList file_names )
+bool Project::load_point_files( QStringList file_names )
 {
   QProgressDialog progress( "Loading point files...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
@@ -461,11 +447,42 @@ void Project::load_point_files( QStringList file_names )
       this->shapes_.push_back( shape );
     }
 
-    if ( !shape->import_point_file( file_names[i] ) )
+    QFileInfo fi( file_names[i] );
+    QString basename = fi.completeBaseName();
+    QString ext = fi.suffix();
+
+    if ( ext != "wpts" && ext != "lpts" )
     {
-      std::cerr << "error!\n";
-      // error
-      return;
+      // hmm, load only global?
+      if ( QFile::exists( file_names[i] ) )
+      {
+        if ( !shape->import_global_point_file( file_names[i] ) )
+        {
+          return false;
+        }
+      }
+
+    }
+    else
+    {
+      QString local_name = fi.absolutePath() + QDir::separator() + basename + ".lpts";
+      QString global_name = fi.absolutePath() + QDir::separator() + basename + ".wpts";
+
+      if ( QFile::exists( local_name ) )
+      {
+        if ( !shape->import_local_point_file( local_name ) )
+        {
+          return false;
+        }
+      }
+
+      if ( QFile::exists( global_name ) )
+      {
+        if ( !shape->import_global_point_file( global_name ) )
+        {
+          return false;
+        }
+      }
     }
   }
 
@@ -476,6 +493,8 @@ void Project::load_point_files( QStringList file_names )
     this->reconstructed_present_ = true;
     emit data_changed();
   }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -608,4 +627,49 @@ bool Project::check_if_legacy( QString filename )
 int Project::get_num_shapes()
 {
   return this->shapes_.size();
+}
+
+//---------------------------------------------------------------------------
+bool Project::find_files( QStringList list, QString project_file, QStringList &fixed_list )
+{
+  QString xml_path = QFileInfo( project_file ).absolutePath();
+
+  foreach( QString file, list ) {
+    QString test_file = file;
+
+    if ( !QFile::exists( test_file ) )
+    {
+      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
+      // 1. try appending the parent dir of the project file
+      test_file = xml_path + QDir::separator() + file;
+    }
+
+    if ( !QFile::exists( test_file ) )
+    {
+      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
+      // 2. Try xml directory's parent
+      test_file = QFileInfo( xml_path ).dir().absolutePath() + QDir::separator() + file;
+    }
+
+    if ( !QFile::exists( test_file ) )
+    {
+      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
+      // 3. Try stripping path and using project directory
+      test_file = xml_path + QDir::separator() + QFileInfo( file ).fileName();
+    }
+
+    if ( !QFile::exists( test_file ) )
+    {
+      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
+      std::cerr << "Could not find file: " << file.toStdString() << "\n";
+      QMessageBox::critical( NULL, "ShapeWorksStudio", "File does not exist: " + file, QMessageBox::Ok );
+      return false;
+    }
+
+    std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
+
+    fixed_list << test_file;
+  }
+
+  return true;
 }

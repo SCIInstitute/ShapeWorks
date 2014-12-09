@@ -88,7 +88,7 @@ void Visualizer::display_samples()
     if ( !mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C )
     {
       mesh = shapes[i]->get_reconstructed_mesh();
-      filename = shapes[i]->get_point_filename();
+      filename = shapes[i]->get_global_point_filename();
     }
     object->set_mesh( mesh );
 

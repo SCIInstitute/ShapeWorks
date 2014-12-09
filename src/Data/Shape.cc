@@ -44,56 +44,30 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file( QString filename )
+bool Shape::import_global_point_file( QString filename )
 {
 
-  QFile file( filename );
-  if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
+  if ( !Shape::import_point_file( filename, this->global_correspondence_points_ ) )
   {
-    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
     return false;
   }
 
-  QTextStream stream( &file );
-
-  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-
-  int num_points = 0;
-  while ( !stream.atEnd() )
-  {
-    QString line = stream.readLine();
-    QStringList list = line.split( ' ' );
-    if ( list.size() != 4 ) // sanity check
-    {
-      std::cerr << "Error, line " << line.toStdString() << " does not contain 3 fields\n";
-      std::cerr << "list.size = " << list.size() << "\n";
-      return false;
-    }
-
-    double x = list[0].toDouble();
-    double y = list[1].toDouble();
-    double z = list[2].toDouble();
-
-    points->InsertNextPoint( x, y, z );
-    num_points++;
-  }
-
-  this->correspondence_points_.clear();
-  this->correspondence_points_.set_size( num_points * 3 );
-
-  int idx = 0;
-  for ( int i = 0; i < num_points; i++ )
-  {
-    double* pos = points->GetPoint( i );
-    this->correspondence_points_[idx++] = pos[0];
-    this->correspondence_points_[idx++] = pos[1];
-    this->correspondence_points_[idx++] = pos[2];
-  }
-
   this->reconstructed_mesh_ = QSharedPointer<Mesh> ( new Mesh() );
-  this->point_filename_ = filename;
+  this->global_point_filename_ = filename;
 
-  return this->reconstructed_mesh_->create_from_pointset( this->correspondence_points_ );
+  return this->reconstructed_mesh_->create_from_pointset( this->global_correspondence_points_ );
+}
+
+//---------------------------------------------------------------------------
+bool Shape::import_local_point_file( QString filename )
+{
+  if ( !Shape::import_point_file( filename, this->local_correspondence_points_ ) )
+  {
+    return false;
+  }
+
+  this->local_point_filename_ = filename;
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -105,7 +79,7 @@ QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 //---------------------------------------------------------------------------
 vnl_vector<double> Shape::get_correspondence_points()
 {
-  return this->correspondence_points_;
+  return this->global_correspondence_points_;
 }
 
 //---------------------------------------------------------------------------
@@ -146,14 +120,76 @@ QString Shape::get_groomed_filename_with_path()
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_point_filename()
+QString Shape::get_global_point_filename()
 {
-  QFileInfo qfi( this->point_filename_ );
-  return qfi.fileName();
+  return QFileInfo( this->global_point_filename_ ).fileName();
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_point_filename_with_path()
+QString Shape::get_global_point_filename_with_path()
 {
-  return this->point_filename_;
+  return this->global_point_filename_;
 }
+
+//---------------------------------------------------------------------------
+QString Shape::get_local_point_filename()
+{
+  return QFileInfo( this->local_point_filename_ ).fileName();
+}
+
+//---------------------------------------------------------------------------
+QString Shape::get_local_point_filename_with_path()
+{
+  return this->local_point_filename_;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::import_point_file( QString filename, vnl_vector<double> &points )
+{
+
+  QFile file( filename );
+  if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
+  {
+    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
+    return false;
+  }
+
+  QTextStream stream( &file );
+
+  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
+
+  int num_points = 0;
+  while ( !stream.atEnd() )
+  {
+    QString line = stream.readLine();
+    QStringList list = line.split( ' ' );
+    if ( list.size() != 4 ) // sanity check
+    {
+      std::cerr << "Error, line " << line.toStdString() << " does not contain 3 fields\n";
+      std::cerr << "list.size = " << list.size() << "\n";
+      return false;
+    }
+
+    double x = list[0].toDouble();
+    double y = list[1].toDouble();
+    double z = list[2].toDouble();
+
+    vtk_points->InsertNextPoint( x, y, z );
+    num_points++;
+  }
+
+  points.clear();
+  points.set_size( num_points * 3 );
+
+  int idx = 0;
+  for ( int i = 0; i < num_points; i++ )
+  {
+    double* pos = vtk_points->GetPoint( i );
+    points[idx++] = pos[0];
+    points[idx++] = pos[1];
+    points[idx++] = pos[2];
+  }
+  return true;
+}
+
+
