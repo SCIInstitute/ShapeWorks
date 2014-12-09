@@ -168,6 +168,13 @@ void ShapeWorksStudioApp::initialize_vtk()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_new_project_triggered()
+{
+  std::cerr << "new project!\n";
+  this->project_->reset();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_open_project_triggered()
 {
   QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),

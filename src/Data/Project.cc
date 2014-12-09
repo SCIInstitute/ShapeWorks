@@ -208,7 +208,6 @@ bool Project::load_project( QString filename )
     return false;
   }
 
-
   this->load_original_files( fixed_import_files );
 
   this->load_groomed_files( fixed_groom_files );
@@ -479,7 +478,6 @@ bool Project::load_point_files( QStringList file_names )
           return false;
         }
       }
-
     }
     else
     {
@@ -545,6 +543,7 @@ void Project::reset()
   this->original_present_ = false;
   this->groomed_present_ = false;
   this->reconstructed_present_ = false;
+  emit data_changed();
 }
 
 //---------------------------------------------------------------------------

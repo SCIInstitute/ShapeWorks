@@ -192,7 +192,7 @@ bool Visualizer::compute_stats()
     return true;
   }
 
-  if ( this->project_->get_shapes().size() == 0 )
+  if ( this->project_->get_shapes().size() == 0 || !this->project_->reconstructed_present())
   {
     return false;
   }
