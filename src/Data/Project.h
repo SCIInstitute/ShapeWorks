@@ -86,6 +86,7 @@ public:
   bool original_present();
   bool groomed_present();
   bool reconstructed_present();
+  int get_num_shapes();
 
 Q_SIGNALS:
   /// signal that the data has changed
