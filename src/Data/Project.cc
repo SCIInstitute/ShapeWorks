@@ -107,15 +107,15 @@ bool Project::load_project( QString filename )
     return false;
   }
 
+  if ( Project::check_if_legacy( filename ) )
+  {
+    return this->load_legacy( filename );
+  }
+
   // clear the project out first
   this->reset();
 
   this->filename_ = filename;
-
-  if ( check_if_legacy( filename ) )
-  {
-    return this->load_legacy( filename );
-  }
 
   // open file
   QFile file( filename );
@@ -217,9 +217,8 @@ bool Project::load_legacy( QString filename )
 
   std::cerr << "load_legacy(" << filename.toStdString() << ")\n";
   TiXmlDocument doc( filename.toStdString().c_str() );
-  bool loadOkay = doc.LoadFile();
 
-  if ( !loadOkay )
+  if ( !doc.LoadFile() )
   {
     std::cerr << "Failed to load!\n";
     QMessageBox::critical( NULL, "ShapeWorksStudio", "Error parsing XML", QMessageBox::Ok );
@@ -338,7 +337,27 @@ bool Project::load_legacy( QString filename )
     // must be an analysis file
     std::cerr << "Identified as an analysis file\n";
 
-    this->load_point_files( fixed_point_files );
+    if (this->reconstructed_present())
+    {
+      // we already have point files loaded
+
+      if (this->get_num_shapes() != fixed_point_files.size())
+      {
+        // what to do?
+        std::cerr << "different number of shapes!\n";
+
+      }
+      else
+      {
+        // overwrite the current point files
+        this->load_point_files( fixed_point_files );
+      }
+    }
+    else
+    {
+      this->load_point_files( fixed_point_files );
+    }
+
   }
 
   return true;
@@ -583,4 +602,10 @@ bool Project::check_if_legacy( QString filename )
   }
 
   return false;
+}
+
+//---------------------------------------------------------------------------
+int Project::get_num_shapes()
+{
+  return this->shapes_.size();
 }
