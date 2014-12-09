@@ -2,6 +2,8 @@
 #include <Application/ShapeWorksStudioApp.h>
 #include <iostream>
 
+#include <itkMacro.h>
+
 #ifdef _WIN32
 
 #include <windows.h>
