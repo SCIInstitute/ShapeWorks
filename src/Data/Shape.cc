@@ -77,9 +77,15 @@ QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 }
 
 //---------------------------------------------------------------------------
-vnl_vector<double> Shape::get_correspondence_points()
+vnl_vector<double> Shape::get_global_correspondence_points()
 {
   return this->global_correspondence_points_;
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> Shape::get_local_correspondence_points()
+{
+  return this->local_correspondence_points_;
 }
 
 //---------------------------------------------------------------------------
@@ -191,5 +197,3 @@ bool Shape::import_point_file( QString filename, vnl_vector<double> &points )
   }
   return true;
 }
-
-

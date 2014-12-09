@@ -191,11 +191,29 @@ bool Project::load_project( QString filename )
     return false;
   }
 
-  this->load_original_files( import_files );
+  QStringList fixed_import_files;
+  QStringList fixed_groom_files;
+  QStringList fixed_point_files;
 
-  this->load_groomed_files( groomed_files );
+  if ( !Project::find_files( import_files, filename, fixed_import_files ) )
+  {
+    return false;
+  }
+  if ( !Project::find_files( groomed_files, filename, fixed_groom_files ) )
+  {
+    return false;
+  }
+  if ( !Project::find_files( point_files, filename, fixed_point_files ) )
+  {
+    return false;
+  }
 
-  this->load_point_files( point_files );
+
+  this->load_original_files( fixed_import_files );
+
+  this->load_groomed_files( fixed_groom_files );
+
+  this->load_point_files( fixed_point_files );
 
   // set this after loading files so it doesn't get fiddled with
   this->display_state_ = display_state;

@@ -39,8 +39,11 @@ public:
   /// Retrieve the reconstructed mesh
   QSharedPointer<Mesh> get_reconstructed_mesh();
 
-  /// Get the correspondence points
-  vnl_vector<double> get_correspondence_points();
+  /// Get the global correspondence points
+  vnl_vector<double> get_global_correspondence_points();
+
+  /// Get the local correspondence points
+  vnl_vector<double> get_local_correspondence_points();
 
   /// Get the id of this shape
   int get_id();

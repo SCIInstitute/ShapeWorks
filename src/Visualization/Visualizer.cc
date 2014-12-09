@@ -78,6 +78,7 @@ void Visualizer::display_samples()
 
     mesh = shapes[i]->get_original_mesh();
     filename = shapes[i]->get_original_filename();
+    object->set_correspondence_points( shapes[i]->get_local_correspondence_points() );
 
     if ( !mesh || this->display_mode_ == Visualizer::MODE_GROOMED_C )
     {
@@ -89,10 +90,12 @@ void Visualizer::display_samples()
     {
       mesh = shapes[i]->get_reconstructed_mesh();
       filename = shapes[i]->get_global_point_filename();
+
+      // use global correspondence points for reconstructed mesh
+      object->set_correspondence_points( shapes[i]->get_global_correspondence_points() );
     }
     object->set_mesh( mesh );
 
-    object->set_correspondence_points( shapes[i]->get_correspondence_points() );
 
     QStringList annotations;
     annotations << filename;
@@ -175,6 +178,8 @@ void Visualizer::update_viewer_properties()
       viewer->set_show_surface( this->show_surface_ );
     }
 
+    this->update_lut();
+
     this->lightbox_->redraw();
   }
 }
@@ -194,7 +199,7 @@ bool Visualizer::compute_stats()
 
   std::vector < vnl_vector < double > > points;
   foreach( ShapeHandle shape, this->project_->get_shapes() ) {
-    points.push_back( shape->get_correspondence_points() );
+    points.push_back( shape->get_global_correspondence_points() );
   }
 
   this->stats.ImportPoints( points );
