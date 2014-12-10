@@ -179,6 +179,10 @@ SET(STUDIO_DATA_HDRS
   Data/Project.h
   Data/MeshManager.h
   Data/MeshGenerator.h
+  Data/MeshSettings.h
+  Data/MeshWorkQueue.h
+  Data/MeshWorker.h
+  Data/MeshCache.h
 )
 SET(STUDIO_DATA_SRCS
   Data/Mesh.cc
@@ -186,6 +190,10 @@ SET(STUDIO_DATA_SRCS
   Data/Project.cc
   Data/MeshManager.cc
   Data/MeshGenerator.cc
+  Data/MeshSettings.cc
+  Data/MeshWorkQueue.cc
+  Data/MeshWorker.cc
+  Data/MeshCache.cc
 )
 
 ### Groom
@@ -304,6 +312,8 @@ SET( STUDIO_MOC_HDRS
      Optimize/OptimizeTool.h
      Analysis/AnalysisTool.h
      Data/Project.h
+     Data/MeshManager.h
+     Data/MeshWorker.h
      Application/Preferences.h
      Visualization/Visualizer.h
      Util/WheelEventForwarder.h

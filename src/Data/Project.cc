@@ -1,6 +1,7 @@
 #include <Data/Project.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
+#include <Data/MeshManager.h>
 
 #include <Visualization/Visualizer.h>
 
@@ -543,6 +544,8 @@ void Project::reset()
   this->original_present_ = false;
   this->groomed_present_ = false;
   this->reconstructed_present_ = false;
+
+  this->mesh_manager_ = QSharedPointer<MeshManager>(new MeshManager());
   emit data_changed();
 }
 

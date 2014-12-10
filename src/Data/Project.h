@@ -6,10 +6,10 @@
 #include <QSharedPointer>
 #include <QVector>
 
-class DataManager;
 class Shape;
 
 class Project;
+class MeshManager;
 typedef QSharedPointer< Project > ProjectHandle;
 
 //! Representation of a project.
@@ -42,7 +42,7 @@ public:
   bool load_legacy( QString filename );
 
   /// get the pointer to the data manager
-  QSharedPointer<DataManager> get_data_manager();
+  //QSharedPointer<DataManager> get_data_manager();
 
   /// import files
   void load_original_files( QStringList file_names );
@@ -113,6 +113,8 @@ private:
 
   /// collection of shapes
   QVector<QSharedPointer<Shape> > shapes_;
+
+  QSharedPointer<MeshManager> mesh_manager_;
 
   bool original_present_;
   bool groomed_present_;
