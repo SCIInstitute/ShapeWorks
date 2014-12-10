@@ -316,6 +316,7 @@ SET( STUDIO_MOC_HDRS
      Data/MeshWorker.h
      Application/Preferences.h
      Visualization/Visualizer.h
+     Visualization/Lightbox.h
      Util/WheelEventForwarder.h
 )
 

@@ -23,7 +23,6 @@
 
 #include <Visualization/CustomSurfaceReconstructionFilter.h>
 
-
 // local files
 #ifdef SW_USE_POWERCRUST
 #include <Visualization/vtkPowerCrustSurfaceReconstruction.h>

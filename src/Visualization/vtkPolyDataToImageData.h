@@ -1,6 +1,6 @@
 // This filter takes a vtkPolyData input and produces a vtkImageData output.
 // It is intended to take a closed surface mesh and produce a binary rasterization.
-// 
+//
 // Options are:
 //
 //  Border: optional border around object (useful for isosurfacing)
@@ -60,21 +60,18 @@ protected:
                                   vtkInformationVector* outputVector );
 
   virtual int RequestData( vtkInformation* request,
-    vtkInformationVector** inputVector,
-    vtkInformationVector* outputVector );
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector );
 
   virtual int RequestUpdateExtent( vtkInformation* request,
-    vtkInformationVector** inputVector,
-    vtkInformationVector* outputVector );
-
-
-
+                                   vtkInformationVector** inputVector,
+                                   vtkInformationVector* outputVector );
 
 private:
   vtkPolyDataToImageData( const vtkPolyDataToImageData& );  // Not implemented.
   void operator=( const vtkPolyDataToImageData& );  // Not implemented.
 
-  void GetOutputInfo( vtkInformationVector** inputVector,
+  void GetOutputInfo( vtkInformationVector * *inputVector,
                       int dim[3], double origin[3], double spacing[3] );
 
   unsigned int Border;

@@ -2,7 +2,6 @@
  * Shapeworks license
  */
 
-
 // Includes for platform specific functions
 #ifdef _WIN32
 #include <shlobj.h>

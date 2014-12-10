@@ -14,26 +14,26 @@ StudioInteractorStyle::~StudioInteractorStyle()
 void StudioInteractorStyle::OnLeftButtonDown()
 {
 /*
-  std::cerr << "left button down\n";
-  if ( this->Interactor->GetAltKey() )
-  //if ( 1 )
-  {
+   std::cerr << "left button down\n";
+   if ( this->Interactor->GetAltKey() )
+   //if ( 1 )
+   {
     std::cerr << "ctrl down too\n";
     int* clickPos = this->GetInteractor()->GetEventPosition();
     this->lightbox_->handle_pick( clickPos );
-  }
-*/
-  // forward events
+   }
+ */
+// forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
 
 void StudioInteractorStyle::OnRightButtonDown()
 {
 /*
-  int* clickPos = this->GetInteractor()->GetEventPosition();
-  this->lightbox_->handle_pick( clickPos );
-*/
-  // forward events
+   int* clickPos = this->GetInteractor()->GetEventPosition();
+   this->lightbox_->handle_pick( clickPos );
+ */
+// forward events
   vtkInteractorStyleTrackballCamera::OnRightButtonDown();
 }
 

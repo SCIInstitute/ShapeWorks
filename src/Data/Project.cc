@@ -545,7 +545,7 @@ void Project::reset()
   this->groomed_present_ = false;
   this->reconstructed_present_ = false;
 
-  this->mesh_manager_ = QSharedPointer<MeshManager>(new MeshManager());
+  this->mesh_manager_ = QSharedPointer<MeshManager>( new MeshManager() );
   emit data_changed();
 }
 

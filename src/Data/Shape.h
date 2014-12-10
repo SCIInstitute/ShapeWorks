@@ -65,7 +65,7 @@ public:
 
 private:
 
-  static bool import_point_file(QString filename, vnl_vector<double> &points);
+  static bool import_point_file( QString filename, vnl_vector<double> &points );
 
   int id_;
 
@@ -80,7 +80,6 @@ private:
 
   vnl_vector<double> global_correspondence_points_;
   vnl_vector<double> local_correspondence_points_;
-
 };
 
 #endif /* STUDIO_DATA_SHAPE_H */

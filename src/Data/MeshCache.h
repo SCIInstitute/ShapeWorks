@@ -17,7 +17,6 @@
 
 #include <vtkSmartPointer.h>
 
-
 //#include "itkParticleShapeStatistics.h"
 
 class vtkPolyData;

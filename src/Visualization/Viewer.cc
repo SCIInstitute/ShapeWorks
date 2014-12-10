@@ -19,8 +19,6 @@
 #include <vtkPropPicker.h>
 #include <vtkCellPicker.h>
 #include <vtkCell.h>
-#include <vtkQImageToImageSource.h>
-#include <vtkImageMapper.h>
 
 #include <Application/Preferences.h>
 #include <Data/Shape.h>
@@ -31,6 +29,9 @@
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
+
+  this->image_actor_ = vtkSmartPointer<vtkImageActor>::New();
+
   this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
@@ -102,40 +103,9 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
     // display loading message
     corner_annotation->SetText( 0, "Loading..." );
 
-    std::string pixmap_name = std::string(":/Studio/Images/shapes-icon.png");
-    QPixmap pixmap;
-    pixmap.load( QString::fromStdString( pixmap_name ) ); 
-
-    vtkSmartPointer<vtkQImageToImageSource> qimageToImageSource =
-      vtkSmartPointer<vtkQImageToImageSource>::New();
-    QImage qimage = pixmap.toImage();
-    qimageToImageSource->SetQImage(&qimage);
-    qimageToImageSource->Update();
-
-    vtkImageData* image = qimageToImageSource->GetOutput();
-
-    // Map 2D image file
-    vtkImageMapper *imageMapper = vtkImageMapper::New();
-    imageMapper->SetInputConnection(qimageToImageSource->GetOutputPort());
-
-
-    imageMapper->SetColorWindow(255);
-    imageMapper->SetColorLevel(127.5);
-
-    vtkSmartPointer<vtkImageActor> imageActor =
-      vtkSmartPointer<vtkImageActor>::New();
-    imageActor->SetInputData(image);
-
-
-
-    // Actor in scene
-//    vtkActor2D *mapActor = vtkActor2D::New();
-//    mapActor->SetLayerNumber(0);
-//    mapActor->SetMapper(imageMapper);	
-    ren->AddViewProp( imageActor );
+    ren->AddViewProp( this->image_actor_ );
 
     ren->ResetCamera();
-
   }
   else
   {
@@ -371,4 +341,10 @@ void Viewer::set_lut( vtkSmartPointer<vtkLookupTable> lut )
 {
   this->lut_ = lut;
   this->glyph_mapper_->SetLookupTable( this->lut_ );
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_loading_screen( vtkSmartPointer<vtkImageData> loading_screen )
+{
+  this->image_actor_->SetInputData( loading_screen );
 }

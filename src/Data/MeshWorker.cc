@@ -28,7 +28,7 @@ void MeshWorker::threadBegin()
 
     // remove from the list of meshes being worked on
     this->workingQueue->remove( workItem->shape );
- 
+
     // wake up the main thread in case it was waiting for us to complete
     this->workDoneCondition->wakeAll();
   }

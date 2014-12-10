@@ -1,5 +1,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
+#include <vtkQImageToImageSource.h>
+#include <vtkImageData.h>
 
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
@@ -24,6 +26,32 @@ Lightbox::Lightbox()
   this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
   this->style_->AutoAdjustCameraClippingRangeOn();
   this->style_->set_lightbox( this );
+
+  // prepare the loading spinner
+  QPixmap pixmap;
+  pixmap.load( QString( ":/Studio/Images/spinner.png" ) );
+  for ( int i = 0; i < 19; i++ )
+  {
+    const int size = 126;
+    QPixmap tile = pixmap.copy( 0, i * size, 126, 126 );
+    QImage qimage = tile.toImage();
+
+    vtkSmartPointer<vtkQImageToImageSource> qimage_to_image_source =
+      vtkSmartPointer<vtkQImageToImageSource>::New();
+    qimage_to_image_source->SetQImage( &qimage );
+    qimage_to_image_source->Update();
+    vtkImageData* image = qimage_to_image_source->GetOutput();
+
+    this->spinner_images_.push_back( image );
+  }
+
+  QObject::connect(
+    &this->loading_timer_, SIGNAL( timeout() ),
+    this, SLOT( handle_timer_callback() ) );
+
+  this->loading_timer_.setInterval( 50 );
+  this->timer_callback_count_ = 0;
+  this->loading_timer_.start();
 }
 
 //-----------------------------------------------------------------------------
@@ -133,6 +161,7 @@ void Lightbox::setup_renderers()
 
       // create the viewer
       QSharedPointer<Viewer> viewer = QSharedPointer<Viewer>( new Viewer() );
+      viewer->set_loading_screen( this->spinner_images_[this->timer_callback_count_] );
       viewer->set_renderer( renderer );
 
       this->viewers_.push_back( viewer );
@@ -247,4 +276,15 @@ void Lightbox::set_glyph_lut( vtkSmartPointer<vtkLookupTable> lut )
 void Lightbox::set_visualizer( Visualizer* visualizer )
 {
   this->visualizer_ = visualizer;
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::handle_timer_callback()
+{
+  this->timer_callback_count_ = ( this->timer_callback_count_ + 1 ) % 19;
+
+  foreach( ViewerHandle viewer, this->get_viewers() ) {
+    viewer->set_loading_screen( this->spinner_images_[this->timer_callback_count_] );
+  }
+  this->renderer_->GetRenderWindow()->Render();
 }

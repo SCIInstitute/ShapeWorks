@@ -28,10 +28,7 @@ public:
   /// Destructor
   ~MeshSettings();
 
-
 private:
-
-  
 };
 
 #endif /* STUDIO_DATA_MESHSETTINGS_H */

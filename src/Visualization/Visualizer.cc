@@ -1,5 +1,7 @@
 #include <vtkMath.h>
 #include <vtkLookupTable.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderWindow.h>
 
 #include <Visualization/Visualizer.h>
 #include <Visualization/DisplayObject.h>
@@ -61,6 +63,7 @@ void Visualizer::set_center( bool center )
 //-----------------------------------------------------------------------------
 void Visualizer::display_samples()
 {
+
   this->update_viewer_properties();
 
   QVector < QSharedPointer < DisplayObject > > display_objects;
@@ -95,7 +98,6 @@ void Visualizer::display_samples()
       object->set_correspondence_points( shapes[i]->get_global_correspondence_points() );
     }
     object->set_mesh( mesh );
-
 
     QStringList annotations;
     annotations << filename;
@@ -192,7 +194,7 @@ bool Visualizer::compute_stats()
     return true;
   }
 
-  if ( this->project_->get_shapes().size() == 0 || !this->project_->reconstructed_present())
+  if ( this->project_->get_shapes().size() == 0 || !this->project_->reconstructed_present() )
   {
     return false;
   }
@@ -354,7 +356,5 @@ void Visualizer::set_selected_point_two( int id )
 void Visualizer::compute_measurements()
 {
   if ( this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0 )
-  {
-
-  }
+  {}
 }

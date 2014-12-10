@@ -5,7 +5,7 @@
 /**
  * @file MeshWorker.h
  * @brief Worker class for parallel mesh reconstruction
- * 
+ *
  * The MeshWorker implements each threads mesh construction management
  */
 

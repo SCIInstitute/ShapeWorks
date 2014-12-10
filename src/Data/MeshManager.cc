@@ -2,33 +2,24 @@
 #include <Data/MeshManager.h>
 #include <Data/Mesh.h>
 
-
 //---------------------------------------------------------------------------
 MeshManager::MeshManager()
-{
-
-}
+{}
 
 //---------------------------------------------------------------------------
 MeshManager::~MeshManager()
-{
-
-}
+{}
 
 //---------------------------------------------------------------------------
-void MeshManager::queue_mesh_creation(QString filename, MeshSettings settings)
-{
-
-}
+void MeshManager::queue_mesh_creation( QString filename, MeshSettings settings )
+{}
 
 //---------------------------------------------------------------------------
-void MeshManager::queue_mesh_creation(const vnl_vector<double>& vnl_points, MeshSettings settings)
-{
-
-}
+void MeshManager::queue_mesh_creation( const vnl_vector<double>& vnl_points, MeshSettings settings )
+{}
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> MeshManager::get_mesh(QString filename, MeshSettings settings, bool wait)
+QSharedPointer<Mesh> MeshManager::get_mesh( QString filename, MeshSettings settings, bool wait )
 {
   QSharedPointer<Mesh> mesh = QSharedPointer<Mesh>( new Mesh() );
 
@@ -36,12 +27,11 @@ QSharedPointer<Mesh> MeshManager::get_mesh(QString filename, MeshSettings settin
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> MeshManager::get_mesh(const vnl_vector<double>& vnl_points, MeshSettings settings, bool wait)
+QSharedPointer<Mesh> MeshManager::get_mesh( const vnl_vector<double>& vnl_points, MeshSettings settings, bool wait )
 {
   QSharedPointer<Mesh> mesh = QSharedPointer<Mesh>( new Mesh() );
 
   return mesh;
-
 }
 
 //---------------------------------------------------------------------------
@@ -88,7 +78,6 @@ void MeshManager::initialize_threads()
     threads.resize( 0 );
     workers.resize( 0 );
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -98,10 +87,10 @@ void MeshManager::shutdown_threads()
   {
     for ( size_t i = 0; i < this->threads.size(); i++ )
     {
-      while( this->threads[i]->isRunning() )
+      while ( this->threads[i]->isRunning() )
       {
         this->threads[i]->exit();
-        this->threads[i]->wait(1000);
+        this->threads[i]->wait( 1000 );
       }
     }
 
@@ -111,6 +100,4 @@ void MeshManager::shutdown_threads()
       delete this->workers[i];
     }
   }
-
 }
-

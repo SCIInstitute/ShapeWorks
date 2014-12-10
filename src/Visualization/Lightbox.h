@@ -24,8 +24,9 @@ typedef QSharedPointer< Lightbox > LightboxHandle;
 /*!
  * The LightBox class displays multiple Viewers in a tiled display
  */
-class Lightbox
+class Lightbox : public QObject
 {
+  Q_OBJECT;
 public:
   Lightbox();
   ~Lightbox();
@@ -53,6 +54,9 @@ public:
   void set_glyph_lut( vtkSmartPointer<vtkLookupTable> lut );
 
   void set_visualizer( Visualizer* visualizer );
+
+public Q_SLOTS:
+  void handle_timer_callback();
 
 private:
 
@@ -84,6 +88,12 @@ private:
   vtkSmartPointer<StudioInteractorStyle> style_;
 
   Visualizer* visualizer_;
+
+  std::vector<vtkSmartPointer<vtkImageData> > spinner_images_;
+
+  QTimer loading_timer_;
+
+  int timer_callback_count_;
 };
 
 #endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */

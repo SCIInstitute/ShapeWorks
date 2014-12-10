@@ -154,29 +154,28 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   powercrust->Update();
 
 /*
-  vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-  normals->SetInputData(powercrust->GetOutput());
-  normals->Update();
-  this->poly_data_ = normals->GetOutput();
-*/
-
+   vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+   normals->SetInputData(powercrust->GetOutput());
+   normals->Update();
+   this->poly_data_ = normals->GetOutput();
+ */
 
   this->poly_data_ = powercrust->GetOutput();
 
 /*
-  vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangleFilter->SetInputData( powercrust->GetOutput() );
-  triangleFilter->Update();
-  
-  vtkSmartPointer<vtkPolyDataToImageData> polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
-  polydataToImageData->SetInputConnection( triangleFilter->GetOutputPort() );
-  polydataToImageData->Update();
-  
-  marching->SetInputConnection( polydataToImageData->GetOutputPort() );
-  marching->SetValue( 0, 0.5 );
-  marching->Update();
-  this->poly_data_ = marching->GetOutput();
-*/
+   vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+   triangleFilter->SetInputData( powercrust->GetOutput() );
+   triangleFilter->Update();
+
+   vtkSmartPointer<vtkPolyDataToImageData> polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
+   polydataToImageData->SetInputConnection( triangleFilter->GetOutputPort() );
+   polydataToImageData->Update();
+
+   marching->SetInputConnection( polydataToImageData->GetOutputPort() );
+   marching->SetValue( 0, 0.5 );
+   marching->Update();
+   this->poly_data_ = marching->GetOutput();
+ */
 
 #else
   vtkSmartPointer<CustomSurfaceReconstructionFilter> surface_reconstruction =
@@ -189,7 +188,6 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   this->poly_data_ = marching->GetOutput();
 
 #endif // ifdef POWERCRUST
-
 
   return true;
 }

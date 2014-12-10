@@ -5,12 +5,12 @@
 
 class vtkRenderer;
 class vtkLookupTable;
-class CustomImagePlaneWidget;
 class vtkRenderWindowInteractor;
 class vtkImageData;
 class vtkCamera;
 class vtkGlyph3D;
 class vtkSphereSource;
+class vtkImageActor;
 
 class DisplayObject;
 
@@ -55,6 +55,8 @@ public:
 
   void set_lut( vtkSmartPointer<vtkLookupTable> lut );
 
+  void set_loading_screen( vtkSmartPointer<vtkImageData> loading_screen );
+
 private:
 
   bool visible_;
@@ -84,6 +86,8 @@ private:
   vtkSmartPointer<vtkLookupTable>          lut_;
 
   vtkSmartPointer<StudioInteractorStyle>   style_;
+
+  vtkSmartPointer<vtkImageActor>           image_actor_;
 };
 
 #endif /* STUDIO_VISUALIZATION_VIEWER_H */
