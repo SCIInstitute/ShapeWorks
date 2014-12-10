@@ -641,6 +641,11 @@ QPushButton {
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="separator"/>
+    <addaction name="action_recent1"/>
+    <addaction name="action_recent2"/>
+    <addaction name="action_recent3"/>
+    <addaction name="action_recent4"/>
+    <addaction name="separator"/>
     <addaction name="action_quit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -1239,6 +1244,26 @@ QPushButton {
   <action name="action_import_legacy">
    <property name="text">
     <string>Import Legacy ShapeWorks</string>
+   </property>
+  </action>
+  <action name="action_recent1">
+   <property name="text">
+    <string>Recent1</string>
+   </property>
+  </action>
+  <action name="action_recent2">
+   <property name="text">
+    <string>Recent2</string>
+   </property>
+  </action>
+  <action name="action_recent3">
+   <property name="text">
+    <string>Recent3</string>
+   </property>
+  </action>
+  <action name="action_recent4">
+   <property name="text">
+    <string>Recent4</string>
    </property>
   </action>
  </widget>

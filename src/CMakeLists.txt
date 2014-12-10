@@ -177,11 +177,15 @@ SET(STUDIO_DATA_HDRS
   Data/Shape.h
   Data/ItkToVtk.h
   Data/Project.h
+  Data/MeshManager.h
+  Data/MeshGenerator.h
 )
 SET(STUDIO_DATA_SRCS
   Data/Mesh.cc
   Data/Shape.cc
   Data/Project.cc
+  Data/MeshManager.cc
+  Data/MeshGenerator.cc
 )
 
 ### Groom

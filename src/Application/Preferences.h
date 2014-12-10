@@ -75,6 +75,9 @@ public:
   int get_num_regression_rteps();
   void set_num_regression_steps( int value );
 
+  QStringList get_recent_files();
+  void add_recent_file(QString file);
+
   /// restore all default values
   void restore_defaults();
 
@@ -83,6 +86,12 @@ Q_SIGNALS:
   void glyph_properties_changed();
   void threading_changed_signal();
   void sliders_changed_signal();
+
+
+public:
+
+  enum { MAX_RECENT_FILES = 4 };
+
 
 private:
 

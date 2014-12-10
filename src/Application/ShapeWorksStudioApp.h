@@ -78,6 +78,8 @@ public Q_SLOTS:
   void handle_pca_timer();
   void handle_pca_labels_changed( QString value, QString eigen, QString lambda );
 
+  void handle_open_recent();
+
 private:
 
   void update_from_preferences();
@@ -91,6 +93,8 @@ private:
   double get_pca_value( int slider_value );
 
   void compute_mode_shape();
+
+  void update_recent_files();
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
@@ -116,6 +120,8 @@ private:
 
   bool pcaAnimateDirection;
   QTimer pcaAnimateTimer;
+
+  QList<QAction*> recent_file_actions_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

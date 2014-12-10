@@ -31,6 +31,18 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi( this );
 
+  this->recent_file_actions_.append( this->ui_->action_recent1 );
+  this->recent_file_actions_.append( this->ui_->action_recent2 );
+  this->recent_file_actions_.append( this->ui_->action_recent3 );
+  this->recent_file_actions_.append( this->ui_->action_recent4 );
+
+  for ( int i = 0; i < 4; i++ )
+  {
+    connect( this->recent_file_actions_[i], SIGNAL( triggered() ),
+             this, SLOT( handle_open_recent() ) );
+  }
+  this->update_recent_files();
+
   this->wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>
                                    ( new WheelEventForwarder( this->ui_->vertical_scroll_bar ) );
   this->ui_->qvtkWidget->installEventFilter( this->wheel_event_forwarder_.data() );
@@ -491,6 +503,9 @@ void ShapeWorksStudioApp::open_project( QString filename )
 {
   this->project_->load_project( filename );
 
+  Preferences::Instance().add_recent_file( filename );
+  this->update_recent_files();
+
   // set UI state based on project
   if ( this->project_->get_tool_state() == Project::DATA_C )
   {
@@ -564,6 +579,28 @@ void ShapeWorksStudioApp::compute_mode_shape()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_recent_files()
+{
+  QStringList recent_files = Preferences::Instance().get_recent_files();
+
+  int num_recent_files = qMin( recent_files.size(), (int)Preferences::MAX_RECENT_FILES );
+
+  for ( int i = 0; i < num_recent_files; i++ )
+  {
+
+    QString text = tr( "&%1 %2" ).arg( i + 1 ).arg( QFileInfo( recent_files[i] ).fileName() );
+    this->recent_file_actions_[i]->setText( text );
+    this->recent_file_actions_[i]->setData( recent_files[i] );
+    this->recent_file_actions_[i]->setVisible( true );
+  }
+
+  for ( int j = num_recent_files; j < Preferences::MAX_RECENT_FILES; ++j )
+  {
+    this->recent_file_actions_[j]->setVisible( false );
+  }
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_pcaSlider_valueChanged()
 {
   // this will make the slider handle redraw making the UI appear more responsive
@@ -621,4 +658,14 @@ void ShapeWorksStudioApp::handle_pca_labels_changed( QString value, QString eige
   this->ui_->pcaValueLabel->setText( value );
   this->ui_->pcaEigenValueLabel->setText( eigen );
   this->ui_->pcaLambdaLabel->setText( lambda );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_open_recent()
+{
+  QAction* action = qobject_cast<QAction*>( sender() );
+  if ( action )
+  {
+    this->open_project( action->data().toString() );
+  }
 }

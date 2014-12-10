@@ -226,6 +226,26 @@ void Preferences::set_num_regression_steps( int value )
 }
 
 //-----------------------------------------------------------------------------
+QStringList Preferences::get_recent_files()
+{
+  return this->settings.value( "General/RecentFileList" ).toStringList();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::add_recent_file( QString file )
+{
+  QStringList files = this->get_recent_files();
+  files.removeAll( file );
+  files.prepend( file );
+  while ( files.size() > Preferences::MAX_RECENT_FILES )
+  {
+    files.removeLast();
+  }
+
+  settings.setValue( "General/RecentFileList", files );
+}
+
+//-----------------------------------------------------------------------------
 void Preferences::restore_defaults()
 {
   this->settings.setValue( "MeshCache/Enabled", DEFAULT_CACHE_ENABLED );
