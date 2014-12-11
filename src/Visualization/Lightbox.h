@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <QVector>
+#include <QTimer>
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataMapper.h>

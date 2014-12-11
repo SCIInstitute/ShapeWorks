@@ -13,9 +13,15 @@
 #ifndef MESH_CACHE_H
 #define MESH_CACHE_H
 
+
+#include <List>
+#include <Map>
+
 #include <QMutex>
 
 #include <vtkSmartPointer.h>
+
+#include <vnl/vnl_vector.h>
 
 //#include "itkParticleShapeStatistics.h"
 

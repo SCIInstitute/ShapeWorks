@@ -1,3 +1,5 @@
+#include <QPixmap>
+
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkQImageToImageSource.h>
