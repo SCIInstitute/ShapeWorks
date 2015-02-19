@@ -169,7 +169,7 @@ bool Shape::import_point_file( QString filename, vnl_vector<double> &points )
   {
     QString line = stream.readLine();
     QStringList list = line.split( ' ' );
-    if ( list.size() != 4 ) // sanity check
+    if ( list.size() < 3 ) // sanity check
     {
       std::cerr << "Error, line " << line.toStdString() << " does not contain 3 fields\n";
       std::cerr << "list.size = " << list.size() << "\n";
