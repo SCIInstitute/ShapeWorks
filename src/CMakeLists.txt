@@ -423,7 +423,7 @@ TARGET_LINK_LIBRARIES( ShapeWorksStudio
   ${Boost_THREAD_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
-  ${VTK_LIBRARIES}
+  ${VTK_LIBRARIES} vtkRenderingQt
   )
 
 
