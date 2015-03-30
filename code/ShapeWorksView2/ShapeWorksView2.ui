@@ -287,6 +287,8 @@ QToolButton:pressed{
     <addaction name="actionExportPcaLoadings"/>
     <addaction name="actionExportVarianceReport"/>
     <addaction name="separator"/>
+    <addaction name="actionLoadScalars"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -1331,6 +1333,11 @@ QToolButton:pressed{
   <action name="actionExportVarianceReport">
    <property name="text">
     <string>Export Variance Report</string>
+   </property>
+  </action>
+  <action name="actionLoadScalars">
+   <property name="text">
+    <string>Load Scalars</string>
    </property>
   </action>
  </widget>
