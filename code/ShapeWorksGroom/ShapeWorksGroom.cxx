@@ -51,6 +51,9 @@
 
 int main(int argc, char *argv[])
 { 
+#ifdef WIN32
+  ::SetErrorMode( 0 );
+#endif
   if (argc < 2)
     {
     std::cerr << "Usage: " << argv[0] << " parameterfile <tool1 tool2 ...>"
@@ -121,6 +124,8 @@ int main(int argc, char *argv[])
       for (int i = 2; i < argc; i++)
         {
         //      shapetools::tool<int, ST_DIM> *t;
+
+          std::cerr << "* Running Tool: " << argv[i] << "\n";
 
         // If this is the second operation, then use the output files as the
         // input files.
@@ -438,6 +443,9 @@ int main(int argc, char *argv[])
           std::cerr << "Unrecognized tool: " << argv[i] << std::endl;
           return 4;
           }
+
+        std::cerr << "* Completed Tool: " << argv[i] << "\n";
+
         }      
       }
     }
@@ -452,5 +460,7 @@ int main(int argc, char *argv[])
     return 2;
     }
   
+  std::cerr << "*** ShapeWorksGroom completed successfully\n";
+
   return 0;
 }
