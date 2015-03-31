@@ -451,6 +451,45 @@ void ShapeWorksView2::on_actionImportScalarValues_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksView2::on_actionLoadScalars_triggered()
+{
+  QString filename = QFileDialog::getOpenFileName( this, "Load Scalars... ",
+                                                   QString(), "CSV files (*.csv)" );
+  if ( filename.isEmpty() ) {return; }
+
+  QFile* file = new QFile( filename );
+
+  if ( !file->open( QIODevice::ReadOnly ) )
+  {
+    std::cerr << "Error opening file for reading\n";
+  }
+
+  QTextStream ts( file );
+
+  this->scalars.clear();
+
+  while ( !ts.atEnd() )
+  {
+    QString str;
+    ts >> str;
+    if ( str != "" )
+    {
+      this->scalars.append( str.toDouble() );
+    }
+  }
+  file->close();
+
+  std::cerr << "found " << this->scalars.size() << " scalars\n";
+
+  if ( this->scalars.size() != this->numPoints )
+  {
+    QString message = "Error: number of scalars does not match number of points ("
+                      + QString::number( this->scalars.size() ) + " != " + QString::number( ( this->numPoints ) ) + ")";
+    QMessageBox::critical( this, "Number of points mismatch", message );
+  }
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionQuit_triggered()
 {
   this->close();
@@ -900,7 +939,12 @@ void ShapeWorksView2::updateAnalysisMode()
 
   if ( this->ui->tabWidget->currentWidget() == this->ui->meanTab )
   {
-    if ( this->ui->meanGroup1Button->isChecked() )
+    if ( this->scalars.size() == this->numPoints )
+    {
+      this->displayShape( this->stats.Mean() );
+      this->displayScalars();
+    }
+    else if ( this->ui->meanGroup1Button->isChecked() )
     {
       this->displayShape( this->stats.Group1Mean() );
     }
@@ -1475,6 +1519,92 @@ void ShapeWorksView2::displayMeanDifference()
     vecs.push_back( tmp );
   }
   this->displayVectorField( vecs );
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::displayScalars()
+{
+  std::cerr << "displayScalars\n";
+
+  vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
+  magnitudes->SetNumberOfComponents( 1 );
+
+  for ( int i = 0; i < this->scalars.size(); i++ )
+  {
+    magnitudes->InsertNextTuple1( this->scalars[i] );
+  }
+
+  vtkSmartPointer<vtkPolyData> pointData = vtkSmartPointer<vtkPolyData>::New();
+  pointData->SetPoints( this->glyphPoints );
+
+  vtkPointLocator* pointLocator = vtkPointLocator::New();
+  pointLocator->SetDataSet( pointData );
+  pointLocator->SetDivisions( 100, 100, 100 );
+  pointLocator->BuildLocator();
+
+  for ( int domain = 0; domain < this->numDomains; domain++ )
+  {
+    vtkPolyData* polyData = this->surfaceMappers[domain]->GetInput();
+
+    vtkFloatArray* surfaceMagnitudes = vtkFloatArray::New();
+    surfaceMagnitudes->SetNumberOfComponents( 1 );
+    surfaceMagnitudes->SetNumberOfTuples( polyData->GetPoints()->GetNumberOfPoints() );
+
+    for ( unsigned int i = 0; i < surfaceMagnitudes->GetNumberOfTuples(); i++ )
+    {
+      // find the 8 closest correspondence points the to current point
+      vtkSmartPointer<vtkIdList> closestPoints = vtkSmartPointer<vtkIdList>::New();
+      pointLocator->FindClosestNPoints( 8, polyData->GetPoint( i ), closestPoints );
+
+      // assign scalar value based on a weighted scheme
+      float weightedScalar = 0.0f;
+      float distanceSum = 0.0f;
+      float distance[8];
+      for ( unsigned int p = 0; p < closestPoints->GetNumberOfIds(); p++ )
+      {
+        // get a particle position
+        vtkIdType id = closestPoints->GetId( p );
+
+        // compute distance to current particle
+        double x = polyData->GetPoint( i )[0] - pointData->GetPoint( id )[0];
+        double y = polyData->GetPoint( i )[1] - pointData->GetPoint( id )[1];
+        double z = polyData->GetPoint( i )[2] - pointData->GetPoint( id )[2];
+        distance[p] = 1.0f / ( x * x + y * y + z * z );
+
+        // multiply scalar value by weight and add to running sum
+        distanceSum += distance[p];
+      }
+
+      float vecX = 0.0f;
+      float vecY = 0.0f;
+      float vecZ = 0.0f;
+
+      for ( unsigned int p = 0; p < closestPoints->GetNumberOfIds(); p++ )
+      {
+        vtkIdType currID = closestPoints->GetId( p );
+        weightedScalar += distance[p] / distanceSum * magnitudes->GetValue( currID );
+      }
+
+      surfaceMagnitudes->SetValue( i, weightedScalar );
+    }
+
+    // surface coloring
+    polyData->GetPointData()->SetScalars( surfaceMagnitudes );
+  }
+
+  this->glyphPointSet->GetPointData()->SetScalars( magnitudes );
+
+  this->updateDifferenceLUT( 0, 100 );
+  this->glyphMapper->SetLookupTable( this->differenceLUT );
+
+  // update surface rendering
+  for ( int i = 0; i < this->numDomains; i++ )
+  {
+    this->surfaceMappers[i]->SetLookupTable( this->differenceLUT );
+    this->surfaceMappers[i]->InterpolateScalarsBeforeMappingOn();
+    this->surfaceMappers[i]->SetColorModeToMapScalars();
+    this->surfaceMappers[i]->ScalarVisibilityOn();
+  }
 }
 
 //---------------------------------------------------------------------------

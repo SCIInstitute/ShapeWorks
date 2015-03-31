@@ -17,7 +17,7 @@
 
 #ifdef SW_USE_OPENMP
 #include <omp.h>
-const int global_iteration = 10;
+const int global_iteration = 1;
 #else /* SW_USE_OPENMP */
 const int global_iteration = 1;
 #endif /* SW_USE_OPENMP */

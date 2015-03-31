@@ -64,6 +64,7 @@ public Q_SLOTS:
   void on_actionExportEigenvectors_triggered();
 
   void on_actionImportScalarValues_triggered();
+  void on_actionLoadScalars_triggered();
 
   void on_actionQuit_triggered();
   void on_actionPreferences_triggered();
@@ -136,6 +137,7 @@ private:
                                   vtkSmartPointer<vtkFloatArray> vectors );
 
   void displayMeanDifference();
+  void displayScalars();
   void displaySpheres();
   void resetPointScalars();
 
@@ -186,6 +188,9 @@ private:
 
   ParticleShapeStatistics<3> stats;
   itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::Pointer regression;
+
+
+  QList<double> scalars;
 
   int numSamples;
   int numDomains;

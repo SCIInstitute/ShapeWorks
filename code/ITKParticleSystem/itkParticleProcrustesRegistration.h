@@ -71,6 +71,7 @@ public:
   void RunRegistration(int i);
   void RunRegistration()
   {
+    std::cerr << "\nRunning Procrustes Registration\n";
     for (int i =0; i < m_DomainsPerShape; i++)
       {
       this->RunRegistration(i);

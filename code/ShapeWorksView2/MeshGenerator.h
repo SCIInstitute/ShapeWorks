@@ -17,7 +17,7 @@
 
 #include <vtkSmartPointer.h>
 
-//#define SW_USE_POWERCRUST
+#define SW_USE_POWERCRUST
 
 class CustomSurfaceReconstructionFilter;
 class vtkPowerCrustSurfaceReconstruction;

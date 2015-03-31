@@ -290,6 +290,8 @@ QToolButton:pressed{
     <addaction name="separator"/>
     <addaction name="actionImportScalarValues"/>
     <addaction name="separator"/>
+    <addaction name="actionLoadScalars"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
@@ -1344,6 +1346,11 @@ QToolButton:pressed{
   <action name="actionExportEigenvectors">
    <property name="text">
     <string>Export Eigenvectors</string>
+   </property>
+  </action>
+  <action name="actionLoadScalars">
+   <property name="text">
+    <string>Load Scalars</string>
    </property>
   </action>
  </widget>

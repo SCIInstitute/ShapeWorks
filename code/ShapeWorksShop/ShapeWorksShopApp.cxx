@@ -655,7 +655,7 @@ ShapeWorksShopApp::ShapeWorksShopApp( const char* fn )
         }
         else
         {
-          m_ShowSpheres = true;
+          //m_ShowSpheres = true;
           vnl_vector_fixed<double,3> center;
           double rad;
           int c_ctr = 0;
