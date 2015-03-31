@@ -61,6 +61,9 @@ public Q_SLOTS:
   void on_actionExportPoints_triggered();
   void on_actionExportSurfaceMesh_triggered();
   void on_actionExportVarianceReport_triggered();
+  void on_actionExportEigenvectors_triggered();
+
+  void on_actionImportScalarValues_triggered();
 
   void on_actionQuit_triggered();
   void on_actionPreferences_triggered();
@@ -217,6 +220,7 @@ private:
   bool groupAnimateDirection;
   QTimer groupAnimateTimer;
 
+  std::vector<float> scalarValues;
 
 
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;

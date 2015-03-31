@@ -286,6 +286,9 @@ QToolButton:pressed{
     <addaction name="actionExportSurfaceMesh"/>
     <addaction name="actionExportPcaLoadings"/>
     <addaction name="actionExportVarianceReport"/>
+    <addaction name="actionExportEigenvectors"/>
+    <addaction name="separator"/>
+    <addaction name="actionImportScalarValues"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -824,7 +827,7 @@ QToolButton:pressed{
                  <item>
                   <widget class="QSpinBox" name="pcaModeSpinBox">
                    <property name="maximum">
-                    <number>10</number>
+                    <number>500</number>
                    </property>
                   </widget>
                  </item>
@@ -1331,6 +1334,16 @@ QToolButton:pressed{
   <action name="actionExportVarianceReport">
    <property name="text">
     <string>Export Variance Report</string>
+   </property>
+  </action>
+  <action name="actionImportScalarValues">
+   <property name="text">
+    <string>Import Scalar Values</string>
+   </property>
+  </action>
+  <action name="actionExportEigenvectors">
+   <property name="text">
+    <string>Export Eigenvectors</string>
    </property>
   </action>
  </widget>
