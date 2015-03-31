@@ -148,7 +148,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize( 10 );
   this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
   //this->scalar_bar_actor_->GetLabelTextProperty()->SetColor( 0, 0, 0 );
-  //this->renderer->AddActor( this->scalar_bar_actor_ );
+  this->renderer->AddActor( this->scalar_bar_actor_ );
 }
 
 //---------------------------------------------------------------------------
@@ -181,8 +181,8 @@ void ShapeWorksView2::on_actionExportPcaLoadings_triggered()
   // write out eigenvectors
   /*
 
-  std::cerr << this->stats.Eigenvectors().columns() << "\n";
-  std::cerr << this->stats.Eigenvectors().rows() << "\n";
+     std::cerr << this->stats.Eigenvectors().columns() << "\n";
+     std::cerr << this->stats.Eigenvectors().rows() << "\n";
 
      // Write eigen csv file
      std::ofstream outfile;
@@ -299,7 +299,7 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
 void ShapeWorksView2::on_actionExportVarianceReport_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, "Export Variance Report As... ",
-    QString(), "CSV files (*.csv)" );
+                                                   QString(), "CSV files (*.csv)" );
   if ( filename.isEmpty() ) {return; }
 
   // Write variance report as a csv file
@@ -328,43 +328,37 @@ void ShapeWorksView2::on_actionExportVarianceReport_triggered()
   outfile.close();
 }
 
-
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionExportEigenvectors_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, "Export Eigenvectors As... ",
-    QString(), "CSV files (*.csv)" );
+                                                   QString(), "CSV files (*.csv)" );
   if ( filename.isEmpty() ) {return; }
-
-
 
   std::cerr << this->stats.Eigenvectors().columns() << "\n";
   std::cerr << this->stats.Eigenvectors().rows() << "\n";
-
 
   // Write out eigenvectors
   std::ofstream outfile;
   outfile.open( filename.toStdString().c_str() );
 
-
   for ( int c = 0; c < this->stats.Eigenvectors().columns(); c++ )
   {
     for ( int r = 0; r < this->stats.Eigenvectors().rows(); r++ )
     {
-      outfile << this->stats.Eigenvectors()(r,c) << ",";
+      outfile << this->stats.Eigenvectors() ( r, c ) << ",";
     }
     outfile << "\n";
   }
 
   outfile.close();
-
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionImportScalarValues_triggered()
 {
   QString filename = QFileDialog::getOpenFileName( this, "Import Scalar Values from... ",
-    QString(), "CSV files (*.csv)" );
+                                                   QString(), "CSV files (*.csv)" );
 
   if ( filename.isEmpty() ) { return; }
 
@@ -372,14 +366,13 @@ void ShapeWorksView2::on_actionImportScalarValues_triggered()
   infile.open( filename.toStdString().c_str() );
 
   scalarValues.clear();
-  for (int i = 0; i < this->numPoints; i++)
+  for ( int i = 0; i < this->numPoints; i++ )
   {
     float value;
     infile >> value;
 //    std::cerr << value << "\n";
-    scalarValues.push_back(value);
+    scalarValues.push_back( value );
   }
-
 
   /////////////////////////////////////////////////////////////////////////////////
   // Step 1. Assign values at each correspondence point based on the image gradient
@@ -392,7 +385,6 @@ void ShapeWorksView2::on_actionImportScalarValues_triggered()
   vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
   vectors->SetNumberOfComponents( 3 );
 
-
   float maxValue = 0;
   for ( unsigned int i = 0; i < this->glyphPoints->GetNumberOfPoints(); i++ )
   {
@@ -400,15 +392,13 @@ void ShapeWorksView2::on_actionImportScalarValues_triggered()
     float v = this->scalarValues[i];
     vectors->InsertNextTuple3( v, v, v );
     magnitudes->InsertNextTuple1( v );
-    if (v > maxValue)
+    if ( v > maxValue )
     {
       maxValue = v;
     }
   }
 
-
   this->updateDifferenceLUT( 0, maxValue );
-
 
   /////////////////////////////////////////////////////////////////////////////////
   // Step 2. Assign values at each mesh point based on the closest correspondence points
@@ -446,8 +436,6 @@ void ShapeWorksView2::on_actionImportScalarValues_triggered()
   }
 
   this->redraw();
-
-
 }
 
 //---------------------------------------------------------------------------
@@ -1529,8 +1517,14 @@ void ShapeWorksView2::displayScalars()
   vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
   magnitudes->SetNumberOfComponents( 1 );
 
+  double max_value = 0;
+
   for ( int i = 0; i < this->scalars.size(); i++ )
   {
+    if ( this->scalars[i] > max_value )
+    {
+      max_value = this->scalars[i];
+    }
     magnitudes->InsertNextTuple1( this->scalars[i] );
   }
 
@@ -1594,7 +1588,7 @@ void ShapeWorksView2::displayScalars()
 
   this->glyphPointSet->GetPointData()->SetScalars( magnitudes );
 
-  this->updateDifferenceLUT( 0, 100 );
+  this->updateDifferenceLUT( 0, max_value );
   this->glyphMapper->SetLookupTable( this->differenceLUT );
 
   // update surface rendering
@@ -1792,14 +1786,12 @@ void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
   std::cerr << "maxrange = " << maxrange << "\n";
   //this->differenceLUT->SetScalarRange(-maxrange, maxrange);
 
-
   //this->differenceLUT->SetValueRange(r0, r1);
 
   //this->differenceLUT->se
 
-  this->scalar_bar_actor_->SetNumberOfLabels(4);
+  this->scalar_bar_actor_->SetNumberOfLabels( 4 );
   //this->scalar_bar_actor_->SetNumberOfLabels(4);
-
 
   //this->differenceLUT->SetColorSpaceToHSV();
   //this->differenceLUT->AddHSVPoint(-maxrange, 0.33, 1.0, 1.0);
