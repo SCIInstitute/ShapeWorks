@@ -54,6 +54,7 @@ FIND_PACKAGE(VTK COMPONENTS
   vtkViewsQt
   vtkFiltersCore
   vtkGUISupportQt
+  vtkRenderingQt
 )
 
 INCLUDE( ${VTK_USE_FILE} )
@@ -423,7 +424,7 @@ TARGET_LINK_LIBRARIES( ShapeWorksStudio
   ${Boost_THREAD_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
-  ${VTK_LIBRARIES} vtkRenderingQt
+  ${VTK_LIBRARIES} 
   )
 
 
