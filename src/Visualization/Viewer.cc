@@ -78,15 +78,19 @@ Viewer::Viewer()
   this->exclusion_sphere_glyph_->ClampingOff();
   this->exclusion_sphere_glyph_->SetScaleModeToScaleByScalar();
   this->exclusion_sphere_glyph_->SetSourceConnection( sphere_source->GetOutputPort() );
+  //this->exclusion_sphere_glyph_->SetColorModeToColorByScale();
 
   this->exclusion_sphere_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
   this->exclusion_sphere_mapper_->SetInputConnection( this->exclusion_sphere_glyph_->GetOutputPort() );
+this->exclusion_sphere_mapper_->SetScalarVisibility(0);
 
   this->exclusion_sphere_actor_ = vtkSmartPointer<vtkActor>::New();
-  this->exclusion_sphere_actor_->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
-  this->exclusion_sphere_actor_->GetProperty()->SetDiffuse( 0.8 );
-  this->exclusion_sphere_actor_->GetProperty()->SetSpecular( 0.3 );
-  this->exclusion_sphere_actor_->GetProperty()->SetSpecularPower( 10.0 );
+  //this->exclusion_sphere_actor_->GetProperty()->SetSpecularColor( 1.0, 1.0, 0.0 );
+  //this->exclusion_sphere_actor_->GetProperty()->SetDiffuse( 0.8 );
+  //this->exclusion_sphere_actor_->GetProperty()->SetSpecular( 0.3 );
+  //this->exclusion_sphere_actor_->GetProperty()->SetSpecularPower( 10.0 );
+  this->exclusion_sphere_actor_->GetProperty()->SetOpacity( 0.5 );
+  this->exclusion_sphere_actor_->GetProperty()->SetColor( 0, 1, 0 );
   this->exclusion_sphere_actor_->SetMapper( this->exclusion_sphere_mapper_ );
 
   this->visible_ = false;
@@ -397,6 +401,7 @@ void Viewer::draw_exclusion_spheres( QSharedPointer<DisplayObject> object )
     scalars->SetNumberOfTuples( num_points );
 
     this->exclusion_sphere_glyph_->SetRange( 0.0, (double) num_points + 1 );
+    this->exclusion_sphere_mapper_->SetScalarRange( 0.0, (double) num_points + 1.0 );
 
     this->exclusion_sphere_points_->Reset();
     this->exclusion_sphere_points_->SetNumberOfPoints( num_points );
