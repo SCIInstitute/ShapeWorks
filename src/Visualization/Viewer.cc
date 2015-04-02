@@ -35,13 +35,13 @@ Viewer::Viewer()
   this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
+  this->sphere_source = vtkSmartPointer<vtkSphereSource>::New();
+
   this->glyph_points_ = vtkSmartPointer<vtkPoints>::New();
   this->glyph_points_->SetDataTypeToDouble();
   this->glyph_point_set_ = vtkSmartPointer<vtkPolyData>::New();
   this->glyph_point_set_->SetPoints( this->glyph_points_ );
   this->glyph_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
-
-  this->sphere_source = vtkSmartPointer<vtkSphereSource>::New();
 
   this->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
   this->glyphs_->SetInputData( this->glyph_point_set_ );
@@ -64,6 +64,30 @@ Viewer::Viewer()
   this->glyph_size_ = 1.0f;
   this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
+
+  // exclusion spheres
+  this->exclusion_sphere_points_ = vtkSmartPointer<vtkPoints>::New();
+  this->exclusion_sphere_points_->SetDataTypeToDouble();
+  this->exclusion_sphere_point_set_ = vtkSmartPointer<vtkPolyData>::New();
+  this->exclusion_sphere_point_set_->SetPoints( this->exclusion_sphere_points_ );
+  this->exclusion_sphere_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
+
+  this->exclusion_sphere_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
+  this->exclusion_sphere_glyph_->SetInputData( this->exclusion_sphere_point_set_ );
+  this->exclusion_sphere_glyph_->ScalingOn();
+  this->exclusion_sphere_glyph_->ClampingOff();
+  this->exclusion_sphere_glyph_->SetScaleModeToScaleByScalar();
+  this->exclusion_sphere_glyph_->SetSourceConnection( sphere_source->GetOutputPort() );
+
+  this->exclusion_sphere_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->exclusion_sphere_mapper_->SetInputConnection( this->exclusion_sphere_glyph_->GetOutputPort() );
+
+  this->exclusion_sphere_actor_ = vtkSmartPointer<vtkActor>::New();
+  this->exclusion_sphere_actor_->GetProperty()->SetSpecularColor( 1.0, 1.0, 1.0 );
+  this->exclusion_sphere_actor_->GetProperty()->SetDiffuse( 0.8 );
+  this->exclusion_sphere_actor_->GetProperty()->SetSpecular( 0.3 );
+  this->exclusion_sphere_actor_->GetProperty()->SetSpecularPower( 10.0 );
+  this->exclusion_sphere_actor_->SetMapper( this->exclusion_sphere_mapper_ );
 
   this->visible_ = false;
 }
@@ -148,6 +172,8 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
       scalars->Reset();
     }
     this->glyph_points_->Modified();
+
+    this->draw_exclusion_spheres( object );
 
     vnl_vector<double> transform = object->get_transform();
 
@@ -277,6 +303,8 @@ void Viewer::update_actors()
   if ( this->show_glyphs_ )
   {
     this->renderer_->AddActor( this->glyph_actor_ );
+
+    this->renderer_->AddActor( this->exclusion_sphere_actor_ );
 /*    if ( this->arrowsVisible )
     {
       this->renderer->AddActor( this->arrowGlyphActor );
@@ -347,4 +375,40 @@ void Viewer::set_lut( vtkSmartPointer<vtkLookupTable> lut )
 void Viewer::set_loading_screen( vtkSmartPointer<vtkImageData> loading_screen )
 {
   this->image_actor_->SetInputData( loading_screen );
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::draw_exclusion_spheres( QSharedPointer<DisplayObject> object )
+{
+  QList<Point> centers = object->get_exclusion_sphere_centers();
+  QList<double> radii = object->get_exclusion_sphere_radii();
+
+  int num_points = centers.size();
+
+  if ( num_points <= 0 )
+  {
+    this->exclusion_sphere_points_->Reset();
+  }
+  else
+  {
+
+    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)( this->exclusion_sphere_point_set_->GetPointData()->GetScalars() );
+    scalars->Reset();
+    scalars->SetNumberOfTuples( num_points );
+
+    this->exclusion_sphere_glyph_->SetRange( 0.0, (double) num_points + 1 );
+
+    this->exclusion_sphere_points_->Reset();
+    this->exclusion_sphere_points_->SetNumberOfPoints( num_points );
+
+    unsigned int idx = 0;
+    for ( int i = 0; i < num_points; i++ )
+    {
+      Point p = centers[i];
+      scalars->InsertValue( i, radii[i] );
+      this->exclusion_sphere_points_->InsertPoint( i, p.x, p.y, p.z );
+    }
+  }
+
+  this->exclusion_sphere_points_->Modified();
 }

@@ -47,6 +47,7 @@ public:
 private:
 
   vtkSmartPointer<vtkPolyData> poly_data_;
+
   int dimensions_[3];
 
   vnl_vector<double> center_transform_;

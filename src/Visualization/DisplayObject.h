@@ -6,6 +6,8 @@
 
 #include <vnl/vnl_vector.h>
 
+#include <Data/Shape.h>
+
 class Mesh;
 
 class DisplayObject;
@@ -34,11 +36,21 @@ public:
   void set_transform( const vnl_vector<double>& transform );
   vnl_vector<double> get_transform();
 
+  QList<Point> get_exclusion_sphere_centers();
+  void set_exclusion_sphere_centers(QList<Point> centers);
+
+  QList<double> get_exclusion_sphere_radii();
+  void set_exclusion_sphere_radii(QList<double> radii);
+
 private:
   QSharedPointer<Mesh> mesh_;
   vnl_vector<double> correspondence_points_;
   QStringList corner_annotations_;
   vnl_vector<double> transform_;
+
+  QList<Point> exclusion_sphere_centers_;
+  QList<double> exclusion_sphere_radii_;
+
 };
 
 #endif /* STUDIO_VISUALIZATION_DISPLAYOBJECT_H */
