@@ -10,6 +10,13 @@ class Shape;
 typedef QSharedPointer< Shape > ShapeHandle;
 typedef QVector< ShapeHandle > ShapeList;
 
+
+class Point
+{
+public:
+  double x,y,z;
+};
+
 //! Representation of a single shape/patient.
 class Shape
 {
@@ -63,6 +70,13 @@ public:
   QString get_local_point_filename();
   QString get_local_point_filename_with_path();
 
+  QList<Point> get_exclusion_sphere_centers();
+  void set_exclusion_sphere_centers(QList<Point> centers);
+
+  QList<double> get_exclusion_sphere_radii();
+  void set_exclusion_sphere_radii(QList<double> radii);
+
+
 private:
 
   static bool import_point_file( QString filename, vnl_vector<double> &points );
@@ -80,6 +94,11 @@ private:
 
   vnl_vector<double> global_correspondence_points_;
   vnl_vector<double> local_correspondence_points_;
+
+  QList<Point> exclusion_sphere_centers_;
+  QList<double> exclusion_sphere_radii_;
+
+
 };
 
 #endif /* STUDIO_DATA_SHAPE_H */

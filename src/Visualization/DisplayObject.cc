@@ -56,3 +56,27 @@ vnl_vector<double> DisplayObject::get_transform()
 {
   return this->transform_;
 }
+
+//---------------------------------------------------------------------------
+QList<Point> DisplayObject::get_exclusion_sphere_centers()
+{
+  return this->exclusion_sphere_centers_;
+}
+
+//---------------------------------------------------------------------------
+void DisplayObject::set_exclusion_sphere_centers(QList<Point> centers)
+{
+  this->exclusion_sphere_centers_ = centers;
+}
+
+//---------------------------------------------------------------------------
+QList<double> DisplayObject::get_exclusion_sphere_radii()
+{
+  return this->exclusion_sphere_radii_;
+}
+
+//---------------------------------------------------------------------------
+void DisplayObject::set_exclusion_sphere_radii(QList<double> radii)
+{
+  this->exclusion_sphere_radii_ = radii;
+}

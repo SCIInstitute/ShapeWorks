@@ -252,6 +252,9 @@ bool Project::load_legacy( QString filename )
   QStringList output_files;
   QStringList point_files;
 
+  QList<Point> sphere_centers;
+  QList<double> sphere_radii;
+
   // point files
   elem = doc_handle.FirstChild( "point_files" ).Element();
   if ( elem )
@@ -294,8 +297,55 @@ bool Project::load_legacy( QString filename )
     }
   }
 
-  bool is_correspondence = doc_handle.FirstChild( "number_of_particles" ).Element() != 0;
+  int num_spheres_per_domain = 0;
+  elem = doc_handle.FirstChild( "spheres_per_domain" ).Element();
+  if ( elem )
+  {
+    std::istringstream buffer;
+    std::string name;
+    buffer.str( elem->GetText() );
+    buffer >> name;
+    num_spheres_per_domain = QString::fromStdString( name ).toInt();
+    std::cerr << "Number of spheres per domain: " << num_spheres_per_domain << "\n";
+  }
 
+  elem = doc_handle.FirstChild( "sphere_centers" ).Element();
+  if ( elem )
+  {
+    std::istringstream buffer;
+    std::string name;
+    buffer.str( elem->GetText() );
+
+    QList<double> current_point;
+
+    while ( buffer >> name )
+    {
+      current_point << QString::fromStdString( name ).toDouble();
+      if ( current_point.size() == 3 )
+      {
+        Point p;
+        p.x = current_point[0];
+        p.y = current_point[1];
+        p.z = current_point[2];
+        sphere_centers << p;
+        current_point.clear();
+      }
+    }
+  }
+
+  elem = doc_handle.FirstChild( "sphere_radii" ).Element();
+  if ( elem )
+  {
+    std::istringstream buffer;
+    std::string name;
+    buffer.str( elem->GetText() );
+    while ( buffer >> name )
+    {
+      sphere_radii << QString::fromStdString( name ).toDouble();
+    }
+  }
+
+  bool is_correspondence = doc_handle.FirstChild( "number_of_particles" ).Element() != 0;
   bool has_points = doc_handle.FirstChild( "point_files" ).Element() != 0;
   bool has_inputs = doc_handle.FirstChild( "inputs" ).Element() != 0;
   bool has_outputs = doc_handle.FirstChild( "outputs" ).Element() != 0;
@@ -332,7 +382,7 @@ bool Project::load_legacy( QString filename )
     // must be a optimization file
     std::cerr << "Identified as an optimize file\n";
 
-    this->load_original_files( input_files );
+    this->load_groomed_files( fixed_input_files );
     if ( has_points )
     {
       this->load_point_files( fixed_point_files );
@@ -363,6 +413,32 @@ bool Project::load_legacy( QString filename )
       this->load_point_files( fixed_point_files );
     }
   }
+
+  if ( num_spheres_per_domain != 0 )
+  {
+    int shape = 0;
+    int count = 0;
+    QList<double> radii;
+    QList<Point> points;
+
+    for ( int i = 0; i < sphere_centers.size(); i++ )
+    {
+      points << sphere_centers[i];
+      radii << sphere_radii[i];
+
+      count++;
+      if ( count % num_spheres_per_domain == 0 )
+      {
+        this->get_shapes()[shape]->set_exclusion_sphere_centers( points );
+        this->get_shapes()[shape]->set_exclusion_sphere_radii( radii );
+        points.clear();
+        radii.clear();
+        shape++;
+      }
+    }
+  }
+
+  emit data_changed();
 
   return true;
 }
@@ -420,6 +496,12 @@ void Project::load_groomed_files( QStringList file_names )
     }
 
     std::cerr << file_names[i].toStdString() << "\n";
+
+    if ( this->shapes_.size() <= i )
+    {
+      QSharedPointer<Shape> new_shape = QSharedPointer<Shape>( new Shape );
+      this->shapes_.push_back( new_shape );
+    }
     this->shapes_[i]->import_groomed_image( file_names[i] );
   }
 

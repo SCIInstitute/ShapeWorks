@@ -99,6 +99,12 @@ void Visualizer::display_samples()
     }
     object->set_mesh( mesh );
 
+    if ( this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C )
+    {
+      object->set_exclusion_sphere_centers( shapes[i]->get_exclusion_sphere_centers() );
+      object->set_exclusion_sphere_radii( shapes[i]->get_exclusion_sphere_radii() );
+    }
+
     QStringList annotations;
     annotations << filename;
     annotations << "";

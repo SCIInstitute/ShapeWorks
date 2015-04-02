@@ -149,6 +149,31 @@ QString Shape::get_local_point_filename_with_path()
   return this->local_point_filename_;
 }
 
+
+//---------------------------------------------------------------------------
+QList<Point> Shape::get_exclusion_sphere_centers()
+{
+  return this->exclusion_sphere_centers_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_exclusion_sphere_centers(QList<Point> centers)
+{
+  this->exclusion_sphere_centers_ = centers;
+}
+
+//---------------------------------------------------------------------------
+QList<double> Shape::get_exclusion_sphere_radii()
+{
+  return this->exclusion_sphere_radii_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_exclusion_sphere_radii(QList<double> radii)
+{
+  this->exclusion_sphere_radii_ = radii;
+}
+
 //---------------------------------------------------------------------------
 bool Shape::import_point_file( QString filename, vnl_vector<double> &points )
 {

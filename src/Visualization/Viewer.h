@@ -59,6 +59,9 @@ public:
 
 private:
 
+
+  void draw_exclusion_spheres(QSharedPointer<DisplayObject> object);
+
   bool visible_;
 
   QSharedPointer<DisplayObject> object_;
@@ -74,11 +77,19 @@ private:
   vtkSmartPointer<vtkRenderer>             renderer_;
 
   vtkSmartPointer<vtkSphereSource>         sphere_source;
+
   vtkSmartPointer<vtkPoints>               glyph_points_;
   vtkSmartPointer<vtkPolyData>             glyph_point_set_;
   vtkSmartPointer<vtkGlyph3D>              glyphs_;
   vtkSmartPointer<vtkPolyDataMapper>       glyph_mapper_;
   vtkSmartPointer<vtkActor>                glyph_actor_;
+
+  vtkSmartPointer<vtkPoints>               exclusion_sphere_points_;
+  vtkSmartPointer<vtkPolyData>             exclusion_sphere_point_set_;
+  vtkSmartPointer<vtkGlyph3D>              exclusion_sphere_glyph_;
+  vtkSmartPointer<vtkPolyDataMapper>       exclusion_sphere_mapper_;
+  vtkSmartPointer<vtkActor>                exclusion_sphere_actor_;
+
 
   vtkSmartPointer<vtkPolyDataMapper>       surface_mapper_;
   vtkSmartPointer<vtkActor>                surface_actor_;
