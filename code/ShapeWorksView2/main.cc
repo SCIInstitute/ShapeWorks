@@ -87,11 +87,27 @@ int main( int argc, char** argv )
 
     if ( argc < 2 )
     {
-      std::cerr << "Usage: " << argv[0] << " parameterfile.xml" << std::endl;
+      std::cerr << "Usage: " << argv[0] << " parameterfile.xml [--pca pca.csv]" << std::endl;
       return 1;
     }
 
     ShapeWorksView2 shapeWorksView2( argc, argv );
+
+
+    if (argc == 4)
+    {
+      QString opt = argv[2];
+      QString file = argv[3];
+      if (opt == "--pca")
+      {
+        std::cout << "Writing PCA values to: " << file.toStdString() << "\n";
+        shapeWorksView2.write_stats_file(file);
+        return 0;
+      }
+
+    }
+
+
     shapeWorksView2.show();
     return app.exec();
   }

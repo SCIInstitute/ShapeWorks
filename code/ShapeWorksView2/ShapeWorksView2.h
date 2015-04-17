@@ -53,6 +53,8 @@ public:
   ShapeWorksView2( int argc, char** argv );
   ~ShapeWorksView2();
 
+  void write_stats_file(QString filename);
+
   virtual void closeEvent( QCloseEvent* event );
 
 public Q_SLOTS:

@@ -155,6 +155,14 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
 ShapeWorksView2::~ShapeWorksView2()
 {}
 
+
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::write_stats_file(QString filename)
+{
+  this->stats.WriteCSVFile2( filename.toStdString() );
+}
+
 /********************************************************************/
 /* Qt event handling                                                */
 /********************************************************************/
@@ -176,7 +184,8 @@ void ShapeWorksView2::on_actionExportPcaLoadings_triggered()
                                                    QString(), "CSV files (*.csv)" );
   if ( filename.isEmpty() ) {return; }
 
-  this->stats.WriteCSVFile2( filename.toStdString() );
+
+  this->write_stats_file(filename);
 
   // write out eigenvectors
   /*

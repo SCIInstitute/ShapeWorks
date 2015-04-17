@@ -13,7 +13,7 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 # Configure ITK -- REQUIRED
 find_package(ITK REQUIRED)
 if(ITK_FOUND)
-  include(${USE_ITK_FILE})
+  include(${ITK_USE_FILE})
 else(ITK_FOUND)
   message(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
 endif(ITK_FOUND)
