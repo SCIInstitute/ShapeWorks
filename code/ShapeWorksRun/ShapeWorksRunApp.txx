@@ -622,6 +622,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
 
   int counter;
 
+  std::cout << "\n";
   for (int i = 0; i < n; i++)
   {
     counter = 0;
@@ -662,7 +663,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     
     out.close();
     outw.close();
-	std::cout << " with " << counter << "points" << std::endl;
+    std::cout << " with " << counter << " points" << std::endl;
   } // end for files
   }
 

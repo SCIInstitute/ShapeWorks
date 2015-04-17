@@ -112,6 +112,30 @@ ParticleEnsembleEntropyFunction<VDimension>
     {
     std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
     }
+
+
+
+  std::cout << "pca mode, variance, percent variance, sum percent\n";
+  double totalVariance = 0;
+  for ( int c = 0; c < num_samples; c++ )
+  {
+    totalVariance += symEigen.D(c, c) - m_MinimumVariance;
+  }
+
+  double sum_variance = 0;
+  for ( int c = num_samples-1; c >= 0; c-- )
+  {
+    double variance = symEigen.D(c, c) - m_MinimumVariance;
+    sum_variance += variance;
+    std::cout << "mode " << num_samples-c-1 << " : ";
+    std::cout << variance << ", ";
+    std::cout << variance / totalVariance * 100.0 << "%, ";
+    std::cout << sum_variance / totalVariance * 100.0 << "%";
+    std::cout<< "\n";
+  }
+
+
+
   std::cout << "ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
             << m_MinimumVariance <<  std::endl;
 }

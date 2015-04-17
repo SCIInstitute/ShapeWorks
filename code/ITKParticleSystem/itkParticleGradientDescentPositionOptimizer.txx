@@ -97,7 +97,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     {
       if (counter % global_iteration == 0)
       {
-        std::cerr << "Performing global step\n";
+        //std::cerr << "Performing global step\n";
         m_GradientFunction->BeforeIteration();
       }
       counter++;
