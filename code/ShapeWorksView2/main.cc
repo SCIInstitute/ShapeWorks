@@ -77,13 +77,11 @@ int main( int argc, char** argv )
 #endif
   QApplication app( argc, argv );
 
-
   try {
 
 #ifdef WIN32
     ::SetErrorMode( 0 );
 #endif
-
 
     if ( argc < 2 )
     {
@@ -91,23 +89,24 @@ int main( int argc, char** argv )
       return 1;
     }
 
-    ShapeWorksView2 shapeWorksView2( argc, argv );
-
-
-    if (argc == 4)
+    if ( argc == 4 )
     {
       QString opt = argv[2];
       QString file = argv[3];
-      if (opt == "--pca")
+      if ( opt == "--pca" )
       {
         std::cout << "Writing PCA values to: " << file.toStdString() << "\n";
-        shapeWorksView2.write_stats_file(file);
+
+        ParticleShapeStatistics<3> stats;
+        stats.ReadPointFiles( argv[1] );
+        stats.ComputeModes();
+        stats.PrincipalComponentProjections();
+        stats.WriteCSVFile2( file.toStdString() );
         return 0;
       }
-
     }
 
-
+    ShapeWorksView2 shapeWorksView2( argc, argv );
     shapeWorksView2.show();
     return app.exec();
   }
@@ -120,5 +119,4 @@ int main( int argc, char** argv )
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << e.what() << "\n";
   }
-
 }
