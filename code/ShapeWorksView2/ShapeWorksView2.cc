@@ -8,6 +8,8 @@
 
 // qt
 #include <QFileDialog>
+
+#include <QTextStream>
 #include <QMessageBox>
 
 // vnl
