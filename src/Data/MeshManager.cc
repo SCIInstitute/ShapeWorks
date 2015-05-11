@@ -1,7 +1,7 @@
 #include <Application/Preferences.h>
 #include <Data/MeshManager.h>
 #include <Data/Mesh.h>
-#include <QThread.h>
+#include <QThread>
 
 //---------------------------------------------------------------------------
 MeshManager::MeshManager()

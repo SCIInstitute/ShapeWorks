@@ -14,8 +14,8 @@
 #define MESH_CACHE_H
 
 
-#include <List>
-#include <Map>
+#include <list>
+#include <map>
 
 #include <QMutex>
 

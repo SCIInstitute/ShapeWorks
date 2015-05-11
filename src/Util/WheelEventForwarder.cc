@@ -1,5 +1,5 @@
 #include <Util/WheelEventForwarder.h>
-#include <QScrollBar.h>
+#include <QScrollBar>
 #include <QtCore/QEvent>
 #include <QtGui/QApplication>
 
