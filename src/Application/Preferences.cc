@@ -4,6 +4,7 @@
 
 // qt
 #include <QThread>
+#include <QSize>
 
 #include <Application/Preferences.h>
 
