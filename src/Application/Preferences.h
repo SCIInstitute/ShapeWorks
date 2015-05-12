@@ -3,7 +3,6 @@
 
 #include <QSettings>
 #include <QString>
-#include <Application/PreferencesWindow.h>
 
 //! Application preferences
 /*!
@@ -15,15 +14,6 @@ class Preferences : public QObject
   Q_OBJECT;
 
 public:
-
-  /// get the singleton instance
-  static Preferences& Instance();
-
-  /// show the PreferencesWindow
-  void show_window();
-
-  /// close the PreferencesWindow
-  void close_window();
 
   //--- general preferences
 
@@ -90,24 +80,12 @@ Q_SIGNALS:
 public:
 
   enum { MAX_RECENT_FILES = 4 };
-
-private:
-
-  /// private constructor
   Preferences();
 
-  /// stop the compiler generating methods of copy the object
-  Preferences( Preferences const& copy );            // not implemented
-  Preferences& operator=( Preferences const& copy ); // not implemented
-
-  /// singleton
-  static Preferences instance;
-
+private:
   /// the QSettings object
   QSettings settings;
 
-  /// the preferences user interface
-  PreferencesWindow preferences_window;
 };
 
 #endif // ifndef STUDIO_APPLICATION_PREFERENCES_H

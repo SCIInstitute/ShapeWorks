@@ -20,7 +20,7 @@ const QString Project::GROOM_C( "groom" );
 const QString Project::OPTIMIZE_C( "optimize" );
 
 //---------------------------------------------------------------------------
-Project::Project()
+Project::Project(Preferences& prefs) : preferences_(prefs)
 {
   this->parent_ = NULL;
   this->reset();
@@ -627,7 +627,7 @@ void Project::reset()
   this->groomed_present_ = false;
   this->reconstructed_present_ = false;
 
-  this->mesh_manager_ = QSharedPointer<MeshManager>( new MeshManager() );
+  this->mesh_manager_ = QSharedPointer<MeshManager>( new MeshManager(preferences_) );
   emit data_changed();
 }
 

@@ -5,6 +5,7 @@
 
 #include <QSharedPointer>
 #include <QVector>
+#include "Application/Preferences.h"
 
 class Shape;
 
@@ -24,7 +25,7 @@ class Project : public QObject
 public:
 
   /// constructor
-  Project();
+  Project(Preferences& prefs);
 
   /// destructor
   ~Project();
@@ -99,6 +100,8 @@ public:
   const static QString OPTIMIZE_C;
 
 private:
+
+  Preferences& preferences_;
 
   void renumber_shapes();
 

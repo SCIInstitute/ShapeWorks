@@ -6,6 +6,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QTimer>
+#include "Application/PreferencesWindow.h"
 
 class Lightbox;
 class GroomTool;
@@ -107,6 +108,9 @@ private:
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<Visualizer> visualizer_;
+  QSharedPointer<PreferencesWindow> preferences_window_;
+  //all the preferences
+  Preferences preferences_;
 
   QSharedPointer<Project> project_;
 

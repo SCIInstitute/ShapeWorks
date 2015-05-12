@@ -12,12 +12,11 @@
 #include <Data/Shape.h>
 
 #include <Application/ShapeWorksStudioApp.h>
-#include <Application/Preferences.h>
 
 #include <ui_GroomTool.h>
 
 //---------------------------------------------------------------------------
-GroomTool::GroomTool()
+GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
 {
 
   this->ui_ = new Ui_GroomTool;
@@ -109,7 +108,7 @@ void GroomTool::on_run_groom_button_clicked()
 
   //groom->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
   //groom->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksGroom/Release/ShapeWorksGroom.exe", args );
-  groom->start( Preferences::Instance().get_groom_location(), args );
+  groom->start( preferences_.get_groom_location(), args );
   if ( !groom->waitForStarted() )
   {
     std::cerr << "Error: failed to start ShapeWorksGroom\n";

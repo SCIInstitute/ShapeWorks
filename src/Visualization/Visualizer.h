@@ -3,6 +3,7 @@
 
 #include <Data/Project.h>
 #include <Visualization/Lightbox.h>
+#include "Application/Preferences.h"
 
 //#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include <Analysis/itkParticleShapeStatistics.h>
@@ -20,7 +21,7 @@ class Visualizer : public QObject
   Q_OBJECT;
 
 public:
-  Visualizer();
+  Visualizer(Preferences &prefs);
   ~Visualizer();
 
   /// set the lightbox
@@ -67,7 +68,7 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
-
+  Preferences &preferences_;
   bool compute_stats();
 
   void update_lut();
@@ -93,6 +94,7 @@ private:
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
   int selected_point_one_;
   int selected_point_two_;
+
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */

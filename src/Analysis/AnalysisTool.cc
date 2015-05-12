@@ -7,7 +7,6 @@
 #include <QMessageBox>
 
 #include <Application/ShapeWorksStudioApp.h>
-#include <Application/Preferences.h>
 
 #include <Data/Project.h>
 #include <Data/Mesh.h>
@@ -23,7 +22,7 @@
 #include <ui_AnalysisTool.h>
 
 //---------------------------------------------------------------------------
-AnalysisTool::AnalysisTool()
+AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
 
   this->ui_ = new Ui_AnalysisTool;
@@ -156,7 +155,7 @@ void AnalysisTool::update_analysis_mode()
 //---------------------------------------------------------------------------
 double AnalysisTool::get_pca_value( int slider_value )
 {
-  float range = Preferences::Instance().get_pca_range();
+  float range = preferences_.get_pca_range();
   int halfRange = this->ui_->pcaSlider->maximum();
 
   double value = (double)slider_value / (double)halfRange * range;

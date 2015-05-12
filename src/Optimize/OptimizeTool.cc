@@ -7,7 +7,6 @@
 #include <QMessageBox>
 
 #include <Application/ShapeWorksStudioApp.h>
-#include <Application/Preferences.h>
 
 #include <Optimize/OptimizeTool.h>
 #include <Data/Project.h>
@@ -17,7 +16,7 @@
 #include <ui_OptimizeTool.h>
 
 //---------------------------------------------------------------------------
-OptimizeTool::OptimizeTool()
+OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
 {
 
   this->ui_ = new Ui_OptimizeTool;
@@ -65,7 +64,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   //optimize->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
 
   //optimize->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
-  optimize->start( Preferences::Instance().get_optimize_location(), args );
+  optimize->start( preferences_.get_optimize_location(), args );
 
   if ( !optimize->waitForStarted() )
   {

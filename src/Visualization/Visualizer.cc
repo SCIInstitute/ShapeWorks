@@ -7,19 +7,17 @@
 #include <Visualization/DisplayObject.h>
 #include <Data/Shape.h>
 
-#include <Application/Preferences.h>
-
 const QString Visualizer::MODE_ORIGINAL_C( "Original" );
 const QString Visualizer::MODE_GROOMED_C( "Groomed" );
 const QString Visualizer::MODE_RECONSTRUCTION_C( "Reconstructed" );
 
 //-----------------------------------------------------------------------------
-Visualizer::Visualizer()
+Visualizer::Visualizer(Preferences &prefs) : preferences_(prefs)
 {
   this->display_mode_ = Visualizer::MODE_ORIGINAL_C;
 
   QObject::connect(
-    &Preferences::Instance(), SIGNAL( glyph_properties_changed() ),
+    &preferences_, SIGNAL( glyph_properties_changed() ),
     this, SLOT( update_viewer_properties() ) );
 
   this->show_glyphs_ = true;
@@ -173,8 +171,8 @@ void Visualizer::set_show_surface( bool show )
 //-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties()
 {
-  double size = Preferences::Instance().get_glyph_size();
-  double quality = Preferences::Instance().get_glyph_quality();
+  double size = preferences_.get_glyph_size();
+  double quality = preferences_.get_glyph_quality();
 
   std::cerr << "** update viewer properties, size = " << size << "\n";
 

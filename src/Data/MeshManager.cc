@@ -1,10 +1,9 @@
-#include <Application/Preferences.h>
 #include <Data/MeshManager.h>
 #include <Data/Mesh.h>
 #include <QThread>
 
 //---------------------------------------------------------------------------
-MeshManager::MeshManager()
+MeshManager::MeshManager(Preferences& prefs) : preferences_(prefs), meshCache(prefs)
 {}
 
 //---------------------------------------------------------------------------
@@ -42,14 +41,14 @@ void MeshManager::initialize_threads()
   this->shutdown_threads();
   //std::cerr << "done shutting down threads\n";
 
-  if ( !Preferences::Instance().get_parallel_enabled() )
+  if ( !preferences_.get_parallel_enabled() )
   {
     threads.resize( 0 );
     workers.resize( 0 );
     return;
   }
 
-  int numThreads = Preferences::Instance().get_num_threads() - 1;
+  int numThreads = preferences_.get_num_threads() - 1;
   if ( numThreads > 0 )
   {
     threads.resize( numThreads );

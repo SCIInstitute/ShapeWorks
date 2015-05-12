@@ -14,6 +14,7 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
 #include <Data/MeshGenerator.h>
+#include "Application/Preferences.h"
 
 class Mesh;
 
@@ -32,7 +33,7 @@ class MeshManager : public QObject
 public:
 
   /// Constructor
-  MeshManager();
+  MeshManager(Preferences& prefs);
 
   /// Destructor
   ~MeshManager();
@@ -53,6 +54,8 @@ private Q_SLOTS:
   void initialize_threads();
 
 private:
+
+  Preferences & preferences_;
 
   void shutdown_threads();
 

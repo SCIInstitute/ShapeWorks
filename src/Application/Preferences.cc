@@ -20,29 +20,9 @@ const int DEFAULT_PCA_STEPS = 40;
 const int DEFAULT_REGRESSION_STEPS = 50;
 
 //-----------------------------------------------------------------------------
-Preferences& Preferences::Instance()
-{
-  static Preferences instance;
-  return instance;
-}
-
-//-----------------------------------------------------------------------------
 Preferences::Preferences()
   : settings( "Scientific Computing and Imaging Institute", "ShapeWorksStudio" )
 {}
-
-//-----------------------------------------------------------------------------
-void Preferences::show_window()
-{
-  this->preferences_window.set_values_from_preferences();
-  this->preferences_window.show();
-}
-
-//-----------------------------------------------------------------------------
-void Preferences::close_window()
-{
-  this->preferences_window.close();
-}
 
 //-----------------------------------------------------------------------------
 QSize Preferences::get_main_window_size()

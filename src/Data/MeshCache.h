@@ -23,6 +23,8 @@
 
 #include <vnl/vnl_vector.h>
 
+#include "Application/Preferences.h"
+
 //#include "itkParticleShapeStatistics.h"
 
 class vtkPolyData;
@@ -72,7 +74,7 @@ class MeshCache
 
 public:
 
-  MeshCache();
+  MeshCache(Preferences& prefs);
 
   vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& vector );
 
@@ -88,6 +90,7 @@ private:
   static long long getTotalAddressibleMemory();
   static long long getTotalAddressiblePhysicalMemory();
 
+  Preferences &preferences_;
   // mesh cache
   CacheMap meshCache;
 

@@ -103,7 +103,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->pcaAnimateDirection = true;
 
-  this->project_ = QSharedPointer<Project>( new Project() );
+  this->project_ = QSharedPointer<Project>( new Project(preferences_) );
   this->project_->set_parent( this );
 
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
@@ -117,7 +117,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
 
   // resize from preferences
-  this->resize( Preferences::Instance().get_main_window_size() );
+  this->resize( preferences_.get_main_window_size() );
 
   // set to import
   this->ui_->action_import_mode->setChecked( true );
@@ -132,23 +132,26 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   this->lightbox_ = LightboxHandle( new Lightbox() );
 
-  this->visualizer_ = QSharedPointer<Visualizer> ( new Visualizer() );
+  this->visualizer_ = QSharedPointer<Visualizer> ( new Visualizer(preferences_) );
   this->visualizer_->set_lightbox( this->lightbox_ );
   this->visualizer_->set_project( this->project_ );
   connect( this->visualizer_.data(), SIGNAL( pca_labels_changed( QString, QString, QString ) ),
            this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
 
-  this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool() );
+  this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool(preferences_) );
   this->groom_tool_->set_project( this->project_ );
   this->groom_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->groom_tool_.data() );
 
   connect( this->groom_tool_.data(), SIGNAL( groom_complete() ), this, SLOT( handle_groom_complete() ) );
 
-  this->optimize_tool_ = QSharedPointer<OptimizeTool>( new OptimizeTool() );
+  this->optimize_tool_ = QSharedPointer<OptimizeTool>( new OptimizeTool(preferences_) );
   this->optimize_tool_->set_project( this->project_ );
   this->optimize_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->optimize_tool_.data() );
+
+  //set up preferences window
+  this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this,preferences_));
 
   this->update_from_preferences();
   this->update_display();
@@ -190,14 +193,14 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
 void ShapeWorksStudioApp::on_action_open_project_triggered()
 {
   QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
-                                                   Preferences::Instance().get_last_directory(),
+                                                   preferences_.get_last_directory(),
                                                    tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
     return;
   }
 
-  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filename ) );
+  preferences_.set_last_directory( QDir().absoluteFilePath( filename ) );
 
   this->open_project( filename );
 }
@@ -222,14 +225,14 @@ void ShapeWorksStudioApp::on_action_save_project_triggered()
 void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, tr( "Save Project As..." ),
-                                                   Preferences::Instance().get_last_directory(),
+                                                   preferences_.get_last_directory(),
                                                    tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
     return;
   }
 
-  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filename ) );
+  preferences_.set_last_directory( QDir().absoluteFilePath( filename ) );
 
   if ( this->project_->save_project( filename ) )
   {
@@ -250,7 +253,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   QStringList filenames;
 
   filenames = QFileDialog::getOpenFileNames( this, tr( "Import Files..." ),
-                                             Preferences::Instance().get_last_directory(),
+                                             preferences_.get_last_directory(),
                                              tr( "NRRD files (*.nrrd)" ) );
 
   if ( filenames.size() == 0 )
@@ -258,7 +261,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
     return;
   }
 
-  Preferences::Instance().set_last_directory( QDir().absoluteFilePath( filenames[0] ) );
+  preferences_.set_last_directory( QDir().absoluteFilePath( filenames[0] ) );
 
   this->import_files( filenames );
 }
@@ -287,10 +290,10 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_from_preferences()
 {
-  this->glyph_quality_slider_->setValue( Preferences::Instance().get_glyph_quality() );
-  this->glyph_quality_label_->setText( QString::number( Preferences::Instance().get_glyph_quality() ) );
-  this->glyph_size_slider_->setValue( Preferences::Instance().get_glyph_size() * 10.0 );
-  this->glyph_size_label_->setText( QString::number( Preferences::Instance().get_glyph_size() ) );
+  this->glyph_quality_slider_->setValue( preferences_.get_glyph_quality() );
+  this->glyph_quality_label_->setText( QString::number( preferences_.get_glyph_quality() ) );
+  this->glyph_size_slider_->setValue( preferences_.get_glyph_size() * 10.0 );
+  this->glyph_size_label_->setText( QString::number( preferences_.get_glyph_size() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -467,8 +470,8 @@ void ShapeWorksStudioApp::update_display()
 
   this->visualizer_->set_show_surface( this->ui_->surface_visible_button->isChecked() );
   this->visualizer_->set_show_glyphs( this->ui_->glyphs_visible_button->isChecked() );
-  Preferences::Instance().set_glyph_size( this->glyph_size_slider_->value() / 10.0 );
-  Preferences::Instance().set_glyph_quality( this->glyph_quality_slider_->value() );
+  preferences_.set_glyph_size( this->glyph_size_slider_->value() / 10.0 );
+  preferences_.set_glyph_quality( this->glyph_quality_slider_->value() );
   this->update_from_preferences();
 
   this->visualizer_->set_center( this->ui_->center_checkbox->isChecked() );
@@ -503,7 +506,7 @@ void ShapeWorksStudioApp::open_project( QString filename )
 {
   this->project_->load_project( filename );
 
-  Preferences::Instance().add_recent_file( filename );
+  preferences_.add_recent_file( filename );
   this->update_recent_files();
 
   // set UI state based on project
@@ -547,23 +550,24 @@ void ShapeWorksStudioApp::set_status_bar( QString status )
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_preferences_triggered()
 {
-  Preferences::Instance().show_window();
+  this->preferences_window_->set_values_from_preferences();
+  this->preferences_window_->show();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 {
   // close the preferences window in case it is open
-  Preferences::Instance().close_window();
+  this->preferences_window_->close();
 
   // save the size of the window to preferences
-  Preferences::Instance().set_main_window_size( this->size() );
+  preferences_.set_main_window_size( this->size() );
 }
 
 //---------------------------------------------------------------------------
 double ShapeWorksStudioApp::get_pca_value( int slider_value )
 {
-  float range = Preferences::Instance().get_pca_range();
+  float range = preferences_.get_pca_range();
   int halfRange = this->ui_->pcaSlider->maximum();
 
   double value = (double)slider_value / (double)halfRange * range;
@@ -581,7 +585,7 @@ void ShapeWorksStudioApp::compute_mode_shape()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_recent_files()
 {
-  QStringList recent_files = Preferences::Instance().get_recent_files();
+  QStringList recent_files = preferences_.get_recent_files();
 
   int num_recent_files = qMin( recent_files.size(), (int)Preferences::MAX_RECENT_FILES );
 

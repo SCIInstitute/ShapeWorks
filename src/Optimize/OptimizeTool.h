@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <QWidget>
+#include "Application/Preferences.h"
 
 class Project;
 class ShapeWorksStudioApp;
@@ -13,7 +14,7 @@ class OptimizeTool : public QWidget
   Q_OBJECT;
 public:
 
-  OptimizeTool();
+  OptimizeTool(Preferences& prefs);
   ~OptimizeTool();
 
   /// export XML for ShapeWorksOptimize
@@ -34,7 +35,7 @@ public Q_SLOTS:
   void on_run_optimize_button_clicked();
 
 private:
-
+  Preferences& preferences_;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
   ShapeWorksStudioApp* app_;

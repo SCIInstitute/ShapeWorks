@@ -2,6 +2,7 @@
 #define STUDIO_APPLICATION_PREFERENCES_WINDOW_H
 
 #include <QDialog>
+#include "Application/Preferences.h"
 
 class Ui_PreferencesWindow;
 class QAbstractButton;
@@ -16,7 +17,7 @@ class PreferencesWindow : public QDialog
   Q_OBJECT
 
 public:
-  PreferencesWindow( QWidget* parent = 0 );
+  PreferencesWindow(QWidget* parent, Preferences& prefs);
 
   void set_values_from_preferences();
 
@@ -42,6 +43,7 @@ public Q_SLOTS:
   void restore_defaults();
 
 private:
+  Preferences &preferences_;
   void update_labels();
   Ui_PreferencesWindow* ui_;
 };

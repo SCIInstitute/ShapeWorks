@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <QWidget>
+#include "Application/Preferences.h"
 
 class Project;
 class Ui_GroomTool;
@@ -13,7 +14,7 @@ class GroomTool : public QWidget
   Q_OBJECT;
 public:
 
-  GroomTool();
+  GroomTool(Preferences& prefs);
   ~GroomTool();
 
   /// export XML for ShapeWorksGroom
@@ -44,6 +45,7 @@ private:
   Ui_GroomTool* ui_;
   QSharedPointer<Project> project_;
   ShapeWorksStudioApp* app_;
+  Preferences& preferences_;
 };
 
 #endif /* STUDIO_GROOM_GROOMTOOL_H */

@@ -8,6 +8,8 @@
 
 #include <Data/Shape.h>
 
+#include "Application/Preferences.h"
+
 class Project;
 class Lightbox;
 class ShapeWorksStudioApp;
@@ -18,7 +20,7 @@ class AnalysisTool : public QWidget
   Q_OBJECT;
 public:
 
-  AnalysisTool();
+  AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
 
   /// export XML for ShapeWorksAnalysis
@@ -45,7 +47,7 @@ public Q_SLOTS:
   void on_pcaModeSpinBox_valueChanged();
 
 private:
-
+  Preferences & preferences_;
   double get_pca_value( int slider_value );
 
   void compute_mode_shape();
