@@ -27,7 +27,7 @@
 
 #include "vtkImageAlgorithm.h"
 
-class VTK_IMAGING_EXPORT CustomSurfaceReconstructionFilter : public vtkImageAlgorithm
+class CustomSurfaceReconstructionFilter : public vtkImageAlgorithm
 {
 public:
   vtkTypeMacro(CustomSurfaceReconstructionFilter,vtkImageAlgorithm);

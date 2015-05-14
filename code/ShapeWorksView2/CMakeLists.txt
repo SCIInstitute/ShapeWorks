@@ -143,9 +143,8 @@ ENDIF ( BUILD_SWV2_OSX_APP )
 TARGET_LINK_LIBRARIES( ShapeWorksView2
   ${QT_LIBRARIES} 
   ${ITK_LIBRARIES}
-  QVTK
+  ${VTK_LIBRARIES}
   ITKParticleSystem tinyxml
-  vtkCommon vtkGraphics vtkImaging vtkRendering vtkWidgets 
   )
 
 

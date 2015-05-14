@@ -264,7 +264,7 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
       {
         QString domainFilename = fi.dir().path() + QDir::separator() + base + QString::number( i + 1 ) + ".stl";
         vtkSmartPointer<vtkSTLWriter> stlWriter = vtkSmartPointer<vtkSTLWriter>::New();
-        stlWriter->SetInput( this->surfaceMappers[i]->GetInput() );
+        stlWriter->SetInputData( this->surfaceMappers[i]->GetInput() );
         stlWriter->SetFileName( domainFilename.toStdString().c_str() );
         stlWriter->Write();
       }
@@ -273,7 +273,7 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
         QString domainFilename = fi.dir().path() + QDir::separator() + base + QString::number( i + 1 ) + ".vtk";
 
         vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-        surfaceWriter->SetInput( this->surfaceMappers[i]->GetInput() );
+        surfaceWriter->SetInputData( this->surfaceMappers[i]->GetInput() );
         surfaceWriter->SetFileName( domainFilename.toStdString().c_str() );
         surfaceWriter->Write();
       }
@@ -285,21 +285,21 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
     vtkSmartPointer<vtkAppendPolyData> appendPolyData = vtkSmartPointer<vtkAppendPolyData>::New();
     for ( int i = 0; i < this->numDomains; i++ )
     {
-      appendPolyData->AddInput( this->surfaceMappers[i]->GetInput() );
+      appendPolyData->AddInputData( this->surfaceMappers[i]->GetInput() );
     }
 
     QFileInfo fi( filename );
     if ( fi.suffix() == "stl" )
     {
       vtkSmartPointer<vtkSTLWriter> stlWriter = vtkSmartPointer<vtkSTLWriter>::New();
-      stlWriter->SetInput( appendPolyData->GetOutput() );
+      stlWriter->SetInputData( appendPolyData->GetOutput() );
       stlWriter->SetFileName( filename.toStdString().c_str() );
       stlWriter->Write();
     }
     else
     {
       vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-      surfaceWriter->SetInput( appendPolyData->GetOutput() );
+      surfaceWriter->SetInputData( appendPolyData->GetOutput() );
       surfaceWriter->SetFileName( filename.toStdString().c_str() );
       surfaceWriter->Write();
     }
@@ -809,7 +809,7 @@ void ShapeWorksView2::initializeGlyphs()
   this->glyphPointSet->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
 
   this->glyphs = vtkSmartPointer<vtkGlyph3D>::New();
-  this->glyphs->SetInput( this->glyphPointSet );
+  this->glyphs->SetInputData( this->glyphPointSet );
   this->glyphs->ScalingOn();
   this->glyphs->ClampingOff();
   this->glyphs->SetScaleModeToDataScalingOff();
@@ -864,7 +864,7 @@ void ShapeWorksView2::initializeGlyphs()
   this->arrowFlipFilter->SetInputConnection( this->arrowSource->GetOutputPort() );
 
   this->arrowGlyphs->SetSourceConnection( this->arrowFlipFilter->GetOutputPort() );
-  this->arrowGlyphs->SetInput( this->glyphPointSet );
+  this->arrowGlyphs->SetInputData( this->glyphPointSet );
   this->arrowGlyphs->ScalingOn();
   this->arrowGlyphs->ClampingOff();
 
@@ -1297,7 +1297,7 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
       vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( this->getDomainShape( shape, i ) );
 
       // retrieve the mesh and set it for display
-      this->surfaceMappers[i]->SetInput( polyData );
+      this->surfaceMappers[i]->SetInputData( polyData );
     }
   }
 
@@ -1382,7 +1382,7 @@ void ShapeWorksView2::computePointDifferences(
 
     vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
       vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-    surfaceReconstruction->SetInput( pointSet );
+    surfaceReconstruction->SetInputData( pointSet );
     surfaceReconstruction->SetNeighborhoodSize( this->meshManager.getNeighborhoodSize() );
     surfaceReconstruction->SetSampleSpacing( this->meshManager.getSampleSpacing() );
     surfaceReconstruction->Update();

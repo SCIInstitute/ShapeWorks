@@ -436,11 +436,11 @@ int CustomSurfaceReconstructionFilter::RequestData(
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
   output->SetExtent(0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
-  output->AllocateScalars();
+  output->AllocateScalars(VTK_FLOAT, COUNT);
   outInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
                0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
 
-  output->SetUpdateExtent(0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
+  output->SetExtent(0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
 
   
   vtkFloatArray *newScalars = 
