@@ -54,10 +54,9 @@
 #include <ui_ShapeWorksView2.h>
 #include "tinyxml.h"
 #include "CustomSurfaceReconstructionFilter.h"
-#include <Preferences.h>
 
 //---------------------------------------------------------------------------
-ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
+ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),  pref_window_(prefs_)
 {
   this->ui = new Ui_ShapeWorksView2;
   this->ui->setupUi( this );
@@ -72,19 +71,19 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->ui->tabWidget->setStyleSheet( QString( "QTabWidget::pane { border: 2px solid rgb( 80, 80, 80 ); }" ) );
 #endif
 
-  QSize size = Preferences::Instance().getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
+  QSize size = prefs_.getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
   this->resize( size );
 
   QObject::connect(
-    &Preferences::Instance(), SIGNAL( colorSchemeChanged( int ) ),
+    &prefs_, SIGNAL( colorSchemeChanged( int ) ),
     this, SLOT( colorSchemeChanged() ) );
 
   QObject::connect(
-    &Preferences::Instance(), SIGNAL( glyphPropertiesChanged() ),
+    &prefs_, SIGNAL( glyphPropertiesChanged() ),
     this, SLOT( glyphPropertiesChanged() ) );
 
   QObject::connect(
-    &Preferences::Instance(), SIGNAL( slidersChangedSignal() ),
+    &prefs_, SIGNAL( slidersChangedSignal() ),
     this, SLOT( handleSliderPreferencesChanged() ) );
 
   QObject::connect(
@@ -173,10 +172,10 @@ void ShapeWorksView2::write_stats_file(QString filename)
 void ShapeWorksView2::closeEvent( QCloseEvent* event )
 {
   // close the preferences window in case it is open
-  Preferences::Instance().closeWindow();
+  pref_window_.close_window();
 
   // save the size of the window to preferences
-  Preferences::Instance().getSettings().setValue( "mainwindow/size", this->size() );
+  prefs_.getSettings().setValue( "mainwindow/size", this->size() );
 }
 
 //---------------------------------------------------------------------------
@@ -497,7 +496,7 @@ void ShapeWorksView2::on_actionQuit_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_actionPreferences_triggered()
 {
-  Preferences::Instance().showWindow();
+  pref_window_.show_window();
 }
 
 //---------------------------------------------------------------------------
@@ -1048,7 +1047,7 @@ void ShapeWorksView2::updateActors()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::updateColorScheme()
 {
-  int scheme = Preferences::Instance().getColorScheme();
+  int scheme = prefs_.getColorScheme();
 
   for ( int i = 0; i < this->numDomains; i++ )
   {
@@ -1073,8 +1072,8 @@ void ShapeWorksView2::updateColorScheme()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::updateGlyphProperties()
 {
-  float size = Preferences::Instance().getGlyphSize();
-  float quality = Preferences::Instance().getGlyphQuality();
+  float size = prefs_.getGlyphSize();
+  float quality = prefs_.getGlyphQuality();
 
   this->glyphs->SetScaleFactor( size );
   this->arrowGlyphs->SetScaleFactor( size );
@@ -1094,7 +1093,7 @@ void ShapeWorksView2::updateGlyphProperties()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::updateSliders()
 {
-  int numPcaSteps = Preferences::Instance().getNumPcaSteps();
+  int numPcaSteps = prefs_.getNumPcaSteps();
 
   if ( numPcaSteps % 2 == 0 )
   {
@@ -1109,7 +1108,7 @@ void ShapeWorksView2::updateSliders()
   this->ui->pcaSlider->setPageStep( 1 );
 
   // regression slider
-  int numRegressionSteps = Preferences::Instance().getNumRegressionSteps();
+  int numRegressionSteps = prefs_.getNumRegressionSteps();
   this->ui->regressionSlider->setMinimum( 0 );
   this->ui->regressionSlider->setMaximum( numRegressionSteps );
 }
@@ -1733,7 +1732,7 @@ double ShapeWorksView2::getRegressionValue( int sliderValue )
 //---------------------------------------------------------------------------
 double ShapeWorksView2::getPcaValue( int sliderValue )
 {
-  float range = Preferences::Instance().getPcaRange();
+  float range = prefs_.getPcaRange();
   int halfRange = this->ui->pcaSlider->maximum();
 
   double value = (double)sliderValue / (double)halfRange * range;

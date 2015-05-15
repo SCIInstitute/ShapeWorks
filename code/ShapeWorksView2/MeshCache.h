@@ -19,6 +19,7 @@
 
 #include "tinyxml.h"
 #include "itkParticleShapeStatistics.h"
+#include <Preferences.h>
 
 class vtkPolyData;
 
@@ -67,7 +68,7 @@ class MeshCache
 
 public:
 
-  MeshCache();
+  MeshCache(Preferences& prefs);
 
   vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& vector );
 
@@ -76,6 +77,7 @@ public:
   void clear();
 
 private:
+  Preferences& prefs_;
 
   void freeSpaceForAmount( size_t allocation );
 

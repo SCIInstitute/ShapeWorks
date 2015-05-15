@@ -26,7 +26,6 @@
 #endif // ifdef _WIN32
 
 #include <MeshCache.h>
-#include <Preferences.h>
 #include <vtkPolyData.h>
 
 long long MeshCache::getTotalPhysicalMemory()
@@ -76,7 +75,7 @@ long long MeshCache::getTotalAddressiblePhysicalMemory()
   if ( physical > addressable ) {return addressable; } else {return physical; }
 }
 
-MeshCache::MeshCache()
+MeshCache::MeshCache(Preferences& prefs) : prefs_(prefs)
 {
   this->maxMemory = MeshCache::getTotalAddressiblePhysicalMemory();
   this->memorySize = 0;
@@ -86,7 +85,7 @@ vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape
 {
   QMutexLocker locker( &mutex );
 
-  if ( !Preferences::Instance().getCacheEnabled() )
+  if ( !prefs_.getCacheEnabled() )
   {
     return NULL;
   }
@@ -103,7 +102,7 @@ vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape
 
 void MeshCache::insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh )
 {
-  if ( !Preferences::Instance().getCacheEnabled() )
+  if ( !prefs_.getCacheEnabled() )
   {
     return;
   }
@@ -138,7 +137,7 @@ void MeshCache::clear()
 
 void MeshCache::freeSpaceForAmount( size_t allocation )
 {
-  size_t memoryLimit = ( Preferences::Instance().getCacheMemory() / 100.0 ) * this->maxMemory;
+  size_t memoryLimit = ( prefs_.getCacheMemory() / 100.0 ) * this->maxMemory;
 
   while ( !this->cacheList.empty() && this->memorySize + allocation > memoryLimit )
   {

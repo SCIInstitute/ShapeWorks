@@ -22,13 +22,14 @@
 #include <MeshGenerator.h>
 #include <MeshWorkQueue.h>
 #include <MeshWorker.h>
+#include <Preferences.h>
 
 class MeshManager : public QObject
 {
   Q_OBJECT
 
 public:
-  MeshManager();
+  MeshManager(Preferences& prefs);
   ~MeshManager();
 
   // mesh generation settings
@@ -54,6 +55,8 @@ private Q_SLOTS:
 private:
 
   void shutdownThreads();
+  
+  Preferences& prefs_;
 
   // cache of shape meshes
   MeshCache meshCache;

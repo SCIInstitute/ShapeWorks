@@ -7,44 +7,27 @@
 
 #include <Preferences.h>
 
-// default values
-const bool DEFAULT_CACHE_ENABLED = true;
-const bool DEFAULT_PARALLEL_ENABLED = true;
-const int DEFAULT_CACHE_MEMORY = 25;
-const int DEFAULT_COLOR_SCHEME = 0;
-const float DEFAULT_GLYPH_SIZE = 1.0f;
-const float DEFAULT_GLYPH_QUALITY = 5.0f;
-const float DEFAULT_NUM_THREADS = 100.0f;
-const float DEFAULT_PCA_RANGE = 2.0f;
-const int DEFAULT_PCA_STEPS = 40;
-const int DEFAULT_REGRESSION_STEPS = 50;
-
-Preferences& Preferences::Instance()
-{
-  static Preferences instance;
-  return instance;
-}
-
 Preferences::Preferences()
-  : settings( "Scientific Computing and Imaging Institute", "ShapeWorksView" )
-{}
+  : DEFAULT_CACHE_ENABLED(true),
+    DEFAULT_PARALLEL_ENABLED(true),
+    DEFAULT_CACHE_MEMORY(25),
+    DEFAULT_COLOR_SCHEME(0),
+    DEFAULT_GLYPH_SIZE(1.f),
+    DEFAULT_GLYPH_QUALITY(5.f),
+    DEFAULT_NUM_THREADS(100.f),
+    DEFAULT_PCA_RANGE(2.f),
+    DEFAULT_PCA_STEPS(40),
+    DEFAULT_REGRESSION_STEPS(50),
+
+    settings( "Scientific Computing and Imaging Institute", "ShapeWorksView" , this)
+{
+    this->restoreDefaults();
+}
 
 QSettings& Preferences::getSettings()
 {
   return this->settings;
 }
-
-void Preferences::showWindow()
-{
-  this->preferencesWindow.setValuesFromPreferences();
-  this->preferencesWindow.show();
-}
-
-void Preferences::closeWindow()
-{
-  this->preferencesWindow.close();
-}
-
 bool Preferences::getCacheEnabled()
 {
   return this->settings.value( "MeshCache/Enabled", DEFAULT_CACHE_ENABLED ).toBool();

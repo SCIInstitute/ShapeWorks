@@ -22,6 +22,8 @@
 
 #include <ColorSchemes.h>
 #include <MeshManager.h>
+#include <Preferences.h>
+#include <PreferencesWindow.h>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -162,6 +164,7 @@ private:
 
   // designer form
   Ui_ShapeWorksView2* ui;
+  Preferences prefs_;
 
   vtkSmartPointer<vtkRenderer>             renderer;
   vtkSmartPointer<vtkOrientationMarkerWidget> orientationMarkerWidget;
@@ -228,7 +231,7 @@ private:
   QTimer groupAnimateTimer;
 
   std::vector<float> scalarValues;
-
+  PreferencesWindow pref_window_;
 
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
 

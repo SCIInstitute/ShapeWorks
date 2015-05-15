@@ -12,6 +12,7 @@
 #define PREFERENCES_WINDOW_H
 
 #include <QDialog>
+#include <Preferences.h>
 
 class Ui_PreferencesWindow;
 class QAbstractButton;
@@ -21,11 +22,13 @@ class PreferencesWindow : public QDialog
   Q_OBJECT
 
 public:
-  PreferencesWindow( QWidget* parent = 0 );
+  PreferencesWindow(Preferences& prefs, QWidget* parent = 0 );
 
   void setValuesFromPreferences();
 
 public Q_SLOTS:
+  void close_window();
+  void show_window();
   void on_meshCacheEnabled_stateChanged( int state );
   void on_meshCacheMemory_valueChanged( int value );
   void on_colorScheme_currentIndexChanged( int index );
@@ -42,6 +45,7 @@ public Q_SLOTS:
 
 private:
   void updateLabels();
+  Preferences &prefs_;
   Ui_PreferencesWindow* ui;
 };
 

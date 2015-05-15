@@ -9,15 +9,14 @@
 #include <vtkPolyData.h>
 
 #include <MeshManager.h>
-#include <Preferences.h>
 
-MeshManager::MeshManager()
+MeshManager::MeshManager(Preferences& prefs) : prefs_(prefs), meshCache(prefs)
 {
   this->smoothingAmount = 0;
 
   // monitor changes to threading preferences
   QObject::connect(
-    &Preferences::Instance(), SIGNAL( threadingChangedSignal() ),
+    &prefs_, SIGNAL( threadingChangedSignal() ),
     this, SLOT( initializeThreads() ) );
 
   this->initializeThreads();
@@ -81,7 +80,7 @@ void MeshManager::generateMesh( const vnl_vector<double>& shape )
     return;
   }
 
-  if ( !Preferences::Instance().getParallelEnabled() || this->threads.size() <= 0 )
+  if ( !prefs_.getParallelEnabled() || this->threads.size() <= 0 )
   {
     return;
   }
@@ -138,14 +137,14 @@ void MeshManager::initializeThreads()
   this->shutdownThreads();
   //std::cerr << "done shutting down threads\n";
 
-  if ( !Preferences::Instance().getParallelEnabled() )
+  if ( !prefs_.getParallelEnabled() )
   {
     threads.resize( 0 );
     workers.resize( 0 );
     return;
   }
 
-  int numThreads = Preferences::Instance().getNumThreads() - 1;
+  int numThreads = prefs_.getNumThreads() - 1;
   if ( numThreads > 0 )
   {
     threads.resize( numThreads );

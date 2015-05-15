@@ -12,21 +12,15 @@
 #define PREFERENCES_H
 
 #include <QSettings>
-#include <PreferencesWindow.h>
 
 class Preferences : public QObject
 {
   Q_OBJECT;
 
 public:
-
-  static Preferences& Instance();
+  Preferences();
 
   QSettings& getSettings();
-
-  void showWindow();
-  void closeWindow();
-
   bool getCacheEnabled();
   void setCacheEnabled( bool enabled );
 
@@ -67,16 +61,19 @@ Q_SIGNALS:
 
 private:
 
-  // private constructor
-  Preferences();
-  // Stop the compiler generating methods of copy the object
-  Preferences( Preferences const& copy );            // Not Implemented
-  Preferences& operator=( Preferences const& copy ); // Not Implemented
-  static Preferences instance;
-
+// default values
+  const bool DEFAULT_CACHE_ENABLED;
+  const bool DEFAULT_PARALLEL_ENABLED;
+  const int DEFAULT_CACHE_MEMORY;
+  const int DEFAULT_COLOR_SCHEME;
+  const float DEFAULT_GLYPH_SIZE;
+  const float DEFAULT_GLYPH_QUALITY;
+  const float DEFAULT_NUM_THREADS;
+  const float DEFAULT_PCA_RANGE;
+  const int DEFAULT_PCA_STEPS;
+  const int DEFAULT_REGRESSION_STEPS;
   QSettings settings;
 
-  PreferencesWindow preferencesWindow;
 };
 
 #endif // ifndef PREFERENCES_H
