@@ -34,7 +34,6 @@
 #include <vtkImageGradient.h>
 #include <vtkImageWriter.h>
 #include <vtkLookupTable.h>
-#include <vtkPLYReader.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>

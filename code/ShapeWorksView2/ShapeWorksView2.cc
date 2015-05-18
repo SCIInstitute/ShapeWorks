@@ -33,7 +33,6 @@
 #include <vtkImageWriter.h>
 #include <vtkLookupTable.h>
 #include <vtkOrientationMarkerWidget.h>
-#include <vtkPLYReader.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
@@ -132,7 +131,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
   this->orientationMarkerWidget->EnabledOn();
   this->orientationMarkerWidget->InteractiveOff();
 
-  this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
+  /*this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
   this->scalar_bar_actor_->SetTitle( "" );
   this->scalar_bar_actor_->SetLookupTable( this->differenceLUT );
   this->scalar_bar_actor_->SetOrientationToHorizontal();
@@ -149,7 +148,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
   this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize( 10 );
   this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
   //this->scalar_bar_actor_->GetLabelTextProperty()->SetColor( 0, 0, 0 );
-  this->renderer->AddActor( this->scalar_bar_actor_ );
+  this->renderer->AddActor( this->scalar_bar_actor_ );*/
 }
 
 //---------------------------------------------------------------------------
@@ -1800,7 +1799,7 @@ void ShapeWorksView2::updateDifferenceLUT( float r0, float r1 )
 
   //this->differenceLUT->se
 
-  this->scalar_bar_actor_->SetNumberOfLabels( 4 );
+  //this->scalar_bar_actor_->SetNumberOfLabels( 4 );
   //this->scalar_bar_actor_->SetNumberOfLabels(4);
 
   //this->differenceLUT->SetColorSpaceToHSV();

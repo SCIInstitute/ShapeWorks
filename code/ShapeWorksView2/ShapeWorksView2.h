@@ -40,7 +40,7 @@ class vtkFloatArray;
 class vtkOrientationMarkerWidget;
 class vtkImageData;
 class vtkTransformPolyDataFilter;
-class vtkScalarBarActor;
+//class vtkScalarBarActor;
 
 // Forward Qt class declarations
 class Ui_ShapeWorksView2;
@@ -233,6 +233,6 @@ private:
   std::vector<float> scalarValues;
   PreferencesWindow pref_window_;
 
-  vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
+//  vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
 
 };

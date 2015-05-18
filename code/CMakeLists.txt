@@ -75,7 +75,19 @@ endif(BUILD_ICPRigid3DRegistration)
 # Optionally configure VTK
 # OPTION(USE_VTK "Use VTK (The Visualization Toolkit). VTK is required to build ShapeWorksView and ShapeWorksShop." OFF)
 IF(USE_VTK)
-  FIND_PACKAGE(VTK REQUIRED)
+  FIND_PACKAGE(VTK COMPONENTS
+  vtkCommonCore
+  vtkIOCore
+  vtkIOLegacy
+  vtkIOGeometry
+  vtkInfovisCore
+  vtkInteractionStyle
+  vtkRenderingFreeTypeOpenGL
+  vtkViewsQt
+  vtkFiltersCore
+  vtkGUISupportQt
+  vtkRenderingQt
+  REQUIRED)
   IF (VTK_FOUND)
     INCLUDE (${VTK_USE_FILE})
   ELSE(VTK_FOUND)
