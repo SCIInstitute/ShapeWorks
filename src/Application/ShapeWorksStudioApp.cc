@@ -275,6 +275,7 @@ void ShapeWorksStudioApp::import_files( QStringList file_names )
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
+  if (!this->lightbox_->render_window_ready()) return;
   this->project_->set_zoom_state( this->ui_->thumbnail_size_slider->value() );
 
   int value = this->ui_->thumbnail_size_slider->maximum() - this->ui_->thumbnail_size_slider->value() + 1;
@@ -482,16 +483,28 @@ void ShapeWorksStudioApp::update_display()
   {
     this->visualizer_->display_samples();
     this->ui_->pcaPanel->setVisible( false );
+	size_t num_samples = this->project_->get_shapes().size();
+	if (num_samples == 0) num_samples = 9;
+	double root = std::sqrt(static_cast<double>(num_samples));
+	if (std::fmod(root,1.0) > 1e-6) root += 1.;
+	size_t value = static_cast<size_t>(root); 
+	size_t zoom_val = this->ui_->thumbnail_size_slider->maximum() + 1 - value;
+	if (zoom_val != this->ui_->thumbnail_size_slider->value())
+		this->ui_->thumbnail_size_slider->setValue(zoom_val);
   }
   else if ( this->ui_->stats_button->isChecked() )
   {
     this->visualizer_->display_mean();
     this->ui_->pcaPanel->setVisible( false );
+	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
+		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
   }
   else if ( this->ui_->pca_button->isChecked() )
   {
     this->compute_mode_shape();
     this->ui_->pcaPanel->setVisible( true );
+	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
+		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
   }
 }
 

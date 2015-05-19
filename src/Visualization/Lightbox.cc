@@ -129,12 +129,12 @@ void Lightbox::set_render_window( vtkRenderWindow* renderWindow )
 //-----------------------------------------------------------------------------
 void Lightbox::setup_renderers()
 {
-  for ( int i = 0; i < this->viewers_.size(); i++ )
+  /*for ( int i = 0; i < this->viewers_.size(); i++ )
   {
     this->render_window_->RemoveRenderer( this->viewers_[i]->get_renderer() );
-  }
+  }*/
 
-  this->viewers_.clear();
+  //this->viewers_.clear();
 
   int* size = this->render_window_->GetSize();
 
@@ -155,19 +155,27 @@ void Lightbox::setup_renderers()
     for ( int x = 0; x < width; x++ )
     {
       int i = ( y * width ) + x;
+	  vtkSmartPointer<vtkRenderer> renderer;
+      // create/get a renderer for the viewer
+	  if (i >= this->viewers_.size()) {
+		  renderer = vtkSmartPointer<vtkRenderer>::New();
+		  this->render_window_->AddRenderer( renderer );
+	  } else { 
+		  renderer = this->viewers_[i]->get_renderer() ;
+	  }
+	  renderer->SetActiveCamera( this->camera_ );
 
-      // create a renderer for the viewer
-      vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-      renderer->SetActiveCamera( this->camera_ );
-      this->render_window_->AddRenderer( renderer );
-
-      // create the viewer
-      QSharedPointer<Viewer> viewer = QSharedPointer<Viewer>( new Viewer() );
+      // create/ set the viewer
+      QSharedPointer<Viewer> viewer;
+	  if (i >= this->viewers_.size()) {
+		  viewer = QSharedPointer<Viewer>( new Viewer() );
+          viewer->set_renderer( renderer );
+          this->viewers_.push_back( viewer );
+	  } else { 
+		  viewer = this->viewers_[i];
+	  }
       viewer->set_loading_screen( this->spinner_images_[this->timer_callback_count_] );
-      viewer->set_renderer( renderer );
-
-      this->viewers_.push_back( viewer );
-
+	  
       double viewport[4] = {0.0, 0.0, 0.0, 0.0};
 
       // horizontal
@@ -179,11 +187,15 @@ void Lightbox::setup_renderers()
       viewport[3] = viewport[1] + tile_height;
 
       renderer->SetViewport( viewport );
+	  renderer->DrawOn();
 
       double color = 0.2f;
 
       renderer->SetBackground( color, color, color );
     }
+  }
+  for (size_t i = total; i < this->viewers_.size(); i++) {
+	  this->viewers_[i]->get_renderer()->DrawOff();
   }
 
   if ( this->render_window_->IsDrawable() )

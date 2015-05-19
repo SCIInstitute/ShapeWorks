@@ -56,6 +56,8 @@ public:
 
   void set_visualizer( Visualizer* visualizer );
 
+  bool render_window_ready() { return render_window_ != NULL; }
+
 public Q_SLOTS:
   void handle_timer_callback();
 
