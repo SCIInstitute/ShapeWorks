@@ -591,7 +591,27 @@ double ShapeWorksStudioApp::get_pca_value( int slider_value )
 void ShapeWorksStudioApp::compute_mode_shape()
 {
   double pcaSliderValue = this->get_pca_value( this->ui_->pcaSlider->value() );
-  int mode = this->ui_->pcaModeSpinBox->value() + 1;
+  int mode = std::min(std::max(1,this->ui_->pcaModeSpinBox->value() + 1),2);
+  //TODO caching doesn't quite work, but may not be needed.
+  /*if (!this->visualizer_->is_cached()) {
+    this->set_status_bar( "Caching data for animation..." );
+	QProgressDialog progress( "Caching data for animation...", "Abort", 0, 40, this);
+	progress.setWindowModality( Qt::WindowModal );
+	progress.show();
+	int val = 0;
+	for(int m = 1; m < 3; m++){
+		for(double i = -2.0; i <=  2.1; i+=0.1) {
+			if(progress.wasCanceled())
+				return;
+		  this->visualizer_->cache_data(m,i);
+          progress.setValue( ++val );
+          QCoreApplication::processEvents();
+		}
+	}
+	this->visualizer_->set_cached(true);
+	
+    this->set_status_bar( "Cached all visual data." );
+  }*/
   this->visualizer_->display_pca( mode, pcaSliderValue );
 }
 
@@ -638,7 +658,7 @@ void ShapeWorksStudioApp::handle_pca_animate_state_changed()
   if ( this->ui_->pcaAnimateCheckBox->isChecked() )
   {
     //this->setPregenSteps();
-    this->pcaAnimateTimer.setInterval( 10 );
+    this->pcaAnimateTimer.setInterval( 1 );
     this->pcaAnimateTimer.start();
   }
   else

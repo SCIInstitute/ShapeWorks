@@ -3,7 +3,9 @@
 
 #include <Data/Project.h>
 #include <Visualization/Lightbox.h>
+#include <Visualization/DisplayObject.h>
 #include "Application/Preferences.h"
+#include <map>
 
 //#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include <Analysis/itkParticleShapeStatistics.h>
@@ -48,7 +50,13 @@ public:
   /// tmp: compute and display the mean shape
   void display_mean();
 
-  void display_shape( const vnl_vector<double> &points );
+  void display_shape( const vnl_vector<double> &points, double value );
+
+  bool is_cached() { return cached_; }
+
+  void set_cached(bool b) { cached_ = b; }
+
+  void cache_data(int mode, double value);
 
   void display_pca( int mode, double value );
 
@@ -68,6 +76,10 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
+  vnl_vector<double> getShape(int mode, double value);
+  QVector<DisplayObjectHandle> * getList( const vnl_vector<double> &points , double value);
+  bool cached_;
+  std::map<double,QVector<DisplayObjectHandle>> disp_handles_;
   Preferences &preferences_;
   bool compute_stats();
 

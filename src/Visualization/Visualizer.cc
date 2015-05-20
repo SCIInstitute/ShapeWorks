@@ -4,7 +4,6 @@
 #include <vtkRenderWindow.h>
 
 #include <Visualization/Visualizer.h>
-#include <Visualization/DisplayObject.h>
 #include <Data/Shape.h>
 
 const QString Visualizer::MODE_ORIGINAL_C( "Original" );
@@ -27,6 +26,7 @@ Visualizer::Visualizer(Preferences &prefs) : preferences_(prefs)
   this->glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
   this->selected_point_one_ = -1;
   this->selected_point_two_ = -1;
+  this->cached_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -129,31 +129,52 @@ void Visualizer::display_mean()
     return;
   }
 
-  this->display_shape( this->stats.Mean() );
+  this->display_shape( this->stats.Mean() , 0.);
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shape( const vnl_vector<double> &points )
+void Visualizer::display_shape( const vnl_vector<double> &points , double value)
 {
-  MeshHandle mesh = MeshHandle( new Mesh() );
-  mesh->create_from_pointset( points );
-
-  DisplayObjectHandle object = DisplayObjectHandle( new DisplayObject() );
-
-  object->set_mesh( mesh );
-  object->set_correspondence_points( points );
-
-  QStringList annotations;
-  annotations << "computed shape";
-  annotations << "";
-  annotations << "";
-  annotations << "";
-  object->set_annotations( annotations );
-
-  QVector<DisplayObjectHandle> list;
-  list << object;
-  this->lightbox_->set_display_objects( list );
+  
+  QVector<DisplayObjectHandle> *list_ptr = getList(points,value);
+  this->lightbox_->set_display_objects( *list_ptr );
   this->lightbox_->redraw();
+}
+
+
+//-----------------------------------------------------------------------------
+QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &points , double value) {
+  QVector<DisplayObjectHandle> *list_ptr = NULL;
+  //std::cerr << "mapped value: " << (value) << std::endl;
+  std::map<double,QVector<DisplayObjectHandle>>::iterator it = disp_handles_.find(value);
+  if (it == disp_handles_.end()) {
+	  MeshHandle mesh = MeshHandle( new Mesh() );
+	  mesh->create_from_pointset( points );
+
+	  DisplayObjectHandle object = DisplayObjectHandle( new DisplayObject() );
+
+	  object->set_mesh( mesh );
+	  object->set_correspondence_points( points );
+
+	  QStringList annotations;
+	  annotations << "computed shape";
+	  annotations << "";
+	  annotations << "";
+	  annotations << "";
+	  object->set_annotations( annotations );
+	  list_ptr = new QVector<DisplayObjectHandle>();
+	  *list_ptr << object;
+	  disp_handles_.insert(std::pair<double,QVector<DisplayObjectHandle>>(value,*list_ptr) );
+  } else 
+	  list_ptr = &it->second;
+  return list_ptr;
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::cache_data(int mode, double value)
+{
+  //std::cerr << "cached value: " << (value + 10. * mode) << std::endl;
+  this->getList(getShape(mode,value),value + 10. * mode);
 }
 
 //-----------------------------------------------------------------------------
@@ -216,30 +237,31 @@ bool Visualizer::compute_stats()
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_pca( int mode, double value )
-{
-  if ( !this->compute_stats() )
-  {
-    return;
-  }
-
-  double pca_slider_value = value;
-
+vnl_vector<double> Visualizer::getShape( int mode, double value ) {
   unsigned int m = this->stats.Eigenvectors().columns() - ( mode );
 
   vnl_vector<double> e = this->stats.Eigenvectors().get_column( m );
 
   double lambda = sqrt( this->stats.Eigenvalues()[m] );
 
-  emit pca_labels_changed( QString::number( pca_slider_value, 'g', 2 ),
+  emit pca_labels_changed( QString::number( value, 'g', 2 ),
                            QString::number( this->stats.Eigenvalues()[m] ),
-                           QString::number( pca_slider_value * lambda ) );
+                           QString::number( value * lambda ) );
 
-  vnl_vector<double> shape;
+  std::map<double,QVector<DisplayObjectHandle>>::iterator it = disp_handles_.find(value + 10. * mode);
+  if (it != disp_handles_.end()) return it->second[0]->get_correspondence_points();
 
-  shape = this->stats.Mean() + ( e * ( value * lambda ) );
+  return this->stats.Mean() + ( e * ( value * lambda ) );
+}
 
-  this->display_shape( this->stats.Mean() + ( e * ( pca_slider_value * lambda ) ) );
+//-----------------------------------------------------------------------------
+void Visualizer::display_pca( int mode, double value )
+{
+  if ( !this->compute_stats() )
+  {
+    return;
+  }
+  this->display_shape( getShape(mode,value) , value + mode * 10.);
 }
 
 //-----------------------------------------------------------------------------
