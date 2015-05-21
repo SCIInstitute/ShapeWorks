@@ -4,6 +4,7 @@
 #include <QString>
 #include <QSharedPointer>
 
+#include <vtkMarchingCubes.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -20,7 +21,6 @@ typedef QSharedPointer< Mesh > MeshHandle;
  */
 class Mesh
 {
-
 public:
 
   /// Constructor
@@ -44,6 +44,11 @@ public:
   /// Get the center transform
   vnl_vector<double> get_center_transform();
 
+  void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
+
+  /// Update the marching cubes output.
+  void Update();
+
 private:
 
   vtkSmartPointer<vtkPolyData> poly_data_;
@@ -51,6 +56,7 @@ private:
   int dimensions_[3];
 
   vnl_vector<double> center_transform_;
+  vtkSmartPointer<vtkMarchingCubes> marching_;
 };
 
 #endif /* STUDIO_DATA_MESH_H */

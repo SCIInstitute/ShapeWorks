@@ -1,7 +1,6 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include <vtkMarchingCubes.h>
 #include <vtkImageImport.h>
 #include <vtkTriangleFilter.h>
 #include <vtkPolyDataNormals.h>
@@ -31,6 +30,10 @@ Mesh::Mesh()
 //---------------------------------------------------------------------------
 Mesh::~Mesh()
 {}
+
+void Mesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data) {
+	this->poly_data_ = poly_data;
+}
 
 //---------------------------------------------------------------------------
 QString Mesh::get_dimension_string()
@@ -96,19 +99,20 @@ void Mesh::create_from_image( QString filename, float iso_value )
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
     itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
-    itk_exporter->SetInput( image );
+    itk_exporter->SetInput(image);
     ConnectPipelines( itk_exporter, vtk_image.GetPointer() );
     vtk_image->Update();
-
+	
     // create isosurface
-    vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
-    marching->SetInputConnection( vtk_image->GetOutputPort() );
-    marching->SetNumberOfContours( 1 );
-    marching->SetValue( 0, iso_value );
-    marching->Update();
+    if (!this->marching_)
+  	  this->marching_ = vtkSmartPointer<vtkMarchingCubes>::New();
+    this->marching_->SetInputConnection( vtk_image->GetOutputPort() );
+    this->marching_->SetNumberOfContours( 1 );
+    this->marching_->SetValue( 0, iso_value );
+    this->marching_->Update();
 
     // store isosurface polydata
-    this->poly_data_ = marching->GetOutput();
+    this->poly_data_ = this->marching_->GetOutput();
   }
   catch ( itk::ExceptionObject & excep )
   {
@@ -135,7 +139,7 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   }
   points->Modified();
 
-  std::cerr << "found " << num_points << " points\n";
+  //std::cerr << "found " << num_points << " points\n";
 
   points->Modified();
 
@@ -143,14 +147,19 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   pointSet->SetPoints( points );
 
   // create isosurface
-  vtkSmartPointer<vtkMarchingCubes> marching = vtkSmartPointer<vtkMarchingCubes>::New();
-  marching->SetNumberOfContours( 1 );
-  marching->SetValue( 0, 0.0 );
+  if (!this->marching_)
+	this->marching_ = vtkSmartPointer<vtkMarchingCubes>::New();
+  this->marching_->SetNumberOfContours( 1 );
+  this->marching_->SetValue( 0, 0.0 );
 
 #ifdef POWERCRUST
   vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust =
     vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
-  powercrust->SetInputData( pointSet );
+#if VTK_MAJOR_VERSION <= 5
+  powercrust->SetInput(pointSet);
+#else
+  powercrust->SetInputData(pointSet);
+#endif
   powercrust->Update();
 
 /*
@@ -164,7 +173,11 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
 
 /*
    vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-   triangleFilter->SetInputData( powercrust->GetOutput() );
+#if VTK_MAJOR_VERSION <= 5
+   triangleFilter->SetInput(powercrust->GetOutput() );
+#else
+   triangleFilter->SetInputData(powercrust->GetOutput() );
+#endif
    triangleFilter->Update();
 
    vtkSmartPointer<vtkPolyDataToImageData> polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
@@ -181,11 +194,13 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   vtkSmartPointer<CustomSurfaceReconstructionFilter> surface_reconstruction =
     vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   surface_reconstruction->SetInputData( pointSet );
-  marching->SetInputConnection( surface_reconstruction->GetOutputPort() );
-  marching->Update();
+  this->marching_->SetInputConnection( surface_reconstruction->GetOutputPort() );
+
+  //TODO testing threading of the meshing update step.
+  //marching->Update();
 
   // store isosurface polydata
-  this->poly_data_ = marching->GetOutput();
+  //this->poly_data_ = marching->GetOutput();
 
 #endif // ifdef POWERCRUST
 
@@ -196,4 +211,10 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
 vnl_vector<double> Mesh::get_center_transform()
 {
   return this->center_transform_;
+}
+
+//---------------------------------------------------------------------------
+void Mesh::Update() {
+	this->marching_->Update();
+	this->poly_data_ = marching_->GetOutput();
 }

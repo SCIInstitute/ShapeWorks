@@ -5,6 +5,7 @@
 
 #include <Visualization/Visualizer.h>
 #include <Data/Shape.h>
+#include <QThread>
 
 const QString Visualizer::MODE_ORIGINAL_C( "Original" );
 const QString Visualizer::MODE_GROOMED_C( "Groomed" );
@@ -141,15 +142,15 @@ void Visualizer::display_shape( const vnl_vector<double> &points , double value)
   this->lightbox_->redraw();
 }
 
-
 //-----------------------------------------------------------------------------
 QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &points , double value) {
   QVector<DisplayObjectHandle> *list_ptr = NULL;
-  //std::cerr << "mapped value: " << (value) << std::endl;
   std::map<double,QVector<DisplayObjectHandle>>::iterator it = disp_handles_.find(value);
   if (it == disp_handles_.end()) {
 	  MeshHandle mesh = MeshHandle( new Mesh() );
 	  mesh->create_from_pointset( points );
+
+	  meshing_queue_.queueThread(mesh);
 
 	  DisplayObjectHandle object = DisplayObjectHandle( new DisplayObject() );
 
@@ -173,8 +174,9 @@ QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &po
 //-----------------------------------------------------------------------------
 void Visualizer::cache_data(int mode, double value)
 {
+  //int strict_mode = std::min(std::max(0,mode),static_cast<int>(this->stats.Eigenvectors().size()) - 1);
   //std::cerr << "cached value: " << (value + 10. * mode) << std::endl;
-  this->getList(getShape(mode,value),value + 10. * mode);
+  //this->getList(getShape(mode,value),value + 10. * strict_mode);
 }
 
 //-----------------------------------------------------------------------------
@@ -238,7 +240,7 @@ bool Visualizer::compute_stats()
 
 //-----------------------------------------------------------------------------
 vnl_vector<double> Visualizer::getShape( int mode, double value ) {
-  unsigned int m = this->stats.Eigenvectors().columns() - ( mode );
+  unsigned int m = this->stats.Eigenvectors().columns() - (mode+1) ;
 
   vnl_vector<double> e = this->stats.Eigenvectors().get_column( m );
 
@@ -257,10 +259,9 @@ vnl_vector<double> Visualizer::getShape( int mode, double value ) {
 //-----------------------------------------------------------------------------
 void Visualizer::display_pca( int mode, double value )
 {
-  if ( !this->compute_stats() )
-  {
+  if ( !this->compute_stats() || this->stats.Eigenvectors().size() <= 1)
     return;
-  }
+  if (mode + 2 > this->stats.Eigenvalues().size()) mode = this->stats.Eigenvalues().size() - 2;
   this->display_shape( getShape(mode,value) , value + mode * 10.);
 }
 

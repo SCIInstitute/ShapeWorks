@@ -44,7 +44,11 @@ Viewer::Viewer()
   this->glyph_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
 
   this->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
-  this->glyphs_->SetInputData( this->glyph_point_set_ );
+#if VTK_MAJOR_VERSION <= 5
+    this->glyphs_->SetInput( this->glyph_point_set_ );
+#else
+    this->glyphs_->SetInputData( this->glyph_point_set_ );
+#endif
   this->glyphs_->ScalingOn();
   this->glyphs_->ClampingOff();
   this->glyphs_->SetScaleModeToDataScalingOff();
@@ -73,7 +77,11 @@ Viewer::Viewer()
   this->exclusion_sphere_point_set_->GetPointData()->SetScalars( vtkSmartPointer<vtkUnsignedLongArray>::New() );
 
   this->exclusion_sphere_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
-  this->exclusion_sphere_glyph_->SetInputData( this->exclusion_sphere_point_set_ );
+#if VTK_MAJOR_VERSION <= 5
+    this->exclusion_sphere_glyph_->SetInput( this->exclusion_sphere_point_set_ );
+#else
+    this->exclusion_sphere_glyph_->SetInputData( this->exclusion_sphere_point_set_ );
+#endif
   this->exclusion_sphere_glyph_->ScalingOn();
   this->exclusion_sphere_glyph_->ClampingOff();
   this->exclusion_sphere_glyph_->SetScaleModeToScaleByScalar();
@@ -192,7 +200,11 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
 
       vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter =
         vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-      transformFilter->SetInputData( poly_data );
+#if VTK_MAJOR_VERSION <= 5
+    transformFilter->SetInput( poly_data );
+#else
+    transformFilter->SetInputData( poly_data );
+#endif
       transformFilter->SetTransform( translation );
       transformFilter->Update();
       poly_data = transformFilter->GetOutput();
@@ -378,7 +390,11 @@ void Viewer::set_lut( vtkSmartPointer<vtkLookupTable> lut )
 //-----------------------------------------------------------------------------
 void Viewer::set_loading_screen( vtkSmartPointer<vtkImageData> loading_screen )
 {
-  this->image_actor_->SetInputData( loading_screen );
+  #if VTK_MAJOR_VERSION <= 5
+    this->image_actor_->SetInput( loading_screen );
+#else
+    this->image_actor_->SetInputData( loading_screen );
+#endif
 }
 
 //-----------------------------------------------------------------------------

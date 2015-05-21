@@ -39,13 +39,21 @@ MeshGenerator::MeshGenerator()
   this->pointSet->SetPoints( this->points );
 
   this->surfaceReconstruction = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-  this->surfaceReconstruction->SetInputData( this->pointSet );
+#if VTK_MAJOR_VERSION <= 5
+  this->surfaceReconstruction->SetInput(this->pointSet);
+#else
+  this->surfaceReconstruction->SetInputData(this->pointSet);
+#endif
 
 #ifdef SW_USE_POWERCRUST
   this->polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
   this->triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   this->powercrust = vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
-  this->powercrust->SetInputData( this->pointSet );
+#if VTK_MAJOR_VERSION <= 5
+  this->powercrust->SetInput(this->pointSet);
+#else
+  this->powercrust->SetInputData(this->pointSet);
+#endif
   this->triangleFilter->SetInputConnection( this->powercrust->GetOutputPort() );
   this->polydataToImageData->SetInputConnection( this->triangleFilter->GetOutputPort() );
 #endif // ifdef SW_USE_POWERCRUST

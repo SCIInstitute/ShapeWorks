@@ -170,6 +170,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
 
   connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
+
+  this->ui_->center_checkbox->setVisible(false);
 }
 
 //---------------------------------------------------------------------------
@@ -591,7 +593,7 @@ double ShapeWorksStudioApp::get_pca_value( int slider_value )
 void ShapeWorksStudioApp::compute_mode_shape()
 {
   double pcaSliderValue = this->get_pca_value( this->ui_->pcaSlider->value() );
-  int mode = std::min(std::max(1,this->ui_->pcaModeSpinBox->value() + 1),2);
+  int mode = this->ui_->pcaModeSpinBox->value();
   //TODO caching doesn't quite work, but may not be needed.
   /*if (!this->visualizer_->is_cached()) {
     this->set_status_bar( "Caching data for animation..." );
@@ -658,7 +660,7 @@ void ShapeWorksStudioApp::handle_pca_animate_state_changed()
   if ( this->ui_->pcaAnimateCheckBox->isChecked() )
   {
     //this->setPregenSteps();
-    this->pcaAnimateTimer.setInterval( 1 );
+    this->pcaAnimateTimer.setInterval( 10 );
     this->pcaAnimateTimer.start();
   }
   else
