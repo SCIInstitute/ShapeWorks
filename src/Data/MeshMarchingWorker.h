@@ -10,8 +10,8 @@ class MeshThread : public QObject
 {
 	Q_OBJECT
 public:
-	MeshThread::MeshThread(MeshHandle m);
-	MeshThread::~MeshThread();
+  MeshThread(MeshHandle m);
+  ~MeshThread();
 	
 public slots:
     void process(); 
@@ -25,9 +25,9 @@ class MeshMarchingWorker : public QObject
 {
 	Q_OBJECT
 public:
-	MeshMarchingWorker::MeshMarchingWorker(size_t max = 8);
-	MeshMarchingWorker::~MeshMarchingWorker();
-	void queueThread(MeshHandle mesh);
+  MeshMarchingWorker(size_t max = 8);
+  ~MeshMarchingWorker();
+  void queueThread(MeshHandle mesh);
 public slots:
     void process(); 
 private:

@@ -145,7 +145,7 @@ void Visualizer::display_shape( const vnl_vector<double> &points , double value)
 //-----------------------------------------------------------------------------
 QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &points , double value) {
   QVector<DisplayObjectHandle> *list_ptr = NULL;
-  std::map<double,QVector<DisplayObjectHandle>>::iterator it = disp_handles_.find(value);
+  std::map<double,QVector<DisplayObjectHandle> >::iterator it = disp_handles_.find(value);
   if (it == disp_handles_.end()) {
 	  MeshHandle mesh = MeshHandle( new Mesh() );
 	  mesh->create_from_pointset( points );
@@ -165,7 +165,7 @@ QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &po
 	  object->set_annotations( annotations );
 	  list_ptr = new QVector<DisplayObjectHandle>();
 	  *list_ptr << object;
-	  disp_handles_.insert(std::pair<double,QVector<DisplayObjectHandle>>(value,*list_ptr) );
+	  disp_handles_.insert(std::pair<double,QVector<DisplayObjectHandle> >(value,*list_ptr) );
   } else 
 	  list_ptr = &it->second;
   return list_ptr;
@@ -250,7 +250,7 @@ vnl_vector<double> Visualizer::getShape( int mode, double value ) {
                            QString::number( this->stats.Eigenvalues()[m] ),
                            QString::number( value * lambda ) );
 
-  std::map<double,QVector<DisplayObjectHandle>>::iterator it = disp_handles_.find(value + 10. * mode);
+  std::map<double,QVector<DisplayObjectHandle> >::iterator it = disp_handles_.find(value + 10. * mode);
   if (it != disp_handles_.end()) return it->second[0]->get_correspondence_points();
 
   return this->stats.Mean() + ( e * ( value * lambda ) );
