@@ -176,5 +176,6 @@ void PreferencesWindow::on_power_crust_toggled(bool powercrust)
 	  this->ui_->neighborhoodSpinBox_2->setEnabled(true);
 	  this->ui_->spacingSpinBox_2->setEnabled(true);
   }
+  preferences_.set_use_powercrust(powercrust);
   emit clear_cache();
 }

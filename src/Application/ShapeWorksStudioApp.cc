@@ -183,6 +183,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
 
   connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
+  connect(this->preferences_window_.data(),SIGNAL(clear_cache()),this->project_.data(),SLOT(handle_clear_cache()));
 
 }
 

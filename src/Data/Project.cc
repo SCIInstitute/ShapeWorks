@@ -24,7 +24,6 @@ Project::Project(Preferences& prefs) : preferences_(prefs)
 {
   this->parent_ = NULL;
   this->reset();
-  connect(&preferences_,SIGNAL(clear_cache()),this,SLOT(handle_clear_cache()));
 }
 
 //---------------------------------------------------------------------------
