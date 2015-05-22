@@ -81,7 +81,7 @@ private:
   vnl_vector<double> getShape(int mode, double value);
   QVector<DisplayObjectHandle> * getList( const vnl_vector<double> &points , double value);
   bool cached_;
-  std::map<double,QVector<DisplayObjectHandle>> disp_handles_;
+  std::map<double,QVector<DisplayObjectHandle> > disp_handles_;
   Preferences &preferences_;
   bool compute_stats();
 

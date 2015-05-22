@@ -245,7 +245,7 @@ vnl_vector<double> Visualizer::getShape( int mode, double value ) {
                            QString::number( this->stats.Eigenvalues()[m] ),
                            QString::number( value * lambda ) );
 
-  std::map<double,QVector<DisplayObjectHandle>>::iterator it = disp_handles_.find(value + 10. * mode);
+  std::map<double,QVector<DisplayObjectHandle> >::iterator it = disp_handles_.find(value + 10. * mode);
   if (it != disp_handles_.end()) return it->second[0]->get_correspondence_points();
 
   return this->stats.Mean() + ( e * ( value * lambda ) );
