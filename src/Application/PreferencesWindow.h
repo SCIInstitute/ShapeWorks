@@ -20,9 +20,7 @@ public:
   PreferencesWindow(QWidget* parent, Preferences& prefs);
 
   void set_values_from_preferences();
-
-  bool get_use_powercrust();
-
+  
 public Q_SLOTS:
 
   void on_groom_location_textChanged( const QString& text );
@@ -42,6 +40,8 @@ public Q_SLOTS:
   void on_pca_steps_valueChanged( int value );
   void on_regression_steps_valueChanged( int value );
   void on_power_crust_toggled(bool b);
+  void on_parallel_enabled_toggled(bool b);
+  void on_num_threads_value_changed(int i);
 
   void restore_defaults();
 signals:

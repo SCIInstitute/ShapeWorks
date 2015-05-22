@@ -606,6 +606,9 @@ QPushButton {
       </item>
       <item row="0" column="3">
        <widget class="QPushButton" name="regression_button">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Regression</string>
         </property>
@@ -800,6 +803,12 @@ QPushButton {
           </property>
           <item>
            <widget class="QWidget" name="pcaHeaderBackground" native="true">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>21</height>
+             </size>
+            </property>
             <layout class="QVBoxLayout" name="verticalLayout_13">
              <property name="leftMargin">
               <number>0</number>
@@ -944,57 +953,6 @@ QPushButton {
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="pcaGroup1Label">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Group1</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QSlider" name="pcaGroupSlider">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="minimum">
-                  <number>0</number>
-                 </property>
-                 <property name="maximum">
-                  <number>20</number>
-                 </property>
-                 <property name="value">
-                  <number>10</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="tickPosition">
-                  <enum>QSlider::TicksBelow</enum>
-                 </property>
-                 <property name="tickInterval">
-                  <number>5</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="pcaGroup2Label">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Group2</string>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="1">
                 <widget class="QWidget" name="widget_23" native="true">
                  <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -1049,7 +1007,7 @@ QPushButton {
                  </layout>
                 </widget>
                </item>
-               <item row="3" column="1">
+               <item row="2" column="1">
                 <widget class="QWidget" name="widget_25" native="true">
                  <layout class="QHBoxLayout" name="horizontalLayout_10">
                   <property name="spacing">
@@ -1067,42 +1025,6 @@ QPushButton {
                   <property name="bottomMargin">
                    <number>0</number>
                   </property>
-                  <item>
-                   <spacer name="horizontalSpacer_7">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="pcaGroupAnimateCheckBox">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>Animate</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                  </layout>
                 </widget>
                </item>

@@ -25,11 +25,6 @@ PreferencesWindow::PreferencesWindow( QWidget* parent, Preferences& prefs ) : pr
 }
 
 //-----------------------------------------------------------------------------
-bool PreferencesWindow::get_use_powercrust() {
-	return this->ui_->power_crust->isChecked();
-}
-
-//-----------------------------------------------------------------------------
 void PreferencesWindow::update_labels()
 {
   this->ui_->glyphQualityLabel->setText( QString::number( preferences_.get_glyph_quality() ) );
@@ -124,6 +119,8 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->pca_range->setValue( preferences_.get_pca_range() );
   this->ui_->pca_steps->setValue( preferences_.get_num_pca_steps() );
   this->ui_->regression_steps->setValue( preferences_.get_num_regression_rteps() );
+  this->ui_->power_crust->setChecked( preferences_.get_use_powercrust() );
+  this->ui_->smoothingSlider_2->setValue( preferences_.get_smoothing_amount() );
 
   this->update_labels();
 }
@@ -178,4 +175,14 @@ void PreferencesWindow::on_power_crust_toggled(bool powercrust)
   }
   preferences_.set_use_powercrust(powercrust);
   emit clear_cache();
+}
+
+//-----------------------------------------------------------------------------
+void PreferencesWindow::on_parallel_enabled_toggled(bool b) {
+  preferences_.set_parallel_enabled(b);
+  this->ui_->num_threads->setEnabled(b);
+}
+//-----------------------------------------------------------------------------
+void PreferencesWindow::on_num_threads_value_changed(int i) {
+  preferences_.set_num_threads(i);
 }

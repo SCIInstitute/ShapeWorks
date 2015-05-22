@@ -24,27 +24,26 @@ class MeshWorker : public QObject
   Q_OBJECT
 
 public:
-	MeshWorker(Preferences& prefs) : prefs_(prefs), meshGenerator(prefs) {}
-	~MeshWorker() {}
-  void setWorkQueue( MeshWorkQueue* queue );
-  void setWorkingQueue( MeshWorkQueue* queue );
-  void setWorkDoneCondition( QWaitCondition* condition );
-  void setMeshCache( MeshCache* cache );
-
+	MeshWorker(Preferences& prefs, 
+		const vnl_vector<double> shape, 
+		MeshWorkQueue *queue,
+		MeshCache * cache);
+	~MeshWorker();
   MeshGenerator* getMeshGenerator();
 
 public Q_SLOTS:
-  void threadBegin();
+  void process();
+
+Q_SIGNALS:
+  void result_ready();
 
 private:
   Preferences& prefs_;
-  MeshGenerator meshGenerator;
+  MeshGenerator meshGenerator_;
+  vnl_vector<double> shape_;
+  MeshWorkQueue *queue_;
+  MeshCache * cache_;
 
-  MeshWorkQueue* workQueue;
-  MeshWorkQueue* workingQueue;
-  MeshCache* meshCache;
-
-  QWaitCondition* workDoneCondition;
 };
 
 #endif // ifndef MESH_WORKER_H

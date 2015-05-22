@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>219</width>
-    <height>350</height>
+    <height>174</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -429,20 +429,6 @@ QToolButton:pressed{
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="medianGroup1Button">
-              <property name="text">
-               <string>Group 1 Median</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="medianGroup2Button">
-              <property name="text">
-               <string>Group 2 Median</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
          </item>
@@ -459,106 +445,8 @@ QToolButton:pressed{
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="mean_overall">
-              <property name="text">
-               <string>Overall</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="meanGroup1Button">
-              <property name="text">
-               <string>Group1 Mean</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="meanGroup2Button">
-              <property name="text">
-               <string>Group 2 Mean</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="meanDifferenceButton">
-              <property name="text">
-               <string>Difference</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <property name="autoExclusive">
-               <bool>true</bool>
-              </property>
-              <property name="default">
-               <bool>false</bool>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-          </layout>
          </item>
         </layout>
        </widget>

@@ -70,11 +70,6 @@ void AnalysisTool::update_analysis_mode()
   // update UI
 
   // groups available
-  this->ui_->meanGroup1Button->setVisible( false );
-  this->ui_->meanGroup2Button->setVisible( false );
-  this->ui_->medianGroup1Button->setVisible( false );
-  this->ui_->medianGroup2Button->setVisible( false );
-  this->ui_->mean_overall->setChecked(true);
 }
 
 //---------------------------------------------------------------------------
