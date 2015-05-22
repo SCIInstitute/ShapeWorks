@@ -65,7 +65,8 @@ void MeshManager::generateMesh( const vnl_vector<double>& shape )
 vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& shape )
 {
   vtkSmartPointer<vtkPolyData> polyData;
-
+  float tmp = this->prefs_.get_cache_epsilon();
+  float tmp2 = this->prefs_.get_num_threads();
   // check cache first
   if ( this->meshCache_.getMesh( shape ) )
   {

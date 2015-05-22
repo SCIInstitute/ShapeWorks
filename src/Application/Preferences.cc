@@ -21,6 +21,7 @@ const int DEFAULT_PCA_STEPS = 40;
 const int DEFAULT_REGRESSION_STEPS = 50;
 const bool DEFAULT_USE_POWERCRUST = true;
 const float DEFAULT_SMOOTHING_AMOUNT = 0.f;
+const float DEFAULT_CACHE_EPSILON = 1e-3f;
 
 //-----------------------------------------------------------------------------
 Preferences::Preferences()
@@ -243,6 +244,12 @@ float Preferences::get_smoothing_amount() {
 void Preferences::set_smoothing_amount(float b) {
   this->settings.setValue( "Mesh/SmoothingAmount", b );
 }
+float Preferences::get_cache_epsilon() {
+	return this->settings.value( "Mesh/CachingEpsilon", DEFAULT_CACHE_EPSILON ).toFloat();
+}
+void Preferences::set_cache_epsilon(float value) {
+  this->settings.setValue( "Mesh/CachingEpsilon", value );
+}
 
 //-----------------------------------------------------------------------------
 void Preferences::restore_defaults()
@@ -259,4 +266,5 @@ void Preferences::restore_defaults()
   this->settings.setValue( "Sliders/RegressionSteps", DEFAULT_REGRESSION_STEPS );
   this->settings.setValue( "Mesh/UsePowercrust", DEFAULT_USE_POWERCRUST );
   this->settings.setValue( "Mesh/SmoothingAmount", DEFAULT_SMOOTHING_AMOUNT );
+  this->settings.setValue( "Mesh/CachingEpsilon", DEFAULT_CACHE_EPSILON );
 }

@@ -77,6 +77,9 @@ public:
   float get_smoothing_amount();
   void set_smoothing_amount(float value);
 
+  float get_cache_epsilon();
+  void set_cache_epsilon(float value);
+
 Q_SIGNALS:
   void color_scheme_changed( int newIndex );
   void glyph_properties_changed();

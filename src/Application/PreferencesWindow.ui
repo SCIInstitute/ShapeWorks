@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -348,14 +348,47 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QCheckBox" name="mesh_cache_enabled">
-            <property name="text">
-             <string>Enabled</string>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="topMargin">
+             <number>0</number>
             </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="mesh_cache_enabled">
+              <property name="text">
+               <string>Enabled</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item alignment="Qt::AlignRight">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>Caching Epsilon =1  x 10 ^ </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="caching_epsilon">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="minimum">
+               <number>-12</number>
+              </property>
+              <property name="maximum">
+               <number>12</number>
+              </property>
+              <property name="value">
+               <number>-3</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout">

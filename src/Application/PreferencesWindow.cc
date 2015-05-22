@@ -72,18 +72,6 @@ void PreferencesWindow::on_glyph_quality_valueChanged( int value )
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_num_threads_valueChanged( int value )
-{
-  preferences_.set_num_threads( value );
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_parallel_enabled_stateChanged( int state )
-{
-  preferences_.set_parallel_enabled( this->ui_->parallel_enabled->isChecked() );
-}
-
-//-----------------------------------------------------------------------------
 void PreferencesWindow::on_pca_range_valueChanged( double value )
 {
   preferences_.set_pca_range( this->ui_->pca_range->value() );
@@ -191,6 +179,10 @@ void PreferencesWindow::on_parallel_enabled_toggled(bool b) {
   this->ui_->num_threads->setEnabled(b);
 }
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_num_threads_value_changed(int i) {
+void PreferencesWindow::on_num_threads_valueChanged(int i) {
   preferences_.set_num_threads(i);
+}
+//-----------------------------------------------------------------------------
+void PreferencesWindow::on_caching_epsilon_valueChanged(int i) {
+	preferences_.set_cache_epsilon(std::powf(10.f,static_cast<float>(i)));
 }

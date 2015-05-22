@@ -28,6 +28,28 @@
 
 #include <vtkPolyData.h>
 
+bool vnl_vector_compare::operator()( const vnl_vector<double> &a, const vnl_vector<double> &b) const
+{
+  if ( a.size() < b.size() )
+  {
+    return true;
+  }
+   for ( unsigned i = 0; i < a.size(); i++ )
+  {
+	  if ( abs(a[i] - b[i]) > MeshCache::pref_ref_->get_cache_epsilon()) {
+		if ( a[i] < b[i])
+		{
+			return true;
+		}
+		else if ( b[i] < a[i])
+		{
+			return false;
+		}
+	  }
+  }
+  return false;
+}
+
 long long MeshCache::getTotalPhysicalMemory()
 {
 #ifdef _WIN32
@@ -75,10 +97,13 @@ long long MeshCache::getTotalAddressiblePhysicalMemory()
   if ( physical > addressable ) {return addressable; } else {return physical; }
 }
 
+Preferences *  MeshCache::pref_ref_ = 0;
+
 MeshCache::MeshCache(Preferences& prefs) : preferences_(prefs)
 {
   this->maxMemory = MeshCache::getTotalAddressiblePhysicalMemory();
   this->memorySize = 0;
+  this->pref_ref_ = &this->preferences_;
 }
 
 vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape )

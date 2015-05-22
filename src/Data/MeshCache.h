@@ -13,7 +13,6 @@
 #ifndef MESH_CACHE_H
 #define MESH_CACHE_H
 
-#define _EPSILON 1e-2
 #include <list>
 #include <map>
 
@@ -40,29 +39,7 @@ public:
 class vnl_vector_compare
 {
 public:
-  bool operator()( const vnl_vector<double> &a, const vnl_vector<double> &b) const
-  {
-    if ( a.size() < b.size() )
-    {
-      return true;
-    }
-
-    for ( unsigned i = 0; i < a.size(); i++ )
-    {
-		if ( abs(a[i] - b[i]) > _EPSILON) {
-			if ( a[i] < b[i])
-			{
-				return true;
-			}
-			else if ( b[i] < a[i])
-			{
-				return false;
-			}
-		}
-    }
-
-    return false;
-  }
+  bool operator()( const vnl_vector<double> &a, const vnl_vector<double> &b) const;
 };
 
 // mesh cache type
@@ -83,6 +60,8 @@ public:
   void insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh );
 
   void clear();
+
+  static Preferences * pref_ref_;
 
 private:
 
