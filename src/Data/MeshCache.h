@@ -13,7 +13,7 @@
 #ifndef MESH_CACHE_H
 #define MESH_CACHE_H
 
-
+#define _EPSILON 1e-3
 #include <list>
 #include <map>
 
@@ -40,23 +40,25 @@ public:
 class vnl_vector_compare
 {
 public:
-  bool operator()( const vnl_vector<double> &x, const vnl_vector<double> &y ) const
+  bool operator()( const vnl_vector<double> &a, const vnl_vector<double> &b) const
   {
-    if ( x.size() < y.size() )
+    if ( a.size() < b.size() )
     {
       return true;
     }
 
-    for ( unsigned i = 0; i < x.size(); i++ )
+    for ( unsigned i = 0; i < a.size(); i++ )
     {
-      if ( x[i] < y[i] )
-      {
-        return true;
-      }
-      else if ( y[i] < x[i] )
-      {
-        return false;
-      }
+		if ( abs(a[i] - b[i]) > _EPSILON) {
+			if ( a[i] < b[i])
+			{
+				return true;
+			}
+			else if ( b[i] < a[i])
+			{
+				return false;
+			}
+		}
     }
 
     return false;

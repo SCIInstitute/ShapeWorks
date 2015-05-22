@@ -1,63 +1,55 @@
-#ifndef STUDIO_DATA_MESHMANAGER_H
-#define STUDIO_DATA_MESHMANAGER_H
+/*
+ * Shapeworks license
+ */
 
-#include <QString>
-#include <QSharedPointer>
+/**
+ * @file MeshManager.h
+ * @brief Class to manage meshes
+ *
+ * The MeshManager handles all aspects of mesh generation and caching.
+ * It houses the cache and manages threads to work on mesh generation
+ * in the background.
+ */
 
-#include <vtkPolyData.h>
+#ifndef MESH_MANAGER_H
+#define MESH_MANAGER_H
+
 #include <vtkSmartPointer.h>
 
-#include <vnl/vnl_vector.h>
+#include <QWaitCondition>
 
-#include <Data/MeshSettings.h>
 #include <Data/MeshCache.h>
+#include <Data/MeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
-#include <Data/MeshGenerator.h>
-#include "Application/Preferences.h"
+#include <Application/Preferences.h>
 
-class Mesh;
-
-class MeshManager;
-typedef QSharedPointer< MeshManager > MeshManagerHandle;
-
-//! Creates, stores, and manages meshes.
-/*!
- * The MeshManager class is responsible for creating, storing and managing all meshes.
- *
- */
 class MeshManager : public QObject
 {
-  Q_OBJECT;
+  Q_OBJECT
 
 public:
-
-  /// Constructor
   MeshManager(Preferences& prefs);
-
-  /// Destructor
   ~MeshManager();
 
-  /// Queue a mesh to be generated from an image file
-  void queue_mesh_creation( QString filename, MeshSettings settings );
+  // mesh generation settings
+  void setNeighborhoodSize( int size );
+  void setSampleSpacing( double spacing );
+  // pre-generate and cache a mesh for this shape
+  void generateMesh( const vnl_vector<double>& shape );
 
-  /// Queue a mesh to be generated from a set of correspondence points
-  void queue_mesh_creation( const vnl_vector<double>& vnl_points, MeshSettings settings );
+  vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& shape );
 
-  /// Get mesh for an image file
-  QSharedPointer<Mesh> get_mesh( QString filename, MeshSettings settings, bool wait );
-
-  /// Get mesh fora set of correspondence points
-  QSharedPointer<Mesh> get_mesh( const vnl_vector<double>& vnl_points, MeshSettings settings, bool wait );
+  void clear_cache();
 
 private Q_SLOTS:
-  void initialize_threads();
+  void initializeThreads();
 
 private:
 
-  Preferences & preferences_;
-
-  void shutdown_threads();
+  void shutdownThreads();
+  
+  Preferences& prefs_;
 
   // cache of shape meshes
   MeshCache meshCache;
@@ -82,8 +74,6 @@ private:
   // mesh generation settings
   int neighborhoodSize;
   double sampleSpacing;
-  bool usePowerCrust;
-  float smoothingAmount;
 };
 
-#endif /* STUDIO_DATA_MESHMANAGER_H */
+#endif // ifndef MESH_Manager_H

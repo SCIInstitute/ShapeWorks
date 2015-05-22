@@ -5,6 +5,7 @@
 
 #include <Visualization/Visualizer.h>
 #include <Data/Shape.h>
+#include <Data/MeshManager.h>
 #include <QThread>
 
 const QString Visualizer::MODE_ORIGINAL_C( "Original" );
@@ -144,31 +145,25 @@ void Visualizer::display_shape( const vnl_vector<double> &points , double value)
 
 //-----------------------------------------------------------------------------
 QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &points , double value) {
-  QVector<DisplayObjectHandle> *list_ptr = NULL;
-  std::map<double,QVector<DisplayObjectHandle>>::iterator it = disp_handles_.find(value);
-  if (it == disp_handles_.end()) {
-	  MeshHandle mesh = MeshHandle( new Mesh() );
-	  mesh->create_from_pointset( points );
+    QVector<DisplayObjectHandle> *list_ptr = NULL;
+	MeshHandle mesh = MeshHandle( new Mesh() );
+	mesh->set_poly_data(this->project_->get_mesh_manager()->getMesh(points));
 
-	  meshing_queue_.queueThread(mesh);
+	DisplayObjectHandle object = DisplayObjectHandle( new DisplayObject() );
 
-	  DisplayObjectHandle object = DisplayObjectHandle( new DisplayObject() );
+	object->set_mesh( mesh );
+	object->set_correspondence_points( points );
 
-	  object->set_mesh( mesh );
-	  object->set_correspondence_points( points );
-
-	  QStringList annotations;
-	  annotations << "computed shape";
-	  annotations << "";
-	  annotations << "";
-	  annotations << "";
-	  object->set_annotations( annotations );
-	  list_ptr = new QVector<DisplayObjectHandle>();
-	  *list_ptr << object;
-	  disp_handles_.insert(std::pair<double,QVector<DisplayObjectHandle>>(value,*list_ptr) );
-  } else 
-	  list_ptr = &it->second;
-  return list_ptr;
+	QStringList annotations;
+	//annotations for the 4 corners of the view box
+	annotations << "computed shape";
+	annotations << "";
+	annotations << "";
+	annotations << "";
+	object->set_annotations( annotations );
+	list_ptr = new QVector<DisplayObjectHandle>();
+	*list_ptr << object;
+    return list_ptr;
 }
 
 //-----------------------------------------------------------------------------

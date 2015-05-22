@@ -25,6 +25,11 @@ PreferencesWindow::PreferencesWindow( QWidget* parent, Preferences& prefs ) : pr
 }
 
 //-----------------------------------------------------------------------------
+bool PreferencesWindow::get_use_powercrust() {
+	return this->ui_->power_crust->isChecked();
+}
+
+//-----------------------------------------------------------------------------
 void PreferencesWindow::update_labels()
 {
   this->ui_->glyphQualityLabel->setText( QString::number( preferences_.get_glyph_quality() ) );
@@ -159,4 +164,17 @@ void PreferencesWindow::on_locate_optimize_button_clicked()
   }
 
   this->ui_->optimize_location->setText( filename );
+}
+
+//-----------------------------------------------------------------------------
+void PreferencesWindow::on_power_crust_toggled(bool powercrust)
+{
+  if (powercrust) {
+	  this->ui_->neighborhoodSpinBox_2->setEnabled(false);
+	  this->ui_->spacingSpinBox_2->setEnabled(false);
+  } else {
+	  this->ui_->neighborhoodSpinBox_2->setEnabled(true);
+	  this->ui_->spacingSpinBox_2->setEnabled(true);
+  }
+  emit clear_cache();
 }

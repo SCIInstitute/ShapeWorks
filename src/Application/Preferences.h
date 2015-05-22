@@ -71,6 +71,12 @@ public:
   /// restore all default values
   void restore_defaults();
 
+  bool get_use_powercrust();
+  void set_use_powercrust(bool b);
+
+  float get_smoothing_amount();
+  void set_smoothing_amount(float value);
+
 Q_SIGNALS:
   void color_scheme_changed( int newIndex );
   void glyph_properties_changed();

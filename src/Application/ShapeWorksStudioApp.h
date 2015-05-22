@@ -63,7 +63,7 @@ public Q_SLOTS:
   void on_center_checkbox_stateChanged();
   void on_thumbnail_size_slider_valueChanged();
   void on_view_mode_combobox_currentIndexChanged();
-
+  
   void mode_changed();
 
   void handle_project_changed();

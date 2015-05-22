@@ -153,6 +153,19 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   //set up preferences window
   this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this,preferences_));
 
+  //analysis tool
+  this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool(preferences_));
+  this->analysis_tool_->set_project( this->project_ );
+  this->analysis_tool_->set_app( this );
+  this->ui_->lower_stacked_widget->addWidget( this->analysis_tool_.data() );
+  
+  //regression tool TODO
+  /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
+  this->analysis_tool_->set_project( this->project_ );
+  this->analysis_tool_->set_app( this );
+  this->ui_->lower_stacked_widget->addWidget( this->analysis_tool_.data() );*/
+
+
   this->update_from_preferences();
   this->update_display();
 
@@ -171,7 +184,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
 
-  this->ui_->center_checkbox->setVisible(false);
 }
 
 //---------------------------------------------------------------------------
@@ -484,7 +496,7 @@ void ShapeWorksStudioApp::update_display()
   if ( this->ui_->samples_button->isChecked() )
   {
     this->visualizer_->display_samples();
-    this->ui_->pcaPanel->setVisible( false );
+    this->ui_->lower_stacked_widget->setVisible( false );
 	size_t num_samples = this->project_->get_shapes().size();
 	if (num_samples == 0) num_samples = 9;
 	double root = std::sqrt(static_cast<double>(num_samples));
@@ -497,14 +509,16 @@ void ShapeWorksStudioApp::update_display()
   else if ( this->ui_->stats_button->isChecked() )
   {
     this->visualizer_->display_mean();
-    this->ui_->pcaPanel->setVisible( false );
+    this->ui_->lower_stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
+    this->ui_->lower_stacked_widget->setVisible( true );
 	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
 		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
   }
   else if ( this->ui_->pca_button->isChecked() )
   {
     this->compute_mode_shape();
-    this->ui_->pcaPanel->setVisible( true );
+    this->ui_->lower_stacked_widget->setCurrentIndex( 0 );
+    this->ui_->lower_stacked_widget->setVisible( true );
 	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
 		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
   }
@@ -594,26 +608,6 @@ void ShapeWorksStudioApp::compute_mode_shape()
 {
   double pcaSliderValue = this->get_pca_value( this->ui_->pcaSlider->value() );
   int mode = this->ui_->pcaModeSpinBox->value();
-  //TODO caching doesn't quite work, but may not be needed.
-  /*if (!this->visualizer_->is_cached()) {
-    this->set_status_bar( "Caching data for animation..." );
-	QProgressDialog progress( "Caching data for animation...", "Abort", 0, 40, this);
-	progress.setWindowModality( Qt::WindowModal );
-	progress.show();
-	int val = 0;
-	for(int m = 1; m < 3; m++){
-		for(double i = -2.0; i <=  2.1; i+=0.1) {
-			if(progress.wasCanceled())
-				return;
-		  this->visualizer_->cache_data(m,i);
-          progress.setValue( ++val );
-          QCoreApplication::processEvents();
-		}
-	}
-	this->visualizer_->set_cached(true);
-	
-    this->set_status_bar( "Cached all visual data." );
-  }*/
   this->visualizer_->display_pca( mode, pcaSliderValue );
 }
 

@@ -89,10 +89,14 @@ public:
   bool reconstructed_present();
   int get_num_shapes();
 
+  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
+
 Q_SIGNALS:
   /// signal that the data has changed
   void data_changed();
 
+public Q_SLOTS:
+  void handle_clear_cache();
 public:
   // constants
   const static QString DATA_C;

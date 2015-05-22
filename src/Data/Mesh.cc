@@ -138,11 +138,6 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
     points->SetPoint( i, x, y, z );
   }
   points->Modified();
-
-  //std::cerr << "found " << num_points << " points\n";
-
-  points->Modified();
-
   vtkSmartPointer<vtkPolyData>pointSet = vtkSmartPointer<vtkPolyData>::New();
   pointSet->SetPoints( points );
 
@@ -162,45 +157,13 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
 #endif
   powercrust->Update();
 
-/*
-   vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-   normals->SetInputData(powercrust->GetOutput());
-   normals->Update();
-   this->poly_data_ = normals->GetOutput();
- */
-
   this->poly_data_ = powercrust->GetOutput();
-
-/*
-   vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-#if VTK_MAJOR_VERSION <= 5
-   triangleFilter->SetInput(powercrust->GetOutput() );
-#else
-   triangleFilter->SetInputData(powercrust->GetOutput() );
-#endif
-   triangleFilter->Update();
-
-   vtkSmartPointer<vtkPolyDataToImageData> polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
-   polydataToImageData->SetInputConnection( triangleFilter->GetOutputPort() );
-   polydataToImageData->Update();
-
-   marching->SetInputConnection( polydataToImageData->GetOutputPort() );
-   marching->SetValue( 0, 0.5 );
-   marching->Update();
-   this->poly_data_ = marching->GetOutput();
- */
 
 #else
   vtkSmartPointer<CustomSurfaceReconstructionFilter> surface_reconstruction =
     vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   surface_reconstruction->SetInputData( pointSet );
   this->marching_->SetInputConnection( surface_reconstruction->GetOutputPort() );
-
-  //TODO testing threading of the meshing update step.
-  //marching->Update();
-
-  // store isosurface polydata
-  //this->poly_data_ = marching->GetOutput();
 
 #endif // ifdef POWERCRUST
 

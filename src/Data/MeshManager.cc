@@ -1,54 +1,119 @@
-#include <Data/MeshManager.h>
-#include <Data/Mesh.h>
+/*
+ * Shapeworks license
+ */
+
+// qt
 #include <QThread>
 
-//---------------------------------------------------------------------------
-MeshManager::MeshManager(Preferences& prefs) : preferences_(prefs), meshCache(prefs)
-{}
+// vtk
+#include <vtkPolyData.h>
 
-//---------------------------------------------------------------------------
+#include <Data/MeshManager.h>
+
+MeshManager::MeshManager(Preferences& prefs) : prefs_(prefs), meshCache(prefs), meshGenerator(prefs)
+{
+
+  // monitor changes to threading preferences
+  QObject::connect(
+    &prefs_, SIGNAL( threadingChangedSignal() ),
+    this, SLOT( initializeThreads() ) );
+
+  this->initializeThreads();
+}
+
 MeshManager::~MeshManager()
-{}
-
-//---------------------------------------------------------------------------
-void MeshManager::queue_mesh_creation( QString filename, MeshSettings settings )
-{}
-
-//---------------------------------------------------------------------------
-void MeshManager::queue_mesh_creation( const vnl_vector<double>& vnl_points, MeshSettings settings )
-{}
-
-//---------------------------------------------------------------------------
-QSharedPointer<Mesh> MeshManager::get_mesh( QString filename, MeshSettings settings, bool wait )
 {
-  QSharedPointer<Mesh> mesh = QSharedPointer<Mesh>( new Mesh() );
-
-  return mesh;
+  this->shutdownThreads();
 }
 
-//---------------------------------------------------------------------------
-QSharedPointer<Mesh> MeshManager::get_mesh( const vnl_vector<double>& vnl_points, MeshSettings settings, bool wait )
+void MeshManager::setNeighborhoodSize( int size )
 {
-  QSharedPointer<Mesh> mesh = QSharedPointer<Mesh>( new Mesh() );
-
-  return mesh;
+  this->neighborhoodSize = size;
+  this->initializeThreads();
+  this->meshCache.clear();
+  this->meshGenerator.setNeighborhoodSize( size );
 }
 
-//---------------------------------------------------------------------------
-void MeshManager::initialize_threads()
+void MeshManager::setSampleSpacing( double spacing )
+{
+  this->sampleSpacing = spacing;
+  this->initializeThreads();
+  this->meshCache.clear();
+  this->meshGenerator.setSampleSpacing( spacing );
+}
+
+void MeshManager::clear_cache() { 
+    this->initializeThreads();
+	this->meshCache.clear(); 
+	this->meshGenerator.updatePipeline();
+}
+
+void MeshManager::generateMesh( const vnl_vector<double>& shape )
+{
+  // check cache first
+  if ( !this->meshCache.getMesh( shape )
+       && !this->workingQueue.isInside( shape )
+       && !this->workQueue.isInside( shape ) )
+  {
+    this->workQueue.push( shape );
+
+    // wake up a thread
+    static int threadId = 0;
+    QMetaObject::invokeMethod( workers[threadId], "threadBegin", Qt::QueuedConnection );
+
+    // wrap
+    threadId++;
+    threadId = threadId % this->threads.size();
+  }
+}
+
+vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& shape )
+{
+  vtkSmartPointer<vtkPolyData> polyData;
+
+  // remove it from the work queue if it is present
+  this->workQueue.remove( shape );
+
+  // if another thread is already working on it, wait here
+  while ( this->workingQueue.isInside( shape ) )
+  {
+    QMutex mutex;
+    mutex.lock();
+    this->workDoneCondition.wait( &mutex, 5000 );
+  }
+
+  // check cache first
+  if ( this->meshCache.getMesh( shape ) )
+  {
+    polyData = this->meshCache.getMesh( shape );
+  }
+  else
+  {
+	  if ( (prefs_.get_parallel_enabled()) && (this->threads.size() > 0) && (!this->prefs_.get_use_powercrust()))
+	  {
+		 this->generateMesh(shape);
+	  } else {
+		 polyData = this->meshGenerator.buildMesh( shape );
+		 this->meshCache.insertMesh( shape, polyData );
+	  }
+  }
+  return polyData;
+}
+
+void MeshManager::initializeThreads()
 {
   //std::cerr << "shutting down threads\n";
-  this->shutdown_threads();
+  this->shutdownThreads();
   //std::cerr << "done shutting down threads\n";
 
-  if ( !preferences_.get_parallel_enabled() )
+  if ( !prefs_.get_parallel_enabled() )
   {
     threads.resize( 0 );
     workers.resize( 0 );
     return;
   }
 
-  int numThreads = preferences_.get_num_threads() - 1;
+  int numThreads = prefs_.get_num_threads() - 1;
   if ( numThreads > 0 )
   {
     threads.resize( numThreads );
@@ -59,7 +124,7 @@ void MeshManager::initialize_threads()
     for ( int i = 0; i < numThreads; i++ )
     {
       threads[i] = new QThread;
-      workers[i] = new MeshWorker;
+      workers[i] = new MeshWorker(prefs_);
       workers[i]->setWorkQueue( &( this->workQueue ) );
       workers[i]->setWorkingQueue( &( this->workingQueue ) );
       workers[i]->setWorkDoneCondition( &( this->workDoneCondition ) );
@@ -67,8 +132,6 @@ void MeshManager::initialize_threads()
 
       workers[i]->getMeshGenerator()->setNeighborhoodSize( this->neighborhoodSize );
       workers[i]->getMeshGenerator()->setSampleSpacing( this->sampleSpacing );
-      workers[i]->getMeshGenerator()->setSmoothingAmount( this->smoothingAmount );
-      workers[i]->getMeshGenerator()->setUsePowerCrust( this->usePowerCrust );
       workers[i]->moveToThread( threads[i] );
       threads[i]->start();
     }
@@ -80,17 +143,16 @@ void MeshManager::initialize_threads()
   }
 }
 
-//---------------------------------------------------------------------------
-void MeshManager::shutdown_threads()
+void MeshManager::shutdownThreads()
 {
   if ( this->threads.size() != 0 )
   {
     for ( size_t i = 0; i < this->threads.size(); i++ )
     {
-      while ( this->threads[i]->isRunning() )
+      while( this->threads[i]->isRunning() )
       {
         this->threads[i]->exit();
-        this->threads[i]->wait( 1000 );
+        this->threads[i]->wait(1000);
       }
     }
 

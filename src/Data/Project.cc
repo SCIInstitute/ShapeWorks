@@ -24,11 +24,18 @@ Project::Project(Preferences& prefs) : preferences_(prefs)
 {
   this->parent_ = NULL;
   this->reset();
+  connect(&preferences_,SIGNAL(clear_cache()),this,SLOT(handle_clear_cache()));
 }
 
 //---------------------------------------------------------------------------
 Project::~Project()
-{}
+{
+}
+
+//---------------------------------------------------------------------------
+void Project::handle_clear_cache() {
+	this->mesh_manager_->clear_cache();
+}
 
 //---------------------------------------------------------------------------
 void Project::set_parent( QWidget* parent )

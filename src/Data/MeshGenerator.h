@@ -16,8 +16,7 @@
 #include "vnl/vnl_vector.h"
 
 #include <vtkSmartPointer.h>
-
-//#define SW_USE_POWERCRUST
+#include <Application/Preferences.h>
 
 class CustomSurfaceReconstructionFilter;
 class vtkPowerCrustSurfaceReconstruction;
@@ -34,19 +33,17 @@ class vtkPolyDataToImageData;
 class MeshGenerator
 {
 public:
-  MeshGenerator();
+  MeshGenerator(Preferences& prefs);
   ~MeshGenerator();
 
   void setNeighborhoodSize( int size );
   void setSampleSpacing( double spacing );
-  void setUsePowerCrust( bool enabled );
-  void setSmoothingAmount( float amount ); // 0-100
 
   vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
+  void updatePipeline();
 
 private:
 
-  void updatePipeline();
 
   vtkSmartPointer<CustomSurfaceReconstructionFilter>  surfaceReconstruction;
   vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust;
@@ -61,8 +58,7 @@ private:
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
   vtkSmartPointer<vtkPolyDataToImageData>  polydataToImageData;
 
-  bool usePowerCrust;
-  bool smoothingEnabled;
+  Preferences& prefs_;
 };
 
 #endif // ifndef MESH_GENERATOR_H

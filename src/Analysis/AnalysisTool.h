@@ -40,16 +40,9 @@ public:
 
 public Q_SLOTS:
   void on_mean_overall_clicked();
-
-  void on_tabWidget_currentChanged();
-
-  void on_pcaSlider_valueChanged();
-  void on_pcaModeSpinBox_valueChanged();
-
+  
 private:
   Preferences & preferences_;
-  double get_pca_value( int slider_value );
-
   void compute_mode_shape();
 
   void update_analysis_mode();

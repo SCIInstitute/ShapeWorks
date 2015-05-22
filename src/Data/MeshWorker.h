@@ -24,6 +24,8 @@ class MeshWorker : public QObject
   Q_OBJECT
 
 public:
+	MeshWorker(Preferences& prefs) : prefs_(prefs), meshGenerator(prefs) {}
+	~MeshWorker() {}
   void setWorkQueue( MeshWorkQueue* queue );
   void setWorkingQueue( MeshWorkQueue* queue );
   void setWorkDoneCondition( QWaitCondition* condition );
@@ -35,7 +37,7 @@ public Q_SLOTS:
   void threadBegin();
 
 private:
-
+  Preferences& prefs_;
   MeshGenerator meshGenerator;
 
   MeshWorkQueue* workQueue;

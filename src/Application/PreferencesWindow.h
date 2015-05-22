@@ -21,6 +21,8 @@ public:
 
   void set_values_from_preferences();
 
+  bool get_use_powercrust();
+
 public Q_SLOTS:
 
   void on_groom_location_textChanged( const QString& text );
@@ -39,8 +41,12 @@ public Q_SLOTS:
   void on_pca_range_valueChanged( double value );
   void on_pca_steps_valueChanged( int value );
   void on_regression_steps_valueChanged( int value );
+  void on_power_crust_toggled(bool b);
 
   void restore_defaults();
+signals:
+  void clear_cache();
+
 
 private:
   Preferences &preferences_;

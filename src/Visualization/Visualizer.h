@@ -64,6 +64,8 @@ public:
   void set_selected_point_one( int id );
   void set_selected_point_two( int id );
 
+  void set_stats_ready(bool b) {this->stats_ready_ = b; }
+
   static const QString MODE_ORIGINAL_C;
   static const QString MODE_GROOMED_C;
   static const QString MODE_RECONSTRUCTION_C;

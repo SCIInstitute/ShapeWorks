@@ -19,20 +19,16 @@
 #include <Visualization/vtkPolyDataToImageData.h>
 
 #include <vtkMetaImageWriter.h>
-//#include <vtkPolyDataWriter.h>
 
 #include <Visualization/CustomSurfaceReconstructionFilter.h>
 
 // local files
-#ifdef SW_USE_POWERCRUST
+#ifdef POWERCRUST
 #include <Visualization/vtkPowerCrustSurfaceReconstruction.h>
 #endif
 
-MeshGenerator::MeshGenerator()
+MeshGenerator::MeshGenerator(Preferences& prefs) : prefs_(prefs)
 {
-  this->usePowerCrust = false;
-  this->smoothingEnabled = false;
-
   this->points = vtkSmartPointer<vtkPoints>::New();
   this->points->SetDataTypeToDouble();
   this->pointSet = vtkSmartPointer<vtkPolyData>::New();
@@ -45,7 +41,7 @@ MeshGenerator::MeshGenerator()
   this->surfaceReconstruction->SetInputData(this->pointSet);
 #endif
 
-#ifdef SW_USE_POWERCRUST
+#ifdef POWERCRUST
   this->polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();
   this->triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   this->powercrust = vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
@@ -56,7 +52,7 @@ MeshGenerator::MeshGenerator()
 #endif
   this->triangleFilter->SetInputConnection( this->powercrust->GetOutputPort() );
   this->polydataToImageData->SetInputConnection( this->triangleFilter->GetOutputPort() );
-#endif // ifdef SW_USE_POWERCRUST
+#endif // ifdef POWERCRUST
 
   this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
   this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
@@ -88,28 +84,6 @@ void MeshGenerator::setSampleSpacing( double spacing )
   this->surfaceReconstruction->SetSampleSpacing( spacing );
 }
 
-void MeshGenerator::setUsePowerCrust( bool enabled )
-{
-  this->usePowerCrust = enabled;
-  this->updatePipeline();
-}
-
-void MeshGenerator::setSmoothingAmount( float amount )
-{
-  if ( amount <= 0 )
-  {
-    this->smoothingEnabled = false;
-  }
-  else
-  {
-    this->smoothingEnabled = true;
-    this->windowSincFilter->SetNumberOfIterations( amount );
-    this->windowSincFilter->SetPassBand( 0.05 );
-  }
-
-  this->updatePipeline();
-}
-
 vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
   // copy shape points into point set
@@ -124,10 +98,9 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
     this->points->SetPoint( i, x, y, z );
   }
   this->points->Modified();
-
-  if ( this->usePowerCrust )
+  if ( this->prefs_.get_use_powercrust() )
   {
-    if ( this->smoothingEnabled )
+    if (this->prefs_.get_smoothing_amount() > 0)
     {
       this->polydataToImageData->Update();
       this->contourFilter->Update();
@@ -151,25 +124,29 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
 
 void MeshGenerator::updatePipeline()
 {
-  if ( this->usePowerCrust && this->smoothingEnabled )
+  if ( this->prefs_.get_use_powercrust() && this->prefs_.get_smoothing_amount() > 0 )
   {
+    this->windowSincFilter->SetNumberOfIterations( this->prefs_.get_smoothing_amount() );
+    this->windowSincFilter->SetPassBand( 0.05 );
     this->contourFilter->SetInputConnection( this->polydataToImageData->GetOutputPort() );
     this->contourFilter->SetValue( 0, 0.5 );
     this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
   }
-  else if ( this->usePowerCrust && !this->smoothingEnabled )
+  else if ( this->prefs_.get_use_powercrust() && !(this->prefs_.get_smoothing_amount() > 0) )
   {
-#ifdef SW_USE_POWERCRUST
+#ifdef POWERCRUST
     this->polydataNormals->SetInputConnection( this->powercrust->GetOutputPort() );
 #endif
   }
-  else if ( !this->usePowerCrust && this->smoothingEnabled )
+  else if ( !this->prefs_.get_use_powercrust() && this->prefs_.get_smoothing_amount() > 0 )
   {
+    this->windowSincFilter->SetNumberOfIterations( this->prefs_.get_smoothing_amount() );
+    this->windowSincFilter->SetPassBand( 0.05 );
     this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
     this->contourFilter->SetValue( 0, 0.0 );
     this->polydataNormals->SetInputConnection( this->windowSincFilter->GetOutputPort() );
   }
-  else if ( !this->usePowerCrust && !this->smoothingEnabled )
+  else if ( !this->prefs_.get_use_powercrust() && !( this->prefs_.get_smoothing_amount() > 0) )
   {
     this->polydataNormals->SetInputConnection( this->contourFilter->GetOutputPort() );
   }
