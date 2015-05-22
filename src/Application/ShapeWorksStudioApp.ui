@@ -1140,6 +1140,7 @@ QPushButton {
    <addaction name="action_import_mode"/>
    <addaction name="action_groom_mode"/>
    <addaction name="action_optimize_mode"/>
+   <addaction name="action_analysis_mode"/>
   </widget>
   <action name="action_quit">
    <property name="text">

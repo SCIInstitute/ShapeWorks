@@ -22,6 +22,14 @@ PreferencesWindow::PreferencesWindow( QWidget* parent, Preferences& prefs ) : pr
 
   QPushButton* reset_button = this->ui_->button_box->button( QDialogButtonBox::RestoreDefaults );
   QObject::connect( reset_button, SIGNAL( clicked() ), this, SLOT( restore_defaults() ) );
+
+#ifndef POWERCRUST
+  this->ui_->power_crust->setVisible(false);
+  this->ui_->power_crust->setChecked(false);
+  this->preferences_->set_use_powercrust(false);
+  this->ui_->neighborhoodSpinBox_2->setEnabled(true);
+  this->ui_->neighborhoodSpinBox_2->setEnabled(true);
+#endif
 }
 
 //-----------------------------------------------------------------------------

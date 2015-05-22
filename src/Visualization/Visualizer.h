@@ -2,7 +2,6 @@
 #define STUDIO_VISUALIZATION_VISUALIZER_H
 
 #include <Data/Project.h>
-#include <Data/MeshMarchingWorker.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
 #include "Application/Preferences.h"
@@ -109,8 +108,6 @@ private:
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
   int selected_point_one_;
   int selected_point_two_;
-
-  MeshMarchingWorker meshing_queue_;
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */

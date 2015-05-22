@@ -557,10 +557,6 @@
            </layout>
           </item>
          </layout>
-         <zorder>verticalLayoutWidget_2</zorder>
-         <zorder>layoutWidget</zorder>
-         <zorder>layoutWidget</zorder>
-         <zorder>layoutWidget</zorder>
         </widget>
        </item>
        <item>
@@ -577,8 +573,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>verticalSpacer_3</zorder>
-      <zorder>verticalSpacer_5</zorder>
       <zorder>groupBox_5</zorder>
       <zorder>groupBox</zorder>
      </widget>

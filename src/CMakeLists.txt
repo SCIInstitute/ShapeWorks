@@ -184,7 +184,6 @@ SET(STUDIO_DATA_HDRS
   Data/MeshWorkQueue.h
   Data/MeshWorker.h
   Data/MeshCache.h
-  Data/MeshMarchingWorker.h
 )
 SET(STUDIO_DATA_SRCS
   Data/Mesh.cc
@@ -196,7 +195,6 @@ SET(STUDIO_DATA_SRCS
   Data/MeshWorkQueue.cc
   Data/MeshWorker.cc
   Data/MeshCache.cc
-  Data/MeshMarchingWorker.cpp
 )
 
 ### Groom
@@ -317,7 +315,6 @@ SET( STUDIO_MOC_HDRS
      Data/Project.h
      Data/MeshManager.h
      Data/MeshWorker.h
-     Data/MeshMarchingWorker.h
      Application/Preferences.h
      Visualization/Visualizer.h
      Visualization/Lightbox.h

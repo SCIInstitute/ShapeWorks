@@ -51,7 +51,10 @@ void MeshManager::generateMesh( const vnl_vector<double>& shape )
   	  connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
   	  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   	  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-	  if (this->thread_count_ < this->prefs_.get_num_threads()) {
+	  size_t tmp_max = this->prefs_.get_num_threads();
+	  if (prefs_.get_use_powercrust())  //powercrust breaks on > 1 additional thread. 
+		tmp_max = 1;
+	  if (this->thread_count_ < tmp_max) {
   		thread->start();
 		this->thread_count_++;
 	  } else 
