@@ -87,7 +87,10 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
 
 void MeshManager::handle_thread_complete() {
 	this->thread_count_ --;
-	while (!this->threads_.empty() && this->thread_count_ < this->prefs_.get_num_threads()) {
+	size_t tmp_max = this->prefs_.get_num_threads();
+	if (prefs_.get_use_powercrust())  //powercrust breaks on > 1 additional thread. 
+		tmp_max = 1;
+	while (!this->threads_.empty() && this->thread_count_ < tmp_max) {
 		QThread *thread = this->threads_.back();
 		this->threads_.pop_back();
 		thread->start();

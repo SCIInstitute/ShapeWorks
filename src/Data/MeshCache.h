@@ -13,7 +13,7 @@
 #ifndef MESH_CACHE_H
 #define MESH_CACHE_H
 
-#define _EPSILON 1e-3
+#define _EPSILON 1e-2
 #include <list>
 #include <map>
 
