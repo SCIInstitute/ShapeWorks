@@ -28,20 +28,20 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_ = new Ui_AnalysisTool;
   this->ui_->setupUi( this );
 
-  //connect( this->ui_->allSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->singleSampleRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->meanRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->pcaRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->regressionRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->ui_->allSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+  connect( this->ui_->singleSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+  connect( this->ui_->meanRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+  connect( this->ui_->pcaRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+  connect( this->ui_->regressionRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
 }
 
 //---------------------------------------------------------------------------
 std::string AnalysisTool::getAnalysisMode() {
 	if (this->ui_->allSamplesRadio->isChecked()) return "all samples";
-	if (this->ui_->allSamplesRadio->isChecked()) return "one samples";
-	if (this->ui_->allSamplesRadio->isChecked()) return "mean";
-	if (this->ui_->allSamplesRadio->isChecked()) return "pca";
-	if (this->ui_->allSamplesRadio->isChecked()) return "regression";
+	if (this->ui_->singleSamplesRadio->isChecked()) return "one samples";
+	if (this->ui_->meanRadio->isChecked()) return "mean";
+	if (this->ui_->pcaRadio->isChecked()) return "pca";
+	if (this->ui_->regressionRadio->isChecked()) return "regression";
 	return "";
 }
 
@@ -117,3 +117,6 @@ void AnalysisTool::update_analysis_mode()
 void AnalysisTool::compute_mode_shape()
 {
 }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_analysis_options() { emit update_view(); }

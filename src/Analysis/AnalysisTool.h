@@ -50,6 +50,10 @@ public:
 
 public Q_SLOTS:
   void on_mean_overall_clicked();
+  void handle_analysis_options();
+
+signals:
+  void update_view();
   
 private:
   Preferences & preferences_;

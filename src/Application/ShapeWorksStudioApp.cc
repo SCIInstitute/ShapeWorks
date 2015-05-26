@@ -170,11 +170,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->update_from_preferences();
   this->update_display();
 
-  //connect( this->ui_->allSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->singleSampleRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->meanRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->pcaRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  //connect( this->ui_->regressionRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->analysis_tool_.data(), SIGNAL( update_view() ), this, SLOT( handle_display_setting_changed() ) );
 
   connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
@@ -504,8 +500,8 @@ void ShapeWorksStudioApp::update_display()
   this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
 
   if (this->project_->get_tool_state() != Project::ANALYSIS_C) return;
-
-  if ( this->analysis_tool_->getAnalysisMode() == "all samples" )
+  std::string mode = this->analysis_tool_->getAnalysisMode();
+  if ( mode == "all samples" )
   {
     this->visualizer_->display_samples();
 	size_t num_samples = this->project_->get_shapes().size();
@@ -519,9 +515,9 @@ void ShapeWorksStudioApp::update_display()
   } else {
 	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
 		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
-		if ( this->analysis_tool_->getAnalysisMode() == "mean" ) {
+		if ( mode == "mean" ) {
 			this->visualizer_->display_mean();
-		} else if (this->analysis_tool_->getAnalysisMode() == "pca") {
+		} else if (mode == "pca") {
 			this->compute_mode_shape();
 		} //TODO 1 sample, median, regression
   }
