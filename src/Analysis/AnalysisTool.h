@@ -38,6 +38,16 @@ public:
 
   void activate();
 
+  std::string getAnalysisMode();
+
+  QSlider* getPCASlider();
+
+  void setLabels(QString which, QString value);
+
+  int getPCAMode();
+
+  bool pcaAnimate();
+
 public Q_SLOTS:
   void on_mean_overall_clicked();
   

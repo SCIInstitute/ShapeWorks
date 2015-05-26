@@ -127,6 +127,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->action_group_->addAction( this->ui_->action_import_mode );
   this->action_group_->addAction( this->ui_->action_groom_mode );
   this->action_group_->addAction( this->ui_->action_optimize_mode );
+  this->action_group_->addAction( this->ui_->action_analysis_mode );
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
 
@@ -157,7 +158,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool(preferences_));
   this->analysis_tool_->set_project( this->project_ );
   this->analysis_tool_->set_app( this );
-  this->ui_->lower_stacked_widget->addWidget( this->analysis_tool_.data() );
+  this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
   
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
@@ -169,10 +170,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->update_from_preferences();
   this->update_display();
 
-  connect( this->ui_->samples_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->ui_->stats_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->ui_->pca_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->ui_->regression_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  //connect( this->ui_->allSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  //connect( this->ui_->singleSampleRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  //connect( this->ui_->meanRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  //connect( this->ui_->pcaRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
+  //connect( this->ui_->regressionRadio, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
 
   connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
@@ -180,7 +182,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
 
-  connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
+  //connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
 
   connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
   connect(this->preferences_window_.data(),SIGNAL(clear_cache()),this->project_.data(),SLOT(handle_clear_cache()));
@@ -430,6 +432,13 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
+{
+  this->project_->set_tool_state( Project::ANALYSIS_C );
+  this->ui_->stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
@@ -494,10 +503,11 @@ void ShapeWorksStudioApp::update_display()
   this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
   this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
 
-  if ( this->ui_->samples_button->isChecked() )
+  if (this->project_->get_tool_state() != Project::ANALYSIS_C) return;
+
+  if ( this->analysis_tool_->getAnalysisMode() == "all samples" )
   {
     this->visualizer_->display_samples();
-    this->ui_->lower_stacked_widget->setVisible( false );
 	size_t num_samples = this->project_->get_shapes().size();
 	if (num_samples == 0) num_samples = 9;
 	double root = std::sqrt(static_cast<double>(num_samples));
@@ -506,22 +516,14 @@ void ShapeWorksStudioApp::update_display()
 	size_t zoom_val = this->ui_->thumbnail_size_slider->maximum() + 1 - value;
 	if (zoom_val != this->ui_->thumbnail_size_slider->value())
 		this->ui_->thumbnail_size_slider->setValue(zoom_val);
-  }
-  else if ( this->ui_->stats_button->isChecked() )
-  {
-    this->visualizer_->display_mean();
-    this->ui_->lower_stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
-    this->ui_->lower_stacked_widget->setVisible( true );
+  } else {
 	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
 		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
-  }
-  else if ( this->ui_->pca_button->isChecked() )
-  {
-    this->compute_mode_shape();
-    this->ui_->lower_stacked_widget->setCurrentIndex( 0 );
-    this->ui_->lower_stacked_widget->setVisible( true );
-	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
-		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
+		if ( this->analysis_tool_->getAnalysisMode() == "mean" ) {
+			this->visualizer_->display_mean();
+		} else if (this->analysis_tool_->getAnalysisMode() == "pca") {
+			this->compute_mode_shape();
+		} //TODO 1 sample, median, regression
   }
 }
 
@@ -551,6 +553,10 @@ void ShapeWorksStudioApp::open_project( QString filename )
   else if ( this->project_->get_tool_state() == Project::OPTIMIZE_C )
   {
     this->ui_->action_optimize_mode->trigger();
+  }
+  else if ( this->project_->get_tool_state() == Project::ANALYSIS_C )
+  {
+    this->ui_->action_analysis_mode->trigger();
   }
 
   // load display mode
@@ -598,7 +604,7 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 double ShapeWorksStudioApp::get_pca_value( int slider_value )
 {
   float range = preferences_.get_pca_range();
-  int halfRange = this->ui_->pcaSlider->maximum();
+  int halfRange = this->analysis_tool_->getPCASlider()->maximum();
 
   double value = (double)slider_value / (double)halfRange * range;
   return value;
@@ -607,8 +613,8 @@ double ShapeWorksStudioApp::get_pca_value( int slider_value )
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape()
 {
-  double pcaSliderValue = this->get_pca_value( this->ui_->pcaSlider->value() );
-  int mode = this->ui_->pcaModeSpinBox->value();
+  double pcaSliderValue = this->get_pca_value( this->analysis_tool_->getPCASlider()->value() );
+  int mode = this->analysis_tool_->getPCAMode();
   this->visualizer_->display_pca( mode, pcaSliderValue );
 }
 
@@ -652,7 +658,7 @@ void ShapeWorksStudioApp::on_pcaModeSpinBox_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_animate_state_changed()
 {
-  if ( this->ui_->pcaAnimateCheckBox->isChecked() )
+  if ( this->analysis_tool_->pcaAnimate())
   {
     //this->setPregenSteps();
     this->pcaAnimateTimer.setInterval( 10 );
@@ -667,31 +673,31 @@ void ShapeWorksStudioApp::handle_pca_animate_state_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_timer()
 {
-  int value = this->ui_->pcaSlider->value();
+  int value = this->analysis_tool_->getPCASlider()->value();
   if ( this->pcaAnimateDirection )
   {
-    value += this->ui_->pcaSlider->singleStep();
+    value += this->analysis_tool_->getPCASlider()->singleStep();
   }
   else
   {
-    value -= this->ui_->pcaSlider->singleStep();
+    value -= this->analysis_tool_->getPCASlider()->singleStep();
   }
 
-  if ( value >= this->ui_->pcaSlider->maximum() || value <= this->ui_->pcaSlider->minimum() )
+  if ( value >= this->analysis_tool_->getPCASlider()->maximum() || value <= this->analysis_tool_->getPCASlider()->minimum() )
   {
     this->pcaAnimateDirection = !this->pcaAnimateDirection;
     //this->setPregenSteps();
   }
 
-  this->ui_->pcaSlider->setValue( value );
+  this->analysis_tool_->getPCASlider()->setValue( value );
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_labels_changed( QString value, QString eigen, QString lambda )
 {
-  this->ui_->pcaValueLabel->setText( value );
-  this->ui_->pcaEigenValueLabel->setText( eigen );
-  this->ui_->pcaLambdaLabel->setText( lambda );
+	this->analysis_tool_->setLabels(QString("pca"),value);
+	this->analysis_tool_->setLabels(QString("eigen"),eigen);
+	this->analysis_tool_->setLabels(QString("lambda"),lambda);
 }
 
 //---------------------------------------------------------------------------

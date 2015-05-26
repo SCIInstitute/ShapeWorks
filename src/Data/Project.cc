@@ -18,6 +18,7 @@
 const QString Project::DATA_C( "data" );
 const QString Project::GROOM_C( "groom" );
 const QString Project::OPTIMIZE_C( "optimize" );
+const QString Project::ANALYSIS_C( "analysis" );
 
 //---------------------------------------------------------------------------
 Project::Project(Preferences& prefs) : preferences_(prefs)

@@ -102,6 +102,7 @@ public:
   const static QString DATA_C;
   const static QString GROOM_C;
   const static QString OPTIMIZE_C;
+  const static QString ANALYSIS_C;
 
 private:
 
