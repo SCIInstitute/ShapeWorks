@@ -23,12 +23,10 @@ Visualizer::Visualizer(Preferences &prefs) : preferences_(prefs)
 
   this->show_glyphs_ = true;
   this->show_surface_ = true;
-  this->stats_ready_ = false;
 
   this->glyph_lut_ = vtkSmartPointer<vtkLookupTable>::New();
   this->selected_point_one_ = -1;
   this->selected_point_two_ = -1;
-  this->cached_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -124,27 +122,79 @@ void Visualizer::display_samples()
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_mean()
-{
-  if ( !this->compute_stats() )
-  {
-    return;
-  }
-
-  this->display_shape( this->stats.Mean() , 0.);
-}
-
-//-----------------------------------------------------------------------------
-void Visualizer::display_shape( const vnl_vector<double> &points , double value)
+void Visualizer::display_shape( const vnl_vector<double> &points)
 {
   
-  QVector<DisplayObjectHandle> *list_ptr = getList(points,value);
+  QVector<DisplayObjectHandle> *list_ptr = getList(points);
   this->lightbox_->set_display_objects( *list_ptr );
   this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
-QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &points , double value) {
+void Visualizer::display_sample(size_t i)
+{
+    size_t sample_count = this->project_->get_shapes().size();
+    if (sample_count == 0) return;
+    i = std::min(sample_count - 1, i);
+  
+    this->update_viewer_properties();
+  
+    QVector < QSharedPointer < DisplayObject > > list_ptr;
+
+    QSharedPointer < Shape > shape = this->project_->get_shapes().at(i);
+
+    QSharedPointer<Mesh> mesh;
+    QString filename;
+
+    //load based on preference, but always load something
+
+    mesh = shape->get_original_mesh();
+    filename = shape->get_original_filename();
+    QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>( new DisplayObject() );
+    object->set_correspondence_points( shape->get_local_correspondence_points() );
+
+    if ( !mesh || this->display_mode_ == Visualizer::MODE_GROOMED_C )
+    {
+      mesh = shape->get_groomed_mesh();
+      filename = shape->get_groomed_filename();
+    }  
+
+    if ( !mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C )
+    {
+      mesh = shape->get_reconstructed_mesh();
+      filename = shape->get_global_point_filename();
+
+      // use global correspondence points for reconstructed mesh
+      object->set_correspondence_points( shape->get_global_correspondence_points() );
+    }
+    object->set_mesh( mesh );
+
+    if ( this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C )
+    {
+      object->set_exclusion_sphere_centers( shape->get_exclusion_sphere_centers() );
+      object->set_exclusion_sphere_radii( shape->get_exclusion_sphere_radii() );
+    }
+
+    QStringList annotations;
+    annotations << filename;
+    annotations << "";
+    annotations << QString::number( shape->get_id() );
+    annotations << "";
+    object->set_annotations( annotations );
+
+    if ( this->center_ )
+    {
+      object->set_transform( mesh->get_center_transform() );
+    }
+    list_ptr << object;
+
+    this->update_viewer_properties();
+    this->lightbox_->set_display_objects( list_ptr );
+    this->lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &points) {
     QVector<DisplayObjectHandle> *list_ptr = NULL;
 	MeshHandle mesh = MeshHandle( new Mesh() );
 	mesh->set_poly_data(this->project_->get_mesh_manager()->getMesh(points));
@@ -164,14 +214,6 @@ QVector<DisplayObjectHandle> * Visualizer::getList( const vnl_vector<double> &po
 	list_ptr = new QVector<DisplayObjectHandle>();
 	*list_ptr << object;
     return list_ptr;
-}
-
-//-----------------------------------------------------------------------------
-void Visualizer::cache_data(int mode, double value)
-{
-  //int strict_mode = std::min(std::max(0,mode),static_cast<int>(this->stats.Eigenvectors().size()) - 1);
-  //std::cerr << "cached value: " << (value + 10. * mode) << std::endl;
-  //this->getList(getShape(mode,value),value + 10. * strict_mode);
 }
 
 //-----------------------------------------------------------------------------
@@ -202,75 +244,16 @@ void Visualizer::update_viewer_properties()
       viewer->set_show_surface( this->show_surface_ );
     }
 
-    this->update_lut();
+	this->update_lut();
 
     this->lightbox_->redraw();
   }
 }
 
 //-----------------------------------------------------------------------------
-bool Visualizer::compute_stats()
-{
-  if ( this->stats_ready_ )
-  {
-    return true;
-  }
-
-  if ( this->project_->get_shapes().size() == 0 || !this->project_->reconstructed_present() )
-  {
-    return false;
-  }
-
-  std::vector < vnl_vector < double > > points;
-  foreach( ShapeHandle shape, this->project_->get_shapes() ) {
-    points.push_back( shape->get_global_correspondence_points() );
-  }
-
-  this->stats.ImportPoints( points );
-  this->stats.ComputeModes();
-  this->stats_ready_ = true;
-
-  return true;
-}
-
-//-----------------------------------------------------------------------------
-vnl_vector<double> Visualizer::getShape( int mode, double value ) {
-  unsigned int m = this->stats.Eigenvectors().columns() - (mode+1) ;
-
-  vnl_vector<double> e = this->stats.Eigenvectors().get_column( m );
-
-  double lambda = sqrt( this->stats.Eigenvalues()[m] );
-
-  emit pca_labels_changed( QString::number( value, 'g', 2 ),
-                           QString::number( this->stats.Eigenvalues()[m] ),
-                           QString::number( value * lambda ) );
-
-  std::map<double,QVector<DisplayObjectHandle> >::iterator it = disp_handles_.find(value + 10. * mode);
-  if (it != disp_handles_.end()) return it->second[0]->get_correspondence_points();
-
-  return this->stats.Mean() + ( e * ( value * lambda ) );
-}
-
-//-----------------------------------------------------------------------------
-void Visualizer::display_pca( int mode, double value )
-{
-  if ( !this->compute_stats() || this->stats.Eigenvectors().size() <= 1)
-    return;
-  if (mode + 2 > this->stats.Eigenvalues().size()) mode = this->stats.Eigenvalues().size() - 2;
-  this->display_shape( getShape(mode,value) , value + mode * 10.);
-}
-
-//-----------------------------------------------------------------------------
 void Visualizer::update_lut()
 {
-  if ( !this->compute_stats() )
-  {
-    return;
-  }
-
-  vnl_vector<double> mean_shape = this->stats.Mean();
-
-  int num_points = mean_shape.size() / 3;
+  int num_points = this->cached_mean_.size() / 3;
 
   this->glyph_lut_->SetNumberOfTableValues( num_points + 1 );
   this->glyph_lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
@@ -306,9 +289,9 @@ void Visualizer::update_lut()
       // color by distance from the selected point
 
       double p1[3];
-      p1[0] = mean_shape[ this->selected_point_one_ * 3 + 0];
-      p1[1] = mean_shape[ this->selected_point_one_ * 3 + 1];
-      p1[2] = mean_shape[ this->selected_point_one_ * 3 + 2];
+      p1[0] = this->cached_mean_[ this->selected_point_one_ * 3 + 0];
+      p1[1] = this->cached_mean_[ this->selected_point_one_ * 3 + 1];
+      p1[2] = this->cached_mean_[ this->selected_point_one_ * 3 + 2];
 
       std::vector<double> distances;
       double max_distance = 0;
@@ -316,9 +299,9 @@ void Visualizer::update_lut()
       {
 
         double p2[3];
-        p2[0] = mean_shape[ i * 3 + 0];
-        p2[1] = mean_shape[ i * 3 + 1];
-        p2[2] = mean_shape[ i * 3 + 2];
+        p2[0] = this->cached_mean_[ i * 3 + 0];
+        p2[1] = this->cached_mean_[ i * 3 + 1];
+        p2[2] = this->cached_mean_[ i * 3 + 2];
 
         double distance = sqrt( vtkMath::Distance2BetweenPoints( p1, p2 ) );
         distances.push_back( distance );
@@ -379,4 +362,10 @@ void Visualizer::compute_measurements()
 {
   if ( this->selected_point_one_ >= 0 && this->selected_point_two_ >= 0 )
   {}
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::setMean(const vnl_vector<double> & mean)
+{
+  this->cached_mean_ = mean;
 }

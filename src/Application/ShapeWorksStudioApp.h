@@ -65,20 +65,12 @@ public Q_SLOTS:
   void on_thumbnail_size_slider_valueChanged();
   void on_view_mode_combobox_currentIndexChanged();
   
-  void mode_changed();
+  void handle_pca_changed();
 
   void handle_project_changed();
   void handle_groom_complete();
 
   void handle_display_setting_changed();
-
-  // PCA
-  void on_pcaSlider_valueChanged();
-  void on_pcaModeSpinBox_valueChanged();
-
-  void handle_pca_animate_state_changed();
-  void handle_pca_timer();
-  void handle_pca_labels_changed( QString value, QString eigen, QString lambda );
 
   void handle_open_recent();
 
@@ -91,8 +83,6 @@ private:
   void update_table();
 
   void update_display();
-
-  double get_pca_value( int slider_value );
 
   void compute_mode_shape();
 
@@ -122,10 +112,6 @@ private:
   QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
-
-  bool pcaAnimateDirection;
-  QTimer pcaAnimateTimer;
-
   QList<QAction*> recent_file_actions_;
 };
 

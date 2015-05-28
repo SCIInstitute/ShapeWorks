@@ -81,6 +81,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->glyph_quality_slider_->setTickPosition( QSlider::TicksBelow );
   this->glyph_quality_slider_->setTickInterval( 1 );
   this->glyph_quality_slider_->setMinimumWidth( 200 );
+  this->ui_->glyphs_visible_button->setMenu( menu );
 
   layout->addWidget( this->glyph_size_slider_, 0, 2, 1, 1 );
   layout->addWidget( this->glyph_quality_slider_, 1, 2, 1, 1 );
@@ -97,15 +98,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
      tool_button->setPopupMode( QToolButton::InstantPopup );
      this->ui_->glyph_layout->addWidget( tool_button );
    */
-
-  this->ui_->glyphs_visible_button->setMenu( menu );
-///
-
-  this->pcaAnimateDirection = true;
-
+  //project initializations
   this->project_ = QSharedPointer<Project>( new Project(preferences_) );
   this->project_->set_parent( this );
-
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
 
   // setup modes
@@ -130,22 +125,21 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->action_group_->addAction( this->ui_->action_analysis_mode );
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
-
   this->lightbox_ = LightboxHandle( new Lightbox() );
 
+  //visualizer initializations
   this->visualizer_ = QSharedPointer<Visualizer> ( new Visualizer(preferences_) );
   this->visualizer_->set_lightbox( this->lightbox_ );
   this->visualizer_->set_project( this->project_ );
-  connect( this->visualizer_.data(), SIGNAL( pca_labels_changed( QString, QString, QString ) ),
-           this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
 
+  //groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool(preferences_) );
   this->groom_tool_->set_project( this->project_ );
   this->groom_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->groom_tool_.data() );
-
   connect( this->groom_tool_.data(), SIGNAL( groom_complete() ), this, SLOT( handle_groom_complete() ) );
 
+  //optimize tool initializations
   this->optimize_tool_ = QSharedPointer<OptimizeTool>( new OptimizeTool(preferences_) );
   this->optimize_tool_->set_project( this->project_ );
   this->optimize_tool_->set_app( this );
@@ -153,12 +147,18 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
 
   //set up preferences window
   this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this,preferences_));
+  connect(this->preferences_window_.data(),SIGNAL(clear_cache()),this->project_.data(),SLOT(handle_clear_cache()));
 
-  //analysis tool
+  //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool(preferences_));
   this->analysis_tool_->set_project( this->project_ );
   this->analysis_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
+  connect( this->analysis_tool_.data(), SIGNAL( pca_labels_changed( QString, QString, QString ) ),
+           this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
+  connect( this->analysis_tool_.data(), SIGNAL( update_view() ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->analysis_tool_.data(), SIGNAL( pca_update() ), this, SLOT( handle_pca_changed() ) );
+
   
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
@@ -170,18 +170,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->update_from_preferences();
   this->update_display();
 
-  connect( this->analysis_tool_.data(), SIGNAL( update_view() ), this, SLOT( handle_display_setting_changed() ) );
-
+  //other signals/slots
   connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
-
-  //connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
-
-  connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
-  connect(this->preferences_window_.data(),SIGNAL(clear_cache()),this->project_.data(),SLOT(handle_clear_cache()));
 
 }
 
@@ -403,8 +397,9 @@ void ShapeWorksStudioApp::update_table()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::mode_changed()
-{}
+void ShapeWorksStudioApp::handle_pca_changed() {
+	this->compute_mode_shape();
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
@@ -484,7 +479,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display()
 {
-  if ( !this->visualizer_ )
+	if ( !this->visualizer_ || this->project_->get_num_shapes() <= 0)
   {
     return;
   }
@@ -499,7 +494,6 @@ void ShapeWorksStudioApp::update_display()
   this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
   this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
 
-  if (this->project_->get_tool_state() != Project::ANALYSIS_C) return;
   std::string mode = this->analysis_tool_->getAnalysisMode();
   if ( mode == "all samples" )
   {
@@ -516,10 +510,12 @@ void ShapeWorksStudioApp::update_display()
 	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
 		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
 		if ( mode == "mean" ) {
-			this->visualizer_->display_mean();
+			this->visualizer_->display_shape(this->analysis_tool_->getMean());
 		} else if (mode == "pca") {
 			this->compute_mode_shape();
-		} //TODO 1 sample, median, regression
+		} else if (mode == "single sample") {//TODO 1 sample, median, regression
+			this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
+		} //TODO regression
   }
 }
 
@@ -533,6 +529,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 void ShapeWorksStudioApp::open_project( QString filename )
 {
   this->project_->load_project( filename );
+  this->visualizer_->setMean(this->analysis_tool_->getMean());
 
   preferences_.add_recent_file( filename );
   this->update_recent_files();
@@ -597,21 +594,9 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 }
 
 //---------------------------------------------------------------------------
-double ShapeWorksStudioApp::get_pca_value( int slider_value )
-{
-  float range = preferences_.get_pca_range();
-  int halfRange = this->analysis_tool_->getPCASlider()->maximum();
-
-  double value = (double)slider_value / (double)halfRange * range;
-  return value;
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape()
 {
-  double pcaSliderValue = this->get_pca_value( this->analysis_tool_->getPCASlider()->value() );
-  int mode = this->analysis_tool_->getPCAMode();
-  this->visualizer_->display_pca( mode, pcaSliderValue );
+  this->visualizer_->display_shape( this->analysis_tool_->getShape());
 }
 
 //---------------------------------------------------------------------------
@@ -634,66 +619,6 @@ void ShapeWorksStudioApp::update_recent_files()
   {
     this->recent_file_actions_[j]->setVisible( false );
   }
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_pcaSlider_valueChanged()
-{
-  // this will make the slider handle redraw making the UI appear more responsive
-  QCoreApplication::processEvents();
-
-  this->compute_mode_shape();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_pcaModeSpinBox_valueChanged()
-{
-  this->compute_mode_shape();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_pca_animate_state_changed()
-{
-  if ( this->analysis_tool_->pcaAnimate())
-  {
-    //this->setPregenSteps();
-    this->pcaAnimateTimer.setInterval( 10 );
-    this->pcaAnimateTimer.start();
-  }
-  else
-  {
-    this->pcaAnimateTimer.stop();
-  }
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_pca_timer()
-{
-  int value = this->analysis_tool_->getPCASlider()->value();
-  if ( this->pcaAnimateDirection )
-  {
-    value += this->analysis_tool_->getPCASlider()->singleStep();
-  }
-  else
-  {
-    value -= this->analysis_tool_->getPCASlider()->singleStep();
-  }
-
-  if ( value >= this->analysis_tool_->getPCASlider()->maximum() || value <= this->analysis_tool_->getPCASlider()->minimum() )
-  {
-    this->pcaAnimateDirection = !this->pcaAnimateDirection;
-    //this->setPregenSteps();
-  }
-
-  this->analysis_tool_->getPCASlider()->setValue( value );
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_pca_labels_changed( QString value, QString eigen, QString lambda )
-{
-	this->analysis_tool_->setLabels(QString("pca"),value);
-	this->analysis_tool_->setLabels(QString("eigen"),eigen);
-	this->analysis_tool_->setLabels(QString("lambda"),lambda);
 }
 
 //---------------------------------------------------------------------------

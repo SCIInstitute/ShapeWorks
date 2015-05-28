@@ -314,12 +314,19 @@ QToolButton:pressed{
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="sampleSpinBox"/>
+      <widget class="QSpinBox" name="sampleSpinBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
     <widget class="QPushButton" name="medianButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>Median</string>
      </property>
@@ -382,6 +389,9 @@ QToolButton:pressed{
         </item>
         <item row="0" column="1">
          <widget class="QSlider" name="pcaSlider">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimum">
            <number>-20</number>
           </property>
@@ -445,6 +455,9 @@ QToolButton:pressed{
            </item>
            <item>
             <widget class="QCheckBox" name="pcaAnimateCheckBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Animate</string>
              </property>
@@ -553,6 +566,9 @@ QToolButton:pressed{
         </item>
         <item>
          <widget class="QSpinBox" name="pcaModeSpinBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="maximum">
            <number>500</number>
           </property>

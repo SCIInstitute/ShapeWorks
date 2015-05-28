@@ -7,9 +7,6 @@
 #include "Application/Preferences.h"
 #include <map>
 
-//#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
-#include <Analysis/itkParticleShapeStatistics.h>
-
 class Visualizer;
 typedef QSharedPointer< Visualizer > VisualizerHandle;
 
@@ -46,31 +43,19 @@ public:
 
   /// update the display using the current settings
   void display_samples();
+  
+  void display_sample(size_t i);
 
-  /// tmp: compute and display the mean shape
-  void display_mean();
-
-  void display_shape( const vnl_vector<double> &points, double value );
-
-  bool is_cached() { return cached_; }
-
-  void set_cached(bool b) { cached_ = b; }
-
-  void cache_data(int mode, double value);
-
-  void display_pca( int mode, double value );
+  void display_shape( const vnl_vector<double> &points);
 
   void set_selected_point_one( int id );
   void set_selected_point_two( int id );
-
-  void set_stats_ready(bool b) {this->stats_ready_ = b; }
 
   static const QString MODE_ORIGINAL_C;
   static const QString MODE_GROOMED_C;
   static const QString MODE_RECONSTRUCTION_C;
 
-Q_SIGNALS:
-  void pca_labels_changed( QString value, QString eigen, QString lambda );
+  void setMean(const vnl_vector<double> &mean);
 
 public Q_SLOTS:
 
@@ -78,12 +63,9 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
-  vnl_vector<double> getShape(int mode, double value);
-  QVector<DisplayObjectHandle> * getList( const vnl_vector<double> &points , double value);
-  bool cached_;
+  QVector<DisplayObjectHandle> * getList( const vnl_vector<double> &points);
   std::map<double,QVector<DisplayObjectHandle> > disp_handles_;
   Preferences &preferences_;
-  bool compute_stats();
 
   void update_lut();
 
@@ -98,16 +80,11 @@ private:
   LightboxHandle lightbox_;
   ProjectHandle project_;
 
-  /// itk particle shape statistics
-  ParticleShapeStatistics<3> stats;
-  bool stats_ready_;
-
-  int pca_mode;
-  double pca_value;
-
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
   int selected_point_one_;
   int selected_point_two_;
+
+  vnl_vector<double> cached_mean_;
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */
