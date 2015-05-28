@@ -315,7 +315,16 @@ QToolButton:pressed{
      <property name="spacing">
       <number>2</number>
      </property>
-     <property name="margin">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
       <number>2</number>
      </property>
      <item>
@@ -330,13 +339,31 @@ QToolButton:pressed{
         <property name="spacing">
          <number>2</number>
         </property>
-        <property name="margin">
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
          <number>2</number>
         </property>
         <item>
          <widget class="QWidget" name="shapeHeaderBackground" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_7">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -357,7 +384,16 @@ QToolButton:pressed{
               <property name="spacing">
                <number>2</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
                <number>0</number>
               </property>
               <item>
@@ -436,7 +472,7 @@ QToolButton:pressed{
               <enum>QTabWidget::Rounded</enum>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="documentMode">
               <bool>false</bool>
@@ -520,6 +556,9 @@ QToolButton:pressed{
                </item>
                <item>
                 <widget class="QPushButton" name="meanDifferenceButton">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="text">
                   <string>Difference</string>
                  </property>
@@ -678,7 +717,16 @@ QToolButton:pressed{
                     <property name="spacing">
                      <number>0</number>
                     </property>
-                    <property name="margin">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
                      <number>0</number>
                     </property>
                     <item>
@@ -723,7 +771,16 @@ QToolButton:pressed{
                     <property name="spacing">
                      <number>0</number>
                     </property>
-                    <property name="margin">
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
                      <number>0</number>
                     </property>
                     <item>
@@ -927,7 +984,16 @@ QToolButton:pressed{
                   <property name="spacing">
                    <number>0</number>
                   </property>
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>0</number>
                   </property>
                   <item>
@@ -1011,13 +1077,31 @@ QToolButton:pressed{
         <property name="spacing">
          <number>2</number>
         </property>
-        <property name="margin">
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
          <number>2</number>
         </property>
         <item>
          <widget class="QWidget" name="visualizationHeaderBackground" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_11">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -1038,7 +1122,16 @@ QToolButton:pressed{
               <property name="spacing">
                <number>2</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
                <number>0</number>
               </property>
               <item>
@@ -1089,7 +1182,16 @@ QToolButton:pressed{
            <property name="spacing">
             <number>2</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>6</number>
+           </property>
+           <property name="topMargin">
+            <number>6</number>
+           </property>
+           <property name="rightMargin">
+            <number>6</number>
+           </property>
+           <property name="bottomMargin">
             <number>6</number>
            </property>
            <item>
