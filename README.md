@@ -72,13 +72,14 @@ cd C:\Path\To\shapeworks\build
 cmake -G "NMake Makefiles" -DVTK_DIR="C:/Path/To/Your/VTK/build" -DITK_DIR="C:/Path/To/Your/ITK/build" -DCMAKE_BUILD_TYPE=Release ../src
 nmake
 ```
+**NOTE** Be sure to copy the Qt DLL files to the View2 Executable directory for the program to run.
 
 Running
 =====================
 
 The original documentation is located in this repository under <code>src/deprecated/documentation</code>.
 You may read about the details of the algorithms there. 
-<br/>
+<br/><br/>
 Here are the basic instructions/pipeline for using the Shapeworks
 Command Line Tools. You can follow the same steps for either the <code>examples/torus</code> or 
 <code>examples/mickey</code>. Steps for the torus example are shown. <br/>
@@ -100,10 +101,66 @@ This step may takes some time.
 ../../build/bin/ShapeWorksView2 torus.analysis.xml
 ```
 The visualizer is called "View2" since a previous and outdated version uses the FLTK library, not needed for View2.
-<br/>
+<br/><br/>
 You Should have a Qt window pop up that looks similar to the one below.
 
 <img src="https://raw.githubusercontent.com/SCIInstitute/shapeworks/master/src/deprecated/documentation/view2.png">
+<br/><br/>
+**Shape**<br/>
+*Mean* The Overall mean shows the average shape of the samples. Difference refers to the difference between two groups 
+of samples, which is a feature that is not yet available. 
+<br/> <br/>
+*Samples* Here you select which sample to show in the viewer. Clicking Median will give you the median sample.
+<br/> <br/>
+*PCA* This tab provides a way to visualize the shape standard deviations from the modes (eigen vector solutions from the 
+statistical analysis.) You can select the mode and slide the standard deviation to show the respective shapes in the 
+viewer. By clicking the "Animate" check, the slider will continuously slide back and forth to visualize the shapes.
+The respective eigen values and lambdas are displayed below the slider.
+<br/> <br/>
+*Regression* This is another feature not yet available. 
+<br/> <br/>
+**Visualization** <br/>
+*Powercrust* This check enables use of the Powercrust isosurface reconstruction library. It is under the GPL License.
+There are known problems with the isosurface reconstruction without powercrust. This will be addressed in the future.
+<br/><br/>
+*Show Glyphs* Toggle visualization of the correspondance point glyphs.
+<br/><br/>
+*Show Surface* Toggle visualization of the isosurface.
+<br/><br/>
+*Neighborhood Size* The neighborhood size used for isosurface reconstruction without powercrust.
+<br/><br/>
+*Spacing* The spacing used for isosurface reconstruction without powercrust.
+<br/><br/>
+*Smoothing* The smoothing amount for isosurface reconstruction.
+<br/><br/>
+**Preferences (ctrl+,)** <br/>
+This window provides a number of options for display and meshing.
+<br/><br/>
+*Color Scheme* Select the Surface and background colors for the viewer.
+<br/><br/>
+*Glyph Quality* Select the quality of the spheres that represent correspondance points.
+<br/><br/>
+*Glyph Size* Select the size of the spheres that represent correspondance points.
+<br/><br/>
+*Memory Cache* To speed up mesh animation, you can cache the meshes into system memory to load as needed.
+<br/><br/>
+*Memory to Use* Select the amount of system memory to use for caching. Turn this down if your machine's memory 
+is bogged down from the program.
+<br/><br/>
+*Parallel Reconstruction* Select the amount of threads to fire (up to system hardware core max) to run while 
+building meshes. This speeds reconstruction, theoretically. Threading is not used if powercrust is enabled.
+<br/><br/>
+*PCA Range* This is the amount of standard deviation to reach on the +/- ends of the PCA Slider.
+<br/><br/>
+*Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
+<br/><br/>
+*Number of Regression Steps* This feature is not currently available.
+<br/><br/>
+*Restore Defaults* Reset the preferences to the program defaults.
+<br/><br/>
+**File Menu** <br/>
+There are a few Import/Export options under the File Menu. The details of these options are 
+beyond the scope of this document.
 
 Contact
 =====================
