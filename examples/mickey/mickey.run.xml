@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<number_of_particles>128</number_of_particles>
+<iterations_per_split>100</iterations_per_split>
+<starting_regularization>1000</starting_regularization>
+<ending_regularization>10</ending_regularization>
+<optimization_iterations>100</optimization_iterations>
+<output_points_prefix>mickey</output_points_prefix>
+<inputs>
+mickey.0_DT.nrrd
+mickey.1_DT.nrrd
+mickey.2_DT.nrrd
+mickey.3_DT.nrrd
+mickey.4_DT.nrrd
+mickey.5_DT.nrrd
+mickey.6_DT.nrrd
+</inputs>

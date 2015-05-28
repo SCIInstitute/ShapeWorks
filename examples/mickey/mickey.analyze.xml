@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+
+<!-- Set of correspondence points in 
+     "world" coordinate space. -->
+<point_files>  
+mickey.0.wpts
+mickey.1.wpts 
+mickey.2.wpts 
+mickey.3.wpts
+mickey.4.wpts
+mickey.5.wpts
+mickey.6.wpts
+</point_files>		  

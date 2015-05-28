@@ -3,7 +3,7 @@ string_io.cxx
 filenameFactory.cxx
 )
 
-IF(USE_VTK)
+IF(BUILD_Unsupported)
  ADD_LIBRARY (VtkUtilities STATIC
  string_io.cxx
  glyph_pipeline.cxx
@@ -12,5 +12,5 @@ IF(USE_VTK)
  isosurface_pipeline.cxx
  itkMeshTovtkPolyData.cxx
  )
-ENDIF(USE_VTK)
+ENDIF()
 

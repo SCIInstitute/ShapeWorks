@@ -1,9 +1,10 @@
 ShapeWorks: Particle-based Shape Correspondence and Visualization Software
 Joshua Cates cates@sci.utah.edu  
+Brig Bagley  brig@sci.utah.edu
 
-$Date: 2009/05/06 21:49:15 $
+$Date: 2015/05/29 $
 $RCSfile: ShapeWorksLicense.txt,v $
-$Revision: 1.1.1.1 $
+$Revision: 1.1.1.2 $
 
 For more information, please see: http://software.sci.utah.edu
 
@@ -32,6 +33,6 @@ DEALINGS IN THE SOFTWARE.
 
 ------------------
 
-PLEASE NOTE: Code in the directory code/VtkFltk is included in this 
+PLEASE NOTE: Code in the directory src/deprecated/VtkFltk is included in this 
 distribution under the LGPL license.  Please see code/VtkFltk/README.txt 
 for more information.

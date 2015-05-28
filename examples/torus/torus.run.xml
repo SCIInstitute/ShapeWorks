@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<number_of_particles>128</number_of_particles>
+<iterations_per_split>100</iterations_per_split>
+<starting_regularization>1000</starting_regularization>
+<ending_regularization>10</ending_regularization>
+<optimization_iterations>100</optimization_iterations>
+<output_points_prefix>torus</output_points_prefix>
+<inputs>
+torus.00_DT.nrrd
+torus.01_DT.nrrd
+torus.02_DT.nrrd
+torus.03_DT.nrrd
+torus.04_DT.nrrd
+torus.05_DT.nrrd
+torus.06_DT.nrrd
+torus.07_DT.nrrd
+torus.08_DT.nrrd
+torus.09_DT.nrrd
+</inputs>

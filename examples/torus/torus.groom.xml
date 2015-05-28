@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Value of background pixels in image-->
+<background>0.0</background>
+<!--Value of foreground pixels in image-->
+<foreground>1.0</foreground>
+<pad>10</pad>
+<transform_file>torus.transform</transform_file>
+<!--Number of anti-aliasing iterations-->
+<antialias_iterations>100</antialias_iterations>
+<!--Size of Gaussian blurring kernel for smoothing-->
+<blur_sigma>2</blur_sigma>
+<inputs>
+torus.00.nrrd
+torus.01.nrrd
+torus.02.nrrd
+torus.03.nrrd
+torus.04.nrrd
+torus.05.nrrd
+torus.06.nrrd
+torus.07.nrrd
+torus.08.nrrd
+torus.09.nrrd
+</inputs>
+<outputs>
+torus.00_DT.nrrd
+torus.01_DT.nrrd
+torus.02_DT.nrrd
+torus.03_DT.nrrd
+torus.04_DT.nrrd
+torus.05_DT.nrrd
+torus.06_DT.nrrd
+torus.07_DT.nrrd
+torus.08_DT.nrrd
+torus.09_DT.nrrd
+</outputs>

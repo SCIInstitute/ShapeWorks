@@ -141,7 +141,7 @@ void auto_pad<T, D>::operator() () {
   {
 
 #pragma omp for
-    for ( int i = 0; i < this->m_input_filenames.size(); i++ )
+    for ( int j = 0; j < this->m_input_filenames.size(); j++ )
     {
       typename itk::ImageFileWriter<image_type>::Pointer writer =
         itk::ImageFileWriter<image_type>::New();
@@ -149,7 +149,7 @@ void auto_pad<T, D>::operator() () {
       typename itk::ImageFileReader<image_type>::Pointer reader =
         itk::ImageFileReader<image_type>::New();
 
-      reader->SetFileName( this->m_input_filenames[i].c_str() );
+      reader->SetFileName( this->m_input_filenames[j].c_str() );
       reader->UpdateLargestPossibleRegion();
 
       typename itk::ConstantPadImageFilter<image_type, image_type>::Pointer padder
@@ -192,7 +192,7 @@ void auto_pad<T, D>::operator() () {
 
       writer->SetInput( padder->GetOutput() );
       writer->SetUseCompression( true );
-      writer->SetFileName( this->m_output_filenames[i].c_str() );
+      writer->SetFileName( this->m_output_filenames[j].c_str() );
       writer->Update();
     }
   }
