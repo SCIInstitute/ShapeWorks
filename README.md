@@ -133,6 +133,8 @@ There are known problems with the isosurface reconstruction without powercrust. 
 <br/><br/>
 *Smoothing* The smoothing amount for isosurface reconstruction.
 <br/><br/>
+<img src="https://raw.githubusercontent.com/SCIInstitute/shapeworks/master/src/deprecated/documentation/preferences.png" 
+ align="right" hspace="20">
 **Preferences (ctrl+,)** <br/>
 This window provides a number of options for display and meshing.
 <br/><br/>
