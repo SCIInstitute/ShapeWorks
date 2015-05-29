@@ -148,6 +148,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   //set up preferences window
   this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this,preferences_));
   connect(this->preferences_window_.data(),SIGNAL(clear_cache()),this->project_.data(),SLOT(handle_clear_cache()));
+  connect(this->preferences_window_.data(),SIGNAL(update_view()),this,SLOT(handle_color_scheme()));
 
   //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool(preferences_));
@@ -629,4 +630,12 @@ void ShapeWorksStudioApp::handle_open_recent()
   {
     this->open_project( action->data().toString() );
   }
+}
+
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_color_scheme()
+{
+	this->visualizer_->update_viewer_properties();
+	this->update_display();
 }

@@ -242,6 +242,7 @@ void Visualizer::update_viewer_properties()
       viewer->set_glyph_size_and_quality( size, quality );
       viewer->set_show_glyphs( this->show_glyphs_ );
       viewer->set_show_surface( this->show_surface_ );
+	  viewer->set_color_scheme(this->preferences_.get_color_scheme());
     }
 
 	this->update_lut();

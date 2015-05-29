@@ -74,6 +74,8 @@ public Q_SLOTS:
 
   void handle_open_recent();
 
+  void handle_color_scheme();
+
 private:
 
   void update_from_preferences();

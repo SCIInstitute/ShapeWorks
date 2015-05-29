@@ -55,6 +55,7 @@ void PreferencesWindow::on_mesh_cache_memory_valueChanged( int value )
 void PreferencesWindow::on_color_scheme_currentIndexChanged( int index )
 {
   preferences_.set_color_scheme( index );
+  emit update_view();
 }
 
 //-----------------------------------------------------------------------------

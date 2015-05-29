@@ -2,6 +2,7 @@
 #define STUDIO_VISUALIZATION_VIEWER_H
 
 #include <QSharedPointer>
+#include <Visualization/ColorSchemes.h>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -57,6 +58,8 @@ public:
 
   void set_loading_screen( vtkSmartPointer<vtkImageData> loading_screen );
 
+  void set_color_scheme(int i);
+
 private:
 
 
@@ -99,6 +102,8 @@ private:
   vtkSmartPointer<StudioInteractorStyle>   style_;
 
   vtkSmartPointer<vtkImageActor>           image_actor_;
+
+  ColorSchemes m_ColorSchemes;
 };
 
 #endif /* STUDIO_VISUALIZATION_VIEWER_H */

@@ -49,6 +49,7 @@ public Q_SLOTS:
   void restore_defaults();
 signals:
   void clear_cache();
+  void update_view();
 
 
 private:

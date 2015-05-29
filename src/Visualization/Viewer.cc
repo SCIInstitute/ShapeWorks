@@ -109,6 +109,15 @@ Viewer::~Viewer()
 {}
 
 //-----------------------------------------------------------------------------
+void Viewer::set_color_scheme(int scheme) {
+  this->surface_actor_->GetProperty()->SetDiffuseColor( m_ColorSchemes[scheme].foreground.r,
+                                                        m_ColorSchemes[scheme].foreground.g,
+                                                        m_ColorSchemes[scheme].foreground.b );
+  this->renderer_->SetBackground( m_ColorSchemes[scheme].background.r,
+                                  m_ColorSchemes[scheme].background.g,
+                                  m_ColorSchemes[scheme].background.b );
+} 
+//-----------------------------------------------------------------------------
 void Viewer::display_object( QSharedPointer<DisplayObject> object )
 {
   this->visible_ = true;
