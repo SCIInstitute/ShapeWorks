@@ -453,9 +453,11 @@ void ShapeWorksStudioApp::handle_project_changed()
     this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
   }
 
-  this->update_display();
   this->update_table();
   this->update_scrollbar();
+  this->project_->handle_clear_cache();
+  this->analysis_tool_->reset_stats();
+  this->update_display();
 }
 
 //---------------------------------------------------------------------------

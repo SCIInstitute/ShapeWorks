@@ -60,7 +60,8 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
   }
   else
   {
-	  if ( (prefs_.get_parallel_enabled()) && 
+	  if (prefs_.get_parallel_enabled() && 
+		  prefs_.get_cache_enabled() &&
 		  (this->prefs_.get_num_threads() > 0))
 	  {
 		 this->generateMesh(shape);

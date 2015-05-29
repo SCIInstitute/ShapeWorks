@@ -104,6 +104,7 @@ private:
   vtkSmartPointer<vtkImageActor>           image_actor_;
 
   ColorSchemes m_ColorSchemes;
+  int scheme_;
 };
 
 #endif /* STUDIO_VISUALIZATION_VIEWER_H */

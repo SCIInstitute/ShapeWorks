@@ -102,6 +102,7 @@ this->exclusion_sphere_mapper_->SetScalarVisibility(0);
   this->exclusion_sphere_actor_->SetMapper( this->exclusion_sphere_mapper_ );
 
   this->visible_ = false;
+  this->scheme_ = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -110,6 +111,7 @@ Viewer::~Viewer()
 
 //-----------------------------------------------------------------------------
 void Viewer::set_color_scheme(int scheme) {
+  this->scheme_ = scheme;
   this->surface_actor_->GetProperty()->SetDiffuseColor( m_ColorSchemes[scheme].foreground.r,
                                                         m_ColorSchemes[scheme].foreground.g,
                                                         m_ColorSchemes[scheme].foreground.b );
@@ -225,7 +227,9 @@ void Viewer::display_object( QSharedPointer<DisplayObject> object )
     mapper->SetInputData( poly_data );
 #endif
     actor->SetMapper( mapper );
-    actor->GetProperty()->SetDiffuseColor( 1, 191.0 / 255.0, 0 );
+	actor->GetProperty()->SetDiffuseColor(  m_ColorSchemes[this->scheme_].foreground.r,
+                                            m_ColorSchemes[this->scheme_].foreground.g,
+                                            m_ColorSchemes[this->scheme_].foreground.b  );
     actor->GetProperty()->SetSpecular( 0.2 );
     actor->GetProperty()->SetSpecularPower( 15 );
     mapper->ScalarVisibilityOff();

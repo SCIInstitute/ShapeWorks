@@ -52,6 +52,8 @@ public:
 
   bool compute_stats();
 
+  void reset_stats();
+
   const vnl_vector<double> & getMean();
   
   const vnl_vector<double> & getShape();

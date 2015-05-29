@@ -93,7 +93,6 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
     if (this->prefs_.get_smoothing_amount() > 0)
     {
       this->polydataToImageData->Update();
-      this->windowSincFilter->Update();
       this->contourFilter->Update();
     }
   }
@@ -101,7 +100,6 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   {
     this->surfaceReconstruction->Modified();
     this->surfaceReconstruction->Update();
-    this->windowSincFilter->Update();
     this->contourFilter->Update();
   }
   this->polydataNormals->Update();

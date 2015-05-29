@@ -42,7 +42,12 @@ void PreferencesWindow::update_labels()
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_mesh_cache_enabled_stateChanged( int state )
 {
-  preferences_.set_cache_enabled( this->ui_->mesh_cache_enabled->isChecked() );
+  bool b = this->ui_->mesh_cache_enabled->isChecked();
+  preferences_.set_cache_enabled( b );
+  this->ui_->mesh_cache_memory->setEnabled(b);
+  this->ui_->parallel_enabled->setEnabled(b);
+  this->ui_->num_threads->setEnabled(b);
+  this->ui_->caching_epsilon->setEnabled(b);
 }
 
 //-----------------------------------------------------------------------------

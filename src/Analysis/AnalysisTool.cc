@@ -290,3 +290,10 @@ void AnalysisTool::pca_labels_changed( QString value, QString eigen, QString lam
 	this->setLabels(QString("eigen"),eigen);
 	this->setLabels(QString("lambda"),lambda);
 }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::reset_stats()
+{
+	this->stats_ready_ = false;
+	this->compute_stats();
+}
