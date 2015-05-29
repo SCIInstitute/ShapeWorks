@@ -36,9 +36,6 @@ public:
   MeshGenerator(Preferences& prefs);
   ~MeshGenerator();
 
-  void setNeighborhoodSize( int size );
-  void setSampleSpacing( double spacing );
-
   vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
   void updatePipeline();
 

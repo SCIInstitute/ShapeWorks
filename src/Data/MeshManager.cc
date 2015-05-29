@@ -17,20 +17,6 @@ MeshManager::MeshManager(Preferences& prefs) : prefs_(prefs), meshCache_(prefs),
 
 MeshManager::~MeshManager() {}
 
-void MeshManager::setNeighborhoodSize( int size )
-{
-  this->neighborhoodSize_ = size;
-  this->meshCache_.clear();
-  this->meshGenerator_.setNeighborhoodSize( size );
-}
-
-void MeshManager::setSampleSpacing( double spacing )
-{
-  this->sampleSpacing_ = spacing;
-  this->meshCache_.clear();
-  this->meshGenerator_.setSampleSpacing( spacing );
-}
-
 void MeshManager::clear_cache() { 
 	this->meshCache_.clear(); 
 	this->meshGenerator_.updatePipeline();

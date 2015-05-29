@@ -41,6 +41,10 @@ public Q_SLOTS:
   void on_parallel_enabled_toggled(bool b);
   void on_num_threads_valueChanged(int i);
   void on_caching_epsilon_valueChanged(int i);
+  
+  void on_smoothingSlider_valueChanged(int i);
+  void on_spacingSpinBox_valueChanged(double d);
+  void on_neighborhoodSpinBox_valueChanged(int i);
 
   void restore_defaults();
 signals:

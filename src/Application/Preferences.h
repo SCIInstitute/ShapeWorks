@@ -80,6 +80,12 @@ public:
   float get_cache_epsilon();
   void set_cache_epsilon(float value);
 
+  float get_spacing();
+  void set_spacing(float value);
+
+  int get_neighborhood();
+  void set_neighborhood(int value);
+
 Q_SIGNALS:
   void color_scheme_changed( int newIndex );
   void glyph_properties_changed();

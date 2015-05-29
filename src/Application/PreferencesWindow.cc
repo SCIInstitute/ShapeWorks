@@ -116,7 +116,9 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->pca_steps->setValue( preferences_.get_num_pca_steps() );
   this->ui_->regression_steps->setValue( preferences_.get_num_regression_rteps() );
   this->ui_->power_crust->setChecked( preferences_.get_use_powercrust() );
-  this->ui_->smoothingSlider_2->setValue( preferences_.get_smoothing_amount() );
+  this->ui_->smoothingSlider->setValue( preferences_.get_smoothing_amount() );
+  this->ui_->neighborhoodSpinBox->setValue( preferences_.get_neighborhood() );
+  this->ui_->spacingSpinBox->setValue( preferences_.get_spacing() );
 
   this->update_labels();
 }
@@ -163,11 +165,11 @@ void PreferencesWindow::on_locate_optimize_button_clicked()
 void PreferencesWindow::on_power_crust_toggled(bool powercrust)
 {
   if (powercrust) {
-	  this->ui_->neighborhoodSpinBox_2->setEnabled(false);
-	  this->ui_->spacingSpinBox_2->setEnabled(false);
+	  this->ui_->neighborhoodSpinBox->setEnabled(false);
+	  this->ui_->spacingSpinBox->setEnabled(false);
   } else {
-	  this->ui_->neighborhoodSpinBox_2->setEnabled(true);
-	  this->ui_->spacingSpinBox_2->setEnabled(true);
+	  this->ui_->neighborhoodSpinBox->setEnabled(true);
+	  this->ui_->spacingSpinBox->setEnabled(true);
   }
   preferences_.set_use_powercrust(powercrust);
   emit clear_cache();
@@ -185,4 +187,18 @@ void PreferencesWindow::on_num_threads_valueChanged(int i) {
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_caching_epsilon_valueChanged(int i) {
 	preferences_.set_cache_epsilon(std::powf(10.f,static_cast<float>(i)));
+    emit clear_cache();
+}
+  
+void PreferencesWindow::on_smoothingSlider_valueChanged(int i) {
+	preferences_.set_smoothing_amount(i);
+    emit clear_cache();
+}
+void PreferencesWindow::on_spacingSpinBox_valueChanged(double d) {
+	preferences_.set_spacing(static_cast<float>(d));
+    emit clear_cache();
+}
+void PreferencesWindow::on_neighborhoodSpinBox_valueChanged(int i) {
+	preferences_.set_neighborhood(i);
+    emit clear_cache();
 }

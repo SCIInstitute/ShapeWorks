@@ -74,16 +74,6 @@ MeshGenerator::MeshGenerator(Preferences& prefs) : prefs_(prefs)
 MeshGenerator::~MeshGenerator()
 {}
 
-void MeshGenerator::setNeighborhoodSize( int size )
-{
-  this->surfaceReconstruction->SetNeighborhoodSize( size );
-}
-
-void MeshGenerator::setSampleSpacing( double spacing )
-{
-  this->surfaceReconstruction->SetSampleSpacing( spacing );
-}
-
 vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
   // copy shape points into point set
@@ -103,6 +93,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
     if (this->prefs_.get_smoothing_amount() > 0)
     {
       this->polydataToImageData->Update();
+      this->windowSincFilter->Update();
       this->contourFilter->Update();
     }
   }
@@ -110,9 +101,9 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   {
     this->surfaceReconstruction->Modified();
     this->surfaceReconstruction->Update();
+    this->windowSincFilter->Update();
     this->contourFilter->Update();
   }
-
   this->polydataNormals->Update();
 
   // make a copy of the vtkPolyData output to return
@@ -140,6 +131,8 @@ void MeshGenerator::updatePipeline()
   }
   else if ( !this->prefs_.get_use_powercrust() && this->prefs_.get_smoothing_amount() > 0 )
   {
+	this->surfaceReconstruction->SetNeighborhoodSize( this->prefs_.get_neighborhood() );
+    this->surfaceReconstruction->SetSampleSpacing( this->prefs_.get_spacing()  );
     this->windowSincFilter->SetNumberOfIterations( this->prefs_.get_smoothing_amount() );
     this->windowSincFilter->SetPassBand( 0.05 );
     this->contourFilter->SetInputConnection( this->surfaceReconstruction->GetOutputPort() );
@@ -148,6 +141,8 @@ void MeshGenerator::updatePipeline()
   }
   else if ( !this->prefs_.get_use_powercrust() && !( this->prefs_.get_smoothing_amount() > 0) )
   {
+	this->surfaceReconstruction->SetNeighborhoodSize( this->prefs_.get_neighborhood() );
+    this->surfaceReconstruction->SetSampleSpacing( this->prefs_.get_spacing()  );
     this->polydataNormals->SetInputConnection( this->contourFilter->GetOutputPort() );
   }
 }

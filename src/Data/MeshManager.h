@@ -32,9 +32,6 @@ public:
   MeshManager(Preferences& prefs);
   ~MeshManager();
 
-  // mesh generation settings
-  void setNeighborhoodSize( int size );
-  void setSampleSpacing( double spacing );
   // pre-generate and cache a mesh for this shape
   void generateMesh( const vnl_vector<double>& shape );
 
@@ -61,9 +58,6 @@ private:
   // the workers
   std::vector<QThread*> threads_;
   
-  // mesh generation settings
-  int neighborhoodSize_;
-  double sampleSpacing_;
   size_t thread_count_;
 };
 

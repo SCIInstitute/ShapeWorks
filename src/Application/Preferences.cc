@@ -22,6 +22,8 @@ const int DEFAULT_REGRESSION_STEPS = 50;
 const bool DEFAULT_USE_POWERCRUST = true;
 const float DEFAULT_SMOOTHING_AMOUNT = 0.f;
 const float DEFAULT_CACHE_EPSILON = 1e-3f;
+const float DEFAULT_SPACING = 1.f;
+const int DEFAULT_NEIGHBORHOOD = 5;
 
 //-----------------------------------------------------------------------------
 Preferences::Preferences()
@@ -249,6 +251,20 @@ float Preferences::get_cache_epsilon() {
 }
 void Preferences::set_cache_epsilon(float value) {
   this->settings.setValue( "Mesh/CachingEpsilon", value );
+}
+
+float Preferences::get_spacing() {
+	return this->settings.value( "Mesh/Spacing", DEFAULT_SPACING ).toFloat();
+}
+void Preferences::set_spacing(float value) {
+  this->settings.setValue( "Mesh/Spacing", value );
+}
+
+int Preferences::get_neighborhood() {
+	return this->settings.value( "Mesh/Neighborhood", DEFAULT_NEIGHBORHOOD ).toInt();
+}
+void Preferences::set_neighborhood(int value) {
+  this->settings.setValue( "Mesh/Neighborhood", value );
 }
 
 //-----------------------------------------------------------------------------
