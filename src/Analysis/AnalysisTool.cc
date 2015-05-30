@@ -297,3 +297,13 @@ void AnalysisTool::reset_stats()
 	this->stats_ready_ = false;
 	this->compute_stats();
 }
+
+//---------------------------------------------------------------------------
+void AnalysisTool::setAnalysisMode(std::string i)
+{
+	this->ui_->allSamplesRadio->setChecked(i == "all samples");
+	this->ui_->singleSamplesRadio->setChecked(i == "single sample");
+	this->ui_->meanRadio->setChecked(i == "mean");
+	this->ui_->pcaRadio->setChecked(i == "pca");
+	this->ui_->regressionRadio->setChecked(i == "regression");
+}

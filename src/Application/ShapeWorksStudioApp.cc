@@ -98,6 +98,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
      tool_button->setPopupMode( QToolButton::InstantPopup );
      this->ui_->glyph_layout->addWidget( tool_button );
    */
+
   //project initializations
   this->project_ = QSharedPointer<Project>( new Project(preferences_) );
   this->project_->set_parent( this );
@@ -131,6 +132,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->visualizer_ = QSharedPointer<Visualizer> ( new Visualizer(preferences_) );
   this->visualizer_->set_lightbox( this->lightbox_ );
   this->visualizer_->set_project( this->project_ );
+
+  this->reset();
 
   //groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool(preferences_) );
@@ -529,8 +532,15 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::reset() {
+  
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project( QString filename )
 {
+  this->reset();
+  this->analysis_tool_->setAnalysisMode("all samples");
   this->project_->load_project( filename );
   this->visualizer_->setMean(this->analysis_tool_->getMean());
 
@@ -640,4 +650,9 @@ void ShapeWorksStudioApp::handle_color_scheme()
 {
 	this->visualizer_->update_viewer_properties();
 	this->update_display();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_auto_view_button_clicked() {
+	this->visualizer_->reset_camera();
 }

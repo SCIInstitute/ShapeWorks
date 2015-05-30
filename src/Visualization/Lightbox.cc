@@ -82,6 +82,7 @@ void Lightbox::insert_object_into_viewer( QSharedPointer<DisplayObject> object, 
   {
     this->first_draw_ = false;
     viewer->reset_camera();
+	viewer->setStartPos();
   }
 }
 

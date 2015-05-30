@@ -64,6 +64,7 @@ public Q_SLOTS:
   void on_center_checkbox_stateChanged();
   void on_thumbnail_size_slider_valueChanged();
   void on_view_mode_combobox_currentIndexChanged();
+  void on_auto_view_button_clicked();
   
   void handle_pca_changed();
 
@@ -89,6 +90,8 @@ private:
   void compute_mode_shape();
 
   void update_recent_files();
+
+  void reset();
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;

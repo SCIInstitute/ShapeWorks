@@ -370,3 +370,15 @@ void Visualizer::setMean(const vnl_vector<double> & mean)
 {
   this->cached_mean_ = mean;
 }
+
+void Visualizer::reset_camera() {
+	
+  if ( this->lightbox_ )
+  {
+    foreach( ViewerHandle viewer, this->lightbox_->get_viewers() ) {
+      viewer->reset_camera();
+	  viewer->resetRotation();
+    }
+  }
+  this->update_viewer_properties();
+}

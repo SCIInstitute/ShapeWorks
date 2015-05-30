@@ -57,6 +57,8 @@ public:
 
   void setMean(const vnl_vector<double> &mean);
 
+  void reset_camera();
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)

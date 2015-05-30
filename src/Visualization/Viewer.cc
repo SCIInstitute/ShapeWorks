@@ -19,6 +19,7 @@
 #include <vtkPropPicker.h>
 #include <vtkCellPicker.h>
 #include <vtkCell.h>
+#include <vtkCamera.h>
 
 #include <Application/Preferences.h>
 #include <Data/Shape.h>
@@ -250,6 +251,22 @@ void Viewer::clear_viewer()
 {
   this->renderer_->RemoveAllViewProps();
   this->visible_ = false;
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::setStartPos()
+{
+	this->renderer_->GetActiveCamera()->GetPosition(startPos[0],startPos[1],startPos[2]);
+}
+
+
+//-----------------------------------------------------------------------------
+void Viewer::resetRotation()
+{
+  //this->renderer_->GetActiveCamera()->SetViewUp(0.,1.,0.);
+  //this->renderer_->GetActiveCamera()->SetFocalPoint(0.,0.,0.);
+  //this->renderer_->GetActiveCamera()->SetPosition(
+  //startPos[0],startPos[1],startPos[2]);
 }
 
 //-----------------------------------------------------------------------------

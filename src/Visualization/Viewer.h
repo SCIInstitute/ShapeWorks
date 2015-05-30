@@ -60,12 +60,17 @@ public:
 
   void set_color_scheme(int i);
 
+  void setStartPos();
+
+  void resetRotation();
+
 private:
 
 
   void draw_exclusion_spheres(QSharedPointer<DisplayObject> object);
 
   bool visible_;
+  double startPos[3];
 
   QSharedPointer<DisplayObject> object_;
 
