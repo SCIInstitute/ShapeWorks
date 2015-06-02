@@ -44,6 +44,7 @@ void PreferencesWindow::updateLabels()
 void PreferencesWindow::on_meshCacheEnabled_stateChanged( int state )
 {
   prefs_.setCacheEnabled( this->ui->meshCacheEnabled->isChecked() );
+  emit clear_cache();
 }
 
 void PreferencesWindow::on_meshCacheMemory_valueChanged( int value )

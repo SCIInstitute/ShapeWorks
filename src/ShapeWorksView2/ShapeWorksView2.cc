@@ -129,31 +129,18 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
   this->orientationMarkerWidget->EnabledOn();
   this->orientationMarkerWidget->InteractiveOff();
 
-  /*this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
-  this->scalar_bar_actor_->SetTitle( "" );
-  this->scalar_bar_actor_->SetLookupTable( this->differenceLUT );
-  this->scalar_bar_actor_->SetOrientationToHorizontal();
-  this->scalar_bar_actor_->SetMaximumNumberOfColors( 1000 );
-  this->scalar_bar_actor_->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
-  this->scalar_bar_actor_->GetPositionCoordinate()->SetValue( .2, .05 );
-  this->scalar_bar_actor_->SetWidth( 0.8 );
-  this->scalar_bar_actor_->SetHeight( 0.1 );
-  this->scalar_bar_actor_->SetPosition( 0.1, 0.01 );
-  this->scalar_bar_actor_->SetLabelFormat( "%.0f" );
-  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize( 12 );
-  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontFamilyToArial();
-  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize( 10 );
-  this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
-  //this->scalar_bar_actor_->GetLabelTextProperty()->SetColor( 0, 0, 0 );
-  this->renderer->AddActor( this->scalar_bar_actor_ );*/
+  QObject::connect(&this->pref_window_, SIGNAL(clear_cache()), this, SLOT(handle_clear_cache()));
 }
 
 //---------------------------------------------------------------------------
 ShapeWorksView2::~ShapeWorksView2()
 {}
 
-
+//---------------------------------------------------------------------------
+void ShapeWorksView2::handle_clear_cache()
+{
+	this->meshManager.clear_cache();
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksView2::write_stats_file(QString filename)
@@ -726,6 +713,7 @@ void ShapeWorksView2::on_showSurface_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_neighborhoodSpinBox_valueChanged()
 {
+  this->handle_clear_cache();
   this->updateSurfaceSettings();
   this->redraw();
 }
@@ -733,6 +721,7 @@ void ShapeWorksView2::on_neighborhoodSpinBox_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_spacingSpinBox_valueChanged()
 {
+  this->handle_clear_cache();
   this->updateSurfaceSettings();
   this->redraw();
 }
@@ -740,6 +729,7 @@ void ShapeWorksView2::on_spacingSpinBox_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_smoothingSlider_valueChanged()
 {
+  this->handle_clear_cache();
   this->updateSurfaceSettings();
   this->redraw();
 }
@@ -820,15 +810,7 @@ void ShapeWorksView2::initializeGlyphs()
   this->arrowGlyphMapper = vtkPolyDataMapper::New();
   this->arrowGlyphActor = vtkActor::New();
 
-  /*this->pValueTFunc = vtkSmartPointer<vtkColorTransferFunction>::New();
-     this->pValueTFunc->SetColorSpaceToHSV();
-     this->pValueTFunc->AddHSVPoint( 0, 0, 1, 1 );
-     this->pValueTFunc->AddHSVPoint( 0.05, 1, .40, 1 );
-     this->pValueTFunc->AddHSVPoint( 0.05 + 0.00001, 1, 0.0, 1 );
-     this->pValueTFunc->AddHSVPoint( 1, 1, 0.0, 1 );*/
-
   this->differenceLUT = vtkSmartPointer<vtkColorTransferFunction>::New();
-  //this->differenceLUT->SetColorSpaceToHSV();
 
   // Arrow glyphs
   this->arrowSource = vtkSmartPointer<vtkArrowSource>::New();
@@ -948,21 +930,6 @@ void ShapeWorksView2::updateAnalysisMode()
   else if ( this->ui->tabWidget->currentWidget() == this->ui->samplesTab )
   {
     int sampleNumber = this->ui->sampleSpinBox->value();
-
-    // pre-generate
-    for ( int step = 0; step < this->pregenSteps.size(); step++ )
-    {
-      int pregenSample = sampleNumber + this->pregenSteps[step];
-      if ( pregenSample >= this->ui->sampleSpinBox->minimum() && pregenSample <= this->ui->sampleSpinBox->maximum() )
-      {
-        vnl_vector<double> shape = this->stats.ShapeMatrix().get_column( pregenSample );
-        for ( int i = 0; i < this->numDomains; i++ )
-        {
-          this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
-        }
-      }
-    }
-
     this->displayShape( this->stats.ShapeMatrix().get_column( sampleNumber ) );
   }
   else if ( this->ui->tabWidget->currentWidget() == this->ui->pcaTab )
@@ -1034,11 +1001,6 @@ void ShapeWorksView2::updateColorScheme()
                                                             m_ColorSchemes[domainScheme].foreground.b );
   }
 
-/*
-   this->RecolorGlyphs(m_ColorSchemes[scheme].alt.r,
-    m_ColorSchemes[scheme].alt.g,
-    m_ColorSchemes[scheme].alt.b);
- */
   this->renderer->SetBackground( m_ColorSchemes[scheme].background.r,
                                  m_ColorSchemes[scheme].background.g,
                                  m_ColorSchemes[scheme].background.b );
@@ -1232,15 +1194,6 @@ bool ShapeWorksView2::readExplanatoryVariables( char* filename )
   double middle = startT + ( ( endT - startT ) / 2.0 );
   this->ui->regressionSlider->setValue( ( middle - this->regressionMin ) / this->regressionRange * this->ui->regressionSlider->maximum() );
 
-/*
-   this->simple_regression->minimum(startT);
-   this->simple_regression->maximum(endT);
-   this->simple_regression->step((endT - startT) / 100.0);
-   //  this->simple_regression->value(startT);
-   this->simple_regression->value(startT + ((endT - startT) / 2.0));
- */
-//this->mode->value(0);
-//this->ComputeSimpleRegressionParameters();
   return true;
 }
 
@@ -1270,10 +1223,8 @@ void ShapeWorksView2::displayShape( const vnl_vector<double> &shape )
   {
     for ( int i = 0; i < this->numDomains; i++ )
     {
-      vtkSmartPointer<vtkPolyData> polyData = this->meshManager.getMesh( this->getDomainShape( shape, i ) );
-
-      // retrieve the mesh and set it for display
-      this->surfaceMappers[i]->SetInputData( polyData );
+      this->surfaceMappers[i]->SetInputData( 
+		  this->meshManager.getMesh( this->getDomainShape( shape, i ) ) );
     }
   }
 
@@ -1639,30 +1590,6 @@ void ShapeWorksView2::computeModeShape()
 
   double groupSliderValue = this->ui->pcaGroupSlider->value();
   double groupRatio = groupSliderValue / static_cast<double>( this->ui->pcaGroupSlider->maximum() );
-
-  // pre-generate
-  for ( int step = 0; step < this->pregenSteps.size(); step++ )
-  {
-    int pregenValue = this->ui->pcaSlider->value() + this->pregenSteps[step];
-    if ( pregenValue >= this->ui->pcaSlider->minimum() && pregenValue <= this->ui->pcaSlider->maximum() )
-    {
-      double pcaValue = this->getPcaValue( pregenValue );
-      vnl_vector<double> shape;
-      if ( this->groupsAvailable )
-      {
-        shape = this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaValue * lambda ) );
-      }
-      else
-      {
-        shape = this->stats.Mean() + ( e * ( pcaValue * lambda ) );
-      }
-      for ( int i = 0; i < this->numDomains; i++ )
-      {
-        this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
-      }
-    }
-  }
-
   if ( this->groupsAvailable )
   {
     this->displayShape( this->stats.Group1Mean() + ( this->stats.GroupDifference() * groupRatio ) + ( e * ( pcaSliderValue * lambda ) ) );
@@ -1676,23 +1603,6 @@ void ShapeWorksView2::computeModeShape()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::computeRegressionShape()
 {
-  // pre-generate
-  for ( int step = 0; step < this->pregenSteps.size(); step++ )
-  {
-    int pregenValue = this->ui->regressionSlider->value() + this->pregenSteps[step];
-    if ( pregenValue >= this->ui->regressionSlider->minimum() && pregenValue <= this->ui->regressionSlider->maximum() )
-    {
-      // scale value back to range
-      double value = this->getRegressionValue( pregenValue );
-
-      vnl_vector<double> shape = this->regression->ComputeMean( value );
-      for ( int i = 0; i < this->numDomains; i++ )
-      {
-        this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
-      }
-    }
-  }
-
   vnl_vector<double> shape = this->regression->ComputeMean( this->getRegressionValue( this->ui->regressionSlider->value() ) );
   this->displayShape( shape );
 }
@@ -1854,8 +1764,8 @@ vtkSmartPointer<vtkPolyData> ShapeWorksView2::getDomainPoints( int domain )
 //---------------------------------------------------------------------------
 void ShapeWorksView2::setPregenSteps()
 {
-  // when animating, we want to pre-generate in a specific direction first
-  // otherwise, we want to pre-generate alternating left and right from the current position
+  // when animating, we want to generate in a specific direction first
+  // otherwise, we want to generate alternating left and right from the current position
   bool animate = false;
   bool direction = false;
 

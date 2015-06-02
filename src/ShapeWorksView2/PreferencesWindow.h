@@ -43,6 +43,9 @@ public Q_SLOTS:
 
   void restoreDefaults();
 
+signals:
+  void clear_cache();
+
 private:
   void updateLabels();
   Preferences &prefs_;

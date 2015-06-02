@@ -32,39 +32,33 @@ public:
   MeshManager(Preferences& prefs);
   ~MeshManager();
 
-  // pre-generate and cache a mesh for this shape
-  void generateMesh( const vnl_vector<double>& shape );
-
   vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& shape );
 
-private Q_SLOTS:
-  void initializeThreads();
+  void clear_cache();
+
+public Q_SLOTS:
+  void handle_thread_complete();
 
 private:
 
-  void shutdownThreads();
-  
+  // generate and cache a mesh for this shape in a queue
+  void generateMesh( const vnl_vector<double>& shape );
+
   Preferences& prefs_;
 
   // cache of shape meshes
-  MeshCache meshCache;
+  MeshCache meshCache_;
 
   // our own mesh generator
-  MeshGenerator meshGenerator;
+  MeshGenerator meshGenerator_;
 
   // queue of meshes to build
-  MeshWorkQueue workQueue;
-
-  // list of meshes that are currently being worked on in other threads
-  MeshWorkQueue workingQueue;
-
+  MeshWorkQueue workQueue_;
+  
   // the workers
-  std::vector<QThread*> threads;
-  std::vector<MeshWorker*> workers;
-
-  // condition to wake us up when work is completed by one of the workers
-  // used when we are asked for a mesh that is currently being worked on by another thread
-  QWaitCondition workDoneCondition;
+  std::vector<QThread*> threads_;
+  
+  size_t thread_count_;
 };
 
 #endif // ifndef MESH_Manager_H

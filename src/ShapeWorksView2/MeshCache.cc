@@ -2,7 +2,6 @@
  * Shapeworks license
  */
 
-
 // Includes for platform specific functions
 #ifdef _WIN32
 #include <shlobj.h>
@@ -26,7 +25,21 @@
 #endif // ifdef _WIN32
 
 #include <MeshCache.h>
+
 #include <vtkPolyData.h>
+
+bool vnl_vector_compare::operator()( const vnl_vector<double> &a, const vnl_vector<double> &b) const
+{
+  if ( a.size() < b.size() )
+    return true;
+  for ( unsigned i = 0; i < a.size(); i++ ) {
+	if ( (a[i] < b[i]) )
+		return true;
+	else if ( b[i] < a[i])
+		return false;
+  }
+  return false;
+}
 
 long long MeshCache::getTotalPhysicalMemory()
 {
@@ -75,17 +88,20 @@ long long MeshCache::getTotalAddressiblePhysicalMemory()
   if ( physical > addressable ) {return addressable; } else {return physical; }
 }
 
-MeshCache::MeshCache(Preferences& prefs) : prefs_(prefs)
+Preferences *  MeshCache::pref_ref_ = 0;
+
+MeshCache::MeshCache(Preferences& prefs) : preferences_(prefs)
 {
   this->maxMemory = MeshCache::getTotalAddressiblePhysicalMemory();
   this->memorySize = 0;
+  this->pref_ref_ = &this->preferences_;
 }
 
 vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape )
 {
   QMutexLocker locker( &mutex );
 
-  if ( !prefs_.getCacheEnabled() )
+  if ( !preferences_.getCacheEnabled() )
   {
     return NULL;
   }
@@ -97,12 +113,12 @@ vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape
     return NULL;
   }
 
-  return meshCache[shape];
+  return it->second;
 }
 
 void MeshCache::insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh )
 {
-  if ( !prefs_.getCacheEnabled() )
+  if ( !preferences_.getCacheEnabled() )
   {
     return;
   }
@@ -137,7 +153,7 @@ void MeshCache::clear()
 
 void MeshCache::freeSpaceForAmount( size_t allocation )
 {
-  size_t memoryLimit = ( prefs_.getCacheMemory() / 100.0 ) * this->maxMemory;
+  size_t memoryLimit = ( preferences_.getCacheMemory() / 100.0 ) * this->maxMemory;
 
   while ( !this->cacheList.empty() && this->memorySize + allocation > memoryLimit )
   {

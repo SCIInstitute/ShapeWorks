@@ -112,6 +112,7 @@ public Q_SLOTS:
   void colorSchemeChanged();
   void glyphPropertiesChanged();
   void handleSliderPreferencesChanged();
+  void handle_clear_cache();
 
 private:
 

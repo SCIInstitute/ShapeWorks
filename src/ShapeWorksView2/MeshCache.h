@@ -13,13 +13,18 @@
 #ifndef MESH_CACHE_H
 #define MESH_CACHE_H
 
+#include <list>
+#include <map>
+
 #include <QMutex>
 
 #include <vtkSmartPointer.h>
 
-#include "tinyxml.h"
-#include "itkParticleShapeStatistics.h"
-#include <Preferences.h>
+#include <vnl/vnl_vector.h>
+
+#include "Preferences.h"
+
+//#include "itkParticleShapeStatistics.h"
 
 class vtkPolyData;
 
@@ -34,27 +39,7 @@ public:
 class vnl_vector_compare
 {
 public:
-  bool operator()( const vnl_vector<double> &x, const vnl_vector<double> &y ) const
-  {
-    if ( x.size() < y.size() )
-    {
-      return true;
-    }
-
-    for ( unsigned i = 0; i < x.size(); i++ )
-    {
-      if ( x[i] < y[i] )
-      {
-        return true;
-      }
-      else if ( y[i] < x[i] )
-      {
-        return false;
-      }
-    }
-
-    return false;
-  }
+  bool operator()( const vnl_vector<double> &a, const vnl_vector<double> &b) const;
 };
 
 // mesh cache type
@@ -76,8 +61,9 @@ public:
 
   void clear();
 
+  static Preferences * pref_ref_;
+
 private:
-  Preferences& prefs_;
 
   void freeSpaceForAmount( size_t allocation );
 
@@ -85,6 +71,7 @@ private:
   static long long getTotalAddressibleMemory();
   static long long getTotalAddressiblePhysicalMemory();
 
+  Preferences &preferences_;
   // mesh cache
   CacheMap meshCache;
 
