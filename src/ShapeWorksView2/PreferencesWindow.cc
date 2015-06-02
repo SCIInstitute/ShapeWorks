@@ -55,20 +55,21 @@ void PreferencesWindow::on_meshCacheMemory_valueChanged( int value )
 void PreferencesWindow::on_colorScheme_currentIndexChanged( int index )
 {
   prefs_.setColorScheme( index );
+  emit update_view();
 }
 
 void PreferencesWindow::on_glyphSize_valueChanged( int value )
 {
-  //QCoreApplication::processEvents();
   prefs_.setGlyphSize( value / 10.0 );
   this->updateLabels();
+  emit update_view();
 }
 
 void PreferencesWindow::on_glyphQuality_valueChanged( int value )
 {
-  //QCoreApplication::processEvents();
   prefs_.setGlyphQuality( value );
   this->updateLabels();
+  emit update_view();
 }
 
 void PreferencesWindow::on_numThreadsSlider_valueChanged( int value )
@@ -85,11 +86,13 @@ void PreferencesWindow::on_parallelEnabled_stateChanged( int state )
 void PreferencesWindow::on_pcaRangeSpinBox_valueChanged( double value )
 {
   prefs_.setPcaRange(this->ui->pcaRangeSpinBox->value());
+  emit update_pca();
 }
 
 void PreferencesWindow::on_pcaStepsSpinBox_valueChanged( int value )
 {
   prefs_.setNumPcaSteps(this->ui->pcaStepsSpinBox->value());
+  emit update_pca();
 }
 
 void PreferencesWindow::on_regressionStepsSpinBox_valueChanged( int value )

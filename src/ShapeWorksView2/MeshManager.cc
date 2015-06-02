@@ -83,4 +83,5 @@ void MeshManager::handle_thread_complete() {
 		thread->start();
 		this->thread_count_++;
 	}
+	emit new_mesh();
 }

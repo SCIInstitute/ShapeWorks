@@ -129,12 +129,29 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
   this->orientationMarkerWidget->EnabledOn();
   this->orientationMarkerWidget->InteractiveOff();
 
-  QObject::connect(&this->pref_window_, SIGNAL(clear_cache()), this, SLOT(handle_clear_cache()));
+  QObject::connect(&(this->pref_window_), SIGNAL(clear_cache()), this, SLOT(handle_clear_cache()));
+  QObject::connect(&(this->pref_window_), SIGNAL(update_view()), this, SLOT(handle_redraw()));
+  QObject::connect(&(this->pref_window_), SIGNAL(update_pca()), this, SLOT(handle_pca()));
+  QObject::connect(&(this->meshManager), SIGNAL(new_mesh()), this, SLOT(handle_redraw()));
 }
 
 //---------------------------------------------------------------------------
 ShapeWorksView2::~ShapeWorksView2()
 {}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::handle_pca()
+{
+	this->updateSliders();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::handle_redraw()
+{
+	this->glyphPropertiesChanged();
+	this->colorSchemeChanged();
+	this->updateActors();
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksView2::handle_clear_cache()

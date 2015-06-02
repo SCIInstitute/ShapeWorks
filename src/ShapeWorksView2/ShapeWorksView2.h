@@ -113,6 +113,8 @@ public Q_SLOTS:
   void glyphPropertiesChanged();
   void handleSliderPreferencesChanged();
   void handle_clear_cache();
+  void handle_redraw();
+  void handle_pca();
 
 private:
 

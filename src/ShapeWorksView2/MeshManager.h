@@ -39,6 +39,9 @@ public:
 public Q_SLOTS:
   void handle_thread_complete();
 
+signals:
+  void new_mesh();
+
 private:
 
   // generate and cache a mesh for this shape in a queue

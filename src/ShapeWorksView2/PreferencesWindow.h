@@ -45,6 +45,8 @@ public Q_SLOTS:
 
 signals:
   void clear_cache();
+  void update_view();
+  void update_pca();
 
 private:
   void updateLabels();
