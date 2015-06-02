@@ -65,9 +65,6 @@ public:
   int getNumRegressionSteps();
   void setNumRegressionSteps( int value );
 
-  QStringList get_recent_files();
-  void add_recent_file( QString file );
-
   /// restore all default values
   void restoreDefaults();
 
