@@ -44,6 +44,8 @@ void PreferencesWindow::updateLabels()
 void PreferencesWindow::on_meshCacheEnabled_stateChanged( int state )
 {
   prefs_.setCacheEnabled( this->ui->meshCacheEnabled->isChecked() );
+  this->ui->parallelEnabled->setEnabled(state);
+  this->ui->numThreadsSlider->setEnabled(state);
   emit clear_cache();
 }
 
