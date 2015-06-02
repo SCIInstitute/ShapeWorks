@@ -37,7 +37,6 @@ void MeshManager::generateMesh( const vnl_vector<double>& shape )
 	  worker->moveToThread(thread);
   	  connect(thread, SIGNAL(started()), worker, SLOT(process()));
   	  connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
-  	  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   	  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 	  size_t tmp_max = this->prefs_.getNumThreads();
 	  if (this->thread_count_ < tmp_max) {

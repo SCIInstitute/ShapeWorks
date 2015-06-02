@@ -25,20 +25,23 @@
 
 class MeshGenerator
 {
-public:
-  MeshGenerator(Preferences& prefs_);
-  ~MeshGenerator();
-  vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
+  public:
+    MeshGenerator(Preferences& prefs_);
+    ~MeshGenerator();
+    vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
 
-private:
-  vtkSmartPointer<vtkSurfaceReconstructionFilter>	surfaceReconstruction;
-  vtkSmartPointer<vtkPoints>						points;
-  vtkSmartPointer<vtkPolyData>						pointSet;
-  vtkSmartPointer<vtkContourFilter>					contourFilter;
-  vtkSmartPointer<vtkReverseSense>					reverseSense;
-  vtkSmartPointer<vtkSmoothPolyDataFilter>			smoothFilter;
+  private:
+    vtkSmartPointer<vtkPolyData> transform_back(
+        vtkSmartPointer<vtkPoints> pt,
+        vtkSmartPointer<vtkPolyData> pd);
+    vtkSmartPointer<vtkSurfaceReconstructionFilter>  surfaceReconstruction;
+    vtkSmartPointer<vtkPoints>            points;
+    vtkSmartPointer<vtkPolyData>            pointSet;
+    vtkSmartPointer<vtkContourFilter>          contourFilter;
+    vtkSmartPointer<vtkReverseSense>          reverseSense;
+    vtkSmartPointer<vtkSmoothPolyDataFilter>      smoothFilter;
 
-  Preferences& prefs_;
+    Preferences& prefs_;
 };
 
 #endif // ifndef MESH_GENERATOR_H
