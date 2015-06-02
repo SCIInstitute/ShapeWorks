@@ -32,18 +32,6 @@ public:
   MeshManager(Preferences& prefs);
   ~MeshManager();
 
-  // mesh generation settings
-  void setNeighborhoodSize( int size );
-  int getNeighborhoodSize();
-
-  void setSampleSpacing( double spacing );
-  double getSampleSpacing();
-
-  void setSmoothingAmount( float amount);
-  float getSmoothing();
-
-  void setUsePowerCrust( bool enabled );
-
   // pre-generate and cache a mesh for this shape
   void generateMesh( const vnl_vector<double>& shape );
 
@@ -77,12 +65,6 @@ private:
   // condition to wake us up when work is completed by one of the workers
   // used when we are asked for a mesh that is currently being worked on by another thread
   QWaitCondition workDoneCondition;
-
-  // mesh generation settings
-  int neighborhoodSize;
-  double sampleSpacing;
-  bool usePowerCrust;
-  float smoothingAmount;
 };
 
 #endif // ifndef MESH_Manager_H

@@ -78,12 +78,6 @@ IF(USE_QT)
   INCLUDE( ${QT_USE_FILE} )
 ENDIF(USE_QT)
 
-# optionally build with powercrust reconstruction
-OPTION(BUILD_PowerCrust "Build with powercrust library)" ON)
-IF(BUILD_PowerCrust)
-  ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
-ENDIF(BUILD_PowerCrust)
-
 IF (VTK_FOUND)
   IF(BUILD_ShapeWorksView2)
     SUBDIRS(ShapeWorksView2)

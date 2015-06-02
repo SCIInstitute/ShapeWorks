@@ -24,6 +24,7 @@ class MeshWorker : public QObject
   Q_OBJECT
 
 public:
+  MeshWorker(Preferences& prefs);
   void setWorkQueue( MeshWorkQueue* queue );
   void setWorkingQueue( MeshWorkQueue* queue );
   void setWorkDoneCondition( QWaitCondition* condition );

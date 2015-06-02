@@ -52,7 +52,6 @@
 #include <ShapeWorksView2.h>
 #include <ui_ShapeWorksView2.h>
 #include "tinyxml.h"
-#include "CustomSurfaceReconstructionFilter.h"
 
 //---------------------------------------------------------------------------
 ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),  pref_window_(prefs_)
@@ -70,8 +69,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
   this->ui->tabWidget->setStyleSheet( QString( "QTabWidget::pane { border: 2px solid rgb( 80, 80, 80 ); }" ) );
 #endif
 
-  QSize size = prefs_.getSettings().value( "mainwindow/size", QSize( 1280, 720 ) ).toSize();
-  this->resize( size );
+  this->resize( prefs_.get_main_window_size() );
 
   QObject::connect(
     &prefs_, SIGNAL( colorSchemeChanged( int ) ),
@@ -174,7 +172,7 @@ void ShapeWorksView2::closeEvent( QCloseEvent* event )
   pref_window_.close_window();
 
   // save the size of the window to preferences
-  prefs_.getSettings().setValue( "mainwindow/size", this->size() );
+  prefs_.set_main_window_size( this->size() );
 }
 
 //---------------------------------------------------------------------------
@@ -726,13 +724,6 @@ void ShapeWorksView2::on_showSurface_stateChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksView2::on_usePowerCrustCheckBox_stateChanged()
-{
-  this->updateSurfaceSettings();
-  this->redraw();
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksView2::on_neighborhoodSpinBox_valueChanged()
 {
   this->updateSurfaceSettings();
@@ -925,12 +916,7 @@ void ShapeWorksView2::updateAnalysisMode()
 
   // this will make the UI appear more responsive
   QCoreApplication::processEvents();
-
-#ifndef SW_USE_POWERCRUST
-  this->ui->powerCrustLabel->hide();
-  this->ui->usePowerCrustCheckBox->hide();
-#endif
-
+  
   // switch back to spheres
   this->displaySpheres();
 
@@ -994,18 +980,10 @@ void ShapeWorksView2::updateAnalysisMode()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::updateSurfaceSettings()
 {
-  this->meshManager.setNeighborhoodSize( this->ui->neighborhoodSpinBox->value() );
-  this->meshManager.setSampleSpacing( this->ui->spacingSpinBox->value() );
+  this->prefs_.setNeighborhood(this->ui->neighborhoodSpinBox->value());
+  this->prefs_.setSpacing(this->ui->spacingSpinBox->value());
   float smoothingAmount = (float)this->ui->smoothingSlider->value() / (float)this->ui->smoothingSlider->maximum() * 100.0f;
-  this->meshManager.setSmoothingAmount( smoothingAmount );
-  this->meshManager.setUsePowerCrust( this->ui->usePowerCrustCheckBox->isChecked() );
-
-  bool powercrust = this->ui->usePowerCrustCheckBox->isChecked();
-
-  // update UI
-  //this->ui->neighborhoodSpinBox->setEnabled( !powercrust );
-  //this->ui->spacingSpinBox->setEnabled( !powercrust );
-  //this->ui->smoothingSlider->setEnabled( !powercrust );
+  this->prefs_.setSmoothingAmount(smoothingAmount);
 
   this->displayShape( this->currentShape );
 }
@@ -1378,11 +1356,9 @@ void ShapeWorksView2::computePointDifferences(
   {
     vtkSmartPointer<vtkPolyData> pointSet = this->getDomainPoints( domain );
 
-    vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
-      vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
+    vtkSmartPointer<vtkSurfaceReconstructionFilter> surfaceReconstruction =
+      vtkSmartPointer<vtkSurfaceReconstructionFilter>::New();
     surfaceReconstruction->SetInputData( pointSet );
-    surfaceReconstruction->SetNeighborhoodSize( this->meshManager.getNeighborhoodSize() );
-    surfaceReconstruction->SetSampleSpacing( this->meshManager.getSampleSpacing() );
     surfaceReconstruction->Update();
 
     vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();

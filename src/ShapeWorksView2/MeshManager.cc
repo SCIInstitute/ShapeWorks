@@ -10,10 +10,8 @@
 
 #include <MeshManager.h>
 
-MeshManager::MeshManager(Preferences& prefs) : prefs_(prefs), meshCache(prefs)
+MeshManager::MeshManager(Preferences& prefs) : prefs_(prefs), meshCache(prefs), meshGenerator(prefs)
 {
-  this->smoothingAmount = 0;
-
   // monitor changes to threading preferences
   QObject::connect(
     &prefs_, SIGNAL( threadingChangedSignal() ),
@@ -25,61 +23,8 @@ MeshManager::MeshManager(Preferences& prefs) : prefs_(prefs), meshCache(prefs)
 MeshManager::~MeshManager()
 {}
 
-void MeshManager::setNeighborhoodSize( int size )
-{
-  this->neighborhoodSize = size;
-  this->initializeThreads();
-  this->meshCache.clear();
-  this->meshGenerator.setNeighborhoodSize( size );
-}
-
-int MeshManager::getNeighborhoodSize()
-{
-  return this->neighborhoodSize;
-}
-
-void MeshManager::setSampleSpacing( double spacing )
-{
-  this->sampleSpacing = spacing;
-  this->initializeThreads();
-  this->meshCache.clear();
-  this->meshGenerator.setSampleSpacing( spacing );
-}
-
-double MeshManager::getSampleSpacing()
-{
-  return this->sampleSpacing;
-}
-
-void MeshManager::setSmoothingAmount( float amount )
-{
-  this->smoothingAmount = amount;
-  this->initializeThreads();
-  this->meshCache.clear();
-  this->meshGenerator.setSmoothingAmount( amount );
-}
-
-float MeshManager::getSmoothing()
-{
-  return this->smoothingAmount;
-}
-
-void MeshManager::setUsePowerCrust( bool enabled )
-{
-  this->usePowerCrust = enabled;
-  this->initializeThreads();
-  this->meshCache.clear();
-  this->meshGenerator.setUsePowerCrust( enabled );
-}
-
 void MeshManager::generateMesh( const vnl_vector<double>& shape )
 {
-  if ( this->usePowerCrust )
-  {
-    // the powercrust code uses all manner of global variables and cannot be run in parallel right now
-    return;
-  }
-
   if ( !prefs_.getParallelEnabled() || this->threads.size() <= 0 )
   {
     return;
@@ -155,16 +100,12 @@ void MeshManager::initializeThreads()
     for ( int i = 0; i < numThreads; i++ )
     {
       threads[i] = new QThread;
-      workers[i] = new MeshWorker;
+      workers[i] = new MeshWorker(this->prefs_);
       workers[i]->setWorkQueue( &( this->workQueue ) );
       workers[i]->setWorkingQueue( &( this->workingQueue ) );
       workers[i]->setWorkDoneCondition( &( this->workDoneCondition ) );
       workers[i]->setMeshCache( &( this->meshCache ) );
 
-      workers[i]->getMeshGenerator()->setNeighborhoodSize( this->neighborhoodSize );
-      workers[i]->getMeshGenerator()->setSampleSpacing( this->sampleSpacing );
-      workers[i]->getMeshGenerator()->setSmoothingAmount( this->smoothingAmount );
-      workers[i]->getMeshGenerator()->setUsePowerCrust( this->usePowerCrust );
       workers[i]->moveToThread( threads[i] );
       threads[i]->start();
     }

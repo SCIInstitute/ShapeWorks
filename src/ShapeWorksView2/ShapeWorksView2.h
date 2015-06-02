@@ -105,7 +105,6 @@ public Q_SLOTS:
   // visualization
   void on_showGlyphs_stateChanged();
   void on_showSurface_stateChanged();
-  void on_usePowerCrustCheckBox_stateChanged();
   void on_neighborhoodSpinBox_valueChanged();
   void on_spacingSpinBox_valueChanged();
   void on_smoothingSlider_valueChanged();

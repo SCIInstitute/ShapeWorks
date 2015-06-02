@@ -1,26 +1,40 @@
-/*
- * Shapeworks license
- */
-
-/**
- * @file Preferences.h
- * @brief Houses and controls application preferences.
- *
- */
-
-#ifndef PREFERENCES_H
-#define PREFERENCES_H
+#ifndef STUDIO_APPLICATION_PREFERENCES_H
+#define STUDIO_APPLICATION_PREFERENCES_H
 
 #include <QSettings>
+#include <QString>
 
+//! Application preferences
+/*!
+ * The Preferences singleton controls all preferences for the application.
+ * Values persist via the QSettings class.
+ */
 class Preferences : public QObject
 {
   Q_OBJECT;
 
 public:
-  Preferences();
 
-  QSettings& getSettings();
+  //--- general preferences
+
+  /// Main window size
+  QSize get_main_window_size();
+  void set_main_window_size( QSize size );
+
+  /// ShapeWorksGroom executable location
+  QString get_groom_location();
+  void set_groom_location( QString location );
+
+  /// ShapeWorksRun executable location
+  QString get_optimize_location();
+  void set_optimize_location( QString location );
+
+  /// last directory used (open/save)
+  QString get_last_directory();
+  void set_last_directory( QString location );
+
+  //--- analysis preferences
+
   bool getCacheEnabled();
   void setCacheEnabled( bool enabled );
 
@@ -51,29 +65,39 @@ public:
   int getNumRegressionSteps();
   void setNumRegressionSteps( int value );
 
+  QStringList get_recent_files();
+  void add_recent_file( QString file );
+
+  /// restore all default values
   void restoreDefaults();
 
+  float getSmoothingAmount();
+  void setSmoothingAmount(float value);
+
+  float getCacheEpsilon();
+  void setCacheEpsilon(float value);
+
+  float getSpacing();
+  void setSpacing(float value);
+
+  int getNeighborhood();
+  void setNeighborhood(int value);
+
 Q_SIGNALS:
-  void colorSchemeChanged( int newIndex );
-  void glyphPropertiesChanged();
-  void threadingChangedSignal();
-  void slidersChangedSignal();
+  void color_scheme_changed( int newIndex );
+  void glyph_properties_changed();
+  void threading_changed_signal();
+  void sliders_changed_signal();
+
+public:
+
+  enum { MAX_RECENT_FILES = 4 };
+  Preferences();
 
 private:
-
-// default values
-  const bool DEFAULT_CACHE_ENABLED;
-  const bool DEFAULT_PARALLEL_ENABLED;
-  const int DEFAULT_CACHE_MEMORY;
-  const int DEFAULT_COLOR_SCHEME;
-  const float DEFAULT_GLYPH_SIZE;
-  const float DEFAULT_GLYPH_QUALITY;
-  const float DEFAULT_NUM_THREADS;
-  const float DEFAULT_PCA_RANGE;
-  const int DEFAULT_PCA_STEPS;
-  const int DEFAULT_REGRESSION_STEPS;
+  /// the QSettings object
   QSettings settings;
 
 };
 
-#endif // ifndef PREFERENCES_H
+#endif // ifndef STUDIO_APPLICATION_PREFERENCES_H

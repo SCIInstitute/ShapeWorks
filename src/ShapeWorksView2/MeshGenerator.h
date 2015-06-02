@@ -16,53 +16,29 @@
 #include "vnl/vnl_vector.h"
 
 #include <vtkSmartPointer.h>
-
-//#define SW_USE_POWERCRUST
-
-class CustomSurfaceReconstructionFilter;
-class vtkPowerCrustSurfaceReconstruction;
-class vtkContourFilter;
-class vtkReverseSense;
-class vtkSmoothPolyDataFilter;
-class vtkPolyDataNormals;
-class vtkPoints;
-class vtkPolyData;
-class vtkTriangleFilter;
-class vtkWindowedSincPolyDataFilter;
-class vtkPolyDataToImageData;
+#include <vtkSurfaceReconstructionFilter.h>
+#include <vtkPoints.h>
+#include <vtkContourFilter.h>
+#include <vtkReverseSense.h>
+#include <vtkSmoothPolyDataFilter.h>
+#include <Preferences.h>
 
 class MeshGenerator
 {
 public:
-  MeshGenerator();
+  MeshGenerator(Preferences& prefs_);
   ~MeshGenerator();
-
-  void setNeighborhoodSize( int size );
-  void setSampleSpacing( double spacing );
-  void setUsePowerCrust( bool enabled );
-  void setSmoothingAmount( float amount ); // 0-100
-
   vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
 
 private:
+  vtkSmartPointer<vtkSurfaceReconstructionFilter>	surfaceReconstruction;
+  vtkSmartPointer<vtkPoints>						points;
+  vtkSmartPointer<vtkPolyData>						pointSet;
+  vtkSmartPointer<vtkContourFilter>					contourFilter;
+  vtkSmartPointer<vtkReverseSense>					reverseSense;
+  vtkSmartPointer<vtkSmoothPolyDataFilter>			smoothFilter;
 
-  void updatePipeline();
-
-  vtkSmartPointer<CustomSurfaceReconstructionFilter>  surfaceReconstruction;
-  vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust;
-
-  vtkSmartPointer<vtkPoints>               points;
-  vtkSmartPointer<vtkPolyData>             pointSet;
-  vtkSmartPointer<vtkContourFilter>        contourFilter;
-  vtkSmartPointer<vtkReverseSense>         reverseSense;
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
-  vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
-  vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
-  vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
-  vtkSmartPointer<vtkPolyDataToImageData>  polydataToImageData;
-
-  bool usePowerCrust;
-  bool smoothingEnabled;
+  Preferences& prefs_;
 };
 
 #endif // ifndef MESH_GENERATOR_H

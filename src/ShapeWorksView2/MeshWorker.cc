@@ -7,6 +7,8 @@
 
 #include <MeshWorker.h>
 
+MeshWorker::MeshWorker(Preferences& prefs) : meshGenerator(prefs) {}
+
 void MeshWorker::threadBegin()
 {
   MeshWorkItem* workItem = this->workQueue->pop();
