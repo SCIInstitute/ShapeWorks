@@ -459,7 +459,6 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->update_table();
   this->update_scrollbar();
   this->project_->handle_clear_cache();
-  this->analysis_tool_->reset_stats();
   this->update_display();
 }
 
@@ -582,6 +581,7 @@ void ShapeWorksStudioApp::open_project( QString filename )
 
   // set the zoom state
   this->ui_->thumbnail_size_slider->setValue( this->project_->get_zoom_state() );
+  this->analysis_tool_->reset_stats();
 }
 
 //---------------------------------------------------------------------------

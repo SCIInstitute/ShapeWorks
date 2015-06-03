@@ -295,7 +295,7 @@ void AnalysisTool::pca_labels_changed( QString value, QString eigen, QString lam
 void AnalysisTool::reset_stats()
 {
 	this->stats_ready_ = false;
-	this->compute_stats();
+	this->stats_ = ParticleShapeStatistics<3>();
 }
 
 //---------------------------------------------------------------------------
