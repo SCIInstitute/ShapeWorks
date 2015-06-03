@@ -4,6 +4,7 @@
 
 // qt
 #include <QtGui>
+#include <cmath>
 
 #include <Application/PreferencesWindow.h>
 #include <Application/Preferences.h>

@@ -1,6 +1,4 @@
 #include <iostream>
-#include <cmath>
-
 #include <QXmlStreamWriter>
 #include <QTemporaryFile>
 #include <QFileDialog>
