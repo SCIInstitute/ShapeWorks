@@ -1,5 +1,7 @@
-OPTION( BUILD_SWV2_OSX_APP "Build ShapeWorksView2 as an application." OFF )
 
+if (APPLE)
+	OPTION( BUILD_SWV2_OSX_APP "Build ShapeWorksView2 as an application." ON )
+endif()
 
 ###########################################
 # Flags for Microsoft Compiler
