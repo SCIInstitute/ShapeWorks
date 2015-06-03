@@ -519,10 +519,11 @@ void ShapeWorksStudioApp::update_display()
 			this->visualizer_->display_shape(this->analysis_tool_->getMean());
 		} else if (mode == "pca") {
 			this->compute_mode_shape();
-		} else if (mode == "single sample") {//TODO 1 sample, median, regression
+		} else if (mode == "single sample") {
 			this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
 		} //TODO regression
   }
+  this->project_->set_zoom_state( this->ui_->thumbnail_size_slider->value() );
 }
 
 //---------------------------------------------------------------------------
@@ -533,16 +534,16 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::reset() {
-  
+    this->ui_->view_mode_combobox->setCurrentIndex( 0 );
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project( QString filename )
 {
   this->reset();
-  this->analysis_tool_->setAnalysisMode("all samples");
   this->project_->load_project( filename );
   this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->analysis_tool_->setAnalysisMode("all samples");
 
   preferences_.add_recent_file( filename );
   this->update_recent_files();
