@@ -5,6 +5,7 @@
 #include <MeshGenerator.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <limits>
 
 MeshGenerator::MeshGenerator(Preferences& prefs) : prefs_(prefs)
 {
@@ -72,21 +73,19 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::transform_back(
     vtkSmartPointer<vtkPolyData> pd)
 {
   double pt_bounds[6];
-  pt->GetBounds(pt_bounds);
-  double centerP[3] = {pt_bounds[1] - pt_bounds[0],pt_bounds[3] - pt_bounds[2],pt_bounds[5] - pt_bounds[4]};
-
   double pd_bounds[6];
+  pt->GetBounds(pt_bounds);
   pd->GetBounds(pd_bounds);
-  double centerD[3] = {pd_bounds[1] - pd_bounds[0],pd_bounds[3] - pd_bounds[2],pd_bounds[5] - pd_bounds[4]};
 
   double scaleX = (pt_bounds[1] - pt_bounds[0])/(pd_bounds[1] - pd_bounds[0]);
   double scaleY = (pt_bounds[3] - pt_bounds[2])/(pd_bounds[3] - pd_bounds[2]);
   double scaleZ = (pt_bounds[5] - pt_bounds[4])/(pd_bounds[5] - pd_bounds[4]);
 
   vtkSmartPointer<vtkTransform> transp = vtkSmartPointer<vtkTransform>::New();
-  transp->Translate(centerP[0],centerP[1],centerP[2]);
+
+  transp->Translate(pt_bounds[0], pt_bounds[2], pt_bounds[4]);
   transp->Scale(scaleX, scaleY, scaleZ);
-  transp->Translate(-centerD[0],-centerD[1],-centerD[2]);
+  transp->Translate(- pd_bounds[0], - pd_bounds[2], - pd_bounds[4]);
 
   vtkSmartPointer<vtkTransformPolyDataFilter> tpd =
     vtkSmartPointer<vtkTransformPolyDataFilter>::New();
