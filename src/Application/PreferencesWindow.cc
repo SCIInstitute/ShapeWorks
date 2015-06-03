@@ -171,7 +171,7 @@ void PreferencesWindow::on_num_threads_valueChanged(int i) {
 }
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_caching_epsilon_valueChanged(int i) {
-	preferences_.set_cache_epsilon(std::powf(10.f,static_cast<float>(i)));
+	preferences_.set_cache_epsilon(std::pow(10.,static_cast<double>(i)));
     emit clear_cache();
 }
   
