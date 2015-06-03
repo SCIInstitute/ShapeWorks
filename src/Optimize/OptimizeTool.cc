@@ -143,8 +143,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   }
 
   this->project_->load_point_files( list );
-
-  this->app_->set_status_bar( "Optimize complete" );
+  emit optimize_complete();
 }
 
 //---------------------------------------------------------------------------

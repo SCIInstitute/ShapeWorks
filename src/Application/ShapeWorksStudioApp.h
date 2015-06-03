@@ -70,6 +70,7 @@ public Q_SLOTS:
 
   void handle_project_changed();
   void handle_groom_complete();
+  void handle_optimize_complete();
 
   void handle_display_setting_changed();
 

@@ -148,6 +148,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->optimize_tool_->set_project( this->project_ );
   this->optimize_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->optimize_tool_.data() );
+  connect( this->optimize_tool_.data(), SIGNAL( optimize_complete() ), this, SLOT( handle_optimize_complete() ) );
 
   //set up preferences window
   this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this,preferences_));
@@ -462,6 +463,15 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->update_table();
   this->update_scrollbar();
   this->project_->handle_clear_cache();
+  this->update_display();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_optimize_complete()
+{
+  this->set_status_bar( "Optimize complete" );
+  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->update_lut();
   this->update_display();
 }
 

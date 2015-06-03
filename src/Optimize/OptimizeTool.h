@@ -33,6 +33,8 @@ public Q_SLOTS:
 
   /// Run optimize tool
   void on_run_optimize_button_clicked();
+signals:
+  void optimize_complete();
 
 private:
   Preferences& preferences_;
