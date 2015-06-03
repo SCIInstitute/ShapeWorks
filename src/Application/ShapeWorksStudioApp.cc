@@ -470,6 +470,7 @@ void ShapeWorksStudioApp::handle_project_changed()
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
   this->set_status_bar( "Optimize complete" );
+  this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->visualizer_->update_lut();
   this->update_display();
@@ -479,6 +480,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 void ShapeWorksStudioApp::handle_groom_complete()
 {
   this->set_status_bar( "Groom complete" );
+  this->ui_->view_mode_combobox->setItemData( 1, 33, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setCurrentIndex( 1 );
 }
 
