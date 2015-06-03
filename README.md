@@ -120,9 +120,6 @@ The respective eigen values and lambdas are displayed below the slider.
 *Regression* This is another feature not yet available. 
 <br/> <br/>
 **Visualization** <br/>
-*Powercrust* This check enables use of the Powercrust isosurface reconstruction library. It is under the GPL License.
-There are known problems with the isosurface reconstruction without powercrust. This will be addressed in the future.
-<br/><br/>
 *Show Glyphs* Toggle visualization of the correspondance point glyphs.
 <br/><br/>
 *Show Surface* Toggle visualization of the isosurface.
