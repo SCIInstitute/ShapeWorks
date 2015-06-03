@@ -25,7 +25,6 @@
 #endif // ifdef _WIN32
 
 #include <Data/MeshCache.h>
-#include <cmath>
 
 #include <vtkPolyData.h>
 

@@ -39,9 +39,8 @@ public:
   void activate();
 
   std::string getAnalysisMode();
-  void setAnalysisMode(std::string i);
 
-  QSlider* getPCASlider();
+  void setAnalysisMode(std::string i);
 
   void setLabels(QString which, QString value);
 

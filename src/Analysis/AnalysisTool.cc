@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 #include <QXmlStreamWriter>
 #include <QTemporaryFile>
@@ -75,11 +76,6 @@ void AnalysisTool::setLabels(QString which, QString value) {
 //---------------------------------------------------------------------------
 int AnalysisTool::getSampleNumber() {
 	return this->ui_->sampleSpinBox->value();
-}
-
-//---------------------------------------------------------------------------
-QSlider* AnalysisTool::getPCASlider() {
-	return this->ui_->pcaSlider;
 }
 
 //---------------------------------------------------------------------------
@@ -256,23 +252,23 @@ void AnalysisTool::handle_pca_animate_state_changed()
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_timer()
 {
-  int value = this->getPCASlider()->value();
+  int value = this->ui_->pcaSlider->value();
   if ( this->pcaAnimateDirection )
   {
-    value += this->getPCASlider()->singleStep();
+    value += this->ui_->pcaSlider->singleStep();
   }
   else
   {
-    value -= this->getPCASlider()->singleStep();
+    value -= this->ui_->pcaSlider->singleStep();
   }
 
-  if ( value >= this->getPCASlider()->maximum() || value <= this->getPCASlider()->minimum() )
+  if ( value >= this->ui_->pcaSlider->maximum() || value <= this->ui_->pcaSlider->minimum() )
   {
     this->pcaAnimateDirection = !this->pcaAnimateDirection;
     //this->setPregenSteps();
   }
 
-  this->getPCASlider()->setValue( value );
+  this->ui_->pcaSlider->setValue( value );
 }
 
 //---------------------------------------------------------------------------
@@ -280,7 +276,7 @@ double AnalysisTool::get_pca_value( )
 {
   int slider_value = this->ui_->pcaSlider->value();
   float range = preferences_.get_pca_range();
-  int halfRange = this->getPCASlider()->maximum();
+  int halfRange = this->ui_->pcaSlider->maximum();
 
   double value = (double)slider_value / (double)halfRange * range;
   return value;
