@@ -405,6 +405,7 @@ void ShapeWorksStudioApp::update_table()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed() {
+	if (!this->project_->reconstructed_present()) return;
 	this->visualizer_->update_lut();
 	this->compute_mode_shape();
 }

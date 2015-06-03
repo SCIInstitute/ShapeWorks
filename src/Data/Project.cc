@@ -47,6 +47,7 @@ void Project::handle_clear_cache() {
 
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples() {
+	if (!this->reconstructed_present_) return;
 	this->preferences_.set_cache_enabled(false);
 	for (int i = 0; i < this->shapes_.size(); i++) {
 		if (this->shapes_.at(i)->get_local_correspondence_points().size() > 0) {
