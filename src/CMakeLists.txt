@@ -30,9 +30,6 @@ OPTION (USE_PRECOMPILED_HEADERS "Use precompiled headers to speed up compilation
 
 OPTION (LOAD_DEFAULT_PROJECT "Load default project" OFF)
 
-OPTION (POWERCRUST "Use PowerCrust" OFF)
-
-
 MESSAGE(STATUS "** PRECOMPILED_HEADERS: ${USE_PRECOMPILED_HEADERS}")
 
 set(CMAKE_BUILD_TYPE Release)
@@ -238,20 +235,14 @@ SET(STUDIO_VISUALIZATION_HDRS
   Visualization/Viewer.h
   Visualization/Visualizer.h
   Visualization/DisplayObject.h
-  Visualization/CustomSurfaceReconstructionFilter.h
   Visualization/StudioInteractorStyle.h
-  Visualization/vtkPolyDataToImageData.h
-  Visualization/itkImageToVTKImageFilter.h
-  Visualization/itkImageToVTKImageFilter.hxx
 )
 SET(STUDIO_VISUALIZATION_SRCS
   Visualization/Lightbox.cc
   Visualization/Viewer.cc
   Visualization/Visualizer.cc
   Visualization/DisplayObject.cc
-  Visualization/CustomSurfaceReconstructionFilter.cc
   Visualization/StudioInteractorStyle.cc
-  Visualization/vtkPolyDataToImageData.cxx
 )
 
 ### Util
@@ -261,15 +252,6 @@ SET(STUDIO_UTIL_HDRS
 SET(STUDIO_UTIL_SRCS
   Util/WheelEventForwarder.cc
   )
-
-
-
-IF(POWERCRUST)
-  ADD_DEFINITIONS(-DPOWERCRUST)
-  SET(STUDIO_VISUALIZATION_HDRS ${STUDIO_VISUALIZATION_HDRS} Visualization/vtkPowerCrustSurfaceReconstruction.h)
-  SET(STUDIO_VISUALIZATION_SRCS ${STUDIO_VISUALIZATION_SRCS} Visualization/vtkPowerCrustSurfaceReconstruction.cxx)
-ENDIF(POWERCRUST)
-
 
 ### TinyXML
 SET (TINYXML_SRCS

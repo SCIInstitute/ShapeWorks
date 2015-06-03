@@ -16,46 +16,32 @@
 #include "vnl/vnl_vector.h"
 
 #include <vtkSmartPointer.h>
+#include <vtkSurfaceReconstructionFilter.h>
+#include <vtkPoints.h>
+#include <vtkContourFilter.h>
+#include <vtkReverseSense.h>
+#include <vtkSmoothPolyDataFilter.h>
 #include <Application/Preferences.h>
-
-class CustomSurfaceReconstructionFilter;
-class vtkPowerCrustSurfaceReconstruction;
-class vtkContourFilter;
-class vtkReverseSense;
-class vtkSmoothPolyDataFilter;
-class vtkPolyDataNormals;
-class vtkPoints;
-class vtkPolyData;
-class vtkTriangleFilter;
-class vtkWindowedSincPolyDataFilter;
-class vtkPolyDataToImageData;
 
 class MeshGenerator
 {
-public:
-  MeshGenerator(Preferences& prefs);
-  ~MeshGenerator();
+  public:
+    MeshGenerator(Preferences& prefs_);
+    ~MeshGenerator();
+    vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
 
-  vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
-  void updatePipeline();
+  private:
+    vtkSmartPointer<vtkPolyData> transform_back(
+        vtkSmartPointer<vtkPoints> pt,
+        vtkSmartPointer<vtkPolyData> pd);
+    vtkSmartPointer<vtkSurfaceReconstructionFilter>  surfaceReconstruction;
+    vtkSmartPointer<vtkPoints>            points;
+    vtkSmartPointer<vtkPolyData>            pointSet;
+    vtkSmartPointer<vtkContourFilter>          contourFilter;
+    vtkSmartPointer<vtkReverseSense>          reverseSense;
+    vtkSmartPointer<vtkSmoothPolyDataFilter>      smoothFilter;
 
-private:
-
-
-  vtkSmartPointer<CustomSurfaceReconstructionFilter>  surfaceReconstruction;
-  vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust;
-
-  vtkSmartPointer<vtkPoints>               points;
-  vtkSmartPointer<vtkPolyData>             pointSet;
-  vtkSmartPointer<vtkContourFilter>        contourFilter;
-  vtkSmartPointer<vtkReverseSense>         reverseSense;
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
-  vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
-  vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
-  vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
-  vtkSmartPointer<vtkPolyDataToImageData>  polydataToImageData;
-
-  Preferences& prefs_;
+    Preferences& prefs_;
 };
 
 #endif // ifndef MESH_GENERATOR_H

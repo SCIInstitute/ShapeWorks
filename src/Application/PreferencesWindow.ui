@@ -501,7 +501,7 @@
             <property name="spacing">
              <number>6</number>
             </property>
-            <item row="1" column="0">
+            <item row="0" column="0">
              <widget class="QLabel" name="label_16">
               <property name="minimumSize">
                <size>
@@ -517,58 +517,41 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_17">
               <property name="text">
                <string>Spacing</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="0" column="1">
              <widget class="QSpinBox" name="neighborhoodSpinBox">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="value">
                <number>5</number>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1">
              <widget class="QDoubleSpinBox" name="spacingSpinBox">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="value">
                <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QCheckBox" name="power_crust">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="powerCrustLabel_2">
-              <property name="text">
-               <string>PowerCrust</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="smoothingLabel_2">
               <property name="text">
                <string>Smoothing</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
+            <item row="2" column="1">
              <widget class="QSlider" name="smoothingSlider">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">

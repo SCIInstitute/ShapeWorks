@@ -103,6 +103,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->project_ = QSharedPointer<Project>( new Project(preferences_) );
   this->project_->set_parent( this );
   connect( this->project_.data(), SIGNAL( data_changed() ), this, SLOT( handle_project_changed() ) );
+  connect( this->project_.data(), SIGNAL( update_display() ), this, SLOT( handle_display_setting_changed() ) );
 
   // setup modes
   this->ui_->view_mode_combobox->addItem( Visualizer::MODE_ORIGINAL_C );
@@ -151,6 +152,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   //set up preferences window
   this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this,preferences_));
   connect(this->preferences_window_.data(),SIGNAL(clear_cache()),this->project_.data(),SLOT(handle_clear_cache()));
+  connect(this->preferences_window_.data(),SIGNAL(clear_cache()),this,SLOT(handle_pca_changed()));
   connect(this->preferences_window_.data(),SIGNAL(update_view()),this,SLOT(handle_color_scheme()));
 
   //analysis tool initializations
@@ -402,6 +404,7 @@ void ShapeWorksStudioApp::update_table()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed() {
+	this->visualizer_->update_lut();
 	this->compute_mode_shape();
 }
 

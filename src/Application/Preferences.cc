@@ -19,7 +19,6 @@ const float DEFAULT_NUM_THREADS = 100.0f;
 const float DEFAULT_PCA_RANGE = 2.0f;
 const int DEFAULT_PCA_STEPS = 40;
 const int DEFAULT_REGRESSION_STEPS = 50;
-const bool DEFAULT_USE_POWERCRUST = true;
 const float DEFAULT_SMOOTHING_AMOUNT = 0.f;
 const float DEFAULT_CACHE_EPSILON = 1e-3f;
 const float DEFAULT_SPACING = 1.f;
@@ -231,14 +230,6 @@ void Preferences::add_recent_file( QString file )
   settings.setValue( "General/RecentFileList", files );
 }
 
-bool Preferences::get_use_powercrust() {
-	return this->settings.value( "Mesh/UsePowercrust", DEFAULT_USE_POWERCRUST ).toBool();
-}
-
-void Preferences::set_use_powercrust(bool b) {
-  this->settings.setValue( "Mesh/UsePowercrust", b );
-}
-
 float Preferences::get_smoothing_amount() {
 	return this->settings.value( "Mesh/SmoothingAmount", DEFAULT_SMOOTHING_AMOUNT ).toFloat();
 }
@@ -280,7 +271,6 @@ void Preferences::restore_defaults()
   this->settings.setValue( "Sliders/PcaRange", DEFAULT_PCA_RANGE );
   this->settings.setValue( "Sliders/PcaSteps", DEFAULT_PCA_STEPS );
   this->settings.setValue( "Sliders/RegressionSteps", DEFAULT_REGRESSION_STEPS );
-  this->settings.setValue( "Mesh/UsePowercrust", DEFAULT_USE_POWERCRUST );
   this->settings.setValue( "Mesh/SmoothingAmount", DEFAULT_SMOOTHING_AMOUNT );
   this->settings.setValue( "Mesh/CachingEpsilon", DEFAULT_CACHE_EPSILON );
 }

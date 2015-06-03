@@ -32,11 +32,11 @@ bool vnl_vector_compare::operator()( const vnl_vector<double> &a, const vnl_vect
 {
   if ( a.size() < b.size() )
     return true;
-  double eps = MeshCache::pref_ref_->get_cache_epsilon();
+  //double eps = MeshCache::pref_ref_->get_cache_epsilon();
   for ( unsigned i = 0; i < a.size(); i++ ) {
-	if ( (a[i] < b[i]) && ((b[i] - a[i]) > eps))
+	if ( (a[i] < b[i]))// && ((b[i] - a[i]) > eps))
 		return true;
-	else if ( b[i] < a[i] && ((a[i] - b[i]) > eps))
+	else if ( b[i] < a[i])// && ((a[i] - b[i]) > eps))
 		return false;
   }
   return false;

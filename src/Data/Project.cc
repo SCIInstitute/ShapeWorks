@@ -25,11 +25,17 @@ Project::Project(Preferences& prefs) : preferences_(prefs)
 {
   this->parent_ = NULL;
   this->reset();
+  connect( this->mesh_manager_.data(), SIGNAL( new_mesh() ), this, SLOT( handle_new_mesh() ) );
 }
 
 //---------------------------------------------------------------------------
 Project::~Project()
 {
+}
+
+//---------------------------------------------------------------------------
+void Project::handle_new_mesh() {
+	emit update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -635,6 +641,8 @@ void Project::reset()
   this->reconstructed_present_ = false;
 
   this->mesh_manager_ = QSharedPointer<MeshManager>( new MeshManager(preferences_) );
+  
+  connect( this->mesh_manager_.data(), SIGNAL( new_mesh() ), this, SLOT( handle_new_mesh() ) );
   emit data_changed();
 }
 

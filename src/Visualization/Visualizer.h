@@ -58,6 +58,8 @@ public:
   void setMean(const vnl_vector<double> &mean);
 
   void reset_camera();
+  
+  void update_lut();
 
 public Q_SLOTS:
 
@@ -69,7 +71,6 @@ private:
   std::map<double,QVector<DisplayObjectHandle> > disp_handles_;
   Preferences &preferences_;
 
-  void update_lut();
 
   void compute_measurements();
 

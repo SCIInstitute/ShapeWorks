@@ -8,16 +8,11 @@
 #include <itkImageFileReader.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
-#include <Visualization/vtkPolyDataToImageData.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
 
-#include <Visualization/CustomSurfaceReconstructionFilter.h>
-
-#ifdef POWERCRUST
-#include <Visualization/vtkPowerCrustSurfaceReconstruction.h>
-#endif /* POWERCRUST */
+#include <vtkSurfaceReconstructionFilter.h>
 
 typedef float PixelType;
 typedef itk::Image< PixelType, 3 > ImageType;
@@ -147,26 +142,11 @@ bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
   this->marching_->SetNumberOfContours( 1 );
   this->marching_->SetValue( 0, 0.0 );
 
-#ifdef POWERCRUST
-  vtkSmartPointer<vtkPowerCrustSurfaceReconstruction> powercrust =
-    vtkSmartPointer<vtkPowerCrustSurfaceReconstruction>::New();
-#if VTK_MAJOR_VERSION <= 5
-  powercrust->SetInput(pointSet);
-#else
-  powercrust->SetInputData(pointSet);
-#endif
-  powercrust->Update();
-
-  this->poly_data_ = powercrust->GetOutput();
-
-#else
-  vtkSmartPointer<CustomSurfaceReconstructionFilter> surface_reconstruction =
-    vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
+  vtkSmartPointer<vtkSurfaceReconstructionFilter> surface_reconstruction =
+    vtkSmartPointer<vtkSurfaceReconstructionFilter>::New();
   surface_reconstruction->SetInputData( pointSet );
   this->marching_->SetInputConnection( surface_reconstruction->GetOutputPort() );
-
-#endif // ifdef POWERCRUST
-
+  
   return true;
 }
 

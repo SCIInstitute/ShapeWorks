@@ -91,12 +91,16 @@ public:
 
   QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
-Q_SIGNALS:
-  /// signal that the data has changed
-  void data_changed();
 
 public Q_SLOTS:
   void handle_clear_cache();
+  void handle_new_mesh();
+
+signals:
+  /// signal that the data has changed
+  void data_changed();
+  void update_display();
+
 public:
   // constants
   const static QString DATA_C;

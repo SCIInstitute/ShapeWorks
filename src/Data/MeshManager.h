@@ -42,6 +42,9 @@ public:
 public Q_SLOTS:
   void handle_thread_complete();
 
+signals:
+  void new_mesh();
+
 private:
 
   Preferences& prefs_;

@@ -37,7 +37,6 @@ public Q_SLOTS:
   void on_pca_range_valueChanged( double value );
   void on_pca_steps_valueChanged( int value );
   void on_regression_steps_valueChanged( int value );
-  void on_power_crust_toggled(bool b);
   void on_parallel_enabled_toggled(bool b);
   void on_num_threads_valueChanged(int i);
   void on_caching_epsilon_valueChanged(int i);

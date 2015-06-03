@@ -127,6 +127,7 @@ void AnalysisTool::handle_analysis_options() {
 		this->ui_->pcaSlider->setEnabled(false);
 		this->ui_->pcaAnimateCheckBox->setEnabled(false);
 		this->ui_->pcaModeSpinBox->setEnabled(false);
+		this->ui_->pcaAnimateCheckBox->setChecked(false);
 	//one sample mode
 	} else if(this->ui_->singleSamplesRadio->isChecked()) {
 		this->ui_->sampleSpinBox->setEnabled(true);
@@ -134,6 +135,7 @@ void AnalysisTool::handle_analysis_options() {
 		this->ui_->pcaSlider->setEnabled(false);
 		this->ui_->pcaAnimateCheckBox->setEnabled(false);
 		this->ui_->pcaModeSpinBox->setEnabled(false);
+		this->ui_->pcaAnimateCheckBox->setChecked(false);
 	//mean mode
 	} else if(this->ui_->meanRadio->isChecked()) {
 		this->ui_->sampleSpinBox->setEnabled(false);
@@ -141,6 +143,7 @@ void AnalysisTool::handle_analysis_options() {
 		this->ui_->pcaSlider->setEnabled(false);
 		this->ui_->pcaAnimateCheckBox->setEnabled(false);
 		this->ui_->pcaModeSpinBox->setEnabled(false);
+		this->ui_->pcaAnimateCheckBox->setChecked(false);
 	//pca mode
 	} else if(this->ui_->pcaRadio->isChecked()) {
 		this->ui_->sampleSpinBox->setEnabled(false);

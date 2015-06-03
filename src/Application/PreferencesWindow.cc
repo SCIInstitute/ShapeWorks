@@ -23,13 +23,6 @@ PreferencesWindow::PreferencesWindow( QWidget* parent, Preferences& prefs ) : pr
   QPushButton* reset_button = this->ui_->button_box->button( QDialogButtonBox::RestoreDefaults );
   QObject::connect( reset_button, SIGNAL( clicked() ), this, SLOT( restore_defaults() ) );
 
-#ifndef POWERCRUST
-  this->ui_->power_crust->setVisible(false);
-  this->ui_->power_crust->setChecked(false);
-  this->preferences_->set_use_powercrust(false);
-  this->ui_->neighborhoodSpinBox_2->setEnabled(true);
-  this->ui_->neighborhoodSpinBox_2->setEnabled(true);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -121,7 +114,6 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->pca_range->setValue( preferences_.get_pca_range() );
   this->ui_->pca_steps->setValue( preferences_.get_num_pca_steps() );
   this->ui_->regression_steps->setValue( preferences_.get_num_regression_rteps() );
-  this->ui_->power_crust->setChecked( preferences_.get_use_powercrust() );
   this->ui_->smoothingSlider->setValue( preferences_.get_smoothing_amount() );
   this->ui_->neighborhoodSpinBox->setValue( preferences_.get_neighborhood() );
   this->ui_->spacingSpinBox->setValue( preferences_.get_spacing() );
@@ -165,20 +157,6 @@ void PreferencesWindow::on_locate_optimize_button_clicked()
   }
 
   this->ui_->optimize_location->setText( filename );
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_power_crust_toggled(bool powercrust)
-{
-  if (powercrust) {
-	  this->ui_->neighborhoodSpinBox->setEnabled(false);
-	  this->ui_->spacingSpinBox->setEnabled(false);
-  } else {
-	  this->ui_->neighborhoodSpinBox->setEnabled(true);
-	  this->ui_->spacingSpinBox->setEnabled(true);
-  }
-  preferences_.set_use_powercrust(powercrust);
-  emit clear_cache();
 }
 
 //-----------------------------------------------------------------------------
