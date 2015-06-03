@@ -500,11 +500,11 @@ void ShapeWorksStudioApp::update_display()
 
   this->visualizer_->set_center( this->ui_->center_checkbox->isChecked() );
   this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
-  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
 
   std::string mode = this->analysis_tool_->getAnalysisMode();
   if ( mode == "all samples" )
   {
+    this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
     this->visualizer_->display_samples();
 	size_t num_samples = this->project_->get_shapes().size();
 	if (num_samples == 0) num_samples = 9;
@@ -518,10 +518,14 @@ void ShapeWorksStudioApp::update_display()
 	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
 		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
 		if ( mode == "mean" ) {
+			this->ui_->view_mode_combobox->setCurrentIndex( 2 );
+			this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
 			this->visualizer_->display_shape(this->analysis_tool_->getMean());
 		} else if (mode == "pca") {
+			this->ui_->view_mode_combobox->setCurrentIndex( 2 );
 			this->compute_mode_shape();
 		} else if (mode == "single sample") {
+			this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
 			this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
 		} //TODO regression
   }
@@ -544,6 +548,7 @@ void ShapeWorksStudioApp::open_project( QString filename )
 {
   this->reset();
   this->project_->load_project( filename );
+  this->project_->calculate_reconstructed_samples();
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->analysis_tool_->setAnalysisMode("all samples");
 

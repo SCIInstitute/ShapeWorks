@@ -31,10 +31,7 @@ public:
 
   /// Create a mesh from an image
   void create_from_image( QString filename, float iso_value );
-
-  /// Create a mesh from a point set
-  bool create_from_pointset( const vnl_vector<double>& vnl_points );
-
+  
   /// Get the dimensions as a string for display (if loaded from an image)
   QString get_dimension_string();
 
@@ -45,9 +42,6 @@ public:
   vnl_vector<double> get_center_transform();
 
   void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
-
-  /// Update the marching cubes output.
-  void Update();
 
 private:
 

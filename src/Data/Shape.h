@@ -52,6 +52,8 @@ public:
   /// Get the local correspondence points
   vnl_vector<double> get_local_correspondence_points();
 
+  void set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data );
+
   /// Get the id of this shape
   int get_id();
 

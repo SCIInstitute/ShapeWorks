@@ -117,47 +117,7 @@ void Mesh::create_from_image( QString filename, float iso_value )
 }
 
 //---------------------------------------------------------------------------
-bool Mesh::create_from_pointset( const vnl_vector<double>& vnl_points )
-{
-  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-
-  int num_points = vnl_points.size() / 3;
-  points->SetNumberOfPoints( num_points );
-
-  unsigned int k = 0;
-  for ( unsigned int i = 0; i < num_points; i++ )
-  {
-    double x = vnl_points[k++];
-    double y = vnl_points[k++];
-    double z = vnl_points[k++];
-    points->SetPoint( i, x, y, z );
-  }
-  points->Modified();
-  vtkSmartPointer<vtkPolyData>pointSet = vtkSmartPointer<vtkPolyData>::New();
-  pointSet->SetPoints( points );
-
-  // create isosurface
-  if (!this->marching_)
-	this->marching_ = vtkSmartPointer<vtkMarchingCubes>::New();
-  this->marching_->SetNumberOfContours( 1 );
-  this->marching_->SetValue( 0, 0.0 );
-
-  vtkSmartPointer<vtkSurfaceReconstructionFilter> surface_reconstruction =
-    vtkSmartPointer<vtkSurfaceReconstructionFilter>::New();
-  surface_reconstruction->SetInputData( pointSet );
-  this->marching_->SetInputConnection( surface_reconstruction->GetOutputPort() );
-  
-  return true;
-}
-
-//---------------------------------------------------------------------------
 vnl_vector<double> Mesh::get_center_transform()
 {
   return this->center_transform_;
-}
-
-//---------------------------------------------------------------------------
-void Mesh::Update() {
-	this->marching_->Update();
-	this->poly_data_ = marching_->GetOutput();
 }

@@ -44,6 +44,12 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data ) {
+    this->reconstructed_mesh_ = QSharedPointer<Mesh> ( new Mesh() );
+	this->reconstructed_mesh_->set_poly_data(poly_data);
+}
+
+//---------------------------------------------------------------------------
 bool Shape::import_global_point_file( QString filename )
 {
 
@@ -52,10 +58,9 @@ bool Shape::import_global_point_file( QString filename )
     return false;
   }
 
-  this->reconstructed_mesh_ = QSharedPointer<Mesh> ( new Mesh() );
   this->global_point_filename_ = filename;
 
-  return this->reconstructed_mesh_->create_from_pointset( this->global_correspondence_points_ );
+  return true;
 }
 
 //---------------------------------------------------------------------------

@@ -59,6 +59,8 @@ public:
 
   /// return all shapes
   QVector<QSharedPointer<Shape> > get_shapes();
+  
+  void calculate_reconstructed_samples();
 
   /// reset the project
   void reset();

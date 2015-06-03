@@ -41,6 +41,21 @@ void Project::handle_new_mesh() {
 //---------------------------------------------------------------------------
 void Project::handle_clear_cache() {
 	this->mesh_manager_->clear_cache();
+	this->calculate_reconstructed_samples();
+}
+
+
+//---------------------------------------------------------------------------
+void Project::calculate_reconstructed_samples() {
+	this->preferences_.set_cache_enabled(false);
+	for (int i = 0; i < this->shapes_.size(); i++) {
+		if (this->shapes_.at(i)->get_local_correspondence_points().size() > 0) {
+			this->shapes_.at(i)->set_reconstructed_mesh(
+				this->mesh_manager_->getMesh(
+				this->shapes_.at(i)->get_local_correspondence_points()));
+		}
+	}
+	this->preferences_.set_cache_enabled(true);
 }
 
 //---------------------------------------------------------------------------
