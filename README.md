@@ -210,7 +210,7 @@ align="right" hspace="20">
 *Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
 <br/><br/>
 *Number of Regression Steps* This feature is not currently available.
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/>
 **Meshing**<br/>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-meshing.png"
 align="right" hspace="20">
