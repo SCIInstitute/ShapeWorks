@@ -66,7 +66,7 @@ or going to *File -> Import Images...* <br/> Your images will appear on the disp
 <br/><br/>
 You can delete images by selecting the image of choice and clicking the "-" button at the bottom. If only one image 
 is loaded, it may still display when it is deleted. It will be replaced by the next image load. 
-<br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 **Groom**<br/>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Groom.png"
 align="right" hspace="20">
@@ -181,10 +181,10 @@ mode of the analysis tool. Zoom is automatically selected as a user switches bet
 <br/><br/>
 <h3>Preferences</h3>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-general.png"
-hspace="20">
+align="right" hspace="20">
 **General**<br/>
-*ShapeWorksGroom* Select the location of the "ShapeWorksGroom" binary you downloaded and extracted from the shapeworks command
-line tools. (https://github.com/SCIInstitute/shapeworks/releases)
+*ShapeWorksGroom* Select the location of the "ShapeWorksGroom" binary you downloaded and extracted from the 
+<a href="https://github.com/SCIInstitute/shapeworks">shapeworks</a> command line tools. 
 <br/><br/>
 *ShapeWorksRun* Select the location of the "ShapeWorksRun" binary you downloaded and extracted from the shapeworks command
 line tools. (https://github.com/SCIInstitute/shapeworks/releases)
@@ -204,16 +204,16 @@ between application runs for convenience.
 <br/><br/>
 **Analysis**<br/>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-analysis.png"
-hspace="20">
+align="right" hspace="20">
 *PCA Range* This is the amount of standard deviation to reach on the +/- ends of the PCA Slider.
 <br/><br/>
 *Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
 <br/><br/>
 *Number of Regression Steps* This feature is not currently available.
-<br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 **Meshing**<br/>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-meshing.png"
-hspace="20">
+align="right" hspace="20">
 *Enable Caching* To speed up mesh animation, you can cache the meshes into system memory to load as needed.
 <br/><br/>
 *Memory to Use* Select the amount of system memory to use for caching. Turn this down if your machine's memory 
