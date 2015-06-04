@@ -186,8 +186,8 @@ align="right" hspace="20">
 *ShapeWorksGroom* Select the location of the "ShapeWorksGroom" binary you downloaded and extracted from the 
 <a href="https://github.com/SCIInstitute/shapeworks">shapeworks</a> command line tools. 
 <br/><br/>
-*ShapeWorksRun* Select the location of the "ShapeWorksRun" binary you downloaded and extracted from the shapeworks command
-line tools. (https://github.com/SCIInstitute/shapeworks/releases)
+*ShapeWorksRun* Select the location of the "ShapeWorksRun" binary you downloaded and extracted from the 
+<a href="https://github.com/SCIInstitute/shapeworks">shapeworks</a> command line tools.
 <br/><br/>
 *Color Scheme* Select the color scheme for the rendering window.
 <br/><br/>
