@@ -158,4 +158,53 @@ between shapes.
 The render window has a few features shortcuts to options available for viewing.
 <br/><br/>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Render.png"
-align="right" hspace="20">
+hspace="20">
+From left to right, here are the rendering options.
+<br/><br/>
+*Autoview* Reset the view to fit the samples. This only affects zoom and translation.
+<br/><br/>
+*Show Glyphs* Toggle whether to show the glyphs for the coorespondence points.
+<br/><br/>
+*Glyph options* Click the down arrow to resize the glyphs or select the quality of the glyphs.
+<br/><br/>
+*Show isosurface* Toggle whether to view the surface representing the shape.
+<br/><br/>
+*View mode drop-down* This drop-down gives 3 options for view mode. Original is the binary segmentation. You must
+have loaded images for this option to be available. Groomed is for the distance transform view. You must  
+run the groom step for this to be available. Reconstructed is for the calculated shape based on the set of 
+coorespondance points. You must run the optimize step for this to be available.
+<br/><br/>
+*Center* Center the samples automatically to align. This is useful if original samples aren't the same in size.
+<br/><br/>
+*Zoom* This slider allows the user to zoom in or out to view more/less samples. This is mainly useful in the "All Samples"
+mode of the analysis tool. Zoom is automatically selected as a user switches between analysis modes.
+<br/><br/>
+<h3>Preferences</h3>
+**General**<br/>
+*ShapeWorksGroom* Select the location of the "ShapeWorksGroom" binary you downloaded and extracted from the shapeworks command
+line tools. (https://github.com/SCIInstitute/shapeworks/releases)
+<br/><br/>
+*ShapeWorksRun* Select the location of the "ShapeWorksRun" binary you downloaded and extracted from the shapeworks command
+line tools. (https://github.com/SCIInstitute/shapeworks/releases)
+<br/><br/>
+*Color Scheme* Select the color scheme for the rendering window.
+<br/><br/>
+*Glyph Quality* This slider changes the quality of the coorespondance points glyphs. This is sync'd with the render window
+shortcut option.
+<br/><br/>
+*Glyph Size* This slider changes the size of the coorespondance points glyphs. This is sync'd with the render window
+shortcut option.
+<br/><br/>
+*Restore Defaults* Click this to restore all options to the program's default values. Options are saved and reloaded
+between application runs for convenience.
+<br/><br/>
+*OK* Click this when you are done changing options.
+<br/><br/>
+**Analysis**<br/>
+*PCA Range* This is the amount of standard deviation to reach on the +/- ends of the PCA Slider.
+<br/><br/>
+*Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
+<br/><br/>
+*Number of Regression Steps* This feature is not currently available.
+<br/><br/>
+**Analysis**<br/>
