@@ -207,4 +207,5 @@ between application runs for convenience.
 <br/><br/>
 *Number of Regression Steps* This feature is not currently available.
 <br/><br/>
-**Analysis**<br/>
+**Meshing**<br/>
+*Enable Caching* To speed up mesh animation, you can cache the meshes into system memory to load as needed.
