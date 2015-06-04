@@ -180,6 +180,8 @@ coorespondance points. You must run the optimize step for this to be available.
 mode of the analysis tool. Zoom is automatically selected as a user switches between analysis modes.
 <br/><br/>
 <h3>Preferences</h3>
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-general.png"
+hspace="20">
 **General**<br/>
 *ShapeWorksGroom* Select the location of the "ShapeWorksGroom" binary you downloaded and extracted from the shapeworks command
 line tools. (https://github.com/SCIInstitute/shapeworks/releases)
@@ -201,6 +203,8 @@ between application runs for convenience.
 *OK* Click this when you are done changing options.
 <br/><br/>
 **Analysis**<br/>
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-analysis.png"
+hspace="20">
 *PCA Range* This is the amount of standard deviation to reach on the +/- ends of the PCA Slider.
 <br/><br/>
 *Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
@@ -208,4 +212,26 @@ between application runs for convenience.
 *Number of Regression Steps* This feature is not currently available.
 <br/><br/>
 **Meshing**<br/>
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-meshing.png"
+hspace="20">
 *Enable Caching* To speed up mesh animation, you can cache the meshes into system memory to load as needed.
+<br/><br/>
+*Memory to Use* Select the amount of system memory to use for caching. Turn this down if your machine's memory 
+is bogged down from the program.
+<br/><br/>
+*Parallel Reconstruction* Select the amount of threads to fire (up to system hardware core max) to run while 
+building meshes. This speeds reconstruction, theoretically.
+<br/><br/>
+*Neighborhood Size* The neighborhood size (max vertex valence) used for isosurface reconstruction.
+<br/><br/>
+*Spacing* The spacing used for isosurface reconstruction.
+<br/><br/>
+*Smoothing* The smoothing amount for isosurface reconstruction.
+<br/><br/>
+<h3>File Menu</h3>
+Here you can open and save projects, load new images, open recent projects, and quit the application.
+<br/><br/>
+
+Contact / Bug Reports
+=====================
+Please email any questions to Shapeworks-users@sci.utah.edu . If there problems or bugs, please report them using the issue tracker on GitHub. This includes feature requests. Feel free to add improvements using git pull requests. 
