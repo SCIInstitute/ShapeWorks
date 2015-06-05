@@ -327,7 +327,7 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
     if ( fi.suffix() == "stl" )
     {
       vtkSmartPointer<vtkSTLWriter> stlWriter = vtkSmartPointer<vtkSTLWriter>::New();
-      stlWriter->SetInputData( appendPolyData->GetOutput() );
+      stlWriter->SetInputData( this->meshManager.getMesh(this->currentShape) );
       stlWriter->SetFileName( filename.toStdString().c_str() );
       stlWriter->Write();
     }
