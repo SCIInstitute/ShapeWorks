@@ -124,9 +124,9 @@ The respective eigen values and lambdas are displayed below the slider.
 <br/><br/>
 *Show Surface* Toggle visualization of the isosurface.
 <br/><br/>
-*Neighborhood Size* The neighborhood size used for isosurface reconstruction without powercrust.
+*Neighborhood Size* The neighborhood size (max vertex valence) used for isosurface reconstruction.
 <br/><br/>
-*Spacing* The spacing used for isosurface reconstruction without powercrust.
+*Spacing* The spacing used for isosurface reconstruction.
 <br/><br/>
 *Smoothing* The smoothing amount for isosurface reconstruction.
 <br/><br/>
@@ -147,7 +147,7 @@ This window provides a number of options for display and meshing.
 is bogged down from the program.
 <br/><br/>
 *Parallel Reconstruction* Select the amount of threads to fire (up to system hardware core max) to run while 
-building meshes. This speeds reconstruction, theoretically. Threading is not used if powercrust is enabled.
+building meshes. This speeds reconstruction, theoretically.
 <br/><br/>
 *PCA Range* This is the amount of standard deviation to reach on the +/- ends of the PCA Slider.
 <br/><br/>
@@ -161,6 +161,6 @@ building meshes. This speeds reconstruction, theoretically. Threading is not use
 There are a few Import/Export options under the File Menu. The details of these options are 
 beyond the scope of this document.
 
-Contact
+Contact / Bug Reports
 =====================
-Please email any questions to Shapeworks-users@sci.utah.edu .
+Please email any questions to Shapeworks-users@sci.utah.edu . If there problems or bugs, please report them using the issue tracker on GitHub. This includes feature requests. Feel free to add improvements using git pull requests. 
