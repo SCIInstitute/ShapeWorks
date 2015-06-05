@@ -334,7 +334,7 @@ void ShapeWorksView2::on_actionExportSurfaceMesh_triggered()
     else
     {
       vtkSmartPointer<vtkPolyDataWriter> surfaceWriter = vtkSmartPointer<vtkPolyDataWriter>::New();
-      surfaceWriter->SetInputData( appendPolyData->GetOutput() );
+	  surfaceWriter->SetInputData( this->meshManager.getMesh(this->currentShape));
       surfaceWriter->SetFileName( filename.toStdString().c_str() );
       surfaceWriter->Write();
     }
