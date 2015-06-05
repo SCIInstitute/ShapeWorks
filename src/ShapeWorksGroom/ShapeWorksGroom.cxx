@@ -58,8 +58,9 @@ int main(int argc, char *argv[])
     {
     std::cerr << "Usage: " << argv[0] << " parameterfile <tool1 tool2 ...>"
               << std::endl;
-    std::cerr << "Tools: relabel hole_fill isolate center extract_centers align_principal blur antialias fastmarching surface point auto_pad split_segmentations extract_label group scale_principal simple_morphometrics icp"
-              << std::endl;
+    std::cerr << "Tools: relabel hole_fill isolate center extract_centers align_principal blur" <<
+		" antialias fastmarching surface point auto_pad split_segmentations extract_label" << 
+		" group scale_principal simple_morphometrics icp"  << std::endl;
     return 3;
     }
   try
@@ -72,8 +73,7 @@ int main(int argc, char *argv[])
     TiXmlDocument doc(argv[1]);
     bool loadOkay = doc.LoadFile();
 
-    if (loadOkay)
-      {
+    if (loadOkay) {
       TiXmlHandle docHandle( &doc );
       TiXmlElement *elem;
       std::istringstream inputsBuffer;
@@ -253,67 +253,6 @@ int main(int argc, char *argv[])
           filter.tool_to_use() = &t;
           filter();
           }
-	   //  else if (std::string(argv[i]) == "icp")
-  // 		{
-  //         if (verbose == 1) std::cout << "icp" << std::endl;
-          
-  //         // batch filter
-  //         shapetools::icp<float, ST_DIM> icp_t(pf);
-  //         icp_t.input_filenames()  = inputs;
-  //         icp_t.output_filenames() = outputs;
-  //         icp_t.input_seg_filenames() = original_inputs;
-          
-  //         std::vector<std::string> icp_outputs;
-  //         std::vector<std::string>::iterator input_it 
-  //           = original_inputs.begin();
-  //         icp_outputs.push_back(*input_it);
-  		
-  //         for(input_it = original_inputs.begin() + 1; input_it != original_inputs.end(); input_it++)
-  //           {
-  //           std::string output_seg_filename = *input_it;
-            
-  //           size_t found = output_seg_filename.rfind(".");
-  //           if (found!=std::string::npos)
-  //             {
-  //             std::string suffix = "_icp";
-  //             unsigned int input_suffix_length = 
-  //               output_seg_filename.length() - found;
-              
-  //             suffix = suffix + output_seg_filename.substr(found);
-  //             output_seg_filename.replace (found,input_suffix_length,suffix);
-  //             icp_outputs.push_back(output_seg_filename);
-  //             }
-            
-  // 		  }
-          
-  //         icp_t.output_seg_filenames() = icp_outputs;
-  //         icp_t();
-          
-  //         shapetools::antialias<float, ST_DIM> antialias_t(pf);
-          
-  //         // batch filter
-          
-  //         shapetools::batchtool<float, ST_DIM> filter;
-  //         filter.input_filenames()  = icp_outputs;
-  //         filter.output_filenames() = outputs;
-  //         filter.tool_to_use() = &antialias_t;
-  //         filter();
-          
-  //         shapetools::fastmarching<float, ST_DIM> fastmarching_t(pf);
-          
-  //         // batch filter
-  //         filter.input_filenames()  = outputs;
-  //         filter.tool_to_use() = &fastmarching_t;
-  //         filter();
-          
-  //         shapetools::blur<float, ST_DIM> blur_t(pf);
-          
-  //         // batch filter
-  //         filter.input_filenames()  = outputs;
-  //         filter.tool_to_use() = &blur_t;
-  //         filter();
-          
-  //         }
         else if (std::string(argv[i]) == "align_principal")
           {
           // NOTE: THIS ASSUMES 3D
@@ -440,14 +379,15 @@ int main(int argc, char *argv[])
           }
         else
           {
-          std::cerr << "Unrecognized tool: " << argv[i] << std::endl;
-          return 4;
+          std::cerr << "Unrecognized tool: " << argv[i] << " ... skipped." << std::endl;
           }
-
         std::cerr << "* Completed Tool: " << argv[i] << "\n";
 
         }      
-      }
+      } else {
+		std::cerr << "There was a problem with the parameter file." << std::endl;
+		return 4;
+	  }
     }
   catch (itk::ExceptionObject &e)
     {

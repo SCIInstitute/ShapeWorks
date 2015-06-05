@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 {
   try
     {
-    if (argc < 2)
+    if (argc != 2)
       {
       std::cerr << "Use: " << argv[0] << " parameterfile" << std::endl;
       return 1;
@@ -51,5 +51,6 @@ int main(int argc, char *argv[])
     return 5;
     }  
   
+  std::cerr << "*** ShapeWorksRun completed successfully\n";
   return 0;
 }
