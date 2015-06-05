@@ -149,7 +149,15 @@ int ParticleShapeStatistics<VDimension>
   this->m_domainsPerShape = 1;
   elem = docHandle.FirstChild( "domains_per_shape" ).Element();
   if (elem) this->m_domainsPerShape = atoi(elem->GetText());
-
+  // try to fix the parameter file's input data names to match the parameter file's path
+  std::string pname(fname);
+  std::string path = pname.substr(0,pname.find_last_of("/") + 1);
+  std::ifstream test(pointsfiles[0].c_str());
+  if (!test.is_open()) {
+	  for (int i = 0; i < pointsfiles.size(); i++) {
+		  pointsfiles[i] = path + pointsfiles[i];
+	  }
+  } else test.close();
   // Read the point files.  Assumes all the same size.
   typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
   reader1->SetFileName( pointsfiles[0].c_str() );

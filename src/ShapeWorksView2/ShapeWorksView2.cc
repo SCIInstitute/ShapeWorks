@@ -117,11 +117,25 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
 
   this->setPregenSteps();
   this->updateSliders();
+  
 
-  if ( !this->readParameterFile( argv[1] ) )
-  {
-	delay(1000);
-    exit( -1 );
+  std::string filename;
+  while(true) {
+	  QString name = QFileDialog::getOpenFileName(this,
+		  tr("Open Parameter File"), "", tr("Parameter Files (*.xml)"));
+	  if (name != QString::null) {
+		  std::string full = name.toStdString();
+		if (this->readParameterFile((char*)full.c_str())) 
+			break;
+	  }
+	  QMessageBox msgBox;
+	  msgBox.setText("Invalid Parameter File");
+	  msgBox.setInformativeText("Do you want find another parameter file, or quit?");
+	  msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Abort);
+	  msgBox.setDefaultButton(QMessageBox::Retry);
+	  int ret = msgBox.exec();
+	  if (ret == QMessageBox::Abort) 
+		  exit(1);
   }
 
   // set to mean

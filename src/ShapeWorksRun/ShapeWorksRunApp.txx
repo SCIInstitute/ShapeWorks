@@ -213,6 +213,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
       inputsBuffer.str("");
 
       numShapes = shapeFiles.size();
+	  
+	  // try to fix the parameter file's input data names to match the parameter file's path
+	  std::string pname(fname);
+	  std::string path = pname.substr(0,pname.find_last_of("/") + 1);
+	  std::ifstream test(shapeFiles[0].c_str());
+	  if (!test.is_open()) {
+		  for (int i = 0; i < shapeFiles.size(); i++) {
+			  shapeFiles[i] = path + shapeFiles[i];
+		  }
+	  } else test.close();
 
       for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
       {

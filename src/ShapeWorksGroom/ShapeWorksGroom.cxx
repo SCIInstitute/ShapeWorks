@@ -118,7 +118,18 @@ int main(int argc, char *argv[])
         std::cerr << "Input list size does not match output list size!" << std::endl;
         return 6;
         }
-
+	  
+	  // try to fix the parameter file's input data names to match the parameter file's path
+	  std::string pname(argv[1]);
+	  std::string path = pname.substr(0,pname.find_last_of("/") + 1);
+	  std::ifstream test(inputs[0].c_str());
+	  if (!test.is_open()) {
+		  for (int i = 0; i < inputs.size(); i++) {
+			  inputs[i] = path + inputs[i];
+			  original_inputs[i] = path + original_inputs[i];
+			  outputs[i] = path + outputs[i];
+		  }
+	  } else test.close();
       // Set up the batch filter.
       // Apply tools.
       for (int i = 2; i < argc; i++)
