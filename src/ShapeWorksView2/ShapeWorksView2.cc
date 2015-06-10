@@ -124,8 +124,8 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
 	  QString name = QFileDialog::getOpenFileName(this,
 		  tr("Open Parameter File"), "", tr("Parameter Files (*.xml)"));
 	  if (name != QString::null) {
-		  std::string full = name.toStdString();
-		if (this->readParameterFile((char*)full.c_str())) 
+		  filename = name.toStdString();
+		if (this->readParameterFile((char*)filename.c_str()))
 			break;
 	  }
 	  QMessageBox msgBox;
@@ -146,7 +146,7 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
   this->regression->SetMatrix( this->stats.ShapeMatrix() );
 
   // Load the explanatory variables
-  this->readExplanatoryVariables( argv[1] );
+  this->readExplanatoryVariables( (char*)filename.c_str() );
   if ( this->regressionAvailable )
   {
     this->regression->ResizeParameters( stats.ShapeMatrix().rows() );
