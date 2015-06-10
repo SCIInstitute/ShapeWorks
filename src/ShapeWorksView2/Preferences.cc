@@ -19,7 +19,7 @@ const float DEFAULT_NUM_THREADS = 100.0f;
 const float DEFAULT_PCA_RANGE = 2.0f;
 const int DEFAULT_PCA_STEPS = 40;
 const int DEFAULT_REGRESSION_STEPS = 50;
-const float DEFAULT_SMOOTHING_AMOUNT = 0.f;
+const int DEFAULT_SMOOTHING_AMOUNT = 1;
 const float DEFAULT_CACHE_EPSILON = 1e-3f;
 const float DEFAULT_SPACING = 8.f;
 const int DEFAULT_NEIGHBORHOOD = 8;
@@ -210,11 +210,11 @@ void Preferences::setNumRegressionSteps( int value )
   emit this->sliders_changed_signal();
 }
 
-float Preferences::getSmoothingAmount() {
-	return this->settings.value( "Mesh/SmoothingAmount", DEFAULT_SMOOTHING_AMOUNT ).toFloat();
+int Preferences::getSmoothingAmount() {
+	return this->settings.value( "Mesh/SmoothingAmount", DEFAULT_SMOOTHING_AMOUNT ).toInt();
 }
 
-void Preferences::setSmoothingAmount(float b) {
+void Preferences::setSmoothingAmount(int b) {
   this->settings.setValue( "Mesh/SmoothingAmount", b );
 }
 float Preferences::getCacheEpsilon() {

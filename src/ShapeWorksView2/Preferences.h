@@ -68,8 +68,8 @@ public:
   /// restore all default values
   void restoreDefaults();
 
-  float getSmoothingAmount();
-  void setSmoothingAmount(float value);
+  int getSmoothingAmount();
+  void setSmoothingAmount(int value);
 
   float getCacheEpsilon();
   void setCacheEpsilon(float value);

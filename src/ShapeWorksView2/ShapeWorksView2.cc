@@ -1006,8 +1006,7 @@ void ShapeWorksView2::updateSurfaceSettings()
 {
   this->prefs_.setNeighborhood(this->ui->neighborhoodSpinBox->value());
   this->prefs_.setSpacing(this->ui->spacingSpinBox->value());
-  float smoothingAmount = (float)this->ui->smoothingSlider->value() / (float)this->ui->smoothingSlider->maximum() * 100.0f;
-  this->prefs_.setSmoothingAmount(smoothingAmount);
+  this->prefs_.setSmoothingAmount(this->ui->smoothingSlider->value());
 
   this->displayShape( this->currentShape );
 }

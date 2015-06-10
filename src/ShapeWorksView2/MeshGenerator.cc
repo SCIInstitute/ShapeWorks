@@ -54,15 +54,18 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
     this->points->SetPoint( i, x, y, z );
   }
   this->points->Modified();
+  //get filtering parameters
   float spacing = this->prefs_.getSpacing();
   int neighborhood = this->prefs_.getNeighborhood();
   int smoothing = this->prefs_.getSmoothingAmount();
   this->surfaceReconstruction->SetSampleSpacing(spacing);
   this->surfaceReconstruction->SetNeighborhoodSize(neighborhood);
+  this->smoothFilter->SetNumberOfIterations(smoothing);
+  //update the filters.
   this->surfaceReconstruction->Modified();
   this->surfaceReconstruction->Update();
   this->contourFilter->Update();
-  this->smoothFilter->SetNumberOfIterations(smoothing);
+  this->smoothFilter->Modified();
   this->smoothFilter->Update();
   this->reverseSense->Update();
   return this->transform_back(this->points,this->reverseSense->GetOutput());

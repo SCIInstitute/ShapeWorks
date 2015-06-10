@@ -34,12 +34,12 @@ class MeshGenerator
     vtkSmartPointer<vtkPolyData> transform_back(
         vtkSmartPointer<vtkPoints> pt,
         vtkSmartPointer<vtkPolyData> pd);
-    vtkSmartPointer<vtkSurfaceReconstructionFilter>  surfaceReconstruction;
-    vtkSmartPointer<vtkPoints>            points;
-    vtkSmartPointer<vtkPolyData>            pointSet;
-    vtkSmartPointer<vtkContourFilter>          contourFilter;
-    vtkSmartPointer<vtkReverseSense>          reverseSense;
-    vtkSmartPointer<vtkSmoothPolyDataFilter>      smoothFilter;
+    vtkSmartPointer<vtkSurfaceReconstructionFilter>		surfaceReconstruction;
+    vtkSmartPointer<vtkPoints>							points;
+    vtkSmartPointer<vtkPolyData>						pointSet;
+    vtkSmartPointer<vtkContourFilter>					contourFilter;
+    vtkSmartPointer<vtkReverseSense>					reverseSense;
+    vtkSmartPointer<vtkSmoothPolyDataFilter>			smoothFilter;
 
     Preferences& prefs_;
 };
