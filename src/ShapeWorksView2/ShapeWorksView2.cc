@@ -609,6 +609,7 @@ void ShapeWorksView2::on_pcaSlider_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_pcaModeSpinBox_valueChanged()
 {
+  
   this->computeModeShape();
   this->redraw();
 }
@@ -1630,8 +1631,9 @@ void ShapeWorksView2::resetPointScalars()
 void ShapeWorksView2::computeModeShape()
 {
   double pcaSliderValue = this->getPcaValue( this->ui->pcaSlider->value() );
-
-  unsigned int m = this->stats.Eigenvectors().columns() - ( this->ui->pcaModeSpinBox->value() + 1 );
+  int box_val = this->ui->pcaModeSpinBox->value();
+  if (box_val > this->numSamples - 1) box_val = this->numSamples - 1;
+  unsigned int m = this->stats.Eigenvectors().columns() - ( box_val + 1 );
 
   vnl_vector<double> e = this->stats.Eigenvectors().get_column( m );
 
