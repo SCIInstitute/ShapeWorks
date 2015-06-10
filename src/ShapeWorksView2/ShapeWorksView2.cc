@@ -183,6 +183,7 @@ void ShapeWorksView2::handle_pca()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::handle_redraw()
 {
+	if (this->ui->pcaAnimateCheckBox->isChecked()) return;
 	this->glyphPropertiesChanged();
 	this->colorSchemeChanged();
 	this->updateActors();
