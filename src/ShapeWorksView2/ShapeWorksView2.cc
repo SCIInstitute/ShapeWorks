@@ -767,6 +767,7 @@ void ShapeWorksView2::on_showSurface_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_neighborhoodSpinBox_valueChanged()
 {
+  this->ui->pcaAnimateCheckBox->setChecked(false);
   this->handle_clear_cache();
   this->updateSurfaceSettings();
   this->redraw();
@@ -775,6 +776,7 @@ void ShapeWorksView2::on_neighborhoodSpinBox_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_spacingSpinBox_valueChanged()
 {
+  this->ui->pcaAnimateCheckBox->setChecked(false);
   this->handle_clear_cache();
   this->updateSurfaceSettings();
   this->redraw();
@@ -783,6 +785,7 @@ void ShapeWorksView2::on_spacingSpinBox_valueChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::on_smoothingSlider_valueChanged()
 {
+  this->ui->pcaAnimateCheckBox->setChecked(false);
   this->handle_clear_cache();
   this->updateSurfaceSettings();
   this->redraw();
