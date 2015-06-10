@@ -47,7 +47,7 @@ Requirements
 =====================
  * Git (https://git-scm.com/)
  * CMake 2.6+ (http://www.cmake.org/)
- * Visualization ToolKit (VTK 6+ recommended) (http://www.vtk.org/)
+ * Visualization ToolKit (VTK 6+ recommended) (http://www.vtk.org/) --built with Qt and Imaging support!
  * Insight Toolkit (ITK 4.5+ recommended) (http://www.itk.org/)
  * Qt 4.8.* (http://www.qt.io/developers/)
  * Windows 7+, OSX 10.9+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
