@@ -1,6 +1,28 @@
 #include <QApplication>
 #include <ShapeWorksView2.h>
 
+#if defined(__WIN32__) || defined(_WIN32) || \
+  defined(WIN32) || defined(__WINDOWS__)  || \
+  defined(__TOS_WIN__)
+
+#include <windows.h>
+
+inline void delay( unsigned long ms )
+{
+  Sleep( ms );
+}
+
+#else  /* presume POSIX */
+
+#include <unistd.h>
+
+inline void delay( unsigned long ms )
+{
+  usleep( ms * 1000 );
+}
+
+#endif
+
 #ifdef _WIN32
 
 #include <windows.h>
@@ -16,26 +38,6 @@ using namespace std;
 
 // maximum number of lines the output console should have
 static const WORD MAX_CONSOLE_LINES = 500;
-
-#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32) || defined(__WINDOWS__) || defined(__TOS_WIN__)
-
-  #include <windows.h>
-
-  inline void delay( unsigned long ms )
-    {
-    Sleep( ms );
-    }
-
-#else  /* presume POSIX */
-
-  #include <unistd.h>
-
-  inline void delay( unsigned long ms )
-    {
-    usleep( ms * 1000 );
-    }
-
-#endif 
 
 void RedirectIOToConsole2()
 {
@@ -102,13 +104,6 @@ int main( int argc, char** argv )
     ::SetErrorMode( 0 );
 #endif
 
-    if ( argc < 2 )
-    {
-      std::cerr << "Usage: " << argv[0] << " parameterfile.xml [--pca pca.csv]" << std::endl;
-	  delay(1000);
-      return 1;
-    }
-
     if ( argc == 4 )
     {
       QString opt = argv[2];
@@ -122,12 +117,12 @@ int main( int argc, char** argv )
         stats.ComputeModes();
         stats.PrincipalComponentProjections();
         stats.WriteCSVFile2( file.toStdString() );
-		delay(1000);
+        delay(1000);
         return 0;
       }
     }
 
-    
+
     QApplication app( argc, argv );
     ShapeWorksView2 shapeWorksView2( argc, argv );
     shapeWorksView2.show();
