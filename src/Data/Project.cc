@@ -275,8 +275,6 @@ bool Project::load_legacy( QString filename )
   TiXmlHandle doc_handle( &doc );
   TiXmlElement* elem;
 
-  int numShapes = 0;
-
   QStringList input_files;
   QStringList output_files;
   QStringList point_files;
@@ -377,7 +375,6 @@ bool Project::load_legacy( QString filename )
   bool is_correspondence = doc_handle.FirstChild( "number_of_particles" ).Element() != 0;
   bool has_points = doc_handle.FirstChild( "point_files" ).Element() != 0;
   bool has_inputs = doc_handle.FirstChild( "inputs" ).Element() != 0;
-  bool has_outputs = doc_handle.FirstChild( "outputs" ).Element() != 0;
 
   // fix up file locations, if necessary
 

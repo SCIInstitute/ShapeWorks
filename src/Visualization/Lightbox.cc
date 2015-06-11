@@ -137,8 +137,6 @@ void Lightbox::setup_renderers()
 
   //this->viewers_.clear();
 
-  int* size = this->render_window_->GetSize();
-
   int width = this->tile_layout_width_;
   int height = this->tile_layout_height_;
   int total = width * height;

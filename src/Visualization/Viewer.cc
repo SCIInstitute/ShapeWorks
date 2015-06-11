@@ -452,7 +452,6 @@ void Viewer::draw_exclusion_spheres( QSharedPointer<DisplayObject> object )
     this->exclusion_sphere_points_->Reset();
     this->exclusion_sphere_points_->SetNumberOfPoints( num_points );
 
-    unsigned int idx = 0;
     for ( int i = 0; i < num_points; i++ )
     {
       Point p = centers[i];
