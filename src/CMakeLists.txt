@@ -56,7 +56,6 @@ IF(USE_VTK)
     vtkIOGeometry
     vtkInfovisCore
     vtkInteractionStyle
-    vtkRenderingFreeTypeOpenGL
     vtkViewsQt
     vtkFiltersCore
     vtkGUISupportQt
