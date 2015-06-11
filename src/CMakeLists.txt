@@ -448,27 +448,18 @@ else()
     ${ShapeworksCLT_BINARY_DIR}/ShapeWorksRun*
     )
   foreach(file ${SHAPEWORKS_DEPS})
-    if (APPLE)
-		add_custom_command(TARGET ShapeWorksStudio POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy ${file} 
-				   $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.app/Contents/Resources)
-	else()
 		add_custom_command(TARGET ShapeWorksStudio POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy ${file} 
 				   $<TARGET_FILE_DIR:ShapeWorksStudio>)
-	endif()
 	message(STATUS "Copied ${file} to ${CMAKE_BINARY_DIR}")
   endforeach()
   # platform specific filenames
-  if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    add_definitions(-DGROOM_EXECUTABLE="ShapeWorksGroom")
-    add_definitions(-DOPTIMIZE_EXECUTABLE="ShapeWorksRun")
-  elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    add_definitions(-DGROOM_EXECUTABLE="../Resources/ShapeWorksGroom")
-    add_definitions(-DOPTIMIZE_EXECUTABLE="../Resources/ShapeWorksRun")
-  elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
+  if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     add_definitions(-DGROOM_EXECUTABLE="ShapeWorksGroom.exe")
     add_definitions(-DOPTIMIZE_EXECUTABLE="ShapeWorksRun.exe")
+  else()
+    add_definitions(-DGROOM_EXECUTABLE="ShapeWorksGroom")
+    add_definitions(-DOPTIMIZE_EXECUTABLE="ShapeWorksRun")
   endif()
 endif()
 
