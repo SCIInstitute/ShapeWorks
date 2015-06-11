@@ -121,8 +121,12 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv ) : meshManager(prefs_),
 
   std::string filename;
   while(true) {
-	  QString name = QFileDialog::getOpenFileName(this,
-		  tr("Open Parameter File"), "", tr("Parameter Files (*.xml)"));
+	  QString name;
+	  if (argc == 2) 
+		  name = QString(argv[1]);
+	  else 
+		  name = QFileDialog::getOpenFileName(this,
+			tr("Open Parameter File"), "", tr("Parameter Files (*.xml)"));
 	  if (name != QString::null) {
 		  filename = name.toStdString();
 		if (this->readParameterFile((char*)filename.c_str()))
