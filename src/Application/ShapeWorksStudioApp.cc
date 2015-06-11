@@ -224,6 +224,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->ui_->action_analysis_mode->setChecked(false);
   this->project_->set_tool_state( Project::DATA_C );
   this->ui_->stacked_widget->setCurrentWidget( this->ui_->import_page );
+  this->ui_->controlsDockWidget_2->setCaption("Data");
 }
 
 //---------------------------------------------------------------------------
@@ -453,6 +454,7 @@ void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
   this->project_->set_tool_state( Project::GROOM_C );
   this->ui_->stacked_widget->setCurrentWidget( this->groom_tool_.data() );
+  this->ui_->controlsDockWidget_2->setCaption("Groom");
 }
 
 //---------------------------------------------------------------------------
@@ -460,6 +462,7 @@ void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
   this->project_->set_tool_state( Project::DATA_C );
   this->ui_->stacked_widget->setCurrentIndex( 0 );
+  this->ui_->controlsDockWidget_2->setCaption("Data");
 }
 
 //---------------------------------------------------------------------------
@@ -467,6 +470,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
   this->project_->set_tool_state( Project::OPTIMIZE_C );
   this->ui_->stacked_widget->setCurrentWidget( this->optimize_tool_.data() );
+  this->ui_->controlsDockWidget_2->setCaption("Optimize");
 }
 
 //---------------------------------------------------------------------------
@@ -474,6 +478,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
   this->project_->set_tool_state( Project::ANALYSIS_C );
   this->ui_->stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
+  this->ui_->controlsDockWidget_2->setCaption("Analysis");
 }
 
 //---------------------------------------------------------------------------
@@ -519,6 +524,9 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->ui_->action_analysis_mode->setEnabled(true);
   this->set_status_bar( "Optimize complete" );
   this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
+  this->ui_->view_mode_combobox->setCurrentIndex( 2 );
+  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
+  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->visualizer_->update_lut();
   this->update_display();

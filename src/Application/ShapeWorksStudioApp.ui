@@ -601,7 +601,7 @@ QPushButton {
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>   Tools</string>
+    <string>Data</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
