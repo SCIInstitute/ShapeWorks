@@ -84,12 +84,6 @@ void PreferencesWindow::on_pca_steps_valueChanged( int value )
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_regression_steps_valueChanged( int value )
-{
-  preferences_.set_num_regression_steps( this->ui_->regression_steps->value() );
-}
-
-//-----------------------------------------------------------------------------
 void PreferencesWindow::restore_defaults()
 {
   preferences_.restore_defaults();
@@ -99,8 +93,6 @@ void PreferencesWindow::restore_defaults()
 //-----------------------------------------------------------------------------
 void PreferencesWindow::set_values_from_preferences()
 {
-  this->ui_->groom_location->setText( preferences_.get_groom_location() );
-  this->ui_->optimize_location->setText( preferences_.get_optimize_location() );
 
   this->ui_->mesh_cache_enabled->setChecked( preferences_.get_cache_enabled() );
   this->ui_->mesh_cache_memory->setValue( preferences_.get_cache_memory() );
@@ -114,50 +106,11 @@ void PreferencesWindow::set_values_from_preferences()
 
   this->ui_->pca_range->setValue( preferences_.get_pca_range() );
   this->ui_->pca_steps->setValue( preferences_.get_num_pca_steps() );
-  this->ui_->regression_steps->setValue( preferences_.get_num_regression_rteps() );
   this->ui_->smoothingSlider->setValue( preferences_.get_smoothing_amount() );
   this->ui_->neighborhoodSpinBox->setValue( preferences_.get_neighborhood() );
   this->ui_->spacingSpinBox->setValue( preferences_.get_spacing() );
 
   this->update_labels();
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_groom_location_textChanged( const QString& text )
-{
-  preferences_.set_groom_location( text );
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_optimize_location_textChanged( const QString& text )
-{
-  preferences_.set_optimize_location( text );
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_locate_groom_button_clicked()
-{
-  QString filename = QFileDialog::getOpenFileName( this, tr( "Locate ShapeWorksGroom..." ),
-                                                   QString(), tr( "File (*)" ) );
-  if ( filename.isEmpty() )
-  {
-    return;
-  }
-
-  this->ui_->groom_location->setText( filename );
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_locate_optimize_button_clicked()
-{
-  QString filename = QFileDialog::getOpenFileName( this, tr( "Locate ShapeWorksGroom..." ),
-                                                   QString(), tr( "File (*)" ) );
-  if ( filename.isEmpty() )
-  {
-    return;
-  }
-
-  this->ui_->optimize_location->setText( filename );
 }
 
 //-----------------------------------------------------------------------------

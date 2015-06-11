@@ -42,30 +42,6 @@ void Preferences::set_main_window_size( QSize size )
 }
 
 //-----------------------------------------------------------------------------
-QString Preferences::get_groom_location()
-{
-  return this->settings.value( "General/GroomLocation", "" ).toString();
-}
-
-//-----------------------------------------------------------------------------
-void Preferences::set_groom_location( QString location )
-{
-  this->settings.setValue( "General/GroomLocation", location );
-}
-
-//-----------------------------------------------------------------------------
-QString Preferences::get_optimize_location()
-{
-  return this->settings.value( "General/OptimizeLocation", "" ).toString();
-}
-
-//-----------------------------------------------------------------------------
-void Preferences::set_optimize_location( QString location )
-{
-  this->settings.setValue( "General/OptimizeLocation", location );
-}
-
-//-----------------------------------------------------------------------------
 QString Preferences::get_last_directory()
 {
   return this->settings.value( "General/LastDirectory", "" ).toString();

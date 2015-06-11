@@ -388,7 +388,6 @@ if(MSVC)
   SOURCE_GROUP(moc_sources FILES ${STUDIO_MOC_SRCS})
 endif(MSVC)
 
-
 # here we instruct CMake to build STUDIO executable from all of the source files
 ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE WIN32 
   ${STUDIO_SRCS}
@@ -407,8 +406,71 @@ TARGET_LINK_LIBRARIES( ShapeWorksStudio
   ${Boost_FILESYSTEM_LIBRARY}
   ${VTK_LIBRARIES} 
   )
+  
+# we need to have the shapeworks command line tools for studio to work.
+find_file(ShapeworksCLT_BINARY_DIR
+  NAMES
+  shapeworks
+  shapeworks/bin
+  shapeworks/build/bin
+  shapeworks/build/bin/Release
+  PATHS
+  $ENV{HOME}
+  "C:/"
+  $ENV{HOME}/Documents
+  )
+SET(required_deps
+  ShapeWorksGroom
+  ShapeWorksRun
+  )
+foreach (file ${required_deps})
+  find_file(${file}-dependency
+    NAMES
+    ${file}
+    ${file}.exe
+    PATHS
+    ${ShapeworksCLT_BINARY_DIR}
+    NO_DEFAULT_PATH
+    )
+  if (${${file}-dependency} MATCHES "${file}-dependency-NOTFOUND")
+    set(ShapeworksCLT_BINARY_DIR "ShapeworksCLT_BINARY_DIR-NOTFOUND" CACHE PATH "Shapeworks command line tools binary directory" FORCE)
+  endif()
+  unset(${file}-dependency CACHE)
+endforeach()
 
-
+if (${ShapeworksCLT_BINARY_DIR} MATCHES "ShapeworksCLT_BINARY_DIR-NOTFOUND")
+  message(ERROR " Shapeworks command line tools binary directory not found. Set ShapeworksCLT_BINARY_DIR in CMake.")
+else()
+  #copy the binaries from ShapeworksCLT to Cleaver binary dir
+  message(STATUS "ShapeworksCLT found at: ${ShapeworksCLT_BINARY_DIR}")
+  FILE(GLOB SHAPEWORKS_DEPS
+    ${ShapeworksCLT_BINARY_DIR}/ShapeWorksGroom*
+    ${ShapeworksCLT_BINARY_DIR}/ShapeWorksRun*
+    )
+  foreach(file ${SHAPEWORKS_DEPS})
+    if (APPLE)
+		add_custom_command(TARGET ShapeWorksStudio POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy ${file} 
+				   $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.app/Contents/Resources)
+	else()
+		add_custom_command(TARGET ShapeWorksStudio POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy ${file} 
+				   $<TARGET_FILE_DIR:ShapeWorksStudio>)
+	endif()
+	message(STATUS "Copied ${file} to ${CMAKE_BINARY_DIR}")
+  endforeach()
+  # platform specific filenames
+  if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    add_definitions(-DGROOM_EXECUTABLE="ShapeWorksGroom")
+    add_definitions(-DOPTIMIZE_EXECUTABLE="ShapeWorksRun")
+  elseif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    add_definitions(-DGROOM_EXECUTABLE="../Resources/ShapeWorksGroom")
+    add_definitions(-DOPTIMIZE_EXECUTABLE="../Resources/ShapeWorksRun")
+  elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    add_definitions(-DGROOM_EXECUTABLE="ShapeWorksGroom.exe")
+    add_definitions(-DOPTIMIZE_EXECUTABLE="ShapeWorksRun.exe")
+  endif()
+endif()
 
 # INSTALLATION AND PACKAGING
 SET(plugin_dest_dir bin)

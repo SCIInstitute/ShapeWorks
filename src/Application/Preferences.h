@@ -20,15 +20,7 @@ public:
   /// Main window size
   QSize get_main_window_size();
   void set_main_window_size( QSize size );
-
-  /// ShapeWorksGroom executable location
-  QString get_groom_location();
-  void set_groom_location( QString location );
-
-  /// ShapeWorksRun executable location
-  QString get_optimize_location();
-  void set_optimize_location( QString location );
-
+  
   /// last directory used (open/save)
   QString get_last_directory();
   void set_last_directory( QString location );

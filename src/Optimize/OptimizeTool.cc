@@ -61,10 +61,10 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   QProcess* optimize = new QProcess( this );
   optimize->setProcessChannelMode( QProcess::MergedChannels );
-  //optimize->start( "C:/Users/amorris/carma/shapeworks/build-x86/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
-
-  //optimize->start( "C:/Users/amorris/carma/shapeworks/bin/ShapeWorksRun/Release/ShapeWorksRun.exe", args );
-  optimize->start( preferences_.get_optimize_location(), args );
+  
+  std::string optimizeLocation = QCoreApplication::applicationFilePath().toStdString();
+  optimizeLocation = optimizeLocation.substr(0,optimizeLocation.find_last_of("/")+1) + OPTIMIZE_EXECUTABLE;
+  optimize->start(QString::fromStdString(optimizeLocation), args );
 
   if ( !optimize->waitForStarted() )
   {
