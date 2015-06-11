@@ -544,6 +544,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
+  if (this->analysis_tool_->pcaAnimate()) return;
   this->update_display();
 }
 
