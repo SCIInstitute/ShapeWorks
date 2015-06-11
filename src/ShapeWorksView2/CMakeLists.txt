@@ -141,6 +141,14 @@ ELSE ( BUILD_SWV2_OSX_APP )
   )
 ENDIF ( BUILD_SWV2_OSX_APP )
 
+IF(WIN32) # Check if we are on Windows
+  if(MSVC) # Check if we are using the Visual Studio compiler
+    set_target_properties(ShapeWorksView2 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:\"mainCRTStartup\"")
+  else()
+    message(SEND_ERROR "You are using an unsupported Windows compiler! (Not MSVC)")
+  endif()
+ENDIF()
+
 
 TARGET_LINK_LIBRARIES( ShapeWorksView2
   ${QT_LIBRARIES} 
@@ -149,7 +157,11 @@ TARGET_LINK_LIBRARIES( ShapeWorksView2
   ITKParticleSystem tinyxml
   )
 
-
+if(WIN32)
+  if(MSVC)
+    set_target_properties(ShapeWorksView2 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+  endif()
+endif()
 
 # INSTALLATION AND PACKAGING
 SET(plugin_dest_dir bin)
