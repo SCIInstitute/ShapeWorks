@@ -6,11 +6,11 @@
 #include <QSharedPointer>
 #include <QVector>
 #include "Application/Preferences.h"
+#include "Data/MeshManager.h"
 
 class Shape;
 
 class Project;
-class MeshManager;
 typedef QSharedPointer< Project > ProjectHandle;
 
 //! Representation of a project.
