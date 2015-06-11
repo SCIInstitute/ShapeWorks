@@ -89,7 +89,8 @@ Command Line Tools. You can follow the same steps for either the <code>examples/
 cd examples/torus
 ../../build/bin/ShapeWorksGroom torus.groom.xml isolate hole_fill center auto_crop antialias fastmarching blur
 ```
-This step may takes some time.
+This step may takes some time. Be sure that you are in the example directory (ie. examples/torus) when running
+the tools. Also be sure you are providing the actual path of the executable. This is for each step.
 
 <h3>ShapeWorksRun</h3>
 ```c++
@@ -101,6 +102,7 @@ This step may takes some time.
 ../../build/bin/ShapeWorksView2 torus.analysis.xml
 ```
 The visualizer is called "View2" since a previous and outdated version uses the FLTK library, not needed for View2.
+You may also double click on the Executable and load the parameter file via a dialog box.
 <br/><br/>
 You Should have a Qt window pop up that looks similar to the one below.
 
