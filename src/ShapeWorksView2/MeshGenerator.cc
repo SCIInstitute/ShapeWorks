@@ -57,7 +57,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   //get filtering parameters
   float spacing = this->prefs_.getSpacing();
   int neighborhood = this->prefs_.getNeighborhood();
-  int smoothing = this->prefs_.getSmoothingAmount();
+  int smoothing = this->prefs_.getSmoothingAmount() * 100;
   this->surfaceReconstruction->SetSampleSpacing(spacing);
   this->surfaceReconstruction->SetNeighborhoodSize(neighborhood);
   this->smoothFilter->SetNumberOfIterations(smoothing);
