@@ -57,13 +57,14 @@ public:
   void set_visualizer( Visualizer* visualizer );
 
   bool render_window_ready() { return render_window_ != NULL; }
+  
+  void clear_renderers();
 
 public Q_SLOTS:
   void handle_timer_callback();
 
 private:
 
-  void clear_renderers();
   void display_objects();
 
   void insert_object_into_viewer( QSharedPointer<DisplayObject> object, int position );

@@ -125,6 +125,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->action_group_->addAction( this->ui_->action_groom_mode );
   this->action_group_->addAction( this->ui_->action_optimize_mode );
   this->action_group_->addAction( this->ui_->action_analysis_mode );
+  this->ui_->action_import_mode->setEnabled(true);
+  this->ui_->action_groom_mode->setEnabled(false);
+  this->ui_->action_optimize_mode->setEnabled(false);
+  this->ui_->action_analysis_mode->setEnabled(false);
 
   this->ui_->statusbar->showMessage( "ShapeWorksStudio" );
   this->lightbox_ = LightboxHandle( new Lightbox() );
@@ -199,8 +203,27 @@ void ShapeWorksStudioApp::initialize_vtk()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered()
 {
-  std::cerr << "new project!\n";
+  QList<int> index_list;
+
+  for ( int i = this->project_->get_num_shapes() - 1; i >=0; i--)
+  {
+    index_list << i;
+  }
+  
+  this->ui_->action_groom_mode->setEnabled(false);
+  this->ui_->action_optimize_mode->setEnabled(false);
+  this->ui_->action_analysis_mode->setEnabled(false);
+  this->project_->remove_shapes( index_list );
   this->project_->reset();
+  this->lightbox_->clear_renderers();
+  this->reset();
+  this->update_display();
+  this->ui_->action_import_mode->setChecked(true);
+  this->ui_->action_groom_mode->setChecked(false);
+  this->ui_->action_optimize_mode->setChecked(false);
+  this->ui_->action_analysis_mode->setChecked(false);
+  this->project_->set_tool_state( Project::DATA_C );
+  this->ui_->stacked_widget->setCurrentWidget( this->ui_->import_page );
 }
 
 //---------------------------------------------------------------------------
@@ -276,8 +299,17 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   }
 
   preferences_.set_last_directory( QDir().absoluteFilePath( filenames[0] ) );
-
+  //need to re-run everything if something new is added.
+  this->ui_->view_mode_combobox->setCurrentIndex( 0 );
+  this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
+  this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
+  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
+  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
   this->import_files( filenames );
+  this->visualizer_->update_lut();
+  this->ui_->action_groom_mode->setEnabled(true);
+  this->ui_->action_optimize_mode->setEnabled(false);
+  this->ui_->action_analysis_mode->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -360,6 +392,12 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   }
 
   this->project_->remove_shapes( index_list );
+  if (this->project_->get_shapes().size() == 0) {
+	  this->ui_->action_groom_mode->setEnabled(false);
+	  this->ui_->action_optimize_mode->setEnabled(false);
+	  this->ui_->action_analysis_mode->setEnabled(false);
+	  this->lightbox_->clear_renderers();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -442,23 +480,31 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 void ShapeWorksStudioApp::handle_project_changed()
 {
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  if (shapes.size() < 1) 
+	this->ui_->action_groom_mode->setEnabled(false);
+  else
+	this->ui_->action_groom_mode->setEnabled(true);
 
   if ( this->project_->groomed_present() )
   {
     this->ui_->view_mode_combobox->setItemData( 1, 33, Qt::UserRole - 1 );
+    this->ui_->action_optimize_mode->setEnabled(true);
   }
   else
   {
     this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
+    this->ui_->action_optimize_mode->setEnabled(false);
   }
 
   if ( this->project_->reconstructed_present() )
   {
     this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
+    this->ui_->action_analysis_mode->setEnabled(true);
   }
   else
   {
     this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
+    this->ui_->action_analysis_mode->setEnabled(false);
   }
 
   this->update_table();
@@ -470,6 +516,7 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
+  this->ui_->action_analysis_mode->setEnabled(true);
   this->set_status_bar( "Optimize complete" );
   this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
   this->visualizer_->setMean(this->analysis_tool_->getMean());
@@ -483,6 +530,8 @@ void ShapeWorksStudioApp::handle_groom_complete()
   this->set_status_bar( "Groom complete" );
   this->ui_->view_mode_combobox->setItemData( 1, 33, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setCurrentIndex( 1 );
+  this->ui_->action_optimize_mode->setEnabled(true);
+  this->ui_->action_analysis_mode->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -665,7 +714,6 @@ void ShapeWorksStudioApp::handle_open_recent()
     this->open_project( action->data().toString() );
   }
 }
-
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_color_scheme()
