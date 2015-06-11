@@ -511,7 +511,6 @@ void ShapeWorksStudioApp::handle_project_changed()
     this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
     this->ui_->action_analysis_mode->setEnabled(false);
   }
-
   this->update_table();
   this->update_scrollbar();
   this->project_->handle_clear_cache();
@@ -621,6 +620,7 @@ void ShapeWorksStudioApp::open_project( QString filename )
   this->project_->calculate_reconstructed_samples();
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->analysis_tool_->setAnalysisMode("all samples");
+  this->analysis_tool_->reset_stats();
 
   preferences_.add_recent_file( filename );
   this->update_recent_files();

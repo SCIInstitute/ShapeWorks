@@ -291,6 +291,17 @@ void AnalysisTool::pca_labels_changed( QString value, QString eigen, QString lam
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats()
 {
+	this->ui_->allSamplesRadio->setChecked(true);
+	this->ui_->singleSamplesRadio->setChecked(false);
+	this->ui_->meanRadio->setChecked(false);
+	this->ui_->pcaRadio->setChecked(false);
+	this->ui_->regressionRadio->setChecked(false);
+	this->ui_->sampleSpinBox->setEnabled(false);
+	this->ui_->medianButton->setEnabled(false);
+	this->ui_->pcaSlider->setEnabled(false);
+	this->ui_->pcaAnimateCheckBox->setEnabled(false);
+	this->ui_->pcaModeSpinBox->setEnabled(false);
+	this->ui_->pcaAnimateCheckBox->setChecked(false);
 	this->stats_ready_ = false;
 	this->stats_ = ParticleShapeStatistics<3>();
 }
