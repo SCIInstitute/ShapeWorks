@@ -193,19 +193,22 @@ shortcut option.
 <br/><br/>
 *Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
 <br/><br/>
+*Neighborhood Size* The neighborhood size (max vertex valence) used for isosurface reconstruction.
+<br/><br/>
+*Spacing* The spacing used for isosurface reconstruction.
+<br/><br/>
+*Smoothing* The smoothing amount for isosurface reconstruction.
+<br/><br/>
 *Enable Caching* To speed up mesh animation, you can cache the meshes into system memory to load as needed.
+<br/><br/>
+*Caching Epsilon* How sensitive the caching is. The smaller the epsilon, the more meshes that will be cached, even if
+they are very similar. If this is too high, large mesh differences might be ignored.
 <br/><br/>
 *Memory to Use* Select the amount of system memory to use for caching. Turn this down if your machine's memory 
 is bogged down from the program.
 <br/><br/>
 *Parallel Reconstruction* Select the amount of threads to fire (up to system hardware core max) to run while 
 building meshes. This speeds reconstruction, theoretically.
-<br/><br/>
-*Neighborhood Size* The neighborhood size (max vertex valence) used for isosurface reconstruction.
-<br/><br/>
-*Spacing* The spacing used for isosurface reconstruction.
-<br/><br/>
-*Smoothing* The smoothing amount for isosurface reconstruction.
 <br/><br/>
 *Restore Defaults* Click this to restore all options to the program's default values. Options are saved and reloaded
 between application runs for convenience.
