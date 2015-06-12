@@ -475,13 +475,14 @@ void Project::load_original_files( QStringList file_names )
 
   QProgressDialog progress( "Loading images...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
+  progress.show();
   progress.setMinimumDuration( 2000 );
 
   for ( int i = 0; i < file_names.size(); i++ )
   {
 
     progress.setValue( i );
-
+	QApplication::processEvents();
     if ( progress.wasCanceled() )
     {
       break;
@@ -495,6 +496,7 @@ void Project::load_original_files( QStringList file_names )
   }
 
   progress.setValue( file_names.size() );
+  QApplication::processEvents();
 
   this->renumber_shapes();
 
@@ -510,11 +512,13 @@ void Project::load_groomed_files( QStringList file_names )
 {
   QProgressDialog progress( "Loading groomed images...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
+  progress.show();
   progress.setMinimumDuration( 2000 );
 
   for ( int i = 0; i < file_names.size(); i++ )
   {
     progress.setValue( i );
+	QApplication::processEvents();
 
     if ( progress.wasCanceled() )
     {
@@ -532,6 +536,7 @@ void Project::load_groomed_files( QStringList file_names )
   }
 
   progress.setValue( file_names.size() );
+  QApplication::processEvents();
 
   if ( file_names.size() > 0 )
   {
@@ -545,6 +550,7 @@ bool Project::load_point_files( QStringList file_names )
 {
   QProgressDialog progress( "Loading point files...", "Abort", 0, file_names.size(), this->parent_ );
   progress.setWindowModality( Qt::WindowModal );
+  progress.show();
   progress.setMinimumDuration( 2000 );
 
   std::cerr << "num file = " << file_names.size() << "\n";
@@ -553,6 +559,7 @@ bool Project::load_point_files( QStringList file_names )
   {
     std::cerr << "Loading file " << file_names[i].toStdString() << "\n";
     progress.setValue( i );
+	QApplication::processEvents();
 
     if ( progress.wasCanceled() )
     {
@@ -612,6 +619,7 @@ bool Project::load_point_files( QStringList file_names )
   }
 
   progress.setValue( file_names.size() );
+  QApplication::processEvents();
 
   if ( file_names.size() > 0 )
   {
