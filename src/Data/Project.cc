@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QApplication>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QProgressDialog>
