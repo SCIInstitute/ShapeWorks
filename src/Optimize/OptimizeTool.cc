@@ -3,7 +3,7 @@
 #include <QXmlStreamWriter>
 #include <QTemporaryFile>
 #include <QFileDialog>
-#include <QProcess>
+#include <QThread>
 #include <QMessageBox>
 
 #include <Application/ShapeWorksStudioApp.h>

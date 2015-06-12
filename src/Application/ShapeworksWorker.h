@@ -13,6 +13,7 @@
 #define SHAPEWORKS_WORKER_H
 
 #include <QObject>
+#include <QStringList>
 
 class ShapeworksWorker : public QObject
 {

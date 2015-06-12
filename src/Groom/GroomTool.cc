@@ -3,6 +3,7 @@
 #include <QXmlStreamWriter>
 #include <QTemporaryFile>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QThread>
 
 #include <Groom/GroomTool.h>
