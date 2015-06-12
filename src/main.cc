@@ -79,7 +79,9 @@ int main( int argc, char** argv )
 
 #ifdef WIN32
   ::SetErrorMode( 0 );
+#ifdef _DEBUG
   RedirectIOToConsole2();
+#endif
 #endif
   try {
 
@@ -96,47 +98,11 @@ int main( int argc, char** argv )
     studio_app->initialize_vtk();
 
     QStringList files;
-
-/*
-   files << "z:/shared/laatee/laa_0_DT.nrrd";
-   files << "z:/shared/laatee/laa_1_DT.nrrd";
-   files << "z:/shared/laatee/laa_2_DT.nrrd";
-   files << "z:/shared/laatee/laa_3_DT.nrrd";
-   files << "z:/shared/laatee/laa_4_DT.nrrd";
- */
-
-/*
-   files << "h:/projects/laa_tee/groomed/interface_0_DT.nrrd";
-   files << "h:/projects/laa_tee/groomed/interface_1_DT.nrrd";
-   files << "h:/projects/laa_tee/groomed/interface_2_DT.nrrd";
- */
-
-/*
-   files << "h:/projects/laa_tee/data/interface_0.nrrd";
-   files << "h:/projects/laa_tee/data/interface_1.nrrd";
-   files << "h:/projects/laa_tee/data/interface_2.nrrd";
-   files << "h:/projects/laa_tee/data/interface_3.nrrd";
-   files << "h:/projects/laa_tee/data/interface_4.nrrd";
-   files << "h:/projects/laa_tee/data/interface_5.nrrd";
- */
-
+	
     if ( argc == 2 )
     {
       studio_app->open_project( QString( argv[1] ) );
     }
-
-    //studio_app.import_files( files );
-#ifdef LOAD_DEFAULT_PROJECT
-    //studio_app->open_project( "h:/projects/studio/studio.xml" );
-    //    studio_app->open_project( "c:/Users/amorris/Desktop/studio2.xml" );
-    //studio_app->import_legacy( "c:/Users/amorris/Desktop/groom.xml" );
-    //studio_app->import_legacy( "c:/Users/amorris/Desktop/optimize.xml" );
-    //studio_app->import_legacy( "c:/Users/amorris/Desktop/analysis.xml" );
-    //studio_app->import_legacy( "c:/Users/amorris/Sync/carma/projects/shape_prediction/param/analysis.decaaf.xml" );
-
-    studio_app->open_project( "c:/Users/amorris/Desktop/studio.sphere/cor.xml" );
-    //studio_app->open_project( "c:/Users/amorris/Desktop/studio.sphere/studio.xml" );
- #endif // ifdef LOAD_DEFAULT_PROJECT
 
     return app.exec();
   }
