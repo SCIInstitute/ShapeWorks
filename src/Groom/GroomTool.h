@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <QWidget>
+#include <QProgressDialog>
 #include "Application/Preferences.h"
 
 class Project;
@@ -33,6 +34,9 @@ public Q_SLOTS:
 
   void on_antialias_checkbox_stateChanged( int state );
   void on_blur_checkbox_stateChanged( int state );
+  void handle_thread_complete();
+  void handle_progress(int val);
+  void handle_error();
 
   /// Export XML
   void on_export_xml_button_clicked();
@@ -46,6 +50,7 @@ private:
   QSharedPointer<Project> project_;
   ShapeWorksStudioApp* app_;
   Preferences& preferences_;
+  QProgressDialog * progress_;
 };
 
 #endif /* STUDIO_GROOM_GROOMTOOL_H */

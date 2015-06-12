@@ -9,6 +9,7 @@
 #include <Application/ShapeWorksStudioApp.h>
 
 #include <Optimize/OptimizeTool.h>
+#include <Application/ShapeworksWorker.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
@@ -43,8 +44,28 @@ void OptimizeTool::on_export_xml_button_clicked()
 }
 
 //---------------------------------------------------------------------------
+void OptimizeTool::handle_error() {
+	this->progress_->setValue(100);
+  QApplication::processEvents();
+	delete this->progress_;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::handle_progress(int val) {
+	if (val < 90)
+		this->progress_->setValue(val);
+  QApplication::processEvents();
+}
+
+//---------------------------------------------------------------------------
 void OptimizeTool::on_run_optimize_button_clicked()
-{
+{  
+  this->progress_ = new QProgressDialog(QString("Running Shapeworks Tool. Please Wait..."),QString(),0,100,this);
+  this->progress_->setWindowModality(Qt::WindowModal);
+  this->progress_->show();
+  QApplication::processEvents();
+  this->progress_->setValue(5);
+  QApplication::processEvents();
   this->app_->set_status_bar( "Please wait: running optimize step..." );
 
   QTemporaryFile file;
@@ -59,62 +80,26 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   args << temp_file_name;
 
-  QProcess* optimize = new QProcess( this );
-  optimize->setProcessChannelMode( QProcess::MergedChannels );
-  
   std::string optimizeLocation = QCoreApplication::applicationFilePath().toStdString();
   optimizeLocation = optimizeLocation.substr(0,optimizeLocation.find_last_of("/")+1) + OPTIMIZE_EXECUTABLE;
-  optimize->start(QString::fromStdString(optimizeLocation), args );
 
-  if ( !optimize->waitForStarted() )
-  {
-    std::cerr << "Error: failed to start ShapeWorksRun\n";
-    QMessageBox::critical( 0, "Error", "Failed to start ShapeWorksRun" );
-    return;
-  }
+  QThread *thread = new QThread;
+  ShapeworksWorker *worker = new ShapeworksWorker(QString::fromStdString(optimizeLocation), args);
+  worker->moveToThread(thread);
+  connect(thread, SIGNAL(started()), worker, SLOT(process()));
+  connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
+  connect(worker, SIGNAL(step_made(int)),  this, SLOT(handle_progress(int)));
+  connect(worker, SIGNAL(run_error()),  this, SLOT(handle_error()));
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  thread->start();
+  // now lets hope this thread does it's job.
 
-  //optimize.closeWriteChannel();
+}
 
-  std::cerr << "running...";
-
-  while ( !optimize->waitForFinished( 1000 ) )
-  {
-    QByteArray result = optimize->readAll();
-    std::cerr << "output: " << result.data() << "\n";
-
-    QString strOut = optimize->readAllStandardOutput();
-    std::cerr << strOut.toStdString() << "\n";
-
-    strOut = optimize->readAllStandardError();
-    std::cerr << strOut.toStdString() << "\n";
-  }
-
-/*
-   if ( !optimize->waitForFinished() )
-   {
-    std::cerr << "Error running ShapeWorksRun\n";
-
-
-
-
-    QMessageBox::critical( 0, "Error", "Error running ShapeWorksRun" );
-    return;
-   }
- */
-
-  QByteArray result = optimize->readAll();
-  std::cerr << "output: " << result.data() << "\n";
-
-  QString strOut = optimize->readAllStandardOutput();
-  std::cerr << strOut.toStdString() << "\n";
-
-  strOut = optimize->readAllStandardError();
-  std::cerr << strOut.toStdString() << "\n";
-
-  std::cerr << "Finished running!\n";
-
-  delete optimize;
-
+//---------------------------------------------------------------------------
+void OptimizeTool::handle_thread_complete() {
+	
   // load files!
 
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
@@ -141,8 +126,14 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
     list << prefix + "." + number + ".wpts";
   }
-
+  
+  this->progress_->setValue(95);
+  QApplication::processEvents();
   this->project_->load_point_files( list );
+
+  this->progress_->setValue(100);
+  QApplication::processEvents();
+  delete this->progress_;
   emit optimize_complete();
 }
 

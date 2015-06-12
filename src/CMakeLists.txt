@@ -157,11 +157,13 @@ SET(STUDIO_APPLICATION_HDRS
   Application/ShapeWorksStudioApp.h
   Application/Preferences.h
   Application/PreferencesWindow.h
+  Application/ShapeworksWorker.h
 )
 SET(STUDIO_APPLICATION_SRCS
   Application/ShapeWorksStudioApp.cc
   Application/Preferences.cc
   Application/PreferencesWindow.cc
+  Application/ShapeworksWorker.cc
 )
 SET(STUDIO_APPLICATION_UIS
   Application/ShapeWorksStudioApp.ui
@@ -296,6 +298,7 @@ SET( STUDIO_MOC_HDRS
      Data/Project.h
      Data/MeshManager.h
      Data/MeshWorker.h
+     Application/ShapeworksWorker.h
      Application/Preferences.h
      Visualization/Visualizer.h
      Visualization/Lightbox.h
@@ -451,7 +454,6 @@ else()
 		add_custom_command(TARGET ShapeWorksStudio POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy ${file} 
 				   $<TARGET_FILE_DIR:ShapeWorksStudio>)
-	message(STATUS "Copied ${file} to ${CMAKE_BINARY_DIR}")
   endforeach()
   # platform specific filenames
   if(CMAKE_SYSTEM_NAME MATCHES "Windows")

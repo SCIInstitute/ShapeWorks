@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <QWidget>
+#include <QProgressDialog>
 #include "Application/Preferences.h"
 
 class Project;
@@ -33,6 +34,9 @@ public Q_SLOTS:
 
   /// Run optimize tool
   void on_run_optimize_button_clicked();
+  void handle_thread_complete();
+  void handle_progress(int val);
+  void handle_error();
 signals:
   void optimize_complete();
 
@@ -41,6 +45,7 @@ private:
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
   ShapeWorksStudioApp* app_;
+  QProgressDialog * progress_;
 };
 
 #endif /* STUDIO_OPTIMIZE_OPTIMIZETOOL_H */

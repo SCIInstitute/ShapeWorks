@@ -3,10 +3,10 @@
 #include <QXmlStreamWriter>
 #include <QTemporaryFile>
 #include <QFileDialog>
-#include <QProcess>
-#include <QMessageBox>
+#include <QThread>
 
 #include <Groom/GroomTool.h>
+#include <Application/ShapeworksWorker.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
@@ -55,8 +55,28 @@ void GroomTool::on_export_xml_button_clicked()
 }
 
 //---------------------------------------------------------------------------
+void GroomTool::handle_error() {
+	this->progress_->setValue(100);
+  QApplication::processEvents();
+	delete this->progress_;
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::handle_progress(int val) {
+	if (val < 90)
+		this->progress_->setValue(val);
+  QApplication::processEvents();
+}
+
+//---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked()
 {
+  this->progress_ = new QProgressDialog(QString("Running Shapeworks Tool. Please Wait..."),QString(),0,100,this);
+  this->progress_->setWindowModality(Qt::WindowModal);
+  this->progress_->show();
+  QApplication::processEvents();
+  this->progress_->setValue(5);
+  QApplication::processEvents();
   this->app_->set_status_bar( "Please wait: running groom step..." );
 
   QTemporaryFile file;
@@ -101,48 +121,26 @@ void GroomTool::on_run_groom_button_clicked()
     args << "blur";
   }
 
-  QProcess* groom = new QProcess( this );
-  groom->setProcessChannelMode( QProcess::MergedChannels );
-
   std::string groomLocation = QCoreApplication::applicationFilePath().toStdString();
-  groomLocation = groomLocation.substr(0,groomLocation.find_last_of("/")+1) + GROOM_EXECUTABLE;
-  groom->start( QString::fromStdString(groomLocation), args );
-  if ( !groom->waitForStarted() )
-  {
-    std::cerr << "Error: failed to start ShapeWorksGroom\n";
-    QMessageBox::critical( 0, "Error", "Failed to start ShapeWorksGroom" );
-    return;
-  }
+  std::string path = groomLocation.substr(0,groomLocation.find_last_of("/")+1);
+  groomLocation = path + GROOM_EXECUTABLE;
 
-  //groom.closeWriteChannel();
+  QThread *thread = new QThread;
+  ShapeworksWorker *worker = new ShapeworksWorker(QString::fromStdString(groomLocation), args);
+  worker->moveToThread(thread);
+  connect(thread, SIGNAL(started()), worker, SLOT(process()));
+  connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
+  connect(worker, SIGNAL(step_made(int)),  this, SLOT(handle_progress(int)));
+  connect(worker, SIGNAL(run_error()),  this, SLOT(handle_error()));
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  thread->start();
+  // now lets hope this thread does it's job.
+}
 
-  std::cerr << "running...";
-
-  while ( !groom->waitForFinished( 1000 ) )
-  {
-    QByteArray result = groom->readAll();
-    std::cerr << "output: " << result.data() << "\n";
-
-    QString strOut = groom->readAllStandardOutput();
-    std::cerr << strOut.toStdString() << "\n";
-
-    strOut = groom->readAllStandardError();
-    std::cerr << strOut.toStdString() << "\n";
-  }
-
-  QByteArray result = groom->readAll();
-  std::cerr << "output: " << result.data() << "\n";
-
-  QString strOut = groom->readAllStandardOutput();
-  std::cerr << strOut.toStdString() << "\n";
-
-  strOut = groom->readAllStandardError();
-  std::cerr << strOut.toStdString() << "\n";
-
-  std::cerr << "Finished running!\n";
-
-  delete groom;
-
+//---------------------------------------------------------------------------
+void GroomTool::handle_thread_complete() {
+	
   QStringList list;
 
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
@@ -155,9 +153,14 @@ void GroomTool::on_run_groom_button_clicked()
 
     list << outfile;
   }
-
+  
+  this->progress_->setValue(95);
+  QApplication::processEvents();
   this->project_->load_groomed_files( list );
-
+  
+  this->progress_->setValue(100);
+  QApplication::processEvents();
+  delete this->progress_;
   emit groom_complete();
 }
 
