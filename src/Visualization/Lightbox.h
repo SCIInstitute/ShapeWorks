@@ -9,6 +9,7 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
 #include <vtkPoints.h>
+#include <vtkCamera.h>
 
 #include <Visualization/Viewer.h>
 

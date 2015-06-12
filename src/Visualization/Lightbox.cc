@@ -26,7 +26,7 @@ Lightbox::Lightbox()
   this->first_draw_ = true;
 
   this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
-  this->style_->AutoAdjustCameraClippingRangeOn();
+  this->style_->AutoAdjustCameraClippingRangeOff();
   this->style_->set_lightbox( this );
 
   // prepare the loading spinner
@@ -236,6 +236,7 @@ void Lightbox::set_start_row( int row )
 //-----------------------------------------------------------------------------
 void Lightbox::set_display_objects( QVector < QSharedPointer < DisplayObject > > objects )
 {
+  this->camera_->SetClippingRange(0.05,100000);
   this->objects_ = objects;
   this->display_objects();
 }
