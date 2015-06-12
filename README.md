@@ -18,9 +18,7 @@ Requirements
 
 Code Documentation
 =====================
-* [Doxygen Documentation](http://sciinstitute.github.io/ShapeWorksStudio/doxygen/)
-* <br/>
-Doxygen pages are currently out of date, but still relevant.
+[Doxygen Documentation](http://sciinstitute.github.io/ShapeWorksStudio/doxygen/) pages are currently out of date, but still relevant.
 
 Building
 =====================
@@ -91,8 +89,8 @@ You can select what amount is appropriate for the optimization step.
 *Blur* This option blurs the distance transform to get rid of high-frequency artifacts. You can choose an appropriate sigma
 for the blurring.
 <br/><br/>
-*Run Groom* Click this when you are ready for grooming. This step takes some time. Output is displayed in the output window.
-You will know when the step is done when you can again interact with the scene.
+*Run Groom* Click this when you are ready for grooming. This step takes some time. Output is put into a 
+ShapeWorksStudioTools.log file next to the executable. A progress indicator shows the tool is working.
 <br/><br/>
 *Export XML* If you wish to use the parameter file created for the groom step in a command line environment, 
 you can export the XML with the grooming options above.
@@ -119,8 +117,8 @@ matrix of the correspondences during the optimization process. This range, along
 iterations, define the rate at which the system converges. The starting regularization decays to the ending
 regularization over the specified number of iterations.
 <br/><br/>
-*Run Optimize* Click this when you are ready for optimizing. This step takes time, but less than grooming. 
-Output is displayed in the output window. You will know when the step is done when you can again interact with the scene.
+*Run Optimize* Click this when you are ready for optimizing. This step takes time, but less than grooming.
+Output is put into a ShapeWorksStudioTools.log file next to the executable. A progress indicator shows the tool is working.
 <br/><br/>
 *Export XML* If you wish to use the parameter file created for the groom step in a command line environment, 
 you can export the XML with the grooming options above. There are other options not in the GUI that you can 
@@ -159,6 +157,7 @@ The render window has a few features shortcuts to options available for viewing.
 <br/><br/>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Render.png"
 hspace="20">
+<br/>
 From left to right, here are the rendering options.
 <br/><br/>
 *Autoview* Reset the view to fit the samples. This only affects zoom and translation.
@@ -182,13 +181,6 @@ mode of the analysis tool. Zoom is automatically selected as a user switches bet
 <h3>Preferences</h3>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-general.png"
 align="right" hspace="20">
-**General**<br/>
-*ShapeWorksGroom* Select the location of the "ShapeWorksGroom" binary you downloaded and extracted from the 
-<a href="https://github.com/SCIInstitute/shapeworks">shapeworks</a> command line tools. 
-<br/><br/>
-*ShapeWorksRun* Select the location of the "ShapeWorksRun" binary you downloaded and extracted from the 
-<a href="https://github.com/SCIInstitute/shapeworks">shapeworks</a> command line tools.
-<br/><br/>
 *Color Scheme* Select the color scheme for the rendering window.
 <br/><br/>
 *Glyph Quality* This slider changes the quality of the coorespondance points glyphs. This is sync'd with the render window
@@ -197,23 +189,10 @@ shortcut option.
 *Glyph Size* This slider changes the size of the coorespondance points glyphs. This is sync'd with the render window
 shortcut option.
 <br/><br/>
-*Restore Defaults* Click this to restore all options to the program's default values. Options are saved and reloaded
-between application runs for convenience.
-<br/><br/>
-*OK* Click this when you are done changing options.
-<br/><br/>
-**Analysis**<br/>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-analysis.png"
-align="right" hspace="20">
 *PCA Range* This is the amount of standard deviation to reach on the +/- ends of the PCA Slider.
 <br/><br/>
 *Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
 <br/><br/>
-*Number of Regression Steps* This feature is not currently available.
-<br/><br/><br/><br/><br/><br/><br/><br/>
-**Meshing**<br/>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-meshing.png"
-align="right" hspace="20">
 *Enable Caching* To speed up mesh animation, you can cache the meshes into system memory to load as needed.
 <br/><br/>
 *Memory to Use* Select the amount of system memory to use for caching. Turn this down if your machine's memory 
@@ -227,6 +206,11 @@ building meshes. This speeds reconstruction, theoretically.
 *Spacing* The spacing used for isosurface reconstruction.
 <br/><br/>
 *Smoothing* The smoothing amount for isosurface reconstruction.
+<br/><br/>
+*Restore Defaults* Click this to restore all options to the program's default values. Options are saved and reloaded
+between application runs for convenience.
+<br/><br/>
+*OK* Click this when you are done changing options.
 <br/><br/>
 <h3>File Menu</h3>
 Here you can open and save projects, load new images, open recent projects, and quit the application.
