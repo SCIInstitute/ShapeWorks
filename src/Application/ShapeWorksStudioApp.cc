@@ -182,11 +182,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->update_display();
 
   //other signals/slots
-  connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_display_setting_changed() ) );
+  connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
+  connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_glyph_changed() ) );
+  connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_glyph_changed() ) );
+  connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
+  connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
 
 }
 
@@ -551,6 +551,12 @@ void ShapeWorksStudioApp::handle_groom_complete()
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
   if (this->analysis_tool_->pcaAnimate()) return;
+  this->update_display();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_glyph_changed()
+{
   this->update_display();
 }
 
