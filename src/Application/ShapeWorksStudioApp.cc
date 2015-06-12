@@ -217,6 +217,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->project_->reset();
   this->lightbox_->clear_renderers();
   this->reset();
+  this->analysis_tool_->reset_stats();
   this->update_display();
   this->ui_->action_import_mode->setChecked(true);
   this->ui_->action_groom_mode->setChecked(false);
@@ -394,10 +395,15 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 
   this->project_->remove_shapes( index_list );
   if (this->project_->get_shapes().size() == 0) {
+	  this->project_->reset();
+	  this->reset();
+	  this->analysis_tool_->reset_stats();
+	  this->project_->set_tool_state( Project::DATA_C );
 	  this->ui_->action_groom_mode->setEnabled(false);
 	  this->ui_->action_optimize_mode->setEnabled(false);
 	  this->ui_->action_analysis_mode->setEnabled(false);
 	  this->lightbox_->clear_renderers();
+	  this->update_display();
   }
 }
 

@@ -665,6 +665,7 @@ void Project::reset()
   this->mesh_manager_ = QSharedPointer<MeshManager>( new MeshManager(preferences_) );
   
   connect( this->mesh_manager_.data(), SIGNAL( new_mesh() ), this, SLOT( handle_new_mesh() ) );
+  this->handle_clear_cache();
   emit data_changed();
 }
 
