@@ -99,10 +99,16 @@ the tools. Also be sure you are providing the actual path of the executable. Thi
 
 <h3>ShapeWorksView2</h3>
 ```c++
-../../build/bin/ShapeWorksView2 torus.analysis.xml
+../../build/bin/ShapeWorksView2
 ```
 The visualizer is called "View2" since a previous and outdated version uses the FLTK library, not needed for View2.
-You may also double click on the Executable and load the parameter file via a dialog box.
+You may also double click on the Executable. You will need to load the parameter file via a dialog box: 
+<code>examples/torus/torus.analysis.xml</code>.<br/>
+**OSX** Please note that if you run View2 from the command line, you will need to type the path to the package
+interior: 
+```c++
+../../build/bin/ShapeWorksView2.app/Contents/MaxOS/ShapeWorksView2
+```
 <br/><br/>
 You Should have a Qt window pop up that looks similar to the one below.
 
