@@ -376,7 +376,7 @@ ENDIF(BUILD_TESTS)
 # For Apple set the icns file containing icons
 IF(APPLE)
   # set how it shows up in the Info.plist file
-  SET(MACOSX_BUNDLE_ICON_FILE ${CMAKE_SOURCE_DIR}/Resources/ShapeWorksStudio.icns) 
+  SET(MACOSX_BUNDLE_ICON_FILE ShapeWorksStudio.icns) 
   # set where in the bundle to put the icns file
   SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   # include the icns file in the target
