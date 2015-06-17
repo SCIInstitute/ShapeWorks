@@ -6,8 +6,25 @@ A new GUI environment for ShapeWorks preprocessing, optimization, and analysis.
 See the original command-line tools, aknowlegements, and papers on the 
 <a href="https://github.com/SCIInstitute/shapeworks">shapeworks</a> github page.
 
+Table of Contents
+====================
+- [Requirements](#requirements)<br/>
+- [Code Documentation](#code-documentation)<br/>
+- [Building](#building)<br/>
+		- [Unix/OSX](#unix-and-osx)<br/>
+		- [Windows](#windows)<br/>
+- [Running](#running)<br/>
+		- [Data](#data)<br/>
+		- [Groom](#groom)<br/>
+		- [Optimize](#optimize)<br/>
+		- [Analysis](#analysis)<br/>
+		- [Rendering Window](#rendering-window)<br/>
+		- [Preferences](#preferences)<br/>
+		- [File Menu](#file-menu)<br/>
+- [Contact and Bug Reports](#contact-and-bug-reports)<br/>
+
 Requirements
-=====================
+===========
  * Git (https://git-scm.com/)
  * CMake 2.6+ (http://www.cmake.org/)
  * Visualization ToolKit (VTK 6+ recommended) (http://www.vtk.org/)
@@ -22,7 +39,7 @@ Code Documentation
 
 Building
 =====================
-<h3>Unix / OSX</h3>
+<h3>Unix and OSX</h3>
 In a terminal:
 ```c++
 mkdir ShapeWorksStudio/build
@@ -55,7 +72,7 @@ The application has tools on the left, the rendering window, view options on the
 preferences dialog.
 <br/><br/>
 <h3>Tools</h3>
-**Data**<br/>
+<h2>Data</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/DataPanel.png"
 align="right" hspace="20">
 This tool tab displays the images (volume files in NRRD format) that have been loaded. 
@@ -65,7 +82,7 @@ or going to *File -> Import Images...* <br/> Your images will appear on the disp
 You can delete images by selecting the image of choice and clicking the "-" button at the bottom. If only one image 
 is loaded, it may still display when it is deleted. It will be replaced by the next image load. 
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-**Groom**<br/>
+<h2>Groom</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Groom.png"
 align="right" hspace="20">
 Once images are loaded, the preprocessing step, "groom" is next. You can select several options for grooming.
@@ -95,7 +112,7 @@ ShapeWorksStudioTools.log file next to the executable. A progress indicator show
 *Export XML* If you wish to use the parameter file created for the groom step in a command line environment, 
 you can export the XML with the grooming options above.
 <br/><br/>
-**Optimize**<br/>
+<h2>Optimize</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Optimize.png"
 align="right" hspace="20">
 Once the grooming step is complete, you can run the optimize step.
@@ -124,7 +141,7 @@ Output is put into a ShapeWorksStudioTools.log file next to the executable. A pr
 you can export the XML with the grooming options above. There are other options not in the GUI that you can 
 add to a parameter file to run outside of Studio.
 <br/><br/>
-**Analysis**<br/>
+<h2>Analysis</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Analysis.png"
 align="right" hspace="20">
 Here is where all the statistical options are available to the user.
@@ -219,6 +236,6 @@ between application runs for convenience.
 Here you can open and save projects, load new images, open recent projects, and quit the application.
 <br/><br/>
 
-Contact / Bug Reports
+Contact and Bug Reports
 =====================
 Please email any questions to Shapeworks-users@sci.utah.edu . If there problems or bugs, please report them using the issue tracker on GitHub. This includes feature requests. Feel free to add improvements using git pull requests. 
