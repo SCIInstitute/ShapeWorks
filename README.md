@@ -14,10 +14,11 @@ Table of Contents
 		- [Unix/OSX](#unix-and-osx)<br/>
 		- [Windows](#windows)<br/>
 - [Running](#running)<br/>
-		- [Data](#data)<br/>
-		- [Groom](#groom)<br/>
-		- [Optimize](#optimize)<br/>
-		- [Analysis](#analysis)<br/>
+		- [Tools](#tools)<br/>
+			- [Data](#data)<br/>
+			- [Groom](#groom)<br/>
+			- [Optimize](#optimize)<br/>
+			- [Analysis](#analysis)<br/>
 		- [Rendering Window](#rendering-window)<br/>
 		- [Preferences](#preferences)<br/>
 		- [File Menu](#file-menu)<br/>
@@ -70,8 +71,9 @@ You Should have a Qt window that looks similar to the one below.
 <br/><br/>
 The application has tools on the left, the rendering window, view options on the lower bar, a small file menu, and a
 preferences dialog.
-<br/><br/>
-<h3>Tools</h3>
+
+Tools
+==========
 <h2>Data</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/DataPanel.png"
 align="right" hspace="20">
@@ -81,7 +83,7 @@ or going to *File -> Import Images...* <br/> Your images will appear on the disp
 <br/><br/>
 You can delete images by selecting the image of choice and clicking the "-" button at the bottom. If only one image 
 is loaded, it may still display when it is deleted. It will be replaced by the next image load. 
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
 <h2>Groom</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Groom.png"
 align="right" hspace="20">
@@ -111,7 +113,7 @@ ShapeWorksStudioTools.log file next to the executable. A progress indicator show
 <br/><br/>
 *Export XML* If you wish to use the parameter file created for the groom step in a command line environment, 
 you can export the XML with the grooming options above.
-<br/><br/>
+
 <h2>Optimize</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Optimize.png"
 align="right" hspace="20">
@@ -140,7 +142,7 @@ Output is put into a ShapeWorksStudioTools.log file next to the executable. A pr
 *Export XML* If you wish to use the parameter file created for the groom step in a command line environment, 
 you can export the XML with the grooming options above. There are other options not in the GUI that you can 
 add to a parameter file to run outside of Studio.
-<br/><br/>
+
 <h2>Analysis</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Analysis.png"
 align="right" hspace="20">
@@ -168,7 +170,7 @@ The higher the mode, the less variance with the standard deviations. Usually the
 between shapes.
 <br/><br/>
 *Regression* This option is not yet available.
-<br/><br/>
+
 <h3>Rendering Window</h3>
 The render window has a few features shortcuts to options available for viewing.
 <br/><br/>
@@ -194,7 +196,7 @@ coorespondance points. You must run the optimize step for this to be available.
 <br/><br/>
 *Zoom* This slider allows the user to zoom in or out to view more/less samples. This is mainly useful in the "All Samples"
 mode of the analysis tool. Zoom is automatically selected as a user switches between analysis modes.
-<br/><br/>
+
 <h3>Preferences</h3>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-general.png"
 align="right" hspace="20">
