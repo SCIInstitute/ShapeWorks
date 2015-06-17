@@ -14,11 +14,10 @@ Table of Contents
 		- [Unix/OSX](#unix-and-osx)<br/>
 		- [Windows](#windows)<br/>
 - [Running](#running)<br/>
-		- [Tools](#tools)<br/>
-			- [Data](#data)<br/>
-			- [Groom](#groom)<br/>
-			- [Optimize](#optimize)<br/>
-			- [Analysis](#analysis)<br/>
+		- [Data](#data)<br/>
+		- [Groom](#groom)<br/>
+		- [Optimize](#optimize)<br/>
+		- [Analysis](#analysis)<br/>
 		- [Rendering Window](#rendering-window)<br/>
 		- [Preferences](#preferences)<br/>
 		- [File Menu](#file-menu)<br/>
