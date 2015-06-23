@@ -99,32 +99,32 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_thread_complete() {
-	
-  // load files!
-
+  //handle failed shape load from project
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
+  if (shapes.size() == 0) {
+        this->progress_->setValue(100);
+        QApplication::processEvents();
+        delete this->progress_;
+        emit optimize_complete();
+  }
+  //create the list of wpts files
   QFileInfo fi( shapes[0]->get_original_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
-
   QString prefix = project_path + QDir::separator() + "studio_run";
-
   QStringList list;
-
-  int pad = 1;
-  if ( shapes.size() >= 10 && shapes.size() < 100 )
-  {
-    pad = 2;
-  }
-  else if ( shapes.size() >= 100 && shapes.size() < 1000 )
-  {
-    pad = 3;
-  }
-
+  int pad = static_cast<int>(log10(shapes.size()));
   for ( int i = 0; i < shapes.size(); i++ )
   {
-    QString number = QString( "%1" ).arg( i, pad, 'd', QChar( '0' ) ).toUpper();
-
-    list << prefix + "." + number + ".wpts";
+      std:: stringstream ss;
+      ss << prefix.toStdString() << ".";
+      int sz = std::max(i,1);
+      int zeros = pad - static_cast<int>(log10(sz));
+      for (int j = 0; j < zeros; j++)
+          ss << "0";
+      ss << i << ".wpts";
+      QString file(ss.str().c_str());
+      std::cout << "Reading points file: " << file.toStdString() << std::endl;
+      list << file;
   }
   
   this->progress_->setValue(95);
