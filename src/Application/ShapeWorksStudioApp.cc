@@ -526,6 +526,8 @@ void ShapeWorksStudioApp::handle_project_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
+  this->analysis_tool_->reset_stats();
+  this->project_->handle_clear_cache();
   this->ui_->action_analysis_mode->setEnabled(true);
   this->set_status_bar( "Optimize complete" );
   this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
