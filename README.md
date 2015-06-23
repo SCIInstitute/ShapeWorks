@@ -82,7 +82,7 @@ or going to *File -> Import Images...* <br/> Your images will appear on the disp
 <br/><br/>
 You can delete images by selecting the image of choice and clicking the "-" button at the bottom. If only one image 
 is loaded, it may still display when it is deleted. It will be replaced by the next image load. 
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <h2>Groom</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Groom.png"
 align="right" hspace="20">
@@ -171,7 +171,7 @@ between shapes.
 *Regression* This option is not yet available.
 
 <h3>Rendering Window</h3>
-The render window has a few features shortcuts to options available for viewing.
+The render window has a few shortcuts to viewing options.
 <br/><br/>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Render.png"
 hspace="20">
@@ -191,7 +191,7 @@ have loaded images for this option to be available. Groomed is for the distance 
 run the groom step for this to be available. Reconstructed is for the calculated shape based on the set of 
 coorespondance points. You must run the optimize step for this to be available.
 <br/><br/>
-*Center* Center the samples automatically to align. This is useful if original samples aren't the same in size.
+*Center* Center the samples automatically to align. This is useful if original samples aren't the same size.
 <br/><br/>
 *Zoom* This slider allows the user to zoom in or out to view more/less samples. This is mainly useful in the "All Samples"
 mode of the analysis tool. Zoom is automatically selected as a user switches between analysis modes.
