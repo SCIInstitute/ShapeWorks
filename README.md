@@ -82,7 +82,7 @@ or going to *File -> Import Images...* <br/> Your images will appear on the disp
 <br/><br/>
 You can delete images by selecting the image of choice and clicking the "-" button at the bottom. If only one image 
 is loaded, it may still display when it is deleted. It will be replaced by the next image load. 
-
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <h2>Groom</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Groom.png"
 align="right" hspace="20">
