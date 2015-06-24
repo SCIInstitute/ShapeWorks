@@ -222,9 +222,11 @@ SET(STUDIO_ANALYSIS_HDRS
   Analysis/AnalysisTool.h
   Analysis/itkParticleShapeStatistics.h
   Analysis/itkParticleShapeStatistics.txx
+  Analysis/bargraph.h
 )
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cc
+  Analysis/bargraph.cpp
 )
 SET(STUDIO_ANALYSIS_UIS
   Analysis/AnalysisTool.ui
@@ -295,6 +297,7 @@ SET( STUDIO_MOC_HDRS
      Groom/GroomTool.h
      Optimize/OptimizeTool.h
      Analysis/AnalysisTool.h
+     Analysis/bargraph.h
      Data/Project.h
      Data/MeshManager.h
      Data/MeshWorker.h
