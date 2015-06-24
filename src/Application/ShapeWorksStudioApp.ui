@@ -460,6 +460,12 @@ QPushButton {
          </item>
          <item>
           <widget class="QToolButton" name="surface_visible_button">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Show isosurface</string>
            </property>
@@ -476,6 +482,9 @@ QPushButton {
            </property>
            <property name="checked">
             <bool>true</bool>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -562,7 +571,7 @@ QPushButton {
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

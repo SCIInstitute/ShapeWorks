@@ -36,6 +36,7 @@ Project::~Project()
 
 //---------------------------------------------------------------------------
 void Project::handle_new_mesh() {
+    std::cout << "HANDLING NEW MESH!!!" << std::endl;
 	emit update_display();
 }
 

@@ -25,18 +25,11 @@ public Q_SLOTS:
   void on_mesh_cache_enabled_stateChanged( int state );
   void on_mesh_cache_memory_valueChanged( int value );
   void on_color_scheme_currentIndexChanged( int index );
-  void on_glyph_size_valueChanged( int value );
-  void on_glyph_quality_valueChanged( int value );
-
   void on_pca_range_valueChanged( double value );
   void on_pca_steps_valueChanged( int value );
   void on_parallel_enabled_toggled(bool b);
   void on_num_threads_valueChanged(int i);
   void on_caching_epsilon_valueChanged(int i);
-  
-  void on_smoothingSlider_valueChanged(int i);
-  void on_spacingSpinBox_valueChanged(double d);
-  void on_neighborhoodSpinBox_valueChanged(int i);
 
   void restore_defaults();
 signals:
@@ -46,7 +39,6 @@ signals:
 
 private:
   Preferences &preferences_;
-  void update_labels();
   Ui_PreferencesWindow* ui_;
 };
 

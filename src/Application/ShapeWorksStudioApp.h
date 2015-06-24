@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QActionGroup>
 #include <QSlider>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
 #include "Application/PreferencesWindow.h"
@@ -120,6 +122,11 @@ private:
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QList<QAction*> recent_file_actions_;
+  //isosurface widgets
+  QLabel* iso_smoothing_label_;
+  QSpinBox* iso_neighborhood_spinner_;
+  QDoubleSpinBox* iso_spacing_spinner_;
+  QSlider* iso_smoothing_slider_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

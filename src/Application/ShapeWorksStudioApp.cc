@@ -47,7 +47,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
     ( new WheelEventForwarder( this->ui_->vertical_scroll_bar ) );
   this->ui_->qvtkWidget->installEventFilter( this->wheel_event_forwarder_.data() );
 
-  /// move this out
+  // Glyph options in the render window.
   QMenu* menu = new QMenu();
   QWidget* widget = new QWidget();
   QGridLayout* layout = new QGridLayout( widget );
@@ -88,6 +88,57 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   widget->setLayout( layout );
 
   QWidgetAction* widget_action = new QWidgetAction( widget );
+  widget_action->setDefaultWidget( widget );
+  menu->addAction( widget_action );
+
+  // Isosurface options in the render window.
+  menu = new QMenu();
+  widget = new QWidget();
+  layout = new QGridLayout( widget );
+  //column 1 (labels)
+  size_label = new QLabel( "Neighborhood Size: " );
+  layout->addWidget( size_label, 0, 0, 1, 1 );
+  size_label = new QLabel( "Spacing: " );
+  layout->addWidget( size_label, 1, 0, 1, 1 );
+  size_label = new QLabel( "Smoothing iterations: " );
+  layout->addWidget( size_label, 2, 0, 1, 1 );
+  //column 2 (number labels)
+  size_label = new QLabel( "" );
+  layout->addWidget( size_label, 0, 1, 1, 1 );
+  layout->addWidget( size_label, 1, 1, 1, 1 );
+  this->iso_smoothing_label_ = new QLabel( "0" );
+  this->iso_smoothing_label_->setMinimumWidth( 50 );
+  layout->addWidget( this->iso_smoothing_label_, 2, 1, 1, 1 );
+  //column 3 (the text/slider widgets)
+  //        neighborhood
+  this->iso_neighborhood_spinner_ = new QSpinBox( widget );
+  this->iso_neighborhood_spinner_->setMinimumWidth( 200 );
+  this->iso_neighborhood_spinner_->setMinimum( 1 );
+  this->iso_neighborhood_spinner_->setMaximum( 99 );
+  this->iso_neighborhood_spinner_->setSingleStep( 1 );
+  layout->addWidget( this->iso_neighborhood_spinner_, 0, 2, 1, 1 );
+  //        spacing
+  this->iso_spacing_spinner_ = new QDoubleSpinBox( widget );
+  this->iso_spacing_spinner_->setMinimumWidth( 200 );
+  this->iso_spacing_spinner_->setMinimum( 0.00 );
+  this->iso_spacing_spinner_->setMaximum( 99.99 );
+  this->iso_spacing_spinner_->setSingleStep( 1.0 );
+  layout->addWidget( this->iso_spacing_spinner_, 1, 2, 1, 1 );
+  //        smoothing
+  this->iso_smoothing_slider_ = new QSlider( widget );
+  this->iso_smoothing_slider_->setOrientation( Qt::Horizontal );
+  this->iso_smoothing_slider_->setMinimum( 0 );
+  this->iso_smoothing_slider_->setMaximum( 5 );
+  this->iso_smoothing_slider_->setPageStep( 1 );
+  this->iso_smoothing_slider_->setTickPosition( QSlider::TicksBelow );
+  this->iso_smoothing_slider_->setTickInterval( 1 );
+  this->iso_smoothing_slider_->setMinimumWidth( 200 );
+  layout->addWidget( this->iso_smoothing_slider_, 2, 2, 1, 1 );
+  // add to the tool button
+  this->ui_->surface_visible_button->setMenu( menu );
+  widget->setLayout( layout );
+
+  widget_action = new QWidgetAction( widget );
   widget_action->setDefaultWidget( widget );
   menu->addAction( widget_action );
 
@@ -181,13 +232,16 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->update_from_preferences();
   this->update_display();
 
-  //other signals/slots
+  //glyph options signals/slots
   connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
   connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_glyph_changed() ) );
   connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_glyph_changed() ) );
   connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
   connect( this->glyph_quality_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
-
+  //isosurface options signals/slots
+  connect( this->iso_neighborhood_spinner_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_pca_changed() ) );
+  connect( this->iso_spacing_spinner_, SIGNAL( valueChanged( double ) ), this, SLOT( handle_pca_changed() ) );
+  connect( this->iso_smoothing_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_pca_changed() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -343,6 +397,14 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_quality_label_->setText( QString::number( preferences_.get_glyph_quality() ) );
   this->glyph_size_slider_->setValue( preferences_.get_glyph_size() * 10.0 );
   this->glyph_size_label_->setText( QString::number( preferences_.get_glyph_size() ) );
+  this->iso_smoothing_label_->setText( QString::number( preferences_.get_smoothing_amount() ) );
+
+  this->glyph_quality_slider_->setValue( preferences_.get_glyph_quality() );
+  this->glyph_size_slider_->setValue( preferences_.get_glyph_size() * 10 );
+  this->iso_smoothing_slider_->setValue( preferences_.get_smoothing_amount() * 100);
+  this->iso_neighborhood_spinner_->setValue( preferences_.get_neighborhood() );
+  this->iso_spacing_spinner_->setValue( preferences_.get_spacing() );
+
 }
 
 //---------------------------------------------------------------------------
@@ -450,9 +512,15 @@ void ShapeWorksStudioApp::update_table()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed() {
-  if (!this->project_->reconstructed_present()) return;
-  this->visualizer_->update_lut();
-  this->compute_mode_shape();
+    preferences_.set_neighborhood( this->iso_neighborhood_spinner_->value());
+    preferences_.set_spacing( this->iso_spacing_spinner_->value() );
+    preferences_.set_smoothing_amount( this->iso_smoothing_slider_->value() );
+    this->update_from_preferences();
+
+    if (!this->project_->reconstructed_present()) return;
+    this->project_->handle_clear_cache();
+    this->visualizer_->update_lut();
+    this->compute_mode_shape();
 }
 
 //---------------------------------------------------------------------------
@@ -559,7 +627,12 @@ void ShapeWorksStudioApp::handle_display_setting_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_glyph_changed()
 {
-  this->update_display();
+    this->visualizer_->set_show_surface( this->ui_->surface_visible_button->isChecked() );
+    this->visualizer_->set_show_glyphs( this->ui_->glyphs_visible_button->isChecked() );
+    preferences_.set_glyph_size( this->glyph_size_slider_->value() / 10.0 );
+    preferences_.set_glyph_quality( this->glyph_quality_slider_->value() );
+    this->update_from_preferences();
+    this->update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -571,16 +644,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display()
 {
-  if ( !this->visualizer_ || this->project_->get_num_shapes() <= 0)
-  {
-    return;
-  }
-
-  this->visualizer_->set_show_surface( this->ui_->surface_visible_button->isChecked() );
-  this->visualizer_->set_show_glyphs( this->ui_->glyphs_visible_button->isChecked() );
-  preferences_.set_glyph_size( this->glyph_size_slider_->value() / 10.0 );
-  preferences_.set_glyph_quality( this->glyph_quality_slider_->value() );
-  this->update_from_preferences();
+  if ( !this->visualizer_ || this->project_->get_num_shapes() <= 0) return;
 
   this->visualizer_->set_center( this->ui_->center_checkbox->isChecked() );
   this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
@@ -704,6 +768,7 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape()
 {
+    std::cout << "COMPUTING" << std::endl;
   this->visualizer_->display_shape( this->analysis_tool_->getShape());
 }
 
