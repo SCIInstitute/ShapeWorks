@@ -39,15 +39,15 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   for ( int i = 0; i < 4; i++ )
   {
     connect( this->recent_file_actions_[i], SIGNAL( triggered() ),
-             this, SLOT( handle_open_recent() ) );
+        this, SLOT( handle_open_recent() ) );
   }
   this->update_recent_files();
 
   this->wheel_event_forwarder_ = QSharedPointer<WheelEventForwarder>
-                                   ( new WheelEventForwarder( this->ui_->vertical_scroll_bar ) );
+    ( new WheelEventForwarder( this->ui_->vertical_scroll_bar ) );
   this->ui_->qvtkWidget->installEventFilter( this->wheel_event_forwarder_.data() );
 
-/// move this out
+  /// move this out
   QMenu* menu = new QMenu();
   QWidget* widget = new QWidget();
   QGridLayout* layout = new QGridLayout( widget );
@@ -166,16 +166,16 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->analysis_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
   connect( this->analysis_tool_.data(), SIGNAL( pca_labels_changed( QString, QString, QString ) ),
-           this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
+      this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
   connect( this->analysis_tool_.data(), SIGNAL( update_view() ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->analysis_tool_.data(), SIGNAL( pca_update() ), this, SLOT( handle_pca_changed() ) );
 
-  
+
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
-  this->analysis_tool_->set_project( this->project_ );
-  this->analysis_tool_->set_app( this );
-  this->ui_->lower_stacked_widget->addWidget( this->analysis_tool_.data() );*/
+    this->analysis_tool_->set_project( this->project_ );
+    this->analysis_tool_->set_app( this );
+    this->ui_->lower_stacked_widget->addWidget( this->analysis_tool_.data() );*/
 
 
   this->update_from_preferences();
@@ -209,7 +209,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   {
     index_list << i;
   }
-  
+
   this->ui_->action_groom_mode->setEnabled(false);
   this->ui_->action_optimize_mode->setEnabled(false);
   this->ui_->action_analysis_mode->setEnabled(false);
@@ -232,8 +232,8 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
 void ShapeWorksStudioApp::on_action_open_project_triggered()
 {
   QString filename = QFileDialog::getOpenFileName( this, tr( "Open Project..." ),
-                                                   preferences_.get_last_directory(),
-                                                   tr( "XML files (*.xml)" ) );
+      preferences_.get_last_directory(),
+      tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
     return;
@@ -264,8 +264,8 @@ void ShapeWorksStudioApp::on_action_save_project_triggered()
 void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString filename = QFileDialog::getSaveFileName( this, tr( "Save Project As..." ),
-                                                   preferences_.get_last_directory(),
-                                                   tr( "XML files (*.xml)" ) );
+      preferences_.get_last_directory(),
+      tr( "XML files (*.xml)" ) );
   if ( filename.isEmpty() )
   {
     return;
@@ -292,8 +292,8 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   QStringList filenames;
 
   filenames = QFileDialog::getOpenFileNames( this, tr( "Import Files..." ),
-                                             preferences_.get_last_directory(),
-                                             tr( "NRRD files (*.nrrd)" ) );
+      preferences_.get_last_directory(),
+      tr( "NRRD files (*.nrrd)" ) );
 
   if ( filenames.size() == 0 )
   {
@@ -395,15 +395,15 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
 
   this->project_->remove_shapes( index_list );
   if (this->project_->get_shapes().size() == 0) {
-	  this->project_->reset();
-	  this->reset();
-	  this->analysis_tool_->reset_stats();
-	  this->project_->set_tool_state( Project::DATA_C );
-	  this->ui_->action_groom_mode->setEnabled(false);
-	  this->ui_->action_optimize_mode->setEnabled(false);
-	  this->ui_->action_analysis_mode->setEnabled(false);
-	  this->lightbox_->clear_renderers();
-	  this->update_display();
+    this->project_->reset();
+    this->reset();
+    this->analysis_tool_->reset_stats();
+    this->project_->set_tool_state( Project::DATA_C );
+    this->ui_->action_groom_mode->setEnabled(false);
+    this->ui_->action_optimize_mode->setEnabled(false);
+    this->ui_->action_analysis_mode->setEnabled(false);
+    this->lightbox_->clear_renderers();
+    this->update_display();
   }
 }
 
@@ -450,9 +450,9 @@ void ShapeWorksStudioApp::update_table()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed() {
-	if (!this->project_->reconstructed_present()) return;
-	this->visualizer_->update_lut();
-	this->compute_mode_shape();
+  if (!this->project_->reconstructed_present()) return;
+  this->visualizer_->update_lut();
+  this->compute_mode_shape();
 }
 
 //---------------------------------------------------------------------------
@@ -491,10 +491,10 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 void ShapeWorksStudioApp::handle_project_changed()
 {
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  if (shapes.size() < 1) 
-	this->ui_->action_groom_mode->setEnabled(false);
+  if (shapes.size() < 1)
+    this->ui_->action_groom_mode->setEnabled(false);
   else
-	this->ui_->action_groom_mode->setEnabled(true);
+    this->ui_->action_groom_mode->setEnabled(true);
 
   if ( this->project_->groomed_present() )
   {
@@ -511,6 +511,7 @@ void ShapeWorksStudioApp::handle_project_changed()
   {
     this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
     this->ui_->action_analysis_mode->setEnabled(true);
+    this->project_->handle_clear_cache();
   }
   else
   {
@@ -519,13 +520,14 @@ void ShapeWorksStudioApp::handle_project_changed()
   }
   this->update_table();
   this->update_scrollbar();
-  this->project_->handle_clear_cache();
   this->update_display();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
+  this->analysis_tool_->reset_stats();
+  this->project_->handle_clear_cache();
   this->ui_->action_analysis_mode->setEnabled(true);
   this->set_status_bar( "Optimize complete" );
   this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
@@ -569,7 +571,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display()
 {
-	if ( !this->visualizer_ || this->project_->get_num_shapes() <= 0)
+  if ( !this->visualizer_ || this->project_->get_num_shapes() <= 0)
   {
     return;
   }
@@ -588,28 +590,29 @@ void ShapeWorksStudioApp::update_display()
   {
     this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
     this->visualizer_->display_samples();
-	size_t num_samples = this->project_->get_shapes().size();
-	if (num_samples == 0) num_samples = 9;
-	double root = std::sqrt(static_cast<double>(num_samples));
-	if (std::fmod(root,1.0) > 1e-6) root += 1.;
-	size_t value = static_cast<size_t>(root); 
-	size_t zoom_val = this->ui_->thumbnail_size_slider->maximum() + 1 - value;
-	if (zoom_val != this->ui_->thumbnail_size_slider->value())
-		this->ui_->thumbnail_size_slider->setValue(zoom_val);
+    size_t num_samples = this->project_->get_shapes().size();
+    if (num_samples == 0) num_samples = 9;
+    double root = std::sqrt(static_cast<double>(num_samples));
+    if (std::fmod(root,1.0) > 1e-6) root += 1.;
+    size_t value = static_cast<size_t>(root);
+    size_t zoom_val = this->ui_->thumbnail_size_slider->maximum() + 1 - value;
+    if (zoom_val != this->ui_->thumbnail_size_slider->value())
+      this->ui_->thumbnail_size_slider->setValue(zoom_val);
   } else {
-	if (this->ui_->thumbnail_size_slider->maximum() != this->ui_->thumbnail_size_slider->value())
-		this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
-		if ( mode == "mean" ) {
-			this->ui_->view_mode_combobox->setCurrentIndex( 2 );
-			this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
-			this->visualizer_->display_shape(this->analysis_tool_->getMean());
-		} else if (mode == "pca") {
-			this->ui_->view_mode_combobox->setCurrentIndex( 2 );
-			this->compute_mode_shape();
-		} else if (mode == "single sample") {
-			this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
-			this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
-		} //TODO regression
+    if (this->ui_->thumbnail_size_slider->maximum() != 
+        this->ui_->thumbnail_size_slider->value())
+      this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
+    if ( mode == "mean" ) {
+      this->ui_->view_mode_combobox->setCurrentIndex( 2 );
+      this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
+      this->visualizer_->display_shape(this->analysis_tool_->getMean());
+    } else if (mode == "pca") {
+      this->ui_->view_mode_combobox->setCurrentIndex( 2 );
+      this->compute_mode_shape();
+    } else if (mode == "single sample") {
+      this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
+      this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
+    } //TODO regression
   }
   this->project_->set_zoom_state( this->ui_->thumbnail_size_slider->value() );
 }
@@ -622,7 +625,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::reset() {
-    this->ui_->view_mode_combobox->setCurrentIndex( 0 );
+  this->ui_->view_mode_combobox->setCurrentIndex( 0 );
 }
 
 //---------------------------------------------------------------------------
@@ -739,11 +742,11 @@ void ShapeWorksStudioApp::handle_open_recent()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_color_scheme()
 {
-	this->visualizer_->update_viewer_properties();
-	this->update_display();
+  this->visualizer_->update_viewer_properties();
+  this->update_display();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_auto_view_button_clicked() {
-	this->visualizer_->reset_camera();
+  this->visualizer_->reset_camera();
 }

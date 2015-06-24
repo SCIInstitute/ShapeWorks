@@ -12,6 +12,8 @@
 
 #include <Analysis/itkParticleShapeStatistics.h>
 
+#include <Analysis/bargraph.h>
+
 class Project;
 class Lightbox;
 class ShapeWorksStudioApp;
@@ -97,6 +99,7 @@ private:
 
   bool pcaAnimateDirection;
   QTimer pcaAnimateTimer;
+  BarGraph *chart_;
 
 
 };

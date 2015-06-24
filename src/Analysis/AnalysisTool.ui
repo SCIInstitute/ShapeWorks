@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>183</width>
-    <height>386</height>
+    <width>213</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -580,6 +580,16 @@ QToolButton:pressed{
     </widget>
    </item>
    <item>
+    <widget class="BarGraph" name="graph_" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>150</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="Line" name="line_4">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -611,9 +621,14 @@ QToolButton:pressed{
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../Resources/ShapeWorksStudio.qrc"/>
-  <include location="../../../shapeworks/code/ShapeWorksView2/ShapeWorksView2.qrc"/>
- </resources>
+ <customwidgets>
+  <customwidget>
+   <class>BarGraph</class>
+   <extends>QWidget</extends>
+   <header location="global">Analysis/bargraph.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
  <connections/>
 </ui>

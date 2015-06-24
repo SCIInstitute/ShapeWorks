@@ -24,21 +24,24 @@
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
 
-  this->ui_ = new Ui_AnalysisTool;
-  this->ui_->setupUi( this );
-  this->stats_ready_ = false;
+    this->ui_ = new Ui_AnalysisTool;
+    this->ui_->setupUi( this );
+    //****************************** The chart
+    //this->ui_->graph) = new BarGraph(this);
+    //******************************
+    this->stats_ready_ = false;
 
-  this->pcaAnimateDirection = true;
+    this->pcaAnimateDirection = true;
 
-  connect( this->ui_->allSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
-  connect( this->ui_->singleSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
-  connect( this->ui_->meanRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
-  connect( this->ui_->pcaRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
-  connect( this->ui_->regressionRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
-  connect( this->ui_->sampleSpinBox, SIGNAL( valueChanged(int) ), this, SLOT( handle_analysis_options() ) );
-  connect( this->ui_->medianButton, SIGNAL( clicked() ), this, SLOT( handle_median() ) );
-  connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
-  connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
+    connect( this->ui_->allSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+    connect( this->ui_->singleSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+    connect( this->ui_->meanRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+    connect( this->ui_->pcaRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+    connect( this->ui_->regressionRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
+    connect( this->ui_->sampleSpinBox, SIGNAL( valueChanged(int) ), this, SLOT( handle_analysis_options() ) );
+    connect( this->ui_->medianButton, SIGNAL( clicked() ), this, SLOT( handle_median() ) );
+    connect( this->ui_->pcaAnimateCheckBox, SIGNAL( stateChanged( int ) ), this, SLOT( handle_pca_animate_state_changed() ) );
+    connect( &this->pcaAnimateTimer, SIGNAL( timeout() ), this, SLOT( handle_pca_timer() ) );
 }
 
 //---------------------------------------------------------------------------
@@ -78,7 +81,8 @@ int AnalysisTool::getSampleNumber() {
 
 //---------------------------------------------------------------------------
 AnalysisTool::~AnalysisTool()
-{}
+{
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::set_project( QSharedPointer<Project> project )
@@ -184,7 +188,12 @@ bool AnalysisTool::compute_stats()
   this->stats_.ImportPoints( points );
   this->stats_.ComputeModes();
   this->stats_ready_ = true;
+  std::vector<double> vals;
+  for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--)
+      vals.push_back(std::log10(this->stats_.Eigenvalues()[i]));
+  this->ui_->graph_->setData(vals);
 
+  this->ui_->graph_->repaint();
   return true;
 }
 
