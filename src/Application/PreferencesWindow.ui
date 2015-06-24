@@ -305,6 +305,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>color_scheme</tabstop>
+  <tabstop>pca_range</tabstop>
+  <tabstop>pca_steps</tabstop>
+  <tabstop>mesh_cache_enabled</tabstop>
+  <tabstop>caching_epsilon</tabstop>
+  <tabstop>mesh_cache_memory</tabstop>
+  <tabstop>parallel_enabled</tabstop>
+  <tabstop>num_threads</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

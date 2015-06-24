@@ -883,6 +883,17 @@ QPushButton {
    <header>QVTKWidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>table_widget</tabstop>
+  <tabstop>delete_button</tabstop>
+  <tabstop>add_button</tabstop>
+  <tabstop>auto_view_button</tabstop>
+  <tabstop>glyphs_visible_button</tabstop>
+  <tabstop>surface_visible_button</tabstop>
+  <tabstop>view_mode_combobox</tabstop>
+  <tabstop>center_checkbox</tabstop>
+  <tabstop>thumbnail_size_slider</tabstop>
+ </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>
  </resources>

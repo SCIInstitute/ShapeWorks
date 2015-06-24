@@ -225,8 +225,15 @@ background: rgb(255, 255, 127)
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../Resources/ShapeWorksStudio.qrc"/>
- </resources>
+ <tabstops>
+  <tabstop>number_of_points_</tabstop>
+  <tabstop>starting_regularization_</tabstop>
+  <tabstop>ending_regularization_</tabstop>
+  <tabstop>iterations_per_split_</tabstop>
+  <tabstop>optimization_iterations_</tabstop>
+  <tabstop>export_xml_button</tabstop>
+  <tabstop>run_optimize_button</tabstop>
+ </tabstops>
+ <resources/>
  <connections/>
 </ui>

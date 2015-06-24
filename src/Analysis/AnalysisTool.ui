@@ -590,6 +590,36 @@ QToolButton:pressed{
     </widget>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QRadioButton" name="log_radio">
+       <property name="text">
+        <string>Log Scale</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="linear_radio">
+       <property name="text">
+        <string>Linear Scale</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="Line" name="line_4">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -629,6 +659,18 @@ QToolButton:pressed{
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>allSamplesRadio</tabstop>
+  <tabstop>singleSamplesRadio</tabstop>
+  <tabstop>sampleSpinBox</tabstop>
+  <tabstop>medianButton</tabstop>
+  <tabstop>meanRadio</tabstop>
+  <tabstop>pcaRadio</tabstop>
+  <tabstop>pcaSlider</tabstop>
+  <tabstop>pcaAnimateCheckBox</tabstop>
+  <tabstop>pcaModeSpinBox</tabstop>
+  <tabstop>regressionRadio</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

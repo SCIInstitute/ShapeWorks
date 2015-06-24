@@ -72,6 +72,8 @@ public Q_SLOTS:
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
 
+  void on_linear_radio_toggled(bool b);
+
 signals:
   void update_view();
   void pca_update();
