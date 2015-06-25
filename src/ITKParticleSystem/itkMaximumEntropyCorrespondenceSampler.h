@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkMaximumEntropyCorrespondenceSampler_h
@@ -26,231 +26,231 @@
 
 namespace itk
 {
-  
+
 /** \class MaximumEntropyCorrespondenceSampler
  *
- * 
+ *
  *
  */
 template <class TImage>
 class ITK_EXPORT MaximumEntropyCorrespondenceSampler
-  : public MaximumEntropySurfaceSampler<TImage> 
+        : public MaximumEntropySurfaceSampler<TImage>
 {
 public:
-  /** Standard class typedefs. */
-  typedef MaximumEntropyCorrespondenceSampler  Self;
-  typedef MaximumEntropySurfaceSampler<TImage>  Superclass;
-  typedef SmartPointer<Self>   Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+    /** Standard class typedefs. */
+    typedef MaximumEntropyCorrespondenceSampler  Self;
+    typedef MaximumEntropySurfaceSampler<TImage>  Superclass;
+    typedef SmartPointer<Self>   Pointer;
+    typedef SmartPointer<const Self>  ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-  
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MaximumEntropyCorrespondenceSampler, MaximumEntropySurfaceSampler);
+    /** Method for creation through the object factory. */
+    itkNewMacro(Self);
 
-  /**Expose the image dimension. */
-  itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
+    /** Run-time type information (and related methods). */
+    itkTypeMacro(MaximumEntropyCorrespondenceSampler, MaximumEntropySurfaceSampler);
 
-  /** Type of the input/output image. */
-  typedef typename Superclass::ImageType ImageType;
+    /**Expose the image dimension. */
+    itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
 
-  /** Expose the point type */
-  typedef typename ImageType::PointType PointType;
+    /** Type of the input/output image. */
+    typedef typename Superclass::ImageType ImageType;
 
-  
-  void SetCorrespondenceOn()
-  {
-    m_LinkingFunction->SetBOn();
-    this->Modified();
-  }
-  void SetCorrespondenceOff()
-  {
-    m_LinkingFunction->SetBOff();
-    this->Modified();
-  }
+    /** Expose the point type */
+    typedef typename ImageType::PointType PointType;
 
-  void SetNormalEnergyOn()
-  {
-    m_LinkingFunction->SetCOn();
-    this->Modified();
-  }
 
-  void SetNormalEnergyOff()
-  {
-    m_LinkingFunction->SetCOff();
-    this->Modified();
-  }
+    void SetCorrespondenceOn()
+    {
+        m_LinkingFunction->SetBOn();
+        this->Modified();
+    }
+    void SetCorrespondenceOff()
+    {
+        m_LinkingFunction->SetBOff();
+        this->Modified();
+    }
 
-  void SetSamplingOn()
-  {
-    m_LinkingFunction->SetAOn();
-    this->Modified();
-  }
-  void SetSamplingOff()
-  {
-    m_LinkingFunction->SetAOff();
-    this->Modified();
-  }
+    void SetNormalEnergyOn()
+    {
+        m_LinkingFunction->SetCOn();
+        this->Modified();
+    }
 
-  bool GetCorrespondenceOn() const
-  { return m_LinkingFunction->GetBOn(); }
-  bool GetSamplingOn() const
-  { return m_LinkingFunction->GetAOn(); }
+    void SetNormalEnergyOff()
+    {
+        m_LinkingFunction->SetCOff();
+        this->Modified();
+    }
 
-  /** This method sets the optimization function for the sampling.
+    void SetSamplingOn()
+    {
+        m_LinkingFunction->SetAOn();
+        this->Modified();
+    }
+    void SetSamplingOff()
+    {
+        m_LinkingFunction->SetAOff();
+        this->Modified();
+    }
+
+    bool GetCorrespondenceOn() const
+    { return m_LinkingFunction->GetBOn(); }
+    bool GetSamplingOn() const
+    { return m_LinkingFunction->GetAOn(); }
+
+    /** This method sets the optimization function for the sampling.
       mode 0 = isotropic adaptivity
       mode 1 = no adaptivity
   */
-  virtual void SetAdaptivityMode(int mode)
-  {
-    if (mode == 0)
-      {
-      m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
-      }
-    else if (mode == 1)
-      {
-      m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
-      }
-    else if (mode == 2)
-      {
-      m_LinkingFunction->SetFunctionA(this->GetQualifierGradientFunction());
-      }
-    else if (mode == 3)
-      {
-      m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
-      }
+    virtual void SetAdaptivityMode(int mode)
+    {
+        if (mode == 0)
+        {
+            m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
+        }
+        else if (mode == 1)
+        {
+            m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
+        }
+        else if (mode == 2)
+        {
+            m_LinkingFunction->SetFunctionA(this->GetQualifierGradientFunction());
+        }
+        else if (mode == 3)
+        {
+            m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
+        }
 
-    Superclass::m_AdaptivityMode = mode;
-    this->Modified();
-  }
+        Superclass::m_AdaptivityMode = mode;
+        this->Modified();
+    }
 
-  /** This method sets the optimization function for correspondences between
+    /** This method sets the optimization function for correspondences between
       surfaces (domains).
       mode 0 = mean force
       mode 1 = minimum entropy
   */
-  virtual void SetCorrespondenceMode(int mode)
-  {
-    if (mode == 1)
+    virtual void SetCorrespondenceMode(int mode)
     {
-      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+        if (mode == 1)
+        {
+            m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+        }
+        else if (mode == 2)
+        {
+            m_LinkingFunction->SetFunctionB(m_GeneralEntropyGradientFunction);
+        }
+        else if (mode == 3)
+        {
+            m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
+        }
+        else if (mode == 4)
+        {
+            m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
+        }
+        else
+        {
+            m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
+        }
+
+        if (m_LinkingFunction->GetCOn() == true) m_LinkingFunction->SetFunctionC(m_EnsembleNormalPenaltyFunction);
+
+        m_CorrespondenceMode = mode;
     }
-    else if (mode == 2)
+
+    void SetAttributeScales(const std::vector<double> &s)
     {
-      m_LinkingFunction->SetFunctionB(m_GeneralEntropyGradientFunction);
-    }
-    else if (mode == 3)
-    {
-      m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
-    }
-    else if (mode == 4)
-    {
-      m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
-    }
-    else
-    {
-      m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
+        m_GeneralEntropyGradientFunction->SetAttributeScales(s);
     }
     
-    if (m_LinkingFunction->GetCOn() == true) m_LinkingFunction->SetFunctionC(m_EnsembleNormalPenaltyFunction);
 
-    m_CorrespondenceMode = mode;
-  }
+    void AddAttributeImage(int d,
+                           typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::ImageType *I)
+    {
+        m_FunctionShapeData->AddFunctionImage(d, I);
+    }
 
-  void SetAttributeScales(const std::vector<double> &s)
-  {
-    m_GeneralEntropyGradientFunction->SetAttributeScales(s);
-  }
-    
-  
-  void AddAttributeImage(int d,
-                         typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::ImageType *I)
-  {
-    m_FunctionShapeData->AddFunctionImage(d, I);
-  }
-  
-  ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
-  { return m_LinkingFunction.GetPointer(); }
-  ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction()
-  { return m_EnsembleNormalPenaltyFunction.GetPointer(); }
-  ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction()
-  { return m_EnsembleMeanFunction.GetPointer(); }
-  ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction()
-  { return m_EnsembleEntropyFunction.GetPointer(); }
-  ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction()
-  { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
-  ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction()
-  { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction()
-  { return m_GeneralEntropyGradientFunction.GetPointer(); }
-
-  
-  const ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
-  { return m_LinkingFunction.GetPointer(); }
-  const ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction() const
-  { return m_EnsembleMeanFunction.GetPointer(); }
-  const ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction() const
-  { return m_EnsembleNormalPenaltyFunction.GetPointer(); }
-  const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction() const
-  { return m_EnsembleEntropyFunction.GetPointer(); }
-  const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
-  { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
-  const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction() const
-  { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  const ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction() const
-  { return m_GeneralEntropyGradientFunction.GetPointer(); }
-  
-  virtual void AllocateDataCaches();
-
-  void SetDomainsPerShape(int n)
-  {
-    m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
-    m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
-    m_ShapeMatrix->SetDomainsPerShape(n);
-    m_EnsembleMeanFunction->SetDomainsPerShape(n);
-    m_EnsembleNormalPenaltyFunction->SetDomainsPerShape(n);
-  }
-
-  void SetTimeptsPerIndividual(int n)
-  {
-    m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n);
-  }
+    ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
+    { return m_LinkingFunction.GetPointer(); }
+    ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction()
+    { return m_EnsembleNormalPenaltyFunction.GetPointer(); }
+    ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction()
+    { return m_EnsembleMeanFunction.GetPointer(); }
+    ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction()
+    { return m_EnsembleEntropyFunction.GetPointer(); }
+    ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction()
+    { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+    ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction()
+    { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
+    ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction()
+    { return m_GeneralEntropyGradientFunction.GetPointer(); }
 
 
-  int GetCorrespondenceMode() const
-  { return m_CorrespondenceMode; }
+    const ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
+    { return m_LinkingFunction.GetPointer(); }
+    const ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction() const
+    { return m_EnsembleMeanFunction.GetPointer(); }
+    const ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction() const
+    { return m_EnsembleNormalPenaltyFunction.GetPointer(); }
+    const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction() const
+    { return m_EnsembleEntropyFunction.GetPointer(); }
+    const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
+    { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+    const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction() const
+    { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
+    const ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction() const
+    { return m_GeneralEntropyGradientFunction.GetPointer(); }
 
-  virtual void InitializeOptimizationFunctions();
-  
+    virtual void AllocateDataCaches();
+
+    void SetDomainsPerShape(int n)
+    {
+        m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
+        m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
+        m_ShapeMatrix->SetDomainsPerShape(n);
+        m_EnsembleMeanFunction->SetDomainsPerShape(n);
+        m_EnsembleNormalPenaltyFunction->SetDomainsPerShape(n);
+    }
+
+    void SetTimeptsPerIndividual(int n)
+    {
+        m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n);
+    }
+
+
+    int GetCorrespondenceMode() const
+    { return m_CorrespondenceMode; }
+
+    virtual void InitializeOptimizationFunctions();
+
 protected:
-  MaximumEntropyCorrespondenceSampler();
-  virtual ~MaximumEntropyCorrespondenceSampler() {};
+    MaximumEntropyCorrespondenceSampler();
+    virtual ~MaximumEntropyCorrespondenceSampler() {};
 
-  void PrintSelf(std::ostream& os, Indent indent) const
-  {
-    Superclass::PrintSelf(os, indent);
-  }
+    void PrintSelf(std::ostream& os, Indent indent) const
+    {
+        Superclass::PrintSelf(os, indent);
+    }
 
-  void GenerateData();
-  
+    void GenerateData();
+
 private:
-  MaximumEntropyCorrespondenceSampler(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
-  int m_CorrespondenceMode;
+    MaximumEntropyCorrespondenceSampler(const Self&); //purposely not implemented
+    void operator=(const Self&); //purposely not implemented
+    int m_CorrespondenceMode;
 
-  typename ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
+    typename ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
-  typename ParticleEnsembleNormalPenaltyFunction<Dimension>::Pointer m_EnsembleNormalPenaltyFunction;
-  typename ParticleEnsembleMeanFunction<Dimension>::Pointer m_EnsembleMeanFunction;
-  typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
-  typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
-  typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
-  typename ParticleGeneralEntropyGradientFunction<Dimension>::Pointer m_GeneralEntropyGradientFunction;
-  typename ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
-  typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::Pointer m_FunctionShapeData;
-  typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
-  typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
+    typename ParticleEnsembleNormalPenaltyFunction<Dimension>::Pointer m_EnsembleNormalPenaltyFunction;
+    typename ParticleEnsembleMeanFunction<Dimension>::Pointer m_EnsembleMeanFunction;
+    typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
+    typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
+    typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
+    typename ParticleGeneralEntropyGradientFunction<Dimension>::Pointer m_GeneralEntropyGradientFunction;
+    typename ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
+    typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::Pointer m_FunctionShapeData;
+    typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
+    typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
 
 };
 
