@@ -1,6 +1,6 @@
 ShapeWorksStudio
 =====================
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/shapes-icon.png">
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/shapes-icon.png"  align="right" hspace="20">
 A new GUI environment for ShapeWorks preprocessing, optimization, and analysis.
 <br/><br/>
 See the original command-line tools, aknowlegements, and papers on the 
