@@ -135,6 +135,8 @@ matrix of the correspondences during the optimization process. This range, along
 iterations, define the rate at which the system converges. The starting regularization decays to the ending
 regularization over the specified number of iterations.
 <br/><br/>
+*Relative Weighting* This is the value of parameter "alpha" from the energy equation [ Q=H(Z) - alpha * SUM_k H(x_k) ] 
+<br/><br/>
 *Run Optimize* Click this when you are ready for optimizing. This step takes time, but less than grooming.
 Output is put into a ShapeWorksStudioTools.log file next to the executable. A progress indicator shows the tool is working.
 <br/><br/>
