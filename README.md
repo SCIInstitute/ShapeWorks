@@ -30,7 +30,7 @@ Requirements
  * Visualization ToolKit (VTK 6+ recommended) (http://www.vtk.org/)
  * Insight Toolkit (ITK 4.5+ recommended) (http://www.itk.org/)
  * Qt 4.8.* (http://www.qt.io/developers/)
- * Windows 7+, OSX 10.9+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
+ * Windows 7+, OSX 10.7+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
  * Shapeworks command line tools (Groom and Run) are required for Studio (https://github.com/SCIInstitute/shapeworks/releases)
 
 Code Documentation
@@ -168,6 +168,9 @@ meshing time and quality.
 The higher the mode, the less variance with the standard deviations. Usually the first two modes contain the most variance 
 between shapes.
 <br/><br/>
+*Log Scale vs. Linear Scale* The bar graph can be plotted in either log or linear scaling. The graph shows the eigen values
+in decreasing values to depict statistical relevancy.
+<br/><br/>
 *Regression* This option is not yet available.
 
 <h3>Rendering Window</h3>
@@ -182,9 +185,22 @@ From left to right, here are the rendering options.
 <br/><br/>
 *Show Glyphs* Toggle whether to show the glyphs for the coorespondence points.
 <br/><br/>
+*Glyph Quality* This slider changes the quality of the coorespondance points glyphs. This is sync'd with the render window
+shortcut option.
+<br/><br/>
+*Glyph Size* This slider changes the size of the coorespondance points glyphs. This is sync'd with the render window
+shortcut option.
+<br/><br/>
 *Glyph options* Click the down arrow to resize the glyphs or select the quality of the glyphs.
 <br/><br/>
-*Show isosurface* Toggle whether to view the surface representing the shape.
+*Show isosurface* Toggle whether to view the surface representing the shape. Click the down arrow for more options. 
+You can alter the number of neighbors, point spacing, and mesh smoothing for isosurface reconstruction.
+<br/><br/>
+*Neighborhood Size* The neighborhood size (max vertex valence) used for isosurface reconstruction.
+<br/><br/>
+*Spacing* The spacing used for isosurface reconstruction.
+<br/><br/>
+*Smoothing* The smoothing amount for isosurface reconstruction.
 <br/><br/>
 *View mode drop-down* This drop-down gives 3 options for view mode. Original is the binary segmentation. You must
 have loaded images for this option to be available. Groomed is for the distance transform view. You must  
@@ -201,21 +217,9 @@ mode of the analysis tool. Zoom is automatically selected as a user switches bet
 align="right" hspace="20">
 *Color Scheme* Select the color scheme for the rendering window.
 <br/><br/>
-*Glyph Quality* This slider changes the quality of the coorespondance points glyphs. This is sync'd with the render window
-shortcut option.
-<br/><br/>
-*Glyph Size* This slider changes the size of the coorespondance points glyphs. This is sync'd with the render window
-shortcut option.
-<br/><br/>
 *PCA Range* This is the amount of standard deviation to reach on the +/- ends of the PCA Slider.
 <br/><br/>
 *Number of PCA Steps* This determines how many steps between +/- PCA Range to take for visualization.
-<br/><br/>
-*Neighborhood Size* The neighborhood size (max vertex valence) used for isosurface reconstruction.
-<br/><br/>
-*Spacing* The spacing used for isosurface reconstruction.
-<br/><br/>
-*Smoothing* The smoothing amount for isosurface reconstruction.
 <br/><br/>
 *Enable Caching* To speed up mesh animation, you can cache the meshes into system memory to load as needed.
 <br/><br/>
