@@ -130,7 +130,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->iso_smoothing_slider_->setOrientation( Qt::Horizontal );
   this->iso_smoothing_slider_->setMinimum( 0 );
   this->iso_smoothing_slider_->setMaximum( 5 );
-  this->iso_smoothing_slider_->setPageStep( 1 );
+  this->iso_smoothing_slider_->setSingleStep( 1 );
   this->iso_smoothing_slider_->setTickPosition( QSlider::TicksBelow );
   this->iso_smoothing_slider_->setTickInterval( 1 );
   this->iso_smoothing_slider_->setMinimumWidth( 200 );
@@ -220,7 +220,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   connect( this->analysis_tool_.data(), SIGNAL( pca_labels_changed( QString, QString, QString ) ),
       this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
   connect( this->analysis_tool_.data(), SIGNAL( update_view() ), this, SLOT( handle_display_setting_changed() ) );
-  connect( this->analysis_tool_.data(), SIGNAL( pca_update() ), this, SLOT( handle_pca_changed() ) );
+  connect( this->analysis_tool_.data(), SIGNAL( pca_update() ), this, SLOT( handle_new_mesh() ) );
 
 
   //regression tool TODO
@@ -418,9 +418,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_size_label_->setText( QString::number( preferences_.get_glyph_size() ) );
   this->iso_smoothing_label_->setText( QString::number( preferences_.get_smoothing_amount() ) );
 
-  this->glyph_quality_slider_->setValue( preferences_.get_glyph_quality() );
-  this->glyph_size_slider_->setValue( preferences_.get_glyph_size() * 10 );
-  this->iso_smoothing_slider_->setValue( preferences_.get_smoothing_amount() * 100);
+  this->iso_smoothing_slider_->setValue( preferences_.get_smoothing_amount()/100);
   this->iso_neighborhood_spinner_->setValue( preferences_.get_neighborhood() );
   this->iso_spacing_spinner_->setValue( preferences_.get_spacing() );
 
@@ -533,12 +531,17 @@ void ShapeWorksStudioApp::update_table()
 void ShapeWorksStudioApp::handle_pca_changed() {
     preferences_.set_neighborhood( this->iso_neighborhood_spinner_->value());
     preferences_.set_spacing( this->iso_spacing_spinner_->value() );
-    preferences_.set_smoothing_amount( this->iso_smoothing_slider_->value() );
+    preferences_.set_smoothing_amount( this->iso_smoothing_slider_->value()*100 );
     this->update_from_preferences();
 
     if (!this->project_->reconstructed_present()) return;
     this->project_->handle_clear_cache();
     this->visualizer_->update_lut();
+	this->compute_mode_shape();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_new_mesh() {
     this->compute_mode_shape();
 }
 
@@ -639,7 +642,7 @@ void ShapeWorksStudioApp::handle_groom_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
-  //if (this->analysis_tool_->pcaAnimate()) return;
+  if (this->analysis_tool_->pcaAnimate()) return;
   this->update_display();
 }
 

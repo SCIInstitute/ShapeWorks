@@ -35,6 +35,7 @@ void PreferencesWindow::on_mesh_cache_enabled_stateChanged( int state )
   this->ui_->parallel_enabled->setEnabled(b);
   this->ui_->num_threads->setEnabled(b);
   this->ui_->caching_epsilon->setEnabled(b);
+  emit clear_cache();
 }
 
 //-----------------------------------------------------------------------------

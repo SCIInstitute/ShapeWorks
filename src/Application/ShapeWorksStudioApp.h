@@ -80,6 +80,7 @@ public Q_SLOTS:
   void handle_open_recent();
 
   void handle_color_scheme();
+  void handle_new_mesh();
 
 private:
 
