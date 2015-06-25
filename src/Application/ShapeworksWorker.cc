@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <sstream>
 #include <fstream>
+#include <iostream>
 
 ShapeworksWorker::ShapeworksWorker(QString exe, QStringList args) : exe_(exe), args_(args){}
 
