@@ -109,7 +109,10 @@ public:
           maxmove = maxA;
         }
 
-        predictedMove = ansA + m_RelativeGradientScaling * ansB;
+        //predictedMove = ansA + m_RelativeGradientScaling * ansB;
+        // turning the scaling to weight the surface sampling part of the objective function -- shireen
+        predictedMove = m_RelativeGradientScaling * ansA + ansB;
+
         if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
         return (predictedMove);
       }
@@ -169,7 +172,12 @@ public:
 //         if (idx == 0 && d == 0)
 //           std::cout << "Energy = " <<  ansA << " + " << m_RelativeEnergyScaling * ansB
 //                     << " = " << ansA + m_RelativeEnergyScaling * ansB << std::endl;
-        finalEnergy = ansA + m_RelativeEnergyScaling * ansB;
+
+        //finalEnergy = ansA + m_RelativeEnergyScaling * ansB;
+
+        // turning the scaling to weight the surface sampling part of the objective function -- shireen
+        finalEnergy = m_RelativeEnergyScaling * ansA + ansB;
+
         if (m_COn == true) // if C is also active
         {
           finalEnergy += m_RelativeNormEnergyScaling * ansC;
@@ -254,10 +262,17 @@ public:
           maxmove = maxA;
         }
 
-        energy = energyA + m_RelativeEnergyScaling * energyB;
+        //energy = energyA + m_RelativeEnergyScaling * energyB;
+
+        // turning the scaling to weight the surface sampling part of the objective function -- shireen
+        energy = m_RelativeEnergyScaling * energyA + energyB;
+
         if (m_COn == true) energy += m_RelativeNormEnergyScaling * energyC;
 
-        predictedMove = ansA + m_RelativeGradientScaling * ansB;
+        // predictedMove = ansA + m_RelativeGradientScaling * ansB;
+        // turning the scaling to weight the surface sampling part of the objective function -- shireen
+        predictedMove = m_RelativeGradientScaling * ansA + ansB;
+
         if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
         return (predictedMove);
       }
