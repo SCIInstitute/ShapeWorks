@@ -6,25 +6,23 @@
 #include <QRect>
 #include <QTextItem>
 #include <sstream>
+#include <cmath>
+#include <iostream>
 
 BarGraph::BarGraph(QWidget *parent) :
     QWidget(parent),
     max_val(100.),
     min_val(0.),
     barwidth(10),
-    margin(5)
+    margin(5),
+    use_log_(true)
 {}
 
 BarGraph::~BarGraph() {}
 
-int BarGraph::getMargin() const
-{
-    return margin;
-}
-
-void BarGraph::setMargin(int value)
-{
-    margin = value;
+void BarGraph::setLogScale(bool b) {
+    use_log_ = b;
+    recalcBasicValues();
 }
 
 void BarGraph::setData(std::vector<double> val)
@@ -33,7 +31,7 @@ void BarGraph::setData(std::vector<double> val)
     max_val = *std::max_element(val.begin(),val.end());
     values.clear();
     for (size_t i = 0; i < val.size(); i++)
-        values.push_back(val[i] - min_val);
+        values.push_back(val[i]);
     recalcBasicValues();
     setMinimumSize( (int)(margin*values.size()*2),200+margin*5);
 }
@@ -52,16 +50,24 @@ void BarGraph::paintBargraph(QPainter &painter)
         painter.drawText(barwidth*(i+0.5)+margin*(i+1),height()- 20,QString::number(i));
     }
     //X label
-    painter.drawText(2*margin,height()- 5,"Eigenvalues (log scale)");
+    painter.drawText(2*margin,height()- 5,"Eigenvalues");
     // Y Label
-    int num_steps = static_cast<int>(max_val - min_val + 1);
-    int start = static_cast<int>(min_val);
+    int num_steps = use_log_?(static_cast<int>(log10(max_val)) -
+                                               static_cast<int>(log10(min_val))+1):5;
+    num_steps = std::max(1,num_steps);
+    int start = static_cast<int>(use_log_?log10(min_val):0);
     int separation = (height() - 45) / num_steps;
     for (int i = 0; i < num_steps; i++) {
         std::stringstream ss;
-        ss << "1e" << (start+i) << "_";
-        painter.drawText(width()  - 45,
-                         height() - 75 - separation * i,QString(ss.str().c_str()));
+        if (use_log_) {
+            ss << "_1e" << (start+i);
+            painter.drawText(width()  - 45,
+                             height() - 75 - separation * i,QString(ss.str().c_str()));
+        } else {
+            ss << "_" << static_cast<int>(start + (max_val / num_steps) * i);
+            painter.drawText(width()  - 45,
+                             height() - 45 - separation * i,QString(ss.str().c_str()));
+        }
     }
 }
 
@@ -87,17 +93,10 @@ void BarGraph::recalcBasicValues()
     int x = margin;
     for(size_t i=0, s = values.size(); i < s; ++i)
     {
-        int barheight = static_cast<int>(values[i] * h / (max_val - min_val));
+        double val = use_log_?(log10(values[i])-log10(min_val)):(values[i]-min_val);
+        double range = use_log_?(log10(max_val) - log10(min_val)):(max_val - min_val);
+        int barheight = static_cast<int>(val * h / (range));
         bars[i].setRect(x,5 + h - barheight,barwidth, barheight);
         x += margin + barwidth;
     }
-}
-
-QString BarGraph::getLabel(size_t i)
-{
-    if(values.size() > i)
-    {
-        return QString::number(values[i]+min_val);
-    }
-    return QString::number(i);
 }

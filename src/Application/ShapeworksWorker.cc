@@ -32,19 +32,21 @@ void ShapeworksWorker::process()
   }
   output << std::endl << std::endl;
   output << "***************************Tool Output*********************************\n";
-  emit step_made(8);
-  int val = 10;
+  emit step_made(6);
+  int val = 7;
   while ( !groom->waitForFinished( 1000 ) ) {
-	  
+	std::stringstream temp;
     QByteArray result = groom->readAll();
-    output << "output: " << result.data() << "\n";
+    temp << "output: " << result.data() << "\n";
 
     QString strOut = groom->readAllStandardOutput();
-    output << strOut.toStdString() << "\n";
+    temp << strOut.toStdString() << "\n";
 
     strOut = groom->readAllStandardError();
-    output << strOut.toStdString() << "\n";
-    emit step_made((val+=2));
+    temp << strOut.toStdString() << "\n";
+	std::cerr << temp.str();
+	output << temp.str();
+    emit step_made((val+=1));
   }
   
   QByteArray result = groom->readAll();

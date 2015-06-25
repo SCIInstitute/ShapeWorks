@@ -8,33 +8,24 @@
 class BarGraph : public QWidget
 {
     Q_OBJECT
-    std::vector<double> values;
-    double max_val,min_val;
-    int barwidth,margin;
-    std::vector<QRect> bars;
 public:
     BarGraph(QWidget *parent = 0);
     ~BarGraph();
     void setData(std::vector<double> values);
     void paintBargraph(QPainter& painter);
-
-
     QBrush getBrush() const;
     void setBrush(const QBrush &value);
-
-    int getMargin() const;
-    void setMargin(int value);
-
-signals:
-    
-public slots:
-protected:
-
+    void setLogScale(bool b);
 private:
     virtual void paintEvent(QPaintEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
     void recalcBasicValues();
-    QString getLabel(size_t i);
+    //members
+    std::vector<double> values;
+    double max_val,min_val;
+    int barwidth,margin;
+    std::vector<QRect> bars;
+    bool use_log_;
 };
 
 #endif // BARGRAPH_H
