@@ -49,7 +49,6 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
 {
   vtkSmartPointer<vtkPolyData> polyData;
   // check cache first
-  bool b = this->prefs_.get_cache_enabled();
   if ( this->prefs_.get_cache_enabled()) {
     polyData = this->meshCache_.getMesh( shape );
     if (!polyData) {
