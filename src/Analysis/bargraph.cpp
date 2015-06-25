@@ -31,7 +31,7 @@ void BarGraph::setData(std::vector<double> val)
     max_val = *std::max_element(val.begin(),val.end());
     values.clear();
     for (size_t i = 0; i < val.size(); i++)
-        values.push_back(val[i] - min_val);
+        values.push_back(val[i]);
     recalcBasicValues();
     setMinimumSize( (int)(margin*values.size()*2),200+margin*5);
 }
@@ -50,24 +50,23 @@ void BarGraph::paintBargraph(QPainter &painter)
         painter.drawText(barwidth*(i+0.5)+margin*(i+1),height()- 20,QString::number(i));
     }
     //X label
-    painter.drawText(2*margin,height()- 5,"Eigenvalues (log scale)");
+    painter.drawText(2*margin,height()- 5,"Eigenvalues");
     // Y Label
-    int num_steps = static_cast<int>(use_log_?(log10(max_val) -
-                                               log10(min_val)):5);
+    int num_steps = use_log_?(static_cast<int>(log10(max_val)) -
+                                               static_cast<int>(log10(min_val))+1):5;
     num_steps = std::max(1,num_steps);
-    std::cout << num_steps << std::endl;
     int start = static_cast<int>(use_log_?log10(min_val):0);
     int separation = (height() - 45) / num_steps;
     for (int i = 0; i < num_steps; i++) {
         std::stringstream ss;
         if (use_log_) {
-            ss << "1e" << (start+i) << "_";
-            painter.drawText(width()  - 45,
-                             height() - 55 - separation * i,QString(ss.str().c_str()));
-        } else {
-            ss << (start + (max_val / num_steps) * i) << "_";
+            ss << "_1e" << (start+i);
             painter.drawText(width()  - 45,
                              height() - 75 - separation * i,QString(ss.str().c_str()));
+        } else {
+            ss << "_" << static_cast<int>(start + (max_val / num_steps) * i);
+            painter.drawText(width()  - 45,
+                             height() - 45 - separation * i,QString(ss.str().c_str()));
         }
     }
 }
@@ -94,7 +93,7 @@ void BarGraph::recalcBasicValues()
     int x = margin;
     for(size_t i=0, s = values.size(); i < s; ++i)
     {
-        double val = use_log_?log10(values[i]):values[i];
+        double val = use_log_?(log10(values[i])-log10(min_val)):(values[i]-min_val);
         double range = use_log_?(log10(max_val) - log10(min_val)):(max_val - min_val);
         int barheight = static_cast<int>(val * h / (range));
         bars[i].setRect(x,5 + h - barheight,barwidth, barheight);

@@ -783,7 +783,6 @@ void ShapeWorksStudioApp::closeEvent( QCloseEvent* event )
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape()
 {
-    std::cout << "COMPUTING" << std::endl;
   this->visualizer_->display_shape( this->analysis_tool_->getShape());
 }
 
