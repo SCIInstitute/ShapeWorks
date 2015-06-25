@@ -27,13 +27,6 @@ PreferencesWindow::PreferencesWindow( QWidget* parent, Preferences& prefs ) : pr
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::update_labels()
-{
-  this->ui_->glyphQualityLabel->setText( QString::number( preferences_.get_glyph_quality() ) );
-  this->ui_->glyphSizeLabel->setText( QString::number( preferences_.get_glyph_size() ) );
-}
-
-//-----------------------------------------------------------------------------
 void PreferencesWindow::on_mesh_cache_enabled_stateChanged( int state )
 {
   bool b = this->ui_->mesh_cache_enabled->isChecked();
@@ -42,6 +35,7 @@ void PreferencesWindow::on_mesh_cache_enabled_stateChanged( int state )
   this->ui_->parallel_enabled->setEnabled(b);
   this->ui_->num_threads->setEnabled(b);
   this->ui_->caching_epsilon->setEnabled(b);
+  emit clear_cache();
 }
 
 //-----------------------------------------------------------------------------
@@ -55,20 +49,6 @@ void PreferencesWindow::on_color_scheme_currentIndexChanged( int index )
 {
   preferences_.set_color_scheme( index );
   emit update_view();
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_glyph_size_valueChanged( int value )
-{
-  preferences_.set_glyph_size( value / 10.0 );
-  this->update_labels();
-}
-
-//-----------------------------------------------------------------------------
-void PreferencesWindow::on_glyph_quality_valueChanged( int value )
-{
-  preferences_.set_glyph_quality( value );
-  this->update_labels();
 }
 
 //-----------------------------------------------------------------------------
@@ -98,19 +78,12 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->mesh_cache_memory->setValue( preferences_.get_cache_memory() );
   this->ui_->color_scheme->setCurrentIndex( preferences_.get_color_scheme() );
 
-  this->ui_->glyph_quality->setValue( preferences_.get_glyph_quality() );
-  this->ui_->glyph_size->setValue( preferences_.get_glyph_size() * 10 );
 
   this->ui_->num_threads->setValue( preferences_.get_num_threads() );
   this->ui_->parallel_enabled->setChecked( preferences_.get_parallel_enabled() );
 
   this->ui_->pca_range->setValue( preferences_.get_pca_range() );
   this->ui_->pca_steps->setValue( preferences_.get_num_pca_steps() );
-  this->ui_->smoothingSlider->setValue( preferences_.get_smoothing_amount() );
-  this->ui_->neighborhoodSpinBox->setValue( preferences_.get_neighborhood() );
-  this->ui_->spacingSpinBox->setValue( preferences_.get_spacing() );
-
-  this->update_labels();
 }
 
 //-----------------------------------------------------------------------------
@@ -125,18 +98,5 @@ void PreferencesWindow::on_num_threads_valueChanged(int i) {
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_caching_epsilon_valueChanged(int i) {
 	preferences_.set_cache_epsilon(std::pow(10.,static_cast<double>(i)));
-    emit clear_cache();
-}
-  
-void PreferencesWindow::on_smoothingSlider_valueChanged(int i) {
-	preferences_.set_smoothing_amount(i);
-    emit clear_cache();
-}
-void PreferencesWindow::on_spacingSpinBox_valueChanged(double d) {
-	preferences_.set_spacing(static_cast<float>(d));
-    emit clear_cache();
-}
-void PreferencesWindow::on_neighborhoodSpinBox_valueChanged(int i) {
-	preferences_.set_neighborhood(i);
     emit clear_cache();
 }

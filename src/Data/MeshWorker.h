@@ -36,6 +36,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void result_ready();
+  void finished();
 
 private:
   Preferences& prefs_;

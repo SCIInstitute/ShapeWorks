@@ -26,12 +26,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
     this->ui_ = new Ui_AnalysisTool;
     this->ui_->setupUi( this );
-    //****************************** The chart
-    //this->ui_->graph) = new BarGraph(this);
-    //******************************
     this->stats_ready_ = false;
 
     this->pcaAnimateDirection = true;
+
+    this->ui_->log_radio->setChecked(true);
+    this->ui_->linear_radio->setChecked(false);
 
     connect( this->ui_->allSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
     connect( this->ui_->singleSamplesRadio, SIGNAL( clicked() ), this, SLOT( handle_analysis_options() ) );
@@ -52,6 +52,17 @@ std::string AnalysisTool::getAnalysisMode() {
 	if (this->ui_->pcaRadio->isChecked()) return "pca";
 	if (this->ui_->regressionRadio->isChecked()) return "regression";
 	return "";
+}
+//---------------------------------------------------------------------------
+void AnalysisTool::on_linear_radio_toggled(bool b) {
+
+    if (b) {
+        this->ui_->graph_->setLogScale(false);
+        this->ui_->graph_->repaint();
+    } else {
+        this->ui_->graph_->setLogScale(true);
+        this->ui_->graph_->repaint();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -190,7 +201,7 @@ bool AnalysisTool::compute_stats()
   this->stats_ready_ = true;
   std::vector<double> vals;
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--)
-      vals.push_back(std::log10(this->stats_.Eigenvalues()[i]));
+      vals.push_back(this->stats_.Eigenvalues()[i]);
   this->ui_->graph_->setData(vals);
 
   this->ui_->graph_->repaint();

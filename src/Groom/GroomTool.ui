@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>176</width>
-    <height>439</height>
+    <width>186</width>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -265,8 +265,21 @@ background: rgb(255, 255, 127)
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../Resources/ShapeWorksStudio.qrc"/>
- </resources>
+ <tabstops>
+  <tabstop>fill_holes_checkbox</tabstop>
+  <tabstop>isolate_checkbox</tabstop>
+  <tabstop>center_checkbox</tabstop>
+  <tabstop>autocrop_checkbox</tabstop>
+  <tabstop>auto_pad_checkbox_</tabstop>
+  <tabstop>padding_amount</tabstop>
+  <tabstop>antialias_checkbox</tabstop>
+  <tabstop>antialias_iterations</tabstop>
+  <tabstop>fastmarching_checkbox</tabstop>
+  <tabstop>blur_checkbox</tabstop>
+  <tabstop>blur_sigma</tabstop>
+  <tabstop>export_xml_button</tabstop>
+  <tabstop>run_groom_button</tabstop>
+ </tabstops>
+ <resources/>
  <connections/>
 </ui>

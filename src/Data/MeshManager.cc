@@ -49,17 +49,18 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
 {
   vtkSmartPointer<vtkPolyData> polyData;
   // check cache first
+  bool b = this->prefs_.get_cache_enabled();
   if ( this->prefs_.get_cache_enabled()) {
     polyData = this->meshCache_.getMesh( shape );
-        if (!polyData) {
-          if (prefs_.get_parallel_enabled() &&
+    if (!polyData) {
+        if (prefs_.get_parallel_enabled() &&
                   (this->prefs_.get_num_threads() > 0)) {
                  this->generateMesh(shape);
-          } else {
+        } else {
                  polyData = this->meshGenerator_.buildMesh( shape );
                  this->meshCache_.insertMesh( shape, polyData );
-          }
         }
+    }
   } else {
         polyData = this->meshGenerator_.buildMesh( shape );
   }

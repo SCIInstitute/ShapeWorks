@@ -52,7 +52,7 @@ void OptimizeTool::handle_error() {
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val) {
-	if (val < 90)
+	if (val < 90 && this->progress_)
 		this->progress_->setValue(val);
   QApplication::processEvents();
 }
@@ -112,13 +112,13 @@ void OptimizeTool::handle_thread_complete() {
   QString project_path = fi.dir().absolutePath();
   QString prefix = project_path + QDir::separator() + "studio_run";
   QStringList list;
-  int pad = static_cast<int>(log10(shapes.size()));
+  int pad = static_cast<int>(std::log10(static_cast<double>(shapes.size())));
   for ( int i = 0; i < shapes.size(); i++ )
   {
       std:: stringstream ss;
       ss << prefix.toStdString() << ".";
       int sz = std::max(i,1);
-      int zeros = pad - static_cast<int>(log10(sz));
+      int zeros = pad - static_cast<int>(std::log10(static_cast<double>(sz)));
       for (int j = 0; j < zeros; j++)
           ss << "0";
       ss << i << ".wpts";
