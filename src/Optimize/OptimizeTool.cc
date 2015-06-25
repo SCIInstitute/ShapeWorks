@@ -170,6 +170,9 @@ bool OptimizeTool::export_xml( QString filename )
   xml_writer->writeTextElement( "optimization_iterations",
                                 QString::number( this->ui_->optimization_iterations_->value() ) );
 
+  xml_writer->writeTextElement( "relative_weighting",
+                                QString::number( this->ui_->relative_weighting_->value() ) );
+
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
   QFileInfo fi( shapes[0]->get_original_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
