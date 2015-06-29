@@ -110,7 +110,9 @@ void OptimizeTool::handle_thread_complete() {
   //create the list of wpts files
   QFileInfo fi( shapes[0]->get_original_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
-  QString prefix = project_path + QDir::separator() + "studio_run";
+  std::string name = this->project_->get_shapes()[0]->get_original_filename().toStdString();
+  name = name.substr(0,name.size() - 5);
+  QString prefix = project_path + QDir::separator() + QString::fromStdString(name);
   QStringList list;
   int pad = static_cast<int>(std::log10(static_cast<double>(shapes.size())));
   for ( int i = 0; i < shapes.size(); i++ )
@@ -170,12 +172,16 @@ bool OptimizeTool::export_xml( QString filename )
   xml_writer->writeTextElement( "optimization_iterations",
                                 QString::number( this->ui_->optimization_iterations_->value() ) );
 
+  xml_writer->writeTextElement( "relative_weighting",
+                                QString::number( this->ui_->relative_weighting_->value() ) );
+
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
   QFileInfo fi( shapes[0]->get_original_filename_with_path() );
   QString project_path = fi.dir().absolutePath();
-
+  std::string name = this->project_->get_shapes()[0]->get_original_filename().toStdString();
+  name = name.substr(0,name.size() - 5);
   xml_writer->writeTextElement( "output_points_prefix",
-                                project_path + QDir::separator() + "studio_run" );
+	  project_path + QDir::separator() + QString::fromStdString(name) );
 
   // inputs
   xml_writer->writeStartElement( "inputs" );
