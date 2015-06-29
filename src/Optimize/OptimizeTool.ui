@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>228</width>
-    <height>358</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -182,11 +182,11 @@ background: rgb(255, 255, 127)
     </widget>
    </item>
    <item>
-     <widget class="Line" name="line_9">
-       <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-       </property>
-     </widget>
+    <widget class="Line" name="line_9">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QGroupBox" name="blur_groupbox_5">
@@ -202,12 +202,12 @@ background: rgb(255, 255, 127)
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="relative_weighting_">
-        <property name="maximum">
-         <number>100</number>
+       <widget class="QDoubleSpinBox" name="relative_weighting_">
+        <property name="decimals">
+         <number>4</number>
         </property>
         <property name="value">
-         <number>1</number>
+         <double>1.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -253,6 +253,7 @@ background: rgb(255, 255, 127)
     </spacer>
    </item>
   </layout>
+  <zorder>line_9</zorder>
   <zorder>antialias_groupbox</zorder>
   <zorder>line_3</zorder>
   <zorder>blur_groupbox_2</zorder>
