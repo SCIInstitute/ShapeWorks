@@ -206,6 +206,9 @@ background: rgb(255, 255, 127)
         <property name="decimals">
          <number>4</number>
         </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
         <property name="value">
          <double>1.000000000000000</double>
         </property>
@@ -253,19 +256,6 @@ background: rgb(255, 255, 127)
     </spacer>
    </item>
   </layout>
-  <zorder>line_9</zorder>
-  <zorder>antialias_groupbox</zorder>
-  <zorder>line_3</zorder>
-  <zorder>blur_groupbox_2</zorder>
-  <zorder>line_4</zorder>
-  <zorder>blur_groupbox_3</zorder>
-  <zorder>line_5</zorder>
-  <zorder>blur_groupbox</zorder>
-  <zorder>blur_groupbox_4</zorder>
-  <zorder>blur_groupbox_5</zorder>
-  <zorder>line</zorder>
-  <zorder>line_7</zorder>
-  <zorder>verticalSpacer</zorder>
  </widget>
  <tabstops>
   <tabstop>number_of_points_</tabstop>
