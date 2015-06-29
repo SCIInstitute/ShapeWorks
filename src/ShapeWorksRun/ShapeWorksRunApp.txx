@@ -755,7 +755,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
       }
     }
 
-    this->m_initial_relative_weighting = 0.05;
+    //this->m_initial_relative_weighting = 0.05;
+    this->m_initial_relative_weighting = 20; // shireen - sampling is now the weighted part we increase it during init
     elem = docHandle.FirstChild( "initial_relative_weighting" ).Element();
     if (elem) this->m_initial_relative_weighting = atof(elem->GetText());
 
