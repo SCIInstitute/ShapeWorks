@@ -82,7 +82,10 @@ or going to *File -> Import Images...* <br/> Your images will appear on the disp
 <br/><br/>
 You can delete images by selecting the image of choice and clicking the red "x" button at the bottom. If only one image 
 is loaded, it may still display when it is deleted. It will be replaced by the next image load. 
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/>
+**NOTE** The tools Groom and Optimize below fail when data paths contain spaces. Please put data in paths with no 
+spaces. This bug will be fixed in a future release.
+<br/><br/><br/><br/><br/><br/><br/>
 <h2>Groom</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Groom.png"
 align="right" hspace="20">
