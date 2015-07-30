@@ -375,7 +375,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 
   filenames = QFileDialog::getOpenFileNames( this, tr( "Import Files..." ),
       preferences_.get_last_directory(),
-      tr( "NRRD files (*.nrrd)" ) );
+      tr( "NRRD files (*.nrrd);;MHA files (*.mha)" ) );
 
   if ( filenames.size() == 0 )
   {
