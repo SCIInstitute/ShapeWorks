@@ -1,0 +1,11 @@
+#SET(RUN_NAME ShapeWorksRun2_withCotan)
+#SET(RUN_NAME ShapeWorksRun2_weighSampling_wCorrespondence)
+#SET(RUN_NAME ShapeWorksRun2_weighSampling_woCorrespondence)
+#SET(RUN_NAME ShapeWorksRun2.1_weighSampling_wCorrespondence)
+SET(RUN_NAME ShapeWorksRun2.1_weighSampling_wCorrespondence_adaptiveSigma)
+#SET(RUN_NAME ShapeWorksRun2_modifiedCotanWithFixedSigmaWithCorrespondence)
+
+ADD_EXECUTABLE(${RUN_NAME} ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
+#TARGET_LINK_LIBRARIES(ShapeWorksRun ITKParticleSystem Utilities ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml)
+TARGET_LINK_LIBRARIES(${RUN_NAME} ITKParticleSystem Utilities ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)
+INSTALL(TARGETS ${RUN_NAME}   RUNTIME DESTINATION .)

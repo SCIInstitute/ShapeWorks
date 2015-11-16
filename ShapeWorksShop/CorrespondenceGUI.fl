@@ -1,0 +1,509 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0110 
+header_name {.h} 
+code_name {.cxx}
+class CorrespondenceGUI {open
+} {
+  Function {CorrespondenceGUI()} {open
+  } {
+    Fl_Window m_MainWindow {
+      label {Correspondence Viewers} open
+      xywh {455 23 756 737} type Double box PLASTIC_UP_BOX color 0 labelsize 12 align 5 resizable visible
+    } {
+      Fl_Tile m_Viewer1Tile {
+        xywh {0 0 755 502}
+      } {
+        Fl_Box {} {
+          label label
+          xywh {0 0 755 501} box PLASTIC_DOWN_BOX color 8 labeltype NO_LABEL resizable
+        }
+        Fl_Box m_Viewer1 {
+          xywh {0 0 755 500} box EMBOSSED_FRAME color 0 align 4
+          code0 {\#include "vtkFlRenderWindowInteractor.h"}
+          class vtkFlRenderWindowInteractor
+        }
+      }
+      Fl_Tabs parameter_tabs {
+        label Options open
+        xywh {360 505 390 225} box PLASTIC_DOWN_BOX labeltype NO_LABEL labelsize 12 align 66
+      } {
+        Fl_Group {} {
+          label Sampling open
+          xywh {365 524 380 206} labeltype EMBOSSED_LABEL labelsize 12
+        } {
+          Fl_Light_Button toggle_sampling_button {
+            label ON
+            callback {ToggleSampling();}
+            tooltip {Toggle sampling on/off} xywh {365 526 20 35} box PLASTIC_ROUND_UP_BOX value 1 color 7 selection_color 2 labeltype NO_LABEL labelsize 21
+          }
+          Fl_Choice adaptivity_mode_choice {
+            label {Surface Sampling}
+            callback {this->SetAdaptivityMode();}
+            tooltip {Adaptivity Mode} xywh {490 534 120 20} box BORDER_BOX down_box PLASTIC_ROUND_DOWN_BOX labeltype ENGRAVED_LABEL labelsize 12 when 1 textsize 12
+          } {
+            MenuItem {} {
+              label adaptive
+              xywh {55 55 30 20} value 1 labeltype EMBOSSED_LABEL labelsize 12
+            }
+            MenuItem {} {
+              label {non-adaptive}
+              xywh {55 55 30 20} labeltype EMBOSSED_LABEL labelsize 12
+            }
+            MenuItem {} {
+              label qualifier
+              xywh {55 55 30 20} value 1 labeltype EMBOSSED_LABEL labelsize 12
+            }
+            MenuItem {} {
+              label omega
+              xywh {65 65 30 20} value 1 labeltype EMBOSSED_LABEL labelsize 12
+            }
+          }
+          Fl_Spinner rho_spinner {
+            label {adaptivity strength}
+            callback {this->SetNumericalParameter()}
+            tooltip {Rho parameter for isotropic mode.} xywh {611 533 40 21} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 minimum 0 maximum 1e+020 step 0.1 textsize 10
+          }
+          Fl_Spinner s_spinner {
+            label {planar spacing}
+            tooltip {Samples per curvature unit parameter for the isotropic mode.} xywh {535 559 62 18} type Float labeltype EMBOSSED_LABEL labelsize 10 minimum 0 maximum 1e+020 step 0.1 textsize 10 hide deactivate
+          }
+          Fl_Spinner relative_gradient_scaling_spinner {
+            label {relative grad scaling}
+            callback {this->SetNumericalParameter();}
+            tooltip {Relative scaling of Correspondence to Sampling gradient} xywh {570 680 65 20} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 minimum -10000 maximum 10000 step 0.1 textsize 10
+          }
+          Fl_Light_Button toggle_correspondence_button {
+            label CORR
+            callback {ToggleCorrespondence();}
+            tooltip {Toggle correspondence on/off} xywh {365 564 20 35} box PLASTIC_ROUND_UP_BOX color 7 selection_color 2 labeltype NO_LABEL labelsize 18
+          }
+          Fl_Spinner recompute_covariance_interval_spinner {
+            label {comp. interv.}
+            callback {this->SetNumericalParameter()}
+            tooltip {Recompute Covariance Interval} xywh {610 592 65 18} labeltype EMBOSSED_LABEL labelsize 10 align 8 minimum 0 maximum 200 textsize 10
+          }
+          Fl_Light_Button hold_min_variance_button {
+            label {hold min var}
+            callback {this->SetNumericalParameter();}
+            tooltip {Hold minimum variance} xywh {588 590 19 22} box PLASTIC_ROUND_UP_BOX color 7 selection_color 2 labeltype EMBOSSED_LABEL labelsize 10 align 4
+          }
+          Fl_Spinner min_variance_spinner {
+            label {min variance}
+            callback {this->SetNumericalParameter()}
+            tooltip {Minimum Variance} xywh {610 570 66 20} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 when 8 minimum 0 maximum 1e+010 step 0.1 value 100 textsize 10
+          }
+          Fl_Choice correspondence_mode_choice {
+            label Correspondence
+            callback {this->SetCorrespondenceMode();}
+            tooltip {Correspondence force type.} xywh {490 570 120 20} box PLASTIC_ROUND_DOWN_BOX down_box PLASTIC_ROUND_UP_BOX labeltype EMBOSSED_LABEL labelsize 12 when 1 textsize 12
+          } {
+            MenuItem {} {
+              label {mean force}
+              xywh {65 65 30 20} labeltype EMBOSSED_LABEL labelsize 12
+            }
+            MenuItem {} {
+              label {minimum entropy}
+              xywh {75 75 30 20} value 1 labeltype EMBOSSED_LABEL labelsize 12
+            }
+            MenuItem general_entropy_choice {
+              label {general entropy}
+              xywh {75 75 30 20} value 1 labeltype EMBOSSED_LABEL labelsize 12 deactivate
+            }
+            MenuItem {} {
+              label {linear regression}
+              xywh {0 0 30 20} labeltype EMBOSSED_LABEL labelsize 12
+            }
+          }
+          Fl_Button set_params_button {
+            label set
+            callback {this->SetNumericalParameter()}
+            tooltip {Color map points.} xywh {409 564 35 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 79 labeltype ENGRAVED_LABEL labelsize 12 labelcolor 8 hide deactivate
+          }
+          Fl_Spinner relative_energy_scaling_spinner {
+            label {relative energy scaling}
+            callback {this->SetNumericalParameter();}
+            tooltip {Relative scaling of Correspondence to Sampling energy.} xywh {570 690 65 20} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 minimum -10000 maximum 10000 step 0.1 textsize 10 hide deactivate
+          }
+          Fl_Value_Output surface_gradmag {
+            label {average grad mag}
+            xywh {455 679 50 20} labeltype EMBOSSED_LABEL labelsize 10 minimum -1e+030 maximum 1e+030 textsize 11
+          }
+          Fl_Value_Output correspondence_gradmag {
+            label {avg grad mag}
+            xywh {513 679 50 20} labeltype NO_LABEL labelsize 10 minimum -1e+030 maximum 1e+030 textsize 11
+          }
+          Fl_Value_Output surface_energy {
+            label {average energy}
+            xywh {455 702 50 20} labeltype EMBOSSED_LABEL labelsize 10 minimum -1e+030 maximum 1e+030 textsize 11
+          }
+          Fl_Value_Output correspondence_energy {
+            label {average energy}
+            xywh {513 702 50 20} labeltype NO_LABEL labelsize 10 minimum -1e+030 maximum 1e+030 textsize 11
+          }
+          Fl_Box {} {
+            label surface
+            xywh {458 660 43 17} labeltype EMBOSSED_LABEL labelsize 11 align 16
+          }
+          Fl_Box {} {
+            label correspondence
+            xywh {513 660 86 17} labeltype EMBOSSED_LABEL labelsize 11 align 16
+          }
+          Fl_Spinner regression_interval_spinner {
+            label {regress interv}
+            callback {this->SetNumericalParameter()}
+            tooltip {Regression interval} xywh {610 612 65 18} labeltype EMBOSSED_LABEL labelsize 10 align 8 minimum 0 maximum 200 textsize 10
+          }
+          Fl_Spinner initial_min_variance_spinner {
+            label {initial min variance}
+            callback {this->SetMinimumVarianceDecay()}
+            tooltip {Minimum Variance} xywh {370 602 66 20} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 when 8 minimum 0 maximum 1e+010 step 0.001 value 100 textsize 10
+          }
+          Fl_Spinner final_min_variance_spinner {
+            label {final min variance}
+            callback {this->SetMinimumVarianceDecay()}
+            tooltip {Minimum Variance} xywh {370 623 66 17} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 when 8 minimum 0 maximum 1e+010 step 0.0001 value 0.1 textsize 10
+          }
+          Fl_Spinner min_variance_decay_iterations {
+            label {min var total decay iterations}
+            callback {this->SetMinimumVarianceDecay()}
+            tooltip {Minimum Variance} xywh {370 640 66 20} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 when 8 minimum 0 maximum 1e+010 value 200 textsize 10
+          }
+          Fl_Spinner norm_penalty_weight_spinner {
+            label {normal penalty weight}
+            callback {this->SetNumericalParameter();} selected
+            tooltip {Weight for penalty term based on surface normals} xywh {570 702 65 20} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 minimum -10000 maximum 10000 step 0.1 value 0 textsize 10
+          }
+        }
+        Fl_Group {} {
+          label Optimization
+          xywh {378 521 230 168} labeltype EMBOSSED_LABEL labelsize 12 hide
+        } {
+          Fl_Light_Button checkpointing_toggle {
+            label checkpointing
+            tooltip {Toggle checkpointing} xywh {379 595 126 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 7 selection_color 2 labeltype EMBOSSED_LABEL labelsize 12
+          }
+          Fl_Choice optimization_mode_choice {
+            label algorithm
+            callback {this->SetOptimizationMode();} open
+            tooltip {Optimization algorithm.} xywh {379 536 221 24} down_box PLASTIC_ROUND_DOWN_BOX labeltype EMBOSSED_LABEL labelsize 12 align 8 when 1 textsize 12
+          } {
+            MenuItem {} {
+              label {Adaptive Gauss-Seidel Updates}
+              xywh {90 90 30 20} labelsize 12
+            }
+            MenuItem {} {
+              label {Jacobi Updates}
+              xywh {70 70 30 20} value 1 labelsize 12
+            }
+            MenuItem {} {
+              label {Gauss-Seidel Updates}
+              xywh {80 80 30 20} value 1 labelsize 12
+            }
+          }
+          Fl_Spinner time_step_spinner {
+            label {global time step}
+            callback {this->SetNumericalParameter()}
+            tooltip {The timestep of the solver.} xywh {381 570 71 22} type Float labeltype EMBOSSED_LABEL labelsize 12 align 8 minimum 0 maximum 1e+020 step 0.01 textsize 12
+          }
+          Fl_Light_Button toggle_constraints_button {
+            label {use domain constraints}
+            callback {this->ToggleConstraints();}
+            tooltip {Enable/Disable domain constraints} xywh {378 625 126 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 7 selection_color 2 labeltype EMBOSSED_LABEL labelsize 12
+          }
+        }
+        Fl_Group {} {
+          label Splitting
+          xywh {379 532 331 189} labeltype EMBOSSED_LABEL labelsize 12 hide
+        } {
+          Fl_Button split_button {
+            label {split all}
+            callback {this->SplitAllParticles();}
+            tooltip {Quit the application.} xywh {384 558 60 30} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL
+          }
+          Fl_Spinner split_radius_spinner {
+            label {new particle distance}
+            tooltip {Distance the new particle is split from the old.} xywh {384 532 80 24} type Float labeltype EMBOSSED_LABEL labelsize 10 align 8 minimum 0.01 maximum 20 step 0.01 textsize 10
+          }
+          Fl_Button split_one_button {
+            label {split last}
+            callback {this->SplitParticle();}
+            tooltip {Quit the application.} xywh {454 563 55 20} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL labelsize 12
+          }
+          Fl_Button auto_initialize_button {
+            label {start auto init}
+            callback {this->AutoInitialize();}
+            tooltip {Quit the application.} xywh {384 638 95 20} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL labelsize 12 deactivate
+          }
+          Fl_Spinner split_interval_spinner {
+            label {split interval}
+            tooltip {Split interval for auto init} xywh {384 614 80 19} labeltype EMBOSSED_LABEL labelsize 10 align 8 maximum 20000 value 100 textsize 10 deactivate
+          }
+          Fl_Light_Button cancel_auto_initialize_button {
+            label {cancel auto init}
+            tooltip {Cancel Autoinitialize} xywh {484 638 110 20} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 7 selection_color 2 labeltype EMBOSSED_LABEL labelsize 12 deactivate
+          }
+          Fl_Spinner init_count_spinner {
+            label {auto init total}
+            tooltip {Total number of particles for initialization} xywh {384 590 80 19} labeltype EMBOSSED_LABEL labelsize 10 align 8 maximum 9e+008 value 1024 textsize 10 deactivate
+          }
+          Fl_Button add_point_button {
+            label {add point}
+            callback {this->AddSinglePoint();}
+            tooltip {Add a single point to all surfaces.} xywh {385 665 95 20} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL
+          }
+        }
+        Fl_Group {} {
+          label Numerical
+          xywh {375 536 152 124} labeltype EMBOSSED_LABEL labelsize 12 hide
+        } {
+          Fl_Spinner cutoff_spinner {
+            label cutoff
+            tooltip {Flat cutoff for normal differences} xywh {379 536 55 21} type Float labeltype EMBOSSED_LABEL labelsize 12 align 8 minimum 0 maximum 2 step 0.01 value 0.3 textsize 12
+          }
+          Fl_Spinner ratio_spinner {
+            label ratio
+            tooltip {Ratio of neighborhood size to sigma.} xywh {379 592 55 21} type Float labeltype EMBOSSED_LABEL labelsize 12 align 8 minimum 0.1 maximum 20 step 0.01 value 3 textsize 12
+          }
+          Fl_Spinner normal_sigma_spinner {
+            label {normal sigma}
+            tooltip {Set the fixed normal sigma parameter.} xywh {380 564 55 21} type Float labeltype EMBOSSED_LABEL labelsize 12 align 8 minimum 0 maximum 5 step 0.01 value 0.2 textsize 12
+          }
+          Fl_Light_Button toggle_domain_lock_button {
+            label {lock shape 0}
+            callback {ToggleDomainLock();}
+            tooltip {Lock/Unlock this domain for optimization} xywh {375 630 90 30} box PLASTIC_ROUND_UP_BOX color 7 selection_color 2 labeltype EMBOSSED_LABEL labelsize 10
+          }
+        }
+      }
+      Fl_Tabs {} {
+        label {Main Tabs} open
+        xywh {180 505 175 225} box PLASTIC_DOWN_BOX labeltype NO_LABEL labelsize 12 align 66
+      } {
+        Fl_Group {} {
+          label Controls open
+          xywh {180 526 175 199} labeltype EMBOSSED_LABEL labelsize 12 align 65
+        } {
+          Fl_Button optimize_start_button {
+            label start
+            callback {this->optimize_start();}
+            tooltip {Quit the application.} xywh {285 526 55 34} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL labelsize 18
+          }
+          Fl_Button optimize_stop_button {
+            label stop
+            callback {this->optimize_stop();}
+            tooltip {Quit the application.} xywh {285 565 55 35} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL labelsize 18
+          }
+          Fl_Button run_single_iteration {
+            label step
+            callback {this->single_iteration();}
+            tooltip {Quit the application.} xywh {285 605 55 35} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL labelsize 18
+          }
+          Fl_Value_Output iterations_window {
+            label {total iterations count}
+            tooltip {Elapsed Iterations} xywh {186 563 89 15} box PLASTIC_ROUND_DOWN_BOX color 7 labeltype EMBOSSED_LABEL labelsize 10 align 2 maximum 0 step 1 textsize 10 textcolor 176
+          }
+          Fl_Clock iteration_clock {
+            xywh {185 606 90 88} box PLASTIC_ROUND_DOWN_BOX color 10 selection_color 1
+          }
+          Fl_Value_Output samples_output {
+            label {total particle count}
+            xywh {186 530 89 19} box PLASTIC_ROUND_DOWN_BOX color 7 labeltype EMBOSSED_LABEL labelsize 10 align 6 maximum 0 step 1 textsize 10 textcolor 4
+          }
+          Fl_Button run_procrustes_button {
+            label {run procrustes}
+            callback {this->RunProcrustes();}
+            tooltip {Run a procrustes registration on all domains.} xywh {278 648 65 37} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL labelsize 12 align 144
+          }
+          Fl_Button {} {
+            label exit
+            callback {this->Quit();}
+            tooltip {Quit the application.} xywh {190 703 40 22} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 1 selection_color 3 labeltype ENGRAVED_LABEL labelcolor 8
+          }
+          Fl_Light_Button use_procrustes_scaling_button {
+            label {Use scaling}
+            callback {this->SetNumericalParameter();}
+            tooltip {Hold minimum variance} xywh {310 693 19 22} box PLASTIC_ROUND_UP_BOX color 7 selection_color 2 labeltype EMBOSSED_LABEL labelsize 10 align 4
+          }
+        }
+        Fl_Group {} {
+          label {Points IO}
+          xywh {185 530 165 150} labeltype EMBOSSED_LABEL labelsize 12 align 65 hide
+        } {
+          Fl_Button WritePointsButton {
+            label {write points}
+            callback {this->WritePointFiles();}
+            tooltip {Write point files.} xywh {190 580 90 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL align 16
+          }
+          Fl_Input pointfile_prefix_input {
+            label {point file prefix}
+            tooltip {Point file name prefix.} xywh {185 530 155 20} box PLASTIC_ROUND_DOWN_BOX labeltype EMBOSSED_LABEL labelsize 12 align 6 textsize 12
+          }
+          Fl_Button WriteModesButton {
+            label {write modes}
+            callback {this->WriteModes();}
+            tooltip {Write mode files.} xywh {190 610 90 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL align 16
+          }
+          Fl_Spinner number_of_modes_spinner {
+            label number
+            tooltip {Number of modes to write.} xywh {285 612 30 18} labeltype EMBOSSED_LABEL labelsize 12 align 6 minimum 0 maximum 200 value 5 textsize 12
+          }
+          Fl_Button WriteParamtersButton {
+            label {write params}
+            callback {this->WriteParameters();}
+            tooltip {Write regression parameters} xywh {190 645 90 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype ENGRAVED_LABEL align 16
+          }
+        }
+        Fl_Group {} {
+          label {Transf. IO}
+          xywh {180 529 165 186} labeltype EMBOSSED_LABEL labelsize 12 align 65 hide
+        } {
+          Fl_Input transform_filename_input {
+            label {transform file name}
+            tooltip {Transform File Name} xywh {185 529 150 20} box PLASTIC_ROUND_DOWN_BOX labeltype EMBOSSED_LABEL labelsize 12 align 6 textsize 12
+          }
+          Fl_Button WriteTransformButton {
+            label {write transforms}
+            callback {this->WriteTransformFile();}
+            tooltip {Write transform file.} xywh {185 604 115 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype EMBOSSED_LABEL align 16
+          }
+          Fl_Button ReadTransformButton {
+            label {read transforms}
+            callback {this->ReadTransformFile();}
+            tooltip {Read  transform file.} xywh {185 569 115 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype EMBOSSED_LABEL align 16
+          }
+        }
+        Fl_Text_Display image_information {
+          label Info
+          xywh {185 520 155 189} box NO_BOX selection_color 7 labeltype EMBOSSED_LABEL labelsize 12 align 69 when 0 textsize 10 textcolor 32 hide
+        }
+      }
+      Fl_Tabs visualization_tabs {
+        xywh {5 505 170 225} box PLASTIC_DOWN_BOX
+      } {
+        Fl_Group {} {
+          label Visualization
+          xywh {5 521 170 207} labeltype EMBOSSED_LABEL labelsize 12
+        } {
+          Fl_Roller SurfaceOpacity {
+            label {surface opacity}
+            callback {this->SetSurfaceOpacity()}
+            xywh {154 539 15 110} box PLASTIC_THIN_UP_BOX color 193 labeltype EMBOSSED_LABEL labelsize 12 labelcolor 8 align 138 step 0.01 value 1
+          }
+          Fl_Spinner selected_particle_spinner {
+            label {visualize point}
+            callback {this->VisualizeNeighborhood()}
+            tooltip {Visualize point.} xywh {10 577 40 17} labeltype EMBOSSED_LABEL labelsize 12 align 8 when 1 minimum 0 maximum 5000 textsize 12
+          }
+          Fl_Spinner neighborhood_size_spinner {
+            label {neighbor. sz}
+            callback {this->VisualizeNeighborhood()}
+            tooltip {Visualize radius around point.} xywh {10 592 40 17} type Float labeltype EMBOSSED_LABEL labelsize 12 align 8 when 1 minimum 0 maximum 1000 step 0.5 textsize 12
+          }
+          Fl_Spinner glyph_scale_spinner {
+            label {glyph size}
+            callback {this->SetGlyphScale()}
+            tooltip {Set Glyph scale} xywh {10 617 45 22} type Float labeltype EMBOSSED_LABEL labelsize 12 align 8 maximum 20 step 0.5 value 3 textsize 12
+          }
+          Fl_Button color_map_glyphs_button {
+            label {recolor glyphs}
+            callback {this->RecolorGlyphs();}
+            tooltip {Color map points.} xywh {10 652 95 27} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype EMBOSSED_LABEL labelsize 12 labelcolor 8
+          }
+          Fl_Spinner viewer1_domain_spinner {
+            label {SHAPE NUMBER}
+            callback {this->ViewerSelectDomain();}
+            tooltip {Select Domain for Viewer 1} xywh {25 533 75 22} labeltype EMBOSSED_LABEL labelsize 12 align 2 when 8 minimum 0 maximum 5000 textsize 12
+          }
+          Fl_Spinner viewer2_domain_spinner {
+            label right
+            callback {this->ViewerSelectDomain();}
+            tooltip {Select Domain for Viewer 1} xywh {65 533 45 25} labeltype EMBOSSED_LABEL labelsize 12 align 2 when 8 minimum 0 maximum 5000 textsize 12 hide deactivate
+          }
+          Fl_Spinner frame_rate_spinner {
+            label {max frame rate}
+            tooltip {Select Domain for Viewer 1} xywh {11 689 44 23} type Float labeltype EMBOSSED_LABEL labelsize 12 align 8 when 8 minimum 0 maximum 5000 step 0.1 value 20 textsize 12
+          }
+          Fl_Button viz_neighborhood_button {
+            label VZ
+            callback {this->AutoVisualizeNeighborhood();}
+            tooltip {Visualize selected particle neighborhood} xywh {130 574 20 26} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 3 selection_color 3 labeltype EMBOSSED_LABEL labelsize 12 labelcolor 8
+          }
+        }
+      }
+    }
+  }
+  Function {~CorrespondenceGUI()} {open return_type virtual
+  } {}
+  Function {Quit()} {open return_type {virtual void}
+  } {}
+  Function {Show()} {open return_type {virtual void}
+  } {}
+  Function {Hide()} {open return_type {virtual void}
+  } {}
+  Function {SetSurfaceOpacity()} {open return_type {virtual void}
+  } {}
+  Function {SetReferenceScale()} {open return_type void
+  } {}
+  Function {WritePointsFile(const char *)} {open return_type {virtual void}
+  } {}
+  Function {optimize_start()} {open return_type {virtual void}
+  } {}
+  Function {optimize_stop()} {open return_type {virtual void}
+  } {}
+  Function {SetExperimental()} {open return_type {virtual void}
+  } {}
+  Function {ColorNeighborhood()} {open return_type {virtual void}
+  } {}
+  Function {VisualizeNeighborhood()} {open return_type {virtual void}
+  } {}
+  Function {SetNumericalParameter()} {open return_type {virtual void}
+  } {}
+  Function {SplitAllParticles()} {open return_type {virtual void}
+  } {}
+  Function {single_iteration()} {open return_type {virtual void}
+  } {}
+  Function {SetGlyphScale()} {open return_type {virtual void}
+  } {}
+  Function {SetAdaptivityMode()} {open return_type {virtual void}
+  } {}
+  Function {ViewerSelectDomain()} {open return_type {virtual void}
+  } {}
+  Function {ToggleCorrespondence()} {open return_type {virtual void}
+  } {}
+  Function {SetCorrespondenceMode()} {open return_type {virtual void}
+  } {}
+  Function {WritePointFiles()} {open return_type {virtual void}
+  } {}
+  Function {WriteModes()} {open return_type {virtual void}
+  } {}
+  Function {RecolorGlyphs()} {open return_type {virtual void}
+  } {}
+  Function {RunProcrustes()} {open return_type {virtual void}
+  } {}
+  Function {SplitParticle()} {open return_type {virtual void}
+  } {}
+  Function {ToggleDomainLock()} {open return_type {virtual void}
+  } {}
+  Function {ToggleSampling()} {open return_type {virtual void}
+  } {}
+  Function {AutoInitialize()} {open return_type {virtual void}
+  } {}
+  Function {WriteVTKMesh()} {open return_type {virtual void}
+  } {}
+  Function {WriteTransformFile() const} {open return_type {virtual void}
+  } {}
+  Function {ReadTransformFile()} {open return_type {virtual void}
+  } {}
+  Function {SetOptimizationMode()} {open return_type {virtual void}
+  } {}
+  Function {AddSinglePoint()} {open return_type {virtual void}
+  } {}
+  Function {AutoVisualizeNeighborhood()} {open return_type {virtual void}
+  } {}
+  Function {ToggleConstraints()} {open return_type {virtual void}
+  } {}
+  Function {WriteParameters()} {open return_type {virtual void}
+  } {}
+  Function {SetMinimumVarianceDecay()} {open return_type {virtual void}
+  } {}
+} 

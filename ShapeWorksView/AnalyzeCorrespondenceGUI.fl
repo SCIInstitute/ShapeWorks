@@ -1,0 +1,405 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+class AnalyzeCorrespondenceGUI {open
+} {
+  Function {AnalyzeCorrespondenceGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {ShapeWorks View} open
+      xywh {1528 49 670 700} type Double box BORDER_BOX color 8 labelfont 9 labelsize 20 align 5 visible
+    } {
+      Fl_Menu_Bar menu {open
+        xywh {0 0 665 20} box PLASTIC_UP_BOX color 17 labeltype NO_LABEL
+      } {
+        Submenu {} {
+          label File
+          xywh {0 0 62 20}
+        } {
+          MenuItem {} {
+            label {Load Point File}
+            callback {this->HideGroups();
+this->LoadPointFile();}
+            xywh {20 20 30 20}
+          }
+          MenuItem {} {
+            label {Load PCA Shape}
+            callback {this->HideGroups();
+this->LoadPCAShape();}
+            xywh {10 10 30 20}
+          }
+          MenuItem {} {
+            label {Load PValues}
+            callback {this->LoadScalars();}
+            xywh {0 0 30 20} hide deactivate
+          }
+          MenuItem {} {
+            label {Load Vectors}
+            callback {this->HideGroups();
+this->ViewMeanGroup->show();
+this->ViewMeanGroup->label("Vector Field");
+this->LoadVectorField();}
+            xywh {0 0 30 20} divider
+          }
+          MenuItem {} {
+            label {Load Tensors}
+            xywh {0 0 30 20} hide deactivate
+          }
+          MenuItem {} {
+            label {Write Points}
+            callback {this->WritePoints();}
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label {Write Surface Mesh}
+            callback {this->WriteMesh()}
+            xywh {5 5 30 20}
+          }
+          MenuItem {} {
+            label {Write Level Set}
+            xywh {5 5 30 20} hide deactivate
+          }
+          MenuItem {} {
+            label {Write PCA Loadings}
+            callback {this->WritePCALoadings();}
+            xywh {5 5 30 20} divider
+          }
+          MenuItem {} {
+            label {Point File Diff}
+            callback {this->HideGroups();
+this->PointFileDiff();}
+            xywh {30 30 30 20} divider
+          }
+          MenuItem {} {
+            label Exit
+            callback {this->Quit();}
+            tooltip {Quit the application.} xywh {0 0 30 20}
+          }
+        }
+        Submenu {} {
+          label View open
+          xywh {0 0 62 20}
+        } {
+          MenuItem {} {
+            label Samples
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->ViewSampleGroup->show();
+this->DisplaySamples();}
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label {Mean Shape}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->DisplayMean(0);
+this->ViewMeanGroup->show();
+this->ViewMeanGroup->label("Sample Mean Shape");}
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label {Median Shape}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->ViewSampleGroup->show();
+this->DisplayGroupMedian(-32);}
+            xywh {20 20 30 20}
+          }
+          MenuItem menuGroup1Mean {
+            label {Group 1 Mean}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->DisplayMean(1);
+this->ViewMeanGroup->show();
+this->ViewMeanGroup->label("Group 1 Mean");}
+            xywh {0 0 30 20}
+          }
+          MenuItem menuGroup1Median {
+            label {Group 1 Median}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->ViewSampleGroup->show();
+this->DisplayGroupMedian(1);}
+            xywh {10 10 30 20}
+          }
+          MenuItem menuGroup2Mean {
+            label {Group 2 Mean}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->DisplayMean(2);
+this->ViewMeanGroup->show();
+this->ViewMeanGroup->label("Group 2 Mean");}
+            xywh {0 0 30 20}
+          }
+          MenuItem menuGroup2Median {
+            label {Group 2 Median}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->ViewSampleGroup->show();
+this->DisplayGroupMedian(2);}
+            xywh {20 20 30 20}
+          }
+          MenuItem {} {
+            label {PCA Modes}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->ViewPCAModesGroup->show();}
+            xywh {0 0 30 20}
+          }
+          MenuItem ViewLinearRegressionChoice {
+            label {Linear Regression}
+            callback {this->HideGroups();
+this->ShowSpheres();
+this->ViewRegressionGroup->show();
+this->ComputeRegressionShape();}
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label {Mean Differences}
+            callback {this->HideGroups();
+this->ViewMeanGroup->show();
+this->ViewMeanGroup->label("Difference in Group Means");
+this->DisplayMeanDifference();}
+            xywh {10 10 30 20}
+          }
+        }
+        Submenu {} {
+          label Options
+          xywh {0 0 62 20}
+        } {
+          MenuItem {} {
+            label Reconstruction
+            callback {this->HideGroups();
+this->OptionsReconstructionGroup->show();}
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label {Color Scheme}
+            callback {this->HideGroups();
+this->OptionsColorSchemeGroup->show();}
+            xywh {0 0 30 20}
+          }
+          MenuItem {} {
+            label Glyphs
+            callback {this->HideGroups();
+this->OptionsGlyphGroup->show();}
+            xywh {0 0 30 20}
+          }
+        }
+      }
+      Fl_Box imageView {
+        xywh {2 25 660 600} box PLASTIC_THIN_UP_BOX color 0 align 2
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+      Fl_Group OptionsReconstructionGroup {
+        label {Surface Reconstruction Options}
+        xywh {5 631 660 62} box PLASTIC_THIN_UP_BOX color 0 labeltype ENGRAVED_LABEL labelsize 20 align 21
+      } {
+        Fl_Spinner samplespacing {
+          label Spacing
+          callback {this->ComputeSurface();}
+          xywh {485 637 45 23} type Float box PLASTIC_THIN_UP_BOX labeltype ENGRAVED_LABEL labelfont 5 align 8 minimum 0.5 step 0.5 value 1
+        }
+        Fl_Spinner neighborhoodsize {
+          label {Neighbor. Size}
+          callback {this->ComputeSurface();}
+          xywh {311 638 45 21} labeltype ENGRAVED_LABEL labelfont 5 align 8 value 5
+        }
+        Fl_Button {} {
+          label ON
+          callback {this->ComputeSurface();}
+          xywh {126 661 50 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 63 selection_color 0 labeltype ENGRAVED_LABEL labelfont 5 labelcolor 8
+        }
+        Fl_Button {} {
+          label OFF
+          callback {this->RemoveSurface();}
+          xywh {70 661 50 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 1 selection_color 0 labeltype ENGRAVED_LABEL labelfont 5 labelcolor 8
+        }
+        Fl_Spinner smooth_iter {
+          label {Mesh Smooth}
+          callback {this->SetSurfaceSmoothing();}
+          tooltip {Set the number of iterations for surface smoothing.} xywh {484 663 45 23} type Float box PLASTIC_THIN_UP_BOX labeltype ENGRAVED_LABEL labelfont 5 align 8 minimum 0 maximum 5000 value 1
+        }
+        Fl_Spinner gradsmooth {
+          label {Grad. Smooth}
+          xywh {311 663 45 23} type Float box PLASTIC_THIN_UP_BOX labeltype ENGRAVED_LABEL labelfont 5 align 8 minimum 0 maximum 10 step 0.1 value 1
+        }
+      }
+      Fl_Group OptionsColorSchemeGroup {
+        label {Color Options}
+        xywh {5 631 660 60} box PLASTIC_THIN_UP_BOX color 0 labeltype ENGRAVED_LABEL labelsize 20 align 21 hide
+      } {
+        Fl_Spinner color_switcher {
+          label {Color Scheme Number}
+          callback {this->ChangeColorScheme();}
+          xywh {416 647 55 24} box PLASTIC_ROUND_UP_BOX color 0 labeltype ENGRAVED_LABEL labelfont 5 labelsize 18 minimum 0 maximum 1 value 1 textfont 5
+        }
+      }
+      Fl_Group OptionsGlyphGroup {
+        label {Glyph Options} open
+        xywh {5 631 660 64} box PLASTIC_THIN_UP_BOX color 0 labeltype ENGRAVED_LABEL labelsize 20 align 21
+      } {
+        Fl_Value_Slider glyph_scale {
+          label {Glyph Size}
+          callback {this->SetGlyphScale();}
+          xywh {281 661 259 15} type {Horz Knob} box PLASTIC_ROUND_DOWN_BOX labeltype ENGRAVED_LABEL labelfont 5 align 4 when 4 minimum 0.1 maximum 10 step 0.1 value 1
+        }
+        Fl_Value_Slider glyph_quality {
+          label {Glyph Quality}
+          callback {this->SetGlyphScale();}
+          xywh {281 641 259 15} type {Horz Knob} box PLASTIC_ROUND_DOWN_BOX labeltype ENGRAVED_LABEL labelfont 5 align 4 when 4 minimum 1 maximum 20 step 0.5 value 5
+        }
+        Fl_Light_Button show_correspondence_button {
+          label {Show Corresp.}
+          callback {this->ShowCorrespondence()}
+          xywh {555 645 15 20} value 1 labeltype ENGRAVED_LABEL labelfont 5 align 148
+        }
+        Fl_Button {} {
+          label ON
+          callback {this->ShowGlyphs();}
+          xywh {110 660 50 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 63 selection_color 0 labeltype ENGRAVED_LABEL labelfont 5 labelcolor 8
+        }
+        Fl_Button {} {
+          label OFF
+          callback {this->RemoveGlyphs();}
+          xywh {54 660 50 25} box PLASTIC_ROUND_UP_BOX down_box PLASTIC_ROUND_DOWN_BOX color 1 selection_color 0 labeltype ENGRAVED_LABEL labelfont 5 labelcolor 8
+        }
+      }
+      Fl_Group ViewMeanGroup {
+        label {Mean Shape}
+        xywh {4 631 660 60} box PLASTIC_THIN_UP_BOX color 0 labeltype ENGRAVED_LABEL labelsize 20 align 16 hide
+      } {}
+      Fl_Group ViewPCAModesGroup {
+        label PCA
+        xywh {5 633 660 57} box PLASTIC_THIN_UP_BOX color 0 labeltype ENGRAVED_LABEL labelsize 20 align 21 hide
+      } {
+        Fl_Value_Slider mode_position {
+          label {slider:}
+          callback {this->ComputeModeShape();}
+          xywh {123 641 235 15} type {Horz Knob} box PLASTIC_THIN_DOWN_BOX selection_color 1 labeltype NO_LABEL minimum -3 maximum 3 textsize 14
+        }
+        Fl_Value_Output lambda_display {
+          label {Eig-val.}
+          xywh {71 667 60 18} box PLASTIC_ROUND_UP_BOX color 0 labeltype EMBOSSED_LABEL labelsize 12 textsize 12
+        }
+        Fl_Slider groupdiff_position {
+          label {slider:}
+          callback {this->ComputeModeShape();} selected
+          xywh {195 668 213 15} type {Horz Knob} box PLASTIC_THIN_DOWN_BOX color 17 selection_color 1 labeltype NO_LABEL align 22 step 0.01
+        }
+        Fl_Box group1LabelBox {
+          label {Group 1}
+          xywh {155 669 30 16} labeltype EMBOSSED_LABEL labelsize 12
+        }
+        Fl_Box group2LabelBox {
+          label {Group 2}
+          xywh {421 668 30 16} labeltype EMBOSSED_LABEL labelsize 12
+        }
+        Fl_Spinner mode {
+          label Mode
+          callback {this->mode_position->value(0.0);
+this->ComputeModeShape();
+this->ComputeSimpleRegressionParameters();}
+          xywh {66 639 45 19} box PLASTIC_THIN_DOWN_BOX labeltype EMBOSSED_LABEL labelsize 12 align 2 minimum 0 value 1 textsize 12
+        }
+        Fl_Value_Slider simple_regression {
+          label {PC regress}
+          callback {this->ComputeSimpleRegressionShape();}
+          xywh {474 660 183 15} type {Horz Knob} box PLASTIC_THIN_DOWN_BOX selection_color 1 labeltype EMBOSSED_LABEL labelsize 12 align 5 minimum -3 maximum 3 textsize 14
+        }
+        Fl_Value_Output loading_display {
+          label {PC loading}
+          xywh {365 639 48 18} box PLASTIC_ROUND_UP_BOX color 0 labeltype EMBOSSED_LABEL labelsize 12 align 8 textsize 12
+        }
+      }
+      Fl_Group ViewRegressionGroup {
+        label {Linear Regression}
+        xywh {3 632 660 60} box PLASTIC_THIN_UP_BOX color 0 selection_color 7 labeltype ENGRAVED_LABEL labelsize 20 align 21 hide
+      } {
+        Fl_Value_Slider position {
+          label {Predictor / Explanatory Variable}
+          callback {this->ComputeRegressionShape();}
+          xywh {208 646 452 16} type {Horz Knob} box PLASTIC_ROUND_DOWN_BOX color 17 selection_color 1 labeltype ENGRAVED_LABEL labelfont 5 minimum -5 maximum 5 step 0.1
+        }
+      }
+      Fl_Group ViewSampleGroup {
+        label {Shape Samples}
+        xywh {4 631 659 60} box PLASTIC_THIN_UP_BOX color 0 labeltype ENGRAVED_LABEL labelsize 20 align 21 hide
+      } {
+        Fl_Spinner sample_selector {
+          label {Sample Number}
+          callback {this->DisplaySamples();}
+          xywh {325 639 75 24} labeltype ENGRAVED_LABEL labelsize 18 align 2 minimum 0 value 1
+        }
+        Fl_Value_Output group_display {
+          label {Group ID}
+          xywh {464 640 33 24} box PLASTIC_ROUND_UP_BOX color 0 selection_color 16 labeltype ENGRAVED_LABEL labelsize 18 align 2 minimum 1 maximum 100 value 1
+        }
+      }
+    }
+  }
+  Function {~AnalyzeCorrespondenceGUI()} {return_type virtual
+  } {}
+  Function {Quit()} {return_type {virtual void}
+  } {}
+  Function {Show()} {return_type {virtual void}
+  } {}
+  Function {Hide()} {return_type {virtual void}
+  } {}
+  Function {ComputeRegressionShape()} {return_type {virtual void}
+  } {}
+  Function {SetGlyphScale()} {return_type {virtual void}
+  } {}
+  Function {ComputeSurface()} {return_type {virtual void}
+  } {}
+  Function {RemoveSurface()} {return_type {virtual void}
+  } {}
+  Function {ChangeColorScheme()} {open return_type {virtual void}
+  } {}
+  Function {HideGroups()} {open return_type {virtual void}
+  } {}
+  Function {DisplayMean(unsigned int)} {return_type {virtual void}
+  } {}
+  Function {DisplaySamples()} {return_type {virtual void}
+  } {}
+  Function {ComputeModeShape()} {open return_type {virtual void}
+  } {}
+  Function {ComputeGroupMeanDifferenceShape()} {open return_type {virtual void}
+  } {}
+  Function {WritePoints()} {open return_type {virtual void}
+  } {}
+  Function {WritePCALoadings()} {open return_type {virtual void}
+  } {}
+  Function {LoadScalars()} {open return_type {virtual void}
+  } {}
+  Function {DisplayMeanDifference()} {open return_type {virtual void}
+  } {}
+  Function {DisplayGroupMedian(int)} {open return_type {virtual void}
+  } {}
+  Function {ShowCorrespondence()} {open return_type {virtual void}
+  } {}
+  Function {ComputeSimpleRegressionShape()} {open return_type {virtual void}
+  } {}
+  Function {ComputeSimpleRegressionParameters()} {open return_type {virtual void}
+  } {}
+  Function {LoadPCAShape()} {open return_type {virtual void}
+  } {}
+  Function {LoadPointFile()} {open return_type {virtual void}
+  } {}
+  Function {ShowSpheres()} {open return_type {virtual void}
+  } {}
+  Function {SetSurfaceSmoothing()} {open return_type {virtual void}
+  } {}
+  Function {LoadVectorField()} {open return_type {virtual void}
+  } {}
+  Function {PointFileDiff()} {open return_type {virtual void}
+  } {}
+  Function {ShowGlyphs()} {open return_type {virtual void}
+  } {}
+  Function {RemoveGlyphs()} {open return_type {virtual void}
+  } {}
+  Function {WriteMesh()} {open return_type {virtual void}
+  } {}
+} 
