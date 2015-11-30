@@ -19,7 +19,7 @@
 #include "vnl/vnl_matrix.h"
 
 #include "vtkSmartPointer.h"
-#include "vtkPointData.h""
+#include "vtkPointData.h"
 #include "vtkPolyData.h"
 
 #include "vtkIdList.h"
