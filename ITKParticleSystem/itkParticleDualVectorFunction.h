@@ -22,13 +22,14 @@
 #include "vnl/vnl_vector_fixed.h"
 
 /* PRATEEP : Debugging to turn correspondence part off in SW optimization */
-//const int USE_CORRESPONDENCE = 0;
+//const int USE_CORRESPONDENCE = 1;
 
-#ifdef USE_CORRESPONDENCE
-    const int USE_CORRESPONDENCE = 1;
+#ifdef USE_CORR
+  const int USE_CORRESPONDENCE = 1;
 #else
-    const int USE_CORRESPONDENCE = 0;
+  const int USE_CORRESPONDENCE = 0;
 #endif
+
 namespace itk
 {
 

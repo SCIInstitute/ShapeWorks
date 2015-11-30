@@ -24,7 +24,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vnl/vnl_inverse.h"
 
 // Prateep
-#define PARTICLE_DEBUG_FLAG
+//#define PARTICLE_DEBUG_FLAG
 namespace itk
 {
 template <unsigned int VDimension>

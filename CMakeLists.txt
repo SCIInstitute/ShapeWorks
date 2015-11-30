@@ -2,7 +2,7 @@ PROJECT(SHAPEWORKS)
 cmake_minimum_required(VERSION 2.6)
 
 #---- Setting variables --------
-SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.5.1")
+SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.7.2")
 SET(VTK_DIR "/home/sci/prafulag/BuildDIR/VTK-5.10.1")
 SET(FLTK_DIR "/home/sci/prafulag/BuildDIR/fltk-1.1.10")
 SET(USE_VTK 1)
@@ -65,9 +65,11 @@ if(USE_WeighSampling)
   add_definitions(-DSW_WEIGH_SAMPLING_TERM)
 endif(USE_WeighSampling)
 
-if(USE_CORRESPONDENCE)
-  add_definitions(-DUSE_CORRESPONDENCE)
-endif(USE_CORRESPONDENCE)
+# Use correspondence term
+option(USE_CORR "Use correspondence" ON)
+if(USE_CORR)
+  add_definitions(-DUSE_CORR)
+endif(USE_CORR)
 
 # Set up the include directories
 include_directories ( 
