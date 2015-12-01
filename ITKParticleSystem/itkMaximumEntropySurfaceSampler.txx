@@ -262,7 +262,7 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
 //  // end PRATEEP
 
   // Initialize member variables of the optimization functions.
-  //  m_GradientFunction->SetMinimumNeighborhoodRadius(maxradius / 3.0);
+//    m_GradientFunction->SetMinimumNeighborhoodRadius(maxradius / 3.0);
   m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
   m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
 

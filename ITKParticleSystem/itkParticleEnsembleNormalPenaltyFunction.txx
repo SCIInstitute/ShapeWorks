@@ -7,8 +7,8 @@ Author:    $Author: wmartin $
 
 Copyright (c) 2009 Scientific Computing and Imaging Institute.
 See ShapeWorksLicense.txt for details.
-This software is distributed WITHOUT ANY WARRANTY; without even 
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 
@@ -17,16 +17,9 @@ PURPOSE.  See the above copyright notices for more information.
 
 #include "vnl/vnl_vector_fixed.h"
 #include "itkParticleEnsembleNormalPenaltyFunction.h"
-// Prateep
-#include "utils.h"
-#include "vnl/vnl_vector.h"
-#include "vnl/vnl_det.h"
-#include "vnl/vnl_inverse.h"
-
-// Prateep
-//#define PARTICLE_DEBUG_FLAG
 namespace itk
 {
+
 template <unsigned int VDimension>
 typename ParticleEnsembleNormalPenaltyFunction<VDimension>::VectorType
 ParticleEnsembleNormalPenaltyFunction<VDimension>
@@ -91,7 +84,7 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
     // get local copy of image
     imgDuplicator->SetInputImage(domain->GetImage());
     imgDuplicator->Update();
-    
+
     // get normal components in neighborhood around current point
     typename NormalComponentImageType::SizeType nSize;
     typename NormalComponentImageType::IndexType nIndex;
@@ -144,34 +137,34 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
     for (unsigned int n = 0; n < VDimension; n++)
     {
         gradE_norm[n] = mean_normal[n] - posnormal[n];
-//        gradE_norm[n] = mean_normal[n] * df_dn;
+        //        gradE_norm[n] = mean_normal[n] * df_dn;
     }
 
-//    gradE_norm *= mat3x3 * normalPartialDerivatives;
+    //    gradE_norm *= mat3x3 * normalPartialDerivatives;
     gradE_norm *= normalPartialDerivatives;
-//    energy = gradE_norm.magnitude();
+    //    energy = gradE_norm.magnitude();
     energy = 0.0;
     for (unsigned int i = d % m_DomainsPerShape; i < system->GetNumberOfDomains(); i += m_DomainsPerShape)
     {
-//        if(i != d)
-//        {
-            domain = static_cast<const ParticleImageDomainWithGradients<float,VDimension> *>(system->GetDomain(i));
-            PointType neighpos = system->GetTransformedPosition(idx, i);
-            typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neighnormal = domain->SampleNormalVnl(neighpos);
+        //        if(i != d)
+        //        {
+        domain = static_cast<const ParticleImageDomainWithGradients<float,VDimension> *>(system->GetDomain(i));
+        PointType neighpos = system->GetTransformedPosition(idx, i);
+        typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neighnormal = domain->SampleNormalVnl(neighpos);
 
-            vnl_vector<double> v_neighnormal(VDimension, 0.0f);
-            for(unsigned int n = 0; n < VDimension; n++)
-            {
-                v_neighnormal[n] = (double) neighnormal[n];
-            }
-//            energy += f( dot_product( v_neighnormal, mean_normal ) );
-            vnl_vector<double> diff = mean_normal - v_neighnormal;
-            energy += diff.magnitude() * diff.magnitude();
-//        }
+        vnl_vector<double> v_neighnormal(VDimension, 0.0f);
+        for(unsigned int n = 0; n < VDimension; n++)
+        {
+            v_neighnormal[n] = (double) neighnormal[n];
+        }
+        //            energy += f( dot_product( v_neighnormal, mean_normal ) );
+        vnl_vector<double> diff = mean_normal - v_neighnormal;
+        energy += diff.magnitude() * diff.magnitude();
+        //        }
     }
-    
-//    maxmove = domain->GetImage()->GetSpacing()[0];
-      maxmove = energy * 0.5;
+
+    //    maxmove = domain->GetImage()->GetSpacing()[0];
+    maxmove = energy * 0.5;
 
     //  Transform the gradient according to the transform of the given domain and return.
     return system->TransformVector(gradE_norm, system->GetInversePrefixTransform(d)
@@ -193,10 +186,10 @@ double ParticleEnsembleNormalPenaltyFunction<VDimension>::f(double ctheta) const
 template <unsigned int VDimension>
 double ParticleEnsembleNormalPenaltyFunction<VDimension>::fprime(double ctheta) const
 {
-  const double epsilon = 1.0e-10;
-  double num = (1.0f - ctheta);
-  double den = (1.0f + ctheta + epsilon);
-  return (-4.0f*num) / (den * den * den);
+    const double epsilon = 1.0e-10;
+    double num = (1.0f - ctheta);
+    double den = (1.0f + ctheta + epsilon);
+    return (-4.0f*num) / (den * den * den);
 }
 
 } // end namespace

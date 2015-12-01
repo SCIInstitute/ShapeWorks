@@ -43,8 +43,8 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_FunctionShapeData);
   // PRATEEP
-  m_CorrespondenceMode = 0; // changed 09/24
-//  m_CorrespondenceMode = 1;
+//  m_CorrespondenceMode = 0; // changed 09/24
+  m_CorrespondenceMode = 1;
 }
 
 template<class TImage>

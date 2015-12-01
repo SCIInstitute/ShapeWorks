@@ -6,7 +6,7 @@ SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.7.2")
 SET(VTK_DIR "/home/sci/prafulag/BuildDIR/VTK-5.10.1")
 SET(FLTK_DIR "/home/sci/prafulag/BuildDIR/fltk-1.1.10")
 SET(USE_VTK 1)
-SET(CMAKE_BUILD_TYPE DEBUG)
+#SET(CMAKE_BUILD_TYPE DEBUG)
 #-------------------------------
 
 SET(BUILD_EXECS_AT_SAME_LEVEL FALSE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
@@ -29,15 +29,18 @@ endif(ITK_FOUND)
 # Optionally build with mesh support (requires linking against trimesh library)
 option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
 
-# Weight Sampling term in optimization
-option(USE_WeighSampling "Weigh Sampling term in SW" OFF)
+## Weight Sampling term in optimization
+## PRATEEP : Turned off (11/30)
+#option(USE_WeighSampling "Weigh Sampling term in SW" OFF)
 
 # Optionally build programs with GUIs.
-option(BUILD_ShapeWorksView "Build ShapeWorksView (requires FLTK & VTK)" ON)
-option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" ON)
+option(BUILD_ShapeWorksView "Build ShapeWorksView (requires FLTK & VTK)" OFF)
+option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" OFF)
+#option(BUILD_ShapeWorksView "Build ShapeWorksView (requires FLTK & VTK)" ON)
+#option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" ON)
 option(BUILD_ShapeWorksShop "Build ShapeWorksShop (requires FLTK & VTK)" OFF)
 option(BUILD_Unsupported "Build unsupported tools (NOT recommended, requires FLTK & VTK)" OFF)
-option(CMAKE_BUILD_TYPE "Build Type" RELEASE)
+option(CMAKE_BUILD_TYPE "Build Type" DEBUG)
 option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)" ON)
 
 # Optionally use OpenMP
@@ -60,16 +63,18 @@ if(BUILD_MeshSupport)
   add_definitions(-DSW_USE_MESH)
 endif(BUILD_MeshSupport)
 
-# Use weigh sampling term
-if(USE_WeighSampling)
-  add_definitions(-DSW_WEIGH_SAMPLING_TERM)
-endif(USE_WeighSampling)
+## Use weigh sampling term
+## PRATEEP : Turned off (11/30)
+#if(USE_WeighSampling)
+#  add_definitions(-DSW_WEIGH_SAMPLING_TERM)
+#endif(USE_WeighSampling)
 
-# Use correspondence term
-option(USE_CORR "Use correspondence" ON)
-if(USE_CORR)
-  add_definitions(-DUSE_CORR)
-endif(USE_CORR)
+## Use correspondence term
+## PRATEEP : Turned off (11/30)
+#option(USE_CORR "Use correspondence" ON)
+#if(USE_CORR)
+#  add_definitions(-DUSE_CORR)
+#endif(USE_CORR)
 
 # Set up the include directories
 include_directories ( 
