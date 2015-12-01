@@ -1029,8 +1029,8 @@ void
 ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
 {  
     // PRATEEP
-    float nbhd_to_sigma = 1.0; // 3.0 -> 1.0
-    float flat_cutoff = 0.85; // 0.3 -> 0.85
+    float nbhd_to_sigma = 3.0; // 3.0 -> 1.0
+    float flat_cutoff = 0.3; // 0.3 -> 0.85
     // end PRATEEP
 
     // PRATEEP
