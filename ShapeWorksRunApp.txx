@@ -1458,7 +1458,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     }
 
     //  m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
-    m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+    //m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+
+    // SHIREEN
+    if(m_optimizer_type == 0)
+        m_Sampler->GetOptimizer()->SetModeToJacobi();
+    else if(m_optimizer_type == 1)
+        m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
+    else
+        m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+    // end SHIREEN
 
     // Set up the minimum variance decay
     m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
