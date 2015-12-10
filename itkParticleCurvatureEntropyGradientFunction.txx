@@ -127,6 +127,10 @@ void
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
+    // SHIREEN
+    m_MaxMoveFactor = 0.1;
+    // END SHIREEN
+
   // Compute the neighborhood size and the optimal sigma.
   const double epsilon = 1.0e-6;
   
@@ -303,7 +307,12 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   //    }
   //  else
   //    {
-  maxmove= (m_CurrentSigma / m_avgKappa) * 0.1;
+  //maxmove= (m_CurrentSigma / m_avgKappa) * 0.1;
+
+  // SHIREEN
+  maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
+  // END SHIREEN
+
     //    }
   
   energy = (A * sigma2inv ) / m_avgKappa;

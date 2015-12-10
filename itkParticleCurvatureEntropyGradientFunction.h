@@ -203,6 +203,10 @@ protected:
   typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
 
   std::vector<double> m_CurrentWeights;
+
+  // SHIREEN
+  float m_MaxMoveFactor;
+  // end SHIREEN
     
   
 };
