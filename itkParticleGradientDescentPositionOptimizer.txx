@@ -42,6 +42,7 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartAdaptiveGaussSeidelOptimization()
 {
+    std::cout << "Starting Adaptive Gauss Seidel Optimization ..... \n" << std::flush;
   const double factor = 1.1;//1.1;
   //  const double epsilon = 1.0e-4;
 
@@ -209,6 +210,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 //                  m_TimeSteps[dom][k] = mintime[dom];
 //                  if (gradmag > maxchange) maxchange = gradmag;
                   done = true;
+                  //std::cout << "\t A bad move will be kept at time step = " << m_TimeSteps[dom][k]*factor << std::endl << std::flush;
                   }
                 }
               }
@@ -250,6 +252,7 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartGaussSeidelOptimization()
 {
+    std::cout << "Starting Gauss Seidel Optimization ..... \n" << std::flush;
   // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
   // ADDED TO THE SYSTEM DURING OPTIMIZATION.
   m_StopOptimization = false;
@@ -327,6 +330,8 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartJacobiOptimization()
 {
+    std::cout << "Starting Jacobi Optimization ..... \n" << std::flush;
+
   // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
   // ADDED TO THE SYSTEM DURING OPTIMIZATION.
   m_StopOptimization = false;
