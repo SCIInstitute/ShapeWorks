@@ -33,6 +33,10 @@
 #include <sys/types.h>
 #endif
 
+// SHIREEN
+#include "../Utilities/utils.h"
+// end SHIREEN
+
 template <class SAMPLERTYPE>
 ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
 {
@@ -48,6 +52,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_use_regression = false;
     m_use_mixed_effects = false;
     m_distribution_domain_id = -1;
+
+    // SHIREEN
+    m_save_init_splits  = false;
+    m_use_shape_statistics_in_init = true;
+    // end SHIREEN
 
     // PRATEEP
     // optimizer settings: use the original shapeworks settings by default
@@ -167,21 +176,45 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 
             if ( m_keep_checkpoints )
             {
+                // SHIREEN
                 std::stringstream ss;
                 ss << iteration_no + m_optimization_iterations_completed;
-                std::string dir_name = "iter" + ss.str();
-                std::string tmp_dir_name = std::string(".") + dir_name;
 
-#ifdef _WIN32
+                std::stringstream ssp;
+                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
+
+                std::string dir_name     = "iter" + ss.str() + "_p" + ssp.str();
+                std::string out_path     = utils::getPath(m_output_points_prefix);
+                std::string prefix       = utils::getFilename(m_output_points_prefix);
+                std::string tmp_dir_name = out_path + "/" + prefix + std::string(".") + dir_name;
+
+                std::cout << "iter dir name = " << tmp_dir_name << std::endl;
+
+    #ifdef _WIN32
                 mkdir( tmp_dir_name.c_str() );
-#else
+    #else
                 mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
-#endif
-                this->WritePointFiles( iteration_no );
-                this->WriteTransformFile( iteration_no );
-                /*if (m_use_regression == true) */this->WriteParameters( iteration_no );
+    #endif
+                this->WritePointFiles(tmp_dir_name + "/" + prefix);
+                this->WriteTransformFile(tmp_dir_name + "/" + prefix);
+                // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+                // end SHIREEN
 
-                rename( tmp_dir_name.c_str(), dir_name.c_str() );
+                //                std::stringstream ss;
+                //                ss << iteration_no + m_optimization_iterations_completed;
+                //                std::string dir_name = "iter" + ss.str();
+                //                std::string tmp_dir_name = std::string(".") + dir_name;
+
+                //#ifdef _WIN32
+                //                mkdir( tmp_dir_name.c_str() );
+                //#else
+                //                mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+                //#endif
+                //                this->WritePointFiles( iteration_no );
+                //                this->WriteTransformFile( iteration_no );
+                //                /*if (m_use_regression == true) */this->WriteParameters( iteration_no );
+
+                //                rename( tmp_dir_name.c_str(), dir_name.c_str() );
             }
         }
     }
@@ -686,6 +719,28 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( int iter ) const
     writer.Update();
 }
 
+// SHIREEN
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( std::string iter_prefix ) const
+{
+    std::string output_file = iter_prefix;
+
+    std::vector< itk::ParticleSystem<3>::TransformType > tlist;
+
+    for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+         i++)
+    {
+        tlist.push_back(m_Sampler->GetParticleSystem()->GetTransform(i));
+    }
+
+    object_writer< itk::ParticleSystem<3>::TransformType > writer;
+    writer.SetFileName(output_file);
+    writer.SetInput(tlist);
+    writer.Update();
+}
+// end SHIREEN
+
 template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::ReadTransformFile()
@@ -788,6 +843,70 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
         std::cout << " with " << counter << "points" << std::endl;
     } // end for files
 }
+
+// SHIREEN
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
+{
+    typedef  itk::MaximumEntropyCorrespondenceSampler<ImageType>::PointType PointType;
+    const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+
+    // Write points in both local and global coordinate system
+    filenameFactory fn;
+    fn.number_of_files(n);
+    fn.prefix(iter_prefix);
+
+    fn.file_format("lpts");
+
+    filenameFactory fnw;
+    fnw.number_of_files(n);
+    fnw.prefix(iter_prefix);
+
+    fnw.file_format("wpts");
+
+    int counter;
+    for (int i = 0; i < n; i++)
+    {
+        counter = 0;
+
+        std::string local_file = fn.filename(i);
+        std::string world_file = fnw.filename(i);
+
+        std::ofstream out( local_file.c_str() );
+        std::ofstream outw( world_file.c_str() );
+
+        std::cout << "Writing " << world_file << " ";
+
+        if ( !out || !outw )
+        {
+            std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
+            throw 1;
+        }
+
+        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+        {
+            PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
+            PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+
+            for (unsigned int k = 0; k < 3; k++)
+            {        out << pos[k] << " ";        }
+            out << std::endl;
+
+            for (unsigned int k = 0; k < 3; k++)
+            {        outw << wpos[k] << " ";        }
+            outw << std::endl;
+
+            counter ++;
+        }  // end for points
+
+
+        out.close();
+        outw.close();
+        std::cout << " with " << counter << "points" << std::endl;
+    } // end for files
+}
+// end SHIREEN
 
 template < class SAMPLERTYPE>
 void
@@ -987,6 +1106,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "pairwise_potential_type" ).Element();
         if (elem) this->m_pairwise_potential_type = atoi(elem->GetText());
         // end PRATEEP
+
+        // SHIREEN
+        m_save_init_splits = false;
+        elem = docHandle.FirstChild( "save_init_splits" ).Element();
+        if (elem) this->m_save_init_splits = (bool) atoi(elem->GetText());
+
+        m_use_shape_statistics_in_init = true;
+        elem = docHandle.FirstChild( "use_shape_statistics_in_init" ).Element();
+        if (elem) this->m_use_shape_statistics_in_init = (bool) atoi(elem->GetText());
+        // end SHIREEN
     }
 
     // Write out the parameters
@@ -1021,6 +1150,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     std::cout << "m_optimizer_type = " << m_optimizer_type << std::endl;
     std::cout << "m_pairwise_potential_type = " << m_pairwise_potential_type << std::endl;
     // end PRATEEP
+
+    // SHIREEN
+    std::cout << "m_save_init_splits = " << m_save_init_splits << std::endl;
+    std::cout << "m_use_shape_statistics_in_init = " << m_use_shape_statistics_in_init << std::endl;
+    // end SHIREEN
 }
 
 
@@ -1131,10 +1265,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     // end PRATEEP
 
     /* PRATEEP */
-    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 32) {
-        m_Sampler->SetCorrespondenceMode(0); // changed 09/24
-    } else
-        m_Sampler->SetCorrespondenceMode(1);
+    // SHIREEN
+    if (m_use_shape_statistics_in_init)
+    {
+        if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 32) {
+            m_Sampler->SetCorrespondenceMode(0); // changed 09/24
+        } else
+            m_Sampler->SetCorrespondenceMode(1);
+    }
+    else{
+        m_Sampler->SetCorrespondenceMode(0);  // force to mean shape
+
+    }
+
+    // END SHIREEN
+
     m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(m_initial_norm_penalty_weighting);
@@ -1149,16 +1294,76 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         this->AddSinglePoint();
     }
 
+    // SHIREEN
+    int split_number = 0;
+    // end SHIREEN
+
     while (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
     {
         this->SplitAllParticles();
         std::cout << std::endl << "Particle count: "
                   << m_Sampler->GetParticleSystem()->GetNumberOfParticles() << std::endl;
 
+        // SHIREEN
+        split_number++;
+        std::cout << "split number = " << split_number << std::endl << std::flush;
+        if ( m_save_init_splits == true)
+        {
+            std::stringstream ss;
+            ss << split_number;
+
+            std::stringstream ssp;
+            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
+
+            std::string dir_name     = "split" + ss.str() + "_wo_opt_p" + ssp.str();
+            std::string out_path     = utils::getPath(m_output_points_prefix);
+            std::string prefix       = utils::getFilename(m_output_points_prefix);
+            std::string tmp_dir_name = out_path + "/" + prefix + std::string(".") + dir_name;
+
+            std::cout << "split dir name = " << tmp_dir_name << std::endl;
+
+#ifdef _WIN32
+            mkdir( tmp_dir_name.c_str() );
+#else
+            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
+            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+        }
+        // end SHIREEN
+
         m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
         m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
         m_Sampler->Modified();
         m_Sampler->Update();
+
+        // SHIREEN
+        if ( m_save_init_splits == true)
+        {
+            std::stringstream ss;
+            ss << split_number;
+
+            std::stringstream ssp;
+            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
+
+            std::string dir_name     = "split" + ss.str() + "_w_opt_p" + ssp.str();
+            std::string out_path     = utils::getPath(m_output_points_prefix);
+            std::string prefix       = utils::getFilename(m_output_points_prefix);
+            std::string tmp_dir_name = out_path + "/" + prefix + std::string(".") + dir_name;
+
+            std::cout << "split dir name = " << tmp_dir_name << std::endl;
+
+#ifdef _WIN32
+            mkdir( tmp_dir_name.c_str() );
+#else
+            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
+            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+        }
+        // end SHIREEN
 
         this->WritePointFiles();
         this->WriteTransformFile();
