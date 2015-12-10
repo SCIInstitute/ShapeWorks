@@ -58,7 +58,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::AllocateDataCaches()
 template <class TImage>
 void
 MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
-{
+{    
   this->SetInPlace(false); // this is required so that we don't release our inputs
   if (this->GetInitialized() == false)
     {
@@ -87,6 +87,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
 
   if (this->GetInitializing() == true) return;
 
+  std::cout << "MaximumEntropyCorrespondenceSampler: starting optimization ..\n" << std::flush;
   this->GetOptimizer()->StartOptimization();
 }
 template <class TImage>

@@ -109,6 +109,11 @@ class ShapeWorksRunApp
   virtual void WriteCuttingPlanePoints( int iter = -1);
   virtual void WriteParameters( int iter = -1 );  
 
+  // SHIREEN
+  virtual void WritePointFiles( std::string iter_prefix );
+  virtual void WriteTransformFile( std::string iter_prefix ) const;
+  // end SHIREEN
+
   void ReadExplanatoryVariables(const char *fname);
 
   void FlagDomainFct(const char *fname);
@@ -174,6 +179,11 @@ protected:
                         // 2 : gauss seidel
 
   int m_pairwise_potential_type; // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
+
+  // SHIREEN
+  bool m_save_init_splits;
+  bool m_use_shape_statistics_in_init;
+  // end SHIREEN
 };
 
 #if ITK_TEMPLATE_EXPLICIT
