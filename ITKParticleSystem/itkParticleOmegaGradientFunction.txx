@@ -179,7 +179,10 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
                                   x - domain->GetCuttingPlanePoint() );
     // PRATEEP : (08/31/2014)
     /* always constrain points to be above cutting plane */
-    D = fabs(D);
+    //D = fabs(D);
+    // SHIREEN
+    D = -fabs(D);
+    // end SHIREEN
     itk::Point<double, VDimension> planept;
     for ( unsigned int i = 0; i < VDimension; i++ )
     { planept[i] = x[i] - (domain->GetCuttingPlaneNormal()[i] * D); }

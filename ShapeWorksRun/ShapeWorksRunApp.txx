@@ -58,12 +58,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_use_shape_statistics_in_init = true;
     // end SHIREEN
 
-    // PRATEEP
+    // PRATEEP - SHIREEN UPDATE
     // optimizer settings: use the original shapeworks settings by default
-    m_optimizer_type    = 0;  // 0: adaptive gauss seidel with bad moves,
-    // 1: adaptive gauss seidel without bad moves,
-    // 2: gauss seidel
-    // 3: jacobi
+    m_optimizer_type    = 2;    // 0 : jacobi
+                                // 1 : gauss seidel
+                                // 2 : adaptive gauss seidel (with bad moves)
     m_pairwise_potential_type = 0; // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer)
     // end PRATEEP
 
@@ -1094,11 +1093,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "output_cutting_plane_file" ).Element();
         if (elem) this->m_output_cutting_plane_file = elem->GetText();
 
-        // PRATEEP
-        this->m_optimizer_type = 0; // 0: adaptive gauss seidel with bad moves,
-        // 1: adaptive gauss seidel without bad moves,
-        // 2: gauss seidel
-        // 3: jacobi
+        // PRATEEP - SHIREEN UPDATE
+        this->m_optimizer_type = 2; // 0 : jacobi
+                                    // 1 : gauss seidel
+                                    // 2 : adaptive gauss seidel (with bad moves)
         elem = docHandle.FirstChild( "optimizer_type" ).Element();
         if (elem) this->m_optimizer_type = atoi(elem->GetText());
 
@@ -1204,8 +1202,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
 
     m_Sampler->GetOptimizer()->SetTimeStep(1.0);
-    m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
-    //  m_Sampler->GetOptimizer()->SetModeToJacobi();
+
+    // SHIREEN
+    if(m_optimizer_type == 0)
+        m_Sampler->GetOptimizer()->SetModeToJacobi();
+    else if(m_optimizer_type == 1)
+        m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
+    else
+        m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+    // end SHIREEN
 
     m_Sampler->SetSamplingOn();
     /* PRATEEP */

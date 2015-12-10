@@ -172,11 +172,11 @@ protected:
   bool m_use_cutting_planes;
   int m_distribution_domain_id;
 
-  // PRATEEP
+  // PRATEEP -- SHIREEN UPDATE
   // optimizer settings
-  int m_optimizer_type; // 0 : adaptive gauss seidel with bad moves,
-                        // 1 : adaptive gauss seidel without bad moves,
-                        // 2 : gauss seidel
+  int m_optimizer_type; // 0 : jacobi
+                        // 1 : gauss seidel
+                        // 2 : adaptive gauss seidel (with bad moves)
 
   int m_pairwise_potential_type; // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 

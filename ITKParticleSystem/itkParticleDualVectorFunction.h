@@ -124,6 +124,11 @@ public:
                 {
                     maxmove = maxA;
                 }
+
+                //                // SHIREEN
+                //                maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
+                //                // end SHIREEN
+
                 /* PRATEEP : Debug */
                 //#ifdef SW_WEIGH_SAMPLING_TERM
                 //        predictedMove = ansB + m_RelativeGradientScaling * ansA;
