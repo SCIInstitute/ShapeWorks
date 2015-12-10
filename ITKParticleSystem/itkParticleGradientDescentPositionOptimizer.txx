@@ -150,6 +150,8 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         for (typename ParticleSystemType::PointContainerType::ConstIterator it
                = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
           {
+            //if((k+1) == 67)
+              //  int test =0;
           bool done = false;
 //          int iter = 0;
 
@@ -194,6 +196,10 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                 if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
                 if (gradmag > maxchange) maxchange = gradmag;
                 done = true;
+
+                // SHIREEN: for debugging
+                //double old_new_dist = sqrt(pow(pt[0] - newpoint[0], 2.0) + pow(pt[1] - newpoint[1], 2.0) + pow(pt[2] - newpoint[2], 2.0));
+                //std::cout << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << newpoint[0] << ", " << newpoint[1] << ", " <<  newpoint[2] << ", " << old_new_dist << ",\n " << std::flush;
                 }
               else 
                 {// bad move, reset point position and back off on timestep            
@@ -211,6 +217,10 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 //                  if (gradmag > maxchange) maxchange = gradmag;
                   done = true;
                   //std::cout << "\t A bad move will be kept at time step = " << m_TimeSteps[dom][k]*factor << std::endl << std::flush;
+
+                  // SHIREEN: for debugging
+                  //double old_new_dist = sqrt(pow(pt[0] - newpoint[0], 2.0) + pow(pt[1] - newpoint[1], 2.0) + pow(pt[2] - newpoint[2], 2.0));
+                  //std::cout << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << newpoint[0] << ", " << newpoint[1] << ", " <<  newpoint[2] << ", " << old_new_dist << ",\n " << std::flush;
                   }
                 }
               }

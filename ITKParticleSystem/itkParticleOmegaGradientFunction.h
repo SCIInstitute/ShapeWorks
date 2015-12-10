@@ -218,7 +218,9 @@ protected:
 
   std::vector<double> m_CurrentWeights;
     
-  
+  // SHIREEN
+  float m_MaxMoveFactor;
+  // end SHIREEN
 };
 
 } //end namespace

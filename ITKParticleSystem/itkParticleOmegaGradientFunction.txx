@@ -153,6 +153,10 @@ void
 ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate( unsigned int idx, unsigned int d, const ParticleSystemType* system )
 {
+    // SHIREEN
+    m_MaxMoveFactor = 0.1;
+    // END SHIREEN
+
     // Compute the neighborhood size and the optimal sigma.
     const double epsilon = 1.0e-6;
 
@@ -218,7 +222,10 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     // AKM : Cutting Plane Disabled
     /**/
     m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
-    m_CurrentWeights.push_back( 1.0 );
+    //m_CurrentWeights.push_back( 1.0 );
+    // SHIREEN
+    m_CurrentWeights.push_back( 0.3 );
+    // end SHIREEN
     /**/
 
     // Add the closest points on any spheres that are defined in the domain.
@@ -242,7 +249,10 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
         // AKM : Changed weight from 1.0 to 0.01
         //        m_CurrentWeights.push_back( 0.01 ); // PM
-        m_CurrentWeights.push_back(1.0);
+        //m_CurrentWeights.push_back(1.0);
+        // SHIREEN
+        m_CurrentWeights.push_back( 0.3 );
+        // end SHIREEN
     }
 
   
@@ -294,14 +304,20 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         // AKM : Cutting Plane Disabled
         /**/
         m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
-        m_CurrentWeights.push_back( 1.0 );
+        //m_CurrentWeights.push_back( 1.0 );
+        // SHIREEN
+        m_CurrentWeights.push_back( 0.3 );
+        // end SHIREEN
         /**/
         for ( unsigned int i = 0; i < spherepoints.size(); i++ )
         {
             m_CurrentNeighborhood.push_back( spherepoints[i] );
             // AKM : Changed weight from 1.0 to 0.01
             //            m_CurrentWeights.push_back( 0.01 ); // PM
-            m_CurrentWeights.push_back(1.0);
+            //m_CurrentWeights.push_back(1.0);
+            // SHIREEN
+            m_CurrentWeights.push_back( 0.3 );
+            // end SHIREEN
         }
 
         //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
@@ -323,14 +339,20 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         // AKM : Cutting Plane Disabled
         /**/
         m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
-        m_CurrentWeights.push_back( 1.0 );
+        //m_CurrentWeights.push_back( 1.0 );
+        // SHIREEN
+        m_CurrentWeights.push_back( 0.3 );
+        // end SHIREEN
         /**/
         for ( unsigned int i = 0; i < spherepoints.size(); i++ )
         {
             m_CurrentNeighborhood.push_back( spherepoints[i] );
             // AKM : Changed weight from 1.0 to 0.01
             //            m_CurrentWeights.push_back( 0.01 ); // PM
-            m_CurrentWeights.push_back(1.0);
+            //m_CurrentWeights.push_back(1.0);
+            // SHIREEN
+            m_CurrentWeights.push_back( 0.3 );
+            // end SHIREEN
         }
         //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
         //      this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
@@ -439,7 +461,11 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
     //    }
     //  else
     //    {
-    maxmove = ( m_CurrentSigma / m_avgKappa ) * 0.1;
+    //maxmove = ( m_CurrentSigma / m_avgKappa ) * 0.1;
+
+    // SHIREEN
+    maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
+    // END SHIREEN
     //    }
 
     energy = ( A * sigma2inv ) / m_avgKappa;

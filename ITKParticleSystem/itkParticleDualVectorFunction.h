@@ -125,9 +125,9 @@ public:
                     maxmove = maxA;
                 }
 
-                //                // SHIREEN
-                //                maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
-                //                // end SHIREEN
+                // SHIREEN
+                maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
+                // end SHIREEN
 
                 /* PRATEEP : Debug */
                 //#ifdef SW_WEIGH_SAMPLING_TERM
@@ -308,6 +308,10 @@ public:
                 energy = energyA + m_RelativeEnergyScaling * energyB;
                 //#endif
                 if (m_COn == true) energy += m_RelativeNormEnergyScaling * energyC;
+
+                // SHIREEN
+                maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
+                // end SHIREEN
 
                 //#ifdef SW_WEIGH_SAMPLING_TERM
                 //        predictedMove = ansB + m_RelativeGradientScaling * ansA;
