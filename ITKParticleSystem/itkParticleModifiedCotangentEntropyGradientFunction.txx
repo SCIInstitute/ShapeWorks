@@ -126,6 +126,10 @@ void
 ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
+    // Praful -- SHIREEN
+        m_MaxMoveFactor = 0.1;
+        // END Praful -- SHIREEN
+
     // Get the position for which we are computing the gradient.
     PointType pos = system->GetPosition(idx, d);
 
@@ -231,7 +235,12 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
     }
 
 
-    maxmove = m_GlobalSigma * 0.1;
+    //maxmove = m_GlobalSigma * 0.1;
+
+    // Praful -- SHIREEN
+    maxmove = m_GlobalSigma * m_MaxMoveFactor;
+    //end Praful -- SHIREEN
+
     energy  = prob_xi ;
 
     return gradE ;

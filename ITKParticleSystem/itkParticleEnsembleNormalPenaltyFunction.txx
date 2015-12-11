@@ -136,8 +136,8 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
 
     for (unsigned int n = 0; n < VDimension; n++)
     {
-        gradE_norm[n] = mean_normal[n] - posnormal[n];
-        //        gradE_norm[n] = mean_normal[n] * df_dn;
+        gradE_norm[n] = mean_normal[n] - posnormal[n]; //commented -- Praful Dec10
+//                gradE_norm[n] = mean_normal[n] * df_dn; //uncommented -- Praful Dec10
     }
 
     //    gradE_norm *= mat3x3 * normalPartialDerivatives;
@@ -146,8 +146,8 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
     energy = 0.0;
     for (unsigned int i = d % m_DomainsPerShape; i < system->GetNumberOfDomains(); i += m_DomainsPerShape)
     {
-        //        if(i != d)
-        //        {
+//                if(i != d) //uncommented -- Praful Dec10
+//                { //uncommented -- Praful Dec10
         domain = static_cast<const ParticleImageDomainWithGradients<float,VDimension> *>(system->GetDomain(i));
         PointType neighpos = system->GetTransformedPosition(idx, i);
         typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neighnormal = domain->SampleNormalVnl(neighpos);
@@ -157,10 +157,10 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
         {
             v_neighnormal[n] = (double) neighnormal[n];
         }
-        //            energy += f( dot_product( v_neighnormal, mean_normal ) );
-        vnl_vector<double> diff = mean_normal - v_neighnormal;
-        energy += diff.magnitude() * diff.magnitude();
-        //        }
+//                    energy += f( dot_product( v_neighnormal, mean_normal ) ); //uncommented -- Praful Dec10
+        vnl_vector<double> diff = mean_normal - v_neighnormal;  //commented -- Praful Dec10
+        energy += diff.magnitude() * diff.magnitude();  //commented -- Praful Dec10
+//                } //uncommented -- Praful Dec10
     }
 
     //    maxmove = domain->GetImage()->GetSpacing()[0];

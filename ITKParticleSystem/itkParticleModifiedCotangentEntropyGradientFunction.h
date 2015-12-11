@@ -216,7 +216,9 @@ protected:
     int m_RunStatus; // 1 for initialization and 2 for optimization
 
     double m_GlobalSigma;
-
+    // Praful -- SHIREEN
+      float m_MaxMoveFactor;
+      // end Praful -- SHIREEN
 };
 
 } //end namespace

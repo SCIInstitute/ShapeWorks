@@ -125,6 +125,10 @@ void
 ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
+    // Praful -- SHIREEN
+        m_MaxMoveFactor = 0.1;
+        // END Praful -- SHIREEN
+
     // Grab a pointer to the domain.  We need a Domain that has surface normal
     // information and a cutting plane
     const ParticleImplicitSurfaceDomain<TGradientNumericType, VDimension>* domain
@@ -281,7 +285,12 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
     }
 
 
-    maxmove = m_GlobalSigma * 0.1;
+    //maxmove = m_GlobalSigma * 0.1;
+
+    // Praful -- SHIREEN
+    maxmove = m_GlobalSigma * m_MaxMoveFactor;
+    //end Praful -- SHIREEN
+
     energy  = prob_xi ;
 
     return gradE ;
