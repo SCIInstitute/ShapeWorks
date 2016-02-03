@@ -248,7 +248,7 @@ ParticleSystem<VDimension>::SplitParticle(double epsilon, unsigned int idx, unsi
     PointType newpos;
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      newpos[i] = this->GetPosition(idx,domain)[i] + epsilon * random[i];
+      newpos[i] = this->GetPosition(idx,domain)[i] + 2 * epsilon * random[i];
       }
     this->GetDomain(domain)->ApplyConstraints(newpos);
     this->AddPosition(newpos, domain, threadId);
@@ -276,7 +276,7 @@ ParticleSystem<VDimension>::SplitAllParticlesInDomain(const vnl_vector_fixed<dou
     PointType newpos;
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      newpos[i] = (*it)[i] + epsilon * random[i];
+      newpos[i] = (*it)[i] + 2*epsilon * random[i];
       }
     this->GetDomain(domain)->ApplyConstraints(newpos);
     this->AddPosition(newpos, domain, threadId);
@@ -291,7 +291,7 @@ ParticleSystem<VDimension>::SplitAllParticles(double epsilon, int threadId)
     vnl_vector_fixed<double, VDimension> random;
 
     /* PRATEEP : fix direction for multiple runs. */
-    srand(1);
+    srand(2);
     
     for (unsigned int i = 0; i < VDimension; i++)
       {        random[i] = static_cast<double>(rand());        }
