@@ -291,7 +291,7 @@ ParticleSystem<VDimension>::SplitAllParticles(double epsilon, int threadId)
     vnl_vector_fixed<double, VDimension> random;
 
     /* PRATEEP : fix direction for multiple runs. */
-    srand(2);
+    srand(1);
     
     for (unsigned int i = 0; i < VDimension; i++)
       {        random[i] = static_cast<double>(rand());        }
