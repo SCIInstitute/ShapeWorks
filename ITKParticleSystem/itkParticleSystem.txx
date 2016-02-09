@@ -276,7 +276,7 @@ ParticleSystem<VDimension>::SplitAllParticlesInDomain(const vnl_vector_fixed<dou
     PointType newpos;
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      newpos[i] = (*it)[i] + 2*epsilon * random[i];
+      newpos[i] = (*it)[i] + epsilon * random[i];
       }
     this->GetDomain(domain)->ApplyConstraints(newpos);
     this->AddPosition(newpos, domain, threadId);
