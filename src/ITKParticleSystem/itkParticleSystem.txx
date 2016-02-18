@@ -233,6 +233,9 @@ ParticleSystem<VDimension>::SplitParticle(double epsilon, unsigned int idx, unsi
   // Find a random direction.
     vnl_vector_fixed<double, VDimension> random;
     
+    /* SHIREEN : fix direction to get repeatable results for multiple runs. */
+    srand(1);
+    
     for (unsigned int i = 0; i < VDimension; i++)
       {  random[i] = static_cast<double>(rand());  }
     double norm = random.magnitude();
@@ -286,6 +289,9 @@ ParticleSystem<VDimension>::SplitAllParticles(double epsilon, int threadId)
 {
     // Find a random direction.
     vnl_vector_fixed<double, VDimension> random;
+    
+    /* SHIREEN : fix direction to get repeatable results for multiple runs. */
+    srand(1);
     
     for (unsigned int i = 0; i < VDimension; i++)
       {        random[i] = static_cast<double>(rand());        }
