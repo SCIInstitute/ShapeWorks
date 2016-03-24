@@ -185,7 +185,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     /* always constrain points to be above cutting plane */
     //D = fabs(D);
     // SHIREEN
-    D = -fabs(D);
+    D = fabs(D); //- changed to plus PRAFUL March 23, 2016
     // end SHIREEN
     itk::Point<double, VDimension> planept;
     for ( unsigned int i = 0; i < VDimension; i++ )

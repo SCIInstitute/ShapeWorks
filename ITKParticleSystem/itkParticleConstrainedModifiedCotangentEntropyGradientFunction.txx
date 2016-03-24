@@ -127,6 +127,9 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
 {
     // Praful -- SHIREEN
         m_MaxMoveFactor = 0.1;
+//        std::cout<<"-------------------"<<std::endl;
+//        std::cout<<"maxmovefactor = "<<m_MaxMoveFactor<<std::endl;
+//        std::cout<<"-------------------"<<std::endl;
         // END Praful -- SHIREEN
 
     // Grab a pointer to the domain.  We need a Domain that has surface normal

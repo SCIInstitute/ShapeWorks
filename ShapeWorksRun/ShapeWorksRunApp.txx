@@ -168,10 +168,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
             this->WriteModes();
             if (m_use_regression == true) this->WriteParameters();
 
-            this->WritePointFiles();
-            this->WriteTransformFile();
-            this->WriteModes();
-            if (m_use_regression == true) this->WriteParameters();
+//            this->WritePointFiles();
+//            this->WriteTransformFile();
+//            this->WriteModes();
+//            if (m_use_regression == true) this->WriteParameters();
 
             if ( m_keep_checkpoints )
             {
@@ -269,6 +269,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
             for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
             {
+                std::cout<<"Reading inputfile: "<<shapeFiles[shapeCount].c_str()<<std::endl;
                 typename itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
                 reader->SetFileName(shapeFiles[shapeCount].c_str());
                 reader->UpdateLargestPossibleRegion();
@@ -642,7 +643,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
         ImageType::Pointer img = dynamic_cast<itk::ParticleImageDomain<float, 3> *>(
                     m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage();
 
-        /*
+
         // first attempt to find the surface moving from the center out in the y direction
         ImageType::IndexType center;
         center[0] = img->GetLargestPossibleRegion().GetSize()[0] / 2;
@@ -660,7 +661,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
             }
             center[1]--;
         }
-        */
+
 
         // couldn't find it, try the old method
         itk::ZeroCrossingImageFilter<ImageType, ImageType>::Pointer zc =
