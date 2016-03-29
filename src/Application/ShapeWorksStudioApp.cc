@@ -282,7 +282,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->ui_->action_analysis_mode->setChecked(false);
   this->project_->set_tool_state( Project::DATA_C );
   this->ui_->stacked_widget->setCurrentWidget( this->ui_->import_page );
-  this->ui_->controlsDockWidget_2->setCaption("Data");
+  this->ui_->controlsDockWidget_2->setWindowTitle("Data");
 }
 
 //---------------------------------------------------------------------------
@@ -559,7 +559,7 @@ void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
   this->project_->set_tool_state( Project::GROOM_C );
   this->ui_->stacked_widget->setCurrentWidget( this->groom_tool_.data() );
-  this->ui_->controlsDockWidget_2->setCaption("Groom");
+  this->ui_->controlsDockWidget_2->setWindowTitle("Groom");
 }
 
 //---------------------------------------------------------------------------
@@ -567,7 +567,7 @@ void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
   this->project_->set_tool_state( Project::DATA_C );
   this->ui_->stacked_widget->setCurrentIndex( 0 );
-  this->ui_->controlsDockWidget_2->setCaption("Data");
+  this->ui_->controlsDockWidget_2->setWindowTitle("Data");
 }
 
 //---------------------------------------------------------------------------
@@ -575,7 +575,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
   this->project_->set_tool_state( Project::OPTIMIZE_C );
   this->ui_->stacked_widget->setCurrentWidget( this->optimize_tool_.data() );
-  this->ui_->controlsDockWidget_2->setCaption("Optimize");
+  this->ui_->controlsDockWidget_2->setWindowTitle("Optimize");
 }
 
 //---------------------------------------------------------------------------
@@ -583,7 +583,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
   this->project_->set_tool_state( Project::ANALYSIS_C );
   this->ui_->stacked_widget->setCurrentWidget( this->analysis_tool_.data() );
-  this->ui_->controlsDockWidget_2->setCaption("Analysis");
+  this->ui_->controlsDockWidget_2->setWindowTitle("Analysis");
 }
 
 //---------------------------------------------------------------------------

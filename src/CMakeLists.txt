@@ -2,7 +2,6 @@ PROJECT( ShapeWorksStudio )
 
 cmake_minimum_required(VERSION 2.8)  
 
-
 ###########################################
 # Flags for Microsoft Compiler
 ###########################################
@@ -19,30 +18,11 @@ IF (WIN32 AND MSVC)
   SET(CMAKE_CXX_FLAGS "/Oi ${CMAKE_CXX_FLAGS} /MP4")
 ENDIF (WIN32 AND MSVC)
 
-
-#Match everything when analyzing dependencies
-INCLUDE_REGULAR_EXPRESSION("^.*$")
-OPTION (BUILD_SHARED_LIBS "Build shared libraries" OFF)
-OPTION (BUILD_TESTS "Build ShapeWorksStudio test applications." ON)
-OPTION (INSTALL_TEST_FILES "Include ShapeWorksStudio test images and help files in the install." OFF)
-OPTION (INSTALL_SOURCE  "Install ShapeWorksStudio source code." OFF)
-OPTION (USE_PRECOMPILED_HEADERS "Use precompiled headers to speed up compilation" ON)
-
-OPTION (LOAD_DEFAULT_PROJECT "Load default project" OFF)
-
-MESSAGE(STATUS "** PRECOMPILED_HEADERS: ${USE_PRECOMPILED_HEADERS}")
-
 set(CMAKE_BUILD_TYPE Release)
 
-IF(LOAD_DEFAULT_PROJECT)
-  ADD_DEFINITIONS(-DLOAD_DEFAULT_PROJECT)
-ENDIF(LOAD_DEFAULT_PROJECT)
-
-IF (WIN32 AND MSVC)
-  ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
-  ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
-ENDIF (WIN32 AND MSVC)
-
+#--------------------------------------------------------------------------------
+# ITK, VTK, Qt5
+#--------------------------------------------------------------------------------
 FIND_PACKAGE(VTK COMPONENTS
   vtkCommonCore
   vtkInfovisCore
@@ -55,326 +35,63 @@ FIND_PACKAGE(VTK COMPONENTS
 
 INCLUDE( ${VTK_USE_FILE} )
 MESSAGE(STATUS "** VTK_DIR: ${VTK_DIR}")
-#MESSAGE(STATUS "** VTK_LIBRARIES: ${VTK_LIBRARIES}")
 
 FIND_PACKAGE(ITK REQUIRED)
 IF (ITK_FOUND)
   INCLUDE (${ITK_USE_FILE})
 ENDIF(ITK_FOUND)
 MESSAGE(STATUS "** ITK_DIR: ${ITK_DIR}")
-#MESSAGE(STATUS "** ITK_LIBRARIES: ${ITK_LIBRARIES}")
 
-#set( Boost_DEBUG TRUE )
-#SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/usr/local/include/boost")
-#SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/usr/local/lib")
-#set( Boost_USE_STATIC_LIBS ON )
-#FIND_PACKAGE(Boost REQUIRED COMPONENTS system filesystem thread)
-#link_directories ( ${Boost_LIBRARY_DIRS} )
-#include_directories ( ${Boost_INCLUDE_DIRS} )
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set (CMAKE_AUTOMOC ON)
+# Find QT5
 
-#MESSAGE(STATUS "** Boost Include: ${Boost_INCLUDE_DIR}")
-#MESSAGE(STATUS "** Boost Libraries: ${Boost_LIBRARY_DIRS}")
-#MESSAGE(STATUS "** Boost Libraries: ${Boost_LIBRARIES}")
+find_package(OpenGL REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5OpenGL REQUIRED)
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
 
-SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+cmake_policy(SET CMP0020 NEW)
 
-#ADD_DEFINITIONS( -Wall )
+#headers
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+include_directories(${Qt5OpenGL_INCLUDE_DIRS})
+include_directories(${Qt5Core_INCLUDE_DIRS})
+include_directories(${Qt5Gui_INCLUDE_DIRS})
 
-# by default only QtCore and QtGui modules are enabled
-# other modules must be enabled like this:
-SET( QT_USE_QT3SUPPORT TRUE )   
-SET( QT_USE_QTXML TRUE )
-SET( QT_USE_QTSVG TRUE )
+#defines
+add_definitions(${Qt5Widgets_DEFINITIONS})
+add_definitions(${Qt5OpenGL_DEFINITIONS})
+add_definitions(${Qt5Core_DEFINITIONS})
+add_definitions(${Qt5Gui_DEFINITIONS})
+
+get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
+get_target_property(QtGui_location Qt5::Gui LOCATION)
+get_target_property(QtCore_location Qt5::Core LOCATION)
+get_target_property(QtOpenGL_location Qt5::OpenGL LOCATION)
+
+if (NOT WIN32)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+endif()
+
+FILE(GLOB STUDIO_UI  */*.ui)
+QT5_WRAP_UI(UI_SRC ${STUDIO_UI})
 
 #--------------------------------------------------------------------------------
-# This sets the windows build that will need the special winmain@16 call. Qt provides
-#  this for us in the qtmain.lib file. Using this cmake code will ensure we have it
-#  linked into our build. Not needed on Unix/OS X/Linux which is why we have the 
-#  IF(WIN32) conditional.
-IF (WIN32)
-    SET (QT_USE_QTMAIN TRUE)
-ENDIF (WIN32)
-
-# this command finds Qt4 libraries and sets all required variables
-# note that it's Qt4, not QT4 or qt4
-SET(QT_MIN_VERSION "4.7.4")
-FIND_PACKAGE( Qt4 REQUIRED )
-
-# add some useful macros and variables
-# (QT_USE_FILE is a variable defined by FIND_PACKAGE( Qt4 ) that contains a path to CMake script)
-INCLUDE( ${QT_USE_FILE} )
-
-MESSAGE(STATUS "** QT_QMAKE_EXECUTABLE: ${QT_QMAKE_EXECUTABLE}")
-
-# Instructs the MSVC toolset to use the precompiled header PRECOMPILED_HEADER
-# for each source file given in the collection named by SOURCES.
-function(enable_precompiled_headers PRECOMPILED_HEADER SOURCES)
-  if(MSVC)
-    set(files ${${SOURCES}})
-
-    get_filename_component(pch_basename ${PRECOMPILED_HEADER} NAME_WE)
-    set(pch_header ${CMAKE_CURRENT_SOURCE_DIR}/${PRECOMPILED_HEADER})
-    set(pch_file ${CMAKE_CURRENT_BINARY_DIR}/${pch_basename}.cc)
-    set_source_files_properties(${pch_file}  PROPERTIES COMPILE_FLAGS "/Yc\"${pch_header}\"")
-
-    # Generate precompiled header translation unit
-    IF(NOT EXISTS "${pch_file}")
-      FILE(WRITE ${pch_file} "// Precompiled header unity generated by CMake\n")
-      FILE(APPEND ${pch_file} "#include <${pch_header}>\n")
-    ENDIF(NOT EXISTS "${pch_file}")
-
-    # Update properties of source files to use the precompiled header.
-    # Additionally, force the inclusion of the precompiled header at beginning of each source file.
-    foreach(source_file ${files} )
-      get_filename_component(extension ${source_file} EXT)
-      if ("${extension}" STREQUAL ".cc")
-#        message ("Setting property on ${source_file}")
-        set_source_files_properties(
-          ${source_file}
-          PROPERTIES COMPILE_FLAGS
-          "/Yu\"${pch_header}\" /FI\"${pch_header}\""
-          )
-      endif("${extension}" STREQUAL ".cc")
-      if ("${extension}" STREQUAL ".cxx")
-#        message ("setting property on ${source_file}")
-        set_source_files_properties(
-          ${source_file}
-          PROPERTIES COMPILE_FLAGS
-          "/Yu\"${pch_header}\" /FI\"${pch_header}\""
-          )
-      endif("${extension}" STREQUAL ".cxx")
-    endforeach(source_file)
-
-    # Finally, update the source file collection to contain the precompiled header translation unit
-    set(${SOURCES} ${pch_file} ${${SOURCES}} PARENT_SCOPE)
-  endif(MSVC)
-endfunction(enable_precompiled_headers)
-
-
-
 ### Application
-SET(STUDIO_APPLICATION_HDRS
-  Application/ShapeWorksStudioApp.h
-  Application/Preferences.h
-  Application/PreferencesWindow.h
-  Application/ShapeworksWorker.h
-)
-SET(STUDIO_APPLICATION_SRCS
-  Application/ShapeWorksStudioApp.cc
-  Application/Preferences.cc
-  Application/PreferencesWindow.cc
-  Application/ShapeworksWorker.cc
-)
-SET(STUDIO_APPLICATION_UIS
-  Application/ShapeWorksStudioApp.ui
-  Application/PreferencesWindow.ui
-)
+#--------------------------------------------------------------------------------
 
-### Data
-SET(STUDIO_DATA_HDRS
-  Data/Mesh.h
-  Data/Shape.h
-  Data/ItkToVtk.h
-  Data/Project.h
-  Data/MeshManager.h
-  Data/MeshGenerator.h
-  Data/MeshSettings.h
-  Data/MeshWorkQueue.h
-  Data/MeshWorker.h
-  Data/MeshCache.h
-)
-SET(STUDIO_DATA_SRCS
-  Data/Mesh.cc
-  Data/Shape.cc
-  Data/Project.cc
-  Data/MeshManager.cc
-  Data/MeshGenerator.cc
-  Data/MeshSettings.cc
-  Data/MeshWorkQueue.cc
-  Data/MeshWorker.cc
-  Data/MeshCache.cc
-)
+FILE(GLOB STUDIO_SRCS */*.cc */*.cpp)
+FILE(GLOB STUDIO_HDRS */*.h)
 
-### Groom
-SET(STUDIO_GROOM_HDRS
-  Groom/GroomTool.h
-)
-SET(STUDIO_GROOM_SRCS
-  Groom/GroomTool.cc
-)
-SET(STUDIO_GROOM_UIS
-  Groom/GroomTool.ui
-)
-
-### Optimize
-SET(STUDIO_OPTIMIZE_HDRS
-  Optimize/OptimizeTool.h
-)
-SET(STUDIO_OPTIMIZE_SRCS
-  Optimize/OptimizeTool.cc
-)
-SET(STUDIO_OPTIMIZE_UIS
-  Optimize/OptimizeTool.ui
-)
-
-### Analyis
-SET(STUDIO_ANALYSIS_HDRS
-  Analysis/AnalysisTool.h
-  Analysis/itkParticleShapeStatistics.h
-  Analysis/itkParticleShapeStatistics.txx
-  Analysis/bargraph.h
-)
-SET(STUDIO_ANALYSIS_SRCS
-  Analysis/AnalysisTool.cc
-  Analysis/bargraph.cpp
-)
-SET(STUDIO_ANALYSIS_UIS
-  Analysis/AnalysisTool.ui
-)
-
-### Visualization
-SET(STUDIO_VISUALIZATION_HDRS
-  Visualization/Lightbox.h
-  Visualization/Viewer.h
-  Visualization/Visualizer.h
-  Visualization/DisplayObject.h
-  Visualization/StudioInteractorStyle.h
-)
-SET(STUDIO_VISUALIZATION_SRCS
-  Visualization/Lightbox.cc
-  Visualization/Viewer.cc
-  Visualization/Visualizer.cc
-  Visualization/DisplayObject.cc
-  Visualization/StudioInteractorStyle.cc
-)
-
-### Util
-SET(STUDIO_UTIL_HDRS
-  Util/WheelEventForwarder.h
-  )
-SET(STUDIO_UTIL_SRCS
-  Util/WheelEventForwarder.cc
-  )
-
-### TinyXML
-SET (TINYXML_SRCS
-  TinyXML/tinystr.cpp
-  TinyXML/tinyxml.cpp
-  TinyXML/tinyxmlparser.cpp
-  TinyXML/tinyxmlerror.cpp
-)
-SET (TINYXML_HDRS
-  TinyXML/tinystr.h
-  TinyXML/tinyxml.h
-)
-
-
-### Studio
-SET( STUDIO_SRCS
-     main.cc
-     ${STUDIO_APPLICATION_SRCS}
-     ${STUDIO_DATA_SRCS}
-     ${STUDIO_GROOM_SRCS}
-     ${STUDIO_OPTIMIZE_SRCS}
-     ${STUDIO_ANALYSIS_SRCS}
-     ${STUDIO_VISUALIZATION_SRCS}
-     ${STUDIO_UTIL_SRCS}
-     ${TINYXML_SRCS}
-)
-
-SET( STUDIO_HDRS
-     ${STUDIO_APPLICATION_HDRS}
-     ${STUDIO_DATA_HDRS}
-     ${STUDIO_GROOM_HDRS}
-     ${STUDIO_OPTIMIZE_HDRS}
-     ${STUDIO_ANALYSIS_HDRS}
-     ${STUDIO_VISUALIZATION_HDRS}
-     ${STUDIO_UTIL_HDRS}
-     ${TINYXML_HDRS}
-)
-
-SET( STUDIO_MOC_HDRS
-     Groom/GroomTool.h
-     Optimize/OptimizeTool.h
-     Analysis/AnalysisTool.h
-     Analysis/bargraph.h
-     Data/Project.h
-     Data/MeshManager.h
-     Data/MeshWorker.h
-     Application/ShapeworksWorker.h
-     Application/Preferences.h
-     Visualization/Visualizer.h
-     Visualization/Lightbox.h
-     Util/WheelEventForwarder.h
-)
-
-SET( STUDIO_RCS
-     Resources/ShapeWorksStudio.qrc
-)
-
-SOURCE_GROUP("Application" FILES ${STUDIO_APPLICATION_SRCS} ${STUDIO_APPLICATION_HDRS} ${STUDIO_APPLICATION_UIS})
-SOURCE_GROUP("Visualization" FILES ${STUDIO_VISUALIZATION_SRCS} ${STUDIO_VISUALIZATION_HDRS})
-SOURCE_GROUP("Data" FILES ${STUDIO_DATA_SRCS} ${STUDIO_DATA_HDRS})
-SOURCE_GROUP("Groom" FILES ${STUDIO_GROOM_SRCS} ${STUDIO_GROOM_HDRS} ${STUDIO_GROOM_UIS})
-SOURCE_GROUP("Optimize" FILES ${STUDIO_OPTIMIZE_SRCS} ${STUDIO_OPTIMIZE_HDRS} ${STUDIO_OPTIMIZE_UIS})
-SOURCE_GROUP("Analysis" FILES ${STUDIO_ANALYSIS_SRCS} ${STUDIO_ANALYSIS_HDRS} ${STUDIO_ANALYSIS_UIS})
-SOURCE_GROUP("TinyXML" FILES ${TINYXML_SRCS} ${TINYXML_HRDS})
-
-# this command will generate rules that will run rcc on all files from STUDIO_RCS
-# in result STUDIO_RC_SRCS variable will contain paths to files produced by rcc
-QT4_ADD_RESOURCES( STUDIO_RC_SRCS ${STUDIO_RCS} )
-
-# this will run uic on .ui files:
-QT4_WRAP_UI( STUDIO_UI_HDRS ${STUDIO_APPLICATION_UIS} 
-  ${STUDIO_GROOM_UIS}
-  ${STUDIO_OPTIMIZE_UIS} 
-  ${STUDIO_ANALYSIS_UIS} 
-)
-
-# and finally this will run moc:
-QT4_WRAP_CPP( STUDIO_MOC_SRCS ${STUDIO_APPLICATION_HDRS} ${STUDIO_MOC_HDRS} )
-
-
-# Turn on precompiled headers
-IF(USE_PRECOMPILED_HEADERS)
-  enable_precompiled_headers(PrefixHeader.h STUDIO_SRCS)
-  enable_precompiled_headers(PrefixHeader.h STUDIO_MOC_SRCS)
-ENDIF(USE_PRECOMPILED_HEADERS)
-
+SET(STUDIO_RCS Resources/ShapeWorksStudio.qrc)
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)
 INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR} )
 #INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
-
-
-# optionally build the test files
-IF ( BUILD_TESTS )
-
-  INCLUDE(CTest)
-  ENABLE_TESTING()
-
-  # ADD_TEST(QuantTest QuantTest "${CMAKE_CURRENT_SOURCE_DIR}")
-  # ADD_EXECUTABLE(QuantTest test/quanttest.cc)
-  # TARGET_LINK_LIBRARIES(QuantTest ${ITK_LIBRARIES})
-
-  # ADD_TEST(HistTestNormal HistTestNormal "${CMAKE_CURRENT_SOURCE_DIR}")
-  # ADD_EXECUTABLE(HistTestNormal test/histtest_normal.cc)
-  # TARGET_LINK_LIBRARIES(HistTestNormal ${ITK_LIBRARIES})
-
-  # ADD_TEST(HistTestMasked HistTestMasked "${CMAKE_CURRENT_SOURCE_DIR}")
-  # ADD_EXECUTABLE(HistTestMasked test/histtest_masked.cc)
-  # TARGET_LINK_LIBRARIES(HistTestMasked ${ITK_LIBRARIES})
-
-  # ADD_TEST(HistTestThresholded HistTestThresholded "${CMAKE_CURRENT_SOURCE_DIR}")
-  # ADD_EXECUTABLE(HistTestThresholded test/histtest_thresholded.cc)
-  # TARGET_LINK_LIBRARIES(HistTestThresholded ${ITK_LIBRARIES})
-
-  # ADD_TEST(HistTestMaskedThresholded HistTestMaskedThresholded "${CMAKE_CURRENT_SOURCE_DIR}")
-  # ADD_EXECUTABLE(HistTestMaskedThresholded test/histtest_masked_thresholded.cc)
-  # TARGET_LINK_LIBRARIES(HistTestMaskedThresholded ${ITK_LIBRARIES})
-
-ENDIF(BUILD_TESTS)
 
 # For Apple set the icns file containing icons
 IF(APPLE)
@@ -390,30 +107,32 @@ ENDIF(APPLE)
 #  SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.rc)
 #ENDIF(WIN32)
 
-if(MSVC)
-  SOURCE_GROUP(moc_sources FILES ${STUDIO_MOC_SRCS})
-endif(MSVC)
-
 # here we instruct CMake to build STUDIO executable from all of the source files
 ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE WIN32 
   ${STUDIO_SRCS}
   ${STUDIO_HDRS}
-  ${STUDIO_MOC_SRCS} 
-  ${STUDIO_RC_SRCS} 
-  ${STUDIO_UI_HDRS} 
-  ${STUDIO_MOC_HDRS}
+  ${STUDIO_UI} 
   )
 
 TARGET_LINK_LIBRARIES( ShapeWorksStudio
-  ${QT_LIBRARIES} 
   ${ITK_LIBRARIES}
   ${Boost_THREAD_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
   ${Boost_FILESYSTEM_LIBRARY}
   ${VTK_LIBRARIES} 
+  ${OPENGL_LIBRARIES}
+  Qt5::Widgets
+  Qt5::OpenGL
+  Qt5::Core
+  Qt5::Gui
+  Qt5::WinMain
   )
+
+#--------------------------------------------------------------------------------
+### Remove Below Section Eventually
+#--------------------------------------------------------------------------------
   
-# we need to have the shapeworks command line tools for studio to work.
+# we need to have the shapeworks command line tools for studio to work. TODO --- REPLACE WITH NEW LIBRARY!
 find_file(ShapeworksCLT_BINARY_DIR
   NAMES
   shapeworks
@@ -468,7 +187,9 @@ else()
   endif()
 endif()
 
+#--------------------------------------------------------------------------------
 # INSTALLATION AND PACKAGING
+#--------------------------------------------------------------------------------
 SET(plugin_dest_dir bin)
 SET(qtconf_dest_dir bin)
 SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio")
@@ -482,9 +203,6 @@ IF(WIN32)
   SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.exe")
 ENDIF(WIN32)
 
-
-
-#--------------------------------------------------------------------------------
 # Install the STUDIO application, on Apple, the bundle is at the root of the
 # install tree, and on other platforms it'll go into the bin directory.
 INSTALL(TARGETS ShapeWorksStudio
@@ -492,28 +210,21 @@ INSTALL(TARGETS ShapeWorksStudio
     RUNTIME DESTINATION bin COMPONENT Runtime
     )
 
-#--------------------------------------------------------------------------------
 # Install needed Qt plugins by copying directories from the qt installation
 # One can cull what gets copied by using 'REGEX "..." EXCLUDE'
 INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
 
-#--------------------------------------------------------------------------------
 # Install needed Qt .nib files and others
 IF(APPLE)
 INSTALL(DIRECTORY "${QT_QTGUI_LIBRARY_RELEASE}/Versions/Current/Resources" DESTINATION ${contents_dest_dir} COMPONENT Runtime)
 ENDIF(APPLE)
 
-
-
-#--------------------------------------------------------------------------------
 # install a qt.conf file
 # this inserts some cmake code into the install script to write the file
 INSTALL(CODE "
     file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")
     " COMPONENT Runtime)
-
-
-#--------------------------------------------------------------------------------
+	
 # Use BundleUtilities to get all other dependencies for the application to work.
 # It takes a bundle or executable along with possible plugins and inspects it
 # for dependencies.  If they are not system dependencies, they are copied.
@@ -532,75 +243,18 @@ INSTALL(CODE "
     include(BundleUtilities)
     fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${DIRS}\")
     " COMPONENT Runtime)
-
-
+	
 # To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
 # where CPackConfig.cmake is created by including CPack
 # And then there's ways to customize this as well
 set(CPACK_BINARY_DRAGNDROP ON)
 include(CPack)
 
-
-# Grab the source code files for installation
-#IF(INSTALL_SOURCE)
-# FILE(GLOB root_files "*.h" "*.txx" "*.cxx" "*.txt")
-# INSTALL(FILES ${root_files}          DESTINATION source)
-# FILE(GLOB test_files "test/*.h" "test/*.txx" "test/*.cxx" "test/*.txt")
-# INSTALL(FILES ${test_files}          DESTINATION source/test)
-#ENDIF(INSTALL_SOURCE)
-
 INSTALL(FILES README.txt DESTINATION .)
 
-# Install test images and help files in the bin directory
-#IF (INSTALL_TEST_FILES)
-#  SET(TEST_DATA   
-#  list of files here ...
-# )
-#  INSTALL(FILES ${TEST_DATA} DESTINATION bin)
-#ENDIF(INSTALL_TEST_FILES)
-
-
-
-# Install the necessary shared ITK Dlls
-# TODO: Assumes the install or package is a Release build.  Need to add logic
-# to find debug vs shared builds and switch on Mac or Windows.s 
-#IF (BUILD_SHARED_LIBS)
-#  INSTALL(FILES ${ITK_LIBRARY_DIRS}/Release/ITKCommon.dll DESTINATION bin)
-#  INSTALL(FILES ${ITK_LIBRARY_DIRS}/Debug/ITKCommon.dll DESTINATION bin)
-#ENDIF(BUILD_SHARED_LIBS)
-
-
-# CPACK CONFIGURATION
-#INCLUDE(InstallRequiredSystemLibraries)
-
-#SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ShapeWorksStudio Research Sandbox")
-#SET(CPACK_PACKAGE_VENDOR "CARMA Center Image Processing Division")
-#SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/PackageDescription.txt")
-#SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
-#SET(CPACK_PACKAGE_VERSION_MAJOR "0")
-#SET(CPACK_PACKAGE_VERSION_MINOR "1")
-#SET(CPACK_PACKAGE_VERSION_PATCH "0")
-#SET(CPACK_PACKAGE_INSTALL_DIRECTORY "ShapeWorksStudio ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PA#CKAGE_VERSION_PATCH}")
-#IF(WIN32 AND NOT UNIX)
-#  # There is a bug in NSI that does not handle full unix paths properly. Make
-#  # sure there is at least one set of four (4) backlashes.
-#  #  SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-#  #  SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\MyExecutable.exe")
-#  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} ShapeWorksStudio Research Sandbox")
-#  #  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.my-project-home-page.org")
-#  #  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.my-personal-home-page.com")
-#  #  SET(CPACK_NSIS_CONTACT "me@my-personal-home-page.com")
-#  SET(CPACK_NSIS_MODIFY_PATH ON)
-#ELSE(WIN32 AND NOT UNIX)
-#  #  SET(CPACK_STRIP_FILES "bin/MyExecutable")
-#    SET(CPACK_SOURCE_STRIP_FILES "")
-#ENDIF(WIN32 AND NOT UNIX)
-
-#SET(CPACK_PACKAGE_EXECUTABLES )
-#INCLUDE(CPack)
-
-
+#--------------------------------------------------------------------------------
 #-- Add an Option to toggle the generation of the API documentation
+#--------------------------------------------------------------------------------
 option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 if(BUILD_DOCUMENTATION)
   FIND_PACKAGE(Doxygen)

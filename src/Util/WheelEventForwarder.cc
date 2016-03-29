@@ -1,7 +1,7 @@
 #include <Util/WheelEventForwarder.h>
 #include <QScrollBar>
-#include <QtCore/QEvent>
-#include <QtGui/QApplication>
+#include <QEvent>
+#include <QApplication>
 
 WheelEventForwarder::WheelEventForwarder( QScrollBar* target ) :
   QObject(),

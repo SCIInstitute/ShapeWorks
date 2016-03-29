@@ -22,7 +22,7 @@ PreferencesWindow::PreferencesWindow( QWidget* parent, Preferences& prefs ) : pr
   this->ui_->num_threads_max_label->setText( QString::number( QThread::idealThreadCount() ) );
 
   QPushButton* reset_button = this->ui_->button_box->button( QDialogButtonBox::RestoreDefaults );
-  QObject::connect( reset_button, SIGNAL( clicked() ), this, SLOT( restore_defaults() ) );
+  QObject::connect( reinterpret_cast<QObject*>(reset_button), SIGNAL( clicked() ), this, SLOT( restore_defaults() ) );
 
 }
 
