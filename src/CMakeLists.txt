@@ -83,7 +83,7 @@ QT5_WRAP_UI(UI_SRC ${STUDIO_UI})
 ### Application
 #--------------------------------------------------------------------------------
 
-FILE(GLOB STUDIO_SRCS */*.cc */*.cpp)
+FILE(GLOB STUDIO_SRCS *.cc */*.cc */*.cpp)
 FILE(GLOB STUDIO_HDRS */*.h)
 
 SET(STUDIO_RCS Resources/ShapeWorksStudio.qrc)
