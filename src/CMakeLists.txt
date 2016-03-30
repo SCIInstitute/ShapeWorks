@@ -18,7 +18,7 @@ IF (WIN32 AND MSVC)
   SET(CMAKE_CXX_FLAGS "/Oi ${CMAKE_CXX_FLAGS} /MP4")
 ENDIF (WIN32 AND MSVC)
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 #--------------------------------------------------------------------------------
 # ITK, VTK, Qt5
@@ -36,7 +36,7 @@ FIND_PACKAGE(VTK COMPONENTS
 INCLUDE( ${VTK_USE_FILE} )
 MESSAGE(STATUS "** VTK_DIR: ${VTK_DIR}")
 
-FIND_PACKAGE(ITK REQUIRED)
+FIND_PACKAGE(ITK COMPONENTS ITKParticleShapeModeling ITKVTK REQUIRED)
 IF (ITK_FOUND)
   INCLUDE (${ITK_USE_FILE})
 ENDIF(ITK_FOUND)
@@ -78,6 +78,8 @@ endif()
 
 FILE(GLOB STUDIO_UI  */*.ui)
 QT5_WRAP_UI(UI_SRC ${STUDIO_UI})
+FILE(GLOB UI_RESOURCES_RCC Resources/*.qrc)
+QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 
 #--------------------------------------------------------------------------------
 ### Application
@@ -85,8 +87,10 @@ QT5_WRAP_UI(UI_SRC ${STUDIO_UI})
 
 FILE(GLOB STUDIO_SRCS *.cc */*.cc */*.cpp)
 FILE(GLOB STUDIO_HDRS */*.h)
+FILE(GLOB STUDIO_ICNS Resources/Images/*.ico)
 
-SET(STUDIO_RCS Resources/ShapeWorksStudio.qrc)
+add_definitions(-DICON_FILE="${STUDIO_ICNS}")
+add_definitions(-DRSCS_FILE="${STUDIO_RSCS}")
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)
@@ -101,17 +105,17 @@ IF(APPLE)
   SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   # include the icns file in the target
   SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns)
+ELSEIF(WIN32)
+  SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.rc)
 ENDIF(APPLE)
-
-#IF(WIN32)
-#  SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.rc)
-#ENDIF(WIN32)
 
 # here we instruct CMake to build STUDIO executable from all of the source files
 ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE WIN32 
   ${STUDIO_SRCS}
   ${STUDIO_HDRS}
   ${STUDIO_UI} 
+  ${STUDIO_ICNS} 
+  ${STUDIO_RSCS} 
   )
 
 TARGET_LINK_LIBRARIES( ShapeWorksStudio
@@ -126,149 +130,5 @@ TARGET_LINK_LIBRARIES( ShapeWorksStudio
   Qt5::Core
   Qt5::Gui
   Qt5::WinMain
+  ${itkParticleShapeModelingLib}
   )
-
-#--------------------------------------------------------------------------------
-### Remove Below Section Eventually
-#--------------------------------------------------------------------------------
-  
-# we need to have the shapeworks command line tools for studio to work. TODO --- REPLACE WITH NEW LIBRARY!
-find_file(ShapeworksCLT_BINARY_DIR
-  NAMES
-  shapeworks
-  shapeworks/bin
-  shapeworks/build/bin
-  shapeworks/build/bin/Release
-  PATHS
-  $ENV{HOME}
-  "C:/"
-  $ENV{HOME}/Documents
-  )
-SET(required_deps
-  ShapeWorksGroom
-  ShapeWorksRun
-  )
-foreach (file ${required_deps})
-  find_file(${file}-dependency
-    NAMES
-    ${file}
-    ${file}.exe
-    PATHS
-    ${ShapeworksCLT_BINARY_DIR}
-    NO_DEFAULT_PATH
-    )
-  if (${${file}-dependency} MATCHES "${file}-dependency-NOTFOUND")
-    set(ShapeworksCLT_BINARY_DIR "ShapeworksCLT_BINARY_DIR-NOTFOUND" CACHE PATH "Shapeworks command line tools binary directory" FORCE)
-  endif()
-  unset(${file}-dependency CACHE)
-endforeach()
-
-if (${ShapeworksCLT_BINARY_DIR} MATCHES "ShapeworksCLT_BINARY_DIR-NOTFOUND")
-  message(ERROR " Shapeworks command line tools binary directory not found. Set ShapeworksCLT_BINARY_DIR in CMake.")
-else()
-  #copy the binaries from ShapeworksCLT to Cleaver binary dir
-  message(STATUS "ShapeworksCLT found at: ${ShapeworksCLT_BINARY_DIR}")
-  FILE(GLOB SHAPEWORKS_DEPS
-    ${ShapeworksCLT_BINARY_DIR}/ShapeWorksGroom*
-    ${ShapeworksCLT_BINARY_DIR}/ShapeWorksRun*
-    )
-  foreach(file ${SHAPEWORKS_DEPS})
-		add_custom_command(TARGET ShapeWorksStudio POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy ${file} 
-				   $<TARGET_FILE_DIR:ShapeWorksStudio>)
-  endforeach()
-  # platform specific filenames
-  if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    add_definitions(-DGROOM_EXECUTABLE="ShapeWorksGroom.exe")
-    add_definitions(-DOPTIMIZE_EXECUTABLE="ShapeWorksRun.exe")
-  else()
-    add_definitions(-DGROOM_EXECUTABLE="ShapeWorksGroom")
-    add_definitions(-DOPTIMIZE_EXECUTABLE="ShapeWorksRun")
-  endif()
-endif()
-
-#--------------------------------------------------------------------------------
-# INSTALLATION AND PACKAGING
-#--------------------------------------------------------------------------------
-SET(plugin_dest_dir bin)
-SET(qtconf_dest_dir bin)
-SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio")
-IF(APPLE)
-  SET(plugin_dest_dir ShapeWorksStudio.app/Contents/MacOS)
-  SET(qtconf_dest_dir ShapeWorksStudio.app/Contents/Resources)
-  SET(contents_dest_dir ShapeWorksStudio.app/Contents)
-  SET(APPS "\${CMAKE_INSTALL_PREFIX}/ShapeWorksStudio.app")
-ENDIF(APPLE)
-IF(WIN32)
-  SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.exe")
-ENDIF(WIN32)
-
-# Install the STUDIO application, on Apple, the bundle is at the root of the
-# install tree, and on other platforms it'll go into the bin directory.
-INSTALL(TARGETS ShapeWorksStudio
-    BUNDLE DESTINATION . COMPONENT Runtime
-    RUNTIME DESTINATION bin COMPONENT Runtime
-    )
-
-# Install needed Qt plugins by copying directories from the qt installation
-# One can cull what gets copied by using 'REGEX "..." EXCLUDE'
-INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
-
-# Install needed Qt .nib files and others
-IF(APPLE)
-INSTALL(DIRECTORY "${QT_QTGUI_LIBRARY_RELEASE}/Versions/Current/Resources" DESTINATION ${contents_dest_dir} COMPONENT Runtime)
-ENDIF(APPLE)
-
-# install a qt.conf file
-# this inserts some cmake code into the install script to write the file
-INSTALL(CODE "
-    file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")
-    " COMPONENT Runtime)
-	
-# Use BundleUtilities to get all other dependencies for the application to work.
-# It takes a bundle or executable along with possible plugins and inspects it
-# for dependencies.  If they are not system dependencies, they are copied.
-
-# directories to look for dependencies
-SET(DIRS ${QT_LIBRARY_DIRS})
-
-# Now the work of copying dependencies into the bundle/package
-# The quotes are escaped and variables to use at install time have their $ escaped
-# An alternative is the do a configure_file() on a script and use install(SCRIPT  ...).
-# Note that the image plugins depend on QtSvg and QtXml, and it got those copied
-# over.
-INSTALL(CODE "
-    file(GLOB_RECURSE QTPLUGINS
-      \"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
-    include(BundleUtilities)
-    fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${DIRS}\")
-    " COMPONENT Runtime)
-	
-# To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
-# where CPackConfig.cmake is created by including CPack
-# And then there's ways to customize this as well
-set(CPACK_BINARY_DRAGNDROP ON)
-include(CPack)
-
-INSTALL(FILES README.txt DESTINATION .)
-
-#--------------------------------------------------------------------------------
-#-- Add an Option to toggle the generation of the API documentation
-#--------------------------------------------------------------------------------
-option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
-if(BUILD_DOCUMENTATION)
-  FIND_PACKAGE(Doxygen)
-  if (NOT DOXYGEN_FOUND)
-    message(FATAL_ERROR 
-      "Doxygen is needed to build the documentation. Please install it correctly")
-  endif()
-  #-- Configure the Template Doxyfile for our specific project
-  configure_file(Doxyfile.in 
-                 ${PROJECT_BINARY_DIR}/Doxyfile  @ONLY IMMEDIATE)
-  #-- Add a custom target to run Doxygen when ever the project is built
-  add_custom_target (docs
-    COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
-    SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
-  # IF you do NOT want the documentation to be generated EVERY time you build the project
-  # then leave out the 'ALL' keyword from the above command.
-endif()

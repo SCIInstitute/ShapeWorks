@@ -124,7 +124,7 @@ void GroomTool::on_run_groom_button_clicked()
 
   std::string groomLocation = QCoreApplication::applicationFilePath().toStdString();
   std::string path = groomLocation.substr(0,groomLocation.find_last_of("/")+1);
-  groomLocation = path + GROOM_EXECUTABLE;
+  groomLocation = path + "";
 
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(QString::fromStdString(groomLocation), args);

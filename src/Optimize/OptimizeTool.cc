@@ -81,7 +81,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   args << temp_file_name;
 
   std::string optimizeLocation = QCoreApplication::applicationFilePath().toStdString();
-  optimizeLocation = optimizeLocation.substr(0,optimizeLocation.find_last_of("/")+1) + OPTIMIZE_EXECUTABLE;
+  optimizeLocation = optimizeLocation.substr(0,optimizeLocation.find_last_of("/")+1) + "";
 
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(QString::fromStdString(optimizeLocation), args);

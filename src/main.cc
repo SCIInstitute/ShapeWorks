@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QResource>
 #include <Application/ShapeWorksStudioApp.h>
 #include <iostream>
 
@@ -90,9 +91,10 @@ int main( int argc, char** argv )
     QApplication app( argc, argv );
 
     QSharedPointer<ShapeWorksStudioApp> studio_app =
-      QSharedPointer<ShapeWorksStudioApp>( new ShapeWorksStudioApp( argc, argv ) );
-
-    studio_app->show();
+      QSharedPointer<ShapeWorksStudioApp>(new ShapeWorksStudioApp(argc, argv));
+    QResource::registerResource(RSCS_FILE);
+    studio_app->setWindowIcon(QIcon(ICON_FILE));
+    studio_app->show(); 
 
     // do this after "show" for mac initialization
     studio_app->initialize_vtk();
