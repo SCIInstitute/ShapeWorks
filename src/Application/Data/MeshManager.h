@@ -22,7 +22,7 @@
 #include <Data/MeshGenerator.h>
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
-#include <Application/Preferences.h>
+#include <Data/Preferences.h>
 
 class MeshManager : public QObject
 {

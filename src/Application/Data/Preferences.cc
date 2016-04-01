@@ -6,7 +6,7 @@
 #include <QThread>
 #include <QSize>
 
-#include <Application/Preferences.h>
+#include <Data/Preferences.h>
 
 // default values
 const bool DEFAULT_CACHE_ENABLED = true;

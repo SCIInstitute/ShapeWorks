@@ -22,7 +22,7 @@
 
 #include <vnl/vnl_vector.h>
 
-#include "Application/Preferences.h"
+#include "Data/Preferences.h"
 
 //#include "itkParticleShapeStatistics.h"
 

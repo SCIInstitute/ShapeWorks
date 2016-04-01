@@ -5,7 +5,7 @@
 
 #include <QSharedPointer>
 #include <QVector>
-#include "Application/Preferences.h"
+#include "Data/Preferences.h"
 #include "Data/MeshManager.h"
 
 class Shape;

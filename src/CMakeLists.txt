@@ -76,7 +76,7 @@ if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 endif()
 
-FILE(GLOB STUDIO_UI  */*.ui)
+FILE(GLOB STUDIO_UI  Application/*/*.ui)
 QT5_WRAP_UI(UI_SRC ${STUDIO_UI})
 FILE(GLOB UI_RESOURCES_RCC Resources/*.qrc)
 QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
@@ -85,8 +85,10 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 ### Application
 #--------------------------------------------------------------------------------
 
-FILE(GLOB STUDIO_SRCS *.cc */*.cc */*.cpp)
-FILE(GLOB STUDIO_HDRS */*.h)
+add_subdirectory(Groom)
+
+FILE(GLOB STUDIO_SRCS Application/main.cc Application/*/*.cc Application/*/*.cpp)
+FILE(GLOB STUDIO_HDRS Application/*/*.h)
 FILE(GLOB STUDIO_ICNS Resources/Images/*.ico)
 
 add_definitions(-DICON_FILE="${STUDIO_ICNS}")
@@ -95,7 +97,10 @@ add_definitions(-DRSCS_FILE="${STUDIO_RSCS}")
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)
 INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR} )
-#INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Application )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Groom )
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # For Apple set the icns file containing icons
 IF(APPLE)
@@ -131,4 +136,5 @@ TARGET_LINK_LIBRARIES( ShapeWorksStudio
   Qt5::Gui
   Qt5::WinMain
   ${itkParticleShapeModelingLib}
+  ShapeWorksGroom
   )

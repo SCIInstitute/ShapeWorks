@@ -4,7 +4,7 @@
 #include <Data/Project.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
-#include "Application/Preferences.h"
+#include "Data/Preferences.h"
 #include <map>
 
 class Visualizer;

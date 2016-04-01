@@ -14,13 +14,15 @@
 
 #include <QObject>
 #include <QStringList>
+#include <ShapeWorksGroom.h>
 
 class ShapeworksWorker : public QObject
 {
   Q_OBJECT
 
 public:
-	ShapeworksWorker(QString exe, QStringList args);
+  typedef enum ThreadType { Groom, Optimize };
+	ShapeworksWorker(ThreadType type, ShapeWorksGroom& groom);
 	~ShapeworksWorker();
 
 public Q_SLOTS:
@@ -28,13 +30,12 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void result_ready();
-  void run_error();
+  void error_message(std::string);
   void step_made(int val);
 
 private:
-	QString exe_;
-	QStringList args_;
-
+  ShapeWorksGroom& groom_;
+  ThreadType type_;
 };
 
 #endif // ifndef SHAPEWORKS_WORKER_H

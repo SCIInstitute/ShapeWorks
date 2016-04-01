@@ -8,7 +8,7 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
-#include "Application/PreferencesWindow.h"
+#include "Data/PreferencesWindow.h"
 
 class Lightbox;
 class GroomTool;
@@ -128,6 +128,7 @@ private:
   QSpinBox* iso_neighborhood_spinner_;
   QDoubleSpinBox* iso_spacing_spinner_;
   QSlider* iso_smoothing_slider_;
+  std::vector<std::string> originalFilenames_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

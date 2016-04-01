@@ -6,8 +6,8 @@
 #include <QtGui>
 #include <cmath>
 
-#include <Application/PreferencesWindow.h>
-#include <Application/Preferences.h>
+#include <Data/PreferencesWindow.h>
+#include <Data/Preferences.h>
 
 // The interface from the designer
 #include "ui_PreferencesWindow.h"

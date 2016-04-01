@@ -21,7 +21,7 @@
 #include <vtkContourFilter.h>
 #include <vtkReverseSense.h>
 #include <vtkSmoothPolyDataFilter.h>
-#include <Application/Preferences.h>
+#include <Data/Preferences.h>
 
 class MeshGenerator
 {

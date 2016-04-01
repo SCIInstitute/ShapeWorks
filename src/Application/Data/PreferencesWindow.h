@@ -2,7 +2,7 @@
 #define STUDIO_APPLICATION_PREFERENCES_WINDOW_H
 
 #include <QDialog>
-#include "Application/Preferences.h"
+#include "Data/Preferences.h"
 
 class Ui_PreferencesWindow;
 class QAbstractButton;

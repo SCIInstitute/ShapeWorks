@@ -5,7 +5,7 @@
 #include <QProcess>
 #include <QMessageBox>
 
-#include <Application/ShapeWorksStudioApp.h>
+#include <Visualization/ShapeWorksStudioApp.h>
 
 #include <Data/Project.h>
 #include <Data/Mesh.h>
@@ -13,7 +13,7 @@
 
 #include <Analysis/AnalysisTool.h>
 
-#include <Analysis/itkParticleShapeStatistics.h>
+#include <Data/itkParticleShapeStatistics.h>
 
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>

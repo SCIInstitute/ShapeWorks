@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QResource>
-#include <Application/ShapeWorksStudioApp.h>
+#include <Visualization/ShapeWorksStudioApp.h>
 #include <iostream>
 
 #include <itkMacro.h>

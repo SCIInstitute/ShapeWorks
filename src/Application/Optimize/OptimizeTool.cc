@@ -6,10 +6,10 @@
 #include <QThread>
 #include <QMessageBox>
 
-#include <Application/ShapeWorksStudioApp.h>
+#include <Visualization/ShapeWorksStudioApp.h>
 
 #include <Optimize/OptimizeTool.h>
-#include <Application/ShapeworksWorker.h>
+#include <Visualization/ShapeworksWorker.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
@@ -67,22 +67,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->progress_->setValue(5);
   QApplication::processEvents();
   this->app_->set_status_bar( "Please wait: running optimize step..." );
-
-  QTemporaryFile file;
-  file.open();
-
-  QString temp_file_name = file.fileName() + ".xml";
-
-  this->export_xml( temp_file_name );
-  file.close();
-
-  QStringList args;
-
-  args << temp_file_name;
-
-  std::string optimizeLocation = QCoreApplication::applicationFilePath().toStdString();
-  optimizeLocation = optimizeLocation.substr(0,optimizeLocation.find_last_of("/")+1) + "";
-
+  /*
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(QString::fromStdString(optimizeLocation), args);
   worker->moveToThread(thread);
@@ -92,7 +77,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   connect(worker, SIGNAL(run_error()),  this, SLOT(handle_error()));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-  thread->start();
+  thread->start();*/
   // now lets hope this thread does it's job.
 
 }

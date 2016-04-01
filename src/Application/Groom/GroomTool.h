@@ -4,7 +4,8 @@
 #include <QSharedPointer>
 #include <QWidget>
 #include <QProgressDialog>
-#include "Application/Preferences.h"
+#include "Data/Preferences.h"
+#include <ShapeWorksGroom.h>
 
 class Project;
 class Ui_GroomTool;
@@ -15,7 +16,7 @@ class GroomTool : public QWidget
   Q_OBJECT;
 public:
 
-  GroomTool(Preferences& prefs);
+  GroomTool(Preferences& prefs, std::vector<std::string>& files);
   ~GroomTool();
 
   /// export XML for ShapeWorksGroom
@@ -51,6 +52,8 @@ private:
   ShapeWorksStudioApp* app_;
   Preferences& preferences_;
   QProgressDialog * progress_;
+  std::vector<std::string>& files_;
+  ShapeWorksGroom groom_;
 };
 
 #endif /* STUDIO_GROOM_GROOMTOOL_H */

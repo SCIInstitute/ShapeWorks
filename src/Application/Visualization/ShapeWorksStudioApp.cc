@@ -10,8 +10,8 @@
 #include <vtkRenderWindow.h>
 
 // studio
-#include <Application/ShapeWorksStudioApp.h>
-#include <Application/Preferences.h>
+#include <Visualization/ShapeWorksStudioApp.h>
+#include <Data/Preferences.h>
 #include <Groom/GroomTool.h>
 #include <Optimize/OptimizeTool.h>
 #include <Analysis/AnalysisTool.h>
@@ -21,7 +21,7 @@
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
 #include <Visualization/Visualizer.h>
-#include <Util/WheelEventForwarder.h>
+#include <Visualization/WheelEventForwarder.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -193,7 +193,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->reset();
 
   //groom tool initializations
-  this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool(preferences_) );
+  this->groom_tool_ = QSharedPointer<GroomTool>( new GroomTool(preferences_, this->originalFilenames_) );
   this->groom_tool_->set_project( this->project_ );
   this->groom_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->groom_tool_.data() );
@@ -260,6 +260,7 @@ void ShapeWorksStudioApp::initialize_vtk()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered()
 {
+  this->originalFilenames_.clear();
   QList<int> index_list;
 
   for ( int i = this->project_->get_num_shapes() - 1; i >=0; i--)
@@ -377,9 +378,11 @@ void ShapeWorksStudioApp::on_action_import_triggered()
       preferences_.get_last_directory(),
       tr( "NRRD files (*.nrrd);;MHA files (*.mha)" ) );
 
-  if ( filenames.size() == 0 )
-  {
+  if ( filenames.size() == 0 ) {
     return;
+  }
+  for (size_t i = 0; i < filenames.size(); i++) {
+    this->originalFilenames_.push_back(filenames.at(i).toStdString());
   }
 
   preferences_.set_last_directory( QDir().absoluteFilePath( filenames[0] ) );
@@ -475,11 +478,16 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   QModelIndexList list = this->ui_->table_widget->selectionModel()->selectedRows();
 
   QList<int> index_list;
-
-  for ( int i = list.size() - 1; i >= 0; i-- )
-  {
+  for ( int i = list.size() - 1; i >= 0; i-- ) {
     index_list << list[i].row();
   }
+  std::vector<std::string> newList;
+  for (size_t i = 0; i < this->originalFilenames_.size(); i++) {
+    if (!index_list.contains(i)) {
+      newList.push_back(this->originalFilenames_[i]);
+    }
+  }
+  this->originalFilenames_ = newList;
 
   this->project_->remove_shapes( index_list );
   if (this->project_->get_shapes().size() == 0) {

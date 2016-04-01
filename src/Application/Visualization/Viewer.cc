@@ -21,7 +21,7 @@
 #include <vtkCell.h>
 #include <vtkCamera.h>
 
-#include <Application/Preferences.h>
+#include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>

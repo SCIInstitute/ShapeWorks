@@ -7,18 +7,18 @@
 #include <QThread>
 
 #include <Groom/GroomTool.h>
-#include <Application/ShapeworksWorker.h>
+#include <Visualization/ShapeworksWorker.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
-#include <Application/ShapeWorksStudioApp.h>
+#include <Visualization/ShapeWorksStudioApp.h>
 
 #include <ui_GroomTool.h>
 
 //---------------------------------------------------------------------------
-GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs)
-{
+GroomTool::GroomTool(Preferences& prefs,std::vector<std::string>& files) 
+  : preferences_(prefs), files_(files) {
 
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi( this );
@@ -80,54 +80,36 @@ void GroomTool::on_run_groom_button_clicked()
   QApplication::processEvents();
   this->app_->set_status_bar( "Please wait: running groom step..." );
 
-  QTemporaryFile file;
-  file.open();
+  this->groom_ = ShapeWorksGroom(this->files_, 0, 1, this->ui_->blur_sigma->value(),
+    this->ui_->padding_amount->value(), this->ui_->antialias_iterations->value(), 0, true);
 
-  QString temp_file_name = file.fileName() + ".xml";
-
-  this->export_xml( temp_file_name );
-  file.close();
-
-  QStringList args;
-
-  args << temp_file_name;
-
-  if ( this->ui_->center_checkbox->isChecked() )
-  {
-    args << "center";
+  if ( this->ui_->center_checkbox->isChecked() ) {
+    this->groom_.queueTool("center");
   }
-
-  if ( this->ui_->autocrop_checkbox->isChecked() )
-  {
-    args << "auto_crop";
+  if ( this->ui_->autocrop_checkbox->isChecked() ) {
+    this->groom_.queueTool("auto_crop");
   }
-
-  if ( this->ui_->auto_pad_checkbox_->isChecked() )
-  {
-    args << "auto_pad";
+  if ( this->ui_->auto_pad_checkbox_->isChecked() ) {
+    this->groom_.queueTool("auto_pad");
   }
-
-  if ( this->ui_->antialias_checkbox->isChecked() )
-  {
-    args << "antialias";
+  if ( this->ui_->antialias_checkbox->isChecked() ) {
+    this->groom_.queueTool("antialias");
   }
-
-  if ( this->ui_->fastmarching_checkbox->isChecked() )
-  {
-    args << "fastmarching";
+  if ( this->ui_->fastmarching_checkbox->isChecked() ) {   
+    this->groom_.queueTool("fastmarching");
   }
-
-  if ( this->ui_->blur_checkbox->isChecked() )
-  {
-    args << "blur";
+  if ( this->ui_->blur_checkbox->isChecked() ) {
+    this->groom_.queueTool("blur");
   }
-
-  std::string groomLocation = QCoreApplication::applicationFilePath().toStdString();
-  std::string path = groomLocation.substr(0,groomLocation.find_last_of("/")+1);
-  groomLocation = path + "";
+  if (this->ui_->fill_holes_checkbox->isChecked()) {
+    this->groom_.queueTool("hole_fill");
+  }
+  if (this->ui_->isolate_checkbox->isChecked()) {
+    this->groom_.queueTool("isolate");
+  }
 
   QThread *thread = new QThread;
-  ShapeworksWorker *worker = new ShapeworksWorker(QString::fromStdString(groomLocation), args);
+  ShapeworksWorker *worker = new ShapeworksWorker(ShapeworksWorker::Groom, this->groom_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));

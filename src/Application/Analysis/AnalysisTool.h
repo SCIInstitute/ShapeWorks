@@ -8,11 +8,11 @@
 
 #include <Data/Shape.h>
 
-#include "Application/Preferences.h"
+#include "Data/Preferences.h"
 
-#include <Analysis/itkParticleShapeStatistics.h>
+#include <Data/itkParticleShapeStatistics.h>
 
-#include <Analysis/bargraph.h>
+#include <Visualization/bargraph.h>
 
 class Project;
 class Lightbox;

@@ -4,7 +4,7 @@
 #include <QSharedPointer>
 #include <QWidget>
 #include <QProgressDialog>
-#include "Application/Preferences.h"
+#include "Data/Preferences.h"
 
 class Project;
 class ShapeWorksStudioApp;
