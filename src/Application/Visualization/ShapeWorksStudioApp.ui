@@ -14,7 +14,7 @@
    <string>ShapeWorksStudio</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../Resources/ShapeWorksStudio.qrc">
+   <iconset resource="../../Resources/ShapeWorksStudio.qrc">
     <normaloff>:/Studio/Images/shapes-icon.png</normaloff>:/Studio/Images/shapes-icon.png</iconset>
   </property>
   <property name="styleSheet">
@@ -422,7 +422,7 @@ QPushButton {
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../Resources/ShapeWorksStudio.qrc">
+            <iconset resource="../../Resources/ShapeWorksStudio.qrc">
              <normaloff>:/Studio/Images/AutoViewOff.png</normaloff>
              <normalon>:/Studio/Images/AutoView.png</normalon>:/Studio/Images/AutoViewOff.png</iconset>
            </property>
@@ -440,7 +440,7 @@ QPushButton {
             <string>Show this slice in volume viewer</string>
            </property>
            <property name="icon">
-            <iconset resource="../Resources/ShapeWorksStudio.qrc">
+            <iconset resource="../../Resources/ShapeWorksStudio.qrc">
              <normaloff>:/Studio/Images/VisibleOff.png</normaloff>
              <normalon>:/Studio/Images/Visible.png</normalon>:/Studio/Images/VisibleOff.png</iconset>
            </property>
@@ -473,7 +473,7 @@ QPushButton {
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../Resources/ShapeWorksStudio.qrc">
+            <iconset resource="../../Resources/ShapeWorksStudio.qrc">
              <normaloff>:/Studio/Images/IsosurfaceVisibleOff.png</normaloff>
              <normalon>:/Studio/Images/IsosurfaceVisible.png</normalon>:/Studio/Images/IsosurfaceVisibleOff.png</iconset>
            </property>
@@ -571,7 +571,7 @@ QPushButton {
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -597,12 +597,13 @@ QPushButton {
      <string>Options</string>
     </property>
     <addaction name="action_preferences"/>
+    <addaction name="actionShow_Tool_Window"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="controlsDockWidget_2">
+  <widget class="QDockWidget" name="controlsDock">
    <property name="floating">
     <bool>false</bool>
    </property>
@@ -665,7 +666,7 @@ QPushButton {
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../Resources/ShapeWorksStudio.qrc">
+              <iconset resource="../../Resources/ShapeWorksStudio.qrc">
                <normaloff>:/Studio/Images/remove.png</normaloff>:/Studio/Images/remove.png</iconset>
              </property>
             </widget>
@@ -694,7 +695,7 @@ QPushButton {
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../Resources/ShapeWorksStudio.qrc">
+              <iconset resource="../../Resources/ShapeWorksStudio.qrc">
                <normaloff>:/Studio/Images/add.png</normaloff>:/Studio/Images/add.png</iconset>
              </property>
             </widget>
@@ -767,7 +768,7 @@ QPushButton {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+    <iconset resource="../../Resources/ShapeWorksStudio.qrc">
      <normaloff>:/Studio/Images/tools.png</normaloff>:/Studio/Images/tools.png</iconset>
    </property>
    <property name="text">
@@ -779,7 +780,7 @@ QPushButton {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+    <iconset resource="../../Resources/ShapeWorksStudio.qrc">
      <normaloff>:/Studio/Images/data.png</normaloff>:/Studio/Images/data.png</iconset>
    </property>
    <property name="text">
@@ -791,7 +792,7 @@ QPushButton {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+    <iconset resource="../../Resources/ShapeWorksStudio.qrc">
      <normaloff>:/Studio/Images/gear2.png</normaloff>:/Studio/Images/gear2.png</iconset>
    </property>
    <property name="text">
@@ -803,7 +804,7 @@ QPushButton {
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../Resources/ShapeWorksStudio.qrc">
+    <iconset resource="../../Resources/ShapeWorksStudio.qrc">
      <normaloff>:/Studio/Images/chart.png</normaloff>:/Studio/Images/chart.png</iconset>
    </property>
    <property name="text">
@@ -875,6 +876,11 @@ QPushButton {
     <string>Recent4</string>
    </property>
   </action>
+  <action name="actionShow_Tool_Window">
+   <property name="text">
+    <string>Show Tool Window</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -895,7 +901,7 @@ QPushButton {
   <tabstop>thumbnail_size_slider</tabstop>
  </tabstops>
  <resources>
-  <include location="../Resources/ShapeWorksStudio.qrc"/>
+  <include location="../../Resources/ShapeWorksStudio.qrc"/>
  </resources>
  <connections/>
 </ui>

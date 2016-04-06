@@ -60,6 +60,7 @@ public Q_SLOTS:
   void on_action_groom_mode_triggered();
   void on_action_optimize_mode_triggered();
   void on_action_analysis_mode_triggered();
+  void on_actionShow_Tool_Window_triggered();
 
   void on_action_preferences_triggered();
 
