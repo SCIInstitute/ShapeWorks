@@ -8,18 +8,20 @@
 #include "itkTranslationTransform.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
 #include <map>
+#include <Data/Mesh.h>
+#include <string>
+
+typedef itk::Image<int, 3> isolate_type;
+typedef itk::Image<unsigned char, 3> crop_type;
+typedef itk::ConnectedThresholdImageFilter<ImageType, ImageType> flood_fill_filter_type;
+typedef itk::TranslationTransform<double, 3>::ParametersType transform_type;
 
 class ShapeWorksGroom {
 public:
-  typedef float PixelType;
-  typedef itk::Image< PixelType, 3 > ImageType;
-  typedef itk::ImageFileReader< ImageType > ReaderType;
-  typedef itk::Image<int, 3> isolate_type;
-  typedef itk::Image<unsigned char, 3> crop_type;
-  typedef itk::ConnectedThresholdImageFilter<ImageType, ImageType> flood_fill_filter_type;
-  typedef itk::TranslationTransform<double, 3>::ParametersType transform_type;
-  ShapeWorksGroom(std::vector<std::string> inputs = std::vector<std::string>(),
+  ShapeWorksGroom(std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
+    std::vector<std::string> input_names = std::vector<std::string>(),
     double background = 0., double foreground = 0.,
     double sigma = 2.0, 
     size_t padding = 0, size_t iterations = 100, 
@@ -27,6 +29,7 @@ public:
     bool verbose = false);
   void run();
   void queueTool(std::string tool);
+  std::vector<std::string> getGroomFileNames();
 private:
   void isolate();
   void hole_fill();
@@ -36,8 +39,9 @@ private:
   void blur();
   void auto_crop();
   void auto_pad();
-  std::vector<std::string> inputs_;
   std::vector<ImageType::Pointer> images_;
+  std::vector<std::string> input_names_;
+  std::vector<std::string> groomNames_;
   bool verbose_;
   double background_, foreground_, sigma_;
   flood_fill_filter_type::IndexType seed_;

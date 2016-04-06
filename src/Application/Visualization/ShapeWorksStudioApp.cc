@@ -158,9 +158,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   connect( this->project_.data(), SIGNAL( update_display() ), this, SLOT( handle_display_setting_changed() ) );
 
   // setup modes
-  this->ui_->view_mode_combobox->addItem( Visualizer::MODE_ORIGINAL_C );
-  this->ui_->view_mode_combobox->addItem( Visualizer::MODE_GROOMED_C );
-  this->ui_->view_mode_combobox->addItem( Visualizer::MODE_RECONSTRUCTION_C );
+  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
+  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_GROOMED_C.c_str());
+  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_RECONSTRUCTION_C.c_str());
   this->ui_->view_mode_combobox->setCurrentIndex( 0 );
   this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
@@ -234,7 +234,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->update_display();
 
   //glyph options signals/slots
-  connect( this->ui_->view_mode_combobox, SIGNAL( currentIndexChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
   connect( this->ui_->glyphs_visible_button, SIGNAL( clicked() ), this, SLOT( handle_glyph_changed() ) );
   connect( this->ui_->surface_visible_button, SIGNAL( clicked() ), this, SLOT( handle_glyph_changed() ) );
   connect( this->glyph_size_slider_, SIGNAL( valueChanged( int ) ), this, SLOT( handle_glyph_changed() ) );
@@ -390,8 +389,8 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   this->ui_->view_mode_combobox->setCurrentIndex( 0 );
   this->ui_->view_mode_combobox->setItemData( 1, 0, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setItemData( 2, 0, Qt::UserRole - 1 );
-  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
-  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
+  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText().toStdString() );
+  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText().toStdString() );
   this->import_files( filenames );
   this->visualizer_->update_lut();
   this->ui_->action_groom_mode->setEnabled(true);
@@ -639,8 +638,8 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->set_status_bar( "Optimize complete" );
   this->ui_->view_mode_combobox->setItemData( 2, 33, Qt::UserRole - 1 );
   this->ui_->view_mode_combobox->setCurrentIndex( 2 );
-  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
-  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
+  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText().toStdString() );
+  this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText().toStdString() );
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->visualizer_->update_lut();
   this->update_display();
@@ -677,7 +676,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
-  this->handle_project_changed();
+  this->update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -686,12 +685,9 @@ void ShapeWorksStudioApp::update_display()
   if ( !this->visualizer_ || this->project_->get_num_shapes() <= 0) return;
 
   this->visualizer_->set_center( this->ui_->center_checkbox->isChecked() );
-  this->project_->set_display_state( this->ui_->view_mode_combobox->currentText() );
-
+  this->project_->set_display_state(this->ui_->view_mode_combobox->currentText().toStdString());
   std::string mode = this->analysis_tool_->getAnalysisMode();
-  if ( mode == "all samples" )
-  {
-    this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
+  if ( mode == "all samples" ) {
     this->visualizer_->display_samples();
     size_t num_samples = this->project_->get_shapes().size();
     if (num_samples == 0) num_samples = 9;
@@ -707,13 +703,11 @@ void ShapeWorksStudioApp::update_display()
       this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
     if ( mode == "mean" ) {
       this->ui_->view_mode_combobox->setCurrentIndex( 2 );
-      this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
     } else if (mode == "pca") {
       this->ui_->view_mode_combobox->setCurrentIndex( 2 );
       this->compute_mode_shape();
     } else if (mode == "single sample") {
-      this->visualizer_->set_display_mode( this->ui_->view_mode_combobox->currentText() );
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
     } //TODO regression
   }
@@ -723,7 +717,11 @@ void ShapeWorksStudioApp::update_display()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
 {
-  this->update_display();
+  if (this->visualizer_) {
+    auto disp_mode = this->ui_->view_mode_combobox->currentText().toStdString();
+    this->visualizer_->set_display_mode(disp_mode);
+    this->update_display();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -763,15 +761,18 @@ void ShapeWorksStudioApp::open_project( QString filename )
   }
 
   // load display mode
-  if ( this->project_->get_display_state() == Visualizer::MODE_ORIGINAL_C )
+  if ( this->project_->get_display_state()
+    == Visualizer::MODE_ORIGINAL_C )
   {
     this->ui_->view_mode_combobox->setCurrentIndex( 0 );
   }
-  else if ( this->project_->get_display_state() == Visualizer::MODE_GROOMED_C )
+  else if (this->project_->get_display_state()
+    == Visualizer::MODE_GROOMED_C)
   {
     this->ui_->view_mode_combobox->setCurrentIndex( 1 );
   }
-  else if ( this->project_->get_display_state() == Visualizer::MODE_RECONSTRUCTION_C )
+  else if (this->project_->get_display_state()
+    == Visualizer::MODE_RECONSTRUCTION_C)
   {
     this->ui_->view_mode_combobox->setCurrentIndex( 2 );
   }

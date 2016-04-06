@@ -18,13 +18,16 @@
 #include "itkDiscreteGaussianImageFilter.h"
 #include "itkNRRDImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
+#include "itkCastImageFilter.h"
 #include <map>
 
-ShapeWorksGroom::ShapeWorksGroom(std::vector<std::string> inputs,
+ShapeWorksGroom::ShapeWorksGroom(std::vector<ImageType::Pointer> inputs,
+  std::vector<std::string> input_names,
   double background, double foreground, 
   double sigma, size_t padding,  size_t iterations,
   size_t levelsetValue, bool verbose)
-  : inputs_(inputs), background_(background), sigma_(sigma_),
+  : images_(inputs), input_names_(input_names), 
+  background_(background), sigma_(sigma_),
   foreground_(foreground), verbose_(verbose), padding_(padding),
   iterations_(iterations), levelSetValue_(levelsetValue) {}
 
@@ -33,18 +36,6 @@ void ShapeWorksGroom::queueTool(std::string tool) {
 }
 
 void ShapeWorksGroom::run() {
-  for (int i = 0; i < this->inputs_.size(); i++) {
-    if (this->inputs_[i].find(".nrrd") != std::string::npos) {
-      itk::NrrdImageIOFactory::RegisterOneFactory();
-    } else if (this->inputs_[i].find(".mha") != std::string::npos) {
-      itk::MetaImageIOFactory::RegisterOneFactory();
-    }
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(this->inputs_[i].c_str());
-    reader->Update();
-    reader->UpdateLargestPossibleRegion();
-    this->images_.push_back(reader->GetOutput());
-  }
   this->seed_.Fill(0);
   for(auto &a : this->runTools_) {
     if (a.first == "isolate") {
@@ -52,7 +43,7 @@ void ShapeWorksGroom::run() {
     } else if (a.first == "hole_fill") {
       this->hole_fill();
     } else if (a.first == "center") {
-      this->hole_fill();
+      this->center();
     } else if (a.first == "auto_crop") {
       this->auto_crop();
     } else if (a.first == "auto_pad") {
@@ -67,30 +58,44 @@ void ShapeWorksGroom::run() {
       throw std::runtime_error("Unknown Tool : " + a.first);
     }
   }
+  this->groomNames_.clear();
+  for (size_t i = 0; i < this->images_.size(); i++) {
+    WriterType::Pointer writer = WriterType::New();
+    auto name = this->input_names_[i];
+    auto pos = name.find_last_of(".");
+    name = name.substr(0, pos) + "_DT.nrrd";
+    this->groomNames_.push_back(name);
+    writer->SetFileName(name);
+    writer->SetInput(this->images_[i]);
+    writer->SetUseCompression(true);
+    writer->Update();
+  }
+}
+
+std::vector<std::string> ShapeWorksGroom::getGroomFileNames() {
+  return this->groomNames_;
 }
 
 void ShapeWorksGroom::isolate() {
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: isolate" << std::endl;
   }
-  for (size_t i = 0; i < this->inputs_.size(); i++) {
+  std::vector<ImageType::Pointer> newImages;
+  for (auto img : this->images_) {
+    typedef itk::CastImageFilter< ImageType, isolate_type > FilterType;
+    FilterType::Pointer filter = FilterType::New();
+    filter->SetInput(img);
+    auto imgIsolate = filter->GetOutput();
     // Find the connected components in this image.
     itk::ConnectedComponentImageFilter<isolate_type, isolate_type>::Pointer
       ccfilter = itk::ConnectedComponentImageFilter<isolate_type, isolate_type>::New();
 
-    itk::ImageFileReader<isolate_type>::Pointer reader =
-      itk::ImageFileReader<isolate_type>::New();
-    reader->SetFileName(this->inputs_[i].c_str());
-    reader->Update();
-    auto img = reader->GetOutput();
-
-    ccfilter->SetInput(img);
+    ccfilter->SetInput(imgIsolate);
     ccfilter->FullyConnectedOn();
     ccfilter->Update();
 
     // First find the size of the connected components.
     std::map<int, int> sizes;
-    //  std::vector<int> sizes;
     itk::ImageRegionConstIterator<isolate_type> rit(ccfilter->GetOutput(),
       img->GetBufferedRegion());
     for (; !rit.IsAtEnd(); ++rit) {
@@ -98,7 +103,6 @@ void ShapeWorksGroom::isolate() {
         sizes[rit.Get()] = sizes[rit.Get()] + 1;
       }
     }
-
     // Find largest connected component. Assumes connected component algorithm
     // enumerates sequentially. (This is true for the ITK algorithm).
     int maxsize = 0;
@@ -111,15 +115,19 @@ void ShapeWorksGroom::isolate() {
       }
     }
     // Copy result into return image. Remove all but the largest connected component.
-    itk::ImageRegionIterator<isolate_type> it(img, img->GetBufferedRegion());
+    itk::ImageRegionIterator<isolate_type> it(imgIsolate, imgIsolate->GetBufferedRegion());
     rit.GoToBegin();
     it.GoToBegin();
     for (; !rit.IsAtEnd(); ++it, ++rit) {
       if (rit.Get() == bigcomponent) it.Set(0.);
       else it.Set(1.);
     }
-    //TODO make it a float image type again?
+    typedef itk::CastImageFilter<isolate_type, ImageType > FilterType2;
+    FilterType2::Pointer filter2 = FilterType2::New();
+    filter2->SetInput(imgIsolate);
+    newImages.push_back(filter2->GetOutput());
   }
+  this->images_ = newImages;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: isolate" << std::endl;
   }
@@ -244,16 +252,15 @@ void ShapeWorksGroom::auto_crop() {
   std::cout << "WARNING!  Assumes objects are centered in each image!" << std::endl;
   ImageType::SizeType maxsize;
   bool first = true;
-  for (int i = 0; i < this->inputs_.size(); i++) {
-    itk::ImageFileReader<crop_type>::Pointer reader =
-      itk::ImageFileReader<crop_type>::New();
-    reader->SetFileName(this->inputs_[i].c_str());
-    reader->Update();
-    auto img = reader->GetOutput();
+  for (auto img : this->images_) {
+    typedef itk::CastImageFilter< ImageType, crop_type > FilterType;
+    FilterType::Pointer filter = FilterType::New();
+    filter->SetInput(img);
+    auto imgCrop = filter->GetOutput();
     // Compute the bounding boxes.
     shapetools::bounding_box<unsigned char, 3> bb_tool;
     bb_tool.background() = this->background_;
-    bb_tool(img);
+    bb_tool(imgCrop);
 
     std::cout << bb_tool.region() << std::endl;
 

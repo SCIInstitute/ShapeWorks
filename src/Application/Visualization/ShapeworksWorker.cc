@@ -9,7 +9,9 @@
 #include <fstream>
 #include <iostream>
 
-ShapeworksWorker::ShapeworksWorker(ThreadType type, ShapeWorksGroom& groom) : type_(type), groom_(groom) {}
+ShapeworksWorker::ShapeworksWorker(ThreadType type, 
+  ShapeWorksGroom& groom,
+  QSharedPointer<Project> project) : type_(type), groom_(groom), project_(project) {}
 
 ShapeworksWorker::~ShapeworksWorker() {}
 

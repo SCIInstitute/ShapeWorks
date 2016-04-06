@@ -7,6 +7,7 @@
 #include <QVector>
 #include "Data/Preferences.h"
 #include "Data/MeshManager.h"
+#include "ShapeWorksGroom.h"
 
 class Shape;
 
@@ -38,10 +39,7 @@ public:
 
   /// load project from file
   bool load_project( QString filename );
-
-  /// load legacy ShapeWorks parameter file
-  bool load_legacy( QString filename );
-
+  
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();
 
@@ -49,7 +47,7 @@ public:
   void load_original_files( QStringList file_names );
 
   /// load groomed files
-  void load_groomed_files( QStringList file_names );
+  void load_groomed_files(std::vector<std::string> file_names);
 
   /// load point files
   bool load_point_files( QStringList file_names );
@@ -66,19 +64,19 @@ public:
   void reset();
 
   /// set the current tool state
-  void set_tool_state( QString tool );
+  void set_tool_state(std::string tool);
 
   /// get the current tool state
-  QString get_tool_state();
+  std::string get_tool_state();
 
   /// get the filename
   QString get_filename();
 
   /// get the display mode
-  void set_display_state( QString mode );
+  void set_display_state(std::string mode);
 
   /// set the display mode
-  QString get_display_state();
+  std::string get_display_state();
 
   /// set the zoom state
   void set_zoom_state( int zoom );
@@ -105,10 +103,10 @@ signals:
 
 public:
   // constants
-  const static QString DATA_C;
-  const static QString GROOM_C;
-  const static QString OPTIMIZE_C;
-  const static QString ANALYSIS_C;
+  const static std::string DATA_C;
+  const static std::string GROOM_C;
+  const static std::string OPTIMIZE_C;
+  const static std::string ANALYSIS_C;
 
 private:
 
@@ -134,8 +132,8 @@ private:
   bool groomed_present_;
   bool reconstructed_present_;
 
-  QString tool_state_;
-  QString display_state_;
+  std::string tool_state_;
+  std::string display_state_;
   int zoom_state_;
 };
 

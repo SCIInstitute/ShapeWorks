@@ -6,6 +6,7 @@
 #include <Visualization/DisplayObject.h>
 #include "Data/Preferences.h"
 #include <map>
+#include <string>
 
 class Visualizer;
 typedef QSharedPointer< Visualizer > VisualizerHandle;
@@ -30,7 +31,7 @@ public:
   void set_project( ProjectHandle project );
 
   /// set display mode (original, groomed, reconstructed)
-  void set_display_mode( QString mode );
+  void set_display_mode( std::string mode );
 
   /// turn automatic centering on/off
   void set_center( bool center );
@@ -51,9 +52,9 @@ public:
   void set_selected_point_one( int id );
   void set_selected_point_two( int id );
 
-  static const QString MODE_ORIGINAL_C;
-  static const QString MODE_GROOMED_C;
-  static const QString MODE_RECONSTRUCTION_C;
+  static const std::string MODE_ORIGINAL_C;
+  static const std::string MODE_GROOMED_C;
+  static const std::string MODE_RECONSTRUCTION_C;
 
   void setMean(const vnl_vector<double> &mean);
 
@@ -74,7 +75,7 @@ private:
 
   void compute_measurements();
 
-  QString display_mode_;
+  std::string display_mode_;
   bool center_;
 
   bool show_glyphs_;

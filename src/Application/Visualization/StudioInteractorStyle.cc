@@ -1,5 +1,5 @@
 #include <vtkObjectFactory.h>
-
+#include <vtkRenderer.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
 
@@ -25,6 +25,7 @@ void StudioInteractorStyle::OnLeftButtonDown()
  */
 // forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
+  this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 void StudioInteractorStyle::OnRightButtonDown()
@@ -35,6 +36,7 @@ void StudioInteractorStyle::OnRightButtonDown()
  */
 // forward events
   vtkInteractorStyleTrackballCamera::OnRightButtonDown();
+  this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 void StudioInteractorStyle::set_lightbox( Lightbox* lightbox )

@@ -1,11 +1,9 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include <vtkImageImport.h>
 #include <vtkTriangleFilter.h>
 #include <vtkPolyDataNormals.h>
 
-#include <itkImageFileReader.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
 
@@ -13,10 +11,9 @@
 #include <Data/ItkToVtk.h>
 
 #include <vtkSurfaceReconstructionFilter.h>
-
-typedef float PixelType;
-typedef itk::Image< PixelType, 3 > ImageType;
-typedef itk::ImageFileReader< ImageType > ReaderType;
+#include "itkNRRDImageIOFactory.h"
+#include "itkMetaImageIOFactory.h"
+#include <vtkMarchingCubes.h>
 
 //---------------------------------------------------------------------------
 Mesh::Mesh()
@@ -46,16 +43,27 @@ vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 }
 
 //---------------------------------------------------------------------------
-void Mesh::create_from_image( QString filename, float iso_value )
+ImageType::Pointer Mesh::create_from_file(QString filename, float iso_value)
 {
-  try
-  {
-    // read file using ITK
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( filename.toStdString() );
-    reader->Update();
-    ImageType::Pointer image = reader->GetOutput();
+  auto fname = filename.toStdString();
+  if (fname.find(".nrrd") != std::string::npos) {
+    itk::NrrdImageIOFactory::RegisterOneFactory();
+  } else if (fname.find(".mha") != std::string::npos) {
+    itk::MetaImageIOFactory::RegisterOneFactory();
+  }
+  // read file using ITK
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName(filename.toStdString());
+  reader->Update();
+  ImageType::Pointer image = reader->GetOutput();
+  this->create_from_image(image, iso_value);
+  return image;
+}
 
+//---------------------------------------------------------------------------
+void Mesh::create_from_image(ImageType::Pointer image, float iso_value)
+{
+  try {
     // get image dimensions
     ImageType::RegionType region = image->GetLargestPossibleRegion();
     ImageType::SizeType size = region.GetSize();
@@ -64,20 +72,16 @@ void Mesh::create_from_image( QString filename, float iso_value )
     this->dimensions_[2] = size[2];
 
     // find the center of mass
-    itk::Array<double> params( 3 );
-    params.Fill( 0.0 );
+    itk::Array<double> params(3);
+    params.Fill(0.0);
     double count = 0.0;
     itk::Point<double, 3> point;
-    itk::ImageRegionIteratorWithIndex<ImageType> oit( image, image->GetLargestPossibleRegion() );
-    for ( oit.GoToBegin(); !oit.IsAtEnd(); ++oit )
-    {
-      if ( oit.Get() > 0 )
-      {
-
+    itk::ImageRegionIteratorWithIndex<ImageType> oit(image, image->GetLargestPossibleRegion());
+    for (oit.GoToBegin(); !oit.IsAtEnd(); ++oit) {
+      if (oit.Get() > 0) {
         // Get the physical index from the image index.
-        image->TransformIndexToPhysicalPoint( oit.GetIndex(), point );
-        for ( unsigned int i = 0; i < 3; i++ )
-        {
+        image->TransformIndexToPhysicalPoint(oit.GetIndex(), point);
+        for (unsigned int i = 0; i < 3; i++) {
           params[i] += point[i];
         }
         count += 1.0;
@@ -85,32 +89,27 @@ void Mesh::create_from_image( QString filename, float iso_value )
     }
 
     // compute center of mass
-    this->center_transform_.set_size( 3 );
-    for ( unsigned int i = 0; i < 3; i++ )
-    {
+    this->center_transform_.set_size(3);
+    for (unsigned int i = 0; i < 3; i++)  {
       this->center_transform_[i] = params[i] / count;
     }
-
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
     itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
     itk_exporter->SetInput(image);
-    ConnectPipelines( itk_exporter, vtk_image.GetPointer() );
+    ConnectPipelines(itk_exporter, vtk_image.GetPointer());
     vtk_image->Update();
-	
+
     // create isosurface
-    if (!this->marching_)
-  	  this->marching_ = vtkSmartPointer<vtkMarchingCubes>::New();
-    this->marching_->SetInputConnection( vtk_image->GetOutputPort() );
-    this->marching_->SetNumberOfContours( 1 );
-    this->marching_->SetValue( 0, iso_value );
-    this->marching_->Update();
+    auto marching = vtkSmartPointer<vtkMarchingCubes>::New();
+    marching->SetInputConnection(vtk_image->GetOutputPort());
+    marching->SetNumberOfContours(1);
+    marching->SetValue(0, iso_value);
+    marching->Update();
 
     // store isosurface polydata
-    this->poly_data_ = this->marching_->GetOutput();
-  }
-  catch ( itk::ExceptionObject & excep )
-  {
+    this->poly_data_ = marching->GetOutput();
+  } catch (itk::ExceptionObject & excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
   }

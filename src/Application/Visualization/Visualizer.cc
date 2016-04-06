@@ -8,9 +8,9 @@
 #include <Data/MeshManager.h>
 #include <QThread>
 
-const QString Visualizer::MODE_ORIGINAL_C( "Original" );
-const QString Visualizer::MODE_GROOMED_C( "Groomed" );
-const QString Visualizer::MODE_RECONSTRUCTION_C( "Reconstructed" );
+const std::string Visualizer::MODE_ORIGINAL_C( "Original" );
+const std::string Visualizer::MODE_GROOMED_C("Groomed");
+const std::string Visualizer::MODE_RECONSTRUCTION_C("Reconstructed");
 
 //-----------------------------------------------------------------------------
 Visualizer::Visualizer(Preferences &prefs) : preferences_(prefs)
@@ -47,7 +47,7 @@ void Visualizer::set_project( ProjectHandle project )
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_display_mode( QString mode )
+void Visualizer::set_display_mode( std::string mode )
 {
   this->display_mode_ = mode;
 }
@@ -59,9 +59,7 @@ void Visualizer::set_center( bool center )
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_samples()
-{
-
+void Visualizer::display_samples() {
   this->update_viewer_properties();
 
   QVector < QSharedPointer < DisplayObject > > display_objects;
@@ -74,35 +72,29 @@ void Visualizer::display_samples()
 
     QSharedPointer<Mesh> mesh;
     QString filename;
-
-    //load based on preference, but always load something
-
-    mesh = shapes[i]->get_original_mesh();
-    filename = shapes[i]->get_original_filename();
-    object->set_correspondence_points( shapes[i]->get_local_correspondence_points() );
-
-    if ( !mesh || this->display_mode_ == Visualizer::MODE_GROOMED_C )
-    {
+    object->set_correspondence_points(shapes[i]->get_local_correspondence_points());
+    //load respective mesh
+    if (this->display_mode_ == Visualizer::MODE_ORIGINAL_C) {
+      mesh = shapes[i]->get_original_mesh();
+      filename = shapes[i]->get_original_filename();
+    } else if (this->display_mode_ == Visualizer::MODE_GROOMED_C) {
       mesh = shapes[i]->get_groomed_mesh();
       filename = shapes[i]->get_groomed_filename();
-    }
-
-    if ( !mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C )
-    {
+    } else if (this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
       mesh = shapes[i]->get_reconstructed_mesh();
       filename = shapes[i]->get_global_point_filename();
-
       // use global correspondence points for reconstructed mesh
-      object->set_correspondence_points( shapes[i]->get_global_correspondence_points() );
+      object->set_correspondence_points(shapes[i]->get_global_correspondence_points());
     }
-    object->set_mesh( mesh );
-
-    if ( this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C )
-    {
+    if ( this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C ) {
       object->set_exclusion_sphere_centers( shapes[i]->get_exclusion_sphere_centers() );
       object->set_exclusion_sphere_radii( shapes[i]->get_exclusion_sphere_radii() );
     }
-
+    if (!mesh) {
+      mesh = shapes[i]->get_original_mesh();
+      filename = shapes[i]->get_original_filename();
+    }
+    object->set_mesh(mesh);
     QStringList annotations;
     annotations << filename;
     annotations << "";

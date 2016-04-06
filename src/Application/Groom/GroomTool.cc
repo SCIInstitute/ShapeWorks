@@ -79,8 +79,14 @@ void GroomTool::on_run_groom_button_clicked()
   this->progress_->setValue(5);
   QApplication::processEvents();
   this->app_->set_status_bar( "Please wait: running groom step..." );
-
-  this->groom_ = ShapeWorksGroom(this->files_, 0, 1, this->ui_->blur_sigma->value(),
+  auto shapes = this->project_->get_shapes();
+  std::vector<ImageType::Pointer> imgs;
+  std::vector<std::string> names;
+  for (auto s : shapes) {
+    imgs.push_back(s->get_image());
+    names.push_back(s->get_original_filename_with_path().toStdString());
+  }
+  this->groom_ = ShapeWorksGroom(imgs, names, 0, 1, this->ui_->blur_sigma->value(),
     this->ui_->padding_amount->value(), this->ui_->antialias_iterations->value(), 0, true);
 
   if ( this->ui_->center_checkbox->isChecked() ) {
@@ -109,7 +115,8 @@ void GroomTool::on_run_groom_button_clicked()
   }
 
   QThread *thread = new QThread;
-  ShapeworksWorker *worker = new ShapeworksWorker(ShapeworksWorker::Groom, this->groom_);
+  ShapeworksWorker *worker = new ShapeworksWorker(
+    ShapeworksWorker::Groom, this->groom_, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
@@ -123,24 +130,9 @@ void GroomTool::on_run_groom_button_clicked()
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_thread_complete() {
-	
-  QStringList list;
-
-  QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  for ( int i = 0; i < shapes.size(); i++ )
-  {
-    QSharedPointer<Mesh> initial_mesh = shapes[i]->get_original_mesh();
-    QString path = shapes[i]->get_original_filename_with_path();
-    QFileInfo fi( path );
-    QString outfile = fi.dir().absolutePath() + QDir::separator() + fi.completeBaseName() + "_DT.nrrd";
-
-    list << outfile;
-  }
-  
-  this->progress_->setValue(95);
+	this->progress_->setValue(95);
   QApplication::processEvents();
-  this->project_->load_groomed_files( list );
-  
+  this->project_->load_groomed_files(this->groom_.getGroomFileNames());
   this->progress_->setValue(100);
   QApplication::processEvents();
   delete this->progress_;

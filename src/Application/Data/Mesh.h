@@ -4,15 +4,22 @@
 #include <QString>
 #include <QSharedPointer>
 
-#include <vtkMarchingCubes.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+#include <vtkImageImport.h>
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
+#include <itkImage.h>
 
 #include <vnl/vnl_vector.h>
 
+typedef float PixelType;
+typedef itk::Image< PixelType, 3 > ImageType;
+typedef itk::ImageFileReader< ImageType > ReaderType;
+typedef itk::ImageFileWriter< ImageType > WriterType;
+
 class Mesh;
 typedef QSharedPointer< Mesh > MeshHandle;
-
 //! Representation of a single mesh.
 /*!
  * The Mesh class represents a single mesh generated from an image file.
@@ -30,7 +37,8 @@ public:
   ~Mesh();
 
   /// Create a mesh from an image
-  void create_from_image( QString filename, float iso_value );
+  ImageType::Pointer create_from_file(QString filename, float iso_value);
+  void create_from_image(ImageType::Pointer img, float iso_value);
   
   /// Get the dimensions as a string for display (if loaded from an image)
   QString get_dimension_string();
@@ -50,7 +58,6 @@ private:
   int dimensions_[3];
 
   vnl_vector<double> center_transform_;
-  vtkSmartPointer<vtkMarchingCubes> marching_;
 };
 
 #endif /* STUDIO_DATA_MESH_H */

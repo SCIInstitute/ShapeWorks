@@ -3,7 +3,7 @@
 
 #include <QSharedPointer>
 #include <QString>
-
+#include "ShapeWorksGroom.h"
 #include <Data/Mesh.h>
 
 class Shape;
@@ -31,8 +31,12 @@ public:
   /// Retrieve the original mesh
   QSharedPointer<Mesh> get_original_mesh();
 
+  ImageType::Pointer get_image();
+
   /// Import the groomed raw image file
-  void import_groomed_image( QString filename );
+  void import_groomed_file(QString filename);
+  /// Import the groomed raw image file
+  void import_groomed_image(ImageType::Pointer img);
 
   /// Retrieve the groomed mesh
   QSharedPointer<Mesh> get_groomed_mesh();
@@ -88,6 +92,7 @@ private:
   QSharedPointer<Mesh> original_mesh_;
   QSharedPointer<Mesh> groomed_mesh_;
   QSharedPointer<Mesh> reconstructed_mesh_;
+  ImageType::Pointer image_;
 
   QString original_mesh_filename_;
   QString groomed_mesh_filename_;
