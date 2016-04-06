@@ -3,8 +3,6 @@
  */
 
 #include <Data/MeshGenerator.h>
-#include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
 #include <limits>
 
 MeshGenerator::MeshGenerator(Preferences& prefs) : prefs_(prefs)
@@ -40,18 +38,17 @@ MeshGenerator::MeshGenerator(Preferences& prefs) : prefs_(prefs)
 }
 MeshGenerator::~MeshGenerator() {}
 
-vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
-{
+void MeshGenerator::setupMesh(const vnl_vector<double>& shape) {
   // copy shape points into point set
   int numPoints = shape.size() / 3;
-  this->points->SetNumberOfPoints( numPoints );
+  this->points->SetNumberOfPoints(numPoints);
   unsigned int k = 0;
-  for ( unsigned int i = 0; i < numPoints; i++ )
+  for (unsigned int i = 0; i < numPoints; i++)
   {
     double x = shape[k++];
     double y = shape[k++];
     double z = shape[k++];
-    this->points->SetPoint( i, x, y, z );
+    this->points->SetPoint(i, x, y, z);
   }
   this->points->Modified();
   float spacing = this->prefs_.get_spacing();
@@ -65,10 +62,23 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   this->smoothFilter->SetNumberOfIterations(smoothing);
   this->smoothFilter->Update();
   this->reverseSense->Update();
-  return this->transform_back(this->points,this->reverseSense->GetOutput());
+}
+vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
+{
+  this->setupMesh(shape);
+  auto t = this->transform_back(this->points,this->reverseSense->GetOutput());
+  return t->GetOutput();
 }
 
-vtkSmartPointer<vtkPolyData> MeshGenerator::transform_back(
+vtkSmartPointer<vtkTransformPolyDataFilter>
+MeshGenerator::buildMeshOutputFilter(const vnl_vector<double>& shape)
+{
+  this->setupMesh(shape);
+  return this->transform_back(this->points, this->reverseSense->GetOutput());
+}
+
+vtkSmartPointer<vtkTransformPolyDataFilter>
+MeshGenerator::transform_back(
     vtkSmartPointer<vtkPoints> pt,
     vtkSmartPointer<vtkPolyData> pd)
 {
@@ -96,5 +106,5 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::transform_back(
 #endif
   tpd->SetTransform(transp);
   tpd->Update();
-  return tpd->GetOutput();
+  return tpd;
 }

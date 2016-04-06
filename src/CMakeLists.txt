@@ -31,6 +31,7 @@ FIND_PACKAGE(VTK COMPONENTS
   vtkFiltersCore
   vtkGUISupportQt
   vtkRenderingQt
+  vtkIOLegacy
 )
 
 INCLUDE( ${VTK_USE_FILE} )

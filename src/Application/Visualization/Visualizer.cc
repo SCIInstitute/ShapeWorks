@@ -120,6 +120,11 @@ void Visualizer::display_shape( const vnl_vector<double> &points)
   QVector<DisplayObjectHandle> *list_ptr = getList(points);
   this->lightbox_->set_display_objects( *list_ptr );
   this->lightbox_->redraw();
+  this->currentShape_ = points;
+}
+
+vnl_vector<double> Visualizer::getCurrentShape(){
+  return this->currentShape_;
 }
 
 //-----------------------------------------------------------------------------

@@ -62,6 +62,8 @@ public:
   
   void update_lut();
 
+  vnl_vector<double> getCurrentShape();
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
@@ -89,6 +91,7 @@ private:
   int selected_point_two_;
 
   vnl_vector<double> cached_mean_;
+  vnl_vector<double> currentShape_;
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */

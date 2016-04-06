@@ -8,6 +8,7 @@
 
 // vtk
 #include <vtkRenderWindow.h>
+#include <vtkPolyDataWriter.h>
 
 // studio
 #include <Visualization/ShapeWorksStudioApp.h>
@@ -854,4 +855,24 @@ void ShapeWorksStudioApp::handle_color_scheme()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_auto_view_button_clicked() {
   this->visualizer_->reset_camera();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
+  std::string dir = preferences_.get_last_directory().toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+    QString::fromStdString(dir) + "newMesh",
+    tr("VTK files (*.vtk)"));
+  if (filename.isEmpty())
+  {
+    return;
+  }
+  auto shape = this->visualizer_->getCurrentShape();
+  MeshGenerator g(this->preferences_);
+  auto meshFilter = g.buildMeshOutputFilter(shape);
+  vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
+  writer->SetFileName(filename.toStdString().c_str());
+  writer->SetInputConnection(meshFilter->GetOutputPort());
+  writer->Write();
 }

@@ -62,6 +62,7 @@ public Q_SLOTS:
   void on_action_optimize_mode_triggered();
   void on_action_analysis_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
+  void on_actionExport_PCA_Mesh_triggered();
 
   void on_action_preferences_triggered();
 

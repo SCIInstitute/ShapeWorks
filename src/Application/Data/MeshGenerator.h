@@ -22,16 +22,23 @@
 #include <vtkReverseSense.h>
 #include <vtkSmoothPolyDataFilter.h>
 #include <Data/Preferences.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
 
 class MeshGenerator
 {
   public:
     MeshGenerator(Preferences& prefs_);
     ~MeshGenerator();
-    vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
+    vtkSmartPointer<vtkPolyData> buildMesh(const vnl_vector<double>& shape);
+    void setupMesh(const vnl_vector<double>& shape);
+
+    vtkSmartPointer<vtkTransformPolyDataFilter>
+      buildMeshOutputFilter(const vnl_vector<double>& shape);
 
   private:
-    vtkSmartPointer<vtkPolyData> transform_back(
+    vtkSmartPointer<vtkTransformPolyDataFilter>
+      transform_back(
         vtkSmartPointer<vtkPoints> pt,
         vtkSmartPointer<vtkPolyData> pd);
     vtkSmartPointer<vtkSurfaceReconstructionFilter>  surfaceReconstruction;
