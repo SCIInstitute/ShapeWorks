@@ -19,7 +19,7 @@
 //---------------------------------------------------------------------------
 GroomTool::GroomTool(Preferences& prefs,std::vector<std::string>& files) 
   : preferences_(prefs), files_(files) {
-
+  this->progress_ = nullptr;
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi( this );
 }
@@ -130,12 +130,17 @@ void GroomTool::on_run_groom_button_clicked()
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_thread_complete() {
-	this->progress_->setValue(95);
-  QApplication::processEvents();
+  if (this->progress_) {
+    this->progress_->setValue(95);
+    QApplication::processEvents();
+  }
   this->project_->load_groomed_files(this->groom_.getGroomFileNames());
-  this->progress_->setValue(100);
-  QApplication::processEvents();
-  delete this->progress_;
+  if (this->progress_) {
+    this->progress_->setValue(100);
+    QApplication::processEvents();
+    delete this->progress_;
+    this->progress_ = nullptr;
+  }
   emit groom_complete();
 }
 
@@ -234,4 +239,27 @@ void GroomTool::set_project( QSharedPointer<Project> project )
 void GroomTool::set_app( ShapeWorksStudioApp* app )
 {
   this->app_ = app;
+}
+
+void GroomTool::on_skipButton_clicked() {
+  auto shapes = this->project_->get_shapes();
+  std::vector<ImageType::Pointer> imgs;
+  std::vector<std::string> names;
+  for (auto s : shapes) {
+    imgs.push_back(s->get_image());
+    names.push_back(s->get_original_filename_with_path().toStdString());
+  }
+  this->groom_ = ShapeWorksGroom(imgs, names, 0, 1, 0, 0, 0, 0, true);
+  QThread *thread = new QThread;
+  ShapeworksWorker *worker = new ShapeworksWorker(
+    ShapeworksWorker::Groom, this->groom_, this->project_);
+  worker->moveToThread(thread);
+  connect(thread, SIGNAL(started()), worker, SLOT(process()));
+  connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
+  connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
+  connect(worker, SIGNAL(run_error()), this, SLOT(handle_error()));
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+  thread->start();
+  // now lets hope this thread does it's job.
 }

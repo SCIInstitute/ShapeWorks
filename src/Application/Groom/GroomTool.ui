@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>186</width>
+    <width>245</width>
     <height>552</height>
    </rect>
   </property>
@@ -234,10 +234,20 @@ background: rgb(255, 255, 127)
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QPushButton" name="export_xml_button">
        <property name="text">
         <string>Export XML</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="skipButton">
+       <property name="text">
+        <string>Skip</string>
        </property>
       </widget>
      </item>
