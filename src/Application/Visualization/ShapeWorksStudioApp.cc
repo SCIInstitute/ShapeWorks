@@ -376,7 +376,6 @@ void ShapeWorksStudioApp::on_action_quit_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_triggered()
 {
-
   QStringList filenames;
 
   filenames = QFileDialog::getOpenFileNames( this, tr( "Import Files..." ),

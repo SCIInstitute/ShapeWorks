@@ -364,12 +364,10 @@ void Visualizer::setMean(const vnl_vector<double> & mean)
 }
 
 void Visualizer::reset_camera() {
-	
-  if ( this->lightbox_ )
-  {
-    foreach( ViewerHandle viewer, this->lightbox_->get_viewers() ) {
-      viewer->reset_camera();
-	  viewer->resetRotation();
+  if ( this->lightbox_ ) {
+    auto trans = this->lightbox_->initPos();
+    for (auto a : this->lightbox_->get_viewers()) {
+      a->reset_camera(trans);
     }
   }
   this->update_viewer_properties();

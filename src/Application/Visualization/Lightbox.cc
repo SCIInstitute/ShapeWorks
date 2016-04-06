@@ -81,9 +81,15 @@ void Lightbox::insert_object_into_viewer( QSharedPointer<DisplayObject> object, 
   if ( this->first_draw_ )
   {
     this->first_draw_ = false;
-    viewer->reset_camera();
-	viewer->setStartPos();
+    viewer->get_renderer()->ResetCamera();
+    auto pos = viewer->get_renderer()->GetActiveCamera()->GetPosition();
+    this->initPos_ = { { pos[0], pos[1], pos[2] } };
   }
+}
+
+//-----------------------------------------------------------------------------
+std::array<double, 3> Lightbox::initPos() {
+  return this->initPos_;
 }
 
 //-----------------------------------------------------------------------------

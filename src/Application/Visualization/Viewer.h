@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
+#include <array>
 
 class vtkRenderer;
 class vtkLookupTable;
@@ -41,8 +42,7 @@ public:
   void display_object( QSharedPointer<DisplayObject> object );
 
   void clear_viewer();
-
-  void reset_camera();
+  void reset_camera(std::array<double, 3> c);
 
   void set_glyph_size_and_quality( double size, double quality );
   void set_show_glyphs( bool show );
@@ -59,10 +59,6 @@ public:
   void set_loading_screen( vtkSmartPointer<vtkImageData> loading_screen );
 
   void set_color_scheme(int i);
-
-  void setStartPos();
-
-  void resetRotation();
 
 private:
 

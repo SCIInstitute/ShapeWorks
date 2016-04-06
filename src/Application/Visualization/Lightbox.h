@@ -61,6 +61,8 @@ public:
   
   void clear_renderers();
 
+  std::array<double, 3> initPos();
+
 public Q_SLOTS:
   void handle_timer_callback();
 
@@ -99,6 +101,8 @@ private:
   QTimer loading_timer_;
 
   int timer_callback_count_;
+
+  std::array<double, 3> initPos_;
 };
 
 #endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */

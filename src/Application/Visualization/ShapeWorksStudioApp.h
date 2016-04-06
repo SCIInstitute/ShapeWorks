@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QTimer>
 #include "Data/PreferencesWindow.h"
+#include <vtkCamera.h>
 
 class Lightbox;
 class GroomTool;
