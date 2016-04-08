@@ -40,7 +40,7 @@ ImageType::Pointer Shape::get_image()
 void Shape::import_groomed_file( QString filename )
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-  this->image_ = this->groomed_mesh_->create_from_file(filename, 0.0);
+  this->image_ = this->groomed_mesh_->create_from_file(filename, 0.5);
   this->groomed_mesh_filename_ = filename;
 }
 

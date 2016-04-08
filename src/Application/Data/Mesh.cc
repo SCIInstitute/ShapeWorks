@@ -3,6 +3,7 @@
 
 #include <vtkTriangleFilter.h>
 #include <vtkPolyDataNormals.h>
+#include <vtkPolyDataWriter.h>
 
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
@@ -51,12 +52,16 @@ ImageType::Pointer Mesh::create_from_file(QString filename, float iso_value)
   } else if (fname.find(".mha") != std::string::npos) {
     itk::MetaImageIOFactory::RegisterOneFactory();
   }
+
+  //////***********************DEBUG
   // read file using ITK
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename.toStdString());
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
   this->create_from_image(image, iso_value);
+
+  //////***********************DEBUG
   return image;
 }
 
@@ -109,6 +114,7 @@ void Mesh::create_from_image(ImageType::Pointer image, float iso_value)
 
     // store isosurface polydata
     this->poly_data_ = marching->GetOutput();
+
   } catch (itk::ExceptionObject & excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;

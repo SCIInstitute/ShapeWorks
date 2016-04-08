@@ -105,7 +105,7 @@ background: rgb(255, 255, 127)
            <number>500</number>
           </property>
           <property name="value">
-           <number>100</number>
+           <number>10</number>
           </property>
          </widget>
         </item>

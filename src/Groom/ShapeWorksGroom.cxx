@@ -22,12 +22,11 @@
 #include <map>
 
 ShapeWorksGroom::ShapeWorksGroom(std::vector<ImageType::Pointer> inputs,
-  std::vector<std::string> input_names,
   double background, double foreground, 
   double sigma, size_t padding,  size_t iterations,
   size_t levelsetValue, bool verbose)
-  : images_(inputs), input_names_(input_names), 
-  background_(background), sigma_(sigma_),
+  : images_(inputs), 
+  background_(background), sigma_(sigma),
   foreground_(foreground), verbose_(verbose), padding_(padding),
   iterations_(iterations), levelSetValue_(levelsetValue) {}
 
@@ -39,18 +38,26 @@ void ShapeWorksGroom::run() {
   this->seed_.Fill(0);
   for(auto &a : this->runTools_) {
     if (a.first == "isolate") {
+      //TODO ?? breaks antialias / blur
+      return;
       this->isolate();
     } else if (a.first == "hole_fill") {
+      //TODO ?? breaks antialias / blur
+      return;
       this->hole_fill();
     } else if (a.first == "center") {
       this->center();
     } else if (a.first == "auto_crop") {
+      //TODO ?? breaks antialias / blur
+      return;
       this->auto_crop();
     } else if (a.first == "auto_pad") {
       this->auto_pad();
     } else if (a.first == "antialias") {
       this->antialias();
     } else if (a.first == "fastmarching") {
+      //TODO ?? what does this do? it's not working
+      return;
       this->fastmarching();
     } else if (a.first == "blur") {
       this->blur();
@@ -58,22 +65,10 @@ void ShapeWorksGroom::run() {
       throw std::runtime_error("Unknown Tool : " + a.first);
     }
   }
-  this->groomNames_.clear();
-  for (size_t i = 0; i < this->images_.size(); i++) {
-    WriterType::Pointer writer = WriterType::New();
-    auto name = this->input_names_[i];
-    auto pos = name.find_last_of(".");
-    name = name.substr(0, pos) + "_DT.nrrd";
-    this->groomNames_.push_back(name);
-    writer->SetFileName(name);
-    writer->SetInput(this->images_[i]);
-    writer->SetUseCompression(true);
-    writer->Update();
-  }
 }
 
-std::vector<std::string> ShapeWorksGroom::getGroomFileNames() {
-  return this->groomNames_;
+std::vector<ImageType::Pointer> ShapeWorksGroom::getImages() {
+  return this->images_;
 }
 
 void ShapeWorksGroom::isolate() {
@@ -125,6 +120,7 @@ void ShapeWorksGroom::isolate() {
     typedef itk::CastImageFilter<isolate_type, ImageType > FilterType2;
     FilterType2::Pointer filter2 = FilterType2::New();
     filter2->SetInput(imgIsolate);
+    filter2->Update();
     newImages.push_back(filter2->GetOutput());
   }
   this->images_ = newImages;
@@ -137,6 +133,7 @@ void ShapeWorksGroom::hole_fill() {
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: hole_fill" << std::endl;
   }
+  std::vector<ImageType::Pointer> out;
   for (auto img : this->images_) {
     // Flood fill the background with the foreground value.
     itk::ConnectedThresholdImageFilter<ImageType, ImageType>::Pointer
@@ -159,7 +156,9 @@ void ShapeWorksGroom::hole_fill() {
         it.Set(this->foreground_);
       }
     }
+    out.push_back(ccfilter->GetOutput());
   }
+  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: hole_fill" << std::endl;
   }
@@ -169,6 +168,7 @@ void ShapeWorksGroom::center() {
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: center" << std::endl;
   }
+  std::vector<ImageType::Pointer> out;
   for (auto img : this->images_) {
     ImageType::PointType origin = img->GetOrigin();
 
@@ -183,7 +183,7 @@ void ShapeWorksGroom::center() {
     sit.GoToBegin();
     oit.GoToBegin();
 
-    itk::TranslationTransform<double, 3>::ParametersType params;
+    itk::Array<double> params(3);
     params.Fill(0.0);
     double count = 0.0;
     itk::Point<double, 3> point;
@@ -239,7 +239,9 @@ void ShapeWorksGroom::center() {
     for (; !it.IsAtEnd(); ++it, ++oit) {
       oit.Set(it.Get());
     }
+    out.push_back(resampler->GetOutput());
   }
+  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: center" << std::endl;
   }
@@ -484,20 +486,17 @@ void ShapeWorksGroom::antialias() {
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: antialias" << std::endl;
   }
+  std::vector<ImageType::Pointer> out;
   for (auto img : this->images_) {
     itk::AntiAliasBinaryImageFilter<ImageType, ImageType>::Pointer anti
       = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>::New();
     anti->SetInput(img);
     anti->SetNumberOfIterations(this->iterations_);
-    anti->SetMaximumRMSError(0.0);
+    anti->SetMaximumRMSError(0.024);
     anti->Update();
-    // Copy resampled image back to the original image (probably can do this
-    // more efficiently --jc).
-    itk::ImageRegionIterator<ImageType> oit(img, img->GetBufferedRegion());
-    itk::ImageRegionIterator<ImageType> it(anti->GetOutput(),
-      img->GetBufferedRegion());
-    for (; !it.IsAtEnd(); ++it, ++oit)  { oit.Set(it.Get()); }
+    out.push_back(anti->GetOutput());
   }
+  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: antialias" << std::endl;
   }
@@ -507,6 +506,7 @@ void ShapeWorksGroom::fastmarching() {
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: fastmarching" << std::endl;
   }
+  std::vector<ImageType::Pointer> out;
   for (auto img : this->images_) {
     itk::ReinitializeLevelSetImageFilter<ImageType>::Pointer filt
       = itk::ReinitializeLevelSetImageFilter<ImageType>::New();
@@ -514,14 +514,9 @@ void ShapeWorksGroom::fastmarching() {
     filt->NarrowBandingOff();
     filt->SetLevelSetValue(this->levelSetValue_);
     filt->Update();
-
-    // Copy resampled image back to the original image (probably can do this
-    // more efficiently --jc).
-    itk::ImageRegionIterator<ImageType> oit(img, img->GetBufferedRegion());
-    itk::ImageRegionIterator<ImageType> it(filt->GetOutput(),
-      img->GetBufferedRegion());
-    for (; !it.IsAtEnd(); ++it, ++oit)  { oit.Set(it.Get()); }
+    out.push_back(filt->GetOutput());
   }
+  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: fastmarching" << std::endl;
   }
@@ -532,21 +527,17 @@ void ShapeWorksGroom::blur() {
   if (this->verbose_) {
     std::cout << "*** RUNNING TOOL: blur" << std::endl;
   }
+  std::vector<ImageType::Pointer> out;
   for (auto img : this->images_) {
     itk::DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer blur
       = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
     blur->SetInput(img);
     blur->SetVariance(this->sigma_ * this->sigma_);
-    blur->SetUseImageSpacingOff();
+    //blur->SetUseImageSpacingOff();
     blur->Update();
-
-    // Copy resampled image back to the original image (probably can do this
-    // more efficiently --jc).
-    itk::ImageRegionIterator<ImageType> oit(img, img->GetBufferedRegion());
-    itk::ImageRegionIterator<ImageType> it(blur->GetOutput(),
-      img->GetBufferedRegion());
-    for (; !it.IsAtEnd(); ++it, ++oit)  { oit.Set(it.Get()); }
+    out.push_back(blur->GetOutput());
   }
+  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: blur" << std::endl;
   }

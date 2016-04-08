@@ -288,6 +288,41 @@ void Project::load_original_files(QStringList file_names)
 }
 
 //---------------------------------------------------------------------------
+void Project::load_groomed_images(std::vector<ImageType::Pointer> images) {
+  QProgressDialog progress("Loading groomed images...", "Abort", 0, images.size(), this->parent_);
+  progress.setWindowModality(Qt::WindowModal);
+  progress.show();
+  progress.setMinimumDuration(2000);
+
+  for (int i = 0; i < images.size(); i++)
+  {
+    progress.setValue(i);
+    QApplication::processEvents();
+
+    if (progress.wasCanceled())
+    {
+      break;
+    }
+
+    if (this->shapes_.size() <= i)
+    {
+      QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
+      this->shapes_.push_back(new_shape);
+    }
+    this->shapes_[i]->import_groomed_image(images[i]);
+  }
+
+  progress.setValue(images.size());
+  QApplication::processEvents();
+
+  if (images.size() > 0)
+  {
+    this->groomed_present_ = true;
+    emit data_changed();
+  }
+}
+
+//---------------------------------------------------------------------------
 void Project::load_groomed_files(std::vector<std::string> file_names)
 {
   QProgressDialog progress("Loading groomed images...", "Abort", 0, file_names.size(), this->parent_);

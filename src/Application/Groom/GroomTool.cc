@@ -86,7 +86,7 @@ void GroomTool::on_run_groom_button_clicked()
     imgs.push_back(s->get_image());
     names.push_back(s->get_original_filename_with_path().toStdString());
   }
-  this->groom_ = ShapeWorksGroom(imgs, names, 0, 1, this->ui_->blur_sigma->value(),
+  this->groom_ = ShapeWorksGroom(imgs, 0, 1, this->ui_->blur_sigma->value(),
     this->ui_->padding_amount->value(), this->ui_->antialias_iterations->value(), 0, true);
 
   if ( this->ui_->center_checkbox->isChecked() ) {
@@ -134,7 +134,7 @@ void GroomTool::handle_thread_complete() {
     this->progress_->setValue(95);
     QApplication::processEvents();
   }
-  this->project_->load_groomed_files(this->groom_.getGroomFileNames());
+  this->project_->load_groomed_images(this->groom_.getImages());
   if (this->progress_) {
     this->progress_->setValue(100);
     QApplication::processEvents();
@@ -249,7 +249,7 @@ void GroomTool::on_skipButton_clicked() {
     imgs.push_back(s->get_image());
     names.push_back(s->get_original_filename_with_path().toStdString());
   }
-  this->groom_ = ShapeWorksGroom(imgs, names, 0, 1, 0, 0, 0, 0, true);
+  this->groom_ = ShapeWorksGroom(imgs, 0, 1, 0, 0, 0, 0, true);
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
     ShapeworksWorker::Groom, this->groom_, this->project_);
