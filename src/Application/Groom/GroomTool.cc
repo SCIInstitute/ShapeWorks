@@ -40,6 +40,15 @@ void GroomTool::on_blur_checkbox_stateChanged( int state )
   this->ui_->blur_groupbox->setEnabled( state );
 }
 
+
+void GroomTool::on_fastmarching_checkbox_stateChanged(int state) {
+  this->ui_->fastmarching_groupbox->setEnabled(state);
+}
+
+void GroomTool::on_autopad_checkbox_stateChanged(int state) {
+  this->ui_->pad_groupbox->setEnabled(state);
+}
+
 //---------------------------------------------------------------------------
 void GroomTool::on_export_xml_button_clicked()
 {
@@ -56,10 +65,11 @@ void GroomTool::on_export_xml_button_clicked()
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::handle_error() {
+void GroomTool::handle_error(std::string msg) {
 	this->progress_->setValue(100);
   QApplication::processEvents();
 	delete this->progress_;
+  emit error_message(msg);
 }
 
 //---------------------------------------------------------------------------
@@ -83,11 +93,16 @@ void GroomTool::on_run_groom_button_clicked()
   std::vector<ImageType::Pointer> imgs;
   std::vector<std::string> names;
   for (auto s : shapes) {
-    imgs.push_back(s->get_image());
+    imgs.push_back(s->get_original_image());
     names.push_back(s->get_original_filename_with_path().toStdString());
   }
-  this->groom_ = ShapeWorksGroom(imgs, 0, 1, this->ui_->blur_sigma->value(),
-    this->ui_->padding_amount->value(), this->ui_->antialias_iterations->value(), 0, true);
+  this->groom_ = ShapeWorksGroom(imgs, 0, 1, 
+    this->ui_->blur_sigma->value(),
+    this->ui_->fastmarch_sigma->value(),
+    this->ui_->iso_value->value(),
+    this->ui_->padding_amount->value(), 
+    this->ui_->antialias_iterations->value(), 
+    true);
 
   if ( this->ui_->center_checkbox->isChecked() ) {
     this->groom_.queueTool("center");
@@ -95,7 +110,10 @@ void GroomTool::on_run_groom_button_clicked()
   if ( this->ui_->autocrop_checkbox->isChecked() ) {
     this->groom_.queueTool("auto_crop");
   }
-  if ( this->ui_->auto_pad_checkbox_->isChecked() ) {
+  if (this->ui_->fill_holes_checkbox->isChecked()) {
+    this->groom_.queueTool("hole_fill");
+  }
+  if (this->ui_->autopad_checkbox->isChecked()) {
     this->groom_.queueTool("auto_pad");
   }
   if ( this->ui_->antialias_checkbox->isChecked() ) {
@@ -107,9 +125,6 @@ void GroomTool::on_run_groom_button_clicked()
   if ( this->ui_->blur_checkbox->isChecked() ) {
     this->groom_.queueTool("blur");
   }
-  if (this->ui_->fill_holes_checkbox->isChecked()) {
-    this->groom_.queueTool("hole_fill");
-  }
   if (this->ui_->isolate_checkbox->isChecked()) {
     this->groom_.queueTool("isolate");
   }
@@ -119,13 +134,11 @@ void GroomTool::on_run_groom_button_clicked()
     ShapeworksWorker::Groom, this->groom_, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
-  connect(worker, SIGNAL(step_made(int)),  this, SLOT(handle_progress(int)));
-  connect(worker, SIGNAL(run_error()),  this, SLOT(handle_error()));
+  connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
+  connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
+  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   thread->start();
-  // now lets hope this thread does it's job.
 }
 
 //---------------------------------------------------------------------------
@@ -134,7 +147,16 @@ void GroomTool::handle_thread_complete() {
     this->progress_->setValue(95);
     QApplication::processEvents();
   }
-  this->project_->load_groomed_images(this->groom_.getImages());
+  double iso = 0.5;
+  if (this->groom_.tools().count("isolate") ||
+    this->groom_.tools().count("hole_fill")) {
+    iso = this->groom_.foreground() / 2.;
+  }
+  if (this->groom_.tools().count("fastmarching") ||
+    this->groom_.tools().count("blur")) {
+    iso = 0.;
+  }
+  this->project_->load_groomed_images(this->groom_.getImages(), iso);
   if (this->progress_) {
     this->progress_->setValue(100);
     QApplication::processEvents();
@@ -246,7 +268,7 @@ void GroomTool::on_skipButton_clicked() {
   std::vector<ImageType::Pointer> imgs;
   std::vector<std::string> names;
   for (auto s : shapes) {
-    imgs.push_back(s->get_image());
+    imgs.push_back(s->get_original_image());
     names.push_back(s->get_original_filename_with_path().toStdString());
   }
   this->groom_ = ShapeWorksGroom(imgs, 0, 1, 0, 0, 0, 0, true);
@@ -257,9 +279,7 @@ void GroomTool::on_skipButton_clicked() {
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
   connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
-  connect(worker, SIGNAL(run_error()), this, SLOT(handle_error()));
+  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   thread->start();
-  // now lets hope this thread does it's job.
 }

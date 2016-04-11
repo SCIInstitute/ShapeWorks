@@ -239,7 +239,7 @@ bool Project::load_project(QString filename)
   for (auto a : fixed_groom_files) {
     groom_list.push_back(a.toStdString());
   }
-  this->load_groomed_files(groom_list);
+  this->load_groomed_files(groom_list, 0.5);
 
   this->load_point_files(fixed_point_files);
 
@@ -288,7 +288,7 @@ void Project::load_original_files(QStringList file_names)
 }
 
 //---------------------------------------------------------------------------
-void Project::load_groomed_images(std::vector<ImageType::Pointer> images) {
+void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double iso) {
   QProgressDialog progress("Loading groomed images...", "Abort", 0, images.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
@@ -309,7 +309,7 @@ void Project::load_groomed_images(std::vector<ImageType::Pointer> images) {
       QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(new_shape);
     }
-    this->shapes_[i]->import_groomed_image(images[i]);
+    this->shapes_[i]->import_groomed_image(images[i], iso);
   }
 
   progress.setValue(images.size());
@@ -323,7 +323,7 @@ void Project::load_groomed_images(std::vector<ImageType::Pointer> images) {
 }
 
 //---------------------------------------------------------------------------
-void Project::load_groomed_files(std::vector<std::string> file_names)
+void Project::load_groomed_files(std::vector<std::string> file_names, double iso)
 {
   QProgressDialog progress("Loading groomed images...", "Abort", 0, file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -347,7 +347,7 @@ void Project::load_groomed_files(std::vector<std::string> file_names)
       QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(new_shape);
     }
-    this->shapes_[i]->import_groomed_file(QString::fromStdString(file_names[i]));
+    this->shapes_[i]->import_groomed_file(QString::fromStdString(file_names[i]), iso);
   }
 
   progress.setValue(file_names.size());

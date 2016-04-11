@@ -80,9 +80,9 @@ int main( int argc, char** argv )
 
 #ifdef WIN32
   ::SetErrorMode( 0 );
-#ifdef _DEBUG
+//#ifdef _DEBUG //TODO put back in for release binaries!
   RedirectIOToConsole2();
-#endif
+//#endif
 #endif
   try {
 

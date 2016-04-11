@@ -31,12 +31,13 @@ public:
   /// Retrieve the original mesh
   QSharedPointer<Mesh> get_original_mesh();
 
-  ImageType::Pointer get_image();
+  ImageType::Pointer get_original_image();
+  ImageType::Pointer get_groomed_image();
 
   /// Import the groomed raw image file
-  void import_groomed_file(QString filename);
+  void import_groomed_file(QString filename, double iso);
   /// Import the groomed raw image file
-  void import_groomed_image(ImageType::Pointer img);
+  void import_groomed_image(ImageType::Pointer img, double iso);
 
   /// Retrieve the groomed mesh
   QSharedPointer<Mesh> get_groomed_mesh();
@@ -92,7 +93,7 @@ private:
   QSharedPointer<Mesh> original_mesh_;
   QSharedPointer<Mesh> groomed_mesh_;
   QSharedPointer<Mesh> reconstructed_mesh_;
-  ImageType::Pointer image_;
+  ImageType::Pointer original_image_, groomed_image_;
 
   QString original_mesh_filename_;
   QString groomed_mesh_filename_;

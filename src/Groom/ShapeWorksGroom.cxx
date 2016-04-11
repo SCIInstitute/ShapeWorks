@@ -19,16 +19,19 @@
 #include "itkNRRDImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include "itkCastImageFilter.h"
+#include "itkPSMImplicitSurfaceImageFilter.h"
 #include <map>
 
 ShapeWorksGroom::ShapeWorksGroom(std::vector<ImageType::Pointer> inputs,
   double background, double foreground, 
-  double sigma, size_t padding,  size_t iterations,
-  size_t levelsetValue, bool verbose)
+  double sigma, double sigmaFastMarch,
+  double iso, size_t padding,  size_t iterations,
+  bool verbose)
   : images_(inputs), 
-  background_(background), sigma_(sigma),
+  background_(background), sigma_(sigma), sigmaFastMarch_(sigmaFastMarch),
+  iso_value_(iso),
   foreground_(foreground), verbose_(verbose), padding_(padding),
-  iterations_(iterations), levelSetValue_(levelsetValue) {}
+  iterations_(iterations) {}
 
 void ShapeWorksGroom::queueTool(std::string tool) {
   this->runTools_.insert(std::make_pair(tool, true));
@@ -36,36 +39,50 @@ void ShapeWorksGroom::queueTool(std::string tool) {
 
 void ShapeWorksGroom::run() {
   this->seed_.Fill(0);
-  for(auto &a : this->runTools_) {
-    if (a.first == "isolate") {
-      //TODO ?? breaks antialias / blur
-      return;
-      this->isolate();
-    } else if (a.first == "hole_fill") {
-      //TODO ?? breaks antialias / blur
-      return;
-      this->hole_fill();
-    } else if (a.first == "center") {
-      this->center();
-    } else if (a.first == "auto_crop") {
-      //TODO ?? breaks antialias / blur
-      return;
-      this->auto_crop();
-    } else if (a.first == "auto_pad") {
-      this->auto_pad();
-    } else if (a.first == "antialias") {
-      this->antialias();
-    } else if (a.first == "fastmarching") {
-      //TODO ?? what does this do? it's not working
-      return;
-      this->fastmarching();
-    } else if (a.first == "blur") {
-      this->blur();
+  if (this->runTools_.count("center")) {
+    this->center();
+  }
+  if (this->runTools_.count("hole_fill")) {
+    this->hole_fill();
+  }
+  if (this->runTools_.count("isolate")) {
+    this->isolate();
+  }
+  if (this->runTools_.count("auto_crop")) {
+    if (this->runTools_.count("fastmarching")) {
+      std::cerr << 
+        "Warning: auto_crop incompatible with fastmarching. "
+        << "Skipping auto_crop." << std::endl;
     } else {
-      throw std::runtime_error("Unknown Tool : " + a.first);
+      this->auto_crop();
+    }
+  }
+  if (this->runTools_.count("auto_pad")) {
+    this->auto_pad();
+  }
+  if (this->runTools_.count("antialias")) {
+    this->antialias();
+  } 
+  if (this->runTools_.count("fastmarching")) {
+    this->fastmarching();
+  }
+  if (this->runTools_.count("blur")) {
+    if (!this->runTools_.count("fastmarching") &&
+      !this->runTools_.count("antialias")) {
+      std::cerr <<
+        "Warning: blur requires fastmarching or antialias. "
+        << "Skipping blur." << std::endl;
+    } else {
+      this->blur();
     }
   }
 }
+
+std::map<std::string, bool> ShapeWorksGroom::tools() {
+  return this->runTools_;
+}
+
+double ShapeWorksGroom::foreground() { return this->foreground_; }
 
 std::vector<ImageType::Pointer> ShapeWorksGroom::getImages() {
   return this->images_;
@@ -258,6 +275,7 @@ void ShapeWorksGroom::auto_crop() {
     typedef itk::CastImageFilter< ImageType, crop_type > FilterType;
     FilterType::Pointer filter = FilterType::New();
     filter->SetInput(img);
+    filter->Update();
     auto imgCrop = filter->GetOutput();
     // Compute the bounding boxes.
     shapetools::bounding_box<unsigned char, 3> bb_tool;
@@ -508,13 +526,13 @@ void ShapeWorksGroom::fastmarching() {
   }
   std::vector<ImageType::Pointer> out;
   for (auto img : this->images_) {
-    itk::ReinitializeLevelSetImageFilter<ImageType>::Pointer filt
-      = itk::ReinitializeLevelSetImageFilter<ImageType>::New();
-    filt->SetInput(img);
-    filt->NarrowBandingOff();
-    filt->SetLevelSetValue(this->levelSetValue_);
-    filt->Update();
-    out.push_back(filt->GetOutput());
+    itk::PSMImplicitSurfaceImageFilter<ImageType, ImageType>::Pointer P
+      = itk::PSMImplicitSurfaceImageFilter<ImageType, ImageType>::New();
+    P->SetSmoothingSigma(this->sigmaFastMarch_);
+    P->SetIsosurfaceValue(this->iso_value_);
+    P->SetInput(img);
+    P->Update();
+    out.push_back(P->GetOutput());
   }
   this->images_ = out;
   if (this->verbose_) {

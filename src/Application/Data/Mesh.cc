@@ -44,7 +44,7 @@ vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 }
 
 //---------------------------------------------------------------------------
-ImageType::Pointer Mesh::create_from_file(QString filename, float iso_value)
+ImageType::Pointer Mesh::create_from_file(QString filename, double iso_value)
 {
   auto fname = filename.toStdString();
   if (fname.find(".nrrd") != std::string::npos) {
@@ -66,7 +66,7 @@ ImageType::Pointer Mesh::create_from_file(QString filename, float iso_value)
 }
 
 //---------------------------------------------------------------------------
-void Mesh::create_from_image(ImageType::Pointer image, float iso_value)
+void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
 {
   try {
     // get image dimensions

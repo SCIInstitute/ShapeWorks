@@ -47,8 +47,8 @@ public:
   void load_original_files( QStringList file_names );
 
   /// load groomed files
-  void load_groomed_files(std::vector<std::string> file_names);
-  void load_groomed_images(std::vector<ImageType::Pointer> images);
+  void load_groomed_files(std::vector<std::string> file_names, double iso);
+  void load_groomed_images(std::vector<ImageType::Pointer> images, double iso);
 
   /// load point files
   bool load_point_files( QStringList file_names );

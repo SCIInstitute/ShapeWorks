@@ -19,7 +19,7 @@ Shape::~Shape()
 void Shape::import_original_image( QString filename, float iso_value )
 {
   this->original_mesh_ = QSharedPointer<Mesh>( new Mesh() );
-  this->image_ = this->original_mesh_->create_from_file( filename, iso_value );
+  this->original_image_ = this->original_mesh_->create_from_file( filename, iso_value );
   this->original_mesh_filename_ = filename;
 }
 
@@ -30,24 +30,29 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
 }
 
 //---------------------------------------------------------------------------
-ImageType::Pointer Shape::get_image()
+ImageType::Pointer Shape::get_original_image()
 {
-  return this->image_;
+  return this->original_image_;
 }
 
+//---------------------------------------------------------------------------
+ImageType::Pointer Shape::get_groomed_image()
+{
+  return this->groomed_image_;
+}
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_file( QString filename )
+void Shape::import_groomed_file( QString filename, double iso )
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-  this->image_ = this->groomed_mesh_->create_from_file(filename, 0.5);
+  this->groomed_image_ = this->groomed_mesh_->create_from_file(filename, iso);
   this->groomed_mesh_filename_ = filename;
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img) {
+void Shape::import_groomed_image(ImageType::Pointer img, double iso) {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-  this->groomed_mesh_->create_from_image(img, 0.0);
+  this->groomed_mesh_->create_from_image(img, iso);
   this->groomed_mesh_filename_ = this->original_mesh_filename_ + "(DT)";
 }
 

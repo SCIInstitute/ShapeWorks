@@ -6,6 +6,7 @@
 #include <QProgressDialog>
 #include "Data/Preferences.h"
 #include <ShapeWorksGroom.h>
+#include <string>
 
 class Project;
 class Ui_GroomTool;
@@ -30,15 +31,18 @@ public:
 
 Q_SIGNALS:
   void groom_complete();
+  void error_message(std::string msg);
 
 public Q_SLOTS:
 
   void on_antialias_checkbox_stateChanged( int state );
   void on_blur_checkbox_stateChanged(int state);
+  void on_fastmarching_checkbox_stateChanged(int state);
+  void on_autopad_checkbox_stateChanged(int state);
   void on_skipButton_clicked();
   void handle_thread_complete();
   void handle_progress(int val);
-  void handle_error();
+  void handle_error(std::string msg);
 
   /// Export XML
   void on_export_xml_button_clicked();

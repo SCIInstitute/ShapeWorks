@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>245</width>
-    <height>552</height>
+    <height>449</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,31 @@ background: rgb(255, 255, 127)
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="6" column="0">
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="fill_holes_checkbox">
+       <property name="text">
+        <string>Fill Holes</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="center_checkbox">
+       <property name="text">
+        <string>Center</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="isolate_checkbox">
+       <property name="text">
+        <string>Isolate</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
       <widget class="QCheckBox" name="autocrop_checkbox">
        <property name="text">
         <string>Autocrop</string>
@@ -36,19 +60,9 @@ background: rgb(255, 255, 127)
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QCheckBox" name="center_checkbox">
+      <widget class="QCheckBox" name="autopad_checkbox">
        <property name="text">
-        <string>Center</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="14" column="0">
-      <widget class="QCheckBox" name="fastmarching_checkbox">
-       <property name="text">
-        <string>Fastmarching</string>
+        <string>Pad</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -56,27 +70,45 @@ background: rgb(255, 255, 127)
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QGroupBox" name="pad_groupbox">
+       <property name="title">
+        <string/>
        </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Amount</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="padding_amount">
+          <property name="maximum">
+           <number>500</number>
+          </property>
+          <property name="value">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
-     <item row="10" column="0">
-      <widget class="Line" name="line_5">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="0">
-      <widget class="Line" name="line_6">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0">
+     <item row="6" column="0">
       <widget class="QCheckBox" name="antialias_checkbox">
        <property name="text">
         <string>Antialias</string>
@@ -86,12 +118,25 @@ background: rgb(255, 255, 127)
        </property>
       </widget>
      </item>
-     <item row="12" column="0">
+     <item row="7" column="0">
       <widget class="QGroupBox" name="antialias_groupbox">
        <property name="title">
         <string/>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
@@ -112,14 +157,96 @@ background: rgb(255, 255, 127)
        </layout>
       </widget>
      </item>
-     <item row="18" column="0">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+     <item row="8" column="0">
+      <widget class="QCheckBox" name="fastmarching_checkbox">
+       <property name="text">
+        <string>Fastmarching</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="16" column="0">
+     <item row="9" column="0">
+      <widget class="QGroupBox" name="fastmarching_groupbox">
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Iso Value</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="iso_value">
+            <property name="minimum">
+             <double>-999999999.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>999999999.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.500000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="sigma2">
+            <property name="text">
+             <string>Sigma</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="fastmarch_sigma"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="10" column="0">
       <widget class="QCheckBox" name="blur_checkbox">
        <property name="text">
         <string>Blur</string>
@@ -129,12 +256,25 @@ background: rgb(255, 255, 127)
        </property>
       </widget>
      </item>
-     <item row="17" column="0">
+     <item row="11" column="0">
       <widget class="QGroupBox" name="blur_groupbox">
        <property name="title">
         <string/>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
@@ -146,84 +286,6 @@ background: rgb(255, 255, 127)
          <widget class="QDoubleSpinBox" name="blur_sigma">
           <property name="value">
            <double>2.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="fill_holes_checkbox">
-       <property name="text">
-        <string>Fill Holes</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QCheckBox" name="isolate_checkbox">
-       <property name="text">
-        <string>Isolate</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="0">
-      <widget class="Line" name="line_7">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QCheckBox" name="auto_pad_checkbox_">
-       <property name="text">
-        <string>Pad</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="Line" name="line_22">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="QGroupBox" name="antialias_groupbox_2">
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Amount</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="padding_amount">
-          <property name="maximum">
-           <number>500</number>
-          </property>
-          <property name="value">
-           <number>10</number>
           </property>
          </widget>
         </item>
@@ -276,18 +338,21 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
-  <tabstop>fill_holes_checkbox</tabstop>
-  <tabstop>isolate_checkbox</tabstop>
   <tabstop>center_checkbox</tabstop>
+  <tabstop>isolate_checkbox</tabstop>
+  <tabstop>fill_holes_checkbox</tabstop>
   <tabstop>autocrop_checkbox</tabstop>
-  <tabstop>auto_pad_checkbox_</tabstop>
+  <tabstop>autopad_checkbox</tabstop>
   <tabstop>padding_amount</tabstop>
   <tabstop>antialias_checkbox</tabstop>
   <tabstop>antialias_iterations</tabstop>
   <tabstop>fastmarching_checkbox</tabstop>
+  <tabstop>iso_value</tabstop>
+  <tabstop>fastmarch_sigma</tabstop>
   <tabstop>blur_checkbox</tabstop>
   <tabstop>blur_sigma</tabstop>
   <tabstop>export_xml_button</tabstop>
+  <tabstop>skipButton</tabstop>
   <tabstop>run_groom_button</tabstop>
  </tabstops>
  <resources/>

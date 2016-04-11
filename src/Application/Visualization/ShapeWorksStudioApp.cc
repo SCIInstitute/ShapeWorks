@@ -218,8 +218,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp( int argc, char** argv )
   this->analysis_tool_->set_project( this->project_ );
   this->analysis_tool_->set_app( this );
   this->ui_->stacked_widget->addWidget( this->analysis_tool_.data() );
-  connect( this->analysis_tool_.data(), SIGNAL( pca_labels_changed( QString, QString, QString ) ),
-      this, SLOT( handle_pca_labels_changed( QString, QString, QString ) ) );
   connect( this->analysis_tool_.data(), SIGNAL( update_view() ), this, SLOT( handle_display_setting_changed() ) );
   connect( this->analysis_tool_.data(), SIGNAL( pca_update() ), this, SLOT( handle_new_mesh() ) );
 
