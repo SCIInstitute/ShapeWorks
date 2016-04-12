@@ -17,9 +17,7 @@
 #include <ui_OptimizeTool.h>
 
 //---------------------------------------------------------------------------
-OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs)
-{
-
+OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_OptimizeTool;
   this->ui_->setupUi( this );
 }
@@ -69,48 +67,22 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->app_->set_status_bar("Please wait: running optimize step...");
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
-  std::vector<std::string> names;
   for (auto s : shapes) {
-    imgs.push_back(s->get_original_image());
-    names.push_back(s->get_original_filename_with_path().toStdString());
+    imgs.push_back(s->get_groomed_image());
   }
-  this->optimize_ = ShapeWorksOptimize(imgs, true);
+  //this->optimize_ = ShapeWorksOptimize(imgs, true);
 
-  if (this->ui_->center_checkbox->isChecked()) {
-    this->groom_.queueTool("center");
-  }
-  if (this->ui_->autocrop_checkbox->isChecked()) {
-    this->groom_.queueTool("auto_crop");
-  }
-  if (this->ui_->fill_holes_checkbox->isChecked()) {
-    this->groom_.queueTool("hole_fill");
-  }
-  if (this->ui_->autopad_checkbox->isChecked()) {
-    this->groom_.queueTool("auto_pad");
-  }
-  if (this->ui_->antialias_checkbox->isChecked()) {
-    this->groom_.queueTool("antialias");
-  }
-  if (this->ui_->fastmarching_checkbox->isChecked()) {
-    this->groom_.queueTool("fastmarching");
-  }
-  if (this->ui_->blur_checkbox->isChecked()) {
-    this->groom_.queueTool("blur");
-  }
-  if (this->ui_->isolate_checkbox->isChecked()) {
-    this->groom_.queueTool("isolate");
-  }
 
   QThread *thread = new QThread;
-  ShapeworksWorker *worker = new ShapeworksWorker(
-    ShapeworksWorker::Groom, this->groom_, this->project_);
+  /*ShapeworksWorker *worker = new ShapeworksWorker(
+    ShapeworksWorker::Optimize, this->optimize_, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
   connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  thread->start();
+  thread->start();*/
 
 }
 

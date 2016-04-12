@@ -140,4 +140,5 @@ TARGET_LINK_LIBRARIES( ShapeWorksStudio
   Qt5::WinMain
   ${itkParticleShapeModelingLib}
   ShapeWorksGroom
+  ShapeWorksOptimize
   )
