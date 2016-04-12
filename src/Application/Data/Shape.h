@@ -43,10 +43,12 @@ public:
   QSharedPointer<Mesh> get_groomed_mesh();
 
   /// Import global correspondence point file
-  bool import_global_point_file( QString filename );
+  bool import_global_point_file(QString filename);
 
   /// Import local correspondence point file
-  bool import_local_point_file( QString filename );
+  bool import_local_point_file(QString filename);
+  /// Import local correspondence point data
+  bool import_local_points(std::vector<itk::Point<float> > points);
 
   /// Retrieve the reconstructed mesh
   QSharedPointer<Mesh> get_reconstructed_mesh();

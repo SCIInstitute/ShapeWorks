@@ -193,7 +193,7 @@ bool AnalysisTool::compute_stats()
 
   std::vector < vnl_vector < double > > points;
   foreach( ShapeHandle shape, this->project_->get_shapes() ) {
-    points.push_back( shape->get_global_correspondence_points() );
+    points.push_back( shape->get_local_correspondence_points() );
   }
 
   this->stats_.ImportPoints( points );

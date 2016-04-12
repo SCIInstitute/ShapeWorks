@@ -15,6 +15,7 @@
 #include <QObject>
 #include <QStringList>
 #include <ShapeWorksGroom.h>
+#include <ShapeWorksOptimize.h>
 #include <Data/Project.h>
 
 class ShapeworksWorker : public QObject
@@ -24,6 +25,7 @@ class ShapeworksWorker : public QObject
 public:
   typedef enum ThreadType { Groom, Optimize };
 	ShapeworksWorker(ThreadType type, ShapeWorksGroom& groom,
+    ShapeWorksOptimize& optimize,
     QSharedPointer<Project> project);
 	~ShapeworksWorker();
 
@@ -34,9 +36,11 @@ Q_SIGNALS:
   void result_ready();
   void error_message(std::string);
   void step_made(int val);
+  void finished();
 
 private:
   ShapeWorksGroom& groom_;
+  ShapeWorksOptimize& optimize_;
   QSharedPointer<Project> project_;
   ThreadType type_;
 };

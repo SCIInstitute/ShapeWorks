@@ -51,7 +51,8 @@ public:
   void load_groomed_images(std::vector<ImageType::Pointer> images, double iso);
 
   /// load point files
-  bool load_point_files( QStringList file_names );
+  bool load_point_files(QStringList file_names);
+  bool load_points(std::vector<std::vector<itk::Point<float> > > points);
 
   /// remove shapes
   void remove_shapes( QList<int> list );
@@ -114,10 +115,6 @@ private:
   Preferences& preferences_;
 
   void renumber_shapes();
-
-  static bool check_if_legacy( QString filename );
-
-  static bool find_files( QStringList list, QString project_file, QStringList &fixed_list );
 
   QWidget* parent_;
 

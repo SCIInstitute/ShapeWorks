@@ -341,6 +341,8 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
   {
     return;
   }
+  preferences_.add_recent_file(filename);
+  this->update_recent_files();
 
   preferences_.set_last_directory( QDir().absoluteFilePath( filename ) );
 

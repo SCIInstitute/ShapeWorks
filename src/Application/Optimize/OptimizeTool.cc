@@ -42,10 +42,11 @@ void OptimizeTool::on_export_xml_button_clicked()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_error() {
+void OptimizeTool::handle_error(std::string msg) {
 	this->progress_->setValue(100);
   QApplication::processEvents();
 	delete this->progress_;
+  emit error_message(msg);
 }
 
 //---------------------------------------------------------------------------
@@ -70,58 +71,34 @@ void OptimizeTool::on_run_optimize_button_clicked()
   for (auto s : shapes) {
     imgs.push_back(s->get_groomed_image());
   }
-  //this->optimize_ = ShapeWorksOptimize(imgs, true);
+  this->optimize_ = ShapeWorksOptimize(imgs, this->ui_->number_of_scales->value(),
+    this->ui_->optimization_iterations_->value(), 
+    this->ui_->tolerance->value(),
+    this->ui_->decaySpan->value(), 
+    this->ui_->starting_regularization_->value(), 
+    this->ui_->ending_regularization_->value(), true);
 
 
   QThread *thread = new QThread;
-  /*ShapeworksWorker *worker = new ShapeworksWorker(
-    ShapeworksWorker::Optimize, this->optimize_, this->project_);
+  ShapeworksWorker *worker = new ShapeworksWorker(
+    ShapeworksWorker::Optimize, ShapeWorksGroom(), this->optimize_, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
   connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  thread->start();*/
+  thread->start();
 
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_thread_complete() {
-  //handle failed shape load from project
-  QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  if (shapes.size() == 0) {
-        this->progress_->setValue(100);
-        QApplication::processEvents();
-        delete this->progress_;
-        emit optimize_complete();
-  }
-  //create the list of wpts files
-  QFileInfo fi( shapes[0]->get_original_filename_with_path() );
-  QString project_path = fi.dir().absolutePath();
-  std::string name = this->project_->get_shapes()[0]->get_original_filename().toStdString();
-  name = name.substr(0,name.size() - 5);
-  QString prefix = project_path + QDir::separator() + QString::fromStdString(name);
-  QStringList list;
-  int pad = static_cast<int>(std::log10(static_cast<double>(shapes.size())));
-  for ( int i = 0; i < shapes.size(); i++ )
-  {
-      std:: stringstream ss;
-      ss << prefix.toStdString() << ".";
-      int sz = std::max(i,1);
-      int zeros = pad - static_cast<int>(std::log10(static_cast<double>(sz)));
-      for (int j = 0; j < zeros; j++)
-          ss << "0";
-      ss << i << ".wpts";
-      QString file(ss.str().c_str());
-      std::cout << "Reading points file: " << file.toStdString() << std::endl;
-      list << file;
-  }
-  
+  auto points = this->optimize_.optimizedPoints();
   this->progress_->setValue(95);
   QApplication::processEvents();
-  this->project_->load_point_files( list );
-
+  this->project_->load_points(points);
+  this->project_->calculate_reconstructed_samples();
   this->progress_->setValue(100);
   QApplication::processEvents();
   delete this->progress_;
@@ -147,10 +124,7 @@ bool OptimizeTool::export_xml( QString filename )
   xml_writer->writeStartDocument();
 
   xml_writer->writeTextElement( "number_of_particles",
-                                QString::number( this->ui_->number_of_points_->value() ) );
-
-  xml_writer->writeTextElement( "iterations_per_split",
-                                QString::number( this->ui_->iterations_per_split_->value() ) );
+                                QString::number( this->ui_->number_of_scales->value() ) );
 
   xml_writer->writeTextElement( "starting_regularization",
                                 QString::number( this->ui_->starting_regularization_->value() ) );
@@ -161,8 +135,8 @@ bool OptimizeTool::export_xml( QString filename )
   xml_writer->writeTextElement( "optimization_iterations",
                                 QString::number( this->ui_->optimization_iterations_->value() ) );
 
-  xml_writer->writeTextElement( "relative_weighting",
-                                QString::number( this->ui_->relative_weighting_->value() ) );
+  xml_writer->writeTextElement( "tolerance",
+                                QString::number( this->ui_->tolerance->value() ) );
 
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
   QFileInfo fi( shapes[0]->get_original_filename_with_path() );

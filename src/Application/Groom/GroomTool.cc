@@ -129,7 +129,7 @@ void GroomTool::on_run_groom_button_clicked()
 
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
-    ShapeworksWorker::Groom, this->groom_, this->project_);
+    ShapeworksWorker::Groom, this->groom_, ShapeWorksOptimize(), this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));

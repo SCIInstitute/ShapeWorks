@@ -82,9 +82,9 @@ void Visualizer::display_samples() {
       filename = shapes[i]->get_groomed_filename();
     } else if (this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
       mesh = shapes[i]->get_reconstructed_mesh();
-      filename = shapes[i]->get_global_point_filename();
-      // use global correspondence points for reconstructed mesh
-      object->set_correspondence_points(shapes[i]->get_global_correspondence_points());
+      filename = shapes[i]->get_original_filename() + "-RE";
+      // use local correspondence points for reconstructed mesh
+      object->set_correspondence_points(shapes[i]->get_local_correspondence_points());
     }
     if ( this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C ) {
       object->set_exclusion_sphere_centers( shapes[i]->get_exclusion_sphere_centers() );
@@ -159,10 +159,10 @@ void Visualizer::display_sample(size_t i)
     if ( !mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C )
     {
       mesh = shape->get_reconstructed_mesh();
-      filename = shape->get_global_point_filename();
+      filename = shape->get_original_filename() + "(RE)";
 
-      // use global correspondence points for reconstructed mesh
-      object->set_correspondence_points( shape->get_global_correspondence_points() );
+      // use local correspondence points for reconstructed mesh
+      object->set_correspondence_points( shape->get_local_correspondence_points() );
     }
     object->set_mesh( mesh );
 
@@ -188,6 +188,7 @@ void Visualizer::display_sample(size_t i)
     this->update_viewer_properties();
     this->lightbox_->set_display_objects( list_ptr );
     this->lightbox_->redraw();
+    this->currentShape_ = shape->get_local_correspondence_points();
 }
 
 //-----------------------------------------------------------------------------

@@ -37,9 +37,10 @@ public Q_SLOTS:
   void on_run_optimize_button_clicked();
   void handle_thread_complete();
   void handle_progress(int val);
-  void handle_error();
+  void handle_error(std::string);
 signals:
   void optimize_complete();
+  void error_message(std::string);
 
 private:
   ShapeWorksOptimize optimize_;

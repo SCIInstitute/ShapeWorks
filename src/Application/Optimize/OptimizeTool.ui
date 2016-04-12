@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>228</width>
-    <height>367</height>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,17 +32,17 @@ background: rgb(255, 255, 127)
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Number of points</string>
+         <string>Number of Splits</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="number_of_points_">
+       <widget class="QSpinBox" name="number_of_scales">
         <property name="maximum">
          <number>20000</number>
         </property>
         <property name="value">
-         <number>128</number>
+         <number>8</number>
         </property>
        </widget>
       </item>
@@ -75,7 +75,7 @@ background: rgb(255, 255, 127)
          <double>999999.000000000000000</double>
         </property>
         <property name="value">
-         <double>1000.000000000000000</double>
+         <double>100.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -108,7 +108,7 @@ background: rgb(255, 255, 127)
          <double>999999.000000000000000</double>
         </property>
         <property name="value">
-         <double>10.000000000000000</double>
+         <double>2.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -123,39 +123,6 @@ background: rgb(255, 255, 127)
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="blur_groupbox">
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Iterations per split</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="iterations_per_split_">
-        <property name="maximum">
-         <number>20000</number>
-        </property>
-        <property name="value">
-         <number>100</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line_7">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="blur_groupbox_4">
      <property name="title">
       <string/>
@@ -164,7 +131,7 @@ background: rgb(255, 255, 127)
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Max iterations</string>
+         <string>Iterations per split</string>
         </property>
        </widget>
       </item>
@@ -174,7 +141,7 @@ background: rgb(255, 255, 127)
          <number>20000</number>
         </property>
         <property name="value">
-         <number>100</number>
+         <number>1000</number>
         </property>
        </widget>
       </item>
@@ -202,7 +169,7 @@ background: rgb(255, 255, 127)
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="relative_weighting_">
+       <widget class="QDoubleSpinBox" name="tolerance">
         <property name="decimals">
          <number>4</number>
         </property>
@@ -210,7 +177,7 @@ background: rgb(255, 255, 127)
          <double>1000.000000000000000</double>
         </property>
         <property name="value">
-         <double>1.000000000000000</double>
+         <double>0.010000000000000</double>
         </property>
        </widget>
       </item>
@@ -219,6 +186,32 @@ background: rgb(255, 255, 127)
    </item>
    <item>
     <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Decay Span</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="decaySpan"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -258,12 +251,11 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
-  <tabstop>number_of_points_</tabstop>
+  <tabstop>number_of_scales</tabstop>
   <tabstop>starting_regularization_</tabstop>
   <tabstop>ending_regularization_</tabstop>
-  <tabstop>iterations_per_split_</tabstop>
   <tabstop>optimization_iterations_</tabstop>
-  <tabstop>relative_weighting_</tabstop>
+  <tabstop>tolerance</tabstop>
   <tabstop>export_xml_button</tabstop>
   <tabstop>run_optimize_button</tabstop>
  </tabstops>

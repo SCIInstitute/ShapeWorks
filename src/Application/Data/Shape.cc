@@ -52,8 +52,11 @@ void Shape::import_groomed_file( QString filename, double iso )
 //---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso) {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
+  this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
-  this->groomed_mesh_filename_ = this->original_mesh_filename_ + "(DT)";
+  auto name = this->original_mesh_filename_.toStdString();
+  name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
+  this->groomed_mesh_filename_ = QString::fromStdString(name);
 }
 
 //---------------------------------------------------------------------------
@@ -79,6 +82,32 @@ bool Shape::import_global_point_file( QString filename )
 
   this->global_point_filename_ = filename;
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Shape::import_local_points(std::vector<itk::Point<float> > points) {
+  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
+  size_t num_points = 0;
+  for (auto &a : points) {
+    double x = static_cast<double>(a[0]);
+    double y = static_cast<double>(a[1]);
+    double z = static_cast<double>(a[2]);
+
+    vtk_points->InsertNextPoint(x, y, z);
+    num_points++;
+  }
+
+  this->local_correspondence_points_.clear();
+  this->local_correspondence_points_.set_size(num_points * 3);
+
+  int idx = 0;
+  for (int i = 0; i < num_points; i++) {
+    double* pos = vtk_points->GetPoint(i);
+    this->local_correspondence_points_[idx++] = pos[0];
+    this->local_correspondence_points_[idx++] = pos[1];
+    this->local_correspondence_points_[idx++] = pos[2];
+  }
   return true;
 }
 
@@ -173,7 +202,6 @@ QString Shape::get_local_point_filename_with_path()
   return this->local_point_filename_;
 }
 
-
 //---------------------------------------------------------------------------
 QList<Point> Shape::get_exclusion_sphere_centers()
 {
@@ -199,46 +227,28 @@ void Shape::set_exclusion_sphere_radii(QList<double> radii)
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file( QString filename, vnl_vector<double> &points )
-{
-
-  QFile file( filename );
-  if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
-  {
+bool Shape::import_point_file( QString filename, vnl_vector<double> &points ) {
+  std::ifstream in(filename.toStdString().c_str());
+  if (!in.good( )) {
     QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
     return false;
   }
-
-  QTextStream stream( &file );
-
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
 
   int num_points = 0;
-  while ( !stream.atEnd() )
-  {
-    QString line = stream.readLine();
-    QStringList list = line.split( ' ' );
-    if ( list.size() < 3 ) // sanity check
-    {
-      std::cerr << "Error, line " << line.toStdString() << " does not contain 3 fields\n";
-      std::cerr << "list.size = " << list.size() << "\n";
-      return false;
-    }
-
-    double x = list[0].toDouble();
-    double y = list[1].toDouble();
-    double z = list[2].toDouble();
-
+  while (in.good()) {
+    double x, y, z; 
+    in >> x >> y >> z;
+    if (!in.good()) break;
     vtk_points->InsertNextPoint( x, y, z );
     num_points++;
   }
-
+  in.close();
   points.clear();
   points.set_size( num_points * 3 );
 
   int idx = 0;
-  for ( int i = 0; i < num_points; i++ )
-  {
+  for ( int i = 0; i < num_points; i++ ) {
     double* pos = vtk_points->GetPoint( i );
     points[idx++] = pos[0];
     points[idx++] = pos[1];

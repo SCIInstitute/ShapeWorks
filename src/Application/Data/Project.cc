@@ -45,7 +45,6 @@ void Project::handle_clear_cache() {
   this->calculate_reconstructed_samples();
 }
 
-
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples() {
   if (!this->reconstructed_present_) return;
@@ -69,18 +68,15 @@ void Project::set_parent(QWidget* parent)
 //---------------------------------------------------------------------------
 bool Project::save_project(QString filename /* = "" */)
 {
-  if (filename == "")
-  {
+  if (filename == "") {
     filename = this->filename_;
   }
-
   this->filename_ = filename;
 
   // open file
   QFile file(filename);
 
-  if (!file.open(QIODevice::WriteOnly))
-  {
+  if (!file.open(QIODevice::WriteOnly)) {
     QMessageBox::warning(0, "Read only", "The file is in read only mode");
     return false;
   }
@@ -100,24 +96,35 @@ bool Project::save_project(QString filename /* = "" */)
 
   // shapes
   xml->writeStartElement("shapes");
-  for (int i = 0; i < this->shapes_.size(); i++)
-  {
+  for (int i = 0; i < this->shapes_.size(); i++) {
     xml->writeStartElement("shape");
     xml->writeAttribute("id", QString::number(i));
 
-    if (this->original_present())
-    {
+    if (this->original_present()) {
       xml->writeTextElement("initial_mesh", this->shapes_[i]->get_original_filename_with_path());
     }
 
-    if (this->groomed_present())
-    {
+    if (this->groomed_present())  {
       xml->writeTextElement("groomed_mesh", this->shapes_[i]->get_groomed_filename_with_path());
+      //try writing the groomed to file 
+      WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName(this->shapes_[i]->get_groomed_filename_with_path().toStdString());
+      writer->SetInput(this->shapes_[i]->get_groomed_image());
+      writer->SetUseCompression(true);
+      writer->Update();
     }
 
-    if (this->reconstructed_present())
-    {
-      xml->writeTextElement("point_file", this->shapes_[i]->get_global_point_filename_with_path());
+    if (this->reconstructed_present()) {
+      auto name = this->shapes_[i]->get_original_filename_with_path().toStdString();
+      name = name.substr(0, name.find_last_of(".")) + ".lpts";
+      xml->writeTextElement("point_file", QString::fromStdString(name));
+      //try writing to file
+      std::ofstream out(name);
+      auto points = this->shapes_[i]->get_local_correspondence_points();
+      for (auto &a : points) {
+        out << a << std::endl;
+      }
+      out.close();
     }
 
     xml->writeEndElement(); // shape
@@ -132,8 +139,7 @@ bool Project::save_project(QString filename /* = "" */)
 //---------------------------------------------------------------------------
 bool Project::load_project(QString filename)
 {
-  if (!QFile::exists(filename))
-  {
+  if (!QFile::exists(filename)) {
     QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
     return false;
   }
@@ -144,8 +150,7 @@ bool Project::load_project(QString filename)
 
   // open file
   QFile file(filename);
-  if (!file.open(QIODevice::ReadOnly))
-  {
+  if (!file.open(QIODevice::ReadOnly)) {
     QMessageBox::warning(0, "Unable to open file", "Error opening file: " + filename);
     return false;
   }
@@ -216,32 +221,19 @@ bool Project::load_project(QString filename)
     QMessageBox::critical(NULL, "ShapeWorksStudio", xml->errorString(), QMessageBox::Ok);
     return false;
   }
-
-  QStringList fixed_import_files;
-  QStringList fixed_groom_files;
-  QStringList fixed_point_files;
-
-  if (!Project::find_files(import_files, filename, fixed_import_files))
-  {
-    return false;
-  }
-  if (!Project::find_files(groomed_files, filename, fixed_groom_files))
-  {
-    return false;
-  }
-  if (!Project::find_files(point_files, filename, fixed_point_files))
-  {
-    return false;
-  }
-
-  this->load_original_files(fixed_import_files);
+  
+  this->load_original_files(import_files);
   std::vector<std::string> groom_list;
-  for (auto a : fixed_groom_files) {
+  for (auto a : groomed_files) {
     groom_list.push_back(a.toStdString());
   }
   this->load_groomed_files(groom_list, 0.5);
 
-  this->load_point_files(fixed_point_files);
+  std::vector<std::string> pointlist;
+  for (auto a : point_files) {
+    pointlist.push_back(a.toStdString());
+  }
+  this->load_point_files(point_files);
 
   // set this after loading files so it doesn't get fiddled with
   this->display_state_ = display_state;
@@ -361,35 +353,61 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
+bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points)
+{
+  QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
+  progress.setWindowModality(Qt::WindowModal);
+  progress.show();
+  progress.setMinimumDuration(2000);
+  std::cerr << "num file = " << points.size() << "\n";
+  for (int i = 0; i < points.size(); i++) {
+    QSharedPointer<Shape> shape;
+    if (this->shapes_.size() > i) {
+      shape = this->shapes_[i];
+    } else {
+      shape = QSharedPointer<Shape>(new Shape);
+      this->shapes_.push_back(shape);
+    }
+    std::cerr << "Loading points from shape " << i << "\n";
+    progress.setValue(i);
+    QApplication::processEvents();
+    if (!shape->import_local_points(points[i])) {
+      return false;
+    }
+    if (progress.wasCanceled()) {
+      break;
+    }
+  }
+  progress.setValue(points.size());
+  QApplication::processEvents();
+
+  if (points.size() > 0) {
+    this->reconstructed_present_ = true;
+    emit data_changed();
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
 bool Project::load_point_files(QStringList file_names)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
   progress.setMinimumDuration(2000);
-
   std::cerr << "num file = " << file_names.size() << "\n";
-
-  for (int i = 0; i < file_names.size(); i++)
-  {
+  for (int i = 0; i < file_names.size(); i++) {
     std::cerr << "Loading file " << file_names[i].toStdString() << "\n";
     progress.setValue(i);
     QApplication::processEvents();
-
-    if (progress.wasCanceled())
-    {
+    if (progress.wasCanceled()) {
       break;
     }
-
     std::cerr << file_names[i].toStdString() << "\n";
-
     QSharedPointer<Shape> shape;
-
-    if (this->shapes_.size() > i)
-    {
+    if (this->shapes_.size() > i) {
       shape = this->shapes_[i];
-    } else
-    {
+    } else {
       shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(shape);
     }
@@ -398,48 +416,26 @@ bool Project::load_point_files(QStringList file_names)
     QString basename = fi.completeBaseName();
     QString ext = fi.suffix();
 
-    if (ext != "wpts" && ext != "lpts")
-    {
-      // hmm, load only global?
-      if (QFile::exists(file_names[i]))
-      {
-        if (!shape->import_global_point_file(file_names[i]))
-        {
+    if (ext == "wpts") {
+      if (QFile::exists(file_names[i])) {
+        if (!shape->import_global_point_file(file_names[i])) {
           return false;
         }
       }
-    } else
-    {
-      QString local_name = fi.absolutePath() + QDir::separator() + basename + ".lpts";
-      QString global_name = fi.absolutePath() + QDir::separator() + basename + ".wpts";
-
-      if (QFile::exists(local_name))
-      {
-        if (!shape->import_local_point_file(local_name))
-        {
-          return false;
-        }
-      }
-
-      if (QFile::exists(global_name))
-      {
-        if (!shape->import_global_point_file(global_name))
-        {
+    } else if (ext == "lpts") {
+      if (QFile::exists(file_names[i])) {
+        if (!shape->import_local_point_file(file_names[i])) {
           return false;
         }
       }
     }
   }
-
   progress.setValue(file_names.size());
   QApplication::processEvents();
-
-  if (file_names.size() > 0)
-  {
+  if (file_names.size() > 0) {
     this->reconstructed_present_ = true;
     emit data_changed();
   }
-
   return true;
 }
 
@@ -551,77 +547,7 @@ int Project::get_zoom_state()
 }
 
 //---------------------------------------------------------------------------
-bool Project::check_if_legacy(QString filename)
-{
-  TiXmlDocument doc(filename.toStdString().c_str());
-
-  if (!doc.LoadFile())
-  {
-    return false;
-  }
-
-  TiXmlHandle doc_handle(&doc);
-
-  if (doc_handle.FirstChild("point_files").Element())
-  {
-    return true;
-  }
-
-  if (doc_handle.FirstChild("inputs").Element())
-  {
-    return true;
-  }
-
-  return false;
-}
-
-//---------------------------------------------------------------------------
 int Project::get_num_shapes()
 {
   return this->shapes_.size();
-}
-
-//---------------------------------------------------------------------------
-bool Project::find_files(QStringList list, QString project_file, QStringList &fixed_list)
-{
-  QString xml_path = QFileInfo(project_file).absolutePath();
-
-  foreach(QString file, list) {
-    QString test_file = file;
-
-    if (!QFile::exists(test_file))
-    {
-      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
-      // 1. try appending the parent dir of the project file
-      test_file = xml_path + QDir::separator() + file;
-    }
-
-    if (!QFile::exists(test_file))
-    {
-      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
-      // 2. Try xml directory's parent
-      test_file = QFileInfo(xml_path).dir().absolutePath() + QDir::separator() + file;
-    }
-
-    if (!QFile::exists(test_file))
-    {
-      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
-      // 3. Try stripping path and using project directory
-      test_file = xml_path + QDir::separator() + QFileInfo(file).fileName();
-    }
-
-    if (!QFile::exists(test_file))
-    {
-      std::cerr << "Could not find: " << test_file.toStdString() << "\n";
-      std::cerr << "Could not find file: " << file.toStdString() << "\n";
-      QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + file, QMessageBox::Ok);
-      return false;
-    }
-
-    std::cerr << "Fixed up " << file.toStdString() << " => " << test_file.toStdString() << "\n";
-
-    fixed_list << test_file;
-  }
-
-  return true;
 }
