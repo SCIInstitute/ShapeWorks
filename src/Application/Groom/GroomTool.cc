@@ -91,10 +91,8 @@ void GroomTool::on_run_groom_button_clicked()
   this->app_->set_status_bar( "Please wait: running groom step..." );
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
-  std::vector<std::string> names;
   for (auto s : shapes) {
     imgs.push_back(s->get_original_image());
-    names.push_back(s->get_original_filename_with_path().toStdString());
   }
   this->groom_ = ShapeWorksGroom(imgs, 0, 1, 
     this->ui_->blur_sigma->value(),
@@ -266,20 +264,9 @@ void GroomTool::set_app( ShapeWorksStudioApp* app )
 void GroomTool::on_skipButton_clicked() {
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
-  std::vector<std::string> names;
   for (auto s : shapes) {
     imgs.push_back(s->get_original_image());
-    names.push_back(s->get_original_filename_with_path().toStdString());
   }
-  this->groom_ = ShapeWorksGroom(imgs, 0, 1, 0, 0, 0, 0, true);
-  QThread *thread = new QThread;
-  ShapeworksWorker *worker = new ShapeworksWorker(
-    ShapeworksWorker::Groom, this->groom_, this->project_);
-  worker->moveToThread(thread);
-  connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
-  connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
-  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
-  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  thread->start();
+  this->project_->load_groomed_images(imgs, this->ui_->iso_value->value());
+  emit groom_complete();
 }

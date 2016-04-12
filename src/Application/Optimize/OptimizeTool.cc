@@ -59,26 +59,58 @@ void OptimizeTool::handle_progress(int val) {
 
 //---------------------------------------------------------------------------
 void OptimizeTool::on_run_optimize_button_clicked()
-{  
-  this->progress_ = new QProgressDialog(QString("Running Shapeworks Tool. Please Wait..."),QString(),0,100,this);
+{
+  this->progress_ = new QProgressDialog(QString("Running Shapeworks Tool. Please Wait..."), QString(), 0, 100, this);
   this->progress_->setWindowModality(Qt::WindowModal);
   this->progress_->show();
   QApplication::processEvents();
   this->progress_->setValue(5);
   QApplication::processEvents();
-  this->app_->set_status_bar( "Please wait: running optimize step..." );
-  /*
+  this->app_->set_status_bar("Please wait: running optimize step...");
+  auto shapes = this->project_->get_shapes();
+  std::vector<ImageType::Pointer> imgs;
+  std::vector<std::string> names;
+  for (auto s : shapes) {
+    imgs.push_back(s->get_original_image());
+    names.push_back(s->get_original_filename_with_path().toStdString());
+  }
+  this->optimize_ = ShapeWorksOptimize(imgs, true);
+
+  if (this->ui_->center_checkbox->isChecked()) {
+    this->groom_.queueTool("center");
+  }
+  if (this->ui_->autocrop_checkbox->isChecked()) {
+    this->groom_.queueTool("auto_crop");
+  }
+  if (this->ui_->fill_holes_checkbox->isChecked()) {
+    this->groom_.queueTool("hole_fill");
+  }
+  if (this->ui_->autopad_checkbox->isChecked()) {
+    this->groom_.queueTool("auto_pad");
+  }
+  if (this->ui_->antialias_checkbox->isChecked()) {
+    this->groom_.queueTool("antialias");
+  }
+  if (this->ui_->fastmarching_checkbox->isChecked()) {
+    this->groom_.queueTool("fastmarching");
+  }
+  if (this->ui_->blur_checkbox->isChecked()) {
+    this->groom_.queueTool("blur");
+  }
+  if (this->ui_->isolate_checkbox->isChecked()) {
+    this->groom_.queueTool("isolate");
+  }
+
   QThread *thread = new QThread;
-  ShapeworksWorker *worker = new ShapeworksWorker(QString::fromStdString(optimizeLocation), args);
+  ShapeworksWorker *worker = new ShapeworksWorker(
+    ShapeworksWorker::Groom, this->groom_, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
-  connect(worker, SIGNAL(step_made(int)),  this, SLOT(handle_progress(int)));
-  connect(worker, SIGNAL(run_error()),  this, SLOT(handle_error()));
+  connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
+  connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
+  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-  thread->start();*/
-  // now lets hope this thread does it's job.
+  thread->start();
 
 }
 

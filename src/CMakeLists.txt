@@ -87,6 +87,7 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 #--------------------------------------------------------------------------------
 
 add_subdirectory(Groom)
+add_subdirectory(Optimize)
 
 FILE(GLOB STUDIO_SRCS Application/main.cc Application/*/*.cc Application/*/*.cpp)
 FILE(GLOB STUDIO_HDRS Application/*/*.h)
@@ -100,6 +101,7 @@ add_definitions(-DRSCS_FILE="${STUDIO_RSCS}")
 INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR} )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Application )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Groom )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Optimize )
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 

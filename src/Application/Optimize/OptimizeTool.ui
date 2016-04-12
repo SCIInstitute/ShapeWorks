@@ -164,7 +164,7 @@ background: rgb(255, 255, 127)
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Optimization iterations</string>
+         <string>Max iterations</string>
         </property>
        </widget>
       </item>
@@ -197,7 +197,7 @@ background: rgb(255, 255, 127)
       <item>
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Relative Weighting</string>
+         <string>Tolerance</string>
         </property>
        </widget>
       </item>

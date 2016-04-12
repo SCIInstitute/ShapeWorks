@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QProgressDialog>
 #include "Data/Preferences.h"
+#include "ShapeWorksOptimize.h"
 
 class Project;
 class ShapeWorksStudioApp;
@@ -41,6 +42,7 @@ signals:
   void optimize_complete();
 
 private:
+  ShapeWorksOptimize optimize_;
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
