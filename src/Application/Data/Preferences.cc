@@ -24,6 +24,12 @@ Preferences::Preferences(QString name)
   this->defaults_.insert(std::make_pair("spacing", 1.f));
   this->defaults_.insert(std::make_pair("neighborhood", 5));
   this->defaults_.insert(std::make_pair("color_scheme", 0));
+  this->defaults_.insert(std::make_pair("groom_start_reg", 100));
+  this->defaults_.insert(std::make_pair("groom_scales", 8));
+  this->defaults_.insert(std::make_pair("groom_end_reg", 2));
+  this->defaults_.insert(std::make_pair("groom_iters", 1000));
+  this->defaults_.insert(std::make_pair("groom_tolerance", 0.01));
+  this->defaults_.insert(std::make_pair("groom_decay_span", 0.0));
 }
 
 Preferences& Preferences::operator = (const Preferences& o) {

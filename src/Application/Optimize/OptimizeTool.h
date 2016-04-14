@@ -28,6 +28,18 @@ public:
   /// set the pointer to the application
   void set_app( ShapeWorksStudioApp* app );
 
+  // set up the parameter table.
+  void setupTable();
+  std::vector<double> getStartRegs();
+  std::vector<double> getEndRegs();
+  std::vector<double> getDecaySpans();
+  std::vector<double> getTolerances();
+  std::vector<unsigned int> getIters();
+
+  void set_preferences();
+
+  void update_preferences();
+
 public Q_SLOTS:
 
   /// Export XML

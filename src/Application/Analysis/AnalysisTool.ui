@@ -672,7 +672,7 @@ QToolButton:pressed{
   <customwidget>
    <class>BarGraph</class>
    <extends>QWidget</extends>
-   <header location="global">Analysis/bargraph.h</header>
+   <header location="global">Visualization/bargraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

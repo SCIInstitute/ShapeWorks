@@ -17,10 +17,12 @@
 class ShapeWorksOptimize {
 public:
   ShapeWorksOptimize(std::vector<ImageType::Pointer> inputs = 
-    std::vector<ImageType::Pointer>(),
-    size_t numScales = 1, size_t maxIter = 1000, double tolerance = 0.01,
-    double decaySpan = 0., double regularizationInitial = 10.0,
-    double regularizationFinal = 2.,
+    std::vector<ImageType::Pointer>(), size_t numScales = 1, 
+    std::vector<double> start_reg = std::vector<double>(),
+    std::vector<double> end_reg = std::vector<double>(),
+    std::vector<unsigned int> iters = std::vector<unsigned int>(),
+    std::vector<double> tolerance = std::vector<double>(),
+    std::vector<double> decay_span = std::vector<double>(),
     bool verbose = false);
   void run();
   void queueTool(std::string tool);
@@ -33,10 +35,11 @@ protected:
 private:
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
-  size_t numScales_, maxIter_, reportInterval_,
+  size_t numScales_, reportInterval_,
     procrustesCounter_;
+  std::vector<unsigned int> maxIter_;
   std::vector<size_t>  procrustesInterval_;
-  double tolerance_, decaySpan_,
+  std::vector<double> tolerance_, decaySpan_,
     regularizationInitial_, regularizationFinal_;
   itk::PSMEntropyModelFilter<ImageType>::Pointer psmFilter_;
   itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;

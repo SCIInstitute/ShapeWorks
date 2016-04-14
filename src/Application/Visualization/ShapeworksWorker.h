@@ -23,7 +23,7 @@ class ShapeworksWorker : public QObject
   Q_OBJECT
 
 public:
-  typedef enum ThreadType { Groom, Optimize };
+  enum ThreadType { Groom, Optimize };
 	ShapeworksWorker(ThreadType type, ShapeWorksGroom& groom,
     ShapeWorksOptimize& optimize,
     QSharedPointer<Project> project);

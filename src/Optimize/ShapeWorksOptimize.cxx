@@ -1,39 +1,29 @@
 #include <ShapeWorksOptimize.h>
 #include <iostream>
 
-ShapeWorksOptimize::ShapeWorksOptimize(std::vector<ImageType::Pointer> inputs,
-  size_t numScales, size_t maxIter, double tolerance,
-  double decaySpan, double regularizationInitial,
-  double regularizationFinal,
-  bool verbose)
+ShapeWorksOptimize::ShapeWorksOptimize(
+  std::vector<ImageType::Pointer> inputs, size_t numScales,
+  std::vector<double> start_reg, std::vector<double> end_reg,
+  std::vector<unsigned int> iters, std::vector<double> tolerance,
+  std::vector<double> decay_span, bool verbose) 
   : images_(inputs), numScales_(numScales),
-  maxIter_(maxIter),
+  maxIter_(iters),
   reportInterval_(10), procrustesCounter_(0),
-  tolerance_(tolerance), decaySpan_(decaySpan),
-  regularizationInitial_(regularizationInitial),
-  regularizationFinal_(regularizationFinal),
+  tolerance_(tolerance), decaySpan_(decay_span),
+  regularizationInitial_(start_reg),
+  regularizationFinal_(end_reg),
   verbose_(verbose) {
   this->psmFilter_ = itk::PSMEntropyModelFilter<ImageType>::New();
   this->procrustesRegistration_ = itk::PSMProcrustesRegistration<3>::New();
 }
 
 void ShapeWorksOptimize::run() {
-  std::vector<double> regularization_initial(this->numScales_,
-    this->regularizationInitial_);
-  std::vector<double> regularization_final(this->numScales_,
-    this->regularizationFinal_);
-  std::vector<double> regularization_decayspan(this->numScales_,
-    this->decaySpan_);
-  std::vector<double> tolerance(this->numScales_,
-    this->tolerance_);
-  std::vector<unsigned int> maximum_iterations(this->numScales_,
-    this->maxIter_);
   this->psmFilter_->SetNumberOfScales(this->numScales_);
-  this->psmFilter_->SetRegularizationInitial(regularization_initial);
-  this->psmFilter_->SetRegularizationFinal(regularization_final);
-  this->psmFilter_->SetRegularizationDecaySpan(regularization_decayspan);
-  this->psmFilter_->SetTolerance(tolerance);
-  this->psmFilter_->SetMaximumNumberOfIterations(maximum_iterations);
+  this->psmFilter_->SetRegularizationInitial(regularizationInitial_);
+  this->psmFilter_->SetRegularizationFinal(regularizationFinal_);
+  this->psmFilter_->SetRegularizationDecaySpan(decaySpan_);
+  this->psmFilter_->SetTolerance(tolerance_);
+  this->psmFilter_->SetMaximumNumberOfIterations(maxIter_);
   this->procrustesInterval_.resize(this->numScales_);
   size_t i = 0;
   for (auto &a : this->images_) {
