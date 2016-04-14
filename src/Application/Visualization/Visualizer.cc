@@ -229,8 +229,8 @@ void Visualizer::set_show_surface( bool show )
 //-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties()
 {
-  double size = preferences_.get_glyph_size();
-  double quality = preferences_.get_glyph_quality();
+  double size = preferences_.get_preference("glyph_size", 1.f);
+  double quality = preferences_.get_preference("glyph_quality", 5.f);
 
   std::cerr << "** update viewer properties, size = " << size << "\n";
 
@@ -240,7 +240,7 @@ void Visualizer::update_viewer_properties()
       viewer->set_glyph_size_and_quality( size, quality );
       viewer->set_show_glyphs( this->show_glyphs_ );
       viewer->set_show_surface( this->show_surface_ );
-	  viewer->set_color_scheme(this->preferences_.get_color_scheme());
+	  viewer->set_color_scheme(this->preferences_.get_preference("color_scheme", 0));
     }
 
 	this->update_lut();

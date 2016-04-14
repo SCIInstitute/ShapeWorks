@@ -48,7 +48,7 @@ void Project::handle_clear_cache() {
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples() {
   if (!this->reconstructed_present_) return;
-  this->preferences_.set_cache_enabled(false);
+  this->preferences_.set_preference("cache_enabled", false);
   for (int i = 0; i < this->shapes_.size(); i++) {
     if (this->shapes_.at(i)->get_local_correspondence_points().size() > 0) {
       this->shapes_.at(i)->set_reconstructed_mesh(
@@ -56,7 +56,7 @@ void Project::calculate_reconstructed_samples() {
         this->shapes_.at(i)->get_local_correspondence_points()));
     }
   }
-  this->preferences_.set_cache_enabled(true);
+  this->preferences_.set_preference("cache_enabled", true);
 }
 
 //---------------------------------------------------------------------------
@@ -93,6 +93,8 @@ bool Project::save_project(QString filename /* = "" */)
   xml->writeTextElement("tool_state", QString::fromStdString(this->tool_state_));
   xml->writeTextElement("display_state", QString::fromStdString(this->display_state_));
   xml->writeTextElement("zoom_state", QString::number(this->zoom_state_));
+  xml->writeTextElement("preference_file", filename);
+  this->preferences_.set_saved();
 
   // shapes
   xml->writeStartElement("shapes");
@@ -162,6 +164,7 @@ bool Project::load_project(QString filename)
   QStringList import_files;
   QStringList groomed_files;
   QStringList point_files;
+  QString preference_file;
 
   std::string display_state;
 
@@ -210,8 +213,13 @@ bool Project::load_project(QString filename)
       {
         point_files << xml->readElementText();
       }
+      if (xml->name() == "preference_file")
+      {
+        preference_file = xml->readElementText();
+      }
     }
   }
+  this->preferences_ = Preferences(preference_file);
 
   std::cerr << "tool state = " << this->tool_state_ << "\n";
 

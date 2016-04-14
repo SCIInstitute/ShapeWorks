@@ -15,65 +15,32 @@ class Preferences : public QObject
 
 public:
 
-  //--- general preferences
-
-  /// Main window size
-  QSize get_main_window_size();
-  void set_main_window_size( QSize size );
-  
-  /// last directory used (open/save)
-  QString get_last_directory();
-  void set_last_directory( QString location );
-
-  //--- analysis preferences
-
-  bool get_cache_enabled();
-  void set_cache_enabled( bool enabled );
-
-  int get_cache_memory();
-  void setCacheMemory( int value );
-
-  int get_color_scheme();
-  void set_color_scheme( int value );
-
-  float get_glyph_quality();
-  void set_glyph_quality( float value );
-
-  float get_glyph_size();
-  void set_glyph_size( float value );
-
-  int get_num_threads();
-  void set_num_threads( int value );
-
-  bool get_parallel_enabled();
-  void set_parallel_enabled( bool enabled );
-
-  float get_pca_range();
-  void set_pca_range( float value );
-
-  int get_num_pca_steps();
-  void set_num_pca_steps( int value );
-
-  int get_num_regression_rteps();
-  void set_num_regression_steps( int value );
-
-  QStringList get_recent_files();
-  void add_recent_file( QString file );
-
-  /// restore all default values
+  enum { MAX_RECENT_FILES = 4 };
+  Preferences(QString name = "ShapeWorksStudio");
   void restore_defaults();
+  void add_recent_file(QString file);
+  QStringList get_recent_files();
 
-  float get_smoothing_amount();
-  void set_smoothing_amount(float value);
+  bool not_saved();
+  void set_saved();
+  Preferences& operator=(const Preferences& other);
 
-  float get_cache_epsilon();
-  void set_cache_epsilon(float value);
+  template<typename T>
+  T get_preference(std::string name, T default_val) {
+    if (this->defaults_.count(name)) {
+      return this->settings_.value(QString::fromStdString(name), 
+        this->defaults_.find(name)->second).value<T>();
+    }
+    return this->settings_.value(QString::fromStdString(name), 
+      default_val).value<T>();
+  }
 
-  float get_spacing();
-  void set_spacing(float value);
-
-  int get_neighborhood();
-  void set_neighborhood(int value);
+  template<typename T>
+  void set_preference(std::string name, T value) {
+    this->settings_.setValue(QString::fromStdString(name), value);
+    this->defaults_.insert(std::make_pair(name, value));
+    this->saved_ = false;
+  }
 
 Q_SIGNALS:
   void color_scheme_changed( int newIndex );
@@ -81,15 +48,11 @@ Q_SIGNALS:
   void threading_changed_signal();
   void sliders_changed_signal();
 
-public:
-
-  enum { MAX_RECENT_FILES = 4 };
-  Preferences();
-
 private:
   /// the QSettings object
-  QSettings settings;
-
+  QSettings settings_;
+  std::map<std::string, QVariant> defaults_;
+  bool saved_;
 };
 
 #endif // ifndef STUDIO_APPLICATION_PREFERENCES_H

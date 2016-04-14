@@ -32,7 +32,7 @@ bool vnl_vector_compare::operator()( const vnl_vector<double> &a, const vnl_vect
 {
   if ( a.size() < b.size() )
     return true;
-  double eps = MeshCache::pref_ref_->get_cache_epsilon();
+  double eps = MeshCache::pref_ref_->get_preference("cache_epsilon", 1e-3f);
   for ( unsigned i = 0; i < a.size(); i++ ) {
 	if ( (a[i] < b[i]) && ((b[i] - a[i]) > eps))
 		return true;
@@ -102,7 +102,7 @@ vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape
 {
   QMutexLocker locker( &mutex );
 
-  if ( !preferences_.get_cache_enabled() )
+  if (!preferences_.get_preference("cache_enabled", true))
   {
     return NULL;
   }
@@ -119,7 +119,7 @@ vtkSmartPointer<vtkPolyData> MeshCache::getMesh( const vnl_vector<double>& shape
 
 void MeshCache::insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh )
 {
-  if ( !preferences_.get_cache_enabled() )
+  if (!preferences_.get_preference("cache_enabled", true))
   {
     return;
   }
@@ -154,7 +154,7 @@ void MeshCache::clear()
 
 void MeshCache::freeSpaceForAmount( size_t allocation )
 {
-  size_t memoryLimit = ( preferences_.get_cache_memory() / 100.0 ) * this->maxMemory;
+  size_t memoryLimit = ( preferences_.get_preference("cache_memory", 25) / 100.0 ) * this->maxMemory;
 
   while ( !this->cacheList.empty() && this->memorySize + allocation > memoryLimit )
   {

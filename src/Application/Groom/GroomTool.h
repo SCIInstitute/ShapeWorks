@@ -29,6 +29,9 @@ public:
   /// set the pointer to the application
   void set_app( ShapeWorksStudioApp* app );
 
+  void update_preferences();
+  void set_preferences();
+
 Q_SIGNALS:
   void groom_complete();
   void error_message(std::string msg);

@@ -19,8 +19,8 @@ MeshGenerator::MeshGenerator(Preferences& prefs) : prefs_(prefs)
   this->surfaceReconstruction->SetInputData(this->pointSet);
 #endif
 
-  this->surfaceReconstruction->SetSampleSpacing(prefs.get_spacing());
-  this->surfaceReconstruction->SetNeighborhoodSize(prefs.get_neighborhood());
+  this->surfaceReconstruction->SetSampleSpacing(prefs.get_preference("spacing",1.f));
+  this->surfaceReconstruction->SetNeighborhoodSize(prefs.get_preference("neighborhood", 5));
 
   this->contourFilter = vtkSmartPointer<vtkContourFilter>::New();
   this->contourFilter->SetInputConnection(this->surfaceReconstruction->GetOutputPort());
@@ -28,7 +28,7 @@ MeshGenerator::MeshGenerator(Preferences& prefs) : prefs_(prefs)
   this->contourFilter->ComputeNormalsOn();
 
   this->smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-  this->smoothFilter->SetNumberOfIterations(prefs.get_smoothing_amount() * 100);
+  this->smoothFilter->SetNumberOfIterations(prefs.get_preference("smoothing_amount", 0.) * 100);
   this->smoothFilter->SetInputConnection( this->contourFilter->GetOutputPort() );
 
   this->reverseSense = vtkSmartPointer<vtkReverseSense>::New();
@@ -51,9 +51,9 @@ void MeshGenerator::setupMesh(const vnl_vector<double>& shape) {
     this->points->SetPoint(i, x, y, z);
   }
   this->points->Modified();
-  float spacing = this->prefs_.get_spacing();
-  int neighborhood = this->prefs_.get_neighborhood();
-  int smoothing = this->prefs_.get_smoothing_amount();
+  float spacing = this->prefs_.get_preference("spacing", 1.f);
+  int neighborhood = this->prefs_.get_preference("neighborhood", 5);
+  int smoothing = this->prefs_.get_preference("smoothing_amount", 0.);
   this->surfaceReconstruction->SetSampleSpacing(spacing);
   this->surfaceReconstruction->SetNeighborhoodSize(neighborhood);
   this->surfaceReconstruction->Modified();

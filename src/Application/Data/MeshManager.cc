@@ -36,7 +36,7 @@ void MeshManager::generateMesh( const vnl_vector<double>& shape )
   	  connect(worker, SIGNAL(result_ready()),  this, SLOT(handle_thread_complete()));
   	  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   	  connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-	  size_t tmp_max = this->prefs_.get_num_threads();
+      size_t tmp_max = this->prefs_.get_preference("num_threads", 100);
 	  if (this->thread_count_ < tmp_max) {
   		thread->start();
 		this->thread_count_++;
@@ -49,11 +49,11 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
 {
   vtkSmartPointer<vtkPolyData> polyData;
   // check cache first
-  if ( this->prefs_.get_cache_enabled()) {
+  if ( this->prefs_.get_preference("cache_enabled", true)) {
     polyData = this->meshCache_.getMesh( shape );
     if (!polyData) {
-        if (prefs_.get_parallel_enabled() &&
-                  (this->prefs_.get_num_threads() > 0)) {
+        if (prefs_.get_preference("parallel_enabled", true) &&
+                  (this->prefs_.get_preference("num_threads", 100) > 0)) {
                  this->generateMesh(shape);
         } else {
                  polyData = this->meshGenerator_.buildMesh( shape );
@@ -68,7 +68,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
 
 void MeshManager::handle_thread_complete() {
 	this->thread_count_ --;
-	size_t tmp_max = this->prefs_.get_num_threads();
+  size_t tmp_max = this->prefs_.get_preference("num_threads", 100);
 	while (!this->threads_.empty() && this->thread_count_ < tmp_max) {
 		QThread *thread = this->threads_.back();
 		this->threads_.pop_back();

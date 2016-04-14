@@ -79,9 +79,54 @@ void GroomTool::handle_progress(int val) {
   QApplication::processEvents();
 }
 
+void GroomTool::set_preferences() {
+  this->ui_->center_checkbox->setChecked(
+    this->preferences_.get_preference("groom_center", this->ui_->center_checkbox->isChecked()));
+  this->ui_->antialias_checkbox->setChecked(
+    this->preferences_.get_preference("groom_antialias", this->ui_->antialias_checkbox->isChecked()));
+  this->ui_->autopad_checkbox->setChecked(
+    this->preferences_.get_preference("groom_pad", this->ui_->autopad_checkbox->isChecked()));
+  this->ui_->fastmarching_checkbox->setChecked(
+    this->preferences_.get_preference("groom_fastmarching", this->ui_->fastmarching_checkbox->isChecked()));
+  this->ui_->blur_checkbox->setChecked(
+    this->preferences_.get_preference("groom_blur", this->ui_->blur_checkbox->isChecked()));
+  this->ui_->autocrop_checkbox->setChecked(
+    this->preferences_.get_preference("groom_crop", this->ui_->autocrop_checkbox->isChecked()));
+  this->ui_->isolate_checkbox->setChecked(
+    this->preferences_.get_preference("groom_isolate", this->ui_->isolate_checkbox->isChecked()));
+  this->ui_->fill_holes_checkbox->setChecked(
+  this->preferences_.get_preference("groom_fill_holes", this->ui_->fill_holes_checkbox->isChecked()));
+  this->ui_->antialias_iterations->setValue(
+    this->preferences_.get_preference("groom_antialias_amount", this->ui_->antialias_iterations->value()));
+  this->ui_->iso_value->setValue(
+    this->preferences_.get_preference("groom_fastmarching_isovalue", this->ui_->iso_value->value()));
+  this->ui_->fastmarch_sigma->setValue(
+    this->preferences_.get_preference("groom_fastmarching_sigma", this->ui_->fastmarch_sigma->value()));
+  this->ui_->blur_sigma->setValue(
+    this->preferences_.get_preference("groom_blur_sigma", this->ui_->blur_sigma->value()));
+  this->ui_->padding_amount->setValue(
+  this->preferences_.get_preference("groom_pad_value", this->ui_->padding_amount->value()));
+}
+
+void GroomTool::update_preferences() {
+  this->preferences_.set_preference("groom_center", this->ui_->center_checkbox->isChecked());
+  this->preferences_.set_preference("groom_antialias", this->ui_->antialias_checkbox->isChecked());
+  this->preferences_.set_preference("groom_pad", this->ui_->autopad_checkbox->isChecked());
+  this->preferences_.set_preference("groom_fastmarching", this->ui_->fastmarching_checkbox->isChecked());
+  this->preferences_.set_preference("groom_blur", this->ui_->blur_checkbox->isChecked());
+  this->preferences_.set_preference("groom_crop", this->ui_->autocrop_checkbox->isChecked());
+  this->preferences_.set_preference("groom_isolate", this->ui_->isolate_checkbox->isChecked());
+  this->preferences_.set_preference("groom_fill_holes", this->ui_->fill_holes_checkbox->isChecked());
+  this->preferences_.set_preference("groom_antialias_amount", this->ui_->antialias_iterations->value());
+  this->preferences_.set_preference("groom_fastmarching_isovalue", this->ui_->iso_value->value());
+  this->preferences_.set_preference("groom_fastmarching_sigma", this->ui_->fastmarch_sigma->value());
+  this->preferences_.set_preference("groom_blur_sigma", this->ui_->blur_sigma->value());
+  this->preferences_.set_preference("groom_pad_value", this->ui_->padding_amount->value());
+}
+
 //---------------------------------------------------------------------------
-void GroomTool::on_run_groom_button_clicked()
-{
+void GroomTool::on_run_groom_button_clicked() {
+  this->update_preferences();
   this->progress_ = new QProgressDialog(QString("Running Shapeworks Tool. Please Wait..."),QString(),0,100,this);
   this->progress_->setWindowModality(Qt::WindowModal);
   this->progress_->show();
@@ -262,6 +307,7 @@ void GroomTool::set_app( ShapeWorksStudioApp* app )
 }
 
 void GroomTool::on_skipButton_clicked() {
+  this->update_preferences();
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   for (auto s : shapes) {

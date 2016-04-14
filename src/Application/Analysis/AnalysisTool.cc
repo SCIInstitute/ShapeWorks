@@ -293,7 +293,7 @@ void AnalysisTool::handle_pca_timer()
 double AnalysisTool::get_pca_value( )
 {
   int slider_value = this->ui_->pcaSlider->value();
-  float range = preferences_.get_pca_range();
+  float range = preferences_.get_preference("pca_range", 2.f);
   int halfRange = this->ui_->pcaSlider->maximum();
 
   double value = (double)slider_value / (double)halfRange * range;
