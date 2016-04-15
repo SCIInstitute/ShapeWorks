@@ -258,6 +258,8 @@ void ShapeWorksStudioApp::initialize_vtk()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered()
 {
+  this->preferences_ = Preferences("ShapeWorksStudio");
+  this->update_from_preferences();
   this->originalFilenames_.clear();
   QList<int> index_list;
 
@@ -382,7 +384,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->import_files(filenames);
   this->visualizer_->update_lut();
-  this->ui_->action_groom_mode->setEnabled(true);
+  this->ui_->action_groom_mode->setEnabled(this->project_->get_shapes().size() > 1);
   this->ui_->action_optimize_mode->setEnabled(false);
   this->ui_->action_analysis_mode->setEnabled(false);
 }
