@@ -116,9 +116,13 @@ IF(APPLE)
 ELSEIF(WIN32)
   SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.rc)
 ENDIF(APPLE)
-
+IF (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+	set(WinConsole "")
+ELSE()
+	set(WinConsole "WIN32")
+ENDIF()
 # here we instruct CMake to build STUDIO executable from all of the source files
-ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE WIN32 
+ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinCosole} 
   ${STUDIO_SRCS}
   ${STUDIO_HDRS}
   ${STUDIO_UI} 

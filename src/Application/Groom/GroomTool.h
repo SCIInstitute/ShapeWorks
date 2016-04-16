@@ -26,15 +26,14 @@ public:
   /// set the pointer to the project
   void set_project( QSharedPointer<Project> project );
 
-  /// set the pointer to the application
-  void set_app( ShapeWorksStudioApp* app );
-
   void update_preferences();
   void set_preferences();
 
 Q_SIGNALS:
   void groom_complete();
-  void error_message(std::string msg);
+  void error_message(std::string);
+  void message(std::string);
+  void progress(size_t);
 
 public Q_SLOTS:
 
@@ -57,11 +56,9 @@ private:
 
   Ui_GroomTool* ui_;
   QSharedPointer<Project> project_;
-  ShapeWorksStudioApp* app_;
   Preferences& preferences_;
-  QProgressDialog * progress_;
   std::vector<std::string>& files_;
-  ShapeWorksGroom groom_;
+  ShapeWorksGroom * groom_;
 };
 
 #endif /* STUDIO_GROOM_GROOMTOOL_H */

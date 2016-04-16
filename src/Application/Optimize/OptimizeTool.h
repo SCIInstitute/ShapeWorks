@@ -25,18 +25,15 @@ public:
   /// set the pointer to the project
   void set_project( QSharedPointer<Project> project );
 
-  /// set the pointer to the application
-  void set_app( ShapeWorksStudioApp* app );
-
   // set up the parameter table.
-  void setupTable();
+  void setupTable(int rows);
   std::vector<double> getStartRegs();
   std::vector<double> getEndRegs();
   std::vector<double> getDecaySpans();
   std::vector<double> getTolerances();
   std::vector<unsigned int> getIters();
 
-  void set_preferences();
+  void set_preferences(bool setScales = false);
 
   void update_preferences();
 
@@ -47,20 +44,21 @@ public Q_SLOTS:
 
   /// Run optimize tool
   void on_run_optimize_button_clicked();
+  void on_number_of_scales_valueChanged(int val);
   void handle_thread_complete();
   void handle_progress(int val);
   void handle_error(std::string);
 signals:
   void optimize_complete();
   void error_message(std::string);
+  void progress(size_t);
+  void message(std::string);
 
 private:
-  ShapeWorksOptimize optimize_;
+  ShapeWorksOptimize * optimize_;
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
-  ShapeWorksStudioApp* app_;
-  QProgressDialog * progress_;
 };
 
 #endif /* STUDIO_OPTIMIZE_OPTIMIZETOOL_H */

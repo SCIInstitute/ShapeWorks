@@ -10,6 +10,7 @@
 #include <QTimer>
 #include "Data/PreferencesWindow.h"
 #include <vtkCamera.h>
+#include <QProgressBar>
 
 class Lightbox;
 class GroomTool;
@@ -41,8 +42,6 @@ public:
   void initialize_vtk();
   void import_files( QStringList file_names );
   void open_project( QString filename );
-
-  void set_status_bar( QString status );
 
 public Q_SLOTS:
 
@@ -84,6 +83,9 @@ public Q_SLOTS:
 
   void handle_color_scheme();
   void handle_new_mesh();
+  void handle_message(std::string str);
+  void handle_error(std::string str);
+  void handle_progress(size_t amt);
 
 private:
 
@@ -132,6 +134,7 @@ private:
   QDoubleSpinBox* iso_spacing_spinner_;
   QSlider* iso_smoothing_slider_;
   std::vector<std::string> originalFilenames_;
+  QProgressBar * progressBar_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

@@ -24,8 +24,8 @@ class ShapeworksWorker : public QObject
 
 public:
   enum ThreadType { Groom, Optimize };
-	ShapeworksWorker(ThreadType type, ShapeWorksGroom& groom,
-    ShapeWorksOptimize& optimize,
+	ShapeworksWorker(ThreadType type, ShapeWorksGroom* groom,
+    ShapeWorksOptimize* optimize,
     QSharedPointer<Project> project);
 	~ShapeworksWorker();
 
@@ -39,8 +39,8 @@ Q_SIGNALS:
   void finished();
 
 private:
-  ShapeWorksGroom& groom_;
-  ShapeWorksOptimize& optimize_;
+  ShapeWorksGroom* groom_;
+  ShapeWorksOptimize*optimize_;
   QSharedPointer<Project> project_;
   ThreadType type_;
 };

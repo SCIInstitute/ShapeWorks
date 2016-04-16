@@ -83,8 +83,8 @@ void Visualizer::display_samples() {
     } else if (this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
       mesh = shapes[i]->get_reconstructed_mesh();
       filename = shapes[i]->get_original_filename() + "-RE";
-      // use local correspondence points for reconstructed mesh
-      object->set_correspondence_points(shapes[i]->get_local_correspondence_points());
+      // use global correspondence points for reconstructed mesh
+      object->set_correspondence_points(shapes[i]->get_global_correspondence_points());
     }
     if ( this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C ) {
       object->set_exclusion_sphere_centers( shapes[i]->get_exclusion_sphere_centers() );

@@ -13,11 +13,14 @@
 #include "itkPSMProjectReader.h"
 #include "itkPSMParticleSystem.h"
 #include "itkCommand.h"
+#include <QObject>
 
-class ShapeWorksOptimize {
+class ShapeWorksOptimize : public QObject {
+  Q_OBJECT;
 public:
-  ShapeWorksOptimize(std::vector<ImageType::Pointer> inputs = 
-    std::vector<ImageType::Pointer>(), size_t numScales = 1, 
+  ShapeWorksOptimize(QObject* parent = nullptr,
+    std::vector<ImageType::Pointer> inputs =
+    std::vector<ImageType::Pointer>(), size_t numScales = 1,
     std::vector<double> start_reg = std::vector<double>(),
     std::vector<double> end_reg = std::vector<double>(),
     std::vector<unsigned int> iters = std::vector<unsigned int>(),
@@ -25,26 +28,27 @@ public:
     std::vector<double> decay_span = std::vector<double>(),
     bool verbose = false);
   void run();
-  void queueTool(std::string tool);
   std::vector<ImageType::Pointer> getImages();
-  std::vector<std::vector<itk::Point<float> > > optimizedPoints();
-  std::vector<std::vector<itk::Point<float> > > initialPoints();
+  std::vector<std::vector<itk::Point<float> > > localPoints();
+  std::vector<std::vector<itk::Point<float> > > globalPoints();
 protected:
-  void ShapeWorksOptimize::IterateCallback(
+  void iterateCallback(
     itk::Object *caller, const itk::EventObject &);
+signals:
+  void progress(int);
 private:
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
-  size_t numScales_, reportInterval_,
-    procrustesCounter_;
+  size_t numScales_;
   std::vector<unsigned int> maxIter_;
-  std::vector<size_t>  procrustesInterval_;
   std::vector<double> tolerance_, decaySpan_,
     regularizationInitial_, regularizationFinal_;
   itk::PSMEntropyModelFilter<ImageType>::Pointer psmFilter_;
-  itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;
-  std::vector<std::vector<itk::Point<float> > >  optimizedPoints_, initialPoints_;
+  std::vector<std::vector<itk::Point<float> > >  localPoints_, globalPoints_;
   itk::MemberCommand<ShapeWorksOptimize>::Pointer iterateCmd_;
+  itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;
+  size_t reportInterval_, procrustesCounter_, totalIters_, iterCount_;
+  std::vector<size_t>  procrustesInterval_;
 };
 
 #endif

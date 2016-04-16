@@ -12,14 +12,11 @@
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 
-#include <Visualization/ShapeWorksStudioApp.h>
-
 #include <ui_GroomTool.h>
 
 //---------------------------------------------------------------------------
 GroomTool::GroomTool(Preferences& prefs,std::vector<std::string>& files) 
   : preferences_(prefs), files_(files) {
-  this->progress_ = nullptr;
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi( this );
 }
@@ -66,17 +63,12 @@ void GroomTool::on_export_xml_button_clicked()
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(std::string msg) {
-	this->progress_->setValue(100);
-  QApplication::processEvents();
-	delete this->progress_;
   emit error_message(msg);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_progress(int val) {
-	if (val < 90)
-		this->progress_->setValue(val);
-  QApplication::processEvents();
+  emit progress(static_cast<size_t>(val));
 }
 
 void GroomTool::set_preferences() {
@@ -127,19 +119,14 @@ void GroomTool::update_preferences() {
 //---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked() {
   this->update_preferences();
-  this->progress_ = new QProgressDialog(QString("Running Shapeworks Tool. Please Wait..."),QString(),0,100,this);
-  this->progress_->setWindowModality(Qt::WindowModal);
-  this->progress_->show();
-  QApplication::processEvents();
-  this->progress_->setValue(5);
-  QApplication::processEvents();
-  this->app_->set_status_bar( "Please wait: running groom step..." );
+  emit message("Please wait: running groom step...");
+  emit progress(5);
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   for (auto s : shapes) {
     imgs.push_back(s->get_original_image());
   }
-  this->groom_ = ShapeWorksGroom(imgs, 0, 1, 
+  this->groom_ = new ShapeWorksGroom(this, imgs, 0, 1, 
     this->ui_->blur_sigma->value(),
     this->ui_->fastmarch_sigma->value(),
     this->ui_->iso_value->value(),
@@ -147,38 +134,41 @@ void GroomTool::on_run_groom_button_clicked() {
     this->ui_->antialias_iterations->value(), 
     true);
 
+  emit progress(15);
   if ( this->ui_->center_checkbox->isChecked() ) {
-    this->groom_.queueTool("center");
+    this->groom_->queueTool("center");
   }
   if ( this->ui_->autocrop_checkbox->isChecked() ) {
-    this->groom_.queueTool("auto_crop");
+    this->groom_->queueTool("auto_crop");
   }
   if (this->ui_->fill_holes_checkbox->isChecked()) {
-    this->groom_.queueTool("hole_fill");
+    this->groom_->queueTool("hole_fill");
   }
   if (this->ui_->autopad_checkbox->isChecked()) {
-    this->groom_.queueTool("auto_pad");
+    this->groom_->queueTool("auto_pad");
   }
   if ( this->ui_->antialias_checkbox->isChecked() ) {
-    this->groom_.queueTool("antialias");
+    this->groom_->queueTool("antialias");
   }
   if ( this->ui_->fastmarching_checkbox->isChecked() ) {   
-    this->groom_.queueTool("fastmarching");
+    this->groom_->queueTool("fastmarching");
   }
   if ( this->ui_->blur_checkbox->isChecked() ) {
-    this->groom_.queueTool("blur");
+    this->groom_->queueTool("blur");
   }
   if (this->ui_->isolate_checkbox->isChecked()) {
-    this->groom_.queueTool("isolate");
+    this->groom_->queueTool("isolate");
   }
-
+  emit progress(10);
+  this->ui_->run_groom_button->setEnabled(false);
+  this->ui_->skipButton->setEnabled(false);
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
-    ShapeworksWorker::Groom, this->groom_, ShapeWorksOptimize(), this->project_);
+    ShapeworksWorker::Groom, this->groom_, nullptr, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
-  connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
+  connect(this->groom_, SIGNAL(progress(int)), this, SLOT(handle_progress(int)));
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
@@ -186,27 +176,22 @@ void GroomTool::on_run_groom_button_clicked() {
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_thread_complete() {
-  if (this->progress_) {
-    this->progress_->setValue(95);
-    QApplication::processEvents();
-  }
+  emit progress(95);
   double iso = 0.5;
-  if (this->groom_.tools().count("isolate") ||
-    this->groom_.tools().count("hole_fill")) {
-    iso = this->groom_.foreground() / 2.;
+  if (this->groom_->tools().count("isolate") ||
+    this->groom_->tools().count("hole_fill")) {
+    iso = this->groom_->foreground() / 2.;
   }
-  if (this->groom_.tools().count("fastmarching") ||
-    this->groom_.tools().count("blur")) {
+  if (this->groom_->tools().count("fastmarching") ||
+    this->groom_->tools().count("blur")) {
     iso = 0.;
   }
-  this->project_->load_groomed_images(this->groom_.getImages(), iso);
-  if (this->progress_) {
-    this->progress_->setValue(100);
-    QApplication::processEvents();
-    delete this->progress_;
-    this->progress_ = nullptr;
-  }
+  this->project_->load_groomed_images(this->groom_->getImages(), iso);
+  emit progress(100);
+  emit message("Groom Complete");
   emit groom_complete();
+  this->ui_->run_groom_button->setEnabled(true);
+  this->ui_->skipButton->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
@@ -300,12 +285,6 @@ void GroomTool::set_project( QSharedPointer<Project> project )
   this->project_ = project;
 }
 
-//---------------------------------------------------------------------------
-void GroomTool::set_app( ShapeWorksStudioApp* app )
-{
-  this->app_ = app;
-}
-
 void GroomTool::on_skipButton_clicked() {
   this->update_preferences();
   auto shapes = this->project_->get_shapes();
@@ -314,5 +293,6 @@ void GroomTool::on_skipButton_clicked() {
     imgs.push_back(s->get_original_image());
   }
   this->project_->load_groomed_images(imgs, this->ui_->iso_value->value());
+  emit message("Skipped groom.");
   emit groom_complete();
 }

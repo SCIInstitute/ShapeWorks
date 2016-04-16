@@ -12,15 +12,17 @@
 #include <map>
 #include <Data/Mesh.h>
 #include <string>
-
+#include <QObject>
 typedef itk::Image<int, 3> isolate_type;
 typedef itk::Image<unsigned char, 3> crop_type;
 typedef itk::ConnectedThresholdImageFilter<ImageType, ImageType> flood_fill_filter_type;
 typedef itk::TranslationTransform<double, 3>::ParametersType transform_type;
 
-class ShapeWorksGroom {
+class ShapeWorksGroom : public QObject {
+  Q_OBJECT;
 public:
-  ShapeWorksGroom(std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
+  ShapeWorksGroom(QObject *parent = nullptr,
+    std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
     double background = 0., double foreground = 0.,
     double sigma = 2.0,
     double sigmaFastMarch = 0.0,
@@ -32,6 +34,8 @@ public:
   std::vector<ImageType::Pointer> getImages();
   double foreground();
   std::map<std::string, bool> tools();
+signals:
+  void progress(int);
 private:
   void isolate();
   void hole_fill();

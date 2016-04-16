@@ -5,9 +5,6 @@
 #include <QFileDialog>
 #include <QThread>
 #include <QMessageBox>
-
-#include <Visualization/ShapeWorksStudioApp.h>
-
 #include <Optimize/OptimizeTool.h>
 #include <Visualization/ShapeworksWorker.h>
 #include <Data/Project.h>
@@ -20,7 +17,7 @@
 OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_OptimizeTool;
   this->ui_->setupUi( this );
-  this->setupTable();
+  this->setupTable(this->ui_->number_of_scales->value());
 }
 
 //---------------------------------------------------------------------------
@@ -34,8 +31,7 @@ void OptimizeTool::on_export_xml_button_clicked()
 
   QString filename = QFileDialog::getSaveFileName( this, tr( "Save as..." ),
                                                    QString(), tr( "XML files (*.xml)" ) );
-  if ( filename.isEmpty() )
-  {
+  if ( filename.isEmpty() ) {
     return;
   }
 
@@ -44,62 +40,57 @@ void OptimizeTool::on_export_xml_button_clicked()
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_error(std::string msg) {
-	this->progress_->setValue(100);
-  QApplication::processEvents();
-	delete this->progress_;
   emit error_message(msg);
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val) {
-	if (val < 90 && this->progress_)
-		this->progress_->setValue(val);
-  QApplication::processEvents();
+  emit progress(static_cast<size_t>(val));
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::on_run_optimize_button_clicked() {
   this->update_preferences();
-  this->progress_ = new QProgressDialog(QString("Running Shapeworks Tool. Please Wait..."), QString(), 0, 100, this);
-  this->progress_->setWindowModality(Qt::WindowModal);
-  this->progress_->show();
-  QApplication::processEvents();
-  this->progress_->setValue(5);
-  QApplication::processEvents();
-  this->app_->set_status_bar("Please wait: running optimize step...");
+  emit message("Please wait: running optimize step...");
+  emit progress(5);
+  this->ui_->run_optimize_button->setEnabled(false);
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   for (auto s : shapes) {
     imgs.push_back(s->get_groomed_image());
   }
-  this->optimize_ = ShapeWorksOptimize(imgs, this->ui_->number_of_scales->value(),
+  auto scales = this->ui_->number_of_scales->value();
+  this->optimize_ = new ShapeWorksOptimize(this, imgs, scales,
     this->getStartRegs(), this->getEndRegs(), this->getIters(),
     this->getTolerances(), this->getDecaySpans(), true);
 
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
-    ShapeworksWorker::Optimize, ShapeWorksGroom(), this->optimize_, this->project_);
+    ShapeworksWorker::Optimize, NULL, this->optimize_, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
-  connect(worker, SIGNAL(step_made(int)), this, SLOT(handle_progress(int)));
+  connect(this->optimize_, SIGNAL(progress(int)), this, SLOT(handle_progress(int)));
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
+}
 
+void OptimizeTool::on_number_of_scales_valueChanged(int val) {
+  this->setupTable(val);
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_thread_complete() {
-  auto points = this->optimize_.optimizedPoints();
-  this->progress_->setValue(95);
-  QApplication::processEvents();
-  this->project_->load_points(points);
+  auto local = this->optimize_->localPoints();
+  auto global = this->optimize_->globalPoints();
+  this->project_->load_points(local, true);
+  this->project_->load_points(global, false);
   this->project_->calculate_reconstructed_samples();
-  this->progress_->setValue(100);
-  QApplication::processEvents();
-  delete this->progress_;
+  emit progress(100);
+  emit message("Optimize Complete");
   emit optimize_complete();
+  this->ui_->run_optimize_button->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
@@ -164,15 +155,8 @@ void OptimizeTool::set_project( QSharedPointer<Project> project )
   this->project_ = project;
 }
 
-//---------------------------------------------------------------------------
-void OptimizeTool::set_app( ShapeWorksStudioApp* app )
-{
-  this->app_ = app;
-}
-
-void OptimizeTool::setupTable() {
+void OptimizeTool::setupTable(int rows) {
   auto table = this->ui_->parameterTable;
-  auto rows = this->ui_->number_of_scales->value();
   table->setRowCount(rows);
   table->setColumnCount(5);
   QStringList Hheader, Vheader;
@@ -182,7 +166,7 @@ void OptimizeTool::setupTable() {
   for (size_t i = 0; i < rows; i++) {
     Vheader << QString::number(i + 1);
   }
-  this->set_preferences();
+  this->set_preferences(false);
   table->verticalHeader()->setVisible(true);
   table->setVerticalHeaderLabels(Vheader);
   table->setEditTriggers(QAbstractItemView::DoubleClicked);
@@ -249,10 +233,12 @@ std::vector<unsigned int> OptimizeTool::getIters() {
   return ans;
 }
 
-void OptimizeTool::set_preferences() {
-  this->ui_->number_of_scales->setValue(
-    this->preferences_.get_preference("groom_scales",
-      this->ui_->number_of_scales->value()));
+void OptimizeTool::set_preferences(bool setScales) {
+  if (setScales) {
+    this->ui_->number_of_scales->setValue(
+      this->preferences_.get_preference("groom_scales",
+        this->ui_->number_of_scales->value()));
+  }
   auto table = this->ui_->parameterTable;
   auto rows = this->ui_->number_of_scales->value();
   for (size_t i = 0; i < rows; i++) {

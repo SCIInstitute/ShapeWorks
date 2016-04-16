@@ -52,7 +52,7 @@ public:
 
   /// load point files
   bool load_point_files(QStringList file_names);
-  bool load_points(std::vector<std::vector<itk::Point<float> > > points);
+  bool load_points(std::vector<std::vector<itk::Point<float> > > points, bool local);
 
   /// remove shapes
   void remove_shapes( QList<int> list );

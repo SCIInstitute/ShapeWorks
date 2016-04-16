@@ -86,7 +86,7 @@ bool Shape::import_global_point_file( QString filename )
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_local_points(std::vector<itk::Point<float> > points) {
+bool Shape::import_points(std::vector<itk::Point<float> > points, bool local) {
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   size_t num_points = 0;
   for (auto &a : points) {
@@ -97,16 +97,18 @@ bool Shape::import_local_points(std::vector<itk::Point<float> > points) {
     vtk_points->InsertNextPoint(x, y, z);
     num_points++;
   }
+  auto & point_list = local ? this->local_correspondence_points_ :
+    this->global_correspondence_points_;
 
-  this->local_correspondence_points_.clear();
-  this->local_correspondence_points_.set_size(num_points * 3);
+  point_list.clear();
+  point_list.set_size(num_points * 3);
 
   int idx = 0;
   for (int i = 0; i < num_points; i++) {
     double* pos = vtk_points->GetPoint(i);
-    this->local_correspondence_points_[idx++] = pos[0];
-    this->local_correspondence_points_[idx++] = pos[1];
-    this->local_correspondence_points_[idx++] = pos[2];
+    point_list[idx++] = pos[0];
+    point_list[idx++] = pos[1];
+    point_list[idx++] = pos[2];
   }
   return true;
 }

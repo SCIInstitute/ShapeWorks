@@ -2,12 +2,14 @@
 #include <iostream>
 
 ShapeWorksOptimize::ShapeWorksOptimize(
+  QObject* parent,
   std::vector<ImageType::Pointer> inputs, size_t numScales,
   std::vector<double> start_reg, std::vector<double> end_reg,
   std::vector<unsigned int> iters, std::vector<double> tolerance,
-  std::vector<double> decay_span, bool verbose) 
-  : images_(inputs), numScales_(numScales),
-  maxIter_(iters),
+  std::vector<double> decay_span,
+  bool verbose)
+  : QObject(parent), images_(inputs), numScales_(numScales),
+  maxIter_(iters), 
   reportInterval_(10), procrustesCounter_(0),
   tolerance_(tolerance), decaySpan_(decay_span),
   regularizationInitial_(start_reg),
@@ -24,8 +26,13 @@ void ShapeWorksOptimize::run() {
   this->psmFilter_->SetRegularizationDecaySpan(decaySpan_);
   this->psmFilter_->SetTolerance(tolerance_);
   this->psmFilter_->SetMaximumNumberOfIterations(maxIter_);
-  this->procrustesInterval_.resize(this->numScales_);
+  this->procrustesInterval_.resize(this->numScales_, 10); //just report every 10
+  this->totalIters_ = 0;
+  for (auto &a : maxIter_) {
+    this->totalIters_ += a;
+  }
   size_t i = 0;
+  this->iterCount_ = 0;
   for (auto &a : this->images_) {
     this->psmFilter_->SetDomainName("item_" + std::to_string(i), i);
     this->psmFilter_->SetInput(i, a);
@@ -35,42 +42,49 @@ void ShapeWorksOptimize::run() {
     this->psmFilter_->GetParticleSystem());
 
   this->iterateCmd_ = itk::MemberCommand<ShapeWorksOptimize>::New();
-  this->iterateCmd_->SetCallbackFunction(this, &ShapeWorksOptimize::IterateCallback);
+  this->iterateCmd_->SetCallbackFunction(this, &ShapeWorksOptimize::iterateCallback);
   this->psmFilter_->AddObserver(itk::IterationEvent(), this->iterateCmd_);
 
   this->psmFilter_->Update();
   for (size_t d = 0; d < this->psmFilter_->
     GetParticleSystem()->GetNumberOfDomains(); d++) {
-    this->optimizedPoints_.push_back(std::vector<itk::Point<float> >());
+    this->localPoints_.push_back(std::vector<itk::Point<float> >());
+    this->globalPoints_.push_back(std::vector<itk::Point<float> >());
     for (size_t j = 0; j < this->psmFilter_->
       GetParticleSystem()->GetNumberOfParticles(d); j++) {
       auto pos = this->psmFilter_->GetParticleSystem()->GetPosition(j, d);
-      this->optimizedPoints_[d].push_back(pos);
+      auto pos2 = this->psmFilter_->GetParticleSystem()->GetTransformedPosition(j, d);
+      this->localPoints_[d].push_back(pos);
+      this->globalPoints_[d].push_back(pos2);
     }
   } 
 }
 
 std::vector<std::vector<itk::Point<float> > >  
-ShapeWorksOptimize::optimizedPoints() {
-  return this->optimizedPoints_;
+ShapeWorksOptimize::localPoints() {
+  return this->localPoints_;
+}
+
+std::vector<std::vector<itk::Point<float> > >
+ShapeWorksOptimize::globalPoints() {
+  return this->globalPoints_;
 }
 
 std::vector<ImageType::Pointer> ShapeWorksOptimize::getImages() {
   return this->images_;
 }
-
-void ShapeWorksOptimize::IterateCallback(itk::Object *caller, const itk::EventObject &)
+void ShapeWorksOptimize::iterateCallback(itk::Object *caller, const itk::EventObject &)
 {
   itk::PSMEntropyModelFilter<ImageType> *o =
     reinterpret_cast<itk::PSMEntropyModelFilter<ImageType> *>(caller);
 
   // Print every 10 iterations
   if (o->GetNumberOfElapsedIterations() % this->reportInterval_ != 0) { return; }
-
+  this->iterCount_ += this->reportInterval_;
+  emit progress(this->iterCount_ * 100 / this->totalIters_);
   std::cout << "Iteration # " << o->GetNumberOfElapsedIterations() << std::endl;
   std::cout << " Eigenmode variances: ";
-  for (unsigned int i = 0; i < o->GetShapePCAVariances().size(); i++)
-  {
+  for (unsigned int i = 0; i < o->GetShapePCAVariances().size(); i++) {
     std::cout << o->GetShapePCAVariances()[i] << " ";
   }
   std::cout << std::endl;
@@ -82,24 +96,21 @@ void ShapeWorksOptimize::IterateCallback(itk::Object *caller, const itk::EventOb
   std::cout << "Optimization Scale " << (o->GetCurrentScale() + 1) << "/"
     << o->GetNumberOfScales() << std::endl;
 
-  if (o->GetNumberOfScales() > 1)
-  {
+  if (o->GetNumberOfScales() > 1) {
     interval = this->procrustesInterval_[o->GetCurrentScale()];
     std::cout << "Interval = " << interval << std::endl;
-  } else // Use the default interval
-  {
+  } else {
+    // Use the default interval
     interval = this->procrustesRegistration_->GetProcrustesInterval();
   }
 
   // Check if the Procrustes interval is set to a value other than 0
-  if (interval > 0)
-  {
+  if (interval > 0) {
     this->procrustesCounter_++;
 
     // If the counter is greater than the interval value, run
     // Procrustes registration
-    if (this->procrustesCounter_ >= interval)
-    {
+    if (this->procrustesCounter_ >= interval) {
       // Reset the counter
       this->procrustesCounter_ = 0;
       this->procrustesRegistration_->RunRegistration();

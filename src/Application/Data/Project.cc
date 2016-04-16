@@ -118,11 +118,20 @@ bool Project::save_project(QString filename /* = "" */)
 
     if (this->reconstructed_present()) {
       auto name = this->shapes_[i]->get_original_filename_with_path().toStdString();
-      name = name.substr(0, name.find_last_of(".")) + ".lpts";
+      name = name.substr(0, name.find_last_of(".")) + ".wpts";
+      auto name2 = name.substr(0, name.find_last_of(".")) + ".lpts";
       xml->writeTextElement("point_file", QString::fromStdString(name));
+      xml->writeTextElement("point_file", QString::fromStdString(name2));
       //try writing to file
       std::ofstream out(name);
-      auto points = this->shapes_[i]->get_local_correspondence_points();
+      auto points = this->shapes_[i]->get_global_correspondence_points();
+      for (auto &a : points) {
+        out << a << std::endl;
+      }
+      out.close();
+      //try writing to file
+      std::ofstream out2(name2);
+      points = this->shapes_[i]->get_local_correspondence_points();
       for (auto &a : points) {
         out << a << std::endl;
       }
@@ -361,7 +370,7 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points)
+bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points, bool local)
 {
   QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -379,7 +388,7 @@ bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points)
     std::cerr << "Loading points from shape " << i << "\n";
     progress.setValue(i);
     QApplication::processEvents();
-    if (!shape->import_local_points(points[i])) {
+    if (!shape->import_points(points[i], local)) {
       return false;
     }
     if (progress.wasCanceled()) {

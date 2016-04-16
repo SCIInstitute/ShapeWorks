@@ -32,6 +32,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
 {
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi(this);
+  this->progressBar_ = new QProgressBar(this);
+  this->ui_->statusbar->addPermanentWidget(this->progressBar_);
+  this->progressBar_->setVisible(false);
 
   this->recent_file_actions_.append(this->ui_->action_recent1);
   this->recent_file_actions_.append(this->ui_->action_recent2);
@@ -196,16 +199,26 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   //groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool(preferences_, this->originalFilenames_));
   this->groom_tool_->set_project(this->project_);
-  this->groom_tool_->set_app(this);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
   connect(this->groom_tool_.data(), SIGNAL(groom_complete()), this, SLOT(handle_groom_complete()));
+  connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
+    this, SLOT(handle_error(std::string)));
+  connect(this->groom_tool_.data(), SIGNAL(message(std::string)),
+    this, SLOT(handle_message(std::string)));
+  connect(this->groom_tool_.data(), SIGNAL(progress(size_t)),
+    this, SLOT(handle_progress(size_t)));
 
   //optimize tool initializations
   this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool(preferences_));
   this->optimize_tool_->set_project(this->project_);
-  this->optimize_tool_->set_app(this);
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()), this, SLOT(handle_optimize_complete()));
+  connect(this->optimize_tool_.data(), SIGNAL(error_message(std::string)),
+    this, SLOT(handle_error(std::string)));
+  connect(this->optimize_tool_.data(), SIGNAL(message(std::string)),
+    this, SLOT(handle_message(std::string)));
+  connect(this->optimize_tool_.data(), SIGNAL(progress(size_t)),
+    this, SLOT(handle_progress(size_t)));
 
   //set up preferences window
   this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this, preferences_));
@@ -318,7 +331,7 @@ void ShapeWorksStudioApp::on_action_save_project_triggered()
   {
     if (this->project_->save_project())
     {
-      this->set_status_bar("Project Saved");
+      this->handle_message("Project Saved");
     }
   }
 }
@@ -349,7 +362,7 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 
   if (this->project_->save_project(filename))
   {
-    this->set_status_bar("Project Saved");
+    this->handle_message("Project Saved");
   }
 }
 
@@ -551,6 +564,27 @@ void ShapeWorksStudioApp::handle_new_mesh() {
   this->compute_mode_shape();
 }
 
+void ShapeWorksStudioApp::handle_message(std::string str) {
+  this->ui_->statusbar->showMessage(QString::fromStdString(str));
+}
+
+void ShapeWorksStudioApp::handle_error(std::string str) {
+  QMessageBox::critical(this, "Critical Error", str.c_str());
+  this->handle_message(str);
+  this->handle_progress(100);
+}
+
+void ShapeWorksStudioApp::handle_progress(size_t value) {
+  if (value < 100) {
+    this->progressBar_->setVisible(true);
+    this->progressBar_->setValue(static_cast<int>(value));
+  } else {
+    this->progressBar_->setValue(100);
+    this->progressBar_->setVisible(false);
+  }
+  qApp->processEvents();
+}
+
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
@@ -623,7 +657,6 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->analysis_tool_->reset_stats();
   this->project_->handle_clear_cache();
   this->ui_->action_analysis_mode->setEnabled(true);
-  this->set_status_bar("Optimize complete");
   this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
   this->ui_->view_mode_combobox->setCurrentIndex(2);
   this->project_->set_display_state(this->ui_->view_mode_combobox->currentText().toStdString());
@@ -636,7 +669,6 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_complete()
 {
-  this->set_status_bar("Groom complete");
   this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
   this->ui_->view_mode_combobox->setCurrentIndex(1);
   this->ui_->action_optimize_mode->setEnabled(true);
@@ -765,12 +797,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   // set the zoom state
   this->ui_->thumbnail_size_slider->setValue(this->project_->get_zoom_state());
   this->analysis_tool_->reset_stats();
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::set_status_bar(QString status)
-{
-  this->ui_->statusbar->showMessage(status);
 }
 
 //---------------------------------------------------------------------------
