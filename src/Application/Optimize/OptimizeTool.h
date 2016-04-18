@@ -19,9 +19,6 @@ public:
   OptimizeTool(Preferences& prefs);
   ~OptimizeTool();
 
-  /// export XML for ShapeWorksOptimize
-  bool export_xml( QString filename );
-
   /// set the pointer to the project
   void set_project( QSharedPointer<Project> project );
 
@@ -38,9 +35,6 @@ public:
   void update_preferences();
 
 public Q_SLOTS:
-
-  /// Export XML
-  void on_export_xml_button_clicked();
 
   /// Run optimize tool
   void on_run_optimize_button_clicked();

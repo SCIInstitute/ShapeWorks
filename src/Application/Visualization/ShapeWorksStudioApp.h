@@ -63,6 +63,7 @@ public Q_SLOTS:
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
   void on_actionSet_Data_Directory_triggered();
+  void on_actionExport_Parameter_XML_triggered();
 
   void on_action_preferences_triggered();
 

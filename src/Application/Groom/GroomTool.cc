@@ -47,21 +47,6 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state) {
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::on_export_xml_button_clicked()
-{
-  std::cerr << "Export XML\n";
-
-  QString filename = QFileDialog::getSaveFileName( this, tr( "Save as..." ),
-                                                   QString(), tr( "XML files (*.xml)" ) );
-  if ( filename.isEmpty() )
-  {
-    return;
-  }
-
-  this->export_xml( filename );
-}
-
-//---------------------------------------------------------------------------
 void GroomTool::handle_error(std::string msg) {
   emit error_message(msg);
 }
@@ -192,91 +177,6 @@ void GroomTool::handle_thread_complete() {
   emit groom_complete();
   this->ui_->run_groom_button->setEnabled(true);
   this->ui_->skipButton->setEnabled(true);
-}
-
-//---------------------------------------------------------------------------
-bool GroomTool::export_xml( QString filename )
-{
-  std::cerr << "export to " << filename.toStdString() << "\n";
-
-  QFile file( filename );
-
-  if ( !file.open( QIODevice::WriteOnly ) )
-  {
-    QMessageBox::warning( 0, "Read only", "The file is in read only mode" );
-    return false;
-  }
-
-  QSharedPointer<QXmlStreamWriter> xml_writer = QSharedPointer<QXmlStreamWriter>( new QXmlStreamWriter() );
-  xml_writer->setAutoFormatting( true );
-  xml_writer->setDevice( &file );
-  xml_writer->writeStartDocument();
-
-  // background
-  xml_writer->writeComment( "Value of background pixels in image" );
-  xml_writer->writeTextElement( "background", "0.0" );
-
-  // foreground
-  xml_writer->writeComment( "Value of foreground pixels in image" );
-  xml_writer->writeTextElement( "foreground", "1.0" );
-
-  // pad
-  /// TODO: hook up a UI element to control
-  xml_writer->writeTextElement( "pad", QString::number( this->ui_->padding_amount->value() ) );
-
-  QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-
-  QFileInfo fi( shapes[0]->get_original_filename_with_path() );
-  QString project_path = fi.dir().absolutePath();
-
-  // output transform
-  xml_writer->writeTextElement( "transform_file", project_path + QDir::separator() + "studio.transform" );
-
-  if ( this->ui_->antialias_checkbox->isChecked() )
-  {
-    xml_writer->writeComment( "Number of anti-aliasing iterations" );
-    xml_writer->writeStartElement( "antialias_iterations" );
-    xml_writer->writeCharacters( QString::number( this->ui_->antialias_iterations->value() ) );
-    xml_writer->writeEndElement();
-  }
-
-  if ( this->ui_->blur_checkbox->isChecked() )
-  {
-    xml_writer->writeComment( "Size of Gaussian blurring kernel for smoothing" );
-    xml_writer->writeStartElement( "blur_sigma" );
-    xml_writer->writeCharacters( QString::number( this->ui_->blur_sigma->value() ) );
-    xml_writer->writeEndElement();
-  }
-
-  // inputs
-  xml_writer->writeStartElement( "inputs" );
-  xml_writer->writeCharacters( "\n" );
-
-  for ( int i = 0; i < shapes.size(); i++ )
-  {
-    xml_writer->writeCharacters( shapes[i]->get_original_filename_with_path() + "\n" );
-  }
-  xml_writer->writeEndElement();
-
-  // outputs
-  xml_writer->writeStartElement( "outputs" );
-  xml_writer->writeCharacters( "\n" );
-  shapes = this->project_->get_shapes();
-
-  for ( int i = 0; i < shapes.size(); i++ )
-  {
-    QString path = shapes[i]->get_original_filename_with_path();
-
-    QFileInfo fi( path );
-    QString outfile = fi.dir().absolutePath() + QDir::separator() + fi.completeBaseName() + "_DT.nrrd";
-
-    xml_writer->writeCharacters( outfile + "\n" );
-  }
-  xml_writer->writeEndElement();
-
-  xml_writer->writeEndDocument();
-
-  return true;
 }
 
 //---------------------------------------------------------------------------

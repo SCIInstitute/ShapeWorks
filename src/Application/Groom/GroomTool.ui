@@ -300,13 +300,6 @@ background: rgb(255, 255, 127)
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="export_xml_button">
-       <property name="text">
-        <string>Export XML</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="skipButton">
        <property name="text">
         <string>Skip</string>
@@ -351,7 +344,6 @@ background: rgb(255, 255, 127)
   <tabstop>fastmarch_sigma</tabstop>
   <tabstop>blur_checkbox</tabstop>
   <tabstop>blur_sigma</tabstop>
-  <tabstop>export_xml_button</tabstop>
   <tabstop>skipButton</tabstop>
   <tabstop>run_groom_button</tabstop>
  </tabstops>

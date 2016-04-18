@@ -586,6 +586,7 @@ QPushButton {
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="actionExport_PCA_Mesh"/>
+    <addaction name="actionExport_Parameter_XML"/>
     <addaction name="separator"/>
     <addaction name="action_recent1"/>
     <addaction name="action_recent2"/>
@@ -894,6 +895,11 @@ QPushButton {
    </property>
    <property name="toolTip">
     <string>Set the Data Directory for all generated images and correspondance points</string>
+   </property>
+  </action>
+  <action name="actionExport_Parameter_XML">
+   <property name="text">
+    <string>Export Parameter XML...</string>
    </property>
   </action>
  </widget>

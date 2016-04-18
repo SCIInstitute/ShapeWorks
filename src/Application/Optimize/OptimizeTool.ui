@@ -62,13 +62,6 @@ background: rgb(255, 255, 127)
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="export_xml_button">
-       <property name="text">
-        <string>Export XML</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="run_optimize_button">
        <property name="text">
         <string>Run Optimize</string>
@@ -81,7 +74,6 @@ background: rgb(255, 255, 127)
  </widget>
  <tabstops>
   <tabstop>number_of_scales</tabstop>
-  <tabstop>export_xml_button</tabstop>
   <tabstop>run_optimize_button</tabstop>
  </tabstops>
  <resources/>

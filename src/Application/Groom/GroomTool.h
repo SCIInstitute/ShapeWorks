@@ -19,10 +19,7 @@ public:
 
   GroomTool(Preferences& prefs, std::vector<std::string>& files);
   ~GroomTool();
-
-  /// export XML for ShapeWorksGroom
-  bool export_xml( QString filename );
-
+  
   /// set the pointer to the project
   void set_project( QSharedPointer<Project> project );
 
@@ -45,9 +42,6 @@ public Q_SLOTS:
   void handle_thread_complete();
   void handle_progress(int val);
   void handle_error(std::string msg);
-
-  /// Export XML
-  void on_export_xml_button_clicked();
 
   /// Run groom tool
   void on_run_groom_button_clicked();

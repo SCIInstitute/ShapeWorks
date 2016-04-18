@@ -911,3 +911,7 @@ void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered() {
       | QFileDialog::DontResolveSymlinks).toStdString();
   this->handle_message("Data directory now set to " + this->data_dir_);
 }
+
+void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered() {
+  this->handle_error("Export of Parameter XML not yet implemented!");
+}
