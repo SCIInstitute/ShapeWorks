@@ -241,7 +241,6 @@ bool Project::load_project(QString filename)
 
   // set this after loading files so it doesn't get fiddled with
   this->display_state_ = display_state;
-
   return true;
 }
 

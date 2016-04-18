@@ -432,6 +432,11 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->iso_neighborhood_spinner_->setValue(preferences_.get_preference("neighborhood", 5));
   this->iso_spacing_spinner_->setValue(preferences_.get_preference("spacing", 1.f));
 
+  this->glyph_quality_label_->setText(QString::number(preferences_.get_preference("glyph_quality", 5.)));
+  this->iso_smoothing_label_->setText(QString::number(preferences_.get_preference("smoothing", 0.)));
+  this->glyph_size_label_->setText(QString::number(preferences_.get_preference("glyph_size", 1.)));
+
+  this->ui_->center_checkbox->setChecked(preferences_.get_preference("center_option", true));
 }
 
 //---------------------------------------------------------------------------
@@ -734,8 +739,8 @@ void ShapeWorksStudioApp::update_display()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged() {
   if (this->visualizer_) {
-    this->preferences_.set_preference("center_option", this->ui_->center_checkbox->isChecked());
     auto disp_mode = this->ui_->view_mode_combobox->currentText().toStdString();
+    this->project_->set_display_state(disp_mode);
     this->visualizer_->set_display_mode(disp_mode);
     this->update_display();
   }
@@ -797,6 +802,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->ui_->thumbnail_size_slider->setValue(this->project_->get_zoom_state());
   this->analysis_tool_->reset_stats();
   this->visualizer_->update_lut();
+  this->preferences_.set_saved();
 }
 
 //---------------------------------------------------------------------------
