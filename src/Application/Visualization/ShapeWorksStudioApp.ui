@@ -582,6 +582,7 @@ QPushButton {
     <addaction name="action_open_project"/>
     <addaction name="action_save_project"/>
     <addaction name="action_save_project_as"/>
+    <addaction name="actionSet_Data_Directory"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="actionExport_PCA_Mesh"/>
@@ -814,7 +815,7 @@ QPushButton {
   </action>
   <action name="action_open_project">
    <property name="text">
-    <string>Open Project</string>
+    <string>Open Project...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -885,6 +886,14 @@ QPushButton {
   <action name="actionExport_PCA_Mesh">
    <property name="text">
     <string>Export PCA Mesh...</string>
+   </property>
+  </action>
+  <action name="actionSet_Data_Directory">
+   <property name="text">
+    <string>Set Data Directory...</string>
+   </property>
+   <property name="toolTip">
+    <string>Set the Data Directory for all generated images and correspondance points</string>
    </property>
   </action>
  </widget>

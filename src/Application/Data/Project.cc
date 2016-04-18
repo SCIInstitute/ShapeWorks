@@ -66,12 +66,13 @@ void Project::set_parent(QWidget* parent)
 }
 
 //---------------------------------------------------------------------------
-bool Project::save_project(QString filename /* = "" */)
-{
+bool Project::save_project(std::string fname, std::string dataDir) {
+  QString filename = QString::fromStdString(fname);
   if (filename == "") {
     filename = this->filename_;
   }
   this->filename_ = filename;
+  bool defaultDir = dataDir == "";
 
   // open file
   QFile file(filename);
@@ -110,30 +111,44 @@ bool Project::save_project(QString filename /* = "" */)
     }
 
     if (this->groomed_present())  {
-      xml->writeTextElement("groomed_mesh", this->shapes_[i]->get_groomed_filename_with_path());
+      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
+      if (!defaultDir) {
+        loc = QString::fromStdString(dataDir) + "/" +
+          this->shapes_[i]->get_groomed_filename();
+      }
+      xml->writeTextElement("groomed_mesh", loc);
       //try writing the groomed to file 
       WriterType::Pointer writer = WriterType::New();
-      writer->SetFileName(this->shapes_[i]->get_groomed_filename_with_path().toStdString());
+      writer->SetFileName(loc.toStdString());
       writer->SetInput(this->shapes_[i]->get_groomed_image());
       writer->SetUseCompression(true);
       writer->Update();
     }
 
     if (this->reconstructed_present()) {
-      auto name = this->shapes_[i]->get_original_filename_with_path().toStdString();
+      auto name = this->shapes_[i]->get_local_point_filename().toStdString();
       name = name.substr(0, name.find_last_of(".")) + ".wpts";
       auto name2 = name.substr(0, name.find_last_of(".")) + ".lpts";
-      xml->writeTextElement("point_file", QString::fromStdString(name));
-      xml->writeTextElement("point_file", QString::fromStdString(name2));
+      auto loc = this->shapes_[i]->get_local_point_filename_with_path().toStdString();
+      auto pos = loc.find_last_of("/");
+      loc = loc.substr(0, pos) + "/";
+      auto path = loc + name;
+      auto path2 = loc + name2;
+      if (!defaultDir) {
+        path = dataDir + "/" + name;
+        path2 = dataDir + "/" + name2;
+      }
+      xml->writeTextElement("point_file", QString::fromStdString(path));
+      xml->writeTextElement("point_file", QString::fromStdString(path2));
       //try writing to file
-      std::ofstream out(name);
+      std::ofstream out(path);
       auto points = this->shapes_[i]->get_global_correspondence_points();
       for (auto &a : points) {
         out << a << std::endl;
       }
       out.close();
       //try writing to file
-      std::ofstream out2(name2);
+      std::ofstream out2(path2);
       points = this->shapes_[i]->get_local_correspondence_points();
       for (auto &a : points) {
         out2 << a << std::endl;

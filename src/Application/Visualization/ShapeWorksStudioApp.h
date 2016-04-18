@@ -62,6 +62,7 @@ public Q_SLOTS:
   void on_action_analysis_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
+  void on_actionSet_Data_Directory_triggered();
 
   void on_action_preferences_triggered();
 
@@ -135,6 +136,7 @@ private:
   QSlider* iso_smoothing_slider_;
   std::vector<std::string> originalFilenames_;
   QProgressBar * progressBar_;
+  std::string data_dir_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

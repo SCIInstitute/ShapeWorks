@@ -35,7 +35,7 @@ public:
   void set_parent( QWidget* parent );
 
   /// save project to file
-  bool save_project( QString filename = "" );
+  bool save_project( std::string filename, std::string dataDir );
 
   /// load project from file
   bool load_project( QString filename );

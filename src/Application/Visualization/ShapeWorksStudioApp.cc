@@ -327,7 +327,7 @@ void ShapeWorksStudioApp::on_action_save_project_triggered()
     this->on_action_save_project_as_triggered();
   } else
   {
-    if (this->project_->save_project())
+    if (this->project_->save_project("", this->data_dir_))
     {
       this->handle_message("Project Saved");
     }
@@ -358,8 +358,7 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 
   this->preferences_.set_preference("last_directory", QDir().absoluteFilePath(filename));
 
-  if (this->project_->save_project(filename))
-  {
+  if (this->project_->save_project(filename.toStdString(), this->data_dir_)) {
     this->handle_message("Project Saved");
   }
 }
@@ -902,4 +901,13 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
   writer->SetFileName(filename.toStdString().c_str());
   writer->SetInputConnection(meshFilter->GetOutputPort());
   writer->Write();
+}
+
+void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered() {
+
+  this->data_dir_ = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    preferences_.get_preference("last_directory", QString()),
+      QFileDialog::ShowDirsOnly
+      | QFileDialog::DontResolveSymlinks).toStdString();
+  this->handle_message("Data directory now set to " + this->data_dir_);
 }
