@@ -53,15 +53,12 @@ ImageType::Pointer Mesh::create_from_file(QString filename, double iso_value)
     itk::MetaImageIOFactory::RegisterOneFactory();
   }
 
-  //////***********************DEBUG
   // read file using ITK
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename.toStdString());
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
   this->create_from_image(image, iso_value);
-
-  //////***********************DEBUG
   return image;
 }
 

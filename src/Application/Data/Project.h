@@ -51,7 +51,7 @@ public:
   void load_groomed_images(std::vector<ImageType::Pointer> images, double iso);
 
   /// load point files
-  bool load_point_files(QStringList file_names);
+  bool load_point_files(std::vector<std::string> file_names, bool local);
   bool load_points(std::vector<std::vector<itk::Point<float> > > points, bool local);
 
   /// remove shapes

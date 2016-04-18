@@ -52,7 +52,7 @@ void OptimizeTool::handle_progress(int val) {
 void OptimizeTool::on_run_optimize_button_clicked() {
   this->update_preferences();
   emit message("Please wait: running optimize step...");
-  emit progress(5);
+  emit progress(1);
   this->ui_->run_optimize_button->setEnabled(false);
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
@@ -236,7 +236,7 @@ std::vector<unsigned int> OptimizeTool::getIters() {
 void OptimizeTool::set_preferences(bool setScales) {
   if (setScales) {
     this->ui_->number_of_scales->setValue(
-      this->preferences_.get_preference("groom_scales",
+      this->preferences_.get_preference("optimize_scales",
         this->ui_->number_of_scales->value()));
   }
   auto table = this->ui_->parameterTable;
@@ -246,19 +246,19 @@ void OptimizeTool::set_preferences(bool setScales) {
       QString cellname;
       switch (j) {
       case 0:
-        cellname = "groom_start_reg";
+        cellname = "optimize_start_reg";
         break;
       case 1:
-        cellname = "groom_end_reg";
+        cellname = "optimize_end_reg";
         break;
       case 2:
-        cellname = "groom_iters";
+        cellname = "optimize_iters";
         break;
       case 3:
-        cellname = "groom_tolerance";
+        cellname = "optimize_tolerance";
         break;
       case 4:
-        cellname = "groom_decay_span";
+        cellname = "optimize_decay_span";
         break;
       }
       auto defaultVal = this->preferences_.get_preference(cellname.toStdString(), j == 2 ? 0 : 0.);
@@ -270,7 +270,7 @@ void OptimizeTool::set_preferences(bool setScales) {
 }
 
 void OptimizeTool::update_preferences() {
-  this->preferences_.set_preference("groom_scales",
+  this->preferences_.set_preference("optimize_scales",
       this->ui_->number_of_scales->value());
   auto table = this->ui_->parameterTable;
   auto rows = this->ui_->number_of_scales->value();
@@ -279,19 +279,19 @@ void OptimizeTool::update_preferences() {
       QString cellname;
       switch (j) {
       case 0:
-        cellname = "groom_start_reg";
+        cellname = "optimize_start_reg";
         break;
       case 1:
-        cellname = "groom_end_reg";
+        cellname = "optimize_end_reg";
         break;
       case 2:
-        cellname = "groom_iters";
+        cellname = "optimize_iters";
         break;
       case 3:
-        cellname = "groom_tolerance";
+        cellname = "optimize_tolerance";
         break;
       case 4:
-        cellname = "groom_decay_span";
+        cellname = "optimize_decay_span";
         break;
       }
       auto cellTest = cellname + QString::number(i);

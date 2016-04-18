@@ -93,7 +93,10 @@ bool Project::save_project(QString filename /* = "" */)
   xml->writeTextElement("tool_state", QString::fromStdString(this->tool_state_));
   xml->writeTextElement("display_state", QString::fromStdString(this->display_state_));
   xml->writeTextElement("zoom_state", QString::number(this->zoom_state_));
-  xml->writeTextElement("preference_file", filename);
+  auto prefs = this->preferences_.getAllPreferences();
+  for (auto &a : prefs) {
+    xml->writeTextElement(QString::fromStdString(a.first), a.second.toString());
+  }
   this->preferences_.set_saved();
 
   // shapes
@@ -133,9 +136,9 @@ bool Project::save_project(QString filename /* = "" */)
       std::ofstream out2(name2);
       points = this->shapes_[i]->get_local_correspondence_points();
       for (auto &a : points) {
-        out << a << std::endl;
+        out2 << a << std::endl;
       }
-      out.close();
+      out2.close();
     }
 
     xml->writeEndElement(); // shape
@@ -180,55 +183,34 @@ bool Project::load_project(QString filename)
   while (!xml->atEnd() && !xml->hasError())
   {
     QXmlStreamReader::TokenType token = xml->readNext();
-    if (token == QXmlStreamReader::StartDocument)
-    {
+    if (token == QXmlStreamReader::StartDocument) {
       continue;
     }
-    if (token == QXmlStreamReader::StartElement)
-    {
-      if (xml->name() == "tool_state")
-      {
-        this->tool_state_ = xml->readElementText().toStdString();
-      }
-
-      if (xml->name() == "display_state")
-      {
-        display_state = xml->readElementText().toStdString();
-      }
-      if (xml->name() == "zoom_state")
-      {
-        this->zoom_state_ = xml->readElementText().toInt();
-      }
-
-      if (xml->name() == "shapes")
-      {
+    if (token == QXmlStreamReader::StartElement)  {
+      auto name = xml->name().toString().toStdString();
+      if (xml->name() == "project" ||
+        xml->name() == "shapes" ||
+        xml->name() == "shape") {
         continue;
       }
-      if (xml->name() == "shape")
-      {
-      }
-
-      if (xml->name() == "initial_mesh")
-      {
-        import_files << xml->readElementText();
-      }
-
-      if (xml->name() == "groomed_mesh")
-      {
-        groomed_files << xml->readElementText();
-      }
-
-      if (xml->name() == "point_file")
-      {
-        point_files << xml->readElementText();
-      }
-      if (xml->name() == "preference_file")
-      {
-        preference_file = xml->readElementText();
+      auto val = xml->readElementText().toStdString();
+      if (xml->name() == "tool_state") {
+        this->tool_state_ = val;
+      } else if (xml->name() == "display_state") {
+        display_state = val;
+      } else if (xml->name() == "zoom_state") {
+        this->zoom_state_ = QString::fromStdString(val).toInt();
+      } else if (xml->name() == "initial_mesh"){
+        import_files << QString::fromStdString(val);
+      } else if (xml->name() == "groomed_mesh") {
+        groomed_files << QString::fromStdString(val);
+      } else if (xml->name() == "point_file")  {
+        point_files << QString::fromStdString(val);
+      } else {
+        this->preferences_.set_preference(name, QVariant(QString::fromStdString(val)));
       }
     }
   }
-  this->preferences_ = Preferences(preference_file);
 
   std::cerr << "tool state = " << this->tool_state_ << "\n";
 
@@ -246,11 +228,16 @@ bool Project::load_project(QString filename)
   }
   this->load_groomed_files(groom_list, 0.5);
 
-  std::vector<std::string> pointlist;
+  std::vector<std::string> localpointlist, globalpointlist;
   for (auto a : point_files) {
-    pointlist.push_back(a.toStdString());
+    if (a.toStdString().find(".lpts") != std::string::npos) {
+      localpointlist.push_back(a.toStdString());
+    } else if (a.toStdString().find(".wpts") != std::string::npos) {
+      globalpointlist.push_back(a.toStdString());
+    }
   }
-  this->load_point_files(point_files);
+  this->load_point_files(localpointlist, true);
+  this->load_point_files(globalpointlist, false);
 
   // set this after loading files so it doesn't get fiddled with
   this->display_state_ = display_state;
@@ -280,6 +267,7 @@ void Project::load_original_files(QStringList file_names)
     std::cerr << file_names[i].toStdString() << "\n";
 
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
+    auto test = file_names[i].toStdString();
     new_shape->import_original_image(file_names[i], 0.5);
     this->shapes_.push_back(new_shape);
   }
@@ -406,21 +394,21 @@ bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points, 
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_point_files(QStringList file_names)
+bool Project::load_point_files(std::vector<std::string> list, bool local )
 {
-  QProgressDialog progress("Loading point files...", "Abort", 0, file_names.size(), this->parent_);
+  QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
   progress.setMinimumDuration(2000);
-  std::cerr << "num file = " << file_names.size() << "\n";
-  for (int i = 0; i < file_names.size(); i++) {
-    std::cerr << "Loading file " << file_names[i].toStdString() << "\n";
+  std::cerr << "num file = " << list.size() << "\n";
+  for (int i = 0; i < list.size(); i++) {
+    std::cerr << "Loading file " << list[i] << "\n";
     progress.setValue(i);
     QApplication::processEvents();
     if (progress.wasCanceled()) {
       break;
     }
-    std::cerr << file_names[i].toStdString() << "\n";
+    std::cerr << list[i] << "\n";
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
       shape = this->shapes_[i];
@@ -428,28 +416,26 @@ bool Project::load_point_files(QStringList file_names)
       shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(shape);
     }
-
-    QFileInfo fi(file_names[i]);
+    auto fname = QString::fromStdString(list[i]);
+    QFileInfo fi(fname);
     QString basename = fi.completeBaseName();
     QString ext = fi.suffix();
 
-    if (ext == "wpts") {
-      if (QFile::exists(file_names[i])) {
-        if (!shape->import_global_point_file(file_names[i])) {
+    if (QFile::exists(fname)) {
+      if (!local) {
+        if (!shape->import_global_point_file(fname)) {
           return false;
         }
-      }
-    } else if (ext == "lpts") {
-      if (QFile::exists(file_names[i])) {
-        if (!shape->import_local_point_file(file_names[i])) {
+      } else {
+        if (!shape->import_local_point_file(fname)) {
           return false;
         }
       }
     }
   }
-  progress.setValue(file_names.size());
+  progress.setValue(list.size());
   QApplication::processEvents();
-  if (file_names.size() > 0) {
+  if (list.size() > 0) {
     this->reconstructed_present_ = true;
     emit data_changed();
   }

@@ -269,9 +269,7 @@ void ShapeWorksStudioApp::initialize_vtk()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_new_project_triggered()
-{
-  this->preferences_ = Preferences("ShapeWorksStudio");
+void ShapeWorksStudioApp::on_action_new_project_triggered() {
   this->update_from_preferences();
   this->originalFilenames_.clear();
   QList<int> index_list;
@@ -428,10 +426,7 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 void ShapeWorksStudioApp::update_from_preferences()
 {
   this->glyph_quality_slider_->setValue(preferences_.get_preference("glyph_quality", 5.));
-  this->glyph_quality_label_->setText(QString::number(preferences_.get_preference("glyph_quality", 5.)));
   this->glyph_size_slider_->setValue(preferences_.get_preference("glyph_size", 1.) * 10.0);
-  this->glyph_size_label_->setText(QString::number(preferences_.get_preference("glyph_size", 1.)));
-  this->iso_smoothing_label_->setText(QString::number(preferences_.get_preference("smoothing_amount", 0.)));
 
   this->iso_smoothing_slider_->setValue(preferences_.get_preference("smoothing_amount", 0.) / 100);
   this->iso_neighborhood_spinner_->setValue(preferences_.get_preference("neighborhood", 5));
@@ -548,11 +543,11 @@ void ShapeWorksStudioApp::update_table()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed() {
-  preferences_.set_preference("neighborhood", this->iso_neighborhood_spinner_->value());
-  preferences_.set_preference("spacing", this->iso_spacing_spinner_->value());
-  preferences_.set_preference("smoothing_amount", this->iso_smoothing_slider_->value() * 100);
-  this->update_from_preferences();
+  this->preferences_.set_preference("neighborhood", this->iso_neighborhood_spinner_->value());
+  this->preferences_.set_preference("spacing", this->iso_spacing_spinner_->value());
+  this->preferences_.set_preference("smoothing_amount", this->iso_smoothing_slider_->value() * 100);
 
+  this->iso_smoothing_label_->setText(QString::number(preferences_.get_preference("smoothing_amount", 0.)));
   if (!this->project_->reconstructed_present()) return;
   this->project_->handle_clear_cache();
   this->visualizer_->update_lut();
@@ -687,15 +682,17 @@ void ShapeWorksStudioApp::handle_glyph_changed()
 {
   this->visualizer_->set_show_surface(this->ui_->surface_visible_button->isChecked());
   this->visualizer_->set_show_glyphs(this->ui_->glyphs_visible_button->isChecked());
-  preferences_.set_preference("glyph_size", this->glyph_size_slider_->value() / 10.0);
-  preferences_.set_preference("glyph_quality", this->glyph_quality_slider_->value());
-  this->update_from_preferences();
+  this->preferences_.set_preference("glyph_size", this->glyph_size_slider_->value() / 10.);
+  this->preferences_.set_preference("glyph_quality", this->glyph_quality_slider_->value());
+  this->glyph_quality_label_->setText(QString::number(preferences_.get_preference("glyph_quality", 5.)));
+  this->glyph_size_label_->setText(QString::number(preferences_.get_preference("glyph_size", 1.)));
   this->update_display();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 {
+  this->preferences_.set_preference("center_option", this->ui_->center_checkbox->isChecked());
   this->update_display();
 }
 
@@ -735,9 +732,9 @@ void ShapeWorksStudioApp::update_display()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged()
-{
+void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged() {
   if (this->visualizer_) {
+    this->preferences_.set_preference("center_option", this->ui_->center_checkbox->isChecked());
     auto disp_mode = this->ui_->view_mode_combobox->currentText().toStdString();
     this->visualizer_->set_display_mode(disp_mode);
     this->update_display();
@@ -756,6 +753,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->project_->load_project(filename);
   this->groom_tool_->set_preferences();
   this->optimize_tool_->set_preferences();
+  this->preferences_window_->set_values_from_preferences();
+  this->update_from_preferences();
   this->project_->calculate_reconstructed_samples();
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->analysis_tool_->setAnalysisMode("all samples");
@@ -797,6 +796,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   // set the zoom state
   this->ui_->thumbnail_size_slider->setValue(this->project_->get_zoom_state());
   this->analysis_tool_->reset_stats();
+  this->visualizer_->update_lut();
 }
 
 //---------------------------------------------------------------------------

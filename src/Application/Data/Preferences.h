@@ -16,15 +16,13 @@ class Preferences : public QObject
 public:
 
   enum { MAX_RECENT_FILES = 4 };
-  Preferences(QString name = "ShapeWorksStudio");
+  Preferences();
   void restore_defaults();
   void add_recent_file(QString file);
   QStringList get_recent_files();
-
   bool not_saved();
   void set_saved();
-  Preferences& operator=(const Preferences& other);
-
+  std::map<std::string, QVariant> getAllPreferences();
   template<typename T>
   T get_preference(std::string name, T default_val) {
     if (this->defaults_.count(name)) {
@@ -38,7 +36,12 @@ public:
   template<typename T>
   void set_preference(std::string name, T value) {
     this->settings_.setValue(QString::fromStdString(name), value);
-    this->defaults_.insert(std::make_pair(name, value));
+    if (!this->defaults_.count(name)) {
+      this->defaults_.insert(std::make_pair(name, value));
+    } else {
+      auto &entry = this->defaults_.find(name);
+      entry->second = value;
+    }
     this->saved_ = false;
   }
 

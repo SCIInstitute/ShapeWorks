@@ -8,8 +8,9 @@
 #include <Data/Preferences.h>
 
 //-----------------------------------------------------------------------------
-Preferences::Preferences(QString name)
-  : settings_( "Scientific Computing and Imaging Institute", name ), saved_(true) {
+Preferences::Preferences()
+  : settings_( "Scientific Computing and Imaging Institute", 
+    "ShapeWorksStudio" ), saved_(true) {
   this->defaults_.insert(std::make_pair("cache_enabled", true));
   this->defaults_.insert(std::make_pair("parallel_enabled", true));
   this->defaults_.insert(std::make_pair("cache_memory", 25));
@@ -32,17 +33,8 @@ Preferences::Preferences(QString name)
   this->defaults_.insert(std::make_pair("groom_decay_span", 0.0));
 }
 
-Preferences& Preferences::operator = (const Preferences& o) {
-  if (this != &o) { // self-assignment check expected
-    this->saved_ = o.saved_;
-    this->defaults_ = o.defaults_; 
-    QStringList keys = o.settings_.allKeys();
-    for (QStringList::iterator i = keys.begin(); i != keys.end(); i++)
-    {
-      this->settings_.setValue(*i, o.settings_.value(*i));
-    }
-  }
-  return *this;
+std::map<std::string, QVariant> Preferences::getAllPreferences() {
+  return this->defaults_;
 }
 
 bool Preferences::not_saved() {
