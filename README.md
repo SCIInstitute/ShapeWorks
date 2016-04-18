@@ -25,12 +25,13 @@ Table of Contents
 
 Requirements
 ===========
+ * C++11 compatible compiler
  * Git (https://git-scm.com/)
- * CMake 2.6+ (http://www.cmake.org/)
- * Visualization ToolKit (VTK 6+ recommended) (http://www.vtk.org/)
- * Insight Toolkit (ITK 4.5+ recommended) (http://www.itk.org/)
- * Qt 4.8.* (http://www.qt.io/developers/)
- * Windows 7+, OSX 10.7+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
+ * CMake 2.8+ (http://www.cmake.org/)
+ * Visualization ToolKit (VTK 7+ recommended) (http://www.vtk.org/)
+ * Insight Toolkit (ITK 4.5+ recommended) (http://www.itk.org/ , built with CMAKE_CXX_FLAGS+="-std=c++11 -fpermissive")
+ * Qt 5 (http://www.qt.io/developers/)
+ * Windows 7+, OSX 10.9+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
  * Shapeworks command line tools (Groom and Run) are required for Studio (https://github.com/SCIInstitute/shapeworks/releases)
 
 Code Documentation
@@ -61,8 +62,7 @@ nmake
 
 Running
 =====================
-Studio runs with no command-line arguments. Once running, set the locations of ShapeWorksGroom 
-and ShapeWorksRun in the Preferences dialog (ctrl+,). 
+Studio runs with no command-line arguments. 
 <br/><br/>
 You Should have a Qt window that looks similar to the one below.
 <br/><br/>
@@ -113,8 +113,6 @@ for the blurring.
 *Run Groom* Click this when you are ready for grooming. This step takes some time. Output is put into a 
 ShapeWorksStudioTools.log file next to the executable. A progress indicator shows the tool is working.
 <br/><br/>
-*Export XML* If you wish to use the parameter file created for the groom step in a command line environment, 
-you can export the XML with the grooming options above.
 
 <h2>Optimize</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Optimize.png"
@@ -143,9 +141,6 @@ regularization over the specified number of iterations.
 *Run Optimize* Click this when you are ready for optimizing. This step takes time, but less than grooming.
 Output is put into a ShapeWorksStudioTools.log file next to the executable. A progress indicator shows the tool is working.
 <br/><br/>
-*Export XML* If you wish to use the parameter file created for the groom step in a command line environment, 
-you can export the XML with the grooming options above. There are other options not in the GUI that you can 
-add to a parameter file to run outside of Studio.
 
 <h2>Analysis</h2>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Analysis.png"
