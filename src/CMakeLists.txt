@@ -18,6 +18,10 @@ IF (WIN32 AND MSVC)
   SET(CMAKE_CXX_FLAGS "/Oi ${CMAKE_CXX_FLAGS} /MP4")
 ENDIF (WIN32 AND MSVC)
 
+if (NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
+endif()
+
 set(CMAKE_BUILD_TYPE Debug)
 
 #--------------------------------------------------------------------------------
