@@ -3,4 +3,5 @@ msvc*
 *~
 */bin/*
 bin*
-/build-*/
+build-*/
+build*

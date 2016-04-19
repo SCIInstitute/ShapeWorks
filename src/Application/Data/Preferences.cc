@@ -9,7 +9,7 @@
 
 //-----------------------------------------------------------------------------
 Preferences::Preferences()
-: settings_( "Scientific Computing and Imaging Institute",
+  : settings_( "Scientific Computing and Imaging Institute", 
     "ShapeWorksStudio" ), saved_(true) {
   this->defaults_.insert(std::make_pair("cache_enabled", true));
   this->defaults_.insert(std::make_pair("parallel_enabled", true));
@@ -31,33 +31,6 @@ Preferences::Preferences()
   this->defaults_.insert(std::make_pair("groom_iters", 1000));
   this->defaults_.insert(std::make_pair("groom_tolerance", 0.01));
   this->defaults_.insert(std::make_pair("groom_decay_span", 0.0));
-}
-
-double Preferences::get_preference(std::string name, double default_val) {
-  if (this->defaults_.count(name)) {
-    return this->settings_.value(QString::fromStdString(name),
-        this->defaults_.find(name)->second).toDouble();
-  }
-  return this->settings_.value(QString::fromStdString(name),
-      default_val).toDouble();
-}
-
-int Preferences::get_preference(std::string name, int default_val) {
-  if (this->defaults_.count(name)) {
-    return this->settings_.value(QString::fromStdString(name),
-        this->defaults_.find(name)->second).toInt();
-  }
-  return this->settings_.value(QString::fromStdString(name),
-      default_val).toInt();
-}
-
-QString Preferences::get_preference(std::string name, QString default_val) {
-  if (this->defaults_.count(name)) {
-    return this->settings_.value(QString::fromStdString(name),
-        this->defaults_.find(name)->second).toString();
-  }
-  return this->settings_.value(QString::fromStdString(name),
-      default_val).toString();
 }
 
 std::map<std::string, QVariant> Preferences::getAllPreferences() {

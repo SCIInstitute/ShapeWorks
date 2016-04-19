@@ -23,9 +23,15 @@ public:
   bool not_saved();
   void set_saved();
   std::map<std::string, QVariant> getAllPreferences();
-  double get_preference(std::string name, double default_val);
-  int get_preference(std::string name, int default_val);
-  QString get_preference(std::string name, QString default_val);
+  template<typename T>
+  T get_preference(std::string name, T default_val) {
+    if (this->defaults_.count(name)) {
+      return this->settings_.value(QString::fromStdString(name), 
+        this->defaults_.find(name)->second).template value<T>();
+    }
+    return this->settings_.value(QString::fromStdString(name), 
+      default_val).template value<T>();
+  }
 
   template<typename T>
   void set_preference(std::string name, T value) {
@@ -33,8 +39,7 @@ public:
     if (!this->defaults_.count(name)) {
       this->defaults_.insert(std::make_pair(name, value));
     } else {
-      auto entry = this->defaults_.find(name);
-      entry->second = value;
+      this->defaults_.find(name)->second = value;
     }
     this->saved_ = false;
   }
