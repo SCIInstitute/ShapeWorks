@@ -170,8 +170,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
 
   // resize from preferences
-  this->resize(preferences_.get_preference("main_window_width", 800),
-      preferences_.get_preference("main_window_height", 600));
+  //this->resize(preferences_.get_preference("main_window_width", 800),
+  //    preferences_.get_preference("main_window_height", 600));
 
   // set to import
   this->ui_->action_import_mode->setChecked(true);
@@ -818,8 +818,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   this->preferences_window_->close();
   if (this->preferences_.not_saved()) {
     // save the size of the window to preferences
-    preferences_.set_preference("main_window_width", this->size().width());
-    preferences_.set_preference("main_window_height", this->size().height());
+    //preferences_.set_preference("main_window_width", this->size().width());
+    //preferences_.set_preference("main_window_height", this->size().height());
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
     msgBox.setInformativeText("This will reload generated files and changed settings.");

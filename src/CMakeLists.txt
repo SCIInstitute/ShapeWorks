@@ -19,7 +19,7 @@ IF (WIN32 AND MSVC)
 ENDIF (WIN32 AND MSVC)
 
 if (NOT WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
 endif()
 
 set(CMAKE_BUILD_TYPE Debug)

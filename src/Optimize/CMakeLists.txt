@@ -5,3 +5,4 @@ include_directories(${CMAKE_SOURCE_DIR}/Application)
 FILE(GLOB SRCS "*.h" "*.cxx")
 
 ADD_LIBRARY(ShapeWorksOptimize ${SRCS})
+TARGET_LINK_LIBRARIES(ShapeWorksOptimize ${ITK_LIBRARIES})
