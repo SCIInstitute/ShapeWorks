@@ -16,7 +16,7 @@
 #include "itkAntiAliasBinaryImageFilter.h"
 #include "itkReinitializeLevelSetImageFilter.h"
 #include "itkDiscreteGaussianImageFilter.h"
-#include "itkNRRDImageIOFactory.h"
+#include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include "itkCastImageFilter.h"
 #include "itkPSMImplicitSurfaceImageFilter.h"

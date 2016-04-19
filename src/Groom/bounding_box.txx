@@ -17,6 +17,7 @@
 
 #include "bounding_box.h"
 #include "itkImageRegionIterator.h"
+#include "itkImageRegionIteratorWithIndex.h"
 
 namespace shapetools
 {

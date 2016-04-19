@@ -12,7 +12,7 @@
 #include <Data/ItkToVtk.h>
 
 #include <vtkSurfaceReconstructionFilter.h>
-#include "itkNRRDImageIOFactory.h"
+#include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include <vtkMarchingCubes.h>
 
