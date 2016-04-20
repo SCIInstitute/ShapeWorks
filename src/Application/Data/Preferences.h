@@ -17,7 +17,7 @@ public:
 
   enum { MAX_RECENT_FILES = 4 };
   Preferences();
-  void restore_defaults();
+  void restore_defaults(bool force = false);
   void add_recent_file(QString file);
   QStringList get_recent_files();
   bool not_saved();
@@ -25,10 +25,6 @@ public:
   std::map<std::string, QVariant> getAllPreferences();
   template<typename T>
   T get_preference(std::string name, T default_val) {
-    if (this->defaults_.count(name)) {
-      return this->settings_.value(QString::fromStdString(name), 
-        this->defaults_.find(name)->second).value<T>();
-    }
     return this->settings_.value(QString::fromStdString(name), 
       default_val).value<T>();
   }
@@ -36,12 +32,6 @@ public:
   template<typename T>
   void set_preference(std::string name, T value) {
     this->settings_.setValue(QString::fromStdString(name), value);
-    if (!this->defaults_.count(name)) {
-      this->defaults_.insert(std::make_pair(name, value));
-    } else {
-      auto &entry = this->defaults_.find(name);
-      entry->second = value;
-    }
     this->saved_ = false;
   }
 
@@ -54,7 +44,6 @@ Q_SIGNALS:
 private:
   /// the QSettings object
   QSettings settings_;
-  std::map<std::string, QVariant> defaults_;
   bool saved_;
 };
 

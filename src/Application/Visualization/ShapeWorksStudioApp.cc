@@ -292,7 +292,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered() {
   this->ui_->action_groom_mode->setChecked(false);
   this->ui_->action_optimize_mode->setChecked(false);
   this->ui_->action_analysis_mode->setChecked(false);
-  this->project_->set_tool_state(Project::DATA_C);
+  this->preferences_.set_preference("tool_state", Project::DATA_C);
   this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
   this->ui_->controlsDock->setWindowTitle("Data");
 }
@@ -390,7 +390,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   this->ui_->view_mode_combobox->setCurrentIndex(0);
   this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
   this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
-  this->project_->set_display_state(this->ui_->view_mode_combobox->currentText().toStdString());
+  this->preferences_.set_preference("display_state", this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->import_files(filenames);
   this->visualizer_->update_lut();
@@ -409,7 +409,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
   if (!this->lightbox_->render_window_ready()) return;
-  this->project_->set_zoom_state(this->ui_->thumbnail_size_slider->value());
+  this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 
   int value = this->ui_->thumbnail_size_slider->maximum() - this->ui_->thumbnail_size_slider->value() + 1;
 
@@ -495,7 +495,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
     this->project_->reset();
     this->reset();
     this->analysis_tool_->reset_stats();
-    this->project_->set_tool_state(Project::DATA_C);
+    this->preferences_.set_preference("tool_state", Project::DATA_C);
     this->ui_->action_groom_mode->setEnabled(false);
     this->ui_->action_optimize_mode->setEnabled(false);
     this->ui_->action_analysis_mode->setEnabled(false);
@@ -587,7 +587,7 @@ void ShapeWorksStudioApp::handle_progress(size_t value) {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
-  this->project_->set_tool_state(Project::GROOM_C);
+  this->preferences_.set_preference("tool_state", Project::GROOM_C);
   this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Groom");
 }
@@ -595,7 +595,7 @@ void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
-  this->project_->set_tool_state(Project::DATA_C);
+  this->preferences_.set_preference("tool_state", Project::DATA_C);
   this->ui_->stacked_widget->setCurrentIndex(0);
   this->ui_->controlsDock->setWindowTitle("Data");
 }
@@ -603,7 +603,7 @@ void ShapeWorksStudioApp::on_action_import_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
-  this->project_->set_tool_state(Project::OPTIMIZE_C);
+  this->preferences_.set_preference("tool_state", Project::OPTIMIZE_C);
   this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Optimize");
 }
@@ -611,7 +611,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
-  this->project_->set_tool_state(Project::ANALYSIS_C);
+  this->preferences_.set_preference("tool_state", Project::ANALYSIS_C);
   this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Analysis");
 }
@@ -658,7 +658,8 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->ui_->action_analysis_mode->setEnabled(true);
   this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
   this->ui_->view_mode_combobox->setCurrentIndex(2);
-  this->project_->set_display_state(this->ui_->view_mode_combobox->currentText().toStdString());
+  this->preferences_.set_preference("display_state",
+    this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->visualizer_->update_lut();
@@ -706,7 +707,8 @@ void ShapeWorksStudioApp::update_display()
   if (!this->visualizer_ || this->project_->get_num_shapes() <= 0) return;
 
   this->visualizer_->set_center(this->ui_->center_checkbox->isChecked());
-  this->project_->set_display_state(this->ui_->view_mode_combobox->currentText().toStdString());
+  this->preferences_.set_preference("display_state",
+    this->ui_->view_mode_combobox->currentText());
   std::string mode = this->analysis_tool_->getAnalysisMode();
   if (mode == "all samples") {
     this->visualizer_->display_samples();
@@ -732,15 +734,15 @@ void ShapeWorksStudioApp::update_display()
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
     } //TODO regression
   }
-  this->project_->set_zoom_state(this->ui_->thumbnail_size_slider->value());
+  this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged() {
   if (this->visualizer_) {
-    auto disp_mode = this->ui_->view_mode_combobox->currentText().toStdString();
-    this->project_->set_display_state(disp_mode);
-    this->visualizer_->set_display_mode(disp_mode);
+    auto disp_mode = this->ui_->view_mode_combobox->currentText();
+    this->preferences_.set_preference("display_state", disp_mode);
+    this->visualizer_->set_display_mode(disp_mode.toStdString());
     this->update_display();
   }
 }
@@ -766,39 +768,33 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   preferences_.add_recent_file(filename);
   this->update_recent_files();
-
+  auto tool_state = this->preferences_.get_preference(
+    "tool_state", Project::DATA_C);
   // set UI state based on project
-  if (this->project_->get_tool_state() == Project::DATA_C)
-  {
+  if (tool_state == Project::DATA_C) {
     this->ui_->action_import_mode->trigger();
-  } else if (this->project_->get_tool_state() == Project::GROOM_C)
-  {
+  } else if (tool_state == Project::GROOM_C) {
     this->ui_->action_groom_mode->trigger();
-  } else if (this->project_->get_tool_state() == Project::OPTIMIZE_C)
-  {
+  } else if (tool_state == Project::OPTIMIZE_C) {
     this->ui_->action_optimize_mode->trigger();
-  } else if (this->project_->get_tool_state() == Project::ANALYSIS_C)
-  {
+  } else if (tool_state == Project::ANALYSIS_C){
     this->ui_->action_analysis_mode->trigger();
   }
 
   // load display mode
-  if (this->project_->get_display_state()
-    == Visualizer::MODE_ORIGINAL_C)
-  {
+  auto display_state = this->preferences_.get_preference(
+    "display_state", Visualizer::MODE_ORIGINAL_C);
+  if (display_state == Visualizer::MODE_ORIGINAL_C) {
     this->ui_->view_mode_combobox->setCurrentIndex(0);
-  } else if (this->project_->get_display_state()
-    == Visualizer::MODE_GROOMED_C)
-  {
+  } else if (display_state == Visualizer::MODE_GROOMED_C) {
     this->ui_->view_mode_combobox->setCurrentIndex(1);
-  } else if (this->project_->get_display_state()
-    == Visualizer::MODE_RECONSTRUCTION_C)
-  {
+  } else if (display_state == Visualizer::MODE_RECONSTRUCTION_C) {
     this->ui_->view_mode_combobox->setCurrentIndex(2);
   }
 
   // set the zoom state
-  this->ui_->thumbnail_size_slider->setValue(this->project_->get_zoom_state());
+  this->ui_->thumbnail_size_slider->setValue(
+    this->preferences_.get_preference("zoom_state",1));
   this->analysis_tool_->reset_stats();
   this->visualizer_->update_lut();
   this->preferences_.set_saved();

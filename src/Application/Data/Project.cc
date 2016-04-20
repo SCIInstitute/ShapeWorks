@@ -90,13 +90,11 @@ bool Project::save_project(std::string fname, std::string dataDir) {
 
   xml->writeStartElement("project");
   xml->writeAttribute("version", "1");
-
-  xml->writeTextElement("tool_state", QString::fromStdString(this->tool_state_));
-  xml->writeTextElement("display_state", QString::fromStdString(this->display_state_));
-  xml->writeTextElement("zoom_state", QString::number(this->zoom_state_));
   auto prefs = this->preferences_.getAllPreferences();
   for (auto &a : prefs) {
-    xml->writeTextElement(QString::fromStdString(a.first), a.second.toString());
+    if (a.first.find("/") == std::string::npos)
+      xml->writeTextElement(
+        QString::fromStdString(a.first), a.second.toString());
   }
   this->preferences_.set_saved();
 
@@ -126,10 +124,10 @@ bool Project::save_project(std::string fname, std::string dataDir) {
     }
 
     if (this->reconstructed_present()) {
-      auto name = this->shapes_[i]->get_local_point_filename().toStdString();
+      auto name = this->shapes_[i]->get_original_filename().toStdString();
       name = name.substr(0, name.find_last_of(".")) + ".wpts";
       auto name2 = name.substr(0, name.find_last_of(".")) + ".lpts";
-      auto loc = this->shapes_[i]->get_local_point_filename_with_path().toStdString();
+      auto loc = this->shapes_[i]->get_original_filename_with_path().toStdString();
       auto pos = loc.find_last_of("/");
       loc = loc.substr(0, pos) + "/";
       auto path = loc + name;
@@ -193,8 +191,6 @@ bool Project::load_project(QString filename)
   QStringList point_files;
   QString preference_file;
 
-  std::string display_state;
-
   while (!xml->atEnd() && !xml->hasError())
   {
     QXmlStreamReader::TokenType token = xml->readNext();
@@ -209,13 +205,7 @@ bool Project::load_project(QString filename)
         continue;
       }
       auto val = xml->readElementText().toStdString();
-      if (xml->name() == "tool_state") {
-        this->tool_state_ = val;
-      } else if (xml->name() == "display_state") {
-        display_state = val;
-      } else if (xml->name() == "zoom_state") {
-        this->zoom_state_ = QString::fromStdString(val).toInt();
-      } else if (xml->name() == "initial_mesh"){
+      if (xml->name() == "initial_mesh"){
         import_files << QString::fromStdString(val);
       } else if (xml->name() == "groomed_mesh") {
         groomed_files << QString::fromStdString(val);
@@ -227,7 +217,7 @@ bool Project::load_project(QString filename)
     }
   }
 
-  std::cerr << "tool state = " << this->tool_state_ << "\n";
+  std::cerr << "tool state = " << this->preferences_.get_preference("zoom_state", 1) << "\n";
 
   /* Error handling. */
   if (xml->hasError())
@@ -254,8 +244,6 @@ bool Project::load_project(QString filename)
   this->load_point_files(localpointlist, true);
   this->load_point_files(globalpointlist, false);
 
-  // set this after loading files so it doesn't get fiddled with
-  this->display_state_ = display_state;
   return true;
 }
 
@@ -477,9 +465,6 @@ void Project::remove_shapes(QList<int> list)
 void Project::reset()
 {
   this->filename_ = "";
-  this->tool_state_ = DATA_C;
-  this->display_state_ = Visualizer::MODE_ORIGINAL_C;
-  this->zoom_state_ = 5;
 
   this->shapes_.clear();
 
@@ -492,18 +477,6 @@ void Project::reset()
   connect(this->mesh_manager_.data(), SIGNAL(new_mesh()), this, SLOT(handle_new_mesh()));
   this->handle_clear_cache();
   emit data_changed();
-}
-
-//---------------------------------------------------------------------------
-void Project::set_tool_state(std::string tool)
-{
-  this->tool_state_ = tool;
-}
-
-//---------------------------------------------------------------------------
-std::string Project::get_tool_state()
-{
-  return this->tool_state_;
 }
 
 //---------------------------------------------------------------------------
@@ -537,30 +510,6 @@ void Project::renumber_shapes()
 QString Project::get_filename()
 {
   return this->filename_;
-}
-
-//---------------------------------------------------------------------------
-void Project::set_display_state(std::string mode)
-{
-  this->display_state_ = mode;
-}
-
-//---------------------------------------------------------------------------
-std::string Project::get_display_state()
-{
-  return this->display_state_;
-}
-
-//---------------------------------------------------------------------------
-void Project::set_zoom_state(int zoom)
-{
-  this->zoom_state_ = zoom;
-}
-
-//---------------------------------------------------------------------------
-int Project::get_zoom_state()
-{
-  return this->zoom_state_;
 }
 
 //---------------------------------------------------------------------------

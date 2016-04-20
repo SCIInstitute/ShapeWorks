@@ -65,26 +65,8 @@ public:
   /// reset the project
   void reset();
 
-  /// set the current tool state
-  void set_tool_state(std::string tool);
-
-  /// get the current tool state
-  std::string get_tool_state();
-
   /// get the filename
   QString get_filename();
-
-  /// get the display mode
-  void set_display_state(std::string mode);
-
-  /// set the display mode
-  std::string get_display_state();
-
-  /// set the zoom state
-  void set_zoom_state( int zoom );
-
-  /// get the zoom state
-  int get_zoom_state();
 
   bool original_present();
   bool groomed_present();
@@ -129,10 +111,6 @@ private:
   bool original_present_;
   bool groomed_present_;
   bool reconstructed_present_;
-
-  std::string tool_state_;
-  std::string display_state_;
-  int zoom_state_;
 };
 
 #endif /* STUDIO_DATA_PROJECT_H */
