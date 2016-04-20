@@ -253,6 +253,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   connect(this->iso_neighborhood_spinner_, SIGNAL(valueChanged(int)), this, SLOT(handle_pca_changed()));
   connect(this->iso_spacing_spinner_, SIGNAL(valueChanged(double)), this, SLOT(handle_pca_changed()));
   connect(this->iso_smoothing_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_pca_changed()));
+  this->preferences_.set_saved();
 }
 
 //---------------------------------------------------------------------------
@@ -269,8 +270,21 @@ void ShapeWorksStudioApp::initialize_vtk()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered() {
-  if (!this->preferences_.not_saved()) {
-    this->on_action_save_project_triggered();
+  if (this->preferences_.not_saved()) {
+    // save the size of the window to preferences
+    QMessageBox msgBox;
+    msgBox.setText("Do you want to save your changes as a project file?");
+    msgBox.setInformativeText("This will reload generated files and changed settings.");
+    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Save);
+    int ret = msgBox.exec();
+    if (ret == QMessageBox::Save) {
+      if (!this->on_action_save_project_triggered()) {
+        return;
+      }
+    } else if (ret == QMessageBox::Cancel) {
+      return;
+    }
   }
   this->update_from_preferences();
   this->originalFilenames_.clear();
@@ -319,18 +333,20 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_save_project_triggered() {
+bool ShapeWorksStudioApp::on_action_save_project_triggered() {
   if (this->project_->get_filename() == "") {
-    this->on_action_save_project_as_triggered();
+    return this->on_action_save_project_as_triggered();
   } else {
-    if (this->project_->save_project("", this->data_dir_)) {
+    if (this->project_->save_project(
+      this->project_->get_filename().toStdString(), this->data_dir_)) {
       this->handle_message("Project Saved");
     }
   }
+  return true;
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_save_project_as_triggered()
+bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString fname("Untitiled.xml");
   if (this->project_->get_shapes().size() > 0) {
@@ -346,7 +362,7 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
     QString::fromStdString(dir) + fname,
     tr("XML files (*.xml)"));
   if (filename.isEmpty()) {
-    return;
+    return false;
   }
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
@@ -355,7 +371,9 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
 
   if (this->project_->save_project(filename.toStdString(), this->data_dir_)) {
     this->handle_message("Project Saved");
+    return true;
   }
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -800,8 +818,6 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   this->preferences_window_->close();
   if (this->preferences_.not_saved()) {
     // save the size of the window to preferences
-    //preferences_.set_preference("main_window_width", this->size().width());
-    //preferences_.set_preference("main_window_height", this->size().height());
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
     msgBox.setInformativeText("This will reload generated files and changed settings.");
@@ -809,7 +825,10 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
     msgBox.setDefaultButton(QMessageBox::Save);
     int ret = msgBox.exec();
     if (ret == QMessageBox::Save) {
-      this->on_action_save_project_as_triggered();
+      if (!this->on_action_save_project_triggered()) {
+        event->ignore();
+        return;
+      }
     } else if (ret == QMessageBox::Cancel) {
       event->ignore();
     }
