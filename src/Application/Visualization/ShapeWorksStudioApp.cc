@@ -170,7 +170,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
 
   // resize from preferences
-  this->resize(preferences_.get_preference("main_window_size", QSize()));
+  this->restoreGeometry(this->preferences_.get_preference("Main/geometry",QByteArray()));
+  this->restoreState(this->preferences_.get_preference("Main/windowState", QByteArray()));
 
   // set to import
   this->ui_->action_import_mode->setChecked(true);
@@ -193,9 +194,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->visualizer_ = QSharedPointer<Visualizer>(new Visualizer(preferences_));
   this->visualizer_->set_lightbox(this->lightbox_);
   this->visualizer_->set_project(this->project_);
-
-  this->reset();
-
+  
   //groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool(preferences_, this->originalFilenames_));
   this->groom_tool_->set_project(this->project_);
@@ -270,6 +269,9 @@ void ShapeWorksStudioApp::initialize_vtk()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered() {
+  if (!this->preferences_.not_saved()) {
+    this->on_action_save_project_triggered();
+  }
   this->update_from_preferences();
   this->originalFilenames_.clear();
   QList<int> index_list;
@@ -285,16 +287,16 @@ void ShapeWorksStudioApp::on_action_new_project_triggered() {
   this->project_->remove_shapes(index_list);
   this->project_->reset();
   this->lightbox_->clear_renderers();
-  this->reset();
   this->analysis_tool_->reset_stats();
   this->update_display();
   this->ui_->action_import_mode->setChecked(true);
   this->ui_->action_groom_mode->setChecked(false);
   this->ui_->action_optimize_mode->setChecked(false);
   this->ui_->action_analysis_mode->setChecked(false);
-  this->preferences_.set_preference("tool_state", Project::DATA_C);
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
   this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
   this->ui_->controlsDock->setWindowTitle("Data");
+  this->preferences_.set_saved();
 }
 
 //---------------------------------------------------------------------------
@@ -307,28 +309,21 @@ void ShapeWorksStudioApp::on_actionShow_Tool_Window_triggered() {
 void ShapeWorksStudioApp::on_action_open_project_triggered()
 {
   QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."),
-    this->preferences_.get_preference("last_directory", QString()),
+    this->preferences_.get_preference("Main/last_directory", QString()),
     tr("XML files (*.xml)"));
-  if (filename.isEmpty())
-  {
+  if (filename.isEmpty()) {
     return;
   }
-
-  this->preferences_.set_preference("last_directory", QDir().absoluteFilePath(filename));
-
+  this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
   this->open_project(filename);
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_save_project_triggered()
-{
-  if (this->project_->get_filename() == "")
-  {
+void ShapeWorksStudioApp::on_action_save_project_triggered() {
+  if (this->project_->get_filename() == "") {
     this->on_action_save_project_as_triggered();
-  } else
-  {
-    if (this->project_->save_project("", this->data_dir_))
-    {
+  } else {
+    if (this->project_->save_project("", this->data_dir_)) {
       this->handle_message("Project Saved");
     }
   }
@@ -344,7 +339,7 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
     tmp = tmp.substr(0, tmp.size() - 5);
     fname = QString::fromStdString(tmp);
   }
-  QString direct = this->preferences_.get_preference("last_directory", QString());
+  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
   auto dir = direct.toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
@@ -356,7 +351,7 @@ void ShapeWorksStudioApp::on_action_save_project_as_triggered()
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
-  this->preferences_.set_preference("last_directory", QDir().absoluteFilePath(filename));
+  this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
 
   if (this->project_->save_project(filename.toStdString(), this->data_dir_)) {
     this->handle_message("Project Saved");
@@ -373,9 +368,8 @@ void ShapeWorksStudioApp::on_action_quit_triggered()
 void ShapeWorksStudioApp::on_action_import_triggered()
 {
   QStringList filenames;
-
   filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
-    preferences_.get_preference("last_directory", QString()),
+    preferences_.get_preference("Main/last_directory", QString()),
     tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
 
   if (filenames.size() == 0) {
@@ -385,7 +379,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
     this->originalFilenames_.push_back(filenames.at(i).toStdString());
   }
 
-  preferences_.set_preference("last_directory", QDir().absoluteFilePath(filenames[0]));
+  preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filenames[0]));
   //need to re-run everything if something new is added.
   this->ui_->view_mode_combobox->setCurrentIndex(0);
   this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
@@ -473,9 +467,7 @@ void ShapeWorksStudioApp::on_add_button_clicked()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_delete_button_clicked()
-{
-
+void ShapeWorksStudioApp::on_delete_button_clicked() {
   QModelIndexList list = this->ui_->table_widget->selectionModel()->selectedRows();
 
   QList<int> index_list;
@@ -493,9 +485,8 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   this->project_->remove_shapes(index_list);
   if (this->project_->get_shapes().size() == 0) {
     this->project_->reset();
-    this->reset();
     this->analysis_tool_->reset_stats();
-    this->preferences_.set_preference("tool_state", Project::DATA_C);
+    this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
     this->ui_->action_groom_mode->setEnabled(false);
     this->ui_->action_optimize_mode->setEnabled(false);
     this->ui_->action_analysis_mode->setEnabled(false);
@@ -587,7 +578,7 @@ void ShapeWorksStudioApp::handle_progress(size_t value) {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", Project::GROOM_C);
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::GROOM_C));
   this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Groom");
 }
@@ -595,7 +586,7 @@ void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", Project::DATA_C);
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
   this->ui_->stacked_widget->setCurrentIndex(0);
   this->ui_->controlsDock->setWindowTitle("Data");
 }
@@ -603,7 +594,7 @@ void ShapeWorksStudioApp::on_action_import_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", Project::OPTIMIZE_C);
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::OPTIMIZE_C));
   this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Optimize");
 }
@@ -611,7 +602,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", Project::ANALYSIS_C);
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
   this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Analysis");
 }
@@ -748,15 +739,15 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::reset() {
-  this->ui_->view_mode_combobox->setCurrentIndex(0);
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename)
 {
-  this->reset();
-  this->project_->load_project(filename);
+  if (!this->project_->load_project(filename)) {
+    return;
+  }
+  auto display_state = this->preferences_.get_preference(
+    "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
+  auto tool_state = this->preferences_.get_preference(
+    "tool_state", QString::fromStdString(Project::DATA_C)).toStdString();
   this->groom_tool_->set_preferences();
   this->optimize_tool_->set_preferences();
   this->preferences_window_->set_values_from_preferences();
@@ -768,8 +759,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   preferences_.add_recent_file(filename);
   this->update_recent_files();
-  auto tool_state = this->preferences_.get_preference(
-    "tool_state", Project::DATA_C);
   // set UI state based on project
   if (tool_state == Project::DATA_C) {
     this->ui_->action_import_mode->trigger();
@@ -782,8 +771,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   // load display mode
-  auto display_state = this->preferences_.get_preference(
-    "display_state", Visualizer::MODE_ORIGINAL_C);
   if (display_state == Visualizer::MODE_ORIGINAL_C) {
     this->ui_->view_mode_combobox->setCurrentIndex(0);
   } else if (display_state == Visualizer::MODE_GROOMED_C) {
@@ -813,7 +800,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   this->preferences_window_->close();
   if (this->preferences_.not_saved()) {
     // save the size of the window to preferences
-    preferences_.set_preference("main_window_size", this->size());
+    //preferences_.set_preference("main_window_width", this->size().width());
+    //preferences_.set_preference("main_window_height", this->size().height());
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
     msgBox.setInformativeText("This will reload generated files and changed settings.");
@@ -826,6 +814,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
       event->ignore();
     }
   }
+  this->preferences_.set_preference("Main/geometry", this->saveGeometry());
+  this->preferences_.set_preference("Main/windowState", this->saveState());
 }
 
 //---------------------------------------------------------------------------
@@ -880,16 +870,16 @@ void ShapeWorksStudioApp::on_auto_view_button_clicked() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
-  QString direct = preferences_.get_preference("last_directory", QString());
+  QString direct = preferences_.get_preference("Main/last_directory", QString());
   auto dir = direct.toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
     QString::fromStdString(dir) + "newMesh",
     tr("VTK files (*.vtk)"));
-  if (filename.isEmpty())
-  {
+  if (filename.isEmpty()) {
     return;
   }
+  this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
   auto shape = this->visualizer_->getCurrentShape();
   MeshGenerator g(this->preferences_);
   auto meshFilter = g.buildMeshOutputFilter(shape);
@@ -902,12 +892,16 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
 void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered() {
 
   this->data_dir_ = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-    preferences_.get_preference("last_directory", QString()),
+    preferences_.get_preference("Main/last_directory", QString()),
       QFileDialog::ShowDirsOnly
       | QFileDialog::DontResolveSymlinks).toStdString();
   this->handle_message("Data directory now set to " + this->data_dir_);
+  this->preferences_.set_preference("Main/last_directory", 
+    QDir().absoluteFilePath(QString::fromStdString(this->data_dir_)));
 }
 
 void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered() {
+  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
+  this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(""/*filename*/));
   this->handle_error("Export of Parameter XML not yet implemented!");
 }

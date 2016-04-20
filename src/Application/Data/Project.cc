@@ -92,9 +92,8 @@ bool Project::save_project(std::string fname, std::string dataDir) {
   xml->writeAttribute("version", "1");
   auto prefs = this->preferences_.getAllPreferences();
   for (auto &a : prefs) {
-    if (a.first.find("/") == std::string::npos)
-      xml->writeTextElement(
-        QString::fromStdString(a.first), a.second.toString());
+    xml->writeTextElement(
+      QString::fromStdString(a.first), a.second.toString());
   }
   this->preferences_.set_saved();
 
@@ -164,35 +163,29 @@ bool Project::save_project(std::string fname, std::string dataDir) {
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_project(QString filename)
-{
+bool Project::load_project(QString filename) {
   if (!QFile::exists(filename)) {
     QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
     return false;
   }
   // clear the project out first
   this->reset();
-
   this->filename_ = filename;
-
   // open file
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
     QMessageBox::warning(0, "Unable to open file", "Error opening file: " + filename);
     return false;
   }
-
   // setup XML
   QSharedPointer<QXmlStreamReader> xml = QSharedPointer<QXmlStreamReader>(new QXmlStreamReader());
   xml->setDevice(&file);
-
   QStringList import_files;
   QStringList groomed_files;
   QStringList point_files;
   QString preference_file;
 
-  while (!xml->atEnd() && !xml->hasError())
-  {
+  while (!xml->atEnd() && !xml->hasError()){
     QXmlStreamReader::TokenType token = xml->readNext();
     if (token == QXmlStreamReader::StartDocument) {
       continue;
@@ -216,23 +209,20 @@ bool Project::load_project(QString filename)
       }
     }
   }
-
-  std::cerr << "tool state = " << this->preferences_.get_preference("zoom_state", 1) << "\n";
+  auto display_state = this->preferences_.get_preference(
+    "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
 
   /* Error handling. */
-  if (xml->hasError())
-  {
+  if (xml->hasError()) {
     QMessageBox::critical(NULL, "ShapeWorksStudio", xml->errorString(), QMessageBox::Ok);
     return false;
   }
-  
   this->load_original_files(import_files);
   std::vector<std::string> groom_list;
   for (auto a : groomed_files) {
     groom_list.push_back(a.toStdString());
   }
   this->load_groomed_files(groom_list, 0.5);
-
   std::vector<std::string> localpointlist, globalpointlist;
   for (auto a : point_files) {
     if (a.toStdString().find(".lpts") != std::string::npos) {
@@ -243,44 +233,32 @@ bool Project::load_project(QString filename)
   }
   this->load_point_files(localpointlist, true);
   this->load_point_files(globalpointlist, false);
-
+  this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
   return true;
 }
 
 //---------------------------------------------------------------------------
-void Project::load_original_files(QStringList file_names)
-{
-
+void Project::load_original_files(QStringList file_names) {
   QProgressDialog progress("Loading images...", "Abort", 0, file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
   progress.setMinimumDuration(2000);
 
-  for (int i = 0; i < file_names.size(); i++)
-  {
-
+  for (int i = 0; i < file_names.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();
-    if (progress.wasCanceled())
-    {
+    if (progress.wasCanceled()) {
       break;
     }
-
-    std::cerr << file_names[i].toStdString() << "\n";
-
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
     auto test = file_names[i].toStdString();
     new_shape->import_original_image(file_names[i], 0.5);
     this->shapes_.push_back(new_shape);
   }
-
   progress.setValue(file_names.size());
   QApplication::processEvents();
-
   this->renumber_shapes();
-
-  if (file_names.size() > 0)
-  {
+  if (file_names.size() > 0) {
     this->original_present_ = true;
     emit data_changed();
   }
@@ -293,29 +271,21 @@ void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double
   progress.show();
   progress.setMinimumDuration(2000);
 
-  for (int i = 0; i < images.size(); i++)
-  {
+  for (int i = 0; i < images.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();
-
-    if (progress.wasCanceled())
-    {
+    if (progress.wasCanceled())  {
       break;
     }
-
-    if (this->shapes_.size() <= i)
-    {
+    if (this->shapes_.size() <= i) {
       QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(new_shape);
     }
     this->shapes_[i]->import_groomed_image(images[i], iso);
   }
-
   progress.setValue(images.size());
   QApplication::processEvents();
-
-  if (images.size() > 0)
-  {
+  if (images.size() > 0) {
     this->groomed_present_ = true;
     emit data_changed();
   }
@@ -329,31 +299,22 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
   progress.show();
   progress.setMinimumDuration(2000);
 
-  for (int i = 0; i < file_names.size(); i++)
-  {
+  for (int i = 0; i < file_names.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();
-
-    if (progress.wasCanceled())
-    {
+    if (progress.wasCanceled()) {
       break;
     }
-
-    std::cerr << file_names[i] << "\n";
-
-    if (this->shapes_.size() <= i)
-    {
+    if (this->shapes_.size() <= i) {
       QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(new_shape);
     }
     this->shapes_[i]->import_groomed_file(QString::fromStdString(file_names[i]), iso);
   }
-
   progress.setValue(file_names.size());
   QApplication::processEvents();
 
-  if (file_names.size() > 0)
-  {
+  if (file_names.size() > 0) {
     this->groomed_present_ = true;
     emit data_changed();
   }
@@ -402,15 +363,12 @@ bool Project::load_point_files(std::vector<std::string> list, bool local )
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
   progress.setMinimumDuration(2000);
-  std::cerr << "num file = " << list.size() << "\n";
   for (int i = 0; i < list.size(); i++) {
-    std::cerr << "Loading file " << list[i] << "\n";
     progress.setValue(i);
     QApplication::processEvents();
     if (progress.wasCanceled()) {
       break;
     }
-    std::cerr << list[i] << "\n";
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
       shape = this->shapes_[i];
@@ -462,8 +420,7 @@ void Project::remove_shapes(QList<int> list)
 }
 
 //---------------------------------------------------------------------------
-void Project::reset()
-{
+void Project::reset() {
   this->filename_ = "";
 
   this->shapes_.clear();

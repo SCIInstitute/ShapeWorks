@@ -26,12 +26,12 @@ public:
   template<typename T>
   T get_preference(std::string name, T default_val) {
     return this->settings_.value(QString::fromStdString(name), 
-      default_val).value<T>();
+      QVariant(default_val)).template value<T>();
   }
 
   template<typename T>
   void set_preference(std::string name, T value) {
-    this->settings_.setValue(QString::fromStdString(name), value);
+    this->settings_.setValue(QString::fromStdString(name), QVariant(value));
     this->saved_ = false;
   }
 

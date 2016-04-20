@@ -19,7 +19,7 @@ IF (WIN32 AND MSVC)
 ENDIF (WIN32 AND MSVC)
 
 if (NOT WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
 endif()
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -126,7 +126,7 @@ ELSE()
 	set(WinConsole "WIN32")
 ENDIF()
 # here we instruct CMake to build STUDIO executable from all of the source files
-ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinCosole} 
+ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole} 
   ${STUDIO_SRCS}
   ${STUDIO_HDRS}
   ${STUDIO_UI} 
@@ -145,7 +145,6 @@ TARGET_LINK_LIBRARIES( ShapeWorksStudio
   Qt5::OpenGL
   Qt5::Core
   Qt5::Gui
-  Qt5::WinMain
   ${itkParticleShapeModelingLib}
   ShapeWorksGroom
   ShapeWorksOptimize

@@ -103,8 +103,6 @@ private:
 
   void update_recent_files();
 
-  void reset();
-
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 

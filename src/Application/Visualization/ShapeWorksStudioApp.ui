@@ -888,6 +888,9 @@ QPushButton {
    <property name="text">
     <string>Export PCA Mesh...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
   </action>
   <action name="actionSet_Data_Directory">
    <property name="text">
@@ -896,10 +899,16 @@ QPushButton {
    <property name="toolTip">
     <string>Set the Data Directory for all generated images and correspondance points</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
   </action>
   <action name="actionExport_Parameter_XML">
    <property name="text">
     <string>Export Parameter XML...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>

@@ -17,7 +17,9 @@ Preferences::Preferences()
 std::map<std::string, QVariant> Preferences::getAllPreferences() {
   std::map<std::string, QVariant> ans;
   for (auto &a : this->settings_.allKeys()) {
-    ans.insert(std::make_pair(a.toStdString(), this->settings_.value(a)));
+    if (a.toStdString().find("/") == std::string::npos) {
+      ans.insert(std::make_pair(a.toStdString(), this->settings_.value(a)));
+    }
   }
   return ans;
 }
@@ -32,7 +34,7 @@ void Preferences::set_saved() {
 
 QStringList Preferences::get_recent_files()
 {
-  return this->settings_.value("recentFileList").toStringList();
+  return this->settings_.value("Main/recentFileList").toStringList();
 }
 
 void Preferences::add_recent_file(QString file)
@@ -45,7 +47,7 @@ void Preferences::add_recent_file(QString file)
     files.removeLast();
   }
 
-  this->settings_.setValue("recentFileList", files);
+  this->settings_.setValue("Main/recentFileList", files);
 }
 
 //-----------------------------------------------------------------------------
