@@ -5,7 +5,7 @@
 #include <QWidget>
 #include <QProgressDialog>
 #include "Data/Preferences.h"
-#include <ShapeWorksGroom.h>
+#include <QGroom.h>
 #include <string>
 
 class Project;
@@ -52,7 +52,7 @@ private:
   QSharedPointer<Project> project_;
   Preferences& preferences_;
   std::vector<std::string>& files_;
-  ShapeWorksGroom * groom_;
+  QGroom * groom_;
 };
 
 #endif /* STUDIO_GROOM_GROOMTOOL_H */

@@ -2,13 +2,14 @@
 #include <iostream>
 
 ShapeWorksOptimize::ShapeWorksOptimize(
-  QObject* parent,
+  //QObject* parent,
   std::vector<ImageType::Pointer> inputs, size_t numScales,
   std::vector<double> start_reg, std::vector<double> end_reg,
   std::vector<unsigned int> iters, std::vector<double> tolerance,
   std::vector<double> decay_span,
   bool verbose)
-  : QObject(parent), images_(inputs), numScales_(numScales),
+  :// QObject(parent), 
+  images_(inputs), numScales_(numScales),
   maxIter_(iters), 
   reportInterval_(10), procrustesCounter_(0),
   tolerance_(tolerance), decaySpan_(decay_span),
@@ -73,15 +74,13 @@ ShapeWorksOptimize::globalPoints() {
 std::vector<ImageType::Pointer> ShapeWorksOptimize::getImages() {
   return this->images_;
 }
-void ShapeWorksOptimize::iterateCallback(itk::Object *caller, const itk::EventObject &)
+void ShapeWorksOptimize::iterateCallback(itk::Object *caller, const itk::EventObject &e)
 {
   itk::PSMEntropyModelFilter<ImageType> *o =
     reinterpret_cast<itk::PSMEntropyModelFilter<ImageType> *>(caller);
 
   // Print every 10 iterations
   if (o->GetNumberOfElapsedIterations() % this->reportInterval_ != 0) { return; }
-  this->iterCount_ += this->reportInterval_;
-  emit progress(this->iterCount_ * 100 / this->totalIters_);
   std::cout << "Iteration # " << o->GetNumberOfElapsedIterations() << std::endl;
   std::cout << " Eigenmode variances: ";
   for (unsigned int i = 0; i < o->GetShapePCAVariances().size(); i++) {

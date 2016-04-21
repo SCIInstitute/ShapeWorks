@@ -14,7 +14,7 @@
 #include <QXmlStreamReader>
 #include <QProgressDialog>
 
-#include <TinyXML/tinyxml.h>
+#include <tinyxml.h>
 
 const std::string Project::DATA_C("data");
 const std::string Project::GROOM_C("groom");

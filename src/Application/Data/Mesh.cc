@@ -15,6 +15,7 @@
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include <vtkMarchingCubes.h>
+#include <ShapeWorksGroom.h>
 
 //---------------------------------------------------------------------------
 Mesh::Mesh()

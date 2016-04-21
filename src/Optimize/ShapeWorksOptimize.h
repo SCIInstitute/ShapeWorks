@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include <Data/Mesh.h>
+#include <ShapeWorksGroom.h>
 #include "itkImage.h"
 #include "itkPSMProcrustesRegistration.h"
 #include "itkImageFileReader.h"
@@ -13,12 +13,10 @@
 #include "itkPSMProjectReader.h"
 #include "itkPSMParticleSystem.h"
 #include "itkCommand.h"
-#include <QObject>
 
-class ShapeWorksOptimize : public QObject {
-  Q_OBJECT;
+class ShapeWorksOptimize { 
 public:
-  ShapeWorksOptimize(QObject* parent = nullptr,
+  ShapeWorksOptimize(
     std::vector<ImageType::Pointer> inputs =
     std::vector<ImageType::Pointer>(), size_t numScales = 1,
     std::vector<double> start_reg = std::vector<double>(),
@@ -34,9 +32,7 @@ public:
 protected:
   void iterateCallback(
     itk::Object *caller, const itk::EventObject &);
-signals:
-  void progress(int);
-private:
+protected:
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
   size_t numScales_;

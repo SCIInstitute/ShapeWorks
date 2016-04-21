@@ -1,0 +1,5 @@
+
+FILE(GLOB SRCS *.cpp)
+FILE(GLOB HDRS *.h)
+
+ADD_LIBRARY(TinyXML ${SRCS} ${HDRS})

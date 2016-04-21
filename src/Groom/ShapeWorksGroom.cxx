@@ -22,13 +22,13 @@
 #include "itkPSMImplicitSurfaceImageFilter.h"
 #include <map>
 
-ShapeWorksGroom::ShapeWorksGroom(QObject * parent,
+ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,
   double background, double foreground, 
   double sigma, double sigmaFastMarch,
   double iso, size_t padding,  size_t iterations,
   bool verbose)
-  : QObject(parent), images_(inputs), 
+  :  images_(inputs), 
   background_(background), sigma_(sigma), sigmaFastMarch_(sigmaFastMarch),
   iso_value_(iso),
   foreground_(foreground), verbose_(verbose), padding_(padding),
@@ -43,15 +43,12 @@ void ShapeWorksGroom::run() {
   size_t ran = 0;
   if (this->runTools_.count("center")) {
     this->center();
-    emit progress(++ran * 100 / this->runTools_.size());
   }
   if (this->runTools_.count("hole_fill")) {
     this->hole_fill();
-    emit progress(++ran * 100 / this->runTools_.size());
   }
   if (this->runTools_.count("isolate")) {
     this->isolate();
-    emit progress(++ran * 100 / this->runTools_.size());
   }
   if (this->runTools_.count("auto_crop")) {
     if (this->runTools_.count("fastmarching")) {
@@ -60,20 +57,16 @@ void ShapeWorksGroom::run() {
         << "Skipping auto_crop." << std::endl;
     } else {
       this->auto_crop();
-      emit progress(++ran * 100 / this->runTools_.size());
     }
   }
   if (this->runTools_.count("auto_pad")) {
     this->auto_pad();
-    emit progress(++ran * 100 / this->runTools_.size());
   }
   if (this->runTools_.count("antialias")) {
     this->antialias();
-    emit progress(++ran * 100 / this->runTools_.size());
   } 
   if (this->runTools_.count("fastmarching")) {
     this->fastmarching();
-    emit progress(++ran * 100 / this->runTools_.size());
   }
   if (this->runTools_.count("blur")) {
     if (!this->runTools_.count("fastmarching") &&
@@ -83,7 +76,6 @@ void ShapeWorksGroom::run() {
         << "Skipping blur." << std::endl;
     } else {
       this->blur();
-      emit progress(++ran * 100 / this->runTools_.size());
     }
   }
 }

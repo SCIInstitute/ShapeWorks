@@ -59,7 +59,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     imgs.push_back(s->get_groomed_image());
   }
   auto scales = this->ui_->number_of_scales->value();
-  this->optimize_ = new ShapeWorksOptimize(this, imgs, scales,
+  this->optimize_ = new QOptimize(this, imgs, scales,
     this->getStartRegs(), this->getEndRegs(), this->getIters(),
     this->getTolerances(), this->getDecaySpans(), true);
 

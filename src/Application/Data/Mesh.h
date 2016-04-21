@@ -7,16 +7,10 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkImageImport.h>
-#include <itkImageFileReader.h>
-#include <itkImageFileWriter.h>
 #include <itkImage.h>
 
 #include <vnl/vnl_vector.h>
-
-typedef float PixelType;
-typedef itk::Image< PixelType, 3 > ImageType;
-typedef itk::ImageFileReader< ImageType > ReaderType;
-typedef itk::ImageFileWriter< ImageType > WriterType;
+#include <ShapeWorksGroom.h>
 
 class Mesh;
 typedef QSharedPointer< Mesh > MeshHandle;

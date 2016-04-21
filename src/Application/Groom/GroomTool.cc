@@ -111,7 +111,7 @@ void GroomTool::on_run_groom_button_clicked() {
   for (auto s : shapes) {
     imgs.push_back(s->get_original_image());
   }
-  this->groom_ = new ShapeWorksGroom(this, imgs, 0, 1, 
+  this->groom_ = new QGroom(this, imgs, 0, 1, 
     this->ui_->blur_sigma->value(),
     this->ui_->fastmarch_sigma->value(),
     this->ui_->iso_value->value(),
