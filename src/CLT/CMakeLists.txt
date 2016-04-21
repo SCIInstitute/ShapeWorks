@@ -13,6 +13,6 @@ ADD_EXECUTABLE(ShapeworksCLT ${SRCS} ${HDRS})
 TARGET_LINK_LIBRARIES(ShapeworksCLT
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES} 
-  ${TinyXML} 
+  TinyXML
   ShapeWorksGroom
   ShapeWorksOptimize)

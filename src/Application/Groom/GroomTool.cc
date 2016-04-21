@@ -123,11 +123,14 @@ void GroomTool::on_run_groom_button_clicked() {
   if ( this->ui_->center_checkbox->isChecked() ) {
     this->groom_->queueTool("center");
   }
-  if ( this->ui_->autocrop_checkbox->isChecked() ) {
-    this->groom_->queueTool("auto_crop");
+  if (this->ui_->isolate_checkbox->isChecked()) {
+    this->groom_->queueTool("isolate");
   }
   if (this->ui_->fill_holes_checkbox->isChecked()) {
     this->groom_->queueTool("hole_fill");
+  }
+  if ( this->ui_->autocrop_checkbox->isChecked() ) {
+    this->groom_->queueTool("auto_crop");
   }
   if (this->ui_->autopad_checkbox->isChecked()) {
     this->groom_->queueTool("auto_pad");
@@ -140,9 +143,6 @@ void GroomTool::on_run_groom_button_clicked() {
   }
   if ( this->ui_->blur_checkbox->isChecked() ) {
     this->groom_->queueTool("blur");
-  }
-  if (this->ui_->isolate_checkbox->isChecked()) {
-    this->groom_->queueTool("isolate");
   }
   emit progress(10);
   this->ui_->run_groom_button->setEnabled(false);

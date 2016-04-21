@@ -6,6 +6,7 @@
 #include <QWidgetAction>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QXmlStreamWriter>
 // vtk
 #include <vtkRenderWindow.h>
 #include <vtkPolyDataWriter.h>
@@ -920,7 +921,38 @@ void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered() {
 }
 
 void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered() {
+  QString fname("Untitiled.xml");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
-  this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(""/*filename*/));
-  this->handle_error("Export of Parameter XML not yet implemented!");
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save XML Parameter file..."),
+    QString::fromStdString(dir) + fname,
+    tr("XML files (*.xml)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
+  // open file
+  QFile file(filename);
+
+  if (!file.open(QIODevice::WriteOnly)) {
+    QMessageBox::warning(0, "Read only", "Failed to write XML file.");
+    return;
+  }
+  // setup XML
+  QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
+  xml->setAutoFormatting(true);
+  xml->setDevice(&file);
+  xml->writeStartElement("shapeworks_parameter_file");
+  xml->writeAttribute("version", "1");
+  auto prefs = this->preferences_.getAllPreferences();
+  for (auto &a : prefs) {
+    if (a.first.find("optimize") != std::string::npos ||
+      a.first.find("groom") != std::string::npos) {
+      xml->writeTextElement(
+        QString::fromStdString(a.first), a.second.toString());
+    }
+  }
+  xml->writeEndElement();
+  this->handle_message("Successfully exported XML parameter file: " + filename.toStdString());
 }
