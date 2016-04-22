@@ -44,9 +44,10 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 FILE(GLOB STUDIO_SRCS main.cc */*.cc */*.cpp)
 FILE(GLOB STUDIO_HDRS */*.h)
 FILE(GLOB STUDIO_ICNS Resources/Images/*.ico)
+FILE(GLOB WINDOW_ICNS Resources/Images/shapes-icon.png)
 
-add_definitions(-DICON_FILE="${STUDIO_ICNS}")
-add_definitions(-DRSCS_FILE="${STUDIO_RSCS}")
+add_definitions(-DICON_FILE="${WINDOW_ICNS}")
+add_definitions(-DRSCS_FILE="${UI_RESOURCES_RCC}")
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)
