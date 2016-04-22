@@ -956,3 +956,15 @@ void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered() {
   xml->writeEndElement();
   this->handle_message("Successfully exported XML parameter file: " + filename.toStdString());
 }
+
+void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
+  this->handle_message("Function on_actionExport_Eigenvalues_triggered not yet implemented!");
+}
+
+void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
+  this->handle_message("Function on_actionExport_Eigenvectors_triggered not yet implemented!");
+}
+
+void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
+  this->handle_message("Function on_actionExport_PCA_Mode_Points_triggered not yet implemented!");
+}
