@@ -27,7 +27,7 @@ void ShapeWorksOptimize::run() {
   this->psmFilter_->SetRegularizationDecaySpan(decaySpan_);
   this->psmFilter_->SetTolerance(tolerance_);
   this->psmFilter_->SetMaximumNumberOfIterations(maxIter_);
-  this->procrustesInterval_.resize(this->numScales_, 10); //just report every 10
+  this->procrustesInterval_.resize(this->numScales_, this->reportInterval_); 
   this->totalIters_ = 0;
   for (auto &a : maxIter_) {
     this->totalIters_ += a;
