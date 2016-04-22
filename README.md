@@ -1,6 +1,6 @@
 ShapeWorksStudio
 =====================
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/shapes-icon.png"  align="right" hspace="20">
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/shapes-icon.png"  align="right" hspace="20">
 A new GUI environment for ShapeWorks preprocessing, optimization, and analysis.
 <br/><br/>
 See the original command-line tools, aknowlegements, and papers on the 
@@ -66,7 +66,7 @@ Studio runs with no command-line arguments.
 <br/><br/>
 You Should have a Qt window that looks similar to the one below.
 <br/><br/>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Application.png">
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/Application.png">
 <br/><br/>
 The application has tools on the left, the rendering window, view options on the lower bar, a small file menu, and a
 preferences dialog.
@@ -74,7 +74,7 @@ preferences dialog.
 Tools
 ==========
 <h2>Data</h2>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/DataPanel.png"
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/DataPanel.png"
 align="right" hspace="20">
 This tool tab displays the images (volume files in NRRD format) that have been loaded. 
 You can select the image files to load by either clicking the blue "+" button at the bottom, 
@@ -87,7 +87,7 @@ is loaded, it may still display when it is deleted. It will be replaced by the n
 spaces. This bug will be fixed in a future release.
 <br/><br/><br/><br/><br/><br/><br/>
 <h2>Groom</h2>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Groom.png"
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/Groom.png"
 align="right" hspace="20">
 Once images are loaded, the preprocessing step, "groom" is next. You can select several options for grooming.
 <br/><br/>
@@ -115,7 +115,7 @@ ShapeWorksStudioTools.log file next to the executable. A progress indicator show
 <br/><br/>
 
 <h2>Optimize</h2>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Optimize.png"
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/Optimize.png"
 align="right" hspace="20">
 Once the grooming step is complete, you can run the optimize step.
 <br/><br/>
@@ -143,7 +143,7 @@ Output is put into a ShapeWorksStudioTools.log file next to the executable. A pr
 <br/><br/>
 
 <h2>Analysis</h2>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Analysis.png"
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/Analysis.png"
 align="right" hspace="20">
 Here is where all the statistical options are available to the user.
 <br/><br/>
@@ -176,7 +176,7 @@ in decreasing values to depict statistical relevancy.
 <h3>Rendering Window</h3>
 The render window has a few shortcuts to viewing options.
 <br/><br/>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/Render.png"
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/Render.png"
 hspace="20">
 <br/>
 From left to right, here are the rendering options.
@@ -213,7 +213,7 @@ coorespondance points. You must run the optimize step for this to be available.
 mode of the analysis tool. Zoom is automatically selected as a user switches between analysis modes.
 
 <h3>Preferences</h3>
-<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Resources/Images/pref-general.png"
+<img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/pref-general.png"
 align="right" hspace="20">
 *Color Scheme* Select the color scheme for the rendering window.
 <br/><br/>
