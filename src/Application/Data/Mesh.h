@@ -31,7 +31,7 @@ public:
   ~Mesh();
 
   /// Create a mesh from an image
-  ImageType::Pointer create_from_file(QString filename, double iso_value);
+  ImageType::Pointer create_from_file(std::string filename, double iso_value);
   void create_from_image(ImageType::Pointer img, double iso_value);
   
   /// Get the dimensions as a string for display (if loaded from an image)

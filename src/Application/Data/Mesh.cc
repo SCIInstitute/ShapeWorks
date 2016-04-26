@@ -45,18 +45,17 @@ vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 }
 
 //---------------------------------------------------------------------------
-ImageType::Pointer Mesh::create_from_file(QString filename, double iso_value)
+ImageType::Pointer Mesh::create_from_file(std::string filename, double iso_value)
 {
-  auto fname = filename.toStdString();
-  if (fname.find(".nrrd") != std::string::npos) {
+  if (filename.find(".nrrd") != std::string::npos) {
     itk::NrrdImageIOFactory::RegisterOneFactory();
-  } else if (fname.find(".mha") != std::string::npos) {
+  } else if (filename.find(".mha") != std::string::npos) {
     itk::MetaImageIOFactory::RegisterOneFactory();
   }
 
   // read file using ITK
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filename.toStdString());
+  reader->SetFileName(filename);
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
   this->create_from_image(image, iso_value);

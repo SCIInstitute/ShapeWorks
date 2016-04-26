@@ -44,7 +44,7 @@ public:
   //QSharedPointer<DataManager> get_data_manager();
 
   /// import files
-  void load_original_files( QStringList file_names );
+    void load_original_files( std::vector<std::string> file_names );
 
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);

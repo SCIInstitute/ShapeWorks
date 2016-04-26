@@ -274,10 +274,6 @@ void AnalysisTool::handle_pca_animate_state_changed()
 void AnalysisTool::handle_pca_timer()
 {
   int value = this->ui_->pcaSlider->value();
-  std::cout << "TIMER!" << this->ui_->pcaSlider->singleStep() << 
-    " is a step, " << this->ui_->pcaSlider->maximum()  << 
-    " is max" << this->ui_->pcaSlider->minimum() << 
-    " is min" << std::endl;
   if ( this->pcaAnimateDirection )
   {
     value += this->ui_->pcaSlider->singleStep();

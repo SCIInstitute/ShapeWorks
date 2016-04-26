@@ -432,9 +432,12 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::import_files(QStringList file_names)
-{
-  this->project_->load_original_files(file_names);
+void ShapeWorksStudioApp::import_files(QStringList file_names) {
+  std::vector<std::string> list;
+  for (auto &a : file_names) {
+    list.push_back(a.toStdString());
+  }
+  this->project_->load_original_files(list);
 }
 
 //---------------------------------------------------------------------------

@@ -26,7 +26,7 @@ public:
   ~Shape();
 
   /// Import the original raw image file
-  void import_original_image( QString filename, float iso_value );
+  void import_original_image( std::string filename, float iso_value );
 
   /// Retrieve the original mesh
   QSharedPointer<Mesh> get_original_mesh();

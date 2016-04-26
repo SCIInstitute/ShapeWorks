@@ -75,7 +75,7 @@ void PreferencesWindow::set_values_from_preferences() {
   this->ui_->num_threads->setValue(preferences_.get_preference("num_threads", 100));
   this->ui_->parallel_enabled->setChecked(preferences_.get_preference("parallel_enabled", true));
   this->ui_->pca_range->setValue(preferences_.get_preference("pca_range", 2.f));
-  this->ui_->pca_steps->setValue(preferences_.get_preference("pnum_pca_steps", 40));
+  this->ui_->pca_steps->setValue(preferences_.get_preference("pnum_pca_steps", 20));
 }
 
 //-----------------------------------------------------------------------------

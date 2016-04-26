@@ -67,7 +67,7 @@ void Preferences::restore_defaults(bool force) {
   if (!this->settings_.contains("pca_range") || force)
     this->settings_.setValue("pca_range", 2.f);
   if (!this->settings_.contains("pca_steps") || force)
-    this->settings_.setValue("pca_steps", 40);
+    this->settings_.setValue("pca_steps", 20);
   if (!this->settings_.contains("regression_steps") || force)
     this->settings_.setValue("regression_steps", 50);
   if (!this->settings_.contains("smoothing_amount") || force)

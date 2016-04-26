@@ -16,11 +16,11 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-void Shape::import_original_image( QString filename, float iso_value )
+void Shape::import_original_image( std::string filename, float iso_value )
 {
   this->original_mesh_ = QSharedPointer<Mesh>( new Mesh() );
   this->original_image_ = this->original_mesh_->create_from_file( filename, iso_value );
-  this->original_mesh_filename_ = filename;
+  this->original_mesh_filename_ = QString::fromStdString(filename);
 }
 
 //---------------------------------------------------------------------------
@@ -45,7 +45,7 @@ ImageType::Pointer Shape::get_groomed_image()
 void Shape::import_groomed_file( QString filename, double iso )
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
-  this->groomed_image_ = this->groomed_mesh_->create_from_file(filename, iso);
+  this->groomed_image_ = this->groomed_mesh_->create_from_file(filename.toStdString(), iso);
   this->groomed_mesh_filename_ = filename;
 }
 
@@ -236,7 +236,7 @@ bool Shape::import_point_file( QString filename, vnl_vector<double> &points ) {
     return false;
   }
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-
+  auto test = filename.toStdString();
   int num_points = 0;
   while (in.good()) {
     double x, y, z; 

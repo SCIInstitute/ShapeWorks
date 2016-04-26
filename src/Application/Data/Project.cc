@@ -50,10 +50,10 @@ void Project::calculate_reconstructed_samples() {
   if (!this->reconstructed_present_) return;
   this->preferences_.set_preference("cache_enabled", false);
   for (int i = 0; i < this->shapes_.size(); i++) {
-    if (this->shapes_.at(i)->get_local_correspondence_points().size() > 0) {
-      this->shapes_.at(i)->set_reconstructed_mesh(
-        this->mesh_manager_->getMesh(
-        this->shapes_.at(i)->get_local_correspondence_points()));
+    auto shape = this->shapes_.at(i);
+    auto pts = shape->get_local_correspondence_points();
+    if (pts.size() > 0) {
+      shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
     }
   }
   this->preferences_.set_preference("cache_enabled", true);
@@ -151,7 +151,7 @@ bool Project::save_project(std::string fname, std::string dataDir) {
       points = this->shapes_[i]->get_local_correspondence_points();
       newline = 1;
       for (auto &a : points) {
-        out << a << (newline % 3 == 0 ? "\n" : "    ");
+        out2 << a << (newline % 3 == 0 ? "\n" : "    ");
         newline++;
       }
       out2.close();
@@ -184,10 +184,8 @@ bool Project::load_project(QString filename) {
   // setup XML
   QSharedPointer<QXmlStreamReader> xml = QSharedPointer<QXmlStreamReader>(new QXmlStreamReader());
   xml->setDevice(&file);
-  QStringList import_files;
-  QStringList groomed_files;
-  QStringList point_files;
-  QString preference_file;
+  std::vector<std::string> import_files, groom_files,
+    local_point_files, global_point_files;
 
   while (!xml->atEnd() && !xml->hasError()){
     QXmlStreamReader::TokenType token = xml->readNext();
@@ -202,12 +200,16 @@ bool Project::load_project(QString filename) {
         continue;
       }
       auto val = xml->readElementText().toStdString();
-      if (xml->name() == "initial_mesh"){
-        import_files << QString::fromStdString(val);
-      } else if (xml->name() == "groomed_mesh") {
-        groomed_files << QString::fromStdString(val);
-      } else if (xml->name() == "point_file")  {
-        point_files << QString::fromStdString(val);
+      if (name == "initial_mesh"){
+        import_files.push_back(val);
+      } else if (name == "groomed_mesh") {
+        groom_files.push_back(val);
+      } else if (name == "point_file")  {
+        if (val.find(".lpts") != std::string::npos) {
+          local_point_files.push_back(val);
+        } else if (val.find(".wpts") != std::string::npos) {
+          global_point_files.push_back(val);
+        }
       } else {
         this->preferences_.set_preference(name, QVariant(QString::fromStdString(val)));
       }
@@ -222,27 +224,15 @@ bool Project::load_project(QString filename) {
     return false;
   }
   this->load_original_files(import_files);
-  std::vector<std::string> groom_list;
-  for (auto a : groomed_files) {
-    groom_list.push_back(a.toStdString());
-  }
-  this->load_groomed_files(groom_list, 0.5);
-  std::vector<std::string> localpointlist, globalpointlist;
-  for (auto a : point_files) {
-    if (a.toStdString().find(".lpts") != std::string::npos) {
-      localpointlist.push_back(a.toStdString());
-    } else if (a.toStdString().find(".wpts") != std::string::npos) {
-      globalpointlist.push_back(a.toStdString());
-    }
-  }
-  this->load_point_files(localpointlist, true);
-  this->load_point_files(globalpointlist, false);
+  this->load_groomed_files(groom_files, 0.5);
+  this->load_point_files(local_point_files, true);
+  this->load_point_files(global_point_files, false);
   this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
   return true;
 }
 
 //---------------------------------------------------------------------------
-void Project::load_original_files(QStringList file_names) {
+void Project::load_original_files(std::vector<std::string> file_names) {
   QProgressDialog progress("Loading images...", "Abort", 0, file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
@@ -255,7 +245,6 @@ void Project::load_original_files(QStringList file_names) {
       break;
     }
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
-    auto test = file_names[i].toStdString();
     new_shape->import_original_image(file_names[i], 0.5);
     this->shapes_.push_back(new_shape);
   }
