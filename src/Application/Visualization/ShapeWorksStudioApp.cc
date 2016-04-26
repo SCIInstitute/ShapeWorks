@@ -368,7 +368,7 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
-  QString fname("Untitiled.xml");
+  QString fname("Untitled.xml");
   if (this->project_->get_shapes().size() > 0) {
     fname = this->project_->get_shapes()[0]->get_original_filename();
     std::string tmp = fname.toStdString();
@@ -952,7 +952,7 @@ void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered() {
 }
 
 void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered() {
-  QString fname("Untitiled.xml");
+  QString fname("Untitled.xml");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
   auto dir = direct.toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
@@ -991,7 +991,7 @@ void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered() {
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
   auto stats = this->analysis_tool_->getStats();
   auto values = stats.Eigenvalues();
-  QString fname("Untitiled.eval");
+  QString fname("Untitled.eval");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
   auto dir = direct.toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
@@ -1013,7 +1013,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
   auto stats = this->analysis_tool_->getStats();
   auto values = stats.Eigenvectors();
-  QString fname("Untitiled.eval");
+  QString fname("Untitled.eval");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
   auto dir = direct.toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
@@ -1039,7 +1039,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
 }
 
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
-  QString fname("Untitiled.pts");
+  QString fname("Untitled.pts");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
   auto dir = direct.toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
