@@ -140,15 +140,19 @@ bool Project::save_project(std::string fname, std::string dataDir) {
       //try writing to file
       std::ofstream out(path);
       auto points = this->shapes_[i]->get_global_correspondence_points();
+      size_t newline = 1;
       for (auto &a : points) {
-        out << a << std::endl;
+        out << a << (newline % 3 == 0 ? "\n" : "    ");
+        newline++;
       }
       out.close();
       //try writing to file
       std::ofstream out2(path2);
       points = this->shapes_[i]->get_local_correspondence_points();
+      newline = 1;
       for (auto &a : points) {
-        out2 << a << std::endl;
+        out << a << (newline % 3 == 0 ? "\n" : "    ");
+        newline++;
       }
       out2.close();
     }

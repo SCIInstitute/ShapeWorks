@@ -8,13 +8,13 @@
 
 #include <Data/PreferencesWindow.h>
 #include <Data/Preferences.h>
+#include <iostream>
 
 // The interface from the designer
 #include "ui_PreferencesWindow.h"
 
 //-----------------------------------------------------------------------------
-PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : preferences_(prefs)
-{
+PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_PreferencesWindow;
   this->ui_->setupUi(this);
 
@@ -27,8 +27,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_mesh_cache_enabled_stateChanged(int state)
-{
+void PreferencesWindow::on_mesh_cache_enabled_stateChanged(int state) {
   bool b = this->ui_->mesh_cache_enabled->isChecked();
   preferences_.set_preference("cache_enabled", b);
   this->ui_->mesh_cache_memory->setEnabled(b);
@@ -39,50 +38,42 @@ void PreferencesWindow::on_mesh_cache_enabled_stateChanged(int state)
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_mesh_cache_memory_valueChanged(int value)
-{
+void PreferencesWindow::on_mesh_cache_memory_valueChanged(int value) {
   preferences_.set_preference("cache_memory", value);
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_color_scheme_currentIndexChanged(int index)
-{
+void PreferencesWindow::on_color_scheme_currentIndexChanged(int index) {
   preferences_.set_preference("color_scheme", index);
   emit update_view();
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_pca_range_valueChanged(double value)
-{
-  preferences_.set_preference("pca_range", this->ui_->pca_range->value());
+void PreferencesWindow::on_pca_range_valueChanged(double value) {
+  preferences_.set_preference("pca_range", value);
+  emit slider_update();
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::on_pca_steps_valueChanged(int value)
-{
-  preferences_.set_preference("pca_steps", this->ui_->pca_steps->value());
+void PreferencesWindow::on_pca_steps_valueChanged(int value) {
+  preferences_.set_preference("pca_steps", value);
+  emit slider_update();
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::restore_defaults()
-{
+void PreferencesWindow::restore_defaults() {
   preferences_.restore_defaults();
   this->set_values_from_preferences();
 }
 
 //-----------------------------------------------------------------------------
-void PreferencesWindow::set_values_from_preferences()
-{
-
+void PreferencesWindow::set_values_from_preferences() {
   this->ui_->mesh_cache_enabled->setChecked(preferences_.get_preference("cache_enabled", true));
   this->ui_->mesh_cache_memory->setValue(preferences_.get_preference("cache_memory", 25));
   this->ui_->pca_range->setValue(preferences_.get_preference("cache_epsilon", 1e-3f));
   this->ui_->color_scheme->setCurrentIndex(preferences_.get_preference("color_scheme", 0));
-
-
   this->ui_->num_threads->setValue(preferences_.get_preference("num_threads", 100));
   this->ui_->parallel_enabled->setChecked(preferences_.get_preference("parallel_enabled", true));
-
   this->ui_->pca_range->setValue(preferences_.get_preference("pca_range", 2.f));
   this->ui_->pca_steps->setValue(preferences_.get_preference("pnum_pca_steps", 40));
 }

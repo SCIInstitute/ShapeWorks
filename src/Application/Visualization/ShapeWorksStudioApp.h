@@ -76,6 +76,7 @@ public Q_SLOTS:
   void on_auto_view_button_clicked();
   
   void handle_pca_changed();
+  void handle_slider_update();
 
   void handle_project_changed();
   void handle_groom_complete();

@@ -102,13 +102,16 @@
         <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="pca_range">
           <property name="decimals">
-           <number>1</number>
+           <number>2</number>
           </property>
           <property name="minimum">
-           <double>1.000000000000000</double>
+           <double>0.010000000000000</double>
           </property>
           <property name="maximum">
            <double>5.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>2.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -125,7 +128,10 @@
            <number>3</number>
           </property>
           <property name="maximum">
-           <number>100</number>
+           <number>40</number>
+          </property>
+          <property name="value">
+           <number>20</number>
           </property>
          </widget>
         </item>

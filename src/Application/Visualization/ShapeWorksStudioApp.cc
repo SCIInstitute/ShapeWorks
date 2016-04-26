@@ -222,9 +222,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
 
   //set up preferences window
   this->preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this, preferences_));
+  this->preferences_window_->set_values_from_preferences();
   connect(this->preferences_window_.data(), SIGNAL(clear_cache()), this->project_.data(), SLOT(handle_clear_cache()));
   connect(this->preferences_window_.data(), SIGNAL(clear_cache()), this, SLOT(handle_pca_changed()));
   connect(this->preferences_window_.data(), SIGNAL(update_view()), this, SLOT(handle_color_scheme()));
+  connect(this->preferences_window_.data(), SIGNAL(slider_update()), this, SLOT(handle_slider_update()));
 
   //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool>(new AnalysisTool(preferences_));
@@ -255,6 +257,15 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   connect(this->iso_spacing_spinner_, SIGNAL(valueChanged(double)), this, SLOT(handle_pca_changed()));
   connect(this->iso_smoothing_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_pca_changed()));
   this->preferences_.set_saved();
+
+  //disable actions
+  this->ui_->actionExport_Eigenvalues->setEnabled(false);
+  this->ui_->actionExport_Eigenvectors->setEnabled(false);
+  this->ui_->actionExport_Parameter_XML->setEnabled(false);
+  this->ui_->actionExport_PCA_Mesh->setEnabled(false);
+  this->ui_->actionExport_PCA_Mode_Points->setEnabled(false);
+  this->ui_->action_save_project->setEnabled(false);
+  this->ui_->action_save_project_as->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -312,6 +323,14 @@ void ShapeWorksStudioApp::on_action_new_project_triggered() {
   this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
   this->ui_->controlsDock->setWindowTitle("Data");
   this->preferences_.set_saved();
+  //disable actions
+  this->ui_->actionExport_Eigenvalues->setEnabled(false);
+  this->ui_->actionExport_Eigenvectors->setEnabled(false);
+  this->ui_->actionExport_Parameter_XML->setEnabled(false);
+  this->ui_->actionExport_PCA_Mesh->setEnabled(false);
+  this->ui_->actionExport_PCA_Mode_Points->setEnabled(false);
+  this->ui_->action_save_project->setEnabled(false);
+  this->ui_->action_save_project_as->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -568,6 +587,10 @@ void ShapeWorksStudioApp::handle_pca_changed() {
   this->compute_mode_shape();
 }
 
+void ShapeWorksStudioApp::handle_slider_update() {
+  this->analysis_tool_->updateSlider();
+}
+
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh() {
   this->compute_mode_shape();
@@ -658,6 +681,14 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->update_table();
   this->update_scrollbar();
   this->update_display();
+  //disable/enable actions
+  this->ui_->actionExport_Eigenvalues->setEnabled(this->project_->reconstructed_present());
+  this->ui_->actionExport_Eigenvectors->setEnabled(this->project_->reconstructed_present());
+  this->ui_->actionExport_Parameter_XML->setEnabled(this->project_->reconstructed_present());
+  this->ui_->actionExport_PCA_Mesh->setEnabled(this->project_->reconstructed_present());
+  this->ui_->actionExport_PCA_Mode_Points->setEnabled(this->project_->reconstructed_present());
+  this->ui_->action_save_project->setEnabled(this->project_->original_present());
+  this->ui_->action_save_project_as->setEnabled(this->project_->original_present());
 }
 
 //---------------------------------------------------------------------------
@@ -809,7 +840,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_preferences_triggered()
 {
-  this->preferences_window_->set_values_from_preferences();
   this->preferences_window_->show();
 }
 
@@ -839,9 +869,10 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::compute_mode_shape()
-{
-  this->visualizer_->display_shape(this->analysis_tool_->getShape());
+void ShapeWorksStudioApp::compute_mode_shape() {
+  int mode = this->analysis_tool_->getPCAMode();
+  double value = this->analysis_tool_->get_pca_value();
+  this->visualizer_->display_shape(this->analysis_tool_->getShape(mode, value));
 }
 
 //---------------------------------------------------------------------------
@@ -958,13 +989,81 @@ void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered() {
 }
 
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
-  this->handle_message("Function on_actionExport_Eigenvalues_triggered not yet implemented!");
+  auto stats = this->analysis_tool_->getStats();
+  auto values = stats.Eigenvalues();
+  QString fname("Untitiled.eval");
+  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvalue EVAL file..."),
+    QString::fromStdString(dir) + fname,
+    tr("EVAL files (*.eval)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
+  std::ofstream out(filename.toStdString().c_str());
+  for (size_t i = values.size() - 1; i > 0; i--) {
+    out << values[i] << std::endl;
+  }
+  out.close();
+  this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
-  this->handle_message("Function on_actionExport_Eigenvectors_triggered not yet implemented!");
+  auto stats = this->analysis_tool_->getStats();
+  auto values = stats.Eigenvectors();
+  QString fname("Untitiled.eval");
+  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Eigenvector EVAL files..."),
+    QString::fromStdString(dir) + fname,
+    tr("EVAL files (*.eval)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
+  auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".eval") - 4);
+  for (size_t i = values.columns() - 1, ii = 0; i > 0; i--, ii++) {
+    auto col = values.get_column(i);
+    std::ofstream out(basename + std::to_string(ii) + ".eval");
+    size_t newline = 1;
+    for (auto &a : col) {
+      out << a << (newline % 3 == 0 ? "\n" : "    " );
+      newline++;
+    }
+    out.close();
+  }
+  this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
-  this->handle_message("Function on_actionExport_PCA_Mode_Points_triggered not yet implemented!");
+  QString fname("Untitiled.pts");
+  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save PCA Mode PCA files..."),
+    QString::fromStdString(dir) + fname,
+    tr("PTS files (*.pts)"));
+  auto basename = filename.toStdString().substr(0, filename.toStdString().find_last_of(".pts") - 3);
+  if (filename.isEmpty()) {
+    return;
+  }
+  float range = preferences_.get_preference("pca_range", 2.f);
+  float steps = static_cast<float>(preferences_.get_preference("pca_steps", 20));
+  int mode = this->analysis_tool_->getPCAMode();
+  auto increment = range * 2.f / steps;
+  size_t i = 0;
+  for (float pca = -range; pca <= range; pca += increment, i++) {
+    auto pts = this->analysis_tool_->getShape(mode, pca);
+    std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
+    size_t newline = 1;
+    for (auto &a : pts) {
+      out << a << (newline % 3 == 0 ? "\n" : "    ");
+      newline++;
+    }
+    out.close();
+  }
+  this->handle_message("Successfully exported PCA Mode PTS files: " + filename.toStdString());
 }

@@ -26,10 +26,7 @@ public:
 
   AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
-
-  /// export XML for ShapeWorksAnalysis
-  bool export_xml( QString filename );
-
+  
   /// set the pointer to the project
   void set_project( QSharedPointer<Project> project );
 
@@ -48,17 +45,23 @@ public:
 
   int getPCAMode();
 
+  double get_pca_value();
+
   bool pcaAnimate();
 
   int getSampleNumber();
 
   bool compute_stats();
 
+  void updateSlider();
+
   void reset_stats();
 
   const vnl_vector<double> & getMean();
   
-  const vnl_vector<double> & getShape();
+  const vnl_vector<double> & getShape(int mode, double value);
+
+  ParticleShapeStatistics<3> getStats();
 
 
 public Q_SLOTS:
@@ -82,7 +85,6 @@ private:
   //private methods
   void pca_labels_changed( QString value, QString eigen, QString lambda );
   void compute_mode_shape();
-  double get_pca_value( );
   void update_analysis_mode();
   //private members
   Preferences & preferences_;

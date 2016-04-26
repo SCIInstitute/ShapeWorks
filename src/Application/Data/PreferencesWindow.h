@@ -35,7 +35,7 @@ public Q_SLOTS:
 signals:
   void clear_cache();
   void update_view();
-
+  void slider_update();
 
 private:
   Preferences &preferences_;

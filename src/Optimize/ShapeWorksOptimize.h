@@ -30,7 +30,7 @@ public:
   std::vector<std::vector<itk::Point<float> > > localPoints();
   std::vector<std::vector<itk::Point<float> > > globalPoints();
 protected:
-  void iterateCallback(
+  virtual void iterateCallback(
     itk::Object *caller, const itk::EventObject &);
 protected:
   std::vector<ImageType::Pointer> images_;

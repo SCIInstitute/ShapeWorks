@@ -216,9 +216,7 @@ bool AnalysisTool::compute_stats()
 }
 
  //-----------------------------------------------------------------------------
-const vnl_vector<double> & AnalysisTool::getShape() {
-  int mode = this->getPCAMode();
-  double value = this->get_pca_value();
+const vnl_vector<double> & AnalysisTool::getShape(int mode, double value) {
   if ( !this->compute_stats() || this->stats_.Eigenvectors().size() <= 1)
     return this->empty_shape_;
   if (mode + 2 > this->stats_.Eigenvalues().size()) mode = this->stats_.Eigenvalues().size() - 2;
@@ -235,6 +233,11 @@ const vnl_vector<double> & AnalysisTool::getShape() {
 
   this->temp_shape_ = this->stats_.Mean() + ( e * ( value * lambda ) );
   return this->temp_shape_;
+}
+
+ParticleShapeStatistics<3> AnalysisTool::getStats() {
+  this->compute_stats();
+  return this->stats_;
 }
 
 //---------------------------------------------------------------------------
@@ -271,6 +274,10 @@ void AnalysisTool::handle_pca_animate_state_changed()
 void AnalysisTool::handle_pca_timer()
 {
   int value = this->ui_->pcaSlider->value();
+  std::cout << "TIMER!" << this->ui_->pcaSlider->singleStep() << 
+    " is a step, " << this->ui_->pcaSlider->maximum()  << 
+    " is max" << this->ui_->pcaSlider->minimum() << 
+    " is min" << std::endl;
   if ( this->pcaAnimateDirection )
   {
     value += this->ui_->pcaSlider->singleStep();
@@ -306,6 +313,13 @@ void AnalysisTool::pca_labels_changed( QString value, QString eigen, QString lam
 	this->setLabels(QString("pca"),value);
 	this->setLabels(QString("eigen"),eigen);
 	this->setLabels(QString("lambda"),lambda);
+}
+
+void AnalysisTool::updateSlider() {
+  auto steps = std::max(this->preferences_.get_preference("pca_steps", 20), 3);
+  auto max = this->preferences_.get_preference("pca_range", 20.);
+  auto sliderRange = this->ui_->pcaSlider->maximum() - this->ui_->pcaSlider->minimum();
+  this->ui_->pcaSlider->setSingleStep(sliderRange / steps);
 }
 
 //---------------------------------------------------------------------------
