@@ -59,7 +59,7 @@ void Preferences::restore_defaults(bool force) {
   if (!this->settings_.contains("cache_memory") || force)
     this->settings_.setValue("cache_memory", 25);
   if (!this->settings_.contains("glyph_size") || force)
-    this->settings_.setValue("glyph_size", 1.);
+    this->settings_.setValue("glyph_size", 5.);
   if (!this->settings_.contains("glyph_quality") || force)
     this->settings_.setValue("glyph_quality", 5.);
   if (!this->settings_.contains("num_threads") || force)
@@ -75,9 +75,9 @@ void Preferences::restore_defaults(bool force) {
   if (!this->settings_.contains("cache_epsilon") || force)
     this->settings_.setValue("cache_epsilon", 1e-3f);
   if (!this->settings_.contains("spacing") || force)
-    this->settings_.setValue("spacing", 1.f);
+    this->settings_.setValue("spacing", 9.f);
   if (!this->settings_.contains("neighborhood") || force)
-    this->settings_.setValue("neighborhood", 5);
+    this->settings_.setValue("neighborhood", 9);
   if (!this->settings_.contains("color_scheme") || force)
     this->settings_.setValue("color_scheme", 0);
   if (!this->settings_.contains("groom_center") || force)
@@ -114,6 +114,8 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_end_reg", 2);
   if (!this->settings_.contains("optimize_iters") || force)
     this->settings_.setValue("optimize_iters", 1000);
+  if (!this->settings_.contains("optimize_iters0") || force)
+    this->settings_.setValue("optimize_iters0", 1);
   if (!this->settings_.contains("optimize_tolerance") || force)
     this->settings_.setValue("optimize_tolerance", 0.01);
   if (!this->settings_.contains("optimize_decay_span") || force)

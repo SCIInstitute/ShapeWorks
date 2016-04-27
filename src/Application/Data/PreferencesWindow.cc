@@ -70,7 +70,8 @@ void PreferencesWindow::restore_defaults() {
 void PreferencesWindow::set_values_from_preferences() {
   this->ui_->mesh_cache_enabled->setChecked(preferences_.get_preference("cache_enabled", true));
   this->ui_->mesh_cache_memory->setValue(preferences_.get_preference("cache_memory", 25));
-  this->ui_->pca_range->setValue(preferences_.get_preference("cache_epsilon", 1e-3f));
+  this->ui_->caching_epsilon->setValue(
+    std::log10(preferences_.get_preference("cache_epsilon", 1e-3f)));
   this->ui_->color_scheme->setCurrentIndex(preferences_.get_preference("color_scheme", 0));
   this->ui_->num_threads->setValue(preferences_.get_preference("num_threads", 100));
   this->ui_->parallel_enabled->setChecked(preferences_.get_preference("parallel_enabled", true));
