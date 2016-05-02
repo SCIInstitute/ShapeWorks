@@ -238,7 +238,8 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
 #ifdef  PARTICLE_DEBUG_FLAG
       if ( ! this->IsInsideBuffer(p) )
         {
-      itkExceptionMacro("A Point, " << p << ", was projected outside the given image domain." );
+          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
+//      itkExceptionMacro("A Point, " << p << ", was projected outside the given image domain." );
         }
 #endif  
       
