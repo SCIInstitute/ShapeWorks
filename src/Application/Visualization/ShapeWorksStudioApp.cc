@@ -768,17 +768,25 @@ void ShapeWorksStudioApp::update_display()
       this->ui_->thumbnail_size_slider->value())
       this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
     if (mode == "mean") {
+      this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setCurrentIndex(2);
       this->ui_->actionExport_PCA_Mesh->setEnabled(true);
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
     } else if (mode == "pca") {
+      this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setCurrentIndex(2);
       this->compute_mode_shape();
       this->ui_->actionExport_PCA_Mesh->setEnabled(true);
     } else if (mode == "single sample") {
+      this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
       this->ui_->actionExport_PCA_Mesh->setEnabled(true);
     } else {
+      this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
       this->ui_->actionExport_PCA_Mesh->setEnabled(false);
     } //TODO regression?
   }
