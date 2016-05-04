@@ -953,6 +953,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
   writer->SetFileName(filename.toStdString().c_str());
   writer->SetInputConnection(meshFilter->GetOutputPort());
   writer->Write();
+  this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }
 
 void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered() {
