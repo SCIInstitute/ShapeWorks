@@ -688,7 +688,6 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->ui_->actionExport_Eigenvalues->setEnabled(this->project_->reconstructed_present());
   this->ui_->actionExport_Eigenvectors->setEnabled(this->project_->reconstructed_present());
   this->ui_->actionExport_Parameter_XML->setEnabled(this->project_->reconstructed_present());
-  this->ui_->actionExport_PCA_Mesh->setEnabled(this->project_->reconstructed_present());
   this->ui_->actionExport_PCA_Mode_Points->setEnabled(this->project_->reconstructed_present());
   this->ui_->action_save_project->setEnabled(this->project_->original_present());
   this->ui_->action_save_project_as->setEnabled(this->project_->original_present());
@@ -770,13 +769,18 @@ void ShapeWorksStudioApp::update_display()
       this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
     if (mode == "mean") {
       this->ui_->view_mode_combobox->setCurrentIndex(2);
+      this->ui_->actionExport_PCA_Mesh->setEnabled(true);
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
     } else if (mode == "pca") {
       this->ui_->view_mode_combobox->setCurrentIndex(2);
       this->compute_mode_shape();
+      this->ui_->actionExport_PCA_Mesh->setEnabled(true);
     } else if (mode == "single sample") {
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
-    } //TODO regression
+      this->ui_->actionExport_PCA_Mesh->setEnabled(true);
+    } else {
+      this->ui_->actionExport_PCA_Mesh->setEnabled(false);
+    } //TODO regression?
   }
   this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
