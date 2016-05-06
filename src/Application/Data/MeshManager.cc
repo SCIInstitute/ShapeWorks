@@ -77,3 +77,29 @@ void MeshManager::handle_thread_complete() {
 	}
 	emit new_mesh();
 }
+
+
+void MeshManager::initializeReconstruction(
+  std::vector<std::vector<itk::Point<float> > > local_pts,
+  std::vector<std::vector<itk::Point<float> > > global_pts,
+  std::vector<ImageType::Pointer> distance_transform) {
+  float init[] = { 0.f,0.f,0.f };
+  std::vector<itk::Point<float> > sparseMean = 
+    std::vector<itk::Point<float> >(global_pts[0].size(), itk::Point<float>(init));
+  for (auto &a : global_pts) {
+    size_t i = 0;
+    for (auto &b : a) {
+      init[0] = b[0]; init[1] = b[1]; init[2] = b[2];
+      itk::Vector<float> vec(init);
+      sparseMean[i] = sparseMean[i] + vec;
+    }
+  }
+  for (size_t i = 0; i < sparseMean.size(); i++) {
+    auto div = static_cast<float>(global_pts[0].size());
+    init[0] = sparseMean[i][0] / div;
+    init[1] = sparseMean[i][1] / div;
+    init[2] = sparseMean[i][2] / div;
+    sparseMean[i] = itk::Point<float>(init);
+  }
+  this->construct_.getMean(local_pts, sparseMean, distance_transform);
+}

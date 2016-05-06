@@ -38,6 +38,13 @@ void OptimizeTool::handle_progress(int val) {
 void OptimizeTool::handle_thread_complete() {
   auto local = this->optimize_->localPoints();
   auto global = this->optimize_->globalPoints();
+  auto shapes = this->project_->get_shapes();
+  std::vector<ImageType::Pointer> imgs;
+  for (auto s : shapes) {
+    imgs.push_back(s->get_groomed_image());
+  }
+  this->project_->get_mesh_manager()->initializeReconstruction(
+    local, global, imgs);
   this->project_->load_points(local, true);
   this->project_->load_points(global, false);
   this->project_->calculate_reconstructed_samples();

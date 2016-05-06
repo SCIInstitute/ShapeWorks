@@ -63,8 +63,8 @@ void MeshGenerator::setupMesh(const vnl_vector<double>& shape) {
   this->smoothFilter->Update();
   this->reverseSense->Update();
 }
-vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
-{
+
+vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape ) {
   this->setupMesh(shape);
   auto t = this->transform_back(this->points,this->reverseSense->GetOutput());
   return t->GetOutput();

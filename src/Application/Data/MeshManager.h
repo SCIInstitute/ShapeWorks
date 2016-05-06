@@ -23,6 +23,7 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
 #include <Data/Preferences.h>
+#include <Data/Reconstruction.h>
 
 class MeshManager : public QObject
 {
@@ -31,6 +32,11 @@ class MeshManager : public QObject
 public:
   MeshManager(Preferences& prefs);
   ~MeshManager();
+
+  void initializeReconstruction(
+    std::vector<std::vector<itk::Point<float> > > local_pts,
+    std::vector<std::vector<itk::Point<float> > > global_pts,
+    std::vector<ImageType::Pointer> distance_transform);
 
   // pre-generate and cache a mesh for this shape
   void generateMesh( const vnl_vector<double>& shape );
@@ -62,6 +68,9 @@ private:
   std::vector<QThread*> threads_;
   
   size_t thread_count_;
+
+  //reconstruction object
+  Reconstruction construct_;
 };
 
 #endif // ifndef MESH_Manager_H
