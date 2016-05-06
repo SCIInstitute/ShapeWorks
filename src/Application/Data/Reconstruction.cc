@@ -8,17 +8,41 @@
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkDecimatePro.h>
+#include "PreViewMeshQC/FEVTKImport.h"
+#include "PreViewMeshQC/FEVTKExport.h"
+#include "PreViewMeshQC/FEFixMesh.h"
+#include "PreViewMeshQC/FEMeshSmoothingModifier.h"
+#include "PreViewMeshQC/FECVDDecimationModifier.h"
+#include <vtkPolyDataReader.h>
+#include <vtkPolyDataWriter.h>
 
-Reconstruction::Reconstruction(){
-  //TODO add to constructor the defaults
-  bool denseDone_ = false;
-  float levelsetValue_ = 0.f;
-  float targetReduction_ = 1.;
-  float featureAngle_ = 1.;
-  int lsSmootherIterations_ = 5;
-  int meshSmootherIterations_ = 5;
-  bool preserveTopology_ = true;
-}
+Reconstruction::Reconstruction(
+  bool denseDone,
+  float levelsetValue,
+  float targetReduction,
+  float featureAngle,
+  int lsSmootherIteration,
+  int meshSmootherIteration,
+  bool preserveTopology,
+  bool fixWinding ,
+  bool smoothBeforeDecimate,
+  bool smoothAfterDecimate,
+  float smoothingLambda,
+  int qcSmoothIterations,
+  float decimationPercent) :
+  denseDone_(denseDone),
+  levelsetValue_(levelsetValue),
+  targetReduction_(targetReduction),
+  featureAngle_(featureAngle),
+  lsSmootherIterations_(lsSmootherIteration),
+  meshSmootherIterations_(meshSmootherIteration),
+  preserveTopology_(preserveTopology),
+  fixWinding_(fixWinding), 
+  smoothBeforeDecimation_(smoothBeforeDecimate),
+  smoothAfterDecimation_(smoothAfterDecimate),
+  smoothingLambda_(smoothingLambda),
+  qcSmoothingIterations_(qcSmoothIterations),
+  decimationPercent_(decimationPercent) {}
 
 Reconstruction::~Reconstruction(){
 }
@@ -35,6 +59,86 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMean(
     throw std::runtime_error("Invalid input for reconstruction!");
   }
   return this->denseMean_;
+}
+
+vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
+  std::vector<itk::Point<float> > local_pts) {
+  if (!this->denseDone_) {
+    throw std::runtime_error("Dense mean not yet computed!");
+  }
+  std::vector<int> particles_indices;
+  for (int i = 0; i < this->goodPoints_.size(); i++) {
+    if (this->goodPoints_[i]) {
+      particles_indices.push_back(i);
+    }
+  }
+  vtkSmartPointer< vtkPoints > subjectPts = vtkSmartPointer<vtkPoints>::New();
+  for (auto &a : local_pts) {
+    subjectPts->InsertNextPoint(a[0], a[1], a[2]);
+  }
+  double sigma = computeAverageDistanceToNeighbors(subjectPts, particles_indices);
+  // (3) set up the common source points for all warps
+  PointIdType id;
+  // NOTE that, since we are not resampling images, this warping is a
+  // forward warping from mean space to subject space
+  // Define container for source landmarks that corresponds to the mean space, this is
+  // the moving mesh which will be warped to each individual subject
+  PointSetType::Pointer sourceLandMarks = PointSetType::New();
+  PointSetType::PointsContainer::Pointer sourceLandMarkContainer = 
+    sourceLandMarks->GetPoints();
+  PointType ps;
+  id = itk::NumericTraits< PointIdType >::Zero;
+  int ns = 0;
+  for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
+    if (std::find(particles_indices.begin(), 
+      particles_indices.end(), ii) != particles_indices.end()) {
+      double p[3];
+      this->sparseMean_->GetPoint(ii, p);
+      ps[0] = p[0];
+      ps[1] = p[1];
+      ps[2] = p[2];
+      sourceLandMarkContainer->InsertElement(id++, ps);
+      ns++;
+    }
+  }
+  RBFTransformType::Pointer rbfTransform = RBFTransformType::New();
+  rbfTransform->SetSigma(sigma); // smaller means more sparse
+  rbfTransform->SetStiffness(1e-10);
+  rbfTransform->SetSourceLandmarks(sourceLandMarks);
+  // Define container for target landmarks corresponds to the subject shape
+  PointSetType::Pointer targetLandMarks = PointSetType::New();
+  PointType pt;
+  PointSetType::PointsContainer::Pointer targetLandMarkContainer = 
+    targetLandMarks->GetPoints();
+  id = itk::NumericTraits< PointIdType >::Zero;
+  int nt = 0;
+  for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
+    if (std::find(particles_indices.begin(), 
+      particles_indices.end(), ii) != particles_indices.end()) {
+      double p[3];
+      subjectPts->GetPoint(ii, p);
+      pt[0] = p[0];
+      pt[1] = p[1];
+      pt[2] = p[2];
+      targetLandMarkContainer->InsertElement(id++, pt);
+      nt++;
+    }
+  }
+  rbfTransform->SetTargetLandmarks(targetLandMarks);
+  // check the mapping (inverse here)
+  // this means source points (current sample's space) should
+  //  be warped to the target (mean space)
+  vtkSmartPointer<vtkPoints> mappedCorrespondences =
+    vtkSmartPointer<vtkPoints>::New();
+  double rms;
+  double rms_wo_mapping;
+  double maxmDist;
+  CheckMapping(this->sparseMean_, subjectPts,
+    rbfTransform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
+  vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
+  denseShape->DeepCopy(this->denseMean_);
+  this->generateWarpedMeshes(rbfTransform, denseShape);
+  return denseShape;
 }
 
 void Reconstruction::computeDenseMean(
@@ -61,8 +165,6 @@ void Reconstruction::computeDenseMean(
     // now decide whether each particle is a good
     // (it normals are in the same direction accross shapes) or
     // bad (there is discrepency in the normal directions across shapes)
-    std::vector<bool> goodPoints;
-
     for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
       bool isGood = true;
 
@@ -78,14 +180,14 @@ void Reconstruction::computeDenseMean(
         double ny_kk = normals[shapeNo_kk](ii, 1);
         double nz_kk = normals[shapeNo_kk](ii, 2);
 
-        goodPoints.push_back((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) < 0);
+        this->goodPoints_.push_back((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) < 0);
       }
     }
     // decide which correspondences will be used to build the warp
     std::vector<int> particles_indices;
     particles_indices.clear();
-    for (unsigned int kk = 0; kk < goodPoints.size(); kk++) {
-      if (goodPoints[kk]) {
+    for (unsigned int kk = 0; kk < this->goodPoints_.size(); kk++) {
+      if (this->goodPoints_[kk]) {
         particles_indices.push_back(kk);
       }
     }
@@ -195,48 +297,7 @@ void Reconstruction::computeDenseMean(
 
     vtkSmartPointer<vtkPolyData> meanDenseShape = 
       this->extractIsosurface(itk2vtkConnector->GetOutput());
-    /////////////////////////////////////////////////////////////////////////////////
-    /*
-    // Define container for target landmarks corresponds to the subject shape
-    PointSetType::Pointer targetLandMarks = PointSetType::New();
-    PointType pt;
-    PointSetType::PointsContainer::Pointer targetLandMarkContainer =
-      targetLandMarks->GetPoints();
-    PointIdType id = itk::NumericTraits< PointIdType >::Zero;
-    int nt = 0;
-    for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
-      if (std::find(local_pts.begin(), local_pts.end(), ii)
-        != local_pts.end()) {
-        double p[3];
-        subjectPts->GetPoint(ii, p);
-        pt[0] = p[0];
-        pt[1] = p[1];
-        pt[2] = p[2];
-        targetLandMarkContainer->InsertElement(id++, pt);
-        nt++;
-      }
-    }
-    std::vector<int> particles_indices;
-    for (int i = 0; i < local_pts.size(); i++) {
-      particles_indices.push_back(i);
-    }
-    double sigma = computeAverageDistanceToNeighbors(subjectPts, particles_indices);
-    RBFTransformType::Pointer rbfTransform = RBFTransformType::New();
-    rbfTransform->SetSigma(sigma); // smaller means more sparse
-    rbfTransform->SetStiffness(1e-10);
-    rbfTransform->SetTargetLandmarks(targetLandMarks);
-    // check the mapping (inverse here)
-    // this means source points (current sample's space) should 
-    //  be warped to the target (mean space)
-    vtkSmartPointer<vtkPoints> mappedCorrespondences =
-      vtkSmartPointer<vtkPoints>::New();
-    double rms;
-    double rms_wo_mapping;
-    double maxmDist;
-    CheckMapping(subjectPts, subjectPts,
-      rbfTransform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
-    this->denseMean_ = vtkSmartPointer<vtkPolyData>::New();
-    this->generateWarpedMeshes(rbfTransform, this->denseMean_);*/
+    this->denseMean_ = this->MeshQC(meanDenseShape);
   } catch (std::exception e) {
     std::cerr << "Error: " << e.what();
     throw e;
@@ -632,4 +693,68 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
   denseShape = smoother->GetOutput();
 
   return denseShape;
+}
+
+vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
+  vtkSmartPointer<vtkPolyData> meshIn) {
+  //for now, write formats and read them in
+  vtkPolyDataWriter * polywriter = vtkPolyDataWriter::New();
+  polywriter->SetFileName("tmp.vtk");
+#if (VTK_MAJOR_VERSION < 6)
+  polywriter->SetInput(meshIn);
+#else
+  polywriter->SetInputData(meshIn);
+#endif
+  polywriter->Update();
+  // read a VTK file
+  FEVTKimport vtk_in;
+  FEMesh* pm = vtk_in.Load("tmp.vtk");
+
+  // make sure we were able to read the file
+  if (pm == 0) {
+    throw std::runtime_error("Could not read file tmp.vtk!");
+  }
+
+  // fix the element winding
+  FEFixMesh fix;
+  FEMesh* pm_fix;
+  if (this->fixWinding_)
+    pm_fix = fix.FixElementWinding(pm);
+
+  // do a Laplacian smoothing before decimation
+  if (this->smoothBeforeDecimation_)
+  {
+    FEMeshSmoothingModifier lap;
+    lap.m_threshold1 = this->smoothingLambda_;
+    lap.m_iteration = this->qcSmoothingIterations_;
+    pm_fix = lap.Apply(pm_fix);
+  }
+
+  // do a CVD decimation
+  FECVDDecimationModifier cvd;
+  cvd.m_pct = this->decimationPercent_;
+  cvd.m_gradient = 1; // uniform decimation
+  pm_fix = cvd.Apply(pm_fix);
+
+  // do a Laplacian smoothing after decimation
+  if (this->smoothAfterDecimation_)  {
+    FEMeshSmoothingModifier lap;
+    lap.m_threshold1 = this->smoothingLambda_;
+    lap.m_iteration = this->qcSmoothingIterations_;
+    pm_fix = lap.Apply(pm_fix);
+  }
+
+  // export to another vtk file
+  FEVTKExport vtk_out;
+  if (vtk_out.Export(*pm_fix, "tmp2.vtk") == false) {
+    throw std::runtime_error("Could not write file tmp2.vtk!");
+  }
+  // don't forget to clean-up
+  delete pm_fix;
+  delete pm;
+  //read back in new mesh
+  vtkPolyDataReader * polyreader = vtkPolyDataReader::New();
+  polyreader->SetFileName("tmp2.vtk");
+  polyreader->Update();
+  return polyreader->GetOutput();
 }
