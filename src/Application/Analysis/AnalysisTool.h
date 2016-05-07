@@ -3,15 +3,10 @@
 
 #include <QSharedPointer>
 #include <QWidget>
-
 #include <Visualization/Visualizer.h>
-
 #include <Data/Shape.h>
-
 #include "Data/Preferences.h"
-
 #include <Data/itkParticleShapeStatistics.h>
-
 #include <Visualization/bargraph.h>
 
 class Project;
@@ -19,8 +14,7 @@ class Lightbox;
 class ShapeWorksStudioApp;
 class Ui_AnalysisTool;
 
-class AnalysisTool : public QWidget
-{
+class AnalysisTool : public QWidget {
   Q_OBJECT;
 public:
 

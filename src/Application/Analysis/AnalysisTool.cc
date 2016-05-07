@@ -4,17 +4,11 @@
 #include <QFileDialog>
 #include <QProcess>
 #include <QMessageBox>
-
 #include <Visualization/ShapeWorksStudioApp.h>
-
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
-
 #include <Analysis/AnalysisTool.h>
-
-#include <Data/itkParticleShapeStatistics.h>
-
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
 

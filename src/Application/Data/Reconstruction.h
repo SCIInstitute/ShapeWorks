@@ -14,7 +14,6 @@
 #include <itkMultiplyImageFilter.h>
 #include "itkImageRegionConstIterator.h"
 
-#define Dimension 3
 class Reconstruction {
   typedef itk::GradientImageFilter<ImageType, float> 
                                                      GradientFilterType;
@@ -37,8 +36,8 @@ class Reconstruction {
                                                      MultiplyByConstantImageFilterType;
   typedef double                                     CoordinateRepType;
   typedef itk::CompactlySupportedRBFSparseKernelTransform 
-    <CoordinateRepType, Dimension>                    RBFTransformType;
-  typedef itk::Point< CoordinateRepType, Dimension >  PointType;
+    <CoordinateRepType, 3>                    RBFTransformType;
+  typedef itk::Point< CoordinateRepType, 3 >  PointType;
   typedef std::vector< PointType >                    PointArrayType;
   typedef RBFTransformType::PointSetType              PointSetType;
   typedef PointSetType::PointIdentifier               PointIdType;
