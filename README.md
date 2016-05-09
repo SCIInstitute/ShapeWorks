@@ -11,6 +11,8 @@ Table of Contents
 - [Requirements](#requirements)<br/>
 - [Code Documentation](#code-documentation)<br/>
 - [Building](#building)<br/>
+		- [Building ITK](#building-itk)<br/>
+		- [Building VTK](#building-vtk)<br/>
 		- [Unix/OSX](#unix-and-osx)<br/>
 		- [Windows](#windows)<br/>
 - [Running](#running)<br/>
@@ -29,7 +31,7 @@ Requirements
  * Git (https://git-scm.com/)
  * CMake 2.8+ (http://www.cmake.org/)
  * Visualization ToolKit (VTK 7.* recommended) (http://www.vtk.org/)
- * Insight Toolkit (ITK 4.9+ recommended) (http://www.itk.org/ , built with CMAKE_CXX_FLAGS+="-std=c++11" on UNIX)
+ * Insight Toolkit (ITK 4.9+ recommended) (http://www.itk.org/)
  * Qt 5.* (http://www.qt.io/developers/)
  * Windows 7+, OSX 10.9+, and OpenSuse 13.1+ Recommended. Other platforms may work, but are not officially supported.
 
@@ -39,7 +41,35 @@ Code Documentation
 
 Building
 =====================
-<h3>Unix and OSX</h3>
+##Building ITK
+- Checkout "Particle Shape Modeling"
+  - <code>cd ITK_DIR/Modules/ThirdParty</code>
+  - <code>git clone https://github.com/brigb123/ITKParticleShapeModeling.git</code>
+- Configure with:
+  - <code>CMAKE_CXX_FLAGS+="-std=c++11"</code> on UNIX
+  - <code>BUILD_SHARED_LIBS=FALSE</code>
+  - <code>BUILD_EXAMPLES=FALSE</code>
+  - <code>BUILD_TESTING=FALSE</code>
+  - <code>ITKV3_COMPATIBILTY=TRUE</code>
+- Build ITK:
+  - Make command: <code>make -j4</code><br/>
+
+##Building VTK
+
+- Configure with:
+  - <code>VTK_Group_Qt=ON</code> on UNIX
+  - <code>VTK_QT_VERSION=5</code> on UNIX
+  - <code>Qt5_DIR="/PATH/TO/YOUR/Qt5"</code> on UNIX
+  - <code>BUILD_SHARED_LIBS=FALSE</code>
+  - <code>BUILD_EXAMPLES=FALSE</code>
+  - <code>BUILD_TESTING=FALSE</code><br/>
+- Build VTK
+  - Make command: <code>make -j4</code><br/>
+
+##Unix and OSX<br/>
+
+###Building ShapeWorksStudio<br/>
+
 In a terminal:
 ```c++
 mkdir ShapeWorksStudio/build
@@ -48,7 +78,7 @@ cmake -DVTK_DIR=Path/To/Your/VTK/build -DITK_DIR=Path/To/Your/ITK/build -DQT_DIR
 make
 ```
 
-<h3>Windows</h3>
+##Windows
 Open a Visual Studio (32 or 64 bit) Native Tools Command Prompt. 
 Follow these commands:
 ```c++
