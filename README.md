@@ -13,8 +13,9 @@ Table of Contents
 - [Building](#building)<br/>
 		- [Building ITK](#building-itk)<br/>
 		- [Building VTK](#building-vtk)<br/>
-		- [Unix/OSX](#unix-and-osx)<br/>
-		- [Windows](#windows)<br/>
+		- [Building ShapeWorksStudio](#building-shapeworksstudio)<br/>
+			- [Unix/OSX](#unix-and-osx)<br/>
+			- [Windows](#windows)<br/>
 - [Running](#running)<br/>
 		- [Data](#data)<br/>
 		- [Groom](#groom)<br/>
