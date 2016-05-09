@@ -66,9 +66,9 @@ Building
 - Build VTK
   - Make command: <code>make -j4</code><br/>
 
-##Unix and OSX<br/>
+##Building ShapeWorksStudio<br/>
 
-###Building ShapeWorksStudio<br/>
+###Unix and OSX<br/>
 
 In a terminal:
 ```c++
@@ -78,7 +78,7 @@ cmake -DVTK_DIR=Path/To/Your/VTK/build -DITK_DIR=Path/To/Your/ITK/build -DQT_DIR
 make
 ```
 
-##Windows
+###Windows
 Open a Visual Studio (32 or 64 bit) Native Tools Command Prompt. 
 Follow these commands:
 ```c++
