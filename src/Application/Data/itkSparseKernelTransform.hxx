@@ -36,9 +36,7 @@ namespace itk
  */
 template <class TScalarType, unsigned int NDimensions>
 SparseKernelTransform<TScalarType, NDimensions>::
-SparseKernelTransform()//:Superclass(
-                         //   NDimensions,
-                           // NDimensions )
+SparseKernelTransform():Superclass(1)
   // the second NDimensions is associated is provided as
   // a tentative number for initializing the Jacobian.
   // The matrix can be resized at run time so this number
@@ -244,7 +242,7 @@ void SparseKernelTransform<TScalarType, NDimensions>
 
     //Eigen::BiCGSTAB<LMatrixType>  solver;
     Eigen::BiCGSTAB<LMatrixType, Eigen::IncompleteLUT<double> >  solver;
-    solver.preconditioner().setDroptol(0.0);
+    solver.preconditioner().setDroptol(1e-10);
     solver.preconditioner().setFillfactor(1000);
 
     //    Eigen::SparseLU<LMatrixType> solver;

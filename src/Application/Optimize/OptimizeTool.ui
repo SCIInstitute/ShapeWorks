@@ -68,6 +68,13 @@ background: rgb(255, 255, 127)
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="computeDenseMean">
+       <property name="text">
+        <string>Compute Dense Mean</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

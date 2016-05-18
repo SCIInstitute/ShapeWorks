@@ -87,13 +87,13 @@ ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole}
   )
 
 TARGET_LINK_LIBRARIES(ShapeWorksStudio
-  ${ITK_LIBRARIES}
-  ${VTK_LIBRARIES} 
-  ${OPENGL_LIBRARIES}
   Qt5::Widgets
   Qt5::OpenGL
   Qt5::Core
   Qt5::Gui
+  ${VTK_LIBRARIES} 
+  ${ITK_LIBRARIES}
+  ${OPENGL_LIBRARIES}
   ${TinyXML} 
   ShapeWorksGroom
   ShapeWorksOptimize)

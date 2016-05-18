@@ -87,15 +87,14 @@ void MeshManager::initializeReconstruction(
   std::vector<itk::Point<float> > sparseMean = 
     std::vector<itk::Point<float> >(global_pts[0].size(), itk::Point<float>(init));
   for (auto &a : global_pts) {
-    size_t i = 0;
-    for (auto &b : a) {
-      init[0] = b[0]; init[1] = b[1]; init[2] = b[2];
+    for (size_t i = 0; i < a.size(); i++) {
+      init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
       itk::Vector<float> vec(init);
       sparseMean[i] = sparseMean[i] + vec;
     }
   }
+  auto div = static_cast<float>(global_pts.size());
   for (size_t i = 0; i < sparseMean.size(); i++) {
-    auto div = static_cast<float>(global_pts[0].size());
     init[0] = sparseMean[i][0] / div;
     init[1] = sparseMean[i][1] / div;
     init[2] = sparseMean[i][2] / div;

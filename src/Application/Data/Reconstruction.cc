@@ -15,6 +15,7 @@
 #include "PreViewMeshQC/FECVDDecimationModifier.h"
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
+#include <array>
 
 Reconstruction::Reconstruction(
   bool denseDone,
@@ -133,7 +134,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   double rms;
   double rms_wo_mapping;
   double maxmDist;
-  CheckMapping(this->sparseMean_, subjectPts,
+  this->CheckMapping(this->sparseMean_, subjectPts,
     rbfTransform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
   denseShape->DeepCopy(this->denseMean_);
@@ -165,7 +166,7 @@ void Reconstruction::computeDenseMean(
     // now decide whether each particle is a good
     // (it normals are in the same direction accross shapes) or
     // bad (there is discrepency in the normal directions across shapes)
-    for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
+    for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
       bool isGood = true;
 
       // the normal of the first shape
@@ -180,7 +181,7 @@ void Reconstruction::computeDenseMean(
         double ny_kk = normals[shapeNo_kk](ii, 1);
         double nz_kk = normals[shapeNo_kk](ii, 2);
 
-        this->goodPoints_.push_back((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) < 0);
+        this->goodPoints_.push_back((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) > 0);
       }
     }
     // decide which correspondences will be used to build the warp
@@ -222,9 +223,9 @@ void Reconstruction::computeDenseMean(
     PointType ps;
     PointIdType id = itk::NumericTraits< PointIdType >::Zero;
     int ns = 0;
-    for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
-      if (std::find(local_pts[ii].begin(),
-        local_pts[ii].end(), ii) != local_pts[ii].end()) {
+    for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
+      if (std::find(particles_indices.begin(),
+        particles_indices.end(), ii) != particles_indices.end()) {
         double p[3];
         this->sparseMean_->GetPoint(ii, p);
         ps[0] = p[0];
@@ -278,23 +279,75 @@ void Reconstruction::computeDenseMean(
       double rms;
       double rms_wo_mapping;
       double maxmDist;
-      CheckMapping(this->sparseMean_, subjectPts[shape], rbfTransform,
+      this->CheckMapping(this->sparseMean_, subjectPts[shape], rbfTransform,
         mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
+
+      ResampleFilterType::Pointer   resampler = ResampleFilterType::New();
+      InterpolatorType::Pointer interpolator = InterpolatorType::New();
+      interpolator->SetSplineOrder(3);
+      resampler->SetInterpolator(interpolator);
+
+      resampler->SetOutputSpacing(spacing);
+      resampler->SetOutputDirection(direction);
+      resampler->SetOutputOrigin(origin);
+      resampler->SetSize(size);
+      resampler->SetTransform(rbfTransform);
+      resampler->SetDefaultPixelValue((PixelType)-100.0);
+      resampler->SetOutputStartIndex(region.GetIndex());
+      resampler->SetInput(distance_transform[shape]);
+      resampler->Update();
+
+      if (shape == 0) {
+        // after warp
+        DuplicatorType::Pointer duplicator = DuplicatorType::New();
+        duplicator->SetInputImage(resampler->GetOutput());
+        duplicator->Update();
+        meanDistanceTransform = duplicator->GetOutput();
+
+        // before warp
+        DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
+        duplicator2->SetInputImage(distance_transform[shape]);
+        duplicator2->Update();
+        meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
+      } else {
+        // after warp
+        sumfilter->SetInput1(meanDistanceTransform);
+        sumfilter->SetInput2(resampler->GetOutput());
+        sumfilter->Update();
+
+        DuplicatorType::Pointer duplicator = DuplicatorType::New();
+        duplicator->SetInputImage(sumfilter->GetOutput());
+        duplicator->Update();
+        meanDistanceTransform = duplicator->GetOutput();
+
+        // before warp
+        sumfilterBeforeWarp->SetInput1(meanDistanceTransformBeforeWarp);
+        sumfilterBeforeWarp->SetInput2(distance_transform[shape]);
+        sumfilterBeforeWarp->Update();
+
+        DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
+        duplicator2->SetInputImage(sumfilterBeforeWarp->GetOutput());
+        duplicator2->Update();
+        meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
+      }
     }
     MultiplyByConstantImageFilterType::Pointer multiplyImageFilter = 
       MultiplyByConstantImageFilterType::New();
     multiplyImageFilter->SetInput(meanDistanceTransform);
-    multiplyImageFilter->SetConstant(1.0 / distance_transform.size());
-
+    multiplyImageFilter->SetConstant(1.0 / 
+      static_cast<double>(distance_transform.size()));
+    multiplyImageFilter->Update();
     MultiplyByConstantImageFilterType::Pointer multiplyImageFilterBeforeWarp = 
       MultiplyByConstantImageFilterType::New();
     multiplyImageFilterBeforeWarp->SetInput(meanDistanceTransformBeforeWarp);
-    multiplyImageFilterBeforeWarp->SetConstant(1.0 / distance_transform.size());
+    multiplyImageFilterBeforeWarp->SetConstant(1.0 / 
+      static_cast<double>(distance_transform.size()));
+    multiplyImageFilterBeforeWarp->Update();
     // going to vtk to extract the template mesh (mean dense shape)
     // to be deformed for each sparse shape
     ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
     itk2vtkConnector->SetInput(multiplyImageFilter->GetOutput());
-
+    itk2vtkConnector->Update();
     vtkSmartPointer<vtkPolyData> meanDenseShape = 
       this->extractIsosurface(itk2vtkConnector->GetOutput());
     this->denseMean_ = this->MeshQC(meanDenseShape);
@@ -308,6 +361,20 @@ void Reconstruction::computeDenseMean(
 vnl_matrix<double> Reconstruction::computeParticlesNormals(
   vtkSmartPointer< vtkPoints > particles,
   ImageType::Pointer distance_transform) {
+  //DEBUG//////////////////////////////
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetInput(distance_transform);
+  writer->SetFileName("test.nrrd");
+  writer->Update();
+  std::vector<std::array<double, 3> > testPts;
+  for (size_t i = 0; i < 128; i++) {
+    std::array<double, 3> point;
+    for (size_t j = 0; j < 3; j++) {
+      point[j] = particles->GetPoint(i)[j];
+    }
+    testPts.push_back(point);
+  }
+  //END DEBUG//////////////////////////////
   const ImageType::SpacingType& spacing = distance_transform->GetSpacing();
   const ImageType::PointType& origin = distance_transform->GetOrigin();
 
@@ -365,18 +432,21 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
   // going to vtk for probing ...
   ITK2VTKConnectorType::Pointer connector_x = ITK2VTKConnectorType::New();
   connector_x->SetInput(nxImage);
+  connector_x->Update();
 
   vtkSmartPointer<vtkImageData> Nx = vtkSmartPointer<vtkImageData>::New();
   Nx = connector_x->GetOutput();
 
   ITK2VTKConnectorType::Pointer connector_y = ITK2VTKConnectorType::New();
   connector_y->SetInput(nyImage);
+  connector_y->Update();
 
   vtkSmartPointer<vtkImageData> Ny = vtkSmartPointer<vtkImageData>::New();
   Ny = connector_y->GetOutput();
 
   ITK2VTKConnectorType::Pointer connector_z = ITK2VTKConnectorType::New();
   connector_z->SetInput(nzImage);
+  connector_z->Update();
 
   vtkSmartPointer<vtkImageData> Nz = vtkSmartPointer<vtkImageData>::New();
   Nz = connector_z->GetOutput();
@@ -404,7 +474,7 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
   vtkSmartPointer<vtkProbeFilter> probe_y = vtkSmartPointer<vtkProbeFilter>::New();
 #if (VTK_MAJOR_VERSION < 6)
   probe_y->SetInput(particlesData);
-  probe_y->SetSource(Nx);
+  probe_y->SetSource(Ny);
 #else
   probe_y->SetInputData(particlesData);
   probe_y->SetSourceData(Ny);
@@ -414,19 +484,18 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
   vtkSmartPointer<vtkProbeFilter> probe_z = vtkSmartPointer<vtkProbeFilter>::New();
 #if (VTK_MAJOR_VERSION < 6)
   probe_z->SetInput(particlesData);
-  probe_z->SetSource(Nx);
+  probe_z->SetSource(Nz);
 #else
   probe_z->SetInputData(particlesData);
   probe_z->SetSourceData(Nz);
 #endif
   probe_z->Update();
-
   vtkFloatArray* nx = vtkFloatArray::SafeDownCast(
-    probe_x->GetPolyDataOutput()->GetPointData()->GetArray("scalars"));
+    probe_x->GetOutput()->GetPointData()->GetScalars());
   vtkFloatArray* ny = vtkFloatArray::SafeDownCast(
-    probe_y->GetPolyDataOutput()->GetPointData()->GetArray("scalars"));
+    probe_y->GetOutput()->GetPointData()->GetScalars());
   vtkFloatArray* nz = vtkFloatArray::SafeDownCast(
-    probe_z->GetPolyDataOutput()->GetPointData()->GetArray("scalars"));
+    probe_z->GetOutput()->GetPointData()->GetScalars());
 
   // Set point normals
   vtkSmartPointer<vtkDoubleArray> pointNormalsArray =
@@ -698,7 +767,8 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
 vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
   vtkSmartPointer<vtkPolyData> meshIn) {
   //for now, write formats and read them in
-  vtkPolyDataWriter * polywriter = vtkPolyDataWriter::New();
+  vtkSmartPointer<vtkPolyDataWriter>  polywriter = 
+    vtkSmartPointer<vtkPolyDataWriter>::New();
   polywriter->SetFileName("tmp.vtk");
 #if (VTK_MAJOR_VERSION < 6)
   polywriter->SetInput(meshIn);
@@ -753,7 +823,8 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
   delete pm_fix;
   delete pm;
   //read back in new mesh
-  vtkPolyDataReader * polyreader = vtkPolyDataReader::New();
+  vtkSmartPointer<vtkPolyDataReader> polyreader = 
+    vtkSmartPointer<vtkPolyDataReader>::New();
   polyreader->SetFileName("tmp2.vtk");
   polyreader->Update();
   return polyreader->GetOutput();

@@ -13,6 +13,7 @@
 #include <itkBSplineInterpolateImageFunction.h>
 #include <itkMultiplyImageFilter.h>
 #include "itkImageRegionConstIterator.h"
+#include <itkImageDuplicator.h>
 
 class Reconstruction {
   typedef itk::GradientImageFilter<ImageType, float> 
@@ -34,6 +35,8 @@ class Reconstruction {
                                                      InterpolatorType;
   typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType>
                                                      MultiplyByConstantImageFilterType;
+
+  typedef itk::ImageDuplicator< ImageType >          DuplicatorType;
   typedef double                                     CoordinateRepType;
   typedef itk::CompactlySupportedRBFSparseKernelTransform 
     <CoordinateRepType, 3>                    RBFTransformType;
