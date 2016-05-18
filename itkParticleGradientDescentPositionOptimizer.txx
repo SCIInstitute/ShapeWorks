@@ -22,6 +22,8 @@ const int global_iteration = 1;
 const int global_iteration = 1;
 #endif /* SW_USE_OPENMP */
 
+#include <algorithm>
+
 namespace itk
 {
 template <class TGradientNumericType, unsigned int VDimension>
@@ -83,6 +85,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   std::vector<double> maxtime(numdomains);
   std::vector<double> mintime(numdomains);
 
+  //Praful - randomize the order of updates on shapes
+  std::srand(1);
+  std::vector<int> randDomIndx(numdomains);
+  for (int i = 0; i<numdomains; i++) randDomIndx[i]=i;
+  //Praful
+
   int counter = 0;
 
   for (unsigned int q = 0; q < numdomains; q++)
@@ -101,16 +109,26 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         m_GradientFunction->BeforeIteration();
       }
       counter++;
-
+      //Praful - randomize the order of updates on shapes
+      std::random_shuffle(randDomIndx.begin(), randDomIndx.end());
+      //Praful
 #pragma omp parallel
 {
 
     // Iterate over each domain
 #pragma omp for
-    for (int dom = 0; dom < numdomains; dom++)
+//    for (int dom = 0; dom < numdomains; dom++)
+//      {
+          //Praful - randomize the order of updates on shapes
+    for (int domId = 0; domId < numdomains; domId++)
       {
+                int dom = randDomIndx[domId];
+                //Praful
+//                std::cout<<"==================================="<<std::endl;
+//                std::cout<<domId << " " << dom << std::endl;
+//                std::cout<<"==================================="<<std::endl;
 
-				int tid = 1;
+                int tid = 1;
 				int num_threads = 1;
 				
 #ifdef SW_USE_OPENMP
