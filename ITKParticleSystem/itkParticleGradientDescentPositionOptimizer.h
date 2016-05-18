@@ -24,6 +24,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "itkParticleVectorFunction.h"
 #include "itkParticleImageDomainWithGradients.h"
+#include <algorithm>
 
 namespace itk
 {
