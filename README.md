@@ -52,6 +52,7 @@ Building
   - <code>BUILD_EXAMPLES=FALSE</code>
   - <code>BUILD_TESTING=FALSE</code>
   - <code>ITKV3_COMPATIBILTY=TRUE</code>
+  - <code>Module_ITKVtkGlue=ON</code>
 - Build ITK:
   - Make command: <code>make -j4</code><br/>
 
