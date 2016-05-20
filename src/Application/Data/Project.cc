@@ -2,6 +2,8 @@
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
 #include <Data/MeshManager.h>
+#include <Visualization/ShapeworksWorker.h>
+#include <QThread>
 
 #include <Visualization/Visualizer.h>
 
@@ -39,6 +41,16 @@ void Project::handle_new_mesh() {
   emit update_display();
 }
 
+void Project::handle_message(std::string s) {
+  emit message(s);
+}
+
+void Project::handle_thread_complete() {
+  emit message("Reconstruction initialization complete.");
+  this->calculate_reconstructed_samples();
+  emit update_display();
+}
+
 //---------------------------------------------------------------------------
 void Project::handle_clear_cache() {
   this->mesh_manager_->clear_cache();
@@ -48,15 +60,59 @@ void Project::handle_clear_cache() {
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples() {
   if (!this->reconstructed_present_) return;
-  this->preferences_.set_preference("cache_enabled", false);
-  for (int i = 0; i < this->shapes_.size(); i++) {
-    auto shape = this->shapes_.at(i);
-    auto pts = shape->get_local_correspondence_points();
-    if (pts.size() > 0) {
-      shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
+  if (!this->mesh_manager_->hasDenseMean()) {
+    emit message(std::string("Warping optimizations to mean space..."));
+    std::vector<ImageType::Pointer> images;
+    std::vector<std::vector<itk::Point<float> > > local_pts;
+    std::vector<std::vector<itk::Point<float> > > global_pts;
+    local_pts.resize(this->shapes_.size());
+    global_pts.resize(this->shapes_.size());
+    images.resize(this->shapes_.size());
+    for (int shape = 0; shape < this->shapes_.size(); shape++) {
+      auto s = this->shapes_.at(shape);
+      auto img = s->get_groomed_image();
+      images[shape] = img;
+      auto gpts = s->get_global_correspondence_points();
+      auto lpts = s->get_local_correspondence_points();
+      for (size_t i = 0; i < gpts.size(); i += 3) {
+        float arr[] = {
+          static_cast<float>(gpts[i]),
+          static_cast<float>(gpts[i + 1]),
+          static_cast<float>(gpts[i + 2])
+        };
+        itk::Point<float> g(arr);
+        global_pts[shape].push_back(g);
+        float arr2[] = {
+          static_cast<float>(lpts[i]),
+          static_cast<float>(lpts[i + 1]),
+          static_cast<float>(lpts[i + 2])
+        };
+        itk::Point<float> l(arr);
+        local_pts[shape].push_back(l);
+      }
     }
+    QThread *thread = new QThread;
+    ShapeworksWorker *worker = new ShapeworksWorker(
+      ShapeworksWorker::Reconstruct, NULL, NULL, QSharedPointer<Project>(this),
+      local_pts, global_pts, images);
+    worker->moveToThread(thread);
+    connect(thread, SIGNAL(started()), worker, SLOT(process()));
+    connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
+    connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+    connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
+    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    thread->start();
+  } else {
+    this->preferences_.set_preference("cache_enabled", false);
+    for (int i = 0; i < this->shapes_.size(); i++) {
+      auto shape = this->shapes_.at(i);
+      auto pts = shape->get_local_correspondence_points();
+      if (pts.size() > 0) {
+        shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
+      }
+    }
+    this->preferences_.set_preference("cache_enabled", true);
   }
-  this->preferences_.set_preference("cache_enabled", true);
 }
 
 //---------------------------------------------------------------------------
@@ -227,6 +283,8 @@ bool Project::load_project(QString filename) {
   this->load_groomed_files(groom_files, 0.5);
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
+  this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
+    global_point_files.size() > 1;
   this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
   return true;
 }
@@ -343,10 +401,13 @@ bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points, 
   QApplication::processEvents();
 
   if (points.size() > 0) {
-    this->reconstructed_present_ = true;
     emit data_changed();
   }
   return true;
+}
+
+void Project::set_reconstructed_present(bool b) {
+  this->reconstructed_present_ = b;
 }
 
 //---------------------------------------------------------------------------
@@ -389,7 +450,6 @@ bool Project::load_point_files(std::vector<std::string> list, bool local )
   progress.setValue(list.size());
   QApplication::processEvents();
   if (list.size() > 0) {
-    this->reconstructed_present_ = true;
     emit data_changed();
   }
   return true;

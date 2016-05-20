@@ -161,6 +161,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->project_->set_parent(this);
   connect(this->project_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->project_.data(), SIGNAL(update_display()), this, SLOT(handle_display_setting_changed()));
+  connect(this->project_.data(), SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
 
   // setup modes
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
@@ -794,9 +795,8 @@ void ShapeWorksStudioApp::update_display()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged() {
+void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp_mode) {
   if (this->visualizer_) {
-    auto disp_mode = this->ui_->view_mode_combobox->currentText();
     this->preferences_.set_preference("display_state", disp_mode);
     this->visualizer_->set_display_mode(disp_mode.toStdString());
     this->update_display();

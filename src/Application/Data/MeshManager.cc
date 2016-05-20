@@ -106,3 +106,7 @@ void MeshManager::initializeReconstruction(
   //now actually generate the dense mean.
   this->construct_.getMean(local_pts, sparseMean, distance_transform);
 }
+
+bool MeshManager::hasDenseMean() {
+  return this->construct_.denseDone();
+}

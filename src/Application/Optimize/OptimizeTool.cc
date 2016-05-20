@@ -40,6 +40,8 @@ void OptimizeTool::handle_thread_complete() {
   auto global = this->optimize_->globalPoints();
   this->project_->load_points(local, true);
   this->project_->load_points(global, false);
+  this->project_->set_reconstructed_present(
+    local.size() == global.size() && global.size() > 1);
   this->project_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Optimize Complete");

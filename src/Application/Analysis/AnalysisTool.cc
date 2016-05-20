@@ -244,7 +244,7 @@ void AnalysisTool::on_pcaSlider_valueChanged()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged()
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i)
 {
   emit pca_update();
 }

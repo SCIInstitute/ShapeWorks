@@ -64,7 +64,7 @@ public Q_SLOTS:
 
   // PCA
   void on_pcaSlider_valueChanged();
-  void on_pcaModeSpinBox_valueChanged();
+  void on_pcaModeSpinBox_valueChanged(int i);
 
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
