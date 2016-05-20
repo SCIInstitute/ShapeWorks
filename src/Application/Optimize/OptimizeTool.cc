@@ -71,34 +71,13 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
   connect(this->optimize_, SIGNAL(progress(int)), this, SLOT(handle_progress(int)));
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
 }
 
-void OptimizeTool::on_computeDenseMean_clicked() {
-  auto shapes = this->project_->get_shapes();
-  std::vector<ImageType::Pointer> imgs;
-  std::vector<std::vector<itk::Point<float> > > lpts, wpts;
-  for (auto s : shapes) {
-    imgs.push_back(s->get_groomed_image());
-    auto l = s->get_local_correspondence_points();
-    auto g = s->get_global_correspondence_points();
-    std::vector<itk::Point<float> > ll, gg;
-    for (size_t i = 0; i < l.size(); i+=3) {
-      float arr[] = { static_cast<float>(l[i + 0]),
-        static_cast<float>(l[i + 1]),
-        static_cast<float>(l[i + 2]) };
-      float arr2[] = { static_cast<float>(g[i + 0]),
-        static_cast<float>(g[i + 1]),
-        static_cast<float>(g[i + 2]) };
-      ll.push_back(itk::Point<float>(arr));
-      gg.push_back(itk::Point<float>(arr2));
-    }
-    lpts.push_back(ll);
-    wpts.push_back(gg);
-  }
-  this->project_->get_mesh_manager()->initializeReconstruction(
-    lpts, wpts, imgs);
+void OptimizeTool::handle_message(std::string s) {
+  emit message(s);
 }
 
 void OptimizeTool::on_number_of_scales_valueChanged(int val) {

@@ -29,6 +29,10 @@ void ShapeworksWorker::process() {
   case ShapeworksWorker::Optimize:
     try {
       this->optimize_->run();
+      emit message("Warping optimizations to mean space...");
+      this->project_->get_mesh_manager()->initializeReconstruction(
+        this->optimize_->localPoints(), 
+        this->optimize_->globalPoints(), this->optimize_->getImages());
     } catch (std::exception e) {
       emit error_message(std::string("Error") + e.what());
     }

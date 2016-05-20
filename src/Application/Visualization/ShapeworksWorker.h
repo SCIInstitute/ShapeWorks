@@ -37,6 +37,7 @@ Q_SIGNALS:
   void error_message(std::string);
   void step_made(int val);
   void finished();
+  void message(std::string);
 
 private:
   ShapeWorksGroom* groom_;

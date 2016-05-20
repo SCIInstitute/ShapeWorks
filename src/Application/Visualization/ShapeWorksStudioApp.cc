@@ -947,11 +947,10 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
   }
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
   auto shape = this->visualizer_->getCurrentShape();
-  MeshGenerator g(this->preferences_);
-  auto meshFilter = g.buildMeshOutputFilter(shape);
+  auto msh = this->project_->get_mesh_manager()->getMesh(shape);
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());
-  writer->SetInputConnection(meshFilter->GetOutputPort());
+  writer->SetInputData(msh);
   writer->Write();
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }

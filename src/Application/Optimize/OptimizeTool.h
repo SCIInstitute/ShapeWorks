@@ -37,11 +37,11 @@ public Q_SLOTS:
 
   /// Run optimize tool
   void on_run_optimize_button_clicked();
-  void on_computeDenseMean_clicked();
   void on_number_of_scales_valueChanged(int val);
   void handle_thread_complete();
   void handle_progress(int val);
   void handle_error(std::string);
+  void handle_message(std::string);
 signals:
   void optimize_complete();
   void error_message(std::string);

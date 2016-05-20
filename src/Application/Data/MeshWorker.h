@@ -18,6 +18,7 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
+#include <Reconstruction.h>
 
 class MeshWorker : public QObject
 {
@@ -25,7 +26,8 @@ class MeshWorker : public QObject
 
 public:
 	MeshWorker(Preferences& prefs, 
-		const vnl_vector<double> shape, 
+		const vnl_vector<double> shape,
+    Reconstruction& construct,
 		MeshWorkQueue *queue,
 		MeshCache * cache);
 	~MeshWorker();
@@ -44,7 +46,6 @@ private:
   vnl_vector<double> shape_;
   MeshWorkQueue *queue_;
   MeshCache * cache_;
-
 };
 
 #endif // ifndef MESH_WORKER_H

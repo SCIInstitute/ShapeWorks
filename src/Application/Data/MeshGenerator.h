@@ -14,41 +14,19 @@
 #define MESH_GENERATOR_H
 
 #include "vnl/vnl_vector.h"
-
-#include <vtkSmartPointer.h>
-#include <vtkSurfaceReconstructionFilter.h>
-#include <vtkPoints.h>
-#include <vtkContourFilter.h>
-#include <vtkReverseSense.h>
-#include <vtkSmoothPolyDataFilter.h>
+#include <Reconstruction.h>
 #include <Data/Preferences.h>
-#include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
 
 class MeshGenerator
 {
   public:
-    MeshGenerator(Preferences& prefs_);
+    MeshGenerator(Preferences& prefs_, Reconstruction& construct);
     ~MeshGenerator();
     vtkSmartPointer<vtkPolyData> buildMesh(const vnl_vector<double>& shape);
-    void setupMesh(const vnl_vector<double>& shape);
-
-    vtkSmartPointer<vtkTransformPolyDataFilter>
-      buildMeshOutputFilter(const vnl_vector<double>& shape);
 
   private:
-    vtkSmartPointer<vtkTransformPolyDataFilter>
-      transform_back(
-        vtkSmartPointer<vtkPoints> pt,
-        vtkSmartPointer<vtkPolyData> pd);
-    vtkSmartPointer<vtkSurfaceReconstructionFilter>  surfaceReconstruction;
-    vtkSmartPointer<vtkPoints>            points;
-    vtkSmartPointer<vtkPolyData>            pointSet;
-    vtkSmartPointer<vtkContourFilter>          contourFilter;
-    vtkSmartPointer<vtkReverseSense>          reverseSense;
-    vtkSmartPointer<vtkSmoothPolyDataFilter>      smoothFilter;
-
     Preferences& prefs_;
+    Reconstruction& construct_;
 };
 
 #endif // ifndef MESH_GENERATOR_H

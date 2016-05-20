@@ -41,8 +41,8 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 ### Application
 #--------------------------------------------------------------------------------
 
-FILE(GLOB STUDIO_SRCS main.cc */*.cc */*.cpp */*.hxx Data/ITKVTK/*.hxx Data/PreViewMeshQC/*.cpp)
-FILE(GLOB STUDIO_HDRS */*.h Data/PreViewMeshQC/*.h)
+FILE(GLOB STUDIO_SRCS main.cc */*.cc */*.cpp */*.hxx)
+FILE(GLOB STUDIO_HDRS */*.h)
 FILE(GLOB STUDIO_ICNS Resources/Images/*.ico)
 FILE(GLOB WINDOW_ICNS Resources/Images/shapes-icon.png)
 
@@ -58,6 +58,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Application/Optimize )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/TinyXML )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Groom )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Optimize )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Surfworks )
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 
@@ -96,4 +97,5 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   ${OPENGL_LIBRARIES}
   ${TinyXML} 
   ShapeWorksGroom
-  ShapeWorksOptimize)
+  ShapeWorksOptimize
+  Surfworks)
