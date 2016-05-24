@@ -12,6 +12,8 @@ class Project;
 class Ui_GroomTool;
 class ShapeWorksStudioApp;
 
+Q_DECLARE_METATYPE(std::string)
+
 class GroomTool : public QWidget
 {
   Q_OBJECT;

@@ -27,6 +27,7 @@ OptimizeTool::~OptimizeTool()
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_error(std::string msg) {
   emit error_message(msg);
+  this->ui_->run_optimize_button->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------

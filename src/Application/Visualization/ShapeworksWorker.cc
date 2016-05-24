@@ -28,7 +28,8 @@ void ShapeworksWorker::process() {
     try {
       this->groom_->run();
     } catch (std::exception e) {
-      emit error_message(std::string("Error") + e.what());
+      emit error_message(std::string("Error: ") + e.what());
+      return;
     }
     break;
   case ShapeworksWorker::Optimize:
@@ -39,7 +40,8 @@ void ShapeworksWorker::process() {
         this->optimize_->localPoints(), 
         this->optimize_->globalPoints(), this->optimize_->getImages());
     } catch (std::exception e) {
-      emit error_message(std::string("Error") + e.what());
+      emit error_message(std::string("Error: ") + e.what());
+      return;
     }
     break;
   case ShapeworksWorker::Reconstruct:
@@ -47,7 +49,8 @@ void ShapeworksWorker::process() {
       this->project_->get_mesh_manager()->initializeReconstruction(
         this->local_pts_, this->global_pts_, this->distance_transform_);
     } catch (std::exception e) {
-      emit error_message(std::string("Error") + e.what());
+      emit error_message(std::string("Error: ") + e.what());
+      return;
     }
     break;
   }
