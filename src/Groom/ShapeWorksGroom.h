@@ -43,6 +43,7 @@ protected:
   void blur();
   void auto_crop();
   void auto_pad();
+  bool isEmpty(ImageType::Pointer image);
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
   double background_, foreground_, blurSigma_, iso_value_,

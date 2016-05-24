@@ -117,6 +117,7 @@ void ShapeWorksGroom::isolate() {
     filter2->SetInput(thresh->GetOutput());
     filter2->Update();
     auto imgIsolate = filter2->GetOutput();
+    if (this->isEmpty(imgIsolate)) { return; }
     newImages.push_back(imgIsolate);
   }
   this->images_ = newImages;
@@ -137,7 +138,7 @@ void ShapeWorksGroom::hole_fill() {
     hfilter->SetInput(img);
     hfilter->SetForegroundValue(itk::NumericTraits< PixelType >::min());
     hfilter->Update();
-
+    if (this->isEmpty(hfilter->GetOutput())) { return; }
     out.push_back(hfilter->GetOutput());
   }
   this->images_ = out;
@@ -221,6 +222,7 @@ void ShapeWorksGroom::center() {
     for (; !it.IsAtEnd(); ++it, ++oit) {
       oit.Set(it.Get());
     }
+    if (this->isEmpty(resampler->GetOutput())) { return; }
     out.push_back(resampler->GetOutput());
   }
   this->images_ = out;
@@ -361,6 +363,7 @@ void ShapeWorksGroom::auto_crop() {
     itk::Matrix<double, 3, 3> I;
     I.SetIdentity();
     extractor->GetOutput()->SetDirection(I);
+    if (this->isEmpty(extractor->GetOutput())) { return; }
     imagesNew.push_back(extractor->GetOutput());
   }
   this->images_ = imagesNew;
@@ -452,12 +455,25 @@ void ShapeWorksGroom::auto_pad() {
       std::cout << "hipad: " << hipad[0] << " " << hipad[1] << " " << hipad[2]
         << std::endl;
     }
+    if (this->isEmpty(padder->GetOutput())) { return; }
     newImages.push_back(padder->GetOutput());
   }
   this->images_ = newImages;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: auto_pad" << std::endl;
   }
+}
+
+bool ShapeWorksGroom::isEmpty(ImageType::Pointer image) {
+  itk::ImageRegionConstIterator<ImageType>  it(image, image->GetRequestedRegion());
+  while (!it.IsAtEnd()) {
+    if (it.Get() != 0) {
+      return false;
+    }
+    ++it;
+  }
+  std::cerr << "\tWarning! Tool failed and was skipped." << std::endl;
+  return true;
 }
 
 void ShapeWorksGroom::antialias() {
@@ -472,6 +488,7 @@ void ShapeWorksGroom::antialias() {
     anti->SetNumberOfIterations(this->iterations_);
     anti->SetMaximumRMSError(0.024);
     anti->Update();
+    if (this->isEmpty(anti->GetOutput())) { return; }
     out.push_back(anti->GetOutput());
   }
   this->images_ = out;
@@ -492,6 +509,7 @@ void ShapeWorksGroom::fastmarching() {
     P->SetIsosurfaceValue(this->iso_value_);
     P->SetInput(img);
     P->Update();
+    if (this->isEmpty(P->GetOutput())) { return; }
     out.push_back(P->GetOutput());
   }
   this->images_ = out;
@@ -513,6 +531,7 @@ void ShapeWorksGroom::blur() {
     blur->SetVariance(this->blurSigma_ * this->blurSigma_);
     blur->SetUseImageSpacingOff();
     blur->Update();
+    if (this->isEmpty(blur->GetOutput())) { return; }
     out.push_back(blur->GetOutput());
   }
   this->images_ = out;
