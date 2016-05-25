@@ -110,7 +110,9 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
       }
       counter++;
       //Praful - randomize the order of updates on shapes
-      std::random_shuffle(randDomIndx.begin(), randDomIndx.end());
+        if (m_randomOrdering == true)
+            std::random_shuffle(randDomIndx.begin(), randDomIndx.end());
+
       //Praful
 #pragma omp parallel
 {

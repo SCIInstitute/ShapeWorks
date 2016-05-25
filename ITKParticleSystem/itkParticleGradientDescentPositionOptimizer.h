@@ -90,7 +90,10 @@ public:
   void SetModeToGaussSeidel() { this->m_OptimizationMode = 1; }
   void SetModeToAdaptiveGaussSeidel() { this->m_OptimizationMode = 2; }
   void SetModeToJacobi() { this->m_OptimizationMode = 0; }
-  
+
+  void SetRandomizationOFF() { this->m_randomOrdering=false; }
+  void SetRandomizationON() { this->m_randomOrdering=true; }
+
   /** Stop the optimization.  This method sets a flag that aborts the
       StartOptimization method after the current iteration. */
   inline void StopOptimization()
@@ -140,6 +143,7 @@ private:
   double m_Tolerance;
   double m_TimeStep;
   int m_OptimizationMode;
+  bool m_randomOrdering;
 
   std::vector< std::vector<double> > m_TimeSteps;
   
