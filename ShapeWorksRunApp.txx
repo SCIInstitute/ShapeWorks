@@ -1030,6 +1030,22 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "initial_relative_weighting" ).Element();
         if (elem) this->m_initial_relative_weighting = atof(elem->GetText());
 
+        //Praful - flag for random ordering updates
+        this->m_randomOrdering=true;
+        elem = docHandle.FirstChild( "randomize_shape_updates" ).Element();
+        if (elem)
+        {
+            if (atoi(elem->GetText()) > 0)
+            {
+                this->m_randomOrdering = true;
+            }
+            else
+            {
+                this->m_randomOrdering = false;
+            }
+        }
+        //Praful - end
+
         this->m_initial_norm_penalty_weighting = 0.0;
         elem = docHandle.FirstChild( "initial_norm_penalty_weighting" ).Element();
         if (elem)
@@ -1154,6 +1170,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     std::cout << "m_save_init_splits = " << m_save_init_splits << std::endl;
     std::cout << "m_use_shape_statistics_in_init = " << m_use_shape_statistics_in_init << std::endl;
     // end SHIREEN
+
+    std::cout << "m_randomOrdering = " << m_randomOrdering << std::endl;
+
 }
 
 
@@ -1212,6 +1231,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     else
         m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
     // end SHIREEN
+
+    if (m_randomOrdering == true)
+        m_Sampler->GetOptimizer()->SetRandomizationON();
+    else
+        m_Sampler->GetOptimizer()->SetRandomizationOFF();
 
     m_Sampler->SetSamplingOn();
     /* PRATEEP */

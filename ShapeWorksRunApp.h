@@ -139,6 +139,7 @@ protected:
   bool m_use_regression;
   bool m_use_mixed_effects;
 
+
   // User-specified parameters
   int m_optimization_iterations;
   int m_optimization_iterations_completed;
@@ -184,6 +185,10 @@ protected:
   bool m_save_init_splits;
   bool m_use_shape_statistics_in_init;
   // end SHIREEN
+
+  //Praful - shape updates in randomized order
+  bool m_randomOrdering; // <= 0 OFF; >0 ON
+
 };
 
 #if ITK_TEMPLATE_EXPLICIT
