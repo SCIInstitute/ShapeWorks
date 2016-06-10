@@ -95,6 +95,9 @@ public Q_SLOTS:
 
 private:
 
+  void disableAllActions();
+  void enablePossibleActions();
+
   void update_from_preferences();
 
   void update_scrollbar();
@@ -139,7 +142,7 @@ private:
   QSlider* iso_smoothing_slider_;
   std::vector<std::string> originalFilenames_;
   QProgressBar * progressBar_;
-  std::string data_dir_;
+  std::string data_dir_, currentMessage_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

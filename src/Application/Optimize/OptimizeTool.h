@@ -32,6 +32,8 @@ public:
   void set_preferences(bool setScales = false);
 
   void update_preferences();
+  void enableActions();
+  void disableActions();
 
 public Q_SLOTS:
 

@@ -38,6 +38,13 @@ public:
     std::vector<std::vector<itk::Point<float> > > global_pts,
     std::vector<ImageType::Pointer> distance_transform);
   bool hasDenseMean();
+  vtkSmartPointer<vtkPolyData> getDenseMean();
+  vtkSmartPointer<vtkPoints> getSparseMean();
+  std::vector<bool> getGoodPoints();
+  void setMean(vtkSmartPointer<vtkPoints> sparseMean,
+    vtkSmartPointer<vtkPolyData> denseMean,
+    std::vector<bool> goodPoints);
+
   // pre-generate and cache a mesh for this shape
   void generateMesh( const vnl_vector<double>& shape );
 

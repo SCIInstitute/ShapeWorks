@@ -27,6 +27,8 @@ public:
 
   void update_preferences();
   void set_preferences();
+  void disableActions();
+  void enableActions();
 
 Q_SIGNALS:
   void groom_complete();

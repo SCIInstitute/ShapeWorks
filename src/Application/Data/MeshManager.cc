@@ -104,9 +104,26 @@ void MeshManager::initializeReconstruction(
     sparseMean[i] = itk::Point<float>(init);
   }
   //now actually generate the dense mean.
-  this->construct_.getMean(local_pts, sparseMean, distance_transform);
+  this->construct_.getDenseMean(local_pts, sparseMean, distance_transform);
 }
 
 bool MeshManager::hasDenseMean() {
   return this->construct_.denseDone();
+}
+
+vtkSmartPointer<vtkPolyData> MeshManager::getDenseMean() { 
+  return this->construct_.getDenseMean();
+}
+
+vtkSmartPointer<vtkPoints> MeshManager::getSparseMean() {
+  return this->construct_.getSparseMean();
+}
+
+std::vector<bool> MeshManager::getGoodPoints() {
+  return this->construct_.getGoodPoints();
+}
+
+void MeshManager::setMean(vtkSmartPointer<vtkPoints> sparseMean,
+  vtkSmartPointer<vtkPolyData> denseMean, std::vector<bool> goodPoints) {
+  this->construct_.setMean(sparseMean, denseMean, goodPoints);
 }

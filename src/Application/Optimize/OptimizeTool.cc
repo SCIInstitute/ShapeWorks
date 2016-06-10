@@ -239,3 +239,11 @@ void OptimizeTool::update_preferences() {
     }
   }
 }
+
+void OptimizeTool::enableActions() {
+  this->ui_->run_optimize_button->setEnabled(true);
+}
+
+void OptimizeTool::disableActions() {
+  this->ui_->run_optimize_button->setEnabled(false);
+}

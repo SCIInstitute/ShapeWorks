@@ -61,15 +61,20 @@ public:
     float decimationPercent = 0.3
     );
   ~Reconstruction();
-  vtkSmartPointer<vtkPolyData> getMean(
+  vtkSmartPointer<vtkPolyData> getDenseMean(
     std::vector<std::vector<itk::Point<float> > > local_pts =
     std::vector<std::vector<itk::Point<float> > >(),
     std::vector<itk::Point<float> > global_pts = 
     std::vector<itk::Point<float> >(),
     std::vector<ImageType::Pointer> distance_transform = 
     std::vector<ImageType::Pointer>() );
+  vtkSmartPointer<vtkPoints> getSparseMean();
+  std::vector<bool> getGoodPoints();
   vtkSmartPointer<vtkPolyData> 
     getMesh(std::vector<itk::Point<float> > local_pts);
+  void setMean(vtkSmartPointer<vtkPoints> sparseMean, 
+    vtkSmartPointer<vtkPolyData>  denseMean,
+    std::vector<bool> goodPoints);
   bool denseDone();
 private:
   void computeDenseMean(

@@ -88,6 +88,16 @@ void GroomTool::set_preferences() {
   this->preferences_.get_preference("groom_pad_value", this->ui_->padding_amount->value()));
 }
 
+void GroomTool::disableActions() {
+  this->ui_->skipButton->setEnabled(false);
+  this->ui_->run_groom_button->setEnabled(false);
+}
+
+void GroomTool::enableActions() {
+  this->ui_->skipButton->setEnabled(true);
+  this->ui_->run_groom_button->setEnabled(true);
+}
+
 void GroomTool::update_preferences() {
   this->preferences_.set_preference("groom_center", this->ui_->center_checkbox->isChecked());
   this->preferences_.set_preference("groom_antialias", this->ui_->antialias_checkbox->isChecked());

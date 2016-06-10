@@ -1,4 +1,6 @@
 #include "Reconstruction.h"
+#include "Reconstruction.h"
+#include "Reconstruction.h"
 #include <vtkKdTreePointLocator.h>
 #include <vtkProbeFilter.h>
 #include <vtkFloatArray.h>
@@ -48,7 +50,7 @@ Reconstruction::Reconstruction(
 Reconstruction::~Reconstruction(){
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::getMean(
+vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
   std::vector<std::vector<itk::Point<float> > > local_pts,
   std::vector<itk::Point<float> > global_pts,
   std::vector<ImageType::Pointer> distance_transform) {
@@ -62,10 +64,18 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMean(
   return this->denseMean_;
 }
 
+vtkSmartPointer<vtkPoints> Reconstruction::getSparseMean() {
+  return this->sparseMean_;
+}
+
+std::vector<bool> Reconstruction::getGoodPoints() {
+  return this->goodPoints_;
+}
+
 vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   std::vector<itk::Point<float> > local_pts) {
   if (!this->denseDone_) {
-    throw std::runtime_error("Dense mean not yet computed!");
+    vtkSmartPointer<vtkPolyData>();
   }
   std::vector<int> particles_indices;
   for (int i = 0; i < this->goodPoints_.size(); i++) {
@@ -141,6 +151,14 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   denseShape->DeepCopy(this->denseMean_);
   this->generateWarpedMeshes(rbfTransform, denseShape);
   return denseShape;
+}
+
+void Reconstruction::setMean(vtkSmartPointer<vtkPoints> sparseMean,
+  vtkSmartPointer<vtkPolyData> denseMean, std::vector<bool> goodPoints) {
+  this->denseMean_ = denseMean;
+  this->sparseMean_ = sparseMean;
+  this->goodPoints_ = goodPoints;
+  this->denseDone_ = true;
 }
 
 bool Reconstruction::denseDone() {
