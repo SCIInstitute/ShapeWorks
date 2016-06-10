@@ -154,47 +154,49 @@ bool Project::save_project(std::string fname, std::string dataDir) {
       QString::fromStdString(a.first), a.second.toString());
   }
   this->preferences_.set_saved();
-  //write out viz data
-  auto prefix = this->shapes_[0]->get_original_filename().toStdString();
-  prefix = prefix.substr(0, prefix.find_last_of("."));
-  auto loc = this->shapes_[0]->get_original_filename_with_path().toStdString();
-  auto pos = loc.find_last_of("/");
-  loc = loc.substr(0, pos) + "/";
-  auto densePath = loc + prefix + ".denseMean.vtk";
-  auto sparsePath = loc + prefix + "sparseMean.txt";
-  auto goodPointsPath = loc + prefix + "goodPoints.txt";
-  if (!defaultDir) {
-    densePath = dataDir + "/denseMean.vtk";
-    sparsePath = dataDir + "/sparseMean.vtk";
-    goodPointsPath = dataDir + "/goodPoints.txt";
+  if (this->reconstructed_present()) {
+    //write out viz data
+    auto prefix = this->shapes_[0]->get_original_filename().toStdString();
+    prefix = prefix.substr(0, prefix.find_last_of("."));
+    auto loc = this->shapes_[0]->get_original_filename_with_path().toStdString();
+    auto pos = loc.find_last_of("/");
+    loc = loc.substr(0, pos) + "/";
+    auto densePath = loc + prefix + ".denseMean.vtk";
+    auto sparsePath = loc + prefix + "sparseMean.txt";
+    auto goodPointsPath = loc + prefix + "goodPoints.txt";
+    if (!defaultDir) {
+      densePath = dataDir + "/denseMean.vtk";
+      sparsePath = dataDir + "/sparseMean.vtk";
+      goodPointsPath = dataDir + "/goodPoints.txt";
+    }
+    xml->writeTextElement("denseMean_file", QString::fromStdString(densePath));
+    xml->writeTextElement("sparseMean_file", QString::fromStdString(sparsePath));
+    xml->writeTextElement("goodPoints_file", QString::fromStdString(goodPointsPath));
+    //write out dense mean
+    vtkPolyDataWriter* writer1 = vtkPolyDataWriter::New();
+    writer1->SetFileName(densePath.c_str());
+    writer1->SetInputData(this->mesh_manager_->getDenseMean());
+    writer1->Write();
+    std::cout << "Wrote dense out" << std::endl;
+    //write out sparse mean
+    std::ofstream ptsOut(goodPointsPath.c_str());
+    auto sparsePts = this->mesh_manager_->getSparseMean();
+    for (size_t i = 0; i < this->shapes_[0]->
+      get_global_correspondence_points().size(); i++) {
+      auto pt = sparsePts->GetPoint(i);
+      ptsOut << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    }
+    ptsOut.close();
+    std::cout << "Wrote sparse out" << std::endl;
+    //write out good points
+    std::ofstream ptsOut1(goodPointsPath.c_str());
+    auto goodPts = this->mesh_manager_->getGoodPoints();
+    for (auto a : goodPts) {
+      ptsOut1 << a << std::endl;
+    }
+    ptsOut1.close();
+    std::cout << "Wrote good points out" << std::endl;
   }
-  xml->writeTextElement("denseMean_file", QString::fromStdString(densePath));
-  xml->writeTextElement("sparseMean_file", QString::fromStdString(sparsePath));
-  xml->writeTextElement("goodPoints_file", QString::fromStdString(goodPointsPath));
-  //write out dense mean
-  vtkPolyDataWriter* writer1 = vtkPolyDataWriter::New();
-  writer1->SetFileName(densePath.c_str());
-  writer1->SetInputData(this->mesh_manager_->getDenseMean());
-  writer1->Write();
-  std::cout << "Wrote dense out" << std::endl;
-  //write out sparse mean
-  std::ofstream ptsOut(goodPointsPath.c_str());
-  auto sparsePts = this->mesh_manager_->getSparseMean();
-  for (size_t i = 0; i < this->shapes_[0]->
-    get_global_correspondence_points().size(); i++) {
-    auto pt = sparsePts->GetPoint(i);
-    ptsOut << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
-  }
-  ptsOut.close();
-  std::cout << "Wrote sparse out" << std::endl;
-  //write out good points
-  std::ofstream ptsOut1(goodPointsPath.c_str());
-  auto goodPts = this->mesh_manager_->getGoodPoints();
-  for (auto a : goodPts) {
-    ptsOut1 << a << std::endl;
-  }
-  ptsOut1.close();
-  std::cout << "Wrote good points out" << std::endl;
 
   // shapes
   xml->writeStartElement("shapes");
