@@ -27,6 +27,7 @@ OptimizeTool::~OptimizeTool()
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_error(std::string msg) {
   emit error_message(msg);
+  this->ui_->run_optimize_button->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
@@ -40,6 +41,8 @@ void OptimizeTool::handle_thread_complete() {
   auto global = this->optimize_->globalPoints();
   this->project_->load_points(local, true);
   this->project_->load_points(global, false);
+  this->project_->set_reconstructed_present(
+    local.size() == global.size() && global.size() > 1);
   this->project_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Optimize Complete");
@@ -71,8 +74,13 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
   connect(this->optimize_, SIGNAL(progress(int)), this, SLOT(handle_progress(int)));
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
+}
+
+void OptimizeTool::handle_message(std::string s) {
+  emit message(s);
 }
 
 void OptimizeTool::on_number_of_scales_valueChanged(int val) {
@@ -230,4 +238,12 @@ void OptimizeTool::update_preferences() {
         table->item(i, j)->text().toDouble());
     }
   }
+}
+
+void OptimizeTool::enableActions() {
+  this->ui_->run_optimize_button->setEnabled(true);
+}
+
+void OptimizeTool::disableActions() {
+  this->ui_->run_optimize_button->setEnabled(false);
 }

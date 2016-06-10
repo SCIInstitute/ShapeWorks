@@ -231,8 +231,6 @@ void Visualizer::update_viewer_properties()
   double size = preferences_.get_preference("glyph_size", 1.f);
   double quality = preferences_.get_preference("glyph_quality", 5.f);
 
-  std::cerr << "** update viewer properties, size = " << size << "\n";
-
   if ( this->lightbox_ )
   {
     foreach( ViewerHandle viewer, this->lightbox_->get_viewers() ) {

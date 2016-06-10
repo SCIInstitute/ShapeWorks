@@ -12,6 +12,8 @@ class Project;
 class Ui_GroomTool;
 class ShapeWorksStudioApp;
 
+Q_DECLARE_METATYPE(std::string)
+
 class GroomTool : public QWidget
 {
   Q_OBJECT;
@@ -25,6 +27,8 @@ public:
 
   void update_preferences();
   void set_preferences();
+  void disableActions();
+  void enableActions();
 
 Q_SIGNALS:
   void groom_complete();

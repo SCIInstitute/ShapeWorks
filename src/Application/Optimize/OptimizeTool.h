@@ -32,6 +32,8 @@ public:
   void set_preferences(bool setScales = false);
 
   void update_preferences();
+  void enableActions();
+  void disableActions();
 
 public Q_SLOTS:
 
@@ -41,6 +43,7 @@ public Q_SLOTS:
   void handle_thread_complete();
   void handle_progress(int val);
   void handle_error(std::string);
+  void handle_message(std::string);
 signals:
   void optimize_complete();
   void error_message(std::string);

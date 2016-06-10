@@ -16,8 +16,6 @@ typedef float PixelType;
 typedef itk::Image< PixelType, 3 > ImageType;
 typedef itk::ImageFileReader< ImageType > ReaderType;
 typedef itk::ImageFileWriter< ImageType > WriterType;
-typedef itk::Image<int, 3> isolate_type;
-typedef itk::Image<unsigned char, 3> crop_type;
 typedef itk::ConnectedThresholdImageFilter<ImageType, ImageType> flood_fill_filter_type;
 typedef itk::TranslationTransform<double, 3>::ParametersType transform_type;
 
@@ -45,9 +43,10 @@ protected:
   void blur();
   void auto_crop();
   void auto_pad();
+  bool isEmpty(ImageType::Pointer image);
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
-  double background_, foreground_, sigma_, iso_value_,
+  double background_, foreground_, blurSigma_, iso_value_,
     sigmaFastMarch_;
   flood_fill_filter_type::IndexType seed_;
   transform_type transform_;

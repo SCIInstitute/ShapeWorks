@@ -161,6 +161,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->project_->set_parent(this);
   connect(this->project_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->project_.data(), SIGNAL(update_display()), this, SLOT(handle_display_setting_changed()));
+  connect(this->project_.data(), SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
 
   // setup modes
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
@@ -183,10 +184,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->action_group_->addAction(this->ui_->action_groom_mode);
   this->action_group_->addAction(this->ui_->action_optimize_mode);
   this->action_group_->addAction(this->ui_->action_analysis_mode);
-  this->ui_->action_import_mode->setEnabled(true);
-  this->ui_->action_groom_mode->setEnabled(false);
-  this->ui_->action_optimize_mode->setEnabled(false);
-  this->ui_->action_analysis_mode->setEnabled(false);
 
   this->ui_->statusbar->showMessage("ShapeWorksStudio");
   this->lightbox_ = LightboxHandle(new Lightbox());
@@ -257,15 +254,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   connect(this->iso_spacing_spinner_, SIGNAL(valueChanged(double)), this, SLOT(handle_pca_changed()));
   connect(this->iso_smoothing_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_pca_changed()));
   this->preferences_.set_saved();
-
-  //disable actions
-  this->ui_->actionExport_Eigenvalues->setEnabled(false);
-  this->ui_->actionExport_Eigenvectors->setEnabled(false);
-  this->ui_->actionExport_Parameter_XML->setEnabled(false);
-  this->ui_->actionExport_PCA_Mesh->setEnabled(false);
-  this->ui_->actionExport_PCA_Mode_Points->setEnabled(false);
-  this->ui_->action_save_project->setEnabled(false);
-  this->ui_->action_save_project_as->setEnabled(false);
+  this->enablePossibleActions();
 }
 
 //---------------------------------------------------------------------------
@@ -307,9 +296,6 @@ void ShapeWorksStudioApp::on_action_new_project_triggered() {
     index_list << i;
   }
 
-  this->ui_->action_groom_mode->setEnabled(false);
-  this->ui_->action_optimize_mode->setEnabled(false);
-  this->ui_->action_analysis_mode->setEnabled(false);
   this->project_->remove_shapes(index_list);
   this->project_->reset();
   this->lightbox_->clear_renderers();
@@ -323,14 +309,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered() {
   this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
   this->ui_->controlsDock->setWindowTitle("Data");
   this->preferences_.set_saved();
-  //disable actions
-  this->ui_->actionExport_Eigenvalues->setEnabled(false);
-  this->ui_->actionExport_Eigenvectors->setEnabled(false);
-  this->ui_->actionExport_Parameter_XML->setEnabled(false);
-  this->ui_->actionExport_PCA_Mesh->setEnabled(false);
-  this->ui_->actionExport_PCA_Mode_Points->setEnabled(false);
-  this->ui_->action_save_project->setEnabled(false);
-  this->ui_->action_save_project_as->setEnabled(false);
+  this->enablePossibleActions();
 }
 
 //---------------------------------------------------------------------------
@@ -350,6 +329,7 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
   }
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
   this->open_project(filename);
+  this->enablePossibleActions();
 }
 
 //---------------------------------------------------------------------------
@@ -426,9 +406,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->import_files(filenames);
   this->visualizer_->update_lut();
-  this->ui_->action_groom_mode->setEnabled(this->project_->get_shapes().size() > 1);
-  this->ui_->action_optimize_mode->setEnabled(false);
-  this->ui_->action_analysis_mode->setEnabled(false);
+  this->enablePossibleActions();
 }
 
 //---------------------------------------------------------------------------
@@ -454,6 +432,53 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
   this->update_scrollbar();
 
   this->ui_->qvtkWidget->GetRenderWindow()->Render();
+}
+
+void ShapeWorksStudioApp::disableAllActions() {
+  // export / save / new / open
+  this->ui_->action_save_project->setEnabled(false);
+  this->ui_->action_save_project_as->setEnabled(false);
+  this->ui_->actionExport_PCA_Mesh->setEnabled(false);
+  this->ui_->actionExport_Eigenvalues->setEnabled(false);
+  this->ui_->actionExport_Eigenvectors->setEnabled(false);
+  this->ui_->actionExport_Parameter_XML->setEnabled(false);
+  this->ui_->actionExport_PCA_Mode_Points->setEnabled(false);
+  this->ui_->action_new_project->setEnabled(false);
+  this->ui_->action_open_project->setEnabled(false);
+  this->ui_->action_import->setEnabled(false);
+  this->ui_->add_button->setEnabled(false);
+  this->ui_->delete_button->setEnabled(false);
+  this->ui_->actionSet_Data_Directory->setEnabled(false);
+  //subtools
+  this->groom_tool_->disableActions();
+  this->optimize_tool_->disableActions();
+}
+
+void ShapeWorksStudioApp::enablePossibleActions() {
+  // export / save / new / open
+  bool reconstructed = this->project_->reconstructed_present();
+  bool original = this->project_->original_present();
+  this->ui_->action_save_project->setEnabled(original);
+  this->ui_->action_save_project_as->setEnabled(original);
+  this->ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
+  this->ui_->actionExport_Eigenvalues->setEnabled(reconstructed);
+  this->ui_->actionExport_Eigenvectors->setEnabled(reconstructed);
+  this->ui_->actionExport_Parameter_XML->setEnabled(reconstructed);
+  this->ui_->actionExport_PCA_Mode_Points->setEnabled(reconstructed);
+  this->ui_->action_new_project->setEnabled(true);
+  this->ui_->action_open_project->setEnabled(true);
+  this->ui_->action_import->setEnabled(true);
+  this->ui_->add_button->setEnabled(true);
+  this->ui_->delete_button->setEnabled(true);
+  this->ui_->actionSet_Data_Directory->setEnabled(true);
+  //available modes
+  this->ui_->action_import_mode->setEnabled(true);
+  this->ui_->action_groom_mode->setEnabled(original);
+  this->ui_->action_optimize_mode->setEnabled(this->project_->groomed_present());
+  this->ui_->action_analysis_mode->setEnabled(reconstructed);
+  //subtools
+  this->groom_tool_->enableActions();
+  this->optimize_tool_->enableActions();
 }
 
 //---------------------------------------------------------------------------
@@ -528,12 +553,10 @@ void ShapeWorksStudioApp::on_delete_button_clicked() {
     this->project_->reset();
     this->analysis_tool_->reset_stats();
     this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
-    this->ui_->action_groom_mode->setEnabled(false);
-    this->ui_->action_optimize_mode->setEnabled(false);
-    this->ui_->action_analysis_mode->setEnabled(false);
     this->lightbox_->clear_renderers();
     this->update_display();
   }
+  this->enablePossibleActions();
 }
 
 //---------------------------------------------------------------------------
@@ -601,6 +624,7 @@ void ShapeWorksStudioApp::handle_new_mesh() {
 
 void ShapeWorksStudioApp::handle_message(std::string str) {
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
+  this->currentMessage_ = str;
 }
 
 void ShapeWorksStudioApp::handle_error(std::string str) {
@@ -613,10 +637,13 @@ void ShapeWorksStudioApp::handle_progress(size_t value) {
   if (value < 100) {
     this->progressBar_->setVisible(true);
     this->progressBar_->setValue(static_cast<int>(value));
+    this->disableAllActions();
   } else {
     this->progressBar_->setValue(100);
     this->progressBar_->setVisible(false);
+    this->enablePossibleActions();
   }
+  this->handle_message(this->currentMessage_);
   qApp->processEvents();
 }
 
@@ -656,41 +683,23 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 void ShapeWorksStudioApp::handle_project_changed()
 {
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
-  if (shapes.size() < 1)
-    this->ui_->action_groom_mode->setEnabled(false);
-  else
-    this->ui_->action_groom_mode->setEnabled(true);
 
-  if (this->project_->groomed_present())
-  {
+  if (this->project_->groomed_present())  {
     this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-    this->ui_->action_optimize_mode->setEnabled(true);
-  } else
-  {
+  } else {
     this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-    this->ui_->action_optimize_mode->setEnabled(false);
   }
 
-  if (this->project_->reconstructed_present())
-  {
+  if (this->project_->reconstructed_present()) {
     this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
-    this->ui_->action_analysis_mode->setEnabled(true);
     this->project_->handle_clear_cache();
-  } else
-  {
+  } else {
     this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
-    this->ui_->action_analysis_mode->setEnabled(false);
   }
   this->update_table();
   this->update_scrollbar();
   this->update_display();
-  //disable/enable actions
-  this->ui_->actionExport_Eigenvalues->setEnabled(this->project_->reconstructed_present());
-  this->ui_->actionExport_Eigenvectors->setEnabled(this->project_->reconstructed_present());
-  this->ui_->actionExport_Parameter_XML->setEnabled(this->project_->reconstructed_present());
-  this->ui_->actionExport_PCA_Mode_Points->setEnabled(this->project_->reconstructed_present());
-  this->ui_->action_save_project->setEnabled(this->project_->original_present());
-  this->ui_->action_save_project_as->setEnabled(this->project_->original_present());
+  this->enablePossibleActions();
 }
 
 //---------------------------------------------------------------------------
@@ -698,7 +707,6 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 {
   this->analysis_tool_->reset_stats();
   this->project_->handle_clear_cache();
-  this->ui_->action_analysis_mode->setEnabled(true);
   this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
   this->ui_->view_mode_combobox->setCurrentIndex(2);
   this->preferences_.set_preference("display_state",
@@ -714,8 +722,6 @@ void ShapeWorksStudioApp::handle_groom_complete()
 {
   this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
   this->ui_->view_mode_combobox->setCurrentIndex(1);
-  this->ui_->action_optimize_mode->setEnabled(true);
-  this->ui_->action_analysis_mode->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -753,6 +759,7 @@ void ShapeWorksStudioApp::update_display()
   this->preferences_.set_preference("display_state",
     this->ui_->view_mode_combobox->currentText());
   std::string mode = this->analysis_tool_->getAnalysisMode();
+  bool reconstruct_ready = this->project_->get_mesh_manager()->hasDenseMean();
   if (mode == "all samples") {
     this->visualizer_->display_samples();
     size_t num_samples = this->project_->get_shapes().size();
@@ -763,40 +770,48 @@ void ShapeWorksStudioApp::update_display()
     size_t zoom_val = this->ui_->thumbnail_size_slider->maximum() + 1 - value;
     if (zoom_val != this->ui_->thumbnail_size_slider->value())
       this->ui_->thumbnail_size_slider->setValue(zoom_val);
+    this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
+    this->ui_->view_mode_combobox->setItemData(1,
+      this->project_->groomed_present() ? 33 : 0, Qt::UserRole - 1);
+    this->ui_->view_mode_combobox->setItemData(2,
+      (this->project_->reconstructed_present() && reconstruct_ready) ?
+      33 : 0, Qt::UserRole - 1);
   } else {
     if (this->ui_->thumbnail_size_slider->maximum() !=
       this->ui_->thumbnail_size_slider->value())
       this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
     if (mode == "mean") {
       this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setCurrentIndex(2);
-      this->ui_->actionExport_PCA_Mesh->setEnabled(true);
+      this->ui_->view_mode_combobox->setItemData(1, reconstruct_ready ? 0 : 33, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ?2:1);
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
     } else if (mode == "pca") {
       this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setCurrentIndex(2);
+      this->ui_->view_mode_combobox->setItemData(1, reconstruct_ready ? 0 : 33, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
       this->compute_mode_shape();
-      this->ui_->actionExport_PCA_Mesh->setEnabled(true);
     } else if (mode == "single sample") {
       this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
-      this->ui_->actionExport_PCA_Mesh->setEnabled(true);
     } else {
       this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-      this->ui_->actionExport_PCA_Mesh->setEnabled(false);
+      this->ui_->view_mode_combobox->setItemData(1, 
+        this->project_->groomed_present() ? 33 : 0, Qt::UserRole - 1);
+      this->ui_->view_mode_combobox->setItemData(2,
+        (this->project_->reconstructed_present() && reconstruct_ready) ?
+        33 : 0, Qt::UserRole - 1);
     } //TODO regression?
   }
   this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged() {
+void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp_mode) {
   if (this->visualizer_) {
-    auto disp_mode = this->ui_->view_mode_combobox->currentText();
     this->preferences_.set_preference("display_state", disp_mode);
     this->visualizer_->set_display_mode(disp_mode.toStdString());
     this->update_display();
@@ -850,6 +865,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->analysis_tool_->reset_stats();
   this->visualizer_->update_lut();
   this->preferences_.set_saved();
+  this->enablePossibleActions();
 }
 
 //---------------------------------------------------------------------------
@@ -947,11 +963,10 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
   }
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
   auto shape = this->visualizer_->getCurrentShape();
-  MeshGenerator g(this->preferences_);
-  auto meshFilter = g.buildMeshOutputFilter(shape);
+  auto msh = this->project_->get_mesh_manager()->getMesh(shape);
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());
-  writer->SetInputConnection(meshFilter->GetOutputPort());
+  writer->SetInputData(msh);
   writer->Write();
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }

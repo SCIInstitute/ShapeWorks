@@ -19,6 +19,7 @@ GroomTool::GroomTool(Preferences& prefs,std::vector<std::string>& files)
   : preferences_(prefs), files_(files) {
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi( this );
+  qRegisterMetaType<std::string>();
 }
 
 //---------------------------------------------------------------------------
@@ -39,7 +40,7 @@ void GroomTool::on_blur_checkbox_stateChanged( int state )
 
 
 void GroomTool::on_fastmarching_checkbox_stateChanged(int state) {
-  this->ui_->fastmarching_groupbox->setEnabled(state);
+  this->ui_->fastmarch_sigma->setEnabled(state);
 }
 
 void GroomTool::on_autopad_checkbox_stateChanged(int state) {
@@ -49,6 +50,8 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state) {
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(std::string msg) {
   emit error_message(msg);
+  this->ui_->run_groom_button->setEnabled(true);
+  this->ui_->skipButton->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
@@ -85,6 +88,16 @@ void GroomTool::set_preferences() {
   this->preferences_.get_preference("groom_pad_value", this->ui_->padding_amount->value()));
 }
 
+void GroomTool::disableActions() {
+  this->ui_->skipButton->setEnabled(false);
+  this->ui_->run_groom_button->setEnabled(false);
+}
+
+void GroomTool::enableActions() {
+  this->ui_->skipButton->setEnabled(true);
+  this->ui_->run_groom_button->setEnabled(true);
+}
+
 void GroomTool::update_preferences() {
   this->preferences_.set_preference("groom_center", this->ui_->center_checkbox->isChecked());
   this->preferences_.set_preference("groom_antialias", this->ui_->antialias_checkbox->isChecked());
@@ -111,7 +124,7 @@ void GroomTool::on_run_groom_button_clicked() {
   for (auto s : shapes) {
     imgs.push_back(s->get_original_image());
   }
-  this->groom_ = new QGroom(this, imgs, 0, 1, 
+  this->groom_ = new QGroom(this, imgs, 0., 1., 
     this->ui_->blur_sigma->value(),
     this->ui_->fastmarch_sigma->value(),
     this->ui_->iso_value->value(),
@@ -162,16 +175,8 @@ void GroomTool::on_run_groom_button_clicked() {
 //---------------------------------------------------------------------------
 void GroomTool::handle_thread_complete() {
   emit progress(95);
-  double iso = 0.5;
-  if (this->groom_->tools().count("isolate") ||
-    this->groom_->tools().count("hole_fill")) {
-    iso = this->groom_->foreground() / 2.;
-  }
-  if (this->groom_->tools().count("fastmarching") ||
-    this->groom_->tools().count("blur")) {
-    iso = 0.;
-  }
-  this->project_->load_groomed_images(this->groom_->getImages(), iso);
+  this->project_->load_groomed_images(this->groom_->getImages(),
+    this->ui_->iso_value->value());
   emit progress(100);
   emit message("Groom Complete");
   emit groom_complete();

@@ -17,23 +17,17 @@ void QGroom::run() {
     this->center();
     emit progress(++ran * 100 / this->runTools_.size());
   }
-  if (this->runTools_.count("hole_fill")) {
-    this->hole_fill();
-    emit progress(++ran * 100 / this->runTools_.size());
-  }
   if (this->runTools_.count("isolate")) {
     this->isolate();
     emit progress(++ran * 100 / this->runTools_.size());
   }
+  if (this->runTools_.count("hole_fill")) {
+    this->hole_fill();
+    emit progress(++ran * 100 / this->runTools_.size());
+  }
   if (this->runTools_.count("auto_crop")) {
-    if (this->runTools_.count("fastmarching")) {
-      std::cerr <<
-        "Warning: auto_crop incompatible with fastmarching. "
-        << "Skipping auto_crop." << std::endl;
-    } else {
-      this->auto_crop();
-      emit progress(++ran * 100 / this->runTools_.size());
-    }
+    this->auto_crop();
+    emit progress(++ran * 100 / this->runTools_.size());
   }
   if (this->runTools_.count("auto_pad")) {
     this->auto_pad();
@@ -43,19 +37,12 @@ void QGroom::run() {
     this->antialias();
     emit progress(++ran * 100 / this->runTools_.size());
   }
+  if (this->runTools_.count("blur")) {
+    this->blur();
+    emit progress(++ran * 100 / this->runTools_.size());
+  }
   if (this->runTools_.count("fastmarching")) {
     this->fastmarching();
     emit progress(++ran * 100 / this->runTools_.size());
-  }
-  if (this->runTools_.count("blur")) {
-    if (!this->runTools_.count("fastmarching") &&
-      !this->runTools_.count("antialias")) {
-      std::cerr <<
-        "Warning: blur requires fastmarching or antialias. "
-        << "Skipping blur." << std::endl;
-    } else {
-      this->blur();
-      emit progress(++ran * 100 / this->runTools_.size());
-    }
   }
 }

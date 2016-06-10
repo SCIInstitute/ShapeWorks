@@ -72,7 +72,7 @@ public Q_SLOTS:
 
   void on_center_checkbox_stateChanged();
   void on_thumbnail_size_slider_valueChanged();
-  void on_view_mode_combobox_currentIndexChanged();
+  void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
   
   void handle_pca_changed();
@@ -94,6 +94,9 @@ public Q_SLOTS:
   void handle_progress(size_t amt);
 
 private:
+
+  void disableAllActions();
+  void enablePossibleActions();
 
   void update_from_preferences();
 
@@ -139,7 +142,7 @@ private:
   QSlider* iso_smoothing_slider_;
   std::vector<std::string> originalFilenames_;
   QProgressBar * progressBar_;
-  std::string data_dir_;
+  std::string data_dir_, currentMessage_;
 };
 
 #endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */

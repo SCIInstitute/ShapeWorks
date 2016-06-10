@@ -20,16 +20,19 @@
 #include "itkMetaImageIOFactory.h"
 #include "itkCastImageFilter.h"
 #include "itkPSMImplicitSurfaceImageFilter.h"
+#include "itkRelabelComponentImageFilter.h"
+#include "itkThresholdImageFilter.h"
+#include "itkBinaryFillholeImageFilter.h"
 #include <map>
 
 ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,
   double background, double foreground, 
-  double sigma, double sigmaFastMarch,
+  double blurSigma, double sigmaFastMarch,
   double iso, size_t padding,  size_t iterations,
   bool verbose)
   :  images_(inputs), 
-  background_(background), sigma_(sigma), sigmaFastMarch_(sigmaFastMarch),
+  background_(background), blurSigma_(blurSigma), sigmaFastMarch_(sigmaFastMarch),
   iso_value_(iso),
   foreground_(foreground), verbose_(verbose), padding_(padding),
   iterations_(iterations) {}
@@ -44,39 +47,26 @@ void ShapeWorksGroom::run() {
   if (this->runTools_.count("center")) {
     this->center();
   }
-  if (this->runTools_.count("hole_fill")) {
-    this->hole_fill();
-  }
   if (this->runTools_.count("isolate")) {
     this->isolate();
   }
+  if (this->runTools_.count("hole_fill")) {
+    this->hole_fill();
+  }
   if (this->runTools_.count("auto_crop")) {
-    if (this->runTools_.count("fastmarching")) {
-      std::cerr << 
-        "Warning: auto_crop incompatible with fastmarching. "
-        << "Skipping auto_crop." << std::endl;
-    } else {
-      this->auto_crop();
-    }
+    this->auto_crop();
   }
   if (this->runTools_.count("auto_pad")) {
     this->auto_pad();
   }
   if (this->runTools_.count("antialias")) {
     this->antialias();
-  } 
-  if (this->runTools_.count("fastmarching")) {
-    this->fastmarching();
   }
   if (this->runTools_.count("blur")) {
-    if (!this->runTools_.count("fastmarching") &&
-      !this->runTools_.count("antialias")) {
-      std::cerr <<
-        "Warning: blur requires fastmarching or antialias. "
-        << "Skipping blur." << std::endl;
-    } else {
-      this->blur();
-    }
+    this->blur();
+  }
+  if (this->runTools_.count("fastmarching")) {
+    this->fastmarching();
   }
 }
 
@@ -96,51 +86,39 @@ void ShapeWorksGroom::isolate() {
   }
   std::vector<ImageType::Pointer> newImages;
   for (auto img : this->images_) {
-    typedef itk::CastImageFilter< ImageType, isolate_type > FilterType;
-    FilterType::Pointer filter = FilterType::New();
-    filter->SetInput(img);
-    auto imgIsolate = filter->GetOutput();
-    // Find the connected components in this image.
-    itk::ConnectedComponentImageFilter<isolate_type, isolate_type>::Pointer
-      ccfilter = itk::ConnectedComponentImageFilter<isolate_type, isolate_type>::New();
 
-    ccfilter->SetInput(imgIsolate);
+    typedef itk::Image<unsigned char, 3>  IsolateType;
+    typedef itk::CastImageFilter< ImageType, IsolateType > ToIntType;
+    ToIntType::Pointer filter = ToIntType::New();
+    filter->SetInput(img);
+    filter->Update();
+    // Find the connected components in this image.
+    itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::Pointer
+      ccfilter = itk::ConnectedComponentImageFilter<IsolateType, IsolateType>::New();
+
+    ccfilter->SetInput(filter->GetOutput());
     ccfilter->FullyConnectedOn();
     ccfilter->Update();
-
-    // First find the size of the connected components.
-    std::map<int, int> sizes;
-    itk::ImageRegionConstIterator<isolate_type> rit(ccfilter->GetOutput(),
-      img->GetBufferedRegion());
-    for (; !rit.IsAtEnd(); ++rit) {
-      if (rit.Get() > 0) {
-        sizes[rit.Get()] = sizes[rit.Get()] + 1;
-      }
-    }
-    // Find largest connected component. Assumes connected component algorithm
-    // enumerates sequentially. (This is true for the ITK algorithm).
-    int maxsize = 0;
-    int bigcomponent = 0;
-    for (std::map<int, int>::const_iterator mapit = sizes.begin();
-      mapit != sizes.end(); mapit++) {
-      if ((*mapit).second > maxsize) {
-        bigcomponent = (*mapit).first;
-        maxsize = (*mapit).second;
-      }
-    }
-    // Copy result into return image. Remove all but the largest connected component.
-    itk::ImageRegionIterator<isolate_type> it(imgIsolate, imgIsolate->GetBufferedRegion());
-    rit.GoToBegin();
-    it.GoToBegin();
-    for (; !rit.IsAtEnd(); ++it, ++rit) {
-      if (rit.Get() == bigcomponent) it.Set(0.);
-      else it.Set(1.);
-    }
-    typedef itk::CastImageFilter<isolate_type, ImageType > FilterType2;
-    FilterType2::Pointer filter2 = FilterType2::New();
-    filter2->SetInput(imgIsolate);
+    typedef itk::RelabelComponentImageFilter<
+      IsolateType, IsolateType >  RelabelType;
+    RelabelType::Pointer relabel = RelabelType::New();
+    relabel->SetInput(ccfilter->GetOutput());
+    relabel->SortByObjectSizeOn();
+    relabel->Update();
+    typedef itk::ThresholdImageFilter< IsolateType >  ThreshType;
+    ThreshType::Pointer thresh = ThreshType::New();
+    thresh->SetInput(relabel->GetOutput());
+    thresh->SetOutsideValue(0);
+    thresh->ThresholdBelow(0);
+    thresh->ThresholdAbove(1.001);
+    thresh->Update();
+    typedef itk::CastImageFilter< IsolateType, ImageType > FilterType;
+    FilterType::Pointer filter2 = FilterType::New();
+    filter2->SetInput(thresh->GetOutput());
     filter2->Update();
-    newImages.push_back(filter2->GetOutput());
+    auto imgIsolate = filter2->GetOutput();
+    if (this->isEmpty(imgIsolate)) { return; }
+    newImages.push_back(imgIsolate);
   }
   this->images_ = newImages;
   if (this->verbose_) {
@@ -154,28 +132,14 @@ void ShapeWorksGroom::hole_fill() {
   }
   std::vector<ImageType::Pointer> out;
   for (auto img : this->images_) {
-    // Flood fill the background with the foreground value.
-    itk::ConnectedThresholdImageFilter<ImageType, ImageType>::Pointer
-      ccfilter = itk::ConnectedThresholdImageFilter<ImageType, ImageType>::New();
-    ccfilter->SetInput(img);
-    ccfilter->SetLower(this->background_);
-    ccfilter->SetUpper(this->background_);
-    ccfilter->SetSeed(this->seed_);
-    ccfilter->SetReplaceValue(this->foreground_);
-    ccfilter->Update();
 
-    // "or" the original image with the inverse (foreground/background flipped)
-    // of the flood-filled copy.
-
-    itk::ImageRegionConstIterator<ImageType> rit(ccfilter->GetOutput(),
-      img->GetBufferedRegion());
-    itk::ImageRegionIterator<ImageType> it(img, img->GetBufferedRegion());
-    for (; !rit.IsAtEnd(); ++rit, ++it) {
-      if (rit.Get() == this->background_) {
-        it.Set(this->foreground_);
-      }
-    }
-    out.push_back(ccfilter->GetOutput());
+    typedef itk::BinaryFillholeImageFilter< ImageType > HoleType;
+    HoleType::Pointer hfilter = HoleType::New();
+    hfilter->SetInput(img);
+    hfilter->SetForegroundValue(itk::NumericTraits< PixelType >::min());
+    hfilter->Update();
+    if (this->isEmpty(hfilter->GetOutput())) { return; }
+    out.push_back(hfilter->GetOutput());
   }
   this->images_ = out;
   if (this->verbose_) {
@@ -258,6 +222,7 @@ void ShapeWorksGroom::center() {
     for (; !it.IsAtEnd(); ++it, ++oit) {
       oit.Set(it.Get());
     }
+    if (this->isEmpty(resampler->GetOutput())) { return; }
     out.push_back(resampler->GetOutput());
   }
   this->images_ = out;
@@ -274,15 +239,10 @@ void ShapeWorksGroom::auto_crop() {
   ImageType::SizeType maxsize;
   bool first = true;
   for (auto img : this->images_) {
-    typedef itk::CastImageFilter< ImageType, crop_type > FilterType;
-    FilterType::Pointer filter = FilterType::New();
-    filter->SetInput(img);
-    filter->Update();
-    auto imgCrop = filter->GetOutput();
     // Compute the bounding boxes.
-    shapetools::bounding_box<unsigned char, 3> bb_tool;
+    shapetools::bounding_box<float, 3> bb_tool;
     bb_tool.background() = this->background_;
-    bb_tool(imgCrop);
+    bb_tool(img);
 
     std::cout << bb_tool.region() << std::endl;
 
@@ -403,6 +363,7 @@ void ShapeWorksGroom::auto_crop() {
     itk::Matrix<double, 3, 3> I;
     I.SetIdentity();
     extractor->GetOutput()->SetDirection(I);
+    if (this->isEmpty(extractor->GetOutput())) { return; }
     imagesNew.push_back(extractor->GetOutput());
   }
   this->images_ = imagesNew;
@@ -494,12 +455,25 @@ void ShapeWorksGroom::auto_pad() {
       std::cout << "hipad: " << hipad[0] << " " << hipad[1] << " " << hipad[2]
         << std::endl;
     }
+    if (this->isEmpty(padder->GetOutput())) { return; }
     newImages.push_back(padder->GetOutput());
   }
   this->images_ = newImages;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: auto_pad" << std::endl;
   }
+}
+
+bool ShapeWorksGroom::isEmpty(ImageType::Pointer image) {
+  itk::ImageRegionConstIterator<ImageType>  it(image, image->GetRequestedRegion());
+  while (!it.IsAtEnd()) {
+    if (it.Get() != 0) {
+      return false;
+    }
+    ++it;
+  }
+  std::cerr << "\tWarning! Tool failed and was skipped." << std::endl;
+  return true;
 }
 
 void ShapeWorksGroom::antialias() {
@@ -514,6 +488,7 @@ void ShapeWorksGroom::antialias() {
     anti->SetNumberOfIterations(this->iterations_);
     anti->SetMaximumRMSError(0.024);
     anti->Update();
+    if (this->isEmpty(anti->GetOutput())) { return; }
     out.push_back(anti->GetOutput());
   }
   this->images_ = out;
@@ -534,6 +509,7 @@ void ShapeWorksGroom::fastmarching() {
     P->SetIsosurfaceValue(this->iso_value_);
     P->SetInput(img);
     P->Update();
+    if (this->isEmpty(P->GetOutput())) { return; }
     out.push_back(P->GetOutput());
   }
   this->images_ = out;
@@ -552,9 +528,10 @@ void ShapeWorksGroom::blur() {
     itk::DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer blur
       = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
     blur->SetInput(img);
-    blur->SetVariance(this->sigma_ * this->sigma_);
-    //blur->SetUseImageSpacingOff();
+    blur->SetVariance(this->blurSigma_ * this->blurSigma_);
+    blur->SetUseImageSpacingOff();
     blur->Update();
+    if (this->isEmpty(blur->GetOutput())) { return; }
     out.push_back(blur->GetOutput());
   }
   this->images_ = out;

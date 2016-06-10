@@ -40,6 +40,7 @@ endif()
 
 add_subdirectory(Groom)
 add_subdirectory(Optimize)
+add_subdirectory(Surfworks)
 add_subdirectory(TinyXML)
 add_subdirectory(Application)
 add_subdirectory(CLT)
