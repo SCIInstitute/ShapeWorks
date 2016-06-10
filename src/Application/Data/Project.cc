@@ -190,7 +190,7 @@ bool Project::save_project(std::string fname, std::string dataDir) {
   //write out good points
   std::ofstream ptsOut1(goodPointsPath.c_str());
   auto goodPts = this->mesh_manager_->getGoodPoints();
-  for (auto &a : goodPts) {
+  for (auto a : goodPts) {
     ptsOut1 << a << std::endl;
   }
   ptsOut1.close();

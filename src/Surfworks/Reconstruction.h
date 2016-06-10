@@ -1,6 +1,8 @@
 #ifndef __RECONSTRUCTION_H__
 #define __RECONSTRUCTION_H__
 
+#define NDEBUG
+
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
 #include "ShapeWorksGroom.h"
 #include "ITKVTK/itkImageToVTKImageFilter.h"
@@ -14,6 +16,7 @@
 #include <itkMultiplyImageFilter.h>
 #include "itkImageRegionConstIterator.h"
 #include <itkImageDuplicator.h>
+#include <vtkSmartPointer.h>
 
 class Reconstruction {
   typedef itk::GradientImageFilter<ImageType, float> 
@@ -103,7 +106,7 @@ private:
     const itk::Image< float, 3 >::PointType& origin);
   vtkSmartPointer<vtkPolyData> extractIsosurface(
     vtkSmartPointer<vtkImageData> volData);
-  vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
+  vtkSmartPointer<vtkPolyData> MeshQC(
     vtkSmartPointer<vtkPolyData> meshIn);
   //members.
   vtkSmartPointer<vtkPoints> sparseMean_;
