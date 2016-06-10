@@ -27,7 +27,7 @@ Reconstruction::Reconstruction(
   int lsSmootherIteration,
   int meshSmootherIteration,
   bool preserveTopology,
-  bool fixWinding ,
+  bool fixWinding,
   bool smoothBeforeDecimate,
   bool smoothAfterDecimate,
   float smoothingLambda,
@@ -40,14 +40,14 @@ Reconstruction::Reconstruction(
   lsSmootherIterations_(lsSmootherIteration),
   meshSmootherIterations_(meshSmootherIteration),
   preserveTopology_(preserveTopology),
-  fixWinding_(fixWinding), 
+  fixWinding_(fixWinding),
   smoothBeforeDecimation_(smoothBeforeDecimate),
   smoothAfterDecimation_(smoothAfterDecimate),
   smoothingLambda_(smoothingLambda),
   qcSmoothingIterations_(qcSmoothIterations),
   decimationPercent_(decimationPercent) {}
 
-Reconstruction::~Reconstruction(){
+Reconstruction::~Reconstruction() {
 }
 
 vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
@@ -64,18 +64,10 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
   return this->denseMean_;
 }
 
-vtkSmartPointer<vtkPoints> Reconstruction::getSparseMean() {
-  return this->sparseMean_;
-}
-
-std::vector<bool> Reconstruction::getGoodPoints() {
-  return this->goodPoints_;
-}
-
 vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   std::vector<itk::Point<float> > local_pts) {
   if (!this->denseDone_) {
-    vtkSmartPointer<vtkPolyData>();
+    return vtkSmartPointer<vtkPolyData>::New();
   }
   std::vector<int> particles_indices;
   for (int i = 0; i < this->goodPoints_.size(); i++) {
@@ -87,7 +79,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   for (auto &a : local_pts) {
     subjectPts->InsertNextPoint(a[0], a[1], a[2]);
   }
-  double sigma = this->computeAverageDistanceToNeighbors(subjectPts, 
+  double sigma = this->computeAverageDistanceToNeighbors(subjectPts,
     particles_indices);
   // (3) set up the common source points for all warps
   PointIdType id;
@@ -96,13 +88,13 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   // Define container for source landmarks that corresponds to the mean space, this is
   // the moving mesh which will be warped to each individual subject
   PointSetType::Pointer sourceLandMarks = PointSetType::New();
-  PointSetType::PointsContainer::Pointer sourceLandMarkContainer = 
+  PointSetType::PointsContainer::Pointer sourceLandMarkContainer =
     sourceLandMarks->GetPoints();
   PointType ps;
   id = itk::NumericTraits< PointIdType >::Zero;
   int ns = 0;
   for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
-    if (std::find(particles_indices.begin(), 
+    if (std::find(particles_indices.begin(),
       particles_indices.end(), ii) != particles_indices.end()) {
       double p[3];
       this->sparseMean_->GetPoint(ii, p);
@@ -120,12 +112,12 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   // Define container for target landmarks corresponds to the subject shape
   PointSetType::Pointer targetLandMarks = PointSetType::New();
   PointType pt;
-  PointSetType::PointsContainer::Pointer targetLandMarkContainer = 
+  PointSetType::PointsContainer::Pointer targetLandMarkContainer =
     targetLandMarks->GetPoints();
   id = itk::NumericTraits< PointIdType >::Zero;
   int nt = 0;
   for (unsigned int ii = 0; ii < local_pts.size(); ii++) {
-    if (std::find(particles_indices.begin(), 
+    if (std::find(particles_indices.begin(),
       particles_indices.end(), ii) != particles_indices.end()) {
       double p[3];
       subjectPts->GetPoint(ii, p);
@@ -153,13 +145,38 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   return denseShape;
 }
 
-void Reconstruction::setMean(vtkSmartPointer<vtkPoints> sparseMean,
-  vtkSmartPointer<vtkPolyData> denseMean, std::vector<bool> goodPoints) {
-  this->denseMean_ = denseMean;
-  this->sparseMean_ = sparseMean;
-  this->goodPoints_ = goodPoints;
+void Reconstruction::readMeanInfo(std::string dense,
+  std::string sparse, std::string goodPoints) {
+  //read out dense mean
+  vtkSmartPointer<vtkPolyDataReader> reader1 = vtkPolyDataReader::New();
+  reader1->SetFileName(dense.c_str());
+  reader1->Update();
+  this->denseMean_ = reader1->GetOutput();
+  //read out sparse mean
+  std::ifstream ptsIn0(sparse.c_str());
+  this->sparseMean_ = vtkSmartPointer<vtkPoints>::New();
+  while (ptsIn0.good()) {
+    double x, y, z;
+    ptsIn0 >> x >> y >> z;
+    if (ptsIn0.good()) {
+      this->sparseMean_->InsertNextPoint(x, y, z);
+    }
+  }
+  ptsIn0.close();
+  //read out good points
+  std::ifstream ptsIn(goodPoints.c_str());
+  this->goodPoints_.clear();
+  while (ptsIn.good()) {
+    int i;
+    ptsIn >> i;
+    if (ptsIn.good()) {
+      this->goodPoints_.push_back(i == 0 ? false : true);
+    }
+  }
+  ptsIn.close();
   this->denseDone_ = true;
 }
+
 
 bool Reconstruction::denseDone() {
   return this->denseDone_;
@@ -279,13 +296,13 @@ void Reconstruction::computeDenseMean(
 
       PointSetType::Pointer targetLandMarks = PointSetType::New();
       PointType pt;
-      PointSetType::PointsContainer::Pointer 
+      PointSetType::PointsContainer::Pointer
         targetLandMarkContainer = targetLandMarks->GetPoints();
       id = itk::NumericTraits< PointIdType >::Zero;
 
       int nt = 0;
-      for (unsigned int ii = 0; ii < local_pts[0].size(); ii++)      {
-        if (std::find(particles_indices.begin(), 
+      for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
+        if (std::find(particles_indices.begin(),
           particles_indices.end(), ii) != particles_indices.end()) {
           double p[3];
           subjectPts[shape]->GetPoint(ii, p);
@@ -356,16 +373,16 @@ void Reconstruction::computeDenseMean(
         meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
       }
     }
-    MultiplyByConstantImageFilterType::Pointer multiplyImageFilter = 
+    MultiplyByConstantImageFilterType::Pointer multiplyImageFilter =
       MultiplyByConstantImageFilterType::New();
     multiplyImageFilter->SetInput(meanDistanceTransform);
-    multiplyImageFilter->SetConstant(1.0 / 
+    multiplyImageFilter->SetConstant(1.0 /
       static_cast<double>(distance_transform.size()));
     multiplyImageFilter->Update();
-    MultiplyByConstantImageFilterType::Pointer multiplyImageFilterBeforeWarp = 
+    MultiplyByConstantImageFilterType::Pointer multiplyImageFilterBeforeWarp =
       MultiplyByConstantImageFilterType::New();
     multiplyImageFilterBeforeWarp->SetInput(meanDistanceTransformBeforeWarp);
-    multiplyImageFilterBeforeWarp->SetConstant(1.0 / 
+    multiplyImageFilterBeforeWarp->SetConstant(1.0 /
       static_cast<double>(distance_transform.size()));
     multiplyImageFilterBeforeWarp->Update();
     // going to vtk to extract the template mesh (mean dense shape)
@@ -373,7 +390,7 @@ void Reconstruction::computeDenseMean(
     ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
     itk2vtkConnector->SetInput(multiplyImageFilter->GetOutput());
     itk2vtkConnector->Update();
-    vtkSmartPointer<vtkPolyData> meanDenseShape = 
+    vtkSmartPointer<vtkPolyData> meanDenseShape =
       this->extractIsosurface(itk2vtkConnector->GetOutput());
     this->denseMean_ = this->MeshQC(meanDenseShape);
   } catch (std::exception e) {
@@ -441,7 +458,7 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
 
   for (gradIter.GoToBegin(), magIter.GoToBegin(), nxIter.GoToBegin(),
     nyIter.GoToBegin(), nzIter.GoToBegin(); !gradIter.IsAtEnd();
-    ++gradIter, ++magIter, ++nxIter, ++nyIter, ++nzIter)  {
+    ++gradIter, ++magIter, ++nxIter, ++nyIter, ++nzIter) {
     itk::CovariantVector<float, 3> grad = gradIter.Get();
     float                      gradMag = magIter.Get();
 
@@ -480,9 +497,9 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
     vtkSmartPointer<vtkPolyData>::New();
   particlesData->SetPoints(particles);
 
-  vtkSmartPointer<vtkPoints> pts = 
+  vtkSmartPointer<vtkPoints> pts =
     this->convertToImageCoordinates(particlesData->GetPoints(),
-    particlesData->GetPoints()->GetNumberOfPoints(), spacing, origin);
+      particlesData->GetPoints()->GetNumberOfPoints(), spacing, origin);
   particlesData->SetPoints(pts);
 
   // (4) get the normals by probing the DT-based normal computation
@@ -558,9 +575,9 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
   // Add the normals to the points in the polydata
   particlesData->GetPointData()->SetNormals(pointNormalsArray);
 
-  vtkSmartPointer<vtkPoints> pts2 = 
+  vtkSmartPointer<vtkPoints> pts2 =
     this->convertToPhysicalCoordinates(particlesData->GetPoints(),
-    particlesData->GetPoints()->GetNumberOfPoints(), spacing, origin);
+      particlesData->GetPoints()->GetNumberOfPoints(), spacing, origin);
   particlesData->SetPoints(pts2);
   return particlesNormals;
 }
@@ -568,8 +585,6 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
 void Reconstruction::generateWarpedMeshes(
   RBFTransformType::Pointer transform,
   vtkSmartPointer<vtkPolyData>& outputMesh) {
-
-
   // generate warped meshes
   vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
   vertices->DeepCopy(outputMesh->GetPoints());
@@ -599,7 +614,7 @@ double Reconstruction::computeAverageDistanceToNeighbors(
   polydata->SetPoints(points);
 
   // Create the tree
-  vtkSmartPointer<vtkKdTreePointLocator> kDTree = 
+  vtkSmartPointer<vtkKdTreePointLocator> kDTree =
     vtkSmartPointer<vtkKdTreePointLocator>::New();
   kDTree->SetDataSet(polydata);
   kDTree->BuildLocator();
@@ -714,7 +729,7 @@ vtkSmartPointer<vtkPoints> Reconstruction::convertToPhysicalCoordinates(
   const itk::Image< float, 3 >::SpacingType& spacing,
   const itk::Image< float, 3 >::PointType& origin) {
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-  for (unsigned int ii = 0; ii < number_of_particles; ii++)  {
+  for (unsigned int ii = 0; ii < number_of_particles; ii++) {
     double p[3];
     particles->GetPoint(ii, p);
     points->InsertNextPoint(p[0] * spacing[0] + origin[0],
@@ -744,7 +759,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
   // feature edge smoothing turned off; feature
   // angle 45 degrees; edge angle 15 degrees; and boundary smoothing turned
   // on. The convergence criterion is 0.0 of the bounding box diagonal.
-  vtkSmartPointer<vtkSmoothPolyDataFilter> lsSmoother = 
+  vtkSmartPointer<vtkSmoothPolyDataFilter> lsSmoother =
     vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   lsSmoother->SetInputConnection(ls->GetOutputPort());
   lsSmoother->SetNumberOfIterations(this->lsSmootherIterations_);
@@ -752,7 +767,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
   std::cout << "..";
 
   // (3) largest connected component (assuming only a single domain shape)
-  vtkSmartPointer<vtkPolyDataConnectivityFilter> conn = 
+  vtkSmartPointer<vtkPolyDataConnectivityFilter> conn =
     vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
   conn->SetExtractionModeToLargestRegion();
 #if (VTK_MAJOR_VERSION < 6)
@@ -763,21 +778,21 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
   conn->Update();
 
   // (4) mesh decimation
-  vtkSmartPointer<vtkDecimatePro> decimator = 
+  vtkSmartPointer<vtkDecimatePro> decimator =
     vtkSmartPointer<vtkDecimatePro>::New();
   decimator->SetInputConnection(conn->GetOutputPort());
   decimator->SetTargetReduction(this->targetReduction_);
   decimator->SetFeatureAngle(this->featureAngle_);
   if (this->preserveTopology_) {
     decimator->PreserveTopologyOn();
-  } else {
+} else {
     decimator->PreserveTopologyOff();
-  } 
+  }
   decimator->BoundaryVertexDeletionOn();
   decimator->Update();
 
   // (5) mesh relaxation
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoother = 
+  vtkSmartPointer<vtkSmoothPolyDataFilter> smoother =
     vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   smoother->SetInputConnection(decimator->GetOutputPort());
   smoother->SetNumberOfIterations(this->meshSmootherIterations_);
@@ -859,4 +874,27 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     return meshIn;
   }
   return meshIn;
+}
+
+void Reconstruction::writeMeanInfo(std::string nameBase) {
+  //write out dense mean
+  vtkSmartPointer<vtkPolyDataWriter> writer1 = vtkPolyDataWriter::New();
+  writer1->SetFileName((nameBase + ".dense.vtk").c_str());
+  writer1->SetInputData(this->denseMean_);
+  writer1->Update();
+  //write out sparse mean
+  std::ofstream ptsOut((nameBase + ".sparse.txt").c_str());
+  auto sparsePts = this->sparseMean_;
+  for (size_t i = 0; i < goodPoints_.size(); i++) {
+    auto pt = sparsePts->GetPoint(i);
+    ptsOut << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+  }
+  ptsOut.close();
+  //write out good points
+  std::ofstream ptsOut1((nameBase + ".goodPoints.txt").c_str());
+  auto goodPts = this->goodPoints_;
+  for (auto a : goodPts) {
+    ptsOut1 << a << std::endl;
+  }
+  ptsOut1.close();
 }

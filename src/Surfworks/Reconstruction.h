@@ -1,7 +1,9 @@
 #ifndef __RECONSTRUCTION_H__
 #define __RECONSTRUCTION_H__
 
+#ifndef NDEBUG
 #define NDEBUG
+#endif
 
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
 #include "ShapeWorksGroom.h"
@@ -71,14 +73,12 @@ public:
     std::vector<itk::Point<float> >(),
     std::vector<ImageType::Pointer> distance_transform = 
     std::vector<ImageType::Pointer>() );
-  vtkSmartPointer<vtkPoints> getSparseMean();
-  std::vector<bool> getGoodPoints();
   vtkSmartPointer<vtkPolyData> 
     getMesh(std::vector<itk::Point<float> > local_pts);
-  void setMean(vtkSmartPointer<vtkPoints> sparseMean, 
-    vtkSmartPointer<vtkPolyData>  denseMean,
-    std::vector<bool> goodPoints);
+  void readMeanInfo(std::string dense, 
+    std::string sparse, std::string goodPoints);
   bool denseDone();
+  void writeMeanInfo(std::string nameBase);
 private:
   void computeDenseMean(
     std::vector<std::vector<itk::Point<float> > > local_pts,

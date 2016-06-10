@@ -154,50 +154,22 @@ bool Project::save_project(std::string fname, std::string dataDir) {
       QString::fromStdString(a.first), a.second.toString());
   }
   this->preferences_.set_saved();
-  if (this->reconstructed_present()) {
-    //write out viz data
-    auto prefix = this->shapes_[0]->get_original_filename().toStdString();
-    prefix = prefix.substr(0, prefix.find_last_of("."));
-    auto loc = this->shapes_[0]->get_original_filename_with_path().toStdString();
-    auto pos = loc.find_last_of("/");
-    loc = loc.substr(0, pos) + "/";
-    auto densePath = loc + prefix + ".denseMean.vtk";
-    auto sparsePath = loc + prefix + "sparseMean.txt";
-    auto goodPointsPath = loc + prefix + "goodPoints.txt";
-    if (!defaultDir) {
-      densePath = dataDir + "/denseMean.vtk";
-      sparsePath = dataDir + "/sparseMean.vtk";
-      goodPointsPath = dataDir + "/goodPoints.txt";
-    }
-    xml->writeTextElement("denseMean_file", QString::fromStdString(densePath));
-    xml->writeTextElement("sparseMean_file", QString::fromStdString(sparsePath));
-    xml->writeTextElement("goodPoints_file", QString::fromStdString(goodPointsPath));
-    //write out dense mean
-    vtkPolyDataWriter* writer1 = vtkPolyDataWriter::New();
-    writer1->SetFileName(densePath.c_str());
-    writer1->SetInputData(this->mesh_manager_->getDenseMean());
-    writer1->Write();
-    std::cout << "Wrote dense out" << std::endl;
-    //write out sparse mean
-    std::ofstream ptsOut(goodPointsPath.c_str());
-    auto sparsePts = this->mesh_manager_->getSparseMean();
-    for (size_t i = 0; i < this->shapes_[0]->
-      get_global_correspondence_points().size(); i++) {
-      auto pt = sparsePts->GetPoint(i);
-      ptsOut << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
-    }
-    ptsOut.close();
-    std::cout << "Wrote sparse out" << std::endl;
-    //write out good points
-    std::ofstream ptsOut1(goodPointsPath.c_str());
-    auto goodPts = this->mesh_manager_->getGoodPoints();
-    for (auto a : goodPts) {
-      ptsOut1 << a << std::endl;
-    }
-    ptsOut1.close();
-    std::cout << "Wrote good points out" << std::endl;
+  //write out mean info
+  auto prefix = this->shapes_[0]->get_original_filename().toStdString();
+  prefix = prefix.substr(0, prefix.find_last_of("."));
+  auto location = this->shapes_[0]->get_original_filename_with_path().toStdString();
+  auto position = location.find_last_of("/");
+  location = location.substr(0, position) + "/" + prefix;
+  if (!defaultDir) {
+    location = dataDir + "/";
   }
-
+  if (this->reconstructed_present()) {
+    this->mesh_manager_->writeMeanInfo(location);
+    xml->writeTextElement("denseMean_file", QString::fromStdString(location + ".dense.vtk"));
+    xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
+    xml->writeTextElement("goodPoints_file", QString::fromStdString(location + ".goodPoints.txt"));
+  }
+  
   // shapes
   xml->writeStartElement("shapes");
   for (int i = 0; i < this->shapes_.size(); i++) {
@@ -263,7 +235,6 @@ bool Project::save_project(std::string fname, std::string dataDir) {
   xml->writeEndElement(); // shapes
 
   xml->writeEndElement(); // project
-
   return true;
 }
 
@@ -335,36 +306,9 @@ bool Project::load_project(QString filename) {
   this->load_groomed_files(groom_files, 0.5);
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
-
-  //read out dense mean
-  vtkSmartPointer<vtkPolyDataReader> reader1 = vtkPolyDataReader::New();
-  reader1->SetFileName(denseFile.c_str());
-  reader1->Update();
-  auto dense = reader1->GetOutput();
-  //read out sparse mean
-  std::ifstream ptsIn0(sparseFile.c_str());
-  vtkSmartPointer<vtkPoints> sparse = vtkSmartPointer<vtkPoints>::New();
-  while (ptsIn0.good()) {
-    double x, y, z;
-    ptsIn0 >> x >> y >> z;
-    if (ptsIn0.good()) {
-      sparse->InsertNextPoint(x,y,z);
-    }
+  if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
+    this->mesh_manager_->readMeanInfo(denseFile, sparseFile, goodPtsFile);
   }
-  ptsIn0.close();
-  //read out good points
-  std::ifstream ptsIn(goodPtsFile.c_str());
-  std::vector<bool> goodpts;
-  while (ptsIn.good()) {
-    int i;
-    ptsIn >> i;
-    if (ptsIn.good()) {
-      goodpts.push_back(i == 0 ? false : true);
-    }
-  }
-  ptsIn.close();
-  this->mesh_manager_->setMean(sparse, dense, goodpts);
-
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
     global_point_files.size() > 1;
   this->preferences_.set_preference("display_state", QString::fromStdString(display_state));

@@ -111,19 +111,11 @@ bool MeshManager::hasDenseMean() {
   return this->construct_.denseDone();
 }
 
-vtkSmartPointer<vtkPolyData> MeshManager::getDenseMean() { 
-  return this->construct_.getDenseMean();
+void MeshManager::writeMeanInfo(std::string baseName) {
+  this->construct_.writeMeanInfo(baseName);
 }
 
-vtkSmartPointer<vtkPoints> MeshManager::getSparseMean() {
-  return this->construct_.getSparseMean();
-}
-
-std::vector<bool> MeshManager::getGoodPoints() {
-  return this->construct_.getGoodPoints();
-}
-
-void MeshManager::setMean(vtkSmartPointer<vtkPoints> sparseMean,
-  vtkSmartPointer<vtkPolyData> denseMean, std::vector<bool> goodPoints) {
-  this->construct_.setMean(sparseMean, denseMean, goodPoints);
+void MeshManager::readMeanInfo(std::string dense, 
+  std::string sparse, std::string goodPoints) {
+  this->construct_.readMeanInfo(dense, sparse, goodPoints);
 }
