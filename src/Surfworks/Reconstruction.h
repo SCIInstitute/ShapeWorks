@@ -1,9 +1,7 @@
 #ifndef __RECONSTRUCTION_H__
 #define __RECONSTRUCTION_H__
 
-#ifndef NDEBUG
-#define NDEBUG
-#endif
+
 
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
 #include "ShapeWorksGroom.h"
@@ -19,6 +17,11 @@
 #include "itkImageRegionConstIterator.h"
 #include <itkImageDuplicator.h>
 #include <vtkSmartPointer.h>
+
+#ifdef assert
+#undef assert
+#define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
+#endif
 
 class Reconstruction {
   typedef itk::GradientImageFilter<ImageType, float> 
