@@ -40,7 +40,6 @@ public Q_SLOTS:
 
   void on_antialias_checkbox_stateChanged( int state );
   void on_blur_checkbox_stateChanged(int state);
-  void on_fastmarching_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
   void on_skipButton_clicked();
   void handle_thread_complete();

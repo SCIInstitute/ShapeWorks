@@ -25,8 +25,6 @@ public:
     std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
     double background = 0., double foreground = 0.,
     double sigma = 2.0,
-    double sigmaFastMarch = 0.0,
-    double iso_value = 0.5,
     size_t padding = 0, size_t iterations = 100,
     bool verbose = false);
   virtual void run();
@@ -35,19 +33,17 @@ public:
   double foreground();
   std::map<std::string, bool> tools();
 protected:
-  void isolate();
-  void hole_fill();
-  void center();
-  void antialias();
-  void fastmarching();
-  void blur();
-  void auto_crop();
-  void auto_pad();
-  bool isEmpty(ImageType::Pointer image);
+  void isolate(int which = -1);
+  void hole_fill(int which = -1);
+  void center(int which = -1);
+  void antialias(int which = -1);
+  void fastmarching(int which = -1);
+  void blur(int which = -1);
+  void auto_pad(int which = -1);
+  //member variables
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
-  double background_, foreground_, blurSigma_, iso_value_,
-    sigmaFastMarch_;
+  double background_, foreground_, blurSigma_;
   flood_fill_filter_type::IndexType seed_;
   transform_type transform_;
   size_t padding_, iterations_;

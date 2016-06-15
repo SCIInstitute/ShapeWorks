@@ -415,7 +415,11 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
   for (auto &a : file_names) {
     list.push_back(a.toStdString());
   }
-  this->project_->load_original_files(list);
+  try {
+    this->project_->load_original_files(list);
+  } catch (std::runtime_error e) {
+    this->handle_error(e.what());
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -496,6 +500,8 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_size_label_->setText(QString::number(preferences_.get_preference("glyph_size", 1.)));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_preference("center_option", true));
+  this->groom_tool_->set_preferences();
+  this->optimize_tool_->set_preferences();
 }
 
 //---------------------------------------------------------------------------

@@ -330,11 +330,30 @@ void Project::load_original_files(std::vector<std::string> file_names) {
     }
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
     new_shape->import_original_image(file_names[i], 0.5);
+    if (!this->shapes_.empty()) {
+      auto spacing = this->shapes_[0]->get_original_image()->GetSpacing();
+      auto spacing_new = new_shape->get_original_image()->GetSpacing();
+      if (spacing != spacing_new) {
+        emit data_changed();
+        this->renumber_shapes();
+        this->original_present_ = true;
+        throw std::runtime_error(file_names[i] + " does not match spacing with " +
+          this->shapes_[0]->get_original_filename().toStdString() + "!!!");
+      }
+      auto sizing = this->shapes_[0]->get_original_image()->GetLargestPossibleRegion();
+      auto sizing_new = new_shape->get_original_image()->GetLargestPossibleRegion();
+      if (sizing != sizing_new) {
+        emit data_changed();
+        this->renumber_shapes();
+        this->original_present_ = true;
+        throw std::runtime_error(file_names[i] + " does not match voxel space with " +
+          this->shapes_[0]->get_original_filename().toStdString() + "!!!");
+      }
+    }
     this->shapes_.push_back(new_shape);
   }
   progress.setValue(file_names.size());
   QApplication::processEvents();
-  this->renumber_shapes();
   if (file_names.size() > 0) {
     this->original_present_ = true;
     emit data_changed();

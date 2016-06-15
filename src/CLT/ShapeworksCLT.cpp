@@ -133,7 +133,6 @@ int main(int argc, char ** argv) {
     }
     //run the groom step
     ShapeWorksGroom groom(inputs, 0, 1, groom_blur_sigma,
-      groom_fastmarching_sigma, groom_fastmarching_isovalue,
       groom_pad_value, groom_antialias_amount, true);
     if (groom_center) { groom.queueTool("center"); }
     if (groom_isolate) { groom.queueTool("isolate"); }

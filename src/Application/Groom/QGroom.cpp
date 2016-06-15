@@ -3,46 +3,55 @@
 QGroom::QGroom(QObject * parent,
   std::vector<ImageType::Pointer> inputs,
   double background, double foreground,
-  double sigma, double sigmaFastMarch, 
-  double iso_value, size_t padding,
+  double sigma, size_t padding,
   size_t iterations, bool verbose)
   : QObject(parent), ShapeWorksGroom(inputs,
-    background, sigma, sigmaFastMarch, iso_value,
-    foreground, verbose, padding, iterations) {}
+    background, foreground, sigma,
+    verbose, padding, iterations) {}
 
 void QGroom::run() {
   this->seed_.Fill(0);
-  size_t ran = 0;
+  size_t ran = 0, total = this->runTools_.size() * this->images_.size();
   if (this->runTools_.count("center")) {
-    this->center();
-    emit progress(++ran * 100 / this->runTools_.size());
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->center(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
   }
   if (this->runTools_.count("isolate")) {
-    this->isolate();
-    emit progress(++ran * 100 / this->runTools_.size());
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->isolate(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
   }
   if (this->runTools_.count("hole_fill")) {
-    this->hole_fill();
-    emit progress(++ran * 100 / this->runTools_.size());
-  }
-  if (this->runTools_.count("auto_crop")) {
-    this->auto_crop();
-    emit progress(++ran * 100 / this->runTools_.size());
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->hole_fill(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
   }
   if (this->runTools_.count("auto_pad")) {
-    this->auto_pad();
-    emit progress(++ran * 100 / this->runTools_.size());
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->auto_pad(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
   }
   if (this->runTools_.count("antialias")) {
-    this->antialias();
-    emit progress(++ran * 100 / this->runTools_.size());
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->antialias(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
   }
   if (this->runTools_.count("blur")) {
-    this->blur();
-    emit progress(++ran * 100 / this->runTools_.size());
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->blur(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
   }
   if (this->runTools_.count("fastmarching")) {
-    this->fastmarching();
-    emit progress(++ran * 100 / this->runTools_.size());
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->fastmarching(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
   }
 }

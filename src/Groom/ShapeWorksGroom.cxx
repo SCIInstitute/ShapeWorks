@@ -19,21 +19,18 @@
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include "itkCastImageFilter.h"
-#include "itkPSMImplicitSurfaceImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
 #include "itkThresholdImageFilter.h"
 #include "itkBinaryFillholeImageFilter.h"
+#include "itkApproximateSignedDistanceMapImageFilter.h"
 #include <map>
 
 ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,
   double background, double foreground, 
-  double blurSigma, double sigmaFastMarch,
-  double iso, size_t padding,  size_t iterations,
+  double blurSigma, size_t padding,  size_t iterations,
   bool verbose)
-  :  images_(inputs), 
-  background_(background), blurSigma_(blurSigma), sigmaFastMarch_(sigmaFastMarch),
-  iso_value_(iso),
+  : images_(inputs), background_(background), blurSigma_(blurSigma),
   foreground_(foreground), verbose_(verbose), padding_(padding),
   iterations_(iterations) {}
 
@@ -52,9 +49,6 @@ void ShapeWorksGroom::run() {
   }
   if (this->runTools_.count("hole_fill")) {
     this->hole_fill();
-  }
-  if (this->runTools_.count("auto_crop")) {
-    this->auto_crop();
   }
   if (this->runTools_.count("auto_pad")) {
     this->auto_pad();
@@ -80,13 +74,15 @@ std::vector<ImageType::Pointer> ShapeWorksGroom::getImages() {
   return this->images_;
 }
 
-void ShapeWorksGroom::isolate() {
+void ShapeWorksGroom::isolate(int which) {
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: isolate" << std::endl;
+    std::cout << "*** RUNNING TOOL: isolate on " <<
+      (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  std::vector<ImageType::Pointer> newImages;
-  for (auto img : this->images_) {
-
+  auto start = (which == -1 ? 0 : which);
+  auto end = (which == -1 ? this->images_.size() : which + 1);
+  for (size_t i = start; i < end; i++) {
+    auto img = this->images_[i];
     typedef itk::Image<unsigned char, 3>  IsolateType;
     typedef itk::CastImageFilter< ImageType, IsolateType > ToIntType;
     ToIntType::Pointer filter = ToIntType::New();
@@ -116,43 +112,43 @@ void ShapeWorksGroom::isolate() {
     FilterType::Pointer filter2 = FilterType::New();
     filter2->SetInput(thresh->GetOutput());
     filter2->Update();
-    auto imgIsolate = filter2->GetOutput();
-    if (this->isEmpty(imgIsolate)) { return; }
-    newImages.push_back(imgIsolate);
+    this->images_[i] = filter2->GetOutput();
   }
-  this->images_ = newImages;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: isolate" << std::endl;
   }
 }
 
-void ShapeWorksGroom::hole_fill() {
+void ShapeWorksGroom::hole_fill(int which) {
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: hole_fill" << std::endl;
+    std::cout << "*** RUNNING TOOL: antialias on " <<
+      (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  std::vector<ImageType::Pointer> out;
-  for (auto img : this->images_) {
-
+  auto start = (which == -1 ? 0 : which);
+  auto end = (which == -1 ? this->images_.size() : which + 1);
+  for (size_t i = start; i < end; i++) {
+    auto img = this->images_[i];
     typedef itk::BinaryFillholeImageFilter< ImageType > HoleType;
     HoleType::Pointer hfilter = HoleType::New();
     hfilter->SetInput(img);
     hfilter->SetForegroundValue(itk::NumericTraits< PixelType >::min());
     hfilter->Update();
-    if (this->isEmpty(hfilter->GetOutput())) { return; }
-    out.push_back(hfilter->GetOutput());
+    this->images_[i] = hfilter->GetOutput();
   }
-  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: hole_fill" << std::endl;
   }
 }
 
-void ShapeWorksGroom::center() {
+void ShapeWorksGroom::center(int which) {
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: center" << std::endl;
+    std::cout << "*** RUNNING TOOL: center on " <<
+      (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  std::vector<ImageType::Pointer> out;
-  for (auto img : this->images_) {
+  auto start = (which == -1 ? 0 : which);
+  auto end = (which == -1 ? this->images_.size() : which + 1);
+  for (size_t i = start; i < end; i++) {
+    auto img = this->images_[i];
     ImageType::PointType origin = img->GetOrigin();
 
     // Copy the original image and find the center of mass.
@@ -222,166 +218,26 @@ void ShapeWorksGroom::center() {
     for (; !it.IsAtEnd(); ++it, ++oit) {
       oit.Set(it.Get());
     }
-    if (this->isEmpty(resampler->GetOutput())) { return; }
-    out.push_back(resampler->GetOutput());
+    this->images_[i] = resampler->GetOutput();
   }
-  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: center" << std::endl;
   }
 }
 
-void ShapeWorksGroom::auto_crop() {
+void ShapeWorksGroom::auto_pad(int which) {
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: auto_crop" << std::endl;
+    std::cout << "*** RUNNING TOOL: auto_pad on " <<
+      (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  std::cout << "WARNING!  Assumes objects are centered in each image!" << std::endl;
-  ImageType::SizeType maxsize;
-  bool first = true;
-  for (auto img : this->images_) {
-    // Compute the bounding boxes.
-    shapetools::bounding_box<float, 3> bb_tool;
-    bb_tool.background() = this->background_;
-    bb_tool(img);
-
-    std::cout << bb_tool.region() << std::endl;
-
-    ImageType::IndexType mycenter;
-    for (unsigned i = 0; i < 3; i++) {
-      mycenter[i] = img->GetRequestedRegion().GetIndex()[i]
-        + (img->GetRequestedRegion().GetSize()[i] / 2);
-    }
-
-    if (first == true) {// save the first bounding box size 
-      first = false;
-      for (unsigned int i = 0; i < 3; i++) {
-        maxsize[i] = bb_tool.region().GetSize()[i];
-      }
-    } else {
-      // Keep the largest bounding box.
-      ImageType::SizeType lowbdist, upbdist, sz;
-      for (unsigned int i = 0; i < 3; i++) {
-        // Compute the distance from lower bound to center
-        lowbdist[i] = mycenter[i] - bb_tool.region().GetIndex()[i];
-
-        // Compute the distance from upper bound to center
-        upbdist[i] = (bb_tool.region().GetIndex()[i] + bb_tool.region().GetSize()[i]) - mycenter[i];
-
-        // Take the larger of the two.
-        if (lowbdist[i] > upbdist[i]){
-          sz[i] = lowbdist[i];
-        } else {
-          sz[i] = upbdist[i];
-        }
-
-        // Use that to construct maxsize
-        if (maxsize[i] < sz[i] * 2) {
-          maxsize[i] = sz[i] * 2;
-        }
-      }
-    }
-  }
-
-  for (unsigned int i = 0; i < 3; i++) {
-    maxsize[i] += this->padding_;
-  }
-  if (this->verbose_) {
-    std::cout << "crop size is " << maxsize << std::endl;
-  }
-  std::vector<ImageType::Pointer> imagesNew;
-  for (auto img : this->images_) {
-
-    itk::ExtractImageFilter<ImageType, ImageType>::Pointer extractor
-      = itk::ExtractImageFilter<ImageType, ImageType>::New();
-
-    // Construct region around center of image.
-    ImageType::RegionType reg;
-    ImageType::IndexType idx;
-
-    ImageType::IndexType thisidx = img->GetRequestedRegion().GetIndex();
-    ImageType::SizeType thissz = img->GetRequestedRegion().GetSize();
-
-    int extra[3];
-    bool pad = false;
-    for (unsigned int i = 0; i < 3; i++) {
-      extra[i] = 0;
-      idx[i] = ((thisidx[i] + thissz[i] / 2) - maxsize[i] / 2);
-      if (idx[i] < 0) {
-        pad = true;
-        extra[i] = -idx[i];
-        if (this->verbose_) {
-          std::cerr << "extra[" << i << "] = " << extra[i] << "\n";
-        }
-      }
-    }
-    itk::ConstantPadImageFilter<ImageType, ImageType>::Pointer padder
-      = itk::ConstantPadImageFilter<ImageType, ImageType>::New();
-
-    if (pad == true) {
-      unsigned long lb[3];
-      unsigned long up[3];
-      for (unsigned int i = 0; i < 3; i++) {
-        lb[i] = extra[i] * 2;
-        up[i] = extra[i] * 2;
-        if (this->verbose_) {
-          std::cout << "pad lower bound [" << i << "] = " << lb[i] << std::endl;
-          std::cout << "pad upper bound [" << i << "] = " << up[i] << std::endl;
-        }
-      }
-      padder->SetConstant(this->background_);
-      padder->SetPadLowerBound(lb);
-      padder->SetPadUpperBound(up);
-      padder->SetInput(img);
-      padder->Update();
-      if (this->verbose_) {
-        std::cout << "Padding done" << std::endl;
-      }
-      thisidx = padder->GetOutput()->GetRequestedRegion().GetIndex();
-      thissz = padder->GetOutput()->GetRequestedRegion().GetSize();
-
-      for (unsigned int i = 0; i < 3; i++) {
-        idx[i] = ((thisidx[i] + thissz[i] / 2) - maxsize[i] / 2);
-      }
-    }
-
-    reg.SetSize(maxsize);
-    reg.SetIndex(idx);
-
-    if (this->verbose_) {
-      std::cout << "extract maxsize = " << maxsize << std::endl;
-      std::cout << "extract index = " << idx << std::endl;
-    }
-    if (pad == true) {
-      extractor->SetInput(padder->GetOutput());
-    } else {
-      extractor->SetInput(img);
-    }
-    extractor->SetExtractionRegion(reg);
-    extractor->Update();
-
-    // Make sure the image information is correct.
-    itk::Matrix<double, 3, 3> I;
-    I.SetIdentity();
-    extractor->GetOutput()->SetDirection(I);
-    if (this->isEmpty(extractor->GetOutput())) { return; }
-    imagesNew.push_back(extractor->GetOutput());
-  }
-  this->images_ = imagesNew;
-  if (this->verbose_) {
-    std::cout << "*** FINISHED RUNNING TOOL: auto_crop" << std::endl;
-  }
-}
-
-void ShapeWorksGroom::auto_pad() {
-  if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: auto_pad" << std::endl;
-  }
-
   ImageType::IndexType upper;
   ImageType::IndexType lower;
 
   bool first = true;
-  for (auto img : this->images_) {
+  auto start = (which == -1 ? 0 : which);
+  auto end = (which == -1 ? this->images_.size() : which + 1);
+  for (size_t i = start; i < end; i++) {
+    auto img = this->images_[i];
     if (first == true) // save the first bounding box
     {
       first = false;
@@ -418,8 +274,8 @@ void ShapeWorksGroom::auto_pad() {
   for (unsigned int i = 0; i < 3; i++) {
     orig[i] = -static_cast<double>(upper[i] - lower[i]) / 2.0;
   }
-  std::vector<ImageType::Pointer> newImages;
-  for (auto img : this->images_) {
+  for (size_t i = start; i < end; i++) {
+    auto img = this->images_[i];
     itk::ConstantPadImageFilter<ImageType, ImageType>::Pointer padder
       = itk::ConstantPadImageFilter<ImageType, ImageType>::New();
     padder->SetConstant(0);
@@ -455,86 +311,73 @@ void ShapeWorksGroom::auto_pad() {
       std::cout << "hipad: " << hipad[0] << " " << hipad[1] << " " << hipad[2]
         << std::endl;
     }
-    if (this->isEmpty(padder->GetOutput())) { return; }
-    newImages.push_back(padder->GetOutput());
+    this->images_[i] = padder->GetOutput();
   }
-  this->images_ = newImages;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: auto_pad" << std::endl;
   }
 }
 
-bool ShapeWorksGroom::isEmpty(ImageType::Pointer image) {
-  itk::ImageRegionConstIterator<ImageType>  it(image, image->GetRequestedRegion());
-  while (!it.IsAtEnd()) {
-    if (it.Get() != 0) {
-      return false;
-    }
-    ++it;
-  }
-  std::cerr << "\tWarning! Tool failed and was skipped." << std::endl;
-  return true;
-}
-
-void ShapeWorksGroom::antialias() {
+void ShapeWorksGroom::antialias(int which) {
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: antialias" << std::endl;
+    std::cout << "*** RUNNING TOOL: antialias on " <<
+      (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  std::vector<ImageType::Pointer> out;
-  for (auto img : this->images_) {
+  auto start = (which == -1 ? 0 : which);
+  auto end = (which == -1 ? this->images_.size() : which + 1);
+  for (size_t i = start; i < end; i++) {
+    auto img = this->images_[i];
     itk::AntiAliasBinaryImageFilter<ImageType, ImageType>::Pointer anti
       = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>::New();
     anti->SetInput(img);
     anti->SetNumberOfIterations(this->iterations_);
     anti->SetMaximumRMSError(0.024);
     anti->Update();
-    if (this->isEmpty(anti->GetOutput())) { return; }
-    out.push_back(anti->GetOutput());
+    this->images_[i] = anti->GetOutput();
   }
-  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: antialias" << std::endl;
   }
 }
 
-void ShapeWorksGroom::fastmarching() {
+void ShapeWorksGroom::fastmarching(int which) {
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: fastmarching" << std::endl;
+    std::cout << "*** RUNNING TOOL: fastmarching on " <<
+      (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  std::vector<ImageType::Pointer> out;
-  for (auto img : this->images_) {
-    itk::PSMImplicitSurfaceImageFilter<ImageType, ImageType>::Pointer P
-      = itk::PSMImplicitSurfaceImageFilter<ImageType, ImageType>::New();
-    P->SetSmoothingSigma(this->sigmaFastMarch_);
-    P->SetIsosurfaceValue(this->iso_value_);
+  auto start = (which == -1 ? 0 : which);
+  auto end = (which == -1 ? this->images_.size() : which + 1);
+  for (size_t i = start; i < end; i++) {
+    auto img = this->images_[i];
+    itk::ApproximateSignedDistanceMapImageFilter<ImageType, ImageType>::Pointer P
+      = itk::ApproximateSignedDistanceMapImageFilter<ImageType, ImageType>::New();
     P->SetInput(img);
+    P->SetInsideValue(0);
+    P->SetOutsideValue(1);
     P->Update();
-    if (this->isEmpty(P->GetOutput())) { return; }
-    out.push_back(P->GetOutput());
+    this->images_[i] = P->GetOutput();
   }
-  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: fastmarching" << std::endl;
   }
 }
 
-void ShapeWorksGroom::blur() {
-
+void ShapeWorksGroom::blur(int which) {
   if (this->verbose_) {
-    std::cout << "*** RUNNING TOOL: blur" << std::endl;
+    std::cout << "*** RUNNING TOOL: blur on "<< 
+      (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  std::vector<ImageType::Pointer> out;
-  for (auto img : this->images_) {
+  auto start = (which == -1 ? 0 : which);
+  auto end = (which == -1 ? this->images_.size() : which + 1);
+  for (size_t i = start ; i < end; i++) {
+    auto img = this->images_[i];
     itk::DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer blur
       = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
     blur->SetInput(img);
     blur->SetVariance(this->blurSigma_ * this->blurSigma_);
-    blur->SetUseImageSpacingOff();
     blur->Update();
-    if (this->isEmpty(blur->GetOutput())) { return; }
-    out.push_back(blur->GetOutput());
+    this->images_[i] = blur->GetOutput();
   }
-  this->images_ = out;
   if (this->verbose_) {
     std::cout << "*** FINISHED RUNNING TOOL: blur" << std::endl;
   }

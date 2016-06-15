@@ -56,16 +56,6 @@ background: rgb(255, 255, 127)
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="autocrop_checkbox">
-       <property name="text">
-        <string>Autocrop (experimental)</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QCheckBox" name="autopad_checkbox">
        <property name="text">
         <string>Pad</string>
@@ -219,85 +209,6 @@ background: rgb(255, 255, 127)
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QGroupBox" name="fastmarching_groupbox">
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <spacer name="horizontalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="sigma2">
-            <property name="text">
-             <string>Sigma</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="fastmarch_sigma"/>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Iso Value</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDoubleSpinBox" name="iso_value">
-         <property name="minimum">
-          <double>-999999999.000000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>999999999.000000000000000</double>
-         </property>
-         <property name="value">
-          <double>0.500000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
     </layout>
    </item>
    <item>
@@ -338,14 +249,11 @@ background: rgb(255, 255, 127)
  </widget>
  <tabstops>
   <tabstop>center_checkbox</tabstop>
-  <tabstop>autocrop_checkbox</tabstop>
   <tabstop>autopad_checkbox</tabstop>
   <tabstop>padding_amount</tabstop>
   <tabstop>antialias_checkbox</tabstop>
   <tabstop>antialias_iterations</tabstop>
   <tabstop>fastmarching_checkbox</tabstop>
-  <tabstop>iso_value</tabstop>
-  <tabstop>fastmarch_sigma</tabstop>
   <tabstop>blur_sigma</tabstop>
   <tabstop>skipButton</tabstop>
   <tabstop>run_groom_button</tabstop>
