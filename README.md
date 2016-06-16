@@ -24,6 +24,7 @@ Table of Contents
 		- [Rendering Window](#rendering-window)<br/>
 		- [Preferences](#preferences)<br/>
 		- [File Menu](#file-menu)<br/>
+- [Known Issues](#known-issues)<br/>
 - [Contact and Bug Reports](#contact-and-bug-reports)<br/>
 
 Requirements
@@ -277,6 +278,10 @@ between application runs for convenience.
 * Open recent projects
 * Quit the application.
 <br/><br/>
+
+Known Issues
+=====================
+* On OSX, full screen mode has a widget bug visualization problem for the left panel. Future Qt releases may fix this.
 
 Contact and Bug Reports
 =====================
