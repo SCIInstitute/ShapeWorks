@@ -95,6 +95,7 @@ void OptimizeTool::on_restoreDefaults_clicked() {
   auto scales = this->preferences_.get_preference("optimize_scales", 8);
   this->ui_->number_of_scales->setValue(scales);
   qApp->processEvents();
+  this->preferences_.set_saved(false);
 }
 
 void OptimizeTool::on_number_of_scales_valueChanged(int val) {

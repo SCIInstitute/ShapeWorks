@@ -68,6 +68,7 @@ void GroomTool::on_restoreDefaults_clicked() {
   this->preferences_.restore_defaults();
   this->set_preferences();
   qApp->processEvents();
+  this->preferences_.set_saved(false);
 }
 
 void GroomTool::set_preferences() {

@@ -980,6 +980,20 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
     return;
   }
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
+  if (this->analysis_tool_->getAnalysisMode() == "all samples") {
+    auto shapes = this->project_->get_shapes();
+    for (size_t i = 0; i < shapes.size(); i++) {
+      auto msh = shapes[i]->get_reconstructed_mesh()->get_poly_data();
+      vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
+      auto name = filename.toStdString();
+      name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + ".vtk";
+      writer->SetFileName(name.c_str());
+      writer->SetInputData(msh);
+      writer->Write();
+    }
+    this->handle_message("Successfully exported PCA Mesh files: " + filename.toStdString());
+    return;
+  }
   auto shape = this->visualizer_->getCurrentShape();
   auto msh = this->project_->get_mesh_manager()->getMesh(shape);
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();

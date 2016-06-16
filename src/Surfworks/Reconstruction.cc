@@ -55,11 +55,11 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
   std::vector<itk::Point<float> > global_pts,
   std::vector<ImageType::Pointer> distance_transform) {
   if (!this->denseDone_) {
+    if (local_pts.empty() || distance_transform.empty() ||
+      local_pts.size() != distance_transform.size()) {
+      throw std::runtime_error("Invalid input for reconstruction!");
+    }
     this->computeDenseMean(local_pts, global_pts, distance_transform);
-  }
-  if (local_pts.empty() || distance_transform.empty() ||
-    local_pts.size() != distance_transform.size()) {
-    throw std::runtime_error("Invalid input for reconstruction!");
   }
   return this->denseMean_;
 }

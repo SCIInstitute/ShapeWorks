@@ -28,8 +28,8 @@ bool Preferences::not_saved() {
   return !this->saved_;
 }
 
-void Preferences::set_saved() {
-  this->saved_ = true;
+void Preferences::set_saved(bool saved) {
+  this->saved_ = saved;
 }
 
 QStringList Preferences::get_recent_files()

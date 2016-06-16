@@ -47,9 +47,11 @@ void MeshManager::generateMesh(const vnl_vector<double>& shape)
   }
 }
 
-vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shape)
-{
+vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shape) {
   vtkSmartPointer<vtkPolyData> polyData;
+  if (shape.empty()) {
+    return polyData;
+  }
   // check cache first
   if (this->prefs_.get_preference("cache_enabled", true)) {
     polyData = this->meshCache_.getMesh(shape);

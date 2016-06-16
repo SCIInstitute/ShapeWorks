@@ -22,7 +22,7 @@ public:
   void add_recent_file(QString file);
   QStringList get_recent_files();
   bool not_saved();
-  void set_saved();
+  void set_saved(bool saved = true);
   std::map<std::string, QVariant> getAllPreferences();
   template<typename T>
   T get_preference(std::string name, T default_val) {
