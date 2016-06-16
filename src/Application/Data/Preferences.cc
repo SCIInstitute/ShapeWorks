@@ -122,3 +122,15 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_decay_span", 0.0);
   this->saved_ = true;
 }
+
+void Preferences::delete_entry(std::string entry) {
+  auto allPref = this->getAllPreferences();
+  std::vector<std::string> toRemove;
+  for (auto &p : allPref) {
+    if (p.first.rfind(entry) != std::string::npos) {
+      this->settings_.remove(QString::fromStdString(p.first));
+    }
+  }
+  allPref = this->getAllPreferences();
+  this->saved_ = false;
+}

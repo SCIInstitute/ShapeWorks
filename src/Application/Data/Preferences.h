@@ -18,6 +18,7 @@ public:
   enum { MAX_RECENT_FILES = 4 };
   Preferences();
   void restore_defaults(bool force = false);
+  void delete_entry(std::string entry);
   void add_recent_file(QString file);
   QStringList get_recent_files();
   bool not_saved();

@@ -54,6 +54,22 @@ void GroomTool::handle_progress(int val) {
   emit progress(static_cast<size_t>(val));
 }
 
+void GroomTool::on_restoreDefaults_clicked() {
+  this->preferences_.delete_entry("groom_center");
+  this->preferences_.delete_entry("groom_antialias");
+  this->preferences_.delete_entry("groom_pad");
+  this->preferences_.delete_entry("groom_fastmarching");
+  this->preferences_.delete_entry("groom_blur");
+  this->preferences_.delete_entry("groom_isolate");
+  this->preferences_.delete_entry("groom_antialias_amount");
+  this->preferences_.delete_entry("groom_fill_holes");
+  this->preferences_.delete_entry("groom_blur_sigma");
+  this->preferences_.delete_entry("groom_pad_value");
+  this->preferences_.restore_defaults();
+  this->set_preferences();
+  qApp->processEvents();
+}
+
 void GroomTool::set_preferences() {
   this->ui_->center_checkbox->setChecked(
     this->preferences_.get_preference("groom_center", this->ui_->center_checkbox->isChecked()));

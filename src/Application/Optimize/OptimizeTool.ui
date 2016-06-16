@@ -70,6 +70,13 @@ background: rgb(255, 255, 127)
      </item>
     </layout>
    </item>
+   <item>
+    <widget class="QPushButton" name="restoreDefaults">
+     <property name="text">
+      <string>Restore Defaults</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>

@@ -83,6 +83,20 @@ void OptimizeTool::handle_message(std::string s) {
   emit message(s);
 }
 
+void OptimizeTool::on_restoreDefaults_clicked() {
+  this->preferences_.delete_entry("optimize_scales");
+  this->preferences_.delete_entry("optimize_start_reg");
+  this->preferences_.delete_entry("optimize_end_reg");
+  this->preferences_.delete_entry("optimize_iters");
+  this->preferences_.delete_entry("optimize_tolerance");
+  this->preferences_.delete_entry("optimize_decay_span");
+  this->preferences_.restore_defaults();
+  this->set_preferences();
+  auto scales = this->preferences_.get_preference("optimize_scales", 8);
+  this->ui_->number_of_scales->setValue(scales);
+  qApp->processEvents();
+}
+
 void OptimizeTool::on_number_of_scales_valueChanged(int val) {
   this->setupTable(val);
 }

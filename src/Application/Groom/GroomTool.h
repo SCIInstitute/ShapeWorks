@@ -44,6 +44,7 @@ public Q_SLOTS:
   void on_skipButton_clicked();
   void handle_thread_complete();
   void handle_progress(int val);
+  void on_restoreDefaults_clicked();
   void handle_error(std::string msg);
 
   /// Run groom tool

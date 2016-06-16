@@ -456,6 +456,12 @@ void ShapeWorksStudioApp::disableAllActions() {
   //subtools
   this->groom_tool_->disableActions();
   this->optimize_tool_->disableActions();
+  //recent
+  QStringList recent_files = preferences_.get_recent_files();
+  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  for (int i = 0; i < num_recent_files; i++) {
+    this->recent_file_actions_[i]->setEnabled(false);
+  }
 }
 
 void ShapeWorksStudioApp::enablePossibleActions() {
@@ -483,6 +489,12 @@ void ShapeWorksStudioApp::enablePossibleActions() {
   //subtools
   this->groom_tool_->enableActions();
   this->optimize_tool_->enableActions();
+  //recent
+  QStringList recent_files = preferences_.get_recent_files();
+  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
+  for (int i = 0; i < num_recent_files; i++) {
+    this->recent_file_actions_[i]->setEnabled(true);
+  }
 }
 
 //---------------------------------------------------------------------------
