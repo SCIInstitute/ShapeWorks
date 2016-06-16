@@ -36,7 +36,8 @@ public:
   void initializeReconstruction(
     std::vector<std::vector<itk::Point<float> > > local_pts,
     std::vector<std::vector<itk::Point<float> > > global_pts,
-    std::vector<ImageType::Pointer> distance_transform);
+    std::vector<ImageType::Pointer> distance_transform,
+    float decimationPecent);
   bool hasDenseMean();
   void setMean(vtkSmartPointer<vtkPoints> sparseMean,
     vtkSmartPointer<vtkPolyData> denseMean,

@@ -32,7 +32,8 @@ public:
     std::vector<std::vector<itk::Point<float> > > global_pts =
     std::vector<std::vector<itk::Point<float> > >(),
     std::vector<ImageType::Pointer> distance_transform =
-    std::vector<ImageType::Pointer>() );
+    std::vector<ImageType::Pointer>(),
+    float decimationPercent = 0.3f);
 	~ShapeworksWorker();
 
 public Q_SLOTS:
@@ -53,6 +54,7 @@ private:
   std::vector<std::vector<itk::Point<float> > > local_pts_;
   std::vector<std::vector<itk::Point<float> > > global_pts_;
   std::vector<ImageType::Pointer> distance_transform_;
+  float decimationPercent_;
 };
 
 #endif // ifndef SHAPEWORKS_WORKER_H

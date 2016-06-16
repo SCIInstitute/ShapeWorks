@@ -110,6 +110,8 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_start_reg", 100);
   if (!this->settings_.contains("optimize_scales") || force)
     this->settings_.setValue("optimize_scales", 8);
+  if (!this->settings_.contains("optimize_decimation") || force)
+    this->settings_.setValue("optimize_decimation", 0.3);
   if (!this->settings_.contains("optimize_end_reg") || force)
     this->settings_.setValue("optimize_end_reg", 2);
   if (!this->settings_.contains("optimize_iters") || force)

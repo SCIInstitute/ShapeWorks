@@ -44,6 +44,7 @@ public Q_SLOTS:
   void handle_thread_complete();
   void handle_progress(int val);
   void handle_error(std::string);
+  void on_meshDecimation_valueChanged(float v);
   void handle_message(std::string);
 signals:
   void optimize_complete();

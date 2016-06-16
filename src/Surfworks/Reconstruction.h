@@ -53,21 +53,7 @@ class Reconstruction {
   typedef RBFTransformType::PointSetType              PointSetType;
   typedef PointSetType::PointIdentifier               PointIdType;
 public:
-  Reconstruction(
-    bool denseDone = false,
-    float levelsetValue = 0.f,
-    float targetReduction = 0.3,
-    float featureAngle = 30.,
-    int lsSmootherIterations = 5,
-    int meshSmootherIterations = 5,
-    bool preserveTopology = true,
-    bool fixWinding = true,
-    bool smoothBeforeDecimate = true,
-    bool smoothAfterDecimate = true,
-    float smoothingLambda = 0.5,
-    int qcSmoothIterations = 1,
-    float decimationPercent = 0.3
-    );
+  Reconstruction(float decimationPercent = 0.3);
   ~Reconstruction();
   vtkSmartPointer<vtkPolyData> getDenseMean(
     std::vector<std::vector<itk::Point<float> > > local_pts =
@@ -76,6 +62,8 @@ public:
     std::vector<itk::Point<float> >(),
     std::vector<ImageType::Pointer> distance_transform = 
     std::vector<ImageType::Pointer>() );
+  void reset();
+  void setDecimation(float dec);
   vtkSmartPointer<vtkPolyData> 
     getMesh(std::vector<itk::Point<float> > local_pts);
   void readMeanInfo(std::string dense, 
@@ -115,15 +103,7 @@ private:
   vtkSmartPointer<vtkPoints> sparseMean_;
   vtkSmartPointer<vtkPolyData> denseMean_;
   std::vector<bool> goodPoints_;
-  bool denseDone_; 
-  float levelsetValue_;
-  float targetReduction_;
-  float featureAngle_;
-  int lsSmootherIterations_;
-  int meshSmootherIterations_;
-  bool preserveTopology_, fixWinding_, smoothBeforeDecimation_,
-    smoothAfterDecimation_;
-  float smoothingLambda_, decimationPercent_;
-  int qcSmoothingIterations_;
+  bool denseDone_;
+  float decimationPercent_;
 };
 #endif // !__RECONSTRUCTION_H__

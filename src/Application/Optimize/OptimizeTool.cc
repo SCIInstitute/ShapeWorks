@@ -68,7 +68,11 @@ void OptimizeTool::on_run_optimize_button_clicked() {
 
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
-    ShapeworksWorker::Optimize, NULL, this->optimize_, this->project_);
+    ShapeworksWorker::Optimize, NULL, this->optimize_, this->project_,
+    std::vector<std::vector<itk::Point<float> > >(),
+    std::vector<std::vector<itk::Point<float> > >(),
+    std::vector<ImageType::Pointer>(),
+    this->ui_->meshDecimation->value());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
@@ -79,11 +83,16 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   thread->start();
 }
 
+void OptimizeTool::on_meshDecimation_valueChanged(float v) {
+  this->preferences_.set_preference("optimize_decimation", v);
+}
+
 void OptimizeTool::handle_message(std::string s) {
   emit message(s);
 }
 
 void OptimizeTool::on_restoreDefaults_clicked() {
+  this->preferences_.delete_entry("optimize_decimation");
   this->preferences_.delete_entry("optimize_scales");
   this->preferences_.delete_entry("optimize_start_reg");
   this->preferences_.delete_entry("optimize_end_reg");
@@ -187,6 +196,9 @@ std::vector<unsigned int> OptimizeTool::getIters() {
 }
 
 void OptimizeTool::set_preferences(bool setScales) {
+  this->ui_->meshDecimation->setValue(
+    this->preferences_.get_preference("optimize_decimation",
+      this->ui_->meshDecimation->value()));
   if (setScales) {
     this->ui_->number_of_scales->setValue(
       this->preferences_.get_preference("optimize_scales",
@@ -223,8 +235,10 @@ void OptimizeTool::set_preferences(bool setScales) {
 }
 
 void OptimizeTool::update_preferences() {
+  this->preferences_.set_preference("optimize_decimation",
+      this->ui_->meshDecimation->value());
   this->preferences_.set_preference("optimize_scales",
-      this->ui_->number_of_scales->value());
+    this->ui_->number_of_scales->value());
   auto table = this->ui_->parameterTable;
   auto rows = this->ui_->number_of_scales->value();
   for (size_t i = 0; i < rows; i++) {

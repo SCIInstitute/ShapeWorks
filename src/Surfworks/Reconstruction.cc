@@ -1,6 +1,4 @@
 #include "Reconstruction.h"
-#include "Reconstruction.h"
-#include "Reconstruction.h"
 #include <vtkKdTreePointLocator.h>
 #include <vtkProbeFilter.h>
 #include <vtkFloatArray.h>
@@ -19,32 +17,8 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
-Reconstruction::Reconstruction(
-  bool denseDone,
-  float levelsetValue,
-  float targetReduction,
-  float featureAngle,
-  int lsSmootherIteration,
-  int meshSmootherIteration,
-  bool preserveTopology,
-  bool fixWinding,
-  bool smoothBeforeDecimate,
-  bool smoothAfterDecimate,
-  float smoothingLambda,
-  int qcSmoothIterations,
-  float decimationPercent) :
-  denseDone_(denseDone),
-  levelsetValue_(levelsetValue),
-  targetReduction_(targetReduction),
-  featureAngle_(featureAngle),
-  lsSmootherIterations_(lsSmootherIteration),
-  meshSmootherIterations_(meshSmootherIteration),
-  preserveTopology_(preserveTopology),
-  fixWinding_(fixWinding),
-  smoothBeforeDecimation_(smoothBeforeDecimate),
-  smoothAfterDecimation_(smoothAfterDecimate),
-  smoothingLambda_(smoothingLambda),
-  qcSmoothingIterations_(qcSmoothIterations),
+Reconstruction::Reconstruction(float decimationPercent) :
+  denseDone_(false),
   decimationPercent_(decimationPercent) {}
 
 Reconstruction::~Reconstruction() {
@@ -54,14 +28,27 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
   std::vector<std::vector<itk::Point<float> > > local_pts,
   std::vector<itk::Point<float> > global_pts,
   std::vector<ImageType::Pointer> distance_transform) {
-  if (!this->denseDone_) {
+  if (!this->denseDone_ || !local_pts.empty() || 
+    !distance_transform.empty() || !global_pts.empty()) {
+    this->denseDone_ = false;
     if (local_pts.empty() || distance_transform.empty() ||
-      local_pts.size() != distance_transform.size()) {
+      global_pts.empty() || local_pts.size() != distance_transform.size()) {
       throw std::runtime_error("Invalid input for reconstruction!");
     }
     this->computeDenseMean(local_pts, global_pts, distance_transform);
   }
   return this->denseMean_;
+}
+
+void Reconstruction::reset() {
+  this->denseDone_ = false;
+  this->goodPoints_.clear();
+  this->denseMean_ = NULL;
+  this->sparseMean_ = NULL;
+}
+
+void Reconstruction::setDecimation(float dec) {
+  this->decimationPercent_ = dec;
 }
 
 vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
@@ -750,7 +737,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
 #else
   ls->SetInputData(volData);
 #endif
-  ls->SetValue(0, this->levelsetValue_);
+  ls->SetValue(0, 0.);
   ls->Update();
 
   // (2) laplacian smoothing
@@ -762,7 +749,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
   vtkSmartPointer<vtkSmoothPolyDataFilter> lsSmoother =
     vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   lsSmoother->SetInputConnection(ls->GetOutputPort());
-  lsSmoother->SetNumberOfIterations(this->lsSmootherIterations_);
+  lsSmoother->SetNumberOfIterations(1);
   lsSmoother->Update();
   std::cout << "..";
 
@@ -781,13 +768,9 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
   vtkSmartPointer<vtkDecimatePro> decimator =
     vtkSmartPointer<vtkDecimatePro>::New();
   decimator->SetInputConnection(conn->GetOutputPort());
-  decimator->SetTargetReduction(this->targetReduction_);
-  decimator->SetFeatureAngle(this->featureAngle_);
-  if (this->preserveTopology_) {
-    decimator->PreserveTopologyOn();
-} else {
-    decimator->PreserveTopologyOff();
-  }
+  decimator->SetTargetReduction(0.1);
+  decimator->SetFeatureAngle(30.);
+  decimator->PreserveTopologyOn();
   decimator->BoundaryVertexDeletionOn();
   decimator->Update();
 
@@ -795,7 +778,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
   vtkSmartPointer<vtkSmoothPolyDataFilter> smoother =
     vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
   smoother->SetInputConnection(decimator->GetOutputPort());
-  smoother->SetNumberOfIterations(this->meshSmootherIterations_);
+  smoother->SetNumberOfIterations(1);
   smoother->Update();
 
   vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
@@ -829,17 +812,12 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     // fix the element winding
     FEFixMesh fix;
     FEMesh* pm_fix;
-    if (this->fixWinding_)
-      pm_fix = fix.FixElementWinding(pm);
-
+    pm_fix = fix.FixElementWinding(pm);
     // do a Laplacian smoothing before decimation
-    if (this->smoothBeforeDecimation_)
-    {
-      FEMeshSmoothingModifier lap;
-      lap.m_threshold1 = this->smoothingLambda_;
-      lap.m_iteration = this->qcSmoothingIterations_;
-      pm_fix = lap.Apply(pm_fix);
-    }
+    FEMeshSmoothingModifier lap;
+    lap.m_threshold1 = 0.5;
+    lap.m_iteration = 1;
+    pm_fix = lap.Apply(pm_fix);
 
     // do a CVD decimation
     FECVDDecimationModifier cvd;
@@ -848,12 +826,10 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     pm_fix = cvd.Apply(pm_fix);
 
     // do a Laplacian smoothing after decimation
-    if (this->smoothAfterDecimation_) {
-      FEMeshSmoothingModifier lap;
-      lap.m_threshold1 = this->smoothingLambda_;
-      lap.m_iteration = this->qcSmoothingIterations_;
-      pm_fix = lap.Apply(pm_fix);
-    }
+      FEMeshSmoothingModifier lap2;
+      lap2.m_threshold1 = 0.5;
+      lap2.m_iteration = 1;
+      pm_fix = lap2.Apply(pm_fix);
 
     // export to another vtk file
     FEVTKExport vtk_out;

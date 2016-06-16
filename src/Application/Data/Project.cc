@@ -96,7 +96,7 @@ void Project::calculate_reconstructed_samples() {
     QThread *thread = new QThread;
     ShapeworksWorker *worker = new ShapeworksWorker(
       ShapeworksWorker::Reconstruct, NULL, NULL, QSharedPointer<Project>(this),
-      local_pts, global_pts, images);
+      local_pts, global_pts, images, this->preferences_.get_preference("optimize_decimation", 0.3));
     worker->moveToThread(thread);
     connect(thread, SIGNAL(started()), worker, SLOT(process()));
     connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
@@ -139,6 +139,11 @@ bool Project::save_project(std::string fname, std::string dataDir) {
     QMessageBox::warning(0, "Read only", "The file is in read only mode");
     return false;
   }
+  QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
+  progress.setWindowModality(Qt::WindowModal);
+  progress.show();
+  progress.setMinimumDuration(2000);
+
 
   // setup XML
   QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
@@ -169,6 +174,8 @@ bool Project::save_project(std::string fname, std::string dataDir) {
     xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
     xml->writeTextElement("goodPoints_file", QString::fromStdString(location + ".goodPoints.txt"));
   }
+  progress.setValue(5);
+  QApplication::processEvents();
   
   // shapes
   xml->writeStartElement("shapes");
@@ -231,10 +238,17 @@ bool Project::save_project(std::string fname, std::string dataDir) {
     }
 
     xml->writeEndElement(); // shape
+    progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. / 
+      static_cast<double>(this->shapes_.size())));
+    QApplication::processEvents();
+    if (progress.wasCanceled()) {
+      break;
+    }
   }
   xml->writeEndElement(); // shapes
 
   xml->writeEndElement(); // project
+  progress.setValue(100);
   return true;
 }
 
@@ -354,6 +368,7 @@ void Project::load_original_files(std::vector<std::string> file_names) {
   }
   progress.setValue(file_names.size());
   QApplication::processEvents();
+  this->renumber_shapes();
   if (file_names.size() > 0) {
     this->original_present_ = true;
     emit data_changed();

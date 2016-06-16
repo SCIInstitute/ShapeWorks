@@ -24,30 +24,70 @@ background: rgb(255, 255, 127)
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="antialias_groupbox">
-     <property name="title">
-      <string/>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="leftMargin">
+      <number>9</number>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Number of Splits</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="number_of_scales">
-        <property name="maximum">
-         <number>20000</number>
-        </property>
-        <property name="value">
-         <number>8</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+     <property name="topMargin">
+      <number>9</number>
+     </property>
+     <property name="rightMargin">
+      <number>9</number>
+     </property>
+     <property name="bottomMargin">
+      <number>9</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Number of Splits</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="number_of_scales">
+       <property name="maximum">
+        <number>20000</number>
+       </property>
+       <property name="value">
+        <number>8</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="leftMargin">
+      <number>9</number>
+     </property>
+     <property name="topMargin">
+      <number>9</number>
+     </property>
+     <property name="rightMargin">
+      <number>9</number>
+     </property>
+     <property name="bottomMargin">
+      <number>9</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Mesh Decimation %</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="meshDecimation">
+       <property name="minimum">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.300000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="Line" name="line_3">
@@ -80,7 +120,6 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
-  <tabstop>number_of_scales</tabstop>
   <tabstop>run_optimize_button</tabstop>
  </tabstops>
  <resources/>

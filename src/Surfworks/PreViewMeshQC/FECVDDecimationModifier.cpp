@@ -5,6 +5,7 @@
 #include "FENodeNodeList.h"
 #include "FEFillHole.h"
 #include <algorithm>
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 //! Constructor
@@ -727,6 +728,7 @@ FEMesh* FECVDDecimationModifier::Triangulate2()
 	pnew->Create(nodes, 0);
 	m_st.resize(nodes);
 	// calculate the node positions
+  std::cout << "Before bad assert" << std::endl;
 	for (int i=0; i<nodes; ++i)
 	{
 		FENode& nd = pnew->Node(i);
@@ -782,6 +784,7 @@ FEMesh* FECVDDecimationModifier::Triangulate2()
 		m_st[i] = thickness / Ci.m_nf;
 	}
 
+  std::cout << "After bad assert" << std::endl;
 	// list of triangles
 	FEFillHole fill;
 	vector<FEFillHole::FACE> tri_list;
