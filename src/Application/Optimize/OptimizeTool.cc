@@ -83,7 +83,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   thread->start();
 }
 
-void OptimizeTool::on_meshDecimation_valueChanged(float v) {
+void OptimizeTool::on_meshDecimation_valueChanged(double v) {
   this->preferences_.set_preference("optimize_decimation", v);
 }
 

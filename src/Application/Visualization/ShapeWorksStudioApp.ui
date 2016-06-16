@@ -460,17 +460,11 @@ QPushButton {
          </item>
          <item>
           <widget class="QToolButton" name="surface_visible_button">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
            <property name="toolTip">
-            <string>Show isosurface</string>
+            <string>show isosurface</string>
            </property>
            <property name="text">
-            <string/>
+            <string>...</string>
            </property>
            <property name="icon">
             <iconset resource="../Resources/ShapeWorksStudio.qrc">
@@ -482,9 +476,6 @@ QPushButton {
            </property>
            <property name="checked">
             <bool>true</bool>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::MenuButtonPopup</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>

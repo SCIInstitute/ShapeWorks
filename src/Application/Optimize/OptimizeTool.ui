@@ -120,7 +120,11 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
+  <tabstop>number_of_scales</tabstop>
+  <tabstop>meshDecimation</tabstop>
+  <tabstop>parameterTable</tabstop>
   <tabstop>run_optimize_button</tabstop>
+  <tabstop>restoreDefaults</tabstop>
  </tabstops>
  <resources/>
  <connections/>

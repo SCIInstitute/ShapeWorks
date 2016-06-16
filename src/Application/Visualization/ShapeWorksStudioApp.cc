@@ -97,65 +97,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
 
-  // Isosurface options in the render window.
-  menu = new QMenu();
-  widget = new QWidget();
-  layout = new QGridLayout(widget);
-  //column 1 (labels)
-  size_label = new QLabel("Neighborhood Size: ");
-  layout->addWidget(size_label, 0, 0, 1, 1);
-  size_label = new QLabel("Spacing: ");
-  layout->addWidget(size_label, 1, 0, 1, 1);
-  size_label = new QLabel("Smoothing iterations: ");
-  layout->addWidget(size_label, 2, 0, 1, 1);
-  //column 2 (number labels)
-  size_label = new QLabel("");
-  layout->addWidget(size_label, 0, 1, 1, 1);
-  layout->addWidget(size_label, 1, 1, 1, 1);
-  this->iso_smoothing_label_ = new QLabel("0");
-  this->iso_smoothing_label_->setMinimumWidth(50);
-  layout->addWidget(this->iso_smoothing_label_, 2, 1, 1, 1);
-  //column 3 (the text/slider widgets)
-  //        neighborhood
-  this->iso_neighborhood_spinner_ = new QSpinBox(widget);
-  this->iso_neighborhood_spinner_->setMinimumWidth(200);
-  this->iso_neighborhood_spinner_->setMinimum(1);
-  this->iso_neighborhood_spinner_->setMaximum(99);
-  this->iso_neighborhood_spinner_->setSingleStep(1);
-  layout->addWidget(this->iso_neighborhood_spinner_, 0, 2, 1, 1);
-  //        spacing
-  this->iso_spacing_spinner_ = new QDoubleSpinBox(widget);
-  this->iso_spacing_spinner_->setMinimumWidth(200);
-  this->iso_spacing_spinner_->setMinimum(0.00);
-  this->iso_spacing_spinner_->setMaximum(99.99);
-  this->iso_spacing_spinner_->setSingleStep(1.0);
-  layout->addWidget(this->iso_spacing_spinner_, 1, 2, 1, 1);
-  //        smoothing
-  this->iso_smoothing_slider_ = new QSlider(widget);
-  this->iso_smoothing_slider_->setOrientation(Qt::Horizontal);
-  this->iso_smoothing_slider_->setMinimum(0);
-  this->iso_smoothing_slider_->setMaximum(5);
-  this->iso_smoothing_slider_->setSingleStep(1);
-  this->iso_smoothing_slider_->setTickPosition(QSlider::TicksBelow);
-  this->iso_smoothing_slider_->setTickInterval(1);
-  this->iso_smoothing_slider_->setMinimumWidth(200);
-  layout->addWidget(this->iso_smoothing_slider_, 2, 2, 1, 1);
-  // add to the tool button
-  this->ui_->surface_visible_button->setMenu(menu);
-  widget->setLayout(layout);
-
-  widget_action = new QWidgetAction(widget);
-  widget_action->setDefaultWidget(widget);
-  menu->addAction(widget_action);
-
-  /*
-     QToolButton* tool_button = new QToolButton();
-     tool_button->setMaximumWidth( 15 );
-     tool_button->setMenu( menu );
-     tool_button->setPopupMode( QToolButton::InstantPopup );
-     this->ui_->glyph_layout->addWidget( tool_button );
-     */
-
   //project initializations
   this->project_ = QSharedPointer<Project>(new Project(preferences_));
   this->project_->set_parent(this);
@@ -249,10 +190,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   connect(this->ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(this->glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
   connect(this->glyph_quality_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
-  //isosurface options signals/slots
-  connect(this->iso_neighborhood_spinner_, SIGNAL(valueChanged(int)), this, SLOT(handle_pca_changed()));
-  connect(this->iso_spacing_spinner_, SIGNAL(valueChanged(double)), this, SLOT(handle_pca_changed()));
-  connect(this->iso_smoothing_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_pca_changed()));
   this->preferences_.set_saved();
   this->enablePossibleActions();
 }
@@ -503,12 +440,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_quality_slider_->setValue(preferences_.get_preference("glyph_quality", 5.));
   this->glyph_size_slider_->setValue(preferences_.get_preference("glyph_size", 1.) * 10.0);
 
-  this->iso_smoothing_slider_->setValue(preferences_.get_preference("smoothing_amount", 0.) / 100);
-  this->iso_neighborhood_spinner_->setValue(preferences_.get_preference("neighborhood", 5));
-  this->iso_spacing_spinner_->setValue(preferences_.get_preference("spacing", 1.f));
-
   this->glyph_quality_label_->setText(QString::number(preferences_.get_preference("glyph_quality", 5.)));
-  this->iso_smoothing_label_->setText(QString::number(preferences_.get_preference("smoothing", 0.)));
   this->glyph_size_label_->setText(QString::number(preferences_.get_preference("glyph_size", 1.)));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_preference("center_option", true));
@@ -521,14 +453,10 @@ void ShapeWorksStudioApp::update_scrollbar()
 {
   int num_rows = this->lightbox_->get_num_rows();
   int num_visible = this->lightbox_->get_num_rows_visible();
-  std::cerr << "num_rows = " << num_rows << "\n";
-  std::cerr << "num_visible = " << num_visible << "\n";
-  if (num_visible >= num_rows)
-  {
+  if (num_visible >= num_rows)  {
     this->ui_->vertical_scroll_bar->setMaximum(0);
     this->ui_->vertical_scroll_bar->setEnabled(false);
-  } else
-  {
+  } else {
     this->ui_->vertical_scroll_bar->setEnabled(true);
     this->ui_->vertical_scroll_bar->setMaximum(num_rows - num_visible);
     this->ui_->vertical_scroll_bar->setPageStep(num_visible);
@@ -620,11 +548,6 @@ void ShapeWorksStudioApp::update_table()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed() {
-  this->preferences_.set_preference("neighborhood", this->iso_neighborhood_spinner_->value());
-  this->preferences_.set_preference("spacing", this->iso_spacing_spinner_->value());
-  this->preferences_.set_preference("smoothing_amount", this->iso_smoothing_slider_->value() * 100);
-
-  this->iso_smoothing_label_->setText(QString::number(preferences_.get_preference("smoothing_amount", 0.)));
   if (!this->project_->reconstructed_present()) return;
   this->project_->handle_clear_cache();
   this->visualizer_->update_lut();
