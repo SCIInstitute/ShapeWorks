@@ -30,13 +30,40 @@ ParticleProcrustesRegistration<3>::RunRegistration(int d)
   const int numPoints = m_ParticleSystem->GetNumberOfParticles(0);
   const int numShapes = totalDomains / m_DomainsPerShape;
 
+  std::vector<int> shapeRnd(numShapes);
+  std::vector<int> domainRnd(numShapes);
+
+  for (int i=0; i<numShapes; i++) shapeRnd[i]=i;
+
+  int k = d % m_DomainsPerShape;
+  for (int i=0; i<numShapes; i++, k += m_DomainsPerShape) domainRnd[i]=k;
+
+  if (m_randomProcrustes==true)
+  {
+      std::cout<<"Using randomized ordering in procrustes..."<<std::endl;
+      unsigned int seed = unsigned (std::time(0));
+      std::srand(seed);
+      std::random_shuffle(shapeRnd.begin(), shapeRnd.end());
+      std::srand(seed);
+      std::random_shuffle(domainRnd.begin(), domainRnd.end());
+   }
+
   Procrustes3D::ShapeListType shapelist;
   Procrustes3D::ShapeType     shapevector;
   Procrustes3D::PointType     point;
 
   // Read input shapes from file list
-  for(int i = d % m_DomainsPerShape; i < totalDomains; i+=m_DomainsPerShape)
-    {
+
+  //Praful - adding randomness to procrustes
+
+  //old looping
+//  for(int i = d % m_DomainsPerShape; i < totalDomains; i+=m_DomainsPerShape)
+//    {
+
+  //Praful - new randomized/non-randomized looping - set randomProcrustes flag in xml file accordingly
+  for (int indI = 0; indI<numShapes; indI++)
+  {
+      int i = domainRnd[indI];
     shapevector.clear();
     for(int j = 0; j < numPoints; j++)
       {
@@ -55,19 +82,33 @@ ParticleProcrustesRegistration<3>::RunRegistration(int d)
   procrustes.AlignShapes(transforms, shapelist);
 
   // Construct transform matrices for each particle system.
-  int k = d % m_DomainsPerShape;
   //    double avgscaleA = 1.0;
   //    double avgscaleB = 1.0;
-  for (int i = 0; i < numShapes; i++, k += m_DomainsPerShape)
-    {
+
+  // old looping
+  //int k = d % m_DomainsPerShape;
+
+  //for (int i = 0; i < numShapes; i++, k += m_DomainsPerShape)
+  //  {
+
+  // Praful - new randomized/non-randomized looping - set randomProcrustes flag in xml file accordingly
+    for (int i = 0; i<numShapes; i++)
+      {
+        int k = domainRnd[i];
+
     if (m_Scaling == false)
       {
       // DO NOT DO PROCRUSTES SCALING.   
       // If the user supplied some scales
       if (m_FixedScales.size() != 0)
         {
-        transforms[i].scale = m_FixedScales[i];
-        std::cout << "Fixed scale " << i << " = " << m_FixedScales[i] << std::endl;
+        // based on old looping
+//          transforms[i].scale = m_FixedScales[i];
+
+          // Praful - new randomized/non-randomized looping - set randomProcrustes flag in xml file accordingly
+          transforms[i].scale = m_FixedScales[shapeRnd[i]];
+
+        std::cout << "Fixed scale " << shapeRnd[i] << " = " << m_FixedScales[shapeRnd[i]] << std::endl;
         }
       else // otherwise do not scale at all
         {

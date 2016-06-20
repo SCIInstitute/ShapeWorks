@@ -23,6 +23,7 @@ const int global_iteration = 1;
 #endif /* SW_USE_OPENMP */
 
 #include <algorithm>
+#include <ctime>
 
 namespace itk
 {
@@ -89,7 +90,25 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   std::srand(1);
   std::vector<int> randDomIndx(numdomains);
   for (int i = 0; i<numdomains; i++) randDomIndx[i]=i;
+
+//  std::vector<int> randDomIndx2(numdomains);
+//  for (int i = 0; i<numdomains; i++) randDomIndx2[i]=i;
   //Praful
+
+//  unsigned int seed = unsigned (std::time(0));
+//  std::srand(seed);
+//  std::random_shuffle(randDomIndx.begin(), randDomIndx.end());
+//  std::srand(seed);
+//  std::random_shuffle(randDomIndx2.begin(), randDomIndx2.end());
+
+//  for (int domId = 0; domId < numdomains; domId++)
+//    {
+//              int dom1 = randDomIndx[domId];
+//              int dom2 = randDomIndx2[domId];
+//              std::cout<<"==================================="<<std::endl;
+//                              std::cout<<domId << " " << dom1 << " " << dom2 << std::endl;
+//                              std::cout<<"==================================="<<std::endl;
+//    }
 
   int counter = 0;
 
