@@ -188,6 +188,7 @@ protected:
 
   //Praful - shape updates in randomized order
   bool m_randomOrdering; // <= 0 OFF; >0 ON
+  bool m_randomProcrustes; // <= 0 OFF; >0 ON
 
 };
 
