@@ -78,6 +78,18 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
     m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
     m_Procrustes->SetDomainsPerShape(m_domains_per_shape);
+
+    if (m_randomProcrustes == true)
+    {
+        m_Procrustes->setRandomizationOn();
+        std::cout << "Randomization in Procrustes is on" << std::endl;
+    }
+    else
+    {
+        m_Procrustes->setRandomizationOFF();
+        std::cout << "Randomization in Procrustes is off" << std::endl;
+    }
+
     if (m_procrustes_scaling == 0)
     {
         m_Procrustes->ScalingOff();
@@ -1044,6 +1056,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
                 this->m_randomOrdering = false;
             }
         }
+
+        this->m_randomProcrustes = true;
+        elem = docHandle.FirstChild( "randomize_procrustes" ).Element();
+        if (elem)
+        {
+            if (atoi(elem->GetText()) > 0)
+            {
+                this->m_randomProcrustes = true;
+            }
+            else
+            {
+                this->m_randomProcrustes = false;
+            }
+        }
+
         //Praful - end
 
         this->m_initial_norm_penalty_weighting = 0.0;
