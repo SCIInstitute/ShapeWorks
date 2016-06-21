@@ -118,8 +118,8 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_iters", 1000);
   if (!this->settings_.contains("optimize_iters0") || force)
     this->settings_.setValue("optimize_iters0", 1);
-  if (!this->settings_.contains("optimize_tolerance") || force)
-    this->settings_.setValue("optimize_tolerance", 0.01);
+  if (!this->settings_.contains("optimize_weight") || force)
+    this->settings_.setValue("optimize_weight", 1.0);
   if (!this->settings_.contains("optimize_decay_span") || force)
     this->settings_.setValue("optimize_decay_span", 0.0);
   this->saved_ = true;

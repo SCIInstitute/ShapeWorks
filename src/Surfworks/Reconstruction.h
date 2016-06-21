@@ -53,7 +53,7 @@ class Reconstruction {
   typedef RBFTransformType::PointSetType              PointSetType;
   typedef PointSetType::PointIdentifier               PointIdType;
 public:
-  Reconstruction(float decimationPercent = 0.3);
+  Reconstruction(float decimationPercent = 0.3, double angleThresh = 45.);
   ~Reconstruction();
   vtkSmartPointer<vtkPolyData> getDenseMean(
     std::vector<std::vector<itk::Point<float> > > local_pts =
@@ -64,6 +64,7 @@ public:
     std::vector<ImageType::Pointer>() );
   void reset();
   void setDecimation(float dec);
+  void setMaxAngle(double angleDegrees);
   vtkSmartPointer<vtkPolyData> 
     getMesh(std::vector<itk::Point<float> > local_pts);
   void readMeanInfo(std::string dense, 
@@ -105,5 +106,6 @@ private:
   std::vector<bool> goodPoints_;
   bool denseDone_;
   float decimationPercent_;
+  double maxAngleDegrees_;
 };
 #endif // !__RECONSTRUCTION_H__

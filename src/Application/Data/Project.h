@@ -26,7 +26,7 @@ class Project : public QObject
 public:
 
   /// constructor
-  Project(Preferences& prefs);
+  Project(QWidget* parent, Preferences& prefs);
 
   /// destructor
   ~Project();
@@ -117,6 +117,7 @@ private:
   bool original_present_;
   bool groomed_present_;
   bool reconstructed_present_;
+
 };
 
 #endif /* STUDIO_DATA_PROJECT_H */

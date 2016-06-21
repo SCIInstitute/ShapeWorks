@@ -5,16 +5,17 @@ ShapeWorksOptimize::ShapeWorksOptimize(
   //QObject* parent,
   std::vector<ImageType::Pointer> inputs, size_t numScales,
   std::vector<double> start_reg, std::vector<double> end_reg,
-  std::vector<unsigned int> iters, std::vector<double> tolerance,
-  std::vector<double> decay_span,
+  std::vector<unsigned int> iters, 
+  std::vector<double> decay_span, double weighting,
   bool verbose)
   :// QObject(parent), 
   images_(inputs), numScales_(numScales),
   maxIter_(iters), 
   reportInterval_(10), procrustesCounter_(0),
-  tolerance_(tolerance), decaySpan_(decay_span),
+  decaySpan_(decay_span),
   regularizationInitial_(start_reg),
   regularizationFinal_(end_reg),
+  weighting_(weighting),
   verbose_(verbose) {
   this->psmFilter_ = itk::PSMEntropyModelFilter<ImageType>::New();
   this->procrustesRegistration_ = itk::PSMProcrustesRegistration<3>::New();
@@ -22,12 +23,14 @@ ShapeWorksOptimize::ShapeWorksOptimize(
 
 void ShapeWorksOptimize::run() {
   this->psmFilter_->SetNumberOfScales(this->numScales_);
-  this->psmFilter_->SetRegularizationInitial(regularizationInitial_);
-  this->psmFilter_->SetRegularizationFinal(regularizationFinal_);
-  this->psmFilter_->SetRegularizationDecaySpan(decaySpan_);
-  this->psmFilter_->SetTolerance(tolerance_);
-  this->psmFilter_->SetMaximumNumberOfIterations(maxIter_);
+  this->psmFilter_->SetRegularizationInitial(this->regularizationInitial_);
+  this->psmFilter_->SetRegularizationFinal(this->regularizationFinal_);
+  this->psmFilter_->SetRegularizationDecaySpan(this->decaySpan_);
+  std::vector<double> tolerance(this->numScales_, 0.01); // this is constant
+  this->psmFilter_->SetTolerance(tolerance);
+  this->psmFilter_->SetMaximumNumberOfIterations(this->maxIter_);
   this->procrustesInterval_.resize(this->numScales_, this->reportInterval_); 
+  this->psmFilter_->SetShapeEntropyWeighting(this->weighting_);
   this->totalIters_ = 0;
   for (auto &a : maxIter_) {
     this->totalIters_ += a;

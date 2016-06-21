@@ -64,7 +64,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   auto scales = this->ui_->number_of_scales->value();
   this->optimize_ = new QOptimize(this, imgs, scales,
     this->getStartRegs(), this->getEndRegs(), this->getIters(),
-    this->getTolerances(), this->getDecaySpans(), true);
+    this->getDecaySpans(), this->ui_->weight->value(), true);
 
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
@@ -72,6 +72,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     std::vector<std::vector<itk::Point<float> > >(),
     std::vector<std::vector<itk::Point<float> > >(),
     std::vector<ImageType::Pointer>(),
+    this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
@@ -97,7 +98,8 @@ void OptimizeTool::on_restoreDefaults_clicked() {
   this->preferences_.delete_entry("optimize_start_reg");
   this->preferences_.delete_entry("optimize_end_reg");
   this->preferences_.delete_entry("optimize_iters");
-  this->preferences_.delete_entry("optimize_tolerance");
+  this->preferences_.delete_entry("optimize_weight");
+  this->preferences_.delete_entry("optimize_maxAngle");
   this->preferences_.delete_entry("optimize_decay_span");
   this->preferences_.restore_defaults();
   this->set_preferences();
@@ -120,10 +122,10 @@ void OptimizeTool::set_project( QSharedPointer<Project> project )
 void OptimizeTool::setupTable(int rows) {
   auto table = this->ui_->parameterTable;
   table->setRowCount(rows);
-  table->setColumnCount(5);
+  table->setColumnCount(4);
   QStringList Hheader, Vheader;
   Hheader << "StartReg" << "EndReg"
-    << "Iters" << "Toler." << "DecaySpan";
+    << "Iters" << "DecaySpan";
   table->setHorizontalHeaderLabels(Hheader);
   for (size_t i = 0; i < rows; i++) {
     Vheader << QString::number(i + 1);
@@ -172,15 +174,6 @@ std::vector<double> OptimizeTool::getDecaySpans() {
   auto ans = std::vector<double>();
   auto table = this->ui_->parameterTable;
   for (size_t i = 0; i < table->rowCount(); i++) {
-    ans.push_back(table->item(i, 4)->text().toDouble());
-  }
-  return ans;
-}
-
-std::vector<double> OptimizeTool::getTolerances() {
-  auto ans = std::vector<double>();
-  auto table = this->ui_->parameterTable;
-  for (size_t i = 0; i < table->rowCount(); i++) {
     ans.push_back(table->item(i, 3)->text().toDouble());
   }
   return ans;
@@ -207,7 +200,7 @@ void OptimizeTool::set_preferences(bool setScales) {
   auto table = this->ui_->parameterTable;
   auto rows = this->ui_->number_of_scales->value();
   for (size_t i = 0; i < rows; i++) {
-    for (size_t j = 0; j < 5; j++) {
+    for (size_t j = 0; j < 4; j++) {
       QString cellname;
       switch (j) {
       case 0:
@@ -220,9 +213,6 @@ void OptimizeTool::set_preferences(bool setScales) {
         cellname = "optimize_iters";
         break;
       case 3:
-        cellname = "optimize_tolerance";
-        break;
-      case 4:
         cellname = "optimize_decay_span";
         break;
       }
@@ -242,7 +232,7 @@ void OptimizeTool::update_preferences() {
   auto table = this->ui_->parameterTable;
   auto rows = this->ui_->number_of_scales->value();
   for (size_t i = 0; i < rows; i++) {
-    for (size_t j = 0; j < 5; j++) {
+    for (size_t j = 0; j < 4; j++) {
       QString cellname;
       switch (j) {
       case 0:
@@ -255,9 +245,6 @@ void OptimizeTool::update_preferences() {
         cellname = "optimize_iters";
         break;
       case 3:
-        cellname = "optimize_tolerance";
-        break;
-      case 4:
         cellname = "optimize_decay_span";
         break;
       }

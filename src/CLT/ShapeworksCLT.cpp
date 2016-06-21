@@ -66,7 +66,7 @@ int main(int argc, char ** argv) {
     size_t iters_default = 1000;
     double tolerance_default = 0.01,
       start_reg_default = 100., end_reg_default = 2.,
-      decay_span_default = 0.;
+      decay_span_default = 0., weight = 1.;
     //collect the values from the parameters
     for (auto a : parameters) {
       //groom parameters
@@ -123,12 +123,8 @@ int main(int argc, char ** argv) {
         } else {
           decay_span.push_back(std::stod(a.second));
         }
-      } else if (a.first.find("optimize_tolerance") != std::string::npos) {
-        if (a.first == "optimize_tolerance") {
-          tolerance_default = std::stod(a.second);
-        } else {
-          tolerance.push_back(std::stod(a.second));
-        }
+      } else if (a.first.find("optimize_weight") != std::string::npos) {
+        weight = std::stod(a.second);
       }
     }
     //run the groom step
@@ -178,7 +174,7 @@ int main(int argc, char ** argv) {
     }
     //run the optimize step
     ShapeWorksOptimize optimize(groomed_img, optimize_scales,
-      start_reg, end_reg, iters, tolerance, decay_span, true);
+      start_reg, end_reg, iters, decay_span, weight, true);
     optimize.run();
     auto lpts = optimize.localPoints();
     auto wpts = optimize.globalPoints();

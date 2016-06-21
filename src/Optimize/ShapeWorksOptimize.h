@@ -22,8 +22,8 @@ public:
     std::vector<double> start_reg = std::vector<double>(),
     std::vector<double> end_reg = std::vector<double>(),
     std::vector<unsigned int> iters = std::vector<unsigned int>(),
-    std::vector<double> tolerance = std::vector<double>(),
     std::vector<double> decay_span = std::vector<double>(),
+    double weighting = 1.,
     bool verbose = false);
   void run();
   std::vector<ImageType::Pointer> getImages();
@@ -36,8 +36,9 @@ protected:
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
   size_t numScales_;
+  double weighting_;
   std::vector<unsigned int> maxIter_;
-  std::vector<double> tolerance_, decaySpan_,
+  std::vector<double> decaySpan_,
     regularizationInitial_, regularizationFinal_;
   itk::PSMEntropyModelFilter<ImageType>::Pointer psmFilter_;
   std::vector<std::vector<itk::Point<float> > >  localPoints_, globalPoints_;

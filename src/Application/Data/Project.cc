@@ -26,7 +26,8 @@ const std::string Project::OPTIMIZE_C("optimize");
 const std::string Project::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
-Project::Project(Preferences& prefs) : preferences_(prefs)
+Project::Project(QWidget* parent, Preferences& prefs) : parent_(parent),
+preferences_(prefs)
 {
   this->parent_ = NULL;
   this->reset();
@@ -100,7 +101,7 @@ void Project::calculate_reconstructed_samples() {
     worker->moveToThread(thread);
     connect(thread, SIGNAL(started()), worker, SLOT(process()));
     connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
-    connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+    connect(worker, SIGNAL(error_message(std::string)), this, SLOT(parent_->handle_error(std::string)));
     connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
     thread->start();

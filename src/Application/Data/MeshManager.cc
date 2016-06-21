@@ -87,6 +87,7 @@ void MeshManager::initializeReconstruction(
   std::vector<std::vector<itk::Point<float> > > local_pts,
   std::vector<std::vector<itk::Point<float> > > global_pts,
   std::vector<ImageType::Pointer> distance_transform,
+  double maxAngleDegrees,
   float decimationPercent) {
   //turn the sets of global points to one sparse global mean.
   float init[] = { 0.f,0.f,0.f };
@@ -109,6 +110,7 @@ void MeshManager::initializeReconstruction(
   //now actually generate the dense mean.
   this->construct_.reset();
   this->construct_.setDecimation(decimationPercent);
+  this->construct_.setMaxAngle(maxAngleDegrees);
   this->construct_.getDenseMean(local_pts, sparseMean, distance_transform);
 }
 

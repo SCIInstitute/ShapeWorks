@@ -17,9 +17,11 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
-Reconstruction::Reconstruction(float decimationPercent) :
+Reconstruction::Reconstruction(float decimationPercent, double maxAngleDegrees) :
   denseDone_(false),
-  decimationPercent_(decimationPercent) {}
+  decimationPercent_(decimationPercent),
+  maxAngleDegrees_(maxAngleDegrees)
+  {}
 
 Reconstruction::~Reconstruction() {
 }
@@ -49,6 +51,10 @@ void Reconstruction::reset() {
 
 void Reconstruction::setDecimation(float dec) {
   this->decimationPercent_ = dec;
+}
+
+void Reconstruction::setMaxAngle(double angleDegrees) {
+  this->maxAngleDegrees_ = angleDegrees;
 }
 
 vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
@@ -210,7 +216,8 @@ void Reconstruction::computeDenseMean(
         double nz_kk = normals[shapeNo_kk](ii, 2);
 
         this->goodPoints_[ii] = this->goodPoints_[ii] &&
-          ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) > 0);
+          ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) > 
+            std::cos(this->maxAngleDegrees_ * M_PI / 180.)); 
       }
     }
     // decide which correspondences will be used to build the warp
@@ -221,6 +228,8 @@ void Reconstruction::computeDenseMean(
         particles_indices.push_back(kk);
       }
     }
+    std::cout << "There are " << particles_indices.size() << " / " << this->goodPoints_.size() <<
+      " good points." << std::endl;
 
     const ImageType::SpacingType& spacing = distance_transform[0]->GetSpacing();
     const ImageType::PointType& origin = distance_transform[0]->GetOrigin();

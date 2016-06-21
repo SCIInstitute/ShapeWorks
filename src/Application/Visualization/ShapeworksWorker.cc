@@ -16,10 +16,12 @@ ShapeworksWorker::ShapeworksWorker(ThreadType type,
   std::vector<std::vector<itk::Point<float> > > local_pts,
   std::vector<std::vector<itk::Point<float> > > global_pts,
   std::vector<ImageType::Pointer> distance_transform,
+  double maxAngle,
   float decimationPercent) : type_(type), groom_(groom),
   optimize_(optimize), project_(project), 
   local_pts_(local_pts), global_pts_(global_pts), 
-  distance_transform_(distance_transform), decimationPercent_(decimationPercent)
+  distance_transform_(distance_transform), 
+  decimationPercent_(decimationPercent), maxAngle_(maxAngle)
   {}
 
 ShapeworksWorker::~ShapeworksWorker() {}
@@ -41,6 +43,7 @@ void ShapeworksWorker::process() {
       this->project_->get_mesh_manager()->initializeReconstruction(
         this->optimize_->localPoints(), 
         this->optimize_->globalPoints(), this->optimize_->getImages(),
+        this->maxAngle_,
         this->decimationPercent_);
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());
@@ -51,7 +54,7 @@ void ShapeworksWorker::process() {
     try {
       this->project_->get_mesh_manager()->initializeReconstruction(
         this->local_pts_, this->global_pts_, this->distance_transform_,
-        this->decimationPercent_);
+        this->maxAngle_, this->decimationPercent_);
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());
       return;

@@ -33,6 +33,7 @@ public:
     std::vector<std::vector<itk::Point<float> > >(),
     std::vector<ImageType::Pointer> distance_transform =
     std::vector<ImageType::Pointer>(),
+    double maxAngle = 45.,
     float decimationPercent = 0.3f);
 	~ShapeworksWorker();
 
@@ -55,6 +56,7 @@ private:
   std::vector<std::vector<itk::Point<float> > > global_pts_;
   std::vector<ImageType::Pointer> distance_transform_;
   float decimationPercent_;
+  double maxAngle_;
 };
 
 #endif // ifndef SHAPEWORKS_WORKER_H

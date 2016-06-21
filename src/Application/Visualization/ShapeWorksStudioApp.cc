@@ -98,7 +98,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   menu->addAction(widget_action);
 
   //project initializations
-  this->project_ = QSharedPointer<Project>(new Project(preferences_));
+  this->project_ = QSharedPointer<Project>(new Project(this, preferences_));
   this->project_->set_parent(this);
   connect(this->project_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->project_.data(), SIGNAL(update_display()), this, SLOT(handle_display_setting_changed()));
