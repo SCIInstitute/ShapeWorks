@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "FECVDDecimationModifier.h"
 #include "FEAutoMesher.h"
 #include "FENodeFaceList.h"
@@ -32,56 +32,65 @@ int randi(int nmax)
 FEMesh* FECVDDecimationModifier::Apply(FEMesh* pm)
 {
 	// make sure this is a triangle mesh
-	if (pm->IsType(FE_TRI3) == false) return 0;
-
-	// store a pointer to the mesh
-	m_pm = pm;
+	if (pm->IsType(FE_TRI3) == false) 
+	{	
+		return 0;
+	}
 
 	// do the initialization
-	Initialize();
+	if (Initialize(pm) == false) return 0;
 
 	// Minimize energy
-	if (Minimize() == false) return 0;
+	if (Minimize(pm) == false) return 0;
 
 	// create the new mesh
 	// we can create either the clustered mesh or the final decimated mesh
 	FEMesh* pnew = 0;
-	if (m_bcvd) pnew = CalculateCVD(); else pnew = Triangulate2();
+	if (m_bcvd) 
+	{
+		// partition mesh based on cluster assingments
+		pnew = CalculateCVD(pm); 
+	}
+	else 
+	{
+		// triangulate the decimation
+		pnew = Triangulate2(pm);
 
-	// next, we use the auto-mesher to reconstruct all faces, edges and nodes
-	FEAutoMesher mesher;
-	mesher.BuildMesh(pnew);
-	//interpolating  shell thickness
-	m_pm = pnew;
-	pnew = InterpolateShellThickness();
+		// make sure we have a mesh
+		if (pnew == 0) return 0;
 
-	// TODO: I noticed that this algorithm can create duplicate elements. I'm not sure yet if
-	//       this is a bug or if there is something fishy about this algorithm. In any case,
-	//       for now I will explicitly check for duplicate elements and remove duplicates. Even
-	//       this may not fix all problems, since sometimes duplicate elements can have different
-	//       winding.
-	// remove duplicate elements
-	pnew->RemoveDuplicateElements();
-	mesher.BuildMesh(pnew);
+		// next, we use the auto-mesher to reconstruct all faces, edges and nodes
+		FEAutoMesher mesher;
+		mesher.BuildMesh(pnew);
+	
+		//interpolating  shell thickness
+		InterpolateShellThickness(pnew);
 
-	// TODO: Another problem I found is that some elements become non-manifold, meaning that
-	//       one or two edges don't have any neighbors. If the origianl mesh is closed, then
-	//       the decimated mesh must be closed as well. (Off course, this assumes that the original
-	//       mesh is closed. Perhaps I can find another criteria for non-manifold).
-	pnew->RemoveNonManifoldElements();
-	mesher.BuildMesh(pnew);
+		// TODO: I noticed that this algorithm can create duplicate elements. I'm not sure yet if
+		//       this is a bug or if there is something fishy about this algorithm. In any case,
+		//       for now I will explicitly check for duplicate elements and remove duplicates. Even
+		//       this may not fix all problems, since sometimes duplicate elements can have different
+		//       winding.
+		// remove duplicate elements
+		pnew->RemoveDuplicateElements();
+		mesher.BuildMesh(pnew);
 
-	// TODO: Some elements can be wound in the wrong direction. So, we try to find those elements
-	//       and invert them.
-	pnew->FixElementWinding();
-	mesher.BuildMesh(pnew);
+		// TODO: Another problem I found is that some elements become non-manifold, meaning that
+		//       one or two edges don't have any neighbors. If the origianl mesh is closed, then
+		//       the decimated mesh must be closed as well. (Off course, this assumes that the original
+		//       mesh is closed. Perhaps I can find another criteria for non-manifold).
+		pnew->RemoveNonManifoldElements();
+		mesher.BuildMesh(pnew);
 
-	// TODO: These operations can create holes in the mesh. therefore we fill all holes.
-	FEFillHole fill;
-	fill.FillAllHoles(pnew);
+		// TODO: Some elements can be wound in the wrong direction. So, we try to find those elements
+		//       and invert them.
+		pnew->FixElementWinding();
+		mesher.BuildMesh(pnew);
 
-	// clean up
-	m_pm = 0;
+		// TODO: These operations can create holes in the mesh. therefore we fill all holes.
+		FEFillHole fill;
+		fill.FillAllHoles(pnew);
+	}
 
 	// All done!
 	return pnew;
@@ -93,80 +102,86 @@ FEMesh* FECVDDecimationModifier::Apply(FEMesh* pm)
 //! edges between clusters.
 //! \todo I need to create a better random seeding algorithm. If the scale is close
 //! to one, this algorithm may take a while to finish.
-void FECVDDecimationModifier::Initialize()
+bool FECVDDecimationModifier::Initialize(FEMesh* pm)
 {
+	// nodes on original mesh
+	int N0 = pm->Nodes();
+
 	// target number of clusters/vertices
-	int N0 = m_pm->Nodes();
 	int NC = (int) (m_pct*N0);
+	if (NC <= 0) return false;
 
 	// allocate cluster data
+	// number of clusters equals number of target nodes
+	// plus one, the "null" cluster
 	m_Cluster.resize(NC + 1);
 
-	// assign all triangles to the "zero" cluster
-	int T0 = m_pm->Faces();
+	// assign all triangles to the "null" cluster
+	int T0 = pm->Faces();
 	m_tag.assign(T0, 0);
 
-
-	//getting the selected faces
-	//create an hashmap for selected faces
-	vector<int> hashmap;
+	// getting the selected elements
 	vector<int> selectedFaces;
-	int flag = 0;
+	for(int i = 0 ; i < pm->Elements() ; i++)
+	{
+		if (pm->Element(i).IsSelected()) selectedFaces.push_back(i);
+	}
 
 	// assign NC random triangles to a cluster
 	// TODO: make a better algorithm
+	int MAX_TRIES = 2*T0;
+	int ntries = 0;
 	int nc = 0;
-	if (flag == 0)  //if no surface selection is there
+	if (selectedFaces.empty() == false)
 	{
-		while (nc < NC)
-		{
-			int n = randi(T0);
-			if (m_tag[n] == 0) m_tag[n] = ++nc;
-		}
-	}
-	else
-	{
-		//Need to change this...this value should come from user......
-		//m_sel_pct = 0.99;
+		// % of total cluster are from selected regions
+		int nc_sel = (int) (m_sel_pct * NC);
 
-
-		int nc_20 = m_sel_pct * NC; // % of total cluster are from selected region
-		//number of selected faces
+		// make sure there are fewer selected elements than nc_sel
 		int sel_faces = selectedFaces.size();
-		while (nc < nc_20)
+		if (sel_faces < nc_sel) return false;
+
+		// assign the first nc_sel seeds 
+		while (nc < nc_sel)
 		{
 			int n = randi(sel_faces);
 			int face_num = selectedFaces[n];
 			if (m_tag[face_num] == 0) m_tag[face_num] = ++nc;
+
+			ntries++;
+			if (ntries > MAX_TRIES) return false;
 		}
-		while (nc < NC)
-		{
-			int n = randi(T0);
-			if (m_tag[n] == 0) m_tag[n] = ++nc;
-		}
+	}
+
+	// assign the remaining seeds
+	while (nc < NC)
+	{
+		int n = randi(T0);
+		if (m_tag[n] == 0) m_tag[n] = ++nc;
+
+		ntries++;
+		if (ntries > MAX_TRIES) return false;
 	}
 
 	// calculate the "rho" value (here, the area) and gamma (centroid) for each face
 	m_rho.resize(T0);
 	m_gamma.resize(T0);
-	m_curvature1.resize(T0);
-	m_curvature2.resize(T0);
 	vec3d r[3];
 	//Creating a node node list
-	FENodeNodeList NNL(m_pm);
+	FENodeNodeList NNL(pm);
 	NNL.Build();
 	for (int i=0; i<T0; ++i)
 	{
-		FEFace& fi = m_pm->Face(i);
+		FEFace& fi = pm->Face(i);
 		
-		m_curvature1[i]= 0;
-		m_curvature2[i]= 0;
-		for(int j = 0;j<4;j++)
+		double curvature1 = 0;
+		double curvature2 = 0;
+		for(int j = 0; j<3; j++)
 		{
 			//normal vector to the jth node of the face
 			//step -1
 			vec3d p = fi.m_nn[j];
-			vec3d r0 = m_pm->Node(fi.n[j]).r;
+			vec3d r0 = pm->Node(fi.n[j]).r;
 
 			//step -2 
 			vec3d r1 = vec3d(1.f- p.x*p.x , -p.y*p.x , -p.x*p.z);
@@ -183,7 +198,7 @@ void FECVDDecimationModifier::Initialize()
 			vector<vec3d> x; 
 			x.reserve(NNL.Valence(current_node));
 			for (int k = 0; k<NNL.Valence(current_node);k++)
-				x.push_back(m_pm->Node(NNL.Node(current_node, k)).r);
+				x.push_back(pm->Node(NNL.Node(current_node, k)).r);
 			vector<vec3d> y; 
 			y.resize(x.size());
 			int nn = x.size();
@@ -218,20 +233,24 @@ void FECVDDecimationModifier::Initialize()
 			//get the curvature
 			double k1 = a + c + sqrt((a-c)*(a-c) + b*b);
 			double k2 = a + c - sqrt((a-c)*(a-c) + b*b);
-			m_curvature1[i] += k1;
-			m_curvature2[i] += k2;
+			curvature1 += k1;
+			curvature2 += k2;
 		}
-		m_curvature1[i] /= 4;
-		m_curvature2[i] /= 4;
+		curvature1 /= 3.0;
+		curvature2 /= 3.0;
 
-		r[0] = m_pm->Node(fi.n[0]).r;
-		r[1] = m_pm->Node(fi.n[1]).r;
-		r[2] = m_pm->Node(fi.n[2]).r;
+		// get the nodal coordinates
+		r[0] = pm->Node(fi.n[0]).r;
+		r[1] = pm->Node(fi.n[1]).r;
+		r[2] = pm->Node(fi.n[2]).r;
 
-		//Need to change this...this value should come from user......
-		//m_gradiant = 3;
+		// calculate rho and gamma
+		m_rho[i] = area_triangle(r) * pow(sqrt(curvature1 * curvature1 + curvature2 * curvature2), m_gradient);
 
-		m_rho[i] = area_triangle(r) * pow(sqrt(m_curvature1[i] * m_curvature1[i] + m_curvature2[i] * m_curvature2[i]),m_gradient);
+		// make sure rho is positive
+		if (m_rho[i] <= 0.0) return false;
+
+		// assign the centroid
 		m_gamma[i] = (r[0] + r[1] + r[2])/3.0;
 	}
 
@@ -243,8 +262,6 @@ void FECVDDecimationModifier::Initialize()
 		{
 			m_Cluster[nc].m_srho += m_rho[i];
 			m_Cluster[nc].m_sgamma += m_gamma[i]*m_rho[i];
-			m_Cluster[nc].m_nf++;
-			m_Cluster[nc].m_fid.push_back(i);
 		}
 	}
 
@@ -252,61 +269,66 @@ void FECVDDecimationModifier::Initialize()
 	m_Edge.clear();
 	for (int i=0; i<T0; ++i)
 	{
-		FEFace& fi = m_pm->Face(i);
+		FEFace& fi = pm->Face(i);
 		for (int j=0; j<3; ++j)
 		{
 			int nj = fi.m_nbr[j];
-			if (nj >= 0)
-			{
-				if (m_tag[i] < m_tag[nj])
-				{
-					EDGE e;
-					e.n[0] = i;
-					e.n[1] = nj;
-					assert(i != nj);
 
-					e.m[0] = fi.n[j];
-					e.m[1] = fi.n[(j+1)%3];
-					m_Edge.push_back(e);
-				}
+			// this algorithm currently only works with closed surfaces
+			// so all neighbors must be assigned
+			if (nj < 0) return false;
+
+			if (m_tag[i] < m_tag[nj])
+			{
+				EDGE e;
+				e.face[0] = i;
+				e.face[1] = nj;
+				if (i == nj) return false;
+
+				e.node[0] = fi.n[j];
+				e.node[1] = fi.n[(j+1)%3];
+				m_Edge.push_back(e);
 			}
 		}
 	}
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------
-void FECVDDecimationModifier::Swap(int nface, int ncluster)
+// This function assigns face to a new cluster
+bool FECVDDecimationModifier::Swap(FEFace& face, int nface, int ncluster)
 {
-	assert(m_tag[nface] != ncluster);
-	FEFace& f = m_pm->Face(nface);
+	if (m_tag[nface] == ncluster) return false;
 	m_tag[nface] = ncluster;
 	for (int j=0; j<3; ++j)
 	{
-		int nj = f.m_nbr[j];
+		int nj = face.m_nbr[j];
 		if (nj >= 0)
 		{
 			if (m_tag[nface] != m_tag[nj])
 			{
 				EDGE ed;
-				ed.n[0] = nface;
-				ed.n[1] = nj;
+				ed.face[0] = nface;
+				ed.face[1] = nj;
+				if (nface == nj) return false;
 
-				ed.m[0] = f.n[j];
-				ed.m[1] = f.n[(j+1)%3];
+				ed.node[0] = face.n[j];
+				ed.node[1] = face.n[(j+1)%3];
 
-				assert(nface != nj);
 				m_Edge.push_front(ed);
 			}
 		}
 	}
+	return true;
 }
 
 //-----------------------------------------------------------------------------
 //! Update clustering to minimize energy
-bool FECVDDecimationModifier::Minimize()
+bool FECVDDecimationModifier::Minimize(FEMesh* pm)
 {
 	bool bconv = false;
-	const int MAX_ITER = 10000;
+	const int MAX_ITER = 50000;
 	int niter = 0;
 	do
 	{
@@ -318,8 +340,14 @@ bool FECVDDecimationModifier::Minimize()
 		for (it = m_Edge.begin(); it != m_Edge.end();)
 		{
 			EDGE& e = *it;
-			int k = m_tag[e.n[0]];
-			int l = m_tag[e.n[1]];
+
+			// faces
+			int m = e.face[0];
+			int n = e.face[1];
+
+			// clusters 
+			int k = m_tag[m];
+			int l = m_tag[n];
 
 			if (k == l)
 			{
@@ -334,25 +362,23 @@ bool FECVDDecimationModifier::Minimize()
 				// case 1 - no change
 				double L1 = (Ck.m_sgamma*Ck.m_sgamma)/Ck.m_srho + (Cl.m_sgamma*Cl.m_sgamma)/Cl.m_srho;
 
-				// case 2 - face 0 to Cl
-				vec3d g0k = Ck.m_sgamma - m_gamma[e.n[0]]*m_rho[e.n[0]];
-				double r0k = Ck.m_srho - m_rho[e.n[0]];
-				double r0ki = (fabs(r0k) < 1e-12 ? 0.0 : 1.0/r0k);
-				vec3d g0l = Cl.m_sgamma + m_gamma[e.n[0]]*m_rho[e.n[0]];
-				double r0l = Cl.m_srho + m_rho[e.n[0]];
-				double r0li = (fabs(r0l) < 1e-12 ? 0.0 : 1.0/r0l);
-				double L2 = (g0k*g0k)*r0ki + (g0l*g0l)*r0li;
+				// case 2 - face m to Cl
+				vec3d g0k = Ck.m_sgamma - m_gamma[m]*m_rho[m];
+				double r0k = Ck.m_srho - m_rho[m];
 
-				// case 3 - face 1 to Ck
-				vec3d g1k = Ck.m_sgamma + m_gamma[e.n[1]]*m_rho[e.n[1]];
-				double r1k = Ck.m_srho + m_rho[e.n[1]];
-				double r1ki = (fabs(r1k) < 1e-12 ? 0.0 : 1.0/r1k);
-				vec3d g1l = Cl.m_sgamma - m_gamma[e.n[1]]*m_rho[e.n[1]];
-				double r1l = Cl.m_srho - m_rho[e.n[1]];
-				double r1li = (fabs(r1l) < 1e-12 ? 0.0 : 1.0/r1l);
-				double L3 = (g1k*g1k)*r1ki + (g1l*g1l)*r1li;
+				vec3d g0l = Cl.m_sgamma + m_gamma[m]*m_rho[m];
+				double r0l = Cl.m_srho + m_rho[m];
+				double L2 = (g0k*g0k) / r0k + (g0l*g0l) / r0l;
 
-				if ((k==0) || ((Ck.m_nf>0)&&(L2>=L1)&&(L2>=L3)))
+				// case 3 - face n to Ck
+				vec3d g1k = Ck.m_sgamma + m_gamma[n]*m_rho[n];
+				double r1k = Ck.m_srho + m_rho[n];
+
+				vec3d g1l = Cl.m_sgamma - m_gamma[n]*m_rho[n];
+				double r1l = Cl.m_srho - m_rho[n];
+				double L3 = (g1k*g1k)/r1k + (g1l*g1l)/r1l;
+
+				if ((k==0) || ((L2>L1)&&(L2>L3)))
 				{
 					// case 2 wins
 					Ck.m_srho = r0k;
@@ -360,23 +386,11 @@ bool FECVDDecimationModifier::Minimize()
 					Cl.m_srho = r0l;
 					Cl.m_sgamma = g0l;
 
-					if (Ck.m_nf > 0)
-					{
-						std::vector<int>::iterator position = std::find(Ck.m_fid.begin(), Ck.m_fid.end(), e.n[0]);
-						if (position != Ck.m_fid.end()) // == vector.end() means the element was not found
-							Ck.m_fid.erase(position);
-					}
+					if (Swap(pm->Face(m), m, l) == false) return false;
 
-					Ck.m_nf--;
-					Cl.m_nf++;					
-					Cl.m_fid.push_back(e.n[0]);
-
-					Swap(e.n[0], l);
-
-//					it = m_Edge.erase(it);
 					bconv = false;
 				}
-				else if ((l==0) || ((Cl.m_nf>0)&&(L3>=L1)&&(L3>=L2)))
+				else if ((l==0) || ((L3>L1)&&(L3>L2)))
 				{
 					// case 3 wins
 					Ck.m_srho = r1k;
@@ -384,21 +398,9 @@ bool FECVDDecimationModifier::Minimize()
 					Cl.m_srho = r1l;
 					Cl.m_sgamma = g1l;
 
-					if (Cl.m_nf > 0)
-					{
-						std::vector<int>::iterator position = std::find(Cl.m_fid.begin(), Cl.m_fid.end(), e.n[1]);
-						if (position != Cl.m_fid.end()) 
-							Cl.m_fid.erase(position);
-					}
+					if (Swap(pm->Face(n), n, k) == false)
+						return false;
 
-					Ck.m_nf++;
-					Cl.m_nf--;
-
-					Ck.m_fid.push_back(e.n[1]);
-
-					Swap(e.n[1], k);
-
-//					it = m_Edge.erase(it);
 					bconv = false;
 				}
 				else 
@@ -415,18 +417,21 @@ bool FECVDDecimationModifier::Minimize()
 			// In some cases, (really bad meshes) a few elements will not have
 			// been assigned to a cluster. If this happens, we just return an
 			// error and the user needs to clean up the mesh before decimating
-			int NF = m_pm->Faces();
-			for (int i=0; i<m_pm->Faces(); ++i)
+			int NF = pm->Faces();
+			for (int i=0; i<pm->Faces(); ++i)
 			{
-				if (m_tag[i] == 0) return false;
+				if (m_tag[i] == 0) 
+					return false;
 			}
 
-			for (int i=0; i<m_pm->Faces(); ++i)
+			// If a face becomes isolated, (i.e. surrounded by different clusters)
+			// we reassign it to the "null" cluster
+			/*			for (int i=0; i<pm->Faces(); ++i)
 			{
-				FEFace& f = m_pm->Face(i);
+				FEFace& f = pm->Face(i);
 				int m = m_tag[i];
-				assert(m>0);
-				if (m_Cluster[m].m_nf > 1)
+
+				if (m_Cluster[m].faces() > 1)
 				{
 					int nl = 0;
 					for (int j=0; j<3; ++j)
@@ -441,51 +446,57 @@ bool FECVDDecimationModifier::Minimize()
 					if (nl == 0)
 					{
 						m_tag[i] = 0;
-						m_Cluster[m].m_nf--;
+						//m_Cluster[m].m_nf--;
 						bconv = false;
 					}
 				}
 			}
+		*/
 		}
 
 		niter++;
 	}
 	while ((bconv == false)&&(niter < MAX_ITER));
 
+	if (niter >= MAX_ITER) return false;
+
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-void FECVDDecimationModifier::NODE::AttachToCluster(int n)
+bool FECVDDecimationModifier::NODE::AttachToCluster(int n)
 {
 	for (int i=0; i<nc; ++i)
 	{
-		if (c[i] == n) return;
+		if (c[i] == n) 
+			return true;
 	}
-	assert(nc<MAX_CLUSTERS-1);
+	if(nc>=MAX_CLUSTERS-1) 
+		return false;
 	c[nc++] = n;
+	return true;
 }
 
 //-----------------------------------------------------------------------------
 // TODO: The case n==6 has other ways to get tesselated. I only implemented a few
-FEMesh* FECVDDecimationModifier::Triangulate()
+FEMesh* FECVDDecimationModifier::Triangulate(FEMesh* pm)
 {
-	int N = m_pm->Nodes();
+	int N = pm->Nodes();
 	vector<NODE> Node; Node.resize(N);
 	for (int i=0; i<N; ++i)
 	{
 		Node[i].nc = 0;
 	}
 
-	FENodeFaceList NFL(m_pm);
+	FENodeFaceList NFL(pm);
 	NFL.BuildSorted();
-	for (int i=0; i<m_pm->Faces(); ++i) m_pm->Face(i).m_ntag = i;
+	for (int i=0; i<pm->Faces(); ++i) pm->Face(i).m_ntag = i;
 	for (int i=0; i<N; ++i)
 	{
 		int nval = NFL.Valence(i);
 		for (int j=0; j<nval; ++j)
 		{
-			Node[i].AttachToCluster(m_tag[NFL.Face(i, j)->m_ntag]);
+			if (Node[i].AttachToCluster(m_tag[NFL.Face(i, j)->m_ntag]) == false) return 0;
 		}
 	}
 
@@ -512,7 +523,7 @@ FEMesh* FECVDDecimationModifier::Triangulate()
 	{
 		FENode& nd = pnew->Node(i);
 		Cluster& Ci = m_Cluster[i+1];
-		assert(Ci.m_nf > 0);
+		assert(Ci.faces() > 0);
 		nd.r = Ci.m_sgamma / Ci.m_srho;
 	}
 
@@ -696,10 +707,10 @@ FEMesh* FECVDDecimationModifier::Triangulate()
 }
 
 //-----------------------------------------------------------------------------
-FEMesh* FECVDDecimationModifier::Triangulate2()
+FEMesh* FECVDDecimationModifier::Triangulate2(FEMesh* pm)
 {
 	// let's build the node data
-	int N = m_pm->Nodes();
+	int N = pm->Nodes();
 	vector<NODE> Node; Node.resize(N);
 	for (int i=0; i<N; ++i)
 	{
@@ -707,16 +718,24 @@ FEMesh* FECVDDecimationModifier::Triangulate2()
 	}
 
 	// find all clusters a node belongs to
-	FENodeFaceList NFL(m_pm);
+	FENodeFaceList NFL(pm);
 	NFL.BuildSorted();
-	for (int i=0; i<m_pm->Faces(); ++i) m_pm->Face(i).m_ntag = i;
+	for (int i=0; i<pm->Faces(); ++i) pm->Face(i).m_ntag = i;
 	for (int i=0; i<N; ++i)
 	{
 		int nval = NFL.Valence(i);
 		for (int j=0; j<nval; ++j)
 		{
-			Node[i].AttachToCluster(m_tag[NFL.Face(i, j)->m_ntag]);
+			if (Node[i].AttachToCluster(m_tag[NFL.Face(i, j)->m_ntag]) == false) 
+				return 0;
 		}
+	}
+
+	// build the cluster's fid array
+	for (int i=0; i<pm->Faces(); ++i)
+	{
+		Cluster& C = m_Cluster[m_tag[i]];
+		C.m_fid.push_back(i);
 	}
 
 	// number of nodes for decimanted mesh equals number of clusters
@@ -731,22 +750,20 @@ FEMesh* FECVDDecimationModifier::Triangulate2()
 	{
 		FENode& nd = pnew->Node(i);
 		Cluster& Ci = m_Cluster[i+1];
-		assert(Ci.m_nf > 0);
-		assert(Ci.m_nf == Ci.m_fid.size());
+
 		//nd.r = Ci.m_sgamma / Ci.m_srho;//change here //original point
 		vec3d po = Ci.m_sgamma / Ci.m_srho;
 		vec3d po_1 = vec3d(0,0,0); //projection of po on one of the faces
 		//find projection of this center back to original surface of the mesh
 		int flag =  0;
 		double thickness = 0;
-		for (int j =0 ;j<Ci.m_nf ;j++)
+		for (int j =0 ;j<Ci.faces() ;j++)
 		{
-			FEFace& fi = m_pm->Face(Ci.m_fid[j]);
-			assert(fi.m_nodes == 3);
+			FEFace& fj = pm->Face(Ci.m_fid[j]);
 			vec3d p[3];
-			p[0] = m_pm->Node(fi.n[0]).r;//p1
-			p[1] = m_pm->Node(fi.n[1]).r;//p2
-			p[2] = m_pm->Node(fi.n[2]).r;//p3
+			p[0] = pm->Node(fj.n[0]).r;//p1
+			p[1] = pm->Node(fj.n[1]).r;//p2
+			p[2] = pm->Node(fj.n[2]).r;//p3
 
 			vec3d u = p[1] - p[0]; //p2 - p1
 			vec3d v = p[2] - p[0]; //p3 - p1
@@ -771,15 +788,18 @@ FEMesh* FECVDDecimationModifier::Triangulate2()
 			nd.r = po_1;
 
 		//shell thickness
-		for (int j =0 ;j<Ci.m_nf ;j++)
+		for (int j = 0; j<Ci.faces(); j++)
 		{
 			//shell thickness.....or some other variable
-			FEFace& fi = m_pm->Face(Ci.m_fid[j]);
-			FEElement* ele = m_pm->ElementPtr(fi.m_elem[0]);
+			FEFace& fi = pm->Face(Ci.m_fid[j]);
+			FEElement* ele = pm->ElementPtr(fi.m_elem[0]);
 			double *st = ele->m_h;
-			thickness += *st;
+			double temp_thickness = 0;
+			for(int ii = 0; ii< ele->Nodes();ii++)
+				temp_thickness += st[ii];
+			thickness += temp_thickness/ele->Nodes();
 		}
-		m_st[i] = thickness / Ci.m_nf;
+		m_st[i] = thickness / Ci.faces();
 	}
 
 	// list of triangles
@@ -802,7 +822,8 @@ FEMesh* FECVDDecimationModifier::Triangulate2()
 		else if (nd.nc > 3)
 		{
 			FEFillHole::EdgeRing ring;
-			for (int j=0; j<nd.nc; ++j) ring.add(nd.c[j]-1, pnew->Node(nd.c[j]-1).r);
+			vec3d temp;
+			for (int j=0; j<nd.nc; ++j) ring.add(nd.c[j]-1, pnew->Node(nd.c[j]-1).r,temp);
 
 			vector<FEFillHole::FACE> tri;
 			fill.DivideRing(ring, tri);
@@ -832,9 +853,9 @@ FEMesh* FECVDDecimationModifier::Triangulate2()
 }
 
 //-----------------------------------------------------------------------------
-FEMesh* FECVDDecimationModifier::CalculateCVD()
+FEMesh* FECVDDecimationModifier::CalculateCVD(FEMesh* pm)
 {
-	FEMesh* pnew = new FEMesh(*m_pm);
+	FEMesh* pnew = new FEMesh(*pm);
 
 	int N = pnew->Elements();
 	for (int i=0; i<N; ++i)
@@ -853,20 +874,20 @@ FEMesh* FECVDDecimationModifier::CalculateCVD()
 }
 
 //-----------------------------------------------------------------------------
-FEMesh* FECVDDecimationModifier::InterpolateShellThickness()
+void FECVDDecimationModifier::InterpolateShellThickness(FEMesh* pm)
 {
-	for (int i=0; i<m_pm->Elements(); ++i)
+	for (int i=0; i<pm->Elements(); ++i)
 	{
-		FEElement& el = m_pm->Element(i);
+		FEElement& el = pm->Element(i);
 		double st = 0;
 		int n = el.Nodes();
+		double* h = el.m_h;
 		for(int j =0;j<n;j++)
 		{
 			int node_id = el.m_node[j];
-			st += m_st[node_id]/3.0;
-		}
-		double* h = el.m_h;
-		h[0] = h[1] = h[2] = h[3] = st;
+			h[j] = m_st[node_id];
+			//st += m_st[node_id]/3.0;
+		}		
+		//h[0] = h[1] = h[2] = h[3] = st;
 	}
-	return m_pm;
 }
