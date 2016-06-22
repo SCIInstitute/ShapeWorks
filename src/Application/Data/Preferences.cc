@@ -122,6 +122,8 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_weight", 1.0);
   if (!this->settings_.contains("optimize_decay_span") || force)
     this->settings_.setValue("optimize_decay_span", 0.0);
+  if (!this->settings_.contains("optimize_maxAngle") || force)
+    this->settings_.setValue("optimize_maxAngle", 30.);
   this->saved_ = true;
 }
 

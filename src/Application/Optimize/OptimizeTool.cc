@@ -88,6 +88,14 @@ void OptimizeTool::on_meshDecimation_valueChanged(double v) {
   this->preferences_.set_preference("optimize_decimation", v);
 }
 
+void OptimizeTool::on_weight_valueChanged(double v) {
+  this->preferences_.set_preference("optimize_weight", v);
+}
+
+void OptimizeTool::on_maxAngle_valueChanged(double v) {
+  this->preferences_.set_preference("optimize_maxAngle", v);
+}
+
 void OptimizeTool::handle_message(std::string s) {
   emit message(s);
 }
@@ -110,6 +118,7 @@ void OptimizeTool::on_restoreDefaults_clicked() {
 }
 
 void OptimizeTool::on_number_of_scales_valueChanged(int val) {
+  this->preferences_.set_preference("optimize_scales", val);
   this->setupTable(val);
 }
 
@@ -192,11 +201,15 @@ void OptimizeTool::set_preferences(bool setScales) {
   this->ui_->meshDecimation->setValue(
     this->preferences_.get_preference("optimize_decimation",
       this->ui_->meshDecimation->value()));
-  if (setScales) {
-    this->ui_->number_of_scales->setValue(
-      this->preferences_.get_preference("optimize_scales",
-        this->ui_->number_of_scales->value()));
-  }
+  this->ui_->maxAngle->setValue(
+    this->preferences_.get_preference("optimize_maxAngle",
+      this->ui_->maxAngle->value()));
+  this->ui_->weight->setValue(
+    this->preferences_.get_preference("optimize_weight",
+      this->ui_->weight->value()));
+  this->ui_->number_of_scales->setValue(
+    this->preferences_.get_preference("optimize_scales",
+      this->ui_->number_of_scales->value()));
   auto table = this->ui_->parameterTable;
   auto rows = this->ui_->number_of_scales->value();
   for (size_t i = 0; i < rows; i++) {
@@ -227,6 +240,10 @@ void OptimizeTool::set_preferences(bool setScales) {
 void OptimizeTool::update_preferences() {
   this->preferences_.set_preference("optimize_decimation",
       this->ui_->meshDecimation->value());
+  this->preferences_.set_preference("optimize_maxAngle",
+    this->ui_->maxAngle->value());
+  this->preferences_.set_preference("optimize_weight",
+    this->ui_->weight->value());
   this->preferences_.set_preference("optimize_scales",
     this->ui_->number_of_scales->value());
   auto table = this->ui_->parameterTable;
