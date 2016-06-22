@@ -399,20 +399,6 @@ void Reconstruction::computeDenseMean(
 vnl_matrix<double> Reconstruction::computeParticlesNormals(
   vtkSmartPointer< vtkPoints > particles,
   ImageType::Pointer distance_transform) {
-  //DEBUG//////////////////////////////
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetInput(distance_transform);
-  writer->SetFileName("test.nrrd");
-  writer->Update();
-  std::vector<std::array<double, 3> > testPts;
-  for (size_t i = 0; i < 128; i++) {
-    std::array<double, 3> point;
-    for (size_t j = 0; j < 3; j++) {
-      point[j] = particles->GetPoint(i)[j];
-    }
-    testPts.push_back(point);
-  }
-  //END DEBUG//////////////////////////////
   const ImageType::SpacingType& spacing = distance_transform->GetSpacing();
   const ImageType::PointType& origin = distance_transform->GetOrigin();
 
