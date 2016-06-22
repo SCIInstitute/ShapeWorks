@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "FEFillHole.h"
 #include "FEAutoMesher.h"
 #include "FENodeNodeList.h"
