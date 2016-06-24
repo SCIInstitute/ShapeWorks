@@ -20,7 +20,8 @@
 Reconstruction::Reconstruction(float decimationPercent, double maxAngleDegrees) :
   denseDone_(false),
   decimationPercent_(decimationPercent),
-  maxAngleDegrees_(maxAngleDegrees)
+  maxAngleDegrees_(maxAngleDegrees),
+  numClusters_(5)
   {}
 
 Reconstruction::~Reconstruction() {
@@ -28,7 +29,7 @@ Reconstruction::~Reconstruction() {
 
 vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
   std::vector<std::vector<itk::Point<float> > > local_pts,
-  std::vector<itk::Point<float> > global_pts,
+  std::vector<std::vector<itk::Point<float> > > global_pts,
   std::vector<ImageType::Pointer> distance_transform) {
   if (!this->denseDone_ || !local_pts.empty() || 
     !distance_transform.empty() || !global_pts.empty()) {
@@ -55,6 +56,10 @@ void Reconstruction::setDecimation(float dec) {
 
 void Reconstruction::setMaxAngle(double angleDegrees) {
   this->maxAngleDegrees_ = angleDegrees;
+}
+
+void Reconstruction::setNumClusters(int num) {
+  this->numClusters_ = num;
 }
 
 vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
@@ -177,16 +182,33 @@ bool Reconstruction::denseDone() {
 
 void Reconstruction::computeDenseMean(
   std::vector<std::vector<itk::Point<float> > > local_pts,
-  std::vector<itk::Point<float> > global_pts,
+  std::vector<std::vector<itk::Point<float> > > global_pts,
   std::vector<ImageType::Pointer> distance_transform) {
   try {
+    //turn the sets of global points to one sparse global mean.
+    float init[] = { 0.f,0.f,0.f };
+    std::vector<itk::Point<float> > sparseMean =
+      std::vector<itk::Point<float> >(global_pts[0].size(), itk::Point<float>(init));
+    for (auto &a : global_pts) {
+      for (size_t i = 0; i < a.size(); i++) {
+        init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
+        itk::Vector<float> vec(init);
+        sparseMean[i] = sparseMean[i] + vec;
+      }
+    }
+    auto div = static_cast<float>(global_pts.size());
+    for (size_t i = 0; i < sparseMean.size(); i++) {
+      init[0] = sparseMean[i][0] / div;
+      init[1] = sparseMean[i][1] / div;
+      init[2] = sparseMean[i][2] / div;
+      sparseMean[i] = itk::Point<float>(init);
+    }
     std::vector<vnl_matrix<double> > normals;
     std::vector<vtkSmartPointer< vtkPoints > > subjectPts;
     this->sparseMean_ = vtkSmartPointer<vtkPoints>::New();
-    for (auto &a : global_pts) {
+    for (auto &a : sparseMean) {
       this->sparseMean_->InsertNextPoint(a[0], a[1], a[2]);
     }
-
     for (size_t shape = 0; shape < local_pts.size(); shape++) {
       subjectPts.push_back(vtkSmartPointer<vtkPoints>::New());
       for (auto &a : local_pts[shape]) {
@@ -287,9 +309,28 @@ void Reconstruction::computeDenseMean(
 
     rbfTransform->SetSourceLandmarks(sourceLandMarks);
 
-    for (size_t shape = 0; shape < local_pts.size(); shape++) {
-      auto dt = distance_transform[shape];
 
+    //////////////////////////////////////////////////////////////////
+    //Praful - get the shape indices corresponding to cetroids of
+    //kmeans clusters and run the following loop on only those shapes
+    // Read input shapes from file list
+    std::vector<int> centroidIndices;
+    if (this->numClusters_ > 0) {
+      performKMeansClustering(global_pts, global_pts[0].size(),
+        this->numClusters_, centroidIndices);
+
+    } else {
+      this->numClusters_ = distance_transform.size();
+      centroidIndices.resize(distance_transform.size());
+      for (unsigned int shapeNo = 0; shapeNo < distance_transform.size(); shapeNo++)
+        centroidIndices.push_back(shapeNo);
+
+    }
+    //////////////////////////////////////////////////////////////////
+    //Praful - clustering
+    for (unsigned int cnt = 0; cnt < centroidIndices.size(); cnt++) {
+      unsigned int shape = centroidIndices[cnt];
+      auto dt = distance_transform[shape];
       PointSetType::Pointer targetLandMarks = PointSetType::New();
       PointType pt;
       PointSetType::PointsContainer::Pointer
@@ -335,7 +376,7 @@ void Reconstruction::computeDenseMean(
       resampler->SetInput(distance_transform[shape]);
       resampler->Update();
 
-      if (shape == 0) {
+      if (cnt == 0) {
         // after warp
         DuplicatorType::Pointer duplicator = DuplicatorType::New();
         duplicator->SetInputImage(resampler->GetOutput());
@@ -373,13 +414,13 @@ void Reconstruction::computeDenseMean(
       MultiplyByConstantImageFilterType::New();
     multiplyImageFilter->SetInput(meanDistanceTransform);
     multiplyImageFilter->SetConstant(1.0 /
-      static_cast<double>(distance_transform.size()));
+      static_cast<double>(this->numClusters_));
     multiplyImageFilter->Update();
     MultiplyByConstantImageFilterType::Pointer multiplyImageFilterBeforeWarp =
       MultiplyByConstantImageFilterType::New();
     multiplyImageFilterBeforeWarp->SetInput(meanDistanceTransformBeforeWarp);
     multiplyImageFilterBeforeWarp->SetConstant(1.0 /
-      static_cast<double>(distance_transform.size()));
+      static_cast<double>(this->numClusters_));
     multiplyImageFilterBeforeWarp->Update();
     // going to vtk to extract the template mesh (mean dense shape)
     // to be deformed for each sparse shape
@@ -868,4 +909,74 @@ void Reconstruction::writeMeanInfo(std::string nameBase) {
     ptsOut1 << a << std::endl;
   }
   ptsOut1.close();
+}
+
+void Reconstruction::performKMeansClustering(
+  std::vector<std::vector<itk::Point<float> > > global_pts,
+  unsigned int number_of_particles, int K,
+  std::vector<int> & centroidIndices) {
+  unsigned int number_of_shapes = global_pts.size();
+  std::vector<vnl_matrix<double>> shapeList;
+  vnl_matrix<double> shapeVector(number_of_particles, 3, 0.0);
+
+  // Read input shapes from file list
+  for (unsigned int shapeNo = 0; shapeNo < number_of_shapes; shapeNo++) {
+    for (unsigned int ii = 0; ii < number_of_particles; ii++) {
+      double p[3];
+      p[0] = global_pts[shapeNo][ii][0];
+      p[1] = global_pts[shapeNo][ii][1];
+      p[2] = global_pts[shapeNo][ii][2];
+
+      shapeVector[ii][0] = p[0];
+      shapeVector[ii][1] = p[1];
+      shapeVector[ii][2] = p[2];
+    }
+    shapeList.push_back(shapeVector);
+  }
+  std::vector<int> centers(K, 0);
+  unsigned int seed = unsigned(std::time(0));
+  std::srand(seed);
+  centers[0] = rand() % number_of_shapes;
+  std::cout << "Setting center[0] to shape #" << centers[0] << std::endl;
+  int countCenters = 1;
+  while (countCenters < K) {
+    vnl_matrix<double> distMat(number_of_shapes, countCenters, 0.0);
+    vnl_vector<double> minDists(number_of_shapes, 0.0);
+    vnl_vector<double> probs(number_of_shapes, 0.0);
+    for (int s = 0; s < number_of_shapes; s++) {
+      for (int c = 0; c < countCenters; c++) {
+        if (s == centers[c]) {
+          distMat.set_row(s, 0.0);
+          break;
+        }
+        shapeVector = shapeList[s] - shapeList[centers[c]];
+        distMat(s, c) = shapeVector.fro_norm();
+      }
+      minDists(s) = distMat.get_row(s).min_value();
+      probs(s) = minDists(s)*minDists(s);
+    }
+    probs.operator /=(probs.sum());
+    vnl_vector<double> cumProbs(number_of_shapes, 0.0);
+
+    for (int s = 0; s < number_of_shapes; s++) {
+      cumProbs[s] = probs.extract(s + 1, 0).sum();
+    }
+    double r = (double)(rand() % 10000);
+    r = r / 10000.0;
+    for (int s = 0; s < number_of_shapes; s++) {
+      if (r < cumProbs[s]) {
+        if (probs[s] == 0.0) {
+          continue;
+        } else {
+          centers[countCenters] = s;
+          countCenters += 1;
+          break;
+        }
+      }
+    }
+    std::cout << "Setting center[" << countCenters - 1 << 
+      "] to shape #" << centers[countCenters - 1] << std::endl;
+  }
+  std::cout << "KMeans++ finished...." << std::endl;
+  centroidIndices = centers;
 }

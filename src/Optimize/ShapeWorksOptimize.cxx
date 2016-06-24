@@ -31,6 +31,7 @@ void ShapeWorksOptimize::run() {
   this->psmFilter_->SetMaximumNumberOfIterations(this->maxIter_);
   this->procrustesInterval_.resize(this->numScales_, this->reportInterval_); 
   this->psmFilter_->SetShapeEntropyWeighting(this->weighting_);
+  //this->psmFilter_->AddCuttingPlane(x(3),y(3),z(3), shape);
   this->totalIters_ = 0;
   for (auto &a : maxIter_) {
     this->totalIters_ += a;

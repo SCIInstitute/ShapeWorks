@@ -45,6 +45,7 @@ public Q_SLOTS:
   void handle_progress(int val);
   void handle_error(std::string);
   void on_meshDecimation_valueChanged(double v);
+  void on_numClusters_valueChanged(int v);
   void on_weight_valueChanged(double v);
   void on_maxAngle_valueChanged(double v);
   void handle_message(std::string);

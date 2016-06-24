@@ -73,7 +73,8 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     std::vector<std::vector<itk::Point<float> > >(),
     std::vector<ImageType::Pointer>(),
     this->ui_->maxAngle->value(),
-    this->ui_->meshDecimation->value());
+    this->ui_->meshDecimation->value(), 
+    this->ui_->numClusters->value());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
@@ -86,6 +87,10 @@ void OptimizeTool::on_run_optimize_button_clicked() {
 
 void OptimizeTool::on_meshDecimation_valueChanged(double v) {
   this->preferences_.set_preference("optimize_decimation", v);
+}
+
+void OptimizeTool::on_numClusters_valueChanged(int v) {
+  this->preferences_.set_preference("optimize_clusters", v);
 }
 
 void OptimizeTool::on_weight_valueChanged(double v) {
@@ -101,6 +106,7 @@ void OptimizeTool::handle_message(std::string s) {
 }
 
 void OptimizeTool::on_restoreDefaults_clicked() {
+  this->preferences_.delete_entry("optimize_clusters");
   this->preferences_.delete_entry("optimize_decimation");
   this->preferences_.delete_entry("optimize_scales");
   this->preferences_.delete_entry("optimize_start_reg");
@@ -198,6 +204,9 @@ std::vector<unsigned int> OptimizeTool::getIters() {
 }
 
 void OptimizeTool::set_preferences(bool setScales) {
+  this->ui_->numClusters->setValue(
+    this->preferences_.get_preference("optimize_clusters",
+      this->ui_->numClusters->value()));
   this->ui_->meshDecimation->setValue(
     this->preferences_.get_preference("optimize_decimation",
       this->ui_->meshDecimation->value()));
@@ -238,6 +247,8 @@ void OptimizeTool::set_preferences(bool setScales) {
 }
 
 void OptimizeTool::update_preferences() {
+  this->preferences_.set_preference("optimize_clusters",
+    this->ui_->numClusters->value());
   this->preferences_.set_preference("optimize_decimation",
       this->ui_->meshDecimation->value());
   this->preferences_.set_preference("optimize_maxAngle",

@@ -88,30 +88,14 @@ void MeshManager::initializeReconstruction(
   std::vector<std::vector<itk::Point<float> > > global_pts,
   std::vector<ImageType::Pointer> distance_transform,
   double maxAngleDegrees,
-  float decimationPercent) {
-  //turn the sets of global points to one sparse global mean.
-  float init[] = { 0.f,0.f,0.f };
-  std::vector<itk::Point<float> > sparseMean =
-    std::vector<itk::Point<float> >(global_pts[0].size(), itk::Point<float>(init));
-  for (auto &a : global_pts) {
-    for (size_t i = 0; i < a.size(); i++) {
-      init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
-      itk::Vector<float> vec(init);
-      sparseMean[i] = sparseMean[i] + vec;
-    }
-  }
-  auto div = static_cast<float>(global_pts.size());
-  for (size_t i = 0; i < sparseMean.size(); i++) {
-    init[0] = sparseMean[i][0] / div;
-    init[1] = sparseMean[i][1] / div;
-    init[2] = sparseMean[i][2] / div;
-    sparseMean[i] = itk::Point<float>(init);
-  }
+  float decimationPercent,
+  int numClusters) {
   //now actually generate the dense mean.
   this->construct_.reset();
   this->construct_.setDecimation(decimationPercent);
   this->construct_.setMaxAngle(maxAngleDegrees);
-  this->construct_.getDenseMean(local_pts, sparseMean, distance_transform);
+  this->construct_.setNumClusters(numClusters);
+  this->construct_.getDenseMean(local_pts, global_pts, distance_transform);
 }
 
 bool MeshManager::hasDenseMean() {

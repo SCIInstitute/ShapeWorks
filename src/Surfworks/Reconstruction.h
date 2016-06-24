@@ -58,12 +58,13 @@ public:
   vtkSmartPointer<vtkPolyData> getDenseMean(
     std::vector<std::vector<itk::Point<float> > > local_pts =
     std::vector<std::vector<itk::Point<float> > >(),
-    std::vector<itk::Point<float> > global_pts = 
-    std::vector<itk::Point<float> >(),
+    std::vector<std::vector<itk::Point<float> > > global_pts =
+    std::vector<std::vector<itk::Point<float> > >(),
     std::vector<ImageType::Pointer> distance_transform = 
     std::vector<ImageType::Pointer>() );
   void reset();
   void setDecimation(float dec);
+  void setNumClusters(int num);
   void setMaxAngle(double angleDegrees);
   vtkSmartPointer<vtkPolyData> 
     getMesh(std::vector<itk::Point<float> > local_pts);
@@ -74,7 +75,7 @@ public:
 private:
   void computeDenseMean(
     std::vector<std::vector<itk::Point<float> > > local_pts,
-    std::vector<itk::Point<float> > global_pts,
+    std::vector<std::vector<itk::Point<float> > > global_pts,
     std::vector<ImageType::Pointer> distance_transform);
   vnl_matrix<double> computeParticlesNormals(
     vtkSmartPointer< vtkPoints > particles,
@@ -100,6 +101,10 @@ private:
     vtkSmartPointer<vtkImageData> volData);
   vtkSmartPointer<vtkPolyData> MeshQC(
     vtkSmartPointer<vtkPolyData> meshIn);
+  void performKMeansClustering(
+    std::vector<std::vector<itk::Point<float> > > global_pts,
+    unsigned int number_of_particles, 
+    int K, std::vector<int> & centroidIndices);
   //members.
   vtkSmartPointer<vtkPoints> sparseMean_;
   vtkSmartPointer<vtkPolyData> denseMean_;
@@ -107,5 +112,6 @@ private:
   bool denseDone_;
   float decimationPercent_;
   double maxAngleDegrees_;
+  size_t numClusters_;
 };
 #endif // !__RECONSTRUCTION_H__

@@ -34,7 +34,8 @@ public:
     std::vector<ImageType::Pointer> distance_transform =
     std::vector<ImageType::Pointer>(),
     double maxAngle = 45.,
-    float decimationPercent = 0.3f);
+    float decimationPercent = 0.3f,
+    int numClusters = 5);
 	~ShapeworksWorker();
 
 public Q_SLOTS:
@@ -57,6 +58,7 @@ private:
   std::vector<ImageType::Pointer> distance_transform_;
   float decimationPercent_;
   double maxAngle_;
+  int numClusters_;
 };
 
 #endif // ifndef SHAPEWORKS_WORKER_H

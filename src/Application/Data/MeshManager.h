@@ -38,7 +38,8 @@ public:
     std::vector<std::vector<itk::Point<float> > > global_pts,
     std::vector<ImageType::Pointer> distance_transform,
     double maxAngle,
-    float decimationPecent);
+    float decimationPecent,
+    int numClusters);
   bool hasDenseMean();
   void setMean(vtkSmartPointer<vtkPoints> sparseMean,
     vtkSmartPointer<vtkPolyData> denseMean,
