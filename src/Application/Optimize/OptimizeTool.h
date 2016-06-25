@@ -34,14 +34,20 @@ public:
   void update_preferences();
   void enableActions();
   void disableActions();
+  void setCutPlanesFile(std::string file);
+  std::string getCutPlanesFile();
 
 public Q_SLOTS:
 
   /// Run optimize tool
   void on_run_optimize_button_clicked();
+  void on_cutPlanesFile_editingFinished();
+  void on_reconstructionButton_clicked();
+  void on_cutPlanesFileButton_clicked();
   void on_restoreDefaults_clicked();
   void on_number_of_scales_valueChanged(int val);
-  void handle_thread_complete();
+  void handle_optimize_complete();
+  void handle_reconstruction_complete();
   void handle_progress(int val);
   void handle_error(std::string);
   void on_meshDecimation_valueChanged(double v);
@@ -51,6 +57,7 @@ public Q_SLOTS:
   void handle_message(std::string);
 signals:
   void optimize_complete();
+  void reconstruction_complete();
   void error_message(std::string);
   void progress(size_t);
   void message(std::string);
@@ -60,6 +67,8 @@ private:
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
+  std::vector<std::array<itk::Point<float>, 3 > > cutPlanes_;
+  bool autoSetCutPlanesFile_;
 };
 
 #endif /* STUDIO_OPTIMIZE_OPTIMIZETOOL_H */

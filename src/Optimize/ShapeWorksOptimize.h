@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <array>
 #include <ShapeWorksGroom.h>
 #include "itkImage.h"
 #include "itkPSMProcrustesRegistration.h"
@@ -18,7 +19,10 @@ class ShapeWorksOptimize {
 public:
   ShapeWorksOptimize(
     std::vector<ImageType::Pointer> inputs =
-    std::vector<ImageType::Pointer>(), size_t numScales = 1,
+    std::vector<ImageType::Pointer>(),
+    std::vector<std::array<itk::Point<float>, 3 > > cutPlanes =
+    std::vector<std::array<itk::Point<float>, 3 > >(),
+    size_t numScales = 1,
     std::vector<double> start_reg = std::vector<double>(),
     std::vector<double> end_reg = std::vector<double>(),
     std::vector<unsigned int> iters = std::vector<unsigned int>(),
@@ -46,6 +50,7 @@ protected:
   itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;
   size_t reportInterval_, procrustesCounter_, totalIters_, iterCount_;
   std::vector<size_t>  procrustesInterval_;
+  std::vector<std::array<itk::Point<float>, 3 > > cutPlanes_;
 };
 
 #endif

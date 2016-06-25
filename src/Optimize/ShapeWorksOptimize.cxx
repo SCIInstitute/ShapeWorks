@@ -3,13 +3,17 @@
 
 ShapeWorksOptimize::ShapeWorksOptimize(
   //QObject* parent,
-  std::vector<ImageType::Pointer> inputs, size_t numScales,
+  std::vector<ImageType::Pointer> inputs,
+  std::vector<std::array<itk::Point<float>, 3 > > cutPlanes,
+  size_t numScales,
   std::vector<double> start_reg, std::vector<double> end_reg,
   std::vector<unsigned int> iters, 
   std::vector<double> decay_span, double weighting,
   bool verbose)
   :// QObject(parent), 
-  images_(inputs), numScales_(numScales),
+  images_(inputs), 
+  cutPlanes_(cutPlanes),
+  numScales_(numScales),
   maxIter_(iters), 
   reportInterval_(10), procrustesCounter_(0),
   decaySpan_(decay_span),
@@ -41,6 +45,19 @@ void ShapeWorksOptimize::run() {
   for (auto &a : this->images_) {
     this->psmFilter_->SetDomainName("item_" + std::to_string(i), i);
     this->psmFilter_->SetInput(i, a);
+    if ((this->cutPlanes_.size() == 1) || 
+      (this->cutPlanes_.size() == this->images_.size())) {
+      vnl_vector_fixed<double, 3> x;
+      vnl_vector_fixed<double, 3> y;
+      vnl_vector_fixed<double, 3> z;
+      size_t which = (this->cutPlanes_.size() == 1) ? 0 : i;
+      for (size_t idx = 0; idx < 3; idx++) {
+        x[idx] = this->cutPlanes_[which][idx][0];
+        y[idx] = this->cutPlanes_[which][idx][1];
+        z[idx] = this->cutPlanes_[which][idx][2];
+      }
+      this->psmFilter_->AddCuttingPlane(x, y, z, "item_" + std::to_string(i));
+    }
     i++;
   }
   this->procrustesRegistration_->SetPSMParticleSystem(

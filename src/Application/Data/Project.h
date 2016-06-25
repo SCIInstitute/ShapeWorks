@@ -35,10 +35,10 @@ public:
   void set_parent( QWidget* parent );
 
   /// save project to file
-  bool save_project( std::string filename, std::string dataDir );
+  bool save_project( std::string filename, std::string dataDir, std::string cutPlanesFile);
 
   /// load project from file
-  bool load_project( QString filename );
+  bool load_project( QString filename, std::string& planesFile);
   
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();

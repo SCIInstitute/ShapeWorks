@@ -64,9 +64,11 @@ void Reconstruction::setNumClusters(int num) {
 
 vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
   std::vector<itk::Point<float> > local_pts) {
+  //default reconstruction if no warping to dense mean has occurred yet
   if (!this->denseDone_) {
     return vtkSmartPointer<vtkPolyData>::New();
   }
+  //we have a dense mean, so lets warp to subject space
   std::vector<int> particles_indices;
   for (int i = 0; i < this->goodPoints_.size(); i++) {
     if (this->goodPoints_[i]) {
@@ -315,16 +317,16 @@ void Reconstruction::computeDenseMean(
     //kmeans clusters and run the following loop on only those shapes
     // Read input shapes from file list
     std::vector<int> centroidIndices;
-    if (this->numClusters_ > 0) {
-      performKMeansClustering(global_pts, global_pts[0].size(),
-        this->numClusters_, centroidIndices);
+    if (this->numClusters_ > 0 && this->numClusters_ < global_pts.size()) {
+      this->performKMeansClustering(global_pts, global_pts[0].size(), centroidIndices);
 
     } else {
       this->numClusters_ = distance_transform.size();
       centroidIndices.resize(distance_transform.size());
-      for (unsigned int shapeNo = 0; shapeNo < distance_transform.size(); shapeNo++)
-        centroidIndices.push_back(shapeNo);
-
+      for (size_t shapeNo = 0; shapeNo < distance_transform.size(); shapeNo++) {
+        centroidIndices[shapeNo] = shapeNo;
+        std::cout << centroidIndices[shapeNo] << std::endl;
+      }
     }
     //////////////////////////////////////////////////////////////////
     //Praful - clustering
@@ -382,7 +384,6 @@ void Reconstruction::computeDenseMean(
         duplicator->SetInputImage(resampler->GetOutput());
         duplicator->Update();
         meanDistanceTransform = duplicator->GetOutput();
-
         // before warp
         DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
         duplicator2->SetInputImage(distance_transform[shape]);
@@ -913,9 +914,12 @@ void Reconstruction::writeMeanInfo(std::string nameBase) {
 
 void Reconstruction::performKMeansClustering(
   std::vector<std::vector<itk::Point<float> > > global_pts,
-  unsigned int number_of_particles, int K,
+  unsigned int number_of_particles,
   std::vector<int> & centroidIndices) {
   unsigned int number_of_shapes = global_pts.size();
+  if (this->numClusters_ > number_of_shapes) {
+    this->numClusters_ = number_of_shapes;
+  }
   std::vector<vnl_matrix<double>> shapeList;
   vnl_matrix<double> shapeVector(number_of_particles, 3, 0.0);
 
@@ -933,13 +937,13 @@ void Reconstruction::performKMeansClustering(
     }
     shapeList.push_back(shapeVector);
   }
-  std::vector<int> centers(K, 0);
+  std::vector<int> centers(this->numClusters_, 0);
   unsigned int seed = unsigned(std::time(0));
   std::srand(seed);
   centers[0] = rand() % number_of_shapes;
   std::cout << "Setting center[0] to shape #" << centers[0] << std::endl;
   int countCenters = 1;
-  while (countCenters < K) {
+  while (countCenters < this->numClusters_) {
     vnl_matrix<double> distMat(number_of_shapes, countCenters, 0.0);
     vnl_vector<double> minDists(number_of_shapes, 0.0);
     vnl_vector<double> probs(number_of_shapes, 0.0);

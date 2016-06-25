@@ -104,7 +104,7 @@ private:
   void performKMeansClustering(
     std::vector<std::vector<itk::Point<float> > > global_pts,
     unsigned int number_of_particles, 
-    int K, std::vector<int> & centroidIndices);
+    std::vector<int> & centroidIndices);
   //members.
   vtkSmartPointer<vtkPoints> sparseMean_;
   vtkSmartPointer<vtkPolyData> denseMean_;

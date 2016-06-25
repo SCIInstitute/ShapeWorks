@@ -150,7 +150,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool(preferences_));
   this->optimize_tool_->set_project(this->project_);
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
-  connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()), this, SLOT(handle_optimize_complete()));
+  connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()), 
+    this, SLOT(handle_optimize_complete()));
+  connect(this->optimize_tool_.data(), SIGNAL(reconstruction_complete()), 
+    this, SLOT(handle_reconstruction_complete()));
   connect(this->optimize_tool_.data(), SIGNAL(error_message(std::string)),
     this, SLOT(handle_error(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(message(std::string)),
@@ -275,7 +278,8 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
     return this->on_action_save_project_as_triggered();
   } else {
     if (this->project_->save_project(
-      this->project_->get_filename().toStdString(), this->data_dir_)) {
+      this->project_->get_filename().toStdString(), this->data_dir_,
+      this->optimize_tool_->getCutPlanesFile())) {
       this->handle_message("Project Saved");
     }
   }
@@ -306,7 +310,8 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
 
-  if (this->project_->save_project(filename.toStdString(), this->data_dir_)) {
+  if (this->project_->save_project(filename.toStdString(), this->data_dir_,
+    this->optimize_tool_->getCutPlanesFile())) {
     this->handle_message("Project Saved");
     return true;
   }
@@ -644,9 +649,21 @@ void ShapeWorksStudioApp::handle_project_changed()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_optimize_complete()
-{
+void ShapeWorksStudioApp::handle_optimize_complete() {
+  this->project_->get_mesh_manager()->resetReconstruct();
   this->analysis_tool_->reset_stats();
+  this->project_->handle_clear_cache();
+  this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
+  this->ui_->view_mode_combobox->setCurrentIndex(1);
+  this->preferences_.set_preference("display_state",
+    this->ui_->view_mode_combobox->currentText());
+  this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
+  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->update_lut();
+  this->update_display();
+}
+
+void ShapeWorksStudioApp::handle_reconstruction_complete() {
   this->project_->handle_clear_cache();
   this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
   this->ui_->view_mode_combobox->setCurrentIndex(2);
@@ -762,7 +779,8 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename)
 {
-  if (!this->project_->load_project(filename)) {
+  std::string planesFile;
+  if (!this->project_->load_project(filename, planesFile)) {
     return;
   }
   auto display_state = this->preferences_.get_preference(
@@ -780,6 +798,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   preferences_.add_recent_file(filename);
   this->update_recent_files();
+  if (planesFile.find_last_of(".txt") != std::string::npos) {
+    this->optimize_tool_->setCutPlanesFile(planesFile);
+  }
   // set UI state based on project
   if (tool_state == Project::DATA_C) {
     this->ui_->action_import_mode->trigger();

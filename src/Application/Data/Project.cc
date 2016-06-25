@@ -63,59 +63,15 @@ void Project::handle_clear_cache() {
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples() {
   if (!this->reconstructed_present_) return;
-  if (!this->mesh_manager_->hasDenseMean()) {
-    emit message(std::string("Warping optimizations to mean space..."));
-    std::vector<ImageType::Pointer> images;
-    std::vector<std::vector<itk::Point<float> > > local_pts;
-    std::vector<std::vector<itk::Point<float> > > global_pts;
-    local_pts.resize(this->shapes_.size());
-    global_pts.resize(this->shapes_.size());
-    images.resize(this->shapes_.size());
-    for (int shape = 0; shape < this->shapes_.size(); shape++) {
-      auto s = this->shapes_.at(shape);
-      auto img = s->get_groomed_image();
-      images[shape] = img;
-      auto gpts = s->get_global_correspondence_points();
-      auto lpts = s->get_local_correspondence_points();
-      for (size_t i = 0; i < gpts.size(); i += 3) {
-        float arr[] = {
-          static_cast<float>(gpts[i]),
-          static_cast<float>(gpts[i + 1]),
-          static_cast<float>(gpts[i + 2])
-        };
-        itk::Point<float> g(arr);
-        global_pts[shape].push_back(g);
-        float arr2[] = {
-          static_cast<float>(lpts[i]),
-          static_cast<float>(lpts[i + 1]),
-          static_cast<float>(lpts[i + 2])
-        };
-        itk::Point<float> l(arr);
-        local_pts[shape].push_back(l);
-      }
+  this->preferences_.set_preference("cache_enabled", false);
+  for (int i = 0; i < this->shapes_.size(); i++) {
+    auto shape = this->shapes_.at(i);
+    auto pts = shape->get_local_correspondence_points();
+    if (pts.size() > 0) {
+      shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
     }
-    QThread *thread = new QThread;
-    ShapeworksWorker *worker = new ShapeworksWorker(
-      ShapeworksWorker::Reconstruct, NULL, NULL, QSharedPointer<Project>(this),
-      local_pts, global_pts, images, this->preferences_.get_preference("optimize_decimation", 0.3));
-    worker->moveToThread(thread);
-    connect(thread, SIGNAL(started()), worker, SLOT(process()));
-    connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
-    connect(worker, SIGNAL(error_message(std::string)), this, SLOT(parent_->handle_error(std::string)));
-    connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
-    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-    thread->start();
-  } else {
-    this->preferences_.set_preference("cache_enabled", false);
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      auto shape = this->shapes_.at(i);
-      auto pts = shape->get_local_correspondence_points();
-      if (pts.size() > 0) {
-        shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
-      }
-    }
-    this->preferences_.set_preference("cache_enabled", true);
   }
+  this->preferences_.set_preference("cache_enabled", true);
 }
 
 //---------------------------------------------------------------------------
@@ -125,7 +81,7 @@ void Project::set_parent(QWidget* parent)
 }
 
 //---------------------------------------------------------------------------
-bool Project::save_project(std::string fname, std::string dataDir) {
+bool Project::save_project(std::string fname, std::string dataDir, std::string cutPlanesFile) {
   QString filename = QString::fromStdString(fname);
   if (filename == "") {
     filename = this->filename_;
@@ -175,6 +131,7 @@ bool Project::save_project(std::string fname, std::string dataDir) {
     xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
     xml->writeTextElement("goodPoints_file", QString::fromStdString(location + ".goodPoints.txt"));
   }
+  xml->writeTextElement("cutPlanes_file", QString::fromStdString(cutPlanesFile));
   progress.setValue(5);
   QApplication::processEvents();
   
@@ -254,7 +211,7 @@ bool Project::save_project(std::string fname, std::string dataDir) {
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_project(QString filename) {
+bool Project::load_project(QString filename, std::string& planesFile) {
   if (!QFile::exists(filename)) {
     QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
     return false;
@@ -304,6 +261,10 @@ bool Project::load_project(QString filename) {
         sparseFile = val;
       } else if (name == "goodPoints_file") {
         goodPtsFile = val;
+      } else if (name == "cutPlanes_file") {
+        if (val.find_last_of(".txt") != std::string::npos) {
+          planesFile = val;
+        }
       } else {
         this->preferences_.set_preference(name, QVariant(QString::fromStdString(val)));
       }

@@ -67,6 +67,7 @@ int main(int argc, char ** argv) {
     double tolerance_default = 0.01,
       start_reg_default = 100., end_reg_default = 2.,
       decay_span_default = 0., weight = 1.;
+    std::string planesFile;
     //collect the values from the parameters
     for (auto a : parameters) {
       //groom parameters
@@ -97,6 +98,8 @@ int main(int argc, char ** argv) {
       } else if (a.first == "groom_blur_sigma") {
         groom_blur_sigma = std::stod(a.second);
         //optimize parameters
+      } else if (a.first == "optimize_planes") {
+        planesFile = a.second;
       } else if (a.first == "optimize_scales") {
         groom_blur_sigma = std::stoi(a.second);
       } else if (a.first.find("optimize_start_reg") != std::string::npos) {
@@ -172,8 +175,28 @@ int main(int argc, char ** argv) {
     while (tolerance.size() > optimize_scales) {
       tolerance.pop_back();
     }
+    //get the cutting planes from file if possible
+    std::ifstream planes(planesFile.c_str());
+    std::vector<std::array<itk::Point<float>, 3 > > cutPlanes;
+    while (planes.good()) {
+      float x1, y1, z1, x2, y2, z2, x3, y3, z3;
+      planes >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3;
+      if (!planes.good()) { break; }
+      itk::Point<float> p1, p2, p3;
+      p1[0] = x1; p1[1] = y1; p1[2] = z1;
+      p2[0] = x2; p2[1] = y2; p2[2] = z2;
+      p3[0] = x3; p3[1] = y3; p3[2] = z3;
+      cutPlanes.push_back({ { p1, p2, p3 } });
+    }
+    if (cutPlanes.empty() || (cutPlanes.size() > 1 &&
+      cutPlanes.size() != groomed_img.size())) {
+      std::cerr << "Error reading cutting plane file. Must have 1 " <<
+        "set of 3 points, or X set of 3 points, where X is number of samples."
+        << std::endl;
+      cutPlanes.clear();
+    } 
     //run the optimize step
-    ShapeWorksOptimize optimize(groomed_img, optimize_scales,
+    ShapeWorksOptimize optimize(groomed_img, cutPlanes, optimize_scales,
       start_reg, end_reg, iters, decay_span, weight, true);
     optimize.run();
     auto lpts = optimize.localPoints();

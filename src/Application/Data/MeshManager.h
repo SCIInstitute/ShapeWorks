@@ -51,6 +51,7 @@ public:
 
   // pre-generate and cache a mesh for this shape
   void generateMesh( const vnl_vector<double>& shape );
+  void resetReconstruct();
 
   vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& shape );
 

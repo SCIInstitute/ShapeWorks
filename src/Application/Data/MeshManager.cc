@@ -47,6 +47,10 @@ void MeshManager::generateMesh(const vnl_vector<double>& shape)
   }
 }
 
+void MeshManager::resetReconstruct() {
+  this->construct_.reset();
+}
+
 vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shape) {
   vtkSmartPointer<vtkPolyData> polyData;
   if (shape.empty()) {

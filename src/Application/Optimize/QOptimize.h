@@ -10,7 +10,10 @@ Q_OBJECT;
 public:
   QOptimize(QObject* parent = nullptr,
     std::vector<ImageType::Pointer> inputs =
-    std::vector<ImageType::Pointer>(), size_t numScales = 1,
+    std::vector<ImageType::Pointer>(), 
+    std::vector<std::array<itk::Point<float>, 3 > > cutPlanes =
+    std::vector<std::array<itk::Point<float>, 3 > >(),
+    size_t numScales = 1,
     std::vector<double> start_reg = std::vector<double>(),
     std::vector<double> end_reg = std::vector<double>(),
     std::vector<unsigned int> iters = std::vector<unsigned int>(),

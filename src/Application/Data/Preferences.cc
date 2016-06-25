@@ -124,8 +124,8 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_decay_span", 0.0);
   if (!this->settings_.contains("optimize_maxAngle") || force)
     this->settings_.setValue("optimize_maxAngle", 30.);
-  if (!this->settings_.contains("optimize_numClusters") || force)
-    this->settings_.setValue("optimize_numClusters", 5);
+  if (!this->settings_.contains("optimize_clusters") || force)
+    this->settings_.setValue("optimize_clusters", 5);
   this->saved_ = true;
 }
 

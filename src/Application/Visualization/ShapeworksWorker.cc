@@ -41,13 +41,6 @@ void ShapeworksWorker::process() {
   case ShapeworksWorker::Optimize:
     try {
       this->optimize_->run();
-      emit message(std::string("Warping optimizations to mean space..."));
-      this->project_->get_mesh_manager()->initializeReconstruction(
-        this->optimize_->localPoints(), 
-        this->optimize_->globalPoints(), this->optimize_->getImages(),
-        this->maxAngle_,
-        this->decimationPercent_,
-        this->numClusters_);
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());
       return;
@@ -55,6 +48,7 @@ void ShapeworksWorker::process() {
     break;
   case ShapeworksWorker::Reconstruct:
     try {
+      emit message(std::string("Warping optimizations to mean space..."));
       this->project_->get_mesh_manager()->initializeReconstruction(
         this->local_pts_, this->global_pts_, this->distance_transform_,
         this->maxAngle_, this->decimationPercent_,

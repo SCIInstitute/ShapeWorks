@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>202</width>
+    <width>193</width>
     <height>444</height>
    </rect>
   </property>
@@ -29,6 +29,18 @@ background: rgb(255, 255, 127)
       <string>Particle System Parameters</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="leftMargin">
+       <number>1</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="leftMargin">
@@ -109,6 +121,33 @@ background: rgb(255, 255, 127)
         </item>
        </layout>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLineEdit" name="cutPlanesFile">
+          <property name="text">
+           <string>Cut Planes File</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cutPlanesFileButton">
+          <property name="maximumSize">
+           <size>
+            <width>95</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Choose...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
@@ -123,11 +162,30 @@ background: rgb(255, 255, 127)
     <widget class="QTableWidget" name="parameterTable"/>
    </item>
    <item>
+    <widget class="QPushButton" name="run_optimize_button">
+     <property name="text">
+      <string>Run Optimize</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Meshing Parameters</string>
+      <string>Reconstruction Parameters</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="leftMargin">
+       <number>1</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>1</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <property name="topMargin">
@@ -249,15 +307,14 @@ background: rgb(255, 255, 127)
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="run_optimize_button">
-       <property name="text">
-        <string>Run Optimize</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QPushButton" name="reconstructionButton">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Run Reconstruction</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QPushButton" name="restoreDefaults">
@@ -283,9 +340,12 @@ background: rgb(255, 255, 127)
  </widget>
  <tabstops>
   <tabstop>number_of_scales</tabstop>
-  <tabstop>meshDecimation</tabstop>
+  <tabstop>weight</tabstop>
+  <tabstop>cutPlanesFileButton</tabstop>
   <tabstop>parameterTable</tabstop>
-  <tabstop>run_optimize_button</tabstop>
+  <tabstop>maxAngle</tabstop>
+  <tabstop>meshDecimation</tabstop>
+  <tabstop>numClusters</tabstop>
   <tabstop>restoreDefaults</tabstop>
  </tabstops>
  <resources/>
