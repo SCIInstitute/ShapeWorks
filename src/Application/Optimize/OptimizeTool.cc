@@ -14,11 +14,9 @@
 #include <ui_OptimizeTool.h>
 
 //---------------------------------------------------------------------------
-OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs),
-  autoSetCutPlanesFile_(false) {
+OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_OptimizeTool;
   this->ui_->setupUi( this );
-  this->setupTable(this->ui_->number_of_scales->value());
 }
 
 //---------------------------------------------------------------------------
@@ -29,6 +27,11 @@ OptimizeTool::~OptimizeTool()
 void OptimizeTool::handle_error(std::string msg) {
   emit error_message(msg);
   this->ui_->run_optimize_button->setEnabled(true);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::handle_warning(std::string msg) {
+  emit warning_message(msg);
 }
 
 //---------------------------------------------------------------------------
@@ -76,10 +79,13 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   for (auto s : shapes) {
     imgs.push_back(s->get_groomed_image());
   }
-  auto scales = this->ui_->number_of_scales->value();
+  auto scales = static_cast<size_t>(std::log2(this->ui_->number_of_particles->value()) + 1);
   this->optimize_ = new QOptimize(this, imgs, this->cutPlanes_, scales,
-    this->getStartRegs(), this->getEndRegs(), this->getIters(),
-    this->getDecaySpans(), this->ui_->weight->value(), true);
+    std::vector<double>(scales,this->ui_->starting_regularization->value()),
+    std::vector<double>(scales, this->ui_->ending_regularization->value()),
+    std::vector<unsigned int>(scales, this->ui_->iterations->value()),
+    std::vector<double>(scales, this->ui_->decay_span->value()),
+    this->ui_->weight->value(), true);
 
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
@@ -116,22 +122,32 @@ void OptimizeTool::on_maxAngle_valueChanged(double v) {
   this->preferences_.set_preference("optimize_maxAngle", v);
 }
 
+void OptimizeTool::on_starting_regularization_valueChanged(double v) {
+  this->preferences_.set_preference("optimize_start_reg", v);
+}
+
+void OptimizeTool::on_ending_regularization_valueChanged(double v) {
+  this->preferences_.set_preference("optimize_end_reg", v);
+}
+
+void OptimizeTool::on_iterations_valueChanged(int v) {
+  this->preferences_.set_preference("optimize_iters", v);
+}
+
+void OptimizeTool::on_decay_span_valueChanged(int v) {
+  this->preferences_.set_preference("optimize_decay_span",
+    static_cast<double>(v));
+}
+
 void OptimizeTool::handle_message(std::string s) {
   emit message(s);
 }
 
-void OptimizeTool::on_cutPlanesFile_editingFinished() {
-  //get the cutting planes from file if possible
-  auto file = this->ui_->cutPlanesFile->text().toStdString();
-  if (file.empty()) {
-    this->ui_->cutPlanesFile->setText("");
-    this->cutPlanes_.clear();
-    return;
-  }
+void OptimizeTool::loadCutPlanesFile(std::string file) {
   std::ifstream planes(file.c_str());
   if (!planes.good()) {
     emit error_message("Cannot open file: " + file);
-    this->ui_->cutPlanesFile->setText("");
+    this->ui_->cutPlanesFile->setText("None Selected");
     this->cutPlanes_.clear();
     return;
   }
@@ -152,12 +168,24 @@ void OptimizeTool::on_cutPlanesFile_editingFinished() {
     cutPlanes.size() != this->project_->get_shapes().size())) {
     emit error_message(std::string("Error reading cutting plane file. Must have 1 ") +
       "set of 3 points, or X set of 3 points, where X is number of samples.");
-    this->ui_->cutPlanesFile->setText("");
+    this->ui_->cutPlanesFile->setText("None Selected");
     this->cutPlanes_.clear();
     return;
   }
   emit message("Successfully read in cut planes file: " + file);
   this->cutPlanes_ = cutPlanes;
+
+}
+
+void OptimizeTool::on_cutPlanesFile_editingFinished() {
+  //get the cutting planes from file if possible
+  auto file = this->ui_->cutPlanesFile->text().toStdString();
+  if (file.empty()) {
+    this->ui_->cutPlanesFile->setText("None Selected");
+    this->cutPlanes_.clear();
+    return;
+  }
+  this->loadCutPlanesFile(file);
 }
 
 void OptimizeTool::on_reconstructionButton_clicked() {
@@ -201,6 +229,7 @@ void OptimizeTool::on_reconstructionButton_clicked() {
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
   connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+  connect(worker, SIGNAL(warning_message(std::string)), this, SLOT(handle_warning(std::string)));
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
@@ -209,28 +238,25 @@ void OptimizeTool::on_reconstructionButton_clicked() {
 
 void OptimizeTool::on_cutPlanesFileButton_clicked() {
   std::string file;
-  if (!this->autoSetCutPlanesFile_) {
-    QString filename;
-    filename = QFileDialog::getOpenFileName(this,
-      tr("Import Clipping Planes File..."),
-      this->preferences_.get_preference("Main/last_directory", QString()),
-      tr("Text files (*.txt)"));
-    if (filename.isEmpty()) {
-      return;
-    }
-    this->preferences_.set_preference("Main/last_directory",
-      QDir().absoluteFilePath(filename));
-    file = filename.toStdString();
+  QString filename;
+  filename = QFileDialog::getOpenFileName(this,
+    tr("Import Clipping Planes File..."),
+    this->preferences_.get_preference("Main/last_directory", QString()),
+    tr("Text files (*.txt)"));
+  if (filename.isEmpty()) {
+    return;
   }
-  this->autoSetCutPlanesFile_ = false;
+  this->preferences_.set_preference("Main/last_directory",
+    QDir().absoluteFilePath(filename));
+  file = filename.toStdString();
   this->ui_->cutPlanesFile->setText(QString::fromStdString(file));
-  this->on_cutPlanesFile_editingFinished();
+  this->loadCutPlanesFile(file);
 }
 
 void OptimizeTool::on_restoreDefaults_clicked() {
   this->preferences_.delete_entry("optimize_clusters");
   this->preferences_.delete_entry("optimize_decimation");
-  this->preferences_.delete_entry("optimize_scales");
+  this->preferences_.delete_entry("optimize_particles");
   this->preferences_.delete_entry("optimize_start_reg");
   this->preferences_.delete_entry("optimize_end_reg");
   this->preferences_.delete_entry("optimize_iters");
@@ -239,90 +265,20 @@ void OptimizeTool::on_restoreDefaults_clicked() {
   this->preferences_.delete_entry("optimize_decay_span");
   this->preferences_.restore_defaults();
   this->set_preferences();
-  auto scales = this->preferences_.get_preference("optimize_scales", 8);
-  this->ui_->number_of_scales->setValue(scales);
+  auto optimize_particles = this->preferences_.get_preference("optimize_particles", 128);
+  this->ui_->number_of_particles->setValue(optimize_particles);
   qApp->processEvents();
   this->preferences_.set_saved(false);
 }
 
-void OptimizeTool::on_number_of_scales_valueChanged(int val) {
-  this->preferences_.set_preference("optimize_scales", val);
-  this->setupTable(val);
+void OptimizeTool::on_number_of_particles_valueChanged(int val) {
+  this->preferences_.set_preference("optimize_particles", val);
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::set_project( QSharedPointer<Project> project )
 {
   this->project_ = project;
-}
-
-void OptimizeTool::setupTable(int rows) {
-  auto table = this->ui_->parameterTable;
-  table->setRowCount(rows);
-  table->setColumnCount(4);
-  QStringList Hheader, Vheader;
-  Hheader << "StartReg" << "EndReg"
-    << "Iters" << "DecaySpan";
-  table->setHorizontalHeaderLabels(Hheader);
-  for (size_t i = 0; i < rows; i++) {
-    Vheader << QString::number(i + 1);
-  }
-  this->set_preferences(false);
-  table->verticalHeader()->setVisible(true);
-  table->setVerticalHeaderLabels(Vheader);
-  table->setEditTriggers(QAbstractItemView::DoubleClicked);
-  table->setSelectionMode(QAbstractItemView::SingleSelection);
-  table->setShowGrid(true);
-  table->setStyleSheet("QTableView {selection-background-color: 0x1111;}");
-  QString styleSheet = "::section {"
-    "spacing: 0px;"
-    "background-color: 0xEEEE;"
-    "color: black;"
-    "border: 1px solid black;"
-    "margin: 0px;"
-    "text-align: left;"
-    "font-family: arial;"
-    "font-size: 11px; }";
-  table->horizontalHeader()->setStyleSheet(styleSheet);
-  table->verticalHeader()->setStyleSheet(styleSheet);
-  table->resizeColumnsToContents();
-  table->resizeRowsToContents();
-}
-
-std::vector<double> OptimizeTool::getStartRegs() {
-  auto ans =  std::vector<double>();
-  auto table = this->ui_->parameterTable;
-  for (size_t i = 0; i < table->rowCount(); i++) {
-    ans.push_back(table->item(i, 0)->text().toDouble());
-  }
-  return ans;
-}
-
-std::vector<double> OptimizeTool::getEndRegs() {
-  auto ans = std::vector<double>();
-  auto table = this->ui_->parameterTable;
-  for (size_t i = 0; i < table->rowCount(); i++) {
-    ans.push_back(table->item(i, 1)->text().toDouble());
-  }
-  return ans;
-}
-
-std::vector<double> OptimizeTool::getDecaySpans() {
-  auto ans = std::vector<double>();
-  auto table = this->ui_->parameterTable;
-  for (size_t i = 0; i < table->rowCount(); i++) {
-    ans.push_back(table->item(i, 3)->text().toDouble());
-  }
-  return ans;
-}
-
-std::vector<unsigned int> OptimizeTool::getIters() {
-  auto ans = std::vector<unsigned int>();
-  auto table = this->ui_->parameterTable;
-  for (size_t i = 0; i < table->rowCount(); i++) {
-    ans.push_back(table->item(i, 2)->text().toUInt());
-  }
-  return ans;
 }
 
 void OptimizeTool::set_preferences(bool setScales) {
@@ -338,34 +294,21 @@ void OptimizeTool::set_preferences(bool setScales) {
   this->ui_->weight->setValue(
     this->preferences_.get_preference("optimize_weight",
       this->ui_->weight->value()));
-  this->ui_->number_of_scales->setValue(
-    this->preferences_.get_preference("optimize_scales",
-      this->ui_->number_of_scales->value()));
-  auto table = this->ui_->parameterTable;
-  auto rows = this->ui_->number_of_scales->value();
-  for (size_t i = 0; i < rows; i++) {
-    for (size_t j = 0; j < 4; j++) {
-      QString cellname;
-      switch (j) {
-      case 0:
-        cellname = "optimize_start_reg";
-        break;
-      case 1:
-        cellname = "optimize_end_reg";
-        break;
-      case 2:
-        cellname = "optimize_iters";
-        break;
-      case 3:
-        cellname = "optimize_decay_span";
-        break;
-      }
-      auto defaultVal = this->preferences_.get_preference(cellname.toStdString(), j == 2 ? 0 : 0.);
-      auto cellTest = cellname + QString::number(i);
-      auto cellVal = this->preferences_.get_preference(cellTest.toStdString(), defaultVal);
-      table->setItem(i, j, new QTableWidgetItem(QString::number(cellVal)));
-    }
-  }
+  this->ui_->number_of_particles->setValue(
+    this->preferences_.get_preference("optimize_particles",
+      this->ui_->number_of_particles->value()));
+  this->ui_->starting_regularization->setValue(
+    this->preferences_.get_preference("optimize_start_reg",
+      this->ui_->starting_regularization->value()));
+  this->ui_->ending_regularization->setValue(
+    this->preferences_.get_preference("optimize_end_reg",
+      this->ui_->ending_regularization->value()));
+  this->ui_->iterations->setValue(
+    this->preferences_.get_preference("optimize_iters",
+      this->ui_->iterations->value()));
+  this->ui_->decay_span->setValue(
+    this->preferences_.get_preference("optimize_decay_span",
+      this->ui_->decay_span->value()));
 }
 
 void OptimizeTool::update_preferences() {
@@ -377,33 +320,18 @@ void OptimizeTool::update_preferences() {
     this->ui_->maxAngle->value());
   this->preferences_.set_preference("optimize_weight",
     this->ui_->weight->value());
-  this->preferences_.set_preference("optimize_scales",
-    this->ui_->number_of_scales->value());
-  auto table = this->ui_->parameterTable;
-  auto rows = this->ui_->number_of_scales->value();
-  for (size_t i = 0; i < rows; i++) {
-    for (size_t j = 0; j < 4; j++) {
-      QString cellname;
-      switch (j) {
-      case 0:
-        cellname = "optimize_start_reg";
-        break;
-      case 1:
-        cellname = "optimize_end_reg";
-        break;
-      case 2:
-        cellname = "optimize_iters";
-        break;
-      case 3:
-        cellname = "optimize_decay_span";
-        break;
-      }
-      auto cellTest = cellname + QString::number(i);
-      this->preferences_.set_preference(cellTest.toStdString(),
-        j == 2 ? table->item(i, j)->text().toUInt() :
-        table->item(i, j)->text().toDouble());
-    }
-  }
+  this->preferences_.set_preference("optimize_particles",
+    this->ui_->number_of_particles->value());
+  this->preferences_.set_preference("optimize_start_reg",
+    this->ui_->starting_regularization->value());
+  this->preferences_.set_preference("optimize_end_reg",
+    this->ui_->ending_regularization->value());
+  this->preferences_.set_preference("optimize_iters",
+    this->ui_->iterations->value());
+  this->preferences_.set_preference("optimize_decay_span",
+    this->ui_->decay_span->value());
+
+
 }
 
 void OptimizeTool::enableActions() {
@@ -416,8 +344,7 @@ void OptimizeTool::disableActions() {
 
 void OptimizeTool::setCutPlanesFile(std::string file) {
   this->ui_->cutPlanesFile->setText(QString::fromStdString(file));
-  this->autoSetCutPlanesFile_ = true;
-  this->on_cutPlanesFileButton_clicked();
+  this->loadCutPlanesFile(file);
 }
 
 std::string OptimizeTool::getCutPlanesFile() {

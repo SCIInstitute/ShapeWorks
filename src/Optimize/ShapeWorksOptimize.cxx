@@ -52,9 +52,9 @@ void ShapeWorksOptimize::run() {
       vnl_vector_fixed<double, 3> z;
       size_t which = (this->cutPlanes_.size() == 1) ? 0 : i;
       for (size_t idx = 0; idx < 3; idx++) {
-        x[idx] = this->cutPlanes_[which][idx][0];
-        y[idx] = this->cutPlanes_[which][idx][1];
-        z[idx] = this->cutPlanes_[which][idx][2];
+        x[idx] = this->cutPlanes_[which][0][idx];
+        y[idx] = this->cutPlanes_[which][1][idx];
+        z[idx] = this->cutPlanes_[which][2][idx];
       }
       this->psmFilter_->AddCuttingPlane(x, y, z, "item_" + std::to_string(i));
     }

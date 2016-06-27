@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>193</width>
-    <height>444</height>
+    <width>202</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,7 +58,7 @@ background: rgb(255, 255, 127)
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Number of Splits</string>
+           <string>Number of Particles</string>
           </property>
          </widget>
         </item>
@@ -76,12 +76,15 @@ background: rgb(255, 255, 127)
          </spacer>
         </item>
         <item>
-         <widget class="QSpinBox" name="number_of_scales">
+         <widget class="QSpinBox" name="number_of_particles">
+          <property name="minimum">
+           <number>1</number>
+          </property>
           <property name="maximum">
            <number>20000</number>
           </property>
           <property name="value">
-           <number>8</number>
+           <number>128</number>
           </property>
          </widget>
         </item>
@@ -122,6 +125,179 @@ background: rgb(255, 255, 127)
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Starting Regularization</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="starting_regularization">
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>9999.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>1000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Ending Regularization</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="ending_regularization">
+          <property name="decimals">
+           <number>1</number>
+          </property>
+          <property name="minimum">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>9999.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>10.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Iterations per Level</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="iterations">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="value">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Decay Span</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_9">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="decay_span">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="value">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Cutting Planes Text file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <property name="topMargin">
          <number>0</number>
@@ -129,7 +305,7 @@ background: rgb(255, 255, 127)
         <item>
          <widget class="QLineEdit" name="cutPlanesFile">
           <property name="text">
-           <string>Cut Planes File</string>
+           <string>None Selected</string>
           </property>
          </widget>
         </item>
@@ -152,19 +328,16 @@ background: rgb(255, 255, 127)
     </widget>
    </item>
    <item>
-    <widget class="Line" name="line_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+    <widget class="QPushButton" name="run_optimize_button">
+     <property name="text">
+      <string>Run Optimize</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="parameterTable"/>
-   </item>
-   <item>
-    <widget class="QPushButton" name="run_optimize_button">
-     <property name="text">
-      <string>Run Optimize</string>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
@@ -339,10 +512,8 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
-  <tabstop>number_of_scales</tabstop>
   <tabstop>weight</tabstop>
   <tabstop>cutPlanesFileButton</tabstop>
-  <tabstop>parameterTable</tabstop>
   <tabstop>maxAngle</tabstop>
   <tabstop>meshDecimation</tabstop>
   <tabstop>numClusters</tabstop>

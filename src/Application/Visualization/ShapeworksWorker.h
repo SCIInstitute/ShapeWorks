@@ -44,6 +44,7 @@ public Q_SLOTS:
 Q_SIGNALS:
   void result_ready();
   void error_message(std::string);
+  void warning_message(std::string);
   void step_made(int val);
   void finished();
   void message(std::string);

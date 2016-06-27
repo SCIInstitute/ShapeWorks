@@ -21,14 +21,6 @@ public:
   /// set the pointer to the project
   void set_project( QSharedPointer<Project> project );
 
-  // set up the parameter table.
-  void setupTable(int rows);
-  std::vector<double> getStartRegs();
-  std::vector<double> getEndRegs();
-  std::vector<double> getDecaySpans();
-  std::vector<double> getTolerances();
-  std::vector<unsigned int> getIters();
-
   void set_preferences(bool setScales = false);
 
   void update_preferences();
@@ -45,20 +37,28 @@ public Q_SLOTS:
   void on_reconstructionButton_clicked();
   void on_cutPlanesFileButton_clicked();
   void on_restoreDefaults_clicked();
-  void on_number_of_scales_valueChanged(int val);
+  void on_number_of_particles_valueChanged(int val);
   void handle_optimize_complete();
   void handle_reconstruction_complete();
   void handle_progress(int val);
   void handle_error(std::string);
+  void handle_warning(std::string);
   void on_meshDecimation_valueChanged(double v);
   void on_numClusters_valueChanged(int v);
   void on_weight_valueChanged(double v);
   void on_maxAngle_valueChanged(double v);
+  void on_starting_regularization_valueChanged(double v);
+  void on_ending_regularization_valueChanged(double v);
+  void on_iterations_valueChanged(int v);
+  void on_decay_span_valueChanged(int v);
   void handle_message(std::string);
+private:
+  void loadCutPlanesFile(std::string file);
 signals:
   void optimize_complete();
   void reconstruction_complete();
   void error_message(std::string);
+  void warning_message(std::string);
   void progress(size_t);
   void message(std::string);
 
@@ -68,7 +68,6 @@ private:
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
   std::vector<std::array<itk::Point<float>, 3 > > cutPlanes_;
-  bool autoSetCutPlanesFile_;
 };
 
 #endif /* STUDIO_OPTIMIZE_OPTIMIZETOOL_H */

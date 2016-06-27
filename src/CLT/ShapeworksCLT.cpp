@@ -58,15 +58,11 @@ int main(int argc, char ** argv) {
       groom_fastmarching = false, groom_blur = false;
     size_t groom_antialias_amount = 10, groom_pad_value = 10;
     double groom_fastmarching_isovalue = 0.5, groom_fastmarching_sigma = 2.,
-      groom_blur_sigma = 2.;
+      groom_blur_sigma = 2., weight = 1.;
     //default optimize options
     size_t optimize_scales = 8;
-    std::vector<unsigned int> iters;
-    std::vector<double> start_reg, end_reg, decay_span, tolerance;
-    size_t iters_default = 1000;
-    double tolerance_default = 0.01,
-      start_reg_default = 100., end_reg_default = 2.,
-      decay_span_default = 0., weight = 1.;
+    unsigned int iters;
+    double start_reg, end_reg, decay_span;
     std::string planesFile;
     //collect the values from the parameters
     for (auto a : parameters) {
@@ -100,32 +96,16 @@ int main(int argc, char ** argv) {
         //optimize parameters
       } else if (a.first == "optimize_planes") {
         planesFile = a.second;
-      } else if (a.first == "optimize_scales") {
-        groom_blur_sigma = std::stoi(a.second);
+      } else if (a.first == "optimize_particles") {
+        optimize_scales = static_cast<size_t>(std::log2(std::stoi(a.second)) + 1);
       } else if (a.first.find("optimize_start_reg") != std::string::npos) {
-        if (a.first == "optimize_start_reg") {
-          start_reg_default = std::stod(a.second);
-        } else {
-          start_reg.push_back(std::stod(a.second));
-        }
+        start_reg = std::stod(a.second);
       } else if (a.first.find("optimize_end_reg") != std::string::npos) {
-        if (a.first == "optimize_end_reg") {
-          end_reg_default = std::stod(a.second);
-        } else {
-          end_reg.push_back(std::stod(a.second));
-        }
+        end_reg = std::stod(a.second);
       } else if (a.first.find("optimize_iters") != std::string::npos) {
-        if (a.first == "optimize_iters") {
-          iters_default = std::stoi(a.second);
-        } else {
-          iters.push_back(std::stoi(a.second));
-        }
+        iters = std::stoi(a.second);
       } else if (a.first.find("optimize_decay_span") != std::string::npos) {
-        if (a.first == "optimize_decay_span") {
-          decay_span_default = std::stod(a.second);
-        } else {
-          decay_span.push_back(std::stod(a.second));
-        }
+        decay_span = std::stod(a.second);
       } else if (a.first.find("optimize_weight") != std::string::npos) {
         weight = std::stod(a.second);
       }
@@ -143,38 +123,6 @@ int main(int argc, char ** argv) {
     if (groom_blur) { groom.queueTool("blur"); }
     groom.run();
     auto groomed_img = groom.getImages();
-    //add optimize scale options if not enough
-    while (start_reg.size() < optimize_scales) {
-      start_reg.push_back(start_reg_default);
-    }
-    while (end_reg.size() < optimize_scales) {
-      end_reg.push_back(end_reg_default);
-    }
-    while (iters.size() < optimize_scales) {
-      iters.push_back(iters_default);
-    }
-    while (decay_span.size() < optimize_scales) {
-      decay_span.push_back(decay_span_default);
-    }
-    while (tolerance.size() < optimize_scales) {
-      tolerance.push_back(tolerance_default);
-    }
-    //remove optimize scale options if too many
-    while (start_reg.size() > optimize_scales) {
-      start_reg.pop_back();
-    }
-    while (end_reg.size() > optimize_scales) {
-      end_reg.pop_back();
-    }
-    while (iters.size() > optimize_scales) {
-      iters.pop_back();
-    }
-    while (decay_span.size() > optimize_scales) {
-      decay_span.pop_back();
-    }
-    while (tolerance.size() > optimize_scales) {
-      tolerance.pop_back();
-    }
     //get the cutting planes from file if possible
     std::ifstream planes(planesFile.c_str());
     std::vector<std::array<itk::Point<float>, 3 > > cutPlanes;
@@ -197,7 +145,11 @@ int main(int argc, char ** argv) {
     } 
     //run the optimize step
     ShapeWorksOptimize optimize(groomed_img, cutPlanes, optimize_scales,
-      start_reg, end_reg, iters, decay_span, weight, true);
+      std::vector<double>(optimize_scales,start_reg),
+      std::vector<double>(optimize_scales, end_reg),
+      std::vector<unsigned int>(optimize_scales, iters),
+      std::vector<double>(optimize_scales, decay_span),
+      weight, true);
     optimize.run();
     auto lpts = optimize.localPoints();
     auto wpts = optimize.globalPoints();

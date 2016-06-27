@@ -156,6 +156,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
     this, SLOT(handle_reconstruction_complete()));
   connect(this->optimize_tool_.data(), SIGNAL(error_message(std::string)),
     this, SLOT(handle_error(std::string)));
+  connect(this->optimize_tool_.data(), SIGNAL(warning_message(std::string)),
+    this, SLOT(handle_warning(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(message(std::string)),
     this, SLOT(handle_message(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(progress(size_t)),
@@ -577,6 +579,10 @@ void ShapeWorksStudioApp::handle_error(std::string str) {
   QMessageBox::critical(this, "Critical Error", str.c_str());
   this->handle_message(str);
   this->handle_progress(100);
+}
+
+void ShapeWorksStudioApp::handle_warning(std::string str) {
+  QMessageBox::warning(this, "Warning!", str.c_str());
 }
 
 void ShapeWorksStudioApp::handle_progress(size_t value) {

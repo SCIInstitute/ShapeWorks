@@ -250,8 +250,7 @@ void SparseKernelTransform<TScalarType, NDimensions>
 
     if(solver.info()!= Eigen::Success) {
         // decomposition failed
-        std::cerr << "LMatrix failed to decompose ...!" << std::endl;
-        return;
+        throw std::runtime_error("LMatrix failed to decompose ...!");
     }
 
     unsigned long numberOfLandmarks = m_SourceLandmarks->GetNumberOfPoints();
@@ -273,8 +272,7 @@ void SparseKernelTransform<TScalarType, NDimensions>
     std::cout  << solver.error() << std::endl;
     if(solver.info() != Eigen::Success) {
         // solving failed
-        std::cerr << "solving sparse system failed ...!" << std::endl;
-        return;
+        throw std::runtime_error("solving sparse system failed ...!");
     }
 
     clock.Stop();

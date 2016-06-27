@@ -23,8 +23,13 @@ FEMeshSmoothingModifier::FEMeshSmoothingModifier()
 
 FEMesh* FEMeshSmoothingModifier::Apply(FEMesh* pm)
 {
+  if (pm == NULL) {
+    throw std::exception("FEMesher failed.");
+  }
 	// make sure this is a triangle mesh
-	if (pm->IsType(FE_TRI3) == false) return 0;
+  if (pm->IsType(FE_TRI3) == false) {
+    throw std::exception("FEMesher failed.");
+  }
 
 	// make a copy of this mesh
 	FEMesh* pnew = new FEMesh(*pm);

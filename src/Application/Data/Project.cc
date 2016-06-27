@@ -125,7 +125,7 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   if (!defaultDir) {
     location = dataDir + "/";
   }
-  if (this->reconstructed_present()) {
+  if (this->reconstructed_present() && this->get_mesh_manager()->hasDenseMean()) {
     this->mesh_manager_->writeMeanInfo(location);
     xml->writeTextElement("denseMean_file", QString::fromStdString(location + ".dense.vtk"));
     xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));

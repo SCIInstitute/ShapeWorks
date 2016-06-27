@@ -33,16 +33,28 @@ void ShapeworksWorker::process() {
   case ShapeworksWorker::Groom:
     try {
       this->groom_->run();
+    } catch (std::runtime_error e) {
+      emit error_message(std::string("Error: ") + e.what());
+      return;
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());
+      return;
+    } catch (...) {
+      emit error_message(std::string("Error during optimization!"));
       return;
     }
     break;
   case ShapeworksWorker::Optimize:
     try {
       this->optimize_->run();
+    } catch (std::runtime_error e) {
+      emit error_message(std::string("Error: ") + e.what());
+      return;
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());
+      return;
+    } catch (...) {
+      emit error_message(std::string("Error during optimization!"));
       return;
     }
     break;
@@ -53,8 +65,18 @@ void ShapeworksWorker::process() {
         this->local_pts_, this->global_pts_, this->distance_transform_,
         this->maxAngle_, this->decimationPercent_,
         this->numClusters_);
-    } catch (std::exception e) {
+    } catch (std::runtime_error e) {
       emit error_message(std::string("Error: ") + e.what());
+      return;
+    } catch (std::exception e) {
+      if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
+        emit warning_message(e.what());
+      } else {
+        emit error_message(std::string("Error: ") + e.what());
+        return;
+      }
+    } catch (...) {
+      emit error_message(std::string("Error during optimization!"));
       return;
     }
     break;

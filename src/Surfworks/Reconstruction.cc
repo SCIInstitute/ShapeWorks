@@ -428,11 +428,14 @@ void Reconstruction::computeDenseMean(
     ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
     itk2vtkConnector->SetInput(multiplyImageFilter->GetOutput());
     itk2vtkConnector->Update();
-    vtkSmartPointer<vtkPolyData> meanDenseShape =
+    this->denseMean_ =
       this->extractIsosurface(itk2vtkConnector->GetOutput());
-    this->denseMean_ = this->MeshQC(meanDenseShape);
+    this->denseMean_ = this->MeshQC(this->denseMean_);
   } catch (std::exception e) {
-    std::cerr << "Error: " << e.what();
+    if (this->denseMean_ != NULL) {
+      this->denseDone_ = true;
+      throw std::exception("Warning! MeshQC failed, but a dense mean was computed by VTK.");
+    }
     throw e;
   }
   this->denseDone_ = true;
@@ -826,66 +829,61 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
 
 vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
   vtkSmartPointer<vtkPolyData> meshIn) {
-  try {
-    //for now, write formats and read them in
-    vtkSmartPointer<vtkPolyDataWriter>  polywriter =
-      vtkSmartPointer<vtkPolyDataWriter>::New();
-    polywriter->SetFileName("tmp.vtk");
+  //for now, write formats and read them in
+  vtkSmartPointer<vtkPolyDataWriter>  polywriter =
+    vtkSmartPointer<vtkPolyDataWriter>::New();
+  polywriter->SetFileName("tmp.vtk");
 #if (VTK_MAJOR_VERSION < 6)
-    polywriter->SetInput(meshIn);
+  polywriter->SetInput(meshIn);
 #else
-    polywriter->SetInputData(meshIn);
+  polywriter->SetInputData(meshIn);
 #endif
-    polywriter->Update();
-    // read a VTK file
-    FEVTKimport vtk_in;
-    FEMesh* pm = vtk_in.Load("tmp.vtk");
+  polywriter->Update();
+  // read a VTK file
+  FEVTKimport vtk_in;
+  FEMesh* pm = vtk_in.Load("tmp.vtk");
 
-    // make sure we were able to read the file
-    if (pm == 0) {
-      throw std::runtime_error("Could not read file tmp.vtk!");
-    }
-
-    // fix the element winding
-    FEFixMesh fix;
-    FEMesh* pm_fix;
-    pm_fix = fix.FixElementWinding(pm);
-    // do a Laplacian smoothing before decimation
-    FEMeshSmoothingModifier lap;
-    lap.m_threshold1 = 0.5;
-    lap.m_iteration = 1;
-    pm_fix = lap.Apply(pm_fix);
-
-    // do a CVD decimation
-    FECVDDecimationModifier cvd;
-    cvd.m_pct = this->decimationPercent_;
-    cvd.m_gradient = 1; // uniform decimation
-    pm_fix = cvd.Apply(pm_fix);
-
-    // do a Laplacian smoothing after decimation
-      FEMeshSmoothingModifier lap2;
-      lap2.m_threshold1 = 0.5;
-      lap2.m_iteration = 1;
-      pm_fix = lap2.Apply(pm_fix);
-
-    // export to another vtk file
-    FEVTKExport vtk_out;
-    if (vtk_out.Export(*pm_fix, "tmp2.vtk") == false) {
-      throw std::runtime_error("Could not write file tmp2.vtk!");
-    }
-    // don't forget to clean-up
-    delete pm_fix;
-    delete pm;
-    //read back in new mesh
-    vtkSmartPointer<vtkPolyDataReader> polyreader =
-      vtkSmartPointer<vtkPolyDataReader>::New();
-    polyreader->SetFileName("tmp2.vtk");
-    polyreader->Update();
-    return polyreader->GetOutput();
-  } catch (...) {
-    std::cerr << "There was a problem meshing from PreView, using VTK..." << std::endl;
-    return meshIn;
+  // make sure we were able to read the file
+  if (pm == 0) {
+    throw std::runtime_error("Could not read file tmp.vtk!");
   }
+
+  // fix the element winding
+  FEFixMesh fix;
+  FEMesh* pm_fix;
+  pm_fix = fix.FixElementWinding(pm);
+  // do a Laplacian smoothing before decimation
+  FEMeshSmoothingModifier lap;
+  lap.m_threshold1 = 0.5;
+  lap.m_iteration = 1;
+  pm_fix = lap.Apply(pm_fix);
+
+  // do a CVD decimation
+  FECVDDecimationModifier cvd;
+  cvd.m_pct = this->decimationPercent_;
+  cvd.m_gradient = 1; // uniform decimation
+  pm_fix = cvd.Apply(pm_fix);
+
+  // do a Laplacian smoothing after decimation
+    FEMeshSmoothingModifier lap2;
+    lap2.m_threshold1 = 0.5;
+    lap2.m_iteration = 1;
+    pm_fix = lap2.Apply(pm_fix);
+
+  // export to another vtk file
+  FEVTKExport vtk_out;
+  if (vtk_out.Export(*pm_fix, "tmp2.vtk") == false) {
+    throw std::runtime_error("Could not write file tmp2.vtk!");
+  }
+  // don't forget to clean-up
+  delete pm_fix;
+  delete pm;
+  //read back in new mesh
+  vtkSmartPointer<vtkPolyDataReader> polyreader =
+    vtkSmartPointer<vtkPolyDataReader>::New();
+  polyreader->SetFileName("tmp2.vtk");
+  polyreader->Update();
+  return polyreader->GetOutput();
   return meshIn;
 }
 
