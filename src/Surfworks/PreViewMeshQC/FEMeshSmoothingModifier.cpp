@@ -4,6 +4,7 @@
 #include "FENodeFaceList.h"
 #include "FENodeNodeList.h"
 #include "FEMesh.h"
+#include <exception>
 #include <algorithm>
 
 //-----------------------------------------------------------------------------
@@ -24,11 +25,11 @@ FEMeshSmoothingModifier::FEMeshSmoothingModifier()
 FEMesh* FEMeshSmoothingModifier::Apply(FEMesh* pm)
 {
   if (pm == NULL) {
-    throw std::exception("FEMesher failed.");
+    throw std::runtime_error("FEMesher failed.");
   }
 	// make sure this is a triangle mesh
   if (pm->IsType(FE_TRI3) == false) {
-    throw std::exception("FEMesher failed.");
+    throw std::runtime_error("FEMesher failed.");
   }
 
 	// make a copy of this mesh
