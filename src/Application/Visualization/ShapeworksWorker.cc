@@ -66,8 +66,12 @@ void ShapeworksWorker::process() {
         this->maxAngle_, this->decimationPercent_,
         this->numClusters_);
     } catch (std::runtime_error e) {
-      emit error_message(std::string("Error: ") + e.what());
-      return;
+      if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
+        emit warning_message(e.what());
+      } else {
+        emit error_message(std::string("Error: ") + e.what());
+        return;
+      }
     } catch (std::exception e) {
       if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
         emit warning_message(e.what());

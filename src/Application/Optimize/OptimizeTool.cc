@@ -180,7 +180,7 @@ void OptimizeTool::loadCutPlanesFile(std::string file) {
 void OptimizeTool::on_cutPlanesFile_editingFinished() {
   //get the cutting planes from file if possible
   auto file = this->ui_->cutPlanesFile->text().toStdString();
-  if (file.empty()) {
+  if (file.empty() || file == "None Selected") {
     this->ui_->cutPlanesFile->setText("None Selected");
     this->cutPlanes_.clear();
     return;
@@ -349,7 +349,7 @@ void OptimizeTool::setCutPlanesFile(std::string file) {
 
 std::string OptimizeTool::getCutPlanesFile() {
   auto name = this->ui_->cutPlanesFile->text().toStdString();
-  if (name.find_last_of(".txt") == std::string::npos) {
+  if (name == "None Selected") {
     return "";
   }
   return name;

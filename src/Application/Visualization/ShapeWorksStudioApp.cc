@@ -804,7 +804,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   preferences_.add_recent_file(filename);
   this->update_recent_files();
-  if (planesFile.find_last_of(".txt") != std::string::npos) {
+  if (!planesFile.empty() && planesFile != "None Selected") {
     this->optimize_tool_->setCutPlanesFile(planesFile);
   }
   // set UI state based on project
