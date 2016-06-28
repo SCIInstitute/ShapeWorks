@@ -93,6 +93,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="padding_amount">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="maximum">
            <number>500</number>
           </property>
@@ -142,6 +148,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="antialias_iterations">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="maximum">
            <number>5000</number>
           </property>
@@ -191,6 +203,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="blur_sigma">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="value">
            <double>2.000000000000000</double>
           </property>

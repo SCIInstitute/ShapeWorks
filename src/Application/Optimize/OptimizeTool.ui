@@ -10,6 +10,12 @@
     <height>458</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>122</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -77,6 +83,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="number_of_particles">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="minimum">
            <number>1</number>
           </property>
@@ -117,6 +129,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="weight">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="value">
            <double>1.000000000000000</double>
           </property>
@@ -151,6 +169,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="starting_regularization">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -194,6 +218,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="ending_regularization">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="decimals">
            <number>1</number>
           </property>
@@ -237,6 +267,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="iterations">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="minimum">
            <number>1</number>
           </property>
@@ -277,6 +313,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="decay_span">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="minimum">
            <number>1</number>
           </property>
@@ -386,6 +428,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="maxAngle">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="maximum">
            <double>90.000000000000000</double>
           </property>
@@ -432,6 +480,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="meshDecimation">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="minimum">
            <double>0.010000000000000</double>
           </property>
@@ -469,6 +523,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="numClusters">
+          <property name="minimumSize">
+           <size>
+            <width>57</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="value">
            <number>5</number>
           </property>
@@ -512,11 +572,19 @@ background: rgb(255, 255, 127)
   </layout>
  </widget>
  <tabstops>
+  <tabstop>number_of_particles</tabstop>
   <tabstop>weight</tabstop>
+  <tabstop>starting_regularization</tabstop>
+  <tabstop>ending_regularization</tabstop>
+  <tabstop>iterations</tabstop>
+  <tabstop>decay_span</tabstop>
+  <tabstop>cutPlanesFile</tabstop>
   <tabstop>cutPlanesFileButton</tabstop>
+  <tabstop>run_optimize_button</tabstop>
   <tabstop>maxAngle</tabstop>
   <tabstop>meshDecimation</tabstop>
   <tabstop>numClusters</tabstop>
+  <tabstop>reconstructionButton</tabstop>
   <tabstop>restoreDefaults</tabstop>
  </tabstops>
  <resources/>
