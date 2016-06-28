@@ -431,12 +431,15 @@ void Reconstruction::computeDenseMean(
     this->denseMean_ =
       this->extractIsosurface(itk2vtkConnector->GetOutput());
     this->denseMean_ = this->MeshQC(this->denseMean_);
-  } catch (std::exception e) {
+  } catch (std::runtime_error e) {
     if (this->denseMean_ != NULL) {
       this->denseDone_ = true;
-      throw std::exception("Warning! MeshQC failed, but a dense mean was computed by VTK.");
+      throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
     }
+  } catch (std::exception e) {
     throw e;
+  } catch (...) {
+    throw std::runtime_error("Optimize failed!");
   }
   this->denseDone_ = true;
 }
