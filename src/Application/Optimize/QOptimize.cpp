@@ -13,6 +13,11 @@ void QOptimize::iterateCallback(itk::Object * caller, const itk::EventObject &e)
   itk::PSMEntropyModelFilter<ImageType> *o =
     reinterpret_cast<itk::PSMEntropyModelFilter<ImageType> *>(caller);
   ShapeWorksOptimize::iterateCallback(caller, e);
+  auto transform = o->GetParticleSystem()->GetTransform();
+  //throw on NaN
+  if (transform(0,0) != transform(0,0)) {
+    throw std::runtime_error("Optimize failed! Please try changing parameters.");
+  }
   if (o->GetNumberOfElapsedIterations() % this->reportInterval_ == 0) {
     this->iterCount_ += this->reportInterval_;
     emit progress(this->iterCount_ * 100 / this->totalIters_);
