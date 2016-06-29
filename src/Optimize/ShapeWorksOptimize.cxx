@@ -102,23 +102,26 @@ void ShapeWorksOptimize::iterateCallback(itk::Object *caller, const itk::EventOb
 
   // Print every 10 iterations
   if (o->GetNumberOfElapsedIterations() % this->reportInterval_ != 0) { return; }
-  std::cout << "Iteration # " << o->GetNumberOfElapsedIterations() << std::endl;
-  std::cout << " Eigenmode variances: ";
-  for (unsigned int i = 0; i < o->GetShapePCAVariances().size(); i++) {
-    std::cout << o->GetShapePCAVariances()[i] << " ";
-  }
-  std::cout << std::endl;
-  std::cout << " Regularization = " << o->GetRegularizationConstant() << std::endl;
-
-  // Check if optimization is run using scales. Get Procrustes
-  // interval for the current scale.
   int interval = 0;
-  std::cout << "Optimization Scale " << (o->GetCurrentScale() + 1) << "/"
-    << o->GetNumberOfScales() << std::endl;
+  if (this->verbose_) {
+    std::cout << "Iteration # " << o->GetNumberOfElapsedIterations() << std::endl;
+    std::cout << " Eigenmode variances: ";
+    for (unsigned int i = 0; i < o->GetShapePCAVariances().size(); i++) {
+      std::cout << o->GetShapePCAVariances()[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << " Regularization = " << o->GetRegularizationConstant() << std::endl;
 
+    // Check if optimization is run using scales. Get Procrustes
+    // interval for the current scale.
+    std::cout << "Optimization Scale " << (o->GetCurrentScale() + 1) << "/"
+      << o->GetNumberOfScales() << std::endl;
+  }
   if (o->GetNumberOfScales() > 1) {
-    interval = this->procrustesInterval_[o->GetCurrentScale()];
-    std::cout << "Interval = " << interval << std::endl;
+    if (this->verbose_) {
+      interval = this->procrustesInterval_[o->GetCurrentScale()];
+      std::cout << "Interval = " << interval << std::endl;
+    }
   } else {
     // Use the default interval
     interval = this->procrustesRegistration_->GetProcrustesInterval();
@@ -134,7 +137,9 @@ void ShapeWorksOptimize::iterateCallback(itk::Object *caller, const itk::EventOb
       // Reset the counter
       this->procrustesCounter_ = 0;
       this->procrustesRegistration_->RunRegistration();
-      std::cout << "Ran Procrustes Registration" << std::endl;
+      if (this->verbose_) {
+        std::cout << "Ran Procrustes Registration" << std::endl;
+      }
     }
   }
 }

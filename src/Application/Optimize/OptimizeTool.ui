@@ -83,6 +83,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="number_of_particles">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -129,6 +135,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="weight">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -169,6 +181,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="starting_regularization">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -218,6 +236,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="ending_regularization">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -267,6 +291,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="iterations">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -313,6 +343,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="decay_span">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -428,6 +464,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="maxAngle">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -480,6 +522,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QDoubleSpinBox" name="meshDecimation">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
@@ -523,6 +571,12 @@ background: rgb(255, 255, 127)
         </item>
         <item>
          <widget class="QSpinBox" name="numClusters">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>57</width>
