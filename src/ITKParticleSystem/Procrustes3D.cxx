@@ -65,9 +65,9 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes)
   {
     shapeListIt = shapes.begin();
     transformIt = transforms.begin();
+    LeaveOneOutMean(mean, shapes, shapeListIt);
     while(shapeListIt != shapes.end())
     {
-      LeaveOneOutMean(mean, shapes, shapeListIt);
 
       AlignTwoShapes((*transformIt), mean, (*shapeListIt));
 
@@ -255,7 +255,7 @@ LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
   for(shapeListIt = shapeList.begin(); shapeListIt != shapeList.end();
       shapeListIt++)
   {
-    if(shapeListIt != leaveOutIt)
+    //    if(shapeListIt != leaveOutIt)
     {
       ShapeType & shape = (*shapeListIt);
       shapeIt = shape.begin();
