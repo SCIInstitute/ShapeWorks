@@ -54,7 +54,7 @@ Building
   - <code>BUILD_TESTING=FALSE</code>
   - <code>ITKV3_COMPATIBILTY=TRUE</code>
 - Build ITK:
-  - Make command: <code>make -j4</code><br/>
+  - Make command: <code>make -j4 all</code><br/>
 
 ##Building VTK
 
@@ -66,7 +66,7 @@ Building
   - <code>BUILD_EXAMPLES=FALSE</code>
   - <code>BUILD_TESTING=FALSE</code><br/>
 - Build VTK
-  - Make command: <code>make -j4</code><br/>
+  - Make command: <code>make -j4 all</code><br/>
 
 ##Building ShapeWorksStudio<br/>
 
@@ -125,52 +125,68 @@ is loaded, it may still display when it is deleted. It will be replaced by the n
 align="right" hspace="20">
 Once more than 1 image is loaded, the preprocessing step, "groom" is next. You can select several options for grooming.
 <br/><br/>
-*Fill Holes* This option fills any existing holes in the segmentations.
+*Center* This option attempts to allign the segmentations to a common center if they aren't the same sizes.
 <br/><br/>
 *Isolate* This option isolates the foreground.
 <br/><br/>
-*Center* This option attempts to allign the segmentations to a common center if they aren't the same sizes.
-<br/><br/>
-*Autocrop* Use this option to find the largest bounding box containing all input shapes, and crop all input volumes
-accordingly.
+*Fill Holes* This option fills any existing holes in the segmentations.
 <br/><br/>
 *Pad* This option adds a padding around the shapes. This can help when a larger number of correspondance points are needed.
 You can select what amount is appropriate for the optimization step.
 <br/><br/>
 *Antialias* This option antialiases the binary segmentation. You can select the number of antialias iterations.
 <br/><br/>
-*Fastmarching* This option computes a distance transform of the surface using the fastmarching method.
-<br/><br/>
 *Blur* This option blurs the distance transform to get rid of high-frequency artifacts. You can choose an appropriate sigma
 for the blurring.
+<br/><br/>
+*Fastmarching* This option computes a distance transform of the surface using the fastmarching method.
 <br/><br/>
 *Run Groom* Click this when you are ready for grooming. This step takes some time. Output is put into a 
 ShapeWorksStudioTools.log file next to the executable. A progress indicator shows the tool is working.
 <br/><br/>
-
+*Skip* Click this if you believe your data to already be pre-processed to your liking.
+<br/><br/>
+*Restore Defaults* Click this to restore all values to their program defaults.
+<br/><br/>
 <h2>Optimize</h2>
+<h3>Optimize</h3>
 <img src="https://raw.githubusercontent.com/SCIInstitute/ShapeWorksStudio/master/src/Application/Resources/Images/Optimize.png"
 align="right" hspace="20">
 Once the grooming step is complete, you can run the optimize step. The Optimize table has 5 parameters per split.
 <br/><br/>
-*Number of splits* Specifies the number of particles (2 ^ splits) to be used to represent each shape in the ensemble.
+*Number of Particles* Specifies the number of particles to be used to represent each shape in the ensemble.
+Keep in mind that the actual particle count will be a power of "2" >= the provided number.
+<br/><br/>
+*Relative Weighting* The relative weighting of terms in the two-term cost function used for the optimization.  
 <br/><br/>
 *Starting/Ending Regularization* These options determines the regularizations on the covariance matrix for the shape-space 
 entropy estimation.
 <br/><br/>
-*Iterations per split* Specifies the number of iterations to run between successive particle splits during an 
+*Iterations per Level* Specifies the number of iterations to run between successive particle splits during an 
 initialization phase. This allows the particle system at a given granularity to converge to a stable state 
 before more particles are added.
 <br/><br/>
-*Tolerance* This is the error tolerance per split, which sets the threshold for optimization to be considered converged.
-<br/><br/>
 *Decay Span* The parameters RegStart, RegEnd, and DecaySpan define an "annealing" type optimization,
 where the minimum variance starts at RegStart and exponentially decreases over DecaySpan to the      
-RegEnd value.  If the DecaySpan is set to 0, then only a constant is used as the Minimum Variance 
-parameter and is held fixed during the optimization.
+RegEnd value.  This is usually the same number as iterations.
 <br/><br/>
 *Run Optimize* Click this when you are ready for optimizing. This step takes a while.
 A progress indicator shows the tool is working.
+<br/><br/>
+<h3>Reconstruction</h3>
+*Max Angle* This is the greatest angle between particle normals (from respective samples)
+permitted to label the particle "good", or useful for reconstruction.
+<br/><br/>
+*Mesh Decimation* The "PreView" library code can decimate the number of triangles to the value 
+set here. The default is "0.30" or 30 percent.
+<br/><br/>
+*# Clusters* To help speed up reconstruction, you can define how many samples/Clusters
+are used to warp data into mean space. "0" indicates to use all of the samples.
+<br/><br/>
+*Run Reconstruction* Click this to run the reconstruction step. If it fails, the VTK
+triangles are used instead. You can re-run with different Optimizations as needed.
+<br/><br/>
+*Restore Defaults* Click this to restore all values to their program defaults.
 <br/><br/>
 
 <h2>Analysis</h2>
@@ -224,14 +240,7 @@ shortcut option.
 <br/><br/>
 *Glyph options* Click the down arrow to resize the glyphs or select the quality of the glyphs.
 <br/><br/>
-*Show isosurface* Toggle whether to view the surface representing the shape. Click the down arrow for more options. 
-You can alter the number of neighbors, point spacing, and mesh smoothing for isosurface reconstruction.
-<br/><br/>
-*Neighborhood Size* The neighborhood size (max vertex valence) used for isosurface reconstruction.
-<br/><br/>
-*Spacing* The spacing used for isosurface reconstruction.
-<br/><br/>
-*Smoothing* The smoothing amount for isosurface reconstruction.
+*Show isosurface* Toggle whether to view the surface representing the shape. 
 <br/><br/>
 *View mode drop-down* This drop-down gives 3 options for view mode. Original is the binary segmentation. You must
 have loaded images for this option to be available. Groomed is for the distance transform view. You must  
@@ -273,7 +282,9 @@ between application runs for convenience.
 * Open and save projects
 * Set the data directory for where generated images will be written when a project is saved.
 * Load new images
-* Export a mesh reconstructed for a sample, the mean, or a variance from the mean.
+* Export a mesh reconstructed for samples, the mean, or a variance from the mean.
+* Export the Eigen values or Eigen vectors from the sample statistics.
+* Export the Particles per shape to text files.
 * Export an XML parameter file to run a command line too on more images
 * Open recent projects
 * Quit the application.

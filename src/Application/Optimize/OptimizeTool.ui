@@ -91,8 +91,14 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="minimum">
@@ -143,8 +149,14 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="value">
@@ -189,8 +201,14 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="decimals">
@@ -200,7 +218,7 @@ background: rgb(255, 255, 127)
            <double>0.100000000000000</double>
           </property>
           <property name="maximum">
-           <double>9999.000000000000000</double>
+           <double>99999.000000000000000</double>
           </property>
           <property name="value">
            <double>1000.000000000000000</double>
@@ -244,8 +262,14 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="decimals">
@@ -255,7 +279,7 @@ background: rgb(255, 255, 127)
            <double>0.100000000000000</double>
           </property>
           <property name="maximum">
-           <double>9999.000000000000000</double>
+           <double>99999.000000000000000</double>
           </property>
           <property name="value">
            <double>10.000000000000000</double>
@@ -299,15 +323,21 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="minimum">
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>9999</number>
+           <number>99999</number>
           </property>
           <property name="value">
            <number>1000</number>
@@ -351,15 +381,21 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="minimum">
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>9999</number>
+           <number>99999</number>
           </property>
           <property name="value">
            <number>1000</number>
@@ -445,7 +481,7 @@ background: rgb(255, 255, 127)
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Max Angle (deg)</string>
+           <string>Max Angle (0-90 deg)</string>
           </property>
          </widget>
         </item>
@@ -472,8 +508,14 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="maximum">
@@ -530,12 +572,21 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="minimum">
            <double>0.010000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
           </property>
           <property name="value">
            <double>0.300000000000000</double>
@@ -552,7 +603,7 @@ background: rgb(255, 255, 127)
         <item>
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>Number of Clusters</string>
+           <string># Clusters (0 uses all)</string>
           </property>
          </widget>
         </item>
@@ -579,8 +630,14 @@ background: rgb(255, 255, 127)
           </property>
           <property name="minimumSize">
            <size>
-            <width>57</width>
+            <width>60</width>
             <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="value">
