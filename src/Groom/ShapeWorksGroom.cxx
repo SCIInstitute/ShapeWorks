@@ -282,7 +282,7 @@ void ShapeWorksGroom::auto_pad(int which) {
     padder->SetInput(img);
 
     // set the desired padding
-    auto pd = static_cast<unsigned long>(this->padding_ / 2);
+    auto pd = static_cast<unsigned long>((this->padding_ + 1) / 2);
     unsigned long hipad[3] = { pd, pd, pd };
     unsigned long lowpad[3] = { pd, pd, pd };
 
