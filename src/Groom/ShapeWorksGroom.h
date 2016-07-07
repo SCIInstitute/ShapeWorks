@@ -48,6 +48,9 @@ protected:
   transform_type transform_;
   size_t padding_, iterations_;
   std::map<std::string, bool> runTools_;
+  ImageType::IndexType upper_;
+  ImageType::IndexType lower_;
+  bool paddingInit_;
 };
 
 #endif

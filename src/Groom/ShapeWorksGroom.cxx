@@ -24,6 +24,7 @@
 #include "itkBinaryFillholeImageFilter.h"
 #include "itkApproximateSignedDistanceMapImageFilter.h"
 #include <map>
+#include <stdexcept>
 
 ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,
@@ -31,8 +32,12 @@ ShapeWorksGroom::ShapeWorksGroom(
   double blurSigma, size_t padding,  size_t iterations,
   bool verbose)
   : images_(inputs), background_(background), blurSigma_(blurSigma),
-  foreground_(foreground), verbose_(verbose), padding_(padding),
-  iterations_(iterations) {}
+  foreground_(foreground),  padding_(padding),
+  iterations_(iterations), verbose_(verbose) {
+  this->paddingInit_ = false;
+  this->upper_ = { 0,0,0 };
+  this->lower_ = { 0,0,0 };
+}
 
 void ShapeWorksGroom::queueTool(std::string tool) {
   this->runTools_.insert(std::make_pair(tool, true));
@@ -230,49 +235,44 @@ void ShapeWorksGroom::auto_pad(int which) {
     std::cout << "*** RUNNING TOOL: auto_pad on " <<
       (which == -1 ? "all" : std::to_string(which)) << std::endl;
   }
-  ImageType::IndexType upper;
-  ImageType::IndexType lower;
-
   bool first = true;
   auto start = (which == -1 ? 0 : which);
   auto end = (which == -1 ? this->images_.size() : which + 1);
-  for (size_t i = start; i < end; i++) {
-    auto img = this->images_[i];
-    if (first == true) // save the first bounding box
-    {
-      first = false;
-      lower = img->GetLargestPossibleRegion().GetIndex();
-      upper = lower + img->GetLargestPossibleRegion().GetSize();
-    } else {
-      // Keep the largest bounding box.
-      ImageType::RegionType::IndexType lowerTmp
-        = img->GetLargestPossibleRegion().GetIndex();
-      ImageType::RegionType::IndexType upperTmp
-        = lowerTmp + img->GetLargestPossibleRegion().GetSize();
-
-      for (unsigned int i = 0; i < 3; i++)
-      {
-        if (lowerTmp[i] < lower[i])
-        {
-          lower[i] = lowerTmp[i];
-        }
-        if (upperTmp[i] > upper[i])
-        {
-          upper[i] = upperTmp[i];
+  if (!this->paddingInit_) {
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      auto img = this->images_[i];
+      if (first == true) {
+        first = false;
+        this->lower_ = img->GetLargestPossibleRegion().GetIndex();
+        this->upper_ = lower_ + img->GetLargestPossibleRegion().GetSize();
+      } else {
+        // Keep the largest bounding box.
+        ImageType::RegionType::IndexType lowerTmp
+          = img->GetLargestPossibleRegion().GetIndex();
+        ImageType::RegionType::IndexType upperTmp
+          = lowerTmp + img->GetLargestPossibleRegion().GetSize();
+        for (unsigned int i = 0; i < 3; i++) {
+          if (lowerTmp[i] < this->lower_[i]) { 
+            this->lower_[i] = lowerTmp[i];
+          }
+          if (upperTmp[i] > this->upper_[i]){
+            this->upper_[i] = upperTmp[i];
+          }
         }
       }
     }
+    this->paddingInit_ = true;
   }
   if (this->verbose_) {
-    std::cout << "Lower bound = " << lower[0] << " " << lower[1]
-      << " " << lower[2] << std::endl;
-    std::cout << "Upper bound = " << upper[0] << " " << upper[1] << " "
-      << upper[2] << std::endl;
+    std::cout << "Lower bound = " << this->lower_[0] << " " << this->lower_[1]
+      << " " << this->lower_[2] << std::endl;
+    std::cout << "Upper bound = " << this->upper_[0] << " " << this->upper_[1] << " "
+      << this->upper_[2] << std::endl;
   }
   // Make sure the origin is at the center of the image.
   double orig[3];
   for (unsigned int i = 0; i < 3; i++) {
-    orig[i] = -static_cast<double>(upper[i] - lower[i]) / 2.0;
+    orig[i] = -static_cast<double>(this->upper_[i] - this->lower_[i]) / 2.0;
   }
   for (size_t i = start; i < end; i++) {
     auto img = this->images_[i];
@@ -281,22 +281,10 @@ void ShapeWorksGroom::auto_pad(int which) {
     padder->SetConstant(0);
     padder->SetInput(img);
 
-    // Find the necessary padding
-    int diff[3];
-    unsigned long lowpad[3];
-    unsigned long hipad[3];
-    bool flag = false;
-    for (unsigned int i = 0; i < 3; i++) {
-      diff[i] = (upper[i] - lower[i])
-        - img->GetBufferedRegion().GetSize()[i];
-      if (diff[i] < 0) {
-        std::cerr << "auto_pad:: negative pad" << std::endl;
-        throw 1;
-      }
-      lowpad[i] = diff[i] / 2;
-      hipad[i] = diff[i] - lowpad[i];
-      if (lowpad[i] != 0 || hipad[i] != 0) { flag = true; }
-    }
+    // set the desired padding
+    auto pd = static_cast<unsigned long>(this->padding_ / 2);
+    unsigned long hipad[3] = { pd, pd, pd };
+    unsigned long lowpad[3] = { pd, pd, pd };
 
     padder->SetPadUpperBound(hipad);
     padder->SetPadLowerBound(lowpad);

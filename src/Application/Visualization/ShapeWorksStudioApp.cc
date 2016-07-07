@@ -605,6 +605,7 @@ void ShapeWorksStudioApp::on_action_groom_mode_triggered()
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::GROOM_C));
   this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Groom");
+  this->on_actionShow_Tool_Window_triggered();
 }
 
 //---------------------------------------------------------------------------
@@ -613,6 +614,7 @@ void ShapeWorksStudioApp::on_action_import_mode_triggered()
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
   this->ui_->stacked_widget->setCurrentIndex(0);
   this->ui_->controlsDock->setWindowTitle("Data");
+  this->on_actionShow_Tool_Window_triggered();
 }
 
 //---------------------------------------------------------------------------
@@ -621,6 +623,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::OPTIMIZE_C));
   this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Optimize");
+  this->on_actionShow_Tool_Window_triggered();
 }
 
 //---------------------------------------------------------------------------
@@ -629,6 +632,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
   this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Analysis");
+  this->on_actionShow_Tool_Window_triggered();
 }
 
 //---------------------------------------------------------------------------

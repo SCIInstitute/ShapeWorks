@@ -7,7 +7,7 @@ QGroom::QGroom(QObject * parent,
   size_t iterations, bool verbose)
   : QObject(parent), ShapeWorksGroom(inputs,
     background, foreground, sigma,
-    verbose, padding, iterations) {}
+     padding, iterations, verbose) {}
 
 void QGroom::run() {
   this->seed_.Fill(0);
