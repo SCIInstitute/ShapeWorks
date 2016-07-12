@@ -66,6 +66,8 @@ void ShapeWorksOptimize::run() {
   this->iterateCmd_ = itk::MemberCommand<ShapeWorksOptimize>::New();
   this->iterateCmd_->SetCallbackFunction(this, &ShapeWorksOptimize::iterateCallback);
   this->psmFilter_->AddObserver(itk::IterationEvent(), this->iterateCmd_);
+  auto o = this->psmFilter_->GetOptimizer();
+  o->SetModeToGaussSeidel();
 
   this->psmFilter_->Update();
   for (size_t d = 0; d < this->psmFilter_->

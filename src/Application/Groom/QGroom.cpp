@@ -42,15 +42,15 @@ void QGroom::run() {
       emit progress(++ran * 100 / total);
     }
   }
-  if (this->runTools_.count("blur")) {
-    for (size_t i = 0; i < this->images_.size(); i++) {
-      this->blur(static_cast<int>(i));
-      emit progress(++ran * 100 / total);
-    }
-  }
   if (this->runTools_.count("fastmarching")) {
     for (size_t i = 0; i < this->images_.size(); i++) {
       this->fastmarching(static_cast<int>(i));
+      emit progress(++ran * 100 / total);
+    }
+  }
+  if (this->runTools_.count("blur")) {
+    for (size_t i = 0; i < this->images_.size(); i++) {
+      this->blur(static_cast<int>(i));
       emit progress(++ran * 100 / total);
     }
   }

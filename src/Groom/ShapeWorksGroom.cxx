@@ -61,11 +61,11 @@ void ShapeWorksGroom::run() {
   if (this->runTools_.count("antialias")) {
     this->antialias();
   }
-  if (this->runTools_.count("blur")) {
-    this->blur();
-  }
   if (this->runTools_.count("fastmarching")) {
     this->fastmarching();
+  }
+  if (this->runTools_.count("blur")) {
+    this->blur();
   }
 }
 
