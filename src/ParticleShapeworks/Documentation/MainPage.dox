@@ -1,0 +1,95 @@
+/**
+ *
+ * \mainpage  Particle Shape Modeling
+ *
+ * \par Authors
+ * This module was created by Joshua Cates, with significant contribution and input by P Thomas
+ * Fletcher, Manasi Datar, and Ross Whitaker.
+ * 
+ * \htmlonly
+ * <table align = center>
+ * <tr>
+ * <td valign = "top" align = "center">
+ * <a href = "http://www.sci.utah.edu"><img src = "scilogo.png" height="140"></a> 
+ * </td>
+ * <td valign = "top" align = "center">
+ * <a href = "http://healthsciences.utah.edu/carma/"><img src = "CARMALogo.png" height="70"></a> 
+ * </td>
+ * <td valign = "top" align = "center">
+ * <a href = "http://healthsciences.utah.edu/"><img src = "ulogo.png" height="70"></a> 
+ * </td>
+ * </tr>
+ * </table>
+ *  \endhtmlonly
+ *
+ * \par Welcome!
+ * Welcome to the Particle Shape Modeling extension module for version
+ * 4 of the Insight Toolkit (ITKv4+)! 
+ *
+ * \par
+ * This module implements algorithms for the Insight Toolkit (v4) for shape
+ * analysis of three-dimensional anatomical shape. The modeling and statistical
+ * analysis of shape variation has a wide range of biomedical applications,
+ * including understanding normal versus abnormal anatomical development,
+ * characterizing degenerative changes due to disease, and modeling motion such
+ * as breathing or the heart cycle. This project's contribution to ITK is a
+ * general software framework for constructing statistical models of sets of
+ * shapes from image data. The framework includes a mixed-effects model for
+ * analyzing longitudinal shape change, which offers increased statistical
+ * power over standard regression or simple averaging of individual trends.
+ * 
+ * \par 
+ * The shape modeling algorithms in this ITK module rely on dynamic point-based
+ * representations of shape surfaces known as particle systems.  Given a
+ * set of image segmentations, the shape modeling algorithms construct a particle-system
+ * surface representation for each shape, while simultaneously generating a
+ * shape model for the population.  The shape model is constructed through an
+ * optimization process on the particle representation that produces a
+ * statistically compact model that best fits the data.  The shape modeling
+ * methodology was first proposed by Cates, et al. in J Cates, P T Fletcher,
+ * M Styner, M Shenton, R Whitaker. "Shape Modeling and Analysis with
+ * Entropy-Based Particle Systems". IPMI 2007, LNCS 4584, pp. 333-345, 2007
+ *
+ * \par       
+ * Our longitudinal shape analysis method is based on mixed-effects models,
+ * pioneered by Laird and Ware (Laird, N.M. and Ware, J.H. (1982)
+ * "Random-Effects Models for Longitudinal Data", Biometrics, 38, 963-974,
+ * 1982). These models are hierarchical, characterizing each individual trend
+ * as a variation from a linear model of the overall population trend. While
+ * mixed-effects models are commonly used for simple univariate or
+ * low-dimensional data, the data coming from medical images, such as
+ * anatomical shape data, is typically much more complex and
+ * high-dimensional. This high dimensionality presents problems in
+ * the estimation of standard mixed-effects models. We have recently developed
+ * a mixed-effects model of anatomical shape that successfully overcomes these
+ * issues by optimizing the shape representation to provide the simplest, or
+ * lowest entropy, description of the population. 
+ *
+ * \par
+ * At the University of Utah, driving applications for LSA algorithm
+ * development include MRI studies of both patients with atrial fibrillation
+ * (AF) and animal models of AF progression.  These studies are ongoing at the
+ * Comprehensive Arrhythmia Research and Management Center (CARMA) at the
+ * University of Utah. The CARMA Center has contributed anonymized longitudinal patient data from AF patients from the
+ * CARMA Center to this project.  Please follow the data links below.
+ *
+ * \par More Information
+ * The official homepage for the ITKv4 PSM Extension Module is located here:
+ * https://github.com/joshcates/ParticleShapeModeling
+ *
+ * \par  
+ * The official homepage for the Insight Toolkit can be found here:
+ * http://www.itk.org 
+ *
+ * \par Data
+ * The CARMA Center has contributed
+ * 60 anonymized datasets as an example case for from our clinical atrial
+ * fibrillation patient database.  These data consist
+ * of manual expert segmentations of the left atrium of the heart for
+ * patients that have undergone radiofrequency ablation.  The timepoints
+ * that are represented are pre-radiofrequency-ablation and, variously, 6, 12, and 24
+ * months post-ablation.  These datasets are publicly available from the
+ * Insight Journal MIDAS repository at the following url:
+ * http://hdl.handle.net/1926/1764.
+ *
+ */

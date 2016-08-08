@@ -24,7 +24,7 @@ FIND_PACKAGE(VTK COMPONENTS
 INCLUDE( ${VTK_USE_FILE} )
 MESSAGE(STATUS "** VTK_DIR: ${VTK_DIR}")
 
-FIND_PACKAGE(ITK COMPONENTS ITKParticleShapeModeling ITKVTK REQUIRED)
+FIND_PACKAGE(ITK REQUIRED)
 IF (ITK_FOUND)
   INCLUDE (${ITK_USE_FILE})
 ENDIF(ITK_FOUND)
@@ -38,6 +38,7 @@ endif()
 ### Projects
 #--------------------------------------------------------------------------------
 
+add_subdirectory(ParticleShapeworks)
 add_subdirectory(Groom)
 add_subdirectory(Optimize)
 add_subdirectory(Surfworks)
