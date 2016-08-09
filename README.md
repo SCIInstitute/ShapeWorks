@@ -1,14 +1,14 @@
-![Shapeworks Banner](http://www.sci.utah.edu/images/software/ShapeWorks/shapeworks.png"")
+<img src="http://www.sci.utah.edu/images/software/ShapeWorks/shapeworks.png">
 
 ## Shapeworks Studio
 https://github.com/SCIInstitute/ShapeWorksStudio
 
-##### [Contents]()
+##### [Contents](#contents)
 
-- [Documentation](#user-content-documentation)
-- [Build](#user-content-build)
-- [Questions and Answers](#user-content-questions-and-answers)
-- [License and Credits](#user-content-license-and-credits)
+- [Documentation](#documentation)
+- [Build](#build)
+- [Questions and Answers](#questions-and-answers)
+- [License and Credits](#license-and-credits)
 
 
 ### Documentation
@@ -22,7 +22,7 @@ For help, email the testing mailing list at shapeworks-users@sci.utah.edu.
 
 ### License and Credits
 For more information, please see: http://software.sci.utah.edu
-
+```c++
 The MIT License
 
 Copyright (c) 2016 Scientific Computing and Imaging Institute,
@@ -46,3 +46,4 @@ Copyright (c) 2016 Scientific Computing and Imaging Institute,
           LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
           FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
           DEALINGS IN THE SOFTWARE.
+```
