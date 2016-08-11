@@ -66,26 +66,27 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 # For Apple set the icns file containing icons
 IF(APPLE)
   # set how it shows up in the Info.plist file
-  SET(MACOSX_BUNDLE_ICON_FILE ShapeWorksStudio.icns) 
+  SET(MACOSX_BUNDLE_ICON_FILE ShapeWorksStudio.icns)
   # set where in the bundle to put the icns file
   SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   # include the icns file in the target
   SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns)
 ELSEIF(WIN32)
-  SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.rc)
+  ADD_DEFINITIONS(-DICON_RC_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Resources/Images/shapes-icon.ico")
+  SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeworksStudio.rc)
 ENDIF(APPLE)
 IF (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-	set(WinConsole "")
+  set(WinConsole "")
 ELSE()
-	set(WinConsole "WIN32")
+  set(WinConsole "WIN32")
 ENDIF()
 # here we instruct CMake to build STUDIO executable from all of the source files
-ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole} 
+ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole}
   ${STUDIO_SRCS}
   ${STUDIO_HDRS}
-  ${STUDIO_UI} 
-  ${STUDIO_ICNS} 
-  ${STUDIO_RSCS} 
+  ${STUDIO_UI}
+  ${STUDIO_ICNS}
+  ${STUDIO_RSCS}
   )
 
 TARGET_LINK_LIBRARIES(ShapeWorksStudio
@@ -93,14 +94,14 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Qt5::OpenGL
   Qt5::Core
   Qt5::Gui
-  ${VTK_LIBRARIES} 
+  ${VTK_LIBRARIES}
   vtkIOLegacy
   vtkRenderingQt
   vtkGUISupportQt
   vtkViewsQt
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
-  ${TinyXML} 
+  ${TinyXML}
   ShapeWorksGroom
   ShapeWorksOptimize
   Surfworks)
