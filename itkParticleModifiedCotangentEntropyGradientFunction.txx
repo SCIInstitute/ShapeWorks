@@ -127,7 +127,10 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
     // Praful -- SHIREEN
-        m_MaxMoveFactor = 0.1;
+        m_MaxMoveFactor = 0.001;
+//        std::cout<<"-------------------"<<std::endl;
+//        std::cout<<"maxmovefactor = "<<m_MaxMoveFactor<<std::endl;
+//        std::cout<<"-------------------"<<std::endl;
         // END Praful -- SHIREEN
 
     // Get the position for which we are computing the gradient.

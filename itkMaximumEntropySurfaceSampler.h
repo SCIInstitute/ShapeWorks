@@ -61,7 +61,7 @@ public:
     /** Run-time type information (and related methods). */
     itkTypeMacro(MaximumEntropySurfaceSampler, InPlaceImageFilter);
 
-    /**Expose the image dimension. */
+    /** Expose the image dimension. */
     itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
 
     /** Convenient typedef for storing cutting plane information */

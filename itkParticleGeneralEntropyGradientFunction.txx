@@ -52,8 +52,11 @@ ParticleGeneralEntropyGradientFunction<VDimension>
     double total = 0.0;
     for (unsigned int i = 0; i < num_samples; i++)
       {
-      points_minus_mean(j, i) = m_ShapeData->GetScalar(i, j)
-        * m_AttributeScales[j % num_functions];
+        points_minus_mean(j, i) = std::log(m_ShapeData->GetScalar(i, j) + 1e-10)
+          * m_AttributeScales[j % num_functions];
+        //Praful
+//      points_minus_mean(j, i) = m_ShapeData->GetScalar(i, j)
+//        * m_AttributeScales[j % num_functions];
 
       total += points_minus_mean(j,i);
       }

@@ -16,6 +16,7 @@ PURPOSE.  See the above copyright notices for more information.
 #define __itkParticleEnsembleNormalPenaltyFunction_txx
 
 #include "vnl/vnl_vector_fixed.h"
+#include "vnl/vnl_det.h"
 #include "itkParticleEnsembleNormalPenaltyFunction.h"
 namespace itk
 {
@@ -136,18 +137,18 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
 
     for (unsigned int n = 0; n < VDimension; n++)
     {
-        gradE_norm[n] = mean_normal[n] - posnormal[n]; //commented -- Praful Dec10
-//                gradE_norm[n] = mean_normal[n] * df_dn; //uncommented -- Praful Dec10
+        gradE_norm[n] = mean_normal[n] - posnormal[n];  //mean energy based normal penalty
+//                gradE_norm[n] = mean_normal[n] * df_dn; //dot product based normal penalty
     }
 
-    //    gradE_norm *= mat3x3 * normalPartialDerivatives;
-    gradE_norm *= normalPartialDerivatives;
+//        gradE_norm *= mat3x3 * normalPartialDerivatives; //dot product based normal penalty
+    gradE_norm *= normalPartialDerivatives;            //mean energy based normal penalty
     //    energy = gradE_norm.magnitude();
     energy = 0.0;
     for (unsigned int i = d % m_DomainsPerShape; i < system->GetNumberOfDomains(); i += m_DomainsPerShape)
     {
-//                if(i != d) //uncommented -- Praful Dec10
-//                { //uncommented -- Praful Dec10
+//                if(i != d) //dot product based normal penalty
+//                {          //dot product based normal penalty
         domain = static_cast<const ParticleImageDomainWithGradients<float,VDimension> *>(system->GetDomain(i));
         PointType neighpos = system->GetTransformedPosition(idx, i);
         typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neighnormal = domain->SampleNormalVnl(neighpos);
@@ -157,10 +158,10 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
         {
             v_neighnormal[n] = (double) neighnormal[n];
         }
-//                    energy += f( dot_product( v_neighnormal, mean_normal ) ); //uncommented -- Praful Dec10
-        vnl_vector<double> diff = mean_normal - v_neighnormal;  //commented -- Praful Dec10
-        energy += diff.magnitude() * diff.magnitude();  //commented -- Praful Dec10
-//                } //uncommented -- Praful Dec10
+//                    energy += f( dot_product( v_neighnormal, mean_normal ) ); //dot product based normal penalty
+        vnl_vector<double> diff = mean_normal - v_neighnormal; //mean energy based normal penalty
+        energy += 0.5 * diff.magnitude() * diff.magnitude();  //mean energy based normal penalty
+//                }                                               //dot product based normal penalty
     }
 
     //    maxmove = domain->GetImage()->GetSpacing()[0];
