@@ -72,6 +72,7 @@ public:
                                 const ParticleSystemType *system,
                                 double &maxmove) const
     {
+
         double maxA, maxB, maxC;
         maxA = 0; maxB = 0; maxC = 0;
         VectorType ansA; ansA.fill(0.0);
@@ -104,6 +105,7 @@ public:
         {
             ansB.fill(0.0);
             maxB = 0.0;
+//           this-> SetBOff();
         }
 
         // get maxmove and predicted move for current configuration
@@ -136,6 +138,9 @@ public:
                 predictedMove = ansA + m_RelativeGradientScaling * ansB;
                 //#endif
                 if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
+//                std::cout<<"**************check3*****************************"<<endl;
+//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//                std::cout<<"*************************************************"<<endl;
                 return (predictedMove);
             }
             else // B is active, A is not active
@@ -148,16 +153,23 @@ public:
 
                 predictedMove = ansB;
                 if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
+//                std::cout<<"**************check2*****************************"<<endl;
+//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//                std::cout<<"*************************************************"<<endl;
                 return (predictedMove);
             }
         }
         else  // only A is active
         {
+//            std::cout<<"*****************check1**************************"<<endl;
+//            std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//            std::cout<<"*************************************************"<<endl;
             maxmove = maxA;
             return ansA;
         }
-
-        // If nothing is turned on, then return a max time
+//        std::cout<<"**************bogus1*****************************"<<endl;
+//        std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//        std::cout<<"*************************************************"<<endl;        // If nothing is turned on, then return a max time
         // step of 0 and a bogus vector.
         maxmove = 0.0;
         return ansA;
@@ -319,6 +331,9 @@ public:
                 predictedMove = ansA + m_RelativeGradientScaling * ansB;
                 //#endif
                 if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
+//                std::cout<<"**************check4*****************************"<<endl;
+//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//                std::cout<<"*************************************************"<<endl;
                 return (predictedMove);
             }
             else // only B is active, A is not active
@@ -333,6 +348,9 @@ public:
                     energy += m_RelativeNormEnergyScaling * energyC;
                     predictedMove += m_RelativeNormGradientScaling * ansC;
                 }
+//                std::cout<<"**************check5*****************************"<<endl;
+//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//                std::cout<<"*************************************************"<<endl;
                 return (predictedMove);
             }
         }
@@ -340,11 +358,17 @@ public:
         {
             maxmove = maxA;
             energy = energyA;
+//            std::cout<<"**************check6****************************"<<endl;
+//            std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//            std::cout<<"*************************************************"<<endl;
             return ansA;
         }
 
         // If nothing is turned on, then return a max time
         // step of 0 and a bogus vector.
+//        std::cout<<"**************bogus2*****************************"<<endl;
+//        std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
+//        std::cout<<"*************************************************"<<endl;
         maxmove = 0.0;
         return ansA;
     }
@@ -360,8 +384,8 @@ public:
         if (m_BOn == true)
         {
             m_FunctionB->BeforeEvaluate(idx, d, system);
-            if (m_COn == true) m_FunctionC->BeforeEvaluate(idx, d, system);
         }
+        if (m_COn == true) m_FunctionC->BeforeEvaluate(idx, d, system);
     }
 
     /** This method is called by a solver after each iteration.  Subclasses may
@@ -372,8 +396,9 @@ public:
         if (m_BOn)
         {
             m_FunctionB->AfterIteration();
-            if (m_COn == true) m_FunctionC->AfterIteration();
+
         }
+        if (m_COn == true) m_FunctionC->AfterIteration();
     }
 
     /** This method is called by a solver before each iteration.  Subclasses may
@@ -384,8 +409,9 @@ public:
         if (m_BOn)
         {
             m_FunctionB->BeforeIteration();
-            if (m_COn == true) m_FunctionC->BeforeIteration();
+
         }
+        if (m_COn == true) m_FunctionC->BeforeIteration();
         m_AverageGradMagA = 0.0;
         m_AverageGradMagB = 0.0;
         m_AverageGradMagC = 0.0;

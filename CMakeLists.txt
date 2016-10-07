@@ -6,8 +6,11 @@ SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.7.2")
 SET(VTK_DIR "/home/sci/prafulag/BuildDIR/VTK-5.10.1")
 SET(FLTK_DIR "/home/sci/prafulag/BuildDIR/fltk-1.1.10")
 SET(USE_VTK 1)
-#SET(CMAKE_BUILD_TYPE DEBUG)
+SET(CMAKE_BUILD_TYPE DEBUG)
 #-------------------------------
+
+SET(VALGRIND_COMPILE_FLAGS "-g -O1")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VALGRIND_COMPILE_FLAGS}")
 
 SET(BUILD_EXECS_AT_SAME_LEVEL FALSE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
 IF (BUILD_EXECS_AT_SAME_LEVEL)
@@ -21,7 +24,7 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 # Configure ITK -- REQUIRED
 find_package(ITK REQUIRED)
 if(ITK_FOUND)
-  include(${USE_ITK_FILE})
+  include(${ITK_USE_FILE})
 else(ITK_FOUND)
   message(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
 endif(ITK_FOUND)
