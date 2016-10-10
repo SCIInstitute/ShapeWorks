@@ -466,6 +466,11 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
     // SHIREEN
     maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
     // END SHIREEN
+
+    //Praful - Oct 10, 2016
+    if (maxmove > sqrt(planeDist))
+        maxmove = sqrt(planeDist);
+
     //    }
 
     energy = ( A * sigma2inv ) / m_avgKappa;
