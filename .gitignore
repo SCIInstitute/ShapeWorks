@@ -1,0 +1,14 @@
+CMakeFiles/
+CMakeLists.txt.user*
+Doxyfile
+Makefile
+cmake_install.cmake
+ICPRigid3DRegistration/CMakeFiles/
+*/Makefile
+*/cmake_install.cmake
+*.Rhistory
+*.directory
+ITKIOFactoryRegistration/
+html/
+ShapeWorksView2/ShapeWorksView2.qrc.depends
+
