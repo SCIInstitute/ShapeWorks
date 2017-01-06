@@ -1,0 +1,5 @@
+#include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
+
+ParticleMeshBasedGeneralEntropyGradientFunction::ParticleMeshBasedGeneralEntropyGradientFunction()
+{
+}

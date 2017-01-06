@@ -189,6 +189,22 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
       }
     }
 #endif
+
+#ifdef SW_USE_FEAMESH
+    if (m_MeshFiles.size() > i)
+    {
+      TriMesh *themesh = TriMesh::read(m_MeshFiles[i].c_str());
+      if(themesh != NULL)
+      {
+        themesh->need_bsphere();
+
+        point c = themesh->bsphere.center;
+        themesh->need_normals();
+        themesh->need_tstrips();
+        m_DomainList[i]->SetMesh(themesh);
+      }
+    }
+#endif
     
       // END TEST CUTTING PLANE
     

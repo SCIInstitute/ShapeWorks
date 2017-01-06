@@ -158,6 +158,73 @@ SetMesh(TriMesh *mesh, const char *gfile)
 }
 #endif
 
+// Praful - fea mesh support
+#ifdef SW_USE_FEAMESH
+template<class T, unsigned int VDimension>
+void
+ParticleImplicitSurfaceDomain<T, VDimension>::
+SetMesh(TriMesh *mesh)
+{
+  m_mesh = mesh;
+
+  m_mesh->need_faces();
+  m_mesh->need_neighbors();
+
+  orient(m_mesh);
+
+  // Recompute values that are no longer correct
+  if (!m_mesh->normals.empty()) m_mesh->normals.clear();
+  m_mesh->need_normals();
+
+    if (!m_mesh->adjacentfaces.empty()) m_mesh->adjacentfaces.clear();
+    m_mesh->need_adjacentfaces();
+
+    if (!m_mesh->across_edge.empty()) m_mesh->across_edge.clear();
+      m_mesh->need_across_edge();
+
+  if (!m_mesh->tstrips.empty()) m_mesh->tstrips.clear();
+  m_mesh->need_tstrips();
+
+  m_mesh->need_faceedges();
+  m_mesh->need_oneringfaces();
+  m_mesh->need_abs_curvatures();
+  m_mesh->need_speed();
+  m_mesh->setSpeedType(1);
+}
+
+template<class T, unsigned int VDimension>
+void
+ParticleImplicitSurfaceDomain<T, VDimension>::
+SetFeaMesh(const char *feaFile)
+{
+    m_mesh->ReadFeatureFromFile(feaFile);
+}
+
+template<class T, unsigned int VDimension>
+void
+ParticleImplicitSurfaceDomain<T, VDimension>::
+SetFids(const char *fidsFile)
+{
+    m_mesh->ReadFaceIndexMap(fidsFile);
+    typename ImageType::IndexType orgn = m_Image->GetOrigin();
+    m_mesh->imageOrigin[0] = orgn[0];
+    m_mesh->imageOrigin[1] = orgn[1];
+    m_mesh->imageOrigin[2] = orgn[2];
+    typename ImageType::RegionType::SizeType sz = m_Image->GetRequestedRegion().GetSize();
+    m_mesh->imageSize[0]   = sz[0];
+    m_mesh->imageSize[1]   = sz[1];
+    m_mesh->imageSize[2]   = sz[2];
+    typename ImageType::SpacingType sp = m_Image->GetSpacing();
+    m_mesh->imageSpacing[0] = sp[0];
+    m_mesh->imageSpacing[1] = sp[1];
+    m_mesh->imageSpacing[2] = sp[2];
+    typename ImageType::RegionType::IndexType idx = m_Image->GetRequestedRegion().GetIndex();
+    m_mesh->imageIndex[0]   = idx[0];
+    m_mesh->imageIndex[1]   = idx[1];
+    m_mesh->imageIndex[2]   = idx[2];
+}
+#endif
+
 template<class T, unsigned int VDimension>
 bool
 ParticleImplicitSurfaceDomain<T, VDimension>::

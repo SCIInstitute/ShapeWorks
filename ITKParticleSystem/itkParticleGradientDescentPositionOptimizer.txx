@@ -120,7 +120,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     }
 
   double maxchange = 0.0;
-  while (m_StopOptimization == false)
+  while (m_StopOptimization == false) // iterations loop
     {
       if (counter % global_iteration == 0)
       {

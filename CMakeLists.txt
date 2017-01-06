@@ -32,15 +32,12 @@ endif(ITK_FOUND)
 # Optionally build with mesh support (requires linking against trimesh library)
 option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
 
-## Weight Sampling term in optimization
-## PRATEEP : Turned off (11/30)
-#option(USE_WeighSampling "Weigh Sampling term in SW" OFF)
+#Praful - Fea mesh support
+option(BUILD_FeaMeshSupport "Build with Fea Mesh support (requires fim library with trimesh2)" ON)
 
 # Optionally build programs with GUIs.
 option(BUILD_ShapeWorksView "Build ShapeWorksView (requires FLTK & VTK)" OFF)
 option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" OFF)
-#option(BUILD_ShapeWorksView "Build ShapeWorksView (requires FLTK & VTK)" ON)
-#option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" ON)
 option(BUILD_ShapeWorksShop "Build ShapeWorksShop (requires FLTK & VTK)" OFF)
 option(BUILD_Unsupported "Build unsupported tools (NOT recommended, requires FLTK & VTK)" OFF)
 option(CMAKE_BUILD_TYPE "Build Type" DEBUG)
@@ -66,18 +63,12 @@ if(BUILD_MeshSupport)
   add_definitions(-DSW_USE_MESH)
 endif(BUILD_MeshSupport)
 
-## Use weigh sampling term
-## PRATEEP : Turned off (11/30)
-#if(USE_WeighSampling)
-#  add_definitions(-DSW_WEIGH_SAMPLING_TERM)
-#endif(USE_WeighSampling)
-
-## Use correspondence term
-## PRATEEP : Turned off (11/30)
-#option(USE_CORR "Use correspondence" ON)
-#if(USE_CORR)
-#  add_definitions(-DUSE_CORR)
-#endif(USE_CORR)
+# Praful - Configure Mesh support for Fea files only
+if(BUILD_FeaMeshSupport)
+  SUBDIRS(fim)
+  INCLUDE_DIRECTORIES(fim/trimesh2/include)
+  add_definitions(-DSW_USE_FEAMESH)
+endif(BUILD_FeaMeshSupport)
 
 # Set up the include directories
 include_directories ( 

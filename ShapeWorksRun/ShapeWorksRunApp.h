@@ -190,6 +190,9 @@ protected:
   bool m_randomOrdering; // <= 0 OFF; >0 ON
   bool m_randomProcrustes; // <= 0 OFF; >0 ON
 
+  //Praful - mesh based attributes
+  bool m_mesh_based_attributes;
+
 };
 
 #if ITK_TEMPLATE_EXPLICIT
