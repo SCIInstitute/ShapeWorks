@@ -20,7 +20,7 @@
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_inverse.h"
 
-#ifdef SW_USE_MESH
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
 #include "TriMesh.h"
 #include "../../meshFIM.h"
 #endif
@@ -100,8 +100,22 @@ public:
 
 #ifdef SW_USE_MESH
   void SetMesh(TriMesh *mesh, const char *gfile);
+  TriMesh* GetMesh()
+  {
+      return m_mesh;
+  }
 #endif
-  
+
+// Praful - fea mesh support
+#ifdef SW_USE_FEAMESH
+  void SetMesh(TriMesh *mesh);
+  void SetFeaMesh(const char *feaFile);
+  void SetFids(const char *fidsFile);
+  TriMesh* GetMesh()
+  {
+      return m_mesh;
+  }
+#endif
   void RemoveCuttingPlane()  { m_UseCuttingPlane = false; }
 
   bool IsCuttingPlaneDefined() const {return m_UseCuttingPlane;}
@@ -159,6 +173,11 @@ protected:
     m_fim = new meshFIM;
     m_mesh = NULL;
 #endif
+
+// Praful - fea mesh support
+#ifdef SW_USE_FEAMESH
+    m_mesh = NULL;
+#endif
     }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
@@ -182,7 +201,11 @@ private:
   TriMesh *m_mesh;
   meshFIM *m_fim;
 #endif
-  
+
+// Praful - fea mesh support
+#ifdef SW_USE_FEAMESH
+  TriMesh *m_mesh;
+#endif
   std::vector< vnl_vector_fixed<double, VDimension> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;
   

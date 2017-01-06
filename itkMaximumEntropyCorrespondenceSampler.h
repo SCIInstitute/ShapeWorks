@@ -23,6 +23,7 @@
 #include "itkParticleGeneralEntropyGradientFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
+#include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
 
 namespace itk
 {
@@ -58,7 +59,7 @@ public:
   /** Expose the point type */
   typedef typename ImageType::PointType PointType;
 
-  
+
   void SetCorrespondenceOn()
   {
     m_LinkingFunction->SetBOn();
@@ -155,6 +156,8 @@ public:
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
     }
+    else if (mode == 5)
+        m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
     else
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
@@ -167,16 +170,30 @@ public:
 
   void SetAttributeScales(const std::vector<double> &s)
   {
-    m_GeneralEntropyGradientFunction->SetAttributeScales(s);
+    if (m_CorrespondenceMode == 2)
+        m_GeneralEntropyGradientFunction->SetAttributeScales(s);
+    else if (m_CorrespondenceMode == 5)
+        m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
   }
-    
-  
+#ifdef SW_USE_FEAMESH
+  // need to set attribute scales after creating new generalentropy class
+
+  void AddFids(int d, const char *fidsFile)
+  {
+      m_DomainList[d]->SetFids(fidsFile);
+  }
+
+  void AddAttributeMesh(int d, const char *s)
+  {
+      m_DomainList[d]->SetFeaMesh(s);
+  }
+#endif
   void AddAttributeImage(int d,
                          typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::ImageType *I)
   {
     m_FunctionShapeData->AddFunctionImage(d, I);
   }
-  
+
   ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
   { return m_LinkingFunction.GetPointer(); }
   ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction()
@@ -191,7 +208,8 @@ public:
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
   ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction()
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
-
+  ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction()
+  { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
   
   const ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
@@ -207,6 +225,8 @@ public:
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
   const ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction() const
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
+  const ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction() const
+  { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
   
   virtual void AllocateDataCaches();
 
@@ -223,7 +243,6 @@ public:
   {
     m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n);
   }
-
 
   int GetCorrespondenceMode() const
   { return m_CorrespondenceMode; }
@@ -258,7 +277,7 @@ private:
   typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::Pointer m_FunctionShapeData;
   typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
   typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
-
+  typename ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 };
 
 } // end namespace itk

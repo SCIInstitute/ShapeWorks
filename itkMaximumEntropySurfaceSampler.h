@@ -32,7 +32,7 @@
 #include "vnl/vnl_matrix_fixed.h"
 // end Prateep
 
-#ifdef SW_USE_MESH
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
 #include "TriMesh.h"
 #endif
 
@@ -170,7 +170,7 @@ public:
     }
 
 
-#ifdef SW_USE_MESH
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     /**Optionally provide a filename for a mesh with geodesic distances.*/
     void SetMeshFile(unsigned int i, const std::string &s)
     {
@@ -390,7 +390,7 @@ private:
     void operator=(const Self&); //purposely not implemented
 
     std::vector<std::string> m_PointsFiles;
-#ifdef SW_USE_MESH
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     std::vector<std::string> m_MeshFiles;
 #endif
     std::string m_TransformFile;
