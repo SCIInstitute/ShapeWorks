@@ -52,6 +52,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_use_regression = false;
     m_use_mixed_effects = false;
     m_distribution_domain_id = -1;
+    m_mesh_based_attributes = true;
 
     // SHIREEN
     m_save_init_splits  = false;
@@ -233,7 +234,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
     if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
     {
         this->optimize_stop();
-    };
+    }
+
+    // Praful - Jan,2017
+    if ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
+    {
+        this->optimize_stop();
+    }
+    if ( m_Sampler->GetGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
+    {
+        this->optimize_stop();
+    }
+    if ( m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
+    {
+        this->optimize_stop();
+    }
     
     //    this->surface_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagA());
     //    this->correspondence_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagB()
@@ -325,8 +340,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
             pointFiles.clear();
         }
 
-
-#ifdef SW_USE_MESH
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
         // load mesh files
         std::vector<std::string> meshFiles;
         elem = docHandle.FirstChild( "mesh_files" ).Element();
@@ -355,8 +369,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
             meshFiles.clear();
         }
-
-
 #endif
 
         // read geometric constraints, if present
@@ -626,19 +638,61 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                     {
                         for (int attrCount = 0; attrCount < m_attributes_per_domain; attrCount++)
                         {
-                            typename itk::ImageFileReader<ImageType>::Pointer reader2 = itk::ImageFileReader<ImageType>::New();
-                            reader2->SetFileName(attrFiles[ctr++].c_str());
-                            reader2->Update();
-                            m_Sampler->AddAttributeImage(shapeCount, reader2->GetOutput());
+                            if (m_mesh_based_attributes)
+                            {
+#ifdef SW_USE_FEAMESH
+                                m_Sampler->AddAttributeMesh(shapeCount, attrFiles[ctr++].c_str());
+#else
+                                std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
+#endif
+                            }
+                            else
+                            {
+                                typename itk::ImageFileReader<ImageType>::Pointer reader2 = itk::ImageFileReader<ImageType>::New();
+                                reader2->SetFileName(attrFiles[ctr++].c_str());
+                                reader2->Update();
+                                m_Sampler->AddAttributeImage(shapeCount, reader2->GetOutput());
+                            }
                         }
                     }
                 }
             }
-        }
 
+            // need fids for mesh based fea
+            if (m_mesh_based_attributes)
+            {
+#ifdef SW_USE_FEAMESH
+                std::vector<std::string> fidsFiles;
+                elem = docHandle.FirstChild("fids").Element();
+                if (elem)
+                {
+                    inputsBuffer.str(elem->GetText());
+                    while (inputsBuffer >> filename)
+                    {
+                        fidsFiles.push_back(filename);
+                    }
+
+                    inputsBuffer.clear();
+                    inputsBuffer.str("");
+                    if (fidsFiles.size() != numShapes)
+                        std::cerr << "ERROR: Invalid number of fids files!!" << std::endl;
+                    else
+                    {
+                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                        {
+                            m_Sampler->AddFids(shapeCount, fidsFiles[shapeCount].c_str());
+                        }
+                    }
+                }
+                else
+                    std::cerr << "ERROR: Must provide fids!!" << std::endl;
+#else
+                std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
+#endif
+            }
+        }
     } // end: document check
 } // end ReadInputs
-
 
 template < class SAMPLERTYPE>
 void
@@ -1096,6 +1150,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "attributes_per_domain" ).Element();
         if (elem) this->m_attributes_per_domain = atoi(elem->GetText());
 
+        this->m_mesh_based_attributes = true;
+        elem = docHandle.FirstChild( "mesh_based_attributes" ).Element();
+        if (elem) this->m_mesh_based_attributes = (bool) atoi(elem->GetText());
+
         this->m_checkpointing_interval = 0;
         elem = docHandle.FirstChild( "checkpointing_interval" ).Element();
         if (elem) this->m_checkpointing_interval = atoi(elem->GetText());
@@ -1199,7 +1257,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     // end SHIREEN
 
     std::cout << "m_randomOrdering = " << m_randomOrdering << std::endl;
-
+    std::cout << "m_mesh_based_attributes = " << m_mesh_based_attributes << std::endl;
 }
 
 
@@ -1553,7 +1611,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     
     if (m_attributes_per_domain > 0)
     {
-        m_Sampler->SetCorrespondenceMode(2); // General entropy
+        if (m_mesh_based_attributes)
+            m_Sampler->SetCorrespondenceMode(5);
+        else
+            m_Sampler->SetCorrespondenceMode(2); // General entropy
     }
     else if (m_use_regression == true)
     {
@@ -1630,7 +1691,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadExplanatoryVariables(const char *fname)
         }
     }
 }
-
 
 template < class SAMPLERTYPE>
 void
@@ -1839,4 +1899,3 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
         }
     }
 }
-
