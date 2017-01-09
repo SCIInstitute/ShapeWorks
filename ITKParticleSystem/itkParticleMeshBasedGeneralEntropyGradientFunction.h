@@ -8,7 +8,7 @@
 
 #include "itkParticleVectorFunction.h"
 #include <vector>
-
+#include <numeric>
 namespace itk
 {
 
@@ -26,15 +26,11 @@ public:
      /** Type of particle system. */
      typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
-     typedef ParticleFunctionBasedShapeSpaceData<float, VDimension> ShapeDataType;
-
-     typedef typename ShapeDataType::DataType DataType;
-
      /** Vector & Point types. */
      typedef typename Superclass::VectorType VectorType;
      typedef typename ParticleSystemType::PointType PointType;
-     typedef vnl_vector<DataType> vnl_vector_type;
-     typedef vnl_matrix<DataType> vnl_matrix_type;
+     typedef vnl_vector<float> vnl_vector_type;
+     typedef vnl_matrix<float> vnl_matrix_type;
 
      /** Method for creation through the object factory. */
      itkNewMacro(Self);
@@ -114,6 +110,16 @@ public:
        m_AttributeScales = s;
      }
 
+     /** Set/Get the number of domains per shape. */
+     void SetDomainsPerShape(int i)
+     { m_DomainsPerShape = i; }
+     int GetDomainsPerShape() const
+     { return m_DomainsPerShape; }
+
+     void SetAttributesPerDomain(const std::vector<int> &i)
+     { m_AttributesPerDomain = i; }
+
+
      virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
      {
        typename ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>::Pointer copy =
@@ -133,7 +139,6 @@ public:
        copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
        copy->m_PointsUpdate = this->m_PointsUpdate;
        copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
-       copy->m_ShapeData = this->m_ShapeData;
 
        return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
      }
@@ -148,7 +153,6 @@ protected:
       m_MinimumVarianceDecayConstant = log(2.0) / 50000.0;
       m_RecomputeCovarianceInterval = 5;
       m_Counter = 0;
-
     }
     virtual ~ParticleMeshBasedGeneralEntropyGradientFunction() {}
     void operator=(const ParticleMeshBasedGeneralEntropyGradientFunction &);
@@ -164,8 +168,10 @@ protected:
      double m_MinimumVarianceDecayConstant;
     int m_Counter;
     std::vector<double> m_AttributeScales;
-
+    int m_DomainsPerShape;
+    std::vector<int> m_AttributesPerDomain;
     double m_CurrentEnergy;
+    vnl_vector_type vv;
 
 };
 } // end namespace
@@ -177,8 +183,5 @@ protected:
 #if ITK_TEMPLATE_TXX
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.txx"
 #endif
-
-
-
 
 #endif // ITKPARTICLEMESHBASEDGENERALENTROPYGRADIENTFUNCTION_H

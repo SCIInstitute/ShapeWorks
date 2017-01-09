@@ -62,8 +62,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     // PRATEEP - SHIREEN UPDATE
     // optimizer settings: use the original shapeworks settings by default
     m_optimizer_type    = 2;    // 0 : jacobi
-                                // 1 : gauss seidel
-                                // 2 : adaptive gauss seidel (with bad moves)
+    // 1 : gauss seidel
+    // 2 : adaptive gauss seidel (with bad moves)
     m_pairwise_potential_type = 0; // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer)
     // end PRATEEP
 
@@ -181,10 +181,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
             this->WriteModes();
             if (m_use_regression == true) this->WriteParameters();
 
-//            this->WritePointFiles();
-//            this->WriteTransformFile();
-//            this->WriteModes();
-//            if (m_use_regression == true) this->WriteParameters();
+            //            this->WritePointFiles();
+            //            this->WriteTransformFile();
+            //            this->WriteModes();
+            //            if (m_use_regression == true) this->WriteParameters();
 
             if ( m_keep_checkpoints )
             {
@@ -202,11 +202,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 
                 std::cout << "iter dir name = " << tmp_dir_name << std::endl;
 
-    #ifdef _WIN32
+#ifdef _WIN32
                 mkdir( tmp_dir_name.c_str() );
-    #else
+#else
                 mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
-    #endif
+#endif
                 this->WritePointFiles(tmp_dir_name + "/" + prefix);
                 this->WriteTransformFile(tmp_dir_name + "/" + prefix);
                 // /*if (m_use_regression == true) */this->WriteParameters( split_number );
@@ -238,17 +238,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 
     // Praful - Jan,2017
     if ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
-    {
         this->optimize_stop();
-    }
+
     if ( m_Sampler->GetGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
-    {
         this->optimize_stop();
-    }
+
     if ( m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
-    {
         this->optimize_stop();
-    }
+
+    if ( m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
+        this->optimize_stop();
     
     //    this->surface_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagA());
     //    this->correspondence_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagB()
@@ -366,7 +365,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                     m_Sampler->SetMeshFile(shapeCount, meshFiles[shapeCount]);
                 }
             }
-
             meshFiles.clear();
         }
 #endif
@@ -590,7 +588,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
         }
 
         // attributes
-        if (this->m_attributes_per_domain >= 1)
+        if (this->m_attributes_per_domain.size() >= 1)
         {
             // attribute scales
             double sc;
@@ -608,6 +606,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
             }
+            m_Sampler->SetAttributeScales(attr_scales);
 
             // attribute files
             std::vector<std::string> attrFiles;
@@ -624,29 +623,37 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
 
-                if ( (attr_scales.size() < m_attributes_per_domain) || (attrFiles.size() < numShapes*m_attributes_per_domain) )
+                int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
+
+                if ( (attr_scales.size() != totAttributes) || (attrFiles.size() != numShapes*totAttributes/m_domains_per_shape))
                 {
-                    std::cerr << "ERROR: Incomplete attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
+                    std::cerr << "ERROR: Inconsistent number of attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
                 }
                 else
                 {
-                    m_Sampler->SetAttributeScales(attr_scales);
-
-                    int ctr = 0;
-
-                    for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                    if (m_mesh_based_attributes)
                     {
-                        for (int attrCount = 0; attrCount < m_attributes_per_domain; attrCount++)
-                        {
-                            if (m_mesh_based_attributes)
-                            {
 #ifdef SW_USE_FEAMESH
+                        m_Sampler->SetAttributesPerDomain(this->m_attributes_per_domain);
+                        int ctr = 0;
+                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                        {
+                            int d = shapeCount % m_domains_per_shape;
+                            for (int attrCount = 0; attrCount < m_attributes_per_domain[d]; attrCount++)
+                            {
                                 m_Sampler->AddAttributeMesh(shapeCount, attrFiles[ctr++].c_str());
-#else
-                                std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
-#endif
                             }
-                            else
+                        }
+#else
+                        std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
+#endif
+                    }
+                    else
+                    {
+                        int ctr = 0;
+                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                        {
+                            for (int attrCount = 0; attrCount < m_attributes_per_domain[0]; attrCount++)
                             {
                                 typename itk::ImageFileReader<ImageType>::Pointer reader2 = itk::ImageFileReader<ImageType>::New();
                                 reader2->SetFileName(attrFiles[ctr++].c_str());
@@ -1146,9 +1153,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "adaptivity_strength" ).Element();
         if (elem) this->m_adaptivity_strength = atof(elem->GetText());
 
-        this->m_attributes_per_domain = 0;
         elem = docHandle.FirstChild( "attributes_per_domain" ).Element();
-        if (elem) this->m_attributes_per_domain = atoi(elem->GetText());
+        if (elem) this->m_attributes_per_domain.push_back(atoi(elem->GetText()));
 
         this->m_mesh_based_attributes = true;
         elem = docHandle.FirstChild( "mesh_based_attributes" ).Element();
@@ -1197,8 +1203,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
 
         // PRATEEP - SHIREEN UPDATE
         this->m_optimizer_type = 2; // 0 : jacobi
-                                    // 1 : gauss seidel
-                                    // 2 : adaptive gauss seidel (with bad moves)
+        // 1 : gauss seidel
+        // 2 : adaptive gauss seidel (with bad moves)
         elem = docHandle.FirstChild( "optimizer_type" ).Element();
         if (elem) this->m_optimizer_type = atoi(elem->GetText());
 
@@ -1234,7 +1240,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     std::cout << "m_initial_relative_weighting = " << m_initial_relative_weighting << std::endl;
     std::cout << "m_initial_norm_penalty_weighting = " << m_initial_norm_penalty_weighting << std::endl;
     std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
-    std::cout << "m_attributes_per_domain = " << m_attributes_per_domain << std::endl;
+//    std::cout << "m_attributes_per_domain = " << m_attributes_per_domain << std::endl;
     std::cout << "m_checkpointing_interval = " << m_checkpointing_interval << std::endl;
     std::cout << "m_transform_file = " << m_transform_file << std::endl;
     std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
@@ -1298,6 +1304,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     m_Sampler->GetGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
     m_Sampler->GetGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
 
+    m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(m_starting_regularization);
+    m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
+    m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
+
     m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVariance(m_starting_regularization);
     m_Sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(1);
     m_Sampler->GetEnsembleRegressionEntropyFunction()->SetHoldMinimumVariance(false);
@@ -1330,6 +1340,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     m_Sampler->GetEnsembleEntropyFunction()
             ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
     m_Sampler->GetGeneralEntropyGradientFunction()
+            ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+    m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()
             ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
     m_Sampler->GetEnsembleRegressionEntropyFunction()
             ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
@@ -1369,9 +1381,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     m_Sampler->GetCurvatureGradientFunction()->SetRho(0.0);
     m_Sampler->GetOmegaGradientFunction()->SetRho(0.0);
-//    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 32) {
+    //    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 32) {
     m_Sampler->SetCorrespondenceOn();
-//    }
+    //    }
     if (this->m_use_initial_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
 
     // PRATEEP
@@ -1588,6 +1600,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
                                                                             m_ending_regularization,
                                                                             m_optimization_iterations-
                                                                             m_optimization_iterations_completed);
+    m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                            m_ending_regularization,
+                                                                            m_optimization_iterations-
+                                                                            m_optimization_iterations_completed);
     m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                                m_ending_regularization,
                                                                                m_optimization_iterations-
@@ -1609,7 +1625,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     m_Sampler->SetCorrespondenceOn();
     if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
     
-    if (m_attributes_per_domain > 0)
+    if (m_attributes_per_domain.size() > 0)
     {
         if (m_mesh_based_attributes)
             m_Sampler->SetCorrespondenceMode(5);
