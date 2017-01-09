@@ -175,8 +175,17 @@ public:
     else if (m_CorrespondenceMode == 5)
         m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
   }
+
+
+
 #ifdef SW_USE_FEAMESH
   // need to set attribute scales after creating new generalentropy class
+
+  void SetAttributesPerDomain(const std::vector<int> &s)
+  {
+      if (m_CorrespondenceMode == 5)
+          m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s);
+  }
 
   void AddFids(int d, const char *fidsFile)
   {
@@ -237,6 +246,7 @@ public:
     m_ShapeMatrix->SetDomainsPerShape(n);
     m_EnsembleMeanFunction->SetDomainsPerShape(n);
     m_EnsembleNormalPenaltyFunction->SetDomainsPerShape(n);
+    m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
   }
 
   void SetTimeptsPerIndividual(int n)
