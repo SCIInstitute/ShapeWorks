@@ -29,6 +29,7 @@
 #include "itkParticleProcrustesRegistration.h"
 #include <sstream>
 #include <string>
+#include <numeric>
 
 template<typename T> std::string toStr(T var) {
 std::ostringstream tmp; tmp << var; return tmp.str();
@@ -158,7 +159,9 @@ protected:
   double m_initial_relative_weighting;
   double m_initial_norm_penalty_weighting;
   double m_adaptivity_strength;
-  unsigned int m_attributes_per_domain;
+
+  std::vector<int> m_attributes_per_domain;
+
   unsigned int m_checkpointing_interval;
   unsigned int m_domains_per_shape;
   unsigned int m_timepts_per_subject;
