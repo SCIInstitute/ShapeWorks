@@ -59,18 +59,19 @@ public:
       {
       if ( p[i] < this->GetLowerBound()[i] )
         {
-        p[i] = this->GetLowerBound()[i];
+        p[i] = this->GetLowerBound()[i] + 1.0;
         flag = true;
         }
-      else if ( p[i] > this->GetUpperBound()[i])
+      else if ( p[i] >= this->GetUpperBound()[i])
         {
-        p[i] = this->GetUpperBound()[i];
+        p[i] = this->GetUpperBound()[i] - 1.0;
         flag = true;
         }
       }
 
     return flag;
   }
+
 protected:
   ParticleClipRegionDomain() {}
   void PrintSelf(std::ostream& os, Indent indent) const
