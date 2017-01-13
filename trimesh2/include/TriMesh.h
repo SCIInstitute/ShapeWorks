@@ -4034,7 +4034,6 @@ public:
         }
     }
 
-
     /* Prateep */
     float GetFeatureValue(point x, int featureIndex)
     {
@@ -4099,11 +4098,16 @@ public:
         point dB = ComputeFeatureDerivative(B,fIndex);
         point dC = ComputeFeatureDerivative(C,fIndex);
 
-
         // interpolate
         dP[0] = ( alphaP * dA[0] ) + ( betaP * dB[0] ) + ( gammaP * dC[0] );
         dP[1] = ( alphaP * dA[1] ) + ( betaP * dB[1] ) + ( gammaP * dC[1] );
         dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] );
+
+        float dPnorm = std::sqrt(dP[0]*dP[0] + dP[1]*dP[1] + dP[2]*dP[2]);
+
+        dP[0] /= dPnorm;
+        dP[1] /= dPnorm;
+        dP[2] /= dPnorm;
 
         return dP;
     }
@@ -4135,6 +4139,11 @@ public:
         df[0] = df[0] / (float) ( this->neighbors[v].size() );
         df[1] = df[1] / (float) ( this->neighbors[v].size() );
         df[2] = df[2] / (float) ( this->neighbors[v].size() );
+
+        float dfNorm = std::sqrt(df[0]*df[0] + df[1]*df[1] + df[2]*df[2]);
+        df[0] /= dfNorm;
+        df[1] /= dfNorm;
+        df[2] /= dfNorm;
 
         return df;
     }
