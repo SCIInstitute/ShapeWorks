@@ -170,32 +170,19 @@ public:
 
   void SetAttributeScales(const std::vector<double> &s)
   {
-    if (m_CorrespondenceMode == 2)
-        m_GeneralEntropyGradientFunction->SetAttributeScales(s);
-    else if (m_CorrespondenceMode == 5)
-        m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
+    m_GeneralEntropyGradientFunction->SetAttributeScales(s);
+    m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
   }
 
 
 
 #ifdef SW_USE_FEAMESH
-  // need to set attribute scales after creating new generalentropy class
-
   void SetAttributesPerDomain(const std::vector<int> &s)
   {
-      if (m_CorrespondenceMode == 5)
-          m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s);
+      this->Superclass::SetAttributesPerDomain(s);
+      m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s);
   }
 
-  void AddFids(int d, const char *fidsFile)
-  {
-      m_DomainList[d]->SetFids(fidsFile);
-  }
-
-  void AddAttributeMesh(int d, const char *s)
-  {
-      m_DomainList[d]->SetFeaMesh(s);
-  }
 #endif
   void AddAttributeImage(int d,
                          typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::ImageType *I)
@@ -241,6 +228,7 @@ public:
 
   void SetDomainsPerShape(int n)
   {
+    Superclass::SetDomainsPerShape(n);
     m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
     m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
     m_ShapeMatrix->SetDomainsPerShape(n);

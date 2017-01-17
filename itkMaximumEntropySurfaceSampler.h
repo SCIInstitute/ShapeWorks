@@ -184,6 +184,26 @@ public:
     {
         this->SetMeshFile(0,s);
     }
+    void SetFidsFiles(const std::vector<std::string> &s)
+    {
+        m_FidsFiles = s;
+    }
+    void SetFeaFiles(const std::vector<std::string> &s)
+    {
+        m_FeaMeshFiles = s;
+    }
+    void SetFeaGradFiles(const std::vector<std::string> &s)
+    {
+        m_FeaGradFiles = s;
+    }
+
+    void SetDomainsPerShape(int i)
+    {
+        m_DomainsPerShape = i;
+    }
+    void SetAttributesPerDomain(const std::vector<int> &i)
+    { m_AttributesPerDomain = i; }
+
 #endif
 
     /** Optionally supply a cutting plane that will be set as a particle
@@ -392,6 +412,11 @@ private:
     std::vector<std::string> m_PointsFiles;
 #if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     std::vector<std::string> m_MeshFiles;
+    std::vector<std::string> m_FeaMeshFiles;
+    std::vector<std::string> m_FeaGradFiles;
+    std::vector<std::string> m_FidsFiles;
+    std::vector<int> m_AttributesPerDomain;
+    int m_DomainsPerShape;
 #endif
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;

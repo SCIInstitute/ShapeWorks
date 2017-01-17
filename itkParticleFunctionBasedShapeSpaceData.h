@@ -145,6 +145,14 @@ public:
     return m_ScalarInterpolators[sample][f]->Evaluate(m_ParticleSystem->GetTransformedPosition(idx,sample));
   }
   
+  PointType GetPosition(unsigned int sample, unsigned int dim)
+  {
+       unsigned int idx = dim / m_NumberOfFunctions;
+       return m_ParticleSystem->GetTransformedPosition(idx,sample);
+  }
+
+
+
 //    inline VectorType SampleGradient(const PointType &p) const
 //   {   return  m_GradientInterpolator->Evaluate(p);  }
 //   inline VnlVectorType SampleGradientVnl(const PointType &p) const
@@ -153,7 +161,7 @@ public:
   {
     unsigned int f = dim % m_NumberOfFunctions;
     unsigned int idx = dim / m_NumberOfFunctions;
-    
+
     return m_GradientInterpolators[sample][f]->Evaluate(m_ParticleSystem->GetTransformedPosition(idx,sample));
   }
   /** Callbacks that may be defined by a subclass.  If a subclass defines one

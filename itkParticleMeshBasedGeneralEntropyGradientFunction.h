@@ -139,7 +139,8 @@ public:
        copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
        copy->m_PointsUpdate = this->m_PointsUpdate;
        copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
-
+       copy->m_AttributesPerDomain = this->m_AttributesPerDomain;
+       copy->m_DomainsPerShape = this->m_DomainsPerShape;
        return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
      }
 
@@ -171,7 +172,6 @@ protected:
     int m_DomainsPerShape;
     std::vector<int> m_AttributesPerDomain;
     double m_CurrentEnergy;
-    vnl_vector_type vv;
 
 };
 } // end namespace
