@@ -367,6 +367,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
             }
             meshFiles.clear();
         }
+
 #endif
 
         // read geometric constraints, if present
@@ -635,15 +636,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                     {
 #ifdef SW_USE_FEAMESH
                         m_Sampler->SetAttributesPerDomain(this->m_attributes_per_domain);
-                        int ctr = 0;
-                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
-                        {
-                            int d = shapeCount % m_domains_per_shape;
-                            for (int attrCount = 0; attrCount < m_attributes_per_domain[d]; attrCount++)
-                            {
-                                m_Sampler->AddAttributeMesh(shapeCount, attrFiles[ctr++].c_str());
-                            }
-                        }
+                        m_Sampler->SetFeaFiles(attrFiles);
 #else
                         std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
 #endif
@@ -669,6 +662,29 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
             if (m_mesh_based_attributes)
             {
 #ifdef SW_USE_FEAMESH
+                std::vector<std::string> feaGradFiles;
+                elem = docHandle.FirstChild("attribute_grad_files").Element();
+                if (elem)
+                {
+                    inputsBuffer.str(elem->GetText());
+                    while (inputsBuffer >> filename)
+                    {
+                        feaGradFiles.push_back(filename);
+                    }
+
+                    inputsBuffer.clear();
+                    inputsBuffer.str("");
+
+                    int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
+                    if (feaGradFiles.size() != numShapes*totAttributes/m_domains_per_shape)
+                        std::cerr << "ERROR: Invalid number of attribute gradient files!!" << std::endl;
+                    else
+                        m_Sampler->SetFeaGradFiles(feaGradFiles);
+                    std::cout << "Done setting feature gradient files!!" << std::endl;
+                }
+                else
+                    std::cout << "WARNING: No feature gradient files.. will use inaccurate centered difference!!" << std::endl;
+
                 std::vector<std::string> fidsFiles;
                 elem = docHandle.FirstChild("fids").Element();
                 if (elem)
@@ -684,12 +700,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                     if (fidsFiles.size() != numShapes)
                         std::cerr << "ERROR: Invalid number of fids files!!" << std::endl;
                     else
-                    {
-                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
-                        {
-                            m_Sampler->AddFids(shapeCount, fidsFiles[shapeCount].c_str());
-                        }
-                    }
+                        m_Sampler->SetFidsFiles(fidsFiles);
                 }
                 else
                     std::cerr << "ERROR: Must provide fids!!" << std::endl;
@@ -1619,6 +1630,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
                                                                                  m_optimization_iterations-
                                                                                  m_optimization_iterations_completed);
 
+//    m_Sampler->SetAttributesPerDomain(m_attributes_per_domain);
+//    m_Sampler->SetDomainsPerShape(m_domains_per_shape);
     std::cout << "Optimizing correspondences." << std::endl;
 
     /* PRATEEP */

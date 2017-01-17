@@ -61,6 +61,9 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
 #ifdef SW_USE_MESH
   m_MeshFiles.push_back("");
 #endif
+#ifdef SW_USE_FEAMESH
+  m_MeshFiles.push_back("");
+#endif
 }
 
 
@@ -107,6 +110,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
   // Allocate all the necessary domains and neighborhoods. This must be done
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
+    int ctr = 0;
   for (unsigned int i = 0; i < this->GetNumberOfInputs(); i++)
     { 
     m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
@@ -196,18 +200,48 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
       TriMesh *themesh = TriMesh::read(m_MeshFiles[i].c_str());
       if(themesh != NULL)
       {
+        themesh->need_faces();
+        themesh->need_neighbors();
+
+        orient(themesh);
+
         themesh->need_bsphere();
 
-        point c = themesh->bsphere.center;
+        if (!themesh->normals.empty())
+            themesh->normals.clear();
         themesh->need_normals();
+
+        if (!themesh->tstrips.empty())
+            themesh->tstrips.clear();
         themesh->need_tstrips();
+
+        if (!themesh->adjacentfaces.empty())
+            themesh->adjacentfaces.clear();
+        themesh->need_adjacentfaces();
+
+        if (!themesh->across_edge.empty())
+            themesh->across_edge.clear();
+        themesh->need_across_edge();
+
+        themesh->need_faceedges();
+        themesh->need_oneringfaces();
+        themesh->need_abs_curvatures();
+        themesh->need_speed();
+        themesh->setSpeedType(1);
+
         m_DomainList[i]->SetMesh(themesh);
+        m_DomainList[i]->SetFids(m_FidsFiles[i].c_str());
+        int d = i % m_DomainsPerShape;
+        for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
+        {
+            int ctr1 = ctr++;
+            m_DomainList[i]->SetFeaMesh(m_FeaMeshFiles[ctr1].c_str());
+            m_DomainList[i]->SetFeaGrad(m_FeaGradFiles[ctr1].c_str());
+        }
       }
     }
-#endif
-    
+#endif    
       // END TEST CUTTING PLANE
-    
     m_ParticleSystem->AddDomain(m_DomainList[i]);
     m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
     }

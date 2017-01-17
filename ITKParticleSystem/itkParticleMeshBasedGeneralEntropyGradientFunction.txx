@@ -4,7 +4,7 @@
 #include "TriMesh.h"
 #include <math.h>
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
-
+#include "itkParticleImplicitSurfaceDomain.h"
 namespace itk
 {
 template <unsigned int VDimension>
@@ -12,9 +12,14 @@ void
 ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 ::ComputeUpdates()
 {
-    const unsigned int num_samples   = m_ParticleSystem->GetNumberOfDomains() / m_DomainsPerShape;
+
+//    const itk::ParticleImplicitSurfaceDomain<float, 3>* dom
+//            = static_cast<const itk::ParticleImplicitSurfaceDomain<float
+//            ,3>*>(m_Sampler->GetParticleSystem()->GetDomain(i));
+
+    const unsigned int num_samples   = this->m_ParticleSystem->GetNumberOfDomains() / m_DomainsPerShape;
     const unsigned int num_functions = m_AttributeScales.size();
-    const unsigned int num_particles = m_ParticleSystem->GetNumberOfParticles();
+    const unsigned int num_particles = this->m_ParticleSystem->GetNumberOfParticles();
     const unsigned int num_dims      = num_particles * num_functions;
 
     // Do we need to resize the update matrix?
@@ -26,7 +31,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     vnl_matrix_type points_minus_mean(num_dims, num_samples);
     vnl_vector_type means(num_dims, 0.0);
-    vnl_vector_type oneVec(num_dims, 1.0);
+
     std::vector<float> fVals;
     // Compute the shape vector. Y
     for (unsigned int j = 0; j < num_samples; j++)
@@ -36,14 +41,19 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         for (unsigned int d = 0; d < m_DomainsPerShape; d++)
         {
             int dom = d + j*m_DomainsPerShape;
-            TriMesh *ptr = m_ParticleSystem->GetDomain(dom)->GetMesh();
+
+            const itk::ParticleImplicitSurfaceDomain<float, 3>* domain
+                    = static_cast<const itk::ParticleImplicitSurfaceDomain<float ,3>*>(this->m_ParticleSystem->GetDomain(dom));
+
+//            TriMesh *ptr = this->m_DomainList[dom]->GetMesh();
+            TriMesh *ptr = domain->GetMesh();
 
             if (d > 0)
                 num += m_AttributesPerDomain[d-1];
 
             for (unsigned int p = 0; p < num_particles; p++)
             {
-                PointType pt_ps = m_ParticleSystem->GetPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -58,7 +68,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
                 {
                     int i1 = i++;
-                    points_minus_mean(i1, j) = fVals[c]*m_AttributeScales[num+c];
+                    points_minus_mean(i1, j) = std::log(fVals[c]+1e-10)*m_AttributeScales[num+c];
                     means(i1) += points_minus_mean(i1, j)/(double)num_samples;
                 }
             }
@@ -67,7 +77,16 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
             std::cerr << "Bug in code while creating feature matrix... check" << std::endl;
     }
 
-    points_minus_mean = points_minus_mean - outer_product(means, oneVec);
+//    std::cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
+//    std::cout << means.extract(num_dims, 0) << std::endl;
+
+    for (unsigned int i = 0; i < points_minus_mean.rows(); i++)
+    {
+        for (unsigned int j = 0; j < points_minus_mean.cols(); j++)
+            points_minus_mean(i,j) = points_minus_mean(i,j) - means(i);
+    }
+
+//    std::cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
 
     // Compute the covariance in the dual space (transposed shape matrix)
     vnl_matrix_type A =  points_minus_mean.transpose()
@@ -96,8 +115,11 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         for (unsigned int d = 0; d < m_DomainsPerShape; d++)
         {
             int dom = d + j*m_DomainsPerShape;
-            TriMesh *ptr = m_ParticleSystem->GetDomain(dom)->GetMesh();
 
+            const itk::ParticleImplicitSurfaceDomain<float, 3>* domain
+                    = static_cast<const itk::ParticleImplicitSurfaceDomain<float ,3>*>(this->m_ParticleSystem->GetDomain(dom));
+
+            TriMesh *ptr = domain->GetMesh();
             if (d > 0)
                 num += m_AttributesPerDomain[d-1];
             for (unsigned int p = 0; p < num_particles; p++)
@@ -108,7 +130,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 v.clear();
                 v.set_size(m_AttributesPerDomain[d]);
                 v.fill(0.0);
-                PointType pt_ps = m_ParticleSystem->GetPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -119,16 +141,20 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                     point dc;
                     dc.clear();
                     dc = ptr->GetFeatureDerivative(pt, c);
+//                    std::cout << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+//                    std::cout << dc[0] << " " << dc[1] << " " << dc[2] << std::endl;
                     for (unsigned int vd = 0; vd < VDimension; vd++)
                         J(c, vd) = dc[vd]*m_AttributeScales[num+c];
                     v(c) = Q(i++,j);
                 }
                 vnl_vector_type dx = J.transpose() * v;
                 for (unsigned int vd = 0; vd < VDimension; vd++)
-                    m_PointsUpdate(d*num_particles*VDimension + p*VDimension + vd, j);
+                    m_PointsUpdate(d*num_particles*VDimension + p*VDimension + vd, j) = dx[vd];
             }
         }
     }
+
+//    std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
 
     m_MinimumEigenValue = std::fabs(symEigen.D(0, 0));
 
@@ -142,7 +168,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
       m_CurrentEnergy += log(std::fabs(symEigen.D(i,i)));
       }
     m_CurrentEnergy /= num_samples;
-    //    energy = 0.5*log(symEigen.determinant());
+
 
     for (unsigned int i =0; i < num_samples; i++)
       {

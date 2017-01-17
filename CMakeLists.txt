@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.6)
 SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.7.2")
 SET(VTK_DIR "/home/sci/prafulag/BuildDIR/VTK-5.10.1")
 SET(FLTK_DIR "/home/sci/prafulag/BuildDIR/fltk-1.1.10")
+SET(VXL_DIR "/home/sci/prafulag/BuildDIR/vxl")
 SET(USE_VTK 1)
 SET(CMAKE_BUILD_TYPE DEBUG)
 #-------------------------------
@@ -57,18 +58,18 @@ if(USE_OPENMP)
 endif(USE_OPENMP)
 
 # Configure Mesh support
-if(BUILD_MeshSupport)
-  SUBDIRS(fim)
-  INCLUDE_DIRECTORIES(fim/trimesh2/include)
-  add_definitions(-DSW_USE_MESH)
-endif(BUILD_MeshSupport)
-
-# Praful - Configure Mesh support for Fea files only
-if(BUILD_FeaMeshSupport)
-  SUBDIRS(fim)
-  INCLUDE_DIRECTORIES(fim/trimesh2/include)
-  add_definitions(-DSW_USE_FEAMESH)
-endif(BUILD_FeaMeshSupport)
+if(BUILD_MeshSupport OR BUILD_FeaMeshSupport)
+  SUBDIRS(fim_v4)
+    INCLUDE_DIRECTORIES(fim_v4)
+  INCLUDE_DIRECTORIES(fim_v4/trimesh2/include)
+  if(BUILD_MeshSupport)
+    add_definitions(-DSW_USE_MESH)
+  endif(BUILD_MeshSupport)
+  if(BUILD_FeaMeshSupport)
+    add_definitions(-DSW_USE_FEAMESH)
+  endif(BUILD_FeaMeshSupport)
+  set(USE_VXL 1)
+endif(BUILD_MeshSupport OR BUILD_FeaMeshSupport)
 
 # Set up the include directories
 include_directories ( 
@@ -104,6 +105,15 @@ IF(USE_VTK)
     MESSAGE(FATAL_ERROR "VTK (The Visualization Toolkit) is required for ShapeWorksView and ShapeWorksShop, but could not be found.")
   ENDIF (VTK_FOUND)
 ENDIF(USE_VTK)
+
+IF(USE_VXL)
+FIND_PACKAGE(VXL)
+IF (VXL_FOUND)
+  INCLUDE (${VXL_DIR}/UseVXL.cmake)
+ELSE(VTK_FOUND)
+  MESSAGE(SEND_ERROR "VXL is required, but could not be found.")
+ENDIF (VXL_FOUND)
+ENDIF(USE_VXL)
 
 IF(USE_QT)
   #--------------------------------------------------------------------------------

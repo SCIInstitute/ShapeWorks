@@ -45,7 +45,7 @@ ParticleGeneralEntropyGradientFunction<VDimension>
   
   vnl_matrix_type points_minus_mean(num_dims, num_samples);
   vnl_vector_type means(num_dims);
-  
+
   // Compute the mean shape vector. Y
   for (unsigned int j = 0; j < num_dims; j++)
     {
@@ -63,6 +63,9 @@ ParticleGeneralEntropyGradientFunction<VDimension>
     means(j) = total/(double)num_samples;
     }
 
+//  std::cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
+//  std::cout << means.extract(num_dims, 0) << std::endl;
+
   
   for (unsigned int j = 0; j < num_dims; j++)
     {
@@ -71,6 +74,8 @@ ParticleGeneralEntropyGradientFunction<VDimension>
       points_minus_mean(j, i) -= means(j);
       }
     }
+//  std::cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
+
   //  std::cout << "points_minus_mean = " << points_minus_mean << std::endl;
   // Compute the covariance in the dual space (transposed shape matrix)
   vnl_matrix_type A =  points_minus_mean.transpose()
@@ -103,6 +108,9 @@ ParticleGeneralEntropyGradientFunction<VDimension>
         {
         typename ShapeDataType::VectorType grad =
             m_ShapeData->GetGradient(i, k);
+//          PointType pt = m_ShapeData->GetPosition(i, k);
+//          std::cout << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+//          std::cout << grad[0] << " " << grad[1] << " " << grad[2] << std::endl;
           for (unsigned int jj = 0; jj < VDimension; jj++)
             {
             J(ii,jj) = grad[jj] * m_AttributeScales[ii];
@@ -127,7 +135,7 @@ ParticleGeneralEntropyGradientFunction<VDimension>
       
       }// done particle
     }
-
+    std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
   m_MinimumEigenValue = symEigen.D(0, 0);
   
   // double energy = 0.0;

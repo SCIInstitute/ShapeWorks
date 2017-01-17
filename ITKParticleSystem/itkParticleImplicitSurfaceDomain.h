@@ -22,7 +22,8 @@
 
 #if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
 #include "TriMesh.h"
-#include "../../meshFIM.h"
+#include "TriMesh_algo.h"
+#include "meshFIM.h"
 #endif
 
 namespace itk
@@ -110,8 +111,13 @@ public:
 #ifdef SW_USE_FEAMESH
   void SetMesh(TriMesh *mesh);
   void SetFeaMesh(const char *feaFile);
+  void SetFeaGrad(const char *feaGradFile);
   void SetFids(const char *fidsFile);
   TriMesh* GetMesh()
+  {
+      return m_mesh;
+  }
+  TriMesh* GetMesh() const
   {
       return m_mesh;
   }
@@ -165,7 +171,7 @@ public:
     return m_SphereCenterList.size();
   }
     
-  
+
 protected:
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false)
     {
