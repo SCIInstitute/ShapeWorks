@@ -433,7 +433,7 @@ public:
     float *geodesic;
 
     vector< vector<float> > features;
-    //vector < vector<point> > featureGradients; //Praful precompute this for use in shapeworks
+    vector < vector<point> > featureGradients; //Praful - load more accurate gradient on vertices using volume for use in shapeworks
 
     // Bounding structures
     BBox bbox;
@@ -3036,146 +3036,6 @@ public:
         //        vcl_cerr<<X.extract(2,3,0,0);
     }
 
-
-    //    /* Prateep */
-    //    float GetBronsteinGeodesicDistance(point x, point y)
-    //    {
-    //        float alphaX, betaX, gammaX;
-    //        Face triangleX;
-    //        GetTriangleInfoForPoint(x, triangleX, alphaX, betaX, gammaX);
-
-    //        float alphaY, betaY, gammaY;
-    //        Face triangleY;
-    //        GetTriangleInfoForPoint(y, triangleY, alphaY, betaY, gammaY);
-
-    //        std::vector<float> w(3);
-    //        w[0] = alphaX;
-    //        w[1] = betaX;
-    //        w[2] = gammaX;
-    //        float d0 = GetVirtualSource(triangleX, w, triangleY.v[0]);
-    //        float d1 = GetVirtualSource(triangleX, w, triangleY.v[1]);
-    //        float d2 = GetVirtualSource(triangleX, w, triangleY.v[2]);
-    //    }
-
-    /* Prateep */
-    // compute approx geodesic distance using virtual source
-    //    float GetVirtualSource(Face triangle, std::vector<float> w, int vertIndex)
-    //    {
-    //        vnl_matrix<point::value_type> X_(3,3);
-    //        point muX;
-    //        for(int i = 0; i < 3; i++) {
-    //            point vertex = this->vertices[ triangle.v[i] ];
-    //            for(int j = 0; j < 3; j++) X_(i,j) = vertex[j];
-    //        }
-    //        X_ = X_.transpose();
-    //        for(int r = 0; r < 3; r++) {
-    //            for(int c = 0; c < 3; c++) muX[r] += X_(r,c);
-    //            muX[r] /= 3.0;
-    //        }
-    //        // Xcent = X - muX
-    //        vnl_matrix<point::value_type> Xcent(3,3);
-    //        for(int r = 0; r < 3; r++) {
-    //            for(int c = 0; c < 3; c++) Xcent(r,c) = X_(r,c) - muX[c];
-    //        }
-    //        vnl_svd<point::value_type> svd(X_);
-    //        vnl_diag_matrix<point::value_type> W_ =  svd.W();
-    //        vnl_matrix<point::value_type> U_ = svd.U();
-    //        vnl_matrix<point::value_type> V_ = svd.V();
-    //        /* top 2 eigen vectors */
-    //        vnl_matrix<point::value_type> U(3,2);
-    //        for(int r = 0; r < 3; r++) {
-    //            for(int c = 0; c < 2; c++) U(r,c) = U_(r,c);
-    //        }
-
-    //        vnl_matrix<point::value_type> X = U.transpose() * Xcent;
-
-    //        std::cout << "Initialize....\n";
-    //        std::vector< vec2 > xinit(3);
-    //        vnl_matrix<float> a(2,4);
-    //        vnl_vector<float> xi(4);
-    //        vnl_vector<float> b(2);
-    //        vnl_vector<float> dgeo(3);
-    //        dgeo(0) =  GetGeodesicDistance(triangle.v[0], vertIndex);
-    //        dgeo(1) =  GetGeodesicDistance(triangle.v[1], vertIndex);
-    //        dgeo(2) =  GetGeodesicDistance(triangle.v[2], vertIndex);
-
-    //        // 01
-    //        a(0,0) = 1.0; a(0,1) = -2.0*X(0,0); a(0,2) = 1.0; a(0,3) = -2.0*X(1,0);
-    //        a(1,0) = 1.0; a(1,1) = -2.0*X(0,1); a(1,2) = 1.0; a(1,3) = -2.0*X(1,1);
-    //        b(0) = (dgeo(0)*dgeo(0) - X(0,0)*X(0,0) - X(1,0)*X(1,0));
-    //        b(1) = (dgeo(1)*dgeo(1) - X(0,1)*X(0,1) - X(1,1)*X(1,1));
-    //        vnl_svd<point::value_type> s1(a);
-    //        xi = s1.solve(b);
-    //        std::cout << "01: " << xi(0) << ' ' << xi(1) << ' ' << xi(2) << ' ' << xi(3) << std::endl;
-    //        xinit[0] = vec2(xi(1),xi(3));
-
-    //        // 12
-    //        a(0,0) = 1.0; a(0,1) = -2.0*X(0,1); a(0,2) = 1.0; a(0,3) = -2.0*X(1,1);
-    //        a(1,0) = 1.0; a(1,1) = -2.0*X(0,2); a(1,2) = 1.0; a(1,3) = -2.0*X(1,2);
-    //        b(0) = (dgeo(1)*dgeo(1) - X(0,1)*X(0,1) - X(1,1)*X(1,1));
-    //        b(1) = (dgeo(2)*dgeo(2) - X(0,2)*X(0,2) - X(1,2)*X(1,2));
-    //        vnl_svd<point::value_type> s2(a);
-    //        xi = s2.solve(b);
-    //        std::cout << "12: " << xi(0) << ' ' << xi(1) << ' ' << xi(2) << ' ' << xi(3) << std::endl;
-    //        xinit[1] = vec2(xi(1),xi(3));
-
-    //        // 02
-    //        a(0,0) = 1.0; a(0,1) = -2.0*X(0,0); a(0,2) = 1.0; a(0,3) = -2.0*X(1,0);
-    //        a(1,0) = 1.0; a(1,1) = -2.0*X(0,2); a(1,2) = 1.0; a(1,3) = -2.0*X(1,2);
-    //        b(0) = (dgeo(0)*dgeo(0) - X(0,0)*X(0,0) - X(1,0)*X(1,0));
-    //        b(1) = (dgeo(2)*dgeo(2) - X(0,2)*X(0,2) - X(1,2)*X(1,2));
-    //        vnl_svd<point::value_type> s3(a);
-    //        xi = s3.solve(b);
-    //        std::cout << "02: " << xi(0) << ' ' << xi(1) << ' ' << xi(2) << ' ' << xi(3) << std::endl;
-    //        xinit[2] = vec2(xi(1),xi(3));
-
-    //        std::cout << "check for best initialization\n";
-    //        float minres = 1.0*LARGENUM;
-    //        int winner = -1;
-
-    //        for(unsigned int i = 0; i < 3; i++) {
-    //            float res = 0.0;
-    //            vec2 x0 = xinit[i];
-
-    //            for(int d = 0; d < 3; d++) {
-    //                vec2 xd(X(0,d), X(1,d));
-    //                res = res + w[d] * ( len2(x0 - xd) - dgeo(d)*dgeo(d));
-    //            }
-    //            if(res < minres) {
-    //                minres = res;
-    //                winner = i;
-    //            }
-    //        }
-
-    //        std::cout << "winner : " << winner << ", minres =  " << minres << std::endl;
-    //        std::cout << "initial points = " << xinit[winner] << ")\n";
-    //        std::cout << "Done\n";
-
-    //        std::cout << "Optimization...............\n";
-    //        alglib_impl::ae_matrix mat;
-    //        mat.rows = 3;
-    //        mat.cols = 2;
-    //        mat.ptr.pp_double = new double*[mat.rows];
-    //        for(int r = 0; r < mat.rows; r++) mat.ptr.pp_double[r] = new double[mat.cols];
-
-    //        X = X.transpose();
-    //        for(int r = 0; r < 3; r++) {
-    //            for(int c = 0; c < 2; c++) {
-    //                mat.ptr.pp_double[r][c] = X(r,c);
-    //            }
-    //        }
-    //        alglib::real_2d_array pt(&mat);
-
-    //        std::cout << "x\n";
-    ////        for(int r = 0; r < 3; r++) {
-    ////            for(int c = 0; c < 2; c++) std::cout << pt(r,c) << " ";
-    ////            std::endl;
-    ////        }
-    //        std::cout << "Done\n";
-
-    //        return 0;
-    //    }
-
     // SHIREEN
     void GetPointTriangleVertices(point x, point & v1, point & v2, point & v3)
     {
@@ -3947,7 +3807,6 @@ public:
 
     }
 
-
     void ReadFeatureFromList(const char *infilename)
     {
         std::ifstream infile(infilename);
@@ -3983,6 +3842,49 @@ public:
             infile.close();
         }
 
+    }
+
+    /* Praful */
+    void ReadFeatureGradientFromFile(const char *infilename)
+    {
+        std::ifstream infile(infilename);
+        if (!infile.is_open())
+        {
+            std::cout << "File Not Found" << std::endl;
+        }
+        else
+        {
+            // read # vertices
+            unsigned int numVert;
+            infile.read(reinterpret_cast<char *>(&numVert), sizeof(unsigned int));
+
+            if ( numVert != this->vertices.size() )
+            {
+                std::cout << "size of feature vector does not match # vertices in mesh" << std::endl;
+            }
+            else
+            {
+                std::cout << "reading feature gradient from file " << infilename << std::endl;
+
+                vector<point> tempFeatureGradVec;
+                // loop over vertices
+                for (int i = 0; i < numVert; i++)
+                {
+                    // read feature gradient
+                    point val;
+                    double value;
+                    for (int j = 0; j < 3; j ++)
+                    {
+                        infile.read( reinterpret_cast<char *>(&value), sizeof(double) );
+                        val[j] = (float) value;
+                    }
+
+                    tempFeatureGradVec.push_back(val);
+                }
+                this->featureGradients.push_back( tempFeatureGradVec );
+            }
+            infile.close();
+        }
     }
 
     void WriteFeatureToFile(int featureIndex, const char *outfilename)
@@ -4103,59 +4005,49 @@ public:
         dP[1] = ( alphaP * dA[1] ) + ( betaP * dB[1] ) + ( gammaP * dC[1] );
         dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] );
 
-        float dPnorm = std::sqrt(dP[0]*dP[0] + dP[1]*dP[1] + dP[2]*dP[2]);
-
-        dP[0] /= dPnorm;
-        dP[1] /= dPnorm;
-        dP[2] /= dPnorm;
-
         return dP;
     }
 
     point ComputeFeatureDerivative(int v,int nFeature = 0)
     {
-        point df; df.clear();
-        df[0] = 0.0f; df[1] = 0.0f; df[2] = 0.0f;
-
-        // feature value at v
-        float valueV = this->features[nFeature][v];
-        point ptV = this->vertices[v];
-
-        // iterate over neighbors of v to compute derivative as central difference
-        for (unsigned int n = 0; n < this->neighbors[v].size(); n++)
+        if (featureGradients.size() > 0)
+            return featureGradients[nFeature][v];
+        else
         {
-            int indexN = this->neighbors[v][n];
-            float valueN = this->features[nFeature][indexN];
-            point ptN = this->vertices[indexN];
+            point df; df.clear();
+            df[0] = 0.0f; df[1] = 0.0f; df[2] = 0.0f;
 
-            float valueDiff = valueN - valueV;
-            point ptDiff = ptN - ptV;
+            // feature value at v
+            float valueV = this->features[nFeature][v];
+            point ptV = this->vertices[v];
 
-            df[0] = df[0] + valueDiff / (ptDiff[0] + 0.0001f);
-            df[1] = df[1] + valueDiff / (ptDiff[1] + 0.0001f);
-            df[2] = df[2] + valueDiff / (ptDiff[2] + 0.0001f);
+            // iterate over neighbors of v to compute derivative as central difference
+            for (unsigned int n = 0; n < this->neighbors[v].size(); n++)
+            {
+                int indexN = this->neighbors[v][n];
+                float valueN = this->features[nFeature][indexN];
+                point ptN = this->vertices[indexN];
+
+                float valueDiff = valueN - valueV;
+                point ptDiff = ptN - ptV;
+
+                df[0] = df[0] + valueDiff / (ptDiff[0] + 0.0001f);
+                df[1] = df[1] + valueDiff / (ptDiff[1] + 0.0001f);
+                df[2] = df[2] + valueDiff / (ptDiff[2] + 0.0001f);
+            }
+
+            df[0] = df[0] / (float) ( this->neighbors[v].size() );
+            df[1] = df[1] / (float) ( this->neighbors[v].size() );
+            df[2] = df[2] / (float) ( this->neighbors[v].size() );
+
+            return df;
         }
-
-        df[0] = df[0] / (float) ( this->neighbors[v].size() );
-        df[1] = df[1] / (float) ( this->neighbors[v].size() );
-        df[2] = df[2] / (float) ( this->neighbors[v].size() );
-
-        float dfNorm = std::sqrt(df[0]*df[0] + df[1]*df[1] + df[2]*df[2]);
-        df[0] /= dfNorm;
-        df[1] /= dfNorm;
-        df[2] /= dfNorm;
-
-        return df;
     }
 
     int GetNumberOfFeatures()
     {
         return this->features.size();
     }
-
-
-
-
 
     // Debugging printout, controllable by a "verbose"ness parameter
 
