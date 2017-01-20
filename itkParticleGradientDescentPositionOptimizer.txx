@@ -24,7 +24,11 @@ const int global_iteration = 1;
 
 #include <algorithm>
 #include <ctime>
-
+#include <string>
+#include "itkParticleImageDomainWithGradients.h"
+#include <vector>
+#include <fstream>
+#include <sstream>
 namespace itk
 {
 template <class TGradientNumericType, unsigned int VDimension>
@@ -54,6 +58,10 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   m_StopOptimization = false;
   m_GradientFunction->SetParticleSystem(m_ParticleSystem);
 
+  typedef typename DomainType::VnlVectorType NormalType;
+  std::vector<PointType> meanPositions;
+  std::vector<NormalType> meanNormals;
+
   bool reset = false;
   // Make sure the time step vector is the right size
   while (m_TimeSteps.size() != m_ParticleSystem->GetNumberOfDomains() )
@@ -80,7 +88,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
   //  if (reset == true) m_GradientFunction->ResetBuffers();
   
-
+  const double pi = std::acos(-1.0);
   unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
   std::vector<double> meantime(numdomains);
   std::vector<double> maxtime(numdomains);
@@ -110,7 +118,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 //                              std::cout<<"==================================="<<std::endl;
 //    }
 
-  int counter = 0;
+  unsigned int counter = 0;
 
   for (unsigned int q = 0; q < numdomains; q++)
     {
@@ -124,13 +132,40 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     {
       if (counter % global_iteration == 0)
       {
-        std::cerr << "Performing global step\n";
+        std::cerr << "Performing global step\n" ;
         m_GradientFunction->BeforeIteration();
       }
       counter++;
       //Praful - randomize the order of updates on shapes
         if (m_randomOrdering == true)
             std::random_shuffle(randDomIndx.begin(), randDomIndx.end());
+
+        if (m_debug_projection)
+        {
+            meanNormals.clear();
+            meanPositions.clear();
+            for (unsigned int j = 0; j < m_ParticleSystem->GetNumberOfParticles(); j++)
+            {
+                PointType meanPt;
+                meanPt[0] = 0.0; meanPt[1] = 0.0; meanPt[2] = 0.0;
+                NormalType meanNormal;
+                meanNormal.fill(0.0);
+                for (unsigned int dom = 0; dom < numdomains; dom++)
+                {
+                    const DomainType * domain = static_cast<const DomainType *>(m_ParticleSystem->GetDomain(dom));
+                    PointType pt = m_ParticleSystem->GetPosition(j, dom);
+                    NormalType normalPs = domain->SampleNormalVnl(pt);
+                    for (int vd = 0; vd < VDimension; vd++)
+                    {
+                        meanPt[vd] += pt[vd]/numdomains;
+                        meanNormal[vd] += normalPs[vd]/numdomains;
+                    }
+                }
+                meanNormal.normalize();
+                meanPositions.push_back(meanPt);
+                meanNormals.push_back(meanNormal);
+            }
+        }
 
       //Praful
 #pragma omp parallel
@@ -169,6 +204,8 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
           VectorType original_gradient;
           PointType newpoint;
 
+          const DomainType * domain = static_cast<const DomainType *>(m_ParticleSystem->GetDomain(dom));
+
           typename GradientFunctionType::Pointer localGradientFunction;
 
           localGradientFunction = m_GradientFunction;
@@ -199,7 +236,18 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
           localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
           original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem,
                                                            maxdt, energy);
+          unsigned int idx = it.GetIndex();
           PointType pt = *it;
+          NormalType ptNormalOld = domain->SampleNormalVnl(pt);
+          if (m_debug_projection)
+          {
+              double dptOld = std::acos(dot_product(ptNormalOld, meanNormals[idx]));
+              PointType diffPt;
+              diffPt[0] = pt[0] - meanPositions[idx][0];
+              diffPt[1] = pt[1] - meanPositions[idx][1];
+              diffPt[2] = pt[2] - meanPositions[idx][2];
+              double dstOld = std::sqrt(diffPt[0]*diffPt[0] + diffPt[1]*diffPt[1] + diffPt[2]*diffPt[2]);
+          }
 
           double newenergy, gradmag;
           while ( !done )
@@ -226,6 +274,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                 {  newpoint[i] = pt[i] - gradient[i]; }
               dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
               m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+
               newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
               
               if (newenergy < energy) // good move, increase timestep for next time
@@ -264,6 +313,29 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                 }
               }
             } // end while not done
+
+          if (m_debug_projection)
+          {
+              PointType ptNew = m_ParticleSystem->GetPosition(idx, dom);
+              NormalType ptNormalNew = domain->SampleNormalVnl(ptNew);
+              double dptNew = std::acos(dot_product(ptNormalNew, meanNormals[idx]));
+              PointType diffPtNew;
+              diffPtNew[0] = ptNew[0] - meanPositions[idx][0];
+              diffPtNew[1] = ptNew[1] - meanPositions[idx][1];
+              diffPtNew[2] = ptNew[2] - meanPositions[idx][2];
+              double dstNew = std::sqrt(diffPtNew[0]*diffPtNew[0] + diffPtNew[1]*diffPtNew[1] + diffPtNew[2]*diffPtNew[2]);
+
+              double devOldToNew = std::acos(dot_product(ptNormalNew, ptNormalOld));
+              if (devOldToNew > pi/4.0)
+                  std::cout << "Warning1!!! domain # " << dom <<" point # "<< idx << " normal turning angle = " << devOldToNew*180.0/pi << std::endl;
+              //          if (dstNew > dstOld)
+              //              std::cout << "Warning2!!! domain # " << dom <<" point # "<< idx << " distance to mean increasing... newDist = " << dstNew << " oldDist = " << dstOld <<std::endl;
+              //          if (dptNew > dptOld)
+              //              std::cout << "Warning3!!! domain # " << dom <<" point # "<< idx << " angle to mean increasing... newAngle = " << dptNew*180.0/pi << " oldAngle = " << dptOld*180.0/pi << std::endl;
+          }
+
+
+
           } // for each particle
         
         // Compute mean time step
@@ -275,8 +347,11 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
         } // if not flagged
       }// for each domain
-    
 }
+
+        //Praful - Newton Ralphson debugging
+        //m_ParticleSystem->PrintDebugData(m_NumberOfIterations);
+
     m_NumberOfIterations++;
     m_GradientFunction->AfterIteration();
     this->InvokeEvent(itk::IterationEvent());
@@ -291,8 +366,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
       m_StopOptimization = true;
       }
     
-    } // end while stop optimization
-  
+    } // end while stop optimization  
 }
 
 /*** GAUSS SEIDEL ***/

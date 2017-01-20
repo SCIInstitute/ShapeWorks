@@ -354,6 +354,8 @@ public:
     return vnl_inverse(T);
   }
 
+  void PrintDebugData(unsigned int sIter);
+
   /** Flag/Unflag a domain.  Flagging a domain has different meanings according
       to the application using this particle system. */
   void FlagDomain(unsigned int i)
