@@ -181,7 +181,7 @@ public:
     void ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints, const char *outfilename);
 
     // SHIREEN - compute distance to landmarks based on geodesic approximation
-    void ComputeDistanceToLandmark(TriMesh *mesh, point landmark, const char *outfilename);
+    void ComputeDistanceToLandmark(TriMesh *mesh, point landmark, bool apply_log, const char *outfilename);
     void UpdateGeodesicMapWithDistancesFromVertices(std::vector<int> vertexIdlist);
     // end SHIREEN
 
