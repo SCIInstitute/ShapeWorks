@@ -639,7 +639,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
     } // end: document check
 } // end ReadInputs
 
-
 template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
@@ -1071,6 +1070,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             }
         }
 
+        m_debug_projection = true;
+        elem = docHandle.FirstChild( "debug_projection" ).Element();
+        if (elem) atoi(elem->GetText()) > 0 ? this->m_debug_projection = true : this->m_debug_projection = false;
+
         //Praful - end
 
         this->m_initial_norm_penalty_weighting = 0.0;
@@ -1249,6 +1252,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
 
     m_Sampler->GetOptimizer()->SetTimeStep(1.0);
+
+    m_Sampler->GetOptimizer()->SetDebugProjection(m_debug_projection);
 
     // SHIREEN
     if(m_optimizer_type == 0)
