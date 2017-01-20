@@ -735,7 +735,7 @@ void meshFIM::computeFIM(TriMesh *mesh, const char *vertT_filename)
 }
 
 // SHIREEN - compute distance to landmarks based on geodesic approximation
-void meshFIM::ComputeDistanceToLandmark(TriMesh *mesh, point landmark, const char *outfilename)
+void meshFIM::ComputeDistanceToLandmark(TriMesh *mesh, point landmark, bool apply_log, const char *outfilename)
 {
     // initialize the geodesic map to hold the geodesics from the triangle vertices of the given landmark to all other mesh vertices
     int numVert = mesh->vertices.size();
@@ -775,7 +775,8 @@ void meshFIM::ComputeDistanceToLandmark(TriMesh *mesh, point landmark, const cha
         point curVertex = mesh->vertices[i];
         float distToLandmark = mesh->GetBronsteinGeodesicDistance(landmark, curVertex, (char*) "LM");
         distToLandmark      += 0.00001f;
-
+        if (apply_log)
+            distToLandmark = std::log(distToLandmark);
         // write distance to curve
         outfile.write( reinterpret_cast<char *>(&distToLandmark), sizeof(float) );
     }
