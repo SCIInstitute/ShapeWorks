@@ -99,25 +99,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
   std::vector<int> randDomIndx(numdomains);
   for (int i = 0; i<numdomains; i++) randDomIndx[i]=i;
 
-//  std::vector<int> randDomIndx2(numdomains);
-//  for (int i = 0; i<numdomains; i++) randDomIndx2[i]=i;
-  //Praful
-
-//  unsigned int seed = unsigned (std::time(0));
-//  std::srand(seed);
-//  std::random_shuffle(randDomIndx.begin(), randDomIndx.end());
-//  std::srand(seed);
-//  std::random_shuffle(randDomIndx2.begin(), randDomIndx2.end());
-
-//  for (int domId = 0; domId < numdomains; domId++)
-//    {
-//              int dom1 = randDomIndx[domId];
-//              int dom2 = randDomIndx2[domId];
-//              std::cout<<"==================================="<<std::endl;
-//                              std::cout<<domId << " " << dom1 << " " << dom2 << std::endl;
-//                              std::cout<<"==================================="<<std::endl;
-//    }
-
   unsigned int counter = 0;
 
   for (unsigned int q = 0; q < numdomains; q++)
@@ -327,11 +308,11 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
               double devOldToNew = std::acos(dot_product(ptNormalNew, ptNormalOld));
               if (devOldToNew > pi/4.0)
-                  std::cout << "Warning1!!! domain # " << dom <<" point # "<< idx << " normal turning angle = " << devOldToNew*180.0/pi << std::endl;
+                  std::cout << "Warning1!!! Iter# " << m_NumberOfIterations << " domain # " << dom <<" point # "<< idx << " normal turning angle = " << devOldToNew*180.0/pi << std::endl;
               //          if (dstNew > dstOld)
-              //              std::cout << "Warning2!!! domain # " << dom <<" point # "<< idx << " distance to mean increasing... newDist = " << dstNew << " oldDist = " << dstOld <<std::endl;
+              //              std::cout << "Warning2!!! Iter# " << m_NumberOfIterations << " domain # " << dom <<" point # "<< idx << " distance to mean increasing... newDist = " << dstNew << " oldDist = " << dstOld <<std::endl;
               //          if (dptNew > dptOld)
-              //              std::cout << "Warning3!!! domain # " << dom <<" point # "<< idx << " angle to mean increasing... newAngle = " << dptNew*180.0/pi << " oldAngle = " << dptOld*180.0/pi << std::endl;
+              //              std::cout << "Warning3!!! Iter# " << m_NumberOfIterations << " domain # " << dom <<" point # "<< idx << " angle to mean increasing... newAngle = " << dptNew*180.0/pi << " oldAngle = " << dptOld*180.0/pi << std::endl;
           }
 
 
