@@ -734,6 +734,82 @@ void meshFIM::computeFIM(TriMesh *mesh, const char *vertT_filename)
     }
 }
 
+// Praful - compute distance to landmarks based on geodesic approximation with given triangle info
+void meshFIM::ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const char *infilename , const char *outfilename)
+{
+    // initialize the geodesic map to hold the geodesics from the triangle vertices of the given landmark to all other mesh vertices
+    SetStopDistance(1e7);
+    int numVert = mesh->vertices.size();
+    mesh->geodesicMap.resize(numVert);
+    SetMesh(mesh);
+
+    std::ifstream pointsFile(infilename);
+    ofstream outfile(outfilename);
+
+    if (!pointsFile)
+    {
+        std::cerr << "points file not found: " << pointsFile << std::endl;
+    }
+    int count = 0;
+    while(pointsFile)
+    {
+        point tmpPt; tmpPt.clear();
+
+        vnl_vector<float> baryCoords(3,0.0);
+
+        int faceId;
+
+        for (int d=0; d<3; d++)
+            pointsFile >> tmpPt[d];
+        if (!pointsFile)
+        {
+            count--;
+            break;
+        }
+        pointsFile >> faceId;
+        if (!pointsFile)
+        {
+            count--;
+            break;
+        }
+        for (int d=0; d<3; d++)
+            pointsFile >> baryCoords[d];
+        if (!pointsFile)
+        {
+            count--;
+            break;
+        }
+        TriMesh::Face triangleX = mesh->faces[faceId];
+        std::vector<int> vertexIdlist;
+        vertexIdlist.clear();
+        vertexIdlist.push_back(triangleX.v[0]);
+        vertexIdlist.push_back(triangleX.v[1]);
+        vertexIdlist.push_back(triangleX.v[2]);
+
+        // update the geodesic map with geodesic distances from each triangle vertex to all other mesh vertices
+        UpdateGeodesicMapWithDistancesFromVertices(vertexIdlist);
+        std::cout << "Point# " << count++ << " fid: " << faceId << " baryCoords: " << baryCoords[0] << " " << baryCoords[1] << " " << baryCoords[2] << std::endl;
+
+        for (int i = 0; i < numVert; i++)
+        {
+//            std::cout << "Vertex: " << i << std::endl;
+            point curVertex = mesh->vertices[i];
+            TriMesh::Face vertFace = mesh->faces[mesh->adjacentfaces[i][0]];
+            vec barycentric = mesh->ComputeBarycentricCoordinates(curVertex, vertFace);
+            vnl_vector<float> baryVert(3, 0.0);
+            for (int d = 0; d < 3; d++)
+                baryVert[d] = barycentric[d];
+            float distToLandmark = mesh->GetBronsteinGeodesicDistance(triangleX, vertFace, baryCoords, baryVert, (char*) "LM");
+            outfile << distToLandmark << " ";
+        }
+        outfile << std::endl;
+    }
+    std::cout << "Total number of points: " << count+1 << std::endl;
+    pointsFile.close();
+    outfile.close();
+}
+
+
 // SHIREEN - compute distance to landmarks based on geodesic approximation
 void meshFIM::ComputeDistanceToLandmark(TriMesh *mesh, point landmark, bool apply_log, const char *outfilename)
 {
@@ -865,7 +941,7 @@ void meshFIM::UpdateGeodesicMapWithDistancesFromVertices(std::vector<int> vertex
             }
         }
 
-        // Loop Through And Copy Only Values < than m_StopDistance
+        // Loop Through And Copy Only Values < than
         int nv = m_meshPtr->vertices.size();
         for(int v = 0; v < nv; v++){
             if ((m_meshPtr->geodesic[v] <= m_StopDistance) && (m_meshPtr->geodesic[v] > 0))

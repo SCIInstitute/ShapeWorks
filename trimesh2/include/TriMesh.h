@@ -2449,81 +2449,67 @@ public:
     /* Praful */
     float GetBronsteinGeodesicDistance(point a, point b, char* method)//, Face Sa, Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b)
     {
-//        float abDiff = 0.0f;
-//        for(int i = 0; i<3; i++)
-//        {
-//            abDiff += (float)(a[i]-b[i]);
-//        }
-//        if(std::abs(abDiff)<0.001f)
-//        {
-//            return 0.0f;
-//        }
-
         Face Sa, Sb;
         vnl_vector <float> baryCoord_a(3), baryCoord_b(3);
         float alp_a, alp_b, bet_a, bet_b, gam_a, gam_b;
         GetTriangleInfoForPoint(a, Sa, alp_a, bet_a, gam_a);
         GetTriangleInfoForPoint(b, Sb, alp_b, bet_b, gam_b);
 
-//        if(Sa.v[0]==Sb.v[0] && Sa.v[1]==Sb.v[1] && Sa.v[2]==Sb.v[2])
-//        {
-//            float val = 0.0f;
-//            for(int i=0; i<3; i++)
-//            {
-//                val += (float)((a[i]-b[i])*(a[i]-b[i]));
-//            }
-//            float dGeo_a_2_b = std::sqrt(val);
-//            return dGeo_a_2_b;
-//        }
+        float dGeo_a_2_b = GetBronsteinGeodesicDistance(Sa, Sb, baryCoord_a, baryCoord_b, method);
+        return dGeo_a_2_b;
+    }
 
-//        std::cout<<"From FIDS!"<<std::endl;
-//        std::cout<<"Face a: "<<Sa.v[0]<<" "<<Sa.v[1]<<" "<<Sa.v[2]<<std::endl;
-//        std::cout<<"Face b: "<<Sb.v[0]<<" "<<Sb.v[1]<<" "<<Sb.v[2]<<std::endl;
-//        std::cout<<"alp_a="<<alp_a<<" bet_a="<<bet_a<<" gam_a="<<gam_a<<std::endl;
-//        std::cout<<"alp_b="<<alp_b<<" bet_b="<<bet_b<<" gam_b="<<gam_b<<std::endl;
+    /* Praful */
+    float GetBronsteinGeodesicDistance( Face Sa, Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char* method)
+    {
+        point a; a.clear();
+        point b; b.clear();
+        for (int d1 = 0; d1 < 3; d1++)
+        {
+            a[d1] = 0.0;
+            b[d1] = 0.0;
+            for (int d2 = 0; d2 < 3; d2++)
+            {
+                point vt = vertices[Sa.v[d2]];
+                a[d1] += baryCoord_a[d2]*vt[d1];
+                point vt2 = vertices[Sb.v[d2]];
+                b[d1] += baryCoord_b[d2]*vt2[d1];
+            }
+        }
+
+        float alp_a, alp_b, bet_a, bet_b, gam_a, gam_b;
+        alp_a = baryCoord_a[0];
+        bet_a = baryCoord_a[1];
+        gam_a = baryCoord_a[2];
+        alp_b = baryCoord_b[0];
+        bet_b = baryCoord_b[1];
+        gam_b = baryCoord_b[2];
+
         if (alp_a<0.000001f)
         {
-//            std::cout<<"alp_a="<<alp_a<<" bet_a="<<bet_a<<" gam_a="<<gam_a<<std::endl;
             alp_a=0.000001f;
-//            std::cout<<"AbsAssign"<<std::endl;
-//            std::cout<<"alp_a="<<alp_a<<" bet_a="<<bet_a<<" gam_a="<<gam_a<<std::endl;
         }
         if (bet_a<0.000001f)
         {
-//            std::cout<<"alp_a="<<alp_a<<" bet_a="<<bet_a<<" gam_a="<<gam_a<<std::endl;
             bet_a=0.000001f;
-//            std::cout<<"AbsAssign"<<std::endl;
-//            std::cout<<"alp_a="<<alp_a<<" bet_a="<<bet_a<<" gam_a="<<gam_a<<std::endl;
         }
         if (gam_a<0.000001f)
         {
-//            std::cout<<"alp_a="<<alp_a<<" bet_a="<<bet_a<<" gam_a="<<gam_a<<std::endl;
             gam_a=0.000001f;
-//            std::cout<<"AbsAssign"<<std::endl;
-//            std::cout<<"alp_a="<<alp_a<<" bet_a="<<bet_a<<" gam_a="<<gam_a<<std::endl;
         }
         if (alp_b<0.000001f)
         {
-//            std::cout<<"alp_b="<<alp_b<<" bet_b="<<bet_b<<" gam_b="<<gam_b<<std::endl;
             alp_b=0.000001f;
-//            std::cout<<"AbsAssign"<<std::endl;
-//            std::cout<<"alp_b="<<alp_b<<" bet_b="<<bet_b<<" gam_b="<<gam_b<<std::endl;
         }
         if (bet_b<0.000001f)
         {
-//            std::cout<<"alp_b="<<alp_b<<" bet_b="<<bet_b<<" gam_b="<<gam_b<<std::endl;
             bet_b=0.000001f;
-//            std::cout<<"AbsAssign"<<std::endl;
-//            std::cout<<"alp_b="<<alp_b<<" bet_b="<<bet_b<<" gam_b="<<gam_b<<std::endl;
         }
         if (gam_b<0.000001f)
         {
-//            std::cout<<"alp_b="<<alp_b<<" bet_b="<<bet_b<<" gam_b="<<gam_b<<std::endl;
             gam_b=0.000001f;
-//            std::cout<<"AbsAssign"<<std::endl;
-//            std::cout<<"alp_b="<<alp_b<<" bet_b="<<bet_b<<" gam_b="<<gam_b<<std::endl;
         }
-//        std::cout<<"*********************"<<std::endl;
+
         alp_a /= (alp_a + bet_a + gam_a);
         bet_a /= (alp_a + bet_a + gam_a);
         gam_a /= (alp_a + bet_a + gam_a);
@@ -2542,8 +2528,6 @@ public:
         vnl_vector<float> xB(2);
         vnl_matrix<float> Xa(2,3);
         vnl_matrix<float> Xb(2,3);
-//        vcl_cerr<<"baryCoord_a: "<<baryCoord_a<<std::endl;
-//        vcl_cerr<<"baryCoord_b: "<<baryCoord_b<<std::endl;
         if(baryCoord_a.max_value() >1.0f || baryCoord_a.min_value()<0.0f || baryCoord_b.max_value() >1.0f || baryCoord_b.min_value()<0.0f)
         {
             std::cerr<<"incorrect barycentric coordinates...!!"<<std::endl;
@@ -2552,18 +2536,8 @@ public:
             return EXIT_FAILURE;
         }
 
-        ComputeCanonicalForm(a, xA, Xa);//, Sa);
-//        vcl_cout<<"xA: "<<xA<<std::endl;
-//        vcl_cout<<"Xa: "<<std::endl<<Xa.extract(2,3,0,0)<<std::endl;
-//        std::cout<<"+++++++++++++++++++++++"<<std::endl;
-//        std::cout<<"a returned!"<<std::endl;
-//        std::cout<<"+++++++++++++++++++++++"<<std::endl;
-        ComputeCanonicalForm(b, xB, Xb);//, Sb);
-//        vcl_cout<<"xB: "<<xB<<std::endl;
-//        vcl_cout<<"Xb: "<<std::endl<<Xb.extract(2,3,0,0)<<std::endl;
-//        std::cout<<"+++++++++++++++++++++++"<<std::endl;
-//        std::cout<<"b returned!"<<std::endl;
-//        std::cout<<"+++++++++++++++++++++++"<<std::endl;
+        ComputeCanonicalForm(a, xA, Xa);
+        ComputeCanonicalForm(b, xB, Xb);
 
         vnl_matrix<float> dA_2_B(3,3);
         bool tooFar = false;
@@ -2588,17 +2562,15 @@ public:
             return LARGENUM;
 
         vnl_vector<float> geo_approx_2_B(3);
-        //        char method[]="Newton";
-        //        std::cout<<"check3"<<std::endl;
-        //        vcl_cout<<dA_2_B<<std::endl;
         for(int vertB_id=0; vertB_id<3; vertB_id++)
             geo_approx_2_B[vertB_id] = ComputeThreePointApproximatedGeodesic(xA, baryCoord_a, Xa, dA_2_B.get_column(vertB_id), method);
-//        std::cout<<"check6"<<std::endl;
+
         float dGeo_a_2_b=0.0f;
         dGeo_a_2_b = ComputeThreePointApproximatedGeodesic(xB, baryCoord_b, Xb, geo_approx_2_B, method);
 
         return dGeo_a_2_b;
     }
+
 
     /* Praful */
     float ComputeGradient(vnl_vector<float> x0, vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, vnl_vector<float> & G)

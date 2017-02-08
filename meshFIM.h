@@ -180,6 +180,9 @@ public:
 
     void ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints, const char *outfilename);
 
+    //Praful - for Riddhish project
+    void ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const char *infilename , const char *outfilename);
+
     // SHIREEN - compute distance to landmarks based on geodesic approximation
     void ComputeDistanceToLandmark(TriMesh *mesh, point landmark, bool apply_log, const char *outfilename);
     void UpdateGeodesicMapWithDistancesFromVertices(std::vector<int> vertexIdlist);
