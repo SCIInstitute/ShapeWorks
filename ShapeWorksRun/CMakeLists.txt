@@ -5,10 +5,9 @@
 #SET(RUN_NAME ShapeWorksRun2.1_weighSampling_wCorrespondence_adaptiveSigma)
 #SET(RUN_NAME ShapeWorksRun2_modifiedCotanWithFixedSigmaWithCorrespondence)
 #SET(RUN_NAME ShapeWorksRun3_FeaMeshes)
-SET(RUN_NAME ShapeWorksRun3.2)
-
 # SHIREEN
-SET(RUN_NAME ShapeWorksRun3)
+#SET(RUN_NAME ShapeWorksRun3)
+SET(RUN_NAME ShapeWorksRun3.2) #fea meshes + normal penalty new code + bug fixes
 
 ADD_EXECUTABLE(${RUN_NAME} ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
 #TARGET_LINK_LIBRARIES(ShapeWorksRun ITKParticleSystem Utilities ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml)
