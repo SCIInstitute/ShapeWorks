@@ -53,7 +53,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
             for (unsigned int p = 0; p < num_particles; p++)
             {
-                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetTransformedPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -68,7 +68,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
                 {
                     int i1 = i++;
-                    points_minus_mean(i1, j) = std::log(fVals[c]+1e-10)*m_AttributeScales[num+c];
+                    points_minus_mean(i1, j) = fVals[c]*m_AttributeScales[num+c];
                     means(i1) += points_minus_mean(i1, j)/(double)num_samples;
                 }
             }
@@ -130,7 +130,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 v.clear();
                 v.set_size(m_AttributesPerDomain[d]);
                 v.fill(0.0);
-                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetTransformedPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -154,27 +154,27 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         }
     }
 
-//    std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
+    std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
 
-    m_MinimumEigenValue = std::fabs(symEigen.D(0, 0));
+    m_MinimumEigenValue = symEigen.D(0, 0);
 
     m_CurrentEnergy = 0.0;
     for (unsigned int i = 0; i < num_samples; i++)
       {
-      if (std::fabs(symEigen.D(i, i)) < m_MinimumEigenValue)
+      if (symEigen.D(i, i) < m_MinimumEigenValue)
         {
-            m_MinimumEigenValue = std::fabs(symEigen.D(i, i));
+            m_MinimumEigenValue = symEigen.D(i, i);
         }
-      m_CurrentEnergy += log(std::fabs(symEigen.D(i,i)));
+      m_CurrentEnergy += log(symEigen.D(i,i));
       }
     m_CurrentEnergy /= num_samples;
 
 
     for (unsigned int i =0; i < num_samples; i++)
       {
-        std::cout << i << ": "<< std::fabs(symEigen.D(i, i)) - m_MinimumVariance << std::endl;
+        std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
       }
-    std::cout << "ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
+    std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
               << m_MinimumVariance <<  std::endl;
 
 }
