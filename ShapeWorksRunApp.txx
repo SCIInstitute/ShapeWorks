@@ -231,23 +231,31 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
         }
     }
 
-    if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
-    {
-        this->optimize_stop();
-    }
+    //Praful - March 13, 2017: following checks not needed
+//    if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
+//    {
+//        this->optimize_stop();
+//    }
 
     // Praful - Jan,2017
-    if ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
-        this->optimize_stop();
+//    if ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
+//        this->optimize_stop();
 
-    if ( m_Sampler->GetGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
-        this->optimize_stop();
+//    if ( m_Sampler->GetGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
+//        this->optimize_stop();
 
-    if ( m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
-        this->optimize_stop();
+//    if ( m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
+//        this->optimize_stop();
 
-    if ( m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
-        this->optimize_stop();
+//    if ( m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
+//        this->optimize_stop();
+
+    //Praful - commented following check - unnecessary and causes optimization to terminate after one iteration if correspondence if off
+
+//    if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
+//    {
+//        this->optimize_stop();
+//    };
     
     //    this->surface_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagA());
     //    this->correspondence_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagB()
@@ -1143,6 +1151,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             }
         }
 
+        m_debug_projection = true;
+        elem = docHandle.FirstChild( "debug_projection" ).Element();
+        if (elem) atoi(elem->GetText()) > 0 ? this->m_debug_projection = true : this->m_debug_projection = false;
+
         //Praful - end
 
         this->m_initial_norm_penalty_weighting = 0.0;
@@ -1328,6 +1340,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
 
     m_Sampler->GetOptimizer()->SetTimeStep(1.0);
+
+    m_Sampler->GetOptimizer()->SetDebugProjection(m_debug_projection);
 
     // SHIREEN
     if(m_optimizer_type == 0)

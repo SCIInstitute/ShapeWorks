@@ -7,6 +7,9 @@
 #SET(RUN_NAME ShapeWorksRun3_FeaMeshes)
 SET(RUN_NAME ShapeWorksRun3.2)
 
+# SHIREEN
+SET(RUN_NAME ShapeWorksRun3)
+
 ADD_EXECUTABLE(${RUN_NAME} ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
 #TARGET_LINK_LIBRARIES(ShapeWorksRun ITKParticleSystem Utilities ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml)
 TARGET_LINK_LIBRARIES(${RUN_NAME} ITKParticleSystem Utilities ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml fim_v4 vgl vgl_algo)
