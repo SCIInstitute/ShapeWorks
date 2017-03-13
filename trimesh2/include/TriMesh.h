@@ -3844,10 +3844,10 @@ public:
                 {
                     // read feature gradient
                     point val;
-                    double value;
+                    float value;
                     for (int j = 0; j < 3; j ++)
                     {
-                        infile.read( reinterpret_cast<char *>(&value), sizeof(double) );
+                        infile.read( reinterpret_cast<char *>(&value), sizeof(float) );
                         val[j] = (float) value;
                     }
 
@@ -3914,10 +3914,6 @@ public:
         float alphaX, betaX, gammaX;
         Face triangleX;
 
-        //        if(x[0] == 1.5 && x[1] == 10.5 && x[2] == -14.5) {
-        //            int t = 0;
-        //        }
-
         GetTriangleInfoForPoint(x,  triangleX, alphaX,  betaX,  gammaX);
 
         // SHIREEN
@@ -3962,6 +3958,19 @@ public:
         Face triangleP;
 
         GetTriangleInfoForPoint(p,  triangleP, alphaP,  betaP,  gammaP);
+
+        if (alphaP < 0.000001f)
+            alphaP = 0.000001f;
+
+        if (betaP < 0.000001f)
+            betaP = 0.000001f;
+
+        if (gammaP < 0.000001f)
+            gammaP = 0.000001f;
+
+        alphaP /= (alphaP + betaP + gammaP);
+        betaP  /= (alphaP + betaP + gammaP);
+        gammaP /= (alphaP + betaP + gammaP);
 
         // compute derivative at 3 vertices (A,B,C)
         int A = triangleP.v[0];
