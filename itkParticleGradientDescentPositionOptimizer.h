@@ -99,6 +99,11 @@ public:
   inline void StopOptimization()
   {    this->m_StopOptimization = true;  }
 
+  void SetDebugProjection(bool flag)
+  {
+      this->m_debug_projection = flag;
+  }
+
   /** Get/Set the number of iterations performed by the solver. */
   itkGetMacro(NumberOfIterations, unsigned int);
   itkSetMacro(NumberOfIterations, unsigned int);
@@ -144,7 +149,7 @@ private:
   double m_TimeStep;
   int m_OptimizationMode;
   bool m_randomOrdering;
-
+  bool m_debug_projection;
   std::vector< std::vector<double> > m_TimeSteps;
   
 };

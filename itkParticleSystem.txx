@@ -16,7 +16,7 @@
 #define __itkParticleSystem_txx
 
 #include "itkCommand.h"
-
+#include "itkParticleImageDomainWithGradients.h"
 namespace itk
 {
 
@@ -379,6 +379,50 @@ ParticleSystem<VDimension>::RegisterAttribute( ParticleAttribute<VDimension> *at
     }
 }
 
+template <unsigned int VDimension>
+void
+ParticleSystem<VDimension>::PrintDebugData(unsigned int sIter)
+{
+    typedef ParticleImageDomainWithGradients<float, VDimension> ImgGradDomain;
+    typedef typename ImgGradDomain::VnlVectorType NormalType;
+    std::cerr << "--------------------------------Projection Debugging--------------------" << std::endl;
+    std::cerr << "Iteration # " << sIter << std::endl;
+    float N = (float) GetNumberOfDomains();
+    const double pi = std::acos(-1.0);
+    double maxAngle = 0.0;
+    for (unsigned int j = 0; j < GetNumberOfParticles(); j++)
+    {
+        PointType meanPt;
+        meanPt[0] = 0.0; meanPt[1] = 0.0; meanPt[2] = 0.0;
+        NormalType meanNormal;
+        meanNormal.fill(0.0);
+        for (unsigned int dom = 0; dom < N; dom++)
+        {
+            const ImgGradDomain * domain = static_cast<const ImgGradDomain *>(GetDomain(dom));
+            PointType pt = GetPosition(j, dom);
+            NormalType normalPs = domain->SampleNormalVnl(pt);
+            for (int vd = 0; vd < VDimension; vd++)
+            {
+                meanPt[vd] += pt[vd]/N;
+                meanNormal[vd] += normalPs[vd]/N;
+            }
+        }
+        meanNormal.normalize();
+        for (unsigned int dom = 0; dom < N; dom++)
+        {
+            const ImgGradDomain * domain = static_cast<const ImgGradDomain *>(GetDomain(dom));
+            PointType pt = GetPosition(j, dom);
+            NormalType normalPs = domain->SampleNormalVnl(pt);
+            double thetaAngl = std::acos(dot_product(meanNormal, normalPs))*180.0/pi;
+            if (thetaAngl > 45.0)
+                std::cerr << "WARNING!!.. domain # " << dom <<" point # "<< j << " projected with angle to mean = " << thetaAngl << std::endl;
+            if (maxAngle < thetaAngl)
+                maxAngle = thetaAngl;
+        }
+    }
+    std::cout << "Maximum angle deviation from mean = " << maxAngle << std::endl;
+    std::cerr << "------------------------------------------------------------------------" << std::endl;
+}
 
 } // end namespace
 

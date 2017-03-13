@@ -286,23 +286,23 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
         p[i] -= vec[i];
         }
       
-#ifdef  PARTICLE_DEBUG_FLAG
-      if ( ! this->IsInsideBuffer(p) )
-        {
-          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
-//      itkExceptionMacro("A Point, " << p << ", was projected outside the given image domain." );
-        }
-#endif  
-      
+//#ifdef  PARTICLE_DEBUG_FLAG
+//      if ( ! this->IsInsideBuffer(p) )
+//        {
+//          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
+////      itkExceptionMacro("A Point, " << p << ", was projected outside the given image domain." );
+//        }
+//#endif
+
       f = this->Sample(p);
       
-#ifdef  PARTICLE_DEBUG_FLAG
-      if ( gradmag < epsilon && fabs(f) > m_Tolerance)
-        {
-        itkExceptionMacro("Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f );
-        }
-#endif
-      
+//#ifdef  PARTICLE_DEBUG_FLAG
+//      if ( gradmag < epsilon && fabs(f) > m_Tolerance)
+//        {
+//        itkExceptionMacro("Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f );
+//        }
+//#endif
+
       // Raise the tolerance if we have done too many iterations.
       k++;
       if (k > 10000)
@@ -311,6 +311,22 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
         k = 0;
         }
       } // end while
+
+#ifdef  PARTICLE_DEBUG_FLAG
+      if ( ! this->IsInsideBuffer(p) )
+        {
+          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
+//      itkExceptionMacro("A Point, " << p << ", was projected outside the given image domain." );
+        }
+#endif
+#ifdef  PARTICLE_DEBUG_FLAG
+      if ( gradmag < epsilon && fabs(f) > m_Tolerance)
+        {
+//        itkExceptionMacro("Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f );
+          std::cout << "Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f << std::endl;
+        }
+#endif
+
     } // end if m_ConstraintsEnabled == true
 
   return flag; 
