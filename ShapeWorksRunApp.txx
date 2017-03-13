@@ -230,10 +230,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
         }
     }
 
-    if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
-    {
-        this->optimize_stop();
-    };
+    //Praful - commented following check - unnecessary and causes optimization to terminate after one iteration if correspondence if off
+
+//    if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
+//    {
+//        this->optimize_stop();
+//    };
     
     //    this->surface_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagA());
     //    this->correspondence_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagB()
