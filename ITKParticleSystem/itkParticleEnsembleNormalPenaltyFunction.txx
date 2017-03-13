@@ -18,6 +18,9 @@ PURPOSE.  See the above copyright notices for more information.
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_det.h"
 #include "itkParticleEnsembleNormalPenaltyFunction.h"
+
+#include "../Utilities/utils.h"
+//using namespace utils;
 namespace itk
 {
 
@@ -31,6 +34,18 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
     const double epsilon = 1.0e-8;
     const double N = (double)(system->GetNumberOfDomains() / m_DomainsPerShape);
 
+    std::vector < typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType > curNormals;
+    curNormals.resize(N);
+
+    std::vector < typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType > curNormals_local;
+    curNormals_local.resize(N);
+
+    std::vector< double > thetas;
+    thetas.resize(N);
+
+    std::vector< double > phis;
+    phis.resize(N);
+
     // Get the position for which we are computing the gradient
     //PointType pos = system->GetTransformedPosition(idx, d);
 
@@ -43,41 +58,60 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
             = static_cast<const ParticleImageDomainWithGradients<float, VDimension> *>(system->GetDomain(d));
 
     // get normal for current position
-    typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType posnormal = domain->SampleNormalVnl(pos);
-    vnl_vector<double> v_posnormal(VDimension, 0.0f);
+    typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType posnormal_local = domain->SampleNormalVnl(pos);
+    VectorType v_posnormal;
+    v_posnormal.fill(0.0);
     for(unsigned int n = 0; n < VDimension; n++)
     {
-        v_posnormal[n] = (double) posnormal[n];
+        v_posnormal[n] = posnormal_local[n];
     }
+    VectorType pn_world = system->TransformVector(v_posnormal, system->GetTransform(d)*system->GetPrefixTransform(d));
+    typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType posnormal;
+    posnormal[0] = pn_world[0];
+    posnormal[1] = pn_world[1];
+    posnormal[2] = pn_world[2];
 
-    // find mean normal for ensemble neighborhood
-    vnl_vector<double> mean_normal(VDimension, 0.0f);
-    for (unsigned int n = 0; n < VDimension; n++)
-    {
-        mean_normal[n] = posnormal[n];
-    }
-
+    //------------------------------------------------- Praful Code
+    int shapeNo = 0;
+//    CartesianToSpherical(posnormal, mean_normal_sph);
     for (unsigned int i = d % m_DomainsPerShape; i < system->GetNumberOfDomains(); i += m_DomainsPerShape)
     {
-        if(i != d)
-        {
-            domain = static_cast<const ParticleImageDomainWithGradients<float,VDimension> *>(system->GetDomain(i));
-            PointType neighpos = system->GetTransformedPosition(idx, i);
-            typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neighnormal = domain->SampleNormalVnl(neighpos);
+        domain = static_cast<const ParticleImageDomainWithGradients<float,VDimension> *>(system->GetDomain(i));
+        PointType neighpos = system->GetPosition(idx, i); //Praful
+        typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neighnormal = domain->SampleNormalVnl(neighpos);
 
-            for(unsigned int n = 0; n < VDimension; n++)
-            {
-                mean_normal[n] += neighnormal[n];
-            }
-        }
+        VectorType neighnormal_cart;
+        neighnormal_cart[0] = neighnormal[0];
+        neighnormal_cart[1] = neighnormal[1];
+        neighnormal_cart[2] = neighnormal[2];
+
+        curNormals_local[shapeNo] = neighnormal;
+
+        VectorType neighnormal_world = system->TransformVector(neighnormal_cart, system->GetTransform(i)*system->GetPrefixTransform(i));
+        curNormals[shapeNo][0] = neighnormal_world[0];
+        curNormals[shapeNo][1] = neighnormal_world[1];
+        curNormals[shapeNo][2] = neighnormal_world[2];
+
+        double in[3] = {curNormals[shapeNo][0], curNormals[shapeNo][1], curNormals[shapeNo][2]};
+        double out[3];
+        utils::cartesian2spherical(in, out);
+        phis[shapeNo] = out[1];
+        thetas[shapeNo] = out[2];
+        shapeNo++;
     }
 
-    for(unsigned int n = 0; n < VDimension; n++)
-    {
-        mean_normal[n] = mean_normal[n] / N;
-    }
+    double avgNormal_sph[3];
+    double avgNormal_cart[3];
+    avgNormal_sph[0] = 1;
+    avgNormal_sph[1] = utils::averageThetaArc(phis);
+    avgNormal_sph[2] = utils::averageThetaArc(thetas);
+    utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
 
-    mean_normal.normalize();
+    typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType avgnormal;
+    avgnormal[0] = avgNormal_cart[0];
+    avgnormal[1] = avgNormal_cart[1];
+    avgnormal[2] = avgNormal_cart[2];
+//------------------------------------------------- Praful Code -- end
 
     //compute gradient
     domain = static_cast< const ParticleImageDomainWithGradients<float,VDimension> *> (system->GetDomain(d));
@@ -130,14 +164,14 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
         }
     }
 
-    double df_dn = fprime( dot_product(v_posnormal, mean_normal) );
+//    double df_dn = fprime( dot_product(v_posnormal, mean_normal) );
 
     // compute gradient
     vnl_vector<double> gradE_norm(VDimension, 0.0f);
 
     for (unsigned int n = 0; n < VDimension; n++)
     {
-        gradE_norm[n] = mean_normal[n] - posnormal[n];  //mean energy based normal penalty
+        gradE_norm[n] = avgnormal[n] - posnormal[n];  //mean energy based normal penalty
 //                gradE_norm[n] = mean_normal[n] * df_dn; //dot product based normal penalty
     }
 
@@ -145,32 +179,40 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
     gradE_norm *= normalPartialDerivatives;            //mean energy based normal penalty
     //    energy = gradE_norm.magnitude();
     energy = 0.0;
+    shapeNo = 0;
     for (unsigned int i = d % m_DomainsPerShape; i < system->GetNumberOfDomains(); i += m_DomainsPerShape)
     {
-//                if(i != d) //dot product based normal penalty
-//                {          //dot product based normal penalty
-        domain = static_cast<const ParticleImageDomainWithGradients<float,VDimension> *>(system->GetDomain(i));
-        PointType neighpos = system->GetTransformedPosition(idx, i);
-        typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neighnormal = domain->SampleNormalVnl(neighpos);
-
-        vnl_vector<double> v_neighnormal(VDimension, 0.0f);
-        for(unsigned int n = 0; n < VDimension; n++)
-        {
-            v_neighnormal[n] = (double) neighnormal[n];
-        }
-//                    energy += f( dot_product( v_neighnormal, mean_normal ) ); //dot product based normal penalty
-        vnl_vector<double> diff = mean_normal - v_neighnormal; //mean energy based normal penalty
+        typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType diff = avgnormal - curNormals[shapeNo++]; //mean energy based normal penalty
         energy += 0.5 * diff.magnitude() * diff.magnitude();  //mean energy based normal penalty
-//                }                                               //dot product based normal penalty
     }
 
     //    maxmove = domain->GetImage()->GetSpacing()[0];
+    std::cout<< "Energy: " << energy << std::endl;
     maxmove = energy * 0.5;
 
     //  Transform the gradient according to the transform of the given domain and return.
     return system->TransformVector(gradE_norm, system->GetInversePrefixTransform(d)
                                    * system->GetInverseTransform(d));
 }
+
+// Praful
+//template <unsigned int VDimension>
+//void ParticleEnsembleNormalPenaltyFunction<VDimension>::CartesianToSpherical(VectorType cart, VectorType &spher) const
+//{
+//    spher.fill(0.0);
+//    spher[0] = cart.magnitude();
+//    spher[1] = std::acos(cart[2]/spher[0]);
+//    spher[2] = std::atan2(cart[1], cart[0]);
+//}
+
+//template <unsigned int VDimension>
+//void ParticleEnsembleNormalPenaltyFunction<VDimension>::SphericalToCartesian(VectorType spher, VectorType &cart) const
+//{
+//    cart.fill(0.0);
+//    cart[0] = spher[0]*std::sin(spher[1])*std::cos(spher[2]);
+//    cart[1] = spher[0]*std::sin(spher[1])*std::sin(spher[2]);
+//    cart[2] = spher[0]*std::cos(spher[1]);
+//}
 
 /* PRATEEP */
 // f(x) = (1-x)^2 / (1+x)^2

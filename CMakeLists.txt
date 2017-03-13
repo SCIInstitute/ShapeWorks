@@ -2,6 +2,10 @@ PROJECT(SHAPEWORKS)
 cmake_minimum_required(VERSION 2.6)
 
 #---- Setting variables --------
+#SET(ITK_DIR "/scratch/TOOLKITS/InsightToolkit-4.5.0-build")
+#SET(VTK_DIR "/scratch/TOOLKITS/VTK5.10.1-BUILD")
+#SET(FLTK_DIR "/scratch/TOOLKITS/fltk-1.1.10")
+
 SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.7.2")
 SET(VTK_DIR "/home/sci/prafulag/BuildDIR/VTK-5.10.1")
 SET(FLTK_DIR "/home/sci/prafulag/BuildDIR/fltk-1.1.10")
@@ -42,7 +46,9 @@ option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" OFF)
 option(BUILD_ShapeWorksShop "Build ShapeWorksShop (requires FLTK & VTK)" OFF)
 option(BUILD_Unsupported "Build unsupported tools (NOT recommended, requires FLTK & VTK)" OFF)
 option(CMAKE_BUILD_TYPE "Build Type" DEBUG)
-option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)" ON)
+option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)" OFF)
+option(BUILD_ShapeWorksGroom "Build ShapeworksGroom" OFF)
+
 
 # Optionally use OpenMP
 option(USE_OPENMP "Build parallel optimization using OpenMP" ON)
@@ -79,7 +85,11 @@ ${SHAPEWORKS_SOURCE_DIR}/tinyxml
 )
 
 # Command-line tools are built by default.
-subdirs(tinyxml ITKParticleSystem Utilities ShapeWorksRun ShapeWorksGroom)
+subdirs(tinyxml ITKParticleSystem Utilities ShapeWorksRun)
+
+if (BUILD_ShapeWorksGroom)
+  subdirs(ShapeWorksGroom)
+endif(BUILD_ShapeWorksGroom)
 
 if (BUILD_ShapeWorksView2)
  set(USE_QT 1)
