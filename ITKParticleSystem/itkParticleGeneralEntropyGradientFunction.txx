@@ -52,11 +52,10 @@ ParticleGeneralEntropyGradientFunction<VDimension>
     double total = 0.0;
     for (unsigned int i = 0; i < num_samples; i++)
       {
-        points_minus_mean(j, i) = std::log(m_ShapeData->GetScalar(i, j) + 1e-10)
-          * m_AttributeScales[j % num_functions];
+
         //Praful
-//      points_minus_mean(j, i) = m_ShapeData->GetScalar(i, j)
-//        * m_AttributeScales[j % num_functions];
+      points_minus_mean(j, i) = m_ShapeData->GetScalar(i, j)
+        * m_AttributeScales[j % num_functions];
 
       total += points_minus_mean(j,i);
       }
@@ -137,7 +136,7 @@ ParticleGeneralEntropyGradientFunction<VDimension>
     }
     std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
   m_MinimumEigenValue = symEigen.D(0, 0);
-  
+  m_CurrentEnergy = 0.0;
   // double energy = 0.0;
   for (unsigned int i = 1; i < num_samples; i++)
     {
@@ -154,7 +153,7 @@ ParticleGeneralEntropyGradientFunction<VDimension>
     {
     std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
     }
-  std::cout << "ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
+  std::cout << "FeaVol_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
             << m_MinimumVariance <<  std::endl;
 }
 
