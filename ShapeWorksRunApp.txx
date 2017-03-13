@@ -1403,17 +1403,38 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     // end PRATEEP
 
     /* PRATEEP */
-    // SHIREEN
+    // SHIREEN - Praful (updated for general entropy)
     if (m_use_shape_statistics_in_init)
     {
-        if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 32) {
+        if (m_number_of_particles < 32) {
             m_Sampler->SetCorrespondenceMode(0); // changed 09/24
-        } else
-            m_Sampler->SetCorrespondenceMode(1);
-    }
-    else{
-        m_Sampler->SetCorrespondenceMode(0);  // force to mean shape
+        }
+        else
+        {
+            if (m_attributes_per_domain.size() > 0)
+            {
+                if (m_mesh_based_attributes)
+                    m_Sampler->SetCorrespondenceMode(5);
+                else
+                    m_Sampler->SetCorrespondenceMode(2);
+            }
+            else
+                m_Sampler->SetCorrespondenceMode(1);
 
+            m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                             m_ending_regularization,
+                                                                             m_iterations_per_split);
+            m_Sampler->GetGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                                    m_ending_regularization,
+                                                                                    m_iterations_per_split);
+            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                                    m_ending_regularization,
+                                                                                    m_iterations_per_split);
+        }
+    }
+    else
+    {
+        m_Sampler->SetCorrespondenceMode(0);  // force to mean shape
     }
 
     // END SHIREEN
@@ -1921,7 +1942,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
             {
                 //if (f[i] > 0.0)
                 {
-                    std::cerr << "domain " << f[i] << " is flagged!\n";
+                    std::cerr << "domain " << i<< " is flagged!\n";
                     m_Sampler->GetParticleSystem()->FlagDomain(f[i]);
                 }
             }
