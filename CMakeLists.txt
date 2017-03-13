@@ -48,7 +48,9 @@ option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" OFF)
 option(BUILD_ShapeWorksShop "Build ShapeWorksShop (requires FLTK & VTK)" OFF)
 option(BUILD_Unsupported "Build unsupported tools (NOT recommended, requires FLTK & VTK)" OFF)
 option(CMAKE_BUILD_TYPE "Build Type" DEBUG)
-option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)" ON)
+option(BUILD_ICPRigid3DRegistration "Build ICPRigid3DRegistration (requires VTK)" OFF)
+option(BUILD_ShapeWorksGroom "Build ShapeworksGroom" OFF)
+
 
 # Optionally use OpenMP
 option(USE_OPENMP "Build parallel optimization using OpenMP" ON)
@@ -91,7 +93,11 @@ ${SHAPEWORKS_SOURCE_DIR}/tinyxml
 )
 
 # Command-line tools are built by default.
-subdirs(tinyxml ITKParticleSystem Utilities ShapeWorksRun ShapeWorksGroom)
+subdirs(tinyxml ITKParticleSystem Utilities ShapeWorksRun)
+
+if (BUILD_ShapeWorksGroom)
+  subdirs(ShapeWorksGroom)
+endif(BUILD_ShapeWorksGroom)
 
 if (BUILD_ShapeWorksView2)
  set(USE_QT 1)

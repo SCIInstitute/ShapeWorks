@@ -94,6 +94,7 @@ public:
       if(this->IsInsideBuffer(p))
         return  m_GradientInterpolator->Evaluate(p);
       else {
+          itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain." );
          VectorType g(1.0e-5);
           return g;
       }
@@ -103,12 +104,13 @@ public:
   inline VnlVectorType SampleNormalVnl(const PointType &p, T epsilon = 1.0e-5) const
   {
     VnlVectorType grad = this->SampleGradientVnl(p);
-    double q = 1.0 / (grad.magnitude() + epsilon);
-    for (unsigned int i = 0; i < VDimension; i++) { grad[i] *= q;
+    grad = grad.normalize();
+//    double q = 1.0 / (grad.magnitude() + epsilon);
+//    for (unsigned int i = 0; i < VDimension; i++) { grad[i] *= q;
         /* PRATEEP */
         // reverse normal directions
 //        grad[i] *= -1.0;
-    }
+//    }
     return grad;
   }
   

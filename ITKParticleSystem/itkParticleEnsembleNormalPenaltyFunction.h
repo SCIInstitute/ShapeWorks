@@ -22,7 +22,7 @@
 #include "itkNeighborhoodIterator.h"
 #include "itkImageDuplicator.h"
 #include "itkImageRegionIterator.h"
-
+//#include "utils.h"
 namespace itk
 {
 
@@ -232,6 +232,10 @@ public:
 
   double fprime(double ctheta) const;
 
+  // Praful
+//  void CartesianToSpherical(vnlVectorType cart, vnlVectorType & spher) const;
+//  void SphericalToCartesian(vnlVectorType spher, vnlVectorType & cart) const;
+
 
 protected:
   ParticleEnsembleNormalPenaltyFunction()
@@ -264,7 +268,7 @@ protected:
   typename itk::NeighborhoodInnerProduct<NormalComponentImageType> inprod;
 
   /* PRATEEP */
-  std::vector< vnl_vector<double> > m_meanWorldNormalCache;
+  std::vector< VectorType > m_meanWorldNormalCache;
   std::string m_diagnostics_prefix;
 
 };
