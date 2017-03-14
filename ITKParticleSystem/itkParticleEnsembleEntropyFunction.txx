@@ -130,7 +130,7 @@ ParticleEnsembleEntropyFunction<VDimension>
     {
         std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
     }
-    std::cout << "ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
+    std::cout << "Correspondence_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
               << m_MinimumVariance <<  std::endl;
 }
 
