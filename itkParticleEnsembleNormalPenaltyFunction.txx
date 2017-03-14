@@ -187,7 +187,7 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
     }
 
     //    maxmove = domain->GetImage()->GetSpacing()[0];
-    std::cout<< "Energy: " << energy << std::endl;
+//    std::cout<< "Normal_Energy: " << energy << std::endl;
     maxmove = energy * 0.5;
 
     //  Transform the gradient according to the transform of the given domain and return.
