@@ -7,7 +7,8 @@
 #SET(RUN_NAME ShapeWorksRun3_FeaMeshes)
 # SHIREEN
 #SET(RUN_NAME ShapeWorksRun3)
-SET(RUN_NAME ShapeWorksRun3.2) #fea meshes + normal penalty new code + bug fixes
+#SET(RUN_NAME ShapeWorksRun3.2) #fea meshes + normal penalty new code + bug fixes
+SET(RUN_NAME ShapeWorksRun4) #different number of particles per domain + replace bad particles during optimization
 
 ADD_EXECUTABLE(${RUN_NAME} ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
 #TARGET_LINK_LIBRARIES(ShapeWorksRun ITKParticleSystem Utilities ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml)
