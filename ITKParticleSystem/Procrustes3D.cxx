@@ -255,7 +255,7 @@ LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
   for(shapeListIt = shapeList.begin(); shapeListIt != shapeList.end();
       shapeListIt++)
   {
-//    if(shapeListIt != leaveOutIt)
+//    if(shapeListIt != leaveOutIt) // fixing the biased procrustes -- Praful
     {
       ShapeType & shape = (*shapeListIt);
       shapeIt = shape.begin();
@@ -271,5 +271,5 @@ LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
   }
 
   for(meanIt = mean.begin(); meanIt != mean.end(); meanIt++)
-    (*meanIt) /= static_cast<RealType>(shapeList.size() - 1);
+    (*meanIt) /= static_cast<RealType>(shapeList.size());
 }
