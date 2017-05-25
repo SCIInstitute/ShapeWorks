@@ -150,7 +150,7 @@ protected:
   std::string m_output_points_prefix;
   std::string m_output_transform_file;
   std::string m_output_cutting_plane_file;
-  unsigned int m_number_of_particles;
+
   double m_starting_regularization;
   double m_ending_regularization;
   int m_recompute_regularization_interval;
@@ -159,6 +159,9 @@ protected:
   double m_initial_relative_weighting;
   double m_initial_norm_penalty_weighting;
   double m_adaptivity_strength;
+
+//  unsigned int m_number_of_particles;
+  std::vector<unsigned int> m_number_of_particles;
 
   std::vector<int> m_attributes_per_domain;
 
