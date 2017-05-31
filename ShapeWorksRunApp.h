@@ -151,6 +151,8 @@ protected:
   std::string m_output_transform_file;
   std::string m_output_cutting_plane_file;
 
+  std::vector < std::string > m_filenames;
+
   double m_starting_regularization;
   double m_ending_regularization;
   int m_recompute_regularization_interval;
@@ -162,7 +164,6 @@ protected:
 
 //  unsigned int m_number_of_particles;
   std::vector<unsigned int> m_number_of_particles;
-
   std::vector<int> m_attributes_per_domain;
 
   unsigned int m_checkpointing_interval;
@@ -193,8 +194,6 @@ protected:
   // end SHIREEN
 
   //Praful - shape updates in randomized order
-  bool m_randomOrdering; // <= 0 OFF; >0 ON
-  bool m_randomProcrustes; // <= 0 OFF; >0 ON
   bool m_debug_projection;
 
   //Praful - mesh based attributes

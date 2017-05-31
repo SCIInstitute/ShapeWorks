@@ -255,6 +255,32 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 }
             }
 
+            m_filenames.clear();
+
+            for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+            {
+                char *str = new char[shapeFiles[shapeCount].length() + 1];
+                strcpy(str, shapeFiles[shapeCount].c_str());
+
+                char *fname;
+                char *pch;
+                pch = strtok(str,"/");
+                while (pch != NULL)
+                {
+                    fname = pch;
+                    pch = strtok (NULL, "/");
+                }
+
+                char *pch2;
+                pch2 = strrchr(fname,'.');
+                int num = pch2-fname+1;
+                int num2 = strlen(fname);
+                strncpy(pch2,"",num2-num);
+
+                m_filenames.push_back(std::string(fname));
+
+            }
+
             shapeFiles.clear();
         }
         // load point files
@@ -812,27 +838,33 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
 
     // Write points in both local and global coordinate system
-    filenameFactory fn;
-    fn.number_of_files(n);
-    fn.prefix(m_output_points_prefix);
-    fn.file_format("lpts");
+//    filenameFactory fn;
+//    fn.number_of_files(n);
+//    fn.prefix(m_output_points_prefix);
+//    fn.file_format("lpts");
 
-    filenameFactory fnw;
-    fnw.number_of_files(n);
-    fnw.prefix(m_output_points_prefix);
-    fnw.file_format("wpts");
+//    filenameFactory fnw;
+//    fnw.number_of_files(n);
+//    fnw.prefix(m_output_points_prefix);
+//    fnw.file_format("wpts");
 
     std::stringstream ss;
     ss << iter+m_optimization_iterations_completed;
+
+    std::string out_path     = utils::getPath(m_output_points_prefix);
 
     int counter;
 
     for (int i = 0; i < n; i++)
     {
         counter = 0;
-        unsigned int u_iter = static_cast< unsigned int >( iter );
-        std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
-        std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
+//        unsigned int u_iter = static_cast< unsigned int >( iter );
+//        std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
+//        std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
+
+        std::string nameStr = iter >= 0 ? "iter" + ss.str() + "/" + m_filenames[i]  : m_filenames[i];
+        std::string local_file = out_path + "/" + nameStr + ".lpts";
+        std::string world_file = out_path + "/" + nameStr + ".wpts";
 
         std::ofstream out( local_file.c_str() );
         std::ofstream outw( world_file.c_str() );
@@ -845,7 +877,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
             throw 1;
         }
 
-        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+        for (unsigned int j = 0; j < m_number_of_particles[i]; j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -860,7 +892,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
 
             counter ++;
         }  // end for points
-
 
         out.close();
         outw.close();
@@ -877,25 +908,25 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
     const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
 
     // Write points in both local and global coordinate system
-    filenameFactory fn;
-    fn.number_of_files(n);
-    fn.prefix(iter_prefix);
+//    filenameFactory fn;
+//    fn.number_of_files(n);
+//    fn.prefix(iter_prefix);
 
-    fn.file_format("lpts");
+//    fn.file_format("lpts");
 
-    filenameFactory fnw;
-    fnw.number_of_files(n);
-    fnw.prefix(iter_prefix);
+//    filenameFactory fnw;
+//    fnw.number_of_files(n);
+//    fnw.prefix(iter_prefix);
 
-    fnw.file_format("wpts");
+//    fnw.file_format("wpts");
 
     int counter;
     for (int i = 0; i < n; i++)
     {
         counter = 0;
 
-        std::string local_file = fn.filename(i);
-        std::string world_file = fnw.filename(i);
+        std::string local_file = iter_prefix + m_filenames[i] + ".lpts";
+        std::string world_file = iter_prefix + m_filenames[i] + ".wpts";
 
         std::ofstream out( local_file.c_str() );
         std::ofstream outw( world_file.c_str() );
@@ -908,7 +939,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
             throw 1;
         }
 
-        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+        for (unsigned int j = 0; j < m_number_of_particles[i]; j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -1406,8 +1437,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
                                                                                     m_ending_regularization,
                                                                                     m_iterations_per_split);
             m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
-                                                                                    m_ending_regularization,
-                                                                                    m_iterations_per_split);
+                                                                                             m_ending_regularization,
+                                                                                             m_iterations_per_split);
         }
     }
     else
@@ -1598,9 +1629,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
                                                                             m_optimization_iterations-
                                                                             m_optimization_iterations_completed);
     m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
-                                                                            m_ending_regularization,
-                                                                            m_optimization_iterations-
-                                                                            m_optimization_iterations_completed);
+                                                                                     m_ending_regularization,
+                                                                                     m_optimization_iterations-
+                                                                                     m_optimization_iterations_completed);
     m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                                m_ending_regularization,
                                                                                m_optimization_iterations-
