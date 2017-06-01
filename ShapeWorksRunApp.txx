@@ -81,17 +81,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
     m_Procrustes->SetDomainsPerShape(m_domains_per_shape);
 
-    if (m_randomProcrustes == true)
-    {
-        m_Procrustes->setRandomizationOn();
-        std::cout << "Randomization in Procrustes is on" << std::endl;
-    }
-    else
-    {
-        m_Procrustes->setRandomizationOFF();
-        std::cout << "Randomization in Procrustes is off" << std::endl;
-    }
-
     if (m_procrustes_scaling == 0)
     {
         m_Procrustes->ScalingOff();
@@ -103,7 +92,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
         std::cout << "Procrustes scaling is on" << std::endl;
     }
 
-    //this->ReadInputs(pf);
     this->ReadInputs(fn);
     this->SetIterationCommand();
     this->InitializeSampler();
@@ -164,10 +152,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
                 std::stringstream ss;
                 ss << iteration_no + m_optimization_iterations_completed;
 
-                std::stringstream ssp;
-                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
+//                std::stringstream ssp;
+//                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
 
-                std::string dir_name     = "iter" + ss.str() + "_p" + ssp.str();
+                std::string dir_name     = "iter" + ss.str(); // + "_p" + ssp.str();
                 std::string out_path     = utils::getPath(m_output_points_prefix);
                 std::string prefix       = utils::getFilename(m_output_points_prefix);
                 std::string tmp_dir_name = out_path + "/" + prefix + std::string(".") + dir_name;
@@ -580,6 +568,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
             }
+
             m_Sampler->SetAttributeScales(attr_scales);
 
             // attribute files
@@ -876,8 +865,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
             std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
             throw 1;
         }
-
-        for (unsigned int j = 0; j < m_number_of_particles[i]; j++ )
+        int d = i % m_domains_per_shape;
+        for (unsigned int j = 0; j < m_number_of_particles[d]; j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -938,8 +927,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
             std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
             throw 1;
         }
-
-        for (unsigned int j = 0; j < m_number_of_particles[i]; j++ )
+        int d = i % m_domains_per_shape;
+        for (unsigned int j = 0; j < m_number_of_particles[d]; j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -1038,7 +1027,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         }
         if (this->m_domains_per_shape != this->m_number_of_particles.size())
         {
-            std::cerr << "Inconsistency in parameters... this->m_domains_per_shape != this->m_number_of_particles.size()" << std::endl;
+            std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()" << std::endl;
             throw 1;
         }
 
@@ -1098,35 +1087,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "initial_relative_weighting" ).Element();
         if (elem) this->m_initial_relative_weighting = atof(elem->GetText());
 
-        //Praful - flag for random ordering updates
-        this->m_randomOrdering=true;
-        elem = docHandle.FirstChild( "randomize_shape_updates" ).Element();
-        if (elem)
-        {
-            if (atoi(elem->GetText()) > 0)
-            {
-                this->m_randomOrdering = true;
-            }
-            else
-            {
-                this->m_randomOrdering = false;
-            }
-        }
-
-        this->m_randomProcrustes = true;
-        elem = docHandle.FirstChild( "randomize_procrustes" ).Element();
-        if (elem)
-        {
-            if (atoi(elem->GetText()) > 0)
-            {
-                this->m_randomProcrustes = true;
-            }
-            else
-            {
-                this->m_randomProcrustes = false;
-            }
-        }
-
         m_debug_projection = true;
         elem = docHandle.FirstChild( "debug_projection" ).Element();
         if (elem) atoi(elem->GetText()) > 0 ? this->m_debug_projection = true : this->m_debug_projection = false;
@@ -1164,7 +1124,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         }
         if (this->m_domains_per_shape != this->m_attributes_per_domain.size())
         {
-            std::cerr << "Inconsistency in parameters... this->m_domains_per_shape != this->m_attributes_per_domain.size()" << std::endl;
+            std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" << std::endl;
             throw 1;
         }
 
@@ -1280,7 +1240,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     std::cout << "m_use_shape_statistics_in_init = " << m_use_shape_statistics_in_init << std::endl;
     // end SHIREEN
 
-    std::cout << "m_randomOrdering = " << m_randomOrdering << std::endl;
     std::cout << "m_mesh_based_attributes = " << m_mesh_based_attributes << std::endl;
 }
 
@@ -1347,11 +1306,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
         m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
     // end SHIREEN
 
-    if (m_randomOrdering == true)
-        m_Sampler->GetOptimizer()->SetRandomizationON();
-    else
-        m_Sampler->GetOptimizer()->SetRandomizationOFF();
-
     m_Sampler->SetSamplingOn();
     /* PRATEEP */
     m_Sampler->SetCorrespondenceOn();
@@ -1385,7 +1339,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     /* PRATEEP */
     // If initial points already specified, compute Procrustes parameters from them and use further.
     // Do not compute parameters again.
-    if( m_Sampler->GetParticleSystem()->GetNumberOfParticles() > 0)
+    if( m_Sampler->GetParticleSystem()->GetNumberOfParticles() > 0) //defaults to number of points read for first domain
     {
         m_disable_procrustes = false;
         m_Procrustes->SetComputeTransformationOn();
@@ -1415,7 +1369,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     // SHIREEN - Praful (updated for general entropy)
     if (m_use_shape_statistics_in_init)
     {
-        if (std::min_element(m_number_of_particles.begin(), m_number_of_particles.end()) < 32) {
+        if (*std::min_element(m_number_of_particles.begin(), m_number_of_particles.end()) < 32)
+        {
             m_Sampler->SetCorrespondenceMode(0); // changed 09/24
         }
         else
@@ -1463,6 +1418,101 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     int split_number = 0;
     // end SHIREEN
 
+    int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    vnl_vector_fixed<double, 3> random;
+    srand(1);
+    for (int i = 0; i < 3; i++)
+        random[i] = static_cast<double>(rand());
+    double norm = random.magnitude();
+    random /= norm;
+
+    double epsilon = this->m_spacing;
+    bool flag_split = false;
+
+    for (int i = 0; i < n; i++)
+    {
+        int d = i % m_domains_per_shape;
+        if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+            flag_split = true;
+    }
+
+    while(flag_split)
+    {
+        this->optimize_stop();
+        for (int i = 0; i < n; i++)
+        {
+            int d = i % m_domains_per_shape;
+            if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+                m_Sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
+        }
+
+        std::cout << std::endl << "Particle count: ";
+        for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
+            std::cout << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) << ", ";
+
+        split_number++;
+        std::cout << "split number = " << split_number << std::endl << std::flush;
+
+        if ( m_save_init_splits == true)
+        {
+            std::stringstream ss;
+            ss << split_number;
+
+            std::string dir_name     = "split" + ss.str() + "_wo_opt";
+            std::string out_path     = utils::getPath(m_output_points_prefix);
+            std::string prefix       = utils::getFilename(m_output_points_prefix);
+            std::string tmp_dir_name = out_path + "/" + dir_name;
+
+            std::cout << "split dir name = " << tmp_dir_name << std::endl;
+
+#ifdef _WIN32
+            mkdir( tmp_dir_name.c_str() );
+#else
+            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
+            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+        }
+        m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
+        m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
+        m_Sampler->Modified();
+        m_Sampler->Update();
+
+        if ( m_save_init_splits == true)
+        {
+            std::stringstream ss;
+            ss << split_number;
+
+            std::string dir_name     = "split" + ss.str() + "_w_opt";
+            std::string out_path     = utils::getPath(m_output_points_prefix);
+            std::string prefix       = utils::getFilename(m_output_points_prefix);
+            std::string tmp_dir_name = out_path + "/" + dir_name;
+
+            std::cout << "split dir name = " << tmp_dir_name << std::endl;
+
+#ifdef _WIN32
+            mkdir( tmp_dir_name.c_str() );
+#else
+            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
+            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+        }
+        this->WritePointFiles();
+        this->WriteTransformFile();
+
+        flag_split = false;
+        for (int i = 0; i < n; i++)
+        {
+            int d = i % m_domains_per_shape;
+            if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+                flag_split = true;
+        }
+    }
+
+/* Praful - incompatible code with different number of particles per domain
     while (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
     {
         this->SplitAllParticles();
@@ -1494,7 +1544,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 #endif
             this->WritePointFiles(tmp_dir_name + "/" + prefix);
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
-            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+            // if (m_use_regression == true) this->WriteParameters( split_number );
         }
         // end SHIREEN
 
@@ -1526,13 +1576,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 #endif
             this->WritePointFiles(tmp_dir_name + "/" + prefix);
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
-            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+            // if (m_use_regression == true) this->WriteParameters( split_number );
         }
         // end SHIREEN
 
         this->WritePointFiles();
         this->WriteTransformFile();
     }
+*/
+
     this->WritePointFiles();
     this->WriteTransformFile();
     this->WriteCuttingPlanePoints();
