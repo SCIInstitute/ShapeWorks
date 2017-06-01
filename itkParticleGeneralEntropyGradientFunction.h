@@ -145,7 +145,7 @@ public:
     m_AttributeScales = s;
   }
 
-  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+    virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
     typename ParticleGeneralEntropyGradientFunction<VDimension>::Pointer copy =
       ParticleGeneralEntropyGradientFunction<VDimension>::New();

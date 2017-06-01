@@ -21,7 +21,7 @@ public:
      typedef SmartPointer<Self>  Pointer;
      typedef SmartPointer<const Self>  ConstPointer;
      typedef ParticleVectorFunction<VDimension> Superclass;
-     itkTypeMacro( ParticleMeshBasedGeneralEntropyGradientFunction, ParticleVectorFunction);
+     itkTypeMacro( ParticleMeshBasedGeneralEntropyGradientFunction, ParticleVectorFunction)
 
      /** Type of particle system. */
      typedef typename Superclass::ParticleSystemType ParticleSystemType;
@@ -33,7 +33,7 @@ public:
      typedef vnl_matrix<float> vnl_matrix_type;
 
      /** Method for creation through the object factory. */
-     itkNewMacro(Self);
+     itkNewMacro(Self)
 
      /** Dimensionality of the domain of the particle system. */
      itkStaticConstMacro(Dimension, unsigned int, VDimension);
@@ -154,6 +154,7 @@ protected:
       m_MinimumVarianceDecayConstant = log(2.0) / 50000.0;
       m_RecomputeCovarianceInterval = 5;
       m_Counter = 0;
+      m_PointsUpdate.clear();
     }
     virtual ~ParticleMeshBasedGeneralEntropyGradientFunction() {}
     void operator=(const ParticleMeshBasedGeneralEntropyGradientFunction &);
@@ -168,9 +169,9 @@ protected:
     int m_RecomputeCovarianceInterval;
      double m_MinimumVarianceDecayConstant;
     int m_Counter;
-    std::vector<double> m_AttributeScales;
+    std::vector<double> m_AttributeScales; //size \sum_i n_i
     int m_DomainsPerShape;
-    std::vector<int> m_AttributesPerDomain;
+    std::vector<int> m_AttributesPerDomain; // n
     double m_CurrentEnergy;
 
 };
