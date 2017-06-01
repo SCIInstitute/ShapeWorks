@@ -89,7 +89,7 @@ class ShapeWorksRunApp
   
   void SetUserParameters(const char *fname);
   
-  virtual void SplitAllParticles()
+  virtual void SplitAllParticles() //Praful - this function is now obsolete
   {
    this->optimize_stop();
 		m_Sampler->GetParticleSystem()->SplitAllParticles(m_spacing);

@@ -27,7 +27,7 @@ ParticleProcrustesRegistration<3>::RunRegistration(int d)
 
     // Assume all domains have the same number of particles.
     const int totalDomains = m_ParticleSystem->GetNumberOfDomains();
-    const int numPoints = m_ParticleSystem->GetNumberOfParticles(0);
+    const int numPoints = m_ParticleSystem->GetNumberOfParticles(d);
     const int numShapes = totalDomains / m_DomainsPerShape;
 
     Procrustes3D::ShapeListType shapelist;

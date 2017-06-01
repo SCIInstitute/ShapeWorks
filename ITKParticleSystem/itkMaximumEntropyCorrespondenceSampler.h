@@ -174,16 +174,12 @@ public:
     m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
   }
 
-
-
-#ifdef SW_USE_FEAMESH
   void SetAttributesPerDomain(const std::vector<int> &s)
   {
       this->Superclass::SetAttributesPerDomain(s);
       m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s);
   }
 
-#endif
   void AddAttributeImage(int d,
                          typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::ImageType *I)
   {
