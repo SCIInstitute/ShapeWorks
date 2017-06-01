@@ -19,8 +19,6 @@
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
 #include "itkParticleSystem.h"
-#include <ctime>
-#include <algorithm>
 
 namespace itk
 {
@@ -110,15 +108,6 @@ public:
   void SetComputeTransformation(int arg)
   { m_ComputeTransformation = arg == 1 ? true : false; }
 
-  void setRandomizationOn()
-  {
-      m_randomProcrustes = true;
-  }
-  void setRandomizationOFF()
-  {
-      m_randomProcrustes = false;
-  }
-
 protected:
   ParticleProcrustesRegistration() : m_DomainsPerShape(1), m_Scaling(true), m_RotationTranslation(true), m_ComputeTransformation(true) {  }
   virtual ~ParticleProcrustesRegistration() {};
@@ -136,7 +125,6 @@ private:
   bool m_Scaling;
   bool m_RotationTranslation;
   bool m_ComputeTransformation;
-  bool m_randomProcrustes;
   ParticleSystemType *m_ParticleSystem;
 };
 

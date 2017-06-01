@@ -25,6 +25,7 @@
 //#include "utils.h"
 namespace itk
 {
+/** DO NOT USE THIS CLASS - Normal penalty now being used as fea files  - Praful*/
 
 /**
  * \class ParticleEnsembleNormalPenaltyFunction

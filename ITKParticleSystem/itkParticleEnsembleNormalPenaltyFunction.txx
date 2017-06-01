@@ -24,6 +24,8 @@ PURPOSE.  See the above copyright notices for more information.
 namespace itk
 {
 
+/** DO NOT USE THIS CLASS - Normal penalty now being used as fea files  - Praful*/
+
 template <unsigned int VDimension>
 typename ParticleEnsembleNormalPenaltyFunction<VDimension>::VectorType
 ParticleEnsembleNormalPenaltyFunction<VDimension>

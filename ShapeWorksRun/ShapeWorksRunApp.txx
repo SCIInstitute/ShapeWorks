@@ -33,6 +33,7 @@
 #include <sys/types.h>
 #endif
 
+#include <algorithm>
 // SHIREEN
 #include "../Utilities/utils.h"
 // end SHIREEN
@@ -80,17 +81,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
     m_Procrustes->SetDomainsPerShape(m_domains_per_shape);
 
-    if (m_randomProcrustes == true)
-    {
-        m_Procrustes->setRandomizationOn();
-        std::cout << "Randomization in Procrustes is on" << std::endl;
-    }
-    else
-    {
-        m_Procrustes->setRandomizationOFF();
-        std::cout << "Randomization in Procrustes is off" << std::endl;
-    }
-
     if (m_procrustes_scaling == 0)
     {
         m_Procrustes->ScalingOff();
@@ -102,23 +92,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
         std::cout << "Procrustes scaling is on" << std::endl;
     }
 
-    //   // Read fixed scales if present
-    //   std::vector<double> fs;
-    //   double stemp;
-    //   ok = true;
-    //   for (unsigned int i = 0; ok == true; i++)
-    //     {
-    //     PARAMSET(pf, stemp, "fixed_scales", i, ok, 1.0);
-    //     if (ok == true) { fs.push_back(stemp);}
-    //     }
-    //   if (fs.size() > 0)
-    //     {
-    //     m_Procrustes->SetFixedScales(fs);
-    //     }
-    //    ok = true;
-    // SCALE ON OR OFF
-
-    //this->ReadInputs(pf);
     this->ReadInputs(fn);
     this->SetIterationCommand();
     this->InitializeSampler();
@@ -162,14 +135,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
     {
 
         m_CheckpointCounter++;
-        // if (m_CheckpointCounter > (int)m_checkpointing_interval)
-        //   {
-        //   m_CheckpointCounter = 0;
-        //   this->WritePointFiles();
-        //   this->WriteTransformFile();
-        //   this->WriteModes();
-        //if (m_use_regression == true) this->WriteParameters();
-        //   }
 
         if (m_CheckpointCounter == (int)m_checkpointing_interval)
         {
@@ -181,21 +146,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
             this->WriteModes();
             if (m_use_regression == true) this->WriteParameters();
 
-            //            this->WritePointFiles();
-            //            this->WriteTransformFile();
-            //            this->WriteModes();
-            //            if (m_use_regression == true) this->WriteParameters();
-
             if ( m_keep_checkpoints )
             {
                 // SHIREEN
                 std::stringstream ss;
                 ss << iteration_no + m_optimization_iterations_completed;
 
-                std::stringstream ssp;
-                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
+//                std::stringstream ssp;
+//                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
 
-                std::string dir_name     = "iter" + ss.str() + "_p" + ssp.str();
+                std::string dir_name     = "iter" + ss.str(); // + "_p" + ssp.str();
                 std::string out_path     = utils::getPath(m_output_points_prefix);
                 std::string prefix       = utils::getFilename(m_output_points_prefix);
                 std::string tmp_dir_name = out_path + "/" + prefix + std::string(".") + dir_name;
@@ -230,39 +190,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
             }
         }
     }
-
-    //Praful - March 13, 2017: following checks not needed
-//    if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
-//    {
-//        this->optimize_stop();
-//    }
-
-    // Praful - Jan,2017
-//    if ( m_Sampler->GetEnsembleRegressionEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
-//        this->optimize_stop();
-
-//    if ( m_Sampler->GetGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
-//        this->optimize_stop();
-
-//    if ( m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetMinimumVariance() <= m_ending_regularization )
-//        this->optimize_stop();
-
-//    if ( m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->GetMinimumVariance() <= m_ending_regularization )
-//        this->optimize_stop();
-
-    //Praful - commented following check - unnecessary and causes optimization to terminate after one iteration if correspondence if off
-
-//    if ( m_Sampler->GetEnsembleEntropyFunction()->GetMinimumVariance()  <= m_ending_regularization )
-//    {
-//        this->optimize_stop();
-//    };
-    
-    //    this->surface_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagA());
-    //    this->correspondence_gradmag->value( m_Sampler->GetLinkingFunction()->GetAverageGradMagB()
-    //                                         * m_Sampler->GetLinkingFunction()->GetRelativeGradientScaling());
-    //    this->surface_energy->value( m_Sampler->GetLinkingFunction()->GetAverageEnergyA());
-    //    this->correspondence_energy->value( m_Sampler->GetLinkingFunction()->GetAverageEnergyB()
-    //                                        * m_Sampler->GetLinkingFunction()->GetRelativeEnergyScaling());
 }
 
 template < class SAMPLERTYPE>
@@ -314,6 +241,32 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 {
                     m_spacing = reader->GetOutput()->GetSpacing()[0];
                 }
+            }
+
+            m_filenames.clear();
+
+            for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+            {
+                char *str = new char[shapeFiles[shapeCount].length() + 1];
+                strcpy(str, shapeFiles[shapeCount].c_str());
+
+                char *fname;
+                char *pch;
+                pch = strtok(str,"/");
+                while (pch != NULL)
+                {
+                    fname = pch;
+                    pch = strtok (NULL, "/");
+                }
+
+                char *pch2;
+                pch2 = strrchr(fname,'.');
+                int num = pch2-fname+1;
+                int num2 = strlen(fname);
+                strncpy(pch2,"",num2-num);
+
+                m_filenames.push_back(std::string(fname));
+
             }
 
             shapeFiles.clear();
@@ -615,6 +568,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
             }
+
             m_Sampler->SetAttributeScales(attr_scales);
 
             // attribute files
@@ -873,34 +827,33 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
 
     // Write points in both local and global coordinate system
-    filenameFactory fn;
-    fn.number_of_files(n);
-    fn.prefix(m_output_points_prefix);
-    fn.file_format("lpts");
+//    filenameFactory fn;
+//    fn.number_of_files(n);
+//    fn.prefix(m_output_points_prefix);
+//    fn.file_format("lpts");
 
-    filenameFactory fnw;
-    fnw.number_of_files(n);
-    fnw.prefix(m_output_points_prefix);
-    fnw.file_format("wpts");
+//    filenameFactory fnw;
+//    fnw.number_of_files(n);
+//    fnw.prefix(m_output_points_prefix);
+//    fnw.file_format("wpts");
 
     std::stringstream ss;
     ss << iter+m_optimization_iterations_completed;
 
-    //// to suffix with # of points
-    //std::stringstream points_ss;
-    //points_ss << m_Sampler->GetParticleSystem()->GetNumberOfParticles(0);
+    std::string out_path     = utils::getPath(m_output_points_prefix);
 
     int counter;
 
     for (int i = 0; i < n; i++)
     {
         counter = 0;
-        unsigned int u_iter = static_cast< unsigned int >( iter );
-        std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
-        std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
-        //// to suffix with # of points
-        //std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i) + "." + points_ss.str();
-        //std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i) + "." + points_ss.str();
+//        unsigned int u_iter = static_cast< unsigned int >( iter );
+//        std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
+//        std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
+
+        std::string nameStr = iter >= 0 ? "iter" + ss.str() + "/" + m_filenames[i]  : m_filenames[i];
+        std::string local_file = out_path + "/" + nameStr + ".lpts";
+        std::string world_file = out_path + "/" + nameStr + ".wpts";
 
         std::ofstream out( local_file.c_str() );
         std::ofstream outw( world_file.c_str() );
@@ -912,8 +865,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
             std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
             throw 1;
         }
-
-        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+        int d = i % m_domains_per_shape;
+        for (unsigned int j = 0; j < m_number_of_particles[d]; j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -928,7 +881,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
 
             counter ++;
         }  // end for points
-
 
         out.close();
         outw.close();
@@ -945,25 +897,25 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
     const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
 
     // Write points in both local and global coordinate system
-    filenameFactory fn;
-    fn.number_of_files(n);
-    fn.prefix(iter_prefix);
+//    filenameFactory fn;
+//    fn.number_of_files(n);
+//    fn.prefix(iter_prefix);
 
-    fn.file_format("lpts");
+//    fn.file_format("lpts");
 
-    filenameFactory fnw;
-    fnw.number_of_files(n);
-    fnw.prefix(iter_prefix);
+//    filenameFactory fnw;
+//    fnw.number_of_files(n);
+//    fnw.prefix(iter_prefix);
 
-    fnw.file_format("wpts");
+//    fnw.file_format("wpts");
 
     int counter;
     for (int i = 0; i < n; i++)
     {
         counter = 0;
 
-        std::string local_file = fn.filename(i);
-        std::string world_file = fnw.filename(i);
+        std::string local_file = iter_prefix + m_filenames[i] + ".lpts";
+        std::string world_file = iter_prefix + m_filenames[i] + ".wpts";
 
         std::ofstream out( local_file.c_str() );
         std::ofstream outw( world_file.c_str() );
@@ -975,8 +927,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
             std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
             throw 1;
         }
-
-        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+        int d = i % m_domains_per_shape;
+        for (unsigned int j = 0; j < m_number_of_particles[d]; j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -1019,10 +971,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteCuttingPlanePoints( int iter )
 
     for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
     {
-        //        const ParticleImplicitSurfaceDomain<TGradientNumericType, VDimension>* domain
-        //                = static_cast<const ParticleImplicitSurfaceDomain<TGradientNumericType,
-        //                VDimension>*>( system->GetDomain( d ) );
-
         const itk::ParticleImplicitSurfaceDomain<float, 3>* dom
                 = static_cast<const itk::ParticleImplicitSurfaceDomain<float
                 ,3>*>(m_Sampler->GetParticleSystem()->GetDomain(i));
@@ -1058,9 +1006,30 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "processing_mode" ).Element();
         if (elem) this->m_processing_mode = atoi(elem->GetText());
 
-        this->m_number_of_particles = 1024;
+        this->m_domains_per_shape = 1;
+        elem = docHandle.FirstChild( "domains_per_shape" ).Element();
+        if (elem) this->m_domains_per_shape = atoi(elem->GetText());
+
+        this->m_number_of_particles.clear();
         elem = docHandle.FirstChild( "number_of_particles" ).Element();
-        if (elem) this->m_number_of_particles = atoi(elem->GetText());
+        if (elem)
+        {
+            std::istringstream inputsBuffer;
+            std::string num;
+            inputsBuffer.str(elem->GetText());
+            while (inputsBuffer >> num)
+                this->m_number_of_particles.push_back(atoi(num.c_str()));
+        }
+        else
+        {
+            std::cerr << "Number of particles not specified" << std::endl;
+            throw 1;
+        }
+        if (this->m_domains_per_shape != this->m_number_of_particles.size())
+        {
+            std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()" << std::endl;
+            throw 1;
+        }
 
         // Parameters with defaults
         this->m_optimization_iterations = -1;
@@ -1078,10 +1047,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         this->m_output_transform_file = "output_transform_file";
         elem = docHandle.FirstChild( "output_transform_file" ).Element();
         if (elem) this->m_output_transform_file = elem->GetText();
-
-        this->m_domains_per_shape = 1;
-        elem = docHandle.FirstChild( "domains_per_shape" ).Element();
-        if (elem) this->m_domains_per_shape = atoi(elem->GetText());
 
         this->m_timepts_per_subject = 1;
         elem = docHandle.FirstChild( "timepts_per_subject" ).Element();
@@ -1122,35 +1087,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "initial_relative_weighting" ).Element();
         if (elem) this->m_initial_relative_weighting = atof(elem->GetText());
 
-        //Praful - flag for random ordering updates
-        this->m_randomOrdering=true;
-        elem = docHandle.FirstChild( "randomize_shape_updates" ).Element();
-        if (elem)
-        {
-            if (atoi(elem->GetText()) > 0)
-            {
-                this->m_randomOrdering = true;
-            }
-            else
-            {
-                this->m_randomOrdering = false;
-            }
-        }
-
-        this->m_randomProcrustes = true;
-        elem = docHandle.FirstChild( "randomize_procrustes" ).Element();
-        if (elem)
-        {
-            if (atoi(elem->GetText()) > 0)
-            {
-                this->m_randomProcrustes = true;
-            }
-            else
-            {
-                this->m_randomProcrustes = false;
-            }
-        }
-
         m_debug_projection = true;
         elem = docHandle.FirstChild( "debug_projection" ).Element();
         if (elem) atoi(elem->GetText()) > 0 ? this->m_debug_projection = true : this->m_debug_projection = false;
@@ -1176,8 +1112,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "adaptivity_strength" ).Element();
         if (elem) this->m_adaptivity_strength = atof(elem->GetText());
 
+        this->m_attributes_per_domain.clear();
         elem = docHandle.FirstChild( "attributes_per_domain" ).Element();
-        if (elem) this->m_attributes_per_domain.push_back(atoi(elem->GetText()));
+        if (elem)
+        {
+            std::istringstream inputsBuffer;
+            std::string num;
+            inputsBuffer.str(elem->GetText());
+            while (inputsBuffer >> num)
+                this->m_attributes_per_domain.push_back(atoi(num.c_str()));
+        }
+        if (this->m_domains_per_shape != this->m_attributes_per_domain.size())
+        {
+            std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" << std::endl;
+            throw 1;
+        }
 
         this->m_mesh_based_attributes = true;
         elem = docHandle.FirstChild( "mesh_based_attributes" ).Element();
@@ -1249,7 +1198,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
 
     // Write out the parameters
     std::cout << "m_processing_mode = " << m_processing_mode << std::endl;
-    std::cout << "m_number_of_particles = " << m_number_of_particles << std::endl;
+    std::cout << "m_number_of_particles = ";
+    for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
+        std::cout << m_number_of_particles[i] << ", ";
+    std::cout << std::endl;
     std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
     std::cout << "m_output_points_prefix = " << m_output_points_prefix << std::endl;
     std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
@@ -1263,7 +1215,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     std::cout << "m_initial_relative_weighting = " << m_initial_relative_weighting << std::endl;
     std::cout << "m_initial_norm_penalty_weighting = " << m_initial_norm_penalty_weighting << std::endl;
     std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
-//    std::cout << "m_attributes_per_domain = " << m_attributes_per_domain << std::endl;
+    std::cout << "m_attributes_per_domain = ";
+    for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
+        std::cout << m_attributes_per_domain[i] << ", ";
+    std::cout << std::endl;
     std::cout << "m_checkpointing_interval = " << m_checkpointing_interval << std::endl;
     std::cout << "m_transform_file = " << m_transform_file << std::endl;
     std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
@@ -1285,7 +1240,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     std::cout << "m_use_shape_statistics_in_init = " << m_use_shape_statistics_in_init << std::endl;
     // end SHIREEN
 
-    std::cout << "m_randomOrdering = " << m_randomOrdering << std::endl;
     std::cout << "m_mesh_based_attributes = " << m_mesh_based_attributes << std::endl;
 }
 
@@ -1352,11 +1306,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
         m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
     // end SHIREEN
 
-    if (m_randomOrdering == true)
-        m_Sampler->GetOptimizer()->SetRandomizationON();
-    else
-        m_Sampler->GetOptimizer()->SetRandomizationOFF();
-
     m_Sampler->SetSamplingOn();
     /* PRATEEP */
     m_Sampler->SetCorrespondenceOn();
@@ -1390,7 +1339,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     /* PRATEEP */
     // If initial points already specified, compute Procrustes parameters from them and use further.
     // Do not compute parameters again.
-    if( m_Sampler->GetParticleSystem()->GetNumberOfParticles() > 0)
+    if( m_Sampler->GetParticleSystem()->GetNumberOfParticles() > 0) //defaults to number of points read for first domain
     {
         m_disable_procrustes = false;
         m_Procrustes->SetComputeTransformationOn();
@@ -1420,7 +1369,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     // SHIREEN - Praful (updated for general entropy)
     if (m_use_shape_statistics_in_init)
     {
-        if (m_number_of_particles < 32) {
+        if (*std::min_element(m_number_of_particles.begin(), m_number_of_particles.end()) < 32)
+        {
             m_Sampler->SetCorrespondenceMode(0); // changed 09/24
         }
         else
@@ -1442,8 +1392,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
                                                                                     m_ending_regularization,
                                                                                     m_iterations_per_split);
             m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
-                                                                                    m_ending_regularization,
-                                                                                    m_iterations_per_split);
+                                                                                             m_ending_regularization,
+                                                                                             m_iterations_per_split);
         }
     }
     else
@@ -1459,9 +1409,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_initial_norm_penalty_weighting);
 
 
-    //if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
-    //  {  this->AddSinglePoint(); }
-
     if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 1)
     {
         this->AddSinglePoint();
@@ -1471,6 +1418,101 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     int split_number = 0;
     // end SHIREEN
 
+    int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    vnl_vector_fixed<double, 3> random;
+    srand(1);
+    for (int i = 0; i < 3; i++)
+        random[i] = static_cast<double>(rand());
+    double norm = random.magnitude();
+    random /= norm;
+
+    double epsilon = this->m_spacing;
+    bool flag_split = false;
+
+    for (int i = 0; i < n; i++)
+    {
+        int d = i % m_domains_per_shape;
+        if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+            flag_split = true;
+    }
+
+    while(flag_split)
+    {
+        this->optimize_stop();
+        for (int i = 0; i < n; i++)
+        {
+            int d = i % m_domains_per_shape;
+            if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+                m_Sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
+        }
+
+        std::cout << std::endl << "Particle count: ";
+        for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
+            std::cout << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) << ", ";
+
+        split_number++;
+        std::cout << "split number = " << split_number << std::endl << std::flush;
+
+        if ( m_save_init_splits == true)
+        {
+            std::stringstream ss;
+            ss << split_number;
+
+            std::string dir_name     = "split" + ss.str() + "_wo_opt";
+            std::string out_path     = utils::getPath(m_output_points_prefix);
+            std::string prefix       = utils::getFilename(m_output_points_prefix);
+            std::string tmp_dir_name = out_path + "/" + dir_name;
+
+            std::cout << "split dir name = " << tmp_dir_name << std::endl;
+
+#ifdef _WIN32
+            mkdir( tmp_dir_name.c_str() );
+#else
+            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
+            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+        }
+        m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
+        m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
+        m_Sampler->Modified();
+        m_Sampler->Update();
+
+        if ( m_save_init_splits == true)
+        {
+            std::stringstream ss;
+            ss << split_number;
+
+            std::string dir_name     = "split" + ss.str() + "_w_opt";
+            std::string out_path     = utils::getPath(m_output_points_prefix);
+            std::string prefix       = utils::getFilename(m_output_points_prefix);
+            std::string tmp_dir_name = out_path + "/" + dir_name;
+
+            std::cout << "split dir name = " << tmp_dir_name << std::endl;
+
+#ifdef _WIN32
+            mkdir( tmp_dir_name.c_str() );
+#else
+            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
+            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+        }
+        this->WritePointFiles();
+        this->WriteTransformFile();
+
+        flag_split = false;
+        for (int i = 0; i < n; i++)
+        {
+            int d = i % m_domains_per_shape;
+            if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+                flag_split = true;
+        }
+    }
+
+/* Praful - incompatible code with different number of particles per domain
     while (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
     {
         this->SplitAllParticles();
@@ -1502,7 +1544,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 #endif
             this->WritePointFiles(tmp_dir_name + "/" + prefix);
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
-            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+            // if (m_use_regression == true) this->WriteParameters( split_number );
         }
         // end SHIREEN
 
@@ -1534,13 +1576,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 #endif
             this->WritePointFiles(tmp_dir_name + "/" + prefix);
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
-            // /*if (m_use_regression == true) */this->WriteParameters( split_number );
+            // if (m_use_regression == true) this->WriteParameters( split_number );
         }
         // end SHIREEN
 
         this->WritePointFiles();
         this->WriteTransformFile();
     }
+*/
+
     this->WritePointFiles();
     this->WriteTransformFile();
     this->WriteCuttingPlanePoints();
@@ -1570,13 +1614,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(m_initial_norm_penalty_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_initial_norm_penalty_weighting);
-
-    //m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(0.05);
-    //m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(0.05);
-    //m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(0.0);
-    //m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(0.0);
-
-    //  if (tmpNoAdaptivityFlag == true) return;
 
     m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
@@ -1625,9 +1662,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
         }
     }
 
-    //  m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
-    //m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
-
     // SHIREEN
     if(m_optimizer_type == 0)
         m_Sampler->GetOptimizer()->SetModeToJacobi();
@@ -1647,9 +1681,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
                                                                             m_optimization_iterations-
                                                                             m_optimization_iterations_completed);
     m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
-                                                                            m_ending_regularization,
-                                                                            m_optimization_iterations-
-                                                                            m_optimization_iterations_completed);
+                                                                                     m_ending_regularization,
+                                                                                     m_optimization_iterations-
+                                                                                     m_optimization_iterations_completed);
     m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                                m_ending_regularization,
                                                                                m_optimization_iterations-
@@ -1665,8 +1699,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
                                                                                  m_optimization_iterations-
                                                                                  m_optimization_iterations_completed);
 
-//    m_Sampler->SetAttributesPerDomain(m_attributes_per_domain);
-//    m_Sampler->SetDomainsPerShape(m_domains_per_shape);
     std::cout << "Optimizing correspondences." << std::endl;
 
     /* PRATEEP */
