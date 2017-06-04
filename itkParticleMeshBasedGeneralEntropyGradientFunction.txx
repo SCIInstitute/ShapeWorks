@@ -184,7 +184,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     maxdt = m_MinimumEigenValue;
 
     int num = 0;
-    for (int i = 0; i < dom-1; i++)
+    for (int i = 0; i < dom; i++)
         num += system->GetNumberOfParticles(i)*VDimension;
 
     VectorType gradE;
