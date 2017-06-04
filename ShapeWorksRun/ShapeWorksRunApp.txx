@@ -152,8 +152,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
                 std::stringstream ss;
                 ss << iteration_no + m_optimization_iterations_completed;
 
-//                std::stringstream ssp;
-//                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
+                //                std::stringstream ssp;
+                //                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
 
                 std::string dir_name     = "iter" + ss.str(); // + "_p" + ssp.str();
                 std::string out_path     = utils::getPath(m_output_points_prefix);
@@ -550,7 +550,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
         }
 
         // attributes
-        if (this->m_attributes_per_domain.size() >= 1)
+        if (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
         {
             // attribute scales
             double sc;
@@ -827,15 +827,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
 
     // Write points in both local and global coordinate system
-//    filenameFactory fn;
-//    fn.number_of_files(n);
-//    fn.prefix(m_output_points_prefix);
-//    fn.file_format("lpts");
+    //    filenameFactory fn;
+    //    fn.number_of_files(n);
+    //    fn.prefix(m_output_points_prefix);
+    //    fn.file_format("lpts");
 
-//    filenameFactory fnw;
-//    fnw.number_of_files(n);
-//    fnw.prefix(m_output_points_prefix);
-//    fnw.file_format("wpts");
+    //    filenameFactory fnw;
+    //    fnw.number_of_files(n);
+    //    fnw.prefix(m_output_points_prefix);
+    //    fnw.file_format("wpts");
 
     std::stringstream ss;
     ss << iter+m_optimization_iterations_completed;
@@ -847,9 +847,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     for (int i = 0; i < n; i++)
     {
         counter = 0;
-//        unsigned int u_iter = static_cast< unsigned int >( iter );
-//        std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
-//        std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
+        //        unsigned int u_iter = static_cast< unsigned int >( iter );
+        //        std::string local_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fn.filename(i) : fn.filename(i);
+        //        std::string world_file = iter >= 0 ? "./.iter" + ss.str() + "/" + fnw.filename(i) : fnw.filename(i);
 
         std::string nameStr = iter >= 0 ? "iter" + ss.str() + "/" + m_filenames[i]  : m_filenames[i];
         std::string local_file = out_path + "/" + nameStr + ".lpts";
@@ -865,8 +865,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
             std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
             throw 1;
         }
-        int d = i % m_domains_per_shape;
-        for (unsigned int j = 0; j < m_number_of_particles[d]; j++ )
+
+        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -897,17 +897,17 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
     const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
 
     // Write points in both local and global coordinate system
-//    filenameFactory fn;
-//    fn.number_of_files(n);
-//    fn.prefix(iter_prefix);
+    //    filenameFactory fn;
+    //    fn.number_of_files(n);
+    //    fn.prefix(iter_prefix);
 
-//    fn.file_format("lpts");
+    //    fn.file_format("lpts");
 
-//    filenameFactory fnw;
-//    fnw.number_of_files(n);
-//    fnw.prefix(iter_prefix);
+    //    filenameFactory fnw;
+    //    fnw.number_of_files(n);
+    //    fnw.prefix(iter_prefix);
 
-//    fnw.file_format("wpts");
+    //    fnw.file_format("wpts");
 
     int counter;
     for (int i = 0; i < n; i++)
@@ -927,8 +927,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
             std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
             throw 1;
         }
-        int d = i % m_domains_per_shape;
-        for (unsigned int j = 0; j < m_number_of_particles[d]; j++ )
+
+        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
@@ -1121,12 +1121,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             inputsBuffer.str(elem->GetText());
             while (inputsBuffer >> num)
                 this->m_attributes_per_domain.push_back(atoi(num.c_str()));
+
+            if (this->m_domains_per_shape != this->m_attributes_per_domain.size())
+            {
+                std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" << std::endl;
+                throw 1;
+            }
         }
-        if (this->m_domains_per_shape != this->m_attributes_per_domain.size())
-        {
-            std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" << std::endl;
-            throw 1;
-        }
+
 
         this->m_mesh_based_attributes = true;
         elem = docHandle.FirstChild( "mesh_based_attributes" ).Element();
@@ -1215,10 +1217,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     std::cout << "m_initial_relative_weighting = " << m_initial_relative_weighting << std::endl;
     std::cout << "m_initial_norm_penalty_weighting = " << m_initial_norm_penalty_weighting << std::endl;
     std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
-    std::cout << "m_attributes_per_domain = ";
-    for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
-        std::cout << m_attributes_per_domain[i] << ", ";
-    std::cout << std::endl;
+    if (this->m_attributes_per_domain.size() > 0)
+    {
+        std::cout << "m_attributes_per_domain = ";
+        for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
+            std::cout << m_attributes_per_domain[i] << ", ";
+        std::cout << std::endl;
+    }
+
     std::cout << "m_checkpointing_interval = " << m_checkpointing_interval << std::endl;
     std::cout << "m_transform_file = " << m_transform_file << std::endl;
     std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
@@ -1433,11 +1439,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     {
         int d = i % m_domains_per_shape;
         if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+        {
             flag_split = true;
+            break;
+        }
     }
-
+    int a = 1;
     while(flag_split)
     {
+        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
         this->optimize_stop();
         for (int i = 0; i < n; i++)
         {
@@ -1512,7 +1522,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         }
     }
 
-/* Praful - incompatible code with different number of particles per domain
+    /* Praful - incompatible code with different number of particles per domain
     while (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
     {
         this->SplitAllParticles();

@@ -111,7 +111,7 @@ public:
 
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
-        for (int i = 0; i < dom-1; i++)
+        for (int i = 0; i < dom; i++)
             k += VDimension * ps->GetNumberOfParticles(i);
         k += idx * VDimension;
         // New code ends - Praful
@@ -140,7 +140,7 @@ public:
         // New code supporting different number of particles per domain - Praful
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
-        for (int i = 0; i < dom-1; i++)
+        for (int i = 0; i < dom; i++)
             k += VDimension * ps->GetNumberOfParticles(i);
         k += idx * VDimension;
         // New code ends - Praful
@@ -155,18 +155,18 @@ public:
     }
 
     // For debugging purposes.
-    //  void PrintMatrix()
-    //  {
-    //    std::cout << std::endl;
-    //    for (unsigned int r = 0; r < this->rows(); r++)
-    //      {
-    //      for (unsigned int c = 0; c < this->cols(); c++)
-    //        {
-    //        std::cout << this->operator()(r, c) << "  ";
-    //        }
-    //    std::cout << std::endl;
-    //      }
-    //  }
+      void PrintMatrix()
+      {
+        std::cout << std::endl;
+        for (unsigned int r = 0; r < this->rows(); r++)
+          {
+          for (unsigned int c = 0; c < this->cols(); c++)
+            {
+            std::cout << this->operator()(r, c) << "  ";
+            }
+        std::cout << std::endl;
+          }
+      }
 
     /** Set/Get the number of domains per shape.  This can only be safely done
       before shapes are initialized with points! */

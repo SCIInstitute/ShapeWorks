@@ -135,6 +135,11 @@ public:
     return m_MinimumVarianceDecayConstant;
   }
   
+  void PrintShapeMatrix()
+  {
+      m_ShapeMatrix->PrintMatrix();
+  }
+
   /** */
   bool GetHoldMinimumVariance() const
   { return m_HoldMinimumVariance; }
