@@ -54,9 +54,10 @@ ParticleEnsembleEntropyFunction<VDimension>
     if (m_PointsUpdate.rows() != num_dims || m_PointsUpdate.cols() != num_samples)
     {
         m_PointsUpdate.set_size(num_dims, num_samples);
+        m_PointsUpdate.clear();
     }
 
-    vnl_matrix_type points_minus_mean(num_dims, num_samples);
+    vnl_matrix_type points_minus_mean(num_dims, num_samples, 0.0);
     vnl_vector_type means(num_dims);
 
     // Compute the covariance matrix.
@@ -82,6 +83,7 @@ ParticleEnsembleEntropyFunction<VDimension>
             points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - means(j);
         }
     }
+    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
 
 #ifdef PARTICLE_DEBUG
     std::cout << "Shape Matrix : " << std::endl;
@@ -98,8 +100,10 @@ ParticleEnsembleEntropyFunction<VDimension>
 #endif
 
 
-    vnl_matrix_type A =  points_minus_mean.transpose()
-            * points_minus_mean * (1.0/((double)(num_samples-1)));
+    vnl_matrix_type A;
+    A =  points_minus_mean.transpose() * points_minus_mean;
+    A /= (double)(num_samples-1);
+
 
     // Regularize A
     for (unsigned int i = 0; i < num_samples; i++)
@@ -144,12 +148,21 @@ ParticleEnsembleEntropyFunction<VDimension>
     // you start deleting particles.
     energy = m_CurrentEnergy;
     maxdt  = m_MinimumEigenValue;
+
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
-    const unsigned int PointsPerDomain = system->GetNumberOfParticles(d);
 
     VectorType gradE;
-    unsigned int k = ((d % DomainsPerShape) * PointsPerDomain * VDimension)
-            + (idx * VDimension);
+    unsigned int k = 0;
+    int dom = d % DomainsPerShape;
+    for (int i = 0; i < dom; i++)
+        k += system->GetNumberOfParticles(i) * VDimension;
+    k += idx*VDimension;
+
+
+//    const unsigned int PointsPerDomain = system->GetNumberOfParticles(d);
+//    unsigned int k = ((d % DomainsPerShape) * PointsPerDomain * VDimension)
+//            + (idx * VDimension);
+
     for (unsigned int i = 0; i< VDimension; i++)
     {
         // gradE[i] = m_PointsUpdate((idx * VDimension) + i, d);
