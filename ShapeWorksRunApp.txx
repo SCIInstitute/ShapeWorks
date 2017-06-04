@@ -1447,7 +1447,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     int a = 1;
     while(flag_split)
     {
-        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
+//        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
         this->optimize_stop();
         for (int i = 0; i < n; i++)
         {
