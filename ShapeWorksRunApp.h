@@ -30,6 +30,7 @@
 #include <sstream>
 #include <string>
 #include <numeric>
+#include "itkParticleGoodBadAssessment.h"
 
 template<typename T> std::string toStr(T var) {
 std::ostringstream tmp; tmp << var; return tmp.str();
@@ -124,9 +125,11 @@ class ShapeWorksRunApp
 protected:
   typename itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_Sampler;
   typename itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
-  
+  typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
+
   int m_CheckpointCounter;
   int m_ProcrustesCounter;
+  int m_GoodBadCounter;
   
   static ITK_THREAD_RETURN_TYPE optimize_callback( void *arg );
   //  static ITK_THREAD_RETURN_TYPE auto_init_callback( void *arg );  
@@ -161,6 +164,7 @@ protected:
   double m_initial_relative_weighting;
   double m_initial_norm_penalty_weighting;
   double m_adaptivity_strength;
+  double m_normalAngle; //GoodBadAssessment
 
 //  unsigned int m_number_of_particles;
   std::vector<unsigned int> m_number_of_particles;
@@ -174,6 +178,8 @@ protected:
   unsigned int m_procrustes_interval;
   bool m_disable_checkpointing;
   bool m_disable_procrustes;
+  unsigned int m_GoodBad_interval;
+  bool m_performGoodBad;
   int m_spheres_per_domain;
   int m_adaptivity_mode;
   int m_keep_checkpoints;
