@@ -98,6 +98,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     this->ReadExplanatoryVariables(fn);
     this->FlagDomainFct(fn);
 
+    m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
+    m_GoodBad->SetParticleSystem(m_Sampler->GetParticleSystem());
+    m_GoodBad->SetDomainsPerShape(m_domains_per_shape);
+    m_GoodBad->SetEpsilon(m_spacing);
+    m_GoodBad->SetCriterionAngle(m_normalAngle);
+
     // Now read the transform file if present.
     if ( m_transform_file != "" )       this->ReadTransformFile();
     if ( m_prefix_transform_file != "") this->ReadPrefixTransformFile(m_prefix_transform_file);
@@ -126,6 +132,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
                 // transform cutting planes
                 m_Sampler->TransformCuttingPlanes( m_distribution_domain_id );
             }
+        }
+    }
+
+    if (m_GoodBad_interval > 0 && m_performGoodBad == true)
+    {
+        m_GoodBadCounter++;
+        if (m_GoodBadCounter >= (int)m_GoodBad_interval)
+        {
+            m_GoodBadCounter = 0;
+            m_GoodBad->RunAssessment();
         }
     }
 
@@ -1129,6 +1145,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             }
         }
 
+        const float pi = std::acos(-1.0);
+        this->m_normalAngle = pi/2.0;
+        elem = docHandle.FirstChild( "normal_angle" ).Element();
+        if (elem) this->m_normalAngle = atof(elem->GetText())*pi/180.0;
+
+        this->m_performGoodBad = true;
+        this->m_GoodBad_interval = 10;
+        elem = docHandle.FirstChild( "replace_bad_particles_interval" ).Element();
+        if (elem) this->m_GoodBad_interval = atoi(elem->GetText());
 
         this->m_mesh_based_attributes = true;
         elem = docHandle.FirstChild( "mesh_based_attributes" ).Element();
@@ -1224,7 +1249,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             std::cout << m_attributes_per_domain[i] << ", ";
         std::cout << std::endl;
     }
-
+    std::cout << "m_GoodBad_interval=" << m_GoodBad_interval << std::endl;
     std::cout << "m_checkpointing_interval = " << m_checkpointing_interval << std::endl;
     std::cout << "m_transform_file = " << m_transform_file << std::endl;
     std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
@@ -1342,6 +1367,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     m_disable_checkpointing = true;
     m_disable_procrustes = true;
+    m_performGoodBad = false;
+    m_GoodBad->SetPerformAssessment(false);
     /* PRATEEP */
     // If initial points already specified, compute Procrustes parameters from them and use further.
     // Do not compute parameters again.
@@ -1444,7 +1471,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             break;
         }
     }
-    int a = 1;
+
     while(flag_split)
     {
 //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
@@ -1611,6 +1638,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     if (m_adaptivity_strength == 0.0) return;
     m_disable_checkpointing = true;
     m_disable_procrustes = true;
+    m_performGoodBad = false;
+    m_GoodBad->SetPerformAssessment(false);
     std::cout << "Adding adaptivity." << std::endl;
 
     // PRATEEP
@@ -1658,7 +1687,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
 
     m_disable_checkpointing = false;
     m_disable_procrustes = false;
-
+    m_performGoodBad = true;
     if (m_procrustes_interval != 0) // Initial registration
     {
         m_Procrustes->RunRegistration();
