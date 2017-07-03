@@ -79,13 +79,19 @@ public:
   /** Start the optimization. */
   void StartOptimization()
   {
-    if (m_OptimizationMode == 0) { this->StartJacobiOptimization(); }
-    else { this->StartGaussSeidelOptimization(); }
+    if (m_OptimizationMode == 0)
+    { this->StartJacobiOptimization(); }
+    else if (m_OptimizationMode == 1)
+    { this->StartGaussSeidelOptimization(); }
+    else if (m_OptimizationMode == 2)
+    { this->StartAdaptiveGaussSeidelOptimization(); }
   }
   void StartJacobiOptimization();
   void StartGaussSeidelOptimization();
+  void StartAdaptiveGaussSeidelOptimization();
 
   /** */
+  void SetModeToAdaptiveGaussSeidel() { this->m_OptimizationMode = 2; }
   void SetModeToGaussSeidel() { this->m_OptimizationMode = 1; }
   void SetModeToJacobi() { this->m_OptimizationMode = 0; }
   

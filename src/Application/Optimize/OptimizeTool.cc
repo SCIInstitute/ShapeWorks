@@ -85,6 +85,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     std::vector<double>(scales, this->ui_->ending_regularization->value()),
     std::vector<unsigned int>(scales, this->ui_->iterations->value()),
     std::vector<double>(scales, this->ui_->decay_span->value()),
+    std::vector<size_t>(scales, this->ui_->procrustes_interval->value()),
     this->ui_->weight->value(), true);
 
   QThread *thread = new QThread;
@@ -136,6 +137,11 @@ void OptimizeTool::on_iterations_valueChanged(int v) {
 
 void OptimizeTool::on_decay_span_valueChanged(int v) {
   this->preferences_.set_preference("optimize_decay_span",
+    static_cast<double>(v));
+}
+
+void OptimizeTool::on_procrustes_interval_valueChanged(int v) {
+  this->preferences_.set_preference("optimize_procrustes_interval",
     static_cast<double>(v));
 }
 
@@ -263,6 +269,7 @@ void OptimizeTool::on_restoreDefaults_clicked() {
   this->preferences_.delete_entry("optimize_weight");
   this->preferences_.delete_entry("optimize_maxAngle");
   this->preferences_.delete_entry("optimize_decay_span");
+  this->preferences_.delete_entry("optimize_procrustes_interval");
   this->preferences_.restore_defaults();
   this->set_preferences();
   auto optimize_particles = this->preferences_.get_preference("optimize_particles", 128);
@@ -309,6 +316,9 @@ void OptimizeTool::set_preferences(bool setScales) {
   this->ui_->decay_span->setValue(
     this->preferences_.get_preference("optimize_decay_span",
       this->ui_->decay_span->value()));
+    this->ui_->procrustes_interval->setValue(
+      this->preferences_.get_preference("optimize_procrustes_interval",
+        this->ui_->procrustes_interval->value()));
 }
 
 void OptimizeTool::update_preferences() {
@@ -330,6 +340,8 @@ void OptimizeTool::update_preferences() {
     this->ui_->iterations->value());
   this->preferences_.set_preference("optimize_decay_span",
     this->ui_->decay_span->value());
+    this->preferences_.set_preference("optimize_procrustes_interval",
+      this->ui_->procrustes_interval->value());
 
 
 }

@@ -63,6 +63,7 @@ int main(int argc, char ** argv) {
     size_t optimize_scales = 8;
     unsigned int iters;
     double start_reg, end_reg, decay_span;
+    size_t procrustes_interval;
     std::string planesFile;
     //collect the values from the parameters
     for (auto a : parameters) {
@@ -106,7 +107,9 @@ int main(int argc, char ** argv) {
         iters = std::stoi(a.second);
       } else if (a.first.find("optimize_decay_span") != std::string::npos) {
         decay_span = std::stod(a.second);
-      } else if (a.first.find("optimize_weight") != std::string::npos) {
+      } else if (a.first.find("optimize_procrustes_interval") != std::string::npos) {
+          procrustes_interval = std::stod(a.second);
+        }else if (a.first.find("optimize_weight") != std::string::npos) {
         weight = std::stod(a.second);
       }
     }
@@ -149,6 +152,7 @@ int main(int argc, char ** argv) {
       std::vector<double>(optimize_scales, end_reg),
       std::vector<unsigned int>(optimize_scales, iters),
       std::vector<double>(optimize_scales, decay_span),
+      std::vector<size_t>(optimize_scales, procrustes_interval),
       weight, true);
     optimize.run();
     auto lpts = optimize.localPoints();

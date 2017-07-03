@@ -113,7 +113,7 @@ public:
       to the surface tangent plane. Returns true if the gradient was modified.*/
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
                                       const PointType &pos,
-                                      double) const
+                                      double& maxtimestep) const
     
   {
     if (this->m_ConstraintsEnabled == true)

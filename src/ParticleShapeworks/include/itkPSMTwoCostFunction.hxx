@@ -26,150 +26,156 @@ template <unsigned int VDimension>
 typename PSMTwoCostFunction<VDimension>::VectorType
 PSMTwoCostFunction<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d,
-	   const ParticleSystemType *system,
-	   double &maxmove) const
+           const ParticleSystemType *system,
+           double &maxmove) const
 {
-  double maxA, maxB;
-  maxA = 0;
-  maxB = 0;
-  VectorType ansA; 
-  ansA.fill(0.0);
-  VectorType ansB; 
-  ansB.fill(0.0);
-  
-  const_cast<PSMTwoCostFunction *>(this)->m_Counter = m_Counter + 1.0;
-  
-  // Evaluate A if it is turned on
-  if (m_AOn)
+    double maxA, maxB;
+    maxA = 0;
+    maxB = 0;
+    VectorType ansA;
+    ansA.fill(0.0);
+    VectorType ansB;
+    ansB.fill(0.0);
+
+    const_cast<PSMTwoCostFunction *>(this)->m_Counter = m_Counter + 1.0;
+
+    // Evaluate A if it is turned on
+    if (m_AOn)
     {
-      ansA = m_FunctionA->Evaluate(idx, d, system, maxA);
-      const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+        ansA = m_FunctionA->Evaluate(idx, d, system, maxA);
+        const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
     }
-  
-  // Evaluate B if it is turned on
-  if (m_BOn)
+
+    // Evaluate B if it is turned on
+    if (m_BOn)
     {
-      ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
-      const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+        ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
+        const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
     }
-  
-  // Compute maximum move and return the predicted move for current configuration
-  if (m_BOn)
-    {      
-      if (m_AOn)  // both A and B are active
-	{
-	  if (maxA > maxB) maxmove = maxB;
-	  else maxmove = maxA;
-	  return (ansA + m_RelativeGradientScaling * ansB);
-	}
-      else // B is active, A is not active
-	{
-	  maxmove = maxB;
-	  return ansB;
-	}
-    }
-  else  // only A is active
+
+    // Compute maximum move and return the predicted move for current configuration
+    if (m_BOn)
     {
-      maxmove = maxA;
-      return ansA;
+        if (m_AOn)  // both A and B are active
+        {
+            if (maxA > maxB) maxmove = maxB;
+            else maxmove = maxA;
+
+            maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
+
+            return (ansA + m_RelativeGradientScaling * ansB);
+        }
+        else // B is active, A is not active
+        {
+            maxmove = maxB;
+            return ansB;
+        }
     }
-  
-  // If nothing is turned on, then return a max time
-  // step of 0 and a bogus vector.
-  maxmove = 0.0;
-  return ansA;
+    else  // only A is active
+    {
+        maxmove = maxA;
+        return ansA;
+    }
+
+    // If nothing is turned on, then return a max time
+    // step of 0 and a bogus vector.
+    maxmove = 0.0;
+    return ansA;
 }
 
 template <unsigned int VDimension>
 typename PSMTwoCostFunction<VDimension>::VectorType
 PSMTwoCostFunction<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d,
-	   const ParticleSystemType *system,
-	   double &maxmove, double &energy) const
+           const ParticleSystemType *system,
+           double &maxmove, double &energy) const
 {
-  double maxA = 0.0;
-  double maxB = 0.0;
-  double energyA = 0.0;
-  double energyB = 0.0;
-  VectorType ansA; ansA.fill(0.0);
-  VectorType ansB; ansB.fill(0.0);
-  
-  const_cast<PSMTwoCostFunction *>(this)->m_Counter = m_Counter + 1.0;
-  
-  // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
-  if (m_AOn)
+    double maxA = 0.0;
+    double maxB = 0.0;
+    double energyA = 0.0;
+    double energyB = 0.0;
+    VectorType ansA; ansA.fill(0.0);
+    VectorType ansB; ansB.fill(0.0);
+
+    const_cast<PSMTwoCostFunction *>(this)->m_Counter = m_Counter + 1.0;
+
+    // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
+    if (m_AOn)
     {
-      ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
-      
-      const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
-      const_cast<PSMTwoCostFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
+        ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
+
+        const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+        const_cast<PSMTwoCostFunction *>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
     }
-  
-  if (m_BOn)
+
+    if (m_BOn)
     {
-      ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
-      
-      const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
-      const_cast<PSMTwoCostFunction *>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
+        ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
+
+        const_cast<PSMTwoCostFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+        const_cast<PSMTwoCostFunction *>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
     }
-  
-  // Compute the final energy, maxmove and predicted move based on
-  // current configuration of A and B
-  if (m_BOn)
+
+    // Compute the final energy, maxmove and predicted move based on
+    // current configuration of A and B
+    if (m_BOn)
     {
-      if (m_AOn)  // both A and B are active
-	{
-	  if (maxA > maxB) maxmove = maxB;
-	  else maxmove = maxA;
-	  energy = energyA + m_RelativeEnergyScaling * energyB;
-	  return (ansA + m_RelativeGradientScaling * ansB);	    
-	}
-      else // only B is active, A is not active
-	{
-	  maxmove = maxB;
-	  energy = energyB;
-	  return ansB;
-	}
+        if (m_AOn)  // both A and B are active
+        {
+            if (maxA > maxB) maxmove = maxB;
+            else maxmove = maxA;
+            energy = energyA + m_RelativeEnergyScaling * energyB;
+
+            maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
+
+            return (ansA + m_RelativeGradientScaling * ansB);
+        }
+        else // only B is active, A is not active
+        {
+            maxmove = maxB;
+            energy = energyB;
+            return ansB;
+        }
     }
-  else  // only A is active
+    else  // only A is active
     {
-      maxmove = maxA;
-      energy = energyA;
-      return ansA;
+        maxmove = maxA;
+        energy = energyA;
+        return ansA;
     }
-  
-  // If nothing is turned on, then return a max time
-  // step of 0 and a bogus vector.
-  maxmove = 0.0;
-  return ansA;
+
+    // If nothing is turned on, then return a max time
+    // step of 0 and a bogus vector.
+    maxmove = 0.0;
+    return ansA;
 }
 
 template <unsigned int VDimension>
 double
 PSMTwoCostFunction<VDimension>
 ::Energy(unsigned int idx, unsigned int d, 
-	 const ParticleSystemType *system) const
+         const ParticleSystemType *system) const
 {
-  double ansA = 0.0;
-  double ansB = 0.0;
-  
-  if (m_AOn ) ansA = m_FunctionA->Energy(idx, d, system);
-  if (m_BOn ) ansB = m_FunctionB->Energy(idx, d, system);
-  
-  // Compute the final energy for the current configuration of A and
-  // B
-  if (m_BOn )
+    double ansA = 0.0;
+    double ansB = 0.0;
+
+    if (m_AOn ) ansA = m_FunctionA->Energy(idx, d, system);
+    if (m_BOn ) ansB = m_FunctionB->Energy(idx, d, system);
+
+    // Compute the final energy for the current configuration of A and
+    // B
+    if (m_BOn )
     {
-      if (m_AOn )  // both A and B are active
-	{ return ansA + m_RelativeEnergyScaling * ansB;	}
-      else // B is active, A is not active
-	{ return ansB;}
+        if (m_AOn )  // both A and B are active
+        { return ansA + m_RelativeEnergyScaling * ansB;	}
+        else // B is active, A is not active
+        { return ansB;}
     }
-  
-  else  // only A is active
+
+    else  // only A is active
     { return ansA; }
-  
-  return 0.0;
+
+    return 0.0;
 }
 
 } // end namespace itk

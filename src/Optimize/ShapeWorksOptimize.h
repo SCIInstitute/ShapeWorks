@@ -27,6 +27,7 @@ public:
     std::vector<double> end_reg = std::vector<double>(),
     std::vector<unsigned int> iters = std::vector<unsigned int>(),
     std::vector<double> decay_span = std::vector<double>(),
+    std::vector<size_t> procrustes_interval = std::vector<size_t>(),
     double weighting = 1.,
     bool verbose = false);
   void run();

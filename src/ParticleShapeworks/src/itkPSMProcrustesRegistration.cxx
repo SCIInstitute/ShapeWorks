@@ -104,11 +104,11 @@ PSMProcrustesRegistration<VDimension>
               R(2,3) =  transforms[i].translation(0) * R(2,0) + transforms[i].translation(1) * R(2,1) + transforms[i].translation(2) * R(2,2);
               R(3,3) =  1.0;
           }
-          
+
           m_PSMParticleSystem->SetTransform(k, R);
-          std::cout << "R" << std::endl;
-          std::cout << R << std::endl;
-          std::cout << std::endl;
+          //          std::cout << "R" << std::endl;
+          //          std::cout << R << std::endl;
+          //          std::cout << std::endl;
         }
       else if( VDimension == 2 )
         {
@@ -142,9 +142,9 @@ PSMProcrustesRegistration<VDimension>
           }
         
         m_PSMParticleSystem->SetTransform(k, R);
-        std::cout << "R" << std::endl;
-        std::cout << R << std::endl;
-        std::cout << std::endl;
+        //        std::cout << "R" << std::endl;
+        //        std::cout << R << std::endl;
+        //        std::cout << std::endl;
         }
     }  // end for loop
 } // end RunRegistration

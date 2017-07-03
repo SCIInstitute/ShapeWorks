@@ -94,6 +94,9 @@ private:
   void LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
                        ShapeListIteratorType & leaveOutIt);
 
+  /** Compute mean of all shapes */
+  void ComputeMean(ShapeType & mean, ShapeListType & shapeList);
+
   /** Align two shapes (translation, rotation & scale) using ordinary Procrustes
       Analysis */
   ShapeType RunProcrustes(SimilarityTransform3D & transform, ShapeType mean,

@@ -280,6 +280,13 @@ PSMEntropyModelFilter<TImage, TShapeMatrix>::GenerateData()
       
       this->SetAbortGenerateData(false); // reset the abort flag
 
+      std::cout << "m_CurrentScale: " << m_CurrentScale << std::endl;
+      std::cout << "m_Tolerance: " << m_Tolerances[scale] << std::endl;
+      std::cout << "m_MaximumNumberOfIteration: " << m_MaximumNumberOfIterations[scale] << std::endl;
+      std::cout << "m_RegularizationDecaySpan: " << m_RegularizationDecaySpan[scale] << std::endl;
+      std::cout << "m_RegularizationInitial: " << m_RegularizationInitial[scale] << std::endl;
+      std::cout << "m_RegularizationFinal: " << m_RegularizationFinal[scale] << std::endl;
+
       // Finally, run the optimization.  Abort flag is checked in the
       // iteration callback registered with the optimizer. See
       // this->OptimizerIterateCallback

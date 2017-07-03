@@ -22,6 +22,7 @@
 #include "itkPSMContainerArrayAttribute.h"
 #include "itkPSMImageDomainWithGradients.h"
 #include <vector>
+#include "itkPSMImplicitSurfaceDomain.h"
 
 namespace itk
 {
@@ -115,19 +116,36 @@ public:
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
       domain. */
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
-                              double &) const;
+  //  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
+  //                              double &) const;
+
+  //  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
+  //                              double &, double &) const
+  //  {
+  //    itkExceptionMacro("This method not implemented");
+  //    return VectorType();
+  //  }
+  //  virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const
+  //  {
+  //    itkExceptionMacro("This method not implemented");
+  //    return 0.0;
+  //  }
 
   virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
-                              double &, double &) const
+                              double&, double & ) const;
+
+  inline virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystemType *c,
+                                     double& d) const
   {
-    itkExceptionMacro("This method not implemented");
-    return VectorType();
+      double e;
+      return this->Evaluate(a, b, c, d, e);
   }
-  virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const
+
+  inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType *c) const
   {
-    itkExceptionMacro("This method not implemented");
-    return 0.0;
+      double d, e;
+      this->Evaluate(a, b, c, d, e);
+      return e;
   }
 
   virtual void ResetBuffers()
