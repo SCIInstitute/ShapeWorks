@@ -5,3 +5,5 @@ msvc*
 bin*
 build-*/
 build*
+*build*
+*.user
