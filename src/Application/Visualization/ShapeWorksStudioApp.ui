@@ -437,7 +437,7 @@ QPushButton {
          <item>
           <widget class="QToolButton" name="glyphs_visible_button">
            <property name="toolTip">
-            <string>Show this slice in volume viewer</string>
+            <string>Show Glyphs</string>
            </property>
            <property name="icon">
             <iconset resource="../Resources/ShapeWorksStudio.qrc">
@@ -562,7 +562,7 @@ QPushButton {
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>21</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -618,16 +618,7 @@ QPushButton {
      <property name="spacing">
       <number>12</number>
      </property>
-     <property name="leftMargin">
-      <number>12</number>
-     </property>
-     <property name="topMargin">
-      <number>12</number>
-     </property>
-     <property name="rightMargin">
-      <number>12</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>12</number>
      </property>
      <item>
@@ -637,16 +628,7 @@ QPushButton {
        </property>
        <widget class="QWidget" name="import_page">
         <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
