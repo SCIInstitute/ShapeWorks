@@ -81,8 +81,11 @@ public:
 
     typename ImageType::PointType l0;
     m_Image->TransformIndexToPhysicalPoint(idx, l0);
+    for (unsigned int i = 0; i < VDimension; i++)
+        idx[i] += sz[i]-1;
+
     typename ImageType::PointType u0;
-    m_Image->TransformIndexToPhysicalPoint(idx + sz, u0);
+    m_Image->TransformIndexToPhysicalPoint(idx, u0);
 
     // Cast points to higher precision if needed.  Parent class uses doubles
     // because they are compared directly with points in the particle system,

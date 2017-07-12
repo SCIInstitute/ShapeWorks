@@ -149,7 +149,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         }
     }
 
-    std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
+    //std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
 
     m_MinimumEigenValue = symEigen.D(0, 0);
     m_CurrentEnergy = 0.0;
@@ -159,7 +159,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
             m_MinimumEigenValue = symEigen.D(i, i);
         m_CurrentEnergy += log(symEigen.D(i,i));
     }
-    m_CurrentEnergy /= num_samples;
+    m_CurrentEnergy /= 2;
 
     for (unsigned int i =0; i < num_samples; i++)
         std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
@@ -192,7 +192,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     for (unsigned int i = 0; i< VDimension; i++)
         gradE[i] = m_PointsUpdate(k + i, sampNum);
 
-    if (idx == 0 ) std::cout << "maxdt= " << maxdt << " idx = " << idx << "\t" << "GradE = " << gradE << std::endl;
+//    if (idx == 0 ) std::cout << "maxdt= " << maxdt << " idx = " << idx << "\t" << "GradE = " << gradE << std::endl;
     return system->TransformVector(gradE, system->GetInverseTransform(d));
 }
 

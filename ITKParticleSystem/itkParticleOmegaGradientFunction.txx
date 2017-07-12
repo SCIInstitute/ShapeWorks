@@ -470,12 +470,23 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
     //Praful - Oct 10, 2016
     if (maxmove > sqrt(planeDist))
         maxmove = sqrt(planeDist);
-
     //    }
+
+     //Praful - July 3, 2017 -- independent to maxmove
+    for ( unsigned int n = 0; n < VDimension; n++ )
+    {    gradE[n] /= m_avgKappa;    }
+
+    double gradNorm = gradE.magnitude();
+
+    if (gradNorm >= sqrt(planeDist))
+    {
+        for ( unsigned int n = 0; n < VDimension; n++ )
+        {    gradE[n] *= 0.95*sqrt(planeDist)/gradNorm;    }
+    }
 
     energy = ( A * sigma2inv ) / m_avgKappa;
 
-    return gradE / m_avgKappa;
+    return gradE;
 }
 } // end namespace
 #endif /* ifndef __itkParticleOmegaGradientFunction_txx */

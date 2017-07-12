@@ -83,7 +83,7 @@ ParticleEnsembleEntropyFunction<VDimension>
             points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - means(j);
         }
     }
-    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
+//    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
 
 #ifdef PARTICLE_DEBUG
     std::cout << "Shape Matrix : " << std::endl;
@@ -127,7 +127,7 @@ ParticleEnsembleEntropyFunction<VDimension>
         //    energy += log(symEigen.D(i,i));
         m_CurrentEnergy += log(symEigen.D(i,i));
     }
-    m_CurrentEnergy /= num_samples;
+    m_CurrentEnergy /= 2;
     //    energy = 0.5*log(symEigen.determinant());
 
     for (unsigned int i =0; i < num_samples; i++)

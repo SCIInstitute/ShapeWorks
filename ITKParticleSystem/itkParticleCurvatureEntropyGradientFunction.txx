@@ -317,6 +317,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   
   energy = (A * sigma2inv ) / m_avgKappa;
 
+
   return gradE / m_avgKappa;
 }
 
