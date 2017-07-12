@@ -62,7 +62,7 @@ ParticleEnsembleMeanFunction<VDimension>
 
  
 
-  energy = gradE.magnitude();
+  energy = gradE.squared_magnitude() * 0.5; //Praful fixed to squared_magnitude*0.5
   maxmove = domain->GetImage()->GetSpacing()[0];
   //  maxmove = energy * 0.5;
   

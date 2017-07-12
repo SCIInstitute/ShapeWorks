@@ -24,6 +24,7 @@
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
+#include "itkParticleMeshBasedGeneralMeanGradientFunction.h"
 
 namespace itk
 {
@@ -158,6 +159,8 @@ public:
     }
     else if (mode == 5)
         m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
+    else if (mode == 6)
+        m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralMeanGradientFunction);
     else
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
@@ -172,12 +175,14 @@ public:
   {
     m_GeneralEntropyGradientFunction->SetAttributeScales(s);
     m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
+    m_MeshBasedGeneralMeanGradientFunction->SetAttributeScales(s);
   }
 
   void SetAttributesPerDomain(const std::vector<int> &s)
   {
       this->Superclass::SetAttributesPerDomain(s);
       m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s);
+      m_MeshBasedGeneralMeanGradientFunction->SetAttributesPerDomain(s);
   }
 
   void AddAttributeImage(int d,
@@ -202,6 +207,8 @@ public:
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
   ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
+  ParticleMeshBasedGeneralMeanGradientFunction<Dimension> *GetMeshBasedGeneralMeanGradientFunction()
+  { return m_MeshBasedGeneralMeanGradientFunction.GetPointer(); }
   
   const ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
@@ -219,6 +226,8 @@ public:
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
   const ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction() const
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
+  const ParticleMeshBasedGeneralMeanGradientFunction<Dimension> *GetMeshBasedGeneralMeanGradientFunction() const
+  { return m_MeshBasedGeneralMeanGradientFunction.GetPointer(); }
   
   virtual void AllocateDataCaches();
 
@@ -231,6 +240,7 @@ public:
     m_EnsembleMeanFunction->SetDomainsPerShape(n);
     m_EnsembleNormalPenaltyFunction->SetDomainsPerShape(n);
     m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
+    m_MeshBasedGeneralMeanGradientFunction->SetDomainsPerShape(n);
   }
 
   void SetTimeptsPerIndividual(int n)
@@ -272,6 +282,7 @@ private:
   typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
   typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
   typename ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
+  typename ParticleMeshBasedGeneralMeanGradientFunction<Dimension>::Pointer m_MeshBasedGeneralMeanGradientFunction;
 };
 
 } // end namespace itk

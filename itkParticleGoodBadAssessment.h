@@ -32,16 +32,10 @@ public:
     typedef ParticleImageDomainWithGradients<TGradientNumericType, VDimension> DomainType;
     typedef typename DomainType::VnlVectorType NormalType;
 
+    typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
+
     /** Method for creation through the object factory. */
     itkNewMacro(Self)
-
-    /** Set/Get the target particle system. */
-    void SetParticleSystem(ParticleSystemType *p)
-    { m_ParticleSystem = p;  }
-    const ParticleSystemType *GetParticleSystem() const
-    { return m_ParticleSystem; }
-    ParticleSystemType *GetParticleSystem()
-    { return m_ParticleSystem; }
 
     /** Set/Get the number of Domains in each shape. */
     void SetDomainsPerShape(int i)
@@ -58,11 +52,10 @@ public:
     void SetPerformAssessment(bool b)
     { m_PerformAssessment = b; }
 
-    /** Performs good/bad points assessment and modifies the bad positions of the
-        particle system accordingly.  Assumes m_ParticleSystem has been set to
-        point to a valid object.*/
-    void RunAssessment();
-    vnl_matrix<double> computeParticlesNormals(int d);
+    /** Performs good/bad points assessment and reports the bad positions of the
+        particle system. */
+    std::vector<std::vector<int> > RunAssessment(const ParticleSystemType * m_ParticleSystem, MeanCurvatureCacheType * m_MeanCurvatureCache);
+    vnl_matrix<double> computeParticlesNormals(int d, const ParticleSystemType * m_ParticleSystem);
 
     struct IdxCompare
     {
@@ -79,11 +72,6 @@ public:
         for (int i = 0; i < v.size(); i++)
             index[i] = i;
         std::sort(index.begin(), index.end(), IdxCompare(v));
-
-//        std::sort(index.begin(), index.end(), [&](const int &a, const int &b){
-//            return (v[a] < v[b]);
-//            }
-//        );
         return index;
     }
 
@@ -99,7 +87,7 @@ private:
   double m_CriterionAngle;
   bool m_PerformAssessment;
   double epsilon; // m_Spacing from ShapeWorksRunApp
-  ParticleSystemType *m_ParticleSystem;
+
 
 };
 

@@ -148,7 +148,8 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
 
     for (unsigned int comp = 0; comp < VDimension; comp++)
     {
-        itImg = itImg.Begin();
+//        itImg = itImg.Begin();
+        itImg.GoToBegin();
         for (unsigned int o = 0; o < it.Size(); ++o, ++itImg)
         {
             imgDuplicator->GetOutput()->TransformIndexToPhysicalPoint(it.GetIndex(o),currPoint);
@@ -197,24 +198,6 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
                                    * system->GetInverseTransform(d));
 }
 
-// Praful
-//template <unsigned int VDimension>
-//void ParticleEnsembleNormalPenaltyFunction<VDimension>::CartesianToSpherical(VectorType cart, VectorType &spher) const
-//{
-//    spher.fill(0.0);
-//    spher[0] = cart.magnitude();
-//    spher[1] = std::acos(cart[2]/spher[0]);
-//    spher[2] = std::atan2(cart[1], cart[0]);
-//}
-
-//template <unsigned int VDimension>
-//void ParticleEnsembleNormalPenaltyFunction<VDimension>::SphericalToCartesian(VectorType spher, VectorType &cart) const
-//{
-//    cart.fill(0.0);
-//    cart[0] = spher[0]*std::sin(spher[1])*std::cos(spher[2]);
-//    cart[1] = spher[0]*std::sin(spher[1])*std::sin(spher[2]);
-//    cart[2] = spher[0]*std::cos(spher[1]);
-//}
 
 /* PRATEEP */
 // f(x) = (1-x)^2 / (1+x)^2

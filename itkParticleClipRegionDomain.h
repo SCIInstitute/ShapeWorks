@@ -59,12 +59,12 @@ public:
       {
       if ( p[i] < this->GetLowerBound()[i] )
         {
-        p[i] = this->GetLowerBound()[i] + 1.0;
+        p[i] = this->GetLowerBound()[i];
         flag = true;
         }
       else if ( p[i] >= this->GetUpperBound()[i])
         {
-        p[i] = this->GetUpperBound()[i] - 1.0;
+        p[i] = this->GetUpperBound()[i];
         flag = true;
         }
       }

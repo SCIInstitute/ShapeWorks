@@ -64,6 +64,8 @@ public:
     /** Expose the image dimension. */
     itkStaticConstMacro(Dimension, unsigned int, TImage::ImageDimension);
 
+    typedef ParticleMeanCurvatureAttribute<typename TImage::PixelType, Dimension>  MeanCurvatureCacheType;
+
     /** Convenient typedef for storing cutting plane information */
     struct CuttingPlaneType
     {
@@ -332,6 +334,9 @@ public:
     int GetPairwisePotentialType()
     {return m_pairwise_potential_type;}
 
+    MeanCurvatureCacheType *GetMeanCurvatureCache()
+    {   return  m_MeanCurvatureCache.GetPointer();  }
+
     void ReadTransforms();
     void ReadPointsFiles();
     virtual void AllocateDataCaches();
@@ -390,8 +395,7 @@ protected:
     typename ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
     typename ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
 
-    typename ParticleMeanCurvatureAttribute<typename ImageType::PixelType, Dimension>
-    ::Pointer m_MeanCurvatureCache;
+    typename MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
     typename ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 

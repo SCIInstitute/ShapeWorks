@@ -175,6 +175,29 @@ public:
         return ansA;
     }
 
+    virtual double EnergyA(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
+    {
+        m_FunctionA->BeforeEvaluate(idx, d, system);
+        double ansA = 0.0;
+        if (m_AOn == true)
+        {
+            ansA = m_FunctionA->Energy(idx, d, system);
+        }
+        return ansA;
+    }
+
+    virtual double EnergyB(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
+    {
+        m_FunctionB->BeforeEvaluate(idx, d, system);
+        double ansB = 0.0;
+        if (m_BOn == true)
+        {
+            ansB = m_FunctionB->Energy(idx, d, system);
+        }
+        ansB *= m_RelativeEnergyScaling;
+        return ansB;
+    }
+
     virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
     {
         double ansA = 0.0;
