@@ -9,7 +9,7 @@
 #SET(RUN_NAME ShapeWorksRun3)
 #SET(RUN_NAME ShapeWorksRun3.2) #fea meshes + normal penalty new code + bug fixes
 #SET(RUN_NAME ShapeWorksRun3.5) #different number of particles per domain, different number of attributes per domain
-SET(RUN_NAME ShapeWorksRun4)    # replace bad particles during optimization
+SET(RUN_NAME ShapeWorksRun4_debug)    # replace bad particles during optimization
 
 ADD_EXECUTABLE(${RUN_NAME} ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
 #TARGET_LINK_LIBRARIES(ShapeWorksRun ITKParticleSystem Utilities ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml)
