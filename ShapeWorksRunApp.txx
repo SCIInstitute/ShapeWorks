@@ -50,9 +50,8 @@ template <class SAMPLERTYPE>
 ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
 {
     // Initialize some member variables
-    m_cotan_sigma_factor = 1.0;
-    m_init_criterion = 1e-10;
-    m_opt_criterion = 1e-10;
+    m_cotan_sigma_factor = 5.0;
+
     m_CheckpointCounter = 0;
     m_ProcrustesCounter = 0;
     m_SaturationCounter = 0;
@@ -1368,9 +1367,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "optimizer_type" ).Element();
         if (elem) this->m_optimizer_type = atoi(elem->GetText());
 
+        m_init_criterion = 1e-6;
         elem = docHandle.FirstChild( "init_criterion" ).Element();
         if (elem) this->m_init_criterion = atof(elem->GetText());
 
+        m_opt_criterion = 1e-6;
         elem = docHandle.FirstChild( "opt_criterion" ).Element();
         if (elem) this->m_opt_criterion = atof(elem->GetText());
 
@@ -1750,12 +1751,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             this->SetCotanSigma();
 
         double minRad = 3.0*this->GetMinNeighborhoodRadius();
-        m_Sampler->GetGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-        m_Sampler->GetQualifierGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-        m_Sampler->GetCurvatureGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+
         m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
         m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-        m_Sampler->GetOmegaGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
 
         m_SaturationCounter = 0;
         m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
@@ -1900,12 +1898,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
         this->SetCotanSigma();
 
     double minRad = 3.0*this->GetMinNeighborhoodRadius();
-    m_Sampler->GetGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetQualifierGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetCurvatureGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+
     m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
     m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetOmegaGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+
 
     m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
     m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
@@ -1950,12 +1946,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
         this->SetCotanSigma();
 
     double minRad = 3.0*this->GetMinNeighborhoodRadius();
-    m_Sampler->GetGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetQualifierGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetCurvatureGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+
     m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
     m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetOmegaGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
 
     m_disable_checkpointing = false;
     m_disable_procrustes = false;
