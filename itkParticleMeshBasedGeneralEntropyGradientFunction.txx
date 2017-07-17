@@ -54,7 +54,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
             for (unsigned int p = 0; p < this->m_ParticleSystem->GetNumberOfParticles(dom); p++)
             {
-                PointType pt_ps = this->m_ParticleSystem->GetTransformedPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -127,7 +127,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 v.clear();
                 v.set_size(m_AttributesPerDomain[d]);
                 v.fill(0.0);
-                PointType pt_ps = this->m_ParticleSystem->GetTransformedPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -193,7 +193,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         gradE[i] = m_PointsUpdate(k + i, sampNum);
 
 //    if (idx == 0 ) std::cout << "maxdt= " << maxdt << " idx = " << idx << "\t" << "GradE = " << gradE << std::endl;
-    return system->TransformVector(gradE, system->GetInverseTransform(d));
+    return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
 }
 
 } // end namespace
