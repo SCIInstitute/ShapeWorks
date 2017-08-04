@@ -76,12 +76,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         {
             // resize and initialize everything to 1.0
             m_TimeSteps[i].resize(np);
-            for (unsigned int j = 0; j < np; j++)
-            {
-                m_TimeSteps[i][j] = 1.0;
-            }
-            reset = true;
         }
+        for (unsigned int j = 0; j < np; j++)
+        {
+            m_TimeSteps[i][j] = 1.0;
+        }
+        reset = true;
     }
 
     //  if (reset == true) m_GradientFunction->ResetBuffers();
