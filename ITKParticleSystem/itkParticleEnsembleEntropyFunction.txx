@@ -54,7 +54,7 @@ ParticleEnsembleEntropyFunction<VDimension>
     if (m_PointsUpdate.rows() != num_dims || m_PointsUpdate.cols() != num_samples)
     {
         m_PointsUpdate.set_size(num_dims, num_samples);
-        m_PointsUpdate.clear();
+        m_PointsUpdate = m_PointsUpdate.fill(0.0);
     }
 
     vnl_matrix_type points_minus_mean(num_dims, num_samples, 0.0);
@@ -83,7 +83,7 @@ ParticleEnsembleEntropyFunction<VDimension>
             points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - means(j);
         }
     }
-    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
+//    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
 
 #ifdef PARTICLE_DEBUG
     std::cout << "Shape Matrix : " << std::endl;

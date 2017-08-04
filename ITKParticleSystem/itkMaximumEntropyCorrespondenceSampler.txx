@@ -35,6 +35,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
   m_FunctionShapeData = ParticleFunctionBasedShapeSpaceData<float, Dimension>::New();
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+  m_EnsembleMeanFunction->SetShapeMatrix(m_ShapeMatrix);
   
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
     //  m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
@@ -73,7 +74,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
     m_LinkingFunction->SetAOn();
     m_LinkingFunction->SetBOn();
-    m_LinkingFunction->SetCOn();
+    m_LinkingFunction->SetCOff();
 
     this->AllocateDomainsAndNeighborhoods();
 

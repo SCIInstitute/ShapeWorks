@@ -377,19 +377,31 @@ public:
       indices will silently fail. For simplicity, only one list of indices is      
       maintained for all dimensions.  If particle index n is flagged, for
       example, then particle index n in all domains is fixed.*/
-  void SetFixedParticleFlag(unsigned int i)
-  { if (i < m_FixedParticleFlags.size())  m_FixedParticleFlags[i] = true;  }
-  void ResetFixedParticleFlag(unsigned int i)
-  { if (i < m_FixedParticleFlags.size()) m_FixedParticleFlags[i] = false;}
-  bool GetFixedParticleFlag(unsigned int i) const
+  void SetFixedParticleFlag(unsigned int d, unsigned int i)
+  { //if (i < m_FixedParticleFlags[d].size())
+          m_FixedParticleFlags[d][i] = true;  }
+  void ResetFixedParticleFlag(unsigned int d, unsigned int i)
+  { //if (i < m_FixedParticleFlags[d].size())
+          m_FixedParticleFlags[i] = false;}
+  bool GetFixedParticleFlag(unsigned int d, unsigned int i) const
   {
-    if (i < m_FixedParticleFlags.size()) return m_FixedParticleFlags[i];
-    else return false;
+      return m_FixedParticleFlags[d][i];
+    //if (i < m_FixedParticleFlags[d].size()) return m_FixedParticleFlags[d][i];
+    //else return false;
   }
   void ResetFixedParticleFlags()
   {
-    for (unsigned int i = 0; i < m_FixedParticleFlags.size(); i++)
-      { m_FixedParticleFlags[i] = false; }
+      for (unsigned d = 0; d < m_FixedParticleFlags.size(); d++)
+      {
+          for (unsigned int i = 0; i < m_FixedParticleFlags[d].size(); i++)
+              m_FixedParticleFlags[d][i] = false;
+      }
+  }
+
+  void SetDomainsPerShape(unsigned int num)
+  {
+       m_DomainsPerShape = num;
+       m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
   
 protected:
@@ -460,6 +472,9 @@ private:
   /** The set of particle domain definitions. */
   std::vector< typename DomainType::Pointer > m_Domains;
 
+  /** Set number of domains per shape -- Praful */
+  unsigned int m_DomainsPerShape;
+
   /** The set of domain neighborhood objects. */
   std::vector< typename NeighborhoodType::Pointer > m_Neighborhoods;
                
@@ -486,7 +501,7 @@ private:
 
   /** An array that indicates which particle indices (in any domain) will
       not respond to SetPosition. */
-  std::vector<bool> m_FixedParticleFlags;
+  std::vector< std::vector<bool> > m_FixedParticleFlags;
 };
 
 } // end namespace itk

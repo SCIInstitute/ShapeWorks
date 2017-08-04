@@ -76,6 +76,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_Sampler->SetDomainsPerShape(m_domains_per_shape); // must be done first!
     m_Sampler->SetTimeptsPerIndividual(m_timepts_per_subject);
 
+    m_Sampler->GetParticleSystem()->SetDomainsPerShape(m_domains_per_shape);
+
     // Set up the procrustes registration object.
     m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
     m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
@@ -1316,6 +1318,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
     /* PRATEEP */
     m_Sampler->SetCorrespondenceOn();
     if (this->m_use_initial_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+    else m_Sampler->SetNormalEnergyOff();
     m_Sampler->SetAdaptivityMode(m_adaptivity_mode);
     m_Sampler->GetEnsembleEntropyFunction()
             ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
@@ -1359,12 +1362,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         m_Procrustes->SetComputeTransformationOff();
     }
 
+    m_Sampler->GetParticleSystem()->SynchronizePositions();
+
     m_Sampler->GetCurvatureGradientFunction()->SetRho(0.0);
     m_Sampler->GetOmegaGradientFunction()->SetRho(0.0);
     //    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 32) {
     m_Sampler->SetCorrespondenceOn();
     //    }
     if (this->m_use_initial_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+    else m_Sampler->SetNormalEnergyOff();
 
     // PRATEEP
     m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
@@ -1418,6 +1424,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 1)
     {
         this->AddSinglePoint();
+        m_Sampler->GetParticleSystem()->SynchronizePositions();
     }
 
     // SHIREEN
@@ -1455,6 +1462,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
                 m_Sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
         }
+        m_Sampler->GetParticleSystem()->SynchronizePositions();
 
         std::cout << std::endl << "Particle count: ";
         for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
@@ -1518,7 +1526,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         {
             int d = i % m_domains_per_shape;
             if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
+            {
                 flag_split = true;
+                break;
+            }
         }
     }
 
@@ -1714,6 +1725,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     /* PRATEEP */
     m_Sampler->SetCorrespondenceOn();
     if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
+    else m_Sampler->SetNormalEnergyOff();
     
     if (m_attributes_per_domain.size() > 0)
     {
@@ -1963,7 +1975,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
         std::vector<int> f;
         int ftmp;
 
-        // set up fixed landmark positions
+        // set up fixed landmark positions // domain_index particle_index
 
         elem = docHandle.FirstChild( "fixed_landmarks" ).Element();
         if (elem)
@@ -1976,9 +1988,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
             inputsBuffer.clear();
             inputsBuffer.str("");
 
-            for (unsigned int i = 0; i < f.size(); i++)
+            for (unsigned int i = 0; i < f.size()/2; i++)
             {
-                m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f[i]);
+                m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f[2*i], f[2*i + 1]);
             }
         }
 

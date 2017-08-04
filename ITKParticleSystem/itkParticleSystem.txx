@@ -149,9 +149,9 @@ ParticleSystem<VDimension>::AddPosition( const PointType &p, unsigned int d, int
                                    m_IndexCounters[d], threadId);
 
   // Increase the FixedParticleFlag list size if necessary.
-  if (m_IndexCounters[0] >= m_FixedParticleFlags.size())
+  if (m_IndexCounters[d] >= m_FixedParticleFlags[d % m_DomainsPerShape].size())
     {
-    m_FixedParticleFlags.push_back(false);
+        m_FixedParticleFlags[d % m_DomainsPerShape].push_back(false);
     }
 
 
@@ -171,7 +171,7 @@ const typename ParticleSystem<VDimension>::PointType &
 ParticleSystem<VDimension>::SetPosition(const PointType &p,  unsigned long int k,
                                         unsigned int d,  int threadId)
 {
-  if (m_FixedParticleFlags[k] == false)
+  if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false)
     {
   
     m_Positions[d]->operator[](k) = p;
