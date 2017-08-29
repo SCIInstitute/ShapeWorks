@@ -1,9 +1,9 @@
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
   Module:    $RCSfile: itkParticleModifiedCotangentEntropyGradientFunction.h,v $
-  Date:      $Date: 2014/05/01 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: shireen $
+  Date:      $Date: 2017/06/26 $
+  Version:   $Revision: 4 $
+  Author:    $Author: Praful $
 
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
@@ -26,7 +26,6 @@
 #include <math.h>
 #include "itkMath.h"
 
-#define NBHD_SIGMA_FACTOR 1.3
 // end PRATEEP
 
 namespace itk
@@ -44,8 +43,8 @@ namespace itk
  * This function depend on modified cotangent potential as defined in Meyer's thesis
  * rather than Gaussian potential (Cates's thesis).
  *
- * Modified potential only depend on a global sigma which defined the neighborhood of each particle
- * compared to a sigma per particle in case of Gaussian potential.
+ * Modified potential only depend on a global sigma based on target number of particles in the domain
+ *
  *
  */
 template <class TGradientNumericType, unsigned int VDimension>
@@ -89,7 +88,7 @@ public:
     virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
                                 double&, double & ) const;
 
-    virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType *);
+    virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType *) {}
 
     inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType *c) const
     {
@@ -105,82 +104,58 @@ public:
 
     virtual void BeforeIteration()
     {
-        // compute the global sigma for the whole particle system using its current status (particles position)
-        if(m_RunStatus == 1 ) // initialization
-        {
-            // allow sigma to change during initialization only when particles are increased
-            double oldSigma = m_GlobalSigma;
-            this->EstimateGlobalSigma(this->GetParticleSystem());
-
-            if(m_GlobalSigma >= 0.0) // make sure that we update the global sigma at the beginning (in the constructor, it is -1)
-            {
-                if ( (abs(oldSigma - m_GlobalSigma)/m_GlobalSigma) < 0.1)
-                {
-                    // not that much change, probably same number of particles, don't change the global sigma
-                    m_GlobalSigma = oldSigma;
-                }
-            }
-        }
-        else // optimization
-        {
-            if(m_GlobalSigma < 0.0) // only compute sigma once during optimization
-                this->EstimateGlobalSigma(this->GetParticleSystem());
-
-        }
-
-        std::cout << "m_GlobalSigma: " << m_GlobalSigma << std::endl;
+       // not needed -- Praful
     }
 
-    /** Estimate the best sigma for Parzen windowing.
-     * This is almost twice the average distance to the nearest 6 neigbhors (hexagonal packing) */
-    void EstimateGlobalSigma(const ParticleSystemType * system);
-
-
-    inline double ComputeModifiedCotangent(double rij)const
+    inline double ComputeModifiedCotangent(double rij, unsigned int d)const
     {
-        if (rij > m_GlobalSigma)
+        if (rij > m_GlobalSigma[d])
             return 0.0;
 
         const double epsilon = 1.0e-6;
-
-        double r     = itk::Math::pi_over_2 * rij/(m_GlobalSigma + epsilon) ;
-        double cotan = cos(r)/(sin(r) + epsilon);
+        rij += epsilon;
+        double r     = itk::Math::pi_over_2 * rij/m_GlobalSigma[d] ;
+        double cotan = cos(r)/sin(r);
         double val   = cotan + r - itk::Math::pi_over_2;
+        double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
+        A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
+        val /= A;
         return val;
     }
 
-    inline double ComputeModifiedCotangentDerivative(double rij)const
+    inline double ComputeModifiedCotangentDerivative(double rij, unsigned int d)const
     {
-        if (rij > m_GlobalSigma)
+        if (rij > m_GlobalSigma[d])
             return 0.0;
 
         const double epsilon = 1.0e-6;
+        rij += epsilon;
+        double r     = itk::Math::pi_over_2 * rij/m_GlobalSigma[d] ;
+        double sin_2 = 1.0 / pow(sin(r),2.0);
+        double val   = (itk::Math::pi_over_2 / m_GlobalSigma[d]) * (1.0 - sin_2);
 
-        double r = itk::Math::pi_over_2 * rij/(m_GlobalSigma + epsilon) ;
+        double A     = -1.0 *itk::Math::pi_over_4 * m_GlobalSigma[d] - itk::Math::pi_over_4 * std::pow(epsilon, 2) / m_GlobalSigma[d] + itk::Math::pi_over_2 * epsilon;
+        A -= (m_GlobalSigma[d]/itk::Math::pi_over_2) * std::log( std::sin(epsilon * itk::Math::pi_over_2 / m_GlobalSigma[d]) );
 
-        double sin_2 = 1.0 / ( pow(sin(r),2.0) + epsilon);
-        double val   = -1.0 * (itk::Math::pi_over_2 * (1.0 / (m_GlobalSigma+epsilon) ) ) * (1 - sin_2);
+        val /= A;
         return val;
     }
 
-    void SetDomainsPerShape(int i)
-    { m_DomainsPerShape = i; }
-    int GetDomainsPerShape() const
-    { return m_DomainsPerShape; }
+    void ClearGlobalSigma()
+    {
+        m_GlobalSigma.clear();
+    }
 
-    // set/get run status : 1 for initialization and 2 for optimization
-    void SetRunStatus(int i)
-    { m_RunStatus = i; }
-    int GetRunStatus() const
-    { return m_RunStatus; }
+    void SetGlobalSigma(std::vector<double> i)
+    { m_GlobalSigma = i; }
+
+    void SetGlobalSigma(double i)
+    { m_GlobalSigma.push_back(i); }
 
     virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
     {
         typename ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer copy = ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::New();
         copy->SetParticleSystem(this->GetParticleSystem());
-        copy->m_Counter = this->m_Counter;
-        copy->m_CurrentWeights = this->m_CurrentWeights;
-        copy->m_CurrentNeighborhood = this->m_CurrentNeighborhood;
         copy->m_GlobalSigma = this->m_GlobalSigma;
 
         copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
@@ -191,34 +166,16 @@ public:
         copy->m_DomainNumber = this->m_DomainNumber;
         copy->m_ParticleSystem = this->m_ParticleSystem;
 
-        copy->m_DomainsPerShape    = this->m_DomainsPerShape;
-        copy->m_diagnostics_prefix = this->m_diagnostics_prefix;
-        copy->m_RunStatus          = this->m_RunStatus;
-
         return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
     }
 
 protected:
-    ParticleModifiedCotangentEntropyGradientFunction() :  m_Counter(0), m_DomainsPerShape(1), m_GlobalSigma(-1.0) {}
+    ParticleModifiedCotangentEntropyGradientFunction() {}
     virtual ~ParticleModifiedCotangentEntropyGradientFunction() {}
     void operator=(const ParticleModifiedCotangentEntropyGradientFunction &);
     ParticleModifiedCotangentEntropyGradientFunction(const ParticleModifiedCotangentEntropyGradientFunction &);
 
-    unsigned int m_Counter;
-
-    //double m_CurrentSigma;
-    typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
-
-    std::vector<double> m_CurrentWeights;
-
-    std::string m_diagnostics_prefix;
-    int m_DomainsPerShape;
-    int m_RunStatus; // 1 for initialization and 2 for optimization
-
-    double m_GlobalSigma;
-    // Praful -- SHIREEN
-      float m_MaxMoveFactor;
-      // end Praful -- SHIREEN
+    std::vector<double> m_GlobalSigma;
 };
 
 } //end namespace

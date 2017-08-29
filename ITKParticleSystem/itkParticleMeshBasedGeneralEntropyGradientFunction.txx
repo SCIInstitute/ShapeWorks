@@ -54,7 +54,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
             for (unsigned int p = 0; p < this->m_ParticleSystem->GetNumberOfParticles(dom); p++)
             {
-                PointType pt_ps = this->m_ParticleSystem->GetTransformedPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -127,7 +127,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 v.clear();
                 v.set_size(m_AttributesPerDomain[d]);
                 v.fill(0.0);
-                PointType pt_ps = this->m_ParticleSystem->GetTransformedPosition(p, dom);
+                PointType pt_ps = this->m_ParticleSystem->GetPosition(p, dom);
                 point pt;
                 pt.clear();
                 pt[0] = pt_ps[0];
@@ -149,7 +149,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         }
     }
 
-    std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
+    //std::cout << m_PointsUpdate.extract(6, num_samples,0,0) << std::endl;
 
     m_MinimumEigenValue = symEigen.D(0, 0);
     m_CurrentEnergy = 0.0;
@@ -159,7 +159,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
             m_MinimumEigenValue = symEigen.D(i, i);
         m_CurrentEnergy += log(symEigen.D(i,i));
     }
-    m_CurrentEnergy /= num_samples;
+    m_CurrentEnergy /= 2;
 
     for (unsigned int i =0; i < num_samples; i++)
         std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
@@ -192,8 +192,8 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     for (unsigned int i = 0; i< VDimension; i++)
         gradE[i] = m_PointsUpdate(k + i, sampNum);
 
-    if (idx == 0 ) std::cout << "maxdt= " << maxdt << " idx = " << idx << "\t" << "GradE = " << gradE << std::endl;
-    return system->TransformVector(gradE, system->GetInverseTransform(d));
+//    if (idx == 0 ) std::cout << "maxdt= " << maxdt << " idx = " << idx << "\t" << "GradE = " << gradE << std::endl;
+    return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
 }
 
 } // end namespace

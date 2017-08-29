@@ -175,11 +175,13 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
                             dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))
                                     ->ApplyVectorConstraints(gradient,
-                                                             m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
+                                                             m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt); //No impact disabled code found--Praful, June 15, 2017
                             gradmag = gradient.magnitude();
 
                             // Prevent a move which is too large
-                            if (gradmag * m_TimeSteps[dom][k] > maxdt)
+//                            if (gradmag * m_TimeSteps[dom][k] > maxdt) // double multiplication of timestep -- Praful, June 15, 2017
+
+                            if (gradmag > maxdt)
                             {
                                 m_TimeSteps[dom][k] /= factor;
                             }
@@ -195,6 +197,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
                                 if (newenergy < energy) // good move, increase timestep for next time
                                 {
+//                                    std::cout<<"dom = " << dom << "iter = " << counter <<std::endl;
                                     meantime[dom] += m_TimeSteps[dom][k];
                                     m_TimeSteps[dom][k] *= factor;
                                     if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
@@ -227,7 +230,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                                         //std::cout << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << newpoint[0] << ", " << newpoint[1] << ", " <<  newpoint[2] << ", " << old_new_dist << ",\n " << std::flush;
                                     }
                                 }
-                            }
+                            } //gradmag check
                         } // end while not done
 
                         if (m_debug_projection)
@@ -245,7 +248,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                     meantime[dom] /= static_cast<double>(k);
 
                     if (meantime[dom] < 1.0) meantime[dom] = 1.0;
-                    //        std::cout << "meantime = " << meantime[dom] << std::endl;
+//                    //        std::cout << "meantime = " << meantime[dom] << std::endl;
                     maxtime[dom] = meantime[dom] + meantime[dom] * 0.2;
                     mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
                 } // if not flagged
@@ -256,12 +259,15 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         m_GradientFunction->AfterIteration();
         this->InvokeEvent(itk::IterationEvent());
 
+        std::cout << m_NumberOfIterations << ".";
+        std::cout.flush();
         // Check for convergence.  Optimization is considered to have converged if
         // max number of iterations is reached or maximum distance moved by any
         // particle is less than the specified precision.
         //    std::cout << "maxchange = " << maxchange << std::endl;
+
         if ((m_NumberOfIterations == m_MaximumNumberOfIterations)
-                || (m_Tolerance > 0.0 &&  maxchange <  m_Tolerance) )
+                || (m_Tolerance > 0.0 &&  maxchange <  m_Tolerance))
         {
             m_StopOptimization = true;
         }
@@ -446,6 +452,8 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         {
             m_StopOptimization = true;
         }
+        std::cout << m_NumberOfIterations << " ";
+        std::cout.flush();
 
     } // end while
 

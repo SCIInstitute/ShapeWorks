@@ -8,8 +8,8 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #ifndef __itkParticleEnsembleMeanFunction_h
@@ -61,7 +61,7 @@ public:
   virtual VectorType Evaluate(unsigned int a, unsigned int b,
                               const ParticleSystemType *c, double &d, double &e) const;
 
-  virtual VectorType Evaluate(unsigned int a,  unsigned int b, 
+  virtual VectorType Evaluate(unsigned int a,  unsigned int b,
                               const ParticleSystemType *c, double &d) const
   {
     double e;
@@ -103,7 +103,7 @@ public:
   { m_DomainsPerShape = i; }
   int GetDomainsPerShape() const
   { return m_DomainsPerShape; }
-  
+
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
     typename ParticleEnsembleMeanFunction<VDimension>::Pointer copy = ParticleEnsembleMeanFunction<VDimension>::New();
@@ -132,7 +132,7 @@ protected:
   vnl_matrix_type m_PointsUpdate;
 
   int m_DomainsPerShape;
-  
+
 };
 
 
