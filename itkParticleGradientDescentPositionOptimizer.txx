@@ -50,7 +50,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartAdaptiveGaussSeidelOptimization()
 {
     std::cout << "Starting Adaptive Gauss Seidel Optimization ..... \n" << std::flush;
-    const double factor = 5;//1.1;
+    const double factor = 1.1;//1.1;
     //  const double epsilon = 1.0e-4;
 
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
@@ -76,17 +76,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         {
             // resize and initialize everything to 1.0
             m_TimeSteps[i].resize(np);
-            for (unsigned int j = 0; j < np; j++)
-            {
-                m_TimeSteps[i][j] = 1.0;
-            }
-            reset = true;
         }
-        else
+        for (unsigned int j = 0; j < np; j++)
         {
-            for (unsigned int j = 0; j < np; j++)
-                m_TimeSteps[i][j] = 1.0;
+            m_TimeSteps[i][j] = 1.0;
         }
+        reset = true;
     }
 
     //  if (reset == true) m_GradientFunction->ResetBuffers();
@@ -103,7 +98,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     {
         meantime[q] = 0.0;
         maxtime[q]  = 1.0e30;
-        mintime[q]  = 1.0e-5;
+        mintime[q]  = 1.0;
     }
 
     double maxchange = 0.0;
@@ -186,12 +181,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                             // Prevent a move which is too large
 //                            if (gradmag * m_TimeSteps[dom][k] > maxdt) // double multiplication of timestep -- Praful, June 15, 2017
 
-//                            if (gradmag > maxdt)
-//                            {
-//                                m_TimeSteps[dom][k] /= factor;
-//                            }
-//                            else // Move is not too large
-//                            {
+                            if (gradmag > maxdt)
+                            {
+                                m_TimeSteps[dom][k] /= factor;
+                            }
+                            else // Move is not too large
+                            {
                                 // Make a move and compute new energy
                                 for (unsigned int i = 0; i < VDimension; i++)
                                 {  newpoint[i] = pt[i] - gradient[i]; }
@@ -235,7 +230,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                                         //std::cout << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << newpoint[0] << ", " << newpoint[1] << ", " <<  newpoint[2] << ", " << old_new_dist << ",\n " << std::flush;
                                     }
                                 }
-//                            } //gradmag check
+                            } //gradmag check
                         } // end while not done
 
                         if (m_debug_projection)
@@ -250,12 +245,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                     } // for each particle
 
                     // Compute mean time step
-//                    meantime[dom] /= static_cast<double>(k);
+                    meantime[dom] /= static_cast<double>(k);
 
-//                    if (meantime[dom] < 1.0) meantime[dom] = 1.0;
+                    if (meantime[dom] < 1.0) meantime[dom] = 1.0;
 //                    //        std::cout << "meantime = " << meantime[dom] << std::endl;
-//                    maxtime[dom] = meantime[dom] + meantime[dom] * 0.2;
-//                    mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
+                    maxtime[dom] = meantime[dom] + meantime[dom] * 0.2;
+                    mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
                 } // if not flagged
             }// for each domain
         }
