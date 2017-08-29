@@ -148,7 +148,6 @@ ParticleEnsembleNormalPenaltyFunction<VDimension>
 
     for (unsigned int comp = 0; comp < VDimension; comp++)
     {
-//        itImg = itImg.Begin();
         itImg.GoToBegin();
         for (unsigned int o = 0; o < it.Size(); ++o, ++itImg)
         {
