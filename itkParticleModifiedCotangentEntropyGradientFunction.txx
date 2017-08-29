@@ -1,9 +1,9 @@
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
   Module:    $RCSfile: itkParticleModifiedCotangentEntropyGradientFunction.txx,v $
-  Date:      $Date: 2014/05/01 01:17:33 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: shireen $
+  Date:      $Date: 2017/06/26 $
+  Version:   $Revision: 4 $
+  Author:    $Author: Praful $
 
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
@@ -18,176 +18,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
 
-#include "vtkSmartPointer.h"
-#include "vtkPointData.h"
-#include "vtkPolyData.h"
-
-#include "vtkIdList.h"
-#include "vtkKdTreePointLocator.h"
-#include "vtkKdTree.h"
-
 namespace itk {
-
-template <class TGradientNumericType, unsigned int VDimension>
-void
-ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
-::EstimateGlobalSigma(const ParticleSystemType * system)
-{
-    //m_GlobalSigma = 1.0;
-    //m_GlobalSigma = 10.0;
-    //return ;
-
-    const double epsilon = 1.0e-6;
-    const int K = 6; // hexagonal ring - one jump
-
-    const unsigned int num_samples   = system->GetNumberOfDomains(); // num_shapes * domains_per_shape
-    const unsigned int num_particles = system->GetNumberOfParticles();
-    const unsigned int num_shapes    = num_samples / m_DomainsPerShape;
-
-    /* PRATEEP */
-    // use fixed sigma
-    if (num_particles < 7)
-    {
-        m_GlobalSigma = this->GetMaximumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
-//        m_GlobalSigma = this->GetMaximumNeighborhoodRadius(); // / this->GetNeighborhoodToSigmaRatio();
-        return;
-    }
-
-    double avgDist = 0.0;
-    for (unsigned int domainInShape = 0; domainInShape < m_DomainsPerShape; domainInShape++)
-    {
-        for (unsigned int shapeNo = 0; shapeNo < num_shapes; shapeNo++)
-        {
-            // linear index of the current domain in the particle system
-            int dom = shapeNo * m_DomainsPerShape + domainInShape;
-
-            // get the particle of the current shape sample
-            vtkSmartPointer< vtkPoints > points = vtkSmartPointer< vtkPoints >::New();
-            for (unsigned int idx = 0; idx < num_particles ; idx++)
-            {
-                // get the current particle
-                PointType pos              = system->GetPosition(idx, dom);
-                points->InsertNextPoint(pos[0], pos[1], pos[2]);
-
-            }
-
-            vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-            polydata->SetPoints(points);
-
-            // Create the kdtree for the current set of particles
-            vtkSmartPointer<vtkKdTreePointLocator> kDTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
-            kDTree->SetDataSet(polydata);
-            kDTree->BuildLocator();
-
-            // Find the closest points to each particle
-            for (unsigned int idx = 0; idx < num_particles ; idx++)
-            {
-                double p[3];
-                points->GetPoint(idx, p);
-
-                vtkSmartPointer<vtkIdList> result = vtkSmartPointer<vtkIdList>::New();
-                kDTree->FindClosestNPoints( K+1, p, result ); // +1 to exclude myself
-
-                double meanDist = 0;
-                for(vtkIdType k = 0; k < K+1; k++)
-                {
-                    vtkIdType pid = result->GetId(k);
-
-                    if (pid == idx) // close to myself
-                        continue;
-
-                    double pk[3];
-                    points->GetPoint(pid, pk);
-
-                    double curDist = sqrt(pow(p[0]-pk[0],2.0) + pow(p[1]-pk[1],2.0) + pow(p[2]-pk[2],2.0));
-
-                    meanDist += curDist;
-                }
-                meanDist /= K;
-
-                avgDist+= meanDist;
-            }
-        }
-    }
-
-    avgDist /= (num_particles * num_shapes * m_DomainsPerShape);
-
-    m_GlobalSigma = avgDist / 0.57; // based on hexagonal packing, sigma is the distance to the second ring
-    //m_GlobalSigma = avgDist ; // based on hexagonal packing, sigma is the distance to the second ring
-
-    if (m_GlobalSigma < epsilon)
-    {
-        m_GlobalSigma = this->GetMinimumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
-    }
-}
-
-template <class TGradientNumericType, unsigned int VDimension>
-void
-ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
-::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
-{
-    // Praful -- SHIREEN
-        m_MaxMoveFactor = 0.001;
-//        std::cout<<"-------------------"<<std::endl;
-//        std::cout<<"maxmovefactor = "<<m_MaxMoveFactor<<std::endl;
-//        std::cout<<"-------------------"<<std::endl;
-        // END Praful -- SHIREEN
-
-    // Get the position for which we are computing the gradient.
-    PointType pos = system->GetPosition(idx, d);
-
-    // Determine the extent of the neighborhood that will be used in the Parzen
-    // windowing estimation.
-    //double neighborhood_radius = m_GlobalSigma * 1.3 * this->GetNeighborhoodToSigmaRatio();
-    //double neighborhood_radius = m_GlobalSigma * 10 * this->GetNeighborhoodToSigmaRatio();
-    double neighborhood_radius = m_GlobalSigma * NBHD_SIGMA_FACTOR * this->GetNeighborhoodToSigmaRatio();
-
-    if (neighborhood_radius > this->GetMaximumNeighborhoodRadius())
-    {
-        neighborhood_radius = this->GetMaximumNeighborhoodRadius();
-    }
-
-    // Get the neighborhood surrounding the point "pos".
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
-
-    // didn't work, for zero-mode, ensemble mean function didnt converge to zero compared to the original shapeworks weighting
-    //    // adjusting the weights according to Meyer's thesis
-    //    double gamma = 0.156;
-
-    //    // get domain information with gradients
-    //    const ParticleImageDomainWithGradients<float, VDimension> * domain
-    //            = static_cast<const ParticleImageDomainWithGradients<float, VDimension> *>(system->GetDomain(d));
-
-    //    // get normal for current position
-    //    typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType pos_normal = domain->SampleNormalVnl(pos, 1.0e-10);
-
-    //    for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
-    //    {
-    //        typename ParticleImageDomainWithGradients<float,VDimension>::VnlVectorType neigh_normal
-    //                = domain->SampleNormalVnl(m_CurrentNeighborhood[k].Point, 1.0e-10);
-
-    //        double dot_prod = dot_product(pos_normal,neigh_normal); // normals already normalized
-
-    //        if (dot_prod >= gamma)
-    //            m_CurrentWeights[k] = 1.0;
-    //        else
-    //        {
-    //            if (dot_prod <= 0)
-    //                m_CurrentWeights[k] = 0.0;
-    //            else
-    //            {
-    //                m_CurrentWeights[k] = cos((gamma - dot_prod)/gamma);
-    //            }
-    //        }
-    //    }
-
-
-    //    std::cout << "idx: " << idx << ", sigma:" << m_GlobalSigma << std::endl;
-    //    std::cout << "idx: " << idx << ", neighborhood_radius:" << neighborhood_radius << std::endl;
-    //    std::cout << "idx: " << idx << ", number of neighbors:" << m_CurrentNeighborhood.size() << std::endl;
-
-}
-
 
 template <class TGradientNumericType, unsigned int VDimension>
 typename ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::VectorType
@@ -195,60 +26,75 @@ ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimensio
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxmove, double &energy) const
 {
-    const double epsilon = 1.0e-6;
+    VectorType gradE;
+    for (unsigned int n = 0; n < VDimension; n++)
+        gradE[n] = 0.0;
 
+    const double epsilon = 1.0e-6;
     // Get the position for which we are computing the gradient.
     PointType pos = system->GetPosition(idx, d);
 
-    VectorType r;
-    VectorType gradE;
-    double rmag;
 
-    for (unsigned int n = 0; n < VDimension; n++)
+    VectorType r;
+    double rmag;
+    energy = epsilon;
+    //m_GlobalSigma - 1 per domain
+    typename ParticleSystemType::PointVectorType m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_GlobalSigma[d], d);
+
+    if (m_CurrentNeighborhood.size()==0)
     {
-        gradE[n] = 0.0;
+        energy = 0;
+        return gradE;
     }
 
-    double prob_xi = epsilon;
-    double M       = epsilon;
     for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
     {
+        PointType pos_k = m_CurrentNeighborhood[k].Point;
         for (unsigned int n = 0; n < VDimension; n++)
-        {
-            // Note that the Neighborhood object has already filtered the
-            // neighborhood for points whose normals differ by > 90 degrees.
-            r[n] = (pos[n] - m_CurrentNeighborhood[k].Point[n]) ;
-        }
+            r[n] = pos[n] - pos_k[n];
         rmag = r.magnitude();
+        energy += this->ComputeModifiedCotangent(rmag, d);
+    }
 
-        double dPhi = this->ComputeModifiedCotangentDerivative(rmag);
-        for (unsigned int n = 0; n < VDimension; n++)
+    energy = std::log(energy/m_CurrentNeighborhood.size());
+
+    for (unsigned int k = 0; k < m_CurrentNeighborhood.size(); k++)
+    {
+        PointType pos_k = m_CurrentNeighborhood[k].Point;
+        typename ParticleSystemType::PointVectorType k_neighborhood = system->FindNeighborhoodPoints(pos_k, m_GlobalSigma[d], d);
+        double energy_k = epsilon;
+
+        for (unsigned int j = 0; j < k_neighborhood.size(); j++)
         {
-            gradE[n] += ( ( m_CurrentWeights[k] * dPhi * r[n] )/(rmag + epsilon) );
+            for (unsigned int n = 0; n < VDimension; n++)
+                r[n] = pos_k[n] - k_neighborhood[j].Point[n];
+            rmag = r.magnitude();
+            energy_k += this->ComputeModifiedCotangent(rmag, d);
         }
 
-        prob_xi += m_CurrentWeights[k] * this->ComputeModifiedCotangent(rmag);
-        M       += m_CurrentWeights[k];
+        for (unsigned int n = 0; n < VDimension; n++)
+            r[n] = pos[n] - pos_k[n];
+        rmag = r.magnitude();
+        double forc = this->ComputeModifiedCotangentDerivative(rmag, d);
+
+        for (unsigned int n = 0; n < VDimension; n++)
+            gradE[n] += (forc * r[n])/(rmag * energy_k);
+
+        for (unsigned int n = 0; n < VDimension; n++)
+            gradE[n] += (forc * r[n])/(rmag * energy);
+
+        energy += std::log(energy_k/k_neighborhood.size());
     }
 
-    prob_xi /= M;
+    energy /= m_CurrentNeighborhood.size()+1;
+
     for (unsigned int n = 0; n < VDimension; n++)
-    {
-        gradE[n] *= ( (-1.0/ (M * prob_xi ) ) );
-    }
+        gradE[n] /= m_CurrentNeighborhood.size();
 
-
-    //maxmove = m_GlobalSigma * 0.1;
-
-    // Praful -- SHIREEN
-    maxmove = m_GlobalSigma * m_MaxMoveFactor;
-    //end Praful -- SHIREEN
-
-    energy  = prob_xi ;
+    maxmove = m_GlobalSigma[d]; // deprecated - not used in gradient descent class
 
     return gradE ;
 }
 
 }// end namespace
 #endif
-

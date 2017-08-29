@@ -127,7 +127,7 @@ ParticleEnsembleEntropyFunction<VDimension>
         //    energy += log(symEigen.D(i,i));
         m_CurrentEnergy += log(symEigen.D(i,i));
     }
-    m_CurrentEnergy /= num_samples;
+    m_CurrentEnergy /= 2;
     //    energy = 0.5*log(symEigen.determinant());
 
     for (unsigned int i =0; i < num_samples; i++)

@@ -29,6 +29,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_MeshBasedGeneralEntropyGradientFunction = ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
+  m_MeshBasedGeneralMeanGradientFunction = ParticleMeshBasedGeneralMeanGradientFunction<Dimension>::New();
 
   m_ShapeMatrix = ParticleShapeMatrixAttribute<double, Dimension>::New();
   m_LinearRegressionShapeMatrix = ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();

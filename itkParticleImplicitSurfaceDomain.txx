@@ -329,6 +329,7 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
 
     } // end if m_ConstraintsEnabled == true
 
+
   return flag; 
 }
 
