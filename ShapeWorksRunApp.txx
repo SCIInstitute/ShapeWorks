@@ -25,6 +25,14 @@
 #include "object_writer.h"
 #include "itkZeroCrossingImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
+
+#include "itkImageToVTKImageFilter.h"
+#include <vtkContourFilter.h>
+#include <vtkSmartPointer.h>
+#include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkMassProperties.h>
+
 #ifdef _WIN32
 #include <direct.h>
 #define mkdir _mkdir
@@ -42,8 +50,11 @@ template <class SAMPLERTYPE>
 ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
 {
     // Initialize some member variables
+    m_cotan_sigma_factor = 5.0;
+
     m_CheckpointCounter = 0;
     m_ProcrustesCounter = 0;
+    m_SaturationCounter = 0;
     m_disable_procrustes = true;
     m_disable_checkpointing = true;
     m_use_cutting_planes = false;
@@ -100,9 +111,47 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     this->ReadExplanatoryVariables(fn);
     this->FlagDomainFct(fn);
 
+    m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
+    m_GoodBad->SetDomainsPerShape(m_domains_per_shape);
+    m_GoodBad->SetCriterionAngle(m_normalAngle);
+    m_GoodBad->SetPerformAssessment(m_performGoodBad);
+
+    m_EnergyA.clear();
+    m_EnergyB.clear();
+    m_TotalEnergy.clear();
+
     // Now read the transform file if present.
     if ( m_transform_file != "" )       this->ReadTransformFile();
     if ( m_prefix_transform_file != "") this->ReadPrefixTransformFile(m_prefix_transform_file);
+}
+
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::ComputeEnergyAfterIteration()
+{
+    int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    double corrEnergy = 0.0;
+
+    double sampEnergy = 0.0;
+    for (int i = 0; i < numShapes; i++)
+    {
+        m_Sampler->GetLinkingFunction()->SetDomainNumber(i);
+        for (int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++)
+        {
+            sampEnergy += m_Sampler->GetLinkingFunction()->EnergyA(j, i, m_Sampler->GetParticleSystem());
+            if (m_Sampler->GetCorrespondenceMode() == 0)
+                corrEnergy += m_Sampler->GetLinkingFunction()->EnergyB(j, i, m_Sampler->GetParticleSystem());
+        }
+    }
+
+    if (m_Sampler->GetCorrespondenceMode() > 0)
+        corrEnergy = m_Sampler->GetLinkingFunction()->EnergyB(0, 0, m_Sampler->GetParticleSystem());
+
+    double totalEnergy = sampEnergy + corrEnergy;
+    m_EnergyA.push_back(sampEnergy);
+    m_EnergyB.push_back(corrEnergy);
+    m_TotalEnergy.push_back(totalEnergy);
 }
 
 template < class SAMPLERTYPE>
@@ -111,6 +160,52 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
 {
     std::cout << ".";
     std::cout.flush();
+
+    if (m_performGoodBad == true)
+    {
+        std::vector<std::vector<int> > tmp;
+        tmp = m_GoodBad->RunAssessment(m_Sampler->GetParticleSystem(), m_Sampler->GetMeanCurvatureCache());
+
+        if (!tmp.empty())
+        {
+            if (this->m_badIds.empty())
+                this->m_badIds.resize(m_domains_per_shape);
+
+            for (int i = 0; i < m_domains_per_shape; i++)
+            {
+                for (int j = 0; j < tmp[i].size(); j++)
+                {
+                    if (m_badIds[i].empty())
+                        this->m_badIds[i].push_back(tmp[i][j]);
+                    else
+                    {
+                        if (std::count(m_badIds[i].begin(), m_badIds[i].end(), tmp[i][j]) == 0)
+                            this->m_badIds[i].push_back(tmp[i][j]);
+                    }
+                }
+            }
+        }
+        ReportBadParticles();
+    }
+
+    this->ComputeEnergyAfterIteration();
+    this->WriteEnergyFiles();
+    int lnth = m_TotalEnergy.size();
+    if (lnth > 1)
+    {
+        double val = std::abs(m_TotalEnergy[lnth-1] - m_TotalEnergy[lnth-2])/std::abs(m_TotalEnergy[lnth-2]);
+        if ((m_optimizing == false && val < m_init_criterion) || (m_optimizing==true && val < m_opt_criterion))
+            m_SaturationCounter++;
+        else
+            m_SaturationCounter = 0;
+        if (m_SaturationCounter > 10)
+        {
+            std::cout <<" \n ----Terminating due to energy decay---- \n";
+            this->optimize_stop();
+        }
+    }
+
+
 
     if (m_optimizing == false) return;
 
@@ -147,6 +242,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
             this->WriteTransformFile();
             this->WriteModes();
             if (m_use_regression == true) this->WriteParameters();
+
+
 
             if ( m_keep_checkpoints )
             {
@@ -791,6 +888,83 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteTransformFile( std::string iter_prefix ) con
 
 template < class SAMPLERTYPE>
 void
+ShapeWorksRunApp<SAMPLERTYPE>::WriteEnergyFiles()
+{
+    std::string strA = utils::getPath(m_output_points_prefix) + "/" + this->m_strEnergy + "_samplingEnergy.txt";
+    std::string strB = utils::getPath(m_output_points_prefix) + "/" + this->m_strEnergy + "_correspondenceEnergy.txt";
+    std::string strTotal = utils::getPath(m_output_points_prefix) + "/" + this->m_strEnergy + "_totalEnergy.txt";
+    std::ofstream outA( strA.c_str(), std::ofstream::app );
+    std::ofstream outB( strB.c_str(), std::ofstream::app );
+    std::ofstream outTotal( strTotal.c_str(), std::ofstream::app );
+
+    if (!outA || !outB || !outTotal)
+    {
+        std::cerr << "EnsembleSystem()::Error opening output energy file" << std::endl;
+        throw 1;
+    }
+
+    int n = m_EnergyA.size()-1;
+    n = n < 0 ? 0 : n;
+    outA << m_EnergyA[n] << std::endl;
+    outB << m_EnergyB[n] << std::endl;
+    outTotal << m_TotalEnergy[n] << std::endl;
+
+    outA.close();
+    outB.close();
+    outTotal.close();
+}
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::ReportBadParticles()
+{
+    typedef  itk::MaximumEntropyCorrespondenceSampler<ImageType>::PointType PointType;
+    const int totalDomains = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    const int numShapes    = totalDomains / m_domains_per_shape;
+    std::string outDomDir;
+    std::string outPtDir;
+    if (this->m_badIds.empty())
+        return;
+    for (int i = 0; i < this->m_domains_per_shape; i++)
+    {
+        if (this->m_badIds[i].empty())
+            continue;
+
+        std::stringstream ss;
+        ss << i;
+        outDomDir = utils::getPath(m_output_points_prefix) + "/" + this->m_strEnergy + "_BadParticles_domain" + ss.str();
+#ifdef _WIN32
+        mkdir( outDomDir.c_str() );
+#else
+        mkdir( outDomDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+        for (int j = 0; j < this->m_badIds[i].size(); j++)
+        {
+            std::stringstream ssj;
+            ssj << m_badIds[i][j];
+            outPtDir = outDomDir + "/particle" + ssj.str();
+#ifdef _WIN32
+            mkdir( outPtDir.c_str() );
+#else
+            mkdir( outPtDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
+#endif
+            for (int k = 0; k < numShapes; k++)
+            {
+                int dom = k*m_domains_per_shape + i;
+                std::string localPtFile = outPtDir + "/" + m_filenames[dom] + ".particles";
+                std::ofstream outl(localPtFile.c_str(), std::ofstream::app);
+                PointType pos = m_Sampler->GetParticleSystem()->GetPosition(m_badIds[i][j], dom);
+                for (unsigned int d = 0; d < 3; d++)
+                    outl << pos[d] << " ";
+                outl << std::endl;
+                outl.close();
+            }
+        }
+    }
+}
+
+template < class SAMPLERTYPE>
+void
 ShapeWorksRunApp<SAMPLERTYPE>::ReadTransformFile()
 {
     object_reader< itk::ParticleSystem<3>::TransformType > reader;
@@ -1110,6 +1284,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             }
         }
 
+        elem = docHandle.FirstChild( "cotan_sigma_factor" ).Element();
+        if (elem) this->m_cotan_sigma_factor = atof(elem->GetText());
+
         this->m_adaptivity_strength = 0.0;
         elem = docHandle.FirstChild( "adaptivity_strength" ).Element();
         if (elem) this->m_adaptivity_strength = atof(elem->GetText());
@@ -1131,6 +1308,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             }
         }
 
+        const float pi = std::acos(-1.0);
+        this->m_normalAngle = pi/2.0;
+        elem = docHandle.FirstChild( "normal_angle" ).Element();
+        if (elem) this->m_normalAngle = atof(elem->GetText())*pi/180.0;
+
+        this->m_performGoodBad = true;
+        elem = docHandle.FirstChild( "report_bad_particles" ).Element();
+        if (elem) this->m_performGoodBad = (bool) atoi(elem->GetText());
 
         this->m_mesh_based_attributes = true;
         elem = docHandle.FirstChild( "mesh_based_attributes" ).Element();
@@ -1184,6 +1369,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "optimizer_type" ).Element();
         if (elem) this->m_optimizer_type = atoi(elem->GetText());
 
+        m_init_criterion = 1e-6;
+        elem = docHandle.FirstChild( "init_criterion" ).Element();
+        if (elem) this->m_init_criterion = atof(elem->GetText());
+
+        m_opt_criterion = 1e-6;
+        elem = docHandle.FirstChild( "opt_criterion" ).Element();
+        if (elem) this->m_opt_criterion = atof(elem->GetText());
+
         this->m_pairwise_potential_type = 0; // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer)
         elem = docHandle.FirstChild( "pairwise_potential_type" ).Element();
         if (elem) this->m_pairwise_potential_type = atoi(elem->GetText());
@@ -1226,7 +1419,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
             std::cout << m_attributes_per_domain[i] << ", ";
         std::cout << std::endl;
     }
-
     std::cout << "m_checkpointing_interval = " << m_checkpointing_interval << std::endl;
     std::cout << "m_transform_file = " << m_transform_file << std::endl;
     std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
@@ -1249,6 +1441,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     // end SHIREEN
 
     std::cout << "m_mesh_based_attributes = " << m_mesh_based_attributes << std::endl;
+    std::cout << "m_init_criterion = " << m_init_criterion << std::endl;
+    std::cout << "m_opt_criterion = " << m_opt_criterion << std::endl;
+
 }
 
 
@@ -1332,7 +1527,59 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
             ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
 
     m_Sampler->Initialize();
+
     m_Sampler->GetOptimizer()->SetTolerance(0.0);
+}
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::SetCotanSigma()
+{
+    typename itk::ImageToVTKImageFilter<ImageType>::Pointer  itk2vtkConnector;
+    m_Sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
+    for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
+    {
+        itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
+        itk2vtkConnector->SetInput(m_Sampler->GetInput(i));
+        vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
+        ls->SetInput(itk2vtkConnector->GetOutput());
+        ls->SetValue(0, 0.0);
+        ls->Update();
+        vtkSmartPointer<vtkMassProperties> mp = vtkSmartPointer<vtkMassProperties>::New();
+        mp->SetInput(ls->GetOutput());
+        mp->Update();
+        double area = mp->GetSurfaceArea();
+//        std::cout << "area = " << area << std::endl;
+        double sigma = m_cotan_sigma_factor*std::sqrt(area/(m_Sampler->GetParticleSystem()->GetNumberOfParticles(i)*M_PI));
+//        std::cout << "sigma (w/o factor) = " << sigma/m_cotan_sigma_factor << std::endl;
+        m_Sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
+    }
+
+}
+
+template < class SAMPLERTYPE>
+double
+ShapeWorksRunApp<SAMPLERTYPE>::GetMinNeighborhoodRadius()
+{
+    double rad = 0.0;
+    typename itk::ImageToVTKImageFilter<ImageType>::Pointer  itk2vtkConnector;
+    for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
+    {
+        itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
+        itk2vtkConnector->SetInput(m_Sampler->GetInput(i));
+        vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
+        ls->SetInput(itk2vtkConnector->GetOutput());
+        ls->SetValue(0, 0.0);
+        ls->Update();
+        vtkSmartPointer<vtkMassProperties> mp = vtkSmartPointer<vtkMassProperties>::New();
+        mp->SetInput(ls->GetOutput());
+        mp->Update();
+        double area = mp->GetSurfaceArea();
+        double sigma = std::sqrt(area/(m_Sampler->GetParticleSystem()->GetNumberOfParticles(i)*M_PI));
+        if (rad < sigma)
+            rad = sigma;
+    }
+    return rad;
 }
 
 template < class SAMPLERTYPE>
@@ -1345,6 +1592,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     m_disable_checkpointing = true;
     m_disable_procrustes = true;
+//    m_performGoodBad = false;
+    //m_GoodBad->SetPerformAssessment(false);
     /* PRATEEP */
     // If initial points already specified, compute Procrustes parameters from them and use further.
     // Do not compute parameters again.
@@ -1372,9 +1621,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     if (this->m_use_initial_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
     else m_Sampler->SetNormalEnergyOff();
 
-    // PRATEEP
-    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
-    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(1);
+    // PRATEEP - Praful : not needed
+//    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
+//    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(1);
     // end PRATEEP
 
     /* PRATEEP */
@@ -1383,11 +1632,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     {
         if (*std::min_element(m_number_of_particles.begin(), m_number_of_particles.end()) < 32)
         {
-            m_Sampler->SetCorrespondenceMode(0); // changed 09/24
+            if (m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+                m_Sampler->SetCorrespondenceMode(6);
+            else
+                m_Sampler->SetCorrespondenceMode(0); // changed 09/24
         }
         else
         {
-            if (m_attributes_per_domain.size() > 0)
+            if (m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
             {
                 if (m_mesh_based_attributes)
                     m_Sampler->SetCorrespondenceMode(5);
@@ -1410,7 +1662,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     }
     else
     {
-        m_Sampler->SetCorrespondenceMode(0);  // force to mean shape
+        if (m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+            m_Sampler->SetCorrespondenceMode(6);
+        else
+            m_Sampler->SetCorrespondenceMode(0);  // force to mean shape
     }
 
     // END SHIREEN
@@ -1451,7 +1706,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             break;
         }
     }
-    int a = 1;
+
     while(flag_split)
     {
 //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
@@ -1488,14 +1743,33 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 #else
             mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
-            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WritePointFiles(tmp_dir_name + "/");
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
             // /*if (m_use_regression == true) */this->WriteParameters( split_number );
         }
+
+        m_EnergyA.clear();
+        m_EnergyB.clear();
+        m_TotalEnergy.clear();
+        std::stringstream ss;
+        ss << split_number;
+        m_strEnergy = "split" + ss.str() + "_init";
+
+        if (this->m_pairwise_potential_type == 1)
+            this->SetCotanSigma();
+
+        double minRad = 3.0*this->GetMinNeighborhoodRadius();
+
+        m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+        m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+
+        m_SaturationCounter = 0;
         m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
         m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
         m_Sampler->Modified();
         m_Sampler->Update();
+
+        this->WriteEnergyFiles();
 
         if ( m_save_init_splits == true)
         {
@@ -1514,7 +1788,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 #else
             mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
-            this->WritePointFiles(tmp_dir_name + "/" + prefix);
+            this->WritePointFiles(tmp_dir_name + "/");
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
             // /*if (m_use_regression == true) */this->WriteParameters( split_number );
         }
@@ -1622,12 +1896,23 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     if (m_adaptivity_strength == 0.0) return;
     m_disable_checkpointing = true;
     m_disable_procrustes = true;
+    //m_performGoodBad = false;
+    //m_GoodBad->SetPerformAssessment(false);
     std::cout << "Adding adaptivity." << std::endl;
 
-    // PRATEEP
-    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
-    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(1);
+    // PRATEEP - Praful: not needed
+//    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
+//    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(1);
     // end PRATEEP
+
+    if (this->m_pairwise_potential_type == 1)
+        this->SetCotanSigma();
+
+    double minRad = 3.0*this->GetMinNeighborhoodRadius();
+
+    m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+
 
     m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
     m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
@@ -1636,6 +1921,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(m_initial_norm_penalty_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_initial_norm_penalty_weighting);
 
+    m_SaturationCounter = 0;
     m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
     m_Sampler->Modified();
@@ -1663,13 +1949,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_norm_penalty_weighting);
 
     // PRATEEP
-    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(2);
-    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(2);
+//    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(2);
+//    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(2);
     // end PRATEEP
+
+    if (this->m_pairwise_potential_type == 1)
+        this->SetCotanSigma();
+
+    double minRad = 3.0*this->GetMinNeighborhoodRadius();
+
+    m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
 
     m_disable_checkpointing = false;
     m_disable_procrustes = false;
-
+//    m_performGoodBad = true;
     if (m_procrustes_interval != 0) // Initial registration
     {
         m_Procrustes->RunRegistration();
@@ -1758,11 +2052,20 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
         m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations-m_optimization_iterations_completed);
     else m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);
 
+    m_EnergyA.clear();
+    m_EnergyB.clear();
+    m_TotalEnergy.clear();
 
+    m_strEnergy = "opt";
+
+    m_SaturationCounter = 0;
     m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
     m_Sampler->GetOptimizer()->SetTolerance(0.0);
     m_Sampler->Modified();
     m_Sampler->Update();
+
+
+    this->WriteEnergyFiles();
 
     this->WritePointFiles();
     this->WriteTransformFile();
