@@ -3948,7 +3948,7 @@ public:
         return featureValue;
     }
 
-    /* Prateep */
+    /* Prateep -- updated Praful */
     point GetFeatureDerivative(point p, int fIndex = 0)
     {
         point dP; dP.clear();
@@ -3987,6 +3987,19 @@ public:
         dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] );
 
         return dP;
+    }
+
+    /* Praful */
+    vec GetFaceNormal(int fidP)
+    {
+        vec v0 = this->vertices[this->faces[fidP].v[0]];
+        vec nv0 = this->normals[this->faces[fidP].v[0]];
+        vec v1 = this->vertices[this->faces[fidP].v[1]];
+        vec v2 = this->vertices[this->faces[fidP].v[2]];
+        vec facenormal = (v1 - v0) CROSS (v2 - v0);
+        float dot1 = facenormal DOT (nv0);
+        if(dot1 < 0.0f ) facenormal = -facenormal;
+        return facenormal;
     }
 
     point ComputeFeatureDerivative(int v,int nFeature = 0)
