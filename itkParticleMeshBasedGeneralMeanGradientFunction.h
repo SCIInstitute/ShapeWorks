@@ -82,6 +82,7 @@ public:
       copy->m_AttributeScales = this->m_AttributeScales;
       copy->m_AttributesPerDomain = this->m_AttributesPerDomain;
       copy->m_DomainsPerShape = this->m_DomainsPerShape;
+      copy->m_PointsUpdate    = this->m_PointsUpdate;
 
       return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
     }
@@ -97,6 +98,7 @@ protected:
     std::vector<double> m_AttributeScales; //size \sum_i n_i
     int m_DomainsPerShape;
     std::vector<int> m_AttributesPerDomain; // n
+    vnl_matrix_type m_PointsUpdate;
 };
 } //end namespace
 

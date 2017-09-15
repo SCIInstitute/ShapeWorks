@@ -5,6 +5,8 @@
 #include <math.h>
 #include "itkParticleImplicitSurfaceDomain.h"
 
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleImageDomainWithHessians.h"
 namespace itk
 {
 
@@ -68,6 +70,11 @@ ParticleMeshBasedGeneralMeanGradientFunction<VDimension>
     const itk::ParticleImplicitSurfaceDomain<float, 3>* domain
             = static_cast<const itk::ParticleImplicitSurfaceDomain<float ,3>*>(this->m_ParticleSystem->GetDomain(d));
 
+    const ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+         = static_cast<const ParticleImageDomainWithGradients<float ,3> *>(this->m_ParticleSystem->GetDomain(d));
+    const ParticleImageDomainWithHessians<float, 3> * domainWithHess
+         = static_cast<const ParticleImageDomainWithHessians<float ,3> *>(this->m_ParticleSystem->GetDomain(d));
+
     TriMesh *ptr = domain->GetMesh();
 
     PointType pos = system->GetTransformedPosition(idx, d);
@@ -76,6 +83,10 @@ ParticleMeshBasedGeneralMeanGradientFunction<VDimension>
     pt[0] = pos[0];
     pt[1] = pos[1];
     pt[2] = pos[2];
+
+    typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleNormalVnl(pos);
+
+    typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(pos);
 
     for (unsigned int c = 0; c < ndims; c++)
     {

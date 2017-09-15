@@ -158,9 +158,15 @@ public:
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
     }
     else if (mode == 5)
+    {
         m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
+        m_MeshBasedGeneralEntropyGradientFunction->UseEntropy();
+    }
     else if (mode == 6)
-        m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralMeanGradientFunction);
+    {
+        m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
+        m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
+    }
     else
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
@@ -178,11 +184,20 @@ public:
     m_MeshBasedGeneralMeanGradientFunction->SetAttributeScales(s);
   }
 
-  void SetAttributesPerDomain(const std::vector<int> &s)
+  void SetAttributesPerDomain(const std::vector<int> s)
   {
-      this->Superclass::SetAttributesPerDomain(s);
-      m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s);
-      m_MeshBasedGeneralMeanGradientFunction->SetAttributesPerDomain(s);
+      std::vector<int> s1;
+      if (s.size() == 0)
+      {
+          s1.resize(m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape());
+          for (int i = 0; i < m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape(); i++)
+              s1[i] = 0;
+      }
+      else
+          s1 = s;
+      this->Superclass::SetAttributesPerDomain(s1);
+      m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s1);
+      m_MeshBasedGeneralMeanGradientFunction->SetAttributesPerDomain(s1);
   }
 
   void AddAttributeImage(int d,
