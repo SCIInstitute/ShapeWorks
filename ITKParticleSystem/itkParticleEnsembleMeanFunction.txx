@@ -54,9 +54,7 @@ ParticleEnsembleMeanFunction<VDimension>
             m_PointsUpdate(j, i) = m_ShapeMatrix->operator()(j, i) - means(j);
         }
     }
-
-//    m_ShapeMatrix->PrintMatrix();
-//    std::cout << m_PointsUpdate.extract(num_dims, num_samples) << std::endl;
+//     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 }
 
 template <unsigned int VDimension>

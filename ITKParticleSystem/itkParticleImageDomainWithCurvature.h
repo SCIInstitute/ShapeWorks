@@ -99,7 +99,7 @@ public:
       }
     
     // Release the memory in the parent hessian images.
-    this->DeletePartialDerivativeImages();
+    //this->DeletePartialDerivativeImages();
     
     m_CurvatureInterpolator->SetInputImage(m_CurvatureImage);
   } // end setimage

@@ -33,6 +33,10 @@
 #include <vtkPolyData.h>
 #include <vtkMassProperties.h>
 
+#include "TriMesh.h"
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleImplicitSurfaceDomain.h"
+
 #ifdef _WIN32
 #include <direct.h>
 #define mkdir _mkdir
@@ -267,6 +271,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
                 mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
                 this->WritePointFiles(tmp_dir_name + "/" + prefix);
+                this->WritePointFilesWithFeatures(tmp_dir_name + "/" + prefix);
                 this->WriteTransformFile(tmp_dir_name + "/" + prefix);
                 // /*if (m_use_regression == true) */this->WriteParameters( split_number );
                 // end SHIREEN
@@ -649,7 +654,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
         }
 
         // attributes
-        if (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+        if ( (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes)
         {
             // attribute scales
             double sc;
@@ -685,18 +690,18 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
 
-                int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
+//                int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
 
-                if ( (attr_scales.size() != totAttributes) || (attrFiles.size() != numShapes*totAttributes/m_domains_per_shape))
-                {
-                    std::cerr << "ERROR: Inconsistent number of attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
-                }
-                else
-                {
+//                if ( (attr_scales.size() != totAttributes) || (attrFiles.size() != numShapes*totAttributes/m_domains_per_shape))
+//                {
+//                    std::cerr << "ERROR: Inconsistent number of attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
+//                }
+//                else
+//                {
                     if (m_mesh_based_attributes)
                     {
 #ifdef SW_USE_FEAMESH
-                        m_Sampler->SetAttributesPerDomain(this->m_attributes_per_domain);
+
                         m_Sampler->SetFeaFiles(attrFiles);
 #else
                         std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
@@ -716,13 +721,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                             }
                         }
                     }
-                }
+//                }
             }
 
             // need fids for mesh based fea
             if (m_mesh_based_attributes)
             {
 #ifdef SW_USE_FEAMESH
+                m_Sampler->SetAttributesPerDomain(this->m_attributes_per_domain);
                 std::vector<std::string> feaGradFiles;
                 elem = docHandle.FirstChild("attribute_grad_files").Element();
                 if (elem)
@@ -744,7 +750,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                     std::cout << "Done setting feature gradient files!!" << std::endl;
                 }
                 else
-                    std::cout << "WARNING: No feature gradient files.. will use inaccurate centered difference!!" << std::endl;
+                {
+                    if (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+                        std::cerr << "ERROR: No feature gradient files.. will use inaccurate centered difference!!" << std::endl;
+                }
 
                 std::vector<std::string> fidsFiles;
                 elem = docHandle.FirstChild("fids").Element();
@@ -764,7 +773,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                         m_Sampler->SetFidsFiles(fidsFiles);
                 }
                 else
-                    std::cerr << "ERROR: Must provide fids!!" << std::endl;
+                {
+                    if (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+                        std::cerr << "ERROR: Must provide fids!!" << std::endl;
+                }
 #else
                 std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
 #endif
@@ -1064,7 +1076,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     } // end for files
 }
 
-// SHIREEN
+// SHIREEN -- updated Praful
 template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
@@ -1127,6 +1139,88 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
     } // end for files
 }
 // end SHIREEN
+
+//Praful
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( std::string iter_prefix )
+{
+    if (!m_mesh_based_attributes)
+        return;
+
+    typedef  itk::MaximumEntropyCorrespondenceSampler<ImageType>::PointType PointType;
+    const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+
+    int counter;
+    for (int i = 0; i < n; i++)
+    {
+        counter = 0;
+
+        std::string world_file = iter_prefix + m_filenames[i] + ".wptsFeatures";
+
+        std::ofstream outw( world_file.c_str() );
+
+        std::cout << "Writing " << world_file << " ";
+
+        if ( !outw )
+        {
+            std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
+            throw 1;
+        }
+
+        const itk::ParticleImplicitSurfaceDomain<float, 3>* domain
+                = static_cast<const itk::ParticleImplicitSurfaceDomain<float ,3>*>(m_Sampler->GetParticleSystem()->GetDomain(i));
+
+        const itk::ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+             = static_cast<const itk::ParticleImageDomainWithGradients<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(i));
+
+        TriMesh *ptr;
+        std::vector<float> fVals;
+        if (m_mesh_based_attributes && m_attributes_per_domain[i % m_domains_per_shape] > 0)
+        {
+            ptr = domain->GetMesh();
+        }
+
+        for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
+        {
+            PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
+            PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+
+            for (unsigned int k = 0; k < 3; k++)
+                outw << wpos[k] << " ";
+
+            if (m_use_normals[i % m_domains_per_shape])
+            {
+                typename itk::ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleNormalVnl(pos);
+                VectorType pN;
+                pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
+                pN = m_Sampler->GetParticleSystem()->TransformVector(pN, m_Sampler->GetParticleSystem()->GetTransform(i) * m_Sampler->GetParticleSystem()->GetPrefixTransform(i));
+                outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
+            }
+
+            if (m_attributes_per_domain[i % m_domains_per_shape] > 0)
+            {
+                point pt;
+                pt.clear();
+                pt[0] = pos[0];
+                pt[1] = pos[1];
+                pt[2] = pos[2];
+                fVals.clear();
+                ptr->GetFeatureValues(pt, fVals);
+                for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++)
+                    outw << fVals[k] << " ";
+            }
+
+            outw << std::endl;
+
+            counter ++;
+        }  // end for points
+
+        outw.close();
+        std::cout << " with " << counter << "points" << std::endl;
+    } // end for files
+}
+// end Praful
 
 template < class SAMPLERTYPE>
 void
@@ -1317,9 +1411,46 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "report_bad_particles" ).Element();
         if (elem) this->m_performGoodBad = (bool) atoi(elem->GetText());
 
-        this->m_mesh_based_attributes = true;
+        this->m_mesh_based_attributes = false;
         elem = docHandle.FirstChild( "mesh_based_attributes" ).Element();
         if (elem) this->m_mesh_based_attributes = (bool) atoi(elem->GetText());
+
+        if (m_mesh_based_attributes)
+        {
+            m_use_xyz.clear();
+            elem = docHandle.FirstChild( "use_xyz" ).Element();
+            if (elem)
+            {
+                std::istringstream inputsBuffer;
+                std::string num;
+                inputsBuffer.str(elem->GetText());
+                while (inputsBuffer >> num)
+                    this->m_use_xyz.push_back((bool) atoi(num.c_str()));
+
+                if (this->m_domains_per_shape != this->m_use_xyz.size())
+                {
+                    std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_use_xyz.size()" << std::endl;
+                    throw 1;
+                }
+            }
+
+            m_use_normals.clear();
+            elem = docHandle.FirstChild( "use_normals" ).Element();
+            if (elem)
+            {
+                std::istringstream inputsBuffer;
+                std::string num;
+                inputsBuffer.str(elem->GetText());
+                while (inputsBuffer >> num)
+                    this->m_use_normals.push_back((bool) atoi(num.c_str()));
+
+                if (this->m_domains_per_shape != this->m_use_normals.size())
+                {
+                    std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_use_normals.size()" << std::endl;
+                    throw 1;
+                }
+            }
+        }
 
         this->m_checkpointing_interval = 0;
         elem = docHandle.FirstChild( "checkpointing_interval" ).Element();
@@ -1592,8 +1723,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     m_disable_checkpointing = true;
     m_disable_procrustes = true;
-//    m_performGoodBad = false;
-    //m_GoodBad->SetPerformAssessment(false);
+
     /* PRATEEP */
     // If initial points already specified, compute Procrustes parameters from them and use further.
     // Do not compute parameters again.
@@ -1621,18 +1751,13 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     if (this->m_use_initial_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
     else m_Sampler->SetNormalEnergyOff();
 
-    // PRATEEP - Praful : not needed
-//    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
-//    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(1);
-    // end PRATEEP
-
     /* PRATEEP */
     // SHIREEN - Praful (updated for general entropy)
     if (m_use_shape_statistics_in_init)
     {
         if (*std::min_element(m_number_of_particles.begin(), m_number_of_particles.end()) < 32)
         {
-            if (m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+            if ((m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes)
                 m_Sampler->SetCorrespondenceMode(6);
             else
                 m_Sampler->SetCorrespondenceMode(0); // changed 09/24
@@ -1647,7 +1772,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
                     m_Sampler->SetCorrespondenceMode(2);
             }
             else
-                m_Sampler->SetCorrespondenceMode(1);
+            {
+                if (m_mesh_based_attributes)
+                    m_Sampler->SetCorrespondenceMode(5);
+                else
+                    m_Sampler->SetCorrespondenceMode(1);
+            }
 
             m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                              m_ending_regularization,
@@ -1662,13 +1792,35 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     }
     else
     {
-        if (m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+        if ((m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes)
             m_Sampler->SetCorrespondenceMode(6);
         else
             m_Sampler->SetCorrespondenceMode(0);  // force to mean shape
     }
 
     // END SHIREEN
+
+    if (m_use_xyz.size() > 0)
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetXYZ(i, m_use_xyz[i]);
+    }
+    else
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetXYZ(i, false);
+    }
+
+    if (m_use_normals.size() > 0)
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetNormals(i, m_use_normals[i]);
+    }
+    else
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetNormals(i, false);
+    }
 
     m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
@@ -1744,6 +1896,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
             this->WritePointFiles(tmp_dir_name + "/");
+            this->WritePointFilesWithFeatures(tmp_dir_name + "/");
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
             // /*if (m_use_regression == true) */this->WriteParameters( split_number );
         }
@@ -1789,6 +1942,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
             this->WritePointFiles(tmp_dir_name + "/");
+            this->WritePointFilesWithFeatures(tmp_dir_name + "/");
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
             // /*if (m_use_regression == true) */this->WriteParameters( split_number );
         }
@@ -1881,6 +2035,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 */
 
     this->WritePointFiles();
+
     this->WriteTransformFile();
     this->WriteCuttingPlanePoints();
 }
@@ -2068,6 +2223,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     this->WriteEnergyFiles();
 
     this->WritePointFiles();
+    this->WritePointFilesWithFeatures(utils::getPath(m_output_points_prefix) + "/");
     this->WriteTransformFile();
     this->WriteModes();
     this->WriteCuttingPlanePoints();
