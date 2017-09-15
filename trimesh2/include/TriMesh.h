@@ -3977,25 +3977,34 @@ public:
         int B = triangleP.v[1];
         int C = triangleP.v[2];
 
-        // Get derivatives of Barycentric coordinates
-        vec fNorm    = GetFaceNormal(triangleP);
-        float fArea  = GetFaceArea(trianglP);
-        vec dAlpha   = GetGradientBaryCentricCoord(fNorm, triangleP.v[2]-triangleP.v[1], fArea);
-        vec dBeta    = GetGradientBaryCentricCoord(fNorm, triangleP.v[0]-triangleP.v[2], fArea);
-        vec dGamma   = GetGradientBaryCentricCoord(fNorm, triangleP.v[1]-triangleP.v[0], fArea);
+//        // Get derivatives of Barycentric coordinates
+//        vec fNorm    = GetFaceNormal(triangleP);
+//        float mag    = fNorm DOT fNorm;
+//        mag          = std::sqrt(mag);
+//        fNorm[0]     /= mag;
+//        fNorm[1]     /= mag;
+//        fNorm[2]     /= mag;
+
+//        float fArea  = GetFaceArea(triangleP);
+//        vec v0 = this->vertices[triangleP.v[0]];
+//        vec v1 = this->vertices[triangleP.v[1]];
+//        vec v2 = this->vertices[triangleP.v[2]];
+//        vec dAlpha   = GetGradientBaryCentricCoord(fNorm, v2-v1, fArea);
+//        vec dBeta    = GetGradientBaryCentricCoord(fNorm, v0-v2, fArea);
+//        vec dGamma   = GetGradientBaryCentricCoord(fNorm, v1-v0, fArea);
 
         point dA = ComputeFeatureDerivative(A,fIndex);
         point dB = ComputeFeatureDerivative(B,fIndex);
         point dC = ComputeFeatureDerivative(C,fIndex);
 
-        float f0 = this->features[fIndex][A];
-        float f1 = this->features[fIndex][B];
-        float f2 = this->features[fIndex][C];
+//        float f0 = this->features[fIndex][A];
+//        float f1 = this->features[fIndex][B];
+//        float f2 = this->features[fIndex][C];
 
         // interpolate
-        dP[0] = ( alphaP * dA[0] ) + ( betaP * dB[0] ) + ( gammaP * dC[0] ) + ( dAlpha[0] * f0 ) + ( dBeta[0] * f1 ) + ( dGamma[0] * f2 );
-        dP[1] = ( alphaP * dA[1] ) + ( betaP * dB[1] ) + ( gammaP * dC[1] ) + ( dAlpha[1] * f0 ) + ( dBeta[1] * f1 ) + ( dGamma[1] * f2 );
-        dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] ) + ( dAlpha[2] * f0 ) + ( dBeta[2] * f1 ) + ( dGamma[2] * f2 );
+        dP[0] = ( alphaP * dA[0] ) + ( betaP * dB[0] ) + ( gammaP * dC[0] );// + ( dAlpha[0] * f0 ) + ( dBeta[0] * f1 ) + ( dGamma[0] * f2 );
+        dP[1] = ( alphaP * dA[1] ) + ( betaP * dB[1] ) + ( gammaP * dC[1] );// + ( dAlpha[1] * f0 ) + ( dBeta[1] * f1 ) + ( dGamma[1] * f2 );
+        dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] );// + ( dAlpha[2] * f0 ) + ( dBeta[2] * f1 ) + ( dGamma[2] * f2 );
 
         return dP;
     }
@@ -4025,12 +4034,15 @@ public:
         int B = triangleP.v[1];
         int C = triangleP.v[2];
 
-        // Get derivatives of Barycentric coordinates
-        vec fNorm    = GetFaceNormal(triangleP);
-        float fArea  = GetFaceArea(trianglP);
-        vec dAlpha   = GetGradientBaryCentricCoord(fNorm, triangleP.v[2]-triangleP.v[1], fArea);
-        vec dBeta    = GetGradientBaryCentricCoord(fNorm, triangleP.v[0]-triangleP.v[2], fArea);
-        vec dGamma   = GetGradientBaryCentricCoord(fNorm, triangleP.v[1]-triangleP.v[0], fArea);
+//        // Get derivatives of Barycentric coordinates
+//        vec fNorm    = GetFaceNormal(triangleP);
+//        float fArea  = GetFaceArea(triangleP);
+//        vec v0 = this->vertices[triangleP.v[0]];
+//        vec v1 = this->vertices[triangleP.v[1]];
+//        vec v2 = this->vertices[triangleP.v[2]];
+//        vec dAlpha   = GetGradientBaryCentricCoord(fNorm, v2-v1, fArea);
+//        vec dBeta    = GetGradientBaryCentricCoord(fNorm, v0-v2, fArea);
+//        vec dGamma   = GetGradientBaryCentricCoord(fNorm, v1-v0, fArea);
 
         // compute final derivatives
         vals.resize(this->GetNumberOfFeatures());
@@ -4041,13 +4053,13 @@ public:
             point dB = ComputeFeatureDerivative(B,fIndex);
             point dC = ComputeFeatureDerivative(C,fIndex);
 
-            float f0 = this->features[fIndex][A];
-            float f1 = this->features[fIndex][B];
-            float f2 = this->features[fIndex][C];
+//            float f0 = this->features[fIndex][A];
+//            float f1 = this->features[fIndex][B];
+//            float f2 = this->features[fIndex][C];
 
-            dP[0] = ( alphaP * dA[0] ) + ( betaP * dB[0] ) + ( gammaP * dC[0] ) + ( dAlpha[0] * f0 ) + ( dBeta[0] * f1 ) + ( dGamma[0] * f2 );
-            dP[1] = ( alphaP * dA[1] ) + ( betaP * dB[1] ) + ( gammaP * dC[1] ) + ( dAlpha[1] * f0 ) + ( dBeta[1] * f1 ) + ( dGamma[1] * f2 );
-            dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] ) + ( dAlpha[2] * f0 ) + ( dBeta[2] * f1 ) + ( dGamma[2] * f2 );
+            dP[0] = ( alphaP * dA[0] ) + ( betaP * dB[0] ) + ( gammaP * dC[0] );// + ( dAlpha[0] * f0 ) + ( dBeta[0] * f1 ) + ( dGamma[0] * f2 );
+            dP[1] = ( alphaP * dA[1] ) + ( betaP * dB[1] ) + ( gammaP * dC[1] );// + ( dAlpha[1] * f0 ) + ( dBeta[1] * f1 ) + ( dGamma[1] * f2 );
+            dP[2] = ( alphaP * dA[2] ) + ( betaP * dB[2] ) + ( gammaP * dC[2] );// + ( dAlpha[2] * f0 ) + ( dBeta[2] * f1 ) + ( dGamma[2] * f2 );
 
             vals[fIndex] = dP;
             dP.clear();
