@@ -403,6 +403,10 @@ public:
        m_DomainsPerShape = num;
        m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
+  unsigned int GetDomainsPerShape()
+  {
+      return m_DomainsPerShape;
+  }
   
 protected:
   ParticleSystem();
