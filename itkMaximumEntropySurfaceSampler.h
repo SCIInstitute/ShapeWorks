@@ -93,7 +93,7 @@ public:
    * THIS IS A HACK UNTIL I CAN FIGURE OUT HOW TO ALLOCATE THE APPROPRIATE
    * NUMBER OF OUTPUTS AND GRAFT THEM TO THE INPUTS.
    */
-    virtual void AllocateWorkingImages();
+//    virtual void AllocateWorkingImages(); -- Praful v4.3 - not needed
 
     void SetInput(const TImage *image)
     { this->SetInput(0, image);  }
@@ -186,6 +186,12 @@ public:
     {
         this->SetMeshFile(0,s);
     }
+
+    void SetImageFiles(const std::vector<std::string> &s)
+    {
+        m_ImageFiles = s;
+    }
+
     void SetFidsFiles(const std::vector<std::string> &s)
     {
         m_FidsFiles = s;
@@ -371,7 +377,7 @@ protected:
     int m_AdaptivityMode;
     bool m_Initializing;
 
-    std::vector<typename TImage::Pointer> m_WorkingImages;
+//    std::vector<typename TImage::Pointer> m_WorkingImages; // Praful - v4.3
 
     typename OptimizerType::Pointer m_Optimizer;
 
@@ -422,6 +428,7 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
 #endif
+    std::vector<std::string> m_ImageFiles;
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
     std::vector< CuttingPlaneType> m_CuttingPlanes;

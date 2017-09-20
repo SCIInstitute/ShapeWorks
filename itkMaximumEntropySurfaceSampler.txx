@@ -19,6 +19,8 @@
 #include "itkImageRegionIterator.h"
 #include "itkZeroCrossingImageFilter.h"
 #include "object_reader.h"
+#include "itkImageFileReader.h"
+#include "itkParticleImageDomain.h"
 
 namespace itk
 {
@@ -67,7 +69,8 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
 }
 
 
-template <class TImage>
+/* Praful - v4.3 - not needed anymore */
+/*template <class TImage>
 void
 MaximumEntropySurfaceSampler<TImage>::AllocateWorkingImages()
 {
@@ -76,7 +79,8 @@ MaximumEntropySurfaceSampler<TImage>::AllocateWorkingImages()
     {
         m_WorkingImages[i] = const_cast<TImage *>(this->GetInput(i));
     }
-}
+}*/
+/* ---------------------------------- */
 
 template <class TImage>
 void
@@ -111,16 +115,23 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     // *after* registering the attributes to the particle system since some of
     // them respond to AddDomain.
     int ctr = 0;
-    for (unsigned int i = 0; i < this->GetNumberOfInputs(); i++)
+    for (unsigned int i = 0; i < this->m_ImageFiles.size(); i++)
     {
         m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
                                 ImageType::PixelType, Dimension>::New() );
         //    m_NeighborhoodList.push_back(ParticleRegionNeighborhood<Dimension>::New());
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
-        m_DomainList[i]->SetSigma(m_WorkingImages[i]->GetSpacing()[0] * 2.0);
+        std::cout<<"Reading inputfile: "<<m_ImageFiles[i].c_str()<<std::endl;
+        typename ImageFileReader<TImage>::Pointer reader = ImageFileReader<ImageType>::New();
+        reader->SetFileName(m_ImageFiles[i].c_str());
+        reader->UpdateLargestPossibleRegion();
 
-        m_DomainList[i]->SetImage(m_WorkingImages[i]);
+        typename TImage::Pointer img_temp = const_cast<TImage *>(reader->GetOutput());
+
+        m_DomainList[i]->SetSigma(img_temp->GetSpacing()[0] * 2.0);
+
+        m_DomainList[i]->SetImage(img_temp);
 
         if (m_CuttingPlanes.size() > i)
         {
@@ -283,15 +294,22 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     // Set the minimum neighborhood radius and maximum sigma based on the
     // domain of the 1st input image.
     unsigned int maxdim = 0;
-    double maxradius = 0.0;
+    double maxradius = 10000000.0;
     double spacing = this->GetInput()->GetSpacing()[0];
-    for (unsigned int i = 0; i < TImage::ImageDimension; i++)
+    int d = 0;
+    for (unsigned int d = 0; d < this->GetParticleSystem()->GetDomainsPerShape(); d++)
     {
-        if (this->GetInput()->GetRequestedRegion().GetSize()[i] > maxdim)
+        double tempMax = 0.0;
+        const ParticleImageDomain<float, 3> * domain = static_cast<const ParticleImageDomain<float, 3> *> (this->GetParticleSystem()->GetDomain(d));
+        for (unsigned int i = 0; i < TImage::ImageDimension; i++)
         {
-            maxdim = this->GetInput()->GetRequestedRegion().GetSize()[i];
-            maxradius = maxdim * this->GetInput()->GetSpacing()[i];
+            if (this->GetInput()->GetRequestedRegion().GetSize()[i] > maxdim)
+            {
+                maxdim = domain->GetImage()->GetRequestedRegion().GetSize()[i];
+                tempMax = maxdim * domain->GetImage()->GetSpacing()[i];
+            }
         }
+        maxradius = tempMax < maxradius ? tempMax : maxradius;
     }
 
     //  // PRATEEP
@@ -356,9 +374,14 @@ MaximumEntropySurfaceSampler<TImage>::GenerateData()
     this->SetInPlace(false); // this is required so that we don't release our inputs
     if (m_Initialized == false)
     {
-        // TEMPORARY HACK.  REALLY WHAT I WANT TO DO IS GRAFT THE INPUT IMAGES TO
-        // AN ARRAY OF OUTPUT IMAGES AND USE THOSE.
-        this->AllocateWorkingImages();
+        /* Praful - not needed anymore - during fix of same bounding box in every domain - v4.3 */
+
+            // TEMPORARY HACK.  REALLY WHAT I WANT TO DO IS GRAFT THE INPUT IMAGES TO
+            // AN ARRAY OF OUTPUT IMAGES AND USE THOSE.
+            // this->AllocateWorkingImages();
+
+        /*--------------------------------------------------------------------------------------*/
+
         this->AllocateDataCaches();
         this->SetAdaptivityMode(m_AdaptivityMode);
         this->AllocateDomainsAndNeighborhoods();
