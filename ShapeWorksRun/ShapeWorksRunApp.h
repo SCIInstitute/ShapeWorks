@@ -32,6 +32,8 @@
 #include <numeric>
 #include "itkParticleGoodBadAssessment.h"
 
+#include "itkParticleVectorFunction.h"
+
 template<typename T> std::string toStr(T var) {
     std::ostringstream tmp; tmp << var; return tmp.str();
 }
@@ -43,6 +45,8 @@ class ShapeWorksRunApp
 public:
     typedef itk::Image<float, 3> ImageType;
     typedef SAMPLERTYPE SamplerType;
+
+    typedef typename itk::ParticleVectorFunction<3>::VectorType VectorType;
 
     ShapeWorksRunApp(const char *);
     virtual ~ShapeWorksRunApp();
@@ -120,6 +124,9 @@ public:
     virtual void WritePointFiles( std::string iter_prefix );
     virtual void WriteTransformFile( std::string iter_prefix ) const;
     // end SHIREEN
+
+    //Praful
+    virtual void WritePointFilesWithFeatures( std::string iter_prefix );
 
     void ReadExplanatoryVariables(const char *fname);
 
@@ -225,6 +232,9 @@ protected:
     double m_init_criterion, m_opt_criterion;
 
     double m_cotan_sigma_factor;
+
+    std::vector<bool> m_use_xyz;
+    std::vector<bool> m_use_normals;
 
 };
 

@@ -114,6 +114,9 @@ ParticleEnsembleEntropyFunction<VDimension>
     //
     vnl_symmetric_eigensystem<double> symEigen(A);
     m_PointsUpdate = points_minus_mean * ((symEigen.pinverse()).transpose());
+
+//     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
+
     m_MinimumEigenValue = symEigen.D(0, 0);
 
     // double energy = 0.0;
