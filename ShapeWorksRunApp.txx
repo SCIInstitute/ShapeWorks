@@ -34,6 +34,7 @@
 #include <vtkMassProperties.h>
 
 #include "TriMesh.h"
+#include "itkParticleImageDomain.h"
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImplicitSurfaceDomain.h"
 
@@ -332,20 +333,16 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
             numShapes = shapeFiles.size();
 
-            for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
-            {
-                std::cout<<"Reading inputfile: "<<shapeFiles[shapeCount].c_str()<<std::endl;
-                typename itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
-                reader->SetFileName(shapeFiles[shapeCount].c_str());
-                reader->UpdateLargestPossibleRegion();
-                m_Sampler->SetInput(shapeCount, reader->GetOutput()); // set the ith input
+            /* Praful - v4.3 - set only first input image in sampler for setting initial parameters, images being used from particleSystem */
+            m_Sampler->SetImageFiles(shapeFiles);
 
-                // Use the first loaded image to set some numerical constants
-                if (shapeCount == 0)
-                {
-                    m_spacing = reader->GetOutput()->GetSpacing()[0];
-                }
-            }
+            int shapeCount = 0;
+            typename itk::ImageFileReader<ImageType>::Pointer reader = itk::ImageFileReader<ImageType>::New();
+            reader->SetFileName(shapeFiles[shapeCount].c_str());
+            reader->UpdateLargestPossibleRegion();
+            m_Sampler->SetInput(shapeCount, reader->GetOutput()); // set the 0th input
+
+            m_spacing = reader->GetOutput()->GetSpacing()[0];
 
             m_filenames.clear();
 
@@ -690,38 +687,38 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
 
-//                int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
+                //                int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
 
-//                if ( (attr_scales.size() != totAttributes) || (attrFiles.size() != numShapes*totAttributes/m_domains_per_shape))
-//                {
-//                    std::cerr << "ERROR: Inconsistent number of attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
-//                }
-//                else
-//                {
-                    if (m_mesh_based_attributes)
-                    {
+                //                if ( (attr_scales.size() != totAttributes) || (attrFiles.size() != numShapes*totAttributes/m_domains_per_shape))
+                //                {
+                //                    std::cerr << "ERROR: Inconsistent number of attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
+                //                }
+                //                else
+                //                {
+                if (m_mesh_based_attributes)
+                {
 #ifdef SW_USE_FEAMESH
 
-                        m_Sampler->SetFeaFiles(attrFiles);
+                    m_Sampler->SetFeaFiles(attrFiles);
 #else
-                        std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
+                    std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
 #endif
-                    }
-                    else
+                }
+                else
+                {
+                    int ctr = 0;
+                    for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
                     {
-                        int ctr = 0;
-                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                        for (int attrCount = 0; attrCount < m_attributes_per_domain[0]; attrCount++)
                         {
-                            for (int attrCount = 0; attrCount < m_attributes_per_domain[0]; attrCount++)
-                            {
-                                typename itk::ImageFileReader<ImageType>::Pointer reader2 = itk::ImageFileReader<ImageType>::New();
-                                reader2->SetFileName(attrFiles[ctr++].c_str());
-                                reader2->Update();
-                                m_Sampler->AddAttributeImage(shapeCount, reader2->GetOutput());
-                            }
+                            typename itk::ImageFileReader<ImageType>::Pointer reader2 = itk::ImageFileReader<ImageType>::New();
+                            reader2->SetFileName(attrFiles[ctr++].c_str());
+                            reader2->Update();
+                            m_Sampler->AddAttributeImage(shapeCount, reader2->GetOutput());
                         }
                     }
-//                }
+                }
+                //                }
             }
 
             // need fids for mesh based fea
@@ -800,24 +797,24 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
         ImageType::Pointer img = dynamic_cast<itk::ParticleImageDomain<float, 3> *>(
                     m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage();
 
-
+// Praful - commenting following code to keep consistency in results.
         // first attempt to find the surface moving from the center out in the y direction
-        ImageType::IndexType center;
-        center[0] = img->GetLargestPossibleRegion().GetSize()[0] / 2;
-        center[1] = img->GetLargestPossibleRegion().GetSize()[1] / 2;
-        center[2] = img->GetLargestPossibleRegion().GetSize()[2] / 2;
+//        ImageType::IndexType center;
+//        center[0] = img->GetLargestPossibleRegion().GetSize()[0] / 2;
+//        center[1] = img->GetLargestPossibleRegion().GetSize()[1] / 2;
+//        center[2] = img->GetLargestPossibleRegion().GetSize()[2] / 2;
 
-        while ( !done && center[1] > 0 )
-        {
-            if ( img->GetPixel(center) < 1.0 && img->GetPixel( center ) > -1.0 )
-            {
-                PointType pos;
-                img->TransformIndexToPhysicalPoint( center, pos );
-                m_Sampler->GetParticleSystem()->AddPosition( pos, i );
-                done = true;
-            }
-            center[1]--;
-        }
+//        while ( !done && center[1] > 0 )
+//        {
+//            if ( img->GetPixel(center) < 1.0 && img->GetPixel( center ) > -1.0 )
+//            {
+//                PointType pos;
+//                img->TransformIndexToPhysicalPoint( center, pos );
+//                m_Sampler->GetParticleSystem()->AddPosition( pos, i );
+//                done = true;
+//            }
+//            center[1]--;
+//        }
 
 
         // couldn't find it, try the old method
@@ -1172,7 +1169,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( std::string iter_pre
                 = static_cast<const itk::ParticleImplicitSurfaceDomain<float ,3>*>(m_Sampler->GetParticleSystem()->GetDomain(i));
 
         const itk::ParticleImageDomainWithGradients<float, 3> * domainWithGrad
-             = static_cast<const itk::ParticleImageDomainWithGradients<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(i));
+                = static_cast<const itk::ParticleImageDomainWithGradients<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(i));
 
         TriMesh *ptr;
         std::vector<float> fVals;
@@ -1670,8 +1667,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetCotanSigma()
     m_Sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
     for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
     {
+        const itk::ParticleImageDomain<float, 3> * domain = static_cast<const itk::ParticleImageDomain<float, 3> *> (m_Sampler->GetParticleSystem()->GetDomain(i));
+
         itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
-        itk2vtkConnector->SetInput(m_Sampler->GetInput(i));
+        itk2vtkConnector->SetInput(domain->GetImage());
         vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
         ls->SetInput(itk2vtkConnector->GetOutput());
         ls->SetValue(0, 0.0);
@@ -1680,9 +1679,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetCotanSigma()
         mp->SetInput(ls->GetOutput());
         mp->Update();
         double area = mp->GetSurfaceArea();
-//        std::cout << "area = " << area << std::endl;
+        //        std::cout << "area = " << area << std::endl;
         double sigma = m_cotan_sigma_factor*std::sqrt(area/(m_Sampler->GetParticleSystem()->GetNumberOfParticles(i)*M_PI));
-//        std::cout << "sigma (w/o factor) = " << sigma/m_cotan_sigma_factor << std::endl;
+        //        std::cout << "sigma (w/o factor) = " << sigma/m_cotan_sigma_factor << std::endl;
         m_Sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
     }
 
@@ -1696,8 +1695,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::GetMinNeighborhoodRadius()
     typename itk::ImageToVTKImageFilter<ImageType>::Pointer  itk2vtkConnector;
     for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
     {
+
+        const itk::ParticleImageDomain<float, 3> * domain = static_cast<const itk::ParticleImageDomain<float, 3> *> (m_Sampler->GetParticleSystem()->GetDomain(i));
+
         itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
-        itk2vtkConnector->SetInput(m_Sampler->GetInput(i));
+        itk2vtkConnector->SetInput(domain->GetImage());
         vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
         ls->SetInput(itk2vtkConnector->GetOutput());
         ls->SetValue(0, 0.0);
@@ -1861,7 +1863,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     while(flag_split)
     {
-//        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
+        //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
         this->optimize_stop();
         for (int i = 0; i < n; i++)
         {
@@ -2056,8 +2058,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     std::cout << "Adding adaptivity." << std::endl;
 
     // PRATEEP - Praful: not needed
-//    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
-//    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(1);
+    //    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(1);
+    //    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(1);
     // end PRATEEP
 
     if (this->m_pairwise_potential_type == 1)
@@ -2104,8 +2106,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_norm_penalty_weighting);
 
     // PRATEEP
-//    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(2);
-//    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(2);
+    //    m_Sampler->GetModifiedCotangentGradientFunction()->SetRunStatus(2);
+    //    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetRunStatus(2);
     // end PRATEEP
 
     if (this->m_pairwise_potential_type == 1)
@@ -2118,7 +2120,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
 
     m_disable_checkpointing = false;
     m_disable_procrustes = false;
-//    m_performGoodBad = true;
+    //    m_performGoodBad = true;
     if (m_procrustes_interval != 0) // Initial registration
     {
         m_Procrustes->RunRegistration();
