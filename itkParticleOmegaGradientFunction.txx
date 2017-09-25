@@ -478,7 +478,7 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
 
     double gradNorm = gradE.magnitude();
 
-    if (gradNorm >= sqrt(planeDist))
+    if (gradNorm >= sqrt(planeDist) && gradNorm > 0.0)
     {
         for ( unsigned int n = 0; n < VDimension; n++ )
         {    gradE[n] *= 0.95*sqrt(planeDist)/gradNorm;    }
