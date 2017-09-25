@@ -294,7 +294,7 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     // Set the minimum neighborhood radius and maximum sigma based on the
     // domain of the 1st input image.
     unsigned int maxdim = 0;
-    double maxradius = 10000000.0;
+    double maxradius = 100000.0;
     double spacing = this->GetInput()->GetSpacing()[0];
 
     for (unsigned int d = 0; d < this->GetParticleSystem()->GetDomainsPerShape(); d++)
