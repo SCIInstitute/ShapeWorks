@@ -173,9 +173,13 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         {
                             gradient = original_gradient * m_TimeSteps[dom][k];
 
+
+                            /*
                             dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))
                                     ->ApplyVectorConstraints(gradient,
-                                                             m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt); //No impact disabled code found--Praful, June 15, 2017
+                                                             m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
+                            */
+
                             gradmag = gradient.magnitude();
 
                             // Prevent a move which is too large
