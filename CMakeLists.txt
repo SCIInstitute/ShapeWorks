@@ -6,10 +6,10 @@ cmake_minimum_required(VERSION 2.6)
 #SET(VTK_DIR "/scratch/TOOLKITS/VTK5.10.1-BUILD")
 #SET(FLTK_DIR "/scratch/TOOLKITS/fltk-1.1.10")
 
-SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.7.2")
-SET(VTK_DIR "/home/sci/prafulag/BuildDIR/VTK-5.10.1")
+SET(ITK_DIR "/Users/prafulag/BuildDIR/ITK-4.7.2")
+SET(VTK_DIR "/Users/prafulag/BuildDIR/VTK-5.10.1")
 SET(FLTK_DIR "/home/sci/prafulag/BuildDIR/fltk-1.1.10")
-SET(VXL_DIR "/home/sci/prafulag/BuildDIR/vxl")
+SET(VXL_DIR "/Users/prafulag/BuildDIR/vxl")
 SET(USE_VTK 1)
 SET(CMAKE_BUILD_TYPE DEBUG)
 #-------------------------------
@@ -42,7 +42,7 @@ option(BUILD_FeaMeshSupport "Build with Fea Mesh support (requires fim library w
 
 # Optionally build programs with GUIs.
 option(BUILD_ShapeWorksView "Build ShapeWorksView (requires FLTK & VTK)" OFF)
-option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" OFF)
+option(BUILD_ShapeWorksView2 "Build ShapeWorksView2 (requires QT & VTK)" ON)
 option(BUILD_ShapeWorksShop "Build ShapeWorksShop (requires FLTK & VTK)" OFF)
 option(BUILD_Unsupported "Build unsupported tools (NOT recommended, requires FLTK & VTK)" OFF)
 option(CMAKE_BUILD_TYPE "Build Type" DEBUG)
@@ -51,7 +51,7 @@ option(BUILD_ShapeWorksGroom "Build ShapeworksGroom" OFF)
 
 
 # Optionally use OpenMP
-option(USE_OPENMP "Build parallel optimization using OpenMP" ON)
+option(USE_OPENMP "Build parallel optimization using OpenMP" OFF)
 if(USE_OPENMP)
   FIND_PACKAGE( OpenMP REQUIRED)
   if(OPENMP_FOUND)
