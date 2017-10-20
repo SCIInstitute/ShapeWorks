@@ -168,6 +168,9 @@ public:
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
+    copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
+    copy->points_mean = this->points_mean;
+
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 
   }
@@ -197,6 +200,9 @@ protected:
   double m_MinimumVarianceDecayConstant;
   int m_RecomputeCovarianceInterval;
   int m_Counter;
+
+  vnl_matrix_type m_InverseCovMatrix; // 3Nx3N - used for energy computation
+  vnl_matrix_type points_mean; //3NxM - used for energy computation
 
 };
 
