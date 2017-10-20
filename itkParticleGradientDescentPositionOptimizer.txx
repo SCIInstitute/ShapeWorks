@@ -164,6 +164,8 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
                         original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem,
                                                                             maxdt, energy);
+
+//                        std::cout << energy << std::endl;
                         unsigned int idx = it.GetIndex();
                         PointType pt = *it;
                         NormalType ptNormalOld = domain->SampleNormalVnl(pt);
@@ -181,9 +183,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                             */
 
                             gradmag = gradient.magnitude();
-
-                            // Prevent a move which is too large
-//                            if (gradmag * m_TimeSteps[dom][k] > maxdt) // double multiplication of timestep -- Praful, June 15, 2017
 
                             if (gradmag > maxdt)
                             {
