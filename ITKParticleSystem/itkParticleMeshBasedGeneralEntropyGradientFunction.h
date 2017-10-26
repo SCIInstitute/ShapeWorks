@@ -63,6 +63,7 @@ public:
     }
 
     vnl_matrix_type GetYMatrix(const ParticleSystemType *c) const;
+    double GetEnergyForPositionInGivenDomain(unsigned int idx, unsigned int d, const ParticleSystemType *c) const;
 
     void SetDimensions()
     {
@@ -181,6 +182,7 @@ public:
         copy->m_mean = this->m_mean;
         copy->m_UseNormals = this->m_UseNormals;
         copy->m_UseXYZ = this->m_UseXYZ;
+        copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
         return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
     }
 
@@ -223,7 +225,8 @@ protected:
     bool m_UseMeanEnergy;
     std::vector<bool> m_UseXYZ;
     std::vector<bool> m_UseNormals;
-    vnl_vector_type m_mean;
+    vnl_matrix_type m_mean;
+    vnl_matrix_type m_InverseCovMatrix;
     int num_dims, num_samples;
 
 };
