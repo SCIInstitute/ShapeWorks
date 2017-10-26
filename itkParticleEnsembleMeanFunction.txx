@@ -35,7 +35,9 @@ ParticleEnsembleMeanFunction<VDimension>
         m_PointsUpdate = m_PointsUpdate.fill(0.0);
     }
 
-    vnl_vector_type means(num_dims, 0.0);
+    means.clear();
+    means.set_size(num_dims, 1);
+    means.fill(0.0);
 
     for (unsigned int j = 0; j < num_dims; j++)
     {
@@ -44,14 +46,14 @@ ParticleEnsembleMeanFunction<VDimension>
         {
             total += m_ShapeMatrix->operator()(j, i);
         }
-        means(j) = total/(double)num_samples;
+        means(j,0) = total/(double)num_samples;
     }
 
     for (unsigned int j = 0; j < num_dims; j++)
     {
         for (unsigned int i = 0; i < num_samples; i++)
         {
-            m_PointsUpdate(j, i) = m_ShapeMatrix->operator()(j, i) - means(j);
+            m_PointsUpdate(j, i) = m_ShapeMatrix->operator()(j, i) - means(j,0);
         }
     }
 //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
@@ -77,7 +79,15 @@ ParticleEnsembleMeanFunction<VDimension>
     for (unsigned int i = 0; i< VDimension; i++)
         gradE[i] = m_PointsUpdate(k + i, d / m_DomainsPerShape);
 
-    energy = gradE.squared_magnitude() * 0.5;
+    VectorType currentEnergy;
+    currentEnergy[0] = m_ShapeMatrix->operator()(k    , d/m_DomainsPerShape) - means(k  ,0);
+    currentEnergy[1] = m_ShapeMatrix->operator()(k+1  , d/m_DomainsPerShape) - means(k+1,0);
+    currentEnergy[2] = m_ShapeMatrix->operator()(k+2  , d/m_DomainsPerShape) - means(k+2,0);
+
+//    energy = gradE.squared_magnitude() * 0.5;
+    energy = currentEnergy.squared_magnitude()*0.5;
+
+
 //    maxmove = domain->GetImage()->GetSpacing()[0];
       maxmove = energy * 0.5;
 

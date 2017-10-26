@@ -116,6 +116,7 @@ public:
     copy->m_DomainsPerShape = this->m_DomainsPerShape;
     copy->m_ShapeMatrix     = this->m_ShapeMatrix;
     copy->m_PointsUpdate    = this->m_PointsUpdate;
+    copy->means            = this->means;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 
@@ -132,6 +133,7 @@ protected:
   vnl_matrix_type m_PointsUpdate;
 
   int m_DomainsPerShape;
+  vnl_matrix_type means;
 
 };
 

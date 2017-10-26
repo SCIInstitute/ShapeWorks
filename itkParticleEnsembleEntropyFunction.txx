@@ -177,19 +177,14 @@ ParticleEnsembleEntropyFunction<VDimension>
     Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - points_mean(k+1, 0);
     Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - points_mean(k+2, 0);
 
-//    std::cout << Xi.extract(3,1) << std::endl;
-    vnl_matrix_type tmp1 = m_InverseCovMatrix.extract(3,3,k,k);
-//    std::cout << tmp1.extract(3,3) << std::endl;
-    vnl_matrix_type tmp = Xi.transpose()*tmp1;
-//    std::cout << tmp.extract(1,3) << std::endl;
 
-//    std::cout << tmp.rows() << " " << tmp.cols() << std::endl;
+    vnl_matrix_type tmp1 = m_InverseCovMatrix.extract(3,3,k,k);
+
+    vnl_matrix_type tmp = Xi.transpose()*tmp1;
+
     tmp *= Xi;
-//    std::cout << tmp.rows() << " " << tmp.cols() << std::endl;
 
     energy = tmp(0,0);
-
-//    std::cout<< tmp(0,0) << " " << energy*10.0 <<std::endl;
 
 //    const unsigned int PointsPerDomain = system->GetNumberOfParticles(d);
 //    unsigned int k = ((d % DomainsPerShape) * PointsPerDomain * VDimension)

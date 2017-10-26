@@ -33,20 +33,34 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     vnl_matrix_type points_minus_mean = GetYMatrix(this->m_ParticleSystem);
 
-    m_mean.set_size(num_dims);
+    m_mean.clear();
+    m_mean.set_size(num_dims,1);
     m_mean.fill(0.0);
 
     for (unsigned int i = 0; i < num_dims; i++)
     {
         for (unsigned int j = 0; j < num_samples; j++)
-            m_mean(i) += points_minus_mean(i,j)/(double)num_samples;
+            m_mean(i,0) += points_minus_mean(i,j)/(double)num_samples;
     }
 
     for (unsigned int i = 0; i < points_minus_mean.rows(); i++)
     {
         for (unsigned int j = 0; j < points_minus_mean.cols(); j++)
-            points_minus_mean(i,j) = points_minus_mean(i,j) - m_mean(i);
+            points_minus_mean(i,j) = points_minus_mean(i,j) - m_mean(i,0);
     }
+
+    vnl_matrix_type covMatrix;
+    covMatrix = points_minus_mean*points_minus_mean.transpose();
+    covMatrix /= (double)(num_samples-1);
+    // Regularize covMatrix
+    for (unsigned int i = 0; i < num_dims; i++)
+    {
+        covMatrix(i, i) += m_MinimumVariance;
+    }
+    vnl_symmetric_eigensystem<float> symEigen1(covMatrix);
+    m_InverseCovMatrix.set_size(num_dims, num_dims);
+    m_InverseCovMatrix.fill(0.0);
+    m_InverseCovMatrix = symEigen1.pinverse();
 
     vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);
 
@@ -61,7 +75,10 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     vnl_symmetric_eigensystem<float> symEigen(A);
 
     if (this->m_UseMeanEnergy)
+    {
         pinvMat.set_identity();
+        m_InverseCovMatrix.set_identity();
+    }
     else
         pinvMat = symEigen.pinverse().transpose();
 
@@ -309,6 +326,96 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     return points_minus_mean;
 }
 
+template <unsigned int VDimension>
+double
+ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
+::GetEnergyForPositionInGivenDomain(unsigned int idx, unsigned int dom, const ParticleSystemType *c) const
+{
+    const ParticleImplicitSurfaceDomain<float, 3>* domain
+            = static_cast<const ParticleImplicitSurfaceDomain<float ,3>*>(c->GetDomain(dom));
+
+    const ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+         = static_cast<const ParticleImageDomainWithGradients<float ,3> *>(this->m_ParticleSystem->GetDomain(dom));
+
+    TriMesh *ptr = domain->GetMesh();
+
+    int d = dom % m_DomainsPerShape;
+
+    PointType pt_ps = c->GetPosition(idx, dom);
+    point pt;
+    pt.clear();
+    pt[0] = pt_ps[0];
+    pt[1] = pt_ps[1];
+    pt[2] = pt_ps[2];
+    std::vector<float> fVals;
+    fVals.clear();
+
+    if (m_AttributesPerDomain[d] > 0)
+        ptr->GetFeatureValues(pt, fVals);
+
+    if (fVals.size() != m_AttributesPerDomain[d])
+        std::cerr << "Unexpected Inconsistency in number of attributes... check" << std::endl;
+
+    int mean_startIdx = 0;
+    int sz_Yidx = 0;
+    if (m_UseXYZ[d])
+        sz_Yidx += 3;
+    if (m_UseNormals[d])
+        sz_Yidx += 3;
+    sz_Yidx += m_AttributesPerDomain[d];
+    vnl_matrix_type Y_dom_idx(sz_Yidx, 1, 0.0);
+
+    int num = 0;
+    for (int i = 0; i < d; i++)
+    {
+        mean_startIdx += c->GetNumberOfParticles(i)*m_AttributesPerDomain[i];
+        num += m_AttributesPerDomain[i];
+        if (m_UseXYZ[i])
+        {
+            mean_startIdx += c->GetNumberOfParticles(i)*3;
+            num += 3;
+        }
+        if (m_UseNormals[i])
+        {
+            mean_startIdx += c->GetNumberOfParticles(i)*3;
+            num += 3;
+        }
+    }
+
+    int i = 0;
+    int s = 0;
+    if (m_UseXYZ[d])
+    {
+        PointType wpt = c->GetPosition(idx, dom);
+//                    PointType wpt = c->GetTransformedPosition(p, dom); -- fix gradient first
+        Y_dom_idx(i++, 0) = wpt[0]*m_AttributeScales[num+0] - m_mean(mean_startIdx++,0);
+        Y_dom_idx(i++, 0) = wpt[1]*m_AttributeScales[num+1] - m_mean(mean_startIdx++,0);
+        Y_dom_idx(i++, 0) = wpt[2]*m_AttributeScales[num+2] - m_mean(mean_startIdx++,0);
+        s = 3;
+    }
+
+    if (m_UseNormals[d])
+    {
+        typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleNormalVnl(pt_ps);
+        VectorType pN;
+        pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
+//                    pN = c->TransformVector(pN, c->GetTransform(d) * c->GetPrefixTransform(d));
+        Y_dom_idx(i++, 0) = pG[0]*m_AttributeScales[num+0+s] - m_mean(mean_startIdx++,0);
+        Y_dom_idx(i++, 0) = pG[1]*m_AttributeScales[num+1+s] - m_mean(mean_startIdx++,0);
+        Y_dom_idx(i++, 0) = pG[2]*m_AttributeScales[num+2+s] - m_mean(mean_startIdx++,0);
+        s = 6;
+    }
+
+    for (unsigned int c = 0; c < m_AttributesPerDomain[d]; c++)
+       Y_dom_idx(i++, 0) = fVals[c]*m_AttributeScales[num+c+s] - m_mean(mean_startIdx++,0);
+
+    vnl_matrix_type tmp1 = m_InverseCovMatrix.extract(sz_Yidx, sz_Yidx, num, num);
+    vnl_matrix_type tmp = Y_dom_idx.transpose()*tmp1;
+
+    tmp *= Y_dom_idx;
+
+    return tmp(0,0);
+}
 
 template <unsigned int VDimension>
 typename ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>::VectorType
@@ -318,15 +425,17 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 {
     // NOTE: This code requires that indices be contiguous, i.e. it won't work if
     // you start deleting particles.
-    int dom = d % m_DomainsPerShape;
-    int sampNum = d/m_DomainsPerShape;
+    int dom = d % m_DomainsPerShape; //domain number within shape
+    int sampNum = d/m_DomainsPerShape; //shape number
 
-    energy = m_CurrentEnergy;
+    energy = GetEnergyForPositionInGivenDomain(idx, d, system);//m_CurrentEnergy;
     maxdt = m_MinimumEigenValue;
 
     int num = 0;
     for (int i = 0; i < dom; i++)
         num += system->GetNumberOfParticles(i)*VDimension;
+
+
 
     VectorType gradE;
     unsigned int k = idx * VDimension + num;

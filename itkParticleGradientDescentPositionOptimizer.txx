@@ -165,15 +165,22 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem,
                                                                             maxdt, energy);
 
+
 //                        std::cout << energy << std::endl;
                         unsigned int idx = it.GetIndex();
                         PointType pt = *it;
                         NormalType ptNormalOld = domain->SampleNormalVnl(pt);
 
+                        double dotPdt = original_gradient[0]*ptNormalOld[0] + original_gradient[1]*ptNormalOld[1] + original_gradient[2]*ptNormalOld[2];
+                        VectorType original_gradient_projectedOntoTangentSpace;
+                        original_gradient_projectedOntoTangentSpace[0] = original_gradient[0] - dotPdt*ptNormalOld[0] ;
+                        original_gradient_projectedOntoTangentSpace[1] = original_gradient[1] - dotPdt*ptNormalOld[1] ;
+                        original_gradient_projectedOntoTangentSpace[2] = original_gradient[2] - dotPdt*ptNormalOld[2] ;
+
                         double newenergy, gradmag;
                         while ( !done )
                         {
-                            gradient = original_gradient * m_TimeSteps[dom][k];
+                            gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
 
                             /*
