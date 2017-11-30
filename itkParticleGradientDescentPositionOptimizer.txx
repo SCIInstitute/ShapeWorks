@@ -24,6 +24,7 @@ const int global_iteration = 1;
 
 #include <algorithm>
 #include <ctime>
+#include <time.h>
 #include <string>
 #include "itkParticleImageDomainWithGradients.h"
 #include <vector>
@@ -100,10 +101,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         maxtime[q]  = 1.0e30;
         mintime[q]  = 1.0;
     }
+    time_t timerBefore, timerAfter;
 
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
+        timerBefore = time(NULL);
         if (counter % global_iteration == 0)
         {
             std::cerr << "Performing global step\n" ;
@@ -162,9 +165,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         // Compute gradient update.
                         double energy = 0.0;
                         localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
-                        original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem,
-                                                                            maxdt, energy);
-
+                        original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
 
 //                        std::cout << energy << std::endl;
                         unsigned int idx = it.GetIndex();
@@ -182,6 +183,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         {
                             gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
+//                            gradient = original_gradient * m_TimeSteps[dom][k];
 
                             /*
                             dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))
@@ -269,7 +271,10 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         m_GradientFunction->AfterIteration();
         this->InvokeEvent(itk::IterationEvent());
 
-        std::cout << m_NumberOfIterations << ".";
+        timerAfter = time(NULL);
+        double seconds = difftime(timerAfter, timerBefore);
+
+        std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
         std::cout.flush();
         // Check for convergence.  Optimization is considered to have converged if
         // max number of iterations is reached or maximum distance moved by any
