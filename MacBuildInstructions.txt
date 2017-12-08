@@ -15,6 +15,8 @@ VXL - https://github.com/vxl/vxl <Download from here, only stable version which 
 
 ITK-4.7.2 - turn on USE_SYSTEM_VXL and provide path of vxl build
 
+https://github.com/InsightSoftwareConsortium/ITK/blob/master/Modules/ThirdParty/VNLInstantiation/src/vnl_fft_base%2Bfloat.3-.cxx
+
 VTK-5.10.1
 
 download the zip from  https://www.vtk.org/gitweb?p=VTK.git;a=tags 
