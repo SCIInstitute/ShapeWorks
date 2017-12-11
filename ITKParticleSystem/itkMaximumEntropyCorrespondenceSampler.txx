@@ -32,6 +32,9 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   m_MeshBasedGeneralMeanGradientFunction = ParticleMeshBasedGeneralMeanGradientFunction<Dimension>::New();
 
   m_ShapeMatrix = ParticleShapeMatrixAttribute<double, Dimension>::New();
+  m_GeneralShapeMatrix = ParticleGeneralShapeMatrix<double, Dimension>::New();
+  m_GeneralShapeGradMatrix = ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
+
   m_LinearRegressionShapeMatrix = ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
   m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
   m_FunctionShapeData = ParticleFunctionBasedShapeSpaceData<float, Dimension>::New();
@@ -42,10 +45,18 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
     //  m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
   m_GeneralEntropyGradientFunction->SetShapeData(m_FunctionShapeData);
+
+  m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
+  m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
+
   Superclass::m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_FunctionShapeData);
+
+  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
+  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
+
   // PRATEEP
 //  m_CorrespondenceMode = 0; // changed 09/24
   m_CorrespondenceMode = 1;
@@ -107,7 +118,12 @@ MaximumEntropyCorrespondenceSampler<TImage>::InitializeOptimizationFunctions()
   m_LinearRegressionShapeMatrix->Initialize();
   m_MixedEffectsShapeMatrix->Initialize();
   m_ShapeMatrix->Initialize();
+
+  m_GeneralShapeMatrix->Initialize();
+  m_GeneralShapeGradMatrix->Initialize();
+
 }
+
 
 } // end namespace
 

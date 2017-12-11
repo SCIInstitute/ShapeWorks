@@ -99,6 +99,28 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
     m_Procrustes->SetDomainsPerShape(m_domains_per_shape);
 
+    if (m_use_xyz.size() > 0)
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->SetXYZ(i, m_use_xyz[i]);
+    }
+    else
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->SetXYZ(i, false);
+    }
+
+    if (m_use_normals.size() > 0)
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->SetNormals(i, m_use_normals[i]);
+    }
+    else
+    {
+        for (int i = 0; i < m_domains_per_shape; i++)
+            m_Sampler->SetNormals(i, false);
+    }
+
     if (m_procrustes_scaling == 0)
     {
         m_Procrustes->ScalingOff();
@@ -1802,27 +1824,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     // END SHIREEN
 
-    if (m_use_xyz.size() > 0)
-    {
-        for (int i = 0; i < m_domains_per_shape; i++)
-            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetXYZ(i, m_use_xyz[i]);
-    }
-    else
-    {
-        for (int i = 0; i < m_domains_per_shape; i++)
-            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetXYZ(i, false);
-    }
 
-    if (m_use_normals.size() > 0)
-    {
-        for (int i = 0; i < m_domains_per_shape; i++)
-            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetNormals(i, m_use_normals[i]);
-    }
-    else
-    {
-        for (int i = 0; i < m_domains_per_shape; i++)
-            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetNormals(i, false);
-    }
 
     m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);

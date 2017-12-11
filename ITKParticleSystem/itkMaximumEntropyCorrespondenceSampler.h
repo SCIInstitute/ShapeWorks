@@ -21,8 +21,10 @@
 #include "itkParticleEnsembleMeanFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleGeneralEntropyGradientFunction.h"
+
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
+
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
 #include "itkParticleMeshBasedGeneralMeanGradientFunction.h"
 
@@ -182,6 +184,22 @@ public:
     m_GeneralEntropyGradientFunction->SetAttributeScales(s);
     m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
     m_MeshBasedGeneralMeanGradientFunction->SetAttributeScales(s);
+    m_GeneralShapeMatrix->SetAttributeScales(s);
+    m_GeneralShapeGradMatrix->SetAttributeScales(s);
+  }
+
+  void SetXYZ(unsigned int i, bool flag)
+  {
+      m_MeshBasedGeneralEntropyGradientFunction->SetXYZ(i, flag);
+      m_GeneralShapeMatrix->SetXYZ(i, flag);
+      m_GeneralShapeGradMatrix->SetXYZ(i, flag);
+  }
+
+  void SetNormals(int i, bool flag)
+  {
+      m_MeshBasedGeneralEntropyGradientFunction->SetNormals(i, flag);
+      m_GeneralShapeMatrix->SetNormals(i, flag);
+      m_GeneralShapeGradMatrix->SetNormals(i, flag);
   }
 
   void SetAttributesPerDomain(const std::vector<int> s)
@@ -198,6 +216,8 @@ public:
       this->Superclass::SetAttributesPerDomain(s1);
       m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s1);
       m_MeshBasedGeneralMeanGradientFunction->SetAttributesPerDomain(s1);
+      m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
+      m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
   void AddAttributeImage(int d,
@@ -256,6 +276,8 @@ public:
     m_EnsembleNormalPenaltyFunction->SetDomainsPerShape(n);
     m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
     m_MeshBasedGeneralMeanGradientFunction->SetDomainsPerShape(n);
+    m_GeneralShapeMatrix->SetDomainsPerShape(n);
+    m_GeneralShapeGradMatrix->SetDomainsPerShape(n);
   }
 
   void SetTimeptsPerIndividual(int n)
@@ -296,6 +318,10 @@ private:
   typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::Pointer m_FunctionShapeData;
   typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
   typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
+
+  typename ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
+  typename ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
+
   typename ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
   typename ParticleMeshBasedGeneralMeanGradientFunction<Dimension>::Pointer m_MeshBasedGeneralMeanGradientFunction;
 };
