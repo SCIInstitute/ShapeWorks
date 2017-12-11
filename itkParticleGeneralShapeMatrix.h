@@ -115,7 +115,7 @@ public:
                 numRows += VDimension * ps->GetNumberOfParticles(i);
             if (m_use_normals[i])
                 numRows += VDimension * ps->GetNumberOfParticles(i);
-             numRows += m_AttributesPerDomain[i];
+             numRows += m_AttributesPerDomain[i]* ps->GetNumberOfParticles(i);
         }
 
         if (numRows > this->rows())
@@ -137,7 +137,7 @@ public:
                 k += VDimension * ps->GetNumberOfParticles(i);
                 num += VDimension;
             }
-            k += m_AttributesPerDomain[i];
+            k += m_AttributesPerDomain[i]* ps->GetNumberOfParticles(i);
             num += m_AttributesPerDomain[i];
         }
         if (m_use_xyz[dom])
@@ -157,13 +157,13 @@ public:
         if (m_use_xyz[dom])
         {
             for (unsigned int i = 0; i < VDimension; i++)
-                this->operator()(i+k, d / m_DomainsPerShape) = pos[i]*m_AttributeScales[num+i];
+                this->operator()(i+k, d / m_DomainsPerShape) = pos[i]*m_AttributeScales[num+i+s];
             k += VDimension;
             s += 3;
         }
         if (m_use_normals[dom])
         {
-            ParticleImageDomainWithGradients::VnlVectorType pN = domainWithGrad->SampleNormalVnl(pos);
+            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalVnl(pos);
             for (unsigned int i = 0; i < VDimension; i++)
                 this->operator()(i+k, d / m_DomainsPerShape) = pN[i]*m_AttributeScales[num+i+s];
             k += VDimension;
@@ -211,7 +211,7 @@ public:
                 k += VDimension * ps->GetNumberOfParticles(i);
                 num += VDimension;
             }
-            k += m_AttributesPerDomain[i];
+            k += m_AttributesPerDomain[i]* ps->GetNumberOfParticles(i);
             num += m_AttributesPerDomain[i];
         }
         if (m_use_xyz[dom])
@@ -233,13 +233,13 @@ public:
         if (m_use_xyz[dom])
         {
             for (unsigned int i = 0; i < VDimension; i++)
-                this->operator()(i+k, d / m_DomainsPerShape) = pos[i]*m_AttributeScales[num+i];
+                this->operator()(i+k, d / m_DomainsPerShape) = pos[i]*m_AttributeScales[num+i+s];
             k += VDimension;
             s += VDimension;
         }
         if (m_use_normals[dom])
         {
-            ParticleImageDomainWithGradients::VnlVectorType pN = domainWithGrad->SampleNormalVnl(pos);
+            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalVnl(pos);
             for (unsigned int i = 0; i < VDimension; i++)
                 this->operator()(i+k, d / m_DomainsPerShape) = pN[i]*m_AttributeScales[num+i+s];
             k += VDimension;
@@ -271,8 +271,6 @@ protected:
         ParticleGeneralShapeMatrix()
     {
         m_DomainsPerShape = 1;
-        m_use_xyz = true;
-        m_use_normals = false;
 
         this->m_DefinedCallbacks.DomainAddEvent = true;
         this->m_DefinedCallbacks.PositionAddEvent = true;
@@ -292,8 +290,8 @@ private:
 
     std::vector<bool> m_use_xyz;
     std::vector<bool> m_use_normals;
-    std::vector<unsigned int> m_AttributesPerDomain;
-    std::vector<unsigned int> m_AttributeScales;
+    std::vector<int> m_AttributesPerDomain;
+    std::vector<double> m_AttributeScales;
 
 }; // end class
 
