@@ -469,6 +469,21 @@ public:
         m_FunctionA->SetParticleSystem(this->GetParticleSystem());
     }
 
+    ParticleVectorFunction<VDimension> * GetFunctionA()
+    {
+        return m_FunctionA.GetPointer();
+    }
+
+    ParticleVectorFunction<VDimension> * GetFunctionB()
+    {
+        return m_FunctionB.GetPointer();
+    }
+
+    ParticleVectorFunction<VDimension> * GetFunctionC()
+    {
+        return m_FunctionC.GetPointer();
+    }
+
     void SetFunctionB( ParticleVectorFunction<VDimension> *o)
     {
         m_FunctionB = o;

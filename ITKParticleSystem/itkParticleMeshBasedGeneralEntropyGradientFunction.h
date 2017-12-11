@@ -9,6 +9,9 @@
 #include "itkParticleVectorFunction.h"
 #include <vector>
 #include <numeric>
+#include "itkParticleGeneralShapeMatrix.h"
+#include "itkParticleGeneralShapeGradientMatrix.h"
+
 namespace itk
 {
 
@@ -26,17 +29,39 @@ public:
     /** Type of particle system. */
     typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
+    typedef ParticleGeneralShapeMatrix<double, VDimension> ShapeDataType;
+    typedef ParticleGeneralShapeGradientMatrix<double, VDimension> ShapeGradientType;
+
+    typedef typename ShapeDataType::DataType DataType;
+
     /** Vector & Point types. */
     typedef typename Superclass::VectorType VectorType;
     typedef typename ParticleSystemType::PointType PointType;
-    typedef vnl_vector<float> vnl_vector_type;
-    typedef vnl_matrix<float> vnl_matrix_type;
+    typedef vnl_vector<DataType> vnl_vector_type;
+    typedef vnl_matrix<DataType> vnl_matrix_type;
 
     /** Method for creation through the object factory. */
     itkNewMacro(Self)
 
     /** Dimensionality of the domain of the particle system. */
     itkStaticConstMacro(Dimension, unsigned int, VDimension);
+
+    /**Access the shape matrix. */
+    void SetShapeData( ShapeDataType *s)
+    {    m_ShapeData = s;  }
+    ShapeDataType *GetShapeData()
+    {   return  m_ShapeData.GetPointer();  }
+    const ShapeDataType *GetShapeData() const
+    {   return  m_ShapeData.GetPointer();  }
+
+    /**Access the shape gradient matrix. */
+    void SetShapeGradient( ShapeGradientType *s)
+    {    m_ShapeGradient = s;  }
+    ShapeGradientType *GetShapeGradient()
+    {   return  m_ShapeGradient.GetPointer();  }
+    const ShapeGradientType *GetShapeGradient() const
+    {   return  m_ShapeGradient.GetPointer();  }
+
 
     /** The first argument is a pointer to the particle system.  The second
          argument is the index of the domain within that particle system.  The
@@ -62,31 +87,35 @@ public:
         return e;
     }
 
-    vnl_matrix_type GetYMatrix(const ParticleSystemType *c) const;
+    //vnl_matrix_type GetYMatrix(const ParticleSystemType *c) const;
+    double GetEnergyForPositionInGivenDomain(unsigned int idx, unsigned int d, const ParticleSystemType *c) const;
 
-    void SetDimensions()
-    {
-        num_samples = this->m_ParticleSystem->GetNumberOfDomains() / m_DomainsPerShape;
+//    void SetDimensions()
+//    {
+//        num_samples = this->m_ParticleSystem->GetNumberOfDomains() / m_DomainsPerShape;
 
-        int ndims = 0;
-        for (int i = 0; i < m_DomainsPerShape; i++)
-        {
-            int shapeAttrs = m_AttributesPerDomain[i];
-            if (m_UseXYZ[i])
-                shapeAttrs += 3;
-            if (m_UseNormals[i])
-                shapeAttrs += 3;
-            ndims += this->m_ParticleSystem->GetNumberOfParticles(i) * shapeAttrs;
-        }
+//        int ndims = 0;
+//        for (int i = 0; i < m_DomainsPerShape; i++)
+//        {
+//            int shapeAttrs = m_AttributesPerDomain[i];
+//            if (m_UseXYZ[i])
+//                shapeAttrs += 3;
+//            if (m_UseNormals[i])
+//                shapeAttrs += 3;
+//            ndims += this->m_ParticleSystem->GetNumberOfParticles(i) * shapeAttrs;
+//        }
 
-        num_dims = ndims;
-    }
+//        num_dims = ndims;
+//    }
+
+
+
 
     /** Called before each iteration of a solver. */
     virtual void BeforeIteration()
     {
-        this->SetDimensions();
-        this->ComputeUpdates();
+//        this->SetDimensions();
+        this->ComputeUpdates(this->m_ParticleSystem);
     }
 
 
@@ -181,6 +210,11 @@ public:
         copy->m_mean = this->m_mean;
         copy->m_UseNormals = this->m_UseNormals;
         copy->m_UseXYZ = this->m_UseXYZ;
+        copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
+
+        copy->m_ShapeData = this->m_ShapeData;
+        copy->m_ShapeGradient = this->m_ShapeGradient;
+
         return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
     }
 
@@ -206,7 +240,10 @@ protected:
     void operator=(const ParticleMeshBasedGeneralEntropyGradientFunction &);
     ParticleMeshBasedGeneralEntropyGradientFunction(const ParticleMeshBasedGeneralEntropyGradientFunction &);
 
-    virtual void ComputeUpdates();
+    typename ShapeDataType::Pointer m_ShapeData;
+    typename ShapeGradientType::Pointer m_ShapeGradient;
+
+    virtual void ComputeUpdates(const ParticleSystemType *c);
     vnl_matrix_type m_PointsUpdate;
 
     double m_MinimumVariance;
@@ -223,7 +260,8 @@ protected:
     bool m_UseMeanEnergy;
     std::vector<bool> m_UseXYZ;
     std::vector<bool> m_UseNormals;
-    vnl_vector_type m_mean;
+    vnl_matrix_type m_mean;
+    vnl_matrix_type m_InverseCovMatrix;
     int num_dims, num_samples;
 
 };

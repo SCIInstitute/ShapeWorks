@@ -24,8 +24,6 @@
 
 namespace itk
 {
-
-
 template <unsigned int VDimension>
 void
 ParticleEnsembleEntropyFunction<VDimension>
@@ -56,9 +54,13 @@ ParticleEnsembleEntropyFunction<VDimension>
         m_PointsUpdate.set_size(num_dims, num_samples);
         m_PointsUpdate = m_PointsUpdate.fill(0.0);
     }
+    vnl_matrix_type points_minus_mean;
+    points_minus_mean.clear();
+    points_minus_mean.set_size(num_dims, num_samples);
+    points_minus_mean.fill(0.0);
 
-    vnl_matrix_type points_minus_mean(num_dims, num_samples, 0.0);
-    vnl_vector_type means(num_dims);
+    points_mean.clear();
+    points_mean.set_size(num_dims, 1);
 
     // Compute the covariance matrix.
     // (A is D' in Davies paper)
@@ -71,7 +73,7 @@ ParticleEnsembleEntropyFunction<VDimension>
         {
             total += m_ShapeMatrix->operator()(j, i);
         }
-        means(j) = total/(double)num_samples;
+        points_mean(j,0) = total/(double)num_samples;
         _total += total;
     }
 
@@ -80,7 +82,7 @@ ParticleEnsembleEntropyFunction<VDimension>
     {
         for (unsigned int i = 0; i < num_samples; i++)
         {
-            points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - means(j);
+            points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - points_mean(j,0);
         }
     }
 //    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
@@ -99,6 +101,16 @@ ParticleEnsembleEntropyFunction<VDimension>
     std::cout << "Done\n";
 #endif
 
+    vnl_matrix_type covMatrix;
+    covMatrix = points_minus_mean*points_minus_mean.transpose();
+    covMatrix /= (double)(num_samples-1);
+    // Regularize covMatrix
+    for (unsigned int i = 0; i < num_dims; i++)
+    {
+        covMatrix(i, i) += m_MinimumVariance;
+    }
+    vnl_symmetric_eigensystem<double> symEigen1(covMatrix);
+    m_InverseCovMatrix = symEigen1.pinverse();
 
     vnl_matrix_type A;
     A =  points_minus_mean.transpose() * points_minus_mean;
@@ -108,12 +120,12 @@ ParticleEnsembleEntropyFunction<VDimension>
     // Regularize A
     for (unsigned int i = 0; i < num_samples; i++)
     {
-        A(i, i) = A(i, i) + m_MinimumVariance;
+        A(i, i) += m_MinimumVariance;
     }
 
     //
     vnl_symmetric_eigensystem<double> symEigen(A);
-    m_PointsUpdate = points_minus_mean * ((symEigen.pinverse()).transpose());
+    m_PointsUpdate = points_minus_mean * ((symEigen.pinverse()));
 
 //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 
@@ -133,7 +145,7 @@ ParticleEnsembleEntropyFunction<VDimension>
     m_CurrentEnergy /= 2;
     //    energy = 0.5*log(symEigen.determinant());
 
-    for (unsigned int i =0; i < num_samples; i++)
+    for (unsigned int i = 0; i < num_samples; i++)
     {
         std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
     }
@@ -149,10 +161,9 @@ ParticleEnsembleEntropyFunction<VDimension>
 {
     // NOTE: This code requires that indices be contiguous, i.e. it won't work if
     // you start deleting particles.
-    energy = m_CurrentEnergy;
-    maxdt  = m_MinimumEigenValue;
-
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
+
+    maxdt  = m_MinimumEigenValue;
 
     VectorType gradE;
     unsigned int k = 0;
@@ -161,6 +172,19 @@ ParticleEnsembleEntropyFunction<VDimension>
         k += system->GetNumberOfParticles(i) * VDimension;
     k += idx*VDimension;
 
+    vnl_matrix_type Xi(3,1,0.0);
+    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - points_mean(k, 0);
+    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - points_mean(k+1, 0);
+    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - points_mean(k+2, 0);
+
+
+    vnl_matrix_type tmp1 = m_InverseCovMatrix.extract(3,3,k,k);
+
+    vnl_matrix_type tmp = Xi.transpose()*tmp1;
+
+    tmp *= Xi;
+
+    energy = tmp(0,0);
 
 //    const unsigned int PointsPerDomain = system->GetNumberOfParticles(d);
 //    unsigned int k = ((d % DomainsPerShape) * PointsPerDomain * VDimension)
@@ -177,8 +201,6 @@ ParticleEnsembleEntropyFunction<VDimension>
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));
 }
-
-
 
 } // end namespace
 #endif

@@ -27,8 +27,7 @@ namespace itk
  *
  * \brief Each column describes a shape.  A shape may be composed of
  * m_DomainsPerShape domains (default 1). ALL DOMAINS ARE *NOT* ASSUMED TO HAVE THE
- * SAME NUMBER OF PARTICLES!  This is for simplicity and should change if this
- * method is to be applied to general classes of multi-domain shapes.
+ * SAME NUMBER OF PARTICLES!
  *
  *
  * Each column represents a single shape.
@@ -195,7 +194,7 @@ protected:
     virtual ~ParticleShapeMatrixAttribute() {}
 
     void PrintSelf(std::ostream& os, Indent indent) const
-    {  Superclass::PrintSelf(os,indent);  }
+    {   Superclass::PrintSelf(os,indent);  }
 
     int m_DomainsPerShape;
 private:
