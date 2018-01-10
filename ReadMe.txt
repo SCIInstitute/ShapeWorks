@@ -2,7 +2,7 @@ From now onwards fim library is hosted in a separate repository at https://prafu
 It is added as a submodule
 
 1. Cloning a fresh hipworks repository:
-    - git clone git@bitbucket.org:prafulprojects/hipworks.git
+    - git clone git@bitbucket.org:prafulag/hipworks.git
     - vi .gitmodules
         - edit url = https://prafulag@bitbucket.org/prafulprojects/fim_v4 ---> url = https://<your_bitbucket_username>@bitbucket.org/prafulprojects/fim_v4
     - git submodule init
