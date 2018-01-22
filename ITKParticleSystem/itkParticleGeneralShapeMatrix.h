@@ -107,6 +107,7 @@ public:
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
         const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+        const typename itk::ParticleSystem<VDimension>::PointType posLocal = ps->GetPosition(idx, d);
 
         int numRows = 0;
         for (int i = 0; i < m_DomainsPerShape; i++)
@@ -163,7 +164,12 @@ public:
         }
         if (m_use_normals[dom])
         {
-            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalVnl(pos);
+            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalVnl(posLocal);
+            typename itk::ParticleSystem<VDimension>::VectorType tmp;
+            tmp[0] = pN[0]; tmp[1] = pN[1]; tmp[2] = pN[2];
+            tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+            pN[0] = tmp[0]; pN[1] = tmp[1]; pN[2] = tmp[2];
+            pN = pN.normalize(); // contains scaling
             for (unsigned int i = 0; i < VDimension; i++)
                 this->operator()(i+k, d / m_DomainsPerShape) = pN[i]*m_AttributeScales[num+i+s];
             k += VDimension;
@@ -175,9 +181,9 @@ public:
         {
             point pt;
             pt.clear();
-            pt[0] = pos[0];
-            pt[1] = pos[1];
-            pt[2] = pos[2];
+            pt[0] = posLocal[0];
+            pt[1] = posLocal[1];
+            pt[2] = posLocal[2];
             fVals.clear();
             ptr->GetFeatureValues(pt, fVals);
         }
@@ -195,6 +201,7 @@ public:
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
         const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+        const typename itk::ParticleSystem<VDimension>::PointType posLocal = ps->GetPosition(idx, d);
 
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
@@ -239,7 +246,12 @@ public:
         }
         if (m_use_normals[dom])
         {
-            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalVnl(pos);
+            ParticleImageDomainWithGradients<float, 3>::VnlVectorType pN = domainWithGrad->SampleNormalVnl(posLocal);
+            typename itk::ParticleSystem<VDimension>::VectorType tmp;
+            tmp[0] = pN[0]; tmp[1] = pN[1]; tmp[2] = pN[2];
+            tmp = ps->TransformVector(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+            pN[0] = tmp[0]; pN[1] = tmp[1]; pN[2] = tmp[2];
+            pN = pN.normalize(); // contains scaling
             for (unsigned int i = 0; i < VDimension; i++)
                 this->operator()(i+k, d / m_DomainsPerShape) = pN[i]*m_AttributeScales[num+i+s];
             k += VDimension;
@@ -251,9 +263,9 @@ public:
         {
             point pt;
             pt.clear();
-            pt[0] = pos[0];
-            pt[1] = pos[1];
-            pt[2] = pos[2];
+            pt[0] = posLocal[0];
+            pt[1] = posLocal[1];
+            pt[2] = posLocal[2];
             fVals.clear();
             ptr->GetFeatureValues(pt, fVals);
         }

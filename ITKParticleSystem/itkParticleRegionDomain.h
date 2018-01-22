@@ -56,31 +56,31 @@ public:
       this method. */
   virtual bool ApplyConstraints(PointType &p) const
   {
-    //    bool flagged = false;
+    bool flagged = false;
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      //      if ( p[i] < m_LowerBound[i])
-      //        {
-      //        flagged = true;
-      //        p[i] = m_LowerBound[i] + 1.0;
-      //        }
-      //      else if ( p[i] > m_UpperBound[i] )
-      //        {
-      //        flagged = true;
-      //        p[i] = m_UpperBound[i] - 1.0;
-      //        }
+            if ( p[i] < m_LowerBound[i])
+              {
+              flagged = true;
+              p[i] = m_LowerBound[i];
+              }
+            else if ( p[i] > m_UpperBound[i] )
+              {
+              flagged = true;
+              p[i] = m_UpperBound[i];
+              }
 
       
-            if ( p[i] < m_LowerBound[i]  || p[i] > m_UpperBound[i])
-              {
-               itkExceptionMacro(<< "Point " << p << " is outside of the specified Domain,  with bounding box "
-                                 <<  m_LowerBound << " - " << m_UpperBound
-                                  << std::endl;);
+//            if ( p[i] < m_LowerBound[i]  || p[i] > m_UpperBound[i])
+//              {
+//               itkExceptionMacro(<< "Point " << p << " is outside of the specified Domain,  with bounding box "
+//                                 <<  m_LowerBound << " - " << m_UpperBound
+//                                  << std::endl;);
         
-             }
+//             }
       }
-    //    return flagged;
-    return false;
+        return flagged;
+//    return false;
   }
 
   /** Set the lower/upper bound of the bounded region. */

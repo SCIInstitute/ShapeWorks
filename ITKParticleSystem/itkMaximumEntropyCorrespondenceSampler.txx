@@ -54,8 +54,8 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_FunctionShapeData);
 
-  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
-  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
+//  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
+//  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
 
   // PRATEEP
 //  m_CorrespondenceMode = 0; // changed 09/24

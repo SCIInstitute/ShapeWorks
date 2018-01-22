@@ -107,7 +107,8 @@ public:
         const itk::ParticleSystem<VDimension> *ps= dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
-        const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+//        const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+        const typename itk::ParticleSystem<VDimension>::PointType posLocal = ps->GetPosition(idx, d);
 
         int numRows = 0;
         for (int i = 0; i < m_DomainsPerShape; i++)
@@ -178,11 +179,11 @@ public:
         if (m_use_normals[dom])
         {
 
-            typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleGradientVnl(pos);
+            typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleGradientVnl(posLocal);
             typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pN = pG.normalize();
             float grad_mag = pG.magnitude();
 
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(pos);
+            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(posLocal);
 
             typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat1;
             mat1.set_identity();
@@ -199,14 +200,23 @@ public:
                     pH(x1, x2)   /= grad_mag;
                 }
             }
-
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat3 = pH * mat1;
-
             // mat3 = H/|grad_f| * (I - n*n');
+            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat3 = pH * mat1;
+            typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
+            tmp.set_size(VDimension, VDimension);
+            tmp.fill(0.0);
+            for (unsigned int c = 0; c<VDimension; c++)
+            {
+                for (unsigned vd = 0; vd<VDimension; vd++)
+                    tmp(c,vd) = mat3(c,vd);
+            }
+
+            tmp = ps->TransformNormalDerivative(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+
             for (unsigned int c = s; c < s+VDimension; c++)
             {
                 for (unsigned int vd = 0; vd < VDimension; vd++)
-                    this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = mat3(c-s, vd)*m_AttributeScales[num+c];
+                    this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = tmp(c-s, vd)*m_AttributeScales[num+c];
             }
             s += VDimension;
             k += VDimension;
@@ -216,9 +226,9 @@ public:
         {
             point pt;
             pt.clear();
-            pt[0] = pos[0];
-            pt[1] = pos[1];
-            pt[2] = pos[2];
+            pt[0] = posLocal[0];
+            pt[1] = posLocal[1];
+            pt[2] = posLocal[2];
 
             for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
             {
@@ -239,7 +249,8 @@ public:
         const itk::ParticleSystem<VDimension> *ps= dynamic_cast<const itk::ParticleSystem<VDimension> *>(o);
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
-        const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+//        const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+        const typename itk::ParticleSystem<VDimension>::PointType posLocal = ps->GetPosition(idx, d);
 
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
@@ -296,11 +307,11 @@ public:
         if (m_use_normals[dom])
         {
 
-            typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleGradientVnl(pos);
+            typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleGradientVnl(posLocal);
             typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pN = pG.normalize();
             float grad_mag = pG.magnitude();
 
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(pos);
+            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(posLocal);
 
             typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat1;
             mat1.set_identity();
@@ -318,13 +329,23 @@ public:
                 }
             }
 
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat3 = pH * mat1;
-
             // mat3 = H/|grad_f| * (I - n*n');
+            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat3 = pH * mat1;
+            typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
+            tmp.set_size(VDimension, VDimension);
+            tmp.fill(0.0);
+            for (unsigned int c = 0; c<VDimension; c++)
+            {
+                for (unsigned vd = 0; vd<VDimension; vd++)
+                    tmp(c,vd) = mat3(c,vd);
+            }
+
+            tmp = ps->TransformNormalDerivative(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+
             for (unsigned int c = s; c < s+VDimension; c++)
             {
                 for (unsigned int vd = 0; vd < VDimension; vd++)
-                    this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = mat3(c-s, vd)*m_AttributeScales[num+c];
+                    this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = tmp(c-s, vd)*m_AttributeScales[num+c];
             }
             s += VDimension;
             k += VDimension;
@@ -335,9 +356,9 @@ public:
         {
             point pt;
             pt.clear();
-            pt[0] = pos[0];
-            pt[1] = pos[1];
-            pt[2] = pos[2];
+            pt[0] = posLocal[0];
+            pt[1] = posLocal[1];
+            pt[2] = posLocal[2];
 
             for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
             {

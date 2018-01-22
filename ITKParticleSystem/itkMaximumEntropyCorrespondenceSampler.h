@@ -179,6 +179,13 @@ public:
     m_CorrespondenceMode = mode;
   }
 
+  void RegisterGeneralShapeMatrices()
+  {
+      std::cout << "Registering general shape matrices.. " << std::endl;
+      Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
+      Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
+  }
+
   void SetAttributeScales(const std::vector<double> &s)
   {
     m_GeneralEntropyGradientFunction->SetAttributeScales(s);
