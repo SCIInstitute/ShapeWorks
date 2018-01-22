@@ -152,7 +152,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     if ( m_prefix_transform_file != "") this->ReadPrefixTransformFile(m_prefix_transform_file);
 }
 
-
 template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::ComputeEnergyAfterIteration()
@@ -294,7 +293,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
                 mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
                 this->WritePointFiles(tmp_dir_name + "/" + prefix);
-                this->WritePointFilesWithFeatures(tmp_dir_name + "/" + prefix);
+                if (m_mesh_based_attributes)
+                    this->WritePointFilesWithFeatures(tmp_dir_name + "/" + prefix);
                 this->WriteTransformFile(tmp_dir_name + "/" + prefix);
                 // /*if (m_use_regression == true) */this->WriteParameters( split_number );
                 // end SHIREEN
@@ -422,6 +422,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
             pointFiles.clear();
         }
+
+        if (m_mesh_based_attributes)
+            m_Sampler->RegisterGeneralShapeMatrices();
 
 #if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
         // load mesh files
@@ -1596,7 +1599,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
 
 }
 
-
 template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
@@ -1900,7 +1902,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
             this->WritePointFiles(tmp_dir_name + "/");
-            this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+            if (m_mesh_based_attributes)
+                this->WritePointFilesWithFeatures(tmp_dir_name + "/");
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
             // /*if (m_use_regression == true) */this->WriteParameters( split_number );
         }
@@ -1946,7 +1949,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
 #endif
             this->WritePointFiles(tmp_dir_name + "/");
-            this->WritePointFilesWithFeatures(tmp_dir_name + "/");
+            if (m_mesh_based_attributes)
+                this->WritePointFilesWithFeatures(tmp_dir_name + "/");
             this->WriteTransformFile(tmp_dir_name + "/" + prefix);
             // /*if (m_use_regression == true) */this->WriteParameters( split_number );
         }
@@ -2227,7 +2231,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     this->WriteEnergyFiles();
 
     this->WritePointFiles();
-    this->WritePointFilesWithFeatures(utils::getPath(m_output_points_prefix) + "/");
+    if (m_mesh_based_attributes)
+        this->WritePointFilesWithFeatures(utils::getPath(m_output_points_prefix) + "/");
     this->WriteTransformFile();
     this->WriteModes();
     this->WriteCuttingPlanePoints();
