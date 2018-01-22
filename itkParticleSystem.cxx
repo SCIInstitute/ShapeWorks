@@ -75,4 +75,31 @@ ParticleSystem<2>
   return ans;
 }
 
+
+/** For efficiency, we specialize for 3D and 2D */
+template<>
+ParticleSystem<3>::VnlMatrixType
+ParticleSystem<3>
+::TransformNormalDerivative(const VnlMatrixType &p, const TransformType &T) const
+{
+  VnlMatrixType ans;
+
+  ans = T.extract(3, 3) * p; //rotation and scaling part
+
+  return ans;
+}
+
+/** For efficiency, we specialize for 3D and 2D */
+template<>
+ParticleSystem<2>::VnlMatrixType
+ParticleSystem<2>
+::TransformNormalDerivative(const VnlMatrixType &p, const TransformType &T) const
+{
+  VnlMatrixType ans;
+
+  ans = T.extract(2, 2) * p; //rotation and scaling part
+
+  return ans;
+}
+
 } // end namespace

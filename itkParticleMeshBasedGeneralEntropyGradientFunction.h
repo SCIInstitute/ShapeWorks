@@ -87,34 +87,10 @@ public:
         return e;
     }
 
-    //vnl_matrix_type GetYMatrix(const ParticleSystemType *c) const;
-    double GetEnergyForPositionInGivenDomain(unsigned int idx, unsigned int d, const ParticleSystemType *c) const;
-
-//    void SetDimensions()
-//    {
-//        num_samples = this->m_ParticleSystem->GetNumberOfDomains() / m_DomainsPerShape;
-
-//        int ndims = 0;
-//        for (int i = 0; i < m_DomainsPerShape; i++)
-//        {
-//            int shapeAttrs = m_AttributesPerDomain[i];
-//            if (m_UseXYZ[i])
-//                shapeAttrs += 3;
-//            if (m_UseNormals[i])
-//                shapeAttrs += 3;
-//            ndims += this->m_ParticleSystem->GetNumberOfParticles(i) * shapeAttrs;
-//        }
-
-//        num_dims = ndims;
-//    }
-
-
-
 
     /** Called before each iteration of a solver. */
     virtual void BeforeIteration()
     {
-//        this->SetDimensions();
         this->ComputeUpdates(this->m_ParticleSystem);
     }
 

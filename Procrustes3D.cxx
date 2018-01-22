@@ -54,21 +54,21 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes)
 
     // Apply translation to shape
     for(shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++)
-      (*shapeIt) +=  center;
+      (*shapeIt) -=  center;
   }
 
   // Remove rotation and scale iteratively
   RealType sumOfSquares = ComputeSumOfSquares(shapes);
   RealType newSumOfSquares, diff = 1e10;
-
+//    int iter = 0;
   while(diff > SOS_EPSILON)
   {
+//      std::cout << ++iter << std::endl;
     shapeListIt = shapes.begin();
     transformIt = transforms.begin();
     LeaveOneOutMean(mean, shapes, shapeListIt);
     while(shapeListIt != shapes.end())
     {
-
       AlignTwoShapes((*transformIt), mean, (*shapeListIt));
 
       shapeListIt++;
@@ -104,6 +104,10 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes)
 
     sumOfSquares = newSumOfSquares;
   }
+//  for(transformIt = transforms.begin(); transformIt != transforms.end();
+//      transformIt++)
+//    std::cout << (*transformIt).scale << "\t";
+//  std::cout << std::endl;
 }
 
 void
@@ -175,6 +179,7 @@ Procrustes3D::
 AlignTwoShapes(SimilarityTransform3D & transform, ShapeType & shape1,
                ShapeType & shape2)
 {
+  // Aligning shape2 to shape1
   ShapeIteratorType shapeIt1, shapeIt2;
   vnl_matrix_fixed<RealType, 3, 3> shapeMat;
   RealType scale2;
@@ -232,6 +237,8 @@ AlignTwoShapes(SimilarityTransform3D & transform, ShapeType & shape1,
 
   newTransform.scale = (scale1 / scale2);
   transform.scale *= newTransform.scale;
+
+//  std::cout << scale1 << "\t" << scale2 << "\t" << newTransform.scale << "\t" << transform.scale <<std::endl;
 
   newTransform.rotation.set_identity();
   TransformShape(shape2, newTransform);

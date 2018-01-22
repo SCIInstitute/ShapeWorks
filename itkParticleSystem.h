@@ -91,6 +91,7 @@ public:
   //  typedef Transform<double, VDimension, VDimension> TransformType;
   typedef vnl_matrix_fixed<double, VDimension +1, VDimension +1> TransformType;
   typedef vnl_vector_fixed<double, VDimension> VectorType;
+  typedef vnl_matrix <double> VnlMatrixType;
 
   /** Register an attribute object with this particle system.  This action adds
       the attribute object as an observer for the particle system so that it
@@ -346,6 +347,9 @@ public:
   /** Transforms a vector using the given transform.   Only the rotational part
       of the transform is applied. NOTE: Scaling is not currently supported.*/
   VectorType TransformVector(const VectorType &, const TransformType &) const;
+
+  /** Transforms the derivative of normals to new space. */
+  VnlMatrixType TransformNormalDerivative(const VnlMatrixType &, const TransformType & ) const;
 
   /** Returns the inverse of a transformation matrix.*/
   inline TransformType InvertTransform(const TransformType &T) const
