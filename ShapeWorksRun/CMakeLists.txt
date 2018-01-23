@@ -16,9 +16,9 @@
 SET(RUN_NAME ShapeWorksRun4.4)
 # procrustes bug fix by Praful
 # procrustes in meshes based code
+# xml tag for energy debugging
 
 #SET(RUN_NAME ShapeWorksRun4.5_debug)
-
 # enforce points to satisfy constraints,
 # ability to use different number of cutting planes and spheres per domain,
 # ability to specify in/out for sphere
