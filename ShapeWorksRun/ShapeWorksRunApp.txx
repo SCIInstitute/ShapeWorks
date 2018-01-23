@@ -270,8 +270,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
             this->WriteModes();
             if (m_use_regression == true) this->WriteParameters();
 
-
-
             if ( m_keep_checkpoints )
             {
                 // SHIREEN
@@ -1923,12 +1921,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         }
 
         if (this->m_pairwise_potential_type == 1)
+        {
             this->SetCotanSigma();
 
-        double minRad = 3.0*this->GetMinNeighborhoodRadius();
+            double minRad = 3.0*this->GetMinNeighborhoodRadius();
 
-        m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-        m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+            m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+            m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+        }
 
         m_SaturationCounter = 0;
         m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
@@ -2050,12 +2050,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     // end PRATEEP
 
     if (this->m_pairwise_potential_type == 1)
+    {
         this->SetCotanSigma();
 
-    double minRad = 3.0*this->GetMinNeighborhoodRadius();
+        double minRad = 3.0*this->GetMinNeighborhoodRadius();
 
-    m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+        m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+        m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+    }
 
     m_disable_checkpointing = false;
     m_disable_procrustes = false;
