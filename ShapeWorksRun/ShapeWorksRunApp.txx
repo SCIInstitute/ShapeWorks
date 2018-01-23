@@ -214,24 +214,25 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
         ReportBadParticles();
     }
 
-    this->ComputeEnergyAfterIteration();
-    this->WriteEnergyFiles();
-    int lnth = m_TotalEnergy.size();
-    if (lnth > 1)
+    if (this->m_logEnergy)
     {
-        double val = std::abs(m_TotalEnergy[lnth-1] - m_TotalEnergy[lnth-2])/std::abs(m_TotalEnergy[lnth-2]);
-        if ((m_optimizing == false && val < m_init_criterion) || (m_optimizing==true && val < m_opt_criterion))
-            m_SaturationCounter++;
-        else
-            m_SaturationCounter = 0;
-        if (m_SaturationCounter > 10)
+        this->ComputeEnergyAfterIteration();
+        this->WriteEnergyFiles();
+        int lnth = m_TotalEnergy.size();
+        if (lnth > 1)
         {
-            std::cout <<" \n ----Terminating due to energy decay---- \n";
-            this->optimize_stop();
+            double val = std::abs(m_TotalEnergy[lnth-1] - m_TotalEnergy[lnth-2])/std::abs(m_TotalEnergy[lnth-2]);
+            if ((m_optimizing == false && val < m_init_criterion) || (m_optimizing==true && val < m_opt_criterion))
+                m_SaturationCounter++;
+            else
+                m_SaturationCounter = 0;
+            if (m_SaturationCounter > 10)
+            {
+                std::cout <<" \n ----Terminating due to energy decay---- \n";
+                this->optimize_stop();
+            }
         }
     }
-
-
 
     if (m_optimizing == false) return;
 
@@ -924,6 +925,7 @@ template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::WriteEnergyFiles()
 {
+    return;
     std::string strA = utils::getPath(m_output_points_prefix) + "/" + this->m_strEnergy + "_samplingEnergy.txt";
     std::string strB = utils::getPath(m_output_points_prefix) + "/" + this->m_strEnergy + "_correspondenceEnergy.txt";
     std::string strTotal = utils::getPath(m_output_points_prefix) + "/" + this->m_strEnergy + "_totalEnergy.txt";
@@ -1522,6 +1524,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "optimizer_type" ).Element();
         if (elem) this->m_optimizer_type = atoi(elem->GetText());
 
+        this->m_logEnergy = false;
+        elem = docHandle.FirstChild("log_energy").Element();
+        if (elem) this->m_logEnergy = bool(atoi(elem->GetText()));
+
         m_init_criterion = 1e-6;
         elem = docHandle.FirstChild( "init_criterion" ).Element();
         if (elem) this->m_init_criterion = atof(elem->GetText());
@@ -1826,8 +1832,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     // END SHIREEN
 
-
-
     m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
     m_Sampler->GetLinkingFunction()->SetRelativeNormGradientScaling(m_initial_norm_penalty_weighting);
@@ -1908,12 +1912,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             // /*if (m_use_regression == true) */this->WriteParameters( split_number );
         }
 
-        m_EnergyA.clear();
-        m_EnergyB.clear();
-        m_TotalEnergy.clear();
-        std::stringstream ss;
-        ss << split_number;
-        m_strEnergy = "split" + ss.str() + "_init";
+        if (this->m_logEnergy)
+        {
+            m_EnergyA.clear();
+            m_EnergyB.clear();
+            m_TotalEnergy.clear();
+            std::stringstream ss;
+            ss << split_number;
+            m_strEnergy = "split" + ss.str() + "_init";
+        }
 
         if (this->m_pairwise_potential_type == 1)
             this->SetCotanSigma();
@@ -1929,7 +1936,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         m_Sampler->Modified();
         m_Sampler->Update();
 
-        this->WriteEnergyFiles();
+        if (this->m_logEnergy)
+            this->WriteEnergyFiles();
 
         if ( m_save_init_splits == true)
         {
@@ -1968,82 +1976,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             }
         }
     }
-
-    /* Praful - incompatible code with different number of particles per domain
-    while (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < m_number_of_particles)
-    {
-        this->SplitAllParticles();
-        std::cout << std::endl << "Particle count: "
-                  << m_Sampler->GetParticleSystem()->GetNumberOfParticles() << std::endl;
-
-        // SHIREEN
-        split_number++;
-        std::cout << "split number = " << split_number << std::endl << std::flush;
-        if ( m_save_init_splits == true)
-        {
-            std::stringstream ss;
-            ss << split_number;
-
-            std::stringstream ssp;
-            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
-
-            std::string dir_name     = "split" + ss.str() + "_wo_opt_p" + ssp.str();
-            std::string out_path     = utils::getPath(m_output_points_prefix);
-            std::string prefix       = utils::getFilename(m_output_points_prefix);
-            std::string tmp_dir_name = out_path + "/" + prefix + std::string(".") + dir_name;
-
-            std::cout << "split dir name = " << tmp_dir_name << std::endl;
-
-#ifdef _WIN32
-            mkdir( tmp_dir_name.c_str() );
-#else
-            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
-#endif
-            this->WritePointFiles(tmp_dir_name + "/" + prefix);
-            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
-            // if (m_use_regression == true) this->WriteParameters( split_number );
-        }
-        // end SHIREEN
-
-        m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
-        m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
-        m_Sampler->Modified();
-        m_Sampler->Update();
-
-        // SHIREEN
-        if ( m_save_init_splits == true)
-        {
-            std::stringstream ss;
-            ss << split_number;
-
-            std::stringstream ssp;
-            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();
-
-            std::string dir_name     = "split" + ss.str() + "_w_opt_p" + ssp.str();
-            std::string out_path     = utils::getPath(m_output_points_prefix);
-            std::string prefix       = utils::getFilename(m_output_points_prefix);
-            std::string tmp_dir_name = out_path + "/" + prefix + std::string(".") + dir_name;
-
-            std::cout << "split dir name = " << tmp_dir_name << std::endl;
-
-#ifdef _WIN32
-            mkdir( tmp_dir_name.c_str() );
-#else
-            mkdir( tmp_dir_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH );
-#endif
-            this->WritePointFiles(tmp_dir_name + "/" + prefix);
-            this->WriteTransformFile(tmp_dir_name + "/" + prefix);
-            // if (m_use_regression == true) this->WriteParameters( split_number );
-        }
-        // end SHIREEN
-
-        this->WritePointFiles();
-        this->WriteTransformFile();
-    }
-*/
-
     this->WritePointFiles();
-
     this->WriteTransformFile();
     this->WriteCuttingPlanePoints();
 }
@@ -2215,11 +2148,13 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
         m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_optimization_iterations-m_optimization_iterations_completed);
     else m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);
 
-    m_EnergyA.clear();
-    m_EnergyB.clear();
-    m_TotalEnergy.clear();
-
-    m_strEnergy = "opt";
+    if (this->m_logEnergy)
+    {
+        m_EnergyA.clear();
+        m_EnergyB.clear();
+        m_TotalEnergy.clear();
+        m_strEnergy = "opt";
+    }
 
     m_SaturationCounter = 0;
     m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
@@ -2227,8 +2162,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     m_Sampler->Modified();
     m_Sampler->Update();
 
-
-    this->WriteEnergyFiles();
+    if (this->m_logEnergy)
+        this->WriteEnergyFiles();
 
     this->WritePointFiles();
     if (m_mesh_based_attributes)

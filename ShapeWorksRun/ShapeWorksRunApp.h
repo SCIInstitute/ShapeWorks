@@ -189,6 +189,7 @@ protected:
     std::vector<double> m_EnergyA;
     std::vector<double> m_EnergyB;
     std::vector<double> m_TotalEnergy;
+    bool m_logEnergy;
 
     unsigned int m_checkpointing_interval;
     unsigned int m_domains_per_shape;
