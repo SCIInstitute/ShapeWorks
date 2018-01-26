@@ -20,7 +20,7 @@
 # xml tag for energy debugging
 # check for computing cotan sigma during intial setup
 
-SET(RUN_NAME ShapeWorksRun4.5_debug)
+SET(RUN_NAME ShapeWorksRun4.5)
 # enforce points to satisfy constraints,
 # ability to use different number of cutting planes and spheres per domain,
 # ability to specify in/out for sphere
