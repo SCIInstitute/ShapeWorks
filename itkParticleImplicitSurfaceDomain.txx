@@ -242,7 +242,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
 
   return Superclass::ApplyVectorConstraints(gradE,pos,maxtimestep);
     // disabled sphere part
-  if (this->IsCuttingSphereDefined())
+  if (this->IsCuttingSphereDefined() && gradE.magnitude() > 0.0)
   {
       for (unsigned int i = 0; i < this->GetNumberOfSpheres(); i++)
       {
@@ -251,74 +251,74 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
           double CToP = sqrt(dot_product(xPos-this->GetSphereCenter(i), xPos-this->GetSphereCenter(i)));
           if (rad < 0) // go inside sphere
           {
-              if (CToP > abs(rad)) // pos outside sphere - bring it in
-              {
-                  if (D < CToP) // gradient towards sphere - right direction
-                  {
-                      if (D > abs(rad)) // still outside sphere - bring it in
-                      {
-                          double D_pos = CToP - abs(rad);
-                          for (unsigned int n = 0; n < VDimension; n++)
-                              gradE[n] *= 1.1*D_pos/gradE.magnitude();
-                      }
-                  }
-                  else // project point into sphere
-                  {
-                      vnl_vector_fixed<double, VDimension> q;
-                      vnl_vector_fixed<double, VDimension> spherept;
-                      q = xPos - this->GetSphereCenter(i);
-                      q.normalize();
+//              if (CToP > abs(rad)) // pos outside sphere - bring it in
+//              {
+//                  if (D < CToP) // gradient towards sphere - right direction
+//                  {
+//                      if (D > abs(rad)) // still outside sphere - bring it in
+//                      {
+//                          double D_pos = CToP - abs(rad);
+//                          for (unsigned int n = 0; n < VDimension; n++)
+//                              gradE[n] *= 1.1*D_pos/gradE.magnitude();
+//                      }
+//                  }
+//                  else // project point into sphere
+//                  {
+//                      vnl_vector_fixed<double, VDimension> q;
+//                      vnl_vector_fixed<double, VDimension> spherept;
+//                      q = xPos - this->GetSphereCenter(i);
+//                      q.normalize();
 
-                      spherept = this->GetSphereCenter(i) + (0.95*abs(rad))*q;
-                      for (unsigned int j = 0; j < VDimension; j++)
-                        gradE[j] = spherept[j]-xPos[j];
-                  }
-              }
-              else // pos inside sphere - correct place
-              {
+//                      spherept = this->GetSphereCenter(i) + (0.95*abs(rad))*q;
+//                      for (unsigned int j = 0; j < VDimension; j++)
+//                        gradE[j] = spherept[j]-xPos[j];
+//                  }
+//              }
+//              else // pos inside sphere - correct place
+//              {
                   if (D >= abs(rad)) // being projected outside sphere
                   {
                       double D_pos = abs(rad)-CToP;
                       for (unsigned int n = 0; n < VDimension; n++)
                           gradE[n] *= 0.9*D_pos/gradE.magnitude();
                   }
-              }
+//              }
           }
           else // stay outside sphere
           {
 
-              if (CToP < abs(rad)) // pos inside sphere - push it out
-              {
-                  if (D > CToP) // gradient pushing outside sphere - right direction
-                  {
-                      if (D < abs(rad) ) // still inside sphere - bring it out
-                      {
-                          double D_pos = abs(rad) - CToP;
-                          for (unsigned int n = 0; n < VDimension; n++)
-                              gradE[n] *= 1.1*D_pos/gradE.magnitude();
-                      }
-                  }
-                  else // project point outside sphere
-                  {
-                      vnl_vector_fixed<double, VDimension> q;
-                      vnl_vector_fixed<double, VDimension> spherept;
-                      q = xPos - this->GetSphereCenter(i);
-                      q.normalize();
+//              if (CToP < abs(rad)) // pos inside sphere - push it out
+//              {
+//                  if (D > CToP) // gradient pushing outside sphere - right direction
+//                  {
+//                      if (D < abs(rad) ) // still inside sphere - bring it out
+//                      {
+//                          double D_pos = abs(rad) - CToP;
+//                          for (unsigned int n = 0; n < VDimension; n++)
+//                              gradE[n] *= 1.1*D_pos/gradE.magnitude();
+//                      }
+//                  }
+//                  else // project point outside sphere
+//                  {
+//                      vnl_vector_fixed<double, VDimension> q;
+//                      vnl_vector_fixed<double, VDimension> spherept;
+//                      q = xPos - this->GetSphereCenter(i);
+//                      q.normalize();
 
-                      spherept = this->GetSphereCenter(i) + (1.1*abs(rad))*q;
-                      for (unsigned int j = 0; j < VDimension; j++)
-                        gradE[j] = spherept[j]-xPos[j];
-                  }
-              }
-              else // pos outside sphere - correct place
-              {
+//                      spherept = this->GetSphereCenter(i) + (1.1*abs(rad))*q;
+//                      for (unsigned int j = 0; j < VDimension; j++)
+//                        gradE[j] = spherept[j]-xPos[j];
+//                  }
+//              }
+//              else // pos outside sphere - correct place
+//              {
                   if (D < abs(rad)) // being projected inside sphere
                   {
                       double D_pos = CToP-abs(rad);
                       for (unsigned int n = 0; n < VDimension; n++)
                           gradE[n] *= 0.9*D_pos/gradE.magnitude();
                   }
-              }
+//              }
           }
 
 
@@ -327,7 +327,6 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
 
   return Superclass::ApplyVectorConstraints(gradE,pos,maxtimestep);
 }
-
 
 
 template<class T, unsigned int VDimension>
