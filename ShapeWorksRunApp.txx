@@ -38,6 +38,8 @@
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImplicitSurfaceDomain.h"
 
+#include <numeric>
+
 #ifdef _WIN32
 #include <direct.h>
 #define mkdir _mkdir
@@ -601,7 +603,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
 
 }
 
-
 template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::ReadConstraints(const char *fname)
@@ -713,6 +714,28 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
         TiXmlElement *elem;
         std::istringstream inputsBuffer;
         int numShapes = m_filenames.size();
+
+        m_cutting_planes_per_input.clear();
+
+        elem = docHandle.FirstChild( "num_planes_per_input" ).Element();
+        if (elem)
+        {
+            inputsBuffer.str(elem->GetText());
+            double val;
+
+            while (inputsBuffer >> val)
+            {
+                m_cutting_planes_per_input.push_back(val);
+            }
+            inputsBuffer.clear();
+            inputsBuffer.str("");
+            if (m_cutting_planes_per_input.size() < numShapes)
+            {
+                std::cerr << "ERROR: Incomplete cutting plane data! Number of cutting planes for every input shape is required!!" << std::endl;
+            }
+        }
+        int numPlanes = std::accumulate(m_cutting_planes_per_input.begin(), m_cutting_planes_per_input.end(), 0);
+
         // otherwise read separate cutting plane for every shape
         elem = docHandle.FirstChild( "cutting_planes" ).Element();
         if (elem)
@@ -729,7 +752,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
             inputsBuffer.clear();
             inputsBuffer.str("");
 
-            if (cpVals.size() < 9*numShapes)
+            if (cpVals.size() < 9*numPlanes)
             {
                 std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" << std::endl;
             }
@@ -741,44 +764,46 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
 
                 for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
                 {
-                    a[0] = cpVals[ctr++];
-                    a[1] = cpVals[ctr++];
-                    a[2] = cpVals[ctr++];
-
-                    b[0] = cpVals[ctr++];
-                    b[1] = cpVals[ctr++];
-                    b[2] = cpVals[ctr++];
-
-                    c[0] = cpVals[ctr++];
-                    c[1] = cpVals[ctr++];
-                    c[2] = cpVals[ctr++];
-
-                    // If initial transform provided, transform cutting plane points
-                    if ( m_prefix_transform_file != "" && m_transform_file != "")
+                    for (int planeCount = 0; planeCount < m_cutting_planes_per_input[shapeCount]; planeCount++)
                     {
-                        itk::ParticleSystem<3>::PointType pa;
-                        itk::ParticleSystem<3>::PointType pb;
-                        itk::ParticleSystem<3>::PointType pc;
+                        a[0] = cpVals[ctr++];
+                        a[1] = cpVals[ctr++];
+                        a[2] = cpVals[ctr++];
 
-                        pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
-                        pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
-                        pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+                        b[0] = cpVals[ctr++];
+                        b[1] = cpVals[ctr++];
+                        b[2] = cpVals[ctr++];
 
-                        itk::ParticleSystem<3>::TransformType T     = m_Sampler->GetParticleSystem()->GetTransform(shapeCount) ;
-                        itk::ParticleSystem<3>::TransformType prefT = m_Sampler->GetParticleSystem()->GetPrefixTransform(shapeCount);
-                        pa = m_Sampler->GetParticleSystem()->TransformPoint(pa, T * prefT );
-                        pb = m_Sampler->GetParticleSystem()->TransformPoint(pb, T * prefT );
-                        pc = m_Sampler->GetParticleSystem()->TransformPoint(pc, T * prefT );
+                        c[0] = cpVals[ctr++];
+                        c[1] = cpVals[ctr++];
+                        c[2] = cpVals[ctr++];
 
-                        a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
-                        b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
-                        c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+                        // If initial transform provided, transform cutting plane points
+                        if ( m_prefix_transform_file != "" && m_transform_file != "")
+                        {
+                            itk::ParticleSystem<3>::PointType pa;
+                            itk::ParticleSystem<3>::PointType pb;
+                            itk::ParticleSystem<3>::PointType pc;
+
+                            pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
+                            pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
+                            pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+
+                            itk::ParticleSystem<3>::TransformType T     = m_Sampler->GetParticleSystem()->GetTransform(shapeCount) ;
+                            itk::ParticleSystem<3>::TransformType prefT = m_Sampler->GetParticleSystem()->GetPrefixTransform(shapeCount);
+                            pa = m_Sampler->GetParticleSystem()->TransformPoint(pa, T * prefT );
+                            pb = m_Sampler->GetParticleSystem()->TransformPoint(pb, T * prefT );
+                            pc = m_Sampler->GetParticleSystem()->TransformPoint(pc, T * prefT );
+
+                            a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
+                            b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
+                            c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+                        }
+
+                        std::cout << "CorrespondenceApp-> Setting Cutting Plane " << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
+
+                        m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
                     }
-
-                    std::cout << "CorrespondenceApp-> Setting Cutting Plane "
-                              << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
-
-                    m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
                 }
             }
         }
@@ -799,11 +824,27 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
         std::istringstream inputsBuffer;
         int numShapes = m_filenames.size();
         // sphere radii and centers
-        this->m_spheres_per_domain = 0;
-        elem = docHandle.FirstChild( "spheres_per_domain" ).Element();
-        if (elem) this->m_spheres_per_domain = atoi(elem->GetText());
+        m_spheres_per_input.clear();
 
-        int numSpheres = numShapes * this->m_spheres_per_domain;
+        elem = docHandle.FirstChild( "spheres_per_domain" ).Element();
+        if (elem)
+        {
+            inputsBuffer.str(elem->GetText());
+            double val;
+
+            while (inputsBuffer >> val)
+            {
+                m_spheres_per_input.push_back(val);
+            }
+            inputsBuffer.clear();
+            inputsBuffer.str("");
+            if (m_spheres_per_input.size() < numShapes)
+            {
+                std::cerr << "ERROR: Incomplete cutting plane data! Number of cutting spheres for every input shape is required!!" << std::endl;
+            }
+        }
+        int numSpheres = std::accumulate(m_spheres_per_input.begin(), m_spheres_per_input.end(), 0);
+
         std::vector<double> radList;
         double r;
 
@@ -853,7 +894,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
 
                         for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
                         {
-                            for (int sphereCount = 0; sphereCount < m_spheres_per_domain; sphereCount++)
+                            for (int sphereCount = 0; sphereCount < m_spheres_per_input[shapeCount]; sphereCount++)
                             {
                                 center[0] = spVals[c_ctr++];
                                 center[1] = spVals[c_ctr++];
@@ -861,7 +902,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
 
                                 rad = radList[r_ctr++];
 
+                                std::cout << "CorrespondenceApp-> Setting Cutting Sphere " ;
+                                std::cout << shapeCount << " (" << center[0] << ") (" << center[1] << ") (" << center[2] << "); ";
+                                std::cout << "(" << rad << ")" << std::endl;
                                 m_Sampler->AddSphere(shapeCount,center,rad);
+
                             }
                         }
                     }

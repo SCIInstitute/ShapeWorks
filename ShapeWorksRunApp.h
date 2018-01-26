@@ -209,10 +209,12 @@ protected:
     double m_normalAngle; //GoodBadAssessment
     bool m_performGoodBad;
 
-    int m_spheres_per_domain;
+
     int m_adaptivity_mode;
     int m_keep_checkpoints;
     bool m_use_cutting_planes;
+    std::vector <int> m_cutting_planes_per_input;
+    std::vector <int> m_spheres_per_input;
     int m_distribution_domain_id;
     int m_SaturationCounter;
     std::string m_strEnergy;
