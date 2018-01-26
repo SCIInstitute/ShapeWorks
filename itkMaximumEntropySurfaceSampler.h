@@ -228,9 +228,9 @@ public:
 
         m_CuttingPlanes[i].push_back(CuttingPlaneType());
 
-        m_CuttingPlanes[i].[m_CuttingPlanes[i].size()-1].a = va;
-        m_CuttingPlanes[i].[m_CuttingPlanes[i].size()-1].b = vb;
-        m_CuttingPlanes[i].[m_CuttingPlanes[i].size()-1].c = vc;
+        m_CuttingPlanes[i][m_CuttingPlanes[i].size()-1].a = va;
+        m_CuttingPlanes[i][m_CuttingPlanes[i].size()-1].b = vb;
+        m_CuttingPlanes[i][m_CuttingPlanes[i].size()-1].c = vc;
 
         if (m_Initialized == true)
         {
