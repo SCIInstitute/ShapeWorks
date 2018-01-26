@@ -226,9 +226,11 @@ public:
             m_CuttingPlanes.resize(i+1);
         }
 
-        m_CuttingPlanes[i].a = va;
-        m_CuttingPlanes[i].b = vb;
-        m_CuttingPlanes[i].c = vc;
+        m_CuttingPlanes[i].push_back(CuttingPlaneType());
+
+        m_CuttingPlanes[i].[m_CuttingPlanes[i].size()-1].a = va;
+        m_CuttingPlanes[i].[m_CuttingPlanes[i].size()-1].b = vb;
+        m_CuttingPlanes[i].[m_CuttingPlanes[i].size()-1].c = vc;
 
         if (m_Initialized == true)
         {
@@ -431,7 +433,7 @@ private:
     std::vector<std::string> m_ImageFiles;
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
-    std::vector< CuttingPlaneType> m_CuttingPlanes;
+    std::vector< std::vector< CuttingPlaneType> > m_CuttingPlanes;
     std::vector< std::vector<SphereType> > m_Spheres;
 
 };

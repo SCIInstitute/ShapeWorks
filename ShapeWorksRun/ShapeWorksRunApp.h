@@ -66,6 +66,11 @@ public:
     virtual void optimize_stop();
 
     virtual void ReadInputs(const char *fname);
+    virtual void ReadMeshInputs(const char *fname);
+    virtual void ReadConstraints(const char *fname);
+    virtual void ReadDistributionCuttingPlane(const char *fname);
+    virtual void ReadCuttingPlanes(const char *fname);
+    virtual void ReadCuttingSpheres(const char *fname);
 
     virtual void ReadPrefixTransformFile(const std::string &s);
     virtual void ReadTransformFile();

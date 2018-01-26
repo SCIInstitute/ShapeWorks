@@ -135,9 +135,8 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
 
         if (m_CuttingPlanes.size() > i)
         {
-            m_DomainList[i]->SetCuttingPlane(m_CuttingPlanes[i].a,
-                                             m_CuttingPlanes[i].b,
-                                             m_CuttingPlanes[i].c);
+            for (unsigned int j = 0; j< m_CuttingPlanes[i].size(); j++)
+                m_DomainList[i]->SetCuttingPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
         }
 
         if (m_Spheres.size() > i)

@@ -35,13 +35,13 @@ SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
   
   if (q.magnitude() > 0.0)
   {
-    m_CuttingPlaneNormal = q / q.magnitude();
-    m_CuttingPlanePoint = a;
+    m_CuttingPlaneNormal.push_back(q / q.magnitude()); //m_CuttingPlaneNormal = q / q.magnitude();
+    m_CuttingPlanePoint.push_back(a); //m_CuttingPlanePoint = a;
     m_UseCuttingPlane = true;
 
-    m_a = a;
-    m_b = b;
-    m_c = c;
+    m_a.push_back(a); //m_a = a;
+    m_b.push_back(b); //m_b = b;
+    m_c.push_back(c); //m_c = c;
   }
 }
 
@@ -228,20 +228,30 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
     vnl_vector_fixed<T, VDimension> grad = this->SampleGradientVnl(pos);
     for (unsigned int i = 0; i < VDimension; i++)
       { x[i] = pos[i]; }
-    const double D = dot_product(m_CuttingPlaneNormal, x- m_CuttingPlanePoint);
-    
-    //    x = m_CuttingPlaneNormal * fabs(1.0 / (D + 1.0e-3));
 
-    // x = m_CuttingPlaneNormal * lambda * exp(-lambda * fabs(D));
-    
-    // Gradient of simple force 1/D^2 to push away from cutting plane
-    vnl_vector_fixed<double, VDimension> df;
-    const double k = (-2.0 / (D * D * D));
-    df[0] = k * grad[0] * m_CuttingPlaneNormal[0];
-    df[1] = k * grad[1] * m_CuttingPlaneNormal[1];
-    df[2] = k * grad[2] * m_CuttingPlaneNormal[2];
+    // Paful -- Applying constraints only! Make sure that the points satisfy the side of sphere/plane
+    //TODO: CHANGE THE FOLLOWING CODE AND INCORPORATE THE SPHERES TOO; FORCE SHOULD ONLY COME FROM OmegaGradientClass
+    for (unsigned int j = 0; j< this->GetNumberOfPlanes(); j++)
+    {
+        const double D = dot_product(m_CuttingPlaneNormal, x- m_CuttingPlanePoint);
 
-    gradE = gradE + df;
+        //    x = m_CuttingPlaneNormal * fabs(1.0 / (D + 1.0e-3));
+
+        // x = m_CuttingPlaneNormal * lambda * exp(-lambda * fabs(D));
+
+        // Gradient of simple force 1/D^2 to push away from cutting plane
+        vnl_vector_fixed<double, VDimension> df;
+        const double k = (-2.0 / (D * D * D));
+        df[0] = k * grad[0] * m_CuttingPlaneNormal[0];
+        df[1] = k * grad[1] * m_CuttingPlaneNormal[1];
+        df[2] = k * grad[2] * m_CuttingPlaneNormal[2];
+
+        gradE = gradE + df;
+    }
+    for (unsigned int j = 0; j< this->GetNumberOfSpheres(); j++)
+    {
+
+    }
 
     // Make sure force is not huge relative to other forces.
     if (gradE.magnitude() > maxtimestep)

@@ -124,30 +124,51 @@ public:
 #endif
   void RemoveCuttingPlane()  { m_UseCuttingPlane = false; }
 
+  void RemoveCuttingSphere()  { m_UseCuttingSphere = false; }
+
   bool IsCuttingPlaneDefined() const {return m_UseCuttingPlane;}
+
+  bool IsCuttingSphereDefined() const {return m_UseCuttingSphere;}
   
   const vnl_vector_fixed<double, VDimension> &GetCuttingPlanePoint() const
-  { return m_CuttingPlanePoint; }
+  { return m_CuttingPlanePoint[0]; }
   const vnl_vector_fixed<double, VDimension> &GetCuttingPlaneNormal() const
-  { return m_CuttingPlaneNormal; }
+  { return m_CuttingPlaneNormal[0]; }
+
+  //Praful
+  const vnl_vector_fixed<double, VDimension> &GetCuttingPlanePoint(int i) const
+  { return m_CuttingPlanePoint[i]; }
+  const vnl_vector_fixed<double, VDimension> &GetCuttingPlaneNormal(int i) const
+  { return m_CuttingPlaneNormal[i]; }
+
+
   // Prateep
   const vnl_vector_fixed<double, VDimension> &GetA() const
-  { return m_a; }
+  { return m_a[0]; }
   const vnl_vector_fixed<double, VDimension> &GetB() const
-  { return m_b; }
+  { return m_b[0]; }
   const vnl_vector_fixed<double, VDimension> &GetC() const
-  { return m_c; }
+  { return m_c[0]; }
+
+  //Praful
+  const vnl_vector_fixed<double, VDimension> &GetA(int i) const
+  { return m_a[i]; }
+  const vnl_vector_fixed<double, VDimension> &GetB(int i) const
+  { return m_b[i]; }
+  const vnl_vector_fixed<double, VDimension> &GetC(int i) const
+  { return m_c[i]; }
 
 
   /** Maintain a list of spheres within the domain.  These are used as 
       soft constraints by some particle forcing functions. */
   void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r)
   {
-    if (r > 0)
-    {
+//    if (r > 0) -- Praful, sign will be used to determine inwards or outwards
+//    {
       m_SphereCenterList.push_back(v);
       m_SphereRadiusList.push_back(r);
-    }
+      m_UseCuttingSphere = true;
+//    }
   }
   
   /** Returns the radius of sphere i, or 0.0 if sphere i does not exist */
@@ -171,9 +192,13 @@ public:
     return m_SphereCenterList.size();
   }
     
+  unsigned int GetNumberOfPlanes() const
+  {
+      return m_CuttingPlanePoint.size();
+  }
 
 protected:
-  ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false)
+  ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
     {
 #ifdef SW_USE_MESH
     m_fim = new meshFIM;
@@ -195,13 +220,15 @@ protected:
 private:
   T m_Tolerance;
   bool m_UseCuttingPlane;
-  vnl_vector_fixed<double, VDimension> m_CuttingPlanePoint;
-  vnl_vector_fixed<double, VDimension> m_CuttingPlaneNormal;
+  bool m_UseCuttingSphere;
+  //Praful - adding ability to use more than one cutting planes
+  std::vector < vnl_vector_fixed<double, VDimension> > m_CuttingPlanePoint;
+  std::vector < vnl_vector_fixed<double, VDimension> > m_CuttingPlaneNormal;
 
-  // Prateep
-  vnl_vector_fixed<double, VDimension> m_a;
-  vnl_vector_fixed<double, VDimension> m_b;
-  vnl_vector_fixed<double, VDimension> m_c;
+  // Prateep -- Praful
+  std::vector < vnl_vector_fixed<double, VDimension> > m_a;
+  std::vector < vnl_vector_fixed<double, VDimension> > m_b;
+  std::vector < vnl_vector_fixed<double, VDimension> > m_c;
   
 #ifdef SW_USE_MESH
   TriMesh *m_mesh;
