@@ -13,12 +13,14 @@
 
 #SET(RUN_NAME ShapeWorksRun4.3) #allow different bounding box for every domain
 
-SET(RUN_NAME ShapeWorksRun4.4)
-# procrustes bug fix by Praful
+# Praful
+#SET(RUN_NAME ShapeWorksRun4.4)
+# procrustes bug fix
 # procrustes in meshes based code
 # xml tag for energy debugging
+# check for computing cotan sigma during intial setup
 
-#SET(RUN_NAME ShapeWorksRun4.5_debug)
+SET(RUN_NAME ShapeWorksRun4.5_debug)
 # enforce points to satisfy constraints,
 # ability to use different number of cutting planes and spheres per domain,
 # ability to specify in/out for sphere

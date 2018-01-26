@@ -421,6 +421,27 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
             pointFiles.clear();
         }
+    } // end: document check
+
+    this->ReadMeshInputs(fname);
+    this->ReadConstraints(fname);
+
+} // end ReadInputs
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
+{
+    TiXmlDocument doc(fname);
+    bool loadOkay = doc.LoadFile();
+
+    if (loadOkay)
+    {
+        TiXmlHandle docHandle( &doc );
+        TiXmlElement *elem;
+        std::istringstream inputsBuffer;
+        std::string filename;
+        int numShapes = m_filenames.size();
 
         if (m_mesh_based_attributes)
             m_Sampler->RegisterGeneralShapeMatrices();
@@ -453,226 +474,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
             }
             meshFiles.clear();
         }
-
 #endif
-
-        // read geometric constraints, if present
-        // cutting planes
-        if(m_distribution_domain_id > -1) {
-            // Distribution cutting planes activated
-            elem = docHandle.FirstChild( "distribution_cutting_plane" ).Element();
-            if(elem)
-            {
-                inputsBuffer.str(elem->GetText());
-
-                std::vector<double> cpVals;
-                double pt;
-
-                while (inputsBuffer >> pt)
-                {
-                    cpVals.push_back(pt);
-                }
-                inputsBuffer.clear();
-                inputsBuffer.str("");
-
-                if (cpVals.size() < 9)
-                {
-                    std::cerr << "ERROR: Incomplete cutting plane data for reference shape! No cutting planes will be loaded!!" << std::endl;
-                }
-                else
-                {
-                    m_use_cutting_planes = true;
-                    vnl_vector_fixed<double,3> a,b,c;
-                    int ctr = 0;
-
-                    for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
-                    {
-                        a[0] = cpVals[ctr++];
-                        a[1] = cpVals[ctr++];
-                        a[2] = cpVals[ctr++];
-
-                        b[0] = cpVals[ctr++];
-                        b[1] = cpVals[ctr++];
-                        b[2] = cpVals[ctr++];
-
-                        c[0] = cpVals[ctr++];
-                        c[1] = cpVals[ctr++];
-                        c[2] = cpVals[ctr++];
-
-                        std::cout << "CorrespondenceApp-> Setting Cutting Plane "
-                                  << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
-
-                        // If initial transform provided, transform cutting plane points
-                        if ( m_prefix_transform_file != "" && m_transform_file != "")
-                        {
-                            itk::ParticleSystem<3>::PointType pa;
-                            itk::ParticleSystem<3>::PointType pb;
-                            itk::ParticleSystem<3>::PointType pc;
-
-                            pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
-                            pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
-                            pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
-
-                            itk::ParticleSystem<3>::TransformType T     = m_Sampler->GetParticleSystem()->GetTransform(shapeCount) ;
-                            itk::ParticleSystem<3>::TransformType prefT = m_Sampler->GetParticleSystem()->GetPrefixTransform(shapeCount);
-                            pa = m_Sampler->GetParticleSystem()->TransformPoint(pa, T * prefT );
-                            pb = m_Sampler->GetParticleSystem()->TransformPoint(pb, T * prefT );
-                            pc = m_Sampler->GetParticleSystem()->TransformPoint(pc, T * prefT );
-
-                            a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
-                            b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
-                            c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
-                        }
-
-                        m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
-                        ctr = 0; // use same cutting plane for all shapes
-                    }
-                }
-            }
-        }
-        else
-        {
-            // otherwise read separate cutting plane for every shape
-            elem = docHandle.FirstChild( "cutting_planes" ).Element();
-            if (elem)
-            {
-                inputsBuffer.str(elem->GetText());
-
-                std::vector<double> cpVals;
-                double pt;
-
-                while (inputsBuffer >> pt)
-                {
-                    cpVals.push_back(pt);
-                }
-                inputsBuffer.clear();
-                inputsBuffer.str("");
-
-                if (cpVals.size() < 9*numShapes)
-                {
-                    std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" << std::endl;
-                }
-                else
-                {
-                    m_use_cutting_planes = true;
-                    vnl_vector_fixed<double,3> a,b,c;
-                    int ctr = 0;
-
-                    for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
-                    {
-                        a[0] = cpVals[ctr++];
-                        a[1] = cpVals[ctr++];
-                        a[2] = cpVals[ctr++];
-
-                        b[0] = cpVals[ctr++];
-                        b[1] = cpVals[ctr++];
-                        b[2] = cpVals[ctr++];
-
-                        c[0] = cpVals[ctr++];
-                        c[1] = cpVals[ctr++];
-                        c[2] = cpVals[ctr++];
-
-                        // If initial transform provided, transform cutting plane points
-                        if ( m_prefix_transform_file != "" && m_transform_file != "")
-                        {
-                            itk::ParticleSystem<3>::PointType pa;
-                            itk::ParticleSystem<3>::PointType pb;
-                            itk::ParticleSystem<3>::PointType pc;
-
-                            pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
-                            pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
-                            pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
-
-                            itk::ParticleSystem<3>::TransformType T     = m_Sampler->GetParticleSystem()->GetTransform(shapeCount) ;
-                            itk::ParticleSystem<3>::TransformType prefT = m_Sampler->GetParticleSystem()->GetPrefixTransform(shapeCount);
-                            pa = m_Sampler->GetParticleSystem()->TransformPoint(pa, T * prefT );
-                            pb = m_Sampler->GetParticleSystem()->TransformPoint(pb, T * prefT );
-                            pc = m_Sampler->GetParticleSystem()->TransformPoint(pc, T * prefT );
-
-                            a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
-                            b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
-                            c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
-                        }
-
-                        std::cout << "CorrespondenceApp-> Setting Cutting Plane "
-                                  << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
-
-                        m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
-                    }
-                }
-            }
-        }
-
-        // sphere radii and centers
-        this->m_spheres_per_domain = 0;
-        elem = docHandle.FirstChild( "spheres_per_domain" ).Element();
-        if (elem) this->m_spheres_per_domain = atoi(elem->GetText());
-
-        int numSpheres = numShapes * this->m_spheres_per_domain;
-        std::vector<double> radList;
-        double r;
-
-        elem = docHandle.FirstChild( "sphere_radii" ).Element();
-        if (elem)
-        {
-            inputsBuffer.str(elem->GetText());
-
-            while (inputsBuffer >> r)
-            {
-                radList.push_back(r);
-            }
-            inputsBuffer.clear();
-            inputsBuffer.str("");
-
-            if (radList.size() < numSpheres)
-            {
-                std::cerr << "ERROR: Incomplete sphere radius data! No spheres will be loaded!!" << std::endl;
-            }
-            else
-            {
-                elem = docHandle.FirstChild( "sphere_centers" ).Element();
-                if (elem)
-                {
-                    inputsBuffer.str(elem->GetText());
-
-                    std::vector<double> spVals;
-                    double pt;
-
-                    while (inputsBuffer >> pt)
-                    {
-                        spVals.push_back(pt);
-                    }
-                    inputsBuffer.clear();
-                    inputsBuffer.str("");
-
-                    if (spVals.size() < 3*numSpheres)
-                    {
-                        std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" << std::endl;
-                    }
-                    else
-                    {
-                        vnl_vector_fixed<double,3> center;
-                        double rad;
-                        int c_ctr = 0;
-                        int r_ctr = 0;
-
-                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
-                        {
-                            for (int sphereCount = 0; sphereCount < m_spheres_per_domain; sphereCount++)
-                            {
-                                center[0] = spVals[c_ctr++];
-                                center[1] = spVals[c_ctr++];
-                                center[2] = spVals[c_ctr++];
-
-                                rad = radList[r_ctr++];
-
-                                m_Sampler->AddSphere(shapeCount,center,rad);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         // attributes
         if ( (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes)
@@ -711,14 +513,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
 
-                //                int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
-
-                //                if ( (attr_scales.size() != totAttributes) || (attrFiles.size() != numShapes*totAttributes/m_domains_per_shape))
-                //                {
-                //                    std::cerr << "ERROR: Inconsistent number of attribute scales or filenames ! No attributes will be loaded!!" << std::endl;
-                //                }
-                //                else
-                //                {
                 if (m_mesh_based_attributes)
                 {
 #ifdef SW_USE_FEAMESH
@@ -803,8 +597,279 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 #endif
             }
         }
-    } // end: document check
-} // end ReadInputs
+    }
+
+}
+
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::ReadConstraints(const char *fname)
+{    
+    if(m_distribution_domain_id > -1)
+        this->ReadDistributionCuttingPlane(fname);
+    else
+        this->ReadCuttingPlanes(fname);
+
+    this->ReadCuttingSpheres(fname);
+}
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::ReadDistributionCuttingPlane(const char *fname)
+{
+    TiXmlDocument doc(fname);
+    bool loadOkay = doc.LoadFile();
+
+    if (loadOkay)
+    {
+        TiXmlHandle docHandle( &doc );
+        TiXmlElement *elem;
+        std::istringstream inputsBuffer;
+        int numShapes = m_filenames.size();
+        // Distribution cutting planes activated
+        elem = docHandle.FirstChild( "distribution_cutting_plane" ).Element();
+        if(elem)
+        {
+            inputsBuffer.str(elem->GetText());
+
+            std::vector<double> cpVals;
+            double pt;
+
+            while (inputsBuffer >> pt)
+            {
+                cpVals.push_back(pt);
+            }
+            inputsBuffer.clear();
+            inputsBuffer.str("");
+
+            if (cpVals.size() < 9)
+            {
+                std::cerr << "ERROR: Incomplete cutting plane data for reference shape! No cutting planes will be loaded!!" << std::endl;
+            }
+            else
+            {
+                m_use_cutting_planes = true;
+                vnl_vector_fixed<double,3> a,b,c;
+                int ctr = 0;
+
+                for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                {
+                    a[0] = cpVals[ctr++];
+                    a[1] = cpVals[ctr++];
+                    a[2] = cpVals[ctr++];
+
+                    b[0] = cpVals[ctr++];
+                    b[1] = cpVals[ctr++];
+                    b[2] = cpVals[ctr++];
+
+                    c[0] = cpVals[ctr++];
+                    c[1] = cpVals[ctr++];
+                    c[2] = cpVals[ctr++];
+
+                    std::cout << "CorrespondenceApp-> Setting Cutting Plane "
+                              << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
+
+                    // If initial transform provided, transform cutting plane points
+                    if ( m_prefix_transform_file != "" && m_transform_file != "")
+                    {
+                        itk::ParticleSystem<3>::PointType pa;
+                        itk::ParticleSystem<3>::PointType pb;
+                        itk::ParticleSystem<3>::PointType pc;
+
+                        pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
+                        pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
+                        pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+
+                        itk::ParticleSystem<3>::TransformType T     = m_Sampler->GetParticleSystem()->GetTransform(shapeCount) ;
+                        itk::ParticleSystem<3>::TransformType prefT = m_Sampler->GetParticleSystem()->GetPrefixTransform(shapeCount);
+                        pa = m_Sampler->GetParticleSystem()->TransformPoint(pa, T * prefT );
+                        pb = m_Sampler->GetParticleSystem()->TransformPoint(pb, T * prefT );
+                        pc = m_Sampler->GetParticleSystem()->TransformPoint(pc, T * prefT );
+
+                        a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
+                        b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
+                        c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+                    }
+
+                    m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
+                    ctr = 0; // use same cutting plane for all shapes
+                }
+            }
+        }
+    }
+}
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
+{
+    TiXmlDocument doc(fname);
+    bool loadOkay = doc.LoadFile();
+
+    if (loadOkay)
+    {
+        TiXmlHandle docHandle( &doc );
+        TiXmlElement *elem;
+        std::istringstream inputsBuffer;
+        int numShapes = m_filenames.size();
+        // otherwise read separate cutting plane for every shape
+        elem = docHandle.FirstChild( "cutting_planes" ).Element();
+        if (elem)
+        {
+            inputsBuffer.str(elem->GetText());
+
+            std::vector<double> cpVals;
+            double pt;
+
+            while (inputsBuffer >> pt)
+            {
+                cpVals.push_back(pt);
+            }
+            inputsBuffer.clear();
+            inputsBuffer.str("");
+
+            if (cpVals.size() < 9*numShapes)
+            {
+                std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" << std::endl;
+            }
+            else
+            {
+                m_use_cutting_planes = true;
+                vnl_vector_fixed<double,3> a,b,c;
+                int ctr = 0;
+
+                for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                {
+                    a[0] = cpVals[ctr++];
+                    a[1] = cpVals[ctr++];
+                    a[2] = cpVals[ctr++];
+
+                    b[0] = cpVals[ctr++];
+                    b[1] = cpVals[ctr++];
+                    b[2] = cpVals[ctr++];
+
+                    c[0] = cpVals[ctr++];
+                    c[1] = cpVals[ctr++];
+                    c[2] = cpVals[ctr++];
+
+                    // If initial transform provided, transform cutting plane points
+                    if ( m_prefix_transform_file != "" && m_transform_file != "")
+                    {
+                        itk::ParticleSystem<3>::PointType pa;
+                        itk::ParticleSystem<3>::PointType pb;
+                        itk::ParticleSystem<3>::PointType pc;
+
+                        pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
+                        pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
+                        pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+
+                        itk::ParticleSystem<3>::TransformType T     = m_Sampler->GetParticleSystem()->GetTransform(shapeCount) ;
+                        itk::ParticleSystem<3>::TransformType prefT = m_Sampler->GetParticleSystem()->GetPrefixTransform(shapeCount);
+                        pa = m_Sampler->GetParticleSystem()->TransformPoint(pa, T * prefT );
+                        pb = m_Sampler->GetParticleSystem()->TransformPoint(pb, T * prefT );
+                        pc = m_Sampler->GetParticleSystem()->TransformPoint(pc, T * prefT );
+
+                        a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
+                        b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
+                        c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+                    }
+
+                    std::cout << "CorrespondenceApp-> Setting Cutting Plane "
+                              << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
+
+                    m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
+                }
+            }
+        }
+    }
+}
+
+template < class SAMPLERTYPE>
+void
+ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
+{
+    TiXmlDocument doc(fname);
+    bool loadOkay = doc.LoadFile();
+
+    if (loadOkay)
+    {
+        TiXmlHandle docHandle( &doc );
+        TiXmlElement *elem;
+        std::istringstream inputsBuffer;
+        int numShapes = m_filenames.size();
+        // sphere radii and centers
+        this->m_spheres_per_domain = 0;
+        elem = docHandle.FirstChild( "spheres_per_domain" ).Element();
+        if (elem) this->m_spheres_per_domain = atoi(elem->GetText());
+
+        int numSpheres = numShapes * this->m_spheres_per_domain;
+        std::vector<double> radList;
+        double r;
+
+        elem = docHandle.FirstChild( "sphere_radii" ).Element();
+        if (elem)
+        {
+            inputsBuffer.str(elem->GetText());
+
+            while (inputsBuffer >> r)
+            {
+                radList.push_back(r);
+            }
+            inputsBuffer.clear();
+            inputsBuffer.str("");
+
+            if (radList.size() < numSpheres)
+            {
+                std::cerr << "ERROR: Incomplete sphere radius data! No spheres will be loaded!!" << std::endl;
+            }
+            else
+            {
+                elem = docHandle.FirstChild( "sphere_centers" ).Element();
+                if (elem)
+                {
+                    inputsBuffer.str(elem->GetText());
+
+                    std::vector<double> spVals;
+                    double pt;
+
+                    while (inputsBuffer >> pt)
+                    {
+                        spVals.push_back(pt);
+                    }
+                    inputsBuffer.clear();
+                    inputsBuffer.str("");
+
+                    if (spVals.size() < 3*numSpheres)
+                    {
+                        std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" << std::endl;
+                    }
+                    else
+                    {
+                        vnl_vector_fixed<double,3> center;
+                        double rad;
+                        int c_ctr = 0;
+                        int r_ctr = 0;
+
+                        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                        {
+                            for (int sphereCount = 0; sphereCount < m_spheres_per_domain; sphereCount++)
+                            {
+                                center[0] = spVals[c_ctr++];
+                                center[1] = spVals[c_ctr++];
+                                center[2] = spVals[c_ctr++];
+
+                                rad = radList[r_ctr++];
+
+                                m_Sampler->AddSphere(shapeCount,center,rad);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 template < class SAMPLERTYPE>
 void
@@ -821,24 +886,24 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
         ImageType::Pointer img = dynamic_cast<itk::ParticleImageDomain<float, 3> *>(
                     m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage();
 
-// Praful - commenting following code to keep consistency in results.
+        // Praful - commenting following code to keep consistency in results.
         // first attempt to find the surface moving from the center out in the y direction
-//        ImageType::IndexType center;
-//        center[0] = img->GetLargestPossibleRegion().GetSize()[0] / 2;
-//        center[1] = img->GetLargestPossibleRegion().GetSize()[1] / 2;
-//        center[2] = img->GetLargestPossibleRegion().GetSize()[2] / 2;
+        //        ImageType::IndexType center;
+        //        center[0] = img->GetLargestPossibleRegion().GetSize()[0] / 2;
+        //        center[1] = img->GetLargestPossibleRegion().GetSize()[1] / 2;
+        //        center[2] = img->GetLargestPossibleRegion().GetSize()[2] / 2;
 
-//        while ( !done && center[1] > 0 )
-//        {
-//            if ( img->GetPixel(center) < 1.0 && img->GetPixel( center ) > -1.0 )
-//            {
-//                PointType pos;
-//                img->TransformIndexToPhysicalPoint( center, pos );
-//                m_Sampler->GetParticleSystem()->AddPosition( pos, i );
-//                done = true;
-//            }
-//            center[1]--;
-//        }
+        //        while ( !done && center[1] > 0 )
+        //        {
+        //            if ( img->GetPixel(center) < 1.0 && img->GetPixel( center ) > -1.0 )
+        //            {
+        //                PointType pos;
+        //                img->TransformIndexToPhysicalPoint( center, pos );
+        //                m_Sampler->GetParticleSystem()->AddPosition( pos, i );
+        //                done = true;
+        //            }
+        //            center[1]--;
+        //        }
 
 
         // couldn't find it, try the old method
@@ -1379,7 +1444,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "initial_relative_weighting" ).Element();
         if (elem) this->m_initial_relative_weighting = atof(elem->GetText());
 
-        m_debug_projection = true;
+        m_debug_projection = false;
         elem = docHandle.FirstChild( "debug_projection" ).Element();
         if (elem) atoi(elem->GetText()) > 0 ? this->m_debug_projection = true : this->m_debug_projection = false;
 
@@ -1429,7 +1494,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "normal_angle" ).Element();
         if (elem) this->m_normalAngle = atof(elem->GetText())*pi/180.0;
 
-        this->m_performGoodBad = true;
+        this->m_performGoodBad = false;
         elem = docHandle.FirstChild( "report_bad_particles" ).Element();
         if (elem) this->m_performGoodBad = (bool) atoi(elem->GetText());
 
@@ -1544,7 +1609,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
         elem = docHandle.FirstChild( "save_init_splits" ).Element();
         if (elem) this->m_save_init_splits = (bool) atoi(elem->GetText());
 
-        m_use_shape_statistics_in_init = true;
+        m_use_shape_statistics_in_init = false;
         elem = docHandle.FirstChild( "use_shape_statistics_in_init" ).Element();
         if (elem) this->m_use_shape_statistics_in_init = (bool) atoi(elem->GetText());
         // end SHIREEN
@@ -2119,12 +2184,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     if (m_use_normal_penalty == true) m_Sampler->SetNormalEnergyOn();
     else m_Sampler->SetNormalEnergyOff();
     
-    if (m_attributes_per_domain.size() > 0)
+    if ((m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes)
     {
         if (m_mesh_based_attributes)
             m_Sampler->SetCorrespondenceMode(5);
         else
-            m_Sampler->SetCorrespondenceMode(2); // General entropy
+            m_Sampler->SetCorrespondenceMode(2); // General entropy, volme based (NOT USED ANYMORE)
     }
     else if (m_use_regression == true)
     {
