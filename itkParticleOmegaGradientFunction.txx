@@ -34,30 +34,30 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
                  double &avgKappa,
                  unsigned int numspheres ) const
 {
-  //  avgKappa =
-  //
-  //  this->ComputeKappa(m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx), dom);
-  avgKappa = 0.0;
-  const double min_sigma = 1.0e-4;
-  const double epsilon = 1.0e-5;
+    //  avgKappa =
+    //
+    //  this->ComputeKappa(m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx), dom);
+    avgKappa = 0.0;
+    const double min_sigma = 1.0e-4;
+    const double epsilon = 1.0e-5;
 
-  const double M = static_cast<double>( VDimension );
-  const double MM = M * M * 2.0 + M;
+    const double M = static_cast<double>( VDimension );
+    const double MM = M * M * 2.0 + M;
 
-  double error = 1.0e6;
-  double sigma, prev_sigma;
-  sigma = initial_sigma;
+    double error = 1.0e6;
+    double sigma, prev_sigma;
+    sigma = initial_sigma;
 
     // Distance to plane is distance to last neighbor in the list
     double planeDist = 0.0;
     // AKM : Cutting Plane Disabled
-    /**/
+    /*
     for (unsigned int i = 0; i < VDimension; i++)
     {
         planeDist += (pos[i] - neighborhood[neighborhood.size()-(numspheres+1)].Point[i]) *
                 (pos[i] - neighborhood[neighborhood.size()-(numspheres+1)].Point[i]);
     }
-    /**/
+    */
 
     while ( error > precision )
     {
@@ -87,7 +87,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
             // Curvature half-way between me and neighbor
             double Dij = ( mymc + mc ) * 0.5;
-            double kappa = this->ComputeKappa(Dij, dom,sqrt(planeDist));
+            double kappa = this->ComputeKappa(Dij, dom,sqrt(planeDist)); // Praful -- planedist not being used in the code
 
             avgKappa += kappa;
 
@@ -177,36 +177,19 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     // AKM : Cutting Plane Disabled
     /**/
     vnl_vector_fixed<double, VDimension> x;
-    vnl_vector_fixed<float, VDimension> grad = domain->SampleGradientVnl( pos );
+
     for (unsigned int i = 0; i < VDimension; i++)  { x[i] = pos[i]; }
-    double D = dot_product( domain->GetCuttingPlaneNormal(),
-                                  x - domain->GetCuttingPlanePoint() );
-    // PRATEEP : (08/31/2014)
-    /* always constrain points to be above cutting plane */
-    //D = fabs(D);
-    // SHIREEN
-    D = fabs(D); //- changed to plus PRAFUL March 23, 2016
-    // end SHIREEN
-    itk::Point<double, VDimension> planept;
-    for ( unsigned int i = 0; i < VDimension; i++ )
-    { planept[i] = x[i] - (domain->GetCuttingPlaneNormal()[i] * D); }
 
-    double myKappa = this->ComputeKappa( m_MeanCurvatureCache->operator[] ( this->GetDomainNumber() )->operator[] ( idx ), d, D );
-    /**/
-    //double myKappa = this->ComputeKappa( m_MeanCurvatureCache->operator[] ( this->GetDomainNumber() )->operator[] ( idx ), d, 0.0 );
-
+    double myKappa = this->ComputeKappa( m_MeanCurvatureCache->operator[] ( this->GetDomainNumber() )->operator[] ( idx ), d, 0 );
 
     if ( m_CurrentSigma < epsilon )
-    {
-            m_CurrentSigma = this->GetMinimumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
-}
+        m_CurrentSigma = this->GetMinimumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
 
             // Determine the extent of the neighborhood that will be used in the Parzen
             // windowing estimation.  The neighborhood extent is based on the optimal
             // sigma calculation and limited to a user supplied maximum radius (probably
             // the size of the domain).
-            double neighborhood_radius = (m_CurrentSigma / myKappa) * 1.3
-            * this->GetNeighborhoodToSigmaRatio();
+    double neighborhood_radius = (m_CurrentSigma / myKappa) * 1.3 * this->GetNeighborhoodToSigmaRatio();
 
     if ( neighborhood_radius > this->GetMaximumNeighborhoodRadius() )
     {
@@ -214,19 +197,35 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     }
 
     // Get the neighborhood surrounding the point "pos".
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,
-                                                           neighborhood_radius, d);
+    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
+
+
     // Add the closest point on the plane as another neighbor.
     // See http://mathworld.wolfram.com/Point-PlaneDistance.html, for example
     //  std::cout << planept << "\t" << D << std::endl;
-    // AKM : Cutting Plane Disabled
-    /**/
-    m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
-    //m_CurrentWeights.push_back( 1.0 );
-    // SHIREEN
-    m_CurrentWeights.push_back( 0.3 );
-    // end SHIREEN
-    /**/
+
+    for (unsigned int pidx = 0; pidx < domain->GetNumberOfPlanes(); pidx++)
+    {
+        double D = dot_product( domain->GetCuttingPlaneNormal(),
+                                x - domain->GetCuttingPlanePoint() );
+        // PRATEEP : (08/31/2014)
+        /* always constrain points to be above cutting plane */
+        //D = fabs(D);
+        // SHIREEN
+        D = fabs(D); //- changed to plus PRAFUL March 23, 2016
+        // end SHIREEN
+        itk::Point<double, VDimension> planept;
+        for ( unsigned int i = 0; i < VDimension; i++ )
+        { planept[i] = x[i] - (domain->GetCuttingPlaneNormal()[i] * D); }
+
+        /**/
+        m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planept, 0 ) );
+        //m_CurrentWeights.push_back( 1.0 );
+        // SHIREEN
+        m_CurrentWeights.push_back( 0.3 );
+        // end SHIREEN
+        /**/
+    }
 
     // Add the closest points on any spheres that are defined in the domain.
     std::vector<itk::Point<double, VDimension> > spherepoints;
@@ -236,14 +235,12 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         itk::Point<double, VDimension> spherept;
         vnl_vector_fixed<double, VDimension> q;
         for ( unsigned int j = 0; j < VDimension; j++ )
-        {
             q[j] = pos[j] - domain->GetSphereCenter( i )[j];
-        }
+
         q.normalize();
         for ( unsigned int j = 0; j < VDimension; j++ )
-        {
             spherept[j] = domain->GetSphereCenter( i )[j] + ( q[j] * domain->GetSphereRadius( i ) );
-        }
+
         spherepoints.push_back( spherept );
         m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherept, 0 ) );
 
@@ -255,16 +252,16 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
         // end SHIREEN
     }
 
-  
-  // DEBUG
-  
-  //   std::cout << domain->GetCuttingPlaneNormal() << "\t" <<  planept << "\t" << pos << std::endl;
-  //    for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
-  //   {
-  //    std::cout << m_CurrentNeighborhood[i].Point << std::endl;
-  //    }
-  //  std::cout << std::endl;
-  // end debug
+
+    // DEBUG
+
+    //   std::cout << domain->GetCuttingPlaneNormal() << "\t" <<  planept << "\t" << pos << std::endl;
+    //    for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
+    //   {
+    //    std::cout << m_CurrentNeighborhood[i].Point << std::endl;
+    //    }
+    //  std::cout << std::endl;
+    // end debug
 
     //    m_CurrentNeighborhood
     //   = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
@@ -427,7 +424,7 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
         double Dij = ( mymc + mc ) * 0.5;
         // AKM : Cutting Plane Disabled
         double kappa = this->ComputeKappa(Dij, d,sqrt(planeDist));
-//        double kappa = this->ComputeKappa( Dij, d, sqrt( 0.0 ) );
+        //        double kappa = this->ComputeKappa( Dij, d, sqrt( 0.0 ) );
 
         for ( unsigned int n = 0; n < VDimension; n++ )
         {
@@ -472,7 +469,7 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
         maxmove = sqrt(planeDist);
     //    }
 
-     //Praful - July 3, 2017 -- independent to maxmove
+    //Praful - July 3, 2017 -- independent to maxmove
     for ( unsigned int n = 0; n < VDimension; n++ )
     {    gradE[n] /= m_avgKappa;    }
 
