@@ -1377,14 +1377,17 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteCuttingPlanePoints( int iter )
                 = static_cast<const itk::ParticleImplicitSurfaceDomain<float
                 ,3>*>(m_Sampler->GetParticleSystem()->GetDomain(i));
 
-        vnl_vector_fixed<double, 3> a = dom->GetA();
-        vnl_vector_fixed<double, 3> b = dom->GetB();
-        vnl_vector_fixed<double, 3> c = dom->GetC();
+        for (unsigned int j = 0; j < dom->GetNumberOfPlanes(); j++)
+        {
+            vnl_vector_fixed<double, 3> a = dom->GetA(j);
+            vnl_vector_fixed<double, 3> b = dom->GetB(j);
+            vnl_vector_fixed<double, 3> c = dom->GetC(j);
 
-        for(int d = 0; d < 3; d++) out << a[d] << " ";
-        for(int d = 0; d < 3; d++) out << b[d] << " ";
-        for(int d = 0; d < 3; d++) out << c[d] << " ";
-        out << std::endl;
+            for(int d = 0; d < 3; d++) out << a[d] << " ";
+            for(int d = 0; d < 3; d++) out << b[d] << " ";
+            for(int d = 0; d < 3; d++) out << c[d] << " ";
+            out << std::endl;
+        }
     }
     out.close();
     std::cout << "Done\n";
