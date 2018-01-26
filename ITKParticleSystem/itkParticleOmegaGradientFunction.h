@@ -136,7 +136,7 @@ public:
                                 const typename ParticleSystemType::PointVectorType &,
                                 const std::vector<double> &,
                                 const PointType &, double, double,
-                                int &err, double &, unsigned int ) const;
+                                int &err, double &, unsigned int, unsigned int ) const;
 
   /** */
   //  void ComputeKappaValues();
@@ -194,6 +194,9 @@ public:
 
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
+    copy->planePts = this->planePts;
+    copy->spherePts = this->spherePts;
+    copy->CToP = this->CToP;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
   }
@@ -217,7 +220,11 @@ protected:
   typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
 
   std::vector<double> m_CurrentWeights;
-    
+
+  std::vector < itk::Point<double, VDimension> > planePts;
+  std::vector < itk::Point<double, VDimension> > spherePts;
+  std::vector < double > CToP; // distance from sphere center to pos
+
   // SHIREEN
   float m_MaxMoveFactor;
   // end SHIREEN

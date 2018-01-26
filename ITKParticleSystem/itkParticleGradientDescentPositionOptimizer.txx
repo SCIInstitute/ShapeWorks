@@ -182,14 +182,9 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         while ( !done )
                         {
                             gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
-
 //                            gradient = original_gradient * m_TimeSteps[dom][k];
 
-                            /*
-                            dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))
-                                    ->ApplyVectorConstraints(gradient,
-                                                             m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
-                            */
+                            dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
 
                             gradmag = gradient.magnitude();
 
