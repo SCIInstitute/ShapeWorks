@@ -217,6 +217,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
                        double maxtimestep) const
 {
 
+    bool flag = false;
   //ShapeWorksRun4.5 - Ensuring that the update does not violate constraints
   vnl_vector_fixed<double, VDimension> x;
   vnl_vector_fixed<double, VDimension> xPos;
@@ -225,24 +226,32 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
       x[i] = pos[i] - gradE[i];
       xPos[i] = pos[i];
   }
+  double gradMag = gradE.magnitude();
 
-  if (this->IsCuttingPlaneDefined() && gradE.magnitude() > 0.0)
+  if (this->IsCuttingPlaneDefined() && gradMag > 0.0)
   {
       for (unsigned int i = 0; i < this->GetNumberOfPlanes(); i++)
       {
           double D = dot_product(this->GetCuttingPlaneNormal(i), x-this->GetCuttingPlanePoint(i));
           if (D < 0)
           {
+              flag = true;
               double D_pos = dot_product(this->GetCuttingPlaneNormal(i), xPos-this->GetCuttingPlanePoint(i));
-              for (unsigned int n = 0; n < VDimension; n++)
-                  gradE[n] *= 0.95*sqrt(D_pos)/gradE.magnitude();
+              if (D_pos < 0)
+                for (unsigned int n = 0; n < VDimension; n++)
+                    gradE[n] *= -0.5*sqrt(-D_pos)/gradMag;
+              else
+                for (unsigned int n = 0; n < VDimension; n++)
+                    gradE[n] *= 0.85*sqrt(D_pos)/gradMag;
           }
       }
   }
+  return flag;
+   gradMag = gradE.magnitude();
 
-  return Superclass::ApplyVectorConstraints(gradE,pos,maxtimestep);
+//  return Superclass::ApplyVectorConstraints(gradE,pos,maxtimestep);
     // disabled sphere part
-  if (this->IsCuttingSphereDefined() && gradE.magnitude() > 0.0)
+  if (this->IsCuttingSphereDefined() && gradMag > 0.0)
   {
       for (unsigned int i = 0; i < this->GetNumberOfSpheres(); i++)
       {
@@ -280,7 +289,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
                   {
                       double D_pos = abs(rad)-CToP;
                       for (unsigned int n = 0; n < VDimension; n++)
-                          gradE[n] *= 0.9*D_pos/gradE.magnitude();
+                          gradE[n] *= 0.9*D_pos/gradMag;
                   }
 //              }
           }
@@ -316,7 +325,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
                   {
                       double D_pos = CToP-abs(rad);
                       for (unsigned int n = 0; n < VDimension; n++)
-                          gradE[n] *= 0.9*D_pos/gradE.magnitude();
+                          gradE[n] *= 0.9*D_pos/gradMag;
                   }
 //              }
           }

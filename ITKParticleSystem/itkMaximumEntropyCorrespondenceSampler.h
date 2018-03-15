@@ -233,6 +233,15 @@ public:
     m_FunctionShapeData->AddFunctionImage(d, I);
   }
 
+  ParticleGeneralShapeMatrix<double, Dimension> *GetGeneralShapeMatrix()
+  {
+      return m_GeneralShapeMatrix.GetPointer();
+  }
+  ParticleGeneralShapeGradientMatrix<double, Dimension> *GetGeneralShapeGradientMatrix()
+  {
+      return m_GeneralShapeGradMatrix.GetPointer();
+  }
+
   ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
   { return m_LinkingFunction.GetPointer(); }
   ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction()

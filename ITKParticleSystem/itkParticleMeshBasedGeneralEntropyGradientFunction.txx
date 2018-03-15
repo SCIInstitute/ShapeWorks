@@ -26,7 +26,10 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     num_dims = m_ShapeData->rows();
     num_samples = m_ShapeData->cols();
 
-    int rows = 0;
+//    std::cout << m_ShapeData->extract(num_dims, num_samples)<< std::endl;
+//    std::cout << m_ShapeGradient->extract(m_ShapeGradient->rows(), m_ShapeGradient->cols())<< std::endl;
+
+     int rows = 0;
     for (int i = 0; i < m_DomainsPerShape; i++)
         rows += VDimension*c->GetNumberOfParticles(i);
 

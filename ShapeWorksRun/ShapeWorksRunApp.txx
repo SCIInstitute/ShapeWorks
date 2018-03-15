@@ -606,8 +606,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
 template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::ReadConstraints(const char *fname)
-{    
-    if(m_distribution_domain_id > -1)
+{
+    if(this->m_distribution_domain_id > -1)
         this->ReadDistributionCuttingPlane(fname);
     else
         this->ReadCuttingPlanes(fname);
@@ -925,6 +925,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
     for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
          i++)
     {
+        if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0)
+            continue;
 
         bool done = false;
 
@@ -1870,7 +1872,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     /* PRATEEP */
     // If initial points already specified, compute Procrustes parameters from them and use further.
     // Do not compute parameters again.
-    if( m_Sampler->GetParticleSystem()->GetNumberOfParticles() > 0) //defaults to number of points read for first domain
+    if( m_Sampler->GetParticleSystem()->GetNumberOfParticles() > 10) //defaults to number of points read for first domain
     {
         m_disable_procrustes = false;
         m_Procrustes->SetComputeTransformationOn();
@@ -1949,11 +1951,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     m_Sampler->GetLinkingFunction()->SetRelativeNormEnergyScaling(m_initial_norm_penalty_weighting);
 
 
-    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 1)
-    {
+//    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles() < 1)
+//    {
         this->AddSinglePoint();
         m_Sampler->GetParticleSystem()->SynchronizePositions();
-    }
+//    }
 
     // SHIREEN
     int split_number = 0;

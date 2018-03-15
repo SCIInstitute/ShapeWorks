@@ -487,23 +487,6 @@ typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Vector
     for ( unsigned int n = 0; n < VDimension; n++ )
     {    gradE[n] *= p;    }
 //    std::cout << gradE[0] << "\t" << gradE[1] << "\t" << gradE[2] << std::endl;
-    /*
-    //Praful -- Adding extra strong force from constraints - NOT NEEDED
-    vnl_vector_fixed<double, VDimension> grad = domain->SampleGradientVnl(pos);
-    for (unsigned int j = 0; j< numPlanes; j++)
-    {
-        const double D = dot_product(domain->GetCuttingPlaneNormal(j), x - domain->GetCuttingPlanePoint(j));
-
-        // Gradient of simple force 1/D^2 to push away from cutting plane
-        VectorType df;
-        const double k = (-2.0 / (D * D * D));
-        df[0] = k * grad[0] * domain->GetCuttingPlaneNormal(j)[0];
-        df[1] = k * grad[1] * domain->GetCuttingPlaneNormal(j)[1];
-        df[2] = k * grad[2] * domain->GetCuttingPlaneNormal(j)[2];
-
-        gradE += df;
-    }
-    */
 
     // Prevents unstable moves in degenerate cases
     //  if (m_CurrentNeighborhood.size() < 4)
