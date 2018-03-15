@@ -111,7 +111,7 @@ ParticleGaussianModeWriter<VDimension>
     int modenum = 0;
     for (int mode = num_samples-1; mode > num_samples-(m_NumberOfModes+1); mode--, modenum++)
       {
-      double lambda = sqrt(symEigen.D(mode, mode));
+      double lambda = sqrt(abs(symEigen.D(mode, mode)));
       
       for (int s = -3; s < 4; s++)
         {

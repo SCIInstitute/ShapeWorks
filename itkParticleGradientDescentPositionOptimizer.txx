@@ -197,7 +197,11 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                                 // Make a move and compute new energy
                                 for (unsigned int i = 0; i < VDimension; i++)
                                 {  newpoint[i] = pt[i] - gradient[i]; }
+
+
                                 dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
+
+
                                 m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
                                 newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
