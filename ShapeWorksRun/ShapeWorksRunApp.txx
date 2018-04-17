@@ -37,7 +37,7 @@
 #include "itkParticleImageDomain.h"
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImplicitSurfaceDomain.h"
-
+#include "itkParticleImageDomainWithHessians.h"
 #include <numeric>
 
 #ifdef _WIN32
@@ -134,11 +134,35 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
         std::cout << "Procrustes scaling is on" << std::endl;
     }
 
+
     this->ReadInputs(fn);
     this->SetIterationCommand();
     this->InitializeSampler();
     this->ReadExplanatoryVariables(fn);
     this->FlagDomainFct(fn);
+
+
+    if (m_use_normals.size() > 0)
+    {
+        int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+        for (int i = 0; i < numShapes; i++)
+        {
+            if (m_use_normals[i % m_domains_per_shape])
+                continue;
+
+            itk::ParticleImageDomainWithHessians<float, 3> * domainWithHess = static_cast< itk::ParticleImageDomainWithHessians<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(i));
+            domainWithHess->DeletePartialDerivativeImages();
+        }
+    }
+    else
+    {
+        int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+        for (int i = 0; i < numShapes; i++)
+        {
+            itk::ParticleImageDomainWithHessians<float, 3> * domainWithHess = static_cast< itk::ParticleImageDomainWithHessians<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(i));
+            domainWithHess->DeletePartialDerivativeImages();
+        }
+    }
 
     m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
     m_GoodBad->SetDomainsPerShape(m_domains_per_shape);
@@ -469,10 +493,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
             }
             else
             {
-                for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
-                {
-                    m_Sampler->SetMeshFile(shapeCount, meshFiles[shapeCount]);
-                }
+                m_Sampler->SetMeshFiles(meshFiles);
+//                for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+//                {
+//                    m_Sampler->SetMeshFile(shapeCount, meshFiles[shapeCount]);
+//                }
             }
             meshFiles.clear();
         }

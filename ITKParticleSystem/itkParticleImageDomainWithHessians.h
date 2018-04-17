@@ -154,12 +154,23 @@ public:
   itkSetMacro(Sigma, double);
   itkGetMacro(Sigma, double);
 
+  void DeletePartialDerivativeImages()
+  {
+    for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++)
+      {
+      m_PartialDerivatives[i]=0;
+      m_Interpolators[i]=0;
+      }
+  }
+
   /** Access interpolators and partial derivative images. */
   typename ScalarInterpolatorType::Pointer *GetInterpolators()
   { return m_Interpolators; }
   typename ImageType::Pointer *GetPartialDerivatives()
   { return m_PartialDerivatives; }
   
+
+
 protected:
   ParticleImageDomainWithHessians() : m_Sigma(0.0)
   {  }
@@ -170,14 +181,6 @@ protected:
   }
   virtual ~ParticleImageDomainWithHessians() {};
 
-  void DeletePartialDerivativeImages()
-  {
-    for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++)
-      {
-      m_PartialDerivatives[i]=0;
-      m_Interpolators[i]=0;
-      }
-  }
   
 private:
   double m_Sigma;
