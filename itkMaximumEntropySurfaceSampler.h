@@ -187,6 +187,11 @@ public:
         this->SetMeshFile(0,s);
     }
 
+    void SetMeshFiles(const std::vector<std::string> &s)
+    {
+        m_MeshFiles = s;
+    }
+
     void SetImageFiles(const std::vector<std::string> &s)
     {
         m_ImageFiles = s;

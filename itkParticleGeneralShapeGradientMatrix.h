@@ -241,7 +241,7 @@ public:
                 numRows += VDimension * ps->GetNumberOfParticles(i);
             if (m_use_normals[i])
                 numRows += VDimension * ps->GetNumberOfParticles(i);
-            numRows += m_AttributesPerDomain[i];
+            numRows += m_AttributesPerDomain[i]* ps->GetNumberOfParticles(i);
         }
 
         if (numRows > this->rows())
