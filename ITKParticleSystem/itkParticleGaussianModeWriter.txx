@@ -81,7 +81,7 @@ ParticleGaussianModeWriter<VDimension>
     {
     char fp[255];
     std::string fn = m_FileName;
-    ::sprintf(fp, ".d%d", d);
+    ::sprintf(fp, "domain%d", d);
     fn += fp;
     
     int rowsperdomain = num_dims / DomainsPerShape;
