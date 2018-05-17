@@ -17,14 +17,11 @@
 
 #include "itkMaximumEntropySurfaceSampler.h"
 #include "itkParticleDualVectorFunction.h"
-#include "itkParticleEnsembleNormalPenaltyFunction.h"
 #include "itkParticleEnsembleMeanFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleGeneralEntropyGradientFunction.h"
-
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
-
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
 #include "itkParticleMeshBasedGeneralMeanGradientFunction.h"
 
@@ -71,18 +68,6 @@ public:
   void SetCorrespondenceOff()
   {
     m_LinkingFunction->SetBOff();
-    this->Modified();
-  }
-
-  void SetNormalEnergyOn()
-  {
-    m_LinkingFunction->SetCOn();
-    this->Modified();
-  }
-
-  void SetNormalEnergyOff()
-  {
-    m_LinkingFunction->SetCOff();
     this->Modified();
   }
 
@@ -173,8 +158,6 @@ public:
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
     }
-    
-    if (m_LinkingFunction->GetCOn() == true) m_LinkingFunction->SetFunctionC(m_EnsembleNormalPenaltyFunction);
 
     m_CorrespondenceMode = mode;
   }
@@ -244,8 +227,6 @@ public:
 
   ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
   { return m_LinkingFunction.GetPointer(); }
-  ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction()
-  { return m_EnsembleNormalPenaltyFunction.GetPointer(); }
   ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction()
   { return m_EnsembleMeanFunction.GetPointer(); }
   ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction()
@@ -265,8 +246,6 @@ public:
   { return m_LinkingFunction.GetPointer(); }
   const ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction() const
   { return m_EnsembleMeanFunction.GetPointer(); }
-  const ParticleEnsembleNormalPenaltyFunction<Dimension> *GetEnsembleNormalPenaltyFunction() const
-  { return m_EnsembleNormalPenaltyFunction.GetPointer(); }
   const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
   const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
@@ -289,7 +268,6 @@ public:
     m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
     m_ShapeMatrix->SetDomainsPerShape(n);
     m_EnsembleMeanFunction->SetDomainsPerShape(n);
-    m_EnsembleNormalPenaltyFunction->SetDomainsPerShape(n);
     m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
     m_MeshBasedGeneralMeanGradientFunction->SetDomainsPerShape(n);
     m_GeneralShapeMatrix->SetDomainsPerShape(n);
@@ -324,7 +302,6 @@ private:
 
   typename ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
-  typename ParticleEnsembleNormalPenaltyFunction<Dimension>::Pointer m_EnsembleNormalPenaltyFunction;
   typename ParticleEnsembleMeanFunction<Dimension>::Pointer m_EnsembleMeanFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;

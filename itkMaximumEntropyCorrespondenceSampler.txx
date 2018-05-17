@@ -22,7 +22,6 @@ template <class TImage>
 MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler()
 {
   m_LinkingFunction = ParticleDualVectorFunction<Dimension>::New();
-  m_EnsembleNormalPenaltyFunction = ParticleEnsembleNormalPenaltyFunction<Dimension>::New();
   m_EnsembleMeanFunction = ParticleEnsembleMeanFunction<Dimension>::New();
   m_GeneralEntropyGradientFunction = ParticleGeneralEntropyGradientFunction<Dimension>::New();
   m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
@@ -77,21 +76,12 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
   this->SetInPlace(false); // this is required so that we don't release our inputs
   if (this->GetInitialized() == false)
     {
-      /* Praful - not needed anymore - during fix of same bounding box in every domain - v4.3 */
-
-          // TEMPORARY HACK.  REALLY WHAT I WANT TO DO IS GRAFT THE INPUT IMAGES TO
-          // AN ARRAY OF OUTPUT IMAGES AND USE THOSE.
-          // this->AllocateWorkingImages();
-
-      /*--------------------------------------------------------------------------------------*/
-
     this->AllocateDataCaches();
     this->SetAdaptivityMode(Superclass::m_AdaptivityMode);
     this->SetCorrespondenceMode(m_CorrespondenceMode);
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
     m_LinkingFunction->SetAOn();
     m_LinkingFunction->SetBOn();
-    m_LinkingFunction->SetCOff();
 
     this->AllocateDomainsAndNeighborhoods();
 

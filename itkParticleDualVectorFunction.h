@@ -81,7 +81,7 @@ public:
 
         const_cast<ParticleDualVectorFunction *>(this)->m_Counter = m_Counter + 1.0;
 
-        // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
+        // evaluate individual functions: A = surface energy, B = correspondence
         if (m_AOn == true)
         {
             ansA = m_FunctionA->Evaluate(idx, d, system, maxA);
@@ -94,18 +94,10 @@ public:
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
         }
 
-        if (m_COn == true)
-        {
-            ansC = m_FunctionC->Evaluate(idx, d, system, maxC);
-            const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagC = m_AverageGradMagC + ansC.magnitude();
-        }
-
-        /* PRATEEP : Turn correspondence values off */
         if( m_RelativeGradientScaling == 0.0)
         {
             ansB.fill(0.0);
             maxB = 0.0;
-//           this-> SetBOff();
         }
 
         // get maxmove and predicted move for current configuration
@@ -117,60 +109,32 @@ public:
                 if (maxB > maxA)
                 {
                     maxmove = maxB;
-                    if ( (m_COn == true) && (maxmove > maxC) ) // C is active as well
-                    {
-                        maxmove = maxC;
-                    }
                 }
                 else
                 {
                     maxmove = maxA;
                 }
 
-                // SHIREEN
                 maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
-                // end SHIREEN
 
-                /* PRATEEP : Debug */
-                //#ifdef SW_WEIGH_SAMPLING_TERM
-                //        predictedMove = ansB + m_RelativeGradientScaling * ansA;
-                //#else
                 predictedMove = ansA + m_RelativeGradientScaling * ansB;
-                //#endif
-                if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
-//                std::cout<<"**************check3*****************************"<<endl;
-//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//                std::cout<<"*************************************************"<<endl;
+
                 return (predictedMove);
             }
             else // B is active, A is not active
             {
                 maxmove = maxB;
-                if ( (m_COn == true) && (maxmove > maxC) ) // C is active
-                {
-                    maxmove = maxC;
-                }
 
                 predictedMove = ansB;
-                if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
-//                std::cout<<"**************check2*****************************"<<endl;
-//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//                std::cout<<"*************************************************"<<endl;
+
                 return (predictedMove);
             }
         }
         else  // only A is active
         {
-//            std::cout<<"*****************check1**************************"<<endl;
-//            std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//            std::cout<<"*************************************************"<<endl;
             maxmove = maxA;
             return ansA;
         }
-//        std::cout<<"**************bogus1*****************************"<<endl;
-//        std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//        std::cout<<"*************************************************"<<endl;        // If nothing is turned on, then return a max time
-        // step of 0 and a bogus vector.
         maxmove = 0.0;
         return ansA;
     }
@@ -205,7 +169,7 @@ public:
         double ansC = 0.0;
         double finalEnergy = 0.0;
 
-        // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
+        // evaluate individual functions: A = surface energy, B = correspondence
         if (m_AOn == true)
         {
             ansA = m_FunctionA->Energy(idx, d, system);
@@ -216,12 +180,6 @@ public:
             ansB = m_FunctionB->Energy(idx, d, system);
         }
 
-        if (m_COn == true)
-        {
-            ansC = m_FunctionC->Energy(idx, d, system);
-        }
-
-        /* PRATEEP : Turn correspondence values off */
         if( m_RelativeEnergyScaling == 0)
         {
             ansB = 0.0;
@@ -232,27 +190,12 @@ public:
         {
             if (m_AOn == true)  // both A and B are active
             {
-                //         if (idx == 0 && d == 0)
-                //           std::cout << "Energy = " <<  ansA << " + " << m_RelativeEnergyScaling * ansB
-                //                     << " = " << ansA + m_RelativeEnergyScaling * ansB << std::endl;
-                //#ifdef SW_WEIGH_SAMPLING_TERM
-                //        finalEnergy = ansB + m_RelativeEnergyScaling * ansA;
-                //#else
                 finalEnergy = ansA + m_RelativeEnergyScaling * ansB;
-                //#endif
-                if (m_COn == true) // if C is also active
-                {
-                    finalEnergy += m_RelativeNormEnergyScaling * ansC;
-                }
                 return (finalEnergy);
             }
             else // B is active, A is not active
             {
                 finalEnergy = ansB;
-                if (m_COn == true) // C is active
-                {
-                    finalEnergy += m_RelativeNormEnergyScaling * ansC;
-                }
                 return finalEnergy ;
             }
         }
@@ -270,17 +213,14 @@ public:
     {
         double maxA = 0.0;
         double maxB = 0.0;
-        double maxC = 0.0;
         double energyA = 0.0;
         double energyB = 0.0;
-        double energyC = 0.0;
         VectorType ansA; ansA.fill(0.0);
         VectorType ansB; ansB.fill(0.0);
-        VectorType ansC; ansC.fill(0.0);
 
         const_cast<ParticleDualVectorFunction *>(this)->m_Counter = m_Counter + 1.0;
 
-        // evaluate individual functions: A = surface energy, B = correspondence, C = normal entropy
+        // evaluate individual functions: A = surface energy, B = correspondence
         if (m_AOn == true)
         {
             ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
@@ -297,15 +237,6 @@ public:
             const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
         }
 
-        if (m_COn == true)
-        {
-            ansC = m_FunctionC->Evaluate(idx, d, system, maxC, energyC);
-
-            const_cast<ParticleDualVectorFunction *>(this)->m_AverageGradMagC = m_AverageGradMagC + ansC.magnitude();
-            const_cast<ParticleDualVectorFunction *>(this)->m_AverageEnergyC = m_AverageEnergyC + energyC;
-        }
-
-        /* PRATEEP : Turn correspondence values off */
         if( m_RelativeEnergyScaling == 0.0)
         {
             energyB = 0.0;
@@ -327,36 +258,18 @@ public:
                 if (maxB > maxA)
                 {
                     maxmove = maxB;
-                    if ( (m_COn == true) && (maxmove > maxB) ) // C is also active
-                    {
-                        maxmove = maxC;
-                    }
                 }
                 else
                 {
                     maxmove = maxA;
                 }
 
-                //#ifdef SW_WEIGH_SAMPLING_TERM
-                //        energy = energyB + m_RelativeEnergyScaling * energyA;
-                //#else
                 energy = energyA + m_RelativeEnergyScaling * energyB;
-                //#endif
-                if (m_COn == true) energy += m_RelativeNormEnergyScaling * energyC;
 
-                // SHIREEN
                 maxmove = maxA; // always driven by the sampling to decrease the senstivity to covariance regularization
-                // end SHIREEN
 
-                //#ifdef SW_WEIGH_SAMPLING_TERM
-                //        predictedMove = ansB + m_RelativeGradientScaling * ansA;
-                //#else
                 predictedMove = ansA + m_RelativeGradientScaling * ansB;
-                //#endif
-                if (m_COn == true) predictedMove += m_RelativeNormGradientScaling * ansC;
-//                std::cout<<"**************check4*****************************"<<endl;
-//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//                std::cout<<"*************************************************"<<endl;
+
                 return (predictedMove);
             }
             else // only B is active, A is not active
@@ -365,15 +278,6 @@ public:
                 energy = energyB;
                 predictedMove = ansB;
 
-                if (m_COn == true) // if C is also active
-                {
-                    if (maxmove > maxC) maxmove = maxC;
-                    energy += m_RelativeNormEnergyScaling * energyC;
-                    predictedMove += m_RelativeNormGradientScaling * ansC;
-                }
-//                std::cout<<"**************check5*****************************"<<endl;
-//                std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//                std::cout<<"*************************************************"<<endl;
                 return (predictedMove);
             }
         }
@@ -381,17 +285,8 @@ public:
         {
             maxmove = maxA;
             energy = energyA;
-//            std::cout<<"**************check6****************************"<<endl;
-//            std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//            std::cout<<"*************************************************"<<endl;
             return ansA;
         }
-
-        // If nothing is turned on, then return a max time
-        // step of 0 and a bogus vector.
-//        std::cout<<"**************bogus2*****************************"<<endl;
-//        std::cout<<"maxmove = "<<maxmove<<" maxA = "<<maxA<<" maxB = "<<maxB<<" maxC = "<<maxC<<endl;
-//        std::cout<<"*************************************************"<<endl;
         maxmove = 0.0;
         return ansA;
     }
@@ -408,7 +303,6 @@ public:
         {
             m_FunctionB->BeforeEvaluate(idx, d, system);
         }
-        if (m_COn == true) m_FunctionC->BeforeEvaluate(idx, d, system);
     }
 
     /** This method is called by a solver after each iteration.  Subclasses may
@@ -421,7 +315,6 @@ public:
             m_FunctionB->AfterIteration();
 
         }
-        if (m_COn == true) m_FunctionC->AfterIteration();
     }
 
     /** This method is called by a solver before each iteration.  Subclasses may
@@ -434,13 +327,9 @@ public:
             m_FunctionB->BeforeIteration();
 
         }
-        if (m_COn == true) m_FunctionC->BeforeIteration();
         m_AverageGradMagA = 0.0;
         m_AverageGradMagB = 0.0;
-        m_AverageGradMagC = 0.0;
         m_AverageEnergyA = 0.0;
-        m_AverageEnergyB = 0.0;
-        m_AverageEnergyC = 0.0;
         m_Counter = 0.0;
     }
 
@@ -451,7 +340,6 @@ public:
         Superclass::SetParticleSystem(p);
         if (m_FunctionA.GetPointer() != 0) m_FunctionA->SetParticleSystem(p);
         if (m_FunctionB.GetPointer() != 0) m_FunctionB->SetParticleSystem(p);
-        if (m_FunctionC.GetPointer() != 0) m_FunctionC->SetParticleSystem(p);
     }
 
     void SetDomainNumber( unsigned int i)
@@ -459,7 +347,6 @@ public:
         Superclass::SetDomainNumber(i);
         if (m_FunctionA.GetPointer() != 0) m_FunctionA->SetDomainNumber(i);
         if (m_FunctionB.GetPointer() != 0) m_FunctionB->SetDomainNumber(i);
-        if (m_FunctionC.GetPointer() != 0) m_FunctionC->SetDomainNumber(i);
     }
 
     void SetFunctionA( ParticleVectorFunction<VDimension> *o)
@@ -479,25 +366,12 @@ public:
         return m_FunctionB.GetPointer();
     }
 
-    ParticleVectorFunction<VDimension> * GetFunctionC()
-    {
-        return m_FunctionC.GetPointer();
-    }
-
     void SetFunctionB( ParticleVectorFunction<VDimension> *o)
     {
         m_FunctionB = o;
         m_FunctionB->SetDomainNumber(this->GetDomainNumber());
         m_FunctionB->SetParticleSystem(this->GetParticleSystem());
     }
-
-    void SetFunctionC( ParticleVectorFunction<VDimension> *o)
-    {
-        m_FunctionC = o;
-        m_FunctionC->SetDomainNumber(this->GetDomainNumber());
-        m_FunctionC->SetParticleSystem(this->GetParticleSystem());
-    }
-
 
     /** Turn each term on and off. */
     void SetAOn()   { m_AOn = true;  }
@@ -508,10 +382,6 @@ public:
     void SetBOff() {  m_BOn = false;  }
     void SetBOn(bool s) {  m_BOn = s;  }
     bool GetBOn() const { return m_BOn;  }
-    void SetCOn()   { m_COn = true;  }
-    void SetCOff() { m_COn = false;  }
-    void SetCOn(bool s)  {    m_COn = s;  }
-    bool GetCOn() const {  return m_COn;  }
 
     /** The relative scaling scales the gradient B relative to A.  By default
       this value is 1.0. */
@@ -523,14 +393,6 @@ public:
     {
         return m_RelativeEnergyScaling;
     }
-    void SetRelativeNormEnergyScaling(double r)
-    {
-        m_RelativeNormEnergyScaling = r;
-    }
-    double GetRelativeNormEnergyScaling() const
-    {
-        return m_RelativeNormEnergyScaling;
-    }
 
     void SetRelativeGradientScaling(double r)
     {
@@ -539,14 +401,6 @@ public:
     double GetRelativeGradientScaling() const
     {
         return m_RelativeGradientScaling;
-    }
-    void SetRelativeNormGradientScaling(double r)
-    {
-        m_RelativeNormGradientScaling = r;
-    }
-    double GetRelativeNormGradientScaling() const
-    {
-        return m_RelativeNormGradientScaling;
     }
 
     double GetAverageGradMagA() const
@@ -557,11 +411,6 @@ public:
     double GetAverageGradMagB() const
     {
         if (m_Counter != 0.0) return m_AverageGradMagB / m_Counter;
-        else return 0.0;
-    }
-    double GetAverageGradMagC() const
-    {
-        if (m_Counter != 0.0) return m_AverageGradMagC / m_Counter;
         else return 0.0;
     }
 
@@ -575,39 +424,26 @@ public:
         if (m_Counter != 0.0) return m_AverageEnergyB / m_Counter;
         else return 0.0;
     }
-    double GetAverageEnergyC() const
-    {
-        if (m_Counter != 0.0) return m_AverageEnergyC / m_Counter;
-        else return 0.0;
-    }
-
 
     virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
     {
         typename ParticleDualVectorFunction<VDimension>::Pointer copy = ParticleDualVectorFunction<VDimension>::New();
         copy->m_AOn = this->m_AOn;
         copy->m_BOn = this->m_BOn;
-        copy->m_COn = this->m_COn;
 
         copy->m_RelativeGradientScaling = this->m_RelativeGradientScaling;
         copy->m_RelativeEnergyScaling = this->m_RelativeEnergyScaling;
-        copy->m_RelativeNormGradientScaling = this->m_RelativeNormGradientScaling;
-        copy->m_RelativeNormEnergyScaling = this->m_RelativeNormEnergyScaling;
         copy->m_AverageGradMagA = this->m_AverageGradMagA;
         copy->m_AverageGradMagB = this->m_AverageGradMagB;
-        copy->m_AverageGradMagC = this->m_AverageGradMagC;
         copy->m_AverageEnergyA = this->m_AverageEnergyA;
         copy->m_AverageEnergyB = this->m_AverageEnergyB;
-        copy->m_AverageEnergyC = this->m_AverageEnergyC;
         copy->m_Counter = this->m_Counter;
 
         if (this->m_FunctionA) copy->m_FunctionA = this->m_FunctionA->Clone();
         if (this->m_FunctionB) copy->m_FunctionB = this->m_FunctionB->Clone();
-        if (this->m_FunctionC) copy->m_FunctionC = this->m_FunctionC->Clone();
 
         if (!copy->m_FunctionA) copy->m_AOn = false;
         if (!copy->m_FunctionB) copy->m_BOn = false;
-        if (!copy->m_FunctionC) copy->m_COn = false;
 
         copy->m_DomainNumber = this->m_DomainNumber;
         copy->m_ParticleSystem = this->m_ParticleSystem;
@@ -616,11 +452,9 @@ public:
     }
 
 protected:
-    ParticleDualVectorFunction() : m_AOn(true), m_BOn(false), m_COn(false),
+    ParticleDualVectorFunction() : m_AOn(true), m_BOn(false),
         m_RelativeGradientScaling(1.0),
-        m_RelativeEnergyScaling(1.0),
-        m_RelativeNormGradientScaling(0.0),
-        m_RelativeNormEnergyScaling(0.0)  {}
+        m_RelativeEnergyScaling(1.0)  {}
 
     virtual ~ParticleDualVectorFunction() {}
     void operator=(const ParticleDualVectorFunction &);
@@ -628,22 +462,16 @@ protected:
 
     bool m_AOn;
     bool m_BOn;
-    bool m_COn;
     double m_RelativeGradientScaling;
     double m_RelativeEnergyScaling;
-    double m_RelativeNormGradientScaling;
-    double m_RelativeNormEnergyScaling;
     double m_AverageGradMagA;
     double m_AverageGradMagB;
-    double m_AverageGradMagC;
     double m_AverageEnergyA;
     double m_AverageEnergyB;
-    double m_AverageEnergyC;
     double m_Counter;
 
     typename ParticleVectorFunction<VDimension>::Pointer m_FunctionA;
     typename ParticleVectorFunction<VDimension>::Pointer m_FunctionB;
-    typename ParticleVectorFunction<VDimension>::Pointer m_FunctionC;
 };
 
 
