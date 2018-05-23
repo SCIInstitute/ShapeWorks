@@ -21,7 +21,8 @@ namespace itk
 {
 
 template <unsigned int VDimension>
-ParticleSystem<VDimension>::ParticleSystem()
+ParticleSystem<VDimension>
+::ParticleSystem()
 {
 }
 
@@ -48,7 +49,8 @@ ParticleSystem<VDimension>
 }
 
 template <unsigned int VDimension>
-void ParticleSystem<VDimension>::AddDomain( DomainType *input, int threadId)
+void ParticleSystem<VDimension>
+::AddDomain( DomainType *input, int threadId)
 {
   this->Modified();
   
@@ -138,7 +140,8 @@ void ParticleSystem<VDimension>
 
 template <unsigned int VDimension>
 const typename ParticleSystem<VDimension>::PointType &
-ParticleSystem<VDimension>::AddPosition( const PointType &p, unsigned int d, int threadId)
+ParticleSystem<VDimension>
+::AddPosition( const PointType &p, unsigned int d, int threadId)
 {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
 
@@ -168,7 +171,8 @@ ParticleSystem<VDimension>::AddPosition( const PointType &p, unsigned int d, int
 
 template <unsigned int VDimension>
 const typename ParticleSystem<VDimension>::PointType &
-ParticleSystem<VDimension>::SetPosition(const PointType &p,  unsigned long int k,
+ParticleSystem<VDimension>
+::SetPosition(const PointType &p,  unsigned long int k,
                                         unsigned int d,  int threadId)
 {
   if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false)
@@ -197,7 +201,8 @@ ParticleSystem<VDimension>::SetPosition(const PointType &p,  unsigned long int k
 
 template <unsigned int VDimension>
 void
-ParticleSystem<VDimension>::RemovePosition(unsigned long int k,
+ParticleSystem<VDimension>
+::RemovePosition(unsigned long int k,
                                         unsigned int d,  int threadId)
 {
   m_Positions[d]->Erase(k);
@@ -215,7 +220,8 @@ ParticleSystem<VDimension>::RemovePosition(unsigned long int k,
 
 template <unsigned int VDimension>
 void
-ParticleSystem<VDimension>::AddPositionList(const std::vector<PointType> &p,
+ParticleSystem<VDimension>
+::AddPositionList(const std::vector<PointType> &p,
                                             unsigned int d, int threadId )
 {
   // Traverse the list and add each point to the domain.
@@ -228,7 +234,8 @@ ParticleSystem<VDimension>::AddPositionList(const std::vector<PointType> &p,
 
 template <unsigned int VDimension>
 void
-ParticleSystem<VDimension>::SplitParticle(double epsilon, unsigned int idx, unsigned int domain, int threadId)
+ParticleSystem<VDimension>
+::SplitParticle(double epsilon, unsigned int idx, unsigned int domain, int threadId)
 {
   // Find a random direction.
     vnl_vector_fixed<double, VDimension> random;
@@ -256,7 +263,8 @@ ParticleSystem<VDimension>::SplitParticle(double epsilon, unsigned int idx, unsi
 
 template <unsigned int VDimension>
 void
-ParticleSystem<VDimension>::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random,
+ParticleSystem<VDimension>
+::SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &random,
                                                       double epsilon, unsigned int domain, int threadId)
 {
   // Loop through all particle positions in the domain and add a new position
@@ -285,12 +293,13 @@ ParticleSystem<VDimension>::SplitAllParticlesInDomain(const vnl_vector_fixed<dou
 
 template <unsigned int VDimension>
 void
-ParticleSystem<VDimension>::SplitAllParticles(double epsilon, int threadId)
+ParticleSystem<VDimension>
+::SplitAllParticles(double epsilon, int threadId)
 {
     // Find a random direction.
     vnl_vector_fixed<double, VDimension> random;
 
-    /* PRATEEP : fix direction for multiple runs. */
+    /* fix direction for multiple runs. */
     srand(1);
     
     for (unsigned int i = 0; i < VDimension; i++)
@@ -310,7 +319,8 @@ ParticleSystem<VDimension>::SplitAllParticles(double epsilon, int threadId)
 
 template <unsigned int VDimension>
 void
-ParticleSystem<VDimension>::RegisterAttribute( ParticleAttribute<VDimension> *attr)
+ParticleSystem<VDimension>
+::RegisterAttribute( ParticleAttribute<VDimension> *attr)
 {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.

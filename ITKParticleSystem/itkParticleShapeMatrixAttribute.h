@@ -87,20 +87,6 @@ public:
         const unsigned int idx = event.GetPositionIndex();
         const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
 
-        /*--- old code assuming SAME NUMBER OF PARTICLES PER DOMAIN ----
-         *
-        const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
-        // Make sure we have enough rows.
-        if ((ps->GetNumberOfParticles(d) * VDimension * m_DomainsPerShape) > this->rows())
-            this->ResizeMatrix(PointsPerDomain * VDimension * m_DomainsPerShape, this->cols());
-
-        // CANNOT ADD POSITION INFO UNTIL ALL POINTS PER DOMAIN IS KNOWN
-        // Add position info to the matrix
-        unsigned int k = ((d % m_DomainsPerShape) * PointsPerDomain * VDimension)
-                + (idx * VDimension);
-         *
-         *-----------------------------------------------------------*/
-        // New code supporting different number of particles per domain - Praful
         int numRows = 0;
         for (int i = 0; i < m_DomainsPerShape; i++)
             numRows += VDimension * ps->GetNumberOfParticles(i);
@@ -113,7 +99,6 @@ public:
         for (int i = 0; i < dom; i++)
             k += VDimension * ps->GetNumberOfParticles(i);
         k += idx * VDimension;
-        // New code ends - Praful
 
         for (unsigned int i = 0; i < VDimension; i++)
             this->operator()(i+k, d / m_DomainsPerShape) = pos[i];
@@ -127,22 +112,11 @@ public:
         const unsigned int idx = event.GetPositionIndex();
         const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
 
-        /*--- old code assuming SAME NUMBER OF PARTICLES PER DOMAIN ----
-         *
-        const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
-        // Modify matrix info
-        //    unsigned int k = VDimension * idx;
-        unsigned int k = ((d % m_DomainsPerShape) * PointsPerDomain * VDimension)
-                + (idx * VDimension);
-         *
-         *-----------------------------------------------------------*/
-        // New code supporting different number of particles per domain - Praful
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
         for (int i = 0; i < dom; i++)
             k += VDimension * ps->GetNumberOfParticles(i);
         k += idx * VDimension;
-        // New code ends - Praful
 
         for (unsigned int i = 0; i < VDimension; i++)
             this->operator()(i+k, d / m_DomainsPerShape) = pos[i];

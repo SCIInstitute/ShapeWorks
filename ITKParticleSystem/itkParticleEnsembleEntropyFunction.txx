@@ -20,8 +20,6 @@
 #include "itkParticleGaussianModeWriter.h"
 #include <string>
 
-//#define PARTICLE_DEBUG
-
 namespace itk
 {
 template <unsigned int VDimension>
@@ -101,56 +99,70 @@ ParticleEnsembleEntropyFunction<VDimension>
     std::cout << "Done\n";
 #endif
 
-    vnl_matrix_type covMatrix;
-    covMatrix = points_minus_mean*points_minus_mean.transpose();
-    covMatrix /= (double)(num_samples-1);
-    // Regularize covMatrix
-    for (unsigned int i = 0; i < num_dims; i++)
+    vnl_diag_matrix<double> W;
+
+    m_InverseCovMatrix.set_size(num_dims, num_dims);
+    m_InverseCovMatrix.fill(0.0);
+    vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);
+
+    if (this->m_UseMeanEnergy)
     {
-        covMatrix(i, i) += m_MinimumVariance;
+        pinvMat.set_identity();
+        m_InverseCovMatrix.set_identity();
     }
-    vnl_symmetric_eigensystem<double> symEigen1(covMatrix);
-    m_InverseCovMatrix = symEigen1.pinverse();
-
-    vnl_matrix_type A;
-    A =  points_minus_mean.transpose() * points_minus_mean;
-    A /= (double)(num_samples-1);
-
-
-    // Regularize A
-    for (unsigned int i = 0; i < num_samples; i++)
+    else
     {
-        A(i, i) += m_MinimumVariance;
-    }
+        vnl_svd <double> svd(points_minus_mean);
 
-    //
-    vnl_symmetric_eigensystem<double> symEigen(A);
-    m_PointsUpdate = points_minus_mean * ((symEigen.pinverse()));
+        vnl_matrix_type U = svd.U();
+        vnl_matrix_type V = svd.V();
+
+        W = svd.W();
+
+        vnl_diag_matrix<double> invLambda = svd.W()*svd.W();
+
+        invLambda.set_diagonal(invLambda.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance);
+        invLambda.invert_in_place();
+
+        pinvMat = (V * invLambda) * V.transpose();
+        m_InverseCovMatrix = (U * invLambda) * U.transpose();
+    }
+    m_PointsUpdate = points_minus_mean * pinvMat;
 
 //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 
-    m_MinimumEigenValue = symEigen.D(0, 0);
-
-    // double energy = 0.0;
     m_CurrentEnergy = 0.0;
-    for (unsigned int i = 1; i < num_samples; i++)
-    {
-        if (symEigen.D(i, i) < m_MinimumEigenValue)
-        {
-            m_MinimumEigenValue = symEigen.D(i, i);
-        }
-        //    energy += log(symEigen.D(i,i));
-        m_CurrentEnergy += log(symEigen.D(i,i));
-    }
-    m_CurrentEnergy /= 2;
-    //    energy = 0.5*log(symEigen.determinant());
 
-    for (unsigned int i = 0; i < num_samples; i++)
+    if (m_UseMeanEnergy)
+        m_CurrentEnergy = points_minus_mean.frobenius_norm();
+    else
     {
-        std::cout << i << ": "<< symEigen.D(i, i) - m_MinimumVariance << std::endl;
+        m_MinimumEigenValue = W(0)*W(0) + m_MinimumVariance;
+        for (unsigned int i = 0; i < num_samples; i++)
+        {
+            double val_i = W(i)*W(i) + m_MinimumVariance;
+            if ( val_i < m_MinimumEigenValue)
+                m_MinimumEigenValue = val_i;
+            m_CurrentEnergy += log(val_i);
+        }
     }
-    std::cout << "Correspondence_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
-              << m_MinimumVariance <<  std::endl;
+
+    m_CurrentEnergy /= 2.0;
+
+    if (!m_UseMeanEnergy)
+    {
+        for (unsigned int i = 0; i < num_samples; i++)
+        {
+            std::cout << i << ": "<< W(i)*W(i) << std::endl;
+        }
+        std::cout << "Correspondence_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
+                  << m_MinimumVariance <<  std::endl;
+    }
+    else
+    {
+        m_MinimumEigenValue = m_CurrentEnergy / 2.0;
+        std::cout << "CorrMean_ENERGY = " << m_CurrentEnergy << std::endl;
+    }
 }
 
 template <unsigned int VDimension>
@@ -186,13 +198,8 @@ ParticleEnsembleEntropyFunction<VDimension>
 
     energy = tmp(0,0);
 
-//    const unsigned int PointsPerDomain = system->GetNumberOfParticles(d);
-//    unsigned int k = ((d % DomainsPerShape) * PointsPerDomain * VDimension)
-//            + (idx * VDimension);
-
     for (unsigned int i = 0; i< VDimension; i++)
     {
-        // gradE[i] = m_PointsUpdate((idx * VDimension) + i, d);
         gradE[i] = m_PointsUpdate(k + i, d / DomainsPerShape);
     }
 

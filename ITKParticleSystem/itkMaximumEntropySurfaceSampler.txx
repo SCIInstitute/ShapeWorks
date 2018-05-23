@@ -45,12 +45,10 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
     m_CurvatureGradientFunction
             = ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
 
-    // PRATEEP
     m_ModifiedCotangentGradientFunction
             = ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
     m_ConstrainedModifiedCotangentGradientFunction
             = ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
-    // end PRATEEP
 
     m_OmegaGradientFunction
             = ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>::New();
@@ -68,20 +66,6 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
 #endif
 }
 
-
-/* Praful - v4.3 - not needed anymore */
-/*template <class TImage>
-void
-MaximumEntropySurfaceSampler<TImage>::AllocateWorkingImages()
-{
-    m_WorkingImages.resize(this->GetNumberOfInputs());
-    for (unsigned int i = 0; i < this->GetNumberOfInputs(); i++)
-    {
-        m_WorkingImages[i] = const_cast<TImage *>(this->GetInput(i));
-    }
-}*/
-/* ---------------------------------- */
-
 template <class TImage>
 void
 MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
@@ -92,10 +76,10 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
     m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_QualifierGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-    // PRATEEP
+
     m_ModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_ConstrainedModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-    // end PRATEEP
+
     m_OmegaGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
     m_Sigma2Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
@@ -119,7 +103,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     {
         m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
                                 ImageType::PixelType, Dimension>::New() );
-        //    m_NeighborhoodList.push_back(ParticleRegionNeighborhood<Dimension>::New());
+
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
         std::cout<<"Reading inputfile: "<<m_ImageFiles[i].c_str()<<std::endl;
@@ -305,32 +289,6 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
         maxradius = tempMax > maxradius ? tempMax : maxradius;
     }
 
-    //  // PRATEEP
-    //  typename itk::ZeroCrossingImageFilter< TImage, TImage>::Pointer zc =
-    //        itk::ZeroCrossingImageFilter< TImage, TImage >::New();
-    //  zc->SetInput( this->GetInput() );
-    //  zc->Update();
-    //  typename itk::ImageRegionConstIteratorWithIndex< TImage > it(zc->GetOutput(),
-    //                                                               zc->GetOutput()->GetRequestedRegion());
-
-    //  unsigned int area = 0;
-    //  for(it.GoToReverseBegin(); !it.IsAtReverseEnd(); --it)
-    //  {
-    //      if(it.Get() == 1.0)
-    //      {
-    //          ++area;
-    //      }
-    //  }
-
-    //  unsigned int numParticles = this->GetParticleSystem()->GetNumberOfParticles(0);
-    //  if (numParticles > 0)
-    //    maxradius = 2.0 * ::sqrt((1.0f * area) / (M_PI * numParticles));
-    //  else
-    //    maxradius = 2.0 * ::sqrt((1.0f*area) / (M_PI));
-    //  // end PRATEEP
-
-    // Initialize member variables of the optimization functions.
-    //    m_GradientFunction->SetMinimumNeighborhoodRadius(maxradius / 3.0);
     m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
     m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
 
@@ -342,7 +300,6 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     m_CurvatureGradientFunction->SetParticleSystem(this->GetParticleSystem());
     m_CurvatureGradientFunction->SetDomainNumber(0);
 
-    // PRATEEP
     m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
     m_ModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
     m_ModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
@@ -352,7 +309,6 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     m_ConstrainedModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
     m_ConstrainedModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
     m_ConstrainedModifiedCotangentGradientFunction->SetDomainNumber(0);
-    // end PRATEEP
 
     m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
     m_OmegaGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
@@ -367,14 +323,6 @@ MaximumEntropySurfaceSampler<TImage>::GenerateData()
     this->SetInPlace(false); // this is required so that we don't release our inputs
     if (m_Initialized == false)
     {
-        /* Praful - not needed anymore - during fix of same bounding box in every domain - v4.3 */
-
-            // TEMPORARY HACK.  REALLY WHAT I WANT TO DO IS GRAFT THE INPUT IMAGES TO
-            // AN ARRAY OF OUTPUT IMAGES AND USE THOSE.
-            // this->AllocateWorkingImages();
-
-        /*--------------------------------------------------------------------------------------*/
-
         this->AllocateDataCaches();
         this->SetAdaptivityMode(m_AdaptivityMode);
         this->AllocateDomainsAndNeighborhoods();

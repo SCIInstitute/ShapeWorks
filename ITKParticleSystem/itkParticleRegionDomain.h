@@ -69,15 +69,6 @@ public:
               flagged = true;
               p[i] = m_UpperBound[i];
               }
-
-      
-//            if ( p[i] < m_LowerBound[i]  || p[i] > m_UpperBound[i])
-//              {
-//               itkExceptionMacro(<< "Point " << p << " is outside of the specified Domain,  with bounding box "
-//                                 <<  m_LowerBound << " - " << m_UpperBound
-//                                  << std::endl;);
-        
-//             }
       }
         return flagged;
 //    return false;

@@ -201,8 +201,8 @@ protected:
         m_HoldMinimumVariance = true;
         m_MinimumVariance = 1.0e-5;
         m_MinimumEigenValue = 0.0;
-        m_MinimumVarianceDecayConstant = log(2.0) / 50000.0;
-        m_RecomputeCovarianceInterval = 5;
+        m_MinimumVarianceDecayConstant = 1.0; //log(2.0) / 50000.0;
+        m_RecomputeCovarianceInterval = 1;
         m_Counter = 0;
         m_PointsUpdate.clear();
         m_UseMeanEnergy = true;

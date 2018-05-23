@@ -26,11 +26,11 @@
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
-// Prateep
+
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
 #include "vnl/vnl_matrix_fixed.h"
-// end Prateep
+
 
 #if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
 #include "TriMesh.h"
@@ -81,7 +81,6 @@ public:
         double radius;
     };
 
-    // Prateep
     /** Tranform Type*/
     typedef vnl_matrix_fixed<double, Dimension +1, Dimension +1> TransformType;
 
@@ -93,8 +92,6 @@ public:
    * THIS IS A HACK UNTIL I CAN FIGURE OUT HOW TO ALLOCATE THE APPROPRIATE
    * NUMBER OF OUTPUTS AND GRAFT THEM TO THE INPUTS.
    */
-//    virtual void AllocateWorkingImages(); -- Praful v4.3 - not needed
-
     void SetInput(const TImage *image)
     { this->SetInput(0, image);  }
 
@@ -134,7 +131,6 @@ public:
         return m_CurvatureGradientFunction;
     }
 
-    // PRATEEP
     ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     *GetModifiedCotangentGradientFunction()
     {
@@ -145,7 +141,6 @@ public:
     {
         return m_ConstrainedModifiedCotangentGradientFunction;
     }
-    // end PRATEEP
 
     ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
     *GetOmegaGradientFunction()
@@ -243,7 +238,6 @@ public:
         }
     }
 
-    // Prateep
     /** Transform a cutting plane based on procrustes transformation */
     void  TransformCuttingPlanes(unsigned int i)
     {
@@ -300,12 +294,10 @@ public:
     {
         if (mode == 0)
         {
-            // PRATEEP
             if(m_pairwise_potential_type == 0)
                 m_Optimizer->SetGradientFunction(m_CurvatureGradientFunction);
             else if(m_pairwise_potential_type == 1)
                 m_Optimizer->SetGradientFunction(m_ModifiedCotangentGradientFunction);
-            // end PRATEEP
         }
         else if (mode ==1)
         {
@@ -340,7 +332,6 @@ public:
     void SetPrefixTransformFile(const char *s)
     { m_PrefixTransformFile = std::string(s); }
 
-    // PRATEEP
     void SetPairwisePotentialType(int pairwise_potential_type)
     { m_pairwise_potential_type = pairwise_potential_type; }
 
@@ -384,8 +375,6 @@ protected:
     int m_AdaptivityMode;
     bool m_Initializing;
 
-//    std::vector<typename TImage::Pointer> m_WorkingImages; // Praful - v4.3
-
     typename OptimizerType::Pointer m_Optimizer;
 
     typename ParticleEntropyGradientFunction<typename ImageType::PixelType,  Dimension>
@@ -395,12 +384,11 @@ protected:
     typename ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_CurvatureGradientFunction;
 
-    // PRATEEP
     typename ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_ModifiedCotangentGradientFunction;
     typename ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_ConstrainedModifiedCotangentGradientFunction;
-    // end PRATEEP
+
 
     typename ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_OmegaGradientFunction;
@@ -414,13 +402,10 @@ protected:
 
     std::vector<typename ParticleImplicitSurfaceDomain<typename
     ImageType::PixelType, Dimension>::Pointer> m_DomainList;
-    //    std::vector<typename ParticleRegionNeighborhood<Dimension>::Pointer>
-    //    m_NeighborhoodList;
+
     std::vector<typename ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
-    // PRATEEP
     int m_pairwise_potential_type;
-    // end PRATEEP
 
 private:
     MaximumEntropySurfaceSampler(const Self&); //purposely not implemented
