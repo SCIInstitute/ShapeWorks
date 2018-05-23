@@ -464,7 +464,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
             numShapes = shapeFiles.size();
 
-            /* Praful - v4.3 - set only first input image in sampler for setting initial parameters, images being used from particleSystem */
             m_Sampler->SetImageFiles(shapeFiles);
 
             int shapeCount = 0;
@@ -1388,10 +1387,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     }
     else
     {
+         // force to mean
         if ((m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes)
             m_Sampler->SetCorrespondenceMode(6);
         else
-            m_Sampler->SetCorrespondenceMode(0);  // force to mean shape
+            m_Sampler->SetCorrespondenceMode(0);
     }
 
     m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
