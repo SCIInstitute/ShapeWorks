@@ -127,9 +127,7 @@ void
 ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
-    // SHIREEN
     m_MaxMoveFactor = 0.1;
-    // END SHIREEN
 
   // Compute the neighborhood size and the optimal sigma.
   const double epsilon = 1.0e-6;
@@ -148,7 +146,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   m_CurrentSigma = this->GetSpatialSigmaCache()->operator[](d)->operator[](idx);
   double myKappa = this->ComputeKappa(m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx), d);
 
-   // TEST DISTANCE TO PLANE IDEA  -- jc 9/5
+   // TEST DISTANCE TO PLANE IDEA
   //  myKappa *=  (fabs(pos[0]) * 1.0);
     // END TEST
   
@@ -269,7 +267,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     double Dij = (mymc + mc) * 0.5; // average my curvature with my neighbors
     double kappa = this->ComputeKappa(Dij, d);
 
-    // TEST DISTANCE TO PLANE IDEA  -- jc 9/5
+    // TEST DISTANCE TO PLANE IDEA
     //    kappa *=  (fabs(pos[0]) * 1.0);
     // END TEST
     
@@ -309,9 +307,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   //    {
   //maxmove= (m_CurrentSigma / m_avgKappa) * 0.1;
 
-  // SHIREEN
   maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
-  // END SHIREEN
 
     //    }
   

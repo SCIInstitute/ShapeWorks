@@ -95,7 +95,6 @@ public:
   {
     if (mode == 0)
       {
-        // PRATEEP
         if(this->m_pairwise_potential_type == 0)
             m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
         else if(this->m_pairwise_potential_type == 1)
@@ -123,8 +122,13 @@ public:
 
   /** This method sets the optimization function for correspondences between
       surfaces (domains).
-      mode 0 = mean force
-      mode 1 = minimum entropy
+      mode 0 = mean energy
+      mode 1 = ensemble entropy
+      mode 2 = image based general entropy
+      mode 3 = ensemble regression entropy
+      mode 4 = ensemble mixed effects entropy
+      mode 5 = mesh based general entropy
+      mode 6 = mesh based general mean energy
   */
   virtual void SetCorrespondenceMode(int mode)
   {

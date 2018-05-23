@@ -41,7 +41,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   m_EnsembleMeanFunction->SetShapeMatrix(m_ShapeMatrix);
   
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
-    //  m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
   m_GeneralEntropyGradientFunction->SetShapeData(m_FunctionShapeData);
 
@@ -53,11 +52,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_FunctionShapeData);
 
-//  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
-//  Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
-
-  // PRATEEP
-//  m_CorrespondenceMode = 0; // changed 09/24
   m_CorrespondenceMode = 1;
 }
 
@@ -113,7 +107,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::InitializeOptimizationFunctions()
   m_GeneralShapeGradMatrix->Initialize();
 
 }
-
 
 } // end namespace
 

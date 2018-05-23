@@ -57,8 +57,6 @@ public:
   typedef LinearInterpolateImageFunction<ImageType, typename PointType::CoordRepType>
   ScalarInterpolatorType;
 
-
-
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 

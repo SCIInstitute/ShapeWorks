@@ -107,7 +107,7 @@ public:
   {
     m_ShapeMatrix->AfterIteration();
     // Update the annealing parameter.
-    if (m_HoldMinimumVariance != true)
+    if (m_HoldMinimumVariance != true && !m_UseMeanEnergy)
       {
       m_Counter ++;
       if (m_Counter >=  m_RecomputeCovarianceInterval)
@@ -140,6 +140,11 @@ public:
       m_ShapeMatrix->PrintMatrix();
   }
 
+  void UseMeanEnergy()
+  { m_UseMeanEnergy = true; }
+  void UseEntropy()
+  { m_UseMeanEnergy = false; }
+
   /** */
   bool GetHoldMinimumVariance() const
   { return m_HoldMinimumVariance; }
@@ -170,6 +175,7 @@ public:
 
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->points_mean = this->points_mean;
+    copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 
@@ -185,6 +191,8 @@ protected:
     m_MinimumVarianceDecayConstant = 1.0;//log(2.0) / 50000.0;
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
+    m_UseMeanEnergy = true;
+    m_PointsUpdate.clear();
   }
   virtual ~ParticleEnsembleEntropyFunction() {}
   void operator=(const ParticleEnsembleEntropyFunction &);
@@ -200,6 +208,7 @@ protected:
   double m_MinimumVarianceDecayConstant;
   int m_RecomputeCovarianceInterval;
   int m_Counter;
+  bool m_UseMeanEnergy;
 
   vnl_matrix_type m_InverseCovMatrix; // 3Nx3N - used for energy computation
   vnl_matrix_type points_mean; //3NxM - used for energy computation

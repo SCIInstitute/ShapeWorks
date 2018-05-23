@@ -26,9 +26,6 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     num_dims = m_ShapeData->rows();
     num_samples = m_ShapeData->cols();
 
-//    std::cout << m_ShapeData->extract(num_dims, num_samples)<< std::endl;
-//    std::cout << m_ShapeGradient->extract(m_ShapeGradient->rows(), m_ShapeGradient->cols())<< std::endl;
-
      int rows = 0;
     for (int i = 0; i < m_DomainsPerShape; i++)
         rows += VDimension*c->GetNumberOfParticles(i);
@@ -139,13 +136,13 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         m_CurrentEnergy = points_minus_mean.frobenius_norm();
     else
     {
-        m_MinimumEigenValue = W(0)*W(0) + m_MinimumVariance; //symEigen.D(0, 0);
+        m_MinimumEigenValue = W(0)*W(0) + m_MinimumVariance;
         for (unsigned int i = 0; i < num_samples; i++)
         {
             double val_i = W(i)*W(i) + m_MinimumVariance;
-            if ( val_i < m_MinimumEigenValue) //(symEigen.D(i, i) < m_MinimumEigenValue)
-                m_MinimumEigenValue = val_i; //symEigen.D(i, i);
-            m_CurrentEnergy += log(val_i); //log(symEigen.D(i,i));
+            if ( val_i < m_MinimumEigenValue)
+                m_MinimumEigenValue = val_i;
+            m_CurrentEnergy += log(val_i);
         }
     }
 
@@ -154,13 +151,16 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     if (!m_UseMeanEnergy)
     {
         for (unsigned int i =0; i < num_samples; i++)
-            std::cout << i << ": "<< W(i)*W(i) << std::endl; //symEigen.D(i, i) - m_MinimumVariance << std::endl;
+            std::cout << i << ": "<< W(i)*W(i) << std::endl;
 
         std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
                   << m_MinimumVariance << std::endl;
     }
     else
+    {
+        m_MinimumEigenValue = m_CurrentEnergy / 2.0;
         std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << std::endl;
+    }
 
 }
 
@@ -207,7 +207,6 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     energy = tmp(0,0);
 
-    //energy = GetEnergyForPositionInGivenDomain(idx, d, system);//m_CurrentEnergy;
 
     maxdt = m_MinimumEigenValue;
 
@@ -220,9 +219,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     for (unsigned int i = 0; i< VDimension; i++)
         gradE[i] = m_PointsUpdate(k + i, sampNum);
 
-//    if (idx == 0 ) std::cout << "maxdt= " << maxdt << " idx = " << idx << "\t" << "GradE = " << gradE << std::endl;
     return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
-//    return gradE;
 }
 
 } // end namespace
