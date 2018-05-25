@@ -93,7 +93,6 @@ public:
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
   {
-//    std::cout << "BeforeIteration counter = " << m_Counter << std::endl;
     m_ShapeMatrix->BeforeIteration();
 
     if (m_Counter == 0)

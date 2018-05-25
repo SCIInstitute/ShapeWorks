@@ -17,13 +17,11 @@
 
 #include "itkMaximumEntropySurfaceSampler.h"
 #include "itkParticleDualVectorFunction.h"
-#include "itkParticleEnsembleMeanFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleGeneralEntropyGradientFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
-#include "itkParticleMeshBasedGeneralMeanGradientFunction.h"
 
 namespace itk
 {
@@ -135,6 +133,7 @@ public:
     if (mode == 1)
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+      m_EnsembleEntropyFunction->UseEntropy();
     }
     else if (mode == 2)
     {
@@ -160,7 +159,8 @@ public:
     }
     else
     {
-      m_LinkingFunction->SetFunctionB(m_EnsembleMeanFunction);
+      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
+      m_EnsembleEntropyFunction->UseMeanEnergy();
     }
 
     m_CorrespondenceMode = mode;
@@ -177,7 +177,6 @@ public:
   {
     m_GeneralEntropyGradientFunction->SetAttributeScales(s);
     m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
-    m_MeshBasedGeneralMeanGradientFunction->SetAttributeScales(s);
     m_GeneralShapeMatrix->SetAttributeScales(s);
     m_GeneralShapeGradMatrix->SetAttributeScales(s);
   }
@@ -209,7 +208,6 @@ public:
           s1 = s;
       this->Superclass::SetAttributesPerDomain(s1);
       m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s1);
-      m_MeshBasedGeneralMeanGradientFunction->SetAttributesPerDomain(s1);
       m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
       m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
@@ -231,8 +229,6 @@ public:
 
   ParticleDualVectorFunction<Dimension> *GetLinkingFunction()
   { return m_LinkingFunction.GetPointer(); }
-  ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction()
-  { return m_EnsembleMeanFunction.GetPointer(); }
   ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
   ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction()
@@ -243,13 +239,9 @@ public:
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
   ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
-  ParticleMeshBasedGeneralMeanGradientFunction<Dimension> *GetMeshBasedGeneralMeanGradientFunction()
-  { return m_MeshBasedGeneralMeanGradientFunction.GetPointer(); }
   
   const ParticleDualVectorFunction<Dimension> *GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
-  const ParticleEnsembleMeanFunction<Dimension> *GetEnsembleMeanFunction() const
-  { return m_EnsembleMeanFunction.GetPointer(); }
   const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
   const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleRegressionEntropyFunction() const
@@ -260,8 +252,6 @@ public:
   { return m_GeneralEntropyGradientFunction.GetPointer(); }
   const ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction() const
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
-  const ParticleMeshBasedGeneralMeanGradientFunction<Dimension> *GetMeshBasedGeneralMeanGradientFunction() const
-  { return m_MeshBasedGeneralMeanGradientFunction.GetPointer(); }
   
   virtual void AllocateDataCaches();
 
@@ -271,9 +261,7 @@ public:
     m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
     m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
     m_ShapeMatrix->SetDomainsPerShape(n);
-    m_EnsembleMeanFunction->SetDomainsPerShape(n);
     m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
-    m_MeshBasedGeneralMeanGradientFunction->SetDomainsPerShape(n);
     m_GeneralShapeMatrix->SetDomainsPerShape(n);
     m_GeneralShapeGradMatrix->SetDomainsPerShape(n);
   }
@@ -306,7 +294,6 @@ private:
 
   typename ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
-  typename ParticleEnsembleMeanFunction<Dimension>::Pointer m_EnsembleMeanFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
@@ -320,7 +307,6 @@ private:
   typename ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
 
   typename ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
-  typename ParticleMeshBasedGeneralMeanGradientFunction<Dimension>::Pointer m_MeshBasedGeneralMeanGradientFunction;
 };
 
 } // end namespace itk

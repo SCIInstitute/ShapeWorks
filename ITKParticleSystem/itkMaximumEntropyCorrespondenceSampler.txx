@@ -22,13 +22,11 @@ template <class TImage>
 MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler()
 {
   m_LinkingFunction = ParticleDualVectorFunction<Dimension>::New();
-  m_EnsembleMeanFunction = ParticleEnsembleMeanFunction<Dimension>::New();
   m_GeneralEntropyGradientFunction = ParticleGeneralEntropyGradientFunction<Dimension>::New();
   m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_MeshBasedGeneralEntropyGradientFunction = ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
-  m_MeshBasedGeneralMeanGradientFunction = ParticleMeshBasedGeneralMeanGradientFunction<Dimension>::New();
 
   m_ShapeMatrix = ParticleShapeMatrixAttribute<double, Dimension>::New();
   m_GeneralShapeMatrix = ParticleGeneralShapeMatrix<double, Dimension>::New();
@@ -38,7 +36,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
   m_FunctionShapeData = ParticleFunctionBasedShapeSpaceData<float, Dimension>::New();
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
-  m_EnsembleMeanFunction->SetShapeMatrix(m_ShapeMatrix);
   
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
