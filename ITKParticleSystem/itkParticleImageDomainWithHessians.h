@@ -163,6 +163,13 @@ public:
       }
   }
 
+  /** Used when a domain is fixed. */
+  void DeleteImages()
+  {
+    Superclass::DeleteImages();
+    this->DeletePartialDerivativeImages();
+  }
+
   /** Access interpolators and partial derivative images. */
   typename ScalarInterpolatorType::Pointer *GetInterpolators()
   { return m_Interpolators; }

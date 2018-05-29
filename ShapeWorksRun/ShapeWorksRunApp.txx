@@ -118,11 +118,18 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     this->ReadMeshInputs(fn);
     this->ReadConstraints(fn);
 
+    this->PrintParamInfo();
+
     this->SetIterationCommand();
     this->InitializeSampler();
 
     this->ReadExplanatoryVariables(fn);
-    this->FlagDomainFct(fn);
+
+    m_p_flgs.clear();
+    m_p_flgs = this->FlagParticlesFct(fn);
+
+    m_d_flgs.clear();
+    m_d_flgs = this->FlagDomainFct(fn);
 
     if (m_use_normals.size() > 0)
     {
@@ -143,6 +150,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
         {
             itk::ParticleImageDomainWithHessians<float, 3> * domainWithHess = static_cast< itk::ParticleImageDomainWithHessians<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(i));
             domainWithHess->DeletePartialDerivativeImages();
+        }
+    }
+
+    if (m_d_flgs.size() > 0)
+    {
+        for (int i = 0; i < m_d_flgs.size(); i++)
+        {
+            itk::ParticleImageDomainWithHessians<float, 3> * domainWithHess = static_cast< itk::ParticleImageDomainWithHessians<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
+            domainWithHess->DeleteImages();
         }
     }
 
@@ -1056,9 +1072,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadExplanatoryVariables(const char *fname)
 }
 
 template < class SAMPLERTYPE>
-void
-ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
+std::vector<int>
+ShapeWorksRunApp<SAMPLERTYPE>::FlagParticlesFct(const char *fname)
 {
+    std::vector<int> f;
+    f.clear();
     TiXmlDocument doc(fname);
     bool loadOkay = doc.LoadFile();
 
@@ -1068,11 +1086,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
         TiXmlElement *elem;
 
         std::istringstream inputsBuffer;
-        std::vector<int> f;
+
         int ftmp;
 
         // set up fixed landmark positions // domain_index particle_index
-
         elem = docHandle.FirstChild( "fixed_landmarks" ).Element();
         if (elem)
         {
@@ -1089,8 +1106,28 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
                 m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f[2*i], f[2*i + 1]);
             }
         }
+    }
+    return f;
+}
 
-        f.clear();
+template < class SAMPLERTYPE>
+std::vector<int>
+ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
+{
+    std::vector<int> f;
+    f.clear();
+    TiXmlDocument doc(fname);
+    bool loadOkay = doc.LoadFile();
+
+    if (loadOkay)
+    {
+        TiXmlHandle docHandle( &doc );
+        TiXmlElement *elem;
+
+        std::istringstream inputsBuffer;
+
+        int ftmp;
+        // set up fixed domains // domain_index
         elem = docHandle.FirstChild( "fixed_domains" ).Element();
         if (elem)
         {
@@ -1103,15 +1140,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::FlagDomainFct(const char *fname)
             inputsBuffer.str("");
 
             for (unsigned int i = 0; i < f.size(); i++)
-            {
-                //if (f[i] > 0.0)
-                {
-                    std::cerr << "domain " << i<< " is flagged!\n";
-                    m_Sampler->GetParticleSystem()->FlagDomain(f[i]);
-                }
-            }
+                m_Sampler->GetParticleSystem()->FlagDomain(f[i]);
         }
     }
+    return f;
 }
 
 template < class SAMPLERTYPE>
@@ -1122,12 +1154,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadTransformFile()
     reader.SetFileName(m_transform_file);
     reader.Update();
     std::cout << "Read transform file " << m_transform_file << std::endl;
-    for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
-         i++)
-    {
-        // std::cout << "Transform " << i << std::endl << reader.GetOutput()[i] << std::endl;
+    for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
         m_Sampler->GetParticleSystem()->SetTransform(i, reader.GetOutput()[i]);
-    }
 }
 
 template < class SAMPLERTYPE>
@@ -1138,12 +1166,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadPrefixTransformFile(const std::string &fn)
     reader.SetFileName(fn.c_str());
     reader.Update();
     std::cout << "Read prefix transform file " << fn << std::endl;
-    for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
-         i++)
-    {
-        //    std::cout << "Prefix Transform " << i << std::endl << reader.GetOutput()[i] << std::endl;
+    for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
         m_Sampler->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
-    }
 }
 
 // Initialization and Optimization
@@ -1268,34 +1292,13 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddSinglePoint()
         ImageType::Pointer img = dynamic_cast<itk::ParticleImageDomain<float, 3> *>(
                     m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage();
 
-        // Praful - commenting following code to keep consistency in results.
-        // first attempt to find the surface moving from the center out in the y direction
-        //        ImageType::IndexType center;
-        //        center[0] = img->GetLargestPossibleRegion().GetSize()[0] / 2;
-        //        center[1] = img->GetLargestPossibleRegion().GetSize()[1] / 2;
-        //        center[2] = img->GetLargestPossibleRegion().GetSize()[2] / 2;
-
-        //        while ( !done && center[1] > 0 )
-        //        {
-        //            if ( img->GetPixel(center) < 1.0 && img->GetPixel( center ) > -1.0 )
-        //            {
-        //                PointType pos;
-        //                img->TransformIndexToPhysicalPoint( center, pos );
-        //                m_Sampler->GetParticleSystem()->AddPosition( pos, i );
-        //                done = true;
-        //            }
-        //            center[1]--;
-        //        }
-
-
-        // couldn't find it, try the old method
         itk::ZeroCrossingImageFilter<ImageType, ImageType>::Pointer zc =
                 itk::ZeroCrossingImageFilter<ImageType, ImageType>::New();
         zc->SetInput( img );
         zc->Update();
         itk::ImageRegionConstIteratorWithIndex<ImageType> it(zc->GetOutput(),
                                                              zc->GetOutput()->GetRequestedRegion());
-        //for (; !it.IsAtEnd() && done == false; ++it)
+
         for (it.GoToReverseBegin(); !it.IsAtReverseEnd() && done == false; --it)
         {
             if (it.Get() == 1.0)
@@ -1447,7 +1450,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             std::stringstream ss;
             ss << split_number;
 
-            std::string dir_name     = "split" + ss.str() + "_wo_opt";
+            std::stringstream ssp;
+            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
+
+            std::string dir_name     = "split" + ss.str() + "_" + ssp.str() + "pts_wo_opt";
             std::string out_path     = utils::getPath(m_output_dir);
 
             std::string tmp_dir_name = out_path + "/" + dir_name;
@@ -1467,7 +1473,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             m_TotalEnergy.clear();
             std::stringstream ss;
             ss << split_number;
-            m_strEnergy = "split" + ss.str() + "_init";
+            std::stringstream ssp;
+            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
+            m_strEnergy = "split" + ss.str() + "_" + ssp.str() + "pts_init";
         }
 
         if (this->m_pairwise_potential_type == 1)
@@ -1490,8 +1498,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         {
             std::stringstream ss;
             ss << split_number;
-
-            std::string dir_name     = "split" + ss.str() + "_w_opt";
+            std::stringstream ssp;
+            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
+            std::string dir_name     = "split" + ss.str() + "_" + ssp.str() + "pts_w_opt";
             std::string out_path     = utils::getPath(m_output_dir);
             std::string tmp_dir_name = out_path + "/" + dir_name;
 
@@ -1535,8 +1544,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     if (m_adaptivity_strength == 0.0) return;
     m_disable_checkpointing = true;
     m_disable_procrustes = true;
-    //m_performGoodBad = false;
-    //m_GoodBad->SetPerformAssessment(false);
+
     std::cout << "Adding adaptivity." << std::endl;
 
     if (this->m_pairwise_potential_type == 1)
@@ -1591,7 +1599,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
 
     m_disable_checkpointing = false;
     m_disable_procrustes = false;
-    //    m_performGoodBad = true;
+
     if (m_procrustes_interval != 0) // Initial registration
     {
         m_Procrustes->RunRegistration();
@@ -1859,9 +1867,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetCotanSigma()
         mp->SetInput(ls->GetOutput());
         mp->Update();
         double area = mp->GetSurfaceArea();
-        //        std::cout << "area = " << area << std::endl;
         double sigma = m_cotan_sigma_factor*std::sqrt(area/(m_Sampler->GetParticleSystem()->GetNumberOfParticles(i)*M_PI));
-        //        std::cout << "sigma (w/o factor) = " << sigma/m_cotan_sigma_factor << std::endl;
         m_Sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
     }
 
@@ -1878,10 +1884,19 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     std::cout << "--------------------" << std::endl;
     std::cout << "m_domains_per_shape = " << m_domains_per_shape << std::endl;
     std::cout << "m_number_of_particles = ";
-    for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
-        std::cout << i << " : " << m_number_of_particles[i] << ", ";
-    std::cout << "m_transform_file = " << m_transform_file << std::endl;
-    std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
+    if (m_domains_per_shape == 1)
+        std::cout << m_number_of_particles[0];
+    else
+    {
+        for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
+            std::cout << "domain " << i << " : " << m_number_of_particles[i] << ", ";
+    }
+    std::cout<<std::endl;
+    if (m_transform_file.length() > 0)
+        std::cout << "m_transform_file = " << m_transform_file << std::endl;
+    if (m_prefix_transform_file.length() > 0)
+        std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
+
     std::cout << "m_output_dir = " << m_output_dir << std::endl;
     std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
     std::cout << "m_mesh_based_attributes = " << m_mesh_based_attributes << std::endl;
@@ -1899,15 +1914,35 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     std::cout << "------------------------------" << std::endl;
     std::cout << "   Optimization parameters" << std::endl;
     std::cout << "------------------------------" << std::endl;
-    std::cout << "m_processing_mode = " << m_processing_mode << std::endl;
-    std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
-    std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
-    std::cout << "m_pairwise_potential_type = " << m_pairwise_potential_type << std::endl;
+    std::cout << "m_processing_mode = " ;
+    if (m_processing_mode >= 0 )
+        std::cout << "Initialization";
+    if ((m_processing_mode >= 1 || m_processing_mode == -1) && m_adaptivity_strength > 0.0)
+        std::cout << ", Adaptivity";
+    if (m_processing_mode >= 2 || m_processing_mode == -2)
+        std::cout << ", Optimization";
+    std::cout << std::endl;
+    if (m_adaptivity_strength > 0.0)
+    {
+        std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
+        std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
+    }
+    std::cout << "m_pairwise_potential_type = ";
     if (m_pairwise_potential_type==0)
         std::cout << "gaussian" << std::endl;
     else
         std::cout << "cotan" << std::endl;
-    std::cout << "m_optimizer_type = " << m_optimizer_type << std::endl;
+    std::cout << "m_optimizer_type = ";
+    if (m_optimizer_type == 0)
+        std::cout << "jacobi";
+    else if (m_optimizer_type == 1)
+        std::cout << "gauss seidel";
+    else if (m_optimizer_type == 2)
+        std::cout << "adaptive gauss seidel (with bad moves)";
+    else
+        std::cerr << "Incorrect option!!";
+
+    std::cout << std::endl;
     std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
     std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed << std::endl;
     std::cout << "m_iterations_per_split = " << m_iterations_per_split << std::endl;

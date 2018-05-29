@@ -117,6 +117,13 @@ public:
   inline bool IsInsideBuffer(const PointType &p) const
   { return m_ScalarInterpolator->IsInsideBuffer(p); }
 
+  /** Used when a domain is fixed. */
+  void DeleteImages()
+  {
+    m_Image = 0;
+    m_ScalarInterpolator = 0;
+  }
+
   /** Allow public access to the scalar interpolator. */
   itkGetObjectMacro(ScalarInterpolator, ScalarInterpolatorType);
   
