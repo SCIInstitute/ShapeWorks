@@ -97,7 +97,8 @@ public:
     virtual void ReadCuttingPlanes(const char *fname);
     virtual void ReadCuttingSpheres(const char *fname);
     void ReadExplanatoryVariables(const char *fname);
-    void FlagDomainFct(const char *fname);
+    std::vector<int> FlagParticlesFct(const char *fname);
+    std::vector<int> FlagDomainFct(const char *fname);
     virtual void ReadTransformFile();
     virtual void ReadPrefixTransformFile(const std::string &s);
 
@@ -183,6 +184,8 @@ protected:
     unsigned int m_checkpointing_interval;
     int m_keep_checkpoints;
     double m_cotan_sigma_factor;
+    std::vector <int> m_p_flgs;
+    std::vector <int> m_d_flgs;
 
     // Keeps track of which state the optimization is in.
     unsigned int m_mode;
