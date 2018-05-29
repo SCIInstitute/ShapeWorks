@@ -127,6 +127,8 @@ template <unsigned int VDimension>
 void ParticleSystem<VDimension>
 ::SetNeighborhood(unsigned int i, NeighborhoodType* N, int threadId)
 {
+  if (m_DomainFlags[i] == true)
+      return;
   m_Neighborhoods[i] = N;
   m_Neighborhoods[i]->SetDomain(m_Domains[i]);
   m_Neighborhoods[i]->SetPointContainer(m_Positions[i]);
@@ -146,10 +148,12 @@ ParticleSystem<VDimension>
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
 
   // Potentially modifes position!
-  m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
+  if (m_DomainFlags[d] == false)
+  {
+      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
 
-  m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]),
-                                   m_IndexCounters[d], threadId);
+      m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);
+  }
 
   // Increase the FixedParticleFlag list size if necessary.
   if (m_IndexCounters[d] >= m_FixedParticleFlags[d % m_DomainsPerShape].size())
@@ -181,10 +185,12 @@ ParticleSystem<VDimension>
     m_Positions[d]->operator[](k) = p;
     
     // Potentially modifes position!
-    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
+    if (m_DomainFlags[d] == false)
+    {
+        m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
     
-    m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k,
-                                     threadId);
+        m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k, threadId);
+     }
 
      }
 
@@ -286,7 +292,8 @@ ParticleSystem<VDimension>
       {
       newpos[i] = (*it)[i] + epsilon * random[i];
       }
-    this->GetDomain(domain)->ApplyConstraints(newpos);
+    if (m_DomainFlags[domain] == false)
+        this->GetDomain(domain)->ApplyConstraints(newpos);
     this->AddPosition(newpos, domain, threadId);
     } // end for std::vector::iterator
 }

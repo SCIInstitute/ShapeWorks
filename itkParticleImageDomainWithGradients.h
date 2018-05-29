@@ -139,6 +139,14 @@ public:
       }
     else return false;
   }
+
+  /** Used when a domain is fixed. */
+  void DeleteImages()
+  {
+    Superclass::DeleteImages();
+    m_GradientImage = 0;
+    m_GradientInterpolator = 0;
+  }
   
 protected:
   ParticleImageDomainWithGradients()

@@ -361,7 +361,7 @@ public:
   /** Flag/Unflag a domain.  Flagging a domain has different meanings according
       to the application using this particle system. */
   void FlagDomain(unsigned int i)
-  {std::cout<<"in flag domain  "<<i<<" "<<m_DomainFlags.size()<<std::endl; m_DomainFlags[i] = true;std::cout<<"end flag domain"<<std::endl; }
+  { m_DomainFlags[i] = true; }
   void UnflagDomain(unsigned int i)
   { m_DomainFlags[i] = false; }
   bool GetDomainFlag(unsigned int i) const
@@ -380,17 +380,11 @@ public:
       maintained for all dimensions.  If particle index n is flagged, for
       example, then particle index n in all domains is fixed.*/
   void SetFixedParticleFlag(unsigned int d, unsigned int i)
-  { //if (i < m_FixedParticleFlags[d].size())
-          m_FixedParticleFlags[d][i] = true;  }
+  { m_FixedParticleFlags[d][i] = true; }
   void ResetFixedParticleFlag(unsigned int d, unsigned int i)
-  { //if (i < m_FixedParticleFlags[d].size())
-          m_FixedParticleFlags[i] = false;}
+  { m_FixedParticleFlags[i] = false; }
   bool GetFixedParticleFlag(unsigned int d, unsigned int i) const
-  {
-      return m_FixedParticleFlags[d][i];
-    //if (i < m_FixedParticleFlags[d].size()) return m_FixedParticleFlags[d][i];
-    //else return false;
-  }
+  { return m_FixedParticleFlags[d][i]; }
   void ResetFixedParticleFlags()
   {
       for (unsigned d = 0; d < m_FixedParticleFlags.size(); d++)
@@ -406,9 +400,7 @@ public:
        m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
   unsigned int GetDomainsPerShape()
-  {
-      return m_DomainsPerShape;
-  }
+  { return m_DomainsPerShape; }
   
 protected:
   ParticleSystem();
