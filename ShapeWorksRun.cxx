@@ -26,11 +26,6 @@ int main(int argc, char *argv[])
       return 1;
       }
     
-#ifdef SW_USE_OPENMP
-    std::cout << "OpenMP is enabled ... \n" << std::flush;
-#else
-    std::cout << "OpenMP is disabled ... \n" << std::flush;
-#endif
     ShapeWorksRunApp<> app(argv[1]);
     
     app.Run();

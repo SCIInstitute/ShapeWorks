@@ -209,6 +209,10 @@ protected:
 
     std::vector <int> m_cutting_planes_per_input;
     std::vector <int> m_spheres_per_input;
+    std::vector<double> cpVals;
+    std::vector<double> spVals;
+    std::vector<double> radList;
+
 };
 
 #if ITK_TEMPLATE_EXPLICIT
