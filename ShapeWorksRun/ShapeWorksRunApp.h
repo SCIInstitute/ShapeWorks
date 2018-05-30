@@ -135,6 +135,8 @@ protected:
     static ITK_THREAD_RETURN_TYPE optimize_callback( void *arg );
     //  static ITK_THREAD_RETURN_TYPE auto_init_callback( void *arg );
 
+    int m_verbosity_level;
+
     // constructor
     int m_CheckpointCounter;
     int m_ProcrustesCounter;
@@ -192,6 +194,7 @@ protected:
     double m_spacing;
 
     std::vector < std::string > m_filenames;
+    std::vector < std::string > pointFiles;
 
     std::vector<double> m_EnergyA;
     std::vector<double> m_EnergyB;

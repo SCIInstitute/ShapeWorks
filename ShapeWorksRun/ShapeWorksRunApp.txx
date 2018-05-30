@@ -104,21 +104,13 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     }
 
     if (m_procrustes_scaling == 0)
-    {
         m_Procrustes->ScalingOff();
-        std::cout << "Procrustes scaling is off" << std::endl;
-    }
     else
-    {
         m_Procrustes->ScalingOn();
-        std::cout << "Procrustes scaling is on" << std::endl;
-    }
 
     this->ReadInputs(fn);
     this->ReadMeshInputs(fn);
     this->ReadConstraints(fn);
-
-    this->PrintParamInfo();
 
     this->SetIterationCommand();
     this->InitializeSampler();
@@ -162,6 +154,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
         }
     }
 
+    this->PrintParamInfo();
+
     m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
     m_GoodBad->SetDomainsPerShape(m_domains_per_shape);
     m_GoodBad->SetCriterionAngle(m_normalAngle);
@@ -197,6 +191,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetUserParameters(const char *fname)
     {
         TiXmlHandle docHandle( &doc );
         TiXmlElement *elem;
+
+        m_verbosity_level = 0;
+        elem = docHandle.FirstChild( "verbosity_level" ).Element();
+        if (elem) this->m_verbosity_level = atoi(elem->GetText());
 
         m_debug_projection = false;
         elem = docHandle.FirstChild( "debug_projection" ).Element();
@@ -519,7 +517,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
             shapeFiles.clear();
         }
         // load point files
-        std::vector<std::string> pointFiles;
+        pointFiles.clear();
         elem = docHandle.FirstChild( "point_files" ).Element();
         if (elem)
         {
@@ -534,7 +532,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
             // read point files only if they are all present
             if (pointFiles.size() < numShapes)
             {
-                std::cerr << "not enough point files, none will be loaded" << std::endl;
+                std::cerr << "ERROR: not enough point files, none will be loaded!!!" << std::endl;
+                return EXIT_FAILURE;
             }
             else
             {
@@ -1879,11 +1878,33 @@ void
 ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
 {
     // Write out the parameters
-    std::cout << "--------------------" << std::endl;
+    std::cout << "---------------------" << std::endl;
     std::cout << "   I/O parameters" << std::endl;
-    std::cout << "--------------------" << std::endl;
-    std::cout << "m_domains_per_shape = " << m_domains_per_shape << std::endl;
-    std::cout << "m_number_of_particles = ";
+    std::cout << "---------------------" << std::endl << std::endl;
+
+    std::cout << "Domains per shape = " << m_domains_per_shape << std::endl;
+    std::cout << m_filenames.size() << " image files provided!!!" << std::endl;
+
+    if ( m_d_flgs.size() > 0 )
+    {
+        std::cout << "Following " << m_d_flgs.size() << " domains have been declared fixed: " << std::endl;
+
+        for (int i = 0; i < m_d_flgs.size(); i++)
+            std::cout << m_d_flgs[i] << "\t" << m_filenames[m_d_flgs[i]] << std::endl;
+
+        std::cout << std::endl;
+    }
+
+    if (m_adaptivity_mode == 3)
+    {
+        std::cout << std::endl << std::endl << "*****Using constraints on shapes*****" << std::endl;
+        // distribution cutting plane
+        std::cout << "m_distribution_domain_id = " << m_distribution_domain_id << std::endl;
+        // cutting planes
+        // cutting spheres
+    }
+
+    std::cout << "Target number of particles = ";
     if (m_domains_per_shape == 1)
         std::cout << m_number_of_particles[0];
     else
@@ -1892,29 +1913,44 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
             std::cout << "domain " << i << " : " << m_number_of_particles[i] << ", ";
     }
     std::cout<<std::endl;
+    if ( m_p_flgs.size() > 0 )
+        std::cout << "Total " << m_p_flgs.size()/2 << " particles have been declared fixed." << std::endl;
+
+    if ( m_mesh_based_attributes )
+    {
+        std::cout << std::endl << std::endl << "*****Using attributes*****" << std::endl;
+
+        std::cout << "Domain(s) using XYZ: ";
+
+        std::cout << "Domain(s) using Normals: ";
+
+        std::cout << "Other attributes per domain:";
+
+        if (this->m_attributes_per_domain.size() > 0)
+        {
+            std::cout << "m_attributes_per_domain = ";
+            for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
+                std::cout << m_attributes_per_domain[i] << ", ";
+            std::cout << std::endl;
+        }
+    }
+
+
+
     if (m_transform_file.length() > 0)
         std::cout << "m_transform_file = " << m_transform_file << std::endl;
     if (m_prefix_transform_file.length() > 0)
         std::cout << "m_prefix_transform_file = " << m_prefix_transform_file << std::endl;
 
-    std::cout << "m_output_dir = " << m_output_dir << std::endl;
-    std::cout << "m_output_transform_file = " << m_output_transform_file << std::endl;
-    std::cout << "m_mesh_based_attributes = " << m_mesh_based_attributes << std::endl;
-    if (this->m_attributes_per_domain.size() > 0)
-    {
-        std::cout << "m_attributes_per_domain = ";
-        for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
-            std::cout << m_attributes_per_domain[i] << ", ";
-        std::cout << std::endl;
-    }
-    std::cout << "m_distribution_domain_id = " << m_distribution_domain_id << std::endl;
+    std::cout << "Output path = " << m_output_dir << std::endl;
+    std::cout << "Output transform filename = " << m_output_transform_file << std::endl;
 
     std::cout << std::endl;
 
     std::cout << "------------------------------" << std::endl;
     std::cout << "   Optimization parameters" << std::endl;
     std::cout << "------------------------------" << std::endl;
-    std::cout << "m_processing_mode = " ;
+    std::cout << "Processing modes = " ;
     if (m_processing_mode >= 0 )
         std::cout << "Initialization";
     if ((m_processing_mode >= 1 || m_processing_mode == -1) && m_adaptivity_strength > 0.0)
@@ -1924,14 +1960,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     std::cout << std::endl;
     if (m_adaptivity_strength > 0.0)
     {
-        std::cout << "m_adaptivity_mode = " << m_adaptivity_mode << std::endl;
         std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
     }
+
     std::cout << "m_pairwise_potential_type = ";
     if (m_pairwise_potential_type==0)
         std::cout << "gaussian" << std::endl;
     else
         std::cout << "cotan" << std::endl;
+
     std::cout << "m_optimizer_type = ";
     if (m_optimizer_type == 0)
         std::cout << "jacobi";
@@ -1959,6 +1996,18 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     std::cout << "m_save_init_splits = " << m_save_init_splits << std::endl;
     std::cout << "m_checkpointing_interval = " << m_checkpointing_interval << std::endl;
     std::cout << "m_keep_checkpoints = " << m_keep_checkpoints << std::endl;
+
+    std::cout << std::endl;
+
+    std::cout << "------------------------------" << std::endl;
+    std::cout << "   Explanatory variables" << std::endl;
+    std::cout << "------------------------------" << std::endl;
+
+    std::cout << std::endl;
+
+    std::cout << "------------------------------" << std::endl;
+    std::cout << "   Debugging parameters" << std::endl;
+    std::cout << "------------------------------" << std::endl;
 }
 
 template < class SAMPLERTYPE>
