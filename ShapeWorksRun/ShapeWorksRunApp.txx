@@ -533,7 +533,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
             if (pointFiles.size() < numShapes)
             {
                 std::cerr << "ERROR: not enough point files, none will be loaded!!!" << std::endl;
-                return EXIT_FAILURE;
+                throw 1;
             }
             else
             {
@@ -583,7 +583,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
             // read mesh files only if they are all present
             if (meshFiles.size() < numShapes)
             {
-                std::cerr << "not enough mesh files, none will be loaded" << std::endl;
+                std::cerr << "not enough mesh files!!!" << std::endl;
+                throw 1;
             }
             else
             {
@@ -612,7 +613,22 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
                 inputsBuffer.clear();
                 inputsBuffer.str("");
             }
+            int numTot = 0;
+            for (int i = 0; i < m_domains_per_shape; i++)
+            {
+                if (m_use_xyz[i])
+                    numTot += 3;
+                if (m_use_normals[i])
+                    numTot += 3;
+                if (m_attributes_per_domain.size() > 0)
+                    numTot += m_attributes_per_domain[i];
+            }
 
+            if (numTot != attr_scales.size())
+            {
+                std::cerr << "not enough attribute scale values!!!" << std::endl;
+                throw 1;
+            }
             m_Sampler->SetAttributeScales(attr_scales);
 
             // attribute files
@@ -637,6 +653,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
                     m_Sampler->SetFeaFiles(attrFiles);
 #else
                     std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
+                    throw 1;
 #endif
                 }
                 else
@@ -653,7 +670,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
                         }
                     }
                 }
-                //                }
             }
 
             // need fids for mesh based fea
@@ -676,15 +692,20 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
 
                     int totAttributes = std::accumulate(m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
                     if (feaGradFiles.size() != numShapes*totAttributes/m_domains_per_shape)
-                        std::cerr << "ERROR: Invalid number of attribute gradient files!!" << std::endl;
+                    {
+                        std::cerr << "ERROR: Invalid number of attribute gradient files!!!" << std::endl;
+                        throw 1;
+                    }
                     else
                         m_Sampler->SetFeaGradFiles(feaGradFiles);
-                    std::cout << "Done setting feature gradient files!!" << std::endl;
                 }
                 else
                 {
                     if (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
-                        std::cerr << "ERROR: No feature gradient files.. will use inaccurate centered difference!!" << std::endl;
+                    {
+                        std::cerr << "ERROR: No feature gradient files!!!" << std::endl;
+                        throw 1;
+                    }
                 }
 
                 std::vector<std::string> fidsFiles;
@@ -700,17 +721,24 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadMeshInputs(const char *fname)
                     inputsBuffer.clear();
                     inputsBuffer.str("");
                     if (fidsFiles.size() != numShapes)
+                    {
                         std::cerr << "ERROR: Invalid number of fids files!!" << std::endl;
+                        throw 1;
+                    }
                     else
                         m_Sampler->SetFidsFiles(fidsFiles);
                 }
                 else
                 {
                     if (this->m_attributes_per_domain.size() >= 1 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
+                    {
                         std::cerr << "ERROR: Must provide fids!!" << std::endl;
+                        throw 1;
+                    }
                 }
 #else
                 std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" << std::endl;
+                throw 1;
 #endif
             }
         }
@@ -749,7 +777,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadDistributionCuttingPlane(const char *fname)
         {
             inputsBuffer.str(elem->GetText());
 
-            std::vector<double> cpVals;
+            cpVals.clear();
             double pt;
 
             while (inputsBuffer >> pt)
@@ -762,6 +790,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadDistributionCuttingPlane(const char *fname)
             if (cpVals.size() < 9)
             {
                 std::cerr << "ERROR: Incomplete cutting plane data for reference shape! No cutting planes will be loaded!!" << std::endl;
+                throw 1;
             }
             else
             {
@@ -782,9 +811,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadDistributionCuttingPlane(const char *fname)
                     c[0] = cpVals[ctr++];
                     c[1] = cpVals[ctr++];
                     c[2] = cpVals[ctr++];
-
-                    std::cout << "CorrespondenceApp-> Setting Cutting Plane "
-                              << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
 
                     // If initial transform provided, transform cutting plane points
                     if ( m_prefix_transform_file != "" && m_transform_file != "")
@@ -847,6 +873,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
             if (m_cutting_planes_per_input.size() < numShapes)
             {
                 std::cerr << "ERROR: Incomplete cutting plane data! Number of cutting planes for every input shape is required!!" << std::endl;
+                throw 1;
             }
         }
         int numPlanes = std::accumulate(m_cutting_planes_per_input.begin(), m_cutting_planes_per_input.end(), 0);
@@ -857,7 +884,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
         {
             inputsBuffer.str(elem->GetText());
 
-            std::vector<double> cpVals;
+            cpVals.clear();
             double pt;
 
             while (inputsBuffer >> pt)
@@ -870,6 +897,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
             if (cpVals.size() < 9*numPlanes)
             {
                 std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" << std::endl;
+                throw 1;
             }
             else
             {
@@ -915,8 +943,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingPlanes(const char *fname)
                             c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
                         }
 
-                        std::cout << "CorrespondenceApp-> Setting Cutting Plane " << shapeCount << " (" << a << ") (" << b << ") (" << c << ")"<< std::endl;
-
                         m_Sampler->SetCuttingPlane(shapeCount,a,b,c);
                     }
                 }
@@ -956,11 +982,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
             if (m_spheres_per_input.size() < numShapes)
             {
                 std::cerr << "ERROR: Incomplete cutting plane data! Number of cutting spheres for every input shape is required!!" << std::endl;
+                throw 1;
             }
         }
         int numSpheres = std::accumulate(m_spheres_per_input.begin(), m_spheres_per_input.end(), 0);
 
-        std::vector<double> radList;
+        radList.clear();
         double r;
 
         elem = docHandle.FirstChild( "sphere_radii" ).Element();
@@ -978,6 +1005,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
             if (radList.size() < numSpheres)
             {
                 std::cerr << "ERROR: Incomplete sphere radius data! No spheres will be loaded!!" << std::endl;
+                throw 1;
             }
             else
             {
@@ -986,7 +1014,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
                 {
                     inputsBuffer.str(elem->GetText());
 
-                    std::vector<double> spVals;
+                    spVals.clear();
                     double pt;
 
                     while (inputsBuffer >> pt)
@@ -999,6 +1027,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
                     if (spVals.size() < 3*numSpheres)
                     {
                         std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" << std::endl;
+                        throw 1;
                     }
                     else
                     {
@@ -1017,9 +1046,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadCuttingSpheres(const char *fname)
 
                                 rad = radList[r_ctr++];
 
-                                std::cout << "CorrespondenceApp-> Setting Cutting Sphere " ;
-                                std::cout << shapeCount << " (" << center[0] << ") (" << center[1] << ") (" << center[2] << "); ";
-                                std::cout << "(" << rad << ")" << std::endl;
                                 m_Sampler->AddSphere(shapeCount,center,rad);
 
                             }
@@ -1152,7 +1178,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadTransformFile()
     object_reader< itk::ParticleSystem<3>::TransformType > reader;
     reader.SetFileName(m_transform_file);
     reader.Update();
-    std::cout << "Read transform file " << m_transform_file << std::endl;
     for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
         m_Sampler->GetParticleSystem()->SetTransform(i, reader.GetOutput()[i]);
 }
@@ -1164,7 +1189,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadPrefixTransformFile(const std::string &fn)
     object_reader< itk::ParticleSystem<3>::TransformType > reader;
     reader.SetFileName(fn.c_str());
     reader.Update();
-    std::cout << "Read prefix transform file " << fn << std::endl;
     for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++)
         m_Sampler->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
 }
@@ -1191,7 +1215,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
 
     m_Sampler->GetOmegaGradientFunction()->SetFlatCutoff(flat_cutoff);
     m_Sampler->GetOmegaGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-
 
     m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
     m_Sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
@@ -1223,7 +1246,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::InitializeSampler()
         m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
     else
         m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
-
 
     m_Sampler->SetSamplingOn();
 
@@ -1554,7 +1576,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
     m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
 
-
     m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
     m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
     m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
@@ -1877,6 +1898,11 @@ template < class SAMPLERTYPE>
 void
 ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
 {
+#ifdef SW_USE_OPENMP
+    std::cout << "OpenMP is enabled ... \n" << std::flush;
+#else
+    std::cout << "OpenMP is disabled ... \n" << std::flush;
+#endif
     // Write out the parameters
     std::cout << "---------------------" << std::endl;
     std::cout << "   I/O parameters" << std::endl;
@@ -1898,10 +1924,43 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     if (m_adaptivity_mode == 3)
     {
         std::cout << std::endl << std::endl << "*****Using constraints on shapes*****" << std::endl;
+
         // distribution cutting plane
-        std::cout << "m_distribution_domain_id = " << m_distribution_domain_id << std::endl;
+
+        if (m_distribution_domain_id > -1)
+        {
+            int i = 0;
+            std::cout << std::endl << "Using distribution cutting plane: " << std::endl;
+            std::cout << "(" << cpVals[i++] << "  " << cpVals[i++] << "  " << cpVals[i++] << ") ";
+            std::cout << "(" << cpVals[i++] << "  " << cpVals[i++] << "  " << cpVals[i++] << ") ";
+            std::cout << "(" << cpVals[i++] << "  " << cpVals[i++] << "  " << cpVals[i++] << ") ";
+            std::cout << std::endl;
+        }
+
         // cutting planes
+        if (cpVals.size() > 0)
+        {
+            std::cout << std::endl << "Using individual cutting planes: " << std::endl;
+            for (int i1 = 0; i1 < cpVals.size(); i1+=9)
+            {
+                int i = i1;
+                std::cout << "(" << cpVals[i++] << "  " << cpVals[i++] << "  " << cpVals[i++] << ") ";
+                std::cout << "(" << cpVals[i++] << "  " << cpVals[i++] << "  " << cpVals[i++] << ") ";
+                std::cout << "(" << cpVals[i++] << "  " << cpVals[i++] << "  " << cpVals[i++] << ") ";
+                std::cout << std::endl;
+            }
+        }
+
         // cutting spheres
+        if (radList.size() > 0)
+        {
+            std::cout << std::endl << "Using cutting spheres: " << std::endl;
+            for (int i1 = 0; i1 < radList.size(); i1++)
+            {
+                int i = i1*3;
+                std::cout << "center: (" << spVals[i++] << "  " << spVals[i++] << "  " << spVals[i++] << "), radius: " << radList[i1] << std::endl;
+            }
+        }
     }
 
     std::cout << "Target number of particles = ";
@@ -1913,6 +1972,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
             std::cout << "domain " << i << " : " << m_number_of_particles[i] << ", ";
     }
     std::cout<<std::endl;
+
     if ( m_p_flgs.size() > 0 )
         std::cout << "Total " << m_p_flgs.size()/2 << " particles have been declared fixed." << std::endl;
 
@@ -1921,21 +1981,29 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
         std::cout << std::endl << std::endl << "*****Using attributes*****" << std::endl;
 
         std::cout << "Domain(s) using XYZ: ";
+        for (int i = 0; i < m_domains_per_shape; i++)
+        {
+            if (m_use_xyz[i])
+                std::cout << i << " ";
+        }
+        std::cout << std::endl;
 
         std::cout << "Domain(s) using Normals: ";
-
-        std::cout << "Other attributes per domain:";
+        for (int i = 0; i < m_domains_per_shape; i++)
+        {
+            if (m_use_normals[i])
+                std::cout << i << " ";
+        }
+        std::cout << std::endl;
 
         if (this->m_attributes_per_domain.size() > 0)
         {
-            std::cout << "m_attributes_per_domain = ";
-            for (unsigned int i = 0; i < this->m_domains_per_shape; i++)
-                std::cout << m_attributes_per_domain[i] << ", ";
+            std::cout << "Other attributes per domain:" << std::endl;
+            for (int i = 0; i < m_domains_per_shape; i++)
+                std::cout << i << ":" << m_attributes_per_domain[i] << "  ";
             std::cout << std::endl;
         }
     }
-
-
 
     if (m_transform_file.length() > 0)
         std::cout << "m_transform_file = " << m_transform_file << std::endl;
@@ -1950,6 +2018,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     std::cout << "------------------------------" << std::endl;
     std::cout << "   Optimization parameters" << std::endl;
     std::cout << "------------------------------" << std::endl;
+
     std::cout << "Processing modes = " ;
     if (m_processing_mode >= 0 )
         std::cout << "Initialization";
@@ -1958,18 +2027,17 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     if (m_processing_mode >= 2 || m_processing_mode == -2)
         std::cout << ", Optimization";
     std::cout << std::endl;
-    if (m_adaptivity_strength > 0.0)
-    {
-        std::cout << "m_adaptivity_strength = " << m_adaptivity_strength << std::endl;
-    }
 
-    std::cout << "m_pairwise_potential_type = ";
+    if (m_adaptivity_strength > 0.0)
+        std::cout << "adaptivity_strength = " << m_adaptivity_strength << std::endl;
+
+    std::cout << "pairwise_potential_type = ";
     if (m_pairwise_potential_type==0)
         std::cout << "gaussian" << std::endl;
     else
         std::cout << "cotan" << std::endl;
 
-    std::cout << "m_optimizer_type = ";
+    std::cout << "optimizer_type = ";
     if (m_optimizer_type == 0)
         std::cout << "jacobi";
     else if (m_optimizer_type == 1)
@@ -1977,9 +2045,12 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
     else if (m_optimizer_type == 2)
         std::cout << "adaptive gauss seidel (with bad moves)";
     else
+    {
         std::cerr << "Incorrect option!!";
-
+        throw 1;
+    }
     std::cout << std::endl;
+
     std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
     std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed << std::endl;
     std::cout << "m_iterations_per_split = " << m_iterations_per_split << std::endl;
@@ -1999,15 +2070,15 @@ ShapeWorksRunApp<SAMPLERTYPE>::PrintParamInfo()
 
     std::cout << std::endl;
 
-    std::cout << "------------------------------" << std::endl;
-    std::cout << "   Explanatory variables" << std::endl;
-    std::cout << "------------------------------" << std::endl;
+    if (m_debug_projection)
+        std::cout << "WARNING: Using debug projection, expect delays!!! Normal angle - " << m_normalAngle << std::endl;
 
-    std::cout << std::endl;
+    if (m_performGoodBad)
+        std::cout << "WARNING: Bad particles will be reported during optimization, expect significant delays!!! " << std::endl;
 
-    std::cout << "------------------------------" << std::endl;
-    std::cout << "   Debugging parameters" << std::endl;
-    std::cout << "------------------------------" << std::endl;
+    if (m_logEnergy)
+        std::cout << "WARNING: Using energy logs for early termination, might increase overall runtime!!! " << std::endl;
+
 }
 
 template < class SAMPLERTYPE>
@@ -2159,7 +2230,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( std::string iter_pre
 
         if ( !outw )
         {
-            std::cerr << "EnsembleSystem()::Error opening output file" << std::endl;
+            std::cerr << "EnsembleSystem()::Error opening output file: " << world_file << std::endl;
             throw 1;
         }
 

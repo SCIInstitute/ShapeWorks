@@ -28,7 +28,7 @@
 #SET(RUN_NAME ShapeWorksRun4.5.1)
 # some code cleanup
 
-SET(RUN_NAME ShapeWorksRun5.0)
+SET(RUN_NAME ShapeWorksRun5.0-pre-release)
 
 ADD_EXECUTABLE(${RUN_NAME} ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
 #TARGET_LINK_LIBRARIES(ShapeWorksRun ITKParticleSystem Utilities ITKIO ITKNumerics ITKBasicFilters ITKCommon tinyxml)
