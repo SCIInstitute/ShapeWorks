@@ -51,6 +51,14 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(ParticleMeanCurvatureAttribute, ParticleContainerArrayAttribute);
 
+  void SetVerbosity(unsigned int val)
+  {
+      m_verbosity = val;
+  }
+
+  unsigned int GetVerbosity()
+  { return m_verbosity; }
+
   virtual void PositionAddEventCallback(Object *o, const EventObject &e) 
   {
     Superclass::PositionAddEventCallback(o, e);
@@ -115,7 +123,7 @@ private:
 
   std::vector<double> m_MeanCurvatureList;
   std::vector<double> m_CurvatureStandardDeviationList;
-  
+  unsigned int m_verbosity;
 };
 
 } // end namespace

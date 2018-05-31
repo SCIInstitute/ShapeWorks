@@ -96,14 +96,18 @@ public:
   inline void StopOptimization()
   {    this->m_StopOptimization = true;  }
 
-  void SetDebugProjection(bool flag)
-  {
-      this->m_debug_projection = flag;
-  }
 
   /** Get/Set the number of iterations performed by the solver. */
   itkGetMacro(NumberOfIterations, unsigned int);
   itkSetMacro(NumberOfIterations, unsigned int);
+
+  void SetVerbosity(unsigned int val)
+  {
+      m_verbosity = val;
+  }
+
+  unsigned int GetVerbosity()
+  { return m_verbosity; }
 
   /** Get/Set a time step parameter for the update.  Each update is simply
       scaled by this value. */
@@ -145,9 +149,8 @@ private:
   double m_Tolerance;
   double m_TimeStep;
   int m_OptimizationMode;
-  bool m_debug_projection;
   std::vector< std::vector<double> > m_TimeSteps;
-  
+  unsigned int m_verbosity;
 };
 
 

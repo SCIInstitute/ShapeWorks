@@ -84,12 +84,28 @@ public:
         }
     }
 
+    void startMessage(std::string str, unsigned int vlevel=0) const
+    {
+        if (m_verbosity_level > vlevel)
+        {
+            std::cout << str;
+            std::cout.flush();
+        }
+    }
+
+    void doneMessage(unsigned int vlevel=0) const
+    {
+        if (m_verbosity_level > vlevel)
+            std::cout << "Done." << std::endl;
+    }
+
     ShapeWorksRunApp(const char *);
     virtual ~ShapeWorksRunApp();
 
-    void SetUserParameters(const char *fname);
+    void SetVerbosity(const char *fname);
     virtual void ReadIOParameters(const char *fname);
     virtual void ReadOptimizationParameters(const char *fname);
+    void SetDebugParameters(const char *fname);
     virtual void ReadInputs(const char *fname);
     virtual void ReadMeshInputs(const char *fname);
     virtual void ReadConstraints(const char *fname);
@@ -135,7 +151,7 @@ protected:
     static ITK_THREAD_RETURN_TYPE optimize_callback( void *arg );
     //  static ITK_THREAD_RETURN_TYPE auto_init_callback( void *arg );
 
-    int m_verbosity_level;
+    unsigned int m_verbosity_level;
 
     // constructor
     int m_CheckpointCounter;
@@ -205,7 +221,6 @@ protected:
     std::vector<std::vector<int> > m_badIds; //GoodBadAssessment
     double m_normalAngle; //GoodBadAssessment
     bool m_performGoodBad;
-    bool m_debug_projection;
 
     std::vector <int> m_cutting_planes_per_input;
     std::vector <int> m_spheres_per_input;

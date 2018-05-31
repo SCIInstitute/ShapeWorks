@@ -131,7 +131,7 @@ public:
 
         }
 
-        std::cout << "m_GlobalSigma: " << m_GlobalSigma << std::endl;
+//        std::cout << "m_GlobalSigma: " << m_GlobalSigma << std::endl;
     }
 
     /** Estimate the best sigma for Parzen windowing.

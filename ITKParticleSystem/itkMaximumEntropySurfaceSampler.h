@@ -338,6 +338,15 @@ public:
     int GetPairwisePotentialType()
     {return m_pairwise_potential_type;}
 
+    void SetVerbosity(unsigned int val)
+    {
+        m_verbosity = val;
+        m_Optimizer->SetVerbosity(val);
+    }
+
+    unsigned int GetVerbosity()
+    { return m_verbosity; }
+
     MeanCurvatureCacheType *GetMeanCurvatureCache()
     {   return  m_MeanCurvatureCache.GetPointer();  }
 
@@ -425,6 +434,8 @@ private:
     std::string m_PrefixTransformFile;
     std::vector< std::vector< CuttingPlaneType> > m_CuttingPlanes;
     std::vector< std::vector<SphereType> > m_Spheres;
+
+    unsigned int m_verbosity;
 
 };
 

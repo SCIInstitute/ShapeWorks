@@ -50,7 +50,7 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartAdaptiveGaussSeidelOptimization()
 {
-    std::cout << "Starting Adaptive Gauss Seidel Optimization ..... \n" << std::flush;
+//    std::cout << "Starting Adaptive Gauss Seidel Optimization ..... \n" << std::flush;
     const double factor = 1.1;//1.1;
     //  const double epsilon = 1.0e-4;
 
@@ -85,8 +85,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         reset = true;
     }
 
-    //  if (reset == true) m_GradientFunction->ResetBuffers();
-
     const double pi = std::acos(-1.0);
     unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
     std::vector<double> meantime(numdomains);
@@ -108,10 +106,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     {
         timerBefore = time(NULL);
         if (counter % global_iteration == 0)
-        {
-            std::cerr << "Performing global step\n" ;
             m_GradientFunction->BeforeIteration();
-        }
         counter++;
 
 #pragma omp parallel
@@ -167,7 +162,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
                         original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
 
-//                        std::cout << energy << std::endl;
                         unsigned int idx = it.GetIndex();
                         PointType pt = *it;
                         NormalType ptNormalOld = domain->SampleNormalVnl(pt);
@@ -182,7 +176,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         while ( !done )
                         {
                             gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
-//                            gradient = original_gradient * m_TimeSteps[dom][k];
 
                             dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
 
@@ -208,16 +201,11 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
                                 if (newenergy < energy) // good move, increase timestep for next time
                                 {
-//                                    std::cout<<"dom = " << dom << "iter = " << counter <<std::endl;
                                     meantime[dom] += m_TimeSteps[dom][k];
                                     m_TimeSteps[dom][k] *= factor;
                                     if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
                                     if (gradmag > maxchange) maxchange = gradmag;
                                     done = true;
-
-                                    // SHIREEN: for debugging
-                                    //double old_new_dist = sqrt(pow(pt[0] - newpoint[0], 2.0) + pow(pt[1] - newpoint[1], 2.0) + pow(pt[2] - newpoint[2], 2.0));
-                                    //std::cout << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << newpoint[0] << ", " << newpoint[1] << ", " <<  newpoint[2] << ", " << old_new_dist << ",\n " << std::flush;
                                 }
                                 else
                                 {// bad move, reset point position and back off on timestep
@@ -230,29 +218,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                                     }
                                     else // keep the move with timestep 1.0 anyway
                                     {
-                                        //                  meantime[dom] += m_TimeSteps[dom][k];
-                                        //                  m_TimeSteps[dom][k] = mintime[dom];
-                                        //                  if (gradmag > maxchange) maxchange = gradmag;
                                         done = true;
-                                        //std::cout << "\t A bad move will be kept at time step = " << m_TimeSteps[dom][k]*factor << std::endl << std::flush;
-
-                                        // SHIREEN: for debugging
-                                        //double old_new_dist = sqrt(pow(pt[0] - newpoint[0], 2.0) + pow(pt[1] - newpoint[1], 2.0) + pow(pt[2] - newpoint[2], 2.0));
-                                        //std::cout << pt[0] << ", " << pt[1] << ", " << pt[2] << ", " << newpoint[0] << ", " << newpoint[1] << ", " <<  newpoint[2] << ", " << old_new_dist << ",\n " << std::flush;
                                     }
                                 }
                             } //gradmag check
                         } // end while not done
 
-                        if (m_debug_projection)
-                        {
-                            PointType ptNew = m_ParticleSystem->GetPosition(idx, dom);
-                            NormalType ptNormalNew = domain->SampleNormalVnl(ptNew);
-
-                            double devOldToNew = std::acos(dot_product(ptNormalNew, ptNormalOld));
-                            if (devOldToNew > pi/4.0)
-                                std::cout << "Warning1!!! Iter# " << m_NumberOfIterations << " domain # " << dom <<" point # "<< idx << " normal turning angle = " << devOldToNew*180.0/pi << std::endl;
-                        }
                     } // for each particle
 
                     // Compute mean time step
@@ -268,19 +239,23 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
         m_NumberOfIterations++;
         m_GradientFunction->AfterIteration();
-        this->InvokeEvent(itk::IterationEvent());
 
         timerAfter = time(NULL);
         double seconds = difftime(timerAfter, timerBefore);
 
-        std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
-        std::cout.flush();
+        if (m_verbosity > 2)
+        {
+            std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
+            std::cout.flush();
+        }
+
+        this->InvokeEvent(itk::IterationEvent());
         // Check for convergence.  Optimization is considered to have converged if
         // max number of iterations is reached or maximum distance moved by any
         // particle is less than the specified precision.
         //    std::cout << "maxchange = " << maxchange << std::endl;
 
-        if ((m_NumberOfIterations == m_MaximumNumberOfIterations)
+        if ((m_NumberOfIterations >= m_MaximumNumberOfIterations)
                 || (m_Tolerance > 0.0 &&  maxchange <  m_Tolerance))
         {
             m_StopOptimization = true;
@@ -295,7 +270,7 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartGaussSeidelOptimization()
 {
-    std::cout << "Starting Gauss Seidel Optimization ..... \n" << std::flush;
+//    std::cout << "Starting Gauss Seidel Optimization ..... \n" << std::flush;
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
     m_StopOptimization = false;
@@ -304,8 +279,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     VectorType gradient;
     PointType newpoint;
 
+    time_t timerBefore, timerAfter;
+
     while (m_StopOptimization == false)
     {
+        timerBefore = time(NULL);
+
         m_GradientFunction->BeforeIteration();
         double maxdt;
 
@@ -354,12 +333,23 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
         m_NumberOfIterations++;
         m_GradientFunction->AfterIteration();
+
+
+        timerAfter = time(NULL);
+        double seconds = difftime(timerAfter, timerBefore);
+
+        if (m_verbosity > 2)
+        {
+            std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
+            std::cout.flush();
+        }
+
         this->InvokeEvent(itk::IterationEvent());
 
         // Check for convergence.  Optimization is considered to have converged if
         // max number of iterations is reached or maximum distance moved by any
         // particle is less than the specified precision.
-        if (m_NumberOfIterations == m_MaximumNumberOfIterations)
+        if (m_NumberOfIterations >= m_MaximumNumberOfIterations)
         {
             m_StopOptimization = true;
         }
@@ -373,7 +363,7 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartJacobiOptimization()
 {
-    std::cout << "Starting Jacobi Optimization ..... \n" << std::flush;
+//    std::cout << "Starting Jacobi Optimization ..... \n" << std::flush;
 
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
@@ -391,8 +381,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     VectorType gradient;
     PointType  newpoint;
 
+    time_t timerBefore, timerAfter;
+
     while (m_StopOptimization == false)
     {
+        timerBefore = time(NULL);
+
         m_GradientFunction->BeforeIteration();
         double maxdt;
 
@@ -457,17 +451,26 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
         m_NumberOfIterations++;
         m_GradientFunction->AfterIteration();
+
+
+        timerAfter = time(NULL);
+        double seconds = difftime(timerAfter, timerBefore);
+
+        if (m_verbosity > 2)
+        {
+            std::cout << m_NumberOfIterations << " ";
+            std::cout.flush();
+        }
+
         this->InvokeEvent(itk::IterationEvent());
 
         // Check for convergence.  Optimization is considered to have converged if
         // max number of iterations is reached or maximum distance moved by any
         // particle is less than the specified precision.
-        if (m_NumberOfIterations == m_MaximumNumberOfIterations)
+        if (m_NumberOfIterations >= m_MaximumNumberOfIterations)
         {
             m_StopOptimization = true;
         }
-        std::cout << m_NumberOfIterations << " ";
-        std::cout.flush();
 
     } // end while
 

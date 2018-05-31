@@ -124,8 +124,8 @@ int vtkPolyDataToImageData::RequestData(
   sampler->GenerateInteriorPointsOn();
   sampler->GenerateVertexPointsOn();
   sampler->Update();
-  std::cout << input->GetNumberOfPoints() << std::endl;
-  std::cout << sampler->GetOutput()->GetNumberOfPoints() << std::endl;
+//  std::cout << input->GetNumberOfPoints() << std::endl;
+//  std::cout << sampler->GetOutput()->GetNumberOfPoints() << std::endl;
 
   int dim[3];
   double spacing[3], origin[3];

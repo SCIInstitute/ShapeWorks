@@ -101,11 +101,11 @@ class plane_widget_pipeline
 //    t = y[2]; y[2] = y[1]; y[1] = t;
 //    t = z[2]; z[2] = z[1]; z[1] = t;
 
-    std::cout << "Normal : " << n[0] << ' ' << n[1] << ' ' << n[2] << std::endl;
-    std::cout << "d : " << d << std::endl;
-    std::cout << "Origin : " << x[0] << ' ' << x[1] << ' ' << x[2] << std::endl;
-    std::cout << "Point1 : " << y[0] << ' ' << y[1] << ' ' << y[2] << std::endl;
-    std::cout << "Point2 : " << z[0] << ' ' << z[1] << ' ' << z[2] << std::endl;
+//    std::cout << "Normal : " << n[0] << ' ' << n[1] << ' ' << n[2] << std::endl;
+//    std::cout << "d : " << d << std::endl;
+//    std::cout << "Origin : " << x[0] << ' ' << x[1] << ' ' << x[2] << std::endl;
+//    std::cout << "Point1 : " << y[0] << ' ' << y[1] << ' ' << y[2] << std::endl;
+//    std::cout << "Point2 : " << z[0] << ' ' << z[1] << ' ' << z[2] << std::endl;
 
     m_plane_source->SetOrigin(x[0],x[1],x[2]);
     m_plane_source->SetPoint1(y[0],y[1],y[2]);
