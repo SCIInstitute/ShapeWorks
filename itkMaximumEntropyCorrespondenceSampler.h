@@ -18,7 +18,6 @@
 #include "itkMaximumEntropySurfaceSampler.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
-#include "itkParticleGeneralEntropyGradientFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
@@ -122,7 +121,6 @@ public:
       surfaces (domains).
       mode 0 = mean energy
       mode 1 = ensemble entropy
-      mode 2 = image based general entropy
       mode 3 = ensemble regression entropy
       mode 4 = ensemble mixed effects entropy
       mode 5 = mesh based general entropy
@@ -134,10 +132,6 @@ public:
     {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
-    }
-    else if (mode == 2)
-    {
-      m_LinkingFunction->SetFunctionB(m_GeneralEntropyGradientFunction);
     }
     else if (mode == 3)
     {
@@ -168,14 +162,12 @@ public:
 
   void RegisterGeneralShapeMatrices()
   {
-      std::cout << "Registering general shape matrices.. " << std::endl;
       Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
       Superclass::m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
   }
 
   void SetAttributeScales(const std::vector<double> &s)
   {
-    m_GeneralEntropyGradientFunction->SetAttributeScales(s);
     m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
     m_GeneralShapeMatrix->SetAttributeScales(s);
     m_GeneralShapeGradMatrix->SetAttributeScales(s);
@@ -212,12 +204,6 @@ public:
       m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
-  void AddAttributeImage(int d,
-                         typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::ImageType *I)
-  {
-    m_FunctionShapeData->AddFunctionImage(d, I);
-  }
-
   ParticleGeneralShapeMatrix<double, Dimension> *GetGeneralShapeMatrix()
   {
       return m_GeneralShapeMatrix.GetPointer();
@@ -235,8 +221,6 @@ public:
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
   ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction()
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction()
-  { return m_GeneralEntropyGradientFunction.GetPointer(); }
   ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
   
@@ -248,8 +232,6 @@ public:
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
   const ParticleEnsembleEntropyFunction<Dimension> *GetEnsembleMixedEffectsEntropyFunction() const
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
-  const ParticleGeneralEntropyGradientFunction<Dimension> *GetGeneralEntropyGradientFunction() const
-  { return m_GeneralEntropyGradientFunction.GetPointer(); }
   const ParticleMeshBasedGeneralEntropyGradientFunction<Dimension> *GetMeshBasedGeneralEntropyGradientFunction() const
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
   
@@ -297,9 +279,9 @@ private:
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
   typename ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
-  typename ParticleGeneralEntropyGradientFunction<Dimension>::Pointer m_GeneralEntropyGradientFunction;
+
   typename ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
-  typename ParticleFunctionBasedShapeSpaceData<float, Dimension>::Pointer m_FunctionShapeData;
+
   typename ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
   typename ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
 

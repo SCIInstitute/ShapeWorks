@@ -110,10 +110,10 @@ TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base
         m_c[0] = pc;
 
 #ifdef PARTICLE_DEBUG_FLAG
-        std::cout << "Mag(normal) : " << m_CuttingPlaneNormal[0].magnitude() << std::endl;
-        std::cout << "Point (a) : "   << m_a[0] << std::endl;
-        std::cout << "Point (b) : "   << m_b[0] << std::endl;
-        std::cout << "Point (c) : "   << m_c[0] << std::endl;
+//        std::cout << "Mag(normal) : " << m_CuttingPlaneNormal[0].magnitude() << std::endl;
+//        std::cout << "Point (a) : "   << m_a[0] << std::endl;
+//        std::cout << "Point (b) : "   << m_b[0] << std::endl;
+//        std::cout << "Point (c) : "   << m_c[0] << std::endl;
 #endif
     }
 }
@@ -368,23 +368,8 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
         p[i] -= vec[i];
         }
       
-//#ifdef  PARTICLE_DEBUG_FLAG
-//      if ( ! this->IsInsideBuffer(p) )
-//        {
-//          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
-////      itkExceptionMacro("A Point, " << p << ", was projected outside the given image domain." );
-//        }
-//#endif
-
       f = this->Sample(p);
       
-//#ifdef  PARTICLE_DEBUG_FLAG
-//      if ( gradmag < epsilon && fabs(f) > m_Tolerance)
-//        {
-//        itkExceptionMacro("Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f );
-//        }
-//#endif
-
       // Raise the tolerance if we have done too many iterations.
       k++;
       if (k > 10000)
@@ -394,20 +379,18 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
         }
       } // end while
 
-#ifdef  PARTICLE_DEBUG_FLAG
-      if ( ! this->IsInsideBuffer(p) )
-        {
-          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
-//      itkExceptionMacro("A Point, " << p << ", was projected outside the given image domain." );
-        }
-#endif
-#ifdef  PARTICLE_DEBUG_FLAG
-      if ( gradmag < epsilon && fabs(f) > m_Tolerance)
-        {
-//        itkExceptionMacro("Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f );
-          std::cout << "Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f << std::endl;
-        }
-#endif
+//#ifdef  PARTICLE_DEBUG_FLAG
+//      if ( ! this->IsInsideBuffer(p) )
+//        {
+//          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
+//        }
+//#endif
+//#ifdef  PARTICLE_DEBUG_FLAG
+//      if ( gradmag < epsilon && fabs(f) > m_Tolerance)
+//        {
+//          std::cout << "Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f << std::endl;
+//        }
+//#endif
 
     } // end if m_ConstraintsEnabled == true
 

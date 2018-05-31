@@ -148,19 +148,20 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     m_CurrentEnergy /= 2.0;
 
-    if (!m_UseMeanEnergy)
-    {
-        for (unsigned int i =0; i < num_samples; i++)
-            std::cout << i << ": "<< W(i)*W(i) << std::endl;
-
-        std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = "
-                  << m_MinimumVariance << std::endl;
-    }
-    else
-    {
+    if (m_UseMeanEnergy)
         m_MinimumEigenValue = m_CurrentEnergy / 2.0;
-        std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << std::endl;
-    }
+
+//    if (!m_UseMeanEnergy)
+//    {
+//        for (unsigned int i =0; i < num_samples; i++)
+//            std::cout << i << ": "<< W(i)*W(i) << std::endl;
+
+//        std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << "\t MinimumVariance = " << m_MinimumVariance << std::endl;
+//    }
+//    else
+//    {
+//        std::cout << "FeaMesh_ENERGY = " << m_CurrentEnergy << std::endl;
+//    }
 
 }
 

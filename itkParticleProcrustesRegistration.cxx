@@ -70,7 +70,7 @@ ParticleProcrustesRegistration<3>::RunRegistration(int d)
             if (m_FixedScales.size() != 0)
             {
                 transforms[i].scale = m_FixedScales[i];
-                std::cout << "Fixed scale " << i << " = " << m_FixedScales[i] << std::endl;
+//                std::cout << "Fixed scale " << i << " = " << m_FixedScales[i] << std::endl;
             }
             else // otherwise do not scale at all
             {
@@ -136,8 +136,8 @@ ParticleProcrustesRegistration<3>::RunRegistration(int d)
 
         }
         m_ParticleSystem->SetTransform(k, R);
-        std::cout << R << std::endl;
-        std::cout << std::endl;
+//        std::cout << R << std::endl;
+//        std::cout << std::endl;
     }
 }
 } // end namespace

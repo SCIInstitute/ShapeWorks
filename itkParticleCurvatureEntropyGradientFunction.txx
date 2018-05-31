@@ -281,7 +281,6 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
     
     double q = kappa * exp( -dot_product(r, r) * sigma2inv);
-    //double q = exp( -dot_product(r, r) * sigma2inv);
     
     A += q;
     
@@ -298,21 +297,9 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   for (unsigned int n = 0; n <VDimension; n++)
     {    gradE[n] *= p;    }
 
-  // Prevents unstable moves in degenerate cases
-  //  if (m_CurrentNeighborhood.size() < 4)
-  //    {
-  //    maxmove= domain->GetImage()->GetSpacing()[0] / 100.0;
-  //    }
-  //  else
-  //    {
-  //maxmove= (m_CurrentSigma / m_avgKappa) * 0.1;
-
   maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
 
-    //    }
-  
   energy = (A * sigma2inv ) / m_avgKappa;
-
 
   return gradE / m_avgKappa;
 }

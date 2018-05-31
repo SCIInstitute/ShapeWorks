@@ -22,7 +22,6 @@ template <class TImage>
 MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler()
 {
   m_LinkingFunction = ParticleDualVectorFunction<Dimension>::New();
-  m_GeneralEntropyGradientFunction = ParticleGeneralEntropyGradientFunction<Dimension>::New();
   m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction<Dimension>::New();
@@ -34,12 +33,11 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
 
   m_LinearRegressionShapeMatrix = ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
   m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
-  m_FunctionShapeData = ParticleFunctionBasedShapeSpaceData<float, Dimension>::New();
+
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
   
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
-  m_GeneralEntropyGradientFunction->SetShapeData(m_FunctionShapeData);
 
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
@@ -47,7 +45,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::MaximumEntropyCorrespondenceSampler
   Superclass::m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
   Superclass::m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
-  Superclass::m_ParticleSystem->RegisterAttribute(m_FunctionShapeData);
 
   m_CorrespondenceMode = 1;
 }
@@ -88,7 +85,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
 
   if (this->GetInitializing() == true) return;
 
-  std::cout << "MaximumEntropyCorrespondenceSampler: starting optimization ..\n" << std::flush;
   this->GetOptimizer()->StartOptimization();
 }
 template <class TImage>

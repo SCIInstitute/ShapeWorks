@@ -78,8 +78,11 @@ ComputeCurvatureStatistics(const ParticleSystemType *system, unsigned int d)
     }
   m_CurvatureStandardDeviationList[d] = sqrt(m_CurvatureStandardDeviationList[d] / (n-1));
   
-  std::cout << "Mean curvature magnitude = " << m_MeanCurvatureList[d] << std::endl;
-  std::cout << "Std deviation = " << m_CurvatureStandardDeviationList[d] << std::endl;
+  if (m_verbosity > 1)
+  {
+      std::cout << "Mean curvature magnitude = " << m_MeanCurvatureList[d] << std::endl;
+      std::cout << "Std deviation = " << m_CurvatureStandardDeviationList[d] << std::endl;
+  }
 }
 
 } // end namespace itk

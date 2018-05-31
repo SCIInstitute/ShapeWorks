@@ -31,7 +31,6 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
     m_AdaptivityMode = 0;
     m_Initializing = false;
 
-
     m_PrefixTransformFile = "";
     m_TransformFile = "";
 
@@ -86,6 +85,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
     m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
 
     m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<typename ImageType::PixelType, Dimension>::New();
+    m_MeanCurvatureCache->SetVerbosity(m_verbosity);
     m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
     m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
     m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
@@ -106,10 +106,15 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
 
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
-        std::cout<<"Reading inputfile: "<<m_ImageFiles[i].c_str()<<std::endl;
+        if (m_verbosity > 1)
+            std::cout<<"Reading inputfile: "<<m_ImageFiles[i].c_str()<<"..."<<std::flush;
+
         typename ImageFileReader<TImage>::Pointer reader = ImageFileReader<ImageType>::New();
         reader->SetFileName(m_ImageFiles[i].c_str());
         reader->UpdateLargestPossibleRegion();
+
+        if (m_verbosity > 1)
+            std::cout << "Done." << std::endl;
 
         typename TImage::Pointer img_temp = const_cast<TImage *>(reader->GetOutput());
 
@@ -354,16 +359,9 @@ MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
         reader.SetFileName(m_TransformFile.c_str());
         reader.Update();
 
-        for (unsigned int i = 0; i <this->GetParticleSystem()->GetNumberOfDomains();
-             i++)
-        {
-            std::cout << "Transform " << i << std::endl << reader.GetOutput()[i] << std::endl;
+        for (unsigned int i = 0; i <this->GetParticleSystem()->GetNumberOfDomains(); i++)
             this->GetParticleSystem()->SetTransform(i, reader.GetOutput()[i]);
-        }
     }
-    // }
-    // void CorrespondenceApp::ReadPrefixTransformFile(const std::string &fn)
-    // {
 
     if (m_PrefixTransformFile != "")
     {
@@ -371,15 +369,10 @@ MaximumEntropySurfaceSampler<TImage>::ReadTransforms()
         reader.SetFileName(m_PrefixTransformFile.c_str());
         reader.Update();
 
-        for (unsigned int i = 0; i < this->GetParticleSystem()->GetNumberOfDomains();
-             i++)
-        {
-            std::cout << "Prefix Transform " << i << std::endl << reader.GetOutput()[i] << std::endl;
+        for (unsigned int i = 0; i < this->GetParticleSystem()->GetNumberOfDomains(); i++)
             this->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
-        }
     }
 
-    // }
 }
 
 
