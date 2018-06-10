@@ -17,9 +17,13 @@
 #include <igl/readOBJ.h>
 #include <igl/viewer/Viewer.h>
 #include <Eigen/Sparse>
+#include <fstream>
 
 using namespace std;
 using namespace Eigen;
+
+
+
 /*////////////////////////////////////////////////////////////////////////////////////////
 W MATRIX PRECOMPUTATION FUNCTION
 */////////////////////////////////////////////////////////////////////////////////////////
@@ -88,5 +92,94 @@ Eigen::MatrixXd mode_variation(Eigen::MatrixXd pca_mode, Eigen::MatrixXd mean_sp
   return Pout;
 }
 
+/*////////////////////////////////////////////////////////////////////////////////////////
+POINT FILE READ FUNCTION
+*/////////////////////////////////////////////////////////////////////////////////////////
+
+Eigen::MatrixXd pointReadFormat(std::string refPointPath, int numP){
+  Eigen::MatrixXd Vout(numP, 3);
+  std::ifstream inFile;
+  inFile.open(refPointPath.c_str());
+  int count = 0;
+  while(!inFile.eof()){
+    inFile >> Vout(count, 0) >> Vout(count, 1) >> Vout(count, 2);
+    count++;
+  }
+  inFile.close();
+  return Vout;
+}
+
+/*////////////////////////////////////////////////////////////////////////////////////////
+Get Mean Function
+*/////////////////////////////////////////////////////////////////////////////////////////
+
+Eigen::MatrixXd findMean(std::vector< std::string > pointPaths, int numP){
+  Eigen::MatrixXd meanOut = Eigen::MatrixXd::Zero(numP, 3);
+  std::string inFilename;
+  for(int i = 0; i < pointPaths.size(); i++){
+    inFilename = pointPaths[i];
+    meanOut += pointReadFormat(inFilename, numP);
+  }
+  meanOut = meanOut/pointPaths.size();
+  return meanOut;
+}
+
+/*////////////////////////////////////////////////////////////////////////////////////////
+Debug Functions
+*/////////////////////////////////////////////////////////////////////////////////////////
+void printeigenvalues(Eigen::VectorXd vec){
+  std::cout << "PRINTING EIGENVALUES " << std::endl;
+  for(int i = 0; i < vec.size(); i++){ std::cout << "Number " << i << ": " << vec(i) << std::endl;}
+}
+
+void printpcamode(Eigen::MatrixXd pcaMoMat, int N, int numP){
+  std::cout << "PRINTING PCAMODE " << N << std::endl;
+  Eigen::MatrixXd outM = Eigen::Map<Eigen::MatrixXd>(pcaMoMat.col(N).data(), numP, 3);
+  std::cout << outM << std::endl;
+  // for(int i = 0; i < pcaMoMat.col(N).size(); i++){ std::cout <<  << vec(i) << std::endl;}
+
+}
+
+/*////////////////////////////////////////////////////////////////////////////////////////
+Compute PCA Mode Function
+*/////////////////////////////////////////////////////////////////////////////////////////
+
+struct eigenOut {
+  int numP;
+  int ppSize;
+  Eigen::MatrixXd pcaModes = Eigen::MatrixXd::Zero(numP*3, ppSize);
+  Eigen::VectorXd eigenvalues = Eigen::VectorXd::Zero(ppSize);
+};
+
+eigenOut findPCAModes(std::vector< std::string > pointPaths, int numP){
+  
+  eigenOut newEigenOut;
+  newEigenOut.numP = numP;
+  newEigenOut.ppSize = pointPaths.size();
+  // Create the Data Matrix and Mean Normalize it
+  Eigen::MatrixXd dataMean = findMean(pointPaths, numP);
+  Eigen::MatrixXd dataMat = Eigen::MatrixXd::Zero(numP*3, pointPaths.size());
+  Eigen::MatrixXd Vtemp;
+  std::string inFilename;
+  for(int i = 0; i < pointPaths.size(); i++){
+    inFilename = pointPaths[i];
+    Vtemp = pointReadFormat(inFilename, numP);
+    dataMat.col(i) = Eigen::Map<Eigen::VectorXd>(Vtemp.data(), Vtemp.size()) - Eigen::Map<Eigen::VectorXd>(dataMean.data(), dataMean.size());
+  }
+
+  // Find the Trick Covariance and all that jazz
+  Eigen::MatrixXd trickCov = (dataMat * dataMat.transpose())/ (pointPaths.size() - 1);
+  Eigen::SelfAdjointEigenSolver<MatrixXd> eig(trickCov);
+  if (numP*3 > pointPaths.size()){
+  newEigenOut.pcaModes = eig.eigenvectors().block(0, numP*3 - pointPaths.size(), numP*3 , pointPaths.size());
+  newEigenOut.eigenvalues = eig.eigenvalues().segment(numP*3 - pointPaths.size(), pointPaths.size());
+  }
+  else{
+  newEigenOut.pcaModes = eig.eigenvectors();
+  newEigenOut.eigenvalues = eig.eigenvalues();
+}
+  
+  return newEigenOut;
+}
 
 #endif

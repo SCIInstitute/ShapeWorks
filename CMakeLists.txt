@@ -6,4 +6,4 @@ add_executable(shapeworkspost
 
 target_include_directories(shapeworkspost PRIVATE ${LIBIGL_INCLUDE_DIRS})
 target_compile_definitions(shapeworkspost PRIVATE ${LIBIGL_DEFINITIONS})
-target_link_libraries(shapeworkspost ${LIBIGL_LIBRARIES} ${LIBIGL_VIEWER_EXTRA_LIBRARIES} ${LIBIGL_TETGEN_EXTRA_LIBRARIES} ${ITK_LIBRARIES})
+target_link_libraries(shapeworkspost ${LIBIGL_LIBRARIES} ${LIBIGL_VIEWER_EXTRA_LIBRARIES} ${LIBIGL_TETGEN_EXTRA_LIBRARIES} ${ITK_LIBRARIES} tinyxml)

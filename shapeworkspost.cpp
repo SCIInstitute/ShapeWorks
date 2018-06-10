@@ -10,6 +10,7 @@ int main()
   return EXIT_FAILURE;
 }
 #else
+#include "tinyxml.h"
 #include <nanogui/formhelper.h>
 #include <nanogui/screen.h>
 #include <nanogui/layout.h>
@@ -32,7 +33,7 @@ int main()
 #include "itkvtkFunctions.h"
 #include "computeFunctions.h"
 
-
+using namespace igl;
 using namespace std;
 using namespace Eigen;
 
@@ -76,30 +77,103 @@ MAIN ROUTINE
 
 int main(int argc, char * argv[])
 { 
+  /*////////////////////////////////////////////////////////////////////////////////////////
+  TINYXML READ PARAMETERS AND FILES
+  */////////////////////////////////////////////////////////////////////////////////////////
 
-  using namespace igl;
-  bool forward = true;
+  TiXmlDocument doc(argv[1]);
+  bool loadOkay = doc.LoadFile();
+  TiXmlHandle docHandle( &doc );
+  TiXmlElement *elem;
+
+  std::istringstream inputsBuffer;
+  std::string tmpString;
+
+  // vector of point paths
+  std::vector< std::string > pointPaths;
+  std::string repPointpath; // representative point path
+  std::string repDTpath; // representative DT path
+  int numParticles;
+
+  if(loadOkay){
+
+    elem = docHandle.FirstChild("point_files").Element();
+    if (!elem){
+      std::cerr << "ERROR : No Point Files Provided" << std::endl;
+      throw 1;
+    }
+    else{
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> tmpString){
+        pointPaths.push_back(tmpString);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+
+    elem = docHandle.FirstChild("rep_point").Element();
+    if (!elem){
+      std::cerr << "ERROR : No representative point provided" << std::endl;
+      throw 1;
+    }
+    else{
+      inputsBuffer.str(elem->GetText());
+      inputsBuffer >> repPointpath;
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+
+    elem = docHandle.FirstChild("rep_DT").Element();
+    if (!elem){
+      std::cerr << "ERROR : No representative DT provided" << std::endl;
+      throw 1;
+    }
+    else{
+      inputsBuffer.str(elem->GetText());
+      inputsBuffer >> repDTpath;
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+
+    elem = docHandle.FirstChild("num_points").Element();
+    if (!elem){
+      std::cerr << "ERROR : Provide Number of particles!" << std::endl;
+      throw 1;
+    }
+    else{
+      numParticles = atoi(elem->GetText());
+    }
+  }
   
-  igl::readOBJ(TUTORIAL_SHARED_PATH "/basemesh_new60.obj",Vref,Fref);
+  /*////////////////////////////////////////////////////////////////////////////////////////
+  DATA PROCESSING
+  */////////////////////////////////////////////////////////////////////////////////////////
+
+  // 1) Compute the template mesh and the template points
+  std::cout << "[1] Compute the template mesh ..." << std::endl;
+  itkMeshfromDT(repDTpath);
+  igl::readOBJ("TemplateMesh.obj",Vref,Fref);
   Vref *= Eigen::AngleAxisd(-90*3.14/180,
           Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
-  // Tetrahedralize the interior
-  // igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-  
-  TV = Vref;
-  TF = Fref;
-  TT = TF;
-
-  // read the text file with paths to all the control points
-  readOBJ(TUTORIAL_SHARED_PATH "/controlpoints_new60.obj", Vcontrol_static, Fcontrol_static);
+  // read the control
+  Vcontrol_static = pointReadFormat(repPointpath, numParticles);
   Vcontrol_static *= Eigen::AngleAxisd(-90*3.14/180,
           Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
-  readOBJ(TUTORIAL_SHARED_PATH "/meanshape_new60.obj", Vmean_space, Fmean_space);
+
+  // 2) Compute the transformations matrix
+  bool forward = true;
+  
+  // // Tetrahedralize the interior
+  // // igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
+  TV = Vref;
+  TF = Fref;
+  TT = TF;  
+  Vmean_space = findMean(pointPaths, numParticles);
   Vmean_space *= Eigen::AngleAxisd(-90*3.14/180,
           Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
 
-  // read the eigenvalues file and store it in a vector
-  // generate a random color matrix
+  // // read the eigenvalues file and store it in a vector
+  // // generate a random color matrix
   Eigen::MatrixXd C(Vcontrol_static.rows(), Vcontrol_static.cols());
   for(int i = 0; i<Vcontrol_static.rows(); i++){
 
@@ -111,54 +185,69 @@ int main(int argc, char * argv[])
     C(i,2) = b;
   }
 
+  // pre-computation of the W matrix
+  std::cout << "[2] W matrix one time computation" << std::endl;
+  Wvec = W_precomputation(Vcontrol_static, TV, TT, TF);
+  W = Wvec[0];
+  Vcontrol_static = Wvec[1];
+
+  std::cout << "[3] Compute PCA for the data" << std::endl;
+  eigenOut newEigenOut = findPCAModes(pointPaths, numParticles);
+  Eigen::MatrixXd pcaModes = newEigenOut.pcaModes;
+  Eigen::VectorXd eigenvalues = newEigenOut.eigenvalues;
+  pca_mode_number = eigenvalues.size() - 1;
+  // for debug write a print eigenvalues function
+  // printeigenvalues(eigenvalues);
+  // printpcamode(pcaModes, 29, numParticles);
+
   /*////////////////////////////////////////////////////////////////////////////////////////
   LOADING TEXT FILES
   */////////////////////////////////////////////////////////////////////////////////////////
 
   // read all the PCA configurations
-  vector<string> v;
-  string line;
-  ifstream myfile(TUTORIAL_SHARED_PATH "/pcapaths_new60.txt");
+  // vector<string> v;
+  // string line;
+  // ifstream myfile(TUTORIAL_SHARED_PATH "/pcapaths_new60.txt");
   
-  if(myfile.is_open()){
-    while ( getline (myfile,line) )
-      {
-        v.push_back(line);
-      }
-  }
+  // if(myfile.is_open()){
+  //   while ( getline (myfile,line) )
+  //     {
+  //       v.push_back(line);
+  //     }
+  // }
 
-  myfile.close();
+  // myfile.close();
 
-  // read all the eigenvalues
-  vector<float> eigenvalue;
-  ifstream myfile1(TUTORIAL_SHARED_PATH "/eigenvalues_new60.txt");
+  // // read all the eigenvalues
+  // vector<float> eigenvalues;
+  // ifstream myfile1(TUTORIAL_SHARED_PATH "/eigenvalues_new60.txt");
 
-  if(myfile1.is_open()){
-    while( getline (myfile1, line) ){
-      eigenvalue.push_back(stof(line));
-    }
-  }
-  myfile1.close();
+  // if(myfile1.is_open()){
+  //   while( getline (myfile1, line) ){
+  //     eigenvalue.push_back(stof(line));
+  //   }
+  // }
+  // myfile1.close();
   
   // read raw shapes
-  vector<string> v_shapes;
-  ifstream myfile2(TUTORIAL_SHARED_PATH "/shapepaths_new60.txt");
+  // vector<string> pointPaths;
+  // ifstream myfile2(TUTORIAL_SHARED_PATH "/shapepaths_new60.txt");
   
-  if(myfile2.is_open()){
-    while ( getline (myfile2,line) )
-      {
-        v_shapes.push_back(line);
-      }
-  }
-  myfile2.close();
-  // readOBJ(v_shapes[1], Vcontrol_static, Fcontrol_static);
+  // if(myfile2.is_open()){
+  //   while ( getline (myfile2,line) )
+  //     {
+  //       pointPaths.push_back(line);
+  //     }
+  // }
+  // myfile2.close();
+  // readOBJ(pointPaths[1], Vcontrol_static, Fcontrol_static);
   
 
 
   /*////////////////////////////////////////////////////////////////////////////////////////
   STARTING VIZ
   */////////////////////////////////////////////////////////////////////////////////////////
-  
+  std::cout << "[4] Starting visualization! " <<std::endl;
   Eigen::VectorXi b;
   Vtemp = W * (Vmean_space.rowwise() + RowVector3d(1,0,0));
   igl::viewer::Viewer viewer;
@@ -268,10 +357,11 @@ int main(int argc, char * argv[])
           int rounded = (int)(y + 0.5);
           sig = (float) rounded / 10.0;
 
-          readOBJ(v[pca_mode_number], Vpca_mode, Fpca_mode);
+          Vpca_mode = Eigen::Map<Eigen::MatrixXd>(pcaModes.col(pca_mode_number).data(), numParticles, 3);
+
           Vpca_mode *= Eigen::AngleAxisd(-90*3.14/180,
           Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
-          V = mode_variation(Vpca_mode, Vmean_space, eigenvalue[pca_mode_number], sig);
+          V = mode_variation(Vpca_mode, Vmean_space, eigenvalues(pca_mode_number), sig);
           Vtemp = W * (V.rowwise() + RowVector3d(1,0,0));
           viewer.data.set_vertices(Vtemp);
 
@@ -441,9 +531,9 @@ int main(int argc, char * argv[])
     intBox->setValue(0);
     // intBox->setFormat("[1-30][0-30]*");
     intBox->setCallback([&,intBox](int value){
-      pca_mode_number = value;
+      pca_mode_number = eigenvalues.size() - value - 1;
       
-      if(value > v.size() - 1) pca_mode_number = v.size() - 1;
+      if(value > pointPaths.size() - 1) pca_mode_number = pointPaths.size() - 1;
       intBox->setValue(value);
     });
     }
@@ -468,12 +558,13 @@ int main(int argc, char * argv[])
     // intBox->setFormat("[1-30][0-30]*");
 
     intBox->setCallback([&,intBox](int value){
-      if(disp_shape && value < v_shapes.size()){
+      if(disp_shape && value < pointPaths.size()){
 
         viewer.data.clear();
-        readOBJ(v_shapes[value], Vshape, Fshape);
+        Vshape = pointReadFormat(pointPaths[value], numParticles);
         // find the point interpolation
-  
+        Vshape *= Eigen::AngleAxisd(-90*3.14/180,
+          Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
         Vtemp = W * (Vshape.rowwise() + RowVector3d(1,0,0));
         viewer.data.set_mesh(TV, TF);
         viewer.data.set_vertices(Vtemp);
@@ -484,463 +575,9 @@ int main(int argc, char * argv[])
         viewer.data.compute_normals();
         intBox->setValue(value);
       }
-      // if(value == 1){
-      //   viewer.data.clear();
-      //   readOBJ(v_shapes[value], Vshape, Fshape);
-      //   viewer.data.set_mesh(Vref, Fref);
-      //   if(points_flag){
-      //         viewer.data.set_points(Vshape, C);
-      //   }
-      //   viewer.data.set_colors(mesh_diffuse_color);
-      //   viewer.data.compute_normals();
-      //   intBox->setValue(value);
-      // }
       
     });
     }
-    
-    /*////////////////////////////////////////////////////////////////////////////////////////
-    TOGGLE BETWEEN DATA
-    */////////////////////////////////////////////////////////////////////////////////////////
-    // {
-      new nanogui::Label(window, "Dataset", "sans-bold");
-      nanogui::ComboBox *selector = new nanogui::ComboBox(window, { "30 young heads", "Normative-MRI", "CT-Metopic", 
-        "JM 1024 Normal", "JM 1024 Metopic", "JM W/O Size 1024 Normal", "JM W/O Size 1024 Metopic", "Hands", "New Joint Model"});
-      selector->setSelectedIndex(0);
-
-      selector->setCallback([&,selector](int value){
-          if(value == data_val){
-              cout << "It's the same" << endl;
-          }
-          else{
-            ///////////////////////// For the 30 shapes ///////////////////////////
-            if(value == 0){
-              cout << "30 clean head shapes" << endl;
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/tissue_cut33.obj",Vref,Fref);
-
-              // Tetrahedralize the interior
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-              // read the text file with paths to all the control points
-              readOBJ(TUTORIAL_SHARED_PATH "/pts.06_500.obj", Vcontrol_static, Fcontrol_static);
-              readOBJ(TUTORIAL_SHARED_PATH "/meanshape.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/pcamodepaths.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  {
-                    v.push_back(line);
-                  }
-              }
-              myfile.close();
-
-              // read all the eigenvalues
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/eigenvalues.txt");
-              eigenvalue.clear();
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              myfile1.close();
-              
-              // read raw shapes
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/shapepaths.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            ///////////////////////// For the CT-Metopic heads ///////////////////////////
-            else if(value == 2){
-              cout << "The CT Metopic heads" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/ctmetopic_basemesh.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/ctmetopic_cp.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/ctmetopic_meanshape.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/ctmetopic_pcamodepaths.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/ctmetopic_eigenvalues.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/ctmetopic_shapepaths.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            else if(value == 3){
-              cout << "Normative from Joint Model with 1024 points" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/jm_normative_basemesh.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_normative_cp_1024.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_normative_meanshape_1024.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/jm_normative_pcamodepaths_1024.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/jm_normative_eigenvalues_1024.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/jm_normative_shapepaths_1024.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            else if(value == 5){
-              cout << "Normative without size from Joint Model with 1024 points" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/jm_normative_basemesh_wos.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_normative_cp_wos1024.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_normative_meanshape_wos1024.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/jm_normative_pcamodepaths_wos1024.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/jm_normative_eigenvalues_wos1024.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/jm_normative_shapepaths_wos1024.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            else if(value == 4){
-              cout << "CT Metopic from Joint Model with 1024 points" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/jm_pathological_basemesh_2.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_pathological_cp_1024.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_pathological_meanshape_1024.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/jm_pathological_pcamodepaths_1024.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/jm_pathological_eigenvalues_1024.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/jm_pathological_shapepaths_1024.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            else if(value == 6){
-              cout << "CT Metopic without size from Joint Model with 1024 points" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/jm_pathological_basemesh_wos.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_pathological_cp_wos1024.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/jm_pathological_meanshape_wos1024.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/jm_pathological_pcamodepaths_wos1024.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/jm_pathological_eigenvalues_wos1024.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/jm_pathological_shapepaths_wos1024.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            else if(value == 7){
-              cout << "Hands Dataset with 1024 points" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/hands_basemesh.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/hands_controlpoints.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/hands_meanshape.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/hands_pcapaths.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/hands_eigenvalues.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/hands_shapepaths.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            else if(value == 8){
-              cout << "New Joint Model" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/new_jm_basemesh.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/new_jm_controlpoints.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/new_jm_meanshape.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/new_jm_pcapaths.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/new_jm_eigenvalues.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/new_jm_shapepaths.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-            
-            
-            
-            ///////////////////////// For the 1year 100 Normal MRI scans ///////////////////////////
-            else{
-              cout << "The 100 normative MRI skin shapes" << endl;
-
-              igl::readOBJ(TUTORIAL_SHARED_PATH "/normativemri_basemesh.obj",Vref,Fref);
-  
-              igl::copyleft::tetgen::tetrahedralize(Vref,Fref,"pYa500", TV,TT,TF);
-
-              readOBJ(TUTORIAL_SHARED_PATH "/normativemri_cp.obj", Vcontrol_static, Fcontrol_static);
-              
-              readOBJ(TUTORIAL_SHARED_PATH "/normativemri_mean.obj", Vmean_space, Fmean_space);
-
-              ifstream myfile(TUTORIAL_SHARED_PATH "/normativemri_pcamodepaths.txt");
-              v.clear();
-              if(myfile.is_open()){
-                while ( getline (myfile,line) )
-                  { 
-                    v.push_back(line);
-                  }
-              }
-              // cout << v.size() << endl;
-              myfile.close();
-
-              // read all the eigenvalues
-              eigenvalue.clear();
-              ifstream myfile1(TUTORIAL_SHARED_PATH "/normativemri_eigenvalues.txt");
-
-              if(myfile1.is_open()){
-                while( getline (myfile1, line) ){
-                  eigenvalue.push_back(stof(line));
-                }
-              }
-              
-              myfile1.close();
-
-              
-              ifstream myfile2(TUTORIAL_SHARED_PATH "/normativemri_shapepaths.txt");
-              v_shapes.clear();
-              if(myfile2.is_open()){
-                while ( getline (myfile2,line) )
-                  {
-                    v_shapes.push_back(line);
-                  }
-              }
-              myfile2.close();
-            }
-
-            // we will always have to recompute the the W matrix
-            Wvec = W_precomputation(Vcontrol_static, TV, TT, TF);
-            W = Wvec[0];
-            Vtemp = W * (Vmean_space.rowwise() + RowVector3d(1,0,0));
-            viewer.data.clear();
-            viewer.data.set_mesh(TV, TF);
-            viewer.data.set_vertices(Vtemp);
-            viewer.data.set_colors(mesh_diffuse_color);
-            V = Vmean_space;
-            if(points_flag){viewer.data.set_points(V,C);}
-            data_val = value;
-          }
-      });
 
     // }
     /*////////////////////////////////////////////////////////////////////////////////////////
@@ -955,11 +592,11 @@ int main(int argc, char * argv[])
       if(viewer.core.is_animating)
       {
           
-            readOBJ(v[pca_mode_number], Vpca_mode, Fpca_mode);
+            Vpca_mode = Eigen::Map<Eigen::MatrixXd>(pcaModes.col(pca_mode_number).data(), numParticles, 3);
             Vpca_mode *= Eigen::AngleAxisd(-90*3.14/180,
           Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
             // find the point interpolation
-            V = mode_variation(Vpca_mode, Vmean_space, eigenvalue[pca_mode_number], sig);
+            V = mode_variation(Vpca_mode, Vmean_space, eigenvalues(pca_mode_number), sig);
             Vtemp = W * (V.rowwise() + RowVector3d(1,0,0));
             viewer.data.set_vertices(Vtemp);
 
