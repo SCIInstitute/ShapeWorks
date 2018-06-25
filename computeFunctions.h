@@ -147,13 +147,14 @@ Compute PCA Mode Function
 struct eigenOut {
   int numP;
   int ppSize;
-  Eigen::MatrixXd pcaModes = Eigen::MatrixXd::Zero(numP*3, ppSize);
-  Eigen::VectorXd eigenvalues = Eigen::VectorXd::Zero(ppSize);
+  Eigen::MatrixXd pcaModes;// = Eigen::MatrixXd::Zero(numP*3, ppSize);
+  Eigen::VectorXd eigenvalues;// = Eigen::VectorXd::Zero(ppSize);
 };
 
 eigenOut findPCAModes(std::vector< std::string > pointPaths, int numP){
-  
+    
   eigenOut newEigenOut;
+    std::cout << "[1] THE BIG BAD" <<std::endl;
   newEigenOut.numP = numP;
   newEigenOut.ppSize = pointPaths.size();
   // Create the Data Matrix and Mean Normalize it
