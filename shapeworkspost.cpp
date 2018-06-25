@@ -201,50 +201,6 @@ int main(int argc, char * argv[])
   // printpcamode(pcaModes, 29, numParticles);
 
   /*////////////////////////////////////////////////////////////////////////////////////////
-  LOADING TEXT FILES
-  */////////////////////////////////////////////////////////////////////////////////////////
-
-  // read all the PCA configurations
-  // vector<string> v;
-  // string line;
-  // ifstream myfile(TUTORIAL_SHARED_PATH "/pcapaths_new60.txt");
-  
-  // if(myfile.is_open()){
-  //   while ( getline (myfile,line) )
-  //     {
-  //       v.push_back(line);
-  //     }
-  // }
-
-  // myfile.close();
-
-  // // read all the eigenvalues
-  // vector<float> eigenvalues;
-  // ifstream myfile1(TUTORIAL_SHARED_PATH "/eigenvalues_new60.txt");
-
-  // if(myfile1.is_open()){
-  //   while( getline (myfile1, line) ){
-  //     eigenvalue.push_back(stof(line));
-  //   }
-  // }
-  // myfile1.close();
-  
-  // read raw shapes
-  // vector<string> pointPaths;
-  // ifstream myfile2(TUTORIAL_SHARED_PATH "/shapepaths_new60.txt");
-  
-  // if(myfile2.is_open()){
-  //   while ( getline (myfile2,line) )
-  //     {
-  //       pointPaths.push_back(line);
-  //     }
-  // }
-  // myfile2.close();
-  // readOBJ(pointPaths[1], Vcontrol_static, Fcontrol_static);
-  
-
-
-  /*////////////////////////////////////////////////////////////////////////////////////////
   STARTING VIZ
   */////////////////////////////////////////////////////////////////////////////////////////
   std::cout << "[4] Starting visualization! " <<std::endl;
@@ -254,7 +210,7 @@ int main(int argc, char * argv[])
   viewer.data.set_mesh(TV, TF);
   viewer.data.set_vertices(Vtemp);
   viewer.data.set_colors(mesh_diffuse_color);
-  viewer.core.invert_normals = true;
+  viewer.core.invert_normals = false;
   V = Vmean_space;
   viewer.data.set_points(V,C);
     viewer.callback_key_pressed = 

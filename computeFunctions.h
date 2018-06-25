@@ -137,7 +137,6 @@ void printpcamode(Eigen::MatrixXd pcaMoMat, int N, int numP){
   Eigen::MatrixXd outM = Eigen::Map<Eigen::MatrixXd>(pcaMoMat.col(N).data(), numP, 3);
   std::cout << outM << std::endl;
   // for(int i = 0; i < pcaMoMat.col(N).size(); i++){ std::cout <<  << vec(i) << std::endl;}
-
 }
 
 /*////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +153,6 @@ struct eigenOut {
 eigenOut findPCAModes(std::vector< std::string > pointPaths, int numP){
     
   eigenOut newEigenOut;
-    std::cout << "[1] THE BIG BAD" <<std::endl;
   newEigenOut.numP = numP;
   newEigenOut.ppSize = pointPaths.size();
   // Create the Data Matrix and Mean Normalize it
