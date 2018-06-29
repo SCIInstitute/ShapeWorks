@@ -62,7 +62,6 @@ option(BUILD_MeshTools ON)
 option(BUILD_FileFormatTools ON)
 option(BUILD_AlignmentTools ON)
 option(BUILD_DataFormatTools ON)
-option(BUILD_DebugTools ON)
 
 file(
 	GLOB
