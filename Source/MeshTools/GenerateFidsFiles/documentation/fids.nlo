@@ -1,0 +1,7 @@
+\nomenclatureentry{a$F$@[{$F$}]\begingroup feature volume\nomeqref {1}|nompageref}{2}
+\nomenclatureentry{a$\Omega$@[{$\Omega$}]\begingroup image domain($\Re^3$)\nomeqref {1}|nompageref}{2}
+\nomenclatureentry{a$M$@[{$M$}]\begingroup surface mesh\nomeqref {1}|nompageref}{2}
+\nomenclatureentry{a$\Vv$@[{$\Vv$}]\begingroup vertices $\in M$\nomeqref {1}|nompageref}{2}
+\nomenclatureentry{a$\Ff$@[{$\Ff$}]\begingroup faces $\in M$\nomeqref {1}|nompageref}{2}
+\nomenclatureentry{a$\mathcal{N}$@[{$\mathcal{N}$}]\begingroup narrow-band $\in \Omega$\nomeqref {1}|nompageref}{2}
+\nomenclatureentry{a$\mathcal{S}$@[{$\mathcal{S}$}]\begingroup set of attributes for each vertex\nomeqref {1}|nompageref}{2}

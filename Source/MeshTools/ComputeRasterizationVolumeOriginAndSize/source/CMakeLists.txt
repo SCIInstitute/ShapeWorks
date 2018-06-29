@@ -1,0 +1,6 @@
+ 
+PROJECT(ComputeRasterizationVolumeOriginAndSize)
+cmake_minimum_required(VERSION 2.8)
+ADD_EXECUTABLE(ComputeRasterizationVolumeOriginAndSize ComputeRasterizationVolumeOriginAndSize.cxx ${source_files})
+TARGET_LINK_LIBRARIES(ComputeRasterizationVolumeOriginAndSize ${VTK_LIBRARIES} tinyxml)
+INSTALL(TARGETS ComputeRasterizationVolumeOriginAndSize  RUNTIME DESTINATION .)

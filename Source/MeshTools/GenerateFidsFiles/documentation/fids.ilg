@@ -1,0 +1,14 @@
+This is makeindex, version 2.15 [TeX Live 2012] (kpathsea + Thai support).
+Scanning style file ./nomencl.ist.......
+** Input style error (file = ./nomencl.ist, line = 70):
+   -- Unknown specifier lethead_prefix.
+** Input style error (file = ./nomencl.ist, line = 71):
+   -- Unknown specifier lethead_suffix.
+** Input style error (file = ./nomencl.ist, line = 72):
+   -- Unknown specifier lethead_flag.
+...done (10 attributes redefined, 3 ignored).
+Scanning input file fids.nlo....done (7 entries accepted, 0 rejected).
+Sorting entries....done (23 comparisons).
+Generating output file fids.nls....done (17 lines written, 0 warnings).
+Output written in fids.nls.
+Transcript written in fids.ilg.
