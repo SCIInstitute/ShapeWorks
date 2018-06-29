@@ -6,12 +6,13 @@ cmake_minimum_required(VERSION 2.6)
 #SET(VTK_DIR "/scratch/TOOLKITS/VTK5.10.1-BUILD")
 #SET(FLTK_DIR "/scratch/TOOLKITS/fltk-1.1.10")
 
-SET(ITK_DIR "/Users/prafulag/Installations/Build/ITK-4.7.2")
-SET(VTK_DIR "/Users/prafulag/Installations/Build/VTK-5.10.1")
-SET(FLTK_DIR "/home/sci/prafulag/BuildDIR/fltk-1.1.10")
-SET(VXL_DIR "/Users/prafulag/Installations/Build/vxl")
+SET(ITK_DIR "~/BuildDIR/ITK-4.7.2")
+SET(VTK_DIR "~/BuildDIR/VTK-5.10.1")
+SET(FLTK_DIR "~/BuildDIR/fltk-1.1.10")
+SET(VXL_DIR "~/BuildDIR/vxl")
 SET(USE_VTK 1)
-SET(CMAKE_BUILD_TYPE DEBUG)
+SET(CMAKE_BUILD_TYPE RELEASE)
+#SET(CMAKE_BUILD_TYPE DEBUG)
 #-------------------------------
 
 SET(VALGRIND_COMPILE_FLAGS "-g -O1")
