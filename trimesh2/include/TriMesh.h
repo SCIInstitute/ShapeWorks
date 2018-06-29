@@ -493,7 +493,7 @@ public:
         }
         else{
             std::cout  << "Impossible SpeedType set" << std::endl;
-            exit(1337);
+            throw(1); //exit(1337);
         }
     }
     void need_tstrips();
@@ -3745,7 +3745,8 @@ public:
         std::ifstream infile(infilename, std::ios::binary);
         if (!infile.is_open())
         {
-            std::cout << "File Not Found" << std::endl;
+            std::cerr << "File Not Found: " << infilename << std::endl;
+            throw(1);
         }
         else
         {
@@ -3755,11 +3756,12 @@ public:
 
             if ( numVert != this->vertices.size() )
             {
-                std::cout << "size of feature vector does not match # vertices in mesh" << std::endl;
+                std::cerr << "size of feature vector does not match # vertices in mesh" << std::endl;
+                throw(1);
             }
             else
             {
-                std::cout << "reading feature from file " << infilename << std::endl;
+//                std::cout << "reading feature from file " << infilename << std::endl;
 
                 vector< float > tmpFeatureVec;
                 // loop over vertices
@@ -3784,11 +3786,12 @@ public:
         std::ifstream infile(infilename);
         if (!infile.is_open())
         {
-            std::cout << "File Not Found" << std::endl;
+            std::cerr << "File Not Found" << std::endl;
+            throw(1); //exit(1);
         }
         else
         {
-            std::cout << "reading feature from file " << infilename << std::endl;
+//            std::cout << "reading feature from file " << infilename << std::endl;
 
             vector< float > tmpFeatureVec;
             float value;
@@ -3807,8 +3810,8 @@ public:
             }
             else
             {
-                std::cout << "size of feature vector does not match # vertices in the mesh ! Aborting..." << std::endl;
-                exit(1);
+                std::cerr << "size of feature vector does not match # vertices in the mesh ! Aborting..." << std::endl;
+                throw(1);//exit(1);
             }
 
             infile.close();
@@ -3822,7 +3825,8 @@ public:
         std::ifstream infile(infilename);
         if (!infile.is_open())
         {
-            std::cout << "File Not Found" << std::endl;
+            std::cerr << "File Not Found" << std::endl;
+            throw(1);//exit(1);
         }
         else
         {
@@ -3832,11 +3836,12 @@ public:
 
             if ( numVert != this->vertices.size() )
             {
-                std::cout << "size of feature vector does not match # vertices in mesh" << std::endl;
+                std::cerr << "size of feature vector does not match # vertices in mesh" << std::endl;
+                throw(1); //exit(1);
             }
             else
             {
-                std::cout << "reading feature gradient from file " << infilename << std::endl;
+//                std::cout << "reading feature gradient from file " << infilename << std::endl;
 
                 vector<point> tempFeatureGradVec;
                 // loop over vertices

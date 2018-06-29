@@ -284,7 +284,7 @@ void meshFIM::GenerateReducedData()
     for (int currentVert= 0; currentVert< m_meshPtr->vertices.size(); currentVert++ )
     {
         // if ((currentVert%100) == 0)
-        std::cout << "vertex " << currentVert+1 << " of " << m_meshPtr->vertices.size() << " vertices ..." << std::endl;
+//        std::cout << "vertex " << currentVert+1 << " of " << m_meshPtr->vertices.size() << " vertices ..." << std::endl;
 
         std::vector<int> seedPointList(1, currentVert);
         SetSeedPoint(seedPointList);
@@ -425,14 +425,14 @@ void meshFIM::GenerateReducedData()
 // SHIREEN - modified the loading to control the generation of geo files (till we add the geo repulsion stuff)
 void meshFIM::loadGeodesicFile(TriMesh *mesh, const char *geoFileName)
 {
-    cout << "Looking for file: " << geoFileName << " ... " << flush;
+//    cout << "Looking for file: " << geoFileName << " ... " << flush;
 
     ifstream infile(geoFileName, std::ios::binary);
     if (!infile.is_open())
     {
         if(GENERATE_GEO_FILES == 1)
         {
-            cout << "File Not Found, will generate the geo file now ..." << endl;
+//            cout << "File Not Found, will generate the geo file now ..." << endl;
 
             int numVert = mesh->vertices.size();
             //mesh->geoMap.resize(numVert);
@@ -442,8 +442,8 @@ void meshFIM::loadGeodesicFile(TriMesh *mesh, const char *geoFileName)
 
             this->computeFIM(mesh,geoFileName);
         }
-        else
-            cout << "File Not Found and geo file generation is DISABLED ..." << endl;
+//        else
+//            cout << "File Not Found and geo file generation is DISABLED ..." << endl;
     }
     else
     {
