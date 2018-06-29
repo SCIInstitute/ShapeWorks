@@ -36,7 +36,7 @@ Class for triangle meshes.
 //#define SHOW_WARNING 1
 
 #define NUM_THREADS 8
-#define MP_USE_OPENMP //-- should be in cmake
+//#define MP_USE_OPENMP //-- should be in cmake
 
 #ifdef MP_USE_OPENMP
 #include <omp.h> // -- PM
@@ -1908,7 +1908,9 @@ public:
 
         //#pragma omp parallel private(tn,fid,narrowBandIt)
         {
+#ifdef MP_USE_OPENMP
             tn = omp_get_thread_num();
+#endif
             std::cout << "\nExecuting thread : " << tn << std::endl;
             while( stop != 0 ) {
                 //#pragma omp critical
