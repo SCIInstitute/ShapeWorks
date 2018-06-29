@@ -1,0 +1,52 @@
+OS tested - MacOS High Sierra 10.13 October 12, 2017
+
+NEVER DO MAKE INSTALL UNLESS YOU ARE SURE WHAT YOU ARE DOING, MAKE IS SUFFICIENT
+
+homebrew - would recommend installing in user directory
+
+Qt4 - Install Qt4 using homebrew. Steps:
+
+brew tap cartr/qt4
+brew tap-pin cartr/qt4
+brew install qt@4
+
+
+VXL - https://github.com/vxl/vxl <Download from here, only stable version which works with MacOS High Sierra, there are two more sources which are not supported anymore, going through their ReadMe files will lead here.
+
+ITK-4.7.2 - turn on USE_SYSTEM_VXL and provide path of vxl build
+
+http://review.source.kitware.com/#/c/22043/1/Modules/ThirdParty/VNL/src/vxl/v3p/netlib/linalg/lsqrBase.cxx
+https://github.com/vxl/vxl/issues/311
+
+VTK-5.10.1
+
+download the zip from  https://www.vtk.org/gitweb?p=VTK.git;a=tags 
+ 
+Apply following edits to the code files to make it work on MacOS High Sierra
+
+tif_config.h.in
+
+Replace following code:
+
+#ifndef __cplusplus
+#define inline
+//#cmakedefine inline
+#endif
+
+with:
+
+#ifndef __cplusplus
+#  ifdef _MSC_VER
+#    define inline
+#  endif
+#endif
+
+
+Follow this link if find anymore issues:
+https://gitlab.kitware.com/vtk/vtk/issues/14359
+
+CMAKE Changes:
+
+turn on USE_QT and USE_GUISUPPORT
+
+required qmake path will be available from brew installation. 
