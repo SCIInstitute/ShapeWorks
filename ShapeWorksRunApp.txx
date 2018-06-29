@@ -1390,38 +1390,28 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
 
     if (m_use_shape_statistics_in_init)
     {
-        if (*std::min_element(m_number_of_particles.begin(), m_number_of_particles.end()) < 32)
+        if (m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
         {
-            if ((m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes)
-                m_Sampler->SetCorrespondenceMode(6);
+            if (m_mesh_based_attributes)
+                m_Sampler->SetCorrespondenceMode(5);
             else
-                m_Sampler->SetCorrespondenceMode(0);
+                m_Sampler->SetCorrespondenceMode(2);
         }
         else
         {
-            if (m_attributes_per_domain.size() > 0 && *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0)
-            {
-                if (m_mesh_based_attributes)
-                    m_Sampler->SetCorrespondenceMode(5);
-                else
-                    m_Sampler->SetCorrespondenceMode(2);
-            }
+            if (m_mesh_based_attributes)
+                m_Sampler->SetCorrespondenceMode(5);
             else
-            {
-                if (m_mesh_based_attributes)
-                    m_Sampler->SetCorrespondenceMode(5);
-                else
-                    m_Sampler->SetCorrespondenceMode(1);
-            }
-
-            m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
-                                                                             m_ending_regularization,
-                                                                             m_iterations_per_split);
-
-            m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
-                                                                                             m_ending_regularization,
-                                                                                             m_iterations_per_split);
+                m_Sampler->SetCorrespondenceMode(1);
         }
+
+        m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                         m_ending_regularization,
+                                                                         m_iterations_per_split);
+
+        m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                                         m_ending_regularization,
+                                                                                         m_iterations_per_split);
     }
     else
     {
