@@ -24,10 +24,10 @@ int main()
 #include <nanogui/colorwheel.h>
 #include <nanogui/popupbutton.h>
 
-#include <igl/readOBJ.h>
 #include <igl/remove_unreferenced.h>
 #include <igl/slice.h>
 #include <igl/readOBJ.h>
+#include <igl/readPLY.h>
 #include <igl/viewer/Viewer.h>
 #include <Eigen/Sparse>
 #include "itkvtkFunctions.h"
@@ -91,10 +91,14 @@ int main(int argc, char * argv[])
 
   // vector of point paths
   std::vector< std::string > pointPaths;
-  std::string repPointpath; // representative point path
-  std::string repDTpath; // representative DT path
-  int numParticles;
+  std::string repPointpath  ("") ; // representative point path
+  std::string repDTpath ("");  // representative DT path
+  std::string repMeshpath ("");
 
+  std::cout << "Initial String Length : " << repPointpath.length() <<std::endl;
+  int numParticles;
+  int meshDecimationFlag = 0;
+  float meshDecimationPercentage = 1.00;
   if(loadOkay){
 
     elem = docHandle.FirstChild("point_files").Element();
@@ -125,12 +129,24 @@ int main(int argc, char * argv[])
 
     elem = docHandle.FirstChild("rep_DT").Element();
     if (!elem){
-      std::cerr << "ERROR : No representative DT provided" << std::endl;
-      throw 1;
+      // std::cerr << "ERROR : No representative DT provided" << std::endl;
+      // throw 1;
     }
     else{
       inputsBuffer.str(elem->GetText());
       inputsBuffer >> repDTpath;
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+
+    elem = docHandle.FirstChild("rep_mesh").Element();
+    if (!elem){
+      // std::cerr << "ERROR : No representative DT provided" << std::endl;
+      // throw 1;
+    }
+    else{
+      inputsBuffer.str(elem->GetText());
+      inputsBuffer >> repMeshpath;
       inputsBuffer.clear();
       inputsBuffer.str("");
     }
@@ -143,16 +159,61 @@ int main(int argc, char * argv[])
     else{
       numParticles = atoi(elem->GetText());
     }
+
+    elem = docHandle.FirstChild("mesh_decimation_on").Element();
+    if (!elem){
+      // std::cerr << "ERROR : Provide Number of particles!" << std::endl;
+      // throw 1;
+    }
+    else{
+      meshDecimationFlag = atoi(elem->GetText());
+    }
+
+    elem = docHandle.FirstChild("mesh_decimation_percent").Element();
+    if (!elem){
+      // std::cerr << "ERROR : Provide Number of particles!" << std::endl;
+      // throw 1;
+    }
+    else{
+      meshDecimationPercentage = atof(elem->GetText());
+    }
   }
   
+  if(repMeshpath.length() == 0 && repDTpath.length() == 0){
+    std::cerr << "Specify Either a representative distance transform" << std::endl;
+    std::cerr << " or a PLY mesh" <<std::endl;
+    throw 1;
+  }
+
+  int whichDataType = 0;
+  if(repMeshpath.length() != 0){whichDataType = 1;}
+  else{ whichDataType = 0;}
   /*////////////////////////////////////////////////////////////////////////////////////////
   DATA PROCESSING
   */////////////////////////////////////////////////////////////////////////////////////////
 
   // 1) Compute the template mesh and the template points
   std::cout << "[1] Compute the template mesh ..." << std::endl;
+
+  // add mesh decimation routine 
+  if(!whichDataType){
   itkMeshfromDT(repDTpath);
+  if(meshDecimationFlag){
+    std::cout << "Performing Mesh Decimation for Faster Computation" <<std::endl;
+    // add the function here
+  }
   igl::readOBJ("TemplateMesh.obj",Vref,Fref);
+  }
+  else{
+    std::cout << "Read PLY " <<std::endl;
+    if(meshDecimationFlag){
+    std::cout << "Performing Mesh Decimation for Faster Computation" <<std::endl;
+    // add the function here
+    }
+    igl::readPLY(repMeshpath.c_str(), Vref, Fref);
+  }
+
+
   Vref *= Eigen::AngleAxisd(-90*3.14/180,
           Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
   // read the control
@@ -213,6 +274,7 @@ int main(int argc, char * argv[])
   viewer.core.invert_normals = false;
   V = Vmean_space;
   viewer.data.set_points(V,C);
+  // std::cout << "This is the first error " << std::endl;
     viewer.callback_key_pressed = 
       [&](igl::viewer::Viewer & viewer,unsigned int key,int mods)->bool
     {
@@ -222,7 +284,7 @@ int main(int argc, char * argv[])
           return false;
       }
     };
-
+  viewer.core.is_animating = true;
   // set viewer call back init with all the nanogui functionality
 
   viewer.callback_init = [&](igl::viewer::Viewer& viewer)
@@ -273,7 +335,7 @@ int main(int argc, char * argv[])
     nanogui::CheckBox *cb_animate = new nanogui::CheckBox(window, "Animate",
             [&](bool state) { viewer.core.is_animating = state; }
         );
-    cb_animate->setChecked(false);
+    cb_animate->setChecked(true);
 
     // Checkbox for displaying the direct shapes
     nanogui::CheckBox *cb_displayshapes = new nanogui::CheckBox(window, "Display shapes",
@@ -319,6 +381,7 @@ int main(int argc, char * argv[])
           Eigen::Vector3d(-1,0,-0)).toRotationMatrix(); 
           V = mode_variation(Vpca_mode, Vmean_space, eigenvalues(pca_mode_number), sig);
           Vtemp = W * (V.rowwise() + RowVector3d(1,0,0));
+          // std::cout << "All get fixed " <<std::endl;
           viewer.data.set_vertices(Vtemp);
 
           // display the overlay control points if the flag is true
