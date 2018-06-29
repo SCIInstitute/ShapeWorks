@@ -1,9 +1,9 @@
 PROJECT(SHAPEWORKS)
 cmake_minimum_required(VERSION 2.6)
 
-SET(ITK_DIR "~/BuildDIR/ITK-4.7.2")
-SET(VXL_DIR "~/BuildDIR/vxl")
-SET(USE_VTK 1)
+SET(ITK_DIR "/Users/prafulag/Installations/Build/ITK-4.7.2")
+SET(VTK_DIR "/Users/prafulag/Installations/Build/VTK-5.10.1")
+SET(VXL_DIR "/Users/prafulag/Installations/Build/vxl")
 SET(CMAKE_BUILD_TYPE RELEASE)
 
 SET(VALGRIND_COMPILE_FLAGS "-g -O1")
@@ -25,6 +25,14 @@ if(ITK_FOUND)
 else(ITK_FOUND)
   message(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
 endif(ITK_FOUND)
+
+# Configure VTK -- REQUIRED
+FIND_PACKAGE(VTK REQUIRED)
+IF (VTK_FOUND)
+INCLUDE (${VTK_USE_FILE})
+ELSE(VTK_FOUND)
+MESSAGE(FATAL_ERROR "VTK (The Visualization Toolkit) is required for ShapeWorksView and ShapeWorksShop, but could not be found.")
+ENDIF (VTK_FOUND)
 
 # Optionally build with mesh support (requires linking against trimesh library)
 option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
