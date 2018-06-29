@@ -13,6 +13,8 @@
 #include "itkMeshFileWriter.h"
 #include "itkMultiplyImageFilter.h"
 #include "itkAddImageFilter.h"
+#include "itkMeshFileReader.h"
+#include "itkMesh.h"
 
 // VTK Dependencies
 
@@ -22,7 +24,29 @@
 3) Points to Mesh Conversion
 4) ...
 */
- 
+void convertVTKtoOBJ(std::string inputFileName){
+  const unsigned int Dimension = 3;
+  typedef float TCoordinate;
+
+  typedef itk::Mesh< TCoordinate, Dimension > TMesh;
+  typedef itk::MeshFileReader< TMesh > TReader;
+  typedef itk::MeshFileWriter< TMesh > TWriter;
+  TReader::Pointer reader = TReader::New();
+  reader->SetFileName(inputFileName.c_str());
+  
+  TWriter::Pointer writer = TWriter::New();
+  writer->SetFileName( "TemplateMesh.obj" );
+  writer->SetInput( reader->GetOutput() );
+  try
+    {
+    writer->Update();
+    }
+  catch( itk::ExceptionObject & error )
+    {
+    std::cerr << "Error: " << error << std::endl;
+    }
+
+}
 
 void itkMeshfromDT(std::string inputFileName){
 

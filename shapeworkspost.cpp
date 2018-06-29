@@ -27,7 +27,7 @@ int main()
 #include <igl/remove_unreferenced.h>
 #include <igl/slice.h>
 #include <igl/readOBJ.h>
-#include <igl/readPLY.h>
+// #include <igl/readSTL.h>
 #include <igl/viewer/Viewer.h>
 #include <Eigen/Sparse>
 #include "itkvtkFunctions.h"
@@ -95,7 +95,6 @@ int main(int argc, char * argv[])
   std::string repDTpath ("");  // representative DT path
   std::string repMeshpath ("");
 
-  std::cout << "Initial String Length : " << repPointpath.length() <<std::endl;
   int numParticles;
   int meshDecimationFlag = 0;
   float meshDecimationPercentage = 1.00;
@@ -188,6 +187,7 @@ int main(int argc, char * argv[])
   int whichDataType = 0;
   if(repMeshpath.length() != 0){whichDataType = 1;}
   else{ whichDataType = 0;}
+
   /*////////////////////////////////////////////////////////////////////////////////////////
   DATA PROCESSING
   */////////////////////////////////////////////////////////////////////////////////////////
@@ -205,12 +205,12 @@ int main(int argc, char * argv[])
   igl::readOBJ("TemplateMesh.obj",Vref,Fref);
   }
   else{
-    std::cout << "Read PLY " <<std::endl;
     if(meshDecimationFlag){
     std::cout << "Performing Mesh Decimation for Faster Computation" <<std::endl;
     // add the function here
     }
-    igl::readPLY(repMeshpath.c_str(), Vref, Fref);
+    convertVTKtoOBJ(repMeshpath);
+    igl::readOBJ("TemplateMesh.obj",Vref,Fref);
   }
 
 

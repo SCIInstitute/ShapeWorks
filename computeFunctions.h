@@ -7,14 +7,11 @@
 #include <igl/cat.h>
 #include <igl/cotmatrix.h>
 #include <igl/matrix_to_list.h>
-#include <igl/parula.h>
 #include <igl/copyleft/tetgen/tetrahedralize.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <igl/readOBJ.h>
 #include <igl/remove_unreferenced.h>
 #include <igl/slice.h>
-#include <igl/readMESH.h>
-#include <igl/readOBJ.h>
 #include <igl/viewer/Viewer.h>
 #include <Eigen/Sparse>
 #include <fstream>
