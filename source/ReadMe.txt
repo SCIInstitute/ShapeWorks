@@ -1,10 +1,10 @@
-From now onwards fim library is hosted in a separate repository at https://prafulag@bitbucket.org/sheryjoe/fim_v4
+fim library is hosted at https://<your_bitbucket_username>@bitbucket.org/sheryjoe/fim_v4
 It is added as a submodule
 
-1. Cloning a fresh hipworks repository:
-    - git clone git@bitbucket.org:prafulag/hipworks.git
+1. Cloning a fresh ShapeWorks-Run repository:
+    - git clone git@bitbucket.org:SCIInstitute/hipworks.git
     - vi .gitmodules
-        - edit url = https://prafulag@bitbucket.org/prafulag/fim_v4 ---> url = https://<your_bitbucket_username>@bitbucket.org/sheryjoe/fim_v4
+        - edit url = https://prafulag@bitbucket.org/sheryjoe/fim_v4 ---> url = https://<your_bitbucket_username>@bitbucket.org/sheryjoe/fim_v4
     - git submodule init
     - git submodule update
     - cd fim_v4
@@ -13,13 +13,14 @@ It is added as a submodule
 2. First time updating your repository after addition of submodules:
     - git pull
     - vi .gitmodules
-        - edit url = https://prafulag@bitbucket.org/prafulag/fim_v4 ---> url = https://<your_bitbucket_username>@bitbucket.org/sheryjoe/fim_v4
+        - edit url = https://prafulag@bitbucket.org/sheryjoe/fim_v4 ---> url = https://<your_bitbucket_username>@bitbucket.org/sheryjoe/fim_v4
     - git submodule init
     - git submodule update
     - you may need to enter your bitbucket password at this point
     - cd fim_v4
     - git checkout master
-        
+
+***** For Developers only*****
 3. Pushing changes made in submodule code:
     - Go to the submodule directory
     - git status
