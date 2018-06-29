@@ -199,18 +199,18 @@ int main(int argc, char * argv[])
   if(!whichDataType){
   itkMeshfromDT(repDTpath);
   if(meshDecimationFlag){
-    std::cout << "Performing Mesh Decimation for Faster Computation" <<std::endl;
-    // add the function here
+    meshDecimation("TemplateMesh.obj", meshDecimationPercentage);
+    igl::readOBJ("TemplateMeshDecimated.obj",Vref,Fref);
   }
-  igl::readOBJ("TemplateMesh.obj",Vref,Fref);
+    else{igl::readOBJ("TemplateMesh.obj",Vref,Fref);}
   }
   else{
-    if(meshDecimationFlag){
-    std::cout << "Performing Mesh Decimation for Faster Computation" <<std::endl;
-    // add the function here
-    }
     convertVTKtoOBJ(repMeshpath);
-    igl::readOBJ("TemplateMesh.obj",Vref,Fref);
+    if(meshDecimationFlag){
+    meshDecimation("TemplateMesh.obj", meshDecimationPercentage);
+    igl::readOBJ("TemplateMeshDecimated.obj",Vref,Fref);
+    }
+    else{igl::readOBJ("TemplateMesh.obj",Vref,Fref);}    
   }
 
 

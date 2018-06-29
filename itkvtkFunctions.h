@@ -10,11 +10,16 @@
 #include "itkBinaryMask3DMeshSource.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkImage.h"
+#include "itkQuadEdgeMesh.h"
 #include "itkMeshFileWriter.h"
 #include "itkMultiplyImageFilter.h"
 #include "itkAddImageFilter.h"
 #include "itkMeshFileReader.h"
+#include "itkQuadEdgeMeshDecimationCriteria.h"
+#include "itkSquaredEdgeLengthDecimationQuadEdgeMeshFilter.h"
 #include "itkMesh.h"
+#include <igl/readOBJ.h>
+#include <Eigen/Sparse>
 
 // VTK Dependencies
 
@@ -24,7 +29,47 @@
 3) Points to Mesh Conversion
 4) ...
 */
+
+void meshDecimation(std::string inputFileName, float decimationPercent){
+  // the input must be an obj file (convert before calling decimation)
+  const unsigned int Dimension = 3;
+  typedef float TCoordinate;
+  typedef itk::QuadEdgeMesh< TCoordinate, Dimension > TMesh;
+  typedef itk::MeshFileReader< TMesh > TReader;
+  typedef itk::MeshFileWriter< TMesh > TWriter;
+  typedef itk::NumberOfFacesCriterion<TMesh>    CriterionType;
+  typedef itk::SquaredEdgeLengthDecimationQuadEdgeMeshFilter<TMesh,
+                                                           TMesh,
+                                                           CriterionType> DecimationType;
+  TReader::Pointer reader = TReader::New();
+  reader->SetFileName(inputFileName.c_str());
+  Eigen::MatrixXd VtempS;
+  Eigen::MatrixXi FtempS;
+  igl::readOBJ(inputFileName.c_str(), VtempS, FtempS);
+  
+  std::cout << "Initial Number of Triangles : "<< FtempS.rows() <<std::endl; 
+  std::cout << "Performing Mesh Decimation ... " << std::endl;
+  int numTFinal = floor(FtempS.rows() * decimationPercent);
+  std::cout << "Final Number of Triangles : " << numTFinal <<std::endl;
+
+  CriterionType::Pointer criterion = CriterionType::New();
+  DecimationType::Pointer decimate = DecimationType::New();
+  criterion->SetTopologicalChange(false);
+  criterion->SetNumberOfElements(numTFinal);
+ 
+  decimate->SetInput(reader->GetOutput());
+  decimate->SetCriterion(criterion);
+  decimate->Update();
+  TWriter::Pointer writer = TWriter::New();
+  writer->SetFileName( "TemplateMeshDecimated.obj" );
+  writer->SetInput( decimate->GetOutput() );
+  writer->Update();
+}
+
+
 void convertVTKtoOBJ(std::string inputFileName){
+
+  // tested for VTK to obj but should work for any input format
   const unsigned int Dimension = 3;
   typedef float TCoordinate;
 
@@ -33,7 +78,6 @@ void convertVTKtoOBJ(std::string inputFileName){
   typedef itk::MeshFileWriter< TMesh > TWriter;
   TReader::Pointer reader = TReader::New();
   reader->SetFileName(inputFileName.c_str());
-  
   TWriter::Pointer writer = TWriter::New();
   writer->SetFileName( "TemplateMesh.obj" );
   writer->SetInput( reader->GetOutput() );
