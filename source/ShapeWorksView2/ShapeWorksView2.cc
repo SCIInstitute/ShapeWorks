@@ -108,18 +108,18 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   // set to mean
   this->ui->tabWidget->setCurrentIndex( 0 );
 
-  // Compute the linear regression
-  this->regression = itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::New();
-  this->regression->SetMatrix( this->stats.ShapeMatrix() );
+  // Compute the linear regression - Praful
+//  this->regression = itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::New();
+//  this->regression->SetMatrix( this->stats.ShapeMatrix() );
 
-  // Load the explanatory variables
+  // Load the explanatory variables  - Praful
   this->readExplanatoryVariables( argv[1] );
   if ( this->regressionAvailable )
   {
-    this->regression->ResizeParameters( stats.ShapeMatrix().rows() );
-    this->regression->ResizeMeanMatrix( stats.ShapeMatrix().rows(), stats.ShapeMatrix().cols() );
-    this->regression->Initialize();
-    this->regression->EstimateParameters();
+//    this->regression->ResizeParameters( stats.ShapeMatrix().rows() );
+//    this->regression->ResizeMeanMatrix( stats.ShapeMatrix().rows(), stats.ShapeMatrix().cols() );
+//    this->regression->Initialize();
+//    this->regression->EstimateParameters();
   }
 
   this->updateColorScheme();
@@ -1076,7 +1076,7 @@ bool ShapeWorksView2::readExplanatoryVariables( char* filename )
     return false;
   }
 
-  this->regression->SetExplanatory( evars );
+//  this->regression->SetExplanatory( evars );
 
   // Initialize range of explanatory variable.
   this->regressionMin = startT;
@@ -1448,7 +1448,7 @@ void ShapeWorksView2::computeRegressionShape()
       // scale value back to range
       double value = this->getRegressionValue( pregenValue );
 
-      vnl_vector<double> shape = this->regression->ComputeMean( value );
+        vnl_vector<double> shape; //this->regression->ComputeMean( value ); - Praful
       for ( int i = 0; i < this->numDomains; i++ )
       {
         this->meshManager.generateMesh( this->getDomainShape( shape, i ) );
@@ -1456,7 +1456,7 @@ void ShapeWorksView2::computeRegressionShape()
     }
   }
 
-  vnl_vector<double> shape = this->regression->ComputeMean( this->getRegressionValue( this->ui->regressionSlider->value() ) );
+    vnl_vector<double> shape; //this->regression->ComputeMean( this->getRegressionValue( this->ui->regressionSlider->value() ) ); - Praful
   this->displayShape( shape );
 }
 

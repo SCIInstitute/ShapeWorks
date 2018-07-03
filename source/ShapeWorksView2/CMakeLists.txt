@@ -1,5 +1,57 @@
-OPTION( BUILD_SWV2_OSX_APP "Build ShapeWorksView2 as an application." OFF )
+PROJECT(SHAPEWORKSVIEW2)
+cmake_minimum_required(VERSION 2.6)
 
+SET(ITK_DIR "/Users/prafulag/Installations/Build/ITK-4.7.2")
+SET(VTK_DIR "/Users/prafulag/Installations/Build/VTK-5.10.1")
+SET(CMAKE_BUILD_TYPE RELEASE)
+
+#Match everything when analyzing dependencies
+INCLUDE_REGULAR_EXPRESSION("^.*$")
+
+# Configure ITK -- REQUIRED
+find_package(ITK REQUIRED)
+if(ITK_FOUND)
+include(${ITK_USE_FILE})
+else(ITK_FOUND)
+message(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
+endif(ITK_FOUND)
+
+# Configure VTK -- REQUIRED
+FIND_PACKAGE(VTK REQUIRED)
+IF (VTK_FOUND)
+    INCLUDE (${VTK_USE_FILE})
+ELSE(VTK_FOUND)
+    MESSAGE(FATAL_ERROR "VTK (The Visualization Toolkit) is required for ShapeWorksView2, but could not be found.")
+ENDIF(VTK_FOUND)
+
+include_directories(${SHAPEWORKSVIEW2_SOURCE_DIR}/tinyxml)
+subdirs(tinyxml)
+
+#--------------------------------------------------------------------------------
+# This sets the windows build that will need the special winmain@16 call. Qt provides
+#  this for us in the qtmain.lib file. Using this cmake code will ensure we have it
+#  linked into our build. Not needed on Unix/OS X/Linux which is why we have the
+#  IF(WIN32) conditional.
+IF (WIN32)
+    SET (QT_USE_QTMAIN TRUE)
+ENDIF (WIN32)
+
+# this command finds Qt4 libraries and sets all required variables
+# note that it's Qt4, not QT4 or qt4
+SET(QT_MIN_VERSION "4.7.4")
+FIND_PACKAGE( Qt4 REQUIRED )
+
+# add some useful macros and variables
+# (QT_USE_FILE is a variable defined by FIND_PACKAGE( Qt4 ) that contains a path to CMake script)
+INCLUDE( ${QT_USE_FILE} )
+
+# build with powercrust reconstruction
+ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
+
+
+###########################################
+
+OPTION( BUILD_SWV2_OSX_APP "Build ShapeWorksView2 as an application." OFF )
 
 ###########################################
 # Flags for Microsoft Compiler
@@ -116,7 +168,6 @@ if(MSVC)
   SOURCE_GROUP(moc_sources FILES ${SHAPEWORKSVIEW_MOC_SRCS})
 endif(MSVC)
 
-
 # here we instruct CMake to build SHAPEWORKSVIEW executable from all of the source files
 
 IF ( BUILD_SWV2_OSX_APP )
@@ -140,14 +191,7 @@ ELSE ( BUILD_SWV2_OSX_APP )
 ENDIF ( BUILD_SWV2_OSX_APP )
 
 
-TARGET_LINK_LIBRARIES( ShapeWorksView2
-  ${QT_LIBRARIES} 
-  ${ITK_LIBRARIES}
-  QVTK
-  ITKParticleSystem tinyxml
-  vtkCommon vtkGraphics vtkImaging vtkRendering vtkWidgets 
-  )
-
+TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} QVTK tinyxml vtkCommon vtkGraphics vtkImaging vtkRendering vtkWidgets)
 
 
 # INSTALLATION AND PACKAGING

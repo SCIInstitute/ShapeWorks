@@ -15,7 +15,7 @@
 
 #include "tinyxml.h"
 
-#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
+//#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticlePositionReader.h"
 #include "itkParticleShapeStatistics.h"
 #include "itkParticlePositionWriter.h"
@@ -182,7 +182,7 @@ private:
   //vtkSmartPointer<vtkDecimatePro>             m_surfDecimate;
 
   ParticleShapeStatistics<3> stats;
-  itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::Pointer regression;
+//  itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>::Pointer regression;
 
   int numSamples;
   int numDomains;
