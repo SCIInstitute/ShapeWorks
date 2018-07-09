@@ -1,3 +1,0 @@
-isolate 
-parameters: foreground, background
-Find the largest connected component in a binary image and

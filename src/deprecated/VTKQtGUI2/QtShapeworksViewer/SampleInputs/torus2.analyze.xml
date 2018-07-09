@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-
-<point_files>  
-t.0.wpts
-t.1.wpts 
-t.2.wpts
-</point_files>		  <!-- Set of correspondence points -->
-                     <!-- in "world" coordinate space. -->
