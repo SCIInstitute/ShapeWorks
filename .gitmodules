@@ -4,3 +4,6 @@
 [submodule "ShapeWorks-Run"]
 	path = ShapeWorks-Run
 	url = https://github.com/SCIInstitute/ShapeWorks-Run.git
+[submodule "ShapeWorks-Prep"]
+	path = ShapeWorks-Prep
+	url = https://github.com/SCIInstitute/ShapeWorks-Prep.git
