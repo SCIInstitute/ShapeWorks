@@ -1,12 +1,10 @@
 PROJECT(SHAPETOOLKIT)
 cmake_minimum_required(VERSION 2.6)
 SET(CMAKE_BUILD_TYPE RELEASE)
-SET(ITK_DIR "/home/sci/riddhishb/Documents/packages/InsightToolkit-4.5.1/build")
-SET(VTK_DIR "/home/sci/riddhishb/VTK-5.10.1/build")
-SET(FLTK_DIR "/home/sci/riddhishb/fltk-1.1.10/build")
+#SET(ITK_DIR "Path-to-ITK-4.7.2-build/")
+#SET(VTK_DIR "Path-to-VTK-5.10.1-build")
 
-#SET(VXL_DIR "/home/sci/riddhishb/Documents/packages/vxl-1.17.0/build")
-SET(VXL_DIR "/home/sci/prafulag/BuildDIR/vxl")
+#SET(VXL_DIR "Path-to-vxl-build")
 
 SET(COMMON_LIBS_DIR "CommonLibraries")
 
