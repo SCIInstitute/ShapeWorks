@@ -60,11 +60,11 @@ else(TARGET tinyxml)
        ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
 endif(TARGET tinyxml)
 
-option(BUILD_ImageTools ON)
-option(BUILD_MeshTools ON)
-option(BUILD_FileFormatTools ON)
-option(BUILD_AlignmentTools ON)
-option(BUILD_DataFormatTools ON)
+option(BUILD_ImageTools "Build ImageTools" ON)
+option(BUILD_MeshTools "Build MeshTools" ON)
+option(BUILD_FileFormatTools "Build file formatting tools" ON)
+option(BUILD_AlignmentTools "Build alignment tools" ON)
+option(BUILD_DataFormatTools "Build data formatting tools" ON)
 
 file(
 	GLOB
