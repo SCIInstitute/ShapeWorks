@@ -53,7 +53,12 @@ SUBDIRS(${COMMON_LIBS_DIR}/fim_v4)
 #INCLUDE_DIRECTORIES(${COMMON_LIBS_DIR}/fim_v4)
 #INCLUDE_DIRECTORIES(${COMMON_LIBS_DIR}/fim_v4/trimesh2/include)
 FILE(GLOB tinyxml_srcs ${COMMON_LIBS_DIR}/tinyxml/*.cpp)
-ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
+
+if(TARGET tinyxml)
+       message("tinyxml exists")
+else(TARGET tinyxml)
+       ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
+endif(TARGET tinyxml)
 
 option(BUILD_ImageTools ON)
 option(BUILD_MeshTools ON)
