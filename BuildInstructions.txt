@@ -1,0 +1,36 @@
+1. Getting the source code
+    
+    - git clone https://github.com/SCIInstitute/shapeworks.git
+    - git submodule init
+    - git submodule update
+    - cd ShapeWorks-Prep
+    - git checkout master
+    - cd ../ShapeWorks-Post
+    - git checkout master
+    - cd ../ShapeWorks-Run
+    - git checkout master
+    - vi .gitmodules
+        - edit url = https://prafulag@bitbucket.org/sheryjoe/fim_v4 ---> url = https://<your_bitbucket_username>@bitbucket.org/sheryjoe/fim_v4
+    - git submodule init
+    - git submodule update
+    - cd fim_v4
+    - git checkout master
+    
+2. Build instructions
+    Pre-requisites
+    - Download and build VXL, ITK-4.7.2 and VTK-5.10.1. Set USE_SYSTEM_VXL as ON while building ITK and provide VXL build path.
+    - Install QT4.8, required only for ShapeWorksView2
+    - <Linux only instruction> Install gcc5.0+, required for ShapeWorksPost
+
+    Building
+    - Set ITK, VTK and VXL paths in CMakeLists.txt in shapeworks repo
+    - Create a build directory for shapeworks, <shapeworks-build>
+    - cd shapeworks-build
+    - ccmake path-to-shapeworks-repo
+    - set CMake flags ON/OFF for the required tools
+    - set CMAKE_INSTALL_PREFIX to install all binaries at one place (optional)
+    - configure
+    - generate
+    - make -j4 
+    - make install (only if CMAKE_INSTALL_PREFIX is provided)
+    
