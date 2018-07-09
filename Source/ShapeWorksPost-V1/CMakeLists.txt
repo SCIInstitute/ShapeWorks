@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.4)
 project(SWPost)
 
-SET(ITK_DIR "/home/sci/prafulag/BuildDIR/ITK-4.9.1-NoVTKglue")
+#SET(ITK_DIR "Path-to-ITK4.7.2-build")
 
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
