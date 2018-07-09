@@ -32,7 +32,7 @@ MESSAGE(FATAL_ERROR "VTK (The Visualization Toolkit) is required for ShapeWorksV
 ENDIF (VTK_FOUND)
 
 # Optionally build with mesh support (requires linking against trimesh library)
-option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
+#option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
 
 # Fea mesh support
 option(BUILD_FeaMeshSupport "Build with Fea Mesh support (requires fim library with trimesh2)" ON)
@@ -52,18 +52,20 @@ if(USE_OPENMP)
 endif(USE_OPENMP)
 
 # Configure Mesh support
-if(BUILD_MeshSupport OR BUILD_FeaMeshSupport)
+#if(BUILD_MeshSupport OR BUILD_FeaMeshSupport)
+if(BUILD_FeaMeshSupport)
   SUBDIRS(fim_v4)
     INCLUDE_DIRECTORIES(fim_v4)
   INCLUDE_DIRECTORIES(fim_v4/trimesh2/include)
-  if(BUILD_MeshSupport)
-    add_definitions(-DSW_USE_MESH)
-  endif(BUILD_MeshSupport)
+#  if(BUILD_MeshSupport)
+#    add_definitions(-DSW_USE_MESH)
+#  endif(BUILD_MeshSupport)
   if(BUILD_FeaMeshSupport)
     add_definitions(-DSW_USE_FEAMESH)
   endif(BUILD_FeaMeshSupport)
   set(USE_VXL 1)
-endif(BUILD_MeshSupport OR BUILD_FeaMeshSupport)
+endif(BUILD_FeaMeshSupport)
+#endif(BUILD_MeshSupport OR BUILD_FeaMeshSupport)
 
 # Set up the include directories
 include_directories ( 
