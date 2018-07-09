@@ -1,7 +1,9 @@
 Shapeworks Command Line Tools
 =====================
+<!--
 <img src="https://raw.githubusercontent.com/SCIInstitute/shapeworks/master/src/deprecated/documentation/splashmain.png" 
  width="400px" align="left" hspace="20">
+-->
 
 The ShapeWorks software is an open-source distribution of a new method for constructing compact 
 statistical point-based models of ensembles of similar shapes that does not rely on any specific 
@@ -17,13 +19,14 @@ Table of Contents
 - [Aknowledgements](#aknowledgements)<br/>
 - [Relevant Papers](#relevant-papers)<br/>
 - [Requirements](#requirements)<br/>
+<!--
 - [Building](#building)<br/>
 		- [Unix/OSX](#unix-and-osx)<br/>
-		- [Windows](#windows)<br/>
+	        - [Windows](#windows)<br/> 
 - [Running](#running)<br/>
 		- [ShapeWorksGroom](#shapeworksgroom)<br/>
 		- [ShapeWorksRun](#shapeworksrun)<br/>
-		- [ShapeWorksView2](#shapeworksview2)<br/>
+		- [ShapeWorksView2](#shapeworksview2)<br/> -->
 - [Contact and Bug Reports](#contact-and-bug-reports)<br/>
 
 <h3>Aknowledgements</h3>
@@ -56,15 +59,18 @@ M.D. Harris, M. Datar, R.T. Whitaker, E.R. Jurrus, C.L. Peters, A.E. Anderson.
 "Statistical Shape Modeling of Cam Femoroacetabular Impingement," In Journal of Orthopaedic Research, 
 Vol. 31, No. 10, pp. 1620--1626. 2013.
 
+P. Agrawal, S.Y. Elhabian, R.T. Whitaker, "Learning Deep Features for Automated Placement of Correspondence Points on Ensembles of Complex Shapes," In International Conference on Medical Image Computing and Computer-Assisted Intervention, pp. 185-193. Springer, Cham, 2017.
+
 Requirements
 =====================
  * Git (https://git-scm.com/)
  * CMake 2.6+ (http://www.cmake.org/)
- * Visualization ToolKit (VTK 6+ recommended) (http://www.vtk.org/) --built with Qt and Imaging support!
- * Insight Toolkit (ITK 4.5+ recommended) (http://www.itk.org/)
- * Qt 4.8.* (http://www.qt.io/developers/)
+ * Visualization ToolKit (VTK 5.10.1 recommended) (http://www.vtk.org/) --built with Qt and Imaging support!
+ * Insight Toolkit (ITK 4.7.2 recommended) (http://www.itk.org/)
+ * Qt 4.8.* (http://www.qt.io/developers/) [Only needed for ShapeWorksView2]
  * Windows 7+, OSX 10.9+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
- 
+
+<!--
 Building
 =====================
 <h3>Unix and OSX</h3>
@@ -75,7 +81,7 @@ cd shapeworks/build
 cmake -DVTK_DIR=Path/To/Your/VTK/build -DITK_DIR=Path/To/Your/ITK/build -DCMAKE_BUILD_TYPE=Release ../src
 make
 ```
-
+<!--
 <h3>Windows</h3>
 Open a Visual Studio (32 or 64 bit) Native Tools Command Prompt. 
 Follow these commands:
@@ -86,17 +92,17 @@ cmake -G "NMake Makefiles" -DVTK_DIR="C:/Path/To/Your/VTK/build" -DITK_DIR="C:/P
 nmake
 ```
 **NOTE** Be sure to copy the Qt DLL files to the View2 Executable directory for the program to run.
-
+<!--
 Running
 =====================
-
+<!--
 The original documentation is located in this repository under <code>src/deprecated/documentation</code>.
 You may read about the details of the algorithms there. 
 <br/><br/>
 Here are the basic instructions/pipeline for using the Shapeworks
 Command Line Tools. You can follow the same steps for either the <code>examples/torus</code> or 
 <code>examples/mickey</code>. Steps for the torus example are shown. <br/>
-
+<!--
 <h3>ShapeWorksGroom</h3>
 ```c++
 cd examples/torus
@@ -104,12 +110,12 @@ cd examples/torus
 ```
 This step may takes some time. Be sure that you are in the example directory (ie. examples/torus) when running
 the tools. Also be sure you are providing the actual path of the executable. This is for each step.
-
+<!--
 <h3>ShapeWorksRun</h3>
 ```c++
 ../../build/bin/ShapeWorksRun torus.run.xml
 ```
-
+<!--
 <h3>ShapeWorksView2</h3>
 ```c++
 ../../build/bin/ShapeWorksView2
@@ -124,7 +130,7 @@ interior:
 ```
 <br/><br/>
 You Should have a Qt window pop up that looks similar to the one below.
-
+<!--
 <img src="https://raw.githubusercontent.com/SCIInstitute/shapeworks/master/src/deprecated/documentation/view2.png">
 <br/><br/>
 **Shape**<br/>
@@ -181,7 +187,7 @@ building meshes. This speeds reconstruction, theoretically.
 **File Menu** <br/>
 There are a few Import/Export options under the File Menu. The details of these options are 
 beyond the scope of this document.
-
+-->
 Contact and Bug Reports
 =====================
 Please email any questions to Shapeworks-users@sci.utah.edu . If there problems or bugs, please report them using the issue tracker on GitHub. This includes feature requests. Feel free to add improvements using git pull requests. 
