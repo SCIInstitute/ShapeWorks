@@ -1,16 +1,31 @@
 PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
-SET(CMAKE_BUILD_TYPE RELEASE)
+SET(CMAKE_BUILD_TYPE Release)
 
-SET(ITK_DIR "/Users/prafulag/Installations/Build/ITK-4.7.2")
-SET(VTK_DIR "/Users/prafulag/Installations/Build/VTK-5.10.1")
-SET(VXL_DIR "/Users/prafulag/Installations/Build/vxl")
+SET(ITK_DIR "path-to-ITK-4.7.2-build")
+SET(VTK_DIR "path-to-VTK-5.10.1-build")
+SET(VXL_DIR "path-to-vxl-build")
 
-include_directories (
-${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Prep/source
-${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Run/source
-${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Post/source/ShapeWorksPost-V1
-${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Post/source/ShapeWorksView2
-)
+option(Build_PrepTools "Build prep tools" ON)
+option(Build_Run "Build shapeworks" ON)
+option(Build_Post "Build post" ON)
+option(Build_View2 "Build view2" ON)
 
-subdirs(ShapeWorks-Prep/source ShapeWorks-Run/source ShapeWorks-Post/source/ShapeWorksPost-V1 ShapeWorks-Post/source/ShapeWorksView2)
+if(Build_PrepTools)
+    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Prep/Source)
+    subdirs(ShapeWorks-Prep/Source)
+endif(Build_PrepTools)
+if(Build_Run)
+    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Run/source)
+    subdirs(ShapeWorks-Run/source)
+endif(Build_Run)
+if(Build_Post)
+    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Post/source/ShapeWorksPost-V1)
+    subdirs(ShapeWorks-Post/source/ShapeWorksPost-V1)
+endif(Build_Post)
+if(Build_View2)
+    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/ShapeWorks-Post/source/ShapeWorksView2)
+    subdirs(ShapeWorks-Post/source/ShapeWorksView2)
+endif(Build_View2)
+
+
