@@ -1,0 +1,3 @@
+[submodule "ShapeWorks-Post"]
+	path = ShapeWorks-Post
+	url = https://github.com/SCIInstitute/ShapeWorks-Post.git
