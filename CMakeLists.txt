@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trimesh2/include )
 file(GLOB trimesh2_srcs trimesh2/include/*.h trimesh2/libsrc/*.cc)
 set( FIM_SRCS meshFIM.cpp ${trimesh2_srcs} )
 
-add_library(fim_v4 ${FIM_SRCS})
+add_library(fim_v4 STATIC ${FIM_SRCS})
 
 # # INSTALLATION AND PACKAGING
 
