@@ -213,10 +213,15 @@ ENDIF(WIN32)
 #--------------------------------------------------------------------------------
 # Install the SHAPEWORKSVIEW application, on Apple, the bundle is at the root of the
 # install tree, and on other platforms it'll go into the bin directory.
+
 INSTALL(TARGETS ShapeWorksView2
-    BUNDLE DESTINATION . COMPONENT Runtime
-    RUNTIME DESTINATION bin COMPONENT Runtime
+    RUNTIME DESTINATION . COMPONENT Runtime
     )
+
+#INSTALL(TARGETS ShapeWorksView2
+#    BUNDLE DESTINATION . COMPONENT Runtime
+#    RUNTIME DESTINATION bin COMPONENT Runtime
+#    )
 
 #--------------------------------------------------------------------------------
 # Install needed Qt plugins by copying directories from the qt installation
