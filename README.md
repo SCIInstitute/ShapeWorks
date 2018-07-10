@@ -79,12 +79,16 @@ Setting up the source code
  - git submodule update
  - cd ShapeWorks-Prep
  - git checkout master
+ - git submodule init
+ - git submodule update
+ - cd fim_v4
+ - git checkout master
+ 
  - cd ../ShapeWorks-Post
  - git checkout master
+ 
  - cd ../ShapeWorks-Run
  - git checkout master
- - vi .gitmodules
- - edit url = https://prafulag@bitbucket.org/sheryjoe/fim_v4 ---> url = https://<your_bitbucket_username>@bitbucket.org/sheryjoe/fim_v4
  - git submodule init
  - git submodule update
  - cd fim_v4
