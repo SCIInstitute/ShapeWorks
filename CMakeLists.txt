@@ -19,13 +19,13 @@ set( FIM_SRCS meshFIM.cpp ${trimesh2_srcs} )
 
 add_library(fim_v4 STATIC ${FIM_SRCS})
 
-# # INSTALLATION AND PACKAGING
+# INSTALLATION AND PACKAGING
 
 # # Install the headers
 # file (GLOB trimesh_headers ${CMAKE_SOURCE_DIR}/trimesh2/include/*.h)
 # INSTALL(FILES ${trimesh_headers} meshFIM.h DESTINATION include)
 
- # Install the library
+# Install the library
  INSTALL(TARGETS fim_v4
  RUNTIME DESTINATION .
  LIBRARY DESTINATION ./lib
