@@ -81,7 +81,7 @@ Setting up the source code
  - git checkout master
  - git submodule init
  - git submodule update
- - cd fim_v4
+ - cd Soucrce/CommonLibraries/fim_v4
  - git checkout master
  
  - cd ../ShapeWorks-Post
@@ -91,7 +91,7 @@ Setting up the source code
  - git checkout master
  - git submodule init
  - git submodule update
- - cd fim_v4
+ - cd source/fim_v4
  - git checkout master
 
 Building
