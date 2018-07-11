@@ -14,7 +14,7 @@ SET(VXL_DIR "path-to-vxl-build")
 
 option(Build_PrepTools "Build prep tools" ON)
 option(Build_Run "Build shapeworks" ON)
-option(Build_Post "Build post" OFF)
+option(Build_Post "Build post" ON)
 option(Build_View2 "Build view2" ON)
 
 if(Build_PrepTools)
