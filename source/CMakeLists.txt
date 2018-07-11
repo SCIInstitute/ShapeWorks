@@ -1,10 +1,10 @@
 PROJECT(SHAPEWORKS)
 cmake_minimum_required(VERSION 2.6)
 
-#SET(ITK_DIR "Path-to-ITK-4.7.2-build")
-#SET(VTK_DIR "Path-to-VTK-5.10.1-build")
-#SET(VXL_DIR "Path-to-vxl-build")
-SET(CMAKE_BUILD_TYPE RELEASE)
+SET(ITK_DIR "~/BuildDIR/ITK-4.7.2")
+SET(VTK_DIR "~/BuildDIR/VTK-5.10.1")
+SET(VXL_DIR "~/BuildDIR/vxl")
+SET(CMAKE_BUILD_TYPE Debug)
 
 #Match everything when analyzing dependencies
 INCLUDE_REGULAR_EXPRESSION("^.*$")
