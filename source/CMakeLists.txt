@@ -6,12 +6,6 @@ cmake_minimum_required(VERSION 2.6)
 #SET(VXL_DIR "Path-to-vxl-build")
 SET(CMAKE_BUILD_TYPE RELEASE)
 
-SET(BUILD_EXECS_AT_SAME_LEVEL FALSE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
-IF (BUILD_EXECS_AT_SAME_LEVEL)
-  SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
-  SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
-ENDIF (BUILD_EXECS_AT_SAME_LEVEL)
-
 #Match everything when analyzing dependencies
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
