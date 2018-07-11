@@ -77,10 +77,10 @@ public:
 
     virtual void WriteModes()
     {
-        const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+        const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains() % m_domains_per_shape;
         if ( n >= 5 )
         {
-            m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_dir,5);
+            m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_dir + "/pts",5);
         }
     }
 
