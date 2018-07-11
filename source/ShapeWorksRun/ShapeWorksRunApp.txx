@@ -1553,6 +1553,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     this->WritePointFilesWithFeatures();
     this->WriteTransformFile();
     this->WriteCuttingPlanePoints();
+    if (m_verbosity_level > 0)
+        std::cout << "Finished initialization!!!" << std::endl;
 }
 
 template < class SAMPLERTYPE>
@@ -1593,6 +1595,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::AddAdaptivity()
     this->WritePointFilesWithFeatures();
     this->WriteTransformFile();
     this->WriteCuttingPlanePoints();
+
+    if (m_verbosity_level > 0)
+        std::cout << "Finished adaptivity!!!" << std::endl;
 }
 
 template < class SAMPLERTYPE>
@@ -1717,6 +1722,8 @@ ShapeWorksRunApp<SAMPLERTYPE>::Optimize()
     this->WriteModes();
     this->WriteCuttingPlanePoints();
     this->WriteParameters();
+    if (m_verbosity_level > 0)
+        std::cout << "Finished optimization!!!" << std::endl;
 }
 
 template < class SAMPLERTYPE>
