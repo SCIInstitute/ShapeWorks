@@ -2,13 +2,19 @@ PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
 SET(CMAKE_BUILD_TYPE Release)
 
+SET(BUILD_EXECS_AT_SAME_LEVEL TRUE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
+IF (BUILD_EXECS_AT_SAME_LEVEL)
+  SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
+  SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
+ENDIF (BUILD_EXECS_AT_SAME_LEVEL)
+
 SET(ITK_DIR "path-to-ITK-4.7.2-build")
 SET(VTK_DIR "path-to-VTK-5.10.1-build")
 SET(VXL_DIR "path-to-vxl-build")
 
 option(Build_PrepTools "Build prep tools" ON)
 option(Build_Run "Build shapeworks" ON)
-option(Build_Post "Build post" ON)
+option(Build_Post "Build post" OFF)
 option(Build_View2 "Build view2" ON)
 
 if(Build_PrepTools)
