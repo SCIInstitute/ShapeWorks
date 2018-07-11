@@ -1483,7 +1483,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
 
             std::string dir_name     = "split" + ss.str() + "_" + ssp.str() + "pts_wo_opt";
-            std::string out_path     = utils::getPath(m_output_dir);
+            std::string out_path     = m_output_dir;
 
             std::string tmp_dir_name = out_path + "/" + dir_name;
 
@@ -1525,7 +1525,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             std::stringstream ssp;
             ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
             std::string dir_name     = "split" + ss.str() + "_" + ssp.str() + "pts_w_opt";
-            std::string out_path     = utils::getPath(m_output_dir);
+            std::string out_path     = m_output_dir;
             std::string tmp_dir_name = out_path + "/" + dir_name;
 
             this->WritePointFiles(tmp_dir_name + "/");
@@ -2123,7 +2123,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( int iter )
     std::stringstream ssp;
     ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
 
-    std::string out_path     = utils::getPath(m_output_dir);
+    std::string out_path     = m_output_dir;
     std::string tmp_dir_name = iter >= 0 ? out_path + "/iter" + ss.str() + "_p" + ssp.str() : out_path;
 
     this->WritePointFiles(tmp_dir_name);
@@ -2207,7 +2207,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( int iter )
     std::stringstream ssp;
     ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
 
-    std::string out_path     = utils::getPath(m_output_dir);
+    std::string out_path     = m_output_dir;
     std::string tmp_dir_name = iter >= 0 ? out_path + "/iter" + ss.str() + "_p" + ssp.str() : out_path;
 
     this->WritePointFilesWithFeatures(tmp_dir_name);
@@ -2234,7 +2234,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( std::string iter_pre
         std::ofstream outw( world_file.c_str() );
 
         std::string str = "Writing " + world_file + "...";
-        int attrNum = 3*int(m_use_xyz[i]) + 3*int(m_use_normals[i]) + m_attributes_per_domain[i % m_domains_per_shape];
+        int attrNum = 3*int(m_use_xyz[i % m_domains_per_shape]) + 3*int(m_use_normals[i % m_domains_per_shape]);
+        if (m_attributes_per_domain.size() > 0)
+                attrNum += m_attributes_per_domain[i % m_domains_per_shape];
         std::stringstream st;
         st << attrNum;
         str +=  "with " + st.str() + " attributes per point...";
@@ -2254,9 +2256,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( std::string iter_pre
 
         TriMesh *ptr;
         std::vector<float> fVals;
-        if (m_mesh_based_attributes && m_attributes_per_domain[i % m_domains_per_shape] > 0)
+        if (m_mesh_based_attributes && m_attributes_per_domain.size() > 0)
         {
-            ptr = domain->GetMesh();
+            if (m_attributes_per_domain[i % m_domains_per_shape] > 0 )
+                ptr = domain->GetMesh();
         }
 
         for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
@@ -2276,17 +2279,20 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( std::string iter_pre
                 outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
             }
 
-            if (m_attributes_per_domain[i % m_domains_per_shape] > 0)
+            if (m_attributes_per_domain.size() > 0)
             {
-                point pt;
-                pt.clear();
-                pt[0] = pos[0];
-                pt[1] = pos[1];
-                pt[2] = pos[2];
-                fVals.clear();
-                ptr->GetFeatureValues(pt, fVals);
-                for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++)
-                    outw << fVals[k] << " ";
+                if (m_attributes_per_domain[i % m_domains_per_shape] > 0)
+                {
+                    point pt;
+                    pt.clear();
+                    pt[0] = pos[0];
+                    pt[1] = pos[1];
+                    pt[2] = pos[2];
+                    fVals.clear();
+                    ptr->GetFeatureValues(pt, fVals);
+                    for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++)
+                        outw << fVals[k] << " ";
+                }
             }
 
             outw << std::endl;
@@ -2307,9 +2313,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::WriteEnergyFiles()
     if (!this->m_logEnergy)
         return;
     this->startMessage("Writing energy files...\n");
-    std::string strA = utils::getPath(m_output_dir) + "/" + this->m_strEnergy + "_samplingEnergy.txt";
-    std::string strB = utils::getPath(m_output_dir) + "/" + this->m_strEnergy + "_correspondenceEnergy.txt";
-    std::string strTotal = utils::getPath(m_output_dir) + "/" + this->m_strEnergy + "_totalEnergy.txt";
+    std::string strA = m_output_dir + "/" + this->m_strEnergy + "_samplingEnergy.txt";
+    std::string strB = m_output_dir + "/" + this->m_strEnergy + "_correspondenceEnergy.txt";
+    std::string strTotal = m_output_dir + "/" + this->m_strEnergy + "_totalEnergy.txt";
     std::ofstream outA( strA.c_str(), std::ofstream::app );
     std::ofstream outB( strB.c_str(), std::ofstream::app );
     std::ofstream outTotal( strTotal.c_str(), std::ofstream::app );
@@ -2551,7 +2557,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReportBadParticles()
 
         std::stringstream ss;
         ss << i;
-        outDomDir = utils::getPath(m_output_dir) + "/" + this->m_strEnergy + "_BadParticles_domain" + ss.str();
+        outDomDir = m_output_dir + "/" + this->m_strEnergy + "_BadParticles_domain" + ss.str();
 #ifdef _WIN32
         mkdir( outDomDir.c_str() );
 #else
