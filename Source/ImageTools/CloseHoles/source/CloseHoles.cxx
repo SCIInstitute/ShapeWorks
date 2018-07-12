@@ -11,7 +11,7 @@ optparse::OptionParser buildParser()
 {
     const std::string usage = "%prog [OPTION]";
     const std::string version = "%prog 0.1";
-    const std::string desc = "A command line tool that performs translational alignment of a given shape image based on either its center of mass or a given 3d point...";
+    const std::string desc = "A command line tool that closes holes in a given binary volume ...";
     //const std::string epilog = "note: --numthreads 0 means use system default (usually max number supported).\n";
     const std::string epilog = "";
 
@@ -21,8 +21,8 @@ optparse::OptionParser buildParser()
             .description(desc)
             .epilog(epilog);
 
-    parser.add_option("--inFilename").action("store").type("string").set_default("").help("The filename of the input shape to be cropped.");
-    parser.add_option("--outFilename").action("store").type("string").set_default("").help("The filename of the output cropped shape.");
+    parser.add_option("--inFilename").action("store").type("string").set_default("").help("The filename of the input shape to be processed.");
+    parser.add_option("--outFilename").action("store").type("string").set_default("").help("The filename of the output shape with holes closed.");
 
     return parser;
 }
@@ -43,8 +43,8 @@ int main(int argc, char * argv[] )
 
   std::string inFilename         = (std::string) options.get("inFilename");
   std::string outFilename        = (std::string) options.get("outFilename");
-  const unsigned int Dimension = 2;
-  typedef unsigned char PixelType;
+  const unsigned int Dimension = 3;
+  typedef float PixelType;
   typedef itk::Image< PixelType, Dimension > ImageType;
   typedef itk::ImageFileReader< ImageType > ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
