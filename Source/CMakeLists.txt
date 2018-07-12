@@ -87,6 +87,7 @@ file(
 if (BUILD_ImageTools)
   subdirs(ImageTools/AntiAliasing/source)
   subdirs(ImageTools/CloseHoles/source)
+  subdirs(ImageTools/FastMarching/source)
   subdirs(ImageTools/CropImages/source)
   subdirs(ImageTools/ExtractGivenLabelImage/source)
   subdirs(ImageTools/PadVolumeWithConstant/source)
