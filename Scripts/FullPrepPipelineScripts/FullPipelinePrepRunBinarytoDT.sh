@@ -4,8 +4,8 @@
 # Authors: Shireen Elhabian
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
-# Project: Coherex-Appendage project
-# Purpose: Run different coherex data processing steps in order 
+# Project: CIBC
+# Purpose: Run shapeworks prep pipeline given a set of segmentations 
 # Notes:
 ##################################################################################
 
@@ -111,7 +111,7 @@ then
                              --iso_spacing 1 --is_center_on 0 --is_binary_image 0 \
                              --sizeX 575 --sizeY 575 --sizeZ 87
     fi            
-    # resample laa binary images (only appendage)
+    # resample binary images
     ./ResampleVolumes.sh --data_dir ${rawSegDir}/ \
                          --data_prefix ${seg_prefix} \
                          --out_dir ${parentDir}resampled/ \

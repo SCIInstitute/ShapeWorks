@@ -5,7 +5,7 @@
 # Authors: Shireen Elhabian
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
-# Project: Coherex-Appendage project
+# Project: CIBC
 # Purpose: Align all subjects to their center of mass (translation)
 # Notes:
 ##################################################################################

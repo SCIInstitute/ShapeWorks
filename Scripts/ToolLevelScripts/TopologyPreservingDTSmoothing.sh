@@ -11,7 +11,9 @@
 ##################################################################################
 
 # adding related-binaries to system path
+source ../setup.txt # works for server as well
 source ../Utils/Utils.sh # common utility functions
+
 
 dt_prefix=""
 dt_suffix=""

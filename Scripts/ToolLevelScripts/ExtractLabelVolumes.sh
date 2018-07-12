@@ -5,7 +5,7 @@
 # Authors: Shireen Elhabian
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
-# Project: Coherex-Appendage project
+# Project: CIBC
 # Purpose: Isolate the anatomy of interset by extracting its label from a multi-label segmentation volume
 # Notes:
 ##################################################################################

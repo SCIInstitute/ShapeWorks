@@ -1,5 +1,14 @@
 #!/bin/bash
 
+##################################################################################
+# Authors: Shireen Elhabian
+# Date:    Spring 2018
+# Company: SCI Institute, Univerity of Utah
+# Project: CIBC
+# Purpose: Run shapeworks prep pipeline given a set of meshes 
+# Notes:
+##################################################################################
+
 ### [1] Preview : Does mesh decimation and cleaning to speed up the computation for fids
 doPreview=0
 decimation_decimal=0.95

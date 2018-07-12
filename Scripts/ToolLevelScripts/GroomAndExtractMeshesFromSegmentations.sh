@@ -5,7 +5,7 @@
 # Authors: Shireen Elhabian
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
-# Project: Coherex-Appendage project
+# Project: CIBC
 # Purpose: Generate QCed meshes from binary segmentations (grooming is performed to extract smooth isosurfaces)
 # Notes:
 ##################################################################################
@@ -107,24 +107,32 @@ do
 
     echo generating mesh for $basename
     
-    xmlfilename=${basename}.genDT.xml
-    rm -rf $xmlfilename
-    echo "<?xml version=\"1.0\" ?>" >> "$xmlfilename"
-    echo "<background> 0.000000 </background>" >> "$xmlfilename"
-    echo "<foreground> 1.000000 </foreground>" >> "$xmlfilename"
-    echo "<pad> 0 </pad>" >> "$xmlfilename"
-    echo "<transform_file> translations </transform_file>" >> "$xmlfilename"
-    echo "<antialias_iterations> 40 </antialias_iterations>" >> "$xmlfilename"
-    echo "<fastmarching_isovalue> 0.000000 </fastmarching_isovalue>" >> "$xmlfilename"
-    echo "<verbose> 1 </verbose>" >> "$xmlfilename"
-    echo "<inputs>" >> "$xmlfilename"
-    echo "${segfilename}" >> "$xmlfilename"
-    echo "</inputs>" >> "$xmlfilename"
-    echo "<outputs>" >> "$xmlfilename"
-    echo "${dtnrrdfilename}" >> "$xmlfilename"
-    echo "</outputs>" >> "$xmlfilename"
-
-    ShapeWorksGroom $xmlfilename isolate hole_fill antialias fastmarching
+    foreground=1
+    antialias_iterations=40
+    isoValue=0.0
+    ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
+    CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
+    AntiAliasing --inFilename ${segfilename} --outFilename  ${dtnrrdfilename} --numIterations $antialias_iterations
+    FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
+    
+    #     xmlfilename=${basename}.genDT.xml
+    #     rm -rf $xmlfilename
+    #     echo "<?xml version=\"1.0\" ?>" >> "$xmlfilename"
+    #     echo "<background> 0.000000 </background>" >> "$xmlfilename"
+    #     echo "<foreground> 1.000000 </foreground>" >> "$xmlfilename"
+    #     echo "<pad> 0 </pad>" >> "$xmlfilename"
+    #     echo "<transform_file> translations </transform_file>" >> "$xmlfilename"
+    #     echo "<antialias_iterations> 40 </antialias_iterations>" >> "$xmlfilename"
+    #     echo "<fastmarching_isovalue> 0.000000 </fastmarching_isovalue>" >> "$xmlfilename"
+    #     echo "<verbose> 1 </verbose>" >> "$xmlfilename"
+    #     echo "<inputs>" >> "$xmlfilename"
+    #     echo "${segfilename}" >> "$xmlfilename"
+    #     echo "</inputs>" >> "$xmlfilename"
+    #     echo "<outputs>" >> "$xmlfilename"
+    #     echo "${dtnrrdfilename}" >> "$xmlfilename"
+    #     echo "</outputs>" >> "$xmlfilename"
+    # 
+    #     ShapeWorksGroom $xmlfilename isolate hole_fill antialias fastmarching
     unu save -i ${dtnrrdfilename} -o ${dtnrrdfilename} -f nrrd -e raw
     
     xmlfilename=${basename}.tpSmoothDT.xml

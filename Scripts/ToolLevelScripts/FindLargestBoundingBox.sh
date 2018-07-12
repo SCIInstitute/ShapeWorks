@@ -5,8 +5,8 @@
 # Authors: Shireen Elhabian
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
-# Project: Coherex-Appendage project
-# Purpose: Align all subjects to one reference (rigid transformation)
+# Project: CIBC
+# Purpose: Find largest bounding box that encapsulate a set of input segmentations
 # Notes:
 ##################################################################################
 

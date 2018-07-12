@@ -5,7 +5,7 @@
 # Authors: Shireen Elhabian
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
-# Project: Coherex-Appendage project
+# Project: CIBC
 # Purpose: Align all subjects to one reference (rigid transformation)
 # Notes:
 ##################################################################################
@@ -68,6 +68,8 @@ do
 done
 
 # grooming setting
+foreground=1
+isoValue=0.0
 antialias_iterations=20
 smoothing_iterations=1
 
@@ -110,25 +112,30 @@ EchoWithColor "-----------------------------------------------------------------
 EchoWithColor "Grooming reference  - isolate, hole file, antialiais and distance transform generation .................." "light_green"
 EchoWithColor "${ref_segfilename}" "light_green"
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
-        
-xmlfilename=${basename}.genDT.xml
-rm -rf $xmlfilename
-echo "<?xml version=\"1.0\" ?>" >> "$xmlfilename"
-echo "<background> 0.000000 </background>" >> "$xmlfilename"
-echo "<foreground> 1.000000 </foreground>" >> "$xmlfilename"
-echo "<pad> 0 </pad>" >> "$xmlfilename"
-echo "<transform_file> translations </transform_file>" >> "$xmlfilename"
-echo "<antialias_iterations> ${antialias_iterations} </antialias_iterations>" >> "$xmlfilename"
-echo "<fastmarching_isovalue> 0.000000 </fastmarching_isovalue>" >> "$xmlfilename"
-echo "<verbose> 1 </verbose>" >> "$xmlfilename"
-echo "<inputs>" >> "$xmlfilename"
-echo "${ref_segfilename}" >> "$xmlfilename"
-echo "</inputs>" >> "$xmlfilename"
-echo "<outputs>" >> "$xmlfilename"
-echo "${ref_dtnrrdfilename}" >> "$xmlfilename"
-echo "</outputs>" >> "$xmlfilename"
 
-ShapeWorksGroom $xmlfilename isolate hole_fill antialias fastmarching
+ExtractGivenLabelImage --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename} --labelVal $foreground
+CloseHoles --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename}
+AntiAliasing --inFilename ${ref_segfilename} --outFilename  ${ref_dtnrrdfilename} --numIterations $antialias_iterations
+FastMarching --inFilename ${ref_dtnrrdfilename} --outFilename  ${ref_dtnrrdfilename} --isoValue $isoValue
+
+# xmlfilename=${basename}.genDT.xml
+# rm -rf $xmlfilename
+# echo "<?xml version=\"1.0\" ?>" >> "$xmlfilename"
+# echo "<background> 0.000000 </background>" >> "$xmlfilename"
+# echo "<foreground> 1.000000 </foreground>" >> "$xmlfilename"
+# echo "<pad> 0 </pad>" >> "$xmlfilename"
+# echo "<transform_file> translations </transform_file>" >> "$xmlfilename"
+# echo "<antialias_iterations> ${antialias_iterations} </antialias_iterations>" >> "$xmlfilename"
+# echo "<fastmarching_isovalue> 0.000000 </fastmarching_isovalue>" >> "$xmlfilename"
+# echo "<verbose> 1 </verbose>" >> "$xmlfilename"
+# echo "<inputs>" >> "$xmlfilename"
+# echo "${ref_segfilename}" >> "$xmlfilename"
+# echo "</inputs>" >> "$xmlfilename"
+# echo "<outputs>" >> "$xmlfilename"
+# echo "${ref_dtnrrdfilename}" >> "$xmlfilename"
+# echo "</outputs>" >> "$xmlfilename"
+# 
+# ShapeWorksGroom $xmlfilename isolate hole_fill antialias fastmarching
 unu save -i ${ref_dtnrrdfilename} -o ${ref_dtnrrdfilename} -f nrrd -e raw
 
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
@@ -210,24 +217,29 @@ do
     EchoWithColor "[1 of 4] Grooming - isolate, hole file, antialiais and distance transform generation .................." "light_green"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
          
-    xmlfilename=${basename}.genDT.xml
-    rm -rf $xmlfilename
-    echo "<?xml version=\"1.0\" ?>" >> "$xmlfilename"
-    echo "<background> 0.000000 </background>" >> "$xmlfilename"
-    echo "<foreground> 1.000000 </foreground>" >> "$xmlfilename"
-    echo "<pad> 0 </pad>" >> "$xmlfilename"
-    echo "<transform_file> translations </transform_file>" >> "$xmlfilename"
-    echo "<antialias_iterations> ${antialias_iterations} </antialias_iterations>" >> "$xmlfilename"
-    echo "<fastmarching_isovalue> 0.000000 </fastmarching_isovalue>" >> "$xmlfilename"
-    echo "<verbose> 1 </verbose>" >> "$xmlfilename"
-    echo "<inputs>" >> "$xmlfilename"
-    echo "${segfilename}" >> "$xmlfilename"
-    echo "</inputs>" >> "$xmlfilename"
-    echo "<outputs>" >> "$xmlfilename"
-    echo "${dtnrrdfilename}" >> "$xmlfilename"
-    echo "</outputs>" >> "$xmlfilename"
-
-    ShapeWorksGroom $xmlfilename isolate hole_fill antialias fastmarching
+    ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
+    CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
+    AntiAliasing --inFilename ${segfilename} --outFilename  ${dtnrrdfilename} --numIterations $antialias_iterations
+    FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
+    
+    #     xmlfilename=${basename}.genDT.xml
+    #     rm -rf $xmlfilename
+    #     echo "<?xml version=\"1.0\" ?>" >> "$xmlfilename"
+    #     echo "<background> 0.000000 </background>" >> "$xmlfilename"
+    #     echo "<foreground> 1.000000 </foreground>" >> "$xmlfilename"
+    #     echo "<pad> 0 </pad>" >> "$xmlfilename"
+    #     echo "<transform_file> translations </transform_file>" >> "$xmlfilename"
+    #     echo "<antialias_iterations> ${antialias_iterations} </antialias_iterations>" >> "$xmlfilename"
+    #     echo "<fastmarching_isovalue> 0.000000 </fastmarching_isovalue>" >> "$xmlfilename"
+    #     echo "<verbose> 1 </verbose>" >> "$xmlfilename"
+    #     echo "<inputs>" >> "$xmlfilename"
+    #     echo "${segfilename}" >> "$xmlfilename"
+    #     echo "</inputs>" >> "$xmlfilename"
+    #     echo "<outputs>" >> "$xmlfilename"
+    #     echo "${dtnrrdfilename}" >> "$xmlfilename"
+    #     echo "</outputs>" >> "$xmlfilename"
+    # 
+    #     ShapeWorksGroom $xmlfilename isolate hole_fill antialias fastmarching
     unu save -i ${dtnrrdfilename} -o ${dtnrrdfilename} -f nrrd -e raw
     
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
@@ -279,9 +291,9 @@ do
     
     if [ $process_raw -eq 1 ]
     then
-    # transform the corresponding image
-    movingToFixedFilename=${out_dir}${img_prefix}.${subject_id}${seg_suffix}.aligned.nrrd
-    WarpImageMultiTransform $imageDimension $imgfilename $movingToFixedFilename -R $ref_imgfilename $affineFilename
+        # transform the corresponding image
+        movingToFixedFilename=${out_dir}${img_prefix}.${subject_id}${seg_suffix}.aligned.nrrd
+        WarpImageMultiTransform $imageDimension $imgfilename $movingToFixedFilename -R $ref_imgfilename $affineFilename
     fi            
 done
 

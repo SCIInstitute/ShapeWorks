@@ -5,12 +5,13 @@
 # Authors: Shireen Elhabian
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
-# Project: Coherex-Appendage project
+# Project: CIBC
 # Purpose: Convert meshes to volumes using fids using precomputed origin and size
 # Notes:
 ##################################################################################
 
 # adding related-binaries to system path
+source ../setup.txt # works for server as well
 source ../Utils/Utils.sh # common utility functions
 
 mesh_extension="vtk"

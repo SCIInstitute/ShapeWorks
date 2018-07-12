@@ -11,7 +11,8 @@
 ##################################################################################
 
 # adding related-binaries to system path
-source /usr/sci/projects/coherex/EXPERIMENTS/SCRIPTS/Utils.sh
+source ../setup.txt # works for server as well
+source ../Utils/Utils.sh # common utility functions
 
 mesh_prefix=""
 mesh_suffix=""
