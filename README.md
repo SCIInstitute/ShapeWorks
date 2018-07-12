@@ -69,7 +69,7 @@ Requirements
  * Insight Toolkit (ITK 4.7.2 recommended) (http://www.itk.org/) -- built with USE_SYSTEM_VXL and provide VXL build path
  * VXL (https://github.com/vxl/vxl)
  * Qt 4.8.* (http://www.qt.io/developers/) [Only needed for ShapeWorksView2]
- * <Linux only instruction> Install gcc5.0+ [required for ShapeWorksPost]
+ * Install gcc5.0+ [only required for ShapeWorksPost on Linux]
  * Windows 7+, OSX 10.9+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
 
 Setting up the source code
