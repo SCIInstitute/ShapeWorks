@@ -26,7 +26,7 @@ optparse::OptionParser buildParser()
     parser.add_option("--inFilename").action("store").type("string").set_default("").help("The filename of the input image to be processed.");
     parser.add_option("--outFilename").action("store").type("string").set_default("").help("The filename of the output distance transform image.");
     parser.add_option("--isoValue").action("store").type("float").set_default(0.0).help("The level set value that defines the interface between foreground and background.");
-=
+
     return parser;
 }
 
