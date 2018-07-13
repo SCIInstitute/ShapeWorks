@@ -15,7 +15,7 @@
 source Utils/Utils.sh
 source setup.txt
 
-ShapeWorksEXE='ShapeWorksRun5.0-pre-release' 
+ShapeWorksEXE='ShapeWorksRun5.0' 
 
 # default shapeworks parameters
 num_particles=512
