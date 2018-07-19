@@ -12,8 +12,8 @@
 ##################################################################################
 
 # adding related-binaries to system path
-source Utils/Utils.sh
-source setup.txt
+source ../Utils/Utils.sh
+source ../setup.txt
 
 ShapeWorksEXE='ShapeWorksRun5.0' 
 
@@ -208,7 +208,7 @@ fi
         lptsfilenames+=("$ptfilename")
         
         #ptfilename=${ptsDir}${sample_name}_world.particles
-        ptfilename=${sample_name}_world.particles #only include the file name in order to use ShapeWorksView2 from the results folder
+        ptfilename=${ptsDir}${sample_name}_world.particles #only include the file name in order to use ShapeWorksView2 from the results folder
         wptsfilenames+=("$ptfilename")
         
         if [ $init_with_prev_scale -eq 1 ]
@@ -307,9 +307,9 @@ fi
 
 
 # writing analyze files
-xmlfilename=${ptsDir}analyze.xml
+xmlfilename=${ptsDir}ShapeWorksView2-Analyze.xml
 rm -f $xmlfilename
-EchoWithColor "Writing analyze parameter file: $xmlfilename" "light_green"
+EchoWithColor "Writing analyze parameter file (SWView2): $xmlfilename" "light_green"
 
 echo "<point_files>" >> $xmlfilename
 for ptfilename in "${wptsfilenames[@]}"
@@ -319,6 +319,29 @@ done
 echo "</point_files>" >> $xmlfilename 
 echo "" >> $xmlfilename
 
+# writing the shapeworks post analyze file
+xmlfilename=${ptsDir}ShapeWorksPost-Analyze.xml
+rm -f $xmlfilename
+EchoWithColor "Writing analyze parameter file (SWPost): $xmlfilename" "light_green"
+
+echo "<point_files>" >> $xmlfilename
+for ptfilename in "${wptsfilenames[@]}"
+do
+    echo "${ptfilename}" >> $xmlfilename
+done
+echo "</point_files>" >> $xmlfilename
+
+echo "<num_points> $num_particles </num_points>" >> $xmlfilename
+echo "<mesh_decimation_on> 1 </mesh_decimation_on>" >> $xmlfilename
+echo "<mesh_decimation_percent>0.75</mesh_decimation_percent>" >> $xmlfilename
+
+echo "<rep_DT>" >> $xmlfilename
+echo "${dtfilenames[1]}" >> $xmlfilename
+echo "</rep_DT>" >> $xmlfilename
+
+echo "<rep_point>" >> $xmlfilename
+echo "${lptsfilenames[1]}" >> $xmlfilename
+echo "</rep_point>" >> $xmlfilename
 
 # writing analyze files with group ids
 xmlfilename=${ptsDir}analyze_groups.xml
@@ -332,6 +355,7 @@ do
 done
 echo "</point_files>" >> $xmlfilename 
 echo "" >> $xmlfilename
+
 
 # echo "<group_ids>" >> $xmlfilename
 # for group_id in "${group_ids[@]}"
