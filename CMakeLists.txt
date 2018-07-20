@@ -8,9 +8,9 @@ IF (BUILD_EXECS_AT_SAME_LEVEL)
   SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
 ENDIF (BUILD_EXECS_AT_SAME_LEVEL)
 
-SET(ITK_DIR "~/BuildDIR/ITK-4.7.2")
-SET(VTK_DIR "~/BuildDIR/VTK-5.10.1")
-SET(VXL_DIR "~/BuildDIR/vxl")
+SET(ITK_DIR "path-to-ITK-4.7.2-build")
+SET(VTK_DIR "path-to-VTK-5.10.1-build")
+SET(VXL_DIR "path-to-vxl-build")
 
 option(Build_PrepTools "Build prep tools" ON)
 option(Build_Run "Build shapeworks" ON)
