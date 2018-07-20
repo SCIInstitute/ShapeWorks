@@ -12,8 +12,7 @@
 ##################################################################################
 
 # adding related-binaries to system path
-source ../Utils/Utils.sh
-source ../setup.txt
+source Utils/Utils.sh
 
 ShapeWorksEXE='ShapeWorksRun5.0' 
 
@@ -26,6 +25,7 @@ end_reg=0.1
 procrustes_interval=0
 with_procrustes_scaling=0
 use_normals=0
+wt_normals=1
 
 iterations_per_split=1000
 optimization_iterations=2000
@@ -44,7 +44,7 @@ data_dir=""
 init_with_prev_scale=0 # infer pre scale out dir
 
 # default output settings
-model_suffix="model"
+model_suffix=""
 
 use_logging=0 # enabling this might cause I/O hanging when log files become huge
 
@@ -78,8 +78,17 @@ do
       init_with_prev_scale="$2"
       shift
       ;;
-      
-      
+
+      --init_iter)
+      iterations_per_split="$2"
+      shift
+      ;;
+
+      --opt_iter)
+      optimization_iterations="$2"
+      shift
+      ;;
+
       --model_suffix)
       model_suffix="$2"
       shift
@@ -120,9 +129,13 @@ do
       shift
       ;;
       
-      
       --use_normals)
       use_normals="$2"
+      shift
+      ;;
+
+      --wt_normals)
+      wt_normals="$2"
       shift
       ;;
       
@@ -344,17 +357,17 @@ echo "${lptsfilenames[1]}" >> $xmlfilename
 echo "</rep_point>" >> $xmlfilename
 
 # writing analyze files with group ids
-xmlfilename=${ptsDir}analyze_groups.xml
-rm -f $xmlfilename
-EchoWithColor "Writing analyze parameter file with group ids: $xmlfilename" "light_green"
+#xmlfilename=${ptsDir}view2_analyze_groups.xml
+#rm -f $xmlfilename
+#EchoWithColor "Writing analyze parameter file with group ids: $xmlfilename" "light_green"
 
-echo "<point_files>" >> $xmlfilename
-for ptfilename in "${wptsfilenames[@]}"
-do
-    echo "${ptfilename}" >> $xmlfilename
-done
-echo "</point_files>" >> $xmlfilename 
-echo "" >> $xmlfilename
+#echo "<point_files>" >> $xmlfilename
+#for ptfilename in "${wptsfilenames[@]}"
+#do
+#    echo "${ptfilename}" >> $xmlfilename
+#done
+#echo "</point_files>" >> $xmlfilename
+#echo "" >> $xmlfilename
 
 
 # echo "<group_ids>" >> $xmlfilename
