@@ -133,7 +133,7 @@ do
     #     echo "</outputs>" >> "$xmlfilename"
     # 
     #     ShapeWorksGroom $xmlfilename isolate hole_fill antialias fastmarching
-    unu save -i ${dtnrrdfilename} -o ${dtnrrdfilename} -f nrrd -e raw
+    #unu save -i ${dtnrrdfilename} -o ${dtnrrdfilename} -f nrrd -e raw #Praful -- not needed, FastMarching output is not in gzip format
     
     xmlfilename=${basename}.tpSmoothDT.xml
     rm -rf $xmlfilename

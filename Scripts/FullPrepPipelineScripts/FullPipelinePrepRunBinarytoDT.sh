@@ -11,8 +11,8 @@
 
 
 # adding related-binaries to system path
-source ../setup.txt # works for server as well
 source ../Utils/Utils.sh # common utility functions
+source ../setup.txt
 
 ### [*] This will process the Raw images in the same way as the segmentations
 needRaw=0
@@ -84,6 +84,38 @@ do
 
       -o|--seg_prefix)
       seg_prefix="$2"
+      shift
+      ;;
+      
+      --padding_size)
+      doPad=1
+      padding_size="$2"
+      shift
+      ;;
+      
+      --doCOM)
+      doCOM="$2"
+      shift
+      ;;
+      
+      --alignRefID)
+      doAlign=1
+      ref_id="$2"
+      shift
+      ;;
+      
+      --largestBB)
+      doLargestBB="$2"
+      shift
+      ;;
+      
+      --crop)
+      doCrop="$2"
+      shift
+      ;;
+      
+      --smoothing_iterations)
+      smoothing_iterations="$2"
       shift
       ;;
       
