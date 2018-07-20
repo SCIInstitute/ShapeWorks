@@ -27,7 +27,7 @@ wt_normals=1
 
 iterations_per_split=1000
 optimization_iterations=2000
-checkpointing_interval=0 #10
+checkpointing_interval=200 #10
 keep_checkpoints=0
 save_init_splits=1
 
@@ -115,6 +115,11 @@ do
       
       --use_normals)
       use_normals="$2"
+      shift
+      ;;
+      
+      --wt_normals)
+      wt_normals="$2"
       shift
       ;;
       

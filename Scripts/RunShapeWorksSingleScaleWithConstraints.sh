@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ##################################################################################
-# File:    RunShapeWorksSingleScale.sh
-# Authors: Shireen Elhabian
+# File:    RunShapeWorksSingleScaleWithConstraints.sh
+# Authors: Praful Agrawal
 # Date:    Spring 2018
 # Company: SCI Institute, Univerity of Utah
 # Project: CIBC
@@ -13,6 +13,7 @@
 
 # adding related-binaries to system path
 source Utils/Utils.sh
+
 
 ShapeWorksEXE='ShapeWorksRun5.0' 
 
@@ -43,8 +44,13 @@ data_dir=""
 # if both are empty, no initialization
 init_with_prev_scale=0 # infer pre scale out dir
 
-# default output settings
 model_suffix=""
+
+use_planes=''
+use_spheres=''
+spheres_radii=''
+spheres_centers=''
+planes_info=''
 
 use_logging=0 # enabling this might cause I/O hanging when log files become huge
 
@@ -78,7 +84,7 @@ do
       init_with_prev_scale="$2"
       shift
       ;;
-
+      
       --init_iter)
       iterations_per_split="$2"
       shift
@@ -88,7 +94,7 @@ do
       optimization_iterations="$2"
       shift
       ;;
-
+      
       --model_suffix)
       model_suffix="$2"
       shift
@@ -133,9 +139,34 @@ do
       use_normals="$2"
       shift
       ;;
-
+      
       --wt_normals)
       wt_normals="$2"
+      shift
+      ;;
+      
+      --use_planes)
+      use_planes="$2"
+      shift
+      ;;
+      
+      --planes_info)
+      planes_info="$2"
+      shift
+      ;;
+      
+      --use_spheres)
+      use_spheres="$2"
+      shift
+      ;;
+      
+      --spheres_radii)
+      spheres_radii="$2"
+      shift
+      ;;
+      
+      --spheres_centers)
+      spheres_centers="$2"
       shift
       ;;
       
@@ -162,9 +193,9 @@ if [ ! -z "$model_suffix" -a "$model_suffix" != " " ]; then
     model_suffix=_${model_suffix}
 fi
 
-paramSWDir=${out_dir}paramfiles${model_suffix}/
-modelDir=${out_dir}model${model_suffix}/
-modelLogDir=${out_dir}model${model_suffix}_logs/
+paramSWDir=${out_dir}/paramfiles${model_suffix}/
+modelDir=${out_dir}/modelWithConstraints${model_suffix}/
+modelLogDir=${out_dir}/modelWithConstraints${model_suffix}_logs/
 
 mkdir -p $paramSWDir
 mkdir -p $modelDir
@@ -184,11 +215,6 @@ fi
 sfx=${sfx}_a_i${initial_relative_weighting}_f${relative_weighting}
 
 sfx=${sfx}_reg_s${starting_regularization}_e${ending_regularization}_r${recompute_regularization_interval}
-
-if [ $procrustes_interval -gt 0 ]
-then
-    sfx=${sfx}_wproc${procrustes_interval}_scale${with_procrustes_scaling}
-fi
 
 ptsDir=${modelDir}final$sfx
 mkdir -p $ptsDir
@@ -211,7 +237,7 @@ then
 fi
 
     echo $data_dir
-    for dtfilename in $data_dir*.nrrd ;
+    for dtfilename in $data_dir/*.nrrd ;
     do
         EchoWithColor "data: - dtfilename: $dtfilename" "yellow"
         
@@ -226,7 +252,7 @@ fi
         lptsfilenames+=("$ptfilename")
         
         #ptfilename=${ptsDir}${sample_name}_world.particles
-        ptfilename=${ptsDir}${sample_name}_world.particles #only include the file name in order to use ShapeWorksView2 from the results folder
+        ptfilename=${sample_name}_world.particles #only include the file name in order to use ShapeWorksView2 from the results folder
         wptsfilenames+=("$ptfilename")
         
         if [ $init_with_prev_scale -eq 1 ]
@@ -268,6 +294,8 @@ echo "" >> $xmlfilename
 
 echo "<domains_per_shape> 1 </domains_per_shape>" >> $xmlfilename
 
+echo "<adaptivity_mode> 3 </adaptivity_mode>" >> $xmlfilename #curcial for using constraints
+
 echo "" >> $xmlfilename
 
 echo "<relative_weighting> $relative_weighting</relative_weighting>" >> $xmlfilename
@@ -287,6 +315,7 @@ if (($use_normals == 0)); then
 echo "<mesh_based_attributes> 0 </mesh_based_attributes>" >> $xmlfilename
 
 else
+echo "<mesh_based_attributes> 1 </mesh_based_attributes>" >> $xmlfilename
 echo "<use_xyz> 1 </use_xyz>" >> $xmlfilename
 echo "<attributes_per_domain> 0 </attributes_per_domain>" >> $xmlfilename
 echo "<use_normals> 1 </use_normals>" >> $xmlfilename
@@ -313,6 +342,49 @@ echo "</inputs>" >> $xmlfilename
 
 echo "" >> $xmlfilename
 
+if [ ! -z "$use_planes" -a "$use_planes" != " " ]; then
+
+echo "<num_planes_per_input>" >> $xmlfilename
+while IFS= read -r line; do
+    echo $line >> $xmlfilename
+done < $use_planes
+echo "</num_planes_per_input>" >> $xmlfilename
+echo "" >> $xmlfilename
+
+echo "<cutting_planes>" >> $xmlfilename
+while IFS= read -r line; do
+    echo $line >> $xmlfilename
+done < $planes_info
+echo "</cutting_planes>" >> $xmlfilename
+echo "" >> $xmlfilename
+
+fi
+
+if [ ! -z "$use_spheres" -a "$use_spheres" != " " ]; then
+
+echo "<spheres_per_domain>" >> $xmlfilename
+while IFS= read -r line; do
+    echo $line >> $xmlfilename
+done < $use_spheres
+echo "</spheres_per_domain>" >> $xmlfilename
+echo "" >> $xmlfilename
+
+echo "<sphere_radii>" >> $xmlfilename
+while IFS= read -r line; do
+    echo $line >> $xmlfilename
+done < $spheres_radii
+echo "</sphere_radii>" >> $xmlfilename
+echo "" >> $xmlfilename
+
+echo "<sphere_centers>" >> $xmlfilename
+while IFS= read -r line; do
+    echo $line >> $xmlfilename
+done < $spheres_centers
+echo "</sphere_centers>" >> $xmlfilename
+echo "" >> $xmlfilename
+
+fi
+
 if [ $init_with_prev_scale -eq 1 ]
 then
     echo "<point_files>" >> $xmlfilename
@@ -322,7 +394,6 @@ then
 	done
 	echo "</point_files>" >> $xmlfilename
 fi
-
 
 # writing analyze files for view2
 xmlfilename=${ptsDir}ShapeWorksView2-Analyze.xml
@@ -360,6 +431,7 @@ echo "</rep_DT>" >> $xmlfilename
 echo "<rep_point>" >> $xmlfilename
 echo "${lptsfilenames[1]}" >> $xmlfilename
 echo "</rep_point>" >> $xmlfilename
+
 
 # writing analyze files with group ids
 #xmlfilename=${ptsDir}view2_analyze_groups.xml
@@ -429,5 +501,3 @@ else
     $ShapeWorksEXE ${paramSWDir}correspondence$sfx.p$num_particles.xml 
     echo "Done with $num_particles particles" 
 fi    
-
-
