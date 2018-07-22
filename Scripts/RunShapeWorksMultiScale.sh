@@ -12,7 +12,6 @@
 
 # adding related-binaries to system path
 source Utils/Utils.sh
-source setup.txt
 
 # default shapeworks parameters
 max_num_particles=2048
@@ -24,10 +23,11 @@ end_reg=0.1
 procrustes_interval=0
 with_procrustes_scaling=0
 use_normals=0
+wt_normals=1
 
 iterations_per_split=1000
 optimization_iterations=2000
-checkpointing_interval=0 #10
+checkpointing_interval=200 #10
 keep_checkpoints=0
 save_init_splits=1
 
@@ -35,7 +35,7 @@ data_dir=""
 
 
 # default output settings
-model_suffix="model"
+model_suffix=""
 verbosity=1
 # input parameters
 while [[ $# > 1 ]]
@@ -92,7 +92,16 @@ do
       verbosity="$2"
       shift
       ;;
-      
+
+      --init_iter)
+      iterations_per_split="$2"
+      shift
+      ;;
+
+      --opt_iter)
+      optimization_iterations="$2"
+      shift
+      ;;
 
       --procrustes_interval)
       procrustes_interval="$2"
@@ -106,6 +115,11 @@ do
       
       --use_normals)
       use_normals="$2"
+      shift
+      ;;
+      
+      --wt_normals)
+      wt_normals="$2"
       shift
       ;;
       
@@ -154,6 +168,11 @@ do
                                   --num_particles $cur_num_particles --init_with_prev_scale $init_with_prev_scale\
                                   --alpha_init $alpha_init --alpha_final $alpha_final \
                                   --start_reg $start_reg --end_reg $end_reg \
-                                  --use_normals $use_normals 
+                                  --use_normals $use_normals \
+                                  --wt_normals $wt_normals \
+                                  --init_iter $iterations_per_split \
+                                  --opt_iter $optimization_iterations \
+                                  --procrustes_interval $procrustes_interval \
+                                  --with_procrustes_scaling $with_procrustes_scaling
 done
 
