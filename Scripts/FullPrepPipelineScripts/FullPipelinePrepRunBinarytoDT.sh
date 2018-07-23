@@ -44,6 +44,7 @@ doCrop=1
 ### [7] The Final Grooming
 doGroomAndMesh=1
 smoothing_iterations=2
+antialias_iterations=40
 
 seg_prefix=seg
 img_prefix=img
@@ -119,6 +120,11 @@ do
       shift
       ;;
       
+      --antialias_iterations)
+      antialias_iterations="$2"
+      shift
+      ;;
+      
       --default)
       DEFAULT=YES
       shift
@@ -189,6 +195,7 @@ then
     ./GroomAndExtractMeshesFromSegmentations.sh  --data_dir ${parentDir}aligned/ \
                                          --out_dir ${parentDir}groom_and_meshes_after_align/ \
                                          --smoothing_iterations ${smoothing_iterations} \
+                                         --antialias_iterations ${antialias_iterations} \
                                          --seg_prefix ${seg_prefix} \
                                          --seg_suffix .isores.padded.com.aligned
 fi
@@ -219,6 +226,7 @@ then
     ./GroomAndExtractMeshesFromSegmentations.sh  --data_dir ${parentDir}cropped/ \
                                          --out_dir ${parentDir}groom_and_meshes/ \
                                          --smoothing_iterations ${smoothing_iterations} \
+                                         --antialias_iterations ${antialias_iterations} \
                                          --seg_prefix ${seg_prefix} \
                                          --seg_suffix .isores.padded.com.aligned.cropped
     mkdir -p ${parentDir}DistanceTransforms/

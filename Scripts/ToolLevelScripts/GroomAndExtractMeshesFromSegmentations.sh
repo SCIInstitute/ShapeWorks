@@ -17,7 +17,7 @@ source ../Utils/Utils.sh # common utility functions
 percentage=50
 decimal=0.5
 smoothing_iterations=2
-
+antialias_iterations=40
 # input parameters
 while [[ $# > 1 ]]
 do
@@ -46,6 +46,11 @@ do
       
       -i|--smoothing_iterations)
       smoothing_iterations="$2"
+      shift
+      ;;
+      
+      --antialias_iterations)
+      antialias_iterations="$2"
       shift
       ;;
       
@@ -108,7 +113,7 @@ do
     echo generating mesh for $basename
     
     foreground=1
-    antialias_iterations=40
+    
     isoValue=0.0
     ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
     CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
