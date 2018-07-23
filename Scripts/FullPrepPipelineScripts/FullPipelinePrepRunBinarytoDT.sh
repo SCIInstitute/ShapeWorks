@@ -32,8 +32,8 @@ padding_size=30
 doCOM=1
 
 ### [4] Rigid Alignment using ANTS to a reference image
-doAlign=0
-ref_id="dodn02Rfemuraligned" # reference id of image to wich all others are aligned 
+doAlign=1
+ref_id="dodn02Rfemuraligned" # reference id of image to which all others are aligned 
 
 ### [5] Find the Largest Bounding Box for Cropping
 doLargestBB=1
