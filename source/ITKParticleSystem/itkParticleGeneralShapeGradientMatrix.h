@@ -153,66 +153,90 @@ public:
         if (m_use_normals[dom])
         {
 
-            typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleGradientVnl(posLocal);
-            typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pN = pG.normalize();
-            float grad_mag = pG.magnitude();
-
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(posLocal);
-
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat1;
-            mat1.set_identity();
-            vnl_matrix<float> nrml(VDimension, 1);
-            nrml.fill(0.0);
-            nrml(0,0) = pN[0]; nrml(1,0) = pN[1]; nrml(2,0) = pN[2];
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat2 = nrml * nrml.transpose();
-
-            for (unsigned int x1 = 0; x1 < VDimension; x1++)
+            if (ps->GetDomainFlag(d))
             {
-                for (unsigned int x2 = 0; x2 < VDimension; x2++)
+                for (unsigned int c = s; c < s+VDimension; c++)
                 {
-                    mat1(x1, x2) -= mat2(x1, x2);
-                    pH(x1, x2)   /= grad_mag;
+                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                        this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = 0.0*m_AttributeScales[num+c];
                 }
+                s += VDimension;
+                k += VDimension;
             }
-
-            // mat3 = H/|grad_f| * (I - n*n');
-            typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat3 = pH * mat1;
-            typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
-            tmp.set_size(VDimension, VDimension);
-            tmp.fill(0.0);
-            for (unsigned int c = 0; c<VDimension; c++)
+            else
             {
-                for (unsigned vd = 0; vd<VDimension; vd++)
-                    tmp(c,vd) = mat3(c,vd);
-            }
+                typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleGradientVnl(posLocal);
+                typename ParticleImageDomainWithGradients<float,3>::VnlVectorType pN = pG.normalize();
+                float grad_mag = pG.magnitude();
 
-            tmp = ps->TransformNormalDerivative(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType pH = domainWithHess->SampleHessianVnl(posLocal);
 
-            for (unsigned int c = s; c < s+VDimension; c++)
-            {
-                for (unsigned int vd = 0; vd < VDimension; vd++)
-                    this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = tmp(c-s, vd)*m_AttributeScales[num+c];
+                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat1;
+                mat1.set_identity();
+                vnl_matrix<float> nrml(VDimension, 1);
+                nrml.fill(0.0);
+                nrml(0,0) = pN[0]; nrml(1,0) = pN[1]; nrml(2,0) = pN[2];
+                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat2 = nrml * nrml.transpose();
+
+                for (unsigned int x1 = 0; x1 < VDimension; x1++)
+                {
+                    for (unsigned int x2 = 0; x2 < VDimension; x2++)
+                    {
+                        mat1(x1, x2) -= mat2(x1, x2);
+                        pH(x1, x2)   /= grad_mag;
+                    }
+                }
+
+                // mat3 = H/|grad_f| * (I - n*n');
+                typename ParticleImageDomainWithHessians<float,3>::VnlMatrixType mat3 = pH * mat1;
+                typename itk::ParticleSystem<VDimension>::VnlMatrixType tmp;
+                tmp.set_size(VDimension, VDimension);
+                tmp.fill(0.0);
+                for (unsigned int c = 0; c<VDimension; c++)
+                {
+                    for (unsigned vd = 0; vd<VDimension; vd++)
+                        tmp(c,vd) = mat3(c,vd);
+                }
+
+                tmp = ps->TransformNormalDerivative(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
+
+                for (unsigned int c = s; c < s+VDimension; c++)
+                {
+                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                        this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = tmp(c-s, vd)*m_AttributeScales[num+c];
+                }
+                s += VDimension;
+                k += VDimension;
             }
-            s += VDimension;
-            k += VDimension;
         }
 
 
         if (m_AttributesPerDomain[dom] > 0)
         {
-            point pt;
-            pt.clear();
-            pt[0] = posLocal[0];
-            pt[1] = posLocal[1];
-            pt[2] = posLocal[2];
-
-            for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
+            if (ps->GetDomainFlag(d))
             {
-                point dc;
-                dc.clear();
-                dc = ptr->GetFeatureDerivative(pt, aa);
-                for (unsigned int vd = 0; vd < VDimension; vd++)
-                    this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = dc[vd]*m_AttributeScales[num+aa+s];
+                for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
+                {
+                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                        this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = 0.0*m_AttributeScales[num+aa+s];
+                }
+            }
+            else
+            {
+                point pt;
+                pt.clear();
+                pt[0] = posLocal[0];
+                pt[1] = posLocal[1];
+                pt[2] = posLocal[2];
+
+                for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
+                {
+                    point dc;
+                    dc.clear();
+                    dc = ptr->GetFeatureDerivative(pt, aa);
+                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                        this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = dc[vd]*m_AttributeScales[num+aa+s];
+                }
             }
         }
     }

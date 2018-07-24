@@ -169,10 +169,11 @@ public:
             pt[2] = posLocal[2];
             fVals.clear();
             ptr->GetFeatureValues(pt, fVals);
+            for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
+                this->operator()(aa+k, d / m_DomainsPerShape) = fVals[aa]*m_AttributeScales[aa+num+s];
         }
 
-        for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
-            this->operator()(aa+k, d / m_DomainsPerShape) = fVals[aa]*m_AttributeScales[aa+num+s];
+
     }
 
     virtual void PositionAddEventCallback(Object *o, const EventObject &e)

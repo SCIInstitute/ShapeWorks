@@ -178,7 +178,13 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
         for (int i = 0; i < m_d_flgs.size(); i++)
         {
             itk::ParticleImageDomainWithHessians<float, 3> * domainWithHess = static_cast< itk::ParticleImageDomainWithHessians<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
-            domainWithHess->DeleteImages();
+            if (m_use_normals[i % m_domains_per_shape])
+                domainWithHess->DeletePartialDerivativeImages();
+            else
+                domainWithHess->DeleteImages();
+//            itk::ParticleImplicitSurfaceDomain<float, 3> * particleDomain = static_cast< itk::ParticleImplicitSurfaceDomain<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
+//            if (particleDomain->GetMesh() != NULL)
+//                particleDomain->GetMesh()->ClearFaceIndexMap();
         }
     }
 
@@ -1848,7 +1854,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::ComputeEnergyAfterIteration()
         m_Sampler->GetLinkingFunction()->SetDomainNumber(i);
         for (int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++)
         {
-            sampEnergy += m_Sampler->GetLinkingFunction()->EnergyA(j, i, m_Sampler->GetParticleSystem());
+            if (m_Sampler->GetParticleSystem()->GetDomainFlag(i))
+                sampEnergy += 0.0;
+            else
+                sampEnergy += m_Sampler->GetLinkingFunction()->EnergyA(j, i, m_Sampler->GetParticleSystem());
             if (m_Sampler->GetCorrespondenceMode() == 0)
                 corrEnergy += m_Sampler->GetLinkingFunction()->EnergyB(j, i, m_Sampler->GetParticleSystem());
         }
@@ -2279,26 +2288,41 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFilesWithFeatures( std::string iter_pre
 
             if (m_use_normals[i % m_domains_per_shape])
             {
-                typename itk::ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleNormalVnl(pos);
-                VectorType pN;
-                pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
-                pN = m_Sampler->GetParticleSystem()->TransformVector(pN, m_Sampler->GetParticleSystem()->GetTransform(i) * m_Sampler->GetParticleSystem()->GetPrefixTransform(i));
-                outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
+//                if (m_Sampler->GetParticleSystem()->GetDomainFlag(i))
+//                {
+//                    outw << 0.0 << " " << 0.0 << " " << 0.0 << " ";
+//                }
+//                else
+//                {
+                    typename itk::ParticleImageDomainWithGradients<float,3>::VnlVectorType pG = domainWithGrad->SampleNormalVnl(pos);
+                    VectorType pN;
+                    pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
+                    pN = m_Sampler->GetParticleSystem()->TransformVector(pN, m_Sampler->GetParticleSystem()->GetTransform(i) * m_Sampler->GetParticleSystem()->GetPrefixTransform(i));
+                    outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
+//                }
             }
 
             if (m_attributes_per_domain.size() > 0)
             {
                 if (m_attributes_per_domain[i % m_domains_per_shape] > 0)
                 {
-                    point pt;
-                    pt.clear();
-                    pt[0] = pos[0];
-                    pt[1] = pos[1];
-                    pt[2] = pos[2];
-                    fVals.clear();
-                    ptr->GetFeatureValues(pt, fVals);
-                    for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++)
-                        outw << fVals[k] << " ";
+//                    if (m_Sampler->GetParticleSystem()->GetDomainFlag(i))
+//                    {
+//                        for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++)
+//                            outw << 0.0 << " ";
+//                    }
+//                    else
+//                    {
+                        point pt;
+                        pt.clear();
+                        pt[0] = pos[0];
+                        pt[1] = pos[1];
+                        pt[2] = pos[2];
+                        fVals.clear();
+                        ptr->GetFeatureValues(pt, fVals);
+                        for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++)
+                            outw << fVals[k] << " ";
+//                    }
                 }
             }
 
