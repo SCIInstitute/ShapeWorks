@@ -884,6 +884,11 @@ public:
         }
     }
 
+    void ClearFaceIndexMap()
+    {
+        this->faceIndexMap.clear();
+    }
+
     /* Prateep */
     float getMaximumEdgeLength()
     {
