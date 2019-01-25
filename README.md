@@ -83,6 +83,7 @@ Setting up the source code
  - git submodule update
  - cd Source/CommonLibraries/fim_v4
  - git checkout master
+ - cd ../../..
  
  - cd ../ShapeWorks-Post
  - git checkout master
