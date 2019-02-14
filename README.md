@@ -67,7 +67,7 @@ Requirements
  * CMake 2.6+ (http://www.cmake.org/)
  * Visualization ToolKit (VTK 5.10.1 recommended) (http://www.vtk.org/) --built with Qt and Imaging support!
  * Insight Toolkit (ITK 4.7.2 recommended) (http://www.itk.org/) -- built with USE_SYSTEM_VXL and provide VXL build path
- * VXL (https://github.com/vxl/vxl)
+ * VXL (https://github.com/vxl/vxl) [download the release tag github-migration]
  * Qt 4.8.* (http://www.qt.io/developers/) [Only needed for ShapeWorksView2]
  * Install gcc5.0+ [only required for ShapeWorksPost on Linux]
  * Windows 7+, OSX 10.9+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
