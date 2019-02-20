@@ -49,6 +49,11 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         points_minus_mean.set_row(i, m_ShapeData->get_row(i) - m_mean(i,0) );
     }
 
+//    if (this->CheckForNans(points_minus_mean))
+//        std::cout << "MGEG: 1. Nans exist!!!" << std::endl;
+//    else
+//        std::cout << "MGEG: 1. No Nans!!!" << std::endl;
+
     vnl_diag_matrix<double> W;
 
     m_InverseCovMatrix.set_size(num_dims, num_dims);
@@ -80,6 +85,12 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     vnl_matrix_type Q = points_minus_mean * pinvMat;
 
+//    if (this->CheckForNans(Q))
+//        std::cout << "MGEG: 2. Nans exist!!!" << std::endl;
+//    else
+//        std::cout << "MGEG: 2. No Nans!!!" << std::endl;
+
+
     // Compute the update matrix in coordinate space by multiplication with the
     // Jacobian.  Each shape gradient must be transformed by a different Jacobian
     // so we have to do this individually for each shape (sample).
@@ -93,42 +104,49 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         for (unsigned int d = 0; d < m_DomainsPerShape; d++)
         {
             int dom = d + j*m_DomainsPerShape;
-            if (d > 0)
+            if (c->GetDomainFlag(dom) == false)
             {
-                num += m_AttributesPerDomain[d-1]*c->GetNumberOfParticles(d-1);
-                if (m_UseXYZ[d-1])
-                    num += 3*c->GetNumberOfParticles(d-1);
-                if (m_UseNormals[d-1])
-                    num += 3*c->GetNumberOfParticles(d-1);
+                if (d > 0)
+                {
+                    num += m_AttributesPerDomain[d-1]*c->GetNumberOfParticles(d-1);
+                    if (m_UseXYZ[d-1])
+                        num += 3*c->GetNumberOfParticles(d-1);
+                    if (m_UseNormals[d-1])
+                        num += 3*c->GetNumberOfParticles(d-1);
 
-                num2 += c->GetNumberOfParticles(d-1)*VDimension;
-            }
+                    num2 += c->GetNumberOfParticles(d-1)*VDimension;
+                }
 
-            int num_attr = m_AttributesPerDomain[d];
-            if (m_UseXYZ[d])
-                num_attr += 3;
-            if (m_UseNormals[d])
-                num_attr += 3;
+                int num_attr = m_AttributesPerDomain[d];
+                if (m_UseXYZ[d])
+                    num_attr += 3;
+                if (m_UseNormals[d])
+                    num_attr += 3;
 
-            J.clear();
-            J.set_size(num_attr, VDimension);
-            J.fill(0.0);
-            v.clear();
-            v.set_size(num_attr, 1);
-            v.fill(0.0);
+                J.clear();
+                J.set_size(num_attr, VDimension);
+                J.fill(0.0);
+                v.clear();
+                v.set_size(num_attr, 1);
+                v.fill(0.0);
 
-            for (unsigned int p = 0; p < c->GetNumberOfParticles(dom); p++)
-            {
-                v = Q.extract( num_attr, 1, num + p*num_attr, j );
-                J = m_ShapeGradient->extract( num_attr, 3, num + p*num_attr, 3*j );
+                for (unsigned int p = 0; p < c->GetNumberOfParticles(dom); p++)
+                {
+                    v = Q.extract( num_attr, 1, num + p*num_attr, j );
+                    J = m_ShapeGradient->extract( num_attr, 3, num + p*num_attr, 3*j );
 
-                vnl_matrix_type dx = J.transpose() * v;
-                for (unsigned int vd = 0; vd < VDimension; vd++)
-                    m_PointsUpdate(num2 + p*VDimension + vd, j) = dx(vd, 0);
+                    vnl_matrix_type dx = J.transpose() * v;
+                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                        m_PointsUpdate(num2 + p*VDimension + vd, j) = dx(vd, 0);
+                }
             }
         }
     }
 
+//    if (this->CheckForNans(m_PointsUpdate))
+//        std::cout << "MGEG: 3. Nans exist!!!" << std::endl;
+//    else
+//        std::cout << "MGEG: 3. No Nans!!!" << std::endl;
 
     m_CurrentEnergy = 0.0;
 

@@ -178,10 +178,13 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
         for (int i = 0; i < m_d_flgs.size(); i++)
         {
             itk::ParticleImageDomainWithHessians<float, 3> * domainWithHess = static_cast< itk::ParticleImageDomainWithHessians<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
-            if (m_use_normals[i % m_domains_per_shape])
-                domainWithHess->DeletePartialDerivativeImages();
-            else
-                domainWithHess->DeleteImages();
+            if (m_use_normals.size() > 0)
+            {
+                if (m_use_normals[i % m_domains_per_shape])
+                    domainWithHess->DeletePartialDerivativeImages();
+                else
+                    domainWithHess->DeleteImages();
+            }
 //            itk::ParticleImplicitSurfaceDomain<float, 3> * particleDomain = static_cast< itk::ParticleImplicitSurfaceDomain<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
 //            if (particleDomain->GetMesh() != NULL)
 //                particleDomain->GetMesh()->ClearFaceIndexMap();
@@ -1373,19 +1376,20 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     m_disable_checkpointing = true;
     m_disable_procrustes = true;
 
-    if( m_Sampler->GetParticleSystem()->GetNumberOfParticles() > 10) //defaults to number of points read for first domain
+    m_disable_procrustes = false;
+    m_Procrustes->SetComputeTransformationOn();
+    if (m_procrustes_interval != 0) // Initial registration
     {
-        m_disable_procrustes = false;
-        m_Procrustes->SetComputeTransformationOn();
-        if (m_procrustes_interval != 0) // Initial registration
+        for (int i = 0; i < this->m_domains_per_shape; i++)
         {
-            m_Procrustes->RunRegistration();
-            this->WritePointFiles();
-            this->WriteTransformFile();
+            if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10)
+                m_Procrustes->RunRegistration(i);
         }
-        m_disable_procrustes = true;
-        m_Procrustes->SetComputeTransformationOff();
+        this->WritePointFiles();
+        this->WriteTransformFile();
     }
+    m_disable_procrustes = true;
+    m_Procrustes->SetComputeTransformationOff();
 
     m_Sampler->GetParticleSystem()->SynchronizePositions();
 
@@ -1432,6 +1436,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
     m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
     this->AddSinglePoint();
+
     m_Sampler->GetParticleSystem()->SynchronizePositions();
 
     int split_number = 0;
@@ -1467,7 +1472,9 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d])
                 m_Sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
         }
+
         m_Sampler->GetParticleSystem()->SynchronizePositions();
+
         split_number++;
 
         if (m_verbosity_level > 0)
@@ -1486,9 +1493,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             ss << split_number;
 
             std::stringstream ssp;
-            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
-
-            std::string dir_name     = "split" + ss.str() + "_" + ssp.str() + "pts_wo_opt";
+            std::string dir_name     = "split" + ss.str() ;
+            for (int i=0; i < m_domains_per_shape; i++)
+            {
+                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i);
+                dir_name     += "_" + ssp.str();
+                ssp.str("");
+            }
+            dir_name += "pts_wo_opt";
             std::string out_path     = m_output_dir;
 
             std::string tmp_dir_name = out_path + "/" + dir_name;
@@ -1505,8 +1517,18 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
         std::stringstream ss;
         ss << split_number;
         std::stringstream ssp;
+
         ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
-        m_strEnergy = "split" + ss.str() + "_" + ssp.str() + "pts_init";
+        m_strEnergy = "split" + ss.str();
+
+        for (int i=0; i < m_domains_per_shape; i++)
+        {
+            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i);
+            m_strEnergy     += "_" + ssp.str();
+            ssp.str("");
+        }
+        m_strEnergy += "pts_init";
+
 
         if (this->m_pairwise_potential_type == 1)
         {
@@ -1529,8 +1551,14 @@ ShapeWorksRunApp<SAMPLERTYPE>::Initialize()
             std::stringstream ss;
             ss << split_number;
             std::stringstream ssp;
-            ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(); // size from domain 0
-            std::string dir_name     = "split" + ss.str() + "_" + ssp.str() + "pts_w_opt";
+            std::string dir_name     = "split" + ss.str() ;
+            for (int i=0; i < m_domains_per_shape; i++)
+            {
+                ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i);
+                dir_name     += "_" + ssp.str();
+                ssp.str("");
+            }
+            dir_name += "pts_w_opt";
             std::string out_path     = m_output_dir;
             std::string tmp_dir_name = out_path + "/" + dir_name;
 
@@ -1791,6 +1819,21 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
         }
     }
 
+    if (m_checkpointing_interval != 0 && m_disable_checkpointing == false)
+    {
+        m_CheckpointCounter++;
+        if (m_CheckpointCounter == (int)m_checkpointing_interval)
+        {
+            m_CheckpointCounter = 0;
+
+            this->WritePointFiles();
+            this->WriteTransformFile();
+            this->WritePointFilesWithFeatures();
+            this->WriteModes();
+            this->WriteParameters();
+            this->WriteEnergyFiles();
+        }
+    }
 
     if (m_optimizing == false) return;
 
@@ -1812,7 +1855,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::IterateCallback(itk::Object *, const itk::EventOb
     }
 
     static unsigned int iteration_no = 0;
-    // Checkpointing
+    // Checkpointing after procrustes (override for optimizing step)
     if (m_checkpointing_interval != 0 && m_disable_checkpointing == false)
     {
 

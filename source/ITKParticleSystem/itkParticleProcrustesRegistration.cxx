@@ -25,10 +25,15 @@ ParticleProcrustesRegistration<3>::RunRegistration(int d)
     // Do not compute any transformation if already computed.
     if(m_ComputeTransformation == false) return;
 
+
+
     // DOES NOT Assume all domains have the same number of particles.
     const int totalDomains = m_ParticleSystem->GetNumberOfDomains();
     const int numPoints = m_ParticleSystem->GetNumberOfParticles(d);
     const int numShapes = totalDomains / m_DomainsPerShape;
+
+    // Do not run procrsutes for this domain if number of points less than 10
+    if (numPoints < 10) return;
 
     Procrustes3D::ShapeListType shapelist;
     Procrustes3D::ShapeType     shapevector;

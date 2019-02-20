@@ -141,6 +141,23 @@ public:
           }
       }
 
+      bool CheckForNans()
+      {
+        bool flag = false;
+        for (unsigned int r = 0; r < this->rows(); r++)
+          {
+          for (unsigned int c = 0; c < this->cols(); c++)
+            {
+            if (isnan(this->operator()(r, c)))
+            {
+                flag = true;
+                break;
+            }
+            }
+          }
+        return flag;
+      }
+
     /** Set/Get the number of domains per shape.  This can only be safely done
       before shapes are initialized with points! */
     void SetDomainsPerShape(int i)

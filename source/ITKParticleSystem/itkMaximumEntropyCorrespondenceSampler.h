@@ -204,6 +204,10 @@ public:
       m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
+  ParticleShapeMatrixAttribute<double, Dimension> *GetShapeMatrix()
+  {
+      return m_ShapeMatrix.GetPointer();
+  }
   ParticleGeneralShapeMatrix<double, Dimension> *GetGeneralShapeMatrix()
   {
       return m_GeneralShapeMatrix.GetPointer();

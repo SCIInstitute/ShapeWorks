@@ -161,6 +161,23 @@ public:
         m_UseNormals[i] = val;
     }
 
+    bool CheckForNans(vnl_matrix_type mat)
+    {
+        bool flag = false;
+        for (int i = 0; i < mat.rows(); i++)
+        {
+            for (int j = 0; j < mat.cols(); j++)
+            {
+                if (isnan(mat(i,j)))
+                {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        return flag;
+    }
+
     virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
     {
         typename ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>::Pointer copy =

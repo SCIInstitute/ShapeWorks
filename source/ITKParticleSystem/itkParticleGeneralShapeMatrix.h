@@ -216,6 +216,36 @@ public:
         // NEED TO IMPLEMENT THIS
     }
 
+    void PrintMatrix()
+    {
+      std::cout << std::endl;
+      for (unsigned int r = 0; r < this->rows(); r++)
+        {
+        for (unsigned int c = 0; c < this->cols(); c++)
+          {
+          std::cout << this->operator()(r, c) << "  ";
+          }
+      std::cout << std::endl;
+        }
+    }
+
+    bool CheckForNans()
+    {
+      bool flag = false;
+      for (unsigned int r = 0; r < this->rows(); r++)
+        {
+        for (unsigned int c = 0; c < this->cols(); c++)
+          {
+          if (isnan(this->operator()(r, c)))
+          {
+              flag = true;
+              break;
+          }
+          }
+        }
+      return flag;
+    }
+
 protected:
         ParticleGeneralShapeMatrix()
     {
