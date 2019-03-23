@@ -112,5 +112,3 @@ done
 echo "</mesh>" >> $xmlfilename
 
 ComputeRasterizationVolumeOriginAndSize $xmlfilename
-
-
