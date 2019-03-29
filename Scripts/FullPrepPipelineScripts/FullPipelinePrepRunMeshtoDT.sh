@@ -42,6 +42,7 @@ TPsmoothing_iterations=1
 
 source ../setup.txt # works for server as well
 source ../Utils/Utils.sh # common utility functions
+scriptDir=../ToolLevelScripts/
 
 parentDir='/home/sci/riddhishb/Downloads/data/process/' # this is where all the preprocessed data will lie
 rawDataDir='/home/sci/riddhishb/Downloads/data/' # this is the path to the data (raw Images and Segmentations)
@@ -100,7 +101,7 @@ buffer_distance=2
 if [ $doPreview -eq 1 ]
 then
 
-    ./MeshesPreviewQualityControl.sh  --data_dir ${rawDataDir} \
+    ${scriptDir}/MeshesPreviewQualityControl.sh  --data_dir ${rawDataDir} \
                                 --out_dir ${parentDir}previewed/ \
                                 --mesh_extension $mesh_extension \
                                 --decimation_decimal $decimation_decimal \
@@ -124,7 +125,7 @@ fi
 if [ $doSmooth -eq 1 ]
 then
 
-    ./SmoothMeshes.sh  --data_dir ${parentDir}previewed/  \
+    ${scriptDir}/SmoothMeshes.sh  --data_dir ${parentDir}previewed/  \
                       --out_dir ${parentDir}smoothed/ \
                       --mesh_extension $mesh_extension \
                       --smoothing_iterations $smoothing_iterations --relaxation_factor $relaxation_factor \
@@ -148,7 +149,7 @@ if [ $doAlign -eq 1 ]
 then
     reference_mesh=${parentDir}smoothed/${reference_meshID}.preview${decimation_percentage}.smooth${smoothing_iterations}.ply 
 
-    ./AlignMeshes.sh  --data_dir ${parentDir}smoothed/ \
+    ${scriptDir}/AlignMeshes.sh  --data_dir ${parentDir}smoothed/ \
                       --out_dir ${parentDir}aligned/ \
                       --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations} \
                       --mesh_extension $mesh_extension \
@@ -162,7 +163,7 @@ fi
 if [ $doSizeOrigin -eq 1 ]
 then
     
-    ./RasterizationVolumeOriginAndSize.sh --data_dir ${parentDir}aligned/ \
+    ${scriptDir}/RasterizationVolumeOriginAndSize.sh --data_dir ${parentDir}aligned/ \
                                           --out_dir ${parentDir}origin_size/ \
                                           --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
                                           --spacing $spacing --narrow_band $narrow_band\
@@ -175,7 +176,7 @@ then
     origin_filename=${parentDir}origin_size/origin_sp${spacing}_nb${narrow_band}.txt
     size_filename=${parentDir}origin_size/size_sp${spacing}_nb${narrow_band}.txt
 
-    ./MeshesToVolumesWithOriginAndSize.sh  --data_dir ${parentDir}aligned/ \
+    ${scriptDir}/MeshesToVolumesWithOriginAndSize.sh  --data_dir ${parentDir}aligned/ \
                                 --out_dir ${parentDir}fidsDT/ \
                                 --mesh_extension $mesh_extension \
                                 --origin_filename $origin_filename\
@@ -190,7 +191,7 @@ fi
 
 if [ $doFixFidsDT -eq 1 ]
 then
-    ./RemoveFidsDTLeakage.sh --data_dir ${parentDir}fidsDT/ \
+    ${scriptDir}/RemoveFidsDTLeakage.sh --data_dir ${parentDir}fidsDT/ \
                              --out_dir ${parentDir}fidsDT/ \
                              --mesh_extension $mesh_extension \
                              --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
@@ -201,7 +202,7 @@ fi
 
 if [ $doTPSmoothDT -eq 1 ]
 then
-    ./TopologyPreservingDTSmoothing.sh  --data_dir ${parentDir}fidsDT/ \
+    ${scriptDir}/TopologyPreservingDTSmoothing.sh  --data_dir ${parentDir}fidsDT/ \
                                         --out_dir ${parentDir}groom/ \
                                         --dt_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp.SignedDistMap_r${ball_radius_factor}_sp${spacing}_nb${narrow_band}.fixed \
                                         --smoothing_iterations $TPsmoothing_iterations
