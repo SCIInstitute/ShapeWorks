@@ -10,22 +10,22 @@
 ##################################################################################
 
 ### [1] Preview : Does mesh decimation and cleaning to speed up the computation for fids
-doPreview=0
-decimation_decimal=0.95
-decimation_percentage=95
+doPreview=1
+decimation_decimal=0.75
+decimation_percentage=75
 
 ### [2] Smoothing : Performs Mesh Smoothing
-doSmooth=0
+doSmooth=1
 smoothing_iterations=1
 relaxation_factor=0.5
 
 ### [3] Alignment : Performs Mesh Alignment
-doAlign=0
+doAlign=1
 registration_mode=similarity
-reference_meshID=nih_n17_L_femur_aligned
+reference_meshID=ref
 
 ### [4] Size and Origin : Computes the biggest bounding box size and origin
-doSizeOrigin=0
+doSizeOrigin=1
 spacing=0.5
 narrow_band=10
 
@@ -37,15 +37,15 @@ ball_radius_factor=1
 doFixFidsDT=1
 
 ### [7] Topology Preserving Smoothing : Merforms smoothing on the DT tranforms
-doTPSmoothDT=1 
+doTPSmoothDT=1
 TPsmoothing_iterations=1
 
 source ../setup.txt # works for server as well
 source ../Utils/Utils.sh # common utility functions
 
-parentDir='' # this is where all the preprocessed data will lie
-rawDataDir='' # this is the path to the data (raw Images and Segmentations)
-mesh_extension='ply'
+parentDir='/home/sci/riddhishb/Downloads/data/process/' # this is where all the preprocessed data will lie
+rawDataDir='/home/sci/riddhishb/Downloads/data/' # this is the path to the data (raw Images and Segmentations)
+mesh_extension='vtk'
 
 while [[ $# > 1 ]]
 do
@@ -67,6 +67,21 @@ do
       shift
       ;;
       
+      -r|--reference_meshID)
+      reference_meshID="$2"
+      shift
+      ;;
+
+      -r|--do_preview)
+      doPreview="$2"
+      shift
+      ;;
+
+      -r|--do_smooth)
+      doSmooth="$2"
+      shift
+      ;;
+
       --default)
       DEFAULT=YES
       shift
@@ -78,6 +93,8 @@ do
   shift
 done
 
+parentDir=${parentDir}/
+rawDataDir=${rawDataDir}/
 buffer_distance=2
 
 if [ $doPreview -eq 1 ]
@@ -88,20 +105,42 @@ then
                                 --mesh_extension $mesh_extension \
                                 --decimation_decimal $decimation_decimal \
                                 --decimation_percentage $decimation_percentage \
-                                --use_preview 1
+                                --use_preview 0
                                 
+fi
+if [ $doPreview -eq 0 ]
+then
+  mkdir -p ${parentDir}previewed
+  for filename in $(find $rawDataDir -name "*.${mesh_extension}" | sort -t '\0' ) ;
+  do
+    prefix=$( GetFilePrefix ${filename} )
+    outnm=${parentDir}previewed/${prefix}.preview${decimation_percentage}.${mesh_extension}
+    cp $filename ${parentDir}previewed/
+    mv ${parentDir}previewed/${prefix}.${mesh_extension} $outnm
+  done
 fi
 
 
 if [ $doSmooth -eq 1 ]
 then
 
-    ./SmoothMeshes.sh  --data_dir ${parentDir}previewed/ \
+    ./SmoothMeshes.sh  --data_dir ${parentDir}previewed/  \
                       --out_dir ${parentDir}smoothed/ \
-                      --mesh_suffix preview${decimation_percentage} \
                       --mesh_extension $mesh_extension \
-                      --smoothing_iterations $smoothing_iterations --relaxation_factor $relaxation_factor
+                      --smoothing_iterations $smoothing_iterations --relaxation_factor $relaxation_factor \
+                      --mesh_suffix preview${decimation_percentage}
                       
+fi
+if [ $doSmooth -eq 0 ]
+then
+  mkdir -p ${parentDir}smoothed
+  for filename in $(find ${parentDir}previewed/ -name "*preview${decimation_percentage}.${mesh_extension}" | sort -t '\0' ) ;
+  do
+    prefix=$( GetFilePrefix ${filename} )
+    outnm=${parentDir}smoothed/${prefix}.smooth${smoothing_iterations}.${mesh_extension}
+    cp $filename ${parentDir}smoothed/
+    mv ${parentDir}smoothed/${prefix}.${mesh_extension} $outnm
+  done
 fi
 
 
@@ -118,14 +157,16 @@ then
 
 fi
 
+
 # compute the origin and size of the distance transform volume where all meshes will fit into
 if [ $doSizeOrigin -eq 1 ]
 then
     
     ./RasterizationVolumeOriginAndSize.sh --data_dir ${parentDir}aligned/ \
                                           --out_dir ${parentDir}origin_size/ \
+                                          --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
                                           --spacing $spacing --narrow_band $narrow_band\
-                                          --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.${registration_mode}_icp 
+                                         
 fi
 
 # convert meshes to distance transforms
@@ -136,10 +177,10 @@ then
 
     ./MeshesToVolumesWithOriginAndSize.sh  --data_dir ${parentDir}aligned/ \
                                 --out_dir ${parentDir}fidsDT/ \
-                                --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.${registration_mode}_icp \
                                 --mesh_extension $mesh_extension \
                                 --origin_filename $origin_filename\
                                 --size_filename $size_filename\
+                                --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
                                 --spacing $spacing --narrow_band $narrow_band\
                                 --ball_radius_factor $ball_radius_factor \
                                 --num_meshes_in_parallel 5 --num_threads 20
@@ -151,8 +192,8 @@ if [ $doFixFidsDT -eq 1 ]
 then
     ./RemoveFidsDTLeakage.sh --data_dir ${parentDir}fidsDT/ \
                              --out_dir ${parentDir}fidsDT/ \
-                             --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.${registration_mode}_icp \
                              --mesh_extension $mesh_extension \
+                             --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
                              --dt_suffix DT_r${ball_radius_factor}_sp${spacing}_nb${narrow_band} \
                              --fids_dt_suffix SignedDistMap_r${ball_radius_factor}_sp${spacing}_nb${narrow_band}
                                           
@@ -162,7 +203,7 @@ if [ $doTPSmoothDT -eq 1 ]
 then
     ./TopologyPreservingDTSmoothing.sh  --data_dir ${parentDir}fidsDT/ \
                                         --out_dir ${parentDir}groom/ \
-                                        --dt_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.${registration_mode}_icp.SignedDistMap_r${ball_radius_factor}_sp${spacing}_nb${narrow_band}.fixed \
+                                        --dt_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp.SignedDistMap_r${ball_radius_factor}_sp${spacing}_nb${narrow_band}.fixed \
                                         --smoothing_iterations $TPsmoothing_iterations
                                 
     mkdir -p ${parentDir}DistanceTransforms/

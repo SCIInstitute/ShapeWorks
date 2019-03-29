@@ -10,27 +10,27 @@
 ##################################################################################
 
 ### [1] Preview : Does mesh decimation and cleaning to speed up the computation for fids
-doPreview=0
+doPreview=1
 decimation_decimal=0.75
 decimation_percentage=75
 
 ### [2] Smoothing : Performs Mesh Smoothing
-doSmooth=0
+doSmooth=1
 smoothing_iterations=1
 relaxation_factor=0.5
 
 ### [3] Alignment : Performs Mesh Alignment
-doAlign=0
+doAlign=1
 registration_mode=similarity
 reference_meshID=ref
 
 ### [4] Size and Origin : Computes the biggest bounding box size and origin
-doSizeOrigin=0
+doSizeOrigin=1
 spacing=0.5
 narrow_band=10
 
 ### [5] Mesh to DT : Computes parameterfile and then the DT from the meshes
-doMeshesToVolumes=0
+doMeshesToVolumes=1
 ball_radius_factor=1
 
 ### [6] Fix DT Leakage : Fixes leakage in the distance transforms for the fids
@@ -72,6 +72,16 @@ do
       shift
       ;;
 
+      -r|--do_preview)
+      doPreview="$2"
+      shift
+      ;;
+
+      -r|--do_smooth)
+      doSmooth="$2"
+      shift
+      ;;
+
       --default)
       DEFAULT=YES
       shift
@@ -83,6 +93,8 @@ do
   shift
 done
 
+parentDir=${parentDir}/
+rawDataDir=${rawDataDir}/
 buffer_distance=2
 
 if [ $doPreview -eq 1 ]
@@ -96,6 +108,17 @@ then
                                 --use_preview 0
                                 
 fi
+if [ $doPreview -eq 0 ]
+then
+  mkdir -p ${parentDir}previewed
+  for filename in $(find $rawDataDir -name "*.${mesh_extension}" | sort -t '\0' ) ;
+  do
+    prefix=$( GetFilePrefix ${filename} )
+    outnm=${parentDir}previewed/${prefix}.preview${decimation_percentage}.${mesh_extension}
+    cp $filename ${parentDir}previewed/
+    mv ${parentDir}previewed/${prefix}.${mesh_extension} $outnm
+  done
+fi
 
 
 if [ $doSmooth -eq 1 ]
@@ -107,6 +130,17 @@ then
                       --smoothing_iterations $smoothing_iterations --relaxation_factor $relaxation_factor \
                       --mesh_suffix preview${decimation_percentage}
                       
+fi
+if [ $doSmooth -eq 0 ]
+then
+  mkdir -p ${parentDir}smoothed
+  for filename in $(find ${parentDir}previewed/ -name "*preview${decimation_percentage}.${mesh_extension}" | sort -t '\0' ) ;
+  do
+    prefix=$( GetFilePrefix ${filename} )
+    outnm=${parentDir}smoothed/${prefix}.smooth${smoothing_iterations}.${mesh_extension}
+    cp $filename ${parentDir}smoothed/
+    mv ${parentDir}smoothed/${prefix}.${mesh_extension} $outnm
+  done
 fi
 
 
@@ -122,6 +156,7 @@ then
                       --registration_mode $registration_mode
 
 fi
+
 
 # compute the origin and size of the distance transform volume where all meshes will fit into
 if [ $doSizeOrigin -eq 1 ]
