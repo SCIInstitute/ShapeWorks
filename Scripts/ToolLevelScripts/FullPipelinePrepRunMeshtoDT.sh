@@ -22,7 +22,7 @@ relaxation_factor=0.5
 ### [3] Alignment : Performs Mesh Alignment
 doAlign=0
 registration_mode=similarity
-reference_meshID=dod_n03_L_femur_aligned
+reference_meshID=ref
 
 ### [4] Size and Origin : Computes the biggest bounding box size and origin
 doSizeOrigin=0
@@ -67,6 +67,11 @@ do
       shift
       ;;
       
+      -r|--reference_meshID)
+      reference_meshID="$2"
+      shift
+      ;;
+
       --default)
       DEFAULT=YES
       shift
