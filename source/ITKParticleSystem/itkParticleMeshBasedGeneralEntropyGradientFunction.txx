@@ -58,7 +58,8 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     m_InverseCovMatrix.set_size(num_dims, num_dims);
     m_InverseCovMatrix.fill(0.0);
-    vnl_matrix_type pinvMat(num_samples, num_samples, 0.0);
+    vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
+    vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
 
     if (this->m_UseMeanEnergy)
     {
@@ -67,20 +68,38 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     }
     else
     {
-        vnl_svd <double> svd(points_minus_mean);
+//        vnl_svd <double> svd(points_minus_mean);
 
-        vnl_matrix_type U = svd.U();
-        vnl_matrix_type V = svd.V();
+//        vnl_matrix_type U = svd.U();
+//        vnl_matrix_type V = svd.V();
 
+//        W = svd.W();
+
+//        vnl_diag_matrix<double> invLambda = svd.W()*svd.W();
+
+//        invLambda.set_diagonal(invLambda.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance);
+//        invLambda.invert_in_place();
+
+//        pinvMat = (V * invLambda) * V.transpose();
+//        m_InverseCovMatrix = (U * invLambda) * U.transpose();
+
+        gramMat = points_minus_mean.transpose()* points_minus_mean;
+
+        vnl_svd <double> svd(gramMat);
+
+        vnl_matrix_type UG = svd.U();
         W = svd.W();
 
-        vnl_diag_matrix<double> invLambda = svd.W()*svd.W();
+        vnl_diag_matrix<double> invLambda = svd.W();
 
         invLambda.set_diagonal(invLambda.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance);
         invLambda.invert_in_place();
 
-        pinvMat = (V * invLambda) * V.transpose();
-        m_InverseCovMatrix = (U * invLambda) * U.transpose();
+        pinvMat = (UG * invLambda) * UG.transpose();
+
+        vnl_matrix_type projMat = points_minus_mean * UG;
+        vnl_matrix_type projMat2 = projMat * invLambda;
+        m_InverseCovMatrix = projMat2 * projMat2.transpose();
     }
 
     vnl_matrix_type Q = points_minus_mean * pinvMat;

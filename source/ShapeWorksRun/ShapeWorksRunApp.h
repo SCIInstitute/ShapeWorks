@@ -177,6 +177,7 @@ protected:
     std::vector<int> m_attributes_per_domain;
     int m_distribution_domain_id;
     std::string m_output_cutting_plane_file;
+    int num_threads; //number of openmp threads
 
     // ReadOptimizationParameters
     int m_processing_mode;
