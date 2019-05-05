@@ -10,9 +10,7 @@
 # Notes:
 ##################################################################################
 
-# adding related-binaries to system path
-source ../setup.txt # works for server as well
-source ../Utils/Utils.sh # common utility functions
+scriptHome=../
 
 # input parameters
 while [[ $# > 1 ]]
@@ -56,6 +54,11 @@ do
       shift
       ;;
       
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
+      
       --default)
       DEFAULT=YES
       shift
@@ -66,6 +69,10 @@ do
   esac
   shift
 done
+
+# adding related-binaries to system path
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh # common utility functions
 
 # grooming setting
 foreground=1

@@ -10,9 +10,7 @@
 # Notes:
 ##################################################################################
 
-# adding related-binaries to system path
-source ../setup.txt # works for server as well
-source ../Utils/Utils.sh # common utility functions
+scriptHome=../
 
 mesh_prefix=""
 mesh_suffix=""
@@ -59,6 +57,10 @@ do
       shift
       ;;
       
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
       
       --default)
       DEFAULT=YES
@@ -71,8 +73,12 @@ do
   shift
 done
 
+# adding related-binaries to system path
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh # common utility functions
 
 mkdir -p $out_dir
+mkdir -p $out_dir/paramfiles
 # origin and size settings
 padding=$(echo "1.3*($narrow_band/$spacing)" | bc -l)
 pad_pixels="${padding%.*}" # get integer value
@@ -88,7 +94,7 @@ EchoWithColor "out_size_filename $out_size_filename" "yellow"
 rm -rf ${out_origin_filename}
 rm -rf ${out_size_filename}
 
-xmlfilename=${out_dir}ComputeRasterizationVolumeOriginAndSize.xml
+xmlfilename=${out_dir}/paramfiles/ComputeRasterizationVolumeOriginAndSize.xml
 rm -rf $xmlfilename
 
 echo "<? xml version="1.0" ?>" >> $xmlfilename
