@@ -110,8 +110,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
             m_GradientFunction->BeforeIteration();
         counter++;
 
-        typename ParticleSystemType::Pointer m_ParticleSystem_dummy;
-        m_GradientFunction->SetParticleSystem(m_ParticleSystem_dummy);
 #pragma omp parallel
         {
             // Iterate over each domain
@@ -240,7 +238,6 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
             }// for each domain
         }
 
-        m_GradientFunction->SetParticleSystem(m_ParticleSystem);
         m_NumberOfIterations++;
         m_GradientFunction->AfterIteration();
 
