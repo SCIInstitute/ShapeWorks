@@ -200,7 +200,7 @@ public:
         copy->m_AttributesPerDomain = this->m_AttributesPerDomain;
         copy->m_DomainsPerShape = this->m_DomainsPerShape;
         copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
-        copy->m_mean = this->m_mean;
+        copy->m_points_mean = this->m_points_mean;
         copy->m_UseNormals = this->m_UseNormals;
         copy->m_UseXYZ = this->m_UseXYZ;
         copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
@@ -221,13 +221,14 @@ protected:
         m_MinimumVarianceDecayConstant = 1.0; //log(2.0) / 50000.0;
         m_RecomputeCovarianceInterval = 1;
         m_Counter = 0;
-        m_PointsUpdate.clear();
         m_UseMeanEnergy = true;
         m_UseNormals.clear();
         m_UseXYZ.clear();
-        m_mean.clear();
         num_dims = 0;
         num_samples = 0;
+        m_PointsUpdate = new vnl_matrix_type(10,10);
+        m_InverseCovMatrix = new vnl_matrix_type(10,10);
+        m_points_mean = new vnl_matrix_type(10,10);
     }
     virtual ~ParticleMeshBasedGeneralEntropyGradientFunction() {}
     void operator=(const ParticleMeshBasedGeneralEntropyGradientFunction &);
@@ -237,7 +238,7 @@ protected:
     typename ShapeGradientType::Pointer m_ShapeGradient;
 
     virtual void ComputeUpdates(const ParticleSystemType *c);
-    vnl_matrix_type m_PointsUpdate;
+    vnl_matrix_type * m_PointsUpdate;
 
     double m_MinimumVariance;
     double m_MinimumEigenValue;
@@ -253,10 +254,9 @@ protected:
     bool m_UseMeanEnergy;
     std::vector<bool> m_UseXYZ;
     std::vector<bool> m_UseNormals;
-    vnl_matrix_type m_mean;
-    vnl_matrix_type m_InverseCovMatrix;
+    vnl_matrix_type * m_points_mean;
+    vnl_matrix_type * m_InverseCovMatrix;
     int num_dims, num_samples;
-
 };
 } // end namespace
 

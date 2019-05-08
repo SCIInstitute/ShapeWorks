@@ -47,18 +47,18 @@ ParticleEnsembleEntropyFunction<VDimension>
 
 
     // Do we need to resize the covariance matrix?
-    if (m_PointsUpdate.rows() != num_dims || m_PointsUpdate.cols() != num_samples)
+    if (m_PointsUpdate->rows() != num_dims || m_PointsUpdate->cols() != num_samples)
     {
-        m_PointsUpdate.set_size(num_dims, num_samples);
-        m_PointsUpdate = m_PointsUpdate.fill(0.0);
+        m_PointsUpdate->set_size(num_dims, num_samples);
+        m_PointsUpdate->fill(0.0);
     }
     vnl_matrix_type points_minus_mean;
     points_minus_mean.clear();
     points_minus_mean.set_size(num_dims, num_samples);
     points_minus_mean.fill(0.0);
 
-    points_mean.clear();
-    points_mean.set_size(num_dims, 1);
+    m_points_mean->clear();
+    m_points_mean->set_size(num_dims, 1);
 
     // Compute the covariance matrix.
     // (A is D' in Davies paper)
@@ -71,7 +71,7 @@ ParticleEnsembleEntropyFunction<VDimension>
         {
             total += m_ShapeMatrix->operator()(j, i);
         }
-        points_mean(j,0) = total/(double)num_samples;
+        m_points_mean->put(j,0, total/(double)num_samples);
         _total += total;
     }
 
@@ -80,7 +80,7 @@ ParticleEnsembleEntropyFunction<VDimension>
     {
         for (unsigned int i = 0; i < num_samples; i++)
         {
-            points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - points_mean(j,0);
+            points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - m_points_mean->get(j,0);
         }
     }
 //    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
@@ -101,15 +101,15 @@ ParticleEnsembleEntropyFunction<VDimension>
 
     vnl_diag_matrix<double> W;
 
-    m_InverseCovMatrix.set_size(num_dims, num_dims);
-    m_InverseCovMatrix.fill(0.0);
+    m_InverseCovMatrix->set_size(num_dims, num_dims);
+    m_InverseCovMatrix->fill(0.0);
     vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
     vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
 
     if (this->m_UseMeanEnergy)
     {
         pinvMat.set_identity();
-        m_InverseCovMatrix.set_identity();
+        m_InverseCovMatrix->set_identity();
     }
     else
     {
@@ -144,9 +144,10 @@ ParticleEnsembleEntropyFunction<VDimension>
 
         vnl_matrix_type projMat = points_minus_mean * UG;
         vnl_matrix_type projMat2 = projMat * invLambda;
-        m_InverseCovMatrix = projMat2 * projMat2.transpose();
+        projMat2 = projMat2 * projMat2.transpose();
+        m_InverseCovMatrix->update(projMat2);
     }
-    m_PointsUpdate = points_minus_mean * pinvMat;
+    m_PointsUpdate->update(points_minus_mean * pinvMat);
 
 //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 
@@ -200,12 +201,12 @@ ParticleEnsembleEntropyFunction<VDimension>
     k += idx*VDimension;
 
     vnl_matrix_type Xi(3,1,0.0);
-    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - points_mean(k, 0);
-    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - points_mean(k+1, 0);
-    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - points_mean(k+2, 0);
+    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);
+    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
+    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
 
 
-    vnl_matrix_type tmp1 = m_InverseCovMatrix.extract(3,3,k,k);
+    vnl_matrix_type tmp1 = m_InverseCovMatrix->extract(3,3,k,k);
 
     vnl_matrix_type tmp = Xi.transpose()*tmp1;
 
@@ -215,7 +216,7 @@ ParticleEnsembleEntropyFunction<VDimension>
 
     for (unsigned int i = 0; i< VDimension; i++)
     {
-        gradE[i] = m_PointsUpdate(k + i, d / DomainsPerShape);
+        gradE[i] = m_PointsUpdate->get(k + i, d / DomainsPerShape);
     }
 
 

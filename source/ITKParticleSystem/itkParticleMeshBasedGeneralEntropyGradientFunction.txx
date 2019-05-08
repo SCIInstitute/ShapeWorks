@@ -31,22 +31,22 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         rows += VDimension*c->GetNumberOfParticles(i);
 
     // Do we need to resize the update matrix?
-    if (m_PointsUpdate.rows() != rows
-            || m_PointsUpdate.cols() != num_samples)
-        m_PointsUpdate.set_size(rows, num_samples);
+    if (m_PointsUpdate->rows() != rows
+            || m_PointsUpdate->cols() != num_samples)
+        m_PointsUpdate->set_size(rows, num_samples);
 
-    m_PointsUpdate.fill(0.0);
+    m_PointsUpdate->fill(0.0);
 
     vnl_matrix_type points_minus_mean(num_dims, num_samples, 0.0);
 
-    m_mean.clear();
-    m_mean.set_size(num_dims,1);
-    m_mean.fill(0.0);
+    m_points_mean->clear();
+    m_points_mean->set_size(num_dims,1);
+    m_points_mean->fill(0.0);
 
     for (unsigned int i = 0; i < num_dims; i++)
     {
-        m_mean(i,0) = (m_ShapeData->get_n_rows(i, 1)).mean();
-        points_minus_mean.set_row(i, m_ShapeData->get_row(i) - m_mean(i,0) );
+        m_points_mean->put(i,0, (m_ShapeData->get_n_rows(i, 1)).mean());
+        points_minus_mean.set_row(i, m_ShapeData->get_row(i) - m_points_mean->get(i,0) );
     }
 
 //    if (this->CheckForNans(points_minus_mean))
@@ -56,15 +56,15 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     vnl_diag_matrix<double> W;
 
-    m_InverseCovMatrix.set_size(num_dims, num_dims);
-    m_InverseCovMatrix.fill(0.0);
+    m_InverseCovMatrix->set_size(num_dims, num_dims);
+    m_InverseCovMatrix->fill(0.0);
     vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
     vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
 
     if (this->m_UseMeanEnergy)
     {
         pinvMat.set_identity();
-        m_InverseCovMatrix.set_identity();
+        m_InverseCovMatrix->set_identity();
     }
     else
     {
@@ -99,7 +99,8 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
         vnl_matrix_type projMat = points_minus_mean * UG;
         vnl_matrix_type projMat2 = projMat * invLambda;
-        m_InverseCovMatrix = projMat2 * projMat2.transpose();
+        projMat2 = projMat2 * projMat2.transpose();
+        m_InverseCovMatrix->update(projMat2);
     }
 
     vnl_matrix_type Q = points_minus_mean * pinvMat;
@@ -113,11 +114,22 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     // Compute the update matrix in coordinate space by multiplication with the
     // Jacobian.  Each shape gradient must be transformed by a different Jacobian
     // so we have to do this individually for each shape (sample).
+
+#pragma omp parallel
+    {
     vnl_matrix_type J;
     vnl_matrix_type v;
-
+#pragma omp for
     for (unsigned int j = 0; j < num_samples; j++)
     {
+        int tid = 1;
+        int num_threads = 1;
+
+#ifdef SW_USE_OPENMP
+        tid = omp_get_thread_num() + 1;
+        num_threads = omp_get_num_threads();
+#endif /* SW_USE_OPENMP */
+
         int num = 0;
         int num2 = 0;
         for (unsigned int d = 0; d < m_DomainsPerShape; d++)
@@ -156,10 +168,11 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
                     vnl_matrix_type dx = J.transpose() * v;
                     for (unsigned int vd = 0; vd < VDimension; vd++)
-                        m_PointsUpdate(num2 + p*VDimension + vd, j) = dx(vd, 0);
+                        m_PointsUpdate->put(num2 + p*VDimension + vd, j, dx(vd, 0));
                 }
             }
         }
+    }
     }
 
 //    if (this->CheckForNans(m_PointsUpdate))
@@ -234,11 +247,11 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         num += num1 * system->GetNumberOfParticles(i);
     }
 
-    vnl_matrix_type tmp1 = m_InverseCovMatrix.extract(sz_Yidx, sz_Yidx, num, num);
+    vnl_matrix_type tmp1 = m_InverseCovMatrix->extract(sz_Yidx, sz_Yidx, num, num);
 
     vnl_matrix_type Y_dom_idx(sz_Yidx, 1, 0.0);
 
-    Y_dom_idx = m_ShapeData->extract(sz_Yidx, 1, num, sampNum) - m_mean.extract(sz_Yidx, 1, num);
+    Y_dom_idx = m_ShapeData->extract(sz_Yidx, 1, num, sampNum) - m_points_mean->extract(sz_Yidx, 1, num);
 
     vnl_matrix_type tmp = Y_dom_idx.transpose()*tmp1;
     tmp *= Y_dom_idx;
@@ -255,7 +268,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     VectorType gradE;
     unsigned int k = idx * VDimension + num;
     for (unsigned int i = 0; i< VDimension; i++)
-        gradE[i] = m_PointsUpdate(k + i, sampNum);
+        gradE[i] = m_PointsUpdate->get(k + i, sampNum);
 
     return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
 }

@@ -40,10 +40,6 @@
 #include "itkParticleImageDomainWithHessians.h"
 #include <numeric>
 
-#ifdef SW_USE_OPENMP
-#include <omp.h>
-#endif
-
 #ifdef _WIN32
 #include <direct.h>
 #define mkdir _mkdir
@@ -78,10 +74,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     // Read parameter file
     this->startMessage("Reading i/o parameters...");
     this->ReadIOParameters(fn);
-
-#ifdef SW_USE_OPENMP
-    omp_set_num_threads(num_threads);
-#endif
 
     this->doneMessage();
 
@@ -278,10 +270,6 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadIOParameters(const char *fname)
             std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()" << std::endl;
             throw 1;
         }
-
-        this->num_threads = 50;
-        elem = docHandle.FirstChild( "num_omp_threads" ).Element();
-        if (elem) this->num_threads = atoi(elem->GetText());
 
         this->m_transform_file = "";
         elem = docHandle.FirstChild( "transform_file" ).Element();
