@@ -17,12 +17,17 @@ message(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be foun
 endif(ITK_FOUND)
 
 # Configure VTK -- REQUIRED
+IF (VTK_DIR)
+ELSE (VTK_DIR)
 FIND_PACKAGE(VTK REQUIRED)
 IF (VTK_FOUND)
     INCLUDE (${VTK_USE_FILE})
 ELSE(VTK_FOUND)
     MESSAGE(FATAL_ERROR "VTK (The Visualization Toolkit) is required for ShapeWorksView2, but could not be found.")
 ENDIF(VTK_FOUND)
+ENDIF (VTK_DIR)
+
+
 
 include_directories(${SHAPEWORKSVIEW2_SOURCE_DIR}/tinyxml)
 subdirs(tinyxml)
