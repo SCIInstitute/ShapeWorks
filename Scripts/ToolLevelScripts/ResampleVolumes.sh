@@ -49,21 +49,6 @@ do
       is_binary_image="$2"
       shift
       ;;
-
-      -z|--sizeX)
-      sizeX="$2"
-      shift
-      ;;
-
-      -y|--sizeY)
-      sizeY="$2"
-      shift
-      ;;
-
-      -z|--sizeZ)
-      sizeZ="$2"
-      shift
-      ;;
      
       --default)
       DEFAULT=YES
@@ -87,12 +72,11 @@ do
     # make sure that the current file matches with the input prefix (laa_ prefix will also matach laa_wall)
     suffix=${prefix:dataPrefixLength}
 
-    # remove all occurences of underscore
-    suffix=$( RemoveAllOccurrenceOf $suffix "_" )
-    
+    # remove all occurences of underscore # this is not needed!
+    # suffix=$( RemoveAllOccurrenceOf $suffix "_" )
+    # echo $suffix
     # remove all occurences of dot
     suffix=$( RemoveAllOccurrenceOf $suffix "." )
-    #echo $suffix
 
     if [[ $( StringContainsOnlyNumbers $suffix ) -eq 1 ]]; 
     then
@@ -109,16 +93,16 @@ do
     then    
         if [ $is_binary_image -eq 1 ]
         then
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn $is_center_on --isBinaryImage $is_binary_image --sizeX $sizeX --sizeY $sizeY --sizeZ $sizeZ
+            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn $is_center_on --isBinaryImage $is_binary_image
         else
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn  $is_center_on --sizeX $sizeX --sizeY $sizeY --sizeZ $sizeZ
+            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn  $is_center_on
         fi
     else
         if [ $is_binary_image -eq 1 ]
         then
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isBinaryImage $is_binary_image --sizeX $sizeX --sizeY $sizeY --sizeZ $sizeZ
+            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isBinaryImage $is_binary_image
         else
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --sizeX $sizeX --sizeY $sizeY --sizeZ $sizeZ
+            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing
         fi
     fi
     

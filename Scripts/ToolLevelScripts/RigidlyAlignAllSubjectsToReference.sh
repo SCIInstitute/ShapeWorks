@@ -183,8 +183,8 @@ do
     # make sure that the current file matches with the input prefix (laa_ prefix will also matach laa_wall)
     suffix=${prefix:segPrefixLength}
     
-    # remove all occurences of underscore
-    suffix=$( RemoveAllOccurrenceOf $suffix "_" )
+    # remove all occurences of underscore # no need for this
+    # suffix=$( RemoveAllOccurrenceOf $suffix "_" )
     
     # remove all occurences of dot
     suffix=$( RemoveAllOccurrenceOf $suffix "." )
