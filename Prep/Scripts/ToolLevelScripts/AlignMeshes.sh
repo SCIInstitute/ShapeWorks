@@ -10,8 +10,8 @@
 # Notes:
 ##################################################################################
 
-# adding related-binaries to system path
-source ../Utils/Utils.sh
+
+scriptHome=../
 
 mesh_prefix=""
 mesh_suffix=""
@@ -61,6 +61,11 @@ do
       shift
       ;;
       
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
+      
       --default)
       DEFAULT=YES
       shift
@@ -72,8 +77,13 @@ do
   shift
 done
 
-mkdir -p $out_dir
+# adding related-binaries to system path
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh
 
+mkdir -p $out_dir
+mkdir -p $out_dir/paramfiles
+mkdir -p $out_dir/transformations
 ref_prefix=$( RemoveFileExtension $reference_mesh)
 reference_mesh_vtk=${ref_prefix}.vtk
 
@@ -96,7 +106,7 @@ do
     
     meshfilename_vtk=${data_dir}${prefix}.vtk
     meshfilename_out_vtk=${out_dir}${prefix}.${registration_mode}_icp.vtk
-    transform_filename=${out_dir}${prefix}.${registration_mode}_icp.txt
+    transform_filename=${out_dir}/transformations/${prefix}.${registration_mode}_icp.txt
      
     if [ $mesh_extension == "ply" ]
     then
@@ -109,7 +119,7 @@ do
     EchoWithColor "meshfilename_out_vtk $meshfilename_out_vtk" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
 
-    xmlfilename=${out_dir}${prefix}_ICPRigid3DMeshRegistration.xml
+    xmlfilename=${out_dir}/paramfiles/${prefix}_ICPRigid3DMeshRegistration.xml
     rm -rf $xmlfilename
     echo "<?xml version=\"1.0\" ?>" >> $xmlfilename
     

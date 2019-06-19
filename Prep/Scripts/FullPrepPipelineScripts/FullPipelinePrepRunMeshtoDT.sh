@@ -11,8 +11,8 @@
 
 ### [1] Preview : Does mesh decimation and cleaning to speed up the computation for fids
 doPreview=1
-decimation_decimal=0.75
-decimation_percentage=75
+decimation_decimal=0.99
+decimation_percentage=99
 
 ### [2] Smoothing : Performs Mesh Smoothing
 doSmooth=1
@@ -37,15 +37,13 @@ ball_radius_factor=1
 doFixFidsDT=1
 
 ### [7] Topology Preserving Smoothing : Merforms smoothing on the DT tranforms
-doTPSmoothDT=1
+doTPSmoothDT=0
 TPsmoothing_iterations=1
 
-source ../setup.txt # works for server as well
-source ../Utils/Utils.sh # common utility functions
-scriptDir=../ToolLevelScripts/
+scriptHome=../ # this is the Scripts folder in ShapeworksPrep directory
 
-parentDir='/home/sci/riddhishb/Downloads/data/process/' # this is where all the preprocessed data will lie
-rawDataDir='/home/sci/riddhishb/Downloads/data/' # this is the path to the data (raw Images and Segmentations)
+parentDir='' # this is where all the preprocessed data will lie
+rawDataDir='' # this is the path to the data (raw Images and Segmentations)
 mesh_extension='vtk'
 
 while [[ $# > 1 ]]
@@ -82,6 +80,11 @@ do
       doSmooth="$2"
       shift
       ;;
+      
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
 
       --default)
       DEFAULT=YES
@@ -93,6 +96,10 @@ do
   esac
   shift
 done
+
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh # common utility functions
+scriptDir=${scriptHome}/ToolLevelScripts/
 
 parentDir=${parentDir}/
 rawDataDir=${rawDataDir}/
@@ -106,7 +113,8 @@ then
                                 --mesh_extension $mesh_extension \
                                 --decimation_decimal $decimation_decimal \
                                 --decimation_percentage $decimation_percentage \
-                                --use_preview 0
+                                --use_preview 1 --scriptHome $scriptHome
+                                
                                 
 fi
 if [ $doPreview -eq 0 ]
@@ -129,7 +137,7 @@ then
                       --out_dir ${parentDir}smoothed/ \
                       --mesh_extension $mesh_extension \
                       --smoothing_iterations $smoothing_iterations --relaxation_factor $relaxation_factor \
-                      --mesh_suffix preview${decimation_percentage}
+                      --mesh_suffix preview${decimation_percentage} --scriptHome $scriptHome
                       
 fi
 if [ $doSmooth -eq 0 ]
@@ -154,10 +162,9 @@ then
                       --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations} \
                       --mesh_extension $mesh_extension \
                       --reference_mesh $reference_mesh \
-                      --registration_mode $registration_mode
+                      --registration_mode $registration_mode --scriptHome $scriptHome
 
 fi
-
 
 # compute the origin and size of the distance transform volume where all meshes will fit into
 if [ $doSizeOrigin -eq 1 ]
@@ -166,7 +173,7 @@ then
     ${scriptDir}/RasterizationVolumeOriginAndSize.sh --data_dir ${parentDir}aligned/ \
                                           --out_dir ${parentDir}origin_size/ \
                                           --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
-                                          --spacing $spacing --narrow_band $narrow_band\
+                                          --spacing $spacing --narrow_band $narrow_band --scriptHome $scriptHome
                                          
 fi
 
@@ -184,7 +191,7 @@ then
                                 --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
                                 --spacing $spacing --narrow_band $narrow_band\
                                 --ball_radius_factor $ball_radius_factor \
-                                --num_meshes_in_parallel 5 --num_threads 20
+                                --num_meshes_in_parallel 5 --num_threads 20 --scriptHome $scriptHome
 fi
 
 
@@ -196,7 +203,8 @@ then
                              --mesh_extension $mesh_extension \
                              --mesh_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp \
                              --dt_suffix DT_r${ball_radius_factor}_sp${spacing}_nb${narrow_band} \
-                             --fids_dt_suffix SignedDistMap_r${ball_radius_factor}_sp${spacing}_nb${narrow_band}
+                             --fids_dt_suffix SignedDistMap_r${ball_radius_factor}_sp${spacing}_nb${narrow_band} \
+                             --scriptHome $scriptHome
                                           
 fi
 
@@ -205,7 +213,7 @@ then
     ${scriptDir}/TopologyPreservingDTSmoothing.sh  --data_dir ${parentDir}fidsDT/ \
                                         --out_dir ${parentDir}groom/ \
                                         --dt_suffix preview${decimation_percentage}.smooth${smoothing_iterations}.similarity_icp.SignedDistMap_r${ball_radius_factor}_sp${spacing}_nb${narrow_band}.fixed \
-                                        --smoothing_iterations $TPsmoothing_iterations
+                                        --smoothing_iterations $TPsmoothing_iterations --scriptHome $scriptHome
                                 
     mkdir -p ${parentDir}DistanceTransforms/
     mv ${parentDir}groom/*.tpSmoothDT.nrrd ${parentDir}DistanceTransforms/                             

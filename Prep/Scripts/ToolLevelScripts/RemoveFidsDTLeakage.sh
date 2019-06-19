@@ -10,9 +10,7 @@
 # Notes:
 ##################################################################################
 
-# adding related-binaries to system path
-source ../setup.txt # works for server as well
-source ../Utils/Utils.sh # common utility functions
+scriptHome=../
 
 mesh_prefix=""
 mesh_suffix=""
@@ -59,6 +57,10 @@ do
       shift
       ;;
       
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
       
       --default)
       DEFAULT=YES
@@ -71,7 +73,13 @@ do
   shift
 done
 
+# adding related-binaries to system path
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh # common utility functions
+
+
 mkdir -p $out_dir
+mkdir -p $out_dir/paramfiles
 
 for meshfilename in $(find $data_dir -name "${mesh_prefix}*${mesh_suffix}.${mesh_extension}" | sort -t '\0' ) ;
 do
@@ -96,7 +104,7 @@ do
     EchoWithColor "out_dtfilename $out_dtfilename" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
 
-    xmlfilename=${out_dir}${prefix}_RemoveFidsDTLeakage.xml
+    xmlfilename=${out_dir}/paramfiles/${prefix}_RemoveFidsDTLeakage.xml
     rm -rf $xmlfilename
     echo "<?xml version=\"1.0\" ?>" >> $xmlfilename
     

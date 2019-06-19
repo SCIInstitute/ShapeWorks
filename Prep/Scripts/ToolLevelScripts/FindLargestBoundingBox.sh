@@ -10,9 +10,7 @@
 # Notes:
 ##################################################################################
 
-# adding related-binaries to system path
-source ../setup.txt # works for server as well
-source ../Utils/Utils.sh # common utility functions
+scriptHome=../
 
 padding_size=0
 # input parameters
@@ -41,6 +39,11 @@ do
       shift
       ;;
       
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
+      
       --default)
       DEFAULT=YES
       shift
@@ -51,6 +54,10 @@ do
   esac
   shift
 done
+
+# adding related-binaries to system path
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh # common utility functions
 
 out_prefix=${data_dir}${seg_prefix}_largest_bounding_box
 txtfilename=${data_dir}${seg_prefix}_filenames.txt
