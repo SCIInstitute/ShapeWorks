@@ -1,0 +1,10 @@
+FILE(GLOB tinyxml_srcs ./*.cpp)
+if(TARGET tinyxml)
+	message("tinyxml exists!!!")
+else(TARGET tinyxml)
+	ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
+endif(TARGET tinyxml)
+
+#INCLUDE_DIRECTORIES(.)
+#INSTALL_TARGETS(/lib tinyxml)
+#INSTALL_FILES(/include tinyxml.h)

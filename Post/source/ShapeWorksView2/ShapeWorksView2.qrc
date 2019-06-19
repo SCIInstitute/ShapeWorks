@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="ShapeWorksView2">
+    <file>images/DownArrow.png</file>
+    <file>images/DownArrowWhite.png</file>
+  </qresource>
+</RCC>
