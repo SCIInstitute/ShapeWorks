@@ -1,0 +1,5 @@
+project(ProjectPointsOntoMesh)
+cmake_minimum_required(VERSION 2.8)
+ADD_EXECUTABLE(ProjectPointsOntoMesh ProjectPointsOntoMesh.cxx)
+TARGET_LINK_LIBRARIES(ProjectPointsOntoMesh ${VTK_LIBRARIES} ${ITK_LIBRARIES} fim_v4 tinyxml vgl vgl_algo)
+INSTALL(TARGETS ProjectPointsOntoMesh RUNTIME DESTINATION .)

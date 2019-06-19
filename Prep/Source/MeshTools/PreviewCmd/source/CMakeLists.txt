@@ -1,0 +1,5 @@
+PROJECT(PreviewCmd)
+cmake_minimum_required(VERSION 2.8)
+ADD_EXECUTABLE(PreviewCmd PreviewCmd.cxx ${source_files})
+TARGET_LINK_LIBRARIES(PreviewCmd )
+INSTALL(TARGETS PreviewCmd  RUNTIME DESTINATION .)
