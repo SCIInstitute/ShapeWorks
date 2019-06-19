@@ -173,7 +173,7 @@ public:
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
-    copy->points_mean = this->points_mean;
+    copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
@@ -191,7 +191,9 @@ protected:
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_UseMeanEnergy = true;
-    m_PointsUpdate.clear();
+    m_PointsUpdate = new vnl_matrix_type(10,10);
+    m_InverseCovMatrix = new vnl_matrix_type(10,10);
+    m_points_mean = new vnl_matrix_type(10,10);
   }
   virtual ~ParticleEnsembleEntropyFunction() {}
   void operator=(const ParticleEnsembleEntropyFunction &);
@@ -199,7 +201,7 @@ protected:
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
   virtual void ComputeCovarianceMatrix();
-  vnl_matrix_type m_PointsUpdate;
+  vnl_matrix_type * m_PointsUpdate;
   double m_MinimumVariance;
   double m_MinimumEigenValue;
   double m_CurrentEnergy;
@@ -209,8 +211,8 @@ protected:
   int m_Counter;
   bool m_UseMeanEnergy;
 
-  vnl_matrix_type m_InverseCovMatrix; // 3Nx3N - used for energy computation
-  vnl_matrix_type points_mean; //3NxM - used for energy computation
+  vnl_matrix_type * m_InverseCovMatrix; // 3Nx3N - used for energy computation
+  vnl_matrix_type * m_points_mean; //3NxM - used for energy computation
 
 };
 

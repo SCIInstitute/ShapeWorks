@@ -74,6 +74,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ShapeWorksRunApp(const char *fn)
     // Read parameter file
     this->startMessage("Reading i/o parameters...");
     this->ReadIOParameters(fn);
+
     this->doneMessage();
 
     this->startMessage("Reading optimization parameters...");
