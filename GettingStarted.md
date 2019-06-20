@@ -2,6 +2,13 @@
 
 This is a repository for sharing information on the use and development of the ShapeWorks toolkit.
 
+[The ShapeWorks Team](#the-team)  
+[User Documentation](#documentation)  
+[Developer Documentation](#documentation)  
+[ShapeWorks Source](#shapeworks-source)  
+[Building ShapeWorks](#building-shapeworks)  
+
+
 ## The Team
 
 The ShapeWorks team has several methods of communication, including mailing lists, a [Gitter community] forum, and [Trello boards] for planning.
@@ -24,7 +31,7 @@ We are using these [Trello boards] for planning. Though similar to a Gitter disc
 Next, there is a separate repository for the [ShapeWorks GUI](https://github.com/SCIInstitute/ShapeWorksStudio). And finally, we have a repo for [documentation](https://github.com/SCIInstitute/shapeworks.pages). Please note that currently the GUI and documentation _are not up to date with the latest ShapeWorks tools._
 
 
-## Document formatting
+## Documentation
 
 The documents contained in this repo are written using [Markdown](#markdown-basics), a simple text layout language that enables basic formatting for things like section headerd and code samples as well as easy addition of web links and images. If you're viewing this document in github you can click on the pencil icon in the top-right corner to see its source. 
 
@@ -49,35 +56,49 @@ Use hash symbols to create section headers. Use more hashes for successive subse
 ###### on... 
 ```
 
-Links are created by enclosing the text shown for the link in brackets and the link directly adjacent in paranthesis. Links to other '#'-indicated sections of the document are formed by using a '#' followed by the lowercase text of the section name separated with dashes. For icons, add some additional brackets and a '!'.
-[external site](http://google.com)
-[link text](#local-section-name)
+Links are created by enclosing the text shown for the link in brackets and the link directly adjacent in paranthesis. Links to other '#'-indicated sections of the document are formed by using a '#' followed by the lowercase text of the section name separated with dashes. For icons, add some additional brackets and a '!'.  
+[external site](http://google.com)  
+[link text](#local-section-name)  
 [![thumbs up](https://66.media.tumblr.com/1f45d6ab69e02479f85ac1c9f1eb4301/tumblr_inline_pkaqpvkvHH1syktzs_540.png)](http://google.com)
+
 ```
 [external site](http://google.com)
 [link text](#local-section-name)
 [![thumbs up](https://66.media.tumblr.com/1f45d6ab69e02479f85ac1c9f1eb4301/tumblr_inline_pkaqpvkvHH1syktzs_540.png)](http://google.com)
 ```
 
-Finally, code can be shown using triple back-ticks (the backwards apostrophe: '`'), even highlighted for a particular language by following the first set of back-ticks with the language name. 
+Finally, code can be shown using triple back-ticks (the backwards apostrophe: '\`' ), even highlighted for a particular language by following the first set of back-ticks with the language name.  
+
 ````
-```sh
-$ echo "Hello Markdown!"
-```
-````
-```sh
-$ echo "Hello Markdown!"
-```
+```python  
+print("Hello Markdown!")
+```  
+````  
+
+```python
+print("Hello Markdown!")
+```  
+
 Use just a single tick to keep monospaced text `inline with the rest of the text`.
 
 You can also add tables, quoted text like you'd see in an email, bulleted items, images and more. Here are [several](https://www.markdownguide.org/cheat-sheet) [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) [quick](https://commonmark.org/help/) [references](https://agea.github.io/tutorial.md/).
 
 
-## Source Control
+## ShapeWorks Source
 
 We use `git` for keeping track of sources revisions and integrating changes from multiple individuals. Here are some of the basics so you can checkout a repository, make some modifications, and share them others, keeping track of all your changes along the way.
 
-The ShapeWorks repositories are stored on [GitHub], so first _make sure you have an account_.
+The ShapeWorks repositories are stored on [GitHub]. If you want to contribute, first _make sure you have an account_.  
+
+To clone the ShapeWorks source, use one of the following commands:  
+```
+git clone https://github.com/SCIInstitute/shapeworks.git
+```
+
+If you have a [GitHub] account, you can [add your public ssh key](https://github.com/settings/keys) and use this version to clone the code: 
+```
+git clone git@github.com:sciinstitute/shapeworks.git
+```
 
 Our repositories use some external libraries such as [fim_v4](https://bitbucket.org/sheryjoe/fim_v4) as submodules, which can be tricky, but unless you are modifying code in one of these, they are automatically synced. See [git submodules](#git-submodules) for more info on using them.
 
@@ -195,8 +216,11 @@ $ git log -- <filename>
 
 #### Checkout a specific commit
 
+_TODO_
 
 ### Git Submodules
+
+_TODO remove this section since we're no longer using submodules._  
 
 Submodules are used in order to incorporate external libraries that also need to be modified to work with our code base, and it is desired for those modifications to be pushed back to the external library. Furthermore, the library is used by other projects at the same time. These three reasons must all be true to warrant the additional complication and susceptibility to errors that is brought on by the use of submodules.
 
@@ -209,7 +233,27 @@ If the library isn't used by any other projects, it is much simpler to just clon
 * What if the user is modifying their version of the submodule (using their own branch of course, _never master_)? Will CMake know this and avoid updating? Or should it update and a merge conflicts be noted? 
 * How are submodule commits handled? (just please provide the necessary documentation)
 
-## <next topic>...
+## Building ShapeWorks
+
+_TODO_ update these instructions
+
+### Install prerequisites
+- Download and build VXL, ITK-4.7.2 and VTK-5.10.1. Set USE_SYSTEM_VXL as ON while building ITK and provide VXL build path.
+- Install QT4.8, required only for ShapeWorksView2
+- <Linux only instruction> Install gcc5.0+, required for ShapeWorksPost
+
+### Configure using cmake
+- Set ITK, VTK and VXL paths in CMakeLists.txt in shapeworks repo
+- Create a build directory for shapeworks, <shapeworks-build>
+- cd shapeworks-build
+- ccmake path-to-shapeworks-repo
+- set CMake flags ON/OFF for the required tools
+- set CMAKE_INSTALL_PREFIX to install all binaries at one place (optional)
+- press 'c' to configure
+- press 'g' to generate
+- make -j4
+- make install (only if CMAKE_INSTALL_PREFIX is provided)
+
 
 
 [//]: # (After these reference links are used they get stripped out by the markdown processor.
