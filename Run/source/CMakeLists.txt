@@ -18,12 +18,20 @@ else(ITK_FOUND)
 endif(ITK_FOUND)
 
 # Configure VTK -- REQUIRED
+
+
+IF (VTK_DIR)
+ELSE (VTK_DIR)
 FIND_PACKAGE(VTK REQUIRED)
 IF (VTK_FOUND)
 INCLUDE (${VTK_USE_FILE})
 ELSE(VTK_FOUND)
 MESSAGE(FATAL_ERROR "VTK (The Visualization Toolkit) is required for ShapeWorksView and ShapeWorksShop, but could not be found.")
 ENDIF (VTK_FOUND)
+ENDIF (VTK_DIR)
+
+
+
 
 # Optionally build with mesh support (requires linking against trimesh library)
 #option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
