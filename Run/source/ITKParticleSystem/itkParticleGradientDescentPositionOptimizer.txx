@@ -57,7 +57,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
     m_StopOptimization = false;
-    m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+    //m_GradientFunction->SetParticleSystem(m_ParticleSystem);
 
     typedef typename DomainType::VnlVectorType NormalType;
 
@@ -104,6 +104,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
+        m_GradientFunction->SetParticleSystem(m_ParticleSystem);
         timerBefore = time(NULL);
         if (counter % global_iteration == 0)
             m_GradientFunction->BeforeIteration();

@@ -10,10 +10,7 @@
 # Notes:
 ##################################################################################
 
-# adding related-binaries to system path
-source ../setup.txt # works for server as well
-source ../Utils/Utils.sh # common utility functions
-
+scriptHome=../
 
 dt_prefix=""
 dt_suffix=""
@@ -51,6 +48,10 @@ do
       shift
       ;;
       
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
       
       --default)
       DEFAULT=YES
@@ -63,7 +64,12 @@ do
   shift
 done
 
+# adding related-binaries to system path
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh # common utility functions
+
 mkdir -p $out_dir
+mkdir -p $out_dir/paramfiles
 
 for dtfilename in $(find $data_dir -name "${dt_prefix}*${dt_suffix}.nrrd" | sort -t '\0' ) ;
 do
@@ -79,7 +85,7 @@ do
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
     
-    xmlfilename=${out_dir}${prefix}_tpSmoothDT.xml
+    xmlfilename=${out_dir}/paramfiles/${prefix}_tpSmoothDT.xml
     rm -rf $xmlfilename
     echo "<propagationScale> 20.0 </propagationScale>" >> "$xmlfilename"
     echo "<alpha> 10.5 </alpha>" >> "$xmlfilename"

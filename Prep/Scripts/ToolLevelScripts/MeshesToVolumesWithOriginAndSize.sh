@@ -10,13 +10,11 @@
 # Notes:
 ##################################################################################
 
-# adding related-binaries to system path
-source ../setup.txt # works for server as well
-source ../Utils/Utils.sh # common utility functions
+scriptHome=../
 
 mesh_extension="vtk"
 
-number_of_subvoxels=2
+number_of_subvoxels=4
 number_of_voxels=4
 narrow_band=10
 ball_radius_factor=1
@@ -90,6 +88,11 @@ do
       shift
       ;;
       
+      -s|--scriptHome)
+      scriptHome="$2"
+      shift
+      ;;
+      
       --default)
       DEFAULT=YES
       shift
@@ -101,7 +104,12 @@ do
   shift
 done
 
+# adding related-binaries to system path
+source ${scriptHome}/setup.txt # works for server as well
+source ${scriptHome}/Utils/Utils.sh # common utility functions
+
 mkdir -p $out_dir
+mkdir -p $out_dir/paramfiles
 # getting the size and origin
 origin=()
 did=0
@@ -130,10 +138,9 @@ size_z=${size[2]}
 echo Size: "${size[@]}"
 
 
-meshCounter=0    
+meshCounter=0
 for mfilename in $(find $data_dir -name "${mesh_prefix}*${mesh_suffix}.${mesh_extension}" | sort -t '\0' ) ;
 do
-
     if [ $meshCounter -lt $num_meshes_in_parallel ]
     then
         meshCounter=$((${meshCounter}+1))    
@@ -168,7 +175,7 @@ do
     EchoWithColor "meshFilename $meshFilename" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
-    xmlfilename=${out_dir}${mesh_prefix}${subject_id}${mesh_suffix}_GenerateFidsFilesFromMeshes.xml
+    xmlfilename=${out_dir}/paramfiles/${mesh_prefix}${subject_id}${mesh_suffix}_GenerateFidsFilesFromMeshes.xml
     rm -rf $xmlfilename
     
     echo "<? xml version="1.0" ?>" >> $xmlfilename
@@ -197,9 +204,9 @@ do
     echo "${meshFilename}" >> $xmlfilename
     echo "</mesh>" >> $xmlfilename 
     
-    GenerateFidsFilesFromMeshes $xmlfilename     
+    GenerateFidsFilesFromMeshes $xmlfilename &
 done
-
+wait
 mv ${data_dir}*.nrrd ${out_dir}
 mv ${data_dir}*.fids ${out_dir}
 cp ${data_dir}*.vtk ${out_dir}
