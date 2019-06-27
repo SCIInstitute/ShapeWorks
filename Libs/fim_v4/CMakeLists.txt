@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.5)
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 #add_definitions( -Wall )
 
+#todo: these two lines are issues since OPTION is deprecated:
 option (BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option (INSTALL_SOURCE  "Install FIM_V4 source code." OFF)
 

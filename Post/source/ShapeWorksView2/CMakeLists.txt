@@ -8,30 +8,6 @@ SET(CMAKE_BUILD_TYPE RELEASE)
 #Match everything when analyzing dependencies
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
-# Configure ITK -- REQUIRED
-find_package(ITK REQUIRED)
-if(ITK_FOUND)
-include(${ITK_USE_FILE})
-else(ITK_FOUND)
-message(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
-endif(ITK_FOUND)
-
-# Configure VTK -- REQUIRED
-IF (VTK_DIR)
-ELSE (VTK_DIR)
-FIND_PACKAGE(VTK REQUIRED)
-IF (VTK_FOUND)
-    INCLUDE (${VTK_USE_FILE})
-ELSE(VTK_FOUND)
-    MESSAGE(FATAL_ERROR "VTK (The Visualization Toolkit) is required for ShapeWorksView2, but could not be found.")
-ENDIF(VTK_FOUND)
-ENDIF (VTK_DIR)
-
-
-
-include_directories(${SHAPEWORKSVIEW2_SOURCE_DIR}/tinyxml)
-subdirs(tinyxml)
-
 #--------------------------------------------------------------------------------
 # This sets the windows build that will need the special winmain@16 call. Qt provides
 #  this for us in the qtmain.lib file. Using this cmake code will ensure we have it

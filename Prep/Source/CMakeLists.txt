@@ -8,62 +8,14 @@ SET(CMAKE_BUILD_TYPE RELEASE)
 
 SET(COMMON_LIBS_DIR "CommonLibraries")
 
-FIND_PACKAGE(ITK REQUIRED)
-IF (ITK_USE_FILE)
-  INCLUDE(${ITK_USE_FILE})
-ELSE(ITK_USE_FILE)
-  MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
-ENDIF(ITK_USE_FILE)
-
-
-
-IF (NOT VTK_DIR)
-FIND_PACKAGE(VTK)
-IF (VTK_FOUND)
-  INCLUDE (${VTK_USE_FILE})
-ELSE(VTK_FOUND)
-  MESSAGE(SEND_ERROR "VTK (The Visualization Toolkit) is required, but could not be found.")
-ENDIF (VTK_FOUND)
-ENDIF (VTK_DIR)
-
-
-FIND_PACKAGE(VXL)
-IF (VXL_FOUND)
-  INCLUDE (${VXL_DIR}/UseVXL.cmake)
-ELSE(VTK_FOUND)
-  MESSAGE(SEND_ERROR "VXL is required, but could not be found.")
-ENDIF (VXL_FOUND)
-
-# OpenMP -- REQUIRED
-find_package(OpenMP)
-if (OPENMP_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
-
-
 INCLUDE_DIRECTORIES(
     ${COMMON_LIBS_DIR}/OptionParser
     ${COMMON_LIBS_DIR}/PreViewMeshQC
-    ${COMMON_LIBS_DIR}/tinyxml
-    ${COMMON_LIBS_DIR}/fim_v4
-    ${COMMON_LIBS_DIR}/fim_v4/trimesh2/include
     ${COMMON_LIBS_DIR}/ITKVTK
     ${COMMON_LIBS_DIR}/Eigen
     ${COMMON_LIBS_DIR}/Procrustes
   )
 
-
-SUBDIRS(${COMMON_LIBS_DIR}/fim_v4)
-#INCLUDE_DIRECTORIES(${COMMON_LIBS_DIR}/fim_v4)
-#INCLUDE_DIRECTORIES(${COMMON_LIBS_DIR}/fim_v4/trimesh2/include)
-FILE(GLOB tinyxml_srcs ${COMMON_LIBS_DIR}/tinyxml/*.cpp)
-
-if(TARGET tinyxml)
-       message("tinyxml exists")
-else(TARGET tinyxml)
-       ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
-endif(TARGET tinyxml)
 
 option(BUILD_ImageTools "Build ImageTools" ON)
 option(BUILD_MeshTools "Build MeshTools" ON)

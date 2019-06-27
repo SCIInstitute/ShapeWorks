@@ -56,11 +56,6 @@ if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
 endif()
 
-# Configure tinyxml
-INCLUDE_DIRECTORIES(${COMMON_LIBS_DIR}/tinyxml)
-FILE(GLOB tinyxml_srcs ${COMMON_LIBS_DIR}/tinyxml/*.cpp)
-ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
-
 INCLUDE_DIRECTORIES(
   ${COMMON_LIBS_DIR}/Eigen
   ${COMMON_LIBS_DIR}/ITKVTK
@@ -102,7 +97,7 @@ FOREACH( var ${BIN_LIST} )
   if(USE_TPS)
     if(VIS_STEPS)
       ADD_EXECUTABLE( ${var}TPSDebug ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}TPSDebug  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${var}TPSDebug  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})   #TODO: why does tinyxml appear twice in these link lines?
       INSTALL(TARGETS ${var}TPSDebug  RUNTIME DESTINATION .)
     else(VIS_STEPS)
       ADD_EXECUTABLE( ${var}TPS ${var}.cxx ${source_files})

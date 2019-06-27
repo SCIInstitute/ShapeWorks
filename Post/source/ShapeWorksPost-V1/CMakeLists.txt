@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 2.4)
 project(SWPost)
 
-#SET(ITK_DIR "Path-to-ITK4.7.2-build")
-
-find_package(ITK REQUIRED)
-include(${ITK_USE_FILE})
-
 ### libIGL options: choose between header only and compiled static library
 option(LIBIGL_USE_STATIC_LIBRARY "Use LibIGL as static library" ON)
 option(LIBIGL_WITH_VIEWER      "Use OpenGL viewer"  ON)
@@ -54,8 +49,5 @@ endif()
 
 include_directories(${LIBIGL_INCLUDE_DIRS})
 add_definitions(${LIBIGL_DEFINITIONS})
-include_directories("include/igl/tinyxml")
-file(GLOB tinyxml_srcs "include/igl/tinyxml/*.cpp")
-ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory("SWPost")
