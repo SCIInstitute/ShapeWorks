@@ -2,6 +2,13 @@ PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
 SET(CMAKE_BUILD_TYPE Release)
 
+# use ccache if available
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
+
 SET(BUILD_EXECS_AT_SAME_LEVEL TRUE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
 IF (BUILD_EXECS_AT_SAME_LEVEL)
   SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
@@ -19,14 +26,25 @@ ENDIF(ITK_USE_FILE)
 
 
 
-IF (NOT VTK_DIR)
-FIND_PACKAGE(VTK)
+FIND_PACKAGE(VTK COMPONENTS
+  vtkCommonCore
+  vtkIOCore
+  vtkIOLegacy
+  vtkIOGeometry
+  vtkInfovisCore
+  vtkInteractionStyle
+  vtkViewsQt
+  vtkFiltersCore
+  vtkGUISupportQt
+  vtkRenderingQt
+  REQUIRED)
 IF (VTK_FOUND)
   INCLUDE (${VTK_USE_FILE})
 ELSE(VTK_FOUND)
-  MESSAGE(SEND_ERROR "VTK (The Visualization Toolkit) is required, but could not be found.")
+  MESSAGE(FATAL_ERROR "VTK could not be found.\
+")
 ENDIF (VTK_FOUND)
-ENDIF (NOT VTK_DIR)
+
 
 
 FIND_PACKAGE(VXL)
