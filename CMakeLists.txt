@@ -15,8 +15,6 @@ IF (BUILD_EXECS_AT_SAME_LEVEL)
   SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
 ENDIF (BUILD_EXECS_AT_SAME_LEVEL)
 
-
-
 FIND_PACKAGE(ITK REQUIRED)
 IF (ITK_USE_FILE)
   INCLUDE(${ITK_USE_FILE})
@@ -24,33 +22,10 @@ ELSE(ITK_USE_FILE)
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
 ENDIF(ITK_USE_FILE)
 
-
-
-FIND_PACKAGE(VTK COMPONENTS
-  vtkCommonCore
-  vtkIOCore
-  vtkIOLegacy
-  vtkIOGeometry
-  vtkInfovisCore
-  vtkInteractionStyle
-  vtkViewsQt
-  vtkFiltersCore
-  vtkGUISupportQt
-  vtkRenderingQt
-  REQUIRED)
-IF (VTK_FOUND)
-  INCLUDE (${VTK_USE_FILE})
-ELSE(VTK_FOUND)
-  MESSAGE(FATAL_ERROR "VTK could not be found.\
-")
-ENDIF (VTK_FOUND)
-
-
-
 FIND_PACKAGE(VXL)
 IF (VXL_FOUND)
   INCLUDE (${VXL_CMAKE_DIR}/UseVXL.cmake)
-ELSE(VTK_FOUND)
+ELSE(VXL_FOUND)
   MESSAGE(SEND_ERROR "VXL is required, but could not be found.")
 ENDIF (VXL_FOUND)
 
@@ -166,6 +141,28 @@ option(Build_PrepTools "Build prep tools" ON)
 option(Build_Run "Build shapeworks" ON)
 option(Build_Post "Build post" ON)
 option(Build_View2 "Build view2" OFF)  #todo: figure out how to install old qt 4.8.1 on new osx (other platforms may also have issues)
+
+
+if(Build_View2)
+  set(VTK_QT_OPTIONS "vtkViewsQt vtkGUISupportQt vtkRenderingQt")
+endif(Build_View2)
+  
+FIND_PACKAGE(VTK COMPONENTS
+  vtkCommonCore
+  vtkIOCore
+  vtkIOLegacy
+  vtkIOGeometry
+  vtkInfovisCore
+  vtkInteractionStyle
+  vtkFiltersCore
+  ${VTK_QT_OPTIONS}
+  REQUIRED)
+IF (VTK_FOUND)
+  INCLUDE (${VTK_USE_FILE})
+ELSE(VTK_FOUND)
+  MESSAGE(FATAL_ERROR "VTK could not be found.")
+ENDIF (VTK_FOUND)
+
 
 if(Build_PrepTools)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Prep/Source)
