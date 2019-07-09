@@ -151,6 +151,7 @@ FIND_PACKAGE(VTK COMPONENTS
   vtkCommonCore
   vtkIOCore
   vtkIOLegacy
+  vtkIOPLY
   vtkIOGeometry
   vtkInfovisCore
   vtkInteractionStyle

@@ -14,8 +14,8 @@ This is a repository for sharing information on the use and development of the S
 The ShapeWorks team has several methods of communication, including mailing lists, a [Gitter community] forum, and [Trello boards] for planning.
 
 ### Mailing Lists
-We have a mailing list for all users of ShapeWorks: shapeworks-users@sci.utah.edu.
-And we have a mailing list for ShapeWorks developers: shapeworks-dev@sci.utah.edu.
+We have a mailing list for all users of ShapeWorks: `shapeworks-users@sci.utah.edu`
+And we have a mailing list for ShapeWorks developers: `shapeworks-dev@sci.utah.edu`
 
 ### Community Forums
 We use Gitter for our community discussion forums, which allows separation of different topics into specific "rooms" as well as both public and private forums, so our community of users can also easily reach out to us. You can access the ShapeWorks Gitter using the [Gitter community] link above or download the [Gitter app](https://gitter.im/apps) for any platform or your phone. It provides easy integration with [GitHub] and has no limitation on the number of messages as is the case with other services.
@@ -95,7 +95,7 @@ To clone the ShapeWorks source, use one of the following commands:
 git clone https://github.com/SCIInstitute/shapeworks.git
 ```
 
-If you have a [GitHub] account, you can [add your public ssh key](https://github.com/settings/keys) and use this version to clone the code: 
+If you have a [GitHub] account, you can [add your public ssh key](https://github.com/settings/keys) and use this version to clone the code:   
 ```
 git clone git@github.com:sciinstitute/shapeworks.git
 ```
@@ -104,79 +104,79 @@ Our repositories use some external libraries such as [fim_v4](https://bitbucket.
 
 ### Basics
 
-Clone the source:
+Clone the source:  
 ```
 $ git clone git@github.com:SCIInstitute/ShapeWorks-[Prep|Tools|...(todo)]
 ```
 
-View current state (branch and modifications, both staged and unstaged):
+View current state (branch and modifications, both staged and unstaged):  
 ```
 $ git status
 ```
 
-View all branches:
+View all branches:  
 ```
 $ git branch -a
 ```
 
-Checkout a branch:
+Checkout a branch:  
 ```
 $ git checkout <branchname>
 ```
 
-Create a branch based on the current branch:
+Create a branch based on the current branch:  
 ```
 $ git branch -b <branchname>
 ```
 
-Checkout a branch:
+Checkout a branch:  
 ```
 $ git checkout <branchname>
 ```
 
-Delete a branch that's been merged with its parent:
+Delete a branch that's been merged with its parent:  
 ```
 $ git branch -d <branchname>
 ```
 
-_Force_ delete a branch whether or not it's been merged:
+_Force_ delete a branch whether or not it's been merged:  
 ```
 $ git branch -D <branchname>
 ```
 
-Push a branch to GitHub:
+Push a branch to GitHub:  
 ```
 $ git push origin <branchname>
 ```
 
-Prune old branches that have been removed from GitHub (--dry-run will show you what will be pruned):
+Prune old branches that have been removed from GitHub (--dry-run will show you what will be pruned):  
 ```
 $ git remote prune origin [--dry-run]
 ```
 
 ### Useful
 
-View the log of a particular file (including moves/renames):
+View the log of a particular file (including moves/renames):  
 ```
 $ git log --follow -- <filename>
 ```
 
-View the diff of the most recent commit:
+View the diff of the most recent commit:  
 ```
 $ git diff HEAD~1
 ```
 
-View the diff between one commit and its predecessor:
+View the diff between one commit and its predecessor:  
 ```
 $ git diff <commit_SHA>~1..<commit_SHA>
 ```
 
-View only the files that changes for a given range of commits:
+View only the files that changes for a given range of commits:  
 ```
 $ git diff --name-only <SHA1> <SHA2>
 ```
 
-Stash your changes temporarily:
+Stash your changes temporarily:  
 ```
 $ git stash save "desc of why these changes are being stashed"
 ```
@@ -187,7 +187,7 @@ $ git stash pop
 ```
 
 Modify the description of the most recent commit:  
-**_WARNING:_** only use this if the commit has not yet been pushed to GitHub.
+**_WARNING:_** only use this if the commit has not yet been pushed to GitHub.  
 ```
 git commit --amend
 ```  
@@ -199,64 +199,35 @@ Please add anything here that seems useful.
 
 #### Commit history
 
-View the commit history including moves and renames:
+View the commit history including moves and renames:  
 ```
 $ git log --follow <filename>
 ```
 
-View the commit history including diffs:
+View the commit history including diffs:  
 ```
 $ git log -p <filename>
 ```
 
-View the commit history of a file/dir when name is the same as a branch:
+View the commit history of a file/dir when name is the same as a branch:  
 ```
 $ git log -- <filename>
 ```
 
-#### Checkout a specific commit
+#### Checkout a tag or a specific commit
 
-_TODO_
-
-### Git Submodules
-
-_TODO remove this section since we're no longer using submodules._  
-
-Submodules are used in order to incorporate external libraries that also need to be modified to work with our code base, and it is desired for those modifications to be pushed back to the external library. Furthermore, the library is used by other projects at the same time. These three reasons must all be true to warrant the additional complication and susceptibility to errors that is brought on by the use of submodules.
-
-If the library isn't used by any other projects, it is much simpler to just clone it separately and deploy it like any other external library. If the required changes will not be pushed back to the submodule, either copy its code directly into your project or clone externally, build and deploy as in 1. 
-
-
-**TODO**
-
-* submodules can be automatically pulled using CMake, but if a submodule is updated, can we ensure that CMake knows current version is up-to-date and update it if not? 
-* What if the user is modifying their version of the submodule (using their own branch of course, _never master_)? Will CMake know this and avoid updating? Or should it update and a merge conflicts be noted? 
-* How are submodule commits handled? (just please provide the necessary documentation)
+The following command checks out a specific tag and creates a local branch rather than using 'detached head' mode:  
+```
+git checkout origin/<tag> -b <tag>
+```
 
 ## Building ShapeWorks
 
-_TODO_ update these instructions
-
-### Install prerequisites
-- Download and build VXL, ITK-4.7.2 and VTK-5.10.1. Set USE_SYSTEM_VXL as ON while building ITK and provide VXL build path.
-- Install QT4.8, required only for ShapeWorksView2
-- <Linux only instruction> Install gcc5.0+, required for ShapeWorksPost
-
-### Configure using cmake
-- Set ITK, VTK and VXL paths in CMakeLists.txt in shapeworks repo
-- Create a build directory for shapeworks, <shapeworks-build>
-- cd shapeworks-build
-- ccmake path-to-shapeworks-repo
-- set CMake flags ON/OFF for the required tools
-- set CMAKE_INSTALL_PREFIX to install all binaries at one place (optional)
-- press 'c' to configure
-- press 'g' to generate
-- make -j4
-- make install (only if CMAKE_INSTALL_PREFIX is provided)
+Please see **[INSTALL.md](INSTALL.md)** for the current build instructions.
 
 
 
-[//]: # (After these reference links are used they get stripped out by the markdown processor.
+[//]:
 
    [github]: <https://github.com/>
    [Gitter community]: <https://gitter.im/ShapeWorks>
