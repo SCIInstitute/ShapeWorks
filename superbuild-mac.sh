@@ -41,7 +41,7 @@ rm -rf vtk-build/
 mkdir vtk-build/
  
 cd vtk-build/
-cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_USE_QT:BOOL=ON -DCMAKE_C_FLAGS=-DGLX_GLXEXT_LEGACY -DCMAKE_CXX_FLAGS=-DGLX_GLXEXT_LEGACY -DVTK_USE_SYSTEM_TIFF=ON -Wno-dev ../vtk/
+cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_USE_QT:BOOL=ON -DCMAKE_C_FLAGS=-DGLX_GLXEXT_LEGACY -DCMAKE_CXX_FLAGS=-DGLX_GLXEXT_LEGACY -DVTK_USE_SYSTEM_TIFF=ON -DVTK_REQUIRED_OBJCXX_FLAGS="" -Wno-dev ../vtk/
 make -j10
 
 ######## ITK ########
@@ -62,31 +62,10 @@ make -j10
 ######## ShapeWorks ########
 cd ${root}
 git clone https://github.com/SCIInstitute/shapeworks.git
-cd shapeworks
-/usr/bin/sed -i bak '11,13 s/^/#/' CMakeLists.txt
-git submodule init
-git submodule update
-cd ShapeWorks-Prep
-git checkout master
-git submodule init
-git submodule update
-cd Source/CommonLibraries/fim_v4
-git checkout master
-cd ../../../../ShapeWorks-Post
-git checkout master
-cd ../ShapeWorks-Run
-git checkout master
-git submodule init
-git submodule update
-cd source/fim_v4
-git checkout master
-cd ${root}
- 
 rm -rf shapeworks-build/
 mkdir shapeworks-build/
- 
 cd shapeworks-build/
- 
+
 cmake -DITK_DIR=${depDir}/ITK-build -DVXL_DIR=${depDir}/vxl-build -DVTK_DIR=${depDir}/vtk-build -DBuild_Post:BOOL=OFF -DUSE_OPENMP=OFF -Wno-dev ../shapeworks
 make -j10
 cd ${root}
