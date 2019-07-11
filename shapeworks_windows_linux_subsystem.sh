@@ -1,6 +1,7 @@
+echo "ShapeWorks SuperBuild for Windows (Linux subsystem)"
+
 root=$(pwd)
 depDir=${root}/shapeworks-dependencies
-
 rm -rf ${depDir}
 mkdir $depDir
 
@@ -74,32 +75,12 @@ then
     cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -Wno-dev ../ITK/
     make -j2
 fi
+
+
 ######## ShapeWorks ########
 cd ${root}
-git clone https://github.com/SCIInstitute/shapeworks.git
-cd shapeworks
-sed -i '11,13 s/^/#/' CMakeLists.txt
-git submodule init
-git submodule update
-cd ShapeWorks-Prep
-git checkout master
-git submodule init
-git submodule update
-cd Source/CommonLibraries/fim_v4
-git checkout master
-cd ../../../../ShapeWorks-Post
-git checkout master
-cd ../ShapeWorks-Run
-git checkout master
-git submodule init
-git submodule update
-cd source/fim_v4
-git checkout master
-cd ${root}
-
 rm -rf shapeworks-build/
 mkdir shapeworks-build/
-
 cd shapeworks-build/
 
 cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DBuild_Post:BOOL=${Build_Post} -DBuild_View2:BOOL=${Build_View2} -Wno-dev -Wno-deprecated ../shapeworks

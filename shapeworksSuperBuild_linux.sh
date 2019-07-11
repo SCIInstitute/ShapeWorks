@@ -1,6 +1,7 @@
+echo "ShapeWorks SuperBuild for Linux"
+
 root=$(pwd)
 depDir=${root}/shapeworks-dependencies
-
 rm -rf ${depDir}
 mkdir $depDir
 
@@ -8,8 +9,8 @@ Build_ITK=1
 Build_VTK=1
 Build_VXL=1
 
-VTK_DIR=${depDir}/ITK-build
-ITK_DIR=${depDir}/vtk-build
+VTK_DIR=${depDir}/vtk-build
+ITK_DIR=${depDir}/itk-build
 VXL_DIR=${depDir}/vxl-build
 
 Build_View2=OFF # vtk will be build with QT only if this is ON
@@ -30,7 +31,7 @@ then
 
     cd vxl-build/
     cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -Wno-dev ../vxl/
-    make -j100
+    make -j4
 fi
 
 ######## VTK ########
@@ -55,7 +56,7 @@ then
 
     cd vtk-build/
     cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_USE_QT:BOOL=${Build_View2} -DCMAKE_C_FLAGS=-DGLX_GLXEXT_LEGACY -DCMAKE_CXX_FLAGS=-DGLX_GLXEXT_LEGACY -Wno-dev ../vtk/
-    make -j100
+    make -j4
 fi
 
 ######## ITK ########
@@ -67,41 +68,20 @@ then
     git checkout -f tags/v4.7.2
     cd ${depDir}
 
-    rm -rf ITK-build/
-    mkdir ITK-build/
+    rm -rf itk-build/
+    mkdir itk-build/
 
-    cd ITK-build/
+    cd itk-build/
     cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -Wno-dev ../ITK/
-    make -j100
+    make -j4
 fi
+
 ######## ShapeWorks ########
 cd ${root}
-git clone https://github.com/SCIInstitute/shapeworks.git
-cd shapeworks
-sed -i '11,13 s/^/#/' CMakeLists.txt
-git submodule init
-git submodule update
-cd ShapeWorks-Prep
-git checkout master
-git submodule init
-git submodule update
-cd Source/CommonLibraries/fim_v4
-git checkout master
-cd ../../../../ShapeWorks-Post
-git checkout master
-cd ../ShapeWorks-Run
-git checkout master
-git submodule init
-git submodule update
-cd source/fim_v4
-git checkout master
-cd ${root}
-
 rm -rf shapeworks-build/
 mkdir shapeworks-build/
-
 cd shapeworks-build/
 
 cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DBuild_Post:BOOL=${Build_Post} -DBuild_View2:BOOL=${Build_View2} -Wno-dev -Wno-deprecated ../shapeworks
-make -j100
+make -j4
 cd ${root}
