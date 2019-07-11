@@ -1,5 +1,5 @@
 project(ComputeGeodesicFromVerticesToPoints)
 cmake_minimum_required(VERSION 2.8)
 ADD_EXECUTABLE(ComputeGeodesicDistanceFromVerticesToPoints ComputeGeodesicDistanceFromVerticesToPoints.cxx ${source_files})
-TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VTK_LIBRARIES} ${VXL_LIBRARIES} vgl_algo vgl fim_v4 tinyxml)
+TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceFromVerticesToPoints ${ITK_LIBRARIES} ${VTK_LIBRARIES} ${VXL_LIBRARIES} fim_v4 vgl_algo vgl tinyxml)
 INSTALL(TARGETS ComputeGeodesicDistanceFromVerticesToPoints RUNTIME DESTINATION .)
