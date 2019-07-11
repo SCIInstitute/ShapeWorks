@@ -37,7 +37,7 @@ This first step is optional but recommended. Anaconda enables simultaneous build
 
 Starting with an older version of Python (3.5), these instructions are based on how the dependencies were acquired and built by the `superbuild-mac.sh` script, with necessary modifications for compatibility with Mojave.
 
-1. **Create base ewnvironment**
+1. **Create base environment**
  ```
  export PYVER="3.5"
  conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
@@ -126,4 +126,11 @@ TODO
 
 The current method for building ShapeWorks on Windows is to utilize its Linux shell.
 
-TODO: add details
+1. Install the Linux Subsystem for Windows (details elsewhere online from Microsoft)
+
+2. Install (using 'sudo apt install') packages:
+
+g++-4.8 gcc-4.8 MesaGL libglu1-mesa-dev freeglut3-dev mesa-common-dev libosmesa6-dev cmake
+
+3. See shapeworks_windows_linux_subsystem.sh for details on installing dependencies and shapeworks.
+
