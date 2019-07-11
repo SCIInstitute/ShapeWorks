@@ -61,11 +61,10 @@ make -j10
 
 ######## ShapeWorks ########
 cd ${root}
-git clone https://github.com/SCIInstitute/shapeworks.git
 rm -rf shapeworks-build/
 mkdir shapeworks-build/
 cd shapeworks-build/
 
-cmake -DITK_DIR=${depDir}/ITK-build -DVXL_DIR=${depDir}/vxl-build -DVTK_DIR=${depDir}/vtk-build -DBuild_Post:BOOL=OFF -DUSE_OPENMP=OFF -Wno-dev ../shapeworks
+cmake -DITK_DIR=${depDir}/ITK-build -DVXL_DIR=${depDir}/vxl-build -DVTK_DIR=${depDir}/vtk-build -DBuild_Post:BOOL=OFF -DUSE_OPENMP=OFF -Wno-dev ..
 make -j10
 cd ${root}
