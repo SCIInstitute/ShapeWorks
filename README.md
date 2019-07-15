@@ -20,6 +20,7 @@ Table of Contents
 - [Aknowledgements](#aknowledgements)<br/>
 - [Relevant Papers](#relevant-papers)<br/>
 - [Installation](#installation)  
+- [Documentation](#documentation)  
 - [Development](#development)  
 <!--
 - [Requirements](#requirements)<br/>
@@ -68,6 +69,10 @@ P. Agrawal, S.Y. Elhabian, R.T. Whitaker, "Learning Deep Features for Automated 
 Installation
 =====================
 _coming soon:_ user installation without the necessity of building ShapeWorks directly
+
+Documentation
+=====================
+_coming soon:_ framework documentation
 
 Development
 =====================

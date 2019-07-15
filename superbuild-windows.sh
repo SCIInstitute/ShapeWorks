@@ -1,4 +1,7 @@
-echo "ShapeWorks SuperBuild for Windows (Linux subsystem)"
+echo "ShapeWorks superbuild for Windows (Linux subsystem)"
+
+# TODO: This build script should probably simply use the linux superbuild script.
+#       If not, upgrade it to be like the other superbuild scripts for osx and linux
 
 root=$(pwd)
 depDir=${root}/shapeworks-dependencies
