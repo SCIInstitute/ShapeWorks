@@ -142,6 +142,7 @@ option(Build_Run "Build shapeworks" ON)
 option(Build_Post "Build post" ON)
 option(Build_View2 "Build view2" OFF)  #todo: figure out how to install old qt 4.8.1 on new osx (other platforms may also have issues)
 
+#todo: setup INSTALL paths as described in Trello (otherwise 'make install' just puts everything in the root path of the specified installation directory)
 
 if(Build_View2)
   set(VTK_QT_OPTIONS "vtkViewsQt vtkGUISupportQt vtkRenderingQt")
