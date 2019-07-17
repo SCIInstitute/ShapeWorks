@@ -1,0 +1,57 @@
+<point_files>
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample0_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample1_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample2_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample3_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample4_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample5_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample6_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample7_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample8_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample9_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample10_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample11_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample12_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample13_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample14_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample15_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample16_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample17_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample18_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample19_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample20_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample21_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample22_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample23_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample24_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample25_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample26_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample27_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample28_tpSmooth_FM.lpts
+/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/Points/sample29_tpSmooth_FM.lpts
+</point_files>
+
+<rep_point>
+	/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/refPoint.lpts
+</rep_point>
+
+<!-- choose between the distance transform as an input or the VTK mesh  -->
+
+<!-- <rep_DT>
+	/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/refDT.nrrd
+</rep_DT>
+ -->
+ <rep_mesh>
+ 	/home/sci/riddhishb/Documents/git-repos/shapeworkspost/examples/Ellipsoid/refMesh.vtk
+ </rep_mesh>
+
+<num_points>256</num_points>
+
+<!-- Flag to turn on the mesh decimation required for very large meshes to reduce computational overhead -->
+<!-- 0 -- Off, 1 -- On  -->
+
+<mesh_decimation_on> 0 </mesh_decimation_on>
+
+<!-- This determines the fraction of the number of triangles to be retained after decimation -->
+<!-- between 0 to 1 -->
+<mesh_decimation_percent>0.75</mesh_decimation_percent>

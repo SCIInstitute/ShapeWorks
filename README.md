@@ -14,22 +14,27 @@ minimization that balances the simplicity of the model (compactness) with the ac
 surface representations. The ShapeWorks software includes tools for preprocessing data, computing 
 point-based shape models, and visualizing the results.
 <br/>
+
 Table of Contents
 ====================
-- [Aknowledgements](#aknowledgements)<br/>
+- [Acknowledgements](#acknowledgements)<br/>
 - [Relevant Papers](#relevant-papers)<br/>
-- [Requirements](#requirements)<br/>
+- [Installation](#installation)  
+- [Documentation](#documentation)  
+- [Development](#development)  
 <!--
+- [Requirements](#requirements)<br/>
 - [Building](#building)<br/>
 		- [Unix/OSX](#unix-and-osx)<br/>
 	        - [Windows](#windows)<br/> 
 - [Running](#running)<br/>
 		- [ShapeWorksGroom](#shapeworksgroom)<br/>
 		- [ShapeWorksRun](#shapeworksrun)<br/>
-		- [ShapeWorksView2](#shapeworksview2)<br/> -->
+		- [ShapeWorksView2](#shapeworksview2)<br/> 
+-->
 - [Contact and Bug Reports](#contact-and-bug-reports)<br/>
 
-<h3>Aknowledgements</h3>
+<h3>Acknowledgements</h3>
 If you use ShapeWorks in work that leads to published research, we humbly ask that you add the 
 following to the 'Acknowledgments' section of your paper: "This project was supported by the 
 National Institute of General Medical Sciences of the National Institutes of Health under 
@@ -61,6 +66,21 @@ Vol. 31, No. 10, pp. 1620--1626. 2013.
 
 P. Agrawal, S.Y. Elhabian, R.T. Whitaker, "Learning Deep Features for Automated Placement of Correspondence Points on Ensembles of Complex Shapes," In International Conference on Medical Image Computing and Computer-Assisted Intervention, pp. 185-193. Springer, Cham, 2017.
 
+Installation
+=====================
+_Coming soon:_ user installation without the necessity of building ShapeWorks directly.  
+Until then, please see **[INSTALL.md](INSTALL.md)** for the current build instructions.
+
+Documentation
+=====================
+_coming soon:_ framework documentation
+
+Development
+=====================
+Please see **[INSTALL.md](INSTALL.md)** for the current build instructions.  
+Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.  
+
+<!--
 Requirements
 =====================
  * Git (https://git-scm.com/)
@@ -107,7 +127,7 @@ Building
  - generate
  - make -j4 
  - make install (only if CMAKE_INSTALL_PREFIX is provided)
-
+-->
 
 <!--
 Building
@@ -227,6 +247,8 @@ building meshes. This speeds reconstruction, theoretically.
 There are a few Import/Export options under the File Menu. The details of these options are 
 beyond the scope of this document.
 -->
+
+
 Contact and Bug Reports
 =====================
 Please email any questions to Shapeworks-users@sci.utah.edu . If there problems or bugs, please report them using the issue tracker on GitHub. This includes feature requests. Feel free to add improvements using git pull requests. 

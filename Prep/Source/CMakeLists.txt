@@ -1,0 +1,113 @@
+PROJECT(SHAPETOOLKIT)
+cmake_minimum_required(VERSION 2.6)
+SET(CMAKE_BUILD_TYPE RELEASE)
+#SET(ITK_DIR "Path-to-ITK-4.7.2-build/")
+#SET(VTK_DIR "Path-to-VTK-5.10.1-build")
+
+#SET(VXL_DIR "Path-to-vxl-build")
+
+SET(COMMON_LIBS_DIR "CommonLibraries")
+
+INCLUDE_DIRECTORIES(
+    ${COMMON_LIBS_DIR}/OptionParser
+    ${COMMON_LIBS_DIR}/PreViewMeshQC
+    ${COMMON_LIBS_DIR}/ITKVTK
+    ${COMMON_LIBS_DIR}/Eigen
+    ${COMMON_LIBS_DIR}/Procrustes
+  )
+
+
+option(BUILD_ImageTools "Build ImageTools" ON)
+option(BUILD_MeshTools "Build MeshTools" ON)
+option(BUILD_FileFormatTools "Build file formatting tools" ON)
+option(BUILD_AlignmentTools "Build alignment tools" ON)
+option(BUILD_DataFormatTools "Build data formatting tools" ON)
+
+file(
+	GLOB
+	source_files
+	*.h
+	*.cpp
+	*.hxx
+	*.cxx
+	*.txx
+    ${COMMON_LIBS_DIR}/OptionParser/*.h
+    ${COMMON_LIBS_DIR}/OptionParser/*.cpp
+    ${COMMON_LIBS_DIR}/PreViewMeshQC/*.h
+    ${COMMON_LIBS_DIR}/PreViewMeshQC/*.cpp
+    ${COMMON_LIBS_DIR}/ITKVTK/*.h
+  	${COMMON_LIBS_DIR}/ITKVTK/*.hxx
+  	${COMMON_LIBS_DIR}/Procrustes/*.h
+    ${COMMON_LIBS_DIR}/Procrustes/*.hxx
+)
+
+if (BUILD_ImageTools)
+  subdirs(ImageTools/AntiAliasing/source)
+  subdirs(ImageTools/CloseHoles/source)
+  subdirs(ImageTools/FastMarching/source)
+  subdirs(ImageTools/CropImages/source)
+  subdirs(ImageTools/ExtractGivenLabelImage/source)
+  subdirs(ImageTools/PadVolumeWithConstant/source)
+  subdirs(ImageTools/FindLargestBoundingBox/source)
+  subdirs(ImageTools/ThresholdImages/source)
+  subdirs(ImageTools/ReflectVolumes/source)
+  subdirs(ImageTools/ResampleVolumesToBeIsotropic/source)
+  subdirs(ImageTools/TopologyPreservingSmoothing/source)
+  subdirs(ImageTools/WriteImageInfoToText/source)
+  subdirs(ImageTools/ClipVolume/source)
+endif(BUILD_ImageTools)
+
+if (BUILD_MeshTools)
+  subdirs(MeshTools/ClipClosedSurface/source)
+  subdirs(MeshTools/ComputeCurvatureAndCoordFiles/source)
+  subdirs(MeshTools/ComputeGeodesicDistanceToCurve/source)
+  subdirs(MeshTools/ComputeGeodesicDistanceToLandmark/source)
+  subdirs(MeshTools/ComputeGeodesicFromVerticesToPoints/source)
+  subdirs(MeshTools/ComputeMeshGeodesics/source)
+  subdirs(MeshTools/ComputeRasterizationVolumeOriginAndSize/source)
+  #subdirs(MeshTools/ExtractDeepNetFeaturesForMeshVertices/source)
+  subdirs(MeshTools/ExtractVertexFeatureFromMesh/source)
+  subdirs(MeshTools/FeaFromVTK/source/FeaFromVTK)
+  subdirs(MeshTools/FillMeshHoles/source)
+  subdirs(MeshTools/FixCuttingPlanes/source)
+  subdirs(MeshTools/GenerateBinaryAndDTImagesFromMeshes/source)
+  subdirs(MeshTools/GenerateFeatureGradientFiles/source)
+  subdirs(MeshTools/GenerateFidsFiles/source)
+  subdirs(MeshTools/GenerateFidsFilesFromMeshes/source)
+  subdirs(MeshTools/GetFeatureVolume/source)
+#  subdirs(MeshTools/ParticleBasedSurfaceReconstruction/source)
+  subdirs(MeshTools/PreviewCmd/source)
+  subdirs(MeshTools/ProbeFeatureVolumesAtMeshVertices/source)
+  subdirs(MeshTools/ProbeNormals/source)
+  subdirs(MeshTools/ProjectPointsOntoMesh/source)
+  subdirs(MeshTools/ReflectMeshes/source)
+  subdirs(MeshTools/RemoveFidsDTLeakage/source)
+  subdirs(MeshTools/SmoothMesh/source)
+endif(BUILD_MeshTools)
+
+if (BUILD_AlignmentTools)
+  subdirs(Alignment/ICPRigid3DImageRegistration/source)
+  subdirs(Alignment/ICPRigid3DMeshRegistration/source)
+  subdirs(Alignment/ReflectMeshes/source)
+  subdirs(Alignment/Resize_origin_resampleShapes)
+  subdirs(Alignment/TranslateShapeToImageOrigin/source)
+endif(BUILD_AlignmentTools)
+
+if (BUILD_DataFormatTools)
+  subdirs(DataFormat/VTKUnstructuredGridToPolyData/source)
+endif(BUILD_DataFormatTools)
+
+if (BUILD_DebugTools)
+  subdirs(DebugTools/GradientFromMeshVsVolume/source)
+#  subdirs(DebugTools/MeshBasedGeoToLMinShapeWorks)
+endif(BUILD_DebugTools)
+
+if (BUILD_FileFormatTools)
+  subdirs(FileFormats/GenericMeshConversion/source)
+  subdirs(FileFormats/fea2vtk/source)
+  subdirs(FileFormats/ply2vtk/source)
+  subdirs(FileFormats/stl2ply/source)
+  subdirs(FileFormats/stl2vtk/source)
+  subdirs(FileFormats/vtk2ply/source)
+  subdirs(FileFormats/MeshFromDistanceTransforms/source)
+endif(BUILD_FileFormatTools)

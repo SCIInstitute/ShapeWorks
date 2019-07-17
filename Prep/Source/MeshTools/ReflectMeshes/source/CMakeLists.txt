@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project(ReflectMesh)
+add_executable(ReflectMesh ReflectMesh.cxx ${source_files})
+target_link_libraries(ReflectMesh ${VTK_LIBRARIES})
+INSTALL(TARGETS ReflectMesh  RUNTIME DESTINATION .)

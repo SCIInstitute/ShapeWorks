@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project(AntiAliasing)
+add_executable(AntiAliasing AntiAliasing.cxx ${source_files})
+target_link_libraries(AntiAliasing ${ITK_LIBRARIES})
+INSTALL(TARGETS AntiAliasing  RUNTIME DESTINATION .)

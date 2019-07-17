@@ -1,0 +1,6 @@
+FILE(GLOB tinyxml_srcs ./*.cpp)
+if(TARGET tinyxml)
+    message("tinyxml already exists")
+else(TARGET tinyxml)
+    ADD_LIBRARY (tinyxml STATIC ${tinyxml_srcs})
+endif(TARGET tinyxml)

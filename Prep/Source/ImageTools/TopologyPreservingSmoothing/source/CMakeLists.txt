@@ -1,0 +1,5 @@
+PROJECT(TopologyPreservingSmoothing)
+cmake_minimum_required(VERSION 2.6)
+ADD_EXECUTABLE(TopologyPreservingSmoothing TopologyPreservingSmoothing.cxx ${source_files})
+TARGET_LINK_LIBRARIES(TopologyPreservingSmoothing  tinyxml ${ITK_LIBRARIES})
+INSTALL(TARGETS TopologyPreservingSmoothing  RUNTIME DESTINATION .)
