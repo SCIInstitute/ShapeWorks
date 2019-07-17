@@ -188,12 +188,12 @@ Specific versions and releases can be identified using tags.
 
 List current tags:__
 ```
-$ git tag <tagname>
+$ git tag --list
 ```
 
-Show details for a specific tag:__
+Show details for a specific tag (`--quiet` hides the diffs):__
 ```
-$ git show <tagname>
+$ git show <tagname> --quiet
 ```
 
 By default, checking out a tag puts your repo into a 'detached head' state. Use the following command the first time you check out a tag or a specific commit to create a local branch with that name (this happens automatically when checking out branches):  
@@ -213,7 +213,7 @@ $ git push origin <tagname>
 
 Delete a tag using:  
 ```
-$ git delete <tagname>
+$ git tag delete <tagname>
 $ git push origin --delete <tagname>
 ```
 The second command is only necessary if the tag has been pushed to Github.  

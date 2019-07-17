@@ -17,7 +17,7 @@ point-based shape models, and visualizing the results.
 
 Table of Contents
 ====================
-- [Aknowledgements](#aknowledgements)<br/>
+- [Acknowledgements](#acknowledgements)<br/>
 - [Relevant Papers](#relevant-papers)<br/>
 - [Installation](#installation)  
 - [Documentation](#documentation)  
@@ -34,7 +34,7 @@ Table of Contents
 -->
 - [Contact and Bug Reports](#contact-and-bug-reports)<br/>
 
-<h3>Aknowledgements</h3>
+<h3>Acknowledgements</h3>
 If you use ShapeWorks in work that leads to published research, we humbly ask that you add the 
 following to the 'Acknowledgments' section of your paper: "This project was supported by the 
 National Institute of General Medical Sciences of the National Institutes of Health under 
@@ -68,7 +68,8 @@ P. Agrawal, S.Y. Elhabian, R.T. Whitaker, "Learning Deep Features for Automated 
 
 Installation
 =====================
-_coming soon:_ user installation without the necessity of building ShapeWorks directly
+_Coming soon:_ user installation without the necessity of building ShapeWorks directly.  
+Until then, please see **[INSTALL.md](INSTALL.md)** for the current build instructions.
 
 Documentation
 =====================
@@ -76,8 +77,8 @@ _coming soon:_ framework documentation
 
 Development
 =====================
-Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.
-Please see **[INSTALL.md](INSTALL.md)** for the current build instructions.
+Please see **[INSTALL.md](INSTALL.md)** for the current build instructions.  
+Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.  
 
 <!--
 Requirements
