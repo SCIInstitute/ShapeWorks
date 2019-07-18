@@ -94,7 +94,7 @@ then
   mkdir ${VXL_BUILD_DIR}
   cd ${VXL_BUILD_DIR}
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -Wno-dev ../vxl/
-  make -j{NUM_PROCS} install
+  make -j${NUM_PROCS} install
 fi
 
 ######## VTK ########
@@ -119,7 +119,7 @@ then
   mkdir ${VTK_BUILD_DIR}
   cd ${VTK_BUILD_DIR}
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_USE_QT:BOOL=${BUILD_VIEW2} -DCMAKE_C_FLAGS=-DGLX_GLXEXT_LEGACY -DCMAKE_CXX_FLAGS=-DGLX_GLXEXT_LEGACY -Wno-dev ../vtk/
-  make -j{NUM_PROCS} install
+  make -j{$NUM_PROCS} install
 fi
 
 ######## ITK ########
@@ -137,7 +137,7 @@ then
   mkdir ${ITK_BUILD_DIR}
   cd ${ITK_BUILD_DIR}
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DITK_USE_SYSTEM_VXL=on -Wno-dev ../ITK/
-  make -j{NUM_PROCS} install
+  make -j${NUM_PROCS} install
 fi
 
 ######## ShapeWorks ########
@@ -152,8 +152,8 @@ if ! [ $USING_CONDA_SANDBOX ]; then
   VXL_DIR="-DVXL_DIR=${VXL_BUILD_DIR}"
 fi
 
-cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ${ITK_DIR} ${VXL_DIR} ${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_VIEW2} -Wno-dev -Wno-deprecated ../shapeworks
-make -j{NUM_PROCS} install
+cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ${ITK_DIR} ${VXL_DIR} ${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_VIEW2} -Wno-dev -Wno-deprecated ../shapeworks/
+make -j${NUM_PROCS} install
 cd ${root}
 
 if [ $USING_CONDA_SANDBOX ]; then
