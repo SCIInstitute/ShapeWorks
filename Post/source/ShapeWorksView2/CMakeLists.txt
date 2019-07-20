@@ -19,12 +19,15 @@ ENDIF (WIN32)
 
 # this command finds Qt4 libraries and sets all required variables
 # note that it's Qt4, not QT4 or qt4
-SET(QT_MIN_VERSION "4.7.4")
-FIND_PACKAGE( Qt4 REQUIRED )
+SET(QT_MIN_VERSION "5.7.0")
+FIND_PACKAGE( Qt5Widgets REQUIRED )
+FIND_PACKAGE( Qt5Gui REQUIRED )
+FIND_PACKAGE( Qt5Core REQUIRED )
+set(CMAKE_AUTOMOC ON)
 
 # add some useful macros and variables
 # (QT_USE_FILE is a variable defined by FIND_PACKAGE( Qt4 ) that contains a path to CMake script)
-INCLUDE( ${QT_USE_FILE} )
+#INCLUDE( ${QT_USE_FILE} )
 
 # build with powercrust reconstruction
 ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
@@ -117,13 +120,13 @@ enable_precompiled_headers(PrefixHeader.h SHAPEWORKSVIEW_SRCS)
 
 # this command will generate rules that will run rcc on all files from SHAPEWORKSVIEW_RCS
 # in result SHAPEWORKSVIEW_RC_SRCS variable will contain paths to files produced by rcc
-QT4_ADD_RESOURCES( SHAPEWORKSVIEW_RC_SRCS ${SHAPEWORKSVIEW_RCS} )
+QT5_ADD_RESOURCES( SHAPEWORKSVIEW_RC_SRCS ${SHAPEWORKSVIEW_RCS} )
 
 # this will run uic on .ui files:
-QT4_WRAP_UI( SHAPEWORKSVIEW_UI_HDRS ${SHAPEWORKSVIEW_UIS} )
+QT5_WRAP_UI( SHAPEWORKSVIEW_UI_HDRS ${SHAPEWORKSVIEW_UIS} )
 
 # and finally this will run moc:
-QT4_WRAP_CPP( SHAPEWORKSVIEW_MOC_SRCS ${SHAPEWORKSVIEW_MOC_HDRS} )
+QT5_WRAP_CPP( SHAPEWORKSVIEW_MOC_SRCS ${SHAPEWORKSVIEW_MOC_HDRS} )
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)

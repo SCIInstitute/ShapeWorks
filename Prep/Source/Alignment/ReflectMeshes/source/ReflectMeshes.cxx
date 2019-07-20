@@ -178,14 +178,14 @@ int main(int argc, char* argv[])
 
         // in order to handle flipping normals under negative scaling
         vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
-        reverseSense->SetInput(mesh);
+        reverseSense->SetInputData(mesh);
         reverseSense->ReverseNormalsOff();
         reverseSense->ReverseCellsOn();
         reverseSense->Update();
 
         vtkSmartPointer<vtkTransformPolyDataFilter> transform = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
         transform->SetTransform( tr );
-        transform->SetInput( reverseSense->GetOutput() );
+        transform->SetInputData( reverseSense->GetOutput() );
         transform->Update();
 
 

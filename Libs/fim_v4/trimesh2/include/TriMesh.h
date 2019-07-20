@@ -3282,11 +3282,17 @@ public:
         resampler->SetTransform( identityTransform );
         resampler->SetInterpolator( interpolator );
         resampler->SetOutputOrigin( this->imageOrigin );
-        double spacing[3] = { this->imageSpacing[0], this->imageSpacing[1], this->imageSpacing[2] };
+        double spacing[3];
+        spacing[0] = this->imageSpacing[0];
+        spacing[1] = this->imageSpacing[1];
+        spacing[2] = this->imageSpacing[2];
         resampler->SetOutputSpacing( spacing);
         resampler->SetInput( img );
         resampler->SetOutputDirection( img->GetDirection() );
-        itk::Size<3> size = { {this->imageSize[0], this->imageSize[1], this->imageSize[2]} };
+        itk::Size<3> size;
+        size[0] = this->imageSize[0];
+        size[1] = this->imageSize[1];
+        size[2] = this->imageSize[2];
         resampler->SetSize( size );
         resampler->Update();
 

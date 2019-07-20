@@ -145,7 +145,7 @@ option(Build_View2 "Build view2" OFF)  #todo: figure out how to install old qt 4
 #todo: setup INSTALL paths as described in Trello (otherwise 'make install' just puts everything in the root path of the specified installation directory)
 
 if(Build_View2)
-  set(VTK_QT_OPTIONS "vtkViewsQt vtkGUISupportQt vtkRenderingQt")
+#  set(VTK_QT_OPTIONS "vtkViewsQt vtkGUISupportQt vtkRenderingQt")
 endif(Build_View2)
   
 FIND_PACKAGE(VTK COMPONENTS

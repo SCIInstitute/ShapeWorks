@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         reader_pd->SetFileName( inFileName[i].c_str() );
         reader_pd->Update();
         inp->DeepCopy( reader_pd->GetOutput() );
-        inp->Update();
+        //inp->Update();
         unsigned int numVert = inp->GetNumberOfPoints();
         vtkDataArray *scalars = inp->GetPointData()->GetScalars();
         ofstream outfile(feaFilename[i].c_str(), std::ios::binary);
