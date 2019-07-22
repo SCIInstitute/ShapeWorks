@@ -34,3 +34,14 @@
 #Others
 .DS_*
 .directory
+
+# from ShapeWorksStudio (not sure they're all okay (e.g., "bin*" would ignore "binary_swap.cpp", etc, so leaving them commented out for now):
+# msvc*
+# *.swp
+# *~
+# */bin/*
+# bin*
+# build-*/
+# build*
+# *build*
+# *.user
