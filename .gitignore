@@ -1,9 +1,0 @@
-msvc*
-*.swp
-*~
-*/bin/*
-bin*
-build-*/
-build*
-*build*
-*.user
