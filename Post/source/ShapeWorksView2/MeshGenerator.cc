@@ -39,7 +39,7 @@ MeshGenerator::MeshGenerator()
   this->pointSet->SetPoints( this->points );
 
   this->surfaceReconstruction = vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-  this->surfaceReconstruction->SetInput( this->pointSet );
+  this->surfaceReconstruction->SetInputData( this->pointSet );
 
 #ifdef SW_USE_POWERCRUST
   this->polydataToImageData = vtkSmartPointer<vtkPolyDataToImageData>::New();

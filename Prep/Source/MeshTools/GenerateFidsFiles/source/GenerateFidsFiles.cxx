@@ -587,7 +587,7 @@ int main(int argc, char *argv[])
                 polydata->SetPoints( points );
 
                 vtkSmartPointer<vtkVertexGlyphFilter> glyphFilter = vtkSmartPointer<vtkVertexGlyphFilter>::New();
-                glyphFilter->SetInputConnection( polydata->GetProducerPort() );
+                glyphFilter->SetInputData( polydata );
                 glyphFilter->Update();
 
                 vtkSmartPointer<vtkPolyDataMapper> mapperPoint = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -620,7 +620,7 @@ int main(int argc, char *argv[])
 
                 vtkSmartPointer<vtkExtractSelection> extractSel = vtkSmartPointer<vtkExtractSelection>::New();
                 extractSel->SetInputConnection(0, reader->GetOutputPort());
-                extractSel->SetInput(1, sel);
+                extractSel->SetInputData(1, sel);
                 extractSel->Update();
 
                 vtkSmartPointer<vtkUnstructuredGrid> selected = vtkSmartPointer<vtkUnstructuredGrid>::New();
@@ -629,7 +629,7 @@ int main(int argc, char *argv[])
                 vtkSmartPointer<vtkProperty> backfaces = vtkSmartPointer<vtkProperty>::New();
                 backfaces->SetColor(1, 0, 0);
                 vtkSmartPointer<vtkDataSetMapper> mapperCells = vtkSmartPointer<vtkDataSetMapper>::New();
-                mapperCells->SetInputConnection( selected->GetProducerPort() );
+                mapperCells->SetInputData( selected );
                 vtkSmartPointer<vtkActor> actorCells = vtkSmartPointer<vtkActor>::New();
                 actorCells->SetMapper( mapperCells );
                 actorCells->SetBackfaceProperty( backfaces );
@@ -648,7 +648,7 @@ int main(int argc, char *argv[])
 
                 vtkSmartPointer<vtkExtractSelection> extractSel1 = vtkSmartPointer<vtkExtractSelection>::New();
                 extractSel1->SetInputConnection(0, reader->GetOutputPort());
-                extractSel1->SetInput(1, sel1);
+                extractSel1->SetInputData(1, sel1);
                 extractSel1->Update();
 
                 vtkSmartPointer<vtkUnstructuredGrid> selected1 = vtkSmartPointer<vtkUnstructuredGrid>::New();
@@ -657,7 +657,7 @@ int main(int argc, char *argv[])
                 vtkSmartPointer<vtkProperty> backfaces1 = vtkSmartPointer<vtkProperty>::New();
                 backfaces1->SetColor(1, 1, 0);
                 vtkSmartPointer<vtkDataSetMapper> mapperCells1 = vtkSmartPointer<vtkDataSetMapper>::New();
-                mapperCells1->SetInputConnection( selected1->GetProducerPort() );
+                mapperCells1->SetInputData( selected1 );
                 vtkSmartPointer<vtkActor> actorCells1 = vtkSmartPointer<vtkActor>::New();
                 actorCells1->SetMapper( mapperCells1 );
                 actorCells1->SetBackfaceProperty( backfaces1 );

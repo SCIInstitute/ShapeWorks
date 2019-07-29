@@ -118,7 +118,7 @@ int vtkPolyDataToImageData::RequestData(
 
   // create a point sampler to generate points along the surface
   vtkSmartPointer<vtkPolyDataPointSampler> sampler = vtkSmartPointer<vtkPolyDataPointSampler>::New();
-  sampler->SetInput( input );
+  sampler->SetInputData( input );
   sampler->SetDistance( this->SampleDistance );
   sampler->GenerateEdgePointsOn();
   sampler->GenerateInteriorPointsOn();
@@ -269,7 +269,7 @@ void vtkPolyDataToImageData::GetOutputInfo( vtkInformationVector** inputVector, 
   vtkPolyData* input = vtkPolyData::SafeDownCast(
     inInfo->Get( vtkDataObject::DATA_OBJECT() ) );
 
-  input->Update();
+  //input->Update();
 
   // Get the bounds of the input input
   double bounds[6];

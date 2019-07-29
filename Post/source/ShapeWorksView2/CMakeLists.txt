@@ -32,7 +32,7 @@ set(CMAKE_AUTOMOC ON)
 #INCLUDE( ${QT_USE_FILE} )
 
 # build with powercrust reconstruction
-ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
+#ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
 
 
 ###########################################
@@ -175,6 +175,9 @@ ELSE ( BUILD_SWV2_OSX_APP )
     ${SHAPEWORKSVIEW_MOC_HDRS}
   )
 ENDIF ( BUILD_SWV2_OSX_APP )
+
+
+SET( QT_LIBRARIES Qt5::Widgets Qt5::Core )
 
 
 TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} QVTK tinyxml vtkCommon vtkGraphics vtkImaging vtkRendering vtkWidgets)

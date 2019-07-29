@@ -256,7 +256,7 @@ int main(int argc, char * argv [] )
 
     vtkSmartPointer<vtkTransformPolyDataFilter> icpTransformFilter =
             vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-    icpTransformFilter->SetInput(moving);
+    icpTransformFilter->SetInputData(moving);
     icpTransformFilter->SetTransform(icp);
     icpTransformFilter->Update();
 
@@ -310,21 +310,21 @@ int main(int argc, char * argv [] )
         vtkActor* tarActor = vtkActor::New();
 
         tarActor->SetMapper( tarMapper );
-        tarMapper->SetInput( target );
+        tarMapper->SetInputData( target );
         tarMapper->ScalarVisibilityOff();
 
         vtkPolyDataMapper* movMapper = vtkPolyDataMapper::New();
         vtkActor* movActor = vtkActor::New();
 
         movActor->SetMapper(movMapper);
-        movMapper->SetInput(moving);
+        movMapper->SetInputData(moving);
         movMapper->ScalarVisibilityOff();
 
         vtkPolyDataMapper* solMapper = vtkPolyDataMapper::New();
         vtkActor* solActor = vtkActor::New();
 
         solActor->SetMapper(solMapper);
-        solMapper->SetInput(solution);
+        solMapper->SetInputData(solution);
         solMapper->ScalarVisibilityOff();
 
         vtkProperty *targetProperty = vtkProperty::New();

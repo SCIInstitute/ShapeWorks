@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
       vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
       //vtkSmartPointer<vtkMarchingCubes> ls = vtkSmartPointer<vtkMarchingCubes>::New();
       //ls->SetInputConnection( reader->GetOutputPort() );
-      ls->SetInput( connector->GetOutput() );
+      ls->SetInputData( connector->GetOutput() );
       ls->SetValue(0, levelsetValue);
       ls->Update();
       std::cout << "..";

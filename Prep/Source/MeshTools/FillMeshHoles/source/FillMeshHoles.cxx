@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 
         std::cout << "Wrting output mesh:" << outFilenames[shapeNo].c_str()  << std::endl ;
         vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInput(normals->GetOutput());
+        writer->SetInputData(normals->GetOutput());
         writer->SetFileName(outFilenames[shapeNo].c_str());
         writer->Update();
     }

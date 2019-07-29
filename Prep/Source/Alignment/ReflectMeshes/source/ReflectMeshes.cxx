@@ -226,12 +226,12 @@ int main(int argc, char* argv[])
 
         if (pref == "ply") {
             vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
-            writer->SetInput( inp );
+            writer->SetInputData( inp );
             writer->SetFileName( outFilenames[sh].c_str() );
             writer->Update();
         } else {
             vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-            writer->SetInput( inp );
+            writer->SetInputData( inp );
             writer->SetFileName( outFilenames[sh].c_str() );
             writer->Update();
         }
