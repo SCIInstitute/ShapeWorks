@@ -114,7 +114,10 @@ int main( int argc, char * argv[] )
     myfile.open (inFilename.c_str());
 
     int bb[3]={0,0,0};
-    int smallestIndex[3] = {1e6,1e6,1e6};
+    int smallestIndex[3];
+    smallestIndex[0] = 1e6;
+    smallestIndex[1] = 1e6;
+    smallestIndex[2] = 1e6;
     int largestIndex[3]  = {0,0,0};
 
     std::vector<int> smallestIndex0_store;  smallestIndex0_store.clear();

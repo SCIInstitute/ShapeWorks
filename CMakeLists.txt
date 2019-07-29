@@ -2,6 +2,8 @@ PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
 SET(CMAKE_BUILD_TYPE Release)
 
+set(CMAKE_CXX_STANDARD 11)
+
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -153,10 +155,12 @@ FIND_PACKAGE(VTK COMPONENTS
   vtkIOCore
   vtkIOLegacy
   vtkIOPLY
+  vtkIOXML
   vtkIOGeometry
   vtkInfovisCore
   vtkInteractionStyle
   vtkFiltersCore
+  vtkFiltersModeling
   ${VTK_QT_OPTIONS}
   REQUIRED)
 IF (VTK_FOUND)

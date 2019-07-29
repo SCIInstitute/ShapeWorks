@@ -20,9 +20,11 @@ ENDIF (WIN32)
 # this command finds Qt4 libraries and sets all required variables
 # note that it's Qt4, not QT4 or qt4
 SET(QT_MIN_VERSION "5.7.0")
-FIND_PACKAGE( Qt5Widgets REQUIRED )
-FIND_PACKAGE( Qt5Gui REQUIRED )
-FIND_PACKAGE( Qt5Core REQUIRED )
+#FIND_PACKAGE( Qt5Widgets REQUIRED )
+#FIND_PACKAGE( Qt5Gui REQUIRED )
+#FIND_PACKAGE( Qt5Core REQUIRED )
+
+find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
 set(CMAKE_AUTOMOC ON)
 
 # add some useful macros and variables
