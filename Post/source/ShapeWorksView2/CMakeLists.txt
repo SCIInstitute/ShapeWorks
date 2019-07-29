@@ -25,7 +25,7 @@ SET(QT_MIN_VERSION "5.7.0")
 #FIND_PACKAGE( Qt5Core REQUIRED )
 
 find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
-set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOMOC OFF)
 
 # add some useful macros and variables
 # (QT_USE_FILE is a variable defined by FIND_PACKAGE( Qt4 ) that contains a path to CMake script)
@@ -180,7 +180,7 @@ ENDIF ( BUILD_SWV2_OSX_APP )
 SET( QT_LIBRARIES Qt5::Widgets Qt5::Core )
 
 
-TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} QVTK tinyxml vtkCommon vtkGraphics vtkImaging vtkRendering vtkWidgets)
+TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} tinyxml ${VTK_LIBRARIES})
 
 
 # INSTALLATION AND PACKAGING

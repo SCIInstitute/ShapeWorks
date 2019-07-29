@@ -25,7 +25,7 @@
 
 // local files
 #ifdef SW_USE_POWERCRUST
-#include "vtkPowerCrustSurfaceReconstruction.h"
+//#include "vtkPowerCrustSurfaceReconstruction.h"
 #endif
 
 MeshGenerator::MeshGenerator()
