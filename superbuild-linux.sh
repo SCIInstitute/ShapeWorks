@@ -31,7 +31,7 @@ fi
 
 # vtk will be built with QT only if this is ON
 if [ -z $BUILD_VIEW2 ]; then
-  BUILD_VIEW2=1
+  BUILD_VIEW2=0
 fi
 
 if [ $BUILD_VIEW2 != 0 ]; then
@@ -62,6 +62,7 @@ fi
 if [ -z $Build_ITK ]; then
   Build_ITK=1
 fi
+basePath=$(pwd)
 
 ## create build and install directories for ShapeWorks deps ##
 if [ $USING_CONDA_SANDBOX ]; then
@@ -119,7 +120,7 @@ then
   mkdir ${VTK_BUILD_DIR}
   cd ${VTK_BUILD_DIR}
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_USE_QT:BOOL=${BUILD_VIEW2} -DCMAKE_C_FLAGS=-DGLX_GLXEXT_LEGACY -DCMAKE_CXX_FLAGS=-DGLX_GLXEXT_LEGACY -Wno-dev ../vtk/
-  make -j{$NUM_PROCS} install
+  make -j${NUM_PROCS} install
 fi
 
 ######## ITK ########
@@ -141,7 +142,8 @@ then
 fi
 
 ######## ShapeWorks ########
-cd ${root}
+# we make an assumption here that you are executing the superbuild from the base SW source directory
+cd ${basePath}
 if [ $BUILD_CLEAN != 0 ]; then rm -rf shapeworks-build; fi
 mkdir shapeworks-build/
 cd shapeworks-build/
@@ -152,15 +154,16 @@ if ! [ $USING_CONDA_SANDBOX ]; then
   VXL_DIR="-DVXL_DIR=${VXL_BUILD_DIR}"
 fi
 
-cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ${ITK_DIR} ${VXL_DIR} ${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_VIEW2} -Wno-dev -Wno-deprecated ../shapeworks/
+cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} ${ITK_DIR} ${VXL_DIR} ${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_VIEW2} -Wno-dev -Wno-deprecated ../
 make -j${NUM_PROCS} install
+
 cd ${root}
 
 if [ $USING_CONDA_SANDBOX ]; then
   # Inform users of ShapeWorks install path:
   MESSAGE("ShapeWorks executables have been installed in this directory. Run them using ./<executable_name>")
-  MESSAGE("[IMPORTANT] first you must ensure shared libraries can be found by the executables:
-  MESSAGE("  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$CONDA_PREFIX/lib/vtk-5.10:$LD_LIBRARY_PATH")
+  MESSAGE("[IMPORTANT] first you must ensure shared libraries can be found by the executables:")
+MESSAGE("  export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$CONDA_PREFIX/lib/vtk-5.10:$LD_LIBRARY_PATH")
   MESSAGE("To add the executables to your default PATH, use this:") # Because non-standard install location is not in PATH
   MESSAGE("  export PATH=$CONDA_PREFIX:$PATH")
 fi
