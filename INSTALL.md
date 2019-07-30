@@ -181,6 +181,8 @@ Continue following [superbuild-linux.sh](superbuild-linux.sh).
 Follow example in [superbuild-linux.sh](superbuild-linux.sh).
  
 6. **ShapeWorks**
+
+Note: In the superbuild script the shapeworks is set up such that you must run the script from its parent directory i.e. from inside shapeworks repo cloned on your local machine. 
 If using the Anaconda sandbox, create a derived environment for this build:
 ```
 conda create --name shapeworks_build --clone build-foundation
