@@ -215,13 +215,13 @@ INSTALL(TARGETS ShapeWorksView2
 #--------------------------------------------------------------------------------
 # Install needed Qt plugins by copying directories from the qt installation
 # One can cull what gets copied by using 'REGEX "..." EXCLUDE'
-INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+#INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
 
 #--------------------------------------------------------------------------------
 # Install needed Qt .nib files and others
-IF(APPLE)
-INSTALL(DIRECTORY "${QT_QTGUI_LIBRARY_RELEASE}/Versions/Current/Resources" DESTINATION ${contents_dest_dir} COMPONENT Runtime)
-ENDIF(APPLE)
+#IF(APPLE)
+#INSTALL(DIRECTORY "${QT_QTGUI_LIBRARY_RELEASE}/Versions/Current/Resources" DESTINATION ${contents_dest_dir} COMPONENT Runtime)
+#ENDIF(APPLE)
 
 
 
