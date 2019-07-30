@@ -63,7 +63,7 @@ if [ -z $Build_ITK ]; then
   Build_ITK=1
 fi
 basePath=$(pwd)
-
+depDir=${root}/shapeworks-dependencies
 ## create build and install directories for ShapeWorks deps ##
 if [ $USING_CONDA_SANDBOX ]; then
   root=${CONDA_PREFIX}
@@ -72,7 +72,7 @@ else
   root=$(pwd)
   INSTALL_PREFIX="${depDir}/install"
 fi
-depDir=${root}/shapeworks-dependencies
+
 if [ $BUILD_CLEAN != 0 ]; then rm -rf ${depDir}; fi
 mkdir ${depDir}
 mkdir ${depDir}/install
