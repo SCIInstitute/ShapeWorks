@@ -23,6 +23,7 @@
 #include "itkInPlaceImageFilter.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleCurvatureEntropyGradientFunction.h"
+#include "itkParticleCurvatureEntropyGradientFunctionWithOffset.h"  //Added by Anupama
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
@@ -131,6 +132,12 @@ public:
         return m_CurvatureGradientFunction;
     }
 
+    ParticleCurvatureEntropyGradientFunctionWithOffset<typename ImageType::PixelType, Dimension>
+    *GetCurvatureGradientFunctionWithOffset()
+    {
+        return m_CurvatureGradientFunctionWithOffset;
+    } //Added by Anupama
+
     ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     *GetModifiedCotangentGradientFunction()
     {
@@ -166,6 +173,20 @@ public:
         this->SetPointsFile(0,s);
     }
 
+    //Added by Anupama for offsets
+
+    void SetOffsetsFile(unsigned int i, const std::string &s)
+    {
+        if (m_OffsetsFiles.size() < i+1)
+        {
+            m_OffsetsFiles.resize(i+1);
+        }
+        m_OffsetsFiles[i] = s;
+    }
+    void SetOffsetsFile(const std::string &s)
+    {
+        this->SetOffsetsFile(0,s);
+    }
 
 #if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     /**Optionally provide a filename for a mesh with geodesic distances.*/
@@ -298,6 +319,8 @@ public:
                 m_Optimizer->SetGradientFunction(m_CurvatureGradientFunction);
             else if(m_pairwise_potential_type == 1)
                 m_Optimizer->SetGradientFunction(m_ModifiedCotangentGradientFunction);
+            else if(m_pairwise_potential_type == 2)
+                m_Optimizer->SetGradientFunction(m_CurvatureGradientFunctionWithOffset); //Added by Anupama
         }
         else if (mode ==1)
         {
@@ -392,7 +415,8 @@ protected:
     ::Pointer m_QualifierGradientFunction;
     typename ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_CurvatureGradientFunction;
-
+    typename ParticleCurvatureEntropyGradientFunctionWithOffset<typename ImageType::PixelType, Dimension>
+    ::Pointer m_CurvatureGradientFunctionWithOffset; //Added by Anupama
     typename ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_ModifiedCotangentGradientFunction;
     typename ParticleConstrainedModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>
@@ -421,6 +445,7 @@ private:
     void operator=(const Self&); //purposely not implemented
 
     std::vector<std::string> m_PointsFiles;
+    std::vector<std::string> m_OffsetsFiles; //Added by Anupama
 #if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     std::vector<std::string> m_MeshFiles;
     std::vector<std::string> m_FeaMeshFiles;

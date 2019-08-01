@@ -64,6 +64,7 @@ ParticleEnsembleEntropyFunction<VDimension>
     // (A is D' in Davies paper)
     // Compute the mean shape vector.
     double _total = 0.0;
+
     for (unsigned int j = 0; j < num_dims; j++)
     {
         double total = 0.0;
@@ -169,6 +170,7 @@ ParticleEnsembleEntropyFunction<VDimension>
 {
     // NOTE: This code requires that indices be contiguous, i.e. it won't work if
     // you start deleting particles.
+
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
     maxdt  = m_MinimumEigenValue;

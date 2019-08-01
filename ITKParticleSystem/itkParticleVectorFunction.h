@@ -66,6 +66,7 @@ public:
   virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const =0;
 
 
+
   /** May be called by the solver class. */
   virtual void ResetBuffers() { }
   
@@ -83,6 +84,10 @@ public:
       Energy as well as the Gradients.  Typically this is only necessary for
       the adaptive gradient descent algorithm.*/
   virtual void BeforeEvaluate(unsigned int , unsigned int, const ParticleSystemType *) {}
+
+  virtual double OffsetSmoothness(unsigned int , unsigned int, const ParticleSystemType *) {} //Added by Anupama
+
+  virtual void RecomputeCovMatrix() {} //Added by Anupama
   
   /** Some subclasses may require a pointer to the particle system and its
       domain number.  These methods set/get those values. */

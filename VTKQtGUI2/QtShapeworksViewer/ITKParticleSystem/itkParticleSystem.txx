@@ -41,6 +41,7 @@ ParticleSystem<VDimension>
   m_PrefixTransforms.resize(num);
   m_InversePrefixTransforms.resize(num);
   m_Positions.resize(num);
+  m_Offsets.resize(num); //Added by Anupama
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
   m_DomainFlags.resize(num);
@@ -59,6 +60,7 @@ void ParticleSystem<VDimension>::AddDomain( DomainType *input, int threadId)
       m_Domains[idx] = input;
       m_Positions[idx]  =  PointContainerType::New();
       m_IndexCounters[idx] = 0;
+      m_Offsets[idx] = 0; //Added by Anupama
       return;
       }
     }
@@ -66,6 +68,7 @@ void ParticleSystem<VDimension>::AddDomain( DomainType *input, int threadId)
   this->SetNumberOfDomains(static_cast<int>(m_Domains.size() + 1));
   m_Domains[ static_cast<int>( m_Domains.size() ) - 1] = input;
   m_Positions[static_cast<int>( m_Domains.size() ) - 1] = PointContainerType::New();
+  m_Offsets[static_cast<float>( m_Domains.size() -1)] = 0; //Added by Anupama
   m_IndexCounters[static_cast<int>( m_Domains.size() -1)] = 0;
   m_Neighborhoods[static_cast<int>( m_Domains.size() -1)] = NeighborhoodType::New();
   m_Transforms[static_cast<int>( m_Domains.size() -1)].set_identity();

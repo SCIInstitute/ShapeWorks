@@ -42,6 +42,9 @@ ParticleSystem<VDimension>
   m_PrefixTransforms.resize(num);
   m_InversePrefixTransforms.resize(num);
   m_Positions.resize(num);
+  m_Prev_Positions.resize(num); //Added by Anupama
+  m_Offsets.resize(num); //Added by Anupama
+  m_Prev_Offsets.resize(num); //Added by Anupama
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
   m_DomainFlags.resize(num);
@@ -69,6 +72,7 @@ void ParticleSystem<VDimension>
   m_Domains[ static_cast<int>( m_Domains.size() ) - 1] = input;
   m_Positions[static_cast<int>( m_Domains.size() ) - 1] = PointContainerType::New();
   m_IndexCounters[static_cast<int>( m_Domains.size() -1)] = 0;
+  m_Prev_Positions[static_cast<int>( m_Domains.size() ) - 1] = PointContainerType::New(); //Added by Anupama
   m_Neighborhoods[static_cast<int>( m_Domains.size() -1)] = NeighborhoodType::New();
   m_Transforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
@@ -143,9 +147,12 @@ void ParticleSystem<VDimension>
 template <unsigned int VDimension>
 const typename ParticleSystem<VDimension>::PointType &
 ParticleSystem<VDimension>
-::AddPosition( const PointType &p, unsigned int d, int threadId)
+::AddPosition( const PointType &p, unsigned int d, int threadId, double offset)
 {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
+  m_Prev_Positions[d]->operator[](m_IndexCounters[d]) = p; //Added by Anupama
+  m_Offsets[d].push_back(offset); //Added by Anupama
+  m_Prev_Offsets[d].push_back(offset); //Added by Anupama
 
   // Potentially modifes position!
   if (m_DomainFlags[d] == false)
@@ -181,7 +188,7 @@ ParticleSystem<VDimension>
 {
   if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false)
     {
-  
+    m_Prev_Positions[d]->operator[](k)=this->GetPosition(k,d); //Added by Anupama
     m_Positions[d]->operator[](k) = p;
     
     // Potentially modifes position!
@@ -206,6 +213,38 @@ ParticleSystem<VDimension>
 }
 
 template <unsigned int VDimension>
+const typename ParticleSystem<VDimension>::PointType & ParticleSystem<VDimension>::SetPositionUpdatePrev(const PointType &p,  unsigned long int k, const PointType &prev,
+                                        unsigned int d,  int threadId)  //Added by Anupama
+{
+  if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false)
+    {
+
+    m_Positions[d]->operator[](k) = p;
+    m_Prev_Positions[d]->operator[](k) = prev; //Added by Anupama
+
+    // Potentially modifes position!
+    if (m_DomainFlags[d] == false)
+    {
+        m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
+
+        m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k, threadId);
+     }
+
+     }
+
+  // Notify any observers.
+  ParticlePositionSetEvent e;
+  e.SetThreadID(threadId);
+  e.SetDomainIndex(d);
+  e.SetPositionIndex(k);
+
+  this->InvokeEvent(e);
+
+  return m_Positions[d]->operator[](k);
+}
+
+
+template <unsigned int VDimension>
 void
 ParticleSystem<VDimension>
 ::RemovePosition(unsigned long int k,
@@ -227,14 +266,21 @@ ParticleSystem<VDimension>
 template <unsigned int VDimension>
 void
 ParticleSystem<VDimension>
-::AddPositionList(const std::vector<PointType> &p,
-                                            unsigned int d, int threadId )
+::AddPositionList(const std::vector<PointType> &p, const std::vector<double> &offsets, unsigned int d, int threadId ) //Modified by Anupama
 {
   // Traverse the list and add each point to the domain.
+  typename std::vector<double>::const_iterator iter= offsets.begin();
   for (typename std::vector<PointType>::const_iterator it= p.begin();
        it != p.end(); it++)
     {
-    this->AddPosition(*it, d, threadId);    
+    double offset=0;
+    if(iter!=offsets.end())
+    {
+        offset=*iter;
+        iter++;
+     }
+    this->AddPosition(*it, d, threadId, offset); //Added by Anupama offset as 0
+
     }
 }
 
@@ -264,7 +310,8 @@ ParticleSystem<VDimension>
       newpos[i] = this->GetPosition(idx,domain)[i] + 2 * epsilon * random[i];
       }
     this->GetDomain(domain)->ApplyConstraints(newpos);
-    this->AddPosition(newpos, domain, threadId);
+    this->AddPosition(newpos, domain, threadId, this->GetOffset(idx,domain)); //Modified by Anupama
+
 }
 
 template <unsigned int VDimension>
@@ -277,10 +324,20 @@ ParticleSystem<VDimension>
   // at an epsilon distance and random direction. Since we are going to add
   // positions to the list, we need to first copy the list.
   std::vector<PointType> list;
+  std::vector<double> offsetlist; //Added by Anupama
+  std::vector<double> offsets =this->GetOffsets(domain); //Added by Anupama
   typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();     
   for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
        it != endIt; it++)
-    {    list.push_back(*it);    }
+    {    list.push_back(*it);
+
+    }
+  for (std::vector<double>::iterator iter = offsets.begin(); iter !=  offsets.end(); ++iter)//Added by Anupama
+    {
+        offsetlist.push_back(*iter);
+    }//Added by Anupama
+
+  std::vector<double>::iterator iter = offsetlist.begin(); //Added by Anupama
 
   for (typename std::vector<PointType>::const_iterator it = list.begin();
        it != list.end(); it++)
@@ -294,7 +351,8 @@ ParticleSystem<VDimension>
       }
     if (m_DomainFlags[domain] == false)
         this->GetDomain(domain)->ApplyConstraints(newpos);
-    this->AddPosition(newpos, domain, threadId);
+    this->AddPosition(newpos, domain, threadId, *iter); //Modified by Anupama *iter
+    iter++;//Added by Anupama
     } // end for std::vector::iterator
 }
 

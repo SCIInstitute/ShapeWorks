@@ -31,7 +31,6 @@
 #include <string>
 #include <numeric>
 #include "itkParticleGoodBadAssessment.h"
-
 #include "itkParticleVectorFunction.h"
 
 template<typename T> std::string toStr(T var) {
@@ -211,6 +210,7 @@ protected:
 
     std::vector < std::string > m_filenames;
     std::vector < std::string > pointFiles;
+    std::vector < std::string > offsetFiles; //Added by Anupama
 
     std::vector<double> m_EnergyA;
     std::vector<double> m_EnergyB;

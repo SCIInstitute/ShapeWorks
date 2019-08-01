@@ -555,6 +555,7 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
         }
         // load point files
         pointFiles.clear();
+        offsetFiles.clear(); //Added by Anupama
         elem = docHandle.FirstChild( "point_files" ).Element();
         if (elem)
         {
@@ -582,6 +583,36 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadInputs(const char *fname)
 
             pointFiles.clear();
         }
+
+        /*Block below added by Anupama*/
+        elem = docHandle.FirstChild( "offset_files" ).Element();
+        if (elem)
+        {
+            inputsBuffer.str(elem->GetText());
+            while (inputsBuffer >> filename)
+            {
+                offsetFiles.push_back(filename);
+            }
+            inputsBuffer.clear();
+            inputsBuffer.str("");
+
+            // read point files only if they are all present
+            if (offsetFiles.size() < numShapes)
+            {
+                std::cerr << "ERROR: not enough point files, none will be loaded!!!" << std::endl;
+                throw 1;
+            }
+            else
+            {
+                for (int shapeCount = 0; shapeCount < numShapes; shapeCount++)
+                {
+                    m_Sampler->SetOffsetsFile(shapeCount, offsetFiles[shapeCount]);
+                }
+            }
+
+            offsetFiles.clear();
+        }
+        /*Block above added by Anupama*/
     } // end: document check
 }
 
@@ -1093,6 +1124,10 @@ ShapeWorksRunApp<SAMPLERTYPE>::ReadExplanatoryVariables(const char *fname)
         std::istringstream inputsBuffer;
         std::vector<double> evars;
         double etmp;
+
+        elem = docHandle.FirstChild( "offset_regularization" ).Element();
+        if (elem) m_Sampler->GetParticleSystem()->SetOffsetRegularization(atof(elem->GetText())); //Added by Anupama
+        else m_Sampler->GetParticleSystem()->SetOffsetRegularization(0.000001);
 
         elem = docHandle.FirstChild( "explanatory_variable" ).Element();
         if (elem)
@@ -2150,11 +2185,19 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
 
         std::string local_file = iter_prefix + "/" + m_filenames[i] + "_local.particles";
         std::string world_file = iter_prefix + "/" + m_filenames[i] + "_world.particles";
+        std::string offset_file = iter_prefix + "/" + m_filenames[i] + "_offset"; //Added by Anupama
+        std::string prev_pos_file = iter_prefix + "/" + m_filenames[i] + "_prev.pos"; //Added by Anupama
+        std::string normals_file = iter_prefix + "/" + m_filenames[i] + ".normals"; //Added by Anupama
+        std::string shape_stat_file = iter_prefix + "/" + m_filenames[i] + "_shape.statistics"; //Added by Anupama
 
         std::ofstream out( local_file.c_str() );
         std::ofstream outw( world_file.c_str() );
+        std::ofstream outo( offset_file.c_str() ); //Added by Anupama
+        std::ofstream oprev( prev_pos_file.c_str() ); //Added by Anupama
+        std::ofstream onorm( normals_file.c_str() ); //Added by Anupama
+        std::ofstream oshapestat( shape_stat_file.c_str() ); //Added by Anupama
 
-        std::string str = "Writing " + world_file + " and " + local_file + " files...";
+        std::string str = "Writing " + world_file + " ,  " + local_file + " , "+shape_stat_file+" , "+offset_file+ " and"+normals_file+ "files..."; //Added by Anupama
         this->startMessage(str,1);
         if ( !out )
         {
@@ -2166,11 +2209,33 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
             std::cerr << "Error opening output file: " << world_file << std::endl;
             throw 1;
         }
+        if ( !outo )
+        {
+            std::cerr << "Error opening output file: " << offset_file << std::endl;
+            throw 1;
+        }//Added by Anupama
+        if ( !onorm )
+        {
+            std::cerr << "Error opening output file: " << offset_file << std::endl;
+            throw 1;
+        }//Added by Anupama
+
+        if ( !oshapestat )
+        {
+            std::cerr << "Error opening output file: " << offset_file << std::endl;
+            throw 1;
+        }//Added by Anupama
+
 
         for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++ )
         {
             PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
             PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+            PointType prevpos = m_Sampler->GetParticleSystem()->GetPrevPosition(j, i);//Added by Anupama
+            double offsetval = m_Sampler->GetParticleSystem()->GetOffset(j,i); //Added by Anupama
+            const itk::ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+                 = static_cast<const itk::ParticleImageDomainWithGradients<float ,3> *>(m_Sampler->GetParticleSystem()->GetDomain(i));
+            itk::ParticleImageDomainWithGradients<float, 3>::VnlVectorType ptnormal = domainWithGrad->SampleNormalVnl(wpos); //Added by Anupama
 
             for (unsigned int k = 0; k < 3; k++)
             {        out << pos[k] << " ";        }
@@ -2180,12 +2245,30 @@ ShapeWorksRunApp<SAMPLERTYPE>::WritePointFiles( std::string iter_prefix )
             {        outw << wpos[k] << " ";        }
             outw << std::endl;
 
+            for (unsigned int k = 0; k < 3; k++)
+            {        oprev << prevpos[k] << " ";        }
+            oprev << std::endl;
+
+            outo << offsetval << " "; //Added by Anupama
+            outo << std::endl; //Added by Anupama
+
+            for (unsigned int k = 0; k < 3; k++)
+            {        onorm << ptnormal[k] << " ";        }
+            onorm << std::endl; //Added by Anupama
+
+            for (unsigned int k = 0; k < 3; k++)
+            {        oshapestat << wpos[k] - (offsetval*ptnormal[k]) << " ";        }
+            oshapestat << std::endl; //Added by Anupama
+
             counter ++;
         }  // end for points
 
 
         out.close();
         outw.close();
+        outo.close(); //Added by Anupama
+        onorm.close(); //Added by Anupama
+        oshapestat.close(); //Added by Anupama
 
         std::stringstream st;
         st << counter;

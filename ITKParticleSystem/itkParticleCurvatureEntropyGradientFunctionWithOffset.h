@@ -8,18 +8,19 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleCurvatureEntropyGradientFunction_h
-#define __itkParticleCurvatureEntropyGradientFunction_h
+#ifndef __itkParticleCurvatureEntropyGradientFunctionWithOffset_h
+#define __itkParticleCurvatureEntropyGradientFunctionWithOffset_h
 
 #include "itkParticleEntropyGradientFunction.h"
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImageDomainWithCurvature.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
+#include "itkParticleImageDomainWithGradients.h" //Added by Anupama
 
 namespace itk
 {
@@ -35,16 +36,16 @@ namespace itk
  *
  */
 template <class TGradientNumericType, unsigned int VDimension>
-class ParticleCurvatureEntropyGradientFunction
+class ParticleCurvatureEntropyGradientFunctionWithOffset
   : public ParticleEntropyGradientFunction<TGradientNumericType, VDimension>
 {
 public:
  /** Standard class typedefs. */
-  typedef ParticleCurvatureEntropyGradientFunction Self;
+  typedef ParticleCurvatureEntropyGradientFunctionWithOffset Self;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
   typedef ParticleEntropyGradientFunction<TGradientNumericType, VDimension> Superclass;
-  itkTypeMacro( ParticleCurvatureEntropyGradientFunction, ParticleEntropyGradientFunction);
+  itkTypeMacro( ParticleCurvatureEntropyGradientFunctionWithOffset, ParticleEntropyGradientFunctionWithOffset);
 
   /** Inherit some parent typedefs. */
   typedef typename Superclass::GradientNumericType GradientNumericType;
@@ -52,7 +53,7 @@ public:
   typedef typename Superclass::VectorType VectorType;
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::GradientVectorType GradientVectorType;
-  
+  typedef ParticleImageDomainWithGradients<TGradientNumericType, VDimension> DomainType; //Added by Anupama
   typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension>
   MeanCurvatureCacheType;
 
@@ -70,23 +71,25 @@ public:
       third argument is the index of the particle location within the given
       domain. */
   inline virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystemType *c,
-                              double& d) const 
+                              double& d) const
   {
     double e;
     return this->Evaluate(a, b, c, d, e);
   }
+
   virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
                               double&, double & ) const;
 
-  virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType *);
+//  virtual VectorType OrigEvaluate(unsigned int, unsigned int, const ParticleSystemType *,
+                             // double&, double & ) const;
 
-  virtual double OffsetSmoothness(unsigned int idx, unsigned int d, const ParticleSystemType *system); //Added by Anupama
+  virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType *);
 
   inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType *c) const
   {
     double d, e;
     this->Evaluate(a, b, c, d, e);
-   return e;  
+   return e;
   }
 
   inline double ComputeKappa(double mc, unsigned int d) const
@@ -109,7 +112,7 @@ public:
 
 
   }
-  
+
   /** */
   virtual void AfterIteration()  {  }
 
@@ -127,17 +130,17 @@ public:
 
   /** */
   //  void ComputeKappaValues();
-  
+
   /** Access the cache of curvature-based weight values for each particle
       position. */
   void SetMeanCurvatureCache( MeanCurvatureCacheType *s)
   {    m_MeanCurvatureCache = s;  }
   MeanCurvatureCacheType *GetMeanCurvatureCache()
   {   return  m_MeanCurvatureCache.GetPointer();  }
-  
+
   const MeanCurvatureCacheType *GetMeanCurvatureCache() const
   {   return  m_MeanCurvatureCache.GetPointer();  }
- 
+
   /** Set/Get the parameters in the kappa function. */
   //  void SetGamma(double g)
   //  { m_Gamma = g; }
@@ -162,7 +165,7 @@ public:
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
-    typename ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer copy = ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::New();
+    typename ParticleCurvatureEntropyGradientFunctionWithOffset<TGradientNumericType, VDimension>::Pointer copy = ParticleCurvatureEntropyGradientFunctionWithOffset<TGradientNumericType, VDimension>::New();
     copy->SetParticleSystem(this->GetParticleSystem());
     copy->m_Counter = this->m_Counter;
     copy->m_Rho = this->m_Rho;
@@ -186,11 +189,11 @@ public:
   }
 
 protected:
-  ParticleCurvatureEntropyGradientFunction() :  m_Counter(0),
+  ParticleCurvatureEntropyGradientFunctionWithOffset() :  m_Counter(0),
                                                m_Rho(1.0) {}
-  virtual ~ParticleCurvatureEntropyGradientFunction() {}
-  void operator=(const ParticleCurvatureEntropyGradientFunction &);
-  ParticleCurvatureEntropyGradientFunction(const ParticleCurvatureEntropyGradientFunction &);
+  virtual ~ParticleCurvatureEntropyGradientFunctionWithOffset() {}
+  void operator=(const ParticleCurvatureEntropyGradientFunctionWithOffset &);
+  ParticleCurvatureEntropyGradientFunctionWithOffset(const ParticleCurvatureEntropyGradientFunctionWithOffset &);
   typename MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
   //  double m_Gamma;
   //  double m_Beta;
@@ -198,26 +201,26 @@ protected:
   //  double m_SamplesPerCurvature;
   unsigned int m_Counter;
   double m_Rho;
-  
+
   double m_avgKappa;
-  
+
   double m_CurrentSigma;
   typename ParticleSystemType::PointVectorType m_CurrentNeighborhood;
 
   std::vector<double> m_CurrentWeights;
 
   float m_MaxMoveFactor;
-  
+
 };
 
 } //end namespace
 
 #if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleCurvatureEntropyGradientFunction+-.h"
+# include "Templates/itkParticleCurvatureEntropyGradientFunctionWithOffset+-.h"
 #endif
 
 #if ITK_TEMPLATE_TXX
-# include "itkParticleCurvatureEntropyGradientFunction.txx"
+# include "itkParticleCurvatureEntropyGradientFunctionWithOffset.txx"
 #endif
 
 #endif

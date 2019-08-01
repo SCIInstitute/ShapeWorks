@@ -6,12 +6,18 @@ cmake_minimum_required(VERSION 2.6)
 #SET(VTK_DIR "/scratch/TOOLKITS/VTK5.10.1-BUILD")
 #SET(FLTK_DIR "/scratch/TOOLKITS/fltk-1.1.10")
 
-SET(ITK_DIR "~/BuildDIR/ITK-4.7.2")
-SET(VTK_DIR "~/BuildDIR/VTK-5.10.1")
-SET(FLTK_DIR "~/BuildDIR/fltk-1.1.10")
-SET(VXL_DIR "~/BuildDIR/vxl")
+#SET(ITK_DIR "~/BuildDIR/ITK-4.7.2")
+#SET(VTK_DIR "~/BuildDIR/VTK-5.10.1")
+#SET(FLTK_DIR "~/BuildDIR/fltk-1.1.10")
+#SET(VXL_DIR "~/BuildDIR/vxl")
+
+SET(ITK_DIR "/home/sci/anupamagvss/Desktop/Softwares/ITKVTK/ITK4.5.1/build4/")
+SET(VTK_DIR "/home/sci/anupamagvss/Desktop/Softwares/ITKVTK/vtk-5.10.1/build2/")
+SET(FLTK_DIR "/home/sci/anupamagvss/Desktop/Softwares/ITKVTK/fltk-1.3.4-2/fltk-build/")
+SET(VXL_DIR "/home/sci/anupamagvss/Desktop/Softwares/vxl-1.17.0/build/")
+
 SET(USE_VTK 1)
-SET(CMAKE_BUILD_TYPE RELEASE)
+SET(CMAKE_BUILD_TYPE DEBUG)
 #SET(CMAKE_BUILD_TYPE DEBUG)
 #-------------------------------
 

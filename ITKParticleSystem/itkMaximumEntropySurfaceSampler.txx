@@ -43,6 +43,9 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
             = ParticleQualifierEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
     m_CurvatureGradientFunction
             = ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+    m_CurvatureGradientFunctionWithOffset
+            = ParticleCurvatureEntropyGradientFunctionWithOffset<typename ImageType::PixelType, Dimension>::New(); //Added by Anupama
+
 
     m_ModifiedCotangentGradientFunction
             = ParticleModifiedCotangentEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
@@ -75,6 +78,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
     m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_QualifierGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
+    m_CurvatureGradientFunctionWithOffset->SetSpatialSigmaCache(m_Sigma1Cache); //Added by Anupama
 
     m_ModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_ConstrainedModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
@@ -87,6 +91,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
     m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<typename ImageType::PixelType, Dimension>::New();
     m_MeanCurvatureCache->SetVerbosity(m_verbosity);
     m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
+    m_CurvatureGradientFunctionWithOffset->SetMeanCurvatureCache(m_MeanCurvatureCache); //Added by Anupama
     m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
     m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
 }
@@ -255,16 +260,38 @@ void
 MaximumEntropySurfaceSampler<TImage>::ReadPointsFiles()
 {
     // If points file names have been specified, then read the initial points.
+    int j=0;
     for (unsigned int i = 0; i < m_PointsFiles.size(); i++)
     {
+        std::vector<double> offsets;
+        itk::ParticlePositionReader<3>::Pointer reader
+                = itk::ParticlePositionReader<3>::New();
         if (m_PointsFiles[i] != "")
         {
-            itk::ParticlePositionReader<3>::Pointer reader
-                    = itk::ParticlePositionReader<3>::New();
             reader->SetFileName(m_PointsFiles[i].c_str());
             reader->Update();
-            this->GetParticleSystem()->AddPositionList(reader->GetOutput(), i);
         }
+        if(j<m_OffsetsFiles.size())
+        {
+            std::ifstream in(m_OffsetsFiles[i].c_str());
+            if ( !in )
+              {
+              itkExceptionMacro("Could not open offset file for input: " << m_OffsetsFiles[i].c_str());
+              }
+
+            //  in >> num_points;
+
+            // Read all of the offsets, one offset per line.
+            while (in)
+              {
+              std::string val;
+              in >> val;
+              if(!val.empty())
+              offsets.push_back(atof(val.c_str()));
+              }
+          }
+        j++;
+        this->GetParticleSystem()->AddPositionList(reader->GetOutput(), offsets, i);
     }
 
     // Push position information out to all observers (necessary to correctly
@@ -307,6 +334,12 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
     m_CurvatureGradientFunction->SetParticleSystem(this->GetParticleSystem());
     m_CurvatureGradientFunction->SetDomainNumber(0);
+
+
+    m_CurvatureGradientFunctionWithOffset->SetMinimumNeighborhoodRadius(spacing * 5.0); //Added by Anupama
+    m_CurvatureGradientFunctionWithOffset->SetMaximumNeighborhoodRadius(maxradius); //Added by Anupama
+    m_CurvatureGradientFunctionWithOffset->SetParticleSystem(this->GetParticleSystem()); //Added by Anupama
+    m_CurvatureGradientFunctionWithOffset->SetDomainNumber(0);//Added by Anupama
 
     m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
     m_ModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);

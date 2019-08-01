@@ -96,6 +96,9 @@ public:
             m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
         else if(this->m_pairwise_potential_type == 1)
             m_LinkingFunction->SetFunctionA( this->GetModifiedCotangentGradientFunction());
+        else if(this->m_pairwise_potential_type == 2)
+            m_LinkingFunction->SetFunctionA( this->GetCurvatureGradientFunctionWithOffset());
+
       }
     else if (mode == 1)
       {

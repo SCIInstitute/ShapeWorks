@@ -41,6 +41,8 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
     = ParticleQualifierEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
   m_CurvatureGradientFunction
     = ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
+  m_CurvatureGradientFunctionWithOffset
+    = ParticleCurvatureEntropyGradientFunctionWithOffset<typename ImageType::PixelType, Dimension>::New(); //Added by Anupama
   m_OmegaGradientFunction
     = ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>::New();
   
@@ -76,6 +78,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
   m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_QualifierGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
+  m_CurvatureGradientFunctionWithOffset->SetSpatialSigmaCache(m_Sigma1Cache); //Added by Anupama
   m_OmegaGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
   m_Sigma2Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
@@ -83,6 +86,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
   
   m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<typename ImageType::PixelType, Dimension>::New();
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
+  m_CurvatureGradientFunctionWithOffset->SetMeanCurvatureCache(m_MeanCurvatureCache); //Added by Anupama
   m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
   m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
 }
@@ -236,6 +240,11 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
   m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
   m_CurvatureGradientFunction->SetParticleSystem(this->GetParticleSystem());
   m_CurvatureGradientFunction->SetDomainNumber(0);
+
+  m_CurvatureGradientFunctionWithOffset->SetMinimumNeighborhoodRadius(spacing * 5.0); //Added by Anupama
+  m_CurvatureGradientFunctionWithOffset->SetMaximumNeighborhoodRadius(maxradius);  //Added by Anupama
+  m_CurvatureGradientFunctionWithOffset->SetParticleSystem(this->GetParticleSystem()); //Added by Anupama
+  m_CurvatureGradientFunctionWithOffset->SetDomainNumber(0); //Added by Anupama
 
   m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
   m_OmegaGradientFunction->SetMaximumNeighborhoodRadius(maxradius);

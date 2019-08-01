@@ -36,10 +36,8 @@ public:
   typedef SmartPointer<const Self>  ConstPointer;
   typedef ParticleVectorFunction<VDimension> Superclass;
   itkTypeMacro( ParticleEnsembleEntropyFunction, ParticleVectorFunction);
-
   /** Type of particle system. */
   typedef typename Superclass::ParticleSystemType ParticleSystemType;
-
   typedef ParticleShapeMatrixAttribute<double, VDimension> ShapeMatrixType;
 
   typedef typename ShapeMatrixType::DataType DataType;
@@ -100,6 +98,11 @@ public:
       this->ComputeCovarianceMatrix();
       }
   }
+
+   virtual void RecomputeCovMatrix()
+  {
+     this->ComputeCovarianceMatrix();
+  } //Added by Anupama
 
   /** Called after each iteration of the solver. */
   virtual void AfterIteration()
@@ -208,7 +211,6 @@ protected:
   int m_RecomputeCovarianceInterval;
   int m_Counter;
   bool m_UseMeanEnergy;
-
   vnl_matrix_type m_InverseCovMatrix; // 3Nx3N - used for energy computation
   vnl_matrix_type points_mean; //3NxM - used for energy computation
 

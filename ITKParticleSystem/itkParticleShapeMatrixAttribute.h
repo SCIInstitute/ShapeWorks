@@ -20,6 +20,7 @@
 #include "itkParticleAttribute.h"
 #include "itkParticleContainer.h"
 #include "vnl/vnl_matrix.h"
+#include "itkParticleImageDomainWithGradients.h" //Added by Anupama
 
 namespace itk
 {
@@ -86,7 +87,13 @@ public:
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
         const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
-
+        //Block below added by Anupama
+        const double offset = ps->GetOffset(idx, d);
+        const ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+             = static_cast<const ParticleImageDomainWithGradients<float ,3> *>(ps->GetDomain(d));
+        ParticleImageDomainWithGradients<float, 3>::VnlVectorType ptnormal = domainWithGrad->SampleNormalVnl(pos);
+        double vectMag=sqrt((ptnormal[0]*ptnormal[0]) + (ptnormal[1]*ptnormal[1]) + (ptnormal[2]*ptnormal[2]));
+        //Block above added by Anupama
         int numRows = 0;
         for (int i = 0; i < m_DomainsPerShape; i++)
             numRows += VDimension * ps->GetNumberOfParticles(i);
@@ -101,7 +108,7 @@ public:
         k += idx * VDimension;
 
         for (unsigned int i = 0; i < VDimension; i++)
-            this->operator()(i+k, d / m_DomainsPerShape) = pos[i];
+            this->operator()(i+k, d / m_DomainsPerShape) = pos[i]-((offset*ptnormal[i])/vectMag); //Modified by Anupama
     }
 
     virtual void PositionSetEventCallback(Object *o, const EventObject &e)
@@ -111,7 +118,14 @@ public:
         const int d = event.GetDomainIndex();
         const unsigned int idx = event.GetPositionIndex();
         const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
+        //Block below added by Anupama
+        const double offset = ps->GetOffset(idx, d);
+        const ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+             = static_cast<const ParticleImageDomainWithGradients<float ,3> *>(ps->GetDomain(d));
+        ParticleImageDomainWithGradients<float, 3>::VnlVectorType ptnormal = domainWithGrad->SampleNormalVnl(pos);
+        double vectMag=sqrt((ptnormal[0]*ptnormal[0]) + (ptnormal[1]*ptnormal[1]) + (ptnormal[2]*ptnormal[2]));
 
+        //Block above added by Anupama
         unsigned int k = 0;
         int dom = d % m_DomainsPerShape;
         for (int i = 0; i < dom; i++)
@@ -119,7 +133,7 @@ public:
         k += idx * VDimension;
 
         for (unsigned int i = 0; i < VDimension; i++)
-            this->operator()(i+k, d / m_DomainsPerShape) = pos[i];
+            this->operator()(i+k, d / m_DomainsPerShape) = pos[i]-((offset*ptnormal[i])/vectMag); //Modified by Anupama
     }
 
     virtual void PositionRemoveEventCallback(Object *, const EventObject &)

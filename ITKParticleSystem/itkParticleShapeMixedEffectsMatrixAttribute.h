@@ -7,6 +7,7 @@
 #include "vnl/vnl_vector.h"
 #include "itkParticleSystem.h"
 #include "vnl/vnl_trace.h"
+#include "itkParticleImageDomainWithGradients.h" //Added by Anupama
 
 namespace itk
 {
@@ -141,6 +142,14 @@ public:
       = ps->GetTransformedPosition(idx, d);
     
     const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
+    //Block below added by Anupama
+    const double offset = ps->GetOffset(idx, d);
+    const ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+         = static_cast<const ParticleImageDomainWithGradients<float ,3> *>(ps->GetDomain(d));
+    ParticleImageDomainWithGradients<float, 3>::VnlVectorType ptnormal = domainWithGrad->SampleNormalVnl(pos);
+    double vectMag=sqrt((ptnormal[0]*ptnormal[0]) + (ptnormal[1]*ptnormal[1]) + (ptnormal[2]*ptnormal[2]));
+
+    //Block above added by Anupama
     
     // Make sure we have enough rows.
     if ( (ps->GetNumberOfParticles(d) * VDimension * this->m_DomainsPerShape) > this->rows() )
@@ -158,7 +167,7 @@ public:
       + (idx * VDimension);
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
+      this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i]-((offset*ptnormal[i])/vectMag); //Modified by Anupama
       }
     
     //   std::cout << "Row " << k << " Col " << d / this->m_DomainsPerShape << " = " << pos << std::endl;
@@ -175,7 +184,14 @@ public:
     const unsigned int idx = event.GetPositionIndex();
     const typename itk::ParticleSystem<VDimension>::PointType pos = ps->GetTransformedPosition(idx, d);
     const unsigned int PointsPerDomain = ps ->GetNumberOfParticles(d);
-    
+    //Block below added by Anupama
+    const double offset = ps->GetOffset(idx, d);
+    const ParticleImageDomainWithGradients<float, 3> * domainWithGrad
+         = static_cast<const ParticleImageDomainWithGradients<float ,3> *>(ps->GetDomain(d));
+    ParticleImageDomainWithGradients<float, 3>::VnlVectorType ptnormal = domainWithGrad->SampleNormalVnl(pos);
+    double vectMag=sqrt((ptnormal[0]*ptnormal[0]) + (ptnormal[1]*ptnormal[1]) + (ptnormal[2]*ptnormal[2]));
+
+    //Block above added by Anupama
     // Modify matrix info
     //    unsigned int k = VDimension * idx;
     unsigned int k = ((d % this->m_DomainsPerShape) * PointsPerDomain * VDimension)
@@ -184,7 +200,7 @@ public:
     for (unsigned int i = 0; i < VDimension; i++)
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) =
-        pos[i] - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape);
+        (pos[i]-((offset*ptnormal[i])/vectMag)) - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape); //Modified by Anupama
       }
   }
   

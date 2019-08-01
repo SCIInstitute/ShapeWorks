@@ -86,6 +86,8 @@ public:
   void StartGaussSeidelOptimization();
   void StartAdaptiveGaussSeidelOptimization();
 
+  double calculateOffsetGradient(PointType pos, PointType prev_pos, VectorType gradXtilda, double offset, double prev_offset);
+
   /** */
   void SetModeToGaussSeidel() { this->m_OptimizationMode = 1; }
   void SetModeToAdaptiveGaussSeidel() { this->m_OptimizationMode = 2; }
@@ -150,6 +152,7 @@ private:
   double m_TimeStep;
   int m_OptimizationMode;
   std::vector< std::vector<double> > m_TimeSteps;
+  std::vector< std::vector<double> > m_TimeStepsDx; //Added by Anupama
   unsigned int m_verbosity;
 };
 

@@ -153,6 +153,8 @@ public:
         return ansB;
     }
 
+
+
     virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
     {
         double ansA = 0.0;
@@ -295,6 +297,17 @@ public:
             m_FunctionB->BeforeEvaluate(idx, d, system);
         }
     }
+
+    virtual double OffsetSmoothness(unsigned int idx, unsigned int d, const ParticleSystemType *system)
+    {
+        return m_FunctionA->OffsetSmoothness(idx, d, system);
+
+    } //Added by Anupama
+
+    virtual void RecomputeCovMatrix()
+    {
+        m_FunctionB->RecomputeCovMatrix();
+    } //Added by Anupama
 
     /** This method is called by a solver after each iteration.  Subclasses may
       or may not implement this method.*/

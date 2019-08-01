@@ -1,4 +1,5 @@
- /*=========================================================================
+
+/*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
   Module:    $RCSfile: itkParticleCurvatureEntropyGradientFunction.txx,v $
   Date:      $Date: 2011/03/24 01:17:33 $
@@ -8,21 +9,22 @@
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleCurvatureEntropyGradientFunction_txx
-#define __itkParticleCurvatureEntropyGradientFunction_txx
+#ifndef __itkParticleCurvatureEntropyGradientFunctionWithOffset_txx
+#define __itkParticleCurvatureEntropyGradientFunctionWithOffset_txx
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
+#include "itkParticleImageDomainWithGradients.h" //Added by Anupama
 
 namespace itk {
 
 template <class TGradientNumericType, unsigned int VDimension>
 double
-ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
+ParticleCurvatureEntropyGradientFunctionWithOffset<TGradientNumericType, VDimension>
 ::EstimateSigma(unsigned int idx,
                 unsigned int dom,
                 const typename ParticleSystemType::PointVectorType &neighborhood,
@@ -37,14 +39,14 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   avgKappa = 0.0;
   const double min_sigma = 1.0e-4;
   const double epsilon = 1.0e-5;
-  
+
   const double M = static_cast<double>(VDimension);
   const double MM = M * M * 2.0 + M;
-  
+
   double error = 1.0e6;
   double sigma, prev_sigma;
   sigma = initial_sigma;
-  
+
   while (error > precision)
     {
     VectorType r_vec;
@@ -53,18 +55,18 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     double C = 0.0;
     double sigma2 = sigma * sigma;
     double sigma22 = sigma2 * 2.0;
-    
+
     double mymc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](idx);
 
     for (unsigned int i = 0; i < neighborhood.size(); i++)
       {
-      if (weights[i] < epsilon) continue;      
+      if (weights[i] < epsilon) continue;
       double mc = m_MeanCurvatureCache->operator[](this->GetDomainNumber())->operator[](neighborhood[i].Index);
       double Dij = (mymc + mc) * 0.5;
       double kappa = this->ComputeKappa(Dij, dom);
 
       avgKappa += kappa;
-      
+
       for (unsigned int n = 0; n < VDimension; n++)
         {
         // Note that the Neighborhood object has already filtered the
@@ -90,21 +92,21 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       avgKappa = 1.0;
       return sigma;
       }; // results are not meaningful
-    
+
     // // First order convergence update.
     // sigma = sqrt(( 1.0 / DIM ) * ( B / A));
-    
+
     // old math
     //  sigma -= (sigma2 * VDimension * A * A - A  * B) / (((2.0 * sigma * VDimension) * A * A -
     //                                          (1.0/(sigma2*sigma))*(A*C-B*B)) + epsilon);
-    
-    // New math -- results are not obviously different? 
+
+    // New math -- results are not obviously different?
     sigma -= (A * (B - A * sigma2 * M)) /
       ( (-MM * A *A * sigma) - 3.0 * A * B * (1.0 / (sigma + epsilon))
         - (A*C + B*B) * (1.0 / (sigma2 * sigma + epsilon)) + epsilon);
-    
+
     error = 1.0 - fabs((sigma/prev_sigma));
-    
+
     // Constrain sigma.
     if (sigma < min_sigma)
       {
@@ -115,23 +117,23 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       {
       if (sigma < 0.0) sigma = min_sigma;
       }
-    
+
     } // end while (error > precision)
-  
+
   err = 0;
   return sigma;
 }
 
 template <class TGradientNumericType, unsigned int VDimension>
 void
-ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
+ParticleCurvatureEntropyGradientFunctionWithOffset<TGradientNumericType, VDimension>
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
     m_MaxMoveFactor = 0.1;
 
   // Compute the neighborhood size and the optimal sigma.
   const double epsilon = 1.0e-6;
-  
+
   // Grab a pointer to the domain.  We need a Domain that has surface normal information.
   //  const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> * domain
   //   = static_cast<const ParticleImageDomainWithGradients<TGradientNumericType,
@@ -139,7 +141,8 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   // Get the position for which we are computing the gradient.
   PointType pos = system->GetPosition(idx, d);
-  
+
+
   // Retrieve the previous optimal sigma value for this point.  If the value is
   // tiny (i.e. unitialized) then use a fraction of the maximum allowed
   // neighborhood radius.
@@ -149,7 +152,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
    // TEST DISTANCE TO PLANE IDEA
   //  myKappa *=  (fabs(pos[0]) * 1.0);
     // END TEST
-  
+
   if (m_CurrentSigma < epsilon)
     {
     m_CurrentSigma = this->GetMinimumNeighborhoodRadius() / this->GetNeighborhoodToSigmaRatio();
@@ -165,17 +168,17 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     {
     neighborhood_radius = this->GetMaximumNeighborhoodRadius();
     }
-  
-  
+
+
   // Get the neighborhood surrounding the point "pos".
    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights, neighborhood_radius, d);
 
    //    m_CurrentNeighborhood
    //   = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
-  
+
   // Compute the weights based on angle between the neighbors and the center.
    //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain, m_CurrentWeights);
-  
+
   // Estimate the best sigma for Parzen windowing.  In some cases, such as when
   // the neighborhood does not include enough points, the value will be bogus.
   // In these cases, an error != 0 is returned, and we try the estimation again
@@ -200,12 +203,12 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       {
       m_CurrentSigma = neighborhood_radius / this->GetNeighborhoodToSigmaRatio();
       }
-    
-    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,    
+
+    m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, m_CurrentWeights,
                                                                neighborhood_radius, d);
     //  m_CurrentNeighborhood = system->FindNeighborhoodPoints(pos, neighborhood_radius, d);
     //    this->ComputeAngularWeights(pos,m_CurrentNeighborhood,domain,m_CurrentWeights);
-    
+
     m_CurrentSigma = EstimateSigma(idx, d, m_CurrentNeighborhood, m_CurrentWeights, pos,
                                    m_CurrentSigma, epsilon, err, m_avgKappa);
     } // done while err
@@ -224,56 +227,35 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   // Make sure sigma doesn't change too quickly!
   m_CurrentSigma = (this->GetSpatialSigmaCache()->operator[](d)->operator[](idx) + m_CurrentSigma) / 2.0;
-  
+
   // We are done with the sigma estimation step.  Cache the sigma value for
   // next time.
   this->GetSpatialSigmaCache()->operator[](d)->operator[](idx) = m_CurrentSigma;
 }
 
 
-template <class TGradientNumericType, unsigned int VDimension>
-double
-ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
-::OffsetSmoothness(unsigned int idx, unsigned int d, const ParticleSystemType * system)
-{
-    const double epsilon = 1.0e-6;
-    double offset_smoothness=0.0;
-    double offset = system->GetOffset(idx, d);
-    double sigma2inv = 1.0 / ((m_CurrentSigma * m_CurrentSigma) + epsilon);
-    for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
-      {
-        int ind=m_CurrentNeighborhood[i].Index;
-        double offset_neighbhor=system->GetOffset(ind, d);
-        offset_smoothness=offset_smoothness+ (offset-offset_neighbhor);
-      }
-
-    offset_smoothness=(-offset_smoothness)*2*(sigma2inv);
-    return offset_smoothness;
-}//Added by Anupama
 
 template <class TGradientNumericType, unsigned int VDimension>
-typename ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>::VectorType
-ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
+typename ParticleCurvatureEntropyGradientFunctionWithOffset<TGradientNumericType, VDimension>::VectorType
+ParticleCurvatureEntropyGradientFunctionWithOffset<TGradientNumericType, VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxmove, double &energy) const
 {
   const double epsilon = 1.0e-6;
-  double alp=system->GetOffsetRegularization();
-  
+
   // Grab a pointer to the domain.  We need a Domain that has surface normal information.
   //  const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> * domain
   //   = static_cast<const ParticleImageDomainWithGradients<TGradientNumericType,
   //   VDimension> *>(system->GetDomain(d));
 
    // Get the position for which we are computing the gradient.
-  PointType pos = system->GetPosition(idx, d);
-  double offsetval = system->GetOffset(idx, d);//Added by Anupama
-  
+
   // Compute the gradients
   double sigma2inv = 1.0 / (2.0* m_CurrentSigma * m_CurrentSigma + epsilon);
-  
+
   VectorType r;
   VectorType gradE;
+  PointType pos;
 
   for (unsigned int n = 0; n < VDimension; n++)
     {
@@ -282,7 +264,6 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
 
   double mymc = m_MeanCurvatureCache->operator[](d)->operator[](idx);
   double A = 0.0;
-  double offset_energy=0;
 
   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++)
     {
@@ -293,7 +274,7 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
     // TEST DISTANCE TO PLANE IDEA
     //    kappa *=  (fabs(pos[0]) * 1.0);
     // END TEST
-    
+
 
     for (unsigned int n = 0; n < VDimension; n++)
       {
@@ -302,42 +283,29 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
       r[n] = (pos[n] - m_CurrentNeighborhood[i].Point[n]) * kappa;
       }
 
-   double offset_neighbhor=system->GetOffset(m_CurrentNeighborhood[i].Index, d); //Added by Anupama
-   double offset_diff=(offsetval - offset_neighbhor);
-   //double offset_en=exp(-offset_diff * offset_diff * sigma2inv); //Added by Anupama
-   offset_energy=offset_energy+((offset_diff*offset_diff)/((2*m_CurrentSigma*m_CurrentSigma)+epsilon)); //Added by Anupama
-    double q =  exp( -dot_product(r, r) * sigma2inv);
-    
+
+    double q = kappa * exp( -dot_product(r, r) * sigma2inv);
+
     A += q;
-    
+
     for (unsigned int n = 0; n < VDimension; n++)
       {
       gradE[n] += m_CurrentWeights[i] * r[n] * q;
       }
     }
-  
+
   double p = 0.0;
   if (A > epsilon)
     {    p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);    }
-  
+
   for (unsigned int n = 0; n <VDimension; n++)
     {    gradE[n] *= p;    }
 
   maxmove= (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
 
   energy = (A * sigma2inv ) / m_avgKappa;
-  energy=energy +(alp* (offset_energy)); //Added by Anupama
 
-  //std::cout<<offset;
- double offset = fabs(system->GetOffset(idx, d));//Added by Anupama
- double val=2*abs(offset);
-
-  if(val!=0)
-  {
-  energy=energy + (1+log(2*abs(offset))); //Added by Anupama for offset energy
-}
-
-  return gradE / m_avgKappa;
+  return (gradE / m_avgKappa);  //Modified by Anupama (gradDx)
 }
 
 }// end namespace

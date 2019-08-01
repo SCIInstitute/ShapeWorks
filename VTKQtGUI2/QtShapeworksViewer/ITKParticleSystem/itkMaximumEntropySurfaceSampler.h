@@ -23,6 +23,7 @@
 #include "itkInPlaceImageFilter.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleCurvatureEntropyGradientFunction.h"
+#include "itkParticleCurvatureEntropyGradientFunctionWithOffset.h" //Added by Anupama
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 #include "itkParticleOmegaGradientFunction.h"
@@ -122,6 +123,11 @@ public:
   {
     return m_CurvatureGradientFunction;
   }
+  ParticleCurvatureEntropyGradientFunctionWithOffset<typename ImageType::PixelType, Dimension>
+  *GetCurvatureGradientFunctionWithOffset()
+  {
+    return m_CurvatureGradientFunctionWithOffset;
+  }//Added by Anupama
 
     ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
   *GetOmegaGradientFunction()
@@ -217,6 +223,7 @@ public:
     if (mode == 0)
       {
       m_Optimizer->SetGradientFunction(m_CurvatureGradientFunction);
+      m_Optimizer->SetGradientFunction(m_CurvatureGradientFunctionWithOffset);
       }
     else if (mode ==1)
       {
@@ -292,6 +299,8 @@ protected:
   ::Pointer m_QualifierGradientFunction;
   typename ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
   ::Pointer m_CurvatureGradientFunction;
+  typename ParticleCurvatureEntropyGradientFunctionWithOffset<typename ImageType::PixelType, Dimension>
+  ::Pointer m_CurvatureGradientFunctionWithOffset; //Added by Anupama
 
   typename ParticleOmegaGradientFunction<typename ImageType::PixelType, Dimension>
   ::Pointer m_OmegaGradientFunction;

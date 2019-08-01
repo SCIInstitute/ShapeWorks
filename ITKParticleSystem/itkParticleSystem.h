@@ -60,6 +60,7 @@ public:
   typedef SmartPointer<const Self>  ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;
 
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -134,8 +135,9 @@ public:
       is thrown.  Set is intended to be used for moving particles. The
       SetTransformedPosition sets the position using a Point transformed by the
       m_Transform associated with the given domain.*/
-  const PointType &AddPosition( const PointType &, unsigned int d=0, int threadId=0);
+  const PointType &AddPosition( const PointType &, unsigned int d=0, int threadId=0, double offset=0); //Modified by Anupama
   const PointType &SetPosition( const PointType &,  unsigned long int k,  unsigned int d=0, int threadId=0);
+  const PointType &SetPositionUpdatePrev( const PointType &,  unsigned long int k,  const PointType &, unsigned int d=0, int threadId=0);//Added by Anupama
 
   //  inline const PointType &SetTransformedPosition(const PointType &p,
   //                                                 unsigned long int k,  unsigned int d=0, int threadId=0)
@@ -153,8 +155,14 @@ public:
       transform matrix for the given domain.*/
   PointType &GetPosition(unsigned long int k, unsigned int d=0)
   {    return m_Positions[d]->operator[](k);  }
+
+
   const PointType &GetPosition(unsigned long int k, unsigned int d=0) const
   {    return m_Positions[d]->operator[](k);  }
+
+  const PointType &GetPrevPosition(unsigned long int k, unsigned int d=0) const
+  {    return m_Prev_Positions[d]->operator[](k);  } //Added by Anupama
+
   PointType GetTransformedPosition(unsigned long int k, unsigned int d=0) const
   {    return this->TransformPoint(m_Positions[d]->operator[](k),
                                   m_Transforms[d] * m_PrefixTransforms[d]);  }
@@ -332,12 +340,44 @@ public:
   /** Return the array of particle positions. */
   const  std::vector<typename  PointContainerType::Pointer> &  GetPositions() const
   { return m_Positions; }
+
+  const std::vector<double> GetOffsets(unsigned int d) const
+  { return m_Offsets[d]; } //Added by Anupama
+
+
+  const std::vector<double> GetPrevOffsets(unsigned int d) const
+  { return m_Prev_Offsets[d]; } //Added by Anupama
+
   const  typename  PointContainerType::Pointer & GetPositions(unsigned int d) const
   { return m_Positions[d]; }
 
+  const double GetOffset(unsigned long int k, unsigned int d) const
+  { return m_Offsets[d][k]; } //Added by Anupama
+
+  const double GetOffsetRegularization() const
+  { return offset_regularization; } //Added by Anupama
+
+  void SetOffsetRegularization(double r)
+  {offset_regularization=r;}//Added by Anupama
+
+  void setOffset(unsigned long int k, unsigned int d, double val)
+  {
+    m_Offsets[d][k]=val;
+    ParticlePositionSetEvent e;
+    e.SetDomainIndex(d);
+    e.SetPositionIndex(k);
+    this->InvokeEvent(e);
+  } //Added by Anupama
+
+  void setPrevOffset(unsigned long int k, unsigned int d, double val)
+  { m_Prev_Offsets[d][k]=val; } //Added by Anupama
+
+  const double GetPrevOffset(unsigned long int k, unsigned int d) const
+  { return m_Prev_Offsets[d][k]; } //Added by Anupama
+
   /** Adds a list of points to the specified domain.  The arguments are the
      std::vector of points and the domain number. */
-  void AddPositionList(const std::vector<PointType> &, unsigned int d = 0, int threadId = 0);
+  void AddPositionList(const std::vector<PointType> &, const std::vector<double> &, unsigned int d = 0, int threadId = 0); //Modified by Anupama
 
   /** Transforms a point using the given transform. NOTE: Scaling is not
       currently implemented. (This method may be converted to virtual and
@@ -466,7 +506,10 @@ private:
   /** The 2D array of particle positions.  1st array axis is the domain number.
       These values may only be modified by the ParticleSystem class itself. */
   std::vector<typename  PointContainerType::Pointer>  m_Positions;
-
+  std::vector<typename  PointContainerType::Pointer>  m_Prev_Positions; //Added by Anupama
+  std::vector< std::vector<double> > m_Offsets; //Added by Anupama
+  std::vector< std::vector<double> > m_Prev_Offsets; //Added by Anupama
+  double offset_regularization; //Added by Anupama
   /** The set of particle domain definitions. */
   std::vector< typename DomainType::Pointer > m_Domains;
 

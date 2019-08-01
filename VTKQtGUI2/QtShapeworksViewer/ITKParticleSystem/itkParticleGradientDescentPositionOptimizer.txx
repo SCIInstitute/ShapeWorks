@@ -353,7 +353,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         for (typename ParticleSystemType::PointContainerType::ConstIterator it
                = m_ParticleSystem->GetPositions(dom)->GetBegin();  it != endit; it++, k++)
           {
-          m_ParticleSystem->SetPosition(updates[dom][k], it.GetIndex(), dom);
+          m_ParticleSystem->SetPositionUpdatePrev(updates[dom][k], it.GetIndex(), dom); //Modified by Anupama
           } // for each particle
         } // if not flagged
       } // for each domain

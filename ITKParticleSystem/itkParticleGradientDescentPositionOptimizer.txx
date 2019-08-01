@@ -66,8 +66,11 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     while (m_TimeSteps.size() != m_ParticleSystem->GetNumberOfDomains() )
     {
         reset = true;
-        std::vector<double> tmp;
+std::vector<double> tmp;
+        std::vector<double> tmp1;
         m_TimeSteps.push_back( tmp );
+        if(m_TimeStepsDx.size() != m_ParticleSystem->GetNumberOfDomains())//Added by Anupama
+            m_TimeStepsDx.push_back( tmp1 ); //Added by Anupama
     }
 
     for (unsigned int i = 0; i < m_ParticleSystem->GetNumberOfDomains(); i++)
@@ -78,9 +81,15 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
             // resize and initialize everything to 1.0
             m_TimeSteps[i].resize(np);
         }
+        if (m_TimeStepsDx[i].size() != np)//Added by Anupama
+        {
+            // resize and initialize everything to 1.0
+            m_TimeStepsDx[i].resize(np); //Added by Anupama
+        }
         for (unsigned int j = 0; j < np; j++)
         {
             m_TimeSteps[i][j] = 1.0;
+            m_TimeStepsDx[i][j] = 0.000001;//Added by Anupama
         }
         reset = true;
     }
@@ -91,6 +100,10 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     std::vector<double> maxtime(numdomains);
     std::vector<double> mintime(numdomains);
 
+    std::vector<double> meantimeDx(numdomains); //Added by Anupama
+    std::vector<double> maxtimeDx(numdomains); //Added by Anupama
+    std::vector<double> mintimeDx(numdomains); //Added by Anupama
+
     unsigned int counter = 0;
 
     for (unsigned int q = 0; q < numdomains; q++)
@@ -98,6 +111,9 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         meantime[q] = 0.0;
         maxtime[q]  = 1.0e30;
         mintime[q]  = 1.0;
+        meantimeDx[q] = 0.0; //Added by Anupama
+        maxtimeDx[q]  = 1.0e30; //Added by Anupama
+        mintimeDx[q]  = 1.0; //Added by Anupama
     }
     time_t timerBefore, timerAfter;
 
@@ -109,19 +125,24 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
             m_GradientFunction->BeforeIteration();
         counter++;
 
-#pragma omp parallel
+        std::vector<std::vector<VectorType> > particleGradients(m_ParticleSystem->GetNumberOfDomains()); //Added by Anupama
+
+        for (unsigned int d = 0; d < m_ParticleSystem->GetNumberOfDomains(); d++)
+            particleGradients[d].resize(m_ParticleSystem->GetPositions(d)->GetSize()); //Added by Anupama
+
+/*#pragma omp parallel
         {
             // Iterate over each domain
-#pragma omp for
+#pragma omp for*/
             for (int dom = 0; dom < numdomains; dom++)
             {
                 int tid = 1;
                 int num_threads = 1;
 
-#ifdef SW_USE_OPENMP
+/*#ifdef SW_USE_OPENMP
                 tid = omp_get_thread_num() + 1;
                 num_threads = omp_get_num_threads();
-#endif /* SW_USE_OPENMP */
+#endif*/ /* SW_USE_OPENMP */
 
                 meantime[dom] = 0.0;
                 // skip any flagged domains
@@ -130,6 +151,7 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                     double maxdt;
 
                     VectorType gradient;
+                    VectorType newGradient; //Added by ANupama
                     VectorType original_gradient;
                     PointType newpoint;
 
@@ -139,9 +161,9 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
                     localGradientFunction = m_GradientFunction;
 
-#ifdef SW_USE_OPENMP
+/*#ifdef SW_USE_OPENMP
                     localGradientFunction = m_GradientFunction->Clone();
-#endif /* SW_USE_OPENMP */
+#endif*/ /* SW_USE_OPENMP */
 
 
                     // Tell function which domain we are working on.
@@ -161,26 +183,71 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                         double energy = 0.0;
                         localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
                         original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
+                        //double offset_smoothness = localGradientFunction->OffsetSmoothness(it.GetIndex(), dom, m_ParticleSystem);
+
+                        /*Below block Added by Anupama*/
+
+                        PointType pos = m_ParticleSystem->GetPosition(it.GetIndex(), dom);
+                        PointType prev_pos = m_ParticleSystem->GetPrevPosition(it.GetIndex(), dom);
+                        double prev_offset = m_ParticleSystem->GetPrevOffset(it.GetIndex(), dom);
+                        double offset = m_ParticleSystem->GetOffset(it.GetIndex(), dom);
+                        VectorType gradDx;
+                        VectorType gradDxSmoothness;
+                        double epsilonval=1.0e-6;
+                        double alpha =1.0e6;
+                        double value1=(1/(1+exp(-alpha*offset)));
+                        double value2=(1/(1+exp(alpha*offset)));
+                        double diffXtilda[3] ={(pos[0]-prev_pos[0]), (pos[1]-prev_pos[1]), (pos[2]-prev_pos[2])};
+                        double diffDeltaX = offset - prev_offset;
+
+                        for (int i=0; i<=2; i++)
+                          {
+                              if(diffXtilda[i]==0)
+                                 diffXtilda[i]=epsilonval;
+                          }
+
+                        for (int i=0; i<=2; i++)
+                            gradDx[i]=(diffDeltaX/diffXtilda[i])*(value1-value2);
+
+                        /*for (int i=0; i<=2; i++)
+                            gradDxSmoothness[i]=(diffDeltaX/diffXtilda[i])*(offset_smoothness);*/
+
+                        for (int i=0; i<=2; i++)
+                            newGradient[i]= original_gradient[i]+gradDx[i];//+gradDxSmoothness[i];
+
+                           /*Above block Added by Anupama*/
+
 
                         unsigned int idx = it.GetIndex();
                         PointType pt = *it;
                         NormalType ptNormalOld = domain->SampleNormalVnl(pt);
 
-                        double dotPdt = original_gradient[0]*ptNormalOld[0] + original_gradient[1]*ptNormalOld[1] + original_gradient[2]*ptNormalOld[2];
+                       // double dotPdt = original_gradient[0]*ptNormalOld[0] + original_gradient[1]*ptNormalOld[1] + original_gradient[2]*ptNormalOld[2];
+                       // VectorType original_gradient_projectedOntoTangentSpace;
+                        //original_gradient_projectedOntoTangentSpace[0] = original_gradient[0] - dotPdt*ptNormalOld[0] ;
+                       // original_gradient_projectedOntoTangentSpace[1] = original_gradient[1] - dotPdt*ptNormalOld[1] ;
+                       // original_gradient_projectedOntoTangentSpace[2] = original_gradient[2] - dotPdt*ptNormalOld[2] ;
+
+                        /*Block below modified by Anupama*/
+                        double dotPdt = newGradient[0]*ptNormalOld[0] + newGradient[1]*ptNormalOld[1] + newGradient[2]*ptNormalOld[2];
                         VectorType original_gradient_projectedOntoTangentSpace;
-                        original_gradient_projectedOntoTangentSpace[0] = original_gradient[0] - dotPdt*ptNormalOld[0] ;
-                        original_gradient_projectedOntoTangentSpace[1] = original_gradient[1] - dotPdt*ptNormalOld[1] ;
-                        original_gradient_projectedOntoTangentSpace[2] = original_gradient[2] - dotPdt*ptNormalOld[2] ;
+                        original_gradient_projectedOntoTangentSpace[0] = newGradient[0] - dotPdt*ptNormalOld[0] ;
+                        original_gradient_projectedOntoTangentSpace[1] = newGradient[1] - dotPdt*ptNormalOld[1] ;
+                        original_gradient_projectedOntoTangentSpace[2] = newGradient[2] - dotPdt*ptNormalOld[2] ;
+                        /*Block above modified by Anupama*/
 
                         double newenergy, gradmag;
                         while ( !done )
                         {
+                            VectorType null_gradient;
+                            for(int i=0; i<VDimension; i++)
+                                null_gradient[i]=0.0;
+                            particleGradients[dom][it.GetIndex()]=null_gradient;//Added by Anupama
                             gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
                             dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
 
                             gradmag = gradient.magnitude();
-
                             if (gradmag > maxdt)
                             {
                                 m_TimeSteps[dom][k] /= factor;
@@ -189,13 +256,15 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                             {
                                 // Make a move and compute new energy
                                 for (unsigned int i = 0; i < VDimension; i++)
-                                {  newpoint[i] = pt[i] - gradient[i]; }
+                                {    newpoint[i] = pt[i] - gradient[i];
+                                }
 
 
                                 dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
 
-
-                                m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+                                 particleGradients[dom][it.GetIndex()]=original_gradient;//Added by Anupama
+                                 //m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+                                 m_ParticleSystem->SetPositionUpdatePrev(newpoint, it.GetIndex(), pt, dom); //Modified by Anupama
 
                                 newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
 
@@ -209,12 +278,14 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                                 }
                                 else
                                 {// bad move, reset point position and back off on timestep
+                                    particleGradients[dom][it.GetIndex()]=null_gradient;//Added by Anupama
                                     if (m_TimeSteps[dom][k] > mintime[dom])
                                     {
                                         dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(pt);
-                                        m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
-
+                                        m_ParticleSystem->SetPositionUpdatePrev(pt, it.GetIndex(), prev_pos, dom); //Modified by Anupama
+                                        //m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
                                         m_TimeSteps[dom][k] /= factor;
+
                                     }
                                     else // keep the move with timestep 1.0 anyway
                                     {
@@ -235,35 +306,146 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                     mintime[dom] = meantime[dom] - meantime[dom] * 0.1;
                 } // if not flagged
             }// for each domain
-        }
+     //   }
 
-        m_NumberOfIterations++;
-        m_GradientFunction->AfterIteration();
+           /*Below block Added by Anupama*/
+       double maxdtDx=0.1;
+       double mintimeDxval=0.0000001;
+       double maxtimeDxval=1.0e30;
+       const double factorDx = 1.1;//1.1;
 
-        timerAfter = time(NULL);
-        double seconds = difftime(timerAfter, timerBefore);
-
-        if (m_verbosity > 2)
+       for (int dom = 0; dom < numdomains; dom++)
         {
-            std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
-            std::cout.flush();
-        }
+            meantimeDx[dom]=0.0;
 
-        this->InvokeEvent(itk::IterationEvent());
-        // Check for convergence.  Optimization is considered to have converged if
-        // max number of iterations is reached or maximum distance moved by any
-        // particle is less than the specified precision.
-        //    std::cout << "maxchange = " << maxchange << std::endl;
+            unsigned int k = 0;
+            typename ParticleSystemType::PointContainerType::ConstIterator endit =
+                    m_ParticleSystem->GetPositions(dom)->GetEnd();
+            for (typename ParticleSystemType::PointContainerType::ConstIterator it
+                 = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
+            {
+               bool doneDx=false;
+               VectorType gradXtilda1=particleGradients[dom][it.GetIndex()];
+               if(gradXtilda1[0]!=0 || gradXtilda1[1]!=0 || gradXtilda1[2]!=0)
+                {
+               double maxdt;
+               double energy=0.0;
+               typename GradientFunctionType::Pointer localGradientFunctionDx;
+               localGradientFunctionDx = m_GradientFunction;
+               localGradientFunctionDx->SetDomainNumber(dom);
+               localGradientFunctionDx->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
+               VectorType gradXtilda=localGradientFunctionDx->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
+               //localGradientFunctionDx->RecomputeCovMatrix();
+               PointType pos = m_ParticleSystem->GetPosition(it.GetIndex(), dom);
+               PointType prev_pos = m_ParticleSystem->GetPrevPosition(it.GetIndex(), dom);
+               //energy = localGradientFunctionDx->Energy(it.GetIndex(), dom, m_ParticleSystem);
+               double prev_offset = m_ParticleSystem->GetPrevOffset(it.GetIndex(), dom);
+               double offset = m_ParticleSystem->GetOffset(it.GetIndex(), dom);
+               double newoffset=0.0;
+               double gradmagDx=0.0;
+               gradmagDx =this->calculateOffsetGradient(pos, prev_pos, gradXtilda, offset, prev_offset);
+               //double offset_smoothness = localGradientFunctionDx->OffsetSmoothness(it.GetIndex(), dom, m_ParticleSystem);
+               //gradmagDx=gradmagDx;//+offset_smoothness;
 
-        if ((m_NumberOfIterations >= m_MaximumNumberOfIterations)
-                || (m_Tolerance > 0.0 &&  maxchange <  m_Tolerance))
-        {
-            m_StopOptimization = true;
-        }
+
+               while(!doneDx)
+               {
+                        newoffset=offset-(gradmagDx* m_TimeStepsDx[dom][it.GetIndex()]);
+                        m_ParticleSystem->setOffset(it.GetIndex(), dom, newoffset);
+                        m_ParticleSystem->setPrevOffset(it.GetIndex(), dom, offset);
+                        double newenergyDx = localGradientFunctionDx->Energy(it.GetIndex(), dom, m_ParticleSystem);
+
+                        if(newenergyDx < energy)
+                        {
+                            meantimeDx[dom] += m_TimeStepsDx[dom][k];
+                            m_TimeStepsDx[dom][k]*=factorDx;
+                            if(m_TimeStepsDx[dom][k] > maxtimeDxval)
+                                m_TimeStepsDx[dom][k]=maxtimeDxval;
+                            doneDx=true;
+                        }
+
+                        else
+                        {
+                            m_ParticleSystem->setOffset(it.GetIndex(), dom, offset);
+                            m_ParticleSystem->setPrevOffset(it.GetIndex(), dom, prev_offset);
+                            if(m_TimeStepsDx[dom][k] > mintimeDxval)
+                            {
+                                m_TimeStepsDx[dom][k] /= factorDx;
+                            }
+
+                            else
+                            {
+                                doneDx=true;
+                            }
+                        }
+
+               }//end of while
+               }
+            } //end of particle iterations
+
+           /* meantimeDx[dom] /= static_cast<double>(k);
+
+             if (meantimeDx[dom] < 1.0) meantimeDx[dom] = 1.0;
+                maxtimeDx[dom] = meantimeDx[dom] + meantimeDx[dom] * 0.2;
+                mintimeDx[dom] = meantimeDx[dom] - meantimeDx[dom] * 0.1;*/
+
+        }//end of domains
+        /* Block above Added by Anupama*/
+         // m_GradientFunction->AfterIteration();
+
+       m_NumberOfIterations++;
+       m_GradientFunction->AfterIteration();
+
+       timerAfter = time(NULL);
+       double seconds = difftime(timerAfter, timerBefore);
+
+       if (m_verbosity > 2)
+       {
+           std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
+           std::cout.flush();
+       }
+
+       this->InvokeEvent(itk::IterationEvent());
+       // Check for convergence.  Optimization is considered to have converged if
+       // max number of iterations is reached or maximum distance moved by any
+       // particle is less than the specified precision.
+       //    std::cout << "maxchange = " << maxchange << std::endl;
+
+       if ((m_NumberOfIterations >= m_MaximumNumberOfIterations)
+               || (m_Tolerance > 0.0 &&  maxchange <  m_Tolerance))
+       {
+           m_StopOptimization = true;
+       }
 
     } // end while stop optimization
 }
 
+template <class TGradientNumericType, unsigned int VDimension>
+double ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
+::calculateOffsetGradient(PointType pos, PointType prev_pos, VectorType gradXtilda, double offset, double prev_offset)
+{
+VectorType gradDx;
+double epsilonval=1.0e-6;
+double alpha =1.0e6;
+double prodGradients=0.0;
+double diffXtilda[3] ={(pos[0]-prev_pos[0]), (pos[1]-prev_pos[1]), (pos[2]-prev_pos[2])};
+double diffDeltaX = offset - prev_offset;
+double value1=(1/(1+exp(-alpha*offset)));
+double value2=(1/(1+exp(alpha*offset)));
+double gradmagDx=0.0;
+
+if(diffDeltaX==0)
+  diffDeltaX=epsilonval;
+
+for (int i=0; i<=2; i++)
+     gradDx[i]=(diffXtilda[i]/diffDeltaX);
+
+for (int i=0; i<=2; i++)
+     prodGradients=prodGradients+(gradDx[i]*gradXtilda[i]);
+
+gradmagDx=(value1-value2)+prodGradients;
+return gradmagDx;
+}
 /*** GAUSS SEIDEL ***/
 template <class TGradientNumericType, unsigned int VDimension>
 void
@@ -373,14 +555,19 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
     // Vector for storing updates.
     std::vector<std::vector<PointType> > updates(m_ParticleSystem->GetNumberOfDomains());
+    std::vector<std::vector<PointType> > oldupdates(m_ParticleSystem->GetNumberOfDomains()); //Added by Anupama
+    std::vector<std::vector<VectorType> > particleGradients(m_ParticleSystem->GetNumberOfDomains()); //Added by Anupama
 
     for (unsigned int d = 0; d < m_ParticleSystem->GetNumberOfDomains(); d++)
     {
         updates[d].resize(m_ParticleSystem->GetPositions(d)->GetSize());
+        oldupdates[d].resize(m_ParticleSystem->GetPositions(d)->GetSize()); //Added by Anupama
+        particleGradients[d].resize(m_ParticleSystem->GetPositions(d)->GetSize()); //Added by Anupama
     }
     VectorType gradient;
+    VectorType newGradient;
     PointType  newpoint;
-
+    PointType  oldpoint; //Added by Anupama
     time_t timerBefore, timerAfter;
 
     while (m_StopOptimization == false)
@@ -406,28 +593,63 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                 for (typename ParticleSystemType::PointContainerType::ConstIterator it
                      = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
                 {
-                    // Compute gradient update.
                     m_GradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
                     gradient = m_GradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem,
                                                             maxdt);
+
+                    /*Below block Added by Anupama*/
+
+                    PointType pos = m_ParticleSystem->GetPosition(it.GetIndex(), dom);
+                    PointType prev_pos = m_ParticleSystem->GetPrevPosition(it.GetIndex(), dom);
+                    double prev_offset = m_ParticleSystem->GetPrevOffset(it.GetIndex(), dom);
+                    double offset = m_ParticleSystem->GetOffset(it.GetIndex(), dom);
+                    VectorType gradDx;
+                    double epsilonval=1.0e-6;
+                    double value1=(1/(1+exp(-1000000*offset)));
+                    double value2=(1/(1+exp(1000000*offset)));
+                    double diffXtilda[3] ={(pos[0]-prev_pos[0]), (pos[1]-prev_pos[1]), (pos[2]-prev_pos[2])};
+                    double diffDeltaX = offset - prev_offset;
+
+                    for (int i=0; i<=2; i++)
+                      {
+                          if(diffXtilda[i]==0)
+                             diffXtilda[i]=epsilonval;
+                      }
+
+                    for (int i=0; i<=2; i++)
+                        gradDx[i]=(diffDeltaX/diffXtilda[i])*(value1-value2);
+
+                    for (int i=0; i<=2; i++)
+                        newGradient[i]=gradient[i]+gradDx[i];
+
+                       /*Above block Added by Anupama*/
+
+
                     // May modify gradient
                     dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))
-                            ->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
+                            ->ApplyVectorConstraints(newGradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt); //Modified by Anupama
 
                     // Hack to avoid blowing up under certain conditions.
                     if (gradient.magnitude() > maxdt)
                     {
                         gradient = (gradient / gradient.magnitude()) * maxdt;
                     }
+                    if (newGradient.magnitude() > maxdt) //Added by Anupama
+                          newGradient = (newGradient / newGradient.magnitude()) * maxdt; //Added by Anupama
 
                     // Compute particle move based on update.
                     for (unsigned int i = 0; i < VDimension; i++)
                     {
-                        newpoint[i] = (*it)[i] - gradient[i] * m_TimeStep;
+                        oldpoint[i]=(*it)[i]; //Added by Anupama
+                        newpoint[i] = (*it)[i] - newGradient[i] * m_TimeStep;
+
                     }
 
                     // Store update
                     updates[dom][k] = newpoint;
+                    oldupdates[dom][k]=oldpoint;//Added by Anupama
+                    particleGradients[dom][k]=gradient;//Added by Anupama
+
                 } // for each particle
             } // if not flagged
         }// for each domain
@@ -443,8 +665,40 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
                 for (typename ParticleSystemType::PointContainerType::ConstIterator it
                      = m_ParticleSystem->GetPositions(dom)->GetBegin();  it != endit; it++, k++)
                 {
+
                     dynamic_cast<DomainType *>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(updates[dom][k]);
-                    m_ParticleSystem->SetPosition(updates[dom][k], it.GetIndex(), dom);
+                    m_ParticleSystem->SetPositionUpdatePrev(updates[dom][k], it.GetIndex(), oldupdates[dom][k], dom); //Modified by Anupama
+
+                    /*Below block Added by Anupama*/
+                   PointType pos = m_ParticleSystem->GetPosition(k, dom);
+                   PointType prev_pos = m_ParticleSystem->GetPrevPosition(k, dom);
+                   VectorType gradDx;
+                   VectorType gradXtilda=particleGradients[dom][k];
+                   double prev_offset = m_ParticleSystem->GetPrevOffset(k, dom);
+                   double offset = m_ParticleSystem->GetOffset(k, dom);
+                   double epsilonval=1.0e-6                                                                         ;
+                   double prodGradients=0.0;
+                   double diffXtilda[3] ={(pos[0]-prev_pos[0]), (pos[1]-prev_pos[1]), (pos[2]-prev_pos[2])};
+                   double diffDeltaX = offset - prev_offset;
+                   double value1=(1/(1+exp(-1000000*offset)));
+                   double value2=(1/(1+exp(1000000*offset)));
+                   double newoffset=0.0;
+
+                   if(diffDeltaX==0)
+                     diffDeltaX=epsilonval;
+
+                   for (int i=0; i<=2; i++)
+                        gradDx[i]=(diffXtilda[i]/diffDeltaX);
+
+                   for (int i=0; i<=2; i++)
+                        prodGradients=prodGradients+(gradDx[i]*gradXtilda[i]);
+
+                      newoffset=offset-(((value1-value2)+prodGradients)*m_TimeStep);
+                      m_ParticleSystem->setOffset(k, dom, newoffset);
+                      m_ParticleSystem->setPrevOffset(k, dom, offset);
+
+                    /* Block above Added by Anupama*/
+
                 } // for each particle
             } // if not flagged
         } // for each domain
