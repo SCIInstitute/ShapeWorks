@@ -1,0 +1,61 @@
+CC = gcc
+CXX = g++
+AR = ar
+
+COPTS = -m32 -march=native -mfpmath=sse
+COPTS += -fopenmp
+XLIBDIR = /usr/X11R6/lib
+
+ifdef DEBUG
+	COPTS += -ggdb3
+	COPTS += -Wall -Wextra -Wno-parentheses -Wno-unused -Wno-sign-compare -Wno-unknown-pragmas
+	CXXOPTS = $(COPTS)
+else
+	COPTS += -O3 -funroll-loops -fomit-frame-pointer -ftree-vectorize
+	#COPTS += -ffast-math
+	COPTS += -fno-math-errno -funsafe-math-optimizations
+	COPTS += -Wall -Wextra -Wno-parentheses -Wno-unused -Wno-sign-compare -Wno-unknown-pragmas
+	CXXOPTS = $(COPTS)
+	LDOPTS = -s
+endif
+
+CFLAGS = $(INCLUDES) $(DEFINES) $(COPTS)
+CXXFLAGS = $(INCLUDES) $(DEFINES) $(CXXOPTS)
+LDFLAGS = $(LIBDIR) $(LDOPTS)
+
+
+LIBS = -lm
+GLLIBS = -L$(XLIBDIR) -lgluit -lGL -lGLU -lX11 -lXmu -lXi
+CHOLMODLIBS = -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis -llapack -lblas
+
+
+$(OBJDIR)/%.o: %.c
+	@ echo "Compiling $<"
+	@ rm -f "$(@:.o=.d)" && env DEPENDENCIES_OUTPUT="$(@:.o=.d) $@" $(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: %.cc
+	@ echo "Compiling $<"
+	@ rm -f "$(@:.o=.d)" && env DEPENDENCIES_OUTPUT="$(@:.o=.d) $@" $(CXX) $(CXXFLAGS) -c $< -o $@
+
+
+define LINK
+	@ echo "Linking $@"
+	@ rm -f $@
+	@ $(CXX) $(CXXFLAGS) $^ $(LDFLAGS) $(LIBS) -o $@
+endef
+
+define STATICLIB
+	@ echo "Creating library $@"
+	@ rm -f $@
+	@ $(AR) -rcs $@ $^
+endef
+
+define SHAREDLIB
+	@ echo "Creating library $@"
+	@ rm -f $@
+	@ $(CXX) $(CXXFLAGS) -shared $^ -o $@
+endef
+
+
+-include $(OBJDIR)/*.d
+
