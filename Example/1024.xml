@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<output_dir>/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/1024/ </output_dir>
+<number_of_particles> 1024 </number_of_particles>
+<iterations_per_split> 4000 </iterations_per_split>
+<checkpointing_interval> 0 </checkpointing_interval>
+<keep_checkpoints> 0 </keep_checkpoints>
+<optimization_iterations> 4000 </optimization_iterations>
+<starting_regularization> 10</starting_regularization>
+<domains_per_shape> 1 </domains_per_shape>
+<ending_regularization> 1 </ending_regularization>
+<adaptivity_mode> 0 </adaptivity_mode>
+<adaptivity_strength> 0.0 </adaptivity_strength>
+<processing_mode> 2 </processing_mode>
+<recompute_regularization_interval> 2 </recompute_regularization_interval>
+<initial_relative_weighting> 0.1 </initial_relative_weighting>
+<initial_norm_penalty_weighting> 0 </initial_norm_penalty_weighting>
+<relative_weighting> 5 </relative_weighting>
+<norm_penalty_weighting> 0 </norm_penalty_weighting>
+<procrustes_interval> 0 </procrustes_interval>
+<procrustes_scaling> 0 </procrustes_scaling>
+<pairwise_potential_type> 0 </pairwise_potential_type>
+<optimizer_type> 2 </optimizer_type>
+<save_init_splits> 0 </save_init_splits>
+<use_shape_statistics_in_init> 0 </use_shape_statistics_in_init>
+<init_criterion> 0.0000001 </init_criterion>
+<opt_criterion> 0.0000001 </opt_criterion>
+<mesh_based_attributes> 0 </mesh_based_attributes>
+<attributes_per_domain> 0 </attributes_per_domain>
+<debug_projection> 0 </debug_projection>
+<report_bad_particles> 0 </report_bad_particles>
+<verbosity>3</verbosity>
+<offset_regularization>0</offset_regularization>
+
+<inputs>
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.00.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.01.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.02.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.03.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.04.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.05.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.06.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.07.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.08.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.09.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.10.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.11.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.12.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.13.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position.14.tpSmoothDT.ISO.nrrd
+/home/sci/anupamagvss/Desktop/AnoPSM/ShapeWorksRun/boxbump/box_1bumpout_position_outlier.tpSmoothDT.ISO.nrrd
+</inputs>
+
+
+
