@@ -18,6 +18,7 @@ echo "ShapeWorks superbuild for Linux"
 #  NUM_PROCS:     number of processors to use for parallel builds (default is 4)
 #
 #  BUILD_POST:    whether or not to build any applications in Post (default is to build them all)
+# HAVE_QT: weather or not qt version 4.x is installed in your system, set 0 if not and it will skip building shapeworksview2
 #
 
 
@@ -30,6 +31,9 @@ if [ -z $BUILD_CLEAN ]; then
   BUILD_CLEAN=0
 fi
 
+if [ -z $HAVE_QT ]; then
+  HAVE_QT=0
+fi
 #
 # gcc5 and above required for Post
 # if [ at_least_required_version "gcc" `gcc -dumpversion` "5.0.0" -eq 1 ]; then
@@ -47,12 +51,12 @@ if [ -z $BUILD_POST ]; then
 fi
 
 # Look for Qt in order to build GUI applications
-HAVE_QT=1
-if ! [ -x "$(command -v qmake)" ]; then
-  echo 'Qt not found. For GUI applications, please make sure Qt4 is installed and that qmake is in the path.' >&2
+if [ $HAVE_QT == 1 ]; then
+  echo 'For GUI applications, please make sure Qt4 is installed and that qmake is in the path.' >&2
   echo 'Download Qt4 from: https://download.qt.io/archive/qt/4.8/4.8.7/' >&2
-  HAVE_QT=0
 fi
+
+#echo $HAVE_QT
 
 # builds faster if more cores are available
 if [ -z $NUM_PROCS ]; then
