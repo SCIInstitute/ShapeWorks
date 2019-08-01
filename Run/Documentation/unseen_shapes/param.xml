@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+
+<output_dir>  /home/sci/anupamagvss/Desktop/ClinicalScenarios/femurs/SSMTools/SW/test/ </output_dir>
+<number_of_particles> 2048 </number_of_particles>
+
+<checkpointing_interval> 0 </checkpointing_interval>
+<keep_checkpoints> 0 </keep_checkpoints>
+
+<iterations_per_split> 4000 </iterations_per_split>
+<optimization_iterations> 4000 </optimization_iterations>
+
+<starting_regularization> 10 </starting_regularization>
+<ending_regularization> 0.001 </ending_regularization>
+<recompute_regularization_interval> 2 </recompute_regularization_interval>
+
+<domains_per_shape> 1 </domains_per_shape>
+<relative_weighting> 1</relative_weighting>
+<initial_relative_weighting> 0.1 </initial_relative_weighting>
+<procrustes_interval> 0 </procrustes_interval>
+<procrustes_scaling> 0 </procrustes_scaling>
+<use_shape_statistics_in_init> 1 </use_shape_statistics_in_init>
+<save_init_splits> 0 </save_init_splits>
+<verbosity>4</verbosity>
+
+
+<fixed_domains>
+0
+1
+</fixed_domains>
+
+<inputs>
+/home/sci/anupamagvss/Desktop/ClinicalScenarios/femurs/Orig/images/dod_n02_R_femur_aligned.clip2.preview95.smooth1.similarity_icp.SignedDistMap_r1_sp0.5_nb10.fixed.nrrd
+/home/sci/anupamagvss/Desktop/ClinicalScenarios/femurs/Orig/images/dod_n03_L_femur_aligned.clip2.preview95.smooth1.similarity_icp.SignedDistMap_r1_sp0.5_nb10.fixed.nrrd
+/home/sci/anupamagvss/Desktop/ClinicalScenarios/femurs/Orig/images/fai_cam01_L_femur_aligned.clip2.preview95.smooth1.similarity_icp.SignedDistMap_r1_sp0.5_nb10.fixed.nrrd
+</inputs>
+
+
+<point_files>
+/home/sci/anupamagvss/Desktop/ClinicalScenarios/femurs/SSMTools/SW/final_xyz_a_i0.1_f1_reg_s10_e0.001_r2_opt2_gauss.p2048/dod_n02_R_femur_aligned.clip2.preview95.smooth1.similarity_icp.SignedDistMap_r1_sp0.5_nb10.fixed.lpts
+/home/sci/anupamagvss/Desktop/ClinicalScenarios/femurs/SSMTools/SW/final_xyz_a_i0.1_f1_reg_s10_e0.001_r2_opt2_gauss.p2048/dod_n03_L_femur_aligned.clip2.preview95.smooth1.similarity_icp.SignedDistMap_r1_sp0.5_nb10.fixed.lpts
+/home/sci/anupamagvss/Desktop/ClinicalScenarios/femurs/SSMTools/SW/TrainingAvg.wpts
+</point_files>
