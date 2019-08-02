@@ -55,7 +55,8 @@ Starting with an older version of Python (3.5), these instructions are based on 
 export PYVER="3.5"
 conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
 conda activate shapeworks-olddeps-foundation
-conda install --yes -c anaconda -c conda-forge cmake openmp ccache
+conda install --yes -c anaconda cmake
+conda install --yes -c anaconda geotiff
 ```
 
 You can simply run [superbuild-mac.sh](superbuild-mac.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. Refer to [the script itself](superbuild-mac.sh) for detailed instructions.
@@ -78,17 +79,17 @@ export PATH=/Users/cam/tools/miniconda3/envs/shapeworks-olddeps-foundation/qt4/b
  - install macports version (not willing to corrupt my system to install very old software, assuming it works at all)
 Ended up deciding not to install Qt at all, so no ShapeWorksView2.
 ```
- 
+
 4. **VTK** (w/o Qt)
 If using the Anaconda sandbox, install tbb-devel (needed by vtk):
 ```
 conda install -c intel tbb-devel
 ```
 Continue following [superbuild-mac.sh](superbuild-mac.sh).
- 
+
 5. **ITK**
 Follow example in [superbuild-mac.sh](superbuild-mac.sh).
- 
+
 6. **ShapeWorks**
 If using the Anaconda sandbox, create a derived environment for this build:
 ```
@@ -169,17 +170,17 @@ Follow example in [superbuild-linux.sh](superbuild-linux.sh).
 
 3. **Qt4**
 You must install Qt4 if you want to use the ShapeWorksView2 application.
- 
+
 4. **VTK**
 If using the Anaconda sandbox, install tbb-devel (needed by vtk):
 ```
 conda install -c intel tbb-devel
 ```
 Continue following [superbuild-linux.sh](superbuild-linux.sh).
- 
+
 5. **ITK**
 Follow example in [superbuild-linux.sh](superbuild-linux.sh).
- 
+
 6. **ShapeWorks**
 If using the Anaconda sandbox, create a derived environment for this build:
 ```
@@ -194,7 +195,7 @@ Some shared libraries are not specified at link time and therefore, if using the
 ```
 $ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$CONDA_PREFIX/lib/vtk-5.10
 ```
-_NOTE:_ This issue may related to a variety of different configuration options, such as our explicit disablement of JPEG in the VXL compilation, or possibly they are problems with old libraries that have since been fixed. We will address these as we upgrade to the latest versions of all dependencies. 
+_NOTE:_ This issue may related to a variety of different configuration options, such as our explicit disablement of JPEG in the VXL compilation, or possibly they are problems with old libraries that have since been fixed. We will address these as we upgrade to the latest versions of all dependencies.
 
 ### SuSE
 
@@ -221,4 +222,3 @@ The current method for building ShapeWorks on Windows is to utilize its Linux sh
 g++-4.8 gcc-4.8 MesaGL libglu1-mesa-dev freeglut3-dev mesa-common-dev libosmesa6-dev cmake
 
 3. See [superbuild-windows.sh](superbuild-windows.sh) for details on installing ShapeWorks and its dependencies.
-
