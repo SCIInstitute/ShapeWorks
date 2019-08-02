@@ -57,6 +57,10 @@ conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
 conda activate shapeworks-olddeps-foundation
 conda install --yes -c anaconda cmake
 conda install --yes -c anaconda geotiff
+conda install --yes -c conda-forge xorg-libxrandr
+conda install --yes -c conda-forge xorg-libx11
+conda install --yes -c conda-forge xorg-libxinerama
+conda install --yes -c conda-forge xorg-libxcursor
 ```
 
 You can simply run [superbuild-mac.sh](superbuild-mac.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. Refer to [the script itself](superbuild-mac.sh) for detailed instructions.

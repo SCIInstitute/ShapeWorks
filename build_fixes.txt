@@ -1,0 +1,6 @@
+
+
+conda install -c conda-forge xorg-libxrandr
+conda install -c conda-forge xorg-libx11
+conda install -c conda-forge xorg-libxinerama
+conda install -c conda-forge xorg-libxcursor
