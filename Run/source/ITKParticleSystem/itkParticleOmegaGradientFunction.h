@@ -240,4 +240,6 @@ protected:
 # include "itkParticleOmegaGradientFunction.txx"
 #endif
 
+#include "itkParticleOmegaGradientFunction.txx"
+
 #endif // ifndef __itkParticleOmegaGradientFunction_h

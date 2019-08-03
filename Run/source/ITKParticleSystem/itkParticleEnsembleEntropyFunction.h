@@ -227,4 +227,6 @@ protected:
 #include "itkParticleEnsembleEntropyFunction.txx"
 #endif
 
+#include "itkParticleEnsembleEntropyFunction.txx"
+
 #endif

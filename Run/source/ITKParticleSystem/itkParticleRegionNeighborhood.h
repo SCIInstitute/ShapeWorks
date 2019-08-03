@@ -149,4 +149,6 @@ private:
 # include "itkParticleRegionNeighborhood.txx"
 #endif
 
+#include "itkParticleRegionNeighborhood.txx"
+
 #endif

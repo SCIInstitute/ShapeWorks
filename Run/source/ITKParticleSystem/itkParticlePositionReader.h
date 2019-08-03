@@ -102,4 +102,6 @@ protected:
 # include "itkParticlePositionReader.txx"
 #endif
 
+#include "itkParticlePositionReader.txx"
+
 #endif

@@ -182,6 +182,8 @@ protected:
 # include "itkParticleCurvatureEntropyGradientFunction.txx"
 #endif
 
+#include "itkParticleCurvatureEntropyGradientFunction.txx"
+
 #endif
 
 

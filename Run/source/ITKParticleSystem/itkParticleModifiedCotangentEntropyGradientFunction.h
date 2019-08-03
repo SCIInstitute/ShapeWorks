@@ -188,4 +188,6 @@ protected:
 # include "itkParticleModifiedCotangentEntropyGradientFunction.txx"
 #endif
 
+#include "itkParticleModifiedCotangentEntropyGradientFunction.txx"
+
 #endif

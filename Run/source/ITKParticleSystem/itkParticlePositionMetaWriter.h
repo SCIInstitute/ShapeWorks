@@ -101,4 +101,6 @@ protected:
 # include "itkParticlePositionMetaWriter.txx"
 #endif
 
+#include "itkParticlePositionMetaWriter.txx"
+
 #endif

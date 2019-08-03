@@ -234,4 +234,6 @@ protected:
 # include "itkParticleEntropyGradientFunction.txx"
 #endif
 
+#include "itkParticleEntropyGradientFunction.txx"
+
 #endif

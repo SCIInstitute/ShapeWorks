@@ -164,5 +164,7 @@ private:
 # include "itkParticleGradientDescentPositionOptimizer.txx"
 #endif
 
+#include "itkParticleGradientDescentPositionOptimizer.txx"
+
 #endif
 

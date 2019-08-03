@@ -185,4 +185,6 @@ protected:
 # include "itkParticleQualifierEntropyGradientFunction.txx"
 #endif
 
+#include "itkParticleQualifierEntropyGradientFunction.txx"
+
 #endif
