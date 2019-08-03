@@ -449,6 +449,8 @@ private:
 #include "itkMaximumEntropySurfaceSampler.txx"
 #endif
 
+#include "itkMaximumEntropySurfaceSampler.txx"
+
 #endif
 
 

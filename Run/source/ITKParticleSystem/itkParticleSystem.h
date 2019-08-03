@@ -512,4 +512,6 @@ private:
 # include "itkParticleSystem.txx"
 #endif
 
+#include "itkParticleSystem.txx"
+
 #endif
