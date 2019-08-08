@@ -67,13 +67,6 @@ if [[ -z $VTK_DIR ]]; then
   cd ${VTK_DIR}
   git checkout -f tags/${VTK_VER}
 
-  ## fix for deprecated sstream in vtkIOStream.h, needed for gcc 4.8.5 in Red Hat Linux
-  sed -i "108,112 s/^/\/\//" vtk/Common/vtkIOStream.h
-  sed -i "113i #include <sstream>" vtk/Common/vtkIOStream.h
-  sed -i "114i using std::basic_istringstream;" vtk/Common/vtkIOStream.h
-  sed -i "115i using std::basic_ostringstream;" vtk/Common/vtkIOStream.h
-  sed -i "116i using std::basic_stringstream;" vtk/Common/vtkIOStream.h
-
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${HAVE_QT} -DVTK_QT_VERSION=5 -Wno-dev ${VTK_DIR}
@@ -90,7 +83,7 @@ if [[ -z $ITK_DIR ]]; then
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DITK_USE_SYSTEM_VXL=on -Wno-dev ${ITK_DIR}
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${VXL_DIR} -Wno-dev ${ITK_DIR}
   make -j${NUM_PROCS} install
 fi
 
