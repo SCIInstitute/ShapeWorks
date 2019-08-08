@@ -49,12 +49,16 @@ fileList = extract_zip_createFiles(DATA_FLAG)
 Most of the following steps even though wrapped in python functions are using
 the undelying c++ code, for whihc we need to call the source paths to the 
 binaries. This step should be common for any use of a function in ShapeWorks.
-__This requires the full ShapeWorks to be correctly built/downloaded!__
+__This requires the full ShapeWorks to be correctly built/downloaded!__'
+
+These following commands set the temporary envisonment variables to point to
+shapeworks binaries and set the necessary library paths
 """
 
-binpath="source_setup.txt" # ideally we should generate this
-exportPath = "source " + binpath
-os.system(exportPath)
+binpath = "../build/shapeworks-build/binary"
+installpath = "../install/lib"
+os.environ["PATH"] = binpath + ":" + os.environ["PATH"]
+os.environ["LD_LIBRARY_PATH"]= installpath + ":" + installpath + "/vtk-5.10"
 
 """
 For the unprepped data the first few steps are 
@@ -65,11 +69,26 @@ For the unprepped data the first few steps are
 -- Largets Bounding Box and Cropping 
 """
 parentDir = '../TestEllipsoids/PrepOutput/'
+if not os.path.exists(parentDir):
+	os.makedirs(parentDir)
 
 if DATA_FLAG:
-	"""Apply isotropic resampling"""
+	"""
+	Apply isotropic resampling
+	
+	For detailed explainations of parameters for resampling volumes, go to
+	... link 
+	"""
+	resampledFiles = applyIsotropicResampling(parentDir, fileList, 1)
+	
+	"""
+	Apply padding
 
-	"""Apply padding"""
+	For detailed explainations of parameters for resampling volumes, go to
+	... link
+	"""
+
+	paddedFiles = applyPadding(parentDir, resampledFiles, 10)
 
 	"""Apply center of mass alignment"""
 
