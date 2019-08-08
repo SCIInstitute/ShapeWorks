@@ -84,14 +84,19 @@ if DATA_FLAG:
 	"""
 	Apply padding
 
-	For detailed explainations of parameters for resampling volumes, go to
+	For detailed explainations of parameters for padding volumes, go to
 	... link
 	"""
 
 	paddedFiles = applyPadding(parentDir, resampledFiles, 10)
 
-	"""Apply center of mass alignment"""
-
+	"""
+	Apply center of mass alignment
+	
+	For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
+	... link
+	"""
+	comFiles = applyCOMAlignment(parentDir, paddedFiles, paddedFiles)
 	"""Apply rigid alignment"""
 	
 	"""Compute largest bounding box and apply cropping"""

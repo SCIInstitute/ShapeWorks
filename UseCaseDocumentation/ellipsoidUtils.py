@@ -96,31 +96,62 @@ def applyPadding(parentDir, inDataList, padSize, padValue=0):
 
 	return outDataList
 
-def applyCOMAlignment(parentDir, inDataList, padSize, padValue=0):
+def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False):
 	"""
 	Author: Riddhish Bhalodia
 	Date: 8th August 2019
 
-	This function takes in a filelist and produces the padded files in the
-	appropriate directory.
+	This function takes in a filelist and produces the center of mass aligned
+	files in the appropriate directory. If the process_raw flag is set True, 
+	then it also applys the same transformation on the corresponding list of 
+	raw files (MRI/CT ...)
+
 	Input Parameters:
 	Output Parameters:
 	"""
-	outDir = parentDir + '/padded/'
+	outDir = parentDir + '/com_aligned/'
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
-	outDataList = []
-	for i in range(len(inDataList)):
-		inname = inDataList[i]
-		spt = inname.rsplit('/', 1)
-		initPath = spt[0] + '/'
-		filename = spt[1]
-		outname = inname.replace(initPath, outDir)
-		outname = outname.replace('.nrrd', '.pad.nrrd')
-		outDataList.append(outname)
-		########### Print Blurb ###############
-		#######################################
-		execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(padSize) + " --paddingValue " + str(padValue)
-		os.system(execCommand)
+	
+	if processRaw:
+		outDataListSeg = []
+		outDataListImg = []
+		for i in range(len(inDataListSeg)):
+			innameSeg = inDataListSeg[i]
+			innameImg = inDataListImg[i]
+			sptSeg = innameSeg.rsplit('/', 1)
+			initPath = sptSeg[0] + '/'
+			filename = sptSeg[1]
+			outnameSeg = innameSeg.replace(initPath, outDir)
+			outnameSeg = outnameSeg.replace('.nrrd', '.com.nrrd')
+			paramname = outnameSeg.replace('.nrrd', '.txt')
+			outDataListSeg.append(outnameSeg)
+			sptImg = innameImg.rsplit('/', 1)
+			initPath = sptImg[0] + '/'
+			filename = sptImg[1]
+			outnameImg = innameImg.replace(initPath, outDir)
+			outnameImg = outnameImg.replace('.nrrd', '.com.nrrd')
+			outDataListImg.append(outnameImg)
+			########### Print Blurb ###############
+			#######################################
+			execCommand = "TranslateShapeToImageOrigin --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --useCenterOfMass 1 --parameterFilename " + paramname + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
+			os.system(execCommand)
 
-	return outDataList
+		return [outDataListSeg, outDataListImg]
+	else:
+		outDataListSeg = []
+		for i in range(len(inDataListSeg)):
+			inname = inDataListSeg[i]
+			spt = inname.rsplit('/', 1)
+			initPath = spt[0] + '/'
+			filename = spt[1]
+			outname = inname.replace(initPath, outDir)
+			outname = outname.replace('.nrrd', '.com.nrrd')
+			paramname = outname.replace('.nrrd', '.txt')
+			outDataListSeg.append(outname)
+			########### Print Blurb ###############
+			#######################################
+			execCommand = "TranslateShapeToImageOrigin --inFilename " + inname + " --outFilename " + outname + " --useCenterOfMass 1 --parameterFilename " + paramname 
+			os.system(execCommand)
+
+		return outDataListSeg
