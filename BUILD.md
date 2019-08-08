@@ -41,71 +41,41 @@ This first step is optional but recommended. Anaconda enables simultaneous build
 <a id="user-content-build-osx-mojave"></a>
 ### OSX 10.14 (Mojave)
 
-#### Two builds are described next, but only the first yet works:
-- [Build with the existing dependencies](#build-mojave-existing)  
-- [Build with updated dependencies (Python, VXL, VTK, ITK, and QT)](#build-mojave-updated)
+To build the current version of ShapeWorks and its dependencies, start with an older version of Python (3.5), and use superbuild.sh.
 
-<a id="user-content-build-mojave-existing"></a>
-#### (A) Build with existing (very old) dependencies
-
-Starting with an older version of Python (3.5), these instructions are based on how the dependencies were acquired and built by the `superbuild-mac.sh` script, with necessary modifications for compatibility with Mojave.
-
-1. **Create base environment** (if using the Anaconda sandbox)
+1. **Create an environment for this build if using Anaconda:
 ```
 export PYVER="3.5"
-conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
-conda activate shapeworks-olddeps-foundation
+conda create --yes --name shapeworks-foundation python=$PYVER
+conda activate shapeworks-foundation
 conda install --yes -c anaconda -c conda-forge cmake openmp ccache
-```
-
-You can simply run [superbuild-mac.sh](superbuild-mac.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. Refer to [the script itself](superbuild-mac.sh) for detailed instructions.
-
-2. **VXL**
-Follow example in [superbuild-mac.sh](superbuild-mac.sh).
-
-3. _skip this step_ **Qt4** (failed but notes are included here anyway)
-```
-conda install -c conda-forge -c pkgw-forge qt4     (works! 4.8.7)
-export PATH=/Users/cam/tools/miniconda3/envs/shapeworks-olddeps-foundation/qt4/bin:$PATH
-...spoke too soon. This installation doesn't include QtScript. Other options:
- - try to fix this installation (unlikely since I don't have the source with which it was compiled)
- - install prebuilt (bad idea since it even tells you it might break your system and be uninstallable)
- - build it myself (tried and tried and eventually gave up since it doesn't work on this version OSX)
-   /usr/bin/sed -i bak 's/fobjc-gc/fobjc-arc/' CMakeLists.txt
-      NOTE: I ran this after the cmake and partial build had completed, so I used the following in the build directory:
-      find .. -name "*" -type f -exec grep -i "\-fobjc-gc" {} \; -exec /usr/bin/sed -i bak 's/fobjc-gc/fobjc-arc/' {} \; -print
-      ...and anyway, it doesn't work at all, so instead just comment out the -fobjc-arc line in CMakeLists.txt.
- - install macports version (not willing to corrupt my system to install very old software, assuming it works at all)
-Ended up deciding not to install Qt at all, so no ShapeWorksView2.
-```
- 
-4. **VTK** (w/o Qt)
-If using the Anaconda sandbox, install tbb-devel (needed by vtk):
-```
 conda install -c intel tbb-devel
 ```
-Continue following [superbuild-mac.sh](superbuild-mac.sh).
- 
-5. **ITK**
-Follow example in [superbuild-mac.sh](superbuild-mac.sh).
- 
-6. **ShapeWorks**
-If using the Anaconda sandbox, create a derived environment for this build:
-```
-conda create --name shapeworks_build --clone build-foundation
-conda activate shapeworks_build
-```
 
-Then configure, build, and install just as in [superbuild-mac.sh](superbuild-mac.sh):
-```
-cmake -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} -DBuild_Post:BOOL=1 -DBuild_View2=0 -DUSE_OPENMP=OFF -Wno-dev ..
-make -j8 install
-```
+Next run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules.
 
-<a id="user-content-build-mojave-updated"></a>
-#### (B) Build with latest versions of VXL, ITK, Python, Qt, and VTK
-
-_TODO_
+These are the arguments the [superbuild script](superbuild.sh) accepts:
+```
+# Call this script by specifying arguments in the same command.
+# Ex:
+#   NUM_PROCS=16 HAVE_QT=1 ./superbuild-linux.sh
+#
+# Arguments:
+#
+#  BUILD_CLEAN:   whether or not to remove all build directories and clone new dependencies
+#
+#  VXL_DIR:       if you already have VXL its install path can be specified
+#  VTK_DIR:       if you already have VTK its install path can be specified
+#  ITK_DIR:       if you already have ITK its install path can be specified
+#
+#  BUILD_DIR:     by default creates a subdirectory of the current directory called 'build' where ShapeWorks and all its external dependencies will be built
+#  INSTALL_DIR:   by default creates a subdirectory of the current directory called 'install' where ShapeWorks and all external dependencies are installed
+#  NUM_PROCS:     number of processors to use for parallel builds (default is 4)
+#
+#  BUILD_POST:    whether or not to build any applications in Post (default is to build them all, see https://github.com/SCIInstitute/ShapeWorks/issues/58 to understand why this is even an option here)
+#  HAVE_QT:       whether or not qt version 4.x is installed in your system, set 0 if not and it will skip building shapeworksview2
+#
+```
 
 <a id="user-content-build-osx-older"></a>
 ### OSX versions < 10.14
@@ -115,7 +85,7 @@ TODO: For now, please try the instructions for [Mojave](#build-mojave)
 
 ### Linux
 
-Notes for building ShapeWorks on Linux using the existing (very old) dependencies.
+Notes for building ShapeWorks on Linux.
 
 [First, create a build sandbox using Anaconda](#build-linux-sandbox)  
 
