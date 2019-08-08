@@ -24,6 +24,8 @@ def extract_zip_createFiles(DATA_FLAG):
 
 	return lst
 
-
-
-
+def applyIsotropicResampling(parentDir, inDataListSeg, inDataListRaw):
+	"""
+	This function takes in a filelist and produces the resampled files in the
+	appropriate directory 
+	"""

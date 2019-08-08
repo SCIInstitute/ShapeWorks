@@ -62,10 +62,24 @@ For the unprepped data the first few steps are
 -- Padding
 -- Center of Mass Alignment
 -- Rigid Alignment
--- Cropping
+-- Largets Bounding Box and Cropping 
 """
+parentDir = '../TestEllipsoids/PrepOutput/'
+
+if DATA_FLAG:
+	"""Apply isotropic resampling"""
+
+	"""Apply padding"""
+
+	"""Apply center of mass alignment"""
+
+	"""Apply rigid alignment"""
+	
+	"""Compute largest bounding box and apply cropping"""
+
 
 """
 We convert the scans to distance transforms, this step is common for both the 
 prepped as well as unprepped data
 """
+
