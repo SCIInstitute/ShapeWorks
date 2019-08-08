@@ -70,12 +70,16 @@ Until then, please see **[BUILD.md](BUILD.md)** for the current build instructio
 
 Documentation
 =====================
-_coming soon:_ framework documentation
+[ShapeWorks user documentation.](http://sciinstitute.github.io/ShapeWorks/)
+<!--
+Desired: https://shapeworks.sci.utah.edu/docs
+-->
 
 Development
 =====================
 Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
 Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.  
+Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
 
 <!--
 Requirements
