@@ -24,9 +24,6 @@ Table of Contents
 - [Development](#development)  
 <!--
 - [Requirements](#requirements)<br/>
-- [Building](#building)<br/>
-		- [Unix/OSX](#unix-and-osx)<br/>
-	        - [Windows](#windows)<br/> 
 - [Running](#running)<br/>
 		- [ShapeWorksGroom](#shapeworksgroom)<br/>
 		- [ShapeWorksRun](#shapeworksrun)<br/>
@@ -69,7 +66,7 @@ P. Agrawal, S.Y. Elhabian, R.T. Whitaker, "Learning Deep Features for Automated 
 Installation
 =====================
 _Coming soon:_ user installation without the necessity of building ShapeWorks directly.  
-Until then, please see **[INSTALL.md](INSTALL.md)** for the current build instructions.
+Until then, please see **[BUILD.md](BUILD.md)** for the current build instructions.
 
 Documentation
 =====================
@@ -77,7 +74,7 @@ _coming soon:_ framework documentation
 
 Development
 =====================
-Please see **[INSTALL.md](INSTALL.md)** for the current build instructions.  
+Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
 Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.  
 
 <!--
@@ -92,66 +89,6 @@ Requirements
  * Install gcc5.0+ [only required for ShapeWorksPost on Linux]
  * Windows 7+, OSX 10.9+, and OpenSuse 13.1 Recommended. Other platforms may work, but are not officially supported.
 
-Setting up the source code
-=====================
- - git clone https://github.com/SCIInstitute/shapeworks.git
- - git submodule init
- - git submodule update
- - cd ShapeWorks-Prep
- - git checkout master
- - git submodule init
- - git submodule update
- - cd Source/CommonLibraries/fim_v4
- - git checkout master
- - cd ../../..
- 
- - cd ../ShapeWorks-Post
- - git checkout master
- 
- - cd ../ShapeWorks-Run
- - git checkout master
- - git submodule init
- - git submodule update
- - cd source/fim_v4
- - git checkout master
-
-Building
-=====================
- - Set ITK, VTK and VXL paths in CMakeLists.txt in shapeworks repo
- - Create a build directory for shapeworks, <shapeworks-build>
- - cd shapeworks-build
- - ccmake path-to-shapeworks-repo
- - set CMake flags ON/OFF for the required tools
- - set CMAKE_INSTALL_PREFIX to install all binaries at one place (optional)
- - configure
- - generate
- - make -j4 
- - make install (only if CMAKE_INSTALL_PREFIX is provided)
--->
-
-<!--
-Building
-=====================
-<h3>Unix and OSX</h3>
-In a terminal:
-```c++
-mkdir shapeworks/build
-cd shapeworks/build
-cmake -DVTK_DIR=Path/To/Your/VTK/build -DITK_DIR=Path/To/Your/ITK/build -DCMAKE_BUILD_TYPE=Release ../src
-make
-```
-<!--
-<h3>Windows</h3>
-Open a Visual Studio (32 or 64 bit) Native Tools Command Prompt. 
-Follow these commands:
-```c++
-mkdir C:\Path\To\shapeworks\build
-cd C:\Path\To\shapeworks\build
-cmake -G "NMake Makefiles" -DVTK_DIR="C:/Path/To/Your/VTK/build" -DITK_DIR="C:/Path/To/Your/ITK/build" -DCMAKE_BUILD_TYPE=Release ../src
-nmake
-```
-**NOTE** Be sure to copy the Qt DLL files to the View2 Executable directory for the program to run.
-<!--
 Running
 =====================
 <!--
