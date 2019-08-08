@@ -1,6 +1,7 @@
 import numpy as np
 from zipfile import ZipFile
 import io
+from colorama import Fore
 import glob
 import os
 
@@ -46,10 +47,12 @@ def applyIsotropicResampling(parentDir, inDataList, isoSpacing, isCenterOn=True,
 		outname = inname.replace(initPath, outDir)
 		outname = outname.replace('.nrrd', '.isores.nrrd')
 		outDataList.append(outname)
-		########### Print Blurb ###############
-		# print(inname, outname)
-		# print(isoSpacing)
-		#######################################
+		print(" ")
+		print(Fore.WHITE, "########### Resampling ###############")
+		print(Fore.CYAN, "Input Filename : ", inname)
+		print(Fore.YELLOW, "Output Filename : ", outname)
+		print(Fore.WHITE, "######################################")
+		print(" ")
 		if isBinaryImage:
 			if isCenterOn:
 				execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
@@ -89,8 +92,12 @@ def applyPadding(parentDir, inDataList, padSize, padValue=0):
 		outname = inname.replace(initPath, outDir)
 		outname = outname.replace('.nrrd', '.pad.nrrd')
 		outDataList.append(outname)
-		########### Print Blurb ###############
-		#######################################
+		print(" ")
+		print(Fore.WHITE, "############## Padding ###############")
+		print(Fore.CYAN, "Input Filename : ", inname)
+		print(Fore.YELLOW, "Output Filename : ", outname)
+		print(Fore.WHITE, "######################################")
+		print(" ")
 		execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(padSize) + " --paddingValue " + str(padValue)
 		os.system(execCommand)
 
@@ -132,8 +139,15 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 			outnameImg = innameImg.replace(initPath, outDir)
 			outnameImg = outnameImg.replace('.nrrd', '.com.nrrd')
 			outDataListImg.append(outnameImg)
-			########### Print Blurb ###############
-			#######################################
+			print(" ")
+			print(Fore.WHITE, "############# COM Alignment ###############")
+			print(Fore.CYAN, "Input Segmentation Filename : ", innameSeg)
+			print(Fore.CYAN, "Input Image Filename : ", innameImg)
+			print(Fore.YELLOW, "Output Segmentation Filename : ", outnameSeg)
+			print(Fore.YELLOW, "Output Image Filename : ", outnameImg)
+			print(Fore.YELLOW, "Output Parameter Filename : ", paramname)
+			print(Fore.WHITE, "###########################################")
+			print(" ")
 			execCommand = "TranslateShapeToImageOrigin --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --useCenterOfMass 1 --parameterFilename " + paramname + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
 			os.system(execCommand)
 
@@ -149,8 +163,13 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 			outname = outname.replace('.nrrd', '.com.nrrd')
 			paramname = outname.replace('.nrrd', '.txt')
 			outDataListSeg.append(outname)
-			########### Print Blurb ###############
-			#######################################
+			print(" ")
+			print(Fore.WHITE, "############# COM Alignment ###############")
+			print(Fore.CYAN, "Input Segmentation Filename : ", inname)
+			print(Fore.YELLOW, "Output Segmentation Filename : ", outname)
+			print(Fore.YELLOW, "Output Parameter Filename : ", paramname)
+			print(Fore.WHITE,"###########################################")
+			print(" ")
 			execCommand = "TranslateShapeToImageOrigin --inFilename " + inname + " --outFilename " + outname + " --useCenterOfMass 1 --parameterFilename " + paramname 
 			os.system(execCommand)
 
