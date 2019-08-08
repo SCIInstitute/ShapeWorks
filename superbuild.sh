@@ -43,15 +43,12 @@ mkdir -p ${INSTALL_DIR}
 
 ## build dependencies if their locations were not specified
 if [[ -z $VXL_DIR ]]; then
-  VXL_VER="github-migration"
+  VXL_VER="v2.0.2"
   VXL_DIR=${BUILD_DIR}/vxl
   cd ${BUILD_DIR}
   git clone https://github.com/vxl/vxl.git
   cd ${VXL_DIR}
   git checkout -f tags/${VXL_VER}
-  sed -i '1,10 s/^/#/' CMakeLists.txt
-  sed -i 's/JPEG_FOUND/JPEG_FOUND_DISABLE/' core/vil/CMakeLists.txt
-  sed -i 's/JPEG_FOUND/JPEG_FOUND_DISABLE/' core/vil1/CMakeLists.txt
   
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -81,7 +78,7 @@ if [[ -z $VTK_DIR ]]; then
 fi
 
 if [[ -z $ITK_DIR ]]; then
-  ITK_VER="v4.7.2"
+  ITK_VER="v5.0.1"
   ITK_DIR=${BUILD_DIR}/ITK
   cd ${BUILD_DIR}
   git clone https://github.com/InsightSoftwareConsortium/ITK.git
@@ -90,7 +87,7 @@ if [[ -z $ITK_DIR ]]; then
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DITK_USE_SYSTEM_VXL=on -Wno-dev ${ITK_DIR}
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${VXL_DIR} -Wno-dev ${ITK_DIR}
   make -j${NUM_PROCS} install
 fi
 
