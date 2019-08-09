@@ -4,6 +4,7 @@ import io
 from colorama import Fore
 import glob
 import os
+import xml.etree.ElementTree as ET
 
 def extract_zip_createFiles(DATA_FLAG):
 	"""
@@ -175,7 +176,52 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 
 		return outDataListSeg
 
-def applyRigidAlignment(parentDir, inDataList, refID):
+def create_cpp_xml(filename, outputfilename):
+	'''
+		This creates a xml for cpp Shape warp binary
+	'''
+	opening_tag = "<"
+	ending_tag = "</"
+	closing_tag = ">"
+	tree = ET.parse(str(filename))
+	root = tree.getroot()
+	children = {}
+	for child in root:
+		children[child.tag] = child.text
+	tags = children.keys()
+	xml_text = ""
+	for tag in tags:
+		xml_text += opening_tag+tag+closing_tag+children[tag]+ending_tag+tag+closing_tag
+	file = open(outputfilename,"w")
+	file.write(xml_text)
+	file.close()
+
+def create_python_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
+	root = ET.Element('sample')
+	propogationScale = ET.SubElement(root, 'propagationScale')
+	propogationScale.text = "\n 20.0 \n"
+	alpha = ET.SubElement(root, 'alpha')
+	alpha.text = "\n  10.5 \n"
+	beta = ET.SubElement(root, 'beta')
+	beta.text = "\n 10.0 \n"
+	isoVal = ET.SubElement(root, 'isoValue')
+	isoVal.text = "\n 0.0 \n"
+	smoothing_iterations = ET.SubElement(root, 'smoothing_iterations')
+	smoothing_iterations.text = "\n " + str(smoothingIterations) + " \n"
+	verbose = ET.SubElement(root, 'verbose')
+	verbose.text = "\n 1 \n"
+	inputs = ET.SubElement(root, 'inputs')
+	inputs.text = "\n " + ref_dtnrrdfilename + " \n"
+	outputs = ET.SubElement(root, 'outputs')
+	outputs.text = "\n " + ref_isonrrdfilename + " \n"
+	dtFiles = ET.SubElement(root, 'dtFiles')
+	dtFiles.text = "\n " + ref_tpdtnrrdfilename + " \n"
+
+	data = ET.tostring(root, encoding='unicode')
+	file = open(xmlfilename, "w+")
+	file.write(data)
+
+def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, smoothingIterations=1, isoValue=0):
 	"""
 	Author: Riddhish Bhalodia
 	Date: 8th August 2019
@@ -191,3 +237,45 @@ def applyRigidAlignment(parentDir, inDataList, refID):
 	outDir = parentDir + '/aligned/'
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
+	# identify the reference scan
+	refDir = outDir + 'reference/'
+	if not os.path.exists(refDir):
+		os.makedirs(refDir)
+	spt = refFile.rsplit('/', 1)
+	initPath = spt[0] + '/'
+	newRefFile = refFile.replace(initPath, refDir)
+	
+	ref_dtnrrdfilename=newRefFile.replace('.nrrd', '.DT.nrrd')
+	ref_tpdtnrrdfilename=newRefFile.replace('.nrrd', '.tpSmoothDT.nrrd')
+	ref_isonrrdfilename=newRefFile.replace('.nrrd', '.ISO.nrrd')
+	ref_binnrrdfilename=newRefFile.replace('.nrrd', '.BIN.nrrd')
+	
+	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
+	# EchoWithColor "Grooming reference  - isolate, hole file, antialiais and distance transform generation .................." "light_green"
+	# EchoWithColor "${ref_segfilename}" "light_green"
+	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
+
+	execCommand = "ExtractGivenLabelImage --inFilename " + refFile + " --outFilename " + refFile + " --labelVal 1"
+	os.system(execCommand)
+	execCommand = "CloseHoles --inFilename " + refFile + " --outFilename " + refFile 
+	os.system(execCommand)
+	execCommand = "AntiAliasing --inFilename " + refFile + " --outFilename " + ref_dtnrrdfilename + " --numIterations " + str(antialiasIterations) 
+	os.system(execCommand)
+	execCommand = "FastMarching --inFilename " + ref_dtnrrdfilename + " --outFilename " + ref_dtnrrdfilename + " --isoValue " + str(isoValue) 
+	os.system(execCommand)
+
+	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
+	# EchoWithColor " TPSmooth reference distance transform  .................." "light_green"
+	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
+	xmlfilename=newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
+	create_python_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename)
+	create_cpp_xml(xmlfilename, xmlfilename)
+	print("THIS GETS DONE")
+	execCommand = "TopologyPreservingSmoothing " + xmlfilename
+	os.system(execCommand) 
+	execCommand = "ThresholdImages --inFilename " + ref_tpdtnrrdfilename + " --outFilename " + ref_binnrrdfilename + " --lowerThresholdLevel -0.000001" 
+	os.system(execCommand)
+
+	for i in range(len(inDataList)):
+		
+	return xmlfilename
