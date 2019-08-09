@@ -148,7 +148,7 @@ protected:
     typename itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
     typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
 
-    static ITK_THREAD_RETURN_TYPE optimize_callback( void *arg );
+    static itk::ITK_THREAD_RETURN_TYPE optimize_callback( void *arg );
     //  static ITK_THREAD_RETURN_TYPE auto_init_callback( void *arg );
 
     unsigned int m_verbosity_level;
@@ -237,5 +237,7 @@ protected:
 #if ITK_TEMPLATE_TXX
 #include "ShapeWorksRunApp.txx"
 #endif
+
+#include "ShapeWorksRunApp.txx"
 
 #endif

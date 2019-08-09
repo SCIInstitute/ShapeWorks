@@ -217,7 +217,7 @@ int main(int argc, char * argv [] )
         vtkTargetImporter->Update();
 
         vtkContourFilter * targetContour = vtkContourFilter::New();
-        targetContour->SetInput( vtkTargetImporter->GetOutput() );
+        targetContour->SetInputData( vtkTargetImporter->GetOutput() );
         targetContour->SetValue( 0, isovalue  );
         targetContour->Update();
 
@@ -237,7 +237,7 @@ int main(int argc, char * argv [] )
         vtkMovingImporter->Update();
 
         vtkContourFilter * movingContour = vtkContourFilter::New();
-        movingContour->SetInput( vtkMovingImporter->GetOutput() );
+        movingContour->SetInputData( vtkMovingImporter->GetOutput() );
         movingContour->SetValue( 0, isovalue );
         movingContour->Update();
 
@@ -259,7 +259,7 @@ int main(int argc, char * argv [] )
 
         vtkSmartPointer<vtkTransformPolyDataFilter> icpTransformFilter =
                 vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        icpTransformFilter->SetInput(moving);
+        icpTransformFilter->SetInputData(moving);
         icpTransformFilter->SetTransform(icp);
         icpTransformFilter->Update();
 
@@ -364,7 +364,7 @@ int main(int argc, char * argv [] )
             // The 3 image plane widgets are used to probe the dataset.
             //
             xImagePlaneWidget->DisplayTextOn();
-            xImagePlaneWidget->SetInput(vtkTargetImporter->GetOutput());
+            xImagePlaneWidget->SetInputData(vtkTargetImporter->GetOutput());
             xImagePlaneWidget->SetPlaneOrientationToXAxes();
             xImagePlaneWidget->SetSliceIndex(size[0]/2);
             xImagePlaneWidget->SetPicker(picker);
@@ -375,7 +375,7 @@ int main(int argc, char * argv [] )
             xImagePlaneWidget->SetResliceInterpolateToNearestNeighbour();
 
             yImagePlaneWidget->DisplayTextOn();
-            yImagePlaneWidget->SetInput(vtkTargetImporter->GetOutput());
+            yImagePlaneWidget->SetInputData(vtkTargetImporter->GetOutput());
             yImagePlaneWidget->SetPlaneOrientationToYAxes();
             yImagePlaneWidget->SetSliceIndex(size[1]/2);
             yImagePlaneWidget->SetPicker(picker);
@@ -386,7 +386,7 @@ int main(int argc, char * argv [] )
             yImagePlaneWidget->SetLookupTable(xImagePlaneWidget->GetLookupTable());
 
             zImagePlaneWidget->DisplayTextOn();
-            zImagePlaneWidget->SetInput(vtkTargetImporter->GetOutput());
+            zImagePlaneWidget->SetInputData(vtkTargetImporter->GetOutput());
             zImagePlaneWidget->SetPlaneOrientationToZAxes();
             zImagePlaneWidget->SetSliceIndex(size[2]/2);
             zImagePlaneWidget->SetPicker(picker);
@@ -412,14 +412,14 @@ int main(int argc, char * argv [] )
             vtkActor          * targetPolyActor  = vtkActor::New();
 
             targetPolyActor->SetMapper( targetPolyMapper );
-            targetPolyMapper->SetInput( targetContour->GetOutput() );
+            targetPolyMapper->SetInputData( targetContour->GetOutput() );
             targetPolyMapper->ScalarVisibilityOff();
 
             vtkPolyDataMapper * movingPolyMapper = vtkPolyDataMapper::New();
             vtkActor          * movingPolyActor  = vtkActor::New();
 
             movingPolyActor->SetMapper( movingPolyMapper );
-            movingPolyMapper->SetInput( movingContour->GetOutput() );
+            movingPolyMapper->SetInputData( movingContour->GetOutput() );
             movingPolyMapper->ScalarVisibilityOff();
 
 
@@ -427,7 +427,7 @@ int main(int argc, char * argv [] )
             vtkActor          * solutionPolyActor  = vtkActor::New();
 
             solutionPolyActor->SetMapper( solutionPolyMapper );
-            solutionPolyMapper->SetInput( icpTransformFilter->GetOutput() );
+            solutionPolyMapper->SetInputData( icpTransformFilter->GetOutput() );
             solutionPolyMapper->ScalarVisibilityOff();
 
             vtkProperty * movingProperty = vtkProperty::New();

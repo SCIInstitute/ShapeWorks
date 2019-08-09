@@ -13,7 +13,7 @@
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #include "itkImageFileReader.h"
-#include "itkMultiThreader.h"
+#include "itkMultiThreaderBase.h"
 #include "tinyxml.h"
 #include <sstream>
 #include <string>
@@ -1305,11 +1305,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::GetMinNeighborhoodRadius()
         itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
         itk2vtkConnector->SetInput(domain->GetImage());
         vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
-        ls->SetInput(itk2vtkConnector->GetOutput());
+        ls->SetInputData(itk2vtkConnector->GetOutput());
         ls->SetValue(0, 0.0);
         ls->Update();
         vtkSmartPointer<vtkMassProperties> mp = vtkSmartPointer<vtkMassProperties>::New();
-        mp->SetInput(ls->GetOutput());
+        mp->SetInputData(ls->GetOutput());
         mp->Update();
         double area = mp->GetSurfaceArea();
         double sigma = std::sqrt(area/(m_Sampler->GetParticleSystem()->GetNumberOfParticles(i)*M_PI));
@@ -1931,11 +1931,11 @@ ShapeWorksRunApp<SAMPLERTYPE>::SetCotanSigma()
         itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
         itk2vtkConnector->SetInput(domain->GetImage());
         vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
-        ls->SetInput(itk2vtkConnector->GetOutput());
+        ls->SetInputData(itk2vtkConnector->GetOutput());
         ls->SetValue(0, 0.0);
         ls->Update();
         vtkSmartPointer<vtkMassProperties> mp = vtkSmartPointer<vtkMassProperties>::New();
-        mp->SetInput(ls->GetOutput());
+        mp->SetInputData(ls->GetOutput());
         mp->Update();
         double area = mp->GetSurfaceArea();
         double sigma = m_cotan_sigma_factor*std::sqrt(area/(m_Sampler->GetParticleSystem()->GetNumberOfParticles(i)*M_PI));

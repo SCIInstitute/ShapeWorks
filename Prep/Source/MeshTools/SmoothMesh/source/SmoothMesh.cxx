@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 
         vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter =
                 vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-        smoothFilter->SetInput(mesh);
+        smoothFilter->SetInputData(mesh);
         smoothFilter->SetNumberOfIterations(iterations);
         smoothFilter->SetRelaxationFactor(relaxation_factor);
         smoothFilter->FeatureEdgeSmoothingOff();
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
         std::cout << "Wrting output mesh:" << outFilenames[shapeNo].c_str()  << std::endl ;
         vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInput(smoothFilter->GetOutput());
+        writer->SetInputData(smoothFilter->GetOutput());
         writer->SetFileName(outFilenames[shapeNo].c_str());
         writer->Update();
     }

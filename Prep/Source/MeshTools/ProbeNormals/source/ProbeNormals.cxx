@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
     if (!pointsFile)
     {
-        std::cout << "point file does not exist... " << pointsFile << std::endl;
+        std::cout << "point file does not exist... " << ptsFname << std::endl;
         return EXIT_FAILURE;
     }
     int count = 0;

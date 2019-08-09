@@ -176,7 +176,7 @@ ImageType::Pointer RasterizeMesh(vtkSmartPointer<vtkPolyData> polydata, double s
 #else
     whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR,1);
 #endif
-    whiteImage->Update();
+    //whiteImage->Update();
 
     // fill the image with foreground voxels:
     //unsigned char inval = 255;

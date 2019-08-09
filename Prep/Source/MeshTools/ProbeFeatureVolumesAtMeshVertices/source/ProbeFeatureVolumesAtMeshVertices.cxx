@@ -158,14 +158,14 @@ int main(int argc, char *argv[])
 
         // now probe the current attribute by the isosurfaces
         vtkSmartPointer<vtkProbeFilter> probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
-        probeFilter->SetInput(mesh);
-        probeFilter->SetSource(itk2vtkConnector2->GetOutput());
+        probeFilter->SetInputData(mesh);
+        probeFilter->SetSourceData(itk2vtkConnector2->GetOutput());
         probeFilter->Update();
 
         std::cout << "Wrting output mesh with features for " << outFilenames[shapeNo].c_str()  << std::endl ;
 
         vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInput(probeFilter->GetPolyDataOutput());
+        writer->SetInputData(probeFilter->GetPolyDataOutput());
         writer->SetFileName(outFilenames[shapeNo].c_str());
         writer->Update();
     }

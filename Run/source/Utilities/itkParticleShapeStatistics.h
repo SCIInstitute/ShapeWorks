@@ -184,4 +184,6 @@ protected:
 # include "itkParticleShapeStatistics.txx"
 #endif
 
+#include "itkParticleShapeStatistics.txx"
+
 #endif

@@ -110,4 +110,6 @@ private:
 #include "itkParticleDomain.txx"
 #endif
 
+#include "itkParticleDomain.txx"
+
 #endif

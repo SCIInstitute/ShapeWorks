@@ -2,6 +2,8 @@ PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
 SET(CMAKE_BUILD_TYPE Release)
 
+set(CMAKE_CXX_STANDARD 11)
+
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -144,27 +146,37 @@ option(Build_View2 "Build view2" OFF)  #todo: figure out how to install old qt 4
 
 #todo: setup INSTALL paths as described in Trello (otherwise 'make install' just puts everything in the root path of the specified installation directory)
 
-if(Build_View2)
-  set(VTK_QT_OPTIONS "vtkViewsQt vtkGUISupportQt vtkRenderingQt")
-endif(Build_View2)
+# if(Build_View2)
+#   set(VTK_QT_OPTIONS "vtkViewsQt vtkGUISupportQt vtkRenderingQt")
+# endif(Build_View2)
   
-FIND_PACKAGE(VTK COMPONENTS
-  vtkCommonCore
-  vtkIOCore
-  vtkIOLegacy
-  vtkIOPLY
-  vtkIOGeometry
-  vtkInfovisCore
-  vtkInteractionStyle
-  vtkFiltersCore
-  ${VTK_QT_OPTIONS}
-  REQUIRED)
-IF (VTK_FOUND)
-  INCLUDE (${VTK_USE_FILE})
-ELSE(VTK_FOUND)
-  MESSAGE(FATAL_ERROR "VTK could not be found.")
-ENDIF (VTK_FOUND)
+# FIND_PACKAGE(VTK COMPONENTS
+#   vtkCommonCore
+#   vtkIOCore
+#   vtkIOLegacy
+#   vtkIOPLY
+#   vtkIOXML
+#   vtkIOImage
+#   vtkIOGeometry
+#   vtkInfovisCore
+#   vtkInteractionStyle
+#   vtkFiltersCore
+#   vtkFiltersModeling
+#   vtkRenderingAnnotation
+#   vtkInteractionWidgets
+#   vtkImagingStencil
+#   ${VTK_QT_OPTIONS}
+#   REQUIRED)
+# IF (VTK_FOUND)
+#   INCLUDE (${VTK_USE_FILE})
+# ELSE(VTK_FOUND)
+#   MESSAGE(FATAL_ERROR "VTK could not be found.")
+# ENDIF (VTK_FOUND)
 
+
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+MESSAGE(STATUS "** USE_VTK_FILE: ${VTK_USE_FILE}")
 
 if(Build_PrepTools)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Prep/Source)

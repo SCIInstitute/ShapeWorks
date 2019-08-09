@@ -215,14 +215,14 @@ int main(int argc, char *argv[])
         // The clipper generates a clipped polygonial model
         vtkSmartPointer<vtkClipClosedSurface> clipper = vtkSmartPointer<vtkClipClosedSurface>::New();
         clipper->SetClippingPlanes(planeCollection);
-        clipper->SetInput(mesh);
+        clipper->SetInputData(mesh);
         clipper->SetGenerateFaces(1);
         //clipper->SetScalarModeToLabels();
         clipper->Update();
 
         std::cout << "Wrting output mesh:" << outFilenames[shapeNo].c_str()  << std::endl ;
         vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInput(clipper->GetOutput());
+        writer->SetInputData(clipper->GetOutput());
         writer->SetFileName(outFilenames[shapeNo].c_str());
         writer->Update();
     }

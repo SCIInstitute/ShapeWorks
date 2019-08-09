@@ -257,4 +257,6 @@ private:
 # include "itkParticleImplicitSurfaceDomain.txx"
 #endif
 
+#include "itkParticleImplicitSurfaceDomain.txx"
+
 #endif

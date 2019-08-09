@@ -748,7 +748,7 @@ void meshFIM::ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const c
 
     if (!pointsFile)
     {
-        std::cerr << "points file not found: " << pointsFile << std::endl;
+        std::cerr << "points file not found: " << infilename << std::endl;
     }
     int count = 0;
     while(pointsFile)

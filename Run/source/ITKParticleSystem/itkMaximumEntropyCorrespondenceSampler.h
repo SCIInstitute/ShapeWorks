@@ -305,4 +305,6 @@ private:
 #include "itkMaximumEntropyCorrespondenceSampler.txx"
 #endif
 
+#include "itkMaximumEntropyCorrespondenceSampler.txx"
+
 #endif
