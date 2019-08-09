@@ -308,5 +308,84 @@ def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, 
 
 	return outDataList
 
-def applyCropping(parentDir, inDataList, paddingSize):
+def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, processRaw=False):
+	"""
+	Author: Riddhish Bhalodia
+	Date: 8th August 2019
+
+	This function takes in a filelist and crops them according to the largest
+	bounding box which it discovers
+	Input Parameters:
+	Output Parameters:
+	"""
+	outDir = parentDir + '/cropped/'
+	if not os.path.exists(outDir):
+		os.makedirs(outDir)
+	# first create a txtfile with all the scan names in it.
+	txtfile = outDir + "dataList.txt"
+
+	with open(txtfile, 'w') as filehandle:
+		for listitem in inDataListSeg:
+			filehandle.write('%s\n' % listitem)
 	
+	outPrefix = outDir + "largest_bounding_box"
+	execCommand = "FindLargestBoundingBox --paddingSize " + str(paddingSize) + " --inFilename " + txtfile + " --outPrefix " + outPrefix
+	os.system(execCommand) 
+	# read all the bounding box files for cropping
+	bb0 = np.loadtxt(outPrefix + "_bb0.txt")
+	bb1 = np.loadtxt(outPrefix + "_bb1.txt")
+	bb2 = np.loadtxt(outPrefix + "_bb2.txt")
+	smI0 = np.loadtxt(outPrefix + "_smallestIndex0.txt")
+	smI1 = np.loadtxt(outPrefix + "_smallestIndex1.txt")
+	smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
+
+	if processRaw:
+		outDataListSeg = []
+		outDataListImg = []
+		for i in range(len(inDataListSeg)):
+			innameSeg = inDataListSeg[i]
+			innameImg = inDataListImg[i]
+			sptSeg = innameSeg.rsplit('/', 1)
+			initPath = sptSeg[0] + '/'
+			filename = sptSeg[1]
+			outnameSeg = innameSeg.replace(initPath, outDir)
+			outnameSeg = outnameSeg.replace('.nrrd', '.cropped.nrrd')
+			outDataListSeg.append(outnameSeg)
+			sptImg = innameImg.rsplit('/', 1)
+			initPath = sptImg[0] + '/'
+			filename = sptImg[1]
+			outnameImg = innameImg.replace(initPath, outDir)
+			outnameImg = outnameImg.replace('.nrrd', '.cropped.nrrd')
+			outDataListImg.append(outnameImg)
+			print(" ")
+			print(Fore.WHITE, "############## Cropping ##############")
+			print(Fore.CYAN, "Input Segmentation Filename : ", innameSeg)
+			print(Fore.CYAN, "Input Image Filename : ", innameImg)
+			print(Fore.YELLOW, "Output Segmentation Filename : ", outnameSeg)
+			print(Fore.YELLOW, "Output Image Filename : ", outnameImg)
+			print(Fore.WHITE, "######################################")
+			print(" ")
+			execCommand = "CropImages --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --bbX " + str(bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(smI2) + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
+			os.system(execCommand)
+
+		return [outDataListSeg, outDataListImg]
+	else:
+		outDataList = []
+		for i in range(len(inDataListSeg)):
+			inname = inDataListSeg[i]
+			spt = inname.rsplit('/', 1)
+			initPath = spt[0] + '/'
+			filename = spt[1]
+			outname = inname.replace(initPath, outDir)
+			outname = outname.replace('.nrrd', '.cropped.nrrd')
+			outDataList.append(outname)
+			print(" ")
+			print(Fore.WHITE, "############## Cropping ##############")
+			print(Fore.CYAN, "Input Filename : ", inname)
+			print(Fore.YELLOW, "Output Filename : ", outname)
+			print(Fore.WHITE, "######################################")
+			print(" ")
+			execCommand = "CropImages --inFilename " + inname + " --outFilename " + outname + " --bbX " + str(bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(smI2) 
+			os.system(execCommand)
+
+		return outDataList

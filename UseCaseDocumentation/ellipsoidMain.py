@@ -102,7 +102,7 @@ if DATA_FLAG:
 	rigidFiles = applyRigidAlignment(parentDir, comFiles, comFiles[0])
 	
 	"""Compute largest bounding box and apply cropping"""
-	
+	croppedFiles = applyCropping(parentDir, rigidFiles, rigidFiles)
 
 """
 We convert the scans to distance transforms, this step is common for both the 
