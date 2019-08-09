@@ -221,7 +221,7 @@ def create_python_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_
 	file = open(xmlfilename, "w+")
 	file.write(data)
 
-def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, smoothingIterations=1, isoValue=0):
+def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, smoothingIterations=1, isoValue=0, icpIterations=10):
 	"""
 	Author: Riddhish Bhalodia
 	Date: 8th August 2019
@@ -250,11 +250,7 @@ def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, 
 	ref_isonrrdfilename=newRefFile.replace('.nrrd', '.ISO.nrrd')
 	ref_binnrrdfilename=newRefFile.replace('.nrrd', '.BIN.nrrd')
 	
-	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
-	# EchoWithColor "Grooming reference  - isolate, hole file, antialiais and distance transform generation .................." "light_green"
-	# EchoWithColor "${ref_segfilename}" "light_green"
-	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
-
+	# reference image processing
 	execCommand = "ExtractGivenLabelImage --inFilename " + refFile + " --outFilename " + refFile + " --labelVal 1"
 	os.system(execCommand)
 	execCommand = "CloseHoles --inFilename " + refFile + " --outFilename " + refFile 
@@ -264,18 +260,53 @@ def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, 
 	execCommand = "FastMarching --inFilename " + ref_dtnrrdfilename + " --outFilename " + ref_dtnrrdfilename + " --isoValue " + str(isoValue) 
 	os.system(execCommand)
 
-	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
-	# EchoWithColor " TPSmooth reference distance transform  .................." "light_green"
-	# EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
 	xmlfilename=newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
 	create_python_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename)
 	create_cpp_xml(xmlfilename, xmlfilename)
-	print("THIS GETS DONE")
 	execCommand = "TopologyPreservingSmoothing " + xmlfilename
 	os.system(execCommand) 
 	execCommand = "ThresholdImages --inFilename " + ref_tpdtnrrdfilename + " --outFilename " + ref_binnrrdfilename + " --lowerThresholdLevel -0.000001" 
 	os.system(execCommand)
 
+	outDataList = []
 	for i in range(len(inDataList)):
-		
-	return xmlfilename
+		inname = inDataList[i]
+		spt = inname.rsplit('/', 1)
+		initPath = spt[0] + '/'
+		filename = spt[1]
+		outname = inname.replace(initPath, outDir)
+		outname = outname.replace('.nrrd', '.aligned.nrrd')
+		outDataList.append(outname)
+
+		dtnrrdfilename=outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
+		tpdtnrrdfilename=outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
+		isonrrdfilename=outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
+		binnrrdfilename=outname.replace('.aligned.nrrd', '.aligned.BIN.nrrd')
+		print(" ")
+		print(Fore.WHITE, "############# Rigid Alignment #############")
+		print(Fore.CYAN, "Input Segmentation Filename : ", inname)
+		print(Fore.CYAN, "Input Reference Filename : ", refFile)
+		print(Fore.YELLOW, "Output Segmentation Filename : ", outname)
+		print(Fore.WHITE,"###########################################")
+		print(" ")
+		execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
+		os.system(execCommand)
+		execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname 
+		os.system(execCommand)
+		execCommand = "AntiAliasing --inFilename " + inname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(antialiasIterations) 
+		os.system(execCommand)
+		execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(isoValue) 
+		os.system(execCommand)
+
+		xmlfilename=outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
+		create_python_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
+		create_cpp_xml(xmlfilename, xmlfilename)
+		execCommand = "TopologyPreservingSmoothing " + xmlfilename
+		os.system(execCommand) 	
+		execCommand = "ICPRigid3DImageRegistration --targetDistanceMap " + ref_tpdtnrrdfilename + " --sourceDistanceMap " + tpdtnrrdfilename + " --sourceSegmentation " + inname + " --icpIterations " + str(icpIterations) + " --visualizeResult 0 --solutionSegmentation " + outname
+		os.system(execCommand)
+
+	return outDataList
+
+def applyCropping(parentDir, inDataList, paddingSize):
+	

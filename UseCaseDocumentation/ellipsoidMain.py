@@ -100,9 +100,9 @@ if DATA_FLAG:
 	"""Apply rigid alignment"""
 
 	rigidFiles = applyRigidAlignment(parentDir, comFiles, comFiles[0])
-	# create_cpp_xml(rigidFiles, rigidFiles)
+	
 	"""Compute largest bounding box and apply cropping"""
-
+	
 
 """
 We convert the scans to distance transforms, this step is common for both the 
