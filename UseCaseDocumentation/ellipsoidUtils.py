@@ -174,3 +174,20 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 			os.system(execCommand)
 
 		return outDataListSeg
+
+def applyRigidAlignment(parentDir, inDataList, refID):
+	"""
+	Author: Riddhish Bhalodia
+	Date: 8th August 2019
+
+	This function takes in a filelist and produces the center of mass aligned
+	files in the appropriate directory. If the process_raw flag is set True, 
+	then it also applys the same transformation on the corresponding list of 
+	raw files (MRI/CT ...)
+
+	Input Parameters:
+	Output Parameters:
+	"""
+	outDir = parentDir + '/aligned/'
+	if not os.path.exists(outDir):
+		os.makedirs(outDir)

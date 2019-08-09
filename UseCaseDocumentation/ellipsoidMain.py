@@ -98,6 +98,8 @@ if DATA_FLAG:
 	"""
 	comFiles = applyCOMAlignment(parentDir, paddedFiles, paddedFiles)
 	"""Apply rigid alignment"""
+
+	rigidFiles = applyRigidAlignment(parentDir, comFiles, refID)
 	
 	"""Compute largest bounding box and apply cropping"""
 
