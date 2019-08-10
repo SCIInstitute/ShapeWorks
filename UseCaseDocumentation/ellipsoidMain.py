@@ -106,6 +106,19 @@ if DATA_FLAG:
 
 """
 We convert the scans to distance transforms, this step is common for both the 
-prepped as well as unprepped data
+prepped as well as unprepped data, just provide correct filenames.
 """
 
+if DATA_FLAG:
+	dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
+else:
+	dtFiles = applyDistanceTransforms(parentDir, fileList)
+
+"""
+################ Particle Based Optimization ################
+
+Now that we have the distance transform representation of data we create 
+the parameter files for the shapeworks particle optimization routine.
+For more details on the plethora of parameters for shapeworks please refer to
+...[link to documentation]
+"""
