@@ -23,7 +23,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import csv
-from ellipsoidUtils import *
+from GroomUtils import *
+from RunUtils import *
 
 """
 First we decide which data we want to use for the example, prepped or 
@@ -42,8 +43,22 @@ newly created Directory TestEllipsoids.
 This data both prepped and unprepped are binary images of ellipsoids varying
 one of the axes while the other two are kept fixed. 
 """
+"""
+Extract the zipfile into proper directory and create necessary supporting
+files
+"""
+parentDir="TestEllipsoids/"
+filename="Ellipsoids.zip"
+if not os.path.exists(parentDir):
+	os.makedirs(parentDir)
+# extract the zipfile
+with ZipFile(filename, 'r') as zipObj:
+	zipObj.extractall(path=parentDir)
+	if DATA_FLAG:
+		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
+	else:
+		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
-fileList = extract_zip_createFiles(DATA_FLAG)
 
 """
 Most of the following steps even though wrapped in python functions are using
@@ -121,4 +136,10 @@ Now that we have the distance transform representation of data we create
 the parameter files for the shapeworks particle optimization routine.
 For more details on the plethora of parameters for shapeworks please refer to
 ...[link to documentation]
+
+First we need to create a dictionary for all the parameters required by this
+optimization routine
 """
+pointDir = '../TestEllipsoids/PointFiles/'
+if not os.path.exists(pointDir):
+	os.makedirs(pointDir)
