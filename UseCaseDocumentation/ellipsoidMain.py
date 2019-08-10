@@ -21,10 +21,11 @@ First import the necessary modules
 
 import numpy as np
 import matplotlib.pyplot as plt
+from zipfile import ZipFile
 import os
 import csv
 from GroomUtils import *
-from RunUtils import *
+from OptimizeUtils import *
 
 """
 First we decide which data we want to use for the example, prepped or 
@@ -143,3 +144,22 @@ optimization routine
 pointDir = '../TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
+parameterDictionary = {
+	"number_of_particles" : 128,
+	"checkpointing_interval" : 200,
+	"keep_checkpoints" : 0,
+	"iterations_per_split" : 1000,
+	"optimization_iterations" : 2000,
+	"starting_regularization" : 100,
+	"ending_regularization" : 0.1,
+	"recompute_regularization_interval" : 2,
+	"domains_per_shape" : 1,
+	"relative_weighting" : 10,
+	"initial_relative_weighting" : 0.01,
+	"procrustes_interval" : 0,
+	"procrustes_scaling" : 0,
+	"save_init_splits" : 0,
+	"debug_projection" : 0,
+	"mesh_based_attributes" : 0,
+	"verbosity" : 3
+}

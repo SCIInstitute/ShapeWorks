@@ -1,5 +1,4 @@
 import numpy as np
-from zipfile import ZipFile
 import io
 from colorama import Fore
 import glob
@@ -407,11 +406,15 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 		initPath = spt[0] + '/'
 		filename = spt[1]
 		outname = inname.replace(initPath, outDir)
+
 		dtnrrdfilename = outname.replace('.nrrd', '.DT.nrrd')
 		tpdtnrrdfilename = outname.replace('.nrrd', '.tpSmoothDT.nrrd')
 		isonrrdfilename = outname.replace('.nrrd', '.ISO.nrrd')
 		vtkfilename = outname.replace('.nrrd', '.tpSmoothDT.vtk')
 		vtkfilename_preview = outname.replace('.nrrd', '.tpSmoothDT.preview' + str(percentage) + ".vtk")
+		finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
+		outDataList.append(finalnm)
+
 		
 		execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
 		os.system(execCommand)
@@ -437,7 +440,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 		execCommand = "PreviewCmd --inFile " + vtkfilename + " --outFile " + vtkfilename_preview + " --decimationPercentage " + str(decimal)
 		os.system(execCommand)
 		# this at the end
-		finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
+
 		shutil.move(tpdtnrrdfilename, finalDTDir)
-		outDataList.append(outname)
+		
 		
