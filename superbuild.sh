@@ -101,5 +101,5 @@ make -j${NUM_PROCS} install
 echo "-----------------------------------------"
 echo "ShapeWorks has been installed in ${INSTALL_DIR}."
 echo "Set LD_LIBRARY_PATH for shared libraries to be found:"
-echo "  export LD_LIBRARY_PATH=$(pwd)/install/lib:$(pwd)/install/lib/vtk-5.10$LD_LIBRARY_PATH"
+echo "  export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:\$LD_LIBRARY_PATH"
 echo "-----------------------------------------"
