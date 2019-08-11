@@ -415,7 +415,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 		finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
 		outDataList.append(finalnm)
 
-		
+
 		execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
 		os.system(execCommand)
 		execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname 
@@ -441,6 +441,5 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 		os.system(execCommand)
 		# this at the end
 
-		shutil.move(tpdtnrrdfilename, finalDTDir)
-		
-		
+		shutil.copy(tpdtnrrdfilename, finalDTDir)
+	return outDataList

@@ -60,7 +60,7 @@ with ZipFile(filename, 'r') as zipObj:
 	else:
 		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
-
+fileList = fileList[:3]
 """
 Most of the following steps even though wrapped in python functions are using
 the undelying c++ code, for whihc we need to call the source paths to the 
@@ -144,6 +144,7 @@ optimization routine
 pointDir = '../TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
+
 parameterDictionary = {
 	"number_of_particles" : 128,
 	"checkpointing_interval" : 200,
@@ -163,3 +164,8 @@ parameterDictionary = {
 	"mesh_based_attributes" : 0,
 	"verbosity" : 3
 }
+
+"""
+Now we execute the particle optimization function.
+"""
+[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
