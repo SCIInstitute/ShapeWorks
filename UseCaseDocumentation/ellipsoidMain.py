@@ -26,6 +26,7 @@ import os
 import csv
 from GroomUtils import *
 from OptimizeUtils import *
+from AnalyzeUtils import *
 
 """
 First we decide which data we want to use for the example, prepped or 
@@ -77,6 +78,8 @@ os.environ["PATH"] = binpath + ":" + os.environ["PATH"]
 os.environ["LD_LIBRARY_PATH"]= installpath + ":" + installpath + "/vtk-5.10"
 
 """
+
+## GROOM : Data Pre-processing 
 For the unprepped data the first few steps are 
 -- Isotropic resampling
 -- Padding
@@ -131,7 +134,7 @@ else:
 	dtFiles = applyDistanceTransforms(parentDir, fileList)
 
 """
-################ Particle Based Optimization ################
+## OPTIMIZE : Particle Based Optimization
 
 Now that we have the distance transform representation of data we create 
 the parameter files for the shapeworks particle optimization routine.
@@ -169,3 +172,20 @@ parameterDictionary = {
 Now we execute the particle optimization function.
 """
 [localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
+
+"""
+## ANALYZE : Shape Analysis and Visualization
+
+The local and world particles will be saved in TestEllipsoids/PointFiles/128
+directory, the set of these points on each sahpe constitue a particle based shape model 
+or a Point Distribution Model (PDM). This PDM shape representation is 
+computationally flexible and efficient and we can use it to perform shape
+analysis. Here we provide one of the provided visualization tool in the 
+shapeworks codebase : ShapeWorksView2.
+This tool will showcase individual shapes with their particle representations,
+as well as the PCA model constructed using these point correspondences. The 
+PCA modes of variation representing the given shape population can be 
+visualized.
+"""
+
+launchShapeWorksView2(pointDir, worldPointFiles)
