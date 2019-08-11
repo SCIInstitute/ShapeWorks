@@ -23,8 +23,9 @@ echo "ShapeWorks superbuild for Linux"
 #
 
 # helper functions
-SRC=$(dirname "$(readlink -f "$0")")
-. ${SRC}/superbuild-utils.sh
+#SRC=$(dirname "$(readlink -f "$0")")
+#. ${SRC}/superbuild-utils.sh
+SRC=`pwd`
 
 if [[ -z $BUILD_CLEAN ]]; then BUILD_CLEAN=0; fi
 if [[ -z $HAVE_QT ]];     then HAVE_QT=0;     fi
