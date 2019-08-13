@@ -43,18 +43,22 @@ This first step is optional but recommended. Anaconda enables simultaneous build
 
 To build the current version of ShapeWorks and its dependencies, start with an older version of Python (3.5), and use superbuild.sh.
 
-1. **Create an environment for this build if using Anaconda:
+1. Create an environment for this build if using Anaconda:
 ```
-export PYVER="3.5"
-<<<<<<< HEAD:INSTALL.md
-conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
-conda activate shapeworks-olddeps-foundation
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash ./Miniconda3-latest-MacOSX-x86_64.sh
+conda create --yes --name shapeworks-foundation python=3.5
+conda activate shapeworks
 conda install --yes -c anaconda cmake
 conda install --yes -c anaconda geotiff
-conda install --yes -c conda-forge xorg-libxrandr
+conda install --yes -c anaconda libxrandr-devel-cos6-x86_64
 conda install --yes -c conda-forge xorg-libx11
-conda install --yes -c conda-forge xorg-libxinerama
-conda install --yes -c conda-forge xorg-libxcursor
+conda install --yes -c anaconda libxinerama-devel-cos6-x86_64
+conda install --yes -c anaconda libxcursor-devel-cos6-x86_64
+conda install --yes -c anaconda libxi-devel-cos6-x86_64
+conda install --yes numpy
+conda install --yes matplotlib
+conda install --yes colorama
 ```
 
 You can simply run [superbuild-mac.sh](superbuild-mac.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. Refer to [the script itself](superbuild-mac.sh) for detailed instructions.
@@ -94,13 +98,6 @@ If using the Anaconda sandbox, create a derived environment for this build:
 conda create --name shapeworks_build --clone build-foundation
 conda activate shapeworks_build
 ```
-=======
-conda create --yes --name shapeworks-foundation python=$PYVER
-conda activate shapeworks-foundation
-conda install --yes -c anaconda -c conda-forge cmake openmp ccache
-conda install -c intel tbb-devel
-```
->>>>>>> master:BUILD.md
 
 Next run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules.
 
@@ -137,99 +134,36 @@ TODO: For now, please try the instructions for [Mojave](#build-mojave)
 
 Notes for building ShapeWorks on Linux.
 
-[First, create a build sandbox using Anaconda](#build-linux-sandbox)  
-
-Next, select the OS and version being used:
-
-[Generic (manylinux if using Docker)](#generic-linux)  
-[SuSE](#suse)  
-[Ubuntu](#ubuntu)  
-
-<a id="user-content-build-linux-sandbox"></a>
-### Install miniconda3 for a sandboxed environment.
-
-This first step is optional but recommended. Anaconda enables simultaneous builds that require different versions of dependencies (e.g., ViSUS, ShapeWorks, and VisIt).
-
-1. Download Miniconda:  
-`wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh`
-2. Install Miniconda:  
-`bash ./Miniconda3-latest-MacOSX-x86_64.sh`  
-accept license agreement and default installation location (or change it).  
-3. Update to latest version and install helper utilities:  
- `conda update -n base -c defaults conda`  
- `conda install -c conda-forge ctags` (the version included with most OSes isn't as good)
-
-Starting with an older version of Python (3.5), the following instructions are based on the `superbuild-linux.sh` script.
-
-1. **Create base environment** (if using the Anaconda sandbox)
+[First, create a build sandbox using Anaconda]
+This first step is optional but recommended. Anaconda enables simultaneous builds that require different versions of dependencies (e.g., ViSUS, ShapeWorks, and VisIt). Note that you can install all of these libraries to your system with a similar apt install command.  
 ```
-export PYVER="3.5"
-conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
-conda activate shapeworks-olddeps-foundation
-conda install --yes -c anaconda -c conda-forge cmake openmp ccache
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash ./Miniconda3-latest-MacOSX-x86_64.sh
+conda create --yes --name shapeworks-foundation python=3.5
+conda activate shapeworks
+conda install --yes -c anaconda cmake
+conda install --yes -c anaconda geotiff
+conda install --yes -c anaconda libxrandr-devel-cos6-x86_64
+conda install --yes -c conda-forge xorg-libx11
+conda install --yes -c anaconda libxinerama-devel-cos6-x86_64
+conda install --yes -c anaconda libxcursor-devel-cos6-x86_64
+conda install --yes -c anaconda libxi-devel-cos6-x86_64
+conda install --yes numpy
+conda install --yes matplotlib
+conda install --yes colorama
 ```
 
-### Generic Linux
+You can simply run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. [Refer to the script itself](superbuild-linux.sh) for detailed instructions.
 
-If using Docker, the most generic linux image available is:  
-`FROM quay.io/pypa/manylinux1_x86_64`
+The following dependencies are installed in superbuild. We show which lines they are found on for convenience:
+**VXL** [65-77]
+**VTK** [79-91]
+**ITK** [93-105]
 
-1. **Create base environment** (if using the Anaconda sandbox)
-```
-export PYVER="3.5"
-conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
-conda activate shapeworks-olddeps-foundation
-conda install --yes -c anaconda -c conda-forge cmake openmp ccache
-```
+An additional, optional, dependency is Qt, which is not installed in the superbuild script.
+**Qt4** (Required for using ShapeWorksView2 application)
 
-You can simply run [superbuild-linux.sh](superbuild-linux.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. [Refer to the script itself](superbuild-linux.sh) for detailed instructions.
-
-2. **VXL**
-Follow example in [superbuild-linux.sh](superbuild-linux.sh).
-
-3. **Qt4**
-You must install Qt4 if you want to use the ShapeWorksView2 application.
-
-4. **VTK**
-If using the Anaconda sandbox, install tbb-devel (needed by vtk):
-```
-conda install -c intel tbb-devel
-```
-Continue following [superbuild-linux.sh](superbuild-linux.sh).
-
-5. **ITK**
-Follow example in [superbuild-linux.sh](superbuild-linux.sh).
-
-6. **ShapeWorks**
-
-Note: In the superbuild script the shapeworks is set up such that you must run the script from its parent directory i.e. from inside shapeworks repo cloned on your local machine. 
-If using the Anaconda sandbox, create a derived environment for this build:
-```
-conda create --name shapeworks_build --clone build-foundation
-conda activate shapeworks_build
-```
-Then simply continue with the example in [superbuild-linux.sh](superbuild-linux.sh).
-
-#### Running
-
-Some shared libraries are not specified at link time and therefore, if using the Anaconda sandbox, their paths must be made available using the following:  
-```
-$ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$CONDA_PREFIX/lib/vtk-5.10
-```
-_NOTE:_ This issue may related to a variety of different configuration options, such as our explicit disablement of JPEG in the VXL compilation, or possibly they are problems with old libraries that have since been fixed. We will address these as we upgrade to the latest versions of all dependencies.
-
-### SuSE
-
-See [Generic Linux][] to get started, and use the following details for OS-specific issues.
-
-_(SuSE-specific instructions)_
-
-### Ubuntu
-
-See [Generic Linux][] to get started, and use the following details for OS-specific issues.
-
-_(Ubuntu-specific instructions)_
-
+**ShapeWorks** is installed in lines [113-124].  
 
 
 ### Windows
