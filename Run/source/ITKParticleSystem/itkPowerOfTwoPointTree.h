@@ -299,4 +299,6 @@ private:
 # include "itkPowerOfTwoPointTree.txx"
 #endif
 
+#include "itkPowerOfTwoPointTree.txx"
+
 #endif

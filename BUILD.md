@@ -41,18 +41,12 @@ This first step is optional but recommended. Anaconda enables simultaneous build
 <a id="user-content-build-osx-mojave"></a>
 ### OSX 10.14 (Mojave)
 
-#### Two builds are described next, but only the first yet works:
-- [Build with the existing dependencies](#build-mojave-existing)  
-- [Build with updated dependencies (Python, VXL, VTK, ITK, and QT)](#build-mojave-updated)
+To build the current version of ShapeWorks and its dependencies, start with an older version of Python (3.5), and use superbuild.sh.
 
-<a id="user-content-build-mojave-existing"></a>
-#### (A) Build with existing (very old) dependencies
-
-Starting with an older version of Python (3.5), these instructions are based on how the dependencies were acquired and built by the `superbuild-mac.sh` script, with necessary modifications for compatibility with Mojave.
-
-1. **Create base environment** (if using the Anaconda sandbox)
+1. **Create an environment for this build if using Anaconda:
 ```
 export PYVER="3.5"
+<<<<<<< HEAD:INSTALL.md
 conda create --yes --name shapeworks-olddeps-foundation python=$PYVER
 conda activate shapeworks-olddeps-foundation
 conda install --yes -c anaconda cmake
@@ -100,17 +94,38 @@ If using the Anaconda sandbox, create a derived environment for this build:
 conda create --name shapeworks_build --clone build-foundation
 conda activate shapeworks_build
 ```
-
-Then configure, build, and install just as in [superbuild-mac.sh](superbuild-mac.sh):
+=======
+conda create --yes --name shapeworks-foundation python=$PYVER
+conda activate shapeworks-foundation
+conda install --yes -c anaconda -c conda-forge cmake openmp ccache
+conda install -c intel tbb-devel
 ```
-cmake -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} -DBuild_Post:BOOL=1 -DBuild_View2=0 -DUSE_OPENMP=OFF -Wno-dev ..
-make -j8 install
+>>>>>>> master:BUILD.md
+
+Next run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules.
+
+These are the arguments the [superbuild script](superbuild.sh) accepts:
 ```
-
-<a id="user-content-build-mojave-updated"></a>
-#### (B) Build with latest versions of VXL, ITK, Python, Qt, and VTK
-
-_TODO_
+# Call this script by specifying arguments in the same command.
+# Ex:
+#   NUM_PROCS=16 HAVE_QT=1 ./superbuild-linux.sh
+#
+# Arguments:
+#
+#  BUILD_CLEAN:   whether or not to remove all build directories and clone new dependencies
+#
+#  VXL_DIR:       if you already have VXL its install path can be specified
+#  VTK_DIR:       if you already have VTK its install path can be specified
+#  ITK_DIR:       if you already have ITK its install path can be specified
+#
+#  BUILD_DIR:     by default creates a subdirectory of the current directory called 'build' where ShapeWorks and all its external dependencies will be built
+#  INSTALL_DIR:   by default creates a subdirectory of the current directory called 'install' where ShapeWorks and all external dependencies are installed
+#  NUM_PROCS:     number of processors to use for parallel builds (default is 4)
+#
+#  BUILD_POST:    whether or not to build any applications in Post (default is to build them all, see https://github.com/SCIInstitute/ShapeWorks/issues/58 to understand why this is even an option here)
+#  HAVE_QT:       whether or not qt version 4.x is installed in your system, set 0 if not and it will skip building shapeworksview2
+#
+```
 
 <a id="user-content-build-osx-older"></a>
 ### OSX versions < 10.14
@@ -120,7 +135,7 @@ TODO: For now, please try the instructions for [Mojave](#build-mojave)
 
 ### Linux
 
-Notes for building ShapeWorks on Linux using the existing (very old) dependencies.
+Notes for building ShapeWorks on Linux.
 
 [First, create a build sandbox using Anaconda](#build-linux-sandbox)  
 
@@ -186,6 +201,8 @@ Continue following [superbuild-linux.sh](superbuild-linux.sh).
 Follow example in [superbuild-linux.sh](superbuild-linux.sh).
 
 6. **ShapeWorks**
+
+Note: In the superbuild script the shapeworks is set up such that you must run the script from its parent directory i.e. from inside shapeworks repo cloned on your local machine. 
 If using the Anaconda sandbox, create a derived environment for this build:
 ```
 conda create --name shapeworks_build --clone build-foundation

@@ -13,7 +13,7 @@
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #include "itkImageFileReader.h"
-#include "itkMultiThreader.h"
+#include "itkMultiThreaderBase.h"
 #include "tinyxml.h"
 #include <sstream>
 #include <string>

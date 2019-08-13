@@ -102,4 +102,6 @@ protected:
 # include "itkParticlePositionWriter.txx"
 #endif
 
+#include "itkParticlePositionWriter.txx"
+
 #endif

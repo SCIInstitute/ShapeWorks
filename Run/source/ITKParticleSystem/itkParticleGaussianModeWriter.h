@@ -102,5 +102,7 @@ protected:
 #include "itkParticleGaussianModeWriter.txx"
 #endif
 
+#include "itkParticleGaussianModeWriter.txx"
+
 #endif
 

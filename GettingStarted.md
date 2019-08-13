@@ -63,7 +63,7 @@ In order to avoid having to type your password every time you refresh your sourc
 ```
 $ git clone git@github.com:sciinstitute/ShapeWorks
 ```
-_Now that you've cloned the source you can already [build ShapeWorks](INSTALL.md#build) if you want._
+_Now that you've cloned the source you can already [build ShapeWorks](BUILD.md#build) if you want._
 
 View current state (branch and modifications, both staged and unstaged):  
 ```
@@ -240,7 +240,7 @@ $ git commit --amend
 
 ## Building ShapeWorks
 
-Please see **[INSTALL.md](INSTALL.md)** for the current build instructions.
+Please see **[BUILD.md](BUILD.md)** for the current build instructions.
 
 
 ## Markdown Basics

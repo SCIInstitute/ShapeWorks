@@ -137,5 +137,6 @@ private:
 #include "itkParticleMeanCurvatureAttribute.txx"
 #endif
 
+#include "itkParticleMeanCurvatureAttribute.txx"
 
 #endif

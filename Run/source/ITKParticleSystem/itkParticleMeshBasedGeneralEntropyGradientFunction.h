@@ -268,4 +268,6 @@ protected:
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.txx"
 #endif
 
+#include "itkParticleMeshBasedGeneralEntropyGradientFunction.txx"
+
 #endif // ITKPARTICLEMESHBASEDGENERALENTROPYGRADIENTFUNCTION_H

@@ -32,6 +32,7 @@ Class for triangle meshes.
 #include <vnl/vnl_sparse_matrix.h>
 #include <vnl/algo/vnl_svd.h>
 #include <vnl/algo/vnl_sparse_lu.h>
+#include <vcl_legacy_aliases.h>
 
 //#define SHOW_WARNING 1
 
@@ -53,7 +54,8 @@ Class for triangle meshes.
 #include <string>
 #include <fstream>
 #include <cstdlib>
-#include <vcl_list.h>
+
+#include <vcl_compiler.h>
 
 // Praful end
 
