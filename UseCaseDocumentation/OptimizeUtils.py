@@ -1,6 +1,6 @@
 import numpy as np
 import io
-from colorama import Fore
+from termcolor import colored, cprint
 import glob
 import os
 import shutil
