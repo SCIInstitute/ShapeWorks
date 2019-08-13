@@ -150,7 +150,7 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 			cprint(("Input Segmentation Filename : ", inname), 'cyan')
 			cprint(("Output Segmentation Filename : ", outname), 'yellow')
 			cprint(("Output Parameter Filename : ", paramname), 'yellow')
-			print(Fore.WHITE,"###########################################")
+			print("###########################################")
 			print(" ")
 			execCommand = "TranslateShapeToImageOrigin --inFilename " + inname + " --outFilename " + outname + " --useCenterOfMass 1 --parameterFilename " + paramname 
 			os.system(execCommand)
@@ -268,7 +268,7 @@ def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, 
 		cprint(("Input Segmentation Filename : ", inname), 'cyan')
 		cprint(("Input Reference Filename : ", refFile), 'cyan')
 		cprint(("Output Segmentation Filename : ", outname), 'yellow')
-		print(Fore.WHITE,"###########################################")
+		print("###########################################")
 		print(" ")
 		execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
 		os.system(execCommand)
