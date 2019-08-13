@@ -61,7 +61,7 @@ with ZipFile(filename, 'r') as zipObj:
 	else:
 		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
-fileList = fileList[:3]
+#fileList = fileList[:3]
 """
 Most of the following steps even though wrapped in python functions are using
 the undelying c++ code, for whihc we need to call the source paths to the 
