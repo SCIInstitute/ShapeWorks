@@ -1,14 +1,14 @@
 import numpy as np
 import io
-from colorama import Fore
 import glob
 import os
 import shutil
 import xml.etree.ElementTree as ET
+from termcolor import colored, cprint
 
 def create_View2_xml(xmlfilename, pointFileList):
 	root = ET.Element('sample')
-	input_points = ET.SubElement(root, 'input_points')
+	input_points = ET.SubElement(root, 'point_files')
 	input_points.text = "\n"
 	for i in range(len(pointFileList)):
 		t1 = input_points.text
