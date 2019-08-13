@@ -30,29 +30,9 @@ if [[ -z $BUILD_CLEAN ]]; then BUILD_CLEAN=0; fi
 if [[ -z $HAVE_QT ]];     then HAVE_QT=0;     fi
 if [[ -z $BUILD_POST ]];  then BUILD_POST=1;  fi
 if [[ -z $NUM_PROCS ]];   then NUM_PROCS=4;   fi
-if [[ -z $USE_CONDA ]]; then USE_CONDA=0; fi
 if [[ $HAVE_QT = 1 ]]; then
   echo 'For GUI applications, please make sure Qt5 is installed and that qmake is in the path.' >&2
   echo 'Download Qt5 from: https://download.qt.io/archive/qt/' >&2
-fi
-
-# Check to see if using conda env. If so, install conda dependencies
-# Assumes conda env by default
-if [[ -z $USE_CONDA ]]; then
-  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  bash ./Miniconda3-latest-MacOSX-x86_64.sh
-  conda create --yes --name shapeworks-foundation python=3.5
-  conda activate shapeworks
-  conda install --yes -c anaconda cmake
-  conda install --yes -c anaconda geotiff
-  conda install --yes -c anaconda libxrandr-devel-cos6-x86_64
-  conda install --yes -c conda-forge xorg-libx11
-  conda install --yes -c anaconda libxinerama-devel-cos6-x86_64
-  conda install --yes -c anaconda libxcursor-devel-cos6-x86_64
-  conda install --yes -c anaconda libxi-devel-cos6-x86_64
-  conda install --yes numpy
-  conda install --yes matplotlib
-  conda install --yes colorama
 fi
 
 ## create build and install directories
