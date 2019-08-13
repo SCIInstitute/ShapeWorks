@@ -23,8 +23,9 @@ echo "ShapeWorks superbuild for Linux"
 #
 
 # helper functions
-SRC=$(dirname "$(readlink -f "$0")")
-. ${SRC}/superbuild-utils.sh
+#SRC=$(dirname "$(readlink -f "$0")")
+#. ${SRC}/superbuild-utils.sh
+SRC=`pwd`
 
 if [[ -z $BUILD_CLEAN ]]; then BUILD_CLEAN=0; fi
 if [[ -z $HAVE_QT ]];     then HAVE_QT=0;     fi
@@ -52,7 +53,7 @@ if [[ -z $VXL_DIR ]]; then
   
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -Wno-dev ${VXL_DIR}
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DVXL_USE_DCMTK:BOOL=OFF -Wno-dev ${VXL_DIR}
   make -j${NUM_PROCS} install
 fi
 
@@ -100,5 +101,5 @@ make -j${NUM_PROCS} install
 echo "-----------------------------------------"
 echo "ShapeWorks has been installed in ${INSTALL_DIR}."
 echo "Set LD_LIBRARY_PATH for shared libraries to be found:"
-echo "  export LD_LIBRARY_PATH=$(pwd)/install/lib:$(pwd)/install/lib/vtk-5.10$LD_LIBRARY_PATH"
+echo "  export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:\$LD_LIBRARY_PATH"
 echo "-----------------------------------------"
