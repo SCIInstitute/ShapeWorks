@@ -135,7 +135,8 @@ TODO: For now, please try the instructions for [Mojave](#build-mojave)
 1. **First** install anaconda and create a sandbox environment. While this step is optional, we highly recommend it, as using a conda environment allows you to do simultaneous builds, which may each require different dependencies. Using a conda env allows you to cleanly separate those. Note that the dependencies installed with the following conda install commands can be done equivalently with apt install. The following lines are also found in [conda_installs.sh](conda_installs.sh), and will be run with the command `./conda_installs.sh`.  
 ```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash ./Miniconda3-latest-MacOSX-x86_64.sh
+bash ./Miniconda3-latest-Linux-x86_64.sh
+source ~/miniconda3/bin/activate
 conda create --yes --name shapeworks-foundation python=3.5
 conda activate shapeworks
 conda install --yes -c anaconda cmake
