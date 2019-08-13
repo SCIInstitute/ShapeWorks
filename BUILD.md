@@ -150,7 +150,28 @@ conda install --yes matplotlib
 conda install --yes colorama
 ```
 
-2. **Simply** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. [Refer to the script itself](superbuild.sh) for detailed instructions.
+2. **Simply** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. These are the arguments the [superbuild script](superbuild.sh) accepts:
+```
+# Call this script by specifying arguments in the same command.
+# Ex:
+#   NUM_PROCS=16 HAVE_QT=1 ./superbuild-linux.sh
+#
+# Arguments:
+#
+#  BUILD_CLEAN:   whether or not to remove all build directories and clone new dependencies
+#
+#  VXL_DIR:       if you already have VXL its install path can be specified
+#  VTK_DIR:       if you already have VTK its install path can be specified
+#  ITK_DIR:       if you already have ITK its install path can be specified
+#
+#  BUILD_DIR:     by default creates a subdirectory of the current directory called 'build' where ShapeWorks and all its external dependencies will be built
+#  INSTALL_DIR:   by default creates a subdirectory of the current directory called 'install' where ShapeWorks and all external dependencies are installed
+#  NUM_PROCS:     number of processors to use for parallel builds (default is 4)
+#
+#  BUILD_POST:    whether or not to build any applications in Post (default is to build them all, see https://github.com/SCIInstitute/ShapeWorks/issues/58 to understand why this is even an option here)
+#  HAVE_QT:       whether or not qt version 4.x is installed in your system, set 0 if not and it will skip building shapeworksview2
+#
+```
 For instance:
 ```
 BUILD_CLEAN=1 NUM_PROCS=8 VXL_DIR=/mylocation/ ./superbuild
