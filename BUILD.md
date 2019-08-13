@@ -132,10 +132,7 @@ TODO: For now, please try the instructions for [Mojave](#build-mojave)
 
 ### Linux
 
-Notes for building ShapeWorks on Linux.
-
-[First, create a build sandbox using Anaconda]
-This first step is optional but recommended. Anaconda enables simultaneous builds that require different versions of dependencies (e.g., ViSUS, ShapeWorks, and VisIt). Note that you can install all of these libraries to your system with a similar apt install command.  
+1. **First** install anaconda and create a sandbox environment. While this step is optional, we highly recommend it, as using a conda environment allows you to do simultaneous builds, which may each require different dependencies. Using a conda env allows you to cleanly separate those. Note that the dependencies installed with the following conda install commands can be done equivalently with apt install.
 ```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash ./Miniconda3-latest-MacOSX-x86_64.sh
@@ -153,11 +150,18 @@ conda install --yes matplotlib
 conda install --yes colorama
 ```
 
-You can simply run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. [Refer to the script itself](superbuild-linux.sh) for detailed instructions.
+2. **Simply** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. [Refer to the script itself](superbuild.sh) for detailed instructions.
+For instance:
+```
+BUILD_CLEAN=1 NUM_PROCS=8 VXL_DIR=/mylocation/ ./superbuild
+```
 
 The following dependencies are installed in superbuild. We show which lines they are found on for convenience:
+
 **VXL** [65-77]
+
 **VTK** [79-91]
+
 **ITK** [93-105]
 
 An additional, optional, dependency is Qt, which is not installed in the superbuild script.
