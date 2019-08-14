@@ -132,10 +132,10 @@ conda activate shapeworks-olddeps-foundation
 conda install --yes -c anaconda -c conda-forge cmake openmp ccache
 ```
 
-You can simply run [superbuild-linux.sh](superbuild-linux.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. [Refer to the script itself](superbuild-linux.sh) for detailed instructions.
+You can simply run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. [Refer to the script itself](superbuild-linux.sh) for detailed instructions.
 
 2. **VXL**
-Follow example in [superbuild-linux.sh](superbuild-linux.sh).
+Follow example in [superbuild.sh](superbuild.sh).
 
 3. **Qt4**
 You must install Qt4 if you want to use the ShapeWorksView2 application.
@@ -145,10 +145,10 @@ If using the Anaconda sandbox, install tbb-devel (needed by vtk):
 ```
 conda install -c intel tbb-devel
 ```
-Continue following [superbuild-linux.sh](superbuild-linux.sh).
+Continue following [superbuild.sh](superbuild.sh).
  
 5. **ITK**
-Follow example in [superbuild-linux.sh](superbuild-linux.sh).
+Follow example in [superbuild.sh](superbuild.sh).
  
 6. **ShapeWorks**
 
@@ -158,7 +158,7 @@ If using the Anaconda sandbox, create a derived environment for this build:
 conda create --name shapeworks_build --clone build-foundation
 conda activate shapeworks_build
 ```
-Then simply continue with the example in [superbuild-linux.sh](superbuild-linux.sh).
+Then simply continue with the example in [superbuild.sh](superbuild.sh).
 
 #### Running
 
