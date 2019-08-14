@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "ShapeWorks superbuild for Linux"
+echo "ShapeWorks superbuild"
 
 # Call this script by specifying arguments in the same command.
 # Ex:
-#   NUM_PROCS=16 HAVE_QT=1 ./superbuild-linux.sh
+#   NUM_PROCS=16 HAVE_QT=1 ./superbuild.sh
 #
 # Arguments:
 #
