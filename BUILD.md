@@ -165,7 +165,7 @@ Then simply continue with the example in [superbuild.sh](superbuild.sh).
 Some shared libraries are not specified at link time and therefore, if using the Anaconda sandbox, their paths must be made available using the following:  
 ```
 $ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$CONDA_PREFIX/lib/vtk-5.10
-```
+v```
 _NOTE:_ This issue may related to a variety of different configuration options, such as our explicit disablement of JPEG in the VXL compilation, or possibly they are problems with old libraries that have since been fixed. We will address these as we upgrade to the latest versions of all dependencies. 
 
 ### SuSE
@@ -193,6 +193,14 @@ https://docs.microsoft.com/en-us/windows/wsl/install-win10
 2. Install (using 'sudo apt install') packages:
 
 build-essential cmake MesaGL libglu1-mesa-dev freeglut3-dev mesa-common-dev libosmesa6-dev libxrandr-dev libxinerama-dev libglu1-mesa-dev libxcursor-dev libi-dev qt-dev qttools5-dev libqt5x11extras5-dev libqt5x11extras5 libqt53dextras5 libxi-dev python3 python3-numpy python3-termcolor python3-matplotlib
+
+3. To enable visualization, follow the instructions here to install and use VcXsrv
+
+https://seanthegeek.net/234/graphical-linux-applications-bash-ubuntu-windows/
+
+VcXsrv is available here:
+
+https://sourceforge.net/projects/vcxsrv/
 
 3. Run [superbuild.sh](superbuild.sh) to build.
 
