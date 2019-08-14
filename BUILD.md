@@ -184,13 +184,15 @@ _(Ubuntu-specific instructions)_
 
 ### Windows
 
-The current method for building ShapeWorks on Windows is to utilize its Linux shell.
+The current method for building ShapeWorks on Windows is to utilize the Windows Subsystem for Linux.
 
-1. Install the Linux Subsystem for Windows (details elsewhere online from Microsoft)
+1. Install the Linux Subsystem for Windows:
+
+https://docs.microsoft.com/en-us/windows/wsl/install-win10
 
 2. Install (using 'sudo apt install') packages:
 
-g++-4.8 gcc-4.8 MesaGL libglu1-mesa-dev freeglut3-dev mesa-common-dev libosmesa6-dev cmake
+build-essential cmake MesaGL libglu1-mesa-dev freeglut3-dev mesa-common-dev libosmesa6-dev libxrandr-dev libxinerama-dev libglu1-mesa-dev libxcursor-dev libi-dev qt-dev qttools5-dev libqt5x11extras5-dev libqt5x11extras5 libqt53dextras5 libxi-dev
 
-3. See [superbuild-windows.sh](superbuild-windows.sh) for details on installing ShapeWorks and its dependencies.
+3. Run [superbuild.sh](superbuild.sh) to build.
 
