@@ -4,6 +4,7 @@ if [[ ! 'command -v conda' ]]; then
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
   bash ./Miniconda3-latest-MacOSX-x86_64.sh
   source ~/miniconda3/bin/activate
+  rm ./Miniconda3-latest-MacOSX-x86_64.sh
 fi
 conda create --yes --name shapeworks python=3.5
 conda activate shapeworks
