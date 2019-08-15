@@ -3,7 +3,7 @@
 superbuild()
 {
 
-echo "ShapeWorks Superbuild"
+echo "## ShapeWorks Superbuild"
 
 # Call this script by specifying arguments in the same command.
 # Ex:
@@ -41,8 +41,8 @@ if [[ -z $HAVE_QT ]];     then HAVE_QT=0;     fi
 if [[ -z $BUILD_POST ]];  then BUILD_POST=1;  fi
 if [[ -z $NUM_PROCS ]];   then NUM_PROCS=8;   fi
 if [[ $HAVE_QT = 1 ]]; then
-  echo 'For GUI applications, please make sure Qt5 is installed and that qmake is in the path.' >&2
-  echo 'Download Qt5 from: https://download.qt.io/archive/qt/' >&2
+  echo '## For GUI applications, please make sure Qt5 is installed and that qmake is in the path.' >&2
+  echo '## Download Qt5 from: https://download.qt.io/archive/qt/' >&2
 fi
 
 ## create build and install directories
@@ -107,11 +107,11 @@ cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${INSTALL_DIR} -DVXL_DIR=$
 make -j${NUM_PROCS} install || exit 1
 
 # Inform users of ShapeWorks install path:
-echo "-----------------------------------------"
-echo "ShapeWorks has successfully been installed in ${INSTALL_DIR}."
-echo "Set LD_LIBRARY_PATH for shared libraries to be found:"
-echo "  export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:\$LD_LIBRARY_PATH"
-echo "-----------------------------------------"
+echo "## -----------------------------------------"
+echo "## ShapeWorks has successfully been installed in ${INSTALL_DIR}."
+echo "## Set LD_LIBRARY_PATH for shared libraries to be found:"
+echo "##   export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:\$LD_LIBRARY_PATH"
+echo "## -----------------------------------------"
 
 }
 

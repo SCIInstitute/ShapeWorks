@@ -10,6 +10,10 @@ First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#s
 ```
 $ git clone https://github.com/SCIInstitute/ShapeWorks
 ```
+If you want to build a branch other than master, check that branch out next:
+```
+$ git checkout -b <branchname>
+```
 
 Then follow the instructions for your specific platform:  
 
