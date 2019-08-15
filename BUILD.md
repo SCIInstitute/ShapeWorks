@@ -25,23 +25,30 @@ Then follow the instructions for your specific platform:
 ```
 # Call this script by specifying arguments in the same command.
 # Ex:
-#   NUM_PROCS=16 HAVE_QT=1 ./superbuild.sh
+#                 NUM_PROCS=16 HAVE_QT=1 ./superbuild.sh
 #
 # Arguments:
 #
-#  BUILD_CLEAN:   whether or not to remove all build directories and clone new dependencies
+#   BUILD_CLEAN:   whether or not to remove all build directories and clone new dependencies
 #
-#  VXL_DIR:       if you already have VXL its install path can be specified
-#  VTK_DIR:       if you already have VTK its install path can be specified
-#  ITK_DIR:       if you already have ITK its install path can be specified
+#   VXL_DIR:       if you already have VXL its install path can be specified
+#   VTK_DIR:       if you already have VTK its install path can be specified
+#   ITK_DIR:       if you already have ITK its install path can be specified
 #
-#  BUILD_DIR:     by default creates a subdirectory of the current directory called 'build' where ShapeWorks and all its external dependencies will be built
-#  INSTALL_DIR:   by default creates a subdirectory of the current directory called 'install' where ShapeWorks and all external dependencies are installed
-#  NUM_PROCS:     number of processors to use for parallel builds (default is 8)
+#   BUILD_DIR:     by default creates a subdirectory of the current directory
+#                  called 'build' where ShapeWorks and all its external
+#                  dependencies will be built
+#   INSTALL_DIR:   by default creates a subdirectory of the current directory
+#                  called 'install' where ShapeWorks and all external
+#                  dependencies are installed
+#   NUM_PROCS:     number of processors to use for parallel builds (default is 8)
 #
-#  BUILD_POST:    whether or not to build any applications in Post (default is to build them all, see https://github.com/SCIInstitute/ShapeWorks/issues/58 to understand why this is even an option here)
-#  HAVE_QT:       whether or not qt version 5.x is installed in your system, set 0 if not and it will skip building shapeworksview2
-#
+#   BUILD_POST:    whether or not to build any applications in Post
+#                  (default is to build them all, see
+#                  https://github.com/SCIInstitute/ShapeWorks/issues/58
+#                  to understand why this is even an option here)
+#   HAVE_QT:       whether or not qt version 5.x is installed in your system,
+#                  set 0 if not and it will skip building shapeworksview2
 ```
 For instance:
 ```
