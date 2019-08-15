@@ -132,26 +132,7 @@ TODO: For now, please try the instructions for [Mojave](#build-mojave)
 
 ### Linux
 
-1. **First** install anaconda and create a sandbox environment. While this step is optional, we highly recommend it, as using a conda environment allows you to do simultaneous builds, which may each require different dependencies. Using a conda env allows you to cleanly separate those. Note that the dependencies installed with the following conda install commands can be done equivalently with apt install [apt_installs.sh](apt_installs.sh). The following lines are also found in [conda_installs.sh](conda_installs.sh), and will be run with the command `./conda_installs.sh`.  
-```
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash ./Miniconda3-latest-Linux-x86_64.sh
-source ~/miniconda3/bin/activate
-conda create --yes --name shapeworks python=3.5
-conda activate shapeworks
-conda install --yes -c anaconda cmake
-conda install --yes -c anaconda geotiff
-conda install --yes -c anaconda libxrandr-devel-cos6-x86_64
-conda install --yes -c conda-forge xorg-libx11
-conda install --yes -c anaconda libxinerama-devel-cos6-x86_64
-conda install --yes -c anaconda libxcursor-devel-cos6-x86_64
-conda install --yes -c anaconda libxi-devel-cos6-x86_64
-conda install --yes numpy
-conda install --yes matplotlib
-conda install --yes colorama
-conda install --yes -c conda-forge libuuid
-conda install --yes -c conda-forge xorg-libsm
-```
+1. **First** install anaconda and create a sandbox environment. While this step is optional, we highly recommend it, as using a conda environment allows you to do simultaneous builds, which may each require different dependencies. Using a conda env allows you to cleanly separate those. This can be done by running [conda_installs.sh](conda_installs.sh) with the command `./conda_installs.sh`. Note that the dependencies installed with conda can be done equivalently with apt install [apt_installs.sh](apt_installs.sh) `./apt_installs.sh`. 
 
 2. **Simply** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. These are the arguments the [superbuild script](superbuild.sh) accepts:
 ```

@@ -1,11 +1,13 @@
 #!/bin/bash
 
-
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash ./Miniconda3-latest-MacOSX-x86_64.sh
-source ~/miniconda3/bin/activate
+if [[ ! 'command -v conda' ]]; then
+  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  bash ./Miniconda3-latest-MacOSX-x86_64.sh
+  source ~/miniconda3/bin/activate
+fi
 conda create --yes --name shapeworks python=3.5
 conda activate shapeworks
+conda update --yes -n base -c defaults conda
 conda install --yes -c anaconda cmake
 conda install --yes -c anaconda geotiff
 conda install --yes -c anaconda libxrandr-devel-cos6-x86_64
