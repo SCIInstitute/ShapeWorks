@@ -6,20 +6,22 @@ _coming soon:_ instructions for user installation without needing to build Shape
 
 ## Build
 
-First, [clone the ShapeWorks source](GettingStarted.md#source-and-branches).
+First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#source-and-branches) for more details).
 ```
 $ git clone https://github.com/SCIInstitute/ShapeWorks
 ```
 
 Then follow the instructions for your specific platform:  
+
 [OSX/Linux](#osx/linux)
+
 [Windows](#windows)  
 
 ### OSX/Linux
 
-1. **First** install anaconda and create a sandbox environment. While this step is optional, we highly recommend it, as using a conda environment allows you to do simultaneous builds, which may each require different dependencies. Using a conda env allows you to cleanly separate those. This can be done by running [conda_installs.sh](conda_installs.sh) with the command `./conda_installs.sh`. Note that the dependencies installed with conda can be done equivalently with apt install [apt_installs.sh](apt_installs.sh) `./apt_installs.sh`.  
+1. **First** install anaconda and create a sandbox environment.  While this step is optional, we highly recommend it, as using a conda environment allows you to do simultaneous builds, which may each require different dependencies.  Using a conda env allows you to cleanly separate those.  This can be done by running [conda_installs.sh](conda_installs.sh) with the command `./conda_installs.sh`.  Note that the dependencies installed with conda can be done equivalently with apt install [apt_installs.sh](apt_installs.sh) `./apt_installs.sh`.  
 
-2. **Simply** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. These are the arguments the [superbuild script](superbuild.sh) accepts:
+2. **Simply** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves.  Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules.  These are the arguments the [superbuild script](superbuild.sh) accepts:
 ```
 # Call this script by specifying arguments in the same command.
 # Ex:
@@ -48,8 +50,7 @@ BUILD_CLEAN=1 NUM_PROCS=8 VXL_DIR=/mylocation/ ./superbuild
 
 The following dependencies are installed in superbuild. We show which lines they are found on for convenience:
 
-**Qt5** Is an optional dependency which is not installed in the superbuild script.
- However, it is required for using ShapeWorksView2 (our visualization application). If you are planning on using the visualization tools, you can install Qt before running the superbuild script. This is done easily in conda: `conda install --yes -c anaconda qt`. Without conda you can install it from their [site](https://doc.qt.io/qt-5/gettingstarted.html#online-installation). 
+**Qt5** Is an optional dependency which is not installed in the superbuild script.  However, it is required for using ShapeWorksView2 (our visualization application).  If you are planning on using the visualization tools, you can install Qt before running the superbuild script.  This is done easily in conda: `conda install --yes -c anaconda qt`.  Without conda you can install it from their [site](https://doc.qt.io/qt-5/gettingstarted.html#online-installation).
 
 **VXL** [65-77]
 
@@ -57,7 +58,7 @@ The following dependencies are installed in superbuild. We show which lines they
 
 **ITK** [93-105]
 
-**ShapeWorks** is installed in lines [113-124].  
+**ShapeWorks** [113-124]  
 
 
 ### Windows
