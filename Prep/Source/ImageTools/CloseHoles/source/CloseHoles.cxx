@@ -35,7 +35,7 @@ int main(int argc, char * argv[] )
     optparse::Values & options = parser.parse_args(argc,argv);
     std::vector<std::string> args = parser.args();
 
-    if(argc < 9)
+    if(argc < 3)
     {
         parser.print_help();
         return EXIT_FAILURE;

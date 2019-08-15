@@ -1,10 +1,13 @@
 #!/bin/bash
 
-echo "ShapeWorks superbuild for Linux"
+superbuild()
+{
+
+echo "ShapeWorks Superbuild"
 
 # Call this script by specifying arguments in the same command.
 # Ex:
-#   NUM_PROCS=16 HAVE_QT=1 ./superbuild-linux.sh
+#   NUM_PROCS=16 HAVE_QT=1 ./superbuild.sh
 #
 # Arguments:
 #
@@ -23,8 +26,9 @@ echo "ShapeWorks superbuild for Linux"
 #
 
 # helper functions
-SRC=$(dirname "$(readlink -f "$0")")
-. ${SRC}/superbuild-utils.sh
+#SRC=$(dirname "$(readlink -f "$0")")
+#. ${SRC}/superbuild-utils.sh
+SRC=`pwd`
 
 if [[ -z $BUILD_CLEAN ]]; then BUILD_CLEAN=0; fi
 if [[ -z $HAVE_QT ]];     then HAVE_QT=0;     fi
@@ -52,8 +56,8 @@ if [[ -z $VXL_DIR ]]; then
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -Wno-dev ${VXL_DIR}
-  make -j${NUM_PROCS} install
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DVXL_USE_DCMTK:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ${VXL_DIR}
+  make -j${NUM_PROCS} install || exit 1
 fi
 
 if [[ -z $VTK_DIR ]]; then
@@ -66,8 +70,8 @@ if [[ -z $VTK_DIR ]]; then
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${HAVE_QT} -DVTK_QT_VERSION=5 -Wno-dev ${VTK_DIR}
-  make -j${NUM_PROCS} install
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${HAVE_QT} -DVTK_QT_VERSION=5 -DCMAKE_BUILD_TYPE=Release -Wno-dev ${VTK_DIR}
+  make -j${NUM_PROCS} install || exit 1
 fi
 
 if [[ -z $ITK_DIR ]]; then
@@ -80,8 +84,8 @@ if [[ -z $ITK_DIR ]]; then
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -Wno-dev ${ITK_DIR}
-  make -j${NUM_PROCS} install
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=Release -Wno-dev ${ITK_DIR}
+  make -j${NUM_PROCS} install || exit 1
 fi
 
 OPENMP_FLAG="-DUSE_OPENMP=ON"
@@ -93,12 +97,16 @@ fi
 cd ${BUILD_DIR}
 if [[ $BUILD_CLEAN = 1 ]]; then rm -rf shapeworks-build; fi
 mkdir -p shapeworks-build && cd shapeworks-build
-cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${INSTALL_DIR} -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${INSTALL_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${HAVE_QT} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated ${SRC}
-make -j${NUM_PROCS} install
+cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${INSTALL_DIR} -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${INSTALL_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${HAVE_QT} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
+make -j${NUM_PROCS} install || exit 1
 
 # Inform users of ShapeWorks install path:
 echo "-----------------------------------------"
-echo "ShapeWorks has been installed in ${INSTALL_DIR}."
+echo "ShapeWorks has successfully been installed in ${INSTALL_DIR}."
 echo "Set LD_LIBRARY_PATH for shared libraries to be found:"
-echo "  export LD_LIBRARY_PATH=$(pwd)/install/lib:$(pwd)/install/lib/vtk-5.10$LD_LIBRARY_PATH"
+echo "  export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:\$LD_LIBRARY_PATH"
 echo "-----------------------------------------"
+
+}
+
+(time superbuild 2>&1) 2>&1 | tee shapeworks_superbuild.log
