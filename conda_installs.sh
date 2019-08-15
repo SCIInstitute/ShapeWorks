@@ -18,3 +18,4 @@ conda install --yes -c conda-forge xorg-libsm
 conda install --yes numpy
 conda install --yes matplotlib
 conda install --yes colorama
+conda install --yes termcolor
