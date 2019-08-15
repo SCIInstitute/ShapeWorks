@@ -157,7 +157,7 @@ conda install --yes -c conda-forge xorg-libsm
 ```
 # Call this script by specifying arguments in the same command.
 # Ex:
-#   NUM_PROCS=16 HAVE_QT=1 ./superbuild-linux.sh
+#   NUM_PROCS=16 HAVE_QT=1 ./superbuild.sh
 #
 # Arguments:
 #
@@ -169,7 +169,7 @@ conda install --yes -c conda-forge xorg-libsm
 #
 #  BUILD_DIR:     by default creates a subdirectory of the current directory called 'build' where ShapeWorks and all its external dependencies will be built
 #  INSTALL_DIR:   by default creates a subdirectory of the current directory called 'install' where ShapeWorks and all external dependencies are installed
-#  NUM_PROCS:     number of processors to use for parallel builds (default is 4)
+#  NUM_PROCS:     number of processors to use for parallel builds (default is 8)
 #
 #  BUILD_POST:    whether or not to build any applications in Post (default is to build them all, see https://github.com/SCIInstitute/ShapeWorks/issues/58 to understand why this is even an option here)
 #  HAVE_QT:       whether or not qt version 4.x is installed in your system, set 0 if not and it will skip building shapeworksview2

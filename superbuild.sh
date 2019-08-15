@@ -19,7 +19,7 @@ echo "ShapeWorks Superbuild"
 #
 #  BUILD_DIR:     by default creates a subdirectory of the current directory called 'build' where ShapeWorks and all its external dependencies will be built
 #  INSTALL_DIR:   by default creates a subdirectory of the current directory called 'install' where ShapeWorks and all external dependencies are installed
-#  NUM_PROCS:     number of processors to use for parallel builds (default is 4)
+#  NUM_PROCS:     number of processors to use for parallel builds (default is 8)
 #
 #  BUILD_POST:    whether or not to build any applications in Post (default is to build them all, see https://github.com/SCIInstitute/ShapeWorks/issues/58 to understand why this is even an option here)
 #  HAVE_QT:       whether or not qt version 4.x is installed in your system, set 0 if not and it will skip building shapeworksview2
@@ -32,7 +32,7 @@ SRC=`pwd`
 if [[ -z $BUILD_CLEAN ]]; then BUILD_CLEAN=0; fi
 if [[ -z $HAVE_QT ]];     then HAVE_QT=0;     fi
 if [[ -z $BUILD_POST ]];  then BUILD_POST=1;  fi
-if [[ -z $NUM_PROCS ]];   then NUM_PROCS=4;   fi
+if [[ -z $NUM_PROCS ]];   then NUM_PROCS=8;   fi
 if [[ $HAVE_QT = 1 ]]; then
   echo 'For GUI applications, please make sure Qt5 is installed and that qmake is in the path.' >&2
   echo 'Download Qt5 from: https://download.qt.io/archive/qt/' >&2
