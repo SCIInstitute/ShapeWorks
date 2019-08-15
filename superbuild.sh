@@ -26,9 +26,8 @@ echo "ShapeWorks Superbuild"
 #
 
 # helper functions
-#SRC=$(dirname "$(readlink -f "$0")")
-#. ${SRC}/superbuild-utils.sh
 SRC=`pwd`
+. ${SRC}/superbuild-utils.sh
 
 if [[ -z $BUILD_CLEAN ]]; then BUILD_CLEAN=0; fi
 if [[ -z $HAVE_QT ]];     then HAVE_QT=0;     fi
@@ -40,8 +39,8 @@ if [[ $HAVE_QT = 1 ]]; then
 fi
 
 ## create build and install directories
-if [[ -z $BUILD_DIR ]];   then BUILD_DIR=$(pwd)/build;     fi
-if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=$(pwd)/install; fi
+if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/build;     fi
+if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/install; fi
 mkdir -p ${BUILD_DIR}
 mkdir -p ${INSTALL_DIR}
 
@@ -70,7 +69,7 @@ if [[ -z $VTK_DIR ]]; then
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${HAVE_QT} -DVTK_QT_VERSION=5 -DCMAKE_BUILD_TYPE=Release -Wno-dev ${VTK_DIR}
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${HAVE_QT} -DVTK_QT_VERSION=5 -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ${VTK_DIR}
   make -j${NUM_PROCS} install || exit 1
 fi
 
