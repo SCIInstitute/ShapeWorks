@@ -149,6 +149,8 @@ conda install --yes -c anaconda libxi-devel-cos6-x86_64
 conda install --yes numpy
 conda install --yes matplotlib
 conda install --yes colorama
+conda install --yes -c conda-forge libuuid
+conda install --yes -c conda-forge xorg-libsm
 ```
 
 2. **Simply** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves. Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules. These are the arguments the [superbuild script](superbuild.sh) accepts:
