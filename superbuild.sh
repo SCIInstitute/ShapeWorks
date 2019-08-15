@@ -16,7 +16,6 @@ echo "ShapeWorks Superbuild"
 #  VXL_DIR:       if you already have VXL its install path can be specified
 #  VTK_DIR:       if you already have VTK its install path can be specified
 #  ITK_DIR:       if you already have ITK its install path can be specified
-#  QT5_DIR:       specify location of QT5
 #
 #  BUILD_DIR:     by default creates a subdirectory of the current directory called 'build' where ShapeWorks and all its external dependencies will be built
 #  INSTALL_DIR:   by default creates a subdirectory of the current directory called 'install' where ShapeWorks and all external dependencies are installed
@@ -46,10 +45,6 @@ if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=$(pwd)/install; fi
 mkdir -p ${BUILD_DIR}
 mkdir -p ${INSTALL_DIR}
 
-if [[ -z $QT5_DIR ]]; then
-    QT_CONFIG="-DQt5_DIR=$QT_DIR"
-fi
-
 ## build dependencies if their locations were not specified
 if [[ -z $VXL_DIR ]]; then
   VXL_VER="v2.0.2"
@@ -75,7 +70,7 @@ if [[ -z $VTK_DIR ]]; then
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF ${QT_CONFIG} -DVTK_Group_Qt:BOOL=${HAVE_QT} -DVTK_QT_VERSION=5 -DCMAKE_BUILD_TYPE=Release -Wno-dev ${VTK_DIR}
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${HAVE_QT} -DVTK_QT_VERSION=5 -DCMAKE_BUILD_TYPE=Release -Wno-dev ${VTK_DIR}
   make -j${NUM_PROCS} install || exit 1
 fi
 
@@ -102,7 +97,7 @@ fi
 cd ${BUILD_DIR}
 if [[ $BUILD_CLEAN = 1 ]]; then rm -rf shapeworks-build; fi
 mkdir -p shapeworks-build && cd shapeworks-build
-cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${INSTALL_DIR} -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${INSTALL_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${HAVE_QT} ${OPENMP_FLAG} ${QT_CONFIG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
+cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${INSTALL_DIR} -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${INSTALL_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${HAVE_QT} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
 make -j${NUM_PROCS} install || exit 1
 
 # Inform users of ShapeWorks install path:
