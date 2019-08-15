@@ -353,4 +353,3 @@ GLFWAPI EGLSurface glfwGetEGLSurface(GLFWwindow* window);
 #endif
 
 #endif /* _glfw3_native_h_ */
-

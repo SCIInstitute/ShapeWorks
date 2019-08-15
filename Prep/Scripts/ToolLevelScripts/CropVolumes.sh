@@ -16,23 +16,25 @@ scriptHome=../
 while [[ $# > 1 ]]
 do
   key="$1"
+  echo $key
   case $key in
-  
+
       -d|--data_dir)
       data_dir="$2"
       shift
       ;;
-      
+
       -i|--img_prefix) # prefix of mri images
       img_prefix="$2"
+      echo $img_prefix
       shift
       ;;
-      
-      -s|--seg_prefix) # prefix of the segmentation (binary image) 
+
+      -s|--seg_prefix) # prefix of the segmentation (binary image)
       seg_prefix="$2"
       shift
       ;;
-      
+
       -f|--seg_suffix) # suffix of the segmentation to be used for file search
       seg_suffix="$2"
       shift
@@ -47,12 +49,12 @@ do
       out_dir="$2"
       shift
       ;;
-      
+
       -s|--scriptHome)
       scriptHome="$2"
       shift
       ;;
-      
+
       --default)
       DEFAULT=YES
       shift
@@ -90,15 +92,15 @@ echo smallestIndex2 : $smallestIndex2
 mkdir -p $out_dir
 
 # CropImages -inFilename ${data_dir}${seg_prefix}_average.nrrd -outFilename ${out_dir}${seg_prefix}_average_cropped.nrrd -bbX $bb0 -bbY $bb1 -bbZ $bb2 \
-#                -startingIndexX $smallestIndex0 -startingIndexY $smallestIndex1 -startingIndexZ $smallestIndex2 
-               
+#                -startingIndexX $smallestIndex0 -startingIndexY $smallestIndex1 -startingIndexZ $smallestIndex2
+
 segPrefixLength=${#seg_prefix}
 for segfilename in $(find $data_dir -name "${seg_prefix}*${seg_suffix}.nrrd" | sort -t '\0' ) ;
 do
     prefix=$( GetFilePrefix ${segfilename} )
     nbr_of_dots=$( CountNumberOfOccurrencesOf  $prefix ".")
     tmp=1
-    nbr_of_dots=$(expr $nbr_of_dots - $tmp) 
+    nbr_of_dots=$(expr $nbr_of_dots - $tmp)
     count=0
     while [ $count -lt $nbr_of_dots ];
     do
@@ -108,21 +110,21 @@ do
 
     # make sure that the current file matches with the input prefix (laa_ prefix will also matach laa_wall)
     suffix=${prefix:segPrefixLength}
-    
+
     # # remove all occurences of underscore
     # suffix=$( RemoveAllOccurrenceOf $suffix "_" )
-    
+
     # remove all occurences of dot
     suffix=$( RemoveAllOccurrenceOf $suffix "." )
 
-    if [[ $( StringContainsOnlyNumbers $suffix ) -eq 1 ]]; 
+    if [[ $( StringContainsOnlyNumbers $suffix ) -eq 1 ]];
     then
         echo correct prefix
     fi
-    
+
     subject_id=$suffix
     imgfilename=${data_dir}${img_prefix}.${subject_id}${seg_suffix}.nrrd
-    
+
     segfilename_cropped=${out_dir}${seg_prefix}.${subject_id}${seg_suffix}.cropped.nrrd
     imgfilename_cropped=${out_dir}${img_prefix}.${subject_id}${seg_suffix}.cropped.nrrd
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
@@ -132,7 +134,7 @@ do
     EchoWithColor "segfilename_cropped $segfilename_cropped" "yellow"
     EchoWithColor  "imgfilename_cropped $imgfilename_cropped" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
-    
+
     if [ $process_raw -eq 1 ]
     then
       CropImages --inFilename $segfilename --outFilename $segfilename_cropped --bbX $bb0 --bbY $bb1 --bbZ $bb2 \
@@ -140,8 +142,6 @@ do
                  --MRIinFilename $imgfilename --MRIoutFilename $imgfilename_cropped
     else
       CropImages --inFilename $segfilename --outFilename $segfilename_cropped --bbX $bb0 --bbY $bb1 --bbZ $bb2 \
-                 --startingIndexX $smallestIndex0 --startingIndexY $smallestIndex1 --startingIndexZ $smallestIndex2 
+                 --startingIndexX $smallestIndex0 --startingIndexY $smallestIndex1 --startingIndexZ $smallestIndex2
     fi
 done
-
-
