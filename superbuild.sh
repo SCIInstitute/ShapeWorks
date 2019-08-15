@@ -1,6 +1,9 @@
 #!/bin/bash
 
-echo "ShapeWorks superbuild"
+superbuild()
+{
+
+echo "ShapeWorks Superbuild"
 
 # Call this script by specifying arguments in the same command.
 # Ex:
@@ -108,3 +111,7 @@ echo "ShapeWorks has successfully been installed in ${INSTALL_DIR}."
 echo "Set LD_LIBRARY_PATH for shared libraries to be found:"
 echo "  export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:\$LD_LIBRARY_PATH"
 echo "-----------------------------------------"
+
+}
+
+(time superbuild 2>&1) 2>&1 | tee shapeworks_superbuild.log
