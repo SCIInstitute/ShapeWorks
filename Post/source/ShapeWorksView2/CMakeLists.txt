@@ -19,15 +19,20 @@ ENDIF (WIN32)
 
 # this command finds Qt4 libraries and sets all required variables
 # note that it's Qt4, not QT4 or qt4
-SET(QT_MIN_VERSION "4.7.4")
-FIND_PACKAGE( Qt4 REQUIRED )
+SET(QT_MIN_VERSION "5.7.0")
+#FIND_PACKAGE( Qt5Widgets REQUIRED )
+#FIND_PACKAGE( Qt5Gui REQUIRED )
+#FIND_PACKAGE( Qt5Core REQUIRED )
+
+find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
+set(CMAKE_AUTOMOC OFF)
 
 # add some useful macros and variables
 # (QT_USE_FILE is a variable defined by FIND_PACKAGE( Qt4 ) that contains a path to CMake script)
-INCLUDE( ${QT_USE_FILE} )
+#INCLUDE( ${QT_USE_FILE} )
 
 # build with powercrust reconstruction
-ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
+#ADD_DEFINITIONS(-DSW_USE_POWERCRUST)
 
 
 ###########################################
@@ -117,13 +122,13 @@ enable_precompiled_headers(PrefixHeader.h SHAPEWORKSVIEW_SRCS)
 
 # this command will generate rules that will run rcc on all files from SHAPEWORKSVIEW_RCS
 # in result SHAPEWORKSVIEW_RC_SRCS variable will contain paths to files produced by rcc
-QT4_ADD_RESOURCES( SHAPEWORKSVIEW_RC_SRCS ${SHAPEWORKSVIEW_RCS} )
+QT5_ADD_RESOURCES( SHAPEWORKSVIEW_RC_SRCS ${SHAPEWORKSVIEW_RCS} )
 
 # this will run uic on .ui files:
-QT4_WRAP_UI( SHAPEWORKSVIEW_UI_HDRS ${SHAPEWORKSVIEW_UIS} )
+QT5_WRAP_UI( SHAPEWORKSVIEW_UI_HDRS ${SHAPEWORKSVIEW_UIS} )
 
 # and finally this will run moc:
-QT4_WRAP_CPP( SHAPEWORKSVIEW_MOC_SRCS ${SHAPEWORKSVIEW_MOC_HDRS} )
+QT5_WRAP_CPP( SHAPEWORKSVIEW_MOC_SRCS ${SHAPEWORKSVIEW_MOC_HDRS} )
 
 # we need this to be able to include headers produced by uic in our code
 # (CMAKE_BINARY_DIR holds a path to the build directory)
@@ -172,7 +177,10 @@ ELSE ( BUILD_SWV2_OSX_APP )
 ENDIF ( BUILD_SWV2_OSX_APP )
 
 
-TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} QVTK tinyxml vtkCommon vtkGraphics vtkImaging vtkRendering vtkWidgets)
+SET( QT_LIBRARIES Qt5::Widgets Qt5::Core )
+
+
+TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} tinyxml ${VTK_LIBRARIES})
 
 
 # INSTALLATION AND PACKAGING
@@ -207,13 +215,13 @@ INSTALL(TARGETS ShapeWorksView2
 #--------------------------------------------------------------------------------
 # Install needed Qt plugins by copying directories from the qt installation
 # One can cull what gets copied by using 'REGEX "..." EXCLUDE'
-INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+#INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
 
 #--------------------------------------------------------------------------------
 # Install needed Qt .nib files and others
-IF(APPLE)
-INSTALL(DIRECTORY "${QT_QTGUI_LIBRARY_RELEASE}/Versions/Current/Resources" DESTINATION ${contents_dest_dir} COMPONENT Runtime)
-ENDIF(APPLE)
+#IF(APPLE)
+#INSTALL(DIRECTORY "${QT_QTGUI_LIBRARY_RELEASE}/Versions/Current/Resources" DESTINATION ${contents_dest_dir} COMPONENT Runtime)
+#ENDIF(APPLE)
 
 
 

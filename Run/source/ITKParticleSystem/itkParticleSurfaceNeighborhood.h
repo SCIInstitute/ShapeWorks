@@ -93,4 +93,6 @@ private:
 # include "itkParticleSurfaceNeighborhood.txx"
 #endif
 
+#include "itkParticleSurfaceNeighborhood.txx"
+
 #endif

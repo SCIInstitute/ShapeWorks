@@ -96,4 +96,7 @@ private:
 #if ITK_TEMPLATE_TXX
 # include "itkParticleGoodBadAssessment.txx"
 #endif
+
+#include "itkParticleGoodBadAssessment.txx"
+
 #endif // ITKPARTICLEGOODBADASSESSMENT_H

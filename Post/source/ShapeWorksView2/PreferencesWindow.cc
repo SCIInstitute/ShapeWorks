@@ -4,6 +4,7 @@
 
 // qt
 #include <QtGui>
+#include <QPushButton>
 
 #include <PreferencesWindow.h>
 #include <Preferences.h>
@@ -20,7 +21,8 @@ PreferencesWindow::PreferencesWindow( QWidget* parent /*= 0 */ )
   this->ui->numThreadsMaxLabel->setText( QString::number( QThread::idealThreadCount() ) );
 
   QPushButton* resetButton = this->ui->buttonBox->button( QDialogButtonBox::RestoreDefaults );
-  QObject::connect( resetButton, SIGNAL( clicked() ), this, SLOT( restoreDefaults() ) );
+
+  connect( resetButton, SIGNAL( clicked(bool) ), this, SLOT( restoreDefaults(void) ) );
 }
 
 void PreferencesWindow::updateLabels()

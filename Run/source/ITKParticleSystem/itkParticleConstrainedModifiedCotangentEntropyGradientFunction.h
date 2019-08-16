@@ -240,4 +240,6 @@ protected:
 # include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.txx"
 #endif
 
+#include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.txx"
+
 #endif

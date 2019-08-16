@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 
             // TODO: write output vtk file
             vtkSmartPointer<vtkPolyDataWriter> out_writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-            out_writer->SetInput(polydata);
+            out_writer->SetInputData(polydata);
             out_writer->SetFileName(vtkFileName.c_str());
             out_writer->Update();
         }

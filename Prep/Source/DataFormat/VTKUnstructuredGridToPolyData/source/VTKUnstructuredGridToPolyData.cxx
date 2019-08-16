@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
         //    geomfilter->Update();
 
         vtkSmartPointer<vtkPolyDataWriter> wr = vtkSmartPointer<vtkPolyDataWriter>::New();
-        wr->SetInput(mesh);
+        wr->SetInputData(mesh);
         wr->SetFileName( outFilenames[shapeNo].c_str() );
         wr->Update();
 

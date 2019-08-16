@@ -148,14 +148,14 @@ int main(int argc, char* argv[])
     tr->Translate(cx, cy, cz);
     // in order to handle flipping normals under negative scaling
     vtkSmartPointer<vtkReverseSense> reverseSense = vtkSmartPointer<vtkReverseSense>::New();
-    reverseSense->SetInput(mesh);
+    reverseSense->SetInputData(mesh);
     reverseSense->ReverseNormalsOff();
     reverseSense->ReverseCellsOn();
     reverseSense->Update();
 
     vtkSmartPointer<vtkTransformPolyDataFilter> transform = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     transform->SetTransform( tr );
-    transform->SetInput( reverseSense->GetOutput() );
+    transform->SetInputData( reverseSense->GetOutput() );
     transform->Update();
 
     vtkSmartPointer<vtkPolyData> inp = vtkSmartPointer<vtkPolyData>::New();
@@ -164,12 +164,12 @@ int main(int argc, char* argv[])
 
     if (pref == "ply") {
         vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
-        writer->SetInput( inp );
+        writer->SetInputData( inp );
         writer->SetFileName( outFilename.c_str() );
         writer->Update();
     } else {
         vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-        writer->SetInput( inp );
+        writer->SetInputData( inp );
         writer->SetFileName( outFilename.c_str() );
         writer->Update();
     }

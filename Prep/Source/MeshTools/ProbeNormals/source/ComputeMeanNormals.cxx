@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         std::ifstream normalFile(nrmFilename[i].c_str());
         if (!normalFile)
         {
-            std::cout << "normal file does not exist... " << normalFile << std::endl;
+            std::cout << "normal file does not exist... " << nrmFilename[i] << std::endl;
             return EXIT_FAILURE;
         }
         else
