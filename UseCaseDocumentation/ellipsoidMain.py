@@ -24,17 +24,17 @@ import matplotlib.pyplot as plt
 from zipfile import ZipFile
 import os
 import csv
+import argparse
+
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-"""
-First we decide which data we want to use for the example, prepped or 
-unprepped. Following DATA_FLAG when set to 0 selects the prepped data and when
-set to NOT 0 will go with unprepped data. Default is 1.
-"""
+parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
+parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
+parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
+args = parser.parse_args()
 
-DATA_FLAG = 1
 
 """
 Unzip the data for this tutorial.
@@ -49,6 +49,11 @@ one of the axes while the other two are kept fixed.
 Extract the zipfile into proper directory and create necessary supporting
 files
 """
+
+print("\nStep 1. Extract Data\n")
+if args.interactive:
+        input("Press Enter to continue")
+
 parentDir="TestEllipsoids/"
 filename="Ellipsoids.zip"
 if not os.path.exists(parentDir):
@@ -56,19 +61,20 @@ if not os.path.exists(parentDir):
 # extract the zipfile
 with ZipFile(filename, 'r') as zipObj:
 	zipObj.extractall(path=parentDir)
-	if DATA_FLAG:
+	if not args.start_with_prepped_data:
 		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
 	else:
 		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
-#fileList = fileList[:3]
+fileList = fileList[:15]
+
 """
 Most of the following steps even though wrapped in python functions are using
-the undelying c++ code, for whihc we need to call the source paths to the 
+the underlying c++ code, for which we need to call the source paths to the 
 binaries. This step should be common for any use of a function in ShapeWorks.
 __This requires the full ShapeWorks to be correctly built/downloaded!__'
 
-These following commands set the temporary envisonment variables to point to
+These following commands set the temporary environment variables to point to
 shapeworks binaries and set the necessary library paths
 """
 
@@ -87,11 +93,16 @@ For the unprepped data the first few steps are
 -- Rigid Alignment
 -- Largets Bounding Box and Cropping 
 """
+
+print("\nStep 2. Groom - Data Pre-processing\n")
+if args.interactive:
+        input("Press Enter to continue")
+
 parentDir = '../TestEllipsoids/PrepOutput/'
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
-if DATA_FLAG:
+if not args.start_with_prepped_data:
 	"""
 	Apply isotropic resampling
 	
@@ -128,7 +139,11 @@ We convert the scans to distance transforms, this step is common for both the
 prepped as well as unprepped data, just provide correct filenames.
 """
 
-if DATA_FLAG:
+print("\nStep 3. Groom - Convert to distance transforms\n")
+if args.interactive:
+        input("Press Enter to continue")
+
+if not args.start_with_prepped_data:
 	dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
 else:
 	dtFiles = applyDistanceTransforms(parentDir, fileList)
@@ -144,6 +159,11 @@ For more details on the plethora of parameters for shapeworks please refer to
 First we need to create a dictionary for all the parameters required by this
 optimization routine
 """
+
+print("\nStep 4. Optimize - Particle Based Optimization\n")
+if args.interactive:
+        input("Press Enter to continue")
+
 pointDir = '../TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
@@ -188,4 +208,11 @@ PCA modes of variation representing the given shape population can be
 visualized.
 """
 
+print("\nStep 4. Analysis - Launch ShapeWorksView2\n")
+if args.interactive:
+        input("Press Enter to continue")
+
+
 launchShapeWorksView2(pointDir, worldPointFiles)
+
+print("\nShapeworks Pipeline Complete!")

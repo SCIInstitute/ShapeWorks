@@ -59,10 +59,12 @@ To clone the ShapeWorks source, use one of the following commands:
 $ git clone https://github.com/SCIInstitute/ShapeWorks
 ```
 
-In order to avoid having to type your password every time you refresh your source code you can [add your public ssh key](https://github.com/settings/keys) to your account and use this version to clone the code:  
+In order to avoid having to type your password every time you refresh your source code you can copy your public ssh key (found in ~/.ssh/id_rsa.pub) and [add it to your github account](https://github.com/settings/keys). Now you can use this version to clone the code: 
 ```
 $ git clone git@github.com:sciinstitute/ShapeWorks
 ```
+If you've already cloned your code, simply change the `[remote "origin"]` in .git/config to `url = git@github.com:SCIInstitute/ShapeWorks`. All git commands remain the same.
+
 _Now that you've cloned the source you can already [build ShapeWorks](BUILD.md#build) if you want._
 
 View current state (branch and modifications, both staged and unstaged):  

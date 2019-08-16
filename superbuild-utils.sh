@@ -13,7 +13,7 @@ at_least_required_version()
     #echo "Greater than or equal to $required"
     return 1
   else
-    echo "ERROR: ${packagename} version must be at least $required"
+    echo "## ERROR: ${packagename} version must be at least $required"
     return 0
   fi
 }

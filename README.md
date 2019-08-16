@@ -1,4 +1,4 @@
-Shapeworks Command Line Tools
+ShapeWorks
 =====================
 <!--
 <img src="https://raw.githubusercontent.com/SCIInstitute/shapeworks/master/src/deprecated/documentation/splashmain.png" 
@@ -13,23 +13,50 @@ objects of arbitrary topology. The proposed correspondence point optimization us
 minimization that balances the simplicity of the model (compactness) with the accuracy of the 
 surface representations. The ShapeWorks software includes tools for preprocessing data, computing 
 point-based shape models, and visualizing the results.
-<br/>
+
+Contact Us
+=====================
+
+User Forum
+----------
+Our user forum is located on [Gitter ShapeWorks User Forum](https://gitter.im/ShapeWorks).
+
+Mailing List
+------------
+Please join our mailing list by sending a message to sympa@sci.utah.edu with the subject `subscribe shapeworks-users` and empty body.
+You can also email any questions, bugs, or feature requests to shapeworks-users@sci.utah.edu.
 
 Table of Contents
 ====================
-- [Acknowledgements](#acknowledgements)<br/>
-- [Relevant Papers](#relevant-papers)<br/>
 - [Installation](#installation)  
 - [Documentation](#documentation)  
-- [Development](#development)  
+- [Acknowledgements](#acknowledgements)
+- [Relevant Papers](#relevant-papers)
+
+Installation
+=====================
+
+Download
+---------------------
+_Coming soon:_ user installation without the necessity of building ShapeWorks directly.  
+Until then, please see **[Development](#development)** to build ShapeWorks.
+
+Development
+---------------------
+Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
 <!--
-- [Requirements](#requirements)<br/>
-- [Running](#running)<br/>
-		- [ShapeWorksGroom](#shapeworksgroom)<br/>
-		- [ShapeWorksRun](#shapeworksrun)<br/>
-		- [ShapeWorksView2](#shapeworksview2)<br/> 
+Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.
 -->
-- [Contact and Bug Reports](#contact-and-bug-reports)<br/>
+Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
+
+As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
+
+Documentation
+=====================
+[ShapeWorks user documentation.](http://sciinstitute.github.io/ShapeWorks/)
+<!--
+Desired: https://shapeworks.sci.utah.edu/docs
+-->
 
 <h3>Acknowledgements</h3>
 If you use ShapeWorks in work that leads to published research, we humbly ask that you add the 
@@ -62,24 +89,6 @@ M.D. Harris, M. Datar, R.T. Whitaker, E.R. Jurrus, C.L. Peters, A.E. Anderson.
 Vol. 31, No. 10, pp. 1620--1626. 2013.
 
 P. Agrawal, S.Y. Elhabian, R.T. Whitaker, "Learning Deep Features for Automated Placement of Correspondence Points on Ensembles of Complex Shapes," In International Conference on Medical Image Computing and Computer-Assisted Intervention, pp. 185-193. Springer, Cham, 2017.
-
-Installation
-=====================
-_Coming soon:_ user installation without the necessity of building ShapeWorks directly.  
-Until then, please see **[BUILD.md](BUILD.md)** for the current build instructions.
-
-Documentation
-=====================
-[ShapeWorks user documentation.](http://sciinstitute.github.io/ShapeWorks/)
-<!--
-Desired: https://shapeworks.sci.utah.edu/docs
--->
-
-Development
-=====================
-Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
-Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.  
-Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
 
 <!--
 Requirements
@@ -189,7 +198,3 @@ There are a few Import/Export options under the File Menu. The details of these 
 beyond the scope of this document.
 -->
 
-
-Contact and Bug Reports
-=====================
-Please email any questions to Shapeworks-users@sci.utah.edu . If there problems or bugs, please report them using the issue tracker on GitHub. This includes feature requests. Feel free to add improvements using git pull requests. 
