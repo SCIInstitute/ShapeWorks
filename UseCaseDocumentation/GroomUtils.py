@@ -431,14 +431,14 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 		execCommand = "TopologyPreservingSmoothing " + xmlfilename
 		os.system(execCommand) 	
 
-		xmlfilename=outname.replace('.nrrd', '.MeshFromDT.xml')
-		create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename)
-		create_cpp_xml(xmlfilename, xmlfilename)
-		execCommand = "MeshFromDistanceTransforms " + xmlfilename
-		os.system(execCommand)
-		decimal = percentage/100.0
-		execCommand = "PreviewCmd --inFile " + vtkfilename + " --outFile " + vtkfilename_preview + " --decimationPercentage " + str(decimal)
-		os.system(execCommand)
+		# xmlfilename=outname.replace('.nrrd', '.MeshFromDT.xml')
+		# create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename)
+		# create_cpp_xml(xmlfilename, xmlfilename)
+		# execCommand = "MeshFromDistanceTransforms " + xmlfilename
+		# os.system(execCommand)
+		# decimal = percentage/100.0
+		# execCommand = "PreviewCmd --inFile " + vtkfilename + " --outFile " + vtkfilename_preview + " --decimationPercentage " + str(decimal)
+		# os.system(execCommand)
 		# this at the end
 
 		shutil.copy(tpdtnrrdfilename, finalDTDir)
