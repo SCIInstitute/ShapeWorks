@@ -6,41 +6,6 @@ SET(CMAKE_BUILD_TYPE RELEASE)
 
 #SET(VXL_DIR "Path-to-vxl-build")
 
-SET(COMMON_LIBS_DIR "CommonLibraries")
-
-INCLUDE_DIRECTORIES(
-    ${COMMON_LIBS_DIR}/OptionParser
-    ${COMMON_LIBS_DIR}/PreViewMeshQC
-    ${COMMON_LIBS_DIR}/ITKVTK
-    ${COMMON_LIBS_DIR}/Eigen
-    ${COMMON_LIBS_DIR}/Procrustes
-  )
-
-
-option(BUILD_ImageTools "Build ImageTools" ON)
-option(BUILD_MeshTools "Build MeshTools" ON)
-option(BUILD_FileFormatTools "Build file formatting tools" ON)
-option(BUILD_AlignmentTools "Build alignment tools" ON)
-option(BUILD_DataFormatTools "Build data formatting tools" ON)
-
-file(
-	GLOB
-	source_files
-	*.h
-	*.cpp
-	*.hxx
-	*.cxx
-	*.txx
-    ${COMMON_LIBS_DIR}/OptionParser/*.h
-    ${COMMON_LIBS_DIR}/OptionParser/*.cpp
-    ${COMMON_LIBS_DIR}/PreViewMeshQC/*.h
-    ${COMMON_LIBS_DIR}/PreViewMeshQC/*.cpp
-    ${COMMON_LIBS_DIR}/ITKVTK/*.h
-  	${COMMON_LIBS_DIR}/ITKVTK/*.hxx
-  	${COMMON_LIBS_DIR}/Procrustes/*.h
-    ${COMMON_LIBS_DIR}/Procrustes/*.hxx
-)
-
 if (BUILD_ImageTools)
   subdirs(ImageTools/AntiAliasing/source)
   subdirs(ImageTools/CloseHoles/source)
@@ -75,7 +40,7 @@ if (BUILD_MeshTools)
   subdirs(MeshTools/GenerateFidsFiles/source)
   subdirs(MeshTools/GenerateFidsFilesFromMeshes/source)
   subdirs(MeshTools/GetFeatureVolume/source)
-#  subdirs(MeshTools/ParticleBasedSurfaceReconstruction/source)
+  #subdirs(MeshTools/ParticleBasedSurfaceReconstruction/source)
   subdirs(MeshTools/PreviewCmd/source)
   subdirs(MeshTools/ProbeFeatureVolumesAtMeshVertices/source)
   subdirs(MeshTools/ProbeNormals/source)

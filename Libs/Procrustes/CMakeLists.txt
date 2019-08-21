@@ -1,0 +1,6 @@
+FILE(GLOB Procrustes_srcs ./*.h ./*.cpp)
+if(TARGET Procrustes)
+    message("Procrustes already exists")
+else(TARGET Procrustes)
+    ADD_LIBRARY (Procrustes STATIC ${Procrustes_srcs})
+endif(TARGET Procrustes)
