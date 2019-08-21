@@ -1,0 +1,6 @@
+FILE(GLOB OptionParser_srcs ./*.h ./*.cpp)
+if(TARGET OptionParser)
+    message("OptionParser already exists")
+else(TARGET OptionParser)
+    ADD_LIBRARY (OptionParser STATIC ${OptionParser_srcs})
+endif(TARGET OptionParser)
