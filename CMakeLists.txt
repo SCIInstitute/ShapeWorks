@@ -136,6 +136,7 @@ INCLUDE_DIRECTORIES(
   Libs/PreViewMeshQC
   Libs/ITKVTK
   Libs/Procrustes
+  Libs/Eigen
   )
 
 #todo: subdirs is deprecated: use add_subdirectory
