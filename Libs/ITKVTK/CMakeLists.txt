@@ -1,0 +1,6 @@
+FILE(GLOB ITKVTK_srcs ./*.h ./*.hxx)
+if(TARGET ITKVTK)
+    message("ITKVTK already exists")
+else(TARGET ITKVTK)
+    ADD_LIBRARY (ITKVTK STATIC ${ITKVTK_srcs})
+endif(TARGET ITKVTK)
