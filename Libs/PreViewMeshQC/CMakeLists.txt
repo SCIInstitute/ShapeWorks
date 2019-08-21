@@ -1,0 +1,6 @@
+FILE(GLOB PreViewMeshQC_srcs ./*.h ./*.cpp)
+if(TARGET PreViewMeshQC)
+    message("PreViewMeshQC already exists")
+else(TARGET PreViewMeshQC)
+    ADD_LIBRARY (PreViewMeshQC STATIC ${PreViewMeshQC_srcs})
+endif(TARGET PreViewMeshQC)
