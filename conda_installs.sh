@@ -30,8 +30,10 @@ conda install --yes -c conda-forge xorg-libx11 libuuid xorg-libsm
 conda install --yes numpy matplotlib colorama
 pip install termcolor
 
+
 #optionally install conda Qt (standalone version recommended)
-if [[ INSTALL_QT ]]; then
+if [[ ! -z $INSTALL_QT ]]; then
+  echo "installing conda Qt (but we only support using the standalone version)"
   conda install --yes -c anaconda qt
 fi
 
