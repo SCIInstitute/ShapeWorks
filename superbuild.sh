@@ -37,7 +37,7 @@ usage()
   echo "  --itk-dir=<path>     : Path to existing ITK installation (version >= ${ITK_VER})"
   echo "  --qt-dir=<path>      : The path to Qt version 5.x that is installed on your system"
   echo ""
-  echo "Example: ./superbuild.sh -n 8 --build-gui 1 --qt-dir /path/to/qt"
+  echo "Example: ./superbuild.sh -n 8 --qt-dir /path/to/qt"
   echo "Build results are saved in ${BUILD_LOG}."
 }
 

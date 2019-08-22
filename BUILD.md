@@ -56,7 +56,7 @@ Arguments:
   --itk-dir=<path>     : Path to existing ITK installation (version >= v5.0.1)
   --qt-dir=<path>      : The path to Qt version 5.x that is installed on your system
 
-Example: ./superbuild.sh -n 8 --build-gui 1 --qt-dir /path/to/qt
+Example: ./superbuild.sh -n 8 --qt-dir /path/to/qt
 Build results are saved in shapeworks_superbuild.log.
 ```
 
