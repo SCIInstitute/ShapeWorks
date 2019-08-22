@@ -1,10 +1,10 @@
 # ShapeWorks build and installation instructions
 
-## Installation
+## Downloadable installation
 
 _coming soon:_ instructions for user installation without needing to build ShapeWorks
 
-## Build
+## Clone source and build
 
 First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#source-and-branches) for more details).
 ```
@@ -23,54 +23,42 @@ Then follow the instructions for your specific platform:
 
 ### OSX/Linux
 
-1. **First** install anaconda and create a sandbox environment.  While this step is optional, we highly recommend it, as using a conda environment allows you to do simultaneous builds, which may each require different dependencies.  Using a conda env allows you to cleanly separate those.  This can be done by running [conda_installs.sh](conda_installs.sh) with the command `./conda_installs.sh`.  Note that the dependencies installed with conda can be done equivalently with apt install [apt_installs.sh](apt_installs.sh) `./apt_installs.sh`.  
+1. ShapeWorks gui applications such as ShapeWorksView2 require **Qt5** or later, which you'll need to install from [the Qt website](https://doc.qt.io/qt-5/gettingstarted.html#online-installation).
 
-2. **Next** if you want to build the ShapeWorksView2 (our visualization application), you will need to install **Qt5** or later. This can be installed easily using conda: `conda install --yes -c anaconda qt`.  Without conda you can install it from [the Qt website](https://doc.qt.io/qt-5/gettingstarted.html#online-installation).
+2. For other requirements, we recommend using anaconda to create a sandbox environment. While optional, using a conda environment allows multiple builds with different dependencies. You can install Anaconda and the [ShapeWorks dependencies](deps.txt) using:  
+`source ./conda_installs.sh`  
+These dependencies installed can be manually installed if preferred.
 
-3. **Finally** run [superbuild.sh](superbuild.sh) to build and install each dependency and the ShapeWorks tools themselves.  Arguments can be passed to this script to build specific dependencies, set the number of processors to use, and choose whether or not to build certain modules.  These are the arguments the [superbuild script](superbuild.sh) accepts:
+3. The `superbuild.sh` script makes building ShapeWorks and its VXL, VTK, and ITK dependencies very easy.  
+If using Anaconda, first activate the environment using `conda activate shapeworks`.  
+The basic build script is executed with `./superbuild.sh`. Here are additional parameters accepted:
 ```
-# Call this script by specifying arguments in the same command.
-# Ex:
-#                 NUM_PROCS=16 HAVE_QT=1 ./superbuild.sh
-#
-# Arguments:
-#
-#   BUILD_CLEAN:   whether or not to remove all build directories and clone new dependencies
-#
-#   VXL_DIR:       if you already have VXL its install path can be specified
-#   VTK_DIR:       if you already have VTK its install path can be specified
-#   ITK_DIR:       if you already have ITK its install path can be specified
-#
-#   BUILD_DIR:     by default creates a subdirectory of the current directory
-#                  called 'build' where ShapeWorks and all its external
-#                  dependencies will be built
-#   INSTALL_DIR:   by default creates a subdirectory of the current directory
-#                  called 'install' where ShapeWorks and all external
-#                  dependencies are installed
-#   NUM_PROCS:     number of processors to use for parallel builds (default is 8)
-#
-#   BUILD_POST:    whether or not to build any applications in Post
-#                  (default is to build them all, see
-#                  https://github.com/SCIInstitute/ShapeWorks/issues/58
-#                  to understand why this is even an option here)
-#   HAVE_QT:       whether or not qt version 5.x is installed in your system,
-#                  set 0 if not and it will skip building shapeworksview2
+ShapeWorks superbuild
+---------------------
+usage: ./superbuild.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] [--no-gui] [--qt-dir=<qt_path>] [--vxl-dir=<vxl_path>] [--vtk-dir=<vtk_path>] [--itk-dir=<itk_path>] | [-h | --help]]
+
+If using Anaconda to install prerequisites please first run:
+source ./conda_installs.sh
+
+Arguments:
+  -h,--help            : Show this screen
+  --clean              : Remove all build directories and clone implicit dependencies
+                       : (explicitly specified dependenciea such as --itk-dir=<path> are ignored)
+  --no-gui             : Do not build the ShapeWorks gui applicaitons, which require Qt 5.x
+                       : The GUI is built by default if qmake > 5.x is found in the path or user-specified QT_DIR.
+  --build-dir=<path>   : Build directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)
+                       : By default uses a subdirectory of the current directory called 'build'.
+  --install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)
+                       : By default uses a subdirectory of the current directory called 'install'.
+  -n,--num_procs=<num> : Number of processors to use for parallel builds (default is 8)
+  --vxl-dir=<path>     : Path to existing VXL installation (version >= v2.0.2)
+  --vtk-dir=<path>     : Path to existing VTK installation (version >= v8.2.0)
+  --itk-dir=<path>     : Path to existing ITK installation (version >= v5.0.1)
+  --qt-dir=<path>      : The path to Qt version 5.x that is installed on your system
+
+Example: ./superbuild.sh -n 8 --build-gui 1 --qt-dir /path/to/qt
+Build results are saved in shapeworks_superbuild.log.
 ```
-For instance:
-```
-BUILD_CLEAN=1 NUM_PROCS=8 VXL_DIR=/mylocation/ ./superbuild
-```
-
-The following dependencies are automatically installed in superbuild. We show which lines they are found on for convenience:
-
-**VXL** [65-77]
-
-**VTK** [79-91]
-
-**ITK** [93-105]
-
-**ShapeWorks** [113-124]  
-
 
 ### Windows
 

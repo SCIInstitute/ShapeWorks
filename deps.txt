@@ -1,0 +1,19 @@
+# ShapeWorks dependencies list
+cmake
+geotiff
+libxrandr-devel-cos6-x86_64
+libxinerama-devel-cos6-x86_64
+libxcursor-devel-cos6-x86_64
+libxi-devel-cos6-x86_64
+xorg-libx11
+libuuid
+xorg-libsm 
+numpy
+matplotlib
+colorama
+termcolor
+
+# Automatically installed by superbuild.sh:
+vxl
+vtk
+itk
