@@ -34,3 +34,13 @@
 #Others
 .DS_*
 .directory
+
+# Build directories
+build*
+install*
+
+# Log files
+*.log
+
+# usr cmake
+CMakeLists.txt.user
