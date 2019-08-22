@@ -1,1 +1,0 @@
-The latest stable release is Eigen 3.3.4. cloned on 4/12/2018 

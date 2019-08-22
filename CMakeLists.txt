@@ -132,11 +132,20 @@ INCLUDE_DIRECTORIES(
   Libs/fim_v4
   Libs/fim_v4/trimesh2/include
   Libs/tinyxml
+  Libs/OptionParser
+  Libs/PreViewMeshQC
+  Libs/ITKVTK
+  Libs/Procrustes
+  Libs/Eigen
   )
 
 #todo: subdirs is deprecated: use add_subdirectory
 SUBDIRS(Libs/fim_v4)
 SUBDIRS(Libs/tinyxml)
+SUBDIRS(Libs/OptionParser)
+SUBDIRS(Libs/PreViewMeshQC)
+SUBDIRS(Libs/ITKVTK)
+SUBDIRS(Libs/Procrustes)
 
 
 option(Build_PrepTools "Build prep tools" ON)

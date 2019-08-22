@@ -1,5 +1,5 @@
 project(FeaFromVTK)
 cmake_minimum_required(VERSION 2.8)
-ADD_EXECUTABLE(FeaFromVTK FeaFromVTK.cxx ${source_files})
+ADD_EXECUTABLE(FeaFromVTK FeaFromVTK.cxx )
 TARGET_LINK_LIBRARIES(FeaFromVTK ${VTK_LIBRARIES} tinyxml)
 INSTALL(TARGETS FeaFromVTK  RUNTIME DESTINATION .)
