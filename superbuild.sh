@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -v   #verbose execution for debugging
+#set -v   #verbose execution for debugging
 
 # defaults
 BUILD_CLEAN=0
