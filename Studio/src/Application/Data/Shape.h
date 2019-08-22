@@ -3,7 +3,7 @@
 
 #include <QSharedPointer>
 #include <QString>
-#include "ShapeWorksGroom.h"
+#include <Groom/ShapeWorksGroom.h>
 #include <Data/Mesh.h>
 
 class Shape;

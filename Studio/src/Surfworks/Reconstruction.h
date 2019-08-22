@@ -1,10 +1,12 @@
 #ifndef __RECONSTRUCTION_H__
 #define __RECONSTRUCTION_H__
 
+#include "Eigen/Dense"
+#include "Eigen/Sparse"
 
 
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
-#include "ShapeWorksGroom.h"
+#include <Groom/ShapeWorksGroom.h>
 #include "ITKVTK/itkImageToVTKImageFilter.h"
 #include "ITKVTK/itkVTKImageToImageFilter.h"
 #include <vtkPolyData.h>

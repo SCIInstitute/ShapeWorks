@@ -7,7 +7,7 @@
 #include <QVector>
 #include "Data/Preferences.h"
 #include "Data/MeshManager.h"
-#include "ShapeWorksGroom.h"
+#include <Groom/ShapeWorksGroom.h>
 
 class Shape;
 

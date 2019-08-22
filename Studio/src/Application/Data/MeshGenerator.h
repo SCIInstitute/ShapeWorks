@@ -14,7 +14,7 @@
 #define MESH_GENERATOR_H
 
 #include "vnl/vnl_vector.h"
-#include <Reconstruction.h>
+#include <Surfworks/Reconstruction.h>
 #include <Data/Preferences.h>
 
 class MeshGenerator

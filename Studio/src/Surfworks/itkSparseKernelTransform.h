@@ -17,6 +17,9 @@
 #ifndef __itkSparseKernelTransform_h
 #define __itkSparseKernelTransform_h
 
+#include "Eigen/Dense"
+#include "Eigen/Sparse"
+
 #include <itkTransform.h>
 #include <itkPoint.h>
 #include <itkVector.h>
@@ -32,8 +35,6 @@
 #include <vnl/vnl_sample.h>
 
 //#define EIGEN_USE_MKL_ALL
-#include "Eigen/Dense"
-#include "Eigen/Sparse"
 #include <stdint.h>
 #include <iostream>
 

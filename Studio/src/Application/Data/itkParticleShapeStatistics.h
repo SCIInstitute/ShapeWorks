@@ -187,4 +187,6 @@ protected:
 # include "itkParticleShapeStatistics.txx"
 #endif
 
+#include "itkParticleShapeStatistics.txx"
+
 #endif // ifndef _ParticleShapeStatistics_h

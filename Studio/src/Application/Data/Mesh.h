@@ -4,13 +4,16 @@
 #include <QString>
 #include <QSharedPointer>
 
+#include "Surfworks/Eigen/Dense"
+#include "Surfworks/Eigen/Sparse"
+
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <vtkImageImport.h>
 #include <itkImage.h>
 
 #include <vnl/vnl_vector.h>
-#include <ShapeWorksGroom.h>
+#include <Groom/ShapeWorksGroom.h>
 
 class Mesh;
 typedef QSharedPointer< Mesh > MeshHandle;

@@ -14,8 +14,8 @@
 
 #include <QObject>
 #include <QStringList>
-#include <ShapeWorksGroom.h>
-#include <ShapeWorksOptimize.h>
+#include <Groom/ShapeWorksGroom.h>
+#include <Optimize/ShapeWorksOptimize.h>
 #include <Data/Project.h>
 
 class ShapeworksWorker : public QObject

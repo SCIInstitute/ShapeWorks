@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <ShapeWorksGroom.h>
-#include <ShapeWorksOptimize.h>
+#include <Groom/ShapeWorksGroom.h>
+#include <Optimize/ShapeWorksOptimize.h>
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 

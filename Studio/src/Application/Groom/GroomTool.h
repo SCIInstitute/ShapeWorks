@@ -1,11 +1,15 @@
 #ifndef STUDIO_GROOM_GROOMTOOL_H
 #define STUDIO_GROOM_GROOMTOOL_H
 
+
+#include "Surfworks/Eigen/Dense"
+#include "Surfworks/Eigen/Sparse"
+
 #include <QSharedPointer>
 #include <QWidget>
 #include <QProgressDialog>
 #include "Data/Preferences.h"
-#include <QGroom.h>
+#include <Groom/QGroom.h>
 #include <string>
 
 class Project;

@@ -1,6 +1,9 @@
 #include <QMessageBox>
 #include <QTextStream>
 
+#include "Surfworks/Eigen/Dense"
+#include "Surfworks/Eigen/Sparse"
+
 #include <vtkTriangleFilter.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkPolyDataWriter.h>
@@ -15,7 +18,7 @@
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"
 #include <vtkMarchingCubes.h>
-#include <ShapeWorksGroom.h>
+#include <Groom/ShapeWorksGroom.h>
 
 //---------------------------------------------------------------------------
 Mesh::Mesh()

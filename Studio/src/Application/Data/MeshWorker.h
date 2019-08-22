@@ -18,7 +18,7 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
-#include <Reconstruction.h>
+#include <Surfworks/Reconstruction.h>
 
 class MeshWorker : public QObject
 {

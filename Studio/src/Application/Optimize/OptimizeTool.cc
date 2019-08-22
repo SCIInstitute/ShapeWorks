@@ -1,5 +1,9 @@
 #include <iostream>
 
+
+#include "Surfworks/Eigen/Dense"
+#include "Surfworks/Eigen/Sparse"
+
 #include <QXmlStreamWriter>
 #include <QTemporaryFile>
 #include <QFileDialog>

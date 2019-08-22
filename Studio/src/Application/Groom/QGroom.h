@@ -1,7 +1,7 @@
 #ifndef __QSHAPEWORKSGROOM_H__
 #define __QSHAPEWORKSGROOM_H__
 
-#include <ShapeWorksGroom.h>
+#include <Groom/ShapeWorksGroom.h>
 #include <QObject>
 
 class QGroom : public QObject, public ShapeWorksGroom {

@@ -1,8 +1,8 @@
 #ifndef __QSHAPEWORKSOPTIMIZE_H__
 #define __QSHAPEWORKSOPTIMIZE_H__
 
-#include <ShapeWorksOptimize.h>
-#include <ShapeWorksGroom.h>
+#include <Optimize/ShapeWorksOptimize.h>
+#include <Groom/ShapeWorksGroom.h>
 #include <QObject>
 
 class QOptimize : public QObject, public ShapeWorksOptimize {

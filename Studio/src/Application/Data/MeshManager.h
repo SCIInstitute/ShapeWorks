@@ -23,7 +23,7 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
 #include <Data/Preferences.h>
-#include <Reconstruction.h>
+#include <Surfworks/Reconstruction.h>
 
 class MeshManager : public QObject
 {

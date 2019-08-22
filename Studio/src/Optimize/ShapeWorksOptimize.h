@@ -5,15 +5,15 @@
 #include <string>
 #include <vector>
 #include <array>
-#include <ShapeWorksGroom.h>
+#include <Groom/ShapeWorksGroom.h>
 #include "itkImage.h"
-#include "itkPSMProcrustesRegistration.h"
+#include <ParticleShapeworks/include/itkPSMProcrustesRegistration.h>
 #include "itkImageFileReader.h"
-#include "itkPSMEntropyModelFilter.h"
-#include "itkPSMProject.h"
-#include "itkPSMProjectReader.h"
-#include "itkPSMParticleSystem.h"
-#include "itkCommand.h"
+#include <ParticleShapeworks/include/itkPSMEntropyModelFilter.h>
+#include <ParticleShapeworks/include/itkPSMProject.h>
+#include <ParticleShapeworks/include/itkPSMProjectReader.h>
+#include <ParticleShapeworks/include/itkPSMParticleSystem.h>
+#include <itkCommand.h>
 
 class ShapeWorksOptimize { 
 public:

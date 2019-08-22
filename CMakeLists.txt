@@ -147,6 +147,9 @@ SUBDIRS(Libs/PreViewMeshQC)
 SUBDIRS(Libs/ITKVTK)
 SUBDIRS(Libs/Procrustes)
 
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
+add_subdirectory(Studio/src)
+
 
 option(Build_PrepTools "Build prep tools" ON)
 option(Build_Run "Build shapeworks" ON)

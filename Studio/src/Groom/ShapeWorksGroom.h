@@ -1,6 +1,9 @@
 #ifndef __SHAPEWORKSGROOM_H__
 #define __SHAPEWORKSGROOM_H__
 
+#include "Surfworks/Eigen/Dense"
+#include "Surfworks/Eigen/Sparse"
+
 #include <cstdlib>
 #include <string>
 #include <vector>
