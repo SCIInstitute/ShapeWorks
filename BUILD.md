@@ -6,30 +6,26 @@ _coming soon:_ instructions for user installation without needing to build Shape
 
 ## Clone source and build
 
-First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#source-and-branches) for more details).
-```
-$ git clone https://github.com/SCIInstitute/ShapeWorks
-```
-If you want to build a branch other than master, check that branch out next:
-```
-$ git checkout -b <branchname>
-```
+1. First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#source-and-branches) for more details).  
+`$ git clone https://github.com/SCIInstitute/ShapeWorks`  
+<br>If you want to build a branch other than master, check that branch out next:  
+`$ git checkout -b <branchname>`
 
-Then follow the instructions for your specific platform:  
+2. Install **Qt5**. ShapeWorks gui applications require **Qt5** or later. Download and install the latest version (5.13) for your OS, selecting the LGPL (free) license.  
+[[OSX]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-mac-x64-5.13.0.dmg) [[Linux]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-linux-x64-5.13.0.run) [[Windows]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-windows-x86-5.13.0.exe) 
 
-[OSX/Linux](#osx/linux)
 
-[Windows](#windows)  
+3. Now follow the instructions for your specific platform:  
+[[OSX]](#osx/linux) [[Linux]](#osx/linux) [[Windows]](#windows)
+
 
 ### OSX/Linux
 
-1. ShapeWorks gui applications such as ShapeWorksView2 require **Qt5** or later, which you'll need to install from [the Qt website](https://doc.qt.io/qt-5/gettingstarted.html#online-installation).
-
-2. For other requirements, we recommend using anaconda to create a sandbox environment. While optional, using a conda environment allows multiple builds with different dependencies. You can install Anaconda and the [ShapeWorks dependencies](deps.txt) using:  
+1. For other requirements, we recommend using anaconda to create a sandbox environment. While optional, using a conda environment allows multiple builds with different dependencies. You can install Anaconda and the [ShapeWorks dependencies](deps.txt) using:  
 `source ./conda_installs.sh`  
-These dependencies installed can be manually installed if preferred.
+<br>These dependencies can be manually installed if preferred. [Here is the list](deps.txt).
 
-3. The `superbuild.sh` script makes building ShapeWorks and its VXL, VTK, and ITK dependencies very easy.  
+2. The `superbuild.sh` script makes building ShapeWorks and its VXL, VTK, and ITK dependencies very easy.  
 If using Anaconda, first activate the environment using `conda activate shapeworks`.  
 The basic build script is executed with `./superbuild.sh`. Here are additional parameters accepted:
 ```

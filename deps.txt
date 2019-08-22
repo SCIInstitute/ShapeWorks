@@ -1,3 +1,4 @@
+```
 # ShapeWorks dependencies list
 cmake
 geotiff
@@ -17,3 +18,4 @@ termcolor
 vxl
 vtk
 itk
+```

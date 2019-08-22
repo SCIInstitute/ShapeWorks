@@ -22,20 +22,20 @@ usage()
   echo "source ./conda_installs.sh"
   echo ""
   echo "Arguments:"
-  echo "  -h,--help            : Show this screen"
-  echo "  --clean              : Remove all build directories and clone implicit dependencies"
-  echo "                       : (explicitly specified dependenciea such as --itk-dir=<path> are ignored)"
-  echo "  --no-gui             : Do not build the ShapeWorks gui applicaitons, which require Qt 5.x"
-  echo "                       : The GUI is built by default if qmake > 5.x is found in the path or user-specified QT_DIR."
-  echo "  --build-dir=<path>   : Build directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)"
-  echo "                       : By default uses a subdirectory of the current directory called 'build'."
-  echo "  --install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)"
-  echo "                       : By default uses a subdirectory of the current directory called 'install'."
-  echo "  -n,--num_procs=<num> : Number of processors to use for parallel builds (default is 8)"
-  echo "  --vxl-dir=<path>     : Path to existing VXL installation (version >= ${VXL_VER})"
-  echo "  --vtk-dir=<path>     : Path to existing VTK installation (version >= ${VTK_VER})"
-  echo "  --itk-dir=<path>     : Path to existing ITK installation (version >= ${ITK_VER})"
-  echo "  --qt-dir=<path>      : The path to Qt version 5.x that is installed on your system"
+  echo "  -h,--help               : Show this screen"
+  echo "  --clean                 : Remove all build directories and clone implicit dependencies"
+  echo "                          : (explicitly specified dependenciea such as --itk-dir=<path> are ignored)"
+  echo "  --no-gui                : Do not build the ShapeWorks gui applicaitons, which require Qt 5.x"
+  echo "                          : The GUI is built by default if qmake > 5.x is found in the path or user-specified QT_DIR."
+  echo "  -b,--build-dir=<path>   : Build directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)"
+  echo "                          : By default uses a subdirectory of the current directory called 'build'."
+  echo "  -i,--install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)"
+  echo "                          : By default uses a subdirectory of the current directory called 'install'."
+  echo "  -n,--num_procs=<num>    : Number of processors to use for parallel builds (default is 8)"
+  echo "  --vxl-dir=<path>        : Path to existing VXL installation (version >= ${VXL_VER})"
+  echo "  --vtk-dir=<path>        : Path to existing VTK installation (version >= ${VTK_VER})"
+  echo "  --itk-dir=<path>        : Path to existing ITK installation (version >= ${ITK_VER})"
+  echo "  --qt-dir=<path>         : The path to Qt version 5.x that is installed on your system"
   echo ""
   echo "Example: ./superbuild.sh -n 8 --qt-dir /path/to/qt"
   echo "Build results are saved in ${BUILD_LOG}."
@@ -43,32 +43,23 @@ usage()
 
 parse_command_line()
 {
-  echo "parsing command line..."
   while [ "$1" != "" ]; do
-    echo "current param: $1"
     case $1 in
-      -i | --install-dir )    shift
-                              INSTALL_DIR=$1
+      -i=*|--install-dir=*)   INSTALL_DIR="${1#*=}"
                               ;;
-      -b | --build-dir )      shift
-                              BUILD_DIR=$1
+      -b=*|--build-dir=*)     BUILD_DIR="${1#*=}"
                               ;;
-      -n | --num-procs )      shift
-                              NUM_PROCS=$1
+      -n=*|--num-procs=*)     NUM_PROCS="${1#*=}"
                               ;;
       --no-gui )              BUILD_GUI=0
                               ;;
-      --qt-dir )              shift
-                              QT_DIR=$1
+      --qt-dir=*)             QT_DIR="${1#*=}"
                               ;;
-      --vxl-dir )             shift
-                              VXL_DIR=$1
+      --vxl-dir=*)            VXL_DIR="${1#*=}"
                               ;;
-      --vtk-dir )             shift
-                              VTK_DIR=$1
+      --vtk-dir=*)            VTK_DIR="${1#*=}"
                               ;;
-      --itk-dir )             shift
-                              ITK_DIR=$1
+      --itk-dir=*)            ITK_DIR="${1#*=}"
                               ;;
       --clean )               BUILD_CLEAN=1
                               ;;
@@ -84,6 +75,7 @@ parse_command_line()
 
 build_vxl()
 {
+  echo "## Building vxl..."
   VXL_DIR=${BUILD_DIR}/vxl
   cd ${BUILD_DIR}
   git clone https://github.com/vxl/vxl.git
@@ -98,6 +90,7 @@ build_vxl()
 
 build_vtk()
 {
+  echo "## Building vtk..."
   VTK_DIR=${BUILD_DIR}/vtk
   cd ${BUILD_DIR}
   git clone https://gitlab.kitware.com/vtk/vtk.git
@@ -112,6 +105,7 @@ build_vtk()
 
 build_itk()
 {
+  echo "## Building itk..."
   ITK_DIR=${BUILD_DIR}/ITK
   cd ${BUILD_DIR}
   git clone https://github.com/InsightSoftwareConsortium/ITK.git
@@ -126,6 +120,7 @@ build_itk()
 
 build_shapeworks()
 {
+  echo "## Building ShapeWorks..."
   OPENMP_FLAG="-DUSE_OPENMP=ON"
   if [ "$(uname)" == "Darwin" ]; then
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
@@ -183,17 +178,13 @@ find_qt()
   fi
 }
 
-superbuild()
+build_all()
 {
-  echo "## ShapeWorks Superbuild"
-
   ## create build and install directories
   if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/build;     fi
   if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/install; fi
   mkdir -p ${BUILD_DIR}
   mkdir -p ${INSTALL_DIR}
-
-  find_qt
 
   ## build dependencies if their locations were not specified
   if [[ -z $VXL_DIR ]]; then
@@ -221,9 +212,18 @@ echo "## ShapeWorks Superbuild"
 SRC=`pwd`
 . ${SRC}/superbuild-utils.sh
 
-# parse command line arguments
 parse_command_line $*
+find_qt
+
+echo "INSTALL_DIR: ${INSTALL_DIR}"
+echo "QT_DIR: ${QT_DIR}"
+echo "VXL_DIR: ${VXL_DIR}"
+echo "VTK_DIR: ${VTK_DIR}"
+echo "ITK_DIR: ${ITK_DIR}"
+echo "NUM_PROCS: ${NUM_PROCS}"
+echo "BUILD_GUI: ${BUILD_GUI}"
+echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build ShapeWorks and necessary dependencies
-(time superbuild 2>&1) 2>&1 | tee shapeworks_superbuild.log
+(time build_all 2>&1) 2>&1 | tee shapeworks_superbuild.log
 
