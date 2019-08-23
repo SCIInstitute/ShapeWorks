@@ -1,4 +1,11 @@
-#!/bin/bash
+#
+# Installs conda environment for building ShapeWorks
+#
+
+if [ -z "$PS1" ]; then
+  echo "ERROR: must call this script using \"source ./conda_installs.sh\")"
+  exit 1
+fi
 
 if [[ ! 'command -v conda' ]]; then
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -7,20 +14,28 @@ if [[ ! 'command -v conda' ]]; then
   conda config --set auto_activate_base false
   rm ./Miniconda3-latest-MacOSX-x86_64.sh
 fi
-conda create --yes --name shapeworks python=3.5
-conda activate shapeworks
+
+#update anaconda
 conda update --yes -n base -c defaults conda
-conda install --yes -c anaconda cmake
-conda install --yes -c anaconda geotiff
-conda install --yes -c anaconda libxrandr-devel-cos6-x86_64
-conda install --yes -c conda-forge xorg-libx11
-conda install --yes -c anaconda libxinerama-devel-cos6-x86_64
-conda install --yes -c anaconda libxcursor-devel-cos6-x86_64
-conda install --yes -c anaconda libxi-devel-cos6-x86_64
-conda install --yes -c conda-forge libuuid
-conda install --yes -c conda-forge xorg-libsm
-# conda install --yes -c anaconda qt
-conda install --yes numpy
-conda install --yes matplotlib
-conda install --yes colorama
-conda install --yes termcolor
+conda update --yes --all
+
+#create and activate shapeworks env
+conda create --yes --name shapeworks python=3.5
+eval "$(conda shell.bash hook)"
+conda activate shapeworks
+
+#install shapeworks deps
+conda install --yes -c anaconda cmake geotiff libxrandr-devel-cos6-x86_64 libxinerama-devel-cos6-x86_64 libxcursor-devel-cos6-x86_64 libxi-devel-cos6-x86_64
+conda install --yes -c conda-forge xorg-libx11 libuuid xorg-libsm 
+conda install --yes numpy matplotlib colorama
+pip install termcolor
+
+
+#optionally install conda Qt (standalone version recommended)
+if [[ ! -z $INSTALL_QT ]]; then
+  echo "installing conda Qt (but we only support using the standalone version)"
+  conda install --yes -c anaconda qt
+fi
+
+conda info
+
