@@ -1,0 +1,7 @@
+FILE(GLOB Transforms_srcs ./*.h ./*.hxx)
+if(TARGET Transforms)
+    message("Transforms already exists")
+else(TARGET Transforms)
+    ADD_LIBRARY (Transforms STATIC ${Transforms_srcs})
+    set_target_properties(Transforms PROPERTIES LINKER_LANGUAGE CXX)
+endif(TARGET Transforms)
