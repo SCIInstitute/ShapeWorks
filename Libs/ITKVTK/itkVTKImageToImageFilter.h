@@ -97,9 +97,9 @@ private:
 
 } // end namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
+//#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkVTKImageToImageFilter.hxx"
-#endif
+//#endif
 
 #endif
 
