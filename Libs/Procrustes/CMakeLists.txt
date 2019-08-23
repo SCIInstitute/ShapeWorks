@@ -1,6 +1,7 @@
-FILE(GLOB Procrustes_srcs ./*.h ./*.cpp)
+FILE(GLOB Procrustes_srcs ./*.h ./*.hxx)
 if(TARGET Procrustes)
     message("Procrustes already exists")
 else(TARGET Procrustes)
     ADD_LIBRARY (Procrustes STATIC ${Procrustes_srcs})
+    set_target_properties(Procrustes PROPERTIES LINKER_LANGUAGE CXX)
 endif(TARGET Procrustes)
