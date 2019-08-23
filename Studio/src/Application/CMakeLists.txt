@@ -105,3 +105,8 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   ShapeWorksGroom
   ShapeWorksOptimize
   Surfworks)
+
+INSTALL(TARGETS ShapeWorksStudio
+  BUNDLE  DESTINATION ${CMAKE_INSTALL_PREFIX}
+  RUNTIME DESTINATION . COMPONENT Runtime
+  )
