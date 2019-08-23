@@ -1,0 +1,8 @@
+FILE(GLOB SurfaceReconstruction_srcs ./*.h ./*.hxx)
+if(TARGET SurfaceReconstruction)
+    message("SurfaceReconstruction already exists")
+else(TARGET SurfaceReconstruction)
+    ADD_LIBRARY (SurfaceReconstruction STATIC ${SurfaceReconstruction_srcs} )
+    TARGET_LINK_LIBRARIES(SurfaceReconstruction PreViewMeshQC ITKVTK Transforms)
+    set_target_properties(SurfaceReconstruction PROPERTIES LINKER_LANGUAGE CXX)
+endif(TARGET SurfaceReconstruction)
