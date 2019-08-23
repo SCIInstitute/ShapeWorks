@@ -6,6 +6,12 @@ SET(CMAKE_BUILD_TYPE RELEASE)
 
 #SET(VXL_DIR "Path-to-vxl-build")
 
+option(BUILD_ImageTools "Build ImageTools" ON)
+option(BUILD_MeshTools "Build MeshTools" ON)
+option(BUILD_FileFormatTools "Build file formatting tools" ON)
+option(BUILD_AlignmentTools "Build alignment tools" ON)
+option(BUILD_DataFormatTools "Build data formatting tools" ON)
+
 if (BUILD_ImageTools)
   subdirs(ImageTools/AntiAliasing/source)
   subdirs(ImageTools/CloseHoles/source)
