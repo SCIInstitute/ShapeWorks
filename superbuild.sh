@@ -220,12 +220,14 @@ parse_command_line $*
 find_qt
 
 echo "INSTALL_DIR: ${INSTALL_DIR}"
+echo "BUILD_DIR: ${BUILD_DIR}"
 echo "QT_DIR: ${QT_DIR}"
 echo "VXL_DIR: ${VXL_DIR}"
 echo "VTK_DIR: ${VTK_DIR}"
 echo "ITK_DIR: ${ITK_DIR}"
 echo "NUM_PROCS: ${NUM_PROCS}"
 echo "BUILD_GUI: ${BUILD_GUI}"
+echo "BUILD_STUDIO: ${BUILD_STUDIO}"
 echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build ShapeWorks and necessary dependencies
