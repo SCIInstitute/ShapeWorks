@@ -317,7 +317,7 @@ void Visualizer::update_lut()
       for ( int i = 0; i < num_points; i++ )
       {
 
-        unsigned char* color = lut->MapValue( max_distance - distances[i] );
+        const unsigned char* color = lut->MapValue( max_distance - distances[i] );
 
         //this->glyph_lut_->SetTableValue( i, distances[i] / max_distance, 0, 1 );
         this->glyph_lut_->SetTableValue( i, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f );
