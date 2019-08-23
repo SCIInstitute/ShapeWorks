@@ -6,6 +6,7 @@
 BUILD_CLEAN=0
 NUM_PROCS=8
 BUILD_GUI=1
+BUILD_STUDIO=0
 BUILD_LOG="shapeworks_superbuild.log"
 VXL_VER="v2.0.2"
 VTK_VER="v8.2.0"
@@ -27,6 +28,7 @@ usage()
   echo "                          : (explicitly specified dependenciea such as --itk-dir=<path> are ignored)"
   echo "  --no-gui                : Do not build the ShapeWorks gui applicaitons, which require Qt 5.x"
   echo "                          : The GUI is built by default if qmake > 5.x is found in the path or user-specified QT_DIR."
+  echo "  --with-studio           : Build ShapeWorksStudio (default off)"
   echo "  -b,--build-dir=<path>   : Build directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)"
   echo "                          : By default uses a subdirectory of the current directory called 'build'."
   echo "  -i,--install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)"
@@ -52,6 +54,8 @@ parse_command_line()
       -n=*|--num-procs=*)     NUM_PROCS="${1#*=}"
                               ;;
       --no-gui )              BUILD_GUI=0
+                              ;;
+      --with-studio )         BUILD_STUDIO=1
                               ;;
       --qt-dir=*)             QT_DIR="${1#*=}"
                               ;;
@@ -129,7 +133,7 @@ build_shapeworks()
   cd ${BUILD_DIR}
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf shapeworks-build; fi
   mkdir -p shapeworks-build && cd shapeworks-build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${INSTALL_DIR}/lib/cmake/ITK-5.0 -DVXL_DIR=${INSTALL_DIR}/share/vxl/cmake -DVTK_DIR=${INSTALL_DIR}/lib64/cmake/vtk-8.2 -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${INSTALL_DIR}/lib/cmake/ITK-5.0 -DVXL_DIR=${INSTALL_DIR}/share/vxl/cmake -DVTK_DIR=${INSTALL_DIR}/lib64/cmake/vtk-8.2 -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
   make -j${NUM_PROCS} install || exit 1
 
   # Inform users of ShapeWorks install path:
@@ -216,12 +220,14 @@ parse_command_line $*
 find_qt
 
 echo "INSTALL_DIR: ${INSTALL_DIR}"
+echo "BUILD_DIR: ${BUILD_DIR}"
 echo "QT_DIR: ${QT_DIR}"
 echo "VXL_DIR: ${VXL_DIR}"
 echo "VTK_DIR: ${VTK_DIR}"
 echo "ITK_DIR: ${ITK_DIR}"
 echo "NUM_PROCS: ${NUM_PROCS}"
 echo "BUILD_GUI: ${BUILD_GUI}"
+echo "BUILD_STUDIO: ${BUILD_STUDIO}"
 echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build ShapeWorks and necessary dependencies

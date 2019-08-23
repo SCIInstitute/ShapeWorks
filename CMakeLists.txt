@@ -148,10 +148,12 @@ SUBDIRS(Libs/ITKVTK)
 SUBDIRS(Libs/Procrustes)
 
 
+
 option(Build_PrepTools "Build prep tools" ON)
 option(Build_Run "Build shapeworks" ON)
 option(Build_Post "Build post" ON)
-option(Build_View2 "Build view2" OFF)  #todo: figure out how to install old qt 4.8.1 on new osx (other platforms may also have issues)
+option(Build_View2 "Build view2" OFF)
+option(Build_Studio "Build studio" OFF)
 
 #todo: setup INSTALL paths as described in Trello (otherwise 'make install' just puts everything in the root path of the specified installation directory)
 
@@ -203,5 +205,6 @@ if(Build_View2)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Post/source/ShapeWorksView2)
     subdirs(Post/source/ShapeWorksView2)
 endif(Build_View2)
-
-
+if(Build_Studio)
+  add_subdirectory(Studio/src)
+endif(Build_Studio)
