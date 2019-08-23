@@ -137,6 +137,8 @@ INCLUDE_DIRECTORIES(
   Libs/ITKVTK
   Libs/Procrustes
   Libs/Eigen
+  Libs/Transforms
+  Libs/SurfaceReconstruction
   )
 
 #todo: subdirs is deprecated: use add_subdirectory
@@ -146,6 +148,8 @@ SUBDIRS(Libs/OptionParser)
 SUBDIRS(Libs/PreViewMeshQC)
 SUBDIRS(Libs/ITKVTK)
 SUBDIRS(Libs/Procrustes)
+SUBDIRS(Libs/Transforms)
+SUBDIRS(Libs/SurfaceReconstruction)
 
 
 option(Build_PrepTools "Build prep tools" ON)
