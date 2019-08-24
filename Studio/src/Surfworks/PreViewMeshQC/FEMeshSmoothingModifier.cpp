@@ -5,6 +5,7 @@
 #include "FENodeNodeList.h"
 #include "FEMesh.h"
 #include <exception>
+#include <stdexcept>
 #include <algorithm>
 
 //-----------------------------------------------------------------------------

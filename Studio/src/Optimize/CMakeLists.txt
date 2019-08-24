@@ -6,6 +6,6 @@ include_directories(${CMAKE_SOURCE_DIR}/ParticleShapeworks/include)
 
 FILE(GLOB SRCS "*.h" "*.cxx")
 
-ADD_LIBRARY(ShapeWorksOptimize ${SRCS})
+ADD_LIBRARY(ShapeWorksOptimize STATIC ${SRCS})
 TARGET_LINK_LIBRARIES(ShapeWorksOptimize ShapeWorksGroom 
   itkParticleShapeModeling ${ITK_LIBRARIES})
