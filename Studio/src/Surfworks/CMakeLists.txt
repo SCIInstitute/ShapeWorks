@@ -9,5 +9,5 @@ FILE(GLOB SRCS "*.h" "*.cc" ".hxx"  ITKVTK/*.hxx PreViewMeshQC/*.cpp)
 
 FILE(GLOB HDRS */*.h)
 
-ADD_LIBRARY(Surfworks ${SRCS} ${HDRS})
+ADD_LIBRARY(Surfworks STATIC ${SRCS} ${HDRS})
 TARGET_LINK_LIBRARIES(Surfworks ShapeWorksGroom ${ITK_LIBRARIES} ${VTK_LIBRARIES})

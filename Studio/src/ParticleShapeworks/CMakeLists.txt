@@ -27,5 +27,5 @@ ENDIF (PSM_BUILD_TESTS)
 INCLUDE_DIRECTORIES(include src)
 
 #create a library to link to
-ADD_LIBRARY(itkParticleShapeModeling ${source_files})
+ADD_LIBRARY(itkParticleShapeModeling STATIC ${source_files})
 TARGET_LINK_LIBRARIES(itkParticleShapeModeling ${ITK_LIBRARIES})
