@@ -9,16 +9,13 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 option (BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option (INSTALL_SOURCE  "Install FIM_V4 source code." OFF)
 
-# Specify include directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trimesh2/include )
-
 # Build the trimesh2 library with the meshFIM code included
-#file(GLOB trimesh2_srcs trimesh2/libsrc/*.cc)
 file(GLOB trimesh2_srcs trimesh2/include/*.h trimesh2/libsrc/*.cc)
 set( FIM_SRCS meshFIM.cpp ${trimesh2_srcs} )
 
 add_library(fim_v4 STATIC ${FIM_SRCS})
+target_include_directories(fim_v4 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
+target_include_directories(fim_v4 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/trimesh2/include> $<INSTALL_INTERFACE:trimesh/include>)  #ctc: move trimesh2 to main external libs (see github issue #89)
 
 # INSTALLATION AND PACKAGING
 

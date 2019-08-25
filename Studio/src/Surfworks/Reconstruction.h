@@ -7,8 +7,8 @@
 
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
 #include <Groom/ShapeWorksGroom.h>
-#include "ITKVTK/itkImageToVTKImageFilter.h"
-#include "ITKVTK/itkVTKImageToImageFilter.h"
+#include <itkImageToVTKImageFilter.h>
+#include <itkVTKImageToImageFilter.h>
 #include <vtkPolyData.h>
 #include <itkAddImageFilter.h>
 #include <itkGradientImageFilter.h>

@@ -45,7 +45,6 @@ FIND_PACKAGE(VTK COMPONENTS
 INCLUDE( ${VTK_USE_FILE} )
 MESSAGE(STATUS "** VTK_DIR: ${VTK_DIR}")
 
-#FIND_PACKAGE(ITK COMPONENTS ITKV3Compatibility ITKVTK REQUIRED)
 FIND_PACKAGE(ITK)
 IF (ITK_FOUND)
   INCLUDE (${ITK_USE_FILE})
@@ -58,7 +57,6 @@ endif()
 
 INCLUDE_DIRECTORIES(
   ${COMMON_LIBS_DIR}/Eigen
-  ${COMMON_LIBS_DIR}/ITKVTK
   ${surfworks_SOURCE_DIR}/Params
   ${COMMON_LIBS_DIR}/Procrustes
   ${surfworks_SOURCE_DIR}/Transforms
@@ -71,8 +69,6 @@ INCLUDE_DIRECTORIES(
 file(
   GLOB
   source_files
-  ${COMMON_LIBS_DIR}/ITKVTK/*.h
-  ${COMMON_LIBS_DIR}/ITKVTK/*.hxx
   Params/*.h
   Params/*.hxx
   ${COMMON_LIBS_DIR}/Procrustes/*.h
@@ -97,21 +93,21 @@ FOREACH( var ${BIN_LIST} )
   if(USE_TPS)
     if(VIS_STEPS)
       ADD_EXECUTABLE( ${var}TPSDebug ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}TPSDebug  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})   #TODO: why does tinyxml appear twice in these link lines?
+      TARGET_LINK_LIBRARIES(${var}TPSDebug ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml)
       INSTALL(TARGETS ${var}TPSDebug  RUNTIME DESTINATION .)
     else(VIS_STEPS)
       ADD_EXECUTABLE( ${var}TPS ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}TPS  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${var}TPS ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml)
       INSTALL(TARGETS ${var}TPS  RUNTIME DESTINATION .)
     endif(VIS_STEPS)
   else(USE_TPS)
     if(VIS_STEPS)
       ADD_EXECUTABLE( ${var}RBFDebug ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}RBFDebug  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${var}RBFDebug ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml)
       INSTALL(TARGETS ${var}RBFDebug  RUNTIME DESTINATION .)
     else(VIS_STEPS)
       ADD_EXECUTABLE( ${var}RBF ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}RBF  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${var}RBF ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml)
       INSTALL(TARGETS ${var}RBF  RUNTIME DESTINATION .)
     endif(VIS_STEPS)
 
