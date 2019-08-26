@@ -29,7 +29,7 @@
 #define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
 #endif
 
-template < template < typename TCoord, int > class TTransformType >
+template < template < typename TCoord, int > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform >
 class Reconstruction {
     typedef float PixelType;
     typedef itk::Image< PixelType, 3 > ImageType;
