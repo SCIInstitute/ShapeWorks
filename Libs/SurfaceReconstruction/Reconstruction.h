@@ -4,6 +4,7 @@
 #include <itkeigen/Eigen/Dense>
 #include <itkeigen/Eigen/Sparse>
 
+#include "itkThinPlateSplineKernelTransform2.h"
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
@@ -23,6 +24,7 @@
 #define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
 #endif
 
+template <class TTransformType>
 class Reconstruction {
     typedef float PixelType;
     typedef itk::Image< PixelType, 3 > ImageType;

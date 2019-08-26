@@ -17,17 +17,20 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
-Reconstruction::Reconstruction(float decimationPercent, double maxAngleDegrees) :
+template <class TTransformType>
+Reconstruction<TTransformType>::Reconstruction(float decimationPercent, double maxAngleDegrees) :
     denseDone_(false),
     decimationPercent_(decimationPercent),
     maxAngleDegrees_(maxAngleDegrees),
     numClusters_(5)
 {}
 
-Reconstruction::~Reconstruction() {
+template <class TTransformType>
+Reconstruction<TTransformType>::~Reconstruction() {
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
+template <class TTransformType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getDenseMean(
         std::vector<std::vector<itk::Point<float> > > local_pts,
         std::vector<std::vector<itk::Point<float> > > global_pts,
         std::vector<ImageType::Pointer> distance_transform) {
@@ -43,26 +46,31 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
     return this->denseMean_;
 }
 
-void Reconstruction::reset() {
+template <class TTransformType>
+void Reconstruction<TTransformType>::reset() {
     this->denseDone_ = false;
     this->goodPoints_.clear();
     this->denseMean_ = NULL;
     this->sparseMean_ = NULL;
 }
 
-void Reconstruction::setDecimation(float dec) {
+template <class TTransformType>
+void Reconstruction<TTransformType>::setDecimation(float dec) {
     this->decimationPercent_ = dec;
 }
 
-void Reconstruction::setMaxAngle(double angleDegrees) {
+template <class TTransformType>
+void Reconstruction<TTransformType>::setMaxAngle(double angleDegrees) {
     this->maxAngleDegrees_ = angleDegrees;
 }
 
-void Reconstruction::setNumClusters(int num) {
+template <class TTransformType>
+void Reconstruction<TTransformType>::setNumClusters(int num) {
     this->numClusters_ = num;
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
+template <class TTransformType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getMesh(
         std::vector<itk::Point<float> > local_pts) {
     //default reconstruction if no warping to dense mean has occurred yet
     if (!this->denseDone_) {
@@ -145,7 +153,8 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
     return denseShape;
 }
 
-void Reconstruction::readMeanInfo(std::string dense,
+template <class TTransformType>
+void Reconstruction<TTransformType>::readMeanInfo(std::string dense,
                                   std::string sparse, std::string goodPoints) {
     //read out dense mean
     vtkSmartPointer<vtkPolyDataReader> reader1 = vtkPolyDataReader::New();
@@ -177,12 +186,13 @@ void Reconstruction::readMeanInfo(std::string dense,
     this->denseDone_ = true;
 }
 
-
-bool Reconstruction::denseDone() {
+template <class TTransformType>
+bool Reconstruction<TTransformType>::denseDone() {
     return this->denseDone_;
 }
 
-void Reconstruction::computeDenseMean(
+template <class TTransformType>
+void Reconstruction<TTransformType>::computeDenseMean(
         std::vector<std::vector<itk::Point<float> > > local_pts,
         std::vector<std::vector<itk::Point<float> > > global_pts,
         std::vector<ImageType::Pointer> distance_transform) {
@@ -444,7 +454,8 @@ void Reconstruction::computeDenseMean(
     this->denseDone_ = true;
 }
 
-vnl_matrix<double> Reconstruction::computeParticlesNormals(
+template <class TTransformType>
+vnl_matrix<double> Reconstruction<TTransformType>::computeParticlesNormals(
         vtkSmartPointer< vtkPoints > particles,
         ImageType::Pointer distance_transform) {
     const ImageType::SpacingType& spacing = distance_transform->GetSpacing();
@@ -612,7 +623,8 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
     return particlesNormals;
 }
 
-void Reconstruction::generateWarpedMeshes(
+template <class TTransformType>
+void Reconstruction<TTransformType>::generateWarpedMeshes(
         RBFTransformType::Pointer transform,
         vtkSmartPointer<vtkPolyData>& outputMesh) {
     // generate warped meshes
@@ -637,7 +649,8 @@ void Reconstruction::generateWarpedMeshes(
     outputMesh->Modified();
 }
 
-double Reconstruction::computeAverageDistanceToNeighbors(
+template <class TTransformType>
+double Reconstruction<TTransformType>::computeAverageDistanceToNeighbors(
         vtkSmartPointer<vtkPoints> points, std::vector<int> particles_indices) {
     int K = 6; // hexagonal ring - one jump
     vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
@@ -683,7 +696,8 @@ double Reconstruction::computeAverageDistanceToNeighbors(
     return avgDist;
 }
 
-void Reconstruction::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
+template <class TTransformType>
+void Reconstruction<TTransformType>::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
                                   vtkSmartPointer<vtkPoints> targetPts, RBFTransformType::Pointer rbfTransform,
                                   vtkSmartPointer<vtkPoints>& mappedCorrespondences, double & rms,
                                   double & rms_wo_mapping, double & maxmDist) {
@@ -739,7 +753,8 @@ void Reconstruction::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
     rms_wo_mapping /= sourcePts->GetNumberOfPoints();
 }
 
-vtkSmartPointer<vtkPoints> Reconstruction::convertToImageCoordinates(
+template <class TTransformType>
+vtkSmartPointer<vtkPoints> Reconstruction<TTransformType>::convertToImageCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
         const itk::Image< float, 3 >::PointType& origin) {
@@ -754,7 +769,8 @@ vtkSmartPointer<vtkPoints> Reconstruction::convertToImageCoordinates(
     return points;
 }
 
-vtkSmartPointer<vtkPoints> Reconstruction::convertToPhysicalCoordinates(
+template <class TTransformType>
+vtkSmartPointer<vtkPoints> Reconstruction<TTransformType>::convertToPhysicalCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
         const itk::Image< float, 3 >::PointType& origin) {
@@ -769,7 +785,8 @@ vtkSmartPointer<vtkPoints> Reconstruction::convertToPhysicalCoordinates(
     return points;
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
+template <class TTransformType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::extractIsosurface(
         vtkSmartPointer<vtkImageData> volData) {
     // (1) isosurface generation
     vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
@@ -830,7 +847,8 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
     return denseShape;
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
+template <class TTransformType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::MeshQC(
         vtkSmartPointer<vtkPolyData> meshIn) {
     //for now, write formats and read them in
     vtkSmartPointer<vtkPolyDataWriter>  polywriter =
@@ -890,7 +908,8 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     return meshIn;
 }
 
-void Reconstruction::writeMeanInfo(std::string nameBase) {
+template <class TTransformType>
+void Reconstruction<TTransformType>::writeMeanInfo(std::string nameBase) {
     //write out dense mean
     vtkSmartPointer<vtkPolyDataWriter> writer1 = vtkPolyDataWriter::New();
     writer1->SetFileName((nameBase + ".dense.vtk").c_str());
@@ -913,7 +932,8 @@ void Reconstruction::writeMeanInfo(std::string nameBase) {
     ptsOut1.close();
 }
 
-void Reconstruction::performKMeansClustering(
+template <class TTransformType>
+void Reconstruction<TTransformType>::performKMeansClustering(
         std::vector<std::vector<itk::Point<float> > > global_pts,
         unsigned int number_of_particles,
         std::vector<int> & centroidIndices) {
