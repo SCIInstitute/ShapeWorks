@@ -6,14 +6,19 @@
 
 #include "itkThinPlateSplineKernelTransform2.h"
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"
+
 #include <itkImageToVTKImageFilter.h>
 #include <itkVTKImageToImageFilter.h>
+
 #include <vtkPolyData.h>
 #include <itkAddImageFilter.h>
 #include <itkGradientImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkResampleImageFilter.h>
+
+#include <itkLinearInterpolateImageFunction.h>
 #include <itkBSplineInterpolateImageFunction.h>
+
 #include <itkMultiplyImageFilter.h>
 #include "itkImageRegionConstIterator.h"
 #include <itkImageDuplicator.h>
@@ -24,7 +29,7 @@
 #define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
 #endif
 
-template <class TTransformType>
+template < template < typename TCoord, int > class TTransformType >
 class Reconstruction {
     typedef float PixelType;
     typedef itk::Image< PixelType, 3 > ImageType;
@@ -51,12 +56,12 @@ class Reconstruction {
 
     typedef itk::ImageDuplicator< ImageType >          DuplicatorType;
     typedef double                                     CoordinateRepType;
-    typedef itk::CompactlySupportedRBFSparseKernelTransform
-    <CoordinateRepType, 3>                    RBFTransformType;
-    typedef itk::Point< CoordinateRepType, 3 >  PointType;
+
+    typedef TTransformType < CoordinateRepType, 3 >     TransformType;
+    typedef itk::Point< CoordinateRepType, 3 >          PointType;
     typedef std::vector< PointType >                    PointArrayType;
-    typedef RBFTransformType::PointSetType              PointSetType;
-    typedef PointSetType::PointIdentifier               PointIdType;
+    typedef typename TransformType::PointSetType        PointSetType;
+    typedef typename PointSetType::PointIdentifier      PointIdType;
 public:
     Reconstruction(float decimationPercent = 0.3, double angleThresh = 45.);
     ~Reconstruction();
@@ -85,13 +90,13 @@ private:
     vnl_matrix<double> computeParticlesNormals(
             vtkSmartPointer< vtkPoints > particles,
             ImageType::Pointer distance_transform);
-    void generateWarpedMeshes(RBFTransformType::Pointer transform,
+    void generateWarpedMeshes(typename TransformType::Pointer transform,
                               vtkSmartPointer<vtkPolyData>& outputMesh);
     double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points,
                                              std::vector<int> particles_indices);
     void CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
                       vtkSmartPointer<vtkPoints> targetPts,
-                      RBFTransformType::Pointer rbfTransform,
+                      typename TransformType::Pointer rbfTransform,
                       vtkSmartPointer<vtkPoints> & mappedCorrespondences,
                       double & rms, double & rms_wo_mapping, double & maxmDist);
     vtkSmartPointer<vtkPoints> convertToImageCoordinates(

@@ -17,7 +17,7 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 Reconstruction<TTransformType>::Reconstruction(float decimationPercent, double maxAngleDegrees) :
     denseDone_(false),
     decimationPercent_(decimationPercent),
@@ -25,11 +25,11 @@ Reconstruction<TTransformType>::Reconstruction(float decimationPercent, double m
     numClusters_(5)
 {}
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 Reconstruction<TTransformType>::~Reconstruction() {
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getDenseMean(
         std::vector<std::vector<itk::Point<float> > > local_pts,
         std::vector<std::vector<itk::Point<float> > > global_pts,
@@ -46,7 +46,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getDenseMean(
     return this->denseMean_;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::reset() {
     this->denseDone_ = false;
     this->goodPoints_.clear();
@@ -54,22 +54,22 @@ void Reconstruction<TTransformType>::reset() {
     this->sparseMean_ = NULL;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::setDecimation(float dec) {
     this->decimationPercent_ = dec;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::setMaxAngle(double angleDegrees) {
     this->maxAngleDegrees_ = angleDegrees;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::setNumClusters(int num) {
     this->numClusters_ = num;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getMesh(
         std::vector<itk::Point<float> > local_pts) {
     //default reconstruction if no warping to dense mean has occurred yet
@@ -95,8 +95,8 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getMesh(
     // forward warping from mean space to subject space
     // Define container for source landmarks that corresponds to the mean space, this is
     // the moving mesh which will be warped to each individual subject
-    PointSetType::Pointer sourceLandMarks = PointSetType::New();
-    PointSetType::PointsContainer::Pointer sourceLandMarkContainer =
+    typename PointSetType::Pointer sourceLandMarks = PointSetType::New();
+    typename PointSetType::PointsContainer::Pointer sourceLandMarkContainer =
             sourceLandMarks->GetPoints();
     PointType ps;
     id = itk::NumericTraits< PointIdType >::Zero;
@@ -113,14 +113,14 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getMesh(
             ns++;
         }
     }
-    RBFTransformType::Pointer rbfTransform = RBFTransformType::New();
+    typename TransformType::Pointer rbfTransform = TransformType::New();
     rbfTransform->SetSigma(sigma); // smaller means more sparse
     rbfTransform->SetStiffness(1e-10);
     rbfTransform->SetSourceLandmarks(sourceLandMarks);
     // Define container for target landmarks corresponds to the subject shape
-    PointSetType::Pointer targetLandMarks = PointSetType::New();
+    typename PointSetType::Pointer targetLandMarks = PointSetType::New();
     PointType pt;
-    PointSetType::PointsContainer::Pointer targetLandMarkContainer =
+    typename PointSetType::PointsContainer::Pointer targetLandMarkContainer =
             targetLandMarks->GetPoints();
     id = itk::NumericTraits< PointIdType >::Zero;
     int nt = 0;
@@ -153,7 +153,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::getMesh(
     return denseShape;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::readMeanInfo(std::string dense,
                                   std::string sparse, std::string goodPoints) {
     //read out dense mean
@@ -186,12 +186,12 @@ void Reconstruction<TTransformType>::readMeanInfo(std::string dense,
     this->denseDone_ = true;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 bool Reconstruction<TTransformType>::denseDone() {
     return this->denseDone_;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::computeDenseMean(
         std::vector<std::vector<itk::Point<float> > > local_pts,
         std::vector<std::vector<itk::Point<float> > > global_pts,
@@ -290,8 +290,8 @@ void Reconstruction<TTransformType>::computeDenseMean(
         // Define container for source landmarks that corresponds to the mean space, this is
         // fixed where the target (each individual shape) will be warped to
         // NOTE that this is inverse warping to avoid holes in the warped distance transforms
-        PointSetType::Pointer sourceLandMarks = PointSetType::New();
-        PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
+        typename PointSetType::Pointer sourceLandMarks = PointSetType::New();
+        typename PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
         PointType ps;
         PointIdType id = itk::NumericTraits< PointIdType >::Zero;
         int ns = 0;
@@ -314,7 +314,7 @@ void Reconstruction<TTransformType>::computeDenseMean(
 
         // the roles of the source and target are reversed to simulate a reverse warping
         // without explicitly invert the warp in order to avoid holes in the warping result
-        RBFTransformType::Pointer rbfTransform = RBFTransformType::New();
+        typename TransformType::Pointer rbfTransform = TransformType::New();
         rbfTransform->SetSigma(sigma); // smaller means more sparse
         //rbfTransform->SetStiffness(0.25*sigma);
         rbfTransform->SetStiffness(1e-10);
@@ -343,9 +343,9 @@ void Reconstruction<TTransformType>::computeDenseMean(
         for (unsigned int cnt = 0; cnt < centroidIndices.size(); cnt++) {
             unsigned int shape = centroidIndices[cnt];
             auto dt = distance_transform[shape];
-            PointSetType::Pointer targetLandMarks = PointSetType::New();
+            typename PointSetType::Pointer targetLandMarks = PointSetType::New();
             PointType pt;
-            PointSetType::PointsContainer::Pointer
+            typename PointSetType::PointsContainer::Pointer
                     targetLandMarkContainer = targetLandMarks->GetPoints();
             id = itk::NumericTraits< PointIdType >::Zero;
 
@@ -454,7 +454,7 @@ void Reconstruction<TTransformType>::computeDenseMean(
     this->denseDone_ = true;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 vnl_matrix<double> Reconstruction<TTransformType>::computeParticlesNormals(
         vtkSmartPointer< vtkPoints > particles,
         ImageType::Pointer distance_transform) {
@@ -623,9 +623,9 @@ vnl_matrix<double> Reconstruction<TTransformType>::computeParticlesNormals(
     return particlesNormals;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::generateWarpedMeshes(
-        RBFTransformType::Pointer transform,
+        typename TransformType::Pointer transform,
         vtkSmartPointer<vtkPolyData>& outputMesh) {
     // generate warped meshes
     vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
@@ -649,7 +649,7 @@ void Reconstruction<TTransformType>::generateWarpedMeshes(
     outputMesh->Modified();
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 double Reconstruction<TTransformType>::computeAverageDistanceToNeighbors(
         vtkSmartPointer<vtkPoints> points, std::vector<int> particles_indices) {
     int K = 6; // hexagonal ring - one jump
@@ -696,9 +696,9 @@ double Reconstruction<TTransformType>::computeAverageDistanceToNeighbors(
     return avgDist;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
-                                  vtkSmartPointer<vtkPoints> targetPts, RBFTransformType::Pointer rbfTransform,
+                                  vtkSmartPointer<vtkPoints> targetPts, typename TransformType::Pointer rbfTransform,
                                   vtkSmartPointer<vtkPoints>& mappedCorrespondences, double & rms,
                                   double & rms_wo_mapping, double & maxmDist) {
     // source should be warped to the target
@@ -753,7 +753,7 @@ void Reconstruction<TTransformType>::CheckMapping(vtkSmartPointer<vtkPoints> sou
     rms_wo_mapping /= sourcePts->GetNumberOfPoints();
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 vtkSmartPointer<vtkPoints> Reconstruction<TTransformType>::convertToImageCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
@@ -769,7 +769,7 @@ vtkSmartPointer<vtkPoints> Reconstruction<TTransformType>::convertToImageCoordin
     return points;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 vtkSmartPointer<vtkPoints> Reconstruction<TTransformType>::convertToPhysicalCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
@@ -785,7 +785,7 @@ vtkSmartPointer<vtkPoints> Reconstruction<TTransformType>::convertToPhysicalCoor
     return points;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::extractIsosurface(
         vtkSmartPointer<vtkImageData> volData) {
     // (1) isosurface generation
@@ -847,7 +847,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::extractIsosurface(
     return denseShape;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::MeshQC(
         vtkSmartPointer<vtkPolyData> meshIn) {
     //for now, write formats and read them in
@@ -908,7 +908,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType>::MeshQC(
     return meshIn;
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::writeMeanInfo(std::string nameBase) {
     //write out dense mean
     vtkSmartPointer<vtkPolyDataWriter> writer1 = vtkPolyDataWriter::New();
@@ -932,7 +932,7 @@ void Reconstruction<TTransformType>::writeMeanInfo(std::string nameBase) {
     ptsOut1.close();
 }
 
-template <class TTransformType>
+template< template < typename TCoord, int > class TTransformType >
 void Reconstruction<TTransformType>::performKMeansClustering(
         std::vector<std::vector<itk::Point<float> > > global_pts,
         unsigned int number_of_particles,
