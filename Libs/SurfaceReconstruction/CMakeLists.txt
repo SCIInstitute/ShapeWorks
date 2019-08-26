@@ -1,0 +1,8 @@
+FILE(GLOB SurfaceReconstruction_srcs ./*.h ./*.cpp)
+if(TARGET SurfaceReconstruction)
+    message("SurfaceReconstruction already exists")
+else(TARGET SurfaceReconstruction)
+    ADD_LIBRARY (SurfaceReconstruction STATIC ${SurfaceReconstruction_srcs})
+    TARGET_LINK_LIBRARIES(SurfaceReconstruction PreViewMeshQC Transforms)
+    target_include_directories(SurfaceReconstruction PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
+endif(TARGET SurfaceReconstruction)

@@ -1,0 +1,7 @@
+FILE(GLOB Transforms_srcs ./*.h ./*.cpp)
+if(TARGET Transforms)
+    message("Transforms already exists")
+else(TARGET Transforms)
+    ADD_LIBRARY (Transforms STATIC ${Transforms_srcs})
+    target_include_directories(Transforms PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
+endif(TARGET Transforms)

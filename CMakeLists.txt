@@ -128,25 +128,8 @@ endif(USE_OPENMP)
 # endif(USE_OPENMP)
 
 
-INCLUDE_DIRECTORIES(
-  Libs/fim_v4
-  Libs/fim_v4/trimesh2/include
-  Libs/tinyxml
-  Libs/OptionParser
-  Libs/PreViewMeshQC
-  Libs/ITKVTK
-  Libs/Procrustes
-  Libs/Eigen
-  )
-
-#todo: subdirs is deprecated: use add_subdirectory
-SUBDIRS(Libs/fim_v4)
-SUBDIRS(Libs/tinyxml)
-SUBDIRS(Libs/OptionParser)
-SUBDIRS(Libs/PreViewMeshQC)
-SUBDIRS(Libs/ITKVTK)
-SUBDIRS(Libs/Procrustes)
-
+add_subdirectory(ExternalLibs)
+add_subdirectory(Libs)
 
 
 option(Build_PrepTools "Build prep tools" ON)
@@ -191,19 +174,19 @@ MESSAGE(STATUS "** USE_VTK_FILE: ${VTK_USE_FILE}")
 
 if(Build_PrepTools)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Prep/Source)
-    subdirs(Prep/Source)
+    add_subdirectory(Prep/Source)
 endif(Build_PrepTools)
 if(Build_Run)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Run/source)
-    subdirs(Run/source)
+    add_subdirectory(Run/source)
 endif(Build_Run)
 if(Build_Post)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Post/source/ShapeWorksPost-V1)
-    subdirs(Post/source/ShapeWorksPost-V1)
+    add_subdirectory(Post/source/ShapeWorksPost-V1)
 endif(Build_Post)
 if(Build_View2)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Post/source/ShapeWorksView2)
-    subdirs(Post/source/ShapeWorksView2)
+    add_subdirectory(Post/source/ShapeWorksView2)
 endif(Build_View2)
 if(Build_Studio)
   add_subdirectory(Studio/src)

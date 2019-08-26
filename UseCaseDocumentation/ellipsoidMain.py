@@ -79,9 +79,9 @@ shapeworks binaries and set the necessary library paths
 """
 
 binpath = "../build/shapeworks-build/binary"
-installpath = "../install/lib"
+installpath = "../install"
 os.environ["PATH"] = binpath + ":" + os.environ["PATH"]
-os.environ["LD_LIBRARY_PATH"]= installpath + ":" + installpath + "/vtk-5.10"
+os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
 
 """
 

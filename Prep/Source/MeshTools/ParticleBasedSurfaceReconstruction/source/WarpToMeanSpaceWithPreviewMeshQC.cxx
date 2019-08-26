@@ -100,15 +100,14 @@
 #include "Params/InputParams.h"
 #include "Utils/utils.h"
 #include "Utils/vis.h"
-#include "Procrustes3D.h"
-
+#include <Procrustes3D.h>
 
 // --------- preview mesh qc -------------
-#include "FEVTKImport.h"
-#include "FEVTKExport.h"
-#include "FEFixMesh.h"
-#include "FEMeshSmoothingModifier.h"
-#include "FECVDDecimationModifier.h"
+#include <FEVTKImport.h>
+#include <FEVTKExport.h>
+#include <FEFixMesh.h>
+#include <FEMeshSmoothingModifier.h>
+#include <FECVDDecimationModifier.h>
 
 using namespace std;
 

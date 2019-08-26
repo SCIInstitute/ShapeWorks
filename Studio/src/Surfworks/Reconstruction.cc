@@ -8,11 +8,11 @@
 #include <vtkSmoothPolyDataFilter.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkDecimatePro.h>
-#include "PreViewMeshQC/FEVTKImport.h"
-#include "PreViewMeshQC/FEVTKExport.h"
-#include "PreViewMeshQC/FEFixMesh.h"
-#include "PreViewMeshQC/FEMeshSmoothingModifier.h"
-#include "PreViewMeshQC/FECVDDecimationModifier.h"
+#include <FEVTKImport.h>
+#include <FEVTKExport.h>
+#include <FEFixMesh.h>
+#include <FEMeshSmoothingModifier.h>
+#include <FECVDDecimationModifier.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
 #include <array>

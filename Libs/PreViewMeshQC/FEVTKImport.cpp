@@ -1,6 +1,6 @@
-#include "FEVTKImport.h"
-#include "FEMesh.h"
-#include "FEAutoMesher.h"
+#include <FEVTKImport.h>
+#include <FEMesh.h>
+#include <FEAutoMesher.h>
 #include <string.h>
 
 FEVTKimport::FEVTKimport()

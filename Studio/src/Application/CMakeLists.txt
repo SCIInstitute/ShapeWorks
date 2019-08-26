@@ -56,7 +56,6 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Application )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Application/Groom )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Application/Optimize )
 include_directories(${CMAKE_SOURCE_DIR}/ParticleShapeworks/include)
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/TinyXML )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Groom )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Optimize )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Surfworks )
@@ -101,7 +100,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   vtkViewsQt
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
-  ${TinyXML}
+  tinyxml
   ShapeWorksGroom
   ShapeWorksOptimize
   Surfworks)

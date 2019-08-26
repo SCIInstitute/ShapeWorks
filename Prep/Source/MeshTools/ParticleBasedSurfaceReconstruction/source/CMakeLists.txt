@@ -1,11 +1,8 @@
 PROJECT(ParticleBasedSurfaceReconstruction)
 cmake_minimum_required(VERSION 2.6)
 
+#ctc: don't try to add include directories like this, but instead use higher level definitions and implicit inclusion from target_link_libraries
 SET(COMMON_LIBS_DIR "../../../CommonLibraries")
-
-#set(ITK_DIR "/home/sci/riddhishb/Documents/packages/InsightToolkit-4.5.1/build")
-set(ITK_DIR "/home/sci/riddhishb/Documents/packages/InsightToolkit-4.5.1/build")
-set(VTK_DIR "/home/sci/riddhishb/VTK-5.10.1/build")
 
 option(USE_TPS "Warp using Thin Plate Splines" OFF)
 if(USE_TPS)
@@ -45,7 +42,6 @@ FIND_PACKAGE(VTK COMPONENTS
 INCLUDE( ${VTK_USE_FILE} )
 MESSAGE(STATUS "** VTK_DIR: ${VTK_DIR}")
 
-#FIND_PACKAGE(ITK COMPONENTS ITKV3Compatibility ITKVTK REQUIRED)
 FIND_PACKAGE(ITK)
 IF (ITK_FOUND)
   INCLUDE (${ITK_USE_FILE})
@@ -58,12 +54,9 @@ endif()
 
 INCLUDE_DIRECTORIES(
   ${COMMON_LIBS_DIR}/Eigen
-  ${COMMON_LIBS_DIR}/ITKVTK
   ${surfworks_SOURCE_DIR}/Params
-  ${COMMON_LIBS_DIR}/Procrustes
   ${surfworks_SOURCE_DIR}/Transforms
   ${surfworks_SOURCE_DIR}/Utils
-  ${COMMON_LIBS_DIR}/PreViewMeshQC
   )
 
 
@@ -71,18 +64,12 @@ INCLUDE_DIRECTORIES(
 file(
   GLOB
   source_files
-  ${COMMON_LIBS_DIR}/ITKVTK/*.h
-  ${COMMON_LIBS_DIR}/ITKVTK/*.hxx
   Params/*.h
   Params/*.hxx
-  ${COMMON_LIBS_DIR}/Procrustes/*.h
-  ${COMMON_LIBS_DIR}/Procrustes/*.hxx
   Transforms/*.h
   Transforms/*.hxx
   Utils/*.h
   Utils/*.cpp
-  ${COMMON_LIBS_DIR}/PreViewMeshQC/*.h
-  ${COMMON_LIBS_DIR}/PreViewMeshQC/*.cpp
   )
 
 SET( BIN_LIST
@@ -97,21 +84,21 @@ FOREACH( var ${BIN_LIST} )
   if(USE_TPS)
     if(VIS_STEPS)
       ADD_EXECUTABLE( ${var}TPSDebug ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}TPSDebug  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})   #TODO: why does tinyxml appear twice in these link lines?
+      TARGET_LINK_LIBRARIES(${var}TPSDebug ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml PreViewMeshQC Procrustes)
       INSTALL(TARGETS ${var}TPSDebug  RUNTIME DESTINATION .)
     else(VIS_STEPS)
       ADD_EXECUTABLE( ${var}TPS ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}TPS  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${var}TPS ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml PreViewMeshQC Procrustes)
       INSTALL(TARGETS ${var}TPS  RUNTIME DESTINATION .)
     endif(VIS_STEPS)
   else(USE_TPS)
     if(VIS_STEPS)
       ADD_EXECUTABLE( ${var}RBFDebug ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}RBFDebug  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${var}RBFDebug ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml PreViewMeshQC Procrustes)
       INSTALL(TARGETS ${var}RBFDebug  RUNTIME DESTINATION .)
     else(VIS_STEPS)
       ADD_EXECUTABLE( ${var}RBF ${var}.cxx ${source_files})
-      TARGET_LINK_LIBRARIES(${var}RBF  tinyxml ${VTK_LIBRARIES} tinyxml ${ITK_LIBRARIES})
+      TARGET_LINK_LIBRARIES(${var}RBF ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml PreViewMeshQC Procrustes)
       INSTALL(TARGETS ${var}RBF  RUNTIME DESTINATION .)
     endif(VIS_STEPS)
 
