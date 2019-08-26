@@ -24,12 +24,15 @@
 #include <itkImageDuplicator.h>
 #include <vtkSmartPointer.h>
 
+#include <typeinfo>
+
 #ifdef assert
 #undef assert
 #define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
 #endif
 
-template < template < typename TCoord, int > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform >
+template < template < typename TCoord, int > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
+           template < typename TImage > class TInterpolatorType = itk::LinearInterpolateImageFunction >
 class Reconstruction {
     typedef float PixelType;
     typedef itk::Image< PixelType, 3 > ImageType;
@@ -49,8 +52,7 @@ class Reconstruction {
     AddImageFilterType;
     typedef itk::ResampleImageFilter<ImageType, ImageType >
     ResampleFilterType;
-    typedef itk::BSplineInterpolateImageFunction<ImageType, double, double >
-    InterpolatorType;
+    typedef TInterpolatorType < ImageType >     InterpolatorType;
     typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType>
     MultiplyByConstantImageFilterType;
 
