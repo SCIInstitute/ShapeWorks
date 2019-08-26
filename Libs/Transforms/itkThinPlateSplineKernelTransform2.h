@@ -130,8 +130,4 @@ private:
 
 } // namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkThinPlateSplineKernelTransform2.hxx"
-#endif
-
 #endif // __itkThinPlateSplineKernelTransform2_h

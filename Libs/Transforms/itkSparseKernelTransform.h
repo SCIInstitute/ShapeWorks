@@ -32,8 +32,8 @@
 #include <vnl/vnl_sample.h>
 
 //#define EIGEN_USE_MKL_ALL
-#include "../Eigen/Dense"
-#include "../Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 #include <stdint.h>
 #include <iostream>
 
@@ -373,8 +373,5 @@ private:
 
 } // end namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkSparseKernelTransform.hxx"
-#endif
 
 #endif // __itkSparseKernelTransform_h

@@ -98,8 +98,5 @@ private:
 
 } // namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkCompactlySupportedRBFSparseKernelTransform.hxx"
-#endif
 
 #endif // __itkCompactlySupportedRBFSparseKernelTransform_h

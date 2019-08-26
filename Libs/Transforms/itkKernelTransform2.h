@@ -536,8 +536,5 @@ private:
 
 } // end namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkKernelTransform2.hxx"
-#endif
 
 #endif // __itkKernelTransform2_h
