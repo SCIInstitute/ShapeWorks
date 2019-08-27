@@ -19,7 +19,7 @@
 
 template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
 Reconstruction<TTransformType, TInterpolatorType>::Reconstruction(float decimationPercent, double maxAngleDegrees) :
-    denseDone_(false),
+    sparseDone_(false), denseDone_(false),
     decimationPercent_(decimationPercent),
     maxAngleDegrees_(maxAngleDegrees),
     numClusters_(5)
@@ -48,6 +48,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::g
 
 template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::reset() {
+    this->sparseDone_ = false;
     this->denseDone_ = false;
     this->goodPoints_.clear();
     this->denseMean_ = NULL;
@@ -183,9 +184,106 @@ void Reconstruction<TTransformType,TInterpolatorType>::readMeanInfo(std::string 
         }
     }
     ptsIn.close();
+    this->sparseDone_ = true;
     this->denseDone_ = true;
 }
 
+template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+std::vector<std::vector<itk::Point<float> > > Reconstruction<TTransformType,TInterpolatorType>::computeSparseMean(std::vector<std::vector<itk::Point<float> > > local_pts,
+                                                                         bool do_procrustes, bool do_procrustes_scaling)
+{
+    // (1) define mean sparse shape:
+    //          run generalized procrustes on the local points to align all shapes to a common coordinate frame
+    Procrustes3D::ShapeListType shapelist;
+    Procrustes3D::ShapeType     shapevector;
+    Procrustes3D::ShapeType     meanSparseShape;
+    Procrustes3D::PointType     point;
+
+    // fill the shape list
+    for (unsigned int shapeNo = 0; shapeNo < local_pts.size(); shapeNo++)
+    {
+        shapevector.clear();
+        std::vector<itk::Point<float> > curShape = local_pts[shapeNo];
+        for(unsigned int ii = 0 ; ii < curShape.size(); ii++)
+        {
+            itk::Point<float>  p = curShape[ii];
+
+            point(0) = double(p[0]);
+            point(1) = double(p[1]);
+            point(2) = double(p[2]);
+
+            shapevector.push_back(point);
+        }
+        shapelist.push_back(shapevector);
+    }
+
+    Procrustes3D procrustes;
+    Procrustes3D::PointType commonCenter;
+    if(do_procrustes)
+    {
+        // Run alignment
+        Procrustes3D::SimilarityTransformListType transforms;
+        procrustes.AlignShapes(transforms, shapelist, do_procrustes_scaling); // shapes are actually aligned (modified) and transforms are returned
+
+        // this is the center which needed for translation of the shapes to coincide on the image origin
+        // so that the whole object is in the image and won't go outside
+        procrustes.ComputeCommonCenter(transforms, commonCenter);
+
+        // Construct transform matrices for each particle system.
+        // Procrustes3D::TransformMatrixListType transformMatrices;
+        // procrustes.ConstructTransformMatrices(transforms,transformMatrices, do_procrustes_scaling); // note that tranforms scale is updated here if do_scaling ==1
+    }
+    else
+    {
+        commonCenter(0) = 0; commonCenter(1) = 0; commonCenter(2) = 0;
+    }
+
+    // compute the average sparse shape
+    procrustes.ComputeMeanShape(meanSparseShape , shapelist);
+    medianShapeIndex_ = procrustes.ComputeMedianShape(shapelist);
+
+    sparseMean_= vtkSmartPointer< vtkPoints >::New(); // for visualization and estimating kernel support
+    for(unsigned int ii = 0 ; ii < meanSparseShape.size(); ii++)
+    {
+        double pt[3];
+
+        pt[0] = meanSparseShape[ii](0) - commonCenter(0);
+        pt[1] = meanSparseShape[ii](1) - commonCenter(1);
+        pt[2] = meanSparseShape[ii](2) - commonCenter(2);
+
+        sparseMean_->InsertNextPoint(pt[0], pt[1], pt[2]);
+    }
+
+    std::vector<std::vector<itk::Point<float> > > global_pts;
+    global_pts.clear();
+    // write aligned shapes for subsequent statistical analysis
+    for (unsigned int shapeNo = 0; shapeNo < local_pts.size(); shapeNo++)
+    {
+        shapevector = shapelist[shapeNo];
+        std::vector<itk::Point<float> > curShape;
+        curShape.clear();
+        for(unsigned int ii = 0 ; ii < shapevector.size(); ii++)
+        {
+            itk::Point<float> pt;
+
+            pt[0] = shapevector[ii](0) - commonCenter(0);
+            pt[1] = shapevector[ii](1) - commonCenter(1);
+            pt[2] = shapevector[ii](2) - commonCenter(2);
+
+            curShape.push_back(pt);
+        }
+
+        global_pts.push_back(curShape);
+    }
+
+    sparseDone_ = true;
+    return global_pts;
+}
+
+template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+bool Reconstruction<TTransformType,TInterpolatorType>::sparseDone() {
+    return this->sparseDone_;
+}
 template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
 bool Reconstruction<TTransformType,TInterpolatorType>::denseDone() {
     return this->denseDone_;
@@ -699,7 +797,7 @@ double Reconstruction<TTransformType,TInterpolatorType>::computeAverageDistanceT
 
 template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
-                                  vtkSmartPointer<vtkPoints> targetPts, typename TransformType::Pointer rbfTransform,
+                                  vtkSmartPointer<vtkPoints> targetPts, typename TransformType::Pointer transform,
                                   vtkSmartPointer<vtkPoints>& mappedCorrespondences, double & rms,
                                   double & rms_wo_mapping, double & maxmDist) {
     // source should be warped to the target
@@ -721,7 +819,7 @@ void Reconstruction<TTransformType,TInterpolatorType>::CheckMapping(vtkSmartPoin
         ps_[0] = ps[0]; ps_[1] = ps[1]; ps_[2] = ps[2];
         pt_[0] = pt[0]; pt_[1] = pt[1]; pt_[2] = pt[2];
 
-        pw_ = rbfTransform->TransformPoint(ps_);
+        pw_ = transform->TransformPoint(ps_);
 
         double cur_rms = pw_.EuclideanDistanceTo(pt_);
         double cur_rms_wo_mapping = ps_.EuclideanDistanceTo(pt_);
@@ -733,7 +831,7 @@ void Reconstruction<TTransformType,TInterpolatorType>::CheckMapping(vtkSmartPoin
         mappedCorrespondences->InsertNextPoint(pw);
 
     }
-    maxmDist = -10000.0f;
+    maxmDist = double(-10000.0f);
     for (unsigned int ii = 0; ii < mappedCorrespondences->GetNumberOfPoints(); ii++) {
         double pi[3];
         mappedCorrespondences->GetPoint(ii, pi);

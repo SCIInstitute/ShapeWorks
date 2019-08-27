@@ -24,7 +24,7 @@
 #include <itkImageDuplicator.h>
 #include <vtkSmartPointer.h>
 
-#include <typeinfo>
+#include "Procrustes3D.h"
 
 #ifdef assert
 #undef assert
@@ -82,9 +82,12 @@ public:
     getMesh(std::vector<itk::Point<float> > local_pts);
     void readMeanInfo(std::string dense,
                       std::string sparse, std::string goodPoints);
+    bool sparseDone();
     bool denseDone();
     void writeMeanInfo(std::string nameBase);
 private:
+    std::vector<std::vector<itk::Point<float> > >  computeSparseMean(std::vector<std::vector<itk::Point<float> > > local_pts,
+                                                                     bool do_procrustes = true, bool do_procrustes_scaling = false);
     void computeDenseMean(
             std::vector<std::vector<itk::Point<float> > > local_pts,
             std::vector<std::vector<itk::Point<float> > > global_pts,
@@ -98,7 +101,7 @@ private:
                                              std::vector<int> particles_indices);
     void CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
                       vtkSmartPointer<vtkPoints> targetPts,
-                      typename TransformType::Pointer rbfTransform,
+                      typename TransformType::Pointer transform,
                       vtkSmartPointer<vtkPoints> & mappedCorrespondences,
                       double & rms, double & rms_wo_mapping, double & maxmDist);
     vtkSmartPointer<vtkPoints> convertToImageCoordinates(
@@ -121,9 +124,11 @@ private:
     vtkSmartPointer<vtkPoints> sparseMean_;
     vtkSmartPointer<vtkPolyData> denseMean_;
     std::vector<bool> goodPoints_;
+    bool sparseDone_;
     bool denseDone_;
     float decimationPercent_;
     double maxAngleDegrees_;
     size_t numClusters_;
+    int medianShapeIndex_;
 };
 #endif // !__RECONSTRUCTION_H__
