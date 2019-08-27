@@ -2,7 +2,7 @@
 #define __itkParticleGoodBadAssessment_txx
 
 #include "itkParticleMeanCurvatureAttribute.h"
-#include "../Utilities/utils.h"
+#include  "Utils.h"
 #include <vector>
 namespace itk{
 

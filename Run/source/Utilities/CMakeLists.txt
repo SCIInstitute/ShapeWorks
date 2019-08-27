@@ -1,8 +1,9 @@
 ADD_LIBRARY (Utilities STATIC
 string_io.cxx
 filenameFactory.cxx
-utils.h
 )
+
+TARGET_LINK_LIBRARIES(Utilities Utils)
 
 IF(USE_VTK)
  ADD_LIBRARY (VtkUtilities STATIC
