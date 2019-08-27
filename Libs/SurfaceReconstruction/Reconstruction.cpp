@@ -956,7 +956,13 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::e
 
 template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::MeshQC(
-        vtkSmartPointer<vtkPolyData> meshIn) {
+        vtkSmartPointer<vtkPolyData> meshIn,
+        bool fixWinding,
+        bool doLaplacianSmoothingBeforeDecimation,
+        bool doLaplacianSmoothingAfterDecimation,
+        float smoothingLambda,
+        int smoothingIterations)
+{
     //for now, write formats and read them in
     vtkSmartPointer<vtkPolyDataWriter>  polywriter =
             vtkSmartPointer<vtkPolyDataWriter>::New();
@@ -979,12 +985,17 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::M
     // fix the element winding
     FEFixMesh fix;
     FEMesh* pm_fix;
-    pm_fix = fix.FixElementWinding(pm);
+    if (fixWinding)
+        pm_fix = fix.FixElementWinding(pm);
+
     // do a Laplacian smoothing before decimation
-    FEMeshSmoothingModifier lap;
-    lap.m_threshold1 = 0.5;
-    lap.m_iteration = 1;
-    pm_fix = lap.Apply(pm_fix);
+    if (doLaplacianSmoothingBeforeDecimation)
+    {
+        FEMeshSmoothingModifier lap;
+        lap.m_threshold1 = double(smoothingLambda);
+        lap.m_iteration = smoothingIterations;
+        pm_fix = lap.Apply(pm_fix);
+    }
 
     // do a CVD decimation
     FECVDDecimationModifier cvd;
@@ -993,10 +1004,13 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::M
     pm_fix = cvd.Apply(pm_fix);
 
     // do a Laplacian smoothing after decimation
-    FEMeshSmoothingModifier lap2;
-    lap2.m_threshold1 = 0.5;
-    lap2.m_iteration = 1;
-    pm_fix = lap2.Apply(pm_fix);
+    if (doLaplacianSmoothingAfterDecimation)
+    {
+        FEMeshSmoothingModifier lap;
+        lap.m_threshold1 = double(smoothingLambda);
+        lap.m_iteration = smoothingIterations;
+        pm_fix = lap.Apply(pm_fix);
+    }
 
     // export to another vtk file
     FEVTKExport vtk_out;
@@ -1006,6 +1020,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::M
     // don't forget to clean-up
     delete pm_fix;
     delete pm;
+
     //read back in new mesh
     vtkSmartPointer<vtkPolyDataReader> polyreader =
             vtkSmartPointer<vtkPolyDataReader>::New();

@@ -121,7 +121,12 @@ private:
             int meshSmootherIterations = 1,
             bool preserveTopology      = true);
     vtkSmartPointer<vtkPolyData> MeshQC(
-            vtkSmartPointer<vtkPolyData> meshIn);
+            vtkSmartPointer<vtkPolyData> meshIn,
+            bool fixWinding = true,
+            bool doLaplacianSmoothingBeforeDecimation = true,
+            bool doLaplacianSmoothingAfterDecimation = true,
+            float smoothingLambda = 0.5f,
+            int smoothingIterations = 1);
     void performKMeansClustering(
             std::vector<std::vector<itk::Point<float> > > global_pts,
             unsigned int number_of_particles,
