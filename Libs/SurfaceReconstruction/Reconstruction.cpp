@@ -1043,7 +1043,8 @@ template< template < typename TCoord, int > class TTransformType, template < typ
 void Reconstruction<TTransformType,TInterpolatorType>::performKMeansClustering(
         std::vector<std::vector<itk::Point<float> > > global_pts,
         unsigned int number_of_particles,
-        std::vector<int> & centroidIndices) {
+        std::vector<int> & centroidIndices)
+{
     unsigned int number_of_shapes = global_pts.size();
     if (this->numClusters_ > number_of_shapes) {
         this->numClusters_ = number_of_shapes;
@@ -1051,13 +1052,13 @@ void Reconstruction<TTransformType,TInterpolatorType>::performKMeansClustering(
     std::vector<vnl_matrix<double>> shapeList;
     vnl_matrix<double> shapeVector(number_of_particles, 3, 0.0);
 
-    // Read input shapes from file list
+    // fill shape matrix
     for (unsigned int shapeNo = 0; shapeNo < number_of_shapes; shapeNo++) {
         for (unsigned int ii = 0; ii < number_of_particles; ii++) {
             double p[3];
-            p[0] = global_pts[shapeNo][ii][0];
-            p[1] = global_pts[shapeNo][ii][1];
-            p[2] = global_pts[shapeNo][ii][2];
+            p[0] = double(global_pts[shapeNo][ii][0]);
+            p[1] = double(global_pts[shapeNo][ii][1]);
+            p[2] = double(global_pts[shapeNo][ii][2]);
 
             shapeVector[ii][0] = p[0];
             shapeVector[ii][1] = p[1];
@@ -1068,20 +1069,21 @@ void Reconstruction<TTransformType,TInterpolatorType>::performKMeansClustering(
     std::vector<int> centers(this->numClusters_, 0);
     unsigned int seed = unsigned(std::time(0));
     std::srand(seed);
-    centers[0] = rand() % number_of_shapes;
+    centers[0] = rand() % int(number_of_shapes);
     std::cout << "Setting center[0] to shape #" << centers[0] << std::endl;
-    int countCenters = 1;
-    while (countCenters < this->numClusters_) {
+    unsigned int countCenters = 1;
+    while (countCenters < this->numClusters_)
+    {
         vnl_matrix<double> distMat(number_of_shapes, countCenters, 0.0);
         vnl_vector<double> minDists(number_of_shapes, 0.0);
         vnl_vector<double> probs(number_of_shapes, 0.0);
-        for (int s = 0; s < number_of_shapes; s++) {
-            for (int c = 0; c < countCenters; c++) {
-                if (s == centers[c]) {
+        for (unsigned int s = 0; s < number_of_shapes; s++) {
+            for (unsigned int c = 0; c < countCenters; c++) {
+                if (s == size_t(centers[c])) {
                     distMat.set_row(s, 0.0);
                     break;
                 }
-                shapeVector = shapeList[s] - shapeList[centers[c]];
+                shapeVector = shapeList[s] - shapeList[size_t(centers[c])];
                 distMat(s, c) = shapeVector.fro_norm();
             }
             minDists(s) = distMat.get_row(s).min_value();
@@ -1090,17 +1092,17 @@ void Reconstruction<TTransformType,TInterpolatorType>::performKMeansClustering(
         probs.operator /=(probs.sum());
         vnl_vector<double> cumProbs(number_of_shapes, 0.0);
 
-        for (int s = 0; s < number_of_shapes; s++) {
+        for (unsigned int s = 0; s < number_of_shapes; s++) {
             cumProbs[s] = probs.extract(s + 1, 0).sum();
         }
-        double r = (double)(rand() % 10000);
+        double r = double(rand() % 10000);
         r = r / 10000.0;
-        for (int s = 0; s < number_of_shapes; s++) {
+        for (unsigned int s = 0; s < number_of_shapes; s++) {
             if (r < cumProbs[s]) {
                 if (probs[s] == 0.0) {
                     continue;
                 } else {
-                    centers[countCenters] = s;
+                    centers[countCenters] = int(s);
                     countCenters += 1;
                     break;
                 }
