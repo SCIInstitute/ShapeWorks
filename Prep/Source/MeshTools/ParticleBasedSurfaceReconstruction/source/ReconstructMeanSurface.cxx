@@ -9,38 +9,43 @@
 #include <type_traits>  // for condition typedefs
 int main( int argc , char* argv[] )
 {
-    if( argc < 2 )
-    {
-        std::cerr << "Usage: " << std::endl;
-        std::cerr << argv[0] << " paramfile " << std::endl;
-        return EXIT_FAILURE;
-    }
+  if( argc < 2 )
+  {
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << argv[0] << " paramfile " << std::endl;
+    return EXIT_FAILURE;
+  }
 
-    InputParams params;
-    params.readParams(argv[1], 3); // 3 - WarpToMeanSpaceWithPreviewMeshQC
+  InputParams params;
+  params.readParams(argv[1], 3); // 3 - WarpToMeanSpaceWithPreviewMeshQC
 
-    std::cout << "Number of input sparse shapes: " << params.localPointsFilenames.size() << std::endl;
+  std::cout << "Number of input sparse shapes: " << params.localPointsFilenames.size() << std::endl;
 
-    //------------- typedefs ---------------
-    const  int Dimension = 3;
-    typedef float      PixelType;
+  //------------- typedefs ---------------
+  const int Dimension = 3;
+  typedef float      PixelType;
+  typedef double CoordinateRepType;
 
-    typedef itk::Image< PixelType, Dimension >  ImageType;
-    typedef itk::ImageFileReader< ImageType >   ReaderType;
-    typedef itk::ImageFileWriter< ImageType >  WriterType;
+  typedef itk::Image< PixelType, Dimension >  ImageType;
+  typedef itk::ImageFileReader< ImageType >   ReaderType;
+  typedef itk::ImageFileWriter< ImageType >   WriterType;
 
-    // transformation
-    typedef   double CoordinateRepType;
-    typedef   itk::CompactlySupportedRBFSparseKernelTransform < CoordinateRepType,Dimension>     RBFTransformType;
-    typedef   itk::ThinPlateSplineKernelTransform2< CoordinateRepType,Dimension>                 ThinPlateSplineType;
+  // transformation
+  typedef itk::CompactlySupportedRBFSparseKernelTransform < CoordinateRepType,Dimension>     RBFTransformType;
+  typedef itk::ThinPlateSplineKernelTransform2< CoordinateRepType,Dimension>                 ThinPlateSplineType;
 
-    // interpolation
-    typedef itk::LinearInterpolateImageFunction<ImageType, double >          LinearInterpolatorType;
-    typedef itk::BSplineInterpolateImageFunction<ImageType, double, double > BSplineInterpolatorType;
+  // interpolation
+  typedef itk::LinearInterpolateImageFunction<ImageType, double >          LinearInterpolatorType;
+  typedef itk::BSplineInterpolateImageFunction<ImageType, double, double > BSplineInterpolatorType;
 
-    //------------- end typedefs ---------------
+  //------------- end typedefs ---------------
 
-    //Reconstruction reconstructor;
+  //Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> reconstructor(0.5, 60.);
+  //reconstructor.reset();
 
-    return 0;
+  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> *reconstructor = new Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction>(0.5, 60.);
+  reconstructor->reset();
+
+
+  return 0;
 }
