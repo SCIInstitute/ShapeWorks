@@ -1,8 +1,8 @@
 #ifndef __SHAPEWORKSGROOM_H__
 #define __SHAPEWORKSGROOM_H__
 
-#include "Surfworks/Eigen/Dense"
-#include "Surfworks/Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 
 #include <cstdlib>
 #include <string>

@@ -1,8 +1,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include "Surfworks/Eigen/Dense"
-#include "Surfworks/Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 
 #include <vtkTriangleFilter.h>
 #include <vtkPolyDataNormals.h>

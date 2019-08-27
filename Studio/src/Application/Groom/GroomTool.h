@@ -2,8 +2,8 @@
 #define STUDIO_GROOM_GROOMTOOL_H
 
 
-#include "Surfworks/Eigen/Dense"
-#include "Surfworks/Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 
 #include <QSharedPointer>
 #include <QWidget>
