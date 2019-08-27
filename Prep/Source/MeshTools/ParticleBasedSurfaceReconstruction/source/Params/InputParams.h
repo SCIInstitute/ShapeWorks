@@ -2,7 +2,7 @@
 #define INPUTPARAMS_H
 
 #include "tinyxml.h"
-#include "../Utils/utils.h"
+#include "Utils.h"
 #include <sys/stat.h> // for mkdir
 #ifdef WIN32
 #include <direct.h>
@@ -446,14 +446,14 @@ public:
             }
 
             // create the directory where the results should be, in case it is not there
-            out_path = utils::getPath(out_prefix);
+            out_path = Utils::getPath(out_prefix);
 #ifdef USE_TPS
             out_path = out_path + "TPS";
 #else
             out_path = out_path + "RBF";
 #endif
 
-            out_prefix = out_path + "/" + utils::getFilename(out_prefix);
+            out_prefix = out_path + "/" + Utils::getFilename(out_prefix);
 
             // remove the output if it already exists to remove any historical results, just in case
             // std::string cmdStr = "rm -rf " + out_path;
@@ -471,7 +471,7 @@ public:
             if (mode == 1 || mode == 2) // WarpToSubjectSpace or MoveAlongPCAModes
             {
                 // create the directory where the results should be, in case it is not there
-                mean_path = utils::getPath(mean_prefix);
+                mean_path = Utils::getPath(mean_prefix);
 
 #ifdef USE_TPS
                 mean_path = mean_path + "TPS";
@@ -479,7 +479,7 @@ public:
                 mean_path = mean_path + "RBF";
 #endif
 
-                mean_prefix = mean_path + "/" + utils::getFilename(mean_prefix);
+                mean_prefix = mean_path + "/" + Utils::getFilename(mean_prefix);
             }
 
         }
