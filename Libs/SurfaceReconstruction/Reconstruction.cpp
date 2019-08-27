@@ -556,7 +556,8 @@ void Reconstruction<TTransformType,TInterpolatorType>::computeDenseMean(
 template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
 vnl_matrix<double> Reconstruction<TTransformType,TInterpolatorType>::computeParticlesNormals(
         vtkSmartPointer< vtkPoints > particles,
-        ImageType::Pointer distance_transform) {
+        ImageType::Pointer distance_transform)
+{
     const ImageType::SpacingType& spacing = distance_transform->GetSpacing();
     const ImageType::PointType& origin = distance_transform->GetOrigin();
 
@@ -602,9 +603,9 @@ vnl_matrix<double> Reconstruction<TTransformType,TInterpolatorType>::computePart
         itk::CovariantVector<float, 3> grad = gradIter.Get();
         float                      gradMag = magIter.Get();
 
-        float nx = -1.0*grad[0] / (1e-10 + gradMag);
-        float ny = -1.0*grad[1] / (1e-10 + gradMag);
-        float nz = -1.0*grad[2] / (1e-10 + gradMag);
+        float nx = -1.0f*grad[0] / (1e-10f + gradMag);
+        float ny = -1.0f*grad[1] / (1e-10f + gradMag);
+        float nz = -1.0f*grad[2] / (1e-10f + gradMag);
 
         nxIter.Set(nx);
         nyIter.Set(ny);
@@ -690,9 +691,9 @@ vnl_matrix<double> Reconstruction<TTransformType,TInterpolatorType>::computePart
         double pN[3];
 
         // getting the normals at particles
-        pN[0] = nx->GetValue(ii);
-        pN[1] = ny->GetValue(ii);
-        pN[2] = nz->GetValue(ii);
+        pN[0] = double(nx->GetValue(ii));
+        pN[1] = double(ny->GetValue(ii));
+        pN[2] = double(nz->GetValue(ii));
 
         // making sure this is a unit vector
         double norm = sqrt(pN[0] * pN[0] + pN[1] * pN[1] + pN[2] * pN[2]);
