@@ -113,7 +113,13 @@ private:
             const itk::Image< float, 3 >::SpacingType& spacing,
             const itk::Image< float, 3 >::PointType& origin);
     vtkSmartPointer<vtkPolyData> extractIsosurface(
-            vtkSmartPointer<vtkImageData> volData);
+            vtkSmartPointer<vtkImageData> volData,
+            float levelsetValue        = 0.0f,
+            float targetReduction      = 0.1f,
+            float featureAngle         = 30,
+            int lsSmootherIterations   = 1,
+            int meshSmootherIterations = 1,
+            bool preserveTopology      = true);
     vtkSmartPointer<vtkPolyData> MeshQC(
             vtkSmartPointer<vtkPolyData> meshIn);
     void performKMeansClustering(

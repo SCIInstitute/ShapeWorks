@@ -886,7 +886,14 @@ vtkSmartPointer<vtkPoints> Reconstruction<TTransformType,TInterpolatorType>::con
 
 template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::extractIsosurface(
-        vtkSmartPointer<vtkImageData> volData) {
+        vtkSmartPointer<vtkImageData> volData,
+        float levelsetValue,
+        float targetReduction,
+        float featureAngle,
+        int lsSmootherIterations,
+        int meshSmootherIterations,
+        bool preserveTopology)
+{
     // (1) isosurface generation
     vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
     //vtkSmartPointer<vtkMarchingCubes> ls = vtkSmartPointer<vtkMarchingCubes>::New();
@@ -896,7 +903,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::e
 #else
     ls->SetInputData(volData);
 #endif
-    ls->SetValue(0, 0.);
+    ls->SetValue(0, double(levelsetValue));
     ls->Update();
 
     // (2) laplacian smoothing
@@ -908,7 +915,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::e
     vtkSmartPointer<vtkSmoothPolyDataFilter> lsSmoother =
             vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
     lsSmoother->SetInputConnection(ls->GetOutputPort());
-    lsSmoother->SetNumberOfIterations(1);
+    lsSmoother->SetNumberOfIterations(lsSmootherIterations);
     lsSmoother->Update();
     std::cout << "..";
 
@@ -927,9 +934,9 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::e
     vtkSmartPointer<vtkDecimatePro> decimator =
             vtkSmartPointer<vtkDecimatePro>::New();
     decimator->SetInputConnection(conn->GetOutputPort());
-    decimator->SetTargetReduction(0.1);
-    decimator->SetFeatureAngle(30.);
-    decimator->PreserveTopologyOn();
+    decimator->SetTargetReduction(double(targetReduction));
+    decimator->SetFeatureAngle(double(featureAngle));
+    preserveTopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
     decimator->BoundaryVertexDeletionOn();
     decimator->Update();
 
@@ -937,7 +944,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::e
     vtkSmartPointer<vtkSmoothPolyDataFilter> smoother =
             vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
     smoother->SetInputConnection(decimator->GetOutputPort());
-    smoother->SetNumberOfIterations(1);
+    smoother->SetNumberOfIterations(meshSmootherIterations);
     smoother->Update();
 
     vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
