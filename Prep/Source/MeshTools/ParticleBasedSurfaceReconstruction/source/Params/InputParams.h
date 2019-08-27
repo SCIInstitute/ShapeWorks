@@ -61,6 +61,9 @@ public:
     int number_of_samples_per_mode;
     float normalAngle;
 
+    bool use_tps_transform;
+    bool use_bspline_interpolation;
+
     // input files
     std::vector< std::string > localPointsFilenames;
     std::vector< std::string > worldPointsFilenames; // optional, wpts from shapeworks (procrustes in this tool need more debuging)
@@ -100,6 +103,9 @@ public:
         number_of_samples_per_mode = 10;
         normalAngle = pi/2.0;
 
+        use_tps_transform         = false;
+        use_bspline_interpolation = false;
+
         localPointsFilenames.clear();
         worldPointsFilenames.clear();
         distanceTransformFilenames.clear();
@@ -118,6 +124,19 @@ public:
             TiXmlElement *elem;
             std::istringstream inputsBuffer;
             std::string filename("/dev/null\0");
+
+            // reconstruction template parameters
+            elem = docHandle.FirstChild( "use_tps_transform" ).Element();
+            if (elem)
+            {
+                atoi(elem->GetText()) > 0 ? use_tps_transform = true : use_tps_transform = false;
+            }
+
+            elem = docHandle.FirstChild( "use_bspline_interpolation" ).Element();
+            if (elem)
+            {
+                atoi(elem->GetText()) > 0 ? use_bspline_interpolation = true : use_bspline_interpolation = false;
+            }
 
             // Compile the list of input files.
             elem = docHandle.FirstChild( "local_point_files" ).Element();
