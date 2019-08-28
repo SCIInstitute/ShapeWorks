@@ -57,7 +57,6 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes, bo
         // Apply translation to shape
         for(shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++)
             (*shapeIt) -= center;
-        //(*shapeIt) += center;
     }
 
     // Remove rotation and scale iteratively
@@ -149,22 +148,22 @@ TransformShapes(ShapeListType & shapes,
 
 void
 Procrustes3D::
-ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices, int do_Scaling)
+ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices, bool do_scale)
 {
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
     transformMatrices.clear();
-    bool m_RotationTranslation = true;
+    bool doRotationTranslation = true;
 
     SimilarityTransformListIteratorType transformListIt;
     for(transformListIt = transforms.begin(); transformListIt != transforms.end(); transformListIt++)
     {
-        if(!do_Scaling)
+        if(!do_scale)
             (*transformListIt).scale = 1.0;
 
         TransformMatrixType T;
 
-        if (m_RotationTranslation == true)
+        if (doRotationTranslation == true)
         {
             T(0,0) =  (*transformListIt).rotation(0,0) * (*transformListIt).scale;
             T(1,0) =  (*transformListIt).rotation(1,0) * (*transformListIt).scale;
@@ -186,7 +185,7 @@ ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMat
             T(2,3) =  (*transformListIt).translation(0) * T(2,0) + (*transformListIt).translation(1) * T(2,1) + (*transformListIt).translation(2) * T(2,2);
             T(3,3) =  1.0;
         }
-        else // only use the scaling (could just be 1.0 depending on m_Scaling value)
+        else // only use the scaling (could just be 1.0 depending on do_scale value)
         {
             T(0,0) =  (*transformListIt).scale;
             T(1,0) =  0.0;
@@ -215,17 +214,16 @@ ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMat
 
 void
 Procrustes3D::
-ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix, int do_Scaling )
+ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix, bool do_scale)
 {
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
-    bool m_RotationTranslation = true;
+    bool doRotationTranslation = true;
 
-
-    if(!do_Scaling)
+    if(!do_scale)
         transform.scale = 1.0;
 
-    if (m_RotationTranslation == true)
+    if (doRotationTranslation == true)
     {
         transformMatrix(0,0) =  transform.rotation(0,0) * transform.scale;
         transformMatrix(1,0) =  transform.rotation(1,0) * transform.scale;
@@ -247,7 +245,7 @@ ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType &
         transformMatrix(2,3) =  transform.translation(0) * transformMatrix(2,0) + transform.translation(1) * transformMatrix(2,1) + transform.translation(2) * transformMatrix(2,2);
         transformMatrix(3,3) =  1.0;
     }
-    else // only use the scaling (could just be 1.0 depending on m_Scaling value)
+    else // only use the scaling (could just be 1.0 depending on do_scale value)
     {
         transformMatrix(0,0) =  transform.scale;
         transformMatrix(1,0) =  0.0;

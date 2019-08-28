@@ -36,7 +36,7 @@ class Procrustes3D
 {
 public:
     typedef double RealType;
-    typedef vnl_vector_fixed<double, 3> PointType;
+    typedef vnl_vector_fixed<double, VDimension> PointType;
     typedef std::vector<PointType> ShapeType;
     typedef ShapeType::iterator ShapeIteratorType;
 
@@ -69,8 +69,8 @@ public:
 
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
-    void ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices, int do_Scaling = 1);
-    void ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix, int do_Scaling = 1);
+    void ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices, bool do_scale = true);
+    void ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix, bool do_scale = true);
 
     void ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList);
     void ComputeCenterOfMass(ShapeType & shape, PointType& center);
