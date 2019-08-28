@@ -261,6 +261,7 @@ Procrustes3D::
 AlignTwoShapes(SimilarityTransform3D & transform, ShapeType & shape1,
                ShapeType & shape2)
 {
+    // Aligning shape2 to shape1
     ShapeIteratorType shapeIt1, shapeIt2;
     vnl_matrix_fixed<RealType, 3, 3> shapeMat;
     RealType scale2;
