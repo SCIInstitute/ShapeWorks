@@ -91,11 +91,7 @@ public:
     int ComputeMedianShape(ShapeListType & shapeList);
 
 
-    private:
-
-    // Compute mean of all shapes except the one at leaveOutIt
-    void LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
-                         ShapeListIteratorType & leaveOutIt);
+private:
 
     // Align two shapes (rotation & scale) using Ordinary Procrustes Analysis
     void AlignTwoShapes(SimilarityTransform3D & transform,

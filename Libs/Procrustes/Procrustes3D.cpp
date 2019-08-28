@@ -67,12 +67,13 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes, bo
     {
         shapeListIt = shapes.begin();
         transformIt = transforms.begin();
+
+        // by computing the mean shape based on all samples, we are removing biasness that was introduced by LeaveOneOutMean
+        ComputeMeanShape(mean, shapes);
+
         while(shapeListIt != shapes.end())
         {
-            LeaveOneOutMean(mean, shapes, shapeListIt);
-
             AlignTwoShapes((*transformIt), mean, (*shapeListIt));
-
             shapeListIt++;
             transformIt++;
         }
@@ -370,43 +371,6 @@ AlignTwoShapes(SimilarityTransform3D & transform, ShapeType & shape1,
 
 void
 Procrustes3D::
-LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
-                ShapeListIteratorType & leaveOutIt)
-{
-    ShapeListIteratorType shapeListIt;
-    ShapeIteratorType shapeIt, meanIt;
-
-    int i, numPoints = shapeList[0].size();
-
-    mean.clear();
-    mean.reserve(numPoints);
-    for(i = 0; i < numPoints; i++)
-        mean.push_back(vnl_vector_fixed<RealType, 3>(0.0, 0.0, 0.0));
-
-    for(shapeListIt = shapeList.begin(); shapeListIt != shapeList.end();
-        shapeListIt++)
-    {
-//        if(shapeListIt != leaveOutIt)
-        {
-            ShapeType & shape = (*shapeListIt);
-            shapeIt = shape.begin();
-            meanIt = mean.begin();
-            while(shapeIt != shape.end())
-            {
-                (*meanIt) += (*shapeIt);
-
-                shapeIt++;
-                meanIt++;
-            }
-        }
-    }
-
-    for(meanIt = mean.begin(); meanIt != mean.end(); meanIt++)
-        (*meanIt) /= static_cast<RealType>(shapeList.size() - 1);
-}
-
-void
-Procrustes3D::
 ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList)
 {
     ShapeListIteratorType shapeListIt;
@@ -428,7 +392,6 @@ ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList)
         while(shapeIt != shape.end())
         {
             (*meanIt) += (*shapeIt);
-
             shapeIt++;
             meanIt++;
         }
