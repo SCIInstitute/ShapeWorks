@@ -17,7 +17,7 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 Reconstruction<TTransformType, TInterpolatorType>::Reconstruction(float decimationPercent, double maxAngleDegrees) :
     sparseDone_(false), denseDone_(false),
     decimationPercent_(decimationPercent),
@@ -25,11 +25,11 @@ Reconstruction<TTransformType, TInterpolatorType>::Reconstruction(float decimati
     numClusters_(5)
 {}
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 Reconstruction<TTransformType,TInterpolatorType>::~Reconstruction() {
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::getDenseMean(
         std::vector<std::vector<itk::Point<float> > > local_pts,
         std::vector<std::vector<itk::Point<float> > > global_pts,
@@ -46,7 +46,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::g
     return this->denseMean_;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::reset() {
     this->sparseDone_ = false;
     this->denseDone_ = false;
@@ -55,22 +55,22 @@ void Reconstruction<TTransformType,TInterpolatorType>::reset() {
     this->sparseMean_ = NULL;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::setDecimation(float dec) {
     this->decimationPercent_ = dec;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::setMaxAngle(double angleDegrees) {
     this->maxAngleDegrees_ = angleDegrees;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::setNumClusters(int num) {
     this->numClusters_ = num;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::getMesh(
         std::vector<itk::Point<float> > local_pts) {
     //default reconstruction if no warping to dense mean has occurred yet
@@ -154,7 +154,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::g
     return denseShape;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::readMeanInfo(std::string dense,
                                   std::string sparse, std::string goodPoints) {
     //read out dense mean
@@ -188,7 +188,7 @@ void Reconstruction<TTransformType,TInterpolatorType>::readMeanInfo(std::string 
     this->denseDone_ = true;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 std::vector<std::vector<itk::Point<float> > > Reconstruction<TTransformType,TInterpolatorType>::computeSparseMean(std::vector<std::vector<itk::Point<float> > > local_pts,
                                                                          bool do_procrustes, bool do_procrustes_scaling)
 {
@@ -280,16 +280,16 @@ std::vector<std::vector<itk::Point<float> > > Reconstruction<TTransformType,TInt
     return global_pts;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 bool Reconstruction<TTransformType,TInterpolatorType>::sparseDone() {
     return this->sparseDone_;
 }
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 bool Reconstruction<TTransformType,TInterpolatorType>::denseDone() {
     return this->denseDone_;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::computeDenseMean(
         std::vector<std::vector<itk::Point<float> > > local_pts,
         std::vector<std::vector<itk::Point<float> > > global_pts,
@@ -553,7 +553,7 @@ void Reconstruction<TTransformType,TInterpolatorType>::computeDenseMean(
     this->denseDone_ = true;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 vnl_matrix<double> Reconstruction<TTransformType,TInterpolatorType>::computeParticlesNormals(
         vtkSmartPointer< vtkPoints > particles,
         ImageType::Pointer distance_transform)
@@ -723,7 +723,7 @@ vnl_matrix<double> Reconstruction<TTransformType,TInterpolatorType>::computePart
     return particlesNormals;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::generateWarpedMeshes(
         typename TransformType::Pointer transform,
         vtkSmartPointer<vtkPolyData>& outputMesh) {
@@ -749,7 +749,7 @@ void Reconstruction<TTransformType,TInterpolatorType>::generateWarpedMeshes(
     outputMesh->Modified();
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 double Reconstruction<TTransformType,TInterpolatorType>::computeAverageDistanceToNeighbors(
         vtkSmartPointer<vtkPoints> points, std::vector<int> particles_indices) {
     int K = 6; // hexagonal ring - one jump
@@ -796,7 +796,7 @@ double Reconstruction<TTransformType,TInterpolatorType>::computeAverageDistanceT
     return avgDist;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
                                   vtkSmartPointer<vtkPoints> targetPts, typename TransformType::Pointer transform,
                                   vtkSmartPointer<vtkPoints>& mappedCorrespondences, double & rms,
@@ -853,7 +853,7 @@ void Reconstruction<TTransformType,TInterpolatorType>::CheckMapping(vtkSmartPoin
     rms_wo_mapping /= sourcePts->GetNumberOfPoints();
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 vtkSmartPointer<vtkPoints> Reconstruction<TTransformType,TInterpolatorType>::convertToImageCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
@@ -869,7 +869,7 @@ vtkSmartPointer<vtkPoints> Reconstruction<TTransformType,TInterpolatorType>::con
     return points;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 vtkSmartPointer<vtkPoints> Reconstruction<TTransformType,TInterpolatorType>::convertToPhysicalCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
@@ -885,7 +885,7 @@ vtkSmartPointer<vtkPoints> Reconstruction<TTransformType,TInterpolatorType>::con
     return points;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::extractIsosurface(
         vtkSmartPointer<vtkImageData> volData,
         float levelsetValue,
@@ -954,7 +954,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::e
     return denseShape;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::MeshQC(
         vtkSmartPointer<vtkPolyData> meshIn,
         bool fixWinding,
@@ -1030,7 +1030,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType>::M
     return meshIn;
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::writeMeanInfo(std::string nameBase) {
     //write out dense mean
     vtkSmartPointer<vtkPolyDataWriter> writer1 = vtkPolyDataWriter::New();
@@ -1054,7 +1054,7 @@ void Reconstruction<TTransformType,TInterpolatorType>::writeMeanInfo(std::string
     ptsOut1.close();
 }
 
-template< template < typename TCoord, int > class TTransformType, template < typename TImage > class TInterpolatorType >
+template< template < typename TCoord, unsigned > class TTransformType, template < typename TImage, typename TCoordRep > class TInterpolatorType >
 void Reconstruction<TTransformType,TInterpolatorType>::performKMeansClustering(
         std::vector<std::vector<itk::Point<float> > > global_pts,
         unsigned int number_of_particles,

@@ -31,8 +31,8 @@
 #define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
 #endif
 
-template < template < typename TCoord, int > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
-           template < typename TImage > class TInterpolatorType = itk::LinearInterpolateImageFunction >
+template < template < typename TCoord, unsigned > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
+           template < typename TImage, typename TCoordRep > class TInterpolatorType = itk::LinearInterpolateImageFunction >
 class Reconstruction {
     typedef float PixelType;
     typedef itk::Image< PixelType, 3 > ImageType;
@@ -52,12 +52,12 @@ class Reconstruction {
     AddImageFilterType;
     typedef itk::ResampleImageFilter<ImageType, ImageType >
     ResampleFilterType;
-    typedef TInterpolatorType < ImageType >     InterpolatorType;
+    typedef double                                     CoordinateRepType;
+    typedef TInterpolatorType < ImageType, CoordinateRepType >     InterpolatorType;
     typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType>
     MultiplyByConstantImageFilterType;
 
     typedef itk::ImageDuplicator< ImageType >          DuplicatorType;
-    typedef double                                     CoordinateRepType;
 
     typedef TTransformType < CoordinateRepType, 3 >     TransformType;
     typedef itk::Point< CoordinateRepType, 3 >          PointType;
@@ -142,4 +142,5 @@ private:
     size_t numClusters_;
     int medianShapeIndex_;
 };
+
 #endif // !__RECONSTRUCTION_H__
