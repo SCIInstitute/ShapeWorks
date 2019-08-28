@@ -68,7 +68,7 @@ public:
     static std::vector<int> randperm(int n);
 
     //--------------------------- IO-----------------------------------
-    static vtkSmartPointer<vtkPoints> readSparseShape(char* filename, int number_of_particles = -1);
+    static void readSparseShape(vtkSmartPointer<vtkPoints>& points, char* filename, int number_of_particles = -1);
     static void writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particles);
 
     static std::vector<int> readParticleIds(char* filename);
