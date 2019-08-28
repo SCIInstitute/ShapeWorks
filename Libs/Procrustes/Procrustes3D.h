@@ -51,11 +51,26 @@ public:
     typedef std::vector<TransformMatrixType> TransformMatrixListType;
     typedef TransformMatrixListType::iterator TransformMatrixIteratorType;
 
-    Procrustes3D() {}
+    Procrustes3D() : m_Scaling(true), m_RotationTranslation(true) { }
+    Procrustes3D(bool do_scaling, bool do_rotation_translation) : m_Scaling(do_scaling), m_RotationTranslation(do_rotation_translation) { }
+
+    bool GetScaling() const
+    { return m_Scaling; }
+    void ScalingOn()
+    { m_Scaling = true; }
+    void ScalingOff()
+    { m_Scaling = false; }
+
+    bool GetRotationTranslation() const
+    { return m_RotationTranslation; }
+    void RotationTranslationOn()
+    { m_RotationTranslation = true; }
+    void RotationTranslationOff()
+    { m_RotationTranslation = false; }
 
     // Align a list of shapes using Generalized Procrustes Analysis
     void AlignShapes(SimilarityTransformListType & transforms,
-                     ShapeListType & shapes, bool do_scale = true);
+                     ShapeListType & shapes);
 
     // Helper function to transform a shape by a similarity transform
     static void TransformShape(ShapeType & shape,
@@ -69,8 +84,8 @@ public:
 
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
-    void ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices, bool do_scale = true);
-    void ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix, bool do_scale = true);
+    void ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices);
+    void ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix);
 
     void ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList);
     void ComputeCenterOfMass(ShapeType & shape, PointType& center);
@@ -98,6 +113,9 @@ private:
                         ShapeType & shape1, ShapeType & shape2);
 
     //  const RealType SOS_EPSILON = 1.0e-8;
+
+    bool m_Scaling; // a flag to factor out scaling
+    bool m_RotationTranslation; // a flag for rotation + translation + (scale depending on m_Scaling), if false, the transformation will only be scaling
 };
 
 
