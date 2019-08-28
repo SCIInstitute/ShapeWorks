@@ -5,8 +5,10 @@
 
 #include "Params/InputParams.h"
 #include "Reconstruction.h"
+#include "Reconstruction.cpp"
 
 #include <type_traits>  // for condition typedefs
+
 int main( int argc , char* argv[] )
 {
   if( argc < 2 )

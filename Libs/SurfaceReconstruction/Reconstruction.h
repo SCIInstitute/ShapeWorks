@@ -142,4 +142,5 @@ private:
     size_t numClusters_;
     int medianShapeIndex_;
 };
+
 #endif // !__RECONSTRUCTION_H__
