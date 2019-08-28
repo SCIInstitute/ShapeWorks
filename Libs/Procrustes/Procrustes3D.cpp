@@ -161,54 +161,10 @@ ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMat
         if(!m_Scaling)
             (*transformListIt).scale = 1.0;
 
-        TransformMatrixType T;
+        TransformMatrixType transformMatrix;
+        ConstructTransformMatrix((*transformListIt), transformMatrix);
 
-        if (m_RotationTranslation == true)
-        {
-            T(0,0) =  (*transformListIt).rotation(0,0) * (*transformListIt).scale;
-            T(1,0) =  (*transformListIt).rotation(1,0) * (*transformListIt).scale;
-            T(2,0) =  (*transformListIt).rotation(2,0) * (*transformListIt).scale;
-            T(3,0) =  0.0;
-
-            T(0,1) =  (*transformListIt).rotation(0,1) * (*transformListIt).scale;
-            T(1,1) =  (*transformListIt).rotation(1,1) * (*transformListIt).scale;
-            T(2,1) =  (*transformListIt).rotation(2,1) * (*transformListIt).scale;
-            T(3,1) =  0.0;
-
-            T(0,2) =  (*transformListIt).rotation(0,2) * (*transformListIt).scale;
-            T(1,2) =  (*transformListIt).rotation(1,2) * (*transformListIt).scale;
-            T(2,2) =  (*transformListIt).rotation(2,2) * (*transformListIt).scale;
-            T(3,2) =  0.0;
-
-            T(0,3) =  (*transformListIt).translation(0) * T(0,0) + (*transformListIt).translation(1) * T(0,1) + (*transformListIt).translation(2) * T(0,2);
-            T(1,3) =  (*transformListIt).translation(0) * T(1,0) + (*transformListIt).translation(1) * T(1,1) + (*transformListIt).translation(2) * T(1,2);
-            T(2,3) =  (*transformListIt).translation(0) * T(2,0) + (*transformListIt).translation(1) * T(2,1) + (*transformListIt).translation(2) * T(2,2);
-            T(3,3) =  1.0;
-        }
-        else // only use the scaling (could just be 1.0 depending on m_Scaling value)
-        {
-            T(0,0) =  (*transformListIt).scale;
-            T(1,0) =  0.0;
-            T(2,0) =  0.0;
-            T(3,0) =  0.0;
-
-            T(0,1) =  0.0;
-            T(1,1) =  (*transformListIt).scale;
-            T(2,1) =  0.0;
-            T(3,1) =  0.0;
-
-            T(0,2) =  0.0;
-            T(1,2) =  0.0;
-            T(2,2) =  (*transformListIt).scale;
-            T(3,2) =  0.0;
-
-            T(0,3) =  0.0;
-            T(1,3) =  0.0;
-            T(2,3) =  0.0;
-            T(3,3) =  1.0;
-
-        }
-        transformMatrices.push_back(T);
+        transformMatrices.push_back(transformMatrix);
     }
 }
 
