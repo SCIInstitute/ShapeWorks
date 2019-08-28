@@ -13,6 +13,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
      updated by Shireen Elhabian (Dec. 2013)
+     consolidated with ITKParticleSystem/Procrustes  (Shireen Aug 2019)
 =========================================================================*/
 #ifndef __Procrustes3D_h
 #define __Procrustes3D_h
