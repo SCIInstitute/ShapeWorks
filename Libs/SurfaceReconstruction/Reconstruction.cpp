@@ -21,11 +21,11 @@
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
-Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(float decimationPercent, double maxAngleDegrees) :
+Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(float decimationPercent, double maxAngleDegrees, size_t numClusters) :
     sparseDone_(false), denseDone_(false),
     decimationPercent_(decimationPercent),
     maxAngleDegrees_(maxAngleDegrees),
-    numClusters_(5)
+    numClusters_(numClusters)
 {}
 
 template < template < typename TCoordRep, unsigned > class TTransformType,

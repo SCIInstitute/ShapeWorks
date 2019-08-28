@@ -65,7 +65,9 @@ class Reconstruction {
     typedef typename PointSetType::PointIdentifier      PointIdType;
 
 public:
-    Reconstruction(float decimationPercent = 0.3f, double angleThresh = 45.0f);
+    Reconstruction(float decimationPercent = 0.3f,
+                   double angleThresh = 45.0f,
+                   size_t numClusters = 5);
     ~Reconstruction();
     vtkSmartPointer<vtkPolyData> getDenseMean(
             std::vector<std::vector<itk::Point<float> > > local_pts =
