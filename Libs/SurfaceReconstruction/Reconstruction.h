@@ -31,49 +31,49 @@
 #define assert(a) { if (!static_cast<bool>(a)) { throw std::runtime_error("a"); } }
 #endif
 
-template < template < typename TCoord, unsigned > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
-           template < typename TImage, typename TCoordRep > class TInterpolatorType = itk::LinearInterpolateImageFunction >
+namespace itk
+{
+template<typename TImageType, typename TCoordRep = double>
+class ITK_TEMPLATE_EXPORT BSplineInterpolateImageFunctionWithDoubleCoefficents
+        : public BSplineInterpolateImageFunction <TImageType, TCoordRep, double>
+{};
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType = itk::CompactlySupportedRBFSparseKernelTransform,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType = itk::LinearInterpolateImageFunction,
+           typename TCoordRep = double, typename PixelType = float, typename ImageType = itk::Image<PixelType, 3>>
 class Reconstruction {
-    typedef float PixelType;
-    typedef itk::Image< PixelType, 3 > ImageType;
+    typedef itk::GradientImageFilter<ImageType, PixelType>               GradientFilterType;
+    typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType > GradientMagnitudeFilterType;
+    typedef itk::Image< itk::CovariantVector< PixelType, 3 >, 3 >        GradientImageType;
+    typedef itk::ImageRegionIterator< GradientImageType >            GradientImageIteratorType;
+    typedef itk::ImageRegionIterator< ImageType >                    ImageIteratorType;
 
-    typedef itk::GradientImageFilter<ImageType, float>
-    GradientFilterType;
-    typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType >
-    GradientMagnitudeFilterType;
-    typedef itk::Image< itk::CovariantVector< float, 3 >, 3 >
-    GradientImageType;
-    typedef itk::ImageRegionIterator< GradientImageType >
-    GradientImageIteratorType;
-    typedef itk::ImageRegionIterator< ImageType >      ImageIteratorType;
+    typedef itk::ImageToVTKImageFilter<ImageType>                    ITK2VTKConnectorType;
+    typedef itk::AddImageFilter <ImageType, ImageType >              AddImageFilterType;
+    typedef itk::ResampleImageFilter<ImageType, ImageType >          ResampleFilterType;
 
-    typedef itk::ImageToVTKImageFilter<ImageType>      ITK2VTKConnectorType;
-    typedef itk::AddImageFilter <ImageType, ImageType >
-    AddImageFilterType;
-    typedef itk::ResampleImageFilter<ImageType, ImageType >
-    ResampleFilterType;
-    typedef double                                     CoordinateRepType;
-    typedef TInterpolatorType < ImageType, CoordinateRepType >     InterpolatorType;
-    typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType>
-    MultiplyByConstantImageFilterType;
+    typedef TInterpolatorType < ImageType, TCoordRep >                  InterpolatorType;
+    typedef itk::MultiplyImageFilter <ImageType, ImageType, ImageType>  MultiplyByConstantImageFilterType;
 
-    typedef itk::ImageDuplicator< ImageType >          DuplicatorType;
+    typedef itk::ImageDuplicator< ImageType >                           DuplicatorType;
+    typedef TTransformType < TCoordRep, 3 >                             TransformType;
 
-    typedef TTransformType < CoordinateRepType, 3 >     TransformType;
-    typedef itk::Point< CoordinateRepType, 3 >          PointType;
+    typedef itk::Point< TCoordRep, 3 >                  PointType;
     typedef std::vector< PointType >                    PointArrayType;
     typedef typename TransformType::PointSetType        PointSetType;
     typedef typename PointSetType::PointIdentifier      PointIdType;
+
 public:
-    Reconstruction(float decimationPercent = 0.3, double angleThresh = 45.);
+    Reconstruction(float decimationPercent = 0.3f, double angleThresh = 45.0f);
     ~Reconstruction();
     vtkSmartPointer<vtkPolyData> getDenseMean(
             std::vector<std::vector<itk::Point<float> > > local_pts =
             std::vector<std::vector<itk::Point<float> > >(),
             std::vector<std::vector<itk::Point<float> > > global_pts =
             std::vector<std::vector<itk::Point<float> > >(),
-            std::vector<ImageType::Pointer> distance_transform =
-            std::vector<ImageType::Pointer>() );
+            std::vector<typename ImageType::Pointer> distance_transform =
+            std::vector<typename ImageType::Pointer>() );
     void reset();
     void setDecimation(float dec);
     void setNumClusters(int num);
@@ -91,10 +91,10 @@ private:
     void computeDenseMean(
             std::vector<std::vector<itk::Point<float> > > local_pts,
             std::vector<std::vector<itk::Point<float> > > global_pts,
-            std::vector<ImageType::Pointer> distance_transform);
+            std::vector<typename ImageType::Pointer> distance_transform);
     vnl_matrix<double> computeParticlesNormals(
             vtkSmartPointer< vtkPoints > particles,
-            ImageType::Pointer distance_transform);
+            typename ImageType::Pointer distance_transform);
     void generateWarpedMeshes(typename TransformType::Pointer transform,
                               vtkSmartPointer<vtkPolyData>& outputMesh);
     double computeAverageDistanceToNeighbors(vtkSmartPointer<vtkPoints> points,
