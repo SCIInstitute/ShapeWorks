@@ -5,7 +5,7 @@
 
 #include "Params/InputParams.h"
 #include "Reconstruction.h"
-#include "Reconstruction.cpp"
+#include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated
 
 #include <type_traits>  // for condition typedefs
 
@@ -19,9 +19,9 @@ int main( int argc , char* argv[] )
   }
 
   InputParams params;
-  params.readParams(argv[1], 3); // 3 - WarpToMeanSpaceWithPreviewMeshQC
-
-  std::cout << "Number of input sparse shapes: " << params.localPointsFilenames.size() << std::endl;
+  //ctc: just commenting these lines out and passing "foo" as first arg in order to test instantiations below
+  // params.readParams(argv[1], 3); // 3 - WarpToMeanSpaceWithPreviewMeshQC
+  //std::cout << "Number of input sparse shapes: " << params.localPointsFilenames.size() << std::endl;
 
   //------------- typedefs ---------------
   const int Dimension = 3;
@@ -42,12 +42,27 @@ int main( int argc , char* argv[] )
 
   //------------- end typedefs ---------------
 
-  //Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> reconstructor(0.5, 60.);
-  //reconstructor.reset();
+  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> reconstructor(0.5, 60.);
+  reconstructor.reset();
 
-  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> *reconstructor = new Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction>(0.5, 60.);
-  reconstructor->reset();
+  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> &reconstructor_ref(reconstructor);
+  reconstructor_ref.reset();
 
+  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> *reconstructor_ptr = new Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction>(0.5, 60.);
+  reconstructor_ptr->reset();
+
+  typedef Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> myReconstruction;
+
+  {
+    myReconstruction reconstructor(0.5, 60.);
+    reconstructor.reset();
+
+    myReconstruction &reconstructor_ref(reconstructor);
+    reconstructor_ref.reset();
+
+    myReconstruction *reconstructor_ptr = new myReconstruction(0.5, 60.);
+    reconstructor_ptr->reset();
+  }
 
   return 0;
 }
