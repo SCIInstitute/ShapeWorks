@@ -330,11 +330,11 @@ ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList)
     ShapeListIteratorType shapeListIt;
     ShapeIteratorType shapeIt, meanIt;
 
-    int i, numPoints = shapeList[0].size();
+    size_t numPoints = shapeList[0].size();
 
     mean.clear();
     mean.reserve(numPoints);
-    for(i = 0; i < numPoints; i++)
+    for(size_t i = 0; i < numPoints; i++)
         mean.push_back(vnl_vector_fixed<RealType, 3>(0.0, 0.0, 0.0));
 
     for(shapeListIt = shapeList.begin(); shapeListIt != shapeList.end();
@@ -361,20 +361,20 @@ ComputeMedianShape(ShapeListType & shapeList)
 {
     int medianShapeIndex =-1;
     double minSum = 1e10;
-    //int ii = -1;
-    for(int ii = 0; ii < shapeList.size(); ii++)
+
+    for(size_t ii = 0; ii < shapeList.size(); ii++)
     {
         ShapeType shape_ii = shapeList[ii];
         double sum = 0.0;
 
-        for(int jj = 0; jj < shapeList.size(); jj++)
+        for(size_t jj = 0; jj < shapeList.size(); jj++)
         {
             if(ii==jj)
                 continue;
 
             ShapeType shape_jj = shapeList[jj];
 
-            for(int kk =0 ; kk < shape_ii.size(); kk++)
+            for(size_t kk =0 ; kk < shape_ii.size(); kk++)
                 sum += (fabs(shape_ii[kk](0) - shape_jj[kk](0)) + fabs(shape_ii[kk](1) - shape_jj[kk](1)) + fabs(shape_ii[kk](2) - shape_jj[kk](2)));
                 //sum += sqrt((shape_ii[kk] - shape_jj[kk]).squared_magnitude());
 
@@ -384,7 +384,7 @@ ComputeMedianShape(ShapeListType & shapeList)
         if(sum < minSum)
         {
             minSum           = sum;
-            medianShapeIndex = ii;
+            medianShapeIndex = int(ii);
         }
     }
 
