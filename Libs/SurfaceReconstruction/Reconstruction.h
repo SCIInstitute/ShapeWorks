@@ -43,6 +43,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType = itk:
            template < typename ImageType, typename TCoordRep > class TInterpolatorType = itk::LinearInterpolateImageFunction,
            typename TCoordRep = double, typename PixelType = float, typename ImageType = itk::Image<PixelType, 3>>
 class Reconstruction {
+public:
     typedef itk::GradientImageFilter<ImageType, PixelType>               GradientFilterType;
     typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType > GradientMagnitudeFilterType;
     typedef itk::Image< itk::CovariantVector< PixelType, 3 >, 3 >        GradientImageType;
@@ -64,7 +65,6 @@ class Reconstruction {
     typedef typename TransformType::PointSetType        PointSetType;
     typedef typename PointSetType::PointIdentifier      PointIdType;
 
-public:
     Reconstruction(float decimationPercent = 0.3f,
                    double angleThresh = 45.0f,
                    size_t numClusters = 5);
