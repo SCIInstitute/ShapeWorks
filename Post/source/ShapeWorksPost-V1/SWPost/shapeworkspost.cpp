@@ -29,7 +29,7 @@ int main()
 #include <igl/readOBJ.h>
 // #include <igl/readSTL.h>
 #include <igl/viewer/Viewer.h>
-#include <Eigen/Sparse>
+#include <itkeigen/Eigen/Sparse>
 #include "itkvtkFunctions.h"
 #include "computeFunctions.h"
 

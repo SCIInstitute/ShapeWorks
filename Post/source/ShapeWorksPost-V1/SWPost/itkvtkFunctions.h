@@ -19,7 +19,7 @@
 #include "itkSquaredEdgeLengthDecimationQuadEdgeMeshFilter.h"
 #include "itkMesh.h"
 #include <igl/readOBJ.h>
-#include <Eigen/Sparse>
+#include <itkeigen/Eigen/Sparse>
 
 // VTK Dependencies
 
