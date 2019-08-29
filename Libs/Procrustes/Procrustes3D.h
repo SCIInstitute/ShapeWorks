@@ -13,6 +13,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
      updated by Shireen Elhabian (Dec. 2013)
+     consolidated with ITKParticleSystem/Procrustes  (Shireen Aug 2019)
 =========================================================================*/
 #ifndef __Procrustes3D_h
 #define __Procrustes3D_h
@@ -36,7 +37,7 @@ class Procrustes3D
 {
 public:
     typedef double RealType;
-    typedef vnl_vector_fixed<double, 3> PointType;
+    typedef vnl_vector_fixed<double, VDimension> PointType;
     typedef std::vector<PointType> ShapeType;
     typedef ShapeType::iterator ShapeIteratorType;
 
@@ -51,11 +52,26 @@ public:
     typedef std::vector<TransformMatrixType> TransformMatrixListType;
     typedef TransformMatrixListType::iterator TransformMatrixIteratorType;
 
-    Procrustes3D() {}
+    Procrustes3D() : m_Scaling(true), m_RotationTranslation(true) { }
+    Procrustes3D(bool do_scaling, bool do_rotation_translation) : m_Scaling(do_scaling), m_RotationTranslation(do_rotation_translation) { }
+
+    bool GetScaling() const
+    { return m_Scaling; }
+    void ScalingOn()
+    { m_Scaling = true; }
+    void ScalingOff()
+    { m_Scaling = false; }
+
+    bool GetRotationTranslation() const
+    { return m_RotationTranslation; }
+    void RotationTranslationOn()
+    { m_RotationTranslation = true; }
+    void RotationTranslationOff()
+    { m_RotationTranslation = false; }
 
     // Align a list of shapes using Generalized Procrustes Analysis
     void AlignShapes(SimilarityTransformListType & transforms,
-                     ShapeListType & shapes, bool do_scale = true);
+                     ShapeListType & shapes);
 
     // Helper function to transform a shape by a similarity transform
     static void TransformShape(ShapeType & shape,
@@ -69,8 +85,8 @@ public:
 
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
-    void ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices, int do_Scaling = 1);
-    void ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix, int do_Scaling = 1);
+    void ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices);
+    void ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix);
 
     void ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList);
     void ComputeCenterOfMass(ShapeType & shape, PointType& center);
@@ -91,17 +107,16 @@ public:
     int ComputeMedianShape(ShapeListType & shapeList);
 
 
-    private:
-
-    // Compute mean of all shapes except the one at leaveOutIt
-    void LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
-                         ShapeListIteratorType & leaveOutIt);
+private:
 
     // Align two shapes (rotation & scale) using Ordinary Procrustes Analysis
     void AlignTwoShapes(SimilarityTransform3D & transform,
                         ShapeType & shape1, ShapeType & shape2);
 
     //  const RealType SOS_EPSILON = 1.0e-8;
+
+    bool m_Scaling; // a flag to factor out scaling
+    bool m_RotationTranslation; // a flag for rotation + translation + (scale depending on m_Scaling), if false, the transformation will only be scaling
 };
 
 
