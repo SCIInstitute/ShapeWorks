@@ -30,6 +30,7 @@ std::vector<int> Utils::randperm(int n)
 
 void Utils::readSparseShape(vtkSmartPointer<vtkPoints>& points, char* filename, int number_of_particles)
 {
+    points->Reset();
     std::ifstream ifs;
     ifs.open(filename);
 
@@ -63,10 +64,52 @@ void Utils::readSparseShape(vtkSmartPointer<vtkPoints>& points, char* filename, 
         }
     }
 
-
     ifs.close();
     std::cout << "total number of correspondences read: " << points->GetNumberOfPoints() << std::endl;
 }
+
+void Utils::readSparseShape(std::vector<itk::Point<double> > & points, char* filename, int number_of_particles)
+{
+    points.clear();
+    std::ifstream ifs;
+    ifs.open(filename);
+
+    if (number_of_particles>0)
+    {
+        for (unsigned int ii = 0 ;ii < number_of_particles; ii++)
+        {
+            itk::Point<double> p;
+            ifs >> p[0] >> p[1] >> p[2];
+
+            points.push_back(p);
+        }
+    }
+    else
+    {
+        std::string line;
+        while(!std::getline(ifs, line, '\n').eof())
+        {
+            std::istringstream reader(line);
+
+            std::string::const_iterator i = line.begin();
+            std::vector<double> lineData;
+            while(!reader.eof()) {
+                double val;
+                reader >> val;
+
+                lineData.push_back(val);
+            }
+
+            itk::Point<double> p;
+            p[0] = lineData[0]; p[1] = lineData[1]; p[2] = lineData[2];
+            points.push_back(p);
+        }
+    }
+
+    ifs.close();
+    std::cout << "total number of correspondences read: " << points.size() << std::endl;
+}
+
 
 void Utils::writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particles)
 {
@@ -81,6 +124,20 @@ void Utils::writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particle
     ofs.close();
     std::cout << "total number of correspondences save: " << particles->GetNumberOfPoints() << std::endl;
 }
+
+void Utils::writeSparseShape(char* filename, std::vector<itk::Point<double> > points)
+{
+    ofstream ofs;
+    ofs.open(filename);
+    for(unsigned int ii = 0 ; ii < points.size(); ii++)
+    {
+        itk::Point<double> p = points[ii];
+        ofs << p[0] << " " << p[1] << " " << p[2] << std::endl;
+    }
+    ofs.close();
+    std::cout << "total number of correspondences save: " << points.size() << std::endl;
+}
+
 
 std::vector<int> Utils::readParticleIds(char* filename)
 {
