@@ -277,7 +277,8 @@ std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType
 
     std::vector< PointArrayType > global_pts;
     global_pts.clear();
-    // write aligned shapes for subsequent statistical analysis
+
+    // prep aligned shapes for subsequent statistical analysis
     for (unsigned int shapeNo = 0; shapeNo < local_pts.size(); shapeNo++)
     {
         shapevector = shapelist[shapeNo];

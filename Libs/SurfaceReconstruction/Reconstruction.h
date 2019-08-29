@@ -86,9 +86,13 @@ public:
     bool sparseDone();
     bool denseDone();
     void writeMeanInfo(std::string nameBase);
-private:
+
+    vtkSmartPointer<vtkPoints>   SparseMean(){return sparseMean_;}
+    vtkSmartPointer<vtkPolyData> DenseMean() {return denseMean_;}
+
     std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts,
                                                                      bool do_procrustes = true, bool do_procrustes_scaling = false);
+private:
     void computeDenseMean(
             std::vector< PointArrayType > local_pts,
             std::vector< PointArrayType > global_pts,
