@@ -70,29 +70,28 @@ public:
                    size_t numClusters = 5);
     ~Reconstruction();
     vtkSmartPointer<vtkPolyData> getDenseMean(
-            std::vector<std::vector<itk::Point<float> > > local_pts =
-            std::vector<std::vector<itk::Point<float> > >(),
-            std::vector<std::vector<itk::Point<float> > > global_pts =
-            std::vector<std::vector<itk::Point<float> > >(),
+            std::vector< PointArrayType > local_pts =
+            std::vector< PointArrayType >(),
+            std::vector< PointArrayType > global_pts =
+            std::vector< PointArrayType >(),
             std::vector<typename ImageType::Pointer> distance_transform =
             std::vector<typename ImageType::Pointer>() );
     void reset();
     void setDecimation(float dec);
     void setNumClusters(int num);
     void setMaxAngle(double angleDegrees);
-    vtkSmartPointer<vtkPolyData>
-    getMesh(std::vector<itk::Point<float> > local_pts);
+    vtkSmartPointer<vtkPolyData> getMesh(PointArrayType local_pts);
     void readMeanInfo(std::string dense,
                       std::string sparse, std::string goodPoints);
     bool sparseDone();
     bool denseDone();
     void writeMeanInfo(std::string nameBase);
 private:
-    std::vector<std::vector<itk::Point<float> > >  computeSparseMean(std::vector<std::vector<itk::Point<float> > > local_pts,
+    std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts,
                                                                      bool do_procrustes = true, bool do_procrustes_scaling = false);
     void computeDenseMean(
-            std::vector<std::vector<itk::Point<float> > > local_pts,
-            std::vector<std::vector<itk::Point<float> > > global_pts,
+            std::vector< PointArrayType > local_pts,
+            std::vector< PointArrayType > global_pts,
             std::vector<typename ImageType::Pointer> distance_transform);
     vnl_matrix<double> computeParticlesNormals(
             vtkSmartPointer< vtkPoints > particles,
@@ -130,7 +129,7 @@ private:
             float smoothingLambda = 0.5f,
             int smoothingIterations = 1);
     void performKMeansClustering(
-            std::vector<std::vector<itk::Point<float> > > global_pts,
+            std::vector< PointArrayType > global_pts,
             unsigned int number_of_particles,
             std::vector<int> & centroidIndices);
     //members.

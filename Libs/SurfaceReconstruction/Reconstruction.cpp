@@ -38,8 +38,8 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::getDenseMean(
-        std::vector<std::vector<itk::Point<float> > > local_pts,
-        std::vector<std::vector<itk::Point<float> > > global_pts,
+        std::vector< PointArrayType > local_pts,
+        std::vector< PointArrayType > global_pts,
         std::vector<typename ImageType::Pointer> distance_transform) {
     if (!this->denseDone_ || !local_pts.empty() ||
             !distance_transform.empty() || !global_pts.empty()) {
@@ -89,7 +89,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::getMesh(
-        std::vector<itk::Point<float> > local_pts) {
+        PointArrayType local_pts) {
     //default reconstruction if no warping to dense mean has occurred yet
     if (!this->denseDone_) {
         return vtkSmartPointer<vtkPolyData>::New();
@@ -210,7 +210,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
-std::vector<std::vector<itk::Point<float> > > Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeSparseMean(std::vector<std::vector<itk::Point<float> > > local_pts,
+std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeSparseMean(std::vector< PointArrayType > local_pts,
                                                                          bool do_procrustes, bool do_procrustes_scaling)
 {
     // (1) define mean sparse shape:
@@ -224,7 +224,7 @@ std::vector<std::vector<itk::Point<float> > > Reconstruction<TTransformType,TInt
     for (unsigned int shapeNo = 0; shapeNo < local_pts.size(); shapeNo++)
     {
         shapevector.clear();
-        std::vector<itk::Point<float> > curShape = local_pts[shapeNo];
+        PointArrayType curShape = local_pts[shapeNo];
         for(unsigned int ii = 0 ; ii < curShape.size(); ii++)
         {
             itk::Point<float>  p = curShape[ii];
@@ -275,13 +275,13 @@ std::vector<std::vector<itk::Point<float> > > Reconstruction<TTransformType,TInt
         sparseMean_->InsertNextPoint(pt[0], pt[1], pt[2]);
     }
 
-    std::vector<std::vector<itk::Point<float> > > global_pts;
+    std::vector< PointArrayType > global_pts;
     global_pts.clear();
     // write aligned shapes for subsequent statistical analysis
     for (unsigned int shapeNo = 0; shapeNo < local_pts.size(); shapeNo++)
     {
         shapevector = shapelist[shapeNo];
-        std::vector<itk::Point<float> > curShape;
+        PointArrayType curShape;
         curShape.clear();
         for(unsigned int ii = 0 ; ii < shapevector.size(); ii++)
         {
@@ -318,14 +318,14 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeDenseMean(
-        std::vector<std::vector<itk::Point<float> > > local_pts,
-        std::vector<std::vector<itk::Point<float> > > global_pts,
+        std::vector< PointArrayType > local_pts,
+        std::vector< PointArrayType > global_pts,
         std::vector<typename ImageType::Pointer> distance_transform) {
     try {
         //turn the sets of global points to one sparse global mean.
         float init[] = { 0.f,0.f,0.f };
-        std::vector<itk::Point<float> > sparseMean =
-                std::vector<itk::Point<float> >(global_pts[0].size(), itk::Point<float>(init));
+        PointArrayType sparseMean =
+                PointArrayType(global_pts[0].size(), itk::Point<float>(init));
         for (auto &a : global_pts) {
             for (size_t i = 0; i < a.size(); i++) {
                 init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
@@ -384,7 +384,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         particles_indices.clear();
         for (unsigned int kk = 0; kk < this->goodPoints_.size(); kk++) {
             if (this->goodPoints_[kk]) {
-                particles_indices.push_back(kk);
+                particles_indices.push_back(int(kk));
             }
         }
         std::cout << "There are " << particles_indices.size() << " / " << this->goodPoints_.size() <<
@@ -458,14 +458,14 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             this->numClusters_ = distance_transform.size();
             centroidIndices.resize(distance_transform.size());
             for (size_t shapeNo = 0; shapeNo < distance_transform.size(); shapeNo++) {
-                centroidIndices[shapeNo] = shapeNo;
+                centroidIndices[shapeNo] = int(shapeNo);
                 std::cout << centroidIndices[shapeNo] << std::endl;
             }
         }
         //////////////////////////////////////////////////////////////////
         //Praful - clustering
         for (unsigned int cnt = 0; cnt < centroidIndices.size(); cnt++) {
-            unsigned int shape = centroidIndices[cnt];
+            size_t shape = size_t(centroidIndices[cnt]);
             auto dt = distance_transform[shape];
             typename PointSetType::Pointer targetLandMarks = PointSetType::New();
             PointType pt;
@@ -1102,7 +1102,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::performKMeansClustering(
-        std::vector<std::vector<itk::Point<float> > > global_pts,
+        std::vector<std::vector<itk::Point<TCoordRep> > > global_pts,
         unsigned int number_of_particles,
         std::vector<int> & centroidIndices)
 {
