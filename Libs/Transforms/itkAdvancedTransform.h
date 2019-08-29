@@ -327,5 +327,6 @@ private:
 
 } // end namespace itk
 
+#include "itkAdvancedTransform.cpp"
 
 #endif

@@ -132,4 +132,6 @@ private:
 
 } // namespace itk
 
+#include "itkThinPlateSplineKernelTransform2.cpp"
+
 #endif // __itkThinPlateSplineKernelTransform2_h
