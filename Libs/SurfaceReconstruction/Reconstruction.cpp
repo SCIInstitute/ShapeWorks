@@ -21,11 +21,20 @@
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
-Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(float decimationPercent, double maxAngleDegrees, size_t numClusters) :
+Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(float decimationPercent, double maxAngleDegrees, size_t numClusters,
+                                                                                                   bool fixWinding,
+                                                                                                   bool doLaplacianSmoothingBeforeDecimation,
+                                                                                                   bool doLaplacianSmoothingAfterDecimation,
+                                                                                                   float smoothingLambda,
+                                                                                                   int smoothingIterations) :
     sparseDone_(false), denseDone_(false),
     decimationPercent_(decimationPercent),
     maxAngleDegrees_(maxAngleDegrees),
-    numClusters_(numClusters)
+    numClusters_(numClusters),
+    fixWinding_(fixWinding),
+    doLaplacianSmoothingBeforeDecimation_(doLaplacianSmoothingBeforeDecimation),
+    smoothingLambda_(smoothingLambda),
+    smoothingIterations_(smoothingIterations)
 {}
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -83,6 +92,42 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setNumClusters(int num) {
     this->numClusters_ = num;
+}
+
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setFixWinding(bool fixWinding){
+    fixWinding_ = fixWinding;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setLaplacianSmoothingBeforeDecimation(bool doLaplacianSmoothingBeforeDecimation){
+    doLaplacianSmoothingBeforeDecimation_ = doLaplacianSmoothingBeforeDecimation;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setLaplacianSmoothingAfterDecimation(bool doLaplacianSmoothingAfterDecimation){
+    doLaplacianSmoothingAfterDecimation_ = doLaplacianSmoothingAfterDecimation;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setSmoothingLambda(float smoothingLambda){
+    smoothingLambda_= smoothingLambda;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setSmoothingIterations(int smoothingIterations){
+    smoothingIterations_ = smoothingIterations;
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -999,12 +1044,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
 vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshQC(
-        vtkSmartPointer<vtkPolyData> meshIn,
-        bool fixWinding,
-        bool doLaplacianSmoothingBeforeDecimation,
-        bool doLaplacianSmoothingAfterDecimation,
-        float smoothingLambda,
-        int smoothingIterations)
+        vtkSmartPointer<vtkPolyData> meshIn)
 {
     //for now, write formats and read them in
     vtkSmartPointer<vtkPolyDataWriter>  polywriter =
@@ -1028,15 +1068,15 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     // fix the element winding
     FEFixMesh fix;
     FEMesh* pm_fix;
-    if (fixWinding)
+    if (fixWinding_)
         pm_fix = fix.FixElementWinding(pm);
 
     // do a Laplacian smoothing before decimation
-    if (doLaplacianSmoothingBeforeDecimation)
+    if (doLaplacianSmoothingBeforeDecimation_)
     {
         FEMeshSmoothingModifier lap;
-        lap.m_threshold1 = double(smoothingLambda);
-        lap.m_iteration = smoothingIterations;
+        lap.m_threshold1 = double(smoothingLambda_);
+        lap.m_iteration = smoothingIterations_;
         pm_fix = lap.Apply(pm_fix);
     }
 
@@ -1047,11 +1087,11 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     pm_fix = cvd.Apply(pm_fix);
 
     // do a Laplacian smoothing after decimation
-    if (doLaplacianSmoothingAfterDecimation)
+    if (doLaplacianSmoothingAfterDecimation_)
     {
         FEMeshSmoothingModifier lap;
-        lap.m_threshold1 = double(smoothingLambda);
-        lap.m_iteration = smoothingIterations;
+        lap.m_threshold1 = double(smoothingLambda_);
+        lap.m_iteration = smoothingIterations_;
         pm_fix = lap.Apply(pm_fix);
     }
 

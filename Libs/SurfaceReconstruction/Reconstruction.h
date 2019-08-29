@@ -67,7 +67,12 @@ public:
 
     Reconstruction(float decimationPercent = 0.3f,
                    double angleThresh = 45.0f,
-                   size_t numClusters = 5);
+                   size_t numClusters = 5,
+                   bool fixWinding = true,
+                   bool doLaplacianSmoothingBeforeDecimation = true,
+                   bool doLaplacianSmoothingAfterDecimation = true,
+                   float smoothingLambda = 0.5f,
+                   int smoothingIterations = 1);
     ~Reconstruction();
     vtkSmartPointer<vtkPolyData> getDenseMean(
             std::vector< PointArrayType > local_pts =
@@ -77,9 +82,16 @@ public:
             std::vector<typename ImageType::Pointer> distance_transform =
             std::vector<typename ImageType::Pointer>() );
     void reset();
+
     void setDecimation(float dec);
     void setNumClusters(int num);
     void setMaxAngle(double angleDegrees);
+    void setFixWinding(bool fixWinding);
+    void setLaplacianSmoothingBeforeDecimation(bool doLaplacianSmoothingBeforeDecimation);
+    void setLaplacianSmoothingAfterDecimation(bool doLaplacianSmoothingAfterDecimation);
+    void setSmoothingLambda(float smoothingLambda);
+    void setSmoothingIterations(int smoothingIterations);
+
     vtkSmartPointer<vtkPolyData> getMesh(PointArrayType local_pts);
     void readMeanInfo(std::string dense,
                       std::string sparse, std::string goodPoints);
@@ -126,12 +138,8 @@ private:
             int meshSmootherIterations = 1,
             bool preserveTopology      = true);
     vtkSmartPointer<vtkPolyData> MeshQC(
-            vtkSmartPointer<vtkPolyData> meshIn,
-            bool fixWinding = true,
-            bool doLaplacianSmoothingBeforeDecimation = true,
-            bool doLaplacianSmoothingAfterDecimation = true,
-            float smoothingLambda = 0.5f,
-            int smoothingIterations = 1);
+            vtkSmartPointer<vtkPolyData> meshIn);
+
     void performKMeansClustering(
             std::vector< PointArrayType > global_pts,
             unsigned int number_of_particles,
@@ -146,6 +154,12 @@ private:
     double maxAngleDegrees_;
     size_t numClusters_;
     int medianShapeIndex_;
+
+    bool fixWinding_;
+    bool doLaplacianSmoothingBeforeDecimation_;
+    bool doLaplacianSmoothingAfterDecimation_;
+    float smoothingLambda_;
+    int smoothingIterations_;
 };
 
 #endif // !__RECONSTRUCTION_H__
