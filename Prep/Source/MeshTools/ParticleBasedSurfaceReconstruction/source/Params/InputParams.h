@@ -466,11 +466,11 @@ public:
 
             // create the directory where the results should be, in case it is not there
             out_path = Utils::getPath(out_prefix);
-#ifdef USE_TPS
-            out_path = out_path + "TPS";
-#else
-            out_path = out_path + "RBF";
-#endif
+
+            //            if(use_tps_transform)
+            //                out_path = out_path + "TPS";
+            //            else
+            //                out_path = out_path + "RBF";
 
             out_prefix = out_path + "/" + Utils::getFilename(out_prefix);
 
@@ -492,11 +492,10 @@ public:
                 // create the directory where the results should be, in case it is not there
                 mean_path = Utils::getPath(mean_prefix);
 
-#ifdef USE_TPS
-                mean_path = mean_path + "TPS";
-#else
-                mean_path = mean_path + "RBF";
-#endif
+                //                if(use_tps_transform)
+                //                    mean_path = mean_path + "TPS";
+                //                else
+                //                    mean_path = mean_path + "RBF";
 
                 mean_prefix = mean_path + "/" + Utils::getFilename(mean_prefix);
             }
