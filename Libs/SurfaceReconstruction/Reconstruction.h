@@ -102,6 +102,8 @@ public:
     vtkSmartPointer<vtkPoints>   SparseMean(){return sparseMean_;}
     vtkSmartPointer<vtkPolyData> DenseMean() {return denseMean_;}
 
+    std::vector<bool> GoodPoints(){return goodPoints_;}
+
     std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts,
                                                                      bool do_procrustes = true, bool do_procrustes_scaling = false);
 private:

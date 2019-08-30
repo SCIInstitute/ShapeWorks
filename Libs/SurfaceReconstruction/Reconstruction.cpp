@@ -436,12 +436,16 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         std::cout << "There are " << particles_indices.size() << " / " << this->goodPoints_.size() <<
                      " good points." << std::endl;
 
+        // The parameters of the output image are taken from the input image.
+        // NOTE: all distance transforms were generated throughout shapeworks pipeline
+        // as such they have the same parameters
         const typename ImageType::SpacingType& spacing = distance_transform[0]->GetSpacing();
         const typename ImageType::PointType& origin = distance_transform[0]->GetOrigin();
         const typename ImageType::DirectionType& direction = distance_transform[0]->GetDirection();
         typename ImageType::SizeType size = distance_transform[0]->GetLargestPossibleRegion().GetSize();
         typename ImageType::RegionType region = distance_transform[0]->GetBufferedRegion();
 
+        // define the mean dense shape (mean distance transform)
         typename ImageType::Pointer meanDistanceTransform = ImageType::New();
         meanDistanceTransform->SetOrigin(origin);
         meanDistanceTransform->SetSpacing(spacing);
@@ -485,12 +489,12 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
 
         // the roles of the source and target are reversed to simulate a reverse warping
         // without explicitly invert the warp in order to avoid holes in the warping result
-        typename TransformType::Pointer rbfTransform = TransformType::New();
-        rbfTransform->SetSigma(sigma); // smaller means more sparse
-        //rbfTransform->SetStiffness(0.25*sigma);
-        rbfTransform->SetStiffness(1e-10);
+        typename TransformType::Pointer transform = TransformType::New();
+        transform->SetSigma(sigma); // smaller means more sparse
+        //transform->SetStiffness(0.25*sigma);
+        transform->SetStiffness(1e-10);
 
-        rbfTransform->SetSourceLandmarks(sourceLandMarks);
+        transform->SetSourceLandmarks(sourceLandMarks);
 
         //////////////////////////////////////////////////////////////////
         //Praful - get the shape indices corresponding to cetroids of
@@ -532,7 +536,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                     nt++;
                 }
             }
-            rbfTransform->SetTargetLandmarks(targetLandMarks);
+            transform->SetTargetLandmarks(targetLandMarks);
             // check the mapping (inverse here)
             // this mean source points (mean space) should
             // be warped to the target (current sample's space)
@@ -540,9 +544,10 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             double rms;
             double rms_wo_mapping;
             double maxmDist;
-            this->CheckMapping(this->sparseMean_, subjectPts[shape], rbfTransform,
+            this->CheckMapping(this->sparseMean_, subjectPts[shape], transform,
                                mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
 
+            // Set the resampler params
             typename ResampleFilterType::Pointer   resampler = ResampleFilterType::New();
             typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
             //interpolator->SetSplineOrder(3); // itk has a default bspline order = 3
@@ -553,7 +558,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             resampler->SetOutputDirection(direction);
             resampler->SetOutputOrigin(origin);
             resampler->SetSize(size);
-            resampler->SetTransform(rbfTransform);
+            resampler->SetTransform(transform);
             resampler->SetDefaultPixelValue((PixelType)-100.0);
             resampler->SetOutputStartIndex(region.GetIndex());
             resampler->SetInput(distance_transform[shape]);
