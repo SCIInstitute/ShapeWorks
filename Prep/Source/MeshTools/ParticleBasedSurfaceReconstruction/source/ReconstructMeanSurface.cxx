@@ -22,11 +22,13 @@ int DoIt(InputParams params)
     typedef typename ReconstructionType::PointArrayType                                          PointArrayType;
 
     // TODO: the below parameters should be obtained from the input ones with good enough defaults
-    float decimationPercent  = 0.3f;
-    double maxAngleDegrees   = 45.0;
-    size_t numClusters       = 5;
+    double maxAngleDegrees   = params.normalAngle *(180.0 / params.pi);
 
-    ReconstructionType reconstructor(decimationPercent, maxAngleDegrees, numClusters);
+    ReconstructionType reconstructor(params.qcDecimationPercentage, maxAngleDegrees, params.K,
+                                     params.qcFixWinding,
+                                     params.qcDoLaplacianSmoothingBeforeDecimation,
+                                     params.qcDoLaplacianSmoothingAfterDecimation,
+                                     params.qcSmoothingLambda, params.qcSmoothingIterations);
     reconstructor.reset();
 
     // read local points and world points if given
@@ -43,7 +45,6 @@ int DoIt(InputParams params)
 
         local_pts.push_back(curShape);
     }
-
 
     // define mean sparse shape -- this is considered as target points in the warp
     if(params.worldPointsFilenames.size() == 0)
