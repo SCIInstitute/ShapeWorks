@@ -1,7 +1,7 @@
 #include <QPixmap>
 
-#include "Surfworks/Eigen/Dense"
-#include "Surfworks/Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>

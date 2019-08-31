@@ -4,8 +4,8 @@
 #include <QString>
 #include <QSharedPointer>
 
-#include "Surfworks/Eigen/Dense"
-#include "Surfworks/Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>

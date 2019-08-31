@@ -1,8 +1,8 @@
 #ifndef __RECONSTRUCTION_H__
 #define __RECONSTRUCTION_H__
 
-#include "Eigen/Dense"
-#include "Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 
 
 #include "itkCompactlySupportedRBFSparseKernelTransform.h"

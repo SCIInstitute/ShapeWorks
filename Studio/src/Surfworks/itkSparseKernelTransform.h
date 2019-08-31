@@ -17,8 +17,8 @@
 #ifndef __itkSparseKernelTransform_h
 #define __itkSparseKernelTransform_h
 
-#include "Eigen/Dense"
-#include "Eigen/Sparse"
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
 
 #include <itkTransform.h>
 #include <itkPoint.h>

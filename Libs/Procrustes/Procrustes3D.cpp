@@ -97,7 +97,6 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes, bo
         // Apply translation to shape
         for(shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++)
             (*shapeIt) -= center;
-        //(*shapeIt) += center;
     }
 
     // Remove rotation and scale iteratively
@@ -108,12 +107,13 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes, bo
     {
         shapeListIt = shapes.begin();
         transformIt = transforms.begin();
+
+        // by computing the mean shape based on all samples, we are removing biasness that was introduced by LeaveOneOutMean
+        ComputeMeanShape(mean, shapes);
+
         while(shapeListIt != shapes.end())
         {
-            LeaveOneOutMean(mean, shapes, shapeListIt);
-
             AlignTwoShapes((*transformIt), mean, (*shapeListIt));
-
             shapeListIt++;
             transformIt++;
         }
@@ -136,7 +136,7 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes, bo
         while(shapeListIt != shapes.end())
         {
             TransformShape((*shapeListIt), scaleSim);
-            if (do_scale)
+            if (m_Scaling)
                 (*transformIt).scale = 1;
             else
                 (*transformIt).scale /= scaleAve;
@@ -189,80 +189,33 @@ TransformShapes(ShapeListType & shapes,
 
 void
 Procrustes3D::
-ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices, int do_Scaling)
+ConstructTransformMatrices(SimilarityTransformListType & transforms,TransformMatrixListType & transformMatrices)
 {
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
     transformMatrices.clear();
-    bool m_RotationTranslation = true;
 
     SimilarityTransformListIteratorType transformListIt;
     for(transformListIt = transforms.begin(); transformListIt != transforms.end(); transformListIt++)
     {
-        if(!do_Scaling)
+        if(!m_Scaling)
             (*transformListIt).scale = 1.0;
 
-        TransformMatrixType T;
+        TransformMatrixType transformMatrix;
+        ConstructTransformMatrix((*transformListIt), transformMatrix);
 
-        if (m_RotationTranslation == true)
-        {
-            T(0,0) =  (*transformListIt).rotation(0,0) * (*transformListIt).scale;
-            T(1,0) =  (*transformListIt).rotation(1,0) * (*transformListIt).scale;
-            T(2,0) =  (*transformListIt).rotation(2,0) * (*transformListIt).scale;
-            T(3,0) =  0.0;
-
-            T(0,1) =  (*transformListIt).rotation(0,1) * (*transformListIt).scale;
-            T(1,1) =  (*transformListIt).rotation(1,1) * (*transformListIt).scale;
-            T(2,1) =  (*transformListIt).rotation(2,1) * (*transformListIt).scale;
-            T(3,1) =  0.0;
-
-            T(0,2) =  (*transformListIt).rotation(0,2) * (*transformListIt).scale;
-            T(1,2) =  (*transformListIt).rotation(1,2) * (*transformListIt).scale;
-            T(2,2) =  (*transformListIt).rotation(2,2) * (*transformListIt).scale;
-            T(3,2) =  0.0;
-
-            T(0,3) =  (*transformListIt).translation(0) * T(0,0) + (*transformListIt).translation(1) * T(0,1) + (*transformListIt).translation(2) * T(0,2);
-            T(1,3) =  (*transformListIt).translation(0) * T(1,0) + (*transformListIt).translation(1) * T(1,1) + (*transformListIt).translation(2) * T(1,2);
-            T(2,3) =  (*transformListIt).translation(0) * T(2,0) + (*transformListIt).translation(1) * T(2,1) + (*transformListIt).translation(2) * T(2,2);
-            T(3,3) =  1.0;
-        }
-        else // only use the scaling (could just be 1.0 depending on m_Scaling value)
-        {
-            T(0,0) =  (*transformListIt).scale;
-            T(1,0) =  0.0;
-            T(2,0) =  0.0;
-            T(3,0) =  0.0;
-
-            T(0,1) =  0.0;
-            T(1,1) =  (*transformListIt).scale;
-            T(2,1) =  0.0;
-            T(3,1) =  0.0;
-
-            T(0,2) =  0.0;
-            T(1,2) =  0.0;
-            T(2,2) =  (*transformListIt).scale;
-            T(3,2) =  0.0;
-
-            T(0,3) =  0.0;
-            T(1,3) =  0.0;
-            T(2,3) =  0.0;
-            T(3,3) =  1.0;
-
-        }
-        transformMatrices.push_back(T);
+        transformMatrices.push_back(transformMatrix);
     }
 }
 
 void
 Procrustes3D::
-ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix, int do_Scaling )
+ConstructTransformMatrix(SimilarityTransform3D & transform,TransformMatrixType & transformMatrix)
 {
     // Transform from Configuration space to Procrustes space.  Translation
     // followed by rotation and scaling.
-    bool m_RotationTranslation = true;
 
-
-    if(!do_Scaling)
+    if(!m_Scaling)
         transform.scale = 1.0;
 
     if (m_RotationTranslation == true)
@@ -348,6 +301,7 @@ Procrustes3D::
 AlignTwoShapes(SimilarityTransform3D & transform, ShapeType & shape1,
                ShapeType & shape2)
 {
+    // Aligning shape2 to shape1
     ShapeIteratorType shapeIt1, shapeIt2;
     vnl_matrix_fixed<RealType, 3, 3> shapeMat;
     RealType scale2;
@@ -412,53 +366,16 @@ AlignTwoShapes(SimilarityTransform3D & transform, ShapeType & shape1,
 
 void
 Procrustes3D::
-LeaveOneOutMean(ShapeType & mean, ShapeListType & shapeList,
-                ShapeListIteratorType & leaveOutIt)
-{
-    ShapeListIteratorType shapeListIt;
-    ShapeIteratorType shapeIt, meanIt;
-
-    int i, numPoints = shapeList[0].size();
-
-    mean.clear();
-    mean.reserve(numPoints);
-    for(i = 0; i < numPoints; i++)
-        mean.push_back(vnl_vector_fixed<RealType, 3>(0.0, 0.0, 0.0));
-
-    for(shapeListIt = shapeList.begin(); shapeListIt != shapeList.end();
-        shapeListIt++)
-    {
-//        if(shapeListIt != leaveOutIt)
-        {
-            ShapeType & shape = (*shapeListIt);
-            shapeIt = shape.begin();
-            meanIt = mean.begin();
-            while(shapeIt != shape.end())
-            {
-                (*meanIt) += (*shapeIt);
-
-                shapeIt++;
-                meanIt++;
-            }
-        }
-    }
-
-    for(meanIt = mean.begin(); meanIt != mean.end(); meanIt++)
-        (*meanIt) /= static_cast<RealType>(shapeList.size() - 1);
-}
-
-void
-Procrustes3D::
 ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList)
 {
     ShapeListIteratorType shapeListIt;
     ShapeIteratorType shapeIt, meanIt;
 
-    int i, numPoints = shapeList[0].size();
+    size_t numPoints = shapeList[0].size();
 
     mean.clear();
     mean.reserve(numPoints);
-    for(i = 0; i < numPoints; i++)
+    for(size_t i = 0; i < numPoints; i++)
         mean.push_back(vnl_vector_fixed<RealType, 3>(0.0, 0.0, 0.0));
 
     for(shapeListIt = shapeList.begin(); shapeListIt != shapeList.end();
@@ -470,7 +387,6 @@ ComputeMeanShape(ShapeType & mean, ShapeListType & shapeList)
         while(shapeIt != shape.end())
         {
             (*meanIt) += (*shapeIt);
-
             shapeIt++;
             meanIt++;
         }
@@ -486,20 +402,20 @@ ComputeMedianShape(ShapeListType & shapeList)
 {
     int medianShapeIndex =-1;
     double minSum = 1e10;
-    //int ii = -1;
-    for(int ii = 0; ii < shapeList.size(); ii++)
+
+    for(size_t ii = 0; ii < shapeList.size(); ii++)
     {
         ShapeType shape_ii = shapeList[ii];
         double sum = 0.0;
 
-        for(int jj = 0; jj < shapeList.size(); jj++)
+        for(size_t jj = 0; jj < shapeList.size(); jj++)
         {
             if(ii==jj)
                 continue;
 
             ShapeType shape_jj = shapeList[jj];
 
-            for(int kk =0 ; kk < shape_ii.size(); kk++)
+            for(size_t kk =0 ; kk < shape_ii.size(); kk++)
                 sum += (fabs(shape_ii[kk](0) - shape_jj[kk](0)) + fabs(shape_ii[kk](1) - shape_jj[kk](1)) + fabs(shape_ii[kk](2) - shape_jj[kk](2)));
                 //sum += sqrt((shape_ii[kk] - shape_jj[kk]).squared_magnitude());
 
@@ -509,7 +425,7 @@ ComputeMedianShape(ShapeListType & shapeList)
         if(sum < minSum)
         {
             minSum           = sum;
-            medianShapeIndex = ii;
+            medianShapeIndex = int(ii);
         }
     }
 
