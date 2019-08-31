@@ -241,10 +241,10 @@ add_custom_command(
 )
 
 
-INSTALL(FILES $<TARGET_FILE:Qt5::Sql> DESTINATION lib)
-INSTALL(FILES $<TARGET_FILE:Qt5::Core> DESTINATION lib)
-INSTALL(FILES $<TARGET_FILE:Qt5::Gui> DESTINATION lib)
-INSTALL(FILES $<TARGET_FILE:Qt5::Widgets> DESTINATION lib)
+#INSTALL(FILES $<TARGET_FILE:Qt5::Sql> DESTINATION lib)
+#INSTALL(FILES $<TARGET_FILE:Qt5::Core> DESTINATION lib)
+#INSTALL(FILES $<TARGET_FILE:Qt5::Gui> DESTINATION lib)
+#INSTALL(FILES $<TARGET_FILE:Qt5::Widgets> DESTINATION lib)
 
 set(APP ${CMAKE_INSTALL_PREFIX}/stl2vtk) 
 
@@ -292,11 +292,11 @@ include(InstallRequiredSystemLibraries)
 
 # copy all libraries to the binary folder
     # by calling fixup_bundle, when TARGET INSTALL is executed
-    install(CODE "
-       include(BundleUtilities)
-       fixup_bundle(\"${APP}\"   \"\"   \"${DIRS}\")
-       " 
-       COMPONENT libraries
-       )
+    # install(CODE "
+    #    include(BundleUtilities)
+    #    fixup_bundle(\"${APP}\"   \"\"   \"${DIRS}\")
+    #    " 
+    #    COMPONENT libraries
+    #    )
 
 
