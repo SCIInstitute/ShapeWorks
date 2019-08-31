@@ -1,4 +1,29 @@
 
+
+/*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Date:      $Date: 2019/08/30 17:10:25 $
+  Version:   $Revision: 1.1 $
+  Author:    $Author: elhabian $
+
+  Purpose:   particle-based mean dense surface reconstruction,
+                (1) generalized procrustes alignment of a correspondence model (from ShapeWorksRun)
+                (2) save aligned shapes for subsequent statistical analysis
+                (3) compute mean sparse shape (procrustes mean)
+                (4) define non-rigid warping function that would map the distance transform of each subject (in subject space) to the mean space
+                (5) construct a dense mean shape (i.e. mesh) (just isosurface with vtk-based smoothing and decimation)
+                (6) mesh quality control using preview (mesh relaxation + mesh decimation)
+
+  Copyright (c) 2009 Scientific Computing and Imaging Institute.
+  See ShapeWorksLicense.txt for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+
+
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
