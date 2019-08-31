@@ -105,7 +105,9 @@ public:
     std::vector<bool> GoodPoints(){return goodPoints_;}
 
     std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts,
-                                                                     bool do_procrustes = true, bool do_procrustes_scaling = false);
+                                                     itk::Point<TCoordRep>& common_center,
+                                                     bool do_procrustes = true,
+                                                     bool do_procrustes_scaling = false);
 private:
     void computeDenseMean(
             std::vector< PointArrayType > local_pts,

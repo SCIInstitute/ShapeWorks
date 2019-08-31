@@ -256,7 +256,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
 std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeSparseMean(std::vector< PointArrayType > local_pts,
-                                                                         bool do_procrustes, bool do_procrustes_scaling)
+                                                                         itk::Point<TCoordRep>& common_center, bool do_procrustes, bool do_procrustes_scaling)
 {
     // (1) define mean sparse shape:
     //          run generalized procrustes on the local points to align all shapes to a common coordinate frame
@@ -285,15 +285,12 @@ std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType
 
     Procrustes3D procrustes;
     Procrustes3D::PointType commonCenter;
+    Procrustes3D::SimilarityTransformListType transforms;
+
     if(do_procrustes)
     {
         // Run alignment
-        Procrustes3D::SimilarityTransformListType transforms;
         procrustes.AlignShapes(transforms, shapelist, do_procrustes_scaling); // shapes are actually aligned (modified) and transforms are returned
-
-        // this is the center which needed for translation of the shapes to coincide on the image origin
-        // so that the whole object is in the image and won't go outside
-        procrustes.ComputeCommonCenter(transforms, commonCenter);
 
         // Construct transform matrices for each particle system.
         // Procrustes3D::TransformMatrixListType transformMatrices;
@@ -301,14 +298,28 @@ std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType
     }
     else
     {
-        commonCenter(0) = 0; commonCenter(1) = 0; commonCenter(2) = 0;
+        // remove translation to compute the common center
+        procrustes.RemoveTranslation(transforms, shapelist); // shapes are actually aligned (modified) and transforms are returned
     }
+
+    // this is the center which needed for translation of the shapes to coincide on the image origin
+    // so that the whole object is in the image and won't go outside
+    procrustes.ComputeCommonCenter(transforms, commonCenter);
+
+    common_center[0] = commonCenter[0];
+    common_center[1] = commonCenter[1];
+    common_center[2] = commonCenter[2];
+
+    std::cout << "commonCenter(0) = " << commonCenter[0] << ", "
+              << "commonCenter(1) = " << commonCenter[1] << ", "
+              << "commonCenter(2) = " << commonCenter[2] << std::endl;
 
     // compute the average sparse shape
     procrustes.ComputeMeanShape(meanSparseShape , shapelist);
     medianShapeIndex_ = procrustes.ComputeMedianShape(shapelist);
 
     sparseMean_= vtkSmartPointer< vtkPoints >::New(); // for visualization and estimating kernel support
+    double center[3] = {0,0,0};
     for(unsigned int ii = 0 ; ii < meanSparseShape.size(); ii++)
     {
         double pt[3];
@@ -317,8 +328,17 @@ std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType
         pt[1] = meanSparseShape[ii](1) - commonCenter(1);
         pt[2] = meanSparseShape[ii](2) - commonCenter(2);
 
+        center[0] += pt[0]; center[1] += pt[1]; center[2] += pt[2];
+
         sparseMean_->InsertNextPoint(pt[0], pt[1], pt[2]);
     }
+    center[0] /= meanSparseShape.size();
+    center[1] /= meanSparseShape.size();
+    center[2] /= meanSparseShape.size();
+
+    std::cout << "center(0) = " << center[0] << ", "
+              << "center(1) = " << center[1] << ", "
+              << "center(2) = " << center[2] << std::endl;
 
     std::vector< PointArrayType > global_pts;
     global_pts.clear();
