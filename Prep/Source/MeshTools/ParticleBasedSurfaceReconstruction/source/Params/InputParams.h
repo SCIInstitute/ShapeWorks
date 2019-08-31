@@ -2,7 +2,7 @@
 #define INPUTPARAMS_H
 
 #include "tinyxml.h"
-#include "../Utils/utils.h"
+#include "Utils.h"
 #include <sys/stat.h> // for mkdir
 #ifdef WIN32
 #include <direct.h>
@@ -61,6 +61,9 @@ public:
     int number_of_samples_per_mode;
     float normalAngle;
 
+    bool use_tps_transform;
+    bool use_bspline_interpolation;
+
     // input files
     std::vector< std::string > localPointsFilenames;
     std::vector< std::string > worldPointsFilenames; // optional, wpts from shapeworks (procrustes in this tool need more debuging)
@@ -100,6 +103,9 @@ public:
         number_of_samples_per_mode = 10;
         normalAngle = pi/2.0;
 
+        use_tps_transform         = false;
+        use_bspline_interpolation = false;
+
         localPointsFilenames.clear();
         worldPointsFilenames.clear();
         distanceTransformFilenames.clear();
@@ -119,6 +125,19 @@ public:
             std::istringstream inputsBuffer;
             std::string filename("/dev/null\0");
 
+            // reconstruction template parameters
+            elem = docHandle.FirstChild( "use_tps_transform" ).Element();
+            if (elem)
+            {
+                atoi(elem->GetText()) > 0 ? use_tps_transform = true : use_tps_transform = false;
+            }
+
+            elem = docHandle.FirstChild( "use_bspline_interpolation" ).Element();
+            if (elem)
+            {
+                atoi(elem->GetText()) > 0 ? use_bspline_interpolation = true : use_bspline_interpolation = false;
+            }
+
             // Compile the list of input files.
             elem = docHandle.FirstChild( "local_point_files" ).Element();
             if (elem)
@@ -137,24 +156,24 @@ public:
                 return EXIT_FAILURE;
             }
 
-            elem = docHandle.FirstChild( "world_point_files" ).Element();
-            if (elem)
-            {
-                inputsBuffer.str(elem->GetText());
-                while (inputsBuffer >> filename)
-                {
-                    worldPointsFilenames.push_back(filename);
-                }
-                inputsBuffer.clear();
-                inputsBuffer.str("");
-            }
-            else
-            {
-                std::cerr << "No world points (wpts) to process .. procrustes will be used for the given lpts (experimental)" << std::endl;
-            }
-
             if (mode == 0 || mode == 3) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC
             {
+                elem = docHandle.FirstChild( "world_point_files" ).Element();
+                if (elem)
+                {
+                    inputsBuffer.str(elem->GetText());
+                    while (inputsBuffer >> filename)
+                    {
+                        worldPointsFilenames.push_back(filename);
+                    }
+                    inputsBuffer.clear();
+                    inputsBuffer.str("");
+                }
+                else
+                {
+                    std::cerr << "No world points (wpts) to process .. procrustes will be used for the given lpts" << std::endl;
+                }
+
                 elem = docHandle.FirstChild( "distance_transform_files" ).Element();
                 if (elem)
                 {
@@ -171,6 +190,17 @@ public:
                     std::cerr << "No distance transforms to process!" << std::endl;
                     return EXIT_FAILURE;
                 }
+
+                //Praful
+                elem = docHandle.FirstChild("number_of_clusters").Element();
+                if (elem)
+                {
+                    K = atof(elem->GetText());
+                }
+                else
+                {
+                    std::cout<<"Warning: All shapes will be used to generate mean distance transform (could be slower)!"<<std::endl;
+                }
             }
 
             elem = docHandle.FirstChild( "out_prefix" ).Element();
@@ -185,17 +215,6 @@ public:
             {
                 std::cerr << "No out_prefix provided ...!" << std::endl;
                 return EXIT_FAILURE;
-            }
-
-            //Praful
-            elem = docHandle.FirstChild("number_of_clusters").Element();
-            if (elem)
-            {
-                K = atof(elem->GetText());
-            }
-            else
-            {
-                std::cout<<"Warning: All shapes will be used to generate mean distance transform (could be slower)!"<<std::endl;
             }
 
 
@@ -229,7 +248,7 @@ public:
             }
             else
             {
-                std::cerr << "No number_of_correspondences_in_warp provided, all correspondences will be used to build the warp ...!" << std::endl;
+                std::cerr << "No number_of_correspondences_in_warp provided, all good correspondences will be used to build the warp ...!" << std::endl;
             }
 
             if (mode == 0 || mode == 3) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC
@@ -446,14 +465,14 @@ public:
             }
 
             // create the directory where the results should be, in case it is not there
-            out_path = utils::getPath(out_prefix);
-#ifdef USE_TPS
-            out_path = out_path + "TPS";
-#else
-            out_path = out_path + "RBF";
-#endif
+            out_path = Utils::getPath(out_prefix);
 
-            out_prefix = out_path + "/" + utils::getFilename(out_prefix);
+            //            if(use_tps_transform)
+            //                out_path = out_path + "TPS";
+            //            else
+            //                out_path = out_path + "RBF";
+
+            out_prefix = out_path + "/" + Utils::getFilename(out_prefix);
 
             // remove the output if it already exists to remove any historical results, just in case
             // std::string cmdStr = "rm -rf " + out_path;
@@ -471,15 +490,14 @@ public:
             if (mode == 1 || mode == 2) // WarpToSubjectSpace or MoveAlongPCAModes
             {
                 // create the directory where the results should be, in case it is not there
-                mean_path = utils::getPath(mean_prefix);
+                mean_path = Utils::getPath(mean_prefix);
 
-#ifdef USE_TPS
-                mean_path = mean_path + "TPS";
-#else
-                mean_path = mean_path + "RBF";
-#endif
+                //                if(use_tps_transform)
+                //                    mean_path = mean_path + "TPS";
+                //                else
+                //                    mean_path = mean_path + "RBF";
 
-                mean_prefix = mean_path + "/" + utils::getFilename(mean_prefix);
+                mean_prefix = mean_path + "/" + Utils::getFilename(mean_prefix);
             }
 
         }

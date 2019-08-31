@@ -73,6 +73,9 @@ public:
     void AlignShapes(SimilarityTransformListType & transforms,
                      ShapeListType & shapes);
 
+    void RemoveTranslation(SimilarityTransformListType & transforms,
+                           ShapeListType & shapes);
+
     // Helper function to transform a shape by a similarity transform
     static void TransformShape(ShapeType & shape,
                                SimilarityTransform3D & transform);

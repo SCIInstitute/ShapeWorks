@@ -17,20 +17,39 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
-Reconstruction::Reconstruction(float decimationPercent, double maxAngleDegrees) :
-    denseDone_(false),
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(float decimationPercent, double maxAngleDegrees, size_t numClusters,
+                                                                                                   bool fixWinding,
+                                                                                                   bool doLaplacianSmoothingBeforeDecimation,
+                                                                                                   bool doLaplacianSmoothingAfterDecimation,
+                                                                                                   float smoothingLambda,
+                                                                                                   int smoothingIterations) :
+    sparseDone_(false), denseDone_(false),
     decimationPercent_(decimationPercent),
     maxAngleDegrees_(maxAngleDegrees),
-    numClusters_(5)
+    numClusters_(numClusters),
+    fixWinding_(fixWinding),
+    doLaplacianSmoothingBeforeDecimation_(doLaplacianSmoothingBeforeDecimation),
+    smoothingLambda_(smoothingLambda),
+    smoothingIterations_(smoothingIterations)
 {}
 
-Reconstruction::~Reconstruction() {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::~Reconstruction() {
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
-        std::vector<std::vector<itk::Point<float> > > local_pts,
-        std::vector<std::vector<itk::Point<float> > > global_pts,
-        std::vector<ImageType::Pointer> distance_transform) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::getDenseMean(
+        std::vector< PointArrayType > local_pts,
+        std::vector< PointArrayType > global_pts,
+        std::vector<typename ImageType::Pointer> distance_transform) {
     if (!this->denseDone_ || !local_pts.empty() ||
             !distance_transform.empty() || !global_pts.empty()) {
         this->denseDone_ = false;
@@ -43,27 +62,79 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getDenseMean(
     return this->denseMean_;
 }
 
-void Reconstruction::reset() {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::reset() {
+    this->sparseDone_ = false;
     this->denseDone_ = false;
     this->goodPoints_.clear();
     this->denseMean_ = NULL;
     this->sparseMean_ = NULL;
 }
 
-void Reconstruction::setDecimation(float dec) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setDecimation(float dec) {
     this->decimationPercent_ = dec;
 }
 
-void Reconstruction::setMaxAngle(double angleDegrees) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setMaxAngle(double angleDegrees) {
     this->maxAngleDegrees_ = angleDegrees;
 }
 
-void Reconstruction::setNumClusters(int num) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setNumClusters(int num) {
     this->numClusters_ = num;
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
-        std::vector<itk::Point<float> > local_pts) {
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setFixWinding(bool fixWinding){
+    fixWinding_ = fixWinding;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setLaplacianSmoothingBeforeDecimation(bool doLaplacianSmoothingBeforeDecimation){
+    doLaplacianSmoothingBeforeDecimation_ = doLaplacianSmoothingBeforeDecimation;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setLaplacianSmoothingAfterDecimation(bool doLaplacianSmoothingAfterDecimation){
+    doLaplacianSmoothingAfterDecimation_ = doLaplacianSmoothingAfterDecimation;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setSmoothingLambda(float smoothingLambda){
+    smoothingLambda_= smoothingLambda;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setSmoothingIterations(int smoothingIterations){
+    smoothingIterations_ = smoothingIterations;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::getMesh(
+        PointArrayType local_pts) {
     //default reconstruction if no warping to dense mean has occurred yet
     if (!this->denseDone_) {
         return vtkSmartPointer<vtkPolyData>::New();
@@ -87,8 +158,8 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
     // forward warping from mean space to subject space
     // Define container for source landmarks that corresponds to the mean space, this is
     // the moving mesh which will be warped to each individual subject
-    PointSetType::Pointer sourceLandMarks = PointSetType::New();
-    PointSetType::PointsContainer::Pointer sourceLandMarkContainer =
+    typename PointSetType::Pointer sourceLandMarks = PointSetType::New();
+    typename PointSetType::PointsContainer::Pointer sourceLandMarkContainer =
             sourceLandMarks->GetPoints();
     PointType ps;
     id = itk::NumericTraits< PointIdType >::Zero;
@@ -105,14 +176,14 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
             ns++;
         }
     }
-    RBFTransformType::Pointer rbfTransform = RBFTransformType::New();
-    rbfTransform->SetSigma(sigma); // smaller means more sparse
-    rbfTransform->SetStiffness(1e-10);
-    rbfTransform->SetSourceLandmarks(sourceLandMarks);
+    typename TransformType::Pointer transform = TransformType::New();
+    transform->SetSigma(sigma); // smaller means more sparse
+    transform->SetStiffness(1e-10);
+    transform->SetSourceLandmarks(sourceLandMarks);
     // Define container for target landmarks corresponds to the subject shape
-    PointSetType::Pointer targetLandMarks = PointSetType::New();
+    typename PointSetType::Pointer targetLandMarks = PointSetType::New();
     PointType pt;
-    PointSetType::PointsContainer::Pointer targetLandMarkContainer =
+    typename PointSetType::PointsContainer::Pointer targetLandMarkContainer =
             targetLandMarks->GetPoints();
     id = itk::NumericTraits< PointIdType >::Zero;
     int nt = 0;
@@ -128,7 +199,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
             nt++;
         }
     }
-    rbfTransform->SetTargetLandmarks(targetLandMarks);
+    transform->SetTargetLandmarks(targetLandMarks);
     // check the mapping (inverse here)
     // this means source points (current sample's space) should
     //  be warped to the target (mean space)
@@ -138,14 +209,17 @@ vtkSmartPointer<vtkPolyData> Reconstruction::getMesh(
     double rms_wo_mapping;
     double maxmDist;
     this->CheckMapping(this->sparseMean_, subjectPts,
-                       rbfTransform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
+                       transform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
     vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
     denseShape->DeepCopy(this->denseMean_);
-    this->generateWarpedMeshes(rbfTransform, denseShape);
+    this->generateWarpedMeshes(transform, denseShape);
     return denseShape;
 }
 
-void Reconstruction::readMeanInfo(std::string dense,
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::readMeanInfo(std::string dense,
                                   std::string sparse, std::string goodPoints) {
     //read out dense mean
     vtkSmartPointer<vtkPolyDataReader> reader1 = vtkPolyDataReader::New();
@@ -174,23 +248,155 @@ void Reconstruction::readMeanInfo(std::string dense,
         }
     }
     ptsIn.close();
+    this->sparseDone_ = true;
     this->denseDone_ = true;
 }
 
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeSparseMean(std::vector< PointArrayType > local_pts,
+                                                                         itk::Point<TCoordRep>& common_center, bool do_procrustes, bool do_procrustes_scaling)
+{
+    // (1) define mean sparse shape:
+    //          run generalized procrustes on the local points to align all shapes to a common coordinate frame
+    Procrustes3D::ShapeListType shapelist;
+    Procrustes3D::ShapeType     shapevector;
+    Procrustes3D::ShapeType     meanSparseShape;
+    Procrustes3D::PointType     point;
 
-bool Reconstruction::denseDone() {
+    // fill the shape list
+    for (unsigned int shapeNo = 0; shapeNo < local_pts.size(); shapeNo++)
+    {
+        shapevector.clear();
+        PointArrayType curShape = local_pts[shapeNo];
+        for(unsigned int ii = 0 ; ii < curShape.size(); ii++)
+        {
+            itk::Point<float>  p = curShape[ii];
+
+            point(0) = double(p[0]);
+            point(1) = double(p[1]);
+            point(2) = double(p[2]);
+
+            shapevector.push_back(point);
+        }
+        shapelist.push_back(shapevector);
+    }
+
+    Procrustes3D procrustes;
+    Procrustes3D::PointType commonCenter;
+    Procrustes3D::SimilarityTransformListType transforms;
+
+    if(do_procrustes_scaling)
+        procrustes.ScalingOn();
+    else
+        procrustes.ScalingOff();
+
+    if(do_procrustes)
+    {
+        // Run alignment
+        procrustes.AlignShapes(transforms, shapelist); // shapes are actually aligned (modified) and transforms are returned
+
+        // Construct transform matrices for each particle system.
+        // Procrustes3D::TransformMatrixListType transformMatrices;
+        // procrustes.ConstructTransformMatrices(transforms,transformMatrices, do_procrustes_scaling); // note that tranforms scale is updated here if do_scaling ==1
+    }
+    else
+    {
+        // remove translation to compute the common center
+        procrustes.RemoveTranslation(transforms, shapelist); // shapes are actually aligned (modified) and transforms are returned
+    }
+
+    // this is the center which needed for translation of the shapes to coincide on the image origin
+    // so that the whole object is in the image and won't go outside
+    procrustes.ComputeCommonCenter(transforms, commonCenter);
+
+    common_center[0] = commonCenter[0];
+    common_center[1] = commonCenter[1];
+    common_center[2] = commonCenter[2];
+
+    std::cout << "commonCenter(0) = " << commonCenter[0] << ", "
+              << "commonCenter(1) = " << commonCenter[1] << ", "
+              << "commonCenter(2) = " << commonCenter[2] << std::endl;
+
+    // compute the average sparse shape
+    procrustes.ComputeMeanShape(meanSparseShape , shapelist);
+    medianShapeIndex_ = procrustes.ComputeMedianShape(shapelist);
+
+    sparseMean_= vtkSmartPointer< vtkPoints >::New(); // for visualization and estimating kernel support
+    double center[3] = {0,0,0};
+    for(unsigned int ii = 0 ; ii < meanSparseShape.size(); ii++)
+    {
+        double pt[3];
+
+        pt[0] = meanSparseShape[ii](0) - commonCenter(0);
+        pt[1] = meanSparseShape[ii](1) - commonCenter(1);
+        pt[2] = meanSparseShape[ii](2) - commonCenter(2);
+
+        center[0] += pt[0]; center[1] += pt[1]; center[2] += pt[2];
+
+        sparseMean_->InsertNextPoint(pt[0], pt[1], pt[2]);
+    }
+    center[0] /= meanSparseShape.size();
+    center[1] /= meanSparseShape.size();
+    center[2] /= meanSparseShape.size();
+
+    std::cout << "center(0) = " << center[0] << ", "
+              << "center(1) = " << center[1] << ", "
+              << "center(2) = " << center[2] << std::endl;
+
+    std::vector< PointArrayType > global_pts;
+    global_pts.clear();
+
+    // prep aligned shapes for subsequent statistical analysis
+    for (unsigned int shapeNo = 0; shapeNo < local_pts.size(); shapeNo++)
+    {
+        shapevector = shapelist[shapeNo];
+        PointArrayType curShape;
+        curShape.clear();
+        for(unsigned int ii = 0 ; ii < shapevector.size(); ii++)
+        {
+            itk::Point<float> pt;
+
+            pt[0] = shapevector[ii](0) - commonCenter(0);
+            pt[1] = shapevector[ii](1) - commonCenter(1);
+            pt[2] = shapevector[ii](2) - commonCenter(2);
+
+            curShape.push_back(pt);
+        }
+
+        global_pts.push_back(curShape);
+    }
+
+    sparseDone_ = true;
+    return global_pts;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+bool Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::sparseDone() {
+    return this->sparseDone_;
+}
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+bool Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::denseDone() {
     return this->denseDone_;
 }
 
-void Reconstruction::computeDenseMean(
-        std::vector<std::vector<itk::Point<float> > > local_pts,
-        std::vector<std::vector<itk::Point<float> > > global_pts,
-        std::vector<ImageType::Pointer> distance_transform) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeDenseMean(
+        std::vector< PointArrayType > local_pts,
+        std::vector< PointArrayType > global_pts,
+        std::vector<typename ImageType::Pointer> distance_transform) {
     try {
         //turn the sets of global points to one sparse global mean.
         float init[] = { 0.f,0.f,0.f };
-        std::vector<itk::Point<float> > sparseMean =
-                std::vector<itk::Point<float> >(global_pts[0].size(), itk::Point<float>(init));
+        PointArrayType sparseMean =
+                PointArrayType(global_pts[0].size(), itk::Point<float>(init));
         for (auto &a : global_pts) {
             for (size_t i = 0; i < a.size(); i++) {
                 init[0] = a[i][0]; init[1] = a[i][1]; init[2] = a[i][2];
@@ -249,39 +455,43 @@ void Reconstruction::computeDenseMean(
         particles_indices.clear();
         for (unsigned int kk = 0; kk < this->goodPoints_.size(); kk++) {
             if (this->goodPoints_[kk]) {
-                particles_indices.push_back(kk);
+                particles_indices.push_back(int(kk));
             }
         }
         std::cout << "There are " << particles_indices.size() << " / " << this->goodPoints_.size() <<
                      " good points." << std::endl;
 
-        const ImageType::SpacingType& spacing = distance_transform[0]->GetSpacing();
-        const ImageType::PointType& origin = distance_transform[0]->GetOrigin();
-        const ImageType::DirectionType& direction = distance_transform[0]->GetDirection();
-        ImageType::SizeType size = distance_transform[0]->GetLargestPossibleRegion().GetSize();
-        ImageType::RegionType region = distance_transform[0]->GetBufferedRegion();
+        // The parameters of the output image are taken from the input image.
+        // NOTE: all distance transforms were generated throughout shapeworks pipeline
+        // as such they have the same parameters
+        const typename ImageType::SpacingType& spacing = distance_transform[0]->GetSpacing();
+        const typename ImageType::PointType& origin = distance_transform[0]->GetOrigin();
+        const typename ImageType::DirectionType& direction = distance_transform[0]->GetDirection();
+        typename ImageType::SizeType size = distance_transform[0]->GetLargestPossibleRegion().GetSize();
+        typename ImageType::RegionType region = distance_transform[0]->GetBufferedRegion();
 
-        ImageType::Pointer meanDistanceTransform = ImageType::New();
+        // define the mean dense shape (mean distance transform)
+        typename ImageType::Pointer meanDistanceTransform = ImageType::New();
         meanDistanceTransform->SetOrigin(origin);
         meanDistanceTransform->SetSpacing(spacing);
         meanDistanceTransform->SetDirection(direction);
         meanDistanceTransform->SetLargestPossibleRegion(size);
 
-        ImageType::Pointer meanDistanceTransformBeforeWarp = ImageType::New();
+        typename ImageType::Pointer meanDistanceTransformBeforeWarp = ImageType::New();
         meanDistanceTransformBeforeWarp->SetOrigin(origin);
         meanDistanceTransformBeforeWarp->SetSpacing(spacing);
         meanDistanceTransformBeforeWarp->SetDirection(direction);
         meanDistanceTransformBeforeWarp->SetLargestPossibleRegion(size);
 
-        AddImageFilterType::Pointer sumfilter = AddImageFilterType::New();
-        AddImageFilterType::Pointer sumfilterBeforeWarp = AddImageFilterType::New();
+        typename AddImageFilterType::Pointer sumfilter = AddImageFilterType::New();
+        typename AddImageFilterType::Pointer sumfilterBeforeWarp = AddImageFilterType::New();
 
 
         // Define container for source landmarks that corresponds to the mean space, this is
         // fixed where the target (each individual shape) will be warped to
         // NOTE that this is inverse warping to avoid holes in the warped distance transforms
-        PointSetType::Pointer sourceLandMarks = PointSetType::New();
-        PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
+        typename PointSetType::Pointer sourceLandMarks = PointSetType::New();
+        typename PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
         PointType ps;
         PointIdType id = itk::NumericTraits< PointIdType >::Zero;
         int ns = 0;
@@ -304,13 +514,12 @@ void Reconstruction::computeDenseMean(
 
         // the roles of the source and target are reversed to simulate a reverse warping
         // without explicitly invert the warp in order to avoid holes in the warping result
-        RBFTransformType::Pointer rbfTransform = RBFTransformType::New();
-        rbfTransform->SetSigma(sigma); // smaller means more sparse
-        //rbfTransform->SetStiffness(0.25*sigma);
-        rbfTransform->SetStiffness(1e-10);
+        typename TransformType::Pointer transform = TransformType::New();
+        transform->SetSigma(sigma); // smaller means more sparse
+        //transform->SetStiffness(0.25*sigma);
+        transform->SetStiffness(1e-10);
 
-        rbfTransform->SetSourceLandmarks(sourceLandMarks);
-
+        transform->SetSourceLandmarks(sourceLandMarks);
 
         //////////////////////////////////////////////////////////////////
         //Praful - get the shape indices corresponding to cetroids of
@@ -324,18 +533,18 @@ void Reconstruction::computeDenseMean(
             this->numClusters_ = distance_transform.size();
             centroidIndices.resize(distance_transform.size());
             for (size_t shapeNo = 0; shapeNo < distance_transform.size(); shapeNo++) {
-                centroidIndices[shapeNo] = shapeNo;
+                centroidIndices[shapeNo] = int(shapeNo);
                 std::cout << centroidIndices[shapeNo] << std::endl;
             }
         }
         //////////////////////////////////////////////////////////////////
         //Praful - clustering
         for (unsigned int cnt = 0; cnt < centroidIndices.size(); cnt++) {
-            unsigned int shape = centroidIndices[cnt];
+            size_t shape = size_t(centroidIndices[cnt]);
             auto dt = distance_transform[shape];
-            PointSetType::Pointer targetLandMarks = PointSetType::New();
+            typename PointSetType::Pointer targetLandMarks = PointSetType::New();
             PointType pt;
-            PointSetType::PointsContainer::Pointer
+            typename PointSetType::PointsContainer::Pointer
                     targetLandMarkContainer = targetLandMarks->GetPoints();
             id = itk::NumericTraits< PointIdType >::Zero;
 
@@ -352,7 +561,7 @@ void Reconstruction::computeDenseMean(
                     nt++;
                 }
             }
-            rbfTransform->SetTargetLandmarks(targetLandMarks);
+            transform->SetTargetLandmarks(targetLandMarks);
             // check the mapping (inverse here)
             // this mean source points (mean space) should
             // be warped to the target (current sample's space)
@@ -360,19 +569,21 @@ void Reconstruction::computeDenseMean(
             double rms;
             double rms_wo_mapping;
             double maxmDist;
-            this->CheckMapping(this->sparseMean_, subjectPts[shape], rbfTransform,
+            this->CheckMapping(this->sparseMean_, subjectPts[shape], transform,
                                mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
 
-            ResampleFilterType::Pointer   resampler = ResampleFilterType::New();
-            InterpolatorType::Pointer interpolator = InterpolatorType::New();
-            interpolator->SetSplineOrder(3);
+            // Set the resampler params
+            typename ResampleFilterType::Pointer   resampler = ResampleFilterType::New();
+            typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
+            //interpolator->SetSplineOrder(3); // itk has a default bspline order = 3
+
             resampler->SetInterpolator(interpolator);
 
             resampler->SetOutputSpacing(spacing);
             resampler->SetOutputDirection(direction);
             resampler->SetOutputOrigin(origin);
             resampler->SetSize(size);
-            resampler->SetTransform(rbfTransform);
+            resampler->SetTransform(transform);
             resampler->SetDefaultPixelValue((PixelType)-100.0);
             resampler->SetOutputStartIndex(region.GetIndex());
             resampler->SetInput(distance_transform[shape]);
@@ -380,12 +591,12 @@ void Reconstruction::computeDenseMean(
 
             if (cnt == 0) {
                 // after warp
-                DuplicatorType::Pointer duplicator = DuplicatorType::New();
+                typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
                 duplicator->SetInputImage(resampler->GetOutput());
                 duplicator->Update();
                 meanDistanceTransform = duplicator->GetOutput();
                 // before warp
-                DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
+                typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
                 duplicator2->SetInputImage(distance_transform[shape]);
                 duplicator2->Update();
                 meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
@@ -395,7 +606,7 @@ void Reconstruction::computeDenseMean(
                 sumfilter->SetInput2(resampler->GetOutput());
                 sumfilter->Update();
 
-                DuplicatorType::Pointer duplicator = DuplicatorType::New();
+                typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
                 duplicator->SetInputImage(sumfilter->GetOutput());
                 duplicator->Update();
                 meanDistanceTransform = duplicator->GetOutput();
@@ -405,19 +616,19 @@ void Reconstruction::computeDenseMean(
                 sumfilterBeforeWarp->SetInput2(distance_transform[shape]);
                 sumfilterBeforeWarp->Update();
 
-                DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
+                typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
                 duplicator2->SetInputImage(sumfilterBeforeWarp->GetOutput());
                 duplicator2->Update();
                 meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
             }
         }
-        MultiplyByConstantImageFilterType::Pointer multiplyImageFilter =
+        typename MultiplyByConstantImageFilterType::Pointer multiplyImageFilter =
                 MultiplyByConstantImageFilterType::New();
         multiplyImageFilter->SetInput(meanDistanceTransform);
         multiplyImageFilter->SetConstant(1.0 /
                                          static_cast<double>(this->numClusters_));
         multiplyImageFilter->Update();
-        MultiplyByConstantImageFilterType::Pointer multiplyImageFilterBeforeWarp =
+        typename MultiplyByConstantImageFilterType::Pointer multiplyImageFilterBeforeWarp =
                 MultiplyByConstantImageFilterType::New();
         multiplyImageFilterBeforeWarp->SetInput(meanDistanceTransformBeforeWarp);
         multiplyImageFilterBeforeWarp->SetConstant(1.0 /
@@ -425,7 +636,7 @@ void Reconstruction::computeDenseMean(
         multiplyImageFilterBeforeWarp->Update();
         // going to vtk to extract the template mesh (mean dense shape)
         // to be deformed for each sparse shape
-        ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
+        typename ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
         itk2vtkConnector->SetInput(multiplyImageFilter->GetOutput());
         itk2vtkConnector->Update();
         this->denseMean_ =
@@ -444,26 +655,30 @@ void Reconstruction::computeDenseMean(
     this->denseDone_ = true;
 }
 
-vnl_matrix<double> Reconstruction::computeParticlesNormals(
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+vnl_matrix<double> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeParticlesNormals(
         vtkSmartPointer< vtkPoints > particles,
-        ImageType::Pointer distance_transform) {
-    const ImageType::SpacingType& spacing = distance_transform->GetSpacing();
-    const ImageType::PointType& origin = distance_transform->GetOrigin();
+        typename ImageType::Pointer distance_transform)
+{
+    const typename ImageType::SpacingType& spacing = distance_transform->GetSpacing();
+    const typename ImageType::PointType& origin = distance_transform->GetOrigin();
 
     // (2) get normals at each voxel from the implicit representation
     // Create and setup a gradient filter
-    GradientFilterType::Pointer gradientFilter = GradientFilterType::New();
+    typename GradientFilterType::Pointer gradientFilter = GradientFilterType::New();
     gradientFilter->SetInput(distance_transform);
     gradientFilter->Update();
 
-    GradientMagnitudeFilterType::Pointer gradientMagFilter = GradientMagnitudeFilterType::New();
+    typename GradientMagnitudeFilterType::Pointer gradientMagFilter = GradientMagnitudeFilterType::New();
     gradientMagFilter->SetInput(distance_transform);
     gradientMagFilter->Update();
 
-    ImageType::Pointer gradMagImage = ImageType::New();
+    typename ImageType::Pointer gradMagImage = ImageType::New();
     gradMagImage = gradientMagFilter->GetOutput();
 
-    GradientImageType::Pointer  gradientImage = GradientImageType::New();
+    typename GradientImageType::Pointer  gradientImage = GradientImageType::New();
     gradientImage = gradientFilter->GetOutput();
 
     // iterate through the gradient to convert it to normal = -gradient/mag(gradient)
@@ -471,17 +686,17 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
     ImageIteratorType magIter(gradMagImage, gradMagImage->GetRequestedRegion());
 
     // initialize the images that will hold the normal components
-    ImageType::Pointer nxImage = ImageType::New();
+    typename ImageType::Pointer nxImage = ImageType::New();
     nxImage->SetRegions(distance_transform->GetLargestPossibleRegion());
     nxImage->Allocate();
     ImageIteratorType nxIter(nxImage, nxImage->GetRequestedRegion());
 
-    ImageType::Pointer nyImage = ImageType::New();
+    typename ImageType::Pointer nyImage = ImageType::New();
     nyImage->SetRegions(distance_transform->GetLargestPossibleRegion());
     nyImage->Allocate();
     ImageIteratorType nyIter(nyImage, nyImage->GetRequestedRegion());
 
-    ImageType::Pointer nzImage = ImageType::New();
+    typename ImageType::Pointer nzImage = ImageType::New();
     nzImage->SetRegions(distance_transform->GetLargestPossibleRegion());
     nzImage->Allocate();
     ImageIteratorType nzIter(nzImage, nzImage->GetRequestedRegion());
@@ -492,9 +707,9 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
         itk::CovariantVector<float, 3> grad = gradIter.Get();
         float                      gradMag = magIter.Get();
 
-        float nx = -1.0*grad[0] / (1e-10 + gradMag);
-        float ny = -1.0*grad[1] / (1e-10 + gradMag);
-        float nz = -1.0*grad[2] / (1e-10 + gradMag);
+        float nx = -1.0f*grad[0] / (1e-10f + gradMag);
+        float ny = -1.0f*grad[1] / (1e-10f + gradMag);
+        float nz = -1.0f*grad[2] / (1e-10f + gradMag);
 
         nxIter.Set(nx);
         nyIter.Set(ny);
@@ -502,21 +717,21 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
     }
 
     // going to vtk for probing ...
-    ITK2VTKConnectorType::Pointer connector_x = ITK2VTKConnectorType::New();
+    typename ITK2VTKConnectorType::Pointer connector_x = ITK2VTKConnectorType::New();
     connector_x->SetInput(nxImage);
     connector_x->Update();
 
     vtkSmartPointer<vtkImageData> Nx = vtkSmartPointer<vtkImageData>::New();
     Nx = connector_x->GetOutput();
 
-    ITK2VTKConnectorType::Pointer connector_y = ITK2VTKConnectorType::New();
+    typename ITK2VTKConnectorType::Pointer connector_y = ITK2VTKConnectorType::New();
     connector_y->SetInput(nyImage);
     connector_y->Update();
 
     vtkSmartPointer<vtkImageData> Ny = vtkSmartPointer<vtkImageData>::New();
     Ny = connector_y->GetOutput();
 
-    ITK2VTKConnectorType::Pointer connector_z = ITK2VTKConnectorType::New();
+    typename ITK2VTKConnectorType::Pointer connector_z = ITK2VTKConnectorType::New();
     connector_z->SetInput(nzImage);
     connector_z->Update();
 
@@ -580,9 +795,9 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
         double pN[3];
 
         // getting the normals at particles
-        pN[0] = nx->GetValue(ii);
-        pN[1] = ny->GetValue(ii);
-        pN[2] = nz->GetValue(ii);
+        pN[0] = double(nx->GetValue(ii));
+        pN[1] = double(ny->GetValue(ii));
+        pN[2] = double(nz->GetValue(ii));
 
         // making sure this is a unit vector
         double norm = sqrt(pN[0] * pN[0] + pN[1] * pN[1] + pN[2] * pN[2]);
@@ -612,8 +827,11 @@ vnl_matrix<double> Reconstruction::computeParticlesNormals(
     return particlesNormals;
 }
 
-void Reconstruction::generateWarpedMeshes(
-        RBFTransformType::Pointer transform,
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::generateWarpedMeshes(
+        typename TransformType::Pointer transform,
         vtkSmartPointer<vtkPolyData>& outputMesh) {
     // generate warped meshes
     vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
@@ -637,7 +855,10 @@ void Reconstruction::generateWarpedMeshes(
     outputMesh->Modified();
 }
 
-double Reconstruction::computeAverageDistanceToNeighbors(
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+double Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::computeAverageDistanceToNeighbors(
         vtkSmartPointer<vtkPoints> points, std::vector<int> particles_indices) {
     int K = 6; // hexagonal ring - one jump
     vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
@@ -683,8 +904,11 @@ double Reconstruction::computeAverageDistanceToNeighbors(
     return avgDist;
 }
 
-void Reconstruction::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
-                                  vtkSmartPointer<vtkPoints> targetPts, RBFTransformType::Pointer rbfTransform,
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
+                                  vtkSmartPointer<vtkPoints> targetPts, typename TransformType::Pointer transform,
                                   vtkSmartPointer<vtkPoints>& mappedCorrespondences, double & rms,
                                   double & rms_wo_mapping, double & maxmDist) {
     // source should be warped to the target
@@ -706,7 +930,7 @@ void Reconstruction::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
         ps_[0] = ps[0]; ps_[1] = ps[1]; ps_[2] = ps[2];
         pt_[0] = pt[0]; pt_[1] = pt[1]; pt_[2] = pt[2];
 
-        pw_ = rbfTransform->TransformPoint(ps_);
+        pw_ = transform->TransformPoint(ps_);
 
         double cur_rms = pw_.EuclideanDistanceTo(pt_);
         double cur_rms_wo_mapping = ps_.EuclideanDistanceTo(pt_);
@@ -718,7 +942,7 @@ void Reconstruction::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
         mappedCorrespondences->InsertNextPoint(pw);
 
     }
-    maxmDist = -10000.0f;
+    maxmDist = double(-10000.0f);
     for (unsigned int ii = 0; ii < mappedCorrespondences->GetNumberOfPoints(); ii++) {
         double pi[3];
         mappedCorrespondences->GetPoint(ii, pi);
@@ -739,7 +963,10 @@ void Reconstruction::CheckMapping(vtkSmartPointer<vtkPoints> sourcePts,
     rms_wo_mapping /= sourcePts->GetNumberOfPoints();
 }
 
-vtkSmartPointer<vtkPoints> Reconstruction::convertToImageCoordinates(
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+vtkSmartPointer<vtkPoints> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::convertToImageCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
         const itk::Image< float, 3 >::PointType& origin) {
@@ -754,7 +981,10 @@ vtkSmartPointer<vtkPoints> Reconstruction::convertToImageCoordinates(
     return points;
 }
 
-vtkSmartPointer<vtkPoints> Reconstruction::convertToPhysicalCoordinates(
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+vtkSmartPointer<vtkPoints> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::convertToPhysicalCoordinates(
         vtkSmartPointer<vtkPoints> particles, int number_of_particles,
         const itk::Image< float, 3 >::SpacingType& spacing,
         const itk::Image< float, 3 >::PointType& origin) {
@@ -769,8 +999,18 @@ vtkSmartPointer<vtkPoints> Reconstruction::convertToPhysicalCoordinates(
     return points;
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
-        vtkSmartPointer<vtkImageData> volData) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::extractIsosurface(
+        vtkSmartPointer<vtkImageData> volData,
+        float levelsetValue,
+        float targetReduction,
+        float featureAngle,
+        int lsSmootherIterations,
+        int meshSmootherIterations,
+        bool preserveTopology)
+{
     // (1) isosurface generation
     vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
     //vtkSmartPointer<vtkMarchingCubes> ls = vtkSmartPointer<vtkMarchingCubes>::New();
@@ -780,7 +1020,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
 #else
     ls->SetInputData(volData);
 #endif
-    ls->SetValue(0, 0.);
+    ls->SetValue(0, double(levelsetValue));
     ls->Update();
 
     // (2) laplacian smoothing
@@ -792,7 +1032,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
     vtkSmartPointer<vtkSmoothPolyDataFilter> lsSmoother =
             vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
     lsSmoother->SetInputConnection(ls->GetOutputPort());
-    lsSmoother->SetNumberOfIterations(1);
+    lsSmoother->SetNumberOfIterations(lsSmootherIterations);
     lsSmoother->Update();
     std::cout << "..";
 
@@ -811,9 +1051,9 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
     vtkSmartPointer<vtkDecimatePro> decimator =
             vtkSmartPointer<vtkDecimatePro>::New();
     decimator->SetInputConnection(conn->GetOutputPort());
-    decimator->SetTargetReduction(0.1);
-    decimator->SetFeatureAngle(30.);
-    decimator->PreserveTopologyOn();
+    decimator->SetTargetReduction(double(targetReduction));
+    decimator->SetFeatureAngle(double(featureAngle));
+    preserveTopology == true ? decimator->PreserveTopologyOn() : decimator->PreserveTopologyOff();
     decimator->BoundaryVertexDeletionOn();
     decimator->Update();
 
@@ -821,7 +1061,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
     vtkSmartPointer<vtkSmoothPolyDataFilter> smoother =
             vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
     smoother->SetInputConnection(decimator->GetOutputPort());
-    smoother->SetNumberOfIterations(1);
+    smoother->SetNumberOfIterations(meshSmootherIterations);
     smoother->Update();
 
     vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
@@ -830,8 +1070,12 @@ vtkSmartPointer<vtkPolyData> Reconstruction::extractIsosurface(
     return denseShape;
 }
 
-vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
-        vtkSmartPointer<vtkPolyData> meshIn) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshQC(
+        vtkSmartPointer<vtkPolyData> meshIn)
+{
     //for now, write formats and read them in
     vtkSmartPointer<vtkPolyDataWriter>  polywriter =
             vtkSmartPointer<vtkPolyDataWriter>::New();
@@ -854,12 +1098,17 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     // fix the element winding
     FEFixMesh fix;
     FEMesh* pm_fix;
-    pm_fix = fix.FixElementWinding(pm);
+    if (fixWinding_)
+        pm_fix = fix.FixElementWinding(pm);
+
     // do a Laplacian smoothing before decimation
-    FEMeshSmoothingModifier lap;
-    lap.m_threshold1 = 0.5;
-    lap.m_iteration = 1;
-    pm_fix = lap.Apply(pm_fix);
+    if (doLaplacianSmoothingBeforeDecimation_)
+    {
+        FEMeshSmoothingModifier lap;
+        lap.m_threshold1 = double(smoothingLambda_);
+        lap.m_iteration = smoothingIterations_;
+        pm_fix = lap.Apply(pm_fix);
+    }
 
     // do a CVD decimation
     FECVDDecimationModifier cvd;
@@ -868,10 +1117,13 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     pm_fix = cvd.Apply(pm_fix);
 
     // do a Laplacian smoothing after decimation
-    FEMeshSmoothingModifier lap2;
-    lap2.m_threshold1 = 0.5;
-    lap2.m_iteration = 1;
-    pm_fix = lap2.Apply(pm_fix);
+    if (doLaplacianSmoothingAfterDecimation_)
+    {
+        FEMeshSmoothingModifier lap;
+        lap.m_threshold1 = double(smoothingLambda_);
+        lap.m_iteration = smoothingIterations_;
+        pm_fix = lap.Apply(pm_fix);
+    }
 
     // export to another vtk file
     FEVTKExport vtk_out;
@@ -881,6 +1133,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     // don't forget to clean-up
     delete pm_fix;
     delete pm;
+
     //read back in new mesh
     vtkSmartPointer<vtkPolyDataReader> polyreader =
             vtkSmartPointer<vtkPolyDataReader>::New();
@@ -890,14 +1143,17 @@ vtkSmartPointer<vtkPolyData> Reconstruction::MeshQC(
     return meshIn;
 }
 
-void Reconstruction::writeMeanInfo(std::string nameBase) {
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::writeMeanInfo(std::string nameBase) {
     //write out dense mean
     vtkSmartPointer<vtkPolyDataWriter> writer1 = vtkPolyDataWriter::New();
     writer1->SetFileName((nameBase + ".dense.vtk").c_str());
     writer1->SetInputData(this->denseMean_);
     writer1->Update();
     //write out sparse mean
-    std::ofstream ptsOut((nameBase + ".sparse.txt").c_str());
+    std::ofstream ptsOut((nameBase + ".sparse.pts").c_str());
     auto sparsePts = this->sparseMean_;
     for (size_t i = 0; i < goodPoints_.size(); i++) {
         auto pt = sparsePts->GetPoint(i);
@@ -913,10 +1169,14 @@ void Reconstruction::writeMeanInfo(std::string nameBase) {
     ptsOut1.close();
 }
 
-void Reconstruction::performKMeansClustering(
-        std::vector<std::vector<itk::Point<float> > > global_pts,
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::performKMeansClustering(
+        std::vector<std::vector<itk::Point<TCoordRep> > > global_pts,
         unsigned int number_of_particles,
-        std::vector<int> & centroidIndices) {
+        std::vector<int> & centroidIndices)
+{
     unsigned int number_of_shapes = global_pts.size();
     if (this->numClusters_ > number_of_shapes) {
         this->numClusters_ = number_of_shapes;
@@ -924,13 +1184,13 @@ void Reconstruction::performKMeansClustering(
     std::vector<vnl_matrix<double>> shapeList;
     vnl_matrix<double> shapeVector(number_of_particles, 3, 0.0);
 
-    // Read input shapes from file list
+    // fill shape matrix
     for (unsigned int shapeNo = 0; shapeNo < number_of_shapes; shapeNo++) {
         for (unsigned int ii = 0; ii < number_of_particles; ii++) {
             double p[3];
-            p[0] = global_pts[shapeNo][ii][0];
-            p[1] = global_pts[shapeNo][ii][1];
-            p[2] = global_pts[shapeNo][ii][2];
+            p[0] = double(global_pts[shapeNo][ii][0]);
+            p[1] = double(global_pts[shapeNo][ii][1]);
+            p[2] = double(global_pts[shapeNo][ii][2]);
 
             shapeVector[ii][0] = p[0];
             shapeVector[ii][1] = p[1];
@@ -941,20 +1201,21 @@ void Reconstruction::performKMeansClustering(
     std::vector<int> centers(this->numClusters_, 0);
     unsigned int seed = unsigned(std::time(0));
     std::srand(seed);
-    centers[0] = rand() % number_of_shapes;
+    centers[0] = rand() % int(number_of_shapes);
     std::cout << "Setting center[0] to shape #" << centers[0] << std::endl;
-    int countCenters = 1;
-    while (countCenters < this->numClusters_) {
+    unsigned int countCenters = 1;
+    while (countCenters < this->numClusters_)
+    {
         vnl_matrix<double> distMat(number_of_shapes, countCenters, 0.0);
         vnl_vector<double> minDists(number_of_shapes, 0.0);
         vnl_vector<double> probs(number_of_shapes, 0.0);
-        for (int s = 0; s < number_of_shapes; s++) {
-            for (int c = 0; c < countCenters; c++) {
-                if (s == centers[c]) {
+        for (unsigned int s = 0; s < number_of_shapes; s++) {
+            for (unsigned int c = 0; c < countCenters; c++) {
+                if (s == size_t(centers[c])) {
                     distMat.set_row(s, 0.0);
                     break;
                 }
-                shapeVector = shapeList[s] - shapeList[centers[c]];
+                shapeVector = shapeList[s] - shapeList[size_t(centers[c])];
                 distMat(s, c) = shapeVector.fro_norm();
             }
             minDists(s) = distMat.get_row(s).min_value();
@@ -963,17 +1224,17 @@ void Reconstruction::performKMeansClustering(
         probs.operator /=(probs.sum());
         vnl_vector<double> cumProbs(number_of_shapes, 0.0);
 
-        for (int s = 0; s < number_of_shapes; s++) {
+        for (unsigned int s = 0; s < number_of_shapes; s++) {
             cumProbs[s] = probs.extract(s + 1, 0).sum();
         }
-        double r = (double)(rand() % 10000);
+        double r = double(rand() % 10000);
         r = r / 10000.0;
-        for (int s = 0; s < number_of_shapes; s++) {
+        for (unsigned int s = 0; s < number_of_shapes; s++) {
             if (r < cumProbs[s]) {
                 if (probs[s] == 0.0) {
                     continue;
                 } else {
-                    centers[countCenters] = s;
+                    centers[countCenters] = int(s);
                     countCenters += 1;
                     break;
                 }
