@@ -6,6 +6,10 @@ ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
 TARGET_LINK_LIBRARIES(ReconstructMeanSurface ${VTK_LIBRARIES}  ${ITK_LIBRARIES} SurfaceReconstruction tinyxml Utils Vis)
 INSTALL(TARGETS ReconstructMeanSurface  RUNTIME DESTINATION .)
 
+ADD_EXECUTABLE(ReconstructSurface ReconstructSurface.cxx)
+TARGET_LINK_LIBRARIES(ReconstructSurface ${VTK_LIBRARIES}  ${ITK_LIBRARIES} SurfaceReconstruction tinyxml Utils Vis)
+INSTALL(TARGETS ReconstructSurface  RUNTIME DESTINATION .)
+
 #PROJECT(ParticleBasedSurfaceReconstruction)
 #cmake_minimum_required(VERSION 2.6)
 
