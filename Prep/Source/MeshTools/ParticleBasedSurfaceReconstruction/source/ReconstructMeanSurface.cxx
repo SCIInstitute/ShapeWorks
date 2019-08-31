@@ -19,6 +19,7 @@ int DoIt(InputParams params)
     typedef itk::ImageFileReader< ImageType >   ReaderType;
     typedef itk::ImageFileWriter< ImageType >   WriterType;
     typedef Reconstruction < TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType> ReconstructionType;
+    typedef typename ReconstructionType::PointType                                               PointType;
     typedef typename ReconstructionType::PointArrayType                                          PointArrayType;
 
     // TODO: the below parameters should be obtained from the input ones with good enough defaults
@@ -46,34 +47,6 @@ int DoIt(InputParams params)
         local_pts.push_back(curShape);
     }
 
-    // define mean sparse shape -- this is considered as target points in the warp
-    if(params.worldPointsFilenames.size() == 0)
-    {
-        // if no world points are given, they will be estimated using procrustes
-        std::cout << "Computing mean sparse shape .... \n ";
-        global_pts = reconstructor.computeSparseMean(local_pts, params.do_procrustes, params.do_procrustes_scaling);
-    }
-    else
-    {
-        std::cout << "Computing mean sparse shape .... \n ";
-        global_pts = reconstructor.computeSparseMean(local_pts, false, false);
-        global_pts.clear(); // clear
-
-        // read given world points
-        for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
-        {
-            std::cout << "Loading world points file: " << params.localPointsFilenames[shapeNo].c_str() << std::endl;
-
-            PointArrayType curShape;
-            Utils::readSparseShape(curShape, const_cast<char*> (params.worldPointsFilenames[shapeNo].c_str()));
-
-            global_pts.push_back(curShape);
-        }
-    }
-
-    if(params.display)
-        Vis::visParticles(reconstructor.SparseMean(),params.glyph_radius,std::string("Mean Sparse Shape"));
-
     // read distance transforms
     std::vector<typename ImageType::Pointer> distance_transforms;
     for (unsigned int shapeNo = 0; shapeNo < params.distanceTransformFilenames.size(); shapeNo++)
@@ -86,13 +59,79 @@ int DoIt(InputParams params)
             itk::MetaImageIOFactory::RegisterOneFactory();
         }
         typename ReaderType::Pointer reader = ReaderType::New();
+        std::cout << "Reading distance transform file : " << filename << std::endl;
         reader->SetFileName( filename.c_str() );
         reader->Update();
         distance_transforms.push_back(reader->GetOutput());
     }
 
+    // define mean sparse shape -- this is considered as target points in the warp
+    PointType commonCenter;
+    if(params.worldPointsFilenames.size() == 0)
+    {
+        // if no world points are given, they will be estimated using procrustes
+        std::cout << "Computing mean sparse shape .... \n ";
+        global_pts = reconstructor.computeSparseMean(local_pts, commonCenter,
+                                                     params.do_procrustes, params.do_procrustes_scaling);
+    }
+    else
+    {
+        std::cout << "Computing mean sparse shape .... \n ";
+        global_pts = reconstructor.computeSparseMean(local_pts, commonCenter, false, false);
+        global_pts.clear(); // clear
+
+        // read given world points
+        for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
+        {
+            std::cout << "Loading world points file: " << params.worldPointsFilenames[shapeNo].c_str() << std::endl;
+
+            PointArrayType curShape;
+            Utils::readSparseShape(curShape, const_cast<char*> (params.worldPointsFilenames[shapeNo].c_str()));
+
+            for(unsigned int ii = 0; ii < curShape.size(); ii++)
+            {
+                curShape[ii][0] -= commonCenter[0];
+                curShape[ii][1] -= commonCenter[1];
+                curShape[ii][2] -= commonCenter[2];
+            }
+
+            global_pts.push_back(curShape);
+        }
+    }
+
+    if(params.display)
+        Vis::visParticles(reconstructor.SparseMean(),params.glyph_radius,std::string("Mean Sparse Shape"));
+
     // compute the dense shape
     vtkSmartPointer<vtkPolyData> denseMean = reconstructor.getDenseMean(local_pts, global_pts, distance_transforms);
+
+    // write output
+    reconstructor.writeMeanInfo(params.out_prefix);
+
+    if(params.display)
+    {
+        std::vector<bool> goodPoints          = reconstructor.GoodPoints();
+        vtkSmartPointer<vtkPoints> sparseMean = reconstructor.SparseMean();
+
+        // now fill vtkpoints with the two lists to visualize
+        vtkSmartPointer<vtkPoints> bad_ones  = vtkSmartPointer<vtkPoints>::New();
+        vtkSmartPointer<vtkPoints> good_ones = vtkSmartPointer<vtkPoints>::New();
+        for(unsigned int kk = 0 ; kk < goodPoints.size(); kk++)
+        {
+            double p[3];
+            sparseMean->GetPoint(kk, p);
+            if (goodPoints[kk])
+                good_ones->InsertNextPoint(p);
+            else
+                bad_ones->InsertNextPoint(p);
+        }
+
+        // now visualize
+        Vis::visParticles(bad_ones, good_ones,params.glyph_radius, std::string("bad particles in red and good ones are in green")); // bad in red and good in green
+        Vis::visMeshWithParticles(denseMean, sparseMean, params.glyph_radius, std::string("dense shape in red and mean sparse shape in white"));
+    }
+
+    return 0;
 }
 
 
@@ -141,28 +180,6 @@ int main( int argc , char* argv[] )
                   CoordinateRepType, PixelType, ImageType>(params);
       }
   }
-
-//  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> reconstructor(0.5, 60.);
-//  reconstructor.reset();
-
-//  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> &reconstructor_ref(reconstructor);
-//  reconstructor_ref.reset();
-
-//  Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> *reconstructor_ptr = new Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction>(0.5, 60.);
-//  reconstructor_ptr->reset();
-
-//  typedef Reconstruction<itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction> myReconstruction;
-
-//  {
-//    myReconstruction reconstructor(0.5, 60.);
-//    reconstructor.reset();
-
-//    myReconstruction &reconstructor_ref(reconstructor);
-//    reconstructor_ref.reset();
-
-//    myReconstruction *reconstructor_ptr = new myReconstruction(0.5, 60.);
-//    reconstructor_ptr->reset();
-//  }
 
   return 0;
 }
