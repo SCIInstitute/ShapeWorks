@@ -176,10 +176,10 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
             ns++;
         }
     }
-    typename TransformType::Pointer rbfTransform = TransformType::New();
-    rbfTransform->SetSigma(sigma); // smaller means more sparse
-    rbfTransform->SetStiffness(1e-10);
-    rbfTransform->SetSourceLandmarks(sourceLandMarks);
+    typename TransformType::Pointer transform = TransformType::New();
+    transform->SetSigma(sigma); // smaller means more sparse
+    transform->SetStiffness(1e-10);
+    transform->SetSourceLandmarks(sourceLandMarks);
     // Define container for target landmarks corresponds to the subject shape
     typename PointSetType::Pointer targetLandMarks = PointSetType::New();
     PointType pt;
@@ -199,7 +199,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
             nt++;
         }
     }
-    rbfTransform->SetTargetLandmarks(targetLandMarks);
+    transform->SetTargetLandmarks(targetLandMarks);
     // check the mapping (inverse here)
     // this means source points (current sample's space) should
     //  be warped to the target (mean space)
@@ -209,10 +209,10 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     double rms_wo_mapping;
     double maxmDist;
     this->CheckMapping(this->sparseMean_, subjectPts,
-                       rbfTransform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
+                       transform, mappedCorrespondences, rms, rms_wo_mapping, maxmDist);
     vtkSmartPointer<vtkPolyData> denseShape = vtkSmartPointer<vtkPolyData>::New();
     denseShape->DeepCopy(this->denseMean_);
-    this->generateWarpedMeshes(rbfTransform, denseShape);
+    this->generateWarpedMeshes(transform, denseShape);
     return denseShape;
 }
 
