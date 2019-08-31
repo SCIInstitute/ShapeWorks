@@ -127,7 +127,7 @@ void Utils::writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particle
     std::cout << "total number of correspondences saved: " << particles->GetNumberOfPoints() << std::endl;
 }
 
-void Utils::writeSparseShape(char* filename, std::vector<itk::Point<double> > points)
+void Utils::writeSparseShape(char* filename, std::vector<itk::Point<double, 3> > points)
 {
     ofstream ofs;
     ofs.open(filename);

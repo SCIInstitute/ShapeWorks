@@ -73,7 +73,7 @@ public:
     static void writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particles);
 
     static void readSparseShape(std::vector<itk::Point<double> > & points, char* filename, int number_of_particles = -1);
-    static void writeSparseShape(char* filename, std::vector<itk::Point<double> > points);
+    static void writeSparseShape(char* filename, std::vector<itk::Point<double, 3> > points);
 
     static std::vector<int> readParticleIds(char* filename);
     static void writeParticleIds(char* filename, std::vector<int> ids);
