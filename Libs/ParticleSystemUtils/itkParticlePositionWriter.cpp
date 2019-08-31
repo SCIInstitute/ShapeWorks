@@ -1,6 +1,6 @@
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticlePositionReader.txx,v $
+  Module:    $RCSfile: itkParticlePositionWriter.txx,v $
   Date:      $Date: 2011/03/24 01:17:33 $
   Version:   $Revision: 1.2 $
   Author:    $Author: wmartin $
@@ -12,45 +12,44 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticlePositionReader_txx
-#define __itkParticlePositionReader_txx
+#ifndef __itkParticlePositionWriter_txx
+#define __itkParticlePositionWriter_txx
 
 #include <fstream>
+
+#include "itkParticlePositionWriter.h"
 
 namespace itk
 {
 
 template <unsigned int VDimension>
-void ParticlePositionReader<VDimension>::Update()
+void ParticlePositionWriter<VDimension>::Update()
 {
-  int counter = 0;
-  // Open the ascii file.
-  std::ifstream in( m_FileName.c_str() );
-  if ( !in )
+  // Open the output file.
+  std::ofstream out( m_FileName.c_str() );
+ 
+  if ( !out )
     {
-    itkExceptionMacro("Could not open point file for input: " << m_FileName.c_str());
+    itkExceptionMacro("Could not open point file for output: " << m_FileName.c_str());
     }
 
-  //  in >> num_points;
+  //  out << num_points;
 
-  // Read all of the points, one point per line.
-  while (in)
+  // Write points.
+  for (typename std::vector<PointType>::const_iterator it= m_Input.begin();
+       it != m_Input.end(); it++)
     {
-    PointType pt;
-    for (unsigned int d = 0; d < VDimension; d++)
+    for (unsigned int i = 0; i < VDimension; i++)
       {
-      in >> pt[d];
+      out << (*it)[i] << " ";
       }
-
-    m_Output.push_back(pt);
-        counter++;
+    out << std::endl;
     }
-  // this algorithm pushes the last point twice
-  m_Output.pop_back();
-  //  std::cout << "Read " << counter-1 << " points. " << std::endl;
-  in.close();
+
+   out.close();
 }
 
 }
 
 #endif
+

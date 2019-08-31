@@ -176,14 +176,4 @@ protected:
   std::vector< std::string > m_pointsfiles; 
 };
 
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleShapeStatistics+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleShapeStatistics.txx"
-#endif
-
-#include "itkParticleShapeStatistics.txx"
-
 #endif

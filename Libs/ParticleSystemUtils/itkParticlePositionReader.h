@@ -93,15 +93,6 @@ protected:
 
 } // end namespace itk
 
-
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticlePositionReader+-.h"
 #endif
 
-#if ITK_TEMPLATE_TXX
-# include "itkParticlePositionReader.txx"
-#endif
-
-#include "itkParticlePositionReader.txx"
-
-#endif
+#include "itkParticlePositionReader.cpp"

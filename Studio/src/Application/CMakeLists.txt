@@ -100,6 +100,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   vtkViewsQt
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
+  ParticleSystemUtils
   tinyxml
   ShapeWorksGroom
   ShapeWorksOptimize

@@ -1,0 +1,8 @@
+FILE(GLOB ParticleSystemUtils_srcs ./*.h ./*.cpp)
+if(TARGET ParticleSystemUtils)
+    message("ParticleSystemUtils already exists")
+else(TARGET ParticleSystemUtils)
+    ADD_LIBRARY (ParticleSystemUtils STATIC ${ParticleSystemUtils_srcs})
+    TARGET_LINK_LIBRARIES(ParticleSystemUtils tinyxml)
+    target_include_directories(ParticleSystemUtils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
+endif(TARGET ParticleSystemUtils)
