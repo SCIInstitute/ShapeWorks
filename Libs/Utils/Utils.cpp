@@ -31,6 +31,7 @@ std::vector<int> Utils::randperm(int n)
 void Utils::readSparseShape(vtkSmartPointer<vtkPoints>& points, char* filename, int number_of_particles)
 {
     points->Reset();
+
     std::ifstream ifs;
     ifs.open(filename);
 
@@ -62,6 +63,7 @@ void Utils::readSparseShape(vtkSmartPointer<vtkPoints>& points, char* filename, 
             }
             points->InsertNextPoint(lineData[0], lineData[1], lineData[2]);
         }
+
     }
 
     ifs.close();
@@ -122,7 +124,7 @@ void Utils::writeSparseShape(char* filename, vtkSmartPointer<vtkPoints> particle
         ofs << p[0] << " " << p[1] << " " << p[2] << std::endl;
     }
     ofs.close();
-    std::cout << "total number of correspondences save: " << particles->GetNumberOfPoints() << std::endl;
+    std::cout << "total number of correspondences saved: " << particles->GetNumberOfPoints() << std::endl;
 }
 
 void Utils::writeSparseShape(char* filename, std::vector<itk::Point<double> > points)
@@ -135,7 +137,7 @@ void Utils::writeSparseShape(char* filename, std::vector<itk::Point<double> > po
         ofs << p[0] << " " << p[1] << " " << p[2] << std::endl;
     }
     ofs.close();
-    std::cout << "total number of correspondences save: " << points.size() << std::endl;
+    std::cout << "total number of correspondences saved: " << points.size() << std::endl;
 }
 
 
