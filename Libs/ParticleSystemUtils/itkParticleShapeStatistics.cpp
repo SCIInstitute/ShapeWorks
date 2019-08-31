@@ -15,6 +15,9 @@
 #ifndef __itkParticleShapeStatistics_txx
 #define __itkParticleShapeStatistics_txx
 
+#include "itkParticleShapeStatistics.h"
+#include "tinyxml.h"
+
 template <unsigned int VDimension>
 int ParticleShapeStatistics<VDimension>
 ::SimpleLinearRegression(const std::vector<double> &y,
