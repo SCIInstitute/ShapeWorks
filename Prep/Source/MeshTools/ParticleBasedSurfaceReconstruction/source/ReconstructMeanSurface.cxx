@@ -47,7 +47,6 @@ int DoIt(InputParams params)
     typedef typename ReconstructionType::PointType                                               PointType;
     typedef typename ReconstructionType::PointArrayType                                          PointArrayType;
 
-    // TODO: the below parameters should be obtained from the input ones with good enough defaults
     double maxAngleDegrees   = params.normalAngle *(180.0 / params.pi);
 
     ReconstructionType reconstructor(params.qcDecimationPercentage, maxAngleDegrees, params.K,
