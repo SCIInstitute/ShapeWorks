@@ -5,7 +5,7 @@
   Date:      $Date: 2019/08/30 17:10:25 $
   Version:   $Revision: 1.1 $
   Author:    $Author: elhabian $
-  Purpose:   particle-based subject-specific dense surface reconstruction, (use output of WarpToMeanSpace)
+  Purpose:   particle-based subject-specific dense surface reconstruction, (use output of ReconstructMeanSurface)
              warp the mean dense shape (mesh) constructed from WarpToMeanSpace to each individual subject space using the sparse correspondence model from ShapeWorksRun
 
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
