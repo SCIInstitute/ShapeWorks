@@ -156,24 +156,24 @@ public:
                 return EXIT_FAILURE;
             }
 
-            elem = docHandle.FirstChild( "world_point_files" ).Element();
-            if (elem)
-            {
-                inputsBuffer.str(elem->GetText());
-                while (inputsBuffer >> filename)
-                {
-                    worldPointsFilenames.push_back(filename);
-                }
-                inputsBuffer.clear();
-                inputsBuffer.str("");
-            }
-            else
-            {
-                std::cerr << "No world points (wpts) to process .. procrustes will be used for the given lpts (experimental)" << std::endl;
-            }
-
             if (mode == 0 || mode == 3) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC
             {
+                elem = docHandle.FirstChild( "world_point_files" ).Element();
+                if (elem)
+                {
+                    inputsBuffer.str(elem->GetText());
+                    while (inputsBuffer >> filename)
+                    {
+                        worldPointsFilenames.push_back(filename);
+                    }
+                    inputsBuffer.clear();
+                    inputsBuffer.str("");
+                }
+                else
+                {
+                    std::cerr << "No world points (wpts) to process .. procrustes will be used for the given lpts" << std::endl;
+                }
+
                 elem = docHandle.FirstChild( "distance_transform_files" ).Element();
                 if (elem)
                 {
@@ -190,6 +190,17 @@ public:
                     std::cerr << "No distance transforms to process!" << std::endl;
                     return EXIT_FAILURE;
                 }
+
+                //Praful
+                elem = docHandle.FirstChild("number_of_clusters").Element();
+                if (elem)
+                {
+                    K = atof(elem->GetText());
+                }
+                else
+                {
+                    std::cout<<"Warning: All shapes will be used to generate mean distance transform (could be slower)!"<<std::endl;
+                }
             }
 
             elem = docHandle.FirstChild( "out_prefix" ).Element();
@@ -204,17 +215,6 @@ public:
             {
                 std::cerr << "No out_prefix provided ...!" << std::endl;
                 return EXIT_FAILURE;
-            }
-
-            //Praful
-            elem = docHandle.FirstChild("number_of_clusters").Element();
-            if (elem)
-            {
-                K = atof(elem->GetText());
-            }
-            else
-            {
-                std::cout<<"Warning: All shapes will be used to generate mean distance transform (could be slower)!"<<std::endl;
             }
 
 
@@ -248,7 +248,7 @@ public:
             }
             else
             {
-                std::cerr << "No number_of_correspondences_in_warp provided, all correspondences will be used to build the warp ...!" << std::endl;
+                std::cerr << "No number_of_correspondences_in_warp provided, all good correspondences will be used to build the warp ...!" << std::endl;
             }
 
             if (mode == 0 || mode == 3) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC
