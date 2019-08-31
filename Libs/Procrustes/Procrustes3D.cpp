@@ -60,7 +60,7 @@ RemoveTranslation(SimilarityTransformListType & transforms, ShapeListType & shap
 
 void
 Procrustes3D::
-AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes, bool do_scale)
+AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes)
 {
     const RealType SOS_EPSILON = 1.0e-8;
 

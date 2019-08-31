@@ -287,10 +287,15 @@ std::vector< std::vector<itk::Point<TCoordRep> > > Reconstruction<TTransformType
     Procrustes3D::PointType commonCenter;
     Procrustes3D::SimilarityTransformListType transforms;
 
+    if(do_procrustes_scaling)
+        procrustes.ScalingOn();
+    else
+        procrustes.ScalingOff();
+
     if(do_procrustes)
     {
         // Run alignment
-        procrustes.AlignShapes(transforms, shapelist, do_procrustes_scaling); // shapes are actually aligned (modified) and transforms are returned
+        procrustes.AlignShapes(transforms, shapelist); // shapes are actually aligned (modified) and transforms are returned
 
         // Construct transform matrices for each particle system.
         // Procrustes3D::TransformMatrixListType transformMatrices;
