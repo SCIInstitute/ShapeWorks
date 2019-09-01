@@ -42,6 +42,10 @@ public:
   ParticleShapeStatistics() {}
   ~ParticleShapeStatistics() {}
 
+  typedef typename itk::ParticlePositionReader<3>::PointType PointType;
+
+  int DoPCA(std::vector< std::vector<PointType> > global_pts, int domainsPerShape = 1);
+
  /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
   
@@ -136,6 +140,9 @@ public:
 
   const vnl_vector<double> &Shape(unsigned int i) const
   { return m_shapes.get_column(i); }
+
+  std::vector<double> PercentVarByMode ()
+  {return m_percentVarByMode;}
 
   /** Computes a simple linear regression of the first list of values with
       respect to the second y=a + bx. Returns the estimated parameters a & b.

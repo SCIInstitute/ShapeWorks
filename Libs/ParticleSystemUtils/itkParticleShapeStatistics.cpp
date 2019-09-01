@@ -271,6 +271,65 @@ int ParticleShapeStatistics<VDimension>
 } // end ReadPointFiles
 
 
+template <unsigned int VDimension>
+int ParticleShapeStatistics<VDimension>
+::DoPCA(std::vector< std::vector<PointType> > global_pts,
+            int domainsPerShape)
+{
+  this->m_domainsPerShape = domainsPerShape;
+
+  // Assumes all the same size.
+  m_numSamples = global_pts.size() / m_domainsPerShape;
+  m_numDimensions = global_pts[0].size() * VDimension * m_domainsPerShape;
+
+  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
+  m_shapes.set_size(m_numDimensions, m_numSamples);
+  m_mean.set_size(m_numDimensions);
+  m_mean.fill(0);
+
+  // Compile the "meta shapes"
+  for (unsigned int i = 0; i < m_numSamples; i++)
+    {
+    for (unsigned int k = 0; k < m_domainsPerShape; k++)
+      {
+        std::vector<PointType> curDomain = global_pts[i*m_domainsPerShape + k];
+      unsigned int q = curDomain.size();
+
+      for (unsigned int j = 0; j < q; j++)
+        {
+        m_mean(q*k*VDimension +(VDimension*j)+0) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+0, i)
+          = curDomain[j][0];
+        m_mean(q*k*VDimension +(VDimension*j)+1) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+1, i)
+          = curDomain[j][1];
+        m_mean(q*k*VDimension +(VDimension*j)+2) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+2, i)
+          = curDomain[j][2];
+
+        m_shapes(q*k*VDimension +(VDimension*j)+0,i) = curDomain[j][0];
+        m_shapes(q*k*VDimension +(VDimension*j)+1,i) = curDomain[j][1];
+        m_shapes(q*k*VDimension +(VDimension*j)+2,i) = curDomain[j][2];
+
+        }
+      }
+    }
+
+  for (unsigned int i = 0; i < m_numDimensions; i++)
+    {
+    m_mean(i)  /= (double)m_numSamples;
+    }
+
+  for (unsigned int j = 0; j < m_numDimensions; j++)
+    {
+    for (unsigned int i = 0; i < m_numSamples; i++)
+      {
+      m_pointsMinusMean(j, i) -= m_mean(j);
+      }
+    }
+
+  ComputeModes();
+  return 0;
+} // end DoPCA
+
+
 /** Reloads a set of point files and recomputes some statistics. */
 
 template <unsigned int VDimension>
