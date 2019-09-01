@@ -287,14 +287,21 @@ int ParticleShapeStatistics<VDimension>
   m_mean.set_size(m_numDimensions);
   m_mean.fill(0);
 
+  std::cout << "VDimension = " << VDimension << "-------------\n";
+  std::cout << "m_numSamples = " << m_numSamples << "-------------\n";
+  std::cout << "m_domainsPerShape = " << m_domainsPerShape << "-------------\n";
+  std::cout << "global_pts.size() = " << global_pts.size() << "-------------\n";
+
   // Compile the "meta shapes"
   for (unsigned int i = 0; i < m_numSamples; i++)
     {
     for (unsigned int k = 0; k < m_domainsPerShape; k++)
       {
+        //std::cout << "i*m_domainsPerShape + k = " << i*m_domainsPerShape + k << "-------------\n";
         std::vector<PointType> curDomain = global_pts[i*m_domainsPerShape + k];
       unsigned int q = curDomain.size();
 
+      //std::cout << "q = " << q << "-------------\n";
       for (unsigned int j = 0; j < q; j++)
         {
         m_mean(q*k*VDimension +(VDimension*j)+0) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+0, i)
