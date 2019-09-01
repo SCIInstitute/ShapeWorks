@@ -23,9 +23,6 @@
 #include <vnl/vnl_vector_fixed.h>
 #include <vnl/vnl_matrix_fixed.h>
 
-
-#define VDimension 3
-
 struct SimilarityTransform3D
 {
     vnl_matrix_fixed<double, 3, 3> rotation;
@@ -37,7 +34,7 @@ class Procrustes3D
 {
 public:
     typedef double RealType;
-    typedef vnl_vector_fixed<double, VDimension> PointType;
+    typedef vnl_vector_fixed<double, 3> PointType;
     typedef std::vector<PointType> ShapeType;
     typedef ShapeType::iterator ShapeIteratorType;
 
@@ -48,7 +45,7 @@ public:
     typedef SimilarityTransformListType::iterator
     SimilarityTransformListIteratorType;
 
-    typedef vnl_matrix_fixed<double, VDimension +1, VDimension +1> TransformMatrixType;
+    typedef vnl_matrix_fixed<double, 3+1, 3+1> TransformMatrixType;
     typedef std::vector<TransformMatrixType> TransformMatrixListType;
     typedef TransformMatrixListType::iterator TransformMatrixIteratorType;
 
