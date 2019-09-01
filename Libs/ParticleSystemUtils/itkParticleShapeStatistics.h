@@ -20,13 +20,14 @@
 #include "vnl/vnl_vector.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/vnl_matrix.h"
-#include "itkParticlePositionReader.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/algo/vnl_matrix_inverse.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cstdio>
+
+#include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
 
 /**
@@ -34,7 +35,7 @@
  * This class computes various statistics for a set of correspondence positions
  * and group ids.
  */
-template <unsigned int VDimension=3>
+template <unsigned int VDimension>
 class ITK_EXPORT ParticleShapeStatistics
 {
 public:
@@ -176,4 +177,5 @@ protected:
   std::vector< std::string > m_pointsfiles; 
 };
 
+#include "itkParticleShapeStatistics.cpp"
 #endif

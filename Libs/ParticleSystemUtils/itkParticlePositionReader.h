@@ -93,6 +93,8 @@ protected:
 
 } // end namespace itk
 
+#include "itkParticlePositionReader.cpp"
+
 #endif
 
-#include "itkParticlePositionReader.cpp"
+
