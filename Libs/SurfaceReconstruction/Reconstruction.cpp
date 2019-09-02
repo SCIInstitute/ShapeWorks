@@ -14,14 +14,16 @@
 #include <FEMeshSmoothingModifier.h>
 #include <FECVDDecimationModifier.h>
 #include <vtkPolyDataReader.h>
+#include <vtkPLYWriter.h>
 #include <vtkPolyDataWriter.h>
 #include <array>
-
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
-Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(float decimationPercent, double maxAngleDegrees, size_t numClusters,
+Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(std::string out_prefix,
+                                                                                                   float decimationPercent, double maxAngleDegrees,
+                                                                                                   size_t numClusters,
                                                                                                    bool fixWinding,
                                                                                                    bool doLaplacianSmoothingBeforeDecimation,
                                                                                                    bool doLaplacianSmoothingAfterDecimation,
@@ -34,7 +36,8 @@ Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageTyp
     fixWinding_(fixWinding),
     doLaplacianSmoothingBeforeDecimation_(doLaplacianSmoothingBeforeDecimation),
     smoothingLambda_(smoothingLambda),
-    smoothingIterations_(smoothingIterations)
+    smoothingIterations_(smoothingIterations),
+    out_prefix_(out_prefix)
 {}
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -1077,22 +1080,19 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
         vtkSmartPointer<vtkPolyData> meshIn)
 {
     //for now, write formats and read them in
-    vtkSmartPointer<vtkPolyDataWriter>  polywriter =
-            vtkSmartPointer<vtkPolyDataWriter>::New();
-    polywriter->SetFileName("tmp.vtk");
-#if (VTK_MAJOR_VERSION < 6)
-    polywriter->SetInput(meshIn);
-#else
-    polywriter->SetInputData(meshIn);
-#endif
-    polywriter->Update();
+    std::string infilename_vtk = out_prefix_ + ".dense-noQC.vtk";
+    std::string infilename_ply = out_prefix_ + ".dense-noQC.ply";
+
+    writeVTK((char*)infilename_vtk.c_str(), meshIn);
+    writePLY((char*)infilename_ply.c_str(), meshIn);
+
     // read a VTK file
     FEVTKimport vtk_in;
-    FEMesh* pm = vtk_in.Load("tmp.vtk");
+    FEMesh* pm = vtk_in.Load(infilename_vtk.c_str());
 
     // make sure we were able to read the file
     if (pm == 0) {
-        throw std::runtime_error("Could not read file tmp.vtk!");
+        throw std::runtime_error("Could not read file " + infilename_vtk + " ... !");
     }
 
     // fix the element winding
@@ -1126,9 +1126,12 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     }
 
     // export to another vtk file
+    std::string outfilename_vtk = out_prefix_ + ".dense-QC.vtk";
+    std::string outfilename_ply = out_prefix_ + ".dense-QC.ply";
+
     FEVTKExport vtk_out;
-    if (vtk_out.Export(*pm_fix, "tmp2.vtk") == false) {
-        throw std::runtime_error("Could not write file tmp2.vtk!");
+    if (vtk_out.Export(*pm_fix, outfilename_vtk.c_str()) == false) {
+        throw std::runtime_error("Could not write file " + outfilename_vtk + " ... !");
     }
     // don't forget to clean-up
     delete pm_fix;
@@ -1137,10 +1140,13 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     //read back in new mesh
     vtkSmartPointer<vtkPolyDataReader> polyreader =
             vtkSmartPointer<vtkPolyDataReader>::New();
-    polyreader->SetFileName("tmp2.vtk");
+    polyreader->SetFileName(outfilename_vtk.c_str());
     polyreader->Update();
+
+    writePLY((char*)outfilename_ply.c_str(), polyreader->GetOutput());
+
     return polyreader->GetOutput();
-    return meshIn;
+    //return meshIn;
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -1245,4 +1251,39 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     }
     std::cout << "KMeans++ finished...." << std::endl;
     centroidIndices = centers;
+}
+
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::writePLY(char* filename, vtkSmartPointer<vtkPolyData> meshIn)
+{
+    vtkPLYWriter *plyWriter=vtkPLYWriter::New();
+
+#if (VTK_MAJOR_VERSION < 6)
+    plyWriter->SetInput(meshIn);
+#else
+    plyWriter->SetInputData(meshIn);
+#endif
+    plyWriter->SetFileName(filename);
+    plyWriter->Update();
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::writeVTK(char* filename, vtkSmartPointer<vtkPolyData> meshIn)
+{
+    //for now, write formats and read them in
+    vtkSmartPointer<vtkPolyDataWriter>  polywriter =
+            vtkSmartPointer<vtkPolyDataWriter>::New();
+
+    polywriter->SetFileName(filename);
+#if (VTK_MAJOR_VERSION < 6)
+    polywriter->SetInput(meshIn);
+#else
+    polywriter->SetInputData(meshIn);
+#endif
+    polywriter->Update();
 }

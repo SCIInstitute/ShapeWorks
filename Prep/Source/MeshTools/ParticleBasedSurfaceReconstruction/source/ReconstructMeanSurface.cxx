@@ -49,7 +49,8 @@ int DoIt(InputParams params)
 
     double maxAngleDegrees   = params.normalAngle *(180.0 / params.pi);
 
-    ReconstructionType reconstructor(params.qcDecimationPercentage, maxAngleDegrees, params.K,
+    ReconstructionType reconstructor(params.out_prefix,
+                                     params.qcDecimationPercentage, maxAngleDegrees, params.K,
                                      params.qcFixWinding,
                                      params.qcDoLaplacianSmoothingBeforeDecimation,
                                      params.qcDoLaplacianSmoothingAfterDecimation,
@@ -128,7 +129,7 @@ int DoIt(InputParams params)
     // write global points to be use for pca modes
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
-       std::string curfilename = params.out_path + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + ".global.pts";
+       std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + ".global.pts";
        Utils::writeSparseShape((char*)curfilename.c_str(), global_pts[shapeNo]);
     }
 
@@ -136,6 +137,7 @@ int DoIt(InputParams params)
         Vis::visParticles(reconstructor.SparseMean(),params.glyph_radius,std::string("Mean Sparse Shape"));
 
     // compute the dense shape
+    std::cout << "Reconstructing dense mean mesh with number of clusters = " << params.K << std::endl;
     vtkSmartPointer<vtkPolyData> denseMean = reconstructor.getDenseMean(local_pts, global_pts, distance_transforms);
 
     // write output

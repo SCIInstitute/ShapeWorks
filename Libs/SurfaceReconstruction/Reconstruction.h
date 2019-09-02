@@ -65,7 +65,8 @@ public:
     typedef typename TransformType::PointSetType        PointSetType;
     typedef typename PointSetType::PointIdentifier      PointIdType;
 
-    Reconstruction(float decimationPercent = 0.3f,
+    Reconstruction(std::string out_prefix = "",
+                   float decimationPercent = 0.3f,
                    double angleThresh = 45.0f,
                    size_t numClusters = 5,
                    bool fixWinding = true,
@@ -103,6 +104,9 @@ public:
     vtkSmartPointer<vtkPolyData> DenseMean() {return denseMean_;}
 
     std::vector<bool> GoodPoints(){return goodPoints_;}
+
+    std::string OutPrefix(){return out_prefix_;}
+    void setOutPrefix(std::string out_prefix){out_prefix_ = out_prefix;}
 
     std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts,
                                                      itk::Point<TCoordRep>& common_center,
@@ -148,6 +152,10 @@ private:
             std::vector< PointArrayType > global_pts,
             unsigned int number_of_particles,
             std::vector<int> & centroidIndices);
+
+    void writePLY(char* filename, vtkSmartPointer<vtkPolyData> meshIn);
+    void writeVTK(char* filename, vtkSmartPointer<vtkPolyData> meshIn);
+
     //members.
     vtkSmartPointer<vtkPoints> sparseMean_;
     vtkSmartPointer<vtkPolyData> denseMean_;
@@ -164,6 +172,8 @@ private:
     bool doLaplacianSmoothingAfterDecimation_;
     float smoothingLambda_;
     int smoothingIterations_;
+
+    std::string out_prefix_; // to save intermediate files in case needed
 };
 
 #endif // !__RECONSTRUCTION_H__
