@@ -93,7 +93,7 @@ protected:
 
 } // end namespace itk
 
+#include "itkParticlePositionWriter.cpp"
 
 #endif
 
-#include "itkParticlePositionWriter.cpp"

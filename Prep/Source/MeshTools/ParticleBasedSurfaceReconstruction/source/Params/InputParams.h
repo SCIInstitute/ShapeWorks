@@ -138,25 +138,28 @@ public:
                 atoi(elem->GetText()) > 0 ? use_bspline_interpolation = true : use_bspline_interpolation = false;
             }
 
-            // Compile the list of input files.
-            elem = docHandle.FirstChild( "local_point_files" ).Element();
-            if (elem)
+            if (mode == 0 || mode == 3 || mode == 1) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC  or WarpToSubject
             {
-                inputsBuffer.str(elem->GetText());
-                while (inputsBuffer >> filename)
+                // Compile the list of input files.
+                elem = docHandle.FirstChild( "local_point_files" ).Element();
+                if (elem)
                 {
-                    localPointsFilenames.push_back(filename);
+                    inputsBuffer.str(elem->GetText());
+                    while (inputsBuffer >> filename)
+                    {
+                        localPointsFilenames.push_back(filename);
+                    }
+                    inputsBuffer.clear();
+                    inputsBuffer.str("");
                 }
-                inputsBuffer.clear();
-                inputsBuffer.str("");
-            }
-            else
-            {
-                std::cerr << "No local points to process!" << std::endl;
-                return EXIT_FAILURE;
+                else
+                {
+                    std::cerr << "No local points to process!" << std::endl;
+                    return EXIT_FAILURE;
+                }
             }
 
-            if (mode == 0 || mode == 3) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC
+            if (mode == 0 || mode == 3 || mode == 2) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC  or MoveAlongPCAModes
             {
                 elem = docHandle.FirstChild( "world_point_files" ).Element();
                 if (elem)
@@ -173,7 +176,9 @@ public:
                 {
                     std::cerr << "No world points (wpts) to process .. procrustes will be used for the given lpts" << std::endl;
                 }
-
+            }
+            if (mode == 0 || mode == 3) // WarpToMeanSpace or WarpToMeanSpaceWithPreviewMeshQC
+            {
                 elem = docHandle.FirstChild( "distance_transform_files" ).Element();
                 if (elem)
                 {
@@ -490,14 +495,14 @@ public:
             if (mode == 1 || mode == 2) // WarpToSubjectSpace or MoveAlongPCAModes
             {
                 // create the directory where the results should be, in case it is not there
-                mean_path = Utils::getPath(mean_prefix);
+                mean_path = Utils::getPath(mean_prefix) + "/" ;
 
                 //                if(use_tps_transform)
                 //                    mean_path = mean_path + "TPS";
                 //                else
                 //                    mean_path = mean_path + "RBF";
 
-                mean_prefix = mean_path + "/" + Utils::getFilename(mean_prefix);
+                mean_prefix = mean_path + Utils::getFilename(mean_prefix);
             }
 
         }

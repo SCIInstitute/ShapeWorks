@@ -20,13 +20,14 @@
 #include "vnl/vnl_vector.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "vnl/vnl_matrix.h"
-#include "itkParticlePositionReader.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/algo/vnl_matrix_inverse.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cstdio>
+
+#include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
 
 /**
@@ -34,12 +35,16 @@
  * This class computes various statistics for a set of correspondence positions
  * and group ids.
  */
-template <unsigned int VDimension=3>
+template <unsigned int VDimension>
 class ITK_EXPORT ParticleShapeStatistics
 {
 public:
   ParticleShapeStatistics() {}
   ~ParticleShapeStatistics() {}
+
+  typedef typename itk::ParticlePositionReader<3>::PointType PointType;
+
+  int DoPCA(std::vector< std::vector<PointType> > global_pts, int domainsPerShape = 1);
 
  /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
@@ -136,6 +141,9 @@ public:
   const vnl_vector<double> &Shape(unsigned int i) const
   { return m_shapes.get_column(i); }
 
+  std::vector<double> PercentVarByMode ()
+  {return m_percentVarByMode;}
+
   /** Computes a simple linear regression of the first list of values with
       respect to the second y=a + bx. Returns the estimated parameters a & b.
        Returns 0 on success and -1 on fail.*/
@@ -176,4 +184,5 @@ protected:
   std::vector< std::string > m_pointsfiles; 
 };
 
+#include "itkParticleShapeStatistics.cpp"
 #endif

@@ -10,6 +10,10 @@ ADD_EXECUTABLE(ReconstructSurface ReconstructSurface.cxx)
 TARGET_LINK_LIBRARIES(ReconstructSurface ${VTK_LIBRARIES}  ${ITK_LIBRARIES} SurfaceReconstruction tinyxml Utils Vis)
 INSTALL(TARGETS ReconstructSurface  RUNTIME DESTINATION .)
 
+ADD_EXECUTABLE(ReconstructSamplesAlongPCAModes ReconstructSamplesAlongPCAModes.cxx)
+TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${VTK_LIBRARIES}  ${ITK_LIBRARIES} SurfaceReconstruction tinyxml Utils Vis ParticleSystemUtils)
+INSTALL(TARGETS ReconstructSamplesAlongPCAModes  RUNTIME DESTINATION .)
+
 #PROJECT(ParticleBasedSurfaceReconstruction)
 #cmake_minimum_required(VERSION 2.6)
 
