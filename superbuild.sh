@@ -15,8 +15,6 @@ QT_DIR=""
 
 usage()
 {
-  echo "ShapeWorks superbuild"
-  echo "---------------------"
   echo "usage: ./superbuild.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] [--no-gui] [--qt-dir=<qt_path>] [--vxl-dir=<vxl_path>] [--vtk-dir=<vtk_path>] [--itk-dir=<itk_path>] | [-h | --help]]"
   echo ""
   echo "If using Anaconda to install prerequisites please first run:"
@@ -25,7 +23,7 @@ usage()
   echo "Arguments:"
   echo "  -h,--help               : Show this screen"
   echo "  --clean                 : Remove all build directories and clone implicit dependencies"
-  echo "                          : (explicitly specified dependenciea such as --itk-dir=<path> are ignored)"
+  echo "                          : (note that user-specified paths such as --itk-dir=<path> will not be deleted)"
   echo "  --no-gui                : Do not build the ShapeWorks gui applicaitons, which require Qt 5.x"
   echo "                          : The GUI is built by default if qmake > 5.x is found in the path or user-specified QT_DIR."
   echo "  --with-studio           : Build ShapeWorksStudio (default off)"
@@ -33,13 +31,13 @@ usage()
   echo "                          : By default uses a subdirectory of the current directory called 'build'."
   echo "  -i,--install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)"
   echo "                          : By default uses a subdirectory of the current directory called 'install'."
-  echo "  -n,--num_procs=<num>    : Number of processors to use for parallel builds (default is 8)"
+  echo "  -n,--num-procs=<num>    : Number of processors to use for parallel builds (default is 8)"
   echo "  --vxl-dir=<path>        : Path to existing VXL installation (version >= ${VXL_VER})"
   echo "  --vtk-dir=<path>        : Path to existing VTK installation (version >= ${VTK_VER})"
   echo "  --itk-dir=<path>        : Path to existing ITK installation (version >= ${ITK_VER})"
   echo "  --qt-dir=<path>         : The path to Qt version 5.x that is installed on your system"
   echo ""
-  echo "Example: ./superbuild.sh -n 8 --qt-dir /path/to/qt"
+  echo "Example: ./superbuild.sh --num-procs=8 --qt-dir=/path/to/qt"
   echo "Build results are saved in ${BUILD_LOG}."
 }
 
@@ -210,7 +208,10 @@ build_all()
 # main
 #
 
+echo "## superbuids.sh $*"
+echo "##"
 echo "## ShapeWorks Superbuild"
+echo "##---------------------"
 
 # helper functions
 SRC=`pwd`
