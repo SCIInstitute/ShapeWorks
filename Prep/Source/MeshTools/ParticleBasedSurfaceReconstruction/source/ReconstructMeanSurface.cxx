@@ -49,7 +49,8 @@ int DoIt(InputParams params)
 
     double maxAngleDegrees   = params.normalAngle *(180.0 / params.pi);
 
-    ReconstructionType reconstructor(params.qcDecimationPercentage, maxAngleDegrees, params.K,
+    ReconstructionType reconstructor(params.out_prefix,
+                                     params.qcDecimationPercentage, maxAngleDegrees, params.K,
                                      params.qcFixWinding,
                                      params.qcDoLaplacianSmoothingBeforeDecimation,
                                      params.qcDoLaplacianSmoothingAfterDecimation,
@@ -90,19 +91,20 @@ int DoIt(InputParams params)
     }
 
     // define mean sparse shape -- this is considered as target points in the warp
-    PointType commonCenter;
+    std::cout << "Computing mean sparse shape .... \n ";
     if(params.worldPointsFilenames.size() == 0)
     {
         // if no world points are given, they will be estimated using procrustes
-        std::cout << "Computing mean sparse shape .... \n ";
+        PointType commonCenter;
         global_pts = reconstructor.computeSparseMean(local_pts, commonCenter,
                                                      params.do_procrustes, params.do_procrustes_scaling);
     }
     else
     {
-        std::cout << "Computing mean sparse shape .... \n ";
-        global_pts = reconstructor.computeSparseMean(local_pts, commonCenter, false, false);
-        global_pts.clear(); // clear
+        // finding image origin that is consistent with the given world coordinates
+        typename ImageType::PointType  origin; origin[0] = 0; origin[1] = 0; origin[2] = 0;
+        double min_x = 1e10,  min_y = 1e10,  min_z = 1e10;
+        double max_x = -1e10, max_y = -1e10, max_z = -1e10;
 
         // read given world points
         for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
@@ -112,23 +114,74 @@ int DoIt(InputParams params)
             PointArrayType curShape;
             Utils::readSparseShape(curShape, const_cast<char*> (params.worldPointsFilenames[shapeNo].c_str()));
 
+            PointType cur_origin; cur_origin[0] = 0; cur_origin[1] = 0; cur_origin[2] = 0;
             for(unsigned int ii = 0; ii < curShape.size(); ii++)
             {
-                curShape[ii][0] -= commonCenter[0];
-                curShape[ii][1] -= commonCenter[1];
-                curShape[ii][2] -= commonCenter[2];
+                cur_origin[0] += curShape[ii][0];
+                cur_origin[1] += curShape[ii][1];
+                cur_origin[2] += curShape[ii][2];
+
+                if(curShape[ii][0] > max_x)
+                    max_x = curShape[ii][0];
+
+                if(curShape[ii][1] > max_y)
+                    max_y = curShape[ii][1];
+
+                if(curShape[ii][2] > max_z)
+                    max_z = curShape[ii][2];
+
+                if(curShape[ii][0] < min_x)
+                    min_x = curShape[ii][0];
+
+                if(curShape[ii][1] < min_y)
+                    min_y = curShape[ii][1];
+
+                if(curShape[ii][2] < min_z)
+                    min_z = curShape[ii][2];
             }
 
+            cur_origin[0] /= double(curShape.size());
+            cur_origin[1] /= double(curShape.size());
+            cur_origin[2] /= double(curShape.size());
+
+            origin[0] += cur_origin[0];
+            origin[1] += cur_origin[1];
+            origin[2] += cur_origin[2];
+
             global_pts.push_back(curShape);
-
-
         }
+
+        origin[0] /= double(global_pts.size());
+        origin[1] /= double(global_pts.size());
+        origin[2] /= double(global_pts.size());
+
+        std::cout << "origin(0) = " << origin[0] << ", "
+                  << "origin(1) = " << origin[1] << ", "
+                  << "origin(2) = " << origin[2] << std::endl;
+
+        std::cout << "min_x = " << min_x << ", "
+                  << "min_y = " << min_y << ", "
+                  << "min_z = " << min_z << std::endl;
+
+        double x_width = max_x - min_x;
+        double y_width = max_y - min_y;
+        double z_width = max_z - min_z;
+
+        origin[0] = origin[0] - (x_width/2.0);
+        origin[1] = origin[1] - (y_width/2.0);
+        origin[2] = origin[2] - (z_width/2.0);
+
+        std::cout << "origin(0) = " << origin[0] << ", "
+                  << "origin(1) = " << origin[1] << ", "
+                  << "origin(2) = " << origin[2] << std::endl;
+
+        reconstructor.setOrigin(origin);
     }
 
     // write global points to be use for pca modes
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
-       std::string curfilename = params.out_prefix + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + ".global.pts";
+       std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + ".global.pts";
        Utils::writeSparseShape((char*)curfilename.c_str(), global_pts[shapeNo]);
     }
 
@@ -136,6 +189,7 @@ int DoIt(InputParams params)
         Vis::visParticles(reconstructor.SparseMean(),params.glyph_radius,std::string("Mean Sparse Shape"));
 
     // compute the dense shape
+    std::cout << "Reconstructing dense mean mesh with number of clusters = " << params.K << std::endl;
     vtkSmartPointer<vtkPolyData> denseMean = reconstructor.getDenseMean(local_pts, global_pts, distance_transforms);
 
     // write output
