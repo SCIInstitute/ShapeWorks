@@ -140,7 +140,7 @@ build_shapeworks()
   echo "## -----------------------------------------"
   echo "## ShapeWorks has successfully been installed in ${INSTALL_DIR}."
   echo "## Set LD_LIBRARY_PATH for shared libraries to be found:"
-  echo "##   export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:\$LD_LIBRARY_PATH"
+  echo "##   export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:${INSTALL_DIR}/lib64:\$LD_LIBRARY_PATH"
   echo "## -----------------------------------------"
 
 }
