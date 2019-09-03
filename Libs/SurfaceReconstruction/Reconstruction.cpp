@@ -18,6 +18,8 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
+#include <itkImageFileWriter.h>
+
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
@@ -37,7 +39,7 @@ Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageTyp
     doLaplacianSmoothingBeforeDecimation_(doLaplacianSmoothingBeforeDecimation),
     smoothingLambda_(smoothingLambda),
     smoothingIterations_(smoothingIterations),
-    out_prefix_(out_prefix)
+    out_prefix_(out_prefix), use_origin(false)
 {}
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -475,20 +477,25 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
 
         // define the mean dense shape (mean distance transform)
         typename ImageType::Pointer meanDistanceTransform = ImageType::New();
-        meanDistanceTransform->SetOrigin(origin);
+        if(use_origin)
+            meanDistanceTransform->SetOrigin(origin_);
+        else
+            meanDistanceTransform->SetOrigin(origin);
         meanDistanceTransform->SetSpacing(spacing);
         meanDistanceTransform->SetDirection(direction);
         meanDistanceTransform->SetLargestPossibleRegion(size);
 
         typename ImageType::Pointer meanDistanceTransformBeforeWarp = ImageType::New();
-        meanDistanceTransformBeforeWarp->SetOrigin(origin);
+        if(use_origin)
+            meanDistanceTransformBeforeWarp->SetOrigin(origin_);
+        else
+            meanDistanceTransformBeforeWarp->SetOrigin(origin);
         meanDistanceTransformBeforeWarp->SetSpacing(spacing);
         meanDistanceTransformBeforeWarp->SetDirection(direction);
         meanDistanceTransformBeforeWarp->SetLargestPossibleRegion(size);
 
         typename AddImageFilterType::Pointer sumfilter = AddImageFilterType::New();
         typename AddImageFilterType::Pointer sumfilterBeforeWarp = AddImageFilterType::New();
-
 
         // Define container for source landmarks that corresponds to the mean space, this is
         // fixed where the target (each individual shape) will be warped to
@@ -584,7 +591,10 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
 
             resampler->SetOutputSpacing(spacing);
             resampler->SetOutputDirection(direction);
-            resampler->SetOutputOrigin(origin);
+            if(use_origin)
+                resampler->SetOutputOrigin(origin_);
+            else
+                resampler->SetOutputOrigin(origin);
             resampler->SetSize(size);
             resampler->SetTransform(transform);
             resampler->SetDefaultPixelValue((PixelType)-100.0);
@@ -624,6 +634,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                 duplicator2->Update();
                 meanDistanceTransformBeforeWarp = duplicator2->GetOutput();
             }
+
         }
         typename MultiplyByConstantImageFilterType::Pointer multiplyImageFilter =
                 MultiplyByConstantImageFilterType::New();
@@ -637,6 +648,19 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         multiplyImageFilterBeforeWarp->SetConstant(1.0 /
                                                    static_cast<double>(this->numClusters_));
         multiplyImageFilterBeforeWarp->Update();
+
+        std::string meanDT_filename           = out_prefix_ + ".meanDT.nrrd" ;;
+        std::string meanDTBeforeWarp_filename = out_prefix_ + ".meanDT_beforeWarp.nrrd" ;;
+
+        typename WriterType::Pointer writer = WriterType::New();
+        writer->SetFileName( meanDT_filename.c_str());
+        writer->SetInput( multiplyImageFilter->GetOutput() );
+        writer->Update();
+
+        writer->SetFileName( meanDTBeforeWarp_filename.c_str());
+        writer->SetInput( multiplyImageFilterBeforeWarp->GetOutput() );
+        writer->Update();
+
         // going to vtk to extract the template mesh (mean dense shape)
         // to be deformed for each sparse shape
         typename ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
@@ -1083,6 +1107,33 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     std::string infilename_vtk = out_prefix_ + ".dense-noQC.vtk";
     std::string infilename_ply = out_prefix_ + ".dense-noQC.ply";
 
+    std::string outfilename_vtk = out_prefix_ + ".dense-QC.vtk";
+    std::string outfilename_ply = out_prefix_ + ".dense-QC.ply";
+
+    writeVTK((char*)infilename_vtk.c_str(), meshIn);
+    writePLY((char*)infilename_ply.c_str(), meshIn);
+
+    std::cout << "Isosurface: " <<  infilename_vtk << std::endl;
+
+    //    vtkSmartPointer<vtkDecimatePro> decimateIn =
+    //            vtkSmartPointer<vtkDecimatePro>::New();
+    //    decimateIn->SetInputData(meshIn);
+    //    decimateIn->SetTargetReduction(0.2);
+    //    decimateIn->PreserveTopologyOn();
+    //    decimateIn->Update();
+
+    //    vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter =
+    //            vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+    //    smoothFilter->SetInputData(decimateIn->GetOutput());
+    //    smoothFilter->SetNumberOfIterations(smoothingIterations_);
+    //    smoothFilter->SetRelaxationFactor(smoothingLambda_);
+    //    smoothFilter->FeatureEdgeSmoothingOff();
+    //    smoothFilter->BoundarySmoothingOn();
+    //    smoothFilter->Update();
+
+    //    writeVTK((char*)infilename_vtk.c_str(), smoothFilter->GetOutput());
+    //    writePLY((char*)infilename_ply.c_str(), smoothFilter->GetOutput());
+
     writeVTK((char*)infilename_vtk.c_str(), meshIn);
     writePLY((char*)infilename_ply.c_str(), meshIn);
 
@@ -1125,28 +1176,47 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
         pm_fix = lap.Apply(pm_fix);
     }
 
-    // export to another vtk file
-    std::string outfilename_vtk = out_prefix_ + ".dense-QC.vtk";
-    std::string outfilename_ply = out_prefix_ + ".dense-QC.ply";
+    if (pm_fix == nullptr){
+        delete pm;
 
-    FEVTKExport vtk_out;
-    if (vtk_out.Export(*pm_fix, outfilename_vtk.c_str()) == false) {
-        throw std::runtime_error("Could not write file " + outfilename_vtk + " ... !");
+        std::cout << "MeshQC failed ... VTK decimation is used instead ... " << std::endl;
+
+        vtkSmartPointer<vtkDecimatePro> decimate =
+                vtkSmartPointer<vtkDecimatePro>::New();
+        decimate->SetInputData(meshIn);
+        decimate->SetTargetReduction(1.0 - decimationPercent_);
+        decimate->PreserveTopologyOn();
+        decimate->Update();
+
+        writeVTK((char*)outfilename_vtk.c_str(), decimate->GetOutput());
+        writePLY((char*)outfilename_ply.c_str(), decimate->GetOutput());
+
+        std::cout << "Decimated mesh: " <<  outfilename_vtk << std::endl;
+        return decimate->GetOutput();
     }
-    // don't forget to clean-up
-    delete pm_fix;
-    delete pm;
+    else {
 
-    //read back in new mesh
-    vtkSmartPointer<vtkPolyDataReader> polyreader =
-            vtkSmartPointer<vtkPolyDataReader>::New();
-    polyreader->SetFileName(outfilename_vtk.c_str());
-    polyreader->Update();
+        FEVTKExport vtk_out;
+        if (vtk_out.Export(*pm_fix, outfilename_vtk.c_str()) == false) {
+            throw std::runtime_error("Could not write file " + outfilename_vtk + " ... !");
+        }
 
-    writePLY((char*)outfilename_ply.c_str(), polyreader->GetOutput());
+        // don't forget to clean-up
+        delete pm_fix;
+        delete pm;
 
-    return polyreader->GetOutput();
-    //return meshIn;
+        // export to another vtk file
+        //read back in new mesh
+        vtkSmartPointer<vtkPolyDataReader> polyreader =
+                vtkSmartPointer<vtkPolyDataReader>::New();
+        polyreader->SetFileName(outfilename_vtk.c_str());
+        polyreader->Update();
+
+        writePLY((char*)outfilename_ply.c_str(), polyreader->GetOutput());
+
+        std::cout << "QCed mesh: " <<  outfilename_vtk << std::endl;
+        return polyreader->GetOutput();
+    }
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
