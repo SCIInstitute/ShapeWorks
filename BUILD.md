@@ -24,6 +24,7 @@ _coming soon:_ instructions for user installation without needing to build Shape
 
 1. For other requirements, we recommend using anaconda to create a sandbox environment. While optional, using a conda environment allows multiple builds with different dependencies. You can install Anaconda and the [ShapeWorks dependencies](deps.txt) using:  
 `source ./conda_installs.sh`  
+<br>Accept the cryptography license terms and default installation path.  
 <br>These dependencies can be manually installed if preferred. [Here is the list](deps.txt).
 
 2. The `superbuild.sh` script makes building ShapeWorks and its VXL, VTK, and ITK dependencies very easy.  
