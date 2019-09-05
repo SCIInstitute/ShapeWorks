@@ -7,11 +7,13 @@
 #include <QSize>
 #include <Data/Preferences.h>
 
+
 //-----------------------------------------------------------------------------
 Preferences::Preferences()
   : settings_( "Scientific Computing and Imaging Institute", 
     "ShapeWorksStudio" ), saved_(true) {
   this->restore_defaults();
+  this->settings_.setFallbacksEnabled(false);
 }
 
 std::map<std::string, QVariant> Preferences::getAllPreferences() {
