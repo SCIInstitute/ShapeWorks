@@ -50,7 +50,7 @@
 #include <dirent.h>
 
 #include <algorithm>
-#include "../Utilities/utils.h"
+#include "Utils.h"
 
 // Constructor and destructor
 template <class SAMPLERTYPE>

@@ -1,8 +1,8 @@
 
-#include "vis.h"
+#include "Vis.h"
 
 
-void visMesh(vtkSmartPointer<vtkPolyData> mesh, std::string window_title)
+void Vis::visMesh(vtkSmartPointer<vtkPolyData> mesh, std::string window_title)
 {
     // Create a mapper and actor
     vtkSmartPointer<vtkPolyDataMapper> mapper =
@@ -39,7 +39,7 @@ void visMesh(vtkSmartPointer<vtkPolyData> mesh, std::string window_title)
     renderWindowInteractor->Start();
 }
 
-void visMeshWithNormals(vtkSmartPointer<vtkPolyData> mesh, int ratio, std::string window_title)
+void Vis::visMeshWithNormals(vtkSmartPointer<vtkPolyData> mesh, int ratio, std::string window_title)
 {
 
     vtkSmartPointer<vtkPolyDataNormals> normals =
@@ -131,7 +131,7 @@ void visMeshWithNormals(vtkSmartPointer<vtkPolyData> mesh, int ratio, std::strin
     renderWindowInteractor->Start();
 }
 
-void visMeshWithParticlesNormals(vtkSmartPointer<vtkPolyData> mesh, vtkSmartPointer<vtkPolyData> particlesData, std::string window_title)
+void Vis::visMeshWithParticlesNormals(vtkSmartPointer<vtkPolyData> mesh, vtkSmartPointer<vtkPolyData> particlesData, std::string window_title)
 {
     vtkSmartPointer<vtkPolyDataNormals> normals =
             vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -219,7 +219,7 @@ void visMeshWithParticlesNormals(vtkSmartPointer<vtkPolyData> mesh, vtkSmartPoin
     renderWindowInteractor->Start();
 }
 
-void visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
+void Vis::visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
                           vtkSmartPointer<vtkPoints> particles, float glyphRadius , std::string window_title)
 {
     vtkSmartPointer<vtkPolyData> polydata =
@@ -291,7 +291,7 @@ void visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
     renderWindowInteractor->Start();
 }
 
-void visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
+void Vis::visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
                           vtkSmartPointer<vtkPoints> particles, std::vector<double> glyphRadii , std::string window_title)
 {
     int numberOfSpheres = particles->GetNumberOfPoints();
@@ -370,7 +370,7 @@ void visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
     renderWindowInteractor->Start();
 }
 
-void visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
+void Vis::visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
                           vtkSmartPointer<vtkPoints> particles,
                           vtkSmartPointer<vtkPoints> particles2,
                           float glyphRadius, std::string window_title)
@@ -466,7 +466,7 @@ void visMeshWithParticles(vtkSmartPointer<vtkPolyData> mesh,
     renderWindowInteractor->Start();
 }
 
-void visParticles(vtkSmartPointer<vtkPoints> particles, float glyphRadius, std::string window_title)
+void Vis::visParticles(vtkSmartPointer<vtkPoints> particles, float glyphRadius, std::string window_title)
 {
     vtkSmartPointer<vtkPolyData> polydata =
             vtkSmartPointer<vtkPolyData>::New();
@@ -521,7 +521,7 @@ void visParticles(vtkSmartPointer<vtkPoints> particles, float glyphRadius, std::
     renderWindowInteractor->Start();
 }
 
-void visParticles(vtkSmartPointer<vtkPolyData> polydata, float glyphRadius , std::string window_title)
+void Vis::visParticles(vtkSmartPointer<vtkPolyData> polydata, float glyphRadius , std::string window_title)
 {
     vtkSmartPointer<vtkPolyData> glyph =
             vtkSmartPointer<vtkPolyData>::New();
@@ -572,7 +572,7 @@ void visParticles(vtkSmartPointer<vtkPolyData> polydata, float glyphRadius , std
     renderWindowInteractor->Start();
 }
 
-void visParticles(vtkSmartPointer<vtkPoints> particles,
+void Vis::visParticles(vtkSmartPointer<vtkPoints> particles,
                   vtkSmartPointer<vtkPoints> particles2,
                   float glyphRadius, std::string window_title)
 {

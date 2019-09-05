@@ -20,6 +20,46 @@
 
 void
 Procrustes3D::
+RemoveTranslation(SimilarityTransformListType & transforms, ShapeListType & shapes)
+{
+    PointType center;
+    ShapeListIteratorType shapeListIt;
+    SimilarityTransformListIteratorType transformIt;
+    ShapeIteratorType shapeIt;
+
+    ShapeType mean;
+
+    SimilarityTransform3D transform;
+    transform.rotation.set_identity();
+    transform.scale = 1.0;
+
+    transforms.clear();
+    transforms.reserve(shapes.size());
+
+    // Remove translation
+    for(shapeListIt = shapes.begin(); shapeListIt != shapes.end(); shapeListIt++)
+    {
+        ShapeType & shape = (*shapeListIt);
+        center.fill(0.0);
+
+        for(shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++)
+            center += (*shapeIt);
+
+        center /= static_cast<RealType>(shape.size());
+
+        transform.translation = -center;
+
+        // First time through transforms we need to push_back
+        transforms.push_back(transform);
+
+        // Apply translation to shape
+        for(shapeIt = shape.begin(); shapeIt != shape.end(); shapeIt++)
+            (*shapeIt) -= center;
+    }
+}
+
+void
+Procrustes3D::
 AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes)
 {
     const RealType SOS_EPSILON = 1.0e-8;

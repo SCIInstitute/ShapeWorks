@@ -48,7 +48,7 @@ bool FEVTKExport::Export(FEMesh& mesh, const char* szfile)
 	{
 		FENode& n = m.Node(j);
 		fprintf(m_fp, "%g %g %g\n", n.r.x, n.r.y, n.r.z);
-	}
+    }
 	
 	// --- F A C E S ---
 	int faces = m.Faces();
@@ -64,7 +64,7 @@ bool FEVTKExport::Export(FEMesh& mesh, const char* szfile)
 			fprintf(m_fp, "%d %d %d %d %d\n", n, f.n[0], f.n[1], f.n[2], f.n[3]);
 		else 
 			assert(false);
-	}
+    }
 
 	//----Shell Thickness ----
 	if (m_ops.bshellthick)
@@ -126,7 +126,7 @@ bool FEVTKExport::Export(FEMesh& mesh, const char* szfile)
 		}
 	}
 
-	Close();
+    Close();
 
 	return true;
 }

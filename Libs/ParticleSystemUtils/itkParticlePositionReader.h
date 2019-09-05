@@ -1,6 +1,6 @@
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticlePositionWriter.h,v $
+  Module:    $RCSfile: itkParticlePositionReader.h,v $
   Date:      $Date: 2011/03/24 01:17:33 $
   Version:   $Revision: 1.2 $
   Author:    $Author: wmartin $
@@ -12,20 +12,20 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticlePositionWriter_h
-#define __itkParticlePositionWriter_h
+#ifndef __itkParticlePositionReader_h
+#define __itkParticlePositionReader_h
 
 #include "itkDataObject.h"
+#include "itkObjectFactory.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
-#include "itkObjectFactory.h"
 #include <vector>
 #include <string>
 
 namespace itk
 {
-/** \class ParticlePositionWriter
- *  This class writes a set of Points to disk.  Its input is a std::vector of points.
+/** \class ParticlePositionReader
+ *  This class reads a set of Points from disk and stores them in a vector.
  *  The file format is simple an ascii list of VDimension-tuples stored one per
  *  line (delimited by std::endl).  There is no header required for the file,
  *  but the file should not contain leading or trailing empty lines.
@@ -39,11 +39,11 @@ namespace itk
  * etc..
  */
 template <unsigned int VDimension>
-class ITK_EXPORT ParticlePositionWriter : public DataObject
+class ITK_EXPORT ParticlePositionReader : public DataObject
 {
 public:
   /** Standard class typedefs */
-  typedef ParticlePositionWriter Self;
+  typedef ParticlePositionReader Self;
   typedef DataObject Superclass;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
@@ -56,52 +56,45 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticlePositionWriter, DataObject);
+  itkTypeMacro(ParticlePositionReader, DataObject);
 
-  /** Set the input vector.  The input is a reference to a std::vector of PointType. */
-  void SetInput( const std::vector<PointType> &p)
+  /** Get the output of the reader.  The output is a std::vector of PointType. */
+  const std::vector<PointType> &GetOutput() const
   {
-   m_Input = p;
+    return m_Output;
   }
 
   /** Set/Get the filename. */
   itkSetStringMacro(FileName);
   itkGetStringMacro(FileName);
 
-  /** Write the file. */
-  inline void Write()
+  /** Read the file. */
+  inline void Read()
   { this->Update(); }
   void Update();
   
 protected:
-  ParticlePositionWriter()  { }
+  ParticlePositionReader() { }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os,indent);
   
-    os << indent << "ParticlePositionWriter: " << std::endl;
+    os << indent << "ParticlePositionReader: " << std::endl;
   }
-  virtual ~ParticlePositionWriter() {};
+  virtual ~ParticlePositionReader() {};
 
  private:
-  ParticlePositionWriter(const Self&); //purposely not implemented
+  ParticlePositionReader(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  std::vector<PointType> m_Input;
+  std::vector<PointType> m_Output;
   std::string m_FileName;
 };
 
 } // end namespace itk
 
-
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticlePositionWriter+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticlePositionWriter.txx"
-#endif
-
-#include "itkParticlePositionWriter.txx"
+#include "itkParticlePositionReader.cpp"
 
 #endif
+
+

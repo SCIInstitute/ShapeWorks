@@ -95,8 +95,9 @@ private:
 
 };
 
-
 } // namespace itk
+
+#include "itkCompactlySupportedRBFSparseKernelTransform.cpp"
 
 
 #endif // __itkCompactlySupportedRBFSparseKernelTransform_h
