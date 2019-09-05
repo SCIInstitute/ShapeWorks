@@ -80,7 +80,7 @@ optparse::OptionParser buildParser()
     parser.add_option("--icpIterations").action("store").type("int").set_default(20).help("The number of iterations user want to run ICP registration.");
     parser.add_option("--visualizeResult").action("store").type("bool").set_default(false).help("A flag to visualize the registration result.");
     parser.add_option("--solutionSegmentation").action("store").type("string").set_default("").help("The filename of the aligned segmentation of source image.");
-
+    // here is where Atefeh will add new stuff
     return parser;
 }
 
