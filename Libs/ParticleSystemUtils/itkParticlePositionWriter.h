@@ -93,15 +93,7 @@ protected:
 
 } // end namespace itk
 
-
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticlePositionWriter+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticlePositionWriter.txx"
-#endif
-
-#include "itkParticlePositionWriter.txx"
+#include "itkParticlePositionWriter.cpp"
 
 #endif
+

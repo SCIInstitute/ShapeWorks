@@ -373,5 +373,6 @@ private:
 
 } // end namespace itk
 
+#include "itkSparseKernelTransform.cpp"
 
 #endif // __itkSparseKernelTransform_h

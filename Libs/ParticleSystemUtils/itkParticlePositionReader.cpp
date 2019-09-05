@@ -16,7 +16,7 @@
 #define __itkParticlePositionReader_txx
 
 #include <fstream>
-
+#include "itkParticlePositionReader.h"
 namespace itk
 {
 

@@ -8,7 +8,7 @@
 #include <sstream>
 #include <fstream>
 #include "itkFixedArray.h"
-#include "utils.h"
+#include "Utils.h"
 #include "vnl/vnl_vector_fixed.h"
 #include "tinyxml.h"
 #include <vector>
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
                 normalFile >> in[2];
 
                 double out[3];
-                utils::cartesian2spherical(in, out);
+                Utils::cartesian2spherical(in, out);
                 phis[j][i]   = out[1];
                 thetas[j][i] = out[2];
                 j++;
@@ -140,9 +140,9 @@ int main(int argc, char *argv[])
         double avgNormal_sph[3];
         double avgNormal_cart[3];
         avgNormal_sph[0] = 1;
-        avgNormal_sph[1] = utils::averageThetaArc(phis[i]);
-        avgNormal_sph[2] = utils::averageThetaArc(thetas[i]);
-        utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
+        avgNormal_sph[1] = Utils::averageThetaArc(phis[i]);
+        avgNormal_sph[2] = Utils::averageThetaArc(thetas[i]);
+        Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
         outfile << avgNormal_cart[0] << " " << avgNormal_cart[1] << " " << avgNormal_cart[2] << std::endl;
     }
     outfile.close();

@@ -537,4 +537,6 @@ private:
 } // end namespace itk
 
 
+#include "itkKernelTransform2.cpp"
+
 #endif // __itkKernelTransform2_h

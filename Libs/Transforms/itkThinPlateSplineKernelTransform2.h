@@ -89,6 +89,8 @@ public:
   typedef typename Superclass::OutputCovariantVectorType OutputCovariantVectorType;
   typedef typename Superclass::PointsIterator            PointsIterator;
 
+  void SetSigma(double sigma){}; // this is only to match the compact supported class
+
 protected:
 
   ThinPlateSplineKernelTransform2()
@@ -129,5 +131,7 @@ private:
 };
 
 } // namespace itk
+
+#include "itkThinPlateSplineKernelTransform2.cpp"
 
 #endif // __itkThinPlateSplineKernelTransform2_h
