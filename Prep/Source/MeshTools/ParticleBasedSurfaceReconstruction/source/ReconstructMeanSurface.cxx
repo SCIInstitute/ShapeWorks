@@ -213,11 +213,14 @@ int DoIt(InputParams params)
         reconstructor.setOrigin(origin_global);
     }
 
-    // write global points to be use for pca modes
+    // write global points to be use for pca modes and also local points
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
        std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global.particles";
        Utils::writeSparseShape((char*)curfilename.c_str(), global_pts[shapeNo]);
+
+       std::string curfilename_local = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local.particles";
+       Utils::writeSparseShape((char*)curfilename_local.c_str(), local_pts[shapeNo]);
     }
 
     if(params.display)
@@ -230,9 +233,53 @@ int DoIt(InputParams params)
     // write output
     reconstructor.writeMeanInfo(params.out_prefix);
 
+    // write out good and bad particles for each subject file
+    std::vector<bool> goodPoints          = reconstructor.GoodPoints();
+    for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
+    {
+        std::string outfilenameGood;
+        std::string outfilenameBad;
+        std::ofstream ofsG, ofsB;
+
+        outfilenameGood = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-good.particles";
+        outfilenameBad  = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-bad.particles";
+
+        ofsG.open(outfilenameGood.c_str());
+        ofsB.open(outfilenameBad.c_str());
+
+        PointArrayType curShape_local = local_pts[shapeNo];
+        for (unsigned int ii = 0 ; ii < params.number_of_particles; ii++)
+        {
+            auto pt = curShape_local[ii];
+            if(goodPoints[ii])
+                ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+            else
+                ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+        }
+        ofsG.close();
+        ofsB.close();
+
+        outfilenameGood = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-good.particles";
+        outfilenameBad  = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-bad.particles";
+
+        ofsG.open(outfilenameGood.c_str());
+        ofsB.open(outfilenameBad.c_str());
+
+        PointArrayType curShape_global = global_pts[shapeNo];
+        for (unsigned int ii = 0 ; ii < params.number_of_particles; ii++)
+        {
+            auto pt = curShape_global[ii];
+            if(goodPoints[ii])
+                ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+            else
+                ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+        }
+        ofsG.close();
+        ofsB.close();
+    }
+
     if(params.display)
     {
-        std::vector<bool> goodPoints          = reconstructor.GoodPoints();
         vtkSmartPointer<vtkPoints> sparseMean = reconstructor.SparseMean();
 
         // now fill vtkpoints with the two lists to visualize

@@ -1243,6 +1243,22 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         ptsOut1 << a << std::endl;
     }
     ptsOut1.close();
+
+    // write out good and bad points separately
+    std::string outfilenameGood = nameBase  + "_good-sparse.particles";
+    std::string outfilenameBad  = nameBase  + "_bad-sparse.particles";
+    std::ofstream ofsG, ofsB;
+    ofsG.open(outfilenameGood.c_str());
+    ofsB.open(outfilenameBad.c_str());
+    for (size_t i = 0; i < goodPoints_.size(); i++) {
+        auto pt = sparsePts->GetPoint(i);
+        if(goodPoints_[i])
+            ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+        else
+            ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    }
+    ofsG.close();
+    ofsB.close();
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
