@@ -216,7 +216,7 @@ int DoIt(InputParams params)
     // write global points to be use for pca modes
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
-       std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + ".global.particles";
+       std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global.particles";
        Utils::writeSparseShape((char*)curfilename.c_str(), global_pts[shapeNo]);
     }
 
