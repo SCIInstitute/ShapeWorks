@@ -649,8 +649,8 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                                                    static_cast<double>(this->numClusters_));
         multiplyImageFilterBeforeWarp->Update();
 
-        std::string meanDT_filename           = out_prefix_ + ".meanDT.nrrd" ;;
-        std::string meanDTBeforeWarp_filename = out_prefix_ + ".meanDT_beforeWarp.nrrd" ;;
+        std::string meanDT_filename           = out_prefix_ + "_meanDT.nrrd" ;;
+        std::string meanDTBeforeWarp_filename = out_prefix_ + "_meanDT_beforeWarp.nrrd" ;;
 
         typename WriterType::Pointer writer = WriterType::New();
         writer->SetFileName( meanDT_filename.c_str());
@@ -1061,7 +1061,7 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     lsSmoother->SetInputConnection(ls->GetOutputPort());
     lsSmoother->SetNumberOfIterations(lsSmootherIterations);
     lsSmoother->Update();
-    std::cout << "..";
+    std::cout << "..\n";
 
     // (3) largest connected component (assuming only a single domain shape)
     vtkSmartPointer<vtkPolyDataConnectivityFilter> conn =
@@ -1104,11 +1104,11 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
         vtkSmartPointer<vtkPolyData> meshIn)
 {
     //for now, write formats and read them in
-    std::string infilename_vtk = out_prefix_ + ".dense-noQC.vtk";
-    std::string infilename_ply = out_prefix_ + ".dense-noQC.ply";
+    std::string infilename_vtk = out_prefix_ + "_dense-noQC.vtk";
+    std::string infilename_ply = out_prefix_ + "_dense-noQC.ply";
 
-    std::string outfilename_vtk = out_prefix_ + ".dense-QC.vtk";
-    std::string outfilename_ply = out_prefix_ + ".dense-QC.ply";
+    std::string outfilename_vtk = out_prefix_ + "_dense-QC.vtk";
+    std::string outfilename_ply = out_prefix_ + "_dense-QC.ply";
 
     writeVTK((char*)infilename_vtk.c_str(), meshIn);
     writePLY((char*)infilename_ply.c_str(), meshIn);
@@ -1225,11 +1225,11 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::writeMeanInfo(std::string nameBase) {
     //write out dense mean
     vtkSmartPointer<vtkPolyDataWriter> writer1 = vtkPolyDataWriter::New();
-    writer1->SetFileName((nameBase + ".dense.vtk").c_str());
+    writer1->SetFileName((nameBase + "_dense.vtk").c_str());
     writer1->SetInputData(this->denseMean_);
     writer1->Update();
     //write out sparse mean
-    std::ofstream ptsOut((nameBase + ".sparse.pts").c_str());
+    std::ofstream ptsOut((nameBase + "_sparse.particles").c_str());
     auto sparsePts = this->sparseMean_;
     for (size_t i = 0; i < goodPoints_.size(); i++) {
         auto pt = sparsePts->GetPoint(i);
@@ -1237,12 +1237,28 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     }
     ptsOut.close();
     //write out good points
-    std::ofstream ptsOut1((nameBase + ".goodPoints.txt").c_str());
+    std::ofstream ptsOut1((nameBase + "_goodPoints.txt").c_str());
     auto goodPts = this->goodPoints_;
     for (auto a : goodPts) {
         ptsOut1 << a << std::endl;
     }
     ptsOut1.close();
+
+    // write out good and bad points separately
+    std::string outfilenameGood = nameBase  + "_good-sparse.particles";
+    std::string outfilenameBad  = nameBase  + "_bad-sparse.particles";
+    std::ofstream ofsG, ofsB;
+    ofsG.open(outfilenameGood.c_str());
+    ofsB.open(outfilenameBad.c_str());
+    for (size_t i = 0; i < goodPoints_.size(); i++) {
+        auto pt = sparsePts->GetPoint(i);
+        if(goodPoints_[i])
+            ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+        else
+            ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+    }
+    ofsG.close();
+    ofsB.close();
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,

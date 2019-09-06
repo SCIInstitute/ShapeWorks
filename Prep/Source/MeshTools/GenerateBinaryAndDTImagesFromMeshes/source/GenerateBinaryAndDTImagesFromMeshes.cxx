@@ -517,7 +517,7 @@ int main(int argc, char *argv[])
 
 #if DBG_SAVE_INTERMEDIATE_RESULT
         vtkPolyDataWriter* polywriter = vtkPolyDataWriter::New();
-        std::string vtkfilename = prefix + ".polydata.vtk";
+        std::string vtkfilename = prefix + "_polydata.vtk";
         polywriter->SetFileName((const char*) vtkfilename.c_str());
         polywriter->SetInput(polydata);
         polywriter->Update();
