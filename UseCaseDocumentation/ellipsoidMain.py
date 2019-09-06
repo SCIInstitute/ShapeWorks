@@ -100,7 +100,7 @@ print("\nStep 2. Groom - Data Pre-processing\n")
 if args.interactive:
         input("Press Enter to continue")
 
-parentDir = '../TestEllipsoids/PrepOutput/'
+parentDir = 'TestEllipsoids/PrepOutput/'
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
@@ -166,7 +166,7 @@ print("\nStep 4. Optimize - Particle Based Optimization\n")
 if args.interactive:
         input("Press Enter to continue")
 
-pointDir = '../TestEllipsoids/PointFiles/'
+pointDir = 'TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
 
