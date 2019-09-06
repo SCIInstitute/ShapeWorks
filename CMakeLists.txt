@@ -13,6 +13,18 @@ endif()
 #set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 #include(DeployQt5)
 
+
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
+if(LINUX)
+  # We need RPATH rather than RUNPATH since RUNPATH
+  # though recommended, is not used for transitive dependencies
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
+endif(LINUX)
+
+
 SET(BUILD_EXECS_AT_SAME_LEVEL TRUE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
 IF (BUILD_EXECS_AT_SAME_LEVEL)
   SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
@@ -130,29 +142,6 @@ endif(USE_OPENMP)
 # endif(USE_OPENMP)
 
 
-# # use, i.e. don't skip the full RPATH for the build tree
-# SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-
-# # when building, don't use the install RPATH already
-# # (but later on when installing)
-# SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-
-# # the RPATH to be used when installing
-# SET(CMAKE_INSTALL_RPATH "")
-
-# # don't add the automatically determined parts of the RPATH
-# # which point to directories outside the build tree to the install RPATH
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
-
-# SET(CMAKE_INSTALL_RPATH "$ORIGIN/lib:$ORIGIN/")
-# #set(CMAKE_INSTALL_RPATH "$ORIGIN/")
-
-# set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-# set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-
-#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-
 
 
 
@@ -161,9 +150,10 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 if(APPLE)
     set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 else()
-    set(CMAKE_INSTALL_RPATH "$ORIGIN")
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
@@ -287,6 +277,8 @@ list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 
 
 include(InstallRequiredSystemLibraries)
+
+MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
 
 #install_qt5_executable(${APP} "" "" "${DIRS}" "" "")
 
