@@ -159,7 +159,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 
 
 if(APPLE)
-    set(CMAKE_INSTALL_RPATH "@executable_path/lib")
+    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 else()
     set(CMAKE_INSTALL_RPATH "$ORIGIN")
 endif()
