@@ -144,6 +144,17 @@ int DoIt(InputParams params)
             std::cout << std_store[sid] << ", " ;
         std::cout << std::endl;
 
+        // writing stds on file
+        std::string stdfilename = params.out_prefix + "_mode-" + modeStr + "_stds.txt";
+        ofstream ofs(stdfilename.c_str());
+
+        if ( !ofs )
+            throw std::runtime_error("Could not open file for output: " + stdfilename);
+
+        for (unsigned int sid = 0 ; sid < std_store.size(); sid++)
+            ofs << std_store[sid] << "\n" ;
+        ofs.close();
+
         for(unsigned int sampleId = 0 ; sampleId < std_store.size(); sampleId++)
         {
             std::string sampleStr = Utils::int2str(int(sampleId), 3);
