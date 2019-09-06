@@ -162,6 +162,7 @@ ShapeWorksView2::~ShapeWorksView2()
 //---------------------------------------------------------------------------
 void ShapeWorksView2::closeEvent( QCloseEvent* event )
 {
+  Q_UNUSED(event);
   // close the preferences window in case it is open
   Preferences::Instance().closeWindow();
 
@@ -970,12 +971,34 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   TiXmlHandle docHandle( &doc );
   std::istringstream inputsBuffer;
 
-  this->groupsAvailable = ( docHandle.FirstChild( "group_ids" ).Element() != NULL );
+  this->groupsAvailable = ( docHandle.FirstChild( "group_ids" ).Element() != nullptr );
 
   // number of domains (objects) per patient/shape
   this->numDomains = 1;
   TiXmlElement* elem = docHandle.FirstChild( "domains_per_shape" ).Element();
   if ( elem ) {this->numDomains = atoi( elem->GetText() ); }
+
+
+  std::vector< std::string > distanceTransformFilenames;
+  elem = docHandle.FirstChild( "distance_transform_files" ).Element();
+  if (elem)
+  {
+    std::string distance_transform_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> distance_transform_filename)
+    {
+      std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
+      distanceTransformFilenames.push_back(distance_transform_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+  else
+  {
+      std::cerr << "No distance transforms specified, using old surface reconstruction method!" << std::endl;
+      //return EXIT_FAILURE;
+  }
+  this->distanceTransformsAvailable = distanceTransformFilenames.size() > 0;
 
   // Run statistics
   this->stats.ReadPointFiles( filename );

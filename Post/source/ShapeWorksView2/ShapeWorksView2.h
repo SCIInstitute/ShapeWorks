@@ -190,6 +190,7 @@ private:
   int pointsPerDomain;
 
   bool groupsAvailable;
+  bool distanceTransformsAvailable = false;
   bool regressionAvailable;
 
   double regressionMin;
