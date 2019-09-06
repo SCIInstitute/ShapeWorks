@@ -51,7 +51,7 @@ int DoIt(InputParams params)
     ParticleShapeStatistics<Dimension> shapeStats;
 
     std::string denseFilename      = params.mean_prefix + ".dense.vtk";
-    std::string sparseFilename     = params.mean_prefix + ".sparse.pts";
+    std::string sparseFilename     = params.mean_prefix + ".sparse.particles";
     std::string goodPointsFilename = params.mean_prefix + ".goodPoints.txt";
 
     std::cout << "denseFilename: "  << denseFilename << std::endl;
@@ -192,10 +192,10 @@ int DoIt(InputParams params)
             vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
             vertices->DeepCopy( curDense->GetPoints() );
 
-            std::string ptsfilename = params.out_prefix + basename + ".dense.pts";
+            std::string ptsfilename = params.out_prefix + basename + ".dense.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), vertices);
 
-            ptsfilename = params.out_prefix + basename + ".sparse.pts";
+            ptsfilename = params.out_prefix + basename + ".sparse.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), curSamplePts);
 
         }

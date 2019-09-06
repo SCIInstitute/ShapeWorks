@@ -1229,7 +1229,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     writer1->SetInputData(this->denseMean_);
     writer1->Update();
     //write out sparse mean
-    std::ofstream ptsOut((nameBase + ".sparse.pts").c_str());
+    std::ofstream ptsOut((nameBase + ".sparse.particles").c_str());
     auto sparsePts = this->sparseMean_;
     for (size_t i = 0; i < goodPoints_.size(); i++) {
         auto pt = sparsePts->GetPoint(i);
