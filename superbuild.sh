@@ -13,7 +13,7 @@ VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
 ITK_VER="v5.0.1"
 ITK_VER_STR="5.0"
-QT_MIN_VER="5.10"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
+QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 
 usage()
 {
