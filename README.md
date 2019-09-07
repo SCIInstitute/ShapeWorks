@@ -112,18 +112,13 @@ Contributors
 Principal Investigators
 ---------------------
 
+- [Shireen Elhabian](https://www.sci.utah.edu/~shireen)
+- [Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
 
-<img src="Images/shireen.png" width="100px" alt="Shireen Elhabian"/> |bb
---|--
-[Shireen Elhabian](https://www.sci.utah.edu/~shireen)|[Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
-
-
-
-
-
-
-
-
+Software Developers
+---------------------
+- [Alan Morris](https://www.sci.utah.edu/people/amorris.html)
+- [Cameron Christensen](https://www.sci.utah.edu/people/cam.html)
 
 Researchers
 ---------------------
@@ -132,15 +127,10 @@ Researchers
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
 - [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
 
-Software Developers
----------------------
-- [Alan Morris](https://www.sci.utah.edu/people/amorris.html)
-- [Cameron Christensen](https://www.sci.utah.edu/people/cam.html)
-
 Past Contributors
 ---------------------
-- Joshue Cates
-- Manasi Datar
+- Joshua Cates
+- [Manasi Datar](https://manasidatar.github.io/index.html)
 
 
 Relevant Papers
