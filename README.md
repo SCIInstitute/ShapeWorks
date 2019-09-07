@@ -37,6 +37,7 @@ Table of Contents
 - [Installation](#installation)  
 - [Getting Started](#getting-started)  
 - [Acknowledgements](#acknowledgements)
+- [Contributers](#contributers)
 - [Relevant Papers](#relevant-papers)
 
 Installation
@@ -84,7 +85,7 @@ grant number P41GM103545."
 -->
 >"This work was supported by the National Institutes of Health under grant numbers R01-AR-076120-01, R01-HL135568-02, and P41-GM103545-19."
 
-How to cite ShapeWorks
+How to Cite ShapeWorks
 ---------------------
 
 When referencing ShapeWorks, please include a bibliographical reference to the paper below, and, if possible, include a link to [shapeworks.sci.utah.edu](http://www.sci.utah.edu/software/shapeworks.html/). 
@@ -104,6 +105,38 @@ title={Shapeworks: particle-based shape correspondence and visualization softwar
 }
 
 ---
+
+Contributers
+=====================
+
+Principal Investigators
+---------------------
+
+<div class="img-with-text">
+    <img src="Images/shireen.png" width="100px" alt="Shireen Elhabian" />
+    [Shireen Elhabian](https://www.sci.utah.edu/~shireen)
+</div>
+
+
+
+- [Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
+
+Researchers
+---------------------
+- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
+- [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
+- [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
+- [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
+
+Software Developers
+---------------------
+- [Alan Morris](https://www.sci.utah.edu/people/amorris.html)
+- [Cameron Christensen](https://www.sci.utah.edu/people/cam.html)
+
+Past Contributers
+---------------------
+- Joshue Cates
+- Manasi Datar
 
 
 Relevant Papers
