@@ -112,7 +112,7 @@ Contributors
 Principal Investigators
 ---------------------
 
-- [Shireen Elhabian](https://www.sci.utah.edu/~shireen)
+- [Shireen Elhabian](http://www.sci.utah.edu/~shireen/)
 - [Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
 
 Software Developers
@@ -129,8 +129,9 @@ Researchers
 
 Past Contributors
 ---------------------
-- Joshua Cates
+- [Joshua Cates](http://www.sci.utah.edu/~cates/)
 - [Manasi Datar](https://manasidatar.github.io/index.html)
+- [Brig Bagley](http://www.cs.utah.edu/~bbagley/)
 
 
 Relevant Papers
