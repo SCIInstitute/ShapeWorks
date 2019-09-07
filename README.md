@@ -87,7 +87,7 @@ grant number P41GM103545."
 How to cite ShapeWorks
 ---------------------
 
-When referencing ShapeWorks, please include a bibliographical reference to the paper below, and, if possible, include a link to [shapeworks.sci.utah.edu](shapeworks.sci.utah.edu). 
+When referencing ShapeWorks, please include a bibliographical reference to the paper below, and, if possible, include a link to [shapeworks.sci.utah.edu](http://www.sci.utah.edu/software/shapeworks.html/). 
 
 ---
 <p align="justify">
