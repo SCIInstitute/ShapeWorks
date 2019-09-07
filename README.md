@@ -112,12 +112,18 @@ Contributors
 Principal Investigators
 ---------------------
 
-<img src="Images/shireen.png" width="100px" alt="Shireen Elhabian"/> [Shireen Elhabian](https://www.sci.utah.edu/~shireen)
+
+<img src="Images/shireen.png" width="100px" alt="Shireen Elhabian"/> |bb
+--|--
+[Shireen Elhabian](https://www.sci.utah.edu/~shireen)|[Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
 
 
 
 
-- [Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
+
+
+
+
 
 Researchers
 ---------------------
