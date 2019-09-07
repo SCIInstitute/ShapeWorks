@@ -37,7 +37,7 @@ Table of Contents
 - [Installation](#installation)  
 - [Getting Started](#getting-started)  
 - [Acknowledgements](#acknowledgements)
-- [Contributers](#contributers)
+- [Contributors](#contributors)
 - [Relevant Papers](#relevant-papers)
 
 Installation
@@ -106,16 +106,14 @@ title={Shapeworks: particle-based shape correspondence and visualization softwar
 
 ---
 
-Contributers
+Contributors
 =====================
 
 Principal Investigators
 ---------------------
 
-<div class="img-with-text">
-    <img src="Images/shireen.png" width="100px" alt="Shireen Elhabian" />
-    [Shireen Elhabian](https://www.sci.utah.edu/~shireen)
-</div>
+<img src="Images/shireen.png" width="100px" alt="Shireen Elhabian"/> [Shireen Elhabian](https://www.sci.utah.edu/~shireen)
+
 
 
 
@@ -133,7 +131,7 @@ Software Developers
 - [Alan Morris](https://www.sci.utah.edu/people/amorris.html)
 - [Cameron Christensen](https://www.sci.utah.edu/people/cam.html)
 
-Past Contributers
+Past Contributors
 ---------------------
 - Joshue Cates
 - Manasi Datar
