@@ -103,6 +103,7 @@ void MeshManager::generateMesh( const vnl_vector<double>& shape )
   }
 }
 
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& shape )
 {
   vtkSmartPointer<vtkPolyData> polyData;
@@ -132,6 +133,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
   return polyData;
 }
 
+//---------------------------------------------------------------------------
 void MeshManager::initializeThreads()
 {
   //std::cerr << "shutting down threads\n";
@@ -145,7 +147,7 @@ void MeshManager::initializeThreads()
     return;
   }
 
-  int numThreads = Preferences::Instance().getNumThreads() - 1;
+  unsigned int numThreads = Preferences::Instance().getNumThreads() - 1;
   if ( numThreads > 0 )
   {
     threads.resize( numThreads );
@@ -153,7 +155,7 @@ void MeshManager::initializeThreads()
 
     //std::cerr << "Starting " << numThreads << " threads\n";
 
-    for ( int i = 0; i < numThreads; i++ )
+    for ( unsigned int i = 0; i < numThreads; i++ )
     {
       threads[i] = new QThread;
       workers[i] = new MeshWorker;
