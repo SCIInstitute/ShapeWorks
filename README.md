@@ -12,7 +12,7 @@ ShapeWorks
   ShapeWorks is a free, open-source suite of software tools that uses a flexible method for automated construction of compact statistical landmark-based shape models of ensembles of anatomical shapes that does not rely on any specific surface parameterization. The method requires very little preprocessing or parameter tuning, and is applicable to a wide range of shape analysis problems, including nonmanifold surfaces and objects of arbitrary topology. ShapeWorks includes tools for preprocessing data, computing landmark-based shape models, and visualizing the results.
 </p>
 
-<img src="Images/about-shapeworks.png" width="800px" align="right" hspace="20">
+<img src="Images/about-shapeworks.png" width="1000px" align="right" hspace="20">
 
 The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that considers the variability in the entire cohort of images. ShapeWorks uses a set of interacting particle systems, one for each shape, in an ensemble, to produce optimal sets of surface correspondences. Particles interact with one another via mutually repelling forces to optimally cover, and therefore describe, the surface geometry. Particles are positioned on surfaces automatically by optimizing the information content of the model via an entropy optimization scheme. In particular, ShapeWorks explicitly models the inherent trade-off between the statistical simplicity of the model (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
 
@@ -71,7 +71,7 @@ If you use ShapeWorks in work that leads to published research, we humbly ask th
 National Institute of General Medical Sciences of the National Institutes of Health under 
 grant number P41GM103545."
 -->
-"This work was supported by the National Institutes of Health under grant numbers R01-AR-076120-01, R01-HL135568-02, and P41-GM103545-19."
+>"This work was supported by the National Institutes of Health under grant numbers R01-AR-076120-01, R01-HL135568-02, and P41-GM103545-19."
 
 
 
