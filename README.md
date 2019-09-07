@@ -13,6 +13,11 @@ ShapeWorks
 </p>
 
 
+<br>
+<img src="Images/about-shapeworks.png" width="800px" align="right" hspace="20">
+<br>
+
+
 Contact Us
 =====================
 
