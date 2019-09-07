@@ -46,6 +46,7 @@ public:
   // pre-generate and cache a mesh for this shape
   void generateMesh( const vnl_vector<double>& shape );
 
+  //! Create a mesh from a shape (set of points)
   vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& shape );
 
 private Q_SLOTS:
