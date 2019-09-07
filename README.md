@@ -7,20 +7,17 @@ ShapeWorks
 
 <img src="Images/shapeworks-logo.png" width="300px" align="left" hspace="20">
 
-
 <p align="justify">
   ShapeWorks is a free, open-source suite of software tools that uses a flexible method for automated construction of compact statistical landmark-based shape models of ensembles of anatomical shapes that does not rely on any specific surface parameterization. The method requires very little preprocessing or parameter tuning, and is applicable to a wide range of shape analysis problems, including nonmanifold surfaces and objects of arbitrary topology. ShapeWorks includes tools for preprocessing data, computing landmark-based shape models, and visualizing the results.
 </p>
 
 <img src="Images/about-shapeworks.png" width="1000px" align="right" hspace="20">
 
-
 <p align="justify">
 The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that considers the variability in the entire cohort of images. ShapeWorks uses a set of interacting particle systems, one for each shape, in an ensemble, to produce optimal sets of surface correspondences. Particles interact with one another via mutually repelling forces to optimally cover, and therefore describe, the surface geometry. Particles are positioned on surfaces automatically by optimizing the information content of the model via an entropy optimization scheme. In particular, ShapeWorks explicitly models the inherent trade-off between the statistical simplicity of the model (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
 </p>    
     
 ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
-
 
 
 Contact Us
@@ -38,7 +35,7 @@ You can also email any questions, bugs, or feature requests to shapeworks-users@
 Table of Contents
 ====================
 - [Installation](#installation)  
-- [Documentation](#documentation)  
+- [Getting Started](#getting-started)  
 - [Acknowledgements](#acknowledgements)
 - [Relevant Papers](#relevant-papers)
 
@@ -56,13 +53,22 @@ Please see **[BUILD.md](BUILD.md)** for the current build instructions.
 <!--
 Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.
 -->
+
+<!-- the below is not updated with dead linkes
 Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
+-->
 
-As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
+**Bug report:** As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
 
-Documentation
+Getting Started
 =====================
+
+See the [ellipsoid example](http://sciinstitute.github.io/ShapeWorks/ellipsoidMain.html) for a python-scripted standard shape modeling workflow using ShapeWorks tools. More use cases will be released in future.
+
+<!-- the below page had dead links and 
 [ShapeWorks user documentation.](http://sciinstitute.github.io/ShapeWorks/)
+-->
+
 <!--
 Desired: https://shapeworks.sci.utah.edu/docs
 -->
@@ -77,8 +83,6 @@ National Institute of General Medical Sciences of the National Institutes of Hea
 grant number P41GM103545."
 -->
 >"This work was supported by the National Institutes of Health under grant numbers R01-AR-076120-01, R01-HL135568-02, and P41-GM103545-19."
-
-
 
 How to cite ShapeWorks
 ---------------------
