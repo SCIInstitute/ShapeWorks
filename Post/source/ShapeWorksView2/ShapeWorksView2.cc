@@ -982,10 +982,6 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   if ( elem ) {this->numDomains = atoi( elem->GetText() ); }
 
 
-
-
-
-
   // Run statistics
   this->stats.ReadPointFiles( filename );
   this->stats.ComputeModes();
@@ -1176,12 +1172,6 @@ void ShapeWorksView2::readReconstructionParams(char *filename)
   {
     this->prepareSurfaceReconstruction();
   }
-
-
-
-
-
-
 }
 
 //---------------------------------------------------------------------------

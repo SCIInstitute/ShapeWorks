@@ -104,6 +104,12 @@ void MeshGenerator::setSmoothingAmount( float amount )
 
 vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
+  if (this->surface_reconstructor_ &&
+      this->surface_reconstructor_->get_surface_reconstruction_avaiable())
+  {
+    return this->surface_reconstructor_->build_mesh(shape);
+
+  }
   // copy shape points into point set
   int numPoints = shape.size() / 3;
   this->points->SetNumberOfPoints( numPoints );
@@ -139,6 +145,11 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   polyData->DeepCopy( this->polydataNormals->GetOutput() );
 
   return polyData;
+}
+
+void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor)
+{
+  this->surface_reconstructor_ = reconstructor;
 }
 
 void MeshGenerator::updatePipeline()

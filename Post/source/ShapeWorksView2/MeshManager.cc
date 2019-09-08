@@ -11,6 +11,7 @@
 #include <MeshManager.h>
 #include <Preferences.h>
 
+
 MeshManager::MeshManager()
   :
     surfaceReconstructor_(new SurfaceReconstructor())
@@ -23,6 +24,8 @@ MeshManager::MeshManager()
     this, SLOT( initializeThreads() ) );
 
   this->initializeThreads();
+
+  this->meshGenerator.set_surface_reconstructor(this->surfaceReconstructor_);
 }
 
 MeshManager::~MeshManager()
@@ -77,6 +80,9 @@ void MeshManager::setUsePowerCrust( bool enabled )
 
 void MeshManager::generateMesh( const vnl_vector<double>& shape )
 {
+  /// disable pre-generation for the moment
+  return;
+
   if ( this->usePowerCrust )
   {
     // the powercrust code uses all manner of global variables and cannot be run in parallel right now

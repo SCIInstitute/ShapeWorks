@@ -5,11 +5,9 @@
 #include <SurfaceReconstructor.h>
 
 #include <itkImage.h>
-#include <itkImageFileReader.h>
 #include <itkNrrdImageIOFactory.h>
 #include <itkMetaImageIOFactory.h>
 
-#include <Libs/SurfaceReconstruction/Reconstruction.h>
 #include <Libs/Utils/Utils.h>
 
 //---------------------------------------------------------------------------
@@ -28,26 +26,6 @@ void SurfaceReconstructor::set_filenames(std::vector<string> distance_transform_
 //---------------------------------------------------------------------------
 void SurfaceReconstructor::generate_mean_dense()
 {
-
-  typedef float PixelType;
-  typedef itk::Image< PixelType, 3 > ImageType;
-  const unsigned int Dimension = 3;
-
-  typedef itk::ImageFileReader< ImageType >   ReaderType;
-
-  typedef double CoordinateRepType;
-  typedef itk::CompactlySupportedRBFSparseKernelTransform < CoordinateRepType,
-                                                            Dimension>     RBFTransformType;
-  typedef itk::ThinPlateSplineKernelTransform2< CoordinateRepType, Dimension>  ThinPlateSplineType;
-  typedef itk::LinearInterpolateImageFunction<ImageType, double > InterpolatorType;
-
-  typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
-                           itk::LinearInterpolateImageFunction,
-                           CoordinateRepType, PixelType, ImageType> ReconstructionType;
-  typedef typename ReconstructionType::PointType PointType;
-  typedef typename ReconstructionType::PointArrayType PointArrayType;
-
-  ReconstructionType reconstructor;
 
   std::cerr << "Generate Mean Dense!\n";
 
@@ -88,13 +66,13 @@ void SurfaceReconstructor::generate_mean_dense()
 
   std::cout << "Computing mean sparse shape .... \n ";
   PointType commonCenter;
-  global_pts = reconstructor.computeSparseMean(local_pts, commonCenter, false, false);
+  global_pts = this->reconstructor_.computeSparseMean(local_pts, commonCenter, false, false);
   global_pts.clear(); // clear
 
   // read given world points
   for (unsigned int shapeNo = 0; shapeNo < this->world_point_filenames_.size(); shapeNo++) {
     std::cout << "Loading world points file: " << this->world_point_filenames_[shapeNo].c_str() <<
-    std::endl;
+      std::endl;
 
     PointArrayType curShape;
     Utils::readSparseShape(curShape,
@@ -110,8 +88,40 @@ void SurfaceReconstructor::generate_mean_dense()
   }
 
   // compute the dense shape
-  vtkSmartPointer<vtkPolyData> denseMean = reconstructor.getDenseMean(local_pts, global_pts,
-                                                                      distance_transforms);
+  vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_.getDenseMean(local_pts, global_pts,
+                                                                             distance_transforms);
+  this->surface_reconstruction_available_ = true;
+}
 
+//---------------------------------------------------------------------------
+bool SurfaceReconstructor::get_surface_reconstruction_avaiable()
+{
+  return this->surface_reconstruction_available_;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> SurfaceReconstructor::build_mesh(const vnl_vector<double> &shape)
+{
+  PointArrayType points;
+
+  unsigned int numPoints = static_cast<unsigned int>(shape.size() / 3);
+  unsigned int k = 0;
+  for ( unsigned int i = 0; i < numPoints; i++ )
+  {
+    double x = shape[k++];
+    double y = shape[k++];
+    double z = shape[k++];
+    PointType point;
+    point[0] = x;
+    point[1] = y;
+    point[2] = z;
+    points.push_back(point);
+  }
+
+  return this->reconstructor_.getMesh(points);
 
 }
+
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
