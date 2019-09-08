@@ -172,6 +172,10 @@ find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 MESSAGE(STATUS "** USE_VTK_FILE: ${VTK_USE_FILE}")
 
+include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
+
+
+
 if(Build_PrepTools)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Prep/Source)
     add_subdirectory(Prep/Source)
