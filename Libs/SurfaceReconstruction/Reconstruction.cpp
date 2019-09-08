@@ -1,4 +1,3 @@
-#include "Reconstruction.h"
 #include <vtkKdTreePointLocator.h>
 #include <vtkProbeFilter.h>
 #include <vtkFloatArray.h>
