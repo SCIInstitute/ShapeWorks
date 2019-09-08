@@ -44,7 +44,7 @@ def launchShapeWorksView2(parentDir, pointFileList):
 	xmlfilename = parentDir + '/shapeworksview2.xml'
 	create_View2_xml(xmlfilename, pointFileList)
 	create_cpp_xml(xmlfilename, xmlfilename)
-	execCommand = "ShapeWorksView2 " + xmlfilename
+	execCommand = "ShapeWorksView2 " + xmlfilename + " &"
 	os.system(execCommand)
     
     
@@ -79,7 +79,8 @@ def create_ReconstructMeanSurface_xml(xmlfilename, parameterDictionary, distance
 
 	data = ET.tostring(root, encoding='unicode')
 	file = open(xmlfilename, "w+")
-	file.write(data)    
+	file.write(data)
+    
     
 def create_ReconstructSurface_xml(xmlfilename, parameterDictionary, local_point_files):
 
@@ -120,12 +121,39 @@ def create_ReconstructSamplesAlongPCAModes_xml(xmlfilename, parameterDictionary,
 def runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary):
    numP = parameterDictionary['number_of_particles']
    outDir = os.path.dirname(parameterDictionary["out_prefix"])
-   parameterFile = outDir + "reconstruct_mean_surface_" + str(numP) + '.xml'
+   parameterFile = outDir + "/reconstruct_mean_surface_" + str(numP) + '.xml'
    
    create_ReconstructMeanSurface_xml(parameterFile, parameterDictionary, dtFiles, localPointFiles, worldPointFiles)
    create_cpp_xml(parameterFile, parameterFile)
     
    execCommand = "ReconstructMeanSurface " + parameterFile
    os.system(execCommand)
+   
+  
+def runReconstructSurface(pointFiles, parameterDictionary):
+   numP = parameterDictionary['number_of_particles']
+   outDir = os.path.dirname(parameterDictionary["out_prefix"])
+   parameterFile = outDir + "/reconstruct_surface_" + str(numP) + '.xml'
+   
+   create_ReconstructSurface_xml(parameterFile, parameterDictionary, pointFiles)
+   create_cpp_xml(parameterFile, parameterFile)
     
+   execCommand = "ReconstructSurface " + parameterFile
+   os.system(execCommand)       
+
+   densePointFiles = glob.glob(outDir + '/*_dense.particles')
+   
+   return densePointFiles
+       
+
+def runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary):
+   numP = parameterDictionary['number_of_particles']
+   outDir = os.path.dirname(parameterDictionary["out_prefix"])
+   parameterFile = outDir + "/reconstruct_samples_along_pca_modes_" + str(numP) + '.xml'
+   
+   create_ReconstructSamplesAlongPCAModes_xml(parameterFile, parameterDictionary, worldPointFiles)
+   create_cpp_xml(parameterFile, parameterFile)
     
+   execCommand = "ReconstructSamplesAlongPCAModes " + parameterFile
+   os.system(execCommand)
+

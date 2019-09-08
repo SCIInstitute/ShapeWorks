@@ -172,8 +172,8 @@ parameterDictionary = {
 	"number_of_particles" : 128,
 	"checkpointing_interval" : 200,
 	"keep_checkpoints" : 0,
-	"iterations_per_split" : 1000,
-	"optimization_iterations" : 2000,
+	"iterations_per_split" : 500,
+	"optimization_iterations" : 3000,
 	"starting_regularization" : 100,
 	"ending_regularization" : 0.1,
 	"recompute_regularization_interval" : 2,
@@ -187,8 +187,6 @@ parameterDictionary = {
 	"mesh_based_attributes" : 0,
 	"verbosity" : 3
 }
-
-
 
 
 """
@@ -223,6 +221,10 @@ This warping function is then used to deform the template dense mesh to the samp
 Reconstruct the dense mean surface given the sparse correspondence model.
 """
 
+print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
+if args.interactive:
+        input("Press Enter to continue")
+
 meanDir   = '../TestEllipsoids/MeanReconstruction/'
 if not os.path.exists(meanDir):
 	os.makedirs(meanDir)
@@ -246,7 +248,7 @@ parameterDictionary = {
    "qcDoLaplacianSmoothingAfterDecimation" : 1,
    "qcSmoothingLambda" : 0.5,
    "qcSmoothingIterations" : 3,
-   "qcDecimationPercentage" : 0.3,
+   "qcDecimationPercentage" : 0.9,
    "normalAngle" : 90,
    "use_tps_transform" : 0,
    "use_bspline_interpolation" : 0,
@@ -256,14 +258,18 @@ parameterDictionary = {
 
 runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
 
+
 """
-Reconstruct the dense sample-specfic surface given the dense mean surface
+Reconstruct the dense sample-specfic surface in the local coordinate system given the dense mean surface
 """
 
-meshDir   = '../TestEllipsoids/MeshFiles/'
-if not os.path.exists(meshDir):
-	os.makedirs(meshDir)
+print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
+if args.interactive:
+        input("Press Enter to continue")
 
+meshDir_local   = '../TestEllipsoids/MeshFiles-Local/'
+if not os.path.exists(meshDir_local):
+	os.makedirs(meshDir_local)
 
 """
 Parameter dictionary for ReconstructSurface cmd tool.
@@ -271,16 +277,52 @@ Parameter dictionary for ReconstructSurface cmd tool.
 parameterDictionary = {
 	"number_of_particles" : 128,
 	"mean_prefix" : meanDir + 'ellipsoid',
-	"out_prefix" : meshDir, 
+	"out_prefix" : meshDir_local + 'ellipsoid', 
 	"use_tps_transform" : 0,
 	"use_bspline_interpolation" : 0,
 	"display" : 0,
 	"glyph_radius" : 1
 }
 
+localDensePointFiles = runReconstructSurface(localPointFiles, parameterDictionary)
+
+
+"""
+Reconstruct the dense sample-specfic surface in the world coordinate system given the dense mean surface
+"""
+
+print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
+if args.interactive:
+        input("Press Enter to continue")
+
+
+meshDir_global   = '../TestEllipsoids/MeshFiles-World/'
+if not os.path.exists(meshDir_global):
+	os.makedirs(meshDir_global)
+
+"""
+Parameter dictionary for ReconstructSurface cmd tool.
+"""
+parameterDictionary = {
+	"number_of_particles" : 128,
+	"mean_prefix" : meanDir + 'ellipsoid',
+	"out_prefix" : meshDir_global + 'ellipsoid',
+	"use_tps_transform" : 0,
+	"use_bspline_interpolation" : 0,
+	"display" : 0,
+	"glyph_radius" : 1
+}
+
+worldDensePointFiles = runReconstructSurface(worldPointFiles, parameterDictionary)
+
 """
 Reconstruct dense meshes along dominant pca modes
 """
+
+print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
+if args.interactive:
+        input("Press Enter to continue")
+
 
 pcaDir   = '../TestEllipsoids/PCAModesFiles/'
 if not os.path.exists(pcaDir):
@@ -300,10 +342,9 @@ parameterDictionary = {
 	"maximum_variance_captured" : 0.95,
 	"maximum_std_dev" : 2,
 	"number_of_samples_per_mode" : 10
-
 }
 
-
+runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
 
 """
 The local and world particles will be saved in TestEllipsoids/PointFiles/128
@@ -318,11 +359,17 @@ PCA modes of variation representing the given shape population can be
 visualized.
 """
 
-print("\nStep 4. Analysis - Launch ShapeWorksView2\n")
+print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
 if args.interactive:
         input("Press Enter to continue")
 
-
 launchShapeWorksView2(pointDir, worldPointFiles)
+
+
+print("\nStep 10. Analysis - Launch ShapeWorksView2 - dense correspondence model.\n")
+if args.interactive:
+        input("Press Enter to continue")
+
+launchShapeWorksView2(meshDir_global, worldDensePointFiles)
 
 print("\nShapeworks Pipeline Complete!")
