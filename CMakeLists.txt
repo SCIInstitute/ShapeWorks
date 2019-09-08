@@ -1,6 +1,6 @@
 PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
-SET(CMAKE_BUILD_TYPE Release)
+#SET(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_CXX_STANDARD 11)
 
