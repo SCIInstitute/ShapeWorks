@@ -27,7 +27,6 @@
 #include "Params/InputParams.h"
 #include "Vis.h"
 #include "Reconstruction.h"
-#include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated
 
 #include "itkNrrdImageIOFactory.h"
 #include "itkMetaImageIOFactory.h"

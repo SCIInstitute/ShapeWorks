@@ -166,4 +166,6 @@ private:
     int smoothingIterations_;
 };
 
+#include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated
+
 #endif // !__RECONSTRUCTION_H__
