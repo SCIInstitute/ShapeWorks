@@ -12,6 +12,8 @@
 #include <Preferences.h>
 
 MeshManager::MeshManager()
+  :
+    surfaceReconstructor_(new SurfaceReconstructor())
 {
   this->smoothingAmount = 0;
 
@@ -131,6 +133,12 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
   }
 
   return polyData;
+}
+
+//---------------------------------------------------------------------------
+QSharedPointer<SurfaceReconstructor> MeshManager::getSurfaceReconstructor()
+{
+  return this->surfaceReconstructor_;
 }
 
 //---------------------------------------------------------------------------

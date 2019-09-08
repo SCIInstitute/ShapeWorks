@@ -114,6 +114,9 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
 
   // Load the explanatory variables  - Praful
   this->readExplanatoryVariables( argv[1] );
+
+  this->readReconstructionParams( argv[1] );
+
   if ( this->regressionAvailable )
   {
 //    this->regression->ResizeParameters( stats.ShapeMatrix().rows() );
@@ -979,26 +982,9 @@ bool ShapeWorksView2::readParameterFile( char* filename )
   if ( elem ) {this->numDomains = atoi( elem->GetText() ); }
 
 
-  std::vector< std::string > distanceTransformFilenames;
-  elem = docHandle.FirstChild( "distance_transform_files" ).Element();
-  if (elem)
-  {
-    std::string distance_transform_filename;
-    inputsBuffer.str(elem->GetText());
-    while (inputsBuffer >> distance_transform_filename)
-    {
-      std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
-      distanceTransformFilenames.push_back(distance_transform_filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-  else
-  {
-      std::cerr << "No distance transforms specified, using old surface reconstruction method!" << std::endl;
-      //return EXIT_FAILURE;
-  }
-  this->distanceTransformsAvailable = distanceTransformFilenames.size() > 0;
+
+
+
 
   // Run statistics
   this->stats.ReadPointFiles( filename );
@@ -1118,6 +1104,95 @@ bool ShapeWorksView2::readExplanatoryVariables( char* filename )
 //this->mode->value(0);
 //this->ComputeSimpleRegressionParameters();
   return true;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::readReconstructionParams(char *filename)
+{
+  // Read parameter file
+  TiXmlDocument doc( filename );
+  bool loadOkay = doc.LoadFile();
+  if ( !loadOkay )
+  {
+    std::cerr << "Error: Invalid parameter file" << std::endl;
+    return;
+  }
+
+  TiXmlHandle docHandle( &doc );
+  std::istringstream inputsBuffer;
+
+  // read distance transform filenames for surface reconstruction
+  this->distanceTransformFilenames_.clear();
+  this->localPointFilenames_.clear();
+  this->worldPointFilenames_.clear();
+  TiXmlElement* elem = docHandle.FirstChild( "distance_transform_files" ).Element();
+  if (elem)
+  {
+    std::string distance_transform_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> distance_transform_filename)
+    {
+      std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
+      this->distanceTransformFilenames_.push_back(distance_transform_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+  else
+  {
+      std::cerr << "No distance transforms specified, using old surface reconstruction method!" << std::endl;
+      //return EXIT_FAILURE;
+  }
+  this->distanceTransformsAvailable = this->distanceTransformFilenames_.size() > 0;
+
+  elem = docHandle.FirstChild( "local_point_files" ).Element();
+  if (elem)
+  {
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename)
+    {
+      this->localPointFilenames_.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+
+  elem = docHandle.FirstChild( "world_point_files" ).Element();
+  if (elem)
+  {
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename)
+    {
+      this->worldPointFilenames_.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  if (this->distanceTransformsAvailable)
+  {
+    this->prepareSurfaceReconstruction();
+  }
+
+
+
+
+
+
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksView2::prepareSurfaceReconstruction()
+{
+  auto surfaceReconstructor = this->meshManager.getSurfaceReconstructor();
+
+  surfaceReconstructor->set_filenames(this->distanceTransformFilenames_,
+                                     this->localPointFilenames_, this->worldPointFilenames_);
+
+  surfaceReconstructor->generate_mean_dense();
 }
 
 //---------------------------------------------------------------------------
