@@ -33,6 +33,7 @@ from AnalyzeUtils import *
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
+parser.add_argument("--optimization_type", help="Single scale or multi scale optimization", action="store_true")
 args = parser.parse_args()
 
 
@@ -168,31 +169,53 @@ pointDir = '../TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
 
-parameterDictionary = {
-	"number_of_particles" : 128,
-	"checkpointing_interval" : 200,
-	"keep_checkpoints" : 0,
-	"iterations_per_split" : 1000,
-	"optimization_iterations" : 2000,
-	"starting_regularization" : 100,
-	"ending_regularization" : 0.1,
-	"recompute_regularization_interval" : 2,
-	"domains_per_shape" : 1,
-	"relative_weighting" : 10,
-	"initial_relative_weighting" : 0.01,
-	"procrustes_interval" : 0,
-	"procrustes_scaling" : 0,
-	"save_init_splits" : 0,
-	"debug_projection" : 0,
-	"mesh_based_attributes" : 0,
-	"verbosity" : 3
-}
+if args.optimization_type:
+	parameterDictionary = {
+		"number_of_particles" : 128,
+		"checkpointing_interval" : 200,
+		"keep_checkpoints" : 0,
+		"iterations_per_split" : 1000,
+		"optimization_iterations" : 2000,
+		"starting_regularization" : 100,
+		"ending_regularization" : 0.1,
+		"recompute_regularization_interval" : 2,
+		"domains_per_shape" : 1,
+		"relative_weighting" : 10,
+		"initial_relative_weighting" : 0.01,
+		"procrustes_interval" : 0,
+		"procrustes_scaling" : 0,
+		"save_init_splits" : 0,
+		"debug_projection" : 0,
+		"mesh_based_attributes" : 0,
+		"verbosity" : 3
+	}
 
-"""
-Now we execute the particle optimization function.
-"""
-[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
-
+	"""
+	Now we execute the particle optimization function.
+	"""
+	[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
+else:
+	parameterDictionary = {
+		"starting_particles" : 128,
+		"number_of_levels" : 3, 
+		"checkpointing_interval" : 200,
+		"keep_checkpoints" : 0,
+		"iterations_per_split" : 1000,
+		"optimization_iterations" : 2000,
+		"starting_regularization" : 100,
+		"ending_regularization" : 0.1,
+		"recompute_regularization_interval" : 2,
+		"domains_per_shape" : 1,
+		"relative_weighting" : 10,
+		"initial_relative_weighting" : 0.01,
+		"procrustes_interval" : 0,
+		"procrustes_scaling" : 0,
+		"save_init_splits" : 0,
+		"debug_projection" : 0,
+		"mesh_based_attributes" : 0,
+		"verbosity" : 3
+	}
+	[localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 """
 ## ANALYZE : Shape Analysis and Visualization
 
