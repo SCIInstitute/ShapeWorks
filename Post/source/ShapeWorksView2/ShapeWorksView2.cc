@@ -100,6 +100,13 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   this->setPregenSteps();
   this->updateSliders();
 
+
+  if ( !this->readReconstructionParams( argv[1] ) )
+  {
+    exit( -1 );
+  }
+
+
   if ( !this->readParameterFile( argv[1] ) )
   {
     exit( -1 );
@@ -115,7 +122,6 @@ ShapeWorksView2::ShapeWorksView2( int argc, char** argv )
   // Load the explanatory variables  - Praful
   this->readExplanatoryVariables( argv[1] );
 
-  this->readReconstructionParams( argv[1] );
 
   if ( this->regressionAvailable )
   {
@@ -1103,7 +1109,7 @@ bool ShapeWorksView2::readExplanatoryVariables( char* filename )
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksView2::readReconstructionParams(char *filename)
+bool ShapeWorksView2::readReconstructionParams( char *filename )
 {
   // Read parameter file
   TiXmlDocument doc( filename );
@@ -1111,7 +1117,7 @@ void ShapeWorksView2::readReconstructionParams(char *filename)
   if ( !loadOkay )
   {
     std::cerr << "Error: Invalid parameter file" << std::endl;
-    return;
+    return false;
   }
 
   TiXmlHandle docHandle( &doc );
@@ -1172,6 +1178,8 @@ void ShapeWorksView2::readReconstructionParams(char *filename)
   {
     this->prepareSurfaceReconstruction();
   }
+
+  return true;
 }
 
 //---------------------------------------------------------------------------

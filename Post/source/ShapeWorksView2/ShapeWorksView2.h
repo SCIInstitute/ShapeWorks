@@ -124,7 +124,7 @@ private:
 
   bool readParameterFile( char* filename );
   bool readExplanatoryVariables( char* filename );
-  void readReconstructionParams(char *filename);
+  bool readReconstructionParams( char *filename );
 
   void prepareSurfaceReconstruction();
 
