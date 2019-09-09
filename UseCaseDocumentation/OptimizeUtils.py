@@ -55,7 +55,7 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
 	file = open(xmlfilename, "w+")
 	file.write(data)
 
-create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir, curFactor):
+def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir, curFactor, lastPointFiles):
 	root = ET.Element('sample')
 	output_dir = ET.SubElement(root, 'output_dir')
 	output_dir.text = "\n" + outDir + "\n"
@@ -104,6 +104,13 @@ create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir, cu
 
 	if curFactor != 0:
 		# add in the pointfiles
+		points = ET.SubElement(root, 'point_files')
+		points.text = "\n"
+		for i in range(len(inPointFiles)):
+			t1 = points.text
+			t1 = t1 + lastPointFiles[i] + '\n'
+			points.text = t1
+
 	data = ET.tostring(root, encoding='unicode')
 	file = open(xmlfilename, "w+")
 	file.write(data)
@@ -155,19 +162,29 @@ def runShapeWorksOptimize_Basic(parentDir, inDataFiles, parameterDictionary):
 
 def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary):
 	numP_init = parameterDictionary['starting_particles']
-	num_levels = parameterDictionary['number_of_levels']
-	outDir = parentDir + '/' + str(numP) + '/'
+	num_levels = parameterDictionary['number_of_levels']	
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 
 	startFactor = int(np.floor(np.log2(numP_init)))
 	for i in range(num_levels):
+		outDir = parentDir + '/' + str(2**(startFactor + i)) + '/'
+		prevOutDir = parentDir + '/' + str(2**(startFactor + i - 1)) + '/'
 		parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
-		create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i)
+		inparts = []
+		for j in range(len(inDataFiles)):
+			inname = inDataFiles[j]
+			spt = inname.rsplit('/', 1)
+			inpath = spt[0] + '/'
+			outname = inname.replace(inpath, outDir)
+			lclname = outname.replace('.nrrd', '_local.particles')
+			inparts.append(lclname)
+		create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, inparts)
 		create_cpp_xml(parameterFile, parameterFile)
 		print(parameterFile)
 		execCommand = "ShapeWorksRun5.0 " + parameterFile
 		os.system(execCommand)
+
 	outPointsWorld = []
 	outPointsLocal = []
 	for i in range(len(inDataFiles)):
