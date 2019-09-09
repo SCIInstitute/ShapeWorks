@@ -81,7 +81,7 @@ void MeshManager::setUsePowerCrust( bool enabled )
 void MeshManager::generateMesh( const vnl_vector<double>& shape )
 {
   /// disable pre-generation for the moment
-  return;
+  //return;
 
   if ( this->usePowerCrust )
   {
@@ -182,6 +182,8 @@ void MeshManager::initializeThreads()
       workers[i]->getMeshGenerator()->setSampleSpacing( this->sampleSpacing );
       workers[i]->getMeshGenerator()->setSmoothingAmount( this->smoothingAmount );
       workers[i]->getMeshGenerator()->setUsePowerCrust( this->usePowerCrust );
+      workers[i]->getMeshGenerator()->set_surface_reconstructor( this->surfaceReconstructor_ );
+
       workers[i]->moveToThread( threads[i] );
       threads[i]->start();
     }

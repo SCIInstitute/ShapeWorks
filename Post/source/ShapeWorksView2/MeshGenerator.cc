@@ -58,8 +58,6 @@ MeshGenerator::MeshGenerator()
   this->windowSincFilter = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
   this->windowSincFilter->SetInputConnection( this->contourFilter->GetOutputPort() );
 
-  this->smoothFilter = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-  this->smoothFilter->SetInputConnection( this->contourFilter->GetOutputPort() );
 
   this->polydataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->polydataNormals->SplittingOff();

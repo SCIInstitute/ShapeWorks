@@ -60,7 +60,6 @@ private:
   vtkSmartPointer<vtkPolyData>             pointSet;
   vtkSmartPointer<vtkContourFilter>        contourFilter;
   vtkSmartPointer<vtkReverseSense>         reverseSense;
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
   vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
   vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
