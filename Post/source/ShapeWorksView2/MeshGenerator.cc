@@ -28,6 +28,7 @@
 //#include "vtkPowerCrustSurfaceReconstruction.h"
 #endif
 
+//---------------------------------------------------------------------------
 MeshGenerator::MeshGenerator()
 {
   this->usePowerCrust = false;
@@ -65,25 +66,30 @@ MeshGenerator::MeshGenerator()
   this->updatePipeline();
 }
 
+//---------------------------------------------------------------------------
 MeshGenerator::~MeshGenerator()
 {}
 
+//---------------------------------------------------------------------------
 void MeshGenerator::setNeighborhoodSize( int size )
 {
   this->surfaceReconstruction->SetNeighborhoodSize( size );
 }
 
+//---------------------------------------------------------------------------
 void MeshGenerator::setSampleSpacing( double spacing )
 {
   this->surfaceReconstruction->SetSampleSpacing( spacing );
 }
 
+//---------------------------------------------------------------------------
 void MeshGenerator::setUsePowerCrust( bool enabled )
 {
   this->usePowerCrust = enabled;
   this->updatePipeline();
 }
 
+//---------------------------------------------------------------------------
 void MeshGenerator::setSmoothingAmount( float amount )
 {
   if ( amount <= 0 )
@@ -100,12 +106,28 @@ void MeshGenerator::setSmoothingAmount( float amount )
   this->updatePipeline();
 }
 
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
   if (this->surface_reconstructor_ &&
       this->surface_reconstructor_->get_surface_reconstruction_avaiable())
   {
-    return this->surface_reconstructor_->build_mesh(shape);
+
+    vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
+
+
+    if (!this->smoothingEnabled)
+    {
+      return poly_data;
+    }
+
+    this->windowSincFilter->SetInputData(poly_data);
+    this->windowSincFilter->Update();
+    this->polydataNormals->Update();
+    // make a copy of the vtkPolyData output to return
+    vtkSmartPointer<vtkPolyData> poly_data2 = vtkSmartPointer<vtkPolyData>::New();
+    poly_data2->DeepCopy( this->polydataNormals->GetOutput() );
+    return poly_data2;
 
   }
   // copy shape points into point set
@@ -145,11 +167,13 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   return polyData;
 }
 
+//---------------------------------------------------------------------------
 void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor)
 {
   this->surface_reconstructor_ = reconstructor;
 }
 
+//---------------------------------------------------------------------------
 void MeshGenerator::updatePipeline()
 {
   if ( this->usePowerCrust && this->smoothingEnabled )
