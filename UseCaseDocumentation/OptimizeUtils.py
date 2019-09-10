@@ -14,6 +14,8 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
 	output_dir.text = "\n" + outDir + "\n"
 	number_of_particles = ET.SubElement(root, 'number_of_particles')
 	number_of_particles.text = "\n" + str(parameterDictionary['number_of_particles']) + "\n"
+	use_normals = ET.SubElement(root, 'use_normals')
+	use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
 	checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
 	checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
 	keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')
@@ -66,6 +68,8 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	N = int(2**(startFactor + curFactor))
 	number_of_particles = ET.SubElement(root, 'number_of_particles')
 	number_of_particles.text = "\n" + str(N) + "\n"
+	use_normals = ET.SubElement(root, 'use_normals')
+	use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
 	checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
 	checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
 	keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')

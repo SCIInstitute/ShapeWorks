@@ -172,6 +172,7 @@ if not os.path.exists(pointDir):
 if int(args.use_single_scale) != 0:
 	parameterDictionary = {
 		"number_of_particles" : 128,
+		"use_normals": 0,
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,
 		"iterations_per_split" : 1000,
@@ -198,6 +199,7 @@ else:
 	parameterDictionary = {
 		"starting_particles" : 32,
 		"number_of_levels" : 3, 
+		"use_normals": 0,
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,
 		"iterations_per_split" : 1000,
