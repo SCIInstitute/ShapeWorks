@@ -385,7 +385,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     Output Parameters:
     """
     outDir = os.path.join(parentDir , 'aligned/')
-    transoutDir = os.path.join(parentDir ,'transformation/')
+    transoutDir = os.path.join(outDir ,'transformations/')
 
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -394,7 +394,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 
     # identify the reference scan
-    refDir = os.path.join(parentDir , 'reference/')
+    refDir = os.path.join(outDir , 'reference/')
     if not os.path.exists(refDir):
         os.makedirs(refDir)
     spt = refFile.rsplit('/', 1)
@@ -428,8 +428,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 
     if processRaw:
-        rawoutDir = os.path.join(parentDir ,'images/')
-        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+        rawoutDir = os.path.join(outDir ,'images/')
+        binaryoutDir = os.path.join(outDir ,'segmentations/')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
