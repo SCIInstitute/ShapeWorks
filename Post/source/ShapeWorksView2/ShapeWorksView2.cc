@@ -1174,10 +1174,23 @@ bool ShapeWorksView2::readReconstructionParams( char *filename )
     inputsBuffer.str("");
   }
 
+  int num_clusters = static_cast<int>(this->distanceTransformFilenames_.size() * 0.30);
+
+  elem = docHandle.FirstChild("number_of_clusters").Element();
+  if (elem)
+  {
+    num_clusters = atof(elem->GetText());
+  }
+
+
   if (this->distanceTransformsAvailable)
   {
     this->prepareSurfaceReconstruction();
   }
+
+  auto surfaceReconstructor = this->meshManager.getSurfaceReconstructor();
+
+  surfaceReconstructor->set_number_of_clusters(num_clusters);
 
   return true;
 }

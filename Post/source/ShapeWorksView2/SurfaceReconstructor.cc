@@ -24,9 +24,16 @@ void SurfaceReconstructor::set_filenames(std::vector<string> distance_transform_
 }
 
 //---------------------------------------------------------------------------
+void SurfaceReconstructor::set_number_of_clusters(int num_clusters)
+{
+  this->num_clusters_ = num_clusters;
+  this->reconstructor_.setNumClusters(this->num_clusters_);
+  std::cerr << "Setting number of reconstruction clusters to " << this->num_clusters_ << "\n";
+}
+
+//---------------------------------------------------------------------------
 void SurfaceReconstructor::generate_mean_dense()
 {
-
 
   std::cerr << "Generate Mean Dense!\n";
 
@@ -107,8 +114,7 @@ vtkSmartPointer<vtkPolyData> SurfaceReconstructor::build_mesh(const vnl_vector<d
 
   unsigned int numPoints = static_cast<unsigned int>(shape.size() / 3);
   unsigned int k = 0;
-  for ( unsigned int i = 0; i < numPoints; i++ )
-  {
+  for (unsigned int i = 0; i < numPoints; i++) {
     double x = shape[k++];
     double y = shape[k++];
     double z = shape[k++];
@@ -120,7 +126,6 @@ vtkSmartPointer<vtkPolyData> SurfaceReconstructor::build_mesh(const vnl_vector<d
   }
 
   return this->reconstructor_.getMesh(points);
-
 }
 
 //---------------------------------------------------------------------------

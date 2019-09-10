@@ -55,6 +55,9 @@ public:
                      std::vector< std::string > local_point_filenames,
                      std::vector< std::string > world_point_filenames);
 
+
+  void set_number_of_clusters(int num_clusters);
+
   void generate_mean_dense();
 
   bool get_surface_reconstruction_avaiable();
@@ -69,4 +72,6 @@ private:
   std::vector< std::string > distance_transform_filenames_;
   std::vector< std::string > world_point_filenames_;
   std::vector< std::string > local_point_filenames_;
+
+  int num_clusters_ = -1;
 };
