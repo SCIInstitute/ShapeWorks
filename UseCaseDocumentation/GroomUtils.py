@@ -8,155 +8,317 @@ import xml.etree.ElementTree as ET
 
 from CommonUtils import *
 
-def applyIsotropicResampling(parentDir, inDataList, isoSpacing, isCenterOn=True, isBinaryImage=True):
-	"""
-	Author: Riddhish Bhalodia
-	Date: 8th August 2019
+def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing, isCenterOn=True, isBinaryImage=True, processRaw = False):
+    """
+    Author: Riddhish Bhalodia
+    Date: 8th August 2019
 
-	This function takes in a filelist and produces the resampled files in the
-	appropriate directory.
-	Input Parameters:
-	Output Parameters:
-	"""
-	outDir = os.path.join(parentDir , 'resampled/')
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
-	outDataList = []
-	for i in range(len(inDataList)):
-		inname = inDataList[i]
-		spt = inname.rsplit('/', 1)
-		initPath = spt[0] + '/'
-		filename = spt[1]
-		outname = inname.replace(initPath, outDir)
-		outname = outname.replace('.nrrd', '.isores.nrrd')
-		outDataList.append(outname)
-		print(" ")
-		print("########### Resampling ###############")
-		cprint(("Input Filename : ", inname), 'cyan')
-		cprint(("Output Filename : ", outname), 'yellow')
-		print("######################################")
-		print(" ")
-		if isBinaryImage:
-			if isCenterOn:
-				execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
-				os.system(execCommand)
-			else:
-				execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(isoSpacing) + " --isCenterImageOn 0 --isBinaryImage 1"
-				os.system(execCommand)
-		else:
-			if isCenterOn:
-				execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(isoSpacing) + " --isCenterImageOn 1"
-				os.system(execCommand)
-			else:
-				execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(isoSpacing) + " --isCenterImageOn 0"
-				os.system(execCommand)
+    This function takes in a filelist and produces the resampled files in the
+    appropriate directory.
+    Input Parameters:
+    Output Parameters:
+    """
+    outDir = os.path.join(parentDir , 'resampled/')
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
 
-	return outDataList
+    if processRaw:
+        #process segmentation files
+        binaryoutDir = os.path.join(parentDir,'segmentations/')
 
-def applyPadding(parentDir, inDataList, padSize, padValue=0):
-	"""
-	Author: Riddhish Bhalodia
-	Date: 8th August 2019
+        if not os.path.exists(binaryoutDir):
+            os.makedirs(binaryoutDir)
+        outDataListSeg = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, binaryoutDir)
+            outname = outname.replace('.nrrd', '.isores.nrrd')
+            outDataListSeg.append(outname)
+            print(" ")
+            print("########### Resampling ###############")
+            cprint(("Input Filename : ", inname), 'cyan')
+            cprint(("Output Filename : ", outname), 'yellow')
+            print("######################################")
+            print(" ")
+            if isBinaryImage:
+                if isCenterOn:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
+                    os.system(execCommand)
+                else:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 0 --isBinaryImage 1"
+                    os.system(execCommand)
+            else:
+                if isCenterOn:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 1"
+                    os.system(execCommand)
+                else:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 0"
+                    os.system(execCommand)
 
-	This function takes in a filelist and produces the padded files in the
-	appropriate directory.
-	Input Parameters:
-	Output Parameters:
-	"""
-	outDir = os.path.join(parentDir , 'padded/')
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
-	outDataList = []
-	for i in range(len(inDataList)):
-		inname = inDataList[i]
-		spt = inname.rsplit('/', 1)
-		initPath = spt[0] + '/'
-		filename = spt[1]
-		outname = inname.replace(initPath, outDir)
-		outname = outname.replace('.nrrd', '.pad.nrrd')
-		outDataList.append(outname)
-		print(" ")
-		print("############## Padding ###############")
-		cprint(("Input Filename : ", inname), 'cyan')
-		cprint(("Output Filename : ", outname), 'yellow')
-		print("######################################")
-		print(" ")
-		execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(padSize) + " --paddingValue " + str(padValue)
-		os.system(execCommand)
+        #process images files
+        isBinaryImage = False
+        rawoutDir = os.path.join(parentDir ,'images/')
 
-	return outDataList
+        if not os.path.exists(rawoutDir):
+            os.makedirs(rawoutDir)
+
+
+        outDataListImg = []
+        for i in range(len(inDataListImg)):
+            inname = inDataListImg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, rawoutDir)
+            outname = outname.replace('.nrrd', '.isores.nrrd')
+            outDataListImg.append(outname)
+            print(" ")
+            print("########### Resampling ###############")
+            cprint(("Input Filename : ", inname), 'cyan')
+            cprint(("Output Filename : ", outname), 'yellow')
+            print("######################################")
+            print(" ")
+            if isBinaryImage:
+                if isCenterOn:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
+                    os.system(execCommand)
+                else:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 0 --isBinaryImage 1"
+                    os.system(execCommand)
+            else:
+                if isCenterOn:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 1"
+                    os.system(execCommand)
+                else:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 0"
+                    os.system(execCommand)
+
+        return [outDataListSeg, outDataListImg]
+
+    else:
+        outDataList = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, outDir)
+            outname = outname.replace('.nrrd', '.isores.nrrd')
+            outDataList.append(outname)
+            print(" ")
+            print("########### Resampling ###############")
+            cprint(("Input Filename : ", inname), 'cyan')
+            cprint(("Output Filename : ", outname), 'yellow')
+            print("######################################")
+            print(" ")
+            if isBinaryImage:
+                if isCenterOn:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
+                    os.system(execCommand)
+                else:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 0 --isBinaryImage 1"
+                    os.system(execCommand)
+            else:
+                if isCenterOn:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 1"
+                    os.system(execCommand)
+                else:
+                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
+                        isoSpacing) + " --isCenterImageOn 0"
+                    os.system(execCommand)
+
+        return outDataList
+
+
+def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, processRaw=False):
+    """
+    Author: Riddhish Bhalodia
+    Date: 8th August 2019
+
+    This function takes in a filelist and produces the padded files in the
+    appropriate directory.
+    Input Parameters:
+    Output Parameters:
+    """
+    outDir = os.path.join(parentDir , 'padded/')
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+
+
+
+
+    if processRaw:
+        # process segmentations
+        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+
+        if not os.path.exists(binaryoutDir):
+            os.makedirs(binaryoutDir)
+        outDataListSeg = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, binaryoutDir)
+            outname = outname.replace('.nrrd', '.pad.nrrd')
+            outDataListSeg.append(outname)
+            print(" ")
+            print("############## Padding ###############")
+            cprint(("Input Filename : ", inname), 'cyan')
+            cprint(("Output Filename : ", outname), 'yellow')
+            print("######################################")
+            print(" ")
+            execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(
+                padSize) + " --paddingValue " + str(padValue)
+            os.system(execCommand)
+
+        #process images
+        rawoutDir = os.path.join(parentDir ,'images/')
+
+        if not os.path.exists(rawoutDir):
+            os.makedirs(rawoutDir)
+
+        outDataListImg = []
+        for i in range(len(inDataListImg)):
+            inname = inDataListImg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, rawoutDir)
+            outname = outname.replace('.nrrd', '.pad.nrrd')
+            outDataListImg.append(outname)
+            print(" ")
+            print("############## Padding ###############")
+            cprint(("Input Filename : ", inname), 'cyan')
+            cprint(("Output Filename : ", outname), 'yellow')
+            print("######################################")
+            print(" ")
+            execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(
+                padSize) + " --paddingValue " + str(padValue)
+            os.system(execCommand)
+
+        return [outDataListSeg, outDataListImg]
+
+    else:
+        outDataList = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, outDir)
+            outname = outname.replace('.nrrd', '.pad.nrrd')
+            outDataList.append(outname)
+            print(" ")
+            print("############## Padding ###############")
+            cprint(("Input Filename : ", inname), 'cyan')
+            cprint(("Output Filename : ", outname), 'yellow')
+            print("######################################")
+            print(" ")
+            execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(
+                padSize) + " --paddingValue " + str(padValue)
+            os.system(execCommand)
+
+        return outDataList
 
 def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False):
-	"""
-	Author: Riddhish Bhalodia
-	Date: 8th August 2019
+    """
+    Author: Riddhish Bhalodia
+    Date: 8th August 2019
 
-	This function takes in a filelist and produces the center of mass aligned
-	files in the appropriate directory. If the process_raw flag is set True, 
-	then it also applys the same transformation on the corresponding list of 
-	raw files (MRI/CT ...)
+    This function takes in a filelist and produces the center of mass aligned
+    files in the appropriate directory. If the process_raw flag is set True,
+    then it also applys the same transformation on the corresponding list of
+    raw files (MRI/CT ...)
 
-	Input Parameters:
-	Output Parameters:
-	"""
-	outDir = os.path.join(parentDir,  'com_aligned/')
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
-	
-	if processRaw:
-		outDataListSeg = []
-		outDataListImg = []
-		for i in range(len(inDataListSeg)):
-			innameSeg = inDataListSeg[i]
-			innameImg = inDataListImg[i]
-			sptSeg = innameSeg.rsplit('/', 1)
-			initPath = sptSeg[0] + '/'
-			filename = sptSeg[1]
-			outnameSeg = innameSeg.replace(initPath, outDir)
-			outnameSeg = outnameSeg.replace('.nrrd', '.com.nrrd')
-			paramname = outnameSeg.replace('.nrrd', '.txt')
-			outDataListSeg.append(outnameSeg)
-			sptImg = innameImg.rsplit('/', 1)
-			initPath = sptImg[0] + '/'
-			filename = sptImg[1]
-			outnameImg = innameImg.replace(initPath, outDir)
-			outnameImg = outnameImg.replace('.nrrd', '.com.nrrd')
-			outDataListImg.append(outnameImg)
-			print(" ")
-			print("############# COM Alignment ###############")
-			cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
-			cprint(("Input Image Filename : ", innameImg), 'cyan')
-			cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
-			cprint(("Output Image Filename : ", outnameImg), 'yellow')
-			cprint(("Output Parameter Filename : ", paramname), 'yellow')
-			print("###########################################")
-			print(" ")
-			execCommand = "TranslateShapeToImageOrigin --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --useCenterOfMass 1 --parameterFilename " + paramname + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
-			os.system(execCommand)
+    Input Parameters:
+    Output Parameters:
+    """
+    outDir = os.path.join(parentDir , 'com_aligned/')
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
 
-		return [outDataListSeg, outDataListImg]
-	else:
-		outDataListSeg = []
-		for i in range(len(inDataListSeg)):
-			inname = inDataListSeg[i]
-			spt = inname.rsplit('/', 1)
-			initPath = spt[0] + '/'
-			filename = spt[1]
-			outname = inname.replace(initPath, outDir)
-			outname = outname.replace('.nrrd', '.com.nrrd')
-			paramname = outname.replace('.nrrd', '.txt')
-			outDataListSeg.append(outname)
-			print(" ")
-			print("############# COM Alignment ###############")
-			cprint(("Input Segmentation Filename : ", inname), 'cyan')
-			cprint(("Output Segmentation Filename : ", outname), 'yellow')
-			cprint(("Output Parameter Filename : ", paramname), 'yellow')
-			print("###########################################")
-			print(" ")
-			execCommand = "TranslateShapeToImageOrigin --inFilename " + inname + " --outFilename " + outname + " --useCenterOfMass 1 --parameterFilename " + paramname 
-			os.system(execCommand)
 
-		return outDataListSeg
+
+
+    if processRaw:
+        rawoutDir = os.path.join(parentDir ,'images/')
+        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+
+        if not os.path.exists(rawoutDir):
+            os.makedirs(rawoutDir)
+
+        if not os.path.exists(binaryoutDir):
+            os.makedirs(binaryoutDir)
+
+        outDataListSeg = []
+        outDataListImg = []
+        for i in range(len(inDataListSeg)):
+            innameSeg = inDataListSeg[i]
+            innameImg = inDataListImg[i]
+            sptSeg = innameSeg.rsplit('/', 1)
+            initPath = sptSeg[0] + '/'
+            filename = sptSeg[1]
+            outnameSeg = innameSeg.replace(initPath, binaryoutDir)
+            outnameSeg = outnameSeg.replace('.nrrd', '.com.nrrd')
+            paramname = outnameSeg.replace('.nrrd', '.txt')
+            outDataListSeg.append(outnameSeg)
+            sptImg = innameImg.rsplit('/', 1)
+            initPath = sptImg[0] + '/'
+            filename = sptImg[1]
+            outnameImg = innameImg.replace(initPath, rawoutDir)
+            outnameImg = outnameImg.replace('.nrrd', '.com.nrrd')
+            outDataListImg.append(outnameImg)
+            print(" ")
+            print("############# COM Alignment ###############")
+            cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
+            cprint(("Input Image Filename : ", innameImg), 'cyan')
+            cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
+            cprint(("Output Image Filename : ", outnameImg), 'yellow')
+            cprint(("Output Parameter Filename : ", paramname), 'yellow')
+            print("###########################################")
+            print(" ")
+            execCommand = "TranslateShapeToImageOrigin --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --useCenterOfMass 1 --parameterFilename " + paramname + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
+            os.system(execCommand)
+
+        return [outDataListSeg, outDataListImg]
+    else:
+        outDataListSeg = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, outDir)
+            outname = outname.replace('.nrrd', '.com.nrrd')
+            paramname = outname.replace('.nrrd', '.txt')
+            outDataListSeg.append(outname)
+            print(" ")
+            print("############# COM Alignment ###############")
+            cprint(("Input Segmentation Filename : ", inname), 'cyan')
+            cprint(("Output Segmentation Filename : ", outname), 'yellow')
+            cprint(("Output Parameter Filename : ", paramname), 'yellow')
+            print("###########################################")
+            print(" ")
+            execCommand = "TranslateShapeToImageOrigin --inFilename " + inname + " --outFilename " + outname + " --useCenterOfMass 1 --parameterFilename " + paramname
+            os.system(execCommand)
+
+        return outDataListSeg
+
 
 def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
 	root = ET.Element('sample')
@@ -183,174 +345,305 @@ def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, re
 	file = open(xmlfilename, "w+")
 	file.write(data)
 
-def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, smoothingIterations=1, isoValue=0, icpIterations=10):
-	"""
-	Author: Riddhish Bhalodia
-	Date: 8th August 2019
 
-	This function takes in a filelist and produces the center of mass aligned
-	files in the appropriate directory. If the process_raw flag is set True, 
-	then it also applys the same transformation on the corresponding list of 
-	raw files (MRI/CT ...)
 
-	Input Parameters:
-	Output Parameters:
-	"""
-	outDir = os.path.join(parentDir , 'aligned/')
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
-	# identify the reference scan
-	refDir = outDir + 'reference/'
-	if not os.path.exists(refDir):
-		os.makedirs(refDir)
-	spt = refFile.rsplit('/', 1)
-	initPath = spt[0] + '/'
-	newRefFile = refFile.replace(initPath, refDir)
-	
-	ref_dtnrrdfilename=newRefFile.replace('.nrrd', '.DT.nrrd')
-	ref_tpdtnrrdfilename=newRefFile.replace('.nrrd', '.tpSmoothDT.nrrd')
-	ref_isonrrdfilename=newRefFile.replace('.nrrd', '.ISO.nrrd')
-	ref_binnrrdfilename=newRefFile.replace('.nrrd', '.BIN.nrrd')
-	
-	# reference image processing
-	execCommand = "ExtractGivenLabelImage --inFilename " + refFile + " --outFilename " + refFile + " --labelVal 1"
-	os.system(execCommand)
-	execCommand = "CloseHoles --inFilename " + refFile + " --outFilename " + refFile 
-	os.system(execCommand)
-	execCommand = "AntiAliasing --inFilename " + refFile + " --outFilename " + ref_dtnrrdfilename + " --numIterations " + str(antialiasIterations) 
-	os.system(execCommand)
-	execCommand = "FastMarching --inFilename " + ref_dtnrrdfilename + " --outFilename " + ref_dtnrrdfilename + " --isoValue " + str(isoValue) 
-	os.system(execCommand)
 
-	xmlfilename=newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
-	create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename)
-	create_cpp_xml(xmlfilename, xmlfilename)
-	execCommand = "TopologyPreservingSmoothing " + xmlfilename
-	os.system(execCommand) 
-	execCommand = "ThresholdImages --inFilename " + ref_tpdtnrrdfilename + " --outFilename " + ref_binnrrdfilename + " --lowerThresholdLevel -0.000001" 
-	os.system(execCommand)
+def FindMedianImage(inDataList):
+    """
+        This find the median file between all the input files
+    """
+    IMG = []
+    for i in range(len(inDataList)):
+        print(inDataList[i])
+        IMG.append(sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i])))
+    COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
 
-	outDataList = []
-	for i in range(len(inDataList)):
-		inname = inDataList[i]
-		spt = inname.rsplit('/', 1)
-		initPath = spt[0] + '/'
-		filename = spt[1]
-		outname = inname.replace(initPath, outDir)
-		outname = outname.replace('.nrrd', '.aligned.nrrd')
-		outDataList.append(outname)
+    idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
+    print(" ")
+    print("############# Rigid Alignment #############")
+    cprint(("The reference file for rigid alignment is found"), 'green')
+    cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
+    print("###########################################")
+    print(" ")
+    return inDataList[idx]
 
-		dtnrrdfilename=outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
-		tpdtnrrdfilename=outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
-		isonrrdfilename=outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-		binnrrdfilename=outname.replace('.aligned.nrrd', '.aligned.BIN.nrrd')
-		print(" ")
-		print("############# Rigid Alignment #############")
-		cprint(("Input Segmentation Filename : ", inname), 'cyan')
-		cprint(("Input Reference Filename : ", refFile), 'cyan')
-		cprint(("Output Segmentation Filename : ", outname), 'yellow')
-		print("###########################################")
-		print(" ")
-		execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
-		os.system(execCommand)
-		execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname 
-		os.system(execCommand)
-		execCommand = "AntiAliasing --inFilename " + inname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(antialiasIterations) 
-		os.system(execCommand)
-		execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(isoValue) 
-		os.system(execCommand)
 
-		xmlfilename=outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
-		create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
-		create_cpp_xml(xmlfilename, xmlfilename)
-		execCommand = "TopologyPreservingSmoothing " + xmlfilename
-		os.system(execCommand) 	
-		execCommand = "ICPRigid3DImageRegistration --targetDistanceMap " + ref_tpdtnrrdfilename + " --sourceDistanceMap " + tpdtnrrdfilename + " --sourceSegmentation " + inname + " --icpIterations " + str(icpIterations) + " --visualizeResult 0 --solutionSegmentation " + outname
-		os.system(execCommand)
 
-	return outDataList
+
+def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antialiasIterations=20,
+                                  smoothingIterations=1, isoValue=0, icpIterations=10, processRaw = False):
+    """
+    Author: Riddhish Bhalodia
+    Date: 8th August 2019
+
+    This function takes in a filelists(binary and raw) and produces rigid aligned
+    files in the appropriate directory. If the process_raw flag is set True,
+    then it also applys the same transformation on the corresponding list of
+    raw files (MRI/CT ...)
+
+    Input Parameters:
+    Output Parameters:
+    """
+    outDir = os.path.join(parentDir , 'aligned/')
+    transoutDir = os.path.join(parentDir ,'transformation/')
+
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+    if not os.path.exists(transoutDir):
+        os.makedirs(transoutDir)
+
+
+    # identify the reference scan
+    refDir = os.path.join(parentDir , 'reference/')
+    if not os.path.exists(refDir):
+        os.makedirs(refDir)
+    spt = refFile.rsplit('/', 1)
+    initPath = spt[0] + '/'
+    newRefFile = refFile.replace(initPath, refDir)
+
+    ref_dtnrrdfilename = newRefFile.replace('.nrrd', '.DT.nrrd')
+    ref_tpdtnrrdfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.nrrd')
+    ref_isonrrdfilename = newRefFile.replace('.nrrd', '.ISO.nrrd')
+    ref_binnrrdfilename = newRefFile.replace('.nrrd', '.BIN.nrrd')
+
+    # reference image processing
+    execCommand = "ExtractGivenLabelImage --inFilename " + refFile + " --outFilename " + refFile + " --labelVal 1"
+    os.system(execCommand)
+    execCommand = "CloseHoles --inFilename " + refFile + " --outFilename " + refFile
+    os.system(execCommand)
+    execCommand = "AntiAliasing --inFilename " + refFile + " --outFilename " + ref_dtnrrdfilename + " --numIterations " + str(
+        antialiasIterations)
+    os.system(execCommand)
+    execCommand = "FastMarching --inFilename " + ref_dtnrrdfilename + " --outFilename " + ref_dtnrrdfilename + " --isoValue " + str(
+        isoValue)
+    os.system(execCommand)
+
+    xmlfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
+    create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename)
+    create_cpp_xml(xmlfilename, xmlfilename)
+    execCommand = "TopologyPreservingSmoothing " + xmlfilename
+    os.system(execCommand)
+    execCommand = "ThresholdImages --inFilename " + ref_tpdtnrrdfilename + " --outFilename " + ref_binnrrdfilename + " --lowerThresholdLevel -0.000001"
+    os.system(execCommand)
+
+
+    if processRaw:
+        rawoutDir = os.path.join(parentDir ,'images/')
+        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+
+        if not os.path.exists(rawoutDir):
+            os.makedirs(rawoutDir)
+
+        if not os.path.exists(binaryoutDir):
+            os.makedirs(binaryoutDir)
+
+        outRawDataList=[]
+        outSegDataList=[]
+        for i in range(len(inDataListSeg)):
+            seginname = inDataListSeg[i]
+            spt = seginname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            segoutname = seginname.replace(initPath, binaryoutDir)
+            segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
+            transoutname = seginname.replace(initPath, transoutDir)
+            transformation = transoutname.replace('.nrrd', '.transformationMatrix.txt')
+            outSegDataList.append(segoutname)
+
+            rawinname = inDataListImg[i]
+            sptR = rawinname.rsplit('/', 1)
+            initPath = sptR[0] + '/'
+            filename = sptR[1]
+            rawoutname = rawinname.replace(initPath, rawoutDir)
+            rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
+            outRawDataList.append(rawoutname)
+
+            dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
+            tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
+            isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
+            binnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.BIN.nrrd')
+            print(" ")
+            print("############# Rigid Alignment #############")
+            cprint(("Input Segmentation Filename : ", seginname), 'cyan')
+            cprint(("Input Reference Filename : ", refFile), 'cyan')
+            cprint(("Input Raw Filename : ", rawinname), 'cyan')
+            cprint(("Output Segmentation Filename : ", segoutname), 'yellow')
+            cprint(("Output Raw Filename : ", rawoutname), 'yellow')
+            cprint(("Output Transformation Matrix : ", transformation), 'yellow')
+            print("###########################################")
+            print(" ")
+            execCommand = "ExtractGivenLabelImage --inFilename " + seginname + " --outFilename " + seginname + " --labelVal 1"
+            os.system(execCommand)
+            execCommand = "CloseHoles --inFilename " + seginname + " --outFilename " + seginname
+            os.system(execCommand)
+            execCommand = "AntiAliasing --inFilename " + seginname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(
+                antialiasIterations)
+            os.system(execCommand)
+            execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(
+                isoValue)
+            os.system(execCommand)
+
+            xmlfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
+            create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
+            create_cpp_xml(xmlfilename, xmlfilename)
+            execCommand = "TopologyPreservingSmoothing " + xmlfilename
+            os.system(execCommand)
+            execCommand = "ICPRigid3DImageRegistration --targetDistanceMap " + ref_tpdtnrrdfilename + " --sourceDistanceMap " + tpdtnrrdfilename + " --sourceSegmentation " + seginname + " --sourceRaw " + rawinname + " --icpIterations " + str(
+                icpIterations) + " --visualizeResult 0 --solutionSegmentation " + segoutname + " --solutionRaw " + rawoutname + " --solutionTransformation " + transformation
+            os.system(execCommand)
+
+        return  [outSegDataList, outRawDataList]
+
+    else:
+
+        outDataList = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, outDir)
+            outname = outname.replace('.nrrd', '.aligned.nrrd')
+            transoutname = inname.replace(initPath, transoutDir)
+            transformation = transoutname.replace('.nrrd', '.tarnsormationMatrix.txt')
+            outDataList.append(outname)
+
+            dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
+            tpdtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
+            isonrrdfilename = outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
+            binnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.BIN.nrrd')
+            print(" ")
+            print("############# Rigid Alignment #############")
+            cprint(("Input Segmentation Filename : ", inname), 'cyan')
+            cprint(("Input Reference Filename : ", refFile), 'cyan')
+            cprint(("Output Segmentation Filename : ", outname), 'yellow')
+            cprint(("Output Transformation Matrix : ", transformation), 'yellow')
+            print("###########################################")
+            print(" ")
+            execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
+            os.system(execCommand)
+            execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname
+            os.system(execCommand)
+            execCommand = "AntiAliasing --inFilename " + inname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(
+                antialiasIterations)
+            os.system(execCommand)
+            execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(
+                isoValue)
+            os.system(execCommand)
+
+            xmlfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
+            create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
+            create_cpp_xml(xmlfilename, xmlfilename)
+            execCommand = "TopologyPreservingSmoothing " + xmlfilename
+            os.system(execCommand)
+            execCommand = "ICPRigid3DImageRegistration --targetDistanceMap " + ref_tpdtnrrdfilename + " --sourceDistanceMap " + tpdtnrrdfilename + " --sourceSegmentation " + inname + " --icpIterations " + str(
+                icpIterations) + " --visualizeResult 0 --solutionSegmentation " + outname + " --solutionTransformation " + transformation
+            os.system(execCommand)
+
+        return outDataList
 
 def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, processRaw=False):
-	"""
-	Author: Riddhish Bhalodia
-	Date: 8th August 2019
+    """
+    Author: Riddhish Bhalodia
+    Date: 8th August 2019
 
-	This function takes in a filelist and crops them according to the largest
-	bounding box which it discovers
-	Input Parameters:
-	Output Parameters:
-	"""
-	outDir = os.path.join(parentDir , 'cropped/')
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
-	# first create a txtfile with all the scan names in it.
-	txtfile = outDir + "dataList.txt"
+    This function takes in a filelist and crops them according to the largest
+    bounding box which it discovers
+    Input Parameters:
+    Output Parameters:
+    """
+    outDir = os.path.join(parentDir , 'cropped/')
 
-	with open(txtfile, 'w') as filehandle:
-		for listitem in inDataListSeg:
-			filehandle.write('%s\n' % listitem)
-	
-	outPrefix = outDir + "largest_bounding_box"
-	execCommand = "FindLargestBoundingBox --paddingSize " + str(paddingSize) + " --inFilename " + txtfile + " --outPrefix " + outPrefix
-	os.system(execCommand) 
-	# read all the bounding box files for cropping
-	bb0 = np.loadtxt(outPrefix + "_bb0.txt")
-	bb1 = np.loadtxt(outPrefix + "_bb1.txt")
-	bb2 = np.loadtxt(outPrefix + "_bb2.txt")
-	smI0 = np.loadtxt(outPrefix + "_smallestIndex0.txt")
-	smI1 = np.loadtxt(outPrefix + "_smallestIndex1.txt")
-	smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
 
-	if processRaw:
-		outDataListSeg = []
-		outDataListImg = []
-		for i in range(len(inDataListSeg)):
-			innameSeg = inDataListSeg[i]
-			innameImg = inDataListImg[i]
-			sptSeg = innameSeg.rsplit('/', 1)
-			initPath = sptSeg[0] + '/'
-			filename = sptSeg[1]
-			outnameSeg = innameSeg.replace(initPath, outDir)
-			outnameSeg = outnameSeg.replace('.nrrd', '.cropped.nrrd')
-			outDataListSeg.append(outnameSeg)
-			sptImg = innameImg.rsplit('/', 1)
-			initPath = sptImg[0] + '/'
-			filename = sptImg[1]
-			outnameImg = innameImg.replace(initPath, outDir)
-			outnameImg = outnameImg.replace('.nrrd', '.cropped.nrrd')
-			outDataListImg.append(outnameImg)
-			print(" ")
-			print("############## Cropping ##############")
-			cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
-			cprint(("Input Image Filename : ", innameImg), 'cyan')
-			cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
-			cprint(("Output Image Filename : ", outnameImg), 'yellow')
-			print("######################################")
-			print(" ")
-			execCommand = "CropImages --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --bbX " + str(bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(smI2) + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
-			os.system(execCommand)
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
 
-		return [outDataListSeg, outDataListImg]
-	else:
-		outDataList = []
-		for i in range(len(inDataListSeg)):
-			inname = inDataListSeg[i]
-			spt = inname.rsplit('/', 1)
-			initPath = spt[0] + '/'
-			filename = spt[1]
-			outname = inname.replace(initPath, outDir)
-			outname = outname.replace('.nrrd', '.cropped.nrrd')
-			outDataList.append(outname)
-			print(" ")
-			print("############## Cropping ##############")
-			cprint(("Input Filename : ", inname), 'cyan')
-			cprint(("Output Filename : ", outname), 'yellow')
-			print("######################################")
-			print(" ")
-			execCommand = "CropImages --inFilename " + inname + " --outFilename " + outname + " --bbX " + str(bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(smI2) 
-			os.system(execCommand)
+    cropinfoDir = os.path.join(parentDir ,'crop_info/')
+    if not os.path.exists(cropinfoDir):
+        os.makedirs(cropinfoDir)
 
-		return outDataList
+    # first create a txtfile with all the scan names in it.
+    txtfile = cropinfoDir + "_dataList.txt"
+
+    with open(txtfile, 'w') as filehandle:
+        for listitem in inDataListSeg:
+            filehandle.write('%s\n' % listitem)
+
+
+    outPrefix = cropinfoDir + "largest_bounding_box"
+    execCommand = "FindLargestBoundingBox --paddingSize " + str(
+        paddingSize) + " --inFilename " + txtfile + " --outPrefix " + outPrefix
+    os.system(execCommand)
+    # read all the bounding box files for cropping
+    bb0 = np.loadtxt(outPrefix + "_bb0.txt")
+    bb1 = np.loadtxt(outPrefix + "_bb1.txt")
+    bb2 = np.loadtxt(outPrefix + "_bb2.txt")
+    smI0 = np.loadtxt(outPrefix + "_smallestIndex0.txt")
+    smI1 = np.loadtxt(outPrefix + "_smallestIndex1.txt")
+    smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
+
+    if processRaw:
+        rawoutDir = os.path.join(parentDir ,'images/')
+        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+
+        if not os.path.exists(rawoutDir):
+            os.makedirs(rawoutDir)
+        if not os.path.exists(binaryoutDir):
+            os.makedirs(binaryoutDir)
+        outDataListSeg = []
+        outDataListImg = []
+        for i in range(len(inDataListSeg)):
+            innameSeg = inDataListSeg[i]
+            innameImg = inDataListImg[i]
+            sptSeg = innameSeg.rsplit('/', 1)
+            initPath = sptSeg[0] + '/'
+            filename = sptSeg[1]
+            outnameSeg = innameSeg.replace(initPath, binaryoutDir)
+            outnameSeg = outnameSeg.replace('.nrrd', '.cropped.nrrd')
+            outDataListSeg.append(outnameSeg)
+            sptImg = innameImg.rsplit('/', 1)
+            initPath = sptImg[0] + '/'
+            filename = sptImg[1]
+            outnameImg = innameImg.replace(initPath, rawoutDir)
+            outnameImg = outnameImg.replace('.nrrd', '.cropped.nrrd')
+            outDataListImg.append(outnameImg)
+            print(" ")
+            print("############## Cropping ##############")
+            cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
+            cprint(("Input Image Filename : ", innameImg), 'cyan')
+            cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
+            cprint(("Output Image Filename : ", outnameImg), 'yellow')
+            print("######################################")
+            print(" ")
+            execCommand = "CropImages --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --bbX " + str(
+                bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(
+                smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(
+                smI2) + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
+            os.system(execCommand)
+
+        return [outDataListSeg, outDataListImg]
+    else:
+        outDataList = []
+        for i in range(len(inDataListSeg)):
+            inname = inDataListSeg[i]
+            spt = inname.rsplit('/', 1)
+            initPath = spt[0] + '/'
+            filename = spt[1]
+            outname = inname.replace(initPath, outDir)
+            outname = outname.replace('.nrrd', '.cropped.nrrd')
+            outDataList.append(outname)
+            print(" ")
+            print("############## Cropping ##############")
+            cprint(("Input Filename : ", inname), 'cyan')
+            cprint(("Output Filename : ", outname), 'yellow')
+            print("######################################")
+            print(" ")
+            execCommand = "CropImages --inFilename " + inname + " --outFilename " + outname + " --bbX " + str(
+                bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(
+                smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(smI2)
+            os.system(execCommand)
+
+        return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
 	root = ET.Element('sample')
