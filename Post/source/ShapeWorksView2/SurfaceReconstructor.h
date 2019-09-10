@@ -32,15 +32,15 @@ public:
   typedef itk::CompactlySupportedRBFSparseKernelTransform < CoordinateRepType,
                                                             3> RBFTransformType;
   typedef itk::ThinPlateSplineKernelTransform2< CoordinateRepType, 3> ThinPlateSplineType;
+
   typedef itk::LinearInterpolateImageFunction<ImageType, double > InterpolatorType;
 
-  typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
+  typedef Reconstruction < itk::CompactlySupportedRBFSparseKernelTransform,
                            itk::LinearInterpolateImageFunction,
                            CoordinateRepType, PixelType, ImageType> ReconstructionType;
+
   typedef typename ReconstructionType::PointType PointType;
   typedef typename ReconstructionType::PointArrayType PointArrayType;
-
-
 
   SurfaceReconstructor();
 
@@ -50,11 +50,9 @@ public:
 
   void generate_mean_dense();
 
-
   bool get_surface_reconstruction_avaiable();
 
-  vtkSmartPointer<vtkPolyData> build_mesh( const vnl_vector<double>& shape );
-
+  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape);
 
 private:
   ReconstructionType reconstructor_;
