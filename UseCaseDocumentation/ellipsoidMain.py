@@ -192,6 +192,7 @@ parameterDictionary = {
 """
 Now we execute the particle optimization function.
 """
+
 [localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
 
 """
@@ -359,17 +360,12 @@ PCA modes of variation representing the given shape population can be
 visualized.
 """
 
-print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
+print("\nStep 9. Analysis - Launch ShapeWorksView2\n")
 if args.interactive:
         input("Press Enter to continue")
 
-launchShapeWorksView2(pointDir, worldPointFiles)
+launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
 
-print("\nStep 10. Analysis - Launch ShapeWorksView2 - dense correspondence model.\n")
-if args.interactive:
-        input("Press Enter to continue")
-
-launchShapeWorksView2(meshDir_global, worldDensePointFiles)
 
 print("\nShapeworks Pipeline Complete!")

@@ -27,6 +27,7 @@ void SurfaceReconstructor::set_filenames(std::vector<string> distance_transform_
 void SurfaceReconstructor::generate_mean_dense()
 {
 
+
   std::cerr << "Generate Mean Dense!\n";
 
   // read local points and world points if given
