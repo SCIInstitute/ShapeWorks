@@ -41,6 +41,7 @@ conda install --yes -c conda-forge xorg-libx11 libuuid xorg-libsm
 conda install --yes -c anaconda numpy
 conda install --yes -c conda-forge matplotlib
 conda install --yes -c conda-forge colorama
+conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
 pip install termcolor
 
 conda info
