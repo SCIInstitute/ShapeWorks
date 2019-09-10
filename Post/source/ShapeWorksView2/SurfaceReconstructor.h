@@ -35,9 +35,16 @@ public:
 
   typedef itk::LinearInterpolateImageFunction<ImageType, double > InterpolatorType;
 
+
   typedef Reconstruction < itk::CompactlySupportedRBFSparseKernelTransform,
                            itk::LinearInterpolateImageFunction,
                            CoordinateRepType, PixelType, ImageType> ReconstructionType;
+
+/*
+  typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
+                           itk::LinearInterpolateImageFunction,
+                           CoordinateRepType, PixelType, ImageType> ReconstructionType;
+*/
 
   typedef typename ReconstructionType::PointType PointType;
   typedef typename ReconstructionType::PointArrayType PointArrayType;

@@ -115,14 +115,16 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
 
     vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
 
-
-    if (!this->smoothingEnabled)
+    if (this->smoothingEnabled)
     {
-      return poly_data;
+      this->windowSincFilter->SetInputData(poly_data);
+      this->windowSincFilter->Update();
+    }
+    else
+    {
+      this->polydataNormals->SetInputData(poly_data);
     }
 
-    this->windowSincFilter->SetInputData(poly_data);
-    this->windowSincFilter->Update();
     this->polydataNormals->Update();
     // make a copy of the vtkPolyData output to return
     vtkSmartPointer<vtkPolyData> poly_data2 = vtkSmartPointer<vtkPolyData>::New();
