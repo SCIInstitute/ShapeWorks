@@ -110,7 +110,7 @@ if int(args.start_with_prepped_data) == 0:
 	For detailed explainations of parameters for resampling volumes, go to
 	... link 
 	"""
-	resampledFiles = applyIsotropicResampling(parentDir, fileList, 1)
+        resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
 	
 	"""
 	Apply padding
@@ -119,7 +119,7 @@ if int(args.start_with_prepped_data) == 0:
 	... link
 	"""
 
-	paddedFiles = applyPadding(parentDir, resampledFiles, 10)
+        paddedFiles = applyPadding(parentDir, resampledFiles, None,  10)
 
 	"""
 	Apply center of mass alignment
@@ -127,13 +127,13 @@ if int(args.start_with_prepped_data) == 0:
 	For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
 	... link
 	"""
-	comFiles = applyCOMAlignment(parentDir, paddedFiles, paddedFiles)
+        comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
 	"""Apply rigid alignment"""
 
-	rigidFiles = applyRigidAlignment(parentDir, comFiles, comFiles[0])
+        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
 	
 	"""Compute largest bounding box and apply cropping"""
-	croppedFiles = applyCropping(parentDir, rigidFiles, rigidFiles)
+        croppedFiles = applyCropping(parentDir, rigidFiles, None)
 
 """
 We convert the scans to distance transforms, this step is common for both the 
