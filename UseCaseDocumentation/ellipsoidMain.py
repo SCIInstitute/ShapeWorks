@@ -33,7 +33,7 @@ from AnalyzeUtils import *
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
-parser.add_argument("--optimization_type", help="Single scale or multi scale optimization", action="store_true")
+parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
 args = parser.parse_args()
 
 
@@ -169,7 +169,7 @@ pointDir = '../TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
 
-if args.optimization_type:
+if args.use_single_scale:
 	parameterDictionary = {
 		"number_of_particles" : 128,
 		"checkpointing_interval" : 200,

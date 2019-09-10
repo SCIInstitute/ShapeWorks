@@ -163,12 +163,12 @@ def runShapeWorksOptimize_Basic(parentDir, inDataFiles, parameterDictionary):
 def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary):
 	numP_init = parameterDictionary['starting_particles']
 	num_levels = parameterDictionary['number_of_levels']	
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
-
+	
 	startFactor = int(np.floor(np.log2(numP_init)))
 	for i in range(num_levels):
 		outDir = parentDir + '/' + str(2**(startFactor + i)) + '/'
+		if not os.path.exists(outDir):
+			os.makedirs(outDir)
 		prevOutDir = parentDir + '/' + str(2**(startFactor + i - 1)) + '/'
 		parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
 		inparts = []
