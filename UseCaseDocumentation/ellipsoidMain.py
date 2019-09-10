@@ -104,36 +104,36 @@ if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
 if int(args.start_with_prepped_data) == 0:
-	"""
-	Apply isotropic resampling
-	
-	For detailed explainations of parameters for resampling volumes, go to
-	... link 
-	"""
-        resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
-	
-	"""
-	Apply padding
+    """
+    Apply isotropic resampling
 
-	For detailed explainations of parameters for padding volumes, go to
-	... link
-	"""
+    For detailed explainations of parameters for resampling volumes, go to
+    ... link
+    """
+    resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
 
-        paddedFiles = applyPadding(parentDir, resampledFiles, None,  10)
+    """
+    Apply padding
 
-	"""
-	Apply center of mass alignment
-	
-	For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
-	... link
-	"""
-        comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
-	"""Apply rigid alignment"""
+    For detailed explainations of parameters for padding volumes, go to
+    ... link
+    """
 
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
-	
-	"""Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir, rigidFiles, None)
+    paddedFiles = applyPadding(parentDir, resampledFiles, None,  10)
+
+    """
+    Apply center of mass alignment
+
+    For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
+    ... link
+    """
+    comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+    """Apply rigid alignment"""
+
+    rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
+
+    """Compute largest bounding box and apply cropping"""
+    croppedFiles = applyCropping(parentDir, rigidFiles, None)
 
 """
 We convert the scans to distance transforms, this step is common for both the 
@@ -267,23 +267,23 @@ parameterDictionary = {
 	"do_procrustes" : 0,
 	"do_procrustes_scaling" : 0,
 	"levelsetValue" : 0.0,
-   "targetReduction" : 0.0,
-   "featureAngle" : 30,
-   "lsSmootherIterations" : 1,
-   "meshSmootherIterations" : 1,
-   "preserveTopology" : 1,
-   "qcFixWinding" : 1,
-   "qcDoLaplacianSmoothingBeforeDecimation" : 1,
-   "qcDoLaplacianSmoothingAfterDecimation" : 1,
-   "qcSmoothingLambda" : 0.5,
-   "qcSmoothingIterations" : 3,
-   "qcDecimationPercentage" : 0.9,
-   "normalAngle" : 90,
-   "use_tps_transform" : 0,
-   "use_bspline_interpolation" : 0,
-   "display" : 0,
-   "glyph_radius" : 1
-}
+       "targetReduction" : 0.0,
+       "featureAngle" : 30,
+       "lsSmootherIterations" : 1,
+       "meshSmootherIterations" : 1,
+       "preserveTopology" : 1,
+       "qcFixWinding" : 1,
+       "qcDoLaplacianSmoothingBeforeDecimation" : 1,
+       "qcDoLaplacianSmoothingAfterDecimation" : 1,
+       "qcSmoothingLambda" : 0.5,
+       "qcSmoothingIterations" : 3,
+       "qcDecimationPercentage" : 0.9,
+       "normalAngle" : 90,
+       "use_tps_transform" : 0,
+       "use_bspline_interpolation" : 0,
+       "display" : 0,
+       "glyph_radius" : 1
+        }
 
 runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
 
@@ -361,7 +361,7 @@ parameterDictionary = {
 	"number_of_particles" : 128,
 	"mean_prefix" : meanDir + 'ellipsoid',
 	"out_prefix" : pcaDir + 'ellipsoid', 
-	"use_tps_transform" : 0,
+        "use_tps_transform" : 0,
 	"use_bspline_interpolation" : 0,
 	"display" : 0,
 	"glyph_radius" : 1,
