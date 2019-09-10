@@ -32,6 +32,22 @@ void SurfaceReconstructor::set_number_of_clusters(int num_clusters)
 }
 
 //---------------------------------------------------------------------------
+void SurfaceReconstructor::set_normal_angle(double angle)
+{
+  this->normal_angle_ = angle;
+  this->reconstructor_.setMaxAngle(this->normal_angle_);
+  std::cerr << "Setting normal angle to " << this->normal_angle_ << "\n";
+}
+
+//---------------------------------------------------------------------------
+void SurfaceReconstructor::set_decimation_percent(double decimation)
+{
+  this->decimation_percent_ = decimation;
+  this->reconstructor_.setDecimation(this->decimation_percent_);
+  std::cerr << "Setting decimation percent to " << this->decimation_percent_ << "\n";
+}
+
+//---------------------------------------------------------------------------
 void SurfaceReconstructor::generate_mean_dense()
 {
 

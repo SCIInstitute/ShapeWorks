@@ -35,16 +35,15 @@ public:
 
   typedef itk::LinearInterpolateImageFunction<ImageType, double > InterpolatorType;
 
-
   typedef Reconstruction < itk::CompactlySupportedRBFSparseKernelTransform,
                            itk::LinearInterpolateImageFunction,
                            CoordinateRepType, PixelType, ImageType> ReconstructionType;
 
 /*
-  typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
+   typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
                            itk::LinearInterpolateImageFunction,
                            CoordinateRepType, PixelType, ImageType> ReconstructionType;
-*/
+ */
 
   typedef typename ReconstructionType::PointType PointType;
   typedef typename ReconstructionType::PointArrayType PointArrayType;
@@ -55,8 +54,9 @@ public:
                      std::vector< std::string > local_point_filenames,
                      std::vector< std::string > world_point_filenames);
 
-
   void set_number_of_clusters(int num_clusters);
+  void set_normal_angle(double angle);
+  void set_decimation_percent(double decimation);
 
   void generate_mean_dense();
 
@@ -74,4 +74,6 @@ private:
   std::vector< std::string > local_point_filenames_;
 
   int num_clusters_ = -1;
+  double decimation_percent_ = 0.3f;
+  double normal_angle_ = 45.0f;
 };
