@@ -196,8 +196,8 @@ if int(args.use_single_scale) != 0:
 	[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
 else:
 	parameterDictionary = {
-		"starting_particles" : 2,
-		"number_of_levels" : 2, 
+		"starting_particles" : 32,
+		"number_of_levels" : 3, 
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,
 		"iterations_per_split" : 1000,
