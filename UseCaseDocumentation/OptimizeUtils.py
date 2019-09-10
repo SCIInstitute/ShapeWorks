@@ -16,6 +16,12 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
 	number_of_particles.text = "\n" + str(parameterDictionary['number_of_particles']) + "\n"
 	use_normals = ET.SubElement(root, 'use_normals')
 	use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
+	if parameterDictionary['use_normals'] == 0:
+		attribute_scales = ET.SubElement(root, 'attribute_scales')
+		attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0\n"
+	else:    
+		attribute_scales = ET.SubElement(root, 'attribute_scales')
+		attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n 1.0 \n  1.0 \n  1.0 \n"
 	checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
 	checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
 	keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')
@@ -70,6 +76,12 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	number_of_particles.text = "\n" + str(N) + "\n"
 	use_normals = ET.SubElement(root, 'use_normals')
 	use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
+	if parameterDictionary['use_normals'] == 0:
+		attribute_scales = ET.SubElement(root, 'attribute_scales')
+		attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0\n"
+	else:    
+		attribute_scales = ET.SubElement(root, 'attribute_scales')
+		attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n 1.0 \n  1.0 \n  1.0 \n"
 	checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
 	checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
 	keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')
