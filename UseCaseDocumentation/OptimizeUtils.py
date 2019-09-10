@@ -6,6 +6,8 @@ import os
 import shutil
 import xml.etree.ElementTree as ET
 
+from CommonUtils import *
+
 def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
 	root = ET.Element('sample')
 	output_dir = ET.SubElement(root, 'output_dir')
@@ -121,29 +123,9 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	file = open(xmlfilename, "w+")
 	file.write(data)
 
-def create_cpp_xml(filename, outputfilename):
-	'''
-		This creates a xml for cpp Shape warp binary
-	'''
-	opening_tag = "<"
-	ending_tag = "</"
-	closing_tag = ">"
-	tree = ET.parse(str(filename))
-	root = tree.getroot()
-	children = {}
-	for child in root:
-		children[child.tag] = child.text
-	tags = children.keys()
-	xml_text = ""
-	for tag in tags:
-		xml_text += opening_tag+tag+closing_tag+children[tag]+ending_tag+tag+closing_tag
-	file = open(outputfilename,"w")
-	file.write(xml_text)
-	file.close()
-
 def runShapeWorksOptimize_Basic(parentDir, inDataFiles, parameterDictionary):
 	numP = parameterDictionary['number_of_particles']
-	outDir = parentDir + '/' + str(numP) + '/'
+	outDir = os.path.join(parentDir , str(numP) + '/')
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 
@@ -174,10 +156,10 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
 	print("Starting Factor", startFactor)
 
 	for i in range(num_levels):
-		outDir = parentDir + '/' + str(2**(startFactor + i)) + '/'
+		outDir = os.path.join(parentDir ,  str(2**(startFactor + i)) + '/')
 		if not os.path.exists(outDir):
 			os.makedirs(outDir)
-		prevOutDir = parentDir + '/' + str(2**(startFactor + i - 1)) + '/'
+		prevOutDir = os.path.join(parentDir ,  str(2**(startFactor + i - 1)) + '/')
 		parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
 		inparts = []
 		for j in range(len(inDataFiles)):
