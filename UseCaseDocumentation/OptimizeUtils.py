@@ -70,7 +70,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	keep_checkpoints.text = "\n" + str(parameterDictionary['keep_checkpoints']) + "\n"
 	iterations_per_split = ET.SubElement(root, 'iterations_per_split')
 	iterations_per_split.text = "\n" + str(parameterDictionary['iterations_per_split']) + "\n"
-	optimization_iterations = ET.SubElement(root, 'optimization_iterwations')
+	optimization_iterations = ET.SubElement(root, 'optimization_iterations')
 	optimization_iterations.text = "\n" + str(parameterDictionary['optimization_iterations']) + "\n"
 	starting_regularization = ET.SubElement(root, 'starting_regularization')
 	starting_regularization.text = "\n" + str(parameterDictionary['starting_regularization']) + "\n"
