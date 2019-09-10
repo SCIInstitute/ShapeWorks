@@ -172,6 +172,111 @@ void Utils::writeParticleIds(char* filename, std::vector<int> ids)
     ofs.close();
 }
 
+//--------------- point cloud queries --------------------------------
+void Utils::computeCenterOfMassForShapeEnsemble (std::vector< std::vector< itk::Point< double, 3 > > > points_list, itk::Point< double, 3 > & center)
+{
+    size_t numShapes = points_list.size();
+    center[0] = 0.0; center[1] = 0.0; center[2] = 0.0;
+    for (size_t shapeNo = 0; shapeNo < numShapes; shapeNo++)
+    {
+        itk::Point< double, 3 >  cur_center;
+        std::vector< itk::Point< double, 3 > > cur_points = points_list[shapeNo];
+        computeCenterOfMassForShape (cur_points, cur_center);
+
+        center[0] += cur_center[0];
+        center[1] += cur_center[1];
+        center[2] += cur_center[2];
+    }
+
+    center[0] /= double(numShapes);
+    center[1] /= double(numShapes);
+    center[2] /= double(numShapes);
+}
+
+void Utils::computeCenterOfMassForShape (std::vector< itk::Point< double, 3 > >  points, itk::Point< double, 3 > & center)
+{
+    size_t numPoints = points.size();
+    center[0] = 0.0; center[1] = 0.0; center[2] = 0.0;
+    for (size_t ii = 0; ii < numPoints; ii++)
+    {
+        itk::Point< double, 3 > cur_point = points[ii];
+        center[0] += cur_point[0];
+        center[1] += cur_point[1];
+        center[2] += cur_point[2];
+    }
+
+    center[0] /= double(numPoints);
+    center[1] /= double(numPoints);
+    center[2] /= double(numPoints);
+}
+
+void Utils::updateMin(double curVal, double& minVal)
+{
+    if(curVal < minVal)
+        minVal = curVal;
+}
+
+void Utils::updateMax(double curVal, double& maxVal)
+{
+    if(curVal > maxVal)
+        maxVal = curVal;
+}
+
+void Utils::getBoundingBoxForShapeEnsemble (std::vector< std::vector< itk::Point< double, 3 > > > points_list,
+                                            double& min_x, double& min_y, double& min_z,
+                                            double& max_x, double& max_y, double& max_z)
+{
+    size_t numShapes = points_list.size();
+
+    min_x = 1e10;  min_y = 1e10;  min_z = 1e10;
+    max_x = -1e10; max_y = -1e10; max_z = -1e10;
+
+    for (size_t shapeNo = 0; shapeNo < numShapes; shapeNo++)
+    {
+        double cur_min_x, cur_min_y, cur_min_z;
+        double cur_max_x, cur_max_y, cur_max_z;
+
+        std::vector< itk::Point< double, 3 > > cur_points = points_list[shapeNo];
+        getBoundingBoxForShape (cur_points,
+                                cur_min_x, cur_min_y, cur_min_z,
+                                cur_max_x, cur_max_y, cur_max_z);
+
+        updateMax(cur_max_x, max_x);
+        updateMax(cur_max_y, max_y);
+        updateMax(cur_max_z, max_z);
+
+        updateMin(cur_min_x, min_x);
+        updateMin(cur_min_y, min_y);
+        updateMin(cur_min_z, min_z);
+
+    }
+
+}
+
+void Utils::getBoundingBoxForShape (std::vector< itk::Point< double, 3 > >  points,
+                                    double& min_x, double& min_y, double& min_z,
+                                    double& max_x, double& max_y, double& max_z)
+{
+    size_t numPoints = points.size();
+
+    min_x = 1e10;  min_y = 1e10;  min_z = 1e10;
+    max_x = -1e10; max_y = -1e10; max_z = -1e10;
+
+    for (size_t ii = 0; ii < numPoints; ii++)
+    {
+        itk::Point< double, 3 > cur_point = points[ii];
+
+        updateMax(cur_point[0], max_x);
+        updateMax(cur_point[1], max_y);
+        updateMax(cur_point[2], max_z);
+
+        updateMin(cur_point[0], min_x);
+        updateMin(cur_point[1], min_y);
+        updateMin(cur_point[2], min_z);
+    }
+}
+
+
 // ------------------- string manipulation ------------------------------------
 std::string Utils::removeExtension( std::string const& filename )
 {

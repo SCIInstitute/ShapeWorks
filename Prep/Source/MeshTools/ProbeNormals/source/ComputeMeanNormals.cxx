@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         if(!elem)
         {
             std::cerr << "No out file name.. default name mean.normals.txt being set" << std::endl;
-            outFilename = "mean.normals.txt";
+            outFilename = "mean_normals.txt";
         }
         else
         {

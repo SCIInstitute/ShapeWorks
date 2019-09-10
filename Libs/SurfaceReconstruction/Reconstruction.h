@@ -24,6 +24,7 @@
 #include <itkImageDuplicator.h>
 #include <vtkSmartPointer.h>
 
+#include <itkImageFileWriter.h>
 #include "Procrustes3D.h"
 
 #ifdef assert
@@ -50,6 +51,8 @@ public:
     typedef itk::ImageRegionIterator< GradientImageType >            GradientImageIteratorType;
     typedef itk::ImageRegionIterator< ImageType >                    ImageIteratorType;
 
+    typedef itk::ImageFileWriter< ImageType >  WriterType;
+
     typedef itk::ImageToVTKImageFilter<ImageType>                    ITK2VTKConnectorType;
     typedef itk::AddImageFilter <ImageType, ImageType >              AddImageFilterType;
     typedef itk::ResampleImageFilter<ImageType, ImageType >          ResampleFilterType;
@@ -65,7 +68,8 @@ public:
     typedef typename TransformType::PointSetType        PointSetType;
     typedef typename PointSetType::PointIdentifier      PointIdType;
 
-    Reconstruction(float decimationPercent = 0.3f,
+    Reconstruction(std::string out_prefix = "",
+                   float decimationPercent = 0.3f,
                    double angleThresh = 45.0f,
                    size_t numClusters = 5,
                    bool fixWinding = true,
@@ -104,10 +108,22 @@ public:
 
     std::vector<bool> GoodPoints(){return goodPoints_;}
 
+    std::string OutPrefix(){return out_prefix_;}
+    void setOutPrefix(std::string out_prefix){out_prefix_ = out_prefix;}
+
     std::vector< PointArrayType >  computeSparseMean(std::vector< PointArrayType > local_pts,
                                                      itk::Point<TCoordRep>& common_center,
                                                      bool do_procrustes = true,
                                                      bool do_procrustes_scaling = false);
+
+    void setOrigin(typename ImageType::PointType origin)
+    {
+        use_origin = true;
+        origin_[0] = origin[0];
+        origin_[1] = origin[1];
+        origin_[2] = origin[2];
+    }
+
 private:
     void computeDenseMean(
             std::vector< PointArrayType > local_pts,
@@ -148,6 +164,10 @@ private:
             std::vector< PointArrayType > global_pts,
             unsigned int number_of_particles,
             std::vector<int> & centroidIndices);
+
+    void writePLY(char* filename, vtkSmartPointer<vtkPolyData> meshIn);
+    void writeVTK(char* filename, vtkSmartPointer<vtkPolyData> meshIn);
+
     //members.
     vtkSmartPointer<vtkPoints> sparseMean_;
     vtkSmartPointer<vtkPolyData> denseMean_;
@@ -164,6 +184,11 @@ private:
     bool doLaplacianSmoothingAfterDecimation_;
     float smoothingLambda_;
     int smoothingIterations_;
+
+    typename ImageType::PointType origin_;
+    bool use_origin;
+
+    std::string out_prefix_; // to save intermediate files in case needed
 };
 
 #include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated

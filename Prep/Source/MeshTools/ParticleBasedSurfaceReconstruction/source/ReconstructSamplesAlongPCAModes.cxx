@@ -49,9 +49,9 @@ int DoIt(InputParams params)
     ReconstructionType reconstructor;
     ParticleShapeStatistics<Dimension> shapeStats;
 
-    std::string denseFilename      = params.mean_prefix + ".dense.vtk";
-    std::string sparseFilename     = params.mean_prefix + ".sparse.pts";
-    std::string goodPointsFilename = params.mean_prefix + ".goodPoints.txt";
+    std::string denseFilename      = params.mean_prefix + "_dense.vtk";
+    std::string sparseFilename     = params.mean_prefix + "_sparse.particles";
+    std::string goodPointsFilename = params.mean_prefix + "_goodPoints.txt";
 
     std::cout << "denseFilename: "  << denseFilename << std::endl;
     std::cout << "sparseFilename: " << sparseFilename << std::endl;
@@ -143,12 +143,23 @@ int DoIt(InputParams params)
             std::cout << std_store[sid] << ", " ;
         std::cout << std::endl;
 
+        // writing stds on file
+        std::string stdfilename = params.out_prefix + "_mode-" + modeStr + "_stds.txt";
+        ofstream ofs(stdfilename.c_str());
+
+        if ( !ofs )
+            throw std::runtime_error("Could not open file for output: " + stdfilename);
+
+        for (unsigned int sid = 0 ; sid < std_store.size(); sid++)
+            ofs << std_store[sid] << "\n" ;
+        ofs.close();
+
         for(unsigned int sampleId = 0 ; sampleId < std_store.size(); sampleId++)
         {
             std::string sampleStr = Utils::int2str(int(sampleId), 3);
 
-            //std::string basename = prefix + ".mode." + modeStr + ".sample." + sampleStr ;
-            std::string basename =  ".mode." + modeStr + ".sample." + sampleStr ;
+            //std::string basename = prefix + "_mode-" + modeStr + "_sample-" + sampleStr ;
+            std::string basename =  "_mode-" + modeStr + "_sample-" + sampleStr ;
 
             std::cout << "generating mode #" + Utils::num2str((float)modeId) + ", sample #" + Utils::num2str((float)sampleId) << std::endl;
 
@@ -180,7 +191,7 @@ int DoIt(InputParams params)
 
             vtkSmartPointer<vtkPolyData> curDense = reconstructor.getMesh(curSparse);
 
-            std::string outfilename = params.out_prefix + basename + ".dense.vtk";
+            std::string outfilename = params.out_prefix + basename + "_dense.vtk";
             std::cout << "Writing: " << outfilename << std::endl;
 
             vtkSmartPointer<vtkPolyDataWriter> writer = vtkPolyDataWriter::New();
@@ -191,10 +202,10 @@ int DoIt(InputParams params)
             vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
             vertices->DeepCopy( curDense->GetPoints() );
 
-            std::string ptsfilename = params.out_prefix + basename + ".dense.pts";
+            std::string ptsfilename = params.out_prefix + basename + "_dense.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), vertices);
 
-            ptsfilename = params.out_prefix + basename + ".sparse.pts";
+            ptsfilename = params.out_prefix + basename + "_sparse.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), curSamplePts);
 
         }

@@ -5,14 +5,20 @@ ShapeWorks
  width="400px" align="left" hspace="20">
 -->
 
-The ShapeWorks software is an open-source distribution of a new method for constructing compact 
-statistical point-based models of ensembles of similar shapes that does not rely on any specific 
-surface parameterization. The method requires very little preprocessing or parameter tuning, and 
-is applicable to a wide range of shape analysis problems, including nonmanifold surfaces and 
-objects of arbitrary topology. The proposed correspondence point optimization uses an entropy-based 
-minimization that balances the simplicity of the model (compactness) with the accuracy of the 
-surface representations. The ShapeWorks software includes tools for preprocessing data, computing 
-point-based shape models, and visualizing the results.
+<img src="Images/shapeworks-logo.png" width="300px" align="left" hspace="20">
+
+<p align="justify">
+  ShapeWorks is a free, open-source suite of software tools that uses a flexible method for automated construction of compact statistical landmark-based shape models of ensembles of anatomical shapes that does not rely on any specific surface parameterization. The method requires very little preprocessing or parameter tuning, and is applicable to a wide range of shape analysis problems, including nonmanifold surfaces and objects of arbitrary topology. ShapeWorks includes tools for preprocessing data, computing landmark-based shape models, and visualizing the results.
+</p>
+
+<img src="Images/about-shapeworks.png" width="1000px" align="right" hspace="20">
+
+<p align="justify">
+The underlying scientific premise of ShapeWorks, particle-based shape modeling, is a groupwise approach to placing landmarks (i.e., correspondences) that considers the variability in the entire cohort of images. ShapeWorks uses a set of interacting particle systems, one for each shape, in an ensemble, to produce optimal sets of surface correspondences. Particles interact with one another via mutually repelling forces to optimally cover, and therefore describe, the surface geometry. Particles are positioned on surfaces automatically by optimizing the information content of the model via an entropy optimization scheme. In particular, ShapeWorks explicitly models the inherent trade-off between the statistical simplicity of the model (i.e., compactness) in the shape space and the accuracy of the shape representations (i.e., good surface samplings) in the configuration space. 
+</p>    
+    
+ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
+
 
 Contact Us
 =====================
@@ -29,8 +35,9 @@ You can also email any questions, bugs, or feature requests to shapeworks-users@
 Table of Contents
 ====================
 - [Installation](#installation)  
-- [Documentation](#documentation)  
+- [Getting Started](#getting-started)  
 - [Acknowledgements](#acknowledgements)
+- [Contributors](#contributors)
 - [Relevant Papers](#relevant-papers)
 
 Installation
@@ -47,48 +54,168 @@ Please see **[BUILD.md](BUILD.md)** for the current build instructions.
 <!--
 Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.
 -->
+
+<!-- the below is not updated with dead linkes
 Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
+-->
 
-As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
+**Bug report:** As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
 
-Documentation
+Getting Started
 =====================
+
+See the [ellipsoid example](http://sciinstitute.github.io/ShapeWorks/ellipsoidMain.html) for a python-scripted standard shape modeling workflow using ShapeWorks tools. More use cases will be released in future.
+
+<!-- the below page had dead links and 
 [ShapeWorks user documentation.](http://sciinstitute.github.io/ShapeWorks/)
+-->
+
 <!--
 Desired: https://shapeworks.sci.utah.edu/docs
 -->
 
-<h3>Acknowledgements</h3>
-If you use ShapeWorks in work that leads to published research, we humbly ask that you add the 
-following to the 'Acknowledgments' section of your paper: "This project was supported by the 
+Acknowledgements
+=====================
+
+If you use ShapeWorks in work that leads to published research, we humbly ask that you to [cite ShapeWorks](#how-to-cite-shapeworks) and add the following to the 'Acknowledgments' section of your paper: 
+<!--
+"This project was supported by the 
 National Institute of General Medical Sciences of the National Institutes of Health under 
 grant number P41GM103545."
+-->
+>"This work was supported by the National Institutes of Health under grant numbers R01-AR-076120-01, R01-HL135568-02, and P41-GM103545-19."
 
-<h3>Relevant Papers</h3>
+How to Cite ShapeWorks
+---------------------
 
+When referencing ShapeWorks, please include a bibliographical reference to the paper below, and, if possible, include a link to [shapeworks.sci.utah.edu](http://www.sci.utah.edu/software/shapeworks.html/). 
+
+---
+<p align="justify">
+Joshua Cates, Shireen Elhabian, Ross Whitaker. "Shapeworks: particle-based shape correspondence and visualization software." Statistical Shape and Deformation Analysis. Academic Press, 2017. 257-298.
+</p>
+
+>@incollection{cates2017shapeworks,
+title={Shapeworks: particle-based shape correspondence and visualization software},
+  author={Cates, Joshua and Elhabian, Shireen and Whitaker, Ross},
+  booktitle={Statistical Shape and Deformation Analysis},
+  pages={257--298},
+  year={2017},
+  publisher={Elsevier}
+}
+
+---
+
+Contributors
+=====================
+
+Principal Investigators
+---------------------
+
+- [Shireen Elhabian](http://www.sci.utah.edu/~shireen/)
+- [Ross Whitaker](http://www.cs.utah.edu/~whitaker/)
+
+Software Developers
+---------------------
+- [Alan Morris](https://www.sci.utah.edu/people/amorris.html)
+- [Cameron Christensen](https://www.sci.utah.edu/people/cam.html)
+
+Researchers
+---------------------
+- [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
+- [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
+- [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
+- [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
+
+Past Contributors
+---------------------
+- [Joshua Cates](http://www.sci.utah.edu/~cates/)
+- [Manasi Datar](https://manasidatar.github.io/index.html)
+- [Brig Bagley](http://www.cs.utah.edu/~bbagley/)
+
+
+Relevant Papers
+=====================
+
+<p align="justify">
 The following selected papers give background on the methods used in ShapeWorks and a 
 sample of the areas ShapeWorks has been applied:
+</p>
 
+<p align="justify">
+J. Cates, P. T. Fletcher, M. Styner, M. Shenton, and R. Whitaker. "Shape modeling and analysis with entropy-based particle systems," In Information Processing in Medical Imaging, pages 333–345. Springer, 2007.
+</p>
+
+<p align="justify">
 J. Cates, P.T. Fletcher, M. Styner, H. Hazlett, R.T. Whitaker. 
 "Particle-Based Shape Analysis of Multi-Object Complexes," 
 In Proceedings of the 11th International Conference on Medical Image Computing and 
 Computer Assisted Intervention (MICCAI '08), Lecture Notes In Computer Science (LCNS), 
 pp. 477--485. 2008. ISBN: 978-3-540-85987-1
+</p>
 
+<p align="justify">
 J. Cates, P.T. Fletcher, Z. Warnock, R.T. Whitaker. 
 "A Shape Analysis Framework for Small Animal Phenotyping with Application to Mice with 
 a Targeted Disruption of Hoxd11," In Proceedings of the 5th IEEE International Symposium 
 on Biomedical Imaging (ISBI '08), pp. 512--516. 2008. DOI: 10.1109/ISBI.2008.4541045
+</p>
 
+<p align="justify">
 K.B. Jones, M. Datar, S. Ravichandran, H. Jin, E. Jurrus, R.T. Whitaker, M.R. Capecchi. 
 "Toward an Understanding of the Short Bone Phenotype Associated with Multiple Osteochondromas," 
 In Journal of Orthopaedic Research, Vol. 31, No. 4, pp. 651--657. 2013.
+</p>
 
+<p align="justify">
 M.D. Harris, M. Datar, R.T. Whitaker, E.R. Jurrus, C.L. Peters, A.E. Anderson. 
 "Statistical Shape Modeling of Cam Femoroacetabular Impingement," In Journal of Orthopaedic Research, 
 Vol. 31, No. 10, pp. 1620--1626. 2013.
+</p>
 
+<p align="justify">
+J. Cates, E. Bieging, A. Morris, G. Gardner, N. Akoum, E. Kholmovski, N. Marrouche, C. McGann, and R. S. MacLeod. "Computational shape models characterize shape change of the left atrium in atrial fibrillation," Clinical Medicine Insights. Cardiology, 8(Suppl 1):99, 2015.
+</p>
+
+<p align="justify">
+S. Sultana, P. Agrawal, S. Elhabian, R. Whitaker, T. Rashid, J. Blatt, J. Cetas, and M. Audette. "Towards a statistical shape-aware deformable contour model for cranial nerve identification," In Workshop on Clinical Image-Based Procedures, pages 68–76. Springer, 2016.
+</p>
+
+<p align="justify">
 P. Agrawal, S.Y. Elhabian, R.T. Whitaker, "Learning Deep Features for Automated Placement of Correspondence Points on Ensembles of Complex Shapes," In International Conference on Medical Image Computing and Computer-Assisted Intervention, pp. 185-193. Springer, Cham, 2017.
+</p>
+
+<p align="justify">
+J. Cates, S. Elhabian, and R. Whitaker. "ShapeWorks: particle-based shape correspondence and visualization software," In G. Zheng, S. Li, and G. Szekely, editors, Statistical Shape and Deformation Analysis: Methods, Implementation and Applications, 1st Edition, chapter 10. Academic Press, 2017.
+</p>
+
+<p align="justify">
+J. Cates, L. Nevell, S. I. Prajapati, L. D. Nelon, J. Y. Chang, M. E. Randolph, B. Wood, C. Keller, and R. T. Whitaker. "Shape analysis of the basioccipital bone in Pax7-deficient mice," Scientific Reports, 7(1):17955, 2017.
+</p>
+
+<p align="justify">
+P. R. Atkins, S. Y. Elhabian, P. Agrawal, M. D. Harris, R. T. Whitaker, J. A. Weiss, C. L. Peters, and A. E. Anderson. "Quantitative comparison of cortical bone thickness using correspondence-based shape modeling in patients with cam femoroacetabular impingement," Journal of Orthopaedic Research, 35(8):1743–1753, 2017.
+</p>
+
+<p align="justify">
+E. T. Bieging, A. Morris, B. D. Wilson, C. J. McGann, N. F. Marrouche, and J. Cates. "Left atrial shape predicts recurrence after atrial fibrillation catheter ablation," Journal of Cardiovascular Electrophysiology, 2018.
+</p>
+
+<p align="justify">
+A. Goparaju, I. Csecs, A. Morris, E. Kholmovski, N. Marrouche, R. Whitaker, and S. Elhabian. "On the Evaluation and Validation of Off-the-Shelf Statistical Shape Modeling Tools: A Clinical Application," In International Workshop on Shape in Medical Imaging, pages 14–27. Springer, 2018.
+</p>
+
+<p align="justify">
+T. Sodergren, R. Bhalodia, R. Whitaker, J. Cates, N. Marrouche, and S. Elhabian. "Mixture modeling of global shape priors and autoencoding local intensity priors for left atrium segmentation," In STACOM- MICCAI: Statistical Atlases and Computational Modeling of the Heart workshop, page in press. Springer, 2018.
+</p>
+
+<p align="justify">
+P. R. Atkins, Y. Shin, P. Agrawal, S. Y. Elhabian, R. T. Whitaker, J. A. Weiss, S. K. Aoki, C. L. Peters ,and A. E.  Anderson. "Which Two-dimensional Radiographic Measurements of Cam Femoroacetabular Impingement Best Describe the Three-dimensional Shape of the Proximal Femur?," Clinical Orthopaedics and Related Research, 477(1):242–253, 2019.
+</p>
+
+<p align="justify">
+M. Jacxsens, S. Elhabian, S. Brady, P. Chalmers, R. Tashjian, and H. Henninger. "Coracoacromial morphology: a contributor to recurrent traumatic anterior glenohumeral instability," Journal of Shoulder and Elbow Surgery, 1:1316-1325, 2019.
+</p>
 
 <!--
 Requirements
