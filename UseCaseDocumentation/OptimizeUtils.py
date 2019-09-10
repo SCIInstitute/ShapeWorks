@@ -60,6 +60,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	output_dir = ET.SubElement(root, 'output_dir')
 	output_dir.text = "\n" + outDir + "\n"
 	startFactor = int(parameterDictionary['starting_particles'])
+	startFactor = int(np.floor(np.log2(startFactor)))
 	N = int(2**(startFactor + curFactor))
 	number_of_particles = ET.SubElement(root, 'number_of_particles')
 	number_of_particles.text = "\n" + str(N) + "\n"
@@ -170,6 +171,8 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
 	num_levels = parameterDictionary['number_of_levels']	
 	
 	startFactor = int(np.floor(np.log2(numP_init)))
+	print("Starting Factor", startFactor)
+
 	for i in range(num_levels):
 		outDir = parentDir + '/' + str(2**(startFactor + i)) + '/'
 		if not os.path.exists(outDir):
@@ -181,7 +184,7 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
 			inname = inDataFiles[j]
 			spt = inname.rsplit('/', 1)
 			inpath = spt[0] + '/'
-			outname = inname.replace(inpath, outDir)
+			outname = inname.replace(inpath, prevOutDir)
 			lclname = outname.replace('.nrrd', '_local.particles')
 			inparts.append(lclname)
 		create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, inparts)

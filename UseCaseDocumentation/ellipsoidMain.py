@@ -31,9 +31,9 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
-parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
-parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
+parser.add_argument("--interactive", help="Run in interactive mode", action="store", default=0)
+parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store", default=0)
+parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
 args = parser.parse_args()
 
 
@@ -52,7 +52,7 @@ files
 """
 
 print("\nStep 1. Extract Data\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
 parentDir="TestEllipsoids/"
@@ -96,14 +96,14 @@ For the unprepped data the first few steps are
 """
 
 print("\nStep 2. Groom - Data Pre-processing\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
 parentDir = '../TestEllipsoids/PrepOutput/'
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
-if not args.start_with_prepped_data:
+if int(args.start_with_prepped_data) == 0:
 	"""
 	Apply isotropic resampling
 	
@@ -141,10 +141,10 @@ prepped as well as unprepped data, just provide correct filenames.
 """
 
 print("\nStep 3. Groom - Convert to distance transforms\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-if not args.start_with_prepped_data:
+if int(args.start_with_prepped_data) == 0:
 	dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
 else:
 	dtFiles = applyDistanceTransforms(parentDir, fileList)
@@ -162,14 +162,14 @@ optimization routine
 """
 
 print("\nStep 4. Optimize - Particle Based Optimization\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
 pointDir = '../TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
 
-if args.use_single_scale:
+if int(args.use_single_scale) != 0:
 	parameterDictionary = {
 		"number_of_particles" : 128,
 		"checkpointing_interval" : 200,
@@ -196,8 +196,8 @@ if args.use_single_scale:
 	[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
 else:
 	parameterDictionary = {
-		"starting_particles" : 128,
-		"number_of_levels" : 3, 
+		"starting_particles" : 2,
+		"number_of_levels" : 2, 
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,
 		"iterations_per_split" : 1000,
@@ -232,7 +232,7 @@ visualized.
 """
 
 print("\nStep 4. Analysis - Launch ShapeWorksView2\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
 
