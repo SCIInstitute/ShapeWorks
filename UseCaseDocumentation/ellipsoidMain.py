@@ -292,7 +292,7 @@ Reconstruct the dense sample-specfic surface in the local coordinate system give
 """
 
 print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
-if args.interactive != 0::
+if args.interactive != 0:
         input("Press Enter to continue")
 
 meshDir_local   = '../TestEllipsoids/MeshFiles-Local/'
