@@ -395,7 +395,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 
-	finalDTDir = parentDir + '/DistanceTransforms/'
+	finalDTDir = parentDir + '/distance_transforms/'
 	if not os.path.exists(finalDTDir):
 		os.makedirs(finalDTDir)
 
