@@ -39,6 +39,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	install_name_tool -change ${PWD}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
     done
     cd ..
+else
+    linuxdeployqt bin/ShapeWorksView2 -verbose=2
 fi
 
 cd ${ROOT}/package
