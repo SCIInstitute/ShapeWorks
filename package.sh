@@ -45,6 +45,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ..
 else
     linuxdeployqt bin/ShapeWorksView2 -verbose=2
+    linuxdeployqt bin/ShapeWorksStudio -verbose=2
 fi
 
 cd ${ROOT}/package
