@@ -12,8 +12,11 @@
 
 //---------------------------------------------------------------------------
 SurfaceReconstructor::SurfaceReconstructor()
-{}
+{
+  this->reconstructor_.setOutputEnabled(false);
+}
 
+//---------------------------------------------------------------------------
 void SurfaceReconstructor::set_filenames(std::vector<string> distance_transform_filenames,
                                          std::vector<string> local_point_filenames,
                                          std::vector<string> world_point_filenames)
