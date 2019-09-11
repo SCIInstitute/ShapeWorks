@@ -110,6 +110,20 @@ ShapeWorksView2::ShapeWorksView2(int argc, char** argv)
     exit(-1);
   }
 
+  if (this->distanceTransformsAvailable) {
+
+    this->ui->neighborhood_label->hide();
+    this->ui->neighborhoodSpinBox->hide();
+
+    this->ui->smoothing_label->hide();
+    this->ui->smoothingSlider->hide();
+
+    this->ui->spacing_label->hide();
+    this->ui->spacingSpinBox->hide();
+  }
+
+
+
   // set to mean
   this->ui->tabWidget->setCurrentIndex(0);
 
@@ -1144,7 +1158,7 @@ bool ShapeWorksView2::readReconstructionParams(char* filename)
   }
 
   if (this->distanceTransformsAvailable) {
-    this->prepareSurfaceReconstruction();
+    this->prepareSurfaceReconstruction();  
   }
 
   auto surfaceReconstructor = this->meshManager.getSurfaceReconstructor();
