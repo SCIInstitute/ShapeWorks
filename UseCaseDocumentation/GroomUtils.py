@@ -11,8 +11,9 @@ from CommonUtils import *
 
 def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing, isCenterOn=True, isBinaryImage=True, processRaw = False):
     """
-    Author: Riddhish Bhalodia
+    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
+    update Date = 10th September 2019
 
     This function takes in a filelist and produces the resampled files in the
     appropriate directory.
@@ -147,8 +148,9 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
 
 def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, processRaw=False):
     """
-    Author: Riddhish Bhalodia
+    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
+    update Date = 10th September 2019
 
     This function takes in a filelist and produces the padded files in the
     appropriate directory.
@@ -238,8 +240,9 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
 
 def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False):
     """
-    Author: Riddhish Bhalodia
+    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
+    update Date = 10th September 2019
 
     This function takes in a filelist and produces the center of mass aligned
     files in the appropriate directory. If the process_raw flag is set True,
@@ -374,8 +377,9 @@ def FindMedianImage(inDataList):
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antialiasIterations=20,
                                   smoothingIterations=1, isoValue=0, icpIterations=10, processRaw = False):
     """
-    Author: Riddhish Bhalodia
+    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
+    update Date = 10th September 2019
 
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,

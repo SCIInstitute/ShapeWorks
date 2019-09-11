@@ -39,10 +39,7 @@ args = parser.parse_args()
 
 
 # set True for process both images and segmentations
-#args.start_with_image_and_segmentation_data = False
-
-## set True for using multi scale optimization
-#args.optimization_multiScale = False
+print(args.start_with_image_and_segmentation_data)
 
 """
 Most of the following steps even though wrapped in python functions are using
@@ -321,8 +318,8 @@ if args.use_single_scale:
 else:
     parameterDictionary = {
             "starting_particles" : 32,
-            "number_of_levels" : 6,
-            "use_normals": 0,
+            "number_of_levels" : 7,
+            "use_normals": 1,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 1000,
