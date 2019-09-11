@@ -95,6 +95,7 @@ public:
     void setLaplacianSmoothingAfterDecimation(bool doLaplacianSmoothingAfterDecimation);
     void setSmoothingLambda(float smoothingLambda);
     void setSmoothingIterations(int smoothingIterations);
+    void setOutputEnabled(bool enabled);
 
     vtkSmartPointer<vtkPolyData> getMesh(PointArrayType local_pts);
     void readMeanInfo(std::string dense,
@@ -189,6 +190,9 @@ private:
     bool use_origin;
 
     std::string out_prefix_; // to save intermediate files in case needed
+    bool output_enabled_ = true;
 };
+
+#include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated
 
 #endif // !__RECONSTRUCTION_H__

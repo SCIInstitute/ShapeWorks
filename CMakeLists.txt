@@ -1,6 +1,6 @@
 PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
-SET(CMAKE_BUILD_TYPE Release)
+#SET(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -198,6 +198,10 @@ option(Build_Studio "Build studio" OFF)
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 MESSAGE(STATUS "** USE_VTK_FILE: ${VTK_USE_FILE}")
+
+include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
+
+
 
 if(Build_PrepTools)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Prep/Source)

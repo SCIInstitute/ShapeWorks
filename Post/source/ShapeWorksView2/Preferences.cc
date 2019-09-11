@@ -98,7 +98,7 @@ void Preferences::setGlyphQuality( float value )
   this->glyphPropertiesChanged();
 }
 
-int Preferences::getNumThreads()
+unsigned int Preferences::getNumThreads()
 {
   // the number of threads is stored as a percentage of the available threads.  This way, if you
   // upgrade ot move to a different machine and had it set at all available threads, it will still be that way
@@ -107,7 +107,7 @@ int Preferences::getNumThreads()
   return numThreads;
 }
 
-void Preferences::setNumThreads( int value )
+void Preferences::setNumThreads( unsigned int value )
 {
   float ratio = (float) value / (float) QThread::idealThreadCount() * 100.0f;
   this->settings.setValue( "MeshCache/NumThreads", ratio );

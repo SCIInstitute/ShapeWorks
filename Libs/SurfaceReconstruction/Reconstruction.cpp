@@ -1,4 +1,3 @@
-#include "Reconstruction.h"
 #include <vtkKdTreePointLocator.h>
 #include <vtkProbeFilter.h>
 #include <vtkFloatArray.h>
@@ -126,6 +125,14 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setSmoothingLambda(float smoothingLambda){
     smoothingLambda_= smoothingLambda;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setOutputEnabled(bool enabled){
+    this->output_enabled_ = enabled;
+    this->out_prefix_ = "/tmp/";
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -652,14 +659,17 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         std::string meanDT_filename           = out_prefix_ + "_meanDT.nrrd" ;;
         std::string meanDTBeforeWarp_filename = out_prefix_ + "_meanDT_beforeWarp.nrrd" ;;
 
-        typename WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName( meanDT_filename.c_str());
-        writer->SetInput( multiplyImageFilter->GetOutput() );
-        writer->Update();
+        if (this->output_enabled_)
+        {
+            typename WriterType::Pointer writer = WriterType::New();
+            writer->SetFileName( meanDT_filename.c_str());
+            writer->SetInput( multiplyImageFilter->GetOutput() );
+            writer->Update();
 
-        writer->SetFileName( meanDTBeforeWarp_filename.c_str());
-        writer->SetInput( multiplyImageFilterBeforeWarp->GetOutput() );
-        writer->Update();
+            writer->SetFileName( meanDTBeforeWarp_filename.c_str());
+            writer->SetInput( multiplyImageFilterBeforeWarp->GetOutput() );
+            writer->Update();
+        }
 
         // going to vtk to extract the template mesh (mean dense shape)
         // to be deformed for each sparse shape

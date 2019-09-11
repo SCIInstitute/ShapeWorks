@@ -391,13 +391,6 @@ print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model
 if args.interactive != 0:
         input("Press Enter to continue")
 
-launchShapeWorksView2(pointDir, worldPointFiles)
-
-
-print("\nStep 10. Analysis - Launch ShapeWorksView2 - dense correspondence model.\n")
-if args.interactive:
-        input("Press Enter to continue")
-
-launchShapeWorksView2(meshDir_global, worldDensePointFiles)
+launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
 print("\nShapeworks Pipeline Complete!")

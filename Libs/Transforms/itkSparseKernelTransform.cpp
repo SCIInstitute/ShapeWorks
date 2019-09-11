@@ -36,7 +36,9 @@ namespace itk
  */
 template <class TScalarType, unsigned int NDimensions>
 SparseKernelTransform<TScalarType, NDimensions>::
-SparseKernelTransform()//:Superclass(
+SparseKernelTransform()
+  : Transform<TScalarType, NDimensions,NDimensions>(1)
+//:Superclass(
                          //   NDimensions,
                            // NDimensions )
   // the second NDimensions is associated is provided as

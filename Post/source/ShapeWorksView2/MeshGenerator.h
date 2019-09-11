@@ -16,6 +16,9 @@
 #include "vnl/vnl_vector.h"
 
 #include <vtkSmartPointer.h>
+#include <QSharedPointer>
+
+#include <SurfaceReconstructor.h>
 
 //#define SW_USE_POWERCRUST
 
@@ -44,6 +47,8 @@ public:
 
   vtkSmartPointer<vtkPolyData> buildMesh( const vnl_vector<double>& shape );
 
+  void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
+
 private:
 
   void updatePipeline();
@@ -55,7 +60,6 @@ private:
   vtkSmartPointer<vtkPolyData>             pointSet;
   vtkSmartPointer<vtkContourFilter>        contourFilter;
   vtkSmartPointer<vtkReverseSense>         reverseSense;
-  vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
   vtkSmartPointer<vtkPolyDataNormals>      polydataNormals;
   vtkSmartPointer<vtkTriangleFilter>       triangleFilter;
   vtkSmartPointer<vtkWindowedSincPolyDataFilter> windowSincFilter;
@@ -63,6 +67,8 @@ private:
 
   bool usePowerCrust;
   bool smoothingEnabled;
+
+  QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
 };
 
 #endif // ifndef MESH_GENERATOR_H
