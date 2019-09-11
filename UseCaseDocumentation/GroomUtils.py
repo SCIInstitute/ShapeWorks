@@ -6,6 +6,7 @@ import os
 import shutil
 import xml.etree.ElementTree as ET
 
+from CommonUtils import *
 
 def applyIsotropicResampling(parentDir, inDataList, isoSpacing, isCenterOn=True, isBinaryImage=True):
 	"""
@@ -17,7 +18,7 @@ def applyIsotropicResampling(parentDir, inDataList, isoSpacing, isCenterOn=True,
 	Input Parameters:
 	Output Parameters:
 	"""
-	outDir = parentDir + '/resampled/'
+	outDir = os.path.join(parentDir , 'resampled/')
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 	outDataList = []
@@ -62,7 +63,7 @@ def applyPadding(parentDir, inDataList, padSize, padValue=0):
 	Input Parameters:
 	Output Parameters:
 	"""
-	outDir = parentDir + '/padded/'
+	outDir = os.path.join(parentDir , 'padded/')
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 	outDataList = []
@@ -98,7 +99,7 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 	Input Parameters:
 	Output Parameters:
 	"""
-	outDir = parentDir + '/com_aligned/'
+	outDir = os.path.join(parentDir,  'com_aligned/')
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 	
@@ -157,26 +158,6 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 
 		return outDataListSeg
 
-def create_cpp_xml(filename, outputfilename):
-	'''
-		This creates a xml for cpp Shape warp binary
-	'''
-	opening_tag = "<"
-	ending_tag = "</"
-	closing_tag = ">"
-	tree = ET.parse(str(filename))
-	root = tree.getroot()
-	children = {}
-	for child in root:
-		children[child.tag] = child.text
-	tags = children.keys()
-	xml_text = ""
-	for tag in tags:
-		xml_text += opening_tag+tag+closing_tag+children[tag]+ending_tag+tag+closing_tag
-	file = open(outputfilename,"w")
-	file.write(xml_text)
-	file.close()
-
 def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
 	root = ET.Element('sample')
 	propogationScale = ET.SubElement(root, 'propagationScale')
@@ -215,7 +196,7 @@ def applyRigidAlignment(parentDir, inDataList, refFile, antialiasIterations=20, 
 	Input Parameters:
 	Output Parameters:
 	"""
-	outDir = parentDir + '/aligned/'
+	outDir = os.path.join(parentDir , 'aligned/')
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 	# identify the reference scan
@@ -299,7 +280,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
 	Input Parameters:
 	Output Parameters:
 	"""
-	outDir = parentDir + '/cropped/'
+	outDir = os.path.join(parentDir , 'cropped/')
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 	# first create a txtfile with all the scan names in it.
@@ -391,11 +372,11 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
 	file.write(data)
 
 def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smoothingIterations=1, isoValue=0, percentage=50):
-	outDir = parentDir + '/groom_and_meshes/'
+	outDir = os.path.join(parentDir , 'groom_and_meshes/')
 	if not os.path.exists(outDir):
 		os.makedirs(outDir)
 
-	finalDTDir = parentDir + '/DistanceTransforms/'
+	finalDTDir = os.path.join(parentDir , 'distance_transforms/')
 	if not os.path.exists(finalDTDir):
 		os.makedirs(finalDTDir)
 

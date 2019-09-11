@@ -57,21 +57,6 @@ int DoIt(InputParams params)
                                      params.qcSmoothingLambda, params.qcSmoothingIterations);
     reconstructor.reset();
 
-    // read local points and world points if given
-    std::vector< PointArrayType > local_pts;  local_pts.clear();
-    std::vector< PointArrayType > global_pts; global_pts.clear();
-
-    // read local points
-    for (unsigned int shapeNo = 0; shapeNo < params.localPointsFilenames.size(); shapeNo++)
-    {
-        std::cout << "Loading local points file: " << params.localPointsFilenames[shapeNo].c_str() << std::endl;
-
-        PointArrayType curShape;
-        Utils::readSparseShape(curShape, const_cast<char*> (params.localPointsFilenames[shapeNo].c_str()));
-
-        local_pts.push_back(curShape);
-    }
-
     // read distance transforms
     std::vector<typename ImageType::Pointer> distance_transforms;
     for (unsigned int shapeNo = 0; shapeNo < params.distanceTransformFilenames.size(); shapeNo++)
@@ -90,22 +75,33 @@ int DoIt(InputParams params)
         distance_transforms.push_back(reader->GetOutput());
     }
 
-    // define mean sparse shape -- this is considered as target points in the warp
-    std::cout << "Computing mean sparse shape .... \n ";
+    // read local points and world points if given
+    std::vector< PointArrayType > local_pts;  local_pts.clear();
+    std::vector< PointArrayType > global_pts; global_pts.clear();
+
+    // read local points
+    for (unsigned int shapeNo = 0; shapeNo < params.localPointsFilenames.size(); shapeNo++)
+    {
+        std::cout << "Loading local points file: " << params.localPointsFilenames[shapeNo].c_str() << std::endl;
+
+        PointArrayType curShape;
+        Utils::readSparseShape(curShape, const_cast<char*> (params.localPointsFilenames[shapeNo].c_str()));
+
+        local_pts.push_back(curShape);
+    }
+
     if(params.worldPointsFilenames.size() == 0)
     {
         // if no world points are given, they will be estimated using procrustes
+        // define mean sparse shape -- this is considered as target points in the warp
+        std::cout << "Computing mean sparse shape .... \n ";
+
         PointType commonCenter;
         global_pts = reconstructor.computeSparseMean(local_pts, commonCenter,
                                                      params.do_procrustes, params.do_procrustes_scaling);
     }
     else
     {
-        // finding image origin that is consistent with the given world coordinates
-        typename ImageType::PointType  origin; origin[0] = 0; origin[1] = 0; origin[2] = 0;
-        double min_x = 1e10,  min_y = 1e10,  min_z = 1e10;
-        double max_x = -1e10, max_y = -1e10, max_z = -1e10;
-
         // read given world points
         for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
         {
@@ -114,75 +110,117 @@ int DoIt(InputParams params)
             PointArrayType curShape;
             Utils::readSparseShape(curShape, const_cast<char*> (params.worldPointsFilenames[shapeNo].c_str()));
 
-            PointType cur_origin; cur_origin[0] = 0; cur_origin[1] = 0; cur_origin[2] = 0;
-            for(unsigned int ii = 0; ii < curShape.size(); ii++)
-            {
-                cur_origin[0] += curShape[ii][0];
-                cur_origin[1] += curShape[ii][1];
-                cur_origin[2] += curShape[ii][2];
-
-                if(curShape[ii][0] > max_x)
-                    max_x = curShape[ii][0];
-
-                if(curShape[ii][1] > max_y)
-                    max_y = curShape[ii][1];
-
-                if(curShape[ii][2] > max_z)
-                    max_z = curShape[ii][2];
-
-                if(curShape[ii][0] < min_x)
-                    min_x = curShape[ii][0];
-
-                if(curShape[ii][1] < min_y)
-                    min_y = curShape[ii][1];
-
-                if(curShape[ii][2] < min_z)
-                    min_z = curShape[ii][2];
-            }
-
-            cur_origin[0] /= double(curShape.size());
-            cur_origin[1] /= double(curShape.size());
-            cur_origin[2] /= double(curShape.size());
-
-            origin[0] += cur_origin[0];
-            origin[1] += cur_origin[1];
-            origin[2] += cur_origin[2];
-
             global_pts.push_back(curShape);
         }
 
-        origin[0] /= double(global_pts.size());
-        origin[1] /= double(global_pts.size());
-        origin[2] /= double(global_pts.size());
+        // finding image origin that is consistent with the given world coordinates and adjusted using the origin of images and point clouds in the local space
+        typename ImageType::PointType  origin_local;
+        typename ImageType::PointType  origin_global;
 
-        std::cout << "origin(0) = " << origin[0] << ", "
-                  << "origin(1) = " << origin[1] << ", "
-                  << "origin(2) = " << origin[2] << std::endl;
+        // the bounding box of the local points
+        double min_x_local, min_y_local, min_z_local;
+        double max_x_local, max_y_local, max_z_local;
 
-        std::cout << "min_x = " << min_x << ", "
-                  << "min_y = " << min_y << ", "
-                  << "min_z = " << min_z << std::endl;
+        // the bounding box of the global points
+        double min_x_global, min_y_global, min_z_global;
+        double max_x_global, max_y_global, max_z_global;
 
-        double x_width = max_x - min_x;
-        double y_width = max_y - min_y;
-        double z_width = max_z - min_z;
+        // compute the center of mass for both local and global points
+        Utils::computeCenterOfMassForShapeEnsemble(local_pts,  origin_local);
+        Utils::computeCenterOfMassForShapeEnsemble(global_pts, origin_global);
 
-        origin[0] = origin[0] - (x_width/2.0);
-        origin[1] = origin[1] - (y_width/2.0);
-        origin[2] = origin[2] - (z_width/2.0);
+        std::cout << "Center of mass of local points:" << std::endl;
+        std::cout << "origin_local(0) = " << origin_local[0] << ", "
+                  << "origin_local(1) = " << origin_local[1] << ", "
+                  << "origin_local(2) = " << origin_local[2] << std::endl;
 
-        std::cout << "origin(0) = " << origin[0] << ", "
-                  << "origin(1) = " << origin[1] << ", "
-                  << "origin(2) = " << origin[2] << std::endl;
+        std::cout << "Center of mass of global points:" << std::endl;
+        std::cout << "origin_global(0) = " << origin_global[0] << ", "
+                  << "origin_global(1) = " << origin_global[1] << ", "
+                  << "origin_global(2) = " << origin_global[2] << std::endl;
 
-        reconstructor.setOrigin(origin);
+        // find the bounding box of both local and global points
+        Utils::getBoundingBoxForShapeEnsemble(local_pts,
+                                              min_x_local, min_y_local, min_z_local,
+                                              max_x_local, max_y_local, max_z_local);
+
+        std::cout << "Local points bounding box:" << std::endl;
+        std::cout << "min_x_local = " << min_x_local << ", "
+                  << "min_y_local = " << min_y_local << ", "
+                  << "min_z_local = " << min_z_local << std::endl;
+
+        std::cout << "max_x_local = " << max_x_local << ", "
+                  << "max_y_local = " << max_y_local << ", "
+                  << "max_z_local = " << max_z_local << std::endl;
+
+        Utils::getBoundingBoxForShapeEnsemble(global_pts,
+                                              min_x_global, min_y_global, min_z_global,
+                                              max_x_global, max_y_global, max_z_global);
+
+        std::cout << "Global points bounding box:" << std::endl;
+        std::cout << "min_x_global = " << min_x_global << ", "
+                  << "min_y_global = " << min_y_global << ", "
+                  << "min_z_global = " << min_z_global << std::endl;
+
+        std::cout << "max_x_global = " << max_x_global << ", "
+                  << "max_y_global = " << max_y_global << ", "
+                  << "max_z_global = " << max_z_global << std::endl;
+
+        // compute the image origin (corner) based on the center of mass
+        double x_width_local = max_x_local - min_x_local;
+        double y_width_local = max_y_local - min_y_local;
+        double z_width_local = max_z_local - min_z_local;
+
+        double x_width_global = max_x_global - min_x_global;
+        double y_width_global = max_y_global - min_y_global;
+        double z_width_global = max_z_global - min_z_global;
+
+        origin_local[0] = origin_local[0] - (x_width_local/2.0);
+        origin_local[1] = origin_local[1] - (y_width_local/2.0);
+        origin_local[2] = origin_local[2] - (z_width_local/2.0);
+
+        origin_global[0] = origin_global[0] - (x_width_global/2.0);
+        origin_global[1] = origin_global[1] - (y_width_global/2.0);
+        origin_global[2] = origin_global[2] - (z_width_global/2.0);
+
+        std::cout << "Image origin (corner) for local points: " << std::endl;
+        std::cout << "origin_local(0) = " << origin_local[0] << ", "
+                  << "origin_local(1) = " << origin_local[1] << ", "
+                  << "origin_local(2) = " << origin_local[2] << std::endl;
+
+        std::cout << "Image origin (corner) for global points: " << std::endl;
+        std::cout << "origin_global(0) = " << origin_global[0] << ", "
+                  << "origin_global(1) = " << origin_global[1] << ", "
+                  << "origin_global(2) = " << origin_global[2] << std::endl;
+
+        // origin of the distance transforms (assume all dts are sharing the same origin)
+        typename ImageType::PointType  origin_dt = distance_transforms[0]->GetOrigin();
+
+        double offset_x = origin_dt[0] - origin_local[0];
+        double offset_y = origin_dt[1] - origin_local[1];
+        double offset_z = origin_dt[2] - origin_local[2];
+
+        // adjust global origin based on local offset
+        origin_global[0] = origin_global[0] + offset_x;
+        origin_global[1] = origin_global[1] + offset_y;
+        origin_global[2] = origin_global[2] + offset_z;
+
+        std::cout << "Image origin (corner) for global points - adjusted: " << std::endl;
+        std::cout << "origin_global(0) = " << origin_global[0] << ", "
+                  << "origin_global(1) = " << origin_global[1] << ", "
+                  << "origin_global(2) = " << origin_global[2] << std::endl;
+
+        reconstructor.setOrigin(origin_global);
     }
 
-    // write global points to be use for pca modes
+    // write global points to be use for pca modes and also local points
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
-       std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + ".global.pts";
+       std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global.particles";
        Utils::writeSparseShape((char*)curfilename.c_str(), global_pts[shapeNo]);
+
+       std::string curfilename_local = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local.particles";
+       Utils::writeSparseShape((char*)curfilename_local.c_str(), local_pts[shapeNo]);
     }
 
     if(params.display)
@@ -195,9 +233,53 @@ int DoIt(InputParams params)
     // write output
     reconstructor.writeMeanInfo(params.out_prefix);
 
+    // write out good and bad particles for each subject file
+    std::vector<bool> goodPoints          = reconstructor.GoodPoints();
+    for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
+    {
+        std::string outfilenameGood;
+        std::string outfilenameBad;
+        std::ofstream ofsG, ofsB;
+
+        outfilenameGood = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-good.particles";
+        outfilenameBad  = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-bad.particles";
+
+        ofsG.open(outfilenameGood.c_str());
+        ofsB.open(outfilenameBad.c_str());
+
+        PointArrayType curShape_local = local_pts[shapeNo];
+        for (unsigned int ii = 0 ; ii < params.number_of_particles; ii++)
+        {
+            auto pt = curShape_local[ii];
+            if(goodPoints[ii])
+                ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+            else
+                ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+        }
+        ofsG.close();
+        ofsB.close();
+
+        outfilenameGood = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-good.particles";
+        outfilenameBad  = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-bad.particles";
+
+        ofsG.open(outfilenameGood.c_str());
+        ofsB.open(outfilenameBad.c_str());
+
+        PointArrayType curShape_global = global_pts[shapeNo];
+        for (unsigned int ii = 0 ; ii < params.number_of_particles; ii++)
+        {
+            auto pt = curShape_global[ii];
+            if(goodPoints[ii])
+                ofsG << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+            else
+                ofsB << pt[0] << " " << pt[1] << " " << pt[2] << std::endl;
+        }
+        ofsG.close();
+        ofsB.close();
+    }
+
     if(params.display)
     {
-        std::vector<bool> goodPoints          = reconstructor.GoodPoints();
         vtkSmartPointer<vtkPoints> sparseMean = reconstructor.SparseMean();
 
         // now fill vtkpoints with the two lists to visualize
