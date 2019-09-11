@@ -64,7 +64,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     if (this->m_UseMeanEnergy)
     {
         pinvMat.set_identity();
-        m_InverseCovMatrix->set_identity();
+        m_InverseCovMatrix->clear(); //set_identity();
     }
     else
     {
@@ -247,7 +247,12 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         num += num1 * system->GetNumberOfParticles(i);
     }
 
-    vnl_matrix_type tmp1 = m_InverseCovMatrix->extract(sz_Yidx, sz_Yidx, num, num);
+    vnl_matrix_type tmp1(sz_Yidx, sz_Yidx, 0.0);
+    
+    if (this->m_UseMeanEnergy)
+        tmp1.set_identity();
+    else
+        tmp1 = m_InverseCovMatrix->extract(sz_Yidx, sz_Yidx, num, num);
 
     vnl_matrix_type Y_dom_idx(sz_Yidx, 1, 0.0);
 
