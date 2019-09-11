@@ -30,6 +30,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
 
+    # copy platform plugins for View2
+    cp -a ShapeWorksStudio.app/Contents/PlugIns .
+
     for i in * ; do
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i
     done
