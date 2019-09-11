@@ -16,8 +16,8 @@ mkdir "package"
 cp -a install "package/${VERSION}"
 mkdir -p package/${VERSION}/examples/ellipsoid
 cp -a UseCaseDocumentation/* package/${VERSION}/examples/ellipsoid
-cp conda_installs.sh packages/${VERSION}
-cp PACKAGE.md packages/${VERSION}/README.md
+cp conda_installs.sh package/${VERSION}
+cp PACKAGE.md package/${VERSION}/README.md
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
 rm -rf include share
