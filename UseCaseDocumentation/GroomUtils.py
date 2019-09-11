@@ -5,6 +5,7 @@ import glob
 import os
 import shutil
 import xml.etree.ElementTree as ET
+import SimpleITK as sitk
 
 from CommonUtils import *
 
