@@ -31,8 +31,9 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
-parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
+parser.add_argument("--interactive", help="Run in interactive mode", action="store", default=0)
+parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store", default=0)
+parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
 args = parser.parse_args()
 
 
@@ -51,7 +52,7 @@ files
 """
 
 print("\nStep 1. Extract Data\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
 parentDir="TestEllipsoids/"
@@ -95,14 +96,14 @@ For the unprepped data the first few steps are
 """
 
 print("\nStep 2. Groom - Data Pre-processing\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
 parentDir = '../TestEllipsoids/PrepOutput/'
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
-if not args.start_with_prepped_data:
+if int(args.start_with_prepped_data) == 0:
 	"""
 	Apply isotropic resampling
 	
@@ -140,10 +141,10 @@ prepped as well as unprepped data, just provide correct filenames.
 """
 
 print("\nStep 3. Groom - Convert to distance transforms\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-if not args.start_with_prepped_data:
+if int(args.start_with_prepped_data) == 0:
 	dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
 else:
 	dtFiles = applyDistanceTransforms(parentDir, fileList)
@@ -161,39 +162,66 @@ optimization routine
 """
 
 print("\nStep 4. Optimize - Particle Based Optimization\n")
-if args.interactive:
+if int(args.interactive) != 0:
         input("Press Enter to continue")
 
 pointDir = '../TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
 
-parameterDictionary = {
-	"number_of_particles" : 128,
-	"checkpointing_interval" : 200,
-	"keep_checkpoints" : 0,
-	"iterations_per_split" : 500,
-	"optimization_iterations" : 3000,
-	"starting_regularization" : 100,
-	"ending_regularization" : 0.1,
-	"recompute_regularization_interval" : 2,
-	"domains_per_shape" : 1,
-	"relative_weighting" : 10,
-	"initial_relative_weighting" : 0.01,
-	"procrustes_interval" : 0,
-	"procrustes_scaling" : 0,
-	"save_init_splits" : 0,
-	"debug_projection" : 0,
-	"mesh_based_attributes" : 0,
-	"verbosity" : 3
-}
+if int(args.use_single_scale) != 0:
+	parameterDictionary = {
+		"number_of_particles" : 128,
+		"use_normals": 0,
+		"checkpointing_interval" : 200,
+		"keep_checkpoints" : 0,
+		"iterations_per_split" : 1000,
+		"optimization_iterations" : 2000,
+		"starting_regularization" : 100,
+		"ending_regularization" : 0.1,
+		"recompute_regularization_interval" : 2,
+		"domains_per_shape" : 1,
+		"relative_weighting" : 10,
+		"initial_relative_weighting" : 0.01,
+		"procrustes_interval" : 0,
+		"procrustes_scaling" : 0,
+		"save_init_splits" : 0,
+		"debug_projection" : 0,
+		"mesh_based_attributes" : 0,
+		"verbosity" : 3
+	}
 
-
-"""
-Now we execute the particle optimization function.
-"""
-
-[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
+	"""
+	Now we execute a single scale particle optimization function.
+	"""
+	[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
+else:
+	parameterDictionary = {
+		"starting_particles" : 32,
+		"number_of_levels" : 3, 
+		"use_normals": 0,
+		"checkpointing_interval" : 200,
+		"keep_checkpoints" : 0,
+		"iterations_per_split" : 1000,
+		"optimization_iterations" : 2000,
+		"starting_regularization" : 100,
+		"ending_regularization" : 0.1,
+		"recompute_regularization_interval" : 2,
+		"domains_per_shape" : 1,
+		"relative_weighting" : 10,
+		"initial_relative_weighting" : 0.01,
+		"procrustes_interval" : 0,
+		"procrustes_scaling" : 0,
+		"save_init_splits" : 0,
+		"debug_projection" : 0,
+		"mesh_based_attributes" : 0,
+		"verbosity" : 3
+	}
+  
+	"""
+	Now we execute a multi-scale particle optimization function.
+	"""
+	[localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
 """
 ## ANALYZE : Shape Analysis and Visualization
@@ -223,7 +251,7 @@ Reconstruct the dense mean surface given the sparse correspondence model.
 """
 
 print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-if args.interactive:
+if args.interactive != 0:
         input("Press Enter to continue")
 
 meanDir   = '../TestEllipsoids/MeanReconstruction/'
@@ -259,13 +287,12 @@ parameterDictionary = {
 
 runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
 
-
 """
 Reconstruct the dense sample-specfic surface in the local coordinate system given the dense mean surface
 """
 
 print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
-if args.interactive:
+if args.interactive != 0:
         input("Press Enter to continue")
 
 meshDir_local   = '../TestEllipsoids/MeshFiles-Local/'
@@ -293,9 +320,8 @@ Reconstruct the dense sample-specfic surface in the world coordinate system give
 """
 
 print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
-if args.interactive:
+if args.interactive !=0:
         input("Press Enter to continue")
-
 
 meshDir_global   = '../TestEllipsoids/MeshFiles-World/'
 if not os.path.exists(meshDir_global):
@@ -321,9 +347,8 @@ Reconstruct dense meshes along dominant pca modes
 """
 
 print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
-if args.interactive:
+if args.interactive != 0:
         input("Press Enter to continue")
-
 
 pcaDir   = '../TestEllipsoids/PCAModesFiles/'
 if not os.path.exists(pcaDir):
@@ -360,12 +385,10 @@ PCA modes of variation representing the given shape population can be
 visualized.
 """
 
-print("\nStep 9. Analysis - Launch ShapeWorksView2\n")
-if args.interactive:
+print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
+if args.interactive != 0:
         input("Press Enter to continue")
 
 launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
-
-
 
 print("\nShapeworks Pipeline Complete!")
