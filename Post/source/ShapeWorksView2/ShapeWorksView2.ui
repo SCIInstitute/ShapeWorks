@@ -392,39 +392,9 @@ QToolButton:pressed{
                <number>0</number>
               </property>
               <item>
-               <widget class="QToolButton" name="shapeOpenButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>21</width>
-                  <height>21</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>21</width>
-                  <height>21</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>...</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="ShapeWorksView2.qrc">
-                  <normaloff>:/ShapeWorksView2/images/DownArrowWhite.png</normaloff>
-                  <normalon>:/Images/DownArrowWhite.png</normalon>:/ShapeWorksView2/images/DownArrowWhite.png</iconset>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QLabel" name="shapeLabel">
                 <property name="text">
-                 <string>Shape</string>
+                 <string>  Shape</string>
                 </property>
                </widget>
               </item>
@@ -1127,38 +1097,9 @@ QToolButton:pressed{
                <number>0</number>
               </property>
               <item>
-               <widget class="QToolButton" name="visualizationOpenButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>21</width>
-                  <height>21</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>21</width>
-                  <height>21</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>...</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="ShapeWorksView2.qrc">
-                  <normaloff>:/ShapeWorksView2/images/DownArrowWhite.png</normaloff>:/ShapeWorksView2/images/DownArrowWhite.png</iconset>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QLabel" name="visualizationLabel">
                 <property name="text">
-                 <string>Visualization</string>
+                 <string>  Visualization</string>
                 </property>
                </widget>
               </item>
@@ -1443,8 +1384,6 @@ QToolButton:pressed{
    <header>QVTKWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="ShapeWorksView2.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
