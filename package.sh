@@ -16,7 +16,8 @@ mkdir "package"
 cp -a install "package/${VERSION}"
 mkdir -p package/${VERSION}/examples/ellipsoid
 cp -a UseCaseDocumentation/* package/${VERSION}/examples/ellipsoid
-
+cp conda_installs.sh package/${VERSION}
+cp PACKAGE.md package/${VERSION}/README.md
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
 rm -rf include share
@@ -28,6 +29,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
+
+    # copy platform plugins for View2
+    cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
     for i in * ; do
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i
