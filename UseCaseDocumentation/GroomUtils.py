@@ -24,7 +24,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
 
     if processRaw:
         #process segmentation files
-        binaryoutDir = os.path.join(parentDir,'segmentations/')
+        binaryoutDir = os.path.join(outDir,'segmentations/')
 
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
@@ -64,7 +64,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
 
         #process images files
         isBinaryImage = False
-        rawoutDir = os.path.join(parentDir ,'images/')
+        rawoutDir = os.path.join(outDir ,'images/')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -163,7 +163,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
 
     if processRaw:
         # process segmentations
-        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+        binaryoutDir = os.path.join(outDir ,'segmentations/')
 
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
@@ -187,7 +187,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             os.system(execCommand)
 
         #process images
-        rawoutDir = os.path.join(parentDir ,'images/')
+        rawoutDir = os.path.join(outDir ,'images/')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -256,8 +256,8 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 
 
     if processRaw:
-        rawoutDir = os.path.join(parentDir ,'images/')
-        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+        rawoutDir = os.path.join(outDir ,'images/')
+        binaryoutDir = os.path.join(outDir ,'segmentations/')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -558,7 +558,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    cropinfoDir = os.path.join(parentDir ,'crop_info/')
+    cropinfoDir = os.path.join(outDir ,'crop_info/')
     if not os.path.exists(cropinfoDir):
         os.makedirs(cropinfoDir)
 
@@ -583,8 +583,8 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
 
     if processRaw:
-        rawoutDir = os.path.join(parentDir ,'images/')
-        binaryoutDir = os.path.join(parentDir ,'segmentations/')
+        rawoutDir = os.path.join(outDir ,'images/')
+        binaryoutDir = os.path.join(outDir ,'segmentations/')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
