@@ -191,11 +191,14 @@ IF(APPLE)
   SET(plugin_dest_dir ShapeWorksView2.app/Contents/MacOS)
   SET(qtconf_dest_dir ShapeWorksView2.app/Contents/Resources)
   SET(contents_dest_dir ShapeWorksView2.app/Contents)
-  SET(APPS "\${CMAKE_INSTALL_PREFIX}/ShapeWorksView2.app")
 ENDIF(APPLE)
 IF(WIN32)
   SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksView2.exe")
 ENDIF(WIN32)
+
+IF ( BUILD_SWV2_OSX_APP )
+  SET(APPS "\${CMAKE_INSTALL_PREFIX}/ShapeWorksView2.app")
+ENDIF ( BUILD_SWV2_OSX_APP )
 
 
 
@@ -204,7 +207,7 @@ ENDIF(WIN32)
 # install tree, and on other platforms it'll go into the bin directory.
 
 INSTALL(TARGETS ShapeWorksView2
-    RUNTIME DESTINATION . COMPONENT Runtime
+    RUNTIME DESTINATION bin COMPONENT Runtime
     )
 
 #INSTALL(TARGETS ShapeWorksView2
@@ -228,7 +231,8 @@ INSTALL(TARGETS ShapeWorksView2
 #--------------------------------------------------------------------------------
 # install a qt.conf file
 # this inserts some cmake code into the install script to write the file
-INSTALL(CODE "
-    file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")
-    " COMPONENT Runtime)
+IF ( BUILD_SWV2_OSX_APP )
+  INSTALL(CODE "file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")"
+    COMPONENT Runtime)
+ENDIF ( BUILD_SWV2_OSX_APP )
 
