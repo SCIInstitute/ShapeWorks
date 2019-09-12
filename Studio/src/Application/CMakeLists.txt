@@ -70,6 +70,8 @@ IF(APPLE)
   SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   # include the icns file in the target
   SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns)
+
+
 ELSEIF(WIN32)
   ADD_DEFINITIONS(-DICON_RC_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Resources/Images/shapes-icon.ico")
   SET(STUDIO_SRCS ${STUDIO_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeworksStudio.rc)
@@ -88,6 +90,10 @@ ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole}
   ${STUDIO_RSCS}
   )
 
+IF(APPLE)
+  SET_TARGET_PROPERTIES(ShapeWorksStudio PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Info.plist.in)
+ENDIF(APPLE)
+    
 TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Qt5::Widgets
   Qt5::OpenGL

@@ -124,6 +124,9 @@ private:
 
   bool readParameterFile( char* filename );
   bool readExplanatoryVariables( char* filename );
+  bool readReconstructionParams( char *filename );
+
+  void prepareSurfaceReconstruction();
 
   void displayShape( const vnl_vector<double> &pos );
   void displayVectorField( const std::vector<itk::ParticlePositionReader<3>::PointType > &vecs );
@@ -190,6 +193,7 @@ private:
   int pointsPerDomain;
 
   bool groupsAvailable;
+  bool distanceTransformsAvailable = false;
   bool regressionAvailable;
 
   double regressionMin;
@@ -217,8 +221,11 @@ private:
   bool groupAnimateDirection;
   QTimer groupAnimateTimer;
 
-
-
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
+
+  std::vector< std::string > distanceTransformFilenames_;
+  std::vector< std::string > localPointFilenames_;
+  std::vector< std::string > worldPointFilenames_;
+
 
 };

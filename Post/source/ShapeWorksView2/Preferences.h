@@ -42,8 +42,8 @@ public:
   float getGlyphSize();
   void setGlyphSize( float value );
 
-  int getNumThreads();
-  void setNumThreads( int value );
+  unsigned int getNumThreads();
+  void setNumThreads( unsigned int value );
 
   bool getParallelEnabled();
   void setParallelEnabled( bool enabled );
