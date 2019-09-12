@@ -109,7 +109,7 @@ ParticleEnsembleEntropyFunction<VDimension>
     if (this->m_UseMeanEnergy)
     {
         pinvMat.set_identity();
-        m_InverseCovMatrix->set_identity();
+        m_InverseCovMatrix->clear(); //set_identity();
     }
     else
     {
@@ -206,7 +206,12 @@ ParticleEnsembleEntropyFunction<VDimension>
     Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
 
 
-    vnl_matrix_type tmp1 = m_InverseCovMatrix->extract(3,3,k,k);
+    vnl_matrix_type tmp1(3, 3, 0.0);
+
+    if (this->m_UseMeanEnergy)
+        tmp1.set_identity();
+    else
+        tmp1 = m_InverseCovMatrix->extract(3,3,k,k);
 
     vnl_matrix_type tmp = Xi.transpose()*tmp1;
 
