@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 2.4)
-project(SWPost)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 ### libIGL options: choose between header only and compiled static library
 option(LIBIGL_USE_STATIC_LIBRARY "Use LibIGL as static library" ON)

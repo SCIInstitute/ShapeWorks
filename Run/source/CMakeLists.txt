@@ -1,14 +1,7 @@
-PROJECT(SHAPEWORKS)
-cmake_minimum_required(VERSION 2.6)
-
-#SET(ITK_DIR "path-to-ITK-4.7.2-build")
-#SET(VTK_DIR "path-to-VTK-5.10.1-build")
-#SET(VXL_DIR "path-to-vxl-build")
-SET(CMAKE_BUILD_TYPE Release)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #Match everything when analyzing dependencies
 INCLUDE_REGULAR_EXPRESSION("^.*$")
-
 
 # Optionally build with mesh support (requires linking against trimesh library)
 #option(BUILD_MeshSupport "Build with Mesh support (requires fim library with trimesh2)" OFF)
