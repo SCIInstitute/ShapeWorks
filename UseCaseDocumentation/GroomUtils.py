@@ -352,14 +352,42 @@ def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, re
 
 
 
+#def FindMedianImage(inDataList):
+#    """
+#        This find the median file between all the input files
+#    """
+#    IMG = []
+#    for i in range(len(inDataList)):
+#        IMG.append(sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i])))
+
+#    COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
+
+#    idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
+#    print(" ")
+#    print("############# Rigid Alignment #############")
+#    cprint(("The reference file for rigid alignment is found"), 'green')
+#    cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
+#    print("###########################################")
+#    print(" ")
+#    return inDataList[idx]
+
+
 def FindMedianImage(inDataList):
     """
         This find the median file between all the input files
     """
     IMG = []
+    DIM = []
     for i in range(len(inDataList)):
-        print(inDataList[i])
-        IMG.append(sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i])))
+        tmp = sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i]))
+        IMG.append(tmp)
+        DIM.append(tmp.shape)
+
+    ref_dim = np.max(DIM, axis =0)
+
+    for i in range(len(inDataList)):
+        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
+
     COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
 
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
@@ -370,7 +398,6 @@ def FindMedianImage(inDataList):
     print("###########################################")
     print(" ")
     return inDataList[idx]
-
 
 
 
