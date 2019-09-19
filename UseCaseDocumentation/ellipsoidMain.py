@@ -99,7 +99,7 @@ print("\nStep 2. Groom - Data Pre-processing\n")
 if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-parentDir = '../TestEllipsoids/PrepOutput/'
+parentDir = './TestEllipsoids/PrepOutput/'
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
@@ -165,7 +165,7 @@ print("\nStep 4. Optimize - Particle Based Optimization\n")
 if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-pointDir = '../TestEllipsoids/PointFiles/'
+pointDir = './TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
 
@@ -254,7 +254,7 @@ print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse 
 if args.interactive != 0:
         input("Press Enter to continue")
 
-meanDir   = '../TestEllipsoids/MeanReconstruction/'
+meanDir   = './TestEllipsoids/MeanReconstruction/'
 if not os.path.exists(meanDir):
 	os.makedirs(meanDir)
     
@@ -295,7 +295,7 @@ print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the loc
 if args.interactive != 0:
         input("Press Enter to continue")
 
-meshDir_local   = '../TestEllipsoids/MeshFiles-Local/'
+meshDir_local   = './TestEllipsoids/MeshFiles-Local/'
 if not os.path.exists(meshDir_local):
 	os.makedirs(meshDir_local)
 
@@ -323,7 +323,7 @@ print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the wor
 if args.interactive !=0:
         input("Press Enter to continue")
 
-meshDir_global   = '../TestEllipsoids/MeshFiles-World/'
+meshDir_global   = './TestEllipsoids/MeshFiles-World/'
 if not os.path.exists(meshDir_global):
 	os.makedirs(meshDir_global)
 
@@ -350,7 +350,7 @@ print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant
 if args.interactive != 0:
         input("Press Enter to continue")
 
-pcaDir   = '../TestEllipsoids/PCAModesFiles/'
+pcaDir   = './TestEllipsoids/PCAModesFiles/'
 if not os.path.exists(pcaDir):
 	os.makedirs(pcaDir)
     
