@@ -152,7 +152,6 @@ if(APPLE)
 else()
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
-set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 
 
 add_subdirectory(ExternalLibs)
