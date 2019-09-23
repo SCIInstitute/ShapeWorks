@@ -58,7 +58,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Application/Optimize )
 include_directories(${CMAKE_SOURCE_DIR}/ParticleShapeworks/include)
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Groom )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Optimize )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Surfworks )
+#INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/Surfworks )
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 
@@ -110,7 +110,11 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   tinyxml
   ShapeWorksGroom
   ShapeWorksOptimize
-  Surfworks)
+  Transforms
+  SurfaceReconstruction
+  ParticleSystemUtils
+  Utils
+  )
 
 INSTALL(TARGETS ShapeWorksStudio
   BUNDLE  DESTINATION bin

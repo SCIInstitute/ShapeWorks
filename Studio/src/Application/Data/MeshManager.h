@@ -23,7 +23,7 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshWorker.h>
 #include <Data/Preferences.h>
-#include <Surfworks/Reconstruction.h>
+#include <Data/SurfaceReconstructor.h>
 
 class MeshManager : public QObject
 {
@@ -33,28 +33,16 @@ public:
   MeshManager(Preferences& prefs);
   ~MeshManager();
 
-  void initializeReconstruction(
-    std::vector<std::vector<itk::Point<float> > > local_pts,
-    std::vector<std::vector<itk::Point<float> > > global_pts,
-    std::vector<ImageType::Pointer> distance_transform,
-    double maxAngle,
-    float decimationPecent,
-    int numClusters);
-  bool hasDenseMean();
-  void setMean(vtkSmartPointer<vtkPoints> sparseMean,
-    vtkSmartPointer<vtkPolyData> denseMean,
-    std::vector<bool> goodPoints);
+  //! pre-generate and cache a mesh for this shape
+  void generateMesh(const vnl_vector<double>& shape);
 
-  void writeMeanInfo(std::string baseName);
-  void readMeanInfo(std::string dense,
-    std::string sparse, std::string goodPoints);
+  //! get a mesh for a shape
+  vtkSmartPointer<vtkPolyData> getMesh(const vnl_vector<double>& shape);
 
-  // pre-generate and cache a mesh for this shape
-  void generateMesh( const vnl_vector<double>& shape );
-  void resetReconstruct();
+  //! return the surface reconstructor
+  QSharedPointer<SurfaceReconstructor> getSurfaceReconstructor();
 
-  vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& shape );
-
+  //! clear the cache
   void clear_cache();
 
 public Q_SLOTS:
@@ -75,14 +63,16 @@ private:
 
   // queue of meshes to build
   MeshWorkQueue workQueue_;
-  
+
   // the workers
   std::vector<QThread*> threads_;
-  
+
   size_t thread_count_;
 
   //reconstruction object
-  Reconstruction construct_;
+  //Reconstruction construct_;
+
+  QSharedPointer<SurfaceReconstructor> surfaceReconstructor_;
 };
 
 #endif // ifndef MESH_Manager_H
