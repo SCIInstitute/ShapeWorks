@@ -394,7 +394,7 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points, bool local)
+bool Project::load_points(std::vector<std::vector<itk::Point<double> > > points, bool local)
 {
   QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);

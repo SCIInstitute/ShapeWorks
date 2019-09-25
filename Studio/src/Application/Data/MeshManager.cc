@@ -108,8 +108,8 @@ QSharedPointer<SurfaceReconstructor> MeshManager::getSurfaceReconstructor()
 /*
    //---------------------------------------------------------------------------
    void MeshManager::initializeReconstruction(
-   std::vector<std::vector<itk::Point<float>>> local_pts,
-   std::vector<std::vector<itk::Point<float>>> global_pts,
+   std::vector<std::vector<itk::Point<double>>> local_pts,
+   std::vector<std::vector<itk::Point<double>>> global_pts,
    std::vector<ImageType::Pointer> distance_transform,
    double maxAngleDegrees,
    float decimationPercent,

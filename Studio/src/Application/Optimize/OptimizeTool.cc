@@ -96,8 +96,8 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   QThread *thread = new QThread;
   ShapeworksWorker *worker = new ShapeworksWorker(
     ShapeworksWorker::Optimize, NULL, this->optimize_, this->project_,
-    std::vector<std::vector<itk::Point<float> > >(),
-    std::vector<std::vector<itk::Point<float> > >(),
+    std::vector<std::vector<itk::Point<double> > >(),
+    std::vector<std::vector<itk::Point<double> > >(),
     std::vector<ImageType::Pointer>(),
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(), 
@@ -173,12 +173,12 @@ void OptimizeTool::loadCutPlanesFile(std::string file) {
     this->cutPlanes_.clear();
     return;
   }
-  std::vector<std::array<itk::Point<float>, 3 > > cutPlanes;
+  std::vector<std::array<itk::Point<double>, 3 > > cutPlanes;
   while (planes.good()) {
     float x1, y1, z1, x2, y2, z2, x3, y3, z3;
     planes >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3;
     if (!planes.fail()) {
-      itk::Point<float> p1, p2, p3;
+      itk::Point<double> p1, p2, p3;
       p1[0] = x1; p1[1] = y1; p1[2] = z1;
       p2[0] = x2; p2[1] = y2; p2[2] = z2;
       p3[0] = x3; p3[1] = y3; p3[2] = z3;
@@ -219,7 +219,7 @@ void OptimizeTool::on_reconstructionButton_clicked() {
   this->ui_->run_optimize_button->setEnabled(false);
   this->ui_->reconstructionButton->setEnabled(false);
   QThread *thread = new QThread;
-  std::vector<std::vector<itk::Point<float> > > local, global;
+  std::vector<std::vector<itk::Point<double> > > local, global;
   std::vector<ImageType::Pointer> images;
   auto shapes = this->project_->get_shapes();
   local.resize(shapes.size());
@@ -230,7 +230,7 @@ void OptimizeTool::on_reconstructionButton_clicked() {
     auto l = s->get_local_correspondence_points();
     auto g = s->get_global_correspondence_points();
     for (size_t i = 0; i < l.size(); i+=3) {
-      itk::Point<float> pt, pt2;
+      itk::Point<double> pt, pt2;
       pt[0] = l[i];
       pt[1] = l[i + 1];
       pt[2] = l[i + 2];
