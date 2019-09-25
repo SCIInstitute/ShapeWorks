@@ -11,8 +11,11 @@
 #include <Data/MeshManager.h>
 
 //---------------------------------------------------------------------------
-MeshManager::MeshManager(Preferences& prefs) : prefs_(prefs),
-  meshCache_(prefs), meshGenerator_(prefs)
+MeshManager::MeshManager(Preferences& prefs) :
+  prefs_(prefs),
+  meshCache_(prefs),
+  meshGenerator_(prefs),
+  surfaceReconstructor_(new SurfaceReconstructor())
 {
   this->thread_count_ = 0;
 }
@@ -54,7 +57,6 @@ void MeshManager::generateMesh(const vnl_vector<double>& shape)
     }
   }
 }
-
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shape)
@@ -104,36 +106,36 @@ QSharedPointer<SurfaceReconstructor> MeshManager::getSurfaceReconstructor()
 }
 
 /*
-//---------------------------------------------------------------------------
-void MeshManager::initializeReconstruction(
-  std::vector<std::vector<itk::Point<float>>> local_pts,
-  std::vector<std::vector<itk::Point<float>>> global_pts,
-  std::vector<ImageType::Pointer> distance_transform,
-  double maxAngleDegrees,
-  float decimationPercent,
-  int numClusters)
-{
-  //now actually generate the dense mean.
-  this->construct_.reset();
-  this->construct_.setDecimation(decimationPercent);
-  this->construct_.setMaxAngle(maxAngleDegrees);
-  this->construct_.setNumClusters(numClusters);
-  this->construct_.getDenseMean(local_pts, global_pts, distance_transform);
-}
+   //---------------------------------------------------------------------------
+   void MeshManager::initializeReconstruction(
+   std::vector<std::vector<itk::Point<float>>> local_pts,
+   std::vector<std::vector<itk::Point<float>>> global_pts,
+   std::vector<ImageType::Pointer> distance_transform,
+   double maxAngleDegrees,
+   float decimationPercent,
+   int numClusters)
+   {
+   //now actually generate the dense mean.
+   this->construct_.reset();
+   this->construct_.setDecimation(decimationPercent);
+   this->construct_.setMaxAngle(maxAngleDegrees);
+   this->construct_.setNumClusters(numClusters);
+   this->construct_.getDenseMean(local_pts, global_pts, distance_transform);
+   }
 
-bool MeshManager::hasDenseMean()
-{
-  return this->construct_.denseDone();
-}
+   bool MeshManager::hasDenseMean()
+   {
+   return this->construct_.denseDone();
+   }
 
-void MeshManager::writeMeanInfo(std::string baseName)
-{
-  this->construct_.writeMeanInfo(baseName);
-}
+   void MeshManager::writeMeanInfo(std::string baseName)
+   {
+   this->construct_.writeMeanInfo(baseName);
+   }
 
-void MeshManager::readMeanInfo(std::string dense,
+   void MeshManager::readMeanInfo(std::string dense,
                                std::string sparse, std::string goodPoints)
-{
-  this->construct_.readMeanInfo(dense, sparse, goodPoints);
-}
-*/
+   {
+   this->construct_.readMeanInfo(dense, sparse, goodPoints);
+   }
+ */
