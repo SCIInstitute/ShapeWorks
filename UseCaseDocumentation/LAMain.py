@@ -34,12 +34,9 @@ parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
 parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
-parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store")
+parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
 args = parser.parse_args()
 
-
-# set True for process both images and segmentations
-print(args.start_with_image_and_segmentation_data)
 
 """
 Most of the following steps even though wrapped in python functions are using
@@ -59,10 +56,10 @@ os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
 
 
 
-filename="/home/sci/atefeh.gk/Public/LA.zip"
+filename="/home/sci/atefeh.gk/Public/leftatrium.zip"
 
 if args.start_with_image_and_segmentation_data:
-    parentDir="TestLA/"
+    parentDir="Test_leftatrium/"
 
     if not os.path.exists(parentDir):
             os.makedirs(parentDir)
@@ -88,7 +85,7 @@ if args.start_with_image_and_segmentation_data:
             -- Largets Bounding Box and Cropping
             """
 
-            parentDir = '../TestLA/PrepOutput/'
+            parentDir = './Test_leftatriumanData/PrepOutput/'
 
             print("\nStep 2. Groom - Data Pre-processing\n")
             if args.interactive:
@@ -172,7 +169,7 @@ else:
     if args.interactive:
             input("Press Enter to continue")
 
-    parentDir="TestLA/"
+    parentDir="Test_leftatrium/"
 
     if not os.path.exists(parentDir):
             os.makedirs(parentDir)
@@ -182,6 +179,7 @@ else:
         zipObj.extractall(path=parentDir)
 
         fileList = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
+
 
     if not args.start_with_prepped_data:
             """
@@ -199,9 +197,10 @@ else:
                     input("Press Enter to continue")
 
             # create the output directory
-            parentDir = '../TestLA/PrepOutput/'
+            parentDir = './Test_leftatrium/PrepOutput/'
             if not os.path.exists(parentDir):
                     os.makedirs(parentDir)
+
 
 
             """
@@ -282,25 +281,25 @@ print("\nStep 4. Optimize - Particle Based Optimization\n")
 if args.interactive:
         input("Press Enter to continue")
 
-pointDir = '../TestLA/PointFiles/'
+pointDir = './Test_leftatrium/PointFiles/'
 if not os.path.exists(pointDir):
     os.makedirs(pointDir)
 
 
 if args.use_single_scale:
     parameterDictionary = {
-            "number_of_particles" : 2048,
+            "number_of_particles" : 1024,
             "use_normals": 0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
-            "iterations_per_split" : 1000,
-            "optimization_iterations" : 5000,
-            "starting_regularization" : 100,
+            "iterations_per_split" : 4000,
+            "optimization_iterations" : 4000,
+            "starting_regularization" : 50000,
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 1,
-            "initial_relative_weighting" : 0.01,
+            "relative_weighting" : 50,
+            "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
@@ -317,19 +316,19 @@ if args.use_single_scale:
 
 else:
     parameterDictionary = {
-            "starting_particles" : 32,
-            "number_of_levels" : 7,
+            "starting_particles" : 128,
+            "number_of_levels" : 4,
             "use_normals": 1,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
-            "iterations_per_split" : 1000,
-            "optimization_iterations" : 5000,
-            "starting_regularization" : 100,
+            "iterations_per_split" : 4000,
+            "optimization_iterations" : 4000,
+            "starting_regularization" : 50000,
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 1,
-            "initial_relative_weighting" : 0.01,
+            "relative_weighting" : 50,
+            "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
@@ -374,7 +373,7 @@ if args.interactive:
         input("Press Enter to continue")
 
 
-meanDir   = '../TestLA/MeanReconstruction/'
+meanDir   = './Test_leftatrium/MeanReconstruction/'
 if not os.path.exists(meanDir):
         os.makedirs(meanDir)
 
@@ -382,8 +381,8 @@ if not os.path.exists(meanDir):
 Parameter dictionary for ReconstructMeanSurface cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 2048,
-        "out_prefix" : meanDir + 'leftatrial',
+        "number_of_particles" : 1024,
+        "out_prefix" : meanDir + 'leftatrium',
         "do_procrustes" : 0,
         "do_procrustes_scaling" : 0,
         "levelsetValue" : 0.0,
@@ -416,7 +415,7 @@ print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the loc
 if args.interactive :
         input("Press Enter to continue")
 
-meshDir_local   = '../TestLA/MeshFiles-Local/'
+meshDir_local   = './Test_leftatrium/MeshFiles-Local/'
 if not os.path.exists(meshDir_local):
         os.makedirs(meshDir_local)
 
@@ -424,9 +423,9 @@ if not os.path.exists(meshDir_local):
 Parameter dictionary for ReconstructSurface cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 2048,
-        "mean_prefix" : meanDir + 'leftatrial',
-        "out_prefix" : meshDir_local + 'leftatrial',
+        "number_of_particles" : 512,
+        "mean_prefix" : meanDir + 'leftatrium',
+        "out_prefix" : meshDir_local + 'leftatrium',
         "use_tps_transform" : 0,
         "use_bspline_interpolation" : 0,
         "display" : 0,
@@ -444,7 +443,7 @@ print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the wor
 if args.interactive :
         input("Press Enter to continue")
 
-meshDir_global   = '../TestLA/MeshFiles-World/'
+meshDir_global   = './Test_leftatrium/MeshFiles-World/'
 if not os.path.exists(meshDir_global):
         os.makedirs(meshDir_global)
 
@@ -452,9 +451,9 @@ if not os.path.exists(meshDir_global):
 Parameter dictionary for ReconstructSurface cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 2048,
-        "mean_prefix" : meanDir + 'leftatrial',
-        "out_prefix" : meshDir_global + 'leftatrial',
+        "number_of_particles" : 1024,
+        "mean_prefix" : meanDir + 'leftatrium',
+        "out_prefix" : meshDir_global + 'leftatrium',
         "use_tps_transform" : 0,
         "use_bspline_interpolation" : 0,
         "display" : 0,
@@ -471,7 +470,7 @@ print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant
 if args.interactive :
         input("Press Enter to continue")
 
-pcaDir   = '../TestLA/PCAModesFiles/'
+pcaDir   = './Test_leftatrium/PCAModesFiles/'
 if not os.path.exists(pcaDir):
         os.makedirs(pcaDir)
 
@@ -479,9 +478,9 @@ if not os.path.exists(pcaDir):
 Parameter dictionary for ReconstructSamplesAlongPCAModes cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 2048,
-        "mean_prefix" : meanDir + 'leftatrial',
-        "out_prefix" : pcaDir + 'leftatrial',
+        "number_of_particles" : 1024,
+        "mean_prefix" : meanDir + 'leftatrium',
+        "out_prefix" : pcaDir + 'leftatrium',
         "use_tps_transform" : 0,
         "use_bspline_interpolation" : 0,
         "display" : 0,
@@ -494,7 +493,7 @@ parameterDictionary = {
 runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
 
 """
-The local and world particles will be saved in TestLA/PointFiles/2048
+The local and world particles will be saved in Test_leftatrium/PointFiles/<number_of_particles>
 directory, the set of these points on each shape constitue a particle based shape model
 or a Point Distribution Model (PDM). This PDM shape representation is
 computationally flexible and efficient and we can use it to perform shape
