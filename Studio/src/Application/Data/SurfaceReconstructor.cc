@@ -23,7 +23,6 @@ void SurfaceReconstructor::initializeReconstruction(
   std::vector<ImageType::Pointer> distance_transform,
   double maxAngle, float decimationPercent, int numClusters)
 {
-  std::cerr << "SurfaceReconstruction::initializeReconstruction!!!\n";
 
   this->reconstructor_.setDecimation(decimationPercent);
   this->reconstructor_.setMaxAngle(maxAngle);
@@ -33,7 +32,6 @@ void SurfaceReconstructor::initializeReconstruction(
   vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_.getDenseMean(local_pts, global_pts,
                                                                              distance_transform);
 
-  std::cerr << "surf: setting available\n";
   this->surface_reconstruction_available_ = true;
 }
 
@@ -58,7 +56,7 @@ void SurfaceReconstructor::readMeanInfo(string dense, string sparse, string good
 //---------------------------------------------------------------------------
 void SurfaceReconstructor::resetReconstruct()
 {
-  /// TODO : implementation
+  this->surface_reconstruction_available_ = false;
 }
 
 //---------------------------------------------------------------------------
