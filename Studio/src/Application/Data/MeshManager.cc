@@ -18,6 +18,8 @@ MeshManager::MeshManager(Preferences& prefs) :
   surfaceReconstructor_(new SurfaceReconstructor())
 {
   this->thread_count_ = 0;
+
+  this->meshGenerator_.set_surface_reconstructor(this->surfaceReconstructor_);
 }
 
 //---------------------------------------------------------------------------
