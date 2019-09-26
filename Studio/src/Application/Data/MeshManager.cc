@@ -106,38 +106,3 @@ QSharedPointer<SurfaceReconstructor> MeshManager::getSurfaceReconstructor()
 {
   return this->surfaceReconstructor_;
 }
-
-/*
-   //---------------------------------------------------------------------------
-   void MeshManager::initializeReconstruction(
-   std::vector<std::vector<itk::Point<double>>> local_pts,
-   std::vector<std::vector<itk::Point<double>>> global_pts,
-   std::vector<ImageType::Pointer> distance_transform,
-   double maxAngleDegrees,
-   float decimationPercent,
-   int numClusters)
-   {
-   //now actually generate the dense mean.
-   this->construct_.reset();
-   this->construct_.setDecimation(decimationPercent);
-   this->construct_.setMaxAngle(maxAngleDegrees);
-   this->construct_.setNumClusters(numClusters);
-   this->construct_.getDenseMean(local_pts, global_pts, distance_transform);
-   }
-
-   bool MeshManager::hasDenseMean()
-   {
-   return this->construct_.denseDone();
-   }
-
-   void MeshManager::writeMeanInfo(std::string baseName)
-   {
-   this->construct_.writeMeanInfo(baseName);
-   }
-
-   void MeshManager::readMeanInfo(std::string dense,
-                               std::string sparse, std::string goodPoints)
-   {
-   this->construct_.readMeanInfo(dense, sparse, goodPoints);
-   }
- */
