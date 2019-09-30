@@ -56,7 +56,7 @@ os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
 
 
 
-filename="/home/sci/atefeh.gk/Public/leftatrium.zip"
+filename="/home/sci/atefeh.gk/Public/LA_39.zip"
 
 if args.start_with_image_and_segmentation_data:
     parentDir="Test_leftatrium/"
@@ -85,7 +85,7 @@ if args.start_with_image_and_segmentation_data:
             -- Largets Bounding Box and Cropping
             """
 
-            parentDir = './Test_leftatriumanData/PrepOutput/'
+            parentDir = './Test_leftatrium/PrepOutput/'
 
             print("\nStep 2. Groom - Data Pre-processing\n")
             if args.interactive:
@@ -288,7 +288,7 @@ if not os.path.exists(pointDir):
 
 if args.use_single_scale:
     parameterDictionary = {
-            "number_of_particles" : 1024,
+            "number_of_particles" : 128,
             "use_normals": 0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
@@ -423,7 +423,7 @@ if not os.path.exists(meshDir_local):
 Parameter dictionary for ReconstructSurface cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 512,
+        "number_of_particles" : 1024,
         "mean_prefix" : meanDir + 'leftatrium',
         "out_prefix" : meshDir_local + 'leftatrium',
         "use_tps_transform" : 0,

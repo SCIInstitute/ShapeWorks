@@ -198,7 +198,7 @@ if int(args.use_single_scale) != 0:
 else:
 	parameterDictionary = {
 		"starting_particles" : 32,
-		"number_of_levels" : 3, 
+                "number_of_levels" : 5,
 		"use_normals": 0,
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,

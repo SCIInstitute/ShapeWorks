@@ -124,7 +124,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	if curFactor != 0:
             # add in the pointfiles
             init_stats = ET.SubElement(root, 'use_shape_statistics_in_init')
-            init_stats.text = "\n" + str(1.0) + "\n"
+            init_stats.text = "\n" + str(0.0) + "\n"
             points = ET.SubElement(root, 'point_files')
             points.text = "\n"
             for i in range(len(lastPointFiles)):
