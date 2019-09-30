@@ -80,7 +80,9 @@ optparse::OptionParser buildParser()
     parser.add_option("--icpIterations").action("store").type("int").set_default(20).help("The number of iterations user want to run ICP registration.");
     parser.add_option("--visualizeResult").action("store").type("bool").set_default(false).help("A flag to visualize the registration result.");
     parser.add_option("--solutionSegmentation").action("store").type("string").set_default("").help("The filename of the aligned segmentation of source image.");
-
+    parser.add_option("--solutionRaw").action("store").type("string").set_default("").help("The filename of the aligned raw source image.");
+    parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
+    parser.add_option("--solutionTransformation").action("store").type("string").set_default("").help("The filename of the textfile containing the transformation matrix.");
     return parser;
 }
 
@@ -164,7 +166,7 @@ void ConnectPipelines(VTK_Exporter* exporter, ITK_Importer importer)
  * well.
  */
 int main(int argc, char * argv [] )
-{  
+{
 
     optparse::OptionParser parser = buildParser();
     optparse::Values & options = parser.parse_args(argc,argv);
@@ -180,6 +182,9 @@ int main(int argc, char * argv [] )
     std::string sourceDistanceMap    = (std::string) options.get("sourceDistanceMap");
     std::string sourceSegmentation   = (std::string) options.get("sourceSegmentation");
     std::string solutionSegmentation = (std::string) options.get("solutionSegmentation");
+    std::string sourceRaw            = (std::string) options.get("sourceRaw");
+    std::string solutionRaw          = (std::string) options.get("solutionRaw");
+    std::string solutionTransformation   = (std::string) options.get("solutionTransformation");
     float         isovalue           = (float) options.get("isoValue");
     int         icpIterations        = (int) options.get("icpIterations");
     bool      visualizeResult        = (bool) options.get("visualizeResult");
@@ -193,10 +198,14 @@ int main(int argc, char * argv [] )
         typedef itk::Image< InputPixelType, Dimension > InputImageType;
         typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
         typedef itk::Image< InputPixelType, Dimension > InputSegImageType;
+        typedef itk::Image< InputPixelType, Dimension > InputRawImageType;
         typedef itk::Image< OutputPixelType, Dimension > OutputSegImageType;
+        typedef itk::Image< OutputPixelType, Dimension > OutputRawImageType;
 
         typedef itk::ImageFileReader< InputImageType > ReaderType;
         typedef itk::ImageFileReader< InputSegImageType > SegReaderType;
+        typedef itk::ImageFileReader< InputRawImageType > RawReaderType;
+
 
         ReaderType::Pointer targetReader  = ReaderType::New();
         targetReader->SetFileName( targetDistanceMap );
@@ -272,6 +281,15 @@ int main(int argc, char * argv [] )
         vtkMatrix4x4::Invert(m1, m);
 
         std::cout << "The resulting matrix is: " << *m << std::endl;
+        // write the matrix m in the solutionTransformation textfile
+        std::ofstream ofs;
+        std::string fname=solutionTransformation;
+        const char * filename = fname.c_str();
+        ofs.open (filename); // the file needs to be overwritten in case running the program on the same file several times
+
+        // for ease of automatic parsing the generated param file
+        ofs <<"The Transformation matrix is:\n"<< *m;
+        ofs.close();
 
         typedef itk::Rigid3DTransformSurrogate<double>  TransformType;
         TransformType::Pointer transform = TransformType::New();
@@ -296,7 +314,7 @@ int main(int argc, char * argv [] )
         //	std::cout << p[r] << " ";
         //}
         //std::cout << std::endl;
-
+        ///////////////////////////
         SegReaderType::Pointer movingSegReader  = SegReaderType::New();
         movingSegReader->SetFileName( sourceSegmentation );
         movingSegReader->Update();
@@ -327,6 +345,42 @@ int main(int argc, char * argv [] )
         itkImageWriter->SetInput( resampler->GetOutput() );
         itkImageWriter->SetFileName( solutionSegmentation );
         itkImageWriter->Update();
+        //////////////////////////////////
+        // Same transformation applied on the raw images
+        // change the variable names for syntax consistency
+        if (sourceRaw != "")
+        {
+            RawReaderType::Pointer movingRawReader  = RawReaderType::New();
+            movingRawReader->SetFileName( sourceRaw );
+            movingRawReader->Update();
+            InputRawImageType::Pointer movingRawInputImage =
+                    movingRawReader->GetOutput();
+
+            typedef itk::ResampleImageFilter< InputRawImageType
+                    , OutputRawImageType > ResampleFilterType;
+            ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+            resampler->SetTransform( transform );
+
+
+            typedef itk::LinearInterpolateImageFunction<
+                    InputRawImageType, double > InterpolatorType;
+            InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+            resampler->SetInterpolator( interpolator );
+            resampler->SetOutputSpacing( movingRawInputImage->GetSpacing() );
+            resampler->SetSize( size );
+            resampler->SetOutputOrigin( movingRawInputImage->GetOrigin() );
+            resampler->SetOutputDirection( movingRawInputImage->GetDirection() );
+            resampler->SetInput( movingRawInputImage );
+            resampler->Update();
+
+            typedef itk::ImageFileWriter< OutputRawImageType >  ITKWriterType;
+            ITKWriterType::Pointer itkImageWriter = ITKWriterType::New();
+
+            itkImageWriter->SetInput( resampler->GetOutput() );
+            itkImageWriter->SetFileName( solutionRaw );
+            itkImageWriter->Update();
+         }
 
         if(visualizeResult){
             //------------------------------------------------------------------------
