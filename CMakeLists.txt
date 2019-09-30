@@ -1,6 +1,6 @@
 PROJECT(shapeworks)
 cmake_minimum_required(VERSION 2.6)
-SET(CMAKE_BUILD_TYPE Release)
+#SET(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -9,6 +9,20 @@ find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
+
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+#include(DeployQt5)
+
+
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
+if(LINUX)
+  # We need RPATH rather than RUNPATH since RUNPATH
+  # though recommended, is not used for transitive dependencies
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
+endif(LINUX)
 
 
 SET(BUILD_EXECS_AT_SAME_LEVEL TRUE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
@@ -128,6 +142,18 @@ endif(USE_OPENMP)
 # endif(USE_OPENMP)
 
 
+
+
+
+
+
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+else()
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+
+
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
 
@@ -172,6 +198,10 @@ find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 MESSAGE(STATUS "** USE_VTK_FILE: ${VTK_USE_FILE}")
 
+include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
+
+
+
 if(Build_PrepTools)
     include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Prep/Source)
     add_subdirectory(Prep/Source)
@@ -191,3 +221,77 @@ endif(Build_View2)
 if(Build_Studio)
   add_subdirectory(Studio/src)
 endif(Build_Studio)
+
+
+add_custom_command(
+    TARGET ShapeWorksView2 POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:Qt5::Widgets>
+        $<TARGET_FILE:Qt5::Core>
+        $<TARGET_FILE:Qt5::Gui>
+        $<TARGET_FILE:Qt5::Sql>
+        $<TARGET_FILE_DIR:ShapeWorksView2>
+)
+
+
+#INSTALL(FILES $<TARGET_FILE:Qt5::Sql> DESTINATION lib)
+#INSTALL(FILES $<TARGET_FILE:Qt5::Core> DESTINATION lib)
+#INSTALL(FILES $<TARGET_FILE:Qt5::Gui> DESTINATION lib)
+#INSTALL(FILES $<TARGET_FILE:Qt5::Widgets> DESTINATION lib)
+
+set(APP ${CMAKE_INSTALL_PREFIX}/stl2vtk) 
+
+# set paths to dependencies
+set(DIRS ${CMAKE_INSTALL_PREFIX}/lib )
+
+
+foreach(plugin ${Qt5Network_PLUGINS})
+  get_target_property(_loc ${plugin} LOCATION)
+  message("Plugin ${plugin} is at location ${_loc}")
+endforeach()
+
+
+
+get_filename_component(Qt_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
+get_filename_component(Qt_PREFIX_DIR "${Qt_BIN_DIR}" PATH)
+
+  
+get_filename_component(QT_LOC Qt5::Widgets DIRECTORY)
+MESSAGE(STATUS "QT libs: ${QT_LOC}")
+
+set(qtlib "Widgets")
+#GET_FILENAME_COMPONENT(QT_LIB_DIR_tmp ${QT_${qtlib}_LIBRARY_RELEASE} PATH)
+
+MESSAGE(STATUS "QT libs: ${QT_LIB_DIR_tmp}")
+
+get_filename_component(qt_dlls_dir "${QtWidgets_location}" PATH)
+get_filename_component(qt_dlls_dir "${qt_dlls_dir}" PATH)
+
+
+
+get_target_property(QT5_WIDGETSLIBRARY Qt5::Widgets LOCATION)
+get_filename_component(QT5_WIDGETSLIBRARYPATH ${QT5_WIDGETSLIBRARY} PATH)
+MESSAGE(STATUS "QT widget: ${QT5_WIDGETSLIBRARYPATH}")
+set(DIRS "${QT5_WIDGETSLIBRARYPATH} \${CMAKE_INSTALL_PREFIX}/lib")
+
+set(DIRS "${CMAKE_INSTALL_PREFIX}/lib")
+
+list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}") 
+
+
+include(InstallRequiredSystemLibraries)
+
+MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+
+#install_qt5_executable(${APP} "" "" "${DIRS}" "" "")
+
+# copy all libraries to the binary folder
+    # by calling fixup_bundle, when TARGET INSTALL is executed
+    # install(CODE "
+    #    include(BundleUtilities)
+    #    fixup_bundle(\"${APP}\"   \"\"   \"${DIRS}\")
+    #    " 
+    #    COMPONENT libraries
+    #    )
+
+

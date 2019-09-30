@@ -19,8 +19,8 @@ optimization and, the post ShapeWorks visualization.
 First import the necessary modules
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
+##import numpy as np
+##import matplotlib.pyplot as plt
 from zipfile import ZipFile
 import os
 import csv
@@ -29,6 +29,22 @@ import argparse
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
+
+
+"""
+Most of the following steps even though wrapped in python functions are using
+the underlying c++ code, for which we need to call the source paths to the 
+binaries. This step should be common for any use of a function in ShapeWorks.
+__This requires the full ShapeWorks to be correctly built/downloaded!__'
+
+These following commands set the temporary environment variables to point to
+shapeworks binaries and set the necessary library paths
+"""
+
+binpath = "../build/shapeworks-build/binary"
+installpath = "../../bin"
+os.environ["PATH"] = installpath + ":" + binpath + ":" + os.environ["PATH"]
+
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store", default=0)
@@ -69,20 +85,6 @@ with ZipFile(filename, 'r') as zipObj:
 
 fileList = fileList[:15]
 
-"""
-Most of the following steps even though wrapped in python functions are using
-the underlying c++ code, for which we need to call the source paths to the 
-binaries. This step should be common for any use of a function in ShapeWorks.
-__This requires the full ShapeWorks to be correctly built/downloaded!__'
-
-These following commands set the temporary environment variables to point to
-shapeworks binaries and set the necessary library paths
-"""
-
-binpath = "../build/shapeworks-build/binary"
-installpath = "../install"
-os.environ["PATH"] = binpath + ":" + os.environ["PATH"]
-os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
 
 """
 
@@ -99,7 +101,7 @@ print("\nStep 2. Groom - Data Pre-processing\n")
 if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-parentDir = '../TestEllipsoids/PrepOutput/'
+parentDir = 'TestEllipsoids/PrepOutput/'
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
@@ -165,7 +167,7 @@ print("\nStep 4. Optimize - Particle Based Optimization\n")
 if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-pointDir = '../TestEllipsoids/PointFiles/'
+pointDir = 'TestEllipsoids/PointFiles/'
 if not os.path.exists(pointDir):
 	os.makedirs(pointDir)
 
@@ -389,13 +391,6 @@ print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model
 if args.interactive != 0:
         input("Press Enter to continue")
 
-launchShapeWorksView2(pointDir, worldPointFiles)
-
-
-print("\nStep 10. Analysis - Launch ShapeWorksView2 - dense correspondence model.\n")
-if args.interactive:
-        input("Press Enter to continue")
-
-launchShapeWorksView2(meshDir_global, worldDensePointFiles)
+launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
 print("\nShapeworks Pipeline Complete!")

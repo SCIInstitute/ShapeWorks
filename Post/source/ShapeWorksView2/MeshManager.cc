@@ -11,7 +11,10 @@
 #include <MeshManager.h>
 #include <Preferences.h>
 
+
 MeshManager::MeshManager()
+  :
+    surfaceReconstructor_(new SurfaceReconstructor())
 {
   this->smoothingAmount = 0;
 
@@ -21,6 +24,8 @@ MeshManager::MeshManager()
     this, SLOT( initializeThreads() ) );
 
   this->initializeThreads();
+
+  this->meshGenerator.set_surface_reconstructor(this->surfaceReconstructor_);
 }
 
 MeshManager::~MeshManager()
@@ -75,6 +80,9 @@ void MeshManager::setUsePowerCrust( bool enabled )
 
 void MeshManager::generateMesh( const vnl_vector<double>& shape )
 {
+  /// disable pre-generation for the moment
+  //return;
+
   if ( this->usePowerCrust )
   {
     // the powercrust code uses all manner of global variables and cannot be run in parallel right now
@@ -103,6 +111,7 @@ void MeshManager::generateMesh( const vnl_vector<double>& shape )
   }
 }
 
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& shape )
 {
   vtkSmartPointer<vtkPolyData> polyData;
@@ -132,6 +141,13 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh( const vnl_vector<double>& sha
   return polyData;
 }
 
+//---------------------------------------------------------------------------
+QSharedPointer<SurfaceReconstructor> MeshManager::getSurfaceReconstructor()
+{
+  return this->surfaceReconstructor_;
+}
+
+//---------------------------------------------------------------------------
 void MeshManager::initializeThreads()
 {
   //std::cerr << "shutting down threads\n";
@@ -145,7 +161,7 @@ void MeshManager::initializeThreads()
     return;
   }
 
-  int numThreads = Preferences::Instance().getNumThreads() - 1;
+  unsigned int numThreads = Preferences::Instance().getNumThreads() - 1;
   if ( numThreads > 0 )
   {
     threads.resize( numThreads );
@@ -153,7 +169,7 @@ void MeshManager::initializeThreads()
 
     //std::cerr << "Starting " << numThreads << " threads\n";
 
-    for ( int i = 0; i < numThreads; i++ )
+    for ( unsigned int i = 0; i < numThreads; i++ )
     {
       threads[i] = new QThread;
       workers[i] = new MeshWorker;
@@ -166,6 +182,8 @@ void MeshManager::initializeThreads()
       workers[i]->getMeshGenerator()->setSampleSpacing( this->sampleSpacing );
       workers[i]->getMeshGenerator()->setSmoothingAmount( this->smoothingAmount );
       workers[i]->getMeshGenerator()->setUsePowerCrust( this->usePowerCrust );
+      workers[i]->getMeshGenerator()->set_surface_reconstructor( this->surfaceReconstructor_ );
+
       workers[i]->moveToThread( threads[i] );
       threads[i]->start();
     }

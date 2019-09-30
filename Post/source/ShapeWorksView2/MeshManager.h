@@ -17,11 +17,13 @@
 #include <vtkSmartPointer.h>
 
 #include <QWaitCondition>
+#include <QSharedPointer>
 
 #include <MeshCache.h>
 #include <MeshGenerator.h>
 #include <MeshWorkQueue.h>
 #include <MeshWorker.h>
+#include <SurfaceReconstructor.h>
 
 class MeshManager : public QObject
 {
@@ -46,7 +48,11 @@ public:
   // pre-generate and cache a mesh for this shape
   void generateMesh( const vnl_vector<double>& shape );
 
+  //! Create a mesh from a shape (set of points)
   vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& shape );
+
+  QSharedPointer<SurfaceReconstructor> getSurfaceReconstructor();
+
 
 private Q_SLOTS:
   void initializeThreads();
@@ -80,6 +86,7 @@ private:
   double sampleSpacing;
   bool usePowerCrust;
   float smoothingAmount;
+  QSharedPointer<SurfaceReconstructor> surfaceReconstructor_;
 };
 
 #endif // ifndef MESH_Manager_H
