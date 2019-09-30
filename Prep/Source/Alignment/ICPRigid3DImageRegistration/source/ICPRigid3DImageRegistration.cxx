@@ -332,10 +332,10 @@ int main(int argc, char * argv [] )
         InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
         resampler->SetInterpolator( interpolator );
-        resampler->SetOutputSpacing( movingSegInputImage->GetSpacing() );
+        resampler->SetOutputSpacing( targetInputImage->GetSpacing() );
         resampler->SetSize( size );
-        resampler->SetOutputOrigin( movingSegInputImage->GetOrigin() );
-        resampler->SetOutputDirection( movingSegInputImage->GetDirection() );
+        resampler->SetOutputOrigin( targetInputImage->GetOrigin() );
+        resampler->SetOutputDirection( targetInputImage->GetDirection() );
         resampler->SetInput( movingSegInputImage );
         resampler->Update();
 
@@ -367,10 +367,10 @@ int main(int argc, char * argv [] )
             InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
             resampler->SetInterpolator( interpolator );
-            resampler->SetOutputSpacing( movingRawInputImage->GetSpacing() );
+            resampler->SetOutputSpacing( targetInputImage->GetSpacing() );
             resampler->SetSize( size );
-            resampler->SetOutputOrigin( movingRawInputImage->GetOrigin() );
-            resampler->SetOutputDirection( movingRawInputImage->GetDirection() );
+            resampler->SetOutputOrigin( targetInputImage->GetOrigin() );
+            resampler->SetOutputDirection( targetInputImage->GetDirection() );
             resampler->SetInput( movingRawInputImage );
             resampler->Update();
 
