@@ -50,9 +50,11 @@ parse_command_line()
   while [ "$1" != "" ]; do
     case $1 in
       -i=*|--install-dir=*)   INSTALL_DIR="${1#*=}"
+                              mkdir -p $INSTALL_DIR
                               ;;
       # FIXME/TODO: https://github.com/SCIInstitute/ShapeWorks/issues/77
       -b=*|--build-dir=*)     BUILD_DIR="${1#*=}"
+                              mkdir -p $BUILD_DIR
                               ;;
       -n=*|--num-procs=*)     NUM_PROCS="${1#*=}"
                               ;;
@@ -77,7 +79,6 @@ parse_command_line()
     shift
   done
 }
-
 # test for required version of something (versions with dots are okay):
 # usage:
 #   at_least_required_version "name" $curr $required

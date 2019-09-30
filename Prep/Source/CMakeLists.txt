@@ -54,6 +54,7 @@ if (BUILD_MeshTools)
   subdirs(MeshTools/ReflectMeshes/source)
   subdirs(MeshTools/RemoveFidsDTLeakage/source)
   subdirs(MeshTools/SmoothMesh/source)
+  subdirs(MeshTools/MeshFromDT/source)
 endif(BUILD_MeshTools)
 
 if (BUILD_AlignmentTools)
