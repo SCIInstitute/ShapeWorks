@@ -8,6 +8,7 @@
 #include "itkAntiAliasBinaryImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkChangeInformationImageFilter.h"
+#include "itkLinearInterpolateImageFunction.h"
 #include "string.h"
 #include "itkImageMomentsCalculator.h"
 #include "itkIndex.h"
@@ -321,21 +322,19 @@ int main( int argc, char * argv[] )
 
     //Transform MRI Image
 
-    translation[0] = translationX;
-    translation[1] = translationY;
-    translation[2] = translationZ;
-
-
     const     unsigned int    Dimension = 3;
     typedef   float InPixelType;
     typedef   float OutPixelType;
+
     typedef itk::Image< InPixelType,    Dimension >   InImageType;
     typedef itk::Image< OutPixelType,    Dimension >   OutImageType;
     typedef itk::ImageFileReader< InImageType  >  RType;
+
     RType::Pointer mrireader = RType::New();
     mrireader->SetFileName( MRIinFilename );
     mrireader->Update();
     InImageType::ConstPointer inImage = mrireader->GetOutput();
+
     typedef itk::ResampleImageFilter<InImageType, OutImageType >  RFilterType;
     RFilterType::Pointer mriresampler = RFilterType::New();
 
@@ -343,12 +342,17 @@ int main( int argc, char * argv[] )
     TransformType::OutputVectorType translation;
     TransformType::Pointer transform = TransformType::New();
 
+    translation[0] = translationX;
+    translation[1] = translationY;
+    translation[2] = translationZ;
+
     transform->Translate(translation)
 
-    typedef itk::LinearInterpolateImageFunction<InImageType, double >  IntType;
-    IntType::Pointer inpolator = IntType::New();
+    typedef itk::LinearInterpolateImageFunction<
+            InputRawImageType, double > InterpolatorType;
+    InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
-    mriresampler->SetInterpolator( inpolator );
+    mriresampler->SetInterpolator( interpolator );
 
     //this is to overcome padding that was occuring after resampling step due to enlargement of size as per input
 
