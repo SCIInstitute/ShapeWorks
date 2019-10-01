@@ -346,10 +346,9 @@ int main( int argc, char * argv[] )
     translation[1] = translationY;
     translation[2] = translationZ;
 
-    transform->Translate(translation)
+    transform->Translate(translation);
 
-    typedef itk::LinearInterpolateImageFunction<
-            InputRawImageType, double > InterpolatorType;
+    typedef itk::LinearInterpolateImageFunction<InImageType, double > InterpolatorType;
     InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
     mriresampler->SetInterpolator( interpolator );
