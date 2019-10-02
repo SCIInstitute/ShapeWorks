@@ -221,7 +221,7 @@ int main(int argc, char * argv [] )
     float m_22    = (float) options.get("m(2,2)");
     float m_03    = (float) options.get("m(0,3)");
     float m_13    = (float) options.get("m(1,3)");
-    float m_23    = (float) options.get("tm(2,3)");
+    float m_23    = (float) options.get("m(2,3)");
 
     try
     {
