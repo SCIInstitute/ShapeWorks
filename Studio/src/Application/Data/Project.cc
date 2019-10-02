@@ -27,7 +27,7 @@ const std::string Project::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
 Project::Project(QWidget* parent, Preferences& prefs) : parent_(parent),
-preferences_(prefs)
+  preferences_(prefs)
 {
   this->parent_ = NULL;
   this->reset();
@@ -36,33 +36,37 @@ preferences_(prefs)
 
 //---------------------------------------------------------------------------
 Project::~Project()
-{
-}
+{}
 
 //---------------------------------------------------------------------------
-void Project::handle_new_mesh() {
+void Project::handle_new_mesh()
+{
   emit update_display();
 }
 
-void Project::handle_message(std::string s) {
+void Project::handle_message(std::string s)
+{
   emit message(s);
 }
 
-void Project::handle_thread_complete() {
+void Project::handle_thread_complete()
+{
   emit message("Reconstruction initialization complete.");
   this->calculate_reconstructed_samples();
   emit update_display();
 }
 
 //---------------------------------------------------------------------------
-void Project::handle_clear_cache() {
+void Project::handle_clear_cache()
+{
   this->mesh_manager_->clear_cache();
   this->calculate_reconstructed_samples();
 }
 
 //---------------------------------------------------------------------------
-void Project::calculate_reconstructed_samples() {
-  if (!this->reconstructed_present_) return;
+void Project::calculate_reconstructed_samples()
+{
+  if (!this->reconstructed_present_) {return;}
   this->preferences_.set_preference("cache_enabled", false);
   for (int i = 0; i < this->shapes_.size(); i++) {
     auto shape = this->shapes_.at(i);
@@ -81,7 +85,8 @@ void Project::set_parent(QWidget* parent)
 }
 
 //---------------------------------------------------------------------------
-bool Project::save_project(std::string fname, std::string dataDir, std::string cutPlanesFile) {
+bool Project::save_project(std::string fname, std::string dataDir, std::string cutPlanesFile)
+{
   QString filename = QString::fromStdString(fname);
   if (filename == "") {
     filename = this->filename_;
@@ -100,7 +105,6 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
   progress.setMinimumDuration(2000);
-
 
   // setup XML
   QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
@@ -125,7 +129,8 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   if (!defaultDir) {
     location = dataDir + "/";
   }
-  if (this->reconstructed_present() && this->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean()) {
+  if (this->reconstructed_present() &&
+      this->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean()) {
     this->mesh_manager_->getSurfaceReconstructor()->writeMeanInfo(location);
     xml->writeTextElement("denseMean_file", QString::fromStdString(location + ".dense.vtk"));
     xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
@@ -134,7 +139,7 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   xml->writeTextElement("cutPlanes_file", QString::fromStdString(cutPlanesFile));
   progress.setValue(5);
   QApplication::processEvents();
-  
+
   // shapes
   xml->writeStartElement("shapes");
   for (int i = 0; i < this->shapes_.size(); i++) {
@@ -145,14 +150,14 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
       xml->writeTextElement("initial_mesh", this->shapes_[i]->get_original_filename_with_path());
     }
 
-    if (this->groomed_present())  {
+    if (this->groomed_present()) {
       QString loc = this->shapes_[i]->get_groomed_filename_with_path();
       if (!defaultDir) {
         loc = QString::fromStdString(dataDir) + "/" +
-          this->shapes_[i]->get_groomed_filename();
+              this->shapes_[i]->get_groomed_filename();
       }
       xml->writeTextElement("groomed_mesh", loc);
-      //try writing the groomed to file 
+      //try writing the groomed to file
       WriterType::Pointer writer = WriterType::New();
       writer->SetFileName(loc.toStdString());
       writer->SetInput(this->shapes_[i]->get_groomed_image());
@@ -196,8 +201,8 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
     }
 
     xml->writeEndElement(); // shape
-    progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. / 
-      static_cast<double>(this->shapes_.size())));
+    progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. /
+                                           static_cast<double>(this->shapes_.size())));
     QApplication::processEvents();
     if (progress.wasCanceled()) {
       break;
@@ -211,88 +216,149 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_project(QString filename, std::string& planesFile) {
+bool Project::load_project(QString filename, std::string& planesFile)
+{
   if (!QFile::exists(filename)) {
-    QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename, QMessageBox::Ok);
+    QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
+                          QMessageBox::Ok);
     return false;
   }
   // clear the project out first
   this->reset();
   this->filename_ = filename;
-  // open file
-  QFile file(filename);
-  if (!file.open(QIODevice::ReadOnly)) {
-    QMessageBox::warning(0, "Unable to open file", "Error opening file: " + filename);
+
+  // open and parse XML
+  TiXmlDocument doc(filename.toStdString().c_str());
+  bool loadOkay = doc.LoadFile();
+  if (!loadOkay) {
+    QString message = "Error: Invalid parameter file" + filename;
+    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
     return false;
   }
+
+  TiXmlHandle docHandle(&doc);
+  std::istringstream inputsBuffer;
+
+  TiXmlElement* project_element = docHandle.FirstChild("project").Element();
+
+  bool is_project = project_element != nullptr;
+
+  TiXmlNode* shapes_node = project_element->FirstChild("shapes");
+
   // setup XML
-  QSharedPointer<QXmlStreamReader> xml = QSharedPointer<QXmlStreamReader>(new QXmlStreamReader());
-  xml->setDevice(&file);
-  std::vector<std::string> import_files, groom_files,
-    local_point_files, global_point_files;
+  std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
 
-  while (!xml->atEnd() && !xml->hasError()){
+  for (TiXmlElement* e = shapes_node->FirstChildElement("shape"); e != NULL;
+       e = e->NextSiblingElement("shape")) {
+    TiXmlElement* initial_mesh_element = e->FirstChildElement("initial_mesh");
+    import_files.push_back(initial_mesh_element->GetText());
+    TiXmlElement* groomed_mesh_element = e->FirstChildElement("groomed_mesh");
+    groom_files.push_back(groomed_mesh_element->GetText());
+    TiXmlElement* point_file_element = e->FirstChildElement("point_file");
+
+    std::string filename = point_file_element->GetText();
+    if (filename.find(".lpts") != std::string::npos) {
+      local_point_files.push_back(filename);
+    }
+    else if (filename.find(".wpts") != std::string::npos) {
+      global_point_files.push_back(filename);
+    }
+
+    auto next_point_file = point_file_element->NextSiblingElement("point_file");
+    if (next_point_file) {
+      filename = next_point_file->GetText();
+      if (filename.find(".lpts") != std::string::npos) {
+        local_point_files.push_back(filename);
+      }
+      else if (filename.find(".wpts") != std::string::npos) {
+        global_point_files.push_back(filename);
+      }
+    }
+  }
+
+/*
+
+   while (!xml->atEnd() && !xml->hasError()) {
     QXmlStreamReader::TokenType token = xml->readNext();
+    std::cerr << "Reading token...\n";
+    std::cerr << "got " << token << "\n";
+
     if (token == QXmlStreamReader::StartDocument) {
       continue;
     }
-    if (token == QXmlStreamReader::StartElement)  {
+    if (token == QXmlStreamReader::StartElement) {
       auto name = xml->name().toString().toStdString();
       if (xml->name() == "project" ||
-        xml->name() == "shapes" ||
-        xml->name() == "shape") {
+          xml->name() == "shapes" ||
+          xml->name() == "shape") {
         continue;
       }
       auto val = xml->readElementText().toStdString();
-      if (name == "initial_mesh"){
+      if (name == "initial_mesh") {
         import_files.push_back(val);
-      } else if (name == "groomed_mesh") {
+      }
+      else if (name == "groomed_mesh") {
         groom_files.push_back(val);
-      } else if (name == "point_file") {
+      }
+      else if (name == "point_file") {
         if (val.find(".lpts") != std::string::npos) {
           local_point_files.push_back(val);
-        } else if (val.find(".wpts") != std::string::npos) {
+        }
+        else if (val.find(".wpts") != std::string::npos) {
           global_point_files.push_back(val);
         }
-      } else if (name == "denseMean_file") {
+      }
+      else if (name == "denseMean_file") {
         denseFile = val;
-      } else if (name == "sparseMean_file") {
+      }
+      else if (name == "sparseMean_file") {
         sparseFile = val;
-      } else if (name == "goodPoints_file") {
+      }
+      else if (name == "goodPoints_file") {
         goodPtsFile = val;
-      } else if (name == "cutPlanes_file") {
+      }
+      else if (name == "cutPlanes_file") {
         if (val.find_last_of(".txt") != std::string::npos) {
           planesFile = val;
         }
-      } else {
+      }
+      else {
         this->preferences_.set_preference(name, QVariant(QString::fromStdString(val)));
       }
     }
-  }
+   }
+   auto display_state = this->preferences_.get_preference(
+    "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
+
+
+   if (xml->hasError()) {
+    QString message = "Error reading project file \"" + filename + "\":\n" + xml->errorString();
+    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    return false;
+   }
+ */
+
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
 
-  /* Error handling. */
-  if (xml->hasError()) {
-    QMessageBox::critical(NULL, "ShapeWorksStudio", xml->errorString(), QMessageBox::Ok);
-    return false;
-  }
   this->load_original_files(import_files);
   this->load_groomed_files(groom_files, 0.5);
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
   if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
-    this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile, goodPtsFile);
+    this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile,
+                                                                 goodPtsFile);
   }
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
-    global_point_files.size() > 1;
+                                 global_point_files.size() > 1;
   this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
   return true;
 }
 
 //---------------------------------------------------------------------------
-void Project::load_original_files(std::vector<std::string> file_names) {
+void Project::load_original_files(std::vector<std::string> file_names)
+{
   QProgressDialog progress("Loading images...", "Abort", 0, file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
@@ -314,7 +380,7 @@ void Project::load_original_files(std::vector<std::string> file_names) {
         this->renumber_shapes();
         this->original_present_ = true;
         throw std::runtime_error(file_names[i] + " does not match spacing with " +
-          this->shapes_[0]->get_original_filename().toStdString() + "!!!");
+                                 this->shapes_[0]->get_original_filename().toStdString() + "!!!");
       }
       auto sizing = this->shapes_[0]->get_original_image()->GetLargestPossibleRegion();
       auto sizing_new = new_shape->get_original_image()->GetLargestPossibleRegion();
@@ -323,7 +389,7 @@ void Project::load_original_files(std::vector<std::string> file_names) {
         this->renumber_shapes();
         this->original_present_ = true;
         throw std::runtime_error(file_names[i] + " does not match voxel space with " +
-          this->shapes_[0]->get_original_filename().toStdString() + "!!!");
+                                 this->shapes_[0]->get_original_filename().toStdString() + "!!!");
       }
     }
     this->shapes_.push_back(new_shape);
@@ -338,7 +404,8 @@ void Project::load_original_files(std::vector<std::string> file_names) {
 }
 
 //---------------------------------------------------------------------------
-void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double iso) {
+void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double iso)
+{
   QProgressDialog progress("Loading groomed images...", "Abort", 0, images.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
@@ -347,7 +414,7 @@ void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double
   for (int i = 0; i < images.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();
-    if (progress.wasCanceled())  {
+    if (progress.wasCanceled()) {
       break;
     }
     if (this->shapes_.size() <= i) {
@@ -367,7 +434,8 @@ void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double
 //---------------------------------------------------------------------------
 void Project::load_groomed_files(std::vector<std::string> file_names, double iso)
 {
-  QProgressDialog progress("Loading groomed images...", "Abort", 0, file_names.size(), this->parent_);
+  QProgressDialog progress("Loading groomed images...", "Abort", 0,
+                           file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.show();
   progress.setMinimumDuration(2000);
@@ -394,7 +462,7 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_points(std::vector<std::vector<itk::Point<double> > > points, bool local)
+bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
 {
   QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -405,7 +473,8 @@ bool Project::load_points(std::vector<std::vector<itk::Point<double> > > points,
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
       shape = this->shapes_[i];
-    } else {
+    }
+    else {
       shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(shape);
     }
@@ -428,12 +497,13 @@ bool Project::load_points(std::vector<std::vector<itk::Point<double> > > points,
   return true;
 }
 
-void Project::set_reconstructed_present(bool b) {
+void Project::set_reconstructed_present(bool b)
+{
   this->reconstructed_present_ = b;
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_point_files(std::vector<std::string> list, bool local )
+bool Project::load_point_files(std::vector<std::string> list, bool local)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -448,7 +518,8 @@ bool Project::load_point_files(std::vector<std::string> list, bool local )
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
       shape = this->shapes_[i];
-    } else {
+    }
+    else {
       shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(shape);
     }
@@ -462,7 +533,8 @@ bool Project::load_point_files(std::vector<std::string> list, bool local )
         if (!shape->import_global_point_file(fname)) {
           return false;
         }
-      } else {
+      }
+      else {
         if (!shape->import_local_point_file(fname)) {
           return false;
         }
@@ -478,7 +550,7 @@ bool Project::load_point_files(std::vector<std::string> list, bool local )
 }
 
 //---------------------------------------------------------------------------
-QVector<QSharedPointer<Shape> > Project::get_shapes()
+QVector<QSharedPointer<Shape>> Project::get_shapes()
 {
   return this->shapes_;
 }
@@ -495,7 +567,8 @@ void Project::remove_shapes(QList<int> list)
 }
 
 //---------------------------------------------------------------------------
-void Project::reset() {
+void Project::reset()
+{
   this->filename_ = "";
 
   this->shapes_.clear();
@@ -532,8 +605,7 @@ bool Project::reconstructed_present()
 //---------------------------------------------------------------------------
 void Project::renumber_shapes()
 {
-  for (int i = 0; i < this->shapes_.size(); i++)
-  {
+  for (int i = 0; i < this->shapes_.size(); i++) {
     this->shapes_[i]->set_id(i + 1);
   }
 }
