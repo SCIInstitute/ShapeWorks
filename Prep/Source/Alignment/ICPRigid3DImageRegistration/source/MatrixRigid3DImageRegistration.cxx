@@ -88,18 +88,18 @@ optparse::OptionParser buildParser()
     parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
     parser.add_option("--solutionRaw").action("store").type("string").set_default("").help("The filename of the aligned raw source image.");
     //parser.add_option("--solutionTransformation").action("store").type("float").set_default("").help("The filename of the textfile containing the transformation matrix.");
-    parser.add_option("--m(0,0)").action("store").type("float").set_default("").help("(0,0) element of the tranformation matrix.");
-    parser.add_option("--m(0,1)").action("store").type("float").set_default("").help("(0,1) element of the tranformation matrix.");
-    parser.add_option("--m(0,2)").action("store").type("float").set_default("").help("(0,2) element of the tranformation matrix.");
-    parser.add_option("--m(1,0)").action("store").type("float").set_default("").help("(1,0) element of the tranformation matrix.");
-    parser.add_option("--m(1,1)").action("store").type("float").set_default("").help("(1,1) element of the tranformation matrix.");
-    parser.add_option("--m(1,2)").action("store").type("float").set_default("").help("(1,2) element of the tranformation matrix.");
-    parser.add_option("--m(2,0)").action("store").type("float").set_default("").help("(2,0) element of the tranformation matrix.");
-    parser.add_option("--m(2,1)").action("store").type("float").set_default("").help("(2,1) element of the tranformation matrix.");
-    parser.add_option("--m(2,2)").action("store").type("float").set_default("").help("(2,2) element of the tranformation matrix.");
-    parser.add_option("--m(0,3)").action("store").type("float").set_default("").help("(0,3) element of the tranformation matrix.");
-    parser.add_option("--m(1,3)").action("store").type("float").set_default("").help("(1,3) element of the tranformation matrix.");
-    parser.add_option("--m(2,3)").action("store").type("float").set_default("").help("(2,3) element of the tranformation matrix.");
+    parser.add_option("--m_00").action("store").type("float").set_default("").help("(0,0) element of the tranformation matrix.");
+    parser.add_option("--m_01").action("store").type("float").set_default("").help("(0,1) element of the tranformation matrix.");
+    parser.add_option("--m_02").action("store").type("float").set_default("").help("(0,2) element of the tranformation matrix.");
+    parser.add_option("--m_10").action("store").type("float").set_default("").help("(1,0) element of the tranformation matrix.");
+    parser.add_option("--m_11").action("store").type("float").set_default("").help("(1,1) element of the tranformation matrix.");
+    parser.add_option("--m_12").action("store").type("float").set_default("").help("(1,2) element of the tranformation matrix.");
+    parser.add_option("--m_20").action("store").type("float").set_default("").help("(2,0) element of the tranformation matrix.");
+    parser.add_option("--m_21").action("store").type("float").set_default("").help("(2,1) element of the tranformation matrix.");
+    parser.add_option("--m_22").action("store").type("float").set_default("").help("(2,2) element of the tranformation matrix.");
+    parser.add_option("--m_03").action("store").type("float").set_default("").help("(0,3) element of the tranformation matrix.");
+    parser.add_option("--m_13").action("store").type("float").set_default("").help("(1,3) element of the tranformation matrix.");
+    parser.add_option("--m_23").action("store").type("float").set_default("").help("(2,3) element of the tranformation matrix.");
     return parser;
 
 
@@ -210,18 +210,18 @@ int main(int argc, char * argv [] )
 //    bool      visualizeResult        = (bool) options.get("visualizeResult");
 
 
-    float m_00    = (float) options.get("m(0,0)");
-    float m_01    = (float) options.get("m(0,1)");
-    float m_02    = (float) options.get("m(0,2)");
-    float m_10    = (float) options.get("m(1,0)");
-    float m_11    = (float) options.get("m(1,1)");
-    float m_12    = (float) options.get("m(1,2)");
-    float m_20    = (float) options.get("m(2,0)");
-    float m_21    = (float) options.get("m(2,1)");
-    float m_22    = (float) options.get("m(2,2)");
-    float m_03    = (float) options.get("m(0,3)");
-    float m_13    = (float) options.get("m(1,3)");
-    float m_23    = (float) options.get("m(2,3)");
+    float m_00    = (float) options.get("m_00");
+    float m_01    = (float) options.get("m_01");
+    float m_02    = (float) options.get("m_02");
+    float m_10    = (float) options.get("m_10");
+    float m_11    = (float) options.get("m_11");
+    float m_12    = (float) options.get("m_12");
+    float m_20    = (float) options.get("m_20");
+    float m_21    = (float) options.get("m_21");
+    float m_22    = (float) options.get("m_22");
+    float m_03    = (float) options.get("m_03");
+    float m_13    = (float) options.get("m_13");
+    float m_23    = (float) options.get("m_23");
 
     try
     {
