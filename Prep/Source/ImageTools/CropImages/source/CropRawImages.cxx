@@ -39,7 +39,7 @@ optparse::OptionParser buildParser()
     parser.add_option("--MRIinFilename").action("store").type("string").set_default("").help("The assoicated image filename to be cropped.");
     parser.add_option("--MRIoutFilename").action("store").type("string").set_default("").help("The filename of the output cropped image.");
 
-    parser.add_option("--bbX").action("store").type("int").set_default(0.0).help("bounding box value in X direction.");
+    parser.add_option("--bbX").action("store").type("float").set_default(0.0).help("bounding box value in X direction.");
     parser.add_option("--bbY").action("store").type("float").set_default(0.0).help("bounding box value in Y direction.");
     parser.add_option("--bbZ").action("store").type("float").set_default(0.0).help("bounding box value in Z direction.");
 
