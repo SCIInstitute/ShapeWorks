@@ -237,7 +237,6 @@ bool Project::load_project(QString filename, std::string& planesFile)
   }
 
   TiXmlHandle docHandle(&doc);
-  std::istringstream inputsBuffer;
 
   TiXmlElement* project_element = docHandle.FirstChild("project").Element();
 
@@ -277,67 +276,33 @@ bool Project::load_project(QString filename, std::string& planesFile)
     }
   }
 
-/*
+  // now read the preferences
+  for (auto item = project_element->FirstChildElement(); item != nullptr;
+       item = item->NextSiblingElement()) {
+    if (QString(item->Value()) != "shapes") {
 
-   while (!xml->atEnd() && !xml->hasError()) {
-    QXmlStreamReader::TokenType token = xml->readNext();
-    std::cerr << "Reading token...\n";
-    std::cerr << "got " << token << "\n";
+      QString name = item->Value();
+      QString value = item->GetText();
 
-    if (token == QXmlStreamReader::StartDocument) {
-      continue;
-    }
-    if (token == QXmlStreamReader::StartElement) {
-      auto name = xml->name().toString().toStdString();
-      if (xml->name() == "project" ||
-          xml->name() == "shapes" ||
-          xml->name() == "shape") {
-        continue;
-      }
-      auto val = xml->readElementText().toStdString();
-      if (name == "initial_mesh") {
-        import_files.push_back(val);
-      }
-      else if (name == "groomed_mesh") {
-        groom_files.push_back(val);
-      }
-      else if (name == "point_file") {
-        if (val.find(".lpts") != std::string::npos) {
-          local_point_files.push_back(val);
-        }
-        else if (val.find(".wpts") != std::string::npos) {
-          global_point_files.push_back(val);
-        }
-      }
-      else if (name == "denseMean_file") {
-        denseFile = val;
+      if (name == "denseMean_file") {
+        denseFile = value.toStdString();
       }
       else if (name == "sparseMean_file") {
-        sparseFile = val;
+        sparseFile = value.toStdString();
       }
       else if (name == "goodPoints_file") {
-        goodPtsFile = val;
+        goodPtsFile = value.toStdString();
       }
       else if (name == "cutPlanes_file") {
-        if (val.find_last_of(".txt") != std::string::npos) {
-          planesFile = val;
+        if (value.toStdString().find_last_of(".txt") != std::string::npos) {
+          planesFile = value.toStdString();
         }
       }
       else {
-        this->preferences_.set_preference(name, QVariant(QString::fromStdString(val)));
+        this->preferences_.set_preference(name.toStdString(), QVariant(value));
       }
     }
-   }
-   auto display_state = this->preferences_.get_preference(
-    "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
-
-
-   if (xml->hasError()) {
-    QString message = "Error reading project file \"" + filename + "\":\n" + xml->errorString();
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
-    return false;
-   }
- */
+  }
 
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
