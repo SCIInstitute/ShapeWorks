@@ -56,13 +56,13 @@ int main(int argc, char * argv[] )
     optparse::OptionParser parser = buildParser();
     optparse::Values & options = parser.parse_args(argc,argv);
     std::vector<std::string> args = parser.args();
-
+/*
     if(argc < 9)
     {
         parser.print_help();
         return EXIT_FAILURE;
     }
-
+*/
 
     std::string MRIinFilename      = (std::string) options.get("MRIinFilename");
     std::string MRIoutFilename     = (std::string) options.get("MRIoutFilename");
