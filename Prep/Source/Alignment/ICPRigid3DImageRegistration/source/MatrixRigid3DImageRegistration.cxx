@@ -84,7 +84,7 @@ optparse::OptionParser buildParser()
     parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
     parser.add_option("--solutionTransformation").action("store").type("string").set_default("").help("The filename of the textfile containing the transformation matrix.");
     */
-    parser.add_option("--targetDistanceMap").action("store").type("string").set_default("").help("The distance map of target image.")
+    parser.add_option("--targetDistanceMap").action("store").type("string").set_default("").help("The distance map of target image.");
     parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
     parser.add_option("--solutionRaw").action("store").type("string").set_default("").help("The filename of the aligned raw source image.");
     //parser.add_option("--solutionTransformation").action("store").type("float").set_default("").help("The filename of the textfile containing the transformation matrix.");
@@ -343,18 +343,18 @@ int main(int argc, char * argv [] )
         p[11]=m->GetElement(2,3);
         */
 
-        p[0] = m_00
-        p[1] = m_01
-        p[2] = m_02
-        p[3] = m_10
-        p[4] = m_11
-        p[5] = m_12
-        p[6] = m_20
-        p[7] = m_21
-        p[8] = m_22
-        p[9] = m_03
-        p[10] = m_13
-        p[11] = m_23
+        p[0] = m_00;
+        p[1] = m_01;
+        p[2] = m_02;
+        p[3] = m_10;
+        p[4] = m_11;
+        p[5] = m_12;
+        p[6] = m_20;
+        p[7] = m_21;
+        p[8] = m_22;
+        p[9] = m_03;
+        p[10] = m_13;
+        p[11] = m_23;
 
          //transform->SetParameters( p );
 
