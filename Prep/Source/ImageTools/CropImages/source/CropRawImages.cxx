@@ -56,13 +56,6 @@ int main(int argc, char * argv[] )
     optparse::OptionParser parser = buildParser();
     optparse::Values & options = parser.parse_args(argc,argv);
     std::vector<std::string> args = parser.args();
-/*
-    if(argc < 9)
-    {
-        parser.print_help();
-        return EXIT_FAILURE;
-    }
-*/
 
     std::string MRIinFilename      = (std::string) options.get("MRIinFilename");
     std::string MRIoutFilename     = (std::string) options.get("MRIoutFilename");
@@ -74,21 +67,21 @@ int main(int argc, char * argv[] )
     float startingIndexX    = (float) options.get("startingIndexX");
     float startingIndexY    = (float) options.get("startingIndexY");
     float startingIndexZ    = (float) options.get("startingIndexZ");
-/*
-    typedef   float InputPixelType;
-    typedef   float InternalPixelType;
-    typedef   float OutputPixelType;
+
+    typedef   float  MRIInputPixelType;
+    typedef   float  MRIInternalPixelType;
+    typedef   float  MRIOutputPixelType;
 
     const     unsigned int    Dimension = 3;
-    typedef itk::Image< InputPixelType,    Dimension >   InputImageType;
-    typedef itk::Image< OutputPixelType,   Dimension >   OutputImageType;
-    /*
-    typedef itk::ImageFileReader< InputImageType  >  ReaderType;
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(inFilename);
+    typedef itk::Image< MRIInputPixelType,    Dimension >   MRIInputImageType;
+    typedef itk::Image< MRIOutputPixelType,   Dimension >   MRIOutputImageType;
+
+    typedef itk::ImageFileReader< MRIInputImageType  >  MRIReaderType;
+    MRIReaderType::Pointer MRIreader = MRIReaderType::New();
+    MRIreader->SetFileName(MRIinFilename);
     try
     {
-        reader->Update();
+        MRIreader->Update();
     }
     catch( itk::ExceptionObject & excep )
     {
@@ -96,28 +89,28 @@ int main(int argc, char * argv[] )
         std::cerr << excep << std::endl;
     }
 
-    InputImageType::IndexType index;
-    index[0]=startingIndexX;
-    index[1]=startingIndexY;
-    index[2]=startingIndexZ;
-    InputImageType::SizeType desiredSize;
-    desiredSize[0]=bbX;
-    desiredSize[1]=bbY;
-    desiredSize[2]=bbZ;
+    MRIInputImageType::IndexType MRIindex;
+    MRIindex[0]=startingIndexX;
+    MRIindex[1]=startingIndexY;
+    MRIindex[2]=startingIndexZ;
+    MRIInputImageType::SizeType MRIdesiredSize;
+    MRIdesiredSize[0]=bbX;
+    MRIdesiredSize[1]=bbY;
+    MRIdesiredSize[2]=bbZ;
 
-    InputImageType::RegionType desiredRegion(index, desiredSize);
+    MRIInputImageType::RegionType MRIdesiredRegion(MRIindex, MRIdesiredSize);
 
-    typedef itk::ExtractImageFilter< InputImageType, OutputImageType > FilterType;
-    FilterType::Pointer filter = FilterType::New();
-    filter->SetExtractionRegion(desiredRegion);
-    filter->SetInput(reader->GetOutput());
+    typedef itk::ExtractImageFilter< MRIInputImageType, MRIOutputImageType > MRIFilterType;
+    MRIFilterType::Pointer MRIfilter = MRIFilterType::New();
+    MRIfilter->SetExtractionRegion(MRIdesiredRegion);
+    MRIfilter->SetInput(MRIreader->GetOutput());
 
 #if ITK_VERSION_MAJOR >= 4
-    filter->SetDirectionCollapseToIdentity(); // This is required.
+    MRIfilter->SetDirectionCollapseToIdentity(); // This is required.
 #endif
     try
     {
-        filter->Update();
+        MRIfilter->Update();
     }
     catch( itk::ExceptionObject & excep )
     {
@@ -125,92 +118,23 @@ int main(int argc, char * argv[] )
         std::cerr << excep << std::endl;
     }
 
-    InputImageType::Pointer output = filter->GetOutput();
-    output->DisconnectPipeline();
-/*
-    typedef itk::ImageFileWriter< OutputImageType >  WriterType;
-    WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( outFilename);
-    writer->SetInput(output);
+    MRIInputImageType::Pointer MRIoutput = MRIfilter->GetOutput();
+    MRIoutput->DisconnectPipeline();
+
+    typedef itk::ImageFileWriter< MRIOutputImageType >  MRIWriterType;
+    MRIWriterType::Pointer MRIwriter = MRIWriterType::New();
+    MRIwriter->SetFileName( MRIoutFilename);
+    MRIwriter->SetInput(MRIoutput);
 
     try
     {
-        writer->Update();
+        MRIwriter->Update();
     }
     catch( itk::ExceptionObject & excep )
     {
         std::cerr << "Exception caught !" << std::endl;
         std::cerr << excep << std::endl;
     }
-*/
-    if(MRIinFilename!="")
-    {
-        typedef   float  MRIInputPixelType;
-        typedef   float  MRIInternalPixelType;
-        typedef   float  MRIOutputPixelType;
 
-        const     unsigned int    Dimension = 3;
-        typedef itk::Image< MRIInputPixelType,    Dimension >   MRIInputImageType;
-        typedef itk::Image< MRIOutputPixelType,   Dimension >   MRIOutputImageType;
-        typedef itk::ImageFileReader< MRIInputImageType  >  MRIReaderType;
-        MRIReaderType::Pointer MRIreader = MRIReaderType::New();
-        MRIreader->SetFileName(MRIinFilename);
-        try
-        {
-            MRIreader->Update();
-        }
-        catch( itk::ExceptionObject & excep )
-        {
-            std::cerr << "Exception caught!" << std::endl;
-            std::cerr << excep << std::endl;
-        }
-
-        MRIInputImageType::IndexType MRIindex;
-        MRIindex[0]=startingIndexX;
-        MRIindex[1]=startingIndexY;
-        MRIindex[2]=startingIndexZ;
-        MRIInputImageType::SizeType MRIdesiredSize;
-        MRIdesiredSize[0]=bbX;
-        MRIdesiredSize[1]=bbY;
-        MRIdesiredSize[2]=bbZ;
-
-        MRIInputImageType::RegionType MRIdesiredRegion(MRIindex, MRIdesiredSize);
-
-        typedef itk::ExtractImageFilter< MRIInputImageType, MRIOutputImageType > MRIFilterType;
-        MRIFilterType::Pointer MRIfilter = MRIFilterType::New();
-        MRIfilter->SetExtractionRegion(MRIdesiredRegion);
-        MRIfilter->SetInput(MRIreader->GetOutput());
-
-#if ITK_VERSION_MAJOR >= 4
-        MRIfilter->SetDirectionCollapseToIdentity(); // This is required.
-#endif
-        try
-        {
-            MRIfilter->Update();
-        }
-        catch( itk::ExceptionObject & excep )
-        {
-            std::cerr << "Exception caught !" << std::endl;
-            std::cerr << excep << std::endl;
-        }
-
-        MRIInputImageType::Pointer MRIoutput = MRIfilter->GetOutput();
-        MRIoutput->DisconnectPipeline();
-
-        typedef itk::ImageFileWriter< MRIOutputImageType >  MRIWriterType;
-        MRIWriterType::Pointer MRIwriter = MRIWriterType::New();
-        MRIwriter->SetFileName( MRIoutFilename);
-        MRIwriter->SetInput(MRIoutput);
-
-        try
-        {
-            MRIwriter->Update();
-        }
-        catch( itk::ExceptionObject & excep )
-        {
-            std::cerr << "Exception caught !" << std::endl;
-            std::cerr << excep << std::endl;
-        }
-    }
     return EXIT_SUCCESS;
 }
