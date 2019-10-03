@@ -68,7 +68,7 @@ private:
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;
-  std::vector<std::array<itk::Point<float>, 3 > > cutPlanes_;
+  std::vector<std::array<itk::Point<double>, 3 > > cutPlanes_;
 };
 
 #endif /* STUDIO_OPTIMIZE_OPTIMIZETOOL_H */

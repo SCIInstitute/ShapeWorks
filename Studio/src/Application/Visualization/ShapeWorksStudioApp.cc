@@ -660,7 +660,7 @@ void ShapeWorksStudioApp::handle_project_changed()
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete() {
-  this->project_->get_mesh_manager()->resetReconstruct();
+  this->project_->get_mesh_manager()->getSurfaceReconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
   this->project_->handle_clear_cache();
   this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
@@ -727,7 +727,7 @@ void ShapeWorksStudioApp::update_display()
   this->preferences_.set_preference("display_state",
     this->ui_->view_mode_combobox->currentText());
   std::string mode = this->analysis_tool_->getAnalysisMode();
-  bool reconstruct_ready = this->project_->get_mesh_manager()->hasDenseMean();
+  bool reconstruct_ready = this->project_->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean();
   if (mode == "all samples") {
     this->visualizer_->display_samples();
     size_t num_samples = this->project_->get_shapes().size();

@@ -45,8 +45,12 @@ Installation
 
 Download
 ---------------------
-_Coming soon:_ user installation without the necessity of building ShapeWorks directly.  
-Until then, please see **[Development](#development)** to build ShapeWorks.
+
+The latest shapeworks release can be downloaded here:
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.1
+
+To build shapeworks from source, please see **[Development](#development)**.
 
 Development
 ---------------------

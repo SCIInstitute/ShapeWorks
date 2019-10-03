@@ -4,7 +4,7 @@
 ShapeWorksOptimize::ShapeWorksOptimize(
   //QObject* parent,
   std::vector<ImageType::Pointer> inputs,
-  std::vector<std::array<itk::Point<float>, 3 > > cutPlanes,
+  std::vector<std::array<itk::Point<double>, 3 > > cutPlanes,
   size_t numScales,
   std::vector<double> start_reg, std::vector<double> end_reg,
   std::vector<unsigned int> iters, 
@@ -101,8 +101,8 @@ void ShapeWorksOptimize::run() {
   this->psmFilter_->Update();
   for (size_t d = 0; d < this->psmFilter_->
     GetParticleSystem()->GetNumberOfDomains(); d++) {
-    this->localPoints_.push_back(std::vector<itk::Point<float> >());
-    this->globalPoints_.push_back(std::vector<itk::Point<float> >());
+    this->localPoints_.push_back(std::vector<itk::Point<double> >());
+    this->globalPoints_.push_back(std::vector<itk::Point<double> >());
     for (size_t j = 0; j < this->psmFilter_->
       GetParticleSystem()->GetNumberOfParticles(d); j++) {
       auto pos = this->psmFilter_->GetParticleSystem()->GetPosition(j, d);
@@ -113,12 +113,12 @@ void ShapeWorksOptimize::run() {
   } 
 }
 
-std::vector<std::vector<itk::Point<float> > >  
+std::vector<std::vector<itk::Point<double> > >
 ShapeWorksOptimize::localPoints() {
   return this->localPoints_;
 }
 
-std::vector<std::vector<itk::Point<float> > >
+std::vector<std::vector<itk::Point<double> > >
 ShapeWorksOptimize::globalPoints() {
   return this->globalPoints_;
 }

@@ -125,8 +125,8 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   if (!defaultDir) {
     location = dataDir + "/";
   }
-  if (this->reconstructed_present() && this->get_mesh_manager()->hasDenseMean()) {
-    this->mesh_manager_->writeMeanInfo(location);
+  if (this->reconstructed_present() && this->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean()) {
+    this->mesh_manager_->getSurfaceReconstructor()->writeMeanInfo(location);
     xml->writeTextElement("denseMean_file", QString::fromStdString(location + ".dense.vtk"));
     xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
     xml->writeTextElement("goodPoints_file", QString::fromStdString(location + ".goodPoints.txt"));
@@ -283,7 +283,7 @@ bool Project::load_project(QString filename, std::string& planesFile) {
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
   if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
-    this->mesh_manager_->readMeanInfo(denseFile, sparseFile, goodPtsFile);
+    this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile, goodPtsFile);
   }
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
     global_point_files.size() > 1;
@@ -394,7 +394,7 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_points(std::vector<std::vector<itk::Point<float> > > points, bool local)
+bool Project::load_points(std::vector<std::vector<itk::Point<double> > > points, bool local)
 {
   QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
