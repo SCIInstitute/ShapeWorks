@@ -52,6 +52,12 @@ int main(int argc, char * argv[] )
         return EXIT_FAILURE;
     }
 */
+
+    std::string inFilename         = (std::string) options.get("inFilename");
+    std::string outFilename        = (std::string) options.get("outFilename");
+    std::string MRIinFilename      = (std::string) options.get("MRIinFilename");
+    std::string MRIoutFilename     = (std::string) options.get("MRIoutFilename");
+
     float bbX    = (float) options.get("bbX");
     float bbY    = (float) options.get("bbY");
     float bbZ    = (float) options.get("bbZ");
@@ -61,12 +67,8 @@ int main(int argc, char * argv[] )
     float startingIndexZ    = (float) options.get("startingIndexZ");
 
 
-    if(inFilename!=""){
-
-        std::string inFilename         = (std::string) options.get("inFilename");
-        std::string outFilename        = (std::string) options.get("outFilename");
-
-
+    if(inFilename!="")
+        {
 
         typedef   float InputPixelType;
         typedef   float InternalPixelType;
@@ -139,8 +141,7 @@ int main(int argc, char * argv[] )
     if(MRIinFilename!="")
     {
 
-        std::string MRIinFilename      = (std::string) options.get("MRIinFilename");
-        std::string MRIoutFilename     = (std::string) options.get("MRIoutFilename");
+
         typedef   float  MRIInputPixelType;
         typedef   float  MRIInternalPixelType;
         typedef   float  MRIOutputPixelType;
