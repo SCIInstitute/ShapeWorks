@@ -48,7 +48,7 @@ public:
   /// Import local correspondence point file
   bool import_local_point_file(QString filename);
   /// Import local correspondence point data
-  bool import_points(std::vector<itk::Point<float> > points, bool local);
+  bool import_points(std::vector<itk::Point<double> > points, bool local);
 
   /// Retrieve the reconstructed mesh
   QSharedPointer<Mesh> get_reconstructed_mesh();

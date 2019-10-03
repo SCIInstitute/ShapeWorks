@@ -6,7 +6,7 @@
  * @file MeshWorker.h
  * @brief Worker class for parallel mesh reconstruction
  *
- * The MeshWorker implements each threads mesh construction management
+ * The MeshWorker implements each thread's mesh construction management
  */
 
 #ifndef MESH_WORKER_H
@@ -18,19 +18,17 @@
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
-#include <Surfworks/Reconstruction.h>
 
 class MeshWorker : public QObject
 {
   Q_OBJECT
 
 public:
-	MeshWorker(Preferences& prefs, 
-		const vnl_vector<double> shape,
-    Reconstruction& construct,
-		MeshWorkQueue *queue,
-		MeshCache * cache);
-	~MeshWorker();
+  MeshWorker(Preferences& prefs,
+             const vnl_vector<double> shape,
+             MeshWorkQueue* queue,
+             MeshCache* cache);
+  ~MeshWorker();
   MeshGenerator* getMeshGenerator();
 
 public Q_SLOTS:
@@ -44,8 +42,8 @@ private:
   Preferences& prefs_;
   MeshGenerator meshGenerator_;
   vnl_vector<double> shape_;
-  MeshWorkQueue *queue_;
-  MeshCache * cache_;
+  MeshWorkQueue* queue_;
+  MeshCache* cache_;
 };
 
 #endif // ifndef MESH_WORKER_H
