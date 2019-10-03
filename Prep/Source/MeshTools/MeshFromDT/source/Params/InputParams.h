@@ -17,7 +17,7 @@ public:
     float qcDecimationPercentage;
 
     float K;
-
+    std::string out_prefix;
     // isosurface extraction parameters
     float levelsetValue ;
     float targetReduction;
@@ -68,6 +68,20 @@ public:
             TiXmlElement *elem;
             std::istringstream inputsBuffer;
             std::string filename("/dev/null\0");
+
+            elem = docHandle.FirstChild( "out_prefix" ).Element();
+            if (elem)
+            {
+                inputsBuffer.str(elem->GetText());
+                inputsBuffer >> out_prefix;
+                inputsBuffer.clear();
+                inputsBuffer.str("");
+            }
+            else
+            {
+                std::cerr << "No out_prefix provided ...!" << std::endl;
+                return EXIT_FAILURE;
+            }
 
             elem = docHandle.FirstChild( "distance_transform_files" ).Element();
             if (elem)

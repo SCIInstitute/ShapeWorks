@@ -21,8 +21,7 @@ int main( int argc , char* argv[] )
     std::cout << "butterfly: " << params.butterfly_subdivision << std::endl;
 
     typedef Reconstruction <> ReconstructionType;
-    std::string prefix("");
-    ReconstructionType reconstructor(prefix,
+    ReconstructionType reconstructor(params.out_prefix,
                                      params.qcDecimationPercentage, 45, params.K,
                                      params.qcFixWinding,
                                      params.qcDoLaplacianSmoothingBeforeDecimation,
