@@ -51,6 +51,7 @@ void Project::handle_message(std::string s)
 
 void Project::handle_thread_complete()
 {
+  std::cerr << "Project::handle_thread_complete\n";
   emit message("Reconstruction initialization complete.");
   this->calculate_reconstructed_samples();
   emit update_display();
@@ -66,7 +67,11 @@ void Project::handle_clear_cache()
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples()
 {
-  if (!this->reconstructed_present_) {return;}
+  std::cerr << "calculate_reconstructed_samples\n";
+  if (!this->reconstructed_present_) {
+    std::cerr << "no reconstructed present\n";
+    return;
+  }
   this->preferences_.set_preference("cache_enabled", false);
   for (int i = 0; i < this->shapes_.size(); i++) {
     auto shape = this->shapes_.at(i);
@@ -242,6 +247,10 @@ bool Project::load_project(QString filename, std::string& planesFile)
 
   bool is_project = project_element != nullptr;
 
+  if (!is_project) {
+    return this->load_light_project(filename, planesFile);
+  }
+
   TiXmlNode* shapes_node = project_element->FirstChild("shapes");
 
   // setup XML
@@ -276,7 +285,7 @@ bool Project::load_project(QString filename, std::string& planesFile)
     }
   }
 
-  // now read the preferences
+  // now read the preferences and other elements
   for (auto item = project_element->FirstChildElement(); item != nullptr;
        item = item->NextSiblingElement()) {
     if (QString(item->Value()) != "shapes") {
@@ -318,6 +327,78 @@ bool Project::load_project(QString filename, std::string& planesFile)
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;
   this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Project::load_light_project(QString filename, string &planesFile)
+{
+  // open and parse XML
+  TiXmlDocument doc(filename.toStdString().c_str());
+  bool loadOkay = doc.LoadFile();
+  if (!loadOkay) {
+    QString message = "Error: Invalid parameter file" + filename;
+    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    return false;
+  }
+
+  TiXmlHandle docHandle(&doc);
+  std::istringstream inputsBuffer;
+
+
+  /// TODO
+  ///this->groupsAvailable = (docHandle.FirstChild("group_ids").Element() != nullptr);
+
+  /// TODO
+  //this->numDomains = 1;
+  //TiXmlElement* elem = docHandle.FirstChild("domains_per_shape").Element();
+  //if (elem) {this->numDomains = atoi(elem->GetText()); }
+
+  // setup XML
+  std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
+  std::string sparseFile, denseFile, goodPtsFile;
+
+  TiXmlElement* elem = docHandle.FirstChild("distance_transform_files").Element();
+  if (elem) {
+    std::string distance_transform_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> distance_transform_filename) {
+      std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
+      groom_files.push_back(distance_transform_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild("local_point_files").Element();
+  if (elem) {
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      local_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = docHandle.FirstChild("world_point_files").Element();
+  if (elem) {
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      global_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  this->load_groomed_files(groom_files, 0.5);
+  this->load_point_files(local_point_files, true);
+  this->load_point_files(global_point_files, false);
+
+
+  this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
+                                 global_point_files.size() > 1;
   return true;
 }
 

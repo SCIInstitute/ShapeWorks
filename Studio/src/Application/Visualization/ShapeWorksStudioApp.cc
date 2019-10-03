@@ -640,6 +640,14 @@ void ShapeWorksStudioApp::handle_project_changed()
 {
   QVector<QSharedPointer<Shape> > shapes = this->project_->get_shapes();
 
+  if (this->project_->original_present())  {
+    this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
+  } else {
+    this->ui_->view_mode_combobox->setCurrentIndex(1);
+    this->visualizer_->set_display_mode(Visualizer::MODE_GROOMED_C.c_str());
+    this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
+  }
+
   if (this->project_->groomed_present())  {
     this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
   } else {
