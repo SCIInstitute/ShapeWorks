@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    IcpRegid3DRegistration.cxx
+  Module:    ApplyRigid3DTransformationToImage.cxx
   Language:  C++
   Date:      $Date: 2011/03/23 22:40:15 $
   Version:   $Revision: 1.1 $
@@ -63,7 +63,7 @@ optparse::OptionParser buildParser()
 {
     const std::string usage = "%prog [OPTION]";
     const std::string version = "%prog 0.1";
-    const std::string desc = "A command line tool that performs iterative closed point (ICP) 3D rigid registration on a pair of images...";
+    const std::string desc = "A command line tool that performs a given transformation matrix to images...";
     //const std::string epilog = "note: --numthreads 0 means use system default (usually max number supported).\n";
     const std::string epilog = "";
 
@@ -72,22 +72,10 @@ optparse::OptionParser buildParser()
             .version(version)
             .description(desc)
             .epilog(epilog);
-/*
-    parser.add_option("--targetDistanceMap").action("store").type("string").set_default("").help("The distance map of target image.");
-    parser.add_option("--sourceDistanceMap").action("store").type("string").set_default("").help("The distance map of source image.");
-    parser.add_option("--sourceSegmentation").action("store").type("string").set_default("").help("The segmentation of source image.");
-    parser.add_option("--isoValue").action("store").type("float").set_default(0.0).help("As we need to get point set from surface for ICP, this iso value is required to get the isosurface. The default value is 0.0.");
-    parser.add_option("--icpIterations").action("store").type("int").set_default(20).help("The number of iterations user want to run ICP registration.");
-    parser.add_option("--visualizeResult").action("store").type("bool").set_default(false).help("A flag to visualize the registration result.");
-    parser.add_option("--solutionSegmentation").action("store").type("string").set_default("").help("The filename of the aligned segmentation of source image.");
-    parser.add_option("--solutionRaw").action("store").type("string").set_default("").help("The filename of the aligned raw source image.");
-    parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
-    parser.add_option("--solutionTransformation").action("store").type("string").set_default("").help("The filename of the textfile containing the transformation matrix.");
-    */
+
     parser.add_option("--targetDistanceMap").action("store").type("string").set_default("").help("The distance map of target image.");
     parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
     parser.add_option("--solutionRaw").action("store").type("string").set_default("").help("The filename of the aligned raw source image.");
-    //parser.add_option("--solutionTransformation").action("store").type("float").set_default("").help("The filename of the textfile containing the transformation matrix.");
     parser.add_option("--m_00").action("store").type("float").set_default("").help("(0,0) element of the tranformation matrix.");
     parser.add_option("--m_01").action("store").type("float").set_default("").help("(0,1) element of the tranformation matrix.");
     parser.add_option("--m_02").action("store").type("float").set_default("").help("(0,2) element of the tranformation matrix.");
@@ -199,15 +187,9 @@ int main(int argc, char * argv [] )
     }
 
     std::string targetDistanceMap    = (std::string) options.get("targetDistanceMap");
- //  std::string sourceDistanceMap    = (std::string) options.get("sourceDistanceMap");
- // std::string sourceSegmentation   = (std::string) options.get("sourceSegmentation");
- //   std::string solutionSegmentation = (std::string) options.get("solutionSegmentation");
     std::string sourceRaw            = (std::string) options.get("sourceRaw");
     std::string solutionRaw          = (std::string) options.get("solutionRaw");
- //   std::string solutionTransformation   = (std::string) options.get("solutionTransformation");
-//    float         isovalue           = (float) options.get("isoValue");
-//   int         icpIterations        = (int) options.get("icpIterations");
-//    bool      visualizeResult        = (bool) options.get("visualizeResult");
+
 
 
     float m_00    = (float) options.get("m_00");
@@ -230,14 +212,10 @@ int main(int argc, char * argv [] )
         const unsigned int Dimension = 3;
 
         typedef itk::Image< InputPixelType, Dimension > InputImageType;
-       // typedef itk::Image< OutputPixelType, Dimension > OutputImageType;
-       // typedef itk::Image< InputPixelType, Dimension > InputSegImageType;
         typedef itk::Image< InputPixelType, Dimension > InputRawImageType;
-      //  typedef itk::Image< OutputPixelType, Dimension > OutputSegImageType;
         typedef itk::Image< OutputPixelType, Dimension > OutputRawImageType;
 
         typedef itk::ImageFileReader< InputImageType > ReaderType;
-       // typedef itk::ImageFileReader< InputSegImageType > SegReaderType;
         typedef itk::ImageFileReader< InputRawImageType > RawReaderType;
 
 
@@ -248,100 +226,11 @@ int main(int argc, char * argv [] )
         InputImageType::Pointer targetInputImage = targetReader->GetOutput();
         InputImageType::SizeType  size  =
                 targetInputImage->GetBufferedRegion().GetSize();
-/*
-        typedef itk::VTKImageExport< InputImageType > ExportFilterType;
 
-        ExportFilterType::Pointer itkTargetExporter = ExportFilterType::New();
-        itkTargetExporter->SetInput( targetReader->GetOutput() );
-
-        vtkImageImport* vtkTargetImporter = vtkImageImport::New();
-        ConnectPipelines(itkTargetExporter, vtkTargetImporter);
-
-        vtkTargetImporter->Update();
-
-        vtkContourFilter * targetContour = vtkContourFilter::New();
-        targetContour->SetInputData( vtkTargetImporter->GetOutput() );
-        targetContour->SetValue( 0, isovalue  );
-        targetContour->Update();
-
-        ReaderType::Pointer movingReader  = ReaderType::New();
-        movingReader->SetFileName( sourceDistanceMap );
-        movingReader->Update();
-
-        InputImageType::Pointer movingInputImage = movingReader->GetOutput();
-
-        ExportFilterType::Pointer itkMovingExporter = ExportFilterType::New();
-
-        itkMovingExporter->SetInput( movingReader->GetOutput() );
-
-        vtkImageImport* vtkMovingImporter = vtkImageImport::New();
-        ConnectPipelines(itkMovingExporter, vtkMovingImporter);
-
-        vtkMovingImporter->Update();
-
-        vtkContourFilter * movingContour = vtkContourFilter::New();
-        movingContour->SetInputData( vtkMovingImporter->GetOutput() );
-        movingContour->SetValue( 0, isovalue );
-        movingContour->Update();
-
-        vtkSmartPointer<vtkPolyData> target = targetContour->GetOutput();
-        vtkSmartPointer<vtkPolyData> moving = movingContour->GetOutput();
-
-
-        // Setup ICP transform		 // Setup ICP transform
-        vtkSmartPointer<vtkIterativeClosestPointTransform> icp =
-                vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
-        icp->SetSource(moving);
-        icp->SetTarget(target);
-        icp->GetLandmarkTransform()->SetModeToRigidBody();
-        icp->SetMaximumNumberOfIterations(icpIterations);
-        //icp->StartByMatchingCentroidsOn();
-        icp->Modified();
-        icp->Update();
-
-
-        vtkSmartPointer<vtkTransformPolyDataFilter> icpTransformFilter =
-                vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        icpTransformFilter->SetInputData(moving);
-        icpTransformFilter->SetTransform(icp);
-        icpTransformFilter->Update();
-
-
-        //Transform Segmentation
-        // Get the resulting transformation matrix (this matrix takes the source points to the target points)
-        vtkSmartPointer<vtkMatrix4x4> m1 = icp->GetMatrix();
-        vtkSmartPointer<vtkMatrix4x4> m  = vtkMatrix4x4::New();
-
-        vtkMatrix4x4::Invert(m1, m);
-
-        std::cout << "The resulting matrix is: " << *m << std::endl;
-        // write the matrix m in the solutionTransformation textfile
-        std::ofstream ofs;
-        std::string fname=solutionTransformation;
-        const char * filename = fname.c_str();
-        ofs.open (filename); // the file needs to be overwritten in case running the program on the same file several times
-
-        // for ease of automatic parsing the generated param file
-        ofs <<"The Transformation matrix is:\n"<< *m;
-        ofs.close();
-*/
         typedef itk::Rigid3DTransformSurrogate<double>  TransformType;
         TransformType::Pointer transform = TransformType::New();
         TransformType::ParametersType p;
         p.set_size(12);
-        /*
-        for(int r=0;r<3;r++)
-        {
-            for(int c=0;c<3;c++)
-            {
-                p[r*3+c]=m->GetElement(r,c);
-            }
-        }
-
-        p[ 9]=m->GetElement(0,3);
-        p[10]=m->GetElement(1,3);
-        p[11]=m->GetElement(2,3);
-        */
 
         p[0] = m_00;
         p[1] = m_01;
@@ -356,49 +245,8 @@ int main(int argc, char * argv [] )
         p[10] = m_13;
         p[11] = m_23;
 
-         //transform->SetParameters( p );
-
-        //std::cout << "parameters:" << std::endl;
-        //for(int r=0;r<12;r++)
-        //{
-        //	std::cout << p[r] << " ";
-        //}
-        //std::cout << std::endl;
-        ///////////////////////////
-        /*
-        SegReaderType::Pointer movingSegReader  = SegReaderType::New();
-        movingSegReader->SetFileName( sourceSegmentation );
-        movingSegReader->Update();
-        InputSegImageType::Pointer movingSegInputImage =
-                movingSegReader->GetOutput();
-
-        typedef itk::ResampleImageFilter< InputSegImageType
-                , OutputSegImageType > ResampleFilterType;
-        ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-        resampler->SetTransform( transform );
-
-
-        typedef itk::NearestNeighborInterpolateImageFunction<
-                InputSegImageType, double > InterpolatorType;
-        InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-        resampler->SetInterpolator( interpolator );
-        resampler->SetOutputSpacing( ->GetSpacing() );
-        resampler->SetSize( size );
-        resampler->SetOutputOrigin( ->GetOrigin() );
-        resampler->SetOutputDirection( ->GetDirection() );
-        resampler->SetInput( movingSegInputImage );
-        resampler->Update();
-
-        typedef itk::ImageFileWriter< OutputSegImageType >  ITKWriterType;
-        ITKWriterType::Pointer itkImageWriter = ITKWriterType::New();
-
-        itkImageWriter->SetInput( resampler->GetOutput() );
-        itkImageWriter->SetFileName( solutionSegmentation );
-        itkImageWriter->Update();
-        */
         //////////////////////////////////
-        // Same transformation applied on the raw images
+        // transformation applied on the raw images
         // change the variable names for syntax consistency
 
         RawReaderType::Pointer movingRawReader  = RawReaderType::New();
@@ -432,170 +280,7 @@ int main(int argc, char * argv [] )
         itkImageWriter->SetFileName( solutionRaw );
         itkImageWriter->Update();
 
-/*
-        if(visualizeResult){
-            //------------------------------------------------------------------------
-            // VTK Render pipeline.
-            //------------------------------------------------------------------------
 
-            // Create a renderer, render window, and render window interactor to
-            // display the results.
-
-            vtkRenderer* renderer = vtkRenderer::New();
-            vtkRenderWindow* renWin = vtkRenderWindow::New();
-            vtkRenderWindowInteractor* iren = vtkRenderWindowInteractor::New();
-
-            renWin->SetSize(500, 500);
-            renWin->AddRenderer(renderer);
-            iren->SetRenderWindow(renWin);
-
-
-            // use cell picker for interacting with the image orthogonal views.
-            //
-            vtkCellPicker * picker = vtkCellPicker::New();
-            picker->SetTolerance(0.005);
-
-
-            //assign default props to the ipw's texture plane actor
-            vtkProperty * ipwProp = vtkProperty::New();
-
-
-            // Create 3 orthogonal view using the ImagePlaneWidget
-            //
-            vtkImagePlaneWidget * xImagePlaneWidget =  vtkImagePlaneWidget::New();
-            vtkImagePlaneWidget * yImagePlaneWidget =  vtkImagePlaneWidget::New();
-            vtkImagePlaneWidget * zImagePlaneWidget =  vtkImagePlaneWidget::New();
-
-            // The 3 image plane widgets are used to probe the dataset.
-            //
-            xImagePlaneWidget->DisplayTextOn();
-            xImagePlaneWidget->SetInputData(vtkTargetImporter->GetOutput());
-            xImagePlaneWidget->SetPlaneOrientationToXAxes();
-            xImagePlaneWidget->SetSliceIndex(size[0]/2);
-            xImagePlaneWidget->SetPicker(picker);
-            xImagePlaneWidget->RestrictPlaneToVolumeOn();
-            xImagePlaneWidget->SetKeyPressActivationValue('x');
-            xImagePlaneWidget->GetPlaneProperty()->SetColor(1, 0, 0);
-            xImagePlaneWidget->SetTexturePlaneProperty(ipwProp);
-            xImagePlaneWidget->SetResliceInterpolateToNearestNeighbour();
-
-            yImagePlaneWidget->DisplayTextOn();
-            yImagePlaneWidget->SetInputData(vtkTargetImporter->GetOutput());
-            yImagePlaneWidget->SetPlaneOrientationToYAxes();
-            yImagePlaneWidget->SetSliceIndex(size[1]/2);
-            yImagePlaneWidget->SetPicker(picker);
-            yImagePlaneWidget->RestrictPlaneToVolumeOn();
-            yImagePlaneWidget->SetKeyPressActivationValue('y');
-            yImagePlaneWidget->GetPlaneProperty()->SetColor(1, 1, 0);
-            yImagePlaneWidget->SetTexturePlaneProperty(ipwProp);
-            yImagePlaneWidget->SetLookupTable(xImagePlaneWidget->GetLookupTable());
-
-            zImagePlaneWidget->DisplayTextOn();
-            zImagePlaneWidget->SetInputData(vtkTargetImporter->GetOutput());
-            zImagePlaneWidget->SetPlaneOrientationToZAxes();
-            zImagePlaneWidget->SetSliceIndex(size[2]/2);
-            zImagePlaneWidget->SetPicker(picker);
-            zImagePlaneWidget->SetKeyPressActivationValue('z');
-            zImagePlaneWidget->GetPlaneProperty()->SetColor(0, 0, 1);
-            zImagePlaneWidget->SetTexturePlaneProperty(ipwProp);
-            zImagePlaneWidget->SetLookupTable(xImagePlaneWidget->GetLookupTable());
-
-            xImagePlaneWidget->SetInteractor( iren );
-            xImagePlaneWidget->On();
-
-            yImagePlaneWidget->SetInteractor( iren );
-            yImagePlaneWidget->On();
-
-            zImagePlaneWidget->SetInteractor( iren );
-            zImagePlaneWidget->On();
-
-
-            // Set the background to something grayish
-            renderer->SetBackground(0.4392, 0.5020, 0.5647);
-
-            vtkPolyDataMapper * targetPolyMapper = vtkPolyDataMapper::New();
-            vtkActor          * targetPolyActor  = vtkActor::New();
-
-            targetPolyActor->SetMapper( targetPolyMapper );
-            targetPolyMapper->SetInputData( targetContour->GetOutput() );
-            targetPolyMapper->ScalarVisibilityOff();
-
-            vtkPolyDataMapper * movingPolyMapper = vtkPolyDataMapper::New();
-            vtkActor          * movingPolyActor  = vtkActor::New();
-
-            movingPolyActor->SetMapper( movingPolyMapper );
-            movingPolyMapper->SetInputData( movingContour->GetOutput() );
-            movingPolyMapper->ScalarVisibilityOff();
-
-
-            vtkPolyDataMapper * solutionPolyMapper = vtkPolyDataMapper::New();
-            vtkActor          * solutionPolyActor  = vtkActor::New();
-
-            solutionPolyActor->SetMapper( solutionPolyMapper );
-            solutionPolyMapper->SetInputData( icpTransformFilter->GetOutput() );
-            solutionPolyMapper->ScalarVisibilityOff();
-
-            vtkProperty * movingProperty = vtkProperty::New();
-            movingProperty->SetAmbient(0.1);
-            movingProperty->SetDiffuse(0.1);
-            movingProperty->SetSpecular(0.5);
-            movingProperty->SetColor(1.0,0.0,0.0);
-            movingProperty->SetLineWidth(2.0);
-            movingProperty->SetRepresentationToSurface();
-
-            vtkProperty * targetProperty = vtkProperty::New();
-            targetProperty->SetAmbient(0.1);
-            targetProperty->SetDiffuse(0.1);
-            targetProperty->SetSpecular(0.5);
-            targetProperty->SetColor(0.0,0.0,1.0);
-            targetProperty->SetLineWidth(2.0);
-            targetProperty->SetRepresentationToSurface();
-
-            vtkProperty * solutionProperty = vtkProperty::New();
-            solutionProperty->SetAmbient(0.1);
-            solutionProperty->SetDiffuse(0.1);
-            solutionProperty->SetSpecular(0.5);
-            solutionProperty->SetColor(0.0,1.0,0.0);
-            solutionProperty->SetLineWidth(2.0);
-            solutionProperty->SetRepresentationToSurface();
-
-            movingPolyActor->SetProperty( movingProperty );
-            targetPolyActor->SetProperty( targetProperty );
-            solutionPolyActor->SetProperty( solutionProperty );
-
-            renderer->AddActor( targetPolyActor );
-            renderer->AddActor( movingPolyActor );
-            renderer->AddActor( solutionPolyActor );
-
-            // Bring up the render window and begin interaction.
-            renderer->ResetCamera();
-            renWin->Render();
-            iren->Start();
-
-            // Release all VTK components
-            targetPolyActor->Delete();
-            movingPolyActor->Delete();
-            solutionPolyActor->Delete();
-            picker->Delete();
-            ipwProp->Delete();
-            vtkTargetImporter->Delete();
-            vtkMovingImporter->Delete();
-            xImagePlaneWidget->Delete();
-            yImagePlaneWidget->Delete();
-            zImagePlaneWidget->Delete();
-            targetContour->Delete();
-            movingContour->Delete();
-            targetProperty->Delete();
-            movingProperty->Delete();
-            solutionProperty->Delete();
-            targetPolyMapper->Delete();
-            movingPolyMapper->Delete();
-            solutionPolyMapper->Delete();
-            renWin->Delete();
-            renderer->Delete();
-            iren->Delete();
-        }
-*/
     }
     catch( itk::ExceptionObject & e )
     {
