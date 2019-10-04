@@ -131,16 +131,24 @@ int DoIt(InputParams params)
         std::string modeStr = Utils::int2str(modeId, 2);
 
         double sqrt_eigenValue = sqrt(eigenValues[TotalNumberOfModes - modeId - 1]);
-        double min_std = -1 * params.maximum_std_dev * sqrt_eigenValue;
-        double max_std = +1 * params.maximum_std_dev * sqrt_eigenValue;
+
+        double min_std_factor = -1 * params.maximum_std_dev ;
+        double max_std_factor = +1 * params.maximum_std_dev ;
+        std::vector<double> std_factor_store = Utils::linspace(min_std_factor, max_std_factor, params.number_of_samples_per_mode);
+
+        //double min_std = -1 * params.maximum_std_dev * sqrt_eigenValue;
+        //double max_std = +1 * params.maximum_std_dev * sqrt_eigenValue;
+        //std::vector<double> std_store = Utils::linspace(min_std, max_std, params.number_of_samples_per_mode);
 
         vnl_vector<double> curMode = eigenVectors.get_column(TotalNumberOfModes - modeId - 1);
 
-        std::vector<double> std_store = Utils::linspace(min_std, max_std, params.number_of_samples_per_mode);
-
+        std::vector<double> std_store;
         std::cout << "std_store: " ;
-        for (unsigned int sid = 0 ; sid < std_store.size(); sid++)
+        for (unsigned int sid = 0 ; sid < std_factor_store.size(); sid++)
+        {
+            std_store.push_back(std_factor_store[sid]*sqrt_eigenValue);
             std::cout << std_store[sid] << ", " ;
+        }
         std::cout << std::endl;
 
         // writing stds on file
@@ -150,8 +158,8 @@ int DoIt(InputParams params)
         if ( !ofs )
             throw std::runtime_error("Could not open file for output: " + stdfilename);
 
-        for (unsigned int sid = 0 ; sid < std_store.size(); sid++)
-            ofs << std_store[sid] << "\n" ;
+        for (unsigned int sid = 0 ; sid < std_factor_store.size(); sid++)
+            ofs << std_factor_store[sid] << "\n" ;
         ofs.close();
 
         for(unsigned int sampleId = 0 ; sampleId < std_store.size(); sampleId++)
