@@ -492,6 +492,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         this->goodPoints_.resize(local_pts[0].size(), true);
         for (size_t j = 0; j < sparseMean.size(); j++) {
 
+            double cur_cos_appex = 0;
             // the mean normal of the current particle index
             double nx_jj = average_normals(j,0);
             double ny_jj = average_normals(j,1);
@@ -502,12 +503,34 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                 double ny_kk = normals[shapeNo_kk](j, 1);
                 double nz_kk = normals[shapeNo_kk](j, 2);
 
-                this->goodPoints_[j] = this->goodPoints_[j] &&
-                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
-                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
-
+                cur_cos_appex += (nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk);
             }
+
+            cur_cos_appex /= local_pts.size();
+            cur_cos_appex *= 2.0; // due to symmetry about the mean normal
+
+            this->goodPoints_[j] = cur_cos_appex > std::cos(this->maxAngleDegrees_ * M_PI / 180.);
         }
+
+
+        //        for (size_t j = 0; j < sparseMean.size(); j++) {
+
+        //            // the mean normal of the current particle index
+        //            double nx_jj = average_normals(j,0);
+        //            double ny_jj = average_normals(j,1);
+        //            double nz_jj = average_normals(j,2);
+
+        //            for (unsigned int shapeNo_kk = 0; shapeNo_kk < local_pts.size(); shapeNo_kk++) {
+        //                double nx_kk = normals[shapeNo_kk](j, 0);
+        //                double ny_kk = normals[shapeNo_kk](j, 1);
+        //                double nz_kk = normals[shapeNo_kk](j, 2);
+
+        //                this->goodPoints_[j] = this->goodPoints_[j] &&
+        //                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
+        //                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
+
+        //            }
+        //        }
 
 
         //        for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
