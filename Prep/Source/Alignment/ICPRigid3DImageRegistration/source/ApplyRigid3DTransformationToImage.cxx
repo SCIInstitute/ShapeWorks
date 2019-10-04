@@ -90,7 +90,7 @@ optparse::OptionParser buildParser()
 //    parser.add_option("--m_03").action("store").type("float").set_default("").help("(0,3) element of the tranformation matrix.");
 //    parser.add_option("--m_13").action("store").type("float").set_default("").help("(1,3) element of the tranformation matrix.");
 //    parser.add_option("--m_23").action("store").type("float").set_default("").help("(2,3) element of the tranformation matrix.");
-    parser.add_option("--transformationMatrix").action("store").type("float").set_default("").help("the tranformation matrix.");
+    parser.add_option("--transformationMatrix").action("store").type("string").set_default("").help("the tranformation matrix.");
     return parser;
 
 
@@ -192,7 +192,7 @@ int main(int argc, char * argv [] )
     std::string targetDistanceMap    = (std::string) options.get("targetDistanceMap");
     std::string sourceRaw            = (std::string) options.get("sourceRaw");
     std::string solutionRaw          = (std::string) options.get("solutionRaw");
-    std::string transformationMatrix          = (std::string) options.get("transformationMatrix");
+    std::string transformationMatrix    = (std::string) options.get("transformationMatrix");
 
  /*
 
