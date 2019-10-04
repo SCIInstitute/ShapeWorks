@@ -78,18 +78,6 @@ optparse::OptionParser buildParser()
     parser.add_option("--targetDistanceMap").action("store").type("string").set_default("").help("The distance map of target image.");
     parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
     parser.add_option("--solutionRaw").action("store").type("string").set_default("").help("The filename of the aligned raw source image.");
-//    parser.add_option("--m_00").action("store").type("float").set_default("").help("(0,0) element of the tranformation matrix.");
-//    parser.add_option("--m_01").action("store").type("float").set_default("").help("(0,1) element of the tranformation matrix.");
-//    parser.add_option("--m_02").action("store").type("float").set_default("").help("(0,2) element of the tranformation matrix.");
-//    parser.add_option("--m_10").action("store").type("float").set_default("").help("(1,0) element of the tranformation matrix.");
-//    parser.add_option("--m_11").action("store").type("float").set_default("").help("(1,1) element of the tranformation matrix.");
-//    parser.add_option("--m_12").action("store").type("float").set_default("").help("(1,2) element of the tranformation matrix.");
-//    parser.add_option("--m_20").action("store").type("float").set_default("").help("(2,0) element of the tranformation matrix.");
-//    parser.add_option("--m_21").action("store").type("float").set_default("").help("(2,1) element of the tranformation matrix.");
-//    parser.add_option("--m_22").action("store").type("float").set_default("").help("(2,2) element of the tranformation matrix.");
-//    parser.add_option("--m_03").action("store").type("float").set_default("").help("(0,3) element of the tranformation matrix.");
-//    parser.add_option("--m_13").action("store").type("float").set_default("").help("(1,3) element of the tranformation matrix.");
-//    parser.add_option("--m_23").action("store").type("float").set_default("").help("(2,3) element of the tranformation matrix.");
     parser.add_option("--transformationMatrix").action("store").type("string").set_default("").help("the tranformation matrix.");
     return parser;
 
@@ -182,33 +170,18 @@ int main(int argc, char * argv [] )
     optparse::OptionParser parser = buildParser();
     optparse::Values & options = parser.parse_args(argc,argv);
     std::vector<std::string> args = parser.args();
-/*
-    if(argc < 7)
+
+    if(argc < 4)
     {
         parser.print_help();
         return EXIT_FAILURE;
     }
-*/
+
     std::string targetDistanceMap    = (std::string) options.get("targetDistanceMap");
     std::string sourceRaw            = (std::string) options.get("sourceRaw");
     std::string solutionRaw          = (std::string) options.get("solutionRaw");
     std::string transformationMatrix    = (std::string) options.get("transformationMatrix");
 
- /*
-
-    float m_00    = (float) options.get("m_00");
-    float m_01    = (float) options.get("m_01");
-    float m_02    = (float) options.get("m_02");
-    float m_10    = (float) options.get("m_10");
-    float m_11    = (float) options.get("m_11");
-    float m_12    = (float) options.get("m_12");
-    float m_20    = (float) options.get("m_20");
-    float m_21    = (float) options.get("m_21");
-    float m_22    = (float) options.get("m_22");
-    float m_03    = (float) options.get("m_03");
-    float m_13    = (float) options.get("m_13");
-    float m_23    = (float) options.get("m_23");
-*/
 
     float m[3][4] = {0.0f};
 
