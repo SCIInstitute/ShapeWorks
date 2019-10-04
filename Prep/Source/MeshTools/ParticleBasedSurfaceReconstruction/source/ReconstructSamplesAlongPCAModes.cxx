@@ -77,30 +77,43 @@ int DoIt(InputParams params)
     // perform PCA on the global points that were used to compute the dense mean mesh
     shapeStats.DoPCA(global_pts, domainsPerShape);
 
-    // detect number of modes
     std::vector<double> percentVarByMode = shapeStats.PercentVarByMode();
-    bool found = false;
-    int NumberOfModes = 0;
     int TotalNumberOfModes = percentVarByMode.size();
-    for (int n = TotalNumberOfModes-1; n >=0; n--)
+
+    int NumberOfModes = 0; bool singleModeToBeGen = false;
+    if ((params.mode_index >= 0) && (params.mode_index < TotalNumberOfModes))
     {
-        if (percentVarByMode[n] >= params.maximum_variance_captured && found==false)
-        {
-            NumberOfModes = n;
-            found = true;
+        NumberOfModes = 1; singleModeToBeGen = true;
+        std::cout << "Mode #" << params.mode_index << " is requested to be generated  ..." << std::endl;
+    }
+    else {
+        if (params.number_of_modes > 0 ){
+            NumberOfModes = params.number_of_modes;
+            std::cout << NumberOfModes << " dominant modes are requested to be generated  ..." << std::endl;
         }
+        else {
+            // detect number of modes
+            bool found = false;
+            for (int n = TotalNumberOfModes-1; n >=0; n--)
+            {
+                if (percentVarByMode[n] >= params.maximum_variance_captured && found==false)
+                {
+                    NumberOfModes = n;
+                    found = true;
+                }
+            }
+
+            if(!found)
+                NumberOfModes = percentVarByMode.size();
+
+            if (NumberOfModes == 0)
+            {
+                std::cerr << "No dominant modes detected !!!!!" << std::endl;
+                return EXIT_FAILURE;
+            }
+        }
+        std::cout << NumberOfModes << " dominant modes is found to capture " << params.maximum_variance_captured*100 << "% of total variation ..." << std::endl;
     }
-
-    if(!found)
-        NumberOfModes = percentVarByMode.size();
-
-    if (NumberOfModes == 0)
-    {
-        std::cerr << "No dominant modes detected !!!!!" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    std::cout << NumberOfModes << " dominant modes is found to capture " << params.maximum_variance_captured*100 << "% of total variation ..." << std::endl;
 
     // start sampling along each mode
     vnl_vector<double> eigenValues  = shapeStats.Eigenvalues();
@@ -129,6 +142,9 @@ int DoIt(InputParams params)
     for (int modeId = 0 ; modeId < NumberOfModes; modeId ++)
     {
         std::string modeStr = Utils::int2str(modeId, 2);
+
+        if (singleModeToBeGen && (modeId != params.mode_index))
+            continue;
 
         double sqrt_eigenValue = sqrt(eigenValues[TotalNumberOfModes - modeId - 1]);
 

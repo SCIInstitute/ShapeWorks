@@ -57,6 +57,8 @@ public:
     bool  display             ;
     float glyph_radius        ;
     float maximum_variance_captured;
+    int mode_index;
+    int number_of_modes;
     float maximum_std_dev;
     int number_of_samples_per_mode;
     float normalAngle;
@@ -99,6 +101,8 @@ public:
         glyph_radius           = 1;
 
         maximum_variance_captured  = 0.95;
+        number_of_modes            = -1; // max variance captured will be used to determine number of modes
+        mode_index                 = -1; // if this is given >=0 and < nSamples, this particular mode will be generated
         maximum_std_dev            = 2.0;
         number_of_samples_per_mode = 10;
         normalAngle = pi/2.0;
@@ -407,6 +411,18 @@ public:
                 if (elem)
                 {
                     number_of_samples_per_mode = atoi( elem->GetText() );
+                }
+
+                elem = docHandle.FirstChild( "mode_index" ).Element();
+                if (elem)
+                {
+                    mode_index = atoi( elem->GetText() );
+                }
+
+                elem = docHandle.FirstChild( "number_of_modes" ).Element();
+                if (elem)
+                {
+                    number_of_modes = atoi( elem->GetText() );
                 }
             }
 
