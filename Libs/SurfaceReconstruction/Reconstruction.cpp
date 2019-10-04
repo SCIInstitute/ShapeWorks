@@ -17,6 +17,12 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
+#include <itkImageFileReader.h>
+#include "itkNrrdImageIOFactory.h"
+#include "itkMetaImageIOFactory.h"
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
+
 #include <itkImageFileWriter.h>
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -1347,6 +1353,89 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     }
     std::cout << "KMeans++ finished...." << std::endl;
     centroidIndices = centers;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(
+        typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision)
+{
+    typename ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
+    itk2vtkConnector->SetInput(dtImage);
+    itk2vtkConnector->Update();
+
+    vtkSmartPointer<vtkPolyData> denseMesh_;
+
+    denseMesh_ = this->extractIsosurface(itk2vtkConnector->GetOutput());
+    try
+    {
+        denseMesh_ = this->MeshQC(denseMesh_);
+    }
+    catch (std::runtime_error e)
+    {
+        if (denseMesh_ != NULL) {
+            throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
+        }
+    }
+
+    if (subdivision > 0)
+    {
+        if (butterfly_subdivision)
+        {
+            vtkSmartPointer <vtkButterflySubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkButterflySubdivisionFilter>::New();
+            subdivisionFilter->SetInputData(denseMesh_);
+            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
+            subdivisionFilter->Update();
+            denseMesh_ = subdivisionFilter->GetOutput();
+        }
+        else
+        {
+            vtkSmartPointer <vtkLoopSubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkLoopSubdivisionFilter>::New();
+            subdivisionFilter->SetInputData(denseMesh_);
+            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
+            subdivisionFilter->Update();
+            denseMesh_ = subdivisionFilter->GetOutput();
+        }
+    }
+
+    std::string plyName = meshFileName;
+    std::string vtkName = meshFileName;
+    std::string str_vtk (".vtk");
+    std::string str_ply (".ply");
+    std::size_t found_in_ply = plyName.find(str_vtk);
+    std::size_t found_in_vtk = vtkName.find(str_ply);
+    if ( found_in_ply != std::string::npos)
+        plyName.replace( found_in_ply, str_vtk.size(), str_ply );
+
+    if ( found_in_vtk != std::string::npos)
+        vtkName.replace( found_in_vtk, str_ply.size(), str_vtk );
+
+    std::cout << "Writing: " + plyName << std::endl;
+    this->writePLY( (char*)plyName.c_str(), denseMesh_ );
+
+    std::cout << "Writing: " + vtkName << std::endl;
+    this->writeVTK( (char*)vtkName.c_str(), denseMesh_ );
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision)
+{
+    typedef itk::ImageFileReader< ImageType > ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
+
+    if (dtFileName.find(".nrrd") != std::string::npos) {
+        itk::NrrdImageIOFactory::RegisterOneFactory();
+    } else if (dtFileName.find(".mha") != std::string::npos) {
+        itk::MetaImageIOFactory::RegisterOneFactory();
+    }
+
+    std::cout << "Reading distance transform file : " << dtFileName << std::endl;
+    reader->SetFileName( dtFileName.c_str() );
+    reader->Update();
+    this->MeshFromDT(reader->GetOutput(), meshFileName, subdivision, butterfly_subdivision);
 }
 
 
