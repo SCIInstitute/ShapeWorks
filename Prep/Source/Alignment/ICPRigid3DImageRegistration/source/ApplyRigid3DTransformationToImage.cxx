@@ -59,6 +59,8 @@
 
 #include "OptionParser.h"
 
+#include <iostream>
+#include <fstream>
 optparse::OptionParser buildParser()
 {
     const std::string usage = "%prog [OPTION]";
@@ -76,18 +78,19 @@ optparse::OptionParser buildParser()
     parser.add_option("--targetDistanceMap").action("store").type("string").set_default("").help("The distance map of target image.");
     parser.add_option("--sourceRaw").action("store").type("string").set_default("").help("The raw source image.");
     parser.add_option("--solutionRaw").action("store").type("string").set_default("").help("The filename of the aligned raw source image.");
-    parser.add_option("--m_00").action("store").type("float").set_default("").help("(0,0) element of the tranformation matrix.");
-    parser.add_option("--m_01").action("store").type("float").set_default("").help("(0,1) element of the tranformation matrix.");
-    parser.add_option("--m_02").action("store").type("float").set_default("").help("(0,2) element of the tranformation matrix.");
-    parser.add_option("--m_10").action("store").type("float").set_default("").help("(1,0) element of the tranformation matrix.");
-    parser.add_option("--m_11").action("store").type("float").set_default("").help("(1,1) element of the tranformation matrix.");
-    parser.add_option("--m_12").action("store").type("float").set_default("").help("(1,2) element of the tranformation matrix.");
-    parser.add_option("--m_20").action("store").type("float").set_default("").help("(2,0) element of the tranformation matrix.");
-    parser.add_option("--m_21").action("store").type("float").set_default("").help("(2,1) element of the tranformation matrix.");
-    parser.add_option("--m_22").action("store").type("float").set_default("").help("(2,2) element of the tranformation matrix.");
-    parser.add_option("--m_03").action("store").type("float").set_default("").help("(0,3) element of the tranformation matrix.");
-    parser.add_option("--m_13").action("store").type("float").set_default("").help("(1,3) element of the tranformation matrix.");
-    parser.add_option("--m_23").action("store").type("float").set_default("").help("(2,3) element of the tranformation matrix.");
+//    parser.add_option("--m_00").action("store").type("float").set_default("").help("(0,0) element of the tranformation matrix.");
+//    parser.add_option("--m_01").action("store").type("float").set_default("").help("(0,1) element of the tranformation matrix.");
+//    parser.add_option("--m_02").action("store").type("float").set_default("").help("(0,2) element of the tranformation matrix.");
+//    parser.add_option("--m_10").action("store").type("float").set_default("").help("(1,0) element of the tranformation matrix.");
+//    parser.add_option("--m_11").action("store").type("float").set_default("").help("(1,1) element of the tranformation matrix.");
+//    parser.add_option("--m_12").action("store").type("float").set_default("").help("(1,2) element of the tranformation matrix.");
+//    parser.add_option("--m_20").action("store").type("float").set_default("").help("(2,0) element of the tranformation matrix.");
+//    parser.add_option("--m_21").action("store").type("float").set_default("").help("(2,1) element of the tranformation matrix.");
+//    parser.add_option("--m_22").action("store").type("float").set_default("").help("(2,2) element of the tranformation matrix.");
+//    parser.add_option("--m_03").action("store").type("float").set_default("").help("(0,3) element of the tranformation matrix.");
+//    parser.add_option("--m_13").action("store").type("float").set_default("").help("(1,3) element of the tranformation matrix.");
+//    parser.add_option("--m_23").action("store").type("float").set_default("").help("(2,3) element of the tranformation matrix.");
+    parser.add_option("--transformationMatrix").action("store").type("float").set_default("").help("the tranformation matrix.");
     return parser;
 
 
@@ -179,18 +182,19 @@ int main(int argc, char * argv [] )
     optparse::OptionParser parser = buildParser();
     optparse::Values & options = parser.parse_args(argc,argv);
     std::vector<std::string> args = parser.args();
-
+/*
     if(argc < 7)
     {
         parser.print_help();
         return EXIT_FAILURE;
     }
-
+*/
     std::string targetDistanceMap    = (std::string) options.get("targetDistanceMap");
     std::string sourceRaw            = (std::string) options.get("sourceRaw");
     std::string solutionRaw          = (std::string) options.get("solutionRaw");
+    std::string transformationMatrix          = (std::string) options.get("transformationMatrix");
 
-
+ /*
 
     float m_00    = (float) options.get("m_00");
     float m_01    = (float) options.get("m_01");
@@ -204,6 +208,16 @@ int main(int argc, char * argv [] )
     float m_03    = (float) options.get("m_03");
     float m_13    = (float) options.get("m_13");
     float m_23    = (float) options.get("m_23");
+*/
+
+    float m[3][4] = {0};
+
+    ifstream info("transformationMatrix");
+    for (int i = 0; i < 3; i++){
+        for (int j = 0; j < 4; j++){
+          info >> m[i][j];
+        }
+    }
 
     try
     {
@@ -232,18 +246,18 @@ int main(int argc, char * argv [] )
         TransformType::ParametersType p;
         p.set_size(12);
 
-        p[0] = m_00;
-        p[1] = m_01;
-        p[2] = m_02;
-        p[3] = m_10;
-        p[4] = m_11;
-        p[5] = m_12;
-        p[6] = m_20;
-        p[7] = m_21;
-        p[8] = m_22;
-        p[9] = m_03;
-        p[10] = m_13;
-        p[11] = m_23;
+        p[0] = m[0][0];
+        p[1] = m[0][1];
+        p[2] = m[0][2];
+        p[3] = m[1][0];
+        p[4] = m[1][1];
+        p[5] = m[1][2];
+        p[6] = m[2][0];
+        p[7] = m[2][1];
+        p[8] = m[2][2];
+        p[9] = m[0][3];
+        p[10] = m[1][3];
+        p[11] = m[2][3];
 
         //////////////////////////////////
         // transformation applied on the raw images
