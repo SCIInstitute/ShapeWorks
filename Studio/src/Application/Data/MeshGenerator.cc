@@ -21,7 +21,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh(const vnl_vector<double>& 
     vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
     return poly_data;
   }
-  return nullptr;
+  return vtkPolyData::New();
 }
 
 //---------------------------------------------------------------------------

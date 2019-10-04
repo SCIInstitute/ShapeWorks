@@ -40,6 +40,9 @@ public:
   /// load project from file
   bool load_project( QString filename, std::string& planesFile);
   
+  /// read a lightweight project file
+  bool load_light_project( QString filename, std::string& planesFile );
+
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();
 

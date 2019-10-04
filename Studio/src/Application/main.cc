@@ -21,8 +21,6 @@ int main(int argc, char** argv) {
     // do this after "show" for mac initialization
     studio_app->initialize_vtk();
 
-    QStringList files;
-
     if (argc == 2) {
       studio_app->open_project(QString(argv[1]));
     }
