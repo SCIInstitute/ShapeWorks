@@ -210,7 +210,7 @@ int main(int argc, char * argv [] )
     float m_23    = (float) options.get("m_23");
 */
 
-    float m[3][4] = {0};
+    float m[3][4] = {0.0f};
 
     ifstream info("transformationMatrix");
     for (int i = 0; i < 3; i++){
