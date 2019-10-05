@@ -4,29 +4,31 @@
 ShapeWorksOptimize::ShapeWorksOptimize(
   //QObject* parent,
   std::vector<ImageType::Pointer> inputs,
-  std::vector<std::array<itk::Point<double>, 3 > > cutPlanes,
+  std::vector<std::array<itk::Point<double>, 3 >> cutPlanes,
   size_t numScales,
   std::vector<double> start_reg, std::vector<double> end_reg,
-  std::vector<unsigned int> iters, 
+  std::vector<unsigned int> iters,
   std::vector<double> decay_span, std::vector<size_t> procrustes_interval, double weighting,
   bool verbose)
-  :// QObject(parent), 
-  images_(inputs), 
+  :// QObject(parent),
+  images_(inputs),
   cutPlanes_(cutPlanes),
   numScales_(numScales),
-  maxIter_(iters), 
+  maxIter_(iters),
   reportInterval_(10), procrustesCounter_(0),
   decaySpan_(decay_span),
   procrustesInterval_(procrustes_interval),
   regularizationInitial_(start_reg),
   regularizationFinal_(end_reg),
   weighting_(weighting),
-  verbose_(verbose) {
+  verbose_(verbose)
+{
   this->psmFilter_ = itk::PSMEntropyModelFilter<ImageType>::New();
   this->procrustesRegistration_ = itk::PSMProcrustesRegistration<3>::New();
 }
 
-void ShapeWorksOptimize::run() {
+void ShapeWorksOptimize::run()
+{
   this->psmFilter_->SetNumberOfScales(this->numScales_);
   this->psmFilter_->SetRegularizationInitial(this->regularizationInitial_);
   this->psmFilter_->SetRegularizationFinal(this->regularizationFinal_);
@@ -48,8 +50,8 @@ void ShapeWorksOptimize::run() {
   for (auto &a : this->images_) {
     this->psmFilter_->SetDomainName("item_" + std::to_string(i), i);
     this->psmFilter_->SetInput(i, a);
-    if ((this->cutPlanes_.size() == 1) || 
-      (this->cutPlanes_.size() == this->images_.size())) {
+    if ((this->cutPlanes_.size() == 1) ||
+        (this->cutPlanes_.size() == this->images_.size())) {
       vnl_vector_fixed<double, 3> x;
       vnl_vector_fixed<double, 3> y;
       vnl_vector_fixed<double, 3> z;
@@ -74,62 +76,67 @@ void ShapeWorksOptimize::run() {
   //o->SetModeToAdaptiveGaussSeidel();
   //std::cout << "USING ADAPTIVE TIME STEP !!!!" << std::endl << std::flush;
 
-  if(this->verbose_){
-      std::cout << "maxIter_: " ;
-      for(unsigned int ii = 0 ; ii < this->maxIter_.size(); ii++)
-          std::cout << this->maxIter_[ii] << ", " ;
-      std::cout << std::endl;
-      std::cout << "numScales_: " << this->numScales_<< std::endl;
-      std::cout << "procrustesCounter_: " << this->procrustesCounter_<< std::endl;
-      std::cout << "procrustesInterval_: " ;
-      for(unsigned int ii = 0 ; ii < this->procrustesInterval_.size(); ii++)
-          std::cout << this->procrustesInterval_[ii] << ", " ;
-      std::cout << std::endl;
-      std::cout << "reportInterval_: " << this->reportInterval_<< std::endl;
-      std::cout << "regularizationFinal_: " ;
-      for(unsigned int ii = 0 ; ii < this->regularizationFinal_.size(); ii++)
-          std::cout << this->regularizationFinal_[ii] << ", " ;
-      std::cout << std::endl;
-      std::cout << "regularizationInitial_: ";
-      for(unsigned int ii = 0 ; ii < this->regularizationInitial_.size(); ii++)
-          std::cout << this->regularizationInitial_[ii] << ", " ;
-      std::cout << std::endl;
-      std::cout << "totalIters_: " << this->totalIters_<< std::endl;
-      std::cout << "weighting_: " << this->weighting_<< std::endl;
+  if (this->verbose_) {
+    std::cout << "maxIter_: ";
+    for (unsigned int ii = 0; ii < this->maxIter_.size(); ii++) {
+      std::cout << this->maxIter_[ii] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "numScales_: " << this->numScales_ << std::endl;
+    std::cout << "procrustesCounter_: " << this->procrustesCounter_ << std::endl;
+    std::cout << "procrustesInterval_: ";
+    for (unsigned int ii = 0; ii < this->procrustesInterval_.size(); ii++) {
+      std::cout << this->procrustesInterval_[ii] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "reportInterval_: " << this->reportInterval_ << std::endl;
+    std::cout << "regularizationFinal_: ";
+    for (unsigned int ii = 0; ii < this->regularizationFinal_.size(); ii++) {
+      std::cout << this->regularizationFinal_[ii] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "regularizationInitial_: ";
+    for (unsigned int ii = 0; ii < this->regularizationInitial_.size(); ii++) {
+      std::cout << this->regularizationInitial_[ii] << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "totalIters_: " << this->totalIters_ << std::endl;
+    std::cout << "weighting_: " << this->weighting_ << std::endl;
   }
 
   this->psmFilter_->Update();
   for (size_t d = 0; d < this->psmFilter_->
-    GetParticleSystem()->GetNumberOfDomains(); d++) {
-    this->localPoints_.push_back(std::vector<itk::Point<double> >());
-    this->globalPoints_.push_back(std::vector<itk::Point<double> >());
+       GetParticleSystem()->GetNumberOfDomains(); d++) {
+    this->localPoints_.push_back(std::vector<itk::Point<double>>());
+    this->globalPoints_.push_back(std::vector<itk::Point<double>>());
     for (size_t j = 0; j < this->psmFilter_->
-      GetParticleSystem()->GetNumberOfParticles(d); j++) {
+         GetParticleSystem()->GetNumberOfParticles(d); j++) {
       auto pos = this->psmFilter_->GetParticleSystem()->GetPosition(j, d);
       auto pos2 = this->psmFilter_->GetParticleSystem()->GetTransformedPosition(j, d);
       this->localPoints_[d].push_back(pos);
       this->globalPoints_[d].push_back(pos2);
     }
-  } 
+  }
 }
 
-std::vector<std::vector<itk::Point<double> > >
-ShapeWorksOptimize::localPoints() {
+std::vector<std::vector<itk::Point<double>>>ShapeWorksOptimize::localPoints()
+{
   return this->localPoints_;
 }
 
-std::vector<std::vector<itk::Point<double> > >
-ShapeWorksOptimize::globalPoints() {
+std::vector<std::vector<itk::Point<double>>>ShapeWorksOptimize::globalPoints()
+{
   return this->globalPoints_;
 }
 
-std::vector<ImageType::Pointer> ShapeWorksOptimize::getImages() {
+std::vector<ImageType::Pointer> ShapeWorksOptimize::getImages()
+{
   return this->images_;
 }
-void ShapeWorksOptimize::iterateCallback(itk::Object *caller, const itk::EventObject &e)
+void ShapeWorksOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
 {
-  itk::PSMEntropyModelFilter<ImageType> *o =
-    reinterpret_cast<itk::PSMEntropyModelFilter<ImageType> *>(caller);
+  itk::PSMEntropyModelFilter<ImageType>* o =
+    reinterpret_cast<itk::PSMEntropyModelFilter<ImageType>*>(caller);
 
   // Print every 10 iterations
   if (o->GetNumberOfElapsedIterations() % this->reportInterval_ != 0) { return; }
@@ -146,14 +153,15 @@ void ShapeWorksOptimize::iterateCallback(itk::Object *caller, const itk::EventOb
     // Check if optimization is run using scales. Get Procrustes
     // interval for the current scale.
     std::cout << "Optimization Scale " << (o->GetCurrentScale() + 1) << "/"
-      << o->GetNumberOfScales() << std::endl;
+              << o->GetNumberOfScales() << std::endl;
   }
   if (o->GetNumberOfScales() > 1) {
     if (this->verbose_) {
       interval = this->procrustesInterval_[o->GetCurrentScale()];
       std::cout << "Interval = " << interval << std::endl;
     }
-  } else {
+  }
+  else {
     // Use the default interval
     interval = this->procrustesRegistration_->GetProcrustesInterval();
   }
