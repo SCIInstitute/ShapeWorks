@@ -32,11 +32,10 @@ endif(BUILD_FeaMeshSupport)
 # Set up the include directories
 include_directories ( 
 ${SHAPEWORKS_SOURCE_DIR}/Utilities
-${SHAPEWORKS_SOURCE_DIR}/ITKParticleSystem 
 )
 
 # Command-line tools are built by default.
-subdirs(ITKParticleSystem Utilities ShapeWorksRun)
+subdirs(Utilities ShapeWorksRun)
 
 IF (WIN32 AND MSVC)
   ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
