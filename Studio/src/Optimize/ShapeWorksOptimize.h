@@ -17,6 +17,11 @@
 #include <ParticleShapeworks/include/itkPSMProjectReader.h>
 #include <ParticleShapeworks/include/itkPSMParticleSystem.h>
 
+
+//#include <itkParticleSystem.h>
+//#include <itkMaximumEntropyCorrespondenceSampler.h>
+
+
 class ShapeWorksOptimize {
 public:
   ShapeWorksOptimize(std::vector<ImageType::Pointer> inputs =
@@ -47,11 +52,14 @@ protected:
   std::vector<unsigned int> maxIter_;
   std::vector<double> decaySpan_,
                       regularizationInitial_, regularizationFinal_;
-  itk::PSMEntropyModelFilter<ImageType>::Pointer psmFilter_;
   std::vector<std::vector<itk::Point<double>>>  localPoints_, globalPoints_;
   itk::MemberCommand<ShapeWorksOptimize>::Pointer iterateCmd_;
-  itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;
   size_t reportInterval_, procrustesCounter_, totalIters_, iterCount_;
   std::vector<size_t> procrustesInterval_;
   std::vector<std::array<itk::Point<double>, 3 >> cutPlanes_;
+
+  // PSM
+  itk::PSMEntropyModelFilter<ImageType>::Pointer psmFilter_;
+  itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;
+
 };
