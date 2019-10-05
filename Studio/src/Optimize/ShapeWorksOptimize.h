@@ -52,6 +52,6 @@ protected:
   itk::MemberCommand<ShapeWorksOptimize>::Pointer iterateCmd_;
   itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;
   size_t reportInterval_, procrustesCounter_, totalIters_, iterCount_;
-  std::vector<size_t>  procrustesInterval_;
+  std::vector<size_t> procrustesInterval_;
   std::vector<std::array<itk::Point<double>, 3 >> cutPlanes_;
 };

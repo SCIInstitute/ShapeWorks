@@ -27,6 +27,7 @@ ShapeWorksOptimize::ShapeWorksOptimize(
   this->procrustesRegistration_ = itk::PSMProcrustesRegistration<3>::New();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksOptimize::run()
 {
   this->psmFilter_->SetNumberOfScales(this->numScales_);
@@ -105,10 +106,16 @@ void ShapeWorksOptimize::run()
   }
 
   this->psmFilter_->Update();
+
+  // for each domain
   for (size_t d = 0; d < this->psmFilter_->
        GetParticleSystem()->GetNumberOfDomains(); d++) {
+
+    // blank set of points
     this->localPoints_.push_back(std::vector<itk::Point<double>>());
     this->globalPoints_.push_back(std::vector<itk::Point<double>>());
+
+    // for each particle
     for (size_t j = 0; j < this->psmFilter_->
          GetParticleSystem()->GetNumberOfParticles(d); j++) {
       auto pos = this->psmFilter_->GetParticleSystem()->GetPosition(j, d);
@@ -119,20 +126,25 @@ void ShapeWorksOptimize::run()
   }
 }
 
-std::vector<std::vector<itk::Point<double>>>ShapeWorksOptimize::localPoints()
+//---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> ShapeWorksOptimize::localPoints()
 {
   return this->localPoints_;
 }
 
-std::vector<std::vector<itk::Point<double>>>ShapeWorksOptimize::globalPoints()
+//---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> ShapeWorksOptimize::globalPoints()
 {
   return this->globalPoints_;
 }
 
+//---------------------------------------------------------------------------
 std::vector<ImageType::Pointer> ShapeWorksOptimize::getImages()
 {
   return this->images_;
 }
+
+//---------------------------------------------------------------------------
 void ShapeWorksOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
 {
   itk::PSMEntropyModelFilter<ImageType>* o =
