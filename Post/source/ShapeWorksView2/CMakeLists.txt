@@ -1,4 +1,9 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+PROJECT(SHAPEWORKSVIEW2)
+cmake_minimum_required(VERSION 2.6)
+
+#SET(ITK_DIR "Path-to-ITK4.7.2-build")
+#SET(VTK_DIR "Path-to-VTK-5.10.1-build")
+#SET(CMAKE_BUILD_TYPE RELEASE)
 
 #Match everything when analyzing dependencies
 INCLUDE_REGULAR_EXPRESSION("^.*$")
