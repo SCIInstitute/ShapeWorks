@@ -236,3 +236,13 @@ IF ( BUILD_SWV2_OSX_APP )
     COMPONENT Runtime)
 ENDIF ( BUILD_SWV2_OSX_APP )
 
+#--------------------------------------------------------------------------------
+add_custom_command(TARGET ShapeWorksView2 POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  $<TARGET_FILE:Qt5::Widgets>
+  $<TARGET_FILE:Qt5::Core>
+  $<TARGET_FILE:Qt5::Gui>
+  $<TARGET_FILE:Qt5::Sql>
+  $<TARGET_FILE_DIR:ShapeWorksView2>
+  )
+  

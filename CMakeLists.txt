@@ -1,7 +1,21 @@
-PROJECT(shapeworks)
-cmake_minimum_required(VERSION 2.6)
+# NOTE: Do not use this cmake directly. Instead, use Superbuild.cmake
 
-set(CMAKE_CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.1)  # this is minimum cmake version for some of our external libs (e.g., libigl)
+set(CMAKE_CXX_STANDARD 11)           # available options are [98, 11, 14, 17. 20]
+
+# Build options
+option(USE_OPENMP      "Build using OpenMP" ON)
+option(Build_PrepTools "Build prep tools"   ON)
+option(Build_Run       "Build shapeworks"   ON)
+option(Build_Post      "Build post"         ON)
+option(Build_View2     "Build view2"        OFF)
+option(Build_Studio    "Build studio"       OFF)
+
+### Configuration
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
+set(SHAPEWORKS_ROOT     "${CMAKE_CURRENT_SOURCE_DIR}")
+set(SHAPEWORKS_EXTERNAL "${SHAPEWORKS_ROOT}/ExternalLibs")
+
 
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
@@ -19,12 +33,9 @@ if(LINUX)
   SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(LINUX)
 
-
-SET(BUILD_EXECS_AT_SAME_LEVEL TRUE CACHE BOOL "For use with ShapeWorksRemote, build all executable outputs in the same directory." )
-IF (BUILD_EXECS_AT_SAME_LEVEL)
-  SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
-  SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/binary)
-ENDIF (BUILD_EXECS_AT_SAME_LEVEL)
+# put executables in bin directory (under build dir) so they are easy to find
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 FIND_PACKAGE(ITK REQUIRED)
 IF (ITK_USE_FILE)
@@ -39,9 +50,6 @@ IF (VXL_FOUND)
 ELSE(VXL_FOUND)
   MESSAGE(SEND_ERROR "VXL is required, but could not be found.")
 ENDIF (VXL_FOUND)
-
-# Optionally use OpenMP
-option(USE_OPENMP "Build parallel optimization using OpenMP" ON)
 
 # Find OpenMP
 if(APPLE AND USE_OPENMP)
@@ -84,14 +92,8 @@ else()
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
 
-add_subdirectory(ExternalLibs)
+add_subdirectory(${SHAPEWORKS_EXTERNAL})
 add_subdirectory(Libs)
-
-option(Build_PrepTools "Build prep tools" ON)
-option(Build_Run "Build shapeworks" ON)
-option(Build_Post "Build post" ON)
-option(Build_View2 "Build view2" OFF)
-option(Build_Studio "Build studio" OFF)
 
 #todo: setup INSTALL paths as described in Trello (otherwise 'make install' just puts everything in the root path of the specified installation directory)
 
@@ -99,37 +101,25 @@ find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 MESSAGE(STATUS "** USE_VTK_FILE: ${VTK_USE_FILE}")
 
-include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
+include_directories(${SHAPEWORKS_ROOT})
 
 if(Build_PrepTools)
-    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Prep/Source)
-    add_subdirectory(Prep/Source)
+  add_subdirectory(Prep/Source)
 endif(Build_PrepTools)
 if(Build_Run)
-    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Run/source)
-    add_subdirectory(Run/source)
+  add_subdirectory(Run/source)
 endif(Build_Run)
 if(Build_Post)
-    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Post/source/ShapeWorksPost-V1)
-    add_subdirectory(Post/source/ShapeWorksPost-V1)
+  add_subdirectory(Post/source/ShapeWorksPost-V1)
 endif(Build_Post)
 if(Build_View2)
-    include_directories ( ${SHAPEWORKS_SOURCE_DIR}/Post/source/ShapeWorksView2)
-    add_subdirectory(Post/source/ShapeWorksView2)
+  MESSAGE(STATUS "Building View2")
+  add_subdirectory(Post/source/ShapeWorksView2)
 endif(Build_View2)
 if(Build_Studio)
   add_subdirectory(Studio/src)
 endif(Build_Studio)
 
-add_custom_command(
-    TARGET ShapeWorksView2 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:Qt5::Widgets>
-        $<TARGET_FILE:Qt5::Core>
-        $<TARGET_FILE:Qt5::Gui>
-        $<TARGET_FILE:Qt5::Sql>
-        $<TARGET_FILE_DIR:ShapeWorksView2>
-)
 
 set(APP ${CMAKE_INSTALL_PREFIX}/stl2vtk) 
 
@@ -143,12 +133,10 @@ endforeach()
 
 get_filename_component(Qt_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
 get_filename_component(Qt_PREFIX_DIR "${Qt_BIN_DIR}" PATH)
-  
 get_filename_component(QT_LOC Qt5::Widgets DIRECTORY)
 MESSAGE(STATUS "QT libs: ${QT_LOC}")
 
 set(qtlib "Widgets")
-
 MESSAGE(STATUS "QT libs: ${QT_LIB_DIR_tmp}")
 
 get_filename_component(qt_dlls_dir "${QtWidgets_location}" PATH)
@@ -163,7 +151,8 @@ set(DIRS "${CMAKE_INSTALL_PREFIX}/lib")
 
 list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}") 
 
-include(InstallRequiredSystemLibraries)
+# <ctc> try without this to see if it's actually necessary
+#include(InstallRequiredSystemLibraries)
 
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
 

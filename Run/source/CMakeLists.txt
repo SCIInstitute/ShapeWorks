@@ -24,8 +24,8 @@ endif(BUILD_FeaMeshSupport)
 
 # Set up the include directories
 include_directories ( 
-${SHAPEWORKS_SOURCE_DIR}/Utilities
-${SHAPEWORKS_SOURCE_DIR}/ITKParticleSystem 
+  ${CMAKE_CURRENT_SOURCE_DIR}/Utilities
+  ${CMAKE_CURRENT_SOURCE_DIR}/ITKParticleSystem 
 )
 
 # Command-line tools are built by default.

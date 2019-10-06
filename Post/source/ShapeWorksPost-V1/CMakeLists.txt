@@ -27,15 +27,6 @@ endif()
 add_subdirectory("${PROJECT_SOURCE_DIR}/shared/cmake" "libigl")
 
 
-### Output directories
-IF (BUILD_EXECS_AT_SAME_LEVEL)
-	message("Binaries going to binary/")
-ELSE (BUILD_EXECS_AT_SAME_LEVEL)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-ENDIF(BUILD_EXECS_AT_SAME_LEVEL)
-
 ### Compilation flags: adapt to your needs ###
 if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /bigobj") ### Enable parallel compilation
