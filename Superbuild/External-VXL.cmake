@@ -24,6 +24,7 @@ ExternalProject_Add(vxl
     -DBUILD_TESTING:BOOL=OFF
     -DCMAKE_BUILD_TYPE=Release
     -Wno-dev 
+    -Wno-deprecated
   UPDATE_COMMAND ""
   LOG_DOWNLOAD 0
   LOG_UPDATE 0

@@ -58,9 +58,9 @@ ExternalProject_Add(ShapeWorks
 #<ctc> TODO: the various options probably need to be in this file
     -DBuild_PrepTools=ON
     -DBuild_Run=ON
-    -DBuild_Post=OFF
-    -DBuild_View2=OFF
-    -DBuild_Studio=OFF
+    -DBuild_Post=ON
+    -DBuild_View2=ON
+    -DBuild_Studio=ON
     -DUSE_OPENMP=${SHAPEWORKS_USE_OPENMP} 
     -DSHAPEWORKS_PYTHON_API=OFF
     -DVTK_DIR:PATH=${VTK_DIR}
