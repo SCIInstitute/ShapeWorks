@@ -94,6 +94,7 @@ public:
         }
     }
 
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     void SetValues(const ParticleSystemType *ps, int idx, int d)
     {
         const typename itk::ParticleSystem<VDimension>::PointType posLocal = ps->GetPosition(idx, d);
@@ -240,6 +241,7 @@ public:
             }
         }
     }
+#endif
 
     virtual void DomainAddEventCallback(Object *, const EventObject &e)
     {
@@ -250,6 +252,7 @@ public:
             this->ResizeMatrix(this->rows(), this->cols()+3); //3 columns for every shape
     }
 
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     virtual void PositionAddEventCallback(Object *o, const EventObject &e)
     {
         // update the size of matrix based on xyz, normals and number of attributes being used
@@ -284,6 +287,7 @@ public:
 
         this->SetValues(ps, idx, d);
     }
+#endif
 
     virtual void PositionRemoveEventCallback(Object *, const EventObject &)
     {

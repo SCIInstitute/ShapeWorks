@@ -102,6 +102,7 @@ public:
             this->ResizeMatrix(this->rows(), this->cols()+1);
     }
 
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     void SetValues(const ParticleSystemType *ps, int idx, int d)
     {
         const typename ParticleSystemType::PointType pos = ps->GetTransformedPosition(idx, d);
@@ -210,6 +211,7 @@ public:
 
         this->SetValues(ps, idx, d);
     }
+#endif
 
     virtual void PositionRemoveEventCallback(Object *, const EventObject &)
     {

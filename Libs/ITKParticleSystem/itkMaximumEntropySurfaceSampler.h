@@ -211,8 +211,8 @@ public:
     }
     void SetAttributesPerDomain(const std::vector<int> &i)
     { m_AttributesPerDomain = i; }
-
 #endif
+
 
     /** Optionally supply a cutting plane that will be set as a particle
       optimization constraint in the image domains. */

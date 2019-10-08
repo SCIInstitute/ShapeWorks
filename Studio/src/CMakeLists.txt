@@ -19,7 +19,7 @@ endif()
 ### Projects
 #--------------------------------------------------------------------------------
 
-add_subdirectory(ParticleShapeworks)
+#add_subdirectory(ParticleShapeworks)
 add_subdirectory(Groom)
 add_subdirectory(Optimize)
 #add_subdirectory(Surfworks)

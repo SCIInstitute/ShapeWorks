@@ -243,7 +243,9 @@ public:
 
   void SetDomainsPerShape(int n)
   {
+#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     Superclass::SetDomainsPerShape(n);
+#endif
     m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
     m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
     m_ShapeMatrix->SetDomainsPerShape(n);

@@ -86,8 +86,8 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   }
   auto scales = static_cast<size_t>(std::log2(this->ui_->number_of_particles->value()) + 1);
   this->optimize_ = new QOptimize(this, imgs, this->cutPlanes_, scales,
-    std::vector<double>(scales,this->ui_->starting_regularization->value()),
-    std::vector<double>(scales, this->ui_->ending_regularization->value()),
+    this->ui_->starting_regularization->value(),
+    this->ui_->ending_regularization->value(),
     std::vector<unsigned int>(scales, this->ui_->iterations->value()),
     std::vector<double>(scales, this->ui_->decay_span->value()),
     std::vector<size_t>(scales, this->ui_->procrustes_interval->value()),
