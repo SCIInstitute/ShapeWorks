@@ -7,38 +7,79 @@
 #include <vtkPolyData.h>
 #include <vtkMassProperties.h>
 
-
-ShapeWorksOptimize::ShapeWorksOptimize(
-  //QObject* parent,
-  std::vector<ImageType::Pointer> inputs,
-  std::vector<std::array<itk::Point<double>, 3 >> cutPlanes,
-  size_t numScales,
-  double start_reg, double end_reg,
-  std::vector<unsigned int> iters,
-  std::vector<double> decay_span, std::vector<size_t> procrustes_interval, double weighting,
-  bool verbose)
-  :// QObject(parent),
-  images_(inputs),
-  cutPlanes_(cutPlanes),
-  numScales_(numScales),
-  maxIter_(iters),
-  reportInterval_(10), procrustesCounter_(0),
-  decaySpan_(decay_span),
-  procrustesInterval_(procrustes_interval),
-  regularizationInitial_(start_reg),
-  regularizationFinal_(end_reg),
-  weighting_(weighting),
-  verbose_(verbose)
+ShapeWorksOptimize::ShapeWorksOptimize()
 {}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_inputs(std::vector<ImageType::Pointer> inputs)
+{
+  this->images_ = inputs;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_start_reg(double start_reg)
+{
+  this->m_starting_regularization = start_reg;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_end_reg(double end_reg)
+{
+  this->m_ending_regularization = end_reg;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_iterations_per_split(unsigned int iterations_per_split)
+{
+  this->iterations_per_split_ = iterations_per_split;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_number_of_particles(unsigned int number_of_particles)
+{
+  this->number_of_particles_ = number_of_particles;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_decay_span(double decay_span)
+{
+  this->decaySpan_ = decay_span;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_procrustes_interval(unsigned procrustes_interval)
+{
+  this->procrustesInterval_ = procrustes_interval;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_weighting(double weighting)
+{
+  this->weighting_ = weighting;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_verbose(bool verbose)
+{
+  this->verbose_ = verbose;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_cut_planes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes)
+{
+  this->cutPlanes_ = cutPlanes;
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::run()
 {
 
-  this->m_starting_regularization = this->regularizationInitial_;
-  this->m_ending_regularization = this->regularizationFinal_;
+  this->m_number_of_particles.push_back(this->number_of_particles_);
 
-  m_verbosity_level = 0;
+  std::cerr << "ShapeWorksOptimize::run\n";
+
+
+  m_verbosity_level = 4;
 
   m_CheckpointCounter = 0;
   m_ProcrustesCounter = 0;
@@ -536,11 +577,175 @@ void ShapeWorksOptimize::Initialize()
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::AddAdaptivity()
-{}
+{
+  if (m_verbosity_level > 0) {
+    std::cout << "------------------------------\n";
+    std::cout << "*** AddAdaptivity Step\n";
+    std::cout << "------------------------------\n";
+  }
+
+  if (m_adaptivity_strength == 0.0) { return;}
+  m_disable_checkpointing = true;
+  m_disable_procrustes = true;
+
+  if (this->m_pairwise_potential_type == 1) {
+    this->SetCotanSigma();
+  }
+
+  double minRad = 3.0 * this->GetMinNeighborhoodRadius();
+
+  m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+  m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+
+  m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
+  m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
+  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+
+  m_SaturationCounter = 0;
+  m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
+  m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
+  m_Sampler->Modified();
+  m_Sampler->Update();
+
+  //this->WritePointFiles();
+  //this->WritePointFilesWithFeatures();
+  //this->WriteTransformFile();
+  //this->WriteCuttingPlanePoints();
+
+  if (m_verbosity_level > 0) {
+    std::cout << "Finished adaptivity!!!" << std::endl;
+  }
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::Optimize()
-{}
+{
+  if (m_verbosity_level > 0) {
+    std::cout << "------------------------------\n";
+    std::cout << "*** Optimize Step\n";
+    std::cout << "------------------------------\n";
+  }
+
+  m_optimizing = true;
+  m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
+  m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
+  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
+  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
+
+  if (this->m_pairwise_potential_type == 1) {
+    this->SetCotanSigma();
+
+    double minRad = 3.0 * this->GetMinNeighborhoodRadius();
+
+    m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(
+      minRad);
+  }
+
+  m_disable_checkpointing = false;
+  m_disable_procrustes = false;
+
+  if (m_procrustes_interval != 0) { // Initial registration
+    m_Procrustes->RunRegistration();
+    //this->WritePointFiles();
+    //this->WriteTransformFile();
+
+    if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
+      // transform cutting planes
+      m_Sampler->TransformCuttingPlanes(m_distribution_domain_id);
+    }
+  }
+
+  if (m_optimizer_type == 0) {
+    m_Sampler->GetOptimizer()->SetModeToJacobi();
+  }
+  else if (m_optimizer_type == 1) {
+    m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
+  }
+  else {
+    m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+  }
+
+  // Set up the minimum variance decay
+  m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+                                                                   m_ending_regularization,
+                                                                   m_optimization_iterations -
+                                                                   m_optimization_iterations_completed);
+
+  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
+    m_starting_regularization,
+    m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
+  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(
+    m_starting_regularization,
+    m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
+
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(
+    m_starting_regularization,
+    m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
+
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(
+    m_starting_regularization,
+    m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
+
+  m_Sampler->SetCorrespondenceOn();
+
+  if ((m_attributes_per_domain.size() > 0 &&
+       *std::max_element(m_attributes_per_domain.begin(),
+                         m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
+    m_Sampler->SetCorrespondenceMode(5);
+  }
+  else if (m_use_regression == true) {
+    if (m_use_mixed_effects == true) {
+      m_Sampler->SetCorrespondenceMode(4);       // MixedEffects
+    }
+    else {
+      m_Sampler->SetCorrespondenceMode(3);       // Regression
+    }
+  }
+  else if (m_starting_regularization == m_ending_regularization) {
+    m_Sampler->SetCorrespondenceMode(0);     // mean force
+  }
+  else {
+    m_Sampler->SetCorrespondenceMode(1);     // Ensemble Entropy
+  }
+
+  if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
+    m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(
+      m_optimization_iterations - m_optimization_iterations_completed);
+  }
+  else { m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);}
+
+  m_EnergyA.clear();
+  m_EnergyB.clear();
+  m_TotalEnergy.clear();
+  m_strEnergy = "opt";
+
+  m_SaturationCounter = 0;
+  m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
+  m_Sampler->GetOptimizer()->SetTolerance(0.0);
+  m_Sampler->Modified();
+  m_Sampler->Update();
+
+  //this->WritePointFiles();
+  //this->WritePointFilesWithFeatures();
+  //this->WriteEnergyFiles();
+  //this->WriteTransformFile();
+  //this->WriteModes();
+  //this->WriteCuttingPlanePoints();
+  //this->WriteParameters();
+  if (m_verbosity_level > 0) {
+    std::cout << "Finished optimization!!!" << std::endl;
+  }
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::AddSinglePoint()
@@ -617,8 +822,10 @@ double ShapeWorksOptimize::GetMinNeighborhoodRadius()
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
 
     const itk::ParticleImageDomain < float,
-    3 > * domain = static_cast < const itk::ParticleImageDomain < float,
-    3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                     3 >* domain = static_cast < const itk::ParticleImageDomain < float,
+                                                                                                  3 >
+                                                                 * > (m_Sampler->GetParticleSystem()
+                                                                      ->GetDomain(i));
 
     itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
     itk2vtkConnector->SetInput(domain->GetImage());
@@ -791,52 +998,51 @@ void ShapeWorksOptimize::iterateCallback(itk::Object* caller, const itk::EventOb
 
   //// ITK PSM
   /*
-  itk::PSMEntropyModelFilter<ImageType>* o =
-    reinterpret_cast<itk::PSMEntropyModelFilter<ImageType>*>(caller);
+     itk::PSMEntropyModelFilter<ImageType>* o =
+     reinterpret_cast<itk::PSMEntropyModelFilter<ImageType>*>(caller);
 
-  // Print every 10 iterations
-  if (o->GetNumberOfElapsedIterations() % this->reportInterval_ != 0) { return; }
-  int interval = 0;
-  if (this->verbose_) {
-    std::cout << "Iteration # " << o->GetNumberOfElapsedIterations() << std::endl;
-    std::cout << " Eigenmode variances: ";
-    for (unsigned int i = 0; i < o->GetShapePCAVariances().size(); i++) {
+     // Print every 10 iterations
+     if (o->GetNumberOfElapsedIterations() % this->reportInterval_ != 0) { return; }
+     int interval = 0;
+     if (this->verbose_) {
+     std::cout << "Iteration # " << o->GetNumberOfElapsedIterations() << std::endl;
+     std::cout << " Eigenmode variances: ";
+     for (unsigned int i = 0; i < o->GetShapePCAVariances().size(); i++) {
       std::cout << o->GetShapePCAVariances()[i] << " ";
-    }
-    std::cout << std::endl;
-    std::cout << " Regularization = " << o->GetRegularizationConstant() << std::endl;
+     }
+     std::cout << std::endl;
+     std::cout << " Regularization = " << o->GetRegularizationConstant() << std::endl;
 
-    // Check if optimization is run using scales. Get Procrustes
-    // interval for the current scale.
-    std::cout << "Optimization Scale " << (o->GetCurrentScale() + 1) << "/"
+     // Check if optimization is run using scales. Get Procrustes
+     // interval for the current scale.
+     std::cout << "Optimization Scale " << (o->GetCurrentScale() + 1) << "/"
               << o->GetNumberOfScales() << std::endl;
-  }
-  if (o->GetNumberOfScales() > 1) {
-    if (this->verbose_) {
+     }
+     if (o->GetNumberOfScales() > 1) {
+     if (this->verbose_) {
       interval = this->procrustesInterval_[o->GetCurrentScale()];
       std::cout << "Interval = " << interval << std::endl;
-    }
-  }
-  else {
-    // Use the default interval
-    interval = this->procrustesRegistration_->GetProcrustesInterval();
-  }
+     }
+     }
+     else {
+     // Use the default interval
+     interval = this->procrustesRegistration_->GetProcrustesInterval();
+     }
 
-  // Check if the Procrustes interval is set to a value other than 0
-  if ((interval > 0) && (o->GetCurrentScale() > 5)) { // only perform procrustes if we have enough particles (e.g. 64)
-    this->procrustesCounter_++;
+     // Check if the Procrustes interval is set to a value other than 0
+     if ((interval > 0) && (o->GetCurrentScale() > 5)) { // only perform procrustes if we have enough particles (e.g. 64)
+     this->procrustesCounter_++;
 
-    // If the counter is greater than the interval value, run
-    // Procrustes registration
-    if (this->procrustesCounter_ >= interval) {
+     // If the counter is greater than the interval value, run
+     // Procrustes registration
+     if (this->procrustesCounter_ >= interval) {
       // Reset the counter
       this->procrustesCounter_ = 0;
       this->procrustesRegistration_->RunRegistration();
       if (this->verbose_) {
         std::cout << "Ran Procrustes Registration" << std::endl;
       }
-    }
-  }
-  */
-
+     }
+     }
+   */
 }

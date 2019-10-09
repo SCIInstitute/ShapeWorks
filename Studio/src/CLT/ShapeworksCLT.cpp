@@ -9,6 +9,7 @@
 #include "itkMetaImageIOFactory.h"
 
 int main(int argc, char ** argv) {
+  /*
   try {
     if (argc < 4) {
       std::cerr << "Usage: ./ShapeworksCLT PARAMETER_FILE.xml INPUT1 INPUT2 ..." << std::endl;
@@ -178,4 +179,5 @@ int main(int argc, char ** argv) {
   }
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
+  */
 }

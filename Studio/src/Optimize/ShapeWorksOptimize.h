@@ -39,25 +39,25 @@
 
 class ShapeWorksOptimize {
 public:
-  ShapeWorksOptimize(std::vector<ImageType::Pointer> inputs =
-                       std::vector<ImageType::Pointer>(),
-                     std::vector<std::array<itk::Point<double>, 3 >> cutPlanes =
-                       std::vector<std::array<itk::Point<double>, 3 >>(),
-                     size_t numScales = 1,
-                     double start_reg = 0,
-                     double end_reg = 0,
-                     std::vector<unsigned int> iters = std::vector<unsigned int>(),
-                     std::vector<double> decay_span = std::vector<double>(),
-                     std::vector<size_t> procrustes_interval = std::vector<size_t>(),
-                     double weighting = 1.,
-                     bool verbose = false);
+  ShapeWorksOptimize();
+
+  void set_inputs(std::vector<ImageType::Pointer> inputs);
+  void set_cut_planes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes);
+  void set_start_reg(double start_reg);
+  void set_end_reg(double end_reg);
+  void set_iterations_per_split(unsigned int iterations_per_split);
+  void set_number_of_particles(unsigned int number_of_particles);
+  void set_decay_span(double decay_span);
+  void set_procrustes_interval(unsigned procrustes_interval);
+  void set_weighting(double weighting);
+  void set_verbose(bool verbose);
+
   void run();
   std::vector<ImageType::Pointer> getImages();
   std::vector<std::vector<itk::Point<double>>> localPoints();
   std::vector<std::vector<itk::Point<double>>> globalPoints();
 
 protected:
-
 
   void Initialize();
   void AddAdaptivity();
@@ -73,15 +73,12 @@ protected:
 protected:
   std::vector<ImageType::Pointer> images_;
   bool verbose_;
-  size_t numScales_;
   double weighting_;
-  std::vector<unsigned int> maxIter_;
-  std::vector<double> decaySpan_;
-  double regularizationInitial_, regularizationFinal_;
+  double decaySpan_;
   std::vector<std::vector<itk::Point<double>>>  localPoints_, globalPoints_;
   itk::MemberCommand<ShapeWorksOptimize>::Pointer iterateCmd_;
   size_t reportInterval_, procrustesCounter_, totalIters_, iterCount_;
-  std::vector<size_t> procrustesInterval_;
+  unsigned int procrustesInterval_;
   std::vector<std::array<itk::Point<double>, 3 >> cutPlanes_;
 
   // PSM
@@ -89,13 +86,12 @@ protected:
   itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
 
-
-
-
-
-
-
   unsigned int m_verbosity_level;
+
+
+  unsigned int iterations_per_split_;
+  unsigned int number_of_particles_;
+
 
   // constructor
   int m_CheckpointCounter;
@@ -162,7 +158,7 @@ protected:
   bool m_logEnergy;
   std::string m_strEnergy;
 
-  std::vector<std::vector<int> > m_badIds; //GoodBadAssessment
+  std::vector<std::vector<int>> m_badIds;  //GoodBadAssessment
   double m_normalAngle; //GoodBadAssessment
   bool m_performGoodBad;
 
@@ -171,13 +167,4 @@ protected:
   std::vector<double> cpVals;
   std::vector<double> spVals;
   std::vector<double> radList;
-
-
-
-
-
-
-
-
-
 };
