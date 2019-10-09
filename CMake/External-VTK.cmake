@@ -28,7 +28,7 @@ ExternalProject_Add(vtk
     -DVTK_PYTHON_VERSION=3
     -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_INSTALL_LIBDIR=lib 
-    -Wno-dev
+    "-DCMAKE_CXX_FLAGS=-Wno-dev"
   UPDATE_COMMAND ""
   LOG_DOWNLOAD 0
   LOG_UPDATE 0

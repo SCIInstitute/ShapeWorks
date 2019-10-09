@@ -1,9 +1,12 @@
-# maybe need to build using `cmake --build . -j 16` in order to pass parallel to dependent projects
+# ShapeWorks Superbuild
+#  Includes external libraries automatically which are built at compilation time rather than during configuration.
 
+project(ShapeWorksSuperbuild)
 include(ExternalProject)
 
+# CMake arguments common to all the external projects
 set(ep_common_args
-  -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+  -DCMAKE_BUILD_TYPE:STRING=${SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE}
   -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
   -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
   -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
@@ -41,6 +44,7 @@ if(APPLE)
   set(SHAPEWORKS_USE_OPENMP OFF)
 endif()
 
+# ShapeWorks (this will include ShapeWorks.cmake)
 ExternalProject_Add(ShapeWorks
   DEPENDS ${ShapeWorks_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
@@ -66,7 +70,8 @@ ExternalProject_Add(ShapeWorks
     -DVTK_DIR:PATH=${VTK_DIR}
     -DVXL_DIR:PATH=${VXL_DIR}
     -DITK_DIR:PATH=${ITK_DIR}
-    -Wno-dev
-    -Wno-deprecated
+    -DSHAPEWORKS_SUPERBUILD:BOOL=OFF
+ #<ctc> todo: these aren't getting properly passed through, while the ones above (ex: vtk_dir) are working. Maybe \" quotes?
+   "-DCMAKE_CXX_FLAGS=-Wno-dev -Wno-deprecated"
 )
 

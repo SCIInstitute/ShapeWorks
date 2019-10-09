@@ -20,7 +20,7 @@ ExternalProject_Add(ITK
     -DITK_USE_SYSTEM_VXL=on
     -DVXL_DIR=${VXL_DIR}
     -DCMAKE_BUILD_TYPE=Release
-    -Wno-dev 
+    "-DCMAKE_CXX_FLAGS=-Wno-dev"
   UPDATE_COMMAND ""
   LOG_DOWNLOAD 0
   LOG_UPDATE 0
