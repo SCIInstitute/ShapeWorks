@@ -8,12 +8,22 @@
 #include <vtkMassProperties.h>
 
 ShapeWorksOptimize::ShapeWorksOptimize()
-{}
+{
+  this->m_Sampler = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>>::New();
+  this->m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
+  this->m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
+
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_inputs(std::vector<ImageType::Pointer> inputs)
 {
+  std::cerr << "Setting inputs!\n";
   this->images_ = inputs;
+
+  for (int i = 0; i < inputs.size(); i++) {
+    this->m_Sampler->SetInput(i, inputs[i]);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -31,13 +41,15 @@ void ShapeWorksOptimize::set_end_reg(double end_reg)
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_iterations_per_split(unsigned int iterations_per_split)
 {
-  this->iterations_per_split_ = iterations_per_split;
+  this->m_iterations_per_split = iterations_per_split;
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_number_of_particles(unsigned int number_of_particles)
 {
-  this->number_of_particles_ = number_of_particles;
+  // only one domain
+  this->m_number_of_particles.clear();
+  this->m_number_of_particles.push_back(number_of_particles);
 }
 
 //---------------------------------------------------------------------------
@@ -49,13 +61,13 @@ void ShapeWorksOptimize::set_decay_span(double decay_span)
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_procrustes_interval(unsigned procrustes_interval)
 {
-  this->procrustesInterval_ = procrustes_interval;
+  this->m_procrustes_interval = procrustes_interval;
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_weighting(double weighting)
 {
-  this->weighting_ = weighting;
+  this->m_relative_weighting = weighting;
 }
 
 //---------------------------------------------------------------------------
@@ -74,12 +86,8 @@ void ShapeWorksOptimize::set_cut_planes(std::vector<std::array<itk::Point<double
 void ShapeWorksOptimize::run()
 {
 
-  this->m_number_of_particles.push_back(this->number_of_particles_);
-
   std::cerr << "ShapeWorksOptimize::run\n";
 
-
-  m_verbosity_level = 4;
 
   m_CheckpointCounter = 0;
   m_ProcrustesCounter = 0;
@@ -97,10 +105,8 @@ void ShapeWorksOptimize::run()
   ///this->ReadOptimizationParameters(fn);
   ///this->SetDebugParameters(fn);
 
-  this->m_Sampler = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>>::New();
-  this->m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
-  this->m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
 
+  std::cerr << "setting number of domains per shape = " << m_domains_per_shape << "\n";
   // Set up the optimization process
   m_Sampler->SetDomainsPerShape(m_domains_per_shape); // must be done first!
   m_Sampler->SetTimeptsPerIndividual(m_timepts_per_subject);
@@ -145,8 +151,8 @@ void ShapeWorksOptimize::run()
   ///this->ReadInputs(fn);
   ///this->ReadMeshInputs(fn);
   ///this->ReadConstraints(fn);
-  ///this->SetIterationCommand();
-  ///this->InitializeSampler();
+  this->SetIterationCommand();
+  this->InitializeSampler();
   ///this->ReadExplanatoryVariables(fn);
 
   ///m_p_flgs.clear();
@@ -337,6 +343,23 @@ void ShapeWorksOptimize::run()
    }
 
  */
+
+  for (size_t d = 0; d < this->m_Sampler->
+      GetParticleSystem()->GetNumberOfDomains(); d++) {
+
+   // blank set of points
+   this->localPoints_.push_back(std::vector<itk::Point<double>>());
+   this->globalPoints_.push_back(std::vector<itk::Point<double>>());
+
+   // for each particle
+   for (size_t j = 0; j < this->m_Sampler->
+        GetParticleSystem()->GetNumberOfParticles(d); j++) {
+     auto pos = this->m_Sampler->GetParticleSystem()->GetPosition(j, d);
+     auto pos2 = this->m_Sampler->GetParticleSystem()->GetTransformedPosition(j, d);
+     this->localPoints_[d].push_back(pos);
+     this->globalPoints_[d].push_back(pos2);
+   }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -434,6 +457,7 @@ void ShapeWorksOptimize::Initialize()
   int split_number = 0;
 
   int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  std::cerr << "number of domains = " << n << "\n";
   vnl_vector_fixed < double, 3 > random;
   srand(1);
   for (int i = 0; i < 3; i++) {
@@ -453,6 +477,10 @@ void ShapeWorksOptimize::Initialize()
     }
   }
 
+  std::cerr << "WTF!\n";
+
+  std::cerr << "flag split = " << flag_split << "\n";
+  std::cerr << "m_verboside_level = " << m_verbosity_level << "\n";
   while (flag_split) {
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     m_Sampler->GetOptimizer()->StopOptimization();
@@ -881,6 +909,86 @@ void ShapeWorksOptimize::ComputeEnergyAfterIteration()
   if (m_verbosity_level > 2) {
     std::cout << "Energy: " << totalEnergy << std::endl;
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::SetIterationCommand()
+{
+
+
+  this->iterateCmd_ = itk::MemberCommand<ShapeWorksOptimize>::New();
+  this->iterateCmd_->SetCallbackFunction(this, &ShapeWorksOptimize::iterateCallback);
+  m_Sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), this->iterateCmd_);
+
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::InitializeSampler()
+{
+  float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
+  float flat_cutoff = 0.3;   // 0.3 -> 0.85
+
+  m_Sampler->SetPairwisePotentialType(m_pairwise_potential_type);
+
+  m_Sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_Sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_Sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+  m_Sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+  m_Sampler->GetQualifierGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_Sampler->GetQualifierGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+
+  m_Sampler->GetModifiedCotangentGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_Sampler->GetModifiedCotangentGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+
+  m_Sampler->GetOmegaGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_Sampler->GetOmegaGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+
+  m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_Sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_Sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
+
+  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(
+    m_starting_regularization);
+  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
+  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
+
+  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetHoldMinimumVariance(false);
+
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
+
+  m_Sampler->GetOptimizer()->SetTimeStep(1.0);
+
+  if (m_optimizer_type == 0) {
+    m_Sampler->GetOptimizer()->SetModeToJacobi();
+  }
+  else if (m_optimizer_type == 1) {
+    m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
+  }
+  else {
+    m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+  }
+
+  m_Sampler->SetSamplingOn();
+
+  m_Sampler->SetCorrespondenceOn();
+
+  m_Sampler->SetAdaptivityMode(m_adaptivity_mode);
+  m_Sampler->GetEnsembleEntropyFunction()
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_Sampler->GetEnsembleRegressionEntropyFunction()
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()
+  ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+
+  m_Sampler->Initialize();
+
+  m_Sampler->GetOptimizer()->SetTolerance(0.0);
 }
 
 //---------------------------------------------------------------------------
