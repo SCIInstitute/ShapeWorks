@@ -87,14 +87,16 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->ui_->reconstructionButton->setEnabled(false);
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
+  std::vector<std::string> groomed_filenames;
   for (auto s : shapes) {
     imgs.push_back(s->get_groomed_image());
+    groomed_filenames.push_back(s->get_groomed_filename_with_path().toStdString());
   }
-  auto scales = static_cast<size_t>(std::log2(this->ui_->number_of_particles->value()) + 1);
 
   this->optimize_ = new QOptimize(this);
 
   this->optimize_->set_inputs(imgs);
+  this->optimize_->set_input_filenames(groomed_filenames);
   this->optimize_->set_cut_planes(this->cutPlanes_);
   this->optimize_->set_start_reg(this->ui_->starting_regularization->value());
   this->optimize_->set_end_reg(this->ui_->ending_regularization->value());

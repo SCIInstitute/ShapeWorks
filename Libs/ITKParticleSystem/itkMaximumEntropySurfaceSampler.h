@@ -168,6 +168,8 @@ public:
 
 
 #if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
+
+
     /**Optionally provide a filename for a mesh with geodesic distances.*/
     void SetMeshFile(unsigned int i, const std::string &s)
     {

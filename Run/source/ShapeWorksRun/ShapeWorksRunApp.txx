@@ -519,6 +519,7 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
       typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
                                                                      ImageType > ::New();
       reader->SetFileName(shapeFiles[shapeCount].c_str());
+      std::cerr << "Now reading: " << shapeFiles[shapeCount] << "\n";
       reader->UpdateLargestPossibleRegion();
       m_Sampler->SetInput(shapeCount, reader->GetOutput());       // set the 0th input
 

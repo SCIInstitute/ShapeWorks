@@ -12,18 +12,24 @@ ShapeWorksOptimize::ShapeWorksOptimize()
   this->m_Sampler = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>>::New();
   this->m_Procrustes = itk::ParticleProcrustesRegistration<3>::New();
   this->m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
+}
+
+//---------------------------------------------------------------------------
+ShapeWorksOptimize::~ShapeWorksOptimize()
+{
 
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_inputs(std::vector<ImageType::Pointer> inputs)
 {
-  std::cerr << "Setting inputs!\n";
   this->images_ = inputs;
+}
 
-  for (int i = 0; i < inputs.size(); i++) {
-    this->m_Sampler->SetInput(i, inputs[i]);
-  }
+//---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_input_filenames(std::vector<std::string> groomed_filenames)
+{
+  this->m_filenames = groomed_filenames;
 }
 
 //---------------------------------------------------------------------------
@@ -88,7 +94,6 @@ void ShapeWorksOptimize::run()
 
   std::cerr << "ShapeWorksOptimize::run\n";
 
-
   m_CheckpointCounter = 0;
   m_ProcrustesCounter = 0;
   m_SaturationCounter = 0;
@@ -105,6 +110,7 @@ void ShapeWorksOptimize::run()
   ///this->ReadOptimizationParameters(fn);
   ///this->SetDebugParameters(fn);
 
+  m_Sampler->SetImageFiles(this->m_filenames);
 
   std::cerr << "setting number of domains per shape = " << m_domains_per_shape << "\n";
   // Set up the optimization process
@@ -149,6 +155,10 @@ void ShapeWorksOptimize::run()
   }
 
   ///this->ReadInputs(fn);
+  for (int i = 0; i < this->images_.size(); i++) {
+    this->m_Sampler->SetInput(i, this->images_[i]);
+  }
+
   ///this->ReadMeshInputs(fn);
   ///this->ReadConstraints(fn);
   this->SetIterationCommand();
@@ -243,6 +253,8 @@ void ShapeWorksOptimize::run()
 
   ///////////////////////////////////
 
+  /// From ::Run()
+  ///
   m_disable_procrustes = true;
   m_disable_checkpointing = true;
 
@@ -345,20 +357,20 @@ void ShapeWorksOptimize::run()
  */
 
   for (size_t d = 0; d < this->m_Sampler->
-      GetParticleSystem()->GetNumberOfDomains(); d++) {
+       GetParticleSystem()->GetNumberOfDomains(); d++) {
 
-   // blank set of points
-   this->localPoints_.push_back(std::vector<itk::Point<double>>());
-   this->globalPoints_.push_back(std::vector<itk::Point<double>>());
+    // blank set of points
+    this->localPoints_.push_back(std::vector<itk::Point<double>>());
+    this->globalPoints_.push_back(std::vector<itk::Point<double>>());
 
-   // for each particle
-   for (size_t j = 0; j < this->m_Sampler->
-        GetParticleSystem()->GetNumberOfParticles(d); j++) {
-     auto pos = this->m_Sampler->GetParticleSystem()->GetPosition(j, d);
-     auto pos2 = this->m_Sampler->GetParticleSystem()->GetTransformedPosition(j, d);
-     this->localPoints_[d].push_back(pos);
-     this->globalPoints_[d].push_back(pos2);
-   }
+    // for each particle
+    for (size_t j = 0; j < this->m_Sampler->
+         GetParticleSystem()->GetNumberOfParticles(d); j++) {
+      auto pos = this->m_Sampler->GetParticleSystem()->GetPosition(j, d);
+      auto pos2 = this->m_Sampler->GetParticleSystem()->GetTransformedPosition(j, d);
+      this->localPoints_[d].push_back(pos);
+      this->globalPoints_[d].push_back(pos2);
+    }
   }
 }
 
@@ -477,10 +489,9 @@ void ShapeWorksOptimize::Initialize()
     }
   }
 
-  std::cerr << "WTF!\n";
 
   std::cerr << "flag split = " << flag_split << "\n";
-  std::cerr << "m_verboside_level = " << m_verbosity_level << "\n";
+  std::cerr << "m_verbosity_level = " << m_verbosity_level << "\n";
   while (flag_split) {
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     m_Sampler->GetOptimizer()->StopOptimization();
@@ -914,12 +925,9 @@ void ShapeWorksOptimize::ComputeEnergyAfterIteration()
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::SetIterationCommand()
 {
-
-
   this->iterateCmd_ = itk::MemberCommand<ShapeWorksOptimize>::New();
   this->iterateCmd_->SetCallbackFunction(this, &ShapeWorksOptimize::iterateCallback);
   m_Sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), this->iterateCmd_);
-
 }
 
 //---------------------------------------------------------------------------

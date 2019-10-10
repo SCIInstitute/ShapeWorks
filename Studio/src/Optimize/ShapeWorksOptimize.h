@@ -27,8 +27,10 @@
 class ShapeWorksOptimize {
 public:
   ShapeWorksOptimize();
+  virtual ~ShapeWorksOptimize();
 
   void set_inputs(std::vector<ImageType::Pointer> inputs);
+  void set_input_filenames(std::vector<std::string> groomed_filenames);
   void set_cut_planes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes);
   void set_start_reg(double start_reg);
   void set_end_reg(double end_reg);
@@ -55,8 +57,7 @@ protected:
   double GetMinNeighborhoodRadius();
   void ComputeEnergyAfterIteration();
 
-
-  void SetIterationCommand();
+  virtual void SetIterationCommand();
   void InitializeSampler();
 
   virtual void iterateCallback(itk::Object* caller, const itk::EventObject &);

@@ -5,6 +5,20 @@ QOptimize::QOptimize(QObject* parent) :
   ShapeWorksOptimize() {}
 
 //---------------------------------------------------------------------------
+QOptimize::~QOptimize()
+{
+
+}
+
+//---------------------------------------------------------------------------
+void QOptimize::SetIterationCommand()
+{
+  this->iterate_command_ = itk::MemberCommand<QOptimize>::New();
+  this->iterate_command_->SetCallbackFunction(this, &QOptimize::iterateCallback);
+  m_Sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), this->iterate_command_);
+}
+
+//---------------------------------------------------------------------------
 void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
 {
   //itk::PSMEntropyModelFilter<ImageType>* o =
@@ -19,6 +33,13 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
     //throw on NaN
     throw std::runtime_error("Optimize failed! Please try changing parameters.");
   }
+
+  std::cerr << "this = " << this << "\n";
+
+  std::cerr << "this->m_optimization_iterations_completed = " << this->m_optimization_iterations_completed << "\n";
+  ///TODO: figure out
+  this->totalIters_ = 8000;
+  this->reportInterval_ = 100;
 
   if (this->m_optimization_iterations_completed % this->reportInterval_ == 0) {
     this->iterCount_ += this->reportInterval_;
