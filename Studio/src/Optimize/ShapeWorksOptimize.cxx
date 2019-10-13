@@ -1,11 +1,14 @@
-#include <ShapeWorksOptimize.h>
 #include <iostream>
-#include "itkImageToVTKImageFilter.h"
+
 #include <vtkContourFilter.h>
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkPolyData.h>
 #include <vtkMassProperties.h>
+
+#include <itkImageToVTKImageFilter.h>
+
+#include <ShapeWorksOptimize.h>
 
 ShapeWorksOptimize::ShapeWorksOptimize()
 {
@@ -61,7 +64,6 @@ void ShapeWorksOptimize::set_number_of_particles(unsigned int number_of_particle
   this->m_number_of_particles.clear();
   this->m_number_of_particles.push_back(number_of_particles);
 }
-
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_procrustes_interval(unsigned procrustes_interval)

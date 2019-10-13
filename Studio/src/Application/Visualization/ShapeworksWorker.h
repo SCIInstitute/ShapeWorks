@@ -1,22 +1,11 @@
-/*
- * Shapeworks license
- */
-
-/**
- * @file MeshWorker.h
- * @brief Worker class for parallel mesh reconstruction
- *
- * The MeshWorker implements each threads mesh construction management
- */
-
-#ifndef SHAPEWORKS_WORKER_H
-#define SHAPEWORKS_WORKER_H
+#pragma once
 
 #include <QObject>
-#include <QStringList>
+
 #include <Groom/ShapeWorksGroom.h>
-#include <Optimize/ShapeWorksOptimize.h>
 #include <Data/Project.h>
+
+class ShapeWorksOptimize;
 
 class ShapeworksWorker : public QObject
 {
@@ -61,5 +50,3 @@ private:
   double maxAngle_;
   int numClusters_;
 };
-
-#endif // ifndef SHAPEWORKS_WORKER_H

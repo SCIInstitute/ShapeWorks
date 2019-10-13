@@ -1,14 +1,7 @@
 #pragma once
 
-#include <cstdlib>
 #include <string>
 #include <vector>
-#include <array>
-#include <cstdio>
-#include <sstream>
-#include <numeric>
-
-#include <tinyxml.h>
 
 #include <itkImage.h>
 #include <itkImageFileReader.h>
@@ -20,7 +13,8 @@
 #include <itkParticleGoodBadAssessment.h>
 #include <itkParticleVectorFunction.h>
 
-#include <Groom/ShapeWorksGroom.h>
+typedef float PixelType;
+typedef itk::Image< PixelType, 3 > ImageType;
 
 class ShapeWorksOptimize {
 public:

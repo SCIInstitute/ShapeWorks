@@ -3,11 +3,10 @@
 #include <itkeigen/Eigen/Dense>
 #include <itkeigen/Eigen/Sparse>
 
-#include <QXmlStreamWriter>
-#include <QTemporaryFile>
 #include <QFileDialog>
 #include <QThread>
 #include <QMessageBox>
+
 #include <Optimize/OptimizeTool.h>
 #include <Visualization/ShapeworksWorker.h>
 #include <Data/Project.h>

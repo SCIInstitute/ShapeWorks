@@ -2,12 +2,15 @@
  * Shapeworks license
  */
 
-#include <Visualization/ShapeworksWorker.h>
-#include <QProcess>
-#include <QMessageBox>
 #include <sstream>
 #include <fstream>
 #include <iostream>
+
+#include <QProcess>
+#include <QMessageBox>
+
+#include <Visualization/ShapeworksWorker.h>
+#include <Optimize/ShapeWorksOptimize.h>
 
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    ShapeWorksGroom* groom,
