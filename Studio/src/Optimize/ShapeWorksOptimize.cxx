@@ -16,9 +16,7 @@ ShapeWorksOptimize::ShapeWorksOptimize()
 
 //---------------------------------------------------------------------------
 ShapeWorksOptimize::~ShapeWorksOptimize()
-{
-
-}
+{}
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_inputs(std::vector<ImageType::Pointer> inputs)
@@ -488,7 +486,6 @@ void ShapeWorksOptimize::Initialize()
       break;
     }
   }
-
 
   std::cerr << "flag split = " << flag_split << "\n";
   std::cerr << "m_verbosity_level = " << m_verbosity_level << "\n";
