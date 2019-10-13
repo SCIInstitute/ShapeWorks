@@ -4,25 +4,23 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <cstdio>
+#include <sstream>
+#include <numeric>
+
+#include <tinyxml.h>
 
 #include <itkImage.h>
 #include <itkImageFileReader.h>
 #include <itkCommand.h>
 
-#include <Groom/ShapeWorksGroom.h>
-
 #include <itkParticleSystem.h>
-#include <cstdio>
-#include "itkMaximumEntropyCorrespondenceSampler.h"
-#include "itkCommand.h"
-#include <vector>
-#include "tinyxml.h"
-#include "itkParticleProcrustesRegistration.h"
-#include <sstream>
-#include <string>
-#include <numeric>
-#include "itkParticleGoodBadAssessment.h"
-#include "itkParticleVectorFunction.h"
+#include <itkMaximumEntropyCorrespondenceSampler.h>
+#include <itkParticleProcrustesRegistration.h>
+#include <itkParticleGoodBadAssessment.h>
+#include <itkParticleVectorFunction.h>
+
+#include <Groom/ShapeWorksGroom.h>
 
 class ShapeWorksOptimize {
 public:
