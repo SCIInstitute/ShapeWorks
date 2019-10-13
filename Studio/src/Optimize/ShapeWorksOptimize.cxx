@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 #include <vtkContourFilter.h>
 #include <vtkSmartPointer.h>
@@ -104,6 +105,14 @@ void ShapeWorksOptimize::run()
   m_optimizing = false;
   m_use_regression = false;
   m_use_mixed_effects = false;
+
+  int number_of_splits = static_cast<int>(
+    std::log2(static_cast<double>(this->m_number_of_particles[0])) + 1);
+  this->iterCount_ = 0;
+
+  this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
+                             this->m_optimization_iterations;
+  std::cerr << "Total number of iterations = " << this->m_total_iterations << "\n";
 
   // Read parameter file
 

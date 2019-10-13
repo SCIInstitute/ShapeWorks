@@ -6,9 +6,7 @@ QOptimize::QOptimize(QObject* parent) :
 
 //---------------------------------------------------------------------------
 QOptimize::~QOptimize()
-{
-
-}
+{}
 
 //---------------------------------------------------------------------------
 void QOptimize::SetIterationCommand()
@@ -21,9 +19,6 @@ void QOptimize::SetIterationCommand()
 //---------------------------------------------------------------------------
 void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
 {
-  //itk::PSMEntropyModelFilter<ImageType>* o =
-  //reinterpret_cast<itk::PSMEntropyModelFilter<ImageType>*>(caller);
-
   // run superclass iterateCallback
   ShapeWorksOptimize::iterateCallback(caller, e);
 
@@ -34,15 +29,10 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
     throw std::runtime_error("Optimize failed! Please try changing parameters.");
   }
 
-  std::cerr << "this = " << this << "\n";
-
-  std::cerr << "this->m_optimization_iterations_completed = " << this->m_optimization_iterations_completed << "\n";
-  ///TODO: figure out
-  this->totalIters_ = 8000;
   this->reportInterval_ = 100;
 
-  if (this->m_optimization_iterations_completed % this->reportInterval_ == 0) {
-    this->iterCount_ += this->reportInterval_;
-    emit progress(this->iterCount_ * 100 / this->totalIters_);
+  if (this->iterCount_ % this->reportInterval_ == 0) {
+    emit progress(this->iterCount_ * 100 / this->m_total_iterations);
   }
+  this->iterCount_++;
 }

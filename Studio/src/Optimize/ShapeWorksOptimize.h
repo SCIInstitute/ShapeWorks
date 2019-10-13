@@ -105,6 +105,7 @@ protected:
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
   int m_iterations_per_split = 1000;
+  int m_total_iterations = 0;
   double m_init_criterion = 1e-6;
   double m_opt_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;

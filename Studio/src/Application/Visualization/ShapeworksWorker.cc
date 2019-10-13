@@ -52,7 +52,8 @@ void ShapeworksWorker::process()
     try {
       this->optimize_->run();
     } catch (std::runtime_error e) {
-      emit error_message(std::string("Error: ") + e.what());
+        std::cerr << "Exception: " << e.what() << "\n";
+        emit error_message(std::string("Error: ") + e.what());
       return;
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());
