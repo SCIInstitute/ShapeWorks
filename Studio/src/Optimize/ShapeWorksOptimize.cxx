@@ -49,6 +49,12 @@ void ShapeWorksOptimize::set_iterations_per_split(unsigned int iterations_per_sp
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksOptimize::set_optimization_iterations(unsigned int iterations)
+{
+  this->m_optimization_iterations = iterations;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_number_of_particles(unsigned int number_of_particles)
 {
   // only one domain
@@ -56,11 +62,6 @@ void ShapeWorksOptimize::set_number_of_particles(unsigned int number_of_particle
   this->m_number_of_particles.push_back(number_of_particles);
 }
 
-//---------------------------------------------------------------------------
-void ShapeWorksOptimize::set_decay_span(double decay_span)
-{
-  this->decaySpan_ = decay_span;
-}
 
 //---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_procrustes_interval(unsigned procrustes_interval)

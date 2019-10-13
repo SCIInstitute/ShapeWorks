@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>202</width>
+    <width>270</width>
     <height>632</height>
    </rect>
   </property>
@@ -284,7 +284,7 @@ background: rgb(255, 255, 127)
         <item>
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>Iterations per Level</string>
+           <string>Iterations per Split</string>
           </property>
          </widget>
         </item>
@@ -335,19 +335,19 @@ background: rgb(255, 255, 127)
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
         <property name="topMargin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="label_7">
+         <widget class="QLabel" name="label_19">
           <property name="text">
-           <string>Decay Span</string>
+           <string>Optimization Interations</string>
           </property>
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_9">
+         <spacer name="horizontalSpacer_15">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -360,7 +360,7 @@ background: rgb(255, 255, 127)
          </spacer>
         </item>
         <item>
-         <widget class="QSpinBox" name="decay_span">
+         <widget class="QSpinBox" name="optimization_iterations">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -390,6 +390,13 @@ background: rgb(255, 255, 127)
           </property>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
        </layout>
       </item>
       <item>
@@ -684,7 +691,6 @@ background: rgb(255, 255, 127)
   <tabstop>starting_regularization</tabstop>
   <tabstop>ending_regularization</tabstop>
   <tabstop>iterations</tabstop>
-  <tabstop>decay_span</tabstop>
   <tabstop>cutPlanesFile</tabstop>
   <tabstop>cutPlanesFileButton</tabstop>
   <tabstop>run_optimize_button</tabstop>

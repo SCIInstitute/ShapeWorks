@@ -102,7 +102,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->optimize_->set_end_reg(this->ui_->ending_regularization->value());
   this->optimize_->set_iterations_per_split(this->ui_->iterations->value());
   this->optimize_->set_number_of_particles(this->ui_->number_of_particles->value());
-  this->optimize_->set_decay_span(this->ui_->decay_span->value());
+  this->optimize_->set_optimization_iterations(this->ui_->optimization_iterations->value());
   this->optimize_->set_procrustes_interval(this->ui_->procrustes_interval->value());
   this->optimize_->set_weighting(this->ui_->weight->value());
   this->optimize_->set_verbose(true);
@@ -365,9 +365,9 @@ void OptimizeTool::set_preferences(bool setScales)
   this->ui_->iterations->setValue(
     this->preferences_.get_preference("optimize_iters",
                                       this->ui_->iterations->value()));
-  this->ui_->decay_span->setValue(
-    this->preferences_.get_preference("optimize_decay_span",
-                                      this->ui_->decay_span->value()));
+  this->ui_->optimization_iterations->setValue(
+    this->preferences_.get_preference("optimize_iters_optimization",
+                                      this->ui_->optimization_iterations->value()));
   this->ui_->procrustes_interval->setValue(
     this->preferences_.get_preference("optimize_procrustes_interval",
                                       this->ui_->procrustes_interval->value()));
@@ -392,8 +392,8 @@ void OptimizeTool::update_preferences()
                                     this->ui_->ending_regularization->value());
   this->preferences_.set_preference("optimize_iters",
                                     this->ui_->iterations->value());
-  this->preferences_.set_preference("optimize_decay_span",
-                                    this->ui_->decay_span->value());
+  this->preferences_.set_preference("optimize_iters_optimization",
+                                    this->ui_->optimization_iterations->value());
   this->preferences_.set_preference("optimize_procrustes_interval",
                                     this->ui_->procrustes_interval->value());
 }

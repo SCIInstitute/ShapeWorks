@@ -35,8 +35,8 @@ public:
   void set_start_reg(double start_reg);
   void set_end_reg(double end_reg);
   void set_iterations_per_split(unsigned int iterations_per_split);
+  void set_optimization_iterations(unsigned int iterations);
   void set_number_of_particles(unsigned int number_of_particles);
-  void set_decay_span(double decay_span);
   void set_procrustes_interval(unsigned procrustes_interval);
   void set_weighting(double weighting);
   void set_verbose(bool verbose);
