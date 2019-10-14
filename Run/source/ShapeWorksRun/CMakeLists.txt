@@ -1,5 +1,5 @@
 
-SET(RUN_NAME ShapeWorksRun5.0)
+SET(RUN_NAME ShapeWorksRun)
 
 ADD_EXECUTABLE(${RUN_NAME} ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
 
