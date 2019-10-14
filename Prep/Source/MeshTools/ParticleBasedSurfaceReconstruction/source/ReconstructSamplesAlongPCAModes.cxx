@@ -139,13 +139,15 @@ int DoIt(InputParams params)
     std::cout << std::endl;
 
     std::string prefix = Utils::getFilename(params.out_prefix);
-    for (int modeId = 0 ; modeId < NumberOfModes; modeId ++)
+    for (int modeId = 0 ; modeId < TotalNumberOfModes; modeId ++)
     {
-        std::string modeStr = Utils::int2str(modeId, 2);
-
         if (singleModeToBeGen && (modeId != params.mode_index))
             continue;
 
+        if ((!singleModeToBeGen) && (modeId >= NumberOfModes))
+            break;
+
+        std::string modeStr = Utils::int2str(modeId, 2);
         double sqrt_eigenValue = sqrt(eigenValues[TotalNumberOfModes - modeId - 1]);
 
         double min_std_factor = -1 * params.maximum_std_dev ;
