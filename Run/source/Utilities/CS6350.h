@@ -38,24 +38,6 @@ struct ltstr
 // //typedef std::map<std::string, string_list, ltstr> string_map;
 // typedef std::map<std::string, int, ltstr> string_index_table;
 
-/**
-   \class exception
-   
-   This is a simple object that code may throw to calling programs that
-   includes information about the exception.
-*/
-class exception
-{
-public:
-  exception(const std::string &s) { m_message = s; }
-  exception() { m_message = "Unknown CS6350 exception."; }
-  std::string m_message;
-}; // end class exception  
-
-// Inserter method for the exception class.
-inline std::ostream& operator<<(std::ostream& s, const exception &f)
-{ s << "CS6350: " << f.m_message; return s; }
-  
 }  // end namespace CS6350
 
 #endif

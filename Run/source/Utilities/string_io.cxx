@@ -42,7 +42,7 @@ void string_io::write() const
 
   if (! fout.is_open() )
     {
-    throw exception("string_io: could not open file for writing");
+    throw std::runtime_error("string_io: could not open file for writing");
     }
 
   string_list::const_iterator it;
@@ -64,7 +64,7 @@ void string_io::read()
   // Attempt to open the file.
   if (! fin.is_open() )
     {
-    throw exception("string_io: could not open file for reading");
+    throw std::runtime_error("string_io: could not open file for reading");
     }
 
   m_strings.clear(); // empty the list
