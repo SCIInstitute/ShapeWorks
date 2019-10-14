@@ -88,7 +88,7 @@ int DoIt(InputParams params)
     }
     else {
         if (params.number_of_modes > 0 ){
-            NumberOfModes = params.number_of_modes;
+            NumberOfModes = std::min(params.number_of_modes, TotalNumberOfModes);
             std::cout << NumberOfModes << " dominant modes are requested to be generated  ..." << std::endl;
         }
         else {
