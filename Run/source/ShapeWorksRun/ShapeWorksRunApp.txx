@@ -19,7 +19,7 @@
 #include <string>
 #include <iostream>
 #include "itkMacro.h"
-#include "filenameFactory.h"
+
 #include <vector>
 #include "object_reader.h"
 #include "object_writer.h"

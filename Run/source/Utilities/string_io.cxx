@@ -14,12 +14,10 @@
 =========================================================================*/
 #include "string_io.h"
 #include <fstream>
-namespace CS6350
-{
 
-string_list split_string(const std::string &s)
+std::vector<std::string> split_string(const std::string &s)
 {
-  string_list list;
+  std::vector<std::string> list;
   unsigned int start = 0;
 
   // Step through the string and find tokens delimited by space(s).
@@ -45,7 +43,7 @@ void string_io::write() const
     throw std::runtime_error("string_io: could not open file for writing");
     }
 
-  string_list::const_iterator it;
+  std::vector<std::string>::const_iterator it;
   for (it = m_strings.begin(); it != m_strings.end(); it++)
     {
     fout << *it;
@@ -78,9 +76,7 @@ void string_io::read()
   fin.close();
 }
 
-} // end namespace CS6350
-
-std::ostream &operator<<(std::ostream & os, const CS6350::string_list &v)
+std::ostream &operator<<(std::ostream & os, const std::vector<std::string> &v)
 {
   for (unsigned int i = 0; i < v.size(); i++)
     {

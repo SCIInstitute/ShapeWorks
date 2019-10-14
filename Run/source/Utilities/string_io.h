@@ -18,13 +18,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "CS6350.h"
-
-namespace CS6350
-{
 
 /**
- * \class vector_io
+ * \class string_io
  *
  * Read/write a std::vector of strings (a list of strings) from/to disk.
  * Strings are assumed to be delimited by a newline.  Use this class by
@@ -39,11 +35,11 @@ public:
   ~string_io() {}
 
   /** Set/get the list of strings to read/write. */
-  string_list &strings()
+  std::vector<std::string> &strings()
   { return m_strings;}
-  const string_list &strings() const
+  const std::vector<std::string> &strings() const
   { return m_strings; }
-  void strings(const string_list &m)
+  void strings(const std::vector<std::string> &m)
   { m_strings = m; }
 
   /** Specify the name of the file to read/write. */
@@ -63,7 +59,7 @@ public:
 protected:
   string_io &operator=(const string_io&); // purposely unimplemented
   string_io(const string_io &); // purposely unimplemented
-  string_list m_strings;
+  std::vector<std::string> m_strings;
   std::string m_filename;
   
 }; // string_io
@@ -72,13 +68,12 @@ protected:
 
 /** Breaks a string of tokens delimited by spaces into a list of tokens
     (strings). */
-string_list split_string(const std::string &);
- 
-} // end namespace CS6350
+std::vector<std::string> split_string(const std::string &);
+
 
 /** A stream inserter for lists of strings.  This method will let us dump the
     contents of a list of strings to output streams. */ 
-std::ostream &operator<<(std::ostream & os, const CS6350::string_list &v);
+std::ostream &operator<<(std::ostream & os, const std::vector<std::string> &v);
  
 
 

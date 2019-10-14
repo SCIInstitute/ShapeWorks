@@ -10,12 +10,12 @@ SET(CMAKE_BUILD_TYPE Release)
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 # Set up the include directories
-include_directories ( 
-${SHAPEWORKS_SOURCE_DIR}/Utilities
-)
+#include_directories ( 
+#${SHAPEWORKS_SOURCE_DIR}/Utilities
+#)
 
 # Command-line tools are built by default.
-subdirs(Utilities ShapeWorksRun)
+subdirs(ShapeWorksRun)
 
 IF (WIN32 AND MSVC)
   ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)

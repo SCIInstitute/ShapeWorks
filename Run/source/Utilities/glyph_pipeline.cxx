@@ -20,6 +20,10 @@
 #include <cstdlib>
 #include <vector>
 
+asdfasdf
+asdf
+asdf
+
 void glyph_pipeline::SetPrefixTransformCallback(itk::Object *o, const itk::EventObject &e)
 {
   // NOTE: Ignoring scale
@@ -83,7 +87,7 @@ void glyph_pipeline::SetPrefixTransformCallback(itk::Object *o, const itk::Event
   
   m_transformer->SetTransform(t);
   //  this->output()->SetUserTransform(t);
-}
+}as
 
 void glyph_pipeline::SetTransformCallback(itk::Object *o, const itk::EventObject &e)
 {
