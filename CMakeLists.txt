@@ -34,11 +34,6 @@ else()
   # actually build ShapeWorks
   project(ShapeWorks)
 
-  ### Configuration
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
-  set(SHAPEWORKS_ROOT     "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "")
-  set(SHAPEWORKS_EXTERNAL "${SHAPEWORKS_ROOT}/ExternalLibs" CACHE INTERNAL "")
-
   # use ccache if available
   find_program(CCACHE_PROGRAM ccache)
   if(CCACHE_PROGRAM)
@@ -173,10 +168,10 @@ else()
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
   endif()
 
-  add_subdirectory(${SHAPEWORKS_EXTERNAL})
+  add_subdirectory(ExternalLibs)    # TODO: cmake should add any libs from this directory (currently only tinyxml)
   add_subdirectory(Libs)
 
-  include_directories(${SHAPEWORKS_ROOT})
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
   if(Build_PrepTools)
     add_subdirectory(Prep/Source)

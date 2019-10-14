@@ -25,17 +25,17 @@ endif()
 set(ShapeWorks_DEPENDENCIES )
 
 if(NOT VTK_DIR)
-  include(${CMAKE_CURRENT_LIST_DIR}/External-VTK.cmake)
+  include("${CMAKE_CURRENT_LIST_DIR}/External-VTK.cmake")
   list(APPEND ShapeWorks_DEPENDENCIES vtk)
 endif()
 
 if(NOT VXL_DIR)
-  include(${CMAKE_CURRENT_LIST_DIR}/External-VXL.cmake)
+  include("${CMAKE_CURRENT_LIST_DIR}/External-VXL.cmake")
   list(APPEND ShapeWorks_DEPENDENCIES vxl)
 endif()
 
 if(NOT ITK_DIR)
-  include(${CMAKE_CURRENT_LIST_DIR}/External-ITK.cmake)
+  include("${CMAKE_CURRENT_LIST_DIR}/External-ITK.cmake")
   list(APPEND ShapeWorks_DEPENDENCIES ITK)
 endif()
 
@@ -45,15 +45,15 @@ if(APPLE)
   set(SHAPEWORKS_USE_OPENMP OFF)
 endif()
 
-set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-dev -Wno-deprecated)
-MESSAGE(STATUS "SHAPEWORKS_CXX_FLAGS: ${SHAPEWORKS_CXX_FLAGS}")
+set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-dev -Wno-deprecated -Wno-inconsistent-missing-override)
+string(REPLACE ";" " " SHAPEWORKS_CXX_FLAGS_STR "${SHAPEWORKS_CXX_FLAGS}")
 
 # ShapeWorks (this will include ShapeWorks.cmake)
 ExternalProject_Add(ShapeWorks
   DEPENDS ${ShapeWorks_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
   UPDATE_COMMAND ""
-  SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..
+  SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/.."
   PREFIX shapeworks
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
@@ -68,10 +68,10 @@ ExternalProject_Add(ShapeWorks
     -DBuild_Studio=ON
     -DUSE_OPENMP=${SHAPEWORKS_USE_OPENMP} 
     -DSHAPEWORKS_PYTHON_API=OFF
-    -DVTK_DIR:PATH=${VTK_DIR}
-    -DVXL_DIR:PATH=${VXL_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
+    -DVTK_DIR:PATH="${VTK_DIR}"
+    -DVXL_DIR:PATH="${VXL_DIR}"
+    -DITK_DIR:PATH="${ITK_DIR}"
     -DSHAPEWORKS_SUPERBUILD:BOOL=OFF
-    -DCMAKE_CXX_FLAGS=${SHAPEWORKS_CXX_FLAGS}
+    "-DCMAKE_CXX_FLAGS=${SHAPEWORKS_CXX_FLAGS_STR}"
 )
 
