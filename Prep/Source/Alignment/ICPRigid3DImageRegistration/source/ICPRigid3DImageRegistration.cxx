@@ -291,7 +291,7 @@ int main(int argc, char * argv [] )
        // ofs <<"The Transformation matrix is:\n"<< *m;
         for (int r=0;r<3;r++){
             for (int c =0;c<4;c++){
-                ofs<< m[r][c]<<"\t";
+                ofs<< m->GetElement(r,c)<<"\t";
             }
             ofs << "\n";
         }
