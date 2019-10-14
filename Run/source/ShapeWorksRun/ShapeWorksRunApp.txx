@@ -594,7 +594,6 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadMeshInputs(const char* fname) {
       m_Sampler->RegisterGeneralShapeMatrices();
     }
 
-#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     // load mesh files
     std::vector < std::string > meshFiles;
     elem = docHandle.FirstChild("mesh_files").Element();
@@ -616,7 +615,6 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadMeshInputs(const char* fname) {
       }
       meshFiles.clear();
     }
-#endif /* if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH) */
 
     // attributes
     if ((this->m_attributes_per_domain.size() >= 1 &&
@@ -668,19 +666,13 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadMeshInputs(const char* fname) {
         inputsBuffer.clear();
         inputsBuffer.str("");
 
-#ifdef SW_USE_FEAMESH
 
         m_Sampler->SetFeaFiles(attrFiles);
-#else
-        std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" <<
-          std::endl;
-        throw 1;
-#endif /* ifdef SW_USE_FEAMESH */
       }
 
       // need fids for mesh based fea
       if (m_mesh_based_attributes) {
-#ifdef SW_USE_FEAMESH
+
         m_Sampler->SetAttributesPerDomain(this->m_attributes_per_domain);
         std::vector < std::string > feaGradFiles;
         elem = docHandle.FirstChild("attribute_grad_files").Element();
@@ -738,11 +730,6 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadMeshInputs(const char* fname) {
             throw 1;
           }
         }
-#else
-        std::cerr << "ERROR: Rebuild with BUILD_FeaMeshSupport option turned ON in CMakeFile!!" <<
-          std::endl;
-        throw 1;
-#endif /* ifdef SW_USE_FEAMESH */
       }
     }
   }

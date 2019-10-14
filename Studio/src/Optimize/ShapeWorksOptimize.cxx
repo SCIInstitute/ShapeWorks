@@ -122,7 +122,7 @@ void ShapeWorksOptimize::run()
 
   m_Sampler->SetImageFiles(this->m_filenames);
 
-  std::cerr << "setting number of domains per shape = " << m_domains_per_shape << "\n";
+
   // Set up the optimization process
   m_Sampler->SetDomainsPerShape(m_domains_per_shape); // must be done first!
   m_Sampler->SetTimeptsPerIndividual(m_timepts_per_subject);

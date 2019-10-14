@@ -57,12 +57,7 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
 
     m_Initialized = false;
     m_PointsFiles.push_back("");
-#ifdef SW_USE_MESH
     m_MeshFiles.push_back("");
-#endif
-#ifdef SW_USE_FEAMESH
-    m_MeshFiles.push_back("");
-#endif
 }
 
 template <class TImage>
@@ -136,64 +131,6 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
             }
         }
 
-#ifdef SW_USE_MESH
-        if (m_MeshFiles.size() > i)
-        {
-            TriMesh *themesh = TriMesh::read(m_MeshFiles[i].c_str());
-            if(themesh != NULL)
-            {
-                std::string fullpath(m_MeshFiles[i].c_str());
-                int index = fullpath.rfind("/");
-                std::string path = fullpath.substr(0, index+1);
-                std::string file = fullpath.substr(index+1, fullpath.length()-1);
-                std::string geoFileName;
-                std::string adaptFileName;
-
-                index = file.rfind(".");
-                if (index == std::string::npos)
-                {
-                    geoFileName = path + file + ".geo";
-                    adaptFileName = path + file + ".ada";
-                }
-                else
-                {
-                    geoFileName = path + file.substr(0, index) + ".geo";
-                    adaptFileName = path + file.substr(0, index) + ".ada";
-                }
-
-                themesh->need_bsphere();
-
-                point c = themesh->bsphere.center;
-                //vec t(0.0f,0.0f,0.0f);
-
-                //t[0] = -c[0];
-                //t[1] = -c[1];
-                //t[2] = -c[2];
-
-                //trans(themesh, t);
-
-                //themesh->bsphere.valid = false;
-                //themesh->need_bsphere();
-
-                //c = themesh->bsphere.center;
-
-                themesh->need_normals();
-                themesh->need_tstrips();
-
-                // Test for Colors
-
-                if (themesh->colors.empty()){
-                    for(int i=0; i < themesh->vertices.size(); i++){
-                        themesh->colors.push_back(Color(1.0f, 1.0f, 1.0f));
-                    }
-                }
-
-                m_DomainList[i]->SetMesh(themesh,geoFileName.c_str());
-            }
-        }
-#endif
-
-#ifdef SW_USE_FEAMESH
 
         if (m_AttributesPerDomain.size() > 0)
         {
@@ -243,7 +180,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
                 }
             }
         }
-#endif    
+
         // END TEST CUTTING PLANE
         m_ParticleSystem->AddDomain(m_DomainList[i]);
         m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);

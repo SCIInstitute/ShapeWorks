@@ -118,48 +118,6 @@ TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base
     }
 }
 
-#ifdef SW_USE_MESH
-template<class T, unsigned int VDimension>
-void
-ParticleImplicitSurfaceDomain<T, VDimension>::
-SetMesh(TriMesh *mesh, const char *gfile)
-{
-  m_mesh = mesh;
-
-  m_mesh->need_faces();	
-  m_mesh->need_neighbors();
-	
-  orient(m_mesh);
-
-  // Recompute values that are no longer correct
-  if (!m_mesh->normals.empty()) m_mesh->normals.clear();
-  m_mesh->need_normals();
-
-	if (!m_mesh->adjacentfaces.empty()) m_mesh->adjacentfaces.clear();
-	m_mesh->need_adjacentfaces();
-
-	if (!m_mesh->across_edge.empty()) m_mesh->across_edge.clear();
-	  m_mesh->need_across_edge();
-
-  if (!m_mesh->tstrips.empty()) m_mesh->tstrips.clear();
-  m_mesh->need_tstrips();
-
-  m_mesh->need_faceedges();
-  m_mesh->need_oneringfaces();
-  m_mesh->need_abs_curvatures();
-  m_mesh->need_speed();
-  m_mesh->setSpeedType(1);
-  m_mesh->need_kdtree();
-
-  double d = m_mesh->bsphere.r * PI * 2.0f * 0.1f;
-  m_fim->SetStopDistance(d);
-
-  m_fim->loadGeodesicFile(m_mesh, gfile);
-}
-#endif
-
-// Praful - fea mesh support
-#ifdef SW_USE_FEAMESH
 template<class T, unsigned int VDimension>
 void
 ParticleImplicitSurfaceDomain<T, VDimension>::
@@ -207,7 +165,6 @@ SetFids(const char *fidsFile)
     m_mesh->imageIndex[1]   = idx[1];
     m_mesh->imageIndex[2]   = idx[2];
 }
-#endif
 
 template<class T, unsigned int VDimension>
 bool
@@ -402,22 +359,6 @@ template <class T, unsigned int VDimension>
 double
 ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const PointType &b) const
 {
-#ifndef SW_USE_MESH
-  // Check to see if the normals are >= 90 degrees apart.
-  if ( dot_product(this->SampleGradientVnl(a), this->SampleGradientVnl(b) ) <= 0.0  )
-  {
-    return -1.0;
-  }
-  else  // Return distance
-  {
-    double sum = 0.0;
-    for (unsigned int i = 0; i < VDimension; i++)
-    {
-      sum += (b[i]-a[i]) * (b[i]-a[i]);
-    }
-    return sqrt(sum);
-  }
-#else
   if (m_mesh != NULL)
   {
     point p1;
@@ -432,7 +373,6 @@ ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const
 
     return ( m_mesh->GetGeodesicDistance(p1,p2) );
   }
-#endif   
 }
 
 } // end namespace
