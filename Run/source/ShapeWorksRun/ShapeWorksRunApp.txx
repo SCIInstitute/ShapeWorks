@@ -1,9 +1,6 @@
 /*=========================================================================
    Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   Module:    $RCSfile: ShapeWorksRunApp.txx,v $
-   Date:      $Date: 2011/03/24 01:17:37 $
-   Version:   $Revision: 1.6 $
-   Author:    $Author: wmartin $
+   File:      ShapeWorksRunApp.txx
 
    Copyright (c) 2009 Scientific Computing and Imaging Institute.
    See ShapeWorksLicense.txt for details.
@@ -12,33 +9,14 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
    =========================================================================*/
-#include "itkImageFileReader.h"
-#include "itkMultiThreaderBase.h"
-#include "tinyxml.h"
+
+// std
 #include <sstream>
 #include <string>
 #include <iostream>
-#include "itkMacro.h"
-
 #include <vector>
-#include "object_reader.h"
-#include "object_writer.h"
-#include "itkZeroCrossingImageFilter.h"
-#include "itkImageRegionIteratorWithIndex.h"
-
-#include "itkImageToVTKImageFilter.h"
-#include <vtkContourFilter.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageData.h>
-#include <vtkPolyData.h>
-#include <vtkMassProperties.h>
-
-#include "TriMesh.h"
-#include "itkParticleImageDomain.h"
-#include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImplicitSurfaceDomain.h"
-#include "itkParticleImageDomainWithHessians.h"
 #include <numeric>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -49,7 +27,33 @@
 #endif
 #include <dirent.h>
 
-#include <algorithm>
+// itk
+#include <itkImageFileReader.h>
+#include <itkMultiThreaderBase.h>
+#include <itkZeroCrossingImageFilter.h>
+#include <itkImageRegionIteratorWithIndex.h>
+#include <itkMacro.h>
+
+// tinyxml
+#include <tinyxml.h>
+
+// vtk
+#include <vtkContourFilter.h>
+#include <vtkSmartPointer.h>
+#include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkMassProperties.h>
+
+// particle system
+#include "TriMesh.h"
+#include "itkImageToVTKImageFilter.h"
+#include "itkParticleImageDomain.h"
+#include "itkParticleImageDomainWithGradients.h"
+#include "itkParticleImplicitSurfaceDomain.h"
+#include "itkParticleImageDomainWithHessians.h"
+#include "object_reader.h"
+#include "object_writer.h"
+
 #include "Utils.h"
 
 // Constructor and destructor
