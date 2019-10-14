@@ -288,7 +288,13 @@ int main(int argc, char * argv [] )
         ofs.open (filename); // the file needs to be overwritten in case running the program on the same file several times
 
         // for ease of automatic parsing the generated param file
-        ofs <<"The Transformation matrix is:\n"<< *m;
+       // ofs <<"The Transformation matrix is:\n"<< *m;
+        for (r=0;r<3;r++){
+            for (c =0;c<4;c++){
+                ofs<< m[r][c]<<"\t";
+            }
+            ofs << "\n";
+        }
         ofs.close();
 
         typedef itk::Rigid3DTransformSurrogate<double>  TransformType;
