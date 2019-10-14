@@ -147,7 +147,15 @@ int DoIt(InputParams params)
         if ((!singleModeToBeGen) && (modeId >= NumberOfModes))
             break;
 
-        std::string modeStr = Utils::int2str(modeId, 2);
+        std::string modeStr  = Utils::int2str(modeId, 2);
+        std::string cur_path = params.out_path + "/mode-" + modeStr;
+        int mkdirStatus;
+#ifdef WIN32
+        mkdirStatus = _mkdir(cur_path.c_str());
+#else
+        mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU);
+#endif
+
         double sqrt_eigenValue = sqrt(eigenValues[TotalNumberOfModes - modeId - 1]);
 
         double min_std_factor = -1 * params.maximum_std_dev ;
@@ -170,7 +178,7 @@ int DoIt(InputParams params)
         std::cout << std::endl;
 
         // writing stds on file
-        std::string stdfilename = params.out_prefix + "_mode-" + modeStr + "_stds.txt";
+        std::string stdfilename = cur_path + "/" + prefix + "_mode-" + modeStr + "_stds.txt";
         ofstream ofs(stdfilename.c_str());
 
         if ( !ofs )
@@ -184,8 +192,8 @@ int DoIt(InputParams params)
         {
             std::string sampleStr = Utils::int2str(int(sampleId), 3);
 
-            //std::string basename = prefix + "_mode-" + modeStr + "_sample-" + sampleStr ;
-            std::string basename =  "_mode-" + modeStr + "_sample-" + sampleStr ;
+            std::string basename = prefix + "_mode-" + modeStr + "_sample-" + sampleStr ;
+            //std::string basename =  "_mode-" + modeStr + "_sample-" + sampleStr ;
 
             std::cout << "generating mode #" + Utils::num2str((float)modeId) + ", sample #" + Utils::num2str((float)sampleId) << std::endl;
 
@@ -217,7 +225,7 @@ int DoIt(InputParams params)
 
             vtkSmartPointer<vtkPolyData> curDense = reconstructor.getMesh(curSparse);
 
-            std::string outfilename = params.out_prefix + basename + "_dense.vtk";
+            std::string outfilename = cur_path + "/" + basename + "_dense.vtk";
             std::cout << "Writing: " << outfilename << std::endl;
 
             vtkSmartPointer<vtkPolyDataWriter> writer = vtkPolyDataWriter::New();
@@ -228,10 +236,10 @@ int DoIt(InputParams params)
             vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
             vertices->DeepCopy( curDense->GetPoints() );
 
-            std::string ptsfilename = params.out_prefix + basename + "_dense.particles";
+            std::string ptsfilename = cur_path + "/" + basename + "_dense.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), vertices);
 
-            ptsfilename = params.out_prefix + basename + "_sparse.particles";
+            ptsfilename = cur_path + "/" + basename + "_sparse.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), curSamplePts);
 
         }
