@@ -139,6 +139,9 @@ int DoIt(InputParams params)
     std::cout << std::endl;
 
     std::string prefix = Utils::getFilename(params.out_prefix);
+    if(!prefix.empty())
+        prefix = prefix + "_";
+
     for (int modeId = 0 ; modeId < TotalNumberOfModes; modeId ++)
     {
         if (singleModeToBeGen && (modeId != params.mode_index))
@@ -178,7 +181,7 @@ int DoIt(InputParams params)
         std::cout << std::endl;
 
         // writing stds on file
-        std::string stdfilename = cur_path + "/" + prefix + "_mode-" + modeStr + "_stds.txt";
+        std::string stdfilename = cur_path + "/" + prefix + "mode-" + modeStr + "_stds.txt";
         ofstream ofs(stdfilename.c_str());
 
         if ( !ofs )
@@ -192,7 +195,7 @@ int DoIt(InputParams params)
         {
             std::string sampleStr = Utils::int2str(int(sampleId), 3);
 
-            std::string basename = prefix + "_mode-" + modeStr + "_sample-" + sampleStr ;
+            std::string basename = prefix + "mode-" + modeStr + "_sample-" + sampleStr ;
             //std::string basename =  "_mode-" + modeStr + "_sample-" + sampleStr ;
 
             std::cout << "generating mode #" + Utils::num2str((float)modeId) + ", sample #" + Utils::num2str((float)sampleId) << std::endl;
