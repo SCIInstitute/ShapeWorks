@@ -289,8 +289,8 @@ int main(int argc, char * argv [] )
 
         // for ease of automatic parsing the generated param file
        // ofs <<"The Transformation matrix is:\n"<< *m;
-        for (r=0;r<3;r++){
-            for (c =0;c<4;c++){
+        for (int r=0;r<3;r++){
+            for (int c =0;c<4;c++){
                 ofs<< m[r][c]<<"\t";
             }
             ofs << "\n";
