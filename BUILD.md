@@ -48,17 +48,31 @@ VcXsrv is available here:
 https://sourceforge.net/projects/vcxsrv/
 
 ### CMake
-Make a build directory and use cmake (or ccmake for a gui version) to configure your build: `cd build; cmake <options> ..`   
+Make a build directory and use cmake (or ccmake for a gui version) to configure your build:  
+``
+mkdir build
+cd build
+cmake <options> ..
+```
+Note: using `ccmake` will present the user with a GUI that makes it easy to see and change any of the options.
+
 Options include the following:
 ```
   -G <generator> (e.g., -GXCode)
+  -DBuild_Studio=[OFF|ON]             default: OFF
+  -DBuild_View2=[OFF|ON]              default: OFF
+  -DBuild_Post=[OFF|ON]               default: ON
+  -DBuild_PrepTools=[OFF|ON]          default: ON
+  -DBuild_Run=[OFF|ON]                default: ON
+  -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
+  -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release
 ```
-  Paths to dependencies can be set explicitly. Otherwise they will be downloaded and built automatically, which guarantees the correct version.
+  Paths to dependencies can be set explicitly. Otherwise they will be downloaded and built automatically.
 ```
   -DVTK_DIR=<path to your own vtk>
   -DITK_DIR=<path to your own ITK>
   -DVXL_DIR=<path to your own vxl>
-  ...etc
+  -DSHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE=[Debug|Release]  default: Release
 ```
 
 ### Build

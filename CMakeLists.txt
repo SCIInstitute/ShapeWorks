@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.10.2)
 set(CMAKE_CXX_STANDARD 11)             # available options are [98, 11, 14, 17. 20]
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 
-# Options (passed as cmake vars when externalproject_add is called).
-set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release)
-mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
+#
+# ShapeWorks options
+#
 option(USE_OPENMP      "Build using OpenMP" ON)
 option(Build_PrepTools "Build prep tools"   ON)
 option(Build_Run       "Build shapeworks"   ON)
@@ -18,11 +18,17 @@ else()
 endif()
 message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")  #removeme, just to verify
 
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Install path prefix, prepended onto install directories.")
+set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
+set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries")
+mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 
-# Start with "superbuild" that includes external libs, of which ShapeWorks is added with this option set to OFF so it gets built
+#
+# Start with Superbuild, which adds external libs then builds ShapeWorks itself by setting this to OFF.
+#
 set(SHAPEWORKS_SUPERBUILD ON CACHE bool "")
+mark_as_advanced(SHAPEWORKS_SUPERBUILD)
 if (SHAPEWORKS_SUPERBUILD)
-  # includes external libraries which adds ShapeWorks but with superbuild turned off so it then gets built
   include(Superbuild)
 else()
   # actually build ShapeWorks
@@ -223,7 +229,7 @@ else()
   # <ctc> try without this to see if it's actually necessary
   #include(InstallRequiredSystemLibraries)
 
+  MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
   MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
 
 endif()
-

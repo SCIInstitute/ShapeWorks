@@ -12,6 +12,7 @@ set(ep_common_args
   -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
   -DCMAKE_GENERATOR:STRING=${CMAKE_GENERATOR}
   -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMAKE_BINARY_DIR}/bin
+  -DCMAKE_CXX_FLAGS=""
   )
 
 # Compute -G arg for configuring external projects with the same CMake generator:
@@ -38,28 +39,28 @@ if(NOT ITK_DIR)
   list(APPEND ShapeWorks_DEPENDENCIES ITK)
 endif()
 
-#<ctc> the ShapeWorks cmakelists supposedly supports openmp on osx
+#FIXME: ShapeWorks cmakelists seems to support openmp on osx, but it's not compiling
 set(SHAPEWORKS_USE_OPENMP ON)
 if(APPLE)
   set(SHAPEWORKS_USE_OPENMP OFF)
 endif()
+
+set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-dev -Wno-deprecated)
+MESSAGE(STATUS "SHAPEWORKS_CXX_FLAGS: ${SHAPEWORKS_CXX_FLAGS}")
 
 # ShapeWorks (this will include ShapeWorks.cmake)
 ExternalProject_Add(ShapeWorks
   DEPENDS ${ShapeWorks_DEPENDENCIES}
   DOWNLOAD_COMMAND ""
   UPDATE_COMMAND ""
-#<ctc> note desire for top-level CMakeLists to be placed in CMake directory, so this would stay the same, but just to note.
   SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..
   PREFIX shapeworks
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_args}
-    # ${_build_doc_args}
-    # ${_python_args}
     -DBUILD_SHARED_LIBS:BOOL=FALSE
-    #ShapeWorks (remainder of arguments)
-#<ctc> TODO: the various options probably need to be in this file
+
+    # ShapeWorks-specific arguments
     -DBuild_PrepTools=ON
     -DBuild_Run=ON
     -DBuild_Post=ON
@@ -71,7 +72,6 @@ ExternalProject_Add(ShapeWorks
     -DVXL_DIR:PATH=${VXL_DIR}
     -DITK_DIR:PATH=${ITK_DIR}
     -DSHAPEWORKS_SUPERBUILD:BOOL=OFF
- #<ctc> todo: these aren't getting properly passed through, while the ones above (ex: vtk_dir) are working. Maybe \" quotes?
-   "-DCMAKE_CXX_FLAGS=-Wno-dev -Wno-deprecated"
+    -DCMAKE_CXX_FLAGS=${SHAPEWORKS_CXX_FLAGS}
 )
 
