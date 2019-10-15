@@ -28,6 +28,9 @@ public:
     // used in case of WarpToSubjectSpace or MoveAlongPCAModes
     std::string mean_prefix;
     std::string mean_path;
+    std::string template_dense_mesh;
+    std::string template_sparse_points;
+    bool use_template_mesh;
 
     // parameters for mesh QC via preview
     bool qcFixWinding;
@@ -114,6 +117,8 @@ public:
         worldPointsFilenames.clear();
         distanceTransformFilenames.clear();
         attribute_labels.clear();
+
+        use_template_mesh = false;
     }
 
     int readParams(char* infilename, int mode ) // 0 - WarpToMeanSpace, 1 - WarpToSubjectSpace, 2 - MoveAlongPCAModes, 3 - WarpToMeanSpaceWithPreviewMeshQC
@@ -236,11 +241,42 @@ public:
                     inputsBuffer >> mean_prefix;
                     inputsBuffer.clear();
                     inputsBuffer.str("");
+                    use_template_mesh = false;
                 }
                 else
                 {
-                    std::cerr << "No mean_prefix provided ...!" << std::endl;
-                    return EXIT_FAILURE;
+                    bool dense_given = false;
+                    bool sparse_given = false;
+                    elem = docHandle.FirstChild( "template_dense_mesh" ).Element();
+                    if (elem)
+                    {
+                        inputsBuffer.str(elem->GetText());
+                        inputsBuffer >> template_dense_mesh;
+                        inputsBuffer.clear();
+                        inputsBuffer.str("");
+                        dense_given = true;
+                    }
+
+                    elem = docHandle.FirstChild( "template_sparse_points" ).Element();
+                    if (elem)
+                    {
+                        inputsBuffer.str(elem->GetText());
+                        inputsBuffer >> template_sparse_points;
+                        inputsBuffer.clear();
+                        inputsBuffer.str("");
+                        sparse_given = true;
+                    }
+
+                    if(dense_given && sparse_given)
+                    {
+                        std::cout << "No mean_prefix provide, the given template shape will be used ...!" << std::endl;
+                        use_template_mesh = true;
+                    }
+                    else
+                    {
+                        std::cerr << "Neither a mean_prefix nor a template mesh (sparse and dense) is provided ...!" << std::endl;
+                        return EXIT_FAILURE;
+                    }
                 }
             }
 

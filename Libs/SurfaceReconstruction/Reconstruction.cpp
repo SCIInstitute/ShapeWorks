@@ -246,6 +246,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     reader1->Update();
     this->denseMean_ = reader1->GetOutput();
     //read out sparse mean
+    int nPoints = 0;
     std::ifstream ptsIn0(sparse.c_str());
     this->sparseMean_ = vtkSmartPointer<vtkPoints>::New();
     while (ptsIn0.good()) {
@@ -253,18 +254,27 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         ptsIn0 >> x >> y >> z;
         if (ptsIn0.good()) {
             this->sparseMean_->InsertNextPoint(x, y, z);
+            nPoints++;
         }
     }
     ptsIn0.close();
     //read out good points
     std::ifstream ptsIn(goodPoints.c_str());
     this->goodPoints_.clear();
-    while (ptsIn.good()) {
-        int i;
-        ptsIn >> i;
-        if (ptsIn.good()) {
-            this->goodPoints_.push_back(i == 0 ? false : true);
+    if(ptsIn.good()){
+        while (ptsIn.good()) {
+            int i;
+            ptsIn >> i;
+            if (ptsIn.good()) {
+                this->goodPoints_.push_back(i == 0 ? false : true);
+            }
         }
+    }
+    else {
+       // good point file is not given if a template mesh is used instead of a mean
+       // just assume all are good
+        for(size_t i = 0 ; i < nPoints; i++)
+            this->goodPoints_.push_back(true);
     }
     ptsIn.close();
     this->sparseDone_ = true;
