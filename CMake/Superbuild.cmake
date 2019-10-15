@@ -45,7 +45,15 @@ if(APPLE)
   set(SHAPEWORKS_USE_OPENMP OFF)
 endif()
 
-set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-dev -Wno-deprecated -Wno-inconsistent-missing-override)
+if (APPLE)
+  # doesn't work in latest clang: -Wno-dev 
+  set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-inconsistent-missing-override)
+else()
+  # TODO: make sure these are straight for each [version of each] platform
+  set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-inconsistent-missing-override)
+endif()
+  
+# cxx flags must be passed as on the command line, with spaces between args
 string(REPLACE ";" " " SHAPEWORKS_CXX_FLAGS_STR "${SHAPEWORKS_CXX_FLAGS}")
 
 # ShapeWorks (this will include ShapeWorks.cmake)
@@ -55,6 +63,7 @@ ExternalProject_Add(ShapeWorks
   UPDATE_COMMAND ""
   SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/.."
   PREFIX shapeworks
+  BUILD_ALWAYS TRUE
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     ${ep_common_args}

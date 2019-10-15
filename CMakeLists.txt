@@ -13,10 +13,11 @@ option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
 if (${Build_Post} OR ${Build_View2} OR ${Build_Studio})
   set(SHAPEWORKS_GUI ON)
+  set(SHAPEWORKS_QT_REQUIRED REQUIRED)
 else()
   set(SHAPEWORKS_GUI OFF)
 endif()
-message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")  #removeme, just to verify
+message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Install path prefix, prepended onto install directories.")
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
@@ -54,62 +55,46 @@ else()
   SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
   SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+  # GUI
+  find_package(OpenGL ${SHAPEWORKS_QT_REQUIRED})
+  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
+  if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
+    set(SHAPEWORKS_QT_FOUND 1)
+  else()
+    set(SHAPEWORKS_QT_FOUND 0)
+  endif()
+  message(STATUS "QT_FOUND: ${SHAPEWORKS_QT_FOUND}")
+
   if (SHAPEWORKS_GUI)
-    set(SHAPEWORKS_VTK_GUI_COMPONENTS vtkGUISupportQt)
-
-    # Find QT5
-    find_package(OpenGL REQUIRED)
-    find_package(Qt5Widgets REQUIRED)
-    find_package(Qt5OpenGL REQUIRED)
-    find_package(Qt5Core REQUIRED)
-    find_package(Qt5Gui REQUIRED)
-
-    cmake_policy(SET CMP0020 NEW)   # be sure to link to qtmain.lib on Windows
-
-    #headers  #<ctc> move to shapeworks_gui interface target includes
+    # headers (TODO: move to shapeworks gui targets' includes)
     include_directories(${Qt5Widgets_INCLUDE_DIRS})
     include_directories(${Qt5OpenGL_INCLUDE_DIRS})
     include_directories(${Qt5Core_INCLUDE_DIRS})
     include_directories(${Qt5Gui_INCLUDE_DIRS})
+    include_directories(${Qt5Sql_INCLUDE_DIRS})
 
-    #defines
+    # defines (TODO: move to shapeworks gui targets' includes)
     add_definitions(${Qt5Widgets_DEFINITIONS})
     add_definitions(${Qt5OpenGL_DEFINITIONS})
     add_definitions(${Qt5Core_DEFINITIONS})
     add_definitions(${Qt5Gui_DEFINITIONS})
+    add_definitions(${Qt5Sql_DEFINITIONS})
 
-    get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
-    get_target_property(QtGui_location Qt5::Gui LOCATION)
-    get_target_property(QtCore_location Qt5::Core LOCATION)
-    get_target_property(QtOpenGL_location Qt5::OpenGL LOCATION)
-
-    if (NOT WIN32)
+    if (WIN32)
+      cmake_policy(SET CMP0020 NEW)   # link to qtmain.lib on Windows
+    else()
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
     endif()
   endif()
 
   ### vtk
-  message(STATUS "VTK_DIR is ${VTK_DIR}") #just verifying, can remove this output
-  find_package(VTK ${SHAPEWORKS_VTK_VERSION_MIN} COMPONENTS 
-    #vtkCommonColor  #TODO: identify which vtk components we use (by trial and error? there's also https://github.com/Kitware/VTK/blob/master/Utilities/Maintenance/WhatModulesVTK.py)
-    vtkCommonCore
-    # vtkCommonDataModel
-    # vtkFiltersGeneral
-    # vtkFiltersGeometry
-    # vtkFiltersPoints
-    # vtkIOExodus
-    # vtkInteractionStyle
-    # vtkRenderingFreeType
-    # vtkRenderingGL2PSOpenGL2
-    ${SHAPEWORKS_VTK_GUI_COMPONENTS}
-    #QUIET
-    )
+  find_package(VTK ${SHAPEWORKS_VTK_VERSION_MIN})
   if (NOT VTK_FOUND)
     message(FATAL_ERROR "** VTK not found. Need to use Superbuild.cmake (see BUILD.md)")
   endif()
 
-  message(STATUS "VXL_DIR is ${VXL_DIR}") #just verifying, can remove this output
+  ### vxl
   FIND_PACKAGE(VXL REQUIRED)
   IF(VXL_FOUND)
     # this adds deprecated VXL variables to the cmake namespace (TODO: use the new ones)
@@ -118,6 +103,7 @@ else()
     MESSAGE(SEND_ERROR "VXL is required, but could not be found.")
   ENDIF(VXL_FOUND)
 
+  ### ITK
   FIND_PACKAGE(ITK ${SHAPEWORKS_ITK_VERSION_MIN} REQUIRED)
   IF (ITK_FOUND)
     INCLUDE(${ITK_USE_FILE})
@@ -125,7 +111,7 @@ else()
     MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
   ENDIF()
 
-  # Find OpenMP
+  # OpenMP
   if(APPLE AND USE_OPENMP)
     if(CMAKE_C_COMPILER_ID MATCHES "Clang")
       set(OpenMP_C "${CMAKE_C_COMPILER}")
