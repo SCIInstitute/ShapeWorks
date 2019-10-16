@@ -112,7 +112,6 @@ else()
   else()
     set(SHAPEWORKS_QT_FOUND 0)
   endif()
-  message(STATUS "QT_FOUND: ${SHAPEWORKS_QT_FOUND}")
 
   if (SHAPEWORKS_GUI)
     # headers (TODO: move to shapeworks gui targets' includes)
