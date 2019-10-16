@@ -25,14 +25,14 @@ set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for e
 mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 
 #
-# Start with Superbuild, which adds external libs.
-# Then build ShapeWorks itself by including it as an external project,
-# but setting SHAPEWORKS_SUPERBUILD to OFF.
+# Start with ShapeWorksExternals, which adds external libs.
+# Then add ShapeWorks itself as an external project, causing it to 
+# configure the rest (below) by setting SHAPEWORKS_SUPERBUILD to OFF.
 #
 set(SHAPEWORKS_SUPERBUILD ON CACHE bool "")
 mark_as_advanced(SHAPEWORKS_SUPERBUILD)
 if (SHAPEWORKS_SUPERBUILD)
-  include(Superbuild)
+  include(ShapeworksExternals)
 
   #FIXME: ShapeWorks cmakelists seems to support openmp on osx, but it's not compiling
   set(SHAPEWORKS_USE_OPENMP ON)
@@ -41,7 +41,6 @@ if (SHAPEWORKS_SUPERBUILD)
   endif()
 
   if (APPLE)
-    # doesn't work in latest clang: -Wno-dev 
     set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-inconsistent-missing-override)
   else()
     # TODO: make sure these are straight for each [version of each] platform
@@ -141,7 +140,7 @@ else()
   ### vtk
   find_package(VTK ${SHAPEWORKS_VTK_VERSION_MIN})
   if (NOT VTK_FOUND)
-    message(FATAL_ERROR "** VTK not found. Need to use Superbuild.cmake (see BUILD.md)")
+    message(FATAL_ERROR "** VTK not found. By default cmake will download it (see BUILD.md)")
   endif()
 
   ### vxl
