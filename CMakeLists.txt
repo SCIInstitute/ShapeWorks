@@ -25,14 +25,64 @@ set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for e
 mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 
 #
-# Start with Superbuild, which adds external libs then builds ShapeWorks itself by setting this to OFF.
+# Start with Superbuild, which adds external libs.
+# Then build ShapeWorks itself by including it as an external project,
+# but setting SHAPEWORKS_SUPERBUILD to OFF.
 #
 set(SHAPEWORKS_SUPERBUILD ON CACHE bool "")
 mark_as_advanced(SHAPEWORKS_SUPERBUILD)
 if (SHAPEWORKS_SUPERBUILD)
   include(Superbuild)
+
+  #FIXME: ShapeWorks cmakelists seems to support openmp on osx, but it's not compiling
+  set(SHAPEWORKS_USE_OPENMP ON)
+  if(APPLE)
+    set(SHAPEWORKS_USE_OPENMP OFF)
+  endif()
+
+  if (APPLE)
+    # doesn't work in latest clang: -Wno-dev 
+    set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-inconsistent-missing-override)
+  else()
+    # TODO: make sure these are straight for each [version of each] platform
+    set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-inconsistent-missing-override)
+  endif()
+  
+  # cxx flags must be passed as on the command line, with spaces between args
+  string(REPLACE ";" " " SHAPEWORKS_CXX_FLAGS_STR "${SHAPEWORKS_CXX_FLAGS}")
+
+  # ShapeWorks (this will include ShapeWorks.cmake)
+  ExternalProject_Add(ShapeWorks
+    DEPENDS ${ShapeWorks_DEPENDENCIES}
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
+    SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}"
+    PREFIX shapeworks
+    BUILD_ALWAYS TRUE
+    CMAKE_GENERATOR ${gen}
+    CMAKE_ARGS
+      ${ep_common_args}
+      -DBUILD_SHARED_LIBS:BOOL=FALSE
+
+      # ShapeWorks-specific arguments
+      -DBuild_PrepTools=${Build_PrepTools}
+      -DBuild_Run=${Build_Run}
+      -DBuild_Post=${Build_Post}
+      -DBuild_View2=${Build_View2}
+      -DBuild_Studio=${Build_Studio}
+      -DUSE_OPENMP=${SHAPEWORKS_USE_OPENMP} 
+      -DSHAPEWORKS_PYTHON_API=OFF
+      -DVTK_DIR:PATH="${VTK_DIR}"
+      -DVXL_DIR:PATH="${VXL_DIR}"
+      -DITK_DIR:PATH="${ITK_DIR}"
+      -DSHAPEWORKS_SUPERBUILD:BOOL=OFF
+      "-DCMAKE_CXX_FLAGS=${SHAPEWORKS_CXX_FLAGS_STR}"
+    )
 else()
-  # actually build ShapeWorks
+  #
+  # Next, actually configure ShapeWorks using the parameters passed from
+  # ExternalProject_Add above. Keep this in mind when modifying configs.
+  #
   project(ShapeWorks)
 
   # use ccache if available
