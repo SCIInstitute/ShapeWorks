@@ -4,3 +4,5 @@ project(CropImages)
 add_executable(CropImages CropImages.cxx)
 target_link_libraries(CropImages ${ITK_LIBRARIES} OptionParser)
 INSTALL(TARGETS CropImages  RUNTIME DESTINATION bin)
+
+

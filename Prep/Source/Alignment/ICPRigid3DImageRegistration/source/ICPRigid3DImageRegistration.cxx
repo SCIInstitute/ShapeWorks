@@ -166,7 +166,7 @@ void ConnectPipelines(VTK_Exporter* exporter, ITK_Importer importer)
  * well.
  */
 int main(int argc, char * argv [] )
-{  
+{
 
     optparse::OptionParser parser = buildParser();
     optparse::Values & options = parser.parse_args(argc,argv);
@@ -288,9 +288,14 @@ int main(int argc, char * argv [] )
         ofs.open (filename); // the file needs to be overwritten in case running the program on the same file several times
 
         // for ease of automatic parsing the generated param file
-        ofs <<"The Transformation matrix is:\n"<< *m;
+        for (int r=0;r<3;r++){
+            for (int c =0;c<4;c++){
+                ofs<< m->GetElement(r,c)<<"\t";
+            }
+            ofs << "\n";
+        }
         ofs.close();
-        
+
         typedef itk::Rigid3DTransformSurrogate<double>  TransformType;
         TransformType::Pointer transform = TransformType::New();
         TransformType::ParametersType p;
@@ -332,10 +337,10 @@ int main(int argc, char * argv [] )
         InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
         resampler->SetInterpolator( interpolator );
-        resampler->SetOutputSpacing( movingSegInputImage->GetSpacing() );
+        resampler->SetOutputSpacing( targetInputImage->GetSpacing() );
         resampler->SetSize( size );
-        resampler->SetOutputOrigin( movingSegInputImage->GetOrigin() );
-        resampler->SetOutputDirection( movingSegInputImage->GetDirection() );
+        resampler->SetOutputOrigin( targetInputImage->GetOrigin() );
+        resampler->SetOutputDirection( targetInputImage->GetDirection() );
         resampler->SetInput( movingSegInputImage );
         resampler->Update();
 
@@ -367,10 +372,10 @@ int main(int argc, char * argv [] )
             InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
             resampler->SetInterpolator( interpolator );
-            resampler->SetOutputSpacing( movingRawInputImage->GetSpacing() );
+            resampler->SetOutputSpacing( targetInputImage->GetSpacing() );
             resampler->SetSize( size );
-            resampler->SetOutputOrigin( movingRawInputImage->GetOrigin() );
-            resampler->SetOutputDirection( movingRawInputImage->GetDirection() );
+            resampler->SetOutputOrigin( targetInputImage->GetOrigin() );
+            resampler->SetOutputDirection( targetInputImage->GetDirection() );
             resampler->SetInput( movingRawInputImage );
             resampler->Update();
 
