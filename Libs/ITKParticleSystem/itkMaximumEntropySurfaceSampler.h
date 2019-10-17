@@ -32,9 +32,7 @@
 #include "vnl/vnl_matrix_fixed.h"
 
 
-#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
 #include "TriMesh.h"
-#endif
 
 namespace itk
 {
@@ -161,13 +159,12 @@ public:
         }
         m_PointsFiles[i] = s;
     }
+
     void SetPointsFile(const std::string &s)
     {
         this->SetPointsFile(0,s);
     }
 
-
-#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     /**Optionally provide a filename for a mesh with geodesic distances.*/
     void SetMeshFile(unsigned int i, const std::string &s)
     {
@@ -210,9 +207,10 @@ public:
         m_DomainsPerShape = i;
     }
     void SetAttributesPerDomain(const std::vector<int> &i)
-    { m_AttributesPerDomain = i; }
+    {
+        m_AttributesPerDomain = i;
+    }
 
-#endif
 
     /** Optionally supply a cutting plane that will be set as a particle
       optimization constraint in the image domains. */
@@ -421,14 +419,13 @@ private:
     void operator=(const Self&); //purposely not implemented
 
     std::vector<std::string> m_PointsFiles;
-#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
     std::vector<std::string> m_MeshFiles;
     std::vector<std::string> m_FeaMeshFiles;
     std::vector<std::string> m_FeaGradFiles;
     std::vector<std::string> m_FidsFiles;
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
-#endif
+
     std::vector<std::string> m_ImageFiles;
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;

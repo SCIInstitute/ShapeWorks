@@ -19,7 +19,7 @@
 #pragma warning( disable: 4996 )
 #endif
 
-#include "itkParticleSystem.h"
+#include <itkParticleSystem.h>
 #include <cstdio>
 #include "itkImage.h"
 #include "itkMaximumEntropyCorrespondenceSampler.h"
