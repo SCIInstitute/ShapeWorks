@@ -2,12 +2,15 @@
  * Shapeworks license
  */
 
-#include <Visualization/ShapeworksWorker.h>
-#include <QProcess>
-#include <QMessageBox>
 #include <sstream>
 #include <fstream>
 #include <iostream>
+
+#include <QProcess>
+#include <QMessageBox>
+
+#include <Visualization/ShapeworksWorker.h>
+#include <Optimize/ShapeWorksOptimize.h>
 
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    ShapeWorksGroom* groom,
@@ -49,7 +52,8 @@ void ShapeworksWorker::process()
     try {
       this->optimize_->run();
     } catch (std::runtime_error e) {
-      emit error_message(std::string("Error: ") + e.what());
+        std::cerr << "Exception: " << e.what() << "\n";
+        emit error_message(std::string("Error: ") + e.what());
       return;
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());

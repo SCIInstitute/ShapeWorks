@@ -20,11 +20,9 @@
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_inverse.h"
 
-#if defined(SW_USE_MESH) || defined(SW_USE_FEAMESH)
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
 #include "meshFIM.h"
-#endif
 
 namespace itk
 {
@@ -99,16 +97,7 @@ public:
   void TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base_a,
                              const vnl_vector<double> &base_b, const vnl_vector<double> &base_c);
 
-#ifdef SW_USE_MESH
-  void SetMesh(TriMesh *mesh, const char *gfile);
-  TriMesh* GetMesh()
-  {
-      return m_mesh;
-  }
-#endif
 
-// Praful - fea mesh support
-#ifdef SW_USE_FEAMESH
   void SetMesh(TriMesh *mesh);
   void SetFeaMesh(const char *feaFile);
   void SetFeaGrad(const char *feaGradFile);
@@ -121,7 +110,7 @@ public:
   {
       return m_mesh;
   }
-#endif
+
   void RemoveCuttingPlane()  { m_UseCuttingPlane = false; }
 
   void RemoveCuttingSphere()  { m_UseCuttingSphere = false; }
@@ -200,15 +189,7 @@ public:
 protected:
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
     {
-#ifdef SW_USE_MESH
-    m_fim = new meshFIM;
     m_mesh = NULL;
-#endif
-
-// Praful - fea mesh support
-#ifdef SW_USE_FEAMESH
-    m_mesh = NULL;
-#endif
     }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
@@ -230,15 +211,8 @@ private:
   std::vector < vnl_vector_fixed<double, VDimension> > m_b;
   std::vector < vnl_vector_fixed<double, VDimension> > m_c;
   
-#ifdef SW_USE_MESH
   TriMesh *m_mesh;
-  meshFIM *m_fim;
-#endif
 
-// Praful - fea mesh support
-#ifdef SW_USE_FEAMESH
-  TriMesh *m_mesh;
-#endif
   std::vector< vnl_vector_fixed<double, VDimension> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;
   

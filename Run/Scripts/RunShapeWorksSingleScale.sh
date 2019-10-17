@@ -14,7 +14,7 @@
 # adding related-binaries to system path
 source Utils/Utils.sh
 
-ShapeWorksEXE='ShapeWorksRun5.0' 
+ShapeWorksEXE='ShapeWorksRun' 
 
 # default shapeworks parameters
 num_particles=512

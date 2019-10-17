@@ -120,6 +120,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   SurfaceReconstruction
   ParticleSystemUtils
   Utils
+  ITKParticleSystem
   )
 
 INSTALL(TARGETS ShapeWorksStudio
