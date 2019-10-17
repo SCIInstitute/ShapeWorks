@@ -351,7 +351,7 @@ def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, re
 
 
 
-def FindMedianImage(inDataList):
+def FindReferenceImage(inDataList):
     """
         This find the median file between all the input files
     """
@@ -371,7 +371,7 @@ def FindMedianImage(inDataList):
 
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
     print(" ")
-    print("############# Rigid Alignment #############")
+    print("############# Reference File #############")
     cprint(("The reference file for rigid alignment is found"), 'green')
     cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
     print("###########################################")
