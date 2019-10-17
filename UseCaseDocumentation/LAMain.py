@@ -56,7 +56,7 @@ os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
 
 
 
-filename="/home/sci/atefeh.gk/Public/LA_39.zip"
+filename="/home/sci/atefeh.gk/Public/leftatrium.zip"
 
 if args.start_with_image_and_segmentation_data:
     parentDir="Test_leftatrium/"
@@ -180,7 +180,7 @@ else:
 
         fileList = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
 
-
+    fileList = fileList[:3]
     if not args.start_with_prepped_data:
             """
             ## GROOM : Data Pre-processing
@@ -290,6 +290,7 @@ if args.use_single_scale:
     parameterDictionary = {
             "number_of_particles" : 128,
             "use_normals": 0,
+            "normal_weight": 10,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 4000,
@@ -310,7 +311,7 @@ if args.use_single_scale:
     """
     Now we execute the particle optimization function.
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleSale(pointDir, dtFiles, parameterDictionary)
 
 
 else:
@@ -318,6 +319,7 @@ else:
             "starting_particles" : 128,
             "number_of_levels" : 4,
             "use_normals": 1,
+            "normal_weight": 10,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 4000,
