@@ -189,7 +189,7 @@ else:
             -- Padding
             -- Center of Mass Alignment
             -- Rigid Alignment
-            -- Largets Bounding Box and Cropping
+            -- Largest Bounding Box and Cropping
             """
 
             print("\nStep 2. Groom - Data Pre-processing\n")
