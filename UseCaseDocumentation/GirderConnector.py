@@ -1,6 +1,6 @@
 import requests 
 
-serverAddress = 'http://155.98.59.38:8080/'
+serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 
 def authenticate():
     authenticationHash = 'c2hhcGV3b3JrczpzaGFwZXdvcmtzdXNlcg=='
