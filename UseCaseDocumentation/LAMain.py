@@ -138,7 +138,7 @@ if args.start_with_image_and_segmentation_data:
             This function uses the same transfrmation matrix for alignment of raw and segmentation files.
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
-            medianFile = FindMedianImage(comFiles_segmentations)
+            medianFile = FindReferenceImage(comFiles_segmentations)
 
             [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
@@ -240,7 +240,7 @@ else:
 
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
-            medianFile = FindMedianImage(comFiles)
+            medianFile = FindReferenceImage FindMedianImage(comFiles)
 
             rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
 
