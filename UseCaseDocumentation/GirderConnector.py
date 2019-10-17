@@ -31,7 +31,7 @@ def getFolderList(authToken, folderName):
     
 def downloadDataset(authToken, filename):
     apicall = serverAddress + "api/v1/item"
-    r = requests.get(url = apicall, params = {'text': filename, 'limit': 1}, headers = {'Girder-Token': authToken}) 
+    r = requests.get(url = apicall, params = {'folderId': '5da8be03a728853200d3d5c0', 'name': filename}, headers = {'Girder-Token': authToken}) 
     data = r.json()
     if(len(data) == 0):
         print('ERROR finding', filename);
