@@ -101,41 +101,42 @@ print("\nStep 2. Groom - Data Pre-processing\n")
 if int(args.interactive) != 0:
         input("Press Enter to continue")
 
+
 parentDir = 'TestEllipsoids/PrepOutput/'
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
 
 if int(args.start_with_prepped_data) == 0:
-	"""
-	Apply isotropic resampling
-	
-	For detailed explainations of parameters for resampling volumes, go to
-	... link 
-	"""
-	resampledFiles = applyIsotropicResampling(parentDir, fileList, 1)
-	
-	"""
-	Apply padding
+    """
+    Apply isotropic resampling
 
-	For detailed explainations of parameters for padding volumes, go to
-	... link
-	"""
+    For detailed explainations of parameters for resampling volumes, go to
+    ... link
+    """
+    resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
 
-	paddedFiles = applyPadding(parentDir, resampledFiles, 10)
+    """
+    Apply padding
 
-	"""
-	Apply center of mass alignment
-	
-	For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
-	... link
-	"""
-	comFiles = applyCOMAlignment(parentDir, paddedFiles, paddedFiles)
-	"""Apply rigid alignment"""
+    For detailed explainations of parameters for padding volumes, go to
+    ... link
+    """
 
-	rigidFiles = applyRigidAlignment(parentDir, comFiles, comFiles[0])
-	
-	"""Compute largest bounding box and apply cropping"""
-	croppedFiles = applyCropping(parentDir, rigidFiles, rigidFiles)
+    paddedFiles = applyPadding(parentDir, resampledFiles, None,  10)
+
+    """
+    Apply center of mass alignment
+
+    For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
+    ... link
+    """
+    comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+    """Apply rigid alignment"""
+
+    rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
+
+    """Compute largest bounding box and apply cropping"""
+    croppedFiles = applyCropping(parentDir, rigidFiles, None)
 
 """
 We convert the scans to distance transforms, this step is common for both the 
@@ -256,7 +257,7 @@ print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse 
 if args.interactive != 0:
         input("Press Enter to continue")
 
-meanDir   = '../TestEllipsoids/MeanReconstruction/'
+meanDir   = './TestEllipsoids/MeanReconstruction/'
 if not os.path.exists(meanDir):
 	os.makedirs(meanDir)
     
@@ -269,23 +270,23 @@ parameterDictionary = {
 	"do_procrustes" : 0,
 	"do_procrustes_scaling" : 0,
 	"levelsetValue" : 0.0,
-   "targetReduction" : 0.0,
-   "featureAngle" : 30,
-   "lsSmootherIterations" : 1,
-   "meshSmootherIterations" : 1,
-   "preserveTopology" : 1,
-   "qcFixWinding" : 1,
-   "qcDoLaplacianSmoothingBeforeDecimation" : 1,
-   "qcDoLaplacianSmoothingAfterDecimation" : 1,
-   "qcSmoothingLambda" : 0.5,
-   "qcSmoothingIterations" : 3,
-   "qcDecimationPercentage" : 0.9,
-   "normalAngle" : 90,
-   "use_tps_transform" : 0,
-   "use_bspline_interpolation" : 0,
-   "display" : 0,
-   "glyph_radius" : 1
-}
+       "targetReduction" : 0.0,
+       "featureAngle" : 30,
+       "lsSmootherIterations" : 1,
+       "meshSmootherIterations" : 1,
+       "preserveTopology" : 1,
+       "qcFixWinding" : 1,
+       "qcDoLaplacianSmoothingBeforeDecimation" : 1,
+       "qcDoLaplacianSmoothingAfterDecimation" : 1,
+       "qcSmoothingLambda" : 0.5,
+       "qcSmoothingIterations" : 3,
+       "qcDecimationPercentage" : 0.9,
+       "normalAngle" : 90,
+       "use_tps_transform" : 0,
+       "use_bspline_interpolation" : 0,
+       "display" : 0,
+       "glyph_radius" : 1
+        }
 
 runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
 
@@ -297,7 +298,7 @@ print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the loc
 if args.interactive != 0:
         input("Press Enter to continue")
 
-meshDir_local   = '../TestEllipsoids/MeshFiles-Local/'
+meshDir_local   = './TestEllipsoids/MeshFiles-Local/'
 if not os.path.exists(meshDir_local):
 	os.makedirs(meshDir_local)
 
@@ -325,7 +326,7 @@ print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the wor
 if args.interactive !=0:
         input("Press Enter to continue")
 
-meshDir_global   = '../TestEllipsoids/MeshFiles-World/'
+meshDir_global   = './TestEllipsoids/MeshFiles-World/'
 if not os.path.exists(meshDir_global):
 	os.makedirs(meshDir_global)
 
@@ -352,7 +353,7 @@ print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant
 if args.interactive != 0:
         input("Press Enter to continue")
 
-pcaDir   = '../TestEllipsoids/PCAModesFiles/'
+pcaDir   = './TestEllipsoids/PCAModesFiles/'
 if not os.path.exists(pcaDir):
 	os.makedirs(pcaDir)
     
@@ -363,7 +364,7 @@ parameterDictionary = {
 	"number_of_particles" : 128,
 	"mean_prefix" : meanDir + 'ellipsoid',
 	"out_prefix" : pcaDir + 'ellipsoid', 
-	"use_tps_transform" : 0,
+        "use_tps_transform" : 0,
 	"use_bspline_interpolation" : 0,
 	"display" : 0,
 	"glyph_radius" : 1,

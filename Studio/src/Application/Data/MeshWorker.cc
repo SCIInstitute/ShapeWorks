@@ -2,21 +2,23 @@
  * Shapeworks license
  */
 
- // vtk
+// vtk
 #include <vtkPolyData.h>
 
 #include <Data/MeshWorker.h>
 
+//---------------------------------------------------------------------------
 MeshWorker::MeshWorker(Preferences& prefs,
-  const vnl_vector<double> shape,
-  Reconstruction& construct,
-  MeshWorkQueue *queue,
-  MeshCache * cache)
-  : prefs_(prefs), meshGenerator_(prefs, construct),
+                       const vnl_vector<double> shape,
+                       MeshWorkQueue* queue,
+                       MeshCache* cache)
+  : prefs_(prefs), meshGenerator_(prefs),
   shape_(shape), queue_(queue), cache_(cache) {}
 
+//---------------------------------------------------------------------------
 MeshWorker::~MeshWorker() {}
 
+//---------------------------------------------------------------------------
 void MeshWorker::process()
 {
   // build the mesh using our MeshGenerator
@@ -24,4 +26,10 @@ void MeshWorker::process()
   this->queue_->remove(this->shape_);
   this->cache_->insertMesh(this->shape_, mesh);
   emit result_ready();
+}
+
+//---------------------------------------------------------------------------
+MeshGenerator* MeshWorker::getMeshGenerator()
+{
+  return &(this->meshGenerator_);
 }

@@ -20,8 +20,8 @@ public:
   ShapeWorksOptimize(
     std::vector<ImageType::Pointer> inputs =
     std::vector<ImageType::Pointer>(),
-    std::vector<std::array<itk::Point<float>, 3 > > cutPlanes =
-    std::vector<std::array<itk::Point<float>, 3 > >(),
+    std::vector<std::array<itk::Point<double>, 3 > > cutPlanes =
+    std::vector<std::array<itk::Point<double>, 3 > >(),
     size_t numScales = 1,
     std::vector<double> start_reg = std::vector<double>(),
     std::vector<double> end_reg = std::vector<double>(),
@@ -32,8 +32,8 @@ public:
     bool verbose = false);
   void run();
   std::vector<ImageType::Pointer> getImages();
-  std::vector<std::vector<itk::Point<float> > > localPoints();
-  std::vector<std::vector<itk::Point<float> > > globalPoints();
+  std::vector<std::vector<itk::Point<double> > > localPoints();
+  std::vector<std::vector<itk::Point<double> > > globalPoints();
 protected:
   virtual void iterateCallback(
     itk::Object *caller, const itk::EventObject &);
@@ -46,12 +46,12 @@ protected:
   std::vector<double> decaySpan_,
     regularizationInitial_, regularizationFinal_;
   itk::PSMEntropyModelFilter<ImageType>::Pointer psmFilter_;
-  std::vector<std::vector<itk::Point<float> > >  localPoints_, globalPoints_;
+  std::vector<std::vector<itk::Point<double> > >  localPoints_, globalPoints_;
   itk::MemberCommand<ShapeWorksOptimize>::Pointer iterateCmd_;
   itk::PSMProcrustesRegistration<3>::Pointer procrustesRegistration_;
   size_t reportInterval_, procrustesCounter_, totalIters_, iterCount_;
   std::vector<size_t>  procrustesInterval_;
-  std::vector<std::array<itk::Point<float>, 3 > > cutPlanes_;
+  std::vector<std::array<itk::Point<double>, 3 > > cutPlanes_;
 };
 
 #endif

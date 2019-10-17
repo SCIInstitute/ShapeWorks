@@ -13,20 +13,26 @@
 #ifndef MESH_GENERATOR_H
 #define MESH_GENERATOR_H
 
+#include <QSharedPointer>
+
 #include "vnl/vnl_vector.h"
-#include <Surfworks/Reconstruction.h>
+
 #include <Data/Preferences.h>
+
+#include <Data/SurfaceReconstructor.h>
 
 class MeshGenerator
 {
-  public:
-    MeshGenerator(Preferences& prefs_, Reconstruction& construct);
-    ~MeshGenerator();
-    vtkSmartPointer<vtkPolyData> buildMesh(const vnl_vector<double>& shape);
+public:
+  MeshGenerator(Preferences& prefs_);
+  ~MeshGenerator();
+  vtkSmartPointer<vtkPolyData> buildMesh(const vnl_vector<double>& shape);
 
-  private:
-    Preferences& prefs_;
-    Reconstruction& construct_;
+  void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
+
+private:
+  Preferences& prefs_;
+  QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
 };
 
 #endif // ifndef MESH_GENERATOR_H

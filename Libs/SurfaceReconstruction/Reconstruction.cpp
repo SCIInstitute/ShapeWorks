@@ -17,7 +17,14 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
+#include <itkImageFileReader.h>
+#include "itkNrrdImageIOFactory.h"
+#include "itkMetaImageIOFactory.h"
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
+
 #include <itkImageFileWriter.h>
+#include "Utils.h"
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
@@ -438,30 +445,114 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             normals.push_back(this->computeParticlesNormals(
                                   subjectPts[shape], distance_transform[shape]));
         }
-        // now decide whether each particle is a good
+
+        // spherical coordinates of normal vector per particle per shape sample to compute average normals
+        std::vector< std::vector< double > > thetas ; thetas.clear();
+        std::vector< std::vector< double > > phis;    phis.clear();
+
+        thetas.resize(sparseMean.size());
+        phis.resize(sparseMean.size());
+        for (size_t j = 0; j < sparseMean.size(); j++) {
+            thetas[j].resize(local_pts.size());
+            phis[j].resize(local_pts.size());
+        }
+        for (int i = 0; i < local_pts.size(); i++){
+            for (size_t j = 0; j < sparseMean.size(); j++) {
+                double curNormal[3];
+                double curNormalSph[3];
+
+                curNormal[0] = normals[i](j,0);
+                curNormal[1] = normals[i](j,1);
+                curNormal[2] = normals[i](j,2);
+
+                Utils::cartesian2spherical(curNormal, curNormalSph);
+                phis[j][i]   = curNormalSph[1];
+                thetas[j][i] = curNormalSph[2];
+            }
+        }
+
+        // compute mean normal for every particle
+        vnl_matrix<double> average_normals(sparseMean.size(), 3);
+        for (size_t j = 0; j < sparseMean.size(); j++) {
+            double avgNormal_sph[3];
+            double avgNormal_cart[3];
+            avgNormal_sph[0] = 1;
+            avgNormal_sph[1] = Utils::averageThetaArc(phis[j]);
+            avgNormal_sph[2] = Utils::averageThetaArc(thetas[j]);
+            Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
+
+            average_normals(j,0) = avgNormal_cart[0];
+            average_normals(j,1) = avgNormal_cart[1];
+            average_normals(j,2) = avgNormal_cart[2];
+        }
+
+        // now decide whether each particle is a good based on dispersion from mean
         // (it normals are in the same direction accross shapes) or
         // bad (there is discrepency in the normal directions across shapes)
         this->goodPoints_.resize(local_pts[0].size(), true);
-        for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
-            bool isGood = true;
+        for (size_t j = 0; j < sparseMean.size(); j++) {
 
-            // the normal of the first shape
-            double nx_jj = normals[0](ii, 0);
-            double ny_jj = normals[0](ii, 1);
-            double nz_jj = normals[0](ii, 2);
+            double cur_cos_appex = 0;
+            // the mean normal of the current particle index
+            double nx_jj = average_normals(j,0);
+            double ny_jj = average_normals(j,1);
+            double nz_jj = average_normals(j,2);
 
-            // start from the second
-            for (unsigned int shapeNo_kk = 1; shapeNo_kk <
-                 local_pts.size(); shapeNo_kk++) {
-                double nx_kk = normals[shapeNo_kk](ii, 0);
-                double ny_kk = normals[shapeNo_kk](ii, 1);
-                double nz_kk = normals[shapeNo_kk](ii, 2);
+            for (unsigned int shapeNo_kk = 0; shapeNo_kk < local_pts.size(); shapeNo_kk++) {
+                double nx_kk = normals[shapeNo_kk](j, 0);
+                double ny_kk = normals[shapeNo_kk](j, 1);
+                double nz_kk = normals[shapeNo_kk](j, 2);
 
-                this->goodPoints_[ii] = this->goodPoints_[ii] &&
-                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
-                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
+                cur_cos_appex += (nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk);
             }
+
+            cur_cos_appex /= local_pts.size();
+            cur_cos_appex *= 2.0; // due to symmetry about the mean normal
+
+            this->goodPoints_[j] = cur_cos_appex > std::cos(this->maxAngleDegrees_ * M_PI / 180.);
         }
+
+
+        //        for (size_t j = 0; j < sparseMean.size(); j++) {
+
+        //            // the mean normal of the current particle index
+        //            double nx_jj = average_normals(j,0);
+        //            double ny_jj = average_normals(j,1);
+        //            double nz_jj = average_normals(j,2);
+
+        //            for (unsigned int shapeNo_kk = 0; shapeNo_kk < local_pts.size(); shapeNo_kk++) {
+        //                double nx_kk = normals[shapeNo_kk](j, 0);
+        //                double ny_kk = normals[shapeNo_kk](j, 1);
+        //                double nz_kk = normals[shapeNo_kk](j, 2);
+
+        //                this->goodPoints_[j] = this->goodPoints_[j] &&
+        //                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
+        //                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
+
+        //            }
+        //        }
+
+
+        //        for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
+        //            bool isGood = true;
+
+        //            // the normal of the first shape
+        //            double nx_jj = normals[0](ii, 0);
+        //            double ny_jj = normals[0](ii, 1);
+        //            double nz_jj = normals[0](ii, 2);
+
+        //            // start from the second
+        //            for (unsigned int shapeNo_kk = 1; shapeNo_kk <
+        //                 local_pts.size(); shapeNo_kk++) {
+        //                double nx_kk = normals[shapeNo_kk](ii, 0);
+        //                double ny_kk = normals[shapeNo_kk](ii, 1);
+        //                double nz_kk = normals[shapeNo_kk](ii, 2);
+
+        //                this->goodPoints_[ii] = this->goodPoints_[ii] &&
+        //                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
+        //                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
+        //            }
+        //        }
         // decide which correspondences will be used to build the warp
         std::vector<int> particles_indices;
         particles_indices.clear();
@@ -1347,6 +1438,89 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     }
     std::cout << "KMeans++ finished...." << std::endl;
     centroidIndices = centers;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(
+        typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision)
+{
+    typename ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
+    itk2vtkConnector->SetInput(dtImage);
+    itk2vtkConnector->Update();
+
+    vtkSmartPointer<vtkPolyData> denseMesh_;
+
+    denseMesh_ = this->extractIsosurface(itk2vtkConnector->GetOutput());
+    try
+    {
+        denseMesh_ = this->MeshQC(denseMesh_);
+    }
+    catch (std::runtime_error e)
+    {
+        if (denseMesh_ != NULL) {
+            throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
+        }
+    }
+
+    if (subdivision > 0)
+    {
+        if (butterfly_subdivision)
+        {
+            vtkSmartPointer <vtkButterflySubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkButterflySubdivisionFilter>::New();
+            subdivisionFilter->SetInputData(denseMesh_);
+            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
+            subdivisionFilter->Update();
+            denseMesh_ = subdivisionFilter->GetOutput();
+        }
+        else
+        {
+            vtkSmartPointer <vtkLoopSubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkLoopSubdivisionFilter>::New();
+            subdivisionFilter->SetInputData(denseMesh_);
+            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
+            subdivisionFilter->Update();
+            denseMesh_ = subdivisionFilter->GetOutput();
+        }
+    }
+
+    std::string plyName = meshFileName;
+    std::string vtkName = meshFileName;
+    std::string str_vtk (".vtk");
+    std::string str_ply (".ply");
+    std::size_t found_in_ply = plyName.find(str_vtk);
+    std::size_t found_in_vtk = vtkName.find(str_ply);
+    if ( found_in_ply != std::string::npos)
+        plyName.replace( found_in_ply, str_vtk.size(), str_ply );
+
+    if ( found_in_vtk != std::string::npos)
+        vtkName.replace( found_in_vtk, str_ply.size(), str_vtk );
+
+    std::cout << "Writing: " + plyName << std::endl;
+    this->writePLY( (char*)plyName.c_str(), denseMesh_ );
+
+    std::cout << "Writing: " + vtkName << std::endl;
+    this->writeVTK( (char*)vtkName.c_str(), denseMesh_ );
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision)
+{
+    typedef itk::ImageFileReader< ImageType > ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
+
+    if (dtFileName.find(".nrrd") != std::string::npos) {
+        itk::NrrdImageIOFactory::RegisterOneFactory();
+    } else if (dtFileName.find(".mha") != std::string::npos) {
+        itk::MetaImageIOFactory::RegisterOneFactory();
+    }
+
+    std::cout << "Reading distance transform file : " << dtFileName << std::endl;
+    reader->SetFileName( dtFileName.c_str() );
+    reader->Update();
+    this->MeshFromDT(reader->GetOutput(), meshFileName, subdivision, butterfly_subdivision);
 }
 
 

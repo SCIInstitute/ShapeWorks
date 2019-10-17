@@ -213,12 +213,22 @@ int DoIt(InputParams params)
     }
 
     // write global points to be use for pca modes and also local points
+    int mkdirStatus;
+    std::string global_points_path = params.out_path + "/global_particles";
+    std::string local_points_path = params.out_path + "/local_particles";
+#ifdef WIN32
+            mkdirStatus = _mkdir(global_points_path.c_str());
+            mkdirStatus = _mkdir(local_points_path.c_str());
+#else
+            mkdirStatus = mkdir(global_points_path.c_str(), S_IRWXU);
+            mkdirStatus = mkdir(local_points_path.c_str(), S_IRWXU);
+#endif
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
-       std::string curfilename = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global.particles";
+       std::string curfilename = global_points_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global.particles";
        Utils::writeSparseShape((char*)curfilename.c_str(), global_pts[shapeNo]);
 
-       std::string curfilename_local = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local.particles";
+       std::string curfilename_local = local_points_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local.particles";
        Utils::writeSparseShape((char*)curfilename_local.c_str(), local_pts[shapeNo]);
     }
 
@@ -233,6 +243,16 @@ int DoIt(InputParams params)
     reconstructor.writeMeanInfo(params.out_prefix);
 
     // write out good and bad particles for each subject file
+    std::string local_good_bad_path = params.out_path + "/local_good_bad";
+    std::string global_good_bad_path = params.out_path + "/global_good_bad";
+#ifdef WIN32
+            mkdirStatus = _mkdir(local_good_bad_path.c_str());
+            mkdirStatus = _mkdir(global_good_bad_path.c_str());
+#else
+            mkdirStatus = mkdir(local_good_bad_path.c_str(), S_IRWXU);
+            mkdirStatus = mkdir(global_good_bad_path.c_str(), S_IRWXU);
+#endif
+
     std::vector<bool> goodPoints          = reconstructor.GoodPoints();
     for (unsigned int shapeNo = 0; shapeNo < params.worldPointsFilenames.size(); shapeNo++)
     {
@@ -240,8 +260,8 @@ int DoIt(InputParams params)
         std::string outfilenameBad;
         std::ofstream ofsG, ofsB;
 
-        outfilenameGood = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-good.particles";
-        outfilenameBad  = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-bad.particles";
+        outfilenameGood = local_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-good.particles";
+        outfilenameBad  = local_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_local-bad.particles";
 
         ofsG.open(outfilenameGood.c_str());
         ofsB.open(outfilenameBad.c_str());
@@ -258,8 +278,8 @@ int DoIt(InputParams params)
         ofsG.close();
         ofsB.close();
 
-        outfilenameGood = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-good.particles";
-        outfilenameBad  = params.out_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-bad.particles";
+        outfilenameGood = global_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-good.particles";
+        outfilenameBad  = global_good_bad_path + "/" + Utils::removeExtension(Utils::getFilename(params.localPointsFilenames[shapeNo])) + "_global-bad.particles";
 
         ofsG.open(outfilenameGood.c_str());
         ofsB.open(outfilenameBad.c_str());
