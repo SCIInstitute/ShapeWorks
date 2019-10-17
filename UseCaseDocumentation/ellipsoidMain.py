@@ -30,6 +30,8 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
+from GirderConnector import downloadUseCaseData
+
 
 """
 Most of the following steps even though wrapped in python functions are using
@@ -75,6 +77,14 @@ parentDir="TestEllipsoids/"
 filename="Ellipsoids.zip"
 if not os.path.exists(parentDir):
 	os.makedirs(parentDir)
+	
+# Check if the data is in the right place
+if not os.path.exists(filename):
+    print("Can't find " + filename)
+    print("Downloading " + filename + " from SCIGirder.")
+    downloadUseCaseData(filename)
+    
+
 # extract the zipfile
 with ZipFile(filename, 'r') as zipObj:
 	zipObj.extractall(path=parentDir)
