@@ -30,6 +30,8 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
+from GirderConnector import downloadUseCaseData
+
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
@@ -53,10 +55,12 @@ installpath = "../install"
 os.environ["PATH"] = binpath + ":" + os.environ["PATH"]
 os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
 
-
-
-
-filename="/home/sci/atefeh.gk/Public/leftatrium.zip"
+filename="leftatrium.zip"
+# Check if the data is in the right place
+if not os.path.exists(filename):
+    print("Can't find " + filename + " on the local filesystem.")
+    print("Downloading " + filename + " from SCIGirder.")
+    downloadUseCaseData(filename)
 
 if args.start_with_image_and_segmentation_data:
     parentDir="Test_leftatrium/"

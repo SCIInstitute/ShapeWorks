@@ -80,7 +80,7 @@ if not os.path.exists(parentDir):
 	
 # Check if the data is in the right place
 if not os.path.exists(filename):
-    print("Can't find " + filename)
+    print("Can't find " + filename + " on the local filesystem.")
     print("Downloading " + filename + " from SCIGirder.")
     downloadUseCaseData(filename)
     
