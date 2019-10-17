@@ -51,7 +51,7 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
 	debug_projection = ET.SubElement(root, 'debug_projection')
 	debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
 	mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
-	mesh_based_attributes.text = "\n" + str(parameterDictionary['mesh_based_attributes']) + "\n"
+        mesh_based_attributes.text = "\n" + str(1.0) + "\n"
 	verbosity = ET.SubElement(root, 'verbosity')
 	verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
 	inputs = ET.SubElement(root, 'inputs')
@@ -111,7 +111,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	debug_projection = ET.SubElement(root, 'debug_projection')
 	debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
 	mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
-	mesh_based_attributes.text = "\n" + str(parameterDictionary['mesh_based_attributes']) + "\n"
+        mesh_based_attributes.text = "\n" + str(1.0) + "\n"
 	verbosity = ET.SubElement(root, 'verbosity')
 	verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
 	inputs = ET.SubElement(root, 'inputs')
@@ -139,7 +139,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 	file = open(xmlfilename, "w+")
 	file.write(data)
 
-def runShapeWorksOptimize_Basic(parentDir, inDataFiles, parameterDictionary):
+def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionary):
 	numP = parameterDictionary['number_of_particles']
 	outDir = os.path.join(parentDir , str(numP) + '/')
 	if not os.path.exists(outDir):
