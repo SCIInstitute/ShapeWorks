@@ -187,14 +187,13 @@ if int(args.use_single_scale) != 0:
 		"procrustes_scaling" : 0,
 		"save_init_splits" : 0,
 		"debug_projection" : 0,
-		"mesh_based_attributes" : 0,
 		"verbosity" : 3
 	}
 
 	"""
 	Now we execute a single scale particle optimization function.
 	"""
-	[localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
+        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 else:
 	parameterDictionary = {
 		"starting_particles" : 32,
@@ -214,7 +213,6 @@ else:
 		"procrustes_scaling" : 0,
 		"save_init_splits" : 0,
 		"debug_projection" : 0,
-		"mesh_based_attributes" : 0,
 		"verbosity" : 3
 	}
   

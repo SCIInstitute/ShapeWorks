@@ -82,7 +82,7 @@ if args.start_with_image_and_segmentation_data:
             -- Padding
             -- Center of Mass Alignment
             -- Rigid Alignment
-            -- Largets Bounding Box and Cropping
+            -- Largest Bounding Box and Cropping
             """
 
             parentDir = './Test_leftatrium/PrepOutput/'
@@ -304,14 +304,13 @@ if args.use_single_scale:
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "mesh_based_attributes" : 0,
             "verbosity" : 3
     }
 
     """
     Now we execute the particle optimization function.
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
 
 else:
@@ -333,7 +332,6 @@ else:
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "mesh_based_attributes" : 0,
             "verbosity" : 3
     }
 
