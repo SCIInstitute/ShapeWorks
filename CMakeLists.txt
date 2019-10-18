@@ -29,7 +29,7 @@ mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 # Then add ShapeWorks itself as an external project, causing it to 
 # configure the rest (below) by setting SHAPEWORKS_SUPERBUILD to OFF.
 #
-set(SHAPEWORKS_SUPERBUILD ON CACHE bool "")
+set(SHAPEWORKS_SUPERBUILD ON CACHE BOOL "")
 mark_as_advanced(SHAPEWORKS_SUPERBUILD)
 if (SHAPEWORKS_SUPERBUILD)
   include(ShapeworksExternals)

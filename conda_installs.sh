@@ -7,7 +7,7 @@ if [ -z "$PS1" ]; then
   exit 1
 fi
 
-if ! [ -x "$(command -v conda)" ]; then
+if [ -x "$(command -v conda)" ]; then
   echo "installing anaconda..."
   if [ "$(uname)" == "Darwin" ]; then
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
@@ -36,12 +36,13 @@ eval "$(conda shell.bash hook)"
 conda activate shapeworks
 
 #install shapeworks deps
-conda install --yes -c anaconda cmake geotiff libxrandr-devel-cos6-x86_64 libxinerama-devel-cos6-x86_64 libxcursor-devel-cos6-x86_64 libxi-devel-cos6-x86_64
-conda install --yes -c conda-forge xorg-libx11 libuuid xorg-libsm 
+conda install --yes -c anaconda geotiff libxrandr-devel-cos6-x86_64 libxinerama-devel-cos6-x86_64 libxcursor-devel-cos6-x86_64 libxi-devel-cos6-x86_64
+conda install --yes -c conda-forge cmake xorg-libx11 libuuid xorg-libsm 
 conda install --yes -c anaconda numpy
 conda install --yes -c conda-forge matplotlib
 conda install --yes -c conda-forge colorama
 conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
+pip install --upgrade pip
 pip install termcolor
 
 conda info
