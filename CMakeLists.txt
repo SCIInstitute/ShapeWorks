@@ -105,7 +105,7 @@ else()
   SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
   # GUI
-  find_package(OpenGL ${SHAPEWORKS_QT_REQUIRED})
+  cmake_policy(SET CMP0072 NEW) # prefer the new opengl library GLVND to the legacy if both are present
   find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
   if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
     set(SHAPEWORKS_QT_FOUND 1)
