@@ -59,7 +59,7 @@ os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
 filename="/home/sci/atefeh.gk/Public/leftatrium.zip"
 
 if args.start_with_image_and_segmentation_data:
-    parentDir="Test_leftatrium/"
+    parentDir="TestLeftAtrium/"
 
     if not os.path.exists(parentDir):
             os.makedirs(parentDir)
@@ -85,7 +85,7 @@ if args.start_with_image_and_segmentation_data:
             -- Largest Bounding Box and Cropping
             """
 
-            parentDir = './Test_leftatrium/PrepOutput/'
+            parentDir = './TestLeftAtrium/PrepOutput/'
 
             print("\nStep 2. Groom - Data Pre-processing\n")
             if args.interactive:
@@ -96,7 +96,7 @@ if args.start_with_image_and_segmentation_data:
             Apply isotropic resampling
 
             For detailed explainations of parameters for resampling volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
 
             the segmentation and images are resampled independently and the result files are saved in two different directories.
             """
@@ -107,7 +107,7 @@ if args.start_with_image_and_segmentation_data:
             Apply padding
 
             For detailed explainations of parameters for padding volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
 
             Both the segmentation and raw images are padded.
             """
@@ -119,7 +119,7 @@ if args.start_with_image_and_segmentation_data:
             Apply center of mass alignment
 
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
 
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
@@ -130,7 +130,7 @@ if args.start_with_image_and_segmentation_data:
             Apply rigid alignment
 
             For detailed explainations of parameters for rigid alignment of volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
 
             This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
             There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
@@ -143,10 +143,15 @@ if args.start_with_image_and_segmentation_data:
             [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
             """
+            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+
+
             Compute largest bounding box and apply cropping
             processRaw = True, processes raw and binary images with shared parameters.
             processRaw = False, applies the center of mass alignment only on segemnattion data.
             The function uses the same bounding box to crop the raw and segemnattion data.
+
             """
             [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
 
@@ -169,7 +174,7 @@ else:
     if args.interactive:
             input("Press Enter to continue")
 
-    parentDir="Test_leftatrium/"
+    parentDir="TestLeftAtrium/"
 
     if not os.path.exists(parentDir):
             os.makedirs(parentDir)
@@ -180,7 +185,6 @@ else:
 
         fileList = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
 
-    fileList = fileList[:3]
     if not args.start_with_prepped_data:
             """
             ## GROOM : Data Pre-processing
@@ -197,7 +201,7 @@ else:
                     input("Press Enter to continue")
 
             # create the output directory
-            parentDir = './Test_leftatrium/PrepOutput/'
+            parentDir = './TestLeftAtrium/PrepOutput/'
             if not os.path.exists(parentDir):
                     os.makedirs(parentDir)
 
@@ -207,9 +211,10 @@ else:
             Apply isotropic resampling
 
             For detailed explainations of parameters for resampling volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
 
             """
+
             resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
 
 
@@ -217,7 +222,7 @@ else:
             Apply padding
 
             For detailed explainations of parameters for padding volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
 
             """
 
@@ -227,7 +232,7 @@ else:
             Apply center of mass alignment
 
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
 
              """
             comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
@@ -236,16 +241,20 @@ else:
             Apply rigid alignment
 
             For detailed explainations of parameters for rigid alignment of volumes, go to
-            ... link
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
 
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
-            medianFile = FindReferenceImage FindMedianImage(comFiles)
+            medianFile = FindReferenceImage(comFiles)
 
             rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
 
             """
             Compute largest bounding box and apply cropping
+
+            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
+
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
             """
             croppedFiles = applyCropping(parentDir, rigidFiles, None )
 
@@ -272,24 +281,34 @@ else:
 Now that we have the distance transform representation of data we create
 the parameter files for the shapeworks particle optimization routine.
 For more details on the plethora of parameters for shapeworks please refer to
-...[link to documentation]
+'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ParameterDescription.pdf'
 
-First we need to create a dictionary for all the parameters required by this
-optimization routine
+We provide two different mode of operations for the ShapeWorks particle opimization;
+1- Single Scale model takes fixed number of particles and performs the optimization.
+For more detail about the optimization steps and parameters please refer to
+'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ScriptUsage.pdf'
+
+2- Multi scale model optimizes for different number of particles in hierarchical manner.
+For more detail about the optimization steps and parameters please refer to
+'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ScriptUsage.pdf'
+
+First we need to create a dictionary for all the parameters required by these
+optimization routines
 """
 print("\nStep 4. Optimize - Particle Based Optimization\n")
 if args.interactive:
         input("Press Enter to continue")
 
-pointDir = './Test_leftatrium/PointFiles/'
+pointDir = './TestLeftAtrium/PointFiles/'
 if not os.path.exists(pointDir):
     os.makedirs(pointDir)
 
 
 if args.use_single_scale:
+
     parameterDictionary = {
-            "number_of_particles" : 128,
-            "use_normals": 0,
+            "number_of_particles" : 1024,
+            "use_normals": 1,
             "normal_weight": 10,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
@@ -311,7 +330,7 @@ if args.use_single_scale:
     """
     Now we execute the particle optimization function.
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleSale(pointDir, dtFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
 
 else:
@@ -373,7 +392,7 @@ if args.interactive:
         input("Press Enter to continue")
 
 
-meanDir   = './Test_leftatrium/MeanReconstruction/'
+meanDir   = './TestLeftAtrium/MeanReconstruction/'
 if not os.path.exists(meanDir):
         os.makedirs(meanDir)
 
@@ -415,7 +434,7 @@ print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the loc
 if args.interactive :
         input("Press Enter to continue")
 
-meshDir_local   = './Test_leftatrium/MeshFiles-Local/'
+meshDir_local   = './TestLeftAtrium/MeshFiles-Local/'
 if not os.path.exists(meshDir_local):
         os.makedirs(meshDir_local)
 
@@ -443,7 +462,7 @@ print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the wor
 if args.interactive :
         input("Press Enter to continue")
 
-meshDir_global   = './Test_leftatrium/MeshFiles-World/'
+meshDir_global   = './TestLeftAtrium/MeshFiles-World/'
 if not os.path.exists(meshDir_global):
         os.makedirs(meshDir_global)
 
@@ -470,7 +489,7 @@ print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant
 if args.interactive :
         input("Press Enter to continue")
 
-pcaDir   = './Test_leftatrium/PCAModesFiles/'
+pcaDir   = './TestLeftAtrium/PCAModesFiles/'
 if not os.path.exists(pcaDir):
         os.makedirs(pcaDir)
 
@@ -493,7 +512,7 @@ parameterDictionary = {
 runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
 
 """
-The local and world particles will be saved in Test_leftatrium/PointFiles/<number_of_particles>
+The local and world particles will be saved in TestLeftAtrium/PointFiles/<number_of_particles>
 directory, the set of these points on each shape constitue a particle based shape model
 or a Point Distribution Model (PDM). This PDM shape representation is
 computationally flexible and efficient and we can use it to perform shape
