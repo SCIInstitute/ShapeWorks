@@ -13,6 +13,7 @@ numpy
 matplotlib
 colorama
 termcolor
+requests
 
 # Automatically installed by superbuild.sh:
 vxl
