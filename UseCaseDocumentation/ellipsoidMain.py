@@ -171,7 +171,7 @@ if not os.path.exists(pointDir):
 
 if int(args.use_single_scale) != 0:
 	parameterDictionary = {
-		"number_of_particles" : 128,
+                "number_of_particles" : 512,
 		"use_normals": 0,
                 "normal_weight": 10,
 		"checkpointing_interval" : 200,
@@ -182,7 +182,7 @@ if int(args.use_single_scale) != 0:
 		"ending_regularization" : 0.1,
 		"recompute_regularization_interval" : 2,
 		"domains_per_shape" : 1,
-		"relative_weighting" : 10,
+                "relative_weighting" : 5,
 		"initial_relative_weighting" : 0.01,
 		"procrustes_interval" : 0,
 		"procrustes_scaling" : 0,
