@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 option(USE_OPENMP      "Build using OpenMP" ON)
 option(Build_PrepTools "Build prep tools"   ON)
 option(Build_Run       "Build shapeworks"   ON)
-option(Build_Post      "Build post"         ON)
+option(Build_Post      "Build post"         OFF)
 option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
 if (${Build_Post} OR ${Build_View2} OR ${Build_Studio})
@@ -227,9 +227,6 @@ else()
 
   set(APP ${CMAKE_INSTALL_PREFIX}/stl2vtk) 
 
-  # set paths to dependencies
-  set(DIRS ${CMAKE_INSTALL_PREFIX}/lib)
-
   foreach(plugin ${Qt5Network_PLUGINS})
     get_target_property(_loc ${plugin} LOCATION)
     message("Plugin ${plugin} is at location ${_loc}")
@@ -249,14 +246,8 @@ else()
   get_target_property(QT5_WIDGETSLIBRARY Qt5::Widgets LOCATION)
   get_filename_component(QT5_WIDGETSLIBRARYPATH ${QT5_WIDGETSLIBRARY} PATH)
   MESSAGE(STATUS "QT widget: ${QT5_WIDGETSLIBRARYPATH}")
-  set(DIRS "${QT5_WIDGETSLIBRARYPATH} \${CMAKE_INSTALL_PREFIX}/lib")
-
   set(DIRS "${CMAKE_INSTALL_PREFIX}/lib")
-
   list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}") 
-
-  # <ctc> try without this to see if it's actually necessary
-  #include(InstallRequiredSystemLibraries)
 
   MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
   MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
