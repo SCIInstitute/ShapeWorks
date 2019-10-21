@@ -265,22 +265,24 @@ bool Project::load_project(QString filename, std::string& planesFile)
     groom_files.push_back(groomed_mesh_element->GetText());
     TiXmlElement* point_file_element = e->FirstChildElement("point_file");
 
-    std::string filename = point_file_element->GetText();
-    if (filename.find(".lpts") != std::string::npos) {
-      local_point_files.push_back(filename);
-    }
-    else if (filename.find(".wpts") != std::string::npos) {
-      global_point_files.push_back(filename);
-    }
-
-    auto next_point_file = point_file_element->NextSiblingElement("point_file");
-    if (next_point_file) {
-      filename = next_point_file->GetText();
+    if (point_file_element) {
+      std::string filename = point_file_element->GetText();
       if (filename.find(".lpts") != std::string::npos) {
         local_point_files.push_back(filename);
       }
       else if (filename.find(".wpts") != std::string::npos) {
         global_point_files.push_back(filename);
+      }
+
+      auto next_point_file = point_file_element->NextSiblingElement("point_file");
+      if (next_point_file) {
+        filename = next_point_file->GetText();
+        if (filename.find(".lpts") != std::string::npos) {
+          local_point_files.push_back(filename);
+        }
+        else if (filename.find(".wpts") != std::string::npos) {
+          global_point_files.push_back(filename);
+        }
       }
     }
   }
@@ -345,7 +347,6 @@ bool Project::load_light_project(QString filename, string &planesFile)
   TiXmlHandle docHandle(&doc);
   std::istringstream inputsBuffer;
 
-
   /// TODO
   ///this->groupsAvailable = (docHandle.FirstChild("group_ids").Element() != nullptr);
 
@@ -395,7 +396,6 @@ bool Project::load_light_project(QString filename, string &planesFile)
   this->load_groomed_files(groom_files, 0.5);
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
-
 
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;

@@ -45,12 +45,13 @@ int main(int argc, char * argv[] )
     optparse::OptionParser parser = buildParser();
     optparse::Values & options = parser.parse_args(argc,argv);
     std::vector<std::string> args = parser.args();
-
+/*
     if(argc < 9)
     {
         parser.print_help();
         return EXIT_FAILURE;
     }
+*/
 
     std::string inFilename         = (std::string) options.get("inFilename");
     std::string outFilename        = (std::string) options.get("outFilename");
@@ -65,75 +66,82 @@ int main(int argc, char * argv[] )
     float startingIndexY    = (float) options.get("startingIndexY");
     float startingIndexZ    = (float) options.get("startingIndexZ");
 
-    typedef   float InputPixelType;
-    typedef   float InternalPixelType;
-    typedef   float OutputPixelType;
 
-    const     unsigned int    Dimension = 3;
-    typedef itk::Image< InputPixelType,    Dimension >   InputImageType;
-    typedef itk::Image< OutputPixelType,   Dimension >   OutputImageType;
-    typedef itk::ImageFileReader< InputImageType  >  ReaderType;
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(inFilename);
-    try
-    {
-        reader->Update();
-    }
-    catch( itk::ExceptionObject & excep )
-    {
-        std::cerr << "Exception caught!" << std::endl;
-        std::cerr << excep << std::endl;
-    }
+    if(inFilename!="")
+        {
 
-    InputImageType::IndexType index;
-    index[0]=startingIndexX;
-    index[1]=startingIndexY;
-    index[2]=startingIndexZ;
-    InputImageType::SizeType desiredSize;
-    desiredSize[0]=bbX;
-    desiredSize[1]=bbY;
-    desiredSize[2]=bbZ;
+        typedef   float InputPixelType;
+        typedef   float InternalPixelType;
+        typedef   float OutputPixelType;
 
-    InputImageType::RegionType desiredRegion(index, desiredSize);
+        const     unsigned int    Dimension = 3;
+        typedef itk::Image< InputPixelType,    Dimension >   InputImageType;
+        typedef itk::Image< OutputPixelType,   Dimension >   OutputImageType;
+        typedef itk::ImageFileReader< InputImageType  >  ReaderType;
+        ReaderType::Pointer reader = ReaderType::New();
+        reader->SetFileName(inFilename);
+        try
+        {
+            reader->Update();
+        }
+        catch( itk::ExceptionObject & excep )
+        {
+            std::cerr << "Exception caught!" << std::endl;
+            std::cerr << excep << std::endl;
+        }
 
-    typedef itk::ExtractImageFilter< InputImageType, OutputImageType > FilterType;
-    FilterType::Pointer filter = FilterType::New();
-    filter->SetExtractionRegion(desiredRegion);
-    filter->SetInput(reader->GetOutput());
+        InputImageType::IndexType index;
+        index[0]=startingIndexX;
+        index[1]=startingIndexY;
+        index[2]=startingIndexZ;
+        InputImageType::SizeType desiredSize;
+        desiredSize[0]=bbX;
+        desiredSize[1]=bbY;
+        desiredSize[2]=bbZ;
 
-#if ITK_VERSION_MAJOR >= 4
-    filter->SetDirectionCollapseToIdentity(); // This is required.
-#endif
-    try
-    {
-        filter->Update();
-    }
-    catch( itk::ExceptionObject & excep )
-    {
-        std::cerr << "Exception caught !" << std::endl;
-        std::cerr << excep << std::endl;
-    }
+        InputImageType::RegionType desiredRegion(index, desiredSize);
 
-    InputImageType::Pointer output = filter->GetOutput();
-    output->DisconnectPipeline();
+        typedef itk::ExtractImageFilter< InputImageType, OutputImageType > FilterType;
+        FilterType::Pointer filter = FilterType::New();
+        filter->SetExtractionRegion(desiredRegion);
+        filter->SetInput(reader->GetOutput());
 
-    typedef itk::ImageFileWriter< OutputImageType >  WriterType;
-    WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( outFilename);
-    writer->SetInput(output);
+    #if ITK_VERSION_MAJOR >= 4
+        filter->SetDirectionCollapseToIdentity(); // This is required.
+    #endif
+        try
+        {
+            filter->Update();
+        }
+        catch( itk::ExceptionObject & excep )
+        {
+            std::cerr << "Exception caught !" << std::endl;
+            std::cerr << excep << std::endl;
+        }
 
-    try
-    {
-        writer->Update();
-    }
-    catch( itk::ExceptionObject & excep )
-    {
-        std::cerr << "Exception caught !" << std::endl;
-        std::cerr << excep << std::endl;
+        InputImageType::Pointer output = filter->GetOutput();
+        output->DisconnectPipeline();
+
+        typedef itk::ImageFileWriter< OutputImageType >  WriterType;
+        WriterType::Pointer writer = WriterType::New();
+        writer->SetFileName( outFilename);
+        writer->SetInput(output);
+
+        try
+        {
+            writer->Update();
+        }
+        catch( itk::ExceptionObject & excep )
+        {
+            std::cerr << "Exception caught !" << std::endl;
+            std::cerr << excep << std::endl;
+        }
     }
 
     if(MRIinFilename!="")
     {
+
+
         typedef   float  MRIInputPixelType;
         typedef   float  MRIInternalPixelType;
         typedef   float  MRIOutputPixelType;

@@ -22,14 +22,8 @@ if(BUILD_FeaMeshSupport)
 endif(BUILD_FeaMeshSupport)
 #endif(BUILD_MeshSupport OR BUILD_FeaMeshSupport)
 
-# Set up the include directories
-include_directories ( 
-  ${CMAKE_CURRENT_SOURCE_DIR}/Utilities
-  ${CMAKE_CURRENT_SOURCE_DIR}/ITKParticleSystem 
-)
-
 # Command-line tools are built by default.
-subdirs(ITKParticleSystem Utilities ShapeWorksRun)
+subdirs(ShapeWorksRun)
 
 IF (WIN32 AND MSVC)
   ADD_DEFINITIONS(-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)

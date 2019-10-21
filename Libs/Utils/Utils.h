@@ -1,7 +1,6 @@
 
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: CS6350.h,v $
   Date:      $Date: 2014/03/24 01:17:40 $
   Version:   $Revision: 1.2 $
   Author:    $Author: elhabian $

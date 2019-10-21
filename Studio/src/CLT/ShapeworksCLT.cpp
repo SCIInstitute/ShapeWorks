@@ -9,6 +9,7 @@
 #include "itkMetaImageIOFactory.h"
 
 int main(int argc, char ** argv) {
+  /*
   try {
     if (argc < 4) {
       std::cerr << "Usage: ./ShapeworksCLT PARAMETER_FILE.xml INPUT1 INPUT2 ..." << std::endl;
@@ -148,8 +149,7 @@ int main(int argc, char ** argv) {
     } 
     //run the optimize step
     ShapeWorksOptimize optimize(groomed_img, cutPlanes, optimize_scales,
-      std::vector<double>(optimize_scales,start_reg),
-      std::vector<double>(optimize_scales, end_reg),
+      start_reg, end_reg,
       std::vector<unsigned int>(optimize_scales, iters),
       std::vector<double>(optimize_scales, decay_span),
       std::vector<size_t>(optimize_scales, procrustes_interval),
@@ -179,4 +179,5 @@ int main(int argc, char ** argv) {
   }
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
+  */
 }
