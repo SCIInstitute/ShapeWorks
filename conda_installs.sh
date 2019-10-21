@@ -43,6 +43,7 @@ conda install --yes -c conda-forge matplotlib
 conda install --yes -c conda-forge colorama
 conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
 pip install termcolor
+pip install requests
 
 conda info
 
