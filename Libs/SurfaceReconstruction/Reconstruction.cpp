@@ -37,7 +37,8 @@ Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageTyp
                                                                                                    bool doLaplacianSmoothingBeforeDecimation,
                                                                                                    bool doLaplacianSmoothingAfterDecimation,
                                                                                                    float smoothingLambda,
-                                                                                                   int smoothingIterations) :
+                                                                                                   int smoothingIterations,
+                                                                                                   bool usePairwiseNormalsDifferencesForGoodBad):
     sparseDone_(false), denseDone_(false),
     decimationPercent_(decimationPercent),
     maxAngleDegrees_(maxAngleDegrees),
@@ -46,7 +47,7 @@ Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageTyp
     doLaplacianSmoothingBeforeDecimation_(doLaplacianSmoothingBeforeDecimation),
     smoothingLambda_(smoothingLambda),
     smoothingIterations_(smoothingIterations),
-    out_prefix_(out_prefix), use_origin(false)
+    out_prefix_(out_prefix), use_origin(false), usePairwiseNormalsDifferencesForGoodBad_(usePairwiseNormalsDifferencesForGoodBad)
 {}
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -457,113 +458,97 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                                   subjectPts[shape], distance_transform[shape]));
         }
 
-        // spherical coordinates of normal vector per particle per shape sample to compute average normals
-        std::vector< std::vector< double > > thetas ; thetas.clear();
-        std::vector< std::vector< double > > phis;    phis.clear();
-
-        thetas.resize(sparseMean.size());
-        phis.resize(sparseMean.size());
-        for (size_t j = 0; j < sparseMean.size(); j++) {
-            thetas[j].resize(local_pts.size());
-            phis[j].resize(local_pts.size());
-        }
-        for (int i = 0; i < local_pts.size(); i++){
-            for (size_t j = 0; j < sparseMean.size(); j++) {
-                double curNormal[3];
-                double curNormalSph[3];
-
-                curNormal[0] = normals[i](j,0);
-                curNormal[1] = normals[i](j,1);
-                curNormal[2] = normals[i](j,2);
-
-                Utils::cartesian2spherical(curNormal, curNormalSph);
-                phis[j][i]   = curNormalSph[1];
-                thetas[j][i] = curNormalSph[2];
-            }
-        }
-
-        // compute mean normal for every particle
-        vnl_matrix<double> average_normals(sparseMean.size(), 3);
-        for (size_t j = 0; j < sparseMean.size(); j++) {
-            double avgNormal_sph[3];
-            double avgNormal_cart[3];
-            avgNormal_sph[0] = 1;
-            avgNormal_sph[1] = Utils::averageThetaArc(phis[j]);
-            avgNormal_sph[2] = Utils::averageThetaArc(thetas[j]);
-            Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
-
-            average_normals(j,0) = avgNormal_cart[0];
-            average_normals(j,1) = avgNormal_cart[1];
-            average_normals(j,2) = avgNormal_cart[2];
-        }
-
         // now decide whether each particle is a good based on dispersion from mean
         // (it normals are in the same direction accross shapes) or
         // bad (there is discrepency in the normal directions across shapes)
         this->goodPoints_.resize(local_pts[0].size(), true);
-        for (size_t j = 0; j < sparseMean.size(); j++) {
+        if(usePairwiseNormalsDifferencesForGoodBad_){
+            for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
+                bool isGood = true;
 
-            double cur_cos_appex = 0;
-            // the mean normal of the current particle index
-            double nx_jj = average_normals(j,0);
-            double ny_jj = average_normals(j,1);
-            double nz_jj = average_normals(j,2);
+                // the normal of the first shape
+                double nx_jj = normals[0](ii, 0);
+                double ny_jj = normals[0](ii, 1);
+                double nz_jj = normals[0](ii, 2);
 
-            for (unsigned int shapeNo_kk = 0; shapeNo_kk < local_pts.size(); shapeNo_kk++) {
-                double nx_kk = normals[shapeNo_kk](j, 0);
-                double ny_kk = normals[shapeNo_kk](j, 1);
-                double nz_kk = normals[shapeNo_kk](j, 2);
+                // start from the second
+                for (unsigned int shapeNo_kk = 1; shapeNo_kk <
+                     local_pts.size(); shapeNo_kk++) {
+                    double nx_kk = normals[shapeNo_kk](ii, 0);
+                    double ny_kk = normals[shapeNo_kk](ii, 1);
+                    double nz_kk = normals[shapeNo_kk](ii, 2);
 
-                cur_cos_appex += (nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk);
+                    this->goodPoints_[ii] = this->goodPoints_[ii] &&
+                            ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
+                             std::cos(this->maxAngleDegrees_ * M_PI / 180.));
+                }
+            }
+        }
+        else {
+            // here use the angle to the average normal
+            // spherical coordinates of normal vector per particle per shape sample to compute average normals
+            std::vector< std::vector< double > > thetas ; thetas.clear();
+            std::vector< std::vector< double > > phis;    phis.clear();
+
+            thetas.resize(sparseMean.size());
+            phis.resize(sparseMean.size());
+            for (size_t j = 0; j < sparseMean.size(); j++) {
+                thetas[j].resize(local_pts.size());
+                phis[j].resize(local_pts.size());
+            }
+            for (int i = 0; i < local_pts.size(); i++){
+                for (size_t j = 0; j < sparseMean.size(); j++) {
+                    double curNormal[3];
+                    double curNormalSph[3];
+
+                    curNormal[0] = normals[i](j,0);
+                    curNormal[1] = normals[i](j,1);
+                    curNormal[2] = normals[i](j,2);
+
+                    Utils::cartesian2spherical(curNormal, curNormalSph);
+                    phis[j][i]   = curNormalSph[1];
+                    thetas[j][i] = curNormalSph[2];
+                }
             }
 
-            cur_cos_appex /= local_pts.size();
-            cur_cos_appex *= 2.0; // due to symmetry about the mean normal
+            // compute mean normal for every particle
+            vnl_matrix<double> average_normals(sparseMean.size(), 3);
+            for (size_t j = 0; j < sparseMean.size(); j++) {
+                double avgNormal_sph[3];
+                double avgNormal_cart[3];
+                avgNormal_sph[0] = 1;
+                avgNormal_sph[1] = Utils::averageThetaArc(phis[j]);
+                avgNormal_sph[2] = Utils::averageThetaArc(thetas[j]);
+                Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
 
-            this->goodPoints_[j] = cur_cos_appex > std::cos(this->maxAngleDegrees_ * M_PI / 180.);
+                average_normals(j,0) = avgNormal_cart[0];
+                average_normals(j,1) = avgNormal_cart[1];
+                average_normals(j,2) = avgNormal_cart[2];
+            }
+
+            for (size_t j = 0; j < sparseMean.size(); j++) {
+
+                double cur_cos_appex = 0;
+                // the mean normal of the current particle index
+                double nx_jj = average_normals(j,0);
+                double ny_jj = average_normals(j,1);
+                double nz_jj = average_normals(j,2);
+
+                for (unsigned int shapeNo_kk = 0; shapeNo_kk < local_pts.size(); shapeNo_kk++) {
+                    double nx_kk = normals[shapeNo_kk](j, 0);
+                    double ny_kk = normals[shapeNo_kk](j, 1);
+                    double nz_kk = normals[shapeNo_kk](j, 2);
+
+                    cur_cos_appex += (nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk);
+                }
+
+                cur_cos_appex /= local_pts.size();
+                cur_cos_appex *= 2.0; // due to symmetry about the mean normal
+
+                this->goodPoints_[j] = cur_cos_appex > std::cos(this->maxAngleDegrees_ * M_PI / 180.);
+            }
         }
 
-
-        //        for (size_t j = 0; j < sparseMean.size(); j++) {
-
-        //            // the mean normal of the current particle index
-        //            double nx_jj = average_normals(j,0);
-        //            double ny_jj = average_normals(j,1);
-        //            double nz_jj = average_normals(j,2);
-
-        //            for (unsigned int shapeNo_kk = 0; shapeNo_kk < local_pts.size(); shapeNo_kk++) {
-        //                double nx_kk = normals[shapeNo_kk](j, 0);
-        //                double ny_kk = normals[shapeNo_kk](j, 1);
-        //                double nz_kk = normals[shapeNo_kk](j, 2);
-
-        //                this->goodPoints_[j] = this->goodPoints_[j] &&
-        //                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
-        //                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
-
-        //            }
-        //        }
-
-
-        //        for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
-        //            bool isGood = true;
-
-        //            // the normal of the first shape
-        //            double nx_jj = normals[0](ii, 0);
-        //            double ny_jj = normals[0](ii, 1);
-        //            double nz_jj = normals[0](ii, 2);
-
-        //            // start from the second
-        //            for (unsigned int shapeNo_kk = 1; shapeNo_kk <
-        //                 local_pts.size(); shapeNo_kk++) {
-        //                double nx_kk = normals[shapeNo_kk](ii, 0);
-        //                double ny_kk = normals[shapeNo_kk](ii, 1);
-        //                double nz_kk = normals[shapeNo_kk](ii, 2);
-
-        //                this->goodPoints_[ii] = this->goodPoints_[ii] &&
-        //                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
-        //                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
-        //            }
-        //        }
         // decide which correspondences will be used to build the warp
         std::vector<int> particles_indices;
         particles_indices.clear();
