@@ -87,11 +87,11 @@ if not os.path.exists(filename):
 
 # extract the zipfile
 with ZipFile(filename, 'r') as zipObj:
-	zipObj.extractall(path=parentDir)
-	if not args.start_with_prepped_data:
-		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
-	else:
-		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
+    zipObj.extractall(path=parentDir)
+    if not args.start_with_prepped_data:
+        fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
+    else:
+        fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
     fileList = fileList[:15]
 
