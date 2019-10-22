@@ -51,19 +51,18 @@ parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (def
 args = parser.parse_args()
 os.environ["PATH"] = args.shapeworks_path + ":" + os.environ["PATH"]
 
-filename="leftatrium.zip"
+filename="./leftatrium.zip"
 # Check if the data is in the right place
 if not os.path.exists(filename):
     print("Can't find " + filename + " on the local filesystem.")
     print("Downloading " + filename + " from SCIGirder.")
     downloadUseCaseData(filename)
+
 #fixme: ld_library_path should not be necessary (see github issue #230)
 os.environ["LD_LIBRARY_PATH"]= binpath + "/../lib:" + binpath + "/../lib64"
 
 
 try:
-
-    filename="./leftatrium.zip"
 
     if args.start_with_image_and_segmentation_data:
         parentDir="Test_leftatrium/"
