@@ -49,9 +49,22 @@ int DoIt(InputParams params)
     ReconstructionType reconstructor;
     ParticleShapeStatistics<Dimension> shapeStats;
 
-    std::string denseFilename      = params.mean_prefix + "_dense.vtk";
-    std::string sparseFilename     = params.mean_prefix + "_sparse.particles";
-    std::string goodPointsFilename = params.mean_prefix + "_goodPoints.txt";
+    std::string denseFilename      ;
+    std::string sparseFilename     ;
+    std::string goodPointsFilename ;
+
+    if(params.use_template_mesh)
+    {
+        denseFilename      = params.template_dense_mesh;
+        sparseFilename     = params.template_sparse_points;
+        goodPointsFilename = ""; // assume that all are good points
+    }
+    else
+    {
+        denseFilename      = params.mean_prefix + "_dense.vtk";
+        sparseFilename     = params.mean_prefix + "_sparse.particles";
+        goodPointsFilename = params.mean_prefix + "_goodPoints.txt";
+    }
 
     std::cout << "denseFilename: "  << denseFilename << std::endl;
     std::cout << "sparseFilename: " << sparseFilename << std::endl;
@@ -77,30 +90,43 @@ int DoIt(InputParams params)
     // perform PCA on the global points that were used to compute the dense mean mesh
     shapeStats.DoPCA(global_pts, domainsPerShape);
 
-    // detect number of modes
     std::vector<double> percentVarByMode = shapeStats.PercentVarByMode();
-    bool found = false;
-    int NumberOfModes = 0;
     int TotalNumberOfModes = percentVarByMode.size();
-    for (int n = TotalNumberOfModes-1; n >=0; n--)
+
+    int NumberOfModes = 0; bool singleModeToBeGen = false;
+    if ((params.mode_index >= 0) && (params.mode_index < TotalNumberOfModes))
     {
-        if (percentVarByMode[n] >= params.maximum_variance_captured && found==false)
-        {
-            NumberOfModes = n;
-            found = true;
+        NumberOfModes = 1; singleModeToBeGen = true;
+        std::cout << "Mode #" << params.mode_index << " is requested to be generated  ..." << std::endl;
+    }
+    else {
+        if (params.number_of_modes > 0 ){
+            NumberOfModes = std::min(params.number_of_modes, TotalNumberOfModes);
+            std::cout << NumberOfModes << " dominant modes are requested to be generated  ..." << std::endl;
         }
+        else {
+            // detect number of modes
+            bool found = false;
+            for (int n = TotalNumberOfModes-1; n >=0; n--)
+            {
+                if (percentVarByMode[n] >= params.maximum_variance_captured && found==false)
+                {
+                    NumberOfModes = n;
+                    found = true;
+                }
+            }
+
+            if(!found)
+                NumberOfModes = percentVarByMode.size();
+
+            if (NumberOfModes == 0)
+            {
+                std::cerr << "No dominant modes detected !!!!!" << std::endl;
+                return EXIT_FAILURE;
+            }
+        }
+        std::cout << NumberOfModes << " dominant modes is found to capture " << params.maximum_variance_captured*100 << "% of total variation ..." << std::endl;
     }
-
-    if(!found)
-        NumberOfModes = percentVarByMode.size();
-
-    if (NumberOfModes == 0)
-    {
-        std::cerr << "No dominant modes detected !!!!!" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    std::cout << NumberOfModes << " dominant modes is found to capture " << params.maximum_variance_captured*100 << "% of total variation ..." << std::endl;
 
     // start sampling along each mode
     vnl_vector<double> eigenValues  = shapeStats.Eigenvalues();
@@ -126,40 +152,64 @@ int DoIt(InputParams params)
     std::cout << std::endl;
 
     std::string prefix = Utils::getFilename(params.out_prefix);
-    for (int modeId = 0 ; modeId < NumberOfModes; modeId ++)
+    if(!prefix.empty())
+        prefix = prefix + "_";
+
+    for (int modeId = 0 ; modeId < TotalNumberOfModes; modeId ++)
     {
-        std::string modeStr = Utils::int2str(modeId, 2);
+        if (singleModeToBeGen && (modeId != params.mode_index))
+            continue;
+
+        if ((!singleModeToBeGen) && (modeId >= NumberOfModes))
+            break;
+
+        std::string modeStr  = Utils::int2str(modeId, 2);
+        std::string cur_path = params.out_path + "/mode-" + modeStr;
+        int mkdirStatus;
+#ifdef WIN32
+        mkdirStatus = _mkdir(cur_path.c_str());
+#else
+        mkdirStatus = mkdir(cur_path.c_str(), S_IRWXU);
+#endif
 
         double sqrt_eigenValue = sqrt(eigenValues[TotalNumberOfModes - modeId - 1]);
-        double min_std = -1 * params.maximum_std_dev * sqrt_eigenValue;
-        double max_std = +1 * params.maximum_std_dev * sqrt_eigenValue;
+
+        double min_std_factor = -1 * params.maximum_std_dev ;
+        double max_std_factor = +1 * params.maximum_std_dev ;
+        std::vector<double> std_factor_store = Utils::linspace(min_std_factor, max_std_factor, params.number_of_samples_per_mode);
+
+        //double min_std = -1 * params.maximum_std_dev * sqrt_eigenValue;
+        //double max_std = +1 * params.maximum_std_dev * sqrt_eigenValue;
+        //std::vector<double> std_store = Utils::linspace(min_std, max_std, params.number_of_samples_per_mode);
 
         vnl_vector<double> curMode = eigenVectors.get_column(TotalNumberOfModes - modeId - 1);
 
-        std::vector<double> std_store = Utils::linspace(min_std, max_std, params.number_of_samples_per_mode);
-
+        std::vector<double> std_store;
         std::cout << "std_store: " ;
-        for (unsigned int sid = 0 ; sid < std_store.size(); sid++)
+        for (unsigned int sid = 0 ; sid < std_factor_store.size(); sid++)
+        {
+            std_store.push_back(std_factor_store[sid]*sqrt_eigenValue);
             std::cout << std_store[sid] << ", " ;
+        }
         std::cout << std::endl;
 
         // writing stds on file
-        std::string stdfilename = params.out_prefix + "_mode-" + modeStr + "_stds.txt";
+        std::string stdfilename = cur_path + "/" + prefix + "mode-" + modeStr + "_stds.txt";
         ofstream ofs(stdfilename.c_str());
 
         if ( !ofs )
             throw std::runtime_error("Could not open file for output: " + stdfilename);
 
-        for (unsigned int sid = 0 ; sid < std_store.size(); sid++)
-            ofs << std_store[sid] << "\n" ;
+        for (unsigned int sid = 0 ; sid < std_factor_store.size(); sid++)
+            ofs << std_factor_store[sid] << "\n" ;
         ofs.close();
 
         for(unsigned int sampleId = 0 ; sampleId < std_store.size(); sampleId++)
         {
             std::string sampleStr = Utils::int2str(int(sampleId), 3);
 
-            //std::string basename = prefix + "_mode-" + modeStr + "_sample-" + sampleStr ;
-            std::string basename =  "_mode-" + modeStr + "_sample-" + sampleStr ;
+            std::string basename = prefix + "mode-" + modeStr + "_sample-" + sampleStr ;
+            //std::string basename =  "_mode-" + modeStr + "_sample-" + sampleStr ;
 
             std::cout << "generating mode #" + Utils::num2str((float)modeId) + ", sample #" + Utils::num2str((float)sampleId) << std::endl;
 
@@ -191,7 +241,7 @@ int DoIt(InputParams params)
 
             vtkSmartPointer<vtkPolyData> curDense = reconstructor.getMesh(curSparse);
 
-            std::string outfilename = params.out_prefix + basename + "_dense.vtk";
+            std::string outfilename = cur_path + "/" + basename + "_dense.vtk";
             std::cout << "Writing: " << outfilename << std::endl;
 
             vtkSmartPointer<vtkPolyDataWriter> writer = vtkPolyDataWriter::New();
@@ -202,10 +252,10 @@ int DoIt(InputParams params)
             vtkSmartPointer<vtkPoints> vertices = vtkSmartPointer<vtkPoints>::New();
             vertices->DeepCopy( curDense->GetPoints() );
 
-            std::string ptsfilename = params.out_prefix + basename + "_dense.particles";
+            std::string ptsfilename = cur_path + "/" + basename + "_dense.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), vertices);
 
-            ptsfilename = params.out_prefix + basename + "_sparse.particles";
+            ptsfilename = cur_path + "/" + basename + "_sparse.particles";
             Utils::writeSparseShape((char*) ptsfilename.c_str(), curSamplePts);
 
         }

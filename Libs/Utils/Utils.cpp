@@ -34,6 +34,8 @@ void Utils::readSparseShape(vtkSmartPointer<vtkPoints>& points, char* filename, 
 
     std::ifstream ifs;
     ifs.open(filename);
+    if(!ifs.good())
+        throw std::runtime_error("Could not open file for output: " + std::string(filename));
 
     if (number_of_particles>0)
     {
@@ -75,6 +77,8 @@ void Utils::readSparseShape(std::vector<itk::Point<double> > & points, char* fil
     points.clear();
     std::ifstream ifs;
     ifs.open(filename);
+    if(!ifs.good())
+        throw std::runtime_error("Could not open file for output: " + std::string(filename));
 
     if (number_of_particles>0)
     {
@@ -145,6 +149,8 @@ std::vector<int> Utils::readParticleIds(char* filename)
 {
     std::ifstream ifs;
     ifs.open(filename);
+    if(!ifs.good())
+        throw std::runtime_error("Could not open file for output: " + std::string(filename));
 
     std::vector<int> ids;
 
