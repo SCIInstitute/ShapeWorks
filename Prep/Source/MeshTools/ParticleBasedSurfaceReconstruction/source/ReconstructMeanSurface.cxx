@@ -53,7 +53,8 @@ int DoIt(InputParams params)
                                      params.qcFixWinding,
                                      params.qcDoLaplacianSmoothingBeforeDecimation,
                                      params.qcDoLaplacianSmoothingAfterDecimation,
-                                     params.qcSmoothingLambda, params.qcSmoothingIterations);
+                                     params.qcSmoothingLambda, params.qcSmoothingIterations,
+                                     params.usePairwiseNormalsDifferencesForGoodBad);
     reconstructor.reset();
 
     // read distance transforms
