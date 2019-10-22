@@ -25,6 +25,7 @@
 
 #include <itkImageFileWriter.h>
 #include "Utils.h"
+#include <math.h>
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
@@ -645,8 +646,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         // Read input shapes from file list
         std::vector<int> centroidIndices;
         if (this->numClusters_ > 0 && this->numClusters_ < global_pts.size()) {
-            this->performKMeansClustering(global_pts, global_pts[0].size(), centroidIndices);
-
+                this->performKMeansClustering(global_pts, global_pts[0].size(), centroidIndices);
         } else {
             this->numClusters_ = distance_transform.size();
             centroidIndices.resize(distance_transform.size());
@@ -1375,6 +1375,43 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
+int Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::
+ComputeMedianShape(std::vector<vnl_matrix<double> > & shapeList)
+{
+    int medianShapeIndex =-1;
+    double minSum = 1e10;
+
+    for(size_t ii = 0; ii < shapeList.size(); ii++)
+    {
+        vnl_matrix<double> shape_ii = shapeList[ii];
+        double sum = 0.0;
+
+        for(size_t jj = 0; jj < shapeList.size(); jj++)
+        {
+            if(ii==jj)
+                continue;
+
+            vnl_matrix<double> shape_jj = shapeList[jj];
+
+            for(size_t kk =0 ; kk < shape_ii.size(); kk++)
+                sum += (fabs(shape_ii[kk][0] - shape_jj[kk][0]) + fabs(shape_ii[kk][1] - shape_jj[kk][1]) + fabs(shape_ii[kk][2] - shape_jj[kk][2]));
+
+        }
+        sum/=shapeList.size();
+
+        if(sum < minSum)
+        {
+            minSum           = sum;
+            medianShapeIndex = int(ii);
+        }
+    }
+
+    return medianShapeIndex;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::performKMeansClustering(
         std::vector<std::vector<itk::Point<TCoordRep> > > global_pts,
         unsigned int number_of_particles,
@@ -1402,6 +1439,15 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         shapeList.push_back(shapeVector);
     }
     std::vector<int> centers(this->numClusters_, 0);
+    if(this->numClusters_ == 1)
+    {
+        // this should be the median shape rather than a random sample
+        centers[0] = ComputeMedianShape(shapeList);
+        centroidIndices = centers;
+        std::cout << "One cluster is given ... and the median shape is used ... \n";
+        return;
+    }
+
     unsigned int seed = unsigned(std::time(0));
     std::srand(seed);
     centers[0] = rand() % int(number_of_shapes);
