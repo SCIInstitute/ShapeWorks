@@ -22,7 +22,7 @@
 #include "itkCommand.h"
 
 // SHIREEN
-#include "utils.h"
+#include "Utils.h"
 #include <fstream>
 #include <math.h>
 #include "itkMath.h"

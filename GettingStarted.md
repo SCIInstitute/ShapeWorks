@@ -96,6 +96,8 @@ Merge the fetched changes to your current branch:
 ```
 $ git merge origin/<branchname>
 ```
+For example, use this command to merge the latest master to your current branch. After that you can test as necessary, then push your branch and make a pull request when it's ready:
+`git merge origin/master`
 
 Shortcut to both fetch and merge upstream changes to the current branch:  
 ```
