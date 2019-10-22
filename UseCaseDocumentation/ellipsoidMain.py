@@ -31,6 +31,8 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
+from GirderConnector import downloadUseCaseData
+
 
 """
 Most of the following steps even though wrapped in python functions are using
@@ -71,17 +73,25 @@ try:
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    parentDir="TestEllipsoids/"
-    filename="Ellipsoids.zip"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-        # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
-        if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
-        else:
-            fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
+parentDir="TestEllipsoids/"
+filename="Ellipsoids.zip"
+if not os.path.exists(parentDir):
+	os.makedirs(parentDir)
+	
+# Check if the data is in the right place
+if not os.path.exists(filename):
+    print("Can't find " + filename + " on the local filesystem.")
+    print("Downloading " + filename + " from SCIGirder.")
+    downloadUseCaseData(filename)
+    
+
+# extract the zipfile
+with ZipFile(filename, 'r') as zipObj:
+	zipObj.extractall(path=parentDir)
+	if not args.start_with_prepped_data:
+		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
+	else:
+		fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
     fileList = fileList[:15]
 

@@ -44,6 +44,7 @@ conda install --yes -c conda-forge colorama
 conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
 pip install --upgrade pip
 pip install termcolor
+pip install requests
 
 conda info
 
