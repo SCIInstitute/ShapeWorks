@@ -129,6 +129,7 @@ public:
     void MeshFromDT(typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision);
 
 private:
+    int ComputeMedianShape(std::vector<vnl_matrix<double>> & shapeList);
     void computeDenseMean(
             std::vector< PointArrayType > local_pts,
             std::vector< PointArrayType > global_pts,
