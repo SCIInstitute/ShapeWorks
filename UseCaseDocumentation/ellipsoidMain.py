@@ -23,6 +23,7 @@ First import the necessary modules
 ##import matplotlib.pyplot as plt
 from zipfile import ZipFile
 import os
+import sys
 import csv
 import argparse
 
@@ -49,7 +50,6 @@ parser.add_argument("--start_with_prepped_data", help="Start with already preppe
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
-print(args)
 os.environ["PATH"] = args.shapeworks_path + ":" + os.environ["PATH"]
 
 try:
@@ -69,13 +69,13 @@ try:
     """
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     parentDir="TestEllipsoids/"
     filename="Ellipsoids.zip"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
-    # extract the zipfile
+        # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
         if not args.start_with_prepped_data:
@@ -99,7 +99,7 @@ try:
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if int(args.interactive) != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
 
     parentDir = 'TestEllipsoids/PrepOutput/'
@@ -145,7 +145,7 @@ try:
 
     print("\nStep 3. Groom - Convert to distance transforms\n")
     if int(args.interactive) != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     if int(args.start_with_prepped_data) == 0:
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
@@ -166,7 +166,7 @@ try:
 
     print("\nStep 4. Optimize - Particle Based Optimization\n")
     if int(args.interactive) != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     pointDir = 'TestEllipsoids/PointFiles/'
     if not os.path.exists(pointDir):
@@ -255,7 +255,7 @@ try:
 
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
     if args.interactive != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     meanDir   = './TestEllipsoids/MeanReconstruction/'
     if not os.path.exists(meanDir):
@@ -270,23 +270,23 @@ try:
         "do_procrustes" : 0,
         "do_procrustes_scaling" : 0,
         "levelsetValue" : 0.0,
-           "targetReduction" : 0.0,
-           "featureAngle" : 30,
-           "lsSmootherIterations" : 1,
-           "meshSmootherIterations" : 1,
-           "preserveTopology" : 1,
-           "qcFixWinding" : 1,
-           "qcDoLaplacianSmoothingBeforeDecimation" : 1,
-           "qcDoLaplacianSmoothingAfterDecimation" : 1,
-           "qcSmoothingLambda" : 0.5,
-           "qcSmoothingIterations" : 3,
-           "qcDecimationPercentage" : 0.9,
-           "normalAngle" : 90,
-           "use_tps_transform" : 0,
-           "use_bspline_interpolation" : 0,
-           "display" : 0,
-           "glyph_radius" : 1
-            }
+        "targetReduction" : 0.0,
+        "featureAngle" : 30,
+        "lsSmootherIterations" : 1,
+        "meshSmootherIterations" : 1,
+        "preserveTopology" : 1,
+        "qcFixWinding" : 1,
+        "qcDoLaplacianSmoothingBeforeDecimation" : 1,
+        "qcDoLaplacianSmoothingAfterDecimation" : 1,
+        "qcSmoothingLambda" : 0.5,
+        "qcSmoothingIterations" : 3,
+        "qcDecimationPercentage" : 0.9,
+        "normalAngle" : 90,
+        "use_tps_transform" : 0,
+        "use_bspline_interpolation" : 0,
+        "display" : 0,
+        "glyph_radius" : 1
+    }
 
     runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
 
@@ -296,7 +296,7 @@ try:
 
     print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
     if args.interactive != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     meshDir_local   = './TestEllipsoids/MeshFiles-Local/'
     if not os.path.exists(meshDir_local):
@@ -324,7 +324,7 @@ try:
 
     print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
     if args.interactive !=0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     meshDir_global   = './TestEllipsoids/MeshFiles-World/'
     if not os.path.exists(meshDir_global):
@@ -351,7 +351,7 @@ try:
 
     print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
     if args.interactive != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     pcaDir   = './TestEllipsoids/PCAModesFiles/'
     if not os.path.exists(pcaDir):
@@ -364,7 +364,7 @@ try:
         "number_of_particles" : 128,
         "mean_prefix" : meanDir + 'ellipsoid',
         "out_prefix" : pcaDir + 'ellipsoid', 
-            "use_tps_transform" : 0,
+        "use_tps_transform" : 0,
         "use_bspline_interpolation" : 0,
         "display" : 0,
         "glyph_radius" : 1,
@@ -390,7 +390,7 @@ try:
 
     print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
     if args.interactive != 0:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
 

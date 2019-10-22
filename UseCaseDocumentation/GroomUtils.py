@@ -323,29 +323,29 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 
 
 def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
-	root = ET.Element('sample')
-	propogationScale = ET.SubElement(root, 'propagationScale')
-	propogationScale.text = "\n 20.0 \n"
-	alpha = ET.SubElement(root, 'alpha')
-	alpha.text = "\n  10.5 \n"
-	beta = ET.SubElement(root, 'beta')
-	beta.text = "\n 10.0 \n"
-	isoVal = ET.SubElement(root, 'isoValue')
-	isoVal.text = "\n 0.0 \n"
-	smoothing_iterations = ET.SubElement(root, 'smoothing_iterations')
-	smoothing_iterations.text = "\n " + str(smoothingIterations) + " \n"
-	verbose = ET.SubElement(root, 'verbose')
-	verbose.text = "\n 1 \n"
-	inputs = ET.SubElement(root, 'inputs')
-	inputs.text = "\n " + ref_dtnrrdfilename + " \n"
-	outputs = ET.SubElement(root, 'outputs')
-	outputs.text = "\n " + ref_isonrrdfilename + " \n"
-	dtFiles = ET.SubElement(root, 'dtFiles')
-	dtFiles.text = "\n " + ref_tpdtnrrdfilename + " \n"
+    root = ET.Element('sample')
+    propogationScale = ET.SubElement(root, 'propagationScale')
+    propogationScale.text = "\n 20.0 \n"
+    alpha = ET.SubElement(root, 'alpha')
+    alpha.text = "\n  10.5 \n"
+    beta = ET.SubElement(root, 'beta')
+    beta.text = "\n 10.0 \n"
+    isoVal = ET.SubElement(root, 'isoValue')
+    isoVal.text = "\n 0.0 \n"
+    smoothing_iterations = ET.SubElement(root, 'smoothing_iterations')
+    smoothing_iterations.text = "\n " + str(smoothingIterations) + " \n"
+    verbose = ET.SubElement(root, 'verbose')
+    verbose.text = "\n 1 \n"
+    inputs = ET.SubElement(root, 'inputs')
+    inputs.text = "\n " + ref_dtnrrdfilename + " \n"
+    outputs = ET.SubElement(root, 'outputs')
+    outputs.text = "\n " + ref_isonrrdfilename + " \n"
+    dtFiles = ET.SubElement(root, 'dtFiles')
+    dtFiles.text = "\n " + ref_tpdtnrrdfilename + " \n"
 
-	data = ET.tostring(root, encoding='unicode')
-	file = open(xmlfilename, "w+")
-	file.write(data)
+    data = ET.tostring(root, encoding='unicode')
+    file = open(xmlfilename, "w+")
+    file.write(data)
 
 
 
@@ -379,7 +379,7 @@ def FindMedianImage(inDataList):
 
 
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antialiasIterations=20,
-                                  smoothingIterations=1, isoValue=0, icpIterations=10, processRaw = False):
+                        smoothingIterations=1, isoValue=0, icpIterations=10, processRaw = False):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -655,74 +655,74 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
         return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
-	root = ET.Element('sample')
-	lsSmootherIterations = ET.SubElement(root, 'lsSmootherIterations')
-	lsSmootherIterations.text = "\n 1.0 \n"
-	targetReduction = ET.SubElement(root, 'targetReduction')
-	targetReduction.text = "\n  0.0001 \n"
-	featureAngle = ET.SubElement(root, 'featureAngle')
-	featureAngle.text = "\n 30.0 \n"
-	preserveTopology = ET.SubElement(root, 'preserveTopology')
-	preserveTopology.text = "\n 1 \n"
-	inputs = ET.SubElement(root, 'inputs')
-	inputs.text = "\n " + tpdtnrrdfilename + " \n"
-	outputs = ET.SubElement(root, 'outputs')
-	outputs.text = "\n " + vtkfilename + " \n"
+    root = ET.Element('sample')
+    lsSmootherIterations = ET.SubElement(root, 'lsSmootherIterations')
+    lsSmootherIterations.text = "\n 1.0 \n"
+    targetReduction = ET.SubElement(root, 'targetReduction')
+    targetReduction.text = "\n  0.0001 \n"
+    featureAngle = ET.SubElement(root, 'featureAngle')
+    featureAngle.text = "\n 30.0 \n"
+    preserveTopology = ET.SubElement(root, 'preserveTopology')
+    preserveTopology.text = "\n 1 \n"
+    inputs = ET.SubElement(root, 'inputs')
+    inputs.text = "\n " + tpdtnrrdfilename + " \n"
+    outputs = ET.SubElement(root, 'outputs')
+    outputs.text = "\n " + vtkfilename + " \n"
 
-	data = ET.tostring(root, encoding='unicode')
-	file = open(xmlfilename, "w+")
-	file.write(data)
+    data = ET.tostring(root, encoding='unicode')
+    file = open(xmlfilename, "w+")
+    file.write(data)
 
 def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smoothingIterations=1, isoValue=0, percentage=50):
-	outDir = os.path.join(parentDir , 'groom_and_meshes/')
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
+    outDir = os.path.join(parentDir , 'groom_and_meshes/')
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
 
-	finalDTDir = os.path.join(parentDir , 'distance_transforms/')
-	if not os.path.exists(finalDTDir):
-		os.makedirs(finalDTDir)
+    finalDTDir = os.path.join(parentDir , 'distance_transforms/')
+    if not os.path.exists(finalDTDir):
+        os.makedirs(finalDTDir)
 
-	outDataList = []
-	for i in range(len(inDataList)):
-		inname = inDataList[i]
-		spt = inname.rsplit('/', 1)
-		initPath = spt[0] + '/'
-		filename = spt[1]
-		outname = inname.replace(initPath, outDir)
+    outDataList = []
+    for i in range(len(inDataList)):
+        inname = inDataList[i]
+        spt = inname.rsplit('/', 1)
+        initPath = spt[0] + '/'
+        filename = spt[1]
+        outname = inname.replace(initPath, outDir)
 
-		dtnrrdfilename = outname.replace('.nrrd', '.DT.nrrd')
-		tpdtnrrdfilename = outname.replace('.nrrd', '.tpSmoothDT.nrrd')
-		isonrrdfilename = outname.replace('.nrrd', '.ISO.nrrd')
-		vtkfilename = outname.replace('.nrrd', '.tpSmoothDT.vtk')
-		vtkfilename_preview = outname.replace('.nrrd', '.tpSmoothDT.preview' + str(percentage) + ".vtk")
-		finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
-		outDataList.append(finalnm)
+        dtnrrdfilename = outname.replace('.nrrd', '.DT.nrrd')
+        tpdtnrrdfilename = outname.replace('.nrrd', '.tpSmoothDT.nrrd')
+        isonrrdfilename = outname.replace('.nrrd', '.ISO.nrrd')
+        vtkfilename = outname.replace('.nrrd', '.tpSmoothDT.vtk')
+        vtkfilename_preview = outname.replace('.nrrd', '.tpSmoothDT.preview' + str(percentage) + ".vtk")
+        finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
+        outDataList.append(finalnm)
 
 
-		execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
-		subprocess.check_call(execCommand, shell=True)
-		execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname 
-		subprocess.check_call(execCommand, shell=True)
-		execCommand = "AntiAliasing --inFilename " + inname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(antialiasIterations) 
-		subprocess.check_call(execCommand, shell=True)
-		execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(isoValue) 
-		subprocess.check_call(execCommand, shell=True)
-		
-		xmlfilename=outname.replace('.nrrd', '.tpSmoothDT.xml')
-		create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
-		create_cpp_xml(xmlfilename, xmlfilename)
-		execCommand = "TopologyPreservingSmoothing " + xmlfilename
-		subprocess.check_call(execCommand, shell=True)
+        execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
+        subprocess.check_call(execCommand, shell=True)
+        execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname 
+        subprocess.check_call(execCommand, shell=True)
+        execCommand = "AntiAliasing --inFilename " + inname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(antialiasIterations) 
+        subprocess.check_call(execCommand, shell=True)
+        execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(isoValue) 
+        subprocess.check_call(execCommand, shell=True)
+        
+        xmlfilename=outname.replace('.nrrd', '.tpSmoothDT.xml')
+        create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
+        create_cpp_xml(xmlfilename, xmlfilename)
+        execCommand = "TopologyPreservingSmoothing " + xmlfilename
+        subprocess.check_call(execCommand, shell=True)
 
-		# xmlfilename=outname.replace('.nrrd', '.MeshFromDT.xml')
-		# create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename)
-		# create_cpp_xml(xmlfilename, xmlfilename)
-		# execCommand = "MeshFromDistanceTransforms " + xmlfilename
-		# subprocess.check_call(execCommand, shell=True)
-		# decimal = percentage/100.0
-		# execCommand = "PreviewCmd --inFile " + vtkfilename + " --outFile " + vtkfilename_preview + " --decimationPercentage " + str(decimal)
-		# subprocess.check_call(execCommand, shell=True)
-		# this at the end
+        # xmlfilename=outname.replace('.nrrd', '.MeshFromDT.xml')
+        # create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename)
+        # create_cpp_xml(xmlfilename, xmlfilename)
+        # execCommand = "MeshFromDistanceTransforms " + xmlfilename
+        # subprocess.check_call(execCommand, shell=True)
+        # decimal = percentage/100.0
+        # execCommand = "PreviewCmd --inFile " + vtkfilename + " --outFile " + vtkfilename_preview + " --decimationPercentage " + str(decimal)
+        # subprocess.check_call(execCommand, shell=True)
+        # this at the end
 
-		shutil.copy(tpdtnrrdfilename, finalDTDir)
-	return outDataList
+        shutil.copy(tpdtnrrdfilename, finalDTDir)
+    return outDataList

@@ -30,14 +30,6 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
-parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
-parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
-parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
-args = parser.parse_args()
-
-
 """
 Most of the following steps even though wrapped in python functions are using
 the underlying c++ code, for which we need to call the source paths to the
@@ -48,12 +40,18 @@ These following commands set the temporary environment variables to point to
 shapeworks binaries and set the necessary library paths
 """
 
-binpath = "../build/shapeworks-build/binary"
-installpath = "../install"
-os.environ["PATH"] = binpath + ":" + os.environ["PATH"]
-os.environ["LD_LIBRARY_PATH"]= installpath + "/lib:" + installpath + "/lib64"
+binpath = "../build/shapeworks/src/ShapeWorks-build/bin"
+parser = argparse.ArgumentParser(description='Example ShapeWorks LA Pipeline')
+parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
+parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
+parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
+parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
+parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
+args = parser.parse_args()
+os.environ["PATH"] = args.shapeworks_path + ":" + os.environ["PATH"]
 
-
+#fixme: ld_library_path should not be necessary (see github issue #230)
+os.environ["LD_LIBRARY_PATH"]= binpath + "/../lib:" + binpath + "/../lib64"
 
 
 filename="/home/sci/atefeh.gk/Public/leftatrium.zip"
@@ -62,7 +60,7 @@ if args.start_with_image_and_segmentation_data:
     parentDir="Test_leftatrium/"
 
     if not os.path.exists(parentDir):
-            os.makedirs(parentDir)
+        os.makedirs(parentDir)
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
@@ -71,89 +69,89 @@ if args.start_with_image_and_segmentation_data:
         fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
 
     if not args.start_with_prepped_data:
-            print("\nStep 1. Extract Data\n")
-            if args.interactive:
-                    input("Press Enter to continue")
+        print("\nStep 1. Extract Data\n")
+        if args.interactive:
+            input("Press Enter to continue")
 
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largets Bounding Box and Cropping
-            """
+        """
+        ## GROOM : Data Pre-processing
+        For the unprepped data the first few steps are
+        -- Isotropic resampling
+        -- Padding
+        -- Center of Mass Alignment
+        -- Rigid Alignment
+        -- Largets Bounding Box and Cropping
+        """
 
-            parentDir = './Test_leftatriumanData/PrepOutput/'
+        parentDir = './Test_leftatriumanData/PrepOutput/'
 
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                    input("Press Enter to continue")
-
-
-            """
-            Apply isotropic resampling
-
-            For detailed explainations of parameters for resampling volumes, go to
-            ... link
-
-            the segmentation and images are resampled independently and the result files are saved in two different directories.
-            """
-
-            [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg ,fileList_img, 1, processRaw = True)
-
-            """
-            Apply padding
-
-            For detailed explainations of parameters for padding volumes, go to
-            ... link
-
-            Both the segmentation and raw images are padded.
-            """
-
-            [paddedFiles_segmentations,  paddedFiles_images] = applyPadding(parentDir, resampledFiles_segmentations,resampledFiles_images, 10, processRaw = True)
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if args.interactive:
+            input("Press Enter to continue")
 
 
-            """
-            Apply center of mass alignment
+        """
+        Apply isotropic resampling
 
-            For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            ... link
+        For detailed explainations of parameters for resampling volumes, go to
+        ... link
 
-            This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-            There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-            """
-            [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, paddedFiles_images , processRaw=True)
+        the segmentation and images are resampled independently and the result files are saved in two different directories.
+        """
 
-            """
-            Apply rigid alignment
+        [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg ,fileList_img, 1, processRaw = True)
 
-            For detailed explainations of parameters for rigid alignment of volumes, go to
-            ... link
+        """
+        Apply padding
 
-            This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-            There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-            processRaw = False, applies the center of mass alignment only on segemnattion data.
-            This function uses the same transfrmation matrix for alignment of raw and segmentation files.
-            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-            """
-            medianFile = FindMedianImage(comFiles_segmentations)
+        For detailed explainations of parameters for padding volumes, go to
+        ... link
 
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+        Both the segmentation and raw images are padded.
+        """
 
-            """
-            Compute largest bounding box and apply cropping
-            processRaw = True, processes raw and binary images with shared parameters.
-            processRaw = False, applies the center of mass alignment only on segemnattion data.
-            The function uses the same bounding box to crop the raw and segemnattion data.
-            """
-            [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
+        [paddedFiles_segmentations,  paddedFiles_images] = applyPadding(parentDir, resampledFiles_segmentations,resampledFiles_images, 10, processRaw = True)
+
+
+        """
+        Apply center of mass alignment
+
+        For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
+        ... link
+
+        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        """
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, paddedFiles_images , processRaw=True)
+
+        """
+        Apply rigid alignment
+
+        For detailed explainations of parameters for rigid alignment of volumes, go to
+        ... link
+
+        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        processRaw = False, applies the center of mass alignment only on segemnattion data.
+        This function uses the same transfrmation matrix for alignment of raw and segmentation files.
+        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+        """
+        medianFile = FindMedianImage(comFiles_segmentations)
+
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+
+        """
+        Compute largest bounding box and apply cropping
+        processRaw = True, processes raw and binary images with shared parameters.
+        processRaw = False, applies the center of mass alignment only on segemnattion data.
+        The function uses the same bounding box to crop the raw and segemnattion data.
+        """
+        [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
 
 
     print("\nStep 3. Groom - Convert to distance transforms\n")
     if args.interactive:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     """
     We convert the scans to distance transforms, this step is common for both the
@@ -167,12 +165,12 @@ else:
 
     print("\nStep 1. Extract Data\n")
     if args.interactive:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     parentDir="Test_leftatrium/"
 
     if not os.path.exists(parentDir):
-            os.makedirs(parentDir)
+        os.makedirs(parentDir)
 
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
@@ -182,77 +180,77 @@ else:
 
 
     if not args.start_with_prepped_data:
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largets Bounding Box and Cropping
-            """
+        """
+        ## GROOM : Data Pre-processing
+        For the unprepped data the first few steps are
+        -- Isotropic resampling
+        -- Padding
+        -- Center of Mass Alignment
+        -- Rigid Alignment
+        -- Largets Bounding Box and Cropping
+        """
 
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                    input("Press Enter to continue")
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if args.interactive:
+            input("Press Enter to continue")
 
-            # create the output directory
-            parentDir = './Test_leftatrium/PrepOutput/'
-            if not os.path.exists(parentDir):
-                    os.makedirs(parentDir)
-
-
-
-            """
-            Apply isotropic resampling
-
-            For detailed explainations of parameters for resampling volumes, go to
-            ... link
-
-            """
-            resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
+        # create the output directory
+        parentDir = './Test_leftatrium/PrepOutput/'
+        if not os.path.exists(parentDir):
+            os.makedirs(parentDir)
 
 
-            """
-            Apply padding
 
-            For detailed explainations of parameters for padding volumes, go to
-            ... link
+        """
+        Apply isotropic resampling
 
-            """
+        For detailed explainations of parameters for resampling volumes, go to
+        ... link
 
-            paddedFiles = applyPadding(parentDir, resampledFiles ,None, 10)
+        """
+        resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
 
-            """
-            Apply center of mass alignment
 
-            For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            ... link
+        """
+        Apply padding
 
-             """
-            comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+        For detailed explainations of parameters for padding volumes, go to
+        ... link
 
-            """
-            Apply rigid alignment
+        """
 
-            For detailed explainations of parameters for rigid alignment of volumes, go to
-            ... link
+        paddedFiles = applyPadding(parentDir, resampledFiles ,None, 10)
 
-            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-            """
-            medianFile = FindMedianImage(comFiles)
+        """
+        Apply center of mass alignment
 
-            rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
+        For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
+        ... link
 
-            """
-            Compute largest bounding box and apply cropping
-            """
-            croppedFiles = applyCropping(parentDir, rigidFiles, None )
+         """
+        comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+
+        """
+        Apply rigid alignment
+
+        For detailed explainations of parameters for rigid alignment of volumes, go to
+        ... link
+
+        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+        """
+        medianFile = FindMedianImage(comFiles)
+
+        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
+
+        """
+        Compute largest bounding box and apply cropping
+        """
+        croppedFiles = applyCropping(parentDir, rigidFiles, None )
 
 
     print("\nStep 3. Groom - Convert to distance transforms\n")
     if args.interactive:
-            input("Press Enter to continue")
+        input("Press Enter to continue")
 
     """
     We convert the scans to distance transforms, this step is common for both the
@@ -279,7 +277,7 @@ optimization routine
 """
 print("\nStep 4. Optimize - Particle Based Optimization\n")
 if args.interactive:
-        input("Press Enter to continue")
+    input("Press Enter to continue")
 
 pointDir = './Test_leftatrium/PointFiles/'
 if not os.path.exists(pointDir):
@@ -288,24 +286,24 @@ if not os.path.exists(pointDir):
 
 if args.use_single_scale:
     parameterDictionary = {
-            "number_of_particles" : 1024,
-            "use_normals": 0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 4000,
-            "optimization_iterations" : 4000,
-            "starting_regularization" : 50000,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "relative_weighting" : 50,
-            "initial_relative_weighting" : 0.1,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "mesh_based_attributes" : 0,
-            "verbosity" : 3
+        "number_of_particles" : 1024,
+        "use_normals": 0,
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 4000,
+        "optimization_iterations" : 4000,
+        "starting_regularization" : 50000,
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 2,
+        "domains_per_shape" : 1,
+        "relative_weighting" : 50,
+        "initial_relative_weighting" : 0.1,
+        "procrustes_interval" : 0,
+        "procrustes_scaling" : 0,
+        "save_init_splits" : 0,
+        "debug_projection" : 0,
+        "mesh_based_attributes" : 0,
+        "verbosity" : 3
     }
 
     """
@@ -316,25 +314,25 @@ if args.use_single_scale:
 
 else:
     parameterDictionary = {
-            "starting_particles" : 128,
-            "number_of_levels" : 4,
-            "use_normals": 1,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 4000,
-            "optimization_iterations" : 4000,
-            "starting_regularization" : 50000,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "relative_weighting" : 50,
-            "initial_relative_weighting" : 0.1,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "mesh_based_attributes" : 0,
-            "verbosity" : 3
+        "starting_particles" : 128,
+        "number_of_levels" : 4,
+        "use_normals": 1,
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 4000,
+        "optimization_iterations" : 4000,
+        "starting_regularization" : 50000,
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 2,
+        "domains_per_shape" : 1,
+        "relative_weighting" : 50,
+        "initial_relative_weighting" : 0.1,
+        "procrustes_interval" : 0,
+        "procrustes_scaling" : 0,
+        "save_init_splits" : 0,
+        "debug_projection" : 0,
+        "mesh_based_attributes" : 0,
+        "verbosity" : 3
     }
 
     [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
@@ -370,39 +368,39 @@ Reconstruct the dense mean surface given the sparse correspondence model.
 
 print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
 if args.interactive:
-        input("Press Enter to continue")
+    input("Press Enter to continue")
 
 
 meanDir   = './Test_leftatrium/MeanReconstruction/'
 if not os.path.exists(meanDir):
-        os.makedirs(meanDir)
+    os.makedirs(meanDir)
 
 """
 Parameter dictionary for ReconstructMeanSurface cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 1024,
-        "out_prefix" : meanDir + 'leftatrium',
-        "do_procrustes" : 0,
-        "do_procrustes_scaling" : 0,
-        "levelsetValue" : 0.0,
-       "targetReduction" : 0.0,
-       "featureAngle" : 30,
-       "lsSmootherIterations" : 1,
-       "meshSmootherIterations" : 1,
-       "preserveTopology" : 1,
-       "qcFixWinding" : 1,
-       "qcDoLaplacianSmoothingBeforeDecimation" : 1,
-       "qcDoLaplacianSmoothingAfterDecimation" : 1,
-       "qcSmoothingLambda" : 0.5,
-       "qcSmoothingIterations" : 3,
-       "qcDecimationPercentage" : 0.9,
-       "normalAngle" : 90,
-       "use_tps_transform" : 0,
-       "use_bspline_interpolation" : 0,
-       "display" : 0,
-       "glyph_radius" : 1
-        }
+    "number_of_particles" : 1024,
+    "out_prefix" : meanDir + 'leftatrium',
+    "do_procrustes" : 0,
+    "do_procrustes_scaling" : 0,
+    "levelsetValue" : 0.0,
+    "targetReduction" : 0.0,
+    "featureAngle" : 30,
+    "lsSmootherIterations" : 1,
+    "meshSmootherIterations" : 1,
+    "preserveTopology" : 1,
+    "qcFixWinding" : 1,
+    "qcDoLaplacianSmoothingBeforeDecimation" : 1,
+    "qcDoLaplacianSmoothingAfterDecimation" : 1,
+    "qcSmoothingLambda" : 0.5,
+    "qcSmoothingIterations" : 3,
+    "qcDecimationPercentage" : 0.9,
+    "normalAngle" : 90,
+    "use_tps_transform" : 0,
+    "use_bspline_interpolation" : 0,
+    "display" : 0,
+    "glyph_radius" : 1
+}
 
 
 runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
@@ -413,23 +411,23 @@ Reconstruct the dense sample-specfic surface in the local coordinate system give
 
 print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
 if args.interactive :
-        input("Press Enter to continue")
+    input("Press Enter to continue")
 
 meshDir_local   = './Test_leftatrium/MeshFiles-Local/'
 if not os.path.exists(meshDir_local):
-        os.makedirs(meshDir_local)
+    os.makedirs(meshDir_local)
 
 """
 Parameter dictionary for ReconstructSurface cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 512,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : meshDir_local + 'leftatrium',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
+    "number_of_particles" : 512,
+    "mean_prefix" : meanDir + 'leftatrium',
+    "out_prefix" : meshDir_local + 'leftatrium',
+    "use_tps_transform" : 0,
+    "use_bspline_interpolation" : 0,
+    "display" : 0,
+    "glyph_radius" : 1
 }
 
 localDensePointFiles = runReconstructSurface(localPointFiles, parameterDictionary)
@@ -441,23 +439,23 @@ Reconstruct the dense sample-specfic surface in the world coordinate system give
 
 print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
 if args.interactive :
-        input("Press Enter to continue")
+    input("Press Enter to continue")
 
 meshDir_global   = './Test_leftatrium/MeshFiles-World/'
 if not os.path.exists(meshDir_global):
-        os.makedirs(meshDir_global)
+    os.makedirs(meshDir_global)
 
 """
 Parameter dictionary for ReconstructSurface cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : meshDir_global + 'leftatrium',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
+    "number_of_particles" : 1024,
+    "mean_prefix" : meanDir + 'leftatrium',
+    "out_prefix" : meshDir_global + 'leftatrium',
+    "use_tps_transform" : 0,
+    "use_bspline_interpolation" : 0,
+    "display" : 0,
+    "glyph_radius" : 1
 }
 
 worldDensePointFiles = runReconstructSurface(worldPointFiles, parameterDictionary)
@@ -468,26 +466,26 @@ Reconstruct dense meshes along dominant pca modes
 
 print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
 if args.interactive :
-        input("Press Enter to continue")
+    input("Press Enter to continue")
 
 pcaDir   = './Test_leftatrium/PCAModesFiles/'
 if not os.path.exists(pcaDir):
-        os.makedirs(pcaDir)
+    os.makedirs(pcaDir)
 
 """
 Parameter dictionary for ReconstructSamplesAlongPCAModes cmd tool.
 """
 parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : pcaDir + 'leftatrium',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1,
-        "maximum_variance_captured" : 0.95,
-        "maximum_std_dev" : 2,
-        "number_of_samples_per_mode" : 10
+    "number_of_particles" : 1024,
+    "mean_prefix" : meanDir + 'leftatrium',
+    "out_prefix" : pcaDir + 'leftatrium',
+    "use_tps_transform" : 0,
+    "use_bspline_interpolation" : 0,
+    "display" : 0,
+    "glyph_radius" : 1,
+    "maximum_variance_captured" : 0.95,
+    "maximum_std_dev" : 2,
+    "number_of_samples_per_mode" : 10
 }
 
 runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
@@ -507,14 +505,14 @@ visualized.
 
 print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
 if args.interactive :
-        input("Press Enter to continue")
+    input("Press Enter to continue")
 
 launchShapeWorksView2(pointDir, worldPointFiles)
 
 
 print("\nStep 10. Analysis - Launch ShapeWorksView2 - dense correspondence model.\n")
 if args.interactive:
-        input("Press Enter to continue")
+    input("Press Enter to continue")
 
 launchShapeWorksView2(meshDir_global, worldDensePointFiles)
 
