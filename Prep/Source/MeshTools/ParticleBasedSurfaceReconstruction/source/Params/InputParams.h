@@ -65,6 +65,7 @@ public:
     float maximum_std_dev;
     int number_of_samples_per_mode;
     float normalAngle;
+    bool usePairwiseNormalsDifferencesForGoodBad;
 
     bool use_tps_transform;
     bool use_bspline_interpolation;
@@ -109,6 +110,7 @@ public:
         maximum_std_dev            = 2.0;
         number_of_samples_per_mode = 10;
         normalAngle = pi/2.0;
+        usePairwiseNormalsDifferencesForGoodBad = false;
 
         use_tps_transform         = false;
         use_bspline_interpolation = false;
@@ -381,6 +383,12 @@ public:
                 if (elem)
                 {
                     normalAngle = atof( elem->GetText() )*pi/180.0;
+                }
+
+                elem = docHandle.FirstChild( "usePairwiseNormalsDifferencesForGoodBad" ).Element();
+                if (elem)
+                {
+                    atoi(elem->GetText()) > 0 ? usePairwiseNormalsDifferencesForGoodBad = true : usePairwiseNormalsDifferencesForGoodBad = false;
                 }
 
                 // read number of iterations for levelset smoother if given
