@@ -2,6 +2,7 @@ import numpy as np
 import io
 import glob
 import os
+import subprocess
 import shutil
 import xml.etree.ElementTree as ET
 from termcolor import colored, cprint
@@ -82,14 +83,14 @@ def launchShapeWorksView2(parentDir, pointFileList):
 	create_View2_xml(xmlfilename, pointFileList)
 	create_cpp_xml(xmlfilename, xmlfilename)
 	execCommand = "ShapeWorksView2 " + xmlfilename + " &"
-	os.system(execCommand)
+	subprocess.check_call(execCommand, shell=True)
 
 def launchShapeWorksView2(parentDir, dtFiles, localPointFiles, worldPointFiles):
 	xmlfilename = parentDir + '/shapeworksview2.xml'
 	create_View2_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles)
 	create_cpp_xml(xmlfilename, xmlfilename)
 	execCommand = "ShapeWorksView2 " + xmlfilename + " &"
-	os.system(execCommand)
+	subprocess.check_call(execCommand, shell=True)
         
     
 def create_ReconstructMeanSurface_xml(xmlfilename, parameterDictionary, distance_transform_files, local_point_files, world_point_files=None):
@@ -171,7 +172,7 @@ def runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, paramet
    create_cpp_xml(parameterFile, parameterFile)
     
    execCommand = "ReconstructMeanSurface " + parameterFile
-   os.system(execCommand)
+   subprocess.check_call(execCommand, shell=True)
    
   
 def runReconstructSurface(pointFiles, parameterDictionary):
@@ -183,7 +184,7 @@ def runReconstructSurface(pointFiles, parameterDictionary):
    create_cpp_xml(parameterFile, parameterFile)
     
    execCommand = "ReconstructSurface " + parameterFile
-   os.system(execCommand)       
+   subprocess.check_call(execCommand, shell=True)
 
    densePointFiles = glob.glob(outDir + '/*_dense.particles')
    
@@ -199,5 +200,5 @@ def runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary):
    create_cpp_xml(parameterFile, parameterFile)
     
    execCommand = "ReconstructSamplesAlongPCAModes " + parameterFile
-   os.system(execCommand)
+   subprocess.check_call(execCommand, shell=True)
 

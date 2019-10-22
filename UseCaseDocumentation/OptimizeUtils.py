@@ -3,6 +3,7 @@ import io
 from termcolor import colored, cprint
 import glob
 import os
+import subprocess
 import shutil
 import xml.etree.ElementTree as ET
 
@@ -150,7 +151,7 @@ def runShapeWorksOptimize_Basic(parentDir, inDataFiles, parameterDictionary):
 	create_cpp_xml(parameterFile, parameterFile)
 	print(parameterFile)
 	execCommand = "ShapeWorksRun " + parameterFile
-	os.system(execCommand)
+	subprocess.check_call(execCommand, shell=True)
 	outPointsWorld = []
 	outPointsLocal = []
 	for i in range(len(inDataFiles)):
@@ -189,7 +190,7 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
 		create_cpp_xml(parameterFile, parameterFile)
 		print(parameterFile)
 		execCommand = "ShapeWorksRun " + parameterFile
-		os.system(execCommand)
+		subprocess.check_call(execCommand, shell=True)
 
 	outPointsWorld = []
 	outPointsLocal = []
