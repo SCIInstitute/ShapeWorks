@@ -1,10 +1,4 @@
-PROJECT(SHAPETOOLKIT)
-cmake_minimum_required(VERSION 2.6)
-SET(CMAKE_BUILD_TYPE RELEASE)
-#SET(ITK_DIR "Path-to-ITK-4.7.2-build/")
-#SET(VTK_DIR "Path-to-VTK-5.10.1-build")
-
-#SET(VXL_DIR "Path-to-vxl-build")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 option(BUILD_ImageTools "Build ImageTools" ON)
 option(BUILD_MeshTools "Build MeshTools" ON)

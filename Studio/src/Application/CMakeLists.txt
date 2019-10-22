@@ -91,9 +91,16 @@ ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole}
 
 IF(APPLE)
   SET_TARGET_PROPERTIES(ShapeWorksStudio PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Info.plist.in)
+  set_property(
+    TARGET ShapeWorksStudio
+    PROPERTY INSTALL_RPATH
+    "@executable_path/../../../../lib"
+    "@executable_path/../Frameworks"
+    )
 ENDIF(APPLE)
-    
+
 TARGET_LINK_LIBRARIES(ShapeWorksStudio
+  PUBLIC 
   Qt5::Widgets
   Qt5::OpenGL
   Qt5::Core
@@ -120,3 +127,24 @@ INSTALL(TARGETS ShapeWorksStudio
   BUNDLE  DESTINATION bin
   RUNTIME DESTINATION bin COMPONENT Runtime
   )
+
+
+if (APPLE)
+  # Add Qt frameworks to app bundle
+  # see https://stackoverflow.com/questions/51556088/cmake-copy-dependencies-to-executable-output-path
+
+  # Get reference to deployqt
+  get_target_property(uic_location Qt5::uic IMPORTED_LOCATION)
+  get_filename_component( _dir ${uic_location} DIRECTORY)
+  set(deployqt "${_dir}/macdeployqt")
+  if(NOT EXISTS ${deployqt})
+    message(FATAL_ERROR "Failed to locate deployqt executable: [${deployqt}]")
+  endif()
+
+  # Execute deployqt during package creation
+  # See https://doc.qt.io/qt-5/osx-deployment.html#macdeploy
+  install(CODE "set(deployqt \"${deployqt}\")" COMPONENT Runtime)
+  install(CODE [===[
+    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app")
+    ]===] COMPONENT Runtime)
+endif()

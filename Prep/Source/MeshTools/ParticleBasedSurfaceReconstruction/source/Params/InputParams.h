@@ -28,6 +28,9 @@ public:
     // used in case of WarpToSubjectSpace or MoveAlongPCAModes
     std::string mean_prefix;
     std::string mean_path;
+    std::string template_dense_mesh;
+    std::string template_sparse_points;
+    bool use_template_mesh;
 
     // parameters for mesh QC via preview
     bool qcFixWinding;
@@ -57,9 +60,12 @@ public:
     bool  display             ;
     float glyph_radius        ;
     float maximum_variance_captured;
+    int mode_index;
+    int number_of_modes;
     float maximum_std_dev;
     int number_of_samples_per_mode;
     float normalAngle;
+    bool usePairwiseNormalsDifferencesForGoodBad;
 
     bool use_tps_transform;
     bool use_bspline_interpolation;
@@ -99,9 +105,12 @@ public:
         glyph_radius           = 1;
 
         maximum_variance_captured  = 0.95;
+        number_of_modes            = -1; // max variance captured will be used to determine number of modes
+        mode_index                 = -1; // if this is given >=0 and < nSamples, this particular mode will be generated
         maximum_std_dev            = 2.0;
         number_of_samples_per_mode = 10;
         normalAngle = pi/2.0;
+        usePairwiseNormalsDifferencesForGoodBad = false;
 
         use_tps_transform         = false;
         use_bspline_interpolation = false;
@@ -110,6 +119,8 @@ public:
         worldPointsFilenames.clear();
         distanceTransformFilenames.clear();
         attribute_labels.clear();
+
+        use_template_mesh = false;
     }
 
     int readParams(char* infilename, int mode ) // 0 - WarpToMeanSpace, 1 - WarpToSubjectSpace, 2 - MoveAlongPCAModes, 3 - WarpToMeanSpaceWithPreviewMeshQC
@@ -232,11 +243,42 @@ public:
                     inputsBuffer >> mean_prefix;
                     inputsBuffer.clear();
                     inputsBuffer.str("");
+                    use_template_mesh = false;
                 }
                 else
                 {
-                    std::cerr << "No mean_prefix provided ...!" << std::endl;
-                    return EXIT_FAILURE;
+                    bool dense_given = false;
+                    bool sparse_given = false;
+                    elem = docHandle.FirstChild( "template_dense_mesh" ).Element();
+                    if (elem)
+                    {
+                        inputsBuffer.str(elem->GetText());
+                        inputsBuffer >> template_dense_mesh;
+                        inputsBuffer.clear();
+                        inputsBuffer.str("");
+                        dense_given = true;
+                    }
+
+                    elem = docHandle.FirstChild( "template_sparse_points" ).Element();
+                    if (elem)
+                    {
+                        inputsBuffer.str(elem->GetText());
+                        inputsBuffer >> template_sparse_points;
+                        inputsBuffer.clear();
+                        inputsBuffer.str("");
+                        sparse_given = true;
+                    }
+
+                    if(dense_given && sparse_given)
+                    {
+                        std::cout << "No mean_prefix provide, the given template shape will be used ...!" << std::endl;
+                        use_template_mesh = true;
+                    }
+                    else
+                    {
+                        std::cerr << "Neither a mean_prefix nor a template mesh (sparse and dense) is provided ...!" << std::endl;
+                        return EXIT_FAILURE;
+                    }
                 }
             }
 
@@ -343,6 +385,12 @@ public:
                     normalAngle = atof( elem->GetText() )*pi/180.0;
                 }
 
+                elem = docHandle.FirstChild( "usePairwiseNormalsDifferencesForGoodBad" ).Element();
+                if (elem)
+                {
+                    atoi(elem->GetText()) > 0 ? usePairwiseNormalsDifferencesForGoodBad = true : usePairwiseNormalsDifferencesForGoodBad = false;
+                }
+
                 // read number of iterations for levelset smoother if given
                 elem = docHandle.FirstChild( "lsSmootherIterations" ).Element();
                 if (elem)
@@ -407,6 +455,18 @@ public:
                 if (elem)
                 {
                     number_of_samples_per_mode = atoi( elem->GetText() );
+                }
+
+                elem = docHandle.FirstChild( "mode_index" ).Element();
+                if (elem)
+                {
+                    mode_index = atoi( elem->GetText() );
+                }
+
+                elem = docHandle.FirstChild( "number_of_modes" ).Element();
+                if (elem)
+                {
+                    number_of_modes = atoi( elem->GetText() );
                 }
             }
 

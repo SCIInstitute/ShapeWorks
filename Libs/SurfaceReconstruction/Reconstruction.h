@@ -76,7 +76,8 @@ public:
                    bool doLaplacianSmoothingBeforeDecimation = true,
                    bool doLaplacianSmoothingAfterDecimation = true,
                    float smoothingLambda = 0.5f,
-                   int smoothingIterations = 1);
+                   int smoothingIterations = 1,
+                   bool usePairwiseNormalsDifferencesForGoodBad = false);
     ~Reconstruction();
     vtkSmartPointer<vtkPolyData> getDenseMean(
             std::vector< PointArrayType > local_pts =
@@ -127,8 +128,11 @@ public:
 
     void MeshFromDT(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision);
     void MeshFromDT(typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision);
+    void EnablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = true;}
+    void DisablePairwiseNormalsDifferencesForGoodBad(){usePairwiseNormalsDifferencesForGoodBad_ = false;}
 
 private:
+    int ComputeMedianShape(std::vector<vnl_matrix<double>> & shapeList);
     void computeDenseMean(
             std::vector< PointArrayType > local_pts,
             std::vector< PointArrayType > global_pts,
@@ -194,6 +198,7 @@ private:
 
     std::string out_prefix_; // to save intermediate files in case needed
     bool output_enabled_ = true;
+    bool usePairwiseNormalsDifferencesForGoodBad_ = false;
 };
 
 #include "Reconstruction.cpp"  //need to include template definition in order for it to be instantiated
