@@ -94,7 +94,7 @@ IF(APPLE)
   set_property(
     TARGET ShapeWorksStudio
     PROPERTY INSTALL_RPATH
-    "@executable_path/../../../../lib" # TODO: copied libs into the bundle
+    "@executable_path/../../../../lib"
     "@executable_path/../Frameworks"
     )
 ENDIF(APPLE)
