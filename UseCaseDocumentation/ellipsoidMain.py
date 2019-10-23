@@ -76,14 +76,13 @@ try:
     parentDir="TestEllipsoids/"
     filename="Ellipsoids.zip"
     if not os.path.exists(parentDir):
-      os.makedirs(parentDir)
+        os.makedirs(parentDir)
 
     # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " on the local filesystem.")
         print("Downloading " + filename + " from SCIGirder.")
         downloadUseCaseData(filename)
-
 
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
@@ -93,7 +92,7 @@ try:
         else:
             fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
-        fileList = fileList[:15]
+    fileList = fileList[:15]
 
 
     """
@@ -230,12 +229,12 @@ try:
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3
-          }
+            }
 
-          """
-          Now we execute a multi-scale particle optimization function.
-          """
-          [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+        """
+        Now we execute a multi-scale particle optimization function.
+        """
+        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
           
     """

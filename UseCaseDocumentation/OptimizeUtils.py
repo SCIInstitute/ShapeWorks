@@ -148,10 +148,10 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     file.write(data)
     
 def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionary):
-	numP = parameterDictionary['number_of_particles']
-	outDir = os.path.join(parentDir , str(numP) + '/')
-	if not os.path.exists(outDir):
-		os.makedirs(outDir)
+    numP = parameterDictionary['number_of_particles']
+    outDir = os.path.join(parentDir , str(numP) + '/')
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
     parameterFile = parentDir + "correspondence_" + str(numP) + '.xml'
     create_SWRun_xml(parameterFile, inDataFiles, parameterDictionary, outDir)
     create_cpp_xml(parameterFile, parameterFile)
