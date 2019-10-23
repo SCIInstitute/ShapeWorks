@@ -20,14 +20,14 @@ public:
 
   AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
-  
+
   /// set the pointer to the project
-  void set_project( QSharedPointer<Project> project );
+  void set_project(QSharedPointer<Project> project);
 
   /// set the pointer to the application
-  void set_app( ShapeWorksStudioApp* app );
+  void set_app(ShapeWorksStudioApp* app);
 
-  void set_shapes( ShapeList shapes );
+  void set_shapes(ShapeList shapes);
 
   void activate();
 
@@ -52,11 +52,12 @@ public:
   void reset_stats();
 
   const vnl_vector<double> & getMean();
-  
+
   const vnl_vector<double> & getShape(int mode, double value);
 
   ParticleShapeStatistics<3> getStats();
-
+  void load_from_preferences();
+  void save_to_preferences();
 
 public Q_SLOTS:
 
@@ -75,13 +76,20 @@ public Q_SLOTS:
 
   void on_linear_radio_toggled(bool b);
 
+  void handle_reconstruction_complete();
+
+  void on_reconstructionButton_clicked();
+
 signals:
   void update_view();
   void pca_update();
-  
+  void progress(size_t);
+  void message(std::string);
+  void reconstruction_complete();
+
 private:
   //private methods
-  void pca_labels_changed( QString value, QString eigen, QString lambda );
+  void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
   //private members
@@ -101,9 +109,7 @@ private:
 
   bool pcaAnimateDirection;
   QTimer pcaAnimateTimer;
-  BarGraph *chart_;
-
-
+  BarGraph* chart_;
 };
 
 #endif /* STUDIO_ANALYSIS_ANALYSISTOOL_H */

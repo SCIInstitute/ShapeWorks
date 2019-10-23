@@ -154,8 +154,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()),
           this, SLOT(handle_optimize_complete()));
-  connect(this->optimize_tool_.data(), SIGNAL(reconstruction_complete()),
-          this, SLOT(handle_reconstruction_complete()));
   connect(this->optimize_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(warning_message(std::string)),
@@ -186,6 +184,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_new_mesh()));
+  connect(this->analysis_tool_.data(), SIGNAL(progress(size_t)),
+          this, SLOT(handle_progress(size_t)));
+  connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
+          this, SLOT(handle_reconstruction_complete()));
 
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
@@ -469,6 +471,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->ui_->center_checkbox->setChecked(preferences_.get_preference("center_option", true));
   this->groom_tool_->set_preferences();
   this->optimize_tool_->set_preferences();
+  this->analysis_tool_->load_from_preferences();
 }
 
 //---------------------------------------------------------------------------
@@ -709,6 +712,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->update_display();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->project_->handle_clear_cache();

@@ -1,10 +1,17 @@
+// std
 #include <iostream>
+
+// qt
 #include <QXmlStreamWriter>
+#include <QThread>
 #include <QTemporaryFile>
 #include <QFileDialog>
 #include <QProcess>
 #include <QMessageBox>
+
+// shapeworks
 #include <Visualization/ShapeWorksStudioApp.h>
+#include <Visualization/ShapeworksWorker.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
@@ -62,6 +69,70 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
     this->ui_->graph_->setLogScale(true);
     this->ui_->graph_->repaint();
   }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_reconstruction_complete()
+{
+  this->project_->handle_clear_cache();
+  this->project_->calculate_reconstructed_samples();
+  emit progress(100);
+  emit message("Reconstruction Complete");
+  emit reconstruction_complete();
+  ///TODO: Studio
+  ///this->ui_->run_optimize_button->setEnabled(true);
+  this->ui_->reconstructionButton->setEnabled(
+    this->project_->reconstructed_present());
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_reconstructionButton_clicked()
+{
+  this->save_to_preferences();
+  emit message("Please wait: running reconstruction step...");
+  emit progress(5);
+  //this->ui_->run_optimize_button->setEnabled(false);
+  this->ui_->reconstructionButton->setEnabled(false);
+  QThread* thread = new QThread;
+  std::vector<std::vector<itk::Point<double>>> local, global;
+  std::vector<ImageType::Pointer> images;
+  auto shapes = this->project_->get_shapes();
+  local.resize(shapes.size());
+  global.resize(shapes.size());
+  images.resize(shapes.size());
+  size_t ii = 0;
+  for (auto &s : shapes) {
+    auto l = s->get_local_correspondence_points();
+    auto g = s->get_global_correspondence_points();
+    for (size_t i = 0; i < l.size(); i += 3) {
+      itk::Point<double> pt, pt2;
+      pt[0] = l[i];
+      pt[1] = l[i + 1];
+      pt[2] = l[i + 2];
+      pt2[0] = g[i];
+      pt2[1] = g[i + 1];
+      pt2[2] = g[i + 2];
+      local[ii].push_back(pt);
+      global[ii].push_back(pt2);
+    }
+    images[ii] = s->get_groomed_image();
+    ii++;
+  }
+  ShapeworksWorker* worker = new ShapeworksWorker(
+    ShapeworksWorker::Reconstruct, NULL, NULL, this->project_,
+    local, global, images,
+    this->ui_->maxAngle->value(),
+    this->ui_->meshDecimation->value(),
+    this->ui_->numClusters->value());
+  worker->moveToThread(thread);
+  connect(thread, SIGNAL(started()), worker, SLOT(process()));
+  connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
+  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
+  connect(worker, SIGNAL(warning_message(std::string)), this, SLOT(handle_warning(std::string)));
+  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+  thread->start();
+  emit progress(15);
 }
 
 //---------------------------------------------------------------------------
@@ -250,10 +321,36 @@ const vnl_vector<double> & AnalysisTool::getShape(int mode, double value)
   return this->temp_shape_;
 }
 
+//---------------------------------------------------------------------------
 ParticleShapeStatistics<3> AnalysisTool::getStats()
 {
   this->compute_stats();
   return this->stats_;
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::load_from_preferences()
+{
+  this->ui_->numClusters->setValue(
+    this->preferences_.get_preference("reconstruction_clusters",
+                                      this->ui_->numClusters->value()));
+  this->ui_->meshDecimation->setValue(
+    this->preferences_.get_preference("reconstruction_decimation",
+                                      this->ui_->meshDecimation->value()));
+  this->ui_->maxAngle->setValue(
+    this->preferences_.get_preference("reconstruction_maxAngle",
+                                      this->ui_->maxAngle->value()));
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::save_to_preferences()
+{
+  this->preferences_.set_preference("reconstruction_clusters",
+                                    this->ui_->numClusters->value());
+  this->preferences_.set_preference("reconstruction_decimation",
+                                    this->ui_->meshDecimation->value());
+  this->preferences_.set_preference("reconstruction_maxAngle",
+                                    this->ui_->maxAngle->value());
 }
 
 //---------------------------------------------------------------------------
