@@ -33,7 +33,7 @@ public:
 
   std::string getAnalysisMode();
 
-  void setAnalysisMode(std::string i);
+  void setAnalysisMode(std::string mode);
 
   void setLabels(QString which, QString value);
 
@@ -59,6 +59,10 @@ public:
 
 
 public Q_SLOTS:
+
+  // analysis mode
+  void on_tabWidget_currentChanged();
+
   void handle_analysis_options();
   void handle_median();
 
