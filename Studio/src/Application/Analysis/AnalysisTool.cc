@@ -180,6 +180,7 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaAnimateCheckBox->setEnabled(false);
     this->ui_->pcaModeSpinBox->setEnabled(false);
   }
+
   emit update_view();
 }
 
