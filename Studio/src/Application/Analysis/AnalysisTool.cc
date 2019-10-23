@@ -327,6 +327,7 @@ void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lamb
   this->setLabels(QString("lambda"), lambda);
 }
 
+//---------------------------------------------------------------------------
 void AnalysisTool::updateSlider()
 {
   auto steps = std::max(this->preferences_.get_preference("pca_steps", 20), 3);
@@ -338,7 +339,7 @@ void AnalysisTool::updateSlider()
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats()
 {
-  this->ui_->tabWidget->setCurrentIndex(0);
+  this->ui_->tabWidget->setCurrentWidget(this->ui_->samples_tab);
   this->ui_->allSamplesRadio->setChecked(true);
   this->ui_->singleSamplesRadio->setChecked(false);
   this->ui_->sampleSpinBox->setEnabled(false);
@@ -355,9 +356,9 @@ void AnalysisTool::reset_stats()
 void AnalysisTool::setAnalysisMode(std::string mode)
 {
   if (mode == "all samples" || mode == "single sample") {
-    this->ui_->tabWidget->setCurrentWidget(this->ui_->samples_tab);
     this->ui_->allSamplesRadio->setChecked(mode == "all samples");
     this->ui_->singleSamplesRadio->setChecked(mode == "single sample");
+    this->ui_->tabWidget->setCurrentWidget(this->ui_->samples_tab);
   }
   else if (mode == "mean") {
     this->ui_->tabWidget->setCurrentWidget(this->ui_->mean_tab);
