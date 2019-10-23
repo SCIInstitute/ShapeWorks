@@ -1,8 +1,12 @@
 #include <ShapeWorksGroom.h>
-#include "tinyxml.h"
+#include <tinyxml.h>
+
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <map>
+#include <stdexcept>
+
 #include "vnl/vnl_vector.h"
 #include "bounding_box.h"
 #include "itkConnectedComponentImageFilter.h"
@@ -23,8 +27,6 @@
 #include "itkThresholdImageFilter.h"
 #include "itkBinaryFillholeImageFilter.h"
 #include "itkApproximateSignedDistanceMapImageFilter.h"
-#include <map>
-#include <stdexcept>
 
 ShapeWorksGroom::ShapeWorksGroom(
   std::vector<ImageType::Pointer> inputs,

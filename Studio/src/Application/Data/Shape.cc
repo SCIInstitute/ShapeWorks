@@ -86,7 +86,7 @@ bool Shape::import_global_point_file( QString filename )
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_points(std::vector<itk::Point<float> > points, bool local) {
+bool Shape::import_points(std::vector<itk::Point<double> > points, bool local) {
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   size_t num_points = 0;
   for (auto &a : points) {

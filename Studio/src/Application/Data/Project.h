@@ -40,6 +40,9 @@ public:
   /// load project from file
   bool load_project( QString filename, std::string& planesFile);
   
+  /// read a lightweight project file
+  bool load_light_project( QString filename, std::string& planesFile );
+
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();
 
@@ -52,7 +55,7 @@ public:
 
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
-  bool load_points(std::vector<std::vector<itk::Point<float> > > points, bool local);
+  bool load_points(std::vector<std::vector<itk::Point<double> > > points, bool local);
 
   void set_reconstructed_present(bool b);
 

@@ -14,7 +14,6 @@
 =========================================================================*/
 #include <iostream>
 #include "ShapeWorksRunApp.h"
-#include "CS6350.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,11 +33,6 @@ int main(int argc, char *argv[])
     {
     std::cerr << e << std::endl;
     return 1;
-    }
-  catch( CS6350::exception & eg )
-    {
-    std::cerr << eg << std::endl;
-    return 2;
     }
   catch( std::exception & ex )
     {

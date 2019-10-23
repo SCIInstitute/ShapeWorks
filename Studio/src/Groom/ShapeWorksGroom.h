@@ -1,20 +1,19 @@
-#ifndef __SHAPEWORKSGROOM_H__
-#define __SHAPEWORKSGROOM_H__
-
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
+#pragma once
 
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include "itkConnectedThresholdImageFilter.h"
-#include "itkTranslationTransform.h"
-#include "itkImage.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 #include <map>
-#include <string>
-//#include <QObject>
+
+#include <itkeigen/Eigen/Dense>
+#include <itkeigen/Eigen/Sparse>
+
+#include <itkConnectedThresholdImageFilter.h>
+#include <itkTranslationTransform.h>
+#include <itkImage.h>
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
+
 typedef float PixelType;
 typedef itk::Image< PixelType, 3 > ImageType;
 typedef itk::ImageFileReader< ImageType > ReaderType;
@@ -24,12 +23,11 @@ typedef itk::TranslationTransform<double, 3>::ParametersType transform_type;
 
 class ShapeWorksGroom {
 public:
-  ShapeWorksGroom(
-    std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
-    double background = 0., double foreground = 0.,
-    double sigma = 2.0,
-    size_t padding = 0, size_t iterations = 100,
-    bool verbose = false);
+  ShapeWorksGroom(std::vector<ImageType::Pointer> inputs = std::vector<ImageType::Pointer>(),
+                  double background = 0., double foreground = 0.,
+                  double sigma = 2.0,
+                  size_t padding = 0, size_t iterations = 100,
+                  bool verbose = false);
   virtual void run();
   void queueTool(std::string tool);
   std::vector<ImageType::Pointer> getImages();
@@ -55,6 +53,4 @@ protected:
   ImageType::IndexType lower_;
   bool paddingInit_;
 };
-
-#endif
 

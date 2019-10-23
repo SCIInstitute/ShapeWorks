@@ -45,8 +45,12 @@ Installation
 
 Download
 ---------------------
-_Coming soon:_ user installation without the necessity of building ShapeWorks directly.  
-Until then, please see **[Development](#development)** to build ShapeWorks.
+
+The latest shapeworks release can be downloaded here:
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.1
+
+To build shapeworks from source, please see **[Development](#development)**.
 
 Development
 ---------------------
@@ -77,13 +81,18 @@ Desired: https://shapeworks.sci.utah.edu/docs
 Acknowledgements
 =====================
 
-If you use ShapeWorks in work that leads to published research, we humbly ask that you to [cite ShapeWorks](#how-to-cite-shapeworks) and add the following to the 'Acknowledgments' section of your paper: 
+If you use ShapeWorks in work that leads to published research, we humbly ask that you to [cite ShapeWorks](#how-to-cite-shapeworks), add the following to the 'Acknowledgments' section of your paper: 
 <!--
 "This project was supported by the 
 National Institute of General Medical Sciences of the National Institutes of Health under 
 grant number P41GM103545."
 -->
->"This work was supported by the National Institutes of Health under grant numbers R01-AR-076120-01, R01-HL135568-02, and P41-GM103545-19."
+>"This work was supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, and NIGMS-P41GM103545."
+
+and add the following 'disclaimer':
+
+>"The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health."
+
 
 How to Cite ShapeWorks
 ---------------------

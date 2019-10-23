@@ -9,6 +9,7 @@
 #include "itkMetaImageIOFactory.h"
 
 int main(int argc, char ** argv) {
+  /*
   try {
     if (argc < 4) {
       std::cerr << "Usage: ./ShapeworksCLT PARAMETER_FILE.xml INPUT1 INPUT2 ..." << std::endl;
@@ -128,12 +129,12 @@ int main(int argc, char ** argv) {
     auto groomed_img = groom.getImages();
     //get the cutting planes from file if possible
     std::ifstream planes(planesFile.c_str());
-    std::vector<std::array<itk::Point<float>, 3 > > cutPlanes;
+    std::vector<std::array<itk::Point<double>, 3 > > cutPlanes;
     while (planes.good()) {
       float x1, y1, z1, x2, y2, z2, x3, y3, z3;
       planes >> x1 >> y1 >> z1 >> x2 >> y2 >> z2 >> x3 >> y3 >> z3;
       if (!planes.good()) { break; }
-      itk::Point<float> p1, p2, p3;
+      itk::Point<double> p1, p2, p3;
       p1[0] = x1; p1[1] = y1; p1[2] = z1;
       p2[0] = x2; p2[1] = y2; p2[2] = z2;
       p3[0] = x3; p3[1] = y3; p3[2] = z3;
@@ -148,8 +149,7 @@ int main(int argc, char ** argv) {
     } 
     //run the optimize step
     ShapeWorksOptimize optimize(groomed_img, cutPlanes, optimize_scales,
-      std::vector<double>(optimize_scales,start_reg),
-      std::vector<double>(optimize_scales, end_reg),
+      start_reg, end_reg,
       std::vector<unsigned int>(optimize_scales, iters),
       std::vector<double>(optimize_scales, decay_span),
       std::vector<size_t>(optimize_scales, procrustes_interval),
@@ -179,4 +179,5 @@ int main(int argc, char ** argv) {
   }
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
+  */
 }

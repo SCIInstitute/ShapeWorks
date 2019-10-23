@@ -7,11 +7,13 @@
 #include <QSize>
 #include <Data/Preferences.h>
 
+
 //-----------------------------------------------------------------------------
 Preferences::Preferences()
   : settings_( "Scientific Computing and Imaging Institute", 
     "ShapeWorksStudio" ), saved_(true) {
   this->restore_defaults();
+  this->settings_.setFallbacksEnabled(false);
 }
 
 std::map<std::string, QVariant> Preferences::getAllPreferences() {
@@ -118,8 +120,6 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_iters", 1000);
   if (!this->settings_.contains("optimize_weight") || force)
     this->settings_.setValue("optimize_weight", 1.0);
-  if (!this->settings_.contains("optimize_decay_span") || force)
-    this->settings_.setValue("optimize_decay_span", 1000);
   if (!this->settings_.contains("optimize_procrustes_interval") || force)
     this->settings_.setValue("optimize_procrustes_interval", 0);
   if (!this->settings_.contains("optimize_maxAngle") || force)

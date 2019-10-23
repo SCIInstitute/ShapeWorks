@@ -1,4 +1,3 @@
-#include "Reconstruction.h"
 #include <vtkKdTreePointLocator.h>
 #include <vtkProbeFilter.h>
 #include <vtkFloatArray.h>
@@ -18,7 +17,15 @@
 #include <vtkPolyDataWriter.h>
 #include <array>
 
+#include <itkImageFileReader.h>
+#include "itkNrrdImageIOFactory.h"
+#include "itkMetaImageIOFactory.h"
+#include <vtkLoopSubdivisionFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
+
 #include <itkImageFileWriter.h>
+#include "Utils.h"
+#include <math.h>
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
@@ -30,7 +37,8 @@ Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageTyp
                                                                                                    bool doLaplacianSmoothingBeforeDecimation,
                                                                                                    bool doLaplacianSmoothingAfterDecimation,
                                                                                                    float smoothingLambda,
-                                                                                                   int smoothingIterations) :
+                                                                                                   int smoothingIterations,
+                                                                                                   bool usePairwiseNormalsDifferencesForGoodBad):
     sparseDone_(false), denseDone_(false),
     decimationPercent_(decimationPercent),
     maxAngleDegrees_(maxAngleDegrees),
@@ -39,7 +47,7 @@ Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageTyp
     doLaplacianSmoothingBeforeDecimation_(doLaplacianSmoothingBeforeDecimation),
     smoothingLambda_(smoothingLambda),
     smoothingIterations_(smoothingIterations),
-    out_prefix_(out_prefix), use_origin(false)
+    out_prefix_(out_prefix), use_origin(false), usePairwiseNormalsDifferencesForGoodBad_(usePairwiseNormalsDifferencesForGoodBad)
 {}
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -126,6 +134,14 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setSmoothingLambda(float smoothingLambda){
     smoothingLambda_= smoothingLambda;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setOutputEnabled(bool enabled){
+    this->output_enabled_ = enabled;
+    this->out_prefix_ = "/tmp/";
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
@@ -232,6 +248,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     reader1->Update();
     this->denseMean_ = reader1->GetOutput();
     //read out sparse mean
+    int nPoints = 0;
     std::ifstream ptsIn0(sparse.c_str());
     this->sparseMean_ = vtkSmartPointer<vtkPoints>::New();
     while (ptsIn0.good()) {
@@ -239,18 +256,27 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         ptsIn0 >> x >> y >> z;
         if (ptsIn0.good()) {
             this->sparseMean_->InsertNextPoint(x, y, z);
+            nPoints++;
         }
     }
     ptsIn0.close();
     //read out good points
     std::ifstream ptsIn(goodPoints.c_str());
     this->goodPoints_.clear();
-    while (ptsIn.good()) {
-        int i;
-        ptsIn >> i;
-        if (ptsIn.good()) {
-            this->goodPoints_.push_back(i == 0 ? false : true);
+    if(ptsIn.good()){
+        while (ptsIn.good()) {
+            int i;
+            ptsIn >> i;
+            if (ptsIn.good()) {
+                this->goodPoints_.push_back(i == 0 ? false : true);
+            }
         }
+    }
+    else {
+       // good point file is not given if a template mesh is used instead of a mean
+       // just assume all are good
+        for(size_t i = 0 ; i < nPoints; i++)
+            this->goodPoints_.push_back(true);
     }
     ptsIn.close();
     this->sparseDone_ = true;
@@ -431,30 +457,98 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
             normals.push_back(this->computeParticlesNormals(
                                   subjectPts[shape], distance_transform[shape]));
         }
-        // now decide whether each particle is a good
+
+        // now decide whether each particle is a good based on dispersion from mean
         // (it normals are in the same direction accross shapes) or
         // bad (there is discrepency in the normal directions across shapes)
         this->goodPoints_.resize(local_pts[0].size(), true);
-        for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
-            bool isGood = true;
+        if(usePairwiseNormalsDifferencesForGoodBad_){
+            for (unsigned int ii = 0; ii < local_pts[0].size(); ii++) {
+                bool isGood = true;
 
-            // the normal of the first shape
-            double nx_jj = normals[0](ii, 0);
-            double ny_jj = normals[0](ii, 1);
-            double nz_jj = normals[0](ii, 2);
+                // the normal of the first shape
+                double nx_jj = normals[0](ii, 0);
+                double ny_jj = normals[0](ii, 1);
+                double nz_jj = normals[0](ii, 2);
 
-            // start from the second
-            for (unsigned int shapeNo_kk = 1; shapeNo_kk <
-                 local_pts.size(); shapeNo_kk++) {
-                double nx_kk = normals[shapeNo_kk](ii, 0);
-                double ny_kk = normals[shapeNo_kk](ii, 1);
-                double nz_kk = normals[shapeNo_kk](ii, 2);
+                // start from the second
+                for (unsigned int shapeNo_kk = 1; shapeNo_kk <
+                     local_pts.size(); shapeNo_kk++) {
+                    double nx_kk = normals[shapeNo_kk](ii, 0);
+                    double ny_kk = normals[shapeNo_kk](ii, 1);
+                    double nz_kk = normals[shapeNo_kk](ii, 2);
 
-                this->goodPoints_[ii] = this->goodPoints_[ii] &&
-                        ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
-                         std::cos(this->maxAngleDegrees_ * M_PI / 180.));
+                    this->goodPoints_[ii] = this->goodPoints_[ii] &&
+                            ((nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk) >
+                             std::cos(this->maxAngleDegrees_ * M_PI / 180.));
+                }
             }
         }
+        else {
+            // here use the angle to the average normal
+            // spherical coordinates of normal vector per particle per shape sample to compute average normals
+            std::vector< std::vector< double > > thetas ; thetas.clear();
+            std::vector< std::vector< double > > phis;    phis.clear();
+
+            thetas.resize(sparseMean.size());
+            phis.resize(sparseMean.size());
+            for (size_t j = 0; j < sparseMean.size(); j++) {
+                thetas[j].resize(local_pts.size());
+                phis[j].resize(local_pts.size());
+            }
+            for (int i = 0; i < local_pts.size(); i++){
+                for (size_t j = 0; j < sparseMean.size(); j++) {
+                    double curNormal[3];
+                    double curNormalSph[3];
+
+                    curNormal[0] = normals[i](j,0);
+                    curNormal[1] = normals[i](j,1);
+                    curNormal[2] = normals[i](j,2);
+
+                    Utils::cartesian2spherical(curNormal, curNormalSph);
+                    phis[j][i]   = curNormalSph[1];
+                    thetas[j][i] = curNormalSph[2];
+                }
+            }
+
+            // compute mean normal for every particle
+            vnl_matrix<double> average_normals(sparseMean.size(), 3);
+            for (size_t j = 0; j < sparseMean.size(); j++) {
+                double avgNormal_sph[3];
+                double avgNormal_cart[3];
+                avgNormal_sph[0] = 1;
+                avgNormal_sph[1] = Utils::averageThetaArc(phis[j]);
+                avgNormal_sph[2] = Utils::averageThetaArc(thetas[j]);
+                Utils::spherical2cartesian(avgNormal_sph, avgNormal_cart);
+
+                average_normals(j,0) = avgNormal_cart[0];
+                average_normals(j,1) = avgNormal_cart[1];
+                average_normals(j,2) = avgNormal_cart[2];
+            }
+
+            for (size_t j = 0; j < sparseMean.size(); j++) {
+
+                double cur_cos_appex = 0;
+                // the mean normal of the current particle index
+                double nx_jj = average_normals(j,0);
+                double ny_jj = average_normals(j,1);
+                double nz_jj = average_normals(j,2);
+
+                for (unsigned int shapeNo_kk = 0; shapeNo_kk < local_pts.size(); shapeNo_kk++) {
+                    double nx_kk = normals[shapeNo_kk](j, 0);
+                    double ny_kk = normals[shapeNo_kk](j, 1);
+                    double nz_kk = normals[shapeNo_kk](j, 2);
+
+                    cur_cos_appex += (nx_jj*nx_kk + ny_jj*ny_kk + nz_jj*nz_kk);
+                }
+
+                cur_cos_appex /= local_pts.size();
+                cur_cos_appex *= 2.0; // due to symmetry about the mean normal
+
+                this->goodPoints_[j] = cur_cos_appex > std::cos(this->maxAngleDegrees_ * M_PI / 180.);
+            }
+        }
+
         // decide which correspondences will be used to build the warp
         std::vector<int> particles_indices;
         particles_indices.clear();
@@ -537,8 +631,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         // Read input shapes from file list
         std::vector<int> centroidIndices;
         if (this->numClusters_ > 0 && this->numClusters_ < global_pts.size()) {
-            this->performKMeansClustering(global_pts, global_pts[0].size(), centroidIndices);
-
+                this->performKMeansClustering(global_pts, global_pts[0].size(), centroidIndices);
         } else {
             this->numClusters_ = distance_transform.size();
             centroidIndices.resize(distance_transform.size());
@@ -652,14 +745,17 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         std::string meanDT_filename           = out_prefix_ + "_meanDT.nrrd" ;;
         std::string meanDTBeforeWarp_filename = out_prefix_ + "_meanDT_beforeWarp.nrrd" ;;
 
-        typename WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName( meanDT_filename.c_str());
-        writer->SetInput( multiplyImageFilter->GetOutput() );
-        writer->Update();
+        if (this->output_enabled_)
+        {
+            typename WriterType::Pointer writer = WriterType::New();
+            writer->SetFileName( meanDT_filename.c_str());
+            writer->SetInput( multiplyImageFilter->GetOutput() );
+            writer->Update();
 
-        writer->SetFileName( meanDTBeforeWarp_filename.c_str());
-        writer->SetInput( multiplyImageFilterBeforeWarp->GetOutput() );
-        writer->Update();
+            writer->SetFileName( meanDTBeforeWarp_filename.c_str());
+            writer->SetInput( multiplyImageFilterBeforeWarp->GetOutput() );
+            writer->Update();
+        }
 
         // going to vtk to extract the template mesh (mean dense shape)
         // to be deformed for each sparse shape
@@ -1264,6 +1360,43 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
            typename TCoordRep, typename PixelType, typename ImageType>
+int Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::
+ComputeMedianShape(std::vector<vnl_matrix<double> > & shapeList)
+{
+    int medianShapeIndex =-1;
+    double minSum = 1e10;
+
+    for(size_t ii = 0; ii < shapeList.size(); ii++)
+    {
+        vnl_matrix<double> shape_ii = shapeList[ii];
+        double sum = 0.0;
+
+        for(size_t jj = 0; jj < shapeList.size(); jj++)
+        {
+            if(ii==jj)
+                continue;
+
+            vnl_matrix<double> shape_jj = shapeList[jj];
+
+            for(size_t kk =0 ; kk < shape_ii.size(); kk++)
+                sum += (fabs(shape_ii[kk][0] - shape_jj[kk][0]) + fabs(shape_ii[kk][1] - shape_jj[kk][1]) + fabs(shape_ii[kk][2] - shape_jj[kk][2]));
+
+        }
+        sum/=shapeList.size();
+
+        if(sum < minSum)
+        {
+            minSum           = sum;
+            medianShapeIndex = int(ii);
+        }
+    }
+
+    return medianShapeIndex;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::performKMeansClustering(
         std::vector<std::vector<itk::Point<TCoordRep> > > global_pts,
         unsigned int number_of_particles,
@@ -1291,6 +1424,15 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         shapeList.push_back(shapeVector);
     }
     std::vector<int> centers(this->numClusters_, 0);
+    if(this->numClusters_ == 1)
+    {
+        // this should be the median shape rather than a random sample
+        centers[0] = ComputeMedianShape(shapeList);
+        centroidIndices = centers;
+        std::cout << "One cluster is given ... and the median shape is used ... \n";
+        return;
+    }
+
     unsigned int seed = unsigned(std::time(0));
     std::srand(seed);
     centers[0] = rand() % int(number_of_shapes);
@@ -1337,6 +1479,89 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     }
     std::cout << "KMeans++ finished...." << std::endl;
     centroidIndices = centers;
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(
+        typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision)
+{
+    typename ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
+    itk2vtkConnector->SetInput(dtImage);
+    itk2vtkConnector->Update();
+
+    vtkSmartPointer<vtkPolyData> denseMesh_;
+
+    denseMesh_ = this->extractIsosurface(itk2vtkConnector->GetOutput());
+    try
+    {
+        denseMesh_ = this->MeshQC(denseMesh_);
+    }
+    catch (std::runtime_error e)
+    {
+        if (denseMesh_ != NULL) {
+            throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
+        }
+    }
+
+    if (subdivision > 0)
+    {
+        if (butterfly_subdivision)
+        {
+            vtkSmartPointer <vtkButterflySubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkButterflySubdivisionFilter>::New();
+            subdivisionFilter->SetInputData(denseMesh_);
+            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
+            subdivisionFilter->Update();
+            denseMesh_ = subdivisionFilter->GetOutput();
+        }
+        else
+        {
+            vtkSmartPointer <vtkLoopSubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkLoopSubdivisionFilter>::New();
+            subdivisionFilter->SetInputData(denseMesh_);
+            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
+            subdivisionFilter->Update();
+            denseMesh_ = subdivisionFilter->GetOutput();
+        }
+    }
+
+    std::string plyName = meshFileName;
+    std::string vtkName = meshFileName;
+    std::string str_vtk (".vtk");
+    std::string str_ply (".ply");
+    std::size_t found_in_ply = plyName.find(str_vtk);
+    std::size_t found_in_vtk = vtkName.find(str_ply);
+    if ( found_in_ply != std::string::npos)
+        plyName.replace( found_in_ply, str_vtk.size(), str_ply );
+
+    if ( found_in_vtk != std::string::npos)
+        vtkName.replace( found_in_vtk, str_ply.size(), str_vtk );
+
+    std::cout << "Writing: " + plyName << std::endl;
+    this->writePLY( (char*)plyName.c_str(), denseMesh_ );
+
+    std::cout << "Writing: " + vtkName << std::endl;
+    this->writeVTK( (char*)vtkName.c_str(), denseMesh_ );
+}
+
+template < template < typename TCoordRep, unsigned > class TTransformType,
+           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
+           typename TCoordRep, typename PixelType, typename ImageType>
+void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision)
+{
+    typedef itk::ImageFileReader< ImageType > ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
+
+    if (dtFileName.find(".nrrd") != std::string::npos) {
+        itk::NrrdImageIOFactory::RegisterOneFactory();
+    } else if (dtFileName.find(".mha") != std::string::npos) {
+        itk::MetaImageIOFactory::RegisterOneFactory();
+    }
+
+    std::cout << "Reading distance transform file : " << dtFileName << std::endl;
+    reader->SetFileName( dtFileName.c_str() );
+    reader->Update();
+    this->MeshFromDT(reader->GetOutput(), meshFileName, subdivision, butterfly_subdivision);
 }
 
 
