@@ -73,25 +73,24 @@ try:
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-parentDir="TestEllipsoids/"
-filename="Ellipsoids.zip"
-if not os.path.exists(parentDir):
-	os.makedirs(parentDir)
-	
-# Check if the data is in the right place
-if not os.path.exists(filename):
-    print("Can't find " + filename + " on the local filesystem.")
-    print("Downloading " + filename + " from SCIGirder.")
-    downloadUseCaseData(filename)
-    
+    parentDir="TestEllipsoids/"
+    filename="Ellipsoids.zip"
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
 
-# extract the zipfile
-with ZipFile(filename, 'r') as zipObj:
-    zipObj.extractall(path=parentDir)
-    if not args.start_with_prepped_data:
-        fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
-    else:
-        fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " on the local filesystem.")
+        print("Downloading " + filename + " from SCIGirder.")
+        downloadUseCaseData(filename)
+
+    # extract the zipfile
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
+        if not args.start_with_prepped_data:
+            fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
+        else:
+            fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
     fileList = fileList[:15]
 
@@ -178,14 +177,15 @@ with ZipFile(filename, 'r') as zipObj:
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = 'TestEllipsoids/PointFiles/'
+    pointDir = './TestEllipsoids/PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
     if int(args.use_single_scale) != 0:
         parameterDictionary = {
-            "number_of_particles" : 128,
+            "number_of_particles" : 512,
             "use_normals": 0,
+            "normal_weight": 10,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 1000,
@@ -194,30 +194,31 @@ with ZipFile(filename, 'r') as zipObj:
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 10,
+            "relative_weighting" : 5,
             "initial_relative_weighting" : 0.01,
             "procrustes_interval" : 0,
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "mesh_based_attributes" : 0,
             "verbosity" : 3
-        }
+          }
 
         """
         Now we execute a single scale particle optimization function.
         """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_Basic(pointDir, dtFiles, parameterDictionary)
+        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+
     else:
         parameterDictionary = {
             "starting_particles" : 32,
-            "number_of_levels" : 3, 
-            "use_normals": 0,
+            "number_of_levels" : 5,
+            "use_normals": 1,
+            "normal_weight": 10,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 1000,
             "optimization_iterations" : 2000,
-            "starting_regularization" : 100,
+            "starting_regularization" : 1000,
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
@@ -227,15 +228,15 @@ with ZipFile(filename, 'r') as zipObj:
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "mesh_based_attributes" : 0,
             "verbosity" : 3
-        }
+            }
 
         """
         Now we execute a multi-scale particle optimization function.
         """
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
+          
     """
     ## ANALYZE : Shape Analysis and Visualization
 
