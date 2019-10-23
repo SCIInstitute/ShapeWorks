@@ -797,10 +797,6 @@ void ShapeWorksStudioApp::update_display()
                                                33 : 0, Qt::UserRole - 1);
   }
   else {
-    if (this->ui_->thumbnail_size_slider->maximum() !=
-        this->ui_->thumbnail_size_slider->value()) {
-      this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
-    }
     if (mode == "mean") {
       this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setItemData(1, reconstruct_ready ? 0 : 33, Qt::UserRole - 1);
@@ -831,6 +827,13 @@ void ShapeWorksStudioApp::update_display()
                                                   reconstruct_ready) ?
                                                  33 : 0, Qt::UserRole - 1);
     } //TODO regression?
+
+    if (this->ui_->thumbnail_size_slider->maximum() !=
+        this->ui_->thumbnail_size_slider->value()) {
+      this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
+    }
+
+
   }
   this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
