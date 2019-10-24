@@ -16,7 +16,8 @@ First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#s
 We recommend using anaconda to create a sandbox environment. While optional, using a conda environment allows multiple builds with different dependencies. You can install Anaconda and the [ShapeWorks dependencies](deps.txt) using:  
 `source ./conda_installs.sh`  
 <br>Accept the cryptography license terms and default installation path.  
-<br>These dependencies can be manually installed if preferred. [Here is the list](deps.txt).
+<br>These dependencies can be manually installed if preferred. [Here is the list](deps.txt).  
+Note that conda may install a different version of Qt that is too old to use with ShapeWorks. Be sure to set the `CMAKE_PREFIX_PATH` as described below in [Configuration](#Configuration).
 
 Install **Qt5**, required by ShapeWorks gui applications (at least version 5.10).  
 Download and install the latest version for your OS, selecting the LGPL (free) license.  
@@ -47,7 +48,7 @@ VcXsrv is available here:
 
 https://sourceforge.net/projects/vcxsrv/
 
-### CMake
+### Configuration
 Make a build directory and use cmake (or ccmake for a gui version) to configure your build:  
 ``
 mkdir build
@@ -59,6 +60,8 @@ Note: using `ccmake` will present the user with a GUI that makes it easy to see 
 Options include the following:
 ```
   -G <generator> (e.g., -GXCode)
+  -DCMAKE_PREFIX_PATH=<lib Path(s)>   default: a ;-separated list of paths to Qt, vtk, ITK, etc.
+                                               For Qt: it finds qmake in the system PATH; A prefix path must contain the lib/cmake directory.
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DBuild_View2=[OFF|ON]              default: OFF
   -DBuild_Post=[OFF|ON]               default: ON
