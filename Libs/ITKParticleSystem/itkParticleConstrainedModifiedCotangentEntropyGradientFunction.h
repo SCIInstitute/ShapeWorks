@@ -21,13 +21,11 @@
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
 
-// SHIREEN
 #include <fstream>
 #include <math.h>
 #include "itkMath.h"
 
 #define NBHD_SIGMA_FACTOR 1.3
-// end SHIREEN
 
 namespace itk
 {
@@ -223,9 +221,7 @@ protected:
     int m_RunStatus; // 1 for initialization and 2 for optimization
 
     double m_GlobalSigma;
-    // Praful -- SHIREEN
-     float m_MaxMoveFactor;
-     // end Praful -- SHIREEN
+    float m_MaxMoveFactor;
 
 };
 
