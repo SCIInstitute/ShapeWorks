@@ -30,7 +30,7 @@ import glob
 from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
-
+from GirderConnector import downloadUseCaseData
 """
 Most of the following steps even though wrapped in python functions are using
 the underlying c++ code, for which we need to call the source paths to the
@@ -41,7 +41,7 @@ These following commands set the temporary environment variables to point to
 shapeworks binaries and set the necessary library paths
 """
 
-binpath = "../build/shapeworks/src/ShapeWorks-build/bin"
+binpath = "../buildnew/shapeworks/src/ShapeWorks-build/bin"
 parser = argparse.ArgumentParser(description='Example ShapeWorks LA Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
@@ -51,115 +51,124 @@ parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (def
 args = parser.parse_args()
 os.environ["PATH"] = args.shapeworks_path + ":" + os.environ["PATH"]
 
-filename="./leftatrium.zip"
-# Check if the data is in the right place
-if not os.path.exists(filename):
-    print("Can't find " + filename + " on the local filesystem.")
-    print("Downloading " + filename + " from SCIGirder.")
-    downloadUseCaseData(filename)
-
-#fixme: ld_library_path should not be necessary (see github issue #230)
-os.environ["LD_LIBRARY_PATH"]= binpath + "/../lib:" + binpath + "/../lib64"
-
 
 try:
+    """
+    Unzip the data for this tutorial.
+
+    The data is inside the leftatrium.zip, run the following function to unzip the
+    data and create necessary supporting files. The files will be Extracted in a
+    newly created Directory TestEllipsoids.
+    This data is LGE segmentation of left atrium.
+    """
+    """
+    Extract the zipfile into proper directory and create necessary supporting
+    files
+    """
+    print("\nStep 1. Extract Data\n")
+    if int(args.interactive) != 0:
+        input("Press Enter to continue")
+
+    filename = "leftatrium.zip"
+    parentDir="TestLeftAtrium/"
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
+
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " on the local filesystem.")
+        print("Downloading " + filename + " from SCIGirder.")
+        downloadUseCaseData(filename)
+
+    # extract the zipfile
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
+
+        fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
+        fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
+
 
     if args.start_with_image_and_segmentation_data:
-        parentDir="TestLeftAtrium/"
 
-        if not os.path.exists(parentDir):
-            os.makedirs(parentDir)
-        # extract the zipfile
-        with ZipFile(filename, 'r') as zipObj:
-            zipObj.extractall(path=parentDir)
+        """
+        ## GROOM : Data Pre-processing
+        For the unprepped data the first few steps are
+        -- Isotropic resampling
+        -- Padding
+        -- Center of Mass Alignment
+        -- Rigid Alignment
+        -- Largest Bounding Box and Cropping
+        """
 
-            fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
-            fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
+        parentDir = './TestLeftAtrium/PrepOutput/'
 
-        if not args.start_with_prepped_data:
-            print("\nStep 1. Extract Data\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largest Bounding Box and Cropping
-            """
-
-            parentDir = './TestLeftAtrium/PrepOutput/'
-
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                input("Press Enter to continue")
+        print("\nStep 2. Groom - Data Pre-processing\n")
+        if args.interactive:
+            input("Press Enter to continue")
 
 
-            """
-            Apply isotropic resampling
+        """
+        Apply isotropic resampling
 
-            For detailed explainations of parameters for resampling volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+        For detailed explainations of parameters for resampling volumes, go to
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
 
-            the segmentation and images are resampled independently and the result files are saved in two different directories.
-            """
+        the segmentation and images are resampled independently and the result files are saved in two different directories.
+        """
 
-            [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg ,fileList_img, 1, processRaw = True)
+        [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg ,fileList_img, 1, processRaw = True)
 
-            """
-            Apply padding
+        """
+        Apply padding
 
-            For detailed explainations of parameters for padding volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+        For detailed explainations of parameters for padding volumes, go to
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
 
-            Both the segmentation and raw images are padded.
-            """
+        Both the segmentation and raw images are padded.
+        """
 
-            [paddedFiles_segmentations,  paddedFiles_images] = applyPadding(parentDir, resampledFiles_segmentations,resampledFiles_images, 10, processRaw = True)
-
-
-            """
-            Apply center of mass alignment
-
-            For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
-
-            This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-            There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-            """
-            [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, paddedFiles_images , processRaw=True)
-
-            """
-            Apply rigid alignment
-
-            For detailed explainations of parameters for rigid alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
-
-            This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-            There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-            processRaw = False, applies the center of mass alignment only on segemnattion data.
-            This function uses the same transfrmation matrix for alignment of raw and segmentation files.
-            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-            """
-            medianFile = FindReferenceImage(comFiles_segmentations)
-
-            [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
-
-            """
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+        [paddedFiles_segmentations,  paddedFiles_images] = applyPadding(parentDir, resampledFiles_segmentations,resampledFiles_images, 10, processRaw = True)
 
 
-            Compute largest bounding box and apply cropping
-            processRaw = True, processes raw and binary images with shared parameters.
-            processRaw = False, applies the center of mass alignment only on segemnattion data.
-            The function uses the same bounding box to crop the raw and segemnattion data.
+        """
+        Apply center of mass alignment
 
-            """
-            [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
+        For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
+
+        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        """
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, paddedFiles_images , processRaw=True)
+
+        """
+        Apply rigid alignment
+
+        For detailed explainations of parameters for rigid alignment of volumes, go to
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
+
+        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        processRaw = False, applies the center of mass alignment only on segemnattion data.
+        This function uses the same transfrmation matrix for alignment of raw and segmentation files.
+        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+        """
+        medianFile = FindReferenceImage(comFiles_segmentations)
+
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+
+        """
+        For detailed explainations of parameters for finding the largest bounding box and cropping, go to
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+
+
+        Compute largest bounding box and apply cropping
+        processRaw = True, processes raw and binary images with shared parameters.
+        processRaw = False, applies the center of mass alignment only on segemnattion data.
+        The function uses the same bounding box to crop the raw and segemnattion data.
+
+        """
+        [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -175,21 +184,6 @@ try:
         else:
             dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
     else:
-
-        print("\nStep 1. Extract Data\n")
-        if args.interactive:
-            input("Press Enter to continue")
-
-        parentDir="TestLeftAtrium/"
-
-        if not os.path.exists(parentDir):
-            os.makedirs(parentDir)
-
-        # extract the zipfile
-        with ZipFile(filename, 'r') as zipObj:
-            zipObj.extractall(path=parentDir)
-
-            fileList = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
 
         if not args.start_with_prepped_data:
             """
@@ -221,7 +215,7 @@ try:
 
             """
 
-            resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
+            resampledFiles = applyIsotropicResampling(parentDir, fileList_seg, None, 1)
 
 
             """
@@ -276,7 +270,7 @@ try:
         if not args.start_with_prepped_data:
             dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
         else:
-            dtFiles = applyDistanceTransforms(parentDir, fileList)
+            dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
 
 
@@ -313,7 +307,7 @@ try:
         parameterDictionary = {
             "number_of_particles" : 1024,
             "use_normals": 1,
-            "normal_weight": 10,
+            "normal_weight": 10.0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 4000,
@@ -342,7 +336,7 @@ try:
             "starting_particles" : 128,
             "number_of_levels" : 4,
             "use_normals": 1,
-            "normal_weight": 10,
+            "normal_weight": 10.0,
             "checkpointing_interval" : 200,
             "keep_checkpoints" : 0,
             "iterations_per_split" : 4000,
@@ -532,14 +526,7 @@ try:
     if args.interactive :
         input("Press Enter to continue")
 
-    launchShapeWorksView2(pointDir, worldPointFiles)
-
-
-    print("\nStep 10. Analysis - Launch ShapeWorksView2 - dense correspondence model.\n")
-    if args.interactive:
-        input("Press Enter to continue")
-
-    launchShapeWorksView2(meshDir_global, worldDensePointFiles)
+    launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
     print("\nShapeworks Pipeline Complete!")
 
