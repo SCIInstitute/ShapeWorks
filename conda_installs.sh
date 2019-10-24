@@ -39,12 +39,12 @@ conda activate shapeworks
 conda install --yes -c anaconda geotiff libxrandr-devel-cos6-x86_64 libxinerama-devel-cos6-x86_64 libxcursor-devel-cos6-x86_64 libxi-devel-cos6-x86_64
 conda install --yes -c conda-forge cmake xorg-libx11 libuuid xorg-libsm 
 conda install --yes -c anaconda numpy
-conda install --yes -c conda-forge matplotlib
 conda install --yes -c conda-forge colorama
 conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
 conda install --yes -c conda-forge requests
 pip install --upgrade pip
 pip install termcolor
+pip install matplotlib
 
 conda info
 
