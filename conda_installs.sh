@@ -7,7 +7,7 @@ if [ -z "$PS1" ]; then
   exit 1
 fi
 
-if [ -x "$(command -v conda)" ]; then
+if ! command -v conda 2>/dev/null 1>&2; then
   echo "installing anaconda..."
   if [ "$(uname)" == "Darwin" ]; then
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
@@ -42,9 +42,9 @@ conda install --yes -c anaconda numpy
 conda install --yes -c conda-forge matplotlib
 conda install --yes -c conda-forge colorama
 conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
+conda install --yes -c conda-forge requests
 pip install --upgrade pip
 pip install termcolor
-pip install requests
 
 conda info
 
