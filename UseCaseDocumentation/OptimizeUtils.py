@@ -53,11 +53,11 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     debug_projection = ET.SubElement(root, 'debug_projection')
     debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
     mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
-    mesh_based_attributes.text = "\n" + str(1.0) + "\n"
+    mesh_based_attributes.text = "\n" + str(1) + "\n"
     verbosity = ET.SubElement(root, 'verbosity')
     verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
     use_xyz = ET.SubElement(root, 'use_xyz')
-    use_xyz.text = "\n" + str(parameterDictionary['use_xyz']) + "\n"
+    use_xyz.text = "\n" + str(1) + "\n"
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
     for i in range(len(inDataFiles)):
