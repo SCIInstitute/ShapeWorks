@@ -16,7 +16,7 @@
 
 #include <itkImageFileReader.h>
 
-#include <Libs/SurfaceReconstruction/Reconstruction.h>
+#include <Reconstruction.h>
 
 class SurfaceReconstructor
 {

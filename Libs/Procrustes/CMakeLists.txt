@@ -1,7 +1,0 @@
-FILE(GLOB Procrustes_srcs ./*.h ./*.cpp)
-if(TARGET Procrustes)
-    message("Procrustes already exists")
-else(TARGET Procrustes)
-    ADD_LIBRARY (Procrustes STATIC ${Procrustes_srcs})
-    target_include_directories(Procrustes PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
-endif(TARGET Procrustes)

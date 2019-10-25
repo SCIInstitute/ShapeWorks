@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 2.6)
-PROJECT(GenericMeshConversion)
-ADD_EXECUTABLE(GenericMeshConversion GenericMeshConversion.cxx)
-TARGET_LINK_LIBRARIES(GenericMeshConversion ${VTK_LIBRARIES} tinyxml)
-INSTALL(TARGETS GenericMeshConversion  RUNTIME DESTINATION bin)

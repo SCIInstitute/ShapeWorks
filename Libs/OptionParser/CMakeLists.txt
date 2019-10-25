@@ -1,7 +1,0 @@
-FILE(GLOB OptionParser_srcs ./*.h ./*.cpp)
-if(TARGET OptionParser)
-    message("OptionParser already exists")
-else(TARGET OptionParser)
-    ADD_LIBRARY (OptionParser STATIC ${OptionParser_srcs})
-    target_include_directories(OptionParser PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
-endif(TARGET OptionParser)

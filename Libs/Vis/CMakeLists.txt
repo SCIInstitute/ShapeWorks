@@ -1,7 +1,0 @@
-FILE(GLOB Vis_srcs ./*.h ./*.cpp)
-if(TARGET Vis)
-    message("Vis already exists")
-else(TARGET Vis)
-    ADD_LIBRARY (Vis STATIC ${Vis_srcs})
-    target_include_directories(Vis PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
-endif(TARGET Vis)

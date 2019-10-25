@@ -23,11 +23,14 @@ target_include_directories(fim_v4 PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURC
 # file (GLOB trimesh_headers ${CMAKE_SOURCE_DIR}/trimesh2/include/*.h)
 # INSTALL(FILES ${trimesh_headers} meshFIM.h DESTINATION include)
 
+#ctc set public_header properties
+
 # Install the library
- INSTALL(TARGETS fim_v4
- RUNTIME DESTINATION bin
- LIBRARY DESTINATION ./lib
- ARCHIVE DESTINATION ./lib
+INSTALL(TARGETS fim_v4
+ RUNTIME DESTINATION bin  #p[robably lib since this is a library, no executables
+ LIBRARY DESTINATION lib
+ ARCHIVE DESTINATION lib
+ PUBLIC_HEADER DESTINATION include
 )
 
 # # To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
