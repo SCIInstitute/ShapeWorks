@@ -78,7 +78,7 @@ TARGET_LINK_LIBRARIES(ReconstructSurface ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tiny
 INSTALL(TARGETS ReconstructSurface  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ReconstructSamplesAlongPCAModes ReconstructSamplesAlongPCAModes.cxx)
-TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml Utils Analyze ParticleSystemUtils)
+TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml Utils Analyze Optimize)
 INSTALL(TARGETS ReconstructSamplesAlongPCAModes  RUNTIME DESTINATION bin)
 
 # ADD_EXECUTABLE(WarpToMeanSpace WarpToMeanSpace.cxx)

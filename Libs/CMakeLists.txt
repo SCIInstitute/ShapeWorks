@@ -7,5 +7,3 @@ add_subdirectory(Utils)
 
 #TODO next...
 add_subdirectory(fim_v4)
-add_subdirectory(ParticleSystemUtils)
-add_subdirectory(ITKParticleSystem)
