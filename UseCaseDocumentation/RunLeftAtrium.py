@@ -69,7 +69,6 @@ def Run_LeftAtrium_Pipline(args):
         fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
         fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
 
-    fileList_seg = fileList_seg[:2]
     if args.start_with_image_and_segmentation_data:
 
         """

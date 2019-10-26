@@ -13,7 +13,7 @@ shapeworks binaries and set the necessary library paths
 from RunEllipsoid import *
 
 
-binpath = "../buildnew/shapeworks/src/ShapeWorks-build/bin"
+binpath = "../build/shapeworks/src/ShapeWorks-build/bin"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store", default=0)
