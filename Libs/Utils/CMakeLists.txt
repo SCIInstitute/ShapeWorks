@@ -42,10 +42,6 @@ ADD_EXECUTABLE(MeshFromDistanceTransforms MeshFromDistanceTransforms.cxx)
 TARGET_LINK_LIBRARIES(MeshFromDistanceTransforms ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)
 INSTALL(TARGETS MeshFromDistanceTransforms  RUNTIME DESTINATION bin)
  
-ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
-TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} ${VTK_LIBRARIES} fim_v4 tinyxml vgl vgl_algo)
-INSTALL(TARGETS fea2vtk RUNTIME DESTINATION bin)
- 
 ADD_EXECUTABLE(vtk2ply vtk2ply.cxx )
 TARGET_LINK_LIBRARIES(vtk2ply ${VTK_LIBRARIES} )
 INSTALL(TARGETS vtk2ply RUNTIME DESTINATION bin)

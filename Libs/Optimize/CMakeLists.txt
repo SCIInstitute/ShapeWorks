@@ -12,5 +12,5 @@ target_include_directories(Optimize PUBLIC
 
 add_executable(ShapeWorksRun ShapeWorksRun.cxx ShapeWorksRunApp.h ShapeWorksRunApp.txx)
 set_target_properties(ShapeWorksRun PROPERTIES COMPILE_DEFINITIONS SW_USE_FEAMESH)
-target_link_libraries(ShapeWorksRun ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml fim_v4 vgl vgl_algo Optimize Utils)
+target_link_libraries(ShapeWorksRun ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2)
 install(TARGETS ShapeWorksRun RUNTIME DESTINATION bin)
