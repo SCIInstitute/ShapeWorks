@@ -27,11 +27,11 @@ INSTALL(TARGETS ResampleVolumeToIsotropic  RUNTIME DESTINATION bin)
 #INSTALL(TARGETS TranslationTransform  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ICPRigid3DImageRegistration ICPRigid3DImageRegistration.cxx)
-TARGET_LINK_LIBRARIES(ICPRigid3DImageRegistration ${ITK_LIBRARIES} OptionParser)
+TARGET_LINK_LIBRARIES(ICPRigid3DImageRegistration ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ICPRigid3DImageRegistration  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ApplyRigid3DTransformationToImage ApplyRigid3DTransformationToImage.cxx)
-TARGET_LINK_LIBRARIES(ApplyRigid3DTransformationToImage ${ITK_LIBRARIES} OptionParser)
+TARGET_LINK_LIBRARIES(ApplyRigid3DTransformationToImage ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ApplyRigid3DTransformationToImage  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ICPRigid3DMeshRegistration ICPRigid3DMeshRegistration.cxx)
@@ -43,10 +43,10 @@ TARGET_LINK_LIBRARIES(ReflectMeshes ${VTK_LIBRARIES} tinyxml)
 INSTALL(TARGETS ReflectMeshes  RUNTIME DESTINATION bin)
 
 add_executable(TranslateShapeToImageOrigin TranslateShapeToImageOrigin.cxx)
-target_link_libraries(TranslateShapeToImageOrigin ${ITK_LIBRARIES} OptionParser)
+target_link_libraries(TranslateShapeToImageOrigin ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS TranslateShapeToImageOrigin  RUNTIME DESTINATION bin)
 
 add_executable(TranslateImages TranslateImages.cxx)
-target_link_libraries(TranslateImages ${ITK_LIBRARIES} OptionParser)
+target_link_libraries(TranslateImages ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS TranslateImages  RUNTIME DESTINATION bin)
 

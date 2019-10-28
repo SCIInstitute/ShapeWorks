@@ -4,6 +4,8 @@ add_library(Optimize STATIC
 target_link_libraries(Optimize
   Alignment
   fim_v4
+  trimesh2
+  Mesh
   tinyxml)
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
