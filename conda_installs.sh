@@ -7,7 +7,7 @@ if [ -z "$PS1" ]; then
   exit 1
 fi
 
-if [ -x "$(command -v conda)" ]; then
+if ! command -v conda 2>/dev/null 1>&2; then
   echo "installing anaconda..."
   if [ "$(uname)" == "Darwin" ]; then
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
@@ -39,11 +39,12 @@ conda activate shapeworks
 conda install --yes -c anaconda geotiff libxrandr-devel-cos6-x86_64 libxinerama-devel-cos6-x86_64 libxcursor-devel-cos6-x86_64 libxi-devel-cos6-x86_64
 conda install --yes -c conda-forge cmake xorg-libx11 libuuid xorg-libsm 
 conda install --yes -c anaconda numpy
-conda install --yes -c conda-forge matplotlib
 conda install --yes -c conda-forge colorama
 conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
+conda install --yes -c conda-forge requests
 pip install --upgrade pip
 pip install termcolor
+pip install matplotlib
 
 conda info
 

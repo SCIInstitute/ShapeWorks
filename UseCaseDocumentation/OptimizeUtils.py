@@ -17,12 +17,13 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     number_of_particles.text = "\n" + str(parameterDictionary['number_of_particles']) + "\n"
     use_normals = ET.SubElement(root, 'use_normals')
     use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
+    normal_weight = parameterDictionary['normal_weight']
     if parameterDictionary['use_normals'] == 0:
         attribute_scales = ET.SubElement(root, 'attribute_scales')
         attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0\n"
-    else:    
+    else:
         attribute_scales = ET.SubElement(root, 'attribute_scales')
-        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n 1.0 \n  1.0 \n  1.0 \n"
+        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n "+ str(normal_weight)+ "\n "  + str(normal_weight)+ "\n " + str(normal_weight)+ "\n"
     checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
     checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
     keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')
@@ -52,9 +53,11 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     debug_projection = ET.SubElement(root, 'debug_projection')
     debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
     mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
-    mesh_based_attributes.text = "\n" + str(parameterDictionary['mesh_based_attributes']) + "\n"
+    mesh_based_attributes.text = "\n" + str(1) + "\n"
     verbosity = ET.SubElement(root, 'verbosity')
     verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
+    use_xyz = ET.SubElement(root, 'use_xyz')
+    use_xyz.text = "\n" + str(1) + "\n"
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
     for i in range(len(inDataFiles)):
@@ -77,12 +80,13 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     number_of_particles.text = "\n" + str(N) + "\n"
     use_normals = ET.SubElement(root, 'use_normals')
     use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
+    normal_weight = parameterDictionary['normal_weight']
     if parameterDictionary['use_normals'] == 0:
         attribute_scales = ET.SubElement(root, 'attribute_scales')
         attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0\n"
-    else:    
+    else:
         attribute_scales = ET.SubElement(root, 'attribute_scales')
-        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n 1.0 \n  1.0 \n  1.0 \n"
+        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n "+ str(normal_weight)+ "\n "  + str(normal_weight)+ "\n " + str(normal_weight)+ "\n"
     checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
     checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
     keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')
@@ -96,7 +100,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     ending_regularization = ET.SubElement(root, 'ending_regularization')
     ending_regularization.text = "\n" + str(parameterDictionary['ending_regularization']) + "\n"
     recompute_regularization_interval = ET.SubElement(root, 'recompute_regularization_interval')
-    recompute_regularization_interval.text = "\n" + str(parameterDictionary['recompute_regularization_interval']) + "\n"
+    recompute_regularization_interval.text = "\n" + str(parameterDictionary['recompute_regularization_interval']) + "\n"    
     domains_per_shape = ET.SubElement(root, 'domains_per_shape')
     domains_per_shape.text = "\n" + str(parameterDictionary['domains_per_shape']) + "\n"
     relative_weighting = ET.SubElement(root, 'relative_weighting')
@@ -112,11 +116,14 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     debug_projection = ET.SubElement(root, 'debug_projection')
     debug_projection.text = "\n" + str(parameterDictionary['debug_projection']) + "\n"
     mesh_based_attributes = ET.SubElement(root, 'mesh_based_attributes')
-    mesh_based_attributes.text = "\n" + str(parameterDictionary['mesh_based_attributes']) + "\n"
+    mesh_based_attributes.text = "\n" + str(1) + "\n"
     verbosity = ET.SubElement(root, 'verbosity')
     verbosity.text = "\n" + str(parameterDictionary['verbosity']) + "\n"
+    use_xyz = ET.SubElement(root, 'use_xyz')
+    use_xyz.text = "\n" + str(1) + "\n"
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
+
     for i in range(len(inDataFiles)):
         t1 = inputs.text
         t1 = t1 + inDataFiles[i] + '\n'
@@ -139,19 +146,18 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
     file.write(data)
-
-def runShapeWorksOptimize_Basic(parentDir, inDataFiles, parameterDictionary):
+    
+def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionary):
     numP = parameterDictionary['number_of_particles']
     outDir = os.path.join(parentDir , str(numP) + '/')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-
     parameterFile = parentDir + "correspondence_" + str(numP) + '.xml'
     create_SWRun_xml(parameterFile, inDataFiles, parameterDictionary, outDir)
     create_cpp_xml(parameterFile, parameterFile)
     print(parameterFile)
-    execCommand = "ShapeWorksRun " + parameterFile
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ShapeWorksRun" , parameterFile]
+    subprocess.check_call(execCommand )
     outPointsWorld = []
     outPointsLocal = []
     for i in range(len(inDataFiles)):
@@ -189,8 +195,8 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
         create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, inparts)
         create_cpp_xml(parameterFile, parameterFile)
         print(parameterFile)
-        execCommand = "ShapeWorksRun " + parameterFile
-        subprocess.check_call(execCommand, shell=True)
+        execCommand = ["ShapeWorksRun" , parameterFile]
+        subprocess.check_call(execCommand )
 
     outPointsWorld = []
     outPointsLocal = []
