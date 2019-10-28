@@ -48,22 +48,22 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
             print(" ")
             if isBinaryImage:
                 if isCenterOn:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing " , str(
+                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage",  "1"]
+                    subprocess.check_call(execCommand)
                 else:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 0 --isBinaryImage 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "0" , "--isBinaryImage", "1"]
+                    subprocess.check_call(execCommand)
             else:
                 if isCenterOn:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "1"]
+                    subprocess.check_call(execCommand)
                 else:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 0"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "0"]
+                    subprocess.check_call(execCommand)
 
         #process images files
         isBinaryImage = False
@@ -90,22 +90,22 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
             print(" ")
             if isBinaryImage:
                 if isCenterOn:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage", "1"]
+                    subprocess.check_call(execCommand)
                 else:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 0 --isBinaryImage 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "0", "--isBinaryImage",  "1"]
+                    subprocess.check_call(execCommand)
             else:
                 if isCenterOn:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "1"]
+                    subprocess.check_call(execCommand)
                 else:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 0"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "0"]
+                    subprocess.check_call(execCommand)
 
         return [outDataListSeg, outDataListImg]
 
@@ -127,22 +127,22 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
             print(" ")
             if isBinaryImage:
                 if isCenterOn:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 1 --isBinaryImage 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "1" , "--isBinaryImage", "1"]
+                    subprocess.check_call(execCommand)
                 else:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 0 --isBinaryImage 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand =["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn",  "0" , "--isBinaryImage",  "1"]
+                    subprocess.check_call(execCommand)
             else:
                 if isCenterOn:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 1"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn" ,  "1"]
+                    subprocess.check_call(execCommand)
                 else:
-                    execCommand = "ResampleVolumesToBeIsotropic --inFilename " + inname + " --outFilename " + outname + " --isoSpacing " + str(
-                        isoSpacing) + " --isCenterImageOn 0"
-                    subprocess.check_call(execCommand, shell=True)
+                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
+                        isoSpacing) , "--isCenterImageOn", "0"]
+                    subprocess.check_call(execCommand)
 
         return outDataList
 
@@ -183,9 +183,9 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(
-                padSize) + " --paddingValue " + str(padValue)
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
+                padSize) , "--paddingValue" , str(padValue)]
+            subprocess.check_call(execCommand)
 
         #process images
         rawoutDir = os.path.join(outDir ,'images/')
@@ -208,9 +208,9 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(
-                padSize) + " --paddingValue " + str(padValue)
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
+                padSize) , "--paddingValue" , str(padValue)]
+            subprocess.check_call(execCommand)
 
         return [outDataListSeg, outDataListImg]
 
@@ -230,9 +230,9 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = "PadVolumeWithConstant --inFilename " + inname + " --outFilename " + outname + " --paddingSize " + str(
-                padSize) + " --paddingValue " + str(padValue)
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
+                padSize) , "--paddingValue" , str(padValue)]
+            subprocess.check_call(execCommand)
 
         return outDataList
 
@@ -294,8 +294,8 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
             cprint(("Output Parameter Filename : ", paramname), 'yellow')
             print("###########################################")
             print(" ")
-            execCommand = "TranslateShapeToImageOrigin --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --useCenterOfMass 1 --parameterFilename " + paramname + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["TranslateShapeToImageOrigin" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--useCenterOfMass",  "1" , "--parameterFilename " , paramname , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
+            subprocess.check_call(execCommand)
 
         return [outDataListSeg, outDataListImg]
     else:
@@ -316,8 +316,8 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
             cprint(("Output Parameter Filename : ", paramname), 'yellow')
             print("###########################################")
             print(" ")
-            execCommand = "TranslateShapeToImageOrigin --inFilename " + inname + " --outFilename " + outname + " --useCenterOfMass 1 --parameterFilename " + paramname
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["TranslateShapeToImageOrigin" , "--inFilename" , inname , "--outFilename" , outname , "--useCenterOfMass" , "1" , "--parameterFilename" , paramname]
+            subprocess.check_call(execCommand)
 
         return outDataListSeg
 
@@ -349,7 +349,7 @@ def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, re
 
 
 
-def FindMedianImage(inDataList):
+def FindReferenceImage(inDataList):
     """
         This find the median file between all the input files
     """
@@ -369,7 +369,7 @@ def FindMedianImage(inDataList):
 
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
     print(" ")
-    print("############# Rigid Alignment #############")
+    print("############# Reference File #############")
     cprint(("The reference file for rigid alignment is found"), 'green')
     cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
     print("###########################################")
@@ -416,24 +416,24 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     ref_binnrrdfilename = newRefFile.replace('.nrrd', '.BIN.nrrd')
 
     # reference image processing
-    execCommand = "ExtractGivenLabelImage --inFilename " + refFile + " --outFilename " + refFile + " --labelVal 1"
-    subprocess.check_call(execCommand, shell=True)
-    execCommand = "CloseHoles --inFilename " + refFile + " --outFilename " + refFile
-    subprocess.check_call(execCommand, shell=True)
-    execCommand = "AntiAliasing --inFilename " + refFile + " --outFilename " + ref_dtnrrdfilename + " --numIterations " + str(
-        antialiasIterations)
-    subprocess.check_call(execCommand, shell=True)
-    execCommand = "FastMarching --inFilename " + ref_dtnrrdfilename + " --outFilename " + ref_dtnrrdfilename + " --isoValue " + str(
-        isoValue)
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ExtractGivenLabelImage" , "--inFilename" , refFile , "--outFilename" , refFile , "--labelVal" , " 1"]
+    subprocess.check_call(execCommand)
+    execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
+    subprocess.check_call(execCommand)
+    execCommand = ["AntiAliasing" ,  "--inFilename" , refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations" , str(
+        antialiasIterations)]
+    subprocess.check_call(execCommand)
+    execCommand = ["FastMarching" ,  "--inFilename" , ref_dtnrrdfilename , "--outFilename" , ref_dtnrrdfilename , "--isoValue" , str(
+        isoValue)]
+    subprocess.check_call(execCommand)
 
     xmlfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
     create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename)
     create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = "TopologyPreservingSmoothing " + xmlfilename
-    subprocess.check_call(execCommand, shell=True)
-    execCommand = "ThresholdImages --inFilename " + ref_tpdtnrrdfilename + " --outFilename " + ref_binnrrdfilename + " --lowerThresholdLevel -0.000001"
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+    subprocess.check_call(execCommand)
+    execCommand = ["ThresholdImages" , "--inFilename" , ref_tpdtnrrdfilename , "--outFilename" , ref_binnrrdfilename , "--lowerThresholdLevel" , "-0.000001"]
+    subprocess.check_call(execCommand)
 
 
     if processRaw:
@@ -481,25 +481,25 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cprint(("Output Transformation Matrix : ", transformation), 'yellow')
             print("###########################################")
             print(" ")
-            execCommand = "ExtractGivenLabelImage --inFilename " + seginname + " --outFilename " + seginname + " --labelVal 1"
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "CloseHoles --inFilename " + seginname + " --outFilename " + seginname
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "AntiAliasing --inFilename " + seginname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(
-                antialiasIterations)
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(
-                isoValue)
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["ExtractGivenLabelImage", "--inFilename" , seginname , "--outFilename" , seginname , "--labelVal" , "1"]
+            subprocess.check_call(execCommand)
+            execCommand = ["CloseHoles" , "--inFilename" , seginname , "--outFilename" , seginname]
+            subprocess.check_call(execCommand)
+            execCommand = ["AntiAliasing" , "--inFilename" , seginname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
+                antialiasIterations)]
+            subprocess.check_call(execCommand)
+            execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
+                isoValue)]
+            subprocess.check_call(execCommand)
 
             xmlfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
             create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
             create_cpp_xml(xmlfilename, xmlfilename)
-            execCommand = "TopologyPreservingSmoothing " + xmlfilename
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "ICPRigid3DImageRegistration --targetDistanceMap " + ref_tpdtnrrdfilename + " --sourceDistanceMap " + tpdtnrrdfilename + " --sourceSegmentation " + seginname + " --sourceRaw " + rawinname + " --icpIterations " + str(
-                icpIterations) + " --visualizeResult 0 --solutionSegmentation " + segoutname + " --solutionRaw " + rawoutname + " --solutionTransformation " + transformation
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+            subprocess.check_call(execCommand )
+            execCommand = ["ICPRigid3DImageRegistration" , "--targetDistanceMap" , ref_tpdtnrrdfilename , "--sourceDistanceMap" , tpdtnrrdfilename , "--sourceSegmentation" , seginname , "--sourceRaw" , rawinname , "--icpIterations" , str(
+                icpIterations) , "--visualizeResult",  "0" ,  "--solutionSegmentation" , segoutname , "--solutionRaw" , rawoutname , "--solutionTransformation" , transformation]
+            subprocess.check_call(execCommand )
 
         return  [outSegDataList, outRawDataList]
 
@@ -529,25 +529,25 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cprint(("Output Transformation Matrix : ", transformation), 'yellow')
             print("###########################################")
             print(" ")
-            execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "AntiAliasing --inFilename " + inname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(
-                antialiasIterations)
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(
-                isoValue)
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["ExtractGivenLabelImage" , "--inFilename" , inname , "--outFilename" , inname , "--labelVal",  "1"]
+            subprocess.check_call(execCommand )
+            execCommand = ["CloseHoles" , "--inFilename" , inname , "--outFilename" , inname]
+            subprocess.check_call(execCommand )
+            execCommand = ["AntiAliasing",  "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
+                antialiasIterations)]
+            subprocess.check_call(execCommand )
+            execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
+                isoValue)]
+            subprocess.check_call(execCommand )
 
             xmlfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
             create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
             create_cpp_xml(xmlfilename, xmlfilename)
-            execCommand = "TopologyPreservingSmoothing " + xmlfilename
-            subprocess.check_call(execCommand, shell=True)
-            execCommand = "ICPRigid3DImageRegistration --targetDistanceMap " + ref_tpdtnrrdfilename + " --sourceDistanceMap " + tpdtnrrdfilename + " --sourceSegmentation " + inname + " --icpIterations " + str(
-                icpIterations) + " --visualizeResult 0 --solutionSegmentation " + outname + " --solutionTransformation " + transformation
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+            subprocess.check_call(execCommand )
+            execCommand = ["ICPRigid3DImageRegistration" , "--targetDistanceMap" , ref_tpdtnrrdfilename , "--sourceDistanceMap" , tpdtnrrdfilename , "--sourceSegmentation" , inname , "--icpIterations" , str(
+                icpIterations) , "--visualizeResult",  "0" ,  "--solutionSegmentation" , outname , "--solutionTransformation" , transformation]
+            subprocess.check_call(execCommand )
 
         return outDataList
 
@@ -580,9 +580,9 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
 
 
     outPrefix = cropinfoDir + "largest_bounding_box"
-    execCommand = "FindLargestBoundingBox --paddingSize " + str(
-        paddingSize) + " --inFilename " + txtfile + " --outPrefix " + outPrefix
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["FindLargestBoundingBox" , "--paddingSize" , str(
+        paddingSize) , "--inFilename" , txtfile , "--outPrefix" , outPrefix]
+    subprocess.check_call(execCommand )
     # read all the bounding box files for cropping
     bb0 = np.loadtxt(outPrefix + "_bb0.txt")
     bb1 = np.loadtxt(outPrefix + "_bb1.txt")
@@ -624,11 +624,11 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Image Filename : ", outnameImg), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = "CropImages --inFilename " + innameSeg + " --outFilename " + outnameSeg + " --bbX " + str(
-                bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(
-                smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(
-                smI2) + " --MRIinFilename " + innameImg + " --MRIoutFilename " + outnameImg
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["CropImages" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--bbX" , str(
+                bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
+                smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(
+                smI2) , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
+            subprocess.check_call(execCommand )
 
         return [outDataListSeg, outDataListImg]
     else:
@@ -647,10 +647,10 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = "CropImages --inFilename " + inname + " --outFilename " + outname + " --bbX " + str(
-                bb0) + " --bbY " + str(bb1) + " --bbZ " + str(bb2) + " --startingIndexX " + str(
-                smI0) + " --startingIndexY " + str(smI1) + " --startingIndexZ " + str(smI2)
-            subprocess.check_call(execCommand, shell=True)
+            execCommand = ["CropImages" , "--inFilename" , inname , "--outFilename" , outname , "--bbX" , str(
+                bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
+                smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(smI2)]
+            subprocess.check_call(execCommand )
 
         return outDataList
 
@@ -699,29 +699,29 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         outDataList.append(finalnm)
 
 
-        execCommand = "ExtractGivenLabelImage --inFilename " + inname + " --outFilename " + inname + " --labelVal 1"
-        subprocess.check_call(execCommand, shell=True)
-        execCommand = "CloseHoles --inFilename " + inname + " --outFilename " + inname 
-        subprocess.check_call(execCommand, shell=True)
-        execCommand = "AntiAliasing --inFilename " + inname + " --outFilename " + dtnrrdfilename + " --numIterations " + str(antialiasIterations) 
-        subprocess.check_call(execCommand, shell=True)
-        execCommand = "FastMarching --inFilename " + dtnrrdfilename + " --outFilename " + dtnrrdfilename + " --isoValue " + str(isoValue) 
-        subprocess.check_call(execCommand, shell=True)
+        execCommand = ["ExtractGivenLabelImage" , "--inFilename" , inname , "--outFilename" , inname , "--labelVal" , "1"]
+        subprocess.check_call(execCommand )
+        execCommand = ["CloseHoles" ,  "--inFilename" , inname , "--outFilename" , inname ]
+        subprocess.check_call(execCommand )
+        execCommand = ["AntiAliasing" , "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(antialiasIterations) ]
+        subprocess.check_call(execCommand )
+        execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(isoValue) ]
+        subprocess.check_call(execCommand )
         
         xmlfilename=outname.replace('.nrrd', '.tpSmoothDT.xml')
         create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
         create_cpp_xml(xmlfilename, xmlfilename)
-        execCommand = "TopologyPreservingSmoothing " + xmlfilename
-        subprocess.check_call(execCommand, shell=True)
+        execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+        subprocess.check_call(execCommand )
 
         # xmlfilename=outname.replace('.nrrd', '.MeshFromDT.xml')
         # create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename)
         # create_cpp_xml(xmlfilename, xmlfilename)
-        # execCommand = "MeshFromDistanceTransforms " + xmlfilename
-        # subprocess.check_call(execCommand, shell=True)
+        # execCommand = ["MeshFromDistanceTransforms" , xmlfilename]
+        # subprocess.check_call(execCommand )
         # decimal = percentage/100.0
-        # execCommand = "PreviewCmd --inFile " + vtkfilename + " --outFile " + vtkfilename_preview + " --decimationPercentage " + str(decimal)
-        # subprocess.check_call(execCommand, shell=True)
+        # execCommand = ["PreviewCmd" , "--inFile" , vtkfilename , "--outFile" , vtkfilename_preview , "--decimationPercentage" , str(decimal)]
+        # subprocess.check_call(execCommand )
         # this at the end
 
         shutil.copy(tpdtnrrdfilename, finalDTDir)

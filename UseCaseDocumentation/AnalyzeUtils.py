@@ -82,15 +82,15 @@ def launchShapeWorksView2(parentDir, pointFileList):
     xmlfilename = os.path.join(parentDir , 'shapeworksview2.xml')
     create_View2_xml(xmlfilename, pointFileList)
     create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = "ShapeWorksView2 " + xmlfilename + " &"
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ShapeWorksView2" , xmlfilename , "&"]
+    subprocess.check_call(execCommand )
 
 def launchShapeWorksView2(parentDir, dtFiles, localPointFiles, worldPointFiles):
     xmlfilename = parentDir + '/shapeworksview2.xml'
     create_View2_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles)
     create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = "ShapeWorksView2 " + xmlfilename + " &"
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ShapeWorksView2" , xmlfilename , "&"]
+    subprocess.check_call(execCommand )
     
     
 def create_ReconstructMeanSurface_xml(xmlfilename, parameterDictionary, distance_transform_files, local_point_files, world_point_files=None):
@@ -171,8 +171,8 @@ def runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, paramet
     create_ReconstructMeanSurface_xml(parameterFile, parameterDictionary, dtFiles, localPointFiles, worldPointFiles)
     create_cpp_xml(parameterFile, parameterFile)
    
-    execCommand = "ReconstructMeanSurface " + parameterFile
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ReconstructMeanSurface" , parameterFile]
+    subprocess.check_call(execCommand )
    
   
 def runReconstructSurface(pointFiles, parameterDictionary):
@@ -183,8 +183,8 @@ def runReconstructSurface(pointFiles, parameterDictionary):
     create_ReconstructSurface_xml(parameterFile, parameterDictionary, pointFiles)
     create_cpp_xml(parameterFile, parameterFile)
     
-    execCommand = "ReconstructSurface " + parameterFile
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ReconstructSurface" , parameterFile]
+    subprocess.check_call(execCommand )
 
     densePointFiles = glob.glob(outDir + '/*_dense.particles')
    
@@ -199,6 +199,6 @@ def runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary):
     create_ReconstructSamplesAlongPCAModes_xml(parameterFile, parameterDictionary, worldPointFiles)
     create_cpp_xml(parameterFile, parameterFile)
    
-    execCommand = "ReconstructSamplesAlongPCAModes " + parameterFile
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ReconstructSamplesAlongPCAModes" , parameterFile]
+    subprocess.check_call(execCommand )
 
