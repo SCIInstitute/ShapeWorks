@@ -138,6 +138,6 @@ target_link_libraries(ReflectMesh ${VTK_LIBRARIES} Utils)
 INSTALL(TARGETS ReflectMesh  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(fea2vtk fea2vtk.cxx)
-TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} ${VTK_LIBRARIES} fim_v4 tinyxml vgl vgl_algo trimesh2)
+TARGET_LINK_LIBRARIES(fea2vtk ${ITK_LIBRARIES} ${VTK_LIBRARIES} Mesh tinyxml vgl vgl_algo trimesh2)
 INSTALL(TARGETS fea2vtk RUNTIME DESTINATION bin)
 
