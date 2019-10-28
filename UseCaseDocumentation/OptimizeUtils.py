@@ -156,8 +156,8 @@ def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionar
     create_SWRun_xml(parameterFile, inDataFiles, parameterDictionary, outDir)
     create_cpp_xml(parameterFile, parameterFile)
     print(parameterFile)
-    execCommand = "ShapeWorksRun " + parameterFile
-    subprocess.check_call(execCommand, shell=True)
+    execCommand = ["ShapeWorksRun" , parameterFile]
+    subprocess.check_call(execCommand )
     outPointsWorld = []
     outPointsLocal = []
     for i in range(len(inDataFiles)):
@@ -195,8 +195,8 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
         create_SWRun_multi_xml(parameterFile, inDataFiles, parameterDictionary, outDir, i, inparts)
         create_cpp_xml(parameterFile, parameterFile)
         print(parameterFile)
-        execCommand = "ShapeWorksRun " + parameterFile
-        subprocess.check_call(execCommand, shell=True)
+        execCommand = ["ShapeWorksRun" , parameterFile]
+        subprocess.check_call(execCommand )
 
     outPointsWorld = []
     outPointsLocal = []
