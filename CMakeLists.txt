@@ -18,8 +18,8 @@ endif()
 message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Install path prefix, prepended onto install directories.")
-set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
-set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries")
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
+set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries (default Release)")
 mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 
 #
