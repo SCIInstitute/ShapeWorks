@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 2.6)
-PROJECT(MeshFromDistanceTransforms)
-ADD_EXECUTABLE(MeshFromDistanceTransforms MeshFromDistanceTransforms.cxx)
-TARGET_LINK_LIBRARIES(MeshFromDistanceTransforms ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)
-INSTALL(TARGETS MeshFromDistanceTransforms  RUNTIME DESTINATION bin)

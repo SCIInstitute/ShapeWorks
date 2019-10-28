@@ -1,5 +1,0 @@
-PROJECT(PreviewCmd)
-cmake_minimum_required(VERSION 2.8)
-ADD_EXECUTABLE(PreviewCmd PreviewCmd.cxx )
-TARGET_LINK_LIBRARIES(PreviewCmd OptionParser PreViewMeshQC)
-INSTALL(TARGETS PreviewCmd  RUNTIME DESTINATION bin)

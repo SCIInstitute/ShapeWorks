@@ -7,4 +7,4 @@ FILE(GLOB SRCS "*.h" "*.cxx")
 
 ADD_LIBRARY(ShapeWorksOptimize STATIC ${SRCS})
 TARGET_LINK_LIBRARIES(ShapeWorksOptimize ShapeWorksGroom 
-  ${ITK_LIBRARIES} ITKParticleSystem tinyxml)
+  ${ITK_LIBRARIES} Optimize tinyxml)

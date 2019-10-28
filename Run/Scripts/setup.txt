@@ -1,8 +1,0 @@
-export PATH="/usr/sci/projects/ShapeWorksPrerelease/BIN:$PATH"
-export PATH="/usr/sci/projects/ShapeWorksPrerelease/BIN/UNU/teem-1.11.0-build:$PATH"
-export PATH="/usr/sci/projects/ShapeWorksPrerelease/BIN/UNU/teem-1.11.0-build/bin:$PATH"
-export PATH="/usr/sci/projects/ShapeWorksPrerelease/BIN/UNU/teem-1.11.0-build/include:$PATH"
-export PATH="/usr/sci/projects/ShapeWorksPrerelease/BIN/ANTs/ANTs-build/bin:/usr/sci/projects/ShapeWorksPrerelease/BIN/ANTs/ANTs/Scripts:$PATH"
-export ANTSPATH="/usr/sci/projects/ShapeWorksPrerelease/BIN/ANTs/ANTs-build/bin"
-export LD_LIBRARY_PATH="/usr/sci/projects/ShapeWorksPrerelease/BIN/ANTs/ANTs-build/lib:$LD_LIBRARY_PATH"
-export PATH="../bin/ShapeWorksRun:$PATH"
