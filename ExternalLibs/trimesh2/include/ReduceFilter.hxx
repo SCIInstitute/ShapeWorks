@@ -5,6 +5,15 @@
 #ifndef __ReduceFilter_HXX
 #define __ReduceFilter_HXX
 
+// constructor
+template<class TFunctor,class TInput,class TOutput>
+ReduceFilter<TFunctor,TInput,TOutput>::ReduceFilter()
+{
+  // disable dynamic multithreading (ITKv5)
+  this->DynamicMultiThreadingOff();
+}
+
+
 template< class TFunctor,
           class TInput,
           class TOutput
