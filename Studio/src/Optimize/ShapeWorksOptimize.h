@@ -68,7 +68,7 @@ protected:
   itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
 
-  unsigned int m_verbosity_level = 5;
+  unsigned int m_verbosity_level = 0;
 
   // constructor
   int m_CheckpointCounter;

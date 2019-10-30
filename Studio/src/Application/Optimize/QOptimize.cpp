@@ -11,14 +11,14 @@ QOptimize::~QOptimize()
 //---------------------------------------------------------------------------
 std::vector<std::vector<itk::Point<double>>> QOptimize::localPoints()
 {
-  QMutexLocker locker(&mutex);
+  //QMutexLocker locker(&mutex);
   return this->localPoints_;
 }
 
 //---------------------------------------------------------------------------
 std::vector<std::vector<itk::Point<double>>> QOptimize::globalPoints()
 {
-  QMutexLocker locker(&mutex);
+  //QMutexLocker locker(&mutex);
   return this->globalPoints_;
 }
 
@@ -43,11 +43,24 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
     throw std::runtime_error("Optimize failed! Please try changing parameters.");
   }
 
-  this->reportInterval_ = 10;
+  bool update = false;
+  if (!this->time_since_last_update_.isValid()) {
+    update = true;
+  }
+  else {
+    auto time_since = this->time_since_last_update_.elapsed();
+    if (time_since > 1000) {
+      update = true;
+    }
+  }
+  this->time_since_last_update_.start();
 
-  if (this->iterCount_ % this->reportInterval_ == 0) {
+  this->reportInterval_ = 100;
 
-    QMutexLocker locker(&mutex);
+//  if (this->iterCount_ % this->reportInterval_ == 0) {
+  if (update) {
+
+    //QMutexLocker locker(&mutex);
 
     this->localPoints_.clear();
     this->globalPoints_.clear();
@@ -70,7 +83,7 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
       }
     }
 
-    emit progress(this->iterCount_ * 10 / this->m_total_iterations);
+    emit progress(this->iterCount_ * 100 / this->m_total_iterations);
   }
   this->iterCount_++;
 }

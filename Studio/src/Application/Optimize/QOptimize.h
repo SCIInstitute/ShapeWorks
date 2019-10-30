@@ -2,6 +2,7 @@
 
 #include <Optimize/ShapeWorksOptimize.h>
 #include <QObject>
+#include <QElapsedTimer>
 
 //! Wraps ShapeWorksOptimize as a QObject
 class QOptimize : public QObject, public ShapeWorksOptimize {
@@ -28,5 +29,7 @@ private:
 
   // for concurrent access
   QMutex mutex;
+
+  QElapsedTimer time_since_last_update_;
 
 };

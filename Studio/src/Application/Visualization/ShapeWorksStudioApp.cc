@@ -593,12 +593,14 @@ void ShapeWorksStudioApp::handle_new_mesh()
   this->compute_mode_shape();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->currentMessage_ = str;
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_error(std::string str)
 {
   QMessageBox::critical(this, "Critical Error", str.c_str());
@@ -606,11 +608,13 @@ void ShapeWorksStudioApp::handle_error(std::string str)
   this->handle_progress(100);
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_warning(std::string str)
 {
   QMessageBox::warning(this, "Warning!", str.c_str());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress(size_t value)
 {
   if (value < 100) {
