@@ -874,7 +874,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->optimize_tool_->set_preferences();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
-  std::cerr << "A5\n";
   this->project_->calculate_reconstructed_samples();
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->analysis_tool_->setAnalysisMode("all samples");

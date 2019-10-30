@@ -11,14 +11,14 @@ QOptimize::~QOptimize()
 //---------------------------------------------------------------------------
 std::vector<std::vector<itk::Point<double>>> QOptimize::localPoints()
 {
-  //QMutexLocker locker(&mutex);
+  QMutexLocker locker(&mutex);
   return this->localPoints_;
 }
 
 //---------------------------------------------------------------------------
 std::vector<std::vector<itk::Point<double>>> QOptimize::globalPoints()
 {
-  //QMutexLocker locker(&mutex);
+  QMutexLocker locker(&mutex);
   return this->globalPoints_;
 }
 
@@ -49,18 +49,18 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
   }
   else {
     auto time_since = this->time_since_last_update_.elapsed();
-    if (time_since > 1000) {
+    if (time_since > 100) {
       update = true;
     }
   }
-  this->time_since_last_update_.start();
 
   this->reportInterval_ = 100;
 
 //  if (this->iterCount_ % this->reportInterval_ == 0) {
   if (update) {
+    this->time_since_last_update_.start();
 
-    //QMutexLocker locker(&mutex);
+    QMutexLocker locker(&mutex);
 
     this->localPoints_.clear();
     this->globalPoints_.clear();
