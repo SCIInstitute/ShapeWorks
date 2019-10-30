@@ -60,7 +60,6 @@ INCLUDE_REGULAR_EXPRESSION("^.*$")
 
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
-include_directories("../../..")
 
 MESSAGE(STATUS "** QT_QMAKE_EXECUTABLE: ${QT_QMAKE_EXECUTABLE}")
 
@@ -180,7 +179,7 @@ ENDIF ( BUILD_SWV2_OSX_APP )
 
 SET( QT_LIBRARIES Qt5::Widgets Qt5::Core )
 
-TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} tinyxml ${VTK_LIBRARIES} Utils ParticleSystemUtils SurfaceReconstruction )
+TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} tinyxml ${VTK_LIBRARIES} Utils Analyze Optimize)
 
 # INSTALLATION AND PACKAGING
 SET(plugin_dest_dir bin)

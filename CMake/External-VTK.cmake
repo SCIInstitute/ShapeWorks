@@ -20,7 +20,6 @@ ExternalProject_Add(vtk
     -DVTK_Group_Qt:BOOL=${Qt5Core_FOUND}
     -DVTK_QT_VERSION=5
     -DVTK_PYTHON_VERSION=3
-    -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_INSTALL_LIBDIR=lib 
   UPDATE_COMMAND ""
   LOG_DOWNLOAD 0

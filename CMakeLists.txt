@@ -6,8 +6,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 # ShapeWorks options
 #
 option(USE_OPENMP      "Build using OpenMP" ON)
-option(Build_PrepTools "Build prep tools"   ON)
-option(Build_Run       "Build shapeworks"   ON)
 option(Build_Post      "Build post"         OFF)
 option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
@@ -20,8 +18,8 @@ endif()
 message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Install path prefix, prepended onto install directories.")
-set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
-set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries")
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
+set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries (default Release)")
 mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 
 #
@@ -64,7 +62,6 @@ if (SHAPEWORKS_SUPERBUILD)
       -DBUILD_SHARED_LIBS:BOOL=FALSE
 
       # ShapeWorks-specific arguments
-      -DBuild_PrepTools=${Build_PrepTools}
       -DBuild_Run=${Build_Run}
       -DBuild_Post=${Build_Post}
       -DBuild_View2=${Build_View2}
@@ -202,17 +199,11 @@ else()
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
   endif()
 
-  add_subdirectory(ExternalLibs)    # TODO: cmake should add any libs from this directory (currently only tinyxml)
+  add_subdirectory(ExternalLibs)    # TODO: cmake externalproject_add should be used for libs in this directory
   add_subdirectory(Libs)
 
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
-  if(Build_PrepTools)
-    add_subdirectory(Prep/Source)
-  endif(Build_PrepTools)
-  if(Build_Run)
-    add_subdirectory(Run/source)
-  endif(Build_Run)
   if(Build_Post)
     add_subdirectory(Post/source/ShapeWorksPost-V1)
   endif(Build_Post)
@@ -223,9 +214,6 @@ else()
   if(Build_Studio)
     add_subdirectory(Studio/src)
   endif(Build_Studio)
-
-
-  set(APP ${CMAKE_INSTALL_PREFIX}/stl2vtk) 
 
   foreach(plugin ${Qt5Network_PLUGINS})
     get_target_property(_loc ${plugin} LOCATION)

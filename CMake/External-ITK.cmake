@@ -20,7 +20,6 @@ ExternalProject_Add(ITK
     -DModule_ITKVtkGlue:BOOL=ON
     -DITK_USE_SYSTEM_VXL=on
     -DVXL_DIR=${VXL_DIR}
-    -DCMAKE_BUILD_TYPE=Release
   UPDATE_COMMAND ""
   LOG_DOWNLOAD 0
   LOG_UPDATE 0

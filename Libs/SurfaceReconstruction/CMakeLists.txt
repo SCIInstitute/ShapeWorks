@@ -1,8 +1,0 @@
-FILE(GLOB SurfaceReconstruction_srcs ./*.h )
-if(TARGET SurfaceReconstruction)
-    message("SurfaceReconstruction already exists")
-else(TARGET SurfaceReconstruction)
-    ADD_LIBRARY (SurfaceReconstruction INTERFACE)
-    TARGET_LINK_LIBRARIES(SurfaceReconstruction INTERFACE PreViewMeshQC Transforms Procrustes Utils)
-    target_include_directories(SurfaceReconstruction INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}> $<INSTALL_INTERFACE:include> ../..)
-endif(TARGET SurfaceReconstruction)

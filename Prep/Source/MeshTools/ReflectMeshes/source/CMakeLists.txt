@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project(ReflectMesh)
-add_executable(ReflectMesh ReflectMesh.cxx )
-target_link_libraries(ReflectMesh ${VTK_LIBRARIES} OptionParser)
-INSTALL(TARGETS ReflectMesh  RUNTIME DESTINATION bin)
