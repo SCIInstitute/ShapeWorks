@@ -366,6 +366,8 @@ void ShapeWorksOptimize::run()
 
  */
 
+  this->localPoints_.clear();
+  this->globalPoints_.clear();
   for (size_t d = 0; d < this->m_Sampler->
        GetParticleSystem()->GetNumberOfDomains(); d++) {
 

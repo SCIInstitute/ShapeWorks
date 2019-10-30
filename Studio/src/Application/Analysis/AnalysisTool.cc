@@ -75,6 +75,7 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
 void AnalysisTool::handle_reconstruction_complete()
 {
   this->project_->handle_clear_cache();
+  std::cerr << "A1\n";
   this->project_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Reconstruction Complete");

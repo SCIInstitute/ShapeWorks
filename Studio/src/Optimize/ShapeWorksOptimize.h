@@ -35,8 +35,8 @@ public:
 
   void run();
   std::vector<ImageType::Pointer> getImages();
-  std::vector<std::vector<itk::Point<double>>> localPoints();
-  std::vector<std::vector<itk::Point<double>>> globalPoints();
+  virtual std::vector<std::vector<itk::Point<double>>> localPoints();
+  virtual std::vector<std::vector<itk::Point<double>>> globalPoints();
 
 protected:
 

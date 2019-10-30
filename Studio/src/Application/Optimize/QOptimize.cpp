@@ -9,6 +9,20 @@ QOptimize::~QOptimize()
 {}
 
 //---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> QOptimize::localPoints()
+{
+  QMutexLocker locker(&mutex);
+  return this->localPoints_;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> QOptimize::globalPoints()
+{
+  QMutexLocker locker(&mutex);
+  return this->globalPoints_;
+}
+
+//---------------------------------------------------------------------------
 void QOptimize::SetIterationCommand()
 {
   this->iterate_command_ = itk::MemberCommand<QOptimize>::New();
@@ -29,9 +43,14 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
     throw std::runtime_error("Optimize failed! Please try changing parameters.");
   }
 
-  this->reportInterval_ = 100;
+  this->reportInterval_ = 10;
 
   if (this->iterCount_ % this->reportInterval_ == 0) {
+
+    QMutexLocker locker(&mutex);
+
+    this->localPoints_.clear();
+    this->globalPoints_.clear();
 
     // copy particles
     for (size_t d = 0; d < this->m_Sampler->
@@ -51,7 +70,7 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
       }
     }
 
-    emit progress(this->iterCount_ * 100 / this->m_total_iterations);
+    emit progress(this->iterCount_ * 10 / this->m_total_iterations);
   }
   this->iterCount_++;
 }

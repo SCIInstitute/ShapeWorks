@@ -237,10 +237,10 @@ void Visualizer::update_viewer_properties()
       viewer->set_glyph_size_and_quality( size, quality );
       viewer->set_show_glyphs( this->show_glyphs_ );
       viewer->set_show_surface( this->show_surface_ );
-	  viewer->set_color_scheme(this->preferences_.get_preference("color_scheme", 0));
+      viewer->set_color_scheme(this->preferences_.get_preference("color_scheme", 0));
     }
 
-	this->update_lut();
+    this->update_lut();
 
     this->lightbox_->redraw();
   }
@@ -250,6 +250,9 @@ void Visualizer::update_viewer_properties()
 void Visualizer::update_lut()
 {
   int num_points = this->cached_mean_.size() / 3;
+
+  /// TMP
+  num_points = 512;
 
   this->glyph_lut_->SetNumberOfTableValues( num_points + 1 );
   this->glyph_lut_->SetTableRange( 0.0, (double)num_points + 1.0 );
@@ -366,6 +369,7 @@ void Visualizer::setMean(const vnl_vector<double> & mean)
   this->cached_mean_ = mean;
 }
 
+//-----------------------------------------------------------------------------
 void Visualizer::reset_camera() {
   if ( this->lightbox_ ) {
     auto trans = this->lightbox_->initPos();

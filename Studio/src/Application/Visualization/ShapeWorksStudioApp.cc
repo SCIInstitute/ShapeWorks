@@ -581,6 +581,7 @@ void ShapeWorksStudioApp::handle_pca_changed()
   this->compute_mode_shape();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_slider_update()
 {
   this->analysis_tool_->updateSlider();
@@ -693,6 +694,8 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->update_table();
   this->update_scrollbar();
   this->update_display();
+  this->visualizer_->update_lut();
+
   this->enablePossibleActions();
 }
 
@@ -867,6 +870,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->optimize_tool_->set_preferences();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
+  std::cerr << "A5\n";
   this->project_->calculate_reconstructed_samples();
   this->visualizer_->setMean(this->analysis_tool_->getMean());
   this->analysis_tool_->setAnalysisMode("all samples");
