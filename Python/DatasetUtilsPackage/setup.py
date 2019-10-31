@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-   name='GirderConnector',
+   name='DatasetUtils',
    version='1.0',
    description='Python functions for calling the Girder API',
    author='asdf',

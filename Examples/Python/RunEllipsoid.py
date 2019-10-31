@@ -29,8 +29,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-#from GirderConnector import downloadUseCaseData
-from GirderConnector import GirderConnector
+from DatasetUtils import datasets
 
 
 
@@ -53,17 +52,16 @@ def Run_Ellipsoid_Pipline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    parentDir="TestEllipsoids/"
     filename="Ellipsoids.zip"
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
-
     # Check if the data is in the right place
     if not os.path.exists(filename):
-        print("Can't find " + filename + " on the local filesystem.")
-        print("Downloading " + filename + " from SCIGirder.")
-        GirderConnector.downloadUseCaseData(filename)
+        print("Can't find " + filename + " in the current directory.")
+        print("Downloading " + filename + " from SCI cibc1.")
+        datasets.downloadDataset(filename)
 
+    parentDir="TestEllipsoids/"
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)

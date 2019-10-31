@@ -47,7 +47,7 @@ pip install termcolor
 pip install matplotlib
 
 # install the local GirderConnector code as a package
-pip install -e Python/GirderPackage
+pip install -e /Python/DatasetUtilsPackage
 
 conda info
 

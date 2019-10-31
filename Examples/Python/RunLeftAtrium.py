@@ -30,7 +30,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from GirderConnector import GirderConnector
+from DatasetUtils import datasets
 
 
 def Run_LeftAtrium_Pipline(args):
@@ -52,16 +52,15 @@ def Run_LeftAtrium_Pipline(args):
         input("Press Enter to continue")
 
     filename = "leftatrium.zip"
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current.")
+        print("Downloading " + filename + " from SCIGirder.")
+        datasets.downloadDataset(filename)
+
     parentDir="TestLeftAtrium/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
-
-    # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " on the local filesystem.")
-        print("Downloading " + filename + " from SCIGirder.")
-        GirderConnector.downloadUseCaseData(filename)
-
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
