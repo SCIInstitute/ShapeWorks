@@ -29,7 +29,9 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from GirderConnector import downloadUseCaseData
+#from GirderConnector import downloadUseCaseData
+from GirderConnector import GirderConnector
+
 
 
 def Run_Ellipsoid_Pipline(args):
@@ -60,7 +62,7 @@ def Run_Ellipsoid_Pipline(args):
     if not os.path.exists(filename):
         print("Can't find " + filename + " on the local filesystem.")
         print("Downloading " + filename + " from SCIGirder.")
-        downloadUseCaseData(filename)
+        GirderConnector.downloadUseCaseData(filename)
 
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:

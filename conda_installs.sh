@@ -46,6 +46,9 @@ pip install --upgrade pip
 pip install termcolor
 pip install matplotlib
 
+# install the local GirderConnector code as a package
+pip install -e Python/GirderPackage
+
 conda info
 
 
