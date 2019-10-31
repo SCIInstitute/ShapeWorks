@@ -3,10 +3,9 @@ import requests
 serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 
 def _authenticate():
-    authenticationHash = 'c2hhcGV3b3JrczpzaGFwZXdvcmtzdXNlcg=='
-    
-    apicall = serverAddress + "api/v1/user/authentication"
-    r = requests.get(url = apicall, headers = {'Authorization': 'Basic ' + authenticationHash}) 
+    python_api_key = 'EJkKKEU6XmYdlpRMQswfcbXDNH4z430Z5a5npigU'
+    apicall = serverAddress + "api/v1/api_key/token"
+    r = requests.post(url = apicall, params = {'key': python_api_key}) 
 
     if(r.status_code == 200):
         data = r.json()
