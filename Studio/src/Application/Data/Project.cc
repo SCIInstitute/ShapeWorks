@@ -262,7 +262,9 @@ bool Project::load_project(QString filename, std::string& planesFile)
     TiXmlElement* initial_mesh_element = e->FirstChildElement("initial_mesh");
     import_files.push_back(initial_mesh_element->GetText());
     TiXmlElement* groomed_mesh_element = e->FirstChildElement("groomed_mesh");
-    groom_files.push_back(groomed_mesh_element->GetText());
+    if (groomed_mesh_element) {
+      groom_files.push_back(groomed_mesh_element->GetText());
+    }
     TiXmlElement* point_file_element = e->FirstChildElement("point_file");
 
     if (point_file_element) {
@@ -319,7 +321,9 @@ bool Project::load_project(QString filename, std::string& planesFile)
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
 
   this->load_original_files(import_files);
-  this->load_groomed_files(groom_files, 0.5);
+  if (groom_files.size() > 0) {
+    this->load_groomed_files(groom_files, 0.5);
+  }
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
   if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
