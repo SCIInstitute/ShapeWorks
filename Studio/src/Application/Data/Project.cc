@@ -454,7 +454,6 @@ void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double
 {
   QProgressDialog progress("Loading groomed images...", "Abort", 0, images.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  progress.show();
   progress.setMinimumDuration(2000);
 
   for (int i = 0; i < images.size(); i++) {
