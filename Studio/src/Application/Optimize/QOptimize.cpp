@@ -65,24 +65,6 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
     this->localPoints_.clear();
     this->globalPoints_.clear();
 
-    // copy particles
-    for (size_t d = 0; d < this->m_Sampler->
-         GetParticleSystem()->GetNumberOfDomains(); d++) {
-
-      // blank set of points
-      this->localPoints_.push_back(std::vector<itk::Point<double>>());
-      this->globalPoints_.push_back(std::vector<itk::Point<double>>());
-
-      // for each particle
-      for (size_t j = 0; j < this->m_Sampler->
-           GetParticleSystem()->GetNumberOfParticles(d); j++) {
-        auto pos = this->m_Sampler->GetParticleSystem()->GetPosition(j, d);
-        auto pos2 = this->m_Sampler->GetParticleSystem()->GetTransformedPosition(j, d);
-        this->localPoints_[d].push_back(pos);
-        this->globalPoints_[d].push_back(pos2);
-      }
-    }
-
     emit progress(this->iterCount_ * 100 / this->m_total_iterations);
   }
   this->iterCount_++;
