@@ -738,7 +738,6 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
         os.mkdir(outDir)
     for file in os.listdir(inputDir):
         if img_suffix in file:
-            print(file)
             subject_id = file.split(img_suffix)[0]
             imgFile = inputDir + file
             leftFilename = inputDir + subject_id + left_suffix + "."+ mesh_extension
@@ -781,7 +780,7 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
                     os.system(execCommand)
         imgList = []
         meshList = []
-        for file in outDir:
+        for file in os.listdir(outDir):
             if ".nrrd" in file:
                 imgList.append(outDir + file)
             if mesh_extension in file:
@@ -800,9 +799,10 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
     outSeg = parentDir + "segmentations/"
     if not os.path.exists(outSeg):
         os.mkdir(outSeg)
-    for file in os.listdir(meshList):
+    for file in meshList:
         sptSeg = file.rsplit('/', 1)
         inputDir = sptSeg[0] + '/'
+        input(inputDir)
         file= sptSeg[1]
         subject_id = file.split(mesh_suffix)[0]
         meshFilename = inputDir + file
