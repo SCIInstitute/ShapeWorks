@@ -726,3 +726,194 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
+
+
+### Mesh Grooming 
+
+# 
+# Refelcts images and meshes to reference side
+def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side):
+    outDir = parentDir + "reflected/"
+    if not os.path.exists(outDir):
+        os.mkdir(outDir)
+    for file in os.listdir(inputDir):
+        if img_suffix in file:
+            print(file)
+            subject_id = file.split(img_suffix)[0]
+            imgFile = inputDir + file
+            leftFilename = inputDir + subject_id + left_suffix + "."+ mesh_extension
+            rightFilename = inputDir + subject_id + right_suffix + "." + mesh_extension
+            leftFilename_out = outDir + subject_id + left_suffix + "."+ mesh_extension
+            rightFilename_out = outDir + subject_id + right_suffix + "." + mesh_extension
+            leftimgFilename = outDir + subject_id + left_suffix + "_" + img_suffix + ".nrrd"
+            rightimgFilename = outDir + subject_id + right_suffix + "_" + img_suffix + ".nrrd"
+            centerFilename = outDir + file.split(".nrrd")[0] + "_origin.txt"
+            if reference_side == "right":
+                if os.path.exists(rightFilename):
+                    shutil.copy(imgFile, rightimgFilename)
+                    shutil.copy(rightFilename, rightFilename_out)
+                # if left exists, reflect the mesh and image
+                if os.path.exists(leftFilename):
+
+                    print("\n############## Reflecting ###############")
+                    cprint(("Input Volume : ", imgFile), 'cyan')
+                    cprint(("Output Volume : ", leftimgFilename), 'yellow')
+                    cprint(("Mesh : ", leftFilename), 'cyan')
+                    print("#######################################\n")
+                    execCommand = "ReflectVolumes  --inFilename " + imgFile + " --outFilename " + leftimgFilename + " --centerFilename " + centerFilename + " --inputDirection 0"
+                    os.system(execCommand)
+                    execCommand = "ReflectMesh --inFilename " + leftFilename + " --outFilename " + leftFilename_out + " --reflectCenterFilename " +  centerFilename + " --inputDirection 0 --meshFormat " + mesh_extension
+                    os.system(execCommand)
+            else:
+                if os.path.exists(leftFilename):
+                    shutil.copy(imgFile, leftimgFilename)
+                    shutil.copy(leftFilename, leftFilename_out)
+                # if right exists, reflect the mesh and image
+                if os.path.exists(rightFilename):
+                    print("############## Reflecting ###############")
+                    cprint(("Input Volume : ", imgFile), 'cyan')
+                    cprint(("Output Volume : ", rightimgFilename), 'yellow')
+                    cprint(("Mesh : ", rightFilename), 'cyan')
+                    print("######################################")
+                    execCommand = "ReflectVolumes  --inFilename " + imgFile + " --outFilename " + rightimgFilename + " --centerFilename " + centerFilename + " --inputDirection 0"
+                    os.system(execCommand)
+                    execCommand = "ReflectMesh --inFilename " + rightFilename + " --outFilename " + rightFilename_out + " --reflectCenterFilename " +  centerFilename + " --inputDirection 0 --meshFormat " + mesh_extension
+                    os.system(execCommand)
+        imgList = []
+        meshList = []
+        for file in outDir:
+            if ".nrrd" in file:
+                imgList.append(outDir + file)
+            if mesh_extension in file:
+                meshList.append(outDir + file)
+    return imgList, meshList
+
+
+
+# rasterization for meshes to DT
+def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_extension):
+    imgList = []
+    segList= []
+    outImg = parentDir + "images/"
+    if not os.path.exists(outImg):
+        os.mkdir(outImg)
+    outSeg = parentDir + "segmentations/"
+    if not os.path.exists(outSeg):
+        os.mkdir(outSeg)
+    for file in os.listdir(meshList):
+        sptSeg = file.rsplit('/', 1)
+        inputDir = sptSeg[0] + '/'
+        file= sptSeg[1]
+        subject_id = file.split(mesh_suffix)[0]
+        meshFilename = inputDir + file
+        # copy image over
+        imgFilename = inputDir + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
+        imgFilename_out = outImg + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
+        shutil.copy(imgFilename, imgFilename_out)
+        imgList.append(imgFilename_out)
+
+        print("########### Turning  Mesh To Volume ##############")
+        cprint(("Input Mesh : ", meshFilename), 'cyan')
+        cprint(("Output Volume : ", outSeg + file[:-4] + ".nrrd"), 'yellow')
+        print("##################################################")
+        # make ply if neccesary
+        if mesh_extension == "vtk":
+            meshfilename_vtk = meshFilename
+            meshFilename = meshFilename[:-4] + "ply"
+            execCommand = "vtk2ply " + meshfilename_vtk + " " + meshFilename
+            os.system(execCommand)
+
+        # write origin, size, and spacing info to text file
+        infoPrefix = outSeg + subject_id + mesh_suffix + "_" + img_suffix
+        execCommand = "WriteImageInfoToText --inFilename " + imgFilename + " --outPrefix " + infoPrefix
+        os.system(execCommand)
+
+        # get origin, size, and spacing data
+        data ={}
+        origin_file = open(infoPrefix + "_origin.txt", "r")
+        text = origin_file.read()
+        data["origin"] = text.split("\n")
+        origin_file.close()
+        size_file = open(infoPrefix + "_size.txt", "r")
+        text = size_file.read()
+        data["size"] = text.split("\n")
+        size_file.close()
+        spacing_file = open(infoPrefix + "_spacing.txt", "r")
+        text = spacing_file.read()
+        data["spacing"] = text.split("\n")
+        spacing_file.close()
+
+        shutil.copy(meshFilename, meshFilename[:-4] + "_cp.ply")
+
+        # write xml file
+        xmlfilename=infoPrefix + "_GenerateBinaryAndDT.xml"
+        if os.path.exists(xmlfilename):
+            os.remove(xmlfilename)
+        xml = open(xmlfilename, "a")
+        xml.write("<?xml version=\"1.0\" ?>\n")
+        xml.write("<mesh>\n")
+        xml.write(meshFilename+"\n")
+        xml.write("</mesh>\n")
+        # write origin, size, and spacing data
+        for key,value in data.items():
+            index = 0
+            for dim in ["x","y","z"]:
+                xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
+                index += 1
+        xml.close()
+
+        # call generate binary and DT
+        execCommand = "GenerateBinaryAndDTImagesFromMeshes " + xmlfilename
+        os.system(execCommand)
+
+    for file in os.listdir(inputDir):
+        if mesh_suffix + ".DT" in file:
+            newName = file.split(".")[0] + "_DT." + file.split(".")[-1]
+            shutil.move(inputDir + file, outSeg + newName)
+        if mesh_suffix + ".rasterized" in file:
+            newName = file.split(".")[0] + "." + file.split(".")[-1]
+            segFile = outSeg + newName
+            shutil.move(inputDir + file, segFile)
+            segList.append(segFile)
+                    
+    return [imgList, segList]
+
+def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cp_x1, cp_x2, cp_x3, cp_y1, cp_y2, cp_y3, cp_z1, cp_z2, cp_z3):
+    outDir = os.path.join(parentDir , 'clipped_segmentations/')
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+    outDataListSeg = []
+    for i in range(len(rigidFiles_segmentations)):
+        innameSeg = rigidFiles_segmentations[i]
+        sptSeg = innameSeg.rsplit('/', 1)
+        print(sptSeg)
+        initPath = sptSeg[0] + '/'
+        filename = sptSeg[1]
+        outnameSeg = innameSeg.replace(initPath, outDir)
+        outnameSeg = outnameSeg.replace('.nrrd', '.clipped.nrrd')
+        outDataListSeg.append(outnameSeg)
+        print(" ")
+        print("############## Clipping ##############")
+        cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
+        cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
+        print("######################################")
+        print(" ")
+        # write xml file
+        xmlfilename= outnameSeg[:-5] + ".xml"
+        if os.path.exists(xmlfilename):
+            os.remove(xmlfilename)
+        xml = open(xmlfilename, "a")
+        xml.write("<?xml version=\"1.0\" ?>\n")
+        xml.write("<num_shapes>1</num_shapes>\n")
+        xml.write("<inputs>\n")
+        xml.write(innameSeg+"\n")
+        xml.write("</inputs>\n")
+        xml.write("<outputs>\n")
+        xml.write(outnameSeg+"\n")
+        xml.write("</outputs>\n")
+        xml.write("<cutting_planes> " +str(cp_x1)+" "+str(cp_y1)+" "+str(cp_z1)+" "+str(cp_x2)+" "+str(cp_y2)+" "+str(cp_z2)+" "+str(cp_x3)+" "+str(cp_y3)+" "+str(cp_z3)+" </cutting_planes>")
+        xml.close()
+        execCommand = "ClipVolume " + xmlfilename
+        os.system(execCommand)
+
+    return outDataListSeg

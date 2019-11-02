@@ -69,6 +69,9 @@ def Run_Femur_Pipline(args):
         -- Largest Bounding Box and Cropping
         """
 
+        parentDir = 'TestFemur/PrepOutput/'
+        if not os.path.exists(parentDir):
+            os.mkdir(parentDir)
 
         print("\nStep 2. Groom - Data Pre-processing\n")
         if args.interactive:
@@ -97,15 +100,17 @@ def Run_Femur_Pipline(args):
         We have left and right femurs, so we will reflect the image if neccesary
         so that we have an image for every mesh
         """
+        inputDir = 'TestFemur/femurdata/'
         reference_side = "left"
-        [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
+        [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
+        input(fileList_mesh)
 
         """
         MeshesToVolumes
         Shapeworks requires volumes so we need to convert meshes to binary segmentations and distance transform
         """
-        [fileList_imgL, fileList_segL] = MeshesToVolumes(parentDir, fileList_img, fileList_Mesh, img_suffix, left_suffix, mesh_extension)
-        [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_Mesh, img_suffix, right_suffix, mesh_extension)
+        [fileList_imgL, fileList_segL] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, left_suffix, mesh_extension)
+        [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, right_suffix, mesh_extension)
         fileList_img = fileList_imgL + fileList_imgR
         fileList_seg = fileList_segL + fileList_segR
 
@@ -157,7 +162,7 @@ def Run_Femur_Pipline(args):
         """
         medianFile = FindReferenceImage(comFiles_segmentations)
 
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)]
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
         """
         Clip Binary Volumes
