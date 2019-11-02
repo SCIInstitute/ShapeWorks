@@ -22,7 +22,6 @@ public:
   virtual ~ShapeWorksOptimize();
 
   void set_inputs(std::vector<ImageType::Pointer> inputs);
-  void set_input_filenames(std::vector<std::string> groomed_filenames);
   void set_cut_planes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes);
   void set_start_reg(double start_reg);
   void set_end_reg(double end_reg);
@@ -128,7 +127,6 @@ protected:
   unsigned int m_mode;
   double m_spacing;
 
-  std::vector < std::string > m_filenames;
   std::vector < std::string > pointFiles;
 
   std::vector<double> m_EnergyA;

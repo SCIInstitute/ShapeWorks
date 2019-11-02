@@ -29,12 +29,6 @@ void ShapeWorksOptimize::set_inputs(std::vector<ImageType::Pointer> inputs)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksOptimize::set_input_filenames(std::vector<std::string> groomed_filenames)
-{
-  this->m_filenames = groomed_filenames;
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_start_reg(double start_reg)
 {
   this->m_starting_regularization = start_reg;
@@ -120,7 +114,8 @@ void ShapeWorksOptimize::run()
   ///this->ReadOptimizationParameters(fn);
   ///this->SetDebugParameters(fn);
 
-  m_Sampler->SetImageFiles(this->m_filenames);
+  //m_Sampler->SetImageFiles(this->m_filenames);
+  m_Sampler->SetImages(this->getImages());
 
 
   // Set up the optimization process

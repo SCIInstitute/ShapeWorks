@@ -84,7 +84,6 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->optimize_ = new QOptimize(this);
 
   this->optimize_->set_inputs(imgs);
-  this->optimize_->set_input_filenames(groomed_filenames);
   this->optimize_->set_cut_planes(this->cutPlanes_);
   this->optimize_->set_start_reg(this->ui_->starting_regularization->value());
   this->optimize_->set_end_reg(this->ui_->ending_regularization->value());
