@@ -44,3 +44,6 @@ install*
 
 # usr cmake
 CMakeLists.txt.user
+
+# Python package meta info
+Python/DatasetUtilsPackage/DatasetUtils.egg-info
