@@ -366,7 +366,7 @@ std::string OptimizeTool::getCutPlanesFile()
 //---------------------------------------------------------------------------
 void OptimizeTool::shutdown_threads()
 {
-  std::cerr << "Shut Down Optimization Threads"
+  std::cerr << "Shut Down Optimization Threads";
   this->optimize_->stop_optimization();
 
   for (size_t i = 0; i < this->threads_.size(); i++) {
