@@ -79,6 +79,19 @@ void ShapeWorksOptimize::set_verbose(bool verbose)
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksOptimize::stop_optimization()
+{
+  this->aborted_ = true;
+  this->m_Sampler->GetOptimizer()->AbortProcessing();
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksOptimize::get_aborted()
+{
+  return this->aborted_;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_cut_planes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes)
 {
   this->cutPlanes_ = cutPlanes;
@@ -497,6 +510,12 @@ void ShapeWorksOptimize::Initialize()
   std::cerr << "flag split = " << flag_split << "\n";
   std::cerr << "m_verbosity_level = " << m_verbosity_level << "\n";
   while (flag_split) {
+
+    if (this->aborted_)
+    {
+      return;
+    }
+
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     m_Sampler->GetOptimizer()->StopOptimization();
 

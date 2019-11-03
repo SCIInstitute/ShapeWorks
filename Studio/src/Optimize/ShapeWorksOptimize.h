@@ -31,6 +31,9 @@ public:
   void set_procrustes_interval(unsigned procrustes_interval);
   void set_weighting(double weighting);
   void set_verbose(bool verbose);
+  void stop_optimization();
+
+  bool get_aborted();
 
   void run();
   std::vector<ImageType::Pointer> getImages();
@@ -144,4 +147,6 @@ protected:
   std::vector<double> cpVals;
   std::vector<double> spVals;
   std::vector<double> radList;
+
+  bool aborted_ = false;
 };

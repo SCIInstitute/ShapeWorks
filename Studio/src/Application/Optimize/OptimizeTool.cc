@@ -108,6 +108,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
+
+  this->threads_ << thread;
 }
 
 //---------------------------------------------------------------------------
@@ -345,4 +347,28 @@ std::string OptimizeTool::getCutPlanesFile()
     return "";
   }
   return name;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::shutdown_threads()
+{
+  this->optimize_->stop_optimization();
+  return;
+
+  for (size_t i = 0; i < this->threads_.size(); i++) {
+    if (this->threads_[i]->isRunning()) {
+      std::cerr << "waiting...\n";
+      this->threads_[i]->wait(1000);
+      std::cerr << "done waiting...\n";
+    }
+    //this->threads_[i]->exit();
+
+    //std::cerr << "Terminate!\n";
+    //this->threads_[i]->terminate();
+    //this->threads_[i]->wait(1000);
+    //  }
+  }
+  for (size_t i = 0; i < this->threads_.size(); i++) {
+    //delete this->threads_[i];
+  }
 }

@@ -66,6 +66,11 @@ void ShapeworksWorker::process()
       emit error_message(std::string("Error during optimization!"));
       return;
     }
+      if (this->optimize_->get_aborted()) {
+        emit error_message(std::string("Optimization Aborted!"));
+        return;
+      }
+
     break;
   case ShapeworksWorker::Reconstruct:
     try {

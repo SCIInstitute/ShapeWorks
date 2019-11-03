@@ -29,6 +29,8 @@ public:
   void setCutPlanesFile(std::string file);
   std::string getCutPlanesFile();
 
+  void shutdown_threads();
+
 public Q_SLOTS:
 
   /// Run optimize tool
@@ -63,6 +65,7 @@ signals:
   void message(std::string);
 
 private:
+  QList<QThread*> threads_;
   QOptimize* optimize_;
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
