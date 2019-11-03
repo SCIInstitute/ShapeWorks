@@ -138,6 +138,7 @@ else()
   if (NOT VTK_FOUND)
     message(FATAL_ERROR "** VTK not found. By default cmake will download it (see BUILD.md)")
   endif()
+  include(${VTK_USE_FILE})
 
   ### vxl
   FIND_PACKAGE(VXL REQUIRED)
