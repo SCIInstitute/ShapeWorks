@@ -52,8 +52,12 @@ void ShapeworksWorker::process()
     try {
       this->optimize_->run();
     } catch (std::runtime_error e) {
-        std::cerr << "Exception: " << e.what() << "\n";
-        emit error_message(std::string("Error: ") + e.what());
+      std::cerr << "Exception: " << e.what() << "\n";
+      emit error_message(std::string("Error: ") + e.what());
+      return;
+    } catch (itk::ExceptionObject & ex) {
+      std::cerr << "ITK Exception: " << ex << std::endl;
+      emit error_message(std::string("ITK Exception: ") + ex.GetDescription());
       return;
     } catch (std::exception e) {
       emit error_message(std::string("Error: ") + e.what());
@@ -62,6 +66,11 @@ void ShapeworksWorker::process()
       emit error_message(std::string("Error during optimization!"));
       return;
     }
+      if (this->optimize_->get_aborted()) {
+        emit error_message(std::string("Optimization Aborted!"));
+        return;
+      }
+
     break;
   case ShapeworksWorker::Reconstruct:
     try {

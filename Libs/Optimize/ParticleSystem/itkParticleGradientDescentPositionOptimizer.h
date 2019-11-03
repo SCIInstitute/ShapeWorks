@@ -96,6 +96,9 @@ public:
   inline void StopOptimization()
   {    this->m_StopOptimization = true;  }
 
+  inline void AbortProcessing()
+  {    this->m_StopOptimization = true;
+       this->m_AbortProcessing = true;  }
 
   /** Get/Set the number of iterations performed by the solver. */
   itkGetMacro(NumberOfIterations, unsigned int);
@@ -144,6 +147,7 @@ private:
   typename ParticleSystemType::Pointer m_ParticleSystem;
   typename GradientFunctionType::Pointer m_GradientFunction;
   bool m_StopOptimization;
+  bool m_AbortProcessing = false;
   unsigned int m_NumberOfIterations;
   unsigned int m_MaximumNumberOfIterations;
   double m_Tolerance;

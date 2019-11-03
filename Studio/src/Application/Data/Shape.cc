@@ -16,10 +16,10 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-void Shape::import_original_image( std::string filename, float iso_value )
+void Shape::import_original_image(std::string filename, float iso_value)
 {
-  this->original_mesh_ = QSharedPointer<Mesh>( new Mesh() );
-  this->original_image_ = this->original_mesh_->create_from_file( filename, iso_value );
+  this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
+  this->original_image_ = this->original_mesh_->create_from_file(filename, iso_value);
   this->original_mesh_filename_ = QString::fromStdString(filename);
 }
 
@@ -42,7 +42,7 @@ ImageType::Pointer Shape::get_groomed_image()
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_file( QString filename, double iso )
+void Shape::import_groomed_file(QString filename, double iso)
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = this->groomed_mesh_->create_from_file(filename.toStdString(), iso);
@@ -50,7 +50,8 @@ void Shape::import_groomed_file( QString filename, double iso )
 }
 
 //---------------------------------------------------------------------------
-void Shape::import_groomed_image(ImageType::Pointer img, double iso) {
+void Shape::import_groomed_image(ImageType::Pointer img, double iso)
+{
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
@@ -66,17 +67,17 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data ) {
-    this->reconstructed_mesh_ = QSharedPointer<Mesh> ( new Mesh() );
-	this->reconstructed_mesh_->set_poly_data(poly_data);
+void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  this->reconstructed_mesh_ = QSharedPointer<Mesh> (new Mesh());
+  this->reconstructed_mesh_->set_poly_data(poly_data);
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_global_point_file( QString filename )
+bool Shape::import_global_point_file(QString filename)
 {
 
-  if ( !Shape::import_point_file( filename, this->global_correspondence_points_ ) )
-  {
+  if (!Shape::import_point_file(filename, this->global_correspondence_points_)) {
     return false;
   }
 
@@ -86,7 +87,8 @@ bool Shape::import_global_point_file( QString filename )
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_points(std::vector<itk::Point<double> > points, bool local) {
+bool Shape::import_points(std::vector<itk::Point<double>> points, bool local)
+{
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   size_t num_points = 0;
   for (auto &a : points) {
@@ -98,7 +100,7 @@ bool Shape::import_points(std::vector<itk::Point<double> > points, bool local) {
     num_points++;
   }
   auto & point_list = local ? this->local_correspondence_points_ :
-    this->global_correspondence_points_;
+                      this->global_correspondence_points_;
 
   point_list.clear();
   point_list.set_size(num_points * 3);
@@ -114,10 +116,9 @@ bool Shape::import_points(std::vector<itk::Point<double> > points, bool local) {
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_local_point_file( QString filename )
+bool Shape::import_local_point_file(QString filename)
 {
-  if ( !Shape::import_point_file( filename, this->local_correspondence_points_ ) )
-  {
+  if (!Shape::import_point_file(filename, this->local_correspondence_points_)) {
     return false;
   }
 
@@ -150,7 +151,7 @@ int Shape::get_id()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_id( int id )
+void Shape::set_id(int id)
 {
   this->id_ = id;
 }
@@ -158,7 +159,7 @@ void Shape::set_id( int id )
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename()
 {
-  QFileInfo qfi( this->original_mesh_filename_ );
+  QFileInfo qfi(this->original_mesh_filename_);
   return qfi.fileName();
 }
 
@@ -170,7 +171,7 @@ QString Shape::get_original_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
-  QFileInfo qfi( this->groomed_mesh_filename_ );
+  QFileInfo qfi(this->groomed_mesh_filename_);
   return qfi.fileName();
 }
 
@@ -183,7 +184,7 @@ QString Shape::get_groomed_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_global_point_filename()
 {
-  return QFileInfo( this->global_point_filename_ ).fileName();
+  return QFileInfo(this->global_point_filename_).fileName();
 }
 
 //---------------------------------------------------------------------------
@@ -195,7 +196,7 @@ QString Shape::get_global_point_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_local_point_filename()
 {
-  return QFileInfo( this->local_point_filename_ ).fileName();
+  return QFileInfo(this->local_point_filename_).fileName();
 }
 
 //---------------------------------------------------------------------------
@@ -229,29 +230,30 @@ void Shape::set_exclusion_sphere_radii(QList<double> radii)
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file( QString filename, vnl_vector<double> &points ) {
+bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
+{
   std::ifstream in(filename.toStdString().c_str());
-  if (!in.good( )) {
-    QMessageBox::warning( 0, "Unable to open file", "Error opening file: " + filename );
+  if (!in.good()) {
+    QMessageBox::warning(0, "Unable to open file", "Error opening file: " + filename);
     return false;
   }
   vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
   auto test = filename.toStdString();
   int num_points = 0;
   while (in.good()) {
-    double x, y, z; 
+    double x, y, z;
     in >> x >> y >> z;
-    if (!in.good()) break;
-    vtk_points->InsertNextPoint( x, y, z );
+    if (!in.good()) {break;}
+    vtk_points->InsertNextPoint(x, y, z);
     num_points++;
   }
   in.close();
   points.clear();
-  points.set_size( num_points * 3 );
+  points.set_size(num_points * 3);
 
   int idx = 0;
-  for ( int i = 0; i < num_points; i++ ) {
-    double* pos = vtk_points->GetPoint( i );
+  for (int i = 0; i < num_points; i++) {
+    double* pos = vtk_points->GetPoint(i);
     points[idx++] = pos[0];
     points[idx++] = pos[1];
     points[idx++] = pos[2];

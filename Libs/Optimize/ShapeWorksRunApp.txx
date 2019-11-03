@@ -502,6 +502,7 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
 
     // load input shapes
     std::vector < std::string > shapeFiles;
+    std::vector < ImageType::Pointer > images;
     elem = docHandle.FirstChild("inputs").Element();
     if (!elem) {
       std::cerr << "No input files have been specified" << std::endl;
@@ -510,6 +511,16 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
     else {
       inputsBuffer.str(elem->GetText());
       while (inputsBuffer >> filename) {
+
+        if (m_verbosity_level > 1) {
+            std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+        }
+        typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
+                                                                       ImageType > ::New();
+        reader->SetFileName(filename);
+        reader->UpdateLargestPossibleRegion();
+        images.push_back(reader->GetOutput());
+
         shapeFiles.push_back(filename);
       }
       inputsBuffer.clear();
@@ -517,7 +528,7 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
 
       numShapes = shapeFiles.size();
 
-      m_Sampler->SetImageFiles(shapeFiles);
+      m_Sampler->SetImages(images);
 
       int shapeCount = 0;
       typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
