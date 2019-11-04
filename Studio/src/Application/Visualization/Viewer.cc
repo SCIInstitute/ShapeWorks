@@ -143,6 +143,8 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
   vtkSmartPointer<vtkRenderer> ren = this->renderer_;
 
+  ren->RemoveAllViewProps();
+
   if (!mesh) {
     // display loading message
     corner_annotation->SetText(0, "Loading...");
@@ -150,7 +152,7 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
     ren->AddViewProp(this->image_actor_);
 
     ren->ResetCamera();
-    this->renderer_->ResetCameraClippingRange();
+    //this->renderer_->ResetCameraClippingRange();
   }
   else {
 
@@ -242,10 +244,10 @@ void Viewer::clear_viewer()
 void Viewer::reset_camera(std::array<double, 3> c)
 {
   this->renderer_->ResetCamera();
+
 //  this->renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
 //  this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
 //  this->renderer_->GetActiveCamera()->SetPosition(c[0], c[1], c[2]);
-  this->renderer_->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
@@ -386,11 +388,7 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut)
 //-----------------------------------------------------------------------------
 void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen)
 {
-#if VTK_MAJOR_VERSION <= 5
-  this->image_actor_->SetInput(loading_screen);
-#else
   this->image_actor_->SetInputData(loading_screen);
-#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -145,12 +145,11 @@ void Lightbox::set_render_window(vtkRenderWindow* renderWindow)
 //-----------------------------------------------------------------------------
 void Lightbox::setup_renderers()
 {
-  /*for ( int i = 0; i < this->viewers_.size(); i++ )
-     {
-     this->render_window_->RemoveRenderer( this->viewers_[i]->get_renderer() );
-     }*/
+  for (int i = 0; i < this->viewers_.size(); i++) {
+    this->render_window_->RemoveRenderer(this->viewers_[i]->get_renderer());
+  }
 
-  //this->viewers_.clear();
+  this->viewers_.clear();
 
   int width = this->tile_layout_width_;
   int height = this->tile_layout_height_;
@@ -176,6 +175,9 @@ void Lightbox::setup_renderers()
       else {
         renderer = this->viewers_[i]->get_renderer();
       }
+
+      renderer->GetRenderWindow()->GetInteractor()->SetInteractorStyle(this->style_);
+
       renderer->SetActiveCamera(this->camera_);
 
       // create/ set the viewer
@@ -310,6 +312,6 @@ void Lightbox::handle_timer_callback()
   foreach(ViewerHandle viewer, this->get_viewers()) {
     viewer->set_loading_screen(this->spinner_images_[this->timer_callback_count_]);
   }
-  this->renderer_->ResetCameraClippingRange();
+  //this->renderer_->ResetCameraClippingRange();
   this->renderer_->GetRenderWindow()->Render();
 }
