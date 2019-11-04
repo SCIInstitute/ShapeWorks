@@ -59,21 +59,9 @@ void OptimizeTool::handle_optimize_complete()
   emit message("Optimize Complete");
   emit optimize_complete();
   this->ui_->run_optimize_button->setEnabled(true);
-  this->ui_->reconstructionButton->setEnabled(
-    this->project_->reconstructed_present());
-}
 
-//---------------------------------------------------------------------------
-void OptimizeTool::handle_reconstruction_complete()
-{
-  this->project_->handle_clear_cache();
-  this->project_->calculate_reconstructed_samples();
-  emit progress(100);
-  emit message("Reconstruction Complete");
-  emit reconstruction_complete();
-  this->ui_->run_optimize_button->setEnabled(true);
-  this->ui_->reconstructionButton->setEnabled(
-    this->project_->reconstructed_present());
+  /// TODO: studio
+  ///this->ui_->reconstructionButton->setEnabled(this->project_->reconstructed_present());
 }
 
 //---------------------------------------------------------------------------
@@ -83,7 +71,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
   emit message("Please wait: running optimize step...");
   emit progress(1);
   this->ui_->run_optimize_button->setEnabled(false);
-  this->ui_->reconstructionButton->setEnabled(false);
+  /// TODO: studio
+  ///this->ui_->reconstructionButton->setEnabled(false);
   auto shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   std::vector<std::string> groomed_filenames;
@@ -95,7 +84,6 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->optimize_ = new QOptimize(this);
 
   this->optimize_->set_inputs(imgs);
-  this->optimize_->set_input_filenames(groomed_filenames);
   this->optimize_->set_cut_planes(this->cutPlanes_);
   this->optimize_->set_start_reg(this->ui_->starting_regularization->value());
   this->optimize_->set_end_reg(this->ui_->ending_regularization->value());
@@ -111,10 +99,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
     ShapeworksWorker::Optimize, NULL, this->optimize_, this->project_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
-    std::vector<ImageType::Pointer>(),
-    this->ui_->maxAngle->value(),
-    this->ui_->meshDecimation->value(),
-    this->ui_->numClusters->value());
+    std::vector<ImageType::Pointer>());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
@@ -123,6 +108,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
   connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
+
+  this->threads_ << thread;
 }
 
 //---------------------------------------------------------------------------
@@ -236,56 +223,6 @@ void OptimizeTool::on_cutPlanesFile_editingFinished()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::on_reconstructionButton_clicked()
-{
-  this->update_preferences();
-  emit message("Please wait: running reconstruction step...");
-  emit progress(5);
-  this->ui_->run_optimize_button->setEnabled(false);
-  this->ui_->reconstructionButton->setEnabled(false);
-  QThread* thread = new QThread;
-  std::vector<std::vector<itk::Point<double>>> local, global;
-  std::vector<ImageType::Pointer> images;
-  auto shapes = this->project_->get_shapes();
-  local.resize(shapes.size());
-  global.resize(shapes.size());
-  images.resize(shapes.size());
-  size_t ii = 0;
-  for (auto &s : shapes) {
-    auto l = s->get_local_correspondence_points();
-    auto g = s->get_global_correspondence_points();
-    for (size_t i = 0; i < l.size(); i += 3) {
-      itk::Point<double> pt, pt2;
-      pt[0] = l[i];
-      pt[1] = l[i + 1];
-      pt[2] = l[i + 2];
-      pt2[0] = g[i];
-      pt2[1] = g[i + 1];
-      pt2[2] = g[i + 2];
-      local[ii].push_back(pt);
-      global[ii].push_back(pt2);
-    }
-    images[ii] = s->get_groomed_image();
-    ii++;
-  }
-  ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::Reconstruct, NULL, NULL, this->project_,
-    local, global, images,
-    this->ui_->maxAngle->value(),
-    this->ui_->meshDecimation->value(),
-    this->ui_->numClusters->value());
-  worker->moveToThread(thread);
-  connect(thread, SIGNAL(started()), worker, SLOT(process()));
-  connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
-  connect(worker, SIGNAL(error_message(std::string)), this, SLOT(handle_error(std::string)));
-  connect(worker, SIGNAL(warning_message(std::string)), this, SLOT(handle_warning(std::string)));
-  connect(worker, SIGNAL(message(std::string)), this, SLOT(handle_message(std::string)));
-  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-  thread->start();
-  emit progress(15);
-}
-
-//---------------------------------------------------------------------------
 void OptimizeTool::on_cutPlanesFileButton_clicked()
 {
   std::string file;
@@ -305,6 +242,7 @@ void OptimizeTool::on_cutPlanesFileButton_clicked()
   this->loadCutPlanesFile(file);
 }
 
+//---------------------------------------------------------------------------
 void OptimizeTool::on_restoreDefaults_clicked()
 {
   this->preferences_.delete_entry("optimize_clusters");
@@ -340,15 +278,6 @@ void OptimizeTool::set_project(QSharedPointer<Project> project)
 //---------------------------------------------------------------------------
 void OptimizeTool::set_preferences(bool setScales)
 {
-  this->ui_->numClusters->setValue(
-    this->preferences_.get_preference("optimize_clusters",
-                                      this->ui_->numClusters->value()));
-  this->ui_->meshDecimation->setValue(
-    this->preferences_.get_preference("optimize_decimation",
-                                      this->ui_->meshDecimation->value()));
-  this->ui_->maxAngle->setValue(
-    this->preferences_.get_preference("optimize_maxAngle",
-                                      this->ui_->maxAngle->value()));
   this->ui_->weight->setValue(
     this->preferences_.get_preference("optimize_weight",
                                       this->ui_->weight->value()));
@@ -375,12 +304,6 @@ void OptimizeTool::set_preferences(bool setScales)
 //---------------------------------------------------------------------------
 void OptimizeTool::update_preferences()
 {
-  this->preferences_.set_preference("optimize_clusters",
-                                    this->ui_->numClusters->value());
-  this->preferences_.set_preference("optimize_decimation",
-                                    this->ui_->meshDecimation->value());
-  this->preferences_.set_preference("optimize_maxAngle",
-                                    this->ui_->maxAngle->value());
   this->preferences_.set_preference("optimize_weight",
                                     this->ui_->weight->value());
   this->preferences_.set_preference("optimize_particles",
@@ -424,4 +347,28 @@ std::string OptimizeTool::getCutPlanesFile()
     return "";
   }
   return name;
+}
+
+//---------------------------------------------------------------------------
+void OptimizeTool::shutdown_threads()
+{
+  this->optimize_->stop_optimization();
+  return;
+
+  for (size_t i = 0; i < this->threads_.size(); i++) {
+    if (this->threads_[i]->isRunning()) {
+      std::cerr << "waiting...\n";
+      this->threads_[i]->wait(1000);
+      std::cerr << "done waiting...\n";
+    }
+    //this->threads_[i]->exit();
+
+    //std::cerr << "Terminate!\n";
+    //this->threads_[i]->terminate();
+    //this->threads_[i]->wait(1000);
+    //  }
+  }
+  for (size_t i = 0; i < this->threads_.size(); i++) {
+    //delete this->threads_[i];
+  }
 }

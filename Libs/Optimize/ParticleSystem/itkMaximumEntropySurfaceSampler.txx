@@ -19,7 +19,6 @@
 #include "itkImageRegionIterator.h"
 #include "itkZeroCrossingImageFilter.h"
 #include "object_reader.h"
-#include "itkImageFileReader.h"
 #include "itkParticleImageDomain.h"
 
 namespace itk
@@ -94,24 +93,14 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     // *after* registering the attributes to the particle system since some of
     // them respond to AddDomain.
     int ctr = 0;
-    for (unsigned int i = 0; i < this->m_ImageFiles.size(); i++)
+    for (unsigned int i = 0; i < this->m_Images.size(); i++)
     {
         m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
                                 ImageType::PixelType, Dimension>::New() );
 
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
-        if (m_verbosity > 1)
-            std::cout<<"Reading inputfile: "<<m_ImageFiles[i].c_str()<<"..."<<std::flush;
-
-        typename ImageFileReader<TImage>::Pointer reader = ImageFileReader<ImageType>::New();
-        reader->SetFileName(m_ImageFiles[i].c_str());
-        reader->UpdateLargestPossibleRegion();
-
-        if (m_verbosity > 1)
-            std::cout << "Done." << std::endl;
-
-        typename TImage::Pointer img_temp = const_cast<TImage *>(reader->GetOutput());
+        typename TImage::Pointer img_temp = this->m_Images[i];
 
         m_DomainList[i]->SetSigma(img_temp->GetSpacing()[0] * 2.0);
 

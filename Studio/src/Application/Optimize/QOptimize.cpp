@@ -32,6 +32,7 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
   this->reportInterval_ = 100;
 
   if (this->iterCount_ % this->reportInterval_ == 0) {
+
     emit progress(this->iterCount_ * 100 / this->m_total_iterations);
   }
   this->iterCount_++;

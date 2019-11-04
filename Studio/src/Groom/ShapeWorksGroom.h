@@ -53,4 +53,3 @@ protected:
   ImageType::IndexType lower_;
   bool paddingInit_;
 };
-
