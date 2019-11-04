@@ -33,6 +33,13 @@ void QOptimize::SetIterationCommand()
 //---------------------------------------------------------------------------
 void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
 {
+  std::cerr << "iterateCallback\n";
+
+  if (this->aborted_)
+  {
+    return;
+  }
+
   // run superclass iterateCallback
   ShapeWorksOptimize::iterateCallback(caller, e);
 
@@ -49,7 +56,7 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
   }
   else {
     auto time_since = this->time_since_last_update_.elapsed();
-    if (time_since > 100) {
+    if (time_since > 250) {
       update = true;
     }
   }
