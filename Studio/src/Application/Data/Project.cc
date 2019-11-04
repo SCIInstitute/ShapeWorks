@@ -380,6 +380,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
     std::string point_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> point_filename) {
+      local_point_files.push_back(point_filename);
       global_point_files.push_back(point_filename);
     }
     inputsBuffer.clear();
@@ -388,6 +389,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   elem = docHandle.FirstChild("local_point_files").Element();
   if (elem) {
+    local_point_files.clear();
     std::string point_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> point_filename) {
@@ -416,6 +418,13 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;
+
+
+  this->calculate_reconstructed_samples();
+
+  this->preferences_.set_preference("display_state", QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
+
   return true;
 }
 

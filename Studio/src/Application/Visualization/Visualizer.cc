@@ -100,7 +100,7 @@ void Visualizer::display_samples() {
     annotations << "";
     object->set_annotations( annotations );
 
-    if ( this->center_ )
+    if ( this->center_ && mesh )
     {
       object->set_transform( mesh->get_center_transform() );
     }

@@ -20,6 +20,8 @@
 #include <Data/Preferences.h>
 
 #include <Data/SurfaceReconstructor.h>
+#include <Data/LegacyMeshGenerator.h>
+
 
 class MeshGenerator
 {
@@ -33,6 +35,7 @@ public:
 private:
   Preferences& prefs_;
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
+  QSharedPointer<LegacyMeshGenerator> legacy_reconstructor_;
 };
 
 #endif // ifndef MESH_GENERATOR_H

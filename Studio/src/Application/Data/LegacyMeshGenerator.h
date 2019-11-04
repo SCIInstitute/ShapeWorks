@@ -10,8 +10,7 @@
  * a mesh from a shape (list of points).
  */
 
-#ifndef MESH_GENERATOR_H
-#define MESH_GENERATOR_H
+#pragma once
 
 #include "vnl/vnl_vector.h"
 
@@ -71,4 +70,3 @@ private:
   //QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
 };
 
-#endif // ifndef MESH_GENERATOR_H
