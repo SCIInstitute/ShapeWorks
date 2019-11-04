@@ -21,21 +21,21 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'resampled/')
+    outDir = os.path.join(parentDir , 'resampled')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
     if processRaw:
         #process segmentation files
-        binaryoutDir = os.path.join(outDir,'segmentations/')
+        binaryoutDir = os.path.join(outDir,'segmentations')
 
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
         outDataListSeg = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
             filename = spt[1]
             outname = inname.replace(initPath, binaryoutDir)
             outname = outname.replace('.nrrd', '.isores.nrrd')
@@ -67,7 +67,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
 
         #process images files
         isBinaryImage = False
-        rawoutDir = os.path.join(outDir ,'images/')
+        rawoutDir = os.path.join(outDir ,'images')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -76,8 +76,8 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
         outDataListImg = []
         for i in range(len(inDataListImg)):
             inname = inDataListImg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
             filename = spt[1]
             outname = inname.replace(initPath, rawoutDir)
             outname = outname.replace('.nrrd', '.isores.nrrd')
@@ -113,8 +113,8 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
         outDataList = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
             filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.isores.nrrd')
@@ -158,21 +158,21 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'padded/')
+    outDir = os.path.join(parentDir , 'padded')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
     if processRaw:
         # process segmentations
-        binaryoutDir = os.path.join(outDir ,'segmentations/')
+        binaryoutDir = os.path.join(outDir ,'segmentations')
 
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
         outDataListSeg = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
             filename = spt[1]
             outname = inname.replace(initPath, binaryoutDir)
             outname = outname.replace('.nrrd', '.pad.nrrd')
@@ -188,7 +188,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             subprocess.check_call(execCommand)
 
         #process images
-        rawoutDir = os.path.join(outDir ,'images/')
+        rawoutDir = os.path.join(outDir ,'images')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -196,8 +196,8 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
         outDataListImg = []
         for i in range(len(inDataListImg)):
             inname = inDataListImg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
             filename = spt[1]
             outname = inname.replace(initPath, rawoutDir)
             outname = outname.replace('.nrrd', '.pad.nrrd')
@@ -218,9 +218,9 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
         outDataList = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
-            filename = spt[1]
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
+            #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.pad.nrrd')
             outDataList.append(outname)
@@ -250,7 +250,7 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'com_aligned/')
+    outDir = os.path.join(parentDir , 'com_aligned')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -258,8 +258,8 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 
 
     if processRaw:
-        rawoutDir = os.path.join(outDir ,'images/')
-        binaryoutDir = os.path.join(outDir ,'segmentations/')
+        rawoutDir = os.path.join(outDir ,'images')
+        binaryoutDir = os.path.join(outDir ,'segmentations')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -272,15 +272,15 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
         for i in range(len(inDataListSeg)):
             innameSeg = inDataListSeg[i]
             innameImg = inDataListImg[i]
-            sptSeg = innameSeg.rsplit('/', 1)
-            initPath = sptSeg[0] + '/'
+            sptSeg = innameSeg.rsplit(os.sep, 1)
+            initPath = sptSeg[0] + os.sep
             filename = sptSeg[1]
             outnameSeg = innameSeg.replace(initPath, binaryoutDir)
             outnameSeg = outnameSeg.replace('.nrrd', '.com.nrrd')
             paramname = outnameSeg.replace('.nrrd', '.txt')
             outDataListSeg.append(outnameSeg)
-            sptImg = innameImg.rsplit('/', 1)
-            initPath = sptImg[0] + '/'
+            sptImg = innameImg.rsplit(os.sep, 1)
+            initPath = sptImg[0] + os.sep
             filename = sptImg[1]
             outnameImg = innameImg.replace(initPath, rawoutDir)
             outnameImg = outnameImg.replace('.nrrd', '.com.nrrd')
@@ -302,9 +302,9 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
         outDataListSeg = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
-            filename = spt[1]
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
+            #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.com.nrrd')
             paramname = outname.replace('.nrrd', '.txt')
@@ -393,8 +393,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'aligned/')
-    transoutDir = os.path.join(outDir ,'transformations/')
+    outDir = os.path.join(parentDir , 'aligned')
+    transoutDir = os.path.join(outDir ,'transformations')
 
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -403,11 +403,11 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 
     # identify the reference scan
-    refDir = os.path.join(outDir , 'reference/')
+    refDir = os.path.join(outDir , 'reference')
     if not os.path.exists(refDir):
         os.makedirs(refDir)
-    spt = refFile.rsplit('/', 1)
-    initPath = spt[0] + '/'
+    spt = refFile.rsplit(os.sep, 1)
+    initPath = spt[0] + os.sep
     newRefFile = refFile.replace(initPath, refDir)
 
     ref_dtnrrdfilename = newRefFile.replace('.nrrd', '.DT.nrrd')
@@ -437,8 +437,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 
     if processRaw:
-        rawoutDir = os.path.join(outDir ,'images/')
-        binaryoutDir = os.path.join(outDir ,'segmentations/')
+        rawoutDir = os.path.join(outDir ,'images')
+        binaryoutDir = os.path.join(outDir ,'segmentations')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -450,8 +450,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         outSegDataList=[]
         for i in range(len(inDataListSeg)):
             seginname = inDataListSeg[i]
-            spt = seginname.rsplit('/', 1)
-            initPath = spt[0] + '/'
+            spt = seginname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
             filename = spt[1]
             segoutname = seginname.replace(initPath, binaryoutDir)
             segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
@@ -460,8 +460,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             outSegDataList.append(segoutname)
 
             rawinname = inDataListImg[i]
-            sptR = rawinname.rsplit('/', 1)
-            initPath = sptR[0] + '/'
+            sptR = rawinname.rsplit(os.sep, 1)
+            initPath = sptR[0] + os.sep
             filename = sptR[1]
             rawoutname = rawinname.replace(initPath, rawoutDir)
             rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
@@ -508,9 +508,9 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         outDataList = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
-            filename = spt[1]
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
+            #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.aligned.nrrd')
             transoutname = inname.replace(initPath, transoutDir)
@@ -561,13 +561,13 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'cropped/')
+    outDir = os.path.join(parentDir , 'cropped')
 
 
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    cropinfoDir = os.path.join(outDir ,'crop_info/')
+    cropinfoDir = os.path.join(outDir ,'crop_info')
     if not os.path.exists(cropinfoDir):
         os.makedirs(cropinfoDir)
 
@@ -592,8 +592,8 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
 
     if processRaw:
-        rawoutDir = os.path.join(outDir ,'images/')
-        binaryoutDir = os.path.join(outDir ,'segmentations/')
+        rawoutDir = os.path.join(outDir ,'images')
+        binaryoutDir = os.path.join(outDir ,'segmentations')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -604,15 +604,15 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
         for i in range(len(inDataListSeg)):
             innameSeg = inDataListSeg[i]
             innameImg = inDataListImg[i]
-            sptSeg = innameSeg.rsplit('/', 1)
-            initPath = sptSeg[0] + '/'
-            filename = sptSeg[1]
+            sptSeg = innameSeg.rsplit(os.sep, 1)
+            initPath = sptSeg[0] + os.sep
+            #filename = sptSeg[1]
             outnameSeg = innameSeg.replace(initPath, binaryoutDir)
             outnameSeg = outnameSeg.replace('.nrrd', '.cropped.nrrd')
             outDataListSeg.append(outnameSeg)
-            sptImg = innameImg.rsplit('/', 1)
-            initPath = sptImg[0] + '/'
-            filename = sptImg[1]
+            sptImg = innameImg.rsplit(os.sep, 1)
+            initPath = sptImg[0] + os.sep
+            #filename = sptImg[1]
             outnameImg = innameImg.replace(initPath, rawoutDir)
             outnameImg = outnameImg.replace('.nrrd', '.cropped.nrrd')
             outDataListImg.append(outnameImg)
@@ -635,9 +635,9 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
         outDataList = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit('/', 1)
-            initPath = spt[0] + '/'
-            filename = spt[1]
+            spt = inname.rsplit(os.sep, 1)
+            initPath = spt[0] + os.sep
+            #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.cropped.nrrd')
             outDataList.append(outname)
@@ -674,20 +674,20 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.write(data)
 
 def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smoothingIterations=1, isoValue=0, percentage=50):
-    outDir = os.path.join(parentDir , 'groom_and_meshes/')
+    outDir = os.path.join(parentDir , 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    finalDTDir = os.path.join(parentDir , 'distance_transforms/')
+    finalDTDir = os.path.join(parentDir , 'distance_transforms')
     if not os.path.exists(finalDTDir):
         os.makedirs(finalDTDir)
 
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        spt = inname.rsplit('/', 1)
-        initPath = spt[0] + '/'
-        filename = spt[1]
+        spt = inname.rsplit(os.sep, 1)
+        initPath = spt[0] + os.sep
+        #filename = spt[1]
         outname = inname.replace(initPath, outDir)
 
         dtnrrdfilename = outname.replace('.nrrd', '.DT.nrrd')
