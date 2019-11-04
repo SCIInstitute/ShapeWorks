@@ -48,7 +48,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
             print(" ")
             if isBinaryImage:
                 if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing " , str(
+                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
                         isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage",  "1"]
                     subprocess.check_call(execCommand)
                 else:
@@ -294,7 +294,7 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
             cprint(("Output Parameter Filename : ", paramname), 'yellow')
             print("###########################################")
             print(" ")
-            execCommand = ["TranslateShapeToImageOrigin" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--useCenterOfMass",  "1" , "--parameterFilename " , paramname , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
+            execCommand = ["TranslateShapeToImageOrigin" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--useCenterOfMass",  "1" , "--parameterFilename" , paramname , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
             subprocess.check_call(execCommand)
 
         return [outDataListSeg, outDataListImg]
@@ -759,10 +759,10 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
                     cprint(("Output Volume : ", leftimgFilename), 'yellow')
                     cprint(("Mesh : ", leftFilename), 'cyan')
                     print("#######################################\n")
-                    execCommand = "ReflectVolumes  --inFilename " + imgFile + " --outFilename " + leftimgFilename + " --centerFilename " + centerFilename + " --inputDirection 0"
-                    os.system(execCommand)
-                    execCommand = "ReflectMesh --inFilename " + leftFilename + " --outFilename " + leftFilename_out + " --reflectCenterFilename " +  centerFilename + " --inputDirection 0 --meshFormat " + mesh_extension
-                    os.system(execCommand)
+                    execCommand = ["ReflectVolumes", "--inFilename", imgFile, "--outFilename", leftimgFilename, "--centerFilename", centerFilename, "--inputDirection", "0"]
+                    subprocess.check_call(execCommand)
+                    execCommand = ["ReflectMesh", "--inFilename", leftFilename, "--outFilename", leftFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0" , "--meshFormat", mesh_extension]
+                    subprocess.check_call(execCommand)
             else:
                 if os.path.exists(leftFilename):
                     shutil.copy(imgFile, leftimgFilename)
@@ -774,10 +774,10 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
                     cprint(("Output Volume : ", rightimgFilename), 'yellow')
                     cprint(("Mesh : ", rightFilename), 'cyan')
                     print("######################################")
-                    execCommand = "ReflectVolumes  --inFilename " + imgFile + " --outFilename " + rightimgFilename + " --centerFilename " + centerFilename + " --inputDirection 0"
-                    os.system(execCommand)
-                    execCommand = "ReflectMesh --inFilename " + rightFilename + " --outFilename " + rightFilename_out + " --reflectCenterFilename " +  centerFilename + " --inputDirection 0 --meshFormat " + mesh_extension
-                    os.system(execCommand)
+                    execCommand = ["ReflectVolumes", "--inFilename", imgFile, "--outFilename", rightimgFilename, "--centerFilename", centerFilename, "--inputDirection", "0"]
+                    subprocess.check_call(execCommand)
+                    execCommand = ["ReflectMesh", "--inFilename", rightFilename, "--outFilename", rightFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0" , "--meshFormat", mesh_extension]
+                    subprocess.check_call(execCommand)
         imgList = []
         meshList = []
         for file in os.listdir(outDir):
@@ -820,13 +820,13 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
             if mesh_extension == "vtk":
                 meshfilename_vtk = meshFilename
                 meshFilename = meshFilename[:-4] + "ply"
-                execCommand = "vtk2ply " + meshfilename_vtk + " " + meshFilename
-                os.system(execCommand)
+                execCommand = ["vtk2ply", meshfilename_vtk, meshFilename]
+                subprocess.check_call(execCommand)
 
             # write origin, size, and spacing info to text file
             infoPrefix = outSeg + subject_id + mesh_suffix + "_" + img_suffix
-            execCommand = "WriteImageInfoToText --inFilename " + imgFilename + " --outPrefix " + infoPrefix
-            os.system(execCommand)
+            execCommand = ["WriteImageInfoToText","--inFilename",imgFilename, "--outPrefix", infoPrefix]
+            subprocess.check_call(execCommand)
 
             # get origin, size, and spacing data
             data ={}
@@ -863,8 +863,8 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
             xml.close()
 
             # call generate binary and DT
-            execCommand = "GenerateBinaryAndDTImagesFromMeshes " + xmlfilename
-            os.system(execCommand)
+            execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
+            subprocess.check_call(execCommand)
 
     for file in os.listdir(inputDir):
         if mesh_suffix + ".DT" in file:
@@ -886,7 +886,6 @@ def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cp_x1, cp_x2, cp_x3, 
     for i in range(len(rigidFiles_segmentations)):
         innameSeg = rigidFiles_segmentations[i]
         sptSeg = innameSeg.rsplit('/', 1)
-        print(sptSeg)
         initPath = sptSeg[0] + '/'
         filename = sptSeg[1]
         outnameSeg = innameSeg.replace(initPath, outDir)
@@ -913,7 +912,7 @@ def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cp_x1, cp_x2, cp_x3, 
         xml.write("</outputs>\n")
         xml.write("<cutting_planes> " +str(cp_x1)+" "+str(cp_y1)+" "+str(cp_z1)+" "+str(cp_x2)+" "+str(cp_y2)+" "+str(cp_z2)+" "+str(cp_x3)+" "+str(cp_y3)+" "+str(cp_z3)+" </cutting_planes>")
         xml.close()
-        execCommand = "ClipVolume " + xmlfilename
-        os.system(execCommand)
+        execCommand = ["ClipVolume", xmlfilename]
+        subprocess.check_call(execCommand)
 
     return outDataListSeg

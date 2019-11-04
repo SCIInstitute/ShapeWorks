@@ -122,7 +122,7 @@ def Run_Femur_Pipline(args):
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
 
-        [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg ,fileList_img, 1, processRaw = True)
+        [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg,fileList_img, 1, processRaw = True)
 
         """
         Apply padding
