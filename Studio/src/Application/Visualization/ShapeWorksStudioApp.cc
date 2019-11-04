@@ -951,8 +951,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
   this->preferences_.set_preference("Main/windowState", this->saveState());
 
   this->hide();
-  QCoreApplication::processEvents();
   this->optimize_tool_->shutdown_threads();
+  QCoreApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------

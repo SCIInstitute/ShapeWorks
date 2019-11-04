@@ -375,6 +375,17 @@ bool Project::load_light_project(QString filename, string &planesFile)
     inputsBuffer.str("");
   }
 
+  elem = docHandle.FirstChild("point_files").Element();
+  if (elem) {
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      global_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
   elem = docHandle.FirstChild("local_point_files").Element();
   if (elem) {
     std::string point_filename;
@@ -388,6 +399,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   elem = docHandle.FirstChild("world_point_files").Element();
   if (elem) {
+    global_point_files.clear();
     std::string point_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> point_filename) {
@@ -396,6 +408,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
     inputsBuffer.clear();
     inputsBuffer.str("");
   }
+
 
   this->load_groomed_files(groom_files, 0.5);
   this->load_point_files(local_point_files, true);
