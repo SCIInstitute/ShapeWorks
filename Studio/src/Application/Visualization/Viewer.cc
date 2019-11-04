@@ -153,6 +153,7 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
     ren->AddViewProp(this->image_actor_);
 
     ren->ResetCamera();
+    this->renderer_->ResetCameraClippingRange();
   } else
   {
 

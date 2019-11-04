@@ -114,9 +114,20 @@ void Lightbox::display_objects()
   int start_object = this->start_row_ * this->tile_layout_width_;
 
   int position = 0;
+  bool need_loading_screen = false;
   for (int i = start_object; i < this->objects_.size(); i++) {
+    if (!this->objects_[i]->get_mesh()) {
+      need_loading_screen = true;
+    }
     this->insert_object_into_viewer(this->objects_[i], position);
     position++;
+  }
+
+  if (need_loading_screen) {
+    this->loading_timer_.start();
+  }
+  else {
+    this->loading_timer_.stop();
   }
 }
 
@@ -293,6 +304,7 @@ void Lightbox::set_visualizer(Visualizer* visualizer)
 //-----------------------------------------------------------------------------
 void Lightbox::handle_timer_callback()
 {
+  std::cerr << "timer callback\n";
   this->timer_callback_count_ = (this->timer_callback_count_ + 1) % 19;
 
   foreach(ViewerHandle viewer, this->get_viewers()) {
