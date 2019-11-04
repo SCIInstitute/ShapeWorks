@@ -783,7 +783,7 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
         for file in os.listdir(outDir):
             if ".nrrd" in file:
                 imgList.append(outDir + file)
-            if mesh_extension in file:
+            if left_suffix +"." + mesh_extension in file or right_suffix +"." + mesh_extension in file:
                 meshList.append(outDir + file)
     return imgList, meshList
 
@@ -800,71 +800,71 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
     if not os.path.exists(outSeg):
         os.mkdir(outSeg)
     for file in meshList:
-        sptSeg = file.rsplit('/', 1)
-        inputDir = sptSeg[0] + '/'
-        input(inputDir)
-        file= sptSeg[1]
-        subject_id = file.split(mesh_suffix)[0]
-        meshFilename = inputDir + file
-        # copy image over
-        imgFilename = inputDir + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
-        imgFilename_out = outImg + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
-        shutil.copy(imgFilename, imgFilename_out)
-        imgList.append(imgFilename_out)
+        if mesh_suffix in file:
+            sptSeg = file.rsplit('/', 1)
+            inputDir = sptSeg[0] + '/'
+            file= sptSeg[1]
+            subject_id = file.split(mesh_suffix)[0]
+            meshFilename = inputDir + file
+            # copy image over
+            imgFilename = inputDir + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
+            imgFilename_out = outImg + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
+            shutil.copy(imgFilename, imgFilename_out)
+            imgList.append(imgFilename_out)
 
-        print("########### Turning  Mesh To Volume ##############")
-        cprint(("Input Mesh : ", meshFilename), 'cyan')
-        cprint(("Output Volume : ", outSeg + file[:-4] + ".nrrd"), 'yellow')
-        print("##################################################")
-        # make ply if neccesary
-        if mesh_extension == "vtk":
-            meshfilename_vtk = meshFilename
-            meshFilename = meshFilename[:-4] + "ply"
-            execCommand = "vtk2ply " + meshfilename_vtk + " " + meshFilename
+            print("########### Turning  Mesh To Volume ##############")
+            cprint(("Input Mesh : ", meshFilename), 'cyan')
+            cprint(("Output Volume : ", outSeg + file[:-4] + ".nrrd"), 'yellow')
+            print("##################################################")
+            # make ply if neccesary
+            if mesh_extension == "vtk":
+                meshfilename_vtk = meshFilename
+                meshFilename = meshFilename[:-4] + "ply"
+                execCommand = "vtk2ply " + meshfilename_vtk + " " + meshFilename
+                os.system(execCommand)
+
+            # write origin, size, and spacing info to text file
+            infoPrefix = outSeg + subject_id + mesh_suffix + "_" + img_suffix
+            execCommand = "WriteImageInfoToText --inFilename " + imgFilename + " --outPrefix " + infoPrefix
             os.system(execCommand)
 
-        # write origin, size, and spacing info to text file
-        infoPrefix = outSeg + subject_id + mesh_suffix + "_" + img_suffix
-        execCommand = "WriteImageInfoToText --inFilename " + imgFilename + " --outPrefix " + infoPrefix
-        os.system(execCommand)
+            # get origin, size, and spacing data
+            data ={}
+            origin_file = open(infoPrefix + "_origin.txt", "r")
+            text = origin_file.read()
+            data["origin"] = text.split("\n")
+            origin_file.close()
+            size_file = open(infoPrefix + "_size.txt", "r")
+            text = size_file.read()
+            data["size"] = text.split("\n")
+            size_file.close()
+            spacing_file = open(infoPrefix + "_spacing.txt", "r")
+            text = spacing_file.read()
+            data["spacing"] = text.split("\n")
+            spacing_file.close()
 
-        # get origin, size, and spacing data
-        data ={}
-        origin_file = open(infoPrefix + "_origin.txt", "r")
-        text = origin_file.read()
-        data["origin"] = text.split("\n")
-        origin_file.close()
-        size_file = open(infoPrefix + "_size.txt", "r")
-        text = size_file.read()
-        data["size"] = text.split("\n")
-        size_file.close()
-        spacing_file = open(infoPrefix + "_spacing.txt", "r")
-        text = spacing_file.read()
-        data["spacing"] = text.split("\n")
-        spacing_file.close()
+            shutil.copy(meshFilename, meshFilename[:-4] + "_cp.ply")
 
-        shutil.copy(meshFilename, meshFilename[:-4] + "_cp.ply")
+            # write xml file
+            xmlfilename=infoPrefix + "_GenerateBinaryAndDT.xml"
+            if os.path.exists(xmlfilename):
+                os.remove(xmlfilename)
+            xml = open(xmlfilename, "a")
+            xml.write("<?xml version=\"1.0\" ?>\n")
+            xml.write("<mesh>\n")
+            xml.write(meshFilename+"\n")
+            xml.write("</mesh>\n")
+            # write origin, size, and spacing data
+            for key,value in data.items():
+                index = 0
+                for dim in ["x","y","z"]:
+                    xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
+                    index += 1
+            xml.close()
 
-        # write xml file
-        xmlfilename=infoPrefix + "_GenerateBinaryAndDT.xml"
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<mesh>\n")
-        xml.write(meshFilename+"\n")
-        xml.write("</mesh>\n")
-        # write origin, size, and spacing data
-        for key,value in data.items():
-            index = 0
-            for dim in ["x","y","z"]:
-                xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
-                index += 1
-        xml.close()
-
-        # call generate binary and DT
-        execCommand = "GenerateBinaryAndDTImagesFromMeshes " + xmlfilename
-        os.system(execCommand)
+            # call generate binary and DT
+            execCommand = "GenerateBinaryAndDTImagesFromMeshes " + xmlfilename
+            os.system(execCommand)
 
     for file in os.listdir(inputDir):
         if mesh_suffix + ".DT" in file:

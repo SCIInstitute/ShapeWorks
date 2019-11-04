@@ -103,7 +103,6 @@ def Run_Femur_Pipline(args):
         inputDir = 'TestFemur/femurdata/'
         reference_side = "left"
         [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
-        input(fileList_mesh)
 
         """
         MeshesToVolumes
