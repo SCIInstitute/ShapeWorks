@@ -24,8 +24,8 @@
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
-#endif
 #include <dirent.h>
+#endif
 
 // itk
 #include <itkImageFileReader.h>
