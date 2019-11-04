@@ -109,6 +109,7 @@ void Visualizer::display_samples() {
 
   this->lightbox_->set_display_objects( display_objects );
   this->update_viewer_properties();
+  this->reset_camera();
 }
 
 //-----------------------------------------------------------------------------

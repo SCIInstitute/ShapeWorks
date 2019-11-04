@@ -25,7 +25,7 @@ void StudioInteractorStyle::OnLeftButtonDown()
  */
 // forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
-  this->GetCurrentRenderer()->ResetCameraClippingRange();
+  //this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 void StudioInteractorStyle::OnRightButtonDown()
@@ -36,7 +36,7 @@ void StudioInteractorStyle::OnRightButtonDown()
  */
 // forward events
   vtkInteractorStyleTrackballCamera::OnRightButtonDown();
-  this->GetCurrentRenderer()->ResetCameraClippingRange();
+  //this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 void StudioInteractorStyle::set_lightbox( Lightbox* lightbox )

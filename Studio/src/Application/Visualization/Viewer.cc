@@ -254,9 +254,10 @@ void Viewer::clear_viewer()
 void Viewer::reset_camera(std::array<double, 3> c)
 {
   this->renderer_->ResetCamera();
-  this->renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
-  this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
-  this->renderer_->GetActiveCamera()->SetPosition(c[0], c[1], c[2]);
+//  this->renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
+//  this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
+//  this->renderer_->GetActiveCamera()->SetPosition(c[0], c[1], c[2]);
+  this->renderer_->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
