@@ -21,7 +21,8 @@ parser.add_argument("--start_with_prepped_data", help="Start with already preppe
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
-os.environ["PATH"] = args.shapeworks_path + ":" + os.environ["PATH"]
+print(os.environ['PATH'])
+os.environ["PATH"] = args.shapeworks_path + os.pathsep + os.environ["PATH"]
 
 try:
 
