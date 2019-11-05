@@ -84,7 +84,12 @@ void Visualizer::display_samples()
     }
     else if (this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
       mesh = shapes[i]->get_reconstructed_mesh();
-      filename = shapes[i]->get_original_filename() + "-RE";
+      if (shapes[i]->get_original_filename() == "") {
+        filename = shapes[i]->get_global_point_filename();
+      }
+      else {
+        filename = shapes[i]->get_original_filename() + "-RE";
+      }
     }
     if (this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C) {
       object->set_exclusion_sphere_centers(shapes[i]->get_exclusion_sphere_centers());
@@ -94,6 +99,12 @@ void Visualizer::display_samples()
       mesh = shapes[i]->get_original_mesh();
       filename = shapes[i]->get_original_filename();
     }
+
+    if (!mesh) {
+      mesh = shapes[i]->get_reconstructed_mesh();
+      filename = shapes[i]->get_global_point_filename();
+    }
+
     object->set_mesh(mesh);
     QStringList annotations;
     annotations << filename;
