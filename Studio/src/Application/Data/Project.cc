@@ -424,6 +424,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   this->preferences_.set_preference("display_state", QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
+  this->renumber_shapes();
 
   return true;
 }
