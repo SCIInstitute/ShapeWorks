@@ -229,7 +229,7 @@
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -391,9 +391,9 @@
   <widget class="QToolBar" name="toolBar">
    <property name="font">
     <font>
-     <pointsize>36</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="windowTitle">
