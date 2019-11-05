@@ -80,7 +80,7 @@ public:
 
   void generate_mean_dense();
 
-  bool get_surface_reconstruction_avaiable();
+  bool get_surface_reconstruction_available();
 
   vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape);
 

@@ -2,7 +2,7 @@
  * Shapeworks license
  */
 
-#include <MeshGenerator.h>
+#include <Data/LegacyMeshGenerator.h>
 
 // vtk
 #include <vtkContourFilter.h>
@@ -16,7 +16,7 @@
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkDecimatePro.h>
 #include <vtkButterflySubdivisionFilter.h>
-#include <vtkPolyDataToImageData.h>
+#include <Data/vtkPolyDataToImageData.h>
 
 #include <vtkMetaImageWriter.h>
 #include <vtkPolyDataWriter.h>
@@ -29,7 +29,7 @@
 #endif
 
 //---------------------------------------------------------------------------
-MeshGenerator::MeshGenerator()
+LegacyMeshGenerator::LegacyMeshGenerator()
 {
   this->usePowerCrust = false;
   this->smoothingEnabled = false;
@@ -67,30 +67,30 @@ MeshGenerator::MeshGenerator()
 }
 
 //---------------------------------------------------------------------------
-MeshGenerator::~MeshGenerator()
+LegacyMeshGenerator::~LegacyMeshGenerator()
 {}
 
 //---------------------------------------------------------------------------
-void MeshGenerator::setNeighborhoodSize( int size )
+void LegacyMeshGenerator::setNeighborhoodSize( int size )
 {
   this->surfaceReconstruction->SetNeighborhoodSize( size );
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::setSampleSpacing( double spacing )
+void LegacyMeshGenerator::setSampleSpacing( double spacing )
 {
   this->surfaceReconstruction->SetSampleSpacing( spacing );
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::setUsePowerCrust( bool enabled )
+void LegacyMeshGenerator::setUsePowerCrust( bool enabled )
 {
   this->usePowerCrust = enabled;
   this->updatePipeline();
 }
 
 //---------------------------------------------------------------------------
-void MeshGenerator::setSmoothingAmount( float amount )
+void LegacyMeshGenerator::setSmoothingAmount( float amount )
 {
   if ( amount <= 0 )
   {
@@ -107,31 +107,8 @@ void MeshGenerator::setSmoothingAmount( float amount )
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
+vtkSmartPointer<vtkPolyData> LegacyMeshGenerator::buildMesh( const vnl_vector<double>& shape )
 {
-  if (this->surface_reconstructor_ &&
-      this->surface_reconstructor_->get_surface_reconstruction_available())
-  {
-
-    vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
-
-    if (this->smoothingEnabled)
-    {
-      this->windowSincFilter->SetInputData(poly_data);
-      this->windowSincFilter->Update();
-    }
-    else
-    {
-      this->polydataNormals->SetInputData(poly_data);
-    }
-
-    this->polydataNormals->Update();
-    // make a copy of the vtkPolyData output to return
-    vtkSmartPointer<vtkPolyData> poly_data2 = vtkSmartPointer<vtkPolyData>::New();
-    poly_data2->DeepCopy( this->polydataNormals->GetOutput() );
-    return poly_data2;
-
-  }
   // copy shape points into point set
   int numPoints = shape.size() / 3;
   this->points->SetNumberOfPoints( numPoints );
@@ -169,14 +146,9 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>&
   return polyData;
 }
 
-//---------------------------------------------------------------------------
-void MeshGenerator::set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor)
-{
-  this->surface_reconstructor_ = reconstructor;
-}
 
 //---------------------------------------------------------------------------
-void MeshGenerator::updatePipeline()
+void LegacyMeshGenerator::updatePipeline()
 {
   if ( this->usePowerCrust && this->smoothingEnabled )
   {
