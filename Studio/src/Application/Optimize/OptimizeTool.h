@@ -66,7 +66,8 @@ signals:
 
 private:
   QList<QThread*> threads_;
-  QOptimize* optimize_;
+  bool optimization_is_running_ = false;
+  QOptimize* optimize_ = nullptr;
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
   QSharedPointer<Project> project_;

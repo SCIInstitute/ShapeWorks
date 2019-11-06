@@ -45,7 +45,7 @@ Viewer::Viewer()
 
   this->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
 #if VTK_MAJOR_VERSION <= 5
-  this->glyphs_->SetInput( this->glyph_point_set_ );
+  this->glyphs_->SetInput(this->glyph_point_set_);
 #else
   this->glyphs_->SetInputData(this->glyph_point_set_);
 #endif
@@ -74,14 +74,11 @@ Viewer::Viewer()
   this->exclusion_sphere_points_->SetDataTypeToDouble();
   this->exclusion_sphere_point_set_ = vtkSmartPointer<vtkPolyData>::New();
   this->exclusion_sphere_point_set_->SetPoints(this->exclusion_sphere_points_);
-  this->exclusion_sphere_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
+  this->exclusion_sphere_point_set_->GetPointData()->SetScalars(
+    vtkSmartPointer<vtkUnsignedLongArray>::New());
 
   this->exclusion_sphere_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
-#if VTK_MAJOR_VERSION <= 5
-  this->exclusion_sphere_glyph_->SetInput( this->exclusion_sphere_point_set_ );
-#else
   this->exclusion_sphere_glyph_->SetInputData(this->exclusion_sphere_point_set_);
-#endif
   this->exclusion_sphere_glyph_->ScalingOn();
   this->exclusion_sphere_glyph_->ClampingOff();
   this->exclusion_sphere_glyph_->SetScaleModeToScaleByScalar();
@@ -110,14 +107,15 @@ Viewer::~Viewer()
 {}
 
 //-----------------------------------------------------------------------------
-void Viewer::set_color_scheme(int scheme) {
+void Viewer::set_color_scheme(int scheme)
+{
   this->scheme_ = scheme;
   this->surface_actor_->GetProperty()->SetDiffuseColor(m_ColorSchemes[scheme].foreground.r,
-    m_ColorSchemes[scheme].foreground.g,
-    m_ColorSchemes[scheme].foreground.b);
+                                                       m_ColorSchemes[scheme].foreground.g,
+                                                       m_ColorSchemes[scheme].foreground.b);
   this->renderer_->SetBackground(m_ColorSchemes[scheme].background.r,
-    m_ColorSchemes[scheme].background.g,
-    m_ColorSchemes[scheme].background.b);
+                                 m_ColorSchemes[scheme].background.g,
+                                 m_ColorSchemes[scheme].background.b);
 }
 //-----------------------------------------------------------------------------
 void Viewer::display_object(QSharedPointer<DisplayObject> object)
@@ -145,16 +143,18 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
   vtkSmartPointer<vtkRenderer> ren = this->renderer_;
 
-  if (!mesh)
-  {
+  ren->RemoveAllViewProps();
+
+  if (!mesh) {
     // display loading message
     corner_annotation->SetText(0, "Loading...");
 
     ren->AddViewProp(this->image_actor_);
 
     ren->ResetCamera();
-  } else
-  {
+    //this->renderer_->ResetCameraClippingRange();
+  }
+  else {
 
     vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
     vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
@@ -164,10 +164,10 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
     int num_points = correspondence_points.size() / 3;
 
-    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(this->glyph_point_set_->GetPointData()->GetScalars());
+    vtkUnsignedLongArray* scalars =
+      (vtkUnsignedLongArray*)(this->glyph_point_set_->GetPointData()->GetScalars());
 
-    if (num_points > 0)
-    {
+    if (num_points > 0) {
       this->glyphs_->SetRange(0.0, (double)num_points + 1);
       this->glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
@@ -178,8 +178,7 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
       scalars->SetNumberOfTuples(num_points);
 
       unsigned int idx = 0;
-      for (int i = 0; i < num_points; i++)
-      {
+      for (int i = 0; i < num_points; i++) {
         scalars->InsertValue(i, i);
         double x = correspondence_points[idx++];
         double y = correspondence_points[idx++];
@@ -187,8 +186,8 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
         this->glyph_points_->InsertPoint(i, x, y, z);
       }
-    } else
-    {
+    }
+    else {
       this->glyph_points_->Reset();
       scalars->Reset();
     }
@@ -198,8 +197,7 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
     vnl_vector<double> transform = object->get_transform();
 
-    if (transform.size() == 3)
-    {
+    if (transform.size() == 3) {
       double tx = -transform[0];
       double ty = -transform[1];
       double tz = -transform[2];
@@ -209,25 +207,17 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
       vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter =
         vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-#if VTK_MAJOR_VERSION <= 5
-      transformFilter->SetInput( poly_data );
-#else
       transformFilter->SetInputData(poly_data);
-#endif
       transformFilter->SetTransform(translation);
       transformFilter->Update();
       poly_data = transformFilter->GetOutput();
     }
 
-#if VTK_MAJOR_VERSION <= 5
-    mapper->SetInput( poly_data );
-#else
     mapper->SetInputData(poly_data);
-#endif
     actor->SetMapper(mapper);
     actor->GetProperty()->SetDiffuseColor(m_ColorSchemes[this->scheme_].foreground.r,
-      m_ColorSchemes[this->scheme_].foreground.g,
-      m_ColorSchemes[this->scheme_].foreground.b);
+                                          m_ColorSchemes[this->scheme_].foreground.g,
+                                          m_ColorSchemes[this->scheme_].foreground.b);
     actor->GetProperty()->SetSpecular(0.2);
     actor->GetProperty()->SetSpecularPower(15);
     mapper->ScalarVisibilityOff();
@@ -254,9 +244,10 @@ void Viewer::clear_viewer()
 void Viewer::reset_camera(std::array<double, 3> c)
 {
   this->renderer_->ResetCamera();
-  this->renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
-  this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
-  this->renderer_->GetActiveCamera()->SetPosition(c[0], c[1], c[2]);
+
+//  this->renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
+//  this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
+//  this->renderer_->GetActiveCamera()->SetPosition(c[0], c[1], c[2]);
 }
 
 //-----------------------------------------------------------------------------
@@ -313,8 +304,7 @@ void Viewer::set_show_surface(bool show)
 //-----------------------------------------------------------------------------
 void Viewer::update_actors()
 {
-  if (!this->visible_)
-  {
+  if (!this->visible_) {
     return;
   }
 
@@ -328,10 +318,9 @@ void Viewer::update_actors()
      {
      this->renderer->RemoveActor( this->surfaceActors[i] );
      }
-     */
+   */
 
-  if (this->show_glyphs_)
-  {
+  if (this->show_glyphs_) {
     this->renderer_->AddActor(this->glyph_actor_);
 
     this->renderer_->AddActor(this->exclusion_sphere_actor_);
@@ -341,8 +330,7 @@ void Viewer::update_actors()
         }*/
   }
 
-  if (this->show_surface_)
-  {
+  if (this->show_surface_) {
     /*    for ( int i = 0; i < this->numDomains; i++ )
         {
         this->renderer->AddActor( this->surfaceActors[i] );
@@ -361,8 +349,7 @@ int Viewer::handle_pick(int* click_pos)
   // First determine what was picked
   vtkSmartPointer<vtkPropPicker> prop_picker = vtkSmartPointer<vtkPropPicker>::New();
   prop_picker->Pick(click_pos[0], click_pos[1], 0, this->renderer_);
-  if (prop_picker->GetActor() != this->glyph_actor_)
-  {
+  if (prop_picker->GetActor() != this->glyph_actor_) {
     return -1;
   }
 
@@ -371,20 +358,17 @@ int Viewer::handle_pick(int* click_pos)
 
   vtkDataArray* input_ids = this->glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds");
 
-  if (input_ids)
-  {
+  if (input_ids) {
     vtkCell* cell = this->glyphs_->GetOutput()->GetCell(cell_picker->GetCellId());
 
-    if (cell && cell->GetNumberOfPoints() > 0)
-    {
+    if (cell && cell->GetNumberOfPoints() > 0) {
       // get first PointId from picked cell
       vtkIdType input_id = cell->GetPointId(0);
 
       // get matching Id from "InputPointIds" array
       vtkIdType glyph_id = input_ids->GetTuple1(input_id);
 
-      if (glyph_id >= 0)
-      {
+      if (glyph_id >= 0) {
         std::cerr << "picked correspondence point :" << glyph_id << "\n";
         return glyph_id;
       }
@@ -404,11 +388,7 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut)
 //-----------------------------------------------------------------------------
 void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen)
 {
-#if VTK_MAJOR_VERSION <= 5
-  this->image_actor_->SetInput( loading_screen );
-#else
   this->image_actor_->SetInputData(loading_screen);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -419,11 +399,10 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<DisplayObject> object)
 
   int num_points = centers.size();
 
-  if (num_points <= 0)
-  {
+  if (num_points <= 0) {
     this->exclusion_sphere_points_->Reset();
-  } else
-  {
+  }
+  else {
 
     vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(
       this->exclusion_sphere_point_set_->GetPointData()->GetScalars());
@@ -436,8 +415,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<DisplayObject> object)
     this->exclusion_sphere_points_->Reset();
     this->exclusion_sphere_points_->SetNumberOfPoints(num_points);
 
-    for (int i = 0; i < num_points; i++)
-    {
+    for (int i = 0; i < num_points; i++) {
       Point p = centers[i];
       scalars->InsertValue(i, radii[i]);
       this->exclusion_sphere_points_->InsertPoint(i, p.x, p.y, p.z);

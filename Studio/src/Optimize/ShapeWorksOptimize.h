@@ -37,8 +37,8 @@ public:
 
   void run();
   std::vector<ImageType::Pointer> getImages();
-  std::vector<std::vector<itk::Point<double>>> localPoints();
-  std::vector<std::vector<itk::Point<double>>> globalPoints();
+  virtual std::vector<std::vector<itk::Point<double>>> localPoints();
+  virtual std::vector<std::vector<itk::Point<double>>> globalPoints();
 
 protected:
 
@@ -70,7 +70,7 @@ protected:
   itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
 
-  unsigned int m_verbosity_level = 5;
+  unsigned int m_verbosity_level = 0;
 
   // constructor
   int m_CheckpointCounter;

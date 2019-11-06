@@ -126,7 +126,6 @@ INSTALL(TARGETS ShapeWorksStudio
   RUNTIME DESTINATION bin COMPONENT Runtime
   )
 
-
 if (APPLE)
   # Add Qt frameworks to app bundle
   # see https://stackoverflow.com/questions/51556088/cmake-copy-dependencies-to-executable-output-path

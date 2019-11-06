@@ -581,6 +581,7 @@ void ShapeWorksStudioApp::handle_pca_changed()
   this->compute_mode_shape();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_slider_update()
 {
   this->analysis_tool_->updateSlider();
@@ -592,12 +593,14 @@ void ShapeWorksStudioApp::handle_new_mesh()
   this->compute_mode_shape();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str)
 {
   this->ui_->statusbar->showMessage(QString::fromStdString(str));
   this->currentMessage_ = str;
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_error(std::string str)
 {
   QMessageBox::critical(this, "Critical Error", str.c_str());
@@ -605,11 +608,13 @@ void ShapeWorksStudioApp::handle_error(std::string str)
   this->handle_progress(100);
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_warning(std::string str)
 {
   QMessageBox::warning(this, "Warning!", str.c_str());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress(size_t value)
 {
   if (value < 100) {
@@ -693,6 +698,8 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->update_table();
   this->update_scrollbar();
   this->update_display();
+  this->visualizer_->update_lut();
+
   this->enablePossibleActions();
 }
 
@@ -807,6 +814,7 @@ void ShapeWorksStudioApp::update_display()
       this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
+      this->visualizer_->reset_camera();
     }
     else if (mode == "pca") {
       this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
@@ -814,12 +822,14 @@ void ShapeWorksStudioApp::update_display()
       this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
       this->compute_mode_shape();
+      this->visualizer_->reset_camera();
     }
     else if (mode == "single sample") {
       this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
+      this->visualizer_->reset_camera();
     }
     else {
       this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
@@ -944,8 +954,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
   this->preferences_.set_preference("Main/windowState", this->saveState());
 
   this->hide();
-  QCoreApplication::processEvents();
   this->optimize_tool_->shutdown_threads();
+  QCoreApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------

@@ -44,14 +44,15 @@ void Project::handle_new_mesh()
   emit update_display();
 }
 
+//---------------------------------------------------------------------------
 void Project::handle_message(std::string s)
 {
   emit message(s);
 }
 
+//---------------------------------------------------------------------------
 void Project::handle_thread_complete()
 {
-  std::cerr << "Project::handle_thread_complete\n";
   emit message("Reconstruction initialization complete.");
   this->calculate_reconstructed_samples();
   emit update_display();
@@ -67,7 +68,6 @@ void Project::handle_clear_cache()
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples()
 {
-  std::cerr << "calculate_reconstructed_samples\n";
   if (!this->reconstructed_present_) {
     std::cerr << "no reconstructed present\n";
     return;
@@ -108,8 +108,8 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   }
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  progress.show();
-  progress.setMinimumDuration(2000);
+  //progress.show();
+  //progress.setMinimumDuration(2000);
 
   // setup XML
   QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
@@ -375,8 +375,21 @@ bool Project::load_light_project(QString filename, string &planesFile)
     inputsBuffer.str("");
   }
 
+  elem = docHandle.FirstChild("point_files").Element();
+  if (elem) {
+    std::string point_filename;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      local_point_files.push_back(point_filename);
+      global_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
   elem = docHandle.FirstChild("local_point_files").Element();
   if (elem) {
+    local_point_files.clear();
     std::string point_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> point_filename) {
@@ -388,6 +401,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   elem = docHandle.FirstChild("world_point_files").Element();
   if (elem) {
+    global_point_files.clear();
     std::string point_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> point_filename) {
@@ -397,12 +411,21 @@ bool Project::load_light_project(QString filename, string &planesFile)
     inputsBuffer.str("");
   }
 
+
   this->load_groomed_files(groom_files, 0.5);
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
 
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;
+
+
+  this->calculate_reconstructed_samples();
+
+  this->preferences_.set_preference("display_state", QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
+  this->renumber_shapes();
+
   return true;
 }
 
@@ -411,8 +434,8 @@ void Project::load_original_files(std::vector<std::string> file_names)
 {
   QProgressDialog progress("Loading images...", "Abort", 0, file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  progress.show();
-  progress.setMinimumDuration(2000);
+  //progress.show();
+  //progress.setMinimumDuration(2000);
 
   for (int i = 0; i < file_names.size(); i++) {
     progress.setValue(i);
@@ -486,8 +509,8 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
   QProgressDialog progress("Loading groomed images...", "Abort", 0,
                            file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  progress.show();
-  progress.setMinimumDuration(2000);
+  //progress.show();
+  //progress.setMinimumDuration(2000);
 
   for (int i = 0; i < file_names.size(); i++) {
     progress.setValue(i);
@@ -513,11 +536,11 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 //---------------------------------------------------------------------------
 bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
 {
-  QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
-  progress.setWindowModality(Qt::WindowModal);
-  progress.show();
-  progress.setMinimumDuration(2000);
-  std::cerr << "num file = " << points.size() << "\n";
+  //QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
+  //progress.setWindowModality(Qt::WindowModal);
+  //progress.show();
+  //progress.setMinimumDuration(2000);
+  //std::cerr << "num file = " << points.size() << "\n";
   for (int i = 0; i < points.size(); i++) {
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
@@ -527,17 +550,17 @@ bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, b
       shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(shape);
     }
-    std::cerr << "Loading points from shape " << i << "\n";
-    progress.setValue(i);
+    //std::cerr << "Loading points from shape " << i << "\n";
+    //progress.setValue(i);
     QApplication::processEvents();
     if (!shape->import_points(points[i], local)) {
       return false;
     }
-    if (progress.wasCanceled()) {
-      break;
-    }
+    //if (progress.wasCanceled()) {
+    //  break;
+    //}
   }
-  progress.setValue(points.size());
+  //progress.setValue(points.size());
   QApplication::processEvents();
 
   if (points.size() > 0) {
@@ -546,6 +569,7 @@ bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, b
   return true;
 }
 
+//---------------------------------------------------------------------------
 void Project::set_reconstructed_present(bool b)
 {
   this->reconstructed_present_ = b;
@@ -556,8 +580,8 @@ bool Project::load_point_files(std::vector<std::string> list, bool local)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  progress.show();
-  progress.setMinimumDuration(2000);
+  //progress.show();
+  //progress.setMinimumDuration(2000);
   for (int i = 0; i < list.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();

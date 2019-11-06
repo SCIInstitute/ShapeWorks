@@ -42,7 +42,20 @@ void OptimizeTool::handle_warning(std::string msg)
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val)
 {
+  QApplication::processEvents();
+
   emit progress(static_cast<size_t>(val));
+
+  auto local = this->optimize_->localPoints();
+  auto global = this->optimize_->globalPoints();
+
+  QApplication::processEvents();
+
+  if (local.size() > 2 && global.size() > 2) {
+    this->project_->load_points(local, true);
+    this->project_->load_points(global, false);
+    this->project_->set_reconstructed_present(false);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -67,10 +80,19 @@ void OptimizeTool::handle_optimize_complete()
 //---------------------------------------------------------------------------
 void OptimizeTool::on_run_optimize_button_clicked()
 {
+  if (this->optimization_is_running_) {
+    this->shutdown_threads();
+    this->optimization_is_running_ = false;
+    this->enableActions();
+    return;
+  }
+  this->optimization_is_running_ = true;
+  this->enableActions();
+
   this->update_preferences();
   emit message("Please wait: running optimize step...");
   emit progress(1);
-  this->ui_->run_optimize_button->setEnabled(false);
+  //this->ui_->run_optimize_button->setEnabled(false);
   /// TODO: studio
   ///this->ui_->reconstructionButton->setEnabled(false);
   auto shapes = this->project_->get_shapes();
@@ -323,13 +345,19 @@ void OptimizeTool::update_preferences()
 //---------------------------------------------------------------------------
 void OptimizeTool::enableActions()
 {
-  this->ui_->run_optimize_button->setEnabled(true);
+  //this->ui_->run_optimize_button->setEnabled(true);
+  if (this->optimization_is_running_) {
+    this->ui_->run_optimize_button->setText("Abort Optimize");
+  }
+  else {
+    this->ui_->run_optimize_button->setText("Run Optimize");
+  }
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::disableActions()
 {
-  this->ui_->run_optimize_button->setEnabled(false);
+  //this->ui_->run_optimize_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -352,8 +380,11 @@ std::string OptimizeTool::getCutPlanesFile()
 //---------------------------------------------------------------------------
 void OptimizeTool::shutdown_threads()
 {
+  std::cerr << "Shut Down Optimization Threads";
+  if (!this->optimize_) {
+    return;
+  }
   this->optimize_->stop_optimization();
-  return;
 
   for (size_t i = 0; i < this->threads_.size(); i++) {
     if (this->threads_[i]->isRunning()) {

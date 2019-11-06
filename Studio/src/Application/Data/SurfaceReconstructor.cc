@@ -163,7 +163,7 @@ void SurfaceReconstructor::generate_mean_dense()
 }
 
 //---------------------------------------------------------------------------
-bool SurfaceReconstructor::get_surface_reconstruction_avaiable()
+bool SurfaceReconstructor::get_surface_reconstruction_available()
 {
   return this->surface_reconstruction_available_;
 }
