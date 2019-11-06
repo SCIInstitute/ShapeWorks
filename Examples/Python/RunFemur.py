@@ -47,7 +47,7 @@ def Run_Femur_Pipline(args):
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
-    # Check if the data is in the right place
+    # # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " on the local filesystem.")
         print("Downloading " + filename + " from SCIGirder.")
@@ -62,10 +62,13 @@ def Run_Femur_Pipline(args):
         """
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
+        -- Reflect images and meshes
+        -- Turn meshes to volumes
         -- Isotropic resampling
         -- Padding
         -- Center of Mass Alignment
         -- Rigid Alignment
+        -- clip segementations
         -- Largest Bounding Box and Cropping
         """
 
@@ -79,21 +82,23 @@ def Run_Femur_Pipline(args):
 
          # set name specific variables
         img_suffix = "1x_hip"
-        mesh_suffix = "femur"
         left_suffix = "L_femur"
         right_suffix = "R_femur"
         mesh_extension = "ply"
 
-        # @TODO manually select cutting plane
-        cp_x1=81.53 
-        cp_y1=79 
-        cp_z1=71.38 
-        cp_x2=104.87 
-        cp_y2=98.94 
-        cp_z2=71.38
-        cp_x3=78.92 
-        cp_y3=88.12 
-        cp_z3=71.38 
+        '''
+        default cutting plane
+        '''
+        cp_x1 = 100
+        cp_y1 = 100 
+        cp_z1 = -50
+        cp_x2 = 100 
+        cp_y2 = -100
+        cp_z2 = -50
+        cp_x3 = -100
+        cp_y3 = 100
+        cp_z3 = -50
+
 
         """
         Reflect
@@ -104,6 +109,7 @@ def Run_Femur_Pipline(args):
         reference_side = "left"
         [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
 
+
         """
         MeshesToVolumes
         Shapeworks requires volumes so we need to convert meshes to binary segmentations and distance transform
@@ -112,6 +118,7 @@ def Run_Femur_Pipline(args):
         [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, right_suffix, mesh_extension)
         fileList_img = fileList_imgL + fileList_imgR
         fileList_seg = fileList_segL + fileList_segR
+
 
         """
         Apply isotropic resampling
@@ -163,6 +170,23 @@ def Run_Femur_Pipline(args):
 
         [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
+        if args.interactive:
+            input("Press enter to define three cutting plane points.")
+            notDone = True
+            while(notDone):
+                cp_x1 = input("Enter point1 x-value:")
+                cp_y1 = input("Enter point1 y-value:")
+                cp_z1 = input("Enter point1 z-value:")
+                cp_x2 = input("Enter point2 x-value:")
+                cp_y2 = input("Enter point2 y-value:")
+                cp_z2 = input("Enter point2 z-value:")
+                cp_x3 = input("Enter point3 x-value:")
+                cp_y3 = input("Enter point3 y-value:")
+                cp_z3 = input("Enter point3 z-value:")
+                answer = input("Clip volumes with: (" + str(cp_x1) + ", " + str(cp_y1) + ", " + str(cp_z1)+ "), (" +str(cp_x2) + ", " + str(cp_y2) 
+                    + ", " + str(cp_z2) + "), (" +str(cp_x3) + ", " + str(cp_y3) + ", " + str(cp_z3) + ")? \n (y/n)")
+                if "y" in answer:
+                    notDone = False
         """
         Clip Binary Volumes
         We have femurs of different shaft length so we will clip them all using the defined cutting plane
@@ -180,7 +204,7 @@ def Run_Femur_Pipline(args):
         The function uses the same bounding box to crop the raw and segemnattion data.
 
         """
-        [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, rigidFiles_segmentations,  rigidFiles_images, processRaw=True)
+        [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, clippedFiles_segmentations,  rigidFiles_images, processRaw=True)
 
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
@@ -284,6 +308,8 @@ def Run_Femur_Pipline(args):
         else:
             dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
+    #debug 
+    # dtFiles = ['TestFemur/PrepOutput/distance_transforms/n03_L_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n02_L_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n04_L_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n03_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n02_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n04_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/N15_51053_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd']
 
 
     """
@@ -311,32 +337,34 @@ def Run_Femur_Pipline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    pointDir = './TestLeftAtrium/PointFiles/'
+    pointDir = './TestFemur/PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
+    # TODO remove comments v
+
     if args.use_single_scale:
+        input("Using single scale")
         parameterDictionary = {
-            "number_of_particles" : 1024,
-            "use_normals": 1,
+            "number_of_particles" : 1024, # num_particles=512
+            "use_normals": 0, #use_normals=1
             "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 4000,
-            "optimization_iterations" : 4000,
-            "starting_regularization" : 50000,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
+            "checkpointing_interval" : 10, #checkpointing_interval=0 #10
+            "keep_checkpoints" : 1, #keep_checkpoints=0
+            "iterations_per_split" : 4000, # iterations_per_split=4000
+            "optimization_iterations" : 4000, #optimization_iterations=4000
+            "starting_regularization" : 100, #start_reg=100
+            "ending_regularization" : 0.1, #ending_reg =0.1
+            "recompute_regularization_interval" : 2, #optimizer=2 # gauss-seidel (1) is better working compared to jacobi (0) while adaptive time step might cause freezing (2)
             "domains_per_shape" : 1,
-            "relative_weighting" : 50,
-            "initial_relative_weighting" : 0.1,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
+            "relative_weighting" : 10, #alpha_final=10
+            "initial_relative_weighting" : 1, #alpha_init=1
+            "procrustes_interval" : 0, #procrustes_interval=0
+            "procrustes_scaling" : 0, #with_procrustes_scaling=0
+            "save_init_splits" : 1, #save_init_splits=1
             "debug_projection" : 0,
             "verbosity" : 3
         }
-
 
         """
         Now we execute the particle optimization function.
@@ -345,26 +373,27 @@ def Run_Femur_Pipline(args):
 
     else:
         parameterDictionary = {
-            "starting_particles" : 128,
-            "number_of_levels" : 4,
-            "use_normals": 1,
+            "starting_particles" : 64, # min_num_particles=32
+            "number_of_levels" : 4, #max_num_particles=2048
+            "use_normals": 0, #use_normals=1
             "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 4000,
-            "optimization_iterations" : 4000,
-            "starting_regularization" : 50000,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
+            "checkpointing_interval" : 10, #checkpointing_interval=0 #10
+            "keep_checkpoints" : 1, #keep_checkpoints=0
+            "iterations_per_split" : 4000, #iterations_per_split=4000
+            "optimization_iterations" : 4000, #optimization_iterations=4000
+            "starting_regularization" : 100, #start_reg=100
+            "ending_regularization" : 0.1, #end_reg=0.1
+            "recompute_regularization_interval" : 2, # optimizer=2 # gauss-seidel (1) is better working compared to jacobi (0) while adaptive time step might cause freezing (2)
             "domains_per_shape" : 1,
-            "relative_weighting" : 50,
-            "initial_relative_weighting" : 0.1,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
+            "relative_weighting" : 10, #alpha_final=10
+            "initial_relative_weighting" : 1, # alpha_init=1
+            "procrustes_interval" : 0, #procrustes_interval=0
+            "procrustes_scaling" : 0, #with_procrustes_scaling=0
+            "save_init_splits" : 1, #save_init_splits=1
             "debug_projection" : 0,
             "verbosity" : 3
         }
+
 
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
@@ -402,7 +431,7 @@ def Run_Femur_Pipline(args):
         input("Press Enter to continue")
 
 
-    meanDir   = './TestLeftAtrium/MeanReconstruction/'
+    meanDir   = './TestFemur/MeanReconstruction/'
     if not os.path.exists(meanDir):
         os.makedirs(meanDir)
 
@@ -411,7 +440,7 @@ def Run_Femur_Pipline(args):
     """
     parameterDictionary = {
         "number_of_particles" : 1024,
-        "out_prefix" : meanDir + 'leftatrium',
+        "out_prefix" : meanDir + 'femur',
         "do_procrustes" : 0,
         "do_procrustes_scaling" : 0,
         "levelsetValue" : 0.0,
@@ -444,7 +473,7 @@ def Run_Femur_Pipline(args):
     if args.interactive :
         input("Press Enter to continue")
 
-    meshDir_local   = './TestLeftAtrium/MeshFiles-Local/'
+    meshDir_local   = './TestFemur/MeshFiles-Local/'
     if not os.path.exists(meshDir_local):
          os.makedirs(meshDir_local)
 
@@ -453,8 +482,8 @@ def Run_Femur_Pipline(args):
     """
     parameterDictionary = {
         "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : meshDir_local + 'leftatrium',
+        "mean_prefix" : meanDir + 'femur',
+        "out_prefix" : meshDir_local + 'femur',
         "use_tps_transform" : 0,
         "use_bspline_interpolation" : 0,
         "display" : 0,
@@ -472,7 +501,7 @@ def Run_Femur_Pipline(args):
     if args.interactive :
         input("Press Enter to continue")
 
-    meshDir_global   = './TestLeftAtrium/MeshFiles-World/'
+    meshDir_global   = './TestFemur/MeshFiles-World/'
     if not os.path.exists(meshDir_global):
         os.makedirs(meshDir_global)
 
@@ -481,8 +510,8 @@ def Run_Femur_Pipline(args):
     """
     parameterDictionary = {
         "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : meshDir_global + 'leftatrium',
+        "mean_prefix" : meanDir + 'femur',
+        "out_prefix" : meshDir_global + 'femur',
         "use_tps_transform" : 0,
         "use_bspline_interpolation" : 0,
         "display" : 0,
@@ -499,7 +528,7 @@ def Run_Femur_Pipline(args):
     if args.interactive :
         input("Press Enter to continue")
 
-    pcaDir   = './TestLeftAtrium/PCAModesFiles/'
+    pcaDir   = './TestFemur/PCAModesFiles/'
     if not os.path.exists(pcaDir):
         os.makedirs(pcaDir)
 
@@ -508,8 +537,8 @@ def Run_Femur_Pipline(args):
     """
     parameterDictionary = {
         "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : pcaDir + 'leftatrium',
+        "mean_prefix" : meanDir + 'femur',
+        "out_prefix" : pcaDir + 'femur',
         "use_tps_transform" : 0,
         "use_bspline_interpolation" : 0,
         "display" : 0,
@@ -539,4 +568,5 @@ def Run_Femur_Pipline(args):
         input("Press Enter to continue")
 
     launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    print(rigidFiles_segmentations)
 

@@ -366,6 +366,10 @@ def FindReferenceImage(inDataList):
         IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
 
     COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
+    mean = sitk.GetImageFromArray(COM)
+    writer = sitk.ImageFileWriter()
+    writer.SetFileName("mean.nrrd")
+    writer.Execute(mean)
 
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
     print(" ")
@@ -778,6 +782,7 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
                     subprocess.check_call(execCommand)
                     execCommand = ["ReflectMesh", "--inFilename", rightFilename, "--outFilename", rightFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0" , "--meshFormat", mesh_extension]
                     subprocess.check_call(execCommand)
+        # get file lists
         imgList = []
         meshList = []
         for file in os.listdir(outDir):
@@ -786,8 +791,6 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
             if left_suffix +"." + mesh_extension in file or right_suffix +"." + mesh_extension in file:
                 meshList.append(outDir + file)
     return imgList, meshList
-
-
 
 # rasterization for meshes to DT
 def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_extension):
@@ -840,6 +843,7 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
             size_file.close()
             spacing_file = open(infoPrefix + "_spacing.txt", "r")
             text = spacing_file.read()
+            spacingX = text.split("\n")[0]
             data["spacing"] = text.split("\n")
             spacing_file.close()
 
@@ -866,15 +870,16 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
             execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
             subprocess.check_call(execCommand)
 
-    for file in os.listdir(inputDir):
-        if mesh_suffix + ".DT" in file:
-            newName = file.split(".")[0] + "_DT." + file.split(".")[-1]
-            shutil.move(inputDir + file, outSeg + newName)
-        if mesh_suffix + ".rasterized" in file:
-            newName = file.split(".")[0] + "." + file.split(".")[-1]
-            segFile = outSeg + newName
-            shutil.move(inputDir + file, segFile)
+            # save output volume
+            output_volume = meshFilename[:-4] + ".rasterized_sp" + str(spacingX) + ".nrrd"
+            segFile = outSeg + subject_id + mesh_suffix + ".nrrd"
+            shutil.move(output_volume, segFile)
             segList.append(segFile)
+
+            #save output DT
+            output_DT =  meshFilename[:-4] + ".DT_sp" + str(spacingX) + ".nrrd"
+            dtFile = outSeg + subject_id + mesh_suffix + "_DT.nrrd"
+            shutil.move(output_DT, dtFile)
                     
     return [imgList, segList]
 
@@ -885,34 +890,36 @@ def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cp_x1, cp_x2, cp_x3, 
     outDataListSeg = []
     for i in range(len(rigidFiles_segmentations)):
         innameSeg = rigidFiles_segmentations[i]
-        sptSeg = innameSeg.rsplit('/', 1)
-        initPath = sptSeg[0] + '/'
-        filename = sptSeg[1]
-        outnameSeg = innameSeg.replace(initPath, outDir)
-        outnameSeg = outnameSeg.replace('.nrrd', '.clipped.nrrd')
-        outDataListSeg.append(outnameSeg)
-        print(" ")
-        print("############## Clipping ##############")
-        cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
-        cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
-        print("######################################")
-        print(" ")
-        # write xml file
-        xmlfilename= outnameSeg[:-5] + ".xml"
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<num_shapes>1</num_shapes>\n")
-        xml.write("<inputs>\n")
-        xml.write(innameSeg+"\n")
-        xml.write("</inputs>\n")
-        xml.write("<outputs>\n")
-        xml.write(outnameSeg+"\n")
-        xml.write("</outputs>\n")
-        xml.write("<cutting_planes> " +str(cp_x1)+" "+str(cp_y1)+" "+str(cp_z1)+" "+str(cp_x2)+" "+str(cp_y2)+" "+str(cp_z2)+" "+str(cp_x3)+" "+str(cp_y3)+" "+str(cp_z3)+" </cutting_planes>")
-        xml.close()
-        execCommand = ["ClipVolume", xmlfilename]
-        subprocess.check_call(execCommand)
+        if (".nrrd") in innameSeg:
+            innameSeg = rigidFiles_segmentations[i]
+            sptSeg = innameSeg.rsplit('/', 1)
+            initPath = sptSeg[0] + '/'
+            filename = sptSeg[1]
+            outnameSeg = innameSeg.replace(initPath, outDir)
+            outnameSeg = outnameSeg.replace('.nrrd', '.clipped.nrrd')
+            outDataListSeg.append(outnameSeg)
+            print(" ")
+            print("############## Clipping ##############")
+            cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
+            cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
+            print("######################################")
+            print(" ")
+            # write xml file
+            xmlfilename= outnameSeg[:-5] + ".xml"
+            if os.path.exists(xmlfilename):
+                os.remove(xmlfilename)
+            xml = open(xmlfilename, "a")
+            xml.write("<?xml version=\"1.0\" ?>\n")
+            xml.write("<num_shapes>1</num_shapes>\n")
+            xml.write("<inputs>\n")
+            xml.write(innameSeg+"\n")
+            xml.write("</inputs>\n")
+            xml.write("<outputs>\n")
+            xml.write(outnameSeg+"\n")
+            xml.write("</outputs>\n")
+            xml.write("<cutting_planes> " +str(cp_x1)+" "+str(cp_y1)+" "+str(cp_z1)+" "+str(cp_x2)+" "+str(cp_y2)+" "+str(cp_z2)+" "+str(cp_x3)+" "+str(cp_y3)+" "+str(cp_z3)+" </cutting_planes>")
+            xml.close()
+            execCommand = ["ClipVolume", xmlfilename]
+            subprocess.check_call(execCommand)
 
     return outDataListSeg
