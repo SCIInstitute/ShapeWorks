@@ -28,7 +28,7 @@ public:
   typedef TFunctor FType;
 
   itkNewMacro(Self);
-  itkTypeMacro(MeanFilter,  ImageToImageFilter);
+  itkTypeMacro(ReduceFilter, ImageToImageFilter);
 
   void SetFunctor(FType * f) { m_functor = f; }
   const FType * GetFunctor() const { return m_functor; }
@@ -38,6 +38,8 @@ public:
   OutType & GetResult() { return m_result; }
 
 protected:
+  ReduceFilter();
+
   virtual void BeforeThreadedGenerateData();
   virtual void AllocateOutputs();
   virtual void ThreadedGenerateData(const InRegion & outputRegionForThread,
