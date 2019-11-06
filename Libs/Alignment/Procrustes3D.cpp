@@ -137,9 +137,9 @@ AlignShapes(SimilarityTransformListType & transforms, ShapeListType & shapes)
         {
             TransformShape((*shapeListIt), scaleSim);
             if (m_Scaling)
-                (*transformIt).scale = 1;
-            else
                 (*transformIt).scale /= scaleAve;
+            else
+                (*transformIt).scale = 1;              
 
             shapeListIt++;
             transformIt++;
