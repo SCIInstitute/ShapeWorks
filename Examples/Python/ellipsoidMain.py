@@ -9,11 +9,12 @@ __This requires the full ShapeWorks to be correctly built/downloaded!__'
 These following commands set the temporary environment variables to point to
 shapeworks binaries and set the necessary library paths
 """
-
+import os
 from RunEllipsoid import *
 
-
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin"
+if os.name == 'nt':
+    binpath = "C:\\Program Files\ShapeWorks\\bin"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store", default=0)
@@ -21,8 +22,8 @@ parser.add_argument("--start_with_prepped_data", help="Start with already preppe
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
-print(os.environ['PATH'])
 os.environ["PATH"] = args.shapeworks_path + os.pathsep + os.environ["PATH"]
+print(os.environ["PATH"])
 
 try:
 
