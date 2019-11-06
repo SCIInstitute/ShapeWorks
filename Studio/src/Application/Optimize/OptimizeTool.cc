@@ -42,25 +42,24 @@ void OptimizeTool::handle_warning(std::string msg)
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val)
 {
-  QApplication::processEvents();
-
   emit progress(static_cast<size_t>(val));
 
   auto local = this->optimize_->localPoints();
   auto global = this->optimize_->globalPoints();
 
-  QApplication::processEvents();
-
   if (local.size() > 2 && global.size() > 2) {
     this->project_->load_points(local, true);
     this->project_->load_points(global, false);
-    this->project_->set_reconstructed_present(false);
   }
+
+  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_optimize_complete()
 {
+  this->optimization_is_running_ = false;
+
   auto local = this->optimize_->localPoints();
   auto global = this->optimize_->globalPoints();
   this->project_->load_points(local, true);

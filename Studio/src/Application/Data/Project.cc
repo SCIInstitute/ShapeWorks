@@ -570,9 +570,9 @@ bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, b
 }
 
 //---------------------------------------------------------------------------
-void Project::set_reconstructed_present(bool b)
+void Project::set_reconstructed_present(bool value)
 {
-  this->reconstructed_present_ = b;
+  this->reconstructed_present_ = value;
 }
 
 //---------------------------------------------------------------------------
