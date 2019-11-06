@@ -25,7 +25,7 @@ os.environ["PATH"] = args.shapeworks_path + ":" + os.environ["PATH"]
 
 try:
 
-    Run_Ellipsoid_Pipline(args)
+    Run_Ellipsoid_Pipeline(args)
 
     print("\nShapeworks Pipeline Complete!")
 

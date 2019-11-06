@@ -33,7 +33,7 @@ from DatasetUtils import datasets
 
 
 
-def Run_Ellipsoid_Pipline(args):
+def Run_Ellipsoid_Pipeline(args):
 
     """
     Unzip the data for this tutorial.
