@@ -35,7 +35,6 @@ void QOptimize::SetIterationCommand()
 //---------------------------------------------------------------------------
 void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
 {
-  std::cerr << "iterateCallback\n";
 
   if (this->aborted_)
   {
