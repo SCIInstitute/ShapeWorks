@@ -306,7 +306,6 @@ void Lightbox::set_visualizer(Visualizer* visualizer)
 //-----------------------------------------------------------------------------
 void Lightbox::handle_timer_callback()
 {
-  std::cerr << "timer callback\n";
   this->timer_callback_count_ = (this->timer_callback_count_ + 1) % 19;
 
   foreach(ViewerHandle viewer, this->get_viewers()) {
