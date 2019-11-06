@@ -13,9 +13,9 @@ rm -rf "package/$VERSION"
 
 mkdir "package"
 
-cp -a install "package/${VERSION}"
-mkdir -p package/${VERSION}/examples/ellipsoid
-cp -a UseCaseDocumentation/* package/${VERSION}/examples/ellipsoid
+cp -a build/install "package/${VERSION}"
+cp -a Examples "package/${VERSION}"
+cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
 cp PACKAGE_README.txt package/${VERSION}/README.txt
 cd "package/${VERSION}"
