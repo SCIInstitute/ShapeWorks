@@ -16,6 +16,9 @@ call pip install --upgrade pip
 call pip install termcolor
 call pip install matplotlib
 
+REM install the local GirderConnector code as a package
+call pip install -e Python/DatasetUtilsPackage
+
 call conda info
 
 
