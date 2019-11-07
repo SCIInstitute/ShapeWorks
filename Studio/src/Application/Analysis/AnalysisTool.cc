@@ -274,8 +274,6 @@ bool AnalysisTool::compute_stats()
     return false;
   }
 
-  std::cerr << "compute stats!\n";
-
   std::vector < vnl_vector < double >> points;
   foreach(ShapeHandle shape, this->project_->get_shapes()) {
     points.push_back(shape->get_global_correspondence_points());
@@ -439,7 +437,6 @@ void AnalysisTool::updateSlider()
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats()
 {
-  std::cerr << "reset_stats\n";
   this->ui_->tabWidget->setCurrentWidget(this->ui_->mean_tab);
   this->ui_->allSamplesRadio->setChecked(true);
   this->ui_->singleSamplesRadio->setChecked(false);
@@ -457,13 +454,12 @@ void AnalysisTool::reset_stats()
 void AnalysisTool::enableActions()
 {
   this->ui_->reconstructionButton->setEnabled(
-    this->project_->reconstructed_present() && !this->project_->is_light_project());
+    this->project_->reconstructed_present() && this->project_->get_groomed_present());
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::setAnalysisMode(std::string mode)
 {
-  std::cerr << "setAnalysisMode(" << mode << "\n";
   if (mode == "all samples" || mode == "single sample") {
     this->ui_->allSamplesRadio->setChecked(mode == "all samples");
     this->ui_->singleSamplesRadio->setChecked(mode == "single sample");

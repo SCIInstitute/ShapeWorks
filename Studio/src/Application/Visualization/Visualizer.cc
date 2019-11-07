@@ -61,12 +61,10 @@ void Visualizer::set_center(bool center)
 //-----------------------------------------------------------------------------
 void Visualizer::display_samples()
 {
-  std::cerr << "display_samples!\n";
   this->update_viewer_properties();
 
-  QVector < QSharedPointer < DisplayObject >> display_objects;
-
-  QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<DisplayObject>> display_objects;
+  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
 
   for (int i = 0; i < shapes.size(); i++) {
     QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>(new DisplayObject());
@@ -102,13 +100,6 @@ void Visualizer::display_samples()
     }
 
     if (!mesh) {
-      //    std::cerr << "compute stats!\n";
-
-      /*
-      MeshHandle mesh = MeshHandle(new Mesh());
-      mesh->set_poly_data(
-        this->project_->get_mesh_manager()->getMesh(shapes[i]->get_local_correspondence_points()));
-*/
       mesh = shapes[i]->get_reconstructed_mesh();
       filename = shapes[i]->get_global_point_filename();
     }
@@ -396,7 +387,6 @@ void Visualizer::setMean(const vnl_vector<double> & mean)
 //-----------------------------------------------------------------------------
 void Visualizer::reset_camera()
 {
-  std::cerr << "Visualizer::reset_camera\n";
   if (this->lightbox_) {
     auto trans = this->lightbox_->initPos();
     for (auto a : this->lightbox_->get_viewers()) {

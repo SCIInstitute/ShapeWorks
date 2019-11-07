@@ -2,6 +2,8 @@
  * Shapeworks license
  */
 
+#include <vtkPolyDataNormals.h>
+
 #include <Data/MeshGenerator.h>
 #include <limits>
 #include <itkPoint.h>
@@ -21,9 +23,17 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh(const vnl_vector<double>& 
   if (this->surface_reconstructor_ &&
       this->surface_reconstructor_->get_surface_reconstruction_available()) {
     vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
+
+    vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
+      vtkSmartPointer<vtkPolyDataNormals>::New();
+    polydata_normals->SetInputData(poly_data);
+    polydata_normals->Update();
+    poly_data = polydata_normals->GetOutput();
+
     return poly_data;
   }
   else {
+
     return this->legacy_reconstructor_->buildMesh(shape);
   }
   return vtkPolyData::New();

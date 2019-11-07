@@ -73,7 +73,6 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shap
     if (!polyData) {
       if (prefs_.get_preference("parallel_enabled", true) &&
           (this->prefs_.get_preference("num_threads", 100) > 0)) {
-        std::cerr << "parallel generate mesh...\n";
         this->generateMesh(shape);
       }
       else {

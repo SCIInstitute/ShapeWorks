@@ -788,7 +788,6 @@ void ShapeWorksStudioApp::update_display()
     this->project_->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean();
 
   std::string mode = this->analysis_tool_->getAnalysisMode();
-  std::cerr << "Update_display, mode = " << mode << "\n";
 
   if (mode == "all samples") {
 
@@ -893,15 +892,15 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->visualizer_->setMean(this->analysis_tool_->getMean());
 
   /*
-  this->analysis_tool_->reset_stats();
+     this->analysis_tool_->reset_stats();
 
-  if (this->project_->is_light_project()) {
-    this->analysis_tool_->setAnalysisMode("mean");
-  }
-  else {
-    this->analysis_tool_->setAnalysisMode("all samples");
-  }
-*/
+     if (this->project_->is_light_project()) {
+     this->analysis_tool_->setAnalysisMode("mean");
+     }
+     else {
+     this->analysis_tool_->setAnalysisMode("all samples");
+     }
+   */
 
   preferences_.add_recent_file(filename);
   this->update_recent_files();

@@ -68,9 +68,7 @@ void Project::handle_clear_cache()
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples()
 {
-  std::cerr << "Project::calculate_reconstructed_samples\n";
   if (!this->reconstructed_present_) {
-    std::cerr << "no reconstructed present\n";
     return;
   }
   //this->preferences_.set_preference("cache_enabled", false);
@@ -416,13 +414,11 @@ bool Project::load_light_project(QString filename, string &planesFile)
   }
 
   this->load_groomed_files(groom_files, 0.5);
-  if (!this->load_point_files(local_point_files, true))
-  {
+  if (!this->load_point_files(local_point_files, true)) {
     return false;
   }
 
-  if (!this->load_point_files(global_point_files, false))
-  {
+  if (!this->load_point_files(global_point_files, false)) {
     return false;
   }
 
@@ -580,6 +576,12 @@ bool Project::is_light_project()
 }
 
 //---------------------------------------------------------------------------
+bool Project::get_groomed_present()
+{
+  return this->groomed_present_;
+}
+
+//---------------------------------------------------------------------------
 bool Project::load_point_files(std::vector<std::string> list, bool local)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
@@ -617,8 +619,7 @@ bool Project::load_point_files(std::vector<std::string> list, bool local)
         }
       }
     }
-    else
-    {
+    else {
       QMessageBox::critical(0, "Error", "Unable to open file:" + fname);
       return false;
     }
@@ -626,7 +627,7 @@ bool Project::load_point_files(std::vector<std::string> list, bool local)
   progress.setValue(list.size());
   QApplication::processEvents();
   if (list.size() > 0) {
-  //  emit data_changed();
+    //  emit data_changed();
   }
   return true;
 }

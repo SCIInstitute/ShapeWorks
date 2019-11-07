@@ -61,6 +61,8 @@ public:
 
   bool is_light_project();
 
+  bool get_groomed_present();
+
   /// remove shapes
   void remove_shapes( QList<int> list );
 
