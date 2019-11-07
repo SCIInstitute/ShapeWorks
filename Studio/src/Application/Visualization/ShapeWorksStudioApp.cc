@@ -979,6 +979,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
       event->ignore();
     }
   }
+  this->analysis_tool_->shutdown();
   this->preferences_.set_preference("Main/geometry", this->saveGeometry());
   this->preferences_.set_preference("Main/windowState", this->saveState());
 

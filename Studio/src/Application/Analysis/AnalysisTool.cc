@@ -354,6 +354,12 @@ void AnalysisTool::save_to_preferences()
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::shutdown()
+{
+  this->pcaAnimateTimer.stop();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_tabWidget_currentChanged()
 {
   this->update_analysis_mode();

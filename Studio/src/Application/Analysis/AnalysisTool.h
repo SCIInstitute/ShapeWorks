@@ -60,6 +60,8 @@ public:
   void load_from_preferences();
   void save_to_preferences();
 
+  void shutdown();
+
 public Q_SLOTS:
 
   // analysis mode
