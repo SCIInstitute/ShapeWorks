@@ -1,7 +1,7 @@
 # Build
 set(Utils_sources
   Utils.cpp
-  OptionParser.cpp)
+  )
 add_library(Utils STATIC
   ${Utils_sources})
 target_include_directories(Utils PUBLIC
@@ -11,7 +11,8 @@ target_include_directories(Utils PUBLIC
 # Install
 set(Utils_headers
   Utils.h
-  OptionParser.h)
+  OptionParser.h
+  )
 set_target_properties(Utils PROPERTIES PUBLIC_HEADER
   "${Utils_headers}")
 install(TARGETS Utils

@@ -110,6 +110,9 @@ else()
     set(SHAPEWORKS_QT_FOUND 0)
   endif()
 
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
+
   if (SHAPEWORKS_GUI)
     # headers (TODO: move to shapeworks gui targets' includes)
     include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -201,8 +204,6 @@ else()
 
   add_subdirectory(ExternalLibs)    # TODO: cmake externalproject_add should be used for libs in this directory
   add_subdirectory(Libs)
-
-  include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
   if(Build_Post)
     add_subdirectory(Post/source/ShapeWorksPost-V1)
