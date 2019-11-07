@@ -55,7 +55,6 @@ Lightbox::Lightbox()
 
   this->loading_timer_.setInterval(50);
   this->timer_callback_count_ = 0;
-  this->loading_timer_.start();
 }
 
 //-----------------------------------------------------------------------------
@@ -123,11 +122,9 @@ void Lightbox::display_objects()
   }
 
   if (need_loading_screen) {
-    std::cerr << "need loading screen = " << need_loading_screen << "\n";
     this->loading_timer_.start();
   }
   else {
-    std::cerr << "need loading screen = " << need_loading_screen << "\n";
     for (int i = start_object; i < this->objects_.size(); i++) {
       this->insert_object_into_viewer(this->objects_[i], position);
       position++;
