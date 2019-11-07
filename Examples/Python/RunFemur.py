@@ -3,8 +3,12 @@
 ====================================================================
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
+Jadie Adams
 
-TODO description
+The femur data set is comprised of segmented meshes of femurs and corresponding CT images that are not segmented.
+The first step in grooming is to turn the meshes into the binary volume format shapeworks expects.
+The full mages and segmentations must be carried through every stop of grooming. 
+Optimization uses single scale.
 
 
 First import the necessary modules
@@ -44,6 +48,8 @@ def Run_Femur_Pipline(args):
 
     filename = "femurdata.zip"
     parentDir="TestFemur/"
+    inputDir = 'TestFemur/femurdata/'
+
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
@@ -56,6 +62,10 @@ def Run_Femur_Pipline(args):
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
+
+    print("\nStep 2. Groom - Data Pre-processing\n")
+    if args.interactive:
+        input("Press Enter to continue")
 
     if args.start_with_image_and_segmentation_data:
 
@@ -72,31 +82,30 @@ def Run_Femur_Pipline(args):
         -- Largest Bounding Box and Cropping
         """
 
+        # Directory where grooming output folders will be added
         parentDir = 'TestFemur/PrepOutput/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
 
-        print("\nStep 2. Groom - Data Pre-processing\n")
-        if args.interactive:
-            input("Press Enter to continue")
-
-         # set name specific variables
+        # set name specific variables
         img_suffix = "1x_hip"
         left_suffix = "L_femur"
         right_suffix = "R_femur"
         mesh_extension = "ply"
+        reference_side = "left" # somewhat arbitrary
 
         '''
-        default cutting plane
+        default cutting plane - if interactive arg is on this will be
+        redefined in the middle of the grooming steps
         '''
         cp_x1 = 100
         cp_y1 = 100 
         cp_z1 = -50
-        cp_x2 = 100 
-        cp_y2 = -100
+        cp_x2 = -100 
+        cp_y2 = 100
         cp_z2 = -50
-        cp_x3 = -100
-        cp_y3 = 100
+        cp_x3 = 100
+        cp_y3 = -100
         cp_z3 = -50
 
 
@@ -105,10 +114,7 @@ def Run_Femur_Pipline(args):
         We have left and right femurs, so we will reflect the image if neccesary
         so that we have an image for every mesh
         """
-        inputDir = 'TestFemur/femurdata/'
-        reference_side = "left"
         [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
-
 
         """
         MeshesToVolumes
@@ -129,7 +135,7 @@ def Run_Femur_Pipline(args):
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
 
-        [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg,fileList_img, 1, processRaw = True)
+        [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg, fileList_img, 1, processRaw = True)
 
         """
         Apply padding
@@ -341,29 +347,28 @@ def Run_Femur_Pipline(args):
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
-    # TODO remove comments v
-
     if args.use_single_scale:
         input("Using single scale")
         parameterDictionary = {
-            "number_of_particles" : 1024, # num_particles=512
-            "use_normals": 0, #use_normals=1
+            "number_of_particles" : 1024, 
+            "use_normals": 0,
             "normal_weight": 10.0,
-            "checkpointing_interval" : 10, #checkpointing_interval=0 #10
-            "keep_checkpoints" : 1, #keep_checkpoints=0
-            "iterations_per_split" : 4000, # iterations_per_split=4000
-            "optimization_iterations" : 4000, #optimization_iterations=4000
-            "starting_regularization" : 100, #start_reg=100
-            "ending_regularization" : 0.1, #ending_reg =0.1
-            "recompute_regularization_interval" : 2, #optimizer=2 # gauss-seidel (1) is better working compared to jacobi (0) while adaptive time step might cause freezing (2)
+            "checkpointing_interval" : 10,
+            "keep_checkpoints" : 1,
+            "iterations_per_split" : 4000,
+            "optimization_iterations" : 4000,
+            "starting_regularization" : 100,
+            "ending_regularization" : 0.1,
+            "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 10, #alpha_final=10
-            "initial_relative_weighting" : 1, #alpha_init=1
-            "procrustes_interval" : 0, #procrustes_interval=0
-            "procrustes_scaling" : 0, #with_procrustes_scaling=0
-            "save_init_splits" : 1, #save_init_splits=1
+            "relative_weighting" : 10,
+            "initial_relative_weighting" : 1,
+            "procrustes_interval" : 0,
+            "procrustes_scaling" : 0,
+            "save_init_splits" : 1,
             "debug_projection" : 0,
-            "verbosity" : 3
+            "verbosity" : 3,
+            "use_statistics_in_init" : 0
         }
 
         """
@@ -373,25 +378,26 @@ def Run_Femur_Pipline(args):
 
     else:
         parameterDictionary = {
-            "starting_particles" : 64, # min_num_particles=32
-            "number_of_levels" : 4, #max_num_particles=2048
-            "use_normals": 0, #use_normals=1
+            "starting_particles" : 64,
+            "number_of_levels" : 4,
+            "use_normals": 0, 
             "normal_weight": 10.0,
-            "checkpointing_interval" : 10, #checkpointing_interval=0 #10
-            "keep_checkpoints" : 1, #keep_checkpoints=0
-            "iterations_per_split" : 4000, #iterations_per_split=4000
-            "optimization_iterations" : 4000, #optimization_iterations=4000
-            "starting_regularization" : 100, #start_reg=100
-            "ending_regularization" : 0.1, #end_reg=0.1
-            "recompute_regularization_interval" : 2, # optimizer=2 # gauss-seidel (1) is better working compared to jacobi (0) while adaptive time step might cause freezing (2)
+            "checkpointing_interval" : 10,
+            "keep_checkpoints" : 1,
+            "iterations_per_split" : 4000,
+            "optimization_iterations" : 4000,
+            "starting_regularization" : 100,
+            "ending_regularization" : 0.1,
+            "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 10, #alpha_final=10
-            "initial_relative_weighting" : 1, # alpha_init=1
-            "procrustes_interval" : 0, #procrustes_interval=0
-            "procrustes_scaling" : 0, #with_procrustes_scaling=0
-            "save_init_splits" : 1, #save_init_splits=1
+            "relative_weighting" : 10,
+            "initial_relative_weighting" : 1,
+            "procrustes_interval" : 0, 
+            "procrustes_scaling" : 0,
+            "save_init_splits" : 1, 
             "debug_projection" : 0,
-            "verbosity" : 3
+            "verbosity" : 3,
+            "use_statistics_in_init" : 0
         }
 
 
