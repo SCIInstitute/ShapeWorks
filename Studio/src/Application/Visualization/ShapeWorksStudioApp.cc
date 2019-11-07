@@ -948,6 +948,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->visualizer_->update_lut();
   this->preferences_.set_saved();
   this->enablePossibleActions();
+  this->visualizer_->reset_camera();
 }
 
 //---------------------------------------------------------------------------

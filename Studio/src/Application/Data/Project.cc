@@ -416,8 +416,15 @@ bool Project::load_light_project(QString filename, string &planesFile)
   }
 
   this->load_groomed_files(groom_files, 0.5);
-  this->load_point_files(local_point_files, true);
-  this->load_point_files(global_point_files, false);
+  if (!this->load_point_files(local_point_files, true))
+  {
+    return false;
+  }
+
+  if (!this->load_point_files(global_point_files, false))
+  {
+    return false;
+  }
 
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;
@@ -609,6 +616,11 @@ bool Project::load_point_files(std::vector<std::string> list, bool local)
           return false;
         }
       }
+    }
+    else
+    {
+      QMessageBox::critical(0, "Error", "Unable to open file:" + fname);
+      return false;
     }
   }
   progress.setValue(list.size());
