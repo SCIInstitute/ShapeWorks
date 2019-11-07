@@ -75,15 +75,15 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
 void AnalysisTool::handle_reconstruction_complete()
 {
   this->project_->handle_clear_cache();
-  std::cerr << "A1\n";
+
   this->project_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Reconstruction Complete");
   emit reconstruction_complete();
   ///TODO: Studio
   ///this->ui_->run_optimize_button->setEnabled(true);
-  this->ui_->reconstructionButton->setEnabled(
-    this->project_->reconstructed_present());
+
+  this->enableActions();
 }
 
 //---------------------------------------------------------------------------
@@ -187,7 +187,6 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 //---------------------------------------------------------------------------
 void AnalysisTool::activate()
 {
-
   this->update_analysis_mode();
 }
 
@@ -274,6 +273,8 @@ bool AnalysisTool::compute_stats()
   if (this->project_->get_shapes().size() == 0 || !this->project_->reconstructed_present()) {
     return false;
   }
+
+  std::cerr << "compute stats!\n";
 
   std::vector < vnl_vector < double >> points;
   foreach(ShapeHandle shape, this->project_->get_shapes()) {
@@ -438,7 +439,8 @@ void AnalysisTool::updateSlider()
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats()
 {
-  this->ui_->tabWidget->setCurrentWidget(this->ui_->samples_tab);
+  std::cerr << "reset_stats\n";
+  this->ui_->tabWidget->setCurrentWidget(this->ui_->mean_tab);
   this->ui_->allSamplesRadio->setChecked(true);
   this->ui_->singleSamplesRadio->setChecked(false);
   this->ui_->sampleSpinBox->setEnabled(false);
@@ -452,8 +454,16 @@ void AnalysisTool::reset_stats()
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::enableActions()
+{
+  this->ui_->reconstructionButton->setEnabled(
+    this->project_->reconstructed_present() && !this->project_->is_light_project());
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::setAnalysisMode(std::string mode)
 {
+  std::cerr << "setAnalysisMode(" << mode << "\n";
   if (mode == "all samples" || mode == "single sample") {
     this->ui_->allSamplesRadio->setChecked(mode == "all samples");
     this->ui_->singleSamplesRadio->setChecked(mode == "single sample");

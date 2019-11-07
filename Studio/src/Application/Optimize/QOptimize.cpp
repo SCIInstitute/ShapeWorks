@@ -36,8 +36,7 @@ void QOptimize::SetIterationCommand()
 void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
 {
 
-  if (this->aborted_)
-  {
+  if (this->aborted_) {
     return;
   }
 
@@ -57,7 +56,7 @@ void QOptimize::iterateCallback(itk::Object* caller, const itk::EventObject &e)
   }
   else {
     auto time_since = this->time_since_last_update_.elapsed();
-    if (time_since > 250) {
+    if (time_since > 100) {
       update = true;
     }
   }

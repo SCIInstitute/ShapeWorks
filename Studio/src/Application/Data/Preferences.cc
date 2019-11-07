@@ -118,6 +118,8 @@ void Preferences::restore_defaults(bool force) {
     this->settings_.setValue("optimize_end_reg", 10);
   if (!this->settings_.contains("optimize_iters") || force)
     this->settings_.setValue("optimize_iters", 1000);
+  if (!this->settings_.contains("optimize_iters_optimization") || force)
+    this->settings_.setValue("optimize_iters_optimization", 1000);
   if (!this->settings_.contains("optimize_weight") || force)
     this->settings_.setValue("optimize_weight", 1.0);
   if (!this->settings_.contains("optimize_procrustes_interval") || force)

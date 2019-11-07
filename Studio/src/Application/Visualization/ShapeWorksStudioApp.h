@@ -80,6 +80,7 @@ public Q_SLOTS:
   void handle_slider_update();
 
   void handle_project_changed();
+  void handle_points_changed();
   void handle_groom_complete();
   void handle_optimize_complete();
   void handle_reconstruction_complete();

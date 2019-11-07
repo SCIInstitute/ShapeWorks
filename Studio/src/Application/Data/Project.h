@@ -55,10 +55,11 @@ public:
 
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
-  bool load_points(std::vector<std::vector<itk::Point<double> > > points, bool local);
+  bool update_points(std::vector<std::vector<itk::Point<double> > > points, bool local);
 
   void set_reconstructed_present(bool b);
 
+  bool is_light_project();
 
   /// remove shapes
   void remove_shapes( QList<int> list );
@@ -91,6 +92,7 @@ public Q_SLOTS:
 signals:
   /// signal that the data has changed
   void data_changed();
+  void points_changed();
   void update_display();
   void message(std::string s);
 
@@ -120,6 +122,7 @@ private:
   bool original_present_;
   bool groomed_present_;
   bool reconstructed_present_;
+  bool is_light_project_ = false;
 
 };
 

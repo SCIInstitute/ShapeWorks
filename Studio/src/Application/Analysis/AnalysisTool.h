@@ -50,6 +50,7 @@ public:
   void updateSlider();
 
   void reset_stats();
+  void enableActions();
 
   const vnl_vector<double> & getMean();
 

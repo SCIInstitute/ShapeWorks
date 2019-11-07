@@ -114,19 +114,24 @@ void Lightbox::display_objects()
   int start_object = this->start_row_ * this->tile_layout_width_;
 
   int position = 0;
+
   bool need_loading_screen = false;
   for (int i = start_object; i < this->objects_.size(); i++) {
     if (!this->objects_[i]->get_mesh()) {
       need_loading_screen = true;
     }
-    this->insert_object_into_viewer(this->objects_[i], position);
-    position++;
   }
 
   if (need_loading_screen) {
+    std::cerr << "need loading screen = " << need_loading_screen << "\n";
     this->loading_timer_.start();
   }
   else {
+    std::cerr << "need loading screen = " << need_loading_screen << "\n";
+    for (int i = start_object; i < this->objects_.size(); i++) {
+      this->insert_object_into_viewer(this->objects_[i], position);
+      position++;
+    }
     this->loading_timer_.stop();
   }
 }

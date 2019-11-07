@@ -61,6 +61,7 @@ void Visualizer::set_center(bool center)
 //-----------------------------------------------------------------------------
 void Visualizer::display_samples()
 {
+  std::cerr << "display_samples!\n";
   this->update_viewer_properties();
 
   QVector < QSharedPointer < DisplayObject >> display_objects;
@@ -101,6 +102,13 @@ void Visualizer::display_samples()
     }
 
     if (!mesh) {
+      //    std::cerr << "compute stats!\n";
+
+      /*
+      MeshHandle mesh = MeshHandle(new Mesh());
+      mesh->set_poly_data(
+        this->project_->get_mesh_manager()->getMesh(shapes[i]->get_local_correspondence_points()));
+*/
       mesh = shapes[i]->get_reconstructed_mesh();
       filename = shapes[i]->get_global_point_filename();
     }
@@ -120,15 +128,31 @@ void Visualizer::display_samples()
     display_objects << object;
   }
 
+  this->display_objects_ = display_objects;
   this->lightbox_->set_display_objects(display_objects);
   this->update_viewer_properties();
-  this->reset_camera();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_samples()
+{
+  QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
+
+  for (int i = 0; i < shapes.size(); i++) {
+    this->display_objects_[i]->set_correspondence_points(
+      shapes[i]->get_local_correspondence_points());
+  }
+
+  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+    viewer->update_points();
+  }
+  this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double> &points)
 {
-  QVector<DisplayObjectHandle>* list_ptr = getList(points);
+  QVector<DisplayObjectHandle>* list_ptr = this->getList(points);
   this->lightbox_->set_display_objects(*list_ptr);
   this->update_viewer_properties();
   //this->reset_camera();
@@ -372,6 +396,7 @@ void Visualizer::setMean(const vnl_vector<double> & mean)
 //-----------------------------------------------------------------------------
 void Visualizer::reset_camera()
 {
+  std::cerr << "Visualizer::reset_camera\n";
   if (this->lightbox_) {
     auto trans = this->lightbox_->initPos();
     for (auto a : this->lightbox_->get_viewers()) {

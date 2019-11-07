@@ -68,11 +68,12 @@ void Project::handle_clear_cache()
 //---------------------------------------------------------------------------
 void Project::calculate_reconstructed_samples()
 {
+  std::cerr << "Project::calculate_reconstructed_samples\n";
   if (!this->reconstructed_present_) {
     std::cerr << "no reconstructed present\n";
     return;
   }
-  this->preferences_.set_preference("cache_enabled", false);
+  //this->preferences_.set_preference("cache_enabled", false);
   for (int i = 0; i < this->shapes_.size(); i++) {
     auto shape = this->shapes_.at(i);
     auto pts = shape->get_local_correspondence_points();
@@ -80,7 +81,7 @@ void Project::calculate_reconstructed_samples()
       shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
     }
   }
-  this->preferences_.set_preference("cache_enabled", true);
+  //this->preferences_.set_preference("cache_enabled", true);
 }
 
 //---------------------------------------------------------------------------
@@ -339,6 +340,9 @@ bool Project::load_project(QString filename, std::string& planesFile)
 //---------------------------------------------------------------------------
 bool Project::load_light_project(QString filename, string &planesFile)
 {
+  std::cerr << "Loading light project...\n";
+  this->is_light_project_ = true;
+
   // open and parse XML
   TiXmlDocument doc(filename.toStdString().c_str());
   bool loadOkay = doc.LoadFile();
@@ -411,7 +415,6 @@ bool Project::load_light_project(QString filename, string &planesFile)
     inputsBuffer.str("");
   }
 
-
   this->load_groomed_files(groom_files, 0.5);
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
@@ -419,13 +422,14 @@ bool Project::load_light_project(QString filename, string &planesFile)
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;
 
+  //this->calculate_reconstructed_samples();
 
-  this->calculate_reconstructed_samples();
-
-  this->preferences_.set_preference("display_state", QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
+  this->preferences_.set_preference("display_state",
+                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
   this->renumber_shapes();
 
+  std::cerr << "light project loaded\n";
   return true;
 }
 
@@ -529,18 +533,13 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 
   if (file_names.size() > 0) {
     this->groomed_present_ = true;
-    emit data_changed();
+    //emit data_changed();
   }
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
+bool Project::update_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
 {
-  //QProgressDialog progress("Loading points...", "Abort", 0, points.size(), this->parent_);
-  //progress.setWindowModality(Qt::WindowModal);
-  //progress.show();
-  //progress.setMinimumDuration(2000);
-  //std::cerr << "num file = " << points.size() << "\n";
   for (int i = 0; i < points.size(); i++) {
     QSharedPointer<Shape> shape;
     if (this->shapes_.size() > i) {
@@ -550,21 +549,13 @@ bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, b
       shape = QSharedPointer<Shape>(new Shape);
       this->shapes_.push_back(shape);
     }
-    //std::cerr << "Loading points from shape " << i << "\n";
-    //progress.setValue(i);
-    QApplication::processEvents();
     if (!shape->import_points(points[i], local)) {
       return false;
     }
-    //if (progress.wasCanceled()) {
-    //  break;
-    //}
   }
-  //progress.setValue(points.size());
-  QApplication::processEvents();
 
   if (points.size() > 0) {
-    emit data_changed();
+    emit points_changed();
   }
   return true;
 }
@@ -573,6 +564,12 @@ bool Project::load_points(std::vector<std::vector<itk::Point<double>>> points, b
 void Project::set_reconstructed_present(bool value)
 {
   this->reconstructed_present_ = value;
+}
+
+//---------------------------------------------------------------------------
+bool Project::is_light_project()
+{
+  return this->is_light_project_;
 }
 
 //---------------------------------------------------------------------------
@@ -617,7 +614,7 @@ bool Project::load_point_files(std::vector<std::string> list, bool local)
   progress.setValue(list.size());
   QApplication::processEvents();
   if (list.size() > 0) {
-    emit data_changed();
+  //  emit data_changed();
   }
   return true;
 }
@@ -642,6 +639,8 @@ void Project::remove_shapes(QList<int> list)
 //---------------------------------------------------------------------------
 void Project::reset()
 {
+  this->is_light_project_ = false;
+
   this->filename_ = "";
 
   this->shapes_.clear();

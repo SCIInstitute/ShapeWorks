@@ -100,6 +100,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->project_ = QSharedPointer<Project>(new Project(this, preferences_));
   this->project_->set_parent(this);
   connect(this->project_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
+  connect(this->project_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
   connect(this->project_.data(), SIGNAL(update_display()), this,
           SLOT(handle_display_setting_changed()));
   connect(this->project_.data(), SIGNAL(message(std::string)), this,
@@ -397,6 +398,7 @@ void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
   this->ui_->qvtkWidget->GetRenderWindow()->Render();
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::disableAllActions()
 {
   // export / save / new / open
@@ -424,6 +426,7 @@ void ShapeWorksStudioApp::disableAllActions()
   }
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::enablePossibleActions()
 {
   // export / save / new / open
@@ -450,6 +453,7 @@ void ShapeWorksStudioApp::enablePossibleActions()
   //subtools
   this->groom_tool_->enableActions();
   this->optimize_tool_->enableActions();
+  this->analysis_tool_->enableActions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
   int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
@@ -670,8 +674,6 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
-  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
-
   if (this->project_->original_present()) {
     this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
   }
@@ -701,6 +703,12 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->visualizer_->update_lut();
 
   this->enablePossibleActions();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_points_changed()
+{
+  this->visualizer_->update_samples();
 }
 
 //---------------------------------------------------------------------------
@@ -780,9 +788,13 @@ void ShapeWorksStudioApp::update_display()
     this->project_->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean();
 
   std::string mode = this->analysis_tool_->getAnalysisMode();
+  std::cerr << "Update_display, mode = " << mode << "\n";
 
   if (mode == "all samples") {
+
+    this->project_->calculate_reconstructed_samples();
     this->visualizer_->display_samples();
+
     size_t num_samples = this->project_->get_shapes().size();
     if (num_samples == 0) {
       num_samples = 9;
@@ -846,8 +858,6 @@ void ShapeWorksStudioApp::update_display()
         this->ui_->thumbnail_size_slider->value()) {
       this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
     }
-
-
   }
   this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
@@ -865,6 +875,8 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename)
 {
+  this->analysis_tool_->reset_stats();
+
   std::string planesFile;
   if (!this->project_->load_project(filename, planesFile)) {
     return;
@@ -877,10 +889,19 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->optimize_tool_->set_preferences();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
-  this->project_->calculate_reconstructed_samples();
+  //this->project_->calculate_reconstructed_samples();
   this->visualizer_->setMean(this->analysis_tool_->getMean());
-  this->analysis_tool_->setAnalysisMode("all samples");
+
+  /*
   this->analysis_tool_->reset_stats();
+
+  if (this->project_->is_light_project()) {
+    this->analysis_tool_->setAnalysisMode("mean");
+  }
+  else {
+    this->analysis_tool_->setAnalysisMode("all samples");
+  }
+*/
 
   preferences_.add_recent_file(filename);
   this->update_recent_files();
@@ -916,6 +937,14 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->ui_->thumbnail_size_slider->setValue(
     this->preferences_.get_preference("zoom_state", 1));
   this->analysis_tool_->reset_stats();
+
+  if (this->project_->is_light_project()) {
+    this->analysis_tool_->setAnalysisMode("mean");
+  }
+  else {
+    this->analysis_tool_->setAnalysisMode("all samples");
+  }
+
   this->visualizer_->update_lut();
   this->preferences_.set_saved();
   this->enablePossibleActions();
