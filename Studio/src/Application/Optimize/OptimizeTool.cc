@@ -86,6 +86,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
     return;
   }
   this->optimization_is_running_ = true;
+  emit optimize_complete();
+
   this->enableActions();
 
   this->update_preferences();

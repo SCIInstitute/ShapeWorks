@@ -155,6 +155,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()),
           this, SLOT(handle_optimize_complete()));
+
+  connect(this->optimize_tool_.data(), &OptimizeTool::optimize_start, this,
+          &ShapeWorksStudioApp::handle_optimize_start);
+
   connect(this->optimize_tool_.data(), SIGNAL(error_message(std::string)),
           this, SLOT(handle_error(std::string)));
   connect(this->optimize_tool_.data(), SIGNAL(warning_message(std::string)),
@@ -660,6 +664,9 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
   this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Optimize");
   this->on_actionShow_Tool_Window_triggered();
+
+  this->visualizer_->set_display_mode(Visualizer::MODE_GROOMED_C.c_str());
+  this->analysis_tool_->setAnalysisMode("all samples");
 }
 
 //---------------------------------------------------------------------------
@@ -749,6 +756,12 @@ void ShapeWorksStudioApp::handle_groom_complete()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_optimize_start()
+{
+  this->ui_->action_analysis_mode->setEnabled(false);
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_display_setting_changed()
 {
   if (this->analysis_tool_->pcaAnimate()) {return;}
@@ -778,7 +791,9 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display()
 {
-  if (!this->visualizer_ || this->project_->get_num_shapes() <= 0) {return;}
+  if (!this->visualizer_ || this->project_->get_num_shapes() <= 0) {
+    return;
+  }
 
   this->visualizer_->set_center(this->ui_->center_checkbox->isChecked());
   this->preferences_.set_preference("display_state",
