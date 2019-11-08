@@ -1,0 +1,13 @@
+
+ShapeWorks 5.2.0 - 2019-11-07
+
+	* Studio: Added live particle optimization updates
+	* Studio: Added "Stop optimization" button
+	* Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)
+	* Studio: Added support for reading View2 parameter files
+	* Studio: Added legacy (View2) surface reconstructor
+	* Studio: Replaced optimization libary with same used by ShapeWorksRun
+	* New portal downloadable example data (ellipsoid, left atrium)
+	* Windows installer, binary releases for Mac and Linux
+	* CMake based superbuild
+
