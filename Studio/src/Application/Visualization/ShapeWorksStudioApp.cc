@@ -666,7 +666,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
   this->on_actionShow_Tool_Window_triggered();
 
   this->visualizer_->set_display_mode(Visualizer::MODE_GROOMED_C.c_str());
-  this->analysis_tool_->setAnalysisMode("all samples");
+  this->update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -676,6 +676,7 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
   this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Analysis");
   this->on_actionShow_Tool_Window_triggered();
+  this->update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -802,7 +803,11 @@ void ShapeWorksStudioApp::update_display()
   bool reconstruct_ready =
     this->project_->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean();
 
-  std::string mode = this->analysis_tool_->getAnalysisMode();
+  std::string mode = "all samples";
+
+  if (this->ui_->action_analysis_mode->isChecked()) {
+    mode = this->analysis_tool_->getAnalysisMode();
+  }
 
   if (mode == "all samples") {
 
