@@ -12,7 +12,7 @@ shapeworks binaries and set the necessary library paths
 import os
 from RunEllipsoid import *
 
-binpath = "../build/shapeworks/src/ShapeWorks-build/bin"
+binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
 if os.name == 'nt':
     binpath = "C:\\Program Files\ShapeWorks\\bin"
 
