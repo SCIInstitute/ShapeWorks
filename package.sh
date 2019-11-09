@@ -13,6 +13,7 @@ rm -rf "package/$VERSION"
 
 mkdir "package"
 
+BASE_LIB=${PWD}/build/install/lib
 cp -a build/install "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
@@ -40,7 +41,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # Fix transitive loaded libs
     cd ../lib
     for i in *.dylib ; do
-	install_name_tool -change ${PWD}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
+	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
     done
     cd ..
 else
