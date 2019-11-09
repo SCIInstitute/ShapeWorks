@@ -10,6 +10,8 @@ These following commands set the temporary environment variables to point to
 shapeworks binaries and set the necessary library paths
 """
 from RunLeftAtrium import *
+import os
+import platform
 
 # Path pre-setup
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
