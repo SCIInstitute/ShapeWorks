@@ -11,7 +11,11 @@ shapeworks binaries and set the necessary library paths
 """
 from RunLeftAtrium import *
 
-binpath = "../build/shapeworks/src/ShapeWorks-build/bin"
+# Path pre-setup
+binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
+if platform.system() == "Windows":
+    binpath = "C:\\Program Files\ShapeWorks\\bin"
+
 parser = argparse.ArgumentParser(description='Example ShapeWorks LA Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
@@ -19,7 +23,12 @@ parser.add_argument("--start_with_image_and_segmentation_data", help = "use imag
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
-os.environ["PATH"] = args.shapeworks_path + ":" + os.environ["PATH"]
+
+# Path final
+if platform.system() == "Darwin":
+    binpath = binpath + os.pathsep + binpath + "/ShapeWorksStudio.app/Contents/MacOS"
+os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
+print(os.environ["PATH"])
 
 
 try:
