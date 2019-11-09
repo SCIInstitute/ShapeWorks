@@ -1,11 +1,13 @@
 ; ShapeWorks.nsi
 
 
-;--------------------------------
+;--------------------------------s
 ; Include Modern UI
 
-  !include "MUI.nsh"
-  !include "x64.nsh"
+!include "MUI2.nsh"
+!include "x64.nsh"
+
+CRCCheck On
 
 ;--------------------------------
 
@@ -22,10 +24,10 @@ FunctionEnd
 ; General
 
 ; The name of the installer
-Name "ShapeWorks-5.2"
+Name "ShapeWorks-5.2.1"
 
 ; The file to write
-OutFile "ShapeWorks-5.2.exe"
+OutFile "ShapeWorks-5.2.1-windows.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES64\ShapeWorks
@@ -39,15 +41,25 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
-; Pages
+;--------------------------------
+;Interface Settings
+  !define MUI_ABORTWARNING
+ 
+;--------------------------------
+;Installer Pages
+  !define MUI_FINISHPAGE_SHOWREADME "Windows_README.txt"
+  !define MUI_FINISHPAGE_SHOWREADME_TEXT "Show README"
+  !define MUI_FINISHPAGE_TITLE "Installation Complete"
+  !define MUI_FINISHPAGE_TEXT "ShapeWorks Installation is complete, please take a moment to read the README."
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+  !insertmacro MUI_PAGE_FINISH
 
-Page components
-Page directory
-Page instfiles
-
-UninstPage uninstConfirm
-UninstPage instfiles
-
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+  
+  
 ;--------------------------------
 
 ; The stuff to install
@@ -93,11 +105,10 @@ Section "Uninstall"
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ShapeWorks"
-  DeleteRegKey HKLM SOFTWARE\NSIS_ShapeWorks
+  DeleteRegKey HKLM SOFTWARE\ShapeWorks
 
-  ; Remove files and uninstaller
-  Delete $INSTDIR\ShapeWorks.nsi
-  Delete $INSTDIR\uninstall.exe
+  ; Delete Files 
+  RMDir /r "$INSTDIR\*.*"   
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\ShapeWorks\*.*"
