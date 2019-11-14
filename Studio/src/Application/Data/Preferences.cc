@@ -86,7 +86,7 @@ void Preferences::restore_defaults(bool force)
     this->settings_.setValue("glyph_quality", 5.);
   }
   if (!this->settings_.contains("num_threads") || force) {
-    this->settings_.setValue("num_threads", 100);
+    this->settings_.setValue("num_threads", QThread::idealThreadCount());
   }
   if (!this->settings_.contains("pca_range") || force) {
     this->settings_.setValue("pca_range", 2.f);
