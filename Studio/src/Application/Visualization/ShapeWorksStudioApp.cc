@@ -115,8 +115,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
 
   // resize from preferences
-  this->restoreGeometry(this->preferences_.get_preference("Main/geometry", QByteArray()));
-  this->restoreState(this->preferences_.get_preference("Main/windowState", QByteArray()));
+  if (this->preferences_.has_entry("StudioWindow/geometry")) {
+    this->restoreGeometry(this->preferences_.get_preference("StudioWindow/geometry", QByteArray()));
+  }
+  if (this->preferences_.has_entry("StudioWindow/windowState")) {
+    this->restoreState(this->preferences_.get_preference("StudioWindow/windowState", QByteArray()));
+  }
 
   // set to import
   this->ui_->action_import_mode->setChecked(true);
@@ -1000,8 +1004,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
     }
   }
   this->analysis_tool_->shutdown();
-  this->preferences_.set_preference("Main/geometry", this->saveGeometry());
-  this->preferences_.set_preference("Main/windowState", this->saveState());
+  this->preferences_.set_preference("StudioWindow/geometry", this->saveGeometry());
+  this->preferences_.set_preference("StudioWindow/windowState", this->saveState());
 
   this->hide();
   this->optimize_tool_->shutdown_threads();

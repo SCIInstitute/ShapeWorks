@@ -23,21 +23,27 @@ public:
   QStringList get_recent_files();
   bool not_saved();
   void set_saved(bool saved = true);
+
+  bool has_entry(QString name);
+
   std::map<std::string, QVariant> getAllPreferences();
+
   template<typename T>
-  T get_preference(std::string name, T default_val) {
-    return this->settings_.value(QString::fromStdString(name), 
-      QVariant(default_val)).template value<T>();
+  T get_preference(std::string name, T default_val)
+  {
+    return this->settings_.value(QString::fromStdString(name),
+                                 QVariant(default_val)).template value<T>();
   }
 
   template<typename T>
-  void set_preference(std::string name, T value) {
+  void set_preference(std::string name, T value)
+  {
     this->settings_.setValue(QString::fromStdString(name), QVariant(value));
     this->saved_ = false;
   }
 
 Q_SIGNALS:
-  void color_scheme_changed( int newIndex );
+  void color_scheme_changed(int newIndex);
   void glyph_properties_changed();
   void threading_changed_signal();
   void sliders_changed_signal();

@@ -10,10 +10,12 @@ These following commands set the temporary environment variables to point to
 shapeworks binaries and set the necessary library paths
 """
 import os
+import platform
 from RunEllipsoid import *
 
-binpath = "../build/shapeworks/src/ShapeWorks-build/bin"
-if os.name == 'nt':
+# Path pre-setup
+binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
+if platform.system() == "Windows":
     binpath = "C:\\Program Files\ShapeWorks\\bin"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
@@ -22,7 +24,12 @@ parser.add_argument("--start_with_prepped_data", help="Start with already preppe
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
-os.environ["PATH"] = args.shapeworks_path + os.pathsep + os.environ["PATH"]
+binpath = args.shapeworks_path
+
+# Path final
+if platform.system() == "Darwin":
+    binpath = binpath + os.pathsep + binpath + "/ShapeWorksStudio.app/Contents/MacOS"
+os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
 print(os.environ["PATH"])
 
 try:

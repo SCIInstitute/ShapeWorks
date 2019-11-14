@@ -3,7 +3,7 @@
 #
 
 if [ -z "$PS1" ]; then
-  echo "ERROR: must call this script using \"source ./conda_installs.sh\")"
+  echo "ERROR: must call this script using \"source ./conda_installs.sh\""
   exit 1
 fi
 

@@ -35,7 +35,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             filename = spt[1]
             outname = inname.replace(initPath, binaryoutDir)
             outname = outname.replace('.nrrd', '.isores.nrrd')
@@ -77,7 +77,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
         for i in range(len(inDataListImg)):
             inname = inDataListImg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             filename = spt[1]
             outname = inname.replace(initPath, rawoutDir)
             outname = outname.replace('.nrrd', '.isores.nrrd')
@@ -114,7 +114,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.isores.nrrd')
@@ -172,7 +172,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             filename = spt[1]
             outname = inname.replace(initPath, binaryoutDir)
             outname = outname.replace('.nrrd', '.pad.nrrd')
@@ -197,7 +197,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
         for i in range(len(inDataListImg)):
             inname = inDataListImg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             filename = spt[1]
             outname = inname.replace(initPath, rawoutDir)
             outname = outname.replace('.nrrd', '.pad.nrrd')
@@ -219,7 +219,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.pad.nrrd')
@@ -303,7 +303,7 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.com.nrrd')
@@ -407,7 +407,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     if not os.path.exists(refDir):
         os.makedirs(refDir)
     spt = refFile.rsplit(os.sep, 1)
-    initPath = spt[0] + os.sep
+    initPath = spt[0]
     newRefFile = refFile.replace(initPath, refDir)
 
     ref_dtnrrdfilename = newRefFile.replace('.nrrd', '.DT.nrrd')
@@ -451,7 +451,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         for i in range(len(inDataListSeg)):
             seginname = inDataListSeg[i]
             spt = seginname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             filename = spt[1]
             segoutname = seginname.replace(initPath, binaryoutDir)
             segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
@@ -509,7 +509,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.aligned.nrrd')
@@ -636,7 +636,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
             spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0] + os.sep
+            initPath = spt[0]
             #filename = spt[1]
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.cropped.nrrd')
@@ -686,7 +686,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
     for i in range(len(inDataList)):
         inname = inDataList[i]
         spt = inname.rsplit(os.sep, 1)
-        initPath = spt[0] + os.sep
+        initPath = spt[0]
         #filename = spt[1]
         outname = inname.replace(initPath, outDir)
 

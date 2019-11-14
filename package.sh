@@ -13,10 +13,12 @@ rm -rf "package/$VERSION"
 
 mkdir "package"
 
+BASE_LIB=${PWD}/build/install/lib
 cp -a build/install "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
+cp ChangeLog package/${VERSION}
 cp PACKAGE_README.txt package/${VERSION}/README.txt
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
@@ -40,8 +42,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # Fix transitive loaded libs
     cd ../lib
     for i in *.dylib ; do
-	install_name_tool -change ${PWD}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
+	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
     done
+
+    install_name_tool -id @rpath/libitkgdcmopenjp2-5.0.1.dylib libitkgdcmopenjp2-5.0.1.dylib
+    
     cd ..
 else
     linuxdeployqt bin/ShapeWorksView2 -verbose=2

@@ -20,9 +20,9 @@ There is currently one python example included.  To run it you will
 need python3 with a few packages.  The easist way to install them is
 to run
 
-./conda_installs.sh
+source ./conda_installs.sh
 
 Then, to run the example:
 
-cd examples/ellipsoid
+cd Examples/Python
 python3 ellipsoidMain.py
