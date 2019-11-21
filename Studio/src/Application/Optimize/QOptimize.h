@@ -2,6 +2,7 @@
 
 #include <Optimize/ShapeWorksOptimize.h>
 #include <QObject>
+#include <QMutex>
 #include <QElapsedTimer>
 
 //! Wraps ShapeWorksOptimize as a QObject
