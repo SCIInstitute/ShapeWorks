@@ -101,15 +101,8 @@ public:
   void SetFixedScales( const std::vector<double> v)
   { m_FixedScales = v; }
 
-  void SetComputeTransformationOff()
-  { m_ComputeTransformation = false; }
-  void SetComputeTransformationOn()
-  { m_ComputeTransformation = true; }
-  void SetComputeTransformation(int arg)
-  { m_ComputeTransformation = arg == 1 ? true : false; }
-
 protected:
-  ParticleProcrustesRegistration() : m_DomainsPerShape(1), m_Scaling(true), m_RotationTranslation(true), m_ComputeTransformation(true) {  }
+  ParticleProcrustesRegistration() : m_DomainsPerShape(1), m_Scaling(true), m_RotationTranslation(true) {  }
   virtual ~ParticleProcrustesRegistration() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
