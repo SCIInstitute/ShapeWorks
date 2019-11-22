@@ -450,6 +450,14 @@ void Project::load_original_files(std::vector<std::string> file_names)
     if (progress.wasCanceled()) {
       break;
     }
+
+    QString filename = QString::fromStdString(file_names[i]);
+    if (!QFile::exists(filename)) {
+      QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
+                            QMessageBox::Ok);
+      return;
+    }
+
     QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
     new_shape->import_original_image(file_names[i], 0.5);
     if (!this->shapes_.empty()) {
