@@ -901,9 +901,15 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->analysis_tool_->reset_stats();
 
   std::string planesFile;
-  if (!this->project_->load_project(filename, planesFile)) {
-    return;
+  try
+  {
+    if (!this->project_->load_project(filename, planesFile)) {
+      return;
+    }
+  } catch (std::runtime_error e) {
+    this->handle_error(e.what());
   }
+
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
   auto tool_state = this->preferences_.get_preference(
