@@ -9,6 +9,7 @@ option(USE_OPENMP      "Build using OpenMP" ON)
 option(Build_Post      "Build post"         OFF)
 option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
+option(BUILD_TESTS     "Build tests"        ON)
 if (${Build_Post} OR ${Build_View2} OR ${Build_Studio})
   set(SHAPEWORKS_GUI ON)
   set(SHAPEWORKS_QT_REQUIRED REQUIRED)
@@ -21,6 +22,27 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Ins
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
 set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries (default Release)")
 mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
+
+
+
+# Google Test
+if (BUILD_TESTS)
+  message(STATUS "Building Google Test")
+  enable_testing()
+  include(FetchContent)
+  
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        release-1.10.0
+    )
+  
+  FetchContent_GetProperties(googletest)
+  if(NOT googletest_POPULATED)
+    FetchContent_Populate(googletest)
+    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+  endif()
+endif(BUILD_TESTS)
 
 #
 # Start with ShapeWorksExternals, which adds external libs.
