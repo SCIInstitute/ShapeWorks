@@ -1317,10 +1317,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::Initialize() {
   }
 
   m_disable_checkpointing = true;
-  m_disable_procrustes = true;
-
   m_disable_procrustes = false;
-  m_Procrustes->SetComputeTransformationOn();
+
   if (m_procrustes_interval != 0) { // Initial registration
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
@@ -1331,7 +1329,6 @@ ShapeWorksRunApp < SAMPLERTYPE > ::Initialize() {
     this->WriteTransformFile();
   }
   m_disable_procrustes = true;
-  m_Procrustes->SetComputeTransformationOff();
 
   m_Sampler->GetParticleSystem()->SynchronizePositions();
 
