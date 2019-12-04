@@ -19,7 +19,8 @@ endif()
 message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Install path prefix, prepended onto install directories.")
-set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the build type, options are: None Debug Release RelWithDebInfo MinSizeRel")
+
+include(DefaultBuildType)
 set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries (default Release)")
 mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 
@@ -75,6 +76,7 @@ if (SHAPEWORKS_SUPERBUILD)
     DEPENDS ${ShapeWorks_DEPENDENCIES}
     DOWNLOAD_COMMAND ""
     UPDATE_COMMAND ""
+    INSTALL_COMMAND ""
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}"
     PREFIX shapeworks
     BUILD_ALWAYS TRUE
@@ -224,6 +226,7 @@ else()
 
   add_subdirectory(ExternalLibs)    # TODO: cmake externalproject_add should be used for libs in this directory
   add_subdirectory(Libs)
+  #add_subdirectory(Applications)   # coming soon...
 
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
