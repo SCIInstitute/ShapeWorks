@@ -77,7 +77,10 @@ public:
 
     virtual void WriteModes()
     {
-        const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains() % m_domains_per_shape;
+        const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains() / m_domains_per_shape;
+        std::cerr << "WriteModes, n = " << n << "\n";
+        std::cerr << "number of domains = " << m_Sampler->GetParticleSystem()->GetNumberOfDomains() << "\n";
+        std::cerr << "domains per shape = " << m_domains_per_shape << "\n";
         if ( n >= 5 )
         {
             m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_dir + "/pts",5);
