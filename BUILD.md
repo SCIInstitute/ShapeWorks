@@ -9,6 +9,8 @@ _coming soon:_ instructions for user installation without needing to build Shape
 First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#source-and-branches) for more details).  
 `$ git clone https://github.com/SCIInstitute/ShapeWorks`  
 <br>If you want to build a branch other than master, check that branch out next:  
+`$ git checkout <branchname>`
+<br>If you want to create a new branch based off of the current branch:  
 `$ git checkout -b <branchname>`
 
 ### Install dependencies (OSX/Linux)
