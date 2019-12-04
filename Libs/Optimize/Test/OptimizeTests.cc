@@ -77,8 +77,8 @@ TEST(OptimizeTests, sample_test) {
   }
 
   // check the first mode of variation.
-  // If Procrustes scaling is working, this should be tiny.
-  // Otherwise it is quite large (>8000).
+  // If Procrustes scaling is working, this should be small.
+  // Otherwise it is quite large (>4000).
   double value = values[values.size() - 1];
-  ASSERT_LT(value, 1);
+  ASSERT_LT(value, 100);
 }
