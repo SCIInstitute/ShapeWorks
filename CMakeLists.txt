@@ -29,6 +29,7 @@ mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 # Google Test
 if (BUILD_TESTS)
   message(STATUS "Building Google Test")
+  set( gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll" FORCE)
   enable_testing()
   include(FetchContent)
   
