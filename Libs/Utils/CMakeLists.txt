@@ -11,7 +11,6 @@ target_include_directories(Utils PUBLIC
 # Install
 set(Utils_headers
   Utils.h
-  OptionParser.h
   )
 set_target_properties(Utils PROPERTIES PUBLIC_HEADER
   "${Utils_headers}")

@@ -206,7 +206,7 @@ else()
 
   add_subdirectory(ExternalLibs)    # TODO: cmake externalproject_add should be used for libs in this directory
   add_subdirectory(Libs)
-  #add_subdirectory(Applications)   # coming soon...
+  add_subdirectory(Applications)   # coming soon...
 
   if(Build_Post)
     add_subdirectory(Post/source/ShapeWorksPost-V1)
@@ -243,5 +243,11 @@ else()
 
   MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
   MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+  # MESSAGE(STATUS "CMAKE_INCLUDE_SYSTEM_FLAG_C: ${CMAKE_INCLUDE_SYSTEM_FLAG_C}")
+  # MESSAGE(STATUS "CMAKE_INCLUDE_SYSTEM_FLAG_CXX: ${CMAKE_INCLUDE_SYSTEM_FLAG_CXX}")
+  # get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+  # foreach(dir ${dirs})
+  #   message(STATUS "dir='${dir}'")
+  # endforeach()
 
 endif()

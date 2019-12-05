@@ -624,7 +624,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Image Filename : ", outnameImg), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["CropImages" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--bbX" , str(
+            execCommand = ["shapeworks crop", "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--bbX" , str(
                 bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
                 smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(
                 smI2) , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
@@ -647,7 +647,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["CropImages" , "--inFilename" , inname , "--outFilename" , outname , "--bbX" , str(
+            execCommand = ["shapeworks crop", "--inFilename" , inname , "--outFilename" , outname , "--bbX" , str(
                 bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
                 smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(smI2)]
             subprocess.check_call(execCommand )

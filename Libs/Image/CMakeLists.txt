@@ -1,3 +1,27 @@
+# Build
+set(Image_sources
+  Image.cpp
+  ImageUtils.cpp)
+add_library(Image STATIC
+  ${Image_sources})
+target_include_directories(Image PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include>)
+
+# Install
+set(Image_headers
+  Image.h
+  ImageUtils.h
+  )
+set_target_properties(Image PROPERTIES PUBLIC_HEADER
+  "${Image_headers}")
+install(TARGETS Image
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION lib
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+  )
+
 add_executable(PadVolumeWithConstant PadVolumeWithConstant.cxx )
 target_link_libraries(PadVolumeWithConstant ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS PadVolumeWithConstant RUNTIME DESTINATION bin)
@@ -19,7 +43,7 @@ target_link_libraries(ResampleVolumesToBeIsotropic ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ResampleVolumesToBeIsotropic RUNTIME DESTINATION bin)
 
 add_executable(ExtractGivenLabelImage ExtractGivenLabelImage.cxx)
-target_link_libraries(ExtractGivenLabelImage ${ITK_LIBRARIES} Utils)
+target_link_libraries(ExtractGivenLabelImage ${ITK_LIBRARIES} Utils Image)
 INSTALL(TARGETS ExtractGivenLabelImage  RUNTIME DESTINATION bin)
 
 add_executable(FastMarching FastMarching.cxx)
