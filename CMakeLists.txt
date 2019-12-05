@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.11)
 set(CMAKE_CXX_STANDARD 11)             # available options are [98, 11, 14, 17. 20]
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 
@@ -140,6 +140,7 @@ else()
   if (NOT VTK_FOUND)
     message(FATAL_ERROR "** VTK not found. By default cmake will download it (see BUILD.md)")
   endif()
+  include(${VTK_USE_FILE})
 
   ### vxl
   FIND_PACKAGE(VXL REQUIRED)

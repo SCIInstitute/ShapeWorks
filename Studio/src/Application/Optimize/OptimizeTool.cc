@@ -42,29 +42,28 @@ void OptimizeTool::handle_warning(std::string msg)
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val)
 {
-  QApplication::processEvents();
-
   emit progress(static_cast<size_t>(val));
 
   auto local = this->optimize_->localPoints();
   auto global = this->optimize_->globalPoints();
 
-  QApplication::processEvents();
-
   if (local.size() > 2 && global.size() > 2) {
-    this->project_->load_points(local, true);
-    this->project_->load_points(global, false);
-    this->project_->set_reconstructed_present(false);
+    this->project_->update_points(local, true);
+    this->project_->update_points(global, false);
   }
+
+  QApplication::processEvents();
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_optimize_complete()
 {
+  this->optimization_is_running_ = false;
+
   auto local = this->optimize_->localPoints();
   auto global = this->optimize_->globalPoints();
-  this->project_->load_points(local, true);
-  this->project_->load_points(global, false);
+  this->project_->update_points(local, true);
+  this->project_->update_points(global, false);
   this->project_->set_reconstructed_present(
     local.size() == global.size() && global.size() > 1);
   this->project_->calculate_reconstructed_samples();
@@ -87,6 +86,8 @@ void OptimizeTool::on_run_optimize_button_clicked()
     return;
   }
   this->optimization_is_running_ = true;
+  emit optimize_start();
+
   this->enableActions();
 
   this->update_preferences();
@@ -277,6 +278,8 @@ void OptimizeTool::on_restoreDefaults_clicked()
   this->preferences_.delete_entry("optimize_maxAngle");
   this->preferences_.delete_entry("optimize_decay_span");
   this->preferences_.delete_entry("optimize_procrustes_interval");
+  this->preferences_.delete_entry("optimize_iters_optimization");
+
   this->preferences_.restore_defaults();
   this->set_preferences();
   auto optimize_particles = this->preferences_.get_preference("optimize_particles", 128);

@@ -269,10 +269,13 @@
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="controlsDock">
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Data</string>
@@ -391,9 +394,9 @@
   <widget class="QToolBar" name="toolBar">
    <property name="font">
     <font>
-     <pointsize>36</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <pointsize>8</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="windowTitle">

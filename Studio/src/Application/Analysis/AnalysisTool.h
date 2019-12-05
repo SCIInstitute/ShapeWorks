@@ -50,6 +50,7 @@ public:
   void updateSlider();
 
   void reset_stats();
+  void enableActions();
 
   const vnl_vector<double> & getMean();
 
@@ -58,6 +59,8 @@ public:
   ParticleShapeStatistics<3> getStats();
   void load_from_preferences();
   void save_to_preferences();
+
+  void shutdown();
 
 public Q_SLOTS:
 

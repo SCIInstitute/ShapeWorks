@@ -44,11 +44,7 @@ Viewer::Viewer()
   this->glyph_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
 
   this->glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
-#if VTK_MAJOR_VERSION <= 5
-  this->glyphs_->SetInput(this->glyph_point_set_);
-#else
   this->glyphs_->SetInputData(this->glyph_point_set_);
-#endif
   this->glyphs_->ScalingOn();
   this->glyphs_->ClampingOff();
   this->glyphs_->SetScaleModeToDataScalingOff();
@@ -160,38 +156,7 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
     vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
     vtkSmartPointer<vtkActor> actor = this->surface_actor_;
 
-    vnl_vector<double> correspondence_points = object->get_correspondence_points();
-
-    int num_points = correspondence_points.size() / 3;
-
-    vtkUnsignedLongArray* scalars =
-      (vtkUnsignedLongArray*)(this->glyph_point_set_->GetPointData()->GetScalars());
-
-    if (num_points > 0) {
-      this->glyphs_->SetRange(0.0, (double)num_points + 1);
-      this->glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
-
-      this->glyph_points_->Reset();
-      this->glyph_points_->SetNumberOfPoints(num_points);
-
-      scalars->Reset();
-      scalars->SetNumberOfTuples(num_points);
-
-      unsigned int idx = 0;
-      for (int i = 0; i < num_points; i++) {
-        scalars->InsertValue(i, i);
-        double x = correspondence_points[idx++];
-        double y = correspondence_points[idx++];
-        double z = correspondence_points[idx++];
-
-        this->glyph_points_->InsertPoint(i, x, y, z);
-      }
-    }
-    else {
-      this->glyph_points_->Reset();
-      scalars->Reset();
-    }
-    this->glyph_points_->Modified();
+    this->update_points();
 
     this->draw_exclusion_spheres(object);
 
@@ -299,6 +264,46 @@ void Viewer::set_show_surface(bool show)
 {
   this->show_surface_ = show;
   this->update_actors();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::update_points()
+{
+  if (!this->object_) {
+    return;
+  }
+  vnl_vector<double> correspondence_points = this->object_->get_correspondence_points();
+
+  int num_points = correspondence_points.size() / 3;
+
+  vtkUnsignedLongArray* scalars =
+    (vtkUnsignedLongArray*)(this->glyph_point_set_->GetPointData()->GetScalars());
+
+  if (num_points > 0) {
+    this->glyphs_->SetRange(0.0, (double)num_points + 1);
+    this->glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
+
+    this->glyph_points_->Reset();
+    this->glyph_points_->SetNumberOfPoints(num_points);
+
+    scalars->Reset();
+    scalars->SetNumberOfTuples(num_points);
+
+    unsigned int idx = 0;
+    for (int i = 0; i < num_points; i++) {
+      scalars->InsertValue(i, i);
+      double x = correspondence_points[idx++];
+      double y = correspondence_points[idx++];
+      double z = correspondence_points[idx++];
+
+      this->glyph_points_->InsertPoint(i, x, y, z);
+    }
+  }
+  else {
+    this->glyph_points_->Reset();
+    scalars->Reset();
+  }
+  this->glyph_points_->Modified();
 }
 
 //-----------------------------------------------------------------------------

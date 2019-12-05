@@ -285,11 +285,15 @@ void ShapeWorksGroom::auto_pad(int which) {
 
     // set the desired padding
     auto pd = static_cast<unsigned long>((this->padding_ + 1) / 2);
-    unsigned long hipad[3] = { pd, pd, pd };
+	itk::Size<3> hipad;
+	hipad[0] = pd;
+	hipad[1] = pd;
+	hipad[2] = pd;
+	
     unsigned long lowpad[3] = { pd, pd, pd };
 
     padder->SetPadUpperBound(hipad);
-    padder->SetPadLowerBound(lowpad);
+    padder->SetPadLowerBound(hipad);
     padder->UpdateLargestPossibleRegion();
 
     if (this->verbose_) {

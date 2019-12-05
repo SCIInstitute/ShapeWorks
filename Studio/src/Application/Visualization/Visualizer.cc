@@ -63,9 +63,8 @@ void Visualizer::display_samples()
 {
   this->update_viewer_properties();
 
-  QVector < QSharedPointer < DisplayObject >> display_objects;
-
-  QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<DisplayObject>> display_objects;
+  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
 
   for (int i = 0; i < shapes.size(); i++) {
     QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>(new DisplayObject());
@@ -120,15 +119,31 @@ void Visualizer::display_samples()
     display_objects << object;
   }
 
+  this->display_objects_ = display_objects;
   this->lightbox_->set_display_objects(display_objects);
   this->update_viewer_properties();
-  this->reset_camera();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::update_samples()
+{
+  QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
+
+  for (int i = 0; i < shapes.size(); i++) {
+    this->display_objects_[i]->set_correspondence_points(
+      shapes[i]->get_local_correspondence_points());
+  }
+
+  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+    viewer->update_points();
+  }
+  this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double> &points)
 {
-  QVector<DisplayObjectHandle>* list_ptr = getList(points);
+  QVector<DisplayObjectHandle>* list_ptr = this->getList(points);
   this->lightbox_->set_display_objects(*list_ptr);
   this->update_viewer_properties();
   //this->reset_camera();

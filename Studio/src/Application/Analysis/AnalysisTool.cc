@@ -75,15 +75,15 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
 void AnalysisTool::handle_reconstruction_complete()
 {
   this->project_->handle_clear_cache();
-  std::cerr << "A1\n";
+
   this->project_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Reconstruction Complete");
   emit reconstruction_complete();
   ///TODO: Studio
   ///this->ui_->run_optimize_button->setEnabled(true);
-  this->ui_->reconstructionButton->setEnabled(
-    this->project_->reconstructed_present());
+
+  this->enableActions();
 }
 
 //---------------------------------------------------------------------------
@@ -187,7 +187,6 @@ void AnalysisTool::set_app(ShapeWorksStudioApp* app)
 //---------------------------------------------------------------------------
 void AnalysisTool::activate()
 {
-
   this->update_analysis_mode();
 }
 
@@ -355,6 +354,12 @@ void AnalysisTool::save_to_preferences()
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::shutdown()
+{
+  this->pcaAnimateTimer.stop();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_tabWidget_currentChanged()
 {
   this->update_analysis_mode();
@@ -438,7 +443,7 @@ void AnalysisTool::updateSlider()
 //---------------------------------------------------------------------------
 void AnalysisTool::reset_stats()
 {
-  this->ui_->tabWidget->setCurrentWidget(this->ui_->samples_tab);
+  this->ui_->tabWidget->setCurrentWidget(this->ui_->mean_tab);
   this->ui_->allSamplesRadio->setChecked(true);
   this->ui_->singleSamplesRadio->setChecked(false);
   this->ui_->sampleSpinBox->setEnabled(false);
@@ -449,6 +454,13 @@ void AnalysisTool::reset_stats()
   this->ui_->pcaAnimateCheckBox->setChecked(false);
   this->stats_ready_ = false;
   this->stats_ = ParticleShapeStatistics<3>();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::enableActions()
+{
+  this->ui_->reconstructionButton->setEnabled(
+    this->project_->reconstructed_present() && this->project_->get_groomed_present());
 }
 
 //---------------------------------------------------------------------------
