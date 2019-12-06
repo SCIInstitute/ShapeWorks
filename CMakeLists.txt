@@ -19,7 +19,6 @@ message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Install path prefix, prepended onto install directories.")
 
-include(DefaultBuildType)
 set(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE Release CACHE STRING "Build type for external libraries (default Release)")
 mark_as_advanced(SHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE)
 
@@ -32,12 +31,6 @@ set(SHAPEWORKS_SUPERBUILD ON CACHE BOOL "")
 mark_as_advanced(SHAPEWORKS_SUPERBUILD)
 if (SHAPEWORKS_SUPERBUILD)
   include(ShapeworksExternals)
-
-  #FIXME: ShapeWorks cmakelists seems to support openmp on osx, but it's not compiling
-  set(SHAPEWORKS_USE_OPENMP ON)
-  if(APPLE)
-    set(SHAPEWORKS_USE_OPENMP OFF)
-  endif()
 
   if (APPLE)
     set(SHAPEWORKS_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-inconsistent-missing-override)
@@ -68,7 +61,7 @@ if (SHAPEWORKS_SUPERBUILD)
       -DBuild_Post=${Build_Post}
       -DBuild_View2=${Build_View2}
       -DBuild_Studio=${Build_Studio}
-      -DUSE_OPENMP=${SHAPEWORKS_USE_OPENMP} 
+      -DUSE_OPENMP=${USE_OPENMP} 
       -DSHAPEWORKS_PYTHON_API=OFF
       -DVTK_DIR:PATH="${VTK_DIR}"
       -DVXL_DIR:PATH="${VXL_DIR}"
@@ -82,6 +75,7 @@ else()
   # ExternalProject_Add above. Keep this in mind when modifying configs.
   #
   project(ShapeWorks)
+  include(DefaultBuildType)
 
   # use ccache if available
   find_program(CCACHE_PROGRAM ccache)
@@ -104,7 +98,9 @@ else()
   SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
   # GUI
-  cmake_policy(SET CMP0072 NEW) # prefer the new opengl library GLVND to the legacy if both are present
+  if(APPLE)
+    cmake_policy(SET CMP0072 NEW) # prefer the new opengl library GLVND to the legacy if both are present
+  endif()
   find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
   if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
     set(SHAPEWORKS_QT_FOUND 1)
@@ -159,41 +155,8 @@ else()
     MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
   ENDIF()
 
-  # OpenMP
-  if(APPLE AND USE_OPENMP)
-    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-      set(OpenMP_C "${CMAKE_C_COMPILER}")
-      set(OpenMP_C_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
-      set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
-      set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-      set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-      set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
-    endif()
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
-      set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
-      set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
-      set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-      set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-      set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-    endif()
-  endif()
-
   if(USE_OPENMP)
-    find_package(OpenMP REQUIRED)
-    add_definitions(-DSW_USE_OPENMP)
-    add_definitions(-DMP_USE_OPENMP)
-    if(APPLE)
-      # the find_package flags just don't work for the latest clang, and I'm also not sure how to find the include path.
-      # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument -I\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/include\" -L\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/lib\"")
-      # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument -I\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/include\" -L\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/lib\"")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
-    else()
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-      #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")  #these don't exist, see cmake FindOpenMP (https://github.com/Kitware/CMake/blob/master/Modules/FindOpenMP.cmake)
-    endif(APPLE)
+    find_package(OPENMP REQUIRED)
   endif(USE_OPENMP)
 
   if(APPLE)
