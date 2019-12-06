@@ -7,38 +7,74 @@
 
 namespace Shapeworks {
 
-int Image::Antialias(const std::string &inFilename, const std::string &outFilename, float maxRMSErr, int numIter)
+bool Image::read(const std::string &inFilename)
 {
-  typedef   float InputPixelType;
-  typedef   float InternalPixelType;
-  typedef   float OutputPixelType;
+  typedef itk::ImageFileReader<ImageType> ReaderType;
 
-  const     unsigned int    Dimension = 3;
-  typedef itk::Image< InputPixelType,    Dimension >   InputImageType;
-  typedef itk::Image< OutputPixelType,    Dimension >   OutputImageType;
-  typedef itk::Image< InternalPixelType, Dimension >   InternalImageType;
-  //<ctc> TODO: in order to make more efficient use of multiple commands, make a function to read an image in this Image class and call it here (and in all the other executables being consolidating into this class)
-  typedef itk::ImageFileReader< InputImageType  >  ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inFilename );
-  InputImageType::ConstPointer inputImage = reader->GetOutput();
+  reader->SetFileName(inFilename);
+  try
+  {
+    reader->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Failed to read image " << inFilename << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
 
-  typedef itk::AntiAliasBinaryImageFilter< InternalImageType, InternalImageType > FilterType;
-  FilterType::Pointer antialiasFilter = FilterType::New();
-  antialiasFilter->SetInput( reader->GetOutput() );
-  antialiasFilter->SetMaximumRMSError(maxRMSErr);
-  antialiasFilter->SetNumberOfIterations( numIter );
-  antialiasFilter->Update();
+  this->image = reader->GetOutput();
+  return true;
+}
 
-  // Write the final output
-  //<ctc> TODO: in order to make more efficient use of multiple commands, save image to Image class and only write it to disk when complete ([] add function to class to write its image(s))
-  typedef itk::ImageFileWriter< OutputImageType > WriterType;
+bool Image::write(const std::string &outFilename)
+{
+  if (!this->image) return false;
+
+  typedef itk::ImageFileWriter<ImageType> WriterType;
+
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( antialiasFilter->GetOutput() );
-  writer->SetFileName(outFilename.c_str());
-  writer->Update();
-    
-  return EXIT_SUCCESS;
+  writer->SetInput(this->image);
+  writer->SetFileName(outFilename);
+
+  try
+  {
+    writer->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Failed to write image to " << outFilename << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+bool Image::antialias(float maxRMSErr, int numIter)
+{
+  if (!this->image) return false;
+
+  typedef itk::AntiAliasBinaryImageFilter<ImageType, ImageType> FilterType;
+  FilterType::Pointer antialiasFilter = FilterType::New();
+  antialiasFilter->SetInput(this->image);
+  antialiasFilter->SetMaximumRMSError(maxRMSErr);
+  antialiasFilter->SetNumberOfIterations(numIter);
+  //antialiasFilter->SetNumberOfLayers(numLayers);  // TODO: should we specify this parameters?
+  try
+  {
+    antialiasFilter->Update();  
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Antialias filter failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  this->image = antialiasFilter->GetOutput();
+  return true;
 }
 
 } // Shapeworks

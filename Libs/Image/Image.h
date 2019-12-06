@@ -7,14 +7,18 @@ namespace Shapeworks {
 class Image
 {
 public:
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3/*dimension*/> ImageType;
 
-  // todo: break commands up into local/static portions so file load/save isn't always required
-  static int Antialias(const std::string &inFilename, const std::string &outFilename, float maxRMSErr, int numIter);
+  Image() {}
+  Image(const std::string &inFilename) { read(inFilename); }
 
+  bool read(const std::string &inFilename);
+  bool write(const std::string &outFilename);
+  bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
 
 private:
-  // todo: save internal data for use between commands
-
+  ImageType::Pointer image;
 };
 
 } // Shapeworks

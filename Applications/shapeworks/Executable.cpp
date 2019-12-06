@@ -9,7 +9,7 @@ void Executable::buildParser()
   parser.usage("Usage: %prog <command> [args]...");
   parser.version("%prog 1.0\nMIT license (todo: verify)");
   parser.description("Command line utilities for understanding groups of related shapes.");
-  parser.epilog("Available commands:\n");
+  parser.epilog("Available commands:");
   parser.disable_interspersed_args(); // so everything after a command's name will be passed to that command (ex: its --help argumemnt)
   
   // global options
@@ -23,22 +23,21 @@ Executable::Executable()
   buildParser();
 }
 
-void Executable::addCommand(/*const*/ Command &command, bool replace) //<ctc> command should probably be const (todo: try it)
+void Executable::addCommand(Command &command)
 {
   auto cmdkey = commands.find(command.name());
   if (cmdkey != commands.end()) {
-    std::cout << "Found " << cmdkey->first << " " << cmdkey->second << '\n';
-    std::cout << "Pass true for second argument to replace command.\n";
-    if (!replace) return;
+    throw std::runtime_error(cmdkey->first + " already exists!");
   }
   std::cout << "Adding " << command.name() << "...\n";
-  const std::string foo("foo");
   commands.insert(std::pair<std::string, Command&>(command.name(),command));
-  parser.usage(parser.usage() + "\n" + command.desc());
+  parser.epilog(parser.epilog() + "\n\t" + command.name() + ": " + command.desc());
+  std::cout << "Added!\n";
 }
 
 int Executable::run(int argc, char const *const *argv)
 {
+  std::cout << "Executable::run...\n";
   const optparse::Values options = parser.parse_args(argc, argv);
   
   // shapeworks global options

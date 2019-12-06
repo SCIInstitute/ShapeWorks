@@ -420,7 +420,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
     execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
     subprocess.check_call(execCommand)
-    execCommand = ["AntiAliasing" ,  "--inFilename" , refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations" , str(
+    execCommand = ["shapeworks antialias" ,  "--inFilename" , refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations" , str(
         antialiasIterations)]
     subprocess.check_call(execCommand)
     execCommand = ["FastMarching" ,  "--inFilename" , ref_dtnrrdfilename , "--outFilename" , ref_dtnrrdfilename , "--isoValue" , str(
@@ -485,7 +485,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand)
             execCommand = ["CloseHoles" , "--inFilename" , seginname , "--outFilename" , seginname]
             subprocess.check_call(execCommand)
-            execCommand = ["AntiAliasing" , "--inFilename" , seginname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
+            execCommand = ["shapeworks antialias" , "--inFilename" , seginname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
                 antialiasIterations)]
             subprocess.check_call(execCommand)
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
@@ -533,7 +533,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand )
             execCommand = ["CloseHoles" , "--inFilename" , inname , "--outFilename" , inname]
             subprocess.check_call(execCommand )
-            execCommand = ["AntiAliasing",  "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
+            execCommand = ["shapeworks antialias",  "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
                 antialiasIterations)]
             subprocess.check_call(execCommand )
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
@@ -703,7 +703,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         subprocess.check_call(execCommand )
         execCommand = ["CloseHoles" ,  "--inFilename" , inname , "--outFilename" , inname ]
         subprocess.check_call(execCommand )
-        execCommand = ["AntiAliasing" , "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(antialiasIterations) ]
+        execCommand = ["shapeworks antialias" , "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(antialiasIterations) ]
         subprocess.check_call(execCommand )
         execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(isoValue) ]
         subprocess.check_call(execCommand )

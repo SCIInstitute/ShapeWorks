@@ -1,0 +1,14 @@
+Merging individual executables into shapeworks.
+
+Notes below identify command name changes and any parameter name changes, which
+have been intentionally minimized in order to facilite upgrading existing
+scripts and python apps that simply call the external executables.
+
+We should also create example Python and C++ apps that show using the API
+directly.
+
+These notes also indicate duplicated functionality that has been discovered.
+
+- AntiAliasing -> shapeworks antialias
+ o ShapeWorksGroom class duplicates this functionality, has different defaults
+

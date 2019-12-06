@@ -120,15 +120,18 @@ namespace optparse
 
         const std::string &operator[](const std::string &d) const
         {
-            return _map.at(d); //<ctc> throws an exception if option isn't set (C++11), rather than silently returning an empty string
-            // std::map<std::string, std::string>::const_iterator it = _map.find(d);
-            // static const std::string empty = "";
-            // return (it != _map.end()) ? it->second : empty;
+            std::cout << "const Values.operator[](" << d << ")...\n";
+            //return _map.at(d); //<ctc> throws an exception if option isn't set (C++11), rather than silently returning an empty string
+            std::map<std::string, std::string>::const_iterator it = _map.find(d);
+            static const std::string empty = "";
+            return (it != _map.end()) ? it->second : empty;
         }
 
         std::string &operator[](const std::string &d)
         {
-          return _map.at(d);  //<ctc> throw an exception if option isn't set (C++11), rather than silently returning an empty string
+          std::cout << "Values.operator[](" << d << ")...\n";
+          //return _map.at(d);  //<ctc> throw an exception if option isn't set (C++11), rather than silently returning an empty string
+          return _map[d];
         }
 
         bool is_set(const std::string &d) const
@@ -798,6 +801,7 @@ namespace optparse
             std::string dest_fallback;
             for (std::vector<std::string>::const_iterator it = opt.begin(); it != opt.end(); ++it)
             {
+              //<ctc> 
                 if (it->substr(0, 2) == "--")
                 {
                     const std::string s = it->substr(2);
@@ -1110,7 +1114,6 @@ namespace optparse
                 _values[o.dest()] = detail::str_inc(_values[o.dest()]);
                 _values.is_set_by_user(o.dest(), true);
             }
-            //<ctc> see what we can do here so individual commands can have their own help
             else if (o.action() == "help")
             {
                 print_help();

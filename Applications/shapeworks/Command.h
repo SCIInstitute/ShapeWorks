@@ -20,7 +20,7 @@ public:
   }
 
   const std::string name() const { return parser.prog(); }
-  const std::string usage() const { return parser.usage(); }  // <ctc> are usage and desc necessary functions ([] double-check)
+  const std::string usage() const { return parser.get_usage(); }  // <ctc> are usage and desc necessary functions ([] double-check)
   const std::string desc() const { return parser.description(); }
 
   int run(const std::vector<std::string> &arguments);

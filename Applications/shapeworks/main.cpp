@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   //...
   
 /* (* means OptionParser already used, otherwise just argv)
- [] AntiAliasing*
+ [x] AntiAliasing*
  [] ClipVolume
  [] CloseHoles*
  [] CropImages*
