@@ -1,4 +1,4 @@
-name: C/C++ CI Test
+name: C/C++ CI Test2
 
 on: [push]
 
