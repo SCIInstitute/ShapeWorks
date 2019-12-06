@@ -29,11 +29,10 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from DatasetUtils import datasets
 
 
 
-def Run_Ellipsoid_Pipline(args):
+def Run_Ellipsoid_Pipeline(args):
 
     """
     Unzip the data for this tutorial.
@@ -57,6 +56,7 @@ def Run_Ellipsoid_Pipline(args):
     if not os.path.exists(filename):
         print("Can't find " + filename + " in the current directory.")
         print("Downloading " + filename + " from SCI cibc1.")
+        from DatasetUtils import datasets
         datasets.downloadDataset(filename)
 
     parentDir="TestEllipsoids/"

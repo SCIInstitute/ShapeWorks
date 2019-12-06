@@ -669,10 +669,38 @@ QToolButton:pressed{
       <string>Surface Reconstruction</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="maxAngle">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>65</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="maximum">
+         <double>90.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>60.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Mesh Decimation %</string>
+         <string>Max Angle (0-90 deg)</string>
         </property>
        </widget>
       </item>
@@ -710,45 +738,20 @@ QToolButton:pressed{
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="maxAngle">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>65</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="maximum">
-         <double>90.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>60.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Max Angle (0-90 deg)</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
          <string># Clusters (0 uses all)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" rowspan="2" colspan="2">
+       <widget class="QPushButton" name="reconstructionButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Run Reconstruction</string>
         </property>
        </widget>
       </item>
@@ -777,13 +780,10 @@ QToolButton:pressed{
         </property>
        </widget>
       </item>
-      <item row="4" column="0" rowspan="2" colspan="2">
-       <widget class="QPushButton" name="reconstructionButton">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Run Reconstruction</string>
+         <string>Mesh Decimation %</string>
         </property>
        </widget>
       </item>

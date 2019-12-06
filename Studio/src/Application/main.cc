@@ -3,12 +3,14 @@
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <iostream>
 
+#include <vtkObject.h>
 #include <itkMacro.h>
 
 int main(int argc, char** argv) {
   try {
 
     std::cerr << "ShapeWorksStudio initializing...\n";
+	vtkObject::GlobalWarningDisplayOff();
 
     QApplication app(argc, argv);
 

@@ -110,7 +110,7 @@ std::vector<int> randperm(int n)
 float modulo(float n, unsigned int d)
 {
     float x = 1.0f * n / d;
-    int xint = (int) vcl_float_round_style(x);
+    int xint = (int) std::round(x);
     float res = n - 1.0f*d*xint;
     return res;
 }

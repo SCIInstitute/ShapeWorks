@@ -69,8 +69,10 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
 //---------------------------------------------------------------------------
 void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data)
 {
-  this->reconstructed_mesh_ = QSharedPointer<Mesh> (new Mesh());
-  this->reconstructed_mesh_->set_poly_data(poly_data);
+  if (poly_data) {
+    this->reconstructed_mesh_ = QSharedPointer<Mesh> (new Mesh());
+    this->reconstructed_mesh_->set_poly_data(poly_data);
+  }
 }
 
 //---------------------------------------------------------------------------

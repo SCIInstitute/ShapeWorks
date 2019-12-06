@@ -58,7 +58,9 @@ private:
   void loadCutPlanesFile(std::string file);
 
 signals:
+  void optimize_start();
   void optimize_complete();
+
   void error_message(std::string);
   void warning_message(std::string);
   void progress(size_t);

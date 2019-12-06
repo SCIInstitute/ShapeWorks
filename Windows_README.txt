@@ -16,13 +16,25 @@ point-based shape models, and visualizing the results.
 
 You have downloaded a binary distribution of ShapeWorks.
 
-There is currently one python example included.  To run it you will
-need python3 with a few packages.  The easist way to install them is
-to run
+To use:
 
-source ./conda_installs.sh
+1. Download and install the "Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019." :
 
-Then, to run the example:
+https://aka.ms/vs/16/release/vc_redist.x64.exe
 
-cd Examples/Python
-python3 ellipsoidMain.py
+2. Download and install Anaconda for Windows:
+
+https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe
+
+3. Copy "C:\Program Files\ShapeWorks\Examples" to another location
+
+4. Open "Anaconda Prompt"
+
+5. CD to "C:\Program Files\ShapeWorks"
+
+6. Run "conda_installs.bat"
+
+7. CD to your copied Examples\Python location
+
+8. Run "python ellipsoidMain.py"
+
