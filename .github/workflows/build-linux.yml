@@ -11,8 +11,15 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
+    - name: Cache dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/install.tar.gz
+	key: ${{ runner.os }}-node
+    - name: Build dependencies
+      run: .github/workflows/build_dependencies.sh
     - name: cmake
-      run: mkdir build && cd build && cmake ..
+      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DSHAPEWORKS_SUPERBUILD=OFF ..
     - name: make
       run: cd build && make
     - name: make test
