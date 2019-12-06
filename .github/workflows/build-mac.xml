@@ -1,6 +1,6 @@
 name: Mac Build
 
-on: pull_request
+on: push
 
 jobs:
   build:
