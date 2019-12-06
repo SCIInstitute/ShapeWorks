@@ -1,6 +1,6 @@
-name: C/C++ CI
+name: Mac Build
 
-on: [pull_request]
+on: pull_request
 
 jobs:
   build:
