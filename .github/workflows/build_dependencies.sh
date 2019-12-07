@@ -3,7 +3,7 @@
 INSTALL_DIR=$HOME/install
 BUILD_DIR=$HOME/build
 
-if [ -f "$HOME/install.tar.gz" ]; then
+if [ -d "$HOME/install" ]; then
     echo "Dependencies already build, unpacking"
     cd $HOME
     tar -xzvf install.tar.gz
