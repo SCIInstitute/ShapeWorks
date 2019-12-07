@@ -4,7 +4,7 @@ INSTALL_DIR=$HOME/install
 BUILD_DIR=$HOME/build
 
 if [ -d "$HOME/install" ]; then
-    echo "Dependencies already built”
+    echo "Dependencies already built"
     exit 0
 else
     echo “No cached dependencies, rebuilding”
@@ -236,4 +236,3 @@ echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build ShapeWorks and necessary dependencies
 (time build_all 2>&1) 2>&1 | tee shapeworks_superbuild.log
-
