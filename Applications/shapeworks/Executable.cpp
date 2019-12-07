@@ -19,7 +19,6 @@ void Executable::buildParser()
 // constructor
 Executable::Executable()
 {
-  std::cout << "Shapeworks executable ctor...\n";
   buildParser();
 }
 
@@ -32,32 +31,47 @@ void Executable::addCommand(Command &command)
   std::cout << "Adding " << command.name() << "...\n";
   commands.insert(std::pair<std::string, Command&>(command.name(),command));
   parser.epilog(parser.epilog() + "\n\t" + command.name() + ": " + command.desc());
-  std::cout << "Added!\n";
+}
+
+int Executable::run(std::vector<std::string> arguments)
+{
+  bool retval = 0;
+  while (!retval && !arguments.empty())
+  {
+    auto cmd = commands.find(arguments[0]);
+    if (cmd != commands.end()) {
+      std::cout << "Executing " << cmd->first << "...\n";
+      auto args = std::vector<std::string>(arguments.begin() + 1, arguments.end());
+      arguments = cmd->second.parse_args(args);
+      retval = cmd->second.run();
+    }
+    else {
+      std::stringstream ss;
+      ss << "\tunknown arguments: " << std::endl;
+      for (auto arg : parser.args())
+        ss << arg << ", ";
+      throw std::runtime_error("Unknown arguments or command '" + arguments[0] + "' not found.\n");
+    }
+  }
+
+  return retval;
 }
 
 int Executable::run(int argc, char const *const *argv)
 {
-  std::cout << "Executable::run...\n";
   const optparse::Values options = parser.parse_args(argc, argv);
   
   // shapeworks global options
   // todo: handle --quiet, --verbose, whatever else is global
   
-  if (!parser.args().empty())
+  if (parser.args().empty())
   {
-    auto cmd = commands.find(parser.args()[0]);
-    if (cmd != commands.end()) {
-      std::cout << "Executing " << cmd->first << "...\n";
-      return cmd->second.run(std::vector<std::string>(parser.args().begin() + 1, parser.args().end()));
-    }
-    else {
-      throw std::runtime_error("Command '" + parser.args()[0] + " not found.\n");
-    }
+    std::cout << "no command specified \n";
+    parser.print_help(); // prints available commands
+    return 1;
   }
 
-  std::cout << "no command specified, usage: \n";
-  parser.print_help(); //<ctc> should print all commands as epilog ([] check this)
-  return 0;
+  return run(parser.args());
 }
 
 

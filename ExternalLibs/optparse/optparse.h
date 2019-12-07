@@ -120,8 +120,6 @@ namespace optparse
 
         const std::string &operator[](const std::string &d) const
         {
-            std::cout << "const Values.operator[](" << d << ")...\n";
-            //return _map.at(d); //<ctc> throws an exception if option isn't set (C++11), rather than silently returning an empty string
             std::map<std::string, std::string>::const_iterator it = _map.find(d);
             static const std::string empty = "";
             return (it != _map.end()) ? it->second : empty;
@@ -129,9 +127,7 @@ namespace optparse
 
         std::string &operator[](const std::string &d)
         {
-          std::cout << "Values.operator[](" << d << ")...\n";
-          //return _map.at(d);  //<ctc> throw an exception if option isn't set (C++11), rather than silently returning an empty string
-          return _map[d];
+            return _map[d];
         }
 
         bool is_set(const std::string &d) const
@@ -801,7 +797,6 @@ namespace optparse
             std::string dest_fallback;
             for (std::vector<std::string>::const_iterator it = opt.begin(); it != opt.end(); ++it)
             {
-              //<ctc> 
                 if (it->substr(0, 2) == "--")
                 {
                     const std::string s = it->substr(2);
@@ -1247,6 +1242,7 @@ namespace optparse
                                          const std::vector<std::string> &v)
         {
             parser._remaining.assign(v.begin(), v.end());
+            parser._leftover.clear();
 
             if (parser.add_version_option() and not parser.version().empty())
             {

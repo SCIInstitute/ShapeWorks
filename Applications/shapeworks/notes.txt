@@ -4,6 +4,17 @@ Notes below identify command name changes and any parameter name changes, which
 have been intentionally minimized in order to facilite upgrading existing
 scripts and python apps that simply call the external executables.
 
+To enable postfix commands (a cmd uses results from the previous cmd), we would load infile or use prev results to call next function. This behavior has been simpler than expected to implement, with the default behaviour when no infile is specified (and the whole thing is a no-op if no output file is specified for the last command).
+[] implement postfix commands using...
+   ...creation of a static image shared by (say) image commands in order for the results to be shared
+   ...or optionally share results through commands or executable class
+   All of this could complicate matters to some degree, so we should make sure this is an important feature before creating it
+   To implement postfix commands only the first one would need an inFilenae and only the last one would need an outFilename... just need to figure out where to keep the Image associated with a given run. Maybe Executable? In this case, infile and outfile can actually be generic to the executable... but maybe that's getting ahead of ourselves since these might be different file types... potentially dangerous and buggy.
+
+works! simple example:
+  shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
+
+
 We should also create example Python and C++ apps that show using the API
 directly.
 
@@ -11,4 +22,6 @@ These notes also indicate duplicated functionality that has been discovered.
 
 - AntiAliasing -> shapeworks antialias
  o ShapeWorksGroom class duplicates this functionality, has different defaults
+
+
 

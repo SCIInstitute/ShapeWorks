@@ -14,16 +14,12 @@ namespace Shapeworks {
 
 class Command {
 public:
-  Command()
-  {
-    std::cout << "Command default ctor...\n";
-  }
-
   const std::string name() const { return parser.prog(); }
   const std::string usage() const { return parser.get_usage(); }  // <ctc> are usage and desc necessary functions ([] double-check)
   const std::string desc() const { return parser.description(); }
 
-  int run(const std::vector<std::string> &arguments);
+  std::vector<std::string> parse_args(const std::vector<std::string> &arguments);
+  int run();
 
   //friend std::ostream& operator<<(std::ostream& os, const Command &cmd); //<ctc> why doesn't this work (a scope issue?)
 
@@ -42,7 +38,7 @@ private:
     
 protected:
   optparse::OptionParser parser;
-  
+  optparse::Values options;
 };
 
 

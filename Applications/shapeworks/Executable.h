@@ -18,10 +18,11 @@ public:
   int run(int argc, char const *const *argv);
 
 private:
-  optparse::OptionParser parser;
   void buildParser();
+  optparse::OptionParser parser;
   std::map<std::string, Command&> commands;
 
+  int run(std::vector<std::string> arguments);
 };
 
 

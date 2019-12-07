@@ -38,6 +38,7 @@ bool Image::write(const std::string &outFilename)
   writer->SetInput(this->image);
   writer->SetFileName(outFilename);
 
+  //<ctc> todo: check for empty filename, and do something more sensible if an exception is thrown -- otherwise there's an infinite loop!
   try
   {
     writer->Update();
