@@ -38,7 +38,7 @@ usage()
   echo "  --clean                 : Remove all build directories and clone implicit dependencies."
   echo "  --no-gui                : Do not build the ShapeWorks gui applicaitons, which require Qt."
   echo "                          : The GUI is built by default if qmake >= $QT_MIN_VER is found in the path."
-  echo "  --with-studio           : Build ShapeWorksStudio (default off)."
+  echo "  --with-studio           : Build ShapeWorksStudio"
   echo "  -b,--build-dir=<path>   : Build directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)."
   echo "                          : By default uses a subdirectory of the current directory called 'build'."
   echo "  -i,--install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)."
