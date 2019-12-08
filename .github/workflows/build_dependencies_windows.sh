@@ -13,7 +13,7 @@ BUILD_DIR=`pwd`/bdeps
 BUILD_CLEAN=0
 NUM_PROCS=8
 BUILD_GUI=1
-BUILD_STUDIO=0
+BUILD_STUDIO=1
 BUILD_LOG="shapeworks_superbuild.log"
 VXL_VER="v2.0.2"
 VTK_VER="v8.2.0"
@@ -36,7 +36,7 @@ build_vxl()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 #  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DVXL_USE_DCMTK:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+  cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
   cmake --build . --config Release || exit 1
   cmake --build . --config Release --target install
 
@@ -53,7 +53,7 @@ build_vtk()
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ..
+  cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ..
   cmake --build . --config Release || exit 1
   cmake --build . --config Release --target install
 
@@ -76,7 +76,10 @@ build_itk()
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+#  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+
+  cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${INSTALL_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+
   cmake --build . --config Release || exit 1
   cmake --build . --config Release --target install
 
@@ -86,12 +89,6 @@ build_itk()
 
 build_all()
 {
-  ## create build and install directories
-  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/build;     fi
-  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/install; fi
-  mkdir -p ${BUILD_DIR}
-  mkdir -p ${INSTALL_DIR}
-
   ## build dependencies if their locations were not specified
   if [[ -z $VXL_DIR ]]; then
     build_vxl
@@ -104,7 +101,6 @@ build_all()
   if [[ -z $ITK_DIR ]]; then
     build_itk
   fi
-
 
 #  build_shapeworks
 }
