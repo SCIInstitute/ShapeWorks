@@ -2,6 +2,8 @@
 
 INSTALL_DIR=$1
 
+cd /d/a/
+
 BUILD_DIR=`pwd`/bdeps
 
 
