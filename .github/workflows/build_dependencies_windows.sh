@@ -3,9 +3,9 @@
 INSTALL_DIR=$1
 
 cd /d/a/
-
+mkdir bdeps
 BUILD_DIR=`pwd`/bdeps
-
+INSTALL_DIR=
 
 #set -v   #verbose execution for debugging
 
@@ -26,7 +26,8 @@ QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever wa
 build_vxl()
 {
   echo "## Building vxl..."
-  cd ${BUILD_DIR}
+  cd /d/a/ShapeWorks/deps
+  d:\a\ShapeWorks\deps  
   git clone https://github.com/vxl/vxl.git
   cd vxl
   # They fixed the VS compilation problem the day after the v2.0.2 release.
