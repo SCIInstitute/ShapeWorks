@@ -2,7 +2,7 @@
 
 INSTALL_DIR=$1
 
-BUILD_DIR=`pwd`/build
+BUILD_DIR=`pwd`/bdeps
 
 
 #set -v   #verbose execution for debugging
