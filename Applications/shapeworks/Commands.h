@@ -4,7 +4,8 @@
 
 namespace Shapeworks {
 
-class Antialias : public Command
+///////////////////////////////////////////////////////////////////////////////
+class Antialias : public ImageCommand
 {
 public:
   static Antialias& getCommand()
@@ -23,8 +24,33 @@ public:
 
 private:
   Antialias() { buildParser(); } // purposely private ctor so only the single instance can be retrieved
-  virtual void buildParser();
-  virtual int execute(const optparse::Values options);
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Smoothmesh : public MeshCommand
+{
+public:
+  static Smoothmesh& getCommand()
+  {
+    static Smoothmesh instance;
+
+    /*debug stuff*/
+    std::cout << "created Smoothmesh command: \n\tname: " << instance.name() << "\n\tdesc: " << instance.desc()
+              << "\n\tusage: " << instance.usage() << std::endl;
+    
+
+    /*end debug stuff*/
+
+    return instance;
+  }
+
+private:
+  Smoothmesh() { buildParser(); } // purposely private ctor so only the single instance can be retrieved
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 
 };
 

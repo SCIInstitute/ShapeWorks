@@ -158,9 +158,9 @@ else()
     MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
   ENDIF()
 
-  if(USE_OPENMP)
+  if(NOT APPLE AND USE_OPENMP)
     find_package(OPENMP REQUIRED)
-  endif(USE_OPENMP)
+  endif()
 
   if(APPLE)
     set(CMAKE_INSTALL_RPATH "@executable_path/../lib")

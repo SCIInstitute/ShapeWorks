@@ -2,6 +2,7 @@
 
 namespace Shapeworks {
 
+///////////////////////////////////////////////////////////////////////////////
 void Executable::buildParser()
 {
   parser.description("Unified Shapeworks executable for all commands.");
@@ -16,12 +17,13 @@ void Executable::buildParser()
   parser.add_option("-q", "--quiet").action("store_false").dest("verbose").set_default("1").help("don't print status messages");
 }
 
-// constructor
+///////////////////////////////////////////////////////////////////////////////
 Executable::Executable()
 {
   buildParser();
 }
 
+///////////////////////////////////////////////////////////////////////////////
 void Executable::addCommand(Command &command)
 {
   auto cmdkey = commands.find(command.name());
@@ -33,7 +35,8 @@ void Executable::addCommand(Command &command)
   parser.epilog(parser.epilog() + "\n\t" + command.name() + ": " + command.desc());
 }
 
-int Executable::run(std::vector<std::string> arguments)
+///////////////////////////////////////////////////////////////////////////////
+int Executable::run(std::vector<std::string> arguments, SharedCommandData &sharedData)
 {
   bool retval = 0;
   while (!retval && !arguments.empty())
@@ -43,7 +46,7 @@ int Executable::run(std::vector<std::string> arguments)
       std::cout << "Executing " << cmd->first << "...\n";
       auto args = std::vector<std::string>(arguments.begin() + 1, arguments.end());
       arguments = cmd->second.parse_args(args);
-      retval = cmd->second.run();
+      retval = cmd->second.run(sharedData);
     }
     else {
       std::stringstream ss;
@@ -57,13 +60,14 @@ int Executable::run(std::vector<std::string> arguments)
   return retval;
 }
 
+///////////////////////////////////////////////////////////////////////////////
 int Executable::run(int argc, char const *const *argv)
 {
   const optparse::Values options = parser.parse_args(argc, argv);
   
   // shapeworks global options
   // todo: handle --quiet, --verbose, whatever else is global
-  
+
   if (parser.args().empty())
   {
     std::cout << "no command specified \n";
@@ -71,7 +75,9 @@ int Executable::run(int argc, char const *const *argv)
     return 1;
   }
 
-  return run(parser.args());
+  // items used for successive operations by commands
+  SharedCommandData sharedData;
+  return run(parser.args(), sharedData);
 }
 
 

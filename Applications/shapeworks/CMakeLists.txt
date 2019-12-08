@@ -10,6 +10,7 @@ target_link_libraries(shapeworks
   ${ITK_LIBRARIES}
   Utils
   Image
+  Mesh
   )
 
 # Install

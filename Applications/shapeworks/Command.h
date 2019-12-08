@@ -5,6 +5,7 @@
  */
 
 #include "OptionParser.h"
+#include "SharedCommandData.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -15,32 +16,36 @@ namespace Shapeworks {
 class Command {
 public:
   const std::string name() const { return parser.prog(); }
-  const std::string usage() const { return parser.get_usage(); }  // <ctc> are usage and desc necessary functions ([] double-check)
+  const std::string usage() const { return parser.get_usage(); }
   const std::string desc() const { return parser.description(); }
 
   std::vector<std::string> parse_args(const std::vector<std::string> &arguments);
-  int run();
-
-  //friend std::ostream& operator<<(std::ostream& os, const Command &cmd); //<ctc> why doesn't this work (a scope issue?)
+  int run(SharedCommandData &sharedData);
 
 private:
-  virtual void buildParser()
-  {
-    parser.prog("noop").description("Default (noop) command.");
-  }
+  virtual bool read(const std::string inFilename, SharedCommandData &sharedData) = 0;
+  virtual bool write(const std::string outFilename, SharedCommandData &sharedData) = 0;
+  virtual int execute(const optparse::Values &options, SharedCommandData &sharedData) = 0;
 
-  virtual int execute(const optparse::Values options) = 0;  // <ctc> make this pure virtual so there is no default command
-  // {
-  //   // note: throws an exception or returns EXIT_FAILURE if there is an error
-  //   std::cout << "shapeworks default command (noop)." << std::endl;
-  //   return EXIT_SUCCESS;
-  // }
-    
 protected:
+  virtual void buildParser(); // derived classes should specialize and call this as well
+
   optparse::OptionParser parser;
-  optparse::Values options;
 };
 
+class ImageCommand : public Command
+{
+private:
+  bool read(const std::string inFilename, SharedCommandData &sharedData) override;
+  bool write(const std::string outFilename, SharedCommandData &sharedData) override;
+};
+
+class MeshCommand : public Command
+{
+private:
+  bool read(const std::string inFilename, SharedCommandData &sharedData) override;
+  bool write(const std::string outFilename, SharedCommandData &sharedData) override;
+};
 
 }; // Shapeworks
 

@@ -7,8 +7,15 @@
 
 namespace Shapeworks {
 
+///////////////////////////////////////////////////////////////////////////////
 bool Image::read(const std::string &inFilename)
 {
+  if (inFilename.empty())
+  {
+    std::cerr << "Empty filename passed to read; returning false." << std::endl;
+    return false;
+  }
+
   typedef itk::ImageFileReader<ImageType> ReaderType;
 
   ReaderType::Pointer reader = ReaderType::New();
@@ -24,13 +31,19 @@ bool Image::read(const std::string &inFilename)
     return false;
   }
 
+  std::cout << "Successfully read image " << inFilename << std::endl;
   this->image = reader->GetOutput();
   return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
 bool Image::write(const std::string &outFilename)
 {
-  if (!this->image) return false;
+  if (!this->image)
+  {
+    std::cerr << "No image to write, so returning false." << std::endl;
+    return false;
+  }
 
   typedef itk::ImageFileWriter<ImageType> WriterType;
 
@@ -50,13 +63,19 @@ bool Image::write(const std::string &outFilename)
     return false;
   }
 
+  std::cout << "Successfully wrote image " << outFilename << std::endl;
   return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
 bool Image::antialias(float maxRMSErr, int numIter)
 {
-  if (!this->image) return false;
-
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+  
   typedef itk::AntiAliasBinaryImageFilter<ImageType, ImageType> FilterType;
   FilterType::Pointer antialiasFilter = FilterType::New();
   antialiasFilter->SetInput(this->image);
@@ -74,6 +93,7 @@ bool Image::antialias(float maxRMSErr, int numIter)
     return false;
   }
 
+  std::cout << "Antialias filter succeeded!\n";
   this->image = antialiasFilter->GetOutput();
   return true;
 }

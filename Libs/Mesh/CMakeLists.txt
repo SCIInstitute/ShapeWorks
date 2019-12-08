@@ -1,14 +1,35 @@
-FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.h ./PreviewMeshQC/*.cpp)
-set(fim_v4_sources meshFIM.cpp)
+# Build
+FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.cpp)
+set(Mesh_sources
+  Mesh.cpp
+  meshFIM.cpp
+  )
 add_library(Mesh STATIC
+  ${Mesh_sources}
   ${PreviewMeshQC_sources}
-  ${fim_v4_sources}
   )
 target_include_directories(Mesh PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
   $<INSTALL_INTERFACE:include>)
+
+# Install
+FILE(GLOB PreviewMeshQC_headers ./PreviewMeshQC/*.h)
+set(Mesh_headers
+  Mesh.h
+  MeshFIM.h
+  "${PreviewMeshQC_headers}"
+  )
+set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
+  "${Mesh_headers}"
+  )
 target_link_libraries(Mesh trimesh2)
+install(TARGETS Mesh
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION lib
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+  )
 
 ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx )
 TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} ${VTK_LIBRARIES} Mesh tinyxml vgl vgl_algo)

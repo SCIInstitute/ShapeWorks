@@ -22,7 +22,7 @@ private:
   optparse::OptionParser parser;
   std::map<std::string, Command&> commands;
 
-  int run(std::vector<std::string> arguments);
+  int run(std::vector<std::string> arguments, SharedCommandData &sharedData);
 };
 
 

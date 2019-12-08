@@ -152,6 +152,12 @@ namespace optparse
             }
         }
 
+        // clear all values in this map
+        void clear()
+        {
+          _map.clear();
+        }
+
         Value get(const std::string &d) const
         {
             return (is_set(d)) ? Value((*this)[d]) : Value();
@@ -850,7 +856,13 @@ namespace optparse
 
         Values &parse_args(const std::vector<std::string> &arguments)
         {
+            _values.clear(); // clear so there are no leftover options from previous runs
             return detail::parse_args_helper(*this, arguments);
+        }
+
+        const Values &get_parsed_options() const
+        {
+          return _values;
         }
 
         template<typename InputIterator>
