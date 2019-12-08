@@ -18,6 +18,15 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
 
+    - name: Cache dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/install
+        key: ${{ runner.os }}-node
+
+    - name: Build dependencies
+      run: .github/workflows/build_dependencies_windows.sh
+
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
