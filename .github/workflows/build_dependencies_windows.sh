@@ -2,10 +2,9 @@
 
 INSTALL_DIR=$1
 
+BUILD_DIR=/d/a/bdeps
+mkdir $BUILD_DIR
 cd /d/a/
-mkdir bdeps
-BUILD_DIR=`pwd`/bdeps
-INSTALL_DIR=
 
 #set -v   #verbose execution for debugging
 
@@ -26,8 +25,7 @@ QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever wa
 build_vxl()
 {
   echo "## Building vxl..."
-  cd /d/a/ShapeWorks/deps
-  d:\a\ShapeWorks\deps  
+  cd $INSTALL_DIR
   git clone https://github.com/vxl/vxl.git
   cd vxl
   # They fixed the VS compilation problem the day after the v2.0.2 release.
@@ -79,7 +77,7 @@ build_itk()
   mkdir -p build && cd build
 #  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
 
-  cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${INSTALL_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+  cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${INSTALL_DIR}\lib\cmake\vtk-8.2" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
 
   cmake --build . --config Release || exit 1
   cmake --build . --config Release --target install
