@@ -25,7 +25,8 @@ QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever wa
 build_vxl()
 {
   echo "## Building vxl..."
-  cd $INSTALL_DIR
+  # cannot use $INSTALL_DIR here as it's a windows style path
+  cd /d/a/ShapeWorks/deps
   git clone https://github.com/vxl/vxl.git
   cd vxl
   # They fixed the VS compilation problem the day after the v2.0.2 release.
