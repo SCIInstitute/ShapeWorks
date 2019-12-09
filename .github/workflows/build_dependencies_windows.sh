@@ -2,8 +2,12 @@
 
 INSTALL_DIR=$1
 
+INSTALL_MSYS_DIR="/d/a/ShapeWorks/deps"
+
 BUILD_DIR=/d/a/bdeps
 mkdir $BUILD_DIR
+mkdir $INSTALL_MSYS_DIR
+
 cd /d/a/
 
 #set -v   #verbose execution for debugging
@@ -26,7 +30,7 @@ build_vxl()
 {
   echo "## Building vxl..."
   # cannot use $INSTALL_DIR here as it's a windows style path
-  cd /d/a/ShapeWorks/deps
+  cd $INSTALL_MSYS_DIR
   git clone https://github.com/vxl/vxl.git
   cd vxl
   # They fixed the VS compilation problem the day after the v2.0.2 release.
