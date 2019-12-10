@@ -51,6 +51,10 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
+    - name: Copy Libraries
+      working-directory: ${{runner.workspace}}/build
+      run: copy ${{runner.workspace}}\deps\lib\*.dll ${{runner.workspace}}\build\bin\Release
+    
     - uses: actions/upload-artifact@v1
       with:
         name: artifact
