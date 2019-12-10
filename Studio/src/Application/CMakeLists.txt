@@ -32,6 +32,20 @@ if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 endif()
 
+
+if(WIN32)
+  find_program(WINDEPLOYQT_EXE
+    HINTS ${Qt5_ROOT} ${Qt5_ROOT}/bin
+    NAMES windeployqt.exe
+    )
+  if(WINDEPLOYQT_EXE MATCHES "NOTFOUND")
+    message(FATAL_ERROR "windeployqt.exe is required to build the installer. Please ensure that it is installed and in your path. It should be found within the Qt5 install path.")
+  endif()
+  set(WINDEPLOYQT ${WINDEPLOYQT_EXE} CACHE INTERNAL "windeployqt executable")
+  mark_as_advanced(WINDEPLOYQT)
+endif()
+
+
 FILE(GLOB STUDIO_UI  */*.ui)
 QT5_WRAP_UI(UI_SRC ${STUDIO_UI})
 FILE(GLOB UI_RESOURCES_RCC Resources/*.qrc)
@@ -88,6 +102,21 @@ ADD_EXECUTABLE( ShapeWorksStudio MACOSX_BUNDLE ${WinConsole}
   ${STUDIO_ICNS}
   ${STUDIO_RSCS}
   )
+
+
+
+if(WIN32)
+  message(STATUS "Setting ${WINDEPLOYQT} command.")
+  # start setting up install process by copying relevant DLLs
+  add_custom_command(TARGET ShapeWorksStudio
+    POST_BUILD
+    # copy Qt libs
+    COMMAND ${WINDEPLOYQT} ARGS --verbose 5 -core -widgets -gui -sql
+                                --libdir $<TARGET_FILE_DIR:ShapeWorksStudio>
+                                $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
+  )
+endif(WIN32)
+
 
 IF(APPLE)
   SET_TARGET_PROPERTIES(ShapeWorksStudio PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Info.plist.in)
