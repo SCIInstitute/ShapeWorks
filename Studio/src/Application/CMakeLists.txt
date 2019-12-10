@@ -115,6 +115,24 @@ if(WIN32)
                                 --libdir $<TARGET_FILE_DIR:ShapeWorksStudio>
                                 $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
   )
+  foreach(itk_lib ${ITK_LIBRARIES})
+    add_custom_command(TARGET ShapeWorksStudio
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${ITK_DIR}/../../lib/${CMAKE_SHARED_LIBRARY_PREFIX}${itk_lib}${MAKE_SHARED_LIBRARY_SUFFIX}
+      $<TARGET_FILE_DIR:ShapeWorksStudio>
+      )
+  endforeach(itk_lib)
+
+  foreach(vtk_lib ${VTK_LIBRARIES})
+    add_custom_command(TARGET ShapeWorksStudio
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${VTK_DIR}/../../lib/${CMAKE_SHARED_LIBRARY_PREFIX}${vtk_lib}${MAKE_SHARED_LIBRARY_SUFFIX}
+      $<TARGET_FILE_DIR:ShapeWorksStudio>
+      )
+  endforeach(vtk_lib)
+
 endif(WIN32)
 
 
