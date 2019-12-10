@@ -32,10 +32,12 @@ if (NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 endif()
 
+get_filename_component(Qt5_HOME "${Qt5_DIR}/../../.." REALPATH)
+
 
 if(WIN32)
   find_program(WINDEPLOYQT_EXE
-    HINTS ${Qt5_ROOT} ${Qt5_ROOT}/bin
+    HINTS ${Qt5_HOME} ${Qt5_HOME}/bin
     NAMES windeployqt.exe
     )
   if(WINDEPLOYQT_EXE MATCHES "NOTFOUND")
@@ -119,7 +121,7 @@ if(WIN32)
     add_custom_command(TARGET ShapeWorksStudio
       POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${ITK_DIR}/../../lib/${CMAKE_SHARED_LIBRARY_PREFIX}${itk_lib}${MAKE_SHARED_LIBRARY_SUFFIX}
+      ${ITK_DIR}/../../lib/${CMAKE_SHARED_LIBRARY_PREFIX}${itk_lib}${CMAKE_SHARED_LIBRARY_SUFFIX}
       $<TARGET_FILE_DIR:ShapeWorksStudio>
       )
   endforeach(itk_lib)
@@ -128,7 +130,7 @@ if(WIN32)
     add_custom_command(TARGET ShapeWorksStudio
       POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${VTK_DIR}/../../lib/${CMAKE_SHARED_LIBRARY_PREFIX}${vtk_lib}${MAKE_SHARED_LIBRARY_SUFFIX}
+      ${VTK_DIR}/../../lib/${CMAKE_SHARED_LIBRARY_PREFIX}${vtk_lib}${CMAKE_SHARED_LIBRARY_SUFFIX}
       $<TARGET_FILE_DIR:ShapeWorksStudio>
       )
   endforeach(vtk_lib)
