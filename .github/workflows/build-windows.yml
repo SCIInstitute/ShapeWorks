@@ -30,10 +30,10 @@ jobs:
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: .github/workflows/build_dependencies_windows.sh "${{runner.workspace}}\deps"
 
-    - uses: actions/upload-artifact@v1
-      with:
-        name: deps
-        path: ${{runner.workspace}}\deps
+    # - uses: actions/upload-artifact@v1
+    #   with:
+    #     name: deps
+    #     path: ${{runner.workspace}}\deps
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -58,7 +58,7 @@ jobs:
 
     - name: Copy Libraries
       working-directory: ${{runner.workspace}}/build
-      run: xcopy /f ${{runner.workspace}}\deps\lib\*.dll ${{runner.workspace}}\build\bin\Release
+      run: xcopy /f ${{runner.workspace}}\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
     
     - uses: actions/upload-artifact@v1
       with:
