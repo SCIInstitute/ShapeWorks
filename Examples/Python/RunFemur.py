@@ -100,13 +100,13 @@ def Run_Femur_Pipline(args):
         '''
         cp_x1 = 100
         cp_y1 = 100 
-        cp_z1 = -50
+        cp_z1 = -38
         cp_x2 = -100 
         cp_y2 = 100
-        cp_z2 = -50
+        cp_z2 = -38
         cp_x3 = 100
         cp_y3 = -100
-        cp_z3 = -50
+        cp_z3 = -38
 
 
         """
@@ -314,10 +314,7 @@ def Run_Femur_Pipline(args):
         else:
             dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
-    #debug 
-    # dtFiles = ['TestFemur/PrepOutput/distance_transforms/n03_L_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n02_L_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n04_L_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n03_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n02_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/n04_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd', 'TestFemur/PrepOutput/distance_transforms/N15_51053_R_femur.isores.pad.com.aligned.clipped.cropped.tpSmoothDT.nrrd']
-
-
+    
     """
 
     ## OPTIMIZE : Particle Based Optimization
@@ -348,7 +345,6 @@ def Run_Femur_Pipline(args):
         os.makedirs(pointDir)
 
     if args.use_single_scale:
-        input("Using single scale")
         parameterDictionary = {
             "number_of_particles" : 1024, 
             "use_normals": 0,
@@ -363,8 +359,8 @@ def Run_Femur_Pipline(args):
             "domains_per_shape" : 1,
             "relative_weighting" : 10,
             "initial_relative_weighting" : 1,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
+            "procrustes_interval" : 1,
+            "procrustes_scaling" : 1,
             "save_init_splits" : 1,
             "debug_projection" : 0,
             "verbosity" : 3,
@@ -392,8 +388,8 @@ def Run_Femur_Pipline(args):
             "domains_per_shape" : 1,
             "relative_weighting" : 10,
             "initial_relative_weighting" : 1,
-            "procrustes_interval" : 0, 
-            "procrustes_scaling" : 0,
+            "procrustes_interval" : 1, 
+            "procrustes_scaling" : 1,
             "save_init_splits" : 1, 
             "debug_projection" : 0,
             "verbosity" : 3,
