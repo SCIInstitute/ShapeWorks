@@ -5,6 +5,15 @@
 #ifndef __MapFilter_HXX
 #define __MapFilter_HXX
 
+// constructor
+template<class TFunctor,class TInput,class TOutput>
+MapFilter<TFunctor,TInput,TOutput>::MapFilter()
+{
+  // disable dynamic multithreading (ITKv5)
+  this->DynamicMultiThreadingOff();
+}
+
+
 template< class TFunctor,
           class TInput,
           class TOutput

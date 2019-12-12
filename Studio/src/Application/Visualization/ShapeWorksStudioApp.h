@@ -37,11 +37,12 @@ public:
   ShapeWorksStudioApp( int argc, char** argv );
   ~ShapeWorksStudioApp();
 
-  virtual void closeEvent( QCloseEvent* event );
+  void closeEvent( QCloseEvent* event ) override;
 
   void initialize_vtk();
   void import_files( QStringList file_names );
   void open_project( QString filename );
+
 
 public Q_SLOTS:
 
@@ -79,7 +80,9 @@ public Q_SLOTS:
   void handle_slider_update();
 
   void handle_project_changed();
+  void handle_points_changed();
   void handle_groom_complete();
+  void handle_optimize_start();
   void handle_optimize_complete();
   void handle_reconstruction_complete();
 

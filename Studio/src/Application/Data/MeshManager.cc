@@ -49,13 +49,13 @@ void MeshManager::generateMesh(const vnl_vector<double>& shape)
     connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    size_t tmp_max = this->prefs_.get_preference("num_threads", 100);
+    size_t tmp_max = this->prefs_.get_preference("num_threads", QThread::idealThreadCount());
     if (this->thread_count_ < tmp_max) {
       thread->start();
       this->thread_count_++;
     }
     else {
-      threads_.push_back(thread);
+      this->threads_.push_back(thread);
     }
   }
 }
@@ -72,7 +72,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shap
     polyData = this->meshCache_.getMesh(shape);
     if (!polyData) {
       if (prefs_.get_preference("parallel_enabled", true) &&
-          (this->prefs_.get_preference("num_threads", 100) > 0)) {
+          (this->prefs_.get_preference("num_threads", QThread::idealThreadCount()) > 0)) {
         this->generateMesh(shape);
       }
       else {
@@ -91,7 +91,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shap
 void MeshManager::handle_thread_complete()
 {
   this->thread_count_--;
-  size_t tmp_max = this->prefs_.get_preference("num_threads", 100);
+  size_t tmp_max = this->prefs_.get_preference("num_threads", QThread::idealThreadCount());
   while (!this->threads_.empty() && this->thread_count_ < tmp_max) {
     QThread* thread = this->threads_.back();
     this->threads_.pop_back();

@@ -24,8 +24,8 @@
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
-#endif
 #include <dirent.h>
+#endif
 
 // itk
 #include <itkImageFileReader.h>
@@ -502,6 +502,7 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
 
     // load input shapes
     std::vector < std::string > shapeFiles;
+    std::vector < ImageType::Pointer > images;
     elem = docHandle.FirstChild("inputs").Element();
     if (!elem) {
       std::cerr << "No input files have been specified" << std::endl;
@@ -510,6 +511,16 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
     else {
       inputsBuffer.str(elem->GetText());
       while (inputsBuffer >> filename) {
+
+        if (m_verbosity_level > 1) {
+            std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+        }
+        typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
+                                                                       ImageType > ::New();
+        reader->SetFileName(filename);
+        reader->UpdateLargestPossibleRegion();
+        images.push_back(reader->GetOutput());
+
         shapeFiles.push_back(filename);
       }
       inputsBuffer.clear();
@@ -517,7 +528,7 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
 
       numShapes = shapeFiles.size();
 
-      m_Sampler->SetImageFiles(shapeFiles);
+      m_Sampler->SetImages(images);
 
       int shapeCount = 0;
       typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
@@ -1306,10 +1317,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::Initialize() {
   }
 
   m_disable_checkpointing = true;
-  m_disable_procrustes = true;
-
   m_disable_procrustes = false;
-  m_Procrustes->SetComputeTransformationOn();
+
   if (m_procrustes_interval != 0) { // Initial registration
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
@@ -1320,7 +1329,6 @@ ShapeWorksRunApp < SAMPLERTYPE > ::Initialize() {
     this->WriteTransformFile();
   }
   m_disable_procrustes = true;
-  m_Procrustes->SetComputeTransformationOff();
 
   m_Sampler->GetParticleSystem()->SynchronizePositions();
 

@@ -48,6 +48,7 @@ public:
   void set_show_glyphs( bool show );
   void set_show_surface( bool show );
 
+  void update_points();
   void update_glyph_properties();
 
   int handle_pick( int* click_pos );

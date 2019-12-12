@@ -21,11 +21,6 @@ template<>
 void
 ParticleProcrustesRegistration<3>::RunRegistration(int d)
 {
-    /* PRATEEP */
-    // Do not compute any transformation if already computed.
-    if(m_ComputeTransformation == false) return;
-
-
 
     // DOES NOT Assume all domains have the same number of particles.
     const int totalDomains = m_ParticleSystem->GetNumberOfDomains();

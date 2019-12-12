@@ -1,7 +1,6 @@
 #ifndef STUDIO_GROOM_GROOMTOOL_H
 #define STUDIO_GROOM_GROOMTOOL_H
 
-
 #include <itkeigen/Eigen/Dense>
 #include <itkeigen/Eigen/Sparse>
 
@@ -25,9 +24,9 @@ public:
 
   GroomTool(Preferences& prefs, std::vector<std::string>& files);
   ~GroomTool();
-  
+
   /// set the pointer to the project
-  void set_project( QSharedPointer<Project> project );
+  void set_project(QSharedPointer<Project> project);
 
   void update_preferences();
   void set_preferences();
@@ -42,7 +41,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
 
-  void on_antialias_checkbox_stateChanged( int state );
+  void on_antialias_checkbox_stateChanged(int state);
   void on_blur_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
   void on_skipButton_clicked();
@@ -60,7 +59,7 @@ private:
   QSharedPointer<Project> project_;
   Preferences& preferences_;
   std::vector<std::string>& files_;
-  QGroom * groom_;
+  QGroom* groom_;
 };
 
 #endif /* STUDIO_GROOM_GROOMTOOL_H */

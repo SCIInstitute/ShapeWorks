@@ -29,12 +29,6 @@ void ShapeWorksOptimize::set_inputs(std::vector<ImageType::Pointer> inputs)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksOptimize::set_input_filenames(std::vector<std::string> groomed_filenames)
-{
-  this->m_filenames = groomed_filenames;
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_start_reg(double start_reg)
 {
   this->m_starting_regularization = start_reg;
@@ -85,6 +79,19 @@ void ShapeWorksOptimize::set_verbose(bool verbose)
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksOptimize::stop_optimization()
+{
+  this->aborted_ = true;
+  this->m_Sampler->GetOptimizer()->AbortProcessing();
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksOptimize::get_aborted()
+{
+  return this->aborted_;
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksOptimize::set_cut_planes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes)
 {
   this->cutPlanes_ = cutPlanes;
@@ -120,7 +127,8 @@ void ShapeWorksOptimize::run()
   ///this->ReadOptimizationParameters(fn);
   ///this->SetDebugParameters(fn);
 
-  m_Sampler->SetImageFiles(this->m_filenames);
+  //m_Sampler->SetImageFiles(this->m_filenames);
+  m_Sampler->SetImages(this->getImages());
 
 
   // Set up the optimization process
@@ -366,6 +374,8 @@ void ShapeWorksOptimize::run()
 
  */
 
+  this->localPoints_.clear();
+  this->globalPoints_.clear();
   for (size_t d = 0; d < this->m_Sampler->
        GetParticleSystem()->GetNumberOfDomains(); d++) {
 
@@ -406,10 +416,8 @@ void ShapeWorksOptimize::Initialize()
   }
 
   m_disable_checkpointing = true;
-  m_disable_procrustes = true;
-
   m_disable_procrustes = false;
-  m_Procrustes->SetComputeTransformationOn();
+
   if (m_procrustes_interval != 0) { // Initial registration
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
@@ -420,7 +428,6 @@ void ShapeWorksOptimize::Initialize()
     //this->WriteTransformFile();
   }
   m_disable_procrustes = true;
-  m_Procrustes->SetComputeTransformationOff();
 
   m_Sampler->GetParticleSystem()->SynchronizePositions();
 
@@ -502,6 +509,12 @@ void ShapeWorksOptimize::Initialize()
   std::cerr << "flag split = " << flag_split << "\n";
   std::cerr << "m_verbosity_level = " << m_verbosity_level << "\n";
   while (flag_split) {
+
+    if (this->aborted_)
+    {
+      return;
+    }
+
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
     m_Sampler->GetOptimizer()->StopOptimization();
 

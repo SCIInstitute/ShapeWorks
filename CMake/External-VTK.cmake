@@ -18,6 +18,7 @@ ExternalProject_Add(vtk
     -DBUILD_TESTING:BOOL=OFF
     -DVTK_Group_Web:BOOL=OFF
     -DVTK_Group_Qt:BOOL=${Qt5Core_FOUND}
+    -DQt5_DIR=${Qt5_DIR}
     -DVTK_QT_VERSION=5
     -DVTK_PYTHON_VERSION=3
     -DCMAKE_INSTALL_LIBDIR=lib 

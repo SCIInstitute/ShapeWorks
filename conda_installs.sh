@@ -3,7 +3,7 @@
 #
 
 if [ -z "$PS1" ]; then
-  echo "ERROR: must call this script using \"source ./conda_installs.sh\")"
+  echo "ERROR: must call this script using \"source ./conda_installs.sh\""
   exit 1
 fi
 
@@ -36,8 +36,9 @@ eval "$(conda shell.bash hook)"
 conda activate shapeworks
 
 #install shapeworks deps
+conda install --yes -c anaconda pip # needed in sub-environments or the base env's pip will silently install to base
 conda install --yes -c anaconda geotiff libxrandr-devel-cos6-x86_64 libxinerama-devel-cos6-x86_64 libxcursor-devel-cos6-x86_64 libxi-devel-cos6-x86_64
-conda install --yes -c conda-forge cmake xorg-libx11 libuuid xorg-libsm 
+conda install --yes -c conda-forge ncurses cmake xorg-libx11 libuuid xorg-libsm 
 conda install --yes -c anaconda numpy
 conda install --yes -c conda-forge colorama
 conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
@@ -45,10 +46,6 @@ conda install --yes -c conda-forge requests
 pip install --upgrade pip
 pip install termcolor
 pip install matplotlib
+pip install -e Python/DatasetUtilsPackage # install the local GirderConnector code as a package
 
 conda info
-
-
-
-
-
