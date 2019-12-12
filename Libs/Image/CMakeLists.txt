@@ -58,6 +58,7 @@ add_executable(CropImages CropImages.cxx)
 target_link_libraries(CropImages ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS CropImages  RUNTIME DESTINATION bin)
 
+# <ctc> gotta go!
 add_executable(AntiAliasing AntiAliasing.cxx)
 target_link_libraries(AntiAliasing ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS AntiAliasing  RUNTIME DESTINATION bin)

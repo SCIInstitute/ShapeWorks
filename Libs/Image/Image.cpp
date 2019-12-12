@@ -17,7 +17,6 @@ bool Image::read(const std::string &inFilename)
   }
 
   typedef itk::ImageFileReader<ImageType> ReaderType;
-
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(inFilename);
   try
@@ -44,14 +43,17 @@ bool Image::write(const std::string &outFilename)
     std::cerr << "No image to write, so returning false." << std::endl;
     return false;
   }
+  if (outFilename.empty())
+  {
+    std::cerr << "Empty filename passed to write; returning false." << std::endl;
+    return false;
+  }
 
   typedef itk::ImageFileWriter<ImageType> WriterType;
-
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput(this->image);
   writer->SetFileName(outFilename);
 
-  //<ctc> todo: check for empty filename, and do something more sensible if an exception is thrown -- otherwise there's an infinite loop!
   try
   {
     writer->Update();

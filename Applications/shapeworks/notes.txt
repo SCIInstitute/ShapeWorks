@@ -23,5 +23,4 @@ These notes also indicate duplicated functionality that has been discovered.
 - AntiAliasing -> shapeworks antialias
  o ShapeWorksGroom class duplicates this functionality, has different defaults
 
-
-
+- SmoothMesh -> shapeworks smooth (?)

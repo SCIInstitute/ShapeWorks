@@ -47,6 +47,14 @@ private:
   bool write(const std::string outFilename, SharedCommandData &sharedData) override;
 };
 
+// something like this for a command tghat reads a list of files, compuytes a transform from all of them (or say, the average of the input images), then writes the single results (or lets it be reused for downstream commands)
+class MultiImageCommand : public Command
+{
+private:
+  bool read(const std::string filelist, SharedCommandData &sharedData) override;
+  bool write(const std::string outputFilename, SharedCommandData &sharedData) override;
+};
+
 }; // Shapeworks
 
 

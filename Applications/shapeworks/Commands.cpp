@@ -10,10 +10,9 @@ void Antialias::buildParser()
 {
   const std::string prog = "antialias";
   const std::string usage = "%prog [OPTION]";
-  const std::string version = "%prog 0.1";
   const std::string desc = "antialiases binary volumes";
   const std::string epilog = "";
-  parser.prog(prog).usage(usage).version(version).description(desc).epilog(epilog);
+  parser.prog(prog).usage(usage).description(desc).epilog(epilog);
   
   parser.add_option("--maxRMSError").action("store").type("float").set_default(0.01).help("The maximum RMS error allowed.");
   parser.add_option("--numIterations").action("store").type("int").set_default(50).help("Number of iterations.");
@@ -44,10 +43,9 @@ void Smoothmesh::buildParser()
 {
   const std::string prog = "smoothmesh";
   const std::string usage = "%prog [OPTION]";
-  const std::string version = "%prog 0.1";
   const std::string desc = "smooths meshes";
   const std::string epilog = "";
-  parser.prog(prog).usage(usage).version(version).description(desc).epilog(epilog);
+  parser.prog(prog).usage(usage).description(desc).epilog(epilog);
   
   // TODO
   // parser.add_option("--maxRMSError").action("store").type("float").set_default(0.01).help("The maximum RMS error allowed.");

@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
   //...
   
 /* (* means OptionParser already used, otherwise just argv)
+ Image commands:
  [x] AntiAliasing*
  [] ClipVolume
  [] CloseHoles*
@@ -32,8 +33,37 @@ int main(int argc, char *argv[])
  [] TopologyPreservingSmoothing
  [] WriteImageInfoToText*
  [] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
+
+ Mesh commands:
+ [] smoothmesh
+[] ComputeCurvatureAndCoordFiles.cxx
+[] ... (some of these may not actually be executables)
+ 	ComputeGeodesicDistanceFromVerticesToPoints.cxx 	ComputeGeodesicDistanceToCurve.cxx 	ComputeGeodesicDistanceToLandmark.cxx 	ComputeMeanNormals.cxx
+ComputeMeshGeodesics.cxx 	ComputeRasterizationVolumeOriginAndSize.cxx 	ExtractVertexFeatureFromMesh.cxx 	FillMeshHoles.cxx 	FixCuttingPlanes.cxx
+GenerateBinaryAndDTImagesFromMeshes.cxx 	GenerateFeatureGradientFiles.cxx 	GenerateFidsFiles.cxx 	GenerateFidsFilesFromMeshes.cxx 	GenerateNormalFeaFiles.cxx
+GetFeatureVolume.cxx 	GradientTesting.cxx 	Mesh.cpp 	Mesh.cpp~ 	Mesh.h
+Mesh.h~ 	ParticleBasedSurfaceReconstruction_InputParams.h 	PreviewCmd.cxx 	PreviewMeshQC/ 	ProbeFeatureVolumesAtMeshVertices.cxx
+ProbeNormals.cxx 	ProjectPointsOntoMesh.cxx 	ReconstructMeanSurface.cxx 	ReconstructSamplesAlongPCAModes.cxx 	ReconstructSurface.cxx
+ReflectMesh.cxx 	RemoveFidsDTLeakage.cxx 	SmoothMesh.cxx 	WriteFeatureGradientAsText.cxx 	deprecated/
+fea2vtk.cxx 	itkMultiplyByConstantImageFilter.h 	meshFIM.cpp 	meshFIM.h
+  ...
+
+ Alignment commands:
+ [] ReflectMeshes
+ [] TranslateShapeToImageOrigin
+
+ Optimize commands:
+...
+
+ Analyze commands:
+...
+
+ Utils commands:
+...
+
 */
 
+  
   try {
     shapeworks.run(argc, argv);
   } catch (const std::exception &e) {
