@@ -161,7 +161,6 @@ ParticleEnsembleEntropyFunction<VDimension>
         for (unsigned int i = 0; i < num_samples; i++)
         {
             double val_i = W(i)*W(i) + m_MinimumVariance;
-            std::cerr << i << " : " << val_i << "\n";
             if ( val_i < m_MinimumEigenValue)
                 m_MinimumEigenValue = val_i;
             m_CurrentEnergy += log(val_i);
