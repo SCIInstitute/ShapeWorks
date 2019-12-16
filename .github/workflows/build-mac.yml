@@ -27,12 +27,13 @@ jobs:
 
     - name: Acquire 10.13 SDK
       uses: wei/wget@v1
-      path: $HOME
       with:
+        path: $HOME
         args: -O MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz
 
     - name: Unpack SDK
-      path: $HOME
+      with:
+        path: $HOME
       run: tar -xf MacOSX10.13.sdk.tar.xz
         
     - name: Build dependencies
