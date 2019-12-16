@@ -38,7 +38,7 @@ jobs:
       run: cd build && make test
 
     - name: Create Installer
-      run: package.sh shapeworks-${GITHUB_SHA::8}
+      run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA::8}
 
     - uses: actions/upload-artifact@v1
       with:
