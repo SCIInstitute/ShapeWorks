@@ -16,6 +16,12 @@ jobs:
 
     - uses: actions/checkout@v1
 
+    - name: Acquire 10.13 SDK
+      run: curl -o $HOME/MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz
+
+    - name: Unpack SDK
+      run: cd $HOME && tar -xf MacOSX10.13.sdk.tar.xz
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
 
@@ -24,15 +30,6 @@ jobs:
       with:
         path: ~/install
         key: ${{ runner.os }}-node
-
-    - name: Acquire 10.13 SDK
-      uses: wei/wget@v1
-      with:
-        path: $HOME
-        args: -O MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz
-
-    - name: Unpack SDK
-      run: cd $HOME && tar -xf MacOSX10.13.sdk.tar.xz
         
     - name: Build dependencies
       run: .github/workflows/build_dependencies.sh
