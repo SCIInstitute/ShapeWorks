@@ -46,4 +46,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: artifact
-        path: ${{runner.workspace}}\package\ShapeWorks\shapeworks-${{github.sha}}-mac.zip
+        path: ${{runner.workspace}}/Shapeworks/package/shapeworks-${{github.sha}}-mac.zip
