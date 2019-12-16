@@ -47,4 +47,3 @@ jobs:
       with:
         name: artifact
         path: ${{runner.workspace}}\package\ShapeWorks\shapeworks-${{github.sha}}-mac.zip
-
