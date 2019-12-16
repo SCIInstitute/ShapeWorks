@@ -13,7 +13,7 @@ ROOT=`pwd`
 
 rm -rf "package/$VERSION"
 
-mkdir "package"
+mkdir -p "package/$VERSION"
 
 BASE_LIB=${INSTALL_DIR}/lib
 cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
