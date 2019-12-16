@@ -41,7 +41,7 @@ jobs:
       run: cd build && make install
 
     - name: Create Installer
-      run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA::8} ${GITHUB_WORKSPACE}/shapeworks-install
+      run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA::8} ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - uses: actions/upload-artifact@v1
       with:
