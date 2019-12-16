@@ -37,6 +37,9 @@ jobs:
     - name: make test
       run: cd build && make test
 
+    - name: make install
+      run: cd build && make install
+
     - name: Create Installer
       run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA::8} ${GITHUB_WORKSPACE}/shapeworks-install
 
