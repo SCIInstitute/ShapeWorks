@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Acquire 10.13 SDK
-      run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/10.13/MacOSX10.13.sdk.tar.gz
+      run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
 
     - name: Unpack SDK
       run: cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
