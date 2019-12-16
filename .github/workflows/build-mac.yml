@@ -32,9 +32,7 @@ jobs:
         args: -O MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz
 
     - name: Unpack SDK
-      with:
-        path: $HOME
-      run: tar -xf MacOSX10.13.sdk.tar.xz
+      run: cd $HOME && tar -xf MacOSX10.13.sdk.tar.xz
         
     - name: Build dependencies
       run: .github/workflows/build_dependencies.sh
