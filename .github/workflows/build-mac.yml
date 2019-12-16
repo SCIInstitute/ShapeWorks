@@ -29,7 +29,7 @@ jobs:
       run: .github/workflows/build_dependencies.sh
 
     - name: cmake
-      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON ..
+      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
 
     - name: make
       run: cd build && make -j4
@@ -38,7 +38,7 @@ jobs:
       run: cd build && make test
 
     - name: Create Installer
-      run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA::8}
+      run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA::8} ${GITHUB_WORKSPACE}/shapeworks-install
 
     - uses: actions/upload-artifact@v1
       with:

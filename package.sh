@@ -1,20 +1,23 @@
 #!/bin/bash -x
 
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <version>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <version> <install_dir> <install_dep_dir>"
     exit 1
 fi
 
 VERSION=$1
+INSTALL_DIR=$2
+INSTALL_DEP_DIR=$3
 ROOT=`pwd`
 
 rm -rf "package/$VERSION"
 
 mkdir "package"
 
-BASE_LIB=${PWD}/build/install/lib
-cp -a build/install "package/${VERSION}"
+BASE_LIB=${INSTALL_DIR}/lib
+cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
+cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
