@@ -29,7 +29,7 @@ jobs:
       run: .github/workflows/build_dependencies.sh
 
     - name: cmake
-      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="macosx10.13" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
 
     - name: make
       run: cd build && make -j4
@@ -45,5 +45,5 @@ jobs:
 
     - uses: actions/upload-artifact@v1
       with:
-        name: artifact
-        path: ${{runner.workspace}}/Shapeworks/package/shapeworks-${{github.sha}}-mac.zip
+        name: shapeworks-${{github.sha}}-mac.zip
+        path: ${{runner.workspace}}/Shapeworks/package/shapeworks-${{github.sha}}-mac
