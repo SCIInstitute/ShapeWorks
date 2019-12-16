@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - build_artifacts
   pull_request:
 
 jobs:
@@ -12,19 +13,35 @@ jobs:
     runs-on: macos-latest
     
     steps:
+
     - uses: actions/checkout@v1
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
+
     - name: Cache dependencies
       uses: actions/cache@v1
       with:
         path: ~/install
         key: ${{ runner.os }}-node
+
     - name: Build dependencies
       run: .github/workflows/build_dependencies.sh
+
     - name: cmake
       run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON ..
+
     - name: make
       run: cd build && make -j4
+
     - name: make test
       run: cd build && make test
+
+    - name: Create Installer
+      run: package.sh shapeworks-${GITHUB_SHA::8}
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: artifact
+        path: ${{runner.workspace}}\build\shapeworks-${GITHUB_SHA::8}.zip
+
