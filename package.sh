@@ -15,7 +15,7 @@ rm -rf "package/$VERSION"
 
 mkdir -p "package/$VERSION"
 
-BASE_LIB=${INSTALL_DIR}/lib
+BASE_LIB=${INSTALL_DEP_DIR}/lib
 cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
