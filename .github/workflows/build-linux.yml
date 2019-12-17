@@ -41,7 +41,7 @@ jobs:
       run: cd build && make test
 
     - name: Build Binary Package
-      run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA}-linux ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      run: pwd ; ls ; PATH=$HOME:$PATH ./package.sh shapeworks-${GITHUB_SHA}-linux ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/Shapeworks/package
 
     - uses: actions/upload-artifact@v1
       with:
