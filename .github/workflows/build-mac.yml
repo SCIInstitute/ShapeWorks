@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - build_artifacts
   pull_request:
 
 jobs:
@@ -46,7 +45,7 @@ jobs:
     - name: make install
       run: cd build && make install
 
-    - name: Create Installer
+    - name: Build Binary Package
       run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA}-mac ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - uses: actions/upload-artifact@v1
