@@ -42,3 +42,10 @@ jobs:
 
     - name: Build Binary Package
       run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA}-linux ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: shapeworks-${{github.sha}}-linux
+        path: ${{runner.workspace}}/Shapeworks/package/shapeworks-${{github.sha}}-linux
+
+    
