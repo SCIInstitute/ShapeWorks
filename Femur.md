@@ -5,7 +5,10 @@ ShapeWorks requires a binary volume format for input segmentations so these mesh
 ## Running the Use Case
 The use case is located at: [https://github.com/SCIInstitute/ShapeWorks](https://github.com/SCIInstitute/ShapeWorks)
 
-To run the use case, run FemurMain.py.
+To run the use case, run FemurMain.py with the tags --start_with_image_and_segmentation_data and --use single scale:
+            
+            python FemurMain.py --start_with_image_and_segmentation_data --use_single_scale
+
 This calls RunFemur.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Grooms the images and meshes by calling methods in GroomUtils.py
@@ -51,4 +54,4 @@ Single scale optimization is used with procrustes scaling to factor out size as 
             "use_statistics_in_init" : 0
 
 ## Analyze
-The PBM for the mean and samples and the primary modes of variation are visualized using ShapeWorks View2.
+The PBM for the mean and samples and the primary modes of variation are visualized using ShapeWorks Studio.
