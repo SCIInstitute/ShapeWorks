@@ -25,8 +25,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from GirderConnector import downloadUseCaseData
-
+from DatasetUtils import datasets
 
 def Run_Femur_Pipline(args):
 
@@ -57,7 +56,7 @@ def Run_Femur_Pipline(args):
     if not os.path.exists(filename):
         print("Can't find " + filename + " on the local filesystem.")
         print("Downloading " + filename + " from SCIGirder.")
-        downloadUseCaseData(filename)
+        datasets.downloadDataset(filename)
 
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
