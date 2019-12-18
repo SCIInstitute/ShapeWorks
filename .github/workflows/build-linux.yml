@@ -51,6 +51,6 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: shapeworks-${{github.sha}}-linux
-        path: ${{runner.workspace}}/ShapeWorks/package/shapeworks-${{github.sha}}-linux
+        path: ${{runner.workspace}}/ShapeWorks/package/shapeworks-${{github.sha}}-linux.zip
 
     

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - build_artifacts
   pull_request:
 
 jobs:
@@ -51,4 +52,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: shapeworks-${{github.sha}}-mac
-        path: ${{runner.workspace}}/ShapeWorks/package/shapeworks-${{github.sha}}-mac
+        path: ${{runner.workspace}}/ShapeWorks/package/shapeworks-${{github.sha}}-mac.zip
