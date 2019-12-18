@@ -24,10 +24,10 @@ FunctionEnd
 ; General
 
 ; The name of the installer
-Name "ShapeWorks-5.2.1"
+Name "ShapeWorks-$%SW_VERSION%"
 
 ; The file to write
-OutFile "ShapeWorks-5.2.1-windows.exe"
+OutFile "ShapeWorks-$%SW_VERSION%-windows.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES64\ShapeWorks
