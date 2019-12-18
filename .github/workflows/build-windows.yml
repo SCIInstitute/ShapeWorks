@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - build_artifacts
   pull_request:
 
 env:
@@ -19,6 +20,12 @@ jobs:
 
     - uses: actions/checkout@v1
 
+    - name: Install wget
+      run: choco install curl
+
+    - name: Install NSIS
+      run: curl -L -o ${{runner.workspace}}\nsis.exe http://www.sci.utah.edu/~amorris/NSISPortable_3.04_English.paf.exe
+    
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
 
