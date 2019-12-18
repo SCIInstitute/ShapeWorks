@@ -44,6 +44,9 @@ jobs:
 
     - name: make install
       run: cd build && make install
+      
+    - name: Remove Qt SQL Stuff
+      run: rm /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so
 
     - name: Build Binary Package
       run: pwd ; ls ; PATH=$HOME:$PATH ./package.sh shapeworks-${GITHUB_SHA}-linux ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
