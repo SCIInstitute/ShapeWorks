@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - build_artifacts
   pull_request:
 
 jobs:
