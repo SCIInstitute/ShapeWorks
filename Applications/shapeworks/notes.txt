@@ -24,3 +24,6 @@ These notes also indicate duplicated functionality that has been discovered.
  o ShapeWorksGroom class duplicates this functionality, has different defaults
 
 - SmoothMesh -> shapeworks smooth (?)
+
+- ResampleVolumesToBeIsotropic -> shapeworks newfunction ...
+ o notes go here

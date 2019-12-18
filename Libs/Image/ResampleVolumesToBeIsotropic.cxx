@@ -113,11 +113,14 @@ int main( int argc, char * argv[] )
         transform->SetIdentity();
         resampler->SetTransform( transform );
 
+        // if (binary) ... use a bspline interpolator 
         //typedef itk::LinearInterpolateImageFunction<InternalImageType, double >  InterpolatorType;
         typedef itk::BSplineInterpolateImageFunction<InternalImageType, double, double> InterpolatorType;
         InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
         interpolator->SetSplineOrder(3);
+        //else... use a linear interpolator
+        
         resampler->SetInterpolator( interpolator );
 
         //this is to overcome padding that was occuring after resampling step due to enlargement of size as per input
@@ -157,16 +160,19 @@ int main( int argc, char * argv[] )
 
         resampler->SetSize( outputSize);
 
-        /*Anti aliasing for binary images*/
+        // if (binary) ...  (this whole section just calls this->image.antialias(...)
+        /*Anti aliasing for binary images*/ 
         typedef itk::AntiAliasBinaryImageFilter< InternalImageType, InternalImageType > FilterType;
         FilterType::Pointer antialiasFilter = FilterType::New();
         antialiasFilter->SetInput( reader->GetOutput() );
         antialiasFilter->SetMaximumRMSError( 0.01);
         antialiasFilter->SetNumberOfIterations( 50 );
         antialiasFilter->Update();
+        // endif (binary) ...
 
         /*resampling the binary image*/
-        resampler->SetInput( antialiasFilter->GetOutput() );
+        //resampler->SetInput( antialiasFilter->GetOutput() );
+        resampler->SetInput( this->image );  (because image will have been updated by calling antialias above)
         resampler->Update();
 
         OutputImageType::Pointer resampledImage = resampler->GetOutput();
@@ -179,6 +185,8 @@ int main( int argc, char * argv[] )
         itk::ImageRegionIterator<OutputImageType> outIterator(outputImage, outputImage->GetLargestPossibleRegion());
 
         /*thresholding for binary images*/
+        // <ctc> super-conservative binarization that we might want to reconsider since it will definitely create a larger footprint of "on" samples in the output image
+        // if (binary) ...
         while(!imageIterator.IsAtEnd())
         {
             OutputPixelType val = imageIterator.Get();
@@ -191,7 +199,7 @@ int main( int argc, char * argv[] )
             ++imageIterator;
             ++outIterator;
         }
-
+        // endif (binary)
 
         typedef itk::ImageFileWriter< OutputImageType >  WriterType;
         WriterType::Pointer writer = WriterType::New();
@@ -315,7 +323,8 @@ int main( int argc, char * argv[] )
         resampler->SetSize( outputSize);
 
         /*resampling the non binary images*/
-        resampler->SetInput(reader->GetOutput() );
+        //resampler->SetInput(reader->GetOutput() );
+        resampler->SetInput(this->image);   // the new Image function, whatever you call it :)
         resampler->Update();
 
         OutputImageType::Pointer resampledImage = resampler->GetOutput();

@@ -10,7 +10,7 @@ import SimpleITK as sitk
 
 from CommonUtils import *
 
-def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing, isCenterOn=True, isBinaryImage=True, processRaw = False):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing, isCenterOn=True, isBinaryImage=True):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -21,49 +21,31 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'resampled')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    if processRaw:
-        #process segmentation files
-        binaryoutDir = os.path.join(outDir,'segmentations')
+    outDataList = []
+    for i in range(len(inDataList)):
+        inname = inDataList[i]
+        spt = inname.rsplit(os.sep, 1)
+        initPath = spt[0]
+        filename = spt[1]
+        outname = inname.replace(initPath, binaryoutDir)
+        outname = outname.replace('.nrrd', '.isores.nrrd')
+        outDataList.append(outname)
+        print(" ")
+        print("########### Resampling ###############")
+        cprint(("Input Filename : ", inname), 'cyan')
+        cprint(("Output Filename : ", outname), 'yellow')
+        print("######################################")
+        print(" ")
+        execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
+        subprocess.check_call(execCommand)
 
-        if not os.path.exists(binaryoutDir):
-            os.makedirs(binaryoutDir)
-        outDataListSeg = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, binaryoutDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataListSeg.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing " , str(
-                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0" , "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
+    return outDataList
+        
+
+
 
         #process images files
         isBinaryImage = False
@@ -88,24 +70,8 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0", "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
+            execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
+            subprocess.check_call(execCommand)
 
         return [outDataListSeg, outDataListImg]
 
@@ -125,24 +91,8 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1" , "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand =["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn",  "0" , "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn" ,  "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
+            execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
+            subprocess.check_call(execCommand)
 
         return outDataList
 

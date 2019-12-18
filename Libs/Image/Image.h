@@ -18,6 +18,7 @@ public:
   bool write(const std::string &outFilename);
   bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
   //bool crop(
+  //bool newFunctionHere(isBinary, isoSpacing, isCenterImageOn, Point3 size);  // maybe have to create a point3 class)
 
 private:
   ImageType::Pointer image;

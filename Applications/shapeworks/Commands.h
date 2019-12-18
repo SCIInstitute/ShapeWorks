@@ -30,6 +30,31 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class Newfunction : public ImageCommand
+{
+public:
+  static Newfunction& getCommand()
+  {
+    static Newfunction instance;
+
+    /*debug stuff*/
+    std::cout << "created Newfunction command: \n\tname: " << instance.name() << "\n\tdesc: " << instance.desc()
+              << "\n\tusage: " << instance.usage() << std::endl;
+    
+
+    /*end debug stuff*/
+
+    return instance;
+  }
+
+private:
+  Newfunction() { buildParser(); } // purposely private ctor so only the single instance can be retrieved
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class Smoothmesh : public MeshCommand
 {
 public:
@@ -53,6 +78,5 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 
 };
-
 
 } // Shapeworks

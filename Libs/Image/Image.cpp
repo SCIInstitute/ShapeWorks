@@ -100,4 +100,9 @@ bool Image::antialias(float maxRMSErr, int numIter)
   return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+bool Image::newFunction(...
+
 } // Shapeworks
+
+

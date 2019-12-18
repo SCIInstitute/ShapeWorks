@@ -13,8 +13,9 @@ int main(int argc, char *argv[])
   Executable shapeworks;
 
   shapeworks.addCommand(Antialias::getCommand());
-  shapeworks.addCommand(Smoothmesh::getCommand());
-  //shapeworks.addCommand(AntiAliasing::command());
+  shapeworks.addCommand(Smoothmesh::getCommand()); 
+  shapeworks.addCommand(Newfunction::getCommand());
+ //shapeworks.addCommand(AntiAliasing::command());
   //...
   
 /* (* means OptionParser already used, otherwise just argv)
