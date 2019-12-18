@@ -9,7 +9,7 @@ fi
 export SW_VERSION=$1
 ROOT=`pwd`
 
-cp -r build/bin/Release bin
+cp -r ../build/bin/Release bin
 windeployqt "bin/ShapeWorksStudio.exe"
 windeployqt "bin/ShapeWorksView2.exe"
 $HOME/nsis.exe shapeworks.nsi
