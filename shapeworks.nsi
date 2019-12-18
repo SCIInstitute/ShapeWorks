@@ -8,6 +8,8 @@
 !include "x64.nsh"
 
 CRCCheck On
+Unicode true
+ManifestDPIAware true
 
 ;--------------------------------
 

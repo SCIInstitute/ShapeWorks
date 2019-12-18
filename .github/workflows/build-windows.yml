@@ -20,12 +20,16 @@ jobs:
 
     - uses: actions/checkout@v1
 
-    - name: Install wget
-      run: choco install curl
+    - name: Install curl,unzip
+      run: choco install curl zip
 
-    - name: Install NSIS
-      run: curl -L -o ${{runner.workspace}}\nsis.exe http://www.sci.utah.edu/~amorris/NSISPortable_3.04_English.paf.exe
-    
+    - name: Get NSIS
+      run: curl -L -o ${{runner.workspace}}\nsis.zip NSISPortable_3.04.zip
+
+    - name: Unzip NSIS
+      working-directory: ${{runner.workspace}}
+      run: unzip nsis.zip
+      
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
 

@@ -12,6 +12,6 @@ ROOT=`pwd`
 cp -r ../build/bin/Release bin
 windeployqt "bin/ShapeWorksStudio.exe"
 windeployqt "bin/ShapeWorksView2.exe"
-../nsis.exe shapeworks.nsi
+../NSISPortable/NSISPortable.exe shapeworks.nsi
 
 
