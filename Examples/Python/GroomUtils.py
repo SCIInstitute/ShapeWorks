@@ -27,7 +27,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
 
     if processRaw:
         #process segmentation files
-        binaryoutDir = outDir + '/segmentations')
+        binaryoutDir = outDir + '/segmentations'
 
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
@@ -67,7 +67,7 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
 
         #process images files
         isBinaryImage = False
-        rawoutDir = outDir + '/images')
+        rawoutDir = outDir + '/images'
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -164,7 +164,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
 
     if processRaw:
         # process segmentations
-        binaryoutDir = outDir + '/segmentations')
+        binaryoutDir = outDir + '/segmentations'
 
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
@@ -678,7 +678,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    finalDTDir = parentDir + '/distance_transforms')
+    finalDTDir = parentDir + '/distance_transforms'
     if not os.path.exists(finalDTDir):
         os.makedirs(finalDTDir)
 
