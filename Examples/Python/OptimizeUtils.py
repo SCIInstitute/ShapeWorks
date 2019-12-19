@@ -126,7 +126,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
 
     for i in range(len(inDataFiles)):
         t1 = inputs.text
-        t1 = t1 + inDataFiles[i] + '\n'
+        t1 = t1 + inDataFiles[i].replace('\\','/') + '\n'
         inputs.text = t1
 
     if curFactor != 0:
@@ -137,7 +137,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
         points.text = "\n"
         for i in range(len(lastPointFiles)):
             t1 = points.text
-            t1 = t1 + lastPointFiles[i] + '\n'
+            t1 = t1 + lastPointFiles[i].replace('\\','/') + '\n'
             points.text = t1
     if curFactor == 0:
         init_stats = ET.SubElement(root, 'use_shape_statistics_in_init')
@@ -149,7 +149,7 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     
 def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionary):
     numP = parameterDictionary['number_of_particles']
-    outDir = os.path.join(parentDir , str(numP) + '/')
+    outDir = parentDir + '/' + str(numP) + '/'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     parameterFile = parentDir + "correspondence_" + str(numP) + '.xml'
@@ -179,10 +179,10 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
     print("Starting Factor", startFactor)
 
     for i in range(num_levels):
-        outDir = os.path.join(parentDir ,  str(2**(startFactor + i)) + '/')
+        outDir = parentDir + '/' + str(2**(startFactor + i)) + '/'
         if not os.path.exists(outDir):
             os.makedirs(outDir)
-        prevOutDir = os.path.join(parentDir ,  str(2**(startFactor + i - 1)) + '/')
+        prevOutDir = parentDir + '/' + str(2**(startFactor + i - 1)) + '/'
         parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
         inparts = []
         for j in range(len(inDataFiles)):
