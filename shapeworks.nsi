@@ -76,6 +76,7 @@ Section "ShapeWorks (required)"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
+  File /r "Python"
 
   
   ; Write the installation path into the registry
