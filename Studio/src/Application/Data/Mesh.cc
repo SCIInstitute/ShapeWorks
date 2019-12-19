@@ -10,6 +10,7 @@
 
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
+#include <itkOrientImageFilter.h>
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
@@ -61,6 +62,16 @@ ImageType::Pointer Mesh::create_from_file(std::string filename, double iso_value
   reader->SetFileName(filename);
   reader->Update();
   ImageType::Pointer image = reader->GetOutput();
+
+  // set orientation to RAI
+  itk::OrientImageFilter<ImageType,ImageType>::Pointer orienter =
+    itk::OrientImageFilter<ImageType,ImageType>::New();
+  orienter->UseImageDirectionOn();
+  orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+  orienter->SetInput(image);
+  orienter->Update();
+  image = orienter->GetOutput();
+
   this->create_from_image(image, iso_value);
   return image;
 }
