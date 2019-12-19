@@ -184,7 +184,7 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
         parameterFile = parentDir + "correspondence_" + str(2**(startFactor + i)) + '.xml'
         inparts = []
         for j in range(len(inDataFiles)):
-            inname = inDataFiles[j]
+            inname = inDataFiles[j].replace('\\','/')
             inpath = os.path.dirname(inDataFiles[j]) + '/'
             outname = inname.replace(inpath, prevOutDir)
             lclname = outname.replace('.nrrd', '_local.particles')
@@ -198,7 +198,7 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
     outPointsWorld = []
     outPointsLocal = []
     for i in range(len(inDataFiles)):
-        inname = inDataFiles[i]
+        inname = inDataFiles[i].replace('\\','/')
         inpath = os.path.dirname(inDataFiles[j]) + '/'
         outname = inname.replace(inpath, outDir)
         wrdname = outname.replace('.nrrd', '_world.particles')

@@ -685,9 +685,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        spt = inname.rsplit(os.sep, 1)
-        initPath = spt[0]
-        #filename = spt[1]
+        initPath = os.path.dirname(inDataList[i])
         outname = inname.replace(initPath, outDir)
 
         dtnrrdfilename = outname.replace('.nrrd', '.DT.nrrd')
