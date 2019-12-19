@@ -43,58 +43,6 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing, isCenterOn=True, is
         subprocess.check_call(execCommand)
 
     return outDataList
-        
-
-
-
-        #process images files
-        isBinaryImage = False
-        rawoutDir = os.path.join(outDir ,'images')
-
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-
-
-        outDataListImg = []
-        for i in range(len(inDataListImg)):
-            inname = inDataListImg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, rawoutDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataListImg.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
-            subprocess.check_call(execCommand)
-
-        return [outDataListSeg, outDataListImg]
-
-    else:
-        outDataList = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataList.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
-            subprocess.check_call(execCommand)
-
-        return outDataList
 
 
 def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, processRaw=False):

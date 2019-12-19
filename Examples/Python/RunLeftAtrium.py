@@ -97,7 +97,7 @@ def Run_LeftAtrium_Pipline(args):
         """
 
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, 1)
-        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, 1)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, 0)
 
         """
         Apply padding
