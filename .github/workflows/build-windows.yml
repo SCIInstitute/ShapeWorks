@@ -38,7 +38,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{runner.workspace}}\deps
-        key: ${{ runner.os }}-node
+        key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
       shell: bash
