@@ -29,23 +29,29 @@ fi
 #update anaconda
 conda update --yes -n base -c defaults conda
 conda update --yes --all
+conda install --yes -c anaconda pip     # needed in sub-environments or the base env's pip will silently install to base
+pip install --upgrade pip
 
 #create and activate shapeworks env
-conda create --yes --name shapeworks python=3.5
+CONDAENV=shapeworks
+conda create --yes --name $CONDAENV python=3.8
 eval "$(conda shell.bash hook)"
-conda activate shapeworks
+conda activate $CONDAENV
 
 #install shapeworks deps
-conda install --yes -c anaconda pip # needed in sub-environments or the base env's pip will silently install to base
-conda install --yes -c anaconda geotiff libxrandr-devel-cos6-x86_64 libxinerama-devel-cos6-x86_64 libxcursor-devel-cos6-x86_64 libxi-devel-cos6-x86_64
-conda install --yes -c conda-forge ncurses cmake xorg-libx11 libuuid xorg-libsm 
-conda install --yes -c anaconda numpy
-conda install --yes -c conda-forge colorama
-conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK
-conda install --yes -c conda-forge requests
-pip install --upgrade pip
-pip install termcolor
-pip install matplotlib
+conda install --yes -c anaconda geotiff=1.5.1 libxrandr-devel-cos6-x86_64=1.5.1 libxinerama-devel-cos6-x86_64=1.1.3 libxcursor-devel-cos6-x86_64=1.1.14 libxi-devel-cos6-x86_64=1.7.8
+conda install --yes -c conda-forge ncurses=6.1 cmake=3.15.5 xorg-libx11=1.6.9 libuuid=2.32.1 xorg-libsm=1.2.3 openmp=8.0.1
+conda install --yes -c anaconda numpy=1.17.4
+conda install --yes -c conda-forge colorama=0.4.3
+conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK=1.2.4
+conda install --yes -c conda-forge requests=2.22.2
+
+pip install termcolor==1.1.0
+pip install matplotlib==3.1.2
 pip install -e Python/DatasetUtilsPackage # install the local GirderConnector code as a package
+
+if [ "$(uname)" = "Linux" ]; then
+  # install anything that's different on linux
+fi
 
 conda info
