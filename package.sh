@@ -1,6 +1,5 @@
 #!/bin/bash -x
 
-
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <version> <install_dir> <install_dep_dir>"
     exit 1
@@ -10,6 +9,19 @@ VERSION=$1
 INSTALL_DIR=$2
 INSTALL_DEP_DIR=$3
 ROOT=`pwd`
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    PLATFORM="mac"
+else
+    PLATFORM="linux"
+fi
+    
+if [[ "$VERSION" == "tag" ]]; then
+    VERSION="ShapeWorks-$(git describe --tags)-$PLATFORM"
+fi
+
+echo $VERSION
+exit
 
 rm -rf "package/$VERSION"
 
@@ -56,8 +68,9 @@ else
     linuxdeployqt bin/ShapeWorksStudio -verbose=2
 fi
 
+mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -r ${VERSION}.zip ${VERSION}
+zip -r ${ROOT}/${VERSION}.zip ${VERSION}
 
 cd $ROOT
 

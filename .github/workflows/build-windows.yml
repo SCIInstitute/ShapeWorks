@@ -93,5 +93,5 @@ jobs:
       
     - uses: actions/upload-artifact@v1
       with:
-        name: installer
-        path: ${{runner.workspace}}\ShapeWorks\ShapeWorks-${{github.sha}}-windows.exe
+        name: shapeworks-${{github.sha}}-windows
+        path: ${{runner.workspace}}\ShapeWorks\artifacts{{github.sha}}-windows.exe

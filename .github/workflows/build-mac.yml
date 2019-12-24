@@ -46,9 +46,9 @@ jobs:
       run: cd build && make install
 
     - name: Build Binary Package
-      run: pwd ; ls ; ./package.sh shapeworks-${GITHUB_SHA}-mac ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      run: pwd ; ls ; ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - uses: actions/upload-artifact@v1
       with:
-        name: shapeworks-${{github.sha}}-mac
-        path: ${{runner.workspace}}/ShapeWorks/package/shapeworks-${{github.sha}}-mac.zip
+        name: artifact-${{github.sha}}-mac
+        path: ${{runner.workspace}}/ShapeWorks/artifacts

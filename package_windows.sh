@@ -6,7 +6,14 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-export SW_VERSION=$1
+VERSION=$1
+
+if [[ "$VERSION" == "tag" ]]; then
+    VERSION="ShapeWorks-$(git describe --tags)-windows"
+fi
+
+
+export SW_VERSION=$VERSION
 ROOT=`pwd`
 
 cp -r ../build/bin/Release bin
@@ -14,4 +21,6 @@ rm -rf Post
 windeployqt "bin/ShapeWorksStudio.exe"
 windeployqt "bin/ShapeWorksView2.exe"
 ../NSISPortable/App/NSIS/makensis.exe shapeworks.nsi
+mkdir artifacts
+cp *.exe artifacts
 

@@ -48,11 +48,11 @@ jobs:
       run: rm /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so
 
     - name: Build Binary Package
-      run: pwd ; ls ; PATH=$HOME:$PATH ./package.sh shapeworks-${GITHUB_SHA}-linux ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
+      run: pwd ; ls ; PATH=$HOME:$PATH ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
 
     - uses: actions/upload-artifact@v1
       with:
         name: shapeworks-${{github.sha}}-linux
-        path: ${{runner.workspace}}/ShapeWorks/package/shapeworks-${{github.sha}}-linux.zip
+        path: ${{runner.workspace}}/ShapeWorks/artifacts
 
     
