@@ -36,7 +36,7 @@ cp ChangeLog package/${VERSION}
 cp PACKAGE_README.txt package/${VERSION}/README.txt
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
-rm -rf include share
+rm -rf include share v3p plugins
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
@@ -63,8 +63,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     
     cd ..
 else
-    linuxdeployqt bin/ShapeWorksView2 -verbose=2
-    linuxdeployqt bin/ShapeWorksStudio -verbose=2
+    cd bin
+    linuxdeployqt ShapeWorksView2 -verbose=2
+    linuxdeployqt ShapeWorksStudio -verbose=2
 fi
 
 mkdir ${ROOT}/artifacts
