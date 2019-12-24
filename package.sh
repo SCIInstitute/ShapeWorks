@@ -20,8 +20,7 @@ if [[ "$VERSION" == "tag" ]]; then
     VERSION="ShapeWorks-$(git describe --tags)-$PLATFORM"
 fi
 
-echo $VERSION
-exit
+echo "Version: $VERSION"
 
 rm -rf "package/$VERSION"
 

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - build_artifacts
   pull_request:
 
 env:
@@ -94,4 +93,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: shapeworks-${{github.sha}}-windows
-        path: ${{runner.workspace}}\ShapeWorks\artifacts{{github.sha}}-windows.exe
+        path: ${{runner.workspace}}\ShapeWorks\artifacts
