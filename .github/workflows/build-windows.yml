@@ -88,7 +88,7 @@ jobs:
 
     - name: Build Binary Package
       shell: bash
-      run: pwd ; ls ; ./package_windows.sh ${GITHUB_SHA}
+      run: pwd ; ls ; ./package_windows.sh tag
       
     - uses: actions/upload-artifact@v1
       with:
