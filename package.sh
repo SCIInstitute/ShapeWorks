@@ -69,7 +69,7 @@ fi
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -r ${ROOT}/${VERSION}.zip ${VERSION}
+zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 
 cd $ROOT
 

@@ -92,5 +92,5 @@ jobs:
       
     - uses: actions/upload-artifact@v1
       with:
-        name: shapeworks-${{github.sha}}-windows
+        name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
