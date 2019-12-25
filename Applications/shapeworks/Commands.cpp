@@ -30,10 +30,37 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Newfunction
+// Reshapevolume
 ///////////////////////////////////////////////////////////////////////////////
-...
+void Reshapevolume::buildParser()
+{
+  const std::string prog = "reshapevolume";
+  const std::string usage = "%prog [OPTION]";
+  const std::string desc = "reshapes volumes to be isotropic";
+  const std::string epilog = "";
+  parser.prog(prog).usage(usage).description(desc).epilog(epilog);
 
+  parser.add_option("--isBinary").action("store").type("bool").set_default(false).help("A flag to treat the input image as a binary image (specialized resampling pipeline) [default disabled].");
+  parser.add_option("--isCenterImage").action("store").type("bool").set_default(false).help("A flag to center the image, i.e. change the origin in the image header to the physcial coordinates of the first voxel (lower left corner) [default disabled].");
+  parser.add_option("--isoSpacing").action("store").type("float").set_default("").help("The isotropic spacing in all dimensions.");
+  parser.add_option("--sizeX").action("store").type("int").set_default(0).help("Image size in x-direction (optional, if set to 0, the size is autmatically estimated from the input image).");
+  parser.add_option("--sizeY").action("store").type("int").set_default(0).help("Image size in y-direction (optional, if set to 0, the size is autmatically estimated from the input image).");
+  parser.add_option("--sizeZ").action("store").type("int").set_default(0).help("Image size in z-direction (optional, if set to 0, the size is autmatically estimated from the input image).");
+
+  Command::buildParser();
+}
+
+int Reshapevolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  bool isBinary = static_cast<bool>(options.get("isBinary"));
+  bool isCenterImage = static_cast<bool>(options.get("isCenterImage"));
+  float isoSpacing = static_cast<float>(options.get("isoSpacing"));
+  int sizeX = static_cast<int>(options.get("sizeX"));
+  int sizeY = static_cast<int>(options.get("sizeY"));
+  int sizeZ = static_cast<int>(options.get("sizeZ"));
+
+  return sharedData.image.Reshapevolume(isBinary, isCenterImage, isoSpacing, sizeX, sizeY, sizeZ);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Clip

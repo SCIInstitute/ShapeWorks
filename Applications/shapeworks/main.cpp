@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(Smoothmesh::getCommand()); 
-  shapeworks.addCommand(Newfunction::getCommand());
+  shapeworks.addCommand(Resamplevolume::getCommand());
  //shapeworks.addCommand(AntiAliasing::command());
   //...
   

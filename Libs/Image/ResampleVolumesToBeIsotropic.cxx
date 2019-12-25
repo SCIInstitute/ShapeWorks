@@ -172,7 +172,8 @@ int main( int argc, char * argv[] )
 
         /*resampling the binary image*/
         //resampler->SetInput( antialiasFilter->GetOutput() );
-        resampler->SetInput( this->image );  (because image will have been updated by calling antialias above)
+        resampler->SetInput( this->image );  
+        //(because image will have been updated by calling antialias above)
         resampler->Update();
 
         OutputImageType::Pointer resampledImage = resampler->GetOutput();
