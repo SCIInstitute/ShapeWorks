@@ -8,6 +8,8 @@
 !include "x64.nsh"
 
 CRCCheck On
+Unicode true
+ManifestDPIAware true
 
 ;--------------------------------
 
@@ -24,10 +26,10 @@ FunctionEnd
 ; General
 
 ; The name of the installer
-Name "ShapeWorks-5.2.1"
+Name "ShapeWorks-$%SW_VERSION%"
 
 ; The file to write
-OutFile "ShapeWorks-5.2.1-windows.exe"
+OutFile "ShapeWorks-$%SW_VERSION%-windows.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES64\ShapeWorks
@@ -74,6 +76,7 @@ Section "ShapeWorks (required)"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
+  File /r "Python"
 
   
   ; Write the installation path into the registry

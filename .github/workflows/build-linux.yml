@@ -9,25 +9,50 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     
     steps:
 
     - uses: actions/checkout@v1
 
+    - name: Acquire LinuxDeployQt
+      run: curl -L -o $HOME/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
+      with:
+        version: "5.9.9"
 
     - name: Cache dependencies
       uses: actions/cache@v1
       with:
         path: ~/install
-        key: ${{ runner.os }}-node
+        key: ${{ runner.os }}-qt5.9.9-${{ hashFiles('**/build_dependencies.sh') }}
+
     - name: Build dependencies
       run: .github/workflows/build_dependencies.sh
+
     - name: cmake
-      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON ..
+      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+
     - name: make
       run: cd build && make -j4
+
     - name: make test
       run: cd build && make test
+
+    - name: make install
+      run: cd build && make install
+      
+    - name: Remove Qt SQL Stuff
+      run: rm /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so
+
+    - name: Build Binary Package
+      run: pwd ; ls ; PATH=$HOME:$PATH ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: artifact-${{github.sha}}-linux
+        path: ${{runner.workspace}}/ShapeWorks/artifacts
+
+    
