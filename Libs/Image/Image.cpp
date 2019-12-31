@@ -4,6 +4,9 @@
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkAntiAliasBinaryImageFilter.h>
+#include <itkResampleImageFilter.h>
+#include <itkBSplineInterpolateImageFunction.h>
+#include <itkChangeInformationImageFilter.h>
 
 namespace Shapeworks {
 
@@ -109,6 +112,8 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
     return false;
   }
 
+  const unsigned int Dimension = 3;
+
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
@@ -125,7 +130,7 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
 
     interpolator->SetSplineOrder(3);
     resampler->SetInterpolator(interpolator);
-    resampler->SetDefaultPixel(-1);
+    resampler->SetDefaultPixelValue(-1);
   }
   else
   {
@@ -142,13 +147,13 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   spacing[2] = isoSpacing;
 
   resampler->SetOutputSpacing(spacing);
-  resampler->SetOutputOrigin(inputImage->GetOrigin());
-  resampler->SetOutputDirection(inputImage->GetDirection());
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
 
   ImageType::SizeType outputSize;
-  ImageType::SizeType inputSize = inputImage->GetLargestPossibleRegion().GetSize();
+  ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
   typedef ImageType::SizeType::SizeValueType SizeValueType;
-  const ImageType::SpacingType& inputSpacing = inputImage->GetSpacing();
+  const ImageType::SpacingType& inputSpacing = image->GetSpacing();
 
   if (sizeX == 0 || sizeY == 0 || sizeZ == 0)
   {
@@ -165,30 +170,32 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
 
   if (isBinary)
   {
-    this->image.antialias();
+    this->antialias();
   }
 
-  resampler->SetInput(this->image);
-  resampler->Update();
+  resampler->SetInput(image);
+  // resampler->Update();
 
   ImageType::Pointer resampledImage = resampler->GetOutput();
 
-  if (isBinary)
-  {
-    ImageType::Pointer outputImage = OutputImageType::New();
-  }
-  else
-  {
-    ImageType::Pointer outputImage = resampler->GetOutput();
-  }
+  // if (isBinary)
+  // {
+  //   ImageType::Pointer outputImage = OutputImageType::New();
+  // }
+  // else
+  // {
+  //   ImageType::Pointer outputImage = resampler->GetOutput();
+  // }
 
-  outputImage->SetSpacing(spacing);
-  outputImage->SetOrigin(inputImage->GetOrigin());
+  image->SetSpacing(spacing);
+  // outputImage->SetOrigin(this->image->GetOrigin());
 
   if (isBinary)
   {
     itk::ImageRegionIterator<ImageType> imageIterator(resampledImage, resampledImage->GetLargestPossibleRegion());
-    itk::ImageRegionIterator<ImageType> outIterator(outputImage, outputImage->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<ImageType> outIterator(image, image->GetLargestPossibleRegion());
+
+    typedef float OutputPixelType;
 
     while (!imageIterator.IsAtEnd())
     {
@@ -209,7 +216,7 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
 
   if (isCenterImage)
   {
-    infoFilter->SetInput(outputImage);
+    infoFilter->SetInput(image);
     infoFilter->CenterImageOn();
     infoFilter->Update();
     // writer->SetInput(infoFilter->GetOutput());

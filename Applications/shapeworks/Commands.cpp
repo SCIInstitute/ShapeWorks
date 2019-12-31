@@ -30,13 +30,13 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Reshapevolume
+// Resamplevolume
 ///////////////////////////////////////////////////////////////////////////////
-void Reshapevolume::buildParser()
+void Resamplevolume::buildParser()
 {
-  const std::string prog = "reshapevolume";
+  const std::string prog = "resamplevolume";
   const std::string usage = "%prog [OPTION]";
-  const std::string desc = "reshapes volumes to be isotropic";
+  const std::string desc = "resamples volumes to be isotropic";
   const std::string epilog = "";
   parser.prog(prog).usage(usage).description(desc).epilog(epilog);
 
@@ -50,7 +50,7 @@ void Reshapevolume::buildParser()
   Command::buildParser();
 }
 
-int Reshapevolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int Resamplevolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   bool isBinary = static_cast<bool>(options.get("isBinary"));
   bool isCenterImage = static_cast<bool>(options.get("isCenterImage"));
@@ -59,7 +59,7 @@ int Reshapevolume::execute(const optparse::Values &options, SharedCommandData &s
   int sizeY = static_cast<int>(options.get("sizeY"));
   int sizeZ = static_cast<int>(options.get("sizeZ"));
 
-  return sharedData.image.Reshapevolume(isBinary, isCenterImage, isoSpacing, sizeX, sizeY, sizeZ);
+  return sharedData.image.resamplevolume(isBinary, isCenterImage, isoSpacing, sizeX, sizeY, sizeZ);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
