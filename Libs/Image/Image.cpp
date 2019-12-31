@@ -112,12 +112,10 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
     return false;
   }
 
-  const unsigned int Dimension = 3;
-
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
-  typedef itk::IdentityTransform<double, Dimension> TransformType;
+  typedef itk::IdentityTransform<double, Image::dims> TransformType;
   TransformType::Pointer transform = TransformType::New();
   
   transform->SetIdentity();
@@ -151,9 +149,9 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   resampler->SetOutputDirection(image->GetDirection());
 
   ImageType::SizeType outputSize;
-  ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
+  ImageType::SizeType inputSize = resampler->GetLargestPossibleRegion().GetSize();
   typedef ImageType::SizeType::SizeValueType SizeValueType;
-  const ImageType::SpacingType& inputSpacing = image->GetSpacing();
+  const ImageType::SpacingType& inputSpacing = resampler->GetSpacing();
 
   if (sizeX == 0 || sizeY == 0 || sizeZ == 0)
   {
@@ -193,9 +191,9 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   if (isBinary)
   {
     itk::ImageRegionIterator<ImageType> imageIterator(resampledImage, resampledImage->GetLargestPossibleRegion());
-    itk::ImageRegionIterator<ImageType> outIterator(image, image->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<ImageType> outIterator(resampler, resampler->GetLargestPossibleRegion());
 
-    typedef float OutputPixelType;
+    Image::PixelType OutputPixelType;
 
     while (!imageIterator.IsAtEnd())
     {
@@ -211,12 +209,14 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
     }
   }
 
+  resampler->Update();
+
   typedef itk::ChangeInformationImageFilter<ImageType> ImageInfoFilterType;
   ImageInfoFilterType::Pointer infoFilter = ImageInfoFilterType::New();
 
   if (isCenterImage)
   {
-    infoFilter->SetInput(image);
+    infoFilter->SetInput(resampler);
     infoFilter->CenterImageOn();
     infoFilter->Update();
     // writer->SetInput(infoFilter->GetOutput());

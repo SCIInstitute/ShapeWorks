@@ -10,6 +10,7 @@ class Image
 public:
   typedef float PixelType;
   typedef itk::Image<PixelType, 3/*dimension*/> ImageType;
+  const unsigned dims = 3;
 
   Image() {}
   Image(const std::string &inFilename) { read(inFilename); }
