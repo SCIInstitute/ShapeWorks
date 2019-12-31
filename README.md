@@ -1,3 +1,7 @@
+![](https://github.com/SCIInstitute/ShapeWorks/workflows/Mac%20Build/badge.svg)
+![](https://github.com/SCIInstitute/ShapeWorks/workflows/Linux%20Build/badge.svg)
+![](https://github.com/SCIInstitute/ShapeWorks/workflows/Windows%20Build/badge.svg)
+
 ShapeWorks
 =====================
 <!--
