@@ -109,7 +109,7 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
     return false;
   }
 
-  typedef itk::ResampleImageFilter<InternalImageType, OutputImageType> ResampleFilterType;
+  typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
   typedef itk::IdentityTransform<double, Dimension> TransformType;
@@ -118,9 +118,9 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   transform->SetIdentity();
   resampler->SetTransform(transform);
 
-  if (isBinary == true)
+  if (isBinary)
   {
-    typedef itk::BSplineInterpolateImageFunction<InternalImageType, double, double> InterpolatorType;
+    typedef itk::BSplineInterpolateImageFunction<ImageType, double, double> InterpolatorType;
     InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
     interpolator->SetSplineOrder(3);
@@ -129,14 +129,14 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   }
   else
   {
-    typedef itk::LinearInterpolateImageFunction<InternalImageType, double >  InterpolatorType;
+    typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
     InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
     resampler->SetInterpolator(interpolator);
     resampler->SetDefaultPixelValue(0);
   }
 
-  OutputImageType::SpacingType spacing;
+  ImageType::SpacingType spacing;
   spacing[0] = isoSpacing;
   spacing[1] = isoSpacing;
   spacing[2] = isoSpacing;
@@ -145,10 +145,10 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   resampler->SetOutputOrigin(inputImage->GetOrigin());
   resampler->SetOutputDirection(inputImage->GetDirection());
 
-  InputImageType::SizeType   outputSize;
-  InputImageType::SizeType   inputSize =inputImage->GetLargestPossibleRegion().GetSize();
-  typedef InputImageType::SizeType::SizeValueType SizeValueType;
-  const InputImageType::SpacingType& inputSpacing = inputImage->GetSpacing();
+  ImageType::SizeType outputSize;
+  ImageType::SizeType inputSize = inputImage->GetLargestPossibleRegion().GetSize();
+  typedef ImageType::SizeType::SizeValueType SizeValueType;
+  const ImageType::SpacingType& inputSpacing = inputImage->GetSpacing();
 
   if (sizeX == 0 || sizeY == 0 || sizeZ == 0)
   {
@@ -163,7 +163,7 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
 
   resampler->SetSize(outputSize);
 
-  if (isBinary == true)
+  if (isBinary)
   {
     this->image.antialias();
   }
@@ -171,25 +171,24 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   resampler->SetInput(this->image);
   resampler->Update();
 
-  OutputImageType::Pointer resampledImage = resampler->GetOutput();
+  ImageType::Pointer resampledImage = resampler->GetOutput();
 
-  if (isBinary == true)
+  if (isBinary)
   {
-    OutputImageType::Pointer outputImage = OutputImageType::New();
-    DeepCopy<OutputImageType>(resampledImage, outputImage);
+    ImageType::Pointer outputImage = OutputImageType::New();
   }
   else
   {
-    OutputImageType::Pointer outputImage = resampler->GetOutput();
+    ImageType::Pointer outputImage = resampler->GetOutput();
   }
 
   outputImage->SetSpacing(spacing);
   outputImage->SetOrigin(inputImage->GetOrigin());
 
-  if (isBinary == true)
+  if (isBinary)
   {
-    itk::ImageRegionIterator<OutputImageType> imageIterator(resampledImage, resampledImage->GetLargestPossibleRegion());
-    itk::ImageRegionIterator<OutputImageType> outIterator(outputImage, outputImage->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<ImageType> imageIterator(resampledImage, resampledImage->GetLargestPossibleRegion());
+    itk::ImageRegionIterator<ImageType> outIterator(outputImage, outputImage->GetLargestPossibleRegion());
 
     while (!imageIterator.IsAtEnd())
     {
@@ -205,7 +204,7 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
     }
   }
 
-  typedef itk::ChangeInformationImageFilter<OutputImageType > ImageInfoFilterType;
+  typedef itk::ChangeInformationImageFilter<ImageType> ImageInfoFilterType;
   ImageInfoFilterType::Pointer infoFilter = ImageInfoFilterType::New();
 
   if (isCenterImage)
