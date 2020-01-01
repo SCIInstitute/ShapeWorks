@@ -8,9 +8,9 @@ namespace Shapeworks {
 class Image
 {
 public:
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3/*dimension*/> ImageType;
-  const unsigned dims = 3;
+  static const unsigned dims = 3;
+  using PixelType = float;
+  using ImageType = typedef itk::Image<PixelType, dims>;
 
   Image() {}
   Image(const std::string &inFilename) { read(inFilename); }
@@ -18,7 +18,7 @@ public:
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename);
   bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
-  bool resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, int sizeX, int sizeY, int sizeZ);
+  bool resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, Dims outputSize)
   // bool resamplevolumes(bool isBinary, float isoSpacing bool isCenterImageOn, Point3 size);  // maybe have to create a point3 class)
 
 private:

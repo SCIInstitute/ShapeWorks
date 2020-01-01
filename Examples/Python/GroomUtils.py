@@ -10,7 +10,7 @@ import SimpleITK as sitk
 
 from CommonUtils import *
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing, isCenterOn=True, isBinaryImage=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isCenterOn=True, isBinaryImage=True):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
