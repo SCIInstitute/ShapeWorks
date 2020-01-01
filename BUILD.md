@@ -30,25 +30,7 @@ Download and install the latest version for your OS, selecting the LGPL (free) l
 
 ### Install dependencies (Windows)
 
-The current method for building ShapeWorks on Windows is to utilize the Windows Subsystem for Linux.
-
-1. Install the Linux Subsystem for Windows:
-
-https://docs.microsoft.com/en-us/windows/wsl/install-win10
-
-2. Install (using 'sudo apt install') packages:
-```
-build-essential cmake MesaGL libglu1-mesa-dev freeglut3-dev mesa-common-dev libosmesa6-dev libxrandr-dev libxinerama-dev libglu1-mesa-dev libxcursor-dev libi-dev qt-dev qttools5-dev libqt5x11extras5-dev libqt5x11extras5 libqt53dextras5 libxi-dev python3 python3-numpy python3-termcolor python3-matplotlib
-```
-Note that if you're using your linux subsystem for other things other than ShapeWorks, it might be beneficial to follow the linux build instructions above, creating a conda environment along the way.
-
-3. To enable visualization, follow the instructions here to install and use VcXsrv
-
-https://seanthegeek.net/234/graphical-linux-applications-bash-ubuntu-windows/
-
-VcXsrv is available here:
-
-https://sourceforge.net/projects/vcxsrv/
+Install anaconda and Qt5 as above.
 
 ### Configuration
 Make a build directory and use cmake (or ccmake for a gui version) to configure your build:  
@@ -75,9 +57,8 @@ Options include the following:
   Paths to dependencies can be set explicitly. Otherwise they will be downloaded and built automatically.
 ```
   -DVTK_DIR=<path to your own vtk>
-  -DITK_DIR=<path to your own ITK>
+  -DITK_DIR=<path to your own ITK> # Note that ITK must be build with VTK for GUI applications
   -DVXL_DIR=<path to your own vxl>
-  -DSHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE=[Debug|Release]  default: Release
 ```
 
 ### Build
