@@ -171,8 +171,8 @@ int main( int argc, char * argv[] )
         // endif (binary) ...
 
         /*resampling the binary image*/
-        //resampler->SetInput( antialiasFilter->GetOutput() );
-        resampler->SetInput( this->image );  
+        resampler->SetInput( antialiasFilter->GetOutput() );
+        // resampler->SetInput( this->image );  
         //(because image will have been updated by calling antialias above)
         resampler->Update();
 
@@ -324,8 +324,8 @@ int main( int argc, char * argv[] )
         resampler->SetSize( outputSize);
 
         /*resampling the non binary images*/
-        //resampler->SetInput(reader->GetOutput() );
-        resampler->SetInput(this->image);   // the new Image function, whatever you call it :)
+        resampler->SetInput(reader->GetOutput() );
+        // resampler->SetInput(this->image);   // the new Image function, whatever you call it :)
         resampler->Update();
 
         OutputImageType::Pointer resampledImage = resampler->GetOutput();

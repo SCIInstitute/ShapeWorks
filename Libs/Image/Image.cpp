@@ -4,6 +4,11 @@
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkAntiAliasBinaryImageFilter.h>
+#include <itkResampleImageFilter.h>
+#include <itkBSplineInterpolateImageFunction.h>
+#include <itkChangeInformationImageFilter.h>
+#include <itkBinaryThresholdImageFilter.h>
+
 
 namespace Shapeworks {
 
@@ -16,7 +21,7 @@ bool Image::read(const std::string &inFilename)
     return false;
   }
 
-  typedef itk::ImageFileReader<ImageType> ReaderType;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(inFilename);
   try
@@ -49,7 +54,7 @@ bool Image::write(const std::string &outFilename)
     return false;
   }
 
-  typedef itk::ImageFileWriter<ImageType> WriterType;
+  using WriterType itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput(this->image);
   writer->SetFileName(outFilename);
@@ -78,12 +83,14 @@ bool Image::antialias(float maxRMSErr, int numIter)
     return false;
   }
   
-  typedef itk::AntiAliasBinaryImageFilter<ImageType, ImageType> FilterType;
+  using FilterType itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer antialiasFilter = FilterType::New();
   antialiasFilter->SetInput(this->image);
   antialiasFilter->SetMaximumRMSError(maxRMSErr);
   antialiasFilter->SetNumberOfIterations(numIter);
   //antialiasFilter->SetNumberOfLayers(numLayers);  // TODO: should we specify this parameters?
+  this->image = antialiasFilter->GetOutput();
+
   try
   {
     antialiasFilter->Update();  
@@ -96,12 +103,11 @@ bool Image::antialias(float maxRMSErr, int numIter)
   }
 
   std::cout << "Antialias filter succeeded!\n";
-  this->image = antialiasFilter->GetOutput();
   return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, int sizeX, int sizeY, int sizeZ)
+bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, Dims outputSize)
 {
   if (!this->image)
   {
@@ -109,119 +115,76 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
     return false;
   }
 
-  typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
+  using ResampleFilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-
-  typedef itk::IdentityTransform<double, Dimension> TransformType;
-  TransformType::Pointer transform = TransformType::New();
-  
-  transform->SetIdentity();
-  resampler->SetTransform(transform);
+  ResampleFilterType::InterpolatorType::Pointer interpolator;
 
   if (isBinary)
   {
-    typedef itk::BSplineInterpolateImageFunction<ImageType, double, double> InterpolatorType;
-    InterpolatorType::Pointer interpolator = InterpolatorType::New();
+    this->antialias();
 
+    using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
+    interpolator = InterpolatorType::New();
     interpolator->SetSplineOrder(3);
-    resampler->SetInterpolator(interpolator);
-    resampler->SetDefaultPixel(-1);
+    resampler->SetDefaultPixelValue(-1);
   }
   else
   {
-    typedef itk::LinearInterpolateImageFunction<ImageType, double> InterpolatorType;
-    InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-    resampler->SetInterpolator(interpolator);
+    using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+    interpolator = InterpolatorType::New();
     resampler->SetDefaultPixelValue(0);
   }
+  resampler->SetInterpolator(interpolator);
+
+  using TransformType = itk::IdentityTransform<double, Image::dims>;
+  TransformType::Pointer transform = TransformType::New();
+  transform->SetIdentity();
+  resampler->SetTransform(transform);
 
   ImageType::SpacingType spacing;
   spacing[0] = isoSpacing;
   spacing[1] = isoSpacing;
   spacing[2] = isoSpacing;
-
   resampler->SetOutputSpacing(spacing);
-  resampler->SetOutputOrigin(inputImage->GetOrigin());
-  resampler->SetOutputDirection(inputImage->GetDirection());
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
 
-  ImageType::SizeType outputSize;
-  ImageType::SizeType inputSize = inputImage->GetLargestPossibleRegion().GetSize();
-  typedef ImageType::SizeType::SizeValueType SizeValueType;
-  const ImageType::SpacingType& inputSpacing = inputImage->GetSpacing();
-
-  if (sizeX == 0 || sizeY == 0 || sizeZ == 0)
+  ImageType::SizeType inputSize = resampler->GetLargestPossibleRegion().GetSize();
+  ImageType::SpacingType inputSpacing = resampler->GetSpacing();
+  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
   {
-    sizeX = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
-    sizeY = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
-    sizeZ = std::ceil((inputSize[2] - 1 ) * inputSpacing[2] / isoSpacing);
+    outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
+    outputSize[1] = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
+    outputSize[2] = std::ceil((inputSize[2] - 1 ) * inputSpacing[2] / isoSpacing);
   }
-
-  outputSize[0] = static_cast<SizeValueType>(sizeX);
-  outputSize[1] = static_cast<SizeValueType>(sizeY);
-  outputSize[2] = static_cast<SizeValueType>(sizeZ);
-
   resampler->SetSize(outputSize);
 
-  if (isBinary)
-  {
-    this->image.antialias();
-  }
-
   resampler->SetInput(this->image);
-  resampler->Update();
-
-  ImageType::Pointer resampledImage = resampler->GetOutput();
-
-  if (isBinary)
-  {
-    ImageType::Pointer outputImage = OutputImageType::New();
-  }
-  else
-  {
-    ImageType::Pointer outputImage = resampler->GetOutput();
-  }
-
-  outputImage->SetSpacing(spacing);
-  outputImage->SetOrigin(inputImage->GetOrigin());
-
-  if (isBinary)
-  {
-    itk::ImageRegionIterator<ImageType> imageIterator(resampledImage, resampledImage->GetLargestPossibleRegion());
-    itk::ImageRegionIterator<ImageType> outIterator(outputImage, outputImage->GetLargestPossibleRegion());
-
-    while (!imageIterator.IsAtEnd())
-    {
-      OutputPixelType val = imageIterator.Get();
-
-      if (val>=0)
-          outIterator.Set((OutputPixelType)1);
-      else
-          outIterator.Set((OutputPixelType)0);
-
-      ++imageIterator;
-      ++outIterator;
-    }
-  }
-
-  typedef itk::ChangeInformationImageFilter<ImageType> ImageInfoFilterType;
-  ImageInfoFilterType::Pointer infoFilter = ImageInfoFilterType::New();
+  this->image = resampler->GetOutput();
 
   if (isCenterImage)
   {
-    infoFilter->SetInput(outputImage);
+    using ImageInfoFilterType = itk::ChangeInformationImageFilter<ImageType>;
+    ImageInfoFilterType::Pointer infoFilter = ImageInfoFilterType::New();
+    infoFilter->SetInput(this->image);
     infoFilter->CenterImageOn();
-    infoFilter->Update();
-    // writer->SetInput(infoFilter->GetOutput());
-    resampler->Update();
+    this->image = infoFilter->GetOutput();
   }
-  else
-    // writer->SetInput(resampler->GetOutput());
-    resampler->Update();
-  
+
   try
   {
     resampler->Update();
+
+    if (isBinary)
+    {
+      using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
+      FilterType::Pointer filter = FilterType::New();
+      filter->SetInput(this->image);
+      filter->SetLowerThreshold(itk::NumericTraits<PixelType>::Zero);
+      filter->SetInsideValue(itk::NumericTraits<PixelType>::One);
+      filter->Update();
+      this->image = filter->GetOutput();
+    }
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -231,7 +194,6 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   }
 
   std::cout << "Resample volumes to be isotropic succeeded!\n";
-  this->image = resampler->GetOutput();
   return true;
 }
 

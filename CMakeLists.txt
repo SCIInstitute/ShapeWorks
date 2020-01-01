@@ -132,6 +132,7 @@ else()
   endif()
 
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+  include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
 
   if (SHAPEWORKS_GUI)

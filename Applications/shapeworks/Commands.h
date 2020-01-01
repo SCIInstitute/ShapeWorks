@@ -30,15 +30,15 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Reshapevolume : public ImageCommand
+class Resamplevolume : public ImageCommand
 {
 public:
-  static Reshapevolume& getCommand()
+  static Resamplevolume& getCommand()
   {
-    static Reshapevolume instance;
+    static Resamplevolume instance;
 
     /*debug stuff*/
-    std::cout << "created Reshapevolume command: \n\tname: " << instance.name() << "\n\tdesc: " << instance.desc()
+    std::cout << "created Resamplevolume command: \n\tname: " << instance.name() << "\n\tdesc: " << instance.desc()
               << "\n\tusage: " << instance.usage() << std::endl;
     
 
@@ -48,7 +48,7 @@ public:
   }
 
 private:
-  Reshapevolume() { buildParser(); } // purposely private ctor so only the single instance can be retrieved
+  Resamplevolume() { buildParser(); } // purposely private ctor so only the single instance can be retrieved
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 
