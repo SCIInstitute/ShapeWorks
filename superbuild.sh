@@ -55,7 +55,6 @@ parse_command_line()
       -i=*|--install-dir=*)   INSTALL_DIR="${1#*=}"
                               mkdir -p $INSTALL_DIR
                               ;;
-      # FIXME/TODO: https://github.com/SCIInstitute/ShapeWorks/issues/77
       -b=*|--build-dir=*)     BUILD_DIR="${1#*=}"
                               mkdir -p $BUILD_DIR
                               ;;
