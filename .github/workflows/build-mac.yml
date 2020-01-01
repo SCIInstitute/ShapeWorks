@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - superbuild
   pull_request:
 
 jobs:
@@ -31,7 +32,8 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
         
     - name: Build dependencies
-      run: SDKROOT=$HOME/MacOSX10.13.sdk .github/workflows/build_dependencies.sh
+      if: steps.cache-dependencies.outputs.cache-hit != 'true'
+      run: SDKROOT=$HOME/MacOSX10.13.sdk INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./superbuild.sh --dependencies_only
 
     - name: cmake
       run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
