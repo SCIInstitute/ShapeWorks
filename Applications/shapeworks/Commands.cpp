@@ -59,7 +59,7 @@ int Resamplevolume::execute(const optparse::Values &options, SharedCommandData &
   unsigned sizeY = static_cast<unsigned>(options.get("sizeY"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizeZ"));
 
-  return sharedData.image.resamplevolume(isBinary, isCenterImage, isoSpacing, Dims([sizeX, sizeY, sizeZ]);
+  return sharedData.image.resamplevolume(isBinary, isCenterImage, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

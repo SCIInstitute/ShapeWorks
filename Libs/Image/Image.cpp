@@ -54,7 +54,7 @@ bool Image::write(const std::string &outFilename)
     return false;
   }
 
-  using WriterType itk::ImageFileWriter<ImageType>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput(this->image);
   writer->SetFileName(outFilename);
@@ -83,7 +83,7 @@ bool Image::antialias(float maxRMSErr, int numIter)
     return false;
   }
   
-  using FilterType itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
+  using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer antialiasFilter = FilterType::New();
   antialiasFilter->SetInput(this->image);
   antialiasFilter->SetMaximumRMSError(maxRMSErr);
@@ -117,22 +117,24 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
 
   using ResampleFilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+  
   ResampleFilterType::InterpolatorType::Pointer interpolator;
-
   if (isBinary)
   {
     this->antialias();
+    resampler->SetDefaultPixelValue(-1);
 
     using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
-    interpolator = InterpolatorType::New();
-    interpolator->SetSplineOrder(3);
-    resampler->SetDefaultPixelValue(-1);
+    InterpolatorType::Pointer bspline_interp = InterpolatorType::New();
+    bspline_interp->SetSplineOrder(3);
+    interpolator = bspline_interp;
   }
   else
   {
+    resampler->SetDefaultPixelValue(0);
+
     using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
     interpolator = InterpolatorType::New();
-    resampler->SetDefaultPixelValue(0);
   }
   resampler->SetInterpolator(interpolator);
 
@@ -148,9 +150,10 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   resampler->SetOutputSpacing(spacing);
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
+  this->image = resampler->GetOutput();
 
-  ImageType::SizeType inputSize = resampler->GetLargestPossibleRegion().GetSize();
-  ImageType::SpacingType inputSpacing = resampler->GetSpacing();
+  ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
+  ImageType::SpacingType inputSpacing = image->GetSpacing();
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
   {
     outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
@@ -160,7 +163,6 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   resampler->SetSize(outputSize);
 
   resampler->SetInput(this->image);
-  this->image = resampler->GetOutput();
 
   if (isCenterImage)
   {
