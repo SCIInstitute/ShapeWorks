@@ -43,7 +43,7 @@ jobs:
     - name: Build dependencies
       shell: bash
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: cd /d/a ; INSTALL_DIR="${{runner.workspace}}\deps" BUILD_DIR="/d/a/bdeps" ; ./superbuild.sh 
+      run: INSTALL_DIR="${{runner.workspace}}\deps" BUILD_DIR="/d/a/bdeps" ; ./superbuild.sh 
 
     # - uses: actions/upload-artifact@v1
     #   with:
