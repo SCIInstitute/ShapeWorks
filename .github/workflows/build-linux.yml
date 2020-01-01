@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - superbuild
   pull_request:
 
 jobs:
@@ -24,13 +25,15 @@ jobs:
         version: "5.9.9"
 
     - name: Cache dependencies
+      id: cache-dependencies
       uses: actions/cache@v1
       with:
         path: ~/install
         key: ${{ runner.os }}-qt5.9.9-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
-      run: .github/workflows/build_dependencies.sh
+      if: steps.cache-dependencies.outputs.cache-hit != 'true'
+      run: INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./superbuild.sh --dependencies_only
 
     - name: cmake
       run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
