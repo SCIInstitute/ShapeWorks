@@ -30,7 +30,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/install
-        key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/superbuild.sh') }}
         
     - name: Build dependencies
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
