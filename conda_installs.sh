@@ -68,8 +68,9 @@ function install_conda() {
   if ! pip install matplotlib==3.1.2; then return 1; fi
   if ! pip install -e Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
 
+  # install any additional Linux dependencies
   if [ "$(uname)" = "Linux" ]; then
-    # install anything that's different on linux
+    echo "nothing additional to install for Linux"
   fi
 
   conda info

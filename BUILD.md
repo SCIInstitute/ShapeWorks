@@ -40,9 +40,13 @@ Install anaconda and Qt5 as above.
 
 After the above dependencies installed via conda, ShapeWorks uses VXL, ITK, and VTK.  You can either provide your own (note: ITK must be built with VTK support), or use the provided superbuild.sh script to build all three (and optionally ShapeWorks itself).  On windows, please use an msys shell (e.g. git bash) and run the same superbuild.sh to build VXL, VTK, and ITK.
 
+The **superbuild.sh** script accepts various options, such as specifying the locations of dependencies and whether or not to build the GUI. It can be used to build everything, or just the dependencies.  
+Use `./superbuild.sh --help` for more details.
+
 ### Configuration
+The following instructions describe how to configure and build ShapeWorks independently if the superbuild.sh script was only used to build dependencies.  
 Make a build directory and use cmake (or ccmake for a gui version) to configure your build:  
-``
+```
 mkdir build
 cd build
 cmake <options> ..
@@ -57,8 +61,6 @@ Options include the following:
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DBuild_View2=[OFF|ON]              default: OFF
   -DBuild_Post=[OFF|ON]               default: ON
-  -DBuild_PrepTools=[OFF|ON]          default: ON
-  -DBuild_Run=[OFF|ON]                default: ON
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
   -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release
 ```
@@ -75,3 +77,13 @@ Execute build using your generated project file:
 - maybe need to build using `cmake --build . -j 16` in order to pass parallel flags to dependent projects (e.g., vtk)
 **XCode project:** `open ShapeWorks.xcodeproj` and build from there  
 **Windows Visual Studio:** open it and build.  
+
+
+**Example (using OSX) that builds dependencies separately, then generates an XCode project for ShapeWorks:**  
+```
+$ ./superbuild.sh  --dependencies_only --build=../dependencies --install=../dependencies
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=./install -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DVXL_DIR=../dependencies/share/vxl/cmake -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+open ShapeWorks.xcodeproj
+```

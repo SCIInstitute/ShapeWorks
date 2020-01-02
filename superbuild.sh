@@ -48,15 +48,18 @@ usage()
   echo "Build results are saved in ${BUILD_LOG}."
 }
 
+# print full names of relative paths, which are needed to specify location of dependencies
+function realpath { echo $(cd $(dirname $1); pwd)/$(basename $1); }
+
 parse_command_line()
 {
   while [ "$1" != "" ]; do
     case $1 in
       -i=*|--install-dir=*)   INSTALL_DIR="${1#*=}"
-                              mkdir -p $INSTALL_DIR
+                              INSTALL_DIR=`realpath "${INSTALL_DIR}"`
                               ;;
       -b=*|--build-dir=*)     BUILD_DIR="${1#*=}"
-                              mkdir -p $BUILD_DIR
+                              BUILD_DIR=`realpath "${BUILD_DIR}"`
                               ;;
       -n=*|--num-procs=*)     NUM_PROCS="${1#*=}"
                               ;;
@@ -65,10 +68,13 @@ parse_command_line()
       --with-studio )         BUILD_STUDIO=1
                               ;;
       --vxl-dir=*)            VXL_DIR="${1#*=}"
+                              `VXL_DIR=realpath "${VXL_DIR}"`
                               ;;
       --vtk-dir=*)            VTK_DIR="${1#*=}"
+                              `VTK_DIR=realpath "${VTK_DIR}"`
                               ;;
       --itk-dir=*)            ITK_DIR="${1#*=}"
+                              `ITK_DIR=realpath "${ITK_DIR}"`
                               ;;
       --clean )               BUILD_CLEAN=1
                               ;;
@@ -292,4 +298,3 @@ echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build ShapeWorks and necessary dependencies
 (time build_all 2>&1) 2>&1 | tee shapeworks_superbuild.log
-
