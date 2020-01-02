@@ -104,6 +104,10 @@ unsigned int Preferences::getNumThreads()
   // upgrade ot move to a different machine and had it set at all available threads, it will still be that way
   float numThreadsRatio = this->settings.value( "MeshCache/NumThreads", DEFAULT_NUM_THREADS ).toFloat() / 100;
   int numThreads = (float)QThread::idealThreadCount() * numThreadsRatio;
+  if (numThreads > 8)
+  {
+    numThreads = 8;
+  }
   return numThreads;
 }
 
