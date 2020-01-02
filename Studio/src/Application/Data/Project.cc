@@ -371,6 +371,14 @@ bool Project::load_light_project(QString filename, string &planesFile)
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
       std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
+
+      if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
+        QMessageBox::critical(NULL, "ShapeWorksStudio",
+                              "File does not exist: " + QString::fromStdString(distance_transform_filename),
+                              QMessageBox::Ok);
+        return false;
+      }
+
       groom_files.push_back(distance_transform_filename);
     }
     inputsBuffer.clear();
