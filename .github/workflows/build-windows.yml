@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - superbuild
   pull_request:
 
 env:
