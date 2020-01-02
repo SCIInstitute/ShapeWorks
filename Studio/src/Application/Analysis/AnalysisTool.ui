@@ -283,7 +283,7 @@ QToolButton:pressed{
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="mean_tab">
       <attribute name="title">
@@ -311,7 +311,7 @@ QToolButton:pressed{
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="difference_button_2">
+        <widget class="QPushButton" name="group1_button">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -321,7 +321,7 @@ QToolButton:pressed{
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QPushButton" name="difference_button_3">
+        <widget class="QPushButton" name="group2_button">
          <property name="enabled">
           <bool>false</bool>
          </property>

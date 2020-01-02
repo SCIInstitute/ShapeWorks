@@ -264,6 +264,30 @@ void AnalysisTool::handle_median()
 }
 
 //-----------------------------------------------------------------------------
+void AnalysisTool::on_overall_button_clicked()
+{
+
+}
+
+//-----------------------------------------------------------------------------
+void AnalysisTool::on_group1_button_clicked()
+{
+
+}
+
+//-----------------------------------------------------------------------------
+void AnalysisTool::on_group2_button_clicked()
+{
+
+}
+
+//-----------------------------------------------------------------------------
+void AnalysisTool::on_difference_button_clicked()
+{
+
+}
+
+//-----------------------------------------------------------------------------
 bool AnalysisTool::compute_stats()
 {
   if (this->stats_ready_) {
