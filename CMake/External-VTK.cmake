@@ -5,7 +5,9 @@ set(SHAPEWORKS_VTK_VERSION v8.2.0 CACHE STRING "vtk version")
 mark_as_advanced(SHAPEWORKS_VTK_VERSION)
 set(SHAPEWORKS_VTK_VERSION_STRING 8.2 CACHE INTERNAL "vtk version string")
 set(VTK_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/vtk-${SHAPEWORKS_VTK_VERSION_STRING})
-find_package(Qt5 COMPONENTS Core) # if found, just build with Qt support 
+if (SHAPEWORKS_GUI)
+  find_package(Qt5 COMPONENTS Core) # if found, just build with Qt support
+endif()
 
 ExternalProject_Add(vtk
   GIT_REPOSITORY https://gitlab.kitware.com/vtk/vtk.git
