@@ -105,7 +105,15 @@ at_least_required_version()
 build_vxl()
 {
   echo "## Building vxl..."
-  cd ${BUILD_DIR}
+
+
+  if [[ $OSTYPE == "msys" ]]; then
+      # VXL make install on windows doesn't work, build in INSTALL_DIR
+      cd ${INSTALL_DIR}
+  else
+      cd ${BUILD_DIR}
+  fi
+  
   git clone https://github.com/vxl/vxl.git
   cd vxl
   # They fixed the VS compilation problem the day after the v2.0.2 release.
