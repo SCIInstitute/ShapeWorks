@@ -2,7 +2,11 @@
 
 ## Downloadable installation
 
-_coming soon:_ instructions for user installation without needing to build ShapeWorks
+Pre-built binary downloads are provided here:
+
+https://github.com/SCIInstitute/ShapeWorks/releases
+
+## Build from source
 
 ### Clone source
 
@@ -31,6 +35,10 @@ Download and install the latest version for your OS, selecting the LGPL (free) l
 ### Install dependencies (Windows)
 
 Install anaconda and Qt5 as above.
+
+### Superbuild
+
+After the above dependencies installed via conda, ShapeWorks uses VXL, ITK, and VTK.  You can either provide your own (note: ITK must be built with VTK support), or use the provided superbuild.sh script to build all three (and optionally ShapeWorks itself).  On windows, please use an msys shell (e.g. git bash) and run the same superbuild.sh to build VXL, VTK, and ITK.
 
 ### Configuration
 Make a build directory and use cmake (or ccmake for a gui version) to configure your build:  
