@@ -81,7 +81,7 @@ Execute build using your generated project file:
 
 **Example (using OSX) that builds dependencies separately, then generates an XCode project for ShapeWorks:**  
 ```
-$ ./superbuild.sh  --dependencies_only --build=../dependencies --install=../dependencies
+$ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
 mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=./install -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DVXL_DIR=../dependencies/share/vxl/cmake -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..

@@ -1,6 +1,7 @@
-#!/bin/bash -x
+#!/bin/bash
 
 #set -v   #verbose execution for debugging
+#set -x   #tracing execution for debugging (echos all commands from script)
 
 # defaults
 BUILD_CLEAN=0
@@ -83,7 +84,11 @@ parse_command_line()
       -h | --help )           usage
                               exit
                               ;;
-      * )                     usage
+      * )                     echo "---------------------"
+                              echo "ERROR: Unknown parameter \"$1\""
+                              echo "(remember to use '=' between a parameter name and its value)"
+                              echo "---------------------"
+                              echo "use '--help' to show usage"
                               exit 1
     esac
     shift
@@ -270,6 +275,13 @@ build_all()
 
   if [[ $BUILD_SHAPEWORKS = 1 ]]; then
       build_shapeworks
+  else
+    # echo dependency directories for easy reference in case the user is independenly building ShapeWorks
+    echo ""
+    echo "Dependency paths:"
+    echo "  VXL_DIR: ${VXL_DIR}"
+    echo "  VTK_DIR: ${VTK_DIR}"
+    echo "  ITK_DIR: ${ITK_DIR}"
   fi
 }
 
@@ -277,13 +289,18 @@ build_all()
 # main
 #
 
-echo "## superbuids.sh $*"
-echo "##"
-echo "## ShapeWorks Superbuild"
-echo "##---------------------"
-
 SRC=`pwd`
 parse_command_line $*
+
+echo "##---------------------"
+echo "## ShapeWorks Superbuild"
+echo "##---------------------"
+echo "##"
+echo "## called using these arguments:"
+echo "##  $*"
+echo "##"
+echo ""
+
 verify_qt
 
 echo "INSTALL_DIR: ${INSTALL_DIR}"
@@ -297,4 +314,4 @@ echo "BUILD_STUDIO: ${BUILD_STUDIO}"
 echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build ShapeWorks and necessary dependencies
-(time build_all 2>&1) 2>&1 | tee shapeworks_superbuild.log
+(time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
