@@ -70,6 +70,11 @@ public Q_SLOTS:
   void handle_analysis_options();
   void handle_median();
 
+  void on_overall_button_clicked();
+  void on_group1_button_clicked();
+  void on_group2_button_clicked();
+  void on_difference_button_clicked();
+
   // PCA
   void on_pcaSlider_valueChanged();
   void on_pcaModeSpinBox_valueChanged(int i);

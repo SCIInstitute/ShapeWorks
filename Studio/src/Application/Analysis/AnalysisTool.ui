@@ -298,6 +298,12 @@ QToolButton:pressed{
          <property name="text">
           <string>Difference</string>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="0" column="0">
@@ -307,6 +313,15 @@ QToolButton:pressed{
          </property>
          <property name="text">
           <string>Overall</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -318,6 +333,12 @@ QToolButton:pressed{
          <property name="text">
           <string>Group1</string>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -327,6 +348,12 @@ QToolButton:pressed{
          </property>
          <property name="text">
           <string>Group2</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

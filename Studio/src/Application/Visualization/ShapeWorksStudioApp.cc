@@ -920,6 +920,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->update_from_preferences();
   //this->project_->calculate_reconstructed_samples();
   this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->analysis_tool_->activate();
 
   /*
      this->analysis_tool_->reset_stats();

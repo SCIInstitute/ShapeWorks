@@ -252,6 +252,11 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
   }
 
+  std::cerr << "update!\n";
+  this->ui_->group1_button->setEnabled(this->project_->groups_available());
+  this->ui_->group2_button->setEnabled(this->project_->groups_available());
+  this->ui_->difference_button->setEnabled(this->project_->groups_available());
+
   emit update_view();
 }
 
@@ -266,25 +271,25 @@ void AnalysisTool::handle_median()
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_overall_button_clicked()
 {
-
+  emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group1_button_clicked()
 {
-
+  emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_group2_button_clicked()
 {
-
+  emit update_view();
 }
 
 //-----------------------------------------------------------------------------
 void AnalysisTool::on_difference_button_clicked()
 {
-
+  emit update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -319,7 +324,17 @@ bool AnalysisTool::compute_stats()
 //-----------------------------------------------------------------------------
 const vnl_vector<double> & AnalysisTool::getMean()
 {
-  if (!this->compute_stats()) { return this->empty_shape_;}
+  if (!this->compute_stats()) {
+    return this->empty_shape_;
+  }
+
+  if (this->ui_->group1_button->isChecked()) {
+    return this->stats_.Group1Mean();
+  }
+  else if (this->ui_->group2_button->isChecked()) {
+    return this->stats_.Group2Mean();
+  }
+
   return this->stats_.Mean();
 }
 

@@ -353,8 +353,8 @@ bool Project::load_light_project(QString filename, string &planesFile)
   TiXmlHandle docHandle(&doc);
   std::istringstream inputsBuffer;
 
-  /// TODO
-  ///this->groupsAvailable = (docHandle.FirstChild("group_ids").Element() != nullptr);
+  // determine if groups are available
+  this->groups_available_ = (docHandle.FirstChild("group_ids").Element() != nullptr);
 
   /// TODO
   //this->numDomains = 1;
@@ -701,6 +701,12 @@ bool Project::groomed_present()
 bool Project::reconstructed_present()
 {
   return this->reconstructed_present_;
+}
+
+//---------------------------------------------------------------------------
+bool Project::groups_available()
+{
+  return this->groups_available_;
 }
 
 //---------------------------------------------------------------------------
