@@ -84,6 +84,6 @@ Execute build using your generated project file:
 $ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=./install -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DVXL_DIR=../dependencies/share/vxl/cmake -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+cmake -DCMAKE_INSTALL_PREFIX=./install  -DCMAKE_PREFIX_PATH="${PWD}/../../dependencies" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
 ```
