@@ -1,29 +1,132 @@
-Merging individual executables into shapeworks.
-
+Notes for merging individual executables' functionality into shapeworks classes.
+-------------------------------------------------------------------------------
 Notes below identify command name changes and any parameter name changes, which
 have been intentionally minimized in order to facilite upgrading existing
 scripts and python apps that simply call the external executables.
 
-To enable postfix commands (a cmd uses results from the previous cmd), we would load infile or use prev results to call next function. This behavior has been simpler than expected to implement, with the default behaviour when no infile is specified (and the whole thing is a no-op if no output file is specified for the last command).
-[] implement postfix commands using...
-   ...creation of a static image shared by (say) image commands in order for the results to be shared
-   ...or optionally share results through commands or executable class
-   All of this could complicate matters to some degree, so we should make sure this is an important feature before creating it
-   To implement postfix commands only the first one would need an inFilenae and only the last one would need an outFilename... just need to figure out where to keep the Image associated with a given run. Maybe Executable? In this case, infile and outfile can actually be generic to the executable... but maybe that's getting ahead of ourselves since these might be different file types... potentially dangerous and buggy.
+Note that duplicate functionality has been discovered and is noted with the commands below.
 
-works! simple example:
-  shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
+General tasks:
+-----------------------------
+[x] implement postfix commands so that results of previous command are used by successive commands
+[] detect and report to the user when no output file is specified for the last command
+[] create example C++ app(s) that show using these classes directly
+[] add unit tests for new classes (goes along with creation of C++ example apps)
 
+Commands:   (* means OptionParser already used, otherwise just argv)
+-----------------------------
+Image commands:
 
-We should also create example Python and C++ apps that show using the API
-directly.
+[x] *AntiAliasing -> shapeworks antialias
+ o ShapeWorksGroom class duplicates antialias functionality, has different defaults
+ o Example: shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
 
-These notes also indicate duplicated functionality that has been discovered.
+[] ClipVolume
+[] CloseHoles*
+[] CropImages*
+[] ExtractGivenLabelImage*
+[] FastMarching*
+[] FindLargestBoundingBox*
+[] PadVolumeWithConstant*
+[] ReflectVolumes*
 
-- AntiAliasing -> shapeworks antialias
- o ShapeWorksGroom class duplicates this functionality, has different defaults
+[] ResampleVolumesToBeIsotropic -> shapeworks resamplevolume 
+ o Example:
+ o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic
+   Converted Image version and will remove Analyze version.
 
-- SmoothMesh -> shapeworks smooth (?)
+[] ThresholdImages*
+[] TopologyPreservingSmoothing
+[] WriteImageInfoToText*
+[] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
 
-- ResampleVolumesToBeIsotropic -> shapeworks newfunction ...
- o notes go here
+Mesh commands:  (some of these may not actually be executables)
+
+ClipClosedSurface.cxx
+ComputeCurvatureAndCoordFiles.cxx
+ComputeGeodesicDistanceFromVerticesToPoints.cxx
+ComputeGeodesicDistanceToCurve.cxx
+ComputeGeodesicDistanceToLandmark.cxx
+ComputeMeanNormals.cxx
+ComputeMeshGeodesics.cxx
+ComputeRasterizationVolumeOriginAndSize.cxx
+ExtractVertexFeatureFromMesh.cxx
+FillMeshHoles.cxx
+FixCuttingPlanes.cxx
+GenerateBinaryAndDTImagesFromMeshes.cxx
+GenerateFeatureGradientFiles.cxx
+GenerateFidsFiles.cxx
+GenerateFidsFilesFromMeshes.cxx
+GenerateNormalFeaFiles.cxx
+GetFeatureVolume.cxx
+GradientTesting.cxx
+ParticleBasedSurfaceReconstruction_InputParams.h
+PreviewCmd.cxx
+[] PreviewMeshQC/
+ - a finite element mesh class
+ - doesn't appear to be our creation
+ - probably update it and move it to ExternalLibs
+ProbeFeatureVolumesAtMeshVertices.cxx
+ProbeNormals.cxx
+ProjectPointsOntoMesh.cxx
+ReconstructMeanSurface.cxx
+ReconstructSamplesAlongPCAModes.cxx
+ReconstructSurface.cxx
+ReflectMesh.cxx
+RemoveFidsDTLeakage.cxx
+[] SmoothMesh -> shapeworks smoothmesh
+WriteFeatureGradientAsText.cxx
+[] deprecated/  (git rm -r deprecated)
+fea2vtk.cxx
+itkMultiplyByConstantImageFilter.h
+meshFIM.cpp
+meshFIM.h
+
+Optimize commands:
+
+ShapeWorksRunApp.h (save this one till last or not at all)
+[] bring up during next meeting since this is a full-fledged application, not merely a utility.
+   It might constitute a class by itself.
+   It seems to only use vtk and ITK, not any of the rest of the ShapeWorks framework.
+    - ah! except ParticleSystem's files (in the Optimize/ParticleSystem) are misnamed as itkParticle*
+    - but ParticleSystem is already a class. It should probably be moved, but it already stands alone
+
+Alignment commands:
+
+ApplyRigid3DTransformationToImage.cxx
+ICPRigid3DImageRegistration.cxx
+ICPRigid3DMeshRegistration.cxx
+Procrustes3D.cpp
+Procrustes3D.h
+[] ReflectMeshes
+ResampleVolumeToIsotropic.cxx
+ResizeOriginResampleVolumes.cxx
+Transforms/
+TranslateImages.cxx
+[] TranslateShapeToImageOrigin
+TranslationTransform.cxx
+
+Analyze commands:
+
+MeshFromDT.cpp
+MeshFromDT_InputParams.h
+Reconstruction.cpp
+Reconstruction.h
+Vis.cpp
+Vis.h
+
+Utils commands:
+
+FeaFromVTK.cxx
+GenericMeshConversion.cxx
+MeshFromDistanceTransforms.cxx
+VTKUnstructuredGridToPolyData.cxx
+itkImageToVTKImageFilter.h
+itkImageToVTKImageFilter.txx
+ply2vtk.cxx
+stl2ply.cxx
+stl2vtk.cxx
+vtk2ply.cxx
+
+  
+

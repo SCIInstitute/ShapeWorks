@@ -15,55 +15,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(Smoothmesh::getCommand()); 
   shapeworks.addCommand(Resamplevolume::getCommand());
- //shapeworks.addCommand(AntiAliasing::command());
   //...
-  
-/* (* means OptionParser already used, otherwise just argv)
- Image commands:
- [x] AntiAliasing*
- [] ClipVolume
- [] CloseHoles*
- [] CropImages*
- [] ExtractGivenLabelImage*
- [] FastMarching*
- [] FindLargestBoundingBox*
- [] PadVolumeWithConstant*
- [] ReflectVolumes*
- [] ResampleVolumesToBeIsotropic*
- [] ThresholdImages*
- [] TopologyPreservingSmoothing
- [] WriteImageInfoToText*
- [] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
-
- Mesh commands:
- [] smoothmesh
-[] ComputeCurvatureAndCoordFiles.cxx
-[] ... (some of these may not actually be executables)
- 	ComputeGeodesicDistanceFromVerticesToPoints.cxx 	ComputeGeodesicDistanceToCurve.cxx 	ComputeGeodesicDistanceToLandmark.cxx 	ComputeMeanNormals.cxx
-ComputeMeshGeodesics.cxx 	ComputeRasterizationVolumeOriginAndSize.cxx 	ExtractVertexFeatureFromMesh.cxx 	FillMeshHoles.cxx 	FixCuttingPlanes.cxx
-GenerateBinaryAndDTImagesFromMeshes.cxx 	GenerateFeatureGradientFiles.cxx 	GenerateFidsFiles.cxx 	GenerateFidsFilesFromMeshes.cxx 	GenerateNormalFeaFiles.cxx
-GetFeatureVolume.cxx 	GradientTesting.cxx 	Mesh.cpp 	Mesh.cpp~ 	Mesh.h
-Mesh.h~ 	ParticleBasedSurfaceReconstruction_InputParams.h 	PreviewCmd.cxx 	PreviewMeshQC/ 	ProbeFeatureVolumesAtMeshVertices.cxx
-ProbeNormals.cxx 	ProjectPointsOntoMesh.cxx 	ReconstructMeanSurface.cxx 	ReconstructSamplesAlongPCAModes.cxx 	ReconstructSurface.cxx
-ReflectMesh.cxx 	RemoveFidsDTLeakage.cxx 	SmoothMesh.cxx 	WriteFeatureGradientAsText.cxx 	deprecated/
-fea2vtk.cxx 	itkMultiplyByConstantImageFilter.h 	meshFIM.cpp 	meshFIM.h
-  ...
-
- Alignment commands:
- [] ReflectMeshes
- [] TranslateShapeToImageOrigin
-
- Optimize commands:
-...
-
- Analyze commands:
-...
-
- Utils commands:
-...
-
-*/
-
   
   try {
     shapeworks.run(argc, argv);
@@ -74,6 +26,7 @@ fea2vtk.cxx 	itkMultiplyByConstantImageFilter.h 	meshFIM.cpp 	meshFIM.h
 
 
   //<ctc> this should now work fine, --help's epilog lists all subcommands, and each command handles its own help
+  // [] verify and remove this comment
   // help: shapeworks <command> options
   //       for help on a specific command: shapeworks <command> --help
   // cmds: antialiasing
@@ -81,8 +34,9 @@ fea2vtk.cxx 	itkMultiplyByConstantImageFilter.h 	meshFIM.cpp 	meshFIM.h
   //       ...
   //
 
-  // <ctc> would be nice to categorize commands as Image, Analyze, etc (yes it would: todo)
-
+  // <ctc> would be nice to categorize commands listed in help as Image, Analyze, etc (yes it would: todo)
+  // [] this is difficult on multiple levels, both in terms of categorization and listing... maybe don't worry about it
+  
   return 0;
 }
 
