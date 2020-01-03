@@ -252,7 +252,6 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
   }
 
-  std::cerr << "update!\n";
   this->ui_->group1_button->setEnabled(this->project_->groups_available());
   this->ui_->group2_button->setEnabled(this->project_->groups_available());
   this->ui_->difference_button->setEnabled(this->project_->groups_available());

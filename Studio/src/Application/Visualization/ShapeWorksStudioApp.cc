@@ -849,7 +849,7 @@ void ShapeWorksStudioApp::update_display()
       this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
       this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
-      this->visualizer_->reset_camera();
+      //this->visualizer_->reset_camera();
     }
     else if (mode == "pca") {
       this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
