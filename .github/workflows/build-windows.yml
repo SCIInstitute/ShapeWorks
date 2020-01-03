@@ -37,12 +37,12 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{runner.workspace}}\deps
-        key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/superbuild.sh') }}
 
     - name: Build dependencies
       shell: bash
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: .github/workflows/build_dependencies_windows.sh "${{runner.workspace}}\deps"
+      run: ./superbuild.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps" --dependencies_only
 
     # - uses: actions/upload-artifact@v1
     #   with:
