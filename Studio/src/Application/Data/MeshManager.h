@@ -42,6 +42,9 @@ public:
   //! return the surface reconstructor
   QSharedPointer<SurfaceReconstructor> getSurfaceReconstructor();
 
+  //! return if reconstruction is ready
+  bool is_reconstruction_ready();
+
   //! clear the cache
   void clear_cache();
 
@@ -68,9 +71,6 @@ private:
   std::vector<QThread*> threads_;
 
   size_t thread_count_;
-
-  //reconstruction object
-  //Reconstruction construct_;
 
   QSharedPointer<SurfaceReconstructor> surfaceReconstructor_;
 };

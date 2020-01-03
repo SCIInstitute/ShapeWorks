@@ -28,6 +28,10 @@
 // ui
 #include <ui_ShapeWorksStudioApp.h>
 
+static QVariant ITEM_DISABLE(0);
+static QVariant ITEM_ENABLE(1 | 32);
+static int ITEM_ROLE = Qt::UserRole - 1;
+
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
 {
@@ -110,9 +114,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_GROOMED_C.c_str());
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_RECONSTRUCTION_C.c_str());
-  this->ui_->view_mode_combobox->setCurrentIndex(0);
-  this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
   // resize from preferences
   if (this->preferences_.has_entry("StudioWindow/geometry")) {
@@ -365,9 +370,12 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 
   preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filenames[0]));
   //need to re-run everything if something new is added.
-  this->ui_->view_mode_combobox->setCurrentIndex(0);
-  this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
+
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
+
   this->preferences_.set_preference("display_state", this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->import_files(filenames);
@@ -644,6 +652,12 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::set_view_combo_item_enabled(int item, bool value)
+{
+  this->ui_->view_mode_combobox->setItemData(item, value ? ITEM_ENABLE : ITEM_DISABLE, ITEM_ROLE);
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::GROOM_C));
@@ -686,28 +700,14 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
-  if (this->project_->original_present()) {
-    this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-  }
-  else {
-    this->ui_->view_mode_combobox->setCurrentIndex(1);
-    this->visualizer_->set_display_mode(Visualizer::MODE_GROOMED_C.c_str());
-    this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-  }
 
-  if (this->project_->groomed_present()) {
-    this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-  }
-  else {
-    this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-  }
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->project_->original_present());
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                    this->project_->reconstructed_present());
 
   if (this->project_->reconstructed_present()) {
-    this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
     this->project_->handle_clear_cache();
-  }
-  else {
-    this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
   }
   this->update_table();
   this->update_scrollbar();
@@ -729,8 +729,8 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->project_->get_mesh_manager()->getSurfaceReconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
   this->project_->handle_clear_cache();
-  this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setCurrentIndex(1);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->preferences_.set_preference("display_state",
                                     this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
@@ -743,8 +743,8 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->project_->handle_clear_cache();
-  this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setCurrentIndex(2);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
   this->preferences_.set_preference("display_state",
                                     this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
@@ -756,8 +756,8 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_complete()
 {
-  this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setCurrentIndex(1);
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
 }
 
 //---------------------------------------------------------------------------
@@ -807,6 +807,11 @@ void ShapeWorksStudioApp::update_display()
   bool reconstruct_ready =
     this->project_->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean();
 
+  if (!this->project_->groomed_present() && this->project_->reconstructed_present()) {
+    // legacy will be used
+    reconstruct_ready = true;
+  }
+
   std::string mode = "all samples";
 
   if (this->ui_->action_analysis_mode->isChecked()) {
@@ -833,48 +838,45 @@ void ShapeWorksStudioApp::update_display()
     if (zoom_val != this->ui_->thumbnail_size_slider->value()) {
       this->ui_->thumbnail_size_slider->setValue(zoom_val);
     }
-    this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-    this->ui_->view_mode_combobox->setItemData(1,
-                                               this->project_->groomed_present() ? 33 : 0,
-                                               Qt::UserRole - 1);
-    this->ui_->view_mode_combobox->setItemData(2,
-                                               (this->project_->reconstructed_present() &&
-                                                reconstruct_ready) ?
-                                               33 : 0, Qt::UserRole - 1);
+
+    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                      this->project_->reconstructed_present() &&
+                                      reconstruct_ready);
   }
   else {
     if (mode == "mean") {
-      this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, reconstruct_ready ? 0 : 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+      this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
-      //this->visualizer_->reset_camera();
     }
     else if (mode == "pca") {
-      this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, reconstruct_ready ? 0 : 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+      this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
       this->compute_mode_shape();
       this->visualizer_->reset_camera();
     }
     else if (mode == "single sample") {
-      this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
+
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->project_->original_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                        this->project_->reconstructed_present() &&
+                                        reconstruct_ready);
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
       this->visualizer_->reset_camera();
     }
     else {
-      this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1,
-                                                 this->project_->groomed_present() ? 33 : 0,
-                                                 Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2,
-                                                 (this->project_->reconstructed_present() &&
-                                                  reconstruct_ready) ?
-                                                 33 : 0, Qt::UserRole - 1);
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->project_->original_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                        this->project_->reconstructed_present() &&
+                                        reconstruct_ready);
     } //TODO regression?
 
     if (this->ui_->thumbnail_size_slider->maximum() !=
