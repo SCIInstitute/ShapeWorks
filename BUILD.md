@@ -2,7 +2,11 @@
 
 ## Downloadable installation
 
-_coming soon:_ instructions for user installation without needing to build ShapeWorks
+Pre-built binary downloads are provided here:
+
+https://github.com/SCIInstitute/ShapeWorks/releases
+
+## Build from source
 
 ### Clone source
 
@@ -32,29 +36,19 @@ Download and install the latest version for your OS, selecting the LGPL (free) l
 
 ### Install dependencies (Windows)
 
-The current method for building ShapeWorks on Windows is to utilize the Windows Subsystem for Linux.
+Install anaconda and Qt5 as above.
 
-1. Install the Linux Subsystem for Windows:
+### Superbuild
 
-https://docs.microsoft.com/en-us/windows/wsl/install-win10
+After the above dependencies installed via conda, ShapeWorks uses VXL, ITK, and VTK.  You can either provide your own (note: ITK must be built with VTK support), or use the provided superbuild.sh script to build all three (and optionally ShapeWorks itself).  On windows, please use an msys shell (e.g. git bash) and run the same superbuild.sh to build VXL, VTK, and ITK.
 
-2. Install (using 'sudo apt install') packages:
-```
-build-essential cmake MesaGL libglu1-mesa-dev freeglut3-dev mesa-common-dev libosmesa6-dev libxrandr-dev libxinerama-dev libglu1-mesa-dev libxcursor-dev libi-dev qt-dev qttools5-dev libqt5x11extras5-dev libqt5x11extras5 libqt53dextras5 libxi-dev python3 python3-numpy python3-termcolor python3-matplotlib
-```
-Note that if you're using your linux subsystem for other things other than ShapeWorks, it might be beneficial to follow the linux build instructions above, creating a conda environment along the way.
-
-3. To enable visualization, follow the instructions here to install and use VcXsrv
-
-https://seanthegeek.net/234/graphical-linux-applications-bash-ubuntu-windows/
-
-VcXsrv is available here:
-
-https://sourceforge.net/projects/vcxsrv/
+The **superbuild.sh** script accepts various options, such as specifying the locations of dependencies and whether or not to build the GUI. It can be used to build everything, or just the dependencies.  
+Use `./superbuild.sh --help` for more details.
 
 ### Configuration
+The following instructions describe how to configure and build ShapeWorks independently if the superbuild.sh script was only used to build dependencies.  
 Make a build directory and use cmake (or ccmake for a gui version) to configure your build:  
-``
+```
 mkdir build
 cd build
 cmake <options> ..
@@ -69,17 +63,14 @@ Options include the following:
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DBuild_View2=[OFF|ON]              default: OFF
   -DBuild_Post=[OFF|ON]               default: ON
-  -DBuild_PrepTools=[OFF|ON]          default: ON
-  -DBuild_Run=[OFF|ON]                default: ON
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
   -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release
 ```
   Paths to dependencies can be set explicitly. Otherwise they will be downloaded and built automatically.
 ```
   -DVTK_DIR=<path to your own vtk>
-  -DITK_DIR=<path to your own ITK>
+  -DITK_DIR=<path to your own ITK> # Note that ITK must be build with VTK for GUI applications
   -DVXL_DIR=<path to your own vxl>
-  -DSHAPEWORKS_EXTERNALS_CMAKE_BUILD_TYPE=[Debug|Release]  default: Release
 ```
 
 ### Build
@@ -88,3 +79,13 @@ Execute build using your generated project file:
 - maybe need to build using `cmake --build . -j 16` in order to pass parallel flags to dependent projects (e.g., vtk)
 **XCode project:** `open ShapeWorks.xcodeproj` and build from there  
 **Windows Visual Studio:** open it and build.  
+
+
+**Example (using OSX) that builds dependencies separately, then generates an XCode project for ShapeWorks:**  
+```
+$ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=./install  -DCMAKE_PREFIX_PATH="${PWD}/../../dependencies" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+open ShapeWorks.xcodeproj
+```
