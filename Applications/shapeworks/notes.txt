@@ -34,6 +34,7 @@ Image commands:
 [x] *AntiAliasing -> shapeworks antialias
  o ShapeWorksGroom class duplicates antialias functionality, has different defaults
  o Example: shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
+ o Example: antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100
 
 [] ClipVolume
 [] *CloseHoles
@@ -45,9 +46,9 @@ Image commands:
 [] *ReflectVolumes
 
 [] ResampleVolumesToBeIsotropic -> shapeworks resamplevolume 
- o Example:
+ o Example: resamplevolume --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100
  o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic
-   Converted Image version and will remove Analyze version.
+  - Converted the Image version and need to remove Analyze version (pretty sure it's just a copy/paste of the ITK example)
 
 [] *ThresholdImages
 [] TopologyPreservingSmoothing
