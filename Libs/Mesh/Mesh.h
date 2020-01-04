@@ -15,6 +15,7 @@ public:
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename);
   bool smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoothing*/);
+  // bool nextfunction(...);
 
 private:
   vtkSmartPointer<vtkPolyData> mesh;

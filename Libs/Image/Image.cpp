@@ -142,16 +142,7 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
   resampler->SetTransform(transform);
-
-  ImageType::SpacingType spacing;
-  spacing[0] = isoSpacing;
-  spacing[1] = isoSpacing;
-  spacing[2] = isoSpacing;
-  resampler->SetOutputSpacing(spacing);
-  resampler->SetOutputOrigin(image->GetOrigin());
-  resampler->SetOutputDirection(image->GetDirection());
-  this->image = resampler->GetOutput();
-
+  
   ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
   ImageType::SpacingType inputSpacing = image->GetSpacing();
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
@@ -162,7 +153,16 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   }
   resampler->SetSize(outputSize);
 
+  ImageType::SpacingType spacing;
+  spacing[0] = isoSpacing;
+  spacing[1] = isoSpacing;
+  spacing[2] = isoSpacing;
+  resampler->SetOutputSpacing(spacing);
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
+
   resampler->SetInput(this->image);
+  this->image = resampler->GetOutput();
 
   if (isCenterImage)
   {

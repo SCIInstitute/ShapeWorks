@@ -19,8 +19,8 @@ public:
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename);
   bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
-  bool resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, Dims outputSize);
-  // bool resamplevolumes(bool isBinary, float isoSpacing bool isCenterImageOn, Point3 size);  // maybe have to create a point3 class)
+  bool resamplevolume(bool isBinary = false, bool isCenterImage = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
+  // bool nextfunction(...);
 
 private:
   ImageType::Pointer image;
