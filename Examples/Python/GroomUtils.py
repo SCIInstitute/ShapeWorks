@@ -39,7 +39,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isCenterOn=True
         cprint(("Output Filename : ", outname), 'yellow')
         print("######################################")
         print(" ")
-        execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
+        execCommand = ["shapeworks resamplevolumes", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
         subprocess.check_call(execCommand)
 
     return outDataList

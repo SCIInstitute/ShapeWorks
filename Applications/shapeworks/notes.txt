@@ -6,10 +6,24 @@ scripts and python apps that simply call the external executables.
 
 Note that duplicate functionality has been discovered and is noted with the commands below.
 
+HOWTO start a new command:
+ 0) decide which command to do next, then create a branch from executable for that command:
+  $ git checkout executable
+  $ git pull
+  $ git checkout -b executable_<command>
+ 1) copy and modify boilerplate for the new command in Commands.h and Commands.cpp and append it to the end of these files
+ 2) add the command in shapeworks.cpp's main(): shapeworks.addCommand(Example::getCommand());
+ 3) add the new function to its associated class (probably Image or Mesh for now)
+ 4) find all uses of the command (in .sh and .py files) and change them to use the new shapeworks subcommand:
+  $ find Examples -name "*" -type f -exec grep -i "OldCommandName" {} \; -print
+ 5) test command as needed to ensure it works the same as before (unless there was already a bug :)
+ 6) remove the old command from its directory's CMakeLists.txt and `git rm OldCommandName.cxx`
+ 7) commit the results and make a pull request *to executable* (not to master)
+ 
 General tasks:
 -----------------------------
 [x] implement postfix commands so that results of previous command are used by successive commands
-[] detect and report to the user when no output file is specified for the last command
+[-] detect and report to the user when no output file is specified for the last command (decided against this)
 [] create example C++ app(s) that show using these classes directly
 [] add unit tests for new classes (goes along with creation of C++ example apps)
 
@@ -22,62 +36,61 @@ Image commands:
  o Example: shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
 
 [] ClipVolume
-[] CloseHoles*
-[] CropImages*
-[] ExtractGivenLabelImage*
-[] FastMarching*
-[] FindLargestBoundingBox*
-[] PadVolumeWithConstant*
-[] ReflectVolumes*
+[] *CloseHoles
+[] *CropImages
+[] *ExtractGivenLabelImage
+[] *FastMarching
+[] *FindLargestBoundingBox
+[] *PadVolumeWithConstant
+[] *ReflectVolumes
 
 [] ResampleVolumesToBeIsotropic -> shapeworks resamplevolume 
  o Example:
  o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic
    Converted Image version and will remove Analyze version.
 
-[] ThresholdImages*
+[] *ThresholdImages
 [] TopologyPreservingSmoothing
-[] WriteImageInfoToText*
+[] *WriteImageInfoToText
 [] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
 
 Mesh commands:  (some of these may not actually be executables)
 
-ClipClosedSurface.cxx
-ComputeCurvatureAndCoordFiles.cxx
-ComputeGeodesicDistanceFromVerticesToPoints.cxx
-ComputeGeodesicDistanceToCurve.cxx
-ComputeGeodesicDistanceToLandmark.cxx
-ComputeMeanNormals.cxx
-ComputeMeshGeodesics.cxx
-ComputeRasterizationVolumeOriginAndSize.cxx
-ExtractVertexFeatureFromMesh.cxx
-FillMeshHoles.cxx
-FixCuttingPlanes.cxx
-GenerateBinaryAndDTImagesFromMeshes.cxx
-GenerateFeatureGradientFiles.cxx
-GenerateFidsFiles.cxx
-GenerateFidsFilesFromMeshes.cxx
-GenerateNormalFeaFiles.cxx
-GetFeatureVolume.cxx
-GradientTesting.cxx
-ParticleBasedSurfaceReconstruction_InputParams.h
-PreviewCmd.cxx
+ClipClosedSurface
+ComputeCurvatureAndCoordFiles
+ComputeGeodesicDistanceFromVerticesToPoints
+ComputeGeodesicDistanceToCurve
+ComputeGeodesicDistanceToLandmark
+ComputeMeanNormals
+ComputeMeshGeodesics
+ComputeRasterizationVolumeOriginAndSize
+ExtractVertexFeatureFromMesh
+FillMeshHoles
+FixCuttingPlanes
+GenerateBinaryAndDTImagesFromMeshes
+GenerateFeatureGradientFiles
+GenerateFidsFiles
+GenerateFidsFilesFromMeshes
+GenerateNormalFeaFiles
+GetFeatureVolume
+GradientTesting
+PreviewCmd
 [] PreviewMeshQC/
  - a finite element mesh class
  - doesn't appear to be our creation
  - probably update it and move it to ExternalLibs
-ProbeFeatureVolumesAtMeshVertices.cxx
-ProbeNormals.cxx
-ProjectPointsOntoMesh.cxx
-ReconstructMeanSurface.cxx
-ReconstructSamplesAlongPCAModes.cxx
-ReconstructSurface.cxx
-ReflectMesh.cxx
-RemoveFidsDTLeakage.cxx
+ProbeFeatureVolumesAtMeshVertices
+ProbeNormals
+ProjectPointsOntoMesh
+ReconstructMeanSurface
+ReconstructSamplesAlongPCAModes
+ReconstructSurface
+ReflectMesh
+RemoveFidsDTLeakage
 [] SmoothMesh -> shapeworks smoothmesh
-WriteFeatureGradientAsText.cxx
-[] deprecated/  (git rm -r deprecated)
-fea2vtk.cxx
+WriteFeatureGradientAsText
+[x] deprecated/  (git rm -r deprecated)
+fea2vtk
 itkMultiplyByConstantImageFilter.h
 meshFIM.cpp
 meshFIM.h
@@ -93,18 +106,18 @@ ShapeWorksRunApp.h (save this one till last or not at all)
 
 Alignment commands:
 
-ApplyRigid3DTransformationToImage.cxx
-ICPRigid3DImageRegistration.cxx
-ICPRigid3DMeshRegistration.cxx
+ApplyRigid3DTransformationToImage
+ICPRigid3DImageRegistration
+ICPRigid3DMeshRegistration
 Procrustes3D.cpp
 Procrustes3D.h
 [] ReflectMeshes
-ResampleVolumeToIsotropic.cxx
-ResizeOriginResampleVolumes.cxx
+ResampleVolumeToIsotropic
+ResizeOriginResampleVolumes
 Transforms/
-TranslateImages.cxx
+TranslateImages
 [] TranslateShapeToImageOrigin
-TranslationTransform.cxx
+TranslationTransform
 
 Analyze commands:
 
@@ -117,16 +130,16 @@ Vis.h
 
 Utils commands:
 
-FeaFromVTK.cxx
-GenericMeshConversion.cxx
-MeshFromDistanceTransforms.cxx
-VTKUnstructuredGridToPolyData.cxx
+FeaFromVTK
+GenericMeshConversion
+MeshFromDistanceTransforms
+VTKUnstructuredGridToPolyData
 itkImageToVTKImageFilter.h
 itkImageToVTKImageFilter.txx
-ply2vtk.cxx
-stl2ply.cxx
-stl2vtk.cxx
-vtk2ply.cxx
+ply2vtk
+stl2ply
+stl2vtk
+vtk2ply
 
   
 

@@ -9,6 +9,7 @@ void Command::buildParser()
 {
   // ensure only arguments for this command get passed and remaining are returned by parse_args
   parser.disable_interspersed_args();
+  parser.usage("%prog [args]...").epilog("");
 
   parser.add_option("--inFilename").action("store").type("string").set_default("").help("Specify input filename. Otherwise uses currently loaded file.");
   parser.add_option("--outFilename").action("store").type("string").set_default("").help("Specify output filename. Otherwise doesn't save output.");

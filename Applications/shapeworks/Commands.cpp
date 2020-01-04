@@ -3,17 +3,47 @@
 
 namespace Shapeworks {
 
+
+
+// boilerplate for a command. Copy this to start a new command
+#if 0
+///////////////////////////////////////////////////////////////////////////////
+// Example
+///////////////////////////////////////////////////////////////////////////////
+void Example::buildParser()
+{
+  const std::string prog = "example";
+  const std::string desc = "brief description of command";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--optionName").action("store").type("float").set_default(0.01).help("Description of optionName.");
+  //additional options... 
+  
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float optionName = static_cast<float>(options.get("optionName"));
+  //read additional options... 
+
+  return sharedData.image.example(optionName, ...);
+}
+#endif
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Antialias
 ///////////////////////////////////////////////////////////////////////////////
 void Antialias::buildParser()
 {
   const std::string prog = "antialias";
-  const std::string usage = "%prog [OPTION]";
   const std::string desc = "antialiases binary volumes";
-  const std::string epilog = "";
-  parser.prog(prog).usage(usage).description(desc).epilog(epilog);
-  
+  parser.prog(prog).description(desc);
+
   parser.add_option("--maxRMSError").action("store").type("float").set_default(0.01).help("The maximum RMS error allowed.");
   parser.add_option("--numIterations").action("store").type("int").set_default(50).help("Number of iterations.");
 
@@ -29,16 +59,15 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
   return sharedData.image.antialias(maxRMSErr, numIter);
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // Resamplevolume
 ///////////////////////////////////////////////////////////////////////////////
 void Resamplevolume::buildParser()
 {
   const std::string prog = "resamplevolume";
-  const std::string usage = "%prog [OPTION]";
   const std::string desc = "resamples volumes to be isotropic";
-  const std::string epilog = "";
-  parser.prog(prog).usage(usage).description(desc).epilog(epilog);
+  parser.prog(prog).description(desc);
 
   parser.add_option("--isBinary").action("store").type("bool").set_default(false).help("A flag to treat the input image as a binary image (specialized resampling pipeline) [default disabled].");
   parser.add_option("--isCenterImage").action("store").type("bool").set_default(false).help("A flag to center the image, i.e. change the origin in the image header to the physcial coordinates of the first voxel (lower left corner) [default disabled].");
@@ -62,12 +91,11 @@ int Resamplevolume::execute(const optparse::Values &options, SharedCommandData &
   return sharedData.image.resamplevolume(isBinary, isCenterImage, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // Clip
 ///////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////
-// etc (todo)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Smoothmesh
@@ -75,10 +103,8 @@ int Resamplevolume::execute(const optparse::Values &options, SharedCommandData &
 void Smoothmesh::buildParser()
 {
   const std::string prog = "smoothmesh";
-  const std::string usage = "%prog [OPTION]";
   const std::string desc = "smooths meshes";
-  const std::string epilog = "";
-  parser.prog(prog).usage(usage).description(desc).epilog(epilog);
+  parser.prog(prog).description(desc);
   
   // TODO
   // parser.add_option("--maxRMSError").action("store").type("float").set_default(0.01).help("The maximum RMS error allowed.");
@@ -95,5 +121,7 @@ int Smoothmesh::execute(const optparse::Values &options, SharedCommandData &shar
 
   return sharedData.mesh.smooth(/*maxRMSErr, numIter*/);
 }
+
+
 
 } // Shapeworks

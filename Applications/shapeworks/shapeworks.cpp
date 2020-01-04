@@ -24,20 +24,8 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-
-  //<ctc> this should now work fine, --help's epilog lists all subcommands, and each command handles its own help
-  // [] verify and remove this comment
-  // help: shapeworks <command> options
-  //       for help on a specific command: shapeworks <command> --help
-  // cmds: antialiasing
-  //       etc, 
-  //       ...
-  //
-
   // <ctc> would be nice to categorize commands listed in help as Image, Analyze, etc (yes it would: todo)
   // [] this is difficult on multiple levels, both in terms of categorization and listing... maybe don't worry about it
   
   return 0;
 }
-
-

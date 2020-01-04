@@ -1,18 +1,20 @@
 # Build
 set(Image_sources
   Image.cpp
-  ImageUtils.cpp)
+  ImageUtils.cpp
+  )
+set(Image_headers
+  Image.h
+  ImageUtils.h
+  )
 add_library(Image STATIC
-  ${Image_sources})
+  ${Image_sources}
+  ${Image_headers})
 target_include_directories(Image PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 
 # Install
-set(Image_headers
-  Image.h
-  ImageUtils.h
-  )
 set_target_properties(Image PROPERTIES PUBLIC_HEADER
   "${Image_headers}")
 install(TARGETS Image
@@ -38,6 +40,7 @@ add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
 target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
 
+#todo: verify new shapeworks subcommand is the same and remove this one
 add_executable(ResampleVolumesToBeIsotropic ResampleVolumesToBeIsotropic.cxx)
 target_link_libraries(ResampleVolumesToBeIsotropic ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ResampleVolumesToBeIsotropic RUNTIME DESTINATION bin)
@@ -57,11 +60,6 @@ INSTALL(TARGETS TopologyPreservingSmoothing  RUNTIME DESTINATION bin)
 add_executable(CropImages CropImages.cxx)
 target_link_libraries(CropImages ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS CropImages  RUNTIME DESTINATION bin)
-
-# <ctc> gotta go!
-add_executable(AntiAliasing AntiAliasing.cxx)
-target_link_libraries(AntiAliasing ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS AntiAliasing  RUNTIME DESTINATION bin)
 
 add_executable(ThresholdImages ThresholdImages.cxx)
 target_link_libraries(ThresholdImages ${ITK_LIBRARIES} Utils)
