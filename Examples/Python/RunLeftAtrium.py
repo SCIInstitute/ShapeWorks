@@ -299,7 +299,7 @@ def Run_LeftAtrium_Pipline(args):
             "relative_weighting" : 50,
             "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
+            "procrustes_scaling" : 1,
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3
@@ -328,7 +328,7 @@ def Run_LeftAtrium_Pipline(args):
             "relative_weighting" : 50,
             "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
+            "procrustes_scaling" : 1,
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3
