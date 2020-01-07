@@ -19,7 +19,7 @@ public:
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename);
   bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
-  bool resamplevolume(bool isBinary = false, bool isCenterImage = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
+  bool resamplevolume(bool isBinary = false, bool recenter = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
   // bool nextfunction(...);
 
 private:

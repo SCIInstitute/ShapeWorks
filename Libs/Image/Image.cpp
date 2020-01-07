@@ -107,7 +107,7 @@ bool Image::antialias(float maxRMSErr, int numIter)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, Dims outputSize)
+bool Image::resamplevolume(bool isBinary, bool recenter, float isoSpacing, Dims outputSize)
 {
   if (!this->image)
   {
@@ -164,7 +164,7 @@ bool Image::resamplevolume(bool isBinary, bool isCenterImage, float isoSpacing, 
   resampler->SetInput(this->image);
   this->image = resampler->GetOutput();
 
-  if (isCenterImage)
+  if (recenter)
   {
     using ImageInfoFilterType = itk::ChangeInformationImageFilter<ImageType>;
     ImageInfoFilterType::Pointer infoFilter = ImageInfoFilterType::New();

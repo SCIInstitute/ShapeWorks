@@ -70,7 +70,7 @@ void Resamplevolume::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--isBinary").action("store").type("bool").set_default(false).help("A flag to treat the input image as a binary image (specialized resampling pipeline) [default disabled].");
-  parser.add_option("--isCenterImage").action("store").type("bool").set_default(false).help("A flag to center the image, i.e. change the origin in the image header to the physcial coordinates of the first voxel (lower left corner) [default disabled].");
+  parser.add_option("--recenter").action("store").type("bool").set_default(false).help("A flag to recenter the volume, i.e. change the origin in the image header to the physcial coordinates of the first voxel (lower left corner) [default disabled].");
   parser.add_option("--isoSpacing").action("store").type("float").set_default(1.0f).help("The isotropic spacing in all dimensions.");
   parser.add_option("--sizeX").action("store").type("unsigned").set_default(0).help("Image size in x-direction (optional, if set to 0, the size is autmatically estimated from the input image).");
   parser.add_option("--sizeY").action("store").type("unsigned").set_default(0).help("Image size in y-direction (optional, if set to 0, the size is autmatically estimated from the input image).");
@@ -82,13 +82,13 @@ void Resamplevolume::buildParser()
 int Resamplevolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   bool isBinary = static_cast<bool>(options.get("isBinary"));
-  bool isCenterImage = static_cast<bool>(options.get("isCenterImage"));
+  bool recenter = static_cast<bool>(options.get("recenter"));
   float isoSpacing = static_cast<float>(options.get("isoSpacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizeX"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizeY"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizeZ"));
 
-  return sharedData.image.resamplevolume(isBinary, isCenterImage, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  return sharedData.image.resamplevolume(isBinary, recenter, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
 

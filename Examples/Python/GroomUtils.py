@@ -10,7 +10,7 @@ import SimpleITK as sitk
 
 from CommonUtils import *
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isCenterOn=True, isBinaryImage=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenterVolumes=True, isBinaryVolume=True):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -30,7 +30,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isCenterOn=True
         spt = inname.rsplit(os.sep, 1)
         initPath = spt[0]
         filename = spt[1]
-        outname = inname.replace(initPath, binaryoutDir)
+        outname = inname.replace(initPath, outDir)
         outname = outname.replace('.nrrd', '.isores.nrrd')
         outDataList.append(outname)
         print(" ")
@@ -39,7 +39,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isCenterOn=True
         cprint(("Output Filename : ", outname), 'yellow')
         print("######################################")
         print(" ")
-        execCommand = ["shapeworks resamplevolumes", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--isCenterImageOn", isCenterOn, "--isBinaryImage", isBinaryImage]
+        execCommand = ["shapeworks", "resamplevolume", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--recenter", str(recenterVolumes), "--isBinary", str(isBinaryVolume)]
         subprocess.check_call(execCommand)
 
     return outDataList
@@ -318,6 +318,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
     execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
     subprocess.check_call(execCommand)
+    #<ctc> fixme:
     execCommand = ["shapeworks antialias" ,  "--inFilename" , refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations" , str(
         antialiasIterations)]
     subprocess.check_call(execCommand)

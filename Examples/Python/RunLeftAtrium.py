@@ -96,8 +96,11 @@ def Run_LeftAtrium_Pipline(args):
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
 
-        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinaryImage=True)
-        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinaryImage=False)
+        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinaryVolume=True)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinaryVolume=False)
+        print("new version of resampling complete!")
+        print("outputs in "+parentDir+"resampled/[segmentations|images]")
+        sys.exit(0)
 
         """
         Apply padding
