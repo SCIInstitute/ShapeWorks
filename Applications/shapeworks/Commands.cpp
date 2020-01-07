@@ -97,7 +97,7 @@ int Resamplevolume::execute(const optparse::Values &options, SharedCommandData &
 void Padvolume::buildParser()
 {
   const std::string prog = "padvolume";
-  const std::string desc = "A command line tool that pad a contant value in the x-, y-, and z-directions of a given volume";
+  const std::string desc = "A command line tool that pad a contant value in the x-, y-, and z- directions of a given volume";
   parser.prog(prog).description(desc);
 
   parser.add_option("--paddingSize").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
