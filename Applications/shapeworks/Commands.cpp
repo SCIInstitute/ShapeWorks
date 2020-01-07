@@ -91,6 +91,29 @@ int Resamplevolume::execute(const optparse::Values &options, SharedCommandData &
   return sharedData.image.resamplevolume(isBinary, recenter, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Padvolume
+///////////////////////////////////////////////////////////////////////////////
+void Padvolume::buildParser()
+{
+  const std::string prog = "padvolume";
+  const std::string desc = "A command line tool that pad a contant value in the x-, y-, and z-directions of a given volume";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--paddingSize").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
+  parser.add_option("--paddingValue").action("store").type("float").set_default(0).help("Value to be used to fill padded voxels.");
+  
+  Command::buildParser();
+}
+
+int Padvolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  int paddingSize = static_cast<int>(options.get("paddingSize"));
+  float paddingValue = static_cast<float>(options.get("paddingValue"));
+
+  return sharedData.image.padvolume(paddingSize, paddingValue);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Clip

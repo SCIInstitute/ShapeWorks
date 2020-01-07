@@ -8,6 +8,7 @@
 #include <itkBSplineInterpolateImageFunction.h>
 #include <itkChangeInformationImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
+#include <itkConstantPadImageFilter.h>
 
 
 namespace Shapeworks {
@@ -197,6 +198,51 @@ bool Image::resamplevolume(bool isBinary, bool recenter, float isoSpacing, Dims 
 
   std::cout << "Resample volumes to be isotropic succeeded!\n";
   return true;
+}
+
+bool Image::padvolume(int paddingSize, float paddingValue)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  ImageType::SizeType lowerExtendRegion;
+  lowerExtendRegion[0] = paddingSize;
+  lowerExtendRegion[1] = paddingSize;
+  lowerExtendRegion[2] = paddingSize;
+
+  ImageType::SizeType upperExtendRegion;
+  upperExtendRegion[0] = paddingSize;
+  upperExtendRegion[1] = paddingSize;
+  upperExtendRegion[2] = paddingSize;
+
+  ImageType::PixelType constantPixel = paddingValue;
+
+  using ConstantPadImageFilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
+  ConstantPadImageFilterType::Pointer padFilter = ConstantPadImageFilterType::New();
+
+  padFilter->SetInput(this->image);
+  padFilter->SetPadLowerBound(lowerExtendRegion);
+  padFilter->SetPadUpperBound(upperExtendRegion);
+  padFilter->SetConstant(constantPixel);
+  this->image = padFilter->GetOutput();
+
+  try
+  {
+    padFilter->Update();  
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Pad volume with constant failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  std::cout << "Pad volume with constant succeeded!\n";
+  return true;
+
 }
 
 } // Shapeworks
