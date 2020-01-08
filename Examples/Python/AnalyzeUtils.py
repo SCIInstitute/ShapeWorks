@@ -78,18 +78,17 @@ def create_cpp_xml(filename, outputfilename):
     file.close()
 
 def launchShapeWorksView2(parentDir, pointFileList):
-
-    xmlfilename = os.path.join(parentDir , 'shapeworksview2.xml')
+    xmlfilename = parentDir + '/shapeworksview2.xml'
     create_View2_xml(xmlfilename, pointFileList)
     create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = ["ShapeWorksView2" , xmlfilename , "&"]
+    execCommand = ["ShapeWorksStudio" , xmlfilename ]
     subprocess.check_call(execCommand )
 
 def launchShapeWorksView2(parentDir, dtFiles, localPointFiles, worldPointFiles):
     xmlfilename = parentDir + '/shapeworksview2.xml'
     create_View2_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles)
     create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = ["ShapeWorksView2" , xmlfilename , "&"]
+    execCommand = ["ShapeWorksStudio" , xmlfilename ]
     subprocess.check_call(execCommand )
     
     

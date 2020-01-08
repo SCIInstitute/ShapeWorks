@@ -1,26 +1,42 @@
 #!/bin/bash -x
 
-
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <version>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <version> <install_dir> <install_dep_dir>"
     exit 1
 fi
 
 VERSION=$1
+INSTALL_DIR=$2
+INSTALL_DEP_DIR=$3
 ROOT=`pwd`
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    PLATFORM="mac"
+else
+    PLATFORM="linux"
+fi
+    
+if [[ "$VERSION" == "tag" ]]; then
+    VERSION="ShapeWorks-$(git describe --tags)-$PLATFORM"
+fi
+
+echo "Version: $VERSION"
 
 rm -rf "package/$VERSION"
 
-mkdir "package"
+mkdir -p "package/$VERSION"
 
-cp -a install "package/${VERSION}"
-mkdir -p package/${VERSION}/examples/ellipsoid
-cp -a UseCaseDocumentation/* package/${VERSION}/examples/ellipsoid
+BASE_LIB=${INSTALL_DEP_DIR}/lib
+cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
+cp -a $INSTALL_DIR/* "package/${VERSION}"
+cp -a Examples "package/${VERSION}"
+cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
+cp ChangeLog package/${VERSION}
 cp PACKAGE_README.txt package/${VERSION}/README.txt
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
-rm -rf include share
+rm -rf include share v3p plugins
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
@@ -40,16 +56,21 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # Fix transitive loaded libs
     cd ../lib
     for i in *.dylib ; do
-	install_name_tool -change ${PWD}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
+	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
     done
+
+    install_name_tool -id @rpath/libitkgdcmopenjp2-5.0.1.dylib libitkgdcmopenjp2-5.0.1.dylib
+    
     cd ..
 else
-    linuxdeployqt bin/ShapeWorksView2 -verbose=2
-    linuxdeployqt bin/ShapeWorksStudio -verbose=2
+    cd bin
+    linuxdeployqt ShapeWorksView2 -verbose=2
+    linuxdeployqt ShapeWorksStudio -verbose=2
 fi
 
+mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -r ${VERSION}.zip ${VERSION}
+zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 
 cd $ROOT
 

@@ -44,7 +44,9 @@ public:
 
   /// update the display using the current settings
   void display_samples();
-  
+
+  void update_samples();
+
   void display_sample(size_t i);
 
   void display_shape( const vnl_vector<double> &points);
@@ -92,6 +94,9 @@ private:
 
   vnl_vector<double> cached_mean_;
   vnl_vector<double> currentShape_;
+
+  QVector < QSharedPointer < DisplayObject >> display_objects_;
+
 };
 
 #endif /* STUDIO_VISUALIZATION_VISUALIZER_H */

@@ -1,0 +1,25 @@
+
+
+ShapeWorks 5.2.2 - 2020-01-09
+	* Returned to superbuild.sh build process
+	* Fixed non-Qt build
+	* Studio: Fixed import and processing of non-RAI image volumes
+	* Studio: Fix centering of groomed and reconstructed volumes
+
+ShapeWorks 5.2.1 - 2019-11-09
+	* Fix examples, binaries
+
+ShapeWorks 5.2.0 - 2019-11-07
+
+	* Studio: Added live particle optimization updates
+	* Studio: Added "Stop optimization" button
+	* Studio: Fixes crashes on exit during optimizations (clean shutdown of threads)
+	* Studio: Added support for reading View2 parameter files
+	* Studio: Added legacy (View2) surface reconstructor
+	* Studio: Replaced optimization libary with same used by ShapeWorksRun
+	* Use cases: Added a femur use case that demonstrates grooming surface meshes along with imaging data for shape modeling
+	* Use cases: Added a left atrium use case that demonstrates grooming images data along with shape data and build multi-scale shape models
+	* Use cases: New portal downloadable example data (ellipsoid, left atrium, and femurs)
+	* Windows installer and binary releases for Mac and Linux
+	* CMake-based superbuild with all dependencies built automatically
+

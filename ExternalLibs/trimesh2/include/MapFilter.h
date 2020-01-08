@@ -29,7 +29,8 @@ public:
   typedef TFunctor FType;
 
   itkNewMacro(Self);
-  itkTypeMacro(MeanFilter,  ImageToImageFilter);
+  itkTypeMacro(MapFilter, ImageToImageFilter);
+
 
   void SetFunctor(FType * f) { m_functor = f; }
   const FType * GetFunctor() const { return m_functor; }
@@ -37,6 +38,7 @@ public:
   void SetRequestedRegion( const OutRegion & outRegion ){ m_region = outRegion; }
 
 protected:
+  MapFilter();
   virtual void AllocateOutputs();
   virtual void ThreadedGenerateData(const OutRegion & outputRegionForThread,
                                     itk::ThreadIdType threadId);

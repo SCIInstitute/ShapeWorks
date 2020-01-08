@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include <vtkKdTreePointLocator.h>
 #include <vtkProbeFilter.h>
 #include <vtkFloatArray.h>
@@ -141,7 +143,11 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            typename TCoordRep, typename PixelType, typename ImageType>
 void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::setOutputEnabled(bool enabled){
     this->output_enabled_ = enabled;
-    this->out_prefix_ = "/tmp/";
+#ifdef WIN32
+	this->out_prefix_ = std::string(std::getenv("TEMP")) + "/";
+#else
+	this->out_prefix_ = "/tmp/";
+#endif
 }
 
 template < template < typename TCoordRep, unsigned > class TTransformType,

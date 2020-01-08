@@ -163,7 +163,7 @@ void SurfaceReconstructor::generate_mean_dense()
 }
 
 //---------------------------------------------------------------------------
-bool SurfaceReconstructor::get_surface_reconstruction_avaiable()
+bool SurfaceReconstructor::get_surface_reconstruction_available()
 {
   return this->surface_reconstruction_available_;
 }
@@ -186,7 +186,8 @@ vtkSmartPointer<vtkPolyData> SurfaceReconstructor::build_mesh(const vnl_vector<d
     points.push_back(point);
   }
 
-  return this->reconstructor_.getMesh(points);
+  vtkSmartPointer<vtkPolyData> poly_data = this->reconstructor_.getMesh(points);
+  return poly_data;
 }
 
 //---------------------------------------------------------------------------

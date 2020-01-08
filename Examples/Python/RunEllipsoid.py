@@ -29,7 +29,6 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from DatasetUtils import datasets
 
 
 
@@ -56,6 +55,7 @@ def Run_Ellipsoid_Pipeline(args):
     # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " in the current directory.")
+        from DatasetUtils import datasets
         datasets.downloadDataset(filename)
 
     parentDir="TestEllipsoids/"

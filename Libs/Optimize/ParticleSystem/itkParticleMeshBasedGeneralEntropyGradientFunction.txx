@@ -117,10 +117,10 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
 #pragma omp parallel
     {
-    vnl_matrix_type J;
+    vnl_matrix_type Jmatrix;
     vnl_matrix_type v;
 #pragma omp for
-    for (unsigned int j = 0; j < num_samples; j++)
+    for (int j = 0; j < num_samples; j++)
     {
         int tid = 1;
         int num_threads = 1;
@@ -154,9 +154,9 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 if (m_UseNormals[d])
                     num_attr += 3;
 
-                J.clear();
-                J.set_size(num_attr, VDimension);
-                J.fill(0.0);
+                Jmatrix.clear();
+                Jmatrix.set_size(num_attr, VDimension);
+                Jmatrix.fill(0.0);
                 v.clear();
                 v.set_size(num_attr, 1);
                 v.fill(0.0);
@@ -164,9 +164,9 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
                 for (unsigned int p = 0; p < c->GetNumberOfParticles(dom); p++)
                 {
                     v = Q.extract( num_attr, 1, num + p*num_attr, j );
-                    J = m_ShapeGradient->extract( num_attr, 3, num + p*num_attr, 3*j );
+                    Jmatrix = m_ShapeGradient->extract( num_attr, 3, num + p*num_attr, 3*j );
 
-                    vnl_matrix_type dx = J.transpose() * v;
+                    vnl_matrix_type dx = Jmatrix.transpose() * v;
                     for (unsigned int vd = 0; vd < VDimension; vd++)
                         m_PointsUpdate->put(num2 + p*VDimension + vd, j, dx(vd, 0));
                 }

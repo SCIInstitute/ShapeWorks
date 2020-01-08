@@ -184,9 +184,9 @@ public:
         m_MeshFiles = s;
     }
 
-    void SetImageFiles(const std::vector<std::string> &s)
+    void SetImages(const std::vector<typename TImage::Pointer> &images)
     {
-        m_ImageFiles = s;
+        m_Images = images;
     }
 
     void SetFidsFiles(const std::vector<std::string> &s)
@@ -426,7 +426,7 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
 
-    std::vector<std::string> m_ImageFiles;
+    std::vector<typename TImage::Pointer> m_Images;
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
     std::vector< std::vector< CuttingPlaneType> > m_CuttingPlanes;

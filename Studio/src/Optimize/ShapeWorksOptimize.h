@@ -22,7 +22,6 @@ public:
   virtual ~ShapeWorksOptimize();
 
   void set_inputs(std::vector<ImageType::Pointer> inputs);
-  void set_input_filenames(std::vector<std::string> groomed_filenames);
   void set_cut_planes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes);
   void set_start_reg(double start_reg);
   void set_end_reg(double end_reg);
@@ -32,11 +31,14 @@ public:
   void set_procrustes_interval(unsigned procrustes_interval);
   void set_weighting(double weighting);
   void set_verbose(bool verbose);
+  void stop_optimization();
+
+  bool get_aborted();
 
   void run();
   std::vector<ImageType::Pointer> getImages();
-  std::vector<std::vector<itk::Point<double>>> localPoints();
-  std::vector<std::vector<itk::Point<double>>> globalPoints();
+  virtual std::vector<std::vector<itk::Point<double>>> localPoints();
+  virtual std::vector<std::vector<itk::Point<double>>> globalPoints();
 
 protected:
 
@@ -128,7 +130,6 @@ protected:
   unsigned int m_mode;
   double m_spacing;
 
-  std::vector < std::string > m_filenames;
   std::vector < std::string > pointFiles;
 
   std::vector<double> m_EnergyA;
@@ -146,4 +147,6 @@ protected:
   std::vector<double> cpVals;
   std::vector<double> spVals;
   std::vector<double> radList;
+
+  bool aborted_ = false;
 };

@@ -50,6 +50,9 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartAdaptiveGaussSeidelOptimization()
 {
+  if (this->m_AbortProcessing) {
+    return;
+  }
 //    std::cout << "Starting Adaptive Gauss Seidel Optimization ..... \n" << std::flush;
     const double factor = 1.1;//1.1;
     //  const double epsilon = 1.0e-4;
@@ -271,6 +274,9 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartGaussSeidelOptimization()
 {
+  if (this->m_AbortProcessing) {
+    return;
+  }
 //    std::cout << "Starting Gauss Seidel Optimization ..... \n" << std::flush;
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
@@ -364,6 +370,9 @@ void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 ::StartJacobiOptimization()
 {
+  if (this->m_AbortProcessing) {
+    return;
+  }
 //    std::cout << "Starting Jacobi Optimization ..... \n" << std::flush;
 
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
