@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Shapeworks.h"
 #include "ImageUtils.h"
 #include <itkTranslationTransform.h>
 
@@ -8,16 +9,22 @@ namespace Shapeworks {
 class Image
 {
 public:
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3/*dimension*/> ImageType;
+  static const unsigned dims = 3;
+  using PixelType = float;
+  using ImageType = itk::Image<PixelType, dims>;
 
   Image() {}
   Image(const std::string &inFilename) { read(inFilename); }
 
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename);
-  bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
-  //bool crop(
+  bool antialias(unsigned numLayers = dims, float maxRMSErr = 0.01f, unsigned numIterations = 50);
+  bool binarize(PixelType threshold = itk::NumericTraits<PixelType>::Zero,
+                PixelType inside = itk::NumericTraits<PixelType>::One,
+                PixelType outside = itk::NumericTraits<PixelType>::Zero);
+  bool recenter();
+  bool resample(bool isBinary = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
+  // bool nextfunction(...);
 
 private:
   ImageType::Pointer image;

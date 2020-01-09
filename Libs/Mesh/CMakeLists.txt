@@ -4,9 +4,16 @@ set(Mesh_sources
   Mesh.cpp
   meshFIM.cpp
   )
+FILE(GLOB PreviewMeshQC_headers ./PreviewMeshQC/*.h)
+set(Mesh_headers
+  Mesh.h
+  MeshFIM.h
+  )
 add_library(Mesh STATIC
   ${Mesh_sources}
+  ${Mesh_headers}
   ${PreviewMeshQC_sources}
+  ${PreviewMeshQC_headers}
   )
 target_include_directories(Mesh PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -14,14 +21,8 @@ target_include_directories(Mesh PUBLIC
   $<INSTALL_INTERFACE:include>)
 
 # Install
-FILE(GLOB PreviewMeshQC_headers ./PreviewMeshQC/*.h)
-set(Mesh_headers
-  Mesh.h
-  MeshFIM.h
-  "${PreviewMeshQC_headers}"
-  )
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
-  "${Mesh_headers}"
+  "${Mesh_headers} ${PreviewMeshQC_headers}"
   )
 target_link_libraries(Mesh trimesh2)
 install(TARGETS Mesh
@@ -105,22 +106,6 @@ INSTALL(TARGETS ReconstructSurface  RUNTIME DESTINATION bin)
 ADD_EXECUTABLE(ReconstructSamplesAlongPCAModes ReconstructSamplesAlongPCAModes.cxx)
 TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml Utils Analyze Optimize)
 INSTALL(TARGETS ReconstructSamplesAlongPCAModes  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(WarpToMeanSpace WarpToMeanSpace.cxx)
-# TARGET_LINK_LIBRARIES(WarpToMeanSpace ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS WarpToMeanSpace  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(WarpToMeanSpaceWithPreviewMeshQC WarpToMeanSpaceWithPreviewMeshQC.cxx)
-# TARGET_LINK_LIBRARIES(WarpToMeanSpaceWithPreviewMeshQC ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS WarpToMeanSpaceWithPreviewMeshQC  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(MoveAlongPCAModes MoveAlongPCAModes.cxx)
-# TARGET_LINK_LIBRARIES(MoveAlongPCAModes ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS MoveAlongPCAModes  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(WarpToSubjectSpace WarpToSubjectSpace.cxx)
-# TARGET_LINK_LIBRARIES(WarpToSubjectSpace ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS WarpToSubjectSpace  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx )
 TARGET_LINK_LIBRARIES(GenerateFidsFilesFromMeshes ${ITK_LIBRARIES} ${VTK_LIBRARIES} Mesh tinyxml vgl vgl_algo)

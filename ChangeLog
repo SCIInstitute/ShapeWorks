@@ -1,5 +1,11 @@
 
 
+ShapeWorks 5.2.2 - 2020-01-09
+	* Returned to superbuild.sh build process
+	* Fixed non-Qt build
+	* Studio: Fixed import and processing of non-RAI image volumes
+	* Studio: Fix centering of groomed and reconstructed volumes
+
 ShapeWorks 5.2.1 - 2019-11-09
 	* Fix examples, binaries
 

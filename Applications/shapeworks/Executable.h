@@ -21,6 +21,7 @@ private:
   void buildParser();
   optparse::OptionParser parser;
   std::map<std::string, Command&> commands;
+  std::map<std::string, std::map<std::string, std::string> > parser_epilog; // <command_type, <command_name, desc> >
 
   int run(std::vector<std::string> arguments, SharedCommandData &sharedData);
 };

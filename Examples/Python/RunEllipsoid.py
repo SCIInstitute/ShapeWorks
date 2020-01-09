@@ -100,7 +100,7 @@ def Run_Ellipsoid_Pipeline(args):
         For detailed explainations of parameters for resampling volumes, go to
         ... link
         """
-        resampledFiles = applyIsotropicResampling(parentDir, fileList, None, 1)
+        resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
 
         """
         Apply padding

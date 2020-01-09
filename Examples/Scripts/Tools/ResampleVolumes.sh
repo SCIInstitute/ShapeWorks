@@ -100,16 +100,16 @@ do
     then    
         if [ $is_binary_image -eq 1 ]
         then
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn $is_center_on --isBinaryImage $is_binary_image
+            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn $is_center_on --isBinaryImage $is_binary_image
         else
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn  $is_center_on
+            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn  $is_center_on
         fi
     else
         if [ $is_binary_image -eq 1 ]
         then
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isBinaryImage $is_binary_image
+            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isBinaryImage $is_binary_image
         else
-            ResampleVolumesToBeIsotropic --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing
+            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing
         fi
     fi
     

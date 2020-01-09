@@ -10,7 +10,7 @@ import SimpleITK as sitk
 
 from CommonUtils import *
 
-def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing, isCenterOn=True, isBinaryImage=True, processRaw = False):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenters=True, isBinary=True):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -21,130 +21,30 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'resampled')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    if processRaw:
-        #process segmentation files
-        binaryoutDir = os.path.join(outDir,'segmentations')
+    outDataList = []
+    for i in range(len(inDataList)):
+        inname = inDataList[i]
+        spt = inname.rsplit(os.sep, 1)
+        initPath = spt[0]
+        filename = spt[1]
+        outname = inname.replace(initPath, outDir)
+        outname = outname.replace('.nrrd', '.isores.nrrd')
+        outDataList.append(outname)
+        print(" ")
+        print("########### Resampling ###############")
+        cprint(("Input Filename : ", inname), 'cyan')
+        cprint(("Output Filename : ", outname), 'yellow')
+        print("######################################")
+        print(" ")
+        execCommand = ["shapeworks", "resampleimage", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--recenter", str(recenters), "--isBinary", str(isBinary)]
+        cmd = "Calling command:\n"+" ".join(execCommand)
+        print(cmd+"\n")
+        subprocess.check_call(execCommand)
 
-        if not os.path.exists(binaryoutDir):
-            os.makedirs(binaryoutDir)
-        outDataListSeg = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, binaryoutDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataListSeg.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing " , str(
-                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0" , "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
-
-        #process images files
-        isBinaryImage = False
-        rawoutDir = os.path.join(outDir ,'images')
-
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-
-
-        outDataListImg = []
-        for i in range(len(inDataListImg)):
-            inname = inDataListImg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, rawoutDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataListImg.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0", "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
-
-        return [outDataListSeg, outDataListImg]
-
-    else:
-        outDataList = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataList.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1" , "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand =["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn",  "0" , "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn" ,  "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
-
-        return outDataList
+    return outDataList
 
 
 def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, processRaw=False):
@@ -158,13 +58,13 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'padded')
+    outDir = parentDir + '/padded'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
     if processRaw:
         # process segmentations
-        binaryoutDir = os.path.join(outDir ,'segmentations')
+        binaryoutDir = outDir + '/segmentations'
 
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
@@ -188,7 +88,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             subprocess.check_call(execCommand)
 
         #process images
-        rawoutDir = os.path.join(outDir ,'images')
+        rawoutDir = outDir + '/images'
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -250,7 +150,7 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'com_aligned')
+    outDir = parentDir + '/com_aligned'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
@@ -258,8 +158,8 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 
 
     if processRaw:
-        rawoutDir = os.path.join(outDir ,'images')
-        binaryoutDir = os.path.join(outDir ,'segmentations')
+        rawoutDir = outDir + '/images'
+        binaryoutDir = outDir + '/segmentations'
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -393,8 +293,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'aligned')
-    transoutDir = os.path.join(outDir ,'transformations')
+    outDir = parentDir + '/aligned'
+    transoutDir = outDir + '/transformations'
 
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -403,7 +303,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 
     # identify the reference scan
-    refDir = os.path.join(outDir , 'reference')
+    refDir = outDir + '/reference'
     if not os.path.exists(refDir):
         os.makedirs(refDir)
     spt = refFile.rsplit(os.sep, 1)
@@ -420,6 +320,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
     execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
     subprocess.check_call(execCommand)
+    #<ctc> fixme:
     execCommand = ["shapeworks antialias" ,  "--inFilename" , refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations" , str(
         antialiasIterations)]
     subprocess.check_call(execCommand)
@@ -437,8 +338,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 
     if processRaw:
-        rawoutDir = os.path.join(outDir ,'images')
-        binaryoutDir = os.path.join(outDir ,'segmentations')
+        rawoutDir = outDir + '/images'
+        binaryoutDir = outDir + '/segmentations'
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -561,13 +462,13 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     Input Parameters:
     Output Parameters:
     """
-    outDir = os.path.join(parentDir , 'cropped')
+    outDir = parentDir + '/cropped'
 
 
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    cropinfoDir = os.path.join(outDir ,'crop_info')
+    cropinfoDir = outDir + '/crop_info'
     if not os.path.exists(cropinfoDir):
         os.makedirs(cropinfoDir)
 
@@ -592,8 +493,8 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
 
     if processRaw:
-        rawoutDir = os.path.join(outDir ,'images')
-        binaryoutDir = os.path.join(outDir ,'segmentations')
+        rawoutDir = outDir + '/images'
+        binaryoutDir = outDir + '/segmentations'
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -624,7 +525,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Image Filename : ", outnameImg), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["shapeworks crop", "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--bbX" , str(
+            execCommand = ["CropImages" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--bbX" , str(
                 bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
                 smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(
                 smI2) , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
@@ -647,7 +548,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["shapeworks crop", "--inFilename" , inname , "--outFilename" , outname , "--bbX" , str(
+            execCommand = ["CropImages" , "--inFilename" , inname , "--outFilename" , outname , "--bbX" , str(
                 bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
                 smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(smI2)]
             subprocess.check_call(execCommand )
@@ -674,20 +575,18 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.write(data)
 
 def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smoothingIterations=1, isoValue=0, percentage=50):
-    outDir = os.path.join(parentDir , 'groom_and_meshes')
+    outDir = parentDir + '/groom_and_meshes'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    finalDTDir = os.path.join(parentDir , 'distance_transforms')
+    finalDTDir = parentDir + '/distance_transforms'
     if not os.path.exists(finalDTDir):
         os.makedirs(finalDTDir)
 
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        spt = inname.rsplit(os.sep, 1)
-        initPath = spt[0]
-        #filename = spt[1]
+        initPath = os.path.dirname(inDataList[i])
         outname = inname.replace(initPath, outDir)
 
         dtnrrdfilename = outname.replace('.nrrd', '.DT.nrrd')

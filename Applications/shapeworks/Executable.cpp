@@ -32,7 +32,23 @@ void Executable::addCommand(Command &command)
   }
   std::cout << "Adding " << command.name() << "...\n";
   commands.insert(std::pair<std::string, Command&>(command.name(),command));
-  parser.epilog(parser.epilog() + "\n\t" + command.name() + ": " + command.desc());
+
+  std::map<std::string, std::string> &command_type_descriptions = parser_epilog[command.type()];
+  command_type_descriptions[command.name()] = command.desc();
+
+  unsigned opt_width = 24;
+  unsigned indent = 2;
+  std::stringstream ss;
+  ss << "Available commands:\n---------------------\n";
+  for (auto cmdtype: parser_epilog)
+  {
+    ss << cmdtype.first << "\n";
+    for (auto cmd: cmdtype.second)
+      ss << std::string(indent, ' ')
+         << cmd.first << std::string(opt_width - indent - cmd.first.length(), ' ')
+         << cmd.second << "\n";
+  }
+  parser.epilog(ss.str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

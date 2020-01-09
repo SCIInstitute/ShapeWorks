@@ -15,6 +15,8 @@ namespace Shapeworks {
 
 class Command {
 public:
+  virtual const std::string type() { return "General"; }
+
   const std::string name() const { return parser.prog(); }
   const std::string usage() const { return parser.get_usage(); }
   const std::string desc() const { return parser.description(); }
@@ -35,6 +37,9 @@ protected:
 
 class ImageCommand : public Command
 {
+public:
+  const std::string type() override { return "Image"; }
+
 private:
   bool read(const std::string inFilename, SharedCommandData &sharedData) override;
   bool write(const std::string outFilename, SharedCommandData &sharedData) override;
@@ -42,17 +47,24 @@ private:
 
 class MeshCommand : public Command
 {
+public:
+  const std::string type() override { return "Mesh"; }
+
 private:
   bool read(const std::string inFilename, SharedCommandData &sharedData) override;
   bool write(const std::string outFilename, SharedCommandData &sharedData) override;
 };
 
-// something like this for a command tghat reads a list of files, compuytes a transform from all of them (or say, the average of the input images), then writes the single results (or lets it be reused for downstream commands)
+// TODO: something like this for a command that reads a list of files, computes a transform from all of them (or say, the average of the input images), then writes the single result (or lets it be reused for downstream commands)
+// NOTE: for most of the existing commands that take a list of files, they could (and should) be executed once for each file, so this type of command should only be used for operations that *require* a list of files to compute a given result, and the others should simply be called once for each file in a given list.
 class MultiImageCommand : public Command
 {
+public:
+  const std::string type() override { return "Multi-image"; }
+
 private:
   bool read(const std::string filelist, SharedCommandData &sharedData) override;
-  bool write(const std::string outputFilename, SharedCommandData &sharedData) override;
+  bool write(const std::string outFilename, SharedCommandData &sharedData) override;
 };
 
 }; // Shapeworks
