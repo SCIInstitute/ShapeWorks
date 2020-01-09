@@ -8,6 +8,8 @@ if (CMAKE_VERSION VERSION_EQUAL "3.0" OR CMAKE_VERSION VERSION_GREATER "3.0")
     cmake_policy(SET CMP0042 OLD)
 endif()
 
+cmake_policy(SET CMP0072 NEW) # prefer the new opengl library GLVND to the legacy if both are present
+
 set(GLFW_VERSION_MAJOR "3")
 set(GLFW_VERSION_MINOR "3")
 set(GLFW_VERSION_PATCH "1")
