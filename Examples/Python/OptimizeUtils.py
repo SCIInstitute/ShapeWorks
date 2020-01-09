@@ -161,7 +161,8 @@ def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionar
     outPointsWorld = []
     outPointsLocal = []
     for i in range(len(inDataFiles)):
-        inpath = os.path.dirname(inDataFiles[j]) + '/'
+        inname = inDataFiles[i].replace('\\','/')
+        inpath = os.path.dirname(inDataFiles[i]) + '/'
         outname = inname.replace(inpath, outDir)
         wrdname = outname.replace('.nrrd', '_world.particles')
         lclname = outname.replace('.nrrd', '_local.particles')
@@ -199,7 +200,7 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
     outPointsLocal = []
     for i in range(len(inDataFiles)):
         inname = inDataFiles[i].replace('\\','/')
-        inpath = os.path.dirname(inDataFiles[j]) + '/'
+        inpath = os.path.dirname(inDataFiles[i]) + '/'
         outname = inname.replace(inpath, outDir)
         wrdname = outname.replace('.nrrd', '_world.particles')
         lclname = outname.replace('.nrrd', '_local.particles')
