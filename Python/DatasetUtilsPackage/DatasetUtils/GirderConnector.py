@@ -152,18 +152,21 @@ def _getFolderList(authToken, folderName):
     
 def _downloadDataset(accessToken, filename):
     apicall = serverAddress + "api/v1/item"
-    r = requests.get(url = apicall, params = {'folderId': '5e15245f0a02fb02ba24268a', 'name': filename}, headers = {'Girder-Token': accessToken}) 
-    data = r.json()
+    response = requests.get(url = apicall, params = {'folderId': '5e15245f0a02fb02ba24268a', 'name': filename}, headers = {'Girder-Token': accessToken}) 
+    data = response.json()
     if(len(data) == 0):
-        print('ERROR finding', filename);
+        print('ERROR finding', filename)
         return
     data = data[0]
     id = data['_id']
     apicall = serverAddress + 'api/v1/item/' + id + '/download'
-    r = requests.get(url = apicall, headers = {'Girder-Token': accessToken})
-    if(r.status_code == 200):
-        open(filename, 'wb').write(r.content)
+    response = requests.get(url = apicall, headers = {'Girder-Token': accessToken})
+    if response.status_code == 200:
+        handle = open(filename, "wb")
+        for chunk in response.iter_content(chunk_size=512):
+            if chunk:  # filter out keep-alive new chunks
+                handle.write(chunk)
         return True
     else:
-        print('ERROR Downloading', filename, '! Response code', r.status_code, _CONTACT_SUPPORT_STRING)
+        print('ERROR Downloading', filename, '! Response code', response.status_code, _CONTACT_SUPPORT_STRING)
         return False
