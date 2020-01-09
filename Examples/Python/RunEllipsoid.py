@@ -101,9 +101,6 @@ def Run_Ellipsoid_Pipeline(args):
         ... link
         """
         resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
-        print("new version of resampling complete!")
-        print("outputs in "+parentDir+"resampled")
-        sys.exit(0)
 
         """
         Apply padding

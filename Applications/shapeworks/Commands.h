@@ -37,13 +37,13 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Resamplevolume : public ImageCommand
+class ResampleImage : public ImageCommand
 {
 public:
-  static Resamplevolume& getCommand() { static Resamplevolume instance; return instance; }
+  static ResampleImage& getCommand() { static ResampleImage instance; return instance; }
 
 private:
-  Resamplevolume() { buildParser(); }
+  ResampleImage() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -61,5 +61,28 @@ private:
 
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class RecenterImage : public ImageCommand
+{
+public:
+  static RecenterImage& getCommand() { static RecenterImage instance; return instance; }
+
+private:
+  RecenterImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Binarize : public ImageCommand
+{
+public:
+  static Binarize& getCommand() { static Binarize instance; return instance; }
+
+private:
+  Binarize() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
 
 } // Shapeworks

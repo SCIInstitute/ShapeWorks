@@ -18,8 +18,12 @@ public:
 
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename);
-  bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
-  bool resamplevolume(bool isBinary = false, bool recenter = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
+  bool antialias(unsigned numLayers = dims, float maxRMSErr = 0.01f, unsigned numIterations = 50);
+  bool binarize(PixelType threshold = itk::NumericTraits<PixelType>::Zero,
+                PixelType inside = itk::NumericTraits<PixelType>::One,
+                PixelType outside = itk::NumericTraits<PixelType>::Zero);
+  bool recenter();
+  bool resample(bool isBinary = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
   // bool nextfunction(...);
 
 private:

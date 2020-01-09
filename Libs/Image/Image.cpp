@@ -9,8 +9,11 @@
 #include <itkChangeInformationImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
 
+#include <limits>
 
 namespace Shapeworks {
+
+//todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
 
 ///////////////////////////////////////////////////////////////////////////////
 bool Image::read(const std::string &inFilename)
@@ -75,7 +78,9 @@ bool Image::write(const std::string &outFilename)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Image::antialias(float maxRMSErr, int numIter)
+// maxRMSError: range [0.0, 1.0], determines how fast the solver converges (larger is faster)
+//
+bool Image::antialias(unsigned numLayers, float maxRMSErr, unsigned numIterations)
 {
   if (!this->image)
   {
@@ -84,16 +89,18 @@ bool Image::antialias(float maxRMSErr, int numIter)
   }
   
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
-  FilterType::Pointer antialiasFilter = FilterType::New();
-  antialiasFilter->SetInput(this->image);
-  antialiasFilter->SetMaximumRMSError(maxRMSErr);
-  antialiasFilter->SetNumberOfIterations(numIter);
-  //antialiasFilter->SetNumberOfLayers(numLayers);  // TODO: should we specify this parameters?
-  this->image = antialiasFilter->GetOutput();
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetMaximumRMSError(maxRMSErr);
+  filter->SetNumberOfIterations(numIterations);
+  if (numLayers)
+    filter->SetNumberOfLayers(numLayers);
+
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
 
   try
   {
-    antialiasFilter->Update();  
+    filter->Update();  
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -107,7 +114,72 @@ bool Image::antialias(float maxRMSErr, int numIter)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Image::resamplevolume(bool isBinary, bool recenter, float isoSpacing, Dims outputSize)
+bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetLowerThreshold(threshold);
+  filter->SetInsideValue(inside);
+  filter->SetOutsideValue(outside);
+  filter->SetInsideValue(itk::NumericTraits<PixelType>::One);
+
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();  
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Binarize filter failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  std::cout << "Binarize filter succeeded!\n";
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Image::recenter()
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->CenterImageOn();
+
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();  
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Recenter image failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  std::cout << "Recenter image succeeded!\n"; // todo: eventually remove debugging statements like this (or add a verbose flag)
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Image::resample(bool isBinary, float isoSpacing, Dims outputSize)
 {
   if (!this->image)
   {
@@ -164,38 +236,21 @@ bool Image::resamplevolume(bool isBinary, bool recenter, float isoSpacing, Dims 
   resampler->SetInput(this->image);
   this->image = resampler->GetOutput();
 
-  if (recenter)
-  {
-    using ImageInfoFilterType = itk::ChangeInformationImageFilter<ImageType>;
-    ImageInfoFilterType::Pointer infoFilter = ImageInfoFilterType::New();
-    infoFilter->SetInput(this->image);
-    infoFilter->CenterImageOn();
-    this->image = infoFilter->GetOutput();
-  }
-
   try
   {
     resampler->Update();
-
-    if (isBinary)
-    {
-      using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
-      FilterType::Pointer filter = FilterType::New();
-      filter->SetInput(this->image);
-      filter->SetLowerThreshold(itk::NumericTraits<PixelType>::Zero);
-      filter->SetInsideValue(itk::NumericTraits<PixelType>::One);
-      filter->Update();
-      this->image = filter->GetOutput();
-    }
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Resample volumes to be isotropic failed:" << std::endl;
+    std::cerr << "Resample images to be isotropic failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
-  std::cout << "Resample volumes to be isotropic succeeded!\n";
+  if (isBinary)
+    this->binarize();
+
+  std::cout << "Resample images to be isotropic succeeded!\n";
   return true;
 }
 

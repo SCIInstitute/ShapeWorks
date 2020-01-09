@@ -14,7 +14,9 @@ int main(int argc, char *argv[])
 
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(Smoothmesh::getCommand()); 
-  shapeworks.addCommand(Resamplevolume::getCommand());
+  shapeworks.addCommand(ResampleImage::getCommand());
+  shapeworks.addCommand(Binarize::getCommand());
+  shapeworks.addCommand(RecenterImage::getCommand());
   //...
   
   try {

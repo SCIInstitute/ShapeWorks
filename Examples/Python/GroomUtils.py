@@ -10,7 +10,7 @@ import SimpleITK as sitk
 
 from CommonUtils import *
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenterVolumes=True, isBinaryVolume=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenters=True, isBinary=True):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -39,7 +39,9 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenterVolumes
         cprint(("Output Filename : ", outname), 'yellow')
         print("######################################")
         print(" ")
-        execCommand = ["shapeworks", "resamplevolume", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--recenter", str(recenterVolumes), "--isBinary", str(isBinaryVolume)]
+        execCommand = ["shapeworks", "resampleimage", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--recenter", str(recenters), "--isBinary", str(isBinary)]
+        cmd = "Calling command:\n"+" ".join(execCommand)
+        print(cmd+"\n")
         subprocess.check_call(execCommand)
 
     return outDataList

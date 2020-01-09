@@ -36,14 +36,19 @@ void Executable::addCommand(Command &command)
   std::map<std::string, std::string> &command_type_descriptions = parser_epilog[command.type()];
   command_type_descriptions[command.name()] = command.desc();
 
-  std::string epilog_str("Available commands:\n---------------------\n");
+  unsigned opt_width = 24;
+  unsigned indent = 2;
+  std::stringstream ss;
+  ss << "Available commands:\n---------------------\n";
   for (auto cmdtype: parser_epilog)
   {
-    epilog_str += cmdtype.first + "\n";
+    ss << cmdtype.first << "\n";
     for (auto cmd: cmdtype.second)
-      epilog_str += "\t" + cmd.first + ": " + cmd.second + "\n";
+      ss << std::string(indent, ' ')
+         << cmd.first << std::string(opt_width - indent - cmd.first.length(), ' ')
+         << cmd.second << "\n";
   }
-  parser.epilog(epilog_str);
+  parser.epilog(ss.str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
