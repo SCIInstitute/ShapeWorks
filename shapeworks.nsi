@@ -29,7 +29,7 @@ FunctionEnd
 Name "ShapeWorks-$%SW_VERSION%"
 
 ; The file to write
-OutFile "ShapeWorks-$%SW_VERSION%-windows.exe"
+OutFile "$%SW_VERSION%.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES64\ShapeWorks
