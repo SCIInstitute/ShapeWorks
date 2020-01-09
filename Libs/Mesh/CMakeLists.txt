@@ -22,7 +22,7 @@ target_include_directories(Mesh PUBLIC
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
-  "${Mesh_headers} ${PreviewMeshQC_headers}"
+  "${Mesh_headers};${PreviewMeshQC_headers}"
   )
 target_link_libraries(Mesh trimesh2)
 install(TARGETS Mesh
