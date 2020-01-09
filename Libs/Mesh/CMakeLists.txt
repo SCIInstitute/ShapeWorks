@@ -7,7 +7,7 @@ set(Mesh_sources
 FILE(GLOB PreviewMeshQC_headers ./PreviewMeshQC/*.h)
 set(Mesh_headers
   Mesh.h
-  MeshFIM.h
+  meshFIM.h
   )
 add_library(Mesh STATIC
   ${Mesh_sources}
