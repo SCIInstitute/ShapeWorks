@@ -40,11 +40,6 @@ add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
 target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
 
-#todo: verify new shapeworks subcommand is the same and remove this one
-add_executable(ResampleVolumesToBeIsotropic ResampleVolumesToBeIsotropic.cxx)
-target_link_libraries(ResampleVolumesToBeIsotropic ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ResampleVolumesToBeIsotropic RUNTIME DESTINATION bin)
-
 add_executable(ExtractGivenLabelImage ExtractGivenLabelImage.cxx)
 target_link_libraries(ExtractGivenLabelImage ${ITK_LIBRARIES} Utils Image)
 INSTALL(TARGETS ExtractGivenLabelImage  RUNTIME DESTINATION bin)

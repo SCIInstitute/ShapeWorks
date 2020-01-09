@@ -100,16 +100,16 @@ do
     then    
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn $is_center_on --isBinaryImage $is_binary_image
+            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --recenter $is_center_on --isBinary $is_binary_image
         else
-            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isCenterImageOn  $is_center_on
+            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --recenter  $is_center_on
         fi
     else
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isBinaryImage $is_binary_image
+            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isBinary $is_binary_image
         else
-            shapeworks resamplevolume --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing
+            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing
         fi
     fi
     

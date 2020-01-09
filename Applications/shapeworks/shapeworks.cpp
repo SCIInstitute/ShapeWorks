@@ -26,8 +26,5 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  // <ctc> would be nice to categorize commands listed in help as Image, Analyze, etc (yes it would: todo)
-  // [] this is difficult on multiple levels, both in terms of categorization and listing... maybe don't worry about it
-  
   return 0;
 }

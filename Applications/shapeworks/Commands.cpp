@@ -58,7 +58,7 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
   int numIterations = static_cast<int>(options.get("numIterations"));
   int numLayers = static_cast<int>(options.get("numLayers"));
 
-  return sharedData.image.antialias(maxRMSErr, numIterations, numLayers);
+  return sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
 }
 
 

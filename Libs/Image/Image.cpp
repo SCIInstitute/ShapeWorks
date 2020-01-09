@@ -80,7 +80,7 @@ bool Image::write(const std::string &outFilename)
 ///////////////////////////////////////////////////////////////////////////////
 // maxRMSError: range [0.0, 1.0], determines how fast the solver converges (larger is faster)
 //
-bool Image::antialias(unsigned numLayers, float maxRMSErr, unsigned numIterations)
+bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayers)
 {
   if (!this->image)
   {

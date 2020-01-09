@@ -41,6 +41,14 @@ Image commands:
  o Example: antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100 --numLayers 9
   - note that numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
 
+ Python Testing (added this to both old and new versions in order to compare results [w/ diff]):
+            
+    print("Calling command:\n"+" ".join(execCommand))
+    subprocess.check_call(execCommand)
+    print("new version of antialias complete!")
+    print("output is "+ref_dtnrrdfilename)
+    sys.exit(0)
+
 [] ClipVolume
 [] *CloseHoles
 [] *CropImages
@@ -73,6 +81,7 @@ More testing:
             print("new version of resampling complete!")
             print("outputs in "+parentDir+"resampled")
             sys.exit(0)
+
 
 [] *ThresholdImages
 [] TopologyPreservingSmoothing

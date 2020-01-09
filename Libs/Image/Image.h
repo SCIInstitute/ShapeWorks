@@ -18,7 +18,7 @@ public:
 
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename);
-  bool antialias(unsigned numLayers = dims, float maxRMSErr = 0.01f, unsigned numIterations = 50);
+  bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
   bool binarize(PixelType threshold = itk::NumericTraits<PixelType>::Zero,
                 PixelType inside = itk::NumericTraits<PixelType>::One,
                 PixelType outside = itk::NumericTraits<PixelType>::Zero);

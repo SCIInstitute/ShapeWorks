@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import io
 from termcolor import colored, cprint
@@ -40,8 +41,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenters=True,
         print("######################################")
         print(" ")
         execCommand = ["shapeworks", "resampleimage", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--recenter", str(recenters), "--isBinary", str(isBinary)]
-        cmd = "Calling command:\n"+" ".join(execCommand)
-        print(cmd+"\n")
+        print("Calling command:\n"+" ".join(execCommand))
         subprocess.check_call(execCommand)
 
     return outDataList
@@ -320,10 +320,9 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
     execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
     subprocess.check_call(execCommand)
-    #<ctc> fixme:
-    execCommand = ["shapeworks antialias" ,  "--inFilename" , refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations" , str(
-        antialiasIterations)]
+    execCommand = ["shapeworks", "antialias", "--inFilename", refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations", str(antialiasIterations)]
     subprocess.check_call(execCommand)
+
     execCommand = ["FastMarching" ,  "--inFilename" , ref_dtnrrdfilename , "--outFilename" , ref_dtnrrdfilename , "--isoValue" , str(
         isoValue)]
     subprocess.check_call(execCommand)
@@ -386,8 +385,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand)
             execCommand = ["CloseHoles" , "--inFilename" , seginname , "--outFilename" , seginname]
             subprocess.check_call(execCommand)
-            execCommand = ["shapeworks antialias" , "--inFilename" , seginname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
-                antialiasIterations)]
+            execCommand = ["shapeworks", "antialias", "--inFilename", seginname, "--outFilename", dtnrrdfilename, "--numIterations", str(antialiasIterations)]
             subprocess.check_call(execCommand)
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
                 isoValue)]
@@ -434,8 +432,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand )
             execCommand = ["CloseHoles" , "--inFilename" , inname , "--outFilename" , inname]
             subprocess.check_call(execCommand )
-            execCommand = ["shapeworks antialias",  "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
-                antialiasIterations)]
+            execCommand = ["shapeworks", "antialias", "--inFilename", inname, "--outFilename", dtnrrdfilename, "--numIterations", str(antialiasIterations)]
             subprocess.check_call(execCommand )
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
                 isoValue)]
@@ -602,7 +599,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         subprocess.check_call(execCommand )
         execCommand = ["CloseHoles" ,  "--inFilename" , inname , "--outFilename" , inname ]
         subprocess.check_call(execCommand )
-        execCommand = ["shapeworks antialias" , "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(antialiasIterations) ]
+        execCommand = ["shapeworks", "antialias", "--inFilename", inname, "--outFilename", dtnrrdfilename, "--numIterations", str(antialiasIterations)]
         subprocess.check_call(execCommand )
         execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(isoValue) ]
         subprocess.check_call(execCommand )
