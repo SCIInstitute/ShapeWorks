@@ -30,8 +30,6 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from DatasetUtils import datasets
-
 
 def Run_LeftAtrium_Pipline(args):
 
@@ -55,7 +53,7 @@ def Run_LeftAtrium_Pipline(args):
     # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " in the current directory.")
-        print("Downloading " + filename + " from SCI cibc1.")
+        from DatasetUtils import datasets
         datasets.downloadDataset(filename)
 
     parentDir="TestLeftAtrium/"

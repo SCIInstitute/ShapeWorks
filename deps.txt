@@ -19,4 +19,7 @@ requests
 vxl
 vtk
 itk
+
+# install the local GirderConnector code as a package
+pip install -e Python/DatasetUtilsPackage
 ```
