@@ -135,11 +135,13 @@ else()
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
 
-add_subdirectory(ExternalLibs)    # TODO: cmake externalproject_add should be used for libs in this directory
-add_subdirectory(Libs)
-#add_subdirectory(Applications)   # coming soon...
-
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
+
+add_subdirectory(ExternalLibs)
+add_subdirectory(Libs)
+add_subdirectory(Applications)
 
 if(Build_Post)
   add_subdirectory(Post/source/ShapeWorksPost-V1)

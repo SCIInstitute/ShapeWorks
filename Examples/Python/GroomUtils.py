@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import io
 from termcolor import colored, cprint
@@ -10,7 +11,7 @@ import SimpleITK as sitk
 
 from CommonUtils import *
 
-def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing, isCenterOn=True, isBinaryImage=True, processRaw = False):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenters=True, isBinary=True):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -21,130 +22,29 @@ def applyIsotropicResampling(parentDir, inDataListSeg, inDataListImg, isoSpacing
     Input Parameters:
     Output Parameters:
     """
-    outDir = parentDir + '/resampled'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    if processRaw:
-        #process segmentation files
-        binaryoutDir = outDir + '/segmentations'
+    outDataList = []
+    for i in range(len(inDataList)):
+        inname = inDataList[i]
+        spt = inname.rsplit(os.sep, 1)
+        initPath = spt[0]
+        filename = spt[1]
+        outname = inname.replace(initPath, outDir)
+        outname = outname.replace('.nrrd', '.isores.nrrd')
+        outDataList.append(outname)
+        print(" ")
+        print("########### Resampling ###############")
+        cprint(("Input Filename : ", inname), 'cyan')
+        cprint(("Output Filename : ", outname), 'yellow')
+        print("######################################")
+        print(" ")
+        execCommand = ["shapeworks", "resampleimage", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--recenter", str(recenters), "--isBinary", str(isBinary)]
+        print("Calling command:\n"+" ".join(execCommand))
+        subprocess.check_call(execCommand)
 
-        if not os.path.exists(binaryoutDir):
-            os.makedirs(binaryoutDir)
-        outDataListSeg = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, binaryoutDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataListSeg.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing " , str(
-                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0" , "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename", inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
-
-        #process images files
-        isBinaryImage = False
-        rawoutDir = outDir + '/images'
-
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-
-
-        outDataListImg = []
-        for i in range(len(inDataListImg)):
-            inname = inDataListImg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, rawoutDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataListImg.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1", "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0", "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic", "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
-
-        return [outDataListSeg, outDataListImg]
-
-    else:
-        outDataList = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.isores.nrrd')
-            outDataList.append(outname)
-            print(" ")
-            print("########### Resampling ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            if isBinaryImage:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "1" , "--isBinaryImage", "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand =["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn",  "0" , "--isBinaryImage",  "1"]
-                    subprocess.check_call(execCommand)
-            else:
-                if isCenterOn:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn" ,  "1"]
-                    subprocess.check_call(execCommand)
-                else:
-                    execCommand = ["ResampleVolumesToBeIsotropic" , "--inFilename" , inname , "--outFilename" , outname , "--isoSpacing" , str(
-                        isoSpacing) , "--isCenterImageOn", "0"]
-                    subprocess.check_call(execCommand)
-
-        return outDataList
+    return outDataList
 
 
 def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, processRaw=False):
@@ -420,9 +320,9 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
     execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
     subprocess.check_call(execCommand)
-    execCommand = ["AntiAliasing" ,  "--inFilename" , refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations" , str(
-        antialiasIterations)]
+    execCommand = ["shapeworks", "antialias", "--inFilename", refFile , "--outFilename" , ref_dtnrrdfilename , "--numIterations", str(antialiasIterations)]
     subprocess.check_call(execCommand)
+
     execCommand = ["FastMarching" ,  "--inFilename" , ref_dtnrrdfilename , "--outFilename" , ref_dtnrrdfilename , "--isoValue" , str(
         isoValue)]
     subprocess.check_call(execCommand)
@@ -485,8 +385,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand)
             execCommand = ["CloseHoles" , "--inFilename" , seginname , "--outFilename" , seginname]
             subprocess.check_call(execCommand)
-            execCommand = ["AntiAliasing" , "--inFilename" , seginname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
-                antialiasIterations)]
+            execCommand = ["shapeworks", "antialias", "--inFilename", seginname, "--outFilename", dtnrrdfilename, "--numIterations", str(antialiasIterations)]
             subprocess.check_call(execCommand)
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
                 isoValue)]
@@ -533,8 +432,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand )
             execCommand = ["CloseHoles" , "--inFilename" , inname , "--outFilename" , inname]
             subprocess.check_call(execCommand )
-            execCommand = ["AntiAliasing",  "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(
-                antialiasIterations)]
+            execCommand = ["shapeworks", "antialias", "--inFilename", inname, "--outFilename", dtnrrdfilename, "--numIterations", str(antialiasIterations)]
             subprocess.check_call(execCommand )
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
                 isoValue)]
@@ -701,7 +599,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         subprocess.check_call(execCommand )
         execCommand = ["CloseHoles" ,  "--inFilename" , inname , "--outFilename" , inname ]
         subprocess.check_call(execCommand )
-        execCommand = ["AntiAliasing" , "--inFilename" , inname , "--outFilename" , dtnrrdfilename , "--numIterations" , str(antialiasIterations) ]
+        execCommand = ["shapeworks", "antialias", "--inFilename", inname, "--outFilename", dtnrrdfilename, "--numIterations", str(antialiasIterations)]
         subprocess.check_call(execCommand )
         execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(isoValue) ]
         subprocess.check_call(execCommand )

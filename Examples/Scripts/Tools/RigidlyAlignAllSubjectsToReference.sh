@@ -116,13 +116,13 @@ ref_isonrrdfilename=${basename}.ISO.nrrd
 ref_binnrrdfilename=${basename}.BIN.nrrd
 
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
-EchoWithColor "Grooming reference  - isolate, hole file, antialiais and distance transform generation .................." "light_green"
+EchoWithColor "Grooming reference  - isolate, hole file, antialias and distance transform generation .................." "light_green"
 EchoWithColor "${ref_segfilename}" "light_green"
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
 
 ExtractGivenLabelImage --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename} --labelVal $foreground
 CloseHoles --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename}
-AntiAliasing --inFilename ${ref_segfilename} --outFilename  ${ref_dtnrrdfilename} --numIterations $antialias_iterations
+shapeworks antialias --inFilename ${ref_segfilename} --outFilename  ${ref_dtnrrdfilename} --numIterations $antialias_iterations
 FastMarching --inFilename ${ref_dtnrrdfilename} --outFilename  ${ref_dtnrrdfilename} --isoValue $isoValue
 
 # xmlfilename=${basename}.genDT.xml
@@ -221,12 +221,12 @@ do
     binnrrdfilename=${basename}.BIN.nrrd
     
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
-    EchoWithColor "[1 of 4] Grooming - isolate, hole file, antialiais and distance transform generation .................." "light_green"
+    EchoWithColor "[1 of 4] Grooming - isolate, hole file, antialias and distance transform generation .................." "light_green"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
          
     ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
     CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
-    AntiAliasing --inFilename ${segfilename} --outFilename  ${dtnrrdfilename} --numIterations $antialias_iterations
+    shapeworks antialias --inFilename ${segfilename} --outFilename  ${dtnrrdfilename} --numIterations $antialias_iterations
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
     
     #     xmlfilename=${basename}.genDT.xml

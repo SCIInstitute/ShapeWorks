@@ -1,17 +1,18 @@
 # Build
 set(Utils_sources
   Utils.cpp
-  OptionParser.cpp)
+  )
+set(Utils_headers
+  Utils.h
+  )
 add_library(Utils STATIC
-  ${Utils_sources})
+  ${Utils_sources}
+  ${Utils_headers})
 target_include_directories(Utils PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 
 # Install
-set(Utils_headers
-  Utils.h
-  OptionParser.h)
 set_target_properties(Utils PROPERTIES PUBLIC_HEADER
   "${Utils_headers}")
 install(TARGETS Utils

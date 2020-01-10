@@ -67,6 +67,8 @@ int main(int argc, char * argv[] )
     float startingIndexZ    = (float) options.get("startingIndexZ");
 
 
+    //<ctc> identical operations on infile and mriinfile (verified with diff)
+    //      so no need for one command to process two images at a time
     if(inFilename!="")
         {
 

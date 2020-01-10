@@ -25,6 +25,7 @@ parser.add_argument("--start_with_image_and_segmentation_data", help = "use imag
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
+binpath = args.shapeworks_path
 
 # Path final
 if platform.system() == "Darwin":
@@ -44,5 +45,5 @@ except KeyboardInterrupt:
     print("KeyboardInterrupt exception caught")
     sys.exit(1)
 except subprocess.CalledProcessError as e:
-    print("general exception caught: "+e.returncode+", "+e.output)
+    print("General exception caught.\n\tReturncode: "+str(e.returncode)+"\n\tOutput: "+str(e.output))
     sys.exit(1)

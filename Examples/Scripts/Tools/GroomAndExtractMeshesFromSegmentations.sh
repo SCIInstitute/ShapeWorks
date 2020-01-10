@@ -123,7 +123,7 @@ do
     isoValue=0.0
     ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
     CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
-    AntiAliasing --inFilename ${segfilename} --outFilename  ${dtnrrdfilename} --numIterations $antialias_iterations
+    shapeworks antialias --inFilename ${segfilename} --outFilename  ${dtnrrdfilename} --numIterations $antialias_iterations
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
     
     #     xmlfilename=${basename}.genDT.xml

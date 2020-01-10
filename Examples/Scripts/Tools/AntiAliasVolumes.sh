@@ -109,7 +109,7 @@ do
     EchoWithColor  "imgfilename_cropped $imgfilename_cropped" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
-    AntiAliasing --inFilename $segfilename --outFilename $segfilename_cropped 
+    shapeworks antialias --inFilename $segfilename --outFilename $segfilename_cropped 
   
 done
 
