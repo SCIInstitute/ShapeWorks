@@ -26,6 +26,8 @@ public:
   bool resample(bool isBinary = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
   // bool nextfunction(...);
 
+  bool compare_equal(const Image &other);
+
 private:
   ImageType::Pointer image;
 };
