@@ -37,7 +37,6 @@ Class for triangle meshes.
 //#define SHOW_WARNING 1
 
 #define NUM_THREADS 8
-//#define MP_USE_OPENMP //-- should be in cmake
 
 #ifdef MP_USE_OPENMP
 #include <omp.h> // -- PM
