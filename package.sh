@@ -70,7 +70,11 @@ fi
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    pkgbuild --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ./artifacts/${VERSION}.pkg
+else
+    zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
+fi
 
 cd $ROOT
 
