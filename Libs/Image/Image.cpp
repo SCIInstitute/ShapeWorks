@@ -61,6 +61,7 @@ bool Image::write(const std::string &outFilename)
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput(this->image);
   writer->SetFileName(outFilename);
+  writer->SetUseCompression(true);
 
   try
   {
