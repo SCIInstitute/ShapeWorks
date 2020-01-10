@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - mac_installer
   pull_request:
 
 jobs:
