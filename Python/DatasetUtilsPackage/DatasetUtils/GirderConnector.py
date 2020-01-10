@@ -4,6 +4,9 @@ import os
 import getpass
 import base64
 
+from sys import stdout
+from math import ceil
+
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
 _CONTACT_SUPPORT_STRING = 'Please contact support.'
@@ -160,12 +163,22 @@ def _downloadDataset(accessToken, filename):
     data = data[0]
     id = data['_id']
     apicall = serverAddress + 'api/v1/item/' + id + '/download'
-    response = requests.get(url = apicall, headers = {'Girder-Token': accessToken})
+    response = requests.get(url = apicall, headers = {'Girder-Token': accessToken}, stream=True)
     if response.status_code == 200:
+        chunkSize = 1048576 # Download 1 MB at a time
+        totalNumChunks = ceil(int(response.headers['Content-Length']) / chunkSize)
+        chunkIndex = 0
+
         handle = open(filename, "wb")
-        for chunk in response.iter_content(chunk_size=512):
-            if chunk:  # filter out keep-alive new chunks
-                handle.write(chunk)
+        for chunk in response.iter_content(chunk_size=chunkSize):
+            if not chunk:  # filter out keep-alive new chunks
+                continue
+            handle.write(chunk)
+
+            chunkIndex += 1
+            stdout.write('\r[%d/%d MB]' % (chunkIndex, totalNumChunks))
+        stdout.write('\n')
+        handle.close()
         return True
     else:
         print('ERROR Downloading', filename, '! Response code', response.status_code, _CONTACT_SUPPORT_STRING)
