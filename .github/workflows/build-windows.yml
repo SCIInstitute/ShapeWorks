@@ -17,7 +17,9 @@ jobs:
     
     steps:
 
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        lfs: true
 
 #    - name: Install curl,unzip
 #      run: choco install curl zip
