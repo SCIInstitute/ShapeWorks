@@ -4,7 +4,7 @@
 #include "ImageUtils.h"
 #include <itkTranslationTransform.h>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 class Image
 {
@@ -30,4 +30,4 @@ private:
   ImageType::Pointer image;
 };
 
-} // Shapeworks
+} // shapeworks

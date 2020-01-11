@@ -6,7 +6,7 @@
 #include "Executable.h"
 #include "Commands.h"
 
-using namespace Shapeworks;
+using namespace shapeworks;
 
 int main(int argc, char *argv[])
 {

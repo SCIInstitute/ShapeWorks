@@ -11,7 +11,7 @@
 #include <stdexcept>
 
 
-namespace Shapeworks {
+namespace shapeworks {
 
 class Command {
 public:

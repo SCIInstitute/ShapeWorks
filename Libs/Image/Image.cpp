@@ -11,7 +11,7 @@
 
 #include <limits>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 //todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
 
@@ -255,6 +255,6 @@ bool Image::resample(bool isBinary, float isoSpacing, Dims outputSize)
   return true;
 }
 
-} // Shapeworks
+} // shapeworks
 
 

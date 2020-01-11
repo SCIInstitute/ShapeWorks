@@ -4,7 +4,7 @@
 #include "Mesh.h"
 #include <string>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 // Most commands can be executed one file at a time, so this class stores the shared data to enable successive operations on the results of these commands.
 // TODO: commands like Clip should use this method rather than independently modifying each element of a group of files.
@@ -26,4 +26,4 @@ struct SharedCommandData
   itk::TranslationTransform<double, 3/*dimension*/>::Pointer imageTransform;
 };
 
-} // Shapeworks
+} // shapeworks

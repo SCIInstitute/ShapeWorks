@@ -4,7 +4,7 @@
 #include <vtkPolyData.h>
 #include <string>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 class Mesh
 {
@@ -21,4 +21,4 @@ private:
   vtkSmartPointer<vtkPolyData> mesh;
 };
 
-} // Shapeworks
+} // shapeworks

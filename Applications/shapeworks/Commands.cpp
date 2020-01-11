@@ -1,7 +1,7 @@
 #include "Commands.h"
 #include "Image.h"
 
-namespace Shapeworks {
+namespace shapeworks {
 
 
 
@@ -177,4 +177,4 @@ int Smoothmesh::execute(const optparse::Values &options, SharedCommandData &shar
 
 
 
-} // Shapeworks
+} // shapeworks

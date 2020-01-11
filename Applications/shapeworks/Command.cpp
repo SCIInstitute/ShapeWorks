@@ -2,7 +2,7 @@
 #include <sstream>
 
 
-namespace Shapeworks {
+namespace shapeworks {
 
 ///////////////////////////////////////////////////////////////////////////////
 void Command::buildParser()
@@ -79,7 +79,7 @@ bool MeshCommand::write(const std::string outFilename, SharedCommandData &shared
 }
 
 
-} // Shapeworks
+} // shapeworks
 
 
 std::ostream& operator<<(std::ostream& os, const Shapeworks::Command &cmd)

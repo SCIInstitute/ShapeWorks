@@ -2,7 +2,7 @@
 
 #include "Command.h"
 
-namespace Shapeworks {
+namespace shapeworks {
 
 
 
@@ -85,4 +85,4 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-} // Shapeworks
+} // shapeworks

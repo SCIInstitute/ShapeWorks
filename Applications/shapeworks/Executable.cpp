@@ -1,6 +1,6 @@
 #include "Executable.h"
 
-namespace Shapeworks {
+namespace shapeworks {
 
 ///////////////////////////////////////////////////////////////////////////////
 void Executable::buildParser()
@@ -97,5 +97,5 @@ int Executable::run(int argc, char const *const *argv)
 }
 
 
-} // Shapeworks
+} // shapeworks
 
