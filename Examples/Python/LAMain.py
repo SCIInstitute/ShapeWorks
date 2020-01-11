@@ -17,6 +17,8 @@ import platform
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
 if platform.system() == "Windows":
     binpath = "C:\\Program Files\ShapeWorks\\bin"
+if platform.system() == "Darwin":
+    binpath = binpath + ":/Applications/ShapeWorks/bin"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks LA Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
@@ -29,9 +31,14 @@ binpath = args.shapeworks_path
 
 # Path final
 if platform.system() == "Darwin":
-    binpath = binpath + os.pathsep + binpath + "/ShapeWorksStudio.app/Contents/MacOS"
+    items = binpath.split(os.pathsep)
+    binpath = ""
+    for item in items:
+        binpath = binpath + os.pathsep + item \
+            + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
+
 os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
-print(os.environ["PATH"])
+print(f"PATH = {os.environ['PATH']}")
 
 
 try:
