@@ -38,7 +38,9 @@ bool Image::read(const std::string &inFilename)
     return false;
   }
 
+#if DEBUG_CONSOLIDATION
   std::cout << "Successfully read image " << inFilename << std::endl;
+#endif
   this->image = reader->GetOutput();
   return true;
 }
@@ -74,7 +76,9 @@ bool Image::write(const std::string &outFilename)
     return false;
   }
 
+#if DEBUG_CONSOLIDATION
   std::cout << "Successfully wrote image " << outFilename << std::endl;
+#endif
   return true;
 }
 
@@ -110,7 +114,9 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
     return false;
   }
 
-  std::cout << "Antialias filter succeeded!\n";
+#if DEBUG_CONSOLIDATION
+ std::cout << "Antialias filter succeeded!\n";
+#endif
   return true;
 }
 
@@ -144,7 +150,9 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
     return false;
   }
 
+#if DEBUG_CONSOLIDATION
   std::cout << "Binarize filter succeeded!\n";
+#endif
   return true;
 }
 
@@ -175,7 +183,9 @@ bool Image::recenter()
     return false;
   }
 
-  std::cout << "Recenter image succeeded!\n"; // todo: eventually remove debugging statements like this (or add a verbose flag)
+#if DEBUG_CONSOLIDATION
+  std::cout << "Recenter image succeeded!\n";
+#endif
   return true;
 }
 
@@ -251,7 +261,9 @@ bool Image::resample(bool isBinary, float isoSpacing, Dims outputSize)
   if (isBinary)
     this->binarize();
 
+#if DEBUG_CONSOLIDATION
   std::cout << "Resample images to be isotropic succeeded!\n";
+#endif
   return true;
 }
 

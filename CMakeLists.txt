@@ -139,6 +139,9 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
 
+# For consolidating the independent executables. Remove when done (TODO)
+add_definitions(-DDEBUG_CONSOLIDATION=1)
+
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
 add_subdirectory(Applications)

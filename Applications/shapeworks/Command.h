@@ -70,5 +70,5 @@ private:
 }; // Shapeworks
 
 
-std::ostream& operator<<(std::ostream& os, const Shapeworks::Command &cmd);
+std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);
 
