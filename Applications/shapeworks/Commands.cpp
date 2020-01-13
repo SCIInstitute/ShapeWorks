@@ -34,6 +34,99 @@ int Example::execute(const optparse::Values &options, SharedCommandData &sharedD
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+// ReadImage
+///////////////////////////////////////////////////////////////////////////////
+void ReadImage::buildParser()
+{
+  const std::string prog = "readimage";
+  const std::string desc = "reads an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to read");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+
+  return sharedData.image.read(filename);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// WriteImage
+///////////////////////////////////////////////////////////////////////////////
+void WriteImage::buildParser()
+{
+  const std::string prog = "writeimage";
+  const std::string desc = "writes the current image (determines type by its extension)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to write");
+  parser.add_option("--compressed").action("store").type("bool").set_default(true).help("whether to compress file [default is true]");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int WriteImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+  bool compressed = static_cast<bool>(options.get("compressed"));
+  
+  return sharedData.image.write(filename, compressed);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ReadMesh
+///////////////////////////////////////////////////////////////////////////////
+void ReadMesh::buildParser()
+{
+  const std::string prog = "readmesh";
+  const std::string desc = "reads a mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to read");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+
+  return sharedData.mesh.read(filename);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// WriteMesh
+///////////////////////////////////////////////////////////////////////////////
+void WriteMesh::buildParser()
+{
+  const std::string prog = "writemesh";
+  const std::string desc = "writes the current mesh (determines type by its extension)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to write");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+  
+  return sharedData.mesh.write(filename);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Antialias
@@ -67,7 +160,7 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
 {
-  const std::string prog = "resampleimage";
+  const std::string prog = "resample";
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
 
@@ -146,9 +239,9 @@ int Binarize::execute(const optparse::Values &options, SharedCommandData &shared
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Smoothmesh
+// SmoothMesh
 ///////////////////////////////////////////////////////////////////////////////
-void Smoothmesh::buildParser()
+void SmoothMesh::buildParser()
 {
   const std::string prog = "smoothmesh";
   const std::string desc = "smooths meshes";
@@ -162,7 +255,7 @@ void Smoothmesh::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int Smoothmesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   // float maxRMSErr = static_cast<float>(options.get("maxRMSError"));
   // int numIter = static_cast<int>(options.get("numIterations"));

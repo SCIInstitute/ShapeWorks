@@ -23,6 +23,53 @@ private:
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+class ReadImage : public ImageCommand
+{
+public:
+  static ReadImage& getCommand() { static ReadImage instance; return instance; }
+
+private:
+  ReadImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class WriteImage : public ImageCommand
+{
+public:
+  static WriteImage& getCommand() { static WriteImage instance; return instance; }
+
+private:
+  WriteImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ReadMesh : public MeshCommand
+{
+public:
+  static ReadMesh& getCommand() { static ReadMesh instance; return instance; }
+
+private:
+  ReadMesh() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class WriteMesh : public MeshCommand
+{
+public:
+  static WriteMesh& getCommand() { static WriteMesh instance; return instance; }
+
+private:
+  WriteMesh() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 class Antialias : public ImageCommand
@@ -49,13 +96,13 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Smoothmesh : public MeshCommand
+class SmoothMesh : public MeshCommand
 {
 public:
-  static Smoothmesh& getCommand() { static Smoothmesh instance; return instance; }
+  static SmoothMesh& getCommand() { static SmoothMesh instance; return instance; }
 
 private:
-  Smoothmesh() { buildParser(); }
+  SmoothMesh() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 

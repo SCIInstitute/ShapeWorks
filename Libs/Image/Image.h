@@ -16,9 +16,25 @@ public:
   Image() {}
   Image(const std::string &inFilename) { read(inFilename); }
 
+  /// read
+  /// \param filename
   bool read(const std::string &inFilename);
-  bool write(const std::string &outFilename);
+
+  /// write
+  /// \param filename
+  /// \param useCompression
+  bool write(const std::string &outFilename, bool useCompression = true);
+
+  /// antialias
+  /// \param numIterations
+  /// \param maxRMSErr
+  /// \param numLayers      size of region around a pixel to sample
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
+
+  /// binarizes image into two regions separated by threshold value
+  /// \param threshold  values <= threshold are considereed "outside" and given that value [default is 0.0]
+  /// \param inside     value for inside region [default is 1]
+  /// \param outside    value for outside region [default is 0]
   bool binarize(PixelType threshold = itk::NumericTraits<PixelType>::Zero,
                 PixelType inside = itk::NumericTraits<PixelType>::One,
                 PixelType outside = itk::NumericTraits<PixelType>::Zero);
@@ -26,10 +42,10 @@ public:
   /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
   bool recenter();
 
-  /// resample image
+  /// resample
   /// \param isoSpacing
-  /// \param outputSize image size can be changed
-  /// \param use bspline interpolation (default is linear)
+  /// \param outputSize     image size can be changed
+  /// \param bSplineInterp  use bspline interpolation (default is linear)
   bool resample(float isoSpacing = 1.0f, Dims outputSize = Dims(), bool bSplineInterp = false);
 
   /// nextfunction
