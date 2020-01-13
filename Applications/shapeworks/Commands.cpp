@@ -137,9 +137,9 @@ void Antialias::buildParser()
   const std::string desc = "antialiases binary volumes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--maxRMSError").action("store").type("float").set_default(0.01).help("The maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
-  parser.add_option("--numIterations").action("store").type("int").set_default(50).help("Number of iterations [default 50].");
-  parser.add_option("--numLayers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
+  parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("The maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
+  parser.add_option("--numiterations").action("store").type("int").set_default(50).help("Number of iterations [default 50].");
+  parser.add_option("--numlayers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
 
   Command::buildParser();
 }
@@ -147,9 +147,9 @@ void Antialias::buildParser()
 ///////////////////////////////////////////////////////////////////////////////
 int Antialias::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  float maxRMSErr = static_cast<float>(options.get("maxRMSError"));
-  int numIterations = static_cast<int>(options.get("numIterations"));
-  int numLayers = static_cast<int>(options.get("numLayers"));
+  float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
+  int numIterations = static_cast<int>(options.get("numiterations"));
+  int numLayers = static_cast<int>(options.get("numlayers"));
 
   return sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
 }
@@ -164,22 +164,22 @@ void ResampleImage::buildParser()
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--bSplineInterp").action("store").type("bool").set_default(false).help("Sample using bspline interpolation (good for binary images) [default uses linear interpolation].");
-  parser.add_option("--isoSpacing").action("store").type("float").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
-  parser.add_option("--sizeX").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
-  parser.add_option("--sizeY").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
-  parser.add_option("--sizeZ").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
+  parser.add_option("--bsplineinterp").action("store").type("bool").set_default(false).help("Sample using bspline interpolation (good for binary images) [default uses linear interpolation].");
+  parser.add_option("--isospacing").action("store").type("float").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
 
   Command::buildParser();
 }
 
 int ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  bool bSplineInterp = static_cast<bool>(options.get("bSplineInterp"));
-  float isoSpacing = static_cast<float>(options.get("isoSpacing"));
-  unsigned sizeX = static_cast<unsigned>(options.get("sizeX"));
-  unsigned sizeY = static_cast<unsigned>(options.get("sizeY"));
-  unsigned sizeZ = static_cast<unsigned>(options.get("sizeZ"));
+  bool bSplineInterp = static_cast<bool>(options.get("bsplineinterp"));
+  float isoSpacing = static_cast<float>(options.get("isospacing"));
+  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
   return sharedData.image.resample(isoSpacing, Dims({sizeX, sizeY, sizeZ}), bSplineInterp);
 }

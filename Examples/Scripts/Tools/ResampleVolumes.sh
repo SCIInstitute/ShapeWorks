@@ -100,19 +100,19 @@ do
     then    
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --recenter $is_center_on --isBinary $is_binary_image
+            shapeworks readimage --name $nrrdfilename antialias resampleimage --isospacing $iso_spacing --bsplineinterp 1 recenterimage binarize writeimage --name $outfilename
         else
-            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --recenter  $is_center_on
+            shapeworks readimage --name $nrrdfilename resampleimage --isospacing $iso_spacing recenterimage writeimage --name $outfilename
         fi
     else
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing --isBinary $is_binary_image
+            shapeworks readimage --name $nrrdfilename antialias resampleimage --isospacing $iso_spacing --bsplineinterp 1 binarize writeimage --name $outfilename
         else
-            shapeworks resampleimage --inFilename $nrrdfilename --outFilename $outfilename --isoSpacing $iso_spacing
+            shapeworks readimage --name $nrrdfilename resampleimage --isospacing $iso_spacing writeimage --name $outfilename
         fi
     fi
-    
+
     unu head $outfilename
         
 done

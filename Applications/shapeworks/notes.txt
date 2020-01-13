@@ -24,12 +24,13 @@ General tasks:
 -----------------------------
 [x] implement postfix commands so that results of previous command are used by successive commands
 [-] detect and report to the user when no output file is specified for the last command (decided against this)
+[] remove camelcase from all shapeworks subcommand arguments (note: we are deliberately still using CamelCase for the command classes themselves)
 [] create example C++ app(s) that show using these classes directly
-[] add unit tests for new classes (goes along with creation of C++ example apps)
+[] add unit tests for new classes (follow Alan's example for a function in Image)
 [] as we go, add/update documentation to Documentation/shapeworks.md, which is a consolidation of all the individual readmes from when I moved the commands into a set of common directories rather than one directory per command
 [-] test write issue I noticed (once outfile is set, does it just write every time) (n/a with following change)
   [x] change --infilename/--outfilename to be full commands (read/writeimage, read/writemesh)
-[] create a wrapper for all these filter functions that itself just accepts a function to create a filter to be executed (Updated)
+[] In the Image class itself, create a wrapper for all these filter functions that itself just accepts a function to create a filter to be executed (Updated)
 
 Commands:   (* means OptionParser already used, otherwise just argv)
 -----------------------------

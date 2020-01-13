@@ -122,7 +122,7 @@ EchoWithColor "-----------------------------------------------------------------
 
 ExtractGivenLabelImage --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename} --labelVal $foreground
 CloseHoles --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename}
-shapeworks readimage --name ${ref_segfilename} antialias --numIterations $antialias_iterations writeimage --name ${ref_dtnrrdfilename} 
+shapeworks readimage --name ${ref_segfilename} antialias --numiterations $antialias_iterations writeimage --name ${ref_dtnrrdfilename} 
 FastMarching --inFilename ${ref_dtnrrdfilename} --outFilename  ${ref_dtnrrdfilename} --isoValue $isoValue
 
 # xmlfilename=${basename}.genDT.xml
@@ -226,7 +226,7 @@ do
          
     ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
     CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
-    shapeworks readimage --name ${segfilename} antialias --numIterations $antialias_iterations writeimage --name ${dtnrrdfilename} 
+    shapeworks readimage --name ${segfilename} antialias --numiterations $antialias_iterations writeimage --name ${dtnrrdfilename} 
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
     
     #     xmlfilename=${basename}.genDT.xml
