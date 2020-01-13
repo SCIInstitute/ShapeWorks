@@ -22,8 +22,18 @@ public:
   bool binarize(PixelType threshold = itk::NumericTraits<PixelType>::Zero,
                 PixelType inside = itk::NumericTraits<PixelType>::One,
                 PixelType outside = itk::NumericTraits<PixelType>::Zero);
+
+  /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
   bool recenter();
-  bool resample(bool isBinary = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
+
+  /// resample image
+  /// \param isoSpacing
+  /// \param outputSize image size can be changed
+  /// \param use bspline interpolation (default is linear)
+  bool resample(float isoSpacing = 1.0f, Dims outputSize = Dims(), bool bSplineInterp = false);
+
+  /// nextfunction
+  /// \param isoSpacing
   // bool nextfunction(...);
 
 private:

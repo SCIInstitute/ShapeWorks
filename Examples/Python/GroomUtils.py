@@ -11,7 +11,7 @@ import SimpleITK as sitk
 
 from CommonUtils import *
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenters=True, isBinary=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, isBinary=True):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -40,9 +40,18 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenters=True,
         cprint(("Output Filename : ", outname), 'yellow')
         print("######################################")
         print(" ")
-        execCommand = ["shapeworks", "resampleimage", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--recenter", str(recenters), "--isBinary", str(isBinary)]
-        print("Calling command:\n"+" ".join(execCommand))
-        subprocess.check_call(execCommand)
+
+        cmd = ["shapeworks"] # coming next: "readimage", inname, ... "writeimage", outname] (will get rid of the redundant --outFilename args below)
+        if isBinary:
+            cmd.append(["antialias"])
+        cmd.append(["resampleimage", "--inFilename", inname, "--outFilename", outname, "--isoSpacing", str(isoSpacing), "--bSplineInterp", str(isBinary)])
+        if recenter:
+            cmd.append(["--recenter", str(recenter), "--outFilename", outname])
+        if isBinary:
+            cmd.append(["binarize", "--outFilename", outname])
+
+        print("Calling cmd:\n"+" ".join(cmd))
+        subprocess.check_call(cmd)
 
     return outDataList
 

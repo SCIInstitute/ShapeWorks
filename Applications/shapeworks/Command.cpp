@@ -44,7 +44,6 @@ bool ImageCommand::read(const std::string inFilename, SharedCommandData &sharedD
   if (!inFilename.empty())
     return sharedData.image.read(inFilename);
 
-  std::cerr << "Not reading anything (image)." << std::endl;
   return true; // treat nothing to read as a noop (a soft success)
 }
 
@@ -54,7 +53,6 @@ bool ImageCommand::write(const std::string outFilename, SharedCommandData &share
   if (!outFilename.empty())
     return sharedData.image.write(outFilename);
 
-  std::cerr << "Not writing anything (image)." << std::endl;
   return true; // treat nothing to write as a noop (a soft success)
 }
 
@@ -64,7 +62,6 @@ bool MeshCommand::read(const std::string inFilename, SharedCommandData &sharedDa
   if (!inFilename.empty())
     return sharedData.mesh.read(inFilename);
 
-  std::cerr << "Not reading anything (mesh)." << std::endl;
   return true; // treat nothing to read as a noop (a soft success)
 }
 
@@ -74,7 +71,6 @@ bool MeshCommand::write(const std::string outFilename, SharedCommandData &shared
   if (!outFilename.empty())
     return sharedData.mesh.write(outFilename);
 
-  std::cerr << "Not writing anything (mesh)." << std::endl;
   return true; // treat nothing to write as a noop (a soft success)
 }
 

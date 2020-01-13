@@ -190,7 +190,7 @@ bool Image::recenter()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Image::resample(bool isBinary, float isoSpacing, Dims outputSize)
+bool Image::resample(float isoSpacing, Dims outputSize, bool bSplineInterp)
 {
   if (!this->image)
   {
@@ -202,11 +202,9 @@ bool Image::resample(bool isBinary, float isoSpacing, Dims outputSize)
   ResampleFilterType::Pointer resampler = ResampleFilterType::New();
   
   ResampleFilterType::InterpolatorType::Pointer interpolator;
-  if (isBinary)
-  {
-    this->antialias();
-    resampler->SetDefaultPixelValue(-1);
 
+  if (bSplineInterp)
+  {
     using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
     InterpolatorType::Pointer bspline_interp = InterpolatorType::New();
     bspline_interp->SetSplineOrder(3);
@@ -214,12 +212,11 @@ bool Image::resample(bool isBinary, float isoSpacing, Dims outputSize)
   }
   else
   {
-    resampler->SetDefaultPixelValue(0);
-
     using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
     interpolator = InterpolatorType::New();
   }
   resampler->SetInterpolator(interpolator);
+  resampler->SetDefaultPixelValue(0);
 
   using TransformType = itk::IdentityTransform<double, Image::dims>;
   TransformType::Pointer transform = TransformType::New();
@@ -257,9 +254,6 @@ bool Image::resample(bool isBinary, float isoSpacing, Dims outputSize)
     std::cerr << exp << std::endl;
     return false;
   }
-
-  if (isBinary)
-    this->binarize();
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Resample images to be isotropic succeeded!\n";
