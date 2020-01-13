@@ -164,7 +164,7 @@ void ResampleImage::buildParser()
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--bsplineinterp").action("store").type("bool").set_default(false).help("Sample using bspline interpolation (good for binary images) [default uses linear interpolation].");
+  parser.add_option("--isbinary").action("store").type("bool").set_default(false).help("For binary input image (this will antialias the sample using bspline interpolation) [default false].");
   parser.add_option("--isospacing").action("store").type("float").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
@@ -175,13 +175,13 @@ void ResampleImage::buildParser()
 
 int ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  bool bSplineInterp = static_cast<bool>(options.get("bsplineinterp"));
+  bool isbinary = static_cast<bool>(options.get("isbinary"));
   float isoSpacing = static_cast<float>(options.get("isospacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.resample(isoSpacing, Dims({sizeX, sizeY, sizeZ}), bSplineInterp);
+  return sharedData.image.resample(isoSpacing, isbinary, Dims({sizeX, sizeY, sizeZ}));
 }
 
 

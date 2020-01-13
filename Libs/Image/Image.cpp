@@ -191,7 +191,7 @@ bool Image::recenter()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Image::resample(float isoSpacing, Dims outputSize, bool bSplineInterp)
+bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
 {
   if (!this->image)
   {
@@ -204,12 +204,14 @@ bool Image::resample(float isoSpacing, Dims outputSize, bool bSplineInterp)
   
   ResampleFilterType::InterpolatorType::Pointer interpolator;
 
-  if (bSplineInterp)
+  // For binary input images, antialiasing then using a bspline filter produces better results
+  if (binaryInput)
   {
     using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
     InterpolatorType::Pointer bspline_interp = InterpolatorType::New();
     bspline_interp->SetSplineOrder(3);
     interpolator = bspline_interp;
+    this->antialias();
   }
   else
   {
@@ -217,7 +219,6 @@ bool Image::resample(float isoSpacing, Dims outputSize, bool bSplineInterp)
     interpolator = InterpolatorType::New();
   }
   resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(0);
 
   using TransformType = itk::IdentityTransform<double, Image::dims>;
   TransformType::Pointer transform = TransformType::New();
@@ -229,7 +230,7 @@ bool Image::resample(float isoSpacing, Dims outputSize, bool bSplineInterp)
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
   {
     outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
-    outputSize[1] = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
+    outputSize[1] = std::ceil((inputSize[1] - 1 ) * inputSpacing[1] / isoSpacing);
     outputSize[2] = std::ceil((inputSize[2] - 1 ) * inputSpacing[2] / isoSpacing);
   }
   resampler->SetSize(outputSize);

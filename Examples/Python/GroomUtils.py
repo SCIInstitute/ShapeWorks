@@ -42,10 +42,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         print(" ")
 
         cmd = ["shapeworks", "readimage", "--name", inname]
-        if isBinary:
-            cmd.append(["antialias"])
-
-        cmd.append(["resampleimage", "--isospacing", str(isoSpacing), "--bsplineinterp", str(isBinary)])
+        cmd.append(["resampleimage", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
 
         if recenter:
             cmd.append(["--recenter", str(recenter)])

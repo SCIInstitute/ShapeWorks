@@ -44,9 +44,9 @@ public:
 
   /// resample
   /// \param isoSpacing
+  /// \param binaryInput    binary input images (will antialias then using a bspline filter to produce better results)
   /// \param outputSize     image size can be changed
-  /// \param bSplineInterp  use bspline interpolation (default is linear)
-  bool resample(float isoSpacing = 1.0f, Dims outputSize = Dims(), bool bSplineInterp = false);
+  bool resample(float isoSpacing = 1.0f, bool binaryInput = false, Dims outputSize = Dims());
 
   /// nextfunction
   /// \param isoSpacing

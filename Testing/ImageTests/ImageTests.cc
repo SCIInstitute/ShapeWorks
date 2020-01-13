@@ -4,7 +4,7 @@
 
 #include "TestConfiguration.h"
 
-using namespace Shapeworks;
+using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 TEST(ImageTests, resample_test) {
@@ -12,7 +12,7 @@ TEST(ImageTests, resample_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.resample(true, 1.0f);
+  image.resample(1.0f, true);
   Image ground_truth(test_location + "resample_baseline.nrrd");
 
   ASSERT_TRUE(image.compare_equal(ground_truth));
