@@ -52,6 +52,8 @@ public:
   /// \param isoSpacing
   // bool nextfunction(...);
 
+  bool compare_equal(const Image &other);
+
 private:
   ImageType::Pointer image;
 };

@@ -8,6 +8,7 @@
 #include <itkBSplineInterpolateImageFunction.h>
 #include <itkChangeInformationImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
+#include <itkTestingComparisonImageFilter.h>
 
 #include <limits>
 
@@ -258,6 +259,34 @@ bool Image::resample(float isoSpacing, Dims outputSize, bool bSplineInterp)
 #if DEBUG_CONSOLIDATION
   std::cout << "Resample images to be isotropic succeeded!\n";
 #endif
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Image::compare_equal(const Image &other)
+{
+  using DiffType = itk::Testing::ComparisonImageFilter<ImageType, ImageType>;
+  DiffType::Pointer diff = DiffType::New();
+  diff->SetValidInput(other.image);
+  diff->SetTestInput(this->image);
+  diff->SetDifferenceThreshold(0);
+  diff->SetToleranceRadius(0);
+
+  try
+  {
+    diff->UpdateLargestPossibleRegion();
+  } catch (itk::ExceptionObject &exp) {
+    std::cerr << "Comparison failed" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  const unsigned long numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
+
+  if (numberOfPixelsWithDifferences > 0.0) {
+    return false;
+  }
+
   return true;
 }
 
