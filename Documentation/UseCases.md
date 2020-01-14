@@ -22,9 +22,9 @@ Returning ShapeWorks Portal users: Enter your username and password
 Username: 
 ```
 
-![](../images/ShapeWorksPortalAccountRegistration.png)
+![ShapeWorks Portal Account Registration Screenshot](images/ShapeWorksPortalAccountRegistration.png)
 
-**Do not use the same password as for your bank account or email!**
+**Do not use the same password as for your bank account or email!**  
 After registering a free account, you can log in from within the script
 
 ```
@@ -36,6 +36,4 @@ joeshmoe downloaded Ellipsoids.zip from the ShapeWorks Portal.
 
 ## Other info about Use Cases
 
-asdfasdf
-
-asdf
+TODO
