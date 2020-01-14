@@ -212,6 +212,7 @@ bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
     bspline_interp->SetSplineOrder(3);
     interpolator = bspline_interp;
     this->antialias();
+    resampler->SetDefaultPixelValue(-1.0);
   }
   else
   {
@@ -230,7 +231,7 @@ bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
   {
     outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
-    outputSize[1] = std::ceil((inputSize[1] - 1 ) * inputSpacing[1] / isoSpacing);
+    outputSize[1] = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
     outputSize[2] = std::ceil((inputSize[2] - 1 ) * inputSpacing[2] / isoSpacing);
   }
   resampler->SetSize(outputSize);
