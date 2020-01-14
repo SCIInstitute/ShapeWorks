@@ -7,7 +7,7 @@
 #include "Command.h"
 #include <optparse.h>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 
 class Executable {

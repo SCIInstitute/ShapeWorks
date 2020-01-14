@@ -2,7 +2,7 @@
 
 #include <itkImageRegionIterator.h>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 class ImageUtils
 {
@@ -35,4 +35,4 @@ void ImageUtils::DeepCopy(typename TImage::Pointer input, typename TImage::Point
 }
 
 
-} // Shapeworks
+} // shapeworks

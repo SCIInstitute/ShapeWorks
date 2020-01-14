@@ -24,22 +24,29 @@ General tasks:
 -----------------------------
 [x] implement postfix commands so that results of previous command are used by successive commands
 [-] detect and report to the user when no output file is specified for the last command (decided against this)
+[] remove camelcase from all shapeworks subcommand arguments (note: we are deliberately still using CamelCase for the command classes themselves)
 [] create example C++ app(s) that show using these classes directly
-[] add unit tests for new classes (goes along with creation of C++ example apps)
+[] add unit tests for new classes (follow Alan's example for a function in Image)
 [] as we go, add/update documentation to Documentation/shapeworks.md, which is a consolidation of all the individual readmes from when I moved the commands into a set of common directories rather than one directory per command
 [-] test write issue I noticed (once outfile is set, does it just write every time) (n/a with following change)
-  [] change --infilename/--outfilename to be full commands (read/writeimage, read/writemesh)
-[] create a wrapper for all these filter functions that itself just accepts a function to create a filter to be executed (Updated)
+  [x] change --infilename/--outfilename to be full commands (read/writeimage, read/writemesh)
+[] In the Image class itself, create a wrapper for all these filter functions that itself just accepts a function to create a filter to be executed (Updated)
 
 Commands:   (* means OptionParser already used, otherwise just argv)
 -----------------------------
 Image commands:
 
+[x] readimage
+[x] writeimage
+[x] binarize (created new command by breaking down resample)
+[x] recenter (created new command by breaking down resample)
 [x] *AntiAliasing -> shapeworks antialias
  o ShapeWorksGroom class duplicates antialias functionality, has different defaults
  o Example: shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
  o Example: antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100 --numLayers 9
   - note that numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
+ o Update example:
+   readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
 
  Python Testing (added this to both old and new versions in order to compare results [w/ diff]):
             
@@ -62,6 +69,8 @@ Image commands:
  o Examples:
   - resampleimage --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --recenter true --isospacing 1.0 --isBinary true
   - ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_29.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
+ o Update example:
+   readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
 
  o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic (see below)
   - Converted the Image version and need to remove Analyze version (pretty sure it's just a copy/paste of the ITK example)
@@ -90,6 +99,8 @@ More testing:
 
 Mesh commands:  (some of these may not actually be executables)
 
+[] readmesh  (functions exist, they just don't do anything)
+[] writemesh (functions exist, they just don't do anything)
 ClipClosedSurface
 ComputeCurvatureAndCoordFiles
 ComputeGeodesicDistanceFromVerticesToPoints
