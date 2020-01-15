@@ -137,9 +137,9 @@ build_vxl()
 
   if [[ $OSTYPE == "msys" ]]; then
       echo cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
-      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVXL_USE_DCMTK:BOOL=OFF -Wno-dev ..
       cmake --build . --config Release || exit 1
-      VXL_DIR=${BUILD_DIR}
+      VXL_DIR=${INSTALL_DIR}/vxl/build
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DVXL_USE_DCMTK:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
@@ -214,8 +214,13 @@ build_shapeworks()
   mkdir -p shapeworks-build && cd shapeworks-build
 
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
-  make -j${NUM_PROCS} install || exit 1
 
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake --build . --config Release || exit 1
+  else
+      make -j${NUM_PROCS} install || exit 1
+  fi
   # Inform users of ShapeWorks install path:
   # FIXME/TODO: get rid of LD_LIBRARY_PATH requirement (https://github.com/SCIInstitute/ShapeWorks/issues/125)
   echo "## -----------------------------------------"
