@@ -4,8 +4,7 @@ import os
 import getpass
 import base64
 
-from sys import stdout
-from math import ceil
+from DatasetUtils import GirderAPI
 
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
@@ -25,7 +24,7 @@ def _loginAndGetAccessToken():
             print('Login failed!')
             return (None, None)
 
-    accessToken = _getAccessToken(loginState['key'])
+    accessToken = GirderAPI._getAccessToken(serverAddress, loginState['key'])
     if accessToken is None:
         # Retry login once
         print('Login info in current directory is invalid.')
@@ -33,7 +32,7 @@ def _loginAndGetAccessToken():
         if loginState is None:
             print('Login failed!')
             return (None, None)
-        accessToken = _getAccessToken(loginState['key'])
+        accessToken = GirderAPI._getAccessToken(serverAddress, loginState['key'])
         if accessToken is None:
             print('ERROR! Login info is invalid again.', _CONTACT_SUPPORT_STRING)
             return (loginState, None)
@@ -51,13 +50,13 @@ def _promptLogin():
         password = getpass.getpass("Password: ")
         combined = username + ':' + password
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
-        basicAuthToken = _authenticateBasicAuth(usernamePasswordHash)
+        basicAuthToken = GirderAPI._authenticateBasicAuth(serverAddress, usernamePasswordHash)
         if basicAuthToken is None:
             print('Incorrect username or password')
 
-    apiKey = _getApiKey(basicAuthToken)
+    apiKey = GirderAPI._getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
     if apiKey is None:
-        apiKey = _createApiKey(basicAuthToken)
+        apiKey = GirderAPI._createApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
     if apiKey is None:
         print('Failed to create api key.', _CONTACT_SUPPORT_STRING)
         return None
@@ -70,6 +69,7 @@ def _saveLogin(loginState):
     with open(_LOGIN_FILE_NAME, 'w') as outfile:
         json.dump(loginState, outfile)
 
+
 def _loadLogin():
     if not os.path.exists(_LOGIN_FILE_NAME):
         return None
@@ -80,79 +80,11 @@ def _loadLogin():
         return loginState
     return None
 
+
 def _verifyLoginState(loginState):
     return 'key' in loginState and 'username' in loginState
 
 
-
-def _getAccessToken(apiKey):
-    apicall = serverAddress + 'api/v1/api_key/token'
-    r = requests.post(url = apicall, params = {'key': apiKey}) 
-
-    if(r.status_code == 200):
-        data = r.json()
-        accessToken = data['authToken']['token']
-        return accessToken
-    else:
-        #print("ERROR Authenticating using api_key! Response code " + str(r.status_code))
-        #print(r.text)
-        return None
-
-
-def _authenticateBasicAuth(usernamePasswordHash):
-    apicall = serverAddress + "api/v1/user/authentication"
-    r = requests.get(url = apicall, headers = {'Authorization': 'Basic ' + usernamePasswordHash}) 
-
-    if(r.status_code == 200):
-        data = r.json()
-        authToken = data['authToken']['token']
-        return authToken
-    else:
-        #print("ERROR Authenticating! Response code " + str(r.status_code))
-        #print(r.text)
-        return None
-
-def _createApiKey(basicAuthToken):
-    apicall = serverAddress + "api/v1/api_key"
-    r = requests.post(url = apicall, params = {'name': _API_KEY_NAME, 'scope': '[\"core.data.read\"]', 'tokenDuration': '1'}, headers = {'Girder-Token': basicAuthToken}) 
-
-    if(r.status_code == 200):
-        apiKey = r.json()
-        return apiKey['key']
-
-    else:
-        print("ERROR creating api key! Response code " + str(r.status_code), _CONTACT_SUPPORT_STRING)
-        print(r.text)
-        return None
-
-def _getApiKey(basicAuthToken):
-    apicall = serverAddress + "api/v1/api_key"
-    r = requests.get(url = apicall, headers = {'Girder-Token': basicAuthToken}) 
-
-    if(r.status_code == 200):
-        apiKeys = r.json()
-        for key in apiKeys:
-            if key['name'] == _API_KEY_NAME:
-                return key['key']
-
-    else:
-        print("ERROR getting list of api keys! Response code " + str(r.status_code), _CONTACT_SUPPORT_STRING)
-        print(r.text)
-        return None
-    return None
-
-def _getCollectionList(authToken):
-    apicall = serverAddress + "api/v1/collection"
-    r = requests.get(url = apicall, headers = {'Girder-Token': authToken}) 
-    data = r.json()
-    print(data)
-    
-def _getFolderList(authToken, folderName):
-    apicall = serverAddress + "api/v1/folder"
-    r = requests.get(url = apicall, params = {'text': folderName}, headers = {'Girder-Token': authToken}) 
-    data = r.json()
-    print(data)
-    
 def _downloadDataset(accessToken, filename):
     apicall = serverAddress + "api/v1/item"
     response = requests.get(url = apicall, params = {'folderId': '5e15245f0a02fb02ba24268a', 'name': filename}, headers = {'Girder-Token': accessToken}) 
@@ -183,3 +115,47 @@ def _downloadDataset(accessToken, filename):
     else:
         print('ERROR Downloading', filename, '! Response code', response.status_code, _CONTACT_SUPPORT_STRING)
         return False
+
+
+def _downloadFolder(accessToken, path, folder):
+    
+    items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
+    failure = False
+    for item in items:
+        failure = failure or not GirderAPI._downloadItem(serverAddress, accessToken, path, item)
+    return failure
+
+
+def _downloadDatasetIndividualFiles(accessToken, datasetName, destinationPath):
+
+    # 1 get info of the use case collection
+    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, 'test')
+    if useCaseCollection is None:
+        return False
+
+    # 2 get info of the dataset folder in that collection
+    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+    if datasetFolder is None:
+        return False
+    
+    # 3 create destination directory in the file system and download every item in the base dataset folder
+    if not os.path.exists(destinationPath):
+        os.makedirs(destinationPath)
+
+    if _downloadFolder(accessToken, destinationPath, datasetFolder):
+        return False
+
+    # 4 get info of all subfolders
+    subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=datasetFolder['_id'])
+    if subfolders is None:
+        return False
+
+    # 5 for each subfolder, create directory in the file system and download every item in the subfolder
+    for subfolder in subfolders:
+        path = destinationPath + '/' + subfolder['name']
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if _downloadFolder(accessToken, path, subfolder):
+            return False
+
+    return True
