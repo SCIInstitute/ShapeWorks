@@ -42,15 +42,15 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         print(" ")
 
         cmd = ["shapeworks", "readimage", "--name", inname]
-        cmd.append(["resampleimage", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
+        cmd.extend(["resample", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
 
         if recenter:
-            cmd.append(["--recenter", str(recenter)])
+            cmd.extend(["--recenter", str(recenter)])
         if isBinary:
-            cmd.append(["binarize"])
+            cmd.extend(["binarize"])
 
-        cmd.append(["writeimage", "--name", outname])
-
+        cmd.extend(["writeimage", "--name", outname])
+        print(cmd)
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
 
