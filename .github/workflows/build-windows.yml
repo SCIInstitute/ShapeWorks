@@ -23,7 +23,6 @@ jobs:
         lfs: true
 
     - name: Get tags
-      uses: actions/checkout@v2
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
     - name: Get NSIS
