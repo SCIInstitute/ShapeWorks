@@ -1,10 +1,10 @@
 # Build
 set(Vis_sources
   Vis.cpp
-  )
+  ShapeCollection.cpp)
 set(Vis_headers
   Vis.h
-  )
+  ShapeCollection.h)
 add_library(Analyze STATIC
   ${Vis_sources}
   ${Vis_headers})

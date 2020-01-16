@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Command.h"
+#include "ShapeCollection.h"
 
 namespace shapeworks {
 
@@ -131,5 +132,20 @@ private:
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
+
+///////////////////////////////////////////////////////////////////////////////
+//TODO: find out how to organize this from Cam/Archna
+class EvaluateSSM : public Command
+{
+public:
+    static EvaluateSSM& getCommand() { static EvaluateSSM instance; return instance; }
+
+private:
+    ShapeCollection shapes;
+    EvaluateSSM() { buildParser(); }
+    void buildParser() override;
+    int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 
 } // shapeworks

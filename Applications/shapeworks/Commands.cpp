@@ -263,5 +263,25 @@ int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &shar
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+// EvaluateSSM
+///////////////////////////////////////////////////////////////////////////////
+void EvaluateSSM::buildParser()
+{
+    const std::string prog = "evaluatessm";
+    const std::string desc = "Evaluates a SSM based on generality, specificity and compactness";
+    parser.prog(prog).description(desc);
+
+    parser.add_option("--filelist").action("store").type("string").set_default("").help("A file containing a list of shape particle filenames separated by newlines");
+
+    Command::buildParser();
+}
+
+int EvaluateSSM::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+    const std::string flist_path = static_cast<std::string>(options.get("filelist"));
+    shapes.read(flist_path);
+    shapes.evaluate();
+}
 
 } // shapeworks

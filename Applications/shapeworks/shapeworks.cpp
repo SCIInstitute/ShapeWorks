@@ -5,7 +5,6 @@
 #include <exception>
 #include "Executable.h"
 #include "Commands.h"
-#include "Analyze/EvaluateSSM.h"
 
 using namespace shapeworks;
 
