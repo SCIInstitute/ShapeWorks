@@ -8,8 +8,8 @@
 class ShapeCollection {
 public:
     ShapeCollection();
-    ShapeCollection(const std::string &flist_path);
-    void read(const std::string &flist_path);
+    ShapeCollection(const std::string &flistPath);
+    void read(const std::string &flistPath);
     void evaluate() const;
 };
 

@@ -279,8 +279,8 @@ void EvaluateSSM::buildParser()
 
 int EvaluateSSM::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-    const std::string flist_path = static_cast<std::string>(options.get("filelist"));
-    shapes.read(flist_path);
+    const std::string flistPath = static_cast<std::string>(options.get("filelist"));
+    shapes.read(flistPath);
     shapes.evaluate();
 }
 
