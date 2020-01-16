@@ -13,9 +13,13 @@ jobs:
     
     steps:
 
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
       with:
         lfs: true
+
+    - name: Get tags
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: Acquire 10.13 SDK
       run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz

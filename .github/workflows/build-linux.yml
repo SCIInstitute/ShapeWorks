@@ -13,9 +13,13 @@ jobs:
     
     steps:
 
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
       with:
         lfs: true
+
+    - name: Get tags
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: Acquire LinuxDeployQt
       run: curl -L -o $HOME/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt
