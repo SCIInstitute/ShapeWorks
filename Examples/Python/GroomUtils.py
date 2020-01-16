@@ -45,7 +45,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         cmd.extend(["resample", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
 
         if recenter:
-            cmd.extend(["--recenter", str(recenter)])
+            cmd.extend(["recenterimage"])
         if isBinary:
             cmd.extend(["binarize"])
 
