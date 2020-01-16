@@ -309,7 +309,9 @@ echo "##  $*"
 echo "##"
 echo ""
 
-verify_qt
+if [[ $OSTYPE != "msys" ]]; then
+    verify_qt
+fi
 
 echo "INSTALL_DIR: ${INSTALL_DIR}"
 echo "BUILD_DIR: ${BUILD_DIR}"
