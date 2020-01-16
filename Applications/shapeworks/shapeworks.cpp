@@ -5,6 +5,7 @@
 #include <exception>
 #include "Executable.h"
 #include "Commands.h"
+#include "Analyze/EvaluateSSM.h"
 
 using namespace shapeworks;
 
@@ -21,6 +22,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ResampleImage::getCommand());
   shapeworks.addCommand(Binarize::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
+  shapeworks.addCommand(EvaluateSSM::getCommand());
   //...
   
   try {

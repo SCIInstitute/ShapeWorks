@@ -4,12 +4,14 @@ set(shapeworks_sources
   Executable.cpp
   Command.cpp
   Commands.cpp
+  Analyze/EvaluateSSM.cpp
   )
 set(shapeworks_headers
   Executable.h
   Command.h
   Commands.h
   SharedCommandData.h
+  Analyze/EvaluateSSM.h
   )
 add_executable(shapeworks
   ${shapeworks_sources}
