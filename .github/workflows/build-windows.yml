@@ -23,7 +23,7 @@ jobs:
         lfs: true
 
     - name: Get tags
-      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: Get NSIS
       run: curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
