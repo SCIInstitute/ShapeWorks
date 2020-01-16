@@ -24,6 +24,7 @@ parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--interactive", help="Run in interactive mode", action="store", default=0)
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store", default=0)
 parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
+parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
 binpath = args.shapeworks_path
@@ -40,6 +41,7 @@ os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
 
 try:
 
+    
     Run_Ellipsoid_Pipeline(args)
 
     print("\nShapeworks Pipeline Complete!")
