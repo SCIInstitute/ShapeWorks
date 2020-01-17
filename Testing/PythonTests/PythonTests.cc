@@ -30,7 +30,11 @@ TEST(PythonTests, tiny_test) {
   std::string bin_dir = std::string(BUILD_DIR) + "/bin";
 #ifdef _WIN32
   bin_dir = bin_dir + "/Release";
-  std::replace( s.begin(), s.end(), '/', '\\'); 
+  std::replace( bin_dir.begin(), bin_dir.end(), '/', '\\'); 
+  std::string path = getenv("PATH");
+  path = path + ";" + std::string(INSTALL_DIR) + "\\bin";
+  std::cerr << "Setting PATH to " << path << "\n";
+  _putenv_s("PATH", path.c_str());
 #endif
 
   std::cerr << "Python examples Location: " << python_examples_location << "\n";
