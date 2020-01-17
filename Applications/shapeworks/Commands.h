@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Command.h"
-#include "ShapeCollection.h"
+#include "itkParticleShapeStatistics.h"
 
 namespace shapeworks {
 
@@ -141,7 +141,7 @@ public:
     static EvaluateSSM& getCommand() { static EvaluateSSM instance; return instance; }
 
 private:
-    ShapeCollection shapes;
+    ParticleShapeStatistics<3> shapeStats;
     EvaluateSSM() { buildParser(); }
     void buildParser() override;
     int execute(const optparse::Values &options, SharedCommandData &sharedData) override;

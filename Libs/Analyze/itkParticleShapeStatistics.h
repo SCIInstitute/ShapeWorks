@@ -27,6 +27,7 @@
 #include <fstream>
 #include <string>
 #include <cstdio>
+#include "tinyxml.h"
 #include "itkParticlePositionWriter.h"
 
 /**

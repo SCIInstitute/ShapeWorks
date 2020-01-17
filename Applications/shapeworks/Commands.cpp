@@ -280,8 +280,7 @@ void EvaluateSSM::buildParser()
 int EvaluateSSM::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
     const std::string flistPath = static_cast<std::string>(options.get("filelist"));
-    shapes.read(flistPath);
-    shapes.evaluate();
+    shapeStats.ReadPointFiles(flistPath.c_str());
 }
 
 } // shapeworks

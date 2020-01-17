@@ -1,10 +1,10 @@
 # Build
 set(Vis_sources
   Vis.cpp
-  ShapeCollection.cpp)
+  itkParticleShapeStatistics.txx)
 set(Vis_headers
   Vis.h
-  ShapeCollection.h)
+  itkParticleShapeStatistics.h)
 add_library(Analyze STATIC
   ${Vis_sources}
   ${Vis_headers})
@@ -12,9 +12,11 @@ target_include_directories(Analyze PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Analyze PUBLIC
+  tinyxml
   Mesh
   Alignment
-  Utils)
+  Utils
+  Optimize)
 
 # set
 set_target_properties(Analyze PROPERTIES PUBLIC_HEADER
