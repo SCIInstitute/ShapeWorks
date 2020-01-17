@@ -1,3 +1,7 @@
+<script src="//yihui.org/js/math-code.js"></script>
+<script async
+  src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 ##Optimization
 ShapeWorks uses the processed data groomed to the sign distance transform for optimization step.
 ShapeWorks uses the Particle Based Modeling (PBM) approach to constructs a correspondence 
@@ -18,6 +22,18 @@ variable Z and as N samples of M observations on N , d × 1 vector random variab
  . The optimization to establish correspondence minimizes the energy function
  
 ![equation](http://www.sciweavers.org/tex2img.php?eq=Q%20%3D%20H%28Z%29-%20%5Csum_%7Bk%3D1%7D%5EN%20H%28X_k%29%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+
+Hi `$z = x + y$`.
+
+`$$a^2 + b^2 = c^2$$`
+
+`$$\begin{vmatrix}a & b\\
+c & d
+\end{vmatrix}=ad-bc$$`
+
+
+
 
 where H is an estimation of differential entropy. Minimization of the first term in Q
 produces a compact distribution of samples in shape space, while the second term seeks
