@@ -28,7 +28,13 @@ TEST(PythonTests, tiny_test) {
   std::string python_examples_location = std::string(TEST_DATA_DIR) + std::string(
     "/../../Examples/Python");
   std::string bin_dir = std::string(BUILD_DIR) + "/bin";
-  std::cerr << "Location: " << python_examples_location << "\n";
+#ifdef _WIN32
+  bin_dir = bin_dir + "/Release";
+  std::replace( s.begin(), s.end(), '/', '\\'); 
+#endif
+
+  std::cerr << "Python examples Location: " << python_examples_location << "\n";
+  std::cerr << "Binary Directory: " << bin_dir << "\n";
 
   // check that one of the resulting files exists
   std::string check_file = python_examples_location +
@@ -42,6 +48,7 @@ TEST(PythonTests, tiny_test) {
 
   // run python
   std::string command = "python ellipsoidMain.py --tiny_test " + bin_dir;
+  std::cerr << "Running command: " << command << "\n";
   system(command.c_str());
 
   ASSERT_TRUE(file_exists(check_file));
