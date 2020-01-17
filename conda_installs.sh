@@ -2,7 +2,9 @@
 # Installs conda environment for building ShapeWorks
 #
 
-if [ -z "$PS1" ]; then
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+
+if [ "$sourced" == "0" ]; then
   echo "ERROR: must call this script using \"source ./conda_installs.sh\""
   exit 1
 fi

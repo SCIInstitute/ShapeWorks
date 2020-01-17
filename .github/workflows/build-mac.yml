@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - add_python_test
   pull_request:
 
 jobs:
