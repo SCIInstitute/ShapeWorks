@@ -48,7 +48,7 @@ jobs:
       run: cd build && make -j4
 
     - name: conda installs
-      run: source conda_install.sh
+      run: source conda_installs.sh
       
     - name: make test
       run: cd build && make test
