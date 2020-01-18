@@ -15,14 +15,12 @@ jobs:
     steps:
 
     - name: Setup Conda
-    - uses: goanpeca/setup-miniconda@v1
+      uses: goanpeca/setup-miniconda@v1
       run: conda info
     
     - name: conda installs
       shell: bash
       run: source ./conda_installs.sh
-
-
     
     - name: Checkout code
       uses: actions/checkout@v2
