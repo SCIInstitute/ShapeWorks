@@ -17,6 +17,7 @@ jobs:
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
       with:
+          miniconda-version: 'latest'
           activate-environment: shapeworks
           auto-activate-base: false
           
@@ -32,17 +33,9 @@ jobs:
       shell: bash -l {0}
       run: source ./conda_installs.sh
 
-    - name: Conda env list
-      shell: bash -l {0}
-      run: conda env list
-
     - name: activate shapeworks
       shell: bash -l {0}
       run: conda activate shapeworks
-
-    - name: Conda env list
-      shell: bash -l {0}
-      run: conda env list
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
@@ -64,15 +57,17 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/superbuild.sh') }}
         
     - name: Build dependencies
+      shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: SDKROOT=$HOME/MacOSX10.13.sdk INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./superbuild.sh --dependencies_only
 
     - name: cmake
+      shell: bash -l {0}
       run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
 
     - name: make
+      shell: bash -l {0}
       run: cd build && make -j4
-
       
     - name: make test
       shell: bash -l {0}
@@ -80,6 +75,7 @@ jobs:
       # run: cd build && make test
 
     - name: make install
+      shell: bash -l {0}
       run: cd build && make install
 
     - name: Build Binary Package
