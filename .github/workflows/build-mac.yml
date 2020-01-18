@@ -16,7 +16,9 @@ jobs:
 
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
-
+      with:
+          activate-environment: shapeworks
+          
     - name: Conda info
       run: conda info
     
