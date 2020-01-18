@@ -1,11 +1,7 @@
 
 
 set(TEST_SRCS
-  OptimizeTests.cc
-  )
-
-set(TEST_HDRS
-  OptimizeTests.h
+  OptimizeTests.cpp
   )
 
 add_executable(OptimizeTests

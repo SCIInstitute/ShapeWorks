@@ -1,11 +1,6 @@
 
-
 set(TEST_SRCS
-  PythonTests.cc
-  )
-
-set(TEST_HDRS
-  PythonTests.h
+  PythonTests.cpp
   )
 
 add_executable(PythonTests
@@ -13,7 +8,6 @@ add_executable(PythonTests
   )
 
 target_link_libraries(PythonTests
-  tinyxml Mesh vgl vgl_algo Image Optimize Utils trimesh2
-  gtest_main ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+  gtest_main )
 
 add_test(NAME PythonTests COMMAND PythonTests)
