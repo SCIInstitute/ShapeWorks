@@ -18,12 +18,13 @@ jobs:
       uses: goanpeca/setup-miniconda@v1
       with:
           miniconda-version: 'latest'
-          activate-environment: shapeworks
-          auto-activate-base: false
           
     - name: Conda info
       run: conda info
-    
+
+    - name: Conda env list
+      run: conda env list
+
     - name: Checkout code
       uses: actions/checkout@v2
       with:
