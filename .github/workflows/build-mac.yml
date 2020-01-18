@@ -20,14 +20,14 @@ jobs:
     - name: Conda info
       run: conda info
     
-    - name: conda installs
-      shell: bash
-      run: source ./conda_installs.sh
-    
     - name: Checkout code
       uses: actions/checkout@v2
       with:
         lfs: true
+
+    - name: conda installs
+      shell: bash
+      run: source ./conda_installs.sh
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
