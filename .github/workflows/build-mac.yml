@@ -22,13 +22,13 @@ jobs:
     - name: Conda info
       run: conda info
 
-    - name: Conda env list
-      run: conda env list
-
     - name: Checkout code
       uses: actions/checkout@v2
       with:
         lfs: true
+
+    - name: Get tags
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
     - name: conda installs
       shell: bash -l {0}
@@ -37,13 +37,7 @@ jobs:
     - name: activate shapeworks
       shell: bash -l {0}
       run: conda activate shapeworks
-
-    - name: ls libs
-      run: ls /Users/runner/miniconda3/envs/shapeworks/lib/python3.7/site-packages/numpy/core/
       
-    - name: Get tags
-      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
-
     - name: Acquire 10.13 SDK
       run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
 
@@ -76,7 +70,6 @@ jobs:
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
-      # run: cd build && make test
 
     - name: make install
       shell: bash -l {0}
