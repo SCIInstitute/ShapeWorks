@@ -13,13 +13,11 @@ jobs:
     
     steps:
 
-    - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
-      with:
-          miniconda-version: 'latest'
-          
-    - name: Conda info
-      run: conda info
+    - name: Acquire 10.13 SDK
+      run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
+
+    - name: Unpack SDK
+      run: cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
 
     - name: Checkout code
       uses: actions/checkout@v2
@@ -29,6 +27,14 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+          miniconda-version: 'latest'
+          
+    - name: Conda info
+      run: conda info
+      
     - name: conda installs
       shell: bash -l {0}
       run: source ./conda_installs.sh
@@ -37,11 +43,6 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks
       
-    - name: Acquire 10.13 SDK
-      run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
-
-    - name: Unpack SDK
-      run: cd $HOME && tar -xzf MacOSX10.13.sdk.tar.gz
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
