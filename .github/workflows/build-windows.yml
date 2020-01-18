@@ -26,22 +26,6 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
-      with:
-          miniconda-version: 'latest'
-          
-    - name: Conda info
-      run: conda info
-
-    - name: conda installs
-      shell: bash -l {0}
-      run: source ./conda_installs.sh
-
-    - name: activate shapeworks
-      shell: bash -l {0}
-      run: conda activate shapeworks
-    
     - name: Get NSIS
       run: curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
 
@@ -98,6 +82,22 @@ jobs:
 #      with:
 #        name: build
 #        path: ${{runner.workspace}}\build
+
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+          miniconda-version: 'latest'
+          
+    - name: Conda info
+      run: conda info
+
+    - name: conda installs
+      shell: bash -l {0}
+      run: source ./conda_installs.sh
+
+    - name: activate shapeworks
+      shell: bash -l {0}
+      run: conda activate shapeworks
     
     - name: Test
       working-directory: ${{runner.workspace}}/build
