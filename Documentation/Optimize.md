@@ -1,4 +1,9 @@
+<script async
+  src="//mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
+`$ x $`
+  
 ##Optimization
 ShapeWorks uses the processed data groomed to the sign distance transform for optimization step.
 ShapeWorks uses the Particle Based Modeling (PBM) approach to constructs a correspondence 
@@ -13,18 +18,12 @@ simultaneously treating correspondence configuration as a random variable.
 
 Correspondence positions are optimized by gradient descent on an energy function that balances the negative entropy of 
 the distribution of particles in configuration space with the positive entropy of the distribution of the configurations
-in shape space. The method is to consider ![equation](http://www.sciweavers.org/tex2img.php?eq=z_k%20%20%5Cin%20%20%5CRe%20%5E%7BdM%7D%2C%20k%3D%7B1%2C%202%2C%20...%2C%20N%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+in shape space. The method is to consider ![equation](images/z_k.png)
  both as observations on a dM × 1 vector random
-variable Z and as N samples of M observations on N , d × 1 vector random variables ![equation](http://www.sciweavers.org/tex2img.php?eq=X_k&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+variable Z and as N samples of M observations on N , d × 1 vector random variables ![equation](images/x_k.png)
  . The optimization to establish correspondence minimizes the energy function
  
-![equation](http://www.sciweavers.org/tex2img.php?eq=Q%20%3D%20H%28Z%29-%20%5Csum_%7Bk%3D1%7D%5EN%20H%28X_k%29%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
-
-
-
-
-
-
+<p align="center"><img src="images/Q.png" /></p>
 
 where H is an estimation of differential entropy. Minimization of the first term in Q
 produces a compact distribution of samples in shape space, while the second term seeks
