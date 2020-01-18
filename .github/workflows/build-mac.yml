@@ -38,6 +38,9 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks
 
+    - name: ls libs
+      run: ls /Users/runner/miniconda3/envs/shapeworks/lib/python3.7/site-packages/numpy/core/
+      
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
