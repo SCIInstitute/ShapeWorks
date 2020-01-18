@@ -60,7 +60,7 @@ jobs:
 
       
     - name: make test
-      run: cd build && ctest -VV
+      run: conda activate shapeworks && cd build && ctest -VV
       # run: cd build && make test
 
     - name: make install
