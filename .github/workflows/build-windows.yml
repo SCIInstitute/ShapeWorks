@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - add_python_test
   pull_request:
 
 env:
@@ -17,6 +18,14 @@ jobs:
     
     steps:
 
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+          miniconda-version: 'latest'
+          
+    - name: Conda info
+      run: conda info
+      
     - name: Checkout code
       uses: actions/checkout@v2
       with:
@@ -25,6 +34,14 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
+    - name: conda installs
+      shell: bash -l {0}
+      run: source ./conda_installs.sh
+
+    - name: activate shapeworks
+      shell: bash -l {0}
+      run: conda activate shapeworks
+    
     - name: Get NSIS
       run: curl -o ${{runner.workspace}}\nsis.zip http://www.sci.utah.edu/~amorris/NSISPortable_3.04.zip
 
@@ -84,10 +101,10 @@ jobs:
     
     - name: Test
       working-directory: ${{runner.workspace}}/build
-      shell: bash
+      shell: bash -l {0}
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C $BUILD_TYPE
+      run: conda activate shapeworks && ctest -C $BUILD_TYPE
 
     - name: Build Binary Package
       shell: bash
