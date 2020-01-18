@@ -33,7 +33,6 @@ function install_conda() {
   conda config --add channels simpleitk
   conda config --add channels anaconda
   conda config --add channels conda-forge
-  conda config --set channel_priority strict
   
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
