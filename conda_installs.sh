@@ -47,9 +47,6 @@ function install_conda() {
   if ! conda install --yes pip; then return 1; fi
   if ! pip install --upgrade pip; then return 1; fi
 
-
-  
-  
   #install shapeworks deps
   if ! conda install --yes \
        cmake=3.15.5 \
@@ -61,7 +58,7 @@ function install_conda() {
        openblas=0.3.3
   then return 1; fi
 
-  # linux and mac deps
+  # linux and mac (only) deps
   if [ "$(uname)" = "Linux" ] || [ "$(uname)" == "Darwin"]; then
       if ! conda install --yes \
 	   xorg-libx11=1.6.9 \
