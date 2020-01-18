@@ -29,6 +29,9 @@ jobs:
       shell: bash
       run: source ./conda_installs.sh
 
+    - name: Conda env list
+      run: conda env list
+
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
