@@ -18,6 +18,7 @@ jobs:
       uses: goanpeca/setup-miniconda@v1
       with:
           activate-environment: shapeworks
+          auto-activate-base: false
           
     - name: Conda info
       run: conda info
@@ -30,6 +31,12 @@ jobs:
     - name: conda installs
       shell: bash
       run: source ./conda_installs.sh
+
+    - name: Conda env list
+      run: conda env list
+
+    - name: activate shapeworks
+      run: conda activate shapeworks
 
     - name: Conda env list
       run: conda env list
@@ -65,6 +72,7 @@ jobs:
 
       
     - name: make test
+      shell: bash
       run: conda activate shapeworks && cd build && ctest -VV
       # run: cd build && make test
 
