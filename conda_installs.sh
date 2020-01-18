@@ -64,7 +64,8 @@ function install_conda() {
        geotiff=1.5.1 \
        numpy=1.17.4 \
        git-lfs=2.6.1 \
-       SimpleITK=1.2.4
+       SimpleITK=1.2.4 \
+       openblas=0.3.3
   then return 1; fi
 
   if ! pip install termcolor==1.1.0; then return 1; fi
