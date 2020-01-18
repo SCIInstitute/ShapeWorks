@@ -17,14 +17,6 @@ jobs:
     runs-on: windows-latest
     
     steps:
-
-    - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
-      with:
-          miniconda-version: 'latest'
-          
-    - name: Conda info
-      run: conda info
       
     - name: Checkout code
       uses: actions/checkout@v2
@@ -33,6 +25,14 @@ jobs:
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
+
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+          miniconda-version: 'latest'
+          
+    - name: Conda info
+      run: conda info
 
     - name: conda installs
       shell: bash -l {0}
