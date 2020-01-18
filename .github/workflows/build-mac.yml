@@ -14,13 +14,13 @@ jobs:
     
     steps:
 
-
-    - name: conda info
+    - name: Setup Conda
+    - uses: goanpeca/setup-miniconda@v1
       run: conda info
     
-    # - name: conda installs
-    #   shell: bash
-    #   run: source ./conda_installs.sh
+    - name: conda installs
+      shell: bash
+      run: source ./conda_installs.sh
 
 
     
