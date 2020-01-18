@@ -29,16 +29,19 @@ jobs:
         lfs: true
 
     - name: conda installs
-      shell: bash
+      shell: bash -l {0}
       run: source ./conda_installs.sh
 
     - name: Conda env list
+      shell: bash -l {0}
       run: conda env list
 
     - name: activate shapeworks
+      shell: bash -l {0}
       run: conda activate shapeworks
 
     - name: Conda env list
+      shell: bash -l {0}
       run: conda env list
 
     - name: Get tags
@@ -72,7 +75,7 @@ jobs:
 
       
     - name: make test
-      shell: bash
+      shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
       # run: cd build && make test
 
