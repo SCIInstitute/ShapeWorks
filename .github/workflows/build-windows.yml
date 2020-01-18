@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - add_python_test
   pull_request:
 
 env:
@@ -48,11 +47,6 @@ jobs:
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: ./superbuild.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps" --dependencies_only
 
-    # - uses: actions/upload-artifact@v1
-    #   with:
-    #     name: deps
-    #     path: ${{runner.workspace}}\deps
-
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
@@ -78,11 +72,6 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: xcopy /f ${{runner.workspace}}\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
     
-#    - uses: actions/upload-artifact@v1
-#      with:
-#        name: build
-#        path: ${{runner.workspace}}\build
-
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
       with:
@@ -104,7 +93,7 @@ jobs:
       shell: bash -l {0}
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: conda activate shapeworks && ctest -C $BUILD_TYPE
+      run: conda activate shapeworks && ctest -VV -C $BUILD_TYPE
 
     - name: Build Binary Package
       shell: bash
