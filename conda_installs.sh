@@ -53,18 +53,10 @@ function install_conda() {
   #install shapeworks deps
   if ! conda install --yes \
        cmake=3.15.5 \
-       xorg-libx11=1.6.9 \
-       xorg-libsm=1.2.3 \
-       openmp=8.0.1 \
        colorama=0.4.3 \
        requests=2.22.0 \
-       libxrandr-devel-cos6-x86_64=1.5.1 \
-       libxinerama-devel-cos6-x86_64=1.1.3 \
-       libxcursor-devel-cos6-x86_64=1.1.14 \
-       libxi-devel-cos6-x86_64=1.7.8 \
        geotiff=1.5.1 \
        numpy=1.17.4 \
-       git-lfs=2.6.1 \
        SimpleITK=1.2.4 \
        openblas=0.3.3
   then return 1; fi
@@ -72,6 +64,14 @@ function install_conda() {
   # linux and mac deps
   if [ "$(uname)" = "Linux" ] || [ "$(uname)" == "Darwin"]; then
       if ! conda install --yes \
+	   xorg-libx11=1.6.9 \
+	   xorg-libsm=1.2.3 \
+	   libxrandr-devel-cos6-x86_64=1.5.1 \
+	   libxinerama-devel-cos6-x86_64=1.1.3 \
+	   libxcursor-devel-cos6-x86_64=1.1.14 \
+	   libxi-devel-cos6-x86_64=1.7.8 \
+	   git-lfs=2.6.1 \
+	   openmp=8.0.1 \
 	   ncurses=6.1 \
 	   libuuid=2.32.1
       then return 1; fi
