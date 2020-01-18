@@ -47,12 +47,13 @@ function install_conda() {
   if ! conda install --yes pip; then return 1; fi
   if ! pip install --upgrade pip; then return 1; fi
 
+
+  
+  
   #install shapeworks deps
   if ! conda install --yes \
-       ncurses=6.1 \
        cmake=3.15.5 \
        xorg-libx11=1.6.9 \
-       libuuid=2.32.1 \
        xorg-libsm=1.2.3 \
        openmp=8.0.1 \
        colorama=0.4.3 \
@@ -68,6 +69,14 @@ function install_conda() {
        openblas=0.3.3
   then return 1; fi
 
+  # linux and mac deps
+  if [ "$(uname)" = "Linux" ] || [ "$(uname)" == "Darwin"]; then
+      if ! conda install --yes \
+	   ncurses=6.1 \
+	   libuuid=2.32.1
+      then return 1; fi
+  fi
+  
   if ! pip install termcolor==1.1.0; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
   if ! pip install -e Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
