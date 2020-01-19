@@ -1,4 +1,5 @@
 ##Optimization
+
 ShapeWorks uses the processed data groomed to the sign distance transform for optimization step.
 ShapeWorks uses the Particle Based Modeling (PBM) approach to constructs a correspondence 
 point model of shape, which describes shape variation by choosing a discrete set of corresponding points 
