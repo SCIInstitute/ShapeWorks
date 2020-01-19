@@ -11,3 +11,4 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(ImageTests)
 add_subdirectory(OptimizeTests)
+add_subdirectory(PythonTests)
