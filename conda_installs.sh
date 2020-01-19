@@ -28,7 +28,6 @@ function install_conda() {
   fi
 
   #update anaconda
-  conda config --add channels simpleitk
   conda config --add channels anaconda
   conda config --add channels conda-forge
   if ! conda update --yes -n base conda; then return 1; fi
@@ -60,12 +59,14 @@ function install_conda() {
        libxi-devel-cos6-x86_64=1.7.8 \
        geotiff=1.5.1 \
        numpy=1.17.4 \
-       git-lfs=2.6.1 \
-       SimpleITK=1.2.4
+       git-lfs=2.6.1 
   then return 1; fi
 
+  
   if ! pip install termcolor==1.1.0; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
+  if ! pip install itk==5.0.1; then return 1; fi
+
   if ! pip install -e Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
 
   # install any additional Linux dependencies
