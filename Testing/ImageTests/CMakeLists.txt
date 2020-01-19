@@ -1,11 +1,7 @@
 
 
 set(TEST_SRCS
-  ImageTests.cc
-  )
-
-set(TEST_HDRS
-  ImageTests.h
+  ImageTests.cpp
   )
 
 add_executable(ImageTests
