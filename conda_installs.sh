@@ -33,7 +33,7 @@ function install_conda() {
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
-  #create and activate shapeworks env
+  #create and activate shapeworks env 
   CONDAENV=shapeworks
   if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
   eval "$(conda shell.bash hook)"
