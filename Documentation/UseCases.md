@@ -22,7 +22,7 @@ Returning ShapeWorks Portal users: Enter your username and password
 Username: 
 ```
 
-![ShapeWorks Portal Account Registration Screenshot](../Images/ShapeWorksPortalAccountRegistration.png)
+![ShapeWorks Portal Account Registration Screenshot](images/ShapeWorksPortalAccountRegistration.png)
 
 **Do not use the same password as for your bank account or email!**  
 After registering a free account, you can log in from within the script
@@ -148,7 +148,7 @@ The steps are described below and the results of each step are shown for the mes
 9. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 10. Distance Transform - Finally the distance transform it taken and the data is ready for ShapeWorks optimize.
 
-![Grooming steps](../Images/FemurGroomPipeline.png)
+![Grooming steps](images/FemurGroomPipeline.png)
 
 ### Optimize
 Single scale optimization is used with procrustes scaling to factor out size as a mode of variation. Below are the default optimization parameters for this use case. 
