@@ -182,8 +182,22 @@ WriteImageInfoToText --inFilename" $1 --outPrefix $2
 * inFilename: The filename of the input image.
 * outPrefix: The prefix for the output files. Output files will be: prefix_origin.txt, prefix_size.txt, and prefix_spacing.txt.
 
+### Clip Volume
+This tool clips a binary volume using a defined cutting plane. It could be used to remove unwanted variance across samples. For example, if you have various femur segmentations with different shaft lengths you may want to clip these volumes so all the shaft lengths are close to the same.
 
-### Mesh pre-Processing
+``
+ClipVolume parameterFile.xml
+``
+Here is the list of all parameters in the parameter file.
+
+* num_shapes: Number of volumes you are clipping.
+* inputs: The filenames of binary volumes to clip.
+* outputs: The filenames of the output clipped volumes.
+* cutting_planes: The planes with which to cut the volumes. Planes are defined by three points (pt1, pt2, and pt3) and the parameter should be formated in the following way: pt1_x pt1_y pt1_z pt2_x pt2_y pt2_z pt3_x pt3_y pt3_z.
+
+
+
+### Mesh Pre-Processing
 
 #### Reflect Mesh
 This tool reflects a mesh segmentation. It can be used when you want to align all pairs of anatomies together. For example, if you have left and right femurs and want to align them all, you would first reflect one side or the other so they are all either left or right femurs.
