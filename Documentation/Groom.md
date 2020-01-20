@@ -164,7 +164,7 @@ alpha and beta are smoothing parameters in the following formula.
 This tool reflects an image. It can be used when you want to align all pairs of anatomies together. For example, if you have left and right femurs and want to align them all, you would first reflect one side or the other so they are all either left or right femurs.
 
 ``
-ReflectVolumes --inFilename $1 --outFilename $2 --reflectCenterFilename $3 --inputDirection $4 --meshFormat $5
+ReflectVolumes --inFilename $1 --outFilename $2 --centerFilename $3 --inputDirection $4 
 ``
 
 * inFilename: The filename of the input image to be reflected.
@@ -186,5 +186,24 @@ ReflectMesh --inFilename $1 --outFilename $2 --reflectCenterFilename $3 --inputD
 * reflectCenterFilename: The filename where the image center about which reflection occured will be stored.
 * inputDirection: Direction along which to reflect.
 * meshFormat: Mesh file format such as "vtk" or "ply"
+
+#### Mesh to volume
+This tool generates a binary volume and distance transform from a ".ply" mesh. If an image corresponding to the mesh exists, the origin, spacing, and size settings should be the same as this image. This information can be acquired using the WriteImageInfoToText tool.
+
+``
+TopologyPreservingSmoothing parameterFile.xml
+`` 
+
+Here is the list of all parameters in the parameter file.
+* mesh: The file name of the input mesh.
+* origin_x: The x origin of the output ".nrrd" files.
+* origin_y: The y origin of the output ".nrrd" files.
+* origin_z: The z origin of the output ".nrrd" files.
+* size_x: The x size of the output ".nrrd" files.
+* size_y: The y size of the output ".nrrd" files.
+* size_z: The z size of the output ".nrrd" files.
+* spacing_x: The x spacing of the output ".nrrd" files.
+* spacing_y: The y spacing of the output ".nrrd" files.
+* spacing_z: The z spacing of the output ".nrrd" files.
 
 ### Alignment 
