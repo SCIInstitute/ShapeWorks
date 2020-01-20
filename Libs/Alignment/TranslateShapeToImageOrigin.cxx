@@ -1,5 +1,5 @@
 
-#include "itkImage.h"
+#include <itkImage.h>
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkResampleImageFilter.h"

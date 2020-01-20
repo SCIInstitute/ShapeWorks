@@ -72,6 +72,11 @@ mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
 zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 
+# Additionally on Mac, create an installer
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    pkgbuild --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
+fi
+
 cd $ROOT
 
 
