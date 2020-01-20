@@ -45,7 +45,7 @@ This example helps us to process the data (raw and binary images) with the same 
 For this use case, we have the raw images of the left atrium and their corresponding binary segmentations. 
 
 ### Running the Use Case
-The use case is located at: [https://github.com/SCIInstitute/ShapeWorks/Python/](https://github.com/SCIInstitute/ShapeWorks)
+The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
 
 To run the use case, run LAMain.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_image_and_segmentation_data: to groom raw images as well as segmentation, the default is only segmentation
@@ -60,6 +60,7 @@ This calls RunLeftAtrium.py which:
 * Opens View2  to visualize results by calling methods in AnalyzeUtils.py
 
 ### Grooming
+For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Groom.md)
 1. Isotropic Resampling - Both the image and mesh are resampled to have uniform voxel spacing. 
 2. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the images and segmentations prevent this.
 3. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference.
@@ -68,6 +69,8 @@ This calls RunLeftAtrium.py which:
 6. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
 ### Optimize
+For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Optimize.md)
+
 * Single scale optimization uses the user defined number of particles for optimization and uses procrustes scaling to factor out size as a mode of variation. 
 Below are the default optimization parameters for this use case. 
 
@@ -123,7 +126,7 @@ In this use case we start with full unsegmented images (CT scans) of the hip and
 ShapeWorks requires a binary volume format for input segmentations so these meshes must first be converted into binary volumes. Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes so that they can be used for analysis.
 
 ### Running the Use Case
-The use case is located at: [https://github.com/SCIInstitute/ShapeWorks](https://github.com/SCIInstitute/ShapeWorks)
+The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
 
 To run the use case, run FemurMain.py with the tags --start_with_image_and_segmentation_data and --use single scale:
             
@@ -136,6 +139,8 @@ This calls RunFemur.py which:
 * Opens View2  to visualize results by calling methods in AnalyzeUtils.py
 
 ### Grooming
+For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Groom.md)
+
 The steps are described below and the results of each step are shown for the meshes (note every step is perfmored on both the meshes the images although the resulting images are not shown here).
 1. Reflect - In this use case we often have both right and left femur surface meshes. We want to align all the femurs, so we choose one side to reflect both the image and mesh.
 2. Meshe to Volumes - Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. 
@@ -151,6 +156,8 @@ The steps are described below and the results of each step are shown for the mes
 ![Grooming steps](images/FemurGroomPipeline.png)
 
 ### Optimize
+For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Optimize.md)
+
 Single scale optimization is used with procrustes scaling to factor out size as a mode of variation. Below are the default optimization parameters for this use case. 
 
             "number_of_particles" : 1024, 
