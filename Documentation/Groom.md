@@ -160,18 +160,30 @@ alpha and beta are smoothing parameters in the following formula.
 
 <p align="center"><img src="images/alpha.png" /></p>
 
+#### Reflect Image
+This tool reflects an image. It can be used when you want to align all pairs of anatomies together. For example, if you have left and right femurs and want to align them all, you would first reflect one side or the other so they are all either left or right femurs.
 
+``
+ReflectVolumes --inFilename $1 --outFilename $2 --reflectCenterFilename $3 --inputDirection $4 --meshFormat $5
+``
+
+* inFilename: The filename of the input image to be reflected.
+* outFilename: The filename of the output reflected image.
+* centerFilename: The filename where the image center about which reflection occured will be stored.
+* inputDirection: Direction along which to reflect.
 
 ### Mesh pre-Processing
 
 #### Reflect Mesh
-This tool reflects a mesh segmentation. It can be used when you want to align all pairs of anatomies together. For example if you have left and right femurs and want to align them all you would either first reflect either all right femurs or all left femurs.
+This tool reflects a mesh segmentation. It can be used when you want to align all pairs of anatomies together. For example, if you have left and right femurs and want to align them all, you would first reflect one side or the other so they are all either left or right femurs.
+
 ``
 ReflectMesh --inFilename $1 --outFilename $2 --reflectCenterFilename $3 --inputDirection $4 --meshFormat $5
 ``
+
 * inFilename: The filename of the input mesh to be reflected.
 * outFilename: The filename of the output reflected mesh.
-* reflectCenterFilename: The filename for origin about which reflection occurs.
+* reflectCenterFilename: The filename where the image center about which reflection occured will be stored.
 * inputDirection: Direction along which to reflect.
 * meshFormat: Mesh file format such as "vtk" or "ply"
 
