@@ -172,6 +172,17 @@ ReflectVolumes --inFilename $1 --outFilename $2 --centerFilename $3 --inputDirec
 * centerFilename: The filename where the image center about which reflection occured will be stored.
 * inputDirection: Direction along which to reflect.
 
+### Write Image Information
+This tool will write information about an image to text. This can be useful if you have a segmented mesh that corresponds to the image which you would like to turn into a volume with the same parameters for example. It produces three text files: one with the x, y, and z origin, one with the x, y, and z size (or dimensions of the image), and one with the x, y, and z voxel spacing.
+
+``
+WriteImageInfoToText --inFilename" $1 --outPrefix $2
+``
+
+* inFilename: The filename of the input image.
+* outPrefix: The prefix for the output files. Output files will be: prefix_origin.txt, prefix_size.txt, and prefix_spacing.txt.
+
+
 ### Mesh pre-Processing
 
 #### Reflect Mesh
