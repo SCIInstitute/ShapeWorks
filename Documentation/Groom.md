@@ -19,7 +19,7 @@ Here is the list of arguments.
 * outFilename: The filename of the output resampled image.
 * isBinaryImage: A flag to treat the input image as a binary image (specialized resampling pipeline).
 * isoSpacing: The isotropic spacing in all dimensions.
-*isCenterImageOn: A flag to center the image, i.e. change the origin in the image header to the physcial coordinates
+* isCenterImageOn: A flag to center the image, i.e. change the origin in the image header to the physcial coordinates
  of the first voxel (lower left corner).
 * sizeX                    Image size in x-direction (optional, if set to 0, the size is autmatically estimated from the input image).
 * sizeY                    Image size in y-direction (optional, if set to 0, the size is autmatically estimated from the input image).
@@ -162,6 +162,17 @@ alpha and beta are smoothing parameters in the following formula.
 
 
 
-### Mesh pre-Processing 
+### Mesh pre-Processing
+
+#### Reflect Mesh
+This tool reflects a mesh segmentation. It can be used when you want to align all pairs of anatomies together. For example if you have left and right femurs and want to align them all you would either first reflect either all right femurs or all left femurs.
+``
+ReflectMesh --inFilename $1 --outFilename $2 --reflectCenterFilename $3 --inputDirection $4 --meshFormat $5
+``
+* inFilename: The filename of the input mesh to be reflected.
+* outFilename: The filename of the output reflected mesh.
+* reflectCenterFilename: The filename for origin about which reflection occurs.
+* inputDirection: Direction along which to reflect.
+* meshFormat: Mesh file format such as "vtk" or "ply"
 
 ### Alignment 
