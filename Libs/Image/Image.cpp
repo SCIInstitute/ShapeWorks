@@ -248,6 +248,7 @@ bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
     outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
     outputSize[1] = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
     outputSize[2] = std::ceil((inputSize[2] - 1 ) * inputSpacing[2] / isoSpacing);
+    // probably std:;ceil should be std::floor (ask Alan and Shireen)
   }
   resampler->SetSize(outputSize);
 
