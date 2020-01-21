@@ -57,8 +57,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
 
     return outDataList
 
-
-def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, processRaw=False):
+def applyPadding(outDir, inDataList, padSize, padValue=0):
     """
     Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
     Date: 8th August 2019
@@ -69,83 +68,26 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
     Input Parameters:
     Output Parameters:
     """
-    outDir = parentDir + '/padded'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-
-    if processRaw:
-        # process segmentations
-        binaryoutDir = outDir + '/segmentations'
-
-        if not os.path.exists(binaryoutDir):
-            os.makedirs(binaryoutDir)
-        outDataListSeg = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, binaryoutDir)
-            outname = outname.replace('.nrrd', '.pad.nrrd')
-            outDataListSeg.append(outname)
-            print(" ")
-            print("############## Padding ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
-                padSize) , "--paddingValue" , str(padValue)]
-            subprocess.check_call(execCommand)
-
-        #process images
-        rawoutDir = outDir + '/images'
-
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-
-        outDataListImg = []
-        for i in range(len(inDataListImg)):
-            inname = inDataListImg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, rawoutDir)
-            outname = outname.replace('.nrrd', '.pad.nrrd')
-            outDataListImg.append(outname)
-            print(" ")
-            print("############## Padding ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
-                padSize) , "--paddingValue" , str(padValue)]
-            subprocess.check_call(execCommand)
-
-        return [outDataListSeg, outDataListImg]
-
-    else:
-        outDataList = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            #filename = spt[1]
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.pad.nrrd')
-            outDataList.append(outname)
-            print(" ")
-            print("############## Padding ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
-                padSize) , "--paddingValue" , str(padValue)]
-            subprocess.check_call(execCommand)
-
-        return outDataList
+    outDataList = []
+    for i in range(len(inDataList)):
+        inname = inDataList[i]
+        spt = inname.rsplit(os.sep, 1)
+        initPath = spt[0]
+        outname = inname.replace(initPath, outDir)
+        outname = outname.replace('.nrrd', '.pad.nrrd')
+        outDataList.append(outname)
+        print(" ")
+        print("############## Padding ###############")
+        cprint(("Input Filename : ", inname), 'cyan')
+        cprint(("Output Filename : ", outname), 'yellow')
+        print("######################################")
+        print(" ")
+        execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
+            padSize) , "--paddingValue" , str(padValue)]
+        subprocess.check_call(execCommand)
+    return outDataList
 
 def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False):
     """
@@ -835,7 +777,8 @@ def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points)
 
 def SelectCuttingPlane(input_file):
     ## Get vtk format
-    file_name, file_format = input_file.split(".")
+    file_name = input_file.split(".")[0]
+    file_format = input_file.split(".")[1]
     input_vtk = file_name + ".vtk"
     if file_format == "nrrd":
         xml_filename = "cutting_plane_nrrd2vtk.xml"

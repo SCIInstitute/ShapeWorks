@@ -60,8 +60,8 @@ def Run_Femur_Pipline(args):
         datasets.downloadDataset(filename)
 
     # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
+    # with ZipFile(filename, 'r') as zipObj:
+    #     zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -85,8 +85,7 @@ def Run_Femur_Pipline(args):
         parentDir = 'TestFemur/PrepOutput/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
-
-        # set name specific variables
+                # set name specific variables
         img_suffix = "1x_hip"
         left_suffix = "L_femur"
         right_suffix = "R_femur"
@@ -104,8 +103,12 @@ def Run_Femur_Pipline(args):
                 if not input_mesh:
                     print("Invalid prefix.")
             cutting_plane_points = SelectCuttingPlane(input_mesh)
+            if cp_prefix[-1] =='R':
+                reference_side = "Right"
             print("Cutting plane points defined: " + str(cutting_plane_points))
             print("Continuing to groom.")
+
+
 
         """
         Reflect
@@ -113,6 +116,7 @@ def Run_Femur_Pipline(args):
         so that we have an image for every mesh
         """
         [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
+        input("Done")
 
         """
         MeshesToVolumes
@@ -121,7 +125,7 @@ def Run_Femur_Pipline(args):
         [fileList_imgL, fileList_segL] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, left_suffix, mesh_extension)
         [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, right_suffix, mesh_extension)
         fileList_img = fileList_imgL + fileList_imgR
-        # fileList_seg = fileList_segL + fileList_segR
+        fileList_seg = fileList_segL + fileList_segR
 
         """
         Apply isotropic resampling
@@ -138,8 +142,8 @@ def Run_Femur_Pipline(args):
 
         Both the segmentation and raw images are padded.
         """
-
-        [paddedFiles_segmentations,  paddedFiles_images] = applyPadding(parentDir, resampledFiles_segmentations,resampledFiles_images, 10, processRaw = True)
+        paddedFiles_segmentations = applyPadding(parentDir + "padded2/segementations/", resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir + "padded2/images/", resampledFiles_images, 10)
 
 
         """
@@ -169,6 +173,7 @@ def Run_Femur_Pipline(args):
 
         [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
+     
         # Define cutting plane on median sample
         if args.interactive:
            input_file = medianFile.replace(".nrrd", "DT.nrrd")
@@ -182,7 +187,7 @@ def Run_Femur_Pipline(args):
                     COM_filename = COM_folder + file
             COM_filehandler = open(COM_filename, "r")
             line = COM_filehandler.readlines()[2].replace("translation:","")
-            translation = line.split()
+            trans = line.split()
             COM_filehandler.close()
             # Get rigid transformation
             rigid_folder = parentDir + "aligned/transformations/"
@@ -195,9 +200,15 @@ def Run_Femur_Pipline(args):
             for line in lines:
                 matrix.append(line.split())
             rigid_filehandler.close()
-            print(translation)
+            print(trans)
             print(matrix)
             print(cutting_plane_points)
+            old = cutting_plane_points 
+            cutting_plane_points = [old[0] - float(trans[0]), old[1] - float(trans[1]), old[2] - float(trans[2]), 
+                old[3] - float(trans[0]), old[4] - float(trans[1]), old[5] - float(trans[2]), 
+                old[6] - float(trans[0]), old[7] - float(trans[1]), old[8] - float(trans[2])]
+            print(cutting_plane_points)
+            input()
 
 
         """
