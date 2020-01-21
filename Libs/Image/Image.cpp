@@ -16,7 +16,8 @@ namespace shapeworks {
 
 //todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
 
-///////////////////////////////////////////////////////////////////////////////
+/// read
+/// \param filename
 bool Image::read(const std::string &inFilename)
 {
   if (inFilename.empty())
@@ -46,7 +47,9 @@ bool Image::read(const std::string &inFilename)
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// write
+/// \param filename
+/// \param useCompression
 bool Image::write(const std::string &outFilename, bool useCompression)
 {
   if (!this->image)
@@ -83,9 +86,10 @@ bool Image::write(const std::string &outFilename, bool useCompression)
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// maxRMSError: range [0.0, 1.0], determines how fast the solver converges (larger is faster)
-//
+/// antialias
+/// \param numIterations
+/// \param maxRMSErr      range [0.0, 1.0], determines how fast the solver converges (larger is faster)
+/// \param numLayers      size of region around a pixel to sample
 bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayers)
 {
   if (!this->image)
@@ -121,7 +125,10 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// binarizes image into two regions separated by threshold value
+/// \param threshold  values <= threshold are considereed "outside" and given that value [default is 0.0]
+/// \param inside     value for inside region [default is 1]
+/// \param outside    value for outside region [default is 0]
 bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 {
   if (!this->image)
@@ -157,7 +164,8 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// recenter
+/// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
 bool Image::recenter()
 {
   if (!this->image)
@@ -190,7 +198,10 @@ bool Image::recenter()
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// resample
+/// \param isoSpacing
+/// \param binaryInput    binary input images (will antialias then using a bspline filter to produce better results)
+/// \param outputSize     image size can be changed
 bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
 {
   if (!this->image)
