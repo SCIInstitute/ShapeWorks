@@ -20,6 +20,7 @@ import sys
 import csv
 import argparse
 import glob
+import re
 
 from GroomUtils import *
 from OptimizeUtils import *
@@ -66,8 +67,7 @@ def Run_Femur_Pipline(args):
     if args.interactive:
         input("Press Enter to continue")
 
-    if args.start_with_image_and_segmentation_data:
-
+    if not args.start_with_prepped_data:
         """
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
@@ -93,20 +93,19 @@ def Run_Femur_Pipline(args):
         mesh_extension = "ply"
         reference_side = "left" # somewhat arbitrary
 
-        '''
-        default cutting plane - if interactive arg is on this will be
-        redefined in the middle of the grooming steps
-        '''
-        cp_x1 = 100
-        cp_y1 = 100 
-        cp_z1 = -38
-        cp_x2 = -100 
-        cp_y2 = 100
-        cp_z2 = -38
-        cp_x3 = 100
-        cp_y3 = -100
-        cp_z3 = -38
-
+        # Get cutting plane
+        if not args.interactive:
+            input_mesh = ''
+            while not input_mesh:
+                cp_prefix = input("Type the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
+                for file in os.listdir(inputDir):
+                    if cp_prefix in file and mesh_extension in file:
+                        input_mesh = inputDir + file
+                if not input_mesh:
+                    print("Invalid prefix.")
+            cutting_plane_points = SelectCuttingPlane(input_mesh)
+            print("Cutting plane points defined: " + str(cutting_plane_points))
+            print("Continuing to groom.")
 
         """
         Reflect
@@ -122,19 +121,14 @@ def Run_Femur_Pipline(args):
         [fileList_imgL, fileList_segL] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, left_suffix, mesh_extension)
         [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, right_suffix, mesh_extension)
         fileList_img = fileList_imgL + fileList_imgR
-        fileList_seg = fileList_segL + fileList_segR
-
+        # fileList_seg = fileList_segL + fileList_segR
 
         """
         Apply isotropic resampling
-
-        For detailed explainations of parameters for resampling volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
-
-        [resampledFiles_segmentations, resampledFiles_images] = applyIsotropicResampling(parentDir, fileList_seg, fileList_img, 1, processRaw = True)
+        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
 
         """
         Apply padding
@@ -175,28 +169,42 @@ def Run_Femur_Pipline(args):
 
         [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
+        # Define cutting plane on median sample
         if args.interactive:
-            input("Press enter to define three cutting plane points.")
-            notDone = True
-            while(notDone):
-                cp_x1 = input("Enter point1 x-value:")
-                cp_y1 = input("Enter point1 y-value:")
-                cp_z1 = input("Enter point1 z-value:")
-                cp_x2 = input("Enter point2 x-value:")
-                cp_y2 = input("Enter point2 y-value:")
-                cp_z2 = input("Enter point2 z-value:")
-                cp_x3 = input("Enter point3 x-value:")
-                cp_y3 = input("Enter point3 y-value:")
-                cp_z3 = input("Enter point3 z-value:")
-                answer = input("Clip volumes with: (" + str(cp_x1) + ", " + str(cp_y1) + ", " + str(cp_z1)+ "), (" +str(cp_x2) + ", " + str(cp_y2) 
-                    + ", " + str(cp_z2) + "), (" +str(cp_x3) + ", " + str(cp_y3) + ", " + str(cp_z3) + ")? \n (y/n)")
-                if "y" in answer:
-                    notDone = False
+           input_file = medianFile.replace(".nrrd", "DT.nrrd")
+           cutting_plane_points = SelectCuttingPlane(input_file)
+        # Fix cutting plane points previously selected
+        else:
+            # Get COM translation
+            COM_folder = parentDir + "com_aligned/segmentations/"
+            for file in os.listdir(COM_folder):
+                if cp_prefix in file and ".txt" in file:
+                    COM_filename = COM_folder + file
+            COM_filehandler = open(COM_filename, "r")
+            line = COM_filehandler.readlines()[2].replace("translation:","")
+            translation = line.split()
+            COM_filehandler.close()
+            # Get rigid transformation
+            rigid_folder = parentDir + "aligned/transformations/"
+            for file in os.listdir(rigid_folder):
+                if cp_prefix in file and img_suffix not in file:
+                    rigid_filename = rigid_folder + file
+            rigid_filehandler = open(rigid_filename, "r")
+            matrix = []
+            lines = rigid_filehandler.readlines()
+            for line in lines:
+                matrix.append(line.split())
+            rigid_filehandler.close()
+            print(translation)
+            print(matrix)
+            print(cutting_plane_points)
+
+
         """
         Clip Binary Volumes
         We have femurs of different shaft length so we will clip them all using the defined cutting plane
         """
-        clippedFiles_segmentations = ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cp_x1, cp_x2, cp_x3, cp_y1, cp_y2, cp_y3, cp_z1, cp_z2, cp_z3)
+        clippedFiles_segmentations = ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points)
 
         """
         For detailed explainations of parameters for finding the largest bounding box and cropping, go to
@@ -220,99 +228,15 @@ def Run_Femur_Pipline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-        if not args.start_with_prepped_data:
-            dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
-        else:
-            dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
+
+        dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
+
     else:
-
-        if not args.start_with_prepped_data:
-            """
-            ## GROOM : Data Pre-processing
-            For the unprepped data the first few steps are
-            -- Isotropic resampling
-            -- Padding
-            -- Center of Mass Alignment
-            -- Rigid Alignment
-            -- Largest Bounding Box and Cropping
-            """
-
-            print("\nStep 2. Groom - Data Pre-processing\n")
-            if args.interactive:
-                input("Press Enter to continue")
-
-            # create the output directory
-            parentDir = './TestLeftAtrium/PrepOutput/'
-            if not os.path.exists(parentDir):
-                os.makedirs(parentDir)
-
-
-
-            """
-            Apply isotropic resampling
-
-            For detailed explainations of parameters for resampling volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-
-            """
-
-            resampledFiles = applyIsotropicResampling(parentDir, fileList_seg, None, 1)
-
-
-            """
-            Apply padding
-
-            For detailed explainations of parameters for padding volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-
-            """
-
-            paddedFiles = applyPadding(parentDir, resampledFiles ,None, 10)
-
-            """
-            Apply center of mass alignment
-
-            For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
-
-             """
-            comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
-
-            """
-            Apply rigid alignment
-
-            For detailed explainations of parameters for rigid alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
-
-            Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-            """
-            medianFile = FindReferenceImage(comFiles)
-
-            rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
-
-            """
-            Compute largest bounding box and apply cropping
-
-            For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-            """
-            croppedFiles = applyCropping(parentDir, rigidFiles, None )
-
+        dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
             input("Press Enter to continue")
-
-        """
-        We convert the scans to distance transforms, this step is common for both the
-        prepped as well as unprepped data, just provide correct filenames.
-        """
-        if not args.start_with_prepped_data:
-            dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-        else:
-            dtFiles = applyDistanceTransforms(parentDir, fileList_seg)
-
     
     """
 

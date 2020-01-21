@@ -8,6 +8,8 @@ import subprocess
 import shutil
 import xml.etree.ElementTree as ET
 import SimpleITK as sitk
+import vtk
+import vtk.util.numpy_support
 
 from CommonUtils import *
 
@@ -167,8 +169,8 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
 
 
     if processRaw:
-        rawoutDir = outDir + '/images'
-        binaryoutDir = outDir + '/segmentations'
+        rawoutDir = outDir + '/images/'
+        binaryoutDir = outDir + '/segmentations/'
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -788,7 +790,7 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
                     
     return [imgList, segList]
 
-def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cp_x1, cp_x2, cp_x3, cp_y1, cp_y2, cp_y3, cp_z1, cp_z2, cp_z3):
+def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points):
     outDir = os.path.join(parentDir , 'clipped_segmentations/')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -822,9 +824,88 @@ def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cp_x1, cp_x2, cp_x3, 
             xml.write("<outputs>\n")
             xml.write(outnameSeg+"\n")
             xml.write("</outputs>\n")
-            xml.write("<cutting_planes> " +str(cp_x1)+" "+str(cp_y1)+" "+str(cp_z1)+" "+str(cp_x2)+" "+str(cp_y2)+" "+str(cp_z2)+" "+str(cp_x3)+" "+str(cp_y3)+" "+str(cp_z3)+" </cutting_planes>")
+            points = str(cutting_plane_points)[1:-1].replace(",","")
+            xml.write("<cutting_planes> " + points +" </cutting_planes>")
             xml.close()
             execCommand = ["ClipVolume", xmlfilename]
             subprocess.check_call(execCommand)
 
     return outDataListSeg
+
+
+def SelectCuttingPlane(input_file):
+    ## Get vtk format
+    file_name, file_format = input_file.split(".")
+    input_vtk = file_name + ".vtk"
+    if file_format == "nrrd":
+        xml_filename = "cutting_plane_nrrd2vtk.xml"
+        create_meshfromDT_xml(xml_filename, input_file, input_vtk)
+        execCommand = ["MeshFromDistanceTransforms", xml_filename]
+        subprocess.check_call(execCommand)
+    elif file_format == "ply":
+        execCommand = ["ply2vtk", input_file, input_vtk]
+        subprocess.check_call(execCommand)
+    elif file_format == "vtk":
+        pass
+    else:
+        print("Error, file format unrecognized: " + input_file)
+
+    ## VTK interactive window
+    print('\n Use the interactive window to select your cutting plane. When you are content with your selection, simply close the window. \n')
+    # read data from file
+     # read data from file
+    reader = vtk.vtkPolyDataReader()
+    reader.SetFileName(input_vtk)
+    reader.ReadAllVectorsOn()
+    reader.ReadAllScalarsOn()
+    reader.Update()
+    # get data
+    data = reader.GetOutput()
+    (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
+    (xcenter, ycenter, zcenter) = data.GetCenter()
+    #create mapper 
+    mapper = vtk.vtkPolyDataMapper()
+    mapper.SetInputData(data)
+    # The actor is a grouping mechanism
+    actor = vtk.vtkActor()
+    actor.SetMapper(mapper)
+    # create camera 
+    camera = vtk.vtkCamera()
+    camera.SetFocalPoint(xcenter, ycenter, zcenter)
+    camera.SetPosition(100, -300, -50)
+    camera.SetViewUp(0,0,1)
+    # create a renderer
+    renderer = vtk.vtkRenderer()
+    renderer.SetActiveCamera(camera);
+    renderer.SetBackground(0.2, 0.2, 0.5)
+    renderer.SetBackground2(0.4, 0.4, 1.0)
+    renderer.SetGradientBackground(True)
+    renderer.AddActor(actor)
+    # create a render_window
+    render_window = vtk.vtkRenderWindow()
+    render_window.AddRenderer(renderer)
+    render_window.SetSize(1000,1000)
+    # create a renderwindowiren
+    iren = vtk.vtkRenderWindowInteractor()
+    iren.SetRenderWindow(render_window)
+    iren.Initialize()
+    rep = vtk.vtkImplicitPlaneRepresentation()
+    rep.SetPlaceFactor(1.25)
+    rep.PlaceWidget(actor.GetBounds())
+    rep.SetNormal(0,0,1)
+    # Create a vtkImagePlaneWidget and activate it
+    plane_widget = vtk.vtkImplicitPlaneWidget2()
+    plane_widget.SetInteractor(iren)
+    plane_widget.SetRepresentation(rep)
+    plane_widget.On()
+    iren.Initialize()
+    iren.Start()
+
+    # use orgin as one point and use normla to solve for two others
+    (o1,o2,o3) = rep.GetOrigin()
+    (n1,n2,n3) = rep.GetNormal()
+    # using x = 1 and y =-1 solve for z
+    pt1_z = (-n1+(n1*o1)+n2+(n2*o2)+(n3*o3))/n3
+    # using x = -1 and y = 1 solve for z
+    pt2_z = (n1+(n1*o1)-n2+(n2*o2)+(n3*o3))/n3
+    return [o1, o2, o3, 1, -1, pt1_z, -1, 1, pt2_z]
