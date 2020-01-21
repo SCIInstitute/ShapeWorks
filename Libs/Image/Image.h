@@ -24,7 +24,6 @@ public:
                 PixelType outside = itk::NumericTraits<PixelType>::Zero);
   bool recenter();
   bool resample(float isoSpacing = 1.0f, bool binaryInput = false, Dims outputSize = Dims());
-  
   // bool nextfunction(...);
 
   bool compare_equal(const Image &other);
