@@ -15,9 +15,13 @@
 #ifndef __itkParticleImageDomain_h
 #define __itkParticleImageDomain_h
 
+#include <fstream>
 #include "itkImage.h"
 #include "itkParticleClipRegionDomain.h"
 #include "itkLinearInterpolateImageFunction.h"
+#include "openvdb/openvdb.h"
+#include "openvdb/tools/SignedFloodFill.h"
+#include "openvdb/tools/Interpolation.h"
 
 namespace itk
 {
@@ -62,8 +66,27 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
+  openvdb::DoubleGrid::Ptr vdbGrid;
   void SetImage(ImageType *I)
   {
+    openvdb::initialize();
+    std::cout << "Initialized OpenVDB" << std::endl;
+
+    vdbGrid = openvdb::DoubleGrid::create(30.0);
+    vdbGrid->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = vdbGrid->getAccessor();
+
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    it.GoToBegin();
+    while(!it.IsAtEnd()) {
+        const auto idx = it.GetIndex();
+        const auto pixel = it.Get();
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, pixel);
+        ++it;
+    }
+    openvdb::tools::signedFloodFill(vdbGrid->tree());
+
     this->Modified();
     m_Image= I;
 
@@ -107,10 +130,26 @@ public:
       To check bounds, use IsInsideBuffer. */
   inline T Sample(const PointType &p) const
   {
-      if(IsInsideBuffer(p))
-        return  m_ScalarInterpolator->Evaluate(p);
-      else
-        return 0.0;
+      // auto vdbAccessor = vdbGrid->getConstAccessor();
+
+      auto o = m_Image->GetOrigin();
+      auto sp = p;
+      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+
+
+      if(IsInsideBuffer(p)) {
+          const T v1 =  m_ScalarInterpolator->Evaluate(p);
+
+          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+          const T v2 = openvdb::tools::BoxSampler::sample(vdbGrid->tree(), coord);
+
+          // std::cout << "(" << p[0] << " " << p[1] << " " << p[2] << ")" << "itk: " << v1 << std::endl;
+          // std::cout << "(" << sp[0] << " " << sp[1] << " " << sp[2] << ")" << "vdb: " << v2 << std::endl << std::endl;
+
+          return v2;
+      } else {
+          return 0.0;
+      }
   }
 
   /** Check whether the point p may be sampled in this image domain. */
