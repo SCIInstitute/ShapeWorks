@@ -43,30 +43,30 @@ def Run_Femur_Pipline(args):
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
-    # print("\nStep 1. Extract Data\n")
-    # if int(args.interactive) != 0:
-    #     input("Press Enter to continue")
+    print("\nStep 1. Extract Data\n")
+    if int(args.interactive) != 0:
+        input("Press Enter to continue")
 
-    # filename = "femurdata.zip"
-    # parentDir="TestFemur/"
-    # inputDir = 'TestFemur/femurdata/'
+    filename = "femurdata.zip"
+    parentDir="TestFemur/"
+    inputDir = 'TestFemur/femurdata/'
 
-    # if not os.path.exists(parentDir):
-    #     os.makedirs(parentDir)
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
 
-    # # # Check if the data is in the right place
-    # if not os.path.exists(filename):
-    #     print("Can't find " + filename + " on the local filesystem.")
-    #     print("Downloading " + filename + " from SCIGirder.")
-    #     datasets.downloadDataset(filename)
+    # # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " on the local filesystem.")
+        print("Downloading " + filename + " from SCIGirder.")
+        datasets.downloadDataset(filename)
 
-    # # extract the zipfile
-    # with ZipFile(filename, 'r') as zipObj:
-    #     zipObj.extractall(path=parentDir)
+    # extract the zipfile
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
 
-    # print("\nStep 2. Groom - Data Pre-processing\n")
-    # if args.interactive:
-    #     input("Press Enter to continue")
+    print("\nStep 2. Groom - Data Pre-processing\n")
+    if args.interactive:
+        input("Press Enter to continue")
 
     if not args.start_with_prepped_data:
         """
@@ -86,87 +86,83 @@ def Run_Femur_Pipline(args):
         parentDir = 'TestFemur/PrepOutput/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
-    #             # set name specific variables
-    #     img_suffix = "1x_hip"
-    #     left_suffix = "L_femur"
-    #     right_suffix = "R_femur"
-    #     mesh_extension = "ply"
-    #     reference_side = "left" # somewhat arbitrary
+                # set name specific variables
+        img_suffix = "1x_hip"
+        left_suffix = "L_femur"
+        right_suffix = "R_femur"
+        mesh_extension = "ply"
+        reference_side = "left" # somewhat arbitrary
 
-    #     # Get cutting plane
-    #     if not args.interactive:
-    #         input_mesh = ''
-    #         while not input_mesh:
-    #             cp_prefix = input("Type the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
-    #             if cp_prefix:
-    #                 for file in os.listdir(inputDir):
-    #                     if cp_prefix in file and mesh_extension in file:
-    #                         input_mesh = inputDir + file
-    #             if not input_mesh:
-    #                 print("Invalid prefix.")
-    #         cutting_plane_points = SelectCuttingPlane(input_mesh)
-    #         if cp_prefix[-1] =='R':
-    #             reference_side = "Right"
-    #         print("Cutting plane points defined: ")
-    #         print(cutting_plane_points)
-    #         print("Continuing to groom.")
-
-
-
-    #     """
-    #     Reflect
-    #     We have left and right femurs, so we will reflect the image if neccesary
-    #     so that we have an image for every mesh
-    #     """
-    #     [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
-
-    #     """
-    #     MeshesToVolumes
-    #     Shapeworks requires volumes so we need to convert meshes to binary segmentations and distance transform
-    #     """
-    #     [fileList_imgL, fileList_segL] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, left_suffix, mesh_extension)
-    #     [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, right_suffix, mesh_extension)
-    #     fileList_img = fileList_imgL + fileList_imgR
-    #     fileList_seg = fileList_segL + fileList_segR
-
-    #     """
-    #     Apply isotropic resampling
-    #     the segmentation and images are resampled independently and the result files are saved in two different directories.
-    #     """
-    #     resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
-    #     resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, recenter=False, isBinary=False)
-
-    #     """
-    #     Apply padding
-    #     Both the segmentation and raw images are padded.
-    #     """
-    #     paddedFiles_segmentations = applyPadding(parentDir + "padded2/segementations/", resampledFiles_segmentations, 10)
-    #     paddedFiles_images = applyPadding(parentDir + "padded2/images/", resampledFiles_images, 10)
+        # Get cutting plane
+        if not args.interactive:
+            input_mesh = ''
+            while not input_mesh:
+                cp_prefix = input("Type the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
+                if cp_prefix:
+                    for file in os.listdir(inputDir):
+                        if cp_prefix in file and mesh_extension in file:
+                            input_mesh = inputDir + file
+                if not input_mesh:
+                    print("Invalid prefix.")
+            cutting_plane_points = SelectCuttingPlane(input_mesh)
+            if cp_prefix[-1] =='R':
+                reference_side = "Right"
+            print("Cutting plane points defined: ")
+            print(cutting_plane_points)
+            print("Continuing to groom.")
 
 
-    #     """
-    #     Apply center of mass alignment
 
-    #     This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-    #     There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-    #     """
-    #     [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+        """
+        Reflect
+        We have left and right femurs, so we will reflect the image if neccesary
+        so that we have an image for every mesh
+        """
+        [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
 
-    #     """
-    #     Apply rigid alignment
-    #     This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-    #     There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-    #     processRaw = False, applies the center of mass alignment only on segemnattion data.
-    #     This function uses the same transfrmation matrix for alignment of raw and segmentation files.
-    #     Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-    #     """
-    #     medianFile = FindReferenceImage(comFiles_segmentations)
+        """
+        MeshesToVolumes
+        Shapeworks requires volumes so we need to convert meshes to binary segmentations and distance transform
+        """
+        [fileList_imgL, fileList_segL] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, left_suffix, mesh_extension)
+        [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, right_suffix, mesh_extension)
+        fileList_img = fileList_imgL + fileList_imgR
+        fileList_seg = fileList_segL + fileList_segR
 
-    #     [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
+        """
+        Apply isotropic resampling
+        the segmentation and images are resampled independently and the result files are saved in two different directories.
+        """
+        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, recenter=False, isBinary=False)
 
-        medianFile = '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/com_aligned/segmentations/n02_L_femur.isores.pad.com.nrrd'
-        rigidFiles_segmentations = ['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/segmentations/n02_L_femur.isores.pad.com.aligned.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/segmentations/n02_R_femur.isores.pad.com.aligned.nrrd']
-        rigidFiles_images = ['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/imagesn02_L_femur_1x_hip.isores.pad.com.aligned.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/imagesn02_R_femur_1x_hip.isores.pad.com.aligned.nrrd']
+        """
+        Apply padding
+        Both the segmentation and raw images are padded.
+        """
+        paddedFiles_segmentations = applyPadding(parentDir + "padded2/segementations/", resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir + "padded2/images/", resampledFiles_images, 10)
+
+
+        """
+        Apply center of mass alignment
+
+        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        """
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+
+        """
+        Apply rigid alignment
+        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        processRaw = False, applies the center of mass alignment only on segemnattion data.
+        This function uses the same transfrmation matrix for alignment of raw and segmentation files.
+        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+        """
+        medianFile = FindReferenceImage(comFiles_segmentations)
+
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
         # Define cutting plane on median sample
         if args.interactive:
