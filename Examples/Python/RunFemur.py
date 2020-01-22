@@ -138,10 +138,6 @@ def Run_Femur_Pipline(args):
 
         """
         Apply padding
-
-        For detailed explainations of parameters for padding volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-
         Both the segmentation and raw images are padded.
         """
         paddedFiles_segmentations = applyPadding(parentDir + "padded2/segementations/", resampledFiles_segmentations, 10)
@@ -151,20 +147,13 @@ def Run_Femur_Pipline(args):
         """
         Apply center of mass alignment
 
-        For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
-
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
         """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, paddedFiles_images , processRaw=True)
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, raw=paddedFiles_images)
 
         """
         Apply rigid alignment
-
-        For detailed explainations of parameters for rigid alignment of volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlignmentTools.pdf'
-
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
         processRaw = False, applies the center of mass alignment only on segemnattion data.

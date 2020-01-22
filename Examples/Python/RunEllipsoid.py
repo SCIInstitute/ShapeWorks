@@ -119,7 +119,7 @@ def Run_Ellipsoid_Pipeline(args):
         For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
         ... link
         """
-        comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
         """Apply rigid alignment"""
 
         rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])

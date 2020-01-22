@@ -106,8 +106,8 @@ def Run_LeftAtrium_Pipline(args):
         Both the segmentation and raw images are padded.
         """
 
-        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations/', resampledFiles_segmentations, 10)
-        paddedFiles_images = applyPadding(parentDir+ 'padded/images/', resampledFiles_images, 10)
+        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir+ 'padded/images', resampledFiles_images, 10)
 
 
         """
@@ -119,7 +119,7 @@ def Run_LeftAtrium_Pipline(args):
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
         """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, paddedFiles_images , processRaw=True)
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
 
         """
         Apply rigid alignment
@@ -205,7 +205,7 @@ def Run_LeftAtrium_Pipline(args):
 
             """
 
-            paddedFiles = applyPadding(parentDir, resampledFiles ,None, 10)
+            paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
 
             """
             Apply center of mass alignment
@@ -214,7 +214,7 @@ def Run_LeftAtrium_Pipline(args):
             'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
 
              """
-            comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
 
             """
             Apply rigid alignment

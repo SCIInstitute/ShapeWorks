@@ -13,165 +13,102 @@ import vtk.util.numpy_support
 
 from CommonUtils import *
 
+def rename(inname, outDir, extension):
+    """
+    Takes inname path and replaces dir with outdir and adds extension before file type
+    """
+    spt = inname.rsplit(os.sep, 1)
+    initPath = spt[0]
+    outname = inname.replace(initPath, outDir)
+    current_extension = "." + inname.split(".")[-1]
+    outname = outname.replace(current_extension, '.' + extension + current_extension)
+    cprint(("Input Filename : ", inname), 'cyan')
+    cprint(("Output Filename : ", outname), 'yellow')
+    print("######################################\n")
+    return outname
+
 def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, isBinary=True):
     """
-    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
-    Date: 8th August 2019
-    update Date = 10th September 2019
-
-    This function takes in a filelist and produces the resampled files in the
-    appropriate directory.
-    Input Parameters:
-    Output Parameters:
+    This function takes in a filelist and produces the resampled files in the appropriate directory.
     """
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        spt = inname.rsplit(os.sep, 1)
-        initPath = spt[0]
-        filename = spt[1]
-        outname = inname.replace(initPath, outDir)
-        outname = outname.replace('.nrrd', '.isores.nrrd')
+        print("\n########### Resampling ###############")
+        outname = rename(inname, outDir, 'isores')
         outDataList.append(outname)
-        print(" ")
-        print("########### Resampling ###############")
-        cprint(("Input Filename : ", inname), 'cyan')
-        cprint(("Output Filename : ", outname), 'yellow')
-        print("######################################")
-        print(" ")
-
-        cmd = ["shapeworks", "readimage", "--name", inname]
-        cmd.extend(["resample", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
-
+        cmd = ["shapeworks", "readimage", "--name", inname, "resample", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)]
         if recenter:
             cmd.extend(["recenterimage"])
         if isBinary:
             cmd.extend(["binarize"])
-
         cmd.extend(["writeimage", "--name", outname])
-        print(cmd)
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
-
     return outDataList
 
 def applyPadding(outDir, inDataList, padSize, padValue=0):
     """
-    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
-    Date: 8th August 2019
-    update Date = 10th September 2019
-
-    This function takes in a filelist and produces the padded files in the
-    appropriate directory.
-    Input Parameters:
-    Output Parameters:
+    This function takes in a filelist and produces the padded files in the appropriate directory.
     """
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        spt = inname.rsplit(os.sep, 1)
-        initPath = spt[0]
-        outname = inname.replace(initPath, outDir)
-        outname = outname.replace('.nrrd', '.pad.nrrd')
+        print("\n########### Padding ###############")
+        outname = rename(inname, outDir, 'pad')
         outDataList.append(outname)
-        print(" ")
-        print("############## Padding ###############")
-        cprint(("Input Filename : ", inname), 'cyan')
-        cprint(("Output Filename : ", outname), 'yellow')
-        print("######################################")
-        print(" ")
-        execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
-            padSize) , "--paddingValue" , str(padValue)]
+        execCommand = ["PadVolumeWithConstant", "--inFilename", inname, "--outFilename", outname, "--paddingSize", str(padSize), "--paddingValue", str(padValue)]
         subprocess.check_call(execCommand)
     return outDataList
 
-def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False):
+def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
     """
-    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
-    Date: 8th August 2019
-    update Date = 10th September 2019
-
     This function takes in a filelist and produces the center of mass aligned
-    files in the appropriate directory. If the process_raw flag is set True,
+    files in the appropriate directory. If inDataListImg is provided,
     then it also applys the same transformation on the corresponding list of
     raw files (MRI/CT ...)
-
-    Input Parameters:
-    Output Parameters:
     """
-    outDir = parentDir + '/com_aligned'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-
-
-
-
-    if processRaw:
-        rawoutDir = outDir + '/images/'
-        binaryoutDir = outDir + '/segmentations/'
-
+    print(outDir)
+    input(raw)
+    if raw:
+        inDataListImg=raw
+        rawoutDir = outDir + 'images/'
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
-
+        binaryoutDir = outDir + '/segmentations/'
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
-
         outDataListSeg = []
         outDataListImg = []
         for i in range(len(inDataListSeg)):
+            print("\n############# COM Alignment ###############")
             innameSeg = inDataListSeg[i]
-            innameImg = inDataListImg[i]
-            sptSeg = innameSeg.rsplit(os.sep, 1)
-            initPath = sptSeg[0] + os.sep
-            filename = sptSeg[1]
-            outnameSeg = innameSeg.replace(initPath, binaryoutDir)
-            outnameSeg = outnameSeg.replace('.nrrd', '.com.nrrd')
+            outnameSeg = rename(innameSeg, binaryoutDir, 'com')
             paramname = outnameSeg.replace('.nrrd', '.txt')
             outDataListSeg.append(outnameSeg)
-            sptImg = innameImg.rsplit(os.sep, 1)
-            initPath = sptImg[0] + os.sep
-            filename = sptImg[1]
-            outnameImg = innameImg.replace(initPath, rawoutDir)
-            outnameImg = outnameImg.replace('.nrrd', '.com.nrrd')
+            innameImg = inDataListImg[i]
+            outnameImg = rename(innameImage, rawoutDir, 'com')
             outDataListImg.append(outnameImg)
-            print(" ")
-            print("############# COM Alignment ###############")
-            cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
-            cprint(("Input Image Filename : ", innameImg), 'cyan')
-            cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
-            cprint(("Output Image Filename : ", outnameImg), 'yellow')
-            cprint(("Output Parameter Filename : ", paramname), 'yellow')
-            print("###########################################")
-            print(" ")
-            execCommand = ["TranslateShapeToImageOrigin" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--useCenterOfMass",  "1" , "--parameterFilename" , paramname , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
+            execCommand = ["TranslateShapeToImageOrigin", "--inFilename", innameSeg, "--outFilename", outnameSeg, "--useCenterOfMass",  "1", 
+            "--parameterFilename", paramname, "--MRIinFilename", innameImg, "--MRIoutFilename", outnameImg]
             subprocess.check_call(execCommand)
-
         return [outDataListSeg, outDataListImg]
     else:
         outDataListSeg = []
         for i in range(len(inDataListSeg)):
+            print("\n############# COM Alignment ###############")
             inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            #filename = spt[1]
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.com.nrrd')
+            outname = rename(inname, outDir, 'com')
             paramname = outname.replace('.nrrd', '.txt')
             outDataListSeg.append(outname)
-            print(" ")
-            print("############# COM Alignment ###############")
-            cprint(("Input Segmentation Filename : ", inname), 'cyan')
-            cprint(("Output Segmentation Filename : ", outname), 'yellow')
-            cprint(("Output Parameter Filename : ", paramname), 'yellow')
-            print("###########################################")
-            print(" ")
-            execCommand = ["TranslateShapeToImageOrigin" , "--inFilename" , inname , "--outFilename" , outname , "--useCenterOfMass" , "1" , "--parameterFilename" , paramname]
+            execCommand = ["TranslateShapeToImageOrigin", "--inFilename", inname, "--outFilename", outname, "--useCenterOfMass", "1",
+            "--parameterFilename", paramname]
             subprocess.check_call(execCommand)
-
         return outDataListSeg
 
 
@@ -195,16 +132,13 @@ def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, re
     outputs.text = "\n " + ref_isonrrdfilename + " \n"
     dtFiles = ET.SubElement(root, 'dtFiles')
     dtFiles.text = "\n " + ref_tpdtnrrdfilename + " \n"
-
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
     file.write(data)
 
-
-
 def FindReferenceImage(inDataList):
     """
-        This find the median file between all the input files
+    This find the median file between all the input files
     """
     IMG = []
     DIM = []
@@ -212,18 +146,14 @@ def FindReferenceImage(inDataList):
         tmp = sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i]))
         IMG.append(tmp)
         DIM.append(tmp.shape)
-
     ref_dim = np.max(DIM, axis =0)
-
     for i in range(len(inDataList)):
-        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
-
+        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant', constant_values = 0)
     COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
     mean = sitk.GetImageFromArray(COM)
     writer = sitk.ImageFileWriter()
     writer.SetFileName("mean.nrrd")
     writer.Execute(mean)
-
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
     print(" ")
     print("############# Reference File #############")
@@ -233,22 +163,13 @@ def FindReferenceImage(inDataList):
     print(" ")
     return inDataList[idx]
 
-
-
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antialiasIterations=20,
                         smoothingIterations=1, isoValue=0, icpIterations=10, processRaw = False):
     """
-    Authors: Riddhish Bhalodia and Atefeh Ghanaatikashani
-    Date: 8th August 2019
-    update Date = 10th September 2019
-
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,
     then it also applys the same transformation on the corresponding list of
     raw files (MRI/CT ...)
-
-    Input Parameters:
-    Output Parameters:
     """
     outDir = parentDir + '/aligned'
     transoutDir = outDir + '/transformations'
@@ -257,7 +178,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         os.makedirs(outDir)
     if not os.path.exists(transoutDir):
         os.makedirs(transoutDir)
-
 
     # identify the reference scan
     refDir = outDir + '/reference'
@@ -273,23 +193,23 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     ref_binnrrdfilename = newRefFile.replace('.nrrd', '.BIN.nrrd')
 
     # reference image processing
-    execCommand = ["ExtractGivenLabelImage" , "--inFilename" , refFile , "--outFilename" , refFile , "--labelVal" , " 1"]
+    execCommand = ["ExtractGivenLabelImage", "--inFilename", refFile, "--outFilename", refFile, "--labelVal", " 1"]
     subprocess.check_call(execCommand)
-    execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
+    execCommand = ["CloseHoles",  "--inFilename", refFile, "--outFilename", refFile]
     subprocess.check_call(execCommand)
     execCommand = ["shapeworks", "readimage", "--name", refFile, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", ref_dtnrrdfilename]
     subprocess.check_call(execCommand)
 
-    execCommand = ["FastMarching" ,  "--inFilename" , ref_dtnrrdfilename , "--outFilename" , ref_dtnrrdfilename , "--isoValue" , str(
+    execCommand = ["FastMarching",  "--inFilename", ref_dtnrrdfilename, "--outFilename", ref_dtnrrdfilename, "--isoValue", str(
         isoValue)]
     subprocess.check_call(execCommand)
 
     xmlfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
     create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename)
     create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+    execCommand = ["TopologyPreservingSmoothing", xmlfilename]
     subprocess.check_call(execCommand)
-    execCommand = ["ThresholdImages" , "--inFilename" , ref_tpdtnrrdfilename , "--outFilename" , ref_binnrrdfilename , "--lowerThresholdLevel" , "-0.000001"]
+    execCommand = ["ThresholdImages", "--inFilename", ref_tpdtnrrdfilename, "--outFilename", ref_binnrrdfilename, "--lowerThresholdLevel", "-0.000001"]
     subprocess.check_call(execCommand)
 
 
@@ -338,23 +258,23 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cprint(("Output Transformation Matrix : ", transformation), 'yellow')
             print("###########################################")
             print(" ")
-            execCommand = ["ExtractGivenLabelImage", "--inFilename" , seginname , "--outFilename" , seginname , "--labelVal" , "1"]
+            execCommand = ["ExtractGivenLabelImage", "--inFilename", seginname, "--outFilename", seginname, "--labelVal", "1"]
             subprocess.check_call(execCommand)
-            execCommand = ["CloseHoles" , "--inFilename" , seginname , "--outFilename" , seginname]
+            execCommand = ["CloseHoles", "--inFilename", seginname, "--outFilename", seginname]
             subprocess.check_call(execCommand)
             execCommand = ["shapeworks", "readimage", "--name", seginname, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", dtnrrdfilename]
             subprocess.check_call(execCommand)
-            execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
+            execCommand = ["FastMarching", "--inFilename", dtnrrdfilename, "--outFilename", dtnrrdfilename, "--isoValue", str(
                 isoValue)]
             subprocess.check_call(execCommand)
 
             xmlfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
             create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
             create_cpp_xml(xmlfilename, xmlfilename)
-            execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+            execCommand = ["TopologyPreservingSmoothing", xmlfilename]
             subprocess.check_call(execCommand )
-            execCommand = ["ICPRigid3DImageRegistration" , "--targetDistanceMap" , ref_tpdtnrrdfilename , "--sourceDistanceMap" , tpdtnrrdfilename , "--sourceSegmentation" , seginname , "--sourceRaw" , rawinname , "--icpIterations" , str(
-                icpIterations) , "--visualizeResult",  "0" ,  "--solutionSegmentation" , segoutname , "--solutionRaw" , rawoutname , "--solutionTransformation" , transformation]
+            execCommand = ["ICPRigid3DImageRegistration", "--targetDistanceMap", ref_tpdtnrrdfilename, "--sourceDistanceMap", tpdtnrrdfilename, "--sourceSegmentation", seginname, "--sourceRaw", rawinname, "--icpIterations", str(
+                icpIterations), "--visualizeResult",  "0",  "--solutionSegmentation", segoutname, "--solutionRaw", rawoutname, "--solutionTransformation", transformation]
             subprocess.check_call(execCommand )
 
         return  [outSegDataList, outRawDataList]
@@ -385,23 +305,23 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cprint(("Output Transformation Matrix : ", transformation), 'yellow')
             print("###########################################")
             print(" ")
-            execCommand = ["ExtractGivenLabelImage" , "--inFilename" , inname , "--outFilename" , inname , "--labelVal",  "1"]
+            execCommand = ["ExtractGivenLabelImage", "--inFilename", inname, "--outFilename", inname, "--labelVal",  "1"]
             subprocess.check_call(execCommand )
-            execCommand = ["CloseHoles" , "--inFilename" , inname , "--outFilename" , inname]
+            execCommand = ["CloseHoles", "--inFilename", inname, "--outFilename", inname]
             subprocess.check_call(execCommand )
             execCommand = ["shapeworks", "readimage", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", dtnrrdfilename]
             subprocess.check_call(execCommand )
-            execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
+            execCommand = ["FastMarching", "--inFilename", dtnrrdfilename, "--outFilename", dtnrrdfilename, "--isoValue", str(
                 isoValue)]
             subprocess.check_call(execCommand )
 
             xmlfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
             create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
             create_cpp_xml(xmlfilename, xmlfilename)
-            execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+            execCommand = ["TopologyPreservingSmoothing", xmlfilename]
             subprocess.check_call(execCommand )
-            execCommand = ["ICPRigid3DImageRegistration" , "--targetDistanceMap" , ref_tpdtnrrdfilename , "--sourceDistanceMap" , tpdtnrrdfilename , "--sourceSegmentation" , inname , "--icpIterations" , str(
-                icpIterations) , "--visualizeResult",  "0" ,  "--solutionSegmentation" , outname , "--solutionTransformation" , transformation]
+            execCommand = ["ICPRigid3DImageRegistration", "--targetDistanceMap", ref_tpdtnrrdfilename, "--sourceDistanceMap", tpdtnrrdfilename, "--sourceSegmentation", inname, "--icpIterations", str(
+                icpIterations), "--visualizeResult",  "0",  "--solutionSegmentation", outname, "--solutionTransformation", transformation]
             subprocess.check_call(execCommand )
 
         return outDataList
@@ -435,8 +355,8 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
 
 
     outPrefix = cropinfoDir + "largest_bounding_box"
-    execCommand = ["FindLargestBoundingBox" , "--paddingSize" , str(
-        paddingSize) , "--inFilename" , txtfile , "--outPrefix" , outPrefix]
+    execCommand = ["FindLargestBoundingBox", "--paddingSize", str(
+        paddingSize), "--inFilename", txtfile, "--outPrefix", outPrefix]
     subprocess.check_call(execCommand )
     # read all the bounding box files for cropping
     bb0 = np.loadtxt(outPrefix + "_bb0.txt")
@@ -479,10 +399,10 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Image Filename : ", outnameImg), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["CropImages" , "--inFilename" , innameSeg , "--outFilename" , outnameSeg , "--bbX" , str(
-                bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
-                smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(
-                smI2) , "--MRIinFilename" , innameImg , "--MRIoutFilename" , outnameImg]
+            execCommand = ["CropImages", "--inFilename", innameSeg, "--outFilename", outnameSeg, "--bbX", str(
+                bb0), "--bbY", str(bb1), "--bbZ", str(bb2), "--startingIndexX", str(
+                smI0), "--startingIndexY", str(smI1), "--startingIndexZ", str(
+                smI2), "--MRIinFilename", innameImg, "--MRIoutFilename", outnameImg]
             subprocess.check_call(execCommand )
 
         return [outDataListSeg, outDataListImg]
@@ -502,9 +422,9 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["CropImages" , "--inFilename" , inname , "--outFilename" , outname , "--bbX" , str(
-                bb0) , "--bbY" , str(bb1) , "--bbZ" , str(bb2) , "--startingIndexX" , str(
-                smI0) , "--startingIndexY" , str(smI1) , "--startingIndexZ" , str(smI2)]
+            execCommand = ["CropImages", "--inFilename", inname, "--outFilename", outname, "--bbX", str(
+                bb0), "--bbY", str(bb1), "--bbZ", str(bb2), "--startingIndexX", str(
+                smI0), "--startingIndexY", str(smI1), "--startingIndexZ", str(smI2)]
             subprocess.check_call(execCommand )
 
         return outDataList
@@ -552,28 +472,28 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         outDataList.append(finalnm)
 
 
-        execCommand = ["ExtractGivenLabelImage" , "--inFilename" , inname , "--outFilename" , inname , "--labelVal" , "1"]
+        execCommand = ["ExtractGivenLabelImage", "--inFilename", inname, "--outFilename", inname, "--labelVal", "1"]
         subprocess.check_call(execCommand )
-        execCommand = ["CloseHoles" ,  "--inFilename" , inname , "--outFilename" , inname ]
+        execCommand = ["CloseHoles",  "--inFilename", inname, "--outFilename", inname ]
         subprocess.check_call(execCommand )
         execCommand = ["shapeworks", "readimage", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", dtnrrdfilename]
         subprocess.check_call(execCommand )
-        execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(isoValue) ]
+        execCommand = ["FastMarching", "--inFilename", dtnrrdfilename, "--outFilename", dtnrrdfilename, "--isoValue", str(isoValue) ]
         subprocess.check_call(execCommand )
         
         xmlfilename=outname.replace('.nrrd', '.tpSmoothDT.xml')
         create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
         create_cpp_xml(xmlfilename, xmlfilename)
-        execCommand = ["TopologyPreservingSmoothing" , xmlfilename]
+        execCommand = ["TopologyPreservingSmoothing", xmlfilename]
         subprocess.check_call(execCommand )
 
         # xmlfilename=outname.replace('.nrrd', '.MeshFromDT.xml')
         # create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename)
         # create_cpp_xml(xmlfilename, xmlfilename)
-        # execCommand = ["MeshFromDistanceTransforms" , xmlfilename]
+        # execCommand = ["MeshFromDistanceTransforms", xmlfilename]
         # subprocess.check_call(execCommand )
         # decimal = percentage/100.0
-        # execCommand = ["PreviewCmd" , "--inFile" , vtkfilename , "--outFile" , vtkfilename_preview , "--decimationPercentage" , str(decimal)]
+        # execCommand = ["PreviewCmd", "--inFile", vtkfilename, "--outFile", vtkfilename_preview, "--decimationPercentage", str(decimal)]
         # subprocess.check_call(execCommand )
         # this at the end
 
@@ -614,7 +534,7 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
                     print("#######################################\n")
                     execCommand = ["ReflectVolumes", "--inFilename", imgFile, "--outFilename", leftimgFilename, "--centerFilename", centerFilename, "--inputDirection", "0"]
                     subprocess.check_call(execCommand)
-                    execCommand = ["ReflectMesh", "--inFilename", leftFilename, "--outFilename", leftFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0" , "--meshFormat", mesh_extension]
+                    execCommand = ["ReflectMesh", "--inFilename", leftFilename, "--outFilename", leftFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_extension]
                     subprocess.check_call(execCommand)
             else:
                 if os.path.exists(leftFilename):
@@ -629,7 +549,7 @@ def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_su
                     print("######################################")
                     execCommand = ["ReflectVolumes", "--inFilename", imgFile, "--outFilename", rightimgFilename, "--centerFilename", centerFilename, "--inputDirection", "0"]
                     subprocess.check_call(execCommand)
-                    execCommand = ["ReflectMesh", "--inFilename", rightFilename, "--outFilename", rightFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0" , "--meshFormat", mesh_extension]
+                    execCommand = ["ReflectMesh", "--inFilename", rightFilename, "--outFilename", rightFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_extension]
                     subprocess.check_call(execCommand)
         # get file lists
         imgList = []
@@ -733,7 +653,7 @@ def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_
     return [imgList, segList]
 
 def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points):
-    outDir = os.path.join(parentDir , 'clipped_segmentations/')
+    outDir = os.path.join(parentDir, 'clipped_segmentations/')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataListSeg = []
