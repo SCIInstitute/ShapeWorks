@@ -328,32 +328,20 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, processRaw=False):
     """
-    Author: Riddhish Bhalodia
-    Date: 8th August 2019
-
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
-    Input Parameters:
-    Output Parameters:
     """
     outDir = parentDir + '/cropped'
-
-
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-
     cropinfoDir = outDir + '/crop_info'
     if not os.path.exists(cropinfoDir):
         os.makedirs(cropinfoDir)
-
     # first create a txtfile with all the scan names in it.
     txtfile = cropinfoDir + "_dataList.txt"
-
     with open(txtfile, 'w') as filehandle:
         for listitem in inDataListSeg:
             filehandle.write('%s\n' % listitem)
-
-
     outPrefix = cropinfoDir + "largest_bounding_box"
     execCommand = ["FindLargestBoundingBox", "--paddingSize", str(
         paddingSize), "--inFilename", txtfile, "--outPrefix", outPrefix]
@@ -365,11 +353,9 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     smI0 = np.loadtxt(outPrefix + "_smallestIndex0.txt")
     smI1 = np.loadtxt(outPrefix + "_smallestIndex1.txt")
     smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
-
     if processRaw:
         rawoutDir = outDir + '/images'
         binaryoutDir = outDir + '/segmentations'
-
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
         if not os.path.exists(binaryoutDir):
@@ -404,7 +390,6 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
                 smI0), "--startingIndexY", str(smI1), "--startingIndexZ", str(
                 smI2), "--MRIinFilename", innameImg, "--MRIoutFilename", outnameImg]
             subprocess.check_call(execCommand )
-
         return [outDataListSeg, outDataListImg]
     else:
         outDataList = []
@@ -426,7 +411,6 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
                 bb0), "--bbY", str(bb1), "--bbZ", str(bb2), "--startingIndexX", str(
                 smI0), "--startingIndexY", str(smI1), "--startingIndexZ", str(smI2)]
             subprocess.check_call(execCommand )
-
         return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
@@ -503,7 +487,6 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 
 ### Mesh Grooming 
 
-# 
 # Refelcts images and meshes to reference side
 def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side):
     outDir = parentDir + "reflected/"
@@ -703,7 +686,7 @@ def SelectCuttingPlane(input_file):
     if file_format == "nrrd":
         xml_filename = "cutting_plane_nrrd2vtk.xml"
         create_meshfromDT_xml(xml_filename, input_file, input_vtk)
-        execCommand = ["MeshFromDistanceTransforms", xml_filename]
+        execCommand = ["NewMeshFromDT", xml_filename]
         subprocess.check_call(execCommand)
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
