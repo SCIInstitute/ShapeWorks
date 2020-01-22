@@ -73,14 +73,12 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
     """
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    print(outDir)
-    input(raw)
     if raw:
         inDataListImg=raw
-        rawoutDir = outDir + 'images/'
+        rawoutDir = outDir + '/images'
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
-        binaryoutDir = outDir + '/segmentations/'
+        binaryoutDir = outDir + '/segmentations'
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
         outDataListSeg = []
@@ -92,7 +90,7 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
             paramname = outnameSeg.replace('.nrrd', '.txt')
             outDataListSeg.append(outnameSeg)
             innameImg = inDataListImg[i]
-            outnameImg = rename(innameImage, rawoutDir, 'com')
+            outnameImg = rename(innameImg, rawoutDir, 'com')
             outDataListImg.append(outnameImg)
             execCommand = ["TranslateShapeToImageOrigin", "--inFilename", innameSeg, "--outFilename", outnameSeg, "--useCenterOfMass",  "1", 
             "--parameterFilename", paramname, "--MRIinFilename", innameImg, "--MRIoutFilename", outnameImg]
@@ -414,23 +412,14 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
         return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
-    root = ET.Element('sample')
-    lsSmootherIterations = ET.SubElement(root, 'lsSmootherIterations')
-    lsSmootherIterations.text = "\n 1.0 \n"
-    targetReduction = ET.SubElement(root, 'targetReduction')
-    targetReduction.text = "\n  0.0001 \n"
-    featureAngle = ET.SubElement(root, 'featureAngle')
-    featureAngle.text = "\n 30.0 \n"
-    preserveTopology = ET.SubElement(root, 'preserveTopology')
-    preserveTopology.text = "\n 1 \n"
-    inputs = ET.SubElement(root, 'inputs')
-    inputs.text = "\n " + tpdtnrrdfilename + " \n"
-    outputs = ET.SubElement(root, 'outputs')
-    outputs.text = "\n " + vtkfilename + " \n"
-
-    data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
-    file.write(data)
+    file.write("<lsSmootherIterations>\n1.0\n</lsSmootherIterations>")
+    file.write("<targetReduction>\n0.0001\n</targetReduction>")
+    file.write("<featureAngle>\n30.0\n</featureAngle>")
+    file.write("<preserveTopology>\n1\n</preserveTopology>")
+    file.write("<inputs>\n" + str(tpdtnrrdfilename) +"\n</inputs>")
+    file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
+    file.close()
 
 def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smoothingIterations=1, isoValue=0, percentage=50):
     outDir = parentDir + '/groom_and_meshes'
@@ -470,17 +459,6 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         create_cpp_xml(xmlfilename, xmlfilename)
         execCommand = ["TopologyPreservingSmoothing", xmlfilename]
         subprocess.check_call(execCommand )
-
-        # xmlfilename=outname.replace('.nrrd', '.MeshFromDT.xml')
-        # create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename)
-        # create_cpp_xml(xmlfilename, xmlfilename)
-        # execCommand = ["MeshFromDistanceTransforms", xmlfilename]
-        # subprocess.check_call(execCommand )
-        # decimal = percentage/100.0
-        # execCommand = ["PreviewCmd", "--inFile", vtkfilename, "--outFile", vtkfilename_preview, "--decimationPercentage", str(decimal)]
-        # subprocess.check_call(execCommand )
-        # this at the end
-
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 
@@ -680,11 +658,12 @@ def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points)
 
 def SelectCuttingPlane(input_file):
     ## Get vtk format
-    file_name = input_file.split(".")[0]
-    file_format = input_file.split(".")[1]
-    input_vtk = file_name + ".vtk"
+    file_format = input_file.split(".")[-1]
+    input_vtk = input_file.replace(file_format, "vtk")
     if file_format == "nrrd":
-        xml_filename = "cutting_plane_nrrd2vtk.xml"
+        print("\nCreating mesh from: " + input_file)
+        print("\nSaving as: " + input_vtk)
+        xml_filename = input_file.rsplit(os.sep, 1)[0] + "/cutting_plane_nrrd2vtk.xml"
         create_meshfromDT_xml(xml_filename, input_file, input_vtk)
         execCommand = ["NewMeshFromDT", xml_filename]
         subprocess.check_call(execCommand)

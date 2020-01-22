@@ -42,7 +42,6 @@ if platform.system() == "Darwin":
             + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
 
 os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
-print(f"PATH = {os.environ['PATH']}")
 
 try:
     if args.use_case == "ellipse":
