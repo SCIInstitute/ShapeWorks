@@ -111,7 +111,7 @@ def Run_Ellipsoid_Pipeline(args):
         ... link
         """
 
-        paddedFiles = applyPadding(parentDir, resampledFiles, None,  10)
+        paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
 
         """
         Apply center of mass alignment

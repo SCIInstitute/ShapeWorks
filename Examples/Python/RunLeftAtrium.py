@@ -106,7 +106,8 @@ def Run_LeftAtrium_Pipline(args):
         Both the segmentation and raw images are padded.
         """
 
-        [paddedFiles_segmentations,  paddedFiles_images] = applyPadding(parentDir, resampledFiles_segmentations,resampledFiles_images, 10, processRaw = True)
+        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations/', resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir+ 'padded/images/', resampledFiles_images, 10)
 
 
         """

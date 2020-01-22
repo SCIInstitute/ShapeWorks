@@ -851,4 +851,4 @@ def SelectCuttingPlane(input_file):
     pt1_z = (-n1+(n1*o1)+n2+(n2*o2)+(n3*o3))/n3
     # using x = -1 and y = 1 solve for z
     pt2_z = (n1+(n1*o1)-n2+(n2*o2)+(n3*o3))/n3
-    return [o1, o2, o3, 1, -1, pt1_z, -1, 1, pt2_z]
+    return np.array([[o1, o2, o3], [1, -1, pt1_z], [-1, 1, pt2_z]])

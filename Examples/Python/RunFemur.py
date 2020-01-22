@@ -21,6 +21,7 @@ import csv
 import argparse
 import glob
 import re
+import numpy as np
 
 from GroomUtils import *
 from OptimizeUtils import *
@@ -60,8 +61,8 @@ def Run_Femur_Pipline(args):
         datasets.downloadDataset(filename)
 
     # extract the zipfile
-    # with ZipFile(filename, 'r') as zipObj:
-    #     zipObj.extractall(path=parentDir)
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -97,15 +98,17 @@ def Run_Femur_Pipline(args):
             input_mesh = ''
             while not input_mesh:
                 cp_prefix = input("Type the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
-                for file in os.listdir(inputDir):
-                    if cp_prefix in file and mesh_extension in file:
-                        input_mesh = inputDir + file
+                if cp_prefix:
+                    for file in os.listdir(inputDir):
+                        if cp_prefix in file and mesh_extension in file:
+                            input_mesh = inputDir + file
                 if not input_mesh:
                     print("Invalid prefix.")
             cutting_plane_points = SelectCuttingPlane(input_mesh)
             if cp_prefix[-1] =='R':
                 reference_side = "Right"
-            print("Cutting plane points defined: " + str(cutting_plane_points))
+            print("Cutting plane points defined: ")
+            print(cutting_plane_points)
             print("Continuing to groom.")
 
 
@@ -116,7 +119,6 @@ def Run_Femur_Pipline(args):
         so that we have an image for every mesh
         """
         [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
-        input("Done")
 
         """
         MeshesToVolumes
@@ -131,8 +133,8 @@ def Run_Femur_Pipline(args):
         Apply isotropic resampling
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
-        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
+        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, recenter=False, isBinary=False)
 
         """
         Apply padding
@@ -173,7 +175,10 @@ def Run_Femur_Pipline(args):
 
         [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, comFiles_segmentations, comFiles_images , medianFile, processRaw = True)
 
-     
+        # medianFile = '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/com_aligned/segmentations/n02_L_femur.isores.pad.com.nrrd'
+        # rigidFiles_segmentations = ['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/segmentations/n02_L_femur.isores.pad.com.aligned.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/segmentations/n02_R_femur.isores.pad.com.aligned.nrrd']
+        # rigidFiles_images = ['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/imagesn02_L_femur_1x_hip.isores.pad.com.aligned.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput/aligned/imagesn02_R_femur_1x_hip.isores.pad.com.aligned.nrrd']
+
         # Define cutting plane on median sample
         if args.interactive:
            input_file = medianFile.replace(".nrrd", "DT.nrrd")
@@ -187,8 +192,18 @@ def Run_Femur_Pipline(args):
                     COM_filename = COM_folder + file
             COM_filehandler = open(COM_filename, "r")
             line = COM_filehandler.readlines()[2].replace("translation:","")
-            trans = line.split()
+            trans = []
+            for string in line.split():
+                trans.append(float(string))
+            trans = np.array(trans)
             COM_filehandler.close()
+            # Apply COM translation
+            print("Translating cutting plane by: ")
+            print(trans)
+            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
+            for pt_index in range(cutting_plane_points.shape[0]):
+                new_cutting_plane_points[pt_index] = cutting_plane_points[pt_index] - trans
+            cutting_plane_points = new_cutting_plane_points
             # Get rigid transformation
             rigid_folder = parentDir + "aligned/transformations/"
             for file in os.listdir(rigid_folder):
@@ -197,25 +212,38 @@ def Run_Femur_Pipline(args):
             rigid_filehandler = open(rigid_filename, "r")
             matrix = []
             lines = rigid_filehandler.readlines()
+            index = 0
             for line in lines:
-                matrix.append(line.split())
+                matrix.append([])
+                for string in line.split():
+                    matrix[index].append(float(string))
+                index += 1
+            matrix = np.array(matrix)
             rigid_filehandler.close()
-            print(trans)
+            print("Transforming cutting plane by: ")
             print(matrix)
+            new_cutting_plane_points = np.zeros(cutting_plane_points.shape)
+            for pt_index in range(cutting_plane_points.shape[0]):
+                pt4D = np.array([1,1,1,1])
+                pt4D[:3] = cutting_plane_points[pt_index]
+                pt = matrix.dot(pt4D)
+                new_cutting_plane_points[pt_index] = pt
+            cutting_plane_points = new_cutting_plane_points
+            print("Cutting plane points: ")
             print(cutting_plane_points)
-            old = cutting_plane_points 
-            cutting_plane_points = [old[0] - float(trans[0]), old[1] - float(trans[1]), old[2] - float(trans[2]), 
-                old[3] - float(trans[0]), old[4] - float(trans[1]), old[5] - float(trans[2]), 
-                old[6] - float(trans[0]), old[7] - float(trans[1]), old[8] - float(trans[2])]
-            print(cutting_plane_points)
-            input()
+            cutting_plane = []
+            for pt_index in range(cutting_plane_points.shape[0]):
+                for pt_index2 in range(cutting_plane_points.shape[1]):
+                    cutting_plane.append(cutting_plane_points[pt_index][pt_index2])
+
+            # input()
 
 
         """
         Clip Binary Volumes
         We have femurs of different shaft length so we will clip them all using the defined cutting plane
         """
-        clippedFiles_segmentations = ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points)
+        clippedFiles_segmentations = ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane)
 
         """
         For detailed explainations of parameters for finding the largest bounding box and cropping, go to
