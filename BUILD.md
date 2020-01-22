@@ -57,18 +57,20 @@ Download and install [[CMake]](https://cmake.org/)
 Download and install [[Visual Studio]](https://visualstudio.microsoft.com/) or another CMake-compatible compiler  
 
 #### Anaconda
-Download and install [[Anaconda]](https://www.anaconda.com/) 
+Download and install [[Anaconda]](https://www.anaconda.com/)  
+It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
 
 #### Qt5
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/)  
-After installing Qt5, add the directory containing 'qmake.exe' to your PATH  
-Example qmake directory: 'D:\Qt\5.14.0\winrt_x64_msvc2017\bin'
+After installing Qt5, add the directory containing `qmake.exe` to your PATH  
+Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
 #### VXL, VTK, and ITK
-These three dependencies can be installed using the **superbuild.sh** script.
-On Windows, use an msys shell (e.g. git bash) to run **superbuild.sh**.
+These three dependencies can be installed using the **superbuild.sh** script.  
+On Windows, use an msys shell (e.g. git bash) to do this.  
+It is recommended to use `$ ./superbuild.sh --dependencies-only` to build VXL, VTK, and ITK.  
 
-The **superbuild.sh** script accepts various options; use `./superbuild.sh --help` for more details.  
+Use `$ ./superbuild.sh --help` for more details on the available superbuild options.  
 
 If you get an error that looks like this:  
 ```
@@ -78,50 +80,58 @@ which: no qmake in (...)
 ```
 Make sure you added Qt to your path as explained in the [Install dependencies/Qt5](#Qt5) step.  
 
+If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK  
 
-### Configuration (OSX/Linux)  
+### Configure and Build  
 Make a build directory and use cmake to configure your build:  
 ```
 mkdir build
 cd build
-cmake <options> <base-shapeworks-directory>
+cmake <options> ..
 ```
 CMake GUI to see and change any of the options:
 - On OSX/Linux, you can use a GUI by running `ccmake` instead of `cmake`.  
-- On Windows, you can use the CMake application.
+- On Windows, you can use the CMake application.  
 
-Options include the following:
+#### Options
+Required:  
 ```
-  -G <generator> (For example: -GXCode or -G "Visual Studio 16 2019" -A x64)
-  -DCMAKE_PREFIX_PATH=<lib Path(s)>   default: a ;-separated list of paths to Qt, vtk, ITK, etc.
-                                               For Qt: it finds qmake in the system PATH; A prefix path must contain the lib/cmake directory.
+  -G<generator> (For example: -GXCode or -G"Visual Studio 16 2019" -Ax64)
+  -DCMAKE_PREFIX_PATH=<qt cmake path>  (This is different from qmake path in the [Install dependencies/Qt5])#Qt5) step
+  -DVXL_DIR=<vxl cmake path>  (contains VXLConfig.cmake)
+  -DVTK_DIR=<vtk cmake path>  (contains VTKConfig.cmake)
+  -DITK_DIR=<itk cmake path>  (contains ITKConfig.cmake)
+```
+Optional:
+```
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DBuild_View2=[OFF|ON]              default: OFF
   -DBuild_Post=[OFF|ON]               default: ON
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
-  -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release
+  -DCMAKE_BUILD_TYPE=[Debug|Release]  
 ```
-  Paths to dependencies can be set explicitly. Otherwise they will be downloaded and built automatically.
-```
-  -DVTK_DIR=<path to your own vtk>
-  -DITK_DIR=<path to your own ITK> # Note that ITK must be build with VTK for GUI applications
-  -DVXL_DIR=<path to your own vxl>
-```
+**See [examples](#Examples) below for common values of the variables**  
 
+#### Building
+- Makefiles: `make -j<num_procs>` where num_procs is the number of parallel processes, say 8.  
+    - (maybe need to build using `cmake --build . -j 16` in order to pass parallel flags to dependent projects (e.g., vtk))  
+- XCode project: `open ShapeWorks.xcodeproj` and build from there  
+- Microsoft Visual Studio: Open ShapeWorks.sln and build from there  
 
-### Build
-Execute build using your generated project file:  
-**Makefiles:** `make -j<num_procs>` where num_procs is the number of parallel processes, say 8.
-- maybe need to build using `cmake --build . -j 16` in order to pass parallel flags to dependent projects (e.g., vtk)
-**XCode project:** `open ShapeWorks.xcodeproj` and build from there  
-**Microsoft Visual Studio:** `open ShapeWorks.sln` and build  
-
-
-**Example (using OSX) that builds dependencies separately, then generates an XCode project for ShapeWorks:**  
+#### Examples
+*OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
 ```
 $ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
 mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=./install  -DCMAKE_PREFIX_PATH="${PWD}/../../dependencies" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
+```
+
+*Windows* example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
+```
+$ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
+mkdir build
+cd build
+cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=dependencies/vxl/build -DVTK_DIR=dependencies/lib/cmake/vtk-8.2 -DITK_DIR=dependencies/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```
