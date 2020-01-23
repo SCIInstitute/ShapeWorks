@@ -63,13 +63,11 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 void Optimize::LoadParameters(const char* fn)
 {
-  // Initialize some member variables
-  if (m_verbosity_level == 0) {
+  if (this->m_verbosity_level == 0) {
     std::cout <<
       "Verbosity 0: This will be the only output on your screen, unless there are any errors. Increase the verbosity if needed."
               << std::endl;
   }
-
 
   // Read parameter file
   this->startMessage("Reading i/o parameters...");
@@ -222,6 +220,12 @@ void Optimize::SetVerbosity(int verbosity_level)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetDomainsPerShape(int domains_per_shape)
+{
+  this->m_domains_per_shape = domains_per_shape;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::ReadIOParameters(const char* fname)
 {
   TiXmlDocument doc(fname);
@@ -230,10 +234,6 @@ void Optimize::ReadIOParameters(const char* fname)
   if (loadOkay) {
     TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
-
-    this->m_domains_per_shape = 1;
-    elem = docHandle.FirstChild("domains_per_shape").Element();
-    if (elem) { this->m_domains_per_shape = atoi(elem->GetText());}
 
     this->m_number_of_particles.clear();
     elem = docHandle.FirstChild("number_of_particles").Element();

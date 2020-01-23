@@ -99,6 +99,7 @@ public:
   virtual ~Optimize();
 
   void SetVerbosity(int verbosity_level);
+  void SetDomainsPerShape(int domains_per_shape);
 
   virtual void ReadIOParameters(const char* fname);
   virtual void ReadOptimizationParameters(const char* fname);
@@ -160,7 +161,7 @@ protected:
   bool m_use_mixed_effects = false;
 
   // ReadIOParameters
-  unsigned int m_domains_per_shape;
+  unsigned int m_domains_per_shape = 1;
   std::vector<unsigned int> m_number_of_particles;
   std::string m_transform_file;
   std::string m_prefix_transform_file;
