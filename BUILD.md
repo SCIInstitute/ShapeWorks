@@ -1,4 +1,4 @@
-# Instructions for building ShapeWorks from source
+# Building ShapeWorks from source
 
 ## Clone source
 
