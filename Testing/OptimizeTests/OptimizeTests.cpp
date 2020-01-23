@@ -61,7 +61,7 @@ TEST(OptimizeTests, sample_test) {
 
   // run with parameter file
   std::string paramfile = std::string("sphere.xml");
-  ShapeWorksRunApp<> app(paramfile.c_str());
+  ShapeWorksRunApp app(paramfile.c_str());
   app.Run();
 
   // compute stats

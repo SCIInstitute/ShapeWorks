@@ -38,17 +38,15 @@ template<typename T> std::string toStr(T var) {
     std::ostringstream tmp; tmp << var; return tmp.str();
 }
 
-template< typename SAMPLERTYPE
-          = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3> >  >
 class ShapeWorksRunApp 
 {
 public:
     typedef itk::Image<float, 3> ImageType;
-    typedef SAMPLERTYPE SamplerType;
+    typedef itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3> > SamplerType;
     SamplerType *GetSampler()  { return m_Sampler.GetPointer(); }
 
     typedef typename itk::ParticleVectorFunction<3>::VectorType VectorType;
-    typename itk::MemberCommand< ShapeWorksRunApp<SamplerType> >::Pointer m_Iteratecmd;
+    typename itk::MemberCommand<ShapeWorksRunApp>::Pointer m_Iteratecmd;
 
     virtual void Run()
     {
@@ -229,14 +227,6 @@ protected:
     std::vector<double> radList;
 
 };
-
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/ShapeWorksRunApp.txx+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-#include "ShapeWorksRunApp.txx"
-#endif
 
 #include "ShapeWorksRunApp.txx"
 

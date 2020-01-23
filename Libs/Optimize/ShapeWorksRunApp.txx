@@ -56,9 +56,9 @@
 
 #include "Utils.h"
 
+//---------------------------------------------------------------------------
 // Constructor and destructor
-template < class SAMPLERTYPE >
-ShapeWorksRunApp < SAMPLERTYPE > ::ShapeWorksRunApp(const char* fn) {
+ShapeWorksRunApp::ShapeWorksRunApp(const char* fn) {
   // Initialize some member variables
   this->SetVerbosity(fn);
   if (m_verbosity_level == 0) {
@@ -217,13 +217,11 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ShapeWorksRunApp(const char* fn) {
   if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file);}
 }
 
-template < class SAMPLERTYPE >
-ShapeWorksRunApp < SAMPLERTYPE > ::~ShapeWorksRunApp() {}
+ShapeWorksRunApp::~ShapeWorksRunApp() {}
 
+//---------------------------------------------------------------------------
 // Reading inputs and parameters from xml file
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::SetVerbosity(const char* fname) {
+void ShapeWorksRunApp::SetVerbosity(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -237,9 +235,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::SetVerbosity(const char* fname) {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadIOParameters(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadIOParameters(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -356,9 +353,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadIOParameters(const char* fname) {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadOptimizationParameters(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadOptimizationParameters(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -460,9 +456,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadOptimizationParameters(const char* fname)
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::SetDebugParameters(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::SetDebugParameters(const char* fname) {
 
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -486,9 +481,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::SetDebugParameters(const char* fname) {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadInputs(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -592,9 +586,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
   }   // end: document check
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadMeshInputs(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadMeshInputs(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -750,9 +743,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadMeshInputs(const char* fname) {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadConstraints(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadConstraints(const char* fname) {
   if (this->m_distribution_domain_id > -1) {
     this->ReadDistributionCuttingPlane(fname);
   }
@@ -763,9 +755,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadConstraints(const char* fname) {
   this->ReadCuttingSpheres(fname);
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadDistributionCuttingPlane(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadDistributionCuttingPlane(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -843,9 +834,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadDistributionCuttingPlane(const char* fnam
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadCuttingPlanes(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadCuttingPlanes(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -948,9 +938,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadCuttingPlanes(const char* fname) {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadCuttingSpheres(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadCuttingSpheres(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -1043,9 +1032,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadCuttingSpheres(const char* fname) {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadExplanatoryVariables(const char* fname) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadExplanatoryVariables(const char* fname) {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
@@ -1078,9 +1066,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadExplanatoryVariables(const char* fname) {
   }
 }
 
-template < class SAMPLERTYPE >
-std::vector < int >
-ShapeWorksRunApp < SAMPLERTYPE > ::FlagParticlesFct(const char* fname) {
+//---------------------------------------------------------------------------
+std::vector < int > ShapeWorksRunApp::FlagParticlesFct(const char* fname) {
   std::vector < int > f;
   f.clear();
   TiXmlDocument doc(fname);
@@ -1112,9 +1099,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::FlagParticlesFct(const char* fname) {
   return f;
 }
 
-template < class SAMPLERTYPE >
-std::vector < int >
-ShapeWorksRunApp < SAMPLERTYPE > ::FlagDomainFct(const char* fname) {
+//---------------------------------------------------------------------------
+std::vector < int > ShapeWorksRunApp::FlagDomainFct(const char* fname) {
   std::vector < int > f;
   f.clear();
   TiXmlDocument doc(fname);
@@ -1145,9 +1131,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::FlagDomainFct(const char* fname) {
   return f;
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadTransformFile() {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadTransformFile() {
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
@@ -1156,9 +1141,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadTransformFile() {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReadPrefixTransformFile(const std::string &fn) {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::ReadPrefixTransformFile(const std::string &fn) {
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
@@ -1167,10 +1151,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadPrefixTransformFile(const std::string &fn
   }
 }
 
+//---------------------------------------------------------------------------
 // Initialization and Optimization
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::InitializeSampler() {
+void ShapeWorksRunApp::InitializeSampler() {
   float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
   float flat_cutoff = 0.3;   // 0.3 -> 0.85
 
@@ -1237,9 +1220,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::InitializeSampler() {
   m_Sampler->GetOptimizer()->SetTolerance(0.0);
 }
 
-template < class SAMPLERTYPE >
-double
-ShapeWorksRunApp < SAMPLERTYPE > ::GetMinNeighborhoodRadius() {
+//---------------------------------------------------------------------------
+double ShapeWorksRunApp::GetMinNeighborhoodRadius() {
   double rad = 0.0;
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -1267,9 +1249,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::GetMinNeighborhoodRadius() {
   return rad;
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::AddSinglePoint() {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::AddSinglePoint() {
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -1307,9 +1288,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::AddSinglePoint() {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::Initialize() {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::Initialize() {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** Initialize Step\n";
@@ -1527,9 +1507,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::Initialize() {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::AddAdaptivity() {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::AddAdaptivity() {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** AddAdaptivity Step\n";
@@ -1570,9 +1549,8 @@ ShapeWorksRunApp < SAMPLERTYPE > ::AddAdaptivity() {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::Optimize() {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::Optimize() {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** Optimize Step\n";
@@ -1699,21 +1677,20 @@ ShapeWorksRunApp < SAMPLERTYPE > ::Optimize() {
   }
 }
 
-template < class SAMPLERTYPE >
-void
-ShapeWorksRunApp < SAMPLERTYPE > ::optimize_start() {
+//---------------------------------------------------------------------------
+void ShapeWorksRunApp::optimize_start() {
   m_Sampler->GetOptimizer()->StartOptimization();
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::optimize_stop() {
+ShapeWorksRunApp::optimize_stop() {
   m_Sampler->GetOptimizer()->StopOptimization();
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::IterateCallback(itk::Object*, const itk::EventObject &) {
+ShapeWorksRunApp::IterateCallback(itk::Object*, const itk::EventObject &) {
   if (m_performGoodBad == true) {
     std::vector < std::vector < int >> tmp;
     tmp = m_GoodBad->RunAssessment(m_Sampler->GetParticleSystem(),
@@ -1818,9 +1795,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::IterateCallback(itk::Object*, const itk::Even
   }
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::ComputeEnergyAfterIteration() {
+ShapeWorksRunApp::ComputeEnergyAfterIteration() {
   int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
   double corrEnergy = 0.0;
 
@@ -1855,9 +1832,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ComputeEnergyAfterIteration() {
   }
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::SetCotanSigma() {
+ShapeWorksRunApp::SetCotanSigma() {
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   m_Sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -1883,9 +1860,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::SetCotanSigma() {
 }
 
 // File writers and info display functions
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::PrintParamInfo() {
+ShapeWorksRunApp::PrintParamInfo() {
 
   if (m_verbosity_level < 2) {
     return;
@@ -2084,9 +2061,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::PrintParamInfo() {
   }
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WriteTransformFile(int iter) const
+ShapeWorksRunApp::WriteTransformFile(int iter) const
 {
   std::string output_file = m_output_dir + "/" + m_output_transform_file;
 
@@ -2101,9 +2078,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WriteTransformFile(int iter) const
   this->WriteTransformFile(output_file);
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WriteTransformFile(std::string iter_prefix) const
+ShapeWorksRunApp::WriteTransformFile(std::string iter_prefix) const
 {
   std::string output_file = iter_prefix;
 
@@ -2123,9 +2100,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WriteTransformFile(std::string iter_prefix) c
   doneMessage();
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFiles(int iter) {
+ShapeWorksRunApp::WritePointFiles(int iter) {
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
@@ -2139,9 +2116,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFiles(int iter) {
   this->WritePointFiles(tmp_dir_name);
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFiles(std::string iter_prefix) {
+ShapeWorksRunApp::WritePointFiles(std::string iter_prefix) {
   this->startMessage("Writing point files...\n");
 #ifdef _WIN32
   mkdir(iter_prefix.c_str());
@@ -2202,9 +2179,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFiles(std::string iter_prefix) {
   this->doneMessage();
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFilesWithFeatures(int iter) {
+ShapeWorksRunApp::WritePointFilesWithFeatures(int iter) {
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
@@ -2218,9 +2195,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFilesWithFeatures(int iter) {
   this->WritePointFilesWithFeatures(tmp_dir_name);
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFilesWithFeatures(std::string iter_prefix) {
+ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix) {
   if (!m_mesh_based_attributes) {
     return;
   }
@@ -2330,9 +2307,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WritePointFilesWithFeatures(std::string iter_
   this->doneMessage();
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WriteEnergyFiles() {
+ShapeWorksRunApp::WriteEnergyFiles() {
   if (!this->m_logEnergy) {
     return;
   }
@@ -2381,9 +2358,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WriteEnergyFiles() {
   this->doneMessage();
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WriteCuttingPlanePoints(int iter) {
+ShapeWorksRunApp::WriteCuttingPlanePoints(int iter) {
   this->startMessage("Writing cutting plane points...\n");
   std::string output_file = m_output_cutting_plane_file;
 
@@ -2425,9 +2402,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WriteCuttingPlanePoints(int iter) {
   this->doneMessage();
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::WriteParameters(int iter) {
+ShapeWorksRunApp::WriteParameters(int iter) {
   if (!m_use_regression) {
     return;
   }
@@ -2556,9 +2533,9 @@ ShapeWorksRunApp < SAMPLERTYPE > ::WriteParameters(int iter) {
   }
 }
 
-template < class SAMPLERTYPE >
+
 void
-ShapeWorksRunApp < SAMPLERTYPE > ::ReportBadParticles() {
+ShapeWorksRunApp::ReportBadParticles() {
   this->startMessage("Reporting bad particles...", 2);
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
   const int totalDomains = m_Sampler->GetParticleSystem()->GetNumberOfDomains();

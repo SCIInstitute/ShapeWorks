@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
       return 1;
       }
     
-    ShapeWorksRunApp<> app(argv[1]);
+    ShapeWorksRunApp app(argv[1]);
     
     app.Run();
     }
