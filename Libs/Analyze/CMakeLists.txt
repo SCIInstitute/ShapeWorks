@@ -1,10 +1,8 @@
 # Build
 set(Vis_sources
-  Vis.cpp
-  itkParticleShapeStatistics.txx)
+  Vis.cpp)
 set(Vis_headers
-  Vis.h
-  itkParticleShapeStatistics.h)
+  Vis.h)
 add_library(Analyze STATIC
   ${Vis_sources}
   ${Vis_headers})
@@ -12,7 +10,6 @@ target_include_directories(Analyze PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Analyze PUBLIC
-  tinyxml
   Mesh
   Alignment
   Utils

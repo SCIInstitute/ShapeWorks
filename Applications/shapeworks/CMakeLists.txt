@@ -22,6 +22,7 @@ target_link_libraries(shapeworks
   Image
   Mesh
   Analyze
+  Particles
   ${ITK_LIBRARIES}
   )
 

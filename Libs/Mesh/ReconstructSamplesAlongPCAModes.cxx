@@ -32,7 +32,7 @@
 #include "itkMetaImageIOFactory.h"
 
 // for pca modes
-#include "itkParticleShapeStatistics.h"
+#include "Libs/Particles/itkParticleShapeStatistics.h"
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,

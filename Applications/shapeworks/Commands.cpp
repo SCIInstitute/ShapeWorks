@@ -281,6 +281,7 @@ int EvaluateSSM::execute(const optparse::Values &options, SharedCommandData &sha
 {
     const std::string flistPath = static_cast<std::string>(options.get("filelist"));
     shapeStats.ReadPointFiles(flistPath.c_str());
+    shapeStats.Evaluate();
 }
 
 } // shapeworks

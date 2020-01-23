@@ -174,7 +174,7 @@ ENDIF ( BUILD_SWV2_OSX_APP )
 
 SET( QT_LIBRARIES Qt5::Widgets Qt5::Core )
 
-TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} tinyxml ${VTK_LIBRARIES} Utils Analyze Optimize)
+TARGET_LINK_LIBRARIES( ShapeWorksView2 ${QT_LIBRARIES} ${ITK_LIBRARIES} tinyxml ${VTK_LIBRARIES} Utils Analyze Optimize Particles)
 
 # INSTALLATION AND PACKAGING
 SET(plugin_dest_dir bin)
