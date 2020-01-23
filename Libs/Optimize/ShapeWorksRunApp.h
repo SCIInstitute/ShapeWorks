@@ -12,8 +12,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __ShapeWorksRunApp_h
-#define __ShapeWorksRunApp_h
+#pragma once
 
 #ifdef _WIN32
 #pragma warning( disable: 4996 )
@@ -227,7 +226,3 @@ protected:
     std::vector<double> radList;
 
 };
-
-#include "ShapeWorksRunApp.txx"
-
-#endif

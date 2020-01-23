@@ -54,6 +54,8 @@
 #include "object_reader.h"
 #include "object_writer.h"
 
+#include <ShapeWorksRunApp.h>
+
 #include "Utils.h"
 
 //---------------------------------------------------------------------------
