@@ -465,62 +465,64 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 
 ### Mesh Grooming 
 
-# Refelcts images and meshes to reference side
-def anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side):
-    outDir = parentDir + "reflected/"
-    if not os.path.exists(outDir):
-        os.mkdir(outDir)
-    for file in os.listdir(inputDir):
-        if img_suffix in file:
-            subject_id = file.split(img_suffix)[0]
-            imgFile = inputDir + file
-            leftFilename = inputDir + subject_id + left_suffix + "."+ mesh_extension
-            rightFilename = inputDir + subject_id + right_suffix + "." + mesh_extension
-            leftFilename_out = outDir + subject_id + left_suffix + "."+ mesh_extension
-            rightFilename_out = outDir + subject_id + right_suffix + "." + mesh_extension
-            leftimgFilename = outDir + subject_id + left_suffix + "_" + img_suffix + ".nrrd"
-            rightimgFilename = outDir + subject_id + right_suffix + "_" + img_suffix + ".nrrd"
-            centerFilename = outDir + file.split(".nrrd")[0] + "_origin.txt"
-            if reference_side == "right":
-                if os.path.exists(rightFilename):
-                    shutil.copy(imgFile, rightimgFilename)
-                    shutil.copy(rightFilename, rightFilename_out)
-                # if left exists, reflect the mesh and image
-                if os.path.exists(leftFilename):
 
-                    print("\n############## Reflecting ###############")
-                    cprint(("Input Volume : ", imgFile), 'cyan')
-                    cprint(("Output Volume : ", leftimgFilename), 'yellow')
-                    cprint(("Mesh : ", leftFilename), 'cyan')
-                    print("#######################################\n")
-                    execCommand = ["ReflectVolumes", "--inFilename", imgFile, "--outFilename", leftimgFilename, "--centerFilename", centerFilename, "--inputDirection", "0"]
-                    subprocess.check_call(execCommand)
-                    execCommand = ["ReflectMesh", "--inFilename", leftFilename, "--outFilename", leftFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_extension]
-                    subprocess.check_call(execCommand)
-            else:
-                if os.path.exists(leftFilename):
-                    shutil.copy(imgFile, leftimgFilename)
-                    shutil.copy(leftFilename, leftFilename_out)
-                # if right exists, reflect the mesh and image
-                if os.path.exists(rightFilename):
-                    print("############## Reflecting ###############")
-                    cprint(("Input Volume : ", imgFile), 'cyan')
-                    cprint(("Output Volume : ", rightimgFilename), 'yellow')
-                    cprint(("Mesh : ", rightFilename), 'cyan')
-                    print("######################################")
-                    execCommand = ["ReflectVolumes", "--inFilename", imgFile, "--outFilename", rightimgFilename, "--centerFilename", centerFilename, "--inputDirection", "0"]
-                    subprocess.check_call(execCommand)
-                    execCommand = ["ReflectMesh", "--inFilename", rightFilename, "--outFilename", rightFilename_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", mesh_extension]
-                    subprocess.check_call(execCommand)
-        # get file lists
-        imgList = []
-        meshList = []
-        for file in os.listdir(outDir):
-            if ".nrrd" in file:
-                imgList.append(outDir + file)
-            if left_suffix +"." + mesh_extension in file or right_suffix +"." + mesh_extension in file:
-                meshList.append(outDir + file)
-    return imgList, meshList
+# Refelcts images and meshes to reference side
+def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+    outSegDir = outDir + "/segmentations"
+    if not os.path.exists(outSegDir):
+        os.mkdir(outSegDir)
+    outImgDir = outDir + "/images"
+    if not os.path.exists(outImgDir):
+        os.mkdir(outImgDir)
+    imageList = []
+    meshList = []
+    for img in img_list:
+        img_name = img.rsplit(os.sep, 1)[1]
+        prefix = img_name.split("_")[0]
+        if reference_side =='right':
+            ref = 'R'
+            flip = 'L'
+        elif reference_side =='left':
+            ref = 'L'
+            flip = 'R'
+        else:
+            print("Error: reference side must be 'left' or 'right'.")
+        # check if ref exists
+        ref_prefix = prefix + "_" + ref
+        flip_prefix = prefix + "_" + flip
+        ref_seg = 'None'
+        flip_seg = 'None'
+        for seg in seg_list:
+            if ref_prefix in seg:
+                ref_seg = seg
+            elif flip_prefix in seg:
+                flip_seg = seg
+        # if we have ref seg, copy image and seg over with appropriate name
+        if ref_seg != 'None':
+            seg_out = ref_seg.replace(ref_seg.rsplit(os.sep, 1)[0], outSegDir)
+            meshList.append(seg_out)
+            shutil.copy(ref_seg, seg_out)
+            img_out = img.replace(img.rsplit(os.sep, 1)[0], outImgDir)
+            img_out = img_out.replace(prefix, ref_prefix)
+            imageList.append(img_out)
+            shutil.copy(img, img_out)
+        # if we have a seg for the non-ref side, reflect it
+        if flip_seg != 'None':
+            print("\n############## Reflecting ###############")
+            img_out = rename(img, outImgDir, 'reflect').replace(prefix, flip_prefix)
+            imageList.append(img_out)
+            centerFilename = outDir + "/" +  prefix + "_origin.txt"
+            execCommand = ["ReflectVolumes", "--inFilename", img, "--outFilename", img_out, "--centerFilename", centerFilename, "--inputDirection", "0"]
+            subprocess.check_call(execCommand)
+            print("\n############## Reflecting ###############")
+            seg_out = rename(flip_seg, outSegDir, 'reflect')
+            meshList.append(seg_out)
+            execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]
+            subprocess.check_call(execCommand)        
+    return meshList, imageList
+
 
 # rasterization for meshes to DT
 def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_extension):

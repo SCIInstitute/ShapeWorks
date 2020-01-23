@@ -60,9 +60,9 @@ def Run_Femur_Pipline(args):
         print("Downloading " + filename + " from SCIGirder.")
         datasets.downloadDataset(filename)
 
-    # extract the zipfile
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
+    # # extract the zipfile
+    # with ZipFile(filename, 'r') as zipObj:
+    #     zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -93,11 +93,11 @@ def Run_Femur_Pipline(args):
         mesh_extension = "ply"
         reference_side = "left" # somewhat arbitrary
 
-        # Get cutting plane
+        # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
             input_mesh = ''
             while not input_mesh:
-                cp_prefix = input("Type the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
+                cp_prefix = input("\nType the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
                 if cp_prefix:
                     for file in os.listdir(inputDir):
                         if cp_prefix in file and mesh_extension in file:
@@ -111,15 +111,22 @@ def Run_Femur_Pipline(args):
             print(cutting_plane_points)
             print("Continuing to groom.")
 
-
+        # Get image ane mesh segmentation file lists
+        files_img = []
+        img_dir = inputDir + 'images/'
+        for file in os.listdir(img_dir):
+            files_img.append(img_dir + file)
+        files_seg = []
+        seg_dir = inputDir + 'meshes/'
+        for file in os.listdir(seg_dir):
+            files_seg.append(seg_dir + file)
 
         """
         Reflect
         We have left and right femurs, so we will reflect the image if neccesary
         so that we have an image for every mesh
         """
-        [fileList_img, fileList_mesh] = anatomyPairsToSingles(parentDir, inputDir, img_suffix, left_suffix, right_suffix, mesh_extension, reference_side)
-
+        fileList_mesh, fileList_img = anatomyPairsToSingles(parentDir + 'reflected', files_seg, files_img, reference_side)
         """
         MeshesToVolumes
         Shapeworks requires volumes so we need to convert meshes to binary segmentations and distance transform
