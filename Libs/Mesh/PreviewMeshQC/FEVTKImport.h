@@ -6,6 +6,7 @@
 using namespace std;
 
 class FEMesh;
+class vtkPolyData;
 
 class FEVTKimport
 {
@@ -16,6 +17,9 @@ public:
   FEMesh* Load(const char* szfile);
 
   FEMesh* Load(istream& stream);
+
+  FEMesh* Load(vtkPolyData *polydata);
+
 
 protected:
   bool BuildMesh();

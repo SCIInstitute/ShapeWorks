@@ -4,6 +4,12 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+
+#include <vtkPolyData.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyDataReader.h>
 
 FEVTKimport::FEVTKimport()
 {
@@ -210,8 +216,9 @@ FEMesh* FEVTKimport::Load(istream &stream)
         }
 
         stream.getline(szline, 256);
-        if (!stream.good()) { return errf("An unexpected error occured while reading the file data.");}
-
+        if (!stream.good()) {
+          return errf("An unexpected error occured while reading the file data.");
+        }
 
         if (!stream.good() && i + 1 != rows) {
           return errf("An unexpected error occured while reading the scalar data.");
@@ -286,4 +293,15 @@ FEMesh* FEVTKimport::Load(istream &stream)
   mesher.BuildMesh(pm);
 
   return pm;
+}
+
+FEMesh* FEVTKimport::Load(vtkPolyData* polydata)
+{
+  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+  writer->SetInputData(polydata);
+  writer->SetWriteToOutputString(true);
+  writer->Update();
+  std::string mesh_string = writer->GetOutputStdString();
+  istringstream stream(mesh_string);
+  return this->Load(stream);
 }
