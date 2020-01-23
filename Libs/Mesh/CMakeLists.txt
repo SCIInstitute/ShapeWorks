@@ -19,6 +19,7 @@ target_include_directories(Mesh PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
   $<INSTALL_INTERFACE:include>)
+target_link_libraries(Mesh ${VTK_LIBRARIES})
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
@@ -92,7 +93,7 @@ TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VTK_L
 INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(PreviewCmd PreviewCmd.cxx )
-TARGET_LINK_LIBRARIES(PreviewCmd Utils Mesh)
+TARGET_LINK_LIBRARIES(PreviewCmd Utils Mesh ${VTK_LIBRARIES})
 INSTALL(TARGETS PreviewCmd  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)

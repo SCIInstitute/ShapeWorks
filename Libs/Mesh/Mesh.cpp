@@ -1,10 +1,14 @@
 #include "Mesh.h"
+#include <PreviewMeshQC/FEAreaCoverage.h>
+#include <PreviewMeshQC/FEVTKImport.h>
+#include <PreviewMeshQC/FEVTKExport.h>
+
+#include <vtkPolyDataReader.h>
+#include <vtkPolyDataWriter.h>
 
 //#include <vtkVersion.h>
 //#include <vtkPointData.h>
 //#include <vtkPolyDataNormals.h>
-#include <vtkPolyDataReader.h>
-#include <vtkPolyDataWriter.h>
 //#include <vtkSmoothPolyDataFilter.h>
 
 namespace shapeworks {
@@ -17,6 +21,7 @@ bool Mesh::read(const std::string &inFilename)
   vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
   reader->SetFileName(inFilename.c_str());
   reader->Update();
+  this->mesh = vtkSmartPointer<vtkPolyData>::New();
   this->mesh->DeepCopy(reader->GetOutput());
   return true;
 }
@@ -24,11 +29,43 @@ bool Mesh::read(const std::string &inFilename)
 ///////////////////////////////////////////////////////////////////////////////
 bool Mesh::write(const std::string &outFilename)
 {
-
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetFileName(outFilename);
+  writer->SetFileName(outFilename.c_str());
   writer->SetInputData(this->mesh);
   writer->Update();
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Mesh::coverage(const Mesh &other_mesh)
+{
+  if (!this->mesh) {
+    std::cerr << "No mesh loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  FEVTKimport importer;
+  FEMesh* surf1 = importer.Load(this->mesh);
+  FEMesh* surf2 = importer.Load(other_mesh.mesh);
+  if (surf1 == nullptr || surf2 == nullptr) {
+    std::cerr << "Error reading mesh\n";
+    return false;
+  }
+
+  FEAreaCoverage areaCoverage;
+
+  vector<double> map1 = areaCoverage.Apply(*surf1, *surf2);
+
+  for (int i = 0; i < surf1->Nodes(); ++i) {
+    surf1->Node(i).m_ndata = map1[i];
+  }
+
+  FEVTKExport vtkout;
+  VTKEXPORT ops = { false, true };
+  vtkout.SetOptions(ops);
+
+  this->mesh = vtkout.ExportToVTK(*surf1);
+
   return true;
 }
 
