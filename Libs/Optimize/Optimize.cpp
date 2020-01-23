@@ -70,15 +70,6 @@ void Optimize::LoadParameters(const char* fn)
               << std::endl;
   }
 
-  m_CheckpointCounter = 0;
-  m_ProcrustesCounter = 0;
-  m_SaturationCounter = 0;
-  m_disable_procrustes = true;
-  m_disable_checkpointing = true;
-  m_use_cutting_planes = false;
-  m_optimizing = false;
-  m_use_regression = false;
-  m_use_mixed_effects = false;
 
   // Read parameter file
   this->startMessage("Reading i/o parameters...");

@@ -149,16 +149,15 @@ protected:
 
   unsigned int m_verbosity_level = 0;
 
-  // constructor
-  int m_CheckpointCounter;
-  int m_ProcrustesCounter;
-  int m_SaturationCounter;
-  bool m_disable_procrustes;
-  bool m_disable_checkpointing;
-  bool m_use_cutting_planes;
-  bool m_optimizing;
-  bool m_use_regression;
-  bool m_use_mixed_effects;
+  int m_CheckpointCounter = 0;
+  int m_ProcrustesCounter = 0;
+  int m_SaturationCounter = 0;
+  bool m_disable_procrustes = true;
+  bool m_disable_checkpointing = true;
+  bool m_use_cutting_planes = false;
+  bool m_optimizing = false;
+  bool m_use_regression = false;
+  bool m_use_mixed_effects = false;
 
   // ReadIOParameters
   unsigned int m_domains_per_shape;
