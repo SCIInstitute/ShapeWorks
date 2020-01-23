@@ -39,7 +39,7 @@ We recommend using anaconda to create a sandbox environment. Using a conda envir
 `source ./conda_installs.sh`  
 <br>Accept the cryptography license terms and default installation path.  
 <br>These dependencies can be manually installed if preferred. [Here is the list](deps.txt).  
-Note that conda may install a different version of Qt that is too old to use with ShapeWorks. Be sure to set the `CMAKE_PREFIX_PATH` as described below in [Configuration](#Configuration).
+Note that conda may install a different version of Qt that is too old to use with ShapeWorks. Be sure to set the `CMAKE_PREFIX_PATH` as described below in [Configuration Options](#Options).
 
 Install **Qt5**, required by ShapeWorks gui applications (at least version 5.10).  
 Download and install the latest version for your OS, selecting the LGPL (free) license.  
@@ -52,16 +52,15 @@ Download and install the latest version for your OS, selecting the LGPL (free) l
 
 #### CMake
 Download and install [[CMake]](https://cmake.org/)  
-
-#### Compiler
 Download and install [[Visual Studio]](https://visualstudio.microsoft.com/) or another CMake-compatible compiler  
 
 #### Anaconda
 Download and install [[Anaconda]](https://www.anaconda.com/)  
 It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
+Using the *Anaconda Prompt*, run `conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows
 
 #### Qt5
-Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/)  
+Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/) (at least version 5.10 required)  
 After installing Qt5, add the directory containing `qmake.exe` to your PATH  
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
@@ -97,7 +96,7 @@ CMake GUI to see and change any of the options:
 Required:  
 ```
   -G<generator> (For example: -GXCode or -G"Visual Studio 16 2019" -Ax64)
-  -DCMAKE_PREFIX_PATH=<qt cmake path>  (This is different from qmake path in the [Install dependencies/Qt5])#Qt5) step
+  -DCMAKE_PREFIX_PATH=<qt cmake path>  (This is different from qmake path in the Install Qt5 step
   -DVXL_DIR=<vxl cmake path>  (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>  (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>  (contains ITKConfig.cmake)
@@ -117,6 +116,11 @@ Optional:
     - (maybe need to build using `cmake --build . -j 16` in order to pass parallel flags to dependent projects (e.g., vtk))  
 - XCode project: `open ShapeWorks.xcodeproj` and build from there  
 - Microsoft Visual Studio: Open ShapeWorks.sln and build from there  
+
+#### Before running Example Python scripts
+Add the ShapeWorks and dependency binaries to the path:  
+- *OSX/Linux:* `$ export PATH=/path/to/shapeworks/build/bin;/path/to/dependencies/bin:$PATH`  
+- *Windows*: `> set PATH=\path\to\shapeworks\build\bin;\path\to\dependency\bin;%PATH%`  
 
 #### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
