@@ -7,7 +7,7 @@ import os
 import subprocess
 import shutil
 import xml.etree.ElementTree as ET
-import SimpleITK as sitk
+import itk
 
 from CommonUtils import *
 
@@ -266,7 +266,7 @@ def FindReferenceImage(inDataList):
     IMG = []
     DIM = []
     for i in range(len(inDataList)):
-        tmp = sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i]))
+        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
         IMG.append(tmp)
         DIM.append(tmp.shape)
 
