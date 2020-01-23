@@ -2,18 +2,13 @@
 
 ## Clone source
 
-ShapeWorks uses git-lfs to store image data for testing.  Please install and setup git lfs before cloning:
-
-git lfs install
-
-If this command fails, you probably need to install git-lfs:
-
-https://github.com/git-lfs/git-lfs/wiki/Installation
-
-If you have already cloned ShapeWorks before installing git-lfs, you can get the test image data using:
-
-git lfs fetch
-git lfs checkout
+ShapeWorks uses *git-lfs* to store image data for testing.  
+Please install and setup **[git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)** before cloning.  
+If you have already cloned ShapeWorks before installing *git-lfs*, you can get the test image data using:  
+```
+$ git lfs fetch
+$ git lfs checkout
+```
 
 First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#source-and-branches) for more details).  
 `$ git clone https://github.com/SCIInstitute/ShapeWorks`  
@@ -23,7 +18,6 @@ First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#s
 `$ git branch -a`
 <br>If you want to create a new branch based off of the current branch:  
 `$ git checkout -b <branchname>`
-
 
 ## Install dependencies (OSX/Linux)  
 
