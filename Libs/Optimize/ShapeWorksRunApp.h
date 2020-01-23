@@ -1,11 +1,7 @@
 /*=========================================================================
    Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   Module:    $RCSfile: ShapeWorksRunApp.h,v $
-   Date:      $Date: 2011/03/24 01:17:37 $
-   Version:   $Revision: 1.6 $
-   Author:    $Author: wmartin $
 
-   Copyright (c) 2009 Scientific Computing and Imaging Institute.
+   Copyright (c) 2020 Scientific Computing and Imaging Institute.
    See ShapeWorksLicense.txt for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
@@ -38,11 +34,6 @@
 
 // optimize library
 #include <itkParticleSystem.h>
-
-template<typename T> std::string toStr(T var)
-{
-  std::ostringstream tmp; tmp << var; return tmp.str();
-}
 
 class ShapeWorksRunApp
 {
