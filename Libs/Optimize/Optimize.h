@@ -100,6 +100,7 @@ public:
 
   void SetVerbosity(int verbosity_level);
   void SetDomainsPerShape(int domains_per_shape);
+  void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
 
   virtual void ReadIOParameters(const char* fname);
   virtual void ReadOptimizationParameters(const char* fname);

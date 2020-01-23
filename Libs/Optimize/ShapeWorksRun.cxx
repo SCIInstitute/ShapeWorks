@@ -27,7 +27,11 @@ int main(int argc, char* argv[])
 
     Optimize app;
     OptimizeParameterFile param;
-    param.set_parameters(argv[1], &app);
+    if (!param.set_parameters(argv[1], &app))
+    {
+      std::cerr << "Error reading parameter file\n";
+      return 1;
+    }
     app.LoadParameters(argv[1]);
     app.Run();
   } catch (itk::ExceptionObject &e) {

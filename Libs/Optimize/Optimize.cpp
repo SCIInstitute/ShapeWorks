@@ -226,6 +226,12 @@ void Optimize::SetDomainsPerShape(int domains_per_shape)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles)
+{
+  this->m_number_of_particles = number_of_particles;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::ReadIOParameters(const char* fname)
 {
   TiXmlDocument doc(fname);
@@ -235,20 +241,7 @@ void Optimize::ReadIOParameters(const char* fname)
     TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
-    this->m_number_of_particles.clear();
-    elem = docHandle.FirstChild("number_of_particles").Element();
-    if (elem) {
-      std::istringstream inputsBuffer;
-      std::string num;
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> num) {
-        this->m_number_of_particles.push_back(atoi(num.c_str()));
-      }
-    }
-    else {
-      std::cerr << "Number of particles not specified" << std::endl;
-      throw 1;
-    }
+    /// TODO: move this check
     if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
       std::cerr <<
         "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()" <<
