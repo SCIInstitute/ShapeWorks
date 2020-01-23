@@ -36,7 +36,7 @@
 // optimize library
 #include <itkParticleSystem.h>
 
-class ShapeWorksRunApp
+class Optimize
 {
 public:
   typedef itk::Image<float, 3> ImageType;
@@ -44,7 +44,7 @@ public:
   SamplerType* GetSampler() { return m_Sampler.GetPointer(); }
 
   typedef typename itk::ParticleVectorFunction<3>::VectorType VectorType;
-  typename itk::MemberCommand<ShapeWorksRunApp>::Pointer m_Iteratecmd;
+  typename itk::MemberCommand<Optimize>::Pointer m_Iteratecmd;
 
   virtual void Run()
   {
@@ -55,7 +55,7 @@ public:
     // Introduce adaptivity
     if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity();}
     // Optimize
-    if (m_processing_mode >= 2 || m_processing_mode == -2) { this->Optimize();}
+    if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
   }
 
   virtual void RunProcrustes()
@@ -66,8 +66,8 @@ public:
 
   virtual void SetIterationCommand()
   {
-    m_Iteratecmd = itk::MemberCommand<ShapeWorksRunApp>::New();
-    m_Iteratecmd->SetCallbackFunction(this, &ShapeWorksRunApp::IterateCallback);
+    m_Iteratecmd = itk::MemberCommand<Optimize>::New();
+    m_Iteratecmd->SetCallbackFunction(this, &Optimize::IterateCallback);
     m_Sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_Iteratecmd);
   }
 
@@ -94,8 +94,8 @@ public:
     }
   }
 
-  ShapeWorksRunApp(const char*);
-  virtual ~ShapeWorksRunApp();
+  Optimize(const char*);
+  virtual ~Optimize();
 
   void SetVerbosity(const char* fname);
   virtual void ReadIOParameters(const char* fname);
@@ -118,7 +118,7 @@ public:
   virtual void AddSinglePoint();
   void Initialize();
   void AddAdaptivity();
-  void Optimize();
+  void RunOptimize();
   virtual void optimize_start();
   virtual void optimize_stop();
   void IterateCallback(itk::Object*, const itk::EventObject &);

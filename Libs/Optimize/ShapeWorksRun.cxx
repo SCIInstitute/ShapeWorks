@@ -13,7 +13,7 @@
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 #include <iostream>
-#include "ShapeWorksRunApp.h"
+#include "Optimize.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
       return 1;
       }
     
-    ShapeWorksRunApp app(argv[1]);
+    Optimize app(argv[1]);
     
     app.Run();
     }

@@ -3,7 +3,7 @@ FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx)
 
 add_library(Optimize STATIC
   ${ParticleSystem_sources}
-  ShapeWorksRunApp.cpp)
+  Optimize.cpp)
 
 target_link_libraries(Optimize
   Alignment

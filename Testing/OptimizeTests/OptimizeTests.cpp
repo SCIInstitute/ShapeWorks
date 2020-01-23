@@ -8,7 +8,7 @@
 
 #include "TestConfiguration.h"
 
-#include "ShapeWorksRunApp.h"
+#include "Optimize.h"
 #include "itkParticleShapeStatistics.h"
 
 //---------------------------------------------------------------------------
@@ -61,7 +61,7 @@ TEST(OptimizeTests, sample_test) {
 
   // run with parameter file
   std::string paramfile = std::string("sphere.xml");
-  ShapeWorksRunApp app(paramfile.c_str());
+  Optimize app(paramfile.c_str());
   app.Run();
 
   // compute stats

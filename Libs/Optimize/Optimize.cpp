@@ -1,6 +1,6 @@
 /*=========================================================================
    Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   File:      ShapeWorksRunApp.cpp
+   File:      Optimize.cpp
 
    Copyright (c) 2020 Scientific Computing and Imaging Institute.
    See ShapeWorksLicense.txt for details.
@@ -54,10 +54,10 @@
 #include "object_reader.h"
 #include "object_writer.h"
 
-#include <ShapeWorksRunApp.h>
+#include <Optimize.h>
 
 //---------------------------------------------------------------------------
-ShapeWorksRunApp::ShapeWorksRunApp(const char* fn)
+Optimize::Optimize(const char* fn)
 {
   // Initialize some member variables
   this->SetVerbosity(fn);
@@ -224,11 +224,11 @@ ShapeWorksRunApp::ShapeWorksRunApp(const char* fn)
 }
 
 //---------------------------------------------------------------------------
-ShapeWorksRunApp::~ShapeWorksRunApp() {}
+Optimize::~Optimize() {}
 
 //---------------------------------------------------------------------------
 // Reading inputs and parameters from xml file
-void ShapeWorksRunApp::SetVerbosity(const char* fname)
+void Optimize::SetVerbosity(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -244,7 +244,7 @@ void ShapeWorksRunApp::SetVerbosity(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadIOParameters(const char* fname)
+void Optimize::ReadIOParameters(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -363,7 +363,7 @@ void ShapeWorksRunApp::ReadIOParameters(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadOptimizationParameters(const char* fname)
+void Optimize::ReadOptimizationParameters(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -467,7 +467,7 @@ void ShapeWorksRunApp::ReadOptimizationParameters(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::SetDebugParameters(const char* fname)
+void Optimize::SetDebugParameters(const char* fname)
 {
 
   TiXmlDocument doc(fname);
@@ -493,7 +493,7 @@ void ShapeWorksRunApp::SetDebugParameters(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadInputs(const char* fname)
+void Optimize::ReadInputs(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -599,7 +599,7 @@ void ShapeWorksRunApp::ReadInputs(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadMeshInputs(const char* fname)
+void Optimize::ReadMeshInputs(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -756,7 +756,7 @@ void ShapeWorksRunApp::ReadMeshInputs(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadConstraints(const char* fname)
+void Optimize::ReadConstraints(const char* fname)
 {
   if (this->m_distribution_domain_id > -1) {
     this->ReadDistributionCuttingPlane(fname);
@@ -769,7 +769,7 @@ void ShapeWorksRunApp::ReadConstraints(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadDistributionCuttingPlane(const char* fname)
+void Optimize::ReadDistributionCuttingPlane(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -849,7 +849,7 @@ void ShapeWorksRunApp::ReadDistributionCuttingPlane(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadCuttingPlanes(const char* fname)
+void Optimize::ReadCuttingPlanes(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -954,7 +954,7 @@ void ShapeWorksRunApp::ReadCuttingPlanes(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadCuttingSpheres(const char* fname)
+void Optimize::ReadCuttingSpheres(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -1049,7 +1049,7 @@ void ShapeWorksRunApp::ReadCuttingSpheres(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadExplanatoryVariables(const char* fname)
+void Optimize::ReadExplanatoryVariables(const char* fname)
 {
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
@@ -1084,7 +1084,7 @@ void ShapeWorksRunApp::ReadExplanatoryVariables(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-std::vector < int > ShapeWorksRunApp::FlagParticlesFct(const char* fname)
+std::vector < int > Optimize::FlagParticlesFct(const char* fname)
 {
   std::vector < int > f;
   f.clear();
@@ -1118,7 +1118,7 @@ std::vector < int > ShapeWorksRunApp::FlagParticlesFct(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-std::vector < int > ShapeWorksRunApp::FlagDomainFct(const char* fname)
+std::vector < int > Optimize::FlagDomainFct(const char* fname)
 {
   std::vector < int > f;
   f.clear();
@@ -1151,7 +1151,7 @@ std::vector < int > ShapeWorksRunApp::FlagDomainFct(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadTransformFile()
+void Optimize::ReadTransformFile()
 {
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(m_transform_file);
@@ -1162,7 +1162,7 @@ void ShapeWorksRunApp::ReadTransformFile()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadPrefixTransformFile(const std::string &fn)
+void Optimize::ReadPrefixTransformFile(const std::string &fn)
 {
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(fn.c_str());
@@ -1174,7 +1174,7 @@ void ShapeWorksRunApp::ReadPrefixTransformFile(const std::string &fn)
 
 //---------------------------------------------------------------------------
 // Initialization and Optimization
-void ShapeWorksRunApp::InitializeSampler()
+void Optimize::InitializeSampler()
 {
   float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
   float flat_cutoff = 0.3;   // 0.3 -> 0.85
@@ -1243,7 +1243,7 @@ void ShapeWorksRunApp::InitializeSampler()
 }
 
 //---------------------------------------------------------------------------
-double ShapeWorksRunApp::GetMinNeighborhoodRadius()
+double Optimize::GetMinNeighborhoodRadius()
 {
   double rad = 0.0;
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
@@ -1275,7 +1275,7 @@ double ShapeWorksRunApp::GetMinNeighborhoodRadius()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::AddSinglePoint()
+void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
@@ -1314,7 +1314,7 @@ void ShapeWorksRunApp::AddSinglePoint()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::Initialize()
+void Optimize::Initialize()
 {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
@@ -1534,7 +1534,7 @@ void ShapeWorksRunApp::Initialize()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::AddAdaptivity()
+void Optimize::AddAdaptivity()
 {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
@@ -1577,7 +1577,7 @@ void ShapeWorksRunApp::AddAdaptivity()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::Optimize()
+void Optimize::RunOptimize()
 {
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
@@ -1706,17 +1706,17 @@ void ShapeWorksRunApp::Optimize()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::optimize_start()
+void Optimize::optimize_start()
 {
   m_Sampler->GetOptimizer()->StartOptimization();
 }
 
-void ShapeWorksRunApp::optimize_stop()
+void Optimize::optimize_stop()
 {
   m_Sampler->GetOptimizer()->StopOptimization();
 }
 
-void ShapeWorksRunApp::IterateCallback(itk::Object*, const itk::EventObject &)
+void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
   if (m_performGoodBad == true) {
     std::vector < std::vector < int >> tmp;
@@ -1822,7 +1822,7 @@ void ShapeWorksRunApp::IterateCallback(itk::Object*, const itk::EventObject &)
   }
 }
 
-void ShapeWorksRunApp::ComputeEnergyAfterIteration()
+void Optimize::ComputeEnergyAfterIteration()
 {
   int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
   double corrEnergy = 0.0;
@@ -1858,7 +1858,7 @@ void ShapeWorksRunApp::ComputeEnergyAfterIteration()
   }
 }
 
-void ShapeWorksRunApp::SetCotanSigma()
+void Optimize::SetCotanSigma()
 {
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   m_Sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
@@ -1888,7 +1888,7 @@ void ShapeWorksRunApp::SetCotanSigma()
 
 // File writers and info display functions
 
-void ShapeWorksRunApp::PrintParamInfo()
+void Optimize::PrintParamInfo()
 {
 
   if (m_verbosity_level < 2) {
@@ -2088,7 +2088,7 @@ void ShapeWorksRunApp::PrintParamInfo()
   }
 }
 
-void ShapeWorksRunApp::WriteTransformFile(int iter) const
+void Optimize::WriteTransformFile(int iter) const
 {
   std::string output_file = m_output_dir + "/" + m_output_transform_file;
 
@@ -2103,7 +2103,7 @@ void ShapeWorksRunApp::WriteTransformFile(int iter) const
   this->WriteTransformFile(output_file);
 }
 
-void ShapeWorksRunApp::WriteTransformFile(std::string iter_prefix) const
+void Optimize::WriteTransformFile(std::string iter_prefix) const
 {
   std::string output_file = iter_prefix;
 
@@ -2123,7 +2123,7 @@ void ShapeWorksRunApp::WriteTransformFile(std::string iter_prefix) const
   doneMessage();
 }
 
-void ShapeWorksRunApp::WritePointFiles(int iter)
+void Optimize::WritePointFiles(int iter)
 {
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
@@ -2138,7 +2138,7 @@ void ShapeWorksRunApp::WritePointFiles(int iter)
   this->WritePointFiles(tmp_dir_name);
 }
 
-void ShapeWorksRunApp::WritePointFiles(std::string iter_prefix)
+void Optimize::WritePointFiles(std::string iter_prefix)
 {
   this->startMessage("Writing point files...\n");
 #ifdef _WIN32
@@ -2200,7 +2200,7 @@ void ShapeWorksRunApp::WritePointFiles(std::string iter_prefix)
   this->doneMessage();
 }
 
-void ShapeWorksRunApp::WritePointFilesWithFeatures(int iter)
+void Optimize::WritePointFilesWithFeatures(int iter)
 {
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
@@ -2215,7 +2215,7 @@ void ShapeWorksRunApp::WritePointFilesWithFeatures(int iter)
   this->WritePointFilesWithFeatures(tmp_dir_name);
 }
 
-void ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix)
+void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
 {
   if (!m_mesh_based_attributes) {
     return;
@@ -2331,7 +2331,7 @@ void ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix)
   this->doneMessage();
 }
 
-void ShapeWorksRunApp::WriteEnergyFiles()
+void Optimize::WriteEnergyFiles()
 {
   if (!this->m_logEnergy) {
     return;
@@ -2381,7 +2381,7 @@ void ShapeWorksRunApp::WriteEnergyFiles()
   this->doneMessage();
 }
 
-void ShapeWorksRunApp::WriteCuttingPlanePoints(int iter)
+void Optimize::WriteCuttingPlanePoints(int iter)
 {
   this->startMessage("Writing cutting plane points...\n");
   std::string output_file = m_output_cutting_plane_file;
@@ -2426,7 +2426,7 @@ void ShapeWorksRunApp::WriteCuttingPlanePoints(int iter)
   this->doneMessage();
 }
 
-void ShapeWorksRunApp::WriteParameters(int iter)
+void Optimize::WriteParameters(int iter)
 {
   if (!m_use_regression) {
     return;
@@ -2562,7 +2562,7 @@ void ShapeWorksRunApp::WriteParameters(int iter)
   }
 }
 
-void ShapeWorksRunApp::ReportBadParticles()
+void Optimize::ReportBadParticles()
 {
   this->startMessage("Reporting bad particles...", 2);
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
