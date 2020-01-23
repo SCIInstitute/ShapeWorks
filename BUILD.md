@@ -10,14 +10,9 @@ $ git lfs fetch
 $ git lfs checkout
 ```
 
-First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#source-and-branches) for more details).  
+To clone the ShapeWorks source:  
 `$ git clone https://github.com/SCIInstitute/ShapeWorks`  
-<br>If you want to build a branch other than master, check that branch out next:  
-`$ git checkout <branchname>`
-<br>Available branches can be listed using:  
-`$ git branch -a`
-<br>If you want to create a new branch based off of the current branch:  
-`$ git checkout -b <branchname>`
+See [GettingStarted.md](GettingStarted.md#source-and-branches) for more details on git commands.  
 
 ## Install dependencies (OSX/Linux)  
 
@@ -45,8 +40,8 @@ Download and install [[Anaconda]](https://www.anaconda.com/)
 It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
 Using the *Anaconda Prompt*, run `conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows
 
-### Qt5
-Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/) (at least version 5.10 required)  
+### Qt5  
+Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)  
 After installing Qt5, add the directory containing `qmake.exe` to your PATH  
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
