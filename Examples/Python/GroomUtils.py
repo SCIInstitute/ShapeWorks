@@ -13,7 +13,7 @@ import vtk.util.numpy_support
 
 from CommonUtils import *
 
-def rename(inname, outDir, extension):
+def rename(inname, outDir, extension_addition, extension_change=''):
     """
     Takes inname path and replaces dir with outdir and adds extension before file type
     """
@@ -21,7 +21,10 @@ def rename(inname, outDir, extension):
     initPath = spt[0]
     outname = inname.replace(initPath, outDir)
     current_extension = "." + inname.split(".")[-1]
-    outname = outname.replace(current_extension, '.' + extension + current_extension)
+    if extension_addition != '':
+        outname = outname.replace(current_extension, '.' + extension_addition + current_extension)
+    if extension_change != '':
+        outname = outname.replace(current_extension, extension_change)
     cprint(("Input Filename : ", inname), 'cyan')
     cprint(("Output Filename : ", outname), 'yellow')
     print("######################################\n")
@@ -525,138 +528,102 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
 
 
 # rasterization for meshes to DT
-def MeshesToVolumes(parentDir, imgList, meshList, img_suffix, mesh_suffix, mesh_extension):
-    imgList = []
+def MeshesToVolumes(outDir, meshList, imgList):
     segList= []
-    outImg = parentDir + "images/"
-    if not os.path.exists(outImg):
-        os.mkdir(outImg)
-    outSeg = parentDir + "segmentations/"
-    if not os.path.exists(outSeg):
-        os.mkdir(outSeg)
-    for file in meshList:
-        if mesh_suffix in file:
-            sptSeg = file.rsplit('/', 1)
-            inputDir = sptSeg[0] + '/'
-            file= sptSeg[1]
-            subject_id = file.split(mesh_suffix)[0]
-            meshFilename = inputDir + file
-            # copy image over
-            imgFilename = inputDir + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
-            imgFilename_out = outImg + subject_id + mesh_suffix+ "_"+ img_suffix + ".nrrd"
-            shutil.copy(imgFilename, imgFilename_out)
-            imgList.append(imgFilename_out)
-
-            print("########### Turning  Mesh To Volume ##############")
-            cprint(("Input Mesh : ", meshFilename), 'cyan')
-            cprint(("Output Volume : ", outSeg + file[:-4] + ".nrrd"), 'yellow')
-            print("##################################################")
-            # make ply if neccesary
-            if mesh_extension == "vtk":
-                meshfilename_vtk = meshFilename
-                meshFilename = meshFilename[:-4] + "ply"
-                execCommand = ["vtk2ply", meshfilename_vtk, meshFilename]
-                subprocess.check_call(execCommand)
-
-            # write origin, size, and spacing info to text file
-            infoPrefix = outSeg + subject_id + mesh_suffix + "_" + img_suffix
-            execCommand = ["WriteImageInfoToText","--inFilename",imgFilename, "--outPrefix", infoPrefix]
+    if not os.path.exists(outDir):
+        os.mkdir(outDir)
+    for mesh in meshList:
+        mesh_name = mesh.rsplit(os.sep, 1)[1]
+        extension = mesh_name.split(".")[-1]
+        prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
+        # change to ply if needed
+        if extension == "vtk":
+            mesh_vtk = mesh
+            mesh = mesh[:-4] + "ply"
+            execCommand = ["vtk2ply", mesh_vtk, mesh]
             subprocess.check_call(execCommand)
+        # get image
+        for image_file in imgList:
+            if prefix in image_file:
+                image = image_file
+         # write origin, size, and spacing info to text file
+        infoPrefix = outDir + '/' + prefix
+        execCommand = ["WriteImageInfoToText","--inFilename",image, "--outPrefix", infoPrefix]
+        subprocess.check_call(execCommand)
+        # get origin, size, and spacing data
+        data ={}
+        origin_file = open(infoPrefix + "_origin.txt", "r")
+        text = origin_file.read()
+        data["origin"] = text.split("\n")
+        origin_file.close()
+        size_file = open(infoPrefix + "_size.txt", "r")
+        text = size_file.read()
+        data["size"] = text.split("\n")
+        size_file.close()
+        spacing_file = open(infoPrefix + "_spacing.txt", "r")
+        text = spacing_file.read()
+        spacingX = text.split("\n")[0]
+        data["spacing"] = text.split("\n")
+        spacing_file.close()
+        # write xml file
+        xmlfilename=infoPrefix + "_GenerateBinaryAndDT.xml"
+        if os.path.exists(xmlfilename):
+            os.remove(xmlfilename)
+        xml = open(xmlfilename, "a")
+        xml.write("<?xml version=\"1.0\" ?>\n")
+        xml.write("<mesh>\n")
+        xml.write(mesh+"\n")
+        xml.write("</mesh>\n")
+        # write origin, size, and spacing data
+        for key,value in data.items():
+            index = 0
+            for dim in ["x","y","z"]:
+                xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
+                index += 1
+        xml.close()
+        print("########### Turning  Mesh To Volume ##############")
+        segFile = rename(mesh, outDir, "", ".nrrd")
+        # call generate binary and DT
+        execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
+        subprocess.check_call(execCommand)
+         # save output volume
+        output_volume = mesh.replace(".ply", ".rasterized_sp" + str(spacingX) + ".nrrd")
+        shutil.move(output_volume, segFile)
+        segList.append(segFile)
+        #save output DT
+        output_DT =  mesh.replace(".ply", ".DT_sp" + str(spacingX) + ".nrrd")
+        dtFile = segFile.replace(".nrrd", "_DT.nrrd")
+        shutil.move(output_DT, dtFile)                    
+    return segList
 
-            # get origin, size, and spacing data
-            data ={}
-            origin_file = open(infoPrefix + "_origin.txt", "r")
-            text = origin_file.read()
-            data["origin"] = text.split("\n")
-            origin_file.close()
-            size_file = open(infoPrefix + "_size.txt", "r")
-            text = size_file.read()
-            data["size"] = text.split("\n")
-            size_file.close()
-            spacing_file = open(infoPrefix + "_spacing.txt", "r")
-            text = spacing_file.read()
-            spacingX = text.split("\n")[0]
-            data["spacing"] = text.split("\n")
-            spacing_file.close()
 
-            shutil.copy(meshFilename, meshFilename[:-4] + "_cp.ply")
-
-            # write xml file
-            xmlfilename=infoPrefix + "_GenerateBinaryAndDT.xml"
-            if os.path.exists(xmlfilename):
-                os.remove(xmlfilename)
-            xml = open(xmlfilename, "a")
-            xml.write("<?xml version=\"1.0\" ?>\n")
-            xml.write("<mesh>\n")
-            xml.write(meshFilename+"\n")
-            xml.write("</mesh>\n")
-            # write origin, size, and spacing data
-            for key,value in data.items():
-                index = 0
-                for dim in ["x","y","z"]:
-                    xml.write("<" + key + "_" + dim + ">" + str(value[index]) + "</" + key + "_" + dim + ">\n")
-                    index += 1
-            xml.close()
-
-            # call generate binary and DT
-            execCommand = ["GenerateBinaryAndDTImagesFromMeshes", xmlfilename]
-            subprocess.check_call(execCommand)
-
-            # save output volume
-            output_volume = meshFilename[:-4] + ".rasterized_sp" + str(spacingX) + ".nrrd"
-            segFile = outSeg + subject_id + mesh_suffix + ".nrrd"
-            shutil.move(output_volume, segFile)
-            segList.append(segFile)
-
-            #save output DT
-            output_DT =  meshFilename[:-4] + ".DT_sp" + str(spacingX) + ".nrrd"
-            dtFile = outSeg + subject_id + mesh_suffix + "_DT.nrrd"
-            shutil.move(output_DT, dtFile)
-                    
-    return [imgList, segList]
-
-def ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points):
-    outDir = os.path.join(parentDir, 'clipped_segmentations/')
+def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    outDataListSeg = []
-    for i in range(len(rigidFiles_segmentations)):
-        innameSeg = rigidFiles_segmentations[i]
-        if (".nrrd") in innameSeg:
-            innameSeg = rigidFiles_segmentations[i]
-            sptSeg = innameSeg.rsplit('/', 1)
-            initPath = sptSeg[0] + '/'
-            filename = sptSeg[1]
-            outnameSeg = innameSeg.replace(initPath, outDir)
-            outnameSeg = outnameSeg.replace('.nrrd', '.clipped.nrrd')
-            outDataListSeg.append(outnameSeg)
-            print(" ")
-            print("############## Clipping ##############")
-            cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
-            cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
-            print("######################################")
-            print(" ")
-            # write xml file
-            xmlfilename= outnameSeg[:-5] + ".xml"
-            if os.path.exists(xmlfilename):
-                os.remove(xmlfilename)
-            xml = open(xmlfilename, "a")
-            xml.write("<?xml version=\"1.0\" ?>\n")
-            xml.write("<num_shapes>1</num_shapes>\n")
-            xml.write("<inputs>\n")
-            xml.write(innameSeg+"\n")
-            xml.write("</inputs>\n")
-            xml.write("<outputs>\n")
-            xml.write(outnameSeg+"\n")
-            xml.write("</outputs>\n")
-            points = str(cutting_plane_points)[1:-1].replace(",","")
-            xml.write("<cutting_planes> " + points +" </cutting_planes>")
-            xml.close()
-            execCommand = ["ClipVolume", xmlfilename]
-            subprocess.check_call(execCommand)
-
-    return outDataListSeg
-
+    outListSeg = []
+    for seg in segList:
+        print("\n############## Clipping ##############")
+        seg_out = rename(seg, outDir, "clipped")
+        outListSeg.append(seg_out)
+        # write xml file
+        xmlfilename= seg_out.replace(".nrrd",".xml")
+        if os.path.exists(xmlfilename):
+            os.remove(xmlfilename)
+        xml = open(xmlfilename, "a")
+        xml.write("<?xml version=\"1.0\" ?>\n")
+        xml.write("<num_shapes>1</num_shapes>\n")
+        xml.write("<inputs>\n")
+        xml.write(seg+"\n")
+        xml.write("</inputs>\n")
+        xml.write("<outputs>\n")
+        xml.write(seg_out+"\n")
+        xml.write("</outputs>\n")
+        points = str(cutting_plane_points)[1:-1].replace(",","")
+        xml.write("<cutting_planes> " + points +" </cutting_planes>")
+        xml.close()
+        execCommand = ["ClipVolume", xmlfilename]
+        subprocess.check_call(execCommand)
+    return outListSeg
 
 def SelectCuttingPlane(input_file):
     ## Get vtk format

@@ -116,46 +116,38 @@ def Run_Femur_Pipline(args):
         img_dir = inputDir + 'images/'
         for file in os.listdir(img_dir):
             files_img.append(img_dir + file)
-        files_seg = []
-        seg_dir = inputDir + 'meshes/'
-        for file in os.listdir(seg_dir):
-            files_seg.append(seg_dir + file)
+        files_mesh = []
+        mesh_dir = inputDir + 'meshes/'
+        for file in os.listdir(mesh_dir):
+            files_mesh.append(mesh_dir + file)
 
         """
-        Reflect
-        We have left and right femurs, so we will reflect the image if neccesary
-        so that we have an image for every mesh
+        Reflect - We have left and right femurs, so we reflect both image and mesh 
+        for the non-reference side so that all of the femurs can be aligned.
         """
-        fileList_mesh, fileList_img = anatomyPairsToSingles(parentDir + 'reflected', files_seg, files_img, reference_side)
+        reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(parentDir + 'reflected', files_mesh, files_img, reference_side)
         """
-        MeshesToVolumes
-        Shapeworks requires volumes so we need to convert meshes to binary segmentations and distance transform
+        MeshesToVolumes - Shapeworks requires volumes so we need to convert 
+        mesh segementaions to binary segmentations.
         """
-        [fileList_imgL, fileList_segL] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, left_suffix, mesh_extension)
-        [fileList_imgR, fileList_segR] = MeshesToVolumes(parentDir, fileList_img, fileList_mesh, img_suffix, right_suffix, mesh_extension)
-        fileList_img = fileList_imgL + fileList_imgR
-        fileList_seg = fileList_segL + fileList_segR
+        fileList_seg = MeshesToVolumes(parentDir + "volumes", reflectedFiles_mesh, reflectedFile_img)
 
         """
-        Apply isotropic resampling
-        the segmentation and images are resampled independently and the result files are saved in two different directories.
+        Apply isotropic resampling - The segmentation and images are resampled independently to have uniform spacing.
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
-        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, recenter=False, isBinary=False)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
 
         """
-        Apply padding
-        Both the segmentation and raw images are padded.
+        Apply padding - Both the segmentation and raw images are padded in case the seg lies on the image boundary.
         """
-        paddedFiles_segmentations = applyPadding(parentDir + "padded2/segementations/", resampledFiles_segmentations, 10)
-        paddedFiles_images = applyPadding(parentDir + "padded2/images/", resampledFiles_images, 10)
+        paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations/", resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir + "padded/images/", resampledFiles_images, 10)
 
 
         """
-        Apply center of mass alignment
-
-        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        Apply center of mass alignment - This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        If raw=the list of image files, it will process both. If the raw parameter is left out it will process the segmentations only.
         """
         [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
 
@@ -225,21 +217,12 @@ def Run_Femur_Pipline(args):
             print(cutting_plane_points)
 
         """
-        Clip Binary Volumes
-        We have femurs of different shaft length so we will clip them all using the defined cutting plane
+        Clip Binary Volumes - We have femurs of different shaft length so we will clip them all using the defined cutting plane.
         """
-        clippedFiles_segmentations = ClipBinaryVolumes(parentDir, rigidFiles_segmentations, cutting_plane_points.flatten())
+        clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
 
         """
-        For detailed explainations of parameters for finding the largest bounding box and cropping, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-
-
-        Compute largest bounding box and apply cropping
-        processRaw = True, processes raw and binary images with shared parameters.
-        processRaw = False, applies the center of mass alignment only on segemnattion data.
-        The function uses the same bounding box to crop the raw and segemnattion data.
-
+        Compute largest bounding box and apply cropping - 
         """
         [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, clippedFiles_segmentations,  rigidFiles_images, processRaw=True)
 
