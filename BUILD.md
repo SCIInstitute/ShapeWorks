@@ -1,14 +1,6 @@
-# ShapeWorks build and installation instructions
+# Instructions for building ShapeWorks from source
 
-## Downloadable installation
-
-Pre-built binary downloads are provided here:
-
-https://github.com/SCIInstitute/ShapeWorks/releases
-
-## Build from source
-
-### Clone source
+## Clone source
 
 ShapeWorks uses git-lfs to store image data for testing.  Please install and setup git lfs before cloning:
 
@@ -33,7 +25,7 @@ First, clone the ShapeWorks source, (see [GettingStarted.md](GettingStarted.md#s
 `$ git checkout -b <branchname>`
 
 
-### Install dependencies (OSX/Linux)  
+## Install dependencies (OSX/Linux)  
 
 We recommend using anaconda to create a sandbox environment. Using a conda environment allows multiple builds with different dependencies. You can install Anaconda and the [ShapeWorks dependencies](deps.txt) using:  
 `source ./conda_installs.sh`  
@@ -48,23 +40,23 @@ Download and install the latest version for your OS, selecting the LGPL (free) l
 **OSX/Linux:** `$ export PATH=<path to your installation>/bin:$PATH`  
 
 
-### Install dependencies (Windows)
+## Install dependencies (Windows)
 
-#### CMake
+### CMake
 Download and install [[CMake]](https://cmake.org/)  
 Download and install [[Visual Studio]](https://visualstudio.microsoft.com/) or another CMake-compatible compiler  
 
-#### Anaconda
+### Anaconda
 Download and install [[Anaconda]](https://www.anaconda.com/)  
 It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
 Using the *Anaconda Prompt*, run `conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows
 
-#### Qt5
+### Qt5
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/) (at least version 5.10 required)  
 After installing Qt5, add the directory containing `qmake.exe` to your PATH  
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
-#### VXL, VTK, and ITK
+### VXL, VTK, and ITK
 These three dependencies can be installed using the **superbuild.sh** script.  
 On Windows, use an msys shell (e.g. git bash) to do this.  
 It is recommended to use `$ ./superbuild.sh --dependencies-only` to build VXL, VTK, and ITK.  
@@ -81,7 +73,7 @@ Make sure you added Qt to your path as explained in the [Install dependencies/Qt
 
 If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK  
 
-### Configure and Build  
+## Configure and Build  
 Make a build directory and use cmake to configure your build:  
 ```
 mkdir build
@@ -92,7 +84,7 @@ CMake GUI to see and change any of the options:
 - On OSX/Linux, you can use a GUI by running `ccmake` instead of `cmake`.  
 - On Windows, you can use the CMake application.  
 
-#### Options
+### Options
 Required:  
 ```
   -G<generator> (For example: -GXCode or -G"Visual Studio 16 2019" -Ax64)
@@ -111,18 +103,18 @@ Optional:
 ```
 **See [examples](#Examples) below for common values of the variables**  
 
-#### Building
+### Building
 - Makefiles: `make -j<num_procs>` where num_procs is the number of parallel processes, say 8.  
     - (maybe need to build using `cmake --build . -j 16` in order to pass parallel flags to dependent projects (e.g., vtk))  
 - XCode project: `open ShapeWorks.xcodeproj` and build from there  
 - Microsoft Visual Studio: Open ShapeWorks.sln and build from there  
 
-#### Before running Example Python scripts
+### Before running Example Python scripts
 Add the ShapeWorks and dependency binaries to the path:  
 - *OSX/Linux:* `$ export PATH=/path/to/shapeworks/build/bin;/path/to/dependencies/bin:$PATH`  
 - *Windows*: `> set PATH=\path\to\shapeworks\build\bin;\path\to\dependency\bin;%PATH%`  
 
-#### Examples
+### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
 ```
 $ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
