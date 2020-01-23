@@ -70,6 +70,9 @@ def Run_Ellipsoid_Pipeline(args):
             fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
     fileList = fileList[:15]
+    if args.tiny_test:
+        args.use_single_scale = 1
+        fileList = fileList[:2]
 
 
     """
@@ -180,6 +183,10 @@ def Run_Ellipsoid_Pipeline(args):
             "verbosity" : 3
           }
 
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+
         """
         Now we execute a single scale particle optimization function.
         """
@@ -213,6 +220,9 @@ def Run_Ellipsoid_Pipeline(args):
         """
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
           
     """
     ## ANALYZE : Shape Analysis and Visualization

@@ -7,7 +7,7 @@ import os
 import subprocess
 import shutil
 import xml.etree.ElementTree as ET
-import SimpleITK as sitk
+import itk
 
 from CommonUtils import *
 
@@ -42,15 +42,15 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         print(" ")
 
         cmd = ["shapeworks", "readimage", "--name", inname]
-        cmd.extend(["resampleimage", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
+        cmd.extend(["resample", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
 
         if recenter:
-            cmd.extend(["--recenter", str(recenter)])
+            cmd.extend(["recenterimage"])
         if isBinary:
             cmd.extend(["binarize"])
 
         cmd.extend(["writeimage", "--name", outname])
-
+        print(cmd)
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
 
@@ -266,7 +266,7 @@ def FindReferenceImage(inDataList):
     IMG = []
     DIM = []
     for i in range(len(inDataList)):
-        tmp = sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i]))
+        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
         IMG.append(tmp)
         DIM.append(tmp.shape)
 

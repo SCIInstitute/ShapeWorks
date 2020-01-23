@@ -48,6 +48,25 @@ double mat3d::Invert()
 	return det;
 }
 
+// return the inverse matrix
+mat3d mat3d::inverse() const
+{
+	double D = det();
+	assert(D != 0);
+	D = 1 / D;
+
+	return mat3d(D*(m_data[1][1] * m_data[2][2] - m_data[1][2] * m_data[2][1]),
+				 D*(m_data[0][2] * m_data[2][1] - m_data[0][1] * m_data[2][2]),
+				 D*(m_data[0][1] * m_data[1][2] - m_data[1][1] * m_data[0][2]),
+				 D*(m_data[1][2] * m_data[2][0] - m_data[1][0] * m_data[2][2]),
+				 D*(m_data[0][0] * m_data[2][2] - m_data[0][2] * m_data[2][0]),
+		 		 D*(m_data[0][2] * m_data[1][0] - m_data[0][0] * m_data[1][2]),
+				 D*(m_data[1][0] * m_data[2][1] - m_data[1][1] * m_data[2][0]),
+				 D*(m_data[0][1] * m_data[2][0] - m_data[0][0] * m_data[2][1]),
+				 D*(m_data[0][0] * m_data[1][1] - m_data[0][1] * m_data[1][0]));
+}
+
+
 //-----------------------------------------------------------------------------
 quatd quatd::slerp(quatd &q1, quatd &q2, double t) 
 {
