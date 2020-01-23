@@ -1,5 +1,6 @@
 /*=========================================================================
    Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+   File:      ShapeWorksRunApp.h
 
    Copyright (c) 2020 Scientific Computing and Imaging Institute.
    See ShapeWorksLicense.txt for details.
@@ -143,7 +144,6 @@ protected:
   typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
 
   static itk::ITK_THREAD_RETURN_TYPE optimize_callback(void* arg);
-  //  static ITK_THREAD_RETURN_TYPE auto_init_callback( void *arg );
 
   unsigned int m_verbosity_level;
 
@@ -212,8 +212,9 @@ protected:
   bool m_logEnergy;
   std::string m_strEnergy;
 
-  std::vector<std::vector<int>> m_badIds;    //GoodBadAssessment
-  double m_normalAngle;   //GoodBadAssessment
+  //GoodBadAssessment
+  std::vector<std::vector<int>> m_badIds;
+  double m_normalAngle;
   bool m_performGoodBad;
 
   std::vector <int> m_cutting_planes_per_input;

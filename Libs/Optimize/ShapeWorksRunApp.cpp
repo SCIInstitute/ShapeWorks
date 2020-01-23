@@ -1,8 +1,8 @@
 /*=========================================================================
    Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-   File:      ShapeWorksRunApp.txx
+   File:      ShapeWorksRunApp.cpp
 
-   Copyright (c) 2009 Scientific Computing and Imaging Institute.
+   Copyright (c) 2020 Scientific Computing and Imaging Institute.
    See ShapeWorksLicense.txt for details.
 
      This software is distributed WITHOUT ANY WARRANTY; without even
@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
-#endif
+#endif // ifdef _WIN32
 
 // itk
 #include <itkImageFileReader.h>
@@ -56,11 +56,9 @@
 
 #include <ShapeWorksRunApp.h>
 
-#include "Utils.h"
-
 //---------------------------------------------------------------------------
-// Constructor and destructor
-ShapeWorksRunApp::ShapeWorksRunApp(const char* fn) {
+ShapeWorksRunApp::ShapeWorksRunApp(const char* fn)
+{
   // Initialize some member variables
   this->SetVerbosity(fn);
   if (m_verbosity_level == 0) {
@@ -170,8 +168,10 @@ ShapeWorksRunApp::ShapeWorksRunApp(const char* fn) {
       }
 
       itk::ParticleImageDomainWithHessians < float,
-      3 > *domainWithHess = static_cast < itk::ParticleImageDomainWithHessians < float,
-      3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                             3 >* domainWithHess =
+        static_cast < itk::ParticleImageDomainWithHessians < float,
+                                                             3 >
+                      * > (m_Sampler->GetParticleSystem()->GetDomain(i));
       domainWithHess->DeletePartialDerivativeImages();
     }
   }
@@ -179,8 +179,10 @@ ShapeWorksRunApp::ShapeWorksRunApp(const char* fn) {
     int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
     for (int i = 0; i < numShapes; i++) {
       itk::ParticleImageDomainWithHessians < float,
-      3 > *domainWithHess = static_cast < itk::ParticleImageDomainWithHessians < float,
-      3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                             3 >* domainWithHess =
+        static_cast < itk::ParticleImageDomainWithHessians < float,
+                                                             3 >
+                      * > (m_Sampler->GetParticleSystem()->GetDomain(i));
       domainWithHess->DeletePartialDerivativeImages();
     }
   }
@@ -188,8 +190,10 @@ ShapeWorksRunApp::ShapeWorksRunApp(const char* fn) {
   if (m_d_flgs.size() > 0) {
     for (int i = 0; i < m_d_flgs.size(); i++) {
       itk::ParticleImageDomainWithHessians < float,
-      3 > *domainWithHess = static_cast < itk::ParticleImageDomainWithHessians < float,
-      3 > * > (m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
+                                             3 >* domainWithHess =
+        static_cast < itk::ParticleImageDomainWithHessians < float,
+                                                             3 >
+                      * > (m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
       if (m_use_normals.size() > 0) {
         if (m_use_normals[i % m_domains_per_shape]) {
           domainWithHess->DeletePartialDerivativeImages();
@@ -219,16 +223,18 @@ ShapeWorksRunApp::ShapeWorksRunApp(const char* fn) {
   if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file);}
 }
 
+//---------------------------------------------------------------------------
 ShapeWorksRunApp::~ShapeWorksRunApp() {}
 
 //---------------------------------------------------------------------------
 // Reading inputs and parameters from xml file
-void ShapeWorksRunApp::SetVerbosity(const char* fname) {
+void ShapeWorksRunApp::SetVerbosity(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     m_verbosity_level = 0;
@@ -238,12 +244,13 @@ void ShapeWorksRunApp::SetVerbosity(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadIOParameters(const char* fname) {
+void ShapeWorksRunApp::ReadIOParameters(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     this->m_domains_per_shape = 1;
@@ -356,12 +363,13 @@ void ShapeWorksRunApp::ReadIOParameters(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadOptimizationParameters(const char* fname) {
+void ShapeWorksRunApp::ReadOptimizationParameters(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     this->m_processing_mode = 3;
@@ -459,13 +467,14 @@ void ShapeWorksRunApp::ReadOptimizationParameters(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::SetDebugParameters(const char* fname) {
+void ShapeWorksRunApp::SetDebugParameters(const char* fname)
+{
 
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     const float pi = std::acos(-1.0);
@@ -484,12 +493,13 @@ void ShapeWorksRunApp::SetDebugParameters(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadInputs(const char* fname) {
+void ShapeWorksRunApp::ReadInputs(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     std::istringstream inputsBuffer;
@@ -509,10 +519,10 @@ void ShapeWorksRunApp::ReadInputs(const char* fname) {
       while (inputsBuffer >> filename) {
 
         if (m_verbosity_level > 1) {
-            std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+          std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
         }
         typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
-                                                                       ImageType > ::New();
+          ImageType > ::New();
         reader->SetFileName(filename);
         reader->UpdateLargestPossibleRegion();
         images.push_back(reader->GetOutput());
@@ -528,7 +538,7 @@ void ShapeWorksRunApp::ReadInputs(const char* fname) {
 
       int shapeCount = 0;
       typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
-                                                                     ImageType > ::New();
+        ImageType > ::New();
       reader->SetFileName(shapeFiles[shapeCount].c_str());
       std::cerr << "Now reading: " << shapeFiles[shapeCount] << "\n";
       reader->UpdateLargestPossibleRegion();
@@ -589,12 +599,13 @@ void ShapeWorksRunApp::ReadInputs(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadMeshInputs(const char* fname) {
+void ShapeWorksRunApp::ReadMeshInputs(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
     std::istringstream inputsBuffer;
     std::string filename;
@@ -676,7 +687,6 @@ void ShapeWorksRunApp::ReadMeshInputs(const char* fname) {
         inputsBuffer.clear();
         inputsBuffer.str("");
 
-
         m_Sampler->SetFeaFiles(attrFiles);
       }
 
@@ -746,7 +756,8 @@ void ShapeWorksRunApp::ReadMeshInputs(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadConstraints(const char* fname) {
+void ShapeWorksRunApp::ReadConstraints(const char* fname)
+{
   if (this->m_distribution_domain_id > -1) {
     this->ReadDistributionCuttingPlane(fname);
   }
@@ -758,12 +769,13 @@ void ShapeWorksRunApp::ReadConstraints(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadDistributionCuttingPlane(const char* fname) {
+void ShapeWorksRunApp::ReadDistributionCuttingPlane(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
     std::istringstream inputsBuffer;
     int numShapes = m_filenames.size();
@@ -837,12 +849,13 @@ void ShapeWorksRunApp::ReadDistributionCuttingPlane(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadCuttingPlanes(const char* fname) {
+void ShapeWorksRunApp::ReadCuttingPlanes(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
     std::istringstream inputsBuffer;
     int numShapes = m_filenames.size();
@@ -941,12 +954,13 @@ void ShapeWorksRunApp::ReadCuttingPlanes(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadCuttingSpheres(const char* fname) {
+void ShapeWorksRunApp::ReadCuttingSpheres(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
     std::istringstream inputsBuffer;
     int numShapes = m_filenames.size();
@@ -1035,12 +1049,13 @@ void ShapeWorksRunApp::ReadCuttingSpheres(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadExplanatoryVariables(const char* fname) {
+void ShapeWorksRunApp::ReadExplanatoryVariables(const char* fname)
+{
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     std::istringstream inputsBuffer;
@@ -1056,10 +1071,10 @@ void ShapeWorksRunApp::ReadExplanatoryVariables(const char* fname) {
       inputsBuffer.clear();
       inputsBuffer.str("");
 
-      dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute < double, 3 > * >
+      dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute < double, 3 >* >
       (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(evars);
 
-      dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute < double, 3 > * >
+      dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute < double, 3 >* >
       (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->SetExplanatory(evars);
 
       m_use_regression = true;
@@ -1069,14 +1084,15 @@ void ShapeWorksRunApp::ReadExplanatoryVariables(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-std::vector < int > ShapeWorksRunApp::FlagParticlesFct(const char* fname) {
+std::vector < int > ShapeWorksRunApp::FlagParticlesFct(const char* fname)
+{
   std::vector < int > f;
   f.clear();
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     std::istringstream inputsBuffer;
@@ -1102,14 +1118,15 @@ std::vector < int > ShapeWorksRunApp::FlagParticlesFct(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-std::vector < int > ShapeWorksRunApp::FlagDomainFct(const char* fname) {
+std::vector < int > ShapeWorksRunApp::FlagDomainFct(const char* fname)
+{
   std::vector < int > f;
   f.clear();
   TiXmlDocument doc(fname);
   bool loadOkay = doc.LoadFile();
 
   if (loadOkay) {
-    TiXmlHandle docHandle( &doc);
+    TiXmlHandle docHandle(&doc);
     TiXmlElement* elem;
 
     std::istringstream inputsBuffer;
@@ -1134,7 +1151,8 @@ std::vector < int > ShapeWorksRunApp::FlagDomainFct(const char* fname) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadTransformFile() {
+void ShapeWorksRunApp::ReadTransformFile()
+{
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
@@ -1144,7 +1162,8 @@ void ShapeWorksRunApp::ReadTransformFile() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::ReadPrefixTransformFile(const std::string &fn) {
+void ShapeWorksRunApp::ReadPrefixTransformFile(const std::string &fn)
+{
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
@@ -1155,7 +1174,8 @@ void ShapeWorksRunApp::ReadPrefixTransformFile(const std::string &fn) {
 
 //---------------------------------------------------------------------------
 // Initialization and Optimization
-void ShapeWorksRunApp::InitializeSampler() {
+void ShapeWorksRunApp::InitializeSampler()
+{
   float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
   float flat_cutoff = 0.3;   // 0.3 -> 0.85
 
@@ -1223,14 +1243,17 @@ void ShapeWorksRunApp::InitializeSampler() {
 }
 
 //---------------------------------------------------------------------------
-double ShapeWorksRunApp::GetMinNeighborhoodRadius() {
+double ShapeWorksRunApp::GetMinNeighborhoodRadius()
+{
   double rad = 0.0;
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
 
     const itk::ParticleImageDomain < float,
-    3 > * domain = static_cast < const itk::ParticleImageDomain < float,
-    3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                     3 >* domain = static_cast < const itk::ParticleImageDomain < float,
+                                                                                                  3 >
+                                                                 * > (m_Sampler->GetParticleSystem()
+                                                                      ->GetDomain(i));
 
     itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
     itk2vtkConnector->SetInput(domain->GetImage());
@@ -1252,7 +1275,8 @@ double ShapeWorksRunApp::GetMinNeighborhoodRadius() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::AddSinglePoint() {
+void ShapeWorksRunApp::AddSinglePoint()
+{
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -1263,7 +1287,7 @@ void ShapeWorksRunApp::AddSinglePoint() {
 
     bool done = false;
 
-    ImageType::Pointer img = dynamic_cast < itk::ParticleImageDomain < float, 3 > * > (
+    ImageType::Pointer img = dynamic_cast < itk::ParticleImageDomain < float, 3 >* > (
       m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage();
 
     itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
@@ -1281,8 +1305,7 @@ void ShapeWorksRunApp::AddSinglePoint() {
         try
         {
           m_Sampler->GetParticleSystem()->AddPosition(pos, i);
-        }
-        catch(itk::ExceptionObject &) {
+        } catch (itk::ExceptionObject &) {
           done = false;
         }
       }
@@ -1291,7 +1314,8 @@ void ShapeWorksRunApp::AddSinglePoint() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::Initialize() {
+void ShapeWorksRunApp::Initialize()
+{
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** Initialize Step\n";
@@ -1510,7 +1534,8 @@ void ShapeWorksRunApp::Initialize() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::AddAdaptivity() {
+void ShapeWorksRunApp::AddAdaptivity()
+{
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** AddAdaptivity Step\n";
@@ -1552,7 +1577,8 @@ void ShapeWorksRunApp::AddAdaptivity() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::Optimize() {
+void ShapeWorksRunApp::Optimize()
+{
   if (m_verbosity_level > 0) {
     std::cout << "------------------------------\n";
     std::cout << "*** Optimize Step\n";
@@ -1680,19 +1706,18 @@ void ShapeWorksRunApp::Optimize() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksRunApp::optimize_start() {
+void ShapeWorksRunApp::optimize_start()
+{
   m_Sampler->GetOptimizer()->StartOptimization();
 }
 
-
-void
-ShapeWorksRunApp::optimize_stop() {
+void ShapeWorksRunApp::optimize_stop()
+{
   m_Sampler->GetOptimizer()->StopOptimization();
 }
 
-
-void
-ShapeWorksRunApp::IterateCallback(itk::Object*, const itk::EventObject &) {
+void ShapeWorksRunApp::IterateCallback(itk::Object*, const itk::EventObject &)
+{
   if (m_performGoodBad == true) {
     std::vector < std::vector < int >> tmp;
     tmp = m_GoodBad->RunAssessment(m_Sampler->GetParticleSystem(),
@@ -1797,9 +1822,8 @@ ShapeWorksRunApp::IterateCallback(itk::Object*, const itk::EventObject &) {
   }
 }
 
-
-void
-ShapeWorksRunApp::ComputeEnergyAfterIteration() {
+void ShapeWorksRunApp::ComputeEnergyAfterIteration()
+{
   int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
   double corrEnergy = 0.0;
 
@@ -1834,15 +1858,16 @@ ShapeWorksRunApp::ComputeEnergyAfterIteration() {
   }
 }
 
-
-void
-ShapeWorksRunApp::SetCotanSigma() {
+void ShapeWorksRunApp::SetCotanSigma()
+{
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   m_Sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     const itk::ParticleImageDomain < float,
-    3 > * domain = static_cast < const itk::ParticleImageDomain < float,
-    3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                     3 >* domain = static_cast < const itk::ParticleImageDomain < float,
+                                                                                                  3 >
+                                                                 * > (m_Sampler->GetParticleSystem()
+                                                                      ->GetDomain(i));
 
     itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
     itk2vtkConnector->SetInput(domain->GetImage());
@@ -1863,8 +1888,8 @@ ShapeWorksRunApp::SetCotanSigma() {
 
 // File writers and info display functions
 
-void
-ShapeWorksRunApp::PrintParamInfo() {
+void ShapeWorksRunApp::PrintParamInfo()
+{
 
   if (m_verbosity_level < 2) {
     return;
@@ -2063,9 +2088,7 @@ ShapeWorksRunApp::PrintParamInfo() {
   }
 }
 
-
-void
-ShapeWorksRunApp::WriteTransformFile(int iter) const
+void ShapeWorksRunApp::WriteTransformFile(int iter) const
 {
   std::string output_file = m_output_dir + "/" + m_output_transform_file;
 
@@ -2080,9 +2103,7 @@ ShapeWorksRunApp::WriteTransformFile(int iter) const
   this->WriteTransformFile(output_file);
 }
 
-
-void
-ShapeWorksRunApp::WriteTransformFile(std::string iter_prefix) const
+void ShapeWorksRunApp::WriteTransformFile(std::string iter_prefix) const
 {
   std::string output_file = iter_prefix;
 
@@ -2102,9 +2123,8 @@ ShapeWorksRunApp::WriteTransformFile(std::string iter_prefix) const
   doneMessage();
 }
 
-
-void
-ShapeWorksRunApp::WritePointFiles(int iter) {
+void ShapeWorksRunApp::WritePointFiles(int iter)
+{
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
@@ -2118,9 +2138,8 @@ ShapeWorksRunApp::WritePointFiles(int iter) {
   this->WritePointFiles(tmp_dir_name);
 }
 
-
-void
-ShapeWorksRunApp::WritePointFiles(std::string iter_prefix) {
+void ShapeWorksRunApp::WritePointFiles(std::string iter_prefix)
+{
   this->startMessage("Writing point files...\n");
 #ifdef _WIN32
   mkdir(iter_prefix.c_str());
@@ -2181,9 +2200,8 @@ ShapeWorksRunApp::WritePointFiles(std::string iter_prefix) {
   this->doneMessage();
 }
 
-
-void
-ShapeWorksRunApp::WritePointFilesWithFeatures(int iter) {
+void ShapeWorksRunApp::WritePointFilesWithFeatures(int iter)
+{
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
@@ -2197,9 +2215,8 @@ ShapeWorksRunApp::WritePointFilesWithFeatures(int iter) {
   this->WritePointFilesWithFeatures(tmp_dir_name);
 }
 
-
-void
-ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix) {
+void ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix)
+{
   if (!m_mesh_based_attributes) {
     return;
   }
@@ -2232,13 +2249,17 @@ ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix) {
       throw 1;
     }
 
-    const itk::ParticleImplicitSurfaceDomain < float, 3 > * domain
+    const itk::ParticleImplicitSurfaceDomain < float, 3 >* domain
       = static_cast < const itk::ParticleImplicitSurfaceDomain < float,
-    3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                                                 3 >* > (m_Sampler->
+                                                                         GetParticleSystem()->
+                                                                         GetDomain(i));
 
-    const itk::ParticleImageDomainWithGradients < float, 3 > * domainWithGrad
+    const itk::ParticleImageDomainWithGradients < float, 3 >* domainWithGrad
       = static_cast < const itk::ParticleImageDomainWithGradients < float,
-    3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                                                    3 >* > (m_Sampler->
+                                                                            GetParticleSystem()->
+                                                                            GetDomain(i));
 
     TriMesh* ptr;
     std::vector < float > fVals;
@@ -2264,7 +2285,8 @@ ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix) {
 //                else
 //                {
         typename itk::ParticleImageDomainWithGradients < float,
-        3 > ::VnlVectorType pG = domainWithGrad->SampleNormalVnl(pos);
+                                                         3 > ::VnlVectorType pG =
+          domainWithGrad->SampleNormalVnl(pos);
         VectorType pN;
         pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
         pN = m_Sampler->GetParticleSystem()->TransformVector(pN,
@@ -2309,9 +2331,8 @@ ShapeWorksRunApp::WritePointFilesWithFeatures(std::string iter_prefix) {
   this->doneMessage();
 }
 
-
-void
-ShapeWorksRunApp::WriteEnergyFiles() {
+void ShapeWorksRunApp::WriteEnergyFiles()
+{
   if (!this->m_logEnergy) {
     return;
   }
@@ -2360,9 +2381,8 @@ ShapeWorksRunApp::WriteEnergyFiles() {
   this->doneMessage();
 }
 
-
-void
-ShapeWorksRunApp::WriteCuttingPlanePoints(int iter) {
+void ShapeWorksRunApp::WriteCuttingPlanePoints(int iter)
+{
   this->startMessage("Writing cutting plane points...\n");
   std::string output_file = m_output_cutting_plane_file;
 
@@ -2378,9 +2398,11 @@ ShapeWorksRunApp::WriteCuttingPlanePoints(int iter) {
   this->startMessage(str, 1);
 
   for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    const itk::ParticleImplicitSurfaceDomain < float, 3 > * dom
+    const itk::ParticleImplicitSurfaceDomain < float, 3 >* dom
       = static_cast < const itk::ParticleImplicitSurfaceDomain < float
-      , 3 > * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                                                                 , 3 >* > (m_Sampler->
+                                                                           GetParticleSystem()->
+                                                                           GetDomain(i));
 
     for (unsigned int j = 0; j < dom->GetNumberOfPlanes(); j++) {
       vnl_vector_fixed < double, 3 > a = dom->GetA(j);
@@ -2404,9 +2426,8 @@ ShapeWorksRunApp::WriteCuttingPlanePoints(int iter) {
   this->doneMessage();
 }
 
-
-void
-ShapeWorksRunApp::WriteParameters(int iter) {
+void ShapeWorksRunApp::WriteParameters(int iter)
+{
   if (!m_use_regression) {
     return;
   }
@@ -2431,8 +2452,9 @@ ShapeWorksRunApp::WriteParameters(int iter) {
 
   if (m_use_mixed_effects == true) {
     vnl_vector < double > slopevec = dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute <
-                                     double, 3 > * >
-    (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetSlope();
+                                                      double, 3 >* >
+                                     (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                      GetShapeMatrix())->GetSlope();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       slope.push_back(slopevec[i]);
@@ -2445,9 +2467,10 @@ ShapeWorksRunApp::WriteParameters(int iter) {
     out.close();
 
     vnl_vector < double > interceptvec = dynamic_cast <
-                                         itk::ParticleShapeMixedEffectsMatrixAttribute < double,
-    3 > * >
-    (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetIntercept();
+      itk::ParticleShapeMixedEffectsMatrixAttribute < double,
+                                                      3 >* >
+                                         (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                          GetShapeMatrix())->GetIntercept();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       intercept.push_back(interceptvec[i]);
@@ -2474,9 +2497,10 @@ ShapeWorksRunApp::WriteParameters(int iter) {
     std::cout << "writing " << interceptname << std::endl;
 
     vnl_matrix < double > sloperand_mat = dynamic_cast <
-                                          itk::ParticleShapeMixedEffectsMatrixAttribute < double,
-    3 > * >
-    (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetSlopeRandom();
+      itk::ParticleShapeMixedEffectsMatrixAttribute < double,
+                                                      3 >* >
+                                          (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                           GetShapeMatrix())->GetSlopeRandom();
 
     out.open(slopename.c_str());
     for (unsigned int i = 0; i < sloperand_mat.rows(); i++) {
@@ -2488,9 +2512,10 @@ ShapeWorksRunApp::WriteParameters(int iter) {
     out.close();
 
     vnl_matrix < double > interceptrand_mat = dynamic_cast <
-                                              itk::ParticleShapeMixedEffectsMatrixAttribute <
-                                              double, 3 > * >
-    (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->GetInterceptRandom();
+      itk::ParticleShapeMixedEffectsMatrixAttribute <
+        double, 3 >* >
+                                              (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                               GetShapeMatrix())->GetInterceptRandom();
 
     out.open(interceptname.c_str());
     for (unsigned int i = 0; i < interceptrand_mat.rows(); i++) {
@@ -2503,9 +2528,10 @@ ShapeWorksRunApp::WriteParameters(int iter) {
   }
   else {
     vnl_vector < double > slopevec = dynamic_cast <
-                                     itk::ParticleShapeLinearRegressionMatrixAttribute < double,
-    3 > * >
-    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetSlope();
+      itk::ParticleShapeLinearRegressionMatrixAttribute < double,
+                                                          3 >* >
+                                     (m_Sampler->GetEnsembleRegressionEntropyFunction()->
+                                      GetShapeMatrix())->GetSlope();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       slope.push_back(slopevec[i]);
@@ -2519,9 +2545,10 @@ ShapeWorksRunApp::WriteParameters(int iter) {
 
     std::vector < double > intercept;
     vnl_vector < double > interceptvec = dynamic_cast <
-                                         itk::ParticleShapeLinearRegressionMatrixAttribute < double,
-    3 > * >
-    (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->GetIntercept();
+      itk::ParticleShapeLinearRegressionMatrixAttribute < double,
+                                                          3 >* >
+                                         (m_Sampler->GetEnsembleRegressionEntropyFunction()->
+                                          GetShapeMatrix())->GetIntercept();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       intercept.push_back(interceptvec[i]);
@@ -2535,9 +2562,8 @@ ShapeWorksRunApp::WriteParameters(int iter) {
   }
 }
 
-
-void
-ShapeWorksRunApp::ReportBadParticles() {
+void ShapeWorksRunApp::ReportBadParticles()
+{
   this->startMessage("Reporting bad particles...", 2);
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
   const int totalDomains = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
