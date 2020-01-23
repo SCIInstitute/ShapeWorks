@@ -57,10 +57,13 @@
 #include <Optimize.h>
 
 //---------------------------------------------------------------------------
-Optimize::Optimize(const char* fn)
+Optimize::Optimize()
+{}
+
+//---------------------------------------------------------------------------
+void Optimize::LoadParameters(const char* fn)
 {
   // Initialize some member variables
-  this->SetVerbosity(fn);
   if (m_verbosity_level == 0) {
     std::cout <<
       "Verbosity 0: This will be the only output on your screen, unless there are any errors. Increase the verbosity if needed."
@@ -91,17 +94,11 @@ Optimize::Optimize(const char* fn)
   this->doneMessage();
 
   // Set up the optimization process
-  m_Sampler = itk::MaximumEntropyCorrespondenceSampler < ImageType > ::New();
+  m_Sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
   m_Sampler->SetDomainsPerShape(m_domains_per_shape);   // must be done first!
   m_Sampler->SetTimeptsPerIndividual(m_timepts_per_subject);
   m_Sampler->GetParticleSystem()->SetDomainsPerShape(m_domains_per_shape);
-
   m_Sampler->SetVerbosity(m_verbosity_level);
-
-  // Set up the procrustes registration object.
-  m_Procrustes = itk::ParticleProcrustesRegistration < 3 > ::New();
-  m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
-  m_Procrustes->SetDomainsPerShape(m_domains_per_shape);
 
   if (m_use_xyz.size() > 0) {
     for (int i = 0; i < m_domains_per_shape; i++) {
@@ -124,6 +121,11 @@ Optimize::Optimize(const char* fn)
       m_Sampler->SetNormals(i, false);
     }
   }
+
+  // Set up the procrustes registration object.
+  m_Procrustes = itk::ParticleProcrustesRegistration < 3 > ::New();
+  m_Procrustes->SetParticleSystem(m_Sampler->GetParticleSystem());
+  m_Procrustes->SetDomainsPerShape(m_domains_per_shape);
 
   if (m_procrustes_scaling == 0) {
     m_Procrustes->ScalingOff();
@@ -215,28 +217,17 @@ Optimize::Optimize(const char* fn)
   m_TotalEnergy.clear();
 
   // Now read the transform file if present.
-  if (m_transform_file != "") { this->ReadTransformFile();}
-  if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file);}
+  if (m_transform_file != "") { this->ReadTransformFile(); }
+  if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file); }
 }
 
 //---------------------------------------------------------------------------
 Optimize::~Optimize() {}
 
 //---------------------------------------------------------------------------
-// Reading inputs and parameters from xml file
-void Optimize::SetVerbosity(const char* fname)
+void Optimize::SetVerbosity(int verbosity_level)
 {
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
-
-    m_verbosity_level = 0;
-    elem = docHandle.FirstChild("verbosity").Element();
-    if (elem) { this->m_verbosity_level = atoi(elem->GetText());}
-  }
+  this->m_verbosity_level = verbosity_level;
 }
 
 //---------------------------------------------------------------------------

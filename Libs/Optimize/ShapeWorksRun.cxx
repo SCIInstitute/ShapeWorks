@@ -1,49 +1,45 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: ShapeWorksRun.cxx,v $
-  Date:      $Date: 2011/03/24 01:17:37 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
+   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+   Module:    $RCSfile: ShapeWorksRun.cxx,v $
+   Date:      $Date: 2011/03/24 01:17:37 $
+   Version:   $Revision: 1.2 $
+   Author:    $Author: wmartin $
 
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
+   Copyright (c) 2009 Scientific Computing and Imaging Institute.
+   See ShapeWorksLicense.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
+   =========================================================================*/
 #include <iostream>
 #include "Optimize.h"
+#include "OptimizeParameterFile.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   try
-    {
-    if (argc < 2)
-      {
+  {
+    if (argc < 2) {
       std::cerr << "Use: " << argv[0] << " parameterfile" << std::endl;
       return 1;
-      }
-    
-    Optimize app(argv[1]);
-    
-    app.Run();
     }
-  catch (itk::ExceptionObject &e)
-    {
+
+    Optimize app;
+    OptimizeParameterFile param;
+    param.set_parameters(argv[1], &app);
+    app.LoadParameters(argv[1]);
+    app.Run();
+  } catch (itk::ExceptionObject &e) {
     std::cerr << e << std::endl;
     return 1;
-    }
-  catch( std::exception & ex )
-    {
+  } catch (std::exception & ex) {
     std::cerr << ex.what() << std::endl;
     return 3;
-    }
-  catch( ... )
-    {
+  } catch (...) {
     std::cerr << "Unknown exception" << std::endl;
     return 5;
-    }  
-  
+  }
+
   return 0;
 }

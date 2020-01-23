@@ -94,10 +94,12 @@ public:
     }
   }
 
-  Optimize(const char*);
+  Optimize();
+  void LoadParameters(const char* fname);
   virtual ~Optimize();
 
-  void SetVerbosity(const char* fname);
+  void SetVerbosity(int verbosity_level);
+
   virtual void ReadIOParameters(const char* fname);
   virtual void ReadOptimizationParameters(const char* fname);
   void SetDebugParameters(const char* fname);
@@ -145,7 +147,7 @@ protected:
 
   static itk::ITK_THREAD_RETURN_TYPE optimize_callback(void* arg);
 
-  unsigned int m_verbosity_level;
+  unsigned int m_verbosity_level = 0;
 
   // constructor
   int m_CheckpointCounter;

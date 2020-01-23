@@ -3,18 +3,22 @@ FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx)
 
 add_library(Optimize STATIC
   ${ParticleSystem_sources}
-  Optimize.cpp)
+  Optimize.cpp
+  OptimizeParameterFile.cpp
+  )
 
 target_link_libraries(Optimize
   Alignment
   trimesh2
   Mesh
-  tinyxml)
+  tinyxml
+  )
 
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem>
-  $<INSTALL_INTERFACE:include>)
+  $<INSTALL_INTERFACE:include>
+  )
 
 add_executable(ShapeWorksRun ShapeWorksRun.cxx )
 set_target_properties(ShapeWorksRun PROPERTIES COMPILE_DEFINITIONS SW_USE_FEAMESH)

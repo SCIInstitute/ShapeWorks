@@ -9,6 +9,7 @@
 #include "TestConfiguration.h"
 
 #include "Optimize.h"
+#include "OptimizeParameterFile.h"
 #include "itkParticleShapeStatistics.h"
 
 //---------------------------------------------------------------------------
@@ -61,7 +62,10 @@ TEST(OptimizeTests, sample_test) {
 
   // run with parameter file
   std::string paramfile = std::string("sphere.xml");
-  Optimize app(paramfile.c_str());
+  Optimize app;
+  OptimizeParameterFile param;
+  param.set_parameters(paramfile.c_str(), &app);
+  app.LoadParameters(paramfile.c_str());
   app.Run();
 
   // compute stats
