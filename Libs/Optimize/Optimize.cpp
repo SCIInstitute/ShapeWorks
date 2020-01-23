@@ -80,7 +80,6 @@ Optimize::Optimize(const char* fn)
   // Read parameter file
   this->startMessage("Reading i/o parameters...");
   this->ReadIOParameters(fn);
-
   this->doneMessage();
 
   this->startMessage("Reading optimization parameters...");
@@ -150,9 +149,9 @@ Optimize::Optimize(const char* fn)
   this->InitializeSampler();
   this->doneMessage();
 
-//    this->startMessage("Reading explanatory variables...");
+  this->startMessage("Reading explanatory variables...");
   this->ReadExplanatoryVariables(fn);
-//    this->doneMessage();
+  this->doneMessage();
 
   m_p_flgs.clear();
   m_p_flgs = this->FlagParticlesFct(fn);
@@ -167,19 +166,17 @@ Optimize::Optimize(const char* fn)
         continue;
       }
 
-      itk::ParticleImageDomainWithHessians < float,
-                                             3 >* domainWithHess =
-        static_cast < itk::ParticleImageDomainWithHessians < float,
-                                                             3 >
-                      * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+      itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
+        static_cast < itk::ParticleImageDomainWithHessians<float,
+                                                           3>*> (m_Sampler->GetParticleSystem()
+                                                                 ->GetDomain(i));
       domainWithHess->DeletePartialDerivativeImages();
     }
   }
   else {
     int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
     for (int i = 0; i < numShapes; i++) {
-      itk::ParticleImageDomainWithHessians < float,
-                                             3 >* domainWithHess =
+      itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
         static_cast < itk::ParticleImageDomainWithHessians < float,
                                                              3 >
                       * > (m_Sampler->GetParticleSystem()->GetDomain(i));
@@ -189,8 +186,7 @@ Optimize::Optimize(const char* fn)
 
   if (m_d_flgs.size() > 0) {
     for (int i = 0; i < m_d_flgs.size(); i++) {
-      itk::ParticleImageDomainWithHessians < float,
-                                             3 >* domainWithHess =
+      itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
         static_cast < itk::ParticleImageDomainWithHessians < float,
                                                              3 >
                       * > (m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
@@ -209,7 +205,7 @@ Optimize::Optimize(const char* fn)
     this->PrintParamInfo();
   }
 
-  m_GoodBad = itk::ParticleGoodBadAssessment < float, 3 > ::New();
+  m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
   m_GoodBad->SetDomainsPerShape(m_domains_per_shape);
   m_GoodBad->SetCriterionAngle(m_normalAngle);
   m_GoodBad->SetPerformAssessment(m_performGoodBad);
@@ -1118,7 +1114,7 @@ std::vector < int > Optimize::FlagParticlesFct(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-std::vector < int > Optimize::FlagDomainFct(const char* fname)
+std::vector<int> Optimize::FlagDomainFct(const char* fname)
 {
   std::vector < int > f;
   f.clear();
