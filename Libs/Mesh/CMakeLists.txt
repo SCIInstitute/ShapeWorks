@@ -7,7 +7,7 @@ set(Mesh_sources
 FILE(GLOB PreviewMeshQC_headers ./PreviewMeshQC/*.h)
 set(Mesh_headers
   Mesh.h
-  MeshFIM.h
+  meshFIM.h
   )
 add_library(Mesh STATIC
   ${Mesh_sources}
@@ -22,7 +22,7 @@ target_include_directories(Mesh PUBLIC
 
 # Install
 set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
-  "${Mesh_headers} ${PreviewMeshQC_headers}"
+  "${Mesh_headers};${PreviewMeshQC_headers}"
   )
 target_link_libraries(Mesh trimesh2)
 install(TARGETS Mesh

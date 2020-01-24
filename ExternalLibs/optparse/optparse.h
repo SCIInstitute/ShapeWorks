@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 
-
 namespace optparse
 {
     class Callback;
@@ -48,8 +47,14 @@ namespace optparse
 
         operator bool()
         {
-            bool t;
-            return (valid && (std::istringstream(str) >> t)) ? t : false;
+            // first try to read as the word 'true' or 'false', otherwise 0 or 1
+            std::string str_lower(str);
+            std::transform(str.begin(), str.end(), str_lower.begin(),
+                           [](unsigned char c){ return std::tolower(c); });
+            bool t = (valid && (std::istringstream(str_lower) >> std::boolalpha >> t)) ? t : false;
+            if (!t)
+              t = (valid && (std::istringstream(str) >> t)) ? t : false;
+            return t;
         }
 
         operator short()

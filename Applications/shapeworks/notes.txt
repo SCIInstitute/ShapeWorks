@@ -17,6 +17,7 @@ HOWTO start a new command:
  4) find all uses of the command (in .sh and .py files) and change them to use the new shapeworks subcommand:
   $ find Examples -name "*" -type f -exec grep -i "OldCommandName" {} \; -print
  5) test command as needed to ensure it works the same as before (unless there was already a bug :)
+  5b add unit tests for new classes (follow Alan's example for a function in Image)
  6) remove the old command from its directory's CMakeLists.txt and `git rm OldCommandName.cxx`
  7) commit the results and make a pull request *to executable* (not to master)
  
@@ -24,17 +25,37 @@ General tasks:
 -----------------------------
 [x] implement postfix commands so that results of previous command are used by successive commands
 [-] detect and report to the user when no output file is specified for the last command (decided against this)
+[] remove camelcase from all shapeworks subcommand arguments (note: we are deliberately still using CamelCase for the command classes themselves)
 [] create example C++ app(s) that show using these classes directly
-[] add unit tests for new classes (goes along with creation of C++ example apps)
+[] add unit tests for new classes (follow Alan's example for a function in Image)
+[] as we go, add/update documentation to Documentation/shapeworks.md, which is a consolidation of all the individual readmes from when I moved the commands into a set of common directories rather than one directory per command
+[-] test write issue I noticed (once outfile is set, does it just write every time) (n/a with following change)
+  [x] change --infilename/--outfilename to be full commands (read/writeimage, read/writemesh)
+[] In the Image class itself, create a wrapper for all these filter functions that itself just accepts a function to create a filter to be executed (Updated)
 
 Commands:   (* means OptionParser already used, otherwise just argv)
 -----------------------------
 Image commands:
 
+[x] readimage
+[x] writeimage
+[x] binarize (created new command by breaking down resample)
+[x] recenter (created new command by breaking down resample)
 [x] *AntiAliasing -> shapeworks antialias
  o ShapeWorksGroom class duplicates antialias functionality, has different defaults
  o Example: shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
- o Example: antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100
+ o Example: antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100 --numLayers 9
+  - note that numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
+ o Update example:
+   readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+
+ Python Testing (added this to both old and new versions in order to compare results [w/ diff]):
+            
+    print("Calling command:\n"+" ".join(execCommand))
+    subprocess.check_call(execCommand)
+    print("new version of antialias complete!")
+    print("output is "+ref_dtnrrdfilename)
+    sys.exit(0)
 
 [] ClipVolume
 [] *CloseHoles
@@ -45,10 +66,32 @@ Image commands:
 [] *PadVolumeWithConstant
 [] *ReflectVolumes
 
-[] ResampleVolumesToBeIsotropic -> shapeworks resamplevolume 
- o Example: resamplevolume --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100
- o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic
+[x] ResampleVolumesToBeIsotropic -> shapeworks resampleimage (per request during 2020.01.07 meeting)
+ o Examples:
+  - resampleimage --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --recenter true --isospacing 1.0 --isBinary true
+  - ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_29.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
+ o Update example:
+   shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+
+ o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic (see below)
   - Converted the Image version and need to remove Analyze version (pretty sure it's just a copy/paste of the ITK example)
+
+Testing (lots of testing and debugging various parameters as well):
+ $ ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_0.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
+ $ shapeworks resampleimage --inFilename /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/cam/Desktop/tmp/resample_image_test_0.nrrd --isoSpacing 1.0 --recenter true --isBinary true
+ $ diff ~/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_0.nrrd ~/Desktop/tmp/resample_image_test_0.nrrd 
+
+More testing:
+(shapeworks) cam@ananda:~/code/ShapeWorks/ShapeWorks/Examples/Python$ for f in `ls TestEllipsoids/PrepOutput/resampled/seg.ellipsoid_*`; do diff $f ../../../ShapeWorks-alt/Examples/Python/$f; done
+(shapeworks) cam@ananda:~/code/ShapeWorks/ShapeWorks/Examples/Python$
+
+ Python Testing (added this to both old and new versions in order to compare results [w/ diff]):
+
+            resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg, isBinary=False)
+            print("new version of resampling complete!")
+            print("outputs in "+parentDir+"resampled")
+            sys.exit(0)
+
 
 [] *ThresholdImages
 [] TopologyPreservingSmoothing
@@ -57,6 +100,8 @@ Image commands:
 
 Mesh commands:  (some of these may not actually be executables)
 
+[] readmesh  (functions exist, they just don't do anything)
+[] writemesh (functions exist, they just don't do anything)
 ClipClosedSurface
 ComputeCurvatureAndCoordFiles
 ComputeGeodesicDistanceFromVerticesToPoints
@@ -113,7 +158,7 @@ ICPRigid3DMeshRegistration
 Procrustes3D.cpp
 Procrustes3D.h
 [] ReflectMeshes
-ResampleVolumeToIsotropic
+[] ResampleVolumeToIsotropic -> see if it's used anywhere and convert those cases to use new resampleimage command
 ResizeOriginResampleVolumes
 Transforms/
 TranslateImages

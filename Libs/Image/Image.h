@@ -4,7 +4,7 @@
 #include "ImageUtils.h"
 #include <itkTranslationTransform.h>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 class Image
 {
@@ -17,14 +17,20 @@ public:
   Image(const std::string &inFilename) { read(inFilename); }
 
   bool read(const std::string &inFilename);
-  bool write(const std::string &outFilename);
-  bool antialias(float maxRMSErr = 0.01f, int numIter = 50);
-  bool resamplevolume(bool isBinary = false, bool recenter = false, float isoSpacing = 1.0f, Dims outputSize = Dims());
+  bool write(const std::string &outFilename, bool useCompression = true);
+  bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
+  bool binarize(PixelType threshold = itk::NumericTraits<PixelType>::Zero,
+                PixelType inside = itk::NumericTraits<PixelType>::One,
+                PixelType outside = itk::NumericTraits<PixelType>::Zero);
+  bool recenter();
+  bool resample(float isoSpacing = 1.0f, bool binaryInput = false, Dims outputSize = Dims());
   bool padvolume(int paddingSize, float paddingValue);
   // bool nextfunction(...);
+
+  bool compare_equal(const Image &other);
 
 private:
   ImageType::Pointer image;
 };
 
-} // Shapeworks
+} // shapeworks

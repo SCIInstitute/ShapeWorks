@@ -6,15 +6,21 @@
 #include "Executable.h"
 #include "Commands.h"
 
-using namespace Shapeworks;
+using namespace shapeworks;
 
 int main(int argc, char *argv[])
 {
   Executable shapeworks;
 
+  shapeworks.addCommand(ReadImage::getCommand());
+  shapeworks.addCommand(WriteImage::getCommand());
+  shapeworks.addCommand(ReadMesh::getCommand());
+  shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
-  shapeworks.addCommand(Smoothmesh::getCommand()); 
-  shapeworks.addCommand(Resamplevolume::getCommand());
+  shapeworks.addCommand(SmoothMesh::getCommand());
+  shapeworks.addCommand(ResampleImage::getCommand());
+  shapeworks.addCommand(Binarize::getCommand());
+  shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(Padvolume::getCommand());
   //...
   
@@ -25,8 +31,5 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  // <ctc> would be nice to categorize commands listed in help as Image, Analyze, etc (yes it would: todo)
-  // [] this is difficult on multiple levels, both in terms of categorization and listing... maybe don't worry about it
-  
   return 0;
 }

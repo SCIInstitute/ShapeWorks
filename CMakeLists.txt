@@ -5,7 +5,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 #
 # ShapeWorks options
 #
-option(USE_OPENMP      "Build using OpenMP" ON)
+if (NOT APPLE)
+  option(USE_OPENMP      "Build using OpenMP" ON)
+endif()
 option(Build_Post      "Build post"         OFF)
 option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
@@ -66,7 +68,6 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # GUI
-cmake_policy(SET CMP0072 NEW) # prefer the new opengl library GLVND to the legacy if both are present
 find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
 if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
   set(SHAPEWORKS_QT_FOUND 1)
@@ -121,41 +122,11 @@ ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
 ENDIF()
 
-# OpenMP
-if(APPLE AND USE_OPENMP)
-  if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-    set(OpenMP_C "${CMAKE_C_COMPILER}")
-    set(OpenMP_C_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
-    set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
-    set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-    set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
-    set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
-  endif()
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
-    set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
-    set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
-    set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-    set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-    set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
-  endif()
-endif()
-
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
-  add_definitions(-DSW_USE_OPENMP)
-  add_definitions(-DMP_USE_OPENMP)
-  if(APPLE)
-    # the find_package flags just don't work for the latest clang, and I'm also not sure how to find the include path.
-    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument -I\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/include\" -L\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/lib\"")
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument -I\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/include\" -L\"/Users/cam/tools/miniconda3/envs/shapeworks_build-000/lib\"")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
-  else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")  #these don't exist, see cmake FindOpenMP (https://github.com/Kitware/CMake/blob/master/Modules/FindOpenMP.cmake)
-  endif(APPLE)
+  add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif(USE_OPENMP)
 
 if(APPLE)
@@ -167,6 +138,9 @@ endif()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
+
+# For consolidating the independent executables. Remove when done (TODO)
+add_definitions(-DDEBUG_CONSOLIDATION=1)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
@@ -206,6 +180,11 @@ if (SHAPEWORKS_GUI)
   set(DIRS "${CMAKE_INSTALL_PREFIX}/lib")
   list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 endif()
+
+if(BUILD_TESTS)
+  add_subdirectory(Testing)
+endif(BUILD_TESTS)
+
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")

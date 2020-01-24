@@ -177,7 +177,7 @@ public:
 		return r;
 	}
 
-	double det()
+	double det() const
 	{
 		double det = 0;
 		det += m_data[0][0]*m_data[1][1]*m_data[2][2];
@@ -190,6 +190,8 @@ public:
 	}
 
 	double Invert();
+
+	mat3d inverse() const;
 
 	void zero()
 	{

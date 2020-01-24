@@ -11,7 +11,7 @@
 #include <stdexcept>
 
 
-namespace Shapeworks {
+namespace shapeworks {
 
 class Command {
 public:
@@ -25,8 +25,6 @@ public:
   int run(SharedCommandData &sharedData);
 
 private:
-  virtual bool read(const std::string inFilename, SharedCommandData &sharedData) = 0;
-  virtual bool write(const std::string outFilename, SharedCommandData &sharedData) = 0;
   virtual int execute(const optparse::Values &options, SharedCommandData &sharedData) = 0;
 
 protected:
@@ -41,8 +39,6 @@ public:
   const std::string type() override { return "Image"; }
 
 private:
-  bool read(const std::string inFilename, SharedCommandData &sharedData) override;
-  bool write(const std::string outFilename, SharedCommandData &sharedData) override;
 };
 
 class MeshCommand : public Command
@@ -51,8 +47,6 @@ public:
   const std::string type() override { return "Mesh"; }
 
 private:
-  bool read(const std::string inFilename, SharedCommandData &sharedData) override;
-  bool write(const std::string outFilename, SharedCommandData &sharedData) override;
 };
 
 // TODO: something like this for a command that reads a list of files, computes a transform from all of them (or say, the average of the input images), then writes the single result (or lets it be reused for downstream commands)
@@ -63,12 +57,12 @@ public:
   const std::string type() override { return "Multi-image"; }
 
 private:
-  bool read(const std::string filelist, SharedCommandData &sharedData) override;
-  bool write(const std::string outFilename, SharedCommandData &sharedData) override;
+  // bool read(const std::string filelist, SharedCommandData &sharedData) override;
+  // bool write(const std::string outFilename, SharedCommandData &sharedData) override;
 };
 
 }; // Shapeworks
 
 
-std::ostream& operator<<(std::ostream& os, const Shapeworks::Command &cmd);
+std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);
 

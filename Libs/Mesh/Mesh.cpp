@@ -7,7 +7,7 @@
 #include <vtkPolyDataWriter.h>
 //#include <vtkSmoothPolyDataFilter.h>
 
-namespace Shapeworks {
+namespace shapeworks {
 
 //<ctc> TODO: mesh
 
@@ -86,4 +86,4 @@ bool Mesh::smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoo
 //   return true;
 // }
 
-} // Shapeworks
+} // shapeworks

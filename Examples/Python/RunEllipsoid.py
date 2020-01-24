@@ -55,7 +55,6 @@ def Run_Ellipsoid_Pipeline(args):
     # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " in the current directory.")
-        print("Downloading " + filename + " from SCI cibc1.")
         from DatasetUtils import datasets
         datasets.downloadDataset(filename)
 
@@ -71,6 +70,9 @@ def Run_Ellipsoid_Pipeline(args):
             fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
 
     fileList = fileList[:15]
+    if args.tiny_test:
+        args.use_single_scale = 1
+        fileList = fileList[:2]
 
 
     """
@@ -101,9 +103,6 @@ def Run_Ellipsoid_Pipeline(args):
         ... link
         """
         resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
-        print("new version of resampling complete!")
-        print("outputs in "+parentDir+"resampled")
-        sys.exit(0)
 
         """
         Apply padding
@@ -184,6 +183,10 @@ def Run_Ellipsoid_Pipeline(args):
             "verbosity" : 3
           }
 
+        if args.tiny_test:
+            parameterDictionary["number_of_particles"] = 32
+            parameterDictionary["optimization_iterations"] = 25
+
         """
         Now we execute a single scale particle optimization function.
         """
@@ -217,6 +220,9 @@ def Run_Ellipsoid_Pipeline(args):
         """
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
+    if args.tiny_test:
+        print("Done with tiny test")
+        exit()
           
     """
     ## ANALYZE : Shape Analysis and Visualization

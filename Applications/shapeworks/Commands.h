@@ -2,7 +2,7 @@
 
 #include "Command.h"
 
-namespace Shapeworks {
+namespace shapeworks {
 
 
 
@@ -23,6 +23,53 @@ private:
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+class ReadImage : public ImageCommand
+{
+public:
+  static ReadImage& getCommand() { static ReadImage instance; return instance; }
+
+private:
+  ReadImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class WriteImage : public ImageCommand
+{
+public:
+  static WriteImage& getCommand() { static WriteImage instance; return instance; }
+
+private:
+  WriteImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ReadMesh : public MeshCommand
+{
+public:
+  static ReadMesh& getCommand() { static ReadMesh instance; return instance; }
+
+private:
+  ReadMesh() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class WriteMesh : public MeshCommand
+{
+public:
+  static WriteMesh& getCommand() { static WriteMesh instance; return instance; }
+
+private:
+  WriteMesh() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 class Antialias : public ImageCommand
@@ -37,13 +84,13 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Resamplevolume : public ImageCommand
+class ResampleImage : public ImageCommand
 {
 public:
-  static Resamplevolume& getCommand() { static Resamplevolume instance; return instance; }
+  static ResampleImage& getCommand() { static ResampleImage instance; return instance; }
 
 private:
-  Resamplevolume() { buildParser(); }
+  ResampleImage() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -64,14 +111,37 @@ private:
 class Smoothmesh : public MeshCommand
 {
 public:
-  static Smoothmesh& getCommand() { static Smoothmesh instance; return instance; }
+  static SmoothMesh& getCommand() { static SmoothMesh instance; return instance; }
 
 private:
-  Smoothmesh() { buildParser(); }
+  SmoothMesh() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class RecenterImage : public ImageCommand
+{
+public:
+  static RecenterImage& getCommand() { static RecenterImage instance; return instance; }
 
-} // Shapeworks
+private:
+  RecenterImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Binarize : public ImageCommand
+{
+public:
+  static Binarize& getCommand() { static Binarize instance; return instance; }
+
+private:
+  Binarize() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+} // shapeworks

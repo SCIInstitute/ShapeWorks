@@ -60,10 +60,8 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     use_xyz.text = "\n" + str(1) + "\n"
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
-    for i in range(len(inDataFiles)):
-        t1 = inputs.text
-        t1 = t1 + inDataFiles[i] + '\n'
-        inputs.text = t1
+    for filename in inDataFiles:
+        inputs.text = inputs.text + filename.replace('\\','/') + "\n"
 
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
@@ -124,10 +122,8 @@ def create_SWRun_multi_xml(xmlfilename, inDataFiles, parameterDictionary, outDir
     inputs = ET.SubElement(root, 'inputs')
     inputs.text = "\n"
 
-    for i in range(len(inDataFiles)):
-        t1 = inputs.text
-        t1 = t1 + inDataFiles[i].replace('\\','/') + '\n'
-        inputs.text = t1
+    for filename in inDataFiles:
+        inputs.text = inputs.text + filename.replace('\\','/') + "\n"
 
     if curFactor != 0:
         # add in the pointfiles
@@ -161,7 +157,8 @@ def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionar
     outPointsWorld = []
     outPointsLocal = []
     for i in range(len(inDataFiles)):
-        inpath = os.path.dirname(inDataFiles[j]) + '/'
+        inname = inDataFiles[i].replace('\\','/')
+        inpath = os.path.dirname(inDataFiles[i]) + '/'
         outname = inname.replace(inpath, outDir)
         wrdname = outname.replace('.nrrd', '_world.particles')
         lclname = outname.replace('.nrrd', '_local.particles')
@@ -199,7 +196,7 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
     outPointsLocal = []
     for i in range(len(inDataFiles)):
         inname = inDataFiles[i].replace('\\','/')
-        inpath = os.path.dirname(inDataFiles[j]) + '/'
+        inpath = os.path.dirname(inDataFiles[i]) + '/'
         outname = inname.replace(inpath, outDir)
         wrdname = outname.replace('.nrrd', '_world.particles')
         lclname = outname.replace('.nrrd', '_local.particles')

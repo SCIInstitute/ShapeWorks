@@ -16,6 +16,3 @@ set_target_properties(ShapeWorksRun PROPERTIES COMPILE_DEFINITIONS SW_USE_FEAMES
 target_link_libraries(ShapeWorksRun ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2)
 install(TARGETS ShapeWorksRun RUNTIME DESTINATION bin)
 
-if(BUILD_TESTS)
-  add_subdirectory(Test)
-endif(BUILD_TESTS)
