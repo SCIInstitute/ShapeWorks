@@ -14,22 +14,8 @@ To clone the ShapeWorks source:
 `$ git clone https://github.com/SCIInstitute/ShapeWorks`  
 See [GettingStarted.md](GettingStarted.md#source-and-branches) for more details on git commands.  
 
-## Install dependencies (OSX/Linux)  
 
-We recommend using anaconda to create a sandbox environment. Using a conda environment allows multiple builds with different dependencies. You can install Anaconda and the [ShapeWorks dependencies](deps.txt) using:  
-`source ./conda_installs.sh`  
-<br>Accept the cryptography license terms and default installation path.  
-<br>These dependencies can be manually installed if preferred. [Here is the list](deps.txt).  
-Note that conda may install a different version of Qt that is too old to use with ShapeWorks. Be sure to set the `CMAKE_PREFIX_PATH` as described below in [Configuration Options](#Options).
-
-Install **Qt5**, required by ShapeWorks gui applications (at least version 5.10).  
-Download and install the latest version for your OS, selecting the LGPL (free) license.  
-[[OSX]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-mac-x64-5.13.0.dmg) [[Linux]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-linux-x64-5.13.0.run) [[Windows]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-windows-x86-5.13.0.exe)  
-<br>Ensure the bin directory for this Qt is in your path:  
-**OSX/Linux:** `$ export PATH=<path to your installation>/bin:$PATH`  
-
-
-## Install dependencies (Windows)
+## Install dependencies
 
 ### CMake
 Download and install [[CMake]](https://cmake.org/)  
@@ -38,11 +24,13 @@ Download and install [[Visual Studio]](https://visualstudio.microsoft.com/) or a
 ### Anaconda
 Download and install [[Anaconda]](https://www.anaconda.com/)  
 It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
-Using the *Anaconda Prompt*, run `conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows
+Using the *Anaconda Prompt*, run `conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows  
+
+You can also install these [dependencies](deps.txt) manually if you prefer not to use Anaconda  
 
 ### Qt5  
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)  
-After installing Qt5, add the directory containing `qmake.exe` to your PATH  
+After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](GettingStarted.md#PATH-environment-variable) for help with this)  
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
 ### VXL, VTK, and ITK
@@ -52,7 +40,7 @@ It is recommended to use `$ ./superbuild.sh --dependencies-only` to build VXL, V
 
 Use `$ ./superbuild.sh --help` for more details on the available superbuild options.  
 
-If you get an error that looks like this:  
+**If you get an error** that looks like this:  
 ```
 which: no qmake in (...)
 ## For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path.
@@ -61,6 +49,7 @@ which: no qmake in (...)
 Make sure you added Qt to your path as explained in the [Install dependencies/Qt5](#Qt5) step.  
 
 If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK  
+
 
 ## Configure and Build  
 Make a build directory and use cmake to configure your build:  
