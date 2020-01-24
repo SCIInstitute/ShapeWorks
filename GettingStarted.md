@@ -305,7 +305,7 @@ You can also add tables, quoted text like you'd see in an email, bulleted items,
    
 ## PATH environment variable
 
-Be careful doing this! You are responsible for messing up your own PATH.  
+**Be careful** doing this! You are responsible for messing up your own PATH.  
 
 ### Adding to the PATH on OSX/Linux
 `$ export PATH=path/to/add:$PATH`  

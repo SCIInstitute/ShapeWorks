@@ -31,7 +31,8 @@ You can also install these [dependencies](deps.txt) manually if you prefer not t
 ### Qt5  
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)  
 After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](GettingStarted.md#PATH-environment-variable) for help with this)  
-Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
+Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
+Example qmake directory Windows: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
 ### VXL, VTK, and ITK
 These three dependencies can be installed using the **superbuild.sh** script.  
@@ -67,9 +68,9 @@ Required:
 ```
   -G<generator> (For example: -GXCode or -G"Visual Studio 16 2019" -Ax64)
   -DCMAKE_PREFIX_PATH=<qt cmake path>  (This is different from qmake path in the Install Qt5 step
-  -DVXL_DIR=<vxl cmake path>  (contains VXLConfig.cmake)
-  -DVTK_DIR=<vtk cmake path>  (contains VTKConfig.cmake)
-  -DITK_DIR=<itk cmake path>  (contains ITKConfig.cmake)
+  -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
+  -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
+  -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
 ```
 Optional:
 ```
@@ -107,5 +108,5 @@ open ShapeWorks.xcodeproj
 $ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
 mkdir build
 cd build
-cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=dependencies/vxl/build -DVTK_DIR=dependencies/lib/cmake/vtk-8.2 -DITK_DIR=dependencies/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```
