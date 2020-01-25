@@ -14,6 +14,10 @@ public:
 
 private:
     ParticleShapeStatistics<3> particles;
+
+    double ComputeCompactness(const int nModes) const;
+    double ComputeGeneralizability(const int nModes) const;
+    double ComputeSpecificity(const int nModes) const;
 };
 }
 
