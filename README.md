@@ -47,21 +47,16 @@ Table of Contents
 Installation
 =====================
 
-Download
+Users
 ---------------------
 
 The latest shapeworks release can be downloaded here:
 
 https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.1
 
-To build shapeworks from source, please see **[Development](#development)**.
-
-Development
+Developers
 ---------------------
 Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
-<!--
-Please see **[GettingStarted.md](GettingStarted.md)** for help using `git` to clone code and `MarkDown` for documentation.
--->
 
 <!-- the below is not updated with dead linkes
 Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
