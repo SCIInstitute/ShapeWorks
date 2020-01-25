@@ -66,8 +66,7 @@ def Run_LeftAtrium_Pipline(args):
         fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
         fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
 
-    if args.start_with_image_and_segmentation_data:
-
+    if args.start_with_image_and_segmentation_data and fileList_img:
         """
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
@@ -93,7 +92,6 @@ def Run_LeftAtrium_Pipline(args):
 
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
-
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
 
@@ -105,10 +103,8 @@ def Run_LeftAtrium_Pipline(args):
 
         Both the segmentation and raw images are padded.
         """
-
         paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', resampledFiles_segmentations, 10)
         paddedFiles_images = applyPadding(parentDir+ 'padded/images', resampledFiles_images, 10)
-
 
         """
         Apply center of mass alignment

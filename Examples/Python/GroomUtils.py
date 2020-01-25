@@ -215,7 +215,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
 
     if processRaw:
-        rawoutDir = outDir + '/images'
+        rawoutDir = outDir + '/images/'
         binaryoutDir = outDir + '/segmentations'
 
         if not os.path.exists(rawoutDir):
@@ -335,7 +335,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     outDir = parentDir + '/cropped'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    cropinfoDir = outDir + '/crop_info'
+    cropinfoDir = outDir + '/crop_info/'
     if not os.path.exists(cropinfoDir):
         os.makedirs(cropinfoDir)
     # first create a txtfile with all the scan names in it.
@@ -355,8 +355,8 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     smI1 = np.loadtxt(outPrefix + "_smallestIndex1.txt")
     smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
     if processRaw:
-        rawoutDir = outDir + '/images'
-        binaryoutDir = outDir + '/segmentations'
+        rawoutDir = outDir + '/images/'
+        binaryoutDir = outDir + '/segmentations/'
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
         if not os.path.exists(binaryoutDir):

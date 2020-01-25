@@ -60,9 +60,9 @@ def Run_Femur_Pipline(args):
         print("Downloading " + filename + " from SCIGirder.")
         datasets.downloadDataset(filename)
 
-    # # extract the zipfile
-    # with ZipFile(filename, 'r') as zipObj:
-    #     zipObj.extractall(path=parentDir)
+    # extract the zipfile
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -88,28 +88,7 @@ def Run_Femur_Pipline(args):
             os.mkdir(parentDir)
                 # set name specific variables
         img_suffix = "1x_hip"
-        left_suffix = "L_femur"
-        right_suffix = "R_femur"
-        mesh_extension = "ply"
         reference_side = "left" # somewhat arbitrary
-
-        # If not interactive, get cutting plane on a mesh user specifies
-        if not args.interactive:
-            input_mesh = ''
-            while not input_mesh:
-                cp_prefix = input("\nType the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
-                if cp_prefix:
-                    for file in os.listdir(inputDir):
-                        if cp_prefix in file and mesh_extension in file:
-                            input_mesh = inputDir + file
-                if not input_mesh:
-                    print("Invalid prefix.")
-            cutting_plane_points = SelectCuttingPlane(input_mesh)
-            if cp_prefix[-1] =='R':
-                reference_side = "Right"
-            print("Cutting plane points defined: ")
-            print(cutting_plane_points)
-            print("Continuing to groom.")
 
         # Get image ane mesh segmentation file lists
         files_img = []
@@ -120,6 +99,24 @@ def Run_Femur_Pipline(args):
         mesh_dir = inputDir + 'meshes/'
         for file in os.listdir(mesh_dir):
             files_mesh.append(mesh_dir + file)
+
+        # If not interactive, get cutting plane on a mesh user specifies
+        if not args.interactive:
+            input_mesh = ''
+            while not input_mesh:
+                cp_prefix = input("\nType the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
+                if cp_prefix:
+                    for file in files_mesh:
+                        if cp_prefix in file:
+                            input_mesh = file
+                if not input_mesh:
+                    print("Invalid prefix.")
+            cutting_plane_points = SelectCuttingPlane(input_mesh)
+            if cp_prefix[-1] =='R':
+                reference_side = "Right"
+            print("Cutting plane points defined: ")
+            print(cutting_plane_points)
+            print("Continuing to groom.")
 
         """
         Reflect - We have left and right femurs, so we reflect both image and mesh 
