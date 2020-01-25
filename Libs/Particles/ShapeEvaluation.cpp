@@ -16,7 +16,6 @@ namespace shapeworks {
         const int nModes = 1;
         std::cout << "Evaluating with nModes=" << nModes << "..." << std::endl;
 
-        this->particles.ComputeModes();
         const auto compactness = this->ComputeCompactness(nModes);
         const auto generalizability = this->ComputeGeneralizability(nModes);
         const auto specificity = this->ComputeSpecificity(nModes);
@@ -30,7 +29,7 @@ namespace shapeworks {
     }
 
     double ShapeEvaluation::ComputeCompactness(const int nModes) const {
-        // Assumes that modes are already computed
+        this->particles.ComputeModes();
 
         const int N = this->particles.SampleSize();
         const int D = this->particles.NumberOfDimensions();
@@ -54,13 +53,11 @@ namespace shapeworks {
 
     //TODO: Implement
     double ShapeEvaluation::ComputeGeneralizability(const int nModes) const {
-        // Assumes that modes are already computed
         return -1.0;
     }
 
     //TODO: Implement
     double ShapeEvaluation::ComputeSpecificity(const int nModes) const {
-        // Assumes that modes are already computed
         return -1.0;
     }
 }
