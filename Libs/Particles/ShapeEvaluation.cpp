@@ -28,7 +28,7 @@ namespace shapeworks {
         std::cout << "Specificity:      " << specificity << std::endl;
     }
 
-    double ShapeEvaluation::ComputeCompactness(const int nModes) const {
+    double ShapeEvaluation::ComputeCompactness(const int nModes) {
         this->particles.ComputeModes();
 
         const int N = this->particles.SampleSize();
@@ -52,12 +52,12 @@ namespace shapeworks {
     }
 
     //TODO: Implement
-    double ShapeEvaluation::ComputeGeneralizability(const int nModes) const {
+    double ShapeEvaluation::ComputeGeneralizability(const int nModes) {
         return -1.0;
     }
 
     //TODO: Implement
-    double ShapeEvaluation::ComputeSpecificity(const int nModes) const {
+    double ShapeEvaluation::ComputeSpecificity(const int nModes) {
         return -1.0;
     }
 }
