@@ -141,6 +141,10 @@ public:
   const vnl_vector<double> &Shape(unsigned int i) const
   { return m_shapes.get_column(i); }
 
+  /** Returns the shape with the mean subtracted */
+  const vnl_matrix<double> &RecenteredShape() const
+  { return m_pointsMinusMean; }
+
   std::vector<double> PercentVarByMode ()
   {return m_percentVarByMode;}
 

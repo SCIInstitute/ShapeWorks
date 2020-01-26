@@ -29,6 +29,8 @@ namespace shapeworks {
     }
 
     double ShapeEvaluation::ComputeCompactness(const int nModes) {
+        // Its probably best to just Compute SVD here, the ComputeModes function
+        // seems to be doing a lot of weird things...
         this->particles.ComputeModes();
 
         const int N = this->particles.SampleSize();
@@ -51,8 +53,39 @@ namespace shapeworks {
         return cumsum[nModes - 1];
     }
 
-    //TODO: Implement
     double ShapeEvaluation::ComputeGeneralizability(const int nModes) {
+        const int N = this->particles.SampleSize();
+        const int D = this->particles.NumberOfDimensions();
+
+        const auto & P = this->particles.RecenteredShape();
+
+        for(int leave=0; leave<N; leave++) {
+            vnl_matrix<double> Y(D, N-1); // Store all particles except one.
+            //TODO: Copy these without extra memory... Perhaps using `update` and/or `extract`
+            // see https://vxl.github.io/doc/release/core/vnl/html/classvnl__matrix.html#adc6f9aab16a597e0addbab45a023e986
+            for(int i=0; i<N; i++) {
+                if(i < leave) {
+                    Y.set_column(i, P.get_column(i));
+                } else if(i > leave) {
+                    Y.set_column(i-1, P.get_column(i));
+                }
+            }
+
+            const auto Ytest = P.get_column(leave);
+
+            //TODO: This is _slightly_ off by the MATLAB SVD result. Why?
+            // C++ S[0] = 7841.8507, MATLAB S(1) = 7794.4
+            vnl_svd<double> svd(Y);
+            const auto S = svd.W().diagonal().apply([](const double &x) { return x * x; }); //TODO: Is there a better way to perform elem-wise square?
+            const auto epsi = svd.U().extract(D, nModes);
+            const auto betas = epsi.transpose() * Ytest;
+            const auto rec = epsi * betas;
+
+            const auto recDist = (rec - Ytest).two_norm();
+            std::cout << recDist << std::endl;
+        }
+
+
         return -1.0;
     }
 
