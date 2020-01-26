@@ -418,9 +418,6 @@ int ParticleShapeStatistics<VDimension>::ComputeModes()
     * m_pointsMinusMean * (1.0/((double)(m_numSamples-1)));
   vnl_symmetric_eigensystem<double> symEigen(A);
 
-  // vnl_svd<double> symSvd(m_pointsMinusMean);
-
-
   m_eigenvectors = m_pointsMinusMean * symEigen.V;
   m_eigenvalues.set_size(m_numSamples);
 
@@ -440,7 +437,6 @@ int ParticleShapeStatistics<VDimension>::ComputeModes()
       }
 
     m_eigenvalues(i) = std::sqrt(symEigen.D(i, i));
-    // m_eigenvalues(i) = symSvd.W(i);
     }
   
   float sum = 0.0;
