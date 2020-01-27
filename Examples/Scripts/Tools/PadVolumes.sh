@@ -124,9 +124,15 @@ do
     EchoWithColor  "imgfilename_padded $imgfilename_padded" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
-    PadVolumeWithConstant --inFilename $segfilename --outFilename $segfilename_padded --paddingSize $padding_size --paddingValue $padVal
+    shapeworks readimage --name $segfilename padvolume writeimage --name $segfilename_padded
     if [ $process_raw -eq 1 ]
     then
-      PadVolumeWithConstant --inFilename $imgfilename --outFilename $imgfilename_padded --paddingSize $padding_size --paddingValue $padVal
+      shapeworks readimage --name $imgfilename padvolume writeimage --name $imgfilename_padded
     fi
+
+    # PadVolumeWithConstant --inFilename $segfilename --outFilename $segfilename_padded --paddingSize $padding_size --paddingValue $padVal
+    # if [ $process_raw -eq 1 ]
+    # then
+    #   PadVolumeWithConstant --inFilename $imgfilename --outFilename $imgfilename_padded --paddingSize $padding_size --paddingValue $padVal
+    # fi
 done

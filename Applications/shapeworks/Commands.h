@@ -108,7 +108,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Smoothmesh : public MeshCommand
+class SmoothMesh : public MeshCommand
 {
 public:
   static SmoothMesh& getCommand() { static SmoothMesh instance; return instance; }

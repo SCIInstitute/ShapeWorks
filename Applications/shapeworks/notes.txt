@@ -63,7 +63,12 @@ Image commands:
 [] *ExtractGivenLabelImage
 [] *FastMarching
 [] *FindLargestBoundingBox
-[] *PadVolumeWithConstant
+[] *PadVolumeWithConstant -> shapeworks padvolume
+o Examples:
+ - ./shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd padvolume --paddingSize 0 --paddingValue 0.0 writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/padvolume_seg.ellipsoid_0.nrrd
+
+ - ./PadVolumeWithConstant --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/archanasrisubramanian/Desktop/shapeworks_results/oldpadvolume_seg.ellipsoid_0.nrrd --paddingSize=0 --paddingValue=0.0
+
 [] *ReflectVolumes
 
 [x] ResampleVolumesToBeIsotropic -> shapeworks resampleimage (per request during 2020.01.07 meeting)
