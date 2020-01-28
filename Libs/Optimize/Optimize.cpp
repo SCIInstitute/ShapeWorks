@@ -321,6 +321,12 @@ void Optimize::SetOutputCuttingPlaneFile(std::string output_cutting_plane_file)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetProcessingMode(int mode)
+{
+  this->m_processing_mode = mode;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::ReadOptimizationParameters(const char* fname)
 {
   TiXmlDocument doc(fname);
@@ -332,10 +338,6 @@ void Optimize::ReadOptimizationParameters(const char* fname)
 
   TiXmlHandle docHandle(&doc);
   TiXmlElement* elem;
-
-  this->m_processing_mode = 3;
-  elem = docHandle.FirstChild("processing_mode").Element();
-  if (elem) { this->m_processing_mode = atoi(elem->GetText());}
 
   this->m_adaptivity_mode = 0;
   elem = docHandle.FirstChild("adaptivity_mode").Element();

@@ -108,6 +108,9 @@ public:
   void SetDistributionDomainID(int distribution_domain_id);
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
 
+
+  void SetProcessingMode(int mode);
+
   virtual void ReadOptimizationParameters(const char* fname);
   void SetDebugParameters(const char* fname);
   virtual void ReadInputs(const char* fname);
@@ -181,7 +184,7 @@ protected:
   std::string m_output_cutting_plane_file;
 
   // ReadOptimizationParameters
-  int m_processing_mode;
+  int m_processing_mode = 3;
   int m_adaptivity_mode;
   double m_adaptivity_strength;
   int m_pairwise_potential_type;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
