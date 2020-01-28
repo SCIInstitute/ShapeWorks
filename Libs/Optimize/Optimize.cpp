@@ -61,6 +61,28 @@ Optimize::Optimize()
 {}
 
 //---------------------------------------------------------------------------
+bool Optimize::Run()
+{
+  // sanity check
+  if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
+    std::cerr <<
+      "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()\n";
+    return false;
+  }
+
+  m_disable_procrustes = true;
+  m_disable_checkpointing = true;
+  // Initialize
+  if (m_processing_mode >= 0) { this->Initialize();}
+  // Introduce adaptivity
+  if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity();}
+  // Optimize
+  if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::LoadParameters(const char* fn)
 {
   if (this->m_verbosity_level == 0) {
@@ -68,11 +90,6 @@ void Optimize::LoadParameters(const char* fn)
       "Verbosity 0: This will be the only output on your screen, unless there are any errors. Increase the verbosity if needed."
               << std::endl;
   }
-
-  // Read parameter file
-  this->startMessage("Reading i/o parameters...");
-  this->ReadIOParameters(fn);
-  this->doneMessage();
 
   this->startMessage("Reading optimization parameters...");
   this->ReadOptimizationParameters(fn);
@@ -244,97 +261,51 @@ void Optimize::SetPrefixTransformFile(std::string prefix_transform_file)
 }
 
 //---------------------------------------------------------------------------
-void Optimize::ReadIOParameters(const char* fname)
+void Optimize::SetOutputDir(std::string output_dir)
 {
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
+  this->m_output_dir = output_dir;
+}
 
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
+//---------------------------------------------------------------------------
+void Optimize::SetOutputTransformFile(std::string output_transform_file)
+{
+  this->m_output_transform_file = output_transform_file;
+}
 
-    /// TODO: move this check
-    if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
-      std::cerr <<
-        "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()" <<
-        std::endl;
-      throw 1;
-    }
+//---------------------------------------------------------------------------
+void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes)
+{
+  this->m_mesh_based_attributes = use_mesh_based_attributes;
+}
 
-    this->m_output_dir = "";
-    elem = docHandle.FirstChild("output_dir").Element();
-    if (elem) { this->m_output_dir = elem->GetText();}
+//---------------------------------------------------------------------------
+void Optimize::SetUseXYZ(std::vector<bool> use_xyz)
+{
+  this->m_use_xyz = use_xyz;
+}
 
-    this->m_output_transform_file = "transform";
-    elem = docHandle.FirstChild("output_transform_file").Element();
-    if (elem) { this->m_output_transform_file = elem->GetText();}
+//---------------------------------------------------------------------------
+void Optimize::SetUseNormals(std::vector<bool> use_normals)
+{
+  this->m_use_normals = use_normals;
+}
 
-    this->m_mesh_based_attributes = false;
-    elem = docHandle.FirstChild("mesh_based_attributes").Element();
-    if (elem) { this->m_mesh_based_attributes = (bool) atoi(elem->GetText());}
-    if (m_mesh_based_attributes) {
-      m_use_xyz.clear();
-      elem = docHandle.FirstChild("use_xyz").Element();
-      if (elem) {
-        std::istringstream inputsBuffer;
-        std::string num;
-        inputsBuffer.str(elem->GetText());
-        while (inputsBuffer >> num) {
-          this->m_use_xyz.push_back((bool) atoi(num.c_str()));
-        }
+//---------------------------------------------------------------------------
+void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain)
+{
+  this->m_attributes_per_domain = attributes_per_domain;
+}
 
-        if (this->m_domains_per_shape != this->m_use_xyz.size()) {
-          std::cerr << "Inconsistency in parameters... m_domains_per_shape != m_use_xyz.size()" <<
-            std::endl;
-          throw 1;
-        }
-      }
+//---------------------------------------------------------------------------
+void Optimize::SetDistributionDomainID(int distribution_domain_id)
+{
+  this->m_distribution_domain_id = distribution_domain_id;
+}
 
-      m_use_normals.clear();
-      elem = docHandle.FirstChild("use_normals").Element();
-      if (elem) {
-        std::istringstream inputsBuffer;
-        std::string num;
-        inputsBuffer.str(elem->GetText());
-        while (inputsBuffer >> num) {
-          this->m_use_normals.push_back((bool) atoi(num.c_str()));
-        }
-
-        if (this->m_domains_per_shape != this->m_use_normals.size()) {
-          std::cerr <<
-            "Inconsistency in parameters... m_domains_per_shape != m_use_normals.size()" <<
-            std::endl;
-          throw 1;
-        }
-      }
-    }
-
-    this->m_attributes_per_domain.clear();
-    elem = docHandle.FirstChild("attributes_per_domain").Element();
-    if (elem) {
-      std::istringstream inputsBuffer;
-      std::string num;
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> num) {
-        this->m_attributes_per_domain.push_back(atoi(num.c_str()));
-      }
-
-      if (this->m_domains_per_shape != this->m_attributes_per_domain.size()) {
-        std::cerr <<
-          "Inconsistency in parameters... m_domains_per_shape != m_attributes_per_domain.size()" <<
-          std::endl;
-        throw 1;
-      }
-    }
-
-    this->m_distribution_domain_id = -1;
-    elem = docHandle.FirstChild("distribution_plane_id").Element();
-    if (elem) { this->m_distribution_domain_id = atoi(elem->GetText());}
-
-    this->m_output_cutting_plane_file = "";
-    elem = docHandle.FirstChild("output_cutting_plane_file").Element();
-    if (elem) { this->m_output_cutting_plane_file = elem->GetText();}
-  }
+//---------------------------------------------------------------------------
+void Optimize::SetOutputCuttingPlaneFile(std::string output_cutting_plane_file)
+{
+  this->m_output_cutting_plane_file = output_cutting_plane_file;
 }
 
 //---------------------------------------------------------------------------

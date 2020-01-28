@@ -46,17 +46,7 @@ public:
   typedef typename itk::ParticleVectorFunction<3>::VectorType VectorType;
   typename itk::MemberCommand<Optimize>::Pointer m_Iteratecmd;
 
-  virtual void Run()
-  {
-    m_disable_procrustes = true;
-    m_disable_checkpointing = true;
-    // Initialize
-    if (m_processing_mode >= 0) { this->Initialize();}
-    // Introduce adaptivity
-    if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity();}
-    // Optimize
-    if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
-  }
+  virtual bool Run();
 
   virtual void RunProcrustes()
   {
@@ -94,20 +84,28 @@ public:
     }
   }
 
+  // constrictor
   Optimize();
+
   void LoadParameters(const char* fname);
+
   virtual ~Optimize();
 
   void SetVerbosity(int verbosity_level);
   void SetDomainsPerShape(int domains_per_shape);
   void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
 
-
   void SetTransformFile(std::string filename);
   void SetPrefixTransformFile(std::string prefix_transform_file);
+  void SetOutputDir(std::string output_dir);
+  void SetOutputTransformFile(std::string output_transform_file);
+  void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
+  void SetUseXYZ(std::vector<bool> use_xyz);
+  void SetUseNormals(std::vector<bool> use_normals);
+  void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
+  void SetDistributionDomainID(int distribution_domain_id);
+  void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
 
-
-  virtual void ReadIOParameters(const char* fname);
   virtual void ReadOptimizationParameters(const char* fname);
   void SetDebugParameters(const char* fname);
   virtual void ReadInputs(const char* fname);
@@ -173,11 +171,11 @@ protected:
   std::string m_prefix_transform_file;
   std::string m_output_dir;
   std::string m_output_transform_file;
-  bool m_mesh_based_attributes;
+  bool m_mesh_based_attributes = false;
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;
   std::vector<int> m_attributes_per_domain;
-  int m_distribution_domain_id;
+  int m_distribution_domain_id = -1;
   std::string m_output_cutting_plane_file;
 
   // ReadOptimizationParameters
