@@ -129,10 +129,4 @@ do
     then
       shapeworks readimage --name $imgfilename padvolume writeimage --name $imgfilename_padded
     fi
-
-    # PadVolumeWithConstant --inFilename $segfilename --outFilename $segfilename_padded --paddingSize $padding_size --paddingValue $padVal
-    # if [ $process_raw -eq 1 ]
-    # then
-    #   PadVolumeWithConstant --inFilename $imgfilename --outFilename $imgfilename_padded --paddingSize $padding_size --paddingValue $padVal
-    # fi
 done

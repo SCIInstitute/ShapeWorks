@@ -329,8 +329,8 @@ bool Image::padvolume(int paddingSize, float paddingValue)
 
   ImageType::PixelType constantPixel = paddingValue;
 
-  using ConstantPadImageFilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
-  ConstantPadImageFilterType::Pointer padFilter = ConstantPadImageFilterType::New();
+  using PadFilter = itk::ConstantPadImageFilter<ImageType, ImageType>;
+  PadFilter::Pointer padFilter = PadFilter::New();
 
   padFilter->SetInput(this->image);
   padFilter->SetPadLowerBound(lowerExtendRegion);
