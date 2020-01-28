@@ -52,10 +52,14 @@ mkdir build
 cd build
 cmake <options> ..
 ```
-- **On OSX/Linux**, you can use a GUI by running `ccmake` instead of `cmake`.  
-- **On Windows**, you can use the CMake application. You might need to specify the paths for cmake, VXL, VTK, and ITK explicitly.
 
 ### Cmake Options
+
+Edit the cmake options to specify the paths for qmake, VXL, VTK, and ITK explicitly.
+
+- **On OSX/Linux**, you can use a GUI by running `ccmake` instead of `cmake`.  
+- **On Windows**, you can use the CMake application. You might need to specify the paths.
+
 Required:  
 ```
   -G<generator> (For example: -GXCode or -G"Visual Studio 16 2019" -Ax64)
