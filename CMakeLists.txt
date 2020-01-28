@@ -101,7 +101,7 @@ endif()
 ### vtk
 find_package(VTK ${SHAPEWORKS_VTK_VERSION_MIN})
 if (NOT VTK_FOUND)
-  message(FATAL_ERROR "** VTK not found. By default cmake will download it (see BUILD.md)")
+  message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
 endif()
 include(${VTK_USE_FILE})
 
@@ -111,7 +111,7 @@ IF(VXL_FOUND)
   # this adds deprecated VXL variables to the cmake namespace (TODO: use the new ones)
   INCLUDE (${VXL_CMAKE_DIR}/UseVXL.cmake)
 ELSE(VXL_FOUND)
-  MESSAGE(SEND_ERROR "VXL is required, but could not be found.")
+  MESSAGE(SEND_ERROR "VXL is required, but could not be found! Make sure path to VXLConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF(VXL_FOUND)
 
 ### ITK
@@ -119,7 +119,7 @@ FIND_PACKAGE(ITK ${SHAPEWORKS_ITK_VERSION_MIN} REQUIRED)
 IF (ITK_FOUND)
   INCLUDE(${ITK_USE_FILE})
 ELSE()
-  MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found.")
+  MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
 
 if(USE_OPENMP)
@@ -166,10 +166,8 @@ if (SHAPEWORKS_GUI)
   get_filename_component(Qt_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
   get_filename_component(Qt_PREFIX_DIR "${Qt_BIN_DIR}" PATH)
   get_filename_component(QT_LOC Qt5::Widgets DIRECTORY)
-  MESSAGE(STATUS "QT libs: ${QT_LOC}")
   
   set(qtlib "Widgets")
-  MESSAGE(STATUS "QT libs: ${QT_LIB_DIR_tmp}")
   
   get_filename_component(qt_dlls_dir "${QtWidgets_location}" PATH)
   get_filename_component(qt_dlls_dir "${qt_dlls_dir}" PATH)

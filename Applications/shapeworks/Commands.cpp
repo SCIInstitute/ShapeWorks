@@ -263,6 +263,34 @@ int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &shar
   return sharedData.mesh.smooth(/*maxRMSErr, numIter*/);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Coverage
+///////////////////////////////////////////////////////////////////////////////
+void Coverage::buildParser()
+{
+  const std::string prog = "coverage";
+  const std::string desc = "coverage between two meshes";
+  parser.prog(prog).description(desc);
+  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
+
+  if (second_mesh_string == "")
+  {
+    std::cerr << "Must specify second mesh\n";
+    return -1;
+  }
+  Mesh second_mesh;
+  second_mesh.read(second_mesh_string);
+
+  return sharedData.mesh.coverage(second_mesh);
+}
 
 
 } // shapeworks
