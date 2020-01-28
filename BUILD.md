@@ -76,7 +76,7 @@ Optional:
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
   -DCMAKE_BUILD_TYPE=[Debug|Release]  
 ```
-**See [examples](#Examples) above for common values of the variables**  
+**See [examples](#Examples) below for common values of the variables**  
 
 ### Building
 - Makefiles: `make -j<num_procs>` where num_procs is the number of parallel processes, say 8.  
