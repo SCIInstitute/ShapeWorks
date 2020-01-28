@@ -19,6 +19,16 @@ TEST(ImageTests, resample_test) {
   ASSERT_TRUE(image.compare_equal(ground_truth));
 }
 
+TEST(ImageTests, padvolume_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/padvolume/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.padvolume(0, 0.0);
+  Image ground_truth(test_location + "padvolume_baseline.nrrd");
+
+  ASSERT_TRUE(image.compare_equal(ground_truth));
+}
+
 //TEST(ImageTests, blah_test) {
 
 // ...

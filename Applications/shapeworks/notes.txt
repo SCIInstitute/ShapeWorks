@@ -17,7 +17,7 @@ HOWTO start a new command:
  4) find all uses of the command (in .sh and .py files) and change them to use the new shapeworks subcommand:
   $ find Examples -name "*" -type f -exec grep -i "OldCommandName" {} \; -print
  5) test command as needed to ensure it works the same as before (unless there was already a bug :)
-  5b add unit tests for new classes (follow Alan's example for a function in Image)
+  5b) add unit tests for new classes (follow Alan's example for a function in Image)
  6) remove the old command from its directory's CMakeLists.txt and `git rm OldCommandName.cxx`
  7) commit the results and make a pull request *to executable* (not to master)
  
@@ -35,6 +35,8 @@ General tasks:
 
 Commands:   (* means OptionParser already used, otherwise just argv)
 -----------------------------
+ShapeWorksToolsConsolidation -> https://docs.google.com/spreadsheets/d/17gevfSR-bY3cSr0C-rAmOe6kE8OtrFv06iWt_W10T1M/
+
 Image commands:
 
 [x] readimage
