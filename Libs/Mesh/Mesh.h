@@ -34,6 +34,6 @@ public:
   bool compare_scalars_equal(const Mesh& other_mesh);
 
 private:
-  vtkSmartPointer<vtkPolyData> mesh;
+  vtkSmartPointer<vtkPolyData> poly_data_;
 };
 } // shapeworks
