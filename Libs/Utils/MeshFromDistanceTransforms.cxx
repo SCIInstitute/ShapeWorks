@@ -141,16 +141,12 @@ int main(int argc, char *argv[])
     ConnectorType::Pointer connector = ConnectorType::New();
     
     reader->SetFileName(inFilenames[shapeNo].c_str());
+    reader->Update();
     connector->SetInput(reader->GetOutput());
-      
-      //vtkSmartPointer<vtkMetaImageReader> reader = vtkSmartPointer<vtkMetaImageReader>::New();
-      //reader->SetFileName( inFilenames[shapeNo].c_str() );
-      //reader->Update();
+      connector->Update();
       std::cout << "processing DT: " << inFilenames[shapeNo].c_str() << "..";
       
-      vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
-      //vtkSmartPointer<vtkMarchingCubes> ls = vtkSmartPointer<vtkMarchingCubes>::New();
-      //ls->SetInputConnection( reader->GetOutputPort() );
+      vtkSmartPointer<vtkMarchingCubes> ls = vtkSmartPointer<vtkMarchingCubes>::New();
       ls->SetInputData( connector->GetOutput() );
       ls->SetValue(0, levelsetValue);
       ls->Update();
@@ -184,12 +180,6 @@ int main(int argc, char *argv[])
       writer->Update();
       std::cout << " Done !" << std::endl;
     
-        
-    //vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
-    //writer->SetInputConnection(smoother->GetOutputPort());
-    //writer->SetFileName( outFilenames[shapeNo].c_str() );
-    //writer->Update();
-    //std::cout << " Done !" << std::endl;
   }
 
   return EXIT_SUCCESS;
