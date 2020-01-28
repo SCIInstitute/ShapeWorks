@@ -135,7 +135,6 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
   filter->SetLowerThreshold(threshold);
   filter->SetInsideValue(inside);
   filter->SetOutsideValue(outside);
-  filter->SetInsideValue(itk::NumericTraits<PixelType>::One);
 
   filter->SetInput(this->image);
   this->image = filter->GetOutput();
