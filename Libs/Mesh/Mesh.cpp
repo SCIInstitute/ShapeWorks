@@ -110,12 +110,12 @@ bool Mesh::compare_points_equal(const Mesh &other_mesh)
 bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
 {
   if (!this->poly_data_ || !other_mesh.poly_data_) {
-    std::cerr << "Mesh Compare: both polydata don't exist";
+    std::cout << "Mesh Compare: both polydata don't exist";
     return false;
   }
 
   if (this->poly_data_->GetNumberOfPoints() != other_mesh.poly_data_->GetNumberOfPoints()) {
-    std::cerr << "Mesh Compare: both polydata differ in number of points";
+    std::cout << "Mesh Compare: both polydata differ in number of points";
     return false;
   }
 
@@ -123,12 +123,12 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
   vtkDataArray* scalars2 = other_mesh.poly_data_->GetPointData()->GetScalars();
 
   if (!scalars1 || !scalars2) {
-    std::cerr << "Mesh Compare: no scalars";
+    std::cout << "Mesh Compare: no scalars";
     return false;
   }
 
   if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues()) {
-    std::cerr << "Mesh Compare: different number of scalars";
+    std::cout << "Mesh Compare: different number of scalars";
     return false;
   }
 
@@ -136,7 +136,7 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
     vtkVariant var1 = scalars1->GetVariantValue(i);
     vtkVariant var2 = scalars2->GetVariantValue(i);
     if (var1 != var2) {
-      std::cerr << "Mesh Compare: values differ: " << var1 << " != " << var2 << "\n";
+      std::cout << "Mesh Compare: values differ: " << var1 << " != " << var2 << "\n";
       return false;
     }
   }
