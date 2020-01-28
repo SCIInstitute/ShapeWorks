@@ -93,7 +93,9 @@ public:
 
   void SetVerbosity(int verbosity_level);
   void SetDomainsPerShape(int domains_per_shape);
+  int GetDomainsPerShape();
   void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
+  std::vector<unsigned int> GetNumberOfParticles();
 
   void SetTransformFile(std::string filename);
   void SetPrefixTransformFile(std::string prefix_transform_file);

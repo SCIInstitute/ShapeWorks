@@ -243,9 +243,21 @@ void Optimize::SetDomainsPerShape(int domains_per_shape)
 }
 
 //---------------------------------------------------------------------------
+int Optimize::GetDomainsPerShape()
+{
+  return this->m_domains_per_shape;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particles)
 {
   this->m_number_of_particles = number_of_particles;
+}
+
+//---------------------------------------------------------------------------
+std::vector<unsigned int> Optimize::GetNumberOfParticles()
+{
+  return this->m_number_of_particles;
 }
 
 //---------------------------------------------------------------------------
