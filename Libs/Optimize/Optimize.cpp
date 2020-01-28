@@ -232,6 +232,18 @@ void Optimize::SetNumberOfParticles(std::vector<unsigned int> number_of_particle
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetTransformFile(std::string filename)
+{
+  this->m_transform_file = filename;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetPrefixTransformFile(std::string prefix_transform_file)
+{
+  this->m_prefix_transform_file = prefix_transform_file;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::ReadIOParameters(const char* fname)
 {
   TiXmlDocument doc(fname);
@@ -248,14 +260,6 @@ void Optimize::ReadIOParameters(const char* fname)
         std::endl;
       throw 1;
     }
-
-    this->m_transform_file = "";
-    elem = docHandle.FirstChild("transform_file").Element();
-    if (elem) { this->m_transform_file = elem->GetText();}
-
-    this->m_prefix_transform_file = "";
-    elem = docHandle.FirstChild("prefix_transform_file").Element();
-    if (elem) { this->m_prefix_transform_file = elem->GetText();}
 
     this->m_output_dir = "";
     elem = docHandle.FirstChild("output_dir").Element();

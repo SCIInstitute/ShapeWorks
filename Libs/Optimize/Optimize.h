@@ -102,6 +102,11 @@ public:
   void SetDomainsPerShape(int domains_per_shape);
   void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
 
+
+  void SetTransformFile(std::string filename);
+  void SetPrefixTransformFile(std::string prefix_transform_file);
+
+
   virtual void ReadIOParameters(const char* fname);
   virtual void ReadOptimizationParameters(const char* fname);
   void SetDebugParameters(const char* fname);
