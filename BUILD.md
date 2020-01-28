@@ -1,9 +1,7 @@
 ---
----
 
 # Building ShapeWorks from source
 
----
 ---
 
 This document contains detailed instructions on building ShapeWorks from scratch. This guide will consist of three main steps. The steps will be summarized, but you can click on the links to access further information.
