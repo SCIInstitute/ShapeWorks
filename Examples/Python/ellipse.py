@@ -32,7 +32,7 @@ from AnalyzeUtils import *
 
 
 
-def Run_Ellipsoid_Pipeline(args):
+def Run_Pipeline(args):
 
     """
     Unzip the data for this tutorial.

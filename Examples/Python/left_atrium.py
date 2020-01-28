@@ -31,7 +31,7 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 
-def Run_LeftAtrium_Pipline(args):
+def Run_Pipline(args):
 
     """
     Unzip the data for this tutorial.

@@ -29,7 +29,7 @@ from AnalyzeUtils import *
 
 from DatasetUtils import datasets
 
-def Run_Femur_Pipline(args):
+def Run_Pipeline(args):
 
     """
     Unzip the data for this tutorial.
