@@ -166,10 +166,8 @@ if (SHAPEWORKS_GUI)
   get_filename_component(Qt_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
   get_filename_component(Qt_PREFIX_DIR "${Qt_BIN_DIR}" PATH)
   get_filename_component(QT_LOC Qt5::Widgets DIRECTORY)
-  MESSAGE(STATUS "QT libs: ${QT_LOC}")
   
   set(qtlib "Widgets")
-  MESSAGE(STATUS "QT libs: ${QT_LIB_DIR_tmp}")
   
   get_filename_component(qt_dlls_dir "${QtWidgets_location}" PATH)
   get_filename_component(qt_dlls_dir "${qt_dlls_dir}" PATH)
