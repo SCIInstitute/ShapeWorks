@@ -43,7 +43,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
 
         cmd = ["shapeworks", "readimage", "--name", inname]
 
-        if binary:
+        if isBinary:
             cmd.extend([antialias])
 
         cmd.extend(["resample", "--isospacing", str(isoSpacing), "--bsplinefilter", str(binary), "--defaultvalue", str(-1.0 * binary)])  #todo: add --defaultvalue to resample params, and get rid of bsplinefilter altogether
