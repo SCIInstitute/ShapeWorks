@@ -11,9 +11,10 @@ shapeworks binaries and set the necessary library paths
 """
 import os
 import platform
-from RunEllipsoid import *
-from RunLeftAtrium import *
-from RunFemur import *
+import argparse
+import subprocess
+import sys
+
 
 # Path pre-setup
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
@@ -33,6 +34,12 @@ parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (def
 args = parser.parse_args()
 binpath = args.shapeworks_path
 
+try:
+    module = __import__(args.use_case)
+except:
+    print('\nError: use case "' + args.use_case + '" unrecognized.\n')
+    sys.exit(1)
+
 # Path final
 if platform.system() == "Darwin":
     items = binpath.split(os.pathsep)
@@ -44,18 +51,8 @@ if platform.system() == "Darwin":
 os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
 
 try:
-    if args.use_case == "ellipse":
-        Run_Ellipsoid_Pipeline(args)
-        print("\nShapeworks Pipeline Complete!")
-    elif args.use_case == "left_atrium":
-        Run_LeftAtrium_Pipline(args)
-        print("\nShapeworks Pipeline Complete!")
-    elif args.use_case == "femur":
-        Run_Femur_Pipline(args)
-        print("\nShapeworks Pipeline Complete!")
-    else:
-        print("Unrecognized use case, current supported use cases are: ellipse, left_atrium, and femur.")
-
+    module.Run_Pipeline(args)
+    print("\nShapeworks Pipeline Complete!")
 except KeyboardInterrupt:
     print("KeyboardInterrupt exception caught")
     sys.exit(1)

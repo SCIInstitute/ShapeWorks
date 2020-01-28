@@ -7,7 +7,8 @@ import os
 import subprocess
 import shutil
 import xml.etree.ElementTree as ET
-import SimpleITK as sitk
+# import SimpleITK as itk
+import itk
 import vtk
 import vtk.util.numpy_support
 
@@ -144,15 +145,15 @@ def FindReferenceImage(inDataList):
     IMG = []
     DIM = []
     for i in range(len(inDataList)):
-        tmp = sitk.GetArrayFromImage(sitk.ReadImage(inDataList[i]))
+        tmp = itk.GetArrayFromImage(itk.ReadImage(inDataList[i]))
         IMG.append(tmp)
         DIM.append(tmp.shape)
     ref_dim = np.max(DIM, axis =0)
     for i in range(len(inDataList)):
         IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant', constant_values = 0)
     COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
-    mean = sitk.GetImageFromArray(COM)
-    writer = sitk.ImageFileWriter()
+    mean = itk.GetImageFromArray(COM)
+    writer = itk.ImageFileWriter()
     writer.SetFileName("mean.nrrd")
     writer.Execute(mean)
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
