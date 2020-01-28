@@ -5,12 +5,20 @@
 
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkPointData.h>
 
 //#include <vtkVersion.h>
 //#include <vtkPointData.h>
 //#include <vtkPolyDataNormals.h>
 //#include <vtkSmoothPolyDataFilter.h>
 
+static bool compare_double(double a, double b)
+{
+  const double EPSILON = 1e-6;
+  return fabs(a - b) < EPSILON;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 namespace shapeworks {
 
 //<ctc> TODO: mesh
@@ -72,6 +80,62 @@ bool Mesh::coverage(const Mesh &other_mesh)
 ///////////////////////////////////////////////////////////////////////////////
 bool Mesh::smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoothing*/)
 {
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Mesh::compare_points_equal(const Mesh &other_mesh)
+{
+  if (!this->mesh || !other_mesh.mesh) {
+    return false;
+  }
+
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
+    return false;
+  }
+
+  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
+    double* point1 = this->mesh->GetPoint(i);
+    double* point2 = other_mesh.mesh->GetPoint(i);
+    if (!compare_double(point1[0], point2[0])
+        || !compare_double(point1[1], point2[1])
+        || !compare_double(point1[2], point2[2])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
+{
+  if (!this->mesh || !other_mesh.mesh) {
+    return false;
+  }
+
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
+    return false;
+  }
+
+  vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
+  vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
+
+  if (!scalars1 || !scalars2) {
+    return false;
+  }
+
+  if (scalars1->GetNumberOfValues() != scalars2->GetNumberOfValues()) {
+    return false;
+  }
+
+  for (int i = 0; i < scalars1->GetNumberOfValues(); i++) {
+    vtkVariant var1 = scalars1->GetVariantValue(i);
+    vtkVariant var2 = scalars2->GetVariantValue(i);
+    if (var1 != var2) {
+      return false;
+    }
+  }
+
   return true;
 }
 
