@@ -2,6 +2,11 @@
 
 
 #include <iostream>
+#include <Eigen/Core>
+#include <Eigen/Dense>
+#include <Eigen/SVD>
+
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
 namespace shapeworks {
     ShapeEvaluation::ShapeEvaluation() {
@@ -29,64 +34,70 @@ namespace shapeworks {
     }
 
     double ShapeEvaluation::ComputeCompactness(const int nModes) {
-        // Its probably best to just Compute SVD here, the ComputeModes function
-        // seems to be doing a lot of weird things...
-        this->particles.ComputeModes();
-
         const int N = this->particles.SampleSize();
         const int D = this->particles.NumberOfDimensions();
+        const auto &_P = this->particles.ShapeMatrix();
 
-        auto eigenValues = this->particles.Eigenvalues(); // Makes a copy of the eigenvalues
-        eigenValues.flip();
-        eigenValues = eigenValues.apply([](const double &x) { return x * x; }); //TODO: Is there a better way to perform elem-wise square?
-        eigenValues *= N - 1;
+        Eigen::Map<const RowMajorMatrix> P(_P.data_block(), _P.rows(), _P.cols());
+        Eigen::MatrixXd Y = P;
+        const Eigen::VectorXd mu = Y.rowwise().mean();
+        Y.colwise() -= mu;
 
-        eigenValues /= N * D;
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
+        const auto S = svd.singularValues();
+        const auto eigValues = S.array().pow(2) / (N*D); //TODO: eigValues might be a misnomer.
+
         // Compute cumulative sum
-        vnl_vector<double> cumsum(N);
-        cumsum[0] = eigenValues[0];
+        Eigen::VectorXd cumsum(N);
+        cumsum[0] = eigValues(0);
         for(int i=1; i<N; i++) {
-            cumsum[i] = cumsum[i-1] + eigenValues[i];
+            cumsum(i) = cumsum(i-1) + eigValues(i);
         }
 
-        cumsum /= eigenValues.sum();
-        return cumsum[nModes - 1];
+        cumsum /= eigValues.sum();
+        return cumsum(nModes - 1);
     }
 
     double ShapeEvaluation::ComputeGeneralizability(const int nModes) {
         const int N = this->particles.SampleSize();
         const int D = this->particles.NumberOfDimensions();
 
-        const auto & P = this->particles.RecenteredShape();
+        const auto &_P = this->particles.ShapeMatrix();
+        const Eigen::Map<const RowMajorMatrix> P(_P.data_block(), _P.rows(), _P.cols());
 
+        double totalDist = 0.0;
         for(int leave=0; leave<N; leave++) {
-            vnl_matrix<double> Y(D, N-1); // Store all particles except one.
-            //TODO: Copy these without extra memory... Perhaps using `update` and/or `extract`
-            // see https://vxl.github.io/doc/release/core/vnl/html/classvnl__matrix.html#adc6f9aab16a597e0addbab45a023e986
+            Eigen::MatrixXd Y(D, N-1);
             for(int i=0; i<N; i++) {
                 if(i < leave) {
-                    Y.set_column(i, P.get_column(i));
+                    Y.col(i) = P.col(i);
                 } else if(i > leave) {
-                    Y.set_column(i-1, P.get_column(i));
+                    Y.col(i-1) = P.col(i);
                 }
             }
 
-            const auto Ytest = P.get_column(leave);
+            const Eigen::VectorXd mu = Y.rowwise().mean();
+            Y.colwise() -= mu;
+            const Eigen::VectorXd Ytest = P.col(leave) - mu;
 
-            //TODO: This is _slightly_ off by the MATLAB SVD result. Why?
-            // C++ S[0] = 7841.8507, MATLAB S(1) = 7794.4
-            vnl_svd<double> svd(Y);
-            const auto S = svd.W().diagonal().apply([](const double &x) { return x * x; }); //TODO: Is there a better way to perform elem-wise square?
-            const auto epsi = svd.U().extract(D, nModes);
+            Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
+            const auto epsi = svd.matrixU().block(0, 0, D, nModes);
             const auto betas = epsi.transpose() * Ytest;
-            const auto rec = epsi * betas;
+            const Eigen::VectorXd rec = epsi * betas;
 
-            const auto recDist = (rec - Ytest).two_norm();
-            std::cout << recDist << std::endl;
+            //TODO: This assumes 3-Dimensions
+            const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), D/3, 3);
+            const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), D/3, 3);
+            const double dist = (rec_reshaped - Ytest_reshaped)
+                    .array().pow(2)
+                    .matrix().rowwise().sum()
+                    .array().sqrt().sum();
+
+            totalDist += dist;
         }
 
-
-        return -1.0;
+        const double generalizability = totalDist / N;
+        return generalizability;
     }
 
     //TODO: Implement

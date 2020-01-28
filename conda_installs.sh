@@ -70,7 +70,8 @@ function install_conda() {
 	   git-lfs=2.6.1 \
 	   openmp=8.0.1 \
 	   ncurses=6.1 \
-	   libuuid=2.32.1
+	   libuuid=2.32.1 \
+	   eigen=3.3.7
       then return 1; fi
   fi
 
