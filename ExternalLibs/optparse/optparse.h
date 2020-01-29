@@ -1032,7 +1032,11 @@ namespace optparse
             std::string value;
 
             const Option &option = lookup_short_opt(opt);
-            if (option._nargs == 1)
+            if(option.type() == "multistring")
+            {
+                value = parse_multistring();
+            }
+            else if (option._nargs == 1)
             {
                 value = arg.substr(2);
                 if (value.empty())
@@ -1076,15 +1080,7 @@ namespace optparse
             const Option &option = lookup_long_opt(opt);
             if(option.type() == "multistring")
             {
-                while(not _remaining.empty()) {
-                    const auto front = _remaining.front();
-                    _remaining.pop_front();
-                    if(front == "--") {
-                        break;
-                    } else {
-                        value += " " + front;
-                    }
-                }
+                value = parse_multistring();
             }
             else if (option._nargs == 1 and delim == std::string::npos)
             {
@@ -1101,6 +1097,21 @@ namespace optparse
             }
 
             process_opt(option, std::string("--") + opt, value);
+        }
+
+        std::string parse_multistring() {
+            std::stringstream ss;
+            while(not _remaining.empty()) {
+                const auto front = _remaining.front();
+                _remaining.pop_front();
+                if(front == "--") {
+                    break;
+                } else {
+                    ss << ' ' << front;
+                }
+            }
+
+            return ss.str();
         }
 
         void process_opt(const Option &o, const std::string &opt, const std::string &value)
