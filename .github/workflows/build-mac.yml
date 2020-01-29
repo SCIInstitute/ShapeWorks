@@ -42,7 +42,6 @@ jobs:
     - name: activate shapeworks
       shell: bash -l {0}
       run: conda activate shapeworks
-      
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
@@ -67,16 +66,16 @@ jobs:
       shell: bash -l {0}
       run: cd build && make -j4
       
-    - name: make test
-      shell: bash -l {0}
-      run: conda activate shapeworks && cd build && ctest -VV
-
     - name: make install
       shell: bash -l {0}
       run: cd build && make install
 
     - name: Build Binary Package
       run: pwd ; ls ; ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      
+    - name: make test
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && ctest -VV
 
     - uses: actions/upload-artifact@v1
       with:

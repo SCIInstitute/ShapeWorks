@@ -1,5 +1,6 @@
 #include "Commands.h"
 #include "Image.h"
+#include <limits>
 
 namespace shapeworks {
 
@@ -233,26 +234,26 @@ int Binarize::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Padvolume
+// Padimage
 ///////////////////////////////////////////////////////////////////////////////
-void Padvolume::buildParser()
+void PadImage::buildParser()
 {
-  const std::string prog = "padvolume";
-  const std::string desc = "A command line tool that pad a contant value in the x-, y-, and z- directions of a given volume";
+  const std::string prog = "padimage";
+  const std::string desc = "pads an image with a contant value in the x-, y-, and z- directions";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--paddingSize").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
-  parser.add_option("--paddingValue").action("store").type("float").set_default(0).help("Value to be used to fill padded voxels.");
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
+  parser.add_option("--value").action("store").type("float").set_default(0).help("Value to be used to fill padded voxels.");
   
   Command::buildParser();
 }
 
-int Padvolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int PadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  int paddingSize = static_cast<int>(options.get("paddingSize"));
-  float paddingValue = static_cast<float>(options.get("paddingValue"));
+  int padding = static_cast<int>(options.get("padding"));
+  float value = static_cast<float>(options.get("value"));
 
-  return sharedData.image.padvolume(paddingSize, paddingValue);
+  return sharedData.image.padimage(padding, value);
 }
 
 
@@ -286,6 +287,34 @@ int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &shar
   return sharedData.mesh.smooth(/*maxRMSErr, numIter*/);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Coverage
+///////////////////////////////////////////////////////////////////////////////
+void Coverage::buildParser()
+{
+  const std::string prog = "coverage";
+  const std::string desc = "coverage between two meshes";
+  parser.prog(prog).description(desc);
+  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
+
+  if (second_mesh_string == "")
+  {
+    std::cerr << "Must specify second mesh\n";
+    return -1;
+  }
+  Mesh second_mesh;
+  second_mesh.read(second_mesh_string);
+
+  return sharedData.mesh.coverage(second_mesh);
+}
 
 
 } // shapeworks

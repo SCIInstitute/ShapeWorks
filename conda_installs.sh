@@ -30,14 +30,13 @@ function install_conda() {
   fi
 
   #update anaconda
-  conda config --add channels simpleitk
   conda config --add channels anaconda
   conda config --add channels conda-forge
   
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
-  #create and activate shapeworks env
+  #create and activate shapeworks env 
   CONDAENV=shapeworks
   if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
   eval "$(conda shell.bash hook)"
@@ -54,9 +53,10 @@ function install_conda() {
        requests=2.22.0 \
        geotiff=1.5.1 \
        numpy=1.17.4 \
-       SimpleITK=1.2.4 \
+       git-lfs=2.6.1 \
        openblas=0.3.3
   then return 1; fi
+
 
   # linux and mac (only) deps
   if [ "$(uname)" = "Linux" ] || [ "$(uname)" == "Darwin"]; then
@@ -73,9 +73,11 @@ function install_conda() {
 	   libuuid=2.32.1
       then return 1; fi
   fi
+
   
   if ! pip install termcolor==1.1.0; then return 1; fi
   if ! pip install matplotlib==3.1.2; then return 1; fi
+  if ! pip install itk==5.0.1; then return 1; fi
   if ! pip install -e Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
 
   # install any additional Linux dependencies

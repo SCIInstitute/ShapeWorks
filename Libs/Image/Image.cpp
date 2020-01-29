@@ -11,8 +11,6 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 
-#include <limits>
-
 namespace shapeworks {
 
 //todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
@@ -143,7 +141,6 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
   filter->SetLowerThreshold(threshold);
   filter->SetInsideValue(inside);
   filter->SetOutsideValue(outside);
-  filter->SetInsideValue(itk::NumericTraits<PixelType>::One);
 
   filter->SetInput(this->image);
   this->image = filter->GetOutput();
@@ -211,10 +208,10 @@ bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
     return false;
   }
 
-  using ResampleFilterType = itk::ResampleImageFilter<ImageType, ImageType>;
-  ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+  using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
+  ResampleFilter::Pointer resampler = ResampleFilter::New();
   
-  ResampleFilterType::InterpolatorType::Pointer interpolator;
+  ResampleFilter::InterpolatorType::Pointer interpolator;
 
   // For binary input images, antialiasing then using a bspline filter produces better results
   if (binaryInput)
@@ -309,7 +306,7 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
-bool Image::padvolume(int paddingSize, float paddingValue)
+bool Image::padimage(int padding, PixelType value)
 {
   if (!this->image)
   {
@@ -318,16 +315,14 @@ bool Image::padvolume(int paddingSize, float paddingValue)
   }
 
   ImageType::SizeType lowerExtendRegion;
-  lowerExtendRegion[0] = paddingSize;
-  lowerExtendRegion[1] = paddingSize;
-  lowerExtendRegion[2] = paddingSize;
+  lowerExtendRegion[0] = padding;
+  lowerExtendRegion[1] = padding;
+  lowerExtendRegion[2] = padding;
 
   ImageType::SizeType upperExtendRegion;
-  upperExtendRegion[0] = paddingSize;
-  upperExtendRegion[1] = paddingSize;
-  upperExtendRegion[2] = paddingSize;
-
-  ImageType::PixelType constantPixel = paddingValue;
+  upperExtendRegion[0] = padding;
+  upperExtendRegion[1] = padding;
+  upperExtendRegion[2] = padding;
 
   using PadFilter = itk::ConstantPadImageFilter<ImageType, ImageType>;
   PadFilter::Pointer padFilter = PadFilter::New();
@@ -335,7 +330,7 @@ bool Image::padvolume(int paddingSize, float paddingValue)
   padFilter->SetInput(this->image);
   padFilter->SetPadLowerBound(lowerExtendRegion);
   padFilter->SetPadUpperBound(upperExtendRegion);
-  padFilter->SetConstant(constantPixel);
+  padFilter->SetConstant(value);
   this->image = padFilter->GetOutput();
 
   try
@@ -344,12 +339,12 @@ bool Image::padvolume(int paddingSize, float paddingValue)
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Pad volume with constant failed:" << std::endl;
+    std::cerr << "Pad image with constant failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
-  std::cout << "Pad volume with constant succeeded!\n";
+  std::cout << "Pad image with constant succeeded!\n";
   return true;
 
 }

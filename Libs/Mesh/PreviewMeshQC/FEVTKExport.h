@@ -1,28 +1,33 @@
 #pragma once
 
+#include <string>
+#include <ostream>
+
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+
 class FEMesh;
 
 //-----------------------------------------------------------------------------
 struct VTKEXPORT
 {
-	bool	bshellthick;	// shell thickness
-	bool	bscalar_data;   //user scalar data
+  bool bshellthick;             // shell thickness
+  bool bscalar_data;            // user scalar data
 };
-
 
 class FEVTKExport
 {
 public:
-	FEVTKExport(void);
-	~FEVTKExport(void);
+  FEVTKExport();
+  ~FEVTKExport() = default;
 
-	bool Export(FEMesh& mesh, const char* szfile);
-	void SetOptions(VTKEXPORT o) { m_ops = o; }
+  bool Export(FEMesh& mesh, const char* szfile);
+  std::string ExportToString(FEMesh& mesh);
+  bool ExportToStream(FEMesh& mesh, std::ostream& out);
+  void SetOptions(VTKEXPORT o) { m_ops = o; }
 
-protected:
-	void Close();
+  vtkSmartPointer<vtkPolyData> ExportToVTK(FEMesh &mesh);
 
 private:
-	FILE* m_fp;
-	VTKEXPORT m_ops;
+  VTKEXPORT m_ops;
 };
