@@ -540,7 +540,7 @@ def MeshesToVolumes(outDir, meshList, imgList):
         # change to ply if needed
         if extension == "vtk":
             mesh_vtk = mesh
-            mesh = mesh[:-4] + "ply"
+            mesh = mesh[:-4] + ".ply"
             execCommand = ["vtk2ply", mesh_vtk, mesh]
             subprocess.check_call(execCommand)
         # get image
@@ -635,7 +635,7 @@ def SelectCuttingPlane(input_file):
         print("\nSaving as: " + input_vtk)
         xml_filename = input_file.rsplit(os.sep, 1)[0] + "/cutting_plane_nrrd2vtk.xml"
         create_meshfromDT_xml(xml_filename, input_file, input_vtk)
-        execCommand = ["NewMeshFromDT", xml_filename]
+        execCommand = ["MeshFromDistanceTransforms", xml_filename]
         subprocess.check_call(execCommand)
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
