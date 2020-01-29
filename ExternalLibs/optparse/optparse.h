@@ -47,12 +47,6 @@ namespace optparse
                                        std::istream_iterator<std::string>());
             return v;
         }
-        std::vector<std::string> split() {
-            std::istringstream iss(str);
-            std::vector<std::string> v((std::istream_iterator<std::string>(iss)),
-                                             std::istream_iterator<std::string>());
-            return v;
-        }
 
         operator const char *()
         {
