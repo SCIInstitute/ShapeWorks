@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <iterator>
 
 namespace optparse
 {
@@ -39,6 +40,19 @@ namespace optparse
         Value() : str(), valid(false) {}
 
         explicit Value(const std::string &v) : str(v), valid(true) {}
+
+        operator std::vector<std::string>() {
+            std::istringstream iss(str);
+            std::vector<std::string> v((std::istream_iterator<std::string>(iss)),
+                                       std::istream_iterator<std::string>());
+            return v;
+        }
+        std::vector<std::string> split() {
+            std::istringstream iss(str);
+            std::vector<std::string> v((std::istream_iterator<std::string>(iss)),
+                                             std::istream_iterator<std::string>());
+            return v;
+        }
 
         operator const char *()
         {
@@ -1060,7 +1074,19 @@ namespace optparse
             }
 
             const Option &option = lookup_long_opt(opt);
-            if (option._nargs == 1 and delim == std::string::npos)
+            if(option.type() == "multistring")
+            {
+                while(not _remaining.empty()) {
+                    const auto front = _remaining.front();
+                    _remaining.pop_front();
+                    if(front == "--") {
+                        break;
+                    } else {
+                        value += " " + front;
+                    }
+                }
+            }
+            else if (option._nargs == 1 and delim == std::string::npos)
             {
                 if (not _remaining.empty())
                 {

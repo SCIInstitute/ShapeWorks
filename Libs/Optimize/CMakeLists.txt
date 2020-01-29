@@ -5,7 +5,8 @@ target_link_libraries(Optimize
   Alignment
   trimesh2
   Mesh
-  tinyxml)
+  tinyxml
+  Particles)
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ParticleSystem>
