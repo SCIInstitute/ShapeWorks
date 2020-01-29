@@ -16,21 +16,21 @@ namespace shapeworks {
 
     void ShapeEvaluation::ReadPointFiles(const std::string &flistPath) {
         std::vector<std::string> filepaths = {
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_0.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_1.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_10.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_11.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_12.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_13.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_14.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_15.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_16.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_17.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_18.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_19.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_2.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_20.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "TestEllipsoids/PointFiles/128/seg.ellipsoid_21.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_0.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_1.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_10.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_11.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_12.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_13.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_14.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_15.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_16.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_17.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_18.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_19.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_2.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_20.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_21.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
         };
         this->particleSystem.LoadParticles(filepaths);
     }
@@ -39,7 +39,7 @@ namespace shapeworks {
         const int nModes = 1;
         std::cout << "Evaluating with nModes=" << nModes << "..." << std::endl;
 
-        const auto compactness = this->ComputeCompactness(nModes);
+        const auto compactness = this->ComputeCompactness(nModes, "compactness.txt");
         const auto generalizability = this->ComputeGeneralizability(nModes);
         const auto specificity = this->ComputeSpecificity(nModes);
 
@@ -51,7 +51,7 @@ namespace shapeworks {
         std::cout << "Specificity:      " << specificity << std::endl;
     }
 
-    double ShapeEvaluation::ComputeCompactness(const int nModes) const {
+    double ShapeEvaluation::ComputeCompactness(const int nModes, const std::string &saveScreePlotTo) const {
         const int N = this->particleSystem.N();
         const int D = this->particleSystem.D();
 
@@ -60,17 +60,22 @@ namespace shapeworks {
         Y.colwise() -= mu;
 
         Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
-        const auto S = svd.singularValues();
-        const auto eigValues = S.array().pow(2) / (N*D); //TODO: eigValues might be a misnomer.
+        const auto S = svd.singularValues().array().pow(2) / (N*D);
 
         // Compute cumulative sum
         Eigen::VectorXd cumsum(N);
-        cumsum(0) = eigValues(0);
+        cumsum(0) = S(0);
         for(int i=1; i<N; i++) {
-            cumsum(i) = cumsum(i-1) + eigValues(i);
+            cumsum(i) = cumsum(i-1) + S(i);
+        }
+        cumsum /= S.sum();
+
+        if(saveScreePlotTo != "") {
+            std::ofstream of(saveScreePlotTo);
+            of << cumsum;
+            of.close();
         }
 
-        cumsum /= eigValues.sum();
         return cumsum(nModes - 1);
     }
 
