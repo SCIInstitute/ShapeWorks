@@ -108,10 +108,10 @@ public:
   void SetDistributionDomainID(int distribution_domain_id);
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
 
-
   // optimization parameters
   void SetProcessingMode(int mode);
   void SetAdaptivityMode(int adaptivity_mode);
+  void SetAdaptivityStrength(double adaptivity_strength);
 
   virtual void ReadOptimizationParameters(const char* fname);
   void SetDebugParameters(const char* fname);
@@ -185,30 +185,30 @@ protected:
   int m_distribution_domain_id = -1;
   std::string m_output_cutting_plane_file;
 
-  // ReadOptimizationParameters
+  // Optimization Parameters
   int m_processing_mode = 3;
-  int m_adaptivity_mode;
-  double m_adaptivity_strength;
-  int m_pairwise_potential_type;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
-  int m_optimizer_type;   // 0 : jacobi, 1 : gauss seidel, 2 : adaptive gauss seidel (with bad moves)
-  unsigned int m_timepts_per_subject;
-  int m_optimization_iterations;
-  int m_optimization_iterations_completed;
-  int m_iterations_per_split;
-  double m_init_criterion;
-  double m_opt_criterion;
-  bool m_use_shape_statistics_in_init;
-  unsigned int m_procrustes_interval;
-  int m_procrustes_scaling;
-  double m_relative_weighting;
-  double m_initial_relative_weighting;
-  double m_starting_regularization;
-  double m_ending_regularization;
-  int m_recompute_regularization_interval;
-  bool m_save_init_splits;
-  unsigned int m_checkpointing_interval;
-  int m_keep_checkpoints;
-  double m_cotan_sigma_factor;
+  int m_adaptivity_mode = 0;
+  double m_adaptivity_strength = 0.0;
+  int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
+  int m_optimizer_type = 2;   // 0 : jacobi, 1 : gauss seidel, 2 : adaptive gauss seidel (with bad moves)
+  unsigned int m_timepts_per_subject = 1;
+  int m_optimization_iterations = 2000;
+  int m_optimization_iterations_completed = 0;
+  int m_iterations_per_split = 1000;
+  double m_init_criterion = 1e-6;
+  double m_opt_criterion = 1e-6;
+  bool m_use_shape_statistics_in_init = false;
+  unsigned int m_procrustes_interval = 3;
+  int m_procrustes_scaling = 1;
+  double m_relative_weighting = 1.0;
+  double m_initial_relative_weighting = 0.05;
+  double m_starting_regularization = 1000;
+  double m_ending_regularization = 1.0;
+  int m_recompute_regularization_interval = 1;
+  bool m_save_init_splits = true;
+  unsigned int m_checkpointing_interval = 50;
+  int m_keep_checkpoints = 0;
+  double m_cotan_sigma_factor = 5.0;
   std::vector <int> m_p_flgs;
   std::vector <int> m_d_flgs;
 

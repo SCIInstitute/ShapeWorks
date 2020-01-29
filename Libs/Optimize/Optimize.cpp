@@ -333,6 +333,12 @@ void Optimize::SetAdaptivityMode(int adaptivity_mode)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetAdaptivityStrength(double adaptivity_strength)
+{
+  this->m_adaptivity_strength = adaptivity_strength;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::ReadOptimizationParameters(const char* fname)
 {
   TiXmlDocument doc(fname);
@@ -344,94 +350,6 @@ void Optimize::ReadOptimizationParameters(const char* fname)
 
   TiXmlHandle docHandle(&doc);
   TiXmlElement* elem;
-
-  this->m_adaptivity_mode = 0;
-  elem = docHandle.FirstChild("adaptivity_mode").Element();
-  if (elem) { this->m_adaptivity_mode = atoi(elem->GetText());}
-
-  this->m_adaptivity_strength = 0.0;
-  elem = docHandle.FirstChild("adaptivity_strength").Element();
-  if (elem) { this->m_adaptivity_strength = atof(elem->GetText());}
-
-  this->m_pairwise_potential_type = 0;       // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer)
-  elem = docHandle.FirstChild("pairwise_potential_type").Element();
-  if (elem) { this->m_pairwise_potential_type = atoi(elem->GetText());}
-
-  this->m_optimizer_type = 2;       // 0 : jacobi, 1 : gauss seidel, 2 : adaptive gauss seidel (with bad moves)
-  elem = docHandle.FirstChild("optimizer_type").Element();
-  if (elem) { this->m_optimizer_type = atoi(elem->GetText());}
-
-  this->m_timepts_per_subject = 1;
-  elem = docHandle.FirstChild("timepts_per_subject").Element();
-  if (elem) { this->m_timepts_per_subject = atoi(elem->GetText());}
-
-  this->m_optimization_iterations = 2000;
-  elem = docHandle.FirstChild("optimization_iterations").Element();
-  if (elem) { this->m_optimization_iterations = atoi(elem->GetText());}
-
-  this->m_optimization_iterations_completed = 0;
-  elem = docHandle.FirstChild("optimization_iterations_completed").Element();
-  if (elem) { this->m_optimization_iterations_completed = atoi(elem->GetText());}
-
-  this->m_iterations_per_split = 1000;
-  elem = docHandle.FirstChild("iterations_per_split").Element();
-  if (elem) { this->m_iterations_per_split = atoi(elem->GetText());}
-
-  m_init_criterion = 1e-6;
-  elem = docHandle.FirstChild("init_criterion").Element();
-  if (elem) { this->m_init_criterion = atof(elem->GetText());}
-
-  m_opt_criterion = 1e-6;
-  elem = docHandle.FirstChild("opt_criterion").Element();
-  if (elem) { this->m_opt_criterion = atof(elem->GetText());}
-
-  m_use_shape_statistics_in_init = false;
-  elem = docHandle.FirstChild("use_shape_statistics_in_init").Element();
-  if (elem) { this->m_use_shape_statistics_in_init = (bool) atoi(elem->GetText());}
-
-  this->m_procrustes_interval = 3;
-  elem = docHandle.FirstChild("procrustes_interval").Element();
-  if (elem) { this->m_procrustes_interval = atoi(elem->GetText());}
-
-  this->m_procrustes_scaling = 1;
-  elem = docHandle.FirstChild("procrustes_scaling").Element();
-  if (elem) { this->m_procrustes_scaling = atoi(elem->GetText());}
-
-  this->m_relative_weighting = 1.0;
-  elem = docHandle.FirstChild("relative_weighting").Element();
-  if (elem) { this->m_relative_weighting = atof(elem->GetText());}
-
-  this->m_initial_relative_weighting = 0.05;
-  elem = docHandle.FirstChild("initial_relative_weighting").Element();
-  if (elem) { this->m_initial_relative_weighting = atof(elem->GetText());}
-
-  this->m_starting_regularization = 1000.0;
-  elem = docHandle.FirstChild("starting_regularization").Element();
-  if (elem) { this->m_starting_regularization = atof(elem->GetText());}
-
-  this->m_ending_regularization = 1.0;
-  elem = docHandle.FirstChild("ending_regularization").Element();
-  if (elem) { this->m_ending_regularization = atof(elem->GetText());}
-
-  this->m_recompute_regularization_interval = 1;
-  elem = docHandle.FirstChild("recompute_regularization_interval").Element();
-  if (elem) { this->m_recompute_regularization_interval = atoi(elem->GetText());}
-
-  m_save_init_splits = true;
-  elem = docHandle.FirstChild("save_init_splits").Element();
-  if (elem) { this->m_save_init_splits = (bool) atoi(elem->GetText());}
-
-  this->m_checkpointing_interval = 50;
-  elem = docHandle.FirstChild("checkpointing_interval").Element();
-  if (elem) { this->m_checkpointing_interval = atoi(elem->GetText());}
-
-  this->m_keep_checkpoints = 0;
-  elem = docHandle.FirstChild("keep_checkpoints").Element();
-  if (elem) { this->m_keep_checkpoints = atoi(elem->GetText());}
-
-  this->m_cotan_sigma_factor = 5.0;
-  elem = docHandle.FirstChild("cotan_sigma_factor").Element();
-  if (elem) { this->m_cotan_sigma_factor = atof(elem->GetText());}
 }
 
 //---------------------------------------------------------------------------

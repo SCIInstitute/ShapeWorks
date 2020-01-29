@@ -179,17 +179,74 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
 {
   TiXmlElement* elem;
 
-  int processing_mode = 3;
   elem = docHandle->FirstChild("processing_mode").Element();
-  if (elem) { processing_mode = atoi(elem->GetText());}
-  optimize->SetProcessingMode(processing_mode);
+  if (elem) { optimize->SetProcessingMode(atoi(elem->GetText()));}
 
-
-  int adaptivity_mode = 0;
   elem = docHandle->FirstChild("adaptivity_mode").Element();
-  if (elem) { adaptivity_mode = atoi(elem->GetText());}
-  optimize->SetAdaptivityMode(adaptivity_mode);
+  if (elem) { optimize->SetAdaptivityMode(atoi(elem->GetText()));}
 
+  elem = docHandle->FirstChild("adaptivity_strength").Element();
+  if (elem) { optimize->SetAdaptivityStrength(atof(elem->GetText()));}
+
+  elem = docHandle->FirstChild("pairwise_potential_type").Element();
+  if (elem) { optimize->SetPairwisePotentialType(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("optimizer_type").Element();
+  if (elem) { optimize->SetOptimizerType(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("timepts_per_subject").Element();
+  if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText());}
+
+  elem = docHandle->FirstChild("optimization_iterations").Element();
+  if (elem) { optimize->SetOptimizationIterations(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("optimization_iterations_completed").Element();
+  if (elem) { optimize->SetOptimizationIterationsCompleted(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("iterations_per_split").Element();
+  if (elem) { optimize->SetIterationsPerSplit(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("init_criterion").Element();
+  if (elem) { optimize->SetInitCriterion(atof(elem->GetText()));}
+
+  elem = docHandle->FirstChild("opt_criterion").Element();
+  if (elem) { optimize->SetOptCriterion(atof(elem->GetText()));}
+
+  elem = docHandle->FirstChild("use_shape_statistics_in_init").Element();
+  if (elem) { optimize->SetUseShapeStatisticsInInit((bool) atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("procrustes_interval").Element();
+  if (elem) { optimize->SetProcrustesInterval(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("procrustes_scaling").Element();
+  if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("relative_weighting").Element();
+  if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText()));}
+
+  elem = docHandle->FirstChild("initial_relative_weighting").Element();
+  if (elem) { optimize->SetInitialRelativeWeighting(atof(elem->GetText()));}
+
+  elem = docHandle->FirstChild("starting_regularization").Element();
+  if (elem) { optimize->SetStartingRegularization(atof(elem->GetText()));}
+
+  elem = docHandle->FirstChild("ending_regularization").Element();
+  if (elem) { optimize->SetEndingRegularization(atof(elem->GetText()));}
+
+  elem = docHandle->FirstChild("recompute_regularization_interval").Element();
+  if (elem) { optimize->SetRecomputeRegularizationInterval(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("save_init_splits").Element();
+  if (elem) { optimize->SetSaveInitSplits((bool) atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("checkpointing_interval").Element();
+  if (elem) { optimize->SetCheckpointingInterval(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("keep_checkpoints").Element();
+  if (elem) { optimize->SetKeepCheckpoints(atoi(elem->GetText()));}
+
+  elem = docHandle->FirstChild("cotan_sigma_factor").Element();
+  if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText()));}
 
   return true;
 }
