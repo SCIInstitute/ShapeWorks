@@ -1,6 +1,10 @@
-#include "ParticleSystemReader.h"
+#include "ParticleSystem.h"
 
-Eigen::MatrixXd ParticleSystemReader::LoadParticles(const std::vector<std::string> &filepaths) {
+ParticleSystem::ParticleSystem() {
+
+}
+
+void ParticleSystem::LoadParticles(const std::vector<std::string> &filepaths) {
     const int N = filepaths.size();
     const int VDimension = 3; //TODO Don't hardcode VDimension
     assert(N > 0);
@@ -17,7 +21,7 @@ Eigen::MatrixXd ParticleSystemReader::LoadParticles(const std::vector<std::strin
     reader0->Update();
     const int D = reader0->GetOutput().size() * VDimension;
 
-    Eigen::MatrixXd P(D, N);
+    P.resize(D, N);
     P.col(0) = Eigen::Map<const Eigen::VectorXd>((double *)reader0->GetOutput().data(), D);
 
     for(int i=1; i<N; i++) {
@@ -28,5 +32,5 @@ Eigen::MatrixXd ParticleSystemReader::LoadParticles(const std::vector<std::strin
         P.col(i) = Eigen::Map<const Eigen::VectorXd>((double *)reader->GetOutput().data(), D);
     }
 
-    return P;
+    isLoaded = true;
 }

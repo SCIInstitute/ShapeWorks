@@ -4,6 +4,7 @@
 #include <string>
 #include <Eigen/Core>
 #include "itkParticleShapeStatistics.h"
+#include "ParticleSystem.h"
 
 namespace shapeworks {
 class ShapeEvaluation {
@@ -12,17 +13,13 @@ public:
 
     void ReadPointFiles(const std::string &flistPath);
     void Evaluate(); //TODO: Remove
-    int N() const { AssertLoaded(); return P.cols(); }
-    int D() const { AssertLoaded(); return P.rows(); }
 
 private:
-    Eigen::MatrixXd P;
-    bool isLoaded = false;
+    ParticleSystem particleSystem;
 
     double ComputeCompactness(const int nModes) const;
     double ComputeGeneralizability(const int nModes) const;
     double ComputeSpecificity(const int nModes) const;
-    void AssertLoaded() const { assert(isLoaded); }
 };
 }
 

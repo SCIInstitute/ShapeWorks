@@ -5,7 +5,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
-#include "ParticleSystemReader.h"
+#include "ParticleSystem.h"
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
@@ -32,8 +32,7 @@ namespace shapeworks {
                 "TestEllipsoids/PointFiles/128/seg.ellipsoid_20.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
                 "TestEllipsoids/PointFiles/128/seg.ellipsoid_21.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
         };
-        this->P = ParticleSystemReader::LoadParticles(filepaths);
-        this->isLoaded = true;
+        this->particleSystem.LoadParticles(filepaths);
     }
 
     void ShapeEvaluation::Evaluate() {
@@ -53,11 +52,10 @@ namespace shapeworks {
     }
 
     double ShapeEvaluation::ComputeCompactness(const int nModes) const {
-        AssertLoaded();
-        const int N = this->N();
-        const int D = this->D();
+        const int N = this->particleSystem.N();
+        const int D = this->particleSystem.D();
 
-        Eigen::MatrixXd Y = P;
+        Eigen::MatrixXd Y = this->particleSystem.Particles();
         const Eigen::VectorXd mu = Y.rowwise().mean();
         Y.colwise() -= mu;
 
@@ -77,9 +75,10 @@ namespace shapeworks {
     }
 
     double ShapeEvaluation::ComputeGeneralizability(const int nModes) const {
-        AssertLoaded();
-        const int N = this->N();
-        const int D = this->D();
+        const int N = this->particleSystem.N();
+        const int D = this->particleSystem.D();
+
+        const Eigen::MatrixXd &P = this->particleSystem.Particles();
 
         double totalDist = 0.0;
         for(int leave=0; leave<N; leave++) {
@@ -118,7 +117,6 @@ namespace shapeworks {
 
     //TODO: Implement
     double ShapeEvaluation::ComputeSpecificity(const int nModes) const {
-        AssertLoaded();
         return -1.0;
     }
 }
