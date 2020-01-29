@@ -5,6 +5,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
+#include "ParticleSystemReader.h"
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
@@ -14,7 +15,25 @@ namespace shapeworks {
     }
 
     void ShapeEvaluation::ReadPointFiles(const std::string &flistPath) {
-        this->particles.ReadPointFiles(flistPath.c_str());
+        std::vector<std::string> filepaths = {
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_0.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_1.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_10.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_11.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_12.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_13.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_14.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_15.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_16.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_17.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_18.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_19.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_2.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_20.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
+                "TestEllipsoids/PointFiles/128/seg.ellipsoid_21.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
+        };
+        this->P = ParticleSystemReader::LoadParticles(filepaths);
+        this->isLoaded = true;
     }
 
     void ShapeEvaluation::Evaluate() {
@@ -33,12 +52,11 @@ namespace shapeworks {
         std::cout << "Specificity:      " << specificity << std::endl;
     }
 
-    double ShapeEvaluation::ComputeCompactness(const int nModes) {
-        const int N = this->particles.SampleSize();
-        const int D = this->particles.NumberOfDimensions();
-        const auto &_P = this->particles.ShapeMatrix();
+    double ShapeEvaluation::ComputeCompactness(const int nModes) const {
+        AssertLoaded();
+        const int N = this->N();
+        const int D = this->D();
 
-        Eigen::Map<const RowMajorMatrix> P(_P.data_block(), _P.rows(), _P.cols());
         Eigen::MatrixXd Y = P;
         const Eigen::VectorXd mu = Y.rowwise().mean();
         Y.colwise() -= mu;
@@ -49,7 +67,7 @@ namespace shapeworks {
 
         // Compute cumulative sum
         Eigen::VectorXd cumsum(N);
-        cumsum[0] = eigValues(0);
+        cumsum(0) = eigValues(0);
         for(int i=1; i<N; i++) {
             cumsum(i) = cumsum(i-1) + eigValues(i);
         }
@@ -58,12 +76,10 @@ namespace shapeworks {
         return cumsum(nModes - 1);
     }
 
-    double ShapeEvaluation::ComputeGeneralizability(const int nModes) {
-        const int N = this->particles.SampleSize();
-        const int D = this->particles.NumberOfDimensions();
-
-        const auto &_P = this->particles.ShapeMatrix();
-        const Eigen::Map<const RowMajorMatrix> P(_P.data_block(), _P.rows(), _P.cols());
+    double ShapeEvaluation::ComputeGeneralizability(const int nModes) const {
+        AssertLoaded();
+        const int N = this->N();
+        const int D = this->D();
 
         double totalDist = 0.0;
         for(int leave=0; leave<N; leave++) {
@@ -101,7 +117,8 @@ namespace shapeworks {
     }
 
     //TODO: Implement
-    double ShapeEvaluation::ComputeSpecificity(const int nModes) {
+    double ShapeEvaluation::ComputeSpecificity(const int nModes) const {
+        AssertLoaded();
         return -1.0;
     }
 }

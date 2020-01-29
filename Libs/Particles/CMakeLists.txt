@@ -1,5 +1,15 @@
-set(sources itkParticleShapeStatistics.cpp ShapeEvaluation.cpp)
-set(headers itkParticleShapeStatistics.h ShapeEvaluation.h)
+set(sources
+        ParticleSystemReader.cpp
+        itkParticleShapeStatistics.cpp
+        itkParticlePositionReader.cpp
+        itkParticlePositionWriter.cpp
+        ShapeEvaluation.cpp)
+set(headers
+        ParticleSystemReader.h
+        itkParticleShapeStatistics.h
+        itkParticlePositionReader.h
+        itkParticlePositionWriter.h
+        ShapeEvaluation.h)
 
 add_library(Particles STATIC
   ${sources}
