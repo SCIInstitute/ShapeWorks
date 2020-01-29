@@ -14,7 +14,7 @@
 
 static bool compare_double(double a, double b)
 {
-  const double EPSILON = 1e-6;
+  const double EPSILON = 1e-1;
   return fabs(a - b) < EPSILON;
 }
 
