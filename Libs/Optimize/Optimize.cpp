@@ -327,6 +327,12 @@ void Optimize::SetProcessingMode(int mode)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetAdaptivityMode(int adaptivity_mode)
+{
+  this->m_adaptivity_mode = adaptivity_mode;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::ReadOptimizationParameters(const char* fname)
 {
   TiXmlDocument doc(fname);

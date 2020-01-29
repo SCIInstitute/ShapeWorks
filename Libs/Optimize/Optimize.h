@@ -109,7 +109,9 @@ public:
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
 
 
+  // optimization parameters
   void SetProcessingMode(int mode);
+  void SetAdaptivityMode(int adaptivity_mode);
 
   virtual void ReadOptimizationParameters(const char* fname);
   void SetDebugParameters(const char* fname);

@@ -184,6 +184,13 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   if (elem) { processing_mode = atoi(elem->GetText());}
   optimize->SetProcessingMode(processing_mode);
 
+
+  int adaptivity_mode = 0;
+  elem = docHandle->FirstChild("adaptivity_mode").Element();
+  if (elem) { adaptivity_mode = atoi(elem->GetText());}
+  optimize->SetAdaptivityMode(adaptivity_mode);
+
+
   return true;
 }
 //---------------------------------------------------------------------------
