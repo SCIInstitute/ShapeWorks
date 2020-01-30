@@ -133,7 +133,10 @@ public:
   void SetKeepCheckpoints(int keep_checkpoints);
   void SetCotanSigmaFactor(double cotan_sigma_factor);
 
-  void SetDebugParameters(const char* fname);
+  void SetNormalAngle(double normal_angle);
+  void SetPerformGoodBad(bool perform_good_bad);
+  void SetLogEnergy(bool log_energy);
+
   virtual void ReadInputs(const char* fname);
   virtual void ReadMeshInputs(const char* fname);
   virtual void ReadConstraints(const char* fname);
@@ -241,13 +244,14 @@ protected:
   std::vector<double> m_EnergyA;
   std::vector<double> m_EnergyB;
   std::vector<double> m_TotalEnergy;
-  bool m_logEnergy;
+  bool m_logEnergy = false;
   std::string m_strEnergy;
 
   //GoodBadAssessment
   std::vector<std::vector<int>> m_badIds;
-  double m_normalAngle;
-  bool m_performGoodBad;
+
+  double m_normalAngle = itk::Math::pi / 2.0;
+  bool m_performGoodBad = false;
 
   std::vector <int> m_cutting_planes_per_input;
   std::vector <int> m_spheres_per_input;

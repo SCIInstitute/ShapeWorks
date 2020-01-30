@@ -62,13 +62,18 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
   if (!this->set_optimization_parameters(&docHandle, optimize)) {
     return false;
   }
+
+  if (!this->set_debug_parameters(&docHandle, optimize)) {
+    return false;
+  }
   return true;
 }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* optimize)
 {
-  TiXmlElement* elem;
+  TiXmlElement* elem = nullptr;
+
   // transform file
   std::string transform_file = "";
   elem = docHandle->FirstChild("transform_file").Element();
@@ -177,7 +182,7 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, Optimize* optimize)
 {
-  TiXmlElement* elem;
+  TiXmlElement* elem = nullptr;
 
   elem = docHandle->FirstChild("processing_mode").Element();
   if (elem) { optimize->SetProcessingMode(atoi(elem->GetText()));}
@@ -247,6 +252,23 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
 
   elem = docHandle->FirstChild("cotan_sigma_factor").Element();
   if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText()));}
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+
+  elem = docHandle->FirstChild("normal_angle").Element();
+  if (elem) { optimize->SetNormalAngle(atof(elem->GetText()) * itk::Math::pi / 180.0);}
+
+  elem = docHandle->FirstChild("report_bad_particles").Element();
+  if (elem) { optimize->SetPerformGoodBad(static_cast<bool>(atoi(elem->GetText())));}
+
+  elem = docHandle->FirstChild("log_energy").Element();
+  if (elem) { optimize->SetLogEnergy(static_cast<bool>(atoi(elem->GetText())));}
 
   return true;
 }

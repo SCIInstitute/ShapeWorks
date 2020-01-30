@@ -91,10 +91,6 @@ void Optimize::LoadParameters(const char* fn)
               << std::endl;
   }
 
-  this->startMessage("Reading debugging parameters...");
-  this->SetDebugParameters(fn);
-  this->doneMessage();
-
   // Set up the optimization process
   this->m_Sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
   this->m_Sampler->SetDomainsPerShape(this->m_domains_per_shape);   // must be done first!
@@ -332,32 +328,6 @@ void Optimize::SetAdaptivityMode(int adaptivity_mode)
 void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 {
   this->m_adaptivity_strength = adaptivity_strength;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::SetDebugParameters(const char* fname)
-{
-
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
-
-    const float pi = std::acos(-1.0);
-    this->m_normalAngle = pi / 2.0;
-    elem = docHandle.FirstChild("normal_angle").Element();
-    if (elem) { this->m_normalAngle = atof(elem->GetText()) * pi / 180.0;}
-
-    this->m_performGoodBad = false;
-    elem = docHandle.FirstChild("report_bad_particles").Element();
-    if (elem) { this->m_performGoodBad = (bool) atoi(elem->GetText());}
-
-    this->m_logEnergy = false;
-    elem = docHandle.FirstChild("log_energy").Element();
-    if (elem) { this->m_logEnergy = bool(atoi(elem->GetText()));}
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -2558,3 +2528,15 @@ void Optimize::SetKeepCheckpoints(int keep_checkpoints)
 //---------------------------------------------------------------------------
 void Optimize::SetCotanSigmaFactor(double cotan_sigma_factor)
 { this->m_cotan_sigma_factor = cotan_sigma_factor;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetNormalAngle(double normal_angle)
+{ this->m_normalAngle = normal_angle;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetPerformGoodBad(bool perform_good_bad)
+{ this->m_performGoodBad = perform_good_bad;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetLogEnergy(bool log_energy)
+{ this->m_logEnergy = log_energy;}

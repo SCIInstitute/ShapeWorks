@@ -29,4 +29,5 @@ public:
 
   bool set_optimization_parameters(TiXmlHandle *docHandle, Optimize* optimize);
 
+  bool set_debug_parameters(TiXmlHandle *docHandle, Optimize* optimize);
 };
