@@ -1095,7 +1095,7 @@ namespace optparse
 
         std::string parse_multistring() {
             std::stringstream ss;
-            while(not _remaining.empty()) {
+            while(!_remaining.empty()) {
                 const auto front = _remaining.front();
                 _remaining.pop_front();
                 if(front == "--") {

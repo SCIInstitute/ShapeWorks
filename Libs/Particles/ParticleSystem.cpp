@@ -4,7 +4,7 @@ ParticleSystem::ParticleSystem() {
 
 }
 
-void ParticleSystem::LoadParticles(const std::vector<std::string> &filepaths) {
+bool ParticleSystem::LoadParticles(const std::vector<std::string> &filepaths) {
     const int N = filepaths.size();
     const int VDimension = 3; //TODO Don't hardcode VDimension
     assert(N > 0);
@@ -33,4 +33,5 @@ void ParticleSystem::LoadParticles(const std::vector<std::string> &filepaths) {
     }
 
     isLoaded = true;
+    return true;
 }

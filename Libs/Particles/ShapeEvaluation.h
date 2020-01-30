@@ -11,15 +11,9 @@ class ShapeEvaluation {
 public:
     ShapeEvaluation();
 
-    void ReadPointFiles(const std::string &flistPath);
-    void Evaluate(); //TODO: Remove
-
-private:
-    ParticleSystem particleSystem;
-
-    double ComputeCompactness(const int nModes, const std::string &saveScreePlotTo="") const;
-    double ComputeGeneralizability(const int nModes) const;
-    double ComputeSpecificity(const int nModes) const;
+    static double ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveScreePlotTo="");
+    static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes);
+    static double ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes);
 };
 }
 

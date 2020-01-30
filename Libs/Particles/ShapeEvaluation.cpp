@@ -10,52 +10,11 @@
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
 namespace shapeworks {
-    ShapeEvaluation::ShapeEvaluation() {
+    double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveScreePlotTo) {
+        const int N = particleSystem.N();
+        const int D = particleSystem.D();
 
-    }
-
-    void ShapeEvaluation::ReadPointFiles(const std::string &flistPath) {
-        std::vector<std::string> filepaths = {
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_0.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_1.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_10.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_11.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_12.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_13.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_14.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_15.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_16.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_17.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_18.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_19.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_2.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_20.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles",
-                "GoodTestEllipsoids/PointFiles/128/seg.ellipsoid_21.isores.pad.com.aligned.cropped.tpSmoothDT_world.particles"
-        };
-        this->particleSystem.LoadParticles(filepaths);
-    }
-
-    void ShapeEvaluation::Evaluate() {
-        const int nModes = 1;
-        std::cout << "Evaluating with nModes=" << nModes << "..." << std::endl;
-
-        const auto compactness = this->ComputeCompactness(nModes, "compactness.txt");
-        const auto generalizability = this->ComputeGeneralizability(nModes);
-        const auto specificity = this->ComputeSpecificity(nModes);
-
-        //TODO: Don't print out these things, return to caller or re-evaluate API
-        // for whatever works best for the commands
-        std::cout << "Done evaluating." << std::endl;
-        std::cout << "Compactness:      " << compactness << std::endl;
-        std::cout << "Generalizability: " << generalizability << std::endl;
-        std::cout << "Specificity:      " << specificity << std::endl;
-    }
-
-    double ShapeEvaluation::ComputeCompactness(const int nModes, const std::string &saveScreePlotTo) const {
-        const int N = this->particleSystem.N();
-        const int D = this->particleSystem.D();
-
-        Eigen::MatrixXd Y = this->particleSystem.Particles();
+        Eigen::MatrixXd Y = particleSystem.Particles();
         const Eigen::VectorXd mu = Y.rowwise().mean();
         Y.colwise() -= mu;
 
@@ -79,11 +38,11 @@ namespace shapeworks {
         return cumsum(nModes - 1);
     }
 
-    double ShapeEvaluation::ComputeGeneralizability(const int nModes) const {
-        const int N = this->particleSystem.N();
-        const int D = this->particleSystem.D();
+    double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes) {
+        const int N = particleSystem.N();
+        const int D = particleSystem.D();
 
-        const Eigen::MatrixXd &P = this->particleSystem.Particles();
+        const Eigen::MatrixXd &P = particleSystem.Particles();
 
         double totalDist = 0.0;
         for(int leave=0; leave<N; leave++) {
@@ -121,7 +80,7 @@ namespace shapeworks {
     }
 
     //TODO: Implement
-    double ShapeEvaluation::ComputeSpecificity(const int nModes) const {
+    double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes) {
         return -1.0;
     }
 }

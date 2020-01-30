@@ -23,7 +23,9 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Binarize::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
-  shapeworks.addCommand(EvaluateSSM::getCommand());
+  shapeworks.addCommand(Compactness::getCommand());
+  shapeworks.addCommand(Generalization::getCommand());
+  shapeworks.addCommand(Specificity::getCommand());
   //...
   
   try {

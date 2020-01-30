@@ -8,7 +8,7 @@
 class ParticleSystem {
 public:
     ParticleSystem();
-    void LoadParticles(const std::vector<std::string> &filepaths);
+    bool LoadParticles(const std::vector<std::string> &filepaths);
 
     const Eigen::MatrixXd &Particles() const { return P; };
     int N() const { AssertLoaded(); return P.cols(); }

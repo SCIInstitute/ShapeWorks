@@ -134,20 +134,4 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-//TODO: find out how to organize this from Cam/Archna
-class EvaluateSSM : public Command
-{
-public:
-    static EvaluateSSM& getCommand() { static EvaluateSSM instance; return instance; }
-
-private:
-    ShapeEvaluation shapeStats;
-
-    EvaluateSSM() { buildParser(); }
-    void buildParser() override;
-    int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-
 } // shapeworks
