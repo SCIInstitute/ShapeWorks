@@ -151,10 +151,10 @@ void Optimize::LoadParameters(const char* fn)
   this->doneMessage();
 
   m_p_flgs.clear();
-  m_p_flgs = this->FlagParticlesFct(fn);
+  m_p_flgs = this->ReadFlagParticles(fn);
 
   m_d_flgs.clear();
-  m_d_flgs = this->FlagDomainFct(fn);
+  m_d_flgs = this->ReadFlagDomains(fn);
 
   if (m_use_normals.size() > 0) {
     int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -814,7 +814,7 @@ void Optimize::ReadExplanatoryVariables(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-std::vector < int > Optimize::FlagParticlesFct(const char* fname)
+std::vector < int > Optimize::ReadFlagParticles(const char* fname)
 {
   std::vector < int > f;
   f.clear();
@@ -848,7 +848,7 @@ std::vector < int > Optimize::FlagParticlesFct(const char* fname)
 }
 
 //---------------------------------------------------------------------------
-std::vector<int> Optimize::FlagDomainFct(const char* fname)
+std::vector<int> Optimize::ReadFlagDomains(const char* fname)
 {
   std::vector < int > f;
   f.clear();

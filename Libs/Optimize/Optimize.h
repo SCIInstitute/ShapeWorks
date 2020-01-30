@@ -149,8 +149,8 @@ public:
   virtual void ReadCuttingPlanes(const char* fname);
   virtual void ReadCuttingSpheres(const char* fname);
   void ReadExplanatoryVariables(const char* fname);
-  std::vector<int> FlagParticlesFct(const char* fname);
-  std::vector<int> FlagDomainFct(const char* fname);
+  std::vector<int> ReadFlagParticles(const char* fname);
+  std::vector<int> ReadFlagDomains(const char* fname);
   virtual void ReadTransformFile();
   virtual void ReadPrefixTransformFile(const std::string &s);
 
