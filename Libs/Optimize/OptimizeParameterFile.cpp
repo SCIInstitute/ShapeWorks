@@ -85,6 +85,14 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
     return false;
   }
 
+  if (!this->read_flag_particles(&doc_handle, optimize)) {
+    return false;
+  }
+
+  if (!this->read_flag_domains(&doc_handle, optimize)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -858,6 +866,48 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
     optimize->SetUseMixedEffects(true);
   }
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_flag_particles(TiXmlHandle* doc_handle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+
+  // set up fixed landmark positions // domain_index particle_index
+  elem = doc_handle->FirstChild("fixed_landmarks").Element();
+  if (elem) {
+    std::istringstream inputsBuffer;
+    inputsBuffer.str(elem->GetText());
+    std::vector<int> f;
+    int ftmp;
+    while (inputsBuffer >> ftmp) {
+      f.push_back(ftmp);
+    }
+
+    optimize->SetParticleFlags(f);
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_flag_domains(TiXmlHandle* doc_handle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+
+  // set up fixed domains // domain_index
+  elem = doc_handle->FirstChild("fixed_domains").Element();
+  if (elem) {
+    std::istringstream inputsBuffer;
+    inputsBuffer.str(elem->GetText());
+    std::vector<int> f;
+    int ftmp;
+    while (inputsBuffer >> ftmp) {
+      f.push_back(ftmp);
+    }
+
+    optimize->SetDomainFlags(f);
+  }
   return true;
 }
 //---------------------------------------------------------------------------

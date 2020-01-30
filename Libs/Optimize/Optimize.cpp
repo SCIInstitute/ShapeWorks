@@ -138,12 +138,6 @@ void Optimize::LoadParameters(const char* fn)
   this->InitializeSampler();
   this->doneMessage();
 
-  m_p_flgs.clear();
-  m_p_flgs = this->ReadFlagParticles(fn);
-
-  m_d_flgs.clear();
-  m_d_flgs = this->ReadFlagDomains(fn);
-
   if (m_use_normals.size() > 0) {
     int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
     for (int i = 0; i < numShapes; i++) {
@@ -363,73 +357,6 @@ void Optimize::SetAdaptivityMode(int adaptivity_mode)
 void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 {
   this->m_adaptivity_strength = adaptivity_strength;
-}
-
-//---------------------------------------------------------------------------
-std::vector < int > Optimize::ReadFlagParticles(const char* fname)
-{
-  std::vector < int > f;
-  f.clear();
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
-
-    std::istringstream inputsBuffer;
-
-    int ftmp;
-
-    // set up fixed landmark positions // domain_index particle_index
-    elem = docHandle.FirstChild("fixed_landmarks").Element();
-    if (elem) {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> ftmp) {
-        f.push_back(ftmp);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-
-      for (unsigned int i = 0; i < f.size() / 2; i++) {
-        m_Sampler->GetParticleSystem()->SetFixedParticleFlag(f[2 * i], f[2 * i + 1]);
-      }
-    }
-  }
-  return f;
-}
-
-//---------------------------------------------------------------------------
-std::vector<int> Optimize::ReadFlagDomains(const char* fname)
-{
-  std::vector < int > f;
-  f.clear();
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
-
-    std::istringstream inputsBuffer;
-
-    int ftmp;
-    // set up fixed domains // domain_index
-    elem = docHandle.FirstChild("fixed_domains").Element();
-    if (elem) {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> ftmp) {
-        f.push_back(ftmp);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-
-      for (unsigned int i = 0; i < f.size(); i++) {
-        m_Sampler->GetParticleSystem()->FlagDomain(f[i]);
-      }
-    }
-  }
-  return f;
 }
 
 //---------------------------------------------------------------------------
@@ -2020,6 +1947,26 @@ void Optimize::SetFeaGradFiles(const std::vector<std::string> &files)
 void Optimize::SetFidsFiles(const std::vector<std::string> &files)
 {
   this->m_Sampler->SetFidsFiles(files);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetParticleFlags(std::vector<int> flags)
+{
+  this->m_p_flgs = flags;
+
+  for (unsigned int i = 0; i < flags.size() / 2; i++) {
+    this->GetSampler()->GetParticleSystem()->SetFixedParticleFlag(flags[2 * i], flags[2 * i + 1]);
+  }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetDomainFlags(std::vector<int> flags)
+{
+  this->m_d_flgs = flags;
+
+  for (unsigned int i = 0; i < flags.size(); i++) {
+    this->GetSampler()->GetParticleSystem()->FlagDomain(flags[i]);
+  }
 }
 
 //---------------------------------------------------------------------------

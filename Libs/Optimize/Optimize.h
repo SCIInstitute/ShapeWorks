@@ -161,13 +161,13 @@ public:
   void SetFeaGradFiles(const std::vector<std::string> &files);
   void SetFidsFiles(const std::vector<std::string> &files);
 
+  void SetParticleFlags(std::vector<int> flags);
+  void SetDomainFlags(std::vector<int> flags);
+
   std::vector<bool> GetUseXYZ();
 
   std::vector<bool> GetUseNormals();
 
-  void ReadExplanatoryVariables(const char* fname);
-  std::vector<int> ReadFlagParticles(const char* fname);
-  std::vector<int> ReadFlagDomains(const char* fname);
   virtual void ReadTransformFile();
   virtual void ReadPrefixTransformFile(const std::string &s);
 
