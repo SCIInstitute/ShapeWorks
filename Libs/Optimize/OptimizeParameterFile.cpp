@@ -77,6 +77,10 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
     return false;
   }
 
+  if (!this->read_constraints(&docHandle, optimize)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -516,6 +520,299 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
                               attributes_per_domain.end()) > 0) {
           std::cerr << "ERROR: Must provide fids!!" << std::endl;
           return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_constraints(TiXmlHandle* doc_handle, Optimize* optimize)
+{
+  if (optimize->GetDistributionDomainID() > -1) {
+    if (!this->read_distribution_cutting_plane(doc_handle, optimize)) {
+      return false;
+    }
+  }
+  else {
+    if (!this->read_cutting_planes(doc_handle, optimize)) {
+      return false;
+    }
+  }
+
+  return this->read_cutting_spheres(doc_handle, optimize);
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_handle,
+                                                            Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+
+  std::istringstream inputsBuffer;
+  int numShapes = optimize->GetNumShapes();
+
+  // Distribution cutting planes activated
+  elem = doc_handle->FirstChild("distribution_cutting_plane").Element();
+  if (!elem) {
+    return true;
+  }
+
+  inputsBuffer.str(elem->GetText());
+
+  std::vector<double> cpVals;
+  double pt;
+
+  while (inputsBuffer >> pt) {
+    cpVals.push_back(pt);
+  }
+  inputsBuffer.clear();
+  inputsBuffer.str("");
+
+  if (cpVals.size() < 9) {
+    std::cerr <<
+      "ERROR: Incomplete cutting plane data for reference shape! No cutting planes will be loaded!!"
+              << std::endl;
+    return false;
+  }
+  else {
+    optimize->SetUseCuttingPlanes(true);
+    vnl_vector_fixed < double, 3 > a, b, c;
+    int ctr = 0;
+
+    for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
+      a[0] = cpVals[ctr++];
+      a[1] = cpVals[ctr++];
+      a[2] = cpVals[ctr++];
+
+      b[0] = cpVals[ctr++];
+      b[1] = cpVals[ctr++];
+      b[2] = cpVals[ctr++];
+
+      c[0] = cpVals[ctr++];
+      c[1] = cpVals[ctr++];
+      c[2] = cpVals[ctr++];
+
+      // If initial transform provided, transform cutting plane points
+      if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
+        itk::ParticleSystem < 3 > ::PointType pa;
+        itk::ParticleSystem < 3 > ::PointType pb;
+        itk::ParticleSystem < 3 > ::PointType pc;
+
+        pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
+        pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
+        pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+
+        itk::ParticleSystem < 3 >::TransformType T =
+          optimize->GetSampler()->GetParticleSystem()->GetTransform(
+            shapeCount);
+        itk::ParticleSystem < 3 >::TransformType prefT =
+          optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
+        pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
+        pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
+        pc = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pc, T * prefT);
+
+        a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
+        b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
+        c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+      }
+
+      optimize->SetCuttingPlane(shapeCount, a, b, c);
+      ctr = 0;             // use same cutting plane for all shapes
+    }
+  }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem;
+  std::istringstream inputsBuffer;
+  int numShapes = optimize->GetNumShapes();
+
+  std::vector<int> cutting_planes_per_input;
+
+  elem = docHandle->FirstChild("num_planes_per_input").Element();
+  if (elem) {
+    inputsBuffer.str(elem->GetText());
+    double val;
+
+    while (inputsBuffer >> val) {
+      cutting_planes_per_input.push_back(val);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+    if (cutting_planes_per_input.size() != numShapes) {
+      std::cerr <<
+        "ERROR: Incomplete cutting plane data! Number of cutting planes for every input shape is required!!"
+                << std::endl;
+      throw 1;
+    }
+  }
+  int numPlanes = std::accumulate(
+    cutting_planes_per_input.begin(), cutting_planes_per_input.end(), 0);
+
+  // otherwise read separate cutting plane for every shape
+  elem = docHandle->FirstChild("cutting_planes").Element();
+  if (!elem) {
+    return true;
+  }
+
+  inputsBuffer.str(elem->GetText());
+
+  std::vector<double> cpVals;
+
+  double pt;
+
+  while (inputsBuffer >> pt) {
+    cpVals.push_back(pt);
+  }
+  inputsBuffer.clear();
+  inputsBuffer.str("");
+
+  if (cpVals.size() < 9 * numPlanes) {
+    std::cerr << "ERROR: Incomplete cutting plane data! No cutting planes will be loaded!!" <<
+      std::endl;
+    throw 1;
+  }
+  else {
+    optimize->SetUseCuttingPlanes(true);
+    vnl_vector_fixed < double, 3 > a, b, c;
+    int ctr = 0;
+
+    for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
+      for (int planeCount = 0; planeCount < cutting_planes_per_input[shapeCount];
+           planeCount++) {
+        a[0] = cpVals[ctr++];
+        a[1] = cpVals[ctr++];
+        a[2] = cpVals[ctr++];
+
+        b[0] = cpVals[ctr++];
+        b[1] = cpVals[ctr++];
+        b[2] = cpVals[ctr++];
+
+        c[0] = cpVals[ctr++];
+        c[1] = cpVals[ctr++];
+        c[2] = cpVals[ctr++];
+
+        // If initial transform provided, transform cutting plane points
+        if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
+          itk::ParticleSystem < 3 > ::PointType pa;
+          itk::ParticleSystem < 3 > ::PointType pb;
+          itk::ParticleSystem < 3 > ::PointType pc;
+
+          pa[0] = a[0]; pa[1] = a[1]; pa[2] = a[2];
+          pb[0] = b[0]; pb[1] = b[1]; pb[2] = b[2];
+          pc[0] = c[0]; pc[1] = c[1]; pc[2] = c[2];
+
+          itk::ParticleSystem < 3 >::TransformType T =
+            optimize->GetSampler()->GetParticleSystem()->GetTransform(
+              shapeCount);
+          itk::ParticleSystem < 3 >::TransformType prefT =
+            optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
+          pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
+          pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
+          pc = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pc, T * prefT);
+
+          a[0] = pa[0]; a[1] = pa[1]; a[2] = pa[2];
+          b[0] = pb[0]; b[1] = pb[1]; b[2] = pb[2];
+          c[0] = pc[0]; c[1] = pc[1]; c[2] = pc[2];
+        }
+
+        optimize->GetSampler()->SetCuttingPlane(shapeCount, a, b, c);
+      }
+    }
+  }
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+  std::istringstream inputsBuffer;
+  int numShapes = optimize->GetNumShapes();
+  // sphere radii and centers
+  std::vector<int> spheres_per_input;
+
+  elem = doc_handle->FirstChild("spheres_per_domain").Element();
+  if (elem) {
+    inputsBuffer.str(elem->GetText());
+    double val;
+
+    while (inputsBuffer >> val) {
+      spheres_per_input.push_back(val);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+    if (spheres_per_input.size() != numShapes) {
+      std::cerr <<
+        "ERROR: Incomplete cutting plane data! Number of cutting spheres for every input shape is required!!"
+                << std::endl;
+      return false;
+    }
+  }
+  int numSpheres = std::accumulate(spheres_per_input.begin(), spheres_per_input.end(), 0);
+
+  std::vector<double> radList;
+  double r;
+
+  elem = doc_handle->FirstChild("sphere_radii").Element();
+  if (elem) {
+    inputsBuffer.str(elem->GetText());
+
+    while (inputsBuffer >> r) {
+      radList.push_back(r);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+
+    if (radList.size() != numSpheres) {
+      std::cerr << "ERROR: Incomplete sphere radius data! No spheres will be loaded!!" <<
+        std::endl;
+      return false;
+    }
+    else {
+      elem = doc_handle->FirstChild("sphere_centers").Element();
+      if (elem) {
+        inputsBuffer.str(elem->GetText());
+
+        std::vector<double> spVals;
+        double pt;
+
+        while (inputsBuffer >> pt) {
+          spVals.push_back(pt);
+        }
+        inputsBuffer.clear();
+        inputsBuffer.str("");
+
+        if (spVals.size() < 3 * numSpheres) {
+          std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" <<
+            std::endl;
+          return false;
+        }
+        else {
+          vnl_vector_fixed < double, 3 > center;
+          double rad;
+          int c_ctr = 0;
+          int r_ctr = 0;
+
+          for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
+            for (int sphereCount = 0; sphereCount < spheres_per_input[shapeCount];
+                 sphereCount++) {
+              center[0] = spVals[c_ctr++];
+              center[1] = spVals[c_ctr++];
+              center[2] = spVals[c_ctr++];
+
+              rad = radList[r_ctr++];
+
+              optimize->GetSampler()->AddSphere(shapeCount, center, rad);
+            }
+          }
         }
       }
     }

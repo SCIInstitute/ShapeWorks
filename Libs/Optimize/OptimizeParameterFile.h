@@ -25,18 +25,26 @@ public:
 
   bool set_parameters(std::string filename, Optimize* optimize);
 
-  bool set_io_parameters(TiXmlHandle *docHandle, Optimize* optimize);
+private:
 
-  bool set_optimization_parameters(TiXmlHandle *docHandle, Optimize* optimize);
+  bool set_io_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
-  bool set_debug_parameters(TiXmlHandle *docHandle, Optimize* optimize);
+  bool set_optimization_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
-  bool read_inputs(TiXmlHandle *docHandle, Optimize* optimize);
+  bool set_debug_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
-  bool read_mesh_inputs(TiXmlHandle *docHandle, Optimize* optimize);
+  bool read_inputs(TiXmlHandle* docHandle, Optimize* optimize);
 
+  bool read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize);
+
+  bool read_constraints(TiXmlHandle* doc_handle, Optimize* optimize);
+
+  bool read_distribution_cutting_plane(TiXmlHandle* doc_handle, Optimize* optimize);
+
+  bool read_cutting_planes(TiXmlHandle* doc_handle, Optimize* optimize);
+
+  bool read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize);
 
 private:
   int verbosity_level_ = 0;
-
 };

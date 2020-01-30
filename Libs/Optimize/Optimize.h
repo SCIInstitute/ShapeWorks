@@ -98,7 +98,9 @@ public:
   std::vector<unsigned int> GetNumberOfParticles();
 
   void SetTransformFile(std::string filename);
+  std::string GetTransformFile();
   void SetPrefixTransformFile(std::string prefix_transform_file);
+  std::string GetPrefixTransformFile();
   void SetOutputDir(std::string output_dir);
   void SetOutputTransformFile(std::string output_transform_file);
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
@@ -108,7 +110,13 @@ public:
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
   std::vector<int> GetAttributesPerDomain();
   void SetDistributionDomainID(int distribution_domain_id);
+  int GetDistributionDomainID();
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
+  void SetUseCuttingPlanes(bool use_cutting_planes);
+  void SetCuttingPlane(unsigned int i,
+                       const vnl_vector_fixed<double, 3> &va,
+                       const vnl_vector_fixed<double, 3> &vb,
+                       const vnl_vector_fixed<double, 3> &vc);
 
   // optimization parameters
   void SetProcessingMode(int mode);
@@ -153,12 +161,6 @@ public:
 
   std::vector<bool> GetUseNormals();
 
-
-
-  virtual void ReadConstraints(const char* fname);
-  virtual void ReadDistributionCuttingPlane(const char* fname);
-  virtual void ReadCuttingPlanes(const char* fname);
-  virtual void ReadCuttingSpheres(const char* fname);
   void ReadExplanatoryVariables(const char* fname);
   std::vector<int> ReadFlagParticles(const char* fname);
   std::vector<int> ReadFlagDomains(const char* fname);
@@ -270,9 +272,6 @@ protected:
   double m_normalAngle = itk::Math::pi / 2.0;
   bool m_performGoodBad = false;
 
-  std::vector <int> m_cutting_planes_per_input;
-  std::vector <int> m_spheres_per_input;
-  std::vector<double> cpVals;
-  std::vector<double> spVals;
-  std::vector<double> radList;
+  std::vector<int> m_cutting_planes_per_input;
+  std::vector<int> m_spheres_per_input;
 };
