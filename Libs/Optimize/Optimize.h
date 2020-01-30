@@ -102,9 +102,11 @@ public:
   void SetOutputDir(std::string output_dir);
   void SetOutputTransformFile(std::string output_transform_file);
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
+  bool GetUseMeshBasedAttributes();
   void SetUseXYZ(std::vector<bool> use_xyz);
   void SetUseNormals(std::vector<bool> use_normals);
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
+  std::vector<int> GetAttributesPerDomain();
   void SetDistributionDomainID(int distribution_domain_id);
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
 
@@ -137,13 +139,22 @@ public:
   void SetPerformGoodBad(bool perform_good_bad);
   void SetLogEnergy(bool log_energy);
 
-
   void SetImages(const std::vector<ImageType::Pointer> &images);
   void SetFilenames(const std::vector<std::string> &filenames);
   void SetPointFiles(const std::vector <std::string> &point_files);
+  int GetNumShapes();
+  void SetMeshFiles(const std::vector<std::string> &mesh_files);
+  void SetAttributeScales(const std::vector<double> &scales);
+  void SetFeaFiles(const std::vector<std::string> &files);
+  void SetFeaGradFiles(const std::vector<std::string> &files);
+  void SetFidsFiles(const std::vector<std::string> &files);
+
+  std::vector<bool> GetUseXYZ();
+
+  std::vector<bool> GetUseNormals();
 
 
-  virtual void ReadMeshInputs(const char* fname);
+
   virtual void ReadConstraints(const char* fname);
   virtual void ReadDistributionCuttingPlane(const char* fname);
   virtual void ReadCuttingPlanes(const char* fname);
@@ -244,6 +255,7 @@ protected:
   double m_spacing;
 
   std::vector < std::string > m_filenames;
+  int m_num_shapes = 0;
   std::vector < std::string > pointFiles;
 
   std::vector<double> m_EnergyA;

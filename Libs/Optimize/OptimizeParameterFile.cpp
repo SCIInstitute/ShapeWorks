@@ -72,6 +72,11 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
   if (!this->read_inputs(&docHandle, optimize)) {
     return false;
   }
+
+  if (!this->read_mesh_inputs(&docHandle, optimize)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -321,15 +326,11 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
 
   optimize->SetImages(images);
 
-  Optimize::ImageType::Pointer first_image = images[0];
-
-  int shapeCount = 0;
-
   std::vector < std::string > filenames;
 
-  for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
-    char* str = new char[shapeFiles[shapeCount].length() + 1];
-    strcpy(str, shapeFiles[shapeCount].c_str());
+  for (int i = 0; i < numShapes; i++) {
+    char* str = new char[shapeFiles[i].length() + 1];
+    strcpy(str, shapeFiles[i].c_str());
 
     char* fname;
     char* pch;
@@ -371,6 +372,154 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
     }
   }
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem = nullptr;
+  std::istringstream inputsBuffer;
+  std::string filename;
+  int numShapes = optimize->GetNumShapes();
+
+  // load mesh files
+  elem = docHandle->FirstChild("mesh_files").Element();
+  if (elem) {
+    std::vector<std::string> meshFiles;
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> filename) {
+      meshFiles.push_back(filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+
+    // read mesh files only if they are all present
+    if (meshFiles.size() != numShapes) {
+      std::cerr << "Error: incorrect number of mesh files!" << std::endl;
+      return false;
+    }
+    else {
+      optimize->SetMeshFiles(meshFiles);
+    }
+  }
+
+  std::vector<int> attributes_per_domain = optimize->GetAttributesPerDomain();
+
+  // attributes
+  if ((attributes_per_domain.size() >= 1 &&
+       *std::max_element(attributes_per_domain.begin(),
+                         attributes_per_domain.end()) > 0) ||
+      optimize->GetUseMeshBasedAttributes()) {
+    // attribute scales
+    double sc;
+    std::vector < double > attr_scales;
+
+    elem = docHandle->FirstChild("attribute_scales").Element();
+    if (elem) {
+      inputsBuffer.str(elem->GetText());
+
+      while (inputsBuffer >> sc) {
+        attr_scales.push_back(sc);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+    int numTot = 0;
+    for (int i = 0; i < optimize->GetDomainsPerShape(); i++) {
+      if (optimize->GetUseXYZ()[i]) {
+        numTot += 3;
+      }
+      if (optimize->GetUseNormals()[i]) {
+        numTot += 3;
+      }
+      if (attributes_per_domain.size() > 0) {
+        numTot += attributes_per_domain[i];
+      }
+    }
+
+    if (numTot != attr_scales.size()) {
+      std::cerr << "not enough attribute scale values!!!" << std::endl;
+      return false;
+    }
+    optimize->SetAttributeScales(attr_scales);
+
+    // attribute files
+    std::vector < std::string > attrFiles;
+    elem = docHandle->FirstChild("attribute_files").Element();
+    if (elem) {
+      inputsBuffer.str(elem->GetText());
+
+      while (inputsBuffer >> filename) {
+        attrFiles.push_back(filename);
+      }
+
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+
+      optimize->SetFeaFiles(attrFiles);
+    }
+
+    // need fids for mesh based fea
+    if (optimize->GetUseMeshBasedAttributes()) {
+      std::vector < std::string > feaGradFiles;
+      elem = docHandle->FirstChild("attribute_grad_files").Element();
+      if (elem) {
+        inputsBuffer.str(elem->GetText());
+        while (inputsBuffer >> filename) {
+          feaGradFiles.push_back(filename);
+        }
+
+        inputsBuffer.clear();
+        inputsBuffer.str("");
+
+        int totAttributes = std::accumulate(
+          attributes_per_domain.begin(), attributes_per_domain.end(), 0);
+        if (feaGradFiles.size() != numShapes * totAttributes / optimize->GetDomainsPerShape()) {
+          std::cerr << "ERROR: Invalid number of attribute gradient files!!!" << std::endl;
+          return false;
+        }
+        else {
+          optimize->SetFeaGradFiles(feaGradFiles);
+        }
+      }
+      else {
+        if (attributes_per_domain.size() >= 1 &&
+            *std::max_element(attributes_per_domain.begin(),
+                              attributes_per_domain.end()) > 0) {
+          std::cerr << "ERROR: No feature gradient files!!!" << std::endl;
+          return false;
+        }
+      }
+
+      std::vector < std::string > fidsFiles;
+      elem = docHandle->FirstChild("fids").Element();
+      if (elem) {
+        inputsBuffer.str(elem->GetText());
+        while (inputsBuffer >> filename) {
+          fidsFiles.push_back(filename);
+        }
+
+        inputsBuffer.clear();
+        inputsBuffer.str("");
+        if (fidsFiles.size() != numShapes) {
+          std::cerr << "ERROR: Invalid number of fids files!!" << std::endl;
+          return false;
+        }
+        else {
+          optimize->SetFidsFiles(fidsFiles);
+        }
+      }
+      else {
+        if (attributes_per_domain.size() >= 1 &&
+            *std::max_element(attributes_per_domain.begin(),
+                              attributes_per_domain.end()) > 0) {
+          std::cerr << "ERROR: Must provide fids!!" << std::endl;
+          return false;
+        }
+      }
+    }
+  }
   return true;
 }
 //---------------------------------------------------------------------------

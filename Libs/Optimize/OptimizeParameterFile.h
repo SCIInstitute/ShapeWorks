@@ -33,6 +33,7 @@ public:
 
   bool read_inputs(TiXmlHandle *docHandle, Optimize* optimize);
 
+  bool read_mesh_inputs(TiXmlHandle *docHandle, Optimize* optimize);
 
 
 private:

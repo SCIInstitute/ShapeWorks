@@ -133,10 +133,6 @@ void Optimize::LoadParameters(const char* fn)
     this->m_Procrustes->ScalingOn();
   }
 
-  this->startMessage("Reading mesh input file paths...");
-  this->ReadMeshInputs(fn);
-  this->doneMessage();
-
   this->startMessage("Reading constraints on input shapes...");
   this->ReadConstraints(fn);
   this->doneMessage();
@@ -278,6 +274,16 @@ void Optimize::SetOutputTransformFile(std::string output_transform_file)
 void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes)
 {
   this->m_mesh_based_attributes = use_mesh_based_attributes;
+
+  if (this->m_mesh_based_attributes) {
+    this->m_Sampler->RegisterGeneralShapeMatrices();
+  }
+}
+
+//---------------------------------------------------------------------------
+bool Optimize::GetUseMeshBasedAttributes()
+{
+  return this->m_mesh_based_attributes;
 }
 
 //---------------------------------------------------------------------------
@@ -296,6 +302,13 @@ void Optimize::SetUseNormals(std::vector<bool> use_normals)
 void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain)
 {
   this->m_attributes_per_domain = attributes_per_domain;
+  this->m_Sampler->SetAttributesPerDomain(attributes_per_domain);
+}
+
+//---------------------------------------------------------------------------
+std::vector<int> Optimize::GetAttributesPerDomain()
+{
+  return this->m_attributes_per_domain;
 }
 
 //---------------------------------------------------------------------------
@@ -326,163 +339,6 @@ void Optimize::SetAdaptivityMode(int adaptivity_mode)
 void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 {
   this->m_adaptivity_strength = adaptivity_strength;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::ReadMeshInputs(const char* fname)
-{
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
-    std::istringstream inputsBuffer;
-    std::string filename;
-    int numShapes = m_filenames.size();
-
-    if (m_mesh_based_attributes) {
-      m_Sampler->RegisterGeneralShapeMatrices();
-    }
-
-    // load mesh files
-    std::vector < std::string > meshFiles;
-    elem = docHandle.FirstChild("mesh_files").Element();
-    if (elem) {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> filename) {
-        meshFiles.push_back(filename);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-
-      // read mesh files only if they are all present
-      if (meshFiles.size() < numShapes) {
-        std::cerr << "not enough mesh files!!!" << std::endl;
-        throw 1;
-      }
-      else {
-        m_Sampler->SetMeshFiles(meshFiles);
-      }
-      meshFiles.clear();
-    }
-
-    // attributes
-    if ((this->m_attributes_per_domain.size() >= 1 &&
-         *std::max_element(m_attributes_per_domain.begin(),
-                           m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
-      // attribute scales
-      double sc;
-      std::vector < double > attr_scales;
-
-      elem = docHandle.FirstChild("attribute_scales").Element();
-      if (elem) {
-        inputsBuffer.str(elem->GetText());
-
-        while (inputsBuffer >> sc) {
-          attr_scales.push_back(sc);
-        }
-        inputsBuffer.clear();
-        inputsBuffer.str("");
-      }
-      int numTot = 0;
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        if (m_use_xyz[i]) {
-          numTot += 3;
-        }
-        if (m_use_normals[i]) {
-          numTot += 3;
-        }
-        if (m_attributes_per_domain.size() > 0) {
-          numTot += m_attributes_per_domain[i];
-        }
-      }
-
-      if (numTot != attr_scales.size()) {
-        std::cerr << "not enough attribute scale values!!!" << std::endl;
-        throw 1;
-      }
-      m_Sampler->SetAttributeScales(attr_scales);
-
-      // attribute files
-      std::vector < std::string > attrFiles;
-      elem = docHandle.FirstChild("attribute_files").Element();
-      if (elem) {
-        inputsBuffer.str(elem->GetText());
-
-        while (inputsBuffer >> filename) {
-          attrFiles.push_back(filename);
-        }
-
-        inputsBuffer.clear();
-        inputsBuffer.str("");
-
-        m_Sampler->SetFeaFiles(attrFiles);
-      }
-
-      // need fids for mesh based fea
-      if (m_mesh_based_attributes) {
-
-        m_Sampler->SetAttributesPerDomain(this->m_attributes_per_domain);
-        std::vector < std::string > feaGradFiles;
-        elem = docHandle.FirstChild("attribute_grad_files").Element();
-        if (elem) {
-          inputsBuffer.str(elem->GetText());
-          while (inputsBuffer >> filename) {
-            feaGradFiles.push_back(filename);
-          }
-
-          inputsBuffer.clear();
-          inputsBuffer.str("");
-
-          int totAttributes = std::accumulate(
-            m_attributes_per_domain.begin(), m_attributes_per_domain.end(), 0);
-          if (feaGradFiles.size() != numShapes * totAttributes / m_domains_per_shape) {
-            std::cerr << "ERROR: Invalid number of attribute gradient files!!!" << std::endl;
-            throw 1;
-          }
-          else {
-            m_Sampler->SetFeaGradFiles(feaGradFiles);
-          }
-        }
-        else {
-          if (this->m_attributes_per_domain.size() >= 1 &&
-              *std::max_element(m_attributes_per_domain.begin(),
-                                m_attributes_per_domain.end()) > 0) {
-            std::cerr << "ERROR: No feature gradient files!!!" << std::endl;
-            throw 1;
-          }
-        }
-
-        std::vector < std::string > fidsFiles;
-        elem = docHandle.FirstChild("fids").Element();
-        if (elem) {
-          inputsBuffer.str(elem->GetText());
-          while (inputsBuffer >> filename) {
-            fidsFiles.push_back(filename);
-          }
-
-          inputsBuffer.clear();
-          inputsBuffer.str("");
-          if (fidsFiles.size() != numShapes) {
-            std::cerr << "ERROR: Invalid number of fids files!!" << std::endl;
-            throw 1;
-          }
-          else {
-            m_Sampler->SetFidsFiles(fidsFiles);
-          }
-        }
-        else {
-          if (this->m_attributes_per_domain.size() >= 1 &&
-              *std::max_element(m_attributes_per_domain.begin(),
-                                m_attributes_per_domain.end()) > 0) {
-            std::cerr << "ERROR: Must provide fids!!" << std::endl;
-            throw 1;
-          }
-        }
-      }
-    }
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -2440,6 +2296,7 @@ void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
   ImageType::Pointer first_image = images[0];
   this->m_Sampler->SetInput(0, first_image);            // set the 0th input
   this->m_spacing = first_image->GetSpacing()[0];
+  this->m_num_shapes = images.size();
 }
 
 //---------------------------------------------------------------------------
@@ -2452,4 +2309,52 @@ void Optimize::SetPointFiles(const std::vector<std::string> &point_files)
   for (int shapeCount = 0; shapeCount < point_files.size(); shapeCount++) {
     this->m_Sampler->SetPointsFile(shapeCount, pointFiles[shapeCount]);
   }
+}
+
+//---------------------------------------------------------------------------
+int Optimize::GetNumShapes()
+{
+  return this->m_num_shapes;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetMeshFiles(const std::vector<std::string> &mesh_files)
+{
+  m_Sampler->SetMeshFiles(mesh_files);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetAttributeScales(const std::vector<double> &scales)
+{
+  this->m_Sampler->SetAttributeScales(scales);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetFeaFiles(const std::vector<std::string> &files)
+{
+  this->m_Sampler->SetFeaFiles(files);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetFeaGradFiles(const std::vector<std::string> &files)
+{
+  this->m_Sampler->SetFeaGradFiles(files);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetFidsFiles(const std::vector<std::string> &files)
+{
+  this->m_Sampler->SetFidsFiles(files);
+}
+
+//---------------------------------------------------------------------------
+std::vector<bool> Optimize::GetUseXYZ()
+{
+  return this->m_use_xyz;
+}
+
+//---------------------------------------------------------------------------
+std::vector<bool> Optimize::GetUseNormals()
+{
+  return this->m_use_normals;
 }
