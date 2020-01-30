@@ -56,7 +56,7 @@
 //---------------------------------------------------------------------------
 Optimize::Optimize()
 {
-  this->m_Sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
+  this->m_sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
 }
 
 //---------------------------------------------------------------------------
@@ -91,36 +91,36 @@ void Optimize::SetParameters()
   }
 
   // Set up the optimization process
-  this->m_Sampler->SetDomainsPerShape(this->m_domains_per_shape);   // must be done first!
-  this->m_Sampler->SetTimeptsPerIndividual(this->m_timepts_per_subject);
-  this->m_Sampler->GetParticleSystem()->SetDomainsPerShape(this->m_domains_per_shape);
-  this->m_Sampler->SetVerbosity(this->m_verbosity_level);
+  this->m_sampler->SetDomainsPerShape(this->m_domains_per_shape);   // must be done first!
+  this->m_sampler->SetTimeptsPerIndividual(this->m_timepts_per_subject);
+  this->m_sampler->GetParticleSystem()->SetDomainsPerShape(this->m_domains_per_shape);
+  this->m_sampler->SetVerbosity(this->m_verbosity_level);
 
   if (this->m_use_xyz.size() > 0) {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
-      this->m_Sampler->SetXYZ(i, this->m_use_xyz[i]);
+      this->m_sampler->SetXYZ(i, this->m_use_xyz[i]);
     }
   }
   else {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
-      this->m_Sampler->SetXYZ(i, false);
+      this->m_sampler->SetXYZ(i, false);
     }
   }
 
   if (this->m_use_normals.size() > 0) {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
-      this->m_Sampler->SetNormals(i, this->m_use_normals[i]);
+      this->m_sampler->SetNormals(i, this->m_use_normals[i]);
     }
   }
   else {
     for (int i = 0; i < this->m_domains_per_shape; i++) {
-      this->m_Sampler->SetNormals(i, false);
+      this->m_sampler->SetNormals(i, false);
     }
   }
 
   // Set up the procrustes registration object.
   this->m_Procrustes = itk::ParticleProcrustesRegistration < 3 > ::New();
-  this->m_Procrustes->SetParticleSystem(this->m_Sampler->GetParticleSystem());
+  this->m_Procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_Procrustes->SetDomainsPerShape(this->m_domains_per_shape);
 
   if (this->m_procrustes_scaling == 0) {
@@ -136,7 +136,7 @@ void Optimize::SetParameters()
   this->doneMessage();
 
   if (m_use_normals.size() > 0) {
-    int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
     for (int i = 0; i < numShapes; i++) {
       if (m_use_normals[i % m_domains_per_shape]) {
         continue;
@@ -144,18 +144,18 @@ void Optimize::SetParameters()
 
       itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
         static_cast < itk::ParticleImageDomainWithHessians<float,
-                                                           3>*> (m_Sampler->GetParticleSystem()
+                                                           3>*> (m_sampler->GetParticleSystem()
                                                                  ->GetDomain(i));
       domainWithHess->DeletePartialDerivativeImages();
     }
   }
   else {
-    int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+    int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
     for (int i = 0; i < numShapes; i++) {
       itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
         static_cast < itk::ParticleImageDomainWithHessians < float,
                                                              3 >
-                      * > (m_Sampler->GetParticleSystem()->GetDomain(i));
+                      * > (m_sampler->GetParticleSystem()->GetDomain(i));
       domainWithHess->DeletePartialDerivativeImages();
     }
   }
@@ -165,7 +165,7 @@ void Optimize::SetParameters()
       itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
         static_cast < itk::ParticleImageDomainWithHessians < float,
                                                              3 >
-                      * > (m_Sampler->GetParticleSystem()->GetDomain(m_domain_flags[i]));
+                      * > (m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i]));
       if (m_use_normals.size() > 0) {
         if (m_use_normals[i % m_domains_per_shape]) {
           domainWithHess->DeletePartialDerivativeImages();
@@ -208,7 +208,7 @@ void Optimize::SetVerbosity(int verbosity_level)
 void Optimize::SetDomainsPerShape(int domains_per_shape)
 {
   this->m_domains_per_shape = domains_per_shape;
-  this->m_Sampler->SetDomainsPerShape(this->m_domains_per_shape);
+  this->m_sampler->SetDomainsPerShape(this->m_domains_per_shape);
 }
 
 //---------------------------------------------------------------------------
@@ -271,7 +271,7 @@ void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes)
   this->m_mesh_based_attributes = use_mesh_based_attributes;
 
   if (this->m_mesh_based_attributes) {
-    this->m_Sampler->RegisterGeneralShapeMatrices();
+    this->m_sampler->RegisterGeneralShapeMatrices();
   }
 }
 
@@ -297,7 +297,7 @@ void Optimize::SetUseNormals(std::vector<bool> use_normals)
 void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain)
 {
   this->m_attributes_per_domain = attributes_per_domain;
-  this->m_Sampler->SetAttributesPerDomain(attributes_per_domain);
+  this->m_sampler->SetAttributesPerDomain(attributes_per_domain);
 }
 
 //---------------------------------------------------------------------------
@@ -335,7 +335,7 @@ void Optimize::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>
                                const vnl_vector_fixed<double, 3> &vb,
                                const vnl_vector_fixed<double, 3> &vc)
 {
-  this->m_Sampler->SetCuttingPlane(i, va, vb, vc);
+  this->m_sampler->SetCuttingPlane(i, va, vb, vc);
 }
 
 //---------------------------------------------------------------------------
@@ -362,8 +362,8 @@ void Optimize::ReadTransformFile()
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    m_Sampler->GetParticleSystem()->SetTransform(i, reader.GetOutput()[i]);
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
+    m_sampler->GetParticleSystem()->SetTransform(i, reader.GetOutput()[i]);
   }
 }
 
@@ -373,8 +373,8 @@ void Optimize::ReadPrefixTransformFile(const std::string &fn)
   object_reader < itk::ParticleSystem < 3 > ::TransformType > reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    m_Sampler->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
+    m_sampler->GetParticleSystem()->SetPrefixTransform(i, reader.GetOutput()[i]);
   }
 }
 
@@ -385,67 +385,67 @@ void Optimize::InitializeSampler()
   float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
   float flat_cutoff = 0.3;   // 0.3 -> 0.85
 
-  m_Sampler->SetPairwisePotentialType(m_pairwise_potential_type);
+  m_sampler->SetPairwisePotentialType(m_pairwise_potential_type);
 
-  m_Sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_Sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_Sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-  m_Sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-  m_Sampler->GetQualifierGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_Sampler->GetQualifierGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+  m_sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+  m_sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+  m_sampler->GetQualifierGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_sampler->GetQualifierGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
-  m_Sampler->GetModifiedCotangentGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_Sampler->GetModifiedCotangentGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+  m_sampler->GetModifiedCotangentGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_sampler->GetModifiedCotangentGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
-  m_Sampler->GetOmegaGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_Sampler->GetOmegaGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
+  m_sampler->GetOmegaGradientFunction()->SetFlatCutoff(flat_cutoff);
+  m_sampler->GetOmegaGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
-  m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
-  m_Sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
-  m_Sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
+  m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
 
-  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(
+  m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(
     m_starting_regularization);
-  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
-  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
+  m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
 
-  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVariance(m_starting_regularization);
-  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(1);
-  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetHoldMinimumVariance(false);
+  m_sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetEnsembleRegressionEntropyFunction()->SetHoldMinimumVariance(false);
 
-  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVariance(m_starting_regularization);
-  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
-  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
+  m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
 
-  m_Sampler->GetOptimizer()->SetTimeStep(1.0);
+  m_sampler->GetOptimizer()->SetTimeStep(1.0);
 
   if (m_optimizer_type == 0) {
-    m_Sampler->GetOptimizer()->SetModeToJacobi();
+    m_sampler->GetOptimizer()->SetModeToJacobi();
   }
   else if (m_optimizer_type == 1) {
-    m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
+    m_sampler->GetOptimizer()->SetModeToGaussSeidel();
   }
   else {
-    m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+    m_sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
   }
 
-  m_Sampler->SetSamplingOn();
+  m_sampler->SetSamplingOn();
 
-  m_Sampler->SetCorrespondenceOn();
+  m_sampler->SetCorrespondenceOn();
 
-  m_Sampler->SetAdaptivityMode(m_adaptivity_mode);
-  m_Sampler->GetEnsembleEntropyFunction()
+  m_sampler->SetAdaptivityMode(m_adaptivity_mode);
+  m_sampler->GetEnsembleEntropyFunction()
   ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
-  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()
+  m_sampler->GetMeshBasedGeneralEntropyGradientFunction()
   ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
-  m_Sampler->GetEnsembleRegressionEntropyFunction()
+  m_sampler->GetEnsembleRegressionEntropyFunction()
   ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
-  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()
+  m_sampler->GetEnsembleMixedEffectsEntropyFunction()
   ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
 
-  m_Sampler->Initialize();
+  m_sampler->Initialize();
 
-  m_Sampler->GetOptimizer()->SetTolerance(0.0);
+  m_sampler->GetOptimizer()->SetTolerance(0.0);
 }
 
 //---------------------------------------------------------------------------
@@ -453,12 +453,12 @@ double Optimize::GetMinNeighborhoodRadius()
 {
   double rad = 0.0;
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
 
     const itk::ParticleImageDomain < float,
                                      3 >* domain = static_cast < const itk::ParticleImageDomain < float,
                                                                                                   3 >
-                                                                 * > (m_Sampler->GetParticleSystem()
+                                                                 * > (m_sampler->GetParticleSystem()
                                                                       ->GetDomain(i));
 
     itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
@@ -472,7 +472,7 @@ double Optimize::GetMinNeighborhoodRadius()
     mp->Update();
     double area = mp->GetSurfaceArea();
     double sigma =
-      std::sqrt(area / (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
+      std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
     if (rad < sigma) {
       rad = sigma;
     }
@@ -485,16 +485,16 @@ void Optimize::AddSinglePoint()
 {
   typedef itk::ParticleSystem < 3 > ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
        i++) {
-    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
+    if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
 
     bool done = false;
 
     ImageType::Pointer img = dynamic_cast < itk::ParticleImageDomain < float, 3 >* > (
-      m_Sampler->GetParticleSystem()->GetDomain(i))->GetImage();
+      m_sampler->GetParticleSystem()->GetDomain(i))->GetImage();
 
     itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
       itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
@@ -510,7 +510,7 @@ void Optimize::AddSinglePoint()
         done = true;
         try
         {
-          m_Sampler->GetParticleSystem()->AddPosition(pos, i);
+          m_sampler->GetParticleSystem()->AddPosition(pos, i);
         } catch (itk::ExceptionObject &) {
           done = false;
         }
@@ -533,7 +533,7 @@ void Optimize::Initialize()
 
   if (m_procrustes_interval != 0) { // Initial registration
     for (int i = 0; i < this->m_domains_per_shape; i++) {
-      if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
+      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
         m_Procrustes->RunRegistration(i);
       }
     }
@@ -542,37 +542,37 @@ void Optimize::Initialize()
   }
   m_disable_procrustes = true;
 
-  m_Sampler->GetParticleSystem()->SynchronizePositions();
+  m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  m_Sampler->GetCurvatureGradientFunction()->SetRho(0.0);
-  m_Sampler->GetOmegaGradientFunction()->SetRho(0.0);
+  m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
+  m_sampler->GetOmegaGradientFunction()->SetRho(0.0);
 
-  m_Sampler->SetCorrespondenceOn();
+  m_sampler->SetCorrespondenceOn();
 
   if (m_use_shape_statistics_in_init) {
     if (m_attributes_per_domain.size() > 0 &&
         *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) {
       if (m_mesh_based_attributes) {
-        m_Sampler->SetCorrespondenceMode(5);
+        m_sampler->SetCorrespondenceMode(5);
       }
       else {
-        m_Sampler->SetCorrespondenceMode(2);
+        m_sampler->SetCorrespondenceMode(2);
       }
     }
     else {
       if (m_mesh_based_attributes) {
-        m_Sampler->SetCorrespondenceMode(5);
+        m_sampler->SetCorrespondenceMode(5);
       }
       else {
-        m_Sampler->SetCorrespondenceMode(1);
+        m_sampler->SetCorrespondenceMode(1);
       }
     }
 
-    m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+    m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                      m_ending_regularization,
                                                                      m_iterations_per_split);
 
-    m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
+    m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
       m_starting_regularization,
       m_ending_regularization,
       m_iterations_per_split);
@@ -582,23 +582,23 @@ void Optimize::Initialize()
     if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(),
                            m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
-      m_Sampler->SetCorrespondenceMode(6);
+      m_sampler->SetCorrespondenceMode(6);
     }
     else {
-      m_Sampler->SetCorrespondenceMode(0);
+      m_sampler->SetCorrespondenceMode(0);
     }
   }
 
-  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
-  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
   this->AddSinglePoint();
 
-  m_Sampler->GetParticleSystem()->SynchronizePositions();
+  m_sampler->GetParticleSystem()->SynchronizePositions();
 
   int split_number = 0;
 
-  int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   vnl_vector_fixed < double, 3 > random;
   srand(1);
   for (int i = 0; i < 3; i++) {
@@ -612,7 +612,7 @@ void Optimize::Initialize()
 
   for (int i = 0; i < n; i++) {
     int d = i % m_domains_per_shape;
-    if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+    if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
       flag_split = true;
       break;
     }
@@ -623,12 +623,12 @@ void Optimize::Initialize()
     this->optimize_stop();
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
-      if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
-        m_Sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
+      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+        m_sampler->GetParticleSystem()->SplitAllParticlesInDomain(random, epsilon, i, 0);
       }
     }
 
-    m_Sampler->GetParticleSystem()->SynchronizePositions();
+    m_sampler->GetParticleSystem()->SynchronizePositions();
 
     split_number++;
 
@@ -637,7 +637,7 @@ void Optimize::Initialize()
 
       std::cout << std::endl << "Particle count: ";
       for (unsigned int i = 0; i < this->m_domains_per_shape; i++) {
-        std::cout << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) << "  ";
+        std::cout << m_sampler->GetParticleSystem()->GetNumberOfParticles(i) << "  ";
       }
       std::cout << std::endl;
     }
@@ -649,7 +649,7 @@ void Optimize::Initialize()
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
       for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i);
+        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
@@ -671,11 +671,11 @@ void Optimize::Initialize()
     ss << split_number;
     std::stringstream ssp;
 
-    ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
+    ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
     m_strEnergy = "split" + ss.str();
 
     for (int i = 0; i < m_domains_per_shape; i++) {
-      ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i);
+      ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
       m_strEnergy += "_" + ssp.str();
       ssp.str("");
     }
@@ -686,16 +686,16 @@ void Optimize::Initialize()
 
       double minRad = 3.0 * this->GetMinNeighborhoodRadius();
 
-      m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-      m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(
+      m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+      m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(
         minRad);
     }
 
     m_SaturationCounter = 0;
-    m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
-    m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
-    m_Sampler->Modified();
-    m_Sampler->Update();
+    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
+    m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    m_sampler->Modified();
+    m_sampler->Update();
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
@@ -703,7 +703,7 @@ void Optimize::Initialize()
       std::stringstream ssp;
       std::string dir_name = "split" + ss.str();
       for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles(i);
+        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
         dir_name += "_" + ssp.str();
         ssp.str("");
       }
@@ -724,7 +724,7 @@ void Optimize::Initialize()
     flag_split = false;
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
-      if (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
+      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
         flag_split = true;
         break;
       }
@@ -758,19 +758,19 @@ void Optimize::AddAdaptivity()
 
   double minRad = 3.0 * this->GetMinNeighborhoodRadius();
 
-  m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-  m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+  m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+  m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
 
-  m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
-  m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
-  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
-  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
+  m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
+  m_sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
+  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
+  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
   m_SaturationCounter = 0;
-  m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
-  m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
-  m_Sampler->Modified();
-  m_Sampler->Update();
+  m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
+  m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+  m_sampler->Modified();
+  m_sampler->Update();
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
@@ -792,18 +792,18 @@ void Optimize::RunOptimize()
   }
 
   m_optimizing = true;
-  m_Sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
-  m_Sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
-  m_Sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
-  m_Sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
+  m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
+  m_sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
+  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
+  m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
 
   if (this->m_pairwise_potential_type == 1) {
     this->SetCotanSigma();
 
     double minRad = 3.0 * this->GetMinNeighborhoodRadius();
 
-    m_Sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_Sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(
+    m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
+    m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(
       minRad);
   }
 
@@ -817,76 +817,76 @@ void Optimize::RunOptimize()
 
     if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
       // transform cutting planes
-      m_Sampler->TransformCuttingPlanes(m_distribution_domain_id);
+      m_sampler->TransformCuttingPlanes(m_distribution_domain_id);
     }
   }
 
   if (m_optimizer_type == 0) {
-    m_Sampler->GetOptimizer()->SetModeToJacobi();
+    m_sampler->GetOptimizer()->SetModeToJacobi();
   }
   else if (m_optimizer_type == 1) {
-    m_Sampler->GetOptimizer()->SetModeToGaussSeidel();
+    m_sampler->GetOptimizer()->SetModeToGaussSeidel();
   }
   else {
-    m_Sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
+    m_sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
   }
 
   // Set up the minimum variance decay
-  m_Sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
+  m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                    m_ending_regularization,
                                                                    m_optimization_iterations -
                                                                    m_optimization_iterations_completed);
 
-  m_Sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
+  m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
     m_starting_regularization,
     m_ending_regularization,
     m_optimization_iterations -
     m_optimization_iterations_completed);
-  m_Sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(
-    m_starting_regularization,
-    m_ending_regularization,
-    m_optimization_iterations -
-    m_optimization_iterations_completed);
-
-  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(
+  m_sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(
     m_starting_regularization,
     m_ending_regularization,
     m_optimization_iterations -
     m_optimization_iterations_completed);
 
-  m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(
+  m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(
     m_starting_regularization,
     m_ending_regularization,
     m_optimization_iterations -
     m_optimization_iterations_completed);
 
-  m_Sampler->SetCorrespondenceOn();
+  m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(
+    m_starting_regularization,
+    m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
+
+  m_sampler->SetCorrespondenceOn();
 
   if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(),
                          m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
-    m_Sampler->SetCorrespondenceMode(5);
+    m_sampler->SetCorrespondenceMode(5);
   }
   else if (m_use_regression == true) {
     if (m_use_mixed_effects == true) {
-      m_Sampler->SetCorrespondenceMode(4);       // MixedEffects
+      m_sampler->SetCorrespondenceMode(4);       // MixedEffects
     }
     else {
-      m_Sampler->SetCorrespondenceMode(3);       // Regression
+      m_sampler->SetCorrespondenceMode(3);       // Regression
     }
   }
   else if (m_starting_regularization == m_ending_regularization) {
-    m_Sampler->SetCorrespondenceMode(0);     // mean force
+    m_sampler->SetCorrespondenceMode(0);     // mean force
   }
   else {
-    m_Sampler->SetCorrespondenceMode(1);     // Ensemble Entropy
+    m_sampler->SetCorrespondenceMode(1);     // Ensemble Entropy
   }
 
   if (m_optimization_iterations - m_optimization_iterations_completed > 0) {
-    m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(
+    m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(
       m_optimization_iterations - m_optimization_iterations_completed);
   }
-  else { m_Sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);}
+  else { m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);}
 
   m_EnergyA.clear();
   m_EnergyB.clear();
@@ -894,10 +894,10 @@ void Optimize::RunOptimize()
   m_strEnergy = "opt";
 
   m_SaturationCounter = 0;
-  m_Sampler->GetOptimizer()->SetNumberOfIterations(0);
-  m_Sampler->GetOptimizer()->SetTolerance(0.0);
-  m_Sampler->Modified();
-  m_Sampler->Update();
+  m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+  m_sampler->GetOptimizer()->SetTolerance(0.0);
+  m_sampler->Modified();
+  m_sampler->Update();
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
@@ -914,20 +914,22 @@ void Optimize::RunOptimize()
 //---------------------------------------------------------------------------
 void Optimize::optimize_start()
 {
-  m_Sampler->GetOptimizer()->StartOptimization();
+  m_sampler->GetOptimizer()->StartOptimization();
 }
 
+//---------------------------------------------------------------------------
 void Optimize::optimize_stop()
 {
-  m_Sampler->GetOptimizer()->StopOptimization();
+  m_sampler->GetOptimizer()->StopOptimization();
 }
 
+//---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
   if (m_performGoodBad == true) {
     std::vector < std::vector < int >> tmp;
-    tmp = m_GoodBad->RunAssessment(m_Sampler->GetParticleSystem(),
-                                   m_Sampler->GetMeanCurvatureCache());
+    tmp = m_GoodBad->RunAssessment(m_sampler->GetParticleSystem(),
+                                   m_sampler->GetMeanCurvatureCache());
 
     if (!tmp.empty()) {
       if (this->m_badIds.empty()) {
@@ -996,7 +998,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 
       if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
         // transform cutting planes
-        m_Sampler->TransformCuttingPlanes(m_distribution_domain_id);
+        m_sampler->TransformCuttingPlanes(m_distribution_domain_id);
       }
     }
   }
@@ -1028,31 +1030,32 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   }
 }
 
+//---------------------------------------------------------------------------
 void Optimize::ComputeEnergyAfterIteration()
 {
-  int numShapes = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   double corrEnergy = 0.0;
 
   double sampEnergy = 0.0;
   for (int i = 0; i < numShapes; i++) {
-    m_Sampler->GetLinkingFunction()->SetDomainNumber(i);
-    for (int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
-      if (m_Sampler->GetParticleSystem()->GetDomainFlag(i)) {
+    m_sampler->GetLinkingFunction()->SetDomainNumber(i);
+    for (int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
+      if (m_sampler->GetParticleSystem()->GetDomainFlag(i)) {
         sampEnergy += 0.0;
       }
       else {
         sampEnergy +=
-          m_Sampler->GetLinkingFunction()->EnergyA(j, i, m_Sampler->GetParticleSystem());
+          m_sampler->GetLinkingFunction()->EnergyA(j, i, m_sampler->GetParticleSystem());
       }
-      if (m_Sampler->GetCorrespondenceMode() == 0) {
+      if (m_sampler->GetCorrespondenceMode() == 0) {
         corrEnergy +=
-          m_Sampler->GetLinkingFunction()->EnergyB(j, i, m_Sampler->GetParticleSystem());
+          m_sampler->GetLinkingFunction()->EnergyB(j, i, m_sampler->GetParticleSystem());
       }
     }
   }
 
-  if (m_Sampler->GetCorrespondenceMode() > 0) {
-    corrEnergy = m_Sampler->GetLinkingFunction()->EnergyB(0, 0, m_Sampler->GetParticleSystem());
+  if (m_sampler->GetCorrespondenceMode() > 0) {
+    corrEnergy = m_sampler->GetLinkingFunction()->EnergyB(0, 0, m_sampler->GetParticleSystem());
   }
 
   double totalEnergy = sampEnergy + corrEnergy;
@@ -1064,15 +1067,16 @@ void Optimize::ComputeEnergyAfterIteration()
   }
 }
 
+//---------------------------------------------------------------------------
 void Optimize::SetCotanSigma()
 {
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
-  m_Sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
+  m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     const itk::ParticleImageDomain < float,
                                      3 >* domain = static_cast < const itk::ParticleImageDomain < float,
                                                                                                   3 >
-                                                                 * > (m_Sampler->GetParticleSystem()
+                                                                 * > (m_sampler->GetParticleSystem()
                                                                       ->GetDomain(i));
 
     itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
@@ -1087,13 +1091,14 @@ void Optimize::SetCotanSigma()
     double area = mp->GetSurfaceArea();
     double sigma = m_cotan_sigma_factor *
                    std::sqrt(area /
-                             (m_Sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
-    m_Sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
+                             (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
+    m_sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
   }
 }
 
 // File writers and info display functions
 
+//---------------------------------------------------------------------------
 void Optimize::PrintParamInfo()
 {
 
@@ -1262,6 +1267,7 @@ void Optimize::PrintParamInfo()
   }
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WriteTransformFile(int iter) const
 {
   std::string output_file = m_output_dir + "/" + m_output_transform_file;
@@ -1270,22 +1276,23 @@ void Optimize::WriteTransformFile(int iter) const
     std::stringstream ss;
     ss << iter + m_optimization_iterations_completed;
     std::stringstream ssp;
-    ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
+    ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
     output_file = m_output_dir + "/iter" + ss.str() + "_p" + ssp.str() + "/" +
                   m_output_transform_file;
   }
   this->WriteTransformFile(output_file);
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WriteTransformFile(std::string iter_prefix) const
 {
   std::string output_file = iter_prefix;
 
   std::vector < itk::ParticleSystem < 3 > ::TransformType > tlist;
 
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
        i++) {
-    tlist.push_back(m_Sampler->GetParticleSystem()->GetTransform(i));
+    tlist.push_back(m_sampler->GetParticleSystem()->GetTransform(i));
   }
 
   std::string str = "writing " + output_file + " ...";
@@ -1297,13 +1304,14 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
   doneMessage();
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WritePointFiles(int iter)
 {
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
   std::stringstream ssp;
-  ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();   // size from domain 0
+  ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();   // size from domain 0
 
   std::string out_path = m_output_dir;
   std::string tmp_dir_name = iter >=
@@ -1312,6 +1320,7 @@ void Optimize::WritePointFiles(int iter)
   this->WritePointFiles(tmp_dir_name);
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WritePointFiles(std::string iter_prefix)
 {
   this->startMessage("Writing point files...\n");
@@ -1322,7 +1331,7 @@ void Optimize::WritePointFiles(std::string iter_prefix)
 #endif
 
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
-  const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
   int counter;
   for (int i = 0; i < n; i++) {
@@ -1345,9 +1354,9 @@ void Optimize::WritePointFiles(std::string iter_prefix)
       throw 1;
     }
 
-    for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
-      PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
-      PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+    for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
+      PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
+      PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
 
       for (unsigned int k = 0; k < 3; k++) {
         out << pos[k] << " ";
@@ -1374,13 +1383,14 @@ void Optimize::WritePointFiles(std::string iter_prefix)
   this->doneMessage();
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WritePointFilesWithFeatures(int iter)
 {
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
   std::stringstream ssp;
-  ssp << m_Sampler->GetParticleSystem()->GetNumberOfParticles();   // size from domain 0
+  ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();   // size from domain 0
 
   std::string out_path = m_output_dir;
   std::string tmp_dir_name = iter >=
@@ -1389,6 +1399,7 @@ void Optimize::WritePointFilesWithFeatures(int iter)
   this->WritePointFilesWithFeatures(tmp_dir_name);
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
 {
   if (!m_mesh_based_attributes) {
@@ -1397,7 +1408,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
 
   this->startMessage("Writing point with attributes files...\n");
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
-  const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
   int counter;
   for (int i = 0; i < n; i++) {
@@ -1425,13 +1436,13 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
 
     const itk::ParticleImplicitSurfaceDomain < float, 3 >* domain
       = static_cast < const itk::ParticleImplicitSurfaceDomain < float,
-                                                                 3 >* > (m_Sampler->
+                                                                 3 >* > (m_sampler->
                                                                          GetParticleSystem()->
                                                                          GetDomain(i));
 
     const itk::ParticleImageDomainWithGradients < float, 3 >* domainWithGrad
       = static_cast < const itk::ParticleImageDomainWithGradients < float,
-                                                                    3 >* > (m_Sampler->
+                                                                    3 >* > (m_sampler->
                                                                             GetParticleSystem()->
                                                                             GetDomain(i));
 
@@ -1443,9 +1454,9 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
       }
     }
 
-    for (unsigned int j = 0; j < m_Sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
-      PointType pos = m_Sampler->GetParticleSystem()->GetPosition(j, i);
-      PointType wpos = m_Sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+    for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
+      PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
+      PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
 
       for (unsigned int k = 0; k < 3; k++) {
         outw << wpos[k] << " ";
@@ -1463,9 +1474,9 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
           domainWithGrad->SampleNormalVnl(pos);
         VectorType pN;
         pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
-        pN = m_Sampler->GetParticleSystem()->TransformVector(pN,
-                                                             m_Sampler->GetParticleSystem()->GetTransform(
-                                                               i) * m_Sampler->GetParticleSystem()->GetPrefixTransform(
+        pN = m_sampler->GetParticleSystem()->TransformVector(pN,
+                                                             m_sampler->GetParticleSystem()->GetTransform(
+                                                               i) * m_sampler->GetParticleSystem()->GetPrefixTransform(
                                                                i));
         outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
 //                }
@@ -1505,6 +1516,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
   this->doneMessage();
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WriteEnergyFiles()
 {
   if (!this->m_logEnergy) {
@@ -1555,6 +1567,7 @@ void Optimize::WriteEnergyFiles()
   this->doneMessage();
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WriteCuttingPlanePoints(int iter)
 {
   this->startMessage("Writing cutting plane points...\n");
@@ -1571,10 +1584,10 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   std::string str = "Writing " + output_file + "...";
   this->startMessage(str, 1);
 
-  for (unsigned int i = 0; i < m_Sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
+  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     const itk::ParticleImplicitSurfaceDomain < float, 3 >* dom
       = static_cast < const itk::ParticleImplicitSurfaceDomain < float
-                                                                 , 3 >* > (m_Sampler->
+                                                                 , 3 >* > (m_sampler->
                                                                            GetParticleSystem()->
                                                                            GetDomain(i));
 
@@ -1600,6 +1613,7 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   this->doneMessage();
 }
 
+//---------------------------------------------------------------------------
 void Optimize::WriteParameters(int iter)
 {
   if (!m_use_regression) {
@@ -1627,7 +1641,7 @@ void Optimize::WriteParameters(int iter)
   if (m_use_mixed_effects == true) {
     vnl_vector < double > slopevec = dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute <
                                                       double, 3 >* >
-                                     (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                     (m_sampler->GetEnsembleMixedEffectsEntropyFunction()->
                                       GetShapeMatrix())->GetSlope();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
@@ -1643,7 +1657,7 @@ void Optimize::WriteParameters(int iter)
     vnl_vector < double > interceptvec = dynamic_cast <
       itk::ParticleShapeMixedEffectsMatrixAttribute < double,
                                                       3 >* >
-                                         (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                         (m_sampler->GetEnsembleMixedEffectsEntropyFunction()->
                                           GetShapeMatrix())->GetIntercept();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
@@ -1673,7 +1687,7 @@ void Optimize::WriteParameters(int iter)
     vnl_matrix < double > sloperand_mat = dynamic_cast <
       itk::ParticleShapeMixedEffectsMatrixAttribute < double,
                                                       3 >* >
-                                          (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                          (m_sampler->GetEnsembleMixedEffectsEntropyFunction()->
                                            GetShapeMatrix())->GetSlopeRandom();
 
     out.open(slopename.c_str());
@@ -1688,7 +1702,7 @@ void Optimize::WriteParameters(int iter)
     vnl_matrix < double > interceptrand_mat = dynamic_cast <
       itk::ParticleShapeMixedEffectsMatrixAttribute <
         double, 3 >* >
-                                              (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->
+                                              (m_sampler->GetEnsembleMixedEffectsEntropyFunction()->
                                                GetShapeMatrix())->GetInterceptRandom();
 
     out.open(interceptname.c_str());
@@ -1704,7 +1718,7 @@ void Optimize::WriteParameters(int iter)
     vnl_vector < double > slopevec = dynamic_cast <
       itk::ParticleShapeLinearRegressionMatrixAttribute < double,
                                                           3 >* >
-                                     (m_Sampler->GetEnsembleRegressionEntropyFunction()->
+                                     (m_sampler->GetEnsembleRegressionEntropyFunction()->
                                       GetShapeMatrix())->GetSlope();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
@@ -1721,7 +1735,7 @@ void Optimize::WriteParameters(int iter)
     vnl_vector < double > interceptvec = dynamic_cast <
       itk::ParticleShapeLinearRegressionMatrixAttribute < double,
                                                           3 >* >
-                                         (m_Sampler->GetEnsembleRegressionEntropyFunction()->
+                                         (m_sampler->GetEnsembleRegressionEntropyFunction()->
                                           GetShapeMatrix())->GetIntercept();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
@@ -1736,11 +1750,12 @@ void Optimize::WriteParameters(int iter)
   }
 }
 
+//---------------------------------------------------------------------------
 void Optimize::ReportBadParticles()
 {
   this->startMessage("Reporting bad particles...", 2);
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
-  const int totalDomains = m_Sampler->GetParticleSystem()->GetNumberOfDomains();
+  const int totalDomains = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   const int numShapes = totalDomains / m_domains_per_shape;
   std::string outDomDir;
   std::string outPtDir;
@@ -1773,7 +1788,7 @@ void Optimize::ReportBadParticles()
         int dom = k * m_domains_per_shape + i;
         std::string localPtFile = outPtDir + "/" + m_filenames[dom] + ".particles";
         std::ofstream outl(localPtFile.c_str(), std::ofstream::app);
-        PointType pos = m_Sampler->GetParticleSystem()->GetPosition(m_badIds[i][j], dom);
+        PointType pos = m_sampler->GetParticleSystem()->GetPosition(m_badIds[i][j], dom);
         for (unsigned int d = 0; d < 3; d++) {
           outl << pos[d] << " ";
         }
@@ -1892,9 +1907,9 @@ void Optimize::SetLogEnergy(bool log_energy)
 //---------------------------------------------------------------------------
 void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
 {
-  this->m_Sampler->SetImages(images);
+  this->m_sampler->SetImages(images);
   ImageType::Pointer first_image = images[0];
-  this->m_Sampler->SetInput(0, first_image);            // set the 0th input
+  this->m_sampler->SetInput(0, first_image);            // set the 0th input
   this->m_spacing = first_image->GetSpacing()[0];
   this->m_num_shapes = images.size();
 }
@@ -1907,7 +1922,7 @@ void Optimize::SetFilenames(const std::vector<std::string> &filenames)
 void Optimize::SetPointFiles(const std::vector<std::string> &point_files)
 {
   for (int shapeCount = 0; shapeCount < point_files.size(); shapeCount++) {
-    this->m_Sampler->SetPointsFile(shapeCount, point_files[shapeCount]);
+    this->m_sampler->SetPointsFile(shapeCount, point_files[shapeCount]);
   }
 }
 
@@ -1920,31 +1935,31 @@ int Optimize::GetNumShapes()
 //---------------------------------------------------------------------------
 void Optimize::SetMeshFiles(const std::vector<std::string> &mesh_files)
 {
-  m_Sampler->SetMeshFiles(mesh_files);
+  m_sampler->SetMeshFiles(mesh_files);
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetAttributeScales(const std::vector<double> &scales)
 {
-  this->m_Sampler->SetAttributeScales(scales);
+  this->m_sampler->SetAttributeScales(scales);
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetFeaFiles(const std::vector<std::string> &files)
 {
-  this->m_Sampler->SetFeaFiles(files);
+  this->m_sampler->SetFeaFiles(files);
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetFeaGradFiles(const std::vector<std::string> &files)
 {
-  this->m_Sampler->SetFeaGradFiles(files);
+  this->m_sampler->SetFeaGradFiles(files);
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetFidsFiles(const std::vector<std::string> &files)
 {
-  this->m_Sampler->SetFidsFiles(files);
+  this->m_sampler->SetFidsFiles(files);
 }
 
 //---------------------------------------------------------------------------

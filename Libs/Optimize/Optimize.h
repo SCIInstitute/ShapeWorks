@@ -41,7 +41,7 @@ class Optimize
 public:
   typedef itk::Image<float, 3> ImageType;
   typedef itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>> SamplerType;
-  SamplerType* GetSampler() { return m_Sampler.GetPointer(); }
+  SamplerType* GetSampler() { return m_sampler.GetPointer(); }
 
   typedef typename itk::ParticleVectorFunction<3>::VectorType VectorType;
   typename itk::MemberCommand<Optimize>::Pointer m_Iteratecmd;
@@ -58,14 +58,14 @@ public:
   {
     m_Iteratecmd = itk::MemberCommand<Optimize>::New();
     m_Iteratecmd->SetCallbackFunction(this, &Optimize::IterateCallback);
-    m_Sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_Iteratecmd);
+    m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_Iteratecmd);
   }
 
   virtual void WriteModes()
   {
-    const int n = m_Sampler->GetParticleSystem()->GetNumberOfDomains() % m_domains_per_shape;
+    const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains() % m_domains_per_shape;
     if (n >= 5) {
-      m_Sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_dir + "/pts", 5);
+      m_sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_dir + "/pts", 5);
     }
   }
 
@@ -197,7 +197,7 @@ public:
   virtual void ReportBadParticles();
 
 protected:
-  typename itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_Sampler;
+  typename itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
   typename itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
   typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
 
