@@ -10,6 +10,7 @@
 #include <itkBinaryThresholdImageFilter.h>
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
+#include <itkRegionOfInterestImageFilter.h>
 
 namespace shapeworks {
 
@@ -281,10 +282,17 @@ bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
 ///////////////////////////////////////////////////////////////////////////////
 bool Image::compare_equal(const Image &other)
 {
+  using RegionFilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
+  RegionFilterType::Pointer region_filter = RegionFilterType::New();
+  region_filter->SetInput(this->image);
+  region_filter->SetRegionOfInterest(this->image->GetLargestPossibleRegion());
+  region_filter->UpdateLargestPossibleRegion();
+  ImageType::Pointer itk_image = region_filter->GetOutput();
+
   using DiffType = itk::Testing::ComparisonImageFilter<ImageType, ImageType>;
   DiffType::Pointer diff = DiffType::New();
   diff->SetValidInput(other.image);
-  diff->SetTestInput(this->image);
+  diff->SetTestInput(itk_image);
   diff->SetDifferenceThreshold(0);
   diff->SetToleranceRadius(0);
 
