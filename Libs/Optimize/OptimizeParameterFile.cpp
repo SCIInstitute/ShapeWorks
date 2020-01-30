@@ -3,12 +3,14 @@
 
 #include <itkImageFileReader.h>
 
+#include <tinyxml.h>
+
 //---------------------------------------------------------------------------
 OptimizeParameterFile::OptimizeParameterFile()
 {}
 
 //---------------------------------------------------------------------------
-bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optimize)
+bool OptimizeParameterFile::load_parameter_file(std::string filename, Optimize* optimize)
 {
   TiXmlDocument doc(filename.c_str());
   bool loadOkay = doc.LoadFile();

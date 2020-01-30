@@ -16,7 +16,7 @@
 #endif
 
 // std
-#include <cstdio>
+//#include <cstdio>
 #include <vector>
 #include <sstream>
 #include <string>
@@ -30,61 +30,36 @@
 #include "itkParticleGoodBadAssessment.h"
 #include "itkParticleVectorFunction.h"
 
-// tinyxml
-#include "tinyxml.h"
-
 // optimize library
 #include <itkParticleSystem.h>
 
 class Optimize
 {
 public:
-  typedef itk::Image<float, 3> ImageType;
-  typedef itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>> SamplerType;
-  SamplerType* GetSampler() { return m_sampler.GetPointer(); }
-
-  typedef typename itk::ParticleVectorFunction<3>::VectorType VectorType;
-  typename itk::MemberCommand<Optimize>::Pointer m_iterate_command;
-
-  virtual bool Run();
-
-  virtual void RunProcrustes()
-  {
-    this->optimize_stop();
-    m_Procrustes->RunRegistration();
-  }
-
-  virtual void SetIterationCommand();
-
-  virtual void WriteModes()
-  {
-    const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains() % m_domains_per_shape;
-    if (n >= 5) {
-      m_sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_dir + "/pts", 5);
-    }
-  }
-
-  void startMessage(std::string str, unsigned int vlevel = 0) const
-  {
-    if (m_verbosity_level > vlevel) {
-      std::cout << str;
-      std::cout.flush();
-    }
-  }
-
-  void doneMessage(unsigned int vlevel = 0) const
-  {
-    if (m_verbosity_level > vlevel) {
-      std::cout << "Done." << std::endl;
-    }
-  }
+  using ImageType = itk::Image<float, 3>;
+  using SamplerType = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>>;
+  using VectorType = itk::ParticleVectorFunction<3>::VectorType;
 
   // constructor
   Optimize();
 
+  virtual ~Optimize();
+
+  SamplerType* GetSampler() { return m_sampler.GetPointer(); }
+
   void SetParameters();
 
-  virtual ~Optimize();
+  virtual bool Run();
+
+  virtual void RunProcrustes();
+
+  virtual void SetIterationCommand();
+
+  virtual void WriteModes();
+
+  void startMessage(std::string str, unsigned int vlevel = 0) const;
+
+  void doneMessage(unsigned int vlevel = 0) const;
 
   void SetVerbosity(int verbosity_level);
   void SetDomainsPerShape(int domains_per_shape);
@@ -276,7 +251,6 @@ protected:
 
   //GoodBadAssessment
   std::vector<std::vector<int>> m_badIds;
-
   double m_normalAngle = itk::Math::pi / 2.0;
   bool m_performGoodBad = false;
 
@@ -284,4 +258,6 @@ protected:
   std::vector<int> m_spheres_per_input;
 
   bool m_file_output_enabled = true;
+
+  itk::MemberCommand<Optimize>::Pointer m_iterate_command;
 };

@@ -64,7 +64,7 @@ TEST(OptimizeTests, sample_test) {
   std::string paramfile = std::string("sphere.xml");
   Optimize app;
   OptimizeParameterFile param;
-  ASSERT_TRUE (param.set_parameters(paramfile.c_str(), &app));
+  ASSERT_TRUE (param.load_parameter_file(paramfile.c_str(), &app));
   app.SetParameters();
   app.Run();
 

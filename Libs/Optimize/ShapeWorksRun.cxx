@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
     Optimize app;
     OptimizeParameterFile param;
-    if (!param.set_parameters(argv[1], &app))
+    if (!param.load_parameter_file(argv[1], &app))
     {
       std::cerr << "Error reading parameter file\n";
       return 1;

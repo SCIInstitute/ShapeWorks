@@ -23,7 +23,8 @@ public:
 
   OptimizeParameterFile();
 
-  bool set_parameters(std::string filename, Optimize* optimize);
+  //! Load a parameter file and set the values on an Optimize object
+  bool load_parameter_file(std::string filename, Optimize* optimize);
 
 private:
 

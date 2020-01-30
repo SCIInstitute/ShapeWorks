@@ -83,6 +83,13 @@ bool Optimize::Run()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::RunProcrustes()
+{
+  this->optimize_stop();
+  m_Procrustes->RunRegistration();
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetParameters()
 {
   if (this->m_verbosity_level == 0) {
@@ -2082,4 +2089,30 @@ void Optimize::SetIterationCommand()
   this->m_iterate_command = itk::MemberCommand<Optimize>::New();
   this->m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
   this->m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::WriteModes()
+{
+  const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains() % m_domains_per_shape;
+  if (n >= 5) {
+    m_sampler->GetEnsembleEntropyFunction()->WriteModes(m_output_dir + "/pts", 5);
+  }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::startMessage(std::string str, unsigned int vlevel) const
+{
+  if (m_verbosity_level > vlevel) {
+    std::cout << str;
+    std::cout.flush();
+  }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::doneMessage(unsigned int vlevel) const
+{
+  if (m_verbosity_level > vlevel) {
+    std::cout << "Done." << std::endl;
+  }
 }
