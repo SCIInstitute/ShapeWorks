@@ -47,13 +47,8 @@ namespace shapeworks {
         double totalDist = 0.0;
         for(int leave=0; leave<N; leave++) {
             Eigen::MatrixXd Y(D, N-1);
-            for(int i=0; i<N; i++) {
-                if(i < leave) {
-                    Y.col(i) = P.col(i);
-                } else if(i > leave) {
-                    Y.col(i-1) = P.col(i);
-                }
-            }
+            Y.leftCols(leave) = P.leftCols(leave);
+            Y.rightCols(N-leave-1) = P.rightCols(N-leave-1);
 
             const Eigen::VectorXd mu = Y.rowwise().mean();
             Y.colwise() -= mu;
