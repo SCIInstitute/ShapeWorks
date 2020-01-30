@@ -262,7 +262,6 @@ protected:
 
   std::vector < std::string > m_filenames;
   int m_num_shapes = 0;
-  std::vector < std::string > pointFiles;
 
   std::vector<double> m_EnergyA;
   std::vector<double> m_EnergyB;

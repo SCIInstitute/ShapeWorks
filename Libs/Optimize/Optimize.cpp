@@ -1907,7 +1907,7 @@ void Optimize::SetFilenames(const std::vector<std::string> &filenames)
 void Optimize::SetPointFiles(const std::vector<std::string> &point_files)
 {
   for (int shapeCount = 0; shapeCount < point_files.size(); shapeCount++) {
-    this->m_Sampler->SetPointsFile(shapeCount, pointFiles[shapeCount]);
+    this->m_Sampler->SetPointsFile(shapeCount, point_files[shapeCount]);
   }
 }
 
