@@ -25,7 +25,7 @@ public:
                 PixelType outside = itk::NumericTraits<PixelType>::Zero);
   bool recenter();
   bool resample(float isoSpacing = 1.0f, PixelType defaultvalue = -1.0, Dims outputSize = Dims());
-  bool padimage(int padding, PixelType value);s
+  bool padimage(int padding, PixelType value);
   // bool nextfunction(...);
 
   bool compare_equal(const Image &other);
