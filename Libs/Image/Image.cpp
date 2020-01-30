@@ -199,9 +199,9 @@ bool Image::recenter()
 
 /// resample accepts only continuous images
 /// \param isoSpacing
-/// \param defaultvalue
+/// \param defaultValue
 /// \param outputSize     image size can be changed
-bool Image::resample(float isoSpacing, PixelType defaultvalue, Dims outputSize)
+bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
 {
   if (!this->image)
   {
@@ -233,7 +233,7 @@ bool Image::resample(float isoSpacing, PixelType defaultvalue, Dims outputSize)
 
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
   interpolator = InterpolatorType::New();
-  resampler->SetDefaultPixelValue(defaultvalue);
+  resampler->SetDefaultPixelValue(defaultValue);
   resampler->SetInterpolator(interpolator);
 
   using TransformType = itk::IdentityTransform<double, Image::dims>;
