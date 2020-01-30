@@ -238,7 +238,7 @@ int Binarize::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void PadImage::buildParser()
 {
-  const std::string prog = "padimage";
+  const std::string prog = "pad";
   const std::string desc = "pads an image with a contant value in the x-, y-, and z- directions";
   parser.prog(prog).description(desc);
 
@@ -253,7 +253,7 @@ int PadImage::execute(const optparse::Values &options, SharedCommandData &shared
   int padding = static_cast<int>(options.get("padding"));
   float value = static_cast<float>(options.get("value"));
 
-  return sharedData.image.padimage(padding, value);
+  return sharedData.image.pad(padding, value);
 }
 
 

@@ -99,7 +99,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             print(" ")
             
             cmd = ["shapeworks", "readimage", "--name", inname]
-            cmd.extend(["padimage" , "--padding" , str(
+            cmd.extend(["pad" , "--padding" , str(
                 padSize) , "--value" , str(padValue)])
             cmd.extend(["writeimage", "--name", outname])
             print(cmd)
@@ -129,7 +129,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             print(" ")
 
             cmd = ["shapeworks", "readimage", "--name", inname]
-            cmd.extend(["padimage" , "--padding" , str(
+            cmd.extend(["pad" , "--padding" , str(
                 padSize) , "--value" , str(padValue)])
             cmd.extend(["writeimage", "--name", outname])
             print(cmd)
@@ -156,7 +156,7 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             print(" ")
             
             cmd = ["shapeworks", "readimage", "--name", inname]
-            cmd.extend(["padimage" , "--padding" , str(
+            cmd.extend(["pad" , "--padding" , str(
                 padSize) , "--value" , str(padValue)])
             cmd.extend(["writeimage", "--name", outname])
             print(cmd)

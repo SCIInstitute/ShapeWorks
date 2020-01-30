@@ -330,7 +330,7 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
-bool Image::padimage(int padding, PixelType value)
+bool Image::pad(int padding, PixelType value)
 {
   if (!this->image)
   {

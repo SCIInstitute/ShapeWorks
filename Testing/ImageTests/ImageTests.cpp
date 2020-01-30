@@ -23,7 +23,7 @@ TEST(ImageTests, padimage_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/padimage/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.padimage(30, 0.0);
+  image.pad(30, 0.0);
  
   Image ground_truth(test_location + "padimage_baseline.nrrd");
 
@@ -34,7 +34,7 @@ TEST(ImageTests, padimage_identity_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/padimage/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.padimage(0, 0.0);
+  image.pad(0, 0.0);
   Image ground_truth(test_location + "1x2x2.nrrd");
 
   ASSERT_TRUE(image.compare_equal(ground_truth));

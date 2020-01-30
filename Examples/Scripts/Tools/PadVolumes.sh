@@ -124,9 +124,9 @@ do
     EchoWithColor  "imgfilename_padded $imgfilename_padded" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
-    shapeworks readimage --name $segfilename padimage writeimage --name $segfilename_padded
+    shapeworks readimage --name $segfilename pad --padding $padding_size --value $padVal writeimage --name $segfilename_padded
     if [ $process_raw -eq 1 ]
     then
-      shapeworks readimage --name $imgfilename padimage writeimage --name $imgfilename_padded
+      shapeworks readimage --name $imgfilename pad --padding $padding_size --value $padVal writeimage --name $imgfilename_padded
     fi
 done
