@@ -197,11 +197,11 @@ bool Image::recenter()
   return true;
 }
 
-/// resample
+/// resample accepts only continuous images
 /// \param isoSpacing
-/// \param binaryInput    binary input images (will antialias then using a bspline filter to produce better results)
+/// \param defaultvalue
 /// \param outputSize     image size can be changed
-bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
+bool Image::resample(float isoSpacing, PixelType defaultvalue, Dims outputSize)
 {
   if (!this->image)
   {
@@ -215,21 +215,25 @@ bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
   ResampleFilter::InterpolatorType::Pointer interpolator;
 
   // For binary input images, antialiasing then using a bspline filter produces better results
-  if (binaryInput)
-  {
-    // todo (archana): take out bsplinefilter altogether, document (above) that this function only accepts continuous image
-    using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
-    InterpolatorType::Pointer bspline_interp = InterpolatorType::New();
-    bspline_interp->SetSplineOrder(3);
-    interpolator = bspline_interp;
-    this->antialias();
-    resampler->SetDefaultPixelValue(-1.0);
-  }
-  else
-  {
-    using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-    interpolator = InterpolatorType::New();
-  }
+  // if (binaryInput)
+  // {
+  //   // todo (archana): take out bsplinefilter altogether, document (above) that this function only accepts continuous image
+  //   using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
+  //   InterpolatorType::Pointer bspline_interp = InterpolatorType::New();
+  //   bspline_interp->SetSplineOrder(3);
+  //   interpolator = bspline_interp;
+  //   this->antialias();
+  //   resampler->SetDefaultPixelValue(-1.0);
+  // }
+  // else
+  // {
+  //   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  //   interpolator = InterpolatorType::New();
+  // }
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  interpolator = InterpolatorType::New();
+  resampler->SetDefaultPixelValue(defaultvalue);
   resampler->SetInterpolator(interpolator);
 
   using TransformType = itk::IdentityTransform<double, Image::dims>;
