@@ -164,6 +164,8 @@ public:
   void SetParticleFlags(std::vector<int> flags);
   void SetDomainFlags(std::vector<int> flags);
 
+  void SetFileOutputEnabled(bool enabled);
+
   std::vector<bool> GetUseXYZ();
 
   std::vector<bool> GetUseNormals();
