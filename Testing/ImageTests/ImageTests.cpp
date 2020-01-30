@@ -24,7 +24,7 @@ TEST(ImageTests, padimage_test) {
 
   Image image(test_location + "1x2x2.nrrd");
   image.padimage(30, 0.0);
-  /*print image origin coordinates*/
+ 
   Image ground_truth(test_location + "padimage_baseline.nrrd");
 
   ASSERT_TRUE(image.compare_equal(ground_truth));
