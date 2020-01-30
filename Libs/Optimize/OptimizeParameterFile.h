@@ -30,4 +30,12 @@ public:
   bool set_optimization_parameters(TiXmlHandle *docHandle, Optimize* optimize);
 
   bool set_debug_parameters(TiXmlHandle *docHandle, Optimize* optimize);
+
+  bool read_inputs(TiXmlHandle *docHandle, Optimize* optimize);
+
+
+
+private:
+  int verbosity_level_ = 0;
+
 };

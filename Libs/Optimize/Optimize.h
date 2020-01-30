@@ -137,7 +137,12 @@ public:
   void SetPerformGoodBad(bool perform_good_bad);
   void SetLogEnergy(bool log_energy);
 
-  virtual void ReadInputs(const char* fname);
+
+  void SetImages(const std::vector<ImageType::Pointer> &images);
+  void SetFilenames(const std::vector<std::string> &filenames);
+  void SetPointFiles(const std::vector <std::string> &point_files);
+
+
   virtual void ReadMeshInputs(const char* fname);
   virtual void ReadConstraints(const char* fname);
   virtual void ReadDistributionCuttingPlane(const char* fname);

@@ -58,7 +58,9 @@
 
 //---------------------------------------------------------------------------
 Optimize::Optimize()
-{}
+{
+  this->m_Sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
+}
 
 //---------------------------------------------------------------------------
 bool Optimize::Run()
@@ -92,7 +94,6 @@ void Optimize::LoadParameters(const char* fn)
   }
 
   // Set up the optimization process
-  this->m_Sampler = itk::MaximumEntropyCorrespondenceSampler<ImageType>::New();
   this->m_Sampler->SetDomainsPerShape(this->m_domains_per_shape);   // must be done first!
   this->m_Sampler->SetTimeptsPerIndividual(this->m_timepts_per_subject);
   this->m_Sampler->GetParticleSystem()->SetDomainsPerShape(this->m_domains_per_shape);
@@ -131,10 +132,6 @@ void Optimize::LoadParameters(const char* fn)
   else {
     this->m_Procrustes->ScalingOn();
   }
-
-  this->startMessage("Reading input file paths...");
-  this->ReadInputs(fn);
-  this->doneMessage();
 
   this->startMessage("Reading mesh input file paths...");
   this->ReadMeshInputs(fn);
@@ -232,6 +229,7 @@ void Optimize::SetVerbosity(int verbosity_level)
 void Optimize::SetDomainsPerShape(int domains_per_shape)
 {
   this->m_domains_per_shape = domains_per_shape;
+  this->m_Sampler->SetDomainsPerShape(this->m_domains_per_shape);
 }
 
 //---------------------------------------------------------------------------
@@ -328,112 +326,6 @@ void Optimize::SetAdaptivityMode(int adaptivity_mode)
 void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 {
   this->m_adaptivity_strength = adaptivity_strength;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::ReadInputs(const char* fname)
-{
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
-
-    std::istringstream inputsBuffer;
-    std::string filename;
-    int numShapes = 0;
-
-    // load input shapes
-    std::vector < std::string > shapeFiles;
-    std::vector < ImageType::Pointer > images;
-    elem = docHandle.FirstChild("inputs").Element();
-    if (!elem) {
-      std::cerr << "No input files have been specified" << std::endl;
-      throw 1;
-    }
-    else {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> filename) {
-
-        if (m_verbosity_level > 1) {
-          std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
-        }
-        typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
-          ImageType > ::New();
-        reader->SetFileName(filename);
-        reader->UpdateLargestPossibleRegion();
-        images.push_back(reader->GetOutput());
-
-        shapeFiles.push_back(filename);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-
-      numShapes = shapeFiles.size();
-
-      m_Sampler->SetImages(images);
-
-      int shapeCount = 0;
-      typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
-        ImageType > ::New();
-      reader->SetFileName(shapeFiles[shapeCount].c_str());
-      std::cerr << "Now reading: " << shapeFiles[shapeCount] << "\n";
-      reader->UpdateLargestPossibleRegion();
-      m_Sampler->SetInput(shapeCount, reader->GetOutput());       // set the 0th input
-
-      m_spacing = reader->GetOutput()->GetSpacing()[0];
-
-      m_filenames.clear();
-
-      for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
-        char* str = new char[shapeFiles[shapeCount].length() + 1];
-        strcpy(str, shapeFiles[shapeCount].c_str());
-
-        char* fname;
-        char* pch;
-        pch = strtok(str, "/");
-        while (pch != NULL) {
-          fname = pch;
-          pch = strtok(NULL, "/");
-        }
-
-        char* pch2;
-        pch2 = strrchr(fname, '.');
-        int num = pch2 - fname + 1;
-        int num2 = strlen(fname);
-        strncpy(pch2, "", num2 - num);
-
-        m_filenames.push_back(std::string(fname));
-      }
-
-      shapeFiles.clear();
-    }
-    // load point files
-    pointFiles.clear();
-    elem = docHandle.FirstChild("point_files").Element();
-    if (elem) {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> filename) {
-        pointFiles.push_back(filename);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-
-      // read point files only if they are all present
-      if (pointFiles.size() < numShapes) {
-        std::cerr << "ERROR: not enough point files, none will be loaded!!!" << std::endl;
-        throw 1;
-      }
-      else {
-        for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
-          m_Sampler->SetPointsFile(shapeCount, pointFiles[shapeCount]);
-        }
-      }
-
-      pointFiles.clear();
-    }
-  }   // end: document check
 }
 
 //---------------------------------------------------------------------------
@@ -2540,3 +2432,24 @@ void Optimize::SetPerformGoodBad(bool perform_good_bad)
 //---------------------------------------------------------------------------
 void Optimize::SetLogEnergy(bool log_energy)
 { this->m_logEnergy = log_energy;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
+{
+  this->m_Sampler->SetImages(images);
+  ImageType::Pointer first_image = images[0];
+  this->m_Sampler->SetInput(0, first_image);            // set the 0th input
+  this->m_spacing = first_image->GetSpacing()[0];
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetFilenames(const std::vector<std::string> &filenames)
+{ this->m_filenames = filenames; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetPointFiles(const std::vector<std::string> &point_files)
+{
+  for (int shapeCount = 0; shapeCount < point_files.size(); shapeCount++) {
+    this->m_Sampler->SetPointsFile(shapeCount, pointFiles[shapeCount]);
+  }
+}

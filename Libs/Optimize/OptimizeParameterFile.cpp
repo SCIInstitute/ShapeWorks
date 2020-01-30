@@ -1,6 +1,8 @@
 #include <OptimizeParameterFile.h>
 #include <Optimize.h>
 
+#include <itkImageFileReader.h>
+
 //---------------------------------------------------------------------------
 OptimizeParameterFile::OptimizeParameterFile()
 {}
@@ -18,10 +20,10 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
   TiXmlHandle docHandle(&doc);
   TiXmlElement* elem;
 
-  int verbosity_level = 5;
+  this->verbosity_level_ = 5;
   elem = docHandle.FirstChild("verbosity").Element();
-  if (elem) { verbosity_level = atoi(elem->GetText()); }
-  optimize->SetVerbosity(verbosity_level);
+  if (elem) { this->verbosity_level_ = atoi(elem->GetText()); }
+  optimize->SetVerbosity(this->verbosity_level_);
 
   int domains_per_shape = 1;
   elem = docHandle.FirstChild("domains_per_shape").Element();
@@ -64,6 +66,10 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
   }
 
   if (!this->set_debug_parameters(&docHandle, optimize)) {
+    return false;
+  }
+
+  if (!this->read_inputs(&docHandle, optimize)) {
     return false;
   }
   return true;
@@ -269,6 +275,101 @@ bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimiz
 
   elem = docHandle->FirstChild("log_energy").Element();
   if (elem) { optimize->SetLogEnergy(static_cast<bool>(atoi(elem->GetText())));}
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimize)
+{
+
+  TiXmlElement* elem = nullptr;
+
+  elem = docHandle->FirstChild("inputs").Element();
+  if (!elem) {
+    std::cerr << "No input files have been specified\n";
+    return false;
+  }
+
+  std::istringstream inputsBuffer;
+  std::string filename;
+  int numShapes = 0;
+
+  // load input shapes
+  std::vector < std::string > shapeFiles;
+  std::vector < Optimize::ImageType::Pointer > images;
+
+  inputsBuffer.str(elem->GetText());
+  while (inputsBuffer >> filename) {
+
+    if (this->verbosity_level_ > 1) {
+      std::cout << "Reading inputfile: " << filename << "...\n" << std::flush;
+    }
+    typename itk::ImageFileReader < Optimize::ImageType > ::Pointer reader = itk::ImageFileReader <
+      Optimize::ImageType > ::New();
+    reader->SetFileName(filename);
+    reader->UpdateLargestPossibleRegion();
+    images.push_back(reader->GetOutput());
+
+    shapeFiles.push_back(filename);
+  }
+
+  inputsBuffer.clear();
+  inputsBuffer.str("");
+
+  numShapes = shapeFiles.size();
+
+  optimize->SetImages(images);
+
+  Optimize::ImageType::Pointer first_image = images[0];
+
+  int shapeCount = 0;
+
+  std::vector < std::string > filenames;
+
+  for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
+    char* str = new char[shapeFiles[shapeCount].length() + 1];
+    strcpy(str, shapeFiles[shapeCount].c_str());
+
+    char* fname;
+    char* pch;
+    pch = strtok(str, "/");
+    while (pch != NULL) {
+      fname = pch;
+      pch = strtok(NULL, "/");
+    }
+
+    char* pch2;
+    pch2 = strrchr(fname, '.');
+    int num = pch2 - fname + 1;
+    int num2 = strlen(fname);
+    strncpy(pch2, "", num2 - num);
+
+    filenames.push_back(std::string(fname));
+  }
+
+  optimize->SetFilenames(filenames);
+
+  // load point files
+  std::vector <std::string> pointFiles;
+  elem = docHandle->FirstChild("point_files").Element();
+  if (elem) {
+    inputsBuffer.str(elem->GetText());
+    while (inputsBuffer >> filename) {
+      pointFiles.push_back(filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+
+    // read point files only if they are all present
+    if (pointFiles.size() != numShapes) {
+      std::cerr << "ERROR: incorrect number of point files!" << std::endl;
+      return false;
+    }
+    else {
+      optimize->SetPointFiles(pointFiles);
+    }
+  }
 
   return true;
 }
