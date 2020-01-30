@@ -34,9 +34,6 @@
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkMacro.h>
 
-// tinyxml
-#include <tinyxml.h>
-
 // vtk
 #include <vtkContourFilter.h>
 #include <vtkSmartPointer.h>
