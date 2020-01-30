@@ -65,7 +65,7 @@ TEST(OptimizeTests, sample_test) {
   Optimize app;
   OptimizeParameterFile param;
   ASSERT_TRUE (param.set_parameters(paramfile.c_str(), &app));
-  app.LoadParameters(paramfile.c_str());
+  app.SetParameters();
   app.Run();
 
   // compute stats

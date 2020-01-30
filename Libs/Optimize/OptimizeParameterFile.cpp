@@ -850,8 +850,6 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
   while (inputsBuffer >> etmp) {
     evars.push_back(etmp);
   }
-  inputsBuffer.clear();
-  inputsBuffer.str("");
 
   dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute < double, 3 >* >
   (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
@@ -872,42 +870,30 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_flag_particles(TiXmlHandle* doc_handle, Optimize* optimize)
 {
-  TiXmlElement* elem = nullptr;
-
-  // set up fixed landmark positions // domain_index particle_index
-  elem = doc_handle->FirstChild("fixed_landmarks").Element();
-  if (elem) {
-    std::istringstream inputsBuffer;
-    inputsBuffer.str(elem->GetText());
-    std::vector<int> f;
-    int ftmp;
-    while (inputsBuffer >> ftmp) {
-      f.push_back(ftmp);
-    }
-
-    optimize->SetParticleFlags(f);
-  }
+  optimize->SetParticleFlags(this->read_int_list(doc_handle, "fixed_landmarks"));
   return true;
 }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_flag_domains(TiXmlHandle* doc_handle, Optimize* optimize)
 {
-  TiXmlElement* elem = nullptr;
+  optimize->SetDomainFlags(this->read_int_list(doc_handle, "fixed_domains"));
+  return true;
+}
 
-  // set up fixed domains // domain_index
-  elem = doc_handle->FirstChild("fixed_domains").Element();
+//---------------------------------------------------------------------------
+std::vector<int> OptimizeParameterFile::read_int_list(TiXmlHandle* doc_handle, std::string name)
+{
+  std::vector<int> list;
+  TiXmlElement* elem = doc_handle->FirstChild(name.c_str()).Element();
   if (elem) {
     std::istringstream inputsBuffer;
     inputsBuffer.str(elem->GetText());
-    std::vector<int> f;
-    int ftmp;
-    while (inputsBuffer >> ftmp) {
-      f.push_back(ftmp);
+    int temp_int;
+    while (inputsBuffer >> temp_int) {
+      list.push_back(temp_int);
     }
-
-    optimize->SetDomainFlags(f);
   }
-  return true;
+  return list;
 }
 //---------------------------------------------------------------------------

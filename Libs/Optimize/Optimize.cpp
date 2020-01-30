@@ -82,7 +82,7 @@ bool Optimize::Run()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::LoadParameters(const char* fn)
+void Optimize::SetParameters()
 {
   if (this->m_verbosity_level == 0) {
     std::cout <<

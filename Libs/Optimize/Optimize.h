@@ -84,10 +84,10 @@ public:
     }
   }
 
-  // constrictor
+  // constructor
   Optimize();
 
-  void LoadParameters(const char* fname);
+  void SetParameters();
 
   virtual ~Optimize();
 
@@ -253,8 +253,8 @@ protected:
   unsigned int m_checkpointing_interval = 50;
   int m_keep_checkpoints = 0;
   double m_cotan_sigma_factor = 5.0;
-  std::vector <int> m_p_flgs;
-  std::vector <int> m_d_flgs;
+  std::vector <int> m_particle_flags;
+  std::vector <int> m_domain_flags;
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode;

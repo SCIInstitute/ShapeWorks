@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
       std::cerr << "Error reading parameter file\n";
       return 1;
     }
-    app.LoadParameters(argv[1]);
+    app.SetParameters();
     app.Run();
   } catch (itk::ExceptionObject &e) {
     std::cerr << e << std::endl;

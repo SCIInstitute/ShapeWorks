@@ -51,7 +51,9 @@ private:
 
   bool read_flag_domains(TiXmlHandle* doc_handle, Optimize* optimize);
 
-
 private:
+
+  std::vector<int> read_int_list(TiXmlHandle* doc_handle, std::string name);
+
   int verbosity_level_ = 0;
 };
