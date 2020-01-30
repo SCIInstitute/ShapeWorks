@@ -125,6 +125,7 @@ public:
   void SetPairwisePotentialType(int pairwise_potential_type);
   void SetOptimizerType(int optimizer_type);
   void SetTimePtsPerSubject(int time_pts_per_subject);
+  int GetTimePtsPerSubject();
   void SetOptimizationIterations(int optimization_iterations);
   void SetOptimizationIterationsCompleted(int optimization_iterations_completed);
   void SetIterationsPerSplit(int iterations_per_split);
@@ -142,6 +143,9 @@ public:
   void SetCheckpointingInterval(int checkpointing_interval);
   void SetKeepCheckpoints(int keep_checkpoints);
   void SetCotanSigmaFactor(double cotan_sigma_factor);
+
+  void SetUseRegression(bool use_regression);
+  void SetUseMixedEffects(bool use_mixed_effects);
 
   void SetNormalAngle(double normal_angle);
   void SetPerformGoodBad(bool perform_good_bad);

@@ -138,10 +138,6 @@ void Optimize::LoadParameters(const char* fn)
   this->InitializeSampler();
   this->doneMessage();
 
-  this->startMessage("Reading explanatory variables...");
-  this->ReadExplanatoryVariables(fn);
-  this->doneMessage();
-
   m_p_flgs.clear();
   m_p_flgs = this->ReadFlagParticles(fn);
 
@@ -367,41 +363,6 @@ void Optimize::SetAdaptivityMode(int adaptivity_mode)
 void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 {
   this->m_adaptivity_strength = adaptivity_strength;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::ReadExplanatoryVariables(const char* fname)
-{
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (loadOkay) {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement* elem;
-
-    std::istringstream inputsBuffer;
-    std::vector < double > evars;
-    double etmp;
-
-    elem = docHandle.FirstChild("explanatory_variable").Element();
-    if (elem) {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> etmp) {
-        evars.push_back(etmp);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-
-      dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute < double, 3 >* >
-      (m_Sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(evars);
-
-      dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute < double, 3 >* >
-      (m_Sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->SetExplanatory(evars);
-
-      m_use_regression = true;
-      if (this->m_timepts_per_subject > 1) { m_use_mixed_effects = true;}
-    }
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -1912,6 +1873,10 @@ void Optimize::SetTimePtsPerSubject(int time_pts_per_subject)
 { this->m_timepts_per_subject = time_pts_per_subject;}
 
 //---------------------------------------------------------------------------
+int Optimize::GetTimePtsPerSubject()
+{ return this->m_timepts_per_subject; }
+
+//---------------------------------------------------------------------------
 void Optimize::SetOptimizationIterations(int optimization_iterations)
 { this->m_optimization_iterations = optimization_iterations;}
 
@@ -1978,6 +1943,14 @@ void Optimize::SetKeepCheckpoints(int keep_checkpoints)
 //---------------------------------------------------------------------------
 void Optimize::SetCotanSigmaFactor(double cotan_sigma_factor)
 { this->m_cotan_sigma_factor = cotan_sigma_factor;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseRegression(bool use_regression)
+{ this->m_use_regression = use_regression; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseMixedEffects(bool use_mixed_effects)
+{ this->m_use_mixed_effects = use_mixed_effects; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetNormalAngle(double normal_angle)

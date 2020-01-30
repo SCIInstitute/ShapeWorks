@@ -17,23 +17,23 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
     return false;
   }
 
-  TiXmlHandle docHandle(&doc);
+  TiXmlHandle doc_handle(&doc);
   TiXmlElement* elem;
 
   this->verbosity_level_ = 5;
-  elem = docHandle.FirstChild("verbosity").Element();
+  elem = doc_handle.FirstChild("verbosity").Element();
   if (elem) { this->verbosity_level_ = atoi(elem->GetText()); }
   optimize->SetVerbosity(this->verbosity_level_);
 
   int domains_per_shape = 1;
-  elem = docHandle.FirstChild("domains_per_shape").Element();
+  elem = doc_handle.FirstChild("domains_per_shape").Element();
   if (elem) {
     domains_per_shape = atoi(elem->GetText());
   }
   optimize->SetDomainsPerShape(domains_per_shape);
 
   std::vector<unsigned int> number_of_particles;
-  elem = docHandle.FirstChild("number_of_particles").Element();
+  elem = doc_handle.FirstChild("number_of_particles").Element();
   if (elem) {
     std::istringstream inputsBuffer;
     std::string num;
@@ -45,7 +45,7 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
     /// TODO: Not sure we need to check this here as it will be checked by Optimize anyway
     if (domains_per_shape != number_of_particles.size()) {
       std::cerr <<
-        "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()" <<
+        "Inconsistency in parameters... domains_per_shape != number_of_particles.size()" <<
         std::endl;
       return false;
     }
@@ -57,27 +57,31 @@ bool OptimizeParameterFile::set_parameters(std::string filename, Optimize* optim
     return false;
   }
 
-  if (!this->set_io_parameters(&docHandle, optimize)) {
+  if (!this->set_io_parameters(&doc_handle, optimize)) {
     return false;
   }
 
-  if (!this->set_optimization_parameters(&docHandle, optimize)) {
+  if (!this->set_optimization_parameters(&doc_handle, optimize)) {
     return false;
   }
 
-  if (!this->set_debug_parameters(&docHandle, optimize)) {
+  if (!this->set_debug_parameters(&doc_handle, optimize)) {
     return false;
   }
 
-  if (!this->read_inputs(&docHandle, optimize)) {
+  if (!this->read_inputs(&doc_handle, optimize)) {
     return false;
   }
 
-  if (!this->read_mesh_inputs(&docHandle, optimize)) {
+  if (!this->read_mesh_inputs(&doc_handle, optimize)) {
     return false;
   }
 
-  if (!this->read_constraints(&docHandle, optimize)) {
+  if (!this->read_constraints(&doc_handle, optimize)) {
+    return false;
+  }
+
+  if (!this->read_explanatory_variables(&doc_handle, optimize)) {
     return false;
   }
 
@@ -817,6 +821,43 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
       }
     }
   }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize)
+{
+
+  TiXmlElement* elem = nullptr;
+
+  std::istringstream inputsBuffer;
+  std::vector < double > evars;
+  double etmp;
+
+  elem = doc_handle->FirstChild("explanatory_variable").Element();
+  if (!elem) {
+    return true;
+  }
+  inputsBuffer.str(elem->GetText());
+  while (inputsBuffer >> etmp) {
+    evars.push_back(etmp);
+  }
+  inputsBuffer.clear();
+  inputsBuffer.str("");
+
+  dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute < double, 3 >* >
+  (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
+    evars);
+
+  dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute < double, 3 >* >
+  (optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->
+  SetExplanatory(evars);
+
+  optimize->SetUseRegression(true);
+  if (optimize->GetTimePtsPerSubject() > 1) {
+    optimize->SetUseMixedEffects(true);
+  }
+
   return true;
 }
 //---------------------------------------------------------------------------

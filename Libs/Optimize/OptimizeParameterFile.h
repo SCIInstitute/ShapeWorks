@@ -45,6 +45,8 @@ private:
 
   bool read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize);
 
+  bool read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize);
+
 private:
   int verbosity_level_ = 0;
 };
