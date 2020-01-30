@@ -78,6 +78,7 @@ bool Optimize::Run()
   // Optimize
   if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize();}
 
+  this->UpdateExportablePoints();
   return true;
 }
 
@@ -1841,6 +1842,41 @@ void Optimize::ReportBadParticles()
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> Optimize::GetLocalPoints()
+{
+  return this->m_local_points;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<itk::Point<double>>> Optimize::GetGlobalPoints()
+{
+  return this->m_global_points;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::UpdateExportablePoints()
+{
+  this->m_local_points.clear();
+  this->m_global_points.clear();
+  for (size_t d = 0; d < this->m_sampler->
+       GetParticleSystem()->GetNumberOfDomains(); d++) {
+
+    // blank set of points
+    this->m_local_points.push_back(std::vector<itk::Point<double>>());
+    this->m_global_points.push_back(std::vector<itk::Point<double>>());
+
+    // for each particle
+    for (size_t j = 0; j < this->m_sampler->
+         GetParticleSystem()->GetNumberOfParticles(d); j++) {
+      auto pos = this->m_sampler->GetParticleSystem()->GetPosition(j, d);
+      auto pos2 = this->m_sampler->GetParticleSystem()->GetTransformedPosition(j, d);
+      this->m_local_points[d].push_back(pos);
+      this->m_global_points[d].push_back(pos2);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetPairwisePotentialType(int pairwise_potential_type)
 { this->m_pairwise_potential_type = pairwise_potential_type;}
 
@@ -2038,4 +2074,12 @@ std::vector<bool> Optimize::GetUseXYZ()
 std::vector<bool> Optimize::GetUseNormals()
 {
   return this->m_use_normals;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetIterationCommand()
+{
+  this->m_iterate_command = itk::MemberCommand<Optimize>::New();
+  this->m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);
+  this->m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_iterate_command);
 }

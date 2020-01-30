@@ -44,7 +44,7 @@ public:
   SamplerType* GetSampler() { return m_sampler.GetPointer(); }
 
   typedef typename itk::ParticleVectorFunction<3>::VectorType VectorType;
-  typename itk::MemberCommand<Optimize>::Pointer m_Iteratecmd;
+  typename itk::MemberCommand<Optimize>::Pointer m_iterate_command;
 
   virtual bool Run();
 
@@ -54,12 +54,7 @@ public:
     m_Procrustes->RunRegistration();
   }
 
-  virtual void SetIterationCommand()
-  {
-    m_Iteratecmd = itk::MemberCommand<Optimize>::New();
-    m_Iteratecmd->SetCallbackFunction(this, &Optimize::IterateCallback);
-    m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), m_Iteratecmd);
-  }
+  virtual void SetIterationCommand();
 
   virtual void WriteModes()
   {
@@ -198,7 +193,13 @@ public:
   virtual void WriteParameters(int iter = -1);
   virtual void ReportBadParticles();
 
+  virtual std::vector<std::vector<itk::Point<double>>> GetLocalPoints();
+  virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
+
 protected:
+
+  void UpdateExportablePoints();
+
   typename itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
   typename itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
   typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
@@ -206,6 +207,8 @@ protected:
   static itk::ITK_THREAD_RETURN_TYPE optimize_callback(void* arg);
 
   unsigned int m_verbosity_level = 0;
+
+  std::vector<std::vector<itk::Point<double>>>  m_local_points, m_global_points;
 
   int m_CheckpointCounter = 0;
   int m_ProcrustesCounter = 0;
