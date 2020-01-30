@@ -277,4 +277,6 @@ protected:
 
   std::vector<int> m_cutting_planes_per_input;
   std::vector<int> m_spheres_per_input;
+
+  bool m_file_output_enabled = true;
 };

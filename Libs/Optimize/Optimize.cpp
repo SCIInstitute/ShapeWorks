@@ -1270,6 +1270,10 @@ void Optimize::PrintParamInfo()
 //---------------------------------------------------------------------------
 void Optimize::WriteTransformFile(int iter) const
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   std::string output_file = m_output_dir + "/" + m_output_transform_file;
 
   if (iter >= 0) {
@@ -1286,6 +1290,10 @@ void Optimize::WriteTransformFile(int iter) const
 //---------------------------------------------------------------------------
 void Optimize::WriteTransformFile(std::string iter_prefix) const
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   std::string output_file = iter_prefix;
 
   std::vector < itk::ParticleSystem < 3 > ::TransformType > tlist;
@@ -1307,6 +1315,10 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
 //---------------------------------------------------------------------------
 void Optimize::WritePointFiles(int iter)
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
@@ -1323,6 +1335,10 @@ void Optimize::WritePointFiles(int iter)
 //---------------------------------------------------------------------------
 void Optimize::WritePointFiles(std::string iter_prefix)
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   this->startMessage("Writing point files...\n");
 #ifdef _WIN32
   mkdir(iter_prefix.c_str());
@@ -1386,6 +1402,10 @@ void Optimize::WritePointFiles(std::string iter_prefix)
 //---------------------------------------------------------------------------
 void Optimize::WritePointFilesWithFeatures(int iter)
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   std::stringstream ss;
   ss << iter + m_optimization_iterations_completed;
 
@@ -1402,6 +1422,10 @@ void Optimize::WritePointFilesWithFeatures(int iter)
 //---------------------------------------------------------------------------
 void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   if (!m_mesh_based_attributes) {
     return;
   }
@@ -1519,6 +1543,10 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
 //---------------------------------------------------------------------------
 void Optimize::WriteEnergyFiles()
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   if (!this->m_logEnergy) {
     return;
   }
@@ -1570,6 +1598,10 @@ void Optimize::WriteEnergyFiles()
 //---------------------------------------------------------------------------
 void Optimize::WriteCuttingPlanePoints(int iter)
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   this->startMessage("Writing cutting plane points...\n");
   std::string output_file = m_output_cutting_plane_file;
 
@@ -1616,6 +1648,10 @@ void Optimize::WriteCuttingPlanePoints(int iter)
 //---------------------------------------------------------------------------
 void Optimize::WriteParameters(int iter)
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   if (!m_use_regression) {
     return;
   }
@@ -1753,6 +1789,10 @@ void Optimize::WriteParameters(int iter)
 //---------------------------------------------------------------------------
 void Optimize::ReportBadParticles()
 {
+  if (!this->m_file_output_enabled) {
+    return;
+  }
+
   this->startMessage("Reporting bad particles...", 2);
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
   const int totalDomains = m_sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -1980,6 +2020,12 @@ void Optimize::SetDomainFlags(std::vector<int> flags)
   for (unsigned int i = 0; i < flags.size(); i++) {
     this->GetSampler()->GetParticleSystem()->FlagDomain(flags[i]);
   }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetFileOutputEnabled(bool enabled)
+{
+  this->m_file_output_enabled = enabled;
 }
 
 //---------------------------------------------------------------------------
