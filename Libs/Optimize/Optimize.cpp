@@ -160,12 +160,12 @@ void Optimize::LoadParameters(const char* fn)
     }
   }
 
-  if (m_d_flgs.size() > 0) {
-    for (int i = 0; i < m_d_flgs.size(); i++) {
+  if (m_domain_flags.size() > 0) {
+    for (int i = 0; i < m_domain_flags.size(); i++) {
       itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
         static_cast < itk::ParticleImageDomainWithHessians < float,
                                                              3 >
-                      * > (m_Sampler->GetParticleSystem()->GetDomain(m_d_flgs[i]));
+                      * > (m_Sampler->GetParticleSystem()->GetDomain(m_domain_flags[i]));
       if (m_use_normals.size() > 0) {
         if (m_use_normals[i % m_domains_per_shape]) {
           domainWithHess->DeletePartialDerivativeImages();
@@ -1114,12 +1114,12 @@ void Optimize::PrintParamInfo()
   std::cout << "Domains per shape = " << m_domains_per_shape << std::endl;
   std::cout << m_filenames.size() << " image files provided!!!" << std::endl;
 
-  if (m_d_flgs.size() > 0) {
-    std::cout << "Following " << m_d_flgs.size() << " domains have been declared fixed: " <<
+  if (m_domain_flags.size() > 0) {
+    std::cout << "Following " << m_domain_flags.size() << " domains have been declared fixed: " <<
       std::endl;
 
-    for (int i = 0; i < m_d_flgs.size(); i++) {
-      std::cout << m_d_flgs[i] << "\t" << m_filenames[m_d_flgs[i]] << std::endl;
+    for (int i = 0; i < m_domain_flags.size(); i++) {
+      std::cout << m_domain_flags[i] << "\t" << m_filenames[m_domain_flags[i]] << std::endl;
     }
 
     std::cout << std::endl;
@@ -1140,8 +1140,9 @@ void Optimize::PrintParamInfo()
   }
   std::cout << std::endl;
 
-  if (m_p_flgs.size() > 0) {
-    std::cout << "Total " << m_p_flgs.size() / 2 << " particles have been declared fixed." <<
+  if (m_particle_flags.size() > 0) {
+    std::cout << "Total " << m_particle_flags.size() / 2 <<
+      " particles have been declared fixed." <<
       std::endl;
   }
 
@@ -1949,7 +1950,7 @@ void Optimize::SetFidsFiles(const std::vector<std::string> &files)
 //---------------------------------------------------------------------------
 void Optimize::SetParticleFlags(std::vector<int> flags)
 {
-  this->m_p_flgs = flags;
+  this->m_particle_flags = flags;
 
   for (unsigned int i = 0; i < flags.size() / 2; i++) {
     this->GetSampler()->GetParticleSystem()->SetFixedParticleFlag(flags[2 * i], flags[2 * i + 1]);
@@ -1959,7 +1960,7 @@ void Optimize::SetParticleFlags(std::vector<int> flags)
 //---------------------------------------------------------------------------
 void Optimize::SetDomainFlags(std::vector<int> flags)
 {
-  this->m_d_flgs = flags;
+  this->m_domain_flags = flags;
 
   for (unsigned int i = 0; i < flags.size(); i++) {
     this->GetSampler()->GetParticleSystem()->FlagDomain(flags[i]);
