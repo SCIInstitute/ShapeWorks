@@ -91,10 +91,6 @@ void Optimize::LoadParameters(const char* fn)
               << std::endl;
   }
 
-  this->startMessage("Reading optimization parameters...");
-  this->ReadOptimizationParameters(fn);
-  this->doneMessage();
-
   this->startMessage("Reading debugging parameters...");
   this->SetDebugParameters(fn);
   this->doneMessage();
@@ -336,20 +332,6 @@ void Optimize::SetAdaptivityMode(int adaptivity_mode)
 void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 {
   this->m_adaptivity_strength = adaptivity_strength;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::ReadOptimizationParameters(const char* fname)
-{
-  TiXmlDocument doc(fname);
-  bool loadOkay = doc.LoadFile();
-
-  if (!loadOkay) {
-    return;
-  }
-
-  TiXmlHandle docHandle(&doc);
-  TiXmlElement* elem;
 }
 
 //---------------------------------------------------------------------------
@@ -2496,3 +2478,83 @@ void Optimize::ReportBadParticles()
   }
   this->doneMessage(2);
 }
+
+//---------------------------------------------------------------------------
+void Optimize::SetPairwisePotentialType(int pairwise_potential_type)
+{ this->m_pairwise_potential_type = pairwise_potential_type;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetOptimizerType(int optimizer_type)
+{ this->m_optimizer_type = optimizer_type;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetTimePtsPerSubject(int time_pts_per_subject)
+{ this->m_timepts_per_subject = time_pts_per_subject;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetOptimizationIterations(int optimization_iterations)
+{ this->m_optimization_iterations = optimization_iterations;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetOptimizationIterationsCompleted(int optimization_iterations_completed)
+{ this->m_optimization_iterations_completed = optimization_iterations_completed;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetIterationsPerSplit(int iterations_per_split)
+{ this->m_iterations_per_split = iterations_per_split;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetInitCriterion(double init_criterion)
+{ this->m_init_criterion = init_criterion;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetOptCriterion(double opt_criterion)
+{ this->m_opt_criterion = opt_criterion;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init)
+{ this->m_use_shape_statistics_in_init = use_shape_statistics_in_init;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetProcrustesInterval(int procrustes_interval)
+{ this->m_procrustes_interval = procrustes_interval;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetProcrustesScaling(int procrustes_scaling)
+{ this->m_procrustes_scaling = procrustes_scaling;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetRelativeWeighting(double relative_weighting)
+{ this->m_relative_weighting = relative_weighting;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetInitialRelativeWeighting(double initial_relative_weighting)
+{ this->m_initial_relative_weighting = initial_relative_weighting;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetStartingRegularization(double starting_regularization)
+{ this->m_starting_regularization = starting_regularization;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetEndingRegularization(double ending_regularization)
+{ this->m_ending_regularization = ending_regularization;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetRecomputeRegularizationInterval(int recompute_regularization_interval)
+{ this->m_recompute_regularization_interval = recompute_regularization_interval;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetSaveInitSplits(bool save_init_splits)
+{ this->m_save_init_splits = save_init_splits;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetCheckpointingInterval(int checkpointing_interval)
+{ this->m_checkpointing_interval = checkpointing_interval;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetKeepCheckpoints(int keep_checkpoints)
+{ this->m_keep_checkpoints = keep_checkpoints;}
+
+//---------------------------------------------------------------------------
+void Optimize::SetCotanSigmaFactor(double cotan_sigma_factor)
+{ this->m_cotan_sigma_factor = cotan_sigma_factor;}

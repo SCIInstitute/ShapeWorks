@@ -112,8 +112,27 @@ public:
   void SetProcessingMode(int mode);
   void SetAdaptivityMode(int adaptivity_mode);
   void SetAdaptivityStrength(double adaptivity_strength);
+  void SetPairwisePotentialType(int pairwise_potential_type);
+  void SetOptimizerType(int optimizer_type);
+  void SetTimePtsPerSubject(int time_pts_per_subject);
+  void SetOptimizationIterations(int optimization_iterations);
+  void SetOptimizationIterationsCompleted(int optimization_iterations_completed);
+  void SetIterationsPerSplit(int iterations_per_split);
+  void SetInitCriterion(double init_criterion);
+  void SetOptCriterion(double opt_criterion);
+  void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
+  void SetProcrustesInterval(int procrustes_interval);
+  void SetProcrustesScaling(int procrustes_scaling);
+  void SetRelativeWeighting(double relative_weighting);
+  void SetInitialRelativeWeighting(double initial_relative_weighting);
+  void SetStartingRegularization(double starting_regularization);
+  void SetEndingRegularization(double ending_regularization);
+  void SetRecomputeRegularizationInterval(int recompute_regularization_interval);
+  void SetSaveInitSplits(bool save_init_splits);
+  void SetCheckpointingInterval(int checkpointing_interval);
+  void SetKeepCheckpoints(int keep_checkpoints);
+  void SetCotanSigmaFactor(double cotan_sigma_factor);
 
-  virtual void ReadOptimizationParameters(const char* fname);
   void SetDebugParameters(const char* fname);
   virtual void ReadInputs(const char* fname);
   virtual void ReadMeshInputs(const char* fname);

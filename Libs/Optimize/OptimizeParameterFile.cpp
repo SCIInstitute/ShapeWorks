@@ -195,7 +195,7 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   if (elem) { optimize->SetOptimizerType(atoi(elem->GetText()));}
 
   elem = docHandle->FirstChild("timepts_per_subject").Element();
-  if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText());}
+  if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText()));}
 
   elem = docHandle->FirstChild("optimization_iterations").Element();
   if (elem) { optimize->SetOptimizationIterations(atoi(elem->GetText()));}
