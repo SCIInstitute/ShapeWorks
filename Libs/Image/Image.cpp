@@ -282,6 +282,11 @@ bool Image::resample(float isoSpacing, bool binaryInput, Dims outputSize)
 ///////////////////////////////////////////////////////////////////////////////
 bool Image::compare_equal(const Image &other)
 {
+  // we use the region of interest filter here with the full region because our
+  // incoming image may be the output of an ExtractImageFilter or PadImageFilter
+  // which modify indices and leave the origin intact.  These will not compare
+  // properly against a saved NRRD file because the act of saving the image to
+  // NRRD and back in will cause the origin (and indices) to be reset.
   using RegionFilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
   RegionFilterType::Pointer region_filter = RegionFilterType::New();
   region_filter->SetInput(this->image);
@@ -289,9 +294,16 @@ bool Image::compare_equal(const Image &other)
   region_filter->UpdateLargestPossibleRegion();
   ImageType::Pointer itk_image = region_filter->GetOutput();
 
+  // perform the same to the other image
+  RegionFilterType::Pointer region_filter2 = RegionFilterType::New();
+  region_filter2->SetInput(other.image);
+  region_filter2->SetRegionOfInterest(other.image->GetLargestPossibleRegion());
+  region_filter2->UpdateLargestPossibleRegion();
+  ImageType::Pointer other_itk_image = region_filter2->GetOutput();
+
   using DiffType = itk::Testing::ComparisonImageFilter<ImageType, ImageType>;
   DiffType::Pointer diff = DiffType::New();
-  diff->SetValidInput(other.image);
+  diff->SetValidInput(other_itk_image);
   diff->SetTestInput(itk_image);
   diff->SetDifferenceThreshold(0);
   diff->SetToleranceRadius(0);
