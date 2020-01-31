@@ -11,14 +11,14 @@ QOptimize::~QOptimize()
 {}
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<itk::Point<double>>> QOptimize::localPoints()
+std::vector<std::vector<itk::Point<double>>> QOptimize::GetLocalPoints()
 {
   QMutexLocker locker(&qmutex);
   return this->localPoints_;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<itk::Point<double>>> QOptimize::globalPoints()
+std::vector<std::vector<itk::Point<double>>> QOptimize::GetGlobalPoints()
 {
   QMutexLocker locker(&qmutex);
   return this->globalPoints_;

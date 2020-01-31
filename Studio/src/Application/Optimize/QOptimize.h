@@ -13,9 +13,8 @@ public:
   QOptimize(QObject* parent = nullptr);
   virtual ~QOptimize();
 
-  std::vector<std::vector<itk::Point<double>>> localPoints() override;
-  std::vector<std::vector<itk::Point<double>>> globalPoints() override;
-
+  std::vector<std::vector<itk::Point<double>>> GetLocalPoints() override;
+  std::vector<std::vector<itk::Point<double>>> GetGlobalPoints() override;
 
 protected:
   virtual void SetIterationCommand() override;
@@ -32,5 +31,4 @@ private:
   QMutex qmutex;
 
   QElapsedTimer time_since_last_update_;
-
 };

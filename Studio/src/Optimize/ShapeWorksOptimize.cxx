@@ -395,13 +395,13 @@ void ShapeWorksOptimize::run()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<itk::Point<double>>> ShapeWorksOptimize::localPoints()
+std::vector<std::vector<itk::Point<double>>> ShapeWorksOptimize::GetLocalPoints()
 {
   return this->localPoints_;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<itk::Point<double>>> ShapeWorksOptimize::globalPoints()
+std::vector<std::vector<itk::Point<double>>> ShapeWorksOptimize::GetGlobalPoints()
 {
   return this->globalPoints_;
 }
