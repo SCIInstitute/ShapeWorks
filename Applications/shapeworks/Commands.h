@@ -92,6 +92,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class PadImage : public ImageCommand
+{
+public:
+  static PadImage& getCommand() { static PadImage instance; return instance; }
+
+private:
+  PadImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class SmoothMesh : public MeshCommand
 {
 public:

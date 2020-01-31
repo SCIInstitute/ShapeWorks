@@ -8,9 +8,9 @@
 #include <itkBSplineInterpolateImageFunction.h>
 #include <itkChangeInformationImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
+#include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
-
-#include <limits>
+#include <itkRegionOfInterestImageFilter.h>
 
 namespace shapeworks {
 
@@ -199,9 +199,9 @@ bool Image::recenter()
 
 /// resample accepts only continuous images
 /// \param isoSpacing
-/// \param defaultvalue
+/// \param defaultValue
 /// \param outputSize     image size can be changed
-bool Image::resample(float isoSpacing, PixelType defaultvalue, Dims outputSize)
+bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
 {
   if (!this->image)
   {
@@ -233,7 +233,7 @@ bool Image::resample(float isoSpacing, PixelType defaultvalue, Dims outputSize)
 
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
   interpolator = InterpolatorType::New();
-  resampler->SetDefaultPixelValue(defaultvalue);
+  resampler->SetDefaultPixelValue(defaultValue);
   resampler->SetInterpolator(interpolator);
 
   using TransformType = itk::IdentityTransform<double, Image::dims>;
@@ -286,10 +286,29 @@ bool Image::resample(float isoSpacing, PixelType defaultvalue, Dims outputSize)
 ///////////////////////////////////////////////////////////////////////////////
 bool Image::compare_equal(const Image &other)
 {
+  // we use the region of interest filter here with the full region because our
+  // incoming image may be the output of an ExtractImageFilter or PadImageFilter
+  // which modify indices and leave the origin intact.  These will not compare
+  // properly against a saved NRRD file because the act of saving the image to
+  // NRRD and back in will cause the origin (and indices) to be reset.
+  using RegionFilterType = itk::RegionOfInterestImageFilter<ImageType, ImageType>;
+  RegionFilterType::Pointer region_filter = RegionFilterType::New();
+  region_filter->SetInput(this->image);
+  region_filter->SetRegionOfInterest(this->image->GetLargestPossibleRegion());
+  region_filter->UpdateLargestPossibleRegion();
+  ImageType::Pointer itk_image = region_filter->GetOutput();
+
+  // perform the same to the other image
+  RegionFilterType::Pointer region_filter2 = RegionFilterType::New();
+  region_filter2->SetInput(other.image);
+  region_filter2->SetRegionOfInterest(other.image->GetLargestPossibleRegion());
+  region_filter2->UpdateLargestPossibleRegion();
+  ImageType::Pointer other_itk_image = region_filter2->GetOutput();
+
   using DiffType = itk::Testing::ComparisonImageFilter<ImageType, ImageType>;
   DiffType::Pointer diff = DiffType::New();
-  diff->SetValidInput(other.image);
-  diff->SetTestInput(this->image);
+  diff->SetValidInput(other_itk_image);
+  diff->SetTestInput(itk_image);
   diff->SetDifferenceThreshold(0);
   diff->SetToleranceRadius(0);
 
@@ -311,6 +330,49 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
-} // shapeworks
+bool Image::pad(int padding, PixelType value)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  ImageType::SizeType lowerExtendRegion;
+  lowerExtendRegion[0] = padding;
+  lowerExtendRegion[1] = padding;
+  lowerExtendRegion[2] = padding;
+
+  ImageType::SizeType upperExtendRegion;
+  upperExtendRegion[0] = padding;
+  upperExtendRegion[1] = padding;
+  upperExtendRegion[2] = padding;
+
+  using PadFilter = itk::ConstantPadImageFilter<ImageType, ImageType>;
+  PadFilter::Pointer padFilter = PadFilter::New();
+
+  padFilter->SetInput(this->image);
+  padFilter->SetPadLowerBound(lowerExtendRegion);
+  padFilter->SetPadUpperBound(upperExtendRegion);
+  padFilter->SetConstant(value);
+  this->image = padFilter->GetOutput();
+
+  try
+  {
+    padFilter->Update();  
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Pad image with constant failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  std::cout << "Pad image with constant succeeded!\n";
+  return true;
+
+}
+
+} // Shapeworks
 
 
