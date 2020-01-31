@@ -36,10 +36,10 @@ Follow these instructions to install the dependencies required to build shapewor
 
    * [[OSX]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-mac-x64-5.13.0.dmg) [[Linux]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-linux-x64-5.13.0.run) [[Windows]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-windows-x86-5.13.0.exe) 
 
-* **Add Qt5 to path**: After installing Qt5, add the directory containing `qmake.exe` to your PATH. ([How to add to PATH](GettingStarted.md#PATH-environment-variable))  
+6. **Add Qt5 to path**: After installing Qt5, add the directory containing `qmake.exe` to your PATH. ([How to add to PATH](GettingStarted.md#PATH-environment-variable))  
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
 Example qmake directory Windows: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`
-6. **VXL, VTK, and ITK**: These three dependencies can be installed by running the `$ ./superbuild.sh --dependencies-only` script. 
+7. **VXL, VTK, and ITK**: These three dependencies can be installed by running the `$ ./superbuild.sh --dependencies-only` script. 
    * **On Windows**, use an msys shell (e.g. git bash) to do this. 
    * If you are getting an error that starts with  **`which: no qmake in (...)`** make sure to execute the last step correctly. If you are still having no luck, [click here](#No-qmake-Error). 
    * If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK. 
