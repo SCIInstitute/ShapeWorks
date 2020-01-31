@@ -88,7 +88,7 @@ public:
       mode 0 = isotropic adaptivity
       mode 1 = no adaptivity
   */
-  virtual void SetAdaptivityMode(int mode)
+  virtual void SetAdaptivityMode(int mode) override
   {
     if (mode == 0)
       {

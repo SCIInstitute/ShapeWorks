@@ -129,8 +129,12 @@ public:
                        const vnl_vector_fixed<double, 3> &vc);
 
   // optimization parameters
+
+  //! Set processing mode (TODO: details)
   void SetProcessingMode(int mode);
+  //! Set adaptivity mode (TODO: details)
   void SetAdaptivityMode(int adaptivity_mode);
+  //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
   void SetPairwisePotentialType(int pairwise_potential_type);
   void SetOptimizerType(int optimizer_type);
@@ -176,6 +180,7 @@ public:
   void SetParticleFlags(std::vector<int> flags);
   void SetDomainFlags(std::vector<int> flags);
 
+  //! Set if file output is enabled
   void SetFileOutputEnabled(bool enabled);
 
   std::vector<bool> GetUseXYZ();
@@ -201,17 +206,6 @@ public:
 
   void PrintParamInfo();
 
-  void WriteTransformFile(int iter = -1) const;
-  void WriteTransformFile(std::string iter_prefix) const;
-  void WritePointFiles(int iter = -1);
-  void WritePointFiles(std::string iter_prefix);
-  void WritePointFilesWithFeatures(int iter = -1);
-  void WritePointFilesWithFeatures(std::string iter_prefix);
-  void WriteEnergyFiles();
-  void WriteCuttingPlanePoints(int iter = -1);
-  void WriteParameters(int iter = -1);
-  void ReportBadParticles();
-
   //! Return the local points
   virtual std::vector<std::vector<itk::Point<double>>> GetLocalPoints();
   //! Return the global points
@@ -223,6 +217,17 @@ public:
   bool GetAborted();
 
 protected:
+
+  void WriteTransformFile(int iter = -1) const;
+  void WriteTransformFile(std::string iter_prefix) const;
+  void WritePointFiles(int iter = -1);
+  void WritePointFiles(std::string iter_prefix);
+  void WritePointFilesWithFeatures(int iter = -1);
+  void WritePointFilesWithFeatures(std::string iter_prefix);
+  void WriteEnergyFiles();
+  void WriteCuttingPlanePoints(int iter = -1);
+  void WriteParameters(int iter = -1);
+  void ReportBadParticles();
 
   void SetParameters();
   void WriteModes();
