@@ -932,6 +932,13 @@ void Optimize::optimize_stop()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::abort_optimization()
+{
+  this->m_aborted = true;
+  this->m_sampler->GetOptimizer()->AbortProcessing();
+}
+
+//---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
   if (m_performGoodBad == true) {
@@ -1861,6 +1868,18 @@ std::vector<std::vector<itk::Point<double>>> Optimize::GetGlobalPoints()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetCutPlanes(std::vector<std::array<itk::Point<double>,3> > planes)
+{
+  this->m_cut_planes = planes;
+}
+
+//---------------------------------------------------------------------------
+bool Optimize::GetAborted()
+{
+  return this->m_aborted;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::UpdateExportablePoints()
 {
   this->m_local_points.clear();
@@ -1990,11 +2009,18 @@ void Optimize::SetLogEnergy(bool log_energy)
 //---------------------------------------------------------------------------
 void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
 {
+  this->m_images = images;
   this->m_sampler->SetImages(images);
   ImageType::Pointer first_image = images[0];
   this->m_sampler->SetInput(0, first_image);            // set the 0th input
   this->m_spacing = first_image->GetSpacing()[0];
   this->m_num_shapes = images.size();
+}
+
+//---------------------------------------------------------------------------
+std::vector<Optimize::ImageType::Pointer> Optimize::GetImages()
+{
+  return this->m_images;
 }
 
 //---------------------------------------------------------------------------

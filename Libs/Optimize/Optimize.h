@@ -122,6 +122,8 @@ public:
   void SetLogEnergy(bool log_energy);
 
   void SetImages(const std::vector<ImageType::Pointer> &images);
+  std::vector<ImageType::Pointer> GetImages();
+
   void SetFilenames(const std::vector<std::string> &filenames);
   void SetPointFiles(const std::vector <std::string> &point_files);
   int GetNumShapes();
@@ -151,6 +153,8 @@ public:
   void RunOptimize();
   virtual void optimize_start();
   virtual void optimize_stop();
+  void abort_optimization();
+
   void IterateCallback(itk::Object*, const itk::EventObject &);
   virtual void ComputeEnergyAfterIteration();
   void SetCotanSigma();
@@ -170,6 +174,8 @@ public:
 
   virtual std::vector<std::vector<itk::Point<double>>> GetLocalPoints();
   virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
+  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes);
+  bool GetAborted();
 
 protected:
 
@@ -258,6 +264,9 @@ protected:
   std::vector<int> m_spheres_per_input;
 
   bool m_file_output_enabled = true;
+  bool m_aborted = false;
+  std::vector<ImageType::Pointer> m_images;
+  std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
 };
