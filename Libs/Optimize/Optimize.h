@@ -16,19 +16,16 @@
 #endif
 
 // std
-//#include <cstdio>
 #include <vector>
-#include <sstream>
 #include <string>
-#include <numeric>
 
 // itk
-#include "itkImage.h"
-#include "itkMaximumEntropyCorrespondenceSampler.h"
-#include "itkCommand.h"
-#include "itkParticleProcrustesRegistration.h"
-#include "itkParticleGoodBadAssessment.h"
-#include "itkParticleVectorFunction.h"
+#include <itkImage.h>
+#include <itkMaximumEntropyCorrespondenceSampler.h>
+#include <itkCommand.h>
+#include <itkParticleProcrustesRegistration.h>
+#include <itkParticleGoodBadAssessment.h>
+#include <itkParticleVectorFunction.h>
 
 // optimize library
 #include <itkParticleSystem.h>
@@ -49,14 +46,13 @@ public:
 
   void SetParameters();
 
-  virtual bool Run();
+  bool Run();
 
-  virtual void RunProcrustes();
+  void RunProcrustes();
 
   virtual void SetIterationCommand();
 
-  virtual void WriteModes();
-
+  void WriteModes();
 
   void SetVerbosity(int verbosity_level);
   void SetDomainsPerShape(int domains_per_shape);
@@ -182,11 +178,9 @@ protected:
 
   void UpdateExportablePoints();
 
-  typename itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
-  typename itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
-  typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
-
-  static itk::ITK_THREAD_RETURN_TYPE optimize_callback(void* arg);
+  itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
+  itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
+  itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
 
@@ -202,7 +196,7 @@ protected:
   bool m_use_regression = false;
   bool m_use_mixed_effects = false;
 
-  // ReadIOParameters
+  // IO Parameters
   unsigned int m_domains_per_shape = 1;
   std::vector<unsigned int> m_number_of_particles;
   std::string m_transform_file;
@@ -256,7 +250,7 @@ protected:
   bool m_log_energy = false;
   std::string m_str_energy;
 
-  //GoodBadAssessment
+  // GoodBadAssessment
   std::vector<std::vector<int>> m_bad_ids;
   double m_normal_angle = itk::Math::pi / 2.0;
   bool m_perform_good_bad = false;
@@ -272,5 +266,4 @@ protected:
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   size_t m_iteration_count = 0;
-
 };
