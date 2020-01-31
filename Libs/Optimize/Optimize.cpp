@@ -98,7 +98,7 @@ bool Optimize::Run()
 //---------------------------------------------------------------------------
 void Optimize::RunProcrustes()
 {
-  this->optimize_stop();
+  this->OptimizerStop();
   m_procrustes->RunRegistration();
 }
 
@@ -641,7 +641,7 @@ void Optimize::Initialize()
 
   while (flag_split) {
     //        m_Sampler->GetEnsembleEntropyFunction()->PrintShapeMatrix();
-    this->optimize_stop();
+    this->OptimizerStop();
     for (int i = 0; i < n; i++) {
       int d = i % m_domains_per_shape;
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[d]) {
@@ -933,19 +933,19 @@ void Optimize::RunOptimize()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::optimize_start()
+void Optimize::OptimizeStart()
 {
   m_sampler->GetOptimizer()->StartOptimization();
 }
 
 //---------------------------------------------------------------------------
-void Optimize::optimize_stop()
+void Optimize::OptimizerStop()
 {
   m_sampler->GetOptimizer()->StopOptimization();
 }
 
 //---------------------------------------------------------------------------
-void Optimize::abort_optimization()
+void Optimize::AbortOptimization()
 {
   this->m_aborted = true;
   this->m_sampler->GetOptimizer()->AbortProcessing();
@@ -986,8 +986,8 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   if (lnth > 1) {
     double val = std::abs(m_total_energy[lnth - 1] - m_total_energy[lnth - 2]) / std::abs(
       m_total_energy[lnth - 2]);
-    if ((m_optimizing == false && val < m_init_criterion) ||
-        (m_optimizing == true && val < m_opt_criterion)) {
+    if ((m_optimizing == false && val < m_initialization_criterion) ||
+        (m_optimizing == true && val < m_optimization_criterion)) {
       m_saturation_counter++;
     }
     else {
@@ -997,7 +997,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
       if (m_verbosity_level > 2) {
         std::cout << " \n ----Early termination due to minimal energy decay---- \n";
       }
-      this->optimize_stop();
+      this->OptimizerStop();
     }
   }
 
@@ -1265,8 +1265,8 @@ void Optimize::PrintParamInfo()
   std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed <<
     std::endl;
   std::cout << "m_iterations_per_split = " << m_iterations_per_split << std::endl;
-  std::cout << "m_init_criterion = " << m_init_criterion << std::endl;
-  std::cout << "m_opt_criterion = " << m_opt_criterion << std::endl;
+  std::cout << "m_init_criterion = " << m_initialization_criterion << std::endl;
+  std::cout << "m_opt_criterion = " << m_optimization_criterion << std::endl;
   std::cout << "m_use_shape_statistics_in_init = " << m_use_shape_statistics_in_init << std::endl;
   std::cout << "m_procrustes_interval = " << m_procrustes_interval << std::endl;
   std::cout << "m_procrustes_scaling = " << m_procrustes_scaling << std::endl;
@@ -1942,12 +1942,12 @@ void Optimize::SetIterationsPerSplit(int iterations_per_split)
 { this->m_iterations_per_split = iterations_per_split;}
 
 //---------------------------------------------------------------------------
-void Optimize::SetInitCriterion(double init_criterion)
-{ this->m_init_criterion = init_criterion;}
+void Optimize::SetInitializationCriterion(double init_criterion)
+{ this->m_initialization_criterion = init_criterion;}
 
 //---------------------------------------------------------------------------
-void Optimize::SetOptCriterion(double opt_criterion)
-{ this->m_opt_criterion = opt_criterion;}
+void Optimize::SetOptimizationCriterion(double opt_criterion)
+{ this->m_optimization_criterion = opt_criterion;}
 
 //---------------------------------------------------------------------------
 void Optimize::SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init)

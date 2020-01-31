@@ -1,12 +1,11 @@
 #pragma once
 
-#include <Optimize/ShapeWorksOptimize.h>
 #include <Libs/Optimize/Optimize.h>
 #include <QObject>
 #include <QMutex>
 #include <QElapsedTimer>
 
-//! Wraps ShapeWorksOptimize as a QObject
+//! Wraps Optimize as a QObject
 class QOptimize : public QObject, public Optimize {
   Q_OBJECT;
 
@@ -33,8 +32,5 @@ private:
 
   QElapsedTimer time_since_last_update_;
 
-  size_t reportInterval_ = 0;
-  size_t procrustesCounter_ = 0;
-  size_t totalIters_ = 0;
 
 };

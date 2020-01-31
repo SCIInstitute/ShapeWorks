@@ -27,7 +27,7 @@
 #include <itkParticleGoodBadAssessment.h>
 #include <itkParticleVectorFunction.h>
 
-// optimize library
+// shapeworks particle system
 #include <itkParticleSystem.h>
 
 /**
@@ -55,17 +55,23 @@ public:
   //! Destructor
   virtual ~Optimize();
 
-  //! Return the Sampler
-  SamplerType* GetSampler() { return m_sampler.GetPointer(); }
-
   //! Run the optimization
   bool Run();
 
-  //! Run an iteration of procrustes
-  void RunProcrustes();
+  //! Abort optimization
+  void AbortOptimization();
 
-  //! Set the iteration callback.  Derived classes should override to set their own callback
-  virtual void SetIterationCallback();
+  //! Return if the optimization was aborted
+  bool GetAborted();
+
+  //! Return the local points
+  virtual std::vector<std::vector<itk::Point<double>>> GetLocalPoints();
+
+  //! Return the global points
+  virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
+
+  //! Set cutting planes
+  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cut_planes);
 
   //! Set the verbosity level (0-5)
   void SetVerbosity(int verbosity_level);
@@ -128,64 +134,121 @@ public:
                        const vnl_vector_fixed<double, 3> &vb,
                        const vnl_vector_fixed<double, 3> &vc);
 
-  // optimization parameters
-
   //! Set processing mode (TODO: details)
   void SetProcessingMode(int mode);
   //! Set adaptivity mode (TODO: details)
   void SetAdaptivityMode(int adaptivity_mode);
   //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
+  //! Set pairwise potential type (TODO: details)
   void SetPairwisePotentialType(int pairwise_potential_type);
+  //! Set the optimizer type (TODO: details)
   void SetOptimizerType(int optimizer_type);
+  //! Set the number of time points per subject (TODO: details)
   void SetTimePtsPerSubject(int time_pts_per_subject);
+  //! Get the number of time points per subject (TODO: details)
   int GetTimePtsPerSubject();
+  //! Set the number of optimization iterations
   void SetOptimizationIterations(int optimization_iterations);
+  //! Set the number of optimization iterations already completed (TODO: details)
   void SetOptimizationIterationsCompleted(int optimization_iterations_completed);
+  //! Set the number of iterations per split
   void SetIterationsPerSplit(int iterations_per_split);
-  void SetInitCriterion(double init_criterion);
-  void SetOptCriterion(double opt_criterion);
+  //! Set the init criterion (TODO: details)
+  void SetInitializationCriterion(double init_criterion);
+  //! Set the optimization criterion (TODO: details)
+  void SetOptimizationCriterion(double opt_criterion);
+  //! Set if shape statistics should be used in initialization
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
+  //! Set the interval for running procrustes (0 to disable)
   void SetProcrustesInterval(int procrustes_interval);
+  //! Set if procrustes scaling should be used (0=disabled, 1=enabled)
   void SetProcrustesScaling(int procrustes_scaling);
+  //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
+  //! Set the initial relative weigting (TODO: details)
   void SetInitialRelativeWeighting(double initial_relative_weighting);
+  //! Set the starting regularization (TODO: details)
   void SetStartingRegularization(double starting_regularization);
+  //! Set the ending regularization (TODO: details)
   void SetEndingRegularization(double ending_regularization);
+  //! Set the interval for recomputing regularization (TODO: details)
   void SetRecomputeRegularizationInterval(int recompute_regularization_interval);
+  //! Set if initilzation splits should be saved or not
   void SetSaveInitSplits(bool save_init_splits);
+  //! Set the checkpointing interval
   void SetCheckpointingInterval(int checkpointing_interval);
+  //! Set if checkpoints should be kept (0=disable, 1=enable)
   void SetKeepCheckpoints(int keep_checkpoints);
+  //! Set the cotan sigma factor (TODO: details)
   void SetCotanSigmaFactor(double cotan_sigma_factor);
 
+  //! Set if regression should be used (TODO: details)
   void SetUseRegression(bool use_regression);
+  //! Set if mixed effects should be used (TODO: details)
   void SetUseMixedEffects(bool use_mixed_effects);
 
+  //! For good/bad analysis, set the normal angle to use (TODO: details)
   void SetNormalAngle(double normal_angle);
+  //! Set if good/bad analysis should be done (TODO: details)
   void SetPerformGoodBad(bool perform_good_bad);
+  //! Set the log energy (TODO: details)
   void SetLogEnergy(bool log_energy);
 
+  //! Set the shape input images
   void SetImages(const std::vector<ImageType::Pointer> &images);
+
+  //! Return the shape input images
   std::vector<ImageType::Pointer> GetImages();
 
+  //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);
+  //! Set starting point files (TODO: details)
   void SetPointFiles(const std::vector <std::string> &point_files);
+
+  //! Get number of shapes
   int GetNumShapes();
+  //! Set the mesh files (TODO: details)
   void SetMeshFiles(const std::vector<std::string> &mesh_files);
+  //! Set attribute scales (TODO: details)
   void SetAttributeScales(const std::vector<double> &scales);
+  //! Set FEA files (TODO: details)
   void SetFeaFiles(const std::vector<std::string> &files);
+  //! Set FEA grad files (TODO: details)
   void SetFeaGradFiles(const std::vector<std::string> &files);
+  //! Set FIDS files (TODO: details)
   void SetFidsFiles(const std::vector<std::string> &files);
 
+  //! Set Particle Flags (TODO: details)
   void SetParticleFlags(std::vector<int> flags);
+  //! Set Domain Flags (TODO: details)
   void SetDomainFlags(std::vector<int> flags);
 
   //! Set if file output is enabled
   void SetFileOutputEnabled(bool enabled);
 
+  //! Return if XYZ is used, per shape
   std::vector<bool> GetUseXYZ();
 
+  //! Return if Normals are used, per shape
   std::vector<bool> GetUseNormals();
+
+  //! Print parameter info to stdout
+  void PrintParamInfo();
+
+  //! Return the Sampler
+  SamplerType* GetSampler() { return m_sampler.GetPointer(); }
+
+protected:
+
+  //! Set the iteration callback.  Derived classes should override to set their own callback
+  virtual void SetIterationCallback();
+
+  //! Run an iteration of procrustes
+  void RunProcrustes();
+
+  void OptimizeStart();
+  void OptimizerStop();
 
   void ReadTransformFile();
   void ReadPrefixTransformFile(const std::string &s);
@@ -196,27 +259,12 @@ public:
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
-  void optimize_start();
-  void optimize_stop();
-  void abort_optimization();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject &);
+
   void ComputeEnergyAfterIteration();
+
   void SetCotanSigma();
-
-  void PrintParamInfo();
-
-  //! Return the local points
-  virtual std::vector<std::vector<itk::Point<double>>> GetLocalPoints();
-  //! Return the global points
-  virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
-  //! Set cutting planes
-  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cut_planes);
-
-  //! Return if the optimization was aborted
-  bool GetAborted();
-
-protected:
 
   void WriteTransformFile(int iter = -1) const;
   void WriteTransformFile(std::string iter_prefix) const;
@@ -280,8 +328,8 @@ protected:
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
   int m_iterations_per_split = 1000;
-  double m_init_criterion = 1e-6;
-  double m_opt_criterion = 1e-6;
+  double m_initialization_criterion = 1e-6;
+  double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
   int m_procrustes_scaling = 1;
@@ -298,8 +346,8 @@ protected:
   std::vector <int> m_domain_flags;
 
   // Keeps track of which state the optimization is in.
-  unsigned int m_mode;
-  double m_spacing;
+  unsigned int m_mode = 0;
+  double m_spacing = 0;
 
   std::vector < std::string > m_filenames;
   int m_num_shapes = 0;

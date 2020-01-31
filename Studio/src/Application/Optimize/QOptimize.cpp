@@ -61,8 +61,6 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject &e)
     }
   }
 
-  this->reportInterval_ = 100;
-
 //  if (this->iterCount_ % this->reportInterval_ == 0) {
   if (update) {
     this->time_since_last_update_.start();

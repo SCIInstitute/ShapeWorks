@@ -390,7 +390,7 @@ void OptimizeTool::shutdown_threads()
   if (!this->optimize_) {
     return;
   }
-  this->optimize_->abort_optimization();
+  this->optimize_->AbortOptimization();
 
   for (size_t i = 0; i < this->threads_.size(); i++) {
     if (this->threads_[i]->isRunning()) {

@@ -241,10 +241,10 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   if (elem) { optimize->SetIterationsPerSplit(atoi(elem->GetText()));}
 
   elem = docHandle->FirstChild("init_criterion").Element();
-  if (elem) { optimize->SetInitCriterion(atof(elem->GetText()));}
+  if (elem) { optimize->SetInitializationCriterion(atof(elem->GetText()));}
 
   elem = docHandle->FirstChild("opt_criterion").Element();
-  if (elem) { optimize->SetOptCriterion(atof(elem->GetText()));}
+  if (elem) { optimize->SetOptimizationCriterion(atof(elem->GetText()));}
 
   elem = docHandle->FirstChild("use_shape_statistics_in_init").Element();
   if (elem) { optimize->SetUseShapeStatisticsInInit((bool) atoi(elem->GetText()));}
