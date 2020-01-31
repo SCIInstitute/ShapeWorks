@@ -18,7 +18,7 @@ public:
   std::vector<std::vector<itk::Point<double>>> GetGlobalPoints() override;
 
 protected:
-  virtual void SetIterationCommand() override;
+  virtual void SetIterationCallback() override;
   virtual void IterateCallback(itk::Object* caller, const itk::EventObject &) override;
 
 signals:

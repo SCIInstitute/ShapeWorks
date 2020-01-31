@@ -25,7 +25,7 @@ std::vector<std::vector<itk::Point<double>>> QOptimize::GetGlobalPoints()
 }
 
 //---------------------------------------------------------------------------
-void QOptimize::SetIterationCommand()
+void QOptimize::SetIterationCallback()
 {
   this->iterate_command_ = itk::MemberCommand<QOptimize>::New();
   this->iterate_command_->SetCallbackFunction(this, &QOptimize::IterateCallback);

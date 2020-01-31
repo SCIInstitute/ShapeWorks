@@ -69,6 +69,8 @@ bool Optimize::Run()
     return false;
   }
 
+  this->SetParameters();
+
   int number_of_splits = static_cast<int>(
     std::log2(static_cast<double>(this->m_number_of_particles[0])) + 1);
   this->m_iteration_count = 0;
@@ -149,7 +151,7 @@ void Optimize::SetParameters()
     this->m_procrustes->ScalingOn();
   }
 
-  this->SetIterationCommand();
+  this->SetIterationCallback();
   this->PrintStartMessage("Initializing variables...");
   this->InitializeSampler();
   this->PrintDoneMessage();
@@ -955,7 +957,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   if (m_perform_good_bad == true) {
     std::vector < std::vector < int >> tmp;
     tmp = m_good_bad->RunAssessment(m_sampler->GetParticleSystem(),
-                                   m_sampler->GetMeanCurvatureCache());
+                                    m_sampler->GetMeanCurvatureCache());
 
     if (!tmp.empty()) {
       if (this->m_bad_ids.empty()) {
@@ -1096,22 +1098,20 @@ void Optimize::ComputeEnergyAfterIteration()
 //---------------------------------------------------------------------------
 void Optimize::SetCotanSigma()
 {
-  typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
+  itk::ImageToVTKImageFilter<ImageType>::Pointer itk2vtkConnector;
   m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    const itk::ParticleImageDomain < float,
-                                     3 >* domain = static_cast < const itk::ParticleImageDomain < float,
-                                                                                                  3 >
-                                                                 * > (m_sampler->GetParticleSystem()
-                                                                      ->GetDomain(i));
+    using DomainType = itk::ParticleImageDomain<float, 3>;
+    const DomainType* domain =
+      static_cast<const DomainType*> (m_sampler->GetParticleSystem()->GetDomain(i));
 
-    itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
+    itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
     itk2vtkConnector->SetInput(domain->GetImage());
-    vtkSmartPointer < vtkContourFilter > ls = vtkSmartPointer < vtkContourFilter > ::New();
+    vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
     ls->SetInputData(itk2vtkConnector->GetOutput());
     ls->SetValue(0, 0.0);
     ls->Update();
-    vtkSmartPointer < vtkMassProperties > mp = vtkSmartPointer < vtkMassProperties > ::New();
+    vtkSmartPointer<vtkMassProperties> mp = vtkSmartPointer<vtkMassProperties>::New();
     mp->SetInputData(ls->GetOutput());
     mp->Update();
     double area = mp->GetSurfaceArea();
@@ -2121,7 +2121,7 @@ std::vector<bool> Optimize::GetUseNormals()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetIterationCommand()
+void Optimize::SetIterationCallback()
 {
   this->m_iterate_command = itk::MemberCommand<Optimize>::New();
   this->m_iterate_command->SetCallbackFunction(this, &Optimize::IterateCallback);

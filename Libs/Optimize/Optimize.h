@@ -30,6 +30,18 @@
 // optimize library
 #include <itkParticleSystem.h>
 
+/**
+ * \class Optimize
+ * \ingroup Group-Optimize
+ *
+ * This class is the top-level API for the optimization library
+ *
+ * \par Overview of Optimize
+ *
+ * The Optimize class controls all aspect of the particle system library
+ * provides a top-level public API for running optimization
+ *
+ */
 class Optimize
 {
 public:
@@ -37,45 +49,80 @@ public:
   using SamplerType = itk::MaximumEntropyCorrespondenceSampler<itk::Image<float, 3>>;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
 
-  // constructor
+  //! Constructor
   Optimize();
 
+  //! Destructor
   virtual ~Optimize();
 
+  //! Return the Sampler
   SamplerType* GetSampler() { return m_sampler.GetPointer(); }
 
-  void SetParameters();
-
+  //! Run the optimization
   bool Run();
 
+  //! Run an iteration of procrustes
   void RunProcrustes();
 
-  virtual void SetIterationCommand();
+  //! Set the iteration callback.  Derived classes should override to set their own callback
+  virtual void SetIterationCallback();
 
-  void WriteModes();
-
+  //! Set the verbosity level (0-5)
   void SetVerbosity(int verbosity_level);
+
+  //! Set the number of domains per shape
   void SetDomainsPerShape(int domains_per_shape);
+  //! Return the number of domains per shape
   int GetDomainsPerShape();
+
+  //! Set the numbers of particles (vector of numbers, one for each domain)
   void SetNumberOfParticles(std::vector<unsigned int> number_of_particles);
+  //! Return the numbers of particles per domain
   std::vector<unsigned int> GetNumberOfParticles();
 
+  //! Set the transform file
   void SetTransformFile(std::string filename);
+  //! Get the transform file
   std::string GetTransformFile();
+
+  //! Set the prefix transform file (TODO: details)
   void SetPrefixTransformFile(std::string prefix_transform_file);
+  //! Get the prefix transform file
   std::string GetPrefixTransformFile();
+
+  //! Set the output directory
   void SetOutputDir(std::string output_dir);
+
+  //! Set the output transform file
   void SetOutputTransformFile(std::string output_transform_file);
+
+  //! Set if mesh based attributes should be used
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
+
+  //! Get if mesh based attributes are being used
   bool GetUseMeshBasedAttributes();
+
+  //! Set if XYZ is used, one value per domain
   void SetUseXYZ(std::vector<bool> use_xyz);
+
+  //! Set if Normals are being used, one value per domain
   void SetUseNormals(std::vector<bool> use_normals);
+
+  //! Set the attributes per domain
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
+  //! Get attributes per domain
   std::vector<int> GetAttributesPerDomain();
+
+  //! Set the distribution domain ID (TODO: details)
   void SetDistributionDomainID(int distribution_domain_id);
+  //! Get the distribution domain ID
   int GetDistributionDomainID();
+
+  //! Set the output cutting plane file
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
+  //! Set if using cutting planes
   void SetUseCuttingPlanes(bool use_cutting_planes);
+  //! Set a given cutting plane for a shape
   void SetCuttingPlane(unsigned int i,
                        const vnl_vector_fixed<double, 3> &va,
                        const vnl_vector_fixed<double, 3> &vb,
@@ -135,42 +182,50 @@ public:
 
   std::vector<bool> GetUseNormals();
 
-  virtual void ReadTransformFile();
-  virtual void ReadPrefixTransformFile(const std::string &s);
+  void ReadTransformFile();
+  void ReadPrefixTransformFile(const std::string &s);
 
-  virtual void InitializeSampler();
+  void InitializeSampler();
   double GetMinNeighborhoodRadius();
-  virtual void AddSinglePoint();
+  void AddSinglePoint();
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
-  virtual void optimize_start();
-  virtual void optimize_stop();
+  void optimize_start();
+  void optimize_stop();
   void abort_optimization();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject &);
-  virtual void ComputeEnergyAfterIteration();
+  void ComputeEnergyAfterIteration();
   void SetCotanSigma();
 
   void PrintParamInfo();
 
-  virtual void WriteTransformFile(int iter = -1) const;
-  virtual void WriteTransformFile(std::string iter_prefix) const;
-  virtual void WritePointFiles(int iter = -1);
-  virtual void WritePointFiles(std::string iter_prefix);
-  virtual void WritePointFilesWithFeatures(int iter = -1);
-  virtual void WritePointFilesWithFeatures(std::string iter_prefix);
-  virtual void WriteEnergyFiles();
-  virtual void WriteCuttingPlanePoints(int iter = -1);
-  virtual void WriteParameters(int iter = -1);
-  virtual void ReportBadParticles();
+  void WriteTransformFile(int iter = -1) const;
+  void WriteTransformFile(std::string iter_prefix) const;
+  void WritePointFiles(int iter = -1);
+  void WritePointFiles(std::string iter_prefix);
+  void WritePointFilesWithFeatures(int iter = -1);
+  void WritePointFilesWithFeatures(std::string iter_prefix);
+  void WriteEnergyFiles();
+  void WriteCuttingPlanePoints(int iter = -1);
+  void WriteParameters(int iter = -1);
+  void ReportBadParticles();
 
+  //! Return the local points
   virtual std::vector<std::vector<itk::Point<double>>> GetLocalPoints();
+  //! Return the global points
   virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
+  //! Set cutting planes
   void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cut_planes);
+
+  //! Return if the optimization was aborted
   bool GetAborted();
 
 protected:
+
+  void SetParameters();
+  void WriteModes();
 
   void PrintStartMessage(std::string str, unsigned int vlevel = 0) const;
 
