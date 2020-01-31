@@ -1,12 +1,13 @@
 #pragma once
 
 #include <Optimize/ShapeWorksOptimize.h>
+#include <Libs/Optimize/Optimize.h>
 #include <QObject>
 #include <QMutex>
 #include <QElapsedTimer>
 
 //! Wraps ShapeWorksOptimize as a QObject
-class QOptimize : public QObject, public ShapeWorksOptimize {
+class QOptimize : public QObject, public Optimize {
   Q_OBJECT;
 
 public:
@@ -18,7 +19,7 @@ public:
 
 protected:
   virtual void SetIterationCommand() override;
-  virtual void iterateCallback(itk::Object* caller, const itk::EventObject &) override;
+  virtual void IterateCallback(itk::Object* caller, const itk::EventObject &) override;
 
 signals:
   void progress(int);
@@ -31,4 +32,10 @@ private:
   QMutex qmutex;
 
   QElapsedTimer time_since_last_update_;
+
+  size_t reportInterval_ = 0;
+  size_t procrustesCounter_ = 0;
+  size_t totalIters_ = 0;
+  size_t iterCount_ = 0;
+
 };

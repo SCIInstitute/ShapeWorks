@@ -155,7 +155,7 @@ public:
   virtual void optimize_stop();
   void abort_optimization();
 
-  void IterateCallback(itk::Object*, const itk::EventObject &);
+  virtual void IterateCallback(itk::Object*, const itk::EventObject &);
   virtual void ComputeEnergyAfterIteration();
   void SetCotanSigma();
 
@@ -269,4 +269,6 @@ protected:
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
+  int m_total_iterations = 0;
+
 };

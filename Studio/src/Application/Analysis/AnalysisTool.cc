@@ -120,7 +120,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
     ii++;
   }
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::Reconstruct, NULL, NULL, this->project_,
+    ShapeworksWorker::ReconstructType, NULL, NULL, this->project_,
     local, global, images,
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(),
