@@ -36,6 +36,5 @@ private:
   size_t reportInterval_ = 0;
   size_t procrustesCounter_ = 0;
   size_t totalIters_ = 0;
-  size_t iterCount_ = 0;
 
 };

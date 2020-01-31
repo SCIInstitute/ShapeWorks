@@ -69,6 +69,17 @@ bool Optimize::Run()
     return false;
   }
 
+  int number_of_splits = static_cast<int>(
+    std::log2(static_cast<double>(this->m_number_of_particles[0])) + 1);
+  this->iterCount_ = 0;
+
+  this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
+                             this->m_optimization_iterations;
+
+  if (this->m_verbosity_level > 0) {
+    std::cout << "Total number of iterations = " << this->m_total_iterations << "\n";
+  }
+
   m_disable_procrustes = true;
   m_disable_checkpointing = true;
   // Initialize
@@ -1868,7 +1879,7 @@ std::vector<std::vector<itk::Point<double>>> Optimize::GetGlobalPoints()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetCutPlanes(std::vector<std::array<itk::Point<double>,3> > planes)
+void Optimize::SetCutPlanes(std::vector<std::array<itk::Point<double>, 3>> planes)
 {
   this->m_cut_planes = planes;
 }

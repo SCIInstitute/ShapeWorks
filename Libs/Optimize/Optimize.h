@@ -270,5 +270,6 @@ protected:
 
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
+  size_t m_iteration_count = 0;
 
 };

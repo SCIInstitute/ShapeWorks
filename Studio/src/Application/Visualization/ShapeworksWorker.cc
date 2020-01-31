@@ -50,6 +50,7 @@ void ShapeworksWorker::process()
     break;
   case ShapeworksWorker::OptimizeType:
     try {
+      this->optimize_->SetParameters();
       this->optimize_->Run();
     } catch (std::runtime_error e) {
       std::cerr << "Exception: " << e.what() << "\n";
