@@ -90,7 +90,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject &e)
       }
     }
 
-    emit progress(this->iterCount_ * 100 / this->m_total_iterations);
+    emit progress(this->m_iteration_count * 100 / this->m_total_iterations);
   }
-  this->iterCount_++;
+  this->m_iteration_count++;
 }

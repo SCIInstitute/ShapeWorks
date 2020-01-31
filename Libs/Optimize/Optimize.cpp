@@ -71,7 +71,7 @@ bool Optimize::Run()
 
   int number_of_splits = static_cast<int>(
     std::log2(static_cast<double>(this->m_number_of_particles[0])) + 1);
-  this->iterCount_ = 0;
+  this->m_iteration_count = 0;
 
   this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
                              this->m_optimization_iterations;
@@ -97,7 +97,7 @@ bool Optimize::Run()
 void Optimize::RunProcrustes()
 {
   this->optimize_stop();
-  m_Procrustes->RunRegistration();
+  m_procrustes->RunRegistration();
 }
 
 //---------------------------------------------------------------------------
@@ -138,21 +138,21 @@ void Optimize::SetParameters()
   }
 
   // Set up the procrustes registration object.
-  this->m_Procrustes = itk::ParticleProcrustesRegistration < 3 > ::New();
-  this->m_Procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
-  this->m_Procrustes->SetDomainsPerShape(this->m_domains_per_shape);
+  this->m_procrustes = itk::ParticleProcrustesRegistration < 3 > ::New();
+  this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
+  this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
 
   if (this->m_procrustes_scaling == 0) {
-    this->m_Procrustes->ScalingOff();
+    this->m_procrustes->ScalingOff();
   }
   else {
-    this->m_Procrustes->ScalingOn();
+    this->m_procrustes->ScalingOn();
   }
 
   this->SetIterationCommand();
-  this->startMessage("Initializing variables...");
+  this->PrintStartMessage("Initializing variables...");
   this->InitializeSampler();
-  this->doneMessage();
+  this->PrintDoneMessage();
 
   if (m_use_normals.size() > 0) {
     int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
@@ -200,14 +200,14 @@ void Optimize::SetParameters()
     this->PrintParamInfo();
   }
 
-  m_GoodBad = itk::ParticleGoodBadAssessment<float, 3>::New();
-  m_GoodBad->SetDomainsPerShape(m_domains_per_shape);
-  m_GoodBad->SetCriterionAngle(m_normalAngle);
-  m_GoodBad->SetPerformAssessment(m_performGoodBad);
+  m_good_bad = itk::ParticleGoodBadAssessment<float, 3>::New();
+  m_good_bad->SetDomainsPerShape(m_domains_per_shape);
+  m_good_bad->SetCriterionAngle(m_normal_angle);
+  m_good_bad->SetPerformAssessment(m_perform_good_bad);
 
-  m_EnergyA.clear();
-  m_EnergyB.clear();
-  m_TotalEnergy.clear();
+  m_energy_a.clear();
+  m_energy_b.clear();
+  m_total_energy.clear();
 
   // Now read the transform file if present.
   if (m_transform_file != "") { this->ReadTransformFile(); }
@@ -553,7 +553,7 @@ void Optimize::Initialize()
   if (m_procrustes_interval != 0) { // Initial registration
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
-        m_Procrustes->RunRegistration(i);
+        m_procrustes->RunRegistration(i);
       }
     }
     this->WritePointFiles();
@@ -683,22 +683,22 @@ void Optimize::Initialize()
       this->WriteParameters(split_number);
     }
 
-    m_EnergyA.clear();
-    m_EnergyB.clear();
-    m_TotalEnergy.clear();
+    m_energy_a.clear();
+    m_energy_b.clear();
+    m_total_energy.clear();
     std::stringstream ss;
     ss << split_number;
     std::stringstream ssp;
 
     ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
-    m_strEnergy = "split" + ss.str();
+    m_str_energy = "split" + ss.str();
 
     for (int i = 0; i < m_domains_per_shape; i++) {
       ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
-      m_strEnergy += "_" + ssp.str();
+      m_str_energy += "_" + ssp.str();
       ssp.str("");
     }
-    m_strEnergy += "pts_init";
+    m_str_energy += "pts_init";
 
     if (this->m_pairwise_potential_type == 1) {
       this->SetCotanSigma();
@@ -710,7 +710,7 @@ void Optimize::Initialize()
         minRad);
     }
 
-    m_SaturationCounter = 0;
+    m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
     m_sampler->Modified();
@@ -785,7 +785,7 @@ void Optimize::AddAdaptivity()
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
-  m_SaturationCounter = 0;
+  m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->Modified();
@@ -830,7 +830,7 @@ void Optimize::RunOptimize()
   m_disable_procrustes = false;
 
   if (m_procrustes_interval != 0) { // Initial registration
-    m_Procrustes->RunRegistration();
+    m_procrustes->RunRegistration();
     this->WritePointFiles();
     this->WriteTransformFile();
 
@@ -907,12 +907,12 @@ void Optimize::RunOptimize()
   }
   else { m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(0);}
 
-  m_EnergyA.clear();
-  m_EnergyB.clear();
-  m_TotalEnergy.clear();
-  m_strEnergy = "opt";
+  m_energy_a.clear();
+  m_energy_b.clear();
+  m_total_energy.clear();
+  m_str_energy = "opt";
 
-  m_SaturationCounter = 0;
+  m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
   m_sampler->Modified();
@@ -952,24 +952,24 @@ void Optimize::abort_optimization()
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 {
-  if (m_performGoodBad == true) {
+  if (m_perform_good_bad == true) {
     std::vector < std::vector < int >> tmp;
-    tmp = m_GoodBad->RunAssessment(m_sampler->GetParticleSystem(),
+    tmp = m_good_bad->RunAssessment(m_sampler->GetParticleSystem(),
                                    m_sampler->GetMeanCurvatureCache());
 
     if (!tmp.empty()) {
-      if (this->m_badIds.empty()) {
-        this->m_badIds.resize(m_domains_per_shape);
+      if (this->m_bad_ids.empty()) {
+        this->m_bad_ids.resize(m_domains_per_shape);
       }
 
       for (int i = 0; i < m_domains_per_shape; i++) {
         for (int j = 0; j < tmp[i].size(); j++) {
-          if (m_badIds[i].empty()) {
-            this->m_badIds[i].push_back(tmp[i][j]);
+          if (m_bad_ids[i].empty()) {
+            this->m_bad_ids[i].push_back(tmp[i][j]);
           }
           else {
-            if (std::count(m_badIds[i].begin(), m_badIds[i].end(), tmp[i][j]) == 0) {
-              this->m_badIds[i].push_back(tmp[i][j]);
+            if (std::count(m_bad_ids[i].begin(), m_bad_ids[i].end(), tmp[i][j]) == 0) {
+              this->m_bad_ids[i].push_back(tmp[i][j]);
             }
           }
         }
@@ -980,18 +980,18 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
 
   this->ComputeEnergyAfterIteration();
 
-  int lnth = m_TotalEnergy.size();
+  int lnth = m_total_energy.size();
   if (lnth > 1) {
-    double val = std::abs(m_TotalEnergy[lnth - 1] - m_TotalEnergy[lnth - 2]) / std::abs(
-      m_TotalEnergy[lnth - 2]);
+    double val = std::abs(m_total_energy[lnth - 1] - m_total_energy[lnth - 2]) / std::abs(
+      m_total_energy[lnth - 2]);
     if ((m_optimizing == false && val < m_init_criterion) ||
         (m_optimizing == true && val < m_opt_criterion)) {
-      m_SaturationCounter++;
+      m_saturation_counter++;
     }
     else {
-      m_SaturationCounter = 0;
+      m_saturation_counter = 0;
     }
-    if (m_SaturationCounter > 10) {
+    if (m_saturation_counter > 10) {
       if (m_verbosity_level > 2) {
         std::cout << " \n ----Early termination due to minimal energy decay---- \n";
       }
@@ -1000,9 +1000,9 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   }
 
   if (m_checkpointing_interval != 0 && m_disable_checkpointing == false) {
-    m_CheckpointCounter++;
-    if (m_CheckpointCounter == (int)m_checkpointing_interval) {
-      m_CheckpointCounter = 0;
+    m_checkpoint_counter++;
+    if (m_checkpoint_counter == (int)m_checkpointing_interval) {
+      m_checkpoint_counter = 0;
 
       this->WritePointFiles();
       this->WriteTransformFile();
@@ -1016,11 +1016,11 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   if (m_optimizing == false) { return;}
 
   if (m_procrustes_interval != 0 && m_disable_procrustes == false) {
-    m_ProcrustesCounter++;
+    m_procrustes_counter++;
 
-    if (m_ProcrustesCounter >= (int)m_procrustes_interval) {
-      m_ProcrustesCounter = 0;
-      m_Procrustes->RunRegistration();
+    if (m_procrustes_counter >= (int)m_procrustes_interval) {
+      m_procrustes_counter = 0;
+      m_procrustes->RunRegistration();
 
       if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
         // transform cutting planes
@@ -1033,11 +1033,11 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject &)
   // Checkpointing after procrustes (override for optimizing step)
   if (m_checkpointing_interval != 0 && m_disable_checkpointing == false) {
 
-    m_CheckpointCounter++;
+    m_checkpoint_counter++;
 
-    if (m_CheckpointCounter == (int)m_checkpointing_interval) {
+    if (m_checkpoint_counter == (int)m_checkpointing_interval) {
       iteration_no += m_checkpointing_interval;
-      m_CheckpointCounter = 0;
+      m_checkpoint_counter = 0;
 
       this->WritePointFiles();
       this->WriteTransformFile();
@@ -1085,9 +1085,9 @@ void Optimize::ComputeEnergyAfterIteration()
   }
 
   double totalEnergy = sampEnergy + corrEnergy;
-  m_EnergyA.push_back(sampEnergy);
-  m_EnergyB.push_back(corrEnergy);
-  m_TotalEnergy.push_back(totalEnergy);
+  m_energy_a.push_back(sampEnergy);
+  m_energy_b.push_back(corrEnergy);
+  m_total_energy.push_back(totalEnergy);
   if (m_verbosity_level > 2) {
     std::cout << "Energy: " << totalEnergy << std::endl;
   }
@@ -1282,13 +1282,13 @@ void Optimize::PrintParamInfo()
 
   std::cout << std::endl;
 
-  if (m_performGoodBad) {
+  if (m_perform_good_bad) {
     std::cout <<
       "Debug: Bad particles will be reported during optimization, expect significant delays!!! " <<
       std::endl;
   }
 
-  if (m_logEnergy) {
+  if (m_log_energy) {
     std::cout << "Debug: Write energy logs, might increase runtime!!! " << std::endl;
   }
 }
@@ -1330,12 +1330,12 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
   }
 
   std::string str = "writing " + output_file + " ...";
-  startMessage(str);
+  PrintStartMessage(str);
   object_writer < itk::ParticleSystem < 3 > ::TransformType > writer;
   writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();
-  doneMessage();
+  PrintDoneMessage();
 }
 
 //---------------------------------------------------------------------------
@@ -1365,7 +1365,7 @@ void Optimize::WritePointFiles(std::string iter_prefix)
     return;
   }
 
-  this->startMessage("Writing point files...\n");
+  this->PrintStartMessage("Writing point files...\n");
 #ifdef _WIN32
   mkdir(iter_prefix.c_str());
 #else
@@ -1386,7 +1386,7 @@ void Optimize::WritePointFiles(std::string iter_prefix)
     std::ofstream outw(world_file.c_str());
 
     std::string str = "Writing " + world_file + " and " + local_file + " files...";
-    this->startMessage(str, 1);
+    this->PrintStartMessage(str, 1);
     if (!out) {
       std::cerr << "Error opening output file: " << local_file << std::endl;
       throw 1;
@@ -1419,10 +1419,10 @@ void Optimize::WritePointFiles(std::string iter_prefix)
     std::stringstream st;
     st << counter;
     str = "with " + st.str() + "points...";
-    this->startMessage(str, 1);
-    this->doneMessage(1);
+    this->PrintStartMessage(str, 1);
+    this->PrintDoneMessage(1);
   }   // end for files
-  this->doneMessage();
+  this->PrintDoneMessage();
 }
 
 //---------------------------------------------------------------------------
@@ -1456,7 +1456,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     return;
   }
 
-  this->startMessage("Writing point with attributes files...\n");
+  this->PrintStartMessage("Writing point with attributes files...\n");
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
   const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
@@ -1477,7 +1477,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     std::stringstream st;
     st << attrNum;
     str += "with " + st.str() + " attributes per point...";
-    this->startMessage(str, 1);
+    this->PrintStartMessage(str, 1);
 
     if (!outw) {
       std::cerr << "Error opening output file: " << world_file << std::endl;
@@ -1561,9 +1561,9 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     }      // end for points
 
     outw.close();
-    this->doneMessage(1);
+    this->PrintDoneMessage(1);
   }   // end for files
-  this->doneMessage();
+  this->PrintDoneMessage();
 }
 
 //---------------------------------------------------------------------------
@@ -1573,13 +1573,13 @@ void Optimize::WriteEnergyFiles()
     return;
   }
 
-  if (!this->m_logEnergy) {
+  if (!this->m_log_energy) {
     return;
   }
-  this->startMessage("Writing energy files...\n");
-  std::string strA = m_output_dir + "/" + this->m_strEnergy + "_samplingEnergy.txt";
-  std::string strB = m_output_dir + "/" + this->m_strEnergy + "_correspondenceEnergy.txt";
-  std::string strTotal = m_output_dir + "/" + this->m_strEnergy + "_totalEnergy.txt";
+  this->PrintStartMessage("Writing energy files...\n");
+  std::string strA = m_output_dir + "/" + this->m_str_energy + "_samplingEnergy.txt";
+  std::string strB = m_output_dir + "/" + this->m_str_energy + "_correspondenceEnergy.txt";
+  std::string strTotal = m_output_dir + "/" + this->m_str_energy + "_totalEnergy.txt";
   std::ofstream outA(strA.c_str(), std::ofstream::app);
   std::ofstream outB(strB.c_str(), std::ofstream::app);
   std::ofstream outTotal(strTotal.c_str(), std::ofstream::app);
@@ -1597,28 +1597,28 @@ void Optimize::WriteEnergyFiles()
     throw 1;
   }
 
-  int n = m_EnergyA.size() - 1;
+  int n = m_energy_a.size() - 1;
   n = n < 0 ? 0 : n;
 
   std::string str = "Appending to " + strA + " ...";
-  this->startMessage(str, 1);
-  outA << m_EnergyA[n] << std::endl;
+  this->PrintStartMessage(str, 1);
+  outA << m_energy_a[n] << std::endl;
   outA.close();
-  this->doneMessage(1);
+  this->PrintDoneMessage(1);
 
   str = "Appending to " + strB + " ...";
-  this->startMessage(str, 1);
-  outB << m_EnergyB[n] << std::endl;
+  this->PrintStartMessage(str, 1);
+  outB << m_energy_b[n] << std::endl;
   outB.close();
-  this->doneMessage(1);
+  this->PrintDoneMessage(1);
 
   str = "Appending to " + strTotal + " ...";
-  this->startMessage(str, 1);
-  outTotal << m_TotalEnergy[n] << std::endl;
+  this->PrintStartMessage(str, 1);
+  outTotal << m_total_energy[n] << std::endl;
   outTotal.close();
-  this->doneMessage(1);
+  this->PrintDoneMessage(1);
 
-  this->doneMessage();
+  this->PrintDoneMessage();
 }
 
 //---------------------------------------------------------------------------
@@ -1628,7 +1628,7 @@ void Optimize::WriteCuttingPlanePoints(int iter)
     return;
   }
 
-  this->startMessage("Writing cutting plane points...\n");
+  this->PrintStartMessage("Writing cutting plane points...\n");
   std::string output_file = m_output_cutting_plane_file;
 
   if (iter >= 0) {
@@ -1640,7 +1640,7 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   std::ofstream out(output_file.c_str());
 
   std::string str = "Writing " + output_file + "...";
-  this->startMessage(str, 1);
+  this->PrintStartMessage(str, 1);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     const itk::ParticleImplicitSurfaceDomain < float, 3 >* dom
@@ -1667,8 +1667,8 @@ void Optimize::WriteCuttingPlanePoints(int iter)
     }
   }
   out.close();
-  this->doneMessage(1);
-  this->doneMessage();
+  this->PrintDoneMessage(1);
+  this->PrintDoneMessage();
 }
 
 //---------------------------------------------------------------------------
@@ -1819,31 +1819,31 @@ void Optimize::ReportBadParticles()
     return;
   }
 
-  this->startMessage("Reporting bad particles...", 2);
+  this->PrintStartMessage("Reporting bad particles...", 2);
   typedef  itk::MaximumEntropyCorrespondenceSampler < ImageType > ::PointType PointType;
   const int totalDomains = m_sampler->GetParticleSystem()->GetNumberOfDomains();
   const int numShapes = totalDomains / m_domains_per_shape;
   std::string outDomDir;
   std::string outPtDir;
-  if (this->m_badIds.empty()) {
+  if (this->m_bad_ids.empty()) {
     return;
   }
   for (int i = 0; i < this->m_domains_per_shape; i++) {
-    if (this->m_badIds[i].empty()) {
+    if (this->m_bad_ids[i].empty()) {
       continue;
     }
 
     std::stringstream ss;
     ss << i;
-    outDomDir = m_output_dir + "/" + this->m_strEnergy + "_BadParticles_domain" + ss.str();
+    outDomDir = m_output_dir + "/" + this->m_str_energy + "_BadParticles_domain" + ss.str();
 #ifdef _WIN32
     mkdir(outDomDir.c_str());
 #else
     mkdir(outDomDir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 #endif
-    for (int j = 0; j < this->m_badIds[i].size(); j++) {
+    for (int j = 0; j < this->m_bad_ids[i].size(); j++) {
       std::stringstream ssj;
-      ssj << m_badIds[i][j];
+      ssj << m_bad_ids[i][j];
       outPtDir = outDomDir + "/particle" + ssj.str();
 #ifdef _WIN32
       mkdir(outPtDir.c_str());
@@ -1854,7 +1854,7 @@ void Optimize::ReportBadParticles()
         int dom = k * m_domains_per_shape + i;
         std::string localPtFile = outPtDir + "/" + m_filenames[dom] + ".particles";
         std::ofstream outl(localPtFile.c_str(), std::ofstream::app);
-        PointType pos = m_sampler->GetParticleSystem()->GetPosition(m_badIds[i][j], dom);
+        PointType pos = m_sampler->GetParticleSystem()->GetPosition(m_bad_ids[i][j], dom);
         for (unsigned int d = 0; d < 3; d++) {
           outl << pos[d] << " ";
         }
@@ -1863,7 +1863,7 @@ void Optimize::ReportBadParticles()
       }
     }
   }
-  this->doneMessage(2);
+  this->PrintDoneMessage(2);
 }
 
 //---------------------------------------------------------------------------
@@ -1879,9 +1879,9 @@ std::vector<std::vector<itk::Point<double>>> Optimize::GetGlobalPoints()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetCutPlanes(std::vector<std::array<itk::Point<double>, 3>> planes)
+void Optimize::SetCutPlanes(std::vector<std::array<itk::Point<double>, 3>> cut_planes)
 {
-  this->m_cut_planes = planes;
+  this->m_cut_planes = cut_planes;
 }
 
 //---------------------------------------------------------------------------
@@ -2007,15 +2007,15 @@ void Optimize::SetUseMixedEffects(bool use_mixed_effects)
 
 //---------------------------------------------------------------------------
 void Optimize::SetNormalAngle(double normal_angle)
-{ this->m_normalAngle = normal_angle;}
+{ this->m_normal_angle = normal_angle;}
 
 //---------------------------------------------------------------------------
 void Optimize::SetPerformGoodBad(bool perform_good_bad)
-{ this->m_performGoodBad = perform_good_bad;}
+{ this->m_perform_good_bad = perform_good_bad;}
 
 //---------------------------------------------------------------------------
 void Optimize::SetLogEnergy(bool log_energy)
-{ this->m_logEnergy = log_energy;}
+{ this->m_log_energy = log_energy;}
 
 //---------------------------------------------------------------------------
 void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
@@ -2138,16 +2138,16 @@ void Optimize::WriteModes()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::startMessage(std::string str, unsigned int vlevel) const
+void Optimize::PrintStartMessage(std::string str, unsigned int vlevel) const
 {
-  if (m_verbosity_level > vlevel) {
+  if (this->m_verbosity_level > vlevel) {
     std::cout << str;
     std::cout.flush();
   }
 }
 
 //---------------------------------------------------------------------------
-void Optimize::doneMessage(unsigned int vlevel) const
+void Optimize::PrintDoneMessage(unsigned int vlevel) const
 {
   if (m_verbosity_level > vlevel) {
     std::cout << "Done." << std::endl;

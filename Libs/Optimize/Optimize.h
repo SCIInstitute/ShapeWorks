@@ -57,9 +57,6 @@ public:
 
   virtual void WriteModes();
 
-  void startMessage(std::string str, unsigned int vlevel = 0) const;
-
-  void doneMessage(unsigned int vlevel = 0) const;
 
   void SetVerbosity(int verbosity_level);
   void SetDomainsPerShape(int domains_per_shape);
@@ -174,16 +171,20 @@ public:
 
   virtual std::vector<std::vector<itk::Point<double>>> GetLocalPoints();
   virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
-  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cutPlanes);
+  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cut_planes);
   bool GetAborted();
 
 protected:
 
+  void PrintStartMessage(std::string str, unsigned int vlevel = 0) const;
+
+  void PrintDoneMessage(unsigned int vlevel = 0) const;
+
   void UpdateExportablePoints();
 
   typename itk::MaximumEntropyCorrespondenceSampler<ImageType>::Pointer m_sampler;
-  typename itk::ParticleProcrustesRegistration<3>::Pointer m_Procrustes;
-  typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_GoodBad;
+  typename itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
+  typename itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   static itk::ITK_THREAD_RETURN_TYPE optimize_callback(void* arg);
 
@@ -191,9 +192,9 @@ protected:
 
   std::vector<std::vector<itk::Point<double>>>  m_local_points, m_global_points;
 
-  int m_CheckpointCounter = 0;
-  int m_ProcrustesCounter = 0;
-  int m_SaturationCounter = 0;
+  int m_checkpoint_counter = 0;
+  int m_procrustes_counter = 0;
+  int m_saturation_counter = 0;
   bool m_disable_procrustes = true;
   bool m_disable_checkpointing = true;
   bool m_use_cutting_planes = false;
@@ -249,16 +250,16 @@ protected:
   std::vector < std::string > m_filenames;
   int m_num_shapes = 0;
 
-  std::vector<double> m_EnergyA;
-  std::vector<double> m_EnergyB;
-  std::vector<double> m_TotalEnergy;
-  bool m_logEnergy = false;
-  std::string m_strEnergy;
+  std::vector<double> m_energy_a;
+  std::vector<double> m_energy_b;
+  std::vector<double> m_total_energy;
+  bool m_log_energy = false;
+  std::string m_str_energy;
 
   //GoodBadAssessment
-  std::vector<std::vector<int>> m_badIds;
-  double m_normalAngle = itk::Math::pi / 2.0;
-  bool m_performGoodBad = false;
+  std::vector<std::vector<int>> m_bad_ids;
+  double m_normal_angle = itk::Math::pi / 2.0;
+  bool m_perform_good_bad = false;
 
   std::vector<int> m_cutting_planes_per_input;
   std::vector<int> m_spheres_per_input;
