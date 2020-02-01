@@ -1,14 +1,37 @@
-FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.h ./PreviewMeshQC/*.cpp)
-set(fim_v4_sources meshFIM.cpp)
+# Build
+FILE(GLOB PreviewMeshQC_sources ./PreviewMeshQC/*.cpp)
+set(Mesh_sources
+  Mesh.cpp
+  meshFIM.cpp
+  )
+FILE(GLOB PreviewMeshQC_headers ./PreviewMeshQC/*.h)
+set(Mesh_headers
+  Mesh.h
+  meshFIM.h
+  )
 add_library(Mesh STATIC
+  ${Mesh_sources}
+  ${Mesh_headers}
   ${PreviewMeshQC_sources}
-  ${fim_v4_sources}
+  ${PreviewMeshQC_headers}
   )
 target_include_directories(Mesh PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/PreviewMeshQC>
   $<INSTALL_INTERFACE:include>)
+target_link_libraries(Mesh ${VTK_LIBRARIES})
+
+# Install
+set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
+  "${Mesh_headers};${PreviewMeshQC_headers}"
+  )
 target_link_libraries(Mesh trimesh2)
+install(TARGETS Mesh
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION lib
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+  )
 
 ADD_EXECUTABLE(GenerateBinaryAndDTImagesFromMeshes GenerateBinaryAndDTImagesFromMeshes.cxx )
 TARGET_LINK_LIBRARIES(GenerateBinaryAndDTImagesFromMeshes ${ITK_LIBRARIES} ${VTK_LIBRARIES} Mesh tinyxml vgl vgl_algo)
@@ -70,7 +93,7 @@ TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToLandmark ${ITK_LIBRARIES} ${VTK_L
 INSTALL(TARGETS ComputeGeodesicDistanceToLandmark RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(PreviewCmd PreviewCmd.cxx )
-TARGET_LINK_LIBRARIES(PreviewCmd Utils Mesh)
+TARGET_LINK_LIBRARIES(PreviewCmd Utils Mesh ${VTK_LIBRARIES})
 INSTALL(TARGETS PreviewCmd  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(ReconstructMeanSurface ReconstructMeanSurface.cxx)
@@ -84,22 +107,6 @@ INSTALL(TARGETS ReconstructSurface  RUNTIME DESTINATION bin)
 ADD_EXECUTABLE(ReconstructSamplesAlongPCAModes ReconstructSamplesAlongPCAModes.cxx)
 TARGET_LINK_LIBRARIES(ReconstructSamplesAlongPCAModes ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml Utils Analyze Optimize)
 INSTALL(TARGETS ReconstructSamplesAlongPCAModes  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(WarpToMeanSpace WarpToMeanSpace.cxx)
-# TARGET_LINK_LIBRARIES(WarpToMeanSpace ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS WarpToMeanSpace  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(WarpToMeanSpaceWithPreviewMeshQC WarpToMeanSpaceWithPreviewMeshQC.cxx)
-# TARGET_LINK_LIBRARIES(WarpToMeanSpaceWithPreviewMeshQC ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS WarpToMeanSpaceWithPreviewMeshQC  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(MoveAlongPCAModes MoveAlongPCAModes.cxx)
-# TARGET_LINK_LIBRARIES(MoveAlongPCAModes ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS MoveAlongPCAModes  RUNTIME DESTINATION bin)
-
-# ADD_EXECUTABLE(WarpToSubjectSpace WarpToSubjectSpace.cxx)
-# TARGET_LINK_LIBRARIES(WarpToSubjectSpace ${VTK_LIBRARIES} ${ITK_LIBRARIES} tinyxml Alignment)
-# INSTALL(TARGETS WarpToSubjectSpace  RUNTIME DESTINATION bin)
 
 ADD_EXECUTABLE(GenerateFidsFilesFromMeshes GenerateFidsFilesFromMeshes.cxx )
 TARGET_LINK_LIBRARIES(GenerateFidsFilesFromMeshes ${ITK_LIBRARIES} ${VTK_LIBRARIES} Mesh tinyxml vgl vgl_algo)

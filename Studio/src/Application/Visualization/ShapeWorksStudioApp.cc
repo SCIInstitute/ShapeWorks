@@ -1010,6 +1010,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
     }
     else if (ret == QMessageBox::Cancel) {
       event->ignore();
+      return;
     }
   }
   this->analysis_tool_->shutdown();

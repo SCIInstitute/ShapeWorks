@@ -1,0 +1,7 @@
+#pragma once
+
+#define TEST_DATA_DIR "@TEST_DATA_DIR@"
+
+#define BUILD_DIR "@CMAKE_BINARY_DIR@"
+
+#define INSTALL_DIR "@CMAKE_INSTALL_PREFIX@"

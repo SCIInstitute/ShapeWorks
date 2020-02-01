@@ -1,3 +1,29 @@
+# Build
+set(Image_sources
+  Image.cpp
+  ImageUtils.cpp
+  )
+set(Image_headers
+  Image.h
+  ImageUtils.h
+  )
+add_library(Image STATIC
+  ${Image_sources}
+  ${Image_headers})
+target_include_directories(Image PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include>)
+
+# Install
+set_target_properties(Image PROPERTIES PUBLIC_HEADER
+  "${Image_headers}")
+install(TARGETS Image
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION lib
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+  )
+
 add_executable(PadVolumeWithConstant PadVolumeWithConstant.cxx )
 target_link_libraries(PadVolumeWithConstant ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS PadVolumeWithConstant RUNTIME DESTINATION bin)
@@ -14,12 +40,8 @@ add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
 target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
 
-add_executable(ResampleVolumesToBeIsotropic ResampleVolumesToBeIsotropic.cxx)
-target_link_libraries(ResampleVolumesToBeIsotropic ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ResampleVolumesToBeIsotropic RUNTIME DESTINATION bin)
-
 add_executable(ExtractGivenLabelImage ExtractGivenLabelImage.cxx)
-target_link_libraries(ExtractGivenLabelImage ${ITK_LIBRARIES} Utils)
+target_link_libraries(ExtractGivenLabelImage ${ITK_LIBRARIES} Utils Image)
 INSTALL(TARGETS ExtractGivenLabelImage  RUNTIME DESTINATION bin)
 
 add_executable(FastMarching FastMarching.cxx)
@@ -33,10 +55,6 @@ INSTALL(TARGETS TopologyPreservingSmoothing  RUNTIME DESTINATION bin)
 add_executable(CropImages CropImages.cxx)
 target_link_libraries(CropImages ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS CropImages  RUNTIME DESTINATION bin)
-
-add_executable(AntiAliasing AntiAliasing.cxx)
-target_link_libraries(AntiAliasing ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS AntiAliasing  RUNTIME DESTINATION bin)
 
 add_executable(ThresholdImages ThresholdImages.cxx)
 target_link_libraries(ThresholdImages ${ITK_LIBRARIES} Utils)
