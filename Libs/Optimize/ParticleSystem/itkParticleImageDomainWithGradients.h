@@ -57,7 +57,9 @@ public:
 
   typedef FixedArray<T, 3> VectorType;
   typedef vnl_vector_fixed<T, 3> VnlVectorType;
-  
+
+  openvdb::VectorGrid::Ptr vdbGradientGrid;
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -79,8 +81,22 @@ public:
     filter->SetUseImageSpacingOn();
     filter->Update();
     m_GradientImage = filter->GetOutput();
-    
     m_GradientInterpolator->SetInputImage(m_GradientImage);
+
+    vdbGradientGrid = openvdb::VectorGrid::create();
+    // vdbGradientGrid->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = vdbGradientGrid->getAccessor();
+
+    ImageRegionIterator<GradientImageType> it(m_GradientImage, m_GradientImage->GetRequestedRegion());
+    it.GoToBegin();
+    while(!it.IsAtEnd()) {
+        const auto idx = it.GetIndex();
+        const vnl_vector_ref<float> pixel = it.Get().GetVnlVector();
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, openvdb::Vec3f(pixel[0], pixel[1], pixel[2]));
+        ++it;
+    }
+
   }
   itkGetObjectMacro(GradientImage, GradientImageType);
 
@@ -91,8 +107,26 @@ public:
       (itk::FixedArray). */
   inline VectorType SampleGradient(const PointType &p) const
   {
-      if(this->IsInsideBuffer(p))
-        return  m_GradientInterpolator->Evaluate(p);
+      auto o = m_GradientImage->GetOrigin();
+      auto sp = p;
+      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+
+      if(this->IsInsideBuffer(p)) {
+        const VectorType v1 =  m_GradientInterpolator->Evaluate(p);
+        const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+
+        const auto _v2 = openvdb::tools::BoxSampler::sample(vdbGradientGrid->tree(), coord);
+        const VectorType v2(_v2.asPointer());
+
+        assert(abs(v1[0]-v2[0]) < 1e-6f);
+        assert(abs(v1[1]-v2[1]) < 1e-6f);
+        assert(abs(v1[2]-v2[2]) < 1e-6f);
+
+        // std::cout << "(" << p[0] << " " << p[1] << " " << p[2] << ")" << "itk: " << v1 << std::endl;
+        // std::cout << "(" << sp[0] << " " << sp[1] << " " << sp[2] << ")" << "vdb: " << v2 << std::endl << std::endl;
+
+        return v2;
+      }
       else {
           itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain." );
          VectorType g(1.0e-5);

@@ -49,6 +49,8 @@ public:
   /** Type of the ITK image used by this class. */
   typedef Image<T, VDimension> ImageType;
 
+  openvdb::DoubleGrid::Ptr vdbImageGrid;
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -66,15 +68,14 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  openvdb::DoubleGrid::Ptr vdbGrid;
   void SetImage(ImageType *I)
   {
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
 
-    vdbGrid = openvdb::DoubleGrid::create(30.0);
-    vdbGrid->setGridClass(openvdb::GRID_LEVEL_SET);
-    auto vdbAccessor = vdbGrid->getAccessor();
+    vdbImageGrid = openvdb::DoubleGrid::create(30.0);
+    vdbImageGrid->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = vdbImageGrid->getAccessor();
 
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
@@ -85,7 +86,7 @@ public:
         vdbAccessor.setValue(coord, pixel);
         ++it;
     }
-    openvdb::tools::signedFloodFill(vdbGrid->tree());
+    openvdb::tools::signedFloodFill(vdbImageGrid->tree());
 
     this->Modified();
     m_Image= I;
@@ -130,7 +131,7 @@ public:
       To check bounds, use IsInsideBuffer. */
   inline T Sample(const PointType &p) const
   {
-      // auto vdbAccessor = vdbGrid->getConstAccessor();
+      // auto vdbAccessor = vdbImageGrid->getConstAccessor();
 
       auto o = m_Image->GetOrigin();
       auto sp = p;
@@ -141,8 +142,9 @@ public:
           const T v1 =  m_ScalarInterpolator->Evaluate(p);
 
           const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-          const T v2 = openvdb::tools::BoxSampler::sample(vdbGrid->tree(), coord);
+          const T v2 = openvdb::tools::BoxSampler::sample(vdbImageGrid->tree(), coord);
 
+          assert(abs(v1 - v2) < 1e-6);
           // std::cout << "(" << p[0] << " " << p[1] << " " << p[2] << ")" << "itk: " << v1 << std::endl;
           // std::cout << "(" << sp[0] << " " << sp[1] << " " << sp[2] << ")" << "vdb: " << v2 << std::endl << std::endl;
 
