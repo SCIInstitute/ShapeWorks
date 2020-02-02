@@ -16,7 +16,7 @@
 #define __itkParticleImageDomain_h
 
 #include "itkImage.h"
-#include "itkParticleClipRegionDomain.h"
+#include "itkParticleRegionDomain.h"
 #include "itkLinearInterpolateImageFunction.h"
 
 namespace itk
@@ -32,7 +32,7 @@ namespace itk
  *
  */
 template <class T, unsigned int VDimension=3>
-class ITK_EXPORT ParticleImageDomain : public ParticleClipRegionDomain<VDimension>
+class ITK_EXPORT ParticleImageDomain : public ParticleRegionDomain<VDimension>
 {
 public:
   /** Standard class typedefs */
