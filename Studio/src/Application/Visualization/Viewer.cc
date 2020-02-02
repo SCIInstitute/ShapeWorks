@@ -184,6 +184,20 @@ void Viewer::display_vector_field()
     this->glyphs_->SetScaleModeToDataScalingOff();
     this->glyph_mapper_->SetLookupTable(this->lut_);
 
+    this->glyph_points_->SetDataTypeToDouble();
+    this->glyph_point_set_->SetPoints(this->glyph_points_);
+    this->glyph_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
+
+    this->glyphs_->SetInputData(this->glyph_point_set_);
+    this->glyphs_->ScalingOn();
+    this->glyphs_->ClampingOff();
+    this->glyphs_->SetScaleModeToDataScalingOff();
+    this->glyphs_->SetSourceConnection(sphere_source->GetOutputPort());
+    this->glyphs_->GeneratePointIdsOn();
+
+
+
+    this->update_points();
     this->arrowsVisible = false;
     return;
   }
@@ -394,7 +408,6 @@ void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes
 //-----------------------------------------------------------------------------
 void Viewer::display_object(QSharedPointer<DisplayObject> object)
 {
-  std::cerr << "Display object!\n";
   this->visible_ = true;
 
   this->object_ = object;
