@@ -25,9 +25,12 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkArrowSource.h>
 #include <vtkPointLocator.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkImageGaussianSmooth.h>
 
 #include <QDebug>
 
+#include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
@@ -236,10 +239,12 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
   double minmag = 1.0e20;
   double maxmag = 0.0;
 
+  /// TODO: multi-domain support
+//  for (int domain = 0; domain < this->numDomains; domain++) {
+
   vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
 
-  if (!this->object_->get_mesh())
-  {
+  if (!this->object_->get_mesh()) {
     return;
   }
 
@@ -250,19 +255,39 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 
   std::cerr << "number of poly points = " << poly_data->GetNumberOfPoints() << "\n";
 
+
+  vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
+    vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
+  surfaceReconstruction->SetInputData(pointSet);
+  //surfaceReconstruction->SetNeighborhoodSize(this->meshManager.getNeighborhoodSize());
+  //surfaceReconstruction->SetSampleSpacing(this->meshManager.getSampleSpacing());
+  surfaceReconstruction->Update();
+
+  vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+  smoother->SetStandardDeviations(surfaceReconstruction->GetOutput()->GetSpacing()[0],
+                                  surfaceReconstruction->GetOutput()->GetSpacing()[1],
+                                  surfaceReconstruction->GetOutput()->GetSpacing()[2]);
+
+  smoother->SetInputConnection(surfaceReconstruction->GetOutputPort());
+
   // Compute normals from the isosurface volume
   vtkSmartPointer<vtkImageGradient> grad = vtkSmartPointer<vtkImageGradient>::New();
   grad->SetDimensionality(3);
-  grad->SetInputData(poly_data);
+  grad->SetInputConnection(smoother->GetOutputPort());
   grad->Update();
 
-  //vnl_vector_fixed<double, 3> normal;
+
+  vnl_vector_fixed<double, 3> normal;
 
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
   // happens properly.
 
-  vtkDataArray* normals = poly_data->GetPointData()->GetNormals();
+  //vtkDataArray* normals = poly_data->GetPointData()->GetNormals();
+  //vtkFloatArray* normals = vtkFloatArray::SafeDownCast(poly_data->GetPointData()->GetNormals());
+
+  //int num_normals = normals->GetNumberOfTuples();
+  //std::cerr << "num_normals = " << num_normals << "\n";
 
   for (unsigned int i = 0; i < pointSet->GetNumberOfPoints(); i++) {
     double x = pointSet->GetPoint(i)[0];
@@ -273,18 +298,14 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
     float yd = vecs[i].y;
     float zd = vecs[i].z;
 
-    //this->trilinearIntefrpolate(grad->GetOutput(), x, y, z, normal);
+    this->trilinearInterpolate(grad->GetOutput(), x, y, z, normal);
 
-    double normal[3];
-    normals->GetTuple(i, normal);
-
-
-    float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
+    float mag = xd * normal(0) + yd * normal(1) + zd * normal(2);
 
     if (mag < minmag) {minmag = mag; }
     if (mag > maxmag) {maxmag = mag; }
 
-    vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
+    vectors->InsertNextTuple3(normal(0) * mag, normal(1) * mag, normal(2) * mag);
     magnitudes->InsertNextTuple1(mag);
   }
   this->updateDifferenceLUT(minmag, maxmag);
@@ -297,8 +318,7 @@ void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes
   qInfo() << "compute_surface_difference\n";
 
   vtkPolyData* polyData = this->surface_mapper_->GetInput();
-  if (!polyData)
-  {
+  if (!polyData) {
     return;
   }
 
