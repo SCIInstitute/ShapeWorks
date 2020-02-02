@@ -57,6 +57,29 @@ std::string AnalysisTool::getAnalysisMode()
   if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) { return "regression";}
   return "";
 }
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::get_group_difference_mode()
+{
+  return this - ui_->difference_button->isChecked();
+}
+
+//---------------------------------------------------------------------------
+std::vector<Point> AnalysisTool::get_group_difference_vectors()
+{
+  std::vector<Point> vecs;
+
+  auto num_points = this->stats_.Mean().size() / 3;
+  for (unsigned int i = 0; i < num_points; i++) {
+    Point tmp;
+    tmp.x = this->stats_.Group2Mean()[i * 3] - this->stats_.Group1Mean()[i * 3];
+    tmp.y = this->stats_.Group2Mean()[i * 3 + 1] - this->stats_.Group1Mean()[i * 3 + 1];
+    tmp.z = this->stats_.Group2Mean()[i * 3 + 2] - this->stats_.Group1Mean()[i * 3 + 2];
+    vecs.push_back(tmp);
+  }
+  return vecs;
+}
+
 //---------------------------------------------------------------------------
 void AnalysisTool::on_linear_radio_toggled(bool b)
 {

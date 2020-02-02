@@ -72,7 +72,7 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
-  QVector<DisplayObjectHandle> * getList( const vnl_vector<double> &points);
+  DisplayObjectHandle create_display_object( const vnl_vector<double> &points);
   std::map<double,QVector<DisplayObjectHandle> > disp_handles_;
   Preferences &preferences_;
 

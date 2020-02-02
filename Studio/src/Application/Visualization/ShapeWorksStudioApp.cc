@@ -852,6 +852,11 @@ void ShapeWorksStudioApp::update_display()
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
       this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
       this->visualizer_->display_shape(this->analysis_tool_->getMean());
+
+      if (this->analysis_tool_->get_group_difference_mode())
+      {
+
+      }
     }
     else if (mode == "pca") {
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
@@ -1028,6 +1033,16 @@ void ShapeWorksStudioApp::compute_mode_shape()
   int mode = this->analysis_tool_->getPCAMode();
   double value = this->analysis_tool_->get_pca_value();
   this->visualizer_->display_shape(this->analysis_tool_->getShape(mode, value));
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::display_group_difference()
+{
+  auto vectors = this->analysis_tool_->get_group_difference_vectors();
+
+
+
+
 }
 
 //---------------------------------------------------------------------------

@@ -18,6 +18,8 @@ class AnalysisTool : public QWidget {
   Q_OBJECT;
 public:
 
+  using PointType = itk::Point<double,3>;
+
   AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
 
@@ -32,6 +34,10 @@ public:
   void activate();
 
   std::string getAnalysisMode();
+
+  bool get_group_difference_mode();
+
+  std::vector<Point> get_group_difference_vectors();
 
   void setAnalysisMode(std::string mode);
 

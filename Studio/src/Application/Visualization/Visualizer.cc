@@ -143,8 +143,9 @@ void Visualizer::update_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double> &points)
 {
-  QVector<DisplayObjectHandle>* list_ptr = this->getList(points);
-  this->lightbox_->set_display_objects(*list_ptr);
+  QVector<DisplayObjectHandle> objects;
+  objects.push_back(this->create_display_object(points));
+  this->lightbox_->set_display_objects(objects);
   this->update_viewer_properties();
   //this->reset_camera();
   this->lightbox_->redraw();
@@ -218,9 +219,9 @@ void Visualizer::display_sample(size_t i)
 }
 
 //-----------------------------------------------------------------------------
-QVector<DisplayObjectHandle>* Visualizer::getList(const vnl_vector<double> &points)
+DisplayObjectHandle Visualizer::create_display_object(const vnl_vector<double> &points)
 {
-  QVector<DisplayObjectHandle>* list_ptr = NULL;
+
   MeshHandle mesh = MeshHandle(new Mesh());
   mesh->set_poly_data(this->project_->get_mesh_manager()->getMesh(points));
 
@@ -236,9 +237,7 @@ QVector<DisplayObjectHandle>* Visualizer::getList(const vnl_vector<double> &poin
   annotations << "";
   annotations << "";
   object->set_annotations(annotations);
-  list_ptr = new QVector<DisplayObjectHandle>();
-  *list_ptr << object;
-  return list_ptr;
+  return object;
 }
 
 //-----------------------------------------------------------------------------
