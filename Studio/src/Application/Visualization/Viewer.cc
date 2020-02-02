@@ -177,6 +177,14 @@ void Viewer::display_vector_field()
 {
   std::vector<Point> vecs = this->object_->get_vectors();
   if (vecs.empty()) {
+    // restore things to normal
+    this->glyphs_->SetSourceConnection(sphere_source->GetOutputPort());
+    this->glyphs_->ScalingOn();
+    this->glyphs_->ClampingOff();
+    this->glyphs_->SetScaleModeToDataScalingOff();
+    this->glyph_mapper_->SetLookupTable(this->lut_);
+
+    this->arrowsVisible = false;
     return;
   }
 
@@ -212,11 +220,6 @@ void Viewer::display_vector_field()
   // update glyph rendering
   this->glyph_mapper_->SetLookupTable(this->differenceLUT);
   this->arrowGlyphMapper->SetLookupTable(this->differenceLUT);
-  this->arrowsVisible = true;
-
-  if (this->show_glyphs_) {
-    this->renderer_->AddActor(this->arrowGlyphActor);
-  }
 
   // update surface rendering
   /// TODO : multi-domain support
@@ -391,6 +394,7 @@ void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes
 //-----------------------------------------------------------------------------
 void Viewer::display_object(QSharedPointer<DisplayObject> object)
 {
+  std::cerr << "Display object!\n";
   this->visible_ = true;
 
   this->object_ = object;
@@ -590,7 +594,7 @@ void Viewer::update_actors()
   }
 
   this->renderer_->RemoveActor(this->glyph_actor_);
-  //this->renderer_->RemoveActor( this->arrowGlyphActor );
+  this->renderer_->RemoveActor(this->arrowGlyphActor);
 
   this->renderer_->RemoveActor(this->surface_actor_);
 
@@ -605,10 +609,10 @@ void Viewer::update_actors()
     this->renderer_->AddActor(this->glyph_actor_);
 
     this->renderer_->AddActor(this->exclusion_sphere_actor_);
-    /*    if ( this->arrowsVisible )
-        {
-        this->renderer->AddActor( this->arrowGlyphActor );
-        }*/
+    if (this->arrowsVisible) {
+      std::cerr << "arrows are visible!\n";
+      this->renderer_->AddActor(this->arrowGlyphActor);
+    }
   }
 
   if (this->show_surface_) {
