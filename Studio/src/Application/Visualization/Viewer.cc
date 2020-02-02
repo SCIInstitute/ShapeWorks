@@ -28,8 +28,6 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkImageGaussianSmooth.h>
 
-#include <QDebug>
-
 #include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
@@ -146,6 +144,10 @@ Viewer::Viewer()
   this->arrowGlyphActor->GetProperty()->SetSpecularPower(10.0);
   this->arrowGlyphActor->SetMapper(this->arrowGlyphMapper);
 
+  this->arrowGlyphs->SetColorModeToColorByScalar();
+  this->arrowGlyphMapper->SetColorModeToMapScalars();
+  this->arrowGlyphMapper->ScalarVisibilityOn();
+
   this->visible_ = false;
   this->scheme_ = 0;
 
@@ -173,7 +175,6 @@ void Viewer::set_color_scheme(int scheme)
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field()
 {
-  qInfo() << "display_vector_field\n";
   std::vector<Point> vecs = this->object_->get_vectors();
   if (vecs.empty()) {
     return;
@@ -226,6 +227,14 @@ void Viewer::display_vector_field()
   this->surface_mapper_->ScalarVisibilityOn();
   //}
 
+  // Set the color modes
+  this->arrowGlyphs->SetColorModeToColorByScalar();
+  this->glyphs_->SetColorModeToColorByScalar();
+  this->glyph_mapper_->SetColorModeToMapScalars();
+  this->glyph_mapper_->ScalarVisibilityOn();
+  this->arrowGlyphMapper->SetColorModeToMapScalars();
+  this->arrowGlyphMapper->ScalarVisibilityOn();
+
   this->arrowsVisible = true;
 }
 
@@ -234,8 +243,6 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
-  qInfo() << "compute_point_difference\n";
-
   double minmag = 1.0e20;
   double maxmag = 0.0;
 
@@ -254,7 +261,6 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
   }
 
   std::cerr << "number of poly points = " << poly_data->GetNumberOfPoints() << "\n";
-
 
   vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
     vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
@@ -276,19 +282,11 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
   grad->SetInputConnection(smoother->GetOutputPort());
   grad->Update();
 
-
   vnl_vector_fixed<double, 3> normal;
 
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
   // happens properly.
-
-  //vtkDataArray* normals = poly_data->GetPointData()->GetNormals();
-  //vtkFloatArray* normals = vtkFloatArray::SafeDownCast(poly_data->GetPointData()->GetNormals());
-
-  //int num_normals = normals->GetNumberOfTuples();
-  //std::cerr << "num_normals = " << num_normals << "\n";
-
   for (unsigned int i = 0; i < pointSet->GetNumberOfPoints(); i++) {
     double x = pointSet->GetPoint(i)[0];
     double y = pointSet->GetPoint(i)[1];
@@ -307,6 +305,7 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 
     vectors->InsertNextTuple3(normal(0) * mag, normal(1) * mag, normal(2) * mag);
     magnitudes->InsertNextTuple1(mag);
+    //std::cerr << "mag = " << mag << "\n";
   }
   this->updateDifferenceLUT(minmag, maxmag);
 }
@@ -315,8 +314,6 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
-  qInfo() << "compute_surface_difference\n";
-
   vtkPolyData* polyData = this->surface_mapper_->GetInput();
   if (!polyData) {
     return;
@@ -379,6 +376,7 @@ void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes
 
     surfaceMagnitudes->SetValue(i, weightedScalar);
 
+    //std::cerr << "scalar = " << weightedScalar << "\n";
     surfaceVectors->SetComponent(i, 0, vecX);
     surfaceVectors->SetComponent(i, 1, vecY);
     surfaceVectors->SetComponent(i, 2, vecZ);
@@ -666,7 +664,9 @@ int Viewer::handle_pick(int* click_pos)
 void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut)
 {
   this->lut_ = lut;
-  this->glyph_mapper_->SetLookupTable(this->lut_);
+  if (!this->arrowsVisible) {
+    this->glyph_mapper_->SetLookupTable(this->lut_);
+  }
 }
 
 //-----------------------------------------------------------------------------
