@@ -43,10 +43,10 @@ Viewer::Viewer()
   this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
-  this->sphere_source = vtkSmartPointer<vtkSphereSource>::New();
+  this->sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
 
-  this->differenceLUT = vtkSmartPointer<vtkColorTransferFunction>::New();
-  this->differenceLUT->SetColorSpaceToHSV();
+  this->difference_lut_ = vtkSmartPointer<vtkColorTransferFunction>::New();
+  this->difference_lut_->SetColorSpaceToHSV();
 
   this->glyph_points_ = vtkSmartPointer<vtkPoints>::New();
   this->glyph_points_->SetDataTypeToDouble();
@@ -59,7 +59,7 @@ Viewer::Viewer()
   this->glyphs_->ScalingOn();
   this->glyphs_->ClampingOff();
   this->glyphs_->SetScaleModeToDataScalingOff();
-  this->glyphs_->SetSourceConnection(sphere_source->GetOutputPort());
+  this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
   this->glyphs_->GeneratePointIdsOn();
 
   this->glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -85,7 +85,7 @@ Viewer::Viewer()
   this->exclusion_sphere_glyph_->ScalingOn();
   this->exclusion_sphere_glyph_->ClampingOff();
   this->exclusion_sphere_glyph_->SetScaleModeToScaleByScalar();
-  this->exclusion_sphere_glyph_->SetSourceConnection(sphere_source->GetOutputPort());
+  this->exclusion_sphere_glyph_->SetSourceConnection(sphere_source_->GetOutputPort());
   //this->exclusion_sphere_glyph_->SetColorModeToColorByScale();
 
   this->exclusion_sphere_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -101,15 +101,15 @@ Viewer::Viewer()
   this->exclusion_sphere_actor_->GetProperty()->SetColor(0, 1, 0);
   this->exclusion_sphere_actor_->SetMapper(this->exclusion_sphere_mapper_);
 
-  this->arrowFlipFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  this->arrowGlyphs = vtkSmartPointer<vtkGlyph3D>::New();
-  this->arrowGlyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  this->arrowGlyphActor = vtkSmartPointer<vtkActor>::New();
+  this->arrow_flip_filter_ = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->arrow_glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
+  this->arrow_glyph_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->arrow_glyph_actor_ = vtkSmartPointer<vtkActor>::New();
 
   // Arrow glyphs
-  this->arrowSource = vtkSmartPointer<vtkArrowSource>::New();
-  this->arrowSource->SetTipResolution(6);
-  this->arrowSource->SetShaftResolution(6);
+  this->arrow_source_ = vtkSmartPointer<vtkArrowSource>::New();
+  this->arrow_source_->SetTipResolution(6);
+  this->arrow_source_->SetShaftResolution(6);
 
   vtkSmartPointer<vtkTransform> t1 = vtkSmartPointer<vtkTransform>::New();
   vtkSmartPointer<vtkTransform> t2 = vtkSmartPointer<vtkTransform>::New();
@@ -122,31 +122,31 @@ Viewer::Viewer()
   t3->Concatenate(t4);
   t2->Concatenate(t3);
   t1->Concatenate(t2);
-  this->transform180 = vtkSmartPointer<vtkTransform>::New();
-  this->transform180->Concatenate(t1);
+  this->transform_180_ = vtkSmartPointer<vtkTransform>::New();
+  this->transform_180_->Concatenate(t1);
 
-  this->arrowFlipFilter->SetTransform(this->transform180);
-  this->arrowFlipFilter->SetInputConnection(this->arrowSource->GetOutputPort());
+  this->arrow_flip_filter_->SetTransform(this->transform_180_);
+  this->arrow_flip_filter_->SetInputConnection(this->arrow_source_->GetOutputPort());
 
-  this->arrowGlyphs->SetSourceConnection(this->arrowFlipFilter->GetOutputPort());
-  this->arrowGlyphs->SetInputData(this->glyph_point_set_);
-  this->arrowGlyphs->ScalingOn();
-  this->arrowGlyphs->ClampingOff();
+  this->arrow_glyphs_->SetSourceConnection(this->arrow_flip_filter_->GetOutputPort());
+  this->arrow_glyphs_->SetInputData(this->glyph_point_set_);
+  this->arrow_glyphs_->ScalingOn();
+  this->arrow_glyphs_->ClampingOff();
 
-  this->arrowGlyphs->SetVectorModeToUseVector();
-  this->arrowGlyphs->SetScaleModeToScaleByVector();
+  this->arrow_glyphs_->SetVectorModeToUseVector();
+  this->arrow_glyphs_->SetScaleModeToScaleByVector();
 
-  this->arrowGlyphMapper->SetInputConnection(this->arrowGlyphs->GetOutputPort());
+  this->arrow_glyph_mapper_->SetInputConnection(this->arrow_glyphs_->GetOutputPort());
 
-  this->arrowGlyphActor->GetProperty()->SetSpecularColor(1.0, 1.0, 1.0);
-  this->arrowGlyphActor->GetProperty()->SetDiffuse(0.8);
-  this->arrowGlyphActor->GetProperty()->SetSpecular(0.3);
-  this->arrowGlyphActor->GetProperty()->SetSpecularPower(10.0);
-  this->arrowGlyphActor->SetMapper(this->arrowGlyphMapper);
+  this->arrow_glyph_actor_->GetProperty()->SetSpecularColor(1.0, 1.0, 1.0);
+  this->arrow_glyph_actor_->GetProperty()->SetDiffuse(0.8);
+  this->arrow_glyph_actor_->GetProperty()->SetSpecular(0.3);
+  this->arrow_glyph_actor_->GetProperty()->SetSpecularPower(10.0);
+  this->arrow_glyph_actor_->SetMapper(this->arrow_glyph_mapper_);
 
-  this->arrowGlyphs->SetColorModeToColorByScalar();
-  this->arrowGlyphMapper->SetColorModeToMapScalars();
-  this->arrowGlyphMapper->ScalarVisibilityOn();
+  this->arrow_glyphs_->SetColorModeToColorByScalar();
+  this->arrow_glyph_mapper_->SetColorModeToMapScalars();
+  this->arrow_glyph_mapper_->ScalarVisibilityOn();
 
   this->visible_ = false;
   this->scheme_ = 0;
@@ -164,12 +164,12 @@ Viewer::~Viewer()
 void Viewer::set_color_scheme(int scheme)
 {
   this->scheme_ = scheme;
-  this->surface_actor_->GetProperty()->SetDiffuseColor(m_ColorSchemes[scheme].foreground.r,
-                                                       m_ColorSchemes[scheme].foreground.g,
-                                                       m_ColorSchemes[scheme].foreground.b);
-  this->renderer_->SetBackground(m_ColorSchemes[scheme].background.r,
-                                 m_ColorSchemes[scheme].background.g,
-                                 m_ColorSchemes[scheme].background.b);
+  this->surface_actor_->GetProperty()->SetDiffuseColor(color_schemes_[scheme].foreground.r,
+                                                       color_schemes_[scheme].foreground.g,
+                                                       color_schemes_[scheme].foreground.b);
+  this->renderer_->SetBackground(color_schemes_[scheme].background.r,
+                                 color_schemes_[scheme].background.g,
+                                 color_schemes_[scheme].background.b);
 }
 
 //-----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ void Viewer::display_vector_field()
   std::vector<Point> vecs = this->object_->get_vectors();
   if (vecs.empty()) {
     // restore things to normal
-    this->glyphs_->SetSourceConnection(sphere_source->GetOutputPort());
+    this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     this->glyphs_->ScalingOn();
     this->glyphs_->ClampingOff();
     this->glyphs_->SetScaleModeToDataScalingOff();
@@ -192,13 +192,13 @@ void Viewer::display_vector_field()
     this->glyphs_->ScalingOn();
     this->glyphs_->ClampingOff();
     this->glyphs_->SetScaleModeToDataScalingOff();
-    this->glyphs_->SetSourceConnection(sphere_source->GetOutputPort());
+    this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     this->glyphs_->GeneratePointIdsOn();
 
 
 
     this->update_points();
-    this->arrowsVisible = false;
+    this->arrows_visible_ = false;
     return;
   }
 
@@ -228,31 +228,31 @@ void Viewer::display_vector_field()
   this->glyph_point_set_->GetPointData()->SetVectors(vectors);
   this->glyph_point_set_->GetPointData()->SetScalars(magnitudes);
 
-  this->glyphs_->SetSourceConnection(this->arrowSource->GetOutputPort());
+  this->glyphs_->SetSourceConnection(this->arrow_source_->GetOutputPort());
   this->glyphs_->SetScaleModeToScaleByVector();
 
   // update glyph rendering
-  this->glyph_mapper_->SetLookupTable(this->differenceLUT);
-  this->arrowGlyphMapper->SetLookupTable(this->differenceLUT);
+  this->glyph_mapper_->SetLookupTable(this->difference_lut_);
+  this->arrow_glyph_mapper_->SetLookupTable(this->difference_lut_);
 
   // update surface rendering
   /// TODO : multi-domain support
   //for (int i = 0; i < this->numDomains; i++) {
-  this->surface_mapper_->SetLookupTable(this->differenceLUT);
+  this->surface_mapper_->SetLookupTable(this->difference_lut_);
   this->surface_mapper_->InterpolateScalarsBeforeMappingOn();
   this->surface_mapper_->SetColorModeToMapScalars();
   this->surface_mapper_->ScalarVisibilityOn();
   //}
 
   // Set the color modes
-  this->arrowGlyphs->SetColorModeToColorByScalar();
+  this->arrow_glyphs_->SetColorModeToColorByScalar();
   this->glyphs_->SetColorModeToColorByScalar();
   this->glyph_mapper_->SetColorModeToMapScalars();
   this->glyph_mapper_->ScalarVisibilityOn();
-  this->arrowGlyphMapper->SetColorModeToMapScalars();
-  this->arrowGlyphMapper->ScalarVisibilityOn();
+  this->arrow_glyph_mapper_->SetColorModeToMapScalars();
+  this->arrow_glyph_mapper_->ScalarVisibilityOn();
 
-  this->arrowsVisible = true;
+  this->arrows_visible_ = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -472,9 +472,9 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
     mapper->SetInputData(poly_data);
     actor->SetMapper(mapper);
-    actor->GetProperty()->SetDiffuseColor(m_ColorSchemes[this->scheme_].foreground.r,
-                                          m_ColorSchemes[this->scheme_].foreground.g,
-                                          m_ColorSchemes[this->scheme_].foreground.b);
+    actor->GetProperty()->SetDiffuseColor(color_schemes_[this->scheme_].foreground.r,
+                                          color_schemes_[this->scheme_].foreground.g,
+                                          color_schemes_[this->scheme_].foreground.b);
     actor->GetProperty()->SetSpecular(0.2);
     actor->GetProperty()->SetSpecularPower(15);
     mapper->ScalarVisibilityOff();
@@ -533,16 +533,16 @@ void Viewer::update_glyph_properties()
 {
   //  std::cerr << "update glyph props\n";
   this->glyphs_->SetScaleFactor(this->glyph_size_);
-  this->arrowGlyphs->SetScaleFactor(this->glyph_size_);
+  this->arrow_glyphs_->SetScaleFactor(this->glyph_size_);
 
-  this->sphere_source->SetThetaResolution(this->glyph_quality_);
-  this->sphere_source->SetPhiResolution(this->glyph_quality_);
+  this->sphere_source_->SetThetaResolution(this->glyph_quality_);
+  this->sphere_source_->SetPhiResolution(this->glyph_quality_);
 
-  this->arrowSource->SetTipResolution(this->glyph_quality_);
-  this->arrowSource->SetShaftResolution(this->glyph_quality_);
+  this->arrow_source_->SetTipResolution(this->glyph_quality_);
+  this->arrow_source_->SetShaftResolution(this->glyph_quality_);
 
   this->glyphs_->Update();
-  this->arrowGlyphs->Update();
+  this->arrow_glyphs_->Update();
 }
 
 //-----------------------------------------------------------------------------
@@ -607,7 +607,7 @@ void Viewer::update_actors()
   }
 
   this->renderer_->RemoveActor(this->glyph_actor_);
-  this->renderer_->RemoveActor(this->arrowGlyphActor);
+  this->renderer_->RemoveActor(this->arrow_glyph_actor_);
 
   this->renderer_->RemoveActor(this->surface_actor_);
 
@@ -622,9 +622,8 @@ void Viewer::update_actors()
     this->renderer_->AddActor(this->glyph_actor_);
 
     this->renderer_->AddActor(this->exclusion_sphere_actor_);
-    if (this->arrowsVisible) {
-      std::cerr << "arrows are visible!\n";
-      this->renderer_->AddActor(this->arrowGlyphActor);
+    if (this->arrows_visible_) {
+      this->renderer_->AddActor(this->arrow_glyph_actor_);
     }
   }
 
@@ -681,7 +680,7 @@ int Viewer::handle_pick(int* click_pos)
 void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut)
 {
   this->lut_ = lut;
-  if (!this->arrowsVisible) {
+  if (!this->arrows_visible_) {
     this->glyph_mapper_->SetLookupTable(this->lut_);
   }
 }
@@ -767,7 +766,7 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
   double orange[3] = { 1.0, 0.5, 0.0 };
   double violet[3] = { 2.0 / 3.0, 0.0, 1.0 };
 
-  this->differenceLUT->RemoveAllPoints();
+  this->difference_lut_->RemoveAllPoints();
 
   //const float yellow = 0.86666;
   //const float blue = 0.66666;
@@ -790,10 +789,10 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
 
   double rd = r1 - r0;
 
-  this->differenceLUT->SetColorSpaceToHSV();
-  this->differenceLUT->AddRGBPoint(r0, blue[0], blue[1], blue[2]);
-  this->differenceLUT->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
-  this->differenceLUT->AddRGBPoint(r1, red[0], red[1], red[2]);
+  this->difference_lut_->SetColorSpaceToHSV();
+  this->difference_lut_->AddRGBPoint(r0, blue[0], blue[1], blue[2]);
+  this->difference_lut_->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
+  this->difference_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
 
   return;
 
@@ -805,5 +804,5 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
     //this->differenceLUT->AddHSVPoint( maxrange - ( fi * pip ), blue, 1.0 - ( fi * resinv ), 1.0 );
   }
 
-  this->differenceLUT->AddHSVPoint(0.0, 0.0, 0.0, 1.0);
+  this->difference_lut_->AddHSVPoint(0.0, 0.0, 0.0, 1.0);
 }

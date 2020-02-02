@@ -69,21 +69,20 @@ private:
   void display_vector_field();
 
   void compute_point_differences(const std::vector<Point> &vecs,
-                               vtkSmartPointer<vtkFloatArray> magnitudes,
-                               vtkSmartPointer<vtkFloatArray> vectors);
+                                 vtkSmartPointer<vtkFloatArray> magnitudes,
+                                 vtkSmartPointer<vtkFloatArray> vectors);
 
-  void computeSurfaceDifferences( vtkSmartPointer<vtkFloatArray> magnitudes,
-                                  vtkSmartPointer<vtkFloatArray> vectors );
+  void computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes,
+                                 vtkSmartPointer<vtkFloatArray> vectors);
 
   void draw_exclusion_spheres(QSharedPointer<DisplayObject> object);
 
-  void trilinearInterpolate( vtkImageData* grad, double x, double y, double z,
-                             vnl_vector_fixed<double, 3> &ans ) const;
+  void trilinearInterpolate(vtkImageData* grad, double x, double y, double z,
+                            vnl_vector_fixed<double, 3> &ans) const;
 
-  void updateDifferenceLUT( float r0, float r1 );
+  void updateDifferenceLUT(float r0, float r1);
 
   bool visible_;
-  double startPos[3];
 
   QSharedPointer<DisplayObject> object_;
 
@@ -97,7 +96,7 @@ private:
 
   vtkSmartPointer<vtkRenderer>             renderer_;
 
-  vtkSmartPointer<vtkSphereSource>         sphere_source;
+  vtkSmartPointer<vtkSphereSource>         sphere_source_;
 
   vtkSmartPointer<vtkPoints>               glyph_points_;
   vtkSmartPointer<vtkPolyData>             glyph_point_set_;
@@ -120,17 +119,16 @@ private:
 
   vtkSmartPointer<vtkImageActor>           image_actor_;
 
-  vtkSmartPointer<vtkColorTransferFunction>   differenceLUT;
-  vtkSmartPointer<vtkArrowSource>             arrowSource;
-  vtkSmartPointer<vtkTransformPolyDataFilter> arrowFlipFilter;
-  vtkSmartPointer<vtkGlyph3D>                 arrowGlyphs;
-  vtkSmartPointer<vtkPolyDataMapper>          arrowGlyphMapper;
-  vtkSmartPointer<vtkActor>                   arrowGlyphActor;
-  vtkSmartPointer<vtkTransform>               transform180;
+  vtkSmartPointer<vtkColorTransferFunction>   difference_lut_;
+  vtkSmartPointer<vtkArrowSource>             arrow_source_;
+  vtkSmartPointer<vtkTransformPolyDataFilter> arrow_flip_filter_;
+  vtkSmartPointer<vtkGlyph3D>                 arrow_glyphs_;
+  vtkSmartPointer<vtkPolyDataMapper>          arrow_glyph_mapper_;
+  vtkSmartPointer<vtkActor>                   arrow_glyph_actor_;
+  vtkSmartPointer<vtkTransform>               transform_180_;
 
+  bool arrows_visible_ = false;
 
-  bool arrowsVisible = false;
-
-  ColorSchemes m_ColorSchemes;
+  ColorSchemes color_schemes_;
   int scheme_;
 };
