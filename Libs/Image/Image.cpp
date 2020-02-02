@@ -211,49 +211,16 @@ bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
 
   using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
   ResampleFilter::Pointer resampler = ResampleFilter::New();
-  
-  ResampleFilter::InterpolatorType::Pointer interpolator;
-
-  // For binary input images, antialiasing then using a bspline filter produces better results
-  // if (binaryInput)
-  // {
-  //   // todo (archana): take out bsplinefilter altogether, document (above) that this function only accepts continuous image
-  //   using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double, double>;
-  //   InterpolatorType::Pointer bspline_interp = InterpolatorType::New();
-  //   bspline_interp->SetSplineOrder(3);
-  //   interpolator = bspline_interp;
-  //   this->antialias();
-  //   resampler->SetDefaultPixelValue(-1.0);
-  // }
-  // else
-  // {
-  //   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  //   interpolator = InterpolatorType::New();
-  // }
-
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  interpolator = InterpolatorType::New();
-  resampler->SetDefaultPixelValue(defaultValue);
-  resampler->SetInterpolator(interpolator);
 
   using TransformType = itk::IdentityTransform<double, Image::dims>;
   TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
   resampler->SetTransform(transform);
-  
-  ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
-  ImageType::SpacingType inputSpacing = image->GetSpacing();
-  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
-  {
-    // fixme: for some reason this isn't what we're supposed to do.
-    // for some datasets (ellipsoid) it works, but for others it's unnecessary
-    // more investigation needed.
-    outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
-    outputSize[1] = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
-    outputSize[2] = std::ceil((inputSize[2] - 1 ) * inputSpacing[2] / isoSpacing);
-    // probably std:;ceil should be std::floor (ask Alan and Shireen)
-  }
-  resampler->SetSize(outputSize);
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  resampler->SetInterpolator(interpolator);
+  resampler->SetDefaultPixelValue(defaultValue);
 
   ImageType::SpacingType spacing;
   spacing[0] = isoSpacing;
@@ -262,7 +229,20 @@ bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
   resampler->SetOutputSpacing(spacing);
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
-
+  
+  ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
+  ImageType::SpacingType inputSpacing = image->GetSpacing();
+  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
+  {
+    // fixme: for some reason this isn't what we're supposed to do.
+    // for some datasets (ellipsoid) it works, but for others it's unnecessary
+    // more investigation needed.
+    outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / isoSpacing);
+    outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / isoSpacing);
+    outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / isoSpacing);
+    // probably std::ceil should be std::floor (ask Alan and Shireen)
+  }
+  resampler->SetSize(outputSize);
   resampler->SetInput(this->image);
   this->image = resampler->GetOutput();
 
