@@ -26,6 +26,8 @@
 #include <vtkArrowSource.h>
 #include <vtkPointLocator.h>
 
+#include <QDebug>
+
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
@@ -168,6 +170,7 @@ void Viewer::set_color_scheme(int scheme)
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field()
 {
+  qInfo() << "display_vector_field\n";
   std::vector<Point> vecs = this->object_->get_vectors();
   if (vecs.empty()) {
     return;
@@ -228,15 +231,24 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
                                        vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
+  qInfo() << "compute_point_difference\n";
+
   double minmag = 1.0e20;
   double maxmag = 0.0;
 
   vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
 
-  vtkSmartPointer<vtkPolyData> poly_data = this->object_->get_mesh()->get_poly_data();
-  if (!poly_data) {
+  if (!this->object_->get_mesh())
+  {
     return;
   }
+
+  vtkSmartPointer<vtkPolyData> poly_data = this->object_->get_mesh()->get_poly_data();
+  if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
+    return;
+  }
+
+  std::cerr << "number of poly points = " << poly_data->GetNumberOfPoints() << "\n";
 
   // Compute normals from the isosurface volume
   vtkSmartPointer<vtkImageGradient> grad = vtkSmartPointer<vtkImageGradient>::New();
@@ -244,11 +256,14 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
   grad->SetInputData(poly_data);
   grad->Update();
 
-  vnl_vector_fixed<double, 3> normal;
+  //vnl_vector_fixed<double, 3> normal;
 
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
   // happens properly.
+
+  vtkDataArray* normals = poly_data->GetPointData()->GetNormals();
+
   for (unsigned int i = 0; i < pointSet->GetNumberOfPoints(); i++) {
     double x = pointSet->GetPoint(i)[0];
     double y = pointSet->GetPoint(i)[1];
@@ -258,14 +273,18 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
     float yd = vecs[i].y;
     float zd = vecs[i].z;
 
-    this->trilinearInterpolate(grad->GetOutput(), x, y, z, normal);
+    //this->trilinearIntefrpolate(grad->GetOutput(), x, y, z, normal);
 
-    float mag = xd * normal(0) + yd * normal(1) + zd * normal(2);
+    double normal[3];
+    normals->GetTuple(i, normal);
+
+
+    float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
 
     if (mag < minmag) {minmag = mag; }
     if (mag > maxmag) {maxmag = mag; }
 
-    vectors->InsertNextTuple3(normal(0) * mag, normal(1) * mag, normal(2) * mag);
+    vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
   }
   this->updateDifferenceLUT(minmag, maxmag);
@@ -275,6 +294,14 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors)
 {
+  qInfo() << "compute_surface_difference\n";
+
+  vtkPolyData* polyData = this->surface_mapper_->GetInput();
+  if (!polyData)
+  {
+    return;
+  }
+
   vtkSmartPointer<vtkPolyData> pointData = vtkSmartPointer<vtkPolyData>::New();
   pointData->SetPoints(this->glyph_points_);
 
@@ -285,7 +312,7 @@ void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes
 
   /// TODO: multi-domain support
   //for (int domain = 0; domain < this->numDomains; domain++) {
-  vtkPolyData* polyData = this->surface_mapper_->GetInput();
+  //vtkPolyData* polyData = this->surface_mapper_->GetInput();
 
   vtkFloatArray* surfaceMagnitudes = vtkFloatArray::New();
   surfaceMagnitudes->SetNumberOfComponents(1);
@@ -424,6 +451,7 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
   ren->AddViewProp(corner_annotation);
 
+  this->display_vector_field();
   this->update_actors();
   this->update_glyph_properties();
 }

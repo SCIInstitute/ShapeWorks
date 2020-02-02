@@ -61,7 +61,7 @@ std::string AnalysisTool::getAnalysisMode()
 //---------------------------------------------------------------------------
 bool AnalysisTool::get_group_difference_mode()
 {
-  return this - ui_->difference_button->isChecked();
+  return this->ui_->difference_button->isChecked();
 }
 
 //---------------------------------------------------------------------------
