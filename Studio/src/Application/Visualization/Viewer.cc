@@ -195,8 +195,6 @@ void Viewer::display_vector_field()
     this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     this->glyphs_->GeneratePointIdsOn();
 
-
-
     this->update_points();
     this->arrows_visible_ = false;
     return;
@@ -795,14 +793,4 @@ void Viewer::updateDifferenceLUT(float r0, float r1)
   this->difference_lut_->AddRGBPoint(r1, red[0], red[1], red[2]);
 
   return;
-
-  const float pip = fabs(maxrange) * resinv;
-  for (unsigned int i = 0; i < resolution; i++) {
-    float fi = static_cast<float>(i);
-
-    //this->differenceLUT->AddHSVPoint( -maxrange + ( fi * pip ), yellow, 1.0 - ( fi * resinv ), 1.0 );
-    //this->differenceLUT->AddHSVPoint( maxrange - ( fi * pip ), blue, 1.0 - ( fi * resinv ), 1.0 );
-  }
-
-  this->difference_lut_->AddHSVPoint(0.0, 0.0, 0.0, 1.0);
 }
