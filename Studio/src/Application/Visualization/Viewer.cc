@@ -20,6 +20,11 @@
 #include <vtkCellPicker.h>
 #include <vtkCell.h>
 #include <vtkCamera.h>
+#include <vtkFloatArray.h>
+#include <vtkImageGradient.h>
+#include <vtkColorTransferFunction.h>
+#include <vtkArrowSource.h>
+#include <vtkPointLocator.h>
 
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
@@ -36,6 +41,9 @@ Viewer::Viewer()
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
 
   this->sphere_source = vtkSmartPointer<vtkSphereSource>::New();
+
+  this->differenceLUT = vtkSmartPointer<vtkColorTransferFunction>::New();
+  this->differenceLUT->SetColorSpaceToHSV();
 
   this->glyph_points_ = vtkSmartPointer<vtkPoints>::New();
   this->glyph_points_->SetDataTypeToDouble();
@@ -60,10 +68,6 @@ Viewer::Viewer()
   this->glyph_actor_->GetProperty()->SetSpecular(0.3);
   this->glyph_actor_->GetProperty()->SetSpecularPower(10.0);
   this->glyph_actor_->SetMapper(this->glyph_mapper_);
-
-  this->glyph_size_ = 1.0f;
-  this->glyph_quality_ = 5.0f;
-  this->update_glyph_properties();
 
   // exclusion spheres
   this->exclusion_sphere_points_ = vtkSmartPointer<vtkPoints>::New();
@@ -94,8 +98,55 @@ Viewer::Viewer()
   this->exclusion_sphere_actor_->GetProperty()->SetColor(0, 1, 0);
   this->exclusion_sphere_actor_->SetMapper(this->exclusion_sphere_mapper_);
 
+  this->arrowFlipFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  this->arrowGlyphs = vtkSmartPointer<vtkGlyph3D>::New();
+  this->arrowGlyphMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  this->arrowGlyphActor = vtkSmartPointer<vtkActor>::New();
+
+  // Arrow glyphs
+  this->arrowSource = vtkSmartPointer<vtkArrowSource>::New();
+  this->arrowSource->SetTipResolution(6);
+  this->arrowSource->SetShaftResolution(6);
+
+  vtkSmartPointer<vtkTransform> t1 = vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkTransform> t2 = vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkTransform> t3 = vtkSmartPointer<vtkTransform>::New();
+  vtkSmartPointer<vtkTransform> t4 = vtkSmartPointer<vtkTransform>::New();
+  t1->Translate(-0.5, 0.0, 0.0);
+  t2->RotateY(180);
+  t3->Translate(0.5, 0.0, 0.0);
+  t4->RotateY(180);
+  t3->Concatenate(t4);
+  t2->Concatenate(t3);
+  t1->Concatenate(t2);
+  this->transform180 = vtkSmartPointer<vtkTransform>::New();
+  this->transform180->Concatenate(t1);
+
+  this->arrowFlipFilter->SetTransform(this->transform180);
+  this->arrowFlipFilter->SetInputConnection(this->arrowSource->GetOutputPort());
+
+  this->arrowGlyphs->SetSourceConnection(this->arrowFlipFilter->GetOutputPort());
+  this->arrowGlyphs->SetInputData(this->glyph_point_set_);
+  this->arrowGlyphs->ScalingOn();
+  this->arrowGlyphs->ClampingOff();
+
+  this->arrowGlyphs->SetVectorModeToUseVector();
+  this->arrowGlyphs->SetScaleModeToScaleByVector();
+
+  this->arrowGlyphMapper->SetInputConnection(this->arrowGlyphs->GetOutputPort());
+
+  this->arrowGlyphActor->GetProperty()->SetSpecularColor(1.0, 1.0, 1.0);
+  this->arrowGlyphActor->GetProperty()->SetDiffuse(0.8);
+  this->arrowGlyphActor->GetProperty()->SetSpecular(0.3);
+  this->arrowGlyphActor->GetProperty()->SetSpecularPower(10.0);
+  this->arrowGlyphActor->SetMapper(this->arrowGlyphMapper);
+
   this->visible_ = false;
   this->scheme_ = 0;
+
+  this->glyph_size_ = 1.0f;
+  this->glyph_quality_ = 5.0f;
+  this->update_glyph_properties();
 }
 
 //-----------------------------------------------------------------------------
@@ -113,6 +164,185 @@ void Viewer::set_color_scheme(int scheme)
                                  m_ColorSchemes[scheme].background.g,
                                  m_ColorSchemes[scheme].background.b);
 }
+
+//-----------------------------------------------------------------------------
+void Viewer::display_vector_field()
+{
+  std::vector<Point> vecs = this->object_->get_vectors();
+  if (vecs.empty()) {
+    return;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Step 1. Assign values at each correspondence point based on the image gradient
+  /////////////////////////////////////////////////////////////////////////////////
+
+  // Dot product difference vectors with the surface normals.
+  vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
+  magnitudes->SetNumberOfComponents(1);
+
+  vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
+  vectors->SetNumberOfComponents(3);
+
+  this->compute_point_differences(vecs, magnitudes, vectors);
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Step 2. Assign values at each mesh point based on the closest correspondence points
+  this->computeSurfaceDifferences(magnitudes, vectors);
+  /////////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Step 3. Assign the vectors and magnitudes to the glyphs and surface
+  /////////////////////////////////////////////////////////////////////////////////
+
+  // assign glyph vectors and magnitudes
+  this->glyph_point_set_->GetPointData()->SetVectors(vectors);
+  this->glyph_point_set_->GetPointData()->SetScalars(magnitudes);
+
+  this->glyphs_->SetSourceConnection(this->arrowSource->GetOutputPort());
+  this->glyphs_->SetScaleModeToScaleByVector();
+
+  // update glyph rendering
+  this->glyph_mapper_->SetLookupTable(this->differenceLUT);
+  this->arrowGlyphMapper->SetLookupTable(this->differenceLUT);
+  this->arrowsVisible = true;
+
+  if (this->show_glyphs_) {
+    this->renderer_->AddActor(this->arrowGlyphActor);
+  }
+
+  // update surface rendering
+  /// TODO : multi-domain support
+  //for (int i = 0; i < this->numDomains; i++) {
+  this->surface_mapper_->SetLookupTable(this->differenceLUT);
+  this->surface_mapper_->InterpolateScalarsBeforeMappingOn();
+  this->surface_mapper_->SetColorModeToMapScalars();
+  this->surface_mapper_->ScalarVisibilityOn();
+  //}
+
+  this->arrowsVisible = true;
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::compute_point_differences(const std::vector<Point> &vecs,
+                                       vtkSmartPointer<vtkFloatArray> magnitudes,
+                                       vtkSmartPointer<vtkFloatArray> vectors)
+{
+  double minmag = 1.0e20;
+  double maxmag = 0.0;
+
+  vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
+
+  vtkSmartPointer<vtkPolyData> poly_data = this->object_->get_mesh()->get_poly_data();
+  if (!poly_data) {
+    return;
+  }
+
+  // Compute normals from the isosurface volume
+  vtkSmartPointer<vtkImageGradient> grad = vtkSmartPointer<vtkImageGradient>::New();
+  grad->SetDimensionality(3);
+  grad->SetInputData(poly_data);
+  grad->Update();
+
+  vnl_vector_fixed<double, 3> normal;
+
+  // Compute difference vector dot product with normal.  Length of vector is
+  // stored in the "scalars" so that the vtk color mapping and glyph scaling
+  // happens properly.
+  for (unsigned int i = 0; i < pointSet->GetNumberOfPoints(); i++) {
+    double x = pointSet->GetPoint(i)[0];
+    double y = pointSet->GetPoint(i)[1];
+    double z = pointSet->GetPoint(i)[2];
+
+    float xd = vecs[i].x;
+    float yd = vecs[i].y;
+    float zd = vecs[i].z;
+
+    this->trilinearInterpolate(grad->GetOutput(), x, y, z, normal);
+
+    float mag = xd * normal(0) + yd * normal(1) + zd * normal(2);
+
+    if (mag < minmag) {minmag = mag; }
+    if (mag > maxmag) {maxmag = mag; }
+
+    vectors->InsertNextTuple3(normal(0) * mag, normal(1) * mag, normal(2) * mag);
+    magnitudes->InsertNextTuple1(mag);
+  }
+  this->updateDifferenceLUT(minmag, maxmag);
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes,
+                                       vtkSmartPointer<vtkFloatArray> vectors)
+{
+  vtkSmartPointer<vtkPolyData> pointData = vtkSmartPointer<vtkPolyData>::New();
+  pointData->SetPoints(this->glyph_points_);
+
+  vtkPointLocator* pointLocator = vtkPointLocator::New();
+  pointLocator->SetDataSet(pointData);
+  pointLocator->SetDivisions(100, 100, 100);
+  pointLocator->BuildLocator();
+
+  /// TODO: multi-domain support
+  //for (int domain = 0; domain < this->numDomains; domain++) {
+  vtkPolyData* polyData = this->surface_mapper_->GetInput();
+
+  vtkFloatArray* surfaceMagnitudes = vtkFloatArray::New();
+  surfaceMagnitudes->SetNumberOfComponents(1);
+  surfaceMagnitudes->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
+
+  vtkFloatArray* surfaceVectors = vtkFloatArray::New();
+  surfaceVectors->SetNumberOfComponents(3);
+  surfaceVectors->SetNumberOfTuples(polyData->GetPoints()->GetNumberOfPoints());
+
+  for (unsigned int i = 0; i < surfaceMagnitudes->GetNumberOfTuples(); i++) {
+    // find the 8 closest correspondence points the to current point
+    vtkSmartPointer<vtkIdList> closestPoints = vtkSmartPointer<vtkIdList>::New();
+    pointLocator->FindClosestNPoints(8, polyData->GetPoint(i), closestPoints);
+
+    // assign scalar value based on a weighted scheme
+    float weightedScalar = 0.0f;
+    float distanceSum = 0.0f;
+    float distance[8];
+    for (unsigned int p = 0; p < closestPoints->GetNumberOfIds(); p++) {
+      // get a particle position
+      vtkIdType id = closestPoints->GetId(p);
+
+      // compute distance to current particle
+      double x = polyData->GetPoint(i)[0] - pointData->GetPoint(id)[0];
+      double y = polyData->GetPoint(i)[1] - pointData->GetPoint(id)[1];
+      double z = polyData->GetPoint(i)[2] - pointData->GetPoint(id)[2];
+      distance[p] = 1.0f / (x * x + y * y + z * z);
+
+      // multiply scalar value by weight and add to running sum
+      distanceSum += distance[p];
+    }
+
+    float vecX = 0.0f;
+    float vecY = 0.0f;
+    float vecZ = 0.0f;
+
+    for (unsigned int p = 0; p < closestPoints->GetNumberOfIds(); p++) {
+      vtkIdType currID = closestPoints->GetId(p);
+      weightedScalar += distance[p] / distanceSum * magnitudes->GetValue(currID);
+      vecX += distance[p] / distanceSum * vectors->GetComponent(currID, 0);
+      vecY += distance[p] / distanceSum * vectors->GetComponent(currID, 1);
+      vecZ += distance[p] / distanceSum * vectors->GetComponent(currID, 2);
+    }
+
+    surfaceMagnitudes->SetValue(i, weightedScalar);
+
+    surfaceVectors->SetComponent(i, 0, vecX);
+    surfaceVectors->SetComponent(i, 1, vecY);
+    surfaceVectors->SetComponent(i, 2, vecZ);
+  }
+
+  // surface coloring
+  polyData->GetPointData()->SetScalars(surfaceMagnitudes);
+  polyData->GetPointData()->SetVectors(surfaceVectors);
+  //}
+}
+
 //-----------------------------------------------------------------------------
 void Viewer::display_object(QSharedPointer<DisplayObject> object)
 {
@@ -240,16 +470,16 @@ void Viewer::update_glyph_properties()
 {
   //  std::cerr << "update glyph props\n";
   this->glyphs_->SetScaleFactor(this->glyph_size_);
-  //this->arrowGlayphs->SetScaleFactor( this->glyph_size_ );
+  this->arrowGlyphs->SetScaleFactor(this->glyph_size_);
 
   this->sphere_source->SetThetaResolution(this->glyph_quality_);
   this->sphere_source->SetPhiResolution(this->glyph_quality_);
 
-  //this->arrowSource->SetTipResolution( this->glyph_quality_ );
-  //this->arrowSource->SetShaftResolution( this->glyph_quality_ );
+  this->arrowSource->SetTipResolution(this->glyph_quality_);
+  this->arrowSource->SetShaftResolution(this->glyph_quality_);
 
   this->glyphs_->Update();
-  //this->arrowGlyphs->Update();
+  this->arrowGlyphs->Update();
 }
 
 //-----------------------------------------------------------------------------
@@ -348,6 +578,7 @@ void Viewer::update_actors()
   //this->renderer_->Render();
 }
 
+//-----------------------------------------------------------------------------
 int Viewer::handle_pick(int* click_pos)
 {
 
@@ -428,4 +659,86 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<DisplayObject> object)
   }
 
   this->exclusion_sphere_points_->Modified();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::trilinearInterpolate(vtkImageData* grad, double x, double y, double z,
+                                  vnl_vector_fixed<double, 3> &ans) const
+{
+  // Access gradient image information.
+  const double* gradData = (const double*)(grad->GetScalarPointer());
+  //const double* spacing = grad->GetSpacing();
+
+  // See, e.g. http://en.wikipedia.org/wiki/Trilinear_interpolation for description
+  // Identify the surrounding 8 points (corners).  c is the closest grid point.
+  vtkIdType idx = grad->FindPoint(x, y, z);
+  const double* c = grad->GetPoint(idx);
+
+  //std::cout << "idx = " << idx << std::endl;
+  //std::cout << "c = " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+
+  ans[0] = gradData[idx * 3];
+  ans[1] = gradData[idx * 3 + 1];
+  ans[2] = gradData[idx * 3 + 2];
+  return;
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::updateDifferenceLUT(float r0, float r1)
+{
+
+  double black[3] = { 0.0, 0.0, 0.0 };
+  double white[3] = { 1.0, 1.0, 1.0 };
+  double red[3] = { 1.0, 0.3, 0.3 };
+  double red_pure[3] = { 1.0, 0.0, 0.0 };
+  double green[3] = { 0.3, 1.0, 0.3 };
+  double green_pure[3] = { 0.0, 1.0, 0.0 };
+  double blue[3] = { 0.3, 0.3, 1.0 };
+  double blue_pure[3] = { 0.0, 0.0, 1.0 };
+  double yellow[3] = { 1.0, 1.0, 0.3 };
+  double yellow_pure[3] = { 1.0, 1.0, 0.0 };
+  double magenta[3] = { 1.0, 0.3, 1.0 };
+  double cyan[3] = { 0.3, 1.0, 1.0 };
+  double orange[3] = { 1.0, 0.5, 0.0 };
+  double violet[3] = { 2.0 / 3.0, 0.0, 1.0 };
+
+  this->differenceLUT->RemoveAllPoints();
+
+  //const float yellow = 0.86666;
+  //const float blue = 0.66666;
+  //const float yellow = 0.33;
+  //const float blue = 0.66;
+  const unsigned int resolution = 100;
+  const float resinv = 1.0 / static_cast<float>(resolution);
+  float maxrange;
+  if (fabs(r0) > fabs(r1)) {maxrange = fabs(r0); }
+  else {maxrange = fabs(r1); }
+
+  std::cerr << "r0 = " << r0 << "\n";
+  std::cerr << "r1 = " << r1 << "\n";
+  std::cerr << "maxrange = " << maxrange << "\n";
+  //this->differenceLUT->SetScalarRange(-maxrange, maxrange);
+
+  //this->differenceLUT->SetColorSpaceToHSV();
+  //this->differenceLUT->AddHSVPoint(-maxrange, 0.33, 1.0, 1.0);
+  //this->differenceLUT->AddHSVPoint(maxrange, 0.66, 1.0, 1.0);
+
+  double rd = r1 - r0;
+
+  this->differenceLUT->SetColorSpaceToHSV();
+  this->differenceLUT->AddRGBPoint(r0, blue[0], blue[1], blue[2]);
+  this->differenceLUT->AddRGBPoint(r0 + rd * 0.5, green[0], green[1], green[2]);
+  this->differenceLUT->AddRGBPoint(r1, red[0], red[1], red[2]);
+
+  return;
+
+  const float pip = fabs(maxrange) * resinv;
+  for (unsigned int i = 0; i < resolution; i++) {
+    float fi = static_cast<float>(i);
+
+    //this->differenceLUT->AddHSVPoint( -maxrange + ( fi * pip ), yellow, 1.0 - ( fi * resinv ), 1.0 );
+    //this->differenceLUT->AddHSVPoint( maxrange - ( fi * pip ), blue, 1.0 - ( fi * resinv ), 1.0 );
+  }
+
+  this->differenceLUT->AddHSVPoint(0.0, 0.0, 0.0, 1.0);
 }
