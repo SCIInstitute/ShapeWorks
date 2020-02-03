@@ -344,11 +344,14 @@ bool AnalysisTool::compute_stats()
   }
 
   std::vector < vnl_vector < double >> points;
+  std::vector<int> group_ids;
   foreach(ShapeHandle shape, this->project_->get_shapes()) {
     points.push_back(shape->get_global_correspondence_points());
+    group_ids.push_back(shape->get_group_id());
   }
 
-  this->stats_.ImportPoints(points);
+  this->stats_.ImportPoints(points, group_ids);
+
   this->stats_.ComputeModes();
   this->stats_ready_ = true;
   std::vector<double> vals;

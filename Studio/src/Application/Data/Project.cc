@@ -374,7 +374,8 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
         QMessageBox::critical(NULL, "ShapeWorksStudio",
-                              "File does not exist: " + QString::fromStdString(distance_transform_filename),
+                              "File does not exist: " +
+                              QString::fromStdString(distance_transform_filename),
                               QMessageBox::Ok);
         return false;
       }
@@ -428,6 +429,21 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   if (!this->load_point_files(global_point_files, false)) {
     return false;
+  }
+
+  // read group ids
+  std::vector<int> group_ids;
+  elem = docHandle.FirstChild("group_ids").Element();
+  if (elem) {
+    inputsBuffer.str(elem->GetText());
+    int group_id;
+    while (inputsBuffer >> group_id) {
+      group_ids.push_back(group_id);
+    }
+
+    for (int i = 0; i < this->shapes_.size(); i++) {
+      this->shapes_[i]->set_group_id(group_ids[i]);
+    }
   }
 
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
