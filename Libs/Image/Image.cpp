@@ -175,9 +175,9 @@ bool Image::recenter()
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
-  filter->CenterImageOn();
 
   filter->SetInput(this->image);
+  filter->CenterImageOn();
   this->image = filter->GetOutput();
 
   try
@@ -217,15 +217,18 @@ bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
   transform->SetIdentity();
   resampler->SetTransform(transform);
 
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  // using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double>;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  interpolator->SetSplineOrder(3);
   resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(defaultValue);
+  resampler->SetDefaultPixelValue(-1);
 
   ImageType::SpacingType spacing;
   spacing[0] = isoSpacing;
   spacing[1] = isoSpacing;
   spacing[2] = isoSpacing;
+
   resampler->SetOutputSpacing(spacing);
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
@@ -237,9 +240,9 @@ bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
     // fixme: for some reason this isn't what we're supposed to do.
     // for some datasets (ellipsoid) it works, but for others it's unnecessary
     // more investigation needed.
-    outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / isoSpacing);
-    outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / isoSpacing);
-    outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / isoSpacing);
+    outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
+    outputSize[1] = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
+    outputSize[2] = std::ceil((inputSize[2] - 1) * inputSpacing[2] / isoSpacing);
     // probably std::ceil should be std::floor (ask Alan and Shireen)
   }
   resampler->SetSize(outputSize);
