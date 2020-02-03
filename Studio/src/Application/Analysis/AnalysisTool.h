@@ -49,6 +49,7 @@ public:
   double get_pca_value();
 
   bool pcaAnimate();
+  bool groupAnimate();
 
   int getSampleNumber();
 
@@ -90,6 +91,9 @@ public Q_SLOTS:
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
 
+  void handle_group_animate_state_changed();
+  void handle_group_timer();
+
   void on_linear_radio_toggled(bool b);
 
   void handle_reconstruction_complete();
@@ -123,7 +127,11 @@ private:
   vnl_vector<double> empty_shape_;
   vnl_vector<double> temp_shape_;
 
-  bool pcaAnimateDirection;
+  bool pcaAnimateDirection = true;
   QTimer pcaAnimateTimer;
+
+  bool groupAnimateDirection = true;
+  QTimer groupAnimateTimer;
+
   BarGraph* chart_;
 };

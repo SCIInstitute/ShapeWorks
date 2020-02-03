@@ -29,8 +29,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
 
-  this->pcaAnimateDirection = true;
-
   this->ui_->log_radio->setChecked(true);
   this->ui_->linear_radio->setChecked(false);
 
@@ -39,9 +37,14 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->sampleSpinBox, SIGNAL(valueChanged(int)), this,
           SLOT(handle_analysis_options()));
   connect(this->ui_->medianButton, SIGNAL(clicked()), this, SLOT(handle_median()));
+
   connect(this->ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
           SLOT(handle_pca_animate_state_changed()));
   connect(&this->pcaAnimateTimer, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+
+  connect(this->ui_->group_animate_checkbox, &QCheckBox::clicked, this,
+          &AnalysisTool::handle_group_animate_state_changed);
+  connect(&this->groupAnimateTimer, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 }
 
 //---------------------------------------------------------------------------
@@ -176,6 +179,12 @@ double AnalysisTool::get_group_value()
 bool AnalysisTool::pcaAnimate()
 {
   return this->ui_->pcaAnimateCheckBox->isChecked();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::groupAnimate()
+{
+  return this->ui_->group_animate_checkbox->isChecked();
 }
 
 //---------------------------------------------------------------------------
@@ -501,6 +510,38 @@ void AnalysisTool::handle_pca_timer()
   }
 
   this->ui_->pcaSlider->setValue(value);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_group_animate_state_changed()
+{
+  if (this->groupAnimate()) {
+    //this->setPregenSteps();
+    this->groupAnimateTimer.setInterval(10);
+    this->groupAnimateTimer.start();
+  }
+  else {
+    this->groupAnimateTimer.stop();
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_group_timer()
+{
+  int value = this->ui_->group_slider->value();
+  if (this->groupAnimateDirection) {
+    value += this->ui_->group_slider->singleStep();
+  }
+  else {
+    value -= this->ui_->group_slider->singleStep();
+  }
+
+  if (value >= this->ui_->group_slider->maximum() || value <= this->ui_->group_slider->minimum()) {
+    this->groupAnimateDirection = !this->groupAnimateDirection;
+    //this->setPregenSteps();
+  }
+
+  this->ui_->group_slider->setValue(value);
 }
 
 //---------------------------------------------------------------------------
