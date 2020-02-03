@@ -122,6 +122,14 @@ ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
 
+### Eigen
+#find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+#IF (TARGET Eigen3::Eigen)
+#  INCLUDE(${EIGEN3_INCLUDE_DIR})
+#ELSE()
+#  MESSAGE(SEND_ERROR "Eigen is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
+#ENDIF(TARGET Eigen3::Eigen)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
@@ -184,7 +192,6 @@ endif()
 if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
-
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
