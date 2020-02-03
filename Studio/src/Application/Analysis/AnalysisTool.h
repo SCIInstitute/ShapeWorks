@@ -108,10 +108,12 @@ signals:
   void reconstruction_complete();
 
 private:
+
   //private methods
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+
   //private members
   Preferences & preferences_;
   Ui_AnalysisTool* ui_;
@@ -127,11 +129,11 @@ private:
   vnl_vector<double> empty_shape_;
   vnl_vector<double> temp_shape_;
 
-  bool pcaAnimateDirection = true;
-  QTimer pcaAnimateTimer;
+  bool pca_animate_direction_ = true;
+  QTimer pca_animate_timer_;
 
-  bool groupAnimateDirection = true;
-  QTimer groupAnimateTimer;
+  bool group_animate_direction_ = true;
+  QTimer group_animate_timer_;
 
   BarGraph* chart_;
 };

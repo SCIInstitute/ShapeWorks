@@ -40,11 +40,12 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 
   connect(this->ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
           SLOT(handle_pca_animate_state_changed()));
-  connect(&this->pcaAnimateTimer, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+  connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
+  // group animation
   connect(this->ui_->group_animate_checkbox, &QCheckBox::clicked, this,
           &AnalysisTool::handle_group_animate_state_changed);
-  connect(&this->groupAnimateTimer, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
+  connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 }
 
 //---------------------------------------------------------------------------
@@ -447,7 +448,7 @@ void AnalysisTool::save_to_preferences()
 //---------------------------------------------------------------------------
 void AnalysisTool::shutdown()
 {
-  this->pcaAnimateTimer.stop();
+  this->pca_animate_timer_.stop();
 }
 
 //---------------------------------------------------------------------------
@@ -485,11 +486,11 @@ void AnalysisTool::handle_pca_animate_state_changed()
 {
   if (this->pcaAnimate()) {
     //this->setPregenSteps();
-    this->pcaAnimateTimer.setInterval(10);
-    this->pcaAnimateTimer.start();
+    this->pca_animate_timer_.setInterval(10);
+    this->pca_animate_timer_.start();
   }
   else {
-    this->pcaAnimateTimer.stop();
+    this->pca_animate_timer_.stop();
   }
 }
 
@@ -497,7 +498,7 @@ void AnalysisTool::handle_pca_animate_state_changed()
 void AnalysisTool::handle_pca_timer()
 {
   int value = this->ui_->pcaSlider->value();
-  if (this->pcaAnimateDirection) {
+  if (this->pca_animate_direction_) {
     value += this->ui_->pcaSlider->singleStep();
   }
   else {
@@ -505,7 +506,7 @@ void AnalysisTool::handle_pca_timer()
   }
 
   if (value >= this->ui_->pcaSlider->maximum() || value <= this->ui_->pcaSlider->minimum()) {
-    this->pcaAnimateDirection = !this->pcaAnimateDirection;
+    this->pca_animate_direction_ = !this->pca_animate_direction_;
     //this->setPregenSteps();
   }
 
@@ -517,11 +518,11 @@ void AnalysisTool::handle_group_animate_state_changed()
 {
   if (this->groupAnimate()) {
     //this->setPregenSteps();
-    this->groupAnimateTimer.setInterval(10);
-    this->groupAnimateTimer.start();
+    this->group_animate_timer_.setInterval(10);
+    this->group_animate_timer_.start();
   }
   else {
-    this->groupAnimateTimer.stop();
+    this->group_animate_timer_.stop();
   }
 }
 
@@ -529,7 +530,7 @@ void AnalysisTool::handle_group_animate_state_changed()
 void AnalysisTool::handle_group_timer()
 {
   int value = this->ui_->group_slider->value();
-  if (this->groupAnimateDirection) {
+  if (this->group_animate_direction_) {
     value += this->ui_->group_slider->singleStep();
   }
   else {
@@ -537,7 +538,7 @@ void AnalysisTool::handle_group_timer()
   }
 
   if (value >= this->ui_->group_slider->maximum() || value <= this->ui_->group_slider->minimum()) {
-    this->groupAnimateDirection = !this->groupAnimateDirection;
+    this->group_animate_direction_ = !this->group_animate_direction_;
     //this->setPregenSteps();
   }
 
