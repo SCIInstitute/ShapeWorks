@@ -83,7 +83,6 @@ std::vector<Point> AnalysisTool::get_group_difference_vectors()
 //---------------------------------------------------------------------------
 void AnalysisTool::on_linear_radio_toggled(bool b)
 {
-
   if (b) {
     this->ui_->graph_->setLogScale(false);
     this->ui_->graph_->repaint();
@@ -163,6 +162,14 @@ void AnalysisTool::on_reconstructionButton_clicked()
 int AnalysisTool::getPCAMode()
 {
   return this->ui_->pcaModeSpinBox->value();
+}
+
+//---------------------------------------------------------------------------
+double AnalysisTool::get_group_value()
+{
+  double groupSliderValue = this->ui_->group_slider->value();
+  double groupRatio = groupSliderValue / static_cast<double>(this->ui_->group_slider->maximum());
+  return groupRatio;
 }
 
 //---------------------------------------------------------------------------
@@ -278,6 +285,7 @@ void AnalysisTool::handle_analysis_options()
   this->ui_->group1_button->setEnabled(this->project_->groups_available());
   this->ui_->group2_button->setEnabled(this->project_->groups_available());
   this->ui_->difference_button->setEnabled(this->project_->groups_available());
+  this->ui_->group_slider_widget->setEnabled(this->project_->groups_available());
 
   emit update_view();
 }
@@ -340,6 +348,12 @@ bool AnalysisTool::compute_stats()
   this->ui_->graph_->setData(vals);
 
   this->ui_->graph_->repaint();
+
+  // set widget enable state for groups
+  bool groups_available = this->project_->groups_available();
+  this->ui_->group_slider->setEnabled(groups_available);
+  this->ui_->group_animate_checkbox->setEnabled(groups_available);
+
   return true;
 }
 
@@ -361,7 +375,7 @@ const vnl_vector<double> & AnalysisTool::getMean()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double> & AnalysisTool::getShape(int mode, double value)
+const vnl_vector<double> & AnalysisTool::getShape(int mode, double value, double group_value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
@@ -378,7 +392,14 @@ const vnl_vector<double> & AnalysisTool::getShape(int mode, double value)
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
-  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+  if (this->project_->groups_available()) {
+    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value) +
+                        (e * (value * lambda));
+  }
+  else {
+    this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+  }
+
   return this->temp_shape_;
 }
 
@@ -428,6 +449,15 @@ void AnalysisTool::on_tabWidget_currentChanged()
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_pcaSlider_valueChanged()
+{
+  // this will make the slider handle redraw making the UI appear more responsive
+  QCoreApplication::processEvents();
+
+  emit pca_update();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::on_group_slider_valueChanged()
 {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();

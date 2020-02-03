@@ -700,7 +700,6 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
-
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->project_->original_present());
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
@@ -1034,7 +1033,9 @@ void ShapeWorksStudioApp::compute_mode_shape()
 {
   int mode = this->analysis_tool_->getPCAMode();
   double value = this->analysis_tool_->get_pca_value();
-  this->visualizer_->display_shape(this->analysis_tool_->getShape(mode, value));
+  double group_value = this->analysis_tool_->get_group_value();
+
+  this->visualizer_->display_shape(this->analysis_tool_->getShape(mode, value, group_value));
 }
 
 //---------------------------------------------------------------------------

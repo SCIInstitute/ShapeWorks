@@ -1,5 +1,4 @@
-#ifndef STUDIO_ANALYSIS_ANALYSISTOOL_H
-#define STUDIO_ANALYSIS_ANALYSISTOOL_H
+#pragma once
 
 #include <QSharedPointer>
 #include <QWidget>
@@ -18,7 +17,7 @@ class AnalysisTool : public QWidget {
   Q_OBJECT;
 public:
 
-  using PointType = itk::Point<double,3>;
+  using PointType = itk::Point<double, 3>;
 
   AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
@@ -45,6 +44,8 @@ public:
 
   int getPCAMode();
 
+  double get_group_value();
+
   double get_pca_value();
 
   bool pcaAnimate();
@@ -60,7 +61,7 @@ public:
 
   const vnl_vector<double> & getMean();
 
-  const vnl_vector<double> & getShape(int mode, double value);
+  const vnl_vector<double> & getShape(int mode, double value, double group_value = 0.5);
 
   ParticleShapeStatistics<3> getStats();
   void load_from_preferences();
@@ -83,6 +84,7 @@ public Q_SLOTS:
 
   // PCA
   void on_pcaSlider_valueChanged();
+  void on_group_slider_valueChanged();
   void on_pcaModeSpinBox_valueChanged(int i);
 
   void handle_pca_animate_state_changed();
@@ -125,5 +127,3 @@ private:
   QTimer pcaAnimateTimer;
   BarGraph* chart_;
 };
-
-#endif /* STUDIO_ANALYSIS_ANALYSISTOOL_H */

@@ -559,13 +559,16 @@ QToolButton:pressed{
                <item>
                 <widget class="QSlider" name="group_slider">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="minimum">
-                  <number>-20</number>
+                  <number>0</number>
                  </property>
                  <property name="maximum">
                   <number>20</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
                  </property>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -613,9 +616,9 @@ QToolButton:pressed{
                 </spacer>
                </item>
                <item>
-                <widget class="QCheckBox" name="pcaAnimateCheckBox_3">
+                <widget class="QCheckBox" name="group_animate_checkbox">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
                   <string>Animate</string>
