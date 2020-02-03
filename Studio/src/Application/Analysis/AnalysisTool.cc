@@ -368,7 +368,7 @@ bool AnalysisTool::compute_stats()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double> & AnalysisTool::getMean()
+const vnl_vector<double>& AnalysisTool::get_mean_shape()
 {
   if (!this->compute_stats()) {
     return this->empty_shape_;
@@ -385,7 +385,7 @@ const vnl_vector<double> & AnalysisTool::getMean()
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double> & AnalysisTool::getShape(int mode, double value, double group_value)
+const vnl_vector<double>& AnalysisTool::get_shape(int mode, double value, double group_value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
@@ -414,7 +414,7 @@ const vnl_vector<double> & AnalysisTool::getShape(int mode, double value, double
 }
 
 //---------------------------------------------------------------------------
-ParticleShapeStatistics<3> AnalysisTool::getStats()
+ParticleShapeStatistics<3> AnalysisTool::get_stats()
 {
   this->compute_stats();
   return this->stats_;

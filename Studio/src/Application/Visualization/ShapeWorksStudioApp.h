@@ -119,7 +119,6 @@ private:
   void update_display();
 
   void compute_mode_shape();
-  void display_group_difference();
 
   void update_recent_files();
 

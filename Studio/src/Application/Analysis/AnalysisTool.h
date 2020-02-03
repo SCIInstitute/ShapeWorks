@@ -60,11 +60,11 @@ public:
   void reset_stats();
   void enableActions();
 
-  const vnl_vector<double> & getMean();
+  const vnl_vector<double>& get_mean_shape();
 
-  const vnl_vector<double> & getShape(int mode, double value, double group_value = 0.5);
+  const vnl_vector<double>& get_shape(int mode, double value, double group_value = 0.5);
 
-  ParticleShapeStatistics<3> getStats();
+  ParticleShapeStatistics<3> get_stats();
   void load_from_preferences();
   void save_to_preferences();
 

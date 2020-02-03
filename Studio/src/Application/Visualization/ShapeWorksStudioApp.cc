@@ -733,7 +733,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->preferences_.set_preference("display_state",
                                     this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
   this->visualizer_->update_lut();
   this->update_display();
 }
@@ -747,7 +747,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
   this->preferences_.set_preference("display_state",
                                     this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
   this->visualizer_->update_lut();
   this->update_display();
 }
@@ -853,10 +853,11 @@ void ShapeWorksStudioApp::update_display()
 
       if (this->analysis_tool_->get_group_difference_mode()) {
         this->visualizer_->display_shape(
-          this->analysis_tool_->getMean(), this->analysis_tool_->get_group_difference_vectors());
+          this->analysis_tool_->get_mean_shape(),
+          this->analysis_tool_->get_group_difference_vectors());
       }
       else {
-        this->visualizer_->display_shape(this->analysis_tool_->getMean());
+        this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
       }
     }
     else if (mode == "pca") {
@@ -927,7 +928,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
   //this->project_->calculate_reconstructed_samples();
-  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
   this->analysis_tool_->activate();
 
   /*
@@ -1031,17 +1032,12 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape()
 {
-  int mode = this->analysis_tool_->getPCAMode();
-  double value = this->analysis_tool_->get_pca_value();
+  int pca_mode = this->analysis_tool_->getPCAMode();
+  double pca_value = this->analysis_tool_->get_pca_value();
   double group_value = this->analysis_tool_->get_group_value();
 
-  this->visualizer_->display_shape(this->analysis_tool_->getShape(mode, value, group_value));
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::display_group_difference()
-{
-  auto vectors = this->analysis_tool_->get_group_difference_vectors();
+  this->visualizer_->display_shape(this->analysis_tool_->get_shape(pca_mode, pca_value,
+                                                                   group_value));
 }
 
 //---------------------------------------------------------------------------
@@ -1176,7 +1172,7 @@ void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered()
 
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
 {
-  auto stats = this->analysis_tool_->getStats();
+  auto stats = this->analysis_tool_->get_stats();
   auto values = stats.Eigenvalues();
   QString fname("Untitled.eval");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
@@ -1199,7 +1195,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
 
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
 {
-  auto stats = this->analysis_tool_->getStats();
+  auto stats = this->analysis_tool_->get_stats();
   auto values = stats.Eigenvectors();
   QString fname("Untitled.eval");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
@@ -1246,7 +1242,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   auto increment = range * 2.f / steps;
   size_t i = 0;
   for (float pca = -range; pca <= range; pca += increment, i++) {
-    auto pts = this->analysis_tool_->getShape(mode, pca);
+    auto pts = this->analysis_tool_->get_shape(mode, pca);
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
     for (auto &a : pts) {
