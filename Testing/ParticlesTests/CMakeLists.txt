@@ -1,13 +1,13 @@
 set(TEST_SRCS
-        ParticlesTests.cpp
-        )
+  ParticlesTests.cpp
+  )
 
 add_executable(ParticlesTests
-        ${TEST_SRCS}
-        )
+  ${TEST_SRCS}
+  )
 
 target_link_libraries(ParticlesTests
-        ${ITK_LIBRARIES} ${VTK_LIBRARIES}
-        Particles gtest_main)
+  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+  Particles gtest_main)
 
 add_test(NAME ParticlesTests COMMAND ParticlesTests)
