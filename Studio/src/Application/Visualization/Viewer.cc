@@ -27,6 +27,7 @@
 #include <vtkPointLocator.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkImageGaussianSmooth.h>
+#include <vtkKdTreePointLocator.h>
 
 #include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
@@ -275,27 +276,16 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
     return;
   }
 
-  vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
-    vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
-  surfaceReconstruction->SetInputData(pointSet);
-  //surfaceReconstruction->SetNeighborhoodSize(this->meshManager.getNeighborhoodSize());
-  //surfaceReconstruction->SetSampleSpacing(this->meshManager.getSampleSpacing());
-  surfaceReconstruction->Update();
+  vtkSmartPointer<vtkPolyDataNormals> polydata_normals =
+    vtkSmartPointer<vtkPolyDataNormals>::New();
+  polydata_normals->SetInputData(poly_data);
+  polydata_normals->Update();
+  polydata_normals->SetSplitting(false); // must be sure not to split normals
+  poly_data = polydata_normals->GetOutput();
 
-  vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
-  smoother->SetStandardDeviations(surfaceReconstruction->GetOutput()->GetSpacing()[0],
-                                  surfaceReconstruction->GetOutput()->GetSpacing()[1],
-                                  surfaceReconstruction->GetOutput()->GetSpacing()[2]);
-
-  smoother->SetInputConnection(surfaceReconstruction->GetOutputPort());
-
-  // Compute normals from the isosurface volume
-  vtkSmartPointer<vtkImageGradient> grad = vtkSmartPointer<vtkImageGradient>::New();
-  grad->SetDimensionality(3);
-  grad->SetInputConnection(smoother->GetOutputPort());
-  grad->Update();
-
-  vnl_vector_fixed<double, 3> normal;
+  vtkSmartPointer<vtkKdTreePointLocator> locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  locator->SetDataSet(poly_data);
+  locator->BuildLocator();
 
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
@@ -305,18 +295,21 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
     double y = pointSet->GetPoint(i)[1];
     double z = pointSet->GetPoint(i)[2];
 
+    double pos[3];
+
+    auto id = locator->FindClosestPoint(pointSet->GetPoint(i));
+    double* normal = poly_data->GetPointData()->GetNormals()->GetTuple(id);
+
     float xd = vecs[i].x;
     float yd = vecs[i].y;
     float zd = vecs[i].z;
 
-    this->trilinear_interpolate(grad->GetOutput(), x, y, z, normal);
-
-    float mag = xd * normal(0) + yd * normal(1) + zd * normal(2);
+    float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
 
     if (mag < minmag) {minmag = mag; }
     if (mag > maxmag) {maxmag = mag; }
 
-    vectors->InsertNextTuple3(normal(0) * mag, normal(1) * mag, normal(2) * mag);
+    vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
     //std::cerr << "mag = " << mag << "\n";
   }
@@ -438,7 +431,6 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
     //ren->ResetCamera();
     //this->renderer_->ResetCameraClippingRange();
     ren->AddViewProp(corner_annotation);
-
   }
   else {
 
@@ -477,11 +469,9 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
     actor->GetProperty()->SetSpecularPower(15);
     mapper->ScalarVisibilityOff();
 
-
     //ren->AddActor( actor );
     //ren->AddActor( this->glyph_actor_ );
   }
-
 
   this->display_vector_field();
   this->update_actors();
@@ -719,28 +709,6 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<DisplayObject> object)
   }
 
   this->exclusion_sphere_points_->Modified();
-}
-
-//-----------------------------------------------------------------------------
-void Viewer::trilinear_interpolate(vtkImageData* grad, double x, double y, double z,
-                                  vnl_vector_fixed<double, 3> &ans) const
-{
-  // Access gradient image information.
-  const double* gradData = (const double*)(grad->GetScalarPointer());
-  //const double* spacing = grad->GetSpacing();
-
-  // See, e.g. http://en.wikipedia.org/wiki/Trilinear_interpolation for description
-  // Identify the surrounding 8 points (corners).  c is the closest grid point.
-  vtkIdType idx = grad->FindPoint(x, y, z);
-  const double* c = grad->GetPoint(idx);
-
-  //std::cout << "idx = " << idx << std::endl;
-  //std::cout << "c = " << c[0] << " " << c[1] << " " << c[2] << std::endl;
-
-  ans[0] = gradData[idx * 3];
-  ans[1] = gradData[idx * 3 + 1];
-  ans[2] = gradData[idx * 3 + 2];
-  return;
 }
 
 //-----------------------------------------------------------------------------

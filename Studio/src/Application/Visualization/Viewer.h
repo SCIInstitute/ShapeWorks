@@ -77,9 +77,6 @@ private:
 
   void draw_exclusion_spheres(QSharedPointer<DisplayObject> object);
 
-  void trilinear_interpolate(vtkImageData* grad, double x, double y, double z,
-                            vnl_vector_fixed<double, 3> &ans) const;
-
   void updateDifferenceLUT(float r0, float r1);
 
   bool visible_;
