@@ -8,7 +8,6 @@ add_executable(ParticlesTests
 
 target_link_libraries(ParticlesTests
         ${ITK_LIBRARIES} ${VTK_LIBRARIES}
-        tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2 Particles
-        gtest_main)
+        Particles gtest_main)
 
 add_test(NAME ParticlesTests COMMAND ParticlesTests)
