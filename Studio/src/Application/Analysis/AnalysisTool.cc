@@ -46,6 +46,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->group_animate_checkbox, &QCheckBox::clicked, this,
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
+
+  connect(this->ui_->pca_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
+  connect(this->ui_->group_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
 }
 
 //---------------------------------------------------------------------------
@@ -366,6 +369,7 @@ bool AnalysisTool::compute_stats()
   bool groups_available = this->project_->groups_available();
   this->ui_->group_slider->setEnabled(groups_available);
   this->ui_->group_animate_checkbox->setEnabled(groups_available);
+  this->ui_->group_radio_button->setEnabled(groups_available);
 
   return true;
 }
@@ -405,21 +409,10 @@ const vnl_vector<double>& AnalysisTool::get_shape(int mode, double value, double
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
-  std::cerr << "g1: " << this->stats_.Group1SampleSize() << "\n";
-  std::cerr << "g2: " << this->stats_.Group2SampleSize() << "\n";
-
-  if (this->project_->groups_available()) {
-
-    std::cerr << "value = " << value << "\n";
-    std::cerr << "lambda = " << lambda << "\n";
-    std::cerr << "group = " << group_value << "\n";
-    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value) +
-                        (e * (value * lambda));
+  if (this->ui_->group_radio_button->isChecked()) {
+    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
   }
   else {
-
-    std::cerr << "value = " << value << "\n";
-    std::cerr << "lambda = " << lambda << "\n";
     this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
   }
 
