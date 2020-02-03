@@ -275,8 +275,6 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
     return;
   }
 
-  std::cerr << "number of poly points = " << poly_data->GetNumberOfPoints() << "\n";
-
   vtkSmartPointer<CustomSurfaceReconstructionFilter> surfaceReconstruction =
     vtkSmartPointer<CustomSurfaceReconstructionFilter>::New();
   surfaceReconstruction->SetInputData(pointSet);
@@ -311,7 +309,7 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
     float yd = vecs[i].y;
     float zd = vecs[i].z;
 
-    this->trilinearInterpolate(grad->GetOutput(), x, y, z, normal);
+    this->trilinear_interpolate(grad->GetOutput(), x, y, z, normal);
 
     float mag = xd * normal(0) + yd * normal(1) + zd * normal(2);
 
@@ -437,8 +435,10 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
 
     ren->AddViewProp(this->image_actor_);
 
-    ren->ResetCamera();
+    //ren->ResetCamera();
     //this->renderer_->ResetCameraClippingRange();
+    ren->AddViewProp(corner_annotation);
+
   }
   else {
 
@@ -477,12 +477,11 @@ void Viewer::display_object(QSharedPointer<DisplayObject> object)
     actor->GetProperty()->SetSpecularPower(15);
     mapper->ScalarVisibilityOff();
 
-    ren->RemoveAllViewProps();
+
     //ren->AddActor( actor );
     //ren->AddActor( this->glyph_actor_ );
   }
 
-  ren->AddViewProp(corner_annotation);
 
   this->display_vector_field();
   this->update_actors();
@@ -499,7 +498,7 @@ void Viewer::clear_viewer()
 //-----------------------------------------------------------------------------
 void Viewer::reset_camera(std::array<double, 3> c)
 {
-  this->renderer_->ResetCamera();
+  //this->renderer_->ResetCamera();
 
 //  this->renderer_->GetActiveCamera()->SetViewUp(0, 1, 0);
 //  this->renderer_->GetActiveCamera()->SetFocalPoint(0, 0, 0);
@@ -606,7 +605,6 @@ void Viewer::update_actors()
 
   this->renderer_->RemoveActor(this->glyph_actor_);
   this->renderer_->RemoveActor(this->arrow_glyph_actor_);
-
   this->renderer_->RemoveActor(this->surface_actor_);
 
   /*
@@ -724,7 +722,7 @@ void Viewer::draw_exclusion_spheres(QSharedPointer<DisplayObject> object)
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::trilinearInterpolate(vtkImageData* grad, double x, double y, double z,
+void Viewer::trilinear_interpolate(vtkImageData* grad, double x, double y, double z,
                                   vnl_vector_fixed<double, 3> &ans) const
 {
   // Access gradient image information.

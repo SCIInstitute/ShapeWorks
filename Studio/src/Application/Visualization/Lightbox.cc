@@ -76,6 +76,10 @@ void Lightbox::insert_object_into_viewer(QSharedPointer<DisplayObject> object, i
     auto pos = viewer->get_renderer()->GetActiveCamera()->GetPosition();
     this->initPos_ = { { pos[0], pos[1], pos[2] } };
   }
+  else
+  {
+    viewer->get_renderer()->SetActiveCamera(this->camera_);
+  }
 }
 
 //-----------------------------------------------------------------------------
