@@ -291,11 +291,6 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
   // stored in the "scalars" so that the vtk color mapping and glyph scaling
   // happens properly.
   for (unsigned int i = 0; i < pointSet->GetNumberOfPoints(); i++) {
-    double x = pointSet->GetPoint(i)[0];
-    double y = pointSet->GetPoint(i)[1];
-    double z = pointSet->GetPoint(i)[2];
-
-    double pos[3];
 
     auto id = locator->FindClosestPoint(pointSet->GetPoint(i));
     double* normal = poly_data->GetPointData()->GetNormals()->GetTuple(id);
@@ -311,7 +306,6 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 
     vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
-    //std::cerr << "mag = " << mag << "\n";
   }
   this->updateDifferenceLUT(minmag, maxmag);
 }
