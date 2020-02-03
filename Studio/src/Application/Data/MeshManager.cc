@@ -106,9 +106,3 @@ QSharedPointer<SurfaceReconstructor> MeshManager::getSurfaceReconstructor()
 {
   return this->surfaceReconstructor_;
 }
-
-//---------------------------------------------------------------------------
-bool MeshManager::is_reconstruction_ready()
-{
-
-}
