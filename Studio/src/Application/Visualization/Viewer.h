@@ -72,8 +72,8 @@ private:
                                  vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
-  void computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes,
-                                 vtkSmartPointer<vtkFloatArray> vectors);
+  void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
+                                   vtkSmartPointer<vtkFloatArray> vectors);
 
   void draw_exclusion_spheres(QSharedPointer<DisplayObject> object);
 

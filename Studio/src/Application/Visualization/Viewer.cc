@@ -216,8 +216,8 @@ void Viewer::display_vector_field()
 
   /////////////////////////////////////////////////////////////////////////////////
   // Step 2. Assign values at each mesh point based on the closest correspondence points
-  this->computeSurfaceDifferences(magnitudes, vectors);
   /////////////////////////////////////////////////////////////////////////////////
+  this->compute_surface_differences(magnitudes, vectors);
 
   /////////////////////////////////////////////////////////////////////////////////
   // Step 3. Assign the vectors and magnitudes to the glyphs and surface
@@ -311,8 +311,8 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::computeSurfaceDifferences(vtkSmartPointer<vtkFloatArray> magnitudes,
-                                       vtkSmartPointer<vtkFloatArray> vectors)
+void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
+                                         vtkSmartPointer<vtkFloatArray> vectors)
 {
   vtkPolyData* polyData = this->surface_mapper_->GetInput();
   if (!polyData) {
