@@ -13,7 +13,7 @@ TEST(ImageTests, resample_binary_isotropic_test) {
 
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
-  image.resample();
+  image.isoresample();
   image.binarize();
   image.recenter();
   Image ground_truth(test_location + "binary-isotropic-resampled.nrrd");
@@ -27,7 +27,7 @@ TEST(ImageTests, resample_binary_anisotropic_test) {
 
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
-  image.resample();
+  image.isoresample();
   image.binarize();
   image.recenter();
   Image ground_truth(test_location + "binary-anisotropic-resampled.nrrd");
@@ -40,7 +40,7 @@ TEST(ImageTests, resample_smooth_isotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
 
   Image image(test_location + "smooth-isotropic-input.nrrd");
-  image.resample();
+  image.isoresample();
   image.recenter();
   Image ground_truth(test_location + "smooth-isotropic-resampled.nrrd");
 
@@ -52,7 +52,7 @@ TEST(ImageTests, resample_smooth_anisotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/resample/");
 
   Image image(test_location + "smooth-anisotropic-input.nrrd");
-  image.resample();
+  image.isoresample();
   image.recenter();
   Image ground_truth(test_location + "smooth-anisotropic-resampled.nrrd");
 

@@ -45,13 +45,13 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
 
         if isBinary:
             cmd.extend(["antialias"])
-        #if isBinary:
-        cmd.extend(["resample", "--isospacing", str(isoSpacing), "--defaultvalue", str(-1.0)])  
+
+        cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
         
-        if recenter:
-            cmd.extend(["recenterimage"])
         if isBinary:
             cmd.extend(["binarize"])
+        if recenter:
+            cmd.extend(["recenterimage"])
 
         cmd.extend(["writeimage", "--name", outname])
         print(cmd)
