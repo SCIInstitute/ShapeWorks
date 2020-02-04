@@ -161,7 +161,7 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
 {
-  const std::string prog = "resample";
+  const std::string prog = "isoresample";
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
 
@@ -180,7 +180,7 @@ int ResampleImage::execute(const optparse::Values &options, SharedCommandData &s
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.resample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
 

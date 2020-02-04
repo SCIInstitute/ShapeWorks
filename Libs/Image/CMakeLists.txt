@@ -24,10 +24,6 @@ install(TARGETS Image
   PUBLIC_HEADER DESTINATION include
   )
 
-add_executable(PadVolumeWithConstant PadVolumeWithConstant.cxx )
-target_link_libraries(PadVolumeWithConstant ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS PadVolumeWithConstant RUNTIME DESTINATION bin)
-
 add_executable(ClipVolume ClipVolume.cxx)
 target_link_libraries(ClipVolume ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)
 INSTALL(TARGETS ClipVolume RUNTIME DESTINATION bin)

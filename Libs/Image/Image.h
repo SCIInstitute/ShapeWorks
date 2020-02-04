@@ -24,7 +24,7 @@ public:
                 PixelType inside = itk::NumericTraits<PixelType>::One,
                 PixelType outside = itk::NumericTraits<PixelType>::Zero);
   bool recenter();
-  bool resample(double isoSpacing = 1.0f, Dims outputSize = Dims());
+  bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
   // bool nextfunction(...);
 

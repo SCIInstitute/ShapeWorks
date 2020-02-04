@@ -197,12 +197,14 @@ bool Image::recenter()
   return true;
 }
 
-/// resample
+/// isoresample
+///
 /// create an isotropic resampling of the given volume
 /// resample accepts only continuous images, so probably antialias binary images first.
+///
 /// \param isoSpacing     size of an output voxel [default 1.0)
 /// \param outputSize     image size can be changed [default stays the same]
-bool Image::resample(double isoSpacing, Dims outputSize)
+bool Image::isoresample(double isoSpacing, Dims outputSize)
 {
   if (!this->image)
   {
