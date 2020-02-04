@@ -27,7 +27,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from DatasetUtils import datasets
+# from DatasetUtils import datasets
 
 def Run_Pipeline(args):
 
@@ -60,7 +60,7 @@ def Run_Pipeline(args):
         print("Downloading " + filename + " from SCIGirder.")
         datasets.downloadDataset(filename)
 
-    # extract the zipfile
+    extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
 
