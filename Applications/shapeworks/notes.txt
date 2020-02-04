@@ -17,6 +17,7 @@ HOWTO start a new command:
  4) find all uses of the command (in .sh and .py files) and change them to use the new shapeworks subcommand:
   $ find Examples -name "*" -type f -exec grep -i "OldCommandName" {} \; -print
  5) test command as needed to ensure it works the same as before (unless there was already a bug :)
+  5b) add unit tests for new classes (follow Alan's example for a function in Image)
  6) remove the old command from its directory's CMakeLists.txt and `git rm OldCommandName.cxx`
  7) commit the results and make a pull request *to executable* (not to master)
  
@@ -34,6 +35,8 @@ General tasks:
 
 Commands:   (* means OptionParser already used, otherwise just argv)
 -----------------------------
+ShapeWorksToolsConsolidation -> https://docs.google.com/spreadsheets/d/17gevfSR-bY3cSr0C-rAmOe6kE8OtrFv06iWt_W10T1M/
+
 Image commands:
 
 [x] readimage
@@ -62,7 +65,12 @@ Image commands:
 [] *ExtractGivenLabelImage
 [] *FastMarching
 [] *FindLargestBoundingBox
-[] *PadVolumeWithConstant
+[x] *PadVolumeWithConstant -> shapeworks pad
+o Examples:
+ - ./shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd pad --padding 0 --value 0.0 writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/padvolume_seg.ellipsoid_0.nrrd
+
+ - ./PadVolumeWithConstant --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/archanasrisubramanian/Desktop/shapeworks_results/oldpadvolume_seg.ellipsoid_0.nrrd --paddingSize=0 --paddingValue=0.0
+
 [] *ReflectVolumes
 
 [x] ResampleVolumesToBeIsotropic -> shapeworks resampleimage (per request during 2020.01.07 meeting)
@@ -70,7 +78,7 @@ Image commands:
   - resampleimage --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --recenter true --isospacing 1.0 --isBinary true
   - ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_29.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
  o Update example:
-   readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+   shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
 
  o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic (see below)
   - Converted the Image version and need to remove Analyze version (pretty sure it's just a copy/paste of the ITK example)

@@ -27,7 +27,13 @@ public:
   bool smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoothing*/);
   // bool nextfunction(...);
 
+  /// Compare if points in two meshes are equal
+  bool compare_points_equal(const Mesh& other_mesh);
+
+  /// Compare if scalars in two meshes are equal
+  bool compare_scalars_equal(const Mesh& other_mesh);
+
 private:
-  vtkSmartPointer<vtkPolyData> mesh;
+  vtkSmartPointer<vtkPolyData> poly_data_;
 };
 } // shapeworks
