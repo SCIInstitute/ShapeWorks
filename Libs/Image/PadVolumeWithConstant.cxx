@@ -143,7 +143,8 @@ int main( int argc, char * argv[] )
     std::cout<<"Writing: " << outFilename <<std::endl;
     writer->SetFileName( outFilename );
     writer->SetInput(padFilter->GetOutput());
-
+    writer->SetUseCompression(true);
+    
     try
     {
         writer->Update();
