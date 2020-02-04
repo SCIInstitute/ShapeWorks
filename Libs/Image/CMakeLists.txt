@@ -67,3 +67,7 @@ INSTALL(TARGETS FindLargestBoundingBox  RUNTIME DESTINATION bin)
 add_executable(ReflectVolumes ReflectVolumes.cxx)
 target_link_libraries(ReflectVolumes ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ReflectVolumes  RUNTIME DESTINATION bin)
+
+add_executable(MeshFromDistanceTransforms MeshFromDistanceTransforms.cxx)
+target_link_libraries(MeshFromDistanceTransforms ${ITK_LIBRARIES} Utils)
+INSTALL(TARGETS MeshFromDistanceTransforms  RUNTIME DESTINATION bin)
