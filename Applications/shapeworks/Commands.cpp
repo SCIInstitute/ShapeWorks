@@ -161,12 +161,11 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
 {
-  const std::string prog = "resample";
+  const std::string prog = "isoresample";
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--defaultvalue").action("store").type("float").set_default(-1.0).help("The default value for pixel");
-  parser.add_option("--isospacing").action("store").type("float").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
+  parser.add_option("--isospacing").action("store").type("double").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
   parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
@@ -176,13 +175,12 @@ void ResampleImage::buildParser()
 
 int ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  float defaultValue = static_cast<bool>(options.get("defaultvalue"));
-  float isoSpacing = static_cast<float>(options.get("isospacing"));
+  double isoSpacing = static_cast<double>(options.get("isospacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.resample(isoSpacing, defaultValue, Dims({sizeX, sizeY, sizeZ}));
+  return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
 
