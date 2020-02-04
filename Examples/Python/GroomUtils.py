@@ -7,7 +7,6 @@ import os
 import subprocess
 import shutil
 import xml.etree.ElementTree as ET
-# import SimpleITK as itk
 import itk
 import vtk
 import vtk.util.numpy_support
@@ -140,22 +139,22 @@ def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, re
 
 def FindReferenceImage(inDataList):
     """
-    This find the median file between all the input files
+        This find the median file between all the input files
     """
     IMG = []
     DIM = []
     for i in range(len(inDataList)):
-        tmp = itk.GetArrayFromImage(itk.ReadImage(inDataList[i]))
+        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
         IMG.append(tmp)
         DIM.append(tmp.shape)
+
     ref_dim = np.max(DIM, axis =0)
+
     for i in range(len(inDataList)):
-        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant', constant_values = 0)
+        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
+
     COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
-    mean = itk.GetImageFromArray(COM)
-    writer = itk.ImageFileWriter()
-    writer.SetFileName("mean.nrrd")
-    writer.Execute(mean)
+
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
     print(" ")
     print("############# Reference File #############")
@@ -543,6 +542,11 @@ def MeshesToVolumes(outDir, meshList, imgList):
             mesh = mesh[:-4] + ".ply"
             execCommand = ["vtk2ply", mesh_vtk, mesh]
             subprocess.check_call(execCommand)
+        if extension == "stl":
+            mesh_vtk = mesh
+            mesh = mesh[:-4] + ".ply"
+            execCommand = ["stl2ply", mesh_vtk, mesh]
+            subprocess.check_call(execCommand) 
         # get image
         for image_file in imgList:
             if prefix in image_file:
@@ -639,6 +643,9 @@ def SelectCuttingPlane(input_file):
         subprocess.check_call(execCommand)
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
+        subprocess.check_call(execCommand)
+    elif file_format == "stl":
+        execCommand = ["stl2vtk", input_file, input_vtk]
         subprocess.check_call(execCommand)
     elif file_format == "vtk":
         pass

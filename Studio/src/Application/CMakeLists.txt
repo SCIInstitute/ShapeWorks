@@ -81,6 +81,8 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} )
 IF(APPLE)
   # set how it shows up in the Info.plist file
   SET(MACOSX_BUNDLE_ICON_FILE ShapeWorksStudio.icns)
+  # set the bundle identifier
+  SET(MACOSX_BUNDLE_GUI_IDENTIFIER edu.utah.sci.shapeworks.studio)
   # set where in the bundle to put the icns file
   SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/Resources/ShapeWorksStudio.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
   # include the icns file in the target

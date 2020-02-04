@@ -65,9 +65,6 @@ jobs:
       shell: bash -l {0}
       run: cd build && make -j4
 
-    - name: make test
-      shell: bash -l {0}
-      run: conda activate shapeworks && cd build && ctest -VV
 
     - name: make install
       shell: bash -l {0}
@@ -79,6 +76,10 @@ jobs:
     - name: Build Binary Package
       run: pwd ; ls ; PATH=$HOME:$PATH ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
 
+    - name: make test
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && ctest -VV
+    
     - uses: actions/upload-artifact@v1
       with:
         name: artifact-${{github.sha}}-linux
