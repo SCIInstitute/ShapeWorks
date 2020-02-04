@@ -1,5 +1,6 @@
 #include "Commands.h"
 #include "Image.h"
+#include <limits>
 
 namespace shapeworks {
 
@@ -160,12 +161,11 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
 {
-  const std::string prog = "resample";
+  const std::string prog = "isoresample";
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isbinary").action("store").type("bool").set_default(false).help("For binary input image (this will antialias the sample using bspline interpolation) [default false].");
-  parser.add_option("--isospacing").action("store").type("float").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
+  parser.add_option("--isospacing").action("store").type("double").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
   parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
@@ -175,13 +175,12 @@ void ResampleImage::buildParser()
 
 int ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  bool isbinary = static_cast<bool>(options.get("isbinary"));
-  float isoSpacing = static_cast<float>(options.get("isospacing"));
+  double isoSpacing = static_cast<double>(options.get("isospacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.resample(isoSpacing, isbinary, Dims({sizeX, sizeY, sizeZ}));
+  return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
 
@@ -230,6 +229,29 @@ int Binarize::execute(const optparse::Values &options, SharedCommandData &shared
   float eps = (threshold == 0.0f) ? std::numeric_limits<float>::epsilon() : 0.0f;
 
   return sharedData.image.binarize(threshold + eps, inside, outside);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Padimage
+///////////////////////////////////////////////////////////////////////////////
+void PadImage::buildParser()
+{
+  const std::string prog = "pad";
+  const std::string desc = "pads an image with a contant value in the x-, y-, and z- directions";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
+  parser.add_option("--value").action("store").type("float").set_default(0).help("Value to be used to fill padded voxels.");
+  
+  Command::buildParser();
+}
+
+int PadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  int padding = static_cast<int>(options.get("padding"));
+  float value = static_cast<float>(options.get("value"));
+
+  return sharedData.image.pad(padding, value);
 }
 
 
