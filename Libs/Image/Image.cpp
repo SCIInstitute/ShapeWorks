@@ -197,11 +197,12 @@ bool Image::recenter()
   return true;
 }
 
-/// resample accepts only continuous images
-/// \param isoSpacing
-/// \param defaultValue
-/// \param outputSize     image size can be changed
-bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
+/// resample
+/// create an isotropic resampling of the given volume
+/// resample accepts only continuous images, so probably antialias binary images first.
+/// \param isoSpacing     size of an output voxel [default 1.0)
+/// \param outputSize     image size can be changed [default stays the same]
+bool Image::resample(double isoSpacing, Dims outputSize)
 {
   if (!this->image)
   {
@@ -212,38 +213,18 @@ bool Image::resample(float isoSpacing, PixelType defaultValue, Dims outputSize)
   using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
   ResampleFilter::Pointer resampler = ResampleFilter::New();
 
-  using TransformType = itk::IdentityTransform<double, Image::dims>;
-  TransformType::Pointer transform = TransformType::New();
-  transform->SetIdentity();
-  resampler->SetTransform(transform);
-
-  // using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  using InterpolatorType = itk::BSplineInterpolateImageFunction<ImageType, double>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
-  interpolator->SetSplineOrder(3);
-  resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(-1);
-
-  ImageType::SpacingType spacing;
-  spacing[0] = isoSpacing;
-  spacing[1] = isoSpacing;
-  spacing[2] = isoSpacing;
-
+  double spacing[] = { isoSpacing, isoSpacing, isoSpacing };
   resampler->SetOutputSpacing(spacing);
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
   
-  ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
-  ImageType::SpacingType inputSpacing = image->GetSpacing();
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
   {
-    // fixme: for some reason this isn't what we're supposed to do.
-    // for some datasets (ellipsoid) it works, but for others it's unnecessary
-    // more investigation needed.
-    outputSize[0] = std::ceil(inputSize[0] * inputSpacing[0] / isoSpacing);
-    outputSize[1] = std::ceil(inputSize[1] * inputSpacing[1] / isoSpacing);
-    outputSize[2] = std::ceil((inputSize[2] - 1) * inputSpacing[2] / isoSpacing);
-    // probably std::ceil should be std::floor (ask Alan and Shireen)
+    ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
+    ImageType::SpacingType inputSpacing = image->GetSpacing();
+    outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / isoSpacing);
+    outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / isoSpacing);
+    outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / isoSpacing);
   }
   resampler->SetSize(outputSize);
   resampler->SetInput(this->image);
