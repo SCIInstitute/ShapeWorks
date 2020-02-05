@@ -29,8 +29,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
 
-  this->pcaAnimateDirection = true;
-
   this->ui_->log_radio->setChecked(true);
   this->ui_->linear_radio->setChecked(false);
 
@@ -39,9 +37,18 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   connect(this->ui_->sampleSpinBox, SIGNAL(valueChanged(int)), this,
           SLOT(handle_analysis_options()));
   connect(this->ui_->medianButton, SIGNAL(clicked()), this, SLOT(handle_median()));
+
   connect(this->ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this,
           SLOT(handle_pca_animate_state_changed()));
-  connect(&this->pcaAnimateTimer, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+  connect(&this->pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+
+  // group animation
+  connect(this->ui_->group_animate_checkbox, &QCheckBox::clicked, this,
+          &AnalysisTool::handle_group_animate_state_changed);
+  connect(&this->group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
+
+  connect(this->ui_->pca_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
+  connect(this->ui_->group_radio_button, &QRadioButton::clicked, this, &AnalysisTool::pca_update);
 }
 
 //---------------------------------------------------------------------------
@@ -57,10 +64,32 @@ std::string AnalysisTool::getAnalysisMode()
   if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) { return "regression";}
   return "";
 }
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::get_group_difference_mode()
+{
+  return this->ui_->difference_button->isChecked();
+}
+
+//---------------------------------------------------------------------------
+std::vector<Point> AnalysisTool::get_group_difference_vectors()
+{
+  std::vector<Point> vecs;
+
+  auto num_points = this->stats_.Mean().size() / 3;
+  for (unsigned int i = 0; i < num_points; i++) {
+    Point tmp;
+    tmp.x = this->stats_.Group2Mean()[i * 3] - this->stats_.Group1Mean()[i * 3];
+    tmp.y = this->stats_.Group2Mean()[i * 3 + 1] - this->stats_.Group1Mean()[i * 3 + 1];
+    tmp.z = this->stats_.Group2Mean()[i * 3 + 2] - this->stats_.Group1Mean()[i * 3 + 2];
+    vecs.push_back(tmp);
+  }
+  return vecs;
+}
+
 //---------------------------------------------------------------------------
 void AnalysisTool::on_linear_radio_toggled(bool b)
 {
-
   if (b) {
     this->ui_->graph_->setLogScale(false);
     this->ui_->graph_->repaint();
@@ -143,9 +172,23 @@ int AnalysisTool::getPCAMode()
 }
 
 //---------------------------------------------------------------------------
+double AnalysisTool::get_group_value()
+{
+  double groupSliderValue = this->ui_->group_slider->value();
+  double groupRatio = groupSliderValue / static_cast<double>(this->ui_->group_slider->maximum());
+  return groupRatio;
+}
+
+//---------------------------------------------------------------------------
 bool AnalysisTool::pcaAnimate()
 {
   return this->ui_->pcaAnimateCheckBox->isChecked();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::groupAnimate()
+{
+  return this->ui_->group_animate_checkbox->isChecked();
 }
 
 //---------------------------------------------------------------------------
@@ -252,6 +295,11 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
   }
 
+  this->ui_->group1_button->setEnabled(this->project_->groups_available());
+  this->ui_->group2_button->setEnabled(this->project_->groups_available());
+  this->ui_->difference_button->setEnabled(this->project_->groups_available());
+  this->ui_->group_slider_widget->setEnabled(this->project_->groups_available());
+
   emit update_view();
 }
 
@@ -260,6 +308,30 @@ void AnalysisTool::handle_median()
 {
   if (!this->compute_stats()) { return;}
   this->ui_->sampleSpinBox->setValue(this->stats_.ComputeMedianShape(-32));       //-32 = both groups
+  emit update_view();
+}
+
+//-----------------------------------------------------------------------------
+void AnalysisTool::on_overall_button_clicked()
+{
+  emit update_view();
+}
+
+//-----------------------------------------------------------------------------
+void AnalysisTool::on_group1_button_clicked()
+{
+  emit update_view();
+}
+
+//-----------------------------------------------------------------------------
+void AnalysisTool::on_group2_button_clicked()
+{
+  emit update_view();
+}
+
+//-----------------------------------------------------------------------------
+void AnalysisTool::on_difference_button_clicked()
+{
   emit update_view();
 }
 
@@ -275,11 +347,14 @@ bool AnalysisTool::compute_stats()
   }
 
   std::vector < vnl_vector < double >> points;
+  std::vector<int> group_ids;
   foreach(ShapeHandle shape, this->project_->get_shapes()) {
     points.push_back(shape->get_global_correspondence_points());
+    group_ids.push_back(shape->get_group_id());
   }
 
-  this->stats_.ImportPoints(points);
+  this->stats_.ImportPoints(points, group_ids);
+
   this->stats_.ComputeModes();
   this->stats_ready_ = true;
   std::vector<double> vals;
@@ -289,18 +364,35 @@ bool AnalysisTool::compute_stats()
   this->ui_->graph_->setData(vals);
 
   this->ui_->graph_->repaint();
+
+  // set widget enable state for groups
+  bool groups_available = this->project_->groups_available();
+  this->ui_->group_slider->setEnabled(groups_available);
+  this->ui_->group_animate_checkbox->setEnabled(groups_available);
+  this->ui_->group_radio_button->setEnabled(groups_available);
+
   return true;
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double> & AnalysisTool::getMean()
+const vnl_vector<double>& AnalysisTool::get_mean_shape()
 {
-  if (!this->compute_stats()) { return this->empty_shape_;}
+  if (!this->compute_stats()) {
+    return this->empty_shape_;
+  }
+
+  if (this->ui_->group1_button->isChecked()) {
+    return this->stats_.Group1Mean();
+  }
+  else if (this->ui_->group2_button->isChecked()) {
+    return this->stats_.Group2Mean();
+  }
+
   return this->stats_.Mean();
 }
 
 //-----------------------------------------------------------------------------
-const vnl_vector<double> & AnalysisTool::getShape(int mode, double value)
+const vnl_vector<double>& AnalysisTool::get_shape(int mode, double value, double group_value)
 {
   if (!this->compute_stats() || this->stats_.Eigenvectors().size() <= 1) {
     return this->empty_shape_;
@@ -317,12 +409,18 @@ const vnl_vector<double> & AnalysisTool::getShape(int mode, double value)
                            QString::number(this->stats_.Eigenvalues()[m]),
                            QString::number(value * lambda));
 
-  this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+  if (this->ui_->group_radio_button->isChecked()) {
+    this->temp_shape_ = this->stats_.Group1Mean() + (this->stats_.GroupDifference() * group_value);
+  }
+  else {
+    this->temp_shape_ = this->stats_.Mean() + (e * (value * lambda));
+  }
+
   return this->temp_shape_;
 }
 
 //---------------------------------------------------------------------------
-ParticleShapeStatistics<3> AnalysisTool::getStats()
+ParticleShapeStatistics<3> AnalysisTool::get_stats()
 {
   this->compute_stats();
   return this->stats_;
@@ -356,7 +454,7 @@ void AnalysisTool::save_to_preferences()
 //---------------------------------------------------------------------------
 void AnalysisTool::shutdown()
 {
-  this->pcaAnimateTimer.stop();
+  this->pca_animate_timer_.stop();
 }
 
 //---------------------------------------------------------------------------
@@ -375,6 +473,15 @@ void AnalysisTool::on_pcaSlider_valueChanged()
 }
 
 //---------------------------------------------------------------------------
+void AnalysisTool::on_group_slider_valueChanged()
+{
+  // this will make the slider handle redraw making the UI appear more responsive
+  QCoreApplication::processEvents();
+
+  emit pca_update();
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i)
 {
   emit pca_update();
@@ -385,11 +492,11 @@ void AnalysisTool::handle_pca_animate_state_changed()
 {
   if (this->pcaAnimate()) {
     //this->setPregenSteps();
-    this->pcaAnimateTimer.setInterval(10);
-    this->pcaAnimateTimer.start();
+    this->pca_animate_timer_.setInterval(10);
+    this->pca_animate_timer_.start();
   }
   else {
-    this->pcaAnimateTimer.stop();
+    this->pca_animate_timer_.stop();
   }
 }
 
@@ -397,7 +504,7 @@ void AnalysisTool::handle_pca_animate_state_changed()
 void AnalysisTool::handle_pca_timer()
 {
   int value = this->ui_->pcaSlider->value();
-  if (this->pcaAnimateDirection) {
+  if (this->pca_animate_direction_) {
     value += this->ui_->pcaSlider->singleStep();
   }
   else {
@@ -405,11 +512,43 @@ void AnalysisTool::handle_pca_timer()
   }
 
   if (value >= this->ui_->pcaSlider->maximum() || value <= this->ui_->pcaSlider->minimum()) {
-    this->pcaAnimateDirection = !this->pcaAnimateDirection;
+    this->pca_animate_direction_ = !this->pca_animate_direction_;
     //this->setPregenSteps();
   }
 
   this->ui_->pcaSlider->setValue(value);
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_group_animate_state_changed()
+{
+  if (this->groupAnimate()) {
+    //this->setPregenSteps();
+    this->group_animate_timer_.setInterval(10);
+    this->group_animate_timer_.start();
+  }
+  else {
+    this->group_animate_timer_.stop();
+  }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::handle_group_timer()
+{
+  int value = this->ui_->group_slider->value();
+  if (this->group_animate_direction_) {
+    value += this->ui_->group_slider->singleStep();
+  }
+  else {
+    value -= this->ui_->group_slider->singleStep();
+  }
+
+  if (value >= this->ui_->group_slider->maximum() || value <= this->ui_->group_slider->minimum()) {
+    this->group_animate_direction_ = !this->group_animate_direction_;
+    //this->setPregenSteps();
+  }
+
+  this->ui_->group_slider->setValue(value);
 }
 
 //---------------------------------------------------------------------------

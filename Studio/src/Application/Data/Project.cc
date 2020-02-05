@@ -353,8 +353,8 @@ bool Project::load_light_project(QString filename, string &planesFile)
   TiXmlHandle docHandle(&doc);
   std::istringstream inputsBuffer;
 
-  /// TODO
-  ///this->groupsAvailable = (docHandle.FirstChild("group_ids").Element() != nullptr);
+  // determine if groups are available
+  this->groups_available_ = (docHandle.FirstChild("group_ids").Element() != nullptr);
 
   /// TODO
   //this->numDomains = 1;
@@ -371,6 +371,15 @@ bool Project::load_light_project(QString filename, string &planesFile)
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
       std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
+
+      if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
+        QMessageBox::critical(NULL, "ShapeWorksStudio",
+                              "File does not exist: " +
+                              QString::fromStdString(distance_transform_filename),
+                              QMessageBox::Ok);
+        return false;
+      }
+
       groom_files.push_back(distance_transform_filename);
     }
     inputsBuffer.clear();
@@ -420,6 +429,21 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   if (!this->load_point_files(global_point_files, false)) {
     return false;
+  }
+
+  // read group ids
+  std::vector<int> group_ids;
+  elem = docHandle.FirstChild("group_ids").Element();
+  if (elem) {
+    inputsBuffer.str(elem->GetText());
+    int group_id;
+    while (inputsBuffer >> group_id) {
+      group_ids.push_back(group_id);
+    }
+
+    for (int i = 0; i < this->shapes_.size(); i++) {
+      this->shapes_[i]->set_group_id(group_ids[i]);
+    }
   }
 
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
@@ -693,6 +717,12 @@ bool Project::groomed_present()
 bool Project::reconstructed_present()
 {
   return this->reconstructed_present_;
+}
+
+//---------------------------------------------------------------------------
+bool Project::groups_available()
+{
+  return this->groups_available_;
 }
 
 //---------------------------------------------------------------------------

@@ -1001,8 +1001,8 @@ bool ShapeWorksView2::readParameterFile(char* filename)
   this->arrowGlyphs->SetColorModeToColorByScalar();
   this->glyphs->SetColorModeToColorByScalar();
   this->glyphMapper->SetColorModeToMapScalars();
-  this->arrowGlyphMapper->SetColorModeToMapScalars();
   this->glyphMapper->ScalarVisibilityOn();
+  this->arrowGlyphMapper->SetColorModeToMapScalars();
   this->arrowGlyphMapper->ScalarVisibilityOn();
 
   this->displayShape(this->stats.Mean());

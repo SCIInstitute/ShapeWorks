@@ -1,5 +1,4 @@
-#ifndef STUDIO_ANALYSIS_ANALYSISTOOL_H
-#define STUDIO_ANALYSIS_ANALYSISTOOL_H
+#pragma once
 
 #include <QSharedPointer>
 #include <QWidget>
@@ -18,6 +17,8 @@ class AnalysisTool : public QWidget {
   Q_OBJECT;
 public:
 
+  using PointType = itk::Point<double, 3>;
+
   AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
 
@@ -33,15 +34,22 @@ public:
 
   std::string getAnalysisMode();
 
+  bool get_group_difference_mode();
+
+  std::vector<Point> get_group_difference_vectors();
+
   void setAnalysisMode(std::string mode);
 
   void setLabels(QString which, QString value);
 
   int getPCAMode();
 
+  double get_group_value();
+
   double get_pca_value();
 
   bool pcaAnimate();
+  bool groupAnimate();
 
   int getSampleNumber();
 
@@ -52,11 +60,11 @@ public:
   void reset_stats();
   void enableActions();
 
-  const vnl_vector<double> & getMean();
+  const vnl_vector<double>& get_mean_shape();
 
-  const vnl_vector<double> & getShape(int mode, double value);
+  const vnl_vector<double>& get_shape(int mode, double value, double group_value = 0.5);
 
-  ParticleShapeStatistics<3> getStats();
+  ParticleShapeStatistics<3> get_stats();
   void load_from_preferences();
   void save_to_preferences();
 
@@ -70,12 +78,22 @@ public Q_SLOTS:
   void handle_analysis_options();
   void handle_median();
 
+  void on_overall_button_clicked();
+  void on_group1_button_clicked();
+  void on_group2_button_clicked();
+  void on_difference_button_clicked();
+
   // PCA
   void on_pcaSlider_valueChanged();
+  void on_group_slider_valueChanged();
   void on_pcaModeSpinBox_valueChanged(int i);
+
 
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
+
+  void handle_group_animate_state_changed();
+  void handle_group_timer();
 
   void on_linear_radio_toggled(bool b);
 
@@ -91,10 +109,12 @@ signals:
   void reconstruction_complete();
 
 private:
+
   //private methods
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+
   //private members
   Preferences & preferences_;
   Ui_AnalysisTool* ui_;
@@ -110,9 +130,11 @@ private:
   vnl_vector<double> empty_shape_;
   vnl_vector<double> temp_shape_;
 
-  bool pcaAnimateDirection;
-  QTimer pcaAnimateTimer;
+  bool pca_animate_direction_ = true;
+  QTimer pca_animate_timer_;
+
+  bool group_animate_direction_ = true;
+  QTimer group_animate_timer_;
+
   BarGraph* chart_;
 };
-
-#endif /* STUDIO_ANALYSIS_ANALYSISTOOL_H */
