@@ -143,14 +143,21 @@ void Visualizer::update_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double> &points)
 {
-  QVector<DisplayObjectHandle>* list_ptr = this->getList(points);
-  this->lightbox_->set_display_objects(*list_ptr);
+  std::vector<Point> empty_vectors;
+  this->display_shape(points, empty_vectors);
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::display_shape(const vnl_vector<double> &points, const std::vector<Point> &vectors)
+{
+  QVector<DisplayObjectHandle> objects;
+  objects.push_back(this->create_display_object(points, vectors));
+  this->lightbox_->set_display_objects(objects);
   this->update_viewer_properties();
   //this->reset_camera();
   this->lightbox_->redraw();
   this->currentShape_ = points;
 }
-
 //-----------------------------------------------------------------------------
 vnl_vector<double> Visualizer::getCurrentShape()
 {
@@ -218,9 +225,10 @@ void Visualizer::display_sample(size_t i)
 }
 
 //-----------------------------------------------------------------------------
-QVector<DisplayObjectHandle>* Visualizer::getList(const vnl_vector<double> &points)
+DisplayObjectHandle Visualizer::create_display_object(const vnl_vector<double> &points,
+                                                      const std::vector<Point> &vectors)
 {
-  QVector<DisplayObjectHandle>* list_ptr = NULL;
+
   MeshHandle mesh = MeshHandle(new Mesh());
   mesh->set_poly_data(this->project_->get_mesh_manager()->getMesh(points));
 
@@ -228,6 +236,7 @@ QVector<DisplayObjectHandle>* Visualizer::getList(const vnl_vector<double> &poin
 
   object->set_mesh(mesh);
   object->set_correspondence_points(points);
+  object->set_vectors(vectors);
 
   QStringList annotations;
   //annotations for the 4 corners of the view box
@@ -236,9 +245,7 @@ QVector<DisplayObjectHandle>* Visualizer::getList(const vnl_vector<double> &poin
   annotations << "";
   annotations << "";
   object->set_annotations(annotations);
-  list_ptr = new QVector<DisplayObjectHandle>();
-  *list_ptr << object;
-  return list_ptr;
+  return object;
 }
 
 //-----------------------------------------------------------------------------

@@ -183,6 +183,23 @@ if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
+#--------------------------------------------------------------------------------
+# Add an option to toggle the generation of the API documentation
+option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
+if(BUILD_DOCUMENTATION)
+
+  # for doxygen
+  SET(ShapeWorks_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  SET(ShapeWorks_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+  find_package(Doxygen)
+  if(NOT DOXYGEN_FOUND)
+    message(FATAL_ERROR
+      "Doxygen is needed to build the documentation. Please install it correctly")
+  endif(NOT DOXYGEN_FOUND)
+
+  add_subdirectory(Documentation/Doxygen)
+endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
