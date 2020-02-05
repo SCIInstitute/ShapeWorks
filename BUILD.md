@@ -4,42 +4,29 @@
 
 ---
 
-This document contains detailed instructions on building ShapeWorks from scratch. This guide will consist of three main steps. The steps will be summarized, but you can click on the links to access further information.
+This document contains detailed instructions on building ShapeWorks from scratch after cloning the repository ([Instructions on cloning](#How-To-Clone)). This guide will consist of two main steps. The steps will be summarized, but you can click on the links to access further information.
 
-1. [Cloning from Git repository](#Clone-source)
-2. [Installing dependencies](#Install-Dependencies)
-3. [Configuring and building](#Configure-and-Build)
+1. [Installing dependencies](#Install-Dependencies)
+2. [Configuring and building](#Configure-and-Build)
 
-## Clone Source
-
-ShapeWorks uses *git-lfs* to store image data for testing. Please install and setup **[git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)** before cloning ([Instructions on cloning](#How-To-Clone)). If you have already cloned ShapeWorks before installing *git-lfs*, you can get the test image data using:  
-```
-$ git lfs fetch
-$ git lfs checkout
-```
 ## Install Dependencies
 
 Follow these instructions to install the dependencies required to build shapeworks. Please make sure they are installed correctly before attempting to build it.
 
-1. **CMake**: Download and install [CMake](https://cmake.org/).
-
-2. **CMake-compatible compiler**: Download and install [Visual Studio](https://visualstudio.microsoft.com/) or another CMake-compatible compiler.
-
-3. **Anaconda**: Download and install [Anaconda](https://www.anaconda.com/). 
-
-4. **Setting up conda environment**: Using the *Anaconda Prompt*, run `conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows. 
+1. **Setting up the conda environment**: Using the *Anaconda Prompt*, run `source ./conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows. 
 
     * **On Windows,** it is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python. 
     * You can also install these [dependencies](deps.txt) manually if you prefer not to use Anaconda.
 
-5. **Qt5**: Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)
+2. **Qt5**: Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)
 
    * [[OSX]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-mac-x64-5.13.0.dmg) [[Linux]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-linux-x64-5.13.0.run) [[Windows]](https://download.qt.io/archive/qt/5.13/5.13.0/qt-opensource-windows-x86-5.13.0.exe) 
 
-6. **Add Qt5 to path**: After installing Qt5, add the directory containing `qmake.exe` to your PATH. ([How to add to PATH](GettingStarted.md#PATH-environment-variable))  
+3. **Add Qt5 to path**: After installing Qt5, add the directory containing `qmake.exe` to your PATH. ([How to add to PATH](GettingStarted.md#PATH-environment-variable))  
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
 Example qmake directory Windows: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`
-7. **VXL, VTK, and ITK**: These three dependencies can be installed by running the `$ ./superbuild.sh --dependencies-only` script. 
+
+4. **VXL, VTK, and ITK**: These three dependencies can be installed by running the `$ ./install_deps.sh` script. 
    * **On Windows**, use an msys shell (e.g. git bash) to do this. 
    * If you are getting an error that starts with  **`which: no qmake in (...)`** make sure to execute the last step correctly. If you are still having no luck, [click here](#No-qmake-Error). 
    * If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK. 
@@ -118,6 +105,14 @@ cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14
 To clone the ShapeWorks source:  
 `$ git clone https://github.com/SCIInstitute/ShapeWorks`  
 See [GettingStarted.md](GettingStarted.md#source-and-branches) for more details on git commands. 
+
+## Clone Source
+
+ShapeWorks uses *git-lfs* to store image data for testing. Please install and setup **[git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)** before cloning. If you have already cloned ShapeWorks before installing *git-lfs*, you can get the test image data using:  
+```
+$ git lfs fetch
+$ git lfs checkout
+```
 
 ### No qmake Error
 
