@@ -62,16 +62,12 @@ namespace shapeworks {
             //TODO: This assumes 3-Dimensions
             const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), D/3, 3);
             const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), D/3, 3);
-            const double dist = (rec_reshaped - Ytest_reshaped)
-                    .array().pow(2)
-                    .matrix().rowwise().sum()
-                    .array().sqrt().sum();
-
+            const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum();
             totalDist += dist;
         }
 
-        const double generalizability = totalDist / N;
-        return generalizability;
+        const double generalization = totalDist / N;
+        return generalization;
     }
 
     //TODO: Implement
