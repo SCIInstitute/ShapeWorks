@@ -81,7 +81,7 @@ namespace shapeworks {
             std::sort(reconstructions.begin(), reconstructions.end(),
                       [](const Reconstruction &l, const Reconstruction &r) { return l.dist < r.dist; });
 
-            const auto srcFilepaths = particleSystem.Paths();
+            const auto &srcPaths = particleSystem.Paths();
 
             for(int i=0; i<reconstructions.size(); i++) {
                 const int percentile = i == reconstructions.size() - 1 ? 100 : std::floor(((double)i / reconstructions.size()) * 100.0);
@@ -99,7 +99,7 @@ namespace shapeworks {
                 if(!xmlOF) { throw std::runtime_error("Unable to open file: " + xmlPath); }
 
                 xmlOF << "<point_files>"
-                      << srcFilepaths[reconstructions[i].shapeIdx] << std::endl << recPath
+                      << srcPaths[reconstructions[i].shapeIdx] << std::endl << recPath
                       << "</point_files>"
                       << "<group_ids>"
                       << 1 << std::endl << 2
