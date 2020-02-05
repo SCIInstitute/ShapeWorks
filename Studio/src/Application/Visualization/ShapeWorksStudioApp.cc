@@ -230,7 +230,7 @@ void ShapeWorksStudioApp::initialize_vtk()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered()
 {
-  if (this->preferences_.not_saved()) {
+  if (this->preferences_.not_saved() && this->ui_->action_save_project->isEnabled()) {
     // save the size of the window to preferences
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
@@ -991,7 +991,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 {
   // close the preferences window in case it is open
   this->preferences_window_->close();
-  if (this->preferences_.not_saved()) {
+  if (this->preferences_.not_saved() && this->ui_->action_save_project->isEnabled()) {
     // save the size of the window to preferences
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
