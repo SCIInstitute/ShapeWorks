@@ -3,15 +3,17 @@
 #include "Shapeworks.h"
 #include "ImageUtils.h"
 #include <itkTranslationTransform.h>
-#include <Eigen>
+#include <Eigen/Core>
+#include <vnl/vnl_vector.h>
+#include <vnl/vnl_matrix.h>
 
 namespace shapeworks {
 
 class RBFShape
 {
-  RBFShape(Vec3 coeff = Vec3(1.,1.,1.),
-                       Vec3 pows = Vec3(1.,1.,1.),
-                       std::vector<Vec3> points = std::vector<Vec3>());
+  RBFShape(Eigen::Vector3d coeff = Eigen::Vector3d(1.,1.,1.),
+                       Eigen::Vector3d pows = Eigen::Vector3d(1.,1.,1.),
+                       Eigen::MatrixXd = Eigen::MatrixXd());
 
       /** This function is the deconstructor of the class. It does nothing in this base class.
           It is a virtual function and hence it can be redefined in the derived class(s). */
@@ -23,7 +25,7 @@ class RBFShape
 
       /** This function retrieves the coefficient (x,y,z,value) of the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual Vec3 coeff();
+      virtual Eigen::Vector3d coeff();
 
       /** This function sets the ID of the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s). */
@@ -43,7 +45,7 @@ class RBFShape
 
       /** This function retrieves the vector of 3D points that were used to construct the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s).*/
-      virtual std::vector<Vec3> getPoints();
+      virtual Eigen::MatrixXd getPoints();
 
       /*******************************************************************************************************************/
       /** Flag functions: This type of functions are used to perform boolean queries for specific characteristics of the class instance. */
@@ -72,7 +74,7 @@ class RBFShape
           where \f$ \mathbf{c} \f$ is the coefficient vector of the implicit function associated with \f$ c_v \f$ as a value
           and  \f$ \mathbf{p} \f$ is the exponent of each spatial coordinate.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual double evaluate(const Vec3 &point);
+      virtual double evaluate(const Eigen::Vector3d &point);
 
       /** This function evaluates the gradient vector of the implicit function at a given 3D point.
           \param point A 3D spatial point that is defined by xyz coordinates.
@@ -81,7 +83,7 @@ class RBFShape
           where \f$ \mathbf{c} \f$ is the coefficient vector of the implicit function associated with \f$ c_v \f$ as a value
           and  \f$ \mathbf{p} \f$ is the exponent of each spatial coordinate. The operations here are element-wise.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual Vec3 gradient(const Vec3 &point);
+      virtual Eigen::Vector3d gradient(const Eigen::Vector3d &point);
 
       /** This function applies a transformation matrix (4x4) to the implicit function.
           \param mtx A 4x4 transfromation matrix to be applied to the implicit function.
@@ -115,13 +117,13 @@ class RBFShape
 
       /** The coefficient (x,y,z,value) that defines the implicit function. This is the linear part of the rbf-based implicit. pows_ > 1 is used to define it as a polynomial with a degree > 1.
           This coefficient defines the background interpolation function of the implicit function, i.e. trends in the function to be interpolated that can not be captured by the rbfs. */
-      Vec3              coeff_;
+      Eigen::Vector3d              coeff_;
 
       /** The exponent (power) of each spatial coordinate (x, y, and z) that defines the mathematical form of the basis function.
           That is, each point will contribute to the definition of the basis function by (x^pows_.x, y^pows_.y, z^pows_.z)
           This member variable doesnot have get/set access functions, it is set once using the class constructor with default ones.
           pows_ > 1 is used to define the background interpolation function as a polynomial with a degree > 1. */
-      Vec3              pows_;
+      Eigen::Vector3d              pows_;
 
       /** Identifier of the implicit function. This can be used by derived classes to refer to certain implicited using their identifiers.
           It can also be used to link different parts of the same "horizon" that has been divided by a fault. Constructor default is 0. */
@@ -137,7 +139,7 @@ class RBFShape
       /** A vector of 3D points (defined using xyz spatial coordinates) that construct the implicit function. Constructor default is empty vector.
           In the RBFImplicit derived class, rbf point values are the tps coefficients used to construct the rbf.
           These values are initialized by zeros (on surface) and +/- offsetScale/rbfOffset (for dipole points, if we move more cells off the surface, the initial rbf point coefficient is decreased). */
-      std::vector<Vec3> points_;
+      Eigen::MatrixXd points_;
 
       bool isFault_;
 };

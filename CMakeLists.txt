@@ -123,12 +123,7 @@ ELSE()
 ENDIF()
 
 ### Eigen
-#find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-#IF (TARGET Eigen3::Eigen)
-#  INCLUDE(${EIGEN3_INCLUDE_DIR})
-#ELSE()
-#  MESSAGE(SEND_ERROR "Eigen is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
-#ENDIF(TARGET Eigen3::Eigen)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)

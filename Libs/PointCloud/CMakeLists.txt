@@ -13,6 +13,8 @@ add_library(PointCloud STATIC
 target_include_directories(PointCloud PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
+target_link_libraries (PointCloud PUBLIC
+    Eigen3::Eigen)
 
 # Install
 set_target_properties(PointCloud PROPERTIES PUBLIC_HEADER
@@ -24,4 +26,4 @@ install(TARGETS PointCloud
   PUBLIC_HEADER DESTINATION include
   )
 
-target_link_libraries (PointCloud Eigen3::Eigen)
+
