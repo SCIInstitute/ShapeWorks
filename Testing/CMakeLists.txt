@@ -10,6 +10,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestConfiguration.h.in
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(ImageTests)
+add_subdirectory(MeshTests)
 add_subdirectory(OptimizeTests)
 add_subdirectory(PythonTests)
 add_subdirectory(ParticlesTests)

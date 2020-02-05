@@ -1212,36 +1212,17 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
     std::string outfilename_vtk = out_prefix_ + "_dense-QC.vtk";
     std::string outfilename_ply = out_prefix_ + "_dense-QC.ply";
 
-    writeVTK((char*)infilename_vtk.c_str(), meshIn);
-    writePLY((char*)infilename_ply.c_str(), meshIn);
+    if (this->output_enabled_) {
+        writeVTK((char*)infilename_vtk.c_str(), meshIn);
+        writePLY((char*)infilename_ply.c_str(), meshIn);
+    }
 
     std::cout << "Isosurface: " <<  infilename_vtk << std::endl;
 
-    //    vtkSmartPointer<vtkDecimatePro> decimateIn =
-    //            vtkSmartPointer<vtkDecimatePro>::New();
-    //    decimateIn->SetInputData(meshIn);
-    //    decimateIn->SetTargetReduction(0.2);
-    //    decimateIn->PreserveTopologyOn();
-    //    decimateIn->Update();
-
-    //    vtkSmartPointer<vtkSmoothPolyDataFilter> smoothFilter =
-    //            vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
-    //    smoothFilter->SetInputData(decimateIn->GetOutput());
-    //    smoothFilter->SetNumberOfIterations(smoothingIterations_);
-    //    smoothFilter->SetRelaxationFactor(smoothingLambda_);
-    //    smoothFilter->FeatureEdgeSmoothingOff();
-    //    smoothFilter->BoundarySmoothingOn();
-    //    smoothFilter->Update();
-
-    //    writeVTK((char*)infilename_vtk.c_str(), smoothFilter->GetOutput());
-    //    writePLY((char*)infilename_ply.c_str(), smoothFilter->GetOutput());
-
-    writeVTK((char*)infilename_vtk.c_str(), meshIn);
-    writePLY((char*)infilename_ply.c_str(), meshIn);
 
     // read a VTK file
     FEVTKimport vtk_in;
-    FEMesh* pm = vtk_in.Load(infilename_vtk.c_str());
+    FEMesh* pm = vtk_in.Load(meshIn);
 
     // make sure we were able to read the file
     if (pm == 0) {
@@ -1290,34 +1271,32 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
         decimate->PreserveTopologyOn();
         decimate->Update();
 
-        writeVTK((char*)outfilename_vtk.c_str(), decimate->GetOutput());
-        writePLY((char*)outfilename_ply.c_str(), decimate->GetOutput());
+        if (this->output_enabled_) {
+            writeVTK((char*)outfilename_vtk.c_str(), decimate->GetOutput());
+            writePLY((char*)outfilename_ply.c_str(), decimate->GetOutput());
+            std::cout << "Decimated mesh: " <<  outfilename_vtk << std::endl;
+        }
 
-        std::cout << "Decimated mesh: " <<  outfilename_vtk << std::endl;
         return decimate->GetOutput();
     }
     else {
 
         FEVTKExport vtk_out;
-        if (vtk_out.Export(*pm_fix, outfilename_vtk.c_str()) == false) {
-            throw std::runtime_error("Could not write file " + outfilename_vtk + " ... !");
+        vtkSmartPointer<vtkPolyData> export_mesh = vtk_out.ExportToVTK(*pm_fix);
+
+        if (this->output_enabled_) {
+            if (vtk_out.Export(*pm_fix, outfilename_vtk.c_str()) == false) {
+                throw std::runtime_error("Could not write file " + outfilename_vtk + " ... !");
+            }
+            std::cout << "QCed mesh: " <<  outfilename_vtk << std::endl;
+            writePLY((char*)outfilename_ply.c_str(), export_mesh);
         }
 
         // don't forget to clean-up
         delete pm_fix;
         delete pm;
 
-        // export to another vtk file
-        //read back in new mesh
-        vtkSmartPointer<vtkPolyDataReader> polyreader =
-                vtkSmartPointer<vtkPolyDataReader>::New();
-        polyreader->SetFileName(outfilename_vtk.c_str());
-        polyreader->Update();
-
-        writePLY((char*)outfilename_ply.c_str(), polyreader->GetOutput());
-
-        std::cout << "QCed mesh: " <<  outfilename_vtk << std::endl;
-        return polyreader->GetOutput();
+        return export_mesh;
     }
 }
 

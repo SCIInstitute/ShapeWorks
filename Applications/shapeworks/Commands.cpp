@@ -1,5 +1,6 @@
 #include "Commands.h"
 #include "Image.h"
+#include <limits>
 
 namespace shapeworks {
 
@@ -160,12 +161,11 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
 {
-  const std::string prog = "resample";
+  const std::string prog = "isoresample";
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--isbinary").action("store").type("bool").set_default(false).help("For binary input image (this will antialias the sample using bspline interpolation) [default false].");
-  parser.add_option("--isospacing").action("store").type("float").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
+  parser.add_option("--isospacing").action("store").type("double").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
   parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
   parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
   parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
@@ -175,13 +175,12 @@ void ResampleImage::buildParser()
 
 int ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  bool isbinary = static_cast<bool>(options.get("isbinary"));
-  float isoSpacing = static_cast<float>(options.get("isospacing"));
+  double isoSpacing = static_cast<double>(options.get("isospacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.resample(isoSpacing, isbinary, Dims({sizeX, sizeY, sizeZ}));
+  return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
 
@@ -233,6 +232,30 @@ int Binarize::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Padimage
+///////////////////////////////////////////////////////////////////////////////
+void PadImage::buildParser()
+{
+  const std::string prog = "pad";
+  const std::string desc = "pads an image with a contant value in the x-, y-, and z- directions";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
+  parser.add_option("--value").action("store").type("float").set_default(0).help("Value to be used to fill padded voxels.");
+  
+  Command::buildParser();
+}
+
+int PadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  int padding = static_cast<int>(options.get("padding"));
+  float value = static_cast<float>(options.get("value"));
+
+  return sharedData.image.pad(padding, value);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // Clip
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -261,5 +284,35 @@ int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &shar
 
   return sharedData.mesh.smooth(/*maxRMSErr, numIter*/);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Coverage
+///////////////////////////////////////////////////////////////////////////////
+void Coverage::buildParser()
+{
+  const std::string prog = "coverage";
+  const std::string desc = "coverage between two meshes";
+  parser.prog(prog).description(desc);
+  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
+
+  if (second_mesh_string == "")
+  {
+    std::cerr << "Must specify second mesh\n";
+    return -1;
+  }
+  Mesh second_mesh;
+  second_mesh.read(second_mesh_string);
+
+  return sharedData.mesh.coverage(second_mesh);
+}
+
 
 } // shapeworks

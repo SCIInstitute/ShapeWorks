@@ -51,43 +51,36 @@ public:
 
   /** Apply any constraints to the given point location.  This method may, for
       example, implement boundary conditions or restrict points to lie on a
-      surface.  This class will throw an exception if the point is outside of
-      the region.  To specify other behaviors, create a subclass and override
-      this method. */
+      surface. This function will clip the point to the boundaries. */
   virtual bool ApplyConstraints(PointType &p) const
   {
-    bool flagged = false;
+    bool changed = false;
     for (unsigned int i = 0; i < VDimension; i++)
-      {
-            if ( p[i] < m_LowerBound[i])
-              {
-              flagged = true;
-              p[i] = m_LowerBound[i];
-              }
-            else if ( p[i] > m_UpperBound[i] )
-              {
-              flagged = true;
-              p[i] = m_UpperBound[i];
-              }
-      }
-        return flagged;
-//    return false;
+    {
+        if (p[i] < GetLowerBound()[i]) {
+            changed = true;
+            p[i] = GetLowerBound()[i];
+        }
+        else if (p[i] > GetUpperBound()[i]) {
+            changed = true;
+            p[i] = GetUpperBound()[i];
+        }
+    }
+    return changed;
   }
 
   /** Set the lower/upper bound of the bounded region. */
   itkSetMacro(LowerBound, PointType);
   itkSetMacro(UpperBound, PointType);
-  virtual const PointType &GetUpperBound() const
-  { return m_UpperBound; }
-  virtual const PointType &GetLowerBound() const
-  { return m_LowerBound; }
+  virtual const PointType &GetUpperBound() const { return m_UpperBound; }
+  virtual const PointType &GetLowerBound() const { return m_LowerBound; }
   
   /** Specify the lower and upper bounds (1st and 2nd parameters, respectively)
       of the region. */
-  void SetRegion(const PointType &l, const PointType &u)
+  void SetRegion(const PointType &lowerBound, const PointType &upperBound)
   {
-    this->SetLowerBound(l);
-    this->SetUpperBound(u);
+    SetLowerBound(lowerBound);
+    SetUpperBound(upperBound);
   }
   
 protected:
@@ -95,8 +88,8 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
-    os << "LowerBound = " << m_LowerBound << std::endl;
-    os << "UpperBound = " << m_UpperBound << std::endl;
+    os << "LowerBound = " << GetLowerBound() << std::endl;
+    os << "UpperBound = " << GetUpperBound() << std::endl;
   }
   virtual ~ParticleRegionDomain() {};
   

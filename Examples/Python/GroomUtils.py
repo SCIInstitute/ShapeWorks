@@ -42,12 +42,16 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         print(" ")
 
         cmd = ["shapeworks", "readimage", "--name", inname]
-        cmd.extend(["resample", "--isospacing", str(isoSpacing), "--isbinary", str(isBinary)])
 
-        if recenter:
-            cmd.extend(["recenterimage"])
+        if isBinary:
+            cmd.extend(["antialias"])
+
+        cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
+        
         if isBinary:
             cmd.extend(["binarize"])
+        if recenter:
+            cmd.extend(["recenterimage"])
 
         cmd.extend(["writeimage", "--name", outname])
         print(cmd)
@@ -93,9 +97,14 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
-                padSize) , "--paddingValue" , str(padValue)]
-            subprocess.check_call(execCommand)
+            
+            cmd = ["shapeworks", "readimage", "--name", inname]
+            cmd.extend(["pad" , "--padding" , str(
+                padSize) , "--value" , str(padValue)])
+            cmd.extend(["writeimage", "--name", outname])
+            print(cmd)
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
 
         #process images
         rawoutDir = outDir + '/images'
@@ -118,9 +127,14 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
-                padSize) , "--paddingValue" , str(padValue)]
-            subprocess.check_call(execCommand)
+
+            cmd = ["shapeworks", "readimage", "--name", inname]
+            cmd.extend(["pad" , "--padding" , str(
+                padSize) , "--value" , str(padValue)])
+            cmd.extend(["writeimage", "--name", outname])
+            print(cmd)
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
 
         return [outDataListSeg, outDataListImg]
 
@@ -140,9 +154,14 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["PadVolumeWithConstant" , "--inFilename" , inname , "--outFilename" , outname , "--paddingSize" , str(
-                padSize) , "--paddingValue" , str(padValue)]
-            subprocess.check_call(execCommand)
+            
+            cmd = ["shapeworks", "readimage", "--name", inname]
+            cmd.extend(["pad" , "--padding" , str(
+                padSize) , "--value" , str(padValue)])
+            cmd.extend(["writeimage", "--name", outname])
+            print(cmd)
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
 
         return outDataList
 
