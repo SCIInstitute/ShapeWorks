@@ -4,7 +4,7 @@ import sys
 import platform
 from pathlib import Path
 
-from EvaluationUtils import scree_plot
+from EvaluationUtils import scree_plot, generalization
 
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
 if platform.system() == "Windows":
@@ -38,6 +38,9 @@ def main():
     
     # Compute compactness
     scree_plot('TestEllipsoids/PointFiles/128/*world.particles', f'{eval_dir}/compactness')
+    
+    # Compute generalization
+    generalization('TestEllipsoids/PointFiles/128/*world.particles', f'{eval_dir}/generalization')
 
 if __name__ == '__main__':
     main()
