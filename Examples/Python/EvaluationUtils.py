@@ -17,9 +17,9 @@ def scree_plot(particles_glob, working_dir):
     # Can't use list of args because it is incompatible with shell=True. We
     # need shell=True for glob expansion
     cmd = f'shapeworks readparticlesystem --names {particles_glob} -- '\
-          f'compactness --nmodes 1 --saveto {working_dir}/scree.txt'
+          f'           compactness --nmodes 1 --saveto {working_dir}/scree.txt'
     print(cmd)
-    subprocess.call(cmd, shell=True)
+    subprocess.check_call(cmd, shell=True)
 
     # Load scree plot data
     Y = np.loadtxt(f'{working_dir}/scree.txt')
@@ -27,13 +27,15 @@ def scree_plot(particles_glob, working_dir):
     X = np.arange(1, N+1)
 
     # Plot data
-    plt.plot(X, Y, linewidth=7.0)
+    plt.plot(X, Y, linewidth=4.0)
     fig = matplotlib.pyplot.gcf()
     fig.set_size_inches(10, 10)
     plt.title('Scree Plot')
     plt.xlabel('Mode')
     plt.ylabel('Scree')
     plt.xticks(X)
+    plt.ylim(bottom=0, top=1.2)
+    plt.xlim(left=1, right=N)
     plt.grid()
     plt.show()
 
