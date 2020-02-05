@@ -16,6 +16,7 @@ class vtkImageActor;
 class vtkColorTransferFunction;
 class vtkArrowSource;
 class vtkTransformPolyDataFilter;
+class vtkScalarBarActor;
 
 class DisplayObject;
 
@@ -123,6 +124,8 @@ private:
   vtkSmartPointer<vtkPolyDataMapper>          arrow_glyph_mapper_;
   vtkSmartPointer<vtkActor>                   arrow_glyph_actor_;
   vtkSmartPointer<vtkTransform>               transform_180_;
+
+  vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
 
   bool arrows_visible_ = false;
 

@@ -28,6 +28,7 @@
 #include <vtkPolyDataNormals.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkKdTreePointLocator.h>
+#include <vtkScalarBarActor.h>
 
 #include <Application/Data/CustomSurfaceReconstructionFilter.h>
 #include <Data/Preferences.h>
@@ -155,6 +156,24 @@ Viewer::Viewer()
   this->glyph_size_ = 1.0f;
   this->glyph_quality_ = 5.0f;
   this->update_glyph_properties();
+
+  this->scalar_bar_actor_ = vtkSmartPointer<vtkScalarBarActor>::New();
+  this->scalar_bar_actor_->SetTitle("");
+  this->scalar_bar_actor_->SetLookupTable(this->difference_lut_);
+  this->scalar_bar_actor_->SetOrientationToHorizontal();
+  this->scalar_bar_actor_->SetMaximumNumberOfColors(1000);
+  this->scalar_bar_actor_->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
+  this->scalar_bar_actor_->GetPositionCoordinate()->SetValue(.2, .05);
+  this->scalar_bar_actor_->SetWidth(0.8);
+  this->scalar_bar_actor_->SetHeight(0.1);
+  this->scalar_bar_actor_->SetPosition(0.1, 0.01);
+  this->scalar_bar_actor_->SetLabelFormat("%.0f");
+  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontFamilyToArial();
+  this->scalar_bar_actor_->GetTitleTextProperty()->SetFontSize(12);
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontFamilyToArial();
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(10);
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
+  this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(1, 1, 1);
 }
 
 //-----------------------------------------------------------------------------
@@ -590,6 +609,7 @@ void Viewer::update_actors()
   this->renderer_->RemoveActor(this->glyph_actor_);
   this->renderer_->RemoveActor(this->arrow_glyph_actor_);
   this->renderer_->RemoveActor(this->surface_actor_);
+  this->renderer_->RemoveActor(this->scalar_bar_actor_);
 
   /*
      for ( int i = 0; i < this->numDomains; i++ )
@@ -604,6 +624,7 @@ void Viewer::update_actors()
     this->renderer_->AddActor(this->exclusion_sphere_actor_);
     if (this->arrows_visible_) {
       this->renderer_->AddActor(this->arrow_glyph_actor_);
+      this->renderer_->AddActor(this->scalar_bar_actor_);
     }
   }
 
