@@ -100,16 +100,16 @@ do
     then    
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks readimage --name $nrrdfilename antialias resampleimage --isospacing $iso_spacing --isbinary 1 recenterimage binarize writeimage --name $outfilename
+            shapeworks readimage --name $nrrdfilename antialias resampleimage --isospacing $iso_spacing --defaultvalue -1.0 recenterimage binarize writeimage --name $outfilename
         else
-            shapeworks readimage --name $nrrdfilename resampleimage --isospacing $iso_spacing recenterimage writeimage --name $outfilename
+            shapeworks readimage --name $nrrdfilename resampleimage --isospacing $iso_spacing --defaultvalue -1.0 recenterimage writeimage --name $outfilename
         fi
     else
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks readimage --name $nrrdfilename antialias resampleimage --isospacing $iso_spacing --isbinary 1 binarize writeimage --name $outfilename
+            shapeworks readimage --name $nrrdfilename antialias resampleimage --isospacing $iso_spacing --defaultvalue -1.0 binarize writeimage --name $outfilename
         else
-            shapeworks readimage --name $nrrdfilename resampleimage --isospacing $iso_spacing writeimage --name $outfilename
+            shapeworks readimage --name $nrrdfilename resampleimage --isospacing $iso_spacing --defaultvalue -1.0 writeimage --name $outfilename
         fi
     fi
 

@@ -191,7 +191,7 @@ def Run_Pipeline(args):
 
             """
 
-            resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg, isBinary=False)
+            resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
 
             """
             Apply padding
