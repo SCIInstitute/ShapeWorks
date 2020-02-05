@@ -15,7 +15,6 @@ import argparse
 import subprocess
 import sys
 
-
 # Path pre-setup
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
 if platform.system() == "Windows":

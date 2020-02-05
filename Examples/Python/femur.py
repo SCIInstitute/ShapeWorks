@@ -60,7 +60,7 @@ def Run_Pipeline(args):
         print("Downloading " + filename + " from SCIGirder.")
         datasets.downloadDataset(filename)
 
-    extract the zipfile
+    # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
 
@@ -72,13 +72,15 @@ def Run_Pipeline(args):
         """
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
+        -- if no interactive tag - define cutting plane
         -- Reflect images and meshes
         -- Turn meshes to volumes
         -- Isotropic resampling
         -- Padding
         -- Center of Mass Alignment
         -- Rigid Alignment
-        -- clip segementations
+        -- if interactive tag - define cutting plane
+        -- clip segementations with cutting plane
         -- Largest Bounding Box and Cropping
         """
 

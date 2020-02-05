@@ -74,7 +74,6 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
         cmd = ["shapeworks", "readimage", "--name", inname]
         cmd.extend(["pad" , "--padding" , str(padSize) , "--value" , str(padValue)])
         cmd.extend(["writeimage", "--name", outname])
-        print(cmd)
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
