@@ -27,7 +27,7 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-# from DatasetUtils import datasets
+from DatasetUtils import datasets
 
 def Run_Pipeline(args):
 
@@ -43,7 +43,7 @@ def Run_Pipeline(args):
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Get Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
@@ -61,6 +61,7 @@ def Run_Pipeline(args):
         datasets.downloadDataset(filename)
 
     # extract the zipfile
+    print("Extracting data from " + filename + "...")
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
 
@@ -95,18 +96,23 @@ def Run_Pipeline(args):
         # Get image ane mesh segmentation file lists
         files_img = []
         img_dir = inputDir + 'images/'
-        for file in os.listdir(img_dir):
+        for file in sorted(os.listdir(img_dir)):
             files_img.append(img_dir + file)
         files_mesh = []
         mesh_dir = inputDir + 'meshes/'
-        for file in os.listdir(mesh_dir):
+        for file in sorted(os.listdir(mesh_dir)):
             files_mesh.append(mesh_dir + file)
 
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
+            options = []
+            for file in files_mesh:
+                file = file.split('/')[-1]
+                prefix = "_".join(file.split("_")[:2])
+                options.append(prefix)
             input_mesh = ''
             while not input_mesh:
-                cp_prefix = input("\nType the prefix of the sample you wish to use to select the cutting plane (for example: n01_L) and press enter:\n")
+                cp_prefix = input("\n\nType the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.\nOptions: " + ", ".join(options) + '\n')
                 if cp_prefix:
                     for file in files_mesh:
                         if cp_prefix in file:
@@ -115,7 +121,7 @@ def Run_Pipeline(args):
                     print("Invalid prefix.")
             cutting_plane_points = SelectCuttingPlane(input_mesh)
             if cp_prefix[-1] =='R':
-                reference_side = "Right"
+                reference_side = "right"
             print("Cutting plane points defined: ")
             print(cutting_plane_points)
             print("Continuing to groom.")
@@ -125,6 +131,7 @@ def Run_Pipeline(args):
         for the non-reference side so that all of the femurs can be aligned.
         """
         reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(parentDir + 'reflected', files_mesh, files_img, reference_side)
+        
         """
         MeshesToVolumes - Shapeworks requires volumes so we need to convert 
         mesh segementaions to binary segmentations.
@@ -142,7 +149,6 @@ def Run_Pipeline(args):
         """
         paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations/", resampledFiles_segmentations, 10)
         paddedFiles_images = applyPadding(parentDir + "padded/images/", resampledFiles_images, 10)
-
 
         """
         Apply center of mass alignment - This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).

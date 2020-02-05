@@ -33,11 +33,7 @@ parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (def
 args = parser.parse_args()
 binpath = args.shapeworks_path
 
-try:
-    module = __import__(args.use_case)
-except:
-    print('\nError: use case "' + args.use_case + '" unrecognized.\n')
-    sys.exit(1)
+module = __import__(args.use_case)
 
 # Path final
 if platform.system() == "Darwin":
