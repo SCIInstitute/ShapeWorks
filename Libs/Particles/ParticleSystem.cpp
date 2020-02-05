@@ -4,8 +4,9 @@ ParticleSystem::ParticleSystem() {
 
 }
 
-bool ParticleSystem::LoadParticles(const std::vector<std::string> &filepaths) {
-    const int N = filepaths.size();
+bool ParticleSystem::LoadParticles(const std::vector<std::string> &_paths) {
+    this->paths = _paths;
+    const int N = paths.size();
     const int VDimension = 3; //TODO Don't hardcode VDimension
     assert(N > 0);
 
@@ -17,7 +18,7 @@ bool ParticleSystem::LoadParticles(const std::vector<std::string> &filepaths) {
             = itk::ParticlePositionReader<VDimension>::New();
 
     // Read the first file to find dimensions
-    reader0->SetFileName(filepaths[0]);
+    reader0->SetFileName(paths[0]);
     reader0->Update();
     const int D = reader0->GetOutput().size() * VDimension;
 
@@ -27,7 +28,7 @@ bool ParticleSystem::LoadParticles(const std::vector<std::string> &filepaths) {
     for(int i=1; i<N; i++) {
         typename itk::ParticlePositionReader<VDimension>::Pointer reader
                 = itk::ParticlePositionReader<VDimension>::New();
-        reader->SetFileName(filepaths[i]);
+        reader->SetFileName(paths[i]);
         reader->Update();
         P.col(i) = Eigen::Map<const Eigen::VectorXd>((double *)reader->GetOutput().data(), D);
     }

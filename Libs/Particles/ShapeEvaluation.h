@@ -12,7 +12,7 @@ public:
     ShapeEvaluation();
 
     static double ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveScreePlotTo="");
-    static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes);
+    static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo="");
     static double ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes);
 };
 }
