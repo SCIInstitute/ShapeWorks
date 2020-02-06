@@ -60,10 +60,10 @@ def Run_Pipeline(args):
         print("Downloading " + filename + " from SCIGirder.")
         datasets.downloadDataset(filename)
 
-    # # extract the zipfile
-    # print("Extracting data from " + filename + "...")
-    # with ZipFile(filename, 'r') as zipObj:
-    #     zipObj.extractall(path=parentDir)
+    # extract the zipfile
+    print("Extracting data from " + filename + "...")
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -86,7 +86,7 @@ def Run_Pipeline(args):
         """
 
         # Directory where grooming output folders will be added
-        parentDir = 'TestFemur/PrepOutput_myCenterInteractive/'
+        parentDir = 'TestFemur/PrepOutput/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
                 # set name specific variables
@@ -104,8 +104,8 @@ def Run_Pipeline(args):
             files_mesh.append(mesh_dir + file)
 
         #Debug
-        files_img = files_img[:3]
-        files_mesh = files_mesh[:3]
+        files_img = files_img[:1]
+        files_mesh = files_mesh[:1]
 
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
@@ -116,7 +116,8 @@ def Run_Pipeline(args):
                 options.append(prefix)
             input_mesh = ''
             while not input_mesh:
-                cp_prefix = input("\n\nType the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.\nOptions: " + ", ".join(options) + '\n')
+                print("\n\nType the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.\nOptions: " + ", ".join(options) + '\n')
+                cp_prefix = input()
                 if cp_prefix:
                     for file in files_mesh:
                         if cp_prefix in file:
@@ -134,51 +135,47 @@ def Run_Pipeline(args):
         Reflect - We have left and right femurs, so we reflect both image and mesh 
         for the non-reference side so that all of the femurs can be aligned.
         """
-        # reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(parentDir + 'reflected', files_mesh, files_img, reference_side)
+        reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(parentDir + 'reflected', files_mesh, files_img, reference_side)
         
-        # """
-        # MeshesToVolumes - Shapeworks requires volumes so we need to convert 
-        # mesh segementaions to binary segmentations.
-        # """
-        # fileList_seg = MeshesToVolumes(parentDir + "volumes", reflectedFiles_mesh, reflectedFile_img)
+        """
+        MeshesToVolumes - Shapeworks requires volumes so we need to convert 
+        mesh segementaions to binary segmentations.
+        """
+        fileList_seg = MeshesToVolumes(parentDir + "volumes", reflectedFiles_mesh, reflectedFile_img)
 
-        # """
-        # Apply isotropic resampling - The segmentation and images are resampled independently to have uniform spacing.
-        # """
-        # resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
-        # resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
+        """
+        Apply isotropic resampling - The segmentation and images are resampled independently to have uniform spacing.
+        """
+        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
 
-        # """
-        # Apply padding - Both the segmentation and raw images are padded in case the seg lies on the image boundary.
-        # """
-        # paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations/", resampledFiles_segmentations, 10)
-        # paddedFiles_images = applyPadding(parentDir + "padded/images/", resampledFiles_images, 10)
+        """
+        Apply padding - Both the segmentation and raw images are padded in case the seg lies on the image boundary.
+        """
+        paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations/", resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir + "padded/images/", resampledFiles_images, 10)
 
-        # """
-        # Apply center of mass alignment - This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-        # If raw=the list of image files, it will process both. If the raw parameter is left out it will process the segmentations only.
-        # """
-        # [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+        """
+        Apply center of mass alignment - This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        If raw=the list of image files, it will process both. If the raw parameter is left out it will process the segmentations only.
+        """
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
 
-        # centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
-        # centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
+        centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
+        centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
 
-        # # centerFiles_images = ['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenter/centered/images/N03_L_1x_hip.isores.pad.com.center.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenterInteractive/centered/images/N04_L_1x_hip.isores.pad.com.center.nrrd']
-        # # centerFiles_segmentations = ['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenter/centered/segmentations/N03_L_femur.isores.pad.com.center.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenterInteractive/centered/segmentations/N04_L_femur.isores.pad.com.center.nrrd']
-        # """
-        # Apply rigid alignment
-        # This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-        # There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-        # processRaw = False, applies the center of mass alignment only on segemnattion data.
-        # This function uses the same transfrmation matrix for alignment of raw and segmentation files.
-        # Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
-        # """
-        # medianFile = FindReferenceImage(centerFiles_segmentations)
+        """
+        Apply rigid alignment
+        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
+        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
+        processRaw = False, applies the center of mass alignment only on segemnattion data.
+        This function uses the same transfrmation matrix for alignment of raw and segmentation files.
+        Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
+        """
+        medianFile = FindReferenceImage(centerFiles_segmentations)
 
-        # [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images , medianFile, processRaw = True)
-        medianFile = '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenterInteractive/centered/segmentations/N03_L_femur.isores.pad.com.center.nrrd'
-        rigidFiles_segmentations = ['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenterInteractive/aligned/segmentations/N03_L_femur.isores.pad.com.center.aligned.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenterInteractive/aligned/segmentations/N04_L_femur.isores.pad.com.center.aligned.nrrd']
-        rigidFiles_images =['/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenterInteractive/aligned/images/N03_L_1x_hip.isores.pad.com.center.aligned.nrrd', '/home/sci/jadie/ShapeWorks/Examples/Python/TestFemur/PrepOutput_myCenterInteractive/aligned/images/N04_L_1x_hip.isores.pad.com.center.aligned.nrrd']
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images , medianFile, processRaw = True)
+
         # Define cutting plane on median sample
         if args.interactive:
            input_file = medianFile.replace("centered","aligned").replace(".nrrd", ".aligned.DT.nrrd")

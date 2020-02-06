@@ -693,12 +693,15 @@ def SelectCuttingPlane(input_file):
         create_meshfromDT_xml(xml_filename, input_file, input_vtk)
         execCommand = ["MeshFromDistanceTransforms", xml_filename]
         subprocess.check_call(execCommand)
+        print("Calling cmd:\n"+" ".join(execCommand))
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
         subprocess.check_call(execCommand)
+        print("Calling cmd:\n"+" ".join(execCommand))
     elif file_format == "stl":
         execCommand = ["stl2vtk", input_file, input_vtk]
         subprocess.check_call(execCommand)
+        print("Calling cmd:\n"+" ".join(execCommand))
     elif file_format == "vtk":
         pass
     else:
