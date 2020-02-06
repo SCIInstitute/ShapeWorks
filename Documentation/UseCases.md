@@ -34,7 +34,27 @@ Password:
 joeshmoe downloaded Ellipsoids.zip from the ShapeWorks Portal.
 ```
 
-##Left Atrium Use Case
+## Running the Use Cases
+
+The use cases are located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
+
+To run a use case, run the follwoing command form the [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python) directory:
+            
+            python RunUseCase.py --use_case [insert name of use case here]
+            
+        
+The following use case names are currently supported:
+* ellipse
+* left_atrium
+* femur
+
+To see the full list of optional tags, run:
+          
+            python RunUseCase.py --help
+            
+        
+
+## Left Atrium Use Case
 
 
 The goal of this use case is using the ShapeWorks functionality to groom different type of input data (raw and segmentation images),
@@ -44,16 +64,16 @@ functionality of ShapeWorks to groom the raw input images alongside with binary 
 This example helps us to process the data (raw and binary images) with the same parameters for downstream tasks.
 For this use case, we have the raw images of the left atrium and their corresponding binary segmentations. 
 
-### Running the Use Case
+### Running Left Atrium
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
 
 To run the use case, run LAMain.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_image_and_segmentation_data: to groom raw images as well as segmentation, the default is only segmentation
 * --use_single_scale: to use the single scale optimization, the default is multiscale optimization
             
-            python LAMain.py 
+              python RunUseCase.py --use_case left_atrium 
 
-This calls RunLeftAtrium.py which:
+This calls left_atrium.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Grooms the images and segmentations by calling methods in GroomUtils.py
 * Optimizes particle distribution by calling methods in OptimizeUtils.py
@@ -128,15 +148,22 @@ ShapeWorks requires a binary volume format for input segmentations so these mesh
 ### Running the Use Case
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
 
-To run the use case, run FemurMain.py with the tags --start_with_image_and_segmentation_data and --use single scale:
+To run the use case, either run:
             
-            python FemurMain.py --start_with_image_and_segmentation_data --use_single_scale
-
-This calls RunFemur.py which:
+              python RunUseCase.py --use_case femur
+Or run:
+    
+              python RunUseCase.py --use_case femur --interactive
+              
+This calls femur.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Grooms the images and meshes by calling methods in GroomUtils.py
 * Optimizes particle distribution by calling methods in OptimizeUtils.py
 * Opens View2  to visualize results by calling methods in AnalyzeUtils.py
+
+If the --interactive tag is used, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process, once the reference sample for alignment has been selected.
+
+If the --interactive tag is not used, the user will select the cutting plane in the beggining of the grooming steps on a sample of their choice.
 
 ### Grooming
 For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Groom.md)
