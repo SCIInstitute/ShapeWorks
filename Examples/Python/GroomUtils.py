@@ -719,6 +719,7 @@ def SelectCuttingPlane(input_file):
     # get data
     data = reader.GetOutput()
     (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
+    print(xmin, xmax, ymin, ymax, zmin, zmax)
     (xcenter, ycenter, zcenter) = data.GetCenter()
     #create mapper 
     mapper = vtk.vtkPolyDataMapper()
@@ -765,4 +766,8 @@ def SelectCuttingPlane(input_file):
     pt1_z = (-n1+(n1*o1)+n2+(n2*o2)+(n3*o3))/n3
     # using x = -1 and y = 1 solve for z
     pt2_z = (n1+(n1*o1)-n2+(n2*o2)+(n3*o3))/n3
+    # fix 0 edge case
+    if o1 == 0 and o2 == 0:
+        o1 = -1
+        o2 = -1
     return np.array([[o1, o2, o3], [1, -1, pt1_z], [-1, 1, pt2_z]])
