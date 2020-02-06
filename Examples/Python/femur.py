@@ -103,10 +103,6 @@ def Run_Pipeline(args):
         for file in sorted(os.listdir(mesh_dir)):
             files_mesh.append(mesh_dir + file)
 
-        #Debug
-        files_img = files_img[:1]
-        files_mesh = files_mesh[:1]
-
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
             options = []
