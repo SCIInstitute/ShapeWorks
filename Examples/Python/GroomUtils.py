@@ -60,6 +60,46 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         subprocess.check_call(cmd)
     return outDataList
 
+def getOrigin(inname):
+    infoPrefix = "_".join(inname.split("_")[:3])
+    cmd = ["WriteImageInfoToText","--inFilename",inname, "--outPrefix", infoPrefix]
+    subprocess.check_call(cmd)
+    origin_file = open(infoPrefix + "_origin.txt", "r")
+    text = origin_file.read()
+    origin = text.split("\n")
+    origin_file.close()
+    cmd = ["rm",infoPrefix + "_origin.txt",infoPrefix + "_spacing.txt", infoPrefix + "_size.txt"]
+    subprocess.check_call(cmd)
+    return origin
+
+def center(outDir, inDataList):
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+    outDataList = []
+    for i in range(len(inDataList)):
+        # center
+        inname = inDataList[i]
+        print("\n########### Centering ###############")
+        outname = rename(inname, outDir, 'center')
+        outDataList.append(outname)
+        cmd = ["shapeworks", "readimage", "--name", inname]
+        cmd.extend(["recenterimage"])
+        cmd.extend(["writeimage", "--name", outname])
+        print("Calling cmd:\n"+" ".join(cmd))
+        subprocess.check_call(cmd)
+        # Get translation
+        original_origin = getOrigin(inname)
+        new_origin = getOrigin(outname)
+        translation = []
+        for dim in range(0,3):
+            translation.append(float(original_origin[dim]) - float(new_origin[dim]))
+        # Write translation
+        translation_file = outname[:-4] + "translation.txt"
+        out_trans = open(translation_file, "w+")
+        out_trans.write(str(translation).replace('[','').replace(']','').replace(',',''))
+        out_trans.close()
+    return outDataList
+
 def applyPadding(outDir, inDataList, padSize, padValue=0):
     """
     This function takes in a filelist and produces the padded files in the appropriate directory.
