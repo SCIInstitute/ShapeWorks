@@ -238,6 +238,11 @@ def Run_Pipeline(args):
                 pt = matrix.dot(pt4D)
                 new_cutting_plane_points[pt_index] = pt
             cutting_plane_points = new_cutting_plane_points
+            # catch for flipped norm
+            if cutting_plane_points[0][1] < 0 and cutting_plane_points[1][1] < 0 and cutting_plane_points[2][1] < 0 :
+                cutting_plane_points[0][1] = cutting_plane_points[0][1] *-1
+                cutting_plane_points[1][1] = cutting_plane_points[1][1] *-1
+                cutting_plane_points[2][1] = cutting_plane_points[2][1] *-1
             print("Cutting plane points: ")
             print(cutting_plane_points)
 
