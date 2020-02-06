@@ -719,7 +719,6 @@ def SelectCuttingPlane(input_file):
     # get data
     data = reader.GetOutput()
     (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
-    print(xmin, xmax, ymin, ymax, zmin, zmax)
     (xcenter, ycenter, zcenter) = data.GetCenter()
     #create mapper 
     mapper = vtk.vtkPolyDataMapper()
