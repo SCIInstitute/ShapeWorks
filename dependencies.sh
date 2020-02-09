@@ -4,12 +4,7 @@
 #set -x   #tracing execution for debugging (echos all commands from script)
 
 # defaults
-BUILD_CLEAN=0
 NUM_PROCS=8
-BUILD_GUI=1
-BUILD_STUDIO=0
-BUILD_SHAPEWORKS=1
-BUILD_LOG="shapeworks_superbuild.log"
 VXL_VER="v2.0.2"
 VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
@@ -29,21 +24,9 @@ usage()
   echo ""
   echo "Arguments:"
   echo "  -h,--help               : Show this screen."
-  echo "  --clean                 : Remove all build directories and clone implicit dependencies."
-  echo "                          : (note that user-specified paths such as --itk-dir=<path> will not be deleted)."
-  echo "  --no-gui                : Do not build the ShapeWorks gui applicaitons, which require Qt."
-  echo "                          : The GUI is built by default if qmake >= $QT_MIN_VER is found in the path."
-  echo "  --with-studio           : Build ShapeWorksStudio (default off)."
-  echo "  -b,--build-dir=<path>   : Build directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)."
-  echo "                          : By default uses a subdirectory of the current directory called 'build'."
   echo "  -i,--install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)."
   echo "                          : By default uses a subdirectory of the current directory called 'install'."
   echo "  -n,--num-procs=<num>    : Number of processors to use for parallel builds (default is 8)."
-  echo "  --vxl-dir=<path>        : Path to existing VXL installation (version >= ${VXL_VER})."
-  echo "  --vtk-dir=<path>        : Path to existing VTK installation (version >= ${VTK_VER})."
-  echo "  --itk-dir=<path>        : Path to existing ITK installation (version >= ${ITK_VER})."
-  echo ""
-  echo "  --dependencies_only     : Only build dependencies, not ShapeWorks."
   echo ""
   echo "Example: ./superbuild.sh --num-procs=8 --install-dir=/path/to/desired/installation"
   echo "Build results are saved in ${BUILD_LOG}."
@@ -59,27 +42,7 @@ parse_command_line()
       -i=*|--install-dir=*)   INSTALL_DIR="${1#*=}"
                               INSTALL_DIR=`realpath "${INSTALL_DIR}"`
                               ;;
-      -b=*|--build-dir=*)     BUILD_DIR="${1#*=}"
-                              BUILD_DIR=`realpath "${BUILD_DIR}"`
-                              ;;
       -n=*|--num-procs=*)     NUM_PROCS="${1#*=}"
-                              ;;
-      --no-gui )              BUILD_GUI=0
-                              ;;
-      --with-studio )         BUILD_STUDIO=1
-                              ;;
-      --vxl-dir=*)            VXL_DIR="${1#*=}"
-                              `VXL_DIR=realpath "${VXL_DIR}"`
-                              ;;
-      --vtk-dir=*)            VTK_DIR="${1#*=}"
-                              `VTK_DIR=realpath "${VTK_DIR}"`
-                              ;;
-      --itk-dir=*)            ITK_DIR="${1#*=}"
-                              `ITK_DIR=realpath "${ITK_DIR}"`
-                              ;;
-      --clean )               BUILD_CLEAN=1
-                              ;;
-      --dependencies_only )   BUILD_SHAPEWORKS=0
                               ;;
       -h | --help )           usage
                               exit
@@ -104,7 +67,7 @@ at_least_required_version()
   current=$2
   required=$3
   echo "## verifying ${packagename}..."
-  if [ "$(printf '%s\n' "$required" "$current" | sort -V | head -n1)" = "$required" ]; then 
+  if [ "$(printf '%s\n' "$required" "$current" | sort -V | head -n1)" = "$required" ]; then
     echo "## SUCCESS: $current is greater than or equal to $required"
     return 1
   else
@@ -124,7 +87,7 @@ build_vxl()
   else
       cd ${BUILD_DIR}
   fi
-  
+
   git clone https://github.com/vxl/vxl.git
   cd vxl
   # They fixed the VS compilation problem the day after the v2.0.2 release.
@@ -181,7 +144,7 @@ build_itk()
 
   if [[ $OSTYPE == "msys" ]]; then
       cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="d:/a/ShapeWorks/deps/lib/cmake/vtk-8.2" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
-      
+
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
   else
@@ -190,36 +153,6 @@ build_itk()
   fi
 
   ITK_DIR=${INSTALL_DIR}/lib/cmake/ITK-${ITK_VER_STR}
-}
-
-build_shapeworks()
-{
-  echo "## Building ShapeWorks..."
-  OPENMP_FLAG="-DUSE_OPENMP=ON"
-  if [ "$(uname)" == "Darwin" ]; then
-    OPENMP_FLAG="-DUSE_OPENMP=OFF"
-  fi
-
-  cd ${BUILD_DIR}
-  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf shapeworks-build; fi
-  mkdir -p shapeworks-build && cd shapeworks-build
-
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
-
-
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake --build . --config Release || exit 1
-  else
-      make -j${NUM_PROCS} install || exit 1
-  fi
-  # Inform users of ShapeWorks install path:
-  # FIXME/TODO: get rid of LD_LIBRARY_PATH requirement (https://github.com/SCIInstitute/ShapeWorks/issues/125)
-  echo "## -----------------------------------------"
-  echo "## ShapeWorks has successfully been installed in ${INSTALL_DIR}."
-  echo "## Set LD_LIBRARY_PATH for shared libraries to be found:"
-  echo "##   export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:${INSTALL_DIR}/lib64:\$LD_LIBRARY_PATH"
-  echo "## -----------------------------------------"
-
 }
 
 # determine if we can build using specified or discovered version of Qt
@@ -251,12 +184,10 @@ verify_qt()
   fi
 }
 
-build_all()
+install_dependencies()
 {
   ## create build and install directories
-  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/build;     fi
-  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/install; fi
-  mkdir -p ${BUILD_DIR}
+  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/dependencies/; fi
   mkdir -p ${INSTALL_DIR}
 
   ## build dependencies if their locations were not specified
@@ -272,16 +203,10 @@ build_all()
     build_itk
   fi
 
-  if [[ $BUILD_SHAPEWORKS = 1 ]]; then
-      build_shapeworks
-  else
-    # echo dependency directories for easy reference in case the user is independenly building ShapeWorks
-    echo ""
-    echo "Dependency paths:"
-    echo "  VXL_DIR: ${VXL_DIR}"
-    echo "  VTK_DIR: ${VTK_DIR}"
-    echo "  ITK_DIR: ${ITK_DIR}"
-  fi
+
+  # echo dependency directories for easy reference in case the user is independenly building ShapeWorks
+  echo ""
+  echo "Install path: ${INSTALL_DIR}"
 }
 
 #
@@ -315,4 +240,4 @@ echo "BUILD_STUDIO: ${BUILD_STUDIO}"
 echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build ShapeWorks and necessary dependencies
-(time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
+(time install_dependencies 2>&1) 2>&1 | tee ${BUILD_LOG}
