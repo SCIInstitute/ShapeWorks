@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
+  shapeworks.addCommand(COM: getCommand());
 
   //...
   

@@ -183,9 +183,6 @@ def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False)
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-
-
-
     if processRaw:
         rawoutDir = outDir + '/images'
         binaryoutDir = outDir + '/segmentations'

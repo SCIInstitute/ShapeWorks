@@ -150,4 +150,20 @@ private:
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
+
+class COM : public ImageCommand
+{
+public:
+  static COM &getCommand()
+  {
+    static COM instance;
+    return instance;
+  }
+
+private:
+  COM() { buildParser(); } 
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks
