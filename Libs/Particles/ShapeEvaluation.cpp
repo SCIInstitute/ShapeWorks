@@ -2,7 +2,6 @@
 
 
 #include <iostream>
-#include <utility>
 #include <Eigen/Core>
 #include <Eigen/SVD>
 
@@ -66,9 +65,10 @@ namespace shapeworks {
             const Eigen::VectorXd rec = epsi * betas + mu;
 
             //TODO: This assumes 3-Dimensions
-            const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), D/3, 3);
-            const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), D/3, 3);
-            const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum();
+            const int numParticles = D / 3;
+            const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, 3);
+            const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, 3);
+            const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
             totalDist += dist;
 
             reconstructions.push_back({dist, leave, rec_reshaped});
@@ -100,7 +100,7 @@ namespace shapeworks {
 
                 xmlOF << "<point_files>"
                       << srcPaths[reconstructions[i].shapeIdx] << std::endl << recPath
-                      << "</point_files>"
+                      << "</point_files>" << std::endl
                       << "<group_ids>"
                       << 1 << std::endl << 2
                       << "</group_ids>";
