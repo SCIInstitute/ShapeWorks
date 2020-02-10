@@ -29,7 +29,7 @@ os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
 
 def main():
     if not os.path.exists('TestEllipsoids'):
-        print('No TestEllipsoids folder found. Please run `ellipsoidMain.py` first.', fil=sys.stderr)
+        print('No TestEllipsoids folder found. Please run `ellipsoidMain.py` first.', file=sys.stderr)
         sys.exit(1)
     
     eval_dir = 'TestEllipsoids/Evaluation'
