@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "ImageUtils.h"
+//#include "ImageUtils.h"
 #include <itkTranslationTransform.h>
 #include <Eigen/Core>
 #include <vnl/vnl_vector.h>
@@ -13,7 +13,7 @@ class RBFShape
 {
   RBFShape(Eigen::Vector3d coeff = Eigen::Vector3d(1.,1.,1.),
                        Eigen::Vector3d pows = Eigen::Vector3d(1.,1.,1.),
-                       Eigen::MatrixXd = Eigen::MatrixXd());
+                       Eigen::MatrixXd points = Eigen::MatrixXd());
 
       /** This function is the deconstructor of the class. It does nothing in this base class.
           It is a virtual function and hence it can be redefined in the derived class(s). */
@@ -74,7 +74,7 @@ class RBFShape
           where \f$ \mathbf{c} \f$ is the coefficient vector of the implicit function associated with \f$ c_v \f$ as a value
           and  \f$ \mathbf{p} \f$ is the exponent of each spatial coordinate.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual double evaluate(const Eigen::Vector3d &point);
+      virtual double evaluate(const Eigen::Vector3d & point);
 
       /** This function evaluates the gradient vector of the implicit function at a given 3D point.
           \param point A 3D spatial point that is defined by xyz coordinates.
@@ -84,6 +84,10 @@ class RBFShape
           and  \f$ \mathbf{p} \f$ is the exponent of each spatial coordinate. The operations here are element-wise.
           It is a virtual function and hence it can be redefined in the derived class(s). */
       virtual Eigen::Vector3d gradient(const Eigen::Vector3d &point);
+
+      /** This function solves the RBF system*/
+
+      virtual void solve_system(Eigen::MatrixXd points);
 
       /** This function applies a transformation matrix (4x4) to the implicit function.
           \param mtx A 4x4 transfromation matrix to be applied to the implicit function.

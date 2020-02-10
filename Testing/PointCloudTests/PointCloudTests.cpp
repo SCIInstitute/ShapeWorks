@@ -11,7 +11,7 @@
 #include "ShapeWorksRunApp.h"
 #include "itkParticleShapeStatistics.h"
 
-#include "PointCloud.h"
+#include "RBFShape.h"
 
 //---------------------------------------------------------------------------
 // until we have a "groom" library we can call

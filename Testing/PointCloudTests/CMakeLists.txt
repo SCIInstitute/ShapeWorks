@@ -7,9 +7,9 @@ add_executable(PointCloudTests
   )
 
 target_link_libraries(PointCloudTests
+  PointCloud
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2
-  gtest_main
-  PointCloud)
+  gtest_main)
 
 add_test(NAME PointCloudTests COMMAND PointCloudTests)
