@@ -66,12 +66,14 @@ public:
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
+  typename openvdb::DoubleGrid::Ptr vdbHessianGrids[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
+
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
-    
+
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
       gaussian = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
     gaussian->SetVariance(m_Sigma * m_Sigma);
@@ -124,6 +126,23 @@ public:
         m_Interpolators[k]->SetInputImage(m_PartialDerivatives[k]);
         }
       }
+
+    const int N = (VDimension + ((VDimension * VDimension) - VDimension) / 2);
+    for(int i=0; i<N; i++) {
+        vdbHessianGrids[i] = openvdb::DoubleGrid::create(0.0);
+        auto vdbAccessor = vdbHessianGrids[i]->getAccessor();
+
+        ImageRegionIterator<ImageType> it(m_PartialDerivatives[i], m_PartialDerivatives[i]->GetRequestedRegion());
+        it.GoToBegin();
+        while(!it.IsAtEnd()) {
+            const auto idx = it.GetIndex();
+            const auto pixel = it.Get();
+            const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+            vdbAccessor.setValue(coord, pixel);
+            ++it;
+        }
+    }
+
   } // end setimage
   
   /** Sample the Hessian at a point.  This method performs no bounds checking.
@@ -144,7 +163,32 @@ public:
         ans[i][j] = ans[j][i] = m_Interpolators[k]->Evaluate(p);
         }
       }
-    return ans;
+
+    auto o = m_PartialDerivatives[0]->GetOrigin();
+    auto sp = p;
+    for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+    const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+
+      VnlMatrixType vdbAns;
+    for (unsigned int i = 0; i < VDimension; i++)
+    {
+        vdbAns[i][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[i]->tree(), coord);
+    }
+
+      // Cross derivatives
+      k = VDimension;
+      for (unsigned int i =0; i < VDimension; i++)
+      {
+          for (unsigned int j = i+1; j < VDimension; j++, k++)
+          {
+              vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[k]->tree(), coord);
+          }
+      }
+
+      const double delta = (vdbAns - ans).array_two_norm();
+      assert(delta < 1e-6);
+
+    return vdbAns;
   }
   
   /** Set /Get the standard deviation for blurring the image prior to
