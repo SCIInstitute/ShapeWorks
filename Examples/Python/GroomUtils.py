@@ -41,7 +41,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         print("######################################")
         print(" ")
 
-        cmd = ["shapeworks", "readimage", "--name", inname]
+        cmd = ["shapeworks", "read-image", "--name", inname]
 
         if isBinary:
             cmd.extend(["antialias"])
@@ -51,9 +51,9 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         if isBinary:
             cmd.extend(["binarize"])
         if recenter:
-            cmd.extend(["recenterimage"])
+            cmd.extend(["recenter-image"])
 
-        cmd.extend(["writeimage", "--name", outname])
+        cmd.extend(["write-image", "--name", outname])
         print(cmd)
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
@@ -98,10 +98,10 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             print("######################################")
             print(" ")
             
-            cmd = ["shapeworks", "readimage", "--name", inname]
+            cmd = ["shapeworks", "read-image", "--name", inname]
             cmd.extend(["pad" , "--padding" , str(
                 padSize) , "--value" , str(padValue)])
-            cmd.extend(["writeimage", "--name", outname])
+            cmd.extend(["write-image", "--name", outname])
             print(cmd)
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
@@ -128,10 +128,10 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             print("######################################")
             print(" ")
 
-            cmd = ["shapeworks", "readimage", "--name", inname]
+            cmd = ["shapeworks", "read-image", "--name", inname]
             cmd.extend(["pad" , "--padding" , str(
                 padSize) , "--value" , str(padValue)])
-            cmd.extend(["writeimage", "--name", outname])
+            cmd.extend(["write-image", "--name", outname])
             print(cmd)
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
@@ -155,10 +155,10 @@ def applyPadding(parentDir, inDataListSeg, inDataListImg, padSize, padValue=0, p
             print("######################################")
             print(" ")
             
-            cmd = ["shapeworks", "readimage", "--name", inname]
+            cmd = ["shapeworks", "read-image", "--name", inname]
             cmd.extend(["pad" , "--padding" , str(
                 padSize) , "--value" , str(padValue)])
-            cmd.extend(["writeimage", "--name", outname])
+            cmd.extend(["write-image", "--name", outname])
             print(cmd)
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
@@ -346,7 +346,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
     execCommand = ["CloseHoles",  "--inFilename" , refFile , "--outFilename" , refFile]
     subprocess.check_call(execCommand)
-    execCommand = ["shapeworks", "readimage", "--name", refFile, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", ref_dtnrrdfilename]
+    execCommand = ["shapeworks", "read-image", "--name", refFile, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", ref_dtnrrdfilename]
     subprocess.check_call(execCommand)
 
     execCommand = ["FastMarching" ,  "--inFilename" , ref_dtnrrdfilename , "--outFilename" , ref_dtnrrdfilename , "--isoValue" , str(
@@ -411,7 +411,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand)
             execCommand = ["CloseHoles" , "--inFilename" , seginname , "--outFilename" , seginname]
             subprocess.check_call(execCommand)
-            execCommand = ["shapeworks", "readimage", "--name", seginname, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", dtnrrdfilename]
+            execCommand = ["shapeworks", "read-image", "--name", seginname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(execCommand)
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
                 isoValue)]
@@ -458,7 +458,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             subprocess.check_call(execCommand )
             execCommand = ["CloseHoles" , "--inFilename" , inname , "--outFilename" , inname]
             subprocess.check_call(execCommand )
-            execCommand = ["shapeworks", "readimage", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", dtnrrdfilename]
+            execCommand = ["shapeworks", "read-image", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(execCommand )
             execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(
                 isoValue)]
@@ -625,7 +625,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         subprocess.check_call(execCommand )
         execCommand = ["CloseHoles" ,  "--inFilename" , inname , "--outFilename" , inname ]
         subprocess.check_call(execCommand )
-        execCommand = ["shapeworks", "readimage", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "writeimage", "--name", dtnrrdfilename]
+        execCommand = ["shapeworks", "read-image", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
         subprocess.check_call(execCommand )
         execCommand = ["FastMarching" , "--inFilename" , dtnrrdfilename , "--outFilename" , dtnrrdfilename , "--isoValue" , str(isoValue) ]
         subprocess.check_call(execCommand )
