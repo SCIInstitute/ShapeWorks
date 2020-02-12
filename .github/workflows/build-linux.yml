@@ -13,10 +13,30 @@ jobs:
     
     steps:
 
-    - uses: actions/checkout@v2
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+          miniconda-version: 'latest'
+
+    - name: Conda info
+      run: conda info
+
+    - name: Checkout code
+      uses: actions/checkout@v2
       with:
         lfs: true
 
+    - name: Get tags
+      run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
+        
+    - name: conda installs
+      shell: bash -l {0}
+      run: source ./conda_installs.sh
+
+    - name: activate shapeworks
+      shell: bash -l {0}
+      run: conda activate shapeworks
+      
     - name: Acquire LinuxDeployQt
       run: curl -L -o $HOME/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt
 
@@ -33,19 +53,21 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/superbuild.sh') }}
 
     - name: Build dependencies
+      shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./superbuild.sh --dependencies_only
 
     - name: cmake
+      shell: bash -l {0}
       run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
 
     - name: make
+      shell: bash -l {0}
       run: cd build && make -j4
 
-    - name: make test
-      run: cd build && make test
 
     - name: make install
+      shell: bash -l {0}
       run: cd build && make install
       
     - name: Remove Qt SQL Stuff
@@ -54,6 +76,10 @@ jobs:
     - name: Build Binary Package
       run: pwd ; ls ; PATH=$HOME:$PATH ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
 
+    - name: make test
+      shell: bash -l {0}
+      run: conda activate shapeworks && cd build && ctest -VV
+    
     - uses: actions/upload-artifact@v1
       with:
         name: artifact-${{github.sha}}-linux

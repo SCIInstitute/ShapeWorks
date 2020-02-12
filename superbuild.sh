@@ -137,14 +137,14 @@ build_vxl()
 
   if [[ $OSTYPE == "msys" ]]; then
       echo cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
-      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVXL_USE_DCMTK:BOOL=OFF -Wno-dev ..
       cmake --build . --config Release || exit 1
+      VXL_DIR=${INSTALL_DIR}/vxl/build
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DVXL_USE_DCMTK:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
+      VXL_DIR=${INSTALL_DIR}/share/vxl/cmake
   fi
-
-  VXL_DIR=${INSTALL_DIR}/share/vxl/cmake
 }
 
 build_vtk()
@@ -165,14 +165,7 @@ build_vtk()
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
-
-  # TODO: this could be lib (not lib64) on the Windows linux subsystem (or even other linuxes), so need to verify
-  if [ "$(uname)" == "Darwin" ]; then
-    VTK_LIB_DIR="lib"
-  else
-    VTK_LIB_DIR="lib64"
-  fi    
-  VTK_DIR=${INSTALL_DIR}/${VTK_LIB_DIR}/cmake/vtk-${VTK_VER_STR}
+  VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
 }
 
 build_itk()
@@ -210,9 +203,15 @@ build_shapeworks()
   cd ${BUILD_DIR}
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf shapeworks-build; fi
   mkdir -p shapeworks-build && cd shapeworks-build
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
-  make -j${NUM_PROCS} install || exit 1
 
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
+
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake --build . --config Release || exit 1
+  else
+      make -j${NUM_PROCS} install || exit 1
+  fi
   # Inform users of ShapeWorks install path:
   # FIXME/TODO: get rid of LD_LIBRARY_PATH requirement (https://github.com/SCIInstitute/ShapeWorks/issues/125)
   echo "## -----------------------------------------"
@@ -301,7 +300,9 @@ echo "##  $*"
 echo "##"
 echo ""
 
-verify_qt
+if [[ $OSTYPE != "msys" ]]; then
+    verify_qt
+fi
 
 echo "INSTALL_DIR: ${INSTALL_DIR}"
 echo "BUILD_DIR: ${BUILD_DIR}"

@@ -17,7 +17,7 @@
 
 #include <fstream>
 #include "itkImage.h"
-#include "itkParticleClipRegionDomain.h"
+#include "itkParticleRegionDomain.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "openvdb/openvdb.h"
 #include "openvdb/tools/SignedFloodFill.h"
@@ -36,7 +36,7 @@ namespace itk
  *
  */
 template <class T, unsigned int VDimension=3>
-class ITK_EXPORT ParticleImageDomain : public ParticleClipRegionDomain<VDimension>
+class ITK_EXPORT ParticleImageDomain : public ParticleRegionDomain<VDimension>
 {
 public:
   /** Standard class typedefs */
