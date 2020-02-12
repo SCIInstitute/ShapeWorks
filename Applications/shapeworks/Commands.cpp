@@ -4,8 +4,6 @@
 
 namespace shapeworks {
 
-
-
 // boilerplate for a command. Copy this to start a new command
 #if 0
 ///////////////////////////////////////////////////////////////////////////////
@@ -33,14 +31,12 @@ int Example::execute(const optparse::Values &options, SharedCommandData &sharedD
 }
 #endif
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // ReadImage
 ///////////////////////////////////////////////////////////////////////////////
 void ReadImage::buildParser()
 {
-  const std::string prog = "readimage";
+  const std::string prog = "read-image";
   const std::string desc = "reads an image";
   parser.prog(prog).description(desc);
 
@@ -57,13 +53,12 @@ int ReadImage::execute(const optparse::Values &options, SharedCommandData &share
   return sharedData.image.read(filename);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // WriteImage
 ///////////////////////////////////////////////////////////////////////////////
 void WriteImage::buildParser()
 {
-  const std::string prog = "writeimage";
+  const std::string prog = "write-image";
   const std::string desc = "writes the current image (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -82,13 +77,12 @@ int WriteImage::execute(const optparse::Values &options, SharedCommandData &shar
   return sharedData.image.write(filename, compressed);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // ReadMesh
 ///////////////////////////////////////////////////////////////////////////////
 void ReadMesh::buildParser()
 {
-  const std::string prog = "readmesh";
+  const std::string prog = "read-mesh";
   const std::string desc = "reads a mesh";
   parser.prog(prog).description(desc);
 
@@ -105,13 +99,12 @@ int ReadMesh::execute(const optparse::Values &options, SharedCommandData &shared
   return sharedData.mesh.read(filename);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // WriteMesh
 ///////////////////////////////////////////////////////////////////////////////
 void WriteMesh::buildParser()
 {
-  const std::string prog = "writemesh";
+  const std::string prog = "write-mesh";
   const std::string desc = "writes the current mesh (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -127,7 +120,6 @@ int WriteMesh::execute(const optparse::Values &options, SharedCommandData &share
   
   return sharedData.mesh.write(filename);
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Antialias
@@ -154,7 +146,6 @@ int Antialias::execute(const optparse::Values &options, SharedCommandData &share
 
   return sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // ResampleImage
@@ -183,13 +174,12 @@ int ResampleImage::execute(const optparse::Values &options, SharedCommandData &s
   return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // RecenterImage
 ///////////////////////////////////////////////////////////////////////////////
 void RecenterImage::buildParser()
 {
-  const std::string prog = "recenterimage";
+  const std::string prog = "recenter-image";
   const std::string desc = "recenters an image by changing its origin in the image header to the physcial coordinates of the center of the image";
   parser.prog(prog).description(desc);
 
@@ -200,7 +190,6 @@ int RecenterImage::execute(const optparse::Values &options, SharedCommandData &s
 {
   return sharedData.image.recenter();
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Binarize
@@ -253,12 +242,6 @@ int PadImage::execute(const optparse::Values &options, SharedCommandData &shared
 
   return sharedData.image.pad(padding, value);
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Clip
-///////////////////////////////////////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // SmoothMesh
@@ -313,6 +296,5 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 
   return sharedData.mesh.coverage(second_mesh);
 }
-
 
 } // shapeworks
