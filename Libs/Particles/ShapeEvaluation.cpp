@@ -113,6 +113,9 @@ namespace shapeworks {
 
     //TODO: Implement
     double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes) {
+
+        Eigen::MatrixXd a;
+
         return -1.0;
     }
 }
