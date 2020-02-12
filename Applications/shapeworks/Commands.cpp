@@ -298,11 +298,11 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// COM
+// CenterOfMassAlign
 ///////////////////////////////////////////////////////////////////////////////
-void COM::buildParser()
+void CenterOfMassAlign::buildParser()
 {
-  const std::string prog = "com";
+  const std::string prog = "center-of-mass-align";
   const std::string desc = "performs translational alignment of a given shape image based on either its center of mass or a given 3d point";
   parser.prog(prog).description(desc);
 
@@ -315,14 +315,14 @@ void COM::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int COM::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   bool useCenterOfMass = static_cast<bool>(options.get("useCenterOfMass"));
   float centerX = static_cast<float>(options.get("centerX"));
   float centerY = static_cast<float>(options.get("centerY"));
   float centerZ = static_cast<float>(options.get("centerZ"));
 
-  return sharedData.image.com(useCenterOfMass, centerX, centerY, centerZ);
+  return sharedData.image.centerofmassalign(useCenterOfMass, centerX, centerY, centerZ);
 }
 
 } // shapeworks

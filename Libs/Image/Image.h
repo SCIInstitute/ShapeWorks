@@ -26,7 +26,7 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  bool com(bool useCenterOfMass, float centerX, float centerY, float centerZ);
+  bool centerofmassalign(bool useCenterOfMass = true, float centerX = 0, float centerY = 0, float centerZ = 0);
   // bool nextfunction(...);
 
   bool compare_equal(const Image &other);

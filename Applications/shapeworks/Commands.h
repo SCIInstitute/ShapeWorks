@@ -151,17 +151,17 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-class COM : public ImageCommand
+class CenterOfMassAlign : public ImageCommand
 {
 public:
-  static COM &getCommand()
+  static CenterOfMassAlign &getCommand()
   {
-    static COM instance;
+    static CenterOfMassAlign instance;
     return instance;
   }
 
 private:
-  COM() { buildParser(); } 
+  CenterOfMassAlign() { buildParser(); } 
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

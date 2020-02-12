@@ -11,6 +11,7 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+// #include <itkTranslationTransform.h>
 
 namespace shapeworks {
 
@@ -335,6 +336,123 @@ bool Image::pad(int padding, PixelType value)
   }
 
   std::cout << "Pad image with constant succeeded!\n";
+  return true;
+
+}
+
+//need to call antialias before and isoresample after for binary images
+bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY, float centerZ)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  double imageCenterX, imageCenterY, imageCenterZ;
+  const unsigned int Dimension = 3;
+
+  using TransformType = itk::TranslationTransform<double, Dimension>;
+  TransformType::Pointer transform = TransformType::New();
+  TransformType::OutputVectorType translation;
+
+  if(useCenterOfMass == true)
+  {
+    // getting the origin of the shape
+    itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
+    float numPixels = 0.0, meanX = 0.0, meanY = 0.0, meanZ = 0.0;
+    while(!imageIt.IsAtEnd())
+    {
+        PixelType val = imageIt.Get();
+        ImageType::IndexType index;
+        ImageType::PointType point;
+        index = imageIt.GetIndex();
+
+        if(val == 1)
+        {
+            numPixels = numPixels+1;
+            image->TransformIndexToPhysicalPoint(index, point);
+            meanX = meanX + point[0];
+            meanY = meanY + point[1];
+            meanZ = meanZ + point[2];
+        }
+        ++imageIt;
+    }
+
+    meanX = meanX/numPixels;
+    meanY = meanY/numPixels;
+    meanZ = meanZ/numPixels;
+
+    imageCenterX = meanX;
+    imageCenterY = meanY;
+    imageCenterZ = meanZ;
+  }
+  else  /*using center of ostium coordinates*/
+  {
+    imageCenterX = centerX;
+    imageCenterY = centerY;
+    imageCenterZ = centerZ;
+  }
+
+  ImageType::IndexType index;
+  ImageType::PointType point;
+  ImageType::PointType center;
+  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
+
+  index[0] = 0; index[1] = 0; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] = point[0]; center[1] = point[1]; center[2] = point[2];
+
+  index[0] = 0; index[1] = 0; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = 0; index[1] = size[1]-1; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = 0; index[1] = size[1]-1; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = 0; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = 0; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  center[0] /= 8.0; center[1] /= 8.0; center[2] /= 8.0;
+
+  // move object's origin to zero then move to the region center
+  translation[0] = -1*(-imageCenterX + center[0]);
+  translation[1] = -1*(-imageCenterY + center[1]);
+  translation[2] = -1*(-imageCenterZ + center[2]);
+
+  transform->Translate(translation);
+
+  try
+  {
+    // transform->Update();
+    transform->Translate(translation);
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Center of mass alignment failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+  std::cout << "Center of mass alignment succeeded!\n";
   return true;
 
 }
