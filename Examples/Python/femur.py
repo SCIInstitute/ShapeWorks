@@ -60,7 +60,7 @@ def Run_Pipeline(args):
         print("Downloading " + filename + " from SCIGirder.")
         datasets.downloadDataset(filename)
 
-    # extract the zipfile
+    extract the zipfile
     print("Extracting data from " + filename + "...")
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
@@ -103,6 +103,10 @@ def Run_Pipeline(args):
         for file in sorted(os.listdir(mesh_dir)):
             files_mesh.append(mesh_dir + file)
 
+        if args.tiny_test:
+            files_img= files_img[:3]
+            files_mesh = files_mesh[:3]
+
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
             options = []
@@ -132,7 +136,7 @@ def Run_Pipeline(args):
         for the non-reference side so that all of the femurs can be aligned.
         """
         reflectedFiles_mesh, reflectedFile_img = anatomyPairsToSingles(parentDir + 'reflected', files_mesh, files_img, reference_side)
-        
+
         """
         MeshesToVolumes - Shapeworks requires volumes so we need to convert 
         mesh segementaions to binary segmentations.
@@ -391,144 +395,5 @@ def Run_Pipeline(args):
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
     if args.interactive:
         input("Press Enter to continue")
-
-
-    meanDir   = './TestFemur/MeanReconstruction/'
-    if not os.path.exists(meanDir):
-        os.makedirs(meanDir)
-
-    """
-    Parameter dictionary for ReconstructMeanSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "out_prefix" : meanDir + 'femur',
-        "do_procrustes" : 0,
-        "do_procrustes_scaling" : 0,
-        "levelsetValue" : 0.0,
-        "targetReduction" : 0.0,
-        "featureAngle" : 30,
-        "lsSmootherIterations" : 1,
-        "meshSmootherIterations" : 1,
-        "preserveTopology" : 1,
-        "qcFixWinding" : 1,
-        "qcDoLaplacianSmoothingBeforeDecimation" : 1,
-        "qcDoLaplacianSmoothingAfterDecimation" : 1,
-        "qcSmoothingLambda" : 0.5,
-        "qcSmoothingIterations" : 3,
-        "qcDecimationPercentage" : 0.9,
-        "normalAngle" : 90,
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-
-    runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
-
-    """
-    Reconstruct the dense sample-specfic surface in the local coordinate system given the dense mean surface
-    """
-
-    print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
-    meshDir_local   = './TestFemur/MeshFiles-Local/'
-    if not os.path.exists(meshDir_local):
-         os.makedirs(meshDir_local)
-
-    """
-    Parameter dictionary for ReconstructSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'femur',
-        "out_prefix" : meshDir_local + 'femur',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-    localDensePointFiles = runReconstructSurface(localPointFiles, parameterDictionary)
-
-
-    """
-    Reconstruct the dense sample-specfic surface in the world coordinate system given the dense mean surface
-    """
-
-    print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
-    meshDir_global   = './TestFemur/MeshFiles-World/'
-    if not os.path.exists(meshDir_global):
-        os.makedirs(meshDir_global)
-
-    """
-    Parameter dictionary for ReconstructSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'femur',
-        "out_prefix" : meshDir_global + 'femur',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-    worldDensePointFiles = runReconstructSurface(worldPointFiles, parameterDictionary)
-
-    """
-    Reconstruct dense meshes along dominant pca modes
-    """
-
-    print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
-    pcaDir   = './TestFemur/PCAModesFiles/'
-    if not os.path.exists(pcaDir):
-        os.makedirs(pcaDir)
-
-    """
-    Parameter dictionary for ReconstructSamplesAlongPCAModes cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'femur',
-        "out_prefix" : pcaDir + 'femur',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1,
-        "maximum_variance_captured" : 0.95,
-        "maximum_std_dev" : 2,
-        "number_of_samples_per_mode" : 10
-    }
-
-    runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
-
-    """
-    The local and world particles will be saved in TestLeftAtrium/PointFiles/<number_of_particles>
-    directory, the set of these points on each shape constitue a particle based shape model
-    or a Point Distribution Model (PDM). This PDM shape representation is
-    computationally flexible and efficient and we can use it to perform shape
-    analysis. Here we provide one of the provided visualization tool in the
-    shapeworks codebase : ShapeWorksView2.
-    This tool will showcase individual shapes with their particle representations,
-    as well as the PCA model constructed using these point correspondences. The
-    PCA modes of variation representing the given shape population can be
-    visualized.
-    """
-
-    print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
     launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
-    print(rigidFiles_segmentations)
 
