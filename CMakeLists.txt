@@ -49,10 +49,6 @@ project(ShapeWorks)
 
 #TODO: Move this to a proper place. For some reason TBB is not linking if this part is in Libs/Optimize/CMakeLists.txt
 list(APPEND CMAKE_MODULE_PATH "/home/sci/karthik/Documents/playground/openvdb/openvdb-7.0.0/build/install/lib64/cmake/OpenVDB")
-find_package(TBB REQUIRED COMPONENTS tbb)
-message("Tbb found: " ${Tbb_FOUND})
-message("Tbb version: " ${Tbb_VERSION})
-message("Tbb Library path: " ${Tbb_LIBRARY_PATH})
 
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
