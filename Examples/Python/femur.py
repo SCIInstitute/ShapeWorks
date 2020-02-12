@@ -60,7 +60,7 @@ def Run_Pipeline(args):
         print("Downloading " + filename + " from SCIGirder.")
         datasets.downloadDataset(filename)
 
-    extract the zipfile
+    # extract the zipfile
     print("Extracting data from " + filename + "...")
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
