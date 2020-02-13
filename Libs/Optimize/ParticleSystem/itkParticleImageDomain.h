@@ -22,9 +22,11 @@
 
 // we have to undef foreach here because both Qt and OpenVDB define foreach
 #undef foreach
+#ifndef Q_MOC_RUN
 #include "openvdb/openvdb.h"
 #include "openvdb/tools/SignedFloodFill.h"
 #include "openvdb/tools/Interpolation.h"
+#endif
 
 namespace itk
 {
