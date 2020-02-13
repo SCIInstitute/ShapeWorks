@@ -19,6 +19,9 @@
 #include "itkImage.h"
 #include "itkParticleRegionDomain.h"
 #include "itkLinearInterpolateImageFunction.h"
+
+// we have to undef foreach here because both Qt and OpenVDB define foreach
+#undef foreach
 #include "openvdb/openvdb.h"
 #include "openvdb/tools/SignedFloodFill.h"
 #include "openvdb/tools/Interpolation.h"
