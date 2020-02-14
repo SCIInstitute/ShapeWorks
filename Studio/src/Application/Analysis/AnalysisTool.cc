@@ -91,11 +91,11 @@ std::vector<Point> AnalysisTool::get_group_difference_vectors()
 void AnalysisTool::on_linear_radio_toggled(bool b)
 {
   if (b) {
-    this->ui_->graph_->setLogScale(false);
+    this->ui_->graph_->set_log_scale(false);
     this->ui_->graph_->repaint();
   }
   else {
-    this->ui_->graph_->setLogScale(true);
+    this->ui_->graph_->set_log_scale(true);
     this->ui_->graph_->repaint();
   }
 }
@@ -361,7 +361,7 @@ bool AnalysisTool::compute_stats()
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
     vals.push_back(this->stats_.Eigenvalues()[i]);
   }
-  this->ui_->graph_->setData(vals);
+  this->ui_->graph_->set_data(vals);
 
   this->ui_->graph_->repaint();
 

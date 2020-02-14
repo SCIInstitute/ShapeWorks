@@ -12,24 +12,22 @@ public:
   BarGraph(QWidget* parent = 0);
   ~BarGraph();
 
-  void setData(std::vector<double> values);
-  void paintBargraph(QPainter& painter);
-  QBrush getBrush() const;
-  void setBrush(const QBrush &value);
-  void setLogScale(bool b);
+  void set_data(std::vector<double> values_);
+  void set_log_scale(bool b);
 
 private:
-  virtual void paintEvent(QPaintEvent* event);
-  virtual void resizeEvent(QResizeEvent* event);
-  void recalcBasicValues();
+  void paintEvent(QPaintEvent* event) override;
+  void resizeEvent(QResizeEvent* event) override;
 
+  void recalculate_basic_values();
+
+  void paint_bar_graph(QPainter& painter);
   double get_chart_height();
 
-  //members
-  std::vector<double> values;
-  double max_val, min_val;
-  int barwidth, margin;
-  std::vector<QRect> bars;
-  bool use_log_;
+  // members
+  std::vector<double> values_;
+  std::vector<QRect> bars_;
+  double max_val_ = 100.0, min_val_ = 0.0;
+  int bar_width_ = 10, margin_ = 5;
+  bool use_log_ = true;
 };
-
