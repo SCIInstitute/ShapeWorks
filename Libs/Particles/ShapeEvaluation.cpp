@@ -115,7 +115,49 @@ namespace shapeworks {
     //TODO: Implement
     double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes) {
 
-        //const int n=1;
+        const int N = particleSystem.N();
+        const int D = particleSystem.D();
+        
+        const int nSamples = 1000;
+
+        Eigen::VectorXd meanSpecificity(nModes);
+        Eigen::VectorXd stdSpecificity(nModes);
+        Eigen::MatrixXd spec_store(nModes,4);
+
+        std::cout << "Computing specificity..." << std::endl;
+
+        //DoPCA
+        const Eigen::MatrixXd &ptsModels = particleSystem.Particles();
+        const Eigen::VectorXd mu = ptsModels.rowwise().mean();
+        Eigen::MatrixXd Y = ptsModels;
+
+        Y.colwise() -= mu;
+
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
+        const auto epsi = svd.matrixU().block(0, 0, D, nModes);
+        auto eigenValues = svd.singularValues();
+        eigenValues = eigenValues.array().pow(2);
+        //eigenValues = eigenValues.row( (0, nModes);
+        //eigenValues(
+
+
+        auto checkItem = eigenValues.segment(0,nModes);
+        std::cout << checkItem.rows() << " x " << checkItem.cols() << std::endl << "row 1:" << std::endl << checkItem << std::endl;
+
+        //Eigen::MatrixXd a(4, 3);
+        //a << 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12;
+        //Eigen::JacobiSVD<Eigen::MatrixXd> svd(a, Eigen::ComputeFullU);
+        
+        //const auto s = svd.matrixU().block(0, 0,4,nModes);
+        //const auto v = svd.matrixV();
+        //const auto d = svd.singularValues().block(0, 0, 4, nModes);
+        //auto checkItem = s;
+        //std::cout << checkItem.rows() << " x " << checkItem.cols() << std::endl << "row 1:" << std::endl << checkItem << std::endl;
+        ////auto checkItem2 = v;
+        ////std::cout << checkItem2.rows() << " x " << checkItem2.cols() << std::endl << "row 1:" << std::endl << checkItem2.row(0) << std::endl;
+        //auto checkItem3 = d;
+        //std::cout << checkItem3.rows() << " x " << checkItem3.cols() << std::endl << "row 1:" << std::endl << checkItem3 << std::endl;
+
         //Eigen::MatrixXd a(3,3);
         //Eigen::MatrixXd b;
 
