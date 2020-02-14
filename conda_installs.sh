@@ -54,7 +54,8 @@ function install_conda() {
        geotiff=1.5.1 \
        numpy=1.17.4 \
        git-lfs=2.6.1 \
-       openblas=0.3.3
+       openblas=0.3.3 \
+       vtk=8.2.0
   then return 1; fi
 
 

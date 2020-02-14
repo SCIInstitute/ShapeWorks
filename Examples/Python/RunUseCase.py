@@ -11,7 +11,9 @@ shapeworks binaries and set the necessary library paths
 """
 import os
 import platform
-from RunEllipsoid import *
+import argparse
+import subprocess
+import sys
 
 # Path pre-setup
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
@@ -21,13 +23,17 @@ if platform.system() == "Darwin":
     binpath = binpath + ":/Applications/ShapeWorks/bin"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--interactive", help="Run in interactive mode", action="store", default=0)
-parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store", default=0)
-parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store", default=0)
+parser.add_argument("--use_case", help="Specify which use case to run, either: ellipse, left_atrium, or femur.")
+parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
+parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
+parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
+parser.add_argument("--use_single_scale", help="Single scale or multi scale optimization", action="store_true")
 parser.add_argument("--tiny_test", help="Run as a short test", action="store_true")
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
 binpath = args.shapeworks_path
+
+module = __import__(args.use_case)
 
 # Path final
 if platform.system() == "Darwin":
@@ -40,15 +46,10 @@ if platform.system() == "Darwin":
 os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
 
 try:
-
-    
-    Run_Ellipsoid_Pipeline(args)
-
+    module.Run_Pipeline(args)
     print("\nShapeworks Pipeline Complete!")
-
 except KeyboardInterrupt:
     print("KeyboardInterrupt exception caught")
     sys.exit(1)
 except subprocess.CalledProcessError as e:
     print("General exception caught.\n\tReturncode: "+str(e.returncode)+"\n\tOutput: "+str(e.output))
-    sys.exit(1)

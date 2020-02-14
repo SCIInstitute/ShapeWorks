@@ -31,7 +31,7 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 
-def Run_LeftAtrium_Pipline(args):
+def Run_Pipeline(args):
 
     """
     Unzip the data for this tutorial.
@@ -66,8 +66,7 @@ def Run_LeftAtrium_Pipline(args):
         fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
         fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
 
-    if args.start_with_image_and_segmentation_data:
-
+    if args.start_with_image_and_segmentation_data and fileList_img:
         """
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
@@ -93,7 +92,6 @@ def Run_LeftAtrium_Pipline(args):
 
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
-
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
 
@@ -105,9 +103,8 @@ def Run_LeftAtrium_Pipline(args):
 
         Both the segmentation and raw images are padded.
         """
-
-        [paddedFiles_segmentations,  paddedFiles_images] = applyPadding(parentDir, resampledFiles_segmentations,resampledFiles_images, 10, processRaw = True)
-
+        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', resampledFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir+ 'padded/images', resampledFiles_images, 10)
 
         """
         Apply center of mass alignment
@@ -118,7 +115,7 @@ def Run_LeftAtrium_Pipline(args):
         This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
         There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
         """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir, paddedFiles_segmentations, paddedFiles_images , processRaw=True)
+        [comFiles_segmentations, comFiles_images] = applyCOMAlignment(parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
 
         """
         Apply rigid alignment
@@ -204,7 +201,7 @@ def Run_LeftAtrium_Pipline(args):
 
             """
 
-            paddedFiles = applyPadding(parentDir, resampledFiles ,None, 10)
+            paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
 
             """
             Apply center of mass alignment
@@ -213,7 +210,7 @@ def Run_LeftAtrium_Pipline(args):
             'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
 
              """
-            comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+            comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
 
             """
             Apply rigid alignment
@@ -297,7 +294,7 @@ def Run_LeftAtrium_Pipline(args):
             "relative_weighting" : 50,
             "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
+            "procrustes_scaling" : 1,
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3
@@ -326,7 +323,7 @@ def Run_LeftAtrium_Pipline(args):
             "relative_weighting" : 50,
             "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
+            "procrustes_scaling" : 1,
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3

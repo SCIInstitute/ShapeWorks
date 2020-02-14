@@ -32,7 +32,7 @@ from AnalyzeUtils import *
 
 
 
-def Run_Ellipsoid_Pipeline(args):
+def Run_Pipeline(args):
 
     """
     Unzip the data for this tutorial.
@@ -111,7 +111,7 @@ def Run_Ellipsoid_Pipeline(args):
         ... link
         """
 
-        paddedFiles = applyPadding(parentDir, resampledFiles, None,  10)
+        paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
 
         """
         Apply center of mass alignment
@@ -119,7 +119,7 @@ def Run_Ellipsoid_Pipeline(args):
         For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
         ... link
         """
-        comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
         """Apply rigid alignment"""
 
         rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
