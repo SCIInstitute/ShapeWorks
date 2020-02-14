@@ -30,10 +30,7 @@ void BarGraph::set_data(std::vector<double> vals)
 {
   this->min_val_ = *std::min_element(vals.begin(), vals.end());
   this->max_val_ = *std::max_element(vals.begin(), vals.end());
-  this->values_.clear();
-  for (size_t i = 0; i < vals.size(); i++) {
-    this->values_.push_back(vals[i]);
-  }
+  this->values_ = vals;
   this->recalculate_basic_values();
   this->setMinimumSize((int)(this->margin_ * this->values_.size() * 2) + 45,
                        200 + this->margin_ * 5);
