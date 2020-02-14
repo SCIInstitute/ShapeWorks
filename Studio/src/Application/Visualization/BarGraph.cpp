@@ -42,11 +42,23 @@ void BarGraph::set_data(std::vector<double> vals)
 //---------------------------------------------------------------------------
 void BarGraph::paint_bar_graph(QPainter &painter)
 {
+  QColor top_color(100, 100, 255);
+  QColor bottom_color(20, 20, 150);
+
   painter.save();
   QPen p(Qt::black);
   p.setWidth(2);
   painter.setPen(p);
   painter.setBrush(Qt::blue);
+
+  QLinearGradient grad(QPointF(0.0, 0.0), QPointF(0.0, 1.0));
+  grad.setCoordinateMode(QGradient::ObjectBoundingMode);
+  grad.setColorAt(0, top_color);
+  grad.setColorAt(1, bottom_color);
+
+  painter.setBrush(QBrush(grad));
+  painter.setPen(QPen(QColor(0, 0, 0), 1, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+  //painter.setZValue(0.0);
 
   // X Values
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
@@ -63,7 +75,7 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   }
 
   // X label
-  painter.drawText(2 * margin_, height() - 5, "Eigenvalues");
+  painter.drawText(2 * margin_, height() - 5, "Mode");
 
   // Y Labels
   int num_steps = use_log_ ? (static_cast<int>(log10(max_val_)) -
