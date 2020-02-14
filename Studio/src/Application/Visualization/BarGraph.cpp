@@ -52,12 +52,21 @@ void BarGraph::paint_bar_graph(QPainter &painter)
 
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
     painter.drawRect(bars_[i]);
-    //numbered eigen value on x axis
-    painter.drawText(bar_width_ * (i + 0.5) + margin_ * (i + 1), height() - 20, QString::number(i));
+    // numbered eigen value on x axis
+    bool draw_text = true;
+
+    if (i % 2 == 0) {
+      if (i < 99 || i % 4 == 0) {
+        // after '9', there's not enough room to write each number, only write every other
+        painter.drawText(bar_width_ * (i + 0.5) + margin_ * (i + 1) - 3,
+                         height() - 20, QString::number(i));
+      }
+    }
   }
-  //X label
+
+  // X label
   painter.drawText(2 * margin_, height() - 5, "Eigenvalues");
-  // Y Label
+  // Y Labels
   int num_steps = use_log_ ? (static_cast<int>(log10(max_val_)) -
                               static_cast<int>(log10(min_val_)) + 1) : 5;
   num_steps = std::max(1, num_steps);
