@@ -12,7 +12,7 @@ public:
   BarGraph(QWidget* parent = 0);
   ~BarGraph();
 
-  void set_data(std::vector<double> values_);
+  void set_data(const std::vector<double>& values);
   void set_log_scale(bool b);
 
 private:

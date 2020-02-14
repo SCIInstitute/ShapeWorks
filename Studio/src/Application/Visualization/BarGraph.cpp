@@ -26,11 +26,11 @@ void BarGraph::set_log_scale(bool b)
 }
 
 //---------------------------------------------------------------------------
-void BarGraph::set_data(std::vector<double> vals)
+void BarGraph::set_data(const std::vector<double>& values)
 {
-  this->min_val_ = *std::min_element(vals.begin(), vals.end());
-  this->max_val_ = *std::max_element(vals.begin(), vals.end());
-  this->values_ = vals;
+  this->min_val_ = *std::min_element(values.begin(), values.end());
+  this->max_val_ = *std::max_element(values.begin(), values.end());
+  this->values_ = values;
   this->recalculate_basic_values();
   this->setMinimumSize((int)(this->margin_ * this->values_.size() * 2) + 45,
                        200 + this->margin_ * 5);
@@ -122,14 +122,17 @@ void BarGraph::recalculate_basic_values()
   if (this->bars_.size() != this->values_.size()) {
     this->bars_.resize(this->values_.size());
   }
+
+  double range =
+    this->use_log_ ? (log10(this->max_val_) - log10(this->min_val_)) : (this->max_val_ -
+                                                                        this->min_val_);
+
   int x = this->margin_ + 45;
+
   for (size_t i = 0, s = this->values_.size(); i < s; ++i) {
     double val =
       this->use_log_ ? (log10(this->values_[i]) - log10(this->min_val_)) : (this->values_[i] -
                                                                             this->min_val_);
-    double range =
-      this->use_log_ ? (log10(this->max_val_) - log10(this->min_val_)) : (this->max_val_ -
-                                                                          this->min_val_);
     int barheight = static_cast<int>(val * h / (range));
     this->bars_[i].setRect(x, 5 + h - barheight, this->bar_width_, barheight);
     x += this->margin_ + this->bar_width_;
