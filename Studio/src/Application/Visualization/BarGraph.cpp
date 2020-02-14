@@ -58,7 +58,6 @@ void BarGraph::paint_bar_graph(QPainter &painter)
 
   painter.setBrush(QBrush(grad));
   painter.setPen(QPen(QColor(0, 0, 0), 1, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-  //painter.setZValue(0.0);
 
   // X Values
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
@@ -68,7 +67,7 @@ void BarGraph::paint_bar_graph(QPainter &painter)
     if (i % 2 == 0) {
       if (i < 99 || i % 4 == 0) {
         // after '9', there's not enough room to write each number, only write every other
-        painter.drawText(bar_width_ * (i + 0.5) + margin_ * (i + 1) - 3,
+        painter.drawText(45 + bar_width_ * (i + 0.5) + margin_ * (i + 1) - 3,
                          height() - 20, QString::number(i));
       }
     }
@@ -88,13 +87,13 @@ void BarGraph::paint_bar_graph(QPainter &painter)
     std::stringstream ss;
     if (use_log_) {
       ss << "_1e" << (start + i);
-      painter.drawText(this->width() - 45,
-                       this->get_chart_height() - 75 - separation * i, QString(ss.str().c_str()));
+      painter.drawText(0, this->get_chart_height() - 75 - separation * i,
+                       QString(ss.str().c_str()));
     }
     else {
       ss << "_" << static_cast<int>(start + (max_val_ / num_steps) * i);
-      painter.drawText(this->width() - 45,
-                       this->get_chart_height() - 45 - separation * i, QString(ss.str().c_str()));
+      painter.drawText(0, this->get_chart_height() - 45 - separation * i,
+                       QString(ss.str().c_str()));
     }
   }
   painter.restore();
@@ -126,7 +125,7 @@ void BarGraph::recalculate_basic_values()
   if (this->bars_.size() != this->values_.size()) {
     this->bars_.resize(this->values_.size());
   }
-  int x = this->margin_;
+  int x = this->margin_ + 45;
   for (size_t i = 0, s = this->values_.size(); i < s; ++i) {
     double val =
       this->use_log_ ? (log10(this->values_[i]) - log10(this->min_val_)) : (this->values_[i] -
