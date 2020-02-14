@@ -50,10 +50,10 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   painter.setPen(p);
   painter.setBrush(Qt::blue);
 
+  // X Values
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
-    painter.drawRect(bars_[i]);
+    painter.drawRect(this->bars_[i]);
     // numbered eigen value on x axis
-    bool draw_text = true;
 
     if (i % 2 == 0) {
       if (i < 99 || i % 4 == 0) {
@@ -66,6 +66,7 @@ void BarGraph::paint_bar_graph(QPainter &painter)
 
   // X label
   painter.drawText(2 * margin_, height() - 5, "Eigenvalues");
+
   // Y Labels
   int num_steps = use_log_ ? (static_cast<int>(log10(max_val_)) -
                               static_cast<int>(log10(min_val_)) + 1) : 5;
@@ -76,12 +77,12 @@ void BarGraph::paint_bar_graph(QPainter &painter)
     std::stringstream ss;
     if (use_log_) {
       ss << "_1e" << (start + i);
-      painter.drawText(width() - 45,
+      painter.drawText(this->width() - 45,
                        this->get_chart_height() - 75 - separation * i, QString(ss.str().c_str()));
     }
     else {
       ss << "_" << static_cast<int>(start + (max_val_ / num_steps) * i);
-      painter.drawText(width() - 45,
+      painter.drawText(this->width() - 45,
                        this->get_chart_height() - 45 - separation * i, QString(ss.str().c_str()));
     }
   }
@@ -104,9 +105,12 @@ void BarGraph::resizeEvent(QResizeEvent* event)
 //---------------------------------------------------------------------------
 void BarGraph::recalculate_basic_values()
 {
-  int sz = std::max(1, static_cast<int>(this->values_.size()));
+  int num_bars = std::max(1, static_cast<int>(this->values_.size()));
+
+  double width_to_work_with = (this->width() - (this->margin_ * this->values_.size())) - 45;
+
   this->bar_width_ =
-    std::max(this->margin_, (int)((this->width() - (this->margin_ * this->values_.size())) / sz));
+    std::max(this->margin_, (int)(width_to_work_with / (num_bars)));
   int h = this->get_chart_height() - 45;
   if (this->bars_.size() != this->values_.size()) {
     this->bars_.resize(this->values_.size());
