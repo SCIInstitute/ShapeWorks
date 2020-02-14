@@ -35,16 +35,14 @@ void BarGraph::set_data(std::vector<double> vals)
     this->values_.push_back(vals[i]);
   }
   this->recalculate_basic_values();
-  this->setMinimumSize((int)(this->margin_ * this->values_.size() * 2), 200 + this->margin_ * 5);
+  this->setMinimumSize((int)(this->margin_ * this->values_.size() * 2) + 45,
+                       200 + this->margin_ * 5);
 }
 
 //---------------------------------------------------------------------------
 void BarGraph::paint_bar_graph(QPainter &painter)
 {
   painter.save();
-  painter.translate(0, 10);
-  painter.scale(0.95, 0.95);
-
   QPen p(Qt::black);
   p.setWidth(2);
   painter.setPen(p);
@@ -73,6 +71,7 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   num_steps = std::max(1, num_steps);
   int start = static_cast<int>(use_log_ ? log10(min_val_) : 0);
   int separation = (this->get_chart_height() - 45) / num_steps;
+
   for (int i = 0; i < num_steps; i++) {
     std::stringstream ss;
     if (use_log_) {

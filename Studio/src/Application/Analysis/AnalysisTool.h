@@ -135,5 +135,4 @@ private:
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
 
-  BarGraph* chart_;
 };

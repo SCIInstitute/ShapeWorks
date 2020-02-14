@@ -751,7 +751,7 @@ QToolButton:pressed{
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>250</height>
+              <height>275</height>
              </size>
             </property>
             <property name="frameShape">
@@ -781,13 +781,19 @@ QToolButton:pressed{
                <x>0</x>
                <y>0</y>
                <width>289</width>
-               <height>238</height>
+               <height>261</height>
               </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>200</height>
+               <height>250</height>
               </size>
              </property>
              <layout class="QGridLayout" name="gridLayout_6">
@@ -808,10 +814,16 @@ QToolButton:pressed{
               </property>
               <item row="0" column="0">
                <widget class="BarGraph" name="graph_" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>200</height>
+                  <height>250</height>
                  </size>
                 </property>
                </widget>
