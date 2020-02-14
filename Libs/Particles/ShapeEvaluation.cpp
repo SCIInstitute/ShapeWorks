@@ -4,6 +4,7 @@
 #include <iostream>
 #include <Eigen/Core>
 #include <Eigen/SVD>
+//#include <Eigen/Dense>
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
@@ -114,14 +115,31 @@ namespace shapeworks {
     //TODO: Implement
     double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes) {
 
-        const int n=1;
-        Eigen::MatrixXd a(3,3);
+        //const int n=1;
+        //Eigen::MatrixXd a(3,3);
+        //Eigen::MatrixXd b;
 
-        std::cout << a << std::endl;
-        //a = a.isZero
+        //a = Eigen::MatrixXd::Random(3,3);
+        //b = Eigen::MatrixXd::Constant(3, 1, 1.0);
 
-        //for
+        //std::cout << "a:" << std::endl << a << std::endl;
+        //std::cout << "b:" << std::endl << b << std::endl;
 
+        //Eigen::MatrixXd c = a * b;
+        //std::cout << "c:" << std::endl << c << std::endl;
+
+        ////a = Eigen::MatrixXd::Random(2,2);
+        ////std::cout << "a:" << std::endl << a << std::endl;
+        ////std::cout << a.colwise()-b << std::endl;
+        ////a = a.isZero
+
+        ////for
+        //a = a.array + 1;
+        //b(1) += .5;
+        //std::cout << b << std::endl;
+
+
+        //std::cout << std::endl;
         return -1.0;
     }
 }
