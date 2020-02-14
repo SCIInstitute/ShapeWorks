@@ -380,6 +380,7 @@ int main( int argc, char * argv[] )
   typedef itk::ImageFileWriter< OutputImageType >  WriterType;
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( argv[2] );
+  writer->SetUseCompression(true);
   writer->SetInput( resampler->GetOutput() );
   try
     {

@@ -1370,6 +1370,7 @@ public:
             std::string f = debug_prefix + ".faceInd.nrrd";
             writer->SetFileName( f.c_str() );
             writer->SetInput( OutputImage );
+            writer->SetUseCompression(true);
             writer->Update();
 
             saveFidsViaKDtreeDistanceMap(OutputImage, debug_prefix);
@@ -1673,6 +1674,7 @@ public:
                 std::string f = debug_prefix + ".faceInd" + debug_suffix + ".nrrd";
                 writer->SetFileName( f.c_str() );
                 writer->SetInput( OutputImage );
+                writer->SetUseCompression(true);
                 writer->Update();
 
                 //saveFidsViaSuperVoxelDistanceMap(OutputImage, debug_prefix, radiusFactor); // using the subvoxel resolution not the original one
@@ -1996,6 +1998,7 @@ public:
             std::string f = debug_prefix + ".faceInd_r" + ss.str() +  "_sp" + sp.str() + ".nrrd";
             writer->SetFileName( f.c_str() );
             writer->SetInput( OutputImage );
+            writer->SetUseCompression(true);
             writer->Update();
         }
         // Collect values in faceIndexMap
@@ -3112,6 +3115,7 @@ public:
         std::string f = prefix + ".DistMap_r" + ss.str() + ".nrrd";
         w->SetFileName( f.c_str() );
         w->SetInput( origDistMap );
+        w->SetUseCompression(true);
         w->Update();
     }
 
@@ -3258,6 +3262,7 @@ public:
         std::string f = prefix + ".SignedDistMap" + suffix + ".nrrd";
         w->SetFileName( f.c_str() );
         w->SetInput( origDistMap );
+        w->SetUseCompression(true);
         w->Update();
     }
 
@@ -3355,6 +3360,7 @@ public:
         std::string f = prefix + ".fidsSV_distMap_r" + ss.str() + ".nrrd";
         w->SetFileName( f.c_str() );
         w->SetInput( distMap );
+        w->SetUseCompression(true);
         w->Update();
     }
 
@@ -3416,6 +3422,7 @@ public:
         std::string f = prefix + ".fidsKD_distMap" + ".nrrd";
         w->SetFileName( f.c_str() );
         w->SetInput( origDistMap );
+        w->SetUseCompression(true);
         w->Update();
     }
 

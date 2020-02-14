@@ -133,6 +133,7 @@ int main( int argc, char * argv[] )
     WType::Pointer mriwriter = WType::New();
     mriwriter->SetFileName( MRIoutFilename);
     mriwriter->SetInput(mriresampler->GetOutput());
+    mriwriter->SetUseCompression(true);
     try
     {
         mriwriter->Update();
