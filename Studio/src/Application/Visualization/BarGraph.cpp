@@ -28,9 +28,22 @@ void BarGraph::set_log_scale(bool b)
 //---------------------------------------------------------------------------
 void BarGraph::set_data(const std::vector<double>& values)
 {
-  this->min_val_ = *std::min_element(values.begin(), values.end());
-  this->max_val_ = *std::max_element(values.begin(), values.end());
-  this->values_ = values;
+  double sum = std::accumulate(values.begin(), values.end(), 0);
+  std::cerr << "sum = " << sum << "\n";
+
+  //this->min_val_ = *std::min_element(values.begin(), values.end());
+  //this->max_val_ = *std::max_element(values.begin(), values.end());
+
+  this->min_val_ = 0.1;
+  this->max_val_ = 100;
+
+  this->values_.clear();
+  for (int i=0;i<values.size();i++)
+  {
+    std::cerr << "insert: " << values[i] / sum * 100 << "\n";
+    this->values_.push_back(values[i] / sum * 100);
+  }
+
   this->recalculate_basic_values();
   this->setMinimumSize((int)(this->margin_ * this->values_.size() * 2) + 45,
                        200 + this->margin_ * 5);
@@ -83,12 +96,13 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   for (int i = 0; i < num_steps; i++) {
     std::stringstream ss;
     if (use_log_) {
+      std::cerr << "_1e" << start+i << "\n";
       ss << "_1e" << (start + i);
       painter.drawText(0, this->get_chart_height() - 75 - separation * i,
                        QString(ss.str().c_str()));
     }
     else {
-      ss << "_" << static_cast<int>(start + (max_val_ / num_steps) * i);
+      ss << static_cast<int>(start + (max_val_ / num_steps) * i);
       painter.drawText(0, this->get_chart_height() - 45 - separation * i,
                        QString(ss.str().c_str()));
     }
@@ -133,6 +147,10 @@ void BarGraph::recalculate_basic_values()
     double val =
       this->use_log_ ? (log10(this->values_[i]) - log10(this->min_val_)) : (this->values_[i] -
                                                                             this->min_val_);
+    if (val < 0)
+    {
+      val = 0;
+    }
     int barheight = static_cast<int>(val * h / (range));
     this->bars_[i].setRect(x, 5 + h - barheight, this->bar_width_, barheight);
     x += this->margin_ + this->bar_width_;
