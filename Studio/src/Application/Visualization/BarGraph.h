@@ -19,10 +19,13 @@ private:
   void paintEvent(QPaintEvent* event) override;
   void resizeEvent(QResizeEvent* event) override;
 
-  void recalculate_basic_values();
+  void recalculate_bars();
 
   void paint_bar_graph(QPainter& painter);
   double get_chart_height();
+  double get_graph_height();
+
+  double get_height_for_value(double value);
 
   // members
   std::vector<double> values_;
@@ -30,4 +33,5 @@ private:
   double max_val_ = 100.0, min_val_ = 0.0;
   int bar_width_ = 10, margin_ = 5;
   bool use_log_ = true;
+  int font_height_ = -1;
 };

@@ -22,7 +22,7 @@ BarGraph::~BarGraph() {}
 void BarGraph::set_log_scale(bool b)
 {
   this->use_log_ = b;
-  this->recalculate_basic_values();
+  this->recalculate_bars();
 }
 
 //---------------------------------------------------------------------------
@@ -38,13 +38,12 @@ void BarGraph::set_data(const std::vector<double>& values)
   this->max_val_ = 100;
 
   this->values_.clear();
-  for (int i=0;i<values.size();i++)
-  {
+  for (int i = 0; i < values.size(); i++) {
     std::cerr << "insert: " << values[i] / sum * 100 << "\n";
     this->values_.push_back(values[i] / sum * 100);
   }
 
-  this->recalculate_basic_values();
+  this->recalculate_bars();
   this->setMinimumSize((int)(this->margin_ * this->values_.size() * 2) + 45,
                        200 + this->margin_ * 5);
 }
@@ -52,6 +51,14 @@ void BarGraph::set_data(const std::vector<double>& values)
 //---------------------------------------------------------------------------
 void BarGraph::paint_bar_graph(QPainter &painter)
 {
+
+  if (this->font_height_ < 0) {
+    QFontMetrics metrics(painter.font());
+
+    QRect rect = metrics.tightBoundingRect("100");
+    this->font_height_ = rect.height();
+  }
+
   QColor top_color(100, 100, 255);
   QColor bottom_color(20, 20, 150);
 
@@ -88,23 +95,28 @@ void BarGraph::paint_bar_graph(QPainter &painter)
 
   // Y Labels
   int num_steps = use_log_ ? (static_cast<int>(log10(max_val_)) -
-                              static_cast<int>(log10(min_val_)) + 1) : 5;
+                              static_cast<int>(log10(min_val_)) + 1) : 6;
   num_steps = std::max(1, num_steps);
   int start = static_cast<int>(use_log_ ? log10(min_val_) : 0);
-  int separation = (this->get_chart_height() - 45) / num_steps;
+  int separation = this->get_graph_height() / num_steps;
+  int graph_height = this->get_graph_height();
 
   for (int i = 0; i < num_steps; i++) {
     std::stringstream ss;
     if (use_log_) {
-      std::cerr << "_1e" << start+i << "\n";
-      ss << "_1e" << (start + i);
+      ss << pow(10, (start + i));
       painter.drawText(0, this->get_chart_height() - 75 - separation * i,
                        QString(ss.str().c_str()));
     }
     else {
-      ss << static_cast<int>(start + (max_val_ / num_steps) * i);
-      painter.drawText(0, this->get_chart_height() - 45 - separation * i,
-                       QString(ss.str().c_str()));
+      int value = static_cast<int>(start + (this->max_val_ / (num_steps - 1)) * i);
+
+      int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(value));
+
+      QString note = QString::number(value);
+      //painter.drawText(0, this->get_graph_height() - separation * i, note);
+      painter.drawText(0, ypos + (this->font_height_ / 2.0), note);
+      painter.drawLine(45, ypos, 50, ypos);
     }
   }
   painter.restore();
@@ -120,19 +132,20 @@ void BarGraph::paintEvent(QPaintEvent* event)
 //---------------------------------------------------------------------------
 void BarGraph::resizeEvent(QResizeEvent* event)
 {
-  this->recalculate_basic_values();
+  this->recalculate_bars();
 }
 
 //---------------------------------------------------------------------------
-void BarGraph::recalculate_basic_values()
+void BarGraph::recalculate_bars()
 {
   int num_bars = std::max(1, static_cast<int>(this->values_.size()));
 
   double width_to_work_with = (this->width() - (this->margin_ * this->values_.size())) - 45;
+  int graph_height = this->get_graph_height();
 
   this->bar_width_ =
     std::max(this->margin_, (int)(width_to_work_with / (num_bars)));
-  int h = this->get_chart_height() - 45;
+
   if (this->bars_.size() != this->values_.size()) {
     this->bars_.resize(this->values_.size());
   }
@@ -147,12 +160,11 @@ void BarGraph::recalculate_basic_values()
     double val =
       this->use_log_ ? (log10(this->values_[i]) - log10(this->min_val_)) : (this->values_[i] -
                                                                             this->min_val_);
-    if (val < 0)
-    {
+    if (val < 0) {
       val = 0;
     }
-    int barheight = static_cast<int>(val * h / (range));
-    this->bars_[i].setRect(x, 5 + h - barheight, this->bar_width_, barheight);
+    int barheight = static_cast<int>(this->get_height_for_value(val));
+    this->bars_[i].setRect(x, 5 + graph_height - barheight, this->bar_width_, barheight);
     x += this->margin_ + this->bar_width_;
   }
 }
@@ -161,4 +173,20 @@ void BarGraph::recalculate_basic_values()
 double BarGraph::get_chart_height()
 {
   return this->height() * 1.0;
+}
+
+//---------------------------------------------------------------------------
+double BarGraph::get_graph_height()
+{
+  return this->get_chart_height() - 45;
+}
+
+//---------------------------------------------------------------------------
+double BarGraph::get_height_for_value(double value)
+{
+  double range =
+    this->use_log_ ? (log10(this->max_val_) - log10(this->min_val_)) : (this->max_val_ -
+                                                                        this->min_val_);
+
+  return value * this->get_graph_height() / range;
 }
