@@ -54,9 +54,18 @@ void BarGraph::paint_bar_graph(QPainter &painter)
 
   if (this->font_height_ < 0) {
     QFontMetrics metrics(painter.font());
-
     QRect rect = metrics.tightBoundingRect("100");
+    //this->font_rect_
     this->font_height_ = rect.height();
+  }
+
+  QString y_axis_label = "Explained Variance";
+
+  if (this->y_axis_text_width_ < 0) {
+    QFontMetrics metrics(painter.font());
+    QRect rect = metrics.tightBoundingRect(y_axis_label);
+    this->y_axis_text_width_ = rect.width();
+    this->y_axis_text_rect_ = rect;
   }
 
   QColor top_color(100, 100, 255);
@@ -91,7 +100,13 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   }
 
   // X label
-  painter.drawText(2 * margin_, height() - 5, "Mode");
+  painter.drawText(10 * this->margin_, height() - 5, "Mode");
+
+  painter.save();
+  painter.translate(10, this->height() / 2 + this->y_axis_text_width_ / 2);
+  painter.rotate(-90);
+  painter.drawText(0, 0, "Explained Variance");
+  painter.restore();
 
   // Y Labels
   int num_steps = use_log_ ? (static_cast<int>(log10(max_val_)) -
@@ -100,6 +115,8 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   int start = static_cast<int>(use_log_ ? log10(min_val_) : 0);
   int separation = this->get_graph_height() / num_steps;
   int graph_height = this->get_graph_height();
+
+  int text_start = this->y_axis_text_rect_.height() + 5;
 
   for (int i = 0; i < num_steps; i++) {
     std::stringstream ss;
@@ -113,9 +130,11 @@ void BarGraph::paint_bar_graph(QPainter &painter)
 
       int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(value));
 
-      QString note = QString::number(value);
-      //painter.drawText(0, this->get_graph_height() - separation * i, note);
-      painter.drawText(0, ypos + (this->font_height_ / 2.0), note);
+      double half_height = this->font_height_ / 2.0;
+      QRect label_rect(0, ypos - 100, 40, 200);
+
+      QString label = QString::number(value);
+      painter.drawText(label_rect, Qt::AlignRight | Qt::AlignVCenter, label);
       painter.drawLine(45, ypos, 50, ypos);
     }
   }

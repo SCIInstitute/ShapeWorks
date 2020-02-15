@@ -34,4 +34,7 @@ private:
   int bar_width_ = 10, margin_ = 5;
   bool use_log_ = true;
   int font_height_ = -1;
+  int y_axis_text_width_ = -1;
+  QRect y_axis_text_rect_;
+  QRect font_rect_;
 };
