@@ -7,6 +7,9 @@ Created on Tue Sep 10 14:32:27 2019
 """
 
 import numpy as np
+import itk
+from sklearn.cluster import KMeans
+from scipy.spatial.distance import cdist
 import io
 import glob
 import os
@@ -36,3 +39,25 @@ def create_cpp_xml(filename, outputfilename):
     file.write(xml_text)
     file.close()
     
+def sampledata(inDataList, num_sample):
+    IMG = []
+    DIM = []
+    for i in range(len(inDataList)):
+        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
+        IMG.append(tmp)
+        DIM.append(tmp.shape)
+
+    ref_dim = np.max(DIM, axis=0)
+    for i in range(len(inDataList)):
+        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]), (0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
+        IMG[i] = np.ndarray.flatten(IMG[i], 'C')
+    IMG = np.asarray(IMG)
+    model = KMeans(n_clusters=num_sample)
+    clusters = model.fit_predict(IMG)
+    labels = list(model.labels_)
+    samples_idx = []
+    for i in range(num_sample):
+        samples_idx.append(labels.index(i))
+
+    return samples_idx
+

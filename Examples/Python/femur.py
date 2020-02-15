@@ -147,8 +147,13 @@ def Run_Pipeline(args):
         Apply isotropic resampling - The segmentation and images are resampled independently to have uniform spacing.
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
-        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
 
+        if args.use_subsample:
+            sample_idx = sampledata(resampledFiles_segmentations, args.use_subsample)
+            resampledFiles_segmentations = [resampledFiles_segmentations[i] for i in sample_idx]
+            reflectedFile_img = [reflectedFile_img[i] for i in sample_idx]
+
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
         """
         Apply padding - Both the segmentation and raw images are padded in case the seg lies on the image boundary.
         """
@@ -286,16 +291,16 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ParameterDescription.pdf'
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
 
     We provide two different mode of operations for the ShapeWorks particle opimization;
     1- Single Scale model takes fixed number of particles and performs the optimization.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ScriptUsage.pdf'
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
 
     2- Multi scale model optimizes for different number of particles in hierarchical manner.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ScriptUsage.pdf'
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
 
     First we need to create a dictionary for all the parameters required by these
     optimization routines
@@ -395,5 +400,5 @@ def Run_Pipeline(args):
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
     if args.interactive:
         input("Press Enter to continue")
-    launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
 

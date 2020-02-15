@@ -66,6 +66,11 @@ def Run_Pipeline(args):
         fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
         fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
 
+    if args.tiny_test:
+        fileList_img = fileList_img[:3]
+        fileList_img = fileList_img[:3]
+
+
     if args.start_with_image_and_segmentation_data and fileList_img:
         """
         ## GROOM : Data Pre-processing
@@ -93,6 +98,12 @@ def Run_Pipeline(args):
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
+
+        if args.use_subsample:
+            sample_idx = sampledata(resampledFiles_segmentations, int(args.use_subsample))
+            resampledFiles_segmentations = [resampledFiles_segmentations[i] for i in sample_idx]
+            fileList_img = [fileList_img[i] for i in sample_idx]
+
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
 
         """
@@ -187,17 +198,23 @@ def Run_Pipeline(args):
             Apply isotropic resampling
 
             For detailed explainations of parameters for resampling volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
 
             """
 
             resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
 
+            if args.use_subsample:
+
+                print('Find sub-sample of data using k-mean clustering!')
+                sample_idx = sampledata(resampledFiles, int(args.use_subsample))
+                resampledFiles = [resampledFiles[i] for i in sample_idx]
+
             """
             Apply padding
 
             For detailed explainations of parameters for padding volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
 
             """
 
@@ -207,7 +224,7 @@ def Run_Pipeline(args):
             Apply center of mass alignment
 
             For detailed explainations of parameters for center of mass(COM) alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
 
              """
             comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
@@ -216,7 +233,7 @@ def Run_Pipeline(args):
             Apply rigid alignment
 
             For detailed explainations of parameters for rigid alignment of volumes, go to
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/AlgnmentTools.pdf'
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
 
             Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
             """
@@ -229,7 +246,7 @@ def Run_Pipeline(args):
 
             For detailed explainations of parameters for finding the largest bounding box and cropping, go to
 
-            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
             """
             croppedFiles = applyCropping(parentDir, rigidFiles, None )
 
@@ -256,16 +273,16 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ParameterDescription.pdf'
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
 
     We provide two different mode of operations for the ShapeWorks particle opimization;
     1- Single Scale model takes fixed number of particles and performs the optimization.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ScriptUsage.pdf'
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
 
     2- Multi scale model optimizes for different number of particles in hierarchical manner.
     For more detail about the optimization steps and parameters please refer to
-    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Run/Documentation/ScriptUsage.pdf'
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ScriptUsage.pdf'
 
     First we need to create a dictionary for all the parameters required by these
     optimization routines
@@ -355,151 +372,9 @@ def Run_Pipeline(args):
 
     """
 
-
-    """
-    Reconstruct the dense mean surface given the sparse correspondence model.
-    """
-
-    print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
-    if args.interactive:
-        input("Press Enter to continue")
-
-
-    meanDir   = './TestLeftAtrium/MeanReconstruction/'
-    if not os.path.exists(meanDir):
-        os.makedirs(meanDir)
-
-    """
-    Parameter dictionary for ReconstructMeanSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "out_prefix" : meanDir + 'leftatrium',
-        "do_procrustes" : 0,
-        "do_procrustes_scaling" : 0,
-        "levelsetValue" : 0.0,
-        "targetReduction" : 0.0,
-        "featureAngle" : 30,
-        "lsSmootherIterations" : 1,
-        "meshSmootherIterations" : 1,
-        "preserveTopology" : 1,
-        "qcFixWinding" : 1,
-        "qcDoLaplacianSmoothingBeforeDecimation" : 1,
-        "qcDoLaplacianSmoothingAfterDecimation" : 1,
-        "qcSmoothingLambda" : 0.5,
-        "qcSmoothingIterations" : 3,
-        "qcDecimationPercentage" : 0.9,
-        "normalAngle" : 90,
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-
-    runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
-
-    """
-    Reconstruct the dense sample-specfic surface in the local coordinate system given the dense mean surface
-    """
-
-    print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
+    print("\nStep 5. Analysis - Launch ShapeWorksStudio.\n")
     if args.interactive :
         input("Press Enter to continue")
 
-    meshDir_local   = './TestLeftAtrium/MeshFiles-Local/'
-    if not os.path.exists(meshDir_local):
-         os.makedirs(meshDir_local)
-
-    """
-    Parameter dictionary for ReconstructSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : meshDir_local + 'leftatrium',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-    localDensePointFiles = runReconstructSurface(localPointFiles, parameterDictionary)
-
-
-    """
-    Reconstruct the dense sample-specfic surface in the world coordinate system given the dense mean surface
-    """
-
-    print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
-    meshDir_global   = './TestLeftAtrium/MeshFiles-World/'
-    if not os.path.exists(meshDir_global):
-        os.makedirs(meshDir_global)
-
-    """
-    Parameter dictionary for ReconstructSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : meshDir_global + 'leftatrium',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-    worldDensePointFiles = runReconstructSurface(worldPointFiles, parameterDictionary)
-
-    """
-    Reconstruct dense meshes along dominant pca modes
-    """
-
-    print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
-    pcaDir   = './TestLeftAtrium/PCAModesFiles/'
-    if not os.path.exists(pcaDir):
-        os.makedirs(pcaDir)
-
-    """
-    Parameter dictionary for ReconstructSamplesAlongPCAModes cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 1024,
-        "mean_prefix" : meanDir + 'leftatrium',
-        "out_prefix" : pcaDir + 'leftatrium',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1,
-        "maximum_variance_captured" : 0.95,
-        "maximum_std_dev" : 2,
-        "number_of_samples_per_mode" : 10
-    }
-
-    runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
-
-    """
-    The local and world particles will be saved in TestLeftAtrium/PointFiles/<number_of_particles>
-    directory, the set of these points on each shape constitue a particle based shape model
-    or a Point Distribution Model (PDM). This PDM shape representation is
-    computationally flexible and efficient and we can use it to perform shape
-    analysis. Here we provide one of the provided visualization tool in the
-    shapeworks codebase : ShapeWorksView2.
-    This tool will showcase individual shapes with their particle representations,
-    as well as the PCA model constructed using these point correspondences. The
-    PCA modes of variation representing the given shape population can be
-    visualized.
-    """
-
-    print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
-    if args.interactive :
-        input("Press Enter to continue")
-
-    launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
