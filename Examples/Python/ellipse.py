@@ -390,5 +390,5 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
