@@ -4,7 +4,8 @@
 #include <iostream>
 #include <Eigen/Core>
 #include <Eigen/SVD>
-//#include <Eigen/Dense>
+#include <Eigen/Dense>
+#include <random>
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
@@ -52,6 +53,7 @@ namespace shapeworks {
 
         double totalDist = 0.0;
         for(int leave=0; leave<N; leave++) {
+
             Eigen::MatrixXd Y(D, N-1);
             Y.leftCols(leave) = P.leftCols(leave);
             Y.rightCols(N-leave-1) = P.rightCols(N-leave-1);
@@ -65,12 +67,18 @@ namespace shapeworks {
             const auto betas = epsi.transpose() * (Ytest - mu);
             const Eigen::VectorXd rec = epsi * betas + mu;
 
+ 
+
             //TODO: This assumes 3-Dimensions
             const int numParticles = D / 3;
             const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, 3);
             const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, 3);
             const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
             totalDist += dist;
+
+            auto checkItem3 = rec_reshaped;
+            std::cout << checkItem3.rows() << " x " << checkItem3.cols() << std::endl << "row 1:" << std::endl << checkItem3 << std::endl;
+            break;
 
             reconstructions.push_back({dist, leave, rec_reshaped});
         }
@@ -113,6 +121,32 @@ namespace shapeworks {
     }
 
     //TODO: Implement
+
+    struct multiVariateNormalRandome
+    {
+        multiVariateNormalRandome(Eigen::MatrixXd const& covar)
+            : multiVariateNormalRandome(Eigen::VectorXd::Zero(covar.rows()), covar)
+        {}
+
+        multiVariateNormalRandome(Eigen::VectorXd const& mean, Eigen::MatrixXd const& covar)
+            : mean(mean)
+        {
+            Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenSolver(covar);
+            transform = eigenSolver.eigenvectors() * eigenSolver.eigenvalues().cwiseSqrt().asDiagonal();
+        }
+
+        Eigen::VectorXd mean;
+        Eigen::MatrixXd transform;
+
+        Eigen::VectorXd operator()() const
+        {
+            static std::mt19937 gen{ std::random_device{}() };
+            static std::normal_distribution<> dist;
+
+            return mean + transform * Eigen::VectorXd{ mean.size() }.unaryExpr([&](auto x) { return dist(gen); });
+        }
+    };
+
     double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes) {
 
         const int N = particleSystem.N();
@@ -136,25 +170,39 @@ namespace shapeworks {
         Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
         const auto epsi = svd.matrixU().block(0, 0, D, nModes);
         auto eigenValues = svd.singularValues();
-        eigenValues = eigenValues.array().pow(2);
-        //eigenValues = eigenValues.row( (0, nModes);
-        //eigenValues(
+        //eigenValues = eigenValues.array().pow(2);
+        //eigenValues = eigenValues.segment(0, nModes);
+        
+        //Eigen::internal::scalar_normal_dist_op<double> randN; // Gaussian functor
+        //Eigen::internal::scalar_normal_dist_op<double>::rng.seed(1); // Seed the rng
 
 
-        auto checkItem = eigenValues.segment(0,nModes);
+        auto checkItem = eigenValues;
         std::cout << checkItem.rows() << " x " << checkItem.cols() << std::endl << "row 1:" << std::endl << checkItem << std::endl;
+
+        int size = 2;
+        Eigen::MatrixXd covar(size, size);
+        covar << 1, .5,
+            .5, 1;
+
+        multiVariateNormalRandome sample{ covar };
+
+        std::cout << "sample:\nmean :"<<sample.mean <<"\nvalues:\n"<< sample() << std::endl;
+
+
+
 
         //Eigen::MatrixXd a(4, 3);
         //a << 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12;
         //Eigen::JacobiSVD<Eigen::MatrixXd> svd(a, Eigen::ComputeFullU);
-        
-        //const auto s = svd.matrixU().block(0, 0,4,nModes);
-        //const auto v = svd.matrixV();
-        //const auto d = svd.singularValues().block(0, 0, 4, nModes);
+        //
+        //const auto s = svd.matrixU();
+        ////const auto v = svd.matrixV();
+        //const auto d = svd.singularValues();
         //auto checkItem = s;
         //std::cout << checkItem.rows() << " x " << checkItem.cols() << std::endl << "row 1:" << std::endl << checkItem << std::endl;
-        ////auto checkItem2 = v;
-        ////std::cout << checkItem2.rows() << " x " << checkItem2.cols() << std::endl << "row 1:" << std::endl << checkItem2.row(0) << std::endl;
+        //////auto checkItem2 = v;
+        //////std::cout << checkItem2.rows() << " x " << checkItem2.cols() << std::endl << "row 1:" << std::endl << checkItem2.row(0) << std::endl;
         //auto checkItem3 = d;
         //std::cout << checkItem3.rows() << " x " << checkItem3.cols() << std::endl << "row 1:" << std::endl << checkItem3 << std::endl;
 
@@ -185,3 +233,4 @@ namespace shapeworks {
         return -1.0;
     }
 }
+
