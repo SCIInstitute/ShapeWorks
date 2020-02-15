@@ -42,7 +42,8 @@ def sampledata(inDataList, num_sample):
     IMG = []
     DIM = []
     for i in range(len(inDataList)):
-        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
+        image = itk.imread(inDataList[i], itk.F)
+        tmp = itk.GetArrayFromImage(image)
         IMG.append(tmp)
         DIM.append(tmp.shape)
 
@@ -51,12 +52,15 @@ def sampledata(inDataList, num_sample):
         IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]), (0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
         IMG[i] = np.ndarray.flatten(IMG[i], 'C')
     IMG = np.asarray(IMG)
+    print("########## Sample subset of data #########")
+    cprint("Run K-means clustering!", 'cyan')
     model = KMeans(n_clusters=num_sample)
     clusters = model.fit_predict(IMG)
     labels = list(model.labels_)
     samples_idx = []
+    cprint("sample one data per cluster to have diverse samples", 'cyan')
     for i in range(num_sample):
         samples_idx.append(labels.index(i))
-
+    print("###########################################\n")
     return samples_idx
 

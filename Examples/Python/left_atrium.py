@@ -70,6 +70,10 @@ def Run_Pipeline(args):
         fileList_img = fileList_img[:3]
         fileList_img = fileList_img[:3]
 
+    if args.use_subsample:
+        sample_idx = sampledata(fileList_seg, int(args.use_subsample))
+        fileList_seg= [fileList_seg[i] for i in sample_idx]
+        fileList_img = [fileList_img[i] for i in sample_idx]
 
     if args.start_with_image_and_segmentation_data and fileList_img:
         """
@@ -98,12 +102,6 @@ def Run_Pipeline(args):
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
-
-        if args.use_subsample:
-            sample_idx = sampledata(resampledFiles_segmentations, int(args.use_subsample))
-            resampledFiles_segmentations = [resampledFiles_segmentations[i] for i in sample_idx]
-            fileList_img = [fileList_img[i] for i in sample_idx]
-
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
 
         """
@@ -203,12 +201,6 @@ def Run_Pipeline(args):
             """
 
             resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
-
-            if args.use_subsample:
-
-                print('Find sub-sample of data using k-mean clustering!')
-                sample_idx = sampledata(resampledFiles, int(args.use_subsample))
-                resampledFiles = [resampledFiles[i] for i in sample_idx]
 
             """
             Apply padding

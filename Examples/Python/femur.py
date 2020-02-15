@@ -104,8 +104,13 @@ def Run_Pipeline(args):
             files_mesh.append(mesh_dir + file)
 
         if args.tiny_test:
-            files_img= files_img[:3]
+            files_img = files_img[:3]
             files_mesh = files_mesh[:3]
+
+        if args.use_subsample:
+            sample_idx = sampledata(files_img, int(args.use_subsample))
+            files_img = [files_img[i] for i in sample_idx]
+            files_mesh = [files_mesh[i] for i in sample_idx]
 
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
@@ -147,12 +152,6 @@ def Run_Pipeline(args):
         Apply isotropic resampling - The segmentation and images are resampled independently to have uniform spacing.
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
-
-        if args.use_subsample:
-            sample_idx = sampledata(resampledFiles_segmentations, int(args.use_subsample))
-            resampledFiles_segmentations = [resampledFiles_segmentations[i] for i in sample_idx]
-            reflectedFile_img = [reflectedFile_img[i] for i in sample_idx]
-
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
         """
         Apply padding - Both the segmentation and raw images are padded in case the seg lies on the image boundary.
