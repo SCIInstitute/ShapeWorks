@@ -29,8 +29,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
 
-  this->ui_->log_radio->setChecked(true);
-  this->ui_->linear_radio->setChecked(false);
+  // defautl to linear scale
+  this->ui_->log_radio->setChecked(false);
+  this->ui_->linear_radio->setChecked(true);
 
   connect(this->ui_->allSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
   connect(this->ui_->singleSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
