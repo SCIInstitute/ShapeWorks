@@ -16,8 +16,7 @@ import subprocess
 import sys
 
 # Path pre-setup
-# binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
-binpath = "../../build/bin"
+binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
 if platform.system() == "Windows":
     binpath = "C:\\Program Files\ShapeWorks\\bin"
 if platform.system() == "Darwin":

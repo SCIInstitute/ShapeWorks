@@ -9,7 +9,6 @@ Created on Tue Sep 10 14:32:27 2019
 import numpy as np
 import itk
 from sklearn.cluster import KMeans
-from scipy.spatial.distance import cdist
 import io
 import glob
 import os

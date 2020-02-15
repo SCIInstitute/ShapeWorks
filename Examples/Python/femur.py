@@ -149,7 +149,7 @@ def Run_Pipeline(args):
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
 
         if args.use_subsample:
-            sample_idx = sampledata(resampledFiles_segmentations, args.use_subsample)
+            sample_idx = sampledata(resampledFiles_segmentations, int(args.use_subsample))
             resampledFiles_segmentations = [resampledFiles_segmentations[i] for i in sample_idx]
             reflectedFile_img = [reflectedFile_img[i] for i in sample_idx]
 
