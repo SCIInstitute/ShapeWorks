@@ -204,7 +204,7 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    meshDir_local   = './TestEllipsoids/MeshFiles-Local/'
+    meshDir_local   = './TestEllipsoidsFD/MeshFiles-Local/'
     if not os.path.exists(meshDir_local):
         os.makedirs(meshDir_local)
 
@@ -232,7 +232,7 @@ def Run_Pipeline(args):
     if args.interactive !=0:
         input("Press Enter to continue")
 
-    meshDir_global   = './TestEllipsoids/MeshFiles-World/'
+    meshDir_global   = './TestEllipsoidsFD/MeshFiles-World/'
     if not os.path.exists(meshDir_global):
         os.makedirs(meshDir_global)
 
@@ -259,7 +259,7 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    pcaDir   = './TestEllipsoids/PCAModesFiles/'
+    pcaDir   = './TestEllipsoidsFD/PCAModesFiles/'
     if not os.path.exists(pcaDir):
         os.makedirs(pcaDir)
 
