@@ -1,0 +1,304 @@
+# -*- coding: utf-8 -*-
+"""
+=====================================================================
+Fixed Domains Example for Statistical Shape Modeling using ShapeWorks 
+=====================================================================
+
+In this example we work with a dataset of axis aligned ellipsoids. 
+This examples is a use case for fixed domains, i.e. we have an existing 
+shape model using some ellipsoids and we want to place correspondences 
+on new ellisoids (we are provided fully prepped binary images) according 
+to the existing shape model.
+
+This example is set to serve as a test case for new ShapeWorks users, and each
+step is explained in the shapeworks including the pre-processing, the 
+optimization and, the post ShapeWorks visualization.
+
+First import the necessary modules
+"""
+
+from zipfile import ZipFile
+import os
+import sys
+import csv
+import argparse
+
+from GroomUtils import *
+from OptimizeUtils import *
+from AnalyzeUtils import *
+
+
+def Run_Pipeline(args):
+
+    """
+    Unzip the data for this tutorial.
+
+    The data is inside the EllipsoidsFD.zip, run the following function to unzip the 
+    data and create necessary supporting files. The files will be Extracted in a
+    newly created Directory TestEllipsoidsFD. This contains the existing shape model and
+    all the necessary files plus the new scans to be processed.
+    """
+    """
+    Extract the zipfile into proper directory and create necessary supporting
+    files
+    """
+    print("\nStep 1. Extract Data\n")
+    if int(args.interactive) != 0:
+        input("Press Enter to continue")
+
+    filename="EllipsoidsFD.zip"
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current directory.")
+        from DatasetUtils import datasets
+        datasets.downloadDataset(filename)
+
+    parentDir="TestEllipsoidsFD/"
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
+    # extract the zipfile
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
+        fileListDT = sorted(glob.glob("TestEllipsoids/Ellipsoids_ExistingDT/*.nrrd"))
+        fileListNew = sorted(glob.glob("TestEllipsoids/Ellipsoids_NewShapes/*.nrrd"))
+
+    """
+
+    ## GROOM : Data Pre-processing 
+    These ellipsoids are prepped and the new ellipsoids just needs to be converted to
+    distance transforms.
+    """
+
+    parentDir = 'TestEllipsoidsFD/PrepOutput/'
+    if not os.path.exists(parentDir):
+        os.makedirs(parentDir)
+
+    print("\nStep 2. Groom - Convert to distance transforms\n")
+    if int(args.interactive) != 0:
+        input("Press Enter to continue")
+
+    dtFilesNew = applyDistanceTransforms(parentDir, fileListNew)
+    print(dtFilesNew, fileListDT)
+    # alldtFiles = 
+
+    """
+    ## OPTIMIZE : Particle Based Optimization with Fixed Domains
+
+    Now that we have the distance transform representation of data we create 
+    the parameter files for the shapeworks particle optimization routine.
+    For more details on the plethora of parameters for shapeworks please refer to
+    ...[link to documentation]
+
+    First we need to create a dictionary for all the parameters required by this
+    optimization routine
+    """
+
+    # print("\nStep 4. Optimize - Particle Based Optimization\n")
+    # if int(args.interactive) != 0:
+    #     input("Press Enter to continue")
+
+    # pointDir = './TestEllipsoidsFD/PointFiles/'
+    # if not os.path.exists(pointDir):
+    #     os.makedirs(pointDir)
+
+    # """
+    # Read the parameter file used for creating the existing shape model 
+    # and decipher the parameters
+    # """
+    # """ TODO """
+
+    # parameterDictionary = {
+    #     "number_of_particles" : 128,
+    #     "use_normals": 0,
+    #     "normal_weight": 10.0,
+    #     "checkpointing_interval" : 200,
+    #     "keep_checkpoints" : 0,
+    #     "iterations_per_split" : 100,
+    #     "optimization_iterations" : 2000,
+    #     "starting_regularization" : 100,
+    #     "ending_regularization" : 0.1,
+    #     "recompute_regularization_interval" : 2,
+    #     "domains_per_shape" : 1,
+    #     "relative_weighting" : 10,
+    #     "initial_relative_weighting" : 0.01,
+    #     "procrustes_interval" : 0,
+    #     "procrustes_scaling" : 0,
+    #     "save_init_splits" : 0,
+    #     "debug_projection" : 0,
+    #     "verbosity" : 3,
+    #     "number_fixed_domains": len(fileListDT)
+    #     "fixed_domain_model_dir": "./TestEllipsoidsFD/FixedShapeModel/"
+    # }
+
+
+    # [localPointFiles, worldPointFiles] = runShapeWorksOptimize_FixedDomains(pointDir, dtFiles, parameterDictionary)
+
+        
+    # """
+    # ## ANALYZE : Shape Analysis and Visualization
+
+    # Shapeworks yields relatively sparse correspondence models that may be inadequate to reconstruct 
+    # thin structures and high curvature regions of the underlying anatomical surfaces. 
+    # However, for many applications, we require a denser correspondence model, for example, 
+    # to construct better surface meshes, make more detailed measurements, or conduct biomechanical 
+    # or other simulations on mesh surfaces. One option for denser modeling is 
+    # to increase the number of particles per shape sample. However, this approach necessarily 
+    # increases the computational overhead, especially when modeling large clinical cohorts.
+
+    # Here we adopt a template-deformation approach to establish an inter-sample dense surface correspondence, 
+    # given a sparse set of optimized particles. To avoid introducing bias due to the template choice, we developed
+    # an unbiased framework for template mesh construction. The dense template mesh is then constructed 
+    # by triangulating the isosurface of the mean distance transform. This unbiased strategy will preserve 
+    # the topology of the desired anatomy  by taking into account the shape population of interest. 
+    # In order to recover a sample-specific surface mesh, a warping function is constructed using the 
+    # sample-level particle system and the mean/template particle system as control points. 
+    # This warping function is then used to deform the template dense mesh to the sample space.
+
+    # """
+
+
+    # """
+    # Reconstruct the dense mean surface given the sparse correspondence model.
+    # """
+
+    # print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
+    # if args.interactive != 0:
+    #     input("Press Enter to continue")
+
+    # meanDir   = './TestEllipsoids/MeanReconstruction/'
+    # if not os.path.exists(meanDir):
+    #     os.makedirs(meanDir)
+
+    # """
+    # Parameter dictionary for ReconstructMeanSurface cmd tool.
+    # """
+    # parameterDictionary = {
+    #     "number_of_particles" : 128,
+    #     "out_prefix" : meanDir + 'ellipsoid',
+    #     "do_procrustes" : 0,
+    #     "do_procrustes_scaling" : 0,
+    #     "levelsetValue" : 0.0,
+    #     "targetReduction" : 0.0,
+    #     "featureAngle" : 30,
+    #     "lsSmootherIterations" : 1,
+    #     "meshSmootherIterations" : 1,
+    #     "preserveTopology" : 1,
+    #     "qcFixWinding" : 1,
+    #     "qcDoLaplacianSmoothingBeforeDecimation" : 1,
+    #     "qcDoLaplacianSmoothingAfterDecimation" : 1,
+    #     "qcSmoothingLambda" : 0.5,
+    #     "qcSmoothingIterations" : 3,
+    #     "qcDecimationPercentage" : 0.9,
+    #     "normalAngle" : 90,
+    #     "use_tps_transform" : 0,
+    #     "use_bspline_interpolation" : 0,
+    #     "display" : 0,
+    #     "glyph_radius" : 1
+    # }
+
+    # runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
+
+    # """
+    # Reconstruct the dense sample-specfic surface in the local coordinate system given the dense mean surface
+    # """
+
+    # print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
+    # if args.interactive != 0:
+    #     input("Press Enter to continue")
+
+    # meshDir_local   = './TestEllipsoidsFD/MeshFiles-Local/'
+    # if not os.path.exists(meshDir_local):
+    #     os.makedirs(meshDir_local)
+
+    # """
+    # Parameter dictionary for ReconstructSurface cmd tool.
+    # """
+    # parameterDictionary = {
+    #     "number_of_particles" : 128,
+    #     "mean_prefix" : meanDir + 'ellipsoid',
+    #     "out_prefix" : meshDir_local + 'ellipsoid', 
+    #     "use_tps_transform" : 0,
+    #     "use_bspline_interpolation" : 0,
+    #     "display" : 0,
+    #     "glyph_radius" : 1
+    # }
+
+    # localDensePointFiles = runReconstructSurface(localPointFiles, parameterDictionary)
+
+
+    # """
+    # Reconstruct the dense sample-specfic surface in the world coordinate system given the dense mean surface
+    # """
+
+    # print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
+    # if args.interactive !=0:
+    #     input("Press Enter to continue")
+
+    # meshDir_global   = './TestEllipsoidsFD/MeshFiles-World/'
+    # if not os.path.exists(meshDir_global):
+    #     os.makedirs(meshDir_global)
+
+    # """
+    # Parameter dictionary for ReconstructSurface cmd tool.
+    # """
+    # parameterDictionary = {
+    #     "number_of_particles" : 128,
+    #     "mean_prefix" : meanDir + 'ellipsoid',
+    #     "out_prefix" : meshDir_global + 'ellipsoid',
+    #     "use_tps_transform" : 0,
+    #     "use_bspline_interpolation" : 0,
+    #     "display" : 0,
+    #     "glyph_radius" : 1
+    # }
+
+    # worldDensePointFiles = runReconstructSurface(worldPointFiles, parameterDictionary)
+
+    # """
+    # Reconstruct dense meshes along dominant pca modes
+    # """
+
+    # print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
+    # if args.interactive != 0:
+    #     input("Press Enter to continue")
+
+    # pcaDir   = './TestEllipsoidsFD/PCAModesFiles/'
+    # if not os.path.exists(pcaDir):
+    #     os.makedirs(pcaDir)
+
+    # """
+    # Parameter dictionary for ReconstructSamplesAlongPCAModes cmd tool.
+    # """
+    # parameterDictionary = {
+    #     "number_of_particles" : 128,
+    #     "mean_prefix" : meanDir + 'ellipsoid',
+    #     "out_prefix" : pcaDir + 'ellipsoid', 
+    #     "use_tps_transform" : 0,
+    #     "use_bspline_interpolation" : 0,
+    #     "display" : 0,
+    #     "glyph_radius" : 1,
+    #     "maximum_variance_captured" : 0.95,
+    #     "maximum_std_dev" : 2,
+    #     "number_of_samples_per_mode" : 10
+    # }
+
+    # runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
+
+    # """
+    # The local and world particles will be saved in TestEllipsoids/PointFiles/128
+    # directory, the set of these points on each shape constitue a particle based shape model 
+    # or a Point Distribution Model (PDM). This PDM shape representation is 
+    # computationally flexible and efficient and we can use it to perform shape
+    # analysis. Here we provide one of the provided visualization tool in the 
+    # shapeworks codebase : ShapeWorksView2.
+    # This tool will showcase individual shapes with their particle representations,
+    # as well as the PCA model constructed using these point correspondences. The 
+    # PCA modes of variation representing the given shape population can be 
+    # visualized.
+    # """
+
+    # print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
+    # if args.interactive != 0:
+    #     input("Press Enter to continue")
+
+    # launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
+
