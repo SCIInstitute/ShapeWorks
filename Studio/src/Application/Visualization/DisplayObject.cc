@@ -80,3 +80,15 @@ void DisplayObject::set_exclusion_sphere_radii(QList<double> radii)
 {
   this->exclusion_sphere_radii_ = radii;
 }
+
+//---------------------------------------------------------------------------
+std::vector<Point> DisplayObject::get_vectors()
+{
+  return this->vectors_;
+}
+
+//---------------------------------------------------------------------------
+void DisplayObject::set_vectors(std::vector<Point> vectors)
+{
+  this->vectors_ = vectors;
+}

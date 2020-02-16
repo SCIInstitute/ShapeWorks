@@ -79,28 +79,28 @@ private:
   // there is one viewer for every tile in the lightbox display
   ViewerList viewers_;
 
-  vtkRenderWindow* render_window_;
+  vtkRenderWindow* render_window_ = nullptr;
 
-  vtkRenderWindowInteractor* interactor_;
+  vtkRenderWindowInteractor* interactor_ = nullptr;
 
-  vtkCamera* camera_;
+  vtkCamera* camera_ = nullptr;
 
-  int tile_layout_width_;
-  int tile_layout_height_;
+  int tile_layout_width_ = 4;
+  int tile_layout_height_ = 4;
 
-  int start_row_;
+  int start_row_ = 0;
 
-  bool first_draw_;
+  bool first_draw_ = true;
 
   vtkSmartPointer<StudioInteractorStyle> style_;
 
-  Visualizer* visualizer_;
+  Visualizer* visualizer_ = nullptr;
 
   std::vector<vtkSmartPointer<vtkImageData> > spinner_images_;
 
   QTimer loading_timer_;
 
-  int timer_callback_count_;
+  int timer_callback_count_ = 0;
 
   std::array<double, 3> initPos_;
 };
