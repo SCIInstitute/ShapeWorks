@@ -135,16 +135,33 @@ namespace shapeworks {
             transform = eigenSolver.eigenvectors() * eigenSolver.eigenvalues().cwiseSqrt().asDiagonal();
         }
 
-        Eigen::VectorXd mean;
+        Eigen::MatrixXd mean;
         Eigen::MatrixXd transform;
+        int m;
+        int n;
+        Eigen::MatrixXd sample;
 
-        Eigen::VectorXd operator()() const
+        Eigen::MatrixXd operator()() const
         {
             static std::mt19937 gen{ std::random_device{}() };
             static std::normal_distribution<> dist;
 
-            return mean + transform * Eigen::VectorXd{ mean.size() }.unaryExpr([&](auto x) { return dist(gen); });
+            Eigen::MatrixXd samples = mean + transform * Eigen::VectorXd{ mean.size() }.unaryExpr([&](auto x) { return dist(gen); });
+            
+            samples;
+            return samples;
         }
+
+        double getSamples(int n) const
+        {
+            static std::mt19937 gen{ std::random_device{}() };
+            static std::normal_distribution<> dist;
+
+            Eigen::MatrixXd samples = mean + transform * Eigen::VectorXd{ mean.size() }.unaryExpr([&](auto x) { return dist(gen); });
+
+            return samples.coeff(n);
+        }
+
     };
 
     double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes) {
@@ -171,26 +188,48 @@ namespace shapeworks {
         const auto epsi = svd.matrixU().block(0, 0, D, nModes);
         auto eigenValues = svd.singularValues();
         //eigenValues = eigenValues.array().pow(2);
-        //eigenValues = eigenValues.segment(0, nModes);
+        eigenValues = eigenValues.segment(0, nModes);
         
-        //Eigen::internal::scalar_normal_dist_op<double> randN; // Gaussian functor
-        //Eigen::internal::scalar_normal_dist_op<double>::rng.seed(1); // Seed the rng
+        //int size = 2;
+        //Eigen::MatrixXd covar(size, size);
+        //covar << 1, .5,
+        //    .5, 1;
+
+        Eigen::MatrixXd samplingBetas(nModes, nSamples);         
+
+        multiVariateNormalRandome sampling{ eigenValues.asDiagonal() };
+        samplingBetas(0,0) = sampling.getSamples(0);
+        samplingBetas(1, 0)= sampling.getSamples(1);
 
 
-        auto checkItem = eigenValues;
-        std::cout << checkItem.rows() << " x " << checkItem.cols() << std::endl << "row 1:" << std::endl << checkItem << std::endl;
+        //for (int i = 0; i < nSamples; i++) {
+        //    multiVariateNormalRandome sampling{ eigenValues.asDiagonal() };
+        //    Eigen::MatrixXd a = sampling.getSamples();
+        //    samplingBetas.col(i) = sampling.getSamples();
+        //    
+        //    //samplingBetas.col(i) = sampling;
+        //}
 
-        int size = 2;
-        Eigen::MatrixXd covar(size, size);
-        covar << 1, .5,
-            .5, 1;
+        //  ********** random normal generated indep ***********
+        /*
+        Eigen::MatrixXd samplingBetas(nModes, nSamples);
+        std::default_random_engine generator;
 
-        multiVariateNormalRandome sample{ covar };
+        for (int j = 0; j < nModes; j++) {
 
-        std::cout << "sample:\nmean :"<<sample.mean <<"\nvalues:\n"<< sample() << std::endl;
+            std::normal_distribution<double> distribution(0.0, eigenValues.coeff(j,0));
 
+            for (int i = 0; i < nSamples; i++) {
+                samplingBetas(j, i) = distribution(generator);
+            }
+        }
+        */
 
+        //samplingPoints = (epsi*samplingBetas).rowwise() + mu;
+        //std::cout << "sample:\nmean :\n" << samplingBetas.mean << "\ncovar :\n" << eigenValues << "\nvalues:\n" << samplingBetas() << std::endl;
 
+        auto checkItem = samplingBetas;
+        std::cout << checkItem.rows() << " x " << checkItem.cols() << std::endl << "row 1:" << std::endl << checkItem.col(0) << std::endl;
 
         //Eigen::MatrixXd a(4, 3);
         //a << 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12;
