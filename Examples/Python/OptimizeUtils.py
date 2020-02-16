@@ -224,7 +224,7 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
     data = ET.tostring(root, encoding='unicode')
     file = open(xmlfilename, "w+")
     file.write(data)
-    
+
 def runShapeWorksOptimize_SingleScale(parentDir, inDataFiles, parameterDictionary):
     numP = parameterDictionary['number_of_particles']
     outDir = parentDir + '/' + str(numP) + '/'
@@ -286,12 +286,25 @@ def runShapeWorksOptimize_MultiScale(parentDir, inDataFiles, parameterDictionary
         outPointsLocal.append(lclname)
     return [outPointsLocal, outPointsWorld]
 
+def findMeanShape(shapeModelDir):
+    fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))
+    for i in range(len(fileList)):
+        if i == 0:
+            meanShape = np.loadtxt(fileList[i])
+        else:
+            meanShape += np.loadtxt(fileList[i])
+    meanShape = meanShape / len(fileList)
+    nmMS = shapeModelDir + '/meanshape_local.particles'
+    np.savetxt(nmMS, meanShape)
+    
+
 
 def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictionary):
     # outDir, numFixedDomains, fixedPointFiles
     numP = parameterDictionary['number_of_particles']
     numFD = parameterDictionary['number_fixed_domains']
     shapeModelDir = parameterDictionary['fixed_domain_model_dir']
+    meanShapePath = parameterDictionary['mean_shape_path']
     outDir = parentDir + '/' + str(numP) + '/'
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -305,7 +318,7 @@ def runShapeWorksOptimize_FixedDomains(parentDir, inDataFiles, parameterDictiona
             inparts.append(lclname)
         else:
             # check the validity of this file existing everytime
-            lclname = shapeModelDir + '/domain0.mean'
+            lclname = meanShapePath
             inparts.append(lclname)
     
     parameterFile = parentDir + "correspondence_" + str(numP) + '.xml'
