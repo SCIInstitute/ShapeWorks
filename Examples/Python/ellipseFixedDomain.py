@@ -59,8 +59,8 @@ def Run_Pipeline(args):
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
-        if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
+        fileListDT = sorted(glob.glob("TestEllipsoids/Ellipsoids_ExistingDT/*.nrrd"))
+		fileListNew = sorted(glob.glob("TestEllipsoids/Ellipsoids_NewShapes/*.nrrd"))
 
     fileList = fileList[:15]
     if args.tiny_test:
@@ -71,68 +71,19 @@ def Run_Pipeline(args):
     """
 
     ## GROOM : Data Pre-processing 
-    For the unprepped data the first few steps are 
-    -- Isotropic resampling
-    -- Padding
-    -- Center of Mass Alignment
-    -- Rigid Alignment
-    -- Largest Bounding Box and Cropping 
+    These ellipsoids are prepped and the new ellipsoids just needs to be converted to
+	distance transforms.
     """
-
-    print("\nStep 2. Groom - Data Pre-processing\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
 
     parentDir = 'TestEllipsoids/PrepOutput/'
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
-    if int(args.start_with_prepped_data) == 0:
-        """
-        Apply isotropic resampling
-
-        For detailed explainations of parameters for resampling volumes, go to
-        ... link
-        """
-        resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
-
-        """
-        Apply padding
-
-        For detailed explainations of parameters for padding volumes, go to
-        ... link
-        """
-
-        paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
-
-        """
-        Apply center of mass alignment
-
-        For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
-        ... link
-        """
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
-        """Apply rigid alignment"""
-
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
-
-        """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir, rigidFiles, None)
-
-    """
-    We convert the scans to distance transforms, this step is common for both the 
-    prepped as well as unprepped data, just provide correct filenames.
-    """
-
-    print("\nStep 3. Groom - Convert to distance transforms\n")
+    print("\nStep 2. Groom - Convert to distance transforms\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    if int(args.start_with_prepped_data) == 0:
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-    else:
-        dtFiles = applyDistanceTransforms(parentDir, fileList)
+    dtFiles = applyDistanceTransforms(parentDir, fileListNew)
 
     """
     ## OPTIMIZE : Particle Based Optimization
