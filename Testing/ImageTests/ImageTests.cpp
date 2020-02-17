@@ -6,7 +6,6 @@
 
 using namespace shapeworks;
 
-//---------------------------------------------------------------------------
 TEST(ImageTests, isoresample_binary_isotropic_test) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
@@ -103,22 +102,6 @@ TEST(ImageTests, pad_identity_test) {
 
   ASSERT_TRUE(image.compare_equal(ground_truth));
 }
-
-// TEST(ImageTests, binarize_test) {
-
-// std::string test_location = std::string(TEST_DATA_DIR) + std::string("/binarize/");
-
-// Image image(test_location + "1x2x2.nrrd");
-// image.binarize();
-// Image ground_truth(test_location + "binarize_baseline.nrrd");
-
-// ASSERT_TRUE(image.compare_equal(ground_truth));
-
-// image.binarize();
-
-// ASSERT_TRUE(image.compare_equal(ground_truth));
-
-// }
 
 //TEST(ImageTests, blah_test) {
 
