@@ -147,11 +147,8 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
     root = ET.Element('sample')
     output_dir = ET.SubElement(root, 'output_dir')
     output_dir.text = "\n" + outDir + "\n"
-    startFactor = int(parameterDictionary['starting_particles'])
-    startFactor = int(np.floor(np.log2(startFactor)))
-    N = int(2**(startFactor + curFactor))
     number_of_particles = ET.SubElement(root, 'number_of_particles')
-    number_of_particles.text = "\n" + str(N) + "\n"
+    number_of_particles.text = "\n" + str(parameterDictionary['number_of_particles']) + "\n"
     use_normals = ET.SubElement(root, 'use_normals')
     use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
     normal_weight = parameterDictionary['normal_weight']
