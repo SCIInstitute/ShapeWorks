@@ -4,36 +4,15 @@ import sys
 import platform
 from pathlib import Path
 
-from EvaluationUtils import scree_plot, generalization
+from EvaluationUtils import scree_plot, generalization, specificity
 
-binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
-if platform.system() == "Windows":
-    binpath = "C:\\Program Files\ShapeWorks\\bin"
-if platform.system() == "Darwin":
-    binpath = binpath + ":/Applications/ShapeWorks/bin"
-
-parser = argparse.ArgumentParser(description='Evaluate the ellipsoid example')
-parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
-args = parser.parse_args()
-binpath = args.shapeworks_path
-
-# Path final
-if platform.system() == "Darwin":
-    items = binpath.split(os.pathsep)
-    binpath = ""
-    for item in items:
-        binpath = binpath + os.pathsep + item \
-            + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
-
-os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
-
-def main():
+def Run_Pipeline(args):
     if not os.path.exists('TestEllipsoids'):
-        print('No TestEllipsoids folder found. Please run `ellipsoidMain.py` first.', file=sys.stderr)
+        print('No TestEllipsoids folder found. Please run the ellipse use case first.', file=sys.stderr)
         sys.exit(1)
     
     eval_dir = 'TestEllipsoids/Evaluation'
-    for subdir in ('compactness', 'generalization', 'specifcity'):
+    for subdir in ('compactness', 'generalization', 'specificity'):
         Path(eval_dir).joinpath(Path(subdir)).mkdir(parents=True, exist_ok=True)
     
     # Compute compactness
@@ -41,6 +20,6 @@ def main():
     
     # Compute generalization
     generalization('TestEllipsoids/PointFiles/128/*world.particles', f'{eval_dir}/generalization')
-
-if __name__ == '__main__':
-    main()
+    
+    # Compute specificity
+    specificity('TestEllipsoids/PointFiles/128/*world.particles', f'{eval_dir}/specificity')
