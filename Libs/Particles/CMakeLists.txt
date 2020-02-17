@@ -9,6 +9,7 @@ set(headers
         itkParticleShapeStatistics.h
         itkParticlePositionReader.h
         itkParticlePositionWriter.h
+        EvaluationUtil.h
         ShapeEvaluation.h)
 
 add_library(Particles STATIC

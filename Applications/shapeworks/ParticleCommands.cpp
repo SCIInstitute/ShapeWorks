@@ -40,7 +40,7 @@ void Compactness::buildParser() {
 int Compactness::execute(const optparse::Values &options, SharedCommandData &sharedData) {
     const int nModes = static_cast<int>(options.get("nmodes"));
     const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-    const double r = ShapeEvaluation::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
+    const double r = ShapeEvaluation<3>::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
     std::cout << r << std::endl;
 
     return 0;
@@ -64,7 +64,7 @@ void Generalization::buildParser() {
 int Generalization::execute(const optparse::Values &options, SharedCommandData &sharedData) {
     const int nModes = static_cast<int>(options.get("nmodes"));
     const std::string saveTo = static_cast<std::string>(options.get("saveto"));
-    const double r = ShapeEvaluation::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
+    const double r = ShapeEvaluation<3>::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
     std::cout << r << std::endl;
 
     return true;
@@ -79,6 +79,7 @@ void Specificity::buildParser() {
     parser.prog(prog).description(desc);
 
     parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
+    parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by generalization along with the mapping to the original shape");
 
     Command::buildParser();
 }
@@ -86,7 +87,8 @@ void Specificity::buildParser() {
 ///////////////////////////////////////////////////////////////////////////////
 int Specificity::execute(const optparse::Values &options, SharedCommandData &sharedData) {
     const int nModes = static_cast<int>(options.get("nmodes"));
-    const double r = ShapeEvaluation::ComputeSpecificity(sharedData.particleSystem, nModes);
+    const std::string saveTo = static_cast<std::string>(options.get("saveto"));
+    const double r = ShapeEvaluation<3>::ComputeSpecificity(sharedData.particleSystem, nModes, saveTo);
     std::cout << r << std::endl;
 
     return true;
