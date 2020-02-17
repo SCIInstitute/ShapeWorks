@@ -47,6 +47,10 @@ jobs:
       shell: bash -l {0}
       run: source ./conda_installs.sh
 
+    - name: activate shapeworks
+      shell: bash -l {0}
+      run: conda activate shapeworks
+
     - name: Cache dependencies
       id: cache-dependencies
       uses: actions/cache@v1
@@ -67,7 +71,7 @@ jobs:
     - name: Configure CMake
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
-      shell: bash
+      shell: bash -l {0}
       working-directory: ${{runner.workspace}}/build
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
@@ -76,7 +80,7 @@ jobs:
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
-      shell: bash
+      shell: bash -l {0]
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: conda activate shapeworks && cmake --build . --config $BUILD_TYPE -j 4
 
@@ -84,10 +88,6 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: xcopy /f ${{runner.workspace}}\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
 
-    - name: activate shapeworks
-      shell: bash -l {0}
-      run: conda activate shapeworks
-    
     - name: Build Binary Package
       shell: bash
       run: pwd ; ls ; ./package_windows.sh tag
