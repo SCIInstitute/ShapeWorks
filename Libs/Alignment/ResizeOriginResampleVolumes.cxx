@@ -210,6 +210,7 @@ int main( int argc, char * argv[] )
 
         writer->SetFileName( outFilenames[sh].c_str() );
         writer->SetInput( resampler->GetOutput() );
+        writer->SetUseCompression(true);
         try
         {
             writer->Update();
