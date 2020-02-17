@@ -135,7 +135,9 @@ namespace shapeworks {
         Eigen::MatrixXd operator()() const
         {
             //static std::mt19937 gen{ std::random_device{}() };
-            static std::mt19937 gen{ 1 }; // seed set as constant 1 for test repeatability
+            
+            // seed set as constant 1 for test repeatability
+            static std::mt19937 gen{ 1 }; 
 
             static std::normal_distribution<> dist;
 
@@ -154,9 +156,7 @@ namespace shapeworks {
         Eigen::VectorXd stdSpecificity(nModes);
         Eigen::MatrixXd spec_store(nModes,4);
 
-        std::cout << "Computing specificity..." << std::endl;
-
-        //DoPCA
+        // PCA calculations
         const Eigen::MatrixXd &ptsModels = particleSystem.Particles();
         const Eigen::VectorXd mu = ptsModels.rowwise().mean();
         Eigen::MatrixXd Y = ptsModels;
@@ -166,7 +166,6 @@ namespace shapeworks {
         Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
         const auto epsi = svd.matrixU().block(0, 0, D, nModes);
         auto eigenValues = svd.singularValues();
-        //eigenValues = eigenValues.array().pow(2);
         eigenValues = eigenValues.segment(0, nModes);
         
         Eigen::MatrixXd samplingBetas(nModes, nSamples);         
@@ -175,22 +174,6 @@ namespace shapeworks {
             for (int i = 0; i < nSamples; i++) {
                 samplingBetas.col(i) = sampling();
             }
-
-            //  ********** random normal generated indep ***********
-            /*
-            Eigen::MatrixXd samplingBetas(nModes, nSamples);
-            std::default_random_engine generator;
-
-            for (int j = 0; j < nModes; j++) {
-
-                std::normal_distribution<double> distribution(0.0, eigenValues.coeff(j,0));
-
-                for (int i = 0; i < nSamples; i++) {
-                    samplingBetas(j, i) = distribution(generator);
-                }
-            }
-            */
-            //  ****************************************************
 
             Eigen::MatrixXd samplingPoints = (epsi * samplingBetas).colwise() + mu;
 
@@ -204,41 +187,30 @@ namespace shapeworks {
 
                 Eigen::VectorXd pts_m = samplingPoints.col(i);
                 Eigen::MatrixXd ptsDistance_vec = ptsModels.colwise() - pts_m;
-                //Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(numParticles, nTrain, 0.0));
-                Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(1, nTrain, 0.0)); // to skip the summing step
+                Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(1, nTrain, 0.0));
 
                 for (int j = 0; j < nTrain; j++) {
                     Eigen::Map<const RowMajorMatrix> ptsDistance_vec_reshaped(ptsDistance_vec.col(j).data(), numParticles, 3);
                     ptsDistance(j) = (ptsDistance_vec_reshaped).rowwise().norm().sum();
-                    //distance += ptsDistance;
-
-
                 }
 
                 distanceToClosestTrainingSample(i) = ptsDistance.minCoeff();
-
-                // for when we want the Argmin      
-                //Eigen::MatrixXd::Index minRow, minCol;
-                //distanceToClosestTrainingSample(i) = ptsDistance.minCoeff(&minRow, &minCol);
-
             }
-
-            
 
             meanSpecificity(modeNumber) = distanceToClosestTrainingSample.mean();
 
-            // TODO: stdSpecificity values mismatch the required numbers, fix
-            //stdSpecificity(modeNumber) = ((((distanceToClosestTrainingSample.rowwise() - distanceToClosestTrainingSample.colwise().mean())) * ((distanceToClosestTrainingSample.rowwise() - distanceToClosestTrainingSample.colwise().mean()))).colwise().sum() / (nTrain - 1)).sqrt();
-            //Eigen::Array<double, 1, Eigen::Dynamic> std_dev = ((distanceToClosestTrainingSample.rowwise() - distanceToClosestTrainingSample.colwise().mean()).square().colwise().sum() / (M - 1)).sqrt();
-            //stdSpecificity(modeNumber) = (distanceToClosestTrainingSample.rowwise() - distanceToClosestTrainingSample.colwise().mean()).squaredNorm();
-            //auto checkItem = std::sqrt((distanceToClosestTrainingSample.rowwise() - distanceToClosestTrainingSample.colwise().mean()).array().square().array().sum()) / std::sqrt(nTrain - 1);
+            // TODO: fix stdSpecificity values,  returns incorect standard deviation
+            //stdSpecificity(modeNumber) = std::sqrt((distanceToClosestTrainingSample.rowwise() - distanceToClosestTrainingSample.colwise().mean()).array().square().array().sum()) / std::sqrt(nTrain - 1);
+
+            //auto checkItem = stdSpecificity(modeNumber)
             //std::cout << "\n \n" << checkItem .rows() << " x " << checkItem.cols() << std::endl << "row 1:" << std::endl << checkItem.row(1) << std::endl;
         }
 
         //TODO: This assumes 3-Dimensions
         const int numParticles = D / 3;
+        const double specificity = meanSpecificity(nModes - 1) / numParticles;
 
-        return meanSpecificity(nModes - 1) / numParticles;
+        return specificity;
     }
 }
 
