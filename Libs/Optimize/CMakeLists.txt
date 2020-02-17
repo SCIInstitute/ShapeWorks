@@ -1,7 +1,7 @@
 find_package(OpenVDB REQUIRED)
 
 
-FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx)
+FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.cpp)
 add_library(Optimize STATIC
   ${ParticleSystem_sources})
 
