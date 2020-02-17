@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Libs/Particles/ShapeEvaluation.h>
 #include "Command.h"
-#include "Libs/Particles/itkParticleShapeStatistics.h"
 
 namespace shapeworks {
 
