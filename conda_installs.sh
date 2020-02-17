@@ -55,7 +55,7 @@ function install_conda() {
        numpy=1.17.4 \
        git-lfs=2.6.1 \
        openblas=0.3.3 \
-       vtk=8.2.0\
+       vtk=8.2.0 \
        scikit-learn=0.22.1
   then return 1; fi
 
