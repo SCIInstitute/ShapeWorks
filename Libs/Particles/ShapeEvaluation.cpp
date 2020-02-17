@@ -110,7 +110,7 @@ namespace shapeworks {
         eigenValues = eigenValues.segment(0, nModes);
         
         Eigen::MatrixXd samplingBetas(nModes, nSamples);         
-        multiVariateNormalRandom sampling{ eigenValues.asDiagonal() };
+        MultiVariateNormalRandom sampling{eigenValues.asDiagonal() };
         for (int modeNumber = 0; modeNumber < nModes; modeNumber++) {
             for (int i = 0; i < nSamples; i++) {
                 samplingBetas.col(i) = sampling();

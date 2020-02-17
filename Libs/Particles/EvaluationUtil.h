@@ -5,16 +5,16 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-struct multiVariateNormalRandom
+struct MultiVariateNormalRandom
 {
     Eigen::VectorXd mean;
     Eigen::MatrixXd transform;
 
-    multiVariateNormalRandom(Eigen::MatrixXd const& covar)
-            : multiVariateNormalRandom(Eigen::VectorXd::Zero(covar.rows()), covar)
+    MultiVariateNormalRandom(Eigen::MatrixXd const& covar)
+            : MultiVariateNormalRandom(Eigen::VectorXd::Zero(covar.rows()), covar)
     {}
 
-    multiVariateNormalRandom(Eigen::VectorXd const& mean, Eigen::MatrixXd const& covar)
+    MultiVariateNormalRandom(Eigen::VectorXd const& mean, Eigen::MatrixXd const& covar)
             : mean(mean)
     {
         Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenSolver(covar);
