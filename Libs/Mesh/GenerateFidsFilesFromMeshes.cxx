@@ -688,6 +688,7 @@ int main(int argc, char *argv[])
 //        std::string f2 = prefix + ".rasterized" + suffix + ".nrrd";
         w2->SetFileName( f2.c_str() );
         w2->SetInput( binaryImage );
+        w2->SetUseCompression(true);
         w2->Update();
 //#endif
         }
@@ -714,6 +715,7 @@ int main(int argc, char *argv[])
 //        std::string f3 = prefix + ".DT" + suffix + ".nrrd";
         w3->SetFileName( f3.c_str() );
         w3->SetInput( dtImage );
+        w3->SetUseCompression(true);
         w3->Update();
 //#endif
         }

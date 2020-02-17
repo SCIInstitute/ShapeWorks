@@ -34,7 +34,27 @@ Password:
 joeshmoe downloaded Ellipsoids.zip from the ShapeWorks Portal.
 ```
 
-##Left Atrium Use Case
+## Running the Use Cases
+
+The use cases are located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
+
+To run a use case, run the follwoing command form the [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python) directory:
+            
+            python RunUseCase.py --use_case [insert name of use case here]
+            
+        
+The following use case names are currently supported:
+* ellipse
+* left_atrium
+* femur
+
+To see the full list of optional tags, run:
+          
+            python RunUseCase.py --help
+            
+        
+
+## Left Atrium Use Case
 
 
 The goal of this use case is using the ShapeWorks functionality to groom different type of input data (raw and segmentation images),
@@ -44,16 +64,16 @@ functionality of ShapeWorks to groom the raw input images alongside with binary 
 This example helps us to process the data (raw and binary images) with the same parameters for downstream tasks.
 For this use case, we have the raw images of the left atrium and their corresponding binary segmentations. 
 
-### Running the Use Case
+### Running Left Atrium
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
 
 To run the use case, run LAMain.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_image_and_segmentation_data: to groom raw images as well as segmentation, the default is only segmentation
 * --use_single_scale: to use the single scale optimization, the default is multiscale optimization
             
-            python LAMain.py 
+              python RunUseCase.py --use_case left_atrium 
 
-This calls RunLeftAtrium.py which:
+This calls left_atrium.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Grooms the images and segmentations by calling methods in GroomUtils.py
 * Optimizes particle distribution by calling methods in OptimizeUtils.py
@@ -125,31 +145,67 @@ The default values of this use case are as below.
 In this use case we start with full unsegmented images (CT scans) of the hip and segmented meshes of each femur.
 ShapeWorks requires a binary volume format for input segmentations so these meshes must first be converted into binary volumes. Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes so that they can be used for analysis.
 
+The femur meshes in this data set have been segmented with varous shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane defined by the user. There are two ways to do so as explained below and they are differentiated by using the "--interactive" tag or not. 
+
+![Femur Lengths](images/femurLengths.png)
+
 ### Running the Use Case
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
 
-To run the use case, run FemurMain.py with the tags --start_with_image_and_segmentation_data and --use single scale:
+To run the use case, run:
             
-            python FemurMain.py --start_with_image_and_segmentation_data --use_single_scale
-
-This calls RunFemur.py which:
+              python RunUseCase.py --use_case femur
+              
+This calls femur.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Grooms the images and meshes by calling methods in GroomUtils.py
 * Optimizes particle distribution by calling methods in OptimizeUtils.py
 * Opens View2  to visualize results by calling methods in AnalyzeUtils.py
 
+#### Running without the --interactive tag
+
+If the --interactive tag is not used, the user will select the cutting plane in the beggining of the grooming steps on a sample of their choice.
+
+The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed which sample prefix they've chosen, and interactive window will pop up in which they can select the cutting plane. When the user is content with their select they simply close this window and the grooming process will continue. This process can be seen below.
+
+![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/UseCaseDocumentation/Documentation/images/notInteractiveFemur.gif)
+
+Note that internally, whatever transformations are done to the sample the user has defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples the cutting plane is still well defined. 
+
+#### Running with the --interactive tag
+To run the use case interactively, either run:
+            
+              python RunUseCase.py --use_case femur --interactive
+
+If the --interactive tag is used, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample and the user can define the cutting plane. Closing the window will continue the grooming process. 
+
+![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/UseCaseDocumentation/Documentation/images/interactiveFemur.gif)
+
 ### Grooming
 For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Groom.md)
 
 The steps are described below and the results of each step are shown for the meshes (note every step is perfmored on both the meshes the images although the resulting images are not shown here).
+
+0. Define cutting plane either in beginning or after rigid alignment using the interactive window. 
+
+            Within this window:
+
+            - Zoom in and out by scrolling
+ 
+            - Rotate view point by clicking in the surrounding area
+ 
+            - Move cutting plane by clicking on it and dragging
+ 
+            - Change normal vector (represented with arrow) by clicking on it and dragging
+  
 1. Reflect - In this use case we often have both right and left femur surface meshes. We want to align all the femurs, so we choose one side to reflect both the image and mesh.
-2. Meshe to Volumes - Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. 
+2. Meshes to Volumes - Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. 
 3. Isotropic Resampling - Both the image and mesh are resampled to have uniform voxel spacing. 
 4. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the images and segmentations prevent this.
-5. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference.
+5. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference. Images are then centered so the origin is in the center.
 6. Reference Selection - The reference is selected by first getting the mean distance transform of the segmentations, then selecting the sample closest to that mean.
 7. Rigid Alignment - All of the segmentations and images are now aligned to the reference using rigid alignment.
-8. Clip Segmentations - Because the femur segmentations vary in shaft lengths, we define a cutting plane to clip them so only the region of interest remains.
+8. Clip Segmentations - Because the femur segmentations vary in shaft lengths, we use the defined cutting plane to clip them so only the region of interest remains.
 9. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 10. Distance Transform - Finally the distance transform it taken and the data is ready for ShapeWorks optimize.
 
