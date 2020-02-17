@@ -32,7 +32,7 @@ TEST(ParticlesTests, compactness_test) {
     auto particleSystem = ParticleSystem();
     ASSERT_TRUE(particleSystem.LoadParticles(filenames));
 
-    const double compactness = ShapeEvaluation::ComputeCompactness(particleSystem, 1);
+    const double compactness = ShapeEvaluation<3>::ComputeCompactness(particleSystem, 1);
     ASSERT_DOUBLE_EQ(compactness, 0.99178682878009183);
 }
 
@@ -41,16 +41,15 @@ TEST(ParticlesTests, generalization_test) {
     auto particleSystem = ParticleSystem();
     ASSERT_TRUE(particleSystem.LoadParticles(filenames));
 
-    const double generalization = ShapeEvaluation::ComputeGeneralization(particleSystem, 1);
-    ASSERT_DOUBLE_EQ(generalization, 25.36334900863832);
+    const double generalization = ShapeEvaluation<3>::ComputeGeneralization(particleSystem, 1);
+    ASSERT_DOUBLE_EQ(generalization, 0.19815116412998687);
 }
 
 //---------------------------------------------------------------------------
-//TODO: Implement specificity test
 TEST(ParticlesTests, specificity_test) {
     auto particleSystem = ParticleSystem();
     ASSERT_TRUE(particleSystem.LoadParticles(filenames));
 
-    const double specificity = ShapeEvaluation::ComputeSpecificity(particleSystem, 1);
-    // ASSERT_TRUE(abs(specificity - 0.0000000000) < 1e-8f);
+    const double specificity = ShapeEvaluation<3>::ComputeSpecificity(particleSystem, 1);
+    ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }
