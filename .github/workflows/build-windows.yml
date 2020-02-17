@@ -80,7 +80,7 @@ jobs:
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
-      shell: bash -l {0]
+      shell: bash -l {0}
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: conda activate shapeworks && cmake --build . --config $BUILD_TYPE -j 4
 
