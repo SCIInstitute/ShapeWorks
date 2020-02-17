@@ -71,6 +71,7 @@ int main(int argc, char * argv[])
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName(outFilename.c_str());
     writer->SetInput( distanceMapImageFilter->GetOutput() );
+    writer->SetUseCompression(true);
     writer->Update();
     
     return EXIT_SUCCESS;

@@ -349,6 +349,7 @@ int main(int argc, char * argv [] )
 
         itkImageWriter->SetInput( resampler->GetOutput() );
         itkImageWriter->SetFileName( solutionSegmentation );
+        itkImageWriter->SetUseCompression(true);
         itkImageWriter->Update();
         //////////////////////////////////
         // Same transformation applied on the raw images
@@ -384,6 +385,7 @@ int main(int argc, char * argv [] )
 
             itkImageWriter->SetInput( resampler->GetOutput() );
             itkImageWriter->SetFileName( solutionRaw );
+            itkImageWriter->SetUseCompression(true);
             itkImageWriter->Update();
          }
 

@@ -20,13 +20,6 @@ Lightbox::Lightbox()
 {
   this->renderer_ = vtkSmartPointer<vtkRenderer>::New();
   this->camera_ = this->renderer_->GetActiveCamera();
-  this->render_window_ = NULL;
-
-  this->tile_layout_width_ = 4;
-  this->tile_layout_height_ = 4;
-  this->start_row_ = 0;
-
-  this->first_draw_ = true;
 
   this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
   this->style_->AutoAdjustCameraClippingRangeOn();
@@ -54,7 +47,6 @@ Lightbox::Lightbox()
     this, SLOT(handle_timer_callback()));
 
   this->loading_timer_.setInterval(50);
-  this->timer_callback_count_ = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -83,6 +75,10 @@ void Lightbox::insert_object_into_viewer(QSharedPointer<DisplayObject> object, i
     viewer->get_renderer()->ResetCamera();
     auto pos = viewer->get_renderer()->GetActiveCamera()->GetPosition();
     this->initPos_ = { { pos[0], pos[1], pos[2] } };
+  }
+  else
+  {
+    viewer->get_renderer()->SetActiveCamera(this->camera_);
   }
 }
 

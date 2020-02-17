@@ -91,6 +91,7 @@ int dataslice(std::vector< std::string > inputpaths, std::vector< std::string > 
         WriterType::Pointer writer = WriterType::New();
         writer->SetInput( image );
         writer->SetFileName(outputname.c_str());
+        writer->SetUseCompression(true);
         writer->Update();
     }
     return EXIT_SUCCESS;

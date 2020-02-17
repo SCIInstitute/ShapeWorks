@@ -177,6 +177,9 @@ int ParticleShapeStatistics<VDimension>
     }
   }
 
+  std::cerr << "group id size = " << m_groupIDs.size() <<"\n";
+  std::cerr << "numSamples = " << m_numSamples << "\n";
+
   // If there are no group IDs, make up some bogus ones
   if (m_groupIDs.size() != m_numSamples)
     {
