@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-====================================================================
-Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
-====================================================================
+=====================================================================
+Fixed Domains Example for Statistical Shape Modeling using ShapeWorks 
+=====================================================================
 
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoids. We provide two different datasets for two different 
-senarios, prepared data consists of the binary images which do not require 
-alignment/resampling/cropping as pre-processing and only require conversion to
-signed distance transforms before running the ShapeWorks particle based 
-optimization. Second is the unprepped data which requires additional 
-pre-processing steps before it can be fed into the optimization. 
+In this example we work with a dataset of axis aligned ellipsoids. 
+This examples is a use case for fixed domains, i.e. we have an existing 
+shape model using some ellipsoids and we want to place correspondences 
+on new ellisoids (we are provided fully prepped binary images) according 
+to the existing shape model.
 
 This example is set to serve as a test case for new ShapeWorks users, and each
 step is explained in the shapeworks including the pre-processing, the 
@@ -30,18 +28,15 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 
-
-
 def Run_Pipeline(args):
 
     """
     Unzip the data for this tutorial.
 
-    The data is inside the Ellipsoids.zip, run the following function to unzip the 
+    The data is inside the EllipsoidsFD.zip, run the following function to unzip the 
     data and create necessary supporting files. The files will be Extracted in a
-    newly created Directory TestEllipsoids.
-    This data both prepped and unprepped are binary images of ellipsoids varying
-    one of the axes while the other two are kept fixed. 
+    newly created Directory TestEllipsoidsFD. This contains the existing shape model and
+    all the necessary files plus the new scans to be processed.
     """
     """
     Extract the zipfile into proper directory and create necessary supporting
@@ -51,98 +46,42 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    filename="Ellipsoids.zip"
+    filename="EllipsoidsFD.zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " in the current directory.")
         from DatasetUtils import datasets
         datasets.downloadDataset(filename)
 
-    parentDir="TestEllipsoids/"
+    parentDir="TestEllipsoidsFD/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
-        if not args.start_with_prepped_data:
-            fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
-        else:
-            fileList = sorted(glob.glob("TestEllipsoids/Ellipsoids_Prepped/*.nrrd"))
-
-    fileList = fileList[:15]
-    if args.tiny_test:
-        args.use_single_scale = 1
-        fileList = fileList[:2]
-
+        fileListDT = sorted(glob.glob("TestEllipsoidsFD/Ellipsoids_ExistingDT/*.nrrd"))
+        fileListNew = sorted(glob.glob("TestEllipsoidsFD/Ellipsoids_NewShapes/*.nrrd"))
 
     """
 
     ## GROOM : Data Pre-processing 
-    For the unprepped data the first few steps are 
-    -- Isotropic resampling
-    -- Padding
-    -- Center of Mass Alignment
-    -- Rigid Alignment
-    -- Largest Bounding Box and Cropping 
+    These ellipsoids are prepped and the new ellipsoids just needs to be converted to
+    distance transforms.
     """
 
-    print("\nStep 2. Groom - Data Pre-processing\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-
-
-    parentDir = 'TestEllipsoids/PrepOutput/'
+    parentDir = 'TestEllipsoidsFD/PrepOutput/'
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
-    if int(args.start_with_prepped_data) == 0:
-        """
-        Apply isotropic resampling
-
-        For detailed explainations of parameters for resampling volumes, go to
-        ... link
-        """
-        resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
-
-        """
-        Apply padding
-
-        For detailed explainations of parameters for padding volumes, go to
-        ... link
-        """
-
-        paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
-
-        """
-        Apply center of mass alignment
-
-        For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
-        ... link
-        """
-        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
-        """Apply rigid alignment"""
-
-        rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
-
-        """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir, rigidFiles, None)
-
-    """
-    We convert the scans to distance transforms, this step is common for both the 
-    prepped as well as unprepped data, just provide correct filenames.
-    """
-
-    print("\nStep 3. Groom - Convert to distance transforms\n")
+    print("\nStep 2. Groom - Convert to distance transforms\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    if int(args.start_with_prepped_data) == 0:
-        dtFiles = applyDistanceTransforms(parentDir, croppedFiles)
-    else:
-        dtFiles = applyDistanceTransforms(parentDir, fileList)
+    dtFilesNew = applyDistanceTransforms(parentDir, fileListNew)
+    dtFiles = fileListDT + dtFilesNew
 
     """
-    ## OPTIMIZE : Particle Based Optimization
+    ## OPTIMIZE : Particle Based Optimization with Fixed Domains
 
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
@@ -157,73 +96,52 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    pointDir = './TestEllipsoids/PointFiles/'
+    pointDir = './TestEllipsoidsFD/PointFiles/'
     if not os.path.exists(pointDir):
         os.makedirs(pointDir)
 
-    if int(args.use_single_scale) != 0:
-        parameterDictionary = {
-            "number_of_particles" : 128,
-            "use_normals": 0,
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 0.01,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "verbosity" : 3
-          }
+    """
+    Evaluate the meanshape of the existing shape model and use that to initialize the 
+    particles on the new shapes
+    """
+    shapemodelDir = "./TestEllipsoidsFD/Ellipsoids_ExistingShapeModel/"
+    findMeanShape(shapemodelDir)
+    meanShapePath = shapemodelDir + '/meanshape_local.particles'
 
-        if args.tiny_test:
-            parameterDictionary["number_of_particles"] = 32
-            parameterDictionary["optimization_iterations"] = 25
+    """
+    Read the parameter file used for creating the existing shape model 
+    and decipher the parameters
+    """
+    """ TODO """
 
-        """
-        Now we execute a single scale particle optimization function.
-        """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
+    parameterDictionary = {
+        "number_of_particles" : 128,
+        "use_normals": 0,
+        "normal_weight": 10.0,
+        "checkpointing_interval" : 200,
+        "keep_checkpoints" : 0,
+        "iterations_per_split" : 100,
+        "optimization_iterations" : 2000,
+        "starting_regularization" : 100,
+        "ending_regularization" : 0.1,
+        "recompute_regularization_interval" : 2,
+        "domains_per_shape" : 1,
+        "relative_weighting" : 10,
+        "initial_relative_weighting" : 0.01,
+        "procrustes_interval" : 0,
+        "procrustes_scaling" : 0,
+        "save_init_splits" : 0,
+        "debug_projection" : 0,
+        "verbosity" : 3,
+        "number_fixed_domains": len(fileListDT),
+        "fixed_domain_model_dir": shapemodelDir,
+        "mean_shape_path": meanShapePath,
+    }
 
-    else:
-        parameterDictionary = {
-            "starting_particles" : 32,
-            "number_of_levels" : 3,
-            "use_normals": 1,
-            "normal_weight": 10.0,
-            "checkpointing_interval" : 200,
-            "keep_checkpoints" : 0,
-            "iterations_per_split" : 100,
-            "optimization_iterations" : 2000,
-            "starting_regularization" : 100,
-            "ending_regularization" : 0.1,
-            "recompute_regularization_interval" : 2,
-            "domains_per_shape" : 1,
-            "relative_weighting" : 10,
-            "initial_relative_weighting" : 0.01,
-            "procrustes_interval" : 0,
-            "procrustes_scaling" : 0,
-            "save_init_splits" : 0,
-            "debug_projection" : 0,
-            "verbosity" : 3
-            }
 
-        """
-        Now we execute a multi-scale particle optimization function.
-        """
-        [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
+    [localPointFiles, worldPointFiles] = runShapeWorksOptimize_FixedDomains(pointDir, dtFiles, parameterDictionary)
 
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
-          
+        
     """
     ## ANALYZE : Shape Analysis and Visualization
 
@@ -296,7 +214,7 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    meshDir_local   = './TestEllipsoids/MeshFiles-Local/'
+    meshDir_local   = './TestEllipsoidsFD/MeshFiles-Local/'
     if not os.path.exists(meshDir_local):
         os.makedirs(meshDir_local)
 
@@ -324,7 +242,7 @@ def Run_Pipeline(args):
     if args.interactive !=0:
         input("Press Enter to continue")
 
-    meshDir_global   = './TestEllipsoids/MeshFiles-World/'
+    meshDir_global   = './TestEllipsoidsFD/MeshFiles-World/'
     if not os.path.exists(meshDir_global):
         os.makedirs(meshDir_global)
 
@@ -351,7 +269,7 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    pcaDir   = './TestEllipsoids/PCAModesFiles/'
+    pcaDir   = './TestEllipsoidsFD/PCAModesFiles/'
     if not os.path.exists(pcaDir):
         os.makedirs(pcaDir)
 
@@ -390,5 +308,5 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
