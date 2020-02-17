@@ -24,6 +24,7 @@ if platform.system() == "Darwin":
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
 parser.add_argument("--use_case", help="Specify which use case to run, either: ellipse, left_atrium, or femur.")
+parser.add_argument("--use_subsample", help="Set number of samples to run the pipeline for a subset of data.")
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
 parser.add_argument("--start_with_image_and_segmentation_data", help = "use images and segmentations data for preprocessing", action="store_true")
