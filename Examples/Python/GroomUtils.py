@@ -203,7 +203,7 @@ def FindReferenceImage(inDataList):
     ref_dim = np.max(DIM, axis =0)
 
     for i in range(len(inDataList)):
-        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]),(0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
+        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]), (0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
 
     COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
 

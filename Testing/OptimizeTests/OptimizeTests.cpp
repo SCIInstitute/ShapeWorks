@@ -41,6 +41,7 @@ static void prep_distance_transform(std::string input, std::string output)
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(output.c_str());
   writer->SetInput(dt_filter->GetOutput());
+  writer->SetUseCompression(true);
   writer->Update();
 }
 

@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
         WriterType::Pointer writer = WriterType::New();
         writer->SetInput( outDist );
         writer->SetFileName( outDistFilename[shCount].c_str() );
+        writer->SetUseCompression(true);
         writer->Update();
     }
 
