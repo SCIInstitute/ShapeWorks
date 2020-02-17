@@ -56,7 +56,8 @@ function install_conda() {
        git-lfs=2.6.1 \
        openblas=0.3.3 \
        vtk=8.2.0 \
-       scikit-learn=0.22.1
+       scikit-learn=0.22.1 \
+       eigen=3.3.7
   then return 1; fi
 
 
@@ -72,8 +73,7 @@ function install_conda() {
 	   git-lfs=2.6.1 \
 	   openmp=8.0.1 \
 	   ncurses=6.1 \
-	   libuuid=2.32.1 \
-	   eigen=3.3.7
+	   libuuid=2.32.1
       then return 1; fi
   fi
 
