@@ -35,6 +35,18 @@ jobs:
     - name: Install Qt
       uses: ouuan/install-qt-action@v2.3.1
 
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+        miniconda-version: 'latest'
+
+    - name: Conda info
+      run: conda info
+
+    - name: conda installs
+      shell: bash -l {0}
+      run: source ./conda_installs.sh
+
     - name: Cache dependencies
       id: cache-dependencies
       uses: actions/cache@v1
@@ -71,18 +83,6 @@ jobs:
     - name: Copy Libraries
       working-directory: ${{runner.workspace}}/build
       run: xcopy /f ${{runner.workspace}}\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
-    
-    - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
-      with:
-          miniconda-version: 'latest'
-          
-    - name: Conda info
-      run: conda info
-
-    - name: conda installs
-      shell: bash -l {0}
-      run: source ./conda_installs.sh
 
     - name: activate shapeworks
       shell: bash -l {0}
