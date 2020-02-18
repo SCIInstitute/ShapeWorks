@@ -144,7 +144,10 @@ The default values of this use case are as below.
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3
-            
+### Analyze
+
+The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
+For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)            
             
 ## Femur Use Case
 
@@ -242,7 +245,8 @@ Single scale optimization is used with procrustes scaling to factor out size as 
             "verbosity" : 3,
             "use_statistics_in_init" : 0
 
-## Analyze
+### Analyze
 
-The PBM for the mean and samples and the primary modes of variation are visualized using ShapeWorks Studio.
+The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
+For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
 
