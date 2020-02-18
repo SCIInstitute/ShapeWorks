@@ -9,6 +9,7 @@ from DatasetUtils import GirderAPI
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
 _CONTACT_SUPPORT_STRING = 'Please contact support.'
+_USE_CASE_DATA_COLLECTION = 'use-case-data-v0'
 
 serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 
@@ -119,17 +120,33 @@ def _downloadDataset(accessToken, filename):
 
 def _downloadFolder(accessToken, path, folder):
     
+    # 1 download items in this folder
     items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
     failure = False
     for item in items:
         failure = failure or not GirderAPI._downloadItem(serverAddress, accessToken, path, item)
+        
+    # 2 check for subfolders
+    subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
+    if subfolders is None:
+        return False
+
+    # 3 for each subfolder, create directory in the file system and download every item in the subfolder
+    for subfolder in subfolders:
+        subpath = path + '/' + subfolder['name']
+        if not os.path.exists(subpath):
+            os.makedirs(subpath)
+        if _downloadFolder(accessToken, subpath, subfolder):
+            return False
+
     return failure
 
 
 def _downloadDatasetIndividualFiles(accessToken, datasetName, destinationPath):
 
+    print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
     # 1 get info of the use case collection
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, 'test')
+    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     if useCaseCollection is None:
         return False
 
@@ -144,10 +161,10 @@ def _downloadDatasetIndividualFiles(accessToken, datasetName, destinationPath):
 
     if _downloadFolder(accessToken, destinationPath, datasetFolder):
         return False
+        
+    return True
 
-    # 4 get info of all subfolders
-    subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=datasetFolder['_id'])
-    if subfolders is None:
+
         return False
 
     # 5 for each subfolder, create directory in the file system and download every item in the subfolder
