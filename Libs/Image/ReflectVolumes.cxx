@@ -160,6 +160,7 @@ int main( int argc, char * argv[] )
     WType::Pointer writer = WType::New();
     writer->SetFileName( outFilename);
     writer->SetInput(infoFilter_->GetOutput());
+    writer->SetUseCompression(true);
     try
     {
         writer->Update();

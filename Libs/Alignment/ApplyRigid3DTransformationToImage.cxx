@@ -265,6 +265,7 @@ int main(int argc, char * argv [] )
 
         itkImageWriter->SetInput( resampler->GetOutput() );
         itkImageWriter->SetFileName( solutionRaw );
+        itkImageWriter->SetUseCompression(true);
         itkImageWriter->Update();
 
 

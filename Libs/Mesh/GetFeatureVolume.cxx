@@ -318,6 +318,7 @@ int main(int argc, char *argv[])
             WriterType::Pointer writer = WriterType::New();
             writer->SetInput( narrowbandVolume );
             writer->SetFileName( featureFileName );
+            writer->SetUseCompression(true);
             writer->Update();
 
         }

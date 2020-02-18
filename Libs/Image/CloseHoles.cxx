@@ -57,6 +57,7 @@ int main(int argc, char * argv[] )
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outFilename );
   writer->SetInput( filter->GetOutput() );
+  writer->SetUseCompression(true);
   try
     {
     writer->Update();
