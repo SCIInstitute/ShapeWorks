@@ -87,7 +87,7 @@ def _verifyLoginState(loginState):
 
 
 # returns True if success
-def _downloadDataset(accessToken, filename):
+def _downloadDatasetZip(accessToken, filename):
     apicall = serverAddress + "api/v1/item"
     response = requests.get(url = apicall, params = {'folderId': '5e15245f0a02fb02ba24268a', 'name': filename}, headers = {'Girder-Token': accessToken}) 
     data = response.json()
@@ -141,7 +141,7 @@ def _downloadFolder(accessToken, path, folder):
 
 
 # returns True if success
-def _downloadDatasetIndividualFiles(accessToken, datasetName, destinationPath):
+def _downloadDataset(accessToken, datasetName, destinationPath):
 
     print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
     # 1 get info of the use case collection
