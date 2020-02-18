@@ -45,6 +45,7 @@ To run a use case, run the follwoing command form the [/Examples/Python](https:/
         
 The following use case names are currently supported:
 * ellipse
+* ellipse_fd
 * left_atrium
 * femur
 
@@ -53,6 +54,9 @@ To see the full list of optional tags, run:
             python RunUseCase.py --help
             
         
+
+## Ellipse and Ellipse Fixed Domains Use Case
+
 
 ## Left Atrium Use Case
 
