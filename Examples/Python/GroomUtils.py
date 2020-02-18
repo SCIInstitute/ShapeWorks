@@ -55,12 +55,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         if recenter:
             cmd.extend(["recenter-image"])
 
-<<<<<<< HEAD
         cmd.extend(["write-image", "--name", outname])
-        print(cmd)
-=======
-        cmd.extend(["writeimage", "--name", outname])
->>>>>>> origin/master
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
