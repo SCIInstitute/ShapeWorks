@@ -70,18 +70,6 @@ TEST(ImageTests, isoresample_image_anisotropic_test) {
   ASSERT_TRUE(image.compare_equal(ground_truth));
 }
 
-TEST(ImageTests, isoresample_mesh_anisotropic_test) {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
-
-  Image image(test_location + "mesh-anisotropic-input.nrrd");
-  image.isoresample();
-  image.recenter();
-  Image ground_truth(test_location + "mesh-anisotropic-isoresampled.nrrd");
-
-  ASSERT_TRUE(image.compare_equal(ground_truth));
-}
-
 TEST(ImageTests, pad_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/pad/");
 
