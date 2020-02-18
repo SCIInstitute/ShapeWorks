@@ -4,8 +4,11 @@
 //#include "ImageUtils.h"
 #include <itkTranslationTransform.h>
 #include <Eigen/Core>
-#include <vnl/vnl_vector.h>
-#include <vnl/vnl_matrix.h>
+#include "evaluators/CPURBFEvaluator.h"
+#include "solvers/EigenRBFSolver.h"
+
+#include "kernels/ThinPlateKernel.h"
+#include "kernels/GaussianKernel.h"
 
 namespace shapeworks {
 
@@ -121,7 +124,7 @@ class RBFShape
 
       /** The coefficient (x,y,z,value) that defines the implicit function. This is the linear part of the rbf-based implicit. pows_ > 1 is used to define it as a polynomial with a degree > 1.
           This coefficient defines the background interpolation function of the implicit function, i.e. trends in the function to be interpolated that can not be captured by the rbfs. */
-      Eigen::Vector3d              coeff_;
+      Eigen::Vector4d              coeff_;
 
       /** The exponent (power) of each spatial coordinate (x, y, and z) that defines the mathematical form of the basis function.
           That is, each point will contribute to the definition of the basis function by (x^pows_.x, y^pows_.y, z^pows_.z)
@@ -146,6 +149,10 @@ class RBFShape
       Eigen::MatrixXd points_;
 
       bool isFault_;
+
+      std::vector<double> PointSolutions;
+      std::vector<double> TPSWeights;
+      std::vector<double> CSRBFWeights;
 };
 
 } // shapeworks
