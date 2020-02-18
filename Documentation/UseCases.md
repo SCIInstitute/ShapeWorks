@@ -174,7 +174,7 @@ If the --interactive tag is not used, the user will select the cutting plane in 
 
 The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed which sample prefix they've chosen, and interactive window will pop up in which they can select the cutting plane. When the user is content with their select they simply close this window and the grooming process will continue. This process can be seen below.
 
-![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/UseCaseDocumentation/Documentation/images/notInteractiveFemur.gif)
+![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/images/notInteractiveFemur.gif)
 
 Note that internally, whatever transformations are done to the sample the user has defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples the cutting plane is still well defined. 
 
@@ -185,7 +185,7 @@ To run the use case interactively, either run:
 
 If the --interactive tag is used, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample and the user can define the cutting plane. Closing the window will continue the grooming process. 
 
-![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/UseCaseDocumentation/Documentation/images/interactiveFemur.gif)
+![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/images/interactiveFemur.gif)
 
 ### Grooming
 For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Groom.md)
