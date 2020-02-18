@@ -127,6 +127,7 @@ public:
         }
       }
 
+#ifdef USE_OPENVDB
     const int N = (VDimension + ((VDimension * VDimension) - VDimension) / 2);
     for(int i=0; i<N; i++) {
         vdbHessianGrids[i] = openvdb::DoubleGrid::create(0.0);
@@ -137,19 +138,49 @@ public:
         while(!it.IsAtEnd()) {
             const auto idx = it.GetIndex();
             const auto pixel = it.Get();
+            if(abs(pixel) < 0.1) {
+                ++it;
+                continue;
+            }
             const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
             vdbAccessor.setValue(coord, pixel);
             ++it;
         }
     }
+#endif
 
   } // end setimage
-  
+
   /** Sample the Hessian at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleHessiansVnl returns a vnl
       matrix of size VDimension x VDimension. */
   inline VnlMatrixType SampleHessianVnl(const PointType &p) const
   {
+#ifdef USE_OPENVDB
+
+      auto o = this->GetOrigin();
+      auto sp = p;
+      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+      const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+
+      VnlMatrixType vdbAns;
+      for (unsigned int i = 0; i < VDimension; i++)
+      {
+          vdbAns[i][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[i]->tree(), coord);
+      }
+
+      // Cross derivatives
+      unsigned int k = VDimension;
+      for (unsigned int i =0; i < VDimension; i++)
+      {
+          for (unsigned int j = i+1; j < VDimension; j++, k++)
+          {
+              vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[k]->tree(), coord);
+          }
+      }
+      return vdbAns;
+#else
+
     VnlMatrixType ans;
     for (unsigned int i = 0; i < VDimension; i++)
       {      ans[i][i] = m_Interpolators[i]->Evaluate(p);      }
@@ -163,32 +194,9 @@ public:
         ans[i][j] = ans[j][i] = m_Interpolators[k]->Evaluate(p);
         }
       }
+    return ans;
+#endif
 
-    auto o = m_PartialDerivatives[0]->GetOrigin();
-    auto sp = p;
-    for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-    const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-
-      VnlMatrixType vdbAns;
-    for (unsigned int i = 0; i < VDimension; i++)
-    {
-        vdbAns[i][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[i]->tree(), coord);
-    }
-
-      // Cross derivatives
-      k = VDimension;
-      for (unsigned int i =0; i < VDimension; i++)
-      {
-          for (unsigned int j = i+1; j < VDimension; j++, k++)
-          {
-              vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[k]->tree(), coord);
-          }
-      }
-
-      const double delta = (vdbAns - ans).array_two_norm();
-      assert(delta < 1e-6);
-
-    return vdbAns;
   }
   
   /** Set /Get the standard deviation for blurring the image prior to

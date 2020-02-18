@@ -77,13 +77,15 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
     this->GetOptimizer()->SetParticleSystem(this->GetParticleSystem());
     this->ReadTransforms();
     this->ReadPointsFiles();
-    this->InitializeOptimizationFunctions();    
-
+    this->InitializeOptimizationFunctions();
 
     this->SetInitialized(true);
     }
 
   if (this->GetInitializing() == true) return;
+#ifdef USE_OPENVDB
+  this->DeleteImages();
+#endif
 
   this->GetOptimizer()->StartOptimization();
 }

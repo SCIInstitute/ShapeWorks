@@ -15,6 +15,8 @@
 #ifndef __itkParticleImageDomain_h
 #define __itkParticleImageDomain_h
 
+#define USE_OPENVDB
+
 #include <fstream>
 #include "itkImage.h"
 #include "itkParticleRegionDomain.h"
@@ -75,9 +77,9 @@ public:
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
+#ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
-
     vdbImageGrid = openvdb::DoubleGrid::create(30.0);
     vdbImageGrid->setGridClass(openvdb::GRID_LEVEL_SET);
     auto vdbAccessor = vdbImageGrid->getAccessor();
@@ -87,11 +89,18 @@ public:
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const auto pixel = it.Get();
+        if(abs(pixel) > 3.0) {
+            it.Set(500000.0);
+            ++it;
+            continue;
+        }
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, pixel);
         ++it;
     }
     openvdb::tools::signedFloodFill(vdbImageGrid->tree());
+    origin = I->GetOrigin();
+#endif
 
     this->Modified();
     m_Image= I;
@@ -132,28 +141,27 @@ public:
   itkGetObjectMacro(Image, ImageType);
   itkGetConstObjectMacro(Image, ImageType);
 
+  PointType origin;
+  inline PointType GetOrigin() const {
+      return origin;
+  }
+
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer. */
   inline T Sample(const PointType &p) const
   {
-      // auto vdbAccessor = vdbImageGrid->getConstAccessor();
-
-      auto o = m_Image->GetOrigin();
-      auto sp = p;
-      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-
-
       if(IsInsideBuffer(p)) {
-          const T v1 =  m_ScalarInterpolator->Evaluate(p);
-
+#ifdef USE_OPENVDB
+          auto o = GetOrigin();
+          auto sp = p;
+          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
           const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
           const T v2 = openvdb::tools::BoxSampler::sample(vdbImageGrid->tree(), coord);
-
-          assert(abs(v1 - v2) < 1e-6);
-          // std::cout << "(" << p[0] << " " << p[1] << " " << p[2] << ")" << "itk: " << v1 << std::endl;
-          // std::cout << "(" << sp[0] << " " << sp[1] << " " << sp[2] << ")" << "vdb: " << v2 << std::endl << std::endl;
-
           return v2;
+#else
+          const T v1 =  m_ScalarInterpolator->Evaluate(p);
+          return v1;
+#endif
       } else {
           return 0.0;
       }
@@ -161,7 +169,14 @@ public:
 
   /** Check whether the point p may be sampled in this image domain. */
   inline bool IsInsideBuffer(const PointType &p) const
-  { return m_ScalarInterpolator->IsInsideBuffer(p); }
+  {
+#ifdef USE_OPENVDB
+      // Hack because we are deleting interpolator and images now...
+      return true;
+#else
+      return m_ScalarInterpolator->IsInsideBuffer(p);
+#endif
+  }
 
   /** Used when a domain is fixed. */
   void DeleteImages()

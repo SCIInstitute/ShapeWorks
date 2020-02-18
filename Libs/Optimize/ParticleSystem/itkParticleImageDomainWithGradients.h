@@ -74,7 +74,7 @@ public:
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
- 
+
     // Compute gradient image and set up gradient interpolation.
     typename GradientImageFilterType::Pointer filter = GradientImageFilterType::New();
     filter->SetInput(I);
@@ -83,8 +83,8 @@ public:
     m_GradientImage = filter->GetOutput();
     m_GradientInterpolator->SetInputImage(m_GradientImage);
 
+#ifdef USE_OPENVDB
     vdbGradientGrid = openvdb::VectorGrid::create();
-    // vdbGradientGrid->setGridClass(openvdb::GRID_LEVEL_SET);
     auto vdbAccessor = vdbGradientGrid->getAccessor();
 
     ImageRegionIterator<GradientImageType> it(m_GradientImage, m_GradientImage->GetRequestedRegion());
@@ -92,14 +92,18 @@ public:
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const vnl_vector_ref<float> pixel = it.Get().GetVnlVector();
+        if(pixel.squared_magnitude() < 0.1) {
+            ++it;
+            continue;
+        }
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, openvdb::Vec3f(pixel[0], pixel[1], pixel[2]));
         ++it;
     }
+#endif
 
   }
   itkGetObjectMacro(GradientImage, GradientImageType);
-
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleGradientsVnl returns a vnl
@@ -107,25 +111,21 @@ public:
       (itk::FixedArray). */
   inline VectorType SampleGradient(const PointType &p) const
   {
-      auto o = m_GradientImage->GetOrigin();
-      auto sp = p;
-      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
 
       if(this->IsInsideBuffer(p)) {
-        const VectorType v1 =  m_GradientInterpolator->Evaluate(p);
-        const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+#ifdef USE_OPENVDB
+          auto o = this->GetOrigin();
+          auto sp = p;
+          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
 
-        const auto _v2 = openvdb::tools::BoxSampler::sample(vdbGradientGrid->tree(), coord);
-        const VectorType v2(_v2.asPointer());
-
-        assert(abs(v1[0]-v2[0]) < 1e-6f);
-        assert(abs(v1[1]-v2[1]) < 1e-6f);
-        assert(abs(v1[2]-v2[2]) < 1e-6f);
-
-        // std::cout << "(" << p[0] << " " << p[1] << " " << p[2] << ")" << "itk: " << v1 << std::endl;
-        // std::cout << "(" << sp[0] << " " << sp[1] << " " << sp[2] << ")" << "vdb: " << v2 << std::endl << std::endl;
-
-        return v2;
+          const auto _v2 = openvdb::tools::BoxSampler::sample(vdbGradientGrid->tree(), coord);
+          const VectorType v2(_v2.asPointer());
+          return v2;
+#else
+          const VectorType v1 =  m_GradientInterpolator->Evaluate(p);
+          return v1;
+#endif
       }
       else {
           itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain." );
