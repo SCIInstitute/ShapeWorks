@@ -151,6 +151,7 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 class CenterOfMassAlign : public ImageCommand
 {
 public:

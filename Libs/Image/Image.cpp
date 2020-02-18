@@ -341,7 +341,7 @@ bool Image::pad(int padding, PixelType value)
 }
 
 //need to call antialias before and isoresample after for binary images
-bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY, float centerZ)
+bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY, float centerZ, const std::string &dataFilename)
 {
   if (!this->image)
   {
@@ -359,7 +359,7 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
   if(useCenterOfMass == true)
   {
     // getting the origin of the shape
-    itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
+    itk::ImageRegionIteratorWithIndex <ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
     float numPixels = 0.0, meanX = 0.0, meanY = 0.0, meanZ = 0.0;
     while(!imageIt.IsAtEnd())
     {
@@ -394,10 +394,12 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
     imageCenterZ = centerZ;
   }
 
+  ImageType::PointType origin = image->GetOrigin();
+  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
+
   ImageType::IndexType index;
   ImageType::PointType point;
   ImageType::PointType center;
-  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
 
   index[0] = 0; index[1] = 0; index[2] = 0;
   image->TransformIndexToPhysicalPoint(index, point);
@@ -438,7 +440,25 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
   translation[1] = -1*(-imageCenterY + center[1]);
   translation[2] = -1*(-imageCenterZ + center[2]);
 
-  transform->Translate(translation);
+  // transform->Translate(translation);
+
+  if (dataFilename.empty())
+  {
+    std::cerr << "Empty filename passed to write data; returning false." << std::endl;
+    return false;
+  }
+
+  std::ofstream ofs;
+  std::string fname = dataFilename;
+  const char *filename = fname.c_str();
+  ofs.open(filename);
+
+  ofs << "translation:" << translation[0] << " " << translation[1] << " " << translation[2] << "\n";
+  ofs << "origin:" << origin[0] << " " << origin[1] << " " << origin[2] << "\n";
+  ofs << "object center:" << imageCenterX << " " << imageCenterY << " " << imageCenterZ << "\n";
+  ofs << "image center:" << center[0] << " " << center[1] << " " << center[2] << "\n";
+
+  ofs.close();
 
   try
   {
@@ -458,5 +478,3 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
 }
 
 } // Shapeworks
-
-

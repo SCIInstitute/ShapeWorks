@@ -310,6 +310,7 @@ void CenterOfMassAlign::buildParser()
   parser.add_option("--centerX").action("store").type("float").set_default(0.0).help("x-coordinate of a user-defined center point.");
   parser.add_option("--centerY").action("store").type("float").set_default(0.0).help("y-coordinate of a user-defined center point.");
   parser.add_option("--centerZ").action("store").type("float").set_default(0.0).help("z-coordinate of a user-defined center point.");
+  parser.add_option("--dataFilename").action("store").type("string").set_default("").help("name of file to write data into");
 
   Command::buildParser();
 }
@@ -321,8 +322,9 @@ int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandDat
   float centerX = static_cast<float>(options.get("centerX"));
   float centerY = static_cast<float>(options.get("centerY"));
   float centerZ = static_cast<float>(options.get("centerZ"));
+  std::string dataFilename = static_cast<std::string>(options.get("dataFilename"));
 
-  return sharedData.image.centerofmassalign(useCenterOfMass, centerX, centerY, centerZ);
+  return sharedData.image.centerofmassalign(useCenterOfMass, centerX, centerY, centerZ, dataFilename);
 }
 
 } // shapeworks
