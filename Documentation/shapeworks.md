@@ -1,7 +1,7 @@
 #
-# ShapeWorks tools
+# ShapeWorks Tools
 #
-# The `shapeworks` executable has a variety of tools for data alignment, processing of images and meshes, reading and converting various file formats, optimization, and analysis. These tasks are described below.
+The `shapeworks` executable has a variety of tools for data alignment, processing of images and meshes, reading and converting various file formats, optimization, and analysis. These tasks are described below.
 #
 [Image Tools]
 [Mesh Tools]
@@ -30,12 +30,15 @@ Image manipulation is used to blah blah blah...
 
 ## AntiAliasing
 
-A command line tool that antialiases binary volumes ....
+This antialiases binary volumes
 
---inFilename = The filename of the input image to be resampled.
---outFilename = The filename of the output antialiased image.
---maxRMSError = The maximum RMS error allowed.
---numIterations = Number of iterations.
+Command Name: antialias
+
+It uses the following input arguments:
+
+  --maxrmserror = The maximum RMS error determines how fast the solver converges. (Range [0.0, 1.0]) [default 0.01].
+  --numiterations = Number of iterations [default 50].
+  --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].
 
 ## ClipVolume
 
@@ -99,13 +102,13 @@ It uses the following input arguments:
  
 ## PadVolumeWithConstant 
 
-A command line tool that pad a contant value in the x-, y-, and z-directions of a given volume.
+This tool pads a contant value in the x-, y-, and z- directions of a given volume.
+
+Command Name: pad
 
 It uses the following input arguments:
-  -inFilename               Image file to be padded.
-  -outFilename              Padded Image file.
-  -paddingSize              Number of voxels to be padded in each direction.
-  -paddingValue             Value to be used to fill padded voxels.
+  --padding = Number of voxels to be padded in each direction.
+  --value = Value to be used to fill padded voxels.
 
 ## ReflectVolumes 
 
@@ -119,11 +122,9 @@ It uses the following input arguments:
 
 ## ResampleVolumesToBeIsotropic 
 
-A command line tool that resamples given mri/binary volumes to have isotropic voxel spacing.
+This tool resamples given mri/binary volumes to have isotropic voxel spacing.
 
 It uses the following input arguments:
-  -inFilename               The filename of the input image to be resampled.
-  -outFilename              The filename of the output resampled image.
   -isBinaryImage            A flag to treat the input image as a binary image (specialized resampling pipeline) [default disabled].
   -isoSpacing               The isotropic spacing in all dimensions.
   -sizeX                    Image size in x-direction (optional, if set to 0, the size is autmatically estimated from the input image).
