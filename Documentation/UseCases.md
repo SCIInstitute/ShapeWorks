@@ -52,7 +52,13 @@ To see the full list of optional tags, run:
           
             python RunUseCase.py --help
             
-        
+### Running a Subset
+
+To run on a subset of the data in the use case, add the --use_subsample tag followed by the number of samples you wish to use. For example:
+
+            python RunUseCase.py --use_case [insert name of use case here] --use_subsample 4
+
+This will select a representative sample of the specified size to run through the pipeline so that it runs faster and uses less memory. The sample is selected by running k-mean clustering, then picking one sample from each cluster so that the resulting sample is representative of all the data.
 
 ## Left Atrium Use Case
 
