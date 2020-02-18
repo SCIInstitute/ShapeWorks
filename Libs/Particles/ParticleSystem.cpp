@@ -5,6 +5,12 @@ ParticleSystem::ParticleSystem() {
 }
 
 bool ParticleSystem::LoadParticles(const std::vector<std::string> &_paths) {
+
+    if (_paths.empty()) {
+      std::cerr << "No filenames passed to readparticlesystem; returning false." << std::endl;
+      return false;
+    }
+
     this->paths = _paths;
     const int N = paths.size();
     const int VDimension = 3; //TODO Don't hardcode VDimension

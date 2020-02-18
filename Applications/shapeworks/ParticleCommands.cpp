@@ -18,7 +18,6 @@ void ReadParticleSystem::buildParser() {
 ///////////////////////////////////////////////////////////////////////////////
 int ReadParticleSystem::execute(const optparse::Values &options, SharedCommandData &sharedData) {
     std::vector<std::string> filenames = options.get("names");
-
     return sharedData.particleSystem.LoadParticles(filenames);
 }
 
