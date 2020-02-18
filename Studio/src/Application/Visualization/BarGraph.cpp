@@ -29,7 +29,6 @@ void BarGraph::set_log_scale(bool b)
 void BarGraph::set_data(const std::vector<double>& values)
 {
   double sum = std::accumulate(values.begin(), values.end(), 0);
-  std::cerr << "sum = " << sum << "\n";
 
   //this->min_val_ = *std::min_element(values.begin(), values.end());
   //this->max_val_ = *std::max_element(values.begin(), values.end());
@@ -39,7 +38,6 @@ void BarGraph::set_data(const std::vector<double>& values)
 
   this->values_.clear();
   for (int i = 0; i < values.size(); i++) {
-    std::cerr << "insert: " << values[i] / sum * 100 << "\n";
     this->values_.push_back(values[i] / sum * 100);
   }
 
@@ -55,7 +53,6 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   if (this->font_height_ < 0) {
     QFontMetrics metrics(painter.font());
     QRect rect = metrics.tightBoundingRect("100");
-    //this->font_rect_
     this->font_height_ = rect.height();
   }
 
@@ -85,18 +82,34 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   painter.setBrush(QBrush(grad));
   painter.setPen(QPen(QColor(0, 0, 0), 1, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 
+  int graph_height = this->get_graph_height();
+
   // X Values
+  QPoint last_acc_pos;
   for (size_t i = 0, s = values_.size(); i < s; ++i) {
     painter.drawRect(this->bars_[i]);
     // numbered eigen value on x axis
 
-    if (i % 2 == 0) {
+    if (i % 2 == 0 || this->bar_width_ > 20) {
       if (i < 99 || i % 4 == 0) {
         // after '9', there's not enough room to write each number, only write every other
         painter.drawText(45 + bar_width_ * (i + 0.5) + margin_ * (i + 1) - 3,
                          height() - 20, QString::number(i));
       }
     }
+
+    int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(
+                                                     this->accumulation_[i]));
+
+    QPoint start_pos(this->bars_[i].x(), ypos);
+    QPoint end_pos(this->bars_[i].x() + this->bars_[i].width() + this->margin_, ypos);
+
+    if (i != 0) {
+      painter.drawLine(last_acc_pos, start_pos);
+    }
+
+    painter.drawLine(start_pos, end_pos);
+    last_acc_pos = end_pos;
   }
 
   // X label
@@ -114,11 +127,11 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   num_steps = std::max(1, num_steps);
   int start = static_cast<int>(use_log_ ? log10(min_val_) : 0);
   int separation = this->get_graph_height() / num_steps;
-  int graph_height = this->get_graph_height();
 
   int text_start = this->y_axis_text_rect_.height() + 5;
 
   for (int i = 0; i < num_steps; i++) {
+
     std::stringstream ss;
     if (use_log_) {
       ss << pow(10, (start + i));
@@ -175,6 +188,8 @@ void BarGraph::recalculate_bars()
 
   int x = this->margin_ + 45;
 
+  this->accumulation_.clear();
+  double sum = 0;
   for (size_t i = 0, s = this->values_.size(); i < s; ++i) {
     double val =
       this->use_log_ ? (log10(this->values_[i]) - log10(this->min_val_)) : (this->values_[i] -
@@ -182,6 +197,8 @@ void BarGraph::recalculate_bars()
     if (val < 0) {
       val = 0;
     }
+    sum = sum + val;
+    this->accumulation_.push_back(sum);
     int barheight = static_cast<int>(this->get_height_for_value(val));
     this->bars_[i].setRect(x, 5 + graph_height - barheight, this->bar_width_, barheight);
     x += this->margin_ + this->bar_width_;

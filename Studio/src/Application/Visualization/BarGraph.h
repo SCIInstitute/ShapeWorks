@@ -29,6 +29,7 @@ private:
 
   // members
   std::vector<double> values_;
+  std::vector<double> accumulation_;
   std::vector<QRect> bars_;
   double max_val_ = 100.0, min_val_ = 0.0;
   int bar_width_ = 10, margin_ = 5;
