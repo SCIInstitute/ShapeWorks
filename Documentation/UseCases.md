@@ -69,6 +69,8 @@ functionality of ShapeWorks to groom the raw input images alongside with binary 
 This example helps us to process the data (raw and binary images) with the same parameters for downstream tasks.
 For this use case, we have the raw images of the left atrium and their corresponding binary segmentations. 
 
+##### Minimum of 32GB of RAM required to run full use case.
+
 ### Running Left Atrium
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
 
@@ -152,6 +154,8 @@ For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWork
 
 In this use case we start with full unsegmented images (CT scans) of the hip and segmented meshes of each femur.
 ShapeWorks requires a binary volume format for input segmentations so these meshes must first be converted into binary volumes. Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes so that they can be used for analysis.
+
+##### Minimum of 32GB of RAM required to run full use case.
 
 The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane defined by the user. There are two ways to do so as explained below and they are differentiated by using the "--interactive" tag or not. 
 
