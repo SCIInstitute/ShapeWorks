@@ -36,9 +36,9 @@ joeshmoe downloaded Ellipsoids.zip from the ShapeWorks Portal.
 
 ## Running the Use Cases
 
-The use cases are located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
+The use cases are located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python). When a use case is run the data is automatically downloaded but you must make an account as described above first.
 
-To run a use case, run the follwoing command form the [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python) directory:
+To run a use case, run the following command from the [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python) directory:
             
             python RunUseCase.py --use_case [insert name of use case here]
             
@@ -61,7 +61,6 @@ To run on a subset of the data in the use case, add the --use_subsample tag foll
 This will select a representative sample of the specified size to run through the pipeline so that it runs faster and uses less memory. The sample is selected by running k-mean clustering, then picking one sample from each cluster so that the resulting sample is representative of all the data.
 
 ## Left Atrium Use Case
-
 
 The goal of this use case is using the ShapeWorks functionality to groom different type of input data (raw and segmentation images),
 and different methods to optimize the particles.
@@ -154,7 +153,7 @@ For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWork
 In this use case we start with full unsegmented images (CT scans) of the hip and segmented meshes of each femur.
 ShapeWorks requires a binary volume format for input segmentations so these meshes must first be converted into binary volumes. Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes so that they can be used for analysis.
 
-The femur meshes in this data set have been segmented with varous shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane defined by the user. There are two ways to do so as explained below and they are differentiated by using the "--interactive" tag or not. 
+The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane defined by the user. There are two ways to do so as explained below and they are differentiated by using the "--interactive" tag or not. 
 
 ![Femur Lengths](images/femurLengths.png)
 
@@ -175,7 +174,7 @@ This calls femur.py which:
 
 If the --interactive tag is not used, the user will select the cutting plane in the beggining of the grooming steps on a sample of their choice.
 
-The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed which sample prefix they've chosen, and interactive window will pop up in which they can select the cutting plane. When the user is content with their select they simply close this window and the grooming process will continue. This process can be seen below.
+The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed the chosen sample prefix, an interactive window will pop up in which they can select the cutting plane. When the user is content with their selection, they simply close this window and the grooming process will continue. This process can be seen below.
 
 ![Alt Text](images/notInteractiveFemur.gif)
 
@@ -211,7 +210,8 @@ The steps are described below and the results of each step are shown for the mes
 2. Meshes to Volumes - Meshes must be turned into binary volumes using rasterization. The corresponding image origin, size, and spacing are used to generate the volume. 
 3. Isotropic Resampling - Both the image and mesh are resampled to have uniform voxel spacing. 
 4. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the images and segmentations prevent this.
-5. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference. Images are then centered so the origin is in the center.
+5a. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference. Images are then centered so the origin is in the center.
+5b. Centering - The samples must be centered before they are aligned to a reference. This step can be performed with Isotropic Resampling as it is in the left atrium use case. In the Femur use case we do so separately so that we can get the translation and apply it to the cutting plane if it has already been selected.
 6. Reference Selection - The reference is selected by first getting the mean distance transform of the segmentations, then selecting the sample closest to that mean.
 7. Rigid Alignment - All of the segmentations and images are now aligned to the reference using rigid alignment.
 8. Clip Segmentations - Because the femur segmentations vary in shaft lengths, we use the defined cutting plane to clip them so only the region of interest remains.
