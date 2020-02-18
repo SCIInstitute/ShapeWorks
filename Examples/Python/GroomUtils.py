@@ -164,7 +164,6 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
             subprocess.check_call(execCommand)
         return outDataListSeg
 
-
 def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
     root = ET.Element('sample')
     propogationScale = ET.SubElement(root, 'propagationScale')
