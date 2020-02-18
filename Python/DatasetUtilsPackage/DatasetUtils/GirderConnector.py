@@ -86,6 +86,7 @@ def _verifyLoginState(loginState):
     return 'key' in loginState and 'username' in loginState
 
 
+# returns True if success
 def _downloadDataset(accessToken, filename):
     apicall = serverAddress + "api/v1/item"
     response = requests.get(url = apicall, params = {'folderId': '5e15245f0a02fb02ba24268a', 'name': filename}, headers = {'Girder-Token': accessToken}) 
@@ -118,30 +119,28 @@ def _downloadDataset(accessToken, filename):
         return False
 
 
+# returns True if success
 def _downloadFolder(accessToken, path, folder):
-    
     # 1 download items in this folder
     items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
     failure = False
     for item in items:
-        failure = failure or not GirderAPI._downloadItem(serverAddress, accessToken, path, item)
+        failure = not GirderAPI._downloadItem(serverAddress, accessToken, path, item) or failure
         
     # 2 check for subfolders
     subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
-    if subfolders is None:
-        return False
+    if subfolders:
+        # 3 for each subfolder, create directory in the file system and download every item in the subfolder
+        for subfolder in subfolders:
+            subpath = path + '/' + subfolder['name']
+            if not os.path.exists(subpath):
+                os.makedirs(subpath)
+            failure = not _downloadFolder(accessToken, subpath, subfolder) or failure
 
-    # 3 for each subfolder, create directory in the file system and download every item in the subfolder
-    for subfolder in subfolders:
-        subpath = path + '/' + subfolder['name']
-        if not os.path.exists(subpath):
-            os.makedirs(subpath)
-        if _downloadFolder(accessToken, subpath, subfolder):
-            return False
-
-    return failure
+    return not failure
 
 
+# returns True if success
 def _downloadDatasetIndividualFiles(accessToken, datasetName, destinationPath):
 
     print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
@@ -159,20 +158,34 @@ def _downloadDatasetIndividualFiles(accessToken, datasetName, destinationPath):
     if not os.path.exists(destinationPath):
         os.makedirs(destinationPath)
 
-    if _downloadFolder(accessToken, destinationPath, datasetFolder):
+    return _downloadFolder(accessToken, destinationPath, datasetFolder)
+
+
+# returns True if success, False if failed to upload 1 or more files
+def _uploadFolder(accessToken, folderName, folderPath, parentId, parentType):
+    if GirderAPI._createFolder(serverAddress, accessToken, parentId, folderName, parentType=parentType) is None:
+        return True
+    folderInfo = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType=parentType, parentId=parentId, folderName=folderName)
+    if folderInfo is None:
+        return True
+
+    failure = False
+    for item in os.listdir(folderPath):
+        itempath = os.path.join(folderPath, item)
+        if os.path.isfile(itempath):
+            failure = not GirderAPI._uploadFile(serverAddress, accessToken, folderInfo['_id'], item, itempath, parentType='folder') or failure
+        else:
+            failure = not _uploadFolder(accessToken, item, itempath, folderInfo['_id'], 'folder') or failure
+    return not failure
+
+
+# returns True if success, False if failure
+def _uploadNewDataset(accessToken, datasetName, datasetPath):
+
+    print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
+
+    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    if useCaseCollection is None:
         return False
-        
-    return True
 
-
-        return False
-
-    # 5 for each subfolder, create directory in the file system and download every item in the subfolder
-    for subfolder in subfolders:
-        path = destinationPath + '/' + subfolder['name']
-        if not os.path.exists(path):
-            os.makedirs(path)
-        if _downloadFolder(accessToken, path, subfolder):
-            return False
-
-    return True
+    return _uploadFolder(accessToken, datasetName, datasetPath, useCaseCollection['_id'], parentType='collection')

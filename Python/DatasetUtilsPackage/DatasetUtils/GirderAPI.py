@@ -4,9 +4,15 @@ import json
 from sys import stdout
 from math import ceil
 
+import os
 
-def _makeRequest(requestFunction, url, params, headers, actionMessage, printError):
-    response = requestFunction(url = url, params = params, headers = headers, stream = True) 
+
+def _makeRequest(requestFunction, url, params, headers, actionMessage, printError, data):
+    if data:
+        response = requestFunction(url = url, params = params, headers = headers, data = data, stream = True) 
+    else:
+        response = requestFunction(url = url, params = params, headers = headers, stream = True) 
+
     if response.status_code == 200:
         return response
     if printError:
@@ -30,11 +36,11 @@ def _makeRequest(requestFunction, url, params, headers, actionMessage, printErro
 
 
 def _makeGetRequest(url, params, headers, actionMessage, printError=True):
-    return _makeRequest(requestFunction = requests.get, url = url, params = params, headers = headers, actionMessage = actionMessage, printError = printError)
+    return _makeRequest(requestFunction = requests.get, url = url, params = params, headers = headers, actionMessage = actionMessage, printError = printError, data = None)
 
 
-def _makePostRequest(url, params, headers, actionMessage, printError=True):
-    return _makeRequest(requestFunction = requests.post, url = url, params = params, headers = headers, actionMessage = actionMessage, printError = printError)
+def _makePostRequest(url, params, headers, actionMessage, data = None, printError=True):
+    return _makeRequest(requestFunction = requests.post, url = url, params = params, headers = headers, actionMessage = actionMessage, printError = printError, data = data)
 
 
 def _getAccessToken(serverAddress, apiKey):
@@ -62,7 +68,7 @@ def _authenticateBasicAuth(serverAddress, usernamePasswordHash):
 def _createApiKey(serverAddress, basicAuthToken, apiKeyName):
     response = _makePostRequest(
         url = serverAddress + 'api/v1/api_key', 
-        params = {'name': apiKeyName, 'scope': '[\"core.data.read\"]', 'tokenDuration': '1'}, 
+        params = {'name': apiKeyName, 'scope': '[\"core.data.read\", \"core.data.write\"]', 'tokenDuration': '1'}, 
         headers = {'Girder-Token': basicAuthToken}, 
         actionMessage = 'creating api key: %s' % apiKeyName)
 
@@ -147,7 +153,8 @@ def _listItemsInFolder(serverAddress, accessToken, folderId):
 
     return None if response is None else response.json()
     
-
+    
+# returns true if success
 def _downloadItem(serverAddress, accessToken, path, item):
     response = _makeGetRequest(
         url = serverAddress + 'api/v1/item/' + item['_id'] + '/download', 
@@ -159,8 +166,9 @@ def _downloadItem(serverAddress, accessToken, path, item):
     if response is None:
         return False
 
-    chunkSize = 1048576 # Download 1 MB at a time
-    totalNumChunks = ceil(int(response.headers['Content-Length']) / chunkSize)
+    NUM_MEGS = 8
+    chunkSize = NUM_MEGS * 1048576 # Download 8 MB at a time
+    fileSize = int(response.headers['Content-Length'])
     chunkIndex = 0
 
     with open(filename, "wb") as filehandle:
@@ -170,6 +178,61 @@ def _downloadItem(serverAddress, accessToken, path, item):
             filehandle.write(chunk)
 
             chunkIndex += 1
-            stdout.write('\r%s [%d/%d MB]' % (filename, chunkIndex, totalNumChunks))
+            stdout.write('\r%s [%d/%d MB]' % (filename, chunkIndex*NUM_MEGS, ceil(fileSize / chunkSize * NUM_MEGS)))
         stdout.write('\n')
     return True
+
+def _createFolder(serverAddress, accessToken, parentId, name, parentType='folder'):
+    actionMessage = 'creating folder %s' % name
+    response = _makePostRequest(
+        url = serverAddress + 'api/v1/folder', 
+        params = {'parentId': parentId, 'name': name, 'parentType': parentType},
+        headers = {'Girder-Token': accessToken},
+        actionMessage = actionMessage
+    )
+    if response is None:
+        return False
+    return True
+
+
+def _uploadFile(serverAddress, accessToken, parentId, name, path, parentType='folder'):
+    filesize = os.stat(path).st_size
+    NUM_MEGS = 8
+    chunkSize = NUM_MEGS * 1048576 # Upload 8 MB at a time
+
+    # Create an upload-in-progress
+    response = _makePostRequest(
+        url = serverAddress + 'api/v1/file', 
+        params = {'parentId': parentId, 'name': name, 'parentType': parentType, 'size': filesize, 'mimeType': 'application/octet-stream'},
+        headers = {'Girder-Token': accessToken},
+        actionMessage = 'Creating upload-in-progress for %s' % name
+    )
+    if response is None:
+        return False
+    uploadid = response.json()['_id']
+    offset = 0
+    chunkIndex = 0
+
+    with open(path, 'rb') as filehandle:
+        stdout.write('\r%s [%d/%d MB]' % (path, chunkIndex*NUM_MEGS, ceil(filesize / chunkSize * NUM_MEGS)))
+        while(True):
+            chunk = filehandle.read(chunkSize)
+            if chunk:
+                response = _makePostRequest(
+                        url = serverAddress + 'api/v1/file/chunk', 
+                        params = {'uploadId': uploadid, 'offset': offset},
+                        headers = {'Girder-Token': accessToken},
+                        actionMessage = 'Uploading chunk %d for %s' % (chunkIndex, name),
+                        data = chunk
+                    )
+                if response is None:
+                    return False
+                offset += chunkSize
+                chunkIndex += 1
+                stdout.write('\r%s [%d/%d MB]' % (path, chunkIndex*NUM_MEGS, ceil(filesize / chunkSize * NUM_MEGS)))
+            else:
+                break
+        stdout.write('\n')
+
+    return True
+
