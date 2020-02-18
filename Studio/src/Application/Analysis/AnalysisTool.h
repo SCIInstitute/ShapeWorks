@@ -70,6 +70,8 @@ public:
 
   void shutdown();
 
+  bool export_variance_graph(QString filename);
+
 public Q_SLOTS:
 
   // analysis mode

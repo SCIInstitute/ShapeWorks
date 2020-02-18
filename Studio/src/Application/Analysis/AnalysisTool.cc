@@ -459,6 +459,12 @@ void AnalysisTool::shutdown()
 }
 
 //---------------------------------------------------------------------------
+bool AnalysisTool::export_variance_graph(QString filename)
+{
+  return this->ui_->graph_->grab().save(filename);
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::on_tabWidget_currentChanged()
 {
   this->update_analysis_mode();
