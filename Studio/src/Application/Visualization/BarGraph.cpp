@@ -93,8 +93,8 @@ void BarGraph::paint_bar_graph(QPainter &painter)
     if (i % 2 == 0 || this->bar_width_ > 20) {
       if (i < 99 || i % 4 == 0) {
         // after '9', there's not enough room to write each number, only write every other
-        painter.drawText(45 + bar_width_ * (i + 0.5) + margin_ * (i + 1) - 3,
-                         height() - 20, QString::number(i));
+        painter.drawText(45 + this->bar_width_ * (i + 0.5) + this->margin_ * (i + 1) - 3,
+                         this->height() - 20, QString::number(i));
       }
     }
 
@@ -133,23 +133,20 @@ void BarGraph::paint_bar_graph(QPainter &painter)
   for (int i = 0; i < num_steps; i++) {
 
     std::stringstream ss;
+    double value;
     if (use_log_) {
-      ss << pow(10, (start + i));
-      painter.drawText(0, this->get_chart_height() - 75 - separation * i,
-                       QString(ss.str().c_str()));
+      value = pow(10, (start + i));
     }
     else {
-      int value = static_cast<int>(start + (this->max_val_ / (num_steps - 1)) * i);
-
-      int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(value));
-
-      double half_height = this->font_height_ / 2.0;
-      QRect label_rect(0, ypos - 100, 40, 200);
-
-      QString label = QString::number(value);
-      painter.drawText(label_rect, Qt::AlignRight | Qt::AlignVCenter, label);
-      painter.drawLine(45, ypos, 50, ypos);
+      value = static_cast<int>(start + (this->max_val_ / (num_steps - 1)) * i);
     }
+
+    int ypos = 5 + graph_height - static_cast<int>(this->get_height_for_value(value));
+
+    QRect label_rect(0, ypos - 100, 40, 200);
+    QString label = QString::number(value);
+    painter.drawText(label_rect, Qt::AlignRight | Qt::AlignVCenter, label);
+    painter.drawLine(45, ypos, 50, ypos);
   }
   painter.restore();
 }
@@ -191,12 +188,7 @@ void BarGraph::recalculate_bars()
   this->accumulation_.clear();
   double sum = 0;
   for (size_t i = 0, s = this->values_.size(); i < s; ++i) {
-    double val =
-      this->use_log_ ? (log10(this->values_[i]) - log10(this->min_val_)) : (this->values_[i] -
-                                                                            this->min_val_);
-    if (val < 0) {
-      val = 0;
-    }
+    double val = this->values_[i];
     sum = sum + val;
     this->accumulation_.push_back(sum);
     int barheight = static_cast<int>(this->get_height_for_value(val));
@@ -224,5 +216,13 @@ double BarGraph::get_height_for_value(double value)
     this->use_log_ ? (log10(this->max_val_) - log10(this->min_val_)) : (this->max_val_ -
                                                                         this->min_val_);
 
-  return value * this->get_graph_height() / range;
+  double val =
+    this->use_log_ ? (log10(value) - log10(this->min_val_)) : (value -
+                                                               this->min_val_);
+  if (val < 0) {
+    val = 0;
+  }
+  double return_value = val * this->get_graph_height() / range;
+
+  return return_value;
 }
