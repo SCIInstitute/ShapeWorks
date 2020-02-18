@@ -36,9 +36,9 @@ joeshmoe downloaded Ellipsoids.zip from the ShapeWorks Portal.
 
 ## Running the Use Cases
 
-The use cases are located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
+The use cases are located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
 
-To run a use case, run the follwoing command form the [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python) directory:
+To run a use case, run the follwoing command form the [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python) directory:
             
             python RunUseCase.py --use_case [insert name of use case here]
             
@@ -71,7 +71,7 @@ This example helps us to process the data (raw and binary images) with the same 
 For this use case, we have the raw images of the left atrium and their corresponding binary segmentations. 
 
 ### Running Left Atrium
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
+The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
 
 To run the use case, run LAMain.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_image_and_segmentation_data: to groom raw images as well as segmentation, the default is only segmentation
@@ -86,7 +86,7 @@ This calls left_atrium.py which:
 * Opens View2  to visualize results by calling methods in AnalyzeUtils.py
 
 ### Grooming
-For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Groom.md)
+For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
 1. Isotropic Resampling - Both the image and mesh are resampled to have uniform voxel spacing. 
 2. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the images and segmentations prevent this.
 3. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference.
@@ -95,7 +95,7 @@ For a description of the grooming tools and parameters, see: [Groom.md](https://
 6. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
 ### Optimize
-For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Optimize.md)
+For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
 
 * Single scale optimization uses the user defined number of particles for optimization and uses procrustes scaling to factor out size as a mode of variation. 
 Below are the default optimization parameters for this use case. 
@@ -159,7 +159,7 @@ The femur meshes in this data set have been segmented with varous shaft lengths 
 ![Femur Lengths](images/femurLengths.png)
 
 ### Running the Use Case
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
+The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
 
 To run the use case, run:
             
@@ -177,7 +177,7 @@ If the --interactive tag is not used, the user will select the cutting plane in 
 
 The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed which sample prefix they've chosen, and interactive window will pop up in which they can select the cutting plane. When the user is content with their select they simply close this window and the grooming process will continue. This process can be seen below.
 
-![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/images/notInteractiveFemur.gif)
+![Alt Text](images/notInteractiveFemur.gif)
 
 Note that internally, whatever transformations are done to the sample the user has defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples the cutting plane is still well defined. 
 
@@ -188,10 +188,10 @@ To run the use case interactively, either run:
 
 If the --interactive tag is used, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample and the user can define the cutting plane. Closing the window will continue the grooming process. 
 
-![Alt Text](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/images/interactiveFemur.gif)
+![Alt Text](images/interactiveFemur.gif)
 
 ### Grooming
-For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Groom.md)
+For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
 
 The steps are described below and the results of each step are shown for the meshes (note every step is perfmored on both the meshes the images although the resulting images are not shown here).
 
@@ -221,7 +221,7 @@ The steps are described below and the results of each step are shown for the mes
 ![Grooming steps](images/FemurGroomPipeline.png)
 
 ### Optimize
-For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/Documentation/Optimize.md)
+For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
 
 Single scale optimization is used with procrustes scaling to factor out size as a mode of variation. Below are the default optimization parameters for this use case. 
 
