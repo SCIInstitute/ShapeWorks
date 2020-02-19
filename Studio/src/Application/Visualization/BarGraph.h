@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <utility>
+#include <QTimer>
 #include <vector>
 
 class BarGraph : public QWidget
@@ -15,9 +16,14 @@ public:
   void set_data(const std::vector<double>& values);
   void set_log_scale(bool b);
 
+public Q_SLOTS:
+  void hover_timer_event();
+
 private:
   void paintEvent(QPaintEvent* event) override;
   void resizeEvent(QResizeEvent* event) override;
+
+  void mouseMoveEvent(QMouseEvent *event) override;
 
   void recalculate_bars();
 
@@ -38,4 +44,8 @@ private:
   int y_axis_text_width_ = -1;
   QRect y_axis_text_rect_;
   QRect font_rect_;
+
+  QPoint hover_position_;
+  QPointF tooltipPosition_;
+  QTimer hover_timer_;
 };

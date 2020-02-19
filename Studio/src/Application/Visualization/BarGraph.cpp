@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QRect>
 #include <QTextItem>
+#include <QToolTip>
 
 #include <sstream>
 #include <cmath>
@@ -13,7 +14,12 @@
 //---------------------------------------------------------------------------
 BarGraph::BarGraph(QWidget* parent) :
   QWidget(parent)
-{}
+{
+
+  this->setMouseTracking(true);
+  this->hover_timer_.setSingleShot(true);
+  this->connect(&this->hover_timer_, &QTimer::timeout, this, &BarGraph::hover_timer_event);
+}
 
 //---------------------------------------------------------------------------
 BarGraph::~BarGraph() {}
@@ -23,6 +29,28 @@ void BarGraph::set_log_scale(bool b)
 {
   this->use_log_ = b;
   this->recalculate_bars();
+}
+
+//---------------------------------------------------------------------------
+void BarGraph::hover_timer_event()
+{
+  double x = this->hover_position_.x();
+
+  double bar = std::floor((x - 45) / (this->bar_width_ + 5));
+
+  if (bar >= 0 && bar < this->values_.size()) {
+    //QString message("x=" + QString::number(x) + "\nbar=" + QString::number(bar));
+
+    double explained_variance = this->values_[bar];
+    double accumulated_variance = this->accumulation_[bar];
+
+    QString message("Mode: " + QString::number(bar)
+                    + "\nExplained Variance: " + QString::number(explained_variance, 'f', 1)
+                    + "\nAccumulated Variance: " + QString::number(accumulated_variance, 'f', 1));
+
+    QPoint point(this->tooltipPosition_.x(), this->tooltipPosition_.y());
+    QToolTip::showText(point, message);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -165,6 +193,23 @@ void BarGraph::resizeEvent(QResizeEvent* event)
 }
 
 //---------------------------------------------------------------------------
+void BarGraph::mouseMoveEvent(QMouseEvent* event)
+{
+  QWidget::mouseMoveEvent(event);
+
+  // Reset hover timer and tooltip
+  this->hover_timer_.stop();
+  QToolTip::hideText();
+
+  this->tooltipPosition_ = event->screenPos();
+  this->hover_position_ = event->pos();
+
+  //hover_timer_event();
+  hover_timer_.start(250);
+  //prev_pos_ = histogram_->to_histogram_pct( e->scenePos().x() );
+}
+
+//---------------------------------------------------------------------------
 void BarGraph::recalculate_bars()
 {
   int num_bars = std::max(1, static_cast<int>(this->values_.size()));
@@ -178,10 +223,6 @@ void BarGraph::recalculate_bars()
   if (this->bars_.size() != this->values_.size()) {
     this->bars_.resize(this->values_.size());
   }
-
-  double range =
-    this->use_log_ ? (log10(this->max_val_) - log10(this->min_val_)) : (this->max_val_ -
-                                                                        this->min_val_);
 
   int x = this->margin_ + 45;
 
