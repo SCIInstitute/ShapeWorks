@@ -44,7 +44,6 @@ if (BUILD_TESTS)
   endif()
 endif(BUILD_TESTS)
 
-
 project(ShapeWorks)
 
 # use ccache if available
