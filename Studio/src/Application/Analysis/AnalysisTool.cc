@@ -29,8 +29,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->setupUi(this);
   this->stats_ready_ = false;
 
-  this->ui_->log_radio->setChecked(true);
-  this->ui_->linear_radio->setChecked(false);
+  // defautl to linear scale
+  this->ui_->log_radio->setChecked(false);
+  this->ui_->linear_radio->setChecked(true);
 
   connect(this->ui_->allSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
   connect(this->ui_->singleSamplesRadio, SIGNAL(clicked()), this, SLOT(handle_analysis_options()));
@@ -91,11 +92,11 @@ std::vector<Point> AnalysisTool::get_group_difference_vectors()
 void AnalysisTool::on_linear_radio_toggled(bool b)
 {
   if (b) {
-    this->ui_->graph_->setLogScale(false);
+    this->ui_->graph_->set_log_scale(false);
     this->ui_->graph_->repaint();
   }
   else {
-    this->ui_->graph_->setLogScale(true);
+    this->ui_->graph_->set_log_scale(true);
     this->ui_->graph_->repaint();
   }
 }
@@ -361,7 +362,7 @@ bool AnalysisTool::compute_stats()
   for (int i = this->stats_.Eigenvalues().size() - 1; i > 0; i--) {
     vals.push_back(this->stats_.Eigenvalues()[i]);
   }
-  this->ui_->graph_->setData(vals);
+  this->ui_->graph_->set_data(vals);
 
   this->ui_->graph_->repaint();
 
@@ -455,6 +456,12 @@ void AnalysisTool::save_to_preferences()
 void AnalysisTool::shutdown()
 {
   this->pca_animate_timer_.stop();
+}
+
+//---------------------------------------------------------------------------
+bool AnalysisTool::export_variance_graph(QString filename)
+{
+  return this->ui_->graph_->grab().save(filename);
 }
 
 //---------------------------------------------------------------------------
