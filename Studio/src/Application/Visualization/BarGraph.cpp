@@ -46,7 +46,7 @@ void BarGraph::hover_timer_event()
 
     QString message("Mode: " + QString::number(bar)
                     + "\nExplained Variance: " + QString::number(explained_variance, 'f', 1)
-                    + "\nAccumulated Variance: " + QString::number(accumulated_variance, 'f', 1));
+                    + "\nCumulative Variance: " + QString::number(accumulated_variance, 'f', 1));
 
     QPoint point(this->tooltipPosition_.x(), this->tooltipPosition_.y());
     QToolTip::showText(point, message);
