@@ -82,9 +82,9 @@ def center(outDir, inDataList):
         print("\n########### Centering ###############")
         outname = rename(inname, outDir, 'center')
         outDataList.append(outname)
-        cmd = ["shapeworks", "readimage", "--name", inname]
-        cmd.extend(["recenterimage"])
-        cmd.extend(["writeimage", "--name", outname])
+        cmd = ["shapeworks", "read-image", "--name", inname]
+        cmd.extend(["recenter-image"])
+        cmd.extend(["write-image", "--name", outname])
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
         # Get translation
@@ -112,107 +112,14 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
         print("\n########### Padding ###############")
         outname = rename(inname, outDir, 'pad')
         outDataList.append(outname)
-        cmd = ["shapeworks", "readimage", "--name", inname]
+        cmd = ["shapeworks", "read-image", "--name", inname]
         cmd.extend(["pad" , "--padding" , str(padSize) , "--value" , str(padValue)])
-        cmd.extend(["writeimage", "--name", outname])
+        cmd.extend(["write-image", "--name", outname])
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
 
-<<<<<<< HEAD
-    if processRaw:
-        # process segmentations
-        binaryoutDir = outDir + '/segmentations'
-
-        if not os.path.exists(binaryoutDir):
-            os.makedirs(binaryoutDir)
-        outDataListSeg = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, binaryoutDir)
-            outname = outname.replace('.nrrd', '.pad.nrrd')
-            outDataListSeg.append(outname)
-            print(" ")
-            print("############## Padding ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            
-            cmd = ["shapeworks", "read-image", "--name", inname]
-            cmd.extend(["pad" , "--padding" , str(
-                padSize) , "--value" , str(padValue)])
-            cmd.extend(["write-image", "--name", outname])
-            print(cmd)
-            print("Calling cmd:\n"+" ".join(cmd))
-            subprocess.check_call(cmd)
-
-        #process images
-        rawoutDir = outDir + '/images'
-
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-
-        outDataListImg = []
-        for i in range(len(inDataListImg)):
-            inname = inDataListImg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
-            outname = inname.replace(initPath, rawoutDir)
-            outname = outname.replace('.nrrd', '.pad.nrrd')
-            outDataListImg.append(outname)
-            print(" ")
-            print("############## Padding ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-
-            cmd = ["shapeworks", "read-image", "--name", inname]
-            cmd.extend(["pad" , "--padding" , str(
-                padSize) , "--value" , str(padValue)])
-            cmd.extend(["write-image", "--name", outname])
-            print(cmd)
-            print("Calling cmd:\n"+" ".join(cmd))
-            subprocess.check_call(cmd)
-
-        return [outDataListSeg, outDataListImg]
-
-    else:
-        outDataList = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            #filename = spt[1]
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.pad.nrrd')
-            outDataList.append(outname)
-            print(" ")
-            print("############## Padding ###############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            
-            cmd = ["shapeworks", "read-image", "--name", inname]
-            cmd.extend(["pad" , "--padding" , str(
-                padSize) , "--value" , str(padValue)])
-            cmd.extend(["write-image", "--name", outname])
-            print(cmd)
-            print("Calling cmd:\n"+" ".join(cmd))
-            subprocess.check_call(cmd)
-
-        return outDataList
-
-def applyCOMAlignment(parentDir, inDataListSeg, inDataListImg, processRaw=False):
-=======
 def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
->>>>>>> origin/master
     """
     This function takes in a filelist and produces the center of mass aligned
     files in the appropriate directory. If inDataListImg is provided,
@@ -256,7 +163,6 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
             "--parameterFilename", paramname]
             subprocess.check_call(execCommand)
         return outDataListSeg
-
 
 def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
     root = ET.Element('sample')
