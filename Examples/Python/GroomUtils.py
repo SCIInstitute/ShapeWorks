@@ -82,9 +82,9 @@ def center(outDir, inDataList):
         print("\n########### Centering ###############")
         outname = rename(inname, outDir, 'center')
         outDataList.append(outname)
-        cmd = ["shapeworks", "readimage", "--name", inname]
-        cmd.extend(["recenterimage"])
-        cmd.extend(["writeimage", "--name", outname])
+        cmd = ["shapeworks", "read-image", "--name", inname]
+        cmd.extend(["recenter-image"])
+        cmd.extend(["write-image", "--name", outname])
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
         # Get translation
@@ -112,9 +112,9 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
         print("\n########### Padding ###############")
         outname = rename(inname, outDir, 'pad')
         outDataList.append(outname)
-        cmd = ["shapeworks", "readimage", "--name", inname]
+        cmd = ["shapeworks", "read-image", "--name", inname]
         cmd.extend(["pad" , "--padding" , str(padSize) , "--value" , str(padValue)])
-        cmd.extend(["writeimage", "--name", outname])
+        cmd.extend(["write-image", "--name", outname])
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
