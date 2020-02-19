@@ -212,7 +212,7 @@ build_eigen()
   cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
   make -j${NUM_PROCS} install || exit 1
 
-  EIGEN_DIR=${INSTALL_DIR}/share/eigen/cmake/
+  EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
 build_shapeworks()

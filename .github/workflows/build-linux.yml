@@ -59,7 +59,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen/cmake -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
 
     - name: make
       shell: bash -l {0}
