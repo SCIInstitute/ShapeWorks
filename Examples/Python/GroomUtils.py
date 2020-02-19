@@ -56,7 +56,6 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
             cmd.extend(["recenter-image"])
 
         cmd.extend(["write-image", "--name", outname])
-        print(cmd)
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
@@ -164,7 +163,6 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
             "--parameterFilename", paramname]
             subprocess.check_call(execCommand)
         return outDataListSeg
-
 
 def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
     root = ET.Element('sample')
