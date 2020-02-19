@@ -15,6 +15,8 @@ VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
 ITK_VER="v5.0.1"
 ITK_VER_STR="5.0"
+EIGEN_VER="3.3.7"
+ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 
 usage()
@@ -42,6 +44,7 @@ usage()
   echo "  --vxl-dir=<path>        : Path to existing VXL installation (version >= ${VXL_VER})."
   echo "  --vtk-dir=<path>        : Path to existing VTK installation (version >= ${VTK_VER})."
   echo "  --itk-dir=<path>        : Path to existing ITK installation (version >= ${ITK_VER})."
+  echo "  --eigen-dir=<path>      : Path to existing Eigen installation (version >= ${EIGEN_VER})."
   echo ""
   echo "  --dependencies_only     : Only build dependencies, not ShapeWorks."
   echo ""
@@ -76,6 +79,9 @@ parse_command_line()
                               ;;
       --itk-dir=*)            ITK_DIR="${1#*=}"
                               `ITK_DIR=realpath "${ITK_DIR}"`
+                              ;;
+      --eigen-dir=*)          EIGEN_DIR="${1#*=}"
+                              `EIGEN_DIR=realpath "${EIGEN_DIR}"`
                               ;;
       --clean )               BUILD_CLEAN=1
                               ;;
@@ -192,6 +198,23 @@ build_itk()
   ITK_DIR=${INSTALL_DIR}/lib/cmake/ITK-${ITK_VER_STR}
 }
 
+build_eigen()
+{
+  echo "## Building Eigen..."
+  cd ${BUILD_DIR}
+  git clone https://gitlab.com/libeigen/eigen.git
+  cd eigen
+  git checkout -f tags/${EIGEN_VER}
+
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
+
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+  make -j${NUM_PROCS} install || exit 1
+
+  EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
+}
+
 build_shapeworks()
 {
   echo "## Building ShapeWorks..."
@@ -204,7 +227,7 @@ build_shapeworks()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf shapeworks-build; fi
   mkdir -p shapeworks-build && cd shapeworks-build
 
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
+  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
 
 
   if [[ $OSTYPE == "msys" ]]; then
@@ -272,6 +295,10 @@ build_all()
     build_itk
   fi
 
+  if [[ -z $EIGEN_DIR ]]; then
+    build_eigen
+  fi
+
   if [[ $BUILD_SHAPEWORKS = 1 ]]; then
       build_shapeworks
   else
@@ -281,6 +308,7 @@ build_all()
     echo "  VXL_DIR: ${VXL_DIR}"
     echo "  VTK_DIR: ${VTK_DIR}"
     echo "  ITK_DIR: ${ITK_DIR}"
+    echo "  EIGEN_DIR: ${EIGEN_DIR}"
   fi
 }
 
