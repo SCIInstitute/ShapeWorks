@@ -602,8 +602,14 @@ namespace optparse
                     mvar = type();
                     std::transform(mvar.begin(), mvar.end(), mvar.begin(), ::toupper);
                 }
-                mvar_short = " " + mvar;
-                mvar_long = "=" + mvar;
+
+                // We cannot use the --option=value notation for multistring
+                if(mvar == "MULTISTRING") {
+                    mvar_long = mvar_short = " <list of strings>";
+                } else {
+                    mvar_short = " " + mvar;
+                    mvar_long = "=" + mvar;
+                }
             }
 
             std::stringstream ss;
