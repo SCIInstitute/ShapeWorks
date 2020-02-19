@@ -248,7 +248,7 @@ int PadImage::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void SmoothMesh::buildParser()
 {
-  const std::string prog = "smoothmesh";
+  const std::string prog = "smooth-mesh";
   const std::string desc = "smooths meshes";
   parser.prog(prog).description(desc);
   
