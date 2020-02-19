@@ -57,7 +57,7 @@ Required:
   -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
-  -DEIGEN_DIR=<eigen cmake path>       (contains Eigen3Config.cmake)
+  -DEIGEN3_DIR=<eigen3 cmake path>       (contains Eigen3Config.cmake)
 ```
 Optional:
 ```
@@ -96,7 +96,7 @@ open ShapeWorks.xcodeproj
 $ ./superbuild.sh  --dependencies_only --build-dir=dependencies --install-dir=dependencies
 mkdir build
 cd build
-cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=dependencies/vxl/build -DVTK_DIR=dependencies/lib/cmake/vtk-8.2 -DITK_DIR=dependencies/lib/cmake/ITK-5.0 -DEIGEN_DIR=dependencies/lib/cmake/eigen-3.3.6/cmake/Eigen3 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=dependencies/vxl/build -DVTK_DIR=dependencies/lib/cmake/vtk-8.2 -DITK_DIR=dependencies/lib/cmake/ITK-5.0 -DEIGEN3_DIR=dependencies/lib/cmake/eigen-3.3.6/cmake/Eigen3 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```
 
 ## Additional Help
