@@ -91,3 +91,9 @@ Here is the list of parameters and their descriptions.
  '2': additional details about parameters read from xml and files written, '3': full verbosity.
 * debug_projection: (default: 0) A boolean to run in debug mode or not.
 
+#### Fixed Domains 
+
+This is a mode in shape works optimize which fixes the particles on selected shapes and optimize over the other to bring them into the fixed shape shape. The parameters related to this functionality are described as follows
+
+* point_files: these are paths to the existing correspondences which are to be kept fixed, the new (to be optimzed) scans should be initialized with mean particles.
+* fixed_domains: This is used to specify which of the data is not to be optimized and set fixed. Strting from 0 it takes the id of the selected scans. 
