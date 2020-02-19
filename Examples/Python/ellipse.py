@@ -4,7 +4,7 @@
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
 
-In this example we provide a full pipeline with an exple dataset of axis 
+In this example we provide a full pipeline with an example dataset of axis 
 aligned ellipsoids. We provide two different datasets for two different 
 senarios, prepared data consists of the binary images which do not require 
 alignment/resampling/cropping as pre-processing and only require conversion to
@@ -390,5 +390,5 @@ def Run_Pipeline(args):
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
 
