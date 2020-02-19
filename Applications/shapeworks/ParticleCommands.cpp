@@ -6,7 +6,7 @@ namespace shapeworks {
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser() {
-    const std::string prog = "readparticlesystem";
+    const std::string prog = "read-particle-system";
     const std::string desc = "reads a particle system";
     parser.prog(prog).description(desc);
 

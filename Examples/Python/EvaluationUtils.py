@@ -16,7 +16,7 @@ def scree_plot(particles_glob, working_dir):
 
     # Can't use list of args because it is incompatible with shell=True. We
     # need shell=True for glob expansion
-    cmd = f'shapeworks readparticlesystem --names {particles_glob} -- '\
+    cmd = f'shapeworks read-particle-system --names {particles_glob} -- '\
           f'           compactness --nmodes 1 --saveto {working_dir}/scree.txt'
     print(cmd)
     subprocess.check_call(cmd, shell=True)
@@ -53,7 +53,7 @@ def generalization(particles_glob, working_dir):
 
     # Can't use list of args because it is incompatible with shell=True. We
     # need shell=True for glob expansion
-    cmd = f'shapeworks readparticlesystem --names {particles_glob} -- '\
+    cmd = f'shapeworks read-particle-system --names {particles_glob} -- '\
           f'           generalization --nmodes 1 --saveto {working_dir}/'
     print(cmd)
     subprocess.check_call(cmd, shell=True)
@@ -78,7 +78,7 @@ def specificity(particles_glob, working_dir):
 
     # Can't use list of args because it is incompatible with shell=True. We
     # need shell=True for glob expansion
-    cmd = f'shapeworks readparticlesystem --names {particles_glob} -- '\
+    cmd = f'shapeworks read-particle-system --names {particles_glob} -- '\
           f'           specificity --nmodes 1 --saveto {working_dir}/'
     print(cmd)
     subprocess.check_call(cmd, shell=True)
