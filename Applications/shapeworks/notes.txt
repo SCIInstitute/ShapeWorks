@@ -41,23 +41,16 @@ Image commands:
 
 [x] readimage
 [x] writeimage
-[x] binarize (created new command by breaking down resample)
-[x] recenter (created new command by breaking down resample)
+[x] binarize (created new command by breaking down isoresample)
+[x] recenter (created new command by breaking down isoresample)
 [x] *AntiAliasing -> shapeworks antialias
  o ShapeWorksGroom class duplicates antialias functionality, has different defaults
- o Example: shapeworks antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 --outFilename ./foobar.nrrd
- o Example: antialias --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --maxRMSError 75 --numIterations 100 --numLayers 9
-  - note that numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
- o Update example:
-   readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+ o Examples
+ - shapeworks antialias readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 writeimage --name ./foobar.nrrd
 
- Python Testing (added this to both old and new versions in order to compare results [w/ diff]):
-            
-    print("Calling command:\n"+" ".join(execCommand))
-    subprocess.check_call(execCommand)
-    print("new version of antialias complete!")
-    print("output is "+ref_dtnrrdfilename)
-    sys.exit(0)
+ - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize isoresample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+
+ Note: numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
 
 [] ClipVolume
 [] *CloseHoles
@@ -66,39 +59,18 @@ Image commands:
 [] *FastMarching
 [] *FindLargestBoundingBox
 [x] *PadVolumeWithConstant -> shapeworks pad
-o Examples:
+ o Examples:
  - ./shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd pad --padding 0 --value 0.0 writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/padvolume_seg.ellipsoid_0.nrrd
 
  - ./PadVolumeWithConstant --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/archanasrisubramanian/Desktop/shapeworks_results/oldpadvolume_seg.ellipsoid_0.nrrd --paddingSize=0 --paddingValue=0.0
 
 [] *ReflectVolumes
 
-[x] ResampleVolumesToBeIsotropic -> shapeworks resampleimage (per request during 2020.01.07 meeting)
+[x] ResampleVolumesToBeIsotropic -> shapeworks isoresample
  o Examples:
-  - resampleimage --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/foobar.nrrd --recenter true --isospacing 1.0 --isBinary true
   - ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_29.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
- o Update example:
-   shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize resample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
 
- o Images/ResampleVolumesToBeIsotropic and Analyze/ResampleVolumeToIsotropic (see below)
-  - Converted the Image version and need to remove Analyze version (pretty sure it's just a copy/paste of the ITK example)
-
-Testing (lots of testing and debugging various parameters as well):
- $ ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_0.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
- $ shapeworks resampleimage --inFilename /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/cam/Desktop/tmp/resample_image_test_0.nrrd --isoSpacing 1.0 --recenter true --isBinary true
- $ diff ~/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_0.nrrd ~/Desktop/tmp/resample_image_test_0.nrrd 
-
-More testing:
-(shapeworks) cam@ananda:~/code/ShapeWorks/ShapeWorks/Examples/Python$ for f in `ls TestEllipsoids/PrepOutput/resampled/seg.ellipsoid_*`; do diff $f ../../../ShapeWorks-alt/Examples/Python/$f; done
-(shapeworks) cam@ananda:~/code/ShapeWorks/ShapeWorks/Examples/Python$
-
- Python Testing (added this to both old and new versions in order to compare results [w/ diff]):
-
-            resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg, isBinary=False)
-            print("new version of resampling complete!")
-            print("outputs in "+parentDir+"resampled")
-            sys.exit(0)
-
+  - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd antialias isoresample --isoSpacing 1.0 recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
 
 [] *ThresholdImages
 [] TopologyPreservingSmoothing

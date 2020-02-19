@@ -150,4 +150,5 @@ private:
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
+
 } // shapeworks

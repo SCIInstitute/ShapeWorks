@@ -6,7 +6,7 @@
 #include <Data/Shape.h>
 #include "Data/Preferences.h"
 #include <Data/itkParticleShapeStatistics.h>
-#include <Visualization/bargraph.h>
+#include <Visualization/BarGraph.h>
 
 class Project;
 class Lightbox;
@@ -70,6 +70,8 @@ public:
 
   void shutdown();
 
+  bool export_variance_graph(QString filename);
+
 public Q_SLOTS:
 
   // analysis mode
@@ -87,7 +89,6 @@ public Q_SLOTS:
   void on_pcaSlider_valueChanged();
   void on_group_slider_valueChanged();
   void on_pcaModeSpinBox_valueChanged(int i);
-
 
   void handle_pca_animate_state_changed();
   void handle_pca_timer();
@@ -136,5 +137,4 @@ private:
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
 
-  BarGraph* chart_;
 };

@@ -334,7 +334,9 @@ bool Image::pad(int padding, PixelType value)
     return false;
   }
 
+#if DEBUG_CONSOLIDATION
   std::cout << "Pad image with constant succeeded!\n";
+#endif
   return true;
 
 }

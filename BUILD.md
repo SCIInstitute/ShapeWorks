@@ -1,5 +1,22 @@
 # Building ShapeWorks from source
 
+## Minimum Requirements
+
+### Linux
+* CMake 3.11
+* GCC 7.5.0
+* Qt 5.9.8 (optional for GUI components)
+
+### Mac
+* CMake 3.11
+* Clang 10.0.0
+* Qt 5.9.8 (optional for GUI components)
+
+### Windows
+* CMake 3.11
+* MSVC 2019
+* Qt 5.9.8 (optional for GUI components)
+
 ## Clone source
 
 ShapeWorks uses *git-lfs* to store image data for testing.  
