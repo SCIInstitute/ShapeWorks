@@ -185,7 +185,7 @@ get_eigen()
       make -j${NUM_PROCS} install || exit 1
   fi
 
-  EIGEN_DIR=${INSTALL_DIR}/lib/cmake/-${EIGEN_VER}
+  EIGEN_DIR=${INSTALL_DIR}/lib/cmake/eigen-${EIGEN_VER}
 }
 
 # determine if we can build using specified or discovered version of Qt
