@@ -122,6 +122,9 @@ ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
 
+### Eigen
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h

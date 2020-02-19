@@ -11,6 +11,8 @@ VTK_VER_STR="8.2"
 ITK_VER="v5.0.1"
 ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
+EIGEN_VER="3.3.7"
+EIGEN="eigen-$EIGEN_VER"
 
 usage()
 {
@@ -27,6 +29,9 @@ usage()
   echo "  -i,--install-dir=<path> : Install directory for ShapeWorks and its implicit dependencieas (VXL, VTK, and ITK)."
   echo "                          : By default uses a subdirectory of the current directory called 'install'."
   echo "  -n,--num-procs=<num>    : Number of processors to use for parallel builds (default is 8)."
+  echo "  --vxl-dir=<path>        : Path to existing VXL installation (version >= ${VXL_VER})."
+  echo "  --vtk-dir=<path>        : Path to existing VTK installation (version >= ${VTK_VER})."
+  echo "  --itk-dir=<path>        : Path to existing ITK installation (version >= ${ITK_VER})."
   echo ""
   echo "Example: ./superbuild.sh --num-procs=8 --install-dir=/path/to/desired/installation"
   echo "Build results are saved in ${BUILD_LOG}."
@@ -113,7 +118,7 @@ build_vxl()
 build_vtk()
 {
   echo "## Building vtk..."
-  cd ${BUILD_DIR}
+  cd ${INSTALL_DIR}
   git clone https://gitlab.kitware.com/vtk/vtk.git
   cd vtk
   git checkout -f tags/${VTK_VER}
@@ -134,7 +139,7 @@ build_vtk()
 build_itk()
 {
   echo "## Building itk..."
-  cd ${BUILD_DIR}
+  cd ${INSTALL_DIR}
   git clone https://github.com/InsightSoftwareConsortium/ITK.git
   cd ITK
   git checkout -f tags/${ITK_VER}
@@ -153,6 +158,34 @@ build_itk()
   fi
 
   ITK_DIR=${INSTALL_DIR}/lib/cmake/ITK-${ITK_VER_STR}
+}
+
+get_eigen()
+{
+  echo "## Getting Eigen..."
+  cd ${INSTALL_DIR}
+  
+  echo "Downloading $EIGEN"
+  wget -O $EIGEN.tar.bz2 http://bitbucket.org/eigen/eigen/get/$EIGEN_VER.tar.bz2
+  mkdir $EIGEN
+  tar --strip-components=1 -xvjf $EIGEN.tar.bz2 -C $EIGEN
+  rm $EIGEN.tar.bz2
+  cd $EIGEN
+
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DEIGEN3_DIR="d:/a/ShapeWorks/deps/lib/cmake/eigen-${EIGEN_VER}" -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+
+      cmake --build . --config Release || exit 1
+      cmake --build . --config Release --target install
+  else
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DEIGEN3_DIR=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+      make -j${NUM_PROCS} install || exit 1
+  fi
+
+  EIGEN_DIR=${INSTALL_DIR}/lib/cmake/-${EIGEN_VER}
 }
 
 # determine if we can build using specified or discovered version of Qt
@@ -202,7 +235,10 @@ install_dependencies()
   if [[ -z $ITK_DIR ]]; then
     build_itk
   fi
-
+  
+  if [[ -z $EIGEN_DIR ]]; then
+    get_eigen
+  fi
 
   # echo dependency directories for easy reference in case the user is independenly building ShapeWorks
   echo ""
@@ -234,6 +270,7 @@ echo "BUILD_DIR: ${BUILD_DIR}"
 echo "VXL_DIR: ${VXL_DIR}"
 echo "VTK_DIR: ${VTK_DIR}"
 echo "ITK_DIR: ${ITK_DIR}"
+echo "EIGEN_DIR: ${EIGEN_DIR}"
 echo "NUM_PROCS: ${NUM_PROCS}"
 echo "BUILD_GUI: ${BUILD_GUI}"
 echo "BUILD_STUDIO: ${BUILD_STUDIO}"

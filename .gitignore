@@ -38,6 +38,7 @@
 # Build directories
 build*
 install*
+dependencies*/
 
 # Log files
 *.log
