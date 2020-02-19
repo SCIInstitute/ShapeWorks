@@ -1,4 +1,9 @@
 
+ShapeWorks 5.3.0 - 2020-02-20
+	* Use cases: Updated femur use case with interactive cutting plane
+	* Use cases: Added fixed domains use case that demonstrates adding a single shape to an existing shape model
+	* Studio: Replaced bar chart with explained variance chart
+	* ???
 
 ShapeWorks 5.2.2 - 2020-01-09
 	* Returned to superbuild.sh build process
