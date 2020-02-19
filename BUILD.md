@@ -26,7 +26,7 @@ Follow these instructions to install the dependencies required to build shapewor
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
 Example qmake directory Windows: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`
 
-4. **VXL, VTK, and ITK**: These three dependencies can be installed by running the `$ ./install_deps.sh` script. 
+4. **VXL, VTK, and ITK**: These three dependencies can be installed by running the `$ ./dependencies.sh` script. 
    * **On Windows**, use an msys shell (e.g. git bash) to do this. 
    * If you are getting an error that starts with  **`which: no qmake in (...)`** make sure to execute the last step correctly. If you are still having no luck, [click here](#No-qmake-Error). 
    * If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK. 
@@ -57,6 +57,7 @@ Required:
   -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
+  -DEIGEN3_DIR=<eigen3 cmake path>       (contains Eigen3Config.cmake)
 ```
 Optional:
 ```
@@ -86,16 +87,16 @@ Before running any example python scripts, add ShapeWorks' dependency binaries t
 $ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=./install  -DCMAKE_PREFIX_PATH="${PWD}/../../dependencies" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+cmake -DCMAKE_INSTALL_PREFIX=./install  -DCMAKE_PREFIX_PATH="${PWD}/../dependencies" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
 ```
 
 *Windows* example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
 ```
-$ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
+$ ./superbuild.sh  --dependencies_only --build-dir=dependencies --install-dir=dependencies
 mkdir build
 cd build
-cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=dependencies/vxl/build -DVTK_DIR=dependencies/lib/cmake/vtk-8.2 -DITK_DIR=dependencies/lib/cmake/ITK-5.0 -DEIGEN3_DIR=dependencies/lib/cmake/eigen-3.3.6/cmake/Eigen3 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```
 
 ## Additional Help
