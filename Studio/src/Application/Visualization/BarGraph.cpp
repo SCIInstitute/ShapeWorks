@@ -56,17 +56,14 @@ void BarGraph::hover_timer_event()
 //---------------------------------------------------------------------------
 void BarGraph::set_data(const std::vector<double>& values)
 {
-  double sum = std::accumulate(values.begin(), values.end(), 0);
+  double sum = std::accumulate(values.begin(), values.end(), 0.0);
 
-  //this->min_val_ = *std::min_element(values.begin(), values.end());
-  //this->max_val_ = *std::max_element(values.begin(), values.end());
-
-  this->min_val_ = 0.1;
+  this->min_val_ = 0;
   this->max_val_ = 100;
 
   this->values_.clear();
   for (int i = 0; i < values.size(); i++) {
-    this->values_.push_back(values[i] / sum * 100);
+    this->values_.push_back(values[i] / sum * 100.0);
   }
 
   this->recalculate_bars();
