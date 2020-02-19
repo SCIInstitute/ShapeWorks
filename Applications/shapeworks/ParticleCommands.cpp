@@ -10,7 +10,7 @@ void ReadParticleSystem::buildParser() {
     const std::string desc = "reads a particle system";
     parser.prog(prog).description(desc);
 
-    parser.add_option("--names").action("store").type("multistring").set_default("").help("name of file to read");
+    parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .particle files");
 
     Command::buildParser();
 }
