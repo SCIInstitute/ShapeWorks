@@ -208,7 +208,7 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  echo "cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
+  echo "cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
 
 }
 
@@ -244,8 +244,8 @@ verify_qt()
 build_all()
 {
   ## create build and install directories
-  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/build;     fi
-  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/install; fi
+  if [[ -z $BUILD_DIR ]];   then BUILD_DIR=${SRC}/dependencies/build;     fi
+  if [[ -z $INSTALL_DIR ]]; then INSTALL_DIR=${SRC}/dependencies/install; fi
   mkdir -p ${BUILD_DIR}
   mkdir -p ${INSTALL_DIR}
 
@@ -285,9 +285,9 @@ build_all()
 SRC=`pwd`
 parse_command_line $*
 
-echo "##---------------------"
-echo "## ShapeWorks Superbuild"
-echo "##---------------------"
+echo "##-------------------------------"
+echo "## ShapeWorks Build Dependencies"
+echo "##-------------------------------"
 echo "##"
 echo "## called using these arguments:"
 echo "##  $*"
@@ -305,8 +305,7 @@ echo "VTK_DIR: ${VTK_DIR}"
 echo "ITK_DIR: ${ITK_DIR}"
 echo "NUM_PROCS: ${NUM_PROCS}"
 echo "BUILD_GUI: ${BUILD_GUI}"
-echo "BUILD_STUDIO: ${BUILD_STUDIO}"
 echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
-#build ShapeWorks and necessary dependencies
+#build dependencies
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
