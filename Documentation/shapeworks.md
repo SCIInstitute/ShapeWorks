@@ -48,9 +48,7 @@ It uses the following input arguments:
 
   --name = Name of file to write.
 
-<a name="antialiasing">
-
-## AntiAliasing
+<a name="antialiasing"> ## AntiAliasing </a>
 
 This tool antialiases binary volumes.
 
@@ -61,8 +59,6 @@ It uses the following input arguments:
   --maxrmserror = The maximum RMS error determines how fast the solver converges. (Range [0.0, 1.0]) [default 0.01].  
   --numiterations = Number of iterations [default 50].  
   --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].
-
-</a>
 
 ## PadVolumeWithConstant 
 
