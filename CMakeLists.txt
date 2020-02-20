@@ -196,7 +196,7 @@ if(BUILD_DOCUMENTATION)
 
   find_package(Doxygen)
   if(NOT DOXYGEN_FOUND)
-v    message(FATAL_ERROR
+    message(FATAL_ERROR
       "Doxygen is needed to build the documentation. Please install it correctly")
   endif(NOT DOXYGEN_FOUND)
 
