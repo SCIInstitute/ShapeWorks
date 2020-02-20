@@ -439,7 +439,7 @@ int ParticleShapeStatistics<VDimension>::ComputeModes()
       m_eigenvectors(j, i) = m_eigenvectors(j, i) / (total + 1.0e-15);
       }
 
-    m_eigenvalues(i) = std::sqrt(symEigen.D(i, i));
+    m_eigenvalues(i) = symEigen.D(i, i);
     }
   
   float sum = 0.0;
