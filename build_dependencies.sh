@@ -98,8 +98,8 @@ at_least_required_version()
 
 build_vxl()
 {
+  echo ""
   echo "## Building vxl..."
-
 
   if [[ $OSTYPE == "msys" ]]; then
       # VXL make install on windows doesn't work, build in INSTALL_DIR
@@ -132,6 +132,7 @@ build_vxl()
 
 build_vtk()
 {
+  echo ""
   echo "## Building vtk..."
   cd ${BUILD_DIR}
   git clone https://gitlab.kitware.com/vtk/vtk.git
@@ -153,6 +154,7 @@ build_vtk()
 
 build_itk()
 {
+  echo ""
   echo "## Building itk..."
   cd ${BUILD_DIR}
   git clone https://github.com/InsightSoftwareConsortium/ITK.git
@@ -177,6 +179,7 @@ build_itk()
 
 build_eigen()
 {
+  echo ""
   echo "## Building Eigen..."
   cd ${BUILD_DIR}
   git clone https://gitlab.com/libeigen/eigen.git
@@ -200,6 +203,7 @@ build_eigen()
 
 show_shapeworks_build()
 {
+  echo ""
   echo "## To build ShapeWorks, please use..."
   echo ""
 
@@ -300,9 +304,6 @@ fi
 
 echo "INSTALL_DIR: ${INSTALL_DIR}"
 echo "BUILD_DIR: ${BUILD_DIR}"
-echo "VXL_DIR: ${VXL_DIR}"
-echo "VTK_DIR: ${VTK_DIR}"
-echo "ITK_DIR: ${ITK_DIR}"
 echo "NUM_PROCS: ${NUM_PROCS}"
 echo "BUILD_GUI: ${BUILD_GUI}"
 echo "BUILD_CLEAN: ${BUILD_CLEAN}"
