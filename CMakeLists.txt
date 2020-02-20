@@ -181,6 +181,7 @@ if (SHAPEWORKS_GUI)
   list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 endif()
 
+#----------------------------------------------------------------------------
 if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
