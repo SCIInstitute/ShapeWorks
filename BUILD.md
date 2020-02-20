@@ -112,17 +112,17 @@ Add the ShapeWorks and dependency binaries to the path:
 ### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
 ```
-$ ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
+$ ./build_dependencies.sh
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=./install  -DCMAKE_PREFIX_PATH="${PWD}/../../dependencies" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+cmake -DCMAKE_PREFIX_PATH="${PWD}/../dependencies/install" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
 ```
 
 *Windows* example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
 ```
-$ ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
+$ ./build_dependencies.sh
 mkdir build
 cd build
-cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/install/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/install/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```
