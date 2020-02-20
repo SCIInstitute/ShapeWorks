@@ -1118,6 +1118,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered()
 {
 
@@ -1132,6 +1133,7 @@ void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered()
                                     QDir().absoluteFilePath(QString::fromStdString(this->data_dir_)));
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered()
 {
   QString fname("Untitled.xml");
@@ -1170,6 +1172,7 @@ void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered()
   this->handle_message("Successfully exported XML parameter file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
 {
   auto stats = this->analysis_tool_->get_stats();
@@ -1193,6 +1196,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
   this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
 {
   auto stats = this->analysis_tool_->get_stats();
@@ -1223,6 +1227,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
   this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
 {
   QString fname("Untitled.pts");
@@ -1252,4 +1257,26 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
     out.close();
   }
   this->handle_message("Successfully exported PCA Mode PTS files: " + filename.toStdString());
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
+{
+  QString fname("Untitled.png");
+  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Variance Graph..."),
+                                                  QString::fromStdString(dir) + fname,
+                                                  tr("PNG files (*.png)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+
+  if (!this->analysis_tool_->export_variance_graph(filename)) {
+    this->handle_error("Error writing variance graph");
+  }
+  else {
+    this->handle_message("Successfully exported Variance Graph: " + filename.toStdString());
+  }
 }

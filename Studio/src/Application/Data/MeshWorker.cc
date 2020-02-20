@@ -26,6 +26,7 @@ void MeshWorker::process()
   this->queue_->remove(this->shape_);
   this->cache_->insertMesh(this->shape_, mesh);
   emit result_ready();
+  emit finished();
 }
 
 //---------------------------------------------------------------------------

@@ -44,7 +44,6 @@ if (BUILD_TESTS)
   endif()
 endif(BUILD_TESTS)
 
-
 project(ShapeWorks)
 
 # use ccache if available
@@ -186,7 +185,7 @@ if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
-#--------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 # Add an option to toggle the generation of the API documentation
 option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 if(BUILD_DOCUMENTATION)
