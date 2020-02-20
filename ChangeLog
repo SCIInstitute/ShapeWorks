@@ -3,7 +3,7 @@ ShapeWorks 5.3.0 - 2020-02-20
 	* Use cases: Added fixed domains use case that demonstrates adding a single shape to an existing shape model
 	* Use cases: Added ellipsoid evaluation use that demonstrates quantitative evaluation of the ellipsoid
 	* Studio: Replaced bar chart with explained variance chart
-	* New commands: Added commands to the `shapeworks` executable to quantitatively evaluate shape models.
+	* New commands: Added commands to the `shapeworks` executable to quantitatively evaluate shape models: read-particle-system, compactness, generalization, specificity
 	* New shapeworks executables commands: read-image, write-image, antialias, isoresample, binarize, recenter-image, pad.
 	* New build method: Separate build_dependencies script (see BUILD.md)
 
