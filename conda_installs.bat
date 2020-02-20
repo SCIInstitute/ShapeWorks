@@ -11,6 +11,7 @@ call conda install --yes -c conda-forge colorama=0.4.3
 call conda install --yes -c conda-forge requests=2.22.0
 call conda install --yes -c conda-forge openblas=0.3.3
 call conda install --yes -c conda-forge numpy=1.17.4
+call conda install --yes -c conda-forge scikit-learn=0.22.1
 
 REM reactivate shapeworks environment
 call conda activate base
