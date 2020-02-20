@@ -10,7 +10,7 @@ The `shapeworks` executable has a variety of tools for data alignment, processin
 [Optimization]
 [File Utilities]
 
-### Image Tools
+# Image Tools
 
 Image manipulation is used to blah blah blah...
 
@@ -28,6 +28,26 @@ Image manipulation is used to blah blah blah...
 [TopologyPreservingSmoothing]
 [WriteImageInfoToText]
 
+## Read
+
+This tool reads an image.
+
+Command Line Name: read-image
+
+It uses the following input arguments:
+
+  --name = Name of file to read.
+
+## Write
+
+This tool writes an image.
+
+Command Line Name: write-image
+
+It uses the following input arguments:
+
+  --name = Name of file to write.
+
 ## AntiAliasing
 
 This tool antialiases binary volumes.
@@ -39,6 +59,58 @@ It uses the following input arguments:
   --maxrmserror = The maximum RMS error determines how fast the solver converges. (Range [0.0, 1.0]) [default 0.01].  
   --numiterations = Number of iterations [default 50].  
   --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].
+
+## PadVolumeWithConstant 
+
+This tool pads a contant value in the x-, y-, and z- directions of a given volume.
+
+Command Line Name: pad
+
+It uses the following input arguments:
+
+  --padding = Number of voxels to be padded in each direction.  
+  --value = Value to be used to fill padded voxels.  
+
+## ResampleVolumesToBeIsotropic 
+
+This tool resamples given mri/binary volumes to have isotropic voxel spacing.
+
+Command Line Name: isoresample
+
+It uses the following input arguments:
+
+  --isospacing = The isotropic spacing in all dimensions.  
+  --sizez = Image size in x-direction [ize is autmatically estimated from input image].  
+  --sizey = Image size in y-direction [size is autmatically estimated from input image].  
+  --sizez = Image size in z-direction [size is autmatically estimated from input image].
+
+## Binarize
+
+This tool binarizes an image at some given threshold.
+
+Command Line Name: binarize
+
+It uses the following input arguments:
+
+  --threshold = Resulting image has two values for pixels: > threshold set to inside value, <= threshold set to outside value [default epsilon].  
+  --inside = Value of pixels > threshold [default 1.0].  
+  --outside = Value of pixels <= threshold [default 0.0].  
+
+## Recenter
+
+This tool recenters an image by changing its origin in image header to the physical coordinates of the center of the image.
+
+Command Line Name: recenter-image
+
+## ReflectVolumes 
+
+A command line tool that reflect 3d volume images with respect to image center and specific axis.
+
+It uses the following input arguments:
+-inFilename - Image file name which needs to be reflected.
+- outFilename - Output file name for the reflected image
+- paddingSize - Axis along which it needs to be reflected
+- centerFilename - The filename where the image center information will be stored. 
 
 ## ClipVolume
 
@@ -99,40 +171,6 @@ It uses the following input arguments:
  -inFilename - A text file with the file names for which the largest size has to be computed.
 - outPrefix - output prefix to be used to save the parameters for the estimated bounding box
 - paddingSize - number of extra voxels in each direction to pad the largest bounding box, checks agains min image size is performed to make sure that this padding won't get out of bounds for the smallest image in the file names provides
- 
-## PadVolumeWithConstant 
-
-This tool pads a contant value in the x-, y-, and z- directions of a given volume.
-
-Command Line Name: pad
-
-It uses the following input arguments:
-
-  --padding = Number of voxels to be padded in each direction.
-  
-  --value = Value to be used to fill padded voxels.
-
-## ReflectVolumes 
-
-A command line tool that reflect 3d volume images with respect to image center and specific axis.
-
-It uses the following input arguments:
- -inFilename - Image file name which needs to be reflected.
-- outFilename - Output file name for the reflected image
-- paddingSize - Axis along which it needs to be reflected
-- centerFilename - The filename where the image center information will be stored. 
-
-## ResampleVolumesToBeIsotropic 
-
-This tool resamples given mri/binary volumes to have isotropic voxel spacing.
-
-It uses the following input arguments:
-  -isBinaryImage            A flag to treat the input image as a binary image (specialized resampling pipeline) [default disabled].
-  -isoSpacing               The isotropic spacing in all dimensions.
-  -sizeX                    Image size in x-direction (optional, if set to 0, the size is autmatically estimated from the input image).
-  -sizeY                    Image size in y-direction (optional, if set to 0, the size is autmatically estimated from the input image).
-  -sizeZ                    Image size in z-direction (optional, if set to 0, the size is autmatically estimated from the input image).
-  -isCenterImageOn          A flag to center the image, i.e. change the origin in the image header to the physcial coordinates of the first voxel (lower left corner) [default disabled].
 
 ## ThresholdImages
 

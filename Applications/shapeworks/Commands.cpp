@@ -200,7 +200,7 @@ void Binarize::buildParser()
   const std::string desc = "binarizes an image at some given threshold";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--threshold").action("store").type("float").set_default(0.0f).help("Resulting image has two values for pixels: > threshold set to inside value, <= threshold set to outside value [default 0.0].");
+  parser.add_option("--threshold").action("store").type("float").set_default(0.0f).help("Resulting image has two values for pixels: > threshold set to inside value, <= threshold set to outside value [default epsilon].");
   parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels > threshold [default 1.0].");
   parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
 
