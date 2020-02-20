@@ -11,15 +11,15 @@ call conda install --yes -c conda-forge colorama=0.4.3
 call conda install --yes -c conda-forge requests=2.22.0
 call conda install --yes -c conda-forge openblas=0.3.3
 call conda install --yes -c conda-forge numpy=1.17.4
-call conda install --yes -c https://conda.anaconda.org/simpleitk SimpleITK=1.2.4
 
 REM reactivate shapeworks environment
 call conda activate base
 call conda activate shapeworks
 
 call pip install --upgrade pip
-call pip install termcolor
-call pip install matplotlib
+call pip install termcolor=1.1.0
+call pip install matplotlib=3.1.2
+call pip install itk=5.0.1
 
 REM install the local GirderConnector code as a package
 call pip install Python/DatasetUtilsPackage
