@@ -185,7 +185,7 @@ if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
-#--------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 # Add an option to toggle the generation of the API documentation
 option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 if(BUILD_DOCUMENTATION)
@@ -196,7 +196,7 @@ if(BUILD_DOCUMENTATION)
 
   find_package(Doxygen)
   if(NOT DOXYGEN_FOUND)
-    message(FATAL_ERROR
+v    message(FATAL_ERROR
       "Doxygen is needed to build the documentation. Please install it correctly")
   endif(NOT DOXYGEN_FOUND)
 
