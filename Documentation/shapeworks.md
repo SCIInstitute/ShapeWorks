@@ -30,16 +30,14 @@ Image manipulation is used to blah blah blah...
 
 ## AntiAliasing
 
-This toll antialiases binary volumes.
+This tool antialiases binary volumes.
 
 Command Line Name: antialias
 
-It uses the following input arguments:
+It uses the following input arguments:  
 
-  --maxrmserror = The maximum RMS error determines how fast the solver converges. (Range [0.0, 1.0]) [default 0.01].
-
-  --numiterations = Number of iterations [default 50].
-
+  --maxrmserror = The maximum RMS error determines how fast the solver converges. (Range [0.0, 1.0]) [default 0.01].  
+  --numiterations = Number of iterations [default 50].  
   --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].
 
 ## ClipVolume
