@@ -4,6 +4,7 @@ ShapeWorks 5.3.0 - 2020-02-20
 	* Use cases: Added ellipsoid evaluation use that demonstrates quantitative evaluation of the ellipsoid
 	* Studio: Replaced bar chart with explained variance chart
 	* New commands: Added commands to the `shapeworks` executable to quantitatively evaluate shape models.
+	* New build method: Separate build_dependencies script (see BUILD.md)
 
 ShapeWorks 5.2.2 - 2020-01-09
 	* Returned to superbuild.sh build process
