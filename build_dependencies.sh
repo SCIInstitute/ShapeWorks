@@ -9,7 +9,7 @@ NUM_PROCS=8
 BUILD_GUI=1
 BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
-BUILD_LOG="shapeworks_superbuild.log"
+BUILD_LOG="build_dependencies.log"
 VXL_VER="v2.0.2"
 VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
@@ -21,7 +21,7 @@ QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever wa
 
 usage()
 {
-  echo "usage: ./superbuild.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] [--no-gui] [--vxl-dir=<vxl_path>] [--vtk-dir=<vtk_path>] [--itk-dir=<itk_path>] | [-h | --help]]"
+  echo "usage: ./build_dependencies.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] [--no-gui] | [-h | --help]]"
   echo ""
   echo "If using Anaconda to install prerequisites please first run:"
   echo "source ./conda_installs.sh"
@@ -35,20 +35,13 @@ usage()
   echo "                          : (note that user-specified paths such as --itk-dir=<path> will not be deleted)."
   echo "  --no-gui                : Do not build the ShapeWorks gui applications, which require Qt."
   echo "                          : The GUI is built by default if qmake >= $QT_MIN_VER is found in the path."
-  echo "  --with-studio           : Build ShapeWorksStudio (default off)."
   echo "  -b,--build-dir=<path>   : Build directory for ShapeWorks and its implicit dependencies (VXL, VTK, and ITK)."
   echo "                          : By default uses a subdirectory of the current directory called 'build'."
   echo "  -i,--install-dir=<path> : Install directory for ShapeWorks and its implicit dependencies (VXL, VTK, and ITK)."
   echo "                          : By default uses a subdirectory of the current directory called 'install'."
   echo "  -n,--num-procs=<num>    : Number of processors to use for parallel builds (default is 8)."
-  echo "  --vxl-dir=<path>        : Path to existing VXL installation (version >= ${VXL_VER})."
-  echo "  --vtk-dir=<path>        : Path to existing VTK installation (version >= ${VTK_VER})."
-  echo "  --itk-dir=<path>        : Path to existing ITK installation (version >= ${ITK_VER})."
-  echo "  --eigen-dir=<path>      : Path to existing Eigen installation (version >= ${EIGEN_VER})."
   echo ""
-  echo "  --dependencies_only     : Only build dependencies, not ShapeWorks."
-  echo ""
-  echo "Example: ./superbuild.sh --num-procs=8 --install-dir=/path/to/desired/installation"
+  echo "Example: ./build_dependencies.sh --num-procs=8 --install-dir=/path/to/desired/installation"
   echo "Build results are saved in ${BUILD_LOG}."
 }
 
@@ -69,23 +62,7 @@ parse_command_line()
                               ;;
       --no-gui )              BUILD_GUI=0
                               ;;
-      --with-studio )         BUILD_STUDIO=1
-                              ;;
-      --vxl-dir=*)            VXL_DIR="${1#*=}"
-                              `VXL_DIR=realpath "${VXL_DIR}"`
-                              ;;
-      --vtk-dir=*)            VTK_DIR="${1#*=}"
-                              `VTK_DIR=realpath "${VTK_DIR}"`
-                              ;;
-      --itk-dir=*)            ITK_DIR="${1#*=}"
-                              `ITK_DIR=realpath "${ITK_DIR}"`
-                              ;;
-      --eigen-dir=*)          EIGEN_DIR="${1#*=}"
-                              `EIGEN_DIR=realpath "${EIGEN_DIR}"`
-                              ;;
       --clean )               BUILD_CLEAN=1
-                              ;;
-      --dependencies_only )   BUILD_SHAPEWORKS=0
                               ;;
       -h | --help )           usage
                               exit
@@ -221,33 +198,17 @@ build_eigen()
   EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
-build_shapeworks()
+show_shapeworks_build()
 {
-  echo "## Building ShapeWorks..."
+  echo "## To build ShapeWorks, please use..."
+  echo ""
+
   OPENMP_FLAG="-DUSE_OPENMP=ON"
   if [ "$(uname)" == "Darwin" ]; then
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  cd ${BUILD_DIR}
-  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf shapeworks-build; fi
-  mkdir -p shapeworks-build && cd shapeworks-build
-
-  cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}
-
-
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake --build . --config Release || exit 1
-  else
-      make -j${NUM_PROCS} install || exit 1
-  fi
-  # Inform users of ShapeWorks install path:
-  # FIXME/TODO: get rid of LD_LIBRARY_PATH requirement (https://github.com/SCIInstitute/ShapeWorks/issues/125)
-  echo "## -----------------------------------------"
-  echo "## ShapeWorks has successfully been installed in ${INSTALL_DIR}."
-  echo "## Set LD_LIBRARY_PATH for shared libraries to be found:"
-  echo "##   export LD_LIBRARY_PATH=${INSTALL_DIR}/lib:${INSTALL_DIR}/lib64:\$LD_LIBRARY_PATH"
-  echo "## -----------------------------------------"
+  echo "cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} -DBuild_Post:BOOL=${BUILD_POST} -DBuild_View2:BOOL=${BUILD_GUI} -DBuild_Studio:BOOL=${BUILD_STUDIO} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
 
 }
 
@@ -305,17 +266,16 @@ build_all()
     build_eigen
   fi
 
-  if [[ $BUILD_SHAPEWORKS = 1 ]]; then
-      build_shapeworks
-  else
-    # echo dependency directories for easy reference in case the user is independenly building ShapeWorks
-    echo ""
-    echo "Dependency paths:"
-    echo "  VXL_DIR: ${VXL_DIR}"
-    echo "  VTK_DIR: ${VTK_DIR}"
-    echo "  ITK_DIR: ${ITK_DIR}"
-    echo "  EIGEN_DIR: ${EIGEN_DIR}"
-  fi
+  # echo dependency directories for easy reference in case the user is independently building ShapeWorks
+  echo ""
+  echo "Dependency paths:"
+  echo "  VXL_DIR: ${VXL_DIR}"
+  echo "  VTK_DIR: ${VTK_DIR}"
+  echo "  ITK_DIR: ${ITK_DIR}"
+  echo "  EIGEN_DIR: ${EIGEN_DIR}"
+  echo ""
+  
+  show_shapeworks_build
 }
 
 #
