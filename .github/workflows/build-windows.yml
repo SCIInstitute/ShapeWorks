@@ -40,12 +40,12 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{runner.workspace}}\deps
-        key: ${{ runner.os }}-${{ hashFiles('**/superbuild.sh') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
       shell: bash
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: ./superbuild.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps" --dependencies_only
+      run: ./build_dependencies.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps"
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -60,7 +60,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-8.2" -DBuild_Studio=ON -DBuild_View2=ON
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="${{runner.workspace}}\deps\share\eigen3\cmake" -DBuild_Studio=ON -DBuild_View2=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build

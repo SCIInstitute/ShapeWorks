@@ -44,7 +44,6 @@ if (BUILD_TESTS)
   endif()
 endif(BUILD_TESTS)
 
-
 project(ShapeWorks)
 
 # use ccache if available
@@ -122,6 +121,9 @@ ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
 
+### Eigen
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
@@ -179,11 +181,12 @@ if (SHAPEWORKS_GUI)
   list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 endif()
 
+#----------------------------------------------------------------------------
 if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
-#--------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 # Add an option to toggle the generation of the API documentation
 option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 if(BUILD_DOCUMENTATION)

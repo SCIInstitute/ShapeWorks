@@ -1,5 +1,22 @@
 # Building ShapeWorks from source
 
+## Minimum Requirements
+
+### Linux
+* CMake 3.11
+* GCC 7.5.0
+* Qt 5.9.8 (optional for GUI components)
+
+### Mac
+* CMake 3.11
+* Clang 10.0.0
+* Qt 5.9.8 (optional for GUI components)
+
+### Windows
+* CMake 3.11
+* MSVC 2019
+* Qt 5.9.8 (optional for GUI components)
+
 ## Clone source
 
 ShapeWorks uses *git-lfs* to store image data for testing.  
@@ -32,14 +49,13 @@ You can also install these [dependencies](deps.txt) manually if you prefer not t
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)  
 After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](GettingStarted.md#PATH-environment-variable) for help with this)  
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
-Example qmake directory Windows: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
+Example qmake directory Windows: `C:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
-### VXL, VTK, and ITK
-These three dependencies can be installed using the **superbuild.sh** script.  
+### VXL, VTK, ITK, and Eigen
+These dependencies can be installed using the **build_dependencies.sh** script.  
 On Windows, use an msys shell (e.g. git bash) to do this.  
-It is recommended to use `$ ./superbuild.sh --dependencies-only` to build VXL, VTK, and ITK.  
 
-Use `$ ./superbuild.sh --help` for more details on the available superbuild options.  
+Use `$ ./build_dependencies.sh --help` for more details on the available options.  
 
 **If you get an error** that looks like this:  
 ```
@@ -76,7 +92,7 @@ Optional:
 ```
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DBuild_View2=[OFF|ON]              default: OFF
-  -DBuild_Post=[OFF|ON]               default: ON
+  -DBuild_Post=[OFF|ON]               default: OFF
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
   -DCMAKE_BUILD_TYPE=[Debug|Release]  
 ```
@@ -96,17 +112,17 @@ Add the ShapeWorks and dependency binaries to the path:
 ### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
 ```
-$ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
+$ ./build_dependencies.sh
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=./install  -DCMAKE_PREFIX_PATH="${PWD}/../../dependencies" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+cmake -DCMAKE_PREFIX_PATH="${PWD}/../dependencies/install" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
 ```
 
 *Windows* example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
 ```
-$ ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
+$ ./build_dependencies.sh
 mkdir build
 cd build
-cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/install/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/install/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```

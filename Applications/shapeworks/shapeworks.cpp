@@ -5,6 +5,7 @@
 #include <exception>
 #include "Executable.h"
 #include "Commands.h"
+#include "ParticleCommands.h"
 
 using namespace shapeworks;
 
@@ -24,9 +25,11 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(CenterOfMassAlign::getCommand());
+  shapeworks.addCommand(ReadParticleSystem::getCommand());
+  shapeworks.addCommand(Compactness::getCommand());
+  shapeworks.addCommand(Generalization::getCommand());
+  shapeworks.addCommand(Specificity::getCommand());
 
-  //...
-  
   try {
     shapeworks.run(argc, argv);
   } catch (const std::exception &e) {
