@@ -11,13 +11,15 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
-// #include <itkTranslationTransform.h>
 
 namespace shapeworks {
 
 //todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
 
 /// read
+///
+/// reads image
+///
 /// \param filename
 bool Image::read(const std::string &inFilename)
 {
@@ -49,6 +51,9 @@ bool Image::read(const std::string &inFilename)
 }
 
 /// write
+///
+/// writes image
+///
 /// \param filename
 /// \param useCompression
 bool Image::write(const std::string &outFilename, bool useCompression)
@@ -88,6 +93,9 @@ bool Image::write(const std::string &outFilename, bool useCompression)
 }
 
 /// antialias
+///
+/// antialiases binary volumes
+///
 /// \param numIterations
 /// \param maxRMSErr      range [0.0, 1.0], determines how fast the solver converges (larger is faster)
 /// \param numLayers      size of region around a pixel to sample
@@ -126,7 +134,10 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   return true;
 }
 
+/// binarize
+///
 /// binarizes image into two regions separated by threshold value
+///
 /// \param threshold  values <= threshold are considereed "outside" and given that value [default is 0.0]
 /// \param inside     value for inside region [default is 1]
 /// \param outside    value for outside region [default is 0]
@@ -165,7 +176,9 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 }
 
 /// recenter
+///
 /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
+///
 bool Image::recenter()
 {
   if (!this->image)
@@ -200,8 +213,7 @@ bool Image::recenter()
 
 /// isoresample
 ///
-/// create an isotropic resampling of the given volume
-/// resample accepts only continuous images, so probably antialias binary images first.
+/// create an isotropic resampling of the given volume (resample accepts only continuous images, so probably antialias binary images first)
 ///
 /// \param isoSpacing     size of an output voxel [default 1.0)
 /// \param outputSize     image size can be changed [default stays the same]
@@ -250,7 +262,11 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// compare_equal
+///
+/// compares two images to see if they are identical
+///
+/// \param  Image   other image to compare
 bool Image::compare_equal(const Image &other)
 {
   // we use the region of interest filter here with the full region because our
@@ -297,6 +313,12 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
+/// pad
+///
+/// pads an image with constant value
+///
+/// \param padding  Number of voxels to be padded in each direction
+/// \param value    Value to be used to fill padded voxels
 bool Image::pad(int padding, PixelType value)
 {
   if (!this->image)
@@ -342,7 +364,11 @@ bool Image::pad(int padding, PixelType value)
 
 }
 
-//need to call antialias before and isoresample after for binary images
+/// centerofmassalign
+///
+/// performs translational alignment of a given shape image based on either its center of mass or a given 3d point
+///
+/// \param useCenterofMass
 bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY, float centerZ, const std::string &dataFilename)
 {
   if (!this->image)
@@ -444,6 +470,24 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
 
   // transform->Translate(translation);
 
+  using ResampleFilter =  itk::ResampleImageFilter<ImageType, ImageType>;
+  ResampleFilter::Pointer resampler = ResampleFilter::New();
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+  resampler->SetTransform(transform.GetPointer());
+  resampler->SetInterpolator(interpolator);
+  resampler->SetDefaultPixelValue(-1);
+  resampler->SetInput(this->image);
+  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetOutputSpacing(image->GetSpacing());
+  // resampler->Update();
+  std::cerr << image->GetOrigin();
+  std::cerr << image->GetTranslation();
+
   if (dataFilename.empty())
   {
     std::cerr << "Empty filename passed to write data; returning false." << std::endl;
@@ -455,17 +499,18 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
   const char *filename = fname.c_str();
   ofs.open(filename);
 
-  ofs << "translation:" << translation[0] << " " << translation[1] << " " << translation[2] << "\n";
-  ofs << "origin:" << origin[0] << " " << origin[1] << " " << origin[2] << "\n";
-  ofs << "object center:" << imageCenterX << " " << imageCenterY << " " << imageCenterZ << "\n";
-  ofs << "image center:" << center[0] << " " << center[1] << " " << center[2] << "\n";
+  ofs << "Translation: " << translation[0] << " " << translation[1] << " " << translation[2] << "\n";
+  ofs << "Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << "\n";
+  ofs << "Object Center: " << imageCenterX << " " << imageCenterY << " " << imageCenterZ << "\n";
+  ofs << "Image Center: " << center[0] << " " << center[1] << " " << center[2] << "\n";
 
   ofs.close();
 
   try
   {
     // transform->Update();
-    transform->Translate(translation);
+    // transform->Translate(translation);
+    resampler->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -473,8 +518,9 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
     std::cerr << exp << std::endl;
     return false;
   }
-
+#if DEBUG_CONSOLIDATION
   std::cout << "Center of mass alignment succeeded!\n";
+#endif
   return true;
 
 }

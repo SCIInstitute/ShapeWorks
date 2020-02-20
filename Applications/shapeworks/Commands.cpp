@@ -21,7 +21,6 @@ void Example::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float optionName = static_cast<float>(options.get("optionName"));
@@ -45,7 +44,6 @@ void ReadImage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -68,7 +66,6 @@ void WriteImage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int WriteImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -91,7 +88,6 @@ void ReadMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -113,7 +109,6 @@ void WriteMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -137,7 +132,6 @@ void Antialias::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Antialias::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
@@ -213,15 +207,14 @@ int Binarize::execute(const optparse::Values &options, SharedCommandData &shared
   float inside = static_cast<float>(options.get("inside"));
   float outside = static_cast<float>(options.get("outside"));
 
-  // For the command line version, we want binarize of an already binarized image to produce the same image, so we add
-  // the tiniest possible epsilon to the specified threshold if that threshold is set to zero. 
+  // For the command line version, we want binarize of an already binarized image to produce the same image, so we add the tiniest possible epsilon to the specified threshold if that threshold is set to zero. 
   float eps = (threshold == 0.0f) ? std::numeric_limits<float>::epsilon() : 0.0f;
 
   return sharedData.image.binarize(threshold + eps, inside, outside);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Padimage
+// PadImage
 ///////////////////////////////////////////////////////////////////////////////
 void PadImage::buildParser()
 {
@@ -259,7 +252,6 @@ void SmoothMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   // float maxRMSErr = static_cast<float>(options.get("maxRMSError"));
@@ -281,7 +273,6 @@ void Coverage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
@@ -310,12 +301,11 @@ void CenterOfMassAlign::buildParser()
   parser.add_option("--centerX").action("store").type("float").set_default(0.0).help("x-coordinate of a user-defined center point.");
   parser.add_option("--centerY").action("store").type("float").set_default(0.0).help("y-coordinate of a user-defined center point.");
   parser.add_option("--centerZ").action("store").type("float").set_default(0.0).help("z-coordinate of a user-defined center point.");
-  parser.add_option("--dataFilename").action("store").type("string").set_default("").help("name of file to write data into");
+  parser.add_option("--dataFilename").action("store").type("string").set_default("data.txt").help("name of file to write data into");
 
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   bool useCenterOfMass = static_cast<bool>(options.get("useCenterOfMass"));
