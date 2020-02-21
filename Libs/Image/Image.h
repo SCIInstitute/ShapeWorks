@@ -26,10 +26,9 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  bool centerofmassalign(bool useCenterOfMass = true, float centerX = 0, float centerY = 0, float centerZ = 0, const std::string &dataFilename="data.txt");
-  // bool nextfunction(...);
-
+  bool centerofmassalign(const std::string &headerFile);
   bool compare_equal(const Image &other);
+  // bool nextfunction(...);
 
 private:
   ImageType::Pointer image;

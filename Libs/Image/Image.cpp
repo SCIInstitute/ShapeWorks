@@ -368,8 +368,8 @@ bool Image::pad(int padding, PixelType value)
 ///
 /// performs translational alignment of a given shape image based on either its center of mass or a given 3d point
 ///
-/// \param useCenterofMass
-bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY, float centerZ, const std::string &dataFilename)
+/// \param headerFile   Name of file to write header information
+bool Image::centerofmassalign(const std::string &headerFile)
 {
   if (!this->image)
   {
@@ -384,43 +384,33 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
   TransformType::Pointer transform = TransformType::New();
   TransformType::OutputVectorType translation;
 
-  if(useCenterOfMass == true)
+  itk::ImageRegionIteratorWithIndex <ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
+  float numPixels = 0.0, meanX = 0.0, meanY = 0.0, meanZ = 0.0;
+  while(!imageIt.IsAtEnd())
   {
-    // getting the origin of the shape
-    itk::ImageRegionIteratorWithIndex <ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
-    float numPixels = 0.0, meanX = 0.0, meanY = 0.0, meanZ = 0.0;
-    while(!imageIt.IsAtEnd())
-    {
-        PixelType val = imageIt.Get();
-        ImageType::IndexType index;
-        ImageType::PointType point;
-        index = imageIt.GetIndex();
+      PixelType val = imageIt.Get();
+      ImageType::IndexType index;
+      ImageType::PointType point;
+      index = imageIt.GetIndex();
 
-        if(val == 1)
-        {
-            numPixels = numPixels + 1;
-            image->TransformIndexToPhysicalPoint(index, point);
-            meanX = meanX + point[0];
-            meanY = meanY + point[1];
-            meanZ = meanZ + point[2];
-        }
-        ++imageIt;
-    }
-
-    meanX = meanX/numPixels;
-    meanY = meanY/numPixels;
-    meanZ = meanZ/numPixels;
-
-    imageCenterX = meanX;
-    imageCenterY = meanY;
-    imageCenterZ = meanZ;
+      if(val == 1)
+      {
+          numPixels = numPixels + 1;
+          image->TransformIndexToPhysicalPoint(index, point);
+          meanX = meanX + point[0];
+          meanY = meanY + point[1];
+          meanZ = meanZ + point[2];
+      }
+      ++imageIt;
   }
-  else  /*using center of ostium coordinates*/
-  {
-    imageCenterX = centerX;
-    imageCenterY = centerY;
-    imageCenterZ = centerZ;
-  }
+
+  meanX = meanX/numPixels;
+  meanY = meanY/numPixels;
+  meanZ = meanZ/numPixels;
+
+  imageCenterX = meanX;
+  imageCenterY = meanY;
+  imageCenterZ = meanZ;
 
   ImageType::PointType origin = image->GetOrigin();
   ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
@@ -468,14 +458,14 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
   translation[1] = -1*(-imageCenterY + center[1]);
   translation[2] = -1*(-imageCenterZ + center[2]);
 
-  if (dataFilename.empty())
+  if (headerFile.empty())
   {
     std::cerr << "Empty filename passed to write data; returning false." << std::endl;
     return false;
   }
 
   std::ofstream ofs;
-  std::string fname = dataFilename;
+  std::string fname = headerFile;
   const char *filename = fname.c_str();
   ofs.open(filename);
 

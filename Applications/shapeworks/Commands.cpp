@@ -297,24 +297,16 @@ void CenterOfMassAlign::buildParser()
   const std::string desc = "performs translational alignment of a given shape image based on either its center of mass or a given 3d point";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--useCenterOfMass").action("store").type("bool").set_default(true).help("A flag to transform shape using its center of mass.");
-  parser.add_option("--centerX").action("store").type("float").set_default(0.0).help("x-coordinate of a user-defined center point.");
-  parser.add_option("--centerY").action("store").type("float").set_default(0.0).help("y-coordinate of a user-defined center point.");
-  parser.add_option("--centerZ").action("store").type("float").set_default(0.0).help("z-coordinate of a user-defined center point.");
-  parser.add_option("--dataFilename").action("store").type("string").set_default("data.txt").help("name of file to write data into");
+  parser.add_option("--headerfile").action("store").type("string").set_default("").help("name of file to write header information");
 
   Command::buildParser();
 }
 
 int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  bool useCenterOfMass = static_cast<bool>(options.get("useCenterOfMass"));
-  float centerX = static_cast<float>(options.get("centerX"));
-  float centerY = static_cast<float>(options.get("centerY"));
-  float centerZ = static_cast<float>(options.get("centerZ"));
-  std::string dataFilename = static_cast<std::string>(options.get("dataFilename"));
+  std::string headerfile = static_cast<std::string>(options.get("headerfile"));
 
-  return sharedData.image.centerofmassalign(useCenterOfMass, centerX, centerY, centerZ, dataFilename);
+  return sharedData.image.centerofmassalign(headerfile);
 }
 
 } // shapeworks
