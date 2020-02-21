@@ -398,7 +398,7 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
 
         if(val == 1)
         {
-            numPixels = numPixels+1;
+            numPixels = numPixels + 1;
             image->TransformIndexToPhysicalPoint(index, point);
             meanX = meanX + point[0];
             meanY = meanY + point[1];
@@ -468,26 +468,6 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
   translation[1] = -1*(-imageCenterY + center[1]);
   translation[2] = -1*(-imageCenterZ + center[2]);
 
-  // transform->Translate(translation);
-
-  using ResampleFilter =  itk::ResampleImageFilter<ImageType, ImageType>;
-  ResampleFilter::Pointer resampler = ResampleFilter::New();
-
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-  resampler->SetTransform(transform.GetPointer());
-  resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(-1);
-  resampler->SetInput(this->image);
-  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
-  resampler->SetOutputOrigin(image->GetOrigin());
-  resampler->SetOutputDirection(image->GetDirection());
-  resampler->SetOutputSpacing(image->GetSpacing());
-  // resampler->Update();
-  std::cerr << image->GetOrigin();
-  std::cerr << image->GetTranslation();
-
   if (dataFilename.empty())
   {
     std::cerr << "Empty filename passed to write data; returning false." << std::endl;
@@ -508,9 +488,7 @@ bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY
 
   try
   {
-    // transform->Update();
-    // transform->Translate(translation);
-    resampler->Update();
+    transform->Translate(translation);
   }
   catch (itk::ExceptionObject &exp)
   {
