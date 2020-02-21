@@ -36,5 +36,5 @@ https://repo.anaconda.com/archive/Anaconda3-2019.10-Windows-x86_64.exe
 
 7. CD to your copied Examples\Python location
 
-8. Run "python ellipsoidMain.py"
+8. Run "python3 RunUseCase.py --use_case ellipse"
 

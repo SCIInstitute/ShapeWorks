@@ -28,5 +28,5 @@ To use the installer version of ShapeWorks (.pkg):
 
 5. CD to your copied Examples\Python location
 
-8. Run "python ellipsoidMain.py"
+6. Run "python3 RunUseCase.py --use_case ellipse"
 
