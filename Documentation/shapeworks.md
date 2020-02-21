@@ -14,7 +14,7 @@ The `shapeworks` executable has a variety of tools for data alignment, processin
 
 Image manipulation is used to blah blah blah...
 
-[AntiAliasing] (#antialiasing)  
+[AntiAliasing] (#anti-aliasing)
 [ClipVolume]
 [CloseHoles]
 [Cropping Images]
@@ -48,7 +48,7 @@ It uses the following input arguments:
 
   --name = Name of file to write.
 
-## <a name="antialiasing"> AntiAliasing </a>
+## <a name="anti-aliasing"></a> AntiAliasing
 
 This tool antialiases binary volumes.
 
