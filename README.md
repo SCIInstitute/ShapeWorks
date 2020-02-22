@@ -56,9 +56,9 @@ https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.1
 
 Binary Installation Documentation
 --------------------------------
-[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Windows_README.txt)
-[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Mac_README.txt)
-[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/PACKAGE_README.txt)
+[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)
+[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)
+[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/PACKAGE_README.txt)
 
 
 Developers
