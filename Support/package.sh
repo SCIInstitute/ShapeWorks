@@ -33,7 +33,7 @@ cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
 cp ChangeLog package/${VERSION}
-cp PACKAGE_README.txt package/${VERSION}/README.txt
+cp documentation/install/PACKAGE_README.txt package/${VERSION}/README.txt
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
 rm -rf include share v3p plugins
