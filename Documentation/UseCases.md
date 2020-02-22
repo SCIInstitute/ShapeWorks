@@ -353,7 +353,7 @@ The steps are described below and the results of each step are shown for the mes
 9. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 10. Distance Transform - Finally the distance transform it taken and the data is ready for ShapeWorks optimize.
 
-![Grooming steps](images/FemurGroomPipeline.png)
+![Grooming steps](images/FemurGroomPipeline.PNG)
 
 ### Optimize
 For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
