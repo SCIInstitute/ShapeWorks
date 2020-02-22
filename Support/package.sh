@@ -70,11 +70,12 @@ fi
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
+cp ${ROOT}/Documentation/install/PACKAGE_README.txt ${VERSION}/README.txt
 zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 
 # Additionally on Mac, create an installer
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    cp Documentation/install/Mac_README.txt ${VERSION}/README.txt
+    cp ${ROOT}/Documentation/install/Mac_README.txt ${VERSION}
     pkgbuild --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
 fi
 
