@@ -77,6 +77,7 @@ zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 if [[ "$OSTYPE" == "darwin"* ]]; then
     cp ${ROOT}/Documentation/install/Mac_README.txt ${VERSION}/README.txt
     pkgbuild --quiet --analyze --root ${VERSION} ShapeWorks.plist
+    plutil -replace BundleIsRelocatable -bool NO ShapeWorks.plist
     pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
 fi
 
