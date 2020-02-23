@@ -250,6 +250,8 @@ double BarGraph::get_graph_height()
 //---------------------------------------------------------------------------
 double BarGraph::get_height_for_value(double value)
 {
+  this->min_val_ = this->use_log_ ? 0.1 : 0.0;
+
   double range =
     this->use_log_ ? (log10(this->max_val_) - log10(this->min_val_)) : (this->max_val_ -
                                                                         this->min_val_);
