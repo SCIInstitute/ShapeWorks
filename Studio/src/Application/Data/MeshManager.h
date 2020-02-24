@@ -69,9 +69,6 @@ private:
 
   size_t thread_count_;
 
-  //reconstruction object
-  //Reconstruction construct_;
-
   QSharedPointer<SurfaceReconstructor> surfaceReconstructor_;
 };
 

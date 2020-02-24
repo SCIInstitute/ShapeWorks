@@ -44,7 +44,6 @@ if (BUILD_TESTS)
   endif()
 endif(BUILD_TESTS)
 
-
 project(ShapeWorks)
 
 #TODO: Move this to a proper place. For some reason TBB is not linking if this part is in Libs/Optimize/CMakeLists.txt
@@ -125,6 +124,9 @@ ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
 
+### Eigen
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h
@@ -182,10 +184,28 @@ if (SHAPEWORKS_GUI)
   list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 endif()
 
+#----------------------------------------------------------------------------
 if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
+#----------------------------------------------------------------------------
+# Add an option to toggle the generation of the API documentation
+option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
+if(BUILD_DOCUMENTATION)
+
+  # for doxygen
+  SET(ShapeWorks_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  SET(ShapeWorks_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+  find_package(Doxygen)
+  if(NOT DOXYGEN_FOUND)
+    message(FATAL_ERROR
+      "Doxygen is needed to build the documentation. Please install it correctly")
+  endif(NOT DOXYGEN_FOUND)
+
+  add_subdirectory(Documentation/Doxygen)
+endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")

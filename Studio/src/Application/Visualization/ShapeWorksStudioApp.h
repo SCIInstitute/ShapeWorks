@@ -34,15 +34,14 @@ class ShapeWorksStudioApp : public QMainWindow
   Q_OBJECT
 public:
 
-  ShapeWorksStudioApp( int argc, char** argv );
+  ShapeWorksStudioApp(int argc, char** argv);
   ~ShapeWorksStudioApp();
 
-  void closeEvent( QCloseEvent* event ) override;
+  void closeEvent(QCloseEvent* event) override;
 
   void initialize_vtk();
-  void import_files( QStringList file_names );
-  void open_project( QString filename );
-
+  void import_files(QStringList file_names);
+  void open_project(QString filename);
 
 public Q_SLOTS:
 
@@ -68,14 +67,14 @@ public Q_SLOTS:
   void on_actionExport_Eigenvalues_triggered();
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
-
+  void on_actionExport_Variance_Graph_triggered();
   void on_action_preferences_triggered();
 
   void on_center_checkbox_stateChanged();
   void on_thumbnail_size_slider_valueChanged();
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
-  
+
   void handle_pca_changed();
   void handle_slider_update();
 
@@ -99,6 +98,14 @@ public Q_SLOTS:
   void handle_progress(size_t amt);
 
 private:
+
+  enum VIEW_MODE {
+    ORIGINAL = 0,
+    GROOMED = 1,
+    RECONSTRUCTED = 2
+  };
+
+  void set_view_combo_item_enabled(int item, bool value);
 
   void disableAllActions();
   void enablePossibleActions();
@@ -141,7 +148,7 @@ private:
   QLabel* glyph_quality_label_;
   QList<QAction*> recent_file_actions_;
   std::vector<std::string> originalFilenames_;
-  QProgressBar * progressBar_;
+  QProgressBar* progressBar_;
   std::string data_dir_, currentMessage_;
 };
 

@@ -296,6 +296,7 @@ int main( int argc, char * argv[] )
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( outFilename);
     writer->SetInput(outputImage);
+    writer->SetUseCompression(true);
 
     try
     {
@@ -343,6 +344,7 @@ int main( int argc, char * argv[] )
         WType::Pointer mriwriter = WType::New();
         mriwriter->SetFileName( MRIoutFilename);
         mriwriter->SetInput(mriresampler->GetOutput());
+        mriwriter->SetUseCompression(true);
         try
         {
             mriwriter->Update();

@@ -21,6 +21,7 @@ typedef QSharedPointer< DisplayObject > DisplayObjectHandle;
 class DisplayObject
 {
 public:
+
   DisplayObject();
   ~DisplayObject();
 
@@ -42,11 +43,16 @@ public:
   QList<double> get_exclusion_sphere_radii();
   void set_exclusion_sphere_radii(QList<double> radii);
 
+  std::vector<Point> get_vectors();
+  void set_vectors(std::vector<Point> vectors);
+
 private:
   QSharedPointer<Mesh> mesh_;
   vnl_vector<double> correspondence_points_;
   QStringList corner_annotations_;
   vnl_vector<double> transform_;
+
+  std::vector<Point> vectors_;
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;

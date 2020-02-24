@@ -54,6 +54,13 @@ The latest shapeworks release can be downloaded here:
 
 https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.1
 
+Binary Installation Documentation
+--------------------------------
+[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)
+[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)
+[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/PACKAGE_README.txt)
+
+
 Developers
 ---------------------
 Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
@@ -67,15 +74,9 @@ Documentation is generated from [the gh-pages branch in GitHub.](https://github.
 Getting Started
 =====================
 
-See the [ellipsoid example](http://sciinstitute.github.io/ShapeWorks/ellipsoidMain.html) for a python-scripted standard shape modeling workflow using ShapeWorks tools. More use cases will be released in future.
+See the [use cases](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/UseCases.md) for python-scripted standard shape modeling workflow using ShapeWorks tools. 
 
-<!-- the below page had dead links and 
-[ShapeWorks user documentation.](http://sciinstitute.github.io/ShapeWorks/)
--->
-
-<!--
-Desired: https://shapeworks.sci.utah.edu/docs
--->
+See documentation for the [groom](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md), [optimize](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md), and  [analyze](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md) tools for more detail.
 
 Acknowledgements
 =====================
@@ -134,6 +135,7 @@ Researchers
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
 - [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
+- [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
 
 Past Contributors
 ---------------------
