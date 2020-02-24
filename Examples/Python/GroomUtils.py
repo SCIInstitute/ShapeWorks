@@ -123,8 +123,7 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
     """
     This function takes in a filelist and produces the center of mass aligned
     files in the appropriate directory. If inDataListImg is provided,
-    then it also applys the same transformation on the corresponding list of
-    raw files (MRI/CT ...)
+    then it also applys the same transformation on the corresponding list of raw files (MRI/CT ...)
     """
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -159,8 +158,10 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
             outname = rename(inname, outDir, 'com')
             paramname = outname.replace('.nrrd', '.txt')
             outDataListSeg.append(outname)
-            execCommand = ["TranslateShapeToImageOrigin", "--inFilename", inname, "--outFilename", outname, "--useCenterOfMass", "1",
-            "--parameterFilename", paramname]
+            cmd = ["shapeworks", "read-image", "--name", inname]
+            cmd.extend(["center-of-mass-align", "--headerfile", paramname])
+            cmd.extend(["write-image", "--name", outname])
+            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(execCommand)
         return outDataListSeg
 
