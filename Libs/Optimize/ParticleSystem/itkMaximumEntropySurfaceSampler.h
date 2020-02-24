@@ -18,7 +18,6 @@
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleEntropyGradientFunction.h"
-#include "itkParticleQualifierEntropyGradientFunction.h"
 #include "itkParticleImplicitSurfaceDomain.h"
 #include "itkInPlaceImageFilter.h"
 #include "itkParticleContainerArrayAttribute.h"
@@ -118,11 +117,6 @@ public:
         return m_GradientFunction;
     }
 
-    ParticleQualifierEntropyGradientFunction<typename ImageType::PixelType, Dimension>
-    *GetQualifierGradientFunction()
-    {
-        return m_QualifierGradientFunction;
-    }
     ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     *GetCurvatureGradientFunction()
     {
@@ -301,10 +295,6 @@ public:
         {
             m_Optimizer->SetGradientFunction(m_GradientFunction);
         }
-        else if (mode ==2)
-        {
-            m_Optimizer->SetGradientFunction(m_QualifierGradientFunction);
-        }
         else if (mode ==3)
         {
             if(m_pairwise_potential_type == 0)
@@ -386,8 +376,6 @@ protected:
 
     typename ParticleEntropyGradientFunction<typename ImageType::PixelType,  Dimension>
     ::Pointer m_GradientFunction;
-    typename ParticleQualifierEntropyGradientFunction<typename ImageType::PixelType,  Dimension>
-    ::Pointer m_QualifierGradientFunction;
     typename ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>
     ::Pointer m_CurvatureGradientFunction;
 

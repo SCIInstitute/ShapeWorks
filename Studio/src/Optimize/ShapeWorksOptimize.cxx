@@ -964,8 +964,6 @@ void ShapeWorksOptimize::InitializeSampler()
   m_Sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_Sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
   m_Sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-  m_Sampler->GetQualifierGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_Sampler->GetQualifierGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
   m_Sampler->GetModifiedCotangentGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_Sampler->GetModifiedCotangentGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
