@@ -16,17 +16,13 @@ point-based shape models, and visualizing the results.
 
 You have downloaded a binary distribution of ShapeWorks.
 
-To use the installer version of ShapeWorks (.pkg):
+There is currently one python example included.  To run it you will
+need python3 with a few packages.  The easist way to install them is
+to run
 
-1. Install the ShapeWorks pkg file.
+source ./conda_installs.sh
 
-2. Open a terminal, change directory to /Applications/ShapeWorks
+Then, to run the example:
 
-3. type "source conda_installs.sh"
-
-4. Copy "/Applications/ShapeWorks/Examples to another location (e.g. $HOME/ShapeWorks-Examples)
-
-5. CD to your copied Examples\Python location
-
-8. Run "python ellipsoidMain.py"
-
+cd Examples/Python
+python3 RunUseCase.py --use_case ellipse

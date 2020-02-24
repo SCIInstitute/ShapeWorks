@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+    - '*'
   pull_request:
 
 jobs:
@@ -71,7 +73,7 @@ jobs:
       run: cd build && make install
 
     - name: Build Binary Package
-      run: pwd ; ls ; ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      run: pwd ; ls ; ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
       
     - name: make test
       shell: bash -l {0}

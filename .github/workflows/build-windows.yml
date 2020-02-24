@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - master
+    tags:
+    - '*'
   pull_request:
-
+    
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
@@ -90,7 +92,7 @@ jobs:
     
     - name: Build Binary Package
       shell: bash
-      run: pwd ; ls ; ./package_windows.sh tag
+      run: pwd ; ls ; cp Documentation/install/Windows_README.txt . ; cp Support/shapeworks.nsi . ; ./Support/package_windows.sh tag
       
     - name: Test
       working-directory: ${{runner.workspace}}/build
