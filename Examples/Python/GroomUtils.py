@@ -121,9 +121,7 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
 
 def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
     """
-    This function takes in a filelist and produces the center of mass aligned
-    files in the appropriate directory. If inDataListImg is provided,
-    then it also applys the same transformation on the corresponding list of raw files (MRI/CT ...)
+    This function takes in a filelist and produces the center of mass aligned files in the appropriate directory. If inDataListImg is provided, then it also applys the same transformation on the corresponding list of raw files (MRI/CT ...)
     """
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -219,10 +217,7 @@ def FindReferenceImage(inDataList):
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antialiasIterations=20,
                         smoothingIterations=1, isoValue=0, icpIterations=10, processRaw = False):
     """
-    This function takes in a filelists(binary and raw) and produces rigid aligned
-    files in the appropriate directory. If the process_raw flag is set True,
-    then it also applys the same transformation on the corresponding list of
-    raw files (MRI/CT ...)
+    This function takes in a filelists(binary and raw) and produces rigid aligned files in the appropriate directory. If the process_raw flag is set True, then it also applys the same transformation on the corresponding list of raw files (MRI/CT ...)
     """
     outDir = parentDir + '/aligned'
     transoutDir = outDir + '/transformations'
@@ -264,7 +259,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
     execCommand = ["ThresholdImages", "--inFilename", ref_tpdtnrrdfilename, "--outFilename", ref_binnrrdfilename, "--lowerThresholdLevel", "-0.000001"]
     subprocess.check_call(execCommand)
-
 
     if processRaw:
         rawoutDir = outDir + '/images/'
