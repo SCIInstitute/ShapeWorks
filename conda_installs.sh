@@ -4,7 +4,7 @@
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
-if [ "$sourced" == "0" ]; then
+if [[ "$sourced" == "0" ]]; then
   echo "ERROR: must call this script using \"source ./conda_installs.sh\""
   exit 1
 fi
@@ -61,7 +61,7 @@ function install_conda() {
 
 
   # linux and mac (only) deps
-  if [ "$(uname)" = "Linux" ] || [ "$(uname)" == "Darwin"]; then
+  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
       if ! conda install --yes \
 	   xorg-libx11=1.6.9 \
 	   xorg-libsm=1.2.3 \
@@ -83,7 +83,7 @@ function install_conda() {
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
 
   # install any additional Linux dependencies
-  if [ "$(uname)" = "Linux" ]; then
+  if [[ "$(uname)" == "Linux" ]]; then
     echo "nothing additional to install for Linux"
   fi
 
