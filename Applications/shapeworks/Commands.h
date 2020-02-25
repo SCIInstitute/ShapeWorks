@@ -151,4 +151,20 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class CloseHoles : public ImageCommand
+{
+public:
+  static CloseHoles &getCommand()
+  {
+    static CloseHoles instance;
+    return instance;
+  }
+
+private:
+  CloseHoles() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks

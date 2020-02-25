@@ -11,6 +11,7 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <itkBinaryFillholeImageFilter.h>
 
 namespace shapeworks {
 
@@ -339,6 +340,35 @@ bool Image::pad(int padding, PixelType value)
 #endif
   return true;
 
+}
+
+bool Image::closeholes()
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::BinaryFillholeImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetForegroundValue(itk::NumericTraits<PixelType>::min());
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Close Holes failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Close Holes succeeded!\n";
+#endif
+  return true;
 }
 
 } // Shapeworks

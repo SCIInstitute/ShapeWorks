@@ -297,4 +297,22 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
   return sharedData.mesh.coverage(second_mesh);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// CloseHoles
+///////////////////////////////////////////////////////////////////////////////
+void CloseHoles::buildParser()
+{
+  const std::string prog = "close-holes";
+  const std::string desc = "closes holes in a given binary volume";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  return sharedData.image.closeholes();
+}
+
 } // shapeworks
