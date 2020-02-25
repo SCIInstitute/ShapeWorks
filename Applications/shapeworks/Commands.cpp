@@ -21,7 +21,6 @@ void Example::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float optionName = static_cast<float>(options.get("optionName"));
@@ -45,7 +44,6 @@ void ReadImage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -68,7 +66,6 @@ void WriteImage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int WriteImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -91,7 +88,6 @@ void ReadMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -113,7 +109,6 @@ void WriteMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -137,7 +132,6 @@ void Antialias::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Antialias::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
@@ -213,15 +207,14 @@ int Binarize::execute(const optparse::Values &options, SharedCommandData &shared
   float inside = static_cast<float>(options.get("inside"));
   float outside = static_cast<float>(options.get("outside"));
 
-  // For the command line version, we want binarize of an already binarized image to produce the same image, so we add
-  // the tiniest possible epsilon to the specified threshold if that threshold is set to zero. 
+  // For the command line version, we want binarize of an already binarized image to produce the same image, so we add the tiniest possible epsilon to the specified threshold if that threshold is set to zero. 
   float eps = (threshold == 0.0f) ? std::numeric_limits<float>::epsilon() : 0.0f;
 
   return sharedData.image.binarize(threshold + eps, inside, outside);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Padimage
+// PadImage
 ///////////////////////////////////////////////////////////////////////////////
 void PadImage::buildParser()
 {
@@ -259,7 +252,6 @@ void SmoothMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   // float maxRMSErr = static_cast<float>(options.get("maxRMSError"));
@@ -281,7 +273,6 @@ void Coverage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
@@ -298,6 +289,27 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// CenterOfMassAlign
+///////////////////////////////////////////////////////////////////////////////
+void CenterOfMassAlign::buildParser()
+{
+  const std::string prog = "center-of-mass-align";
+  const std::string desc = "performs translational alignment of a given shape image based on either its center of mass or a given 3d point";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--headerfile").action("store").type("string").set_default("").help("name of file to write header information");
+
+  Command::buildParser();
+}
+
+int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string headerfile = static_cast<std::string>(options.get("headerfile"));
+
+  return sharedData.image.centerofmassalign(headerfile);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // ExtractLabel
 ///////////////////////////////////////////////////////////////////////////////
 void ExtractLabel::buildParser()
@@ -309,11 +321,8 @@ void ExtractLabel::buildParser()
   parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted.");
   parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels > threshold [default 1.0].");
   parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
-
-  Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float label = static_cast<float>(options.get("label"));
@@ -321,6 +330,27 @@ int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sh
   float outside = static_cast<float>(options.get("outside"));
 
   return sharedData.image.extractlabel(label, inside, outside);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Resample
+///////////////////////////////////////////////////////////////////////////////
+void Resample::buildParser()
+{
+  const std::string prog = "resample";
+  const std::string desc = "brief description of command";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--mrifilename").action("store").type("string").set_default("").help("name of MRI file");
+  
+  Command::buildParser();
+}
+
+int Resample::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string mrifilename = static_cast<std::string>(options.get("mrifilename"));
+
+  return sharedData.image.resample(mrifilename);
 }
 
 } // shapeworks

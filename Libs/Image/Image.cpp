@@ -17,6 +17,9 @@ namespace shapeworks {
 //todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
 
 /// read
+///
+/// reads image
+///
 /// \param filename
 bool Image::read(const std::string &inFilename)
 {
@@ -48,6 +51,9 @@ bool Image::read(const std::string &inFilename)
 }
 
 /// write
+///
+/// writes image
+///
 /// \param filename
 /// \param useCompression
 bool Image::write(const std::string &outFilename, bool useCompression)
@@ -87,6 +93,9 @@ bool Image::write(const std::string &outFilename, bool useCompression)
 }
 
 /// antialias
+///
+/// antialiases binary volumes
+///
 /// \param numIterations
 /// \param maxRMSErr      range [0.0, 1.0], determines how fast the solver converges (larger is faster)
 /// \param numLayers      size of region around a pixel to sample
@@ -125,7 +134,10 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   return true;
 }
 
+/// binarize
+///
 /// binarizes image into two regions separated by threshold value
+///
 /// \param threshold  values <= threshold are considereed "outside" and given that value [default is 0.0]
 /// \param inside     value for inside region [default is 1]
 /// \param outside    value for outside region [default is 0]
@@ -164,7 +176,9 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 }
 
 /// recenter
+///
 /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
+///
 bool Image::recenter()
 {
   if (!this->image)
@@ -199,8 +213,7 @@ bool Image::recenter()
 
 /// isoresample
 ///
-/// create an isotropic resampling of the given volume
-/// resample accepts only continuous images, so probably antialias binary images first.
+/// create an isotropic resampling of the given volume (resample accepts only continuous images, so probably antialias binary images first)
 ///
 /// \param isoSpacing     size of an output voxel [default 1.0)
 /// \param outputSize     image size can be changed [default stays the same]
@@ -249,7 +262,11 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// compare_equal
+///
+/// compares two images to see if they are identical
+///
+/// \param  Image   other image to compare
 bool Image::compare_equal(const Image &other)
 {
   // we use the region of interest filter here with the full region because our
@@ -296,6 +313,12 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
+/// pad
+///
+/// pads an image with constant value
+///
+/// \param padding  Number of voxels to be padded in each direction
+/// \param value    Value to be used to fill padded voxels
 bool Image::pad(int padding, PixelType value)
 {
   if (!this->image)
@@ -342,6 +365,12 @@ bool Image::pad(int padding, PixelType value)
 }
 
 bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
+/// centerofmassalign
+///
+/// performs translational alignment of a given shape image based on either its center of mass or a given 3d point
+///
+/// \param headerFile   Name of file to write header information
+bool Image::centerofmassalign(const std::string &headerFile)
 {
   if (!this->image)
   {
@@ -376,5 +405,164 @@ bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
 }
 
 } // Shapeworks
+  double imageCenterX, imageCenterY, imageCenterZ;
+  const unsigned int Dimension = 3;
 
+  using TransformType = itk::TranslationTransform<double, Dimension>;
+  TransformType::Pointer transform = TransformType::New();
+  TransformType::OutputVectorType translation;
 
+  itk::ImageRegionIteratorWithIndex <ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
+  float numPixels = 0.0, meanX = 0.0, meanY = 0.0, meanZ = 0.0;
+  while(!imageIt.IsAtEnd())
+  {
+      PixelType val = imageIt.Get();
+      ImageType::IndexType index;
+      ImageType::PointType point;
+      index = imageIt.GetIndex();
+
+      if(val == 1)
+      {
+          numPixels = numPixels + 1;
+          image->TransformIndexToPhysicalPoint(index, point);
+          meanX = meanX + point[0];
+          meanY = meanY + point[1];
+          meanZ = meanZ + point[2];
+      }
+      ++imageIt;
+  }
+
+  meanX = meanX/numPixels;
+  meanY = meanY/numPixels;
+  meanZ = meanZ/numPixels;
+
+  imageCenterX = meanX;
+  imageCenterY = meanY;
+  imageCenterZ = meanZ;
+
+  ImageType::PointType origin = image->GetOrigin();
+  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
+
+  ImageType::IndexType index;
+  ImageType::PointType point;
+  ImageType::PointType center;
+
+  index[0] = 0; index[1] = 0; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] = point[0]; center[1] = point[1]; center[2] = point[2];
+
+  index[0] = 0; index[1] = 0; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = 0; index[1] = size[1]-1; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = 0; index[1] = size[1]-1; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = 0; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = 0; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = size[2]-1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  center[0] /= 8.0; center[1] /= 8.0; center[2] /= 8.0;
+
+  // move object's origin to zero then move to the region center
+  translation[0] = -1*(-imageCenterX + center[0]);
+  translation[1] = -1*(-imageCenterY + center[1]);
+  translation[2] = -1*(-imageCenterZ + center[2]);
+
+  if (headerFile.empty())
+  {
+    std::cerr << "Empty filename passed to write data; returning false." << std::endl;
+    return false;
+  }
+
+  std::ofstream ofs;
+  std::string fname = headerFile;
+  const char *filename = fname.c_str();
+  ofs.open(filename);
+
+  ofs << "Translation: " << translation[0] << " " << translation[1] << " " << translation[2] << "\n";
+  ofs << "Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << "\n";
+  ofs << "Object Center: " << imageCenterX << " " << imageCenterY << " " << imageCenterZ << "\n";
+  ofs << "Image Center: " << center[0] << " " << center[1] << " " << center[2] << "\n";
+
+  ofs.close();
+
+  try
+  {
+    transform->Translate(translation);
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Center of mass alignment failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Center of mass alignment succeeded!\n";
+#endif
+  return true;
+
+}
+
+bool Image::resample(const std::string &mriFilename)
+{
+  read(mriFilename);
+  
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  FilterType::Pointer resampler = FilterType::New();
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+  resampler->SetInterpolator(interpolator);
+  resampler->SetDefaultPixelValue(0);
+  resampler->SetTransform(transform.GetPointer());
+  resampler->SetInput(image);
+  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetOutputSpacing(image->GetSpacing());
+  resampler->Update();
+
+  try
+  {
+    // resampler->Update();
+    write(mriFilename);
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Resample failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Resample succeeded!\n";
+#endif
+  return true;
+
+}
+
+} // Shapeworks

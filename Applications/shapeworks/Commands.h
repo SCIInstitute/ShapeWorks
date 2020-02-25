@@ -152,14 +152,34 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class CenterOfMassAlign : public ImageCommand
+{
+public:
+  static CenterOfMassAlign &getCommand() { static CenterOfMassAlign instance; return instance; }
+
+private:
+  CenterOfMassAlign() { buildParser(); } 
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Resample : public ImageCommand
+{
+public:
+  static Resample& getCommand() { static Resample instance; return instance; }
+
+private:
+  Resample() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class ExtractLabel : public ImageCommand
 {
 public:
-  static ExtractLabel &getCommand()
-  {
-    static ExtractLabel instance;
-    return instance;
-  }
+  static ExtractLabel &getCommand(){ static ExtractLabel instance; return instance; }
 
 private:
   ExtractLabel() { buildParser(); }

@@ -26,10 +26,11 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
+  bool centerofmassalign(const std::string &headerFile);
+  bool resample(const std::string &mriFilename);
   bool extractlabel(PixelType label = 1.0, PixelType inside = itk::NumericTraits<PixelType>::One, PixelType outside = itk::NumericTraits<PixelType>::Zero);
-  // bool nextfunction(...);
-
   bool compare_equal(const Image &other);
+  // bool nextfunction(...);
 
 private:
   ImageType::Pointer image;

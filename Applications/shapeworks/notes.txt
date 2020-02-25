@@ -39,18 +39,16 @@ ShapeWorksToolsConsolidation -> https://docs.google.com/spreadsheets/d/17gevfSR-
 
 Image commands:
 
-[x] readimage
-[x] writeimage
+[x] read-image
+[x] write-image
 [x] binarize (created new command by breaking down isoresample)
-[x] recenter (created new command by breaking down isoresample)
-[x] *AntiAliasing -> shapeworks antialias
+[x] recenter-image (created new command by breaking down isoresample)
+[x] *AntiAliasing -> antialias
  o ShapeWorksGroom class duplicates antialias functionality, has different defaults
- o Examples
- - shapeworks antialias readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 writeimage --name ./foobar.nrrd
+ o numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
+ o Examples:
 
- - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize isoresample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
-
- Note: numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
+ - shapeworks read-image --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numiterations 75 --maxrmserror 0.03 --numlayers 0 write-image --name ./foobar.nrrd
 
 [] ClipVolume
 [] *CloseHoles
@@ -64,19 +62,21 @@ Image commands:
 
 [] *FastMarching
 [] *FindLargestBoundingBox
-[x] *PadVolumeWithConstant -> shapeworks pad
+[x] *PadVolumeWithConstant -> pad
  o Examples:
- - ./shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd pad --padding 0 --value 0.0 writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/padvolume_seg.ellipsoid_0.nrrd
 
- - ./PadVolumeWithConstant --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/archanasrisubramanian/Desktop/shapeworks_results/oldpadvolume_seg.ellipsoid_0.nrrd --paddingSize=0 --paddingValue=0.0
+ - PadVolumeWithConstant --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/archanasrisubramanian/Desktop/shapeworks_results/oldpadvolume_seg.ellipsoid_0.nrrd --paddingSize=0 --paddingValue=0.0
+
+ - shapeworks read-image --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd pad --padding 0 --value 0.0 write-image --name /Users/archanasrisubramanian/Desktop/shapeworks_results/padvolume_seg.ellipsoid_0.nrrd
 
 [] *ReflectVolumes
 
-[x] ResampleVolumesToBeIsotropic -> shapeworks isoresample
+[x] ResampleVolumesToBeIsotropic -> isoresample
  o Examples:
+
   - ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_29.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
 
-  - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd antialias isoresample --isoSpacing 1.0 recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+  - shapeworks read-image --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd antialias isoresample --isospacing 1.0 recenter-image binarize write-image --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
 
 [] *ThresholdImages
 [] TopologyPreservingSmoothing
@@ -142,13 +142,26 @@ ICPRigid3DImageRegistration
 ICPRigid3DMeshRegistration
 Procrustes3D.cpp
 Procrustes3D.h
-[] ReflectMeshes
-[] ResampleVolumeToIsotropic -> see if it's used anywhere and convert those cases to use new resampleimage command
+ReflectMeshes
+ResampleVolumeToIsotropic -> see if it's used anywhere and convert those cases to use new resampleimage command
 ResizeOriginResampleVolumes
-Transforms/
 TranslateImages
-[] TranslateShapeToImageOrigin
+[x] TranslateShapeToImageOrigin -> center-of-mass-align 
+o Examples:
+
+ - shapeworks read-image --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd center-of-mass-align --headerfile=/Users/archanasrisubramanian/Desktop/shapeworks_results/COM/data.txt write-image --name /Users/archanasrisubramanian/Desktop/shapeworks_results/COM/com_seg.ellipsoid_0.nrrd
+
+ - TranslateShapeToImageOrigin --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd --outFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/old_com_seg.ellipsoid_0.nrrd --useCenterOfMass 1 --parameterFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/data.txt
+
 TranslationTransform
+
+Alignment/Transform Commands:
+
+itkAdvancedTransform
+itkCompactlySupportedRBFSparseKernelTransform
+itkKernelTransform2
+itkSparseKernelTransform
+itkThinPlateSplineKernelTransform2
 
 Analyze commands:
 
@@ -171,6 +184,3 @@ ply2vtk
 stl2ply
 stl2vtk
 vtk2ply
-
-  
-

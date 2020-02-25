@@ -24,11 +24,13 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
+  shapeworks.addCommand(CenterOfMassAlign::getCommand());
+  shapeworks.addCommand(ExtractLabel::getCommand());
+  shapeworks.addCommand(Resample::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
-  shapeworks.addCommand(ExtractLabel::getCommand());
 
   try {
     shapeworks.run(argc, argv);
