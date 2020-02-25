@@ -60,9 +60,8 @@ It uses the following input arguments:
   --numiterations = Number of iterations [default 50].  
   --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].
 
-[!Original Image] (images/Original.png)
-
-[!Antialiased Image] (images/Antialias.png)
+<img src="images/Original.png" width="300px" align="left" hspace="20">
+<img src="Images/Antialias.png" width="300px" align="left" hspace="20">
 
 ## PadVolumeWithConstant 
 
