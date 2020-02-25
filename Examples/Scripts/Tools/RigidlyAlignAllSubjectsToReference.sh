@@ -121,8 +121,8 @@ EchoWithColor "${ref_segfilename}" "light_green"
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
 
 ExtractGivenLabelImage --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename} --labelVal $foreground
-CloseHoles --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename}
-shapeworks readimage --name ${ref_segfilename} antialias --numiterations $antialias_iterations writeimage --name ${ref_dtnrrdfilename} 
+shapeworks read-image --name ${ref_segfilename} close-holes write-image --name ${ref_segfilename}
+shapeworks read-image --name ${ref_segfilename} antialias --numiterations $antialias_iterations writeimage --name ${ref_dtnrrdfilename} 
 FastMarching --inFilename ${ref_dtnrrdfilename} --outFilename  ${ref_dtnrrdfilename} --isoValue $isoValue
 
 # xmlfilename=${basename}.genDT.xml
@@ -225,8 +225,8 @@ do
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
          
     ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
-    CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
-    shapeworks readimage --name ${segfilename} antialias --numiterations $antialias_iterations writeimage --name ${dtnrrdfilename} 
+    shapeworks read-image --name ${segfilename} close-holes write-image --name ${segfilename}
+    shapeworks read-image --name ${segfilename} antialias --numiterations $antialias_iterations writeimage --name ${dtnrrdfilename} 
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
     
     #     xmlfilename=${basename}.genDT.xml

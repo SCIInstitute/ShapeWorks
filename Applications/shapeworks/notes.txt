@@ -46,14 +46,20 @@ Image commands:
 [x] *AntiAliasing -> shapeworks antialias
  o ShapeWorksGroom class duplicates antialias functionality, has different defaults
  o Examples
- - shapeworks antialias readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 writeimage --name ./foobar.nrrd
+ - shapeworks antialias read-image --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 writeimage --name ./foobar.nrrd
 
- - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize isoresample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+ - shapeworks read-image --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize isoresample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
 
  Note: numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
 
 [] ClipVolume
-[] *CloseHoles
+[x] *CloseHoles -> close-holes
+ o Examples:
+
+ - shapeworks read-image --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd close-holes write-image --name /Users/archanasrisubramanian/Desktop/shapeworks_results/closeholes_seg.ellipsoid_0.nrrd 
+
+ - CloseHoles --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd --outFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/old_close_holes_seg.ellipsoid_0.nrrd
+
 [] *CropImages
 [] *ExtractGivenLabelImage
 [] *FastMarching

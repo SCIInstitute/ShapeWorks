@@ -247,7 +247,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     # reference image processing
     execCommand = ["ExtractGivenLabelImage", "--inFilename", refFile, "--outFilename", refFile, "--labelVal", " 1"]
     subprocess.check_call(execCommand)
-    execCommand = ["CloseHoles",  "--inFilename", refFile, "--outFilename", refFile]
+    execCommand = ["shapeworks", "read-image", "--name", refFile, "close-holes", "write-image", "--name", refFile]
     subprocess.check_call(execCommand)
     execCommand = ["shapeworks", "read-image", "--name", refFile, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", ref_dtnrrdfilename]
     subprocess.check_call(execCommand)
@@ -312,7 +312,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             print(" ")
             execCommand = ["ExtractGivenLabelImage", "--inFilename", seginname, "--outFilename", seginname, "--labelVal", "1"]
             subprocess.check_call(execCommand)
-            execCommand = ["CloseHoles", "--inFilename", seginname, "--outFilename", seginname]
+            execCommand = ["shapeworks", "read-image", "--name", seginname, "close-holes", "write-image", "--name", seginname]
             subprocess.check_call(execCommand)
             execCommand = ["shapeworks", "read-image", "--name", seginname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(execCommand)
@@ -359,7 +359,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             print(" ")
             execCommand = ["ExtractGivenLabelImage", "--inFilename", inname, "--outFilename", inname, "--labelVal",  "1"]
             subprocess.check_call(execCommand )
-            execCommand = ["CloseHoles", "--inFilename", inname, "--outFilename", inname]
+            execCommand = ["shapeworks", "read-image", "--name", inname, "close-holes", "write-image", "--name", inname]
             subprocess.check_call(execCommand )
             execCommand = ["shapeworks", "read-image", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(execCommand )
@@ -501,7 +501,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 
         execCommand = ["ExtractGivenLabelImage", "--inFilename", inname, "--outFilename", inname, "--labelVal", "1"]
         subprocess.check_call(execCommand )
-        execCommand = ["CloseHoles",  "--inFilename", inname, "--outFilename", inname ]
+        execCommand = ["shapeworks", "read-image", "--name", inname, "close-holes", "write-image", "--name", inname]
         subprocess.check_call(execCommand )
         execCommand = ["shapeworks", "read-image", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
         subprocess.check_call(execCommand )

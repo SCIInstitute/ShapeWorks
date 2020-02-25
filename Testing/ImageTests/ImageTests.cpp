@@ -91,6 +91,16 @@ TEST(ImageTests, pad_identity_test) {
   ASSERT_TRUE(image.compare_equal(ground_truth));
 }
 
+TEST(ImageTests, closeholes_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/closeholes/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.closeholes();
+  Image ground_truth(test_location + "closeholes_baseline.nrrd");
+
+  ASSERT_TRUE(image.compare_equal(ground_truth));
+}
+
 //TEST(ImageTests, blah_test) {
 
 // ...
