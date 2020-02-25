@@ -341,6 +341,47 @@ bool Image::pad(int padding, PixelType value)
 
 }
 
+bool Image::extractlabel(float label)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  itk::ImageRegionIterator<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
+  itk::ImageRegionIterator<ImageType> outIterator(this->image, image->GetLargestPossibleRegion());
+
+  while (!imageIterator.IsAtEnd())
+  {
+    PixelType val = imageIterator.Get();
+
+    if (val == label)
+      outIterator.Set((PixelType)1);
+    else
+      outIterator.Set((PixelType)0);
+
+    ++imageIterator;
+    ++outIterator;
+  }
+
+  try
+  {
+    image->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Extract Label from Image failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Extract Label from Image succeeded!\n";
+#endif
+  return true;
+}
+
 } // Shapeworks
 
 

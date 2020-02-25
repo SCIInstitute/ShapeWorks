@@ -151,4 +151,20 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class ExtractLabel : public ImageCommand
+{
+public:
+  static ExtractLabel &getCommand()
+  {
+    static ExtractLabel instance;
+    return instance;
+  }
+
+private:
+  ExtractLabel() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks

@@ -297,4 +297,26 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
   return sharedData.mesh.coverage(second_mesh);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// ExtractLabel
+///////////////////////////////////////////////////////////////////////////////
+void ExtractLabel::buildParser()
+{
+  const std::string prog = "extract-label";
+  const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted.");
+
+  ExtractLabel::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float label = static_cast<float>(options.get("label"));
+
+  return sharedData.image.extractlabel(label);
+}
+
 } // shapeworks
