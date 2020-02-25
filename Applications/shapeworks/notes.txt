@@ -55,7 +55,13 @@ Image commands:
 [] ClipVolume
 [] *CloseHoles
 [] *CropImages
-[] *ExtractGivenLabelImage
+[x] *ExtractGivenLabelImage -> extract-label 
+ o Examples:
+
+ - shapeworks read-image --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd extract-label --label 1.0 write-image --name /Users/archanasrisubramanian/Desktop/shapeworks_results/extractlabel_seg.ellipsoid_0.nrrd
+
+ - ExtractGivenLabelImage --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd --outFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/old_extractlabel_seg.ellipsoid_0.nrrd --labelVal 1
+
 [] *FastMarching
 [] *FindLargestBoundingBox
 [x] *PadVolumeWithConstant -> shapeworks pad

@@ -26,7 +26,7 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  bool extractlabel(float label = 1.0);
+  bool extractlabel(PixelType label = 1.0, PixelType inside = itk::NumericTraits<PixelType>::One, PixelType outside = itk::NumericTraits<PixelType>::Zero);
   // bool nextfunction(...);
 
   bool compare_equal(const Image &other);

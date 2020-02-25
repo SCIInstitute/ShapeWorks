@@ -120,7 +120,7 @@ EchoWithColor "Grooming reference  - isolate, hole file, antialias and distance 
 EchoWithColor "${ref_segfilename}" "light_green"
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
 
-ExtractGivenLabelImage --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename} --labelVal $foreground
+shapeworks read-image --name ${ref_segfilename} extract-label --label $foreground write-image --name ${ref_segfilename}
 CloseHoles --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename}
 shapeworks readimage --name ${ref_segfilename} antialias --numiterations $antialias_iterations writeimage --name ${ref_dtnrrdfilename} 
 FastMarching --inFilename ${ref_dtnrrdfilename} --outFilename  ${ref_dtnrrdfilename} --isoValue $isoValue
@@ -224,7 +224,7 @@ do
     EchoWithColor "[1 of 4] Grooming - isolate, hole file, antialias and distance transform generation .................." "light_green"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
          
-    ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
+    shapeworks read-image --name ${segfilename} extract-label --label $foreground write-image --name ${segfilename}
     CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
     shapeworks readimage --name ${segfilename} antialias --numiterations $antialias_iterations writeimage --name ${dtnrrdfilename} 
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue

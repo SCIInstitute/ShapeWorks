@@ -121,7 +121,8 @@ do
     foreground=1
     
     isoValue=0.0
-    ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
+    
+    shapeworks read-image --name ${segfilename} extract-label --label $foreground write-image --name ${segfilename}
     CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
     shapeworks readimage --name ${segfilename} antialias --numiterations $antialias_iterations writeimage --name ${dtnrrdfilename}
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue

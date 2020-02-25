@@ -307,16 +307,20 @@ void ExtractLabel::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted.");
+  parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels > threshold [default 1.0].");
+  parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
 
-  ExtractLabel::buildParser();
+  Command::buildParser();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float label = static_cast<float>(options.get("label"));
+  float inside = static_cast<float>(options.get("inside"));
+  float outside = static_cast<float>(options.get("outside"));
 
-  return sharedData.image.extractlabel(label);
+  return sharedData.image.extractlabel(label, inside, outside);
 }
 
 } // shapeworks

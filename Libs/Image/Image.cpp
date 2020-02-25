@@ -341,7 +341,7 @@ bool Image::pad(int padding, PixelType value)
 
 }
 
-bool Image::extractlabel(float label)
+bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
 {
   if (!this->image)
   {
@@ -349,25 +349,18 @@ bool Image::extractlabel(float label)
     return false;
   }
 
-  itk::ImageRegionIterator<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
-  itk::ImageRegionIterator<ImageType> outIterator(this->image, image->GetLargestPossibleRegion());
+  using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetLowerThreshold(label);
+  filter->SetInsideValue(inside);
+  filter->SetOutsideValue(outside);
 
-  while (!imageIterator.IsAtEnd())
-  {
-    PixelType val = imageIterator.Get();
-
-    if (val == label)
-      outIterator.Set((PixelType)1);
-    else
-      outIterator.Set((PixelType)0);
-
-    ++imageIterator;
-    ++outIterator;
-  }
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
 
   try
   {
-    image->Update();
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {

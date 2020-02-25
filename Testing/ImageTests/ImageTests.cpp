@@ -91,6 +91,16 @@ TEST(ImageTests, pad_identity_test) {
   ASSERT_TRUE(image.compare_equal(ground_truth));
 }
 
+TEST(ImageTests, extractlabel_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.extractlabel(1.0);
+  Image ground_truth(test_location + "extractlabel_baseline.nrrd");
+
+  ASSERT_TRUE(image.compare_equal(ground_truth));
+}
+
 //TEST(ImageTests, blah_test) {
 
 // ...
