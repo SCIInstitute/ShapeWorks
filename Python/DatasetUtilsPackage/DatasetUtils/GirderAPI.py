@@ -182,6 +182,33 @@ def _downloadItem(serverAddress, accessToken, path, item):
         stdout.write('\n')
     return True
 
+# returns true if success
+def _downloadFolder(serverAddress, accessToken, path, folderInfo):
+    response = _makeGetRequest(
+        url = serverAddress + 'api/v1/folder/' + folderInfo['_id'] + '/download', 
+        params = None,
+        headers = {'Girder-Token': accessToken},
+        actionMessage = 'downloading folder %s' % folderInfo['name']
+    )
+    filename = path + '/' + folderInfo['name'] + '.zip'
+    if response is None:
+        return False
+
+    NUM_MEGS = 64
+    chunkSize = NUM_MEGS * 1048576 # Download 64 MB at a time
+    chunkIndex = 0
+
+    with open(filename, "wb") as filehandle:
+        for chunk in response.iter_content(chunk_size=chunkSize):
+            if not chunk:  # filter out keep-alive new chunks
+                continue
+            filehandle.write(chunk)
+
+            chunkIndex += 1
+            stdout.write('\r%s [%d MB]' % (filename, chunkIndex*NUM_MEGS))
+        stdout.write('\n')
+    return True
+
 def _createFolder(serverAddress, accessToken, parentId, name, parentType='folder'):
     actionMessage = 'creating folder %s' % name
     response = _makePostRequest(

@@ -87,7 +87,23 @@ def _verifyLoginState(loginState):
 
 
 # returns True if success
-def _downloadDatasetZip(accessToken, filename):
+def _downloadDatasetZip(accessToken, datasetName, destinationPath):
+    
+    print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
+    # 1 get info of the use case collection
+    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    if useCaseCollection is None:
+        return False
+
+    # 2 get info of the dataset folder in that collection
+    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+    if datasetFolder is None:
+        return False
+    
+    success = GirderAPI._downloadFolder(serverAddress, accessToken, path=destinationPath, folderInfo=datasetFolder)
+    return success
+
+
     apicall = serverAddress + "api/v1/item"
     response = requests.get(url = apicall, params = {'folderId': '5e15245f0a02fb02ba24268a', 'name': filename}, headers = {'Girder-Token': accessToken}) 
     data = response.json()
