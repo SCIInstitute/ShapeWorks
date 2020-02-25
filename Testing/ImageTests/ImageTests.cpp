@@ -92,7 +92,7 @@ TEST(ImageTests, pad_identity_test) {
 }
 
 TEST(ImageTests, closeholes_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/closeholes/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
 
   Image image(test_location + "1x2x2.nrrd");
   image.closeholes();
