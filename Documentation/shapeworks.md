@@ -61,7 +61,7 @@ It uses the following input arguments:
   --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].
 
 <img src="images/Original.png" width="300px" align="left" hspace="20">
-<img src="Images/Antialias.png" width="300px" align="left" hspace="20">
+<img src="images/Antialias.png" width="300px" align="left" hspace="20">
 
 ## PadVolumeWithConstant 
 
