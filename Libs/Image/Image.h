@@ -28,6 +28,7 @@ public:
   bool pad(int padding, PixelType value);
   bool centerofmassalign(const std::string &headerFile);
   bool compare_equal(const Image &other);
+  bool resample(const std::string &mriFilename);
   // bool nextfunction(...);
 
 private:

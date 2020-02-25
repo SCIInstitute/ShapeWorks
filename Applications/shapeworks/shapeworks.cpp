@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
+  shapeworks.addCommand(Resample::getCommand());
 
   try {
     shapeworks.run(argc, argv);

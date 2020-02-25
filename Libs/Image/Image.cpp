@@ -493,4 +493,48 @@ bool Image::centerofmassalign(const std::string &headerFile)
 
 }
 
+bool Image::resample(const std::string &mriFilename)
+{
+  read(mriFilename);
+  
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  FilterType::Pointer resampler = FilterType::New();
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+  resampler->SetInterpolator(interpolator);
+  resampler->SetDefaultPixelValue(0);
+  resampler->SetTransform(transform.GetPointer());
+  resampler->SetInput(image);
+  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetOutputSpacing(image->GetSpacing());
+  resampler->Update();
+
+  try
+  {
+    // resampler->Update();
+    write(mriFilename);
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Resample failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Resample succeeded!\n";
+#endif
+  return true;
+
+}
+
 } // Shapeworks

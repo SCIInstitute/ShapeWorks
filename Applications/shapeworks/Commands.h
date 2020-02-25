@@ -167,4 +167,16 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class Resample : public ImageCommand
+{
+public:
+  static Resample& getCommand() { static Resample instance; return instance; }
+
+private:
+  Resample() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks

@@ -309,4 +309,25 @@ int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandDat
   return sharedData.image.centerofmassalign(headerfile);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Resample
+///////////////////////////////////////////////////////////////////////////////
+void Resample::buildParser()
+{
+  const std::string prog = "resample";
+  const std::string desc = "brief description of command";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--mrifilename").action("store").type("string").set_default("").help("name of MRI file");
+  
+  Command::buildParser();
+}
+
+int Resample::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string mrifilename = static_cast<std::string>(options.get("mrifilename"));
+
+  return sharedData.image.resample(mrifilename);
+}
+
 } // shapeworks
