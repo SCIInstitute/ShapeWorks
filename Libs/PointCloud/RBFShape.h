@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stddef.h>
 #include "Shapeworks.h"
 //#include "ImageUtils.h"
 #include <itkTranslationTransform.h>
@@ -14,7 +15,7 @@ namespace shapeworks {
 
 class RBFShape
 {
-  RBFShape(Eigen::Vector3d coeff = Eigen::Vector3d(1.,1.,1.),
+  RBFShape(Eigen::Vector4d coeff = Eigen::Vector4d(1.,1.,1.,1.),
                        Eigen::Vector3d pows = Eigen::Vector3d(1.,1.,1.),
                        Eigen::MatrixXd points = Eigen::MatrixXd());
 
@@ -147,6 +148,8 @@ class RBFShape
           In the RBFImplicit derived class, rbf point values are the tps coefficients used to construct the rbf.
           These values are initialized by zeros (on surface) and +/- offsetScale/rbfOffset (for dipole points, if we move more cells off the surface, the initial rbf point coefficient is decreased). */
       Eigen::MatrixXd points_;
+
+      RBFKernel * kernel;
 
       bool isFault_;
 
