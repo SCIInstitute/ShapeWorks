@@ -60,6 +60,10 @@ It uses the following input arguments:
   --numiterations = Number of iterations [default 50].  
   --numlayers = Number of layers around a 3d pixel to use for this computation [default image dims].
 
+[!Original Image] (images/Original.png)
+
+[!Antialiased Image] (images/Antialias.png)
+
 ## PadVolumeWithConstant 
 
 This tool pads a contant value in the x-, y-, and z- directions of a given volume.
