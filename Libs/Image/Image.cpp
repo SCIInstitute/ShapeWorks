@@ -511,7 +511,7 @@ bool Image::resample(const std::string &mriFilename)
 
   resampler->SetInterpolator(interpolator);
   resampler->SetDefaultPixelValue(0);
-  resampler->SetTransform(transform.GetPointer());
+  // resampler->SetTransform(transform.GetPointer());
   resampler->SetInput(image);
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(image->GetOrigin());
@@ -567,6 +567,35 @@ bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Extract Label from Image succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::closeholes()
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::BinaryFillholeImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetForegroundValue(itk::NumericTraits<PixelType>::min());
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Close Holes failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Close Holes succeeded!\n";
 #endif
   return true;
 }
