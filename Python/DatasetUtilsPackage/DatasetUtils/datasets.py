@@ -1,8 +1,6 @@
 from DatasetUtils import GirderConnector
 
-
-# By default tries to use locally stored login state with interactive login
-def downloadDatasetZip(datasetName, destinationPath = '.', loginState = None):
+def downloadDataset(datasetName, destinationPath, asZip = True, loginState = None):
     print('.___________________________.')
     print('|                           |')
     print('|     ShapeWorks Portal     |')
@@ -24,39 +22,16 @@ def downloadDatasetZip(datasetName, destinationPath = '.', loginState = None):
             print('Unable to get access token')
             return False
     
-    if GirderConnector._downloadDatasetZip(accessToken, datasetName, destinationPath):
-        print(loginState['username'], 'downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
-        return True
-    
-    return False
-
-def downloadDataset(datasetName, destinationPath, loginState = None):
-    print('.___________________________.')
-    print('|                           |')
-    print('|     ShapeWorks Portal     |')
-    print('|___________________________|')
-    print()
-    print('Downloading the', datasetName, 'dataset from the ShapeWorks Portal')
-    if loginState is None:
-        # interactive login mode
-        loginState, accessToken = GirderConnector._loginAndGetAccessToken()
-        if accessToken is None:
-            return False
+    if asZip:
+        success = GirderConnector._downloadDatasetZip(accessToken, datasetName, destinationPath)
     else:
-        # login using provided credentials
-        if not GirderConnector._verifyLoginState(loginState):
-            print('Invalid login state')
-            return False
-        accessToken = GirderConnector._getAccessToken(loginState['key'])
-        if accessToken is None:
-            print('Unable to get access token')
-            return False
-    
-    if GirderConnector._downloadDataset(accessToken, datasetName, destinationPath):
+        success = GirderConnector._downloadDataset(accessToken, datasetName, destinationPath)
+    if success:
         print(loginState['username'], 'downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
         return True
-    
-    return False
+    else:
+        print('FAILED to downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
+        return False
 
 def uploadNewDataset(datasetName, datasetPath, loginState = None):
     print('.___________________________.')
