@@ -166,8 +166,8 @@ def _downloadItem(serverAddress, accessToken, path, item):
     if response is None:
         return False
 
-    NUM_MEGS = 64
-    chunkSize = NUM_MEGS * 1048576 # Download 64 MB at a time
+    NUM_MEGS = 32
+    chunkSize = NUM_MEGS * 1048576 # Download 32 MB at a time
     fileSize = int(response.headers['Content-Length'])
     chunkIndex = 0
 
@@ -194,8 +194,8 @@ def _downloadFolder(serverAddress, accessToken, path, folderInfo):
     if response is None:
         return False
 
-    NUM_MEGS = 64
-    chunkSize = NUM_MEGS * 1048576 # Download 64 MB at a time
+    NUM_MEGS = 32
+    chunkSize = NUM_MEGS * 1048576 # Download 32 MB at a time
     chunkIndex = 0
 
     with open(filename, "wb") as filehandle:

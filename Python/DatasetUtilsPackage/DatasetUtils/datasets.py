@@ -1,11 +1,15 @@
 from DatasetUtils import GirderConnector
 
-def downloadDataset(datasetName, destinationPath, asZip = True, loginState = None):
+def printPortalWelcome():
     print('.___________________________.')
     print('|                           |')
     print('|     ShapeWorks Portal     |')
     print('|___________________________|')
     print()
+
+
+def downloadDataset(datasetName, destinationPath, asZip = True, loginState = None):
+    printPortalWelcome()
     print('Downloading the', datasetName, 'dataset from the ShapeWorks Portal')
     if loginState is None:
         # interactive login mode
@@ -34,11 +38,7 @@ def downloadDataset(datasetName, destinationPath, asZip = True, loginState = Non
         return False
 
 def uploadNewDataset(datasetName, datasetPath, loginState = None):
-    print('.___________________________.')
-    print('|                           |')
-    print('|     ShapeWorks Portal     |')
-    print('|___________________________|')
-    print()
+    printPortalWelcome()
     print('Uploading the %s dataset from %s to the ShapeWorks Portal' % (datasetName, datasetPath))
     if loginState is None:
         # interactive login mode

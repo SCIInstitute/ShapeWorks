@@ -8,7 +8,7 @@ from DatasetUtils import GirderAPI
 
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
-_CONTACT_SUPPORT_STRING = 'Please contact support.'
+_CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-users@sci.utah.edu'
 _USE_CASE_DATA_COLLECTION = 'use-case-data-v0'
 
 serverAddress = 'http://cibc1.sci.utah.edu:8080/'
