@@ -154,9 +154,7 @@ bool Image::binarize(PixelType thresholdVal, PixelType inside, PixelType outside
 }
 
 /// recenter
-///
-/// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
-///
+/// recenters by changing origin (in the image header) to the physical coordinates of the center of the image
 bool Image::recenter()
 {
   if (!this->image)

@@ -174,7 +174,7 @@ int ResampleImage::execute(const optparse::Values &options, SharedCommandData &s
 void RecenterImage::buildParser()
 {
   const std::string prog = "recenter-image";
-  const std::string desc = "recenters an image by changing its origin in the image header to the physcial coordinates of the center of the image";
+  const std::string desc = "recenters an image by changing its origin in the image\n\t\t\theader to the physical coordinates of the center of the image";
   parser.prog(prog).description(desc);
 
   Command::buildParser();
