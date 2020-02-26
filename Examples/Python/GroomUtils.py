@@ -241,17 +241,16 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     ref_binnrrdfilename = newRefFile.replace('.nrrd', '.BIN.nrrd')
 
     # reference image processing
-    cmd = ["shapeworks", "read-image", "--name", refFile, "extract-label", "--label", 1.0, "write-image", "--name", refFile]
+    cmd = ["shapeworks", "read-image", "--name", refFile, "extract-label", "--label", str(1.0), "write-image", "--name", refFile]
     print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
-    execCommand = ["CloseHoles",  "--inFilename", refFile, "--outFilename", refFile]
-    subprocess.check_call(execCommand)
+    cmd = ["shapeworks", "read-image", "--name", refFile, "close-holes", "write-image", "--name", refFile]
+    print("Calling cmd:\n"+" ".join(cmd))
+    subprocess.check_call(cmd)
     cmd = ["shapeworks", "read-image", "--name", refFile, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", ref_dtnrrdfilename]
     print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
-
-    execCommand = ["FastMarching",  "--inFilename", ref_dtnrrdfilename, "--outFilename", ref_dtnrrdfilename, "--isoValue", str(
-        isoValue)]
+    execCommand = ["FastMarching",  "--inFilename", ref_dtnrrdfilename, "--outFilename", ref_dtnrrdfilename, "--isoValue", str(isoValue)]
     subprocess.check_call(execCommand)
 
     xmlfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
@@ -310,8 +309,9 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cmd = ["shapeworks", "read-image", "--name", seginname, "extract-label", "--label", 1.0, "write-image", "--name", seginname]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
-            execCommand = ["CloseHoles", "--inFilename", seginname, "--outFilename", seginname]
-            subprocess.check_call(execCommand)
+            cmd = ["shapeworks", "read-image", "--name", seginname, "close-holes", "write-image", "--name", seginname]
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
             cmd = ["shapeworks", "read-image", "--name", seginname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
@@ -359,13 +359,13 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cmd = ["shapeworks", "read-image", "--name", inname, "extract-label", "--label", 1.0, "write-image", "--name", inname]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
-            execCommand = ["CloseHoles", "--inFilename", inname, "--outFilename", inname]
-            subprocess.check_call(execCommand )
+            cmd = ["shapeworks", "read-image", "--name", inname, "close-holes", "write-image", "--name", inname]
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
             cmd = ["shapeworks", "read-image", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
-            execCommand = ["FastMarching", "--inFilename", dtnrrdfilename, "--outFilename", dtnrrdfilename, "--isoValue", str(
-                isoValue)]
+            execCommand = ["FastMarching", "--inFilename", dtnrrdfilename, "--outFilename", dtnrrdfilename, "--isoValue", str(isoValue)]
             subprocess.check_call(execCommand )
 
             xmlfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
@@ -502,8 +502,9 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         cmd = ["shapeworks", "read-image", "--name", inname, "extract-label", "--label", 1.0, "write-image", "--name", inname]
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
-        execCommand = ["CloseHoles",  "--inFilename", inname, "--outFilename", inname ]
-        subprocess.check_call(execCommand )
+        cmd = ["shapeworks", "read-image", "--name", inname, "close-holes", "write-image", "--name", inname]
+        print("Calling cmd:\n"+" ".join(cmd))
+        subprocess.check_call(cmd)
         cmd = ["shapeworks", "read-image", "--name", inname, "antialias", "--numiterations", str(antialiasIterations), "write-image", "--name", dtnrrdfilename]
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)

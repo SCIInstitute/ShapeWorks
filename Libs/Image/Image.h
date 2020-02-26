@@ -29,6 +29,9 @@ public:
   bool centerofmassalign(const std::string &headerFile);
   bool resample(const std::string &mriFilename);
   bool extractlabel(PixelType label = 1.0, PixelType inside = itk::NumericTraits<PixelType>::One, PixelType outside = itk::NumericTraits<PixelType>::Zero);
+  bool closeholes();
+  // bool nextfunction(...);
+
   bool compare_equal(const Image &other);
   // bool nextfunction(...);
 

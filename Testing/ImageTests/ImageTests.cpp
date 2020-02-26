@@ -97,6 +97,14 @@ TEST(ImageTests, extractlabel_test) {
   Image image(test_location + "1x2x2.nrrd");
   image.extractlabel(1.0);
   Image ground_truth(test_location + "extractlabel_baseline.nrrd");
+}
+
+TEST(ImageTests, closeholes_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.closeholes();
+  Image ground_truth(test_location + "closeholes_baseline.nrrd");
 
   ASSERT_TRUE(image.compare_equal(ground_truth));
 }

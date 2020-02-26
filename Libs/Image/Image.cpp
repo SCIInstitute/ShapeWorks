@@ -364,7 +364,6 @@ bool Image::pad(int padding, PixelType value)
 
 }
 
-bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
 /// centerofmassalign
 ///
 /// performs translational alignment of a given shape image based on either its center of mass or a given 3d point
@@ -378,33 +377,6 @@ bool Image::centerofmassalign(const std::string &headerFile)
     return false;
   }
 
-  using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-  filter->SetLowerThreshold(label);
-  filter->SetInsideValue(inside);
-  filter->SetOutsideValue(outside);
-
-  filter->SetInput(this->image);
-  this->image = filter->GetOutput();
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Extract Label from Image failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Extract Label from Image succeeded!\n";
-#endif
-  return true;
-}
-
-} // Shapeworks
   double imageCenterX, imageCenterY, imageCenterZ;
   const unsigned int Dimension = 3;
 
@@ -563,6 +535,40 @@ bool Image::resample(const std::string &mriFilename)
 #endif
   return true;
 
+}
+
+bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetLowerThreshold(label);
+  filter->SetInsideValue(inside);
+  filter->SetOutsideValue(outside);
+
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Extract Label from Image failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Extract Label from Image succeeded!\n";
+#endif
+  return true;
 }
 
 } // Shapeworks

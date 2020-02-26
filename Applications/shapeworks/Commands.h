@@ -179,10 +179,22 @@ private:
 class ExtractLabel : public ImageCommand
 {
 public:
-  static ExtractLabel &getCommand(){ static ExtractLabel instance; return instance; }
+  static ExtractLabel &getCommand() { static ExtractLabel instance; return instance; }
 
 private:
   ExtractLabel() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class CloseHoles : public ImageCommand
+{
+public:
+  static CloseHoles &getCommand() { static CloseHoles instance; return instance; }
+
+private:
+  CloseHoles() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
