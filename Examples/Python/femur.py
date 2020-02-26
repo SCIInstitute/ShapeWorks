@@ -27,8 +27,6 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from DatasetUtils import datasets
-
 def Run_Pipeline(args):
 
     """
@@ -57,7 +55,7 @@ def Run_Pipeline(args):
         DatasetUtils.downloadDataset(datasetName)
 
     parentDir="TestFemur/"
-    inputDir = 'TestFemur/femurdata/'
+    inputDir = 'TestFemur/' + datasetName + '/'
 
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)

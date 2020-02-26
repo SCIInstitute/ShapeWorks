@@ -153,6 +153,17 @@ def _listItemsInFolder(serverAddress, accessToken, folderId):
 
     return None if response is None else response.json()
     
+
+def _listFolders(serverAddress, accessToken, folderId, parentType):
+    actionMessage = 'listing items in folder'
+    response = _makeGetRequest(
+        url = serverAddress + "api/v1/folder", 
+        params = {'parentId': folderId, 'parentType': parentType}, 
+        headers = {'Girder-Token': accessToken}, 
+        actionMessage = actionMessage)
+
+    return None if response is None else response.json()
+    
     
 # returns true if success
 def _downloadItem(serverAddress, accessToken, path, item):
@@ -262,4 +273,3 @@ def _uploadFile(serverAddress, accessToken, parentId, name, path, parentType='fo
         stdout.write('\n')
 
     return True
-

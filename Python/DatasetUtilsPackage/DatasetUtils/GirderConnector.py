@@ -14,6 +14,29 @@ _USE_CASE_DATA_COLLECTION = 'use-case-data-v0'
 serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 
 
+def _printDataPortalWelcome():
+    print('.___________________________.')
+    print('|                           |')
+    print('|     ShapeWorks Portal     |')
+    print('|___________________________|')
+    print()
+
+
+def _login(loginState):
+    if loginState is None:
+        # interactive login mode
+        loginState, accessToken = _loginAndGetAccessToken()
+    else:
+        # login using provided credentials
+        if not _verifyLoginState(loginState):
+            print('Invalid login state')
+            return None
+        accessToken = _getAccessToken(loginState['key'])
+    if accessToken is None:
+        print('Unable to get access token')
+    return accessToken
+    
+
 def _loginAndGetAccessToken():
 
     loginState = _loadLogin()
@@ -197,11 +220,21 @@ def _uploadFolder(accessToken, folderName, folderPath, parentId, parentType):
 
 # returns True if success, False if failure
 def _uploadNewDataset(accessToken, datasetName, datasetPath):
-
     print('Collection: %s' % _USE_CASE_DATA_COLLECTION)
-
     useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     if useCaseCollection is None:
         return False
 
     return _uploadFolder(accessToken, datasetName, datasetPath, useCaseCollection['_id'], parentType='collection')
+
+
+# returns None if failed, otherwise a list of dataset names
+def _getDatasetList(accessToken):
+    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    if useCaseCollection is None:
+        return None
+    jsonList = GirderAPI._listFolders(serverAddress, accessToken, useCaseCollection['_id'], 'collection')
+    if jsonList is None:
+        return None
+    datasetList = [element['name'] for element in jsonList]
+    return datasetList
