@@ -342,6 +342,8 @@ void ExtractLabel::buildParser()
   parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted. [default 1.0].");
   parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels >= threshold [default 1.0].");
   parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
+
+  Command::buildParser();
 }
 
 int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
