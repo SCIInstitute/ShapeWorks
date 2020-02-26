@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Generalization::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
+  shapeworks.addCommand(Threshold::getCommand());
 
   try {
     shapeworks.run(argc, argv);

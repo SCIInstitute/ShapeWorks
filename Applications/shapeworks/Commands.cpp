@@ -339,8 +339,8 @@ void ExtractLabel::buildParser()
   const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted.");
-  parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels > threshold [default 1.0].");
+  parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted. [default 1.0].");
+  parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels >= threshold [default 1.0].");
   parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
 }
 
@@ -368,6 +368,33 @@ void CloseHoles::buildParser()
 int CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   return sharedData.image.closeholes();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Threshold
+///////////////////////////////////////////////////////////////////////////////
+void Threshold::buildParser()
+{
+  const std::string prog = "threshold";
+  const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--lowerThreshold").action("store").type("float").set_default(-1 * std::numeric_limits<float>::max()).help("The lower threshold level (optional, default = FLT_MIN)");
+  parser.add_option("--upperThreshold").action("store").type("float").set_default(std::numeric_limits<float>::max()).help("The upper threshold level (optional, default = FLT_MAX)");
+  parser.add_option("--inside").action("store").type("float").set_default(1).help("The inside pixel value after threshold");
+  parser.add_option("--outside").action("store").type("float").set_default(0).help("The outside pixel value after threshold");
+  
+  Command::buildParser();
+}
+
+int Threshold::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float lowerthreshold = static_cast<float>(options.get("lowerThreshold"));
+  float upperthreshold = static_cast<float>(options.get("upperThreshold"));
+  float inside = static_cast<float>(options.get("inside"));
+  float outside = static_cast<float>(options.get("outside"));
+
+  return sharedData.image.threshold(lowerthreshold, upperthreshold, inside, outside);
 }
 
 } // shapeworks

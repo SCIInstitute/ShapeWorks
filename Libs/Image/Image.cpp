@@ -142,33 +142,10 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
 /// \param threshold  values <= threshold are considereed "outside" and given that value [default is 0.0]
 /// \param inside     value for inside region [default is 1]
 /// \param outside    value for outside region [default is 0]
-bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
+bool Image::binarize(PixelType thresholdVal, PixelType inside, PixelType outside)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
 
-  using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-  filter->SetLowerThreshold(threshold);
-  filter->SetInsideValue(inside);
-  filter->SetOutsideValue(outside);
-
-  filter->SetInput(this->image);
-  this->image = filter->GetOutput();
-
-  try
-  {
-    filter->Update();  
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Binarize filter failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
+  threshold(thresholdVal, itk::NumericTraits<PixelType>::max(), inside, outside);
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Binarize filter succeeded!\n";
@@ -540,31 +517,7 @@ bool Image::resample(const std::string &mriFilename)
 
 bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
-  using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
-  FilterType::Pointer filter = FilterType::New();
-  filter->SetLowerThreshold(label);
-  filter->SetInsideValue(inside);
-  filter->SetOutsideValue(outside);
-
-  filter->SetInput(this->image);
-  this->image = filter->GetOutput();
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Extract Label from Image failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
+  threshold(label, label, inside, outside);
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Extract Label from Image succeeded!\n";
@@ -597,6 +550,39 @@ bool Image::closeholes()
   }
 #if DEBUG_CONSOLIDATION
   std::cout << "Close Holes succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::threshold(PixelType lowerThreshold, PixelType upperThreshold, PixelType outside, PixelType inside)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetLowerThreshold(lowerThreshold);
+  filter->SetUpperThreshold(upperThreshold);
+  filter->SetOutsideValue(outside);
+  filter->SetInsideValue(inside);
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Threshold failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Threshold succeeded!\n";
 #endif
   return true;
 }

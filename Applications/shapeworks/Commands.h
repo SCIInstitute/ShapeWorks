@@ -199,4 +199,16 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class Threshold : public ImageCommand
+{
+public:
+  static Threshold& getCommand() { static Threshold instance; return instance; }
+
+private:
+  Threshold() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks

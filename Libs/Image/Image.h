@@ -30,10 +30,10 @@ public:
   bool resample(const std::string &mriFilename);
   bool extractlabel(PixelType label = 1.0, PixelType inside = itk::NumericTraits<PixelType>::One, PixelType outside = itk::NumericTraits<PixelType>::Zero);
   bool closeholes();
+  bool threshold(PixelType lowerThreshold, PixelType upperThreshold, PixelType outside, PixelType inside);
   // bool nextfunction(...);
 
   bool compare_equal(const Image &other);
-  // bool nextfunction(...);
 
 private:
   ImageType::Pointer image;
