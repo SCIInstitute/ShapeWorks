@@ -47,18 +47,20 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    filename = "femurdata.zip"
+
+    datasetName = "femur"
+    filename = datasetName + ".zip"
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current directory.")
+        import DatasetUtils
+        DatasetUtils.downloadDataset(datasetName)
+
     parentDir="TestFemur/"
     inputDir = 'TestFemur/femurdata/'
 
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
-
-    # # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " on the local filesystem.")
-        print("Downloading " + filename + " from SCIGirder.")
-        datasets.downloadDataset(filename)
 
     # extract the zipfile
     print("Extracting data from " + filename + "...")

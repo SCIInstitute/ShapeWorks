@@ -194,8 +194,8 @@ def _downloadFolder(serverAddress, accessToken, path, folderInfo):
     if response is None:
         return False
 
-    NUM_MEGS = 32
-    chunkSize = NUM_MEGS * 1048576 # Download 32 MB at a time
+    NUM_MEGS = 64
+    chunkSize = NUM_MEGS * 1048576 # Download 64 MB at a time
     chunkIndex = 0
 
     with open(filename, "wb") as filehandle:
@@ -224,8 +224,8 @@ def _createFolder(serverAddress, accessToken, parentId, name, parentType='folder
 
 def _uploadFile(serverAddress, accessToken, parentId, name, path, parentType='folder'):
     filesize = os.stat(path).st_size
-    NUM_MEGS = 64
-    chunkSize = NUM_MEGS * 1048576 # Upload 64 MB at a time
+    NUM_MEGS = 32
+    chunkSize = NUM_MEGS * 1048576 # Upload 32 MB at a time
 
     # Create an upload-in-progress
     response = _makePostRequest(
