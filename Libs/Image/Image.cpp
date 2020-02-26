@@ -11,6 +11,7 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <itkBinaryFillholeImageFilter.h>
 
 namespace shapeworks {
 
