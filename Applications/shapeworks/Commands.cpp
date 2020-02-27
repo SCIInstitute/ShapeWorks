@@ -186,34 +186,6 @@ int RecenterImage::execute(const optparse::Values &options, SharedCommandData &s
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Binarize
-///////////////////////////////////////////////////////////////////////////////
-void Binarize::buildParser()
-{
-  const std::string prog = "binarize";
-  const std::string desc = "binarizes an image at some given threshold";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--threshold").action("store").type("float").set_default(0.0f).help("Resulting image has two values for pixels: > threshold set to inside value, <= threshold set to outside value [default 0.0].");
-  parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels > threshold [default 1.0].");
-  parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
-
-  Command::buildParser();
-}
-
-int Binarize::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  float threshold = static_cast<float>(options.get("threshold"));
-  float inside = static_cast<float>(options.get("inside"));
-  float outside = static_cast<float>(options.get("outside"));
-
-  // For the command line version, we want binarize of an already binarized image to produce the same image, so we add the tiniest possible epsilon to the specified threshold if that threshold is set to zero. 
-  float eps = (threshold == 0.0f) ? std::numeric_limits<float>::epsilon() : 0.0f;
-
-  return sharedData.image.binarize(threshold + eps, inside, outside);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // PadImage
 ///////////////////////////////////////////////////////////////////////////////
 void PadImage::buildParser()
@@ -340,8 +312,6 @@ void ExtractLabel::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted. [default 1.0].");
-  parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels >= threshold [default 1.0].");
-  parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
 
   Command::buildParser();
 }
@@ -349,10 +319,8 @@ void ExtractLabel::buildParser()
 int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float label = static_cast<float>(options.get("label"));
-  float inside = static_cast<float>(options.get("inside"));
-  float outside = static_cast<float>(options.get("outside"));
 
-  return sharedData.image.extractlabel(label, inside, outside);
+  return sharedData.image.extractlabel(label);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -381,22 +349,18 @@ void Threshold::buildParser()
   const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--lowerThreshold").action("store").type("float").set_default(-1 * std::numeric_limits<float>::max()).help("The lower threshold level (optional, default = FLT_MIN)");
-  parser.add_option("--upperThreshold").action("store").type("float").set_default(std::numeric_limits<float>::max()).help("The upper threshold level (optional, default = FLT_MAX)");
-  parser.add_option("--inside").action("store").type("float").set_default(1).help("The inside pixel value after threshold");
-  parser.add_option("--outside").action("store").type("float").set_default(0).help("The outside pixel value after threshold");
+  parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("The lower threshold level (optional, default = epsilon)");
+  parser.add_option("--max").action("store").type("float").set_default(std::numeric_limits<float>::max()).help("The upper threshold level (optional, default = FLT_MAX)");
   
   Command::buildParser();
 }
 
 int Threshold::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  float lowerthreshold = static_cast<float>(options.get("lowerThreshold"));
-  float upperthreshold = static_cast<float>(options.get("upperThreshold"));
-  float inside = static_cast<float>(options.get("inside"));
-  float outside = static_cast<float>(options.get("outside"));
+  float min = static_cast<float>(options.get("min"));
+  float max = static_cast<float>(options.get("max"));
 
-  return sharedData.image.threshold(lowerthreshold, upperthreshold, inside, outside);
+  return sharedData.image.threshold(min, max);
 }
 
 } // shapeworks

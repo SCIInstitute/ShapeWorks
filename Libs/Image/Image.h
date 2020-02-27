@@ -20,9 +20,6 @@ public:
   bool read(const std::string &inFilename);
   bool write(const std::string &outFilename, bool useCompression = true);
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
-  bool binarize(PixelType threshold = std::numeric_limits<PixelType>::epsilon(),
-                PixelType inside = itk::NumericTraits<PixelType>::One,
-                PixelType outside = itk::NumericTraits<PixelType>::Zero);
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
@@ -30,9 +27,8 @@ public:
   bool resample(const std::string &mriFilename);
   bool extractlabel(PixelType label = 1.0);
   bool closeholes();
-  bool threshold(PixelType lowerThreshold, PixelType upperThreshold, PixelType outside, PixelType inside);
+  bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<float>::max());
   // bool nextfunction(...);
-
   bool compare_equal(const Image &other);
 
 private:

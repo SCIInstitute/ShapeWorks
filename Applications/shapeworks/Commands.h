@@ -128,18 +128,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Binarize : public ImageCommand
-{
-public:
-  static Binarize& getCommand() { static Binarize instance; return instance; }
-
-private:
-  Binarize() { buildParser(); }
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
 class Coverage : public MeshCommand
 {
 public:

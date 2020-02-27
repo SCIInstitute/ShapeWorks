@@ -13,7 +13,7 @@ TEST(ImageTests, isoresample_binary_isotropic_test) {
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
   image.isoresample();
-  image.binarize();
+  image.threshold();
   image.recenter();
   Image ground_truth(test_location + "binary-isotropic-isoresampled.nrrd");
 
@@ -27,7 +27,7 @@ TEST(ImageTests, isoresample_binary_anisotropic_test) {
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
   image.isoresample();
-  image.binarize();
+  image.threshold();
   image.recenter();
   Image ground_truth(test_location + "binary-anisotropic-isoresampled.nrrd");
 

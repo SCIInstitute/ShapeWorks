@@ -135,24 +135,6 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   return true;
 }
 
-/// binarize
-///
-/// binarizes image into two regions separated by threshold value
-///
-/// \param threshold  values <= threshold are considereed "outside" and given that value [default is 0.0]
-/// \param inside     value for inside region [default is 1]
-/// \param outside    value for outside region [default is 0]
-bool Image::binarize(PixelType thresholdVal, PixelType inside, PixelType outside)
-{
-
-  threshold(thresholdVal, itk::NumericTraits<PixelType>::max(), inside, outside);
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Binarize filter succeeded!\n";
-#endif
-  return true;
-}
-
 /// recenter
 ///
 /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
@@ -554,7 +536,7 @@ bool Image::closeholes()
   return true;
 }
 
-bool Image::threshold(PixelType lowerThreshold, PixelType upperThreshold, PixelType outside, PixelType inside)
+bool Image::threshold(PixelType min, PixelType max)
 {
   if (!this->image)
   {
@@ -565,10 +547,10 @@ bool Image::threshold(PixelType lowerThreshold, PixelType upperThreshold, PixelT
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   filter->SetInput(this->image);
-  filter->SetLowerThreshold(lowerThreshold);
-  filter->SetUpperThreshold(upperThreshold);
-  filter->SetOutsideValue(outside);
-  filter->SetInsideValue(inside);
+  filter->SetLowerThreshold(min);
+  filter->SetUpperThreshold(max);
+  filter->SetInsideValue(1.0);
+  filter->SetOutsideValue(0.0);
 
   try
   {
