@@ -100,14 +100,14 @@ do
     then    
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks read-image --name $nrrdfilename antialias isoresample --isospacing $iso_spacing recenter-image binarize write-image --name $outfilename
+            shapeworks read-image --name $nrrdfilename antialias isoresample --isospacing $iso_spacing recenter-image threshold write-image --name $outfilename
         else
             shapeworks read-image --name $nrrdfilename isoresample --isospacing $iso_spacing recenterimage write-image --name $outfilename
         fi
     else
         if [ $is_binary_image -eq 1 ]
         then
-            shapeworks read-image --name $nrrdfilename antialias isoresample --isospacing $iso_spacing binarize write-image --name $outfilename
+            shapeworks read-image --name $nrrdfilename antialias isoresample --isospacing $iso_spacing threshold write-image --name $outfilename
         else
             shapeworks read-image --name $nrrdfilename isoresample --isospacing $iso_spacing write-image --name $outfilename
         fi

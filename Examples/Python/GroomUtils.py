@@ -51,7 +51,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
         
         if isBinary:
-            cmd.extend(["binarize"])
+            cmd.extend(["threshold"])
         if recenter:
             cmd.extend(["recenter-image"])
 
@@ -258,7 +258,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     create_cpp_xml(xmlfilename, xmlfilename)
     execCommand = ["TopologyPreservingSmoothing", xmlfilename]
     subprocess.check_call(execCommand)
-    execCommand = ["ThresholdImages", "--inFilename", ref_tpdtnrrdfilename, "--outFilename", ref_binnrrdfilename, "--lowerThresholdLevel", "-0.000001"]
+    execCommand = ["shapeworks", "read-image", "--name", ref_tpdtnrrdfilename, "threshold", "--min", str(-0.000001), "write-image", "--name", ref_binnrrdfilename]
     subprocess.check_call(execCommand)
 
     if processRaw:

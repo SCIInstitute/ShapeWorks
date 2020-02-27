@@ -169,7 +169,7 @@ echo "</dtFiles>" >> "$xmlfilename"
 
 TopologyPreservingSmoothing $xmlfilename
 
-ThresholdImages --inFilename ${ref_tpdtnrrdfilename} --outFilename ${ref_binnrrdfilename} --lowerThresholdLevel -0.00001 
+shapeworks read-image --name ${ref_tpdtnrrdfilename} threshold --min -0.00001 write-image --name ${ref_binnrrdfilename}
 unu save -i ${ref_binnrrdfilename} -o ${ref_binnrrdfilename} -f nrrd -e raw
 
 segPrefixLength=${#seg_prefix}
@@ -293,7 +293,7 @@ do
     
     # threshold the transformed distance transform
     movingToFixedBinFilename=${out_dir}${seg_prefix}.${subject_id}${seg_suffix}.aligned.nrrd
-    ThresholdImages --inFilename $movingToFixedFilename --outFilename $movingToFixedBinFilename --lowerThresholdLevel -0.00001 
+    shapeworks read-image --name ${movingToFixedFilename} threshold --min -0.00001 write-image --name ${movingToFixedBinFilename}
     unu save -i $movingToFixedBinFilename -o $movingToFixedBinFilename -f nrrd -e raw
     
     if [ $process_raw -eq 1 ]

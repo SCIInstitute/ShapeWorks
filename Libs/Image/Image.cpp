@@ -515,9 +515,9 @@ bool Image::resample(const std::string &mriFilename)
 
 }
 
-bool Image::extractlabel(PixelType label, PixelType inside, PixelType outside)
+bool Image::extractlabel(PixelType label)
 {
-  threshold(label, label, inside, outside);
+  threshold(label, label);
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Extract Label from Image succeeded!\n";
