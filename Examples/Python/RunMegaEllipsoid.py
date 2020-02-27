@@ -4,7 +4,7 @@
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
 ====================================================================
 
-In this example we provide a full pipeline with an exple dataset of axis 
+In this example we provide a full pipeline with an example dataset of axis 
 aligned ellipsoids. We provide two different datasets for two different 
 senarios, prepared data consists of the binary images which do not require 
 alignment/resampling/cropping as pre-processing and only require conversion to
@@ -32,7 +32,7 @@ from AnalyzeUtils import *
 
 
 
-def Run_Ellipsoid_Pipeline(args):
+def Run_Pipeline(args):
 
     """
     Unzip the data for this tutorial.
@@ -47,10 +47,18 @@ def Run_Ellipsoid_Pipeline(args):
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
-    if not args.start_with_prepped_data:
-        fileList = sorted(glob.glob("MegaEllipsoids/Ellipsoids_UnPrepped/*.nrrd"))
-    else:
-        fileList = sorted(glob.glob("MegaEllipsoids/Ellipsoids_Prepped/*.nrrd"))
+    print("\nStep 1. Extract Data\n")
+    if int(args.interactive) != 0:
+        input("Press Enter to continue")
+
+    filename="Ellipsoids.zip"
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current directory.")
+        from DatasetUtils import datasets
+        datasets.downloadDataset(filename)
+
+    parentDir="MegaEllipsoids/"
 
     fileList = fileList[:15]
     if args.tiny_test:
@@ -94,7 +102,7 @@ def Run_Ellipsoid_Pipeline(args):
         ... link
         """
 
-        paddedFiles = applyPadding(parentDir, resampledFiles, None,  10)
+        paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
 
         """
         Apply center of mass alignment
@@ -102,7 +110,7 @@ def Run_Ellipsoid_Pipeline(args):
         For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
         ... link
         """
-        comFiles = applyCOMAlignment(parentDir, paddedFiles, None)
+        comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
         """Apply rigid alignment"""
 
         rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
@@ -229,149 +237,9 @@ def Run_Ellipsoid_Pipeline(args):
 
     """
 
-
-    """
-    Reconstruct the dense mean surface given the sparse correspondence model.
-    """
-
-    print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
+    print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     if args.interactive != 0:
         input("Press Enter to continue")
 
-    meanDir   = './MegaEllipsoids/MeanReconstruction/'
-    if not os.path.exists(meanDir):
-        os.makedirs(meanDir)
-
-    """
-    Parameter dictionary for ReconstructMeanSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 128,
-        "out_prefix" : meanDir + 'ellipsoid',
-        "do_procrustes" : 0,
-        "do_procrustes_scaling" : 0,
-        "levelsetValue" : 0.0,
-        "targetReduction" : 0.0,
-        "featureAngle" : 30,
-        "lsSmootherIterations" : 1,
-        "meshSmootherIterations" : 1,
-        "preserveTopology" : 1,
-        "qcFixWinding" : 1,
-        "qcDoLaplacianSmoothingBeforeDecimation" : 1,
-        "qcDoLaplacianSmoothingAfterDecimation" : 1,
-        "qcSmoothingLambda" : 0.5,
-        "qcSmoothingIterations" : 3,
-        "qcDecimationPercentage" : 0.9,
-        "normalAngle" : 90,
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-    runReconstructMeanSurface(dtFiles, localPointFiles, worldPointFiles, parameterDictionary)
-
-    """
-    Reconstruct the dense sample-specfic surface in the local coordinate system given the dense mean surface
-    """
-
-    print("\nStep 6. Analysis - Reconstruct sample-specific dense surface in the local coordinate system.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
-    meshDir_local   = './MegaEllipsoids/MeshFiles-Local/'
-    if not os.path.exists(meshDir_local):
-        os.makedirs(meshDir_local)
-
-    """
-    Parameter dictionary for ReconstructSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 128,
-        "mean_prefix" : meanDir + 'ellipsoid',
-        "out_prefix" : meshDir_local + 'ellipsoid', 
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-    localDensePointFiles = runReconstructSurface(localPointFiles, parameterDictionary)
-
-
-    """
-    Reconstruct the dense sample-specfic surface in the world coordinate system given the dense mean surface
-    """
-
-    print("\nStep 7. Analysis - Reconstruct sample-specific dense surface in the world coordinate system.\n")
-    if args.interactive !=0:
-        input("Press Enter to continue")
-
-    meshDir_global   = './MegaEllipsoids/MeshFiles-World/'
-    if not os.path.exists(meshDir_global):
-        os.makedirs(meshDir_global)
-
-    """
-    Parameter dictionary for ReconstructSurface cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 128,
-        "mean_prefix" : meanDir + 'ellipsoid',
-        "out_prefix" : meshDir_global + 'ellipsoid',
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1
-    }
-
-    worldDensePointFiles = runReconstructSurface(worldPointFiles, parameterDictionary)
-
-    """
-    Reconstruct dense meshes along dominant pca modes
-    """
-
-    print("\nStep 8. Analysis - Reconstruct dense surface for samples along dominant PCA modes.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
-    pcaDir   = './MegaEllipsoids/PCAModesFiles/'
-    if not os.path.exists(pcaDir):
-        os.makedirs(pcaDir)
-
-    """
-    Parameter dictionary for ReconstructSamplesAlongPCAModes cmd tool.
-    """
-    parameterDictionary = {
-        "number_of_particles" : 128,
-        "mean_prefix" : meanDir + 'ellipsoid',
-        "out_prefix" : pcaDir + 'ellipsoid', 
-        "use_tps_transform" : 0,
-        "use_bspline_interpolation" : 0,
-        "display" : 0,
-        "glyph_radius" : 1,
-        "maximum_variance_captured" : 0.95,
-        "maximum_std_dev" : 2,
-        "number_of_samples_per_mode" : 10
-    }
-
-    runReconstructSamplesAlongPCAModes(worldPointFiles, parameterDictionary)
-
-    """
-    The local and world particles will be saved in MegaEllipsoids/PointFiles/128
-    directory, the set of these points on each shape constitue a particle based shape model 
-    or a Point Distribution Model (PDM). This PDM shape representation is 
-    computationally flexible and efficient and we can use it to perform shape
-    analysis. Here we provide one of the provided visualization tool in the 
-    shapeworks codebase : ShapeWorksView2.
-    This tool will showcase individual shapes with their particle representations,
-    as well as the PCA model constructed using these point correspondences. The 
-    PCA modes of variation representing the given shape population can be 
-    visualized.
-    """
-
-    print("\nStep 9. Analysis - Launch ShapeWorksView2 - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
-    launchShapeWorksView2(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
 

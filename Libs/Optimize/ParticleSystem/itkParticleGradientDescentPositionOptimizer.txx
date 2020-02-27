@@ -261,7 +261,9 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
 
         if (m_verbosity > 2)
         {
-            std::cout << m_NumberOfIterations << ". " << msElapsed << "ms | Mem=[" << vmUsage << "KB|" << residentSet << "KB]";
+            int dsUsage = m_ParticleSystem->GetMemUsage() / 1024;
+            // std::cout << m_NumberOfIterations << ". " << msElapsed << "ms | Mem=[" << vmUsage << "KB|" << residentSet << "KB]";
+            std::cout << m_NumberOfIterations << ". " << msElapsed << "ms | Mem=[" << dsUsage << "KB|" << residentSet << "KB]" << std::endl;
             std::cout.flush();
         }
 

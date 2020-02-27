@@ -56,7 +56,7 @@ public:
   /** Type of the ITK image used by this class. */
   typedef Image<T, VDimension> ImageType;
 
-  openvdb::DoubleGrid::Ptr vdbImageGrid;
+  openvdb::FloatGrid::Ptr vdbImageGrid;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -80,7 +80,7 @@ public:
 #ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
-    vdbImageGrid = openvdb::DoubleGrid::create(30.0);
+    vdbImageGrid = openvdb::FloatGrid::create(30.0);
     vdbImageGrid->setGridClass(openvdb::GRID_LEVEL_SET);
     auto vdbAccessor = vdbImageGrid->getAccessor();
 
@@ -89,11 +89,13 @@ public:
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const auto pixel = it.Get();
+        /*
         if(abs(pixel) > 3.0) {
             it.Set(500000.0);
             ++it;
             continue;
         }
+         */
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, pixel);
         ++it;
@@ -165,6 +167,14 @@ public:
       } else {
           return 0.0;
       }
+  }
+
+  unsigned long GetMemUsage() const {
+#ifdef USE_OPENVDB
+      return vdbImageGrid->memUsage();
+#else
+      return m_Image->Capacity() * sizeof(T);
+#endif
   }
 
   /** Check whether the point p may be sampled in this image domain. */

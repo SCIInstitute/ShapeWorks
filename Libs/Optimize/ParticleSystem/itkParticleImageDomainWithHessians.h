@@ -66,7 +66,7 @@ public:
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  typename openvdb::DoubleGrid::Ptr vdbHessianGrids[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
+  typename openvdb::FloatGrid::Ptr vdbHessianGrids[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
@@ -130,7 +130,7 @@ public:
 #ifdef USE_OPENVDB
     const int N = (VDimension + ((VDimension * VDimension) - VDimension) / 2);
     for(int i=0; i<N; i++) {
-        vdbHessianGrids[i] = openvdb::DoubleGrid::create(0.0);
+        vdbHessianGrids[i] = openvdb::FloatGrid::create(0.0);
         auto vdbAccessor = vdbHessianGrids[i]->getAccessor();
 
         ImageRegionIterator<ImageType> it(m_PartialDerivatives[i], m_PartialDerivatives[i]->GetRequestedRegion());
@@ -138,10 +138,12 @@ public:
         while(!it.IsAtEnd()) {
             const auto idx = it.GetIndex();
             const auto pixel = it.Get();
+            /*
             if(abs(pixel) < 0.1) {
                 ++it;
                 continue;
             }
+             */
             const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
             vdbAccessor.setValue(coord, pixel);
             ++it;
@@ -150,6 +152,22 @@ public:
 #endif
 
   } // end setimage
+
+    unsigned long GetMemUsage() const {
+        auto size = Superclass::GetMemUsage();
+        for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++) {
+#ifdef USE_OPENVDB
+            if(vdbHessianGrids[i]) {
+                size += vdbHessianGrids[i]->memUsage();
+            }
+#else
+            if(m_PartialDerivatives[i]) {
+                size += m_PartialDerivatives[i]->Capacity() * sizeof(T);
+            }
+#endif
+        }
+        return size;
+    }
 
   /** Sample the Hessian at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleHessiansVnl returns a vnl
@@ -210,6 +228,10 @@ public:
   {
     for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++)
       {
+#ifdef USE_OPENVDB
+      // vdbHessianGrids[i]->clear();
+      vdbHessianGrids[i]=0;
+#endif
       m_PartialDerivatives[i]=0;
       m_Interpolators[i]=0;
       }

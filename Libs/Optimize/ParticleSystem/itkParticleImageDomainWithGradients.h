@@ -92,10 +92,12 @@ public:
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const vnl_vector_ref<float> pixel = it.Get().GetVnlVector();
+        /*
         if(pixel.squared_magnitude() < 0.1) {
             ++it;
             continue;
         }
+         */
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, openvdb::Vec3f(pixel[0], pixel[1], pixel[2]));
         ++it;
@@ -104,6 +106,15 @@ public:
 
   }
   itkGetObjectMacro(GradientImage, GradientImageType);
+
+    unsigned long GetMemUsage() const {
+        const auto size = Superclass::GetMemUsage();
+#ifdef USE_OPENVDB
+        return size + vdbGradientGrid->memUsage();
+#else
+        return size + m_GradientImage->Capacity() * sizeof(T) * 3;
+#endif
+    }
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleGradientsVnl returns a vnl
@@ -147,7 +158,7 @@ public:
 //    }
     return grad;
   }
-  
+
   /** Allow public access to the scalar interpolator. */
   itkGetObjectMacro(GradientInterpolator, GradientInterpolatorType);
 
