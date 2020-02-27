@@ -533,7 +533,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
     imageList = []
     meshList = []
     for img in img_list:
-        img_name = img.rsplit(os.sep, 1)[1]
+        img_name = img.rsplit('/', 1)[1]
         prefix = img_name.split("_")[0]
         if reference_side =='right':
             ref = 'R'
