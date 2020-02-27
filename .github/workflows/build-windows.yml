@@ -35,7 +35,7 @@ jobs:
       run: Expand-Archive -LiteralPath nsis.zip -DestinationPath .
       
     - name: Install Qt
-      uses: ouuan/install-qt-action@v2.3.1
+      uses: ouuan/install-qt-action@v2.4.1
 
     - name: Cache dependencies
       id: cache-dependencies
