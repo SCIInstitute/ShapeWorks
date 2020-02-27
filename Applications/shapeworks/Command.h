@@ -49,6 +49,14 @@ public:
 private:
 };
 
+class ParticleSystemCommand : public Command
+{
+public:
+    const std::string type() override { return "ParticleSystem"; }
+
+private:
+};
+
 // TODO: something like this for a command that reads a list of files, computes a transform from all of them (or say, the average of the input images), then writes the single result (or lets it be reused for downstream commands)
 // NOTE: for most of the existing commands that take a list of files, they could (and should) be executed once for each file, so this type of command should only be used for operations that *require* a list of files to compute a given result, and the others should simply be called once for each file in a given list.
 class MultiImageCommand : public Command

@@ -164,7 +164,7 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 }
 
 /// recenter
-/// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
+/// recenters by changing origin (in the image header) to the physical coordinates of the center of the image
 bool Image::recenter()
 {
   if (!this->image)
@@ -334,7 +334,9 @@ bool Image::pad(int padding, PixelType value)
     return false;
   }
 
+#if DEBUG_CONSOLIDATION
   std::cout << "Pad image with constant succeeded!\n";
+#endif
   return true;
 
 }

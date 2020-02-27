@@ -34,6 +34,7 @@
 #Others
 .DS_*
 .directory
+.idea/
 
 # Build directories
 build*

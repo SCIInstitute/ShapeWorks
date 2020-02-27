@@ -34,6 +34,10 @@ parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (def
 args = parser.parse_args()
 binpath = args.shapeworks_path
 
+if len(sys.argv)==1:
+    parser.print_help(sys.stderr)
+    sys.exit(1)
+
 module = __import__(args.use_case)
 
 # Path final
