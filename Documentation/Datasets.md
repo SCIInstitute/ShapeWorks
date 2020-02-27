@@ -39,3 +39,21 @@ When calling `DatasetUtils.downloadDataset('ellipsoid')`, you will get a zip fil
       - bunch of \*.nrrd
     - Ellipsoids_UnPrepped/
       - bunch of \*.nrrd
+
+## API
+
+### DatasetUtils.downloadDataset(datasetName, destinationPath='.', asZip = True)  
+- Parameters:   
+  - **datasetName** is one of 'ellipsoid', 'ellipsoid_fd', 'femur', 'left_atrium'  
+  - **destinationPath** is where the zip file or folder will go once it is downloaded  
+  - **asZip** toggles whether to download as zip or download individual files   
+- Returns: True on success and False on failure  
+
+### DatasetUtils.uploadNewDataset(datasetName, datasetPath)
+- Parameters:   
+  - **datasetName** is the name the dataset will have on the data portal 
+  - **datasetPath** is the path to the root folder of the dataset on the local file system  
+- Returns: True on success and False on failure  
+
+### DatasetUtils.getDatasetList()  
+- Returns: a list of all existing datasets on the data portal  
