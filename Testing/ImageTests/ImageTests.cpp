@@ -100,7 +100,7 @@ TEST(ImageTests, extractlabel_test) {
 }
 
 TEST(ImageTests, closeholes_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/closeholes/");
 
   Image image(test_location + "1x2x2.nrrd");
   image.closeholes();
