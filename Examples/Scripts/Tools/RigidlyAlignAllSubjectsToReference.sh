@@ -121,7 +121,7 @@ EchoWithColor "${ref_segfilename}" "light_green"
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
 
 shapeworks read-image --name ${ref_segfilename} extract-label --label $foreground write-image --name ${ref_segfilename}
-shapeworks read-image --name ${ref_segfilename} close-holes write-image --name ${ref_segfilename}
+shapeworks read-image --name ${ref_segfilename} closeholes write-image --name ${ref_segfilename}
 shapeworks read-image --name ${ref_segfilename} antialias --numiterations $antialias_iterations write-image --name ${ref_dtnrrdfilename} 
 FastMarching --inFilename ${ref_dtnrrdfilename} --outFilename  ${ref_dtnrrdfilename} --isoValue $isoValue
 
@@ -225,7 +225,7 @@ do
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
          
     shapeworks read-image --name ${segfilename} extract-label --label $foreground write-image --name ${segfilename}
-    shapeworks read-image --name ${segfilename} close-holes write-image --name ${segfilename}
+    shapeworks read-image --name ${segfilename} closeholes write-image --name ${segfilename}
     shapeworks read-image --name ${segfilename} antialias --numiterations $antialias_iterations write-image --name ${dtnrrdfilename} 
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
     

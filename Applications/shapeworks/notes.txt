@@ -51,10 +51,10 @@ Image commands:
  - shapeworks read-image --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numiterations 75 --maxrmserror 0.03 --numlayers 0 write-image --name ./foobar.nrrd
 
 [] ClipVolume
-[x] *CloseHoles -> close-holes
+[x] *CloseHoles -> closeholes
  o Examples:
 
- - shapeworks read-image --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd close-holes write-image --name /Users/archanasrisubramanian/Desktop/shapeworks_results/closeholes_seg.ellipsoid_0.nrrd 
+ - shapeworks read-image --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd closeholes write-image --name /Users/archanasrisubramanian/Desktop/shapeworks_results/closeholes_seg.ellipsoid_0.nrrd 
 
  - CloseHoles --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd --outFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/old_close_holes_seg.ellipsoid_0.nrrd
 

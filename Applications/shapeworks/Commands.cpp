@@ -360,7 +360,7 @@ int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sh
 ///////////////////////////////////////////////////////////////////////////////
 void CloseHoles::buildParser()
 {
-  const std::string prog = "close-holes";
+  const std::string prog = "closeholes";
   const std::string desc = "closes holes in a given binary volume";
   parser.prog(prog).description(desc);
 
