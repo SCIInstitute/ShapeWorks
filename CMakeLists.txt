@@ -67,14 +67,16 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # GUI
-find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
-if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
-  set(SHAPEWORKS_QT_FOUND 1)
-else()
-  set(SHAPEWORKS_QT_FOUND 0)
-endif()
 
 if (SHAPEWORKS_GUI)
+    
+  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
+  if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
+  set(SHAPEWORKS_QT_FOUND 1)
+  else()
+  set(SHAPEWORKS_QT_FOUND 0)
+  endif()
+
   # headers (TODO: move to shapeworks gui targets' includes)
   include_directories(${Qt5Widgets_INCLUDE_DIRS})
   include_directories(${Qt5OpenGL_INCLUDE_DIRS})
