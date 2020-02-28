@@ -1,6 +1,5 @@
 #include "Image.h"
 
-#include <itkImage.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkAntiAliasBinaryImageFilter.h>
@@ -329,6 +328,7 @@ bool Image::pad(int padding, PixelType value)
 /// performs translational alignment of a given shape image based on either its center of mass or a given 3d point
 ///
 /// \param headerFile   Name of file to write header information
+#if 0
 bool Image::centerofmassalign(const std::string &headerFile)
 {
   if (!this->image)
@@ -452,6 +452,8 @@ bool Image::centerofmassalign(const std::string &headerFile)
   return true;
 
 }
+#endif
+
 
 bool Image::resample(const std::string &mriFilename)
 {
@@ -567,6 +569,19 @@ bool Image::threshold(PixelType min, PixelType max)
   std::cout << "Threshold succeeded!\n";
 #endif
   return true;
+}
+
+Point3 Image::centerOfMass() const
+{
+  Point3 p;
+  //todo
+  return p;
+}
+
+//todo: ack! most of these should be void functions. Have confidence the operations work! Trust the worker! 
+void Image::transform(const Transform &transform)
+{
+  //todo
 }
 
 } // Shapeworks

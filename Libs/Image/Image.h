@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "ImageUtils.h"
+#include "Transform.h"
 #include <limits>
-#include <itkTranslationTransform.h>
+#include <itkImage.h>
 
 namespace shapeworks {
 
@@ -23,12 +23,14 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  bool centerofmassalign(const std::string &headerFile);
+  Point3 centerOfMass() const;
+  void transform(const Transform &transform);
   bool resample(const std::string &mriFilename);
   bool extractlabel(PixelType label = 1.0);
   bool closeholes();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<float>::max());
   // bool nextfunction(...);
+
   bool compare_equal(const Image &other);
 
 private:

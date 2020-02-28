@@ -25,7 +25,8 @@ struct SharedCommandData
   Mesh mesh;
   ParticleSystem particleSystem;
 
-  itk::TranslationTransform<double, 3/*dimension*/>::Pointer imageTransform;
+  //maybe this only needs to be a Point
+  //itk::TranslationTransform<double, 3/*dimension*/>::Pointer imageTransform;
 };
 
 } // shapeworks

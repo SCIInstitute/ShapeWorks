@@ -278,7 +278,7 @@ int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandDat
 {
   std::string headerfile = static_cast<std::string>(options.get("headerfile"));
 
-  return sharedData.image.centerofmassalign(headerfile);
+  return 1; // sharedData.image.centerofmassalign(headerfile); //todo
 }
 
 ///////////////////////////////////////////////////////////////////////////////
