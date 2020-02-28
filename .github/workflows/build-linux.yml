@@ -29,7 +29,7 @@ jobs:
     - name: ccache cache files
       uses: actions/cache@v1.1.0
       with:
-        path: .ccache
+        path: $HOME/.ccache
         key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
         restore-keys: |
           ${{ matrix.config.name }}-ccache-
@@ -50,16 +50,8 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Cache conda installs
-      id: cache-conda-installs
-      uses: actions/cache@v1
-      with:
-        path: /usr/share/miniconda3/envs/shapeworks
-        key: ${{ runner.os }}-${{ hashFiles('**/conda_installs.sh') }}
-
     - name: conda installs
       shell: bash -l {0}
-      if: steps.cache-conda-installs.outputs.cache-hit != 'true'
       run: source ./conda_installs.sh
 
     - name: install ccache
