@@ -57,9 +57,17 @@ jobs:
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
-        
+
+    - name: Cache conda installs
+      id: cache-conda-installs
+      uses: actions/cache@v1
+      with:
+        path: ~/miniconda3
+        key: ${{ runner.os }}-${{ hashFiles('**/conda_install.sh') }}
+
     - name: conda installs
       shell: bash -l {0}
+      if: steps.cache-conda-installs.outputs.cache-hit != 'true'
       run: source ./conda_installs.sh
 
     - name: activate shapeworks
@@ -69,10 +77,18 @@ jobs:
     - name: Acquire LinuxDeployQt
       run: curl -L -o $HOME/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt
 
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: QtCache
+
     - name: Install Qt
-      uses: ouuan/install-qt-action@v2.3.1
+      uses: akenmorris/install-qt-action@v4
       with:
         version: "5.9.9"
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Cache dependencies
       id: cache-dependencies
@@ -88,7 +104,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+      run: mkdir build && cd build && cmake -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DCMAKE_BUILD_TYPE=Release -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
 
     - name: make
       shell: bash -l {0}
