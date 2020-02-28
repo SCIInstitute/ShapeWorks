@@ -112,6 +112,7 @@ jobs:
       run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
 
     - name: ccache statistics
+      shell: bash -l {0}
       run: conda activate shapeworks && ccache -s
 
     - uses: actions/upload-artifact@v1
