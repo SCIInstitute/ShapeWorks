@@ -9,6 +9,9 @@ on:
     - '*'
   pull_request:
 
+env:
+  CCACHE_VERSION: 3.7.7
+
 jobs:
   build:
 
@@ -16,12 +19,28 @@ jobs:
     
     steps:
 
+    - name: Download ccache
+      id: ccache
+      shell: cmake -P {0}
+      run: |
+        set(ccache_url "https://github.com/cristianadam/ccache/releases/download/v$ENV{CCACHE_VERSION}/${{ runner.os }}.tar.xz")
+        file(DOWNLOAD "${ccache_url}" ./ccache.tar.xz SHOW_PROGRESS)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./ccache.tar.xz)
+
     - name: Prepare ccache timestamp
       id: ccache_cache_timestamp
       shell: cmake -P {0}
       run: |
-      string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
-      message("::set-output name=timestamp::${current_date}")
+        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+        message("::set-output name=timestamp::${current_date}")
+
+    - name: ccache cache files
+      uses: actions/cache@v1.1.0
+      with:
+        path: .ccache
+        key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        restore-keys: |
+          ${{ matrix.config.name }}-ccache-
     
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
@@ -75,7 +94,6 @@ jobs:
       shell: bash -l {0}
       run: cd build && make -j4
 
-
     - name: make install
       shell: bash -l {0}
       run: cd build && make install
@@ -94,13 +112,3 @@ jobs:
       with:
         name: artifact-${{github.sha}}-linux
         path: ${{runner.workspace}}/ShapeWorks/artifacts
-
-    - name: ccache cache files
-      uses: actions/cache@v1.1.0
-      with:
-      path: .ccache
-      key: ${ { matrix.config.name } }-ccache-${ { steps.ccache_cache_timestamp.outputs.timestamp } }
-      restore-keys: |
-          ${ { matrix.config.name } }-ccache-
-
-    
