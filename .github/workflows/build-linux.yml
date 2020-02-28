@@ -74,7 +74,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ../Qt
-        key: QtCache
+        key: QtCache2
 
     - name: Install Qt
       uses: akenmorris/install-qt-action@v5
@@ -107,7 +107,7 @@ jobs:
       run: conda activate shapeworks && cd build && make install
       
     - name: Remove Qt SQL Stuff
-      run: rm /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so
+      run: mv /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so /tmp
 
     - name: Build Binary Package
       run: pwd ; ls ; PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
@@ -115,7 +115,10 @@ jobs:
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
-    
+  
+    - name: Replace Qt SQL Stuff
+      run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
+
     - uses: actions/upload-artifact@v1
       with:
         name: artifact-${{github.sha}}-linux
