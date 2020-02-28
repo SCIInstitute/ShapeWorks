@@ -2,29 +2,31 @@
 
 #include "Shapeworks.h"
 #include "Image.h"
-#include <itkTransform.h>
+#include <itkFixedCenterOfRotationAffineTransform.h>
 
 namespace shapeworks {
 
 class Transform
 {
 public:
-  static const unsigned dims = 3;
-  using TransformType = itk::Transform<double, dims>;
+  using TransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
 
-  Transform() { setIdentity(); }
+  Transform() : rotangle(0.0) {}
 
   TransformType::Pointer get() const;
 
-  void setIdentity();
-  void setTranslate(double T[3]);
-  void setRotate(double R[3]);
-  void setScale(double S[3]);
+  void reset();
+  void translate(const Point3 &p); 
+  void rotate(const Vector3 &axis, double angle);
+  void scale(const Point3 &s);
 
   void print() const;
 
 private:
-  double mat[4][4];
+  Point3 scaling;
+  Vector3 translation;
+  Vector3 rotaxis;
+  double rotangle;
 };
 
 } // shapeworks

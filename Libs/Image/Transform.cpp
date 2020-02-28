@@ -2,41 +2,43 @@
 
 namespace shapeworks {
 
-Transform::print() const
+void Transform::print() const
 {
-  for (int i = 0; i < 4; i++) {
-    std::cout << "[ ";
-    for (int j = 0; j < 4; j++)
-      std::cout << mat[i][j] << " ";
-    std::cout << "]\n";
-  }
+  TransformType::Pointer xform = this->get();
+  std::cout << xform << std::endl;
 }
 
-Transform::clear()
+void Transform::reset()
 {
-  while (!transforms.empty())
-    transforms.pop();
+  scaling = Point3();
+  translation = Vector3();
+  rotaxis = Vector3();
+  rotangle = 0.0;
 }
 
-void setIdentity()
+void Transforms::translate(const Vector3 &v)
 {
-  mat = {};
-  for (int i=0; i<4; i++)
-    mat[i][i] = 1.0;
+  translation += v;
 }
 
-void Transforms::setTranslate(double T[3])
+void rotate(const Vector3 &axis, double angle)
 {
-  mat[0][3] = T[0];
-  mat[1][3] = T[1];
-  mat[2][3] = T[2];
+  //note: this should be accumulative like scale and translate, but it's tricker for rotation
+  rotaxis = axis;
+  rotangle = angle;
+}
+
+void scale(const Point3 &s)
+{
+  scale *= s;
 }
 
 TransformType::Pointer Transforms::get() const;
 {
-  TransformType::Pointer transform = itk::FixedCenterOfRotationAffineTransform<double, dims>::New();
+  TransformType::Pointer transform = TransformType::New();
   transform->Translate(std::vector<double>(mat[0][3], mat[1][3], mat[2][3]));
-  //todo, add the others
+  transform->Scale(std::vector<double>(mat[0][0], mat[1][1], mat[2][2]));
+  transform->Rotate3D(rotaxis, angle);
   return transform;
 }
 
