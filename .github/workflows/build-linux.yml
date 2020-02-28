@@ -29,7 +29,7 @@ jobs:
     - name: ccache cache files
       uses: actions/cache@v1.1.0
       with:
-        path: $HOME/.ccache
+        path: ~/.ccache
         key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
         restore-keys: |
           ${{ matrix.config.name }}-ccache-
@@ -110,6 +110,9 @@ jobs:
   
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
+
+    - name: ccache statistics
+      run: conda activate shapeworks && ccache -s
 
     - uses: actions/upload-artifact@v1
       with:
