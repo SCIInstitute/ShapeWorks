@@ -15,6 +15,7 @@
 #ifndef __itkParticleImageDomainWithGradients_h
 #define __itkParticleImageDomainWithGradients_h
 
+#include <itkImageLinearIteratorWithIndex.h>
 #include "itkImage.h"
 #include "itkImageDuplicator.h"
 #include "itkParticleImageDomain.h"
@@ -87,20 +88,24 @@ public:
     vdbGradientGrid = openvdb::VectorGrid::create();
     auto vdbAccessor = vdbGradientGrid->getAccessor();
 
-    ImageRegionIterator<GradientImageType> it(m_GradientImage, m_GradientImage->GetRequestedRegion());
+    ImageRegionIterator<GradientImageType> gradIt(m_GradientImage, m_GradientImage->GetRequestedRegion());
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    gradIt.GoToBegin();
     it.GoToBegin();
-    while(!it.IsAtEnd()) {
-        const auto idx = it.GetIndex();
-        const vnl_vector_ref<float> pixel = it.Get().GetVnlVector();
-        /*
-        if(pixel.squared_magnitude() < 0.1) {
-            ++it;
+    while(!gradIt.IsAtEnd()) {
+        const auto idx = gradIt.GetIndex();
+        if(idx != it.GetIndex()) {
+            throw std::runtime_error("Bad index");
+        }
+        const vnl_vector_ref<float> grad = gradIt.Get().GetVnlVector();
+        const auto pixel = it.Get();
+        if(abs(pixel) > 3.0) {
+            ++gradIt; ++it;
             continue;
         }
-         */
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-        vdbAccessor.setValue(coord, openvdb::Vec3f(pixel[0], pixel[1], pixel[2]));
-        ++it;
+        vdbAccessor.setValue(coord, openvdb::Vec3f(grad[0], grad[1], grad[2]));
+        ++gradIt; ++it;
     }
 #endif
 

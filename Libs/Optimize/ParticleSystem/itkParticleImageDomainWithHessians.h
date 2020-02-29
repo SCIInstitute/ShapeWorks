@@ -133,20 +133,24 @@ public:
         vdbHessianGrids[i] = openvdb::FloatGrid::create(0.0);
         auto vdbAccessor = vdbHessianGrids[i]->getAccessor();
 
-        ImageRegionIterator<ImageType> it(m_PartialDerivatives[i], m_PartialDerivatives[i]->GetRequestedRegion());
-        it.GoToBegin();
-        while(!it.IsAtEnd()) {
-            const auto idx = it.GetIndex();
+        ImageRegionIterator<ImageType> hessIt(m_PartialDerivatives[i], m_PartialDerivatives[i]->GetRequestedRegion());
+        ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+        hessIt.GoToBegin();
+        while(!hessIt.IsAtEnd()) {
+            const auto idx = hessIt.GetIndex();
+            if(idx != it.GetIndex()) {
+                throw std::runtime_error("Bad index");
+            }
+            const auto hess = hessIt.Get();
             const auto pixel = it.Get();
-            /*
-            if(abs(pixel) < 0.1) {
-                ++it;
+            if(abs(pixel) > 3.0) {
+                ++hessIt; ++it;
                 continue;
             }
-             */
+
             const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-            vdbAccessor.setValue(coord, pixel);
-            ++it;
+            vdbAccessor.setValue(coord, hess);
+            ++hessIt; ++it;
         }
     }
 #endif

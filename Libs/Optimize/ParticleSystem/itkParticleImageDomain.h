@@ -80,7 +80,7 @@ public:
 #ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
-    vdbImageGrid = openvdb::FloatGrid::create(30.0);
+    vdbImageGrid = openvdb::FloatGrid::create(500000.0);
     vdbImageGrid->setGridClass(openvdb::GRID_LEVEL_SET);
     auto vdbAccessor = vdbImageGrid->getAccessor();
 
@@ -89,18 +89,15 @@ public:
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const auto pixel = it.Get();
-        /*
         if(abs(pixel) > 3.0) {
-            it.Set(500000.0);
             ++it;
             continue;
         }
-         */
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, pixel);
         ++it;
     }
-    openvdb::tools::signedFloodFill(vdbImageGrid->tree());
+    // openvdb::tools::signedFloodFill(vdbImageGrid->tree());
     origin = I->GetOrigin();
 #endif
 
@@ -181,7 +178,7 @@ public:
   inline bool IsInsideBuffer(const PointType &p) const
   {
 #ifdef USE_OPENVDB
-      // Hack because we are deleting interpolator and images now...
+      //TODO: Hack because we are deleting interpolator and images now...
       return true;
 #else
       return m_ScalarInterpolator->IsInsideBuffer(p);
