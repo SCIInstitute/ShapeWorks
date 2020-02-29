@@ -69,7 +69,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ../Qt
-        key: QtCache2
+        key: QtCache-mac
 
     - name: Install Qt
       uses: akenmorris/install-qt-action@v5

@@ -66,7 +66,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ../Qt
-        key: QtCache2
+        key: QtCache-linux
 
     - name: Install Qt
       uses: akenmorris/install-qt-action@v5
