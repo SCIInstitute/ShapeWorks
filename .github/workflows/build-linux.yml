@@ -30,9 +30,9 @@ jobs:
       uses: actions/cache@v1.1.0
       with:
         path: ~/.ccache
-        key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        key: ${{ runner.os }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
         restore-keys: |
-          ${{ matrix.config.name }}-ccache-
+          ${{ runner.os }}-ccache-
     
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
