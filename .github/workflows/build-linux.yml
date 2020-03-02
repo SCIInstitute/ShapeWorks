@@ -8,6 +8,9 @@ on:
     - '*'
   pull_request:
 
+env:
+  CCACHE_VERSION: 3.7.7
+
 jobs:
   build:
 
@@ -15,6 +18,21 @@ jobs:
     
     steps:
 
+    - name: Prepare ccache timestamp
+      id: ccache_cache_timestamp
+      shell: cmake -P {0}
+      run: |
+        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+        message("::set-output name=timestamp::${current_date}")
+
+    - name: ccache cache files
+      uses: actions/cache@v1.1.0
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-
+    
     - name: Setup Conda
       uses: goanpeca/setup-miniconda@v1
       with:
@@ -30,22 +48,30 @@ jobs:
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
-        
+
     - name: conda installs
       shell: bash -l {0}
       run: source ./conda_installs.sh
 
-    - name: activate shapeworks
+    - name: install ccache
       shell: bash -l {0}
-      run: conda activate shapeworks
+      run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
       
     - name: Acquire LinuxDeployQt
       run: curl -L -o $HOME/linuxdeployqt https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt
 
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: QtCache-linux
+
     - name: Install Qt
-      uses: ouuan/install-qt-action@v2.3.1
+      uses: akenmorris/install-qt-action@v5
       with:
         version: "5.9.9"
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Cache dependencies
       id: cache-dependencies
@@ -61,19 +87,18 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DCMAKE_BUILD_TYPE=Release -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
 
     - name: make
       shell: bash -l {0}
-      run: cd build && make -j4
-
+      run: conda activate shapeworks && cd build && make -j4
 
     - name: make install
       shell: bash -l {0}
-      run: cd build && make install
+      run: conda activate shapeworks && cd build && make install
       
     - name: Remove Qt SQL Stuff
-      run: rm /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so
+      run: mv /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so /tmp
 
     - name: Build Binary Package
       run: pwd ; ls ; PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
@@ -81,10 +106,16 @@ jobs:
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
-    
+  
+    - name: Replace Qt SQL Stuff
+      run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
+
+    - name: ccache statistics
+      shell: bash -l {0}
+      run: conda activate shapeworks && ccache -s
+
     - uses: actions/upload-artifact@v1
       with:
         name: artifact-${{github.sha}}-linux
         path: ${{runner.workspace}}/ShapeWorks/artifacts
 
-    

@@ -52,7 +52,9 @@ Users
 
 The latest shapeworks release can be downloaded here:
 
-https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.1
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.3.1
+
+Features added across releases can be seen at [ChangeLog](ChangeLog).
 
 Binary Installation Documentation
 --------------------------------
