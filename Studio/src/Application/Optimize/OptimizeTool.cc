@@ -44,8 +44,8 @@ void OptimizeTool::handle_progress(int val)
 {
   emit progress(static_cast<size_t>(val));
 
-  auto local = this->optimize_->localPoints();
-  auto global = this->optimize_->globalPoints();
+  auto local = this->optimize_->GetLocalPoints();
+  auto global = this->optimize_->GetGlobalPoints();
 
   if (local.size() > 2 && global.size() > 2) {
     this->project_->update_points(local, true);
@@ -60,8 +60,8 @@ void OptimizeTool::handle_optimize_complete()
 {
   this->optimization_is_running_ = false;
 
-  auto local = this->optimize_->localPoints();
-  auto global = this->optimize_->globalPoints();
+  auto local = this->optimize_->GetLocalPoints();
+  auto global = this->optimize_->GetGlobalPoints();
   this->project_->update_points(local, true);
   this->project_->update_points(global, false);
   this->project_->set_reconstructed_present(
@@ -106,20 +106,23 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->optimize_ = new QOptimize(this);
 
-  this->optimize_->set_inputs(imgs);
-  this->optimize_->set_cut_planes(this->cutPlanes_);
-  this->optimize_->set_start_reg(this->ui_->starting_regularization->value());
-  this->optimize_->set_end_reg(this->ui_->ending_regularization->value());
-  this->optimize_->set_iterations_per_split(this->ui_->iterations->value());
-  this->optimize_->set_number_of_particles(this->ui_->number_of_particles->value());
-  this->optimize_->set_optimization_iterations(this->ui_->optimization_iterations->value());
-  this->optimize_->set_procrustes_interval(this->ui_->procrustes_interval->value());
-  this->optimize_->set_weighting(this->ui_->weight->value());
-  this->optimize_->set_verbose(true);
+  std::vector<unsigned int> numbers_of_particles;
+  numbers_of_particles.push_back(this->ui_->number_of_particles->value());
+  this->optimize_->SetFileOutputEnabled(false);
+  this->optimize_->SetImages(imgs);
+  this->optimize_->SetCutPlanes(this->cutPlanes_);
+  this->optimize_->SetStartingRegularization(this->ui_->starting_regularization->value());
+  this->optimize_->SetEndingRegularization(this->ui_->ending_regularization->value());
+  this->optimize_->SetIterationsPerSplit(this->ui_->iterations->value());
+  this->optimize_->SetNumberOfParticles(numbers_of_particles);
+  this->optimize_->SetOptimizationIterations(this->ui_->optimization_iterations->value());
+  this->optimize_->SetProcrustesInterval(this->ui_->procrustes_interval->value());
+  this->optimize_->SetRelativeWeighting(this->ui_->weight->value());
+  this->optimize_->SetVerbosity(5);
 
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::Optimize, NULL, this->optimize_, this->project_,
+    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->project_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<ImageType::Pointer>());
@@ -387,7 +390,7 @@ void OptimizeTool::shutdown_threads()
   if (!this->optimize_) {
     return;
   }
-  this->optimize_->stop_optimization();
+  this->optimize_->AbortOptimization();
 
   for (size_t i = 0; i < this->threads_.size(); i++) {
     if (this->threads_[i]->isRunning()) {

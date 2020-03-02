@@ -10,11 +10,11 @@
 #include <QMessageBox>
 
 #include <Visualization/ShapeworksWorker.h>
-#include <Optimize/ShapeWorksOptimize.h>
+#include <Libs/Optimize/Optimize.h>
 
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    ShapeWorksGroom* groom,
-                                   ShapeWorksOptimize* optimize,
+                                   Optimize* optimize,
                                    QSharedPointer<Project> project,
                                    std::vector<std::vector<itk::Point<double>>> local_pts,
                                    std::vector<std::vector<itk::Point<double>>> global_pts,
@@ -34,7 +34,7 @@ ShapeworksWorker::~ShapeworksWorker() {}
 void ShapeworksWorker::process()
 {
   switch (this->type_) {
-  case ShapeworksWorker::Groom:
+  case ShapeworksWorker::GroomType:
     try {
       this->groom_->run();
     } catch (std::runtime_error e) {
@@ -48,9 +48,9 @@ void ShapeworksWorker::process()
       return;
     }
     break;
-  case ShapeworksWorker::Optimize:
+  case ShapeworksWorker::OptimizeType:
     try {
-      this->optimize_->run();
+      this->optimize_->Run();
     } catch (std::runtime_error e) {
       std::cerr << "Exception: " << e.what() << "\n";
       emit error_message(std::string("Error: ") + e.what());
@@ -66,13 +66,13 @@ void ShapeworksWorker::process()
       emit error_message(std::string("Error during optimization!"));
       return;
     }
-      if (this->optimize_->get_aborted()) {
+      if (this->optimize_->GetAborted()) {
         emit error_message(std::string("Optimization Aborted!"));
         return;
       }
 
     break;
-  case ShapeworksWorker::Reconstruct:
+  case ShapeworksWorker::ReconstructType:
     try {
       emit message(std::string("Warping optimizations to mean space..."));
       this->project_->get_mesh_manager()->getSurfaceReconstructor()->initializeReconstruction(
