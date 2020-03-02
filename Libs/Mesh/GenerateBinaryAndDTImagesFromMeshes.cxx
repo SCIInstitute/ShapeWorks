@@ -535,6 +535,7 @@ int main(int argc, char *argv[])
         ImageWriterType::Pointer w2 = ImageWriterType::New();
         w2->SetFileName( f2.c_str() );
         w2->SetInput( binaryImage );
+        w2->SetUseCompression(true);
         w2->Update();
 
         std::string f3 = prefix + ".DT" + suffix + ".nrrd";
@@ -546,6 +547,7 @@ int main(int argc, char *argv[])
         ImageWriterType::Pointer w3 = ImageWriterType::New();
         w3->SetFileName( f3.c_str() );
         w3->SetInput( dtImage );
+        w3->SetUseCompression(true);
         w3->Update();
 
     }

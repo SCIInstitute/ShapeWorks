@@ -12,7 +12,7 @@ target_link_libraries(Optimize
   trimesh2
   Mesh
   tinyxml
-  )
+  Particles)
 
 target_include_directories(Optimize PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

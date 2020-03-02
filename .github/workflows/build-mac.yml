@@ -4,8 +4,13 @@ on:
   push:
     branches:
       - master
+    tags:
+    - '*'
   pull_request:
 
+env:
+  CCACHE_VERSION: 3.7.7
+  
 jobs:
   build:
 
@@ -13,6 +18,21 @@ jobs:
     
     steps:
 
+    - name: Prepare ccache timestamp
+      id: ccache_cache_timestamp
+      shell: cmake -P {0}
+      run: |
+        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+        message("::set-output name=timestamp::${current_date}")
+
+    - name: ccache cache files
+      uses: actions/cache@v1.1.0
+      with:
+        path: ~/.ccache
+        key: ${{ runner.os }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-
+    
     - name: Acquire 10.13 SDK
       run: curl -L -o $HOME/MacOSX10.13.sdk.tar.gz http://www.sci.utah.edu/~amorris/MacOSX10.13.sdk.tar.gz
 
@@ -39,39 +59,49 @@ jobs:
       shell: bash -l {0}
       run: source ./conda_installs.sh
 
-    - name: activate shapeworks
+    - name: install ccache
       shell: bash -l {0}
-      run: conda activate shapeworks
+      run: conda activate shapeworks && conda install -c conda-forge ccache=3.7.7
+    
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: QtCache-mac
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: akenmorris/install-qt-action@v5
+      with:
+        version: "5.9.9"
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Cache dependencies
       id: cache-dependencies
       uses: actions/cache@v1
       with:
         path: ~/install
-        key: ${{ runner.os }}-${{ hashFiles('**/superbuild.sh') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
         
     - name: Build dependencies
       shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: SDKROOT=$HOME/MacOSX10.13.sdk INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./superbuild.sh --dependencies_only
+      run: SDKROOT=$HOME/MacOSX10.13.sdk INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh
 
     - name: cmake
       shell: bash -l {0}
-      run: mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DVXL_DIR=$HOME/install/share/vxl/cmake -DITK_DIR=$HOME/install/lib/cmake/ITK-5.0 -DVTK_DIR=$HOME/install/lib/cmake/vtk-8.2 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DCMAKE_BUILD_TYPE=Release -DSHAPEWORKS_SUPERBUILD=OFF -DUSE_OPENMP=OFF -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" ..
 
     - name: make
       shell: bash -l {0}
-      run: cd build && make -j4
+      run: conda activate shapeworks && cd build && make -j4
       
     - name: make install
       shell: bash -l {0}
-      run: cd build && make install
+      run: conda activate shapeworks && cd build && make install
 
     - name: Build Binary Package
-      run: pwd ; ls ; ./package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      run: pwd ; ls ; ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
       
     - name: make test
       shell: bash -l {0}

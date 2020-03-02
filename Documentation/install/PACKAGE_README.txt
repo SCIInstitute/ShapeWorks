@@ -25,4 +25,4 @@ source ./conda_installs.sh
 Then, to run the example:
 
 cd Examples/Python
-python3 ellipsoidMain.py
+python3 RunUseCase.py --use_case ellipse

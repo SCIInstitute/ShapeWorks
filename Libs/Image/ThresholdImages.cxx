@@ -43,6 +43,7 @@ int binarythreshold(std::string inputpath, std::string outputpath,
     WriterType::Pointer writer = WriterType::New();
     writer->SetInput( threshold->GetOutput() );
     writer->SetFileName(outputpath.c_str());
+    writer->SetUseCompression(true);
     writer->Update();
     
 	return EXIT_SUCCESS;

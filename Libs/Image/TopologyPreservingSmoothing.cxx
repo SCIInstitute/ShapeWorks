@@ -178,6 +178,7 @@ int main( int argc, char *argv[])
         ImageWriterType::Pointer w = ImageWriterType::New();
         w->SetInput( smoothing->GetOutput() );
         w->SetFileName(distFilenames[dtNo].c_str());
+        w->SetUseCompression(true);
         w->Update();
         if(verbose) {
             std::cout << "Done\n";
@@ -245,7 +246,7 @@ int main( int argc, char *argv[])
         size_t ind = outFilenames[dtNo].find('.');
         std::string filename = outFilenames[dtNo];
         writer->SetFileName( filename.c_str() );
-        writer->SetFileName( filename.c_str() );
+        writer->SetUseCompression(true);
 
         try {
             writer->Update();

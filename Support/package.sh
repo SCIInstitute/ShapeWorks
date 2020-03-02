@@ -33,7 +33,7 @@ cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp conda_installs.sh package/${VERSION}
 cp ChangeLog package/${VERSION}
-cp PACKAGE_README.txt package/${VERSION}/README.txt
+cp documentation/install/PACKAGE_README.txt package/${VERSION}/README.txt
 cd "package/${VERSION}"
 rm bin/h5cc bin/h5c++ bin/itkTestDriver
 rm -rf include share v3p plugins
@@ -70,11 +70,15 @@ fi
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
+cp ${ROOT}/Documentation/install/PACKAGE_README.txt ${VERSION}/README.txt
 zip -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
 
 # Additionally on Mac, create an installer
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    pkgbuild --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
+    cp ${ROOT}/Documentation/install/Mac_README.txt ${VERSION}/README.txt
+    pkgbuild --quiet --analyze --root ${VERSION} ShapeWorks.plist
+    plutil -replace BundleIsRelocatable -bool NO ShapeWorks.plist
+    pkgbuild --component-plist ShapeWorks.plist --install-location /Applications/ShapeWorks --root ${VERSION} --identifier edu.utah.sci.shapeworks ${ROOT}/artifacts/${VERSION}.pkg
 fi
 
 cd $ROOT

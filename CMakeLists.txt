@@ -44,7 +44,6 @@ if (BUILD_TESTS)
   endif()
 endif(BUILD_TESTS)
 
-
 project(ShapeWorks)
 
 # use ccache if available
@@ -68,14 +67,16 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # GUI
-find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
-if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
-  set(SHAPEWORKS_QT_FOUND 1)
-else()
-  set(SHAPEWORKS_QT_FOUND 0)
-endif()
 
 if (SHAPEWORKS_GUI)
+    
+  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
+  if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
+  set(SHAPEWORKS_QT_FOUND 1)
+  else()
+  set(SHAPEWORKS_QT_FOUND 0)
+  endif()
+
   # headers (TODO: move to shapeworks gui targets' includes)
   include_directories(${Qt5Widgets_INCLUDE_DIRS})
   include_directories(${Qt5OpenGL_INCLUDE_DIRS})
@@ -121,6 +122,9 @@ IF (ITK_FOUND)
 ELSE()
   MESSAGE(SEND_ERROR "ITK (The Insight Toolkit) is required, but could not be found! Make sure path to ITKConfig.cmake is included in CMAKE_PREFIX_PATH")
 ENDIF()
+
+### Eigen
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
@@ -179,11 +183,12 @@ if (SHAPEWORKS_GUI)
   list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 endif()
 
+#----------------------------------------------------------------------------
 if(BUILD_TESTS)
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
-#--------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 # Add an option to toggle the generation of the API documentation
 option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 if(BUILD_DOCUMENTATION)
@@ -203,3 +208,4 @@ endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+
