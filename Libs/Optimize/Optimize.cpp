@@ -412,8 +412,6 @@ void Optimize::InitializeSampler()
   m_sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
   m_sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-  m_sampler->GetQualifierGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_sampler->GetQualifierGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
   m_sampler->GetModifiedCotangentGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetModifiedCotangentGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);

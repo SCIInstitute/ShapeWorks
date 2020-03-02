@@ -38,8 +38,6 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
 
     m_GradientFunction
             = ParticleEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
-    m_QualifierGradientFunction
-            = ParticleQualifierEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
     m_CurvatureGradientFunction
             = ParticleCurvatureEntropyGradientFunction<typename ImageType::PixelType, Dimension>::New();
 
@@ -67,7 +65,6 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDataCaches()
     m_Sigma1Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
     m_ParticleSystem->RegisterAttribute(m_Sigma1Cache);
     m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-    m_QualifierGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
     m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
     m_ModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
@@ -225,9 +222,6 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
 
     m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
     m_GradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-
-    m_QualifierGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
-    m_QualifierGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
 
     m_CurvatureGradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
     m_CurvatureGradientFunction->SetMaximumNeighborhoodRadius(maxradius);

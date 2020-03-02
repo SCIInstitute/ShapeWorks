@@ -101,10 +101,6 @@ public:
       {
       m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
       }
-    else if (mode == 2)
-      {
-      m_LinkingFunction->SetFunctionA(this->GetQualifierGradientFunction());
-      }
     else if (mode == 3)
       {
         if(this->m_pairwise_potential_type == 0)
