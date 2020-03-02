@@ -67,8 +67,9 @@ def getOrigin(inname):
     text = origin_file.read()
     origin = text.split("\n")
     origin_file.close()
-    cmd = ["rm",infoPrefix + "_origin.txt",infoPrefix + "_spacing.txt", infoPrefix + "_size.txt"]
-    subprocess.check_call(cmd)
+    os.remove(infoPrefix + "_origin.txt")
+    os.remove(infoPrefix + "_spacing.txt")
+    os.remove(infoPrefix + "_size.txt")
     return origin
 
 def center(outDir, inDataList):
