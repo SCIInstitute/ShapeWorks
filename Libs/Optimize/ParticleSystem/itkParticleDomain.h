@@ -1,6 +1,4 @@
 /*=========================================================================
-  Program:   ShapeWorks
-
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
@@ -8,8 +6,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleDomain_h
-#define __itkParticleDomain_h
+#pragma once
 
 #include "itkDataObject.h"
 #include "itkPoint.h"
@@ -74,5 +71,3 @@ private:
 };
 
 } // end namespace itk
-
-#endif
