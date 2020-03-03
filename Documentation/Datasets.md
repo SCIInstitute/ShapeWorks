@@ -3,21 +3,20 @@
 
 ## Requirements
 
-Each dataset must have a README.txt and License.txt
+Each dataset must have a **License.txt** which descibes the terms of use and citation requirements for the data.  
+You can see an example in the Left Atrium dataset [License](http://cibc1.sci.utah.edu:8080/api/v1/file/5e5600298886bab730d72cf6/download).
 
-
-## Uploading a Dataset
+## Uploading a Dataset (developers only)
 
 1. Create an account on the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/#?dialog=register)
 2. Ask Oleks to add you to the list of developers. (oleks@sci.utah.edu)
-3. Prepare dataset folder with README.txt and License.txt
+3. Prepare dataset folder with License.txt
 4. Use `DatasetUtils.uploadNewDataset(datasetName, datasetPath)` to upload.
 5. Name the dataset all lowercase with underscores separating words similar to: 'ellipsoid', 'ellipsoid_fd', 'left_atrium', 'femur'
 
 Example file structure:
 - TestEllipsoids/
   - ellipsoid/
-    - README.txt
     - License.txt
     - Ellipsoids_Prepped/
       - bunch of \*.nrrd
@@ -33,7 +32,6 @@ DatasetUtils.uploadNewDataset('ellipsoid', 'TestEllipsoids/ellipsoid/')
 When calling `DatasetUtils.downloadDataset('ellipsoid')`, you will get a zip file with the following structure:  
 - ellipsoid.zip
   - ellipsoid/
-    - README.txt
     - License.txt
     - Ellipsoids_Prepped/
       - bunch of \*.nrrd

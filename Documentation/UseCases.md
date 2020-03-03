@@ -1,6 +1,13 @@
 
 # Use Cases
 
+- [Downloading Datasets](#Downloading-Datasets)
+- [Running Use Cases](#Running-the-Use-Cases)
+  - [Ellipsoid](#Ellipsoid-Use-Case)
+  - [Fixed Domains Ellipsoid](#Fixed-Domains-Ellipsoid-Use-Case)
+  - [Left Atrium](#Left-Atrium-Use-Case)
+  - [Femur](#Femur-Use-Case)
+- [Dataset Guidelines](#Dataset-Guidelines)
 
 ## Downloading Datasets
 
@@ -143,7 +150,7 @@ The default values of this use case are as below.
             "verbosity" : 3
             
             
-## Fixed Domains Ellipsoid
+## Fixed Domains Ellipsoid Use Case
 
 This use case is designed for the fixed domains functionality of ShapeWorks. The fixed domains are used for the cases where we need to place correspondences over new shapes using a pre-existing shape model. In this example we use the example dataset in Ellipsoids_FD.zip which contains a previously generated shape model on ellipsoids, plus prepped segmentations of two new ellipsoids scans.
 
@@ -385,3 +392,5 @@ Single scale optimization is used with procrustes scaling to factor out size as 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
 For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
 
+## Dataset Guidelines
+Check out [Datasets.md](Datasets.md) for dataset upload instructions and guidelines. 
