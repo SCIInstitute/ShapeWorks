@@ -78,18 +78,9 @@ public:
   /** Start the optimization. */
   void StartOptimization()
   {
-    if (m_OptimizationMode == 0) { this->StartJacobiOptimization(); }
-    else if (m_OptimizationMode == 2) { this->StartAdaptiveGaussSeidelOptimization();}
-    else { this->StartGaussSeidelOptimization(); }
+    this->StartAdaptiveGaussSeidelOptimization();
   }
-  void StartJacobiOptimization();
-  void StartGaussSeidelOptimization();
   void StartAdaptiveGaussSeidelOptimization();
-
-  /** */
-  void SetModeToGaussSeidel() { this->m_OptimizationMode = 1; }
-  void SetModeToAdaptiveGaussSeidel() { this->m_OptimizationMode = 2; }
-  void SetModeToJacobi() { this->m_OptimizationMode = 0; }
 
   /** Stop the optimization.  This method sets a flag that aborts the
       StartOptimization method after the current iteration. */
@@ -152,7 +143,6 @@ private:
   unsigned int m_MaximumNumberOfIterations;
   double m_Tolerance;
   double m_TimeStep;
-  int m_OptimizationMode;
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
 };

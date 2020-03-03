@@ -323,7 +323,9 @@ protected:
   int m_adaptivity_mode = 0;
   double m_adaptivity_strength = 0.0;
   int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
-  int m_optimizer_type = 2;   // 0 : jacobi, 1 : gauss seidel, 2 : adaptive gauss seidel (with bad moves)
+
+  // TODO at some point remove m_optimizer_type entirely
+  int m_optimizer_type = 2;   // 2 : adaptive gauss seidel (with bad moves)
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
