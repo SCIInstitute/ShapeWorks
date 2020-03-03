@@ -66,10 +66,7 @@ Binary Installation Documentation
 Developers
 ---------------------
 Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
-
-<!-- the below is not updated with dead linkes
-Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
--->
+Please see **[Datasets.md](Documentation/Datasets.md)** for dataset upload instructions and guidelines.
 
 **Bug report:** As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
 
