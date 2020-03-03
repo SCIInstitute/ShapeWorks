@@ -241,7 +241,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     ref_binnrrdfilename = newRefFile.replace('.nrrd', '.BIN.nrrd')
 
     # reference image processing
-    cmd = ["shapeworks", "read-image", "--name", refFile, "extract-label", "--label", str(1.0), "write-image", "--name", refFile]
+    cmd = ["shapeworks", "read-image", "--name", refFile, "extractlabel", "--label", str(1.0), "write-image", "--name", refFile]
     print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
     cmd = ["shapeworks", "read-image", "--name", refFile, "closeholes", "write-image", "--name", refFile]
@@ -306,7 +306,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cprint(("Output Transformation Matrix : ", transformation), 'yellow')
             print("###########################################")
             print(" ")
-            cmd = ["shapeworks", "read-image", "--name", seginname, "extract-label", "--label", 1.0, "write-image", "--name", seginname]
+            cmd = ["shapeworks", "read-image", "--name", seginname, "extractlabel", "--label", 1.0, "write-image", "--name", seginname]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
             cmd = ["shapeworks", "read-image", "--name", seginname, "closeholes", "write-image", "--name", seginname]
@@ -356,7 +356,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             cprint(("Output Transformation Matrix : ", transformation), 'yellow')
             print("###########################################")
             print(" ")
-            cmd = ["shapeworks", "read-image", "--name", inname, "extract-label", "--label", 1.0, "write-image", "--name", inname]
+            cmd = ["shapeworks", "read-image", "--name", inname, "extractlabel", "--label", 1.0, "write-image", "--name", inname]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
             cmd = ["shapeworks", "read-image", "--name", inname, "closeholes", "write-image", "--name", inname]
@@ -499,7 +499,7 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
         outDataList.append(finalnm)
 
-        cmd = ["shapeworks", "read-image", "--name", inname, "extract-label", "--label", 1.0, "write-image", "--name", inname]
+        cmd = ["shapeworks", "read-image", "--name", inname, "extractlabel", "--label", 1.0, "write-image", "--name", inname]
         print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
         cmd = ["shapeworks", "read-image", "--name", inname, "closeholes", "write-image", "--name", inname]

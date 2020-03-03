@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "Image.h"
+ 
 #include <itkFixedCenterOfRotationAffineTransform.h>
 
 namespace shapeworks {
@@ -16,14 +16,14 @@ public:
   TransformType::Pointer get() const;
 
   void reset();
-  void translate(const Point3 &p); 
+  void translate(const Vector3 &v); 
   void rotate(const Vector3 &axis, double angle);
-  void scale(const Point3 &s);
+  void scale(const Vector3 &s);
 
   void print() const;
 
 private:
-  Point3 scaling;
+  Vector3 scaling;
   Vector3 translation;
   Vector3 rotaxis;
   double rotangle;

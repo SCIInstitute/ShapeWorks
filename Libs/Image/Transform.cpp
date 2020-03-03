@@ -1,3 +1,5 @@
+#include "Shapeworks.h"
+#include "Image.h"
 #include "Transform.h"
 
 namespace shapeworks {
@@ -10,35 +12,37 @@ void Transform::print() const
 
 void Transform::reset()
 {
-  scaling = Point3();
+  scaling = Vector3();
   translation = Vector3();
   rotaxis = Vector3();
   rotangle = 0.0;
 }
 
-void Transforms::translate(const Vector3 &v)
+void Transform::translate(const Vector3 &v)
 {
   translation += v;
 }
 
-void rotate(const Vector3 &axis, double angle)
+void Transform::rotate(const Vector3 &axis, double angle)
 {
   //note: this should be accumulative like scale and translate, but it's tricker for rotation
   rotaxis = axis;
   rotangle = angle;
 }
 
-void scale(const Point3 &s)
+void Transform::scale(const Vector3 &s)
 {
-  scale *= s;
+  //todo
+//   scaling = scaling * s;
 }
 
-TransformType::Pointer Transforms::get() const;
+Transform::TransformType::Pointer Transform::get() const
 {
   TransformType::Pointer transform = TransformType::New();
-  transform->Translate(std::vector<double>(mat[0][3], mat[1][3], mat[2][3]));
-  transform->Scale(std::vector<double>(mat[0][0], mat[1][1], mat[2][2]));
-  transform->Rotate3D(rotaxis, angle);
+  transform->Translate(translation);
+  transform->Scale(scaling);
+  transform->Rotate3D(rotaxis, rotangle);
+  
   return transform;
 }
 

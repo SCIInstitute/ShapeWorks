@@ -25,13 +25,13 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(CenterOfMassAlign::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
-  shapeworks.addCommand(Resample::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
   shapeworks.addCommand(Threshold::getCommand());
+  shapeworks.addCommand(FastMarching::getCommand());
 
   try {
     shapeworks.run(argc, argv);

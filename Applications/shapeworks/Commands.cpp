@@ -282,32 +282,11 @@ int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandDat
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Resample
-///////////////////////////////////////////////////////////////////////////////
-void Resample::buildParser()
-{
-  const std::string prog = "resample";
-  const std::string desc = "brief description of command";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--mrifilename").action("store").type("string").set_default("").help("name of MRI file");
-  
-  Command::buildParser();
-}
-
-int Resample::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string mrifilename = static_cast<std::string>(options.get("mrifilename"));
-
-  return sharedData.image.resample(mrifilename);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // ExtractLabel
 ///////////////////////////////////////////////////////////////////////////////
 void ExtractLabel::buildParser()
 {
-  const std::string prog = "extract-label";
+  const std::string prog = "extractlabel";
   const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
   parser.prog(prog).description(desc);
 
@@ -320,7 +299,7 @@ int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sh
 {
   float label = static_cast<float>(options.get("label"));
 
-  return sharedData.image.extractlabel(label);
+  return sharedData.image.extractLabel(label);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -337,7 +316,7 @@ void CloseHoles::buildParser()
 
 int CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.closeholes();
+  return sharedData.image.closeHoles();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -361,6 +340,27 @@ int Threshold::execute(const optparse::Values &options, SharedCommandData &share
   float max = static_cast<float>(options.get("max"));
 
   return sharedData.image.threshold(min, max);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FastMarch
+///////////////////////////////////////////////////////////////////////////////
+void FastMarching::buildParser()
+{
+  const std::string prog = "fastmarching";
+  const std::string desc = "computes distance transform volume from a binary (antialiased) image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("The level set value that defines the interface between foreground and background.");
+  
+  Command::buildParser();
+}
+
+int FastMarching::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float isovalue = static_cast<float>(options.get("isovalue"));
+
+  return sharedData.image.fastMarch(isovalue);
 }
 
 } // shapeworks

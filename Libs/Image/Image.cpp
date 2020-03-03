@@ -11,6 +11,7 @@
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkBinaryFillholeImageFilter.h>
+#include <itkReinitializeLevelSetImageFilter.h>
 
 namespace shapeworks {
 
@@ -221,12 +222,12 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   return true;
 }
 
-/// compare_equal
+/// operator ==
 ///
 /// compares two images to see if they are identical
 ///
 /// \param  Image   other image to compare
-bool Image::compare_equal(const Image &other)
+bool Image::operator==(const Image &other) const
 {
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
@@ -454,52 +455,7 @@ bool Image::centerofmassalign(const std::string &headerFile)
 }
 #endif
 
-
-bool Image::resample(const std::string &mriFilename)
-{
-  read(mriFilename);
-  
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
-  FilterType::Pointer resampler = FilterType::New();
-
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-  resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(0);
-  // resampler->SetTransform(transform.GetPointer());
-  resampler->SetInput(image);
-  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
-  resampler->SetOutputOrigin(image->GetOrigin());
-  resampler->SetOutputDirection(image->GetDirection());
-  resampler->SetOutputSpacing(image->GetSpacing());
-  resampler->Update();
-
-  try
-  {
-    // resampler->Update();
-    write(mriFilename);
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Resample failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-#if DEBUG_CONSOLIDATION
-  std::cout << "Resample succeeded!\n";
-#endif
-  return true;
-
-}
-
-bool Image::extractlabel(PixelType label)
+bool Image::extractLabel(PixelType label)
 {
   threshold(label, label);
 
@@ -509,7 +465,7 @@ bool Image::extractlabel(PixelType label)
   return true;
 }
 
-bool Image::closeholes()
+bool Image::closeHoles()
 {
   if (!this->image)
   {
@@ -573,15 +529,116 @@ bool Image::threshold(PixelType min, PixelType max)
 
 Point3 Image::centerOfMass() const
 {
-  Point3 p;
-  //todo
-  return p;
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  Point3 com; //center of mass
+  Point3 mean;
+
+  itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
+  int numPixels = 0;
+
+  while (!imageIt.IsAtEnd())
+  {
+    PixelType val = imageIt.Get();
+    ImageType::IndexType index;
+    ImageType::PointType point;
+    index = imageIt.GetIndex();
+
+    if (val == 1)
+    {
+      numPixels += 1;
+      image->TransformIndexToPhysicalPoint(index, point);
+      mean[0] += point[0];
+      mean[1] += point[1];
+      mean[2] += point[2];
+    }
+    ++imageIt;
+  }
+
+  com = mean / static_cast<float>(numPixels);
+
+  return com;
 }
 
 //todo: ack! most of these should be void functions. Have confidence the operations work! Trust the worker! 
-void Image::transform(const Transform &transform)
+void Image::applyTransform(const Transform &transform)
 {
-  //todo
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+  }
+
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  FilterType::Pointer resampler = FilterType::New();
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+  resampler->SetInterpolator(interpolator);
+  resampler->SetDefaultPixelValue(-1);
+
+  // transform->Translate(translation);
+  resampler->SetTransform(transform.get());
+
+  resampler->SetInput(this->image);
+  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
+  // resampler->SetOutputOrigin(image->GetOrigin());
+  // resampler->SetOutputDirection(image->GetDirection());
+  // resampler->SetOutputSpacing(image->GetSpacing());
+
+  try
+  {
+    resampler->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Transform failed:" << std::endl;
+    std::cerr << exp << std::endl;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Transform succeeded!\n";
+#endif
+}
+
+bool Image::fastMarch(float isovalue)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  const int VDimension = 3;
+  typedef float ScalarType;
+  typedef itk::Image<ScalarType, VDimension> ScalarImageType;
+
+  typedef itk::ReinitializeLevelSetImageFilter<ScalarImageType> ReinitializeLevelSetImageFilterType;
+
+  typename ReinitializeLevelSetImageFilterType::Pointer distanceMapImageFilter = ReinitializeLevelSetImageFilterType::New();
+
+  distanceMapImageFilter->SetInput(this->image);
+  distanceMapImageFilter->NarrowBandingOff();
+  distanceMapImageFilter->SetLevelSetValue(isovalue);
+
+  try
+  {
+    distanceMapImageFilter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Fast Marching failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Fast Marching succeeded!\n";
+#endif
+  return true;
 }
 
 } // Shapeworks

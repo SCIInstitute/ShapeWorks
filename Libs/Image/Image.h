@@ -24,14 +24,14 @@ public:
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
   Point3 centerOfMass() const;
-  void transform(const Transform &transform);
-  bool resample(const std::string &mriFilename);
-  bool extractlabel(PixelType label = 1.0);
-  bool closeholes();
+  void applyTransform(const Transform &transform);
+  bool extractLabel(PixelType label = 1.0);
+  bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<float>::max());
+  bool fastMarch(float isovalue);
   // bool nextfunction(...);
 
-  bool compare_equal(const Image &other);
+  bool operator==(const Image &other) const;
 
 private:
   ImageType::Pointer image;

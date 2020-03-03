@@ -143,7 +143,7 @@ private:
 class CenterOfMassAlign : public ImageCommand
 {
 public:
-  static CenterOfMassAlign &getCommand() { static CenterOfMassAlign instance; return instance; }
+  static CenterOfMassAlign& getCommand() { static CenterOfMassAlign instance; return instance; }
 
 private:
   CenterOfMassAlign() { buildParser(); } 
@@ -152,22 +152,10 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Resample : public ImageCommand
-{
-public:
-  static Resample& getCommand() { static Resample instance; return instance; }
-
-private:
-  Resample() { buildParser(); }
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
 class ExtractLabel : public ImageCommand
 {
 public:
-  static ExtractLabel &getCommand() { static ExtractLabel instance; return instance; }
+  static ExtractLabel& getCommand() { static ExtractLabel instance; return instance; }
 
 private:
   ExtractLabel() { buildParser(); }
@@ -179,7 +167,7 @@ private:
 class CloseHoles : public ImageCommand
 {
 public:
-  static CloseHoles &getCommand() { static CloseHoles instance; return instance; }
+  static CloseHoles& getCommand() { static CloseHoles instance; return instance; }
 
 private:
   CloseHoles() { buildParser(); }
@@ -195,6 +183,18 @@ public:
 
 private:
   Threshold() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class FastMarching : public ImageCommand
+{
+public:
+  static FastMarching& getCommand() { static FastMarching instance; return instance; }
+
+private:
+  FastMarching() { buildParser(); } 
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
