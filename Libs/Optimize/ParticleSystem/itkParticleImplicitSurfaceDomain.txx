@@ -170,11 +170,10 @@ template<class T, unsigned int VDimension>
 bool
 ParticleImplicitSurfaceDomain<T, VDimension>::
 ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                       const PointType &pos,
-                       double maxtimestep) const
+                       const PointType &pos) const
 {
 
-    bool flag = false;
+    bool flag = Superclass::ApplyVectorConstraints(gradE, pos);
   //ShapeWorksRun4.5 - Ensuring that the update does not violate constraints
   vnl_vector_fixed<double, VDimension> x;
   vnl_vector_fixed<double, VDimension> xPos;
@@ -206,7 +205,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
   return flag;
    gradMag = gradE.magnitude();
 
-//  return Superclass::ApplyVectorConstraints(gradE,pos,maxtimestep);
+//  return Superclass::ApplyVectorConstraints(gradE,pos);
     // disabled sphere part
   if (this->IsCuttingSphereDefined() && gradMag > 0.0)
   {
@@ -291,7 +290,7 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
       }
   }
 
-  return Superclass::ApplyVectorConstraints(gradE,pos,maxtimestep);
+  return Superclass::ApplyVectorConstraints(gradE,pos);
 }
 
 

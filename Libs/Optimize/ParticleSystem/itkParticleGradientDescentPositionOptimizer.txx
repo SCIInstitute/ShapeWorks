@@ -117,7 +117,6 @@ namespace itk
             double maxdt;
 
             VectorType gradient;
-            VectorType original_gradient;
             PointType newpoint;
 
             const DomainType* domain = static_cast<const DomainType*>(m_ParticleSystem->GetDomain(dom));
@@ -147,24 +146,17 @@ namespace itk
               // Compute gradient update.
               double energy = 0.0;
               localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
-              original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
+              gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
 
               unsigned int idx = it.GetIndex();
               PointType pt = *it;
-              NormalType ptNormalOld = domain->SampleNormalVnl(pt);
-
-              double dotPdt = original_gradient[0] * ptNormalOld[0] + original_gradient[1] * ptNormalOld[1] + original_gradient[2] * ptNormalOld[2];
-              VectorType original_gradient_projectedOntoTangentSpace;
-              original_gradient_projectedOntoTangentSpace[0] = original_gradient[0] - dotPdt * ptNormalOld[0];
-              original_gradient_projectedOntoTangentSpace[1] = original_gradient[1] - dotPdt * ptNormalOld[1];
-              original_gradient_projectedOntoTangentSpace[2] = original_gradient[2] - dotPdt * ptNormalOld[2];
 
               double newenergy, gradmag;
               while (!done)
               {
-                gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+                gradient = gradient * m_TimeSteps[dom][k];
 
-                dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
+                domain->ApplyVectorConstraints(gradient, *it);
 
                 gradmag = gradient.magnitude();
 
@@ -180,9 +172,7 @@ namespace itk
                     newpoint[i] = pt[i] - gradient[i];
                   }
 
-
-                  dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
-
+                  domain->ApplyConstraints(newpoint);
 
                   m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
@@ -200,7 +190,7 @@ namespace itk
                   {// bad move, reset point position and back off on timestep
                     if (m_TimeSteps[dom][k] > mintime[dom])
                     {
-                      dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(pt);
+                      domain->ApplyConstraints(pt);
                       m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
 
                       m_TimeSteps[dom][k] /= factor;
