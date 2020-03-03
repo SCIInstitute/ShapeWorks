@@ -92,28 +92,6 @@ public:
     return this->m_GradientInterpolator.GetPointer();
   }
 
-  /** This method is called by an optimizer after a call to Evaluate and may be
-      used to apply any constraints the resulting vector, such as a projection
-      to the surface tangent plane. Returns true if the gradient was modified.*/
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos) const
-    
-  {
-
-    if (this->m_ConstraintsEnabled == true)
-      {
-      const double epsilon = 1.0e-10;
-      
-      double dotprod = 0.0;  
-      VnlVectorType normal =  this->SampleNormalVnl(pos, epsilon);
-      for (unsigned int i = 0; i < VDimension; i++) {   dotprod  += normal[i] * gradE[i]; }
-      for (unsigned int i = 0; i < VDimension; i++) {   gradE[i] -= normal[i] * dotprod; }
-     
-      return true;
-      }
-    else return false;
-  }
-
   /** Used when a domain is fixed. */
   void DeleteImages()
   {
@@ -134,6 +112,22 @@ protected:
     ParticleImageDomain<T, VDimension>::PrintSelf(os, indent);
     os << indent << "m_GradientImage = " << m_GradientImage << std::endl;
     os << indent << "m_GradientInterpolator = " << m_GradientInterpolator << std::endl;
+  }
+
+  /** This method is called by an optimizer after a call to Evaluate and may be
+      used to apply any constraints the resulting vector, such as a projection
+      to the surface tangent plane. Returns true if the gradient was modified.*/
+  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const
+  {
+    const double epsilon = 1.0e-10;
+
+    double dotprod = 0.0;
+    VnlVectorType normal = this->SampleNormalVnl(pos, epsilon);
+    for (unsigned int i = 0; i < VDimension; i++) { dotprod += normal[i] * gradE[i]; }
+    for (unsigned int i = 0; i < VDimension; i++) { gradE[i] -= normal[i] * dotprod; }
+
+    return true;
   }
   
 private:

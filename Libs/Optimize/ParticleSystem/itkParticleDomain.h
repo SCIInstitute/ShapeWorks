@@ -10,6 +10,7 @@
 
 #include "itkDataObject.h"
 #include "itkPoint.h"
+#include "vnl/vnl_vector_fixed.h"
 
 namespace itk
 {
@@ -22,6 +23,8 @@ public:
 
   /** Point type used to store particle locations. */
   typedef Point<double, VDimension> PointType;
+  
+  virtual void UpdatePointPosition(PointType& point, vnl_vector_fixed<double, VDimension>& gradient) const = 0;
 
   /** Apply any constraints to the given point location.  This method may, for
       example, implement boundary conditions or restrict points to lie on a

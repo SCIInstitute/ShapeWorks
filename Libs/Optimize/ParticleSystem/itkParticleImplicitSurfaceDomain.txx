@@ -293,6 +293,14 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
   return Superclass::ApplyVectorConstraints(gradE,pos);
 }
 
+template<class T, unsigned int VDimension>
+void
+ParticleImplicitSurfaceDomain<T, VDimension>::
+UpdatePointPosition(PointType& point, vnl_vector_fixed<double, VDimension>& gradient) const {
+  this->ApplyVectorConstraints(gradient, point);
+  for (int i = 0; i < VDimension; i++) { point[i] -= gradient[i]; }
+  this->ApplyConstraints(point);
+}
 
 template<class T, unsigned int VDimension>
 bool

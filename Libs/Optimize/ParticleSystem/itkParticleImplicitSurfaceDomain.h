@@ -55,6 +55,8 @@ public:
   virtual T GetTolerance() {
     return this->m_Tolerance;
   }
+
+  virtual void UpdatePointPosition(PointType& point, vnl_vector_fixed<double, VDimension>& gradient) const;
   
   /** Apply any constraints to the given point location.  This method
       constrains points to lie within the given domain and on a given implicit
@@ -67,11 +69,6 @@ public:
       common.  Consider subclassing this method to add a check for significant
       differences in the input and output points. */
   virtual bool ApplyConstraints(PointType &p) const;
-
-  /** Optionally add a repulsion from a planar boundar specified in
-      m_CuttingPlane */
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos) const;
 
   /** Define a distance measure on the surface.  Note that this distance
       measure is NOT the geodesic distance, as one might expect, but is only a
@@ -182,12 +179,17 @@ protected:
   {
     m_mesh = NULL;
   }
+  virtual ~ParticleImplicitSurfaceDomain() {};
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "m_Tolerance = " << m_Tolerance << std::endl;
   }
-  virtual ~ParticleImplicitSurfaceDomain() {};
+
+  /** Optionally add a repulsion from a planar boundar specified in
+      m_CuttingPlane */
+  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const;
 
 private:
   T m_Tolerance;

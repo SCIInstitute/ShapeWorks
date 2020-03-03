@@ -156,7 +156,6 @@ namespace itk
               {
                 gradient = gradient * m_TimeSteps[dom][k];
 
-                domain->ApplyVectorConstraints(gradient, *it);
 
                 gradmag = gradient.magnitude();
 
@@ -166,13 +165,8 @@ namespace itk
                 }
                 else // Move is not too large
                 {
-                  // Make a move and compute new energy
-                  for (unsigned int i = 0; i < VDimension; i++)
-                  {
-                    newpoint[i] = pt[i] - gradient[i];
-                  }
-
-                  domain->ApplyConstraints(newpoint);
+                  PointType newpoint = pt;
+                  domain->UpdatePointPosition(newpoint, gradient);
 
                   m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
 
@@ -191,6 +185,8 @@ namespace itk
                     if (m_TimeSteps[dom][k] > mintime[dom])
                     {
                       domain->ApplyConstraints(pt);
+                      // TODO instead of calling ApplyConstraints, call UpdatePointPosition with a gradient of 0
+                      //domain->UpdatePointPosition(pt, gradient);
                       m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
 
                       m_TimeSteps[dom][k] /= factor;
