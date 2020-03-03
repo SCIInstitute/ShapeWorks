@@ -438,16 +438,6 @@ void Optimize::InitializeSampler()
 
   m_sampler->GetOptimizer()->SetTimeStep(1.0);
 
-  if (m_optimizer_type == 0) {
-    m_sampler->GetOptimizer()->SetModeToJacobi();
-  }
-  else if (m_optimizer_type == 1) {
-    m_sampler->GetOptimizer()->SetModeToGaussSeidel();
-  }
-  else {
-    m_sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
-  }
-
   m_sampler->SetSamplingOn();
 
   m_sampler->SetCorrespondenceOn();
@@ -848,16 +838,6 @@ void Optimize::RunOptimize()
       // transform cutting planes
       m_sampler->TransformCuttingPlanes(m_distribution_domain_id);
     }
-  }
-
-  if (m_optimizer_type == 0) {
-    m_sampler->GetOptimizer()->SetModeToJacobi();
-  }
-  else if (m_optimizer_type == 1) {
-    m_sampler->GetOptimizer()->SetModeToGaussSeidel();
-  }
-  else {
-    m_sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
   }
 
   // Set up the minimum variance decay
