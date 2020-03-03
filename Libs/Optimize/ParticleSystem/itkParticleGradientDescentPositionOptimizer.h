@@ -145,18 +145,12 @@ private:
   double m_TimeStep;
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
+
+  void ResetTimeStepVectors();
 };
 
 
 } // end namespace
-
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleGradientDescentPositionOptimizer+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleGradientDescentPositionOptimizer.txx"
-#endif
 
 #include "itkParticleGradientDescentPositionOptimizer.txx"
 
