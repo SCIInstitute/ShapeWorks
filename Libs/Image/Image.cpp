@@ -11,6 +11,9 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <itkImageSeriesReader.h>
+#include <itkGDCMImageIO.h>
+#include <itkGDCMSeriesFileNames.h>
 
 namespace shapeworks {
 
@@ -43,6 +46,42 @@ bool Image::read(const std::string &inFilename)
 #if DEBUG_CONSOLIDATION
   std::cout << "Successfully read image " << inFilename << std::endl;
 #endif
+  this->image = reader->GetOutput();
+  return true;
+}
+
+/// read_dicom_dir
+/// \param dicom_dir directory of dicom files
+bool Image::read_dicom_dir(const std::string &dicom_dir)
+{
+  // read in as dicom stack
+  using ReaderType = itk::ImageSeriesReader<ImageType>;
+  using ImageIOType = itk::GDCMImageIO;
+  using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
+
+  ImageIOType::Pointer gdcm_io = ImageIOType::New();
+  InputNamesGeneratorType::Pointer input_names = InputNamesGeneratorType::New();
+  input_names->SetInputDirectory( dicom_dir );
+
+  const ReaderType::FileNamesContainer &filenames = input_names->GetInputFileNames();
+
+  ReaderType::Pointer reader = ReaderType::New();
+
+  reader->SetImageIO( gdcm_io );
+  reader->SetFileNames( filenames );
+  ImageType::Pointer data = reader->GetOutput();
+  data = reader->GetOutput();
+  try
+  {
+    reader->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Failed to read dicom dir: " << dicom_dir << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
   this->image = reader->GetOutput();
   return true;
 }
