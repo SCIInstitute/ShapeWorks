@@ -71,15 +71,15 @@ def Run_Pipeline(args):
     distance transforms.
     """
 
-    parentDir = 'TestEllipsoidsFD/PrepOutput/'
-    if not os.path.exists(parentDir):
-        os.makedirs(parentDir)
+    outputDir = 'TestEllipsoidsFD/PrepOutput/'
+    if not os.path.exists(outputDir):
+        os.makedirs(outputDir)
 
     print("\nStep 2. Groom - Convert to distance transforms\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    dtFilesNew = applyDistanceTransforms(parentDir, fileListNew)
+    dtFilesNew = applyDistanceTransforms(outputDir, fileListNew)
     dtFiles = fileListDT + dtFilesNew
 
     """
@@ -106,7 +106,7 @@ def Run_Pipeline(args):
     Evaluate the meanshape of the existing shape model and use that to initialize the 
     particles on the new shapes
     """
-    shapemodelDir = "./TestEllipsoidsFD/Ellipsoids_ExistingShapeModel/"
+    shapemodelDir = parentDir + "Ellipsoids_ExistingShapeModel/"
     findMeanShape(shapemodelDir)
     meanShapePath = shapemodelDir + '/meanshape_local.particles'
 
