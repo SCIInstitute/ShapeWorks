@@ -83,9 +83,6 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
     }
 
   if (this->GetInitializing() == true) return;
-#ifdef USE_OPENVDB
-  this->DeleteImages();
-#endif
 
   this->GetOptimizer()->StartOptimization();
 }

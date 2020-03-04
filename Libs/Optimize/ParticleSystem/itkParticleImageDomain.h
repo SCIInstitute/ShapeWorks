@@ -85,7 +85,9 @@ public:
 
   PointType m_Origin;
   PointType m_ZeroCrossingPoint;
+  typename ImageType::RegionType::IndexType m_Index;
 
+  //TODO: Move into proper file(statistics?)
   double m_SurfaceArea;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
@@ -116,9 +118,12 @@ public:
         ++it;
     }
     m_Origin = I->GetOrigin();
+    m_Index = I->GetRequestedRegion().GetIndex();
 
     // Compute surface area
+    //TODO: This doesn't work. Also, its probably not used.
     //TODO: Refactor
+    /*
     typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
     itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
     itk2vtkConnector->SetInput(I);
@@ -130,6 +135,7 @@ public:
     mp->SetInputData(ls->GetOutput());
     mp->Update();
     m_SurfaceArea = mp->GetSurfaceArea();
+    */
 
 
     // Compute zero crossing point
@@ -197,6 +203,8 @@ public:
   }
 
   inline double GetSurfaceArea() const {
+    //TODO: Remove me
+    throw std::runtime_error("Surface area: Somebody wants it!");
     return m_SurfaceArea;
   }
 
@@ -210,6 +218,10 @@ public:
 
   inline typename ImageType::SpacingType GetSpacing() const {
     return m_Spacing;
+  }
+
+  inline typename ImageType::RegionType::IndexType GetIndex() const {
+    return m_Index;
   }
 
   inline PointType GetZeroCrossingPoint() const {
@@ -237,6 +249,7 @@ public:
       }
   }
 
+  //TODO: Remove, this is misleading
   unsigned long GetMemUsage() const {
 #ifdef USE_OPENVDB
       return m_VDBImage->memUsage();

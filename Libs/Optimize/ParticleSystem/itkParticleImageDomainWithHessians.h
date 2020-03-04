@@ -77,7 +77,7 @@ public:
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
       gaussian = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
     gaussian->SetVariance(m_Sigma * m_Sigma);
-    gaussian->SetInput(this->GetImage());
+    gaussian->SetInput(I);
     gaussian->SetUseImageSpacingOn();
     gaussian->Update();
     

@@ -102,8 +102,9 @@ public:
     //this->DeletePartialDerivativeImages();
     
     m_CurvatureInterpolator->SetInputImage(m_CurvatureImage);
+
   } // end setimage
-  
+
   double GetCurvature(const PointType &pos) const
   {
     return m_CurvatureInterpolator->Evaluate(pos);
