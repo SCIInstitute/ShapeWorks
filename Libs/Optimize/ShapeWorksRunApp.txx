@@ -518,8 +518,7 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
         typename itk::ImageFileReader < ImageType > ::Pointer reader = itk::ImageFileReader <
                                                                        ImageType > ::New();
         reader->SetFileName(filename);
-        //TODO: Remove
-        // reader->UpdateLargestPossibleRegion();
+        reader->UpdateLargestPossibleRegion();
         images.push_back(reader->GetOutput());
 
         shapeFiles.push_back(filename);
@@ -536,8 +535,7 @@ ShapeWorksRunApp < SAMPLERTYPE > ::ReadInputs(const char* fname) {
                                                                      ImageType > ::New();
       reader->SetFileName(shapeFiles[shapeCount].c_str());
       std::cerr << "Now reading: " << shapeFiles[shapeCount] << "\n";
-      //TODO: Remove
-      // reader->UpdateLargestPossibleRegion();
+      reader->UpdateLargestPossibleRegion();
       m_Sampler->SetInput(shapeCount, reader->GetOutput());       // set the 0th input
 
       m_spacing = reader->GetOutput()->GetSpacing()[0];
