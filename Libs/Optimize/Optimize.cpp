@@ -43,7 +43,6 @@
 
 // particle system
 #include "TriMesh.h"
-#include "itkImageToVTKImageFilter.h"
 #include "itkParticleImageDomain.h"
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImplicitSurfaceDomain.h"
@@ -474,22 +473,9 @@ double Optimize::GetMinNeighborhoodRadius()
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
 
-    const itk::ParticleImageDomain < float,
-                                     3 >* domain = static_cast < const itk::ParticleImageDomain < float,
-                                                                                                  3 >
-                                                                 * > (m_sampler->GetParticleSystem()
-                                                                      ->GetDomain(i));
-
-    itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
-    itk2vtkConnector->SetInput(domain->GetImage());
-    vtkSmartPointer < vtkContourFilter > ls = vtkSmartPointer < vtkContourFilter > ::New();
-    ls->SetInputData(itk2vtkConnector->GetOutput());
-    ls->SetValue(0, 0.0);
-    ls->Update();
-    vtkSmartPointer < vtkMassProperties > mp = vtkSmartPointer < vtkMassProperties > ::New();
-    mp->SetInputData(ls->GetOutput());
-    mp->Update();
-    double area = mp->GetSurfaceArea();
+    //TODO: Don't dynamic cast
+    const auto domain = dynamic_cast<itk::ParticleImageDomain<float, 3> *>(m_sampler->GetParticleSystem()->GetDomain(i));
+    double area = domain->GetSurfaceArea();
     double sigma =
       std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
     if (rad < sigma) {

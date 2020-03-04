@@ -18,9 +18,12 @@
 #define USE_OPENVDB
 
 #include <fstream>
+#include <vtkContourFilter.h>
+#include <vtkMassProperties.h>
 #include "itkImage.h"
 #include "itkParticleRegionDomain.h"
 #include "itkLinearInterpolateImageFunction.h"
+#include "itkImageToVTKImageFilter.h"
 
 // we have to undef foreach here because both Qt and OpenVDB define foreach
 #undef foreach
@@ -56,7 +59,9 @@ public:
   /** Type of the ITK image used by this class. */
   typedef Image<T, VDimension> ImageType;
 
-  openvdb::FloatGrid::Ptr vdbImageGrid;
+#ifdef USE_OPENVDB
+  openvdb::FloatGrid::Ptr m_vdbImage;
+#endif
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -73,6 +78,11 @@ public:
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
+  typename ImageType::SizeType m_Size;
+  typename ImageType::SpacingType m_Spacing;
+
+  double m_SurfaceArea;
+
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
@@ -80,9 +90,12 @@ public:
 #ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
-    vdbImageGrid = openvdb::FloatGrid::create(500000.0);
-    vdbImageGrid->setGridClass(openvdb::GRID_LEVEL_SET);
-    auto vdbAccessor = vdbImageGrid->getAccessor();
+    m_vdbImage = openvdb::FloatGrid::create(500000.0);
+    m_vdbImage->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = m_vdbImage->getAccessor();
+
+    m_Size = I->GetRequestedRegion().GetSize();
+    m_Spacing = I->GetRequestedRegion().GetSpacing();
 
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
@@ -97,9 +110,21 @@ public:
         vdbAccessor.setValue(coord, pixel);
         ++it;
     }
-    // openvdb::tools::signedFloodFill(vdbImageGrid->tree());
     origin = I->GetOrigin();
-#endif
+
+    // Compute surface area
+    typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
+    itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
+    itk2vtkConnector->SetInput(I);
+    vtkSmartPointer < vtkContourFilter > ls = vtkSmartPointer < vtkContourFilter > ::New();
+    ls->SetInputData(itk2vtkConnector->GetOutput());
+    ls->SetValue(0, 0.0);
+    ls->Update();
+    vtkSmartPointer < vtkMassProperties > mp = vtkSmartPointer < vtkMassProperties > ::New();
+    mp->SetInputData(ls->GetOutput());
+    mp->Update();
+    m_SurfaceArea = mp->GetSurfaceArea();
+#else
 
     this->Modified();
     m_Image= I;
@@ -136,14 +161,25 @@ public:
     
     this->SetLowerBound(l);
     this->SetUpperBound(u);
+#endif
   }
-  itkGetObjectMacro(Image, ImageType);
-  itkGetConstObjectMacro(Image, ImageType);
+
+  inline double GetSurfaceArea() const {
+    return m_SurfaceArea;
+  }
 
   PointType origin;
   inline PointType GetOrigin() const {
       return origin;
   }
+
+  inline typename ImageType::SizeType GetSize() const {
+    return m_Size;
+  }
+
+    inline typename ImageType::SpacingType GetSpacing() const {
+      return m_Spacing;
+    }
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer. */
@@ -155,7 +191,7 @@ public:
           auto sp = p;
           for(int i=0; i<3; i++) { sp[i] -= o[i]; }
           const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-          const T v2 = openvdb::tools::BoxSampler::sample(vdbImageGrid->tree(), coord);
+          const T v2 = openvdb::tools::BoxSampler::sample(m_vdbImage->tree(), coord);
           return v2;
 #else
           const T v1 =  m_ScalarInterpolator->Evaluate(p);
@@ -168,7 +204,7 @@ public:
 
   unsigned long GetMemUsage() const {
 #ifdef USE_OPENVDB
-      return vdbImageGrid->memUsage();
+      return m_vdbImage->memUsage();
 #else
       return m_Image->Capacity() * sizeof(T);
 #endif
@@ -188,34 +224,23 @@ public:
   /** Used when a domain is fixed. */
   void DeleteImages()
   {
-    m_Image = 0;
-    m_ScalarInterpolator = 0;
+    m_vdbImage = 0;
   }
 
-  /** Allow public access to the scalar interpolator. */
-  itkGetObjectMacro(ScalarInterpolator, ScalarInterpolatorType);
-  
 protected:
   ParticleImageDomain()
   {
-    m_ScalarInterpolator = ScalarInterpolatorType::New();
   }
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
-    
-    os << indent << "m_Image = " << m_Image << std::endl;
-    os << indent << "m_ScalarInterpolator = " << m_ScalarInterpolator << std::endl;
   }
   virtual ~ParticleImageDomain() {};
   
 private:
   ParticleImageDomain(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  typename ImageType::Pointer m_Image;
-  typename ScalarInterpolatorType::Pointer m_ScalarInterpolator;
 };
 
 } // end namespace itk

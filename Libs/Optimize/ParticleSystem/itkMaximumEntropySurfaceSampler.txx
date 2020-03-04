@@ -211,10 +211,10 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
         const ParticleImageDomain<float, 3> * domain = static_cast<const ParticleImageDomain<float, 3> *> (this->GetParticleSystem()->GetDomain(d));
         for (unsigned int i = 0; i < TImage::ImageDimension; i++)
         {
-            if (domain->GetImage()->GetRequestedRegion().GetSize()[i] > maxdim)
+            if (domain->GetSize()[i] > maxdim)
             {
-                maxdim = domain->GetImage()->GetRequestedRegion().GetSize()[i];
-                tempMax = maxdim * domain->GetImage()->GetSpacing()[i];
+                maxdim = domain->GetSize()[i];
+                tempMax = maxdim * domain->GetSpacing()[i];
             }
         }
         maxradius = tempMax > maxradius ? tempMax : maxradius;
