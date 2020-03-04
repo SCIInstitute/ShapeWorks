@@ -183,7 +183,7 @@ void GroomTool::on_run_groom_button_clicked()
   this->ui_->skipButton->setEnabled(false);
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::Groom, this->groom_, nullptr, this->project_);
+    ShapeworksWorker::GroomType, this->groom_, nullptr, this->project_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));

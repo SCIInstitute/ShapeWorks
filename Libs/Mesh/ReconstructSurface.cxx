@@ -43,9 +43,24 @@ int DoIt(InputParams params)
 
     ReconstructionType reconstructor;
 
-    std::string denseFilename      = params.mean_prefix + "_dense.vtk";
-    std::string sparseFilename     = params.mean_prefix + "_sparse.particles";
-    std::string goodPointsFilename = params.mean_prefix + "_goodPoints.txt";
+    std::string denseFilename      ;
+    std::string sparseFilename     ;
+    std::string goodPointsFilename ;
+
+    if(params.use_template_mesh)
+    {
+        denseFilename      = params.template_dense_mesh;
+        sparseFilename     = params.template_sparse_points;
+        goodPointsFilename = ""; // assume that all are good points
+        if (!params.template_good_indices.empty())
+            goodPointsFilename = params.template_good_indices;
+    }
+    else
+    {
+        denseFilename      = params.mean_prefix + "_dense.vtk";
+        sparseFilename     = params.mean_prefix + "_sparse.particles";
+        goodPointsFilename = params.mean_prefix + "_goodPoints.txt";
+    }
 
     std::cout << "denseFilename: "  << denseFilename << std::endl;
     std::cout << "sparseFilename: " << sparseFilename << std::endl;

@@ -17,8 +17,7 @@ def rename(inname, outDir, extension_addition, extension_change=''):
     """
     Takes inname path and replaces dir with outdir and adds extension before file type
     """
-    spt = inname.rsplit(os.sep, 1)
-    initPath = spt[0]
+    initPath = os.path.dirname(inname)
     outname = inname.replace(initPath, outDir)
     current_extension = "." + inname.split(".")[-1]
     if extension_addition != '':
@@ -68,8 +67,9 @@ def getOrigin(inname):
     text = origin_file.read()
     origin = text.split("\n")
     origin_file.close()
-    cmd = ["rm",infoPrefix + "_origin.txt",infoPrefix + "_spacing.txt", infoPrefix + "_size.txt"]
-    subprocess.check_call(cmd)
+    os.remove(infoPrefix + "_origin.txt")
+    os.remove(infoPrefix + "_spacing.txt")
+    os.remove(infoPrefix + "_size.txt")
     return origin
 
 def center(outDir, inDataList):
@@ -127,10 +127,10 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
         os.makedirs(outDir)
     if raw:
         inDataListImg=raw
-        rawoutDir = outDir + '/images'
+        rawoutDir = os.path.join(outDir, 'images')
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
-        binaryoutDir = outDir + '/segmentations'
+        binaryoutDir = os.path.join(outDir, 'segmentations')
         if not os.path.exists(binaryoutDir):
             os.makedirs(binaryoutDir)
         outDataListSeg = []
@@ -219,8 +219,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     """
     This function takes in a filelists(binary and raw) and produces rigid aligned files in the appropriate directory. If the process_raw flag is set True, then it also applys the same transformation on the corresponding list of raw files (MRI/CT ...)
     """
-    outDir = parentDir + '/aligned'
-    transoutDir = outDir + '/transformations'
+    outDir = os.path.join(parentDir, 'aligned')
+    transoutDir = os.path.join(outDir, 'transformations')
 
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -228,11 +228,10 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         os.makedirs(transoutDir)
 
     # identify the reference scan
-    refDir = outDir + '/reference'
+    refDir = os.path.join(outDir, 'reference')
     if not os.path.exists(refDir):
         os.makedirs(refDir)
-    spt = refFile.rsplit(os.sep, 1)
-    initPath = spt[0]
+    initPath = os.path.dirname(refFile)
     newRefFile = refFile.replace(initPath, refDir)
 
     ref_dtnrrdfilename = newRefFile.replace('.nrrd', '.DT.nrrd')
@@ -262,8 +261,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     subprocess.check_call(execCommand)
 
     if processRaw:
-        rawoutDir = outDir + '/images/'
-        binaryoutDir = outDir + '/segmentations'
+        rawoutDir = os.path.join(outDir, 'images')
+        binaryoutDir = os.path.join(outDir + 'segmentations')
 
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
@@ -275,9 +274,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         outSegDataList=[]
         for i in range(len(inDataListSeg)):
             seginname = inDataListSeg[i]
-            spt = seginname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            filename = spt[1]
+            initPath = os.path.dirname(seginname)
+            filename = os.path.basename(seginname)
             segoutname = seginname.replace(initPath, binaryoutDir)
             segoutname = segoutname.replace('.nrrd', '.aligned.nrrd')
             transoutname = seginname.replace(initPath, transoutDir)
@@ -285,9 +283,8 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             outSegDataList.append(segoutname)
 
             rawinname = inDataListImg[i]
-            sptR = rawinname.rsplit(os.sep, 1)
-            initPath = sptR[0] + os.sep
-            filename = sptR[1]
+            initPath = os.path.dirname(rawinname)
+            filename = os.path.basename(rawinname)
             rawoutname = rawinname.replace(initPath, rawoutDir)
             rawoutname = rawoutname.replace('.nrrd', '.aligned.nrrd')
             outRawDataList.append(rawoutname)
@@ -335,9 +332,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
         outDataList = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            #filename = spt[1]
+            initPath = os.path.dirname(inname)
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.aligned.nrrd')
             transoutname = inname.replace(initPath, transoutDir)
@@ -384,18 +379,18 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
     """
-    outDir = parentDir + '/cropped'
+    outDir = os.path.join(parentDir, 'cropped')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    cropinfoDir = outDir + '/crop_info/'
+    cropinfoDir = os.path.join(outDir, 'crop_info')
     if not os.path.exists(cropinfoDir):
         os.makedirs(cropinfoDir)
     # first create a txtfile with all the scan names in it.
-    txtfile = cropinfoDir + "_dataList.txt"
+    txtfile = os.path.join(cropinfoDir, "_dataList.txt")
     with open(txtfile, 'w') as filehandle:
         for listitem in inDataListSeg:
             filehandle.write('%s\n' % listitem)
-    outPrefix = cropinfoDir + "largest_bounding_box"
+    outPrefix = os.path.join(cropinfoDir, "largest_bounding_box")
     execCommand = ["FindLargestBoundingBox", "--paddingSize", str(
         paddingSize), "--inFilename", txtfile, "--outPrefix", outPrefix]
     subprocess.check_call(execCommand )
@@ -407,8 +402,8 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     smI1 = np.loadtxt(outPrefix + "_smallestIndex1.txt")
     smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
     if processRaw:
-        rawoutDir = outDir + '/images/'
-        binaryoutDir = outDir + '/segmentations/'
+        rawoutDir = os.path.join(outDir, 'images')
+        binaryoutDir = os.path.join(outDir, 'segmentations')
         if not os.path.exists(rawoutDir):
             os.makedirs(rawoutDir)
         if not os.path.exists(binaryoutDir):
@@ -418,15 +413,11 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
         for i in range(len(inDataListSeg)):
             innameSeg = inDataListSeg[i]
             innameImg = inDataListImg[i]
-            sptSeg = innameSeg.rsplit(os.sep, 1)
-            initPath = sptSeg[0] + os.sep
-            #filename = sptSeg[1]
+            initPath = os.path.dirname(innameSeg)
             outnameSeg = innameSeg.replace(initPath, binaryoutDir)
             outnameSeg = outnameSeg.replace('.nrrd', '.cropped.nrrd')
             outDataListSeg.append(outnameSeg)
-            sptImg = innameImg.rsplit(os.sep, 1)
-            initPath = sptImg[0] + os.sep
-            #filename = sptImg[1]
+            initPath = os.path.dirname(innameImg)
             outnameImg = innameImg.replace(initPath, rawoutDir)
             outnameImg = outnameImg.replace('.nrrd', '.cropped.nrrd')
             outDataListImg.append(outnameImg)
@@ -448,9 +439,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
         outDataList = []
         for i in range(len(inDataListSeg)):
             inname = inDataListSeg[i]
-            spt = inname.rsplit(os.sep, 1)
-            initPath = spt[0]
-            #filename = spt[1]
+            initPath = os.path.dirname(inname)
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.cropped.nrrd')
             outDataList.append(outname)
@@ -477,11 +466,11 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.close()
 
 def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smoothingIterations=1, isoValue=0, percentage=50):
-    outDir = parentDir + '/groom_and_meshes'
+    outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
 
-    finalDTDir = parentDir + '/distance_transforms'
+    finalDTDir = os.path.join(parentDir, 'distance_transforms')
     if not os.path.exists(finalDTDir):
         os.makedirs(finalDTDir)
 
@@ -527,21 +516,21 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
 def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    outSegDir = outDir + "/segmentations"
+    outSegDir = os.path.join(outDir, "segmentations")
     if not os.path.exists(outSegDir):
         os.mkdir(outSegDir)
-    outImgDir = outDir + "/images"
+    outImgDir = os.path.join(outDir, "images")
     if not os.path.exists(outImgDir):
         os.mkdir(outImgDir)
     imageList = []
     meshList = []
     for img in img_list:
-        img_name = img.rsplit(os.sep, 1)[1]
+        img_name = os.path.basename(img)
         prefix = img_name.split("_")[0]
-        if reference_side =='right':
+        if reference_side == 'right':
             ref = 'R'
             flip = 'L'
-        elif reference_side =='left':
+        elif reference_side == 'left':
             ref = 'L'
             flip = 'R'
         else:
@@ -558,10 +547,10 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
                 flip_seg = seg
         # if we have ref seg, copy image and seg over with appropriate name
         if ref_seg != 'None':
-            seg_out = ref_seg.replace(ref_seg.rsplit(os.sep, 1)[0], outSegDir)
+            seg_out = ref_seg.replace(os.path.dirname(ref_seg), outSegDir)
             meshList.append(seg_out)
             shutil.copy(ref_seg, seg_out)
-            img_out = img.replace(img.rsplit(os.sep, 1)[0], outImgDir)
+            img_out = img.replace(os.path.dirname(img), outImgDir)
             img_out = img_out.replace(prefix, ref_prefix)
             imageList.append(img_out)
             shutil.copy(img, img_out)
@@ -570,7 +559,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             print("\n############## Reflecting ###############")
             img_out = rename(img, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
-            centerFilename = outDir + "/" +  prefix + "_origin.txt"
+            centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             execCommand = ["ReflectVolumes", "--inFilename", img, "--outFilename", img_out, "--centerFilename", centerFilename, "--inputDirection", "0"]
             subprocess.check_call(execCommand)
             print("\n############## Reflecting ###############")
@@ -587,7 +576,7 @@ def MeshesToVolumes(outDir, meshList, imgList):
     if not os.path.exists(outDir):
         os.mkdir(outDir)
     for mesh in meshList:
-        mesh_name = mesh.rsplit(os.sep, 1)[1]
+        mesh_name = os.path.basename(mesh)
         extension = mesh_name.split(".")[-1]
         prefix = mesh_name.split("_")[0] + "_" + mesh_name.split("_")[1]
         # change to ply if needed
@@ -606,7 +595,7 @@ def MeshesToVolumes(outDir, meshList, imgList):
             if prefix in image_file:
                 image = image_file
          # write origin, size, and spacing info to text file
-        infoPrefix = outDir + '/' + prefix
+        infoPrefix = os.path.join(outDir, prefix)
         execCommand = ["WriteImageInfoToText","--inFilename",image, "--outPrefix", infoPrefix]
         subprocess.check_call(execCommand)
         # get origin, size, and spacing data
@@ -691,7 +680,7 @@ def SelectCuttingPlane(input_file):
     if file_format == "nrrd":
         print("\nCreating mesh from: " + input_file)
         print("\nSaving as: " + input_vtk)
-        xml_filename = input_file.rsplit(os.sep, 1)[0] + "/cutting_plane_nrrd2vtk.xml"
+        xml_filename = os.path.join(os.path.dirname(input_file), "cutting_plane_nrrd2vtk.xml")
         create_meshfromDT_xml(xml_filename, input_file, input_vtk)
         execCommand = ["MeshFromDistanceTransforms", xml_filename]
         subprocess.check_call(execCommand)
