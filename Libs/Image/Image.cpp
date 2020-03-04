@@ -396,7 +396,7 @@ bool Image::threshold(PixelType min, PixelType max)
   return true;
 }
 
-Vector3 Image::centerOfMass() const
+Point3 Image::centerOfMass() const
 {
   if (!this->image)
   {
@@ -404,8 +404,7 @@ Vector3 Image::centerOfMass() const
     return false;
   }
 
-  Vector3 com; //center of mass
-  Vector3 mean;
+  Point3 mean;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -428,17 +427,20 @@ Vector3 Image::centerOfMass() const
     ++imageIt;
   }
 
-  com = mean / static_cast<float>(numPixels);
+  mean[0] /= static_cast<double>(numPixels);
+  mean[1] /= static_cast<double>(numPixels);
+  mean[2] /= static_cast<double>(numPixels);
 
-  return com;
+  return mean;
 }
 
 //todo: ack! most of these should be void functions. Have confidence the operations work! Trust the worker! 
-void Image::applyTransform(const Transform &transform)
+bool Image::applyTransform(const Transform &transform)
 {
   if (!this->image)
   {
     std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
   }
 
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
@@ -467,10 +469,12 @@ void Image::applyTransform(const Transform &transform)
   {
     std::cerr << "Transform failed:" << std::endl;
     std::cerr << exp << std::endl;
+    return false;
   }
 #if DEBUG_CONSOLIDATION
   std::cout << "Transform succeeded!\n";
 #endif
+  return true;
 }
 
 bool Image::fastMarch(float isovalue)

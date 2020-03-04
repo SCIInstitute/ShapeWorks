@@ -270,9 +270,9 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--tx").action("store").type("float").set_default(0.01).help("Description of optionName.");
-  parser.add_option("--ty").action("store").type("float").set_default(0.01).help("Description of optionName.");
-  parser.add_option("--tz").action("store").type("float").set_default(0.01).help("Description of optionName.");
+  parser.add_option("--tx").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--ty").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--tz").action("store").type("double").set_default(0.0).help("Description of optionName.");
 
   Command::buildParser();
 }
@@ -280,11 +280,23 @@ void Translate::buildParser()
 int Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  float tx = static_cast<float>(options.get("tx"));
-  float ty = static_cast<float>(options.get("ty"));
-  float tz = static_cast<float>(options.get("tz"));
+  
+  if (centerofmass)
+  {
+    Point3 com = sharedData.image.centerOfMass();
+    sharedData.transform.translate(com.GetVectorFromOrigin());
+  }
+  else
+  {
+    double tx = static_cast<double>(options.get("tx"));
+    double ty = static_cast<double>(options.get("ty"));
+    double tz = static_cast<double>(options.get("tz"));
 
-  return sharedData.transform.translate(centerofmass, tx, ty, tz);
+    double v[3] = {tx, ty, tz};
+    sharedData.transform.translate(Vector3(v));
+  }
+
+  return 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -293,7 +305,7 @@ int Translate::execute(const optparse::Values &options, SharedCommandData &share
 void ApplyTransform::buildParser()
 {
   const std::string prog = "applytransform";
-  const std::string desc = "apply transformations";
+  const std::string desc = "apply current transformation";
   parser.prog(prog).description(desc);
 
   Command::buildParser();

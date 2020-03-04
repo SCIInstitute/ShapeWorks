@@ -6,7 +6,7 @@ namespace shapeworks {
 
 void Transform::print() const
 {
-  TransformType::Pointer xform = this->get();
+  itkTransformType::Pointer xform = this->get();
   std::cout << xform << std::endl;
 }
 
@@ -18,9 +18,9 @@ void Transform::reset()
   rotangle = 0.0;
 }
 
-void Transform::translate(bool centerofmass, float tx, float ty, float tz)
+void Transform::translate(const Vector3 &v)
 {
-  // translation += v;
+  translation += v;
 }
 
 void Transform::rotate(const Vector3 &axis, double angle)
@@ -32,13 +32,12 @@ void Transform::rotate(const Vector3 &axis, double angle)
 
 void Transform::scale(const Vector3 &s)
 {
-  //todo
-//   scaling = scaling * s;
+  scaling = scaling * s;
 }
 
-Transform::TransformType::Pointer Transform::get() const
+Transform::itkTransformType::Pointer Transform::get() const
 {
-  TransformType::Pointer transform = TransformType::New();
+  itkTransformType::Pointer transform = itkTransformType::New();
   transform->Translate(translation);
   transform->Scale(scaling);
   transform->Rotate3D(rotaxis, rotangle);

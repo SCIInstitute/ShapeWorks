@@ -9,18 +9,18 @@ namespace shapeworks {
 class Transform
 {
 public:
-  using TransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
+  using itkTransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
 
   Transform() : rotangle(0.0) {}
 
-  TransformType::Pointer get() const;
+  itkTransformType::Pointer get() const;
 
   void reset();
-  void translate(bool centerofmass, float tx, float ty, float tz); 
+  void translate(const Vector3 &v); 
   void rotate(const Vector3 &axis, double angle);
   void scale(const Vector3 &s);
 
-  void print() const;
+  void print() const; //todo: operator << and operator >>
 
 private:
   Vector3 scaling;

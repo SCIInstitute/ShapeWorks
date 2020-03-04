@@ -23,8 +23,8 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  Vector3 centerOfMass() const;
-  void applyTransform(const Transform &transform);
+  Point3 centerOfMass() const;
+  bool applyTransform(const Transform &transform);
   bool extractLabel(PixelType label = 1.0);
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<float>::max());
