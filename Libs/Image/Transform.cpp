@@ -21,6 +21,10 @@ void Transform::reset()
 void Transform::translate(const Vector3 &v)
 {
   translation += v;
+#if DEBUG_CONSOLIDATION
+  std::cout << translation;
+  std::cout << "Translate succeeded!\n";
+#endif
 }
 
 void Transform::rotate(const Vector3 &axis, double angle)
@@ -41,7 +45,10 @@ Transform::itkTransformType::Pointer Transform::get() const
   transform->Translate(translation);
   transform->Scale(scaling);
   transform->Rotate3D(rotaxis, rotangle);
-  
+
+#if DEBUG_CONSOLIDATION
+  std::cout << *transform;
+#endif
   return transform;
 }
 
