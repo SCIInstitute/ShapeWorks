@@ -23,7 +23,7 @@ void
 ParticleMeanCurvatureAttribute<TNumericType, VDimension>::
 ComputeCurvatureStatistics(const ParticleSystemType *system, unsigned int d)
 {
-  typedef ParticleImplicitSurfaceDomain<TNumericType, VDimension> DomainType;
+  typedef ParticleImageDomainWithCurvature<TNumericType, VDimension> DomainType;
   typedef typename DomainType::ImageType ImageType;
 
   // Loop through a zero crossing image, project all the zero crossing points
