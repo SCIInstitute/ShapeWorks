@@ -261,24 +261,47 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// CenterOfMassAlign
+// Translate
 ///////////////////////////////////////////////////////////////////////////////
-void CenterOfMassAlign::buildParser()
+void Translate::buildParser()
 {
-  const std::string prog = "center-of-mass-align";
-  const std::string desc = "performs translational alignment of a given shape image based on either its center of mass or a given 3d point";
+  const std::string prog = "translate";
+  const std::string desc = "translates images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--headerfile").action("store").type("string").set_default("").help("name of file to write header information");
+  parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
+  parser.add_option("--tx").action("store").type("float").set_default(0.01).help("Description of optionName.");
+  parser.add_option("--ty").action("store").type("float").set_default(0.01).help("Description of optionName.");
+  parser.add_option("--tz").action("store").type("float").set_default(0.01).help("Description of optionName.");
 
   Command::buildParser();
 }
 
-int CenterOfMassAlign::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  std::string headerfile = static_cast<std::string>(options.get("headerfile"));
+  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
+  float tx = static_cast<float>(options.get("tx"));
+  float ty = static_cast<float>(options.get("ty"));
+  float tz = static_cast<float>(options.get("tz"));
 
-  return 1; // sharedData.image.centerofmassalign(headerfile); //todo
+  return sharedData.transform.translate(centerofmass, tx, ty, tz);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ApplyTransform
+///////////////////////////////////////////////////////////////////////////////
+void ApplyTransform::buildParser()
+{
+  const std::string prog = "applytransform";
+  const std::string desc = "apply transformations";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+int ApplyTransform::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  return sharedData.image.applyTransform(sharedData.transform);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -345,9 +368,9 @@ int Threshold::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // FastMarch
 ///////////////////////////////////////////////////////////////////////////////
-void FastMarching::buildParser()
+void FastMarch::buildParser()
 {
-  const std::string prog = "fastmarching";
+  const std::string prog = "fastmarch";
   const std::string desc = "computes distance transform volume from a binary (antialiased) image";
   parser.prog(prog).description(desc);
 
@@ -356,7 +379,7 @@ void FastMarching::buildParser()
   Command::buildParser();
 }
 
-int FastMarching::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int FastMarch::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float isovalue = static_cast<float>(options.get("isovalue"));
 

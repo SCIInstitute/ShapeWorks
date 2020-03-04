@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "Mesh.h"
 #include "ParticleSystem.h"
+#include "Transform.h"
 #include <string>
 
 namespace shapeworks {
@@ -24,6 +25,7 @@ struct SharedCommandData
   Image image;
   Mesh mesh;
   ParticleSystem particleSystem;
+  Transform transform;
 
   //maybe this only needs to be a Point
   //itk::TranslationTransform<double, 3/*dimension*/>::Pointer imageTransform;

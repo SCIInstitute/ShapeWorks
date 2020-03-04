@@ -18,9 +18,9 @@ void Transform::reset()
   rotangle = 0.0;
 }
 
-void Transform::translate(const Vector3 &v)
+void Transform::translate(bool centerofmass, float tx, float ty, float tz)
 {
-  translation += v;
+  // translation += v;
 }
 
 void Transform::rotate(const Vector3 &axis, double angle)

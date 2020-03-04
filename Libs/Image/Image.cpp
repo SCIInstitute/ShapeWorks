@@ -324,137 +324,6 @@ bool Image::pad(int padding, PixelType value)
 
 }
 
-/// centerofmassalign
-///
-/// performs translational alignment of a given shape image based on either its center of mass or a given 3d point
-///
-/// \param headerFile   Name of file to write header information
-#if 0
-bool Image::centerofmassalign(const std::string &headerFile)
-{
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
-  double imageCenterX, imageCenterY, imageCenterZ;
-  const unsigned int Dimension = 3;
-
-  using TransformType = itk::TranslationTransform<double, Dimension>;
-  TransformType::Pointer transform = TransformType::New();
-  TransformType::OutputVectorType translation;
-
-  itk::ImageRegionIteratorWithIndex <ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
-  float numPixels = 0.0, meanX = 0.0, meanY = 0.0, meanZ = 0.0;
-  while(!imageIt.IsAtEnd())
-  {
-      PixelType val = imageIt.Get();
-      ImageType::IndexType index;
-      ImageType::PointType point;
-      index = imageIt.GetIndex();
-
-      if(val == 1)
-      {
-          numPixels = numPixels + 1;
-          image->TransformIndexToPhysicalPoint(index, point);
-          meanX = meanX + point[0];
-          meanY = meanY + point[1];
-          meanZ = meanZ + point[2];
-      }
-      ++imageIt;
-  }
-
-  meanX = meanX/numPixels;
-  meanY = meanY/numPixels;
-  meanZ = meanZ/numPixels;
-
-  imageCenterX = meanX;
-  imageCenterY = meanY;
-  imageCenterZ = meanZ;
-
-  ImageType::PointType origin = image->GetOrigin();
-  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
-
-  ImageType::IndexType index;
-  ImageType::PointType point;
-  ImageType::PointType center;
-
-  index[0] = 0; index[1] = 0; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] = point[0]; center[1] = point[1]; center[2] = point[2];
-
-  index[0] = 0; index[1] = 0; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = 0; index[1] = size[1]-1; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = 0; index[1] = size[1]-1; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = 0; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = 0; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  center[0] /= 8.0; center[1] /= 8.0; center[2] /= 8.0;
-
-  // move object's origin to zero then move to the region center
-  translation[0] = -1*(-imageCenterX + center[0]);
-  translation[1] = -1*(-imageCenterY + center[1]);
-  translation[2] = -1*(-imageCenterZ + center[2]);
-
-  if (headerFile.empty())
-  {
-    std::cerr << "Empty filename passed to write data; returning false." << std::endl;
-    return false;
-  }
-
-  std::ofstream ofs;
-  std::string fname = headerFile;
-  const char *filename = fname.c_str();
-  ofs.open(filename);
-
-  ofs << "Translation: " << translation[0] << " " << translation[1] << " " << translation[2] << "\n";
-  ofs << "Origin: " << origin[0] << " " << origin[1] << " " << origin[2] << "\n";
-  ofs << "Object Center: " << imageCenterX << " " << imageCenterY << " " << imageCenterZ << "\n";
-  ofs << "Image Center: " << center[0] << " " << center[1] << " " << center[2] << "\n";
-
-  ofs.close();
-
-  try
-  {
-    transform->Translate(translation);
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Center of mass alignment failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-#if DEBUG_CONSOLIDATION
-  std::cout << "Center of mass alignment succeeded!\n";
-#endif
-  return true;
-
-}
-#endif
-
 bool Image::extractLabel(PixelType label)
 {
   threshold(label, label);
@@ -527,7 +396,7 @@ bool Image::threshold(PixelType min, PixelType max)
   return true;
 }
 
-Point3 Image::centerOfMass() const
+Vector3 Image::centerOfMass() const
 {
   if (!this->image)
   {
@@ -535,8 +404,8 @@ Point3 Image::centerOfMass() const
     return false;
   }
 
-  Point3 com; //center of mass
-  Point3 mean;
+  Vector3 com; //center of mass
+  Vector3 mean;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -612,31 +481,27 @@ bool Image::fastMarch(float isovalue)
     return false;
   }
 
-  const int VDimension = 3;
-  typedef float ScalarType;
-  typedef itk::Image<ScalarType, VDimension> ScalarImageType;
+  using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
 
-  typedef itk::ReinitializeLevelSetImageFilter<ScalarImageType> ReinitializeLevelSetImageFilterType;
+  FilterType::Pointer filter = FilterType::New();
 
-  typename ReinitializeLevelSetImageFilterType::Pointer distanceMapImageFilter = ReinitializeLevelSetImageFilterType::New();
-
-  distanceMapImageFilter->SetInput(this->image);
-  distanceMapImageFilter->NarrowBandingOff();
-  distanceMapImageFilter->SetLevelSetValue(isovalue);
+  filter->SetInput(this->image);
+  filter->NarrowBandingOff();
+  filter->SetLevelSetValue(isovalue);
 
   try
   {
-    distanceMapImageFilter->Update();
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Fast Marching failed:" << std::endl;
+    std::cerr << "Fast March failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Fast Marching succeeded!\n";
+  std::cout << "Fast March succeeded!\n";
 #endif
   return true;
 }

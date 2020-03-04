@@ -16,7 +16,7 @@ public:
   TransformType::Pointer get() const;
 
   void reset();
-  void translate(const Vector3 &v); 
+  void translate(bool centerofmass, float tx, float ty, float tz); 
   void rotate(const Vector3 &axis, double angle);
   void scale(const Vector3 &s);
 
