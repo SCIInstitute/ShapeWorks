@@ -105,7 +105,7 @@ jobs:
 
     - name: make test
       shell: bash -l {0}
-      run: conda activate shapeworks && cd build && ctest -VV
+      run: conda activate shapeworks && cd build && ls -laR /home/runner/work/ShapeWorks/ShapeWorks/Testing/data/ && ctest -VV
   
     - name: Replace Qt SQL Stuff
       run: mv /tmp/lib*.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/
