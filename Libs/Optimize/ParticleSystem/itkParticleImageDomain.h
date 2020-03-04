@@ -20,10 +20,12 @@
 #include <fstream>
 #include <vtkContourFilter.h>
 #include <vtkMassProperties.h>
-#include "itkImage.h"
-#include "itkParticleRegionDomain.h"
-#include "itkLinearInterpolateImageFunction.h"
+#include <itkImage.h>
+#include <itkParticleRegionDomain.h>
+#include <itkLinearInterpolateImageFunction.h>
 #include "itkImageToVTKImageFilter.h"
+#include <itkZeroCrossingImageFilter.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
 
 // we have to undef foreach here because both Qt and OpenVDB define foreach
 #undef foreach
@@ -60,7 +62,7 @@ public:
   typedef Image<T, VDimension> ImageType;
 
 #ifdef USE_OPENVDB
-  openvdb::FloatGrid::Ptr m_vdbImage;
+  openvdb::FloatGrid::Ptr m_VDBImage;
 #endif
 
   /** Method for creation through the object factory. */
@@ -81,6 +83,9 @@ public:
   typename ImageType::SizeType m_Size;
   typename ImageType::SpacingType m_Spacing;
 
+  PointType m_Origin;
+  PointType m_ZeroCrossingPoint;
+
   double m_SurfaceArea;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
@@ -90,12 +95,12 @@ public:
 #ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
-    m_vdbImage = openvdb::FloatGrid::create(500000.0);
-    m_vdbImage->setGridClass(openvdb::GRID_LEVEL_SET);
-    auto vdbAccessor = m_vdbImage->getAccessor();
+    m_VDBImage = openvdb::FloatGrid::create(500000.0);
+    m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = m_VDBImage->getAccessor();
 
     m_Size = I->GetRequestedRegion().GetSize();
-    m_Spacing = I->GetRequestedRegion().GetSpacing();
+    m_Spacing = I->GetSpacing();
 
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
@@ -110,9 +115,10 @@ public:
         vdbAccessor.setValue(coord, pixel);
         ++it;
     }
-    origin = I->GetOrigin();
+    m_Origin = I->GetOrigin();
 
     // Compute surface area
+    //TODO: Refactor
     typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
     itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
     itk2vtkConnector->SetInput(I);
@@ -124,13 +130,33 @@ public:
     mp->SetInputData(ls->GetOutput());
     mp->Update();
     m_SurfaceArea = mp->GetSurfaceArea();
-#else
 
+
+    // Compute zero crossing point
+    //TODO: Refactor
+    typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+            itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
+    zc->SetInput(I);
+    zc->Update();
+    typename itk::ImageRegionConstIteratorWithIndex < ImageType > zcIt(zc->GetOutput(),
+                                                            zc->GetOutput()->GetRequestedRegion());
+
+    for (zcIt.GoToReverseBegin(); !zcIt.IsAtReverseEnd(); --zcIt) {
+      if (zcIt.Get() == 1.0) {
+        PointType pos;
+        I->TransformIndexToPhysicalPoint(zcIt.GetIndex(), pos);
+        this->m_ZeroCrossingPoint = pos;
+        break;
+      }
+    }
+
+
+    //TODO: REMOVE THIIIISS
     this->Modified();
     m_Image= I;
 
     // Set up the scalar image and interpolation.
-    m_ScalarInterpolator->SetInputImage(m_Image);
+    // m_ScalarInterpolator->SetInputImage(m_Image);
 
     // Grab the upper-left and lower-right corners of the bounding box.  Points
     // are always in physical coordinates, not image index coordinates.
@@ -161,25 +187,34 @@ public:
     
     this->SetLowerBound(l);
     this->SetUpperBound(u);
+#else
 #endif
+  }
+
+  typename ImageType::Pointer m_Image;
+  inline ImageType *GetImage() const {
+    return m_Image;
   }
 
   inline double GetSurfaceArea() const {
     return m_SurfaceArea;
   }
 
-  PointType origin;
   inline PointType GetOrigin() const {
-      return origin;
+      return m_Origin;
   }
 
   inline typename ImageType::SizeType GetSize() const {
     return m_Size;
   }
 
-    inline typename ImageType::SpacingType GetSpacing() const {
-      return m_Spacing;
-    }
+  inline typename ImageType::SpacingType GetSpacing() const {
+    return m_Spacing;
+  }
+
+  inline PointType GetZeroCrossingPoint() const {
+    return m_ZeroCrossingPoint;
+  }
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer. */
@@ -191,7 +226,7 @@ public:
           auto sp = p;
           for(int i=0; i<3; i++) { sp[i] -= o[i]; }
           const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-          const T v2 = openvdb::tools::BoxSampler::sample(m_vdbImage->tree(), coord);
+          const T v2 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
           return v2;
 #else
           const T v1 =  m_ScalarInterpolator->Evaluate(p);
@@ -204,7 +239,7 @@ public:
 
   unsigned long GetMemUsage() const {
 #ifdef USE_OPENVDB
-      return m_vdbImage->memUsage();
+      return m_VDBImage->memUsage();
 #else
       return m_Image->Capacity() * sizeof(T);
 #endif
@@ -224,7 +259,7 @@ public:
   /** Used when a domain is fixed. */
   void DeleteImages()
   {
-    m_vdbImage = 0;
+    m_VDBImage = 0;
   }
 
 protected:

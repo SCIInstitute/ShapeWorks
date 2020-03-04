@@ -69,10 +69,10 @@ public:
     typedef itk::DiscreteGaussianImageFilter<ImageType, ImageType> DiscreteGaussianImageFilterType;
     typename DiscreteGaussianImageFilterType::Pointer f = DiscreteGaussianImageFilterType::New();
 
-    double sig =  this->GetImage()->GetSpacing()[0] * 0.5;
+    double sig =  this->GetSpacing()[0] * 0.5;
     
     f->SetVariance(sig);
-    f->SetInput(this->GetImage());
+    f->SetInput(I);
     f->SetUseImageSpacingOn();
     f->Update();
 
@@ -92,7 +92,7 @@ public:
       if (it.Get() < 4.0 && it.Get() > -4.0)
         {      
          PointType pos;
-         this->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
+         I->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
          oit.Set(this->MeanCurvature(pos));
         }
       else oit.Set(1.0e-6);
