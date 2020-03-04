@@ -128,18 +128,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Binarize : public ImageCommand
-{
-public:
-  static Binarize& getCommand() { static Binarize instance; return instance; }
-
-private:
-  Binarize() { buildParser(); }
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
 class Coverage : public MeshCommand
 {
 public:
@@ -147,6 +135,86 @@ public:
 
 private:
   Coverage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Translate : public TransformCommand
+{
+public:
+  static Translate &getCommand()
+  {
+    static Translate instance;
+    return instance;
+  }
+
+private:
+  Translate() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ApplyTransform : public ImageCommand
+{
+public:
+  static ApplyTransform &getCommand()
+  {
+    static ApplyTransform instance;
+    return instance;
+  }
+
+private:
+  ApplyTransform() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ExtractLabel : public ImageCommand
+{
+public:
+  static ExtractLabel& getCommand() { static ExtractLabel instance; return instance; }
+
+private:
+  ExtractLabel() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class CloseHoles : public ImageCommand
+{
+public:
+  static CloseHoles& getCommand() { static CloseHoles instance; return instance; }
+
+private:
+  CloseHoles() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Threshold : public ImageCommand
+{
+public:
+  static Threshold& getCommand() { static Threshold instance; return instance; }
+
+private:
+  Threshold() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class FastMarch : public ImageCommand
+{
+public:
+  static FastMarch& getCommand() { static FastMarch instance; return instance; }
+
+private:
+  FastMarch() { buildParser(); } 
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

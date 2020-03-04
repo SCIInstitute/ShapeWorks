@@ -27,8 +27,6 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-from DatasetUtils import datasets
-
 def Run_Pipeline(args):
 
     """
@@ -47,18 +45,20 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    filename = "femurdata.zip"
+
+    datasetName = "femur"
+    filename = datasetName + ".zip"
+    # Check if the data is in the right place
+    if not os.path.exists(filename):
+        print("Can't find " + filename + " in the current directory.")
+        import DatasetUtils
+        DatasetUtils.downloadDataset(datasetName)
+
     parentDir="TestFemur/"
-    inputDir = 'TestFemur/femurdata/'
+    inputDir = 'TestFemur/' + datasetName + '/'
 
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
-
-    # # Check if the data is in the right place
-    if not os.path.exists(filename):
-        print("Can't find " + filename + " on the local filesystem.")
-        print("Downloading " + filename + " from SCIGirder.")
-        datasets.downloadDataset(filename)
 
     # extract the zipfile
     print("Extracting data from " + filename + "...")

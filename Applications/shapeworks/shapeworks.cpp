@@ -20,14 +20,19 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(SmoothMesh::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
-  shapeworks.addCommand(Binarize::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
+  shapeworks.addCommand(Translate::getCommand());
+  shapeworks.addCommand(ApplyTransform::getCommand());
+  shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
+  shapeworks.addCommand(CloseHoles::getCommand());
+  shapeworks.addCommand(Threshold::getCommand());
+  shapeworks.addCommand(FastMarch::getCommand());
 
   try {
     shapeworks.run(argc, argv);

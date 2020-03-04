@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "ImageUtils.h"
+#include "Transform.h"
 #include <limits>
 #include <itkImage.h>
 
@@ -20,15 +20,18 @@ public:
   bool read(const std::string &filename);
   bool write(const std::string &filename, bool compressed = true);
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
-  bool binarize(PixelType threshold = std::numeric_limits<PixelType>::epsilon(),
-                PixelType inside = itk::NumericTraits<PixelType>::One,
-                PixelType outside = itk::NumericTraits<PixelType>::Zero);
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
+  Point3 centerOfMass() const;
+  bool applyTransform(const Transform &transform);
+  bool extractLabel(PixelType label = 1.0);
+  bool closeHoles();
+  bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<float>::max());
+  bool fastMarch(float isovalue = 0.0);
   // bool nextfunction(...);
 
-  bool compare_equal(const Image &other);
+  bool operator==(const Image &other) const;
 
 private:
   ImageType::Pointer image;

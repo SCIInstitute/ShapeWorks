@@ -120,9 +120,9 @@ EchoWithColor "Grooming reference  - isolate, hole file, antialias and distance 
 EchoWithColor "${ref_segfilename}" "light_green"
 EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
 
-ExtractGivenLabelImage --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename} --labelVal $foreground
-CloseHoles --inFilename ${ref_segfilename} --outFilename  ${ref_segfilename}
-shapeworks readimage --name ${ref_segfilename} antialias --numiterations $antialias_iterations writeimage --name ${ref_dtnrrdfilename} 
+shapeworks read-image --name ${ref_segfilename} extract-label --label $foreground write-image --name ${ref_segfilename}
+shapeworks read-image --name ${ref_segfilename} closeholes write-image --name ${ref_segfilename}
+shapeworks read-image --name ${ref_segfilename} antialias --numiterations $antialias_iterations write-image --name ${ref_dtnrrdfilename} 
 FastMarching --inFilename ${ref_dtnrrdfilename} --outFilename  ${ref_dtnrrdfilename} --isoValue $isoValue
 
 # xmlfilename=${basename}.genDT.xml
@@ -169,7 +169,7 @@ echo "</dtFiles>" >> "$xmlfilename"
 
 TopologyPreservingSmoothing $xmlfilename
 
-ThresholdImages --inFilename ${ref_tpdtnrrdfilename} --outFilename ${ref_binnrrdfilename} --lowerThresholdLevel -0.00001 
+shapeworks read-image --name ${ref_tpdtnrrdfilename} threshold --min -0.00001 write-image --name ${ref_binnrrdfilename}
 unu save -i ${ref_binnrrdfilename} -o ${ref_binnrrdfilename} -f nrrd -e raw
 
 segPrefixLength=${#seg_prefix}
@@ -224,9 +224,9 @@ do
     EchoWithColor "[1 of 4] Grooming - isolate, hole file, antialias and distance transform generation .................." "light_green"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "light_green"
          
-    ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
-    CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
-    shapeworks readimage --name ${segfilename} antialias --numiterations $antialias_iterations writeimage --name ${dtnrrdfilename} 
+    shapeworks read-image --name ${segfilename} extract-label --label $foreground write-image --name ${segfilename}
+    shapeworks read-image --name ${segfilename} closeholes write-image --name ${segfilename}
+    shapeworks read-image --name ${segfilename} antialias --numiterations $antialias_iterations write-image --name ${dtnrrdfilename} 
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
     
     #     xmlfilename=${basename}.genDT.xml
@@ -293,7 +293,7 @@ do
     
     # threshold the transformed distance transform
     movingToFixedBinFilename=${out_dir}${seg_prefix}.${subject_id}${seg_suffix}.aligned.nrrd
-    ThresholdImages --inFilename $movingToFixedFilename --outFilename $movingToFixedBinFilename --lowerThresholdLevel -0.00001 
+    shapeworks read-image --name ${movingToFixedFilename} threshold --min -0.00001 write-image --name ${movingToFixedBinFilename}
     unu save -i $movingToFixedBinFilename -o $movingToFixedBinFilename -f nrrd -e raw
     
     if [ $process_raw -eq 1 ]

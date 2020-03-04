@@ -52,7 +52,15 @@ private:
 class ParticleSystemCommand : public Command
 {
 public:
-    const std::string type() override { return "ParticleSystem"; }
+  const std::string type() override { return "ParticleSystem"; }
+
+private:
+};
+
+class TransformCommand : public Command
+{
+public:
+  const std::string type() override { return "Transform"; }
 
 private:
 };
@@ -71,6 +79,4 @@ private:
 
 }; // Shapeworks
 
-
 std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);
-
