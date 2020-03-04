@@ -88,7 +88,7 @@ public:
       mode 0 = isotropic adaptivity
       mode 1 = no adaptivity
   */
-  virtual void SetAdaptivityMode(int mode)
+  virtual void SetAdaptivityMode(int mode) override
   {
     if (mode == 0)
       {
@@ -100,10 +100,6 @@ public:
     else if (mode == 1)
       {
       m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
-      }
-    else if (mode == 2)
-      {
-      m_LinkingFunction->SetFunctionA(this->GetQualifierGradientFunction());
       }
     else if (mode == 3)
       {

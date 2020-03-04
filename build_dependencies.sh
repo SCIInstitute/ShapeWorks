@@ -172,7 +172,7 @@ build_itk()
       cmake --build . --config "${BUILD_MODE}" || exit 1
       cmake --build . --config "${BUILD_MODE}" --target install
   else
-      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DCMAKE_BUILD_TYPE="${BUILD_MODE}" -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE="${BUILD_MODE}" -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -312,3 +312,4 @@ echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 
 #build dependencies
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
+
