@@ -96,7 +96,7 @@ TEST(ImageTests, dicom_read_test) {
 
   // read dicom
   Image image;
-  image.read_dicom_dir(test_location + "dcm_files");
+  image.read_dicom_dir(test_location + "dcm_files/");
 
   // read ground truth
   Image ground_truth(test_location + "dicom.nrrd");
