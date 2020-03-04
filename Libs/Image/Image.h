@@ -3,7 +3,7 @@
 #include "Shapeworks.h"
 #include "ImageUtils.h"
 #include <limits>
-#include <itkTranslationTransform.h>
+#include <itkImage.h>
 
 namespace shapeworks {
 
@@ -15,10 +15,10 @@ public:
   using ImageType = itk::Image<PixelType, dims>;
 
   Image() {}
-  Image(const std::string &inFilename) { read(inFilename); }
+  Image(const std::string &filename) { read(filename); }
 
-  bool read(const std::string &inFilename);
-  bool write(const std::string &outFilename, bool useCompression = true);
+  bool read(const std::string &filename);
+  bool write(const std::string &filename, bool compressed = true);
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
   bool binarize(PixelType threshold = std::numeric_limits<PixelType>::epsilon(),
                 PixelType inside = itk::NumericTraits<PixelType>::One,

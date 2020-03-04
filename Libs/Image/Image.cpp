@@ -1,6 +1,5 @@
 #include "Image.h"
 
-#include <itkImage.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkAntiAliasBinaryImageFilter.h>
@@ -11,6 +10,7 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <itkTranslationTransform.h>
 
 namespace shapeworks {
 
@@ -18,9 +18,9 @@ namespace shapeworks {
 
 /// read
 /// \param filename
-bool Image::read(const std::string &inFilename)
+bool Image::read(const std::string &filename)
 {
-  if (inFilename.empty())
+  if (filename.empty())
   {
     std::cerr << "Empty filename passed to read; returning false." << std::endl;
     return false;
@@ -28,20 +28,20 @@ bool Image::read(const std::string &inFilename)
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(inFilename);
+  reader->SetFileName(filename);
   try
   {
     reader->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Failed to read image " << inFilename << std::endl;
+    std::cerr << "Failed to read image " << filename << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Successfully read image " << inFilename << std::endl;
+  std::cout << "Successfully read image " << filename << std::endl;
 #endif
   this->image = reader->GetOutput();
   return true;
@@ -49,15 +49,15 @@ bool Image::read(const std::string &inFilename)
 
 /// write
 /// \param filename
-/// \param useCompression
-bool Image::write(const std::string &outFilename, bool useCompression)
+/// \param compressed
+bool Image::write(const std::string &filename, bool compressed)
 {
   if (!this->image)
   {
     std::cerr << "No image to write, so returning false." << std::endl;
     return false;
   }
-  if (outFilename.empty())
+  if (filename.empty())
   {
     std::cerr << "Empty filename passed to write; returning false." << std::endl;
     return false;
@@ -66,8 +66,8 @@ bool Image::write(const std::string &outFilename, bool useCompression)
   using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput(this->image);
-  writer->SetFileName(outFilename);
-  writer->SetUseCompression(useCompression);
+  writer->SetFileName(filename);
+  writer->SetUseCompression(compressed);
 
   try
   {
@@ -75,13 +75,13 @@ bool Image::write(const std::string &outFilename, bool useCompression)
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Failed to write image to " << outFilename << std::endl;
+    std::cerr << "Failed to write image to " << filename << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Successfully wrote image " << outFilename << std::endl;
+  std::cout << "Successfully wrote image " << filename << std::endl;
 #endif
   return true;
 }
