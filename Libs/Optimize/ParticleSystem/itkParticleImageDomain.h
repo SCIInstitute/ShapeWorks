@@ -61,8 +61,8 @@ public:
     // Cast points to higher precision if needed.  Parent class uses doubles
     // because they are compared directly with points in the particle system,
     // which are always double precision.
-    typename PointType l;
-    typename PointType u;
+    PointType l;
+    PointType u;
     
     for (unsigned int i = 0; i < VDimension; i++)
       {

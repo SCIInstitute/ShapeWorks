@@ -20,7 +20,7 @@ public:
   typedef SmartPointer<ParticleRegionDomain>  Pointer;
 
   /** Point type used to store particle locations. */
-  typedef ParticleDomain<VDimension>::PointType PointType;
+  typedef typename ParticleDomain<VDimension>::PointType PointType;
 
   /** Apply any constraints to the given point location.  This method may, for
       example, implement boundary conditions or restrict points to lie on a

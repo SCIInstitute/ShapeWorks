@@ -32,7 +32,7 @@ class ParticleImageDomainWithCurvature : public ParticleImageDomainWithHessians<
 public:
   /** Standard class typedefs */
   typedef ParticleImageDomainWithHessians<T, VDimension> Superclass;
-  typedef SmartPointer<Self>  Pointer;
+  typedef SmartPointer<ParticleImageDomainWithCurvature<T, VDimension>>  Pointer;
 
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;

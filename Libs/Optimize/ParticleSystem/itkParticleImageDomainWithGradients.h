@@ -31,7 +31,7 @@ template <class T, unsigned int VDimension=3>
 class ParticleImageDomainWithGradients : public ParticleImageDomain<T, VDimension>
 {
 public:
-  typedef SmartPointer<Self>  Pointer;
+  typedef SmartPointer<ParticleImageDomainWithGradients<T, VDimension>>  Pointer;
 
   /** Point type of the domain (not necessarily of the image). */
   typedef typename ParticleImageDomain<T, VDimension>::PointType PointType;
