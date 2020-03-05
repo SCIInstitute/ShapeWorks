@@ -10,6 +10,8 @@ add_executable(ImageTests
 
 target_link_libraries(ImageTests
   tinyxml Mesh vgl vgl_algo Image Optimize Utils trimesh2
-  gtest_main ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+  GTest::Main
+  )
 
 add_test(NAME ImageTests COMMAND ImageTests)
