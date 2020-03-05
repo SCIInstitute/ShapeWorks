@@ -157,27 +157,23 @@ public:
     }
 
 
-    //TODO: REMOVE THIIIISS
-    this->Modified();
-    m_Image= I;
-
     // Set up the scalar image and interpolation.
     // m_ScalarInterpolator->SetInputImage(m_Image);
 
     // Grab the upper-left and lower-right corners of the bounding box.  Points
     // are always in physical coordinates, not image index coordinates.
     typename ImageType::RegionType::IndexType idx
-      = m_Image->GetRequestedRegion().GetIndex(); // upper lh corner
+      = I->GetRequestedRegion().GetIndex(); // upper lh corner
     typename ImageType::RegionType::SizeType sz
-      = m_Image->GetRequestedRegion().GetSize();  // upper lh corner
+      = I->GetRequestedRegion().GetSize();  // upper lh corner
 
     typename ImageType::PointType l0;
-    m_Image->TransformIndexToPhysicalPoint(idx, l0);
+    I->TransformIndexToPhysicalPoint(idx, l0);
     for (unsigned int i = 0; i < VDimension; i++)
         idx[i] += sz[i]-1;
 
     typename ImageType::PointType u0;
-    m_Image->TransformIndexToPhysicalPoint(idx, u0);
+    I->TransformIndexToPhysicalPoint(idx, u0);
 
     // Cast points to higher precision if needed.  Parent class uses doubles
     // because they are compared directly with points in the particle system,
@@ -195,11 +191,6 @@ public:
     this->SetUpperBound(u);
 #else
 #endif
-  }
-
-  typename ImageType::Pointer m_Image;
-  inline ImageType *GetImage() const {
-    return m_Image;
   }
 
   inline double GetSurfaceArea() const {
