@@ -350,7 +350,8 @@ bool Image::is_directory(const std::string &pathname)
 
 bool Image::pad(int padding, PixelType value)
 {
-  if (!this->image) {
+  if (!this->image)
+  {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -377,7 +378,9 @@ bool Image::pad(int padding, PixelType value)
   try
   {
     padFilter->Update();
-  } catch (itk::ExceptionObject &exp) {
+  }
+  catch (itk::ExceptionObject &exp)
+  {
     std::cerr << "Pad image with constant failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
