@@ -7,12 +7,12 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QXmlStreamWriter>
+
 // vtk
 #include <vtkRenderWindow.h>
 #include <vtkPolyDataWriter.h>
 
 // studio
-#include <Visualization/ShapeWorksStudioApp.h>
 #include <Data/Preferences.h>
 #include <Groom/GroomTool.h>
 #include <Optimize/OptimizeTool.h>
@@ -20,6 +20,7 @@
 #include <Data/Project.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
+#include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
 #include <Visualization/Visualizer.h>

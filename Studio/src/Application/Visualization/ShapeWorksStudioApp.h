@@ -1,5 +1,4 @@
-#ifndef STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H
-#define STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H
+#pragma once
 
 #include <QMainWindow>
 #include <QActionGroup>
@@ -8,9 +7,9 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QTimer>
-#include "Data/PreferencesWindow.h"
-#include <vtkCamera.h>
 #include <QProgressBar>
+
+#include <Data/PreferencesWindow.h>
 
 class Lightbox;
 class GroomTool;
@@ -108,6 +107,7 @@ private:
   void set_view_combo_item_enabled(int item, bool value);
 
   void disableAllActions();
+
   void enablePossibleActions();
 
   void update_from_preferences();
@@ -128,12 +128,12 @@ private:
   QActionGroup* action_group_;
 
   QSharedPointer<Lightbox> lightbox_;
-
   QSharedPointer<GroomTool> groom_tool_;
   QSharedPointer<OptimizeTool> optimize_tool_;
   QSharedPointer<AnalysisTool> analysis_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
+
   //all the preferences
   Preferences preferences_;
 
@@ -151,5 +151,3 @@ private:
   QProgressBar* progressBar_;
   std::string data_dir_, currentMessage_;
 };
-
-#endif /* STUDIO_APPLICATION_SHAPEWORKSSTUDIOAPP_H */
