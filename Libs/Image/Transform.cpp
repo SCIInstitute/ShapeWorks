@@ -22,7 +22,7 @@ void Transform::translate(const Vector3 &v)
 {
   translation += v;
 #if DEBUG_CONSOLIDATION
-  std::cout << translation;
+  std::cout << v;
   std::cout << "Translate succeeded!\n";
 #endif
 }

@@ -13,6 +13,8 @@ option(Build_View2     "Build view2"        OFF)
 option(Build_Studio    "Build studio"       OFF)
 option(Python_API      "Python API"         ON)
 option(BUILD_TESTS     "Build tests"        ON)
+option(DEBUG_CONSOLIDATION "Debug consolidation code" OFF) # Remove when done (TODO)
+
 if ("${Build_Post}" OR "${Build_View2}" OR "${Build_Studio}")
   set(SHAPEWORKS_GUI ON)
   set(SHAPEWORKS_QT_REQUIRED REQUIRED)
@@ -143,9 +145,6 @@ endif()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
-
-# For consolidating the independent executables. Remove when done (TODO)
-set(DEBUG_CONSOLIDATION false)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)

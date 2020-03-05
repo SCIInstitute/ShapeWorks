@@ -478,37 +478,4 @@ bool Image::applyTransform(const Transform &transform)
   return true;
 }
 
-bool Image::fastMarch(float isovalue)
-{
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
-  using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
-
-  FilterType::Pointer filter = FilterType::New();
-
-  filter->SetInput(this->image);
-  filter->NarrowBandingOff();
-  filter->SetLevelSetValue(isovalue);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Fast March failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Fast March succeeded!\n";
-#endif
-  return true;
-}
-
 } // Shapeworks
