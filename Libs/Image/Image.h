@@ -18,7 +18,6 @@ public:
   Image(const std::string &inFilename) { read(inFilename); }
 
   bool read(const std::string &inFilename);
-  bool read_dicom_dir(const std::string &dicom_dir);
   bool write(const std::string &outFilename, bool useCompression = true);
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
   bool binarize(PixelType threshold = std::numeric_limits<PixelType>::epsilon(),
@@ -32,7 +31,11 @@ public:
   bool compare_equal(const Image &other);
 
 private:
+
+  static bool is_directory(const std::string &pathname);
+
+  bool read_image_dir(const std::string &pathname);
+
   ImageType::Pointer image;
 };
-
 } // shapeworks

@@ -15,6 +15,8 @@
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
 
+#include <sys/stat.h>
+
 namespace shapeworks {
 
 //todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
@@ -23,10 +25,13 @@ namespace shapeworks {
 /// \param filename
 bool Image::read(const std::string &inFilename)
 {
-  if (inFilename.empty())
-  {
+  if (inFilename.empty()) {
     std::cerr << "Empty filename passed to read; returning false." << std::endl;
     return false;
+  }
+
+  if (Image::is_directory(inFilename)) {
+    return this->read_image_dir(inFilename);
   }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -35,9 +40,7 @@ bool Image::read(const std::string &inFilename)
   try
   {
     reader->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
+  } catch (itk::ExceptionObject &exp) {
     std::cerr << "Failed to read image " << inFilename << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -50,34 +53,28 @@ bool Image::read(const std::string &inFilename)
   return true;
 }
 
-/// read_dicom_dir
-/// \param dicom_dir directory of dicom files
-bool Image::read_dicom_dir(const std::string &dicom_dir)
+/// read_image_dir
+/// \param pathname directory containing image series
+bool Image::read_image_dir(const std::string &pathname)
 {
-  // read in as dicom stack
   using ReaderType = itk::ImageSeriesReader<ImageType>;
   using ImageIOType = itk::GDCMImageIO;
   using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
 
   ImageIOType::Pointer gdcm_io = ImageIOType::New();
   InputNamesGeneratorType::Pointer input_names = InputNamesGeneratorType::New();
-  input_names->SetInputDirectory( dicom_dir );
+  input_names->SetInputDirectory(pathname);
 
   const ReaderType::FileNamesContainer &filenames = input_names->GetInputFileNames();
-
   ReaderType::Pointer reader = ReaderType::New();
+  reader->SetImageIO(gdcm_io);
+  reader->SetFileNames(filenames);
 
-  reader->SetImageIO( gdcm_io );
-  reader->SetFileNames( filenames );
-  ImageType::Pointer data = reader->GetOutput();
-  data = reader->GetOutput();
   try
   {
     reader->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Failed to read dicom dir: " << dicom_dir << std::endl;
+  } catch (itk::ExceptionObject &exp) {
+    std::cerr << "Failed to read dicom dir: " << pathname << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
@@ -91,13 +88,11 @@ bool Image::read_dicom_dir(const std::string &dicom_dir)
 /// \param useCompression
 bool Image::write(const std::string &outFilename, bool useCompression)
 {
-  if (!this->image)
-  {
+  if (!this->image) {
     std::cerr << "No image to write, so returning false." << std::endl;
     return false;
   }
-  if (outFilename.empty())
-  {
+  if (outFilename.empty()) {
     std::cerr << "Empty filename passed to write; returning false." << std::endl;
     return false;
   }
@@ -111,9 +106,7 @@ bool Image::write(const std::string &outFilename, bool useCompression)
   try
   {
     writer->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
+  } catch (itk::ExceptionObject &exp) {
     std::cerr << "Failed to write image to " << outFilename << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -131,35 +124,33 @@ bool Image::write(const std::string &outFilename, bool useCompression)
 /// \param numLayers      size of region around a pixel to sample
 bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayers)
 {
-  if (!this->image)
-  {
+  if (!this->image) {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
-  
+
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   filter->SetMaximumRMSError(maxRMSErr);
   filter->SetNumberOfIterations(numIterations);
-  if (numLayers)
+  if (numLayers) {
     filter->SetNumberOfLayers(numLayers);
+  }
 
   filter->SetInput(this->image);
   this->image = filter->GetOutput();
 
   try
   {
-    filter->Update();  
-  }
-  catch (itk::ExceptionObject &exp)
-  {
+    filter->Update();
+  } catch (itk::ExceptionObject &exp) {
     std::cerr << "Antialias filter failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
 #if DEBUG_CONSOLIDATION
- std::cout << "Antialias filter succeeded!\n";
+  std::cout << "Antialias filter succeeded!\n";
 #endif
   return true;
 }
@@ -170,8 +161,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
 /// \param outside    value for outside region [default is 0]
 bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 {
-  if (!this->image)
-  {
+  if (!this->image) {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -187,10 +177,8 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 
   try
   {
-    filter->Update();  
-  }
-  catch (itk::ExceptionObject &exp)
-  {
+    filter->Update();
+  } catch (itk::ExceptionObject &exp) {
     std::cerr << "Binarize filter failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -206,8 +194,7 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 /// recenters by changing origin (in the image header) to the physical coordinates of the center of the image
 bool Image::recenter()
 {
-  if (!this->image)
-  {
+  if (!this->image) {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -221,10 +208,8 @@ bool Image::recenter()
 
   try
   {
-    filter->Update();  
-  }
-  catch (itk::ExceptionObject &exp)
-  {
+    filter->Update();
+  } catch (itk::ExceptionObject &exp) {
     std::cerr << "Recenter image failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -245,8 +230,7 @@ bool Image::recenter()
 /// \param outputSize     image size can be changed [default stays the same]
 bool Image::isoresample(double isoSpacing, Dims outputSize)
 {
-  if (!this->image)
-  {
+  if (!this->image) {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -258,9 +242,8 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   resampler->SetOutputSpacing(spacing);
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
-  
-  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
-  {
+
+  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0) {
     ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
     ImageType::SpacingType inputSpacing = image->GetSpacing();
     outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / isoSpacing);
@@ -274,9 +257,7 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   try
   {
     resampler->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
+  } catch (itk::ExceptionObject &exp) {
     std::cerr << "Resample images to be isotropic failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -335,10 +316,21 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
+bool Image::is_directory(const std::string &pathname)
+{
+  struct stat info;
+  if (stat(pathname.c_str(), &info) != 0) {
+    return false;
+  }
+  else if (info.st_mode & S_IFDIR) {
+    return true;
+  }
+  return false;
+}
+
 bool Image::pad(int padding, PixelType value)
 {
-  if (!this->image)
-  {
+  if (!this->image) {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -364,10 +356,8 @@ bool Image::pad(int padding, PixelType value)
 
   try
   {
-    padFilter->Update();  
-  }
-  catch (itk::ExceptionObject &exp)
-  {
+    padFilter->Update();
+  } catch (itk::ExceptionObject &exp) {
     std::cerr << "Pad image with constant failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -377,9 +367,5 @@ bool Image::pad(int padding, PixelType value)
   std::cout << "Pad image with constant succeeded!\n";
 #endif
   return true;
-
 }
-
 } // Shapeworks
-
-

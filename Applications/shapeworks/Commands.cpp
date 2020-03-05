@@ -50,16 +50,7 @@ void ReadImage::buildParser()
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
-  std::string dicom_dir = options["dicom_dir"];
-
-  if (dicom_dir != "")
-  {
-    return sharedData.image.read_dicom_dir(dicom_dir);
-  }
-  else
-  {
-    return sharedData.image.read(filename);
-  }
+  return sharedData.image.read(filename);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
