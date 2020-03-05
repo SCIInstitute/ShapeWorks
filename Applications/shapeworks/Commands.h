@@ -207,16 +207,4 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-class FastMarch : public ImageCommand
-{
-public:
-  static FastMarch& getCommand() { static FastMarch instance; return instance; }
-
-private:
-  FastMarch() { buildParser(); } 
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
 } // shapeworks
