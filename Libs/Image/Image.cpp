@@ -25,12 +25,14 @@ namespace shapeworks {
 /// \param filename
 bool Image::read(const std::string &inFilename)
 {
-  if (inFilename.empty()) {
+  if (inFilename.empty())
+  {
     std::cerr << "Empty filename passed to read; returning false." << std::endl;
     return false;
   }
 
-  if (Image::is_directory(inFilename)) {
+  if (Image::is_directory(inFilename))
+  {
     return this->read_image_dir(inFilename);
   }
 
@@ -40,7 +42,9 @@ bool Image::read(const std::string &inFilename)
   try
   {
     reader->Update();
-  } catch (itk::ExceptionObject &exp) {
+  }
+  catch (itk::ExceptionObject &exp)
+  {
     std::cerr << "Failed to read image " << inFilename << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -88,11 +92,13 @@ bool Image::read_image_dir(const std::string &pathname)
 /// \param useCompression
 bool Image::write(const std::string &outFilename, bool useCompression)
 {
-  if (!this->image) {
+  if (!this->image)
+  {
     std::cerr << "No image to write, so returning false." << std::endl;
     return false;
   }
-  if (outFilename.empty()) {
+  if (outFilename.empty())
+  {
     std::cerr << "Empty filename passed to write; returning false." << std::endl;
     return false;
   }
@@ -106,7 +112,9 @@ bool Image::write(const std::string &outFilename, bool useCompression)
   try
   {
     writer->Update();
-  } catch (itk::ExceptionObject &exp) {
+  }
+  catch (itk::ExceptionObject &exp)
+  {
     std::cerr << "Failed to write image to " << outFilename << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -124,7 +132,8 @@ bool Image::write(const std::string &outFilename, bool useCompression)
 /// \param numLayers      size of region around a pixel to sample
 bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayers)
 {
-  if (!this->image) {
+  if (!this->image)
+  {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -133,9 +142,8 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   FilterType::Pointer filter = FilterType::New();
   filter->SetMaximumRMSError(maxRMSErr);
   filter->SetNumberOfIterations(numIterations);
-  if (numLayers) {
+  if (numLayers)
     filter->SetNumberOfLayers(numLayers);
-  }
 
   filter->SetInput(this->image);
   this->image = filter->GetOutput();
@@ -143,7 +151,9 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   try
   {
     filter->Update();
-  } catch (itk::ExceptionObject &exp) {
+  }
+  catch (itk::ExceptionObject &exp)
+  {
     std::cerr << "Antialias filter failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -161,7 +171,8 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
 /// \param outside    value for outside region [default is 0]
 bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 {
-  if (!this->image) {
+  if (!this->image)
+  {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -178,7 +189,9 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
   try
   {
     filter->Update();
-  } catch (itk::ExceptionObject &exp) {
+  }
+  catch (itk::ExceptionObject &exp)
+  {
     std::cerr << "Binarize filter failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -194,7 +207,8 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 /// recenters by changing origin (in the image header) to the physical coordinates of the center of the image
 bool Image::recenter()
 {
-  if (!this->image) {
+  if (!this->image)
+  {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -209,7 +223,9 @@ bool Image::recenter()
   try
   {
     filter->Update();
-  } catch (itk::ExceptionObject &exp) {
+  }
+  catch (itk::ExceptionObject &exp)
+  {
     std::cerr << "Recenter image failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -230,7 +246,8 @@ bool Image::recenter()
 /// \param outputSize     image size can be changed [default stays the same]
 bool Image::isoresample(double isoSpacing, Dims outputSize)
 {
-  if (!this->image) {
+  if (!this->image)
+  {
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
@@ -243,7 +260,8 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
 
-  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0) {
+  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
+  {
     ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
     ImageType::SpacingType inputSpacing = image->GetSpacing();
     outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / isoSpacing);
@@ -257,7 +275,9 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   try
   {
     resampler->Update();
-  } catch (itk::ExceptionObject &exp) {
+  }
+  catch (itk::ExceptionObject &exp)
+  {
     std::cerr << "Resample images to be isotropic failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
