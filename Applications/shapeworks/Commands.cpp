@@ -297,4 +297,26 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
   return sharedData.mesh.coverage(second_mesh);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// FastMarch
+///////////////////////////////////////////////////////////////////////////////
+void FastMarch::buildParser()
+{
+  const std::string prog = "fastmarch";
+  const std::string desc = "computes distance transform volume from a binary (antialiased) image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("The level set value that defines the interface between foreground and background.");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int FastMarch::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float isovalue = static_cast<float>(options.get("isovalue"));
+
+  return sharedData.image.fastmarch(isovalue);
+}
+
 } // shapeworks

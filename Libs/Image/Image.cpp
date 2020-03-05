@@ -341,6 +341,38 @@ bool Image::pad(int padding, PixelType value)
 
 }
 
+bool Image::fastMarch(float isoValue)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
+
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(reader->GetOutput());
+  filter->NarrowBandingOff();
+  filter->SetLevelSetValue(isoValue);
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Fast March failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Fast March succeeded!\n";
+#endif
+  return true;
+}
+
 } // Shapeworks
 
 

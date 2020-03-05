@@ -26,6 +26,7 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
+  bool fastMarch(float isoValue = 0.0);
   // bool nextfunction(...);
 
   bool compare_equal(const Image &other);
