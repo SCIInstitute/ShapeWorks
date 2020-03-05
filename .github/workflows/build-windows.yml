@@ -47,6 +47,18 @@ jobs:
         version: "5.9.9"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
+    - name: Setup Conda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+          miniconda-version: 'latest'
+          
+    - name: Conda info
+      run: conda info
+
+    - name: conda installs
+      shell: bash -l {0}
+      run: source ./conda_installs.sh
+
     - name: Cache dependencies
       id: cache-dependencies
       uses: actions/cache@v1
@@ -72,33 +84,17 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="${{runner.workspace}}\deps\share\eigen3\cmake" -DBuild_Studio=ON -DBuild_View2=ON
+      run: conda activate shapeworks && cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSHAPEWORKS_SUPERBUILD=OFF -DVXL_DIR="${{runner.workspace}}\deps\vxl\build" -DITK_DIR="${{runner.workspace}}\deps\lib\cmake\ITK-5.0" -DVTK_DIR="${{runner.workspace}}\deps\lib\cmake\vtk-8.2" -DEigen3_DIR="${{runner.workspace}}\deps\share\eigen3\cmake" -DBuild_Studio=ON -DBuild_View2=ON
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config $BUILD_TYPE -j 4
+      run: conda activate shapeworks && cmake --build . --config $BUILD_TYPE -j 4
 
     - name: Copy Libraries
       working-directory: ${{runner.workspace}}/build
       run: xcopy /f ${{runner.workspace}}\deps\bin\*.dll ${{runner.workspace}}\build\bin\Release
-    
-    - name: Setup Conda
-      uses: goanpeca/setup-miniconda@v1
-      with:
-          miniconda-version: 'latest'
-          
-    - name: Conda info
-      run: conda info
-
-    - name: conda installs
-      shell: bash -l {0}
-      run: source ./conda_installs.sh
-
-    - name: activate shapeworks
-      shell: bash -l {0}
-      run: conda activate shapeworks
     
     - name: Build Binary Package
       shell: bash
