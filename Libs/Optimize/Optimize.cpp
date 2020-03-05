@@ -465,6 +465,16 @@ void Optimize::InitializeSampler()
   m_sampler->Initialize();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
+
+  // These flags have to be set after Initialize, since Initialize will set them all to zero
+  for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
+    this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
+  }
+
+  for (unsigned int i = 0; i < this->m_particle_flags.size() / 2; i++) {
+    this->GetSampler()->GetParticleSystem()
+    ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -2084,20 +2094,12 @@ void Optimize::SetFidsFiles(const std::vector<std::string> &files)
 void Optimize::SetParticleFlags(std::vector<int> flags)
 {
   this->m_particle_flags = flags;
-
-  for (unsigned int i = 0; i < flags.size() / 2; i++) {
-    this->GetSampler()->GetParticleSystem()->SetFixedParticleFlag(flags[2 * i], flags[2 * i + 1]);
-  }
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetDomainFlags(std::vector<int> flags)
 {
   this->m_domain_flags = flags;
-
-  for (unsigned int i = 0; i < flags.size(); i++) {
-    this->GetSampler()->GetParticleSystem()->FlagDomain(flags[i]);
-  }
 }
 
 //---------------------------------------------------------------------------
