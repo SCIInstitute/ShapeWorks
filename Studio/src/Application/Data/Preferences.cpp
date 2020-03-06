@@ -27,6 +27,18 @@ std::map<std::string, QVariant> Preferences::getAllPreferences()
 }
 
 //-----------------------------------------------------------------------------
+bool Preferences::get_cache_enabled()
+{
+  return this->settings_.value("Studio/cache_enabled", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_cache_enabled(bool value)
+{
+  this->settings_.setValue("Studio/cache_enabled", value);
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::not_saved()
 {
   return !this->saved_;
@@ -66,9 +78,7 @@ void Preferences::add_recent_file(QString file)
 //-----------------------------------------------------------------------------
 void Preferences::restore_defaults(bool force)
 {
-  if (!this->settings_.contains("cache_enabled") || force) {
-    this->settings_.setValue("cache_enabled", true);
-  }
+  this->set_cache_enabled(true);
   if (!this->settings_.contains("parallel_enabled") || force) {
     this->settings_.setValue("parallel_enabled", true);
   }

@@ -27,7 +27,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
 void PreferencesWindow::on_mesh_cache_enabled_stateChanged(int state)
 {
   bool b = this->ui_->mesh_cache_enabled->isChecked();
-  preferences_.set_preference("cache_enabled", b);
+  preferences_.set_cache_enabled(b);
   this->ui_->mesh_cache_memory->setEnabled(b);
   this->ui_->parallel_enabled->setEnabled(b);
   this->ui_->num_threads->setEnabled(b);
@@ -72,7 +72,7 @@ void PreferencesWindow::restore_defaults()
 //-----------------------------------------------------------------------------
 void PreferencesWindow::set_values_from_preferences()
 {
-  this->ui_->mesh_cache_enabled->setChecked(preferences_.get_preference("cache_enabled", true));
+  this->ui_->mesh_cache_enabled->setChecked(preferences_.get_cache_enabled());
   this->ui_->mesh_cache_memory->setValue(preferences_.get_preference("cache_memory", 25));
   this->ui_->caching_epsilon->setValue(
     std::log10(preferences_.get_preference("cache_epsilon", 1e-3f)));

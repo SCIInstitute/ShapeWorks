@@ -104,7 +104,7 @@ vtkSmartPointer<vtkPolyData> MeshCache::getMesh(const vnl_vector<double>& shape)
 {
   QMutexLocker locker(&mutex);
 
-  if (!preferences_.get_preference("cache_enabled", true)) {
+  if (!preferences_.get_cache_enabled()) {
     return NULL;
   }
 
@@ -120,7 +120,7 @@ vtkSmartPointer<vtkPolyData> MeshCache::getMesh(const vnl_vector<double>& shape)
 //-----------------------------------------------------------------------------
 void MeshCache::insertMesh(const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh)
 {
-  if (!preferences_.get_preference("cache_enabled", true)) {
+  if (!preferences_.get_cache_enabled()) {
     return;
   }
 

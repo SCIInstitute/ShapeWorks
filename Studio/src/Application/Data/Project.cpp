@@ -71,7 +71,7 @@ void Project::calculate_reconstructed_samples()
   if (!this->reconstructed_present_) {
     return;
   }
-  //this->preferences_.set_preference("cache_enabled", false);
+  //this->preferences_.set_preference("Studio/cache_enabled", false);
   for (int i = 0; i < this->shapes_.size(); i++) {
     auto shape = this->shapes_.at(i);
     auto pts = shape->get_local_correspondence_points();
@@ -79,7 +79,7 @@ void Project::calculate_reconstructed_samples()
       shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
     }
   }
-  //this->preferences_.set_preference("cache_enabled", true);
+  //this->preferences_.set_preference("Studio/cache_enabled", true);
 }
 
 //---------------------------------------------------------------------------

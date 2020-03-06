@@ -65,7 +65,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shap
     return polyData;
   }
   // check cache first
-  if (this->prefs_.get_preference("cache_enabled", true)) {
+  if (this->prefs_.get_cache_enabled()) {
     polyData = this->meshCache_.getMesh(shape);
     if (!polyData) {
       if (prefs_.get_preference("parallel_enabled", true) &&

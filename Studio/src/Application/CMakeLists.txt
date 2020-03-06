@@ -57,7 +57,7 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 ### Application
 #--------------------------------------------------------------------------------
 
-FILE(GLOB STUDIO_SRCS main.cc */*.cc */*.cpp */*.hxx)
+FILE(GLOB STUDIO_SRCS main.cpp */*.cc */*.cpp */*.hxx)
 FILE(GLOB STUDIO_HDRS */*.h)
 FILE(GLOB STUDIO_ICNS Resources/Images/*.ico)
 FILE(GLOB WINDOW_ICNS Resources/Images/shapes-icon.png)

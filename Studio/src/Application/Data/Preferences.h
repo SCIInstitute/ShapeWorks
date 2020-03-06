@@ -41,6 +41,9 @@ public:
     this->saved_ = false;
   }
 
+  bool get_cache_enabled();
+  void set_cache_enabled(bool value);
+
 Q_SIGNALS:
   void color_scheme_changed(int newIndex);
   void glyph_properties_changed();
