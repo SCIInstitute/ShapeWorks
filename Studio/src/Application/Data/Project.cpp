@@ -172,13 +172,18 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
       writer->SetUseCompression(true);
       std::cerr << "Writing distance transform: " << loc.toStdString() << "\n";
       writer->Update();
+
+      QApplication::processEvents();
+      if (progress.wasCanceled()) {
+        break;
+      }
     }
     xml->writeTextElement("distance_transforms", groomed_list);
   }
 
   // correspondence points
   if (this->reconstructed_present()) {
-    QStringList global_list;
+    QStringList world_list;
     QStringList local_list;
 
     for (int i = 0; i < this->shapes_.size(); i++) {
@@ -194,69 +199,18 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
         global_path = dataDir + "/" + global_name;
         local_path = dataDir + "/" + local_name;
       }
-      global_list << QString::fromStdString(global_path);
+      world_list << QString::fromStdString(global_path);
       local_list << QString::fromStdString(local_path);
       this->save_particles_file(global_path, this->shapes_[i]->get_global_correspondence_points());
       this->save_particles_file(local_path, this->shapes_[i]->get_local_correspondence_points());
     }
     xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
-    xml->writeTextElement("global_point_files", "\n" + global_list.join("\n") + "\n");
+    xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
   }
 
-  // shapes
-  xml->writeStartElement("shapes");
-
-  for (int i = 0; i < this->shapes_.size(); i++) {
-    xml->writeStartElement("shape");
-    xml->writeAttribute("id", QString::number(i));
-
-    if (this->original_present()) {
-      xml->writeTextElement("initial_mesh", this->shapes_[i]->get_original_filename_with_path());
-    }
-
-    if (this->groomed_present()) {
-      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
-      if (!defaultDir) {
-        loc = QString::fromStdString(dataDir) + "/" +
-              this->shapes_[i]->get_groomed_filename();
-      }
-      xml->writeTextElement("groomed_mesh", loc);
-      //try writing the groomed to file
-      WriterType::Pointer writer = WriterType::New();
-      writer->SetFileName(loc.toStdString());
-      writer->SetInput(this->shapes_[i]->get_groomed_image());
-      writer->SetUseCompression(true);
-      writer->Update();
-    }
-
-    if (this->reconstructed_present()) {
-      auto name = this->shapes_[i]->get_original_filename().toStdString();
-      name = name.substr(0, name.find_last_of(".")) + ".wpts";
-      auto name2 = name.substr(0, name.find_last_of(".")) + ".lpts";
-      auto loc = this->shapes_[i]->get_original_filename_with_path().toStdString();
-      auto pos = loc.find_last_of("/");
-      loc = loc.substr(0, pos) + "/";
-      auto path = loc + name;
-      auto path2 = loc + name2;
-      if (!defaultDir) {
-        path = dataDir + "/" + name;
-        path2 = dataDir + "/" + name2;
-      }
-      xml->writeTextElement("point_file", QString::fromStdString(path));
-      xml->writeTextElement("point_file", QString::fromStdString(path2));
-      this->save_particles_file(path, this->shapes_[i]->get_global_correspondence_points());
-      this->save_particles_file(path2, this->shapes_[i]->get_local_correspondence_points());
-    }
-
-    xml->writeEndElement(); // shape
-    progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. /
-                                           static_cast<double>(this->shapes_.size())));
-    QApplication::processEvents();
-    if (progress.wasCanceled()) {
-      break;
-    }
-  }
-  xml->writeEndElement(); // shapes
+  /// Re-integrate progress after completing the above
+  //progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. /
+  //static_cast<double>(this->shapes_.size())));
 
   xml->writeEndElement(); // project
   progress.setValue(100);
@@ -306,47 +260,78 @@ bool Project::load_project(QString filename, std::string& planesFile)
     return this->load_light_project(filename, planesFile);
   }
 
-  TiXmlNode* shapes_node = project_element->FirstChild("shapes");
+  if (QString(project_element->Attribute("version")) != "2") {
+    QString message =
+      "Error: This version of ShapeWorksStudio only reads version 2 project files: " +
+      filename;
+    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+    return false;
+  }
 
   // setup XML
-  std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
+  std::vector<std::string> original_files, groom_files, local_point_files, global_point_files;
   std::string sparseFile, denseFile, goodPtsFile;
 
-  for (TiXmlElement* e = shapes_node->FirstChildElement("shape"); e != NULL;
-       e = e->NextSiblingElement("shape")) {
-    TiXmlElement* initial_mesh_element = e->FirstChildElement("initial_mesh");
-    if (!initial_mesh_element) {
-      QString message = "Error: Invalid parameter file: " + filename;
-      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
-      return false;
-    }
-    import_files.push_back(initial_mesh_element->GetText());
-    TiXmlElement* groomed_mesh_element = e->FirstChildElement("groomed_mesh");
-    if (groomed_mesh_element) {
-      groom_files.push_back(groomed_mesh_element->GetText());
-    }
-    TiXmlElement* point_file_element = e->FirstChildElement("point_file");
+  TiXmlElement* elem = project_element->FirstChildElement("original_files");
+  if (elem) {
+    std::string filename;
+    std::istringstream inputsBuffer(elem->GetText());
+    while (inputsBuffer >> filename) {
+      std::cerr << "Found original file: " << filename << "\n";
 
-    if (point_file_element) {
-      std::string filename = point_file_element->GetText();
-      if (filename.find(".lpts") != std::string::npos) {
-        local_point_files.push_back(filename);
-      }
-      else if (filename.find(".wpts") != std::string::npos) {
-        global_point_files.push_back(filename);
+      if (!QFile::exists(QString::fromStdString(filename))) {
+        QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " +
+                              QString::fromStdString(filename), QMessageBox::Ok);
+        return false;
       }
 
-      auto next_point_file = point_file_element->NextSiblingElement("point_file");
-      if (next_point_file) {
-        filename = next_point_file->GetText();
-        if (filename.find(".lpts") != std::string::npos) {
-          local_point_files.push_back(filename);
-        }
-        else if (filename.find(".wpts") != std::string::npos) {
-          global_point_files.push_back(filename);
-        }
-      }
+      original_files.push_back(filename);
     }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = project_element->FirstChildElement("distance_transforms");
+  if (elem) {
+    std::string filename;
+    std::istringstream inputsBuffer(elem->GetText());
+    while (inputsBuffer >> filename) {
+      std::cerr << "Found distance transform: " << filename << "\n";
+
+      if (!QFile::exists(QString::fromStdString(filename))) {
+        QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " +
+                              QString::fromStdString(filename), QMessageBox::Ok);
+        return false;
+      }
+
+      groom_files.push_back(filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = project_element->FirstChildElement("local_point_files");
+  if (elem) {
+    local_point_files.clear();
+    std::string point_filename;
+    std::istringstream inputsBuffer(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      local_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
+  }
+
+  elem = project_element->FirstChildElement("world_point_files");
+  if (elem) {
+    global_point_files.clear();
+    std::string point_filename;
+    std::istringstream inputsBuffer(elem->GetText());
+    while (inputsBuffer >> point_filename) {
+      global_point_files.push_back(point_filename);
+    }
+    inputsBuffer.clear();
+    inputsBuffer.str("");
   }
 
   // load project settings
@@ -391,7 +376,7 @@ bool Project::load_project(QString filename, std::string& planesFile)
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
 
-  this->load_original_files(import_files);
+  this->load_original_files(original_files);
   if (groom_files.size() > 0) {
     this->load_groomed_files(groom_files, 0.5);
   }
