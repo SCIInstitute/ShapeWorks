@@ -1,7 +1,3 @@
-/*
- * Shapeworks license
- */
-
 #include <Data/SurfaceReconstructor.h>
 
 #include <itkImage.h>

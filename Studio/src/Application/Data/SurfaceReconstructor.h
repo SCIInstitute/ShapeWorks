@@ -1,6 +1,4 @@
-/*
- * Shapeworks license
- */
+#pragma once
 
 /**
  * @file SurfaceReconstructor.h
@@ -8,8 +6,6 @@
  *
  * The SurfaceReconstructor wraps the surface reconstruction method
  */
-
-#pragma once
 
 #include <vector>
 #include <string>
@@ -53,8 +49,8 @@ public:
   //**********************************************//
   //************Imported From Studio *************//
 
-  void initializeReconstruction(std::vector<std::vector<itk::Point<double> > > local_pts,
-                                std::vector<std::vector<itk::Point<double> > > global_pts,
+  void initializeReconstruction(std::vector<std::vector<itk::Point<double>>> local_pts,
+                                std::vector<std::vector<itk::Point<double>>> global_pts,
                                 std::vector<ImageType::Pointer> distance_transform,
                                 double maxAngle,
                                 float decimationPercent,

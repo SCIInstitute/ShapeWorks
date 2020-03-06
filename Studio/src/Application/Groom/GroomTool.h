@@ -1,5 +1,4 @@
-#ifndef STUDIO_GROOM_GROOMTOOL_H
-#define STUDIO_GROOM_GROOMTOOL_H
+#pragma once
 
 #include <itkeigen/Eigen/Dense>
 #include <itkeigen/Eigen/Sparse>
@@ -61,5 +60,3 @@ private:
   std::vector<std::string>& files_;
   QGroom* groom_;
 };
-
-#endif /* STUDIO_GROOM_GROOMTOOL_H */

@@ -3,9 +3,9 @@
 #include <QEvent>
 #include <QApplication>
 
-WheelEventForwarder::WheelEventForwarder( QScrollBar* target ) :
+WheelEventForwarder::WheelEventForwarder(QScrollBar* target) :
   QObject(),
-  target_( target )
+  target_(target)
 {}
 
 WheelEventForwarder::~WheelEventForwarder()
@@ -13,20 +13,19 @@ WheelEventForwarder::~WheelEventForwarder()
   this->target_ = NULL;
 }
 
-bool WheelEventForwarder::eventFilter( QObject* obj, QEvent* event )
+bool WheelEventForwarder::eventFilter(QObject* obj, QEvent* event)
 {
-  Q_UNUSED( obj );
+  Q_UNUSED(obj);
 
   static bool recursion_protection = false;
 
-  if ( recursion_protection ) { return false; }
+  if (recursion_protection) { return false; }
 
-  if ( !this->target_ ) { return false; }
+  if (!this->target_) { return false; }
 
-  if ( event->type() == QEvent::Wheel )
-  {
+  if (event->type() == QEvent::Wheel) {
     recursion_protection = true;
-    this->target_->event( event );
+    this->target_->event(event);
     recursion_protection = false;
   }
 

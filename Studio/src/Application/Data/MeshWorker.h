@@ -1,6 +1,4 @@
-/*
- * Shapeworks license
- */
+#pragma once
 
 /**
  * @file MeshWorker.h
@@ -9,8 +7,6 @@
  * The MeshWorker implements each thread's mesh construction management
  */
 
-#ifndef MESH_WORKER_H
-#define MESH_WORKER_H
 
 #include <QObject>
 #include <QWaitCondition>
@@ -45,5 +41,3 @@ private:
   MeshWorkQueue* queue_;
   MeshCache* cache_;
 };
-
-#endif // ifndef MESH_WORKER_H

@@ -1,7 +1,3 @@
-/*
- * Shapeworks license
- */
-
 #include <Data/MeshWorkQueue.h>
 
 MeshWorkQueue::MeshWorkQueue()
@@ -10,19 +6,18 @@ MeshWorkQueue::MeshWorkQueue()
 MeshWorkQueue::~MeshWorkQueue()
 {}
 
-void MeshWorkQueue::push( const vnl_vector<double> &item )
+void MeshWorkQueue::push(const vnl_vector<double> &item)
 {
-  QMutexLocker locker( &this->mutex );
-  this->workList.push_back( item );
+  QMutexLocker locker(&this->mutex);
+  this->workList.push_back(item);
 }
 
 MeshWorkItem* MeshWorkQueue::pop()
 {
-  QMutexLocker locker( &this->mutex );
+  QMutexLocker locker(&this->mutex);
   MeshWorkItem* item = new MeshWorkItem;
 
-  if ( this->workList.empty() )
-  {
+  if (this->workList.empty()) {
     return NULL;
   }
 
@@ -31,29 +26,27 @@ MeshWorkItem* MeshWorkQueue::pop()
   return item;
 }
 
-bool MeshWorkQueue::isInside( const vnl_vector<double> &item )
+bool MeshWorkQueue::isInside(const vnl_vector<double> &item)
 {
-  QMutexLocker locker( &this->mutex );
+  QMutexLocker locker(&this->mutex);
 
-  for ( WorkList::iterator it = this->workList.begin(); it != this->workList.end(); ++it )
-  {
-    if ( *it == item )
-    {
+  for (WorkList::iterator it = this->workList.begin(); it != this->workList.end(); ++it) {
+    if (*it == item) {
       return true;
     }
   }
   return false;
 }
 
-void MeshWorkQueue::remove( const vnl_vector<double> &item )
+void MeshWorkQueue::remove(const vnl_vector<double> &item)
 {
-  QMutexLocker locker( &this->mutex );
+  QMutexLocker locker(&this->mutex);
 
-  this->workList.remove( item );
+  this->workList.remove(item);
 }
 
 bool MeshWorkQueue::isEmpty()
 {
-  QMutexLocker locker( &this->mutex );
+  QMutexLocker locker(&this->mutex);
   return this->workList.empty();
 }

@@ -259,8 +259,7 @@ bool Project::load_project(QString filename, std::string& planesFile)
   for (TiXmlElement* e = shapes_node->FirstChildElement("shape"); e != NULL;
        e = e->NextSiblingElement("shape")) {
     TiXmlElement* initial_mesh_element = e->FirstChildElement("initial_mesh");
-    if (!initial_mesh_element)
-    {
+    if (!initial_mesh_element) {
       QString message = "Error: Invalid parameter file: " + filename;
       QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
       return false;

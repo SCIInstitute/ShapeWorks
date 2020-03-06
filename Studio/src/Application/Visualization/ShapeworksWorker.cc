@@ -1,7 +1,3 @@
-/*
- * Shapeworks license
- */
-
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -66,10 +62,10 @@ void ShapeworksWorker::process()
       emit error_message(std::string("Error during optimization!"));
       return;
     }
-      if (this->optimize_->GetAborted()) {
-        emit error_message(std::string("Optimization Aborted!"));
-        return;
-      }
+    if (this->optimize_->GetAborted()) {
+      emit error_message(std::string("Optimization Aborted!"));
+      return;
+    }
 
     break;
   case ShapeworksWorker::ReconstructType:

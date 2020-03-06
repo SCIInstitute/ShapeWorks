@@ -1,7 +1,4 @@
-/*
- * Shapeworks license
- */
-
+#pragma once
 /**
  * @file MeshGenerator.h
  * @brief Mesh generation
@@ -10,18 +7,13 @@
  * a mesh from a shape (list of points).
  */
 
-#ifndef MESH_GENERATOR_H
-#define MESH_GENERATOR_H
-
 #include <QSharedPointer>
 
 #include "vnl/vnl_vector.h"
 
 #include <Data/Preferences.h>
-
 #include <Data/SurfaceReconstructor.h>
 #include <Data/LegacyMeshGenerator.h>
-
 
 class MeshGenerator
 {
@@ -37,5 +29,3 @@ private:
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
   QSharedPointer<LegacyMeshGenerator> legacy_reconstructor_;
 };
-
-#endif // ifndef MESH_GENERATOR_H

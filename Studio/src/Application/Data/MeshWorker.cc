@@ -1,7 +1,3 @@
-/*
- * Shapeworks license
- */
-
 // vtk
 #include <vtkPolyData.h>
 

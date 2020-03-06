@@ -1,5 +1,4 @@
-#ifndef STUDIO_APPLICATION_PREFERENCES_H
-#define STUDIO_APPLICATION_PREFERENCES_H
+#pragma once
 
 #include <QSettings>
 #include <QString>
@@ -53,5 +52,3 @@ private:
   QSettings settings_;
   bool saved_;
 };
-
-#endif // ifndef STUDIO_APPLICATION_PREFERENCES_H

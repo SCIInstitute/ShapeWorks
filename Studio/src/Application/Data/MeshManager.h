@@ -1,7 +1,4 @@
-/*
- * Shapeworks license
- */
-
+#pragma once
 /**
  * @file MeshManager.h
  * @brief Class to manage meshes
@@ -10,9 +7,6 @@
  * It houses the cache and manages threads to work on mesh generation
  * in the background.
  */
-
-#ifndef MESH_MANAGER_H
-#define MESH_MANAGER_H
 
 #include <vtkSmartPointer.h>
 
@@ -71,5 +65,3 @@ private:
 
   QSharedPointer<SurfaceReconstructor> surfaceReconstructor_;
 };
-
-#endif // ifndef MESH_Manager_H

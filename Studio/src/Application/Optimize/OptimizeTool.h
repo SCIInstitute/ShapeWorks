@@ -1,5 +1,4 @@
-#ifndef STUDIO_OPTIMIZE_OPTIMIZETOOL_H
-#define STUDIO_OPTIMIZE_OPTIMIZETOOL_H
+#pragma once
 
 #include <QSharedPointer>
 #include <QWidget>
@@ -75,5 +74,3 @@ private:
   QSharedPointer<Project> project_;
   std::vector<std::array<itk::Point<double>, 3 >> cutPlanes_;
 };
-
-#endif /* STUDIO_OPTIMIZE_OPTIMIZETOOL_H */

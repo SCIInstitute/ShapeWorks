@@ -1,7 +1,3 @@
-/*
- * Shapeworks license
- */
-
 // qt
 #include <QThread>
 #include <QSize>

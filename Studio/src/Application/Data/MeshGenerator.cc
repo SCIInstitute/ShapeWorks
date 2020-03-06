@@ -1,12 +1,10 @@
-/*
- * Shapeworks license
- */
+#include <limits>
+
+#include <itkPoint.h>
 
 #include <vtkPolyDataNormals.h>
 
 #include <Data/MeshGenerator.h>
-#include <limits>
-#include <itkPoint.h>
 
 //---------------------------------------------------------------------------
 MeshGenerator::MeshGenerator(Preferences& prefs)

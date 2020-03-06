@@ -10,7 +10,7 @@ DisplayObject::~DisplayObject()
 {}
 
 //-----------------------------------------------------------------------------
-void DisplayObject::set_mesh( QSharedPointer<Mesh> mesh )
+void DisplayObject::set_mesh(QSharedPointer<Mesh> mesh)
 {
   this->mesh_ = mesh;
 }
@@ -22,7 +22,7 @@ QSharedPointer<Mesh> DisplayObject::get_mesh()
 }
 
 //-----------------------------------------------------------------------------
-void DisplayObject::set_annotations( QStringList annotations )
+void DisplayObject::set_annotations(QStringList annotations)
 {
   this->corner_annotations_ = annotations;
 }
@@ -34,7 +34,7 @@ QStringList DisplayObject::get_annotations()
 }
 
 //-----------------------------------------------------------------------------
-void DisplayObject::set_correspondence_points( vnl_vector<double> points )
+void DisplayObject::set_correspondence_points(vnl_vector<double> points)
 {
   this->correspondence_points_ = points;
 }
@@ -46,7 +46,7 @@ vnl_vector<double> DisplayObject::get_correspondence_points()
 }
 
 //-----------------------------------------------------------------------------
-void DisplayObject::set_transform( const vnl_vector<double>& transform )
+void DisplayObject::set_transform(const vnl_vector<double>& transform)
 {
   this->transform_ = transform;
 }
