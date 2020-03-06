@@ -3,11 +3,14 @@
 #include <QSharedPointer>
 #include <QWidget>
 #include <QProgressDialog>
-#include "Data/Preferences.h"
-#include "QOptimize.h"
+
+#include <itkPoint.h>
+
+#include <Data/Preferences.h>
 
 class Project;
 class Ui_OptimizeTool;
+class QOptimize;
 
 class OptimizeTool : public QWidget
 {

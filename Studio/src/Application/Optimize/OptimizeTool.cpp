@@ -8,10 +8,12 @@
 #include <QMessageBox>
 
 #include <Optimize/OptimizeTool.h>
-#include <Visualization/ShapeworksWorker.h>
+#include <Visualization/ShapeWorksWorker.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
+
+#include <Optimize/QOptimize.h>
 
 #include <ui_OptimizeTool.h>
 

@@ -118,11 +118,13 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
 
   xml->writeStartElement("project");
   xml->writeAttribute("version", "1");
+  xml->writeStartElement("settings");
   auto prefs = this->preferences_.get_project_preferences();
   for (auto &a : prefs) {
     xml->writeTextElement(
       QString::fromStdString(a.first), a.second.toString());
   }
+  xml->writeEndElement(); // settings
   this->preferences_.set_saved();
   //write out mean info
   auto prefix = this->shapes_[0]->get_original_filename().toStdString();
@@ -293,6 +295,18 @@ bool Project::load_project(QString filename, std::string& planesFile)
     }
   }
 
+
+  TiXmlNode* settings_node = project_element->FirstChild("settings");
+
+  for (auto item = settings_node->FirstChildElement(); item != nullptr;
+       item = item->NextSiblingElement()) {
+    QString name = item->Value();
+    QString value = item->GetText();
+    std::cerr << "setting: " << name.toStdString() << " to " << value.toStdString() << "\n";
+    this->preferences_.set_preference(name.toStdString(), QVariant(value));
+  }
+
+
   // now read the preferences and other elements
   for (auto item = project_element->FirstChildElement(); item != nullptr;
        item = item->NextSiblingElement()) {
@@ -316,7 +330,7 @@ bool Project::load_project(QString filename, std::string& planesFile)
         }
       }
       else {
-        this->preferences_.set_preference(name.toStdString(), QVariant(value));
+    //    this->preferences_.set_preference(name.toStdString(), QVariant(value));
       }
     }
   }

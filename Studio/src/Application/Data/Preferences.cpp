@@ -18,8 +18,10 @@ std::map<std::string, QVariant> Preferences::get_project_preferences()
 {
   std::map<std::string, QVariant> ans;
   for (QString &a : this->settings_.allKeys()) {
+    QString key = a;
     if (a.toStdString().find("Project/") != std::string::npos) {
-      ans.insert(std::make_pair(a.remove("Project/").toStdString(), this->settings_.value(a)));
+      ans.insert(std::make_pair(a.remove("Project/").toStdString(), this->settings_.value(key)));
+      std::cerr << "a = " << key.toStdString() << "\n";
     }
   }
   return ans;
@@ -76,7 +78,7 @@ void Preferences::set_num_threads(int num_threads)
 //-----------------------------------------------------------------------------
 float Preferences::get_glyph_size()
 {
-  this->settings_.value("Project/glyph_size", 5.0);
+  return this->settings_.value("Project/glyph_size", 5.0).toFloat();
 }
 
 //-----------------------------------------------------------------------------
