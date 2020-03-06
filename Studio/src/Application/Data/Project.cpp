@@ -146,7 +146,7 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   progress.setValue(5);
   QApplication::processEvents();
 
-
+  // original files
   if (this->original_present()) {
     QString original_list = "\n";
     for (int i = 0; i < this->shapes_.size(); i++) {
@@ -154,6 +154,55 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
     }
     xml->writeTextElement("original_files", original_list);
   }
+
+  // distance transforms
+  if (this->groomed_present()) {
+    QString groomed_list = "\n";
+    for (int i = 0; i < this->shapes_.size(); i++) {
+      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
+      if (!defaultDir) {
+        loc = QString::fromStdString(dataDir) + "/" +
+              this->shapes_[i]->get_groomed_filename();
+      }
+      groomed_list = groomed_list + loc + "\n";
+      //try writing the groomed to file
+      WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName(loc.toStdString());
+      writer->SetInput(this->shapes_[i]->get_groomed_image());
+      writer->SetUseCompression(true);
+      std::cerr << "Writing distance transform: " << loc.toStdString() << "\n";
+      writer->Update();
+    }
+    xml->writeTextElement("distance_transforms", groomed_list);
+  }
+
+  // correspondence points
+  if (this->reconstructed_present()) {
+    QStringList global_list;
+    QStringList local_list;
+
+    for (int i = 0; i < this->shapes_.size(); i++) {
+      auto base_name = this->shapes_[i]->get_original_filename().toStdString();
+      auto global_name = base_name.substr(0, base_name.find_last_of(".")) + ".world.particles";
+      auto local_name = base_name.substr(0, base_name.find_last_of(".")) + ".local.particles";
+      auto loc = this->shapes_[i]->get_original_filename_with_path().toStdString();
+      auto pos = loc.find_last_of("/");
+      loc = loc.substr(0, pos) + "/";
+      auto global_path = loc + global_name;
+      auto local_path = loc + local_name;
+      if (!defaultDir) {
+        global_path = dataDir + "/" + global_name;
+        local_path = dataDir + "/" + local_name;
+      }
+      global_list << QString::fromStdString(global_path);
+      local_list << QString::fromStdString(local_path);
+      this->save_particles_file(global_path, this->shapes_[i]->get_global_correspondence_points());
+      this->save_particles_file(local_path, this->shapes_[i]->get_local_correspondence_points());
+    }
+    xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
+    xml->writeTextElement("global_point_files", "\n" + global_list.join("\n") + "\n");
+  }
+
   // shapes
   xml->writeStartElement("shapes");
 
@@ -195,24 +244,8 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
       }
       xml->writeTextElement("point_file", QString::fromStdString(path));
       xml->writeTextElement("point_file", QString::fromStdString(path2));
-      //try writing to file
-      std::ofstream out(path);
-      auto points = this->shapes_[i]->get_global_correspondence_points();
-      size_t newline = 1;
-      for (auto &a : points) {
-        out << a << (newline % 3 == 0 ? "\n" : "    ");
-        newline++;
-      }
-      out.close();
-      //try writing to file
-      std::ofstream out2(path2);
-      points = this->shapes_[i]->get_local_correspondence_points();
-      newline = 1;
-      for (auto &a : points) {
-        out2 << a << (newline % 3 == 0 ? "\n" : "    ");
-        newline++;
-      }
-      out2.close();
+      this->save_particles_file(path, this->shapes_[i]->get_global_correspondence_points());
+      this->save_particles_file(path2, this->shapes_[i]->get_local_correspondence_points());
     }
 
     xml->writeEndElement(); // shape
@@ -228,6 +261,18 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   xml->writeEndElement(); // project
   progress.setValue(100);
   return true;
+}
+
+//---------------------------------------------------------------------------
+void Project::save_particles_file(std::string filename, const vnl_vector<double> &points)
+{
+  std::ofstream out(filename);
+  size_t newline = 1;
+  for (auto &a : points) {
+    out << a << (newline % 3 == 0 ? "\n" : "    ");
+    newline++;
+  }
+  out.close();
 }
 
 //---------------------------------------------------------------------------

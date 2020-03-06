@@ -108,6 +108,8 @@ private:
 
   Preferences& preferences_;
 
+  void save_particles_file(std::string filename, const vnl_vector<double> &points);
+
   void renumber_shapes();
 
   QWidget* parent_;
