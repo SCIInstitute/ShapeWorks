@@ -50,6 +50,30 @@ void Preferences::set_parallel_enabled(bool value)
 }
 
 //-----------------------------------------------------------------------------
+int Preferences::get_memory_cache_percent()
+{
+  return this->settings_.value("Studio/memory_cache_percent", 25).toInt();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_memory_cache_percent(int value)
+{
+  this->settings_.setValue("Studio/memory_cache_percent", value);
+}
+
+//-----------------------------------------------------------------------------
+int Preferences::get_num_threads()
+{
+  return this->settings_.value("Studio/num_threads", QThread::idealThreadCount()).toInt();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_num_threads(int num_threads)
+{
+  this->settings_.setValue("Studio/num_threads", num_threads);
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::not_saved()
 {
   return !this->saved_;
@@ -91,17 +115,14 @@ void Preferences::restore_defaults(bool force)
 {
   this->set_cache_enabled(true);
   this->set_parallel_enabled(true);
-  if (!this->settings_.contains("cache_memory") || force) {
-    this->settings_.setValue("cache_memory", 25);
-  }
+  this->set_memory_cache_percent(25);
+  this->set_num_threads(QThread::idealThreadCount());
+
   if (!this->settings_.contains("glyph_size") || force) {
     this->settings_.setValue("glyph_size", 5.);
   }
   if (!this->settings_.contains("glyph_quality") || force) {
     this->settings_.setValue("glyph_quality", 5.);
-  }
-  if (!this->settings_.contains("num_threads") || force) {
-    this->settings_.setValue("num_threads", QThread::idealThreadCount());
   }
   if (!this->settings_.contains("pca_range") || force) {
     this->settings_.setValue("pca_range", 2.f);

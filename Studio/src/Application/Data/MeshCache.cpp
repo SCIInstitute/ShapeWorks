@@ -156,7 +156,7 @@ void MeshCache::clear()
 //-----------------------------------------------------------------------------
 void MeshCache::freeSpaceForAmount(size_t allocation)
 {
-  size_t memoryLimit = (preferences_.get_preference("cache_memory", 25) / 100.0) * this->maxMemory;
+  size_t memoryLimit = (preferences_.get_memory_cache_percent() / 100.0) * this->maxMemory;
 
   while (!this->cacheList.empty() && this->memorySize + allocation > memoryLimit) {
     CacheListItem item = this->cacheList.back();

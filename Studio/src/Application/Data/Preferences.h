@@ -47,6 +47,14 @@ public:
   bool get_parallel_enabled();
   void set_parallel_enabled(bool value);
 
+  //! default 25 percent
+  int get_memory_cache_percent();
+  //! 0-100
+  void set_memory_cache_percent(int value);
+
+  int get_num_threads();
+  void set_num_threads(int num_threads);
+
 Q_SIGNALS:
   void color_scheme_changed(int newIndex);
   void glyph_properties_changed();
