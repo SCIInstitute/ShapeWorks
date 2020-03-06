@@ -1,9 +1,9 @@
-# Building ShapeWorks from source
+# Building ShapeWorks from source on Windows
 
-This document contains detailed instructions on building ShapeWorks from scratch after cloning the repository ([Instructions on cloning](#How-To-Clone)). This guide will consist of two main steps. The steps will be summarized, but you can click on the links to access further information.
-
-1. [Installing dependencies](#Install-Dependencies)
-2. [Configuring and building](#Configure-and-Build)
+## Minimum Requirements
+* CMake 3.11
+* MSVC 2019
+* Qt 5.9.8 (optional for GUI components)
 
 ## Install dependencies
 
@@ -21,18 +21,16 @@ Download and install the latest version of [[Qt5]](https://download.qt.io/archiv
 After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](GettingStarted.md#PATH-environment-variable) for help with this)  
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
-### VXL, VTK, and ITK
-These three dependencies can be installed using the **superbuild.sh** script.  
+### VXL, VTK, ITK, and Eigen
+These three dependencies can be installed using the **build_dependencies.sh** script.  
 Use an msys shell (e.g. git bash) to do this on Windows.  
-It is recommended to use `$ ./superbuild.sh --dependencies-only` to build VXL, VTK, and ITK.  
 
-Use `$ ./superbuild.sh --help` for more details on the available superbuild options.  
+Use `$ ./build_dependencies.sh --help` for more details on the available build_dependencies options.  
 
-**If you get an error** that looks like this:  
-```
-which: no qmake in (...)
-```
+**If you get an error** that says: `which: no qmake in (...)`  
 Make sure you added Qt to your path as explained in the [Install dependencies/Qt5](#Qt5) step.  
+
+If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK  
 
 ## Configure and Build  
 Use the CMake-gui to configure and generate project files for your preferred build system. (e.g. Visual Studio 16 2019)  
@@ -40,9 +38,8 @@ Use the CMake-gui to configure and generate project files for your preferred bui
 ### Options
 Required:  
 ```
+  -D CMAKE_PREFIX_PATH=<dependencies directory>
   -D VXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
-  -D VTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
-  -D ITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
 ```
 Optional:
 ```
@@ -52,17 +49,12 @@ Optional:
   -D CMAKE_INSTALL_PREFIX=<path>       default: ./install
   -D CMAKE_BUILD_TYPE=[Debug|Release]  
 ```
-**See [examples](#Examples) below for common values of the variables**  
-
-### Before running Example Python scripts
-Add the ShapeWorks and dependency binaries to the path:  
-`> set PATH=\path\to\shapeworks\build\bin;\path\to\dependency\bin;%PATH%`  
 
 ### Examples
 *Windows* example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
 ```
-> ./superbuild.sh  --dependencies_only --build-dir=../dependencies --install-dir=../dependencies
+> ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
 > mkdir build
 > cd build
-> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```
