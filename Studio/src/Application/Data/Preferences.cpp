@@ -14,12 +14,12 @@ Preferences::Preferences()
 }
 
 //-----------------------------------------------------------------------------
-std::map<std::string, QVariant> Preferences::getAllPreferences()
+std::map<std::string, QVariant> Preferences::get_project_preferences()
 {
   std::map<std::string, QVariant> ans;
-  for (auto &a : this->settings_.allKeys()) {
-    if (a.toStdString().find("/") == std::string::npos) {
-      ans.insert(std::make_pair(a.toStdString(), this->settings_.value(a)));
+  for (QString &a : this->settings_.allKeys()) {
+    if (a.toStdString().find("Project/") != std::string::npos) {
+      ans.insert(std::make_pair(a.remove("Project/").toStdString(), this->settings_.value(a)));
     }
   }
   return ans;
@@ -74,6 +74,18 @@ void Preferences::set_num_threads(int num_threads)
 }
 
 //-----------------------------------------------------------------------------
+float Preferences::get_glyph_size()
+{
+  this->settings_.value("Project/glyph_size", 5.0);
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_glyph_size(float value)
+{
+  this->settings_.setValue("Project/glyph_size", value);
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::not_saved()
 {
   return !this->saved_;
@@ -118,9 +130,7 @@ void Preferences::restore_defaults(bool force)
   this->set_memory_cache_percent(25);
   this->set_num_threads(QThread::idealThreadCount());
 
-  if (!this->settings_.contains("glyph_size") || force) {
-    this->settings_.setValue("glyph_size", 5.);
-  }
+  this->set_glyph_size(5.0);
   if (!this->settings_.contains("glyph_quality") || force) {
     this->settings_.setValue("glyph_quality", 5.);
   }
@@ -223,13 +233,13 @@ void Preferences::restore_defaults(bool force)
 //-----------------------------------------------------------------------------
 void Preferences::delete_entry(std::string entry)
 {
-  auto allPref = this->getAllPreferences();
+  auto allPref = this->get_project_preferences();
   std::vector<std::string> toRemove;
   for (auto &p : allPref) {
     if (p.first.rfind(entry) != std::string::npos) {
       this->settings_.remove(QString::fromStdString(p.first));
     }
   }
-  allPref = this->getAllPreferences();
+  allPref = this->get_project_preferences();
   this->saved_ = false;
 }

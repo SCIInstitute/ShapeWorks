@@ -483,11 +483,11 @@ void ShapeWorksStudioApp::enablePossibleActions()
 void ShapeWorksStudioApp::update_from_preferences()
 {
   this->glyph_quality_slider_->setValue(preferences_.get_preference("glyph_quality", 5.));
-  this->glyph_size_slider_->setValue(preferences_.get_preference("glyph_size", 1.) * 10.0);
+  this->glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
 
   this->glyph_quality_label_->setText(QString::number(preferences_.get_preference("glyph_quality",
                                                                                   5.)));
-  this->glyph_size_label_->setText(QString::number(preferences_.get_preference("glyph_size", 1.)));
+  this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_preference("center_option", true));
   this->groom_tool_->set_preferences();
@@ -778,11 +778,11 @@ void ShapeWorksStudioApp::handle_glyph_changed()
 {
   this->visualizer_->set_show_surface(this->ui_->surface_visible_button->isChecked());
   this->visualizer_->set_show_glyphs(this->ui_->glyphs_visible_button->isChecked());
-  this->preferences_.set_preference("glyph_size", this->glyph_size_slider_->value() / 10.);
+  this->preferences_.set_glyph_size(this->glyph_size_slider_->value() / 10.0);
   this->preferences_.set_preference("glyph_quality", this->glyph_quality_slider_->value());
   this->glyph_quality_label_->setText(QString::number(preferences_.get_preference("glyph_quality",
                                                                                   5.)));
-  this->glyph_size_label_->setText(QString::number(preferences_.get_preference("glyph_size", 1.)));
+  this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   this->update_display();
 }
 
@@ -1161,7 +1161,7 @@ void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered()
   xml->setDevice(&file);
   xml->writeStartElement("shapeworks_parameter_file");
   xml->writeAttribute("version", "1");
-  auto prefs = this->preferences_.getAllPreferences();
+  auto prefs = this->preferences_.get_project_preferences();
   for (auto &a : prefs) {
     if (a.first.find("optimize") != std::string::npos ||
         a.first.find("groom") != std::string::npos) {

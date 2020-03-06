@@ -25,7 +25,7 @@ public:
 
   bool has_entry(QString name);
 
-  std::map<std::string, QVariant> getAllPreferences();
+  std::map<std::string, QVariant> get_project_preferences();
 
   template<typename T>
   T get_preference(std::string name, T default_val)
@@ -54,6 +54,9 @@ public:
 
   int get_num_threads();
   void set_num_threads(int num_threads);
+
+  float get_glyph_size();
+  void set_glyph_size(float value);
 
 Q_SIGNALS:
   void color_scheme_changed(int newIndex);

@@ -118,7 +118,7 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
 
   xml->writeStartElement("project");
   xml->writeAttribute("version", "1");
-  auto prefs = this->preferences_.getAllPreferences();
+  auto prefs = this->preferences_.get_project_preferences();
   for (auto &a : prefs) {
     xml->writeTextElement(
       QString::fromStdString(a.first), a.second.toString());

@@ -263,7 +263,7 @@ void Visualizer::set_show_surface(bool show)
 //-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties()
 {
-  double size = preferences_.get_preference("glyph_size", 1.f);
+  double size = preferences_.get_glyph_size();
   double quality = preferences_.get_preference("glyph_quality", 5.f);
 
   if (this->lightbox_) {
