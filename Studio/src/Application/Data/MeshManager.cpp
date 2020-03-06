@@ -68,7 +68,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shap
   if (this->prefs_.get_cache_enabled()) {
     polyData = this->meshCache_.getMesh(shape);
     if (!polyData) {
-      if (prefs_.get_preference("parallel_enabled", true) &&
+      if (prefs_.get_parallel_enabled() &&
           (this->prefs_.get_preference("num_threads", QThread::idealThreadCount()) > 0)) {
         this->generateMesh(shape);
       }

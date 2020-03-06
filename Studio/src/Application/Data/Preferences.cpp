@@ -7,8 +7,7 @@
 
 //-----------------------------------------------------------------------------
 Preferences::Preferences()
-  : settings_("Scientific Computing and Imaging Institute",
-              "ShapeWorksStudio"), saved_(true)
+  : settings_("Scientific Computing and Imaging Institute", "ShapeWorksStudio")
 {
   this->restore_defaults();
   this->settings_.setFallbacksEnabled(false);
@@ -36,6 +35,18 @@ bool Preferences::get_cache_enabled()
 void Preferences::set_cache_enabled(bool value)
 {
   this->settings_.setValue("Studio/cache_enabled", value);
+}
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_parallel_enabled()
+{
+  return this->settings_.value("Studio/parallel_enabled", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_parallel_enabled(bool value)
+{
+  this->settings_.setValue("Studio/parallel_enabled", value);
 }
 
 //-----------------------------------------------------------------------------
@@ -79,9 +90,7 @@ void Preferences::add_recent_file(QString file)
 void Preferences::restore_defaults(bool force)
 {
   this->set_cache_enabled(true);
-  if (!this->settings_.contains("parallel_enabled") || force) {
-    this->settings_.setValue("parallel_enabled", true);
-  }
+  this->set_parallel_enabled(true);
   if (!this->settings_.contains("cache_memory") || force) {
     this->settings_.setValue("cache_memory", 25);
   }

@@ -79,7 +79,7 @@ void PreferencesWindow::set_values_from_preferences()
   this->ui_->color_scheme->setCurrentIndex(preferences_.get_preference("color_scheme", 0));
   this->ui_->num_threads->setValue(preferences_.get_preference("num_threads",
                                                                QThread::idealThreadCount()));
-  this->ui_->parallel_enabled->setChecked(preferences_.get_preference("parallel_enabled", true));
+  this->ui_->parallel_enabled->setChecked(preferences_.get_parallel_enabled());
   this->ui_->pca_range->setValue(preferences_.get_preference("pca_range", 2.f));
   this->ui_->pca_steps->setValue(preferences_.get_preference("pnum_pca_steps", 20));
 }
@@ -87,7 +87,7 @@ void PreferencesWindow::set_values_from_preferences()
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_parallel_enabled_toggled(bool b)
 {
-  preferences_.set_preference("parallel_enabled", b);
+  preferences_.set_parallel_enabled(b);
   this->ui_->num_threads->setEnabled(b);
 }
 //-----------------------------------------------------------------------------

@@ -44,6 +44,9 @@ public:
   bool get_cache_enabled();
   void set_cache_enabled(bool value);
 
+  bool get_parallel_enabled();
+  void set_parallel_enabled(bool value);
+
 Q_SIGNALS:
   void color_scheme_changed(int newIndex);
   void glyph_properties_changed();
@@ -53,5 +56,5 @@ Q_SIGNALS:
 private:
   /// the QSettings object
   QSettings settings_;
-  bool saved_;
+  bool saved_ = true;
 };
