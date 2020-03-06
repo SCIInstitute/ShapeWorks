@@ -1,24 +1,20 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
-
-#include <vtkTriangleFilter.h>
-#include <vtkPolyDataNormals.h>
-#include <vtkPolyDataWriter.h>
-
+#include <itkNrrdImageIOFactory.h>
+#include <itkMetaImageIOFactory.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkVTKImageExport.h>
 #include <itkOrientImageFilter.h>
 
+#include <vtkSurfaceReconstructionFilter.h>
+#include <vtkMarchingCubes.h>
+#include <vtkTriangleFilter.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkPolyDataWriter.h>
+
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
-
-#include <vtkSurfaceReconstructionFilter.h>
-#include "itkNrrdImageIOFactory.h"
-#include "itkMetaImageIOFactory.h"
-#include <vtkMarchingCubes.h>
 #include <Groom/ShapeWorksGroom.h>
 
 //---------------------------------------------------------------------------
@@ -29,16 +25,17 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {}
 
-void Mesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data) {
-	this->poly_data_ = poly_data;
+void Mesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  this->poly_data_ = poly_data;
 }
 
 //---------------------------------------------------------------------------
 QString Mesh::get_dimension_string()
 {
-  QString str = "[" + QString::number( this->dimensions_[0] ) +
-                ", " + QString::number( this->dimensions_[1] ) +
-                ", " + QString::number( this->dimensions_[2] ) + "]";
+  QString str = "[" + QString::number(this->dimensions_[0]) +
+                ", " + QString::number(this->dimensions_[1]) +
+                ", " + QString::number(this->dimensions_[2]) + "]";
   return str;
 }
 
@@ -53,7 +50,8 @@ ImageType::Pointer Mesh::create_from_file(std::string filename, double iso_value
 {
   if (filename.find(".nrrd") != std::string::npos) {
     itk::NrrdImageIOFactory::RegisterOneFactory();
-  } else if (filename.find(".mha") != std::string::npos) {
+  }
+  else if (filename.find(".mha") != std::string::npos) {
     itk::MetaImageIOFactory::RegisterOneFactory();
   }
 
@@ -64,8 +62,8 @@ ImageType::Pointer Mesh::create_from_file(std::string filename, double iso_value
   ImageType::Pointer image = reader->GetOutput();
 
   // set orientation to RAI
-  itk::OrientImageFilter<ImageType,ImageType>::Pointer orienter =
-    itk::OrientImageFilter<ImageType,ImageType>::New();
+  itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
+    itk::OrientImageFilter<ImageType, ImageType>::New();
   orienter->UseImageDirectionOn();
   orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
   orienter->SetInput(image);
@@ -106,7 +104,7 @@ void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
 
     // compute center of mass
     this->center_transform_.set_size(3);
-    for (unsigned int i = 0; i < 3; i++)  {
+    for (unsigned int i = 0; i < 3; i++) {
       this->center_transform_[i] = params[i] / count;
     }
     // connect to VTK
@@ -125,7 +123,6 @@ void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
 
     // store isosurface polydata
     this->poly_data_ = marching->GetOutput();
-
   } catch (itk::ExceptionObject & excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;

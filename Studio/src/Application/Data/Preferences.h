@@ -41,6 +41,12 @@ public:
     this->saved_ = false;
   }
 
+  QByteArray get_window_geometry();
+  void set_window_geometry(QByteArray geometry);
+
+  QByteArray get_window_state();
+  void set_window_state(QByteArray state);
+
   bool get_cache_enabled();
   void set_cache_enabled(bool value);
 
@@ -65,7 +71,7 @@ Q_SIGNALS:
   void sliders_changed_signal();
 
 private:
-  /// the QSettings object
+
   QSettings settings_;
   bool saved_ = true;
 };

@@ -28,6 +28,30 @@ std::map<std::string, QVariant> Preferences::get_project_preferences()
 }
 
 //-----------------------------------------------------------------------------
+QByteArray Preferences::get_window_geometry()
+{
+  return this->settings_.value("Studio/window_geometry", QByteArray()).toByteArray();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_window_geometry(QByteArray geometry)
+{
+  this->settings_.setValue("Studio/window_geometry", geometry);
+}
+
+//-----------------------------------------------------------------------------
+QByteArray Preferences::get_window_state()
+{
+  return this->settings_.value("Studio/window_state", QByteArray()).toByteArray();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_window_state(QByteArray state)
+{
+  this->settings_.setValue("Studio/window_state", state);
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::get_cache_enabled()
 {
   return this->settings_.value("Studio/cache_enabled", true).toBool();

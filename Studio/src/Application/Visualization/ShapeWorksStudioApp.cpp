@@ -121,11 +121,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
   // resize from preferences
-  if (this->preferences_.has_entry("StudioWindow/geometry")) {
-    this->restoreGeometry(this->preferences_.get_preference("StudioWindow/geometry", QByteArray()));
+  if (!this->preferences_.get_window_geometry().isEmpty()) {
+    std::cerr << "set geom from prefs\n";
+    this->restoreGeometry(this->preferences_.get_window_geometry());
   }
-  if (this->preferences_.has_entry("StudioWindow/windowState")) {
-    this->restoreState(this->preferences_.get_preference("StudioWindow/windowState", QByteArray()));
+  if (!this->preferences_.get_window_state().isEmpty()) {
+    this->restoreState(this->preferences_.get_window_state());
   }
 
   // set to import
@@ -1022,8 +1023,8 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
     }
   }
   this->analysis_tool_->shutdown();
-  this->preferences_.set_preference("StudioWindow/geometry", this->saveGeometry());
-  this->preferences_.set_preference("StudioWindow/windowState", this->saveState());
+  this->preferences_.set_window_geometry(this->saveGeometry());
+  this->preferences_.set_window_state(this->saveState());
 
   this->hide();
   this->optimize_tool_->shutdown_threads();

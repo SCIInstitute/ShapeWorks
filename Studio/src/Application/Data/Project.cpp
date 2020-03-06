@@ -296,6 +296,7 @@ bool Project::load_project(QString filename, std::string& planesFile)
   }
 
 
+  // load project settings
   TiXmlNode* settings_node = project_element->FirstChild("settings");
 
   for (auto item = settings_node->FirstChildElement(); item != nullptr;
@@ -305,7 +306,6 @@ bool Project::load_project(QString filename, std::string& planesFile)
     std::cerr << "setting: " << name.toStdString() << " to " << value.toStdString() << "\n";
     this->preferences_.set_preference(name.toStdString(), QVariant(value));
   }
-
 
   // now read the preferences and other elements
   for (auto item = project_element->FirstChildElement(); item != nullptr;
@@ -330,7 +330,7 @@ bool Project::load_project(QString filename, std::string& planesFile)
         }
       }
       else {
-    //    this->preferences_.set_preference(name.toStdString(), QVariant(value));
+        //    this->preferences_.set_preference(name.toStdString(), QVariant(value));
       }
     }
   }
