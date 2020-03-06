@@ -12,9 +12,12 @@ void Transform::print() const
 
 void Transform::reset()
 {
-  scaling = Vector3();
-  translation = Vector3();
-  rotaxis = Vector3();
+  double translate[3] = {0.0, 0.0, 0.0};
+  double scale[3] = {1.0, 1.0, 1.0};
+  double rotate[3] = {0.0, 0.0, 1.0};
+  scaling = Vector3(scale);
+  translation = Vector3(translate);
+  rotaxis = Vector3(rotate);
   rotangle = 0.0;
 }
 
@@ -22,7 +25,7 @@ void Transform::translate(const Vector3 &v)
 {
   translation += v;
 #if DEBUG_CONSOLIDATION
-  std::cout << v;
+  std::cout << v << std::endl;
   std::cout << "Translate succeeded!\n";
 #endif
 }

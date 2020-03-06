@@ -11,7 +11,7 @@ class Transform
 public:
   using itkTransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
 
-  Transform() : rotangle(0.0) {}
+  Transform() : rotangle(0.0) { reset(); }
 
   itkTransformType::Pointer get() const;
 

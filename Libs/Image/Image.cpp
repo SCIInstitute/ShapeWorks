@@ -63,6 +63,8 @@ bool Image::write(const std::string &filename, bool compressed)
   if (!this->image)
   {
     std::cerr << "No image to write, so returning false." << std::endl;
+    
+    //todo: just return
     return false;
   }
   if (filename.empty())
