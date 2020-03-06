@@ -55,6 +55,9 @@ public:
   /** Reloads a set of point files and recomputes some statistics. */
   int ReloadPointFiles( );
 
+  /** Loads a set of point files and pre-computes some statistics. */
+  int ImportPoints( std::vector<vnl_vector<double> > points, std::vector<int> group_ids );
+
   /** Writes a text file in comma-separated format.  Suitable for reading into
       excel or R or Matlab for analysis. */
   int WriteCSVFile(const char *s);

@@ -1,11 +1,16 @@
 #pragma once
 
+// Qt
 #include <QSharedPointer>
 #include <QWidget>
-#include <Visualization/Visualizer.h>
+
+// ShapeWorks
+#include <itkParticleShapeStatistics.h>
+
+// Studio
 #include <Data/Shape.h>
-#include "Data/Preferences.h"
-#include <Data/itkParticleShapeStatistics.h>
+#include <Data/Preferences.h>
+#include <Visualization/Visualizer.h>
 #include <Visualization/BarGraph.h>
 
 class Project;

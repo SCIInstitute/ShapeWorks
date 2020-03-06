@@ -410,8 +410,99 @@ int ParticleShapeStatistics<VDimension>
   m_groupdiff = m_mean2 - m_mean1;
   
   return 0;
-} // end ReloadPointFiles
+}
 
+template < unsigned int VDimension /*= 3*/ >
+int ParticleShapeStatistics < VDimension > ::ImportPoints(
+  std::vector < vnl_vector < double >> points, std::vector < int > group_ids) {
+  this->m_groupIDs = group_ids;
+  this->m_domainsPerShape = 1;
+
+  int num_points = points[0].size() / 3;
+
+  // Read the point files.  Assumes all the same size.
+  m_numSamples1 = 0;
+  m_numSamples2 = 0;
+  m_numSamples = points.size() / m_domainsPerShape;
+  m_numDimensions = num_points * VDimension * m_domainsPerShape;
+
+  // If there are no group IDs, make up some bogus ones
+  if (m_groupIDs.size() != m_numSamples) {
+    if (m_groupIDs.size() > 0) {
+      std::cerr << "Group ID list does not match shape list in size." << std::endl;
+      return 1;
+    }
+
+    m_groupIDs.resize(m_numSamples);
+    for (unsigned int k = 0; k < m_numSamples / 2; k++) {
+      m_groupIDs[k] = 1;
+      m_numSamples1++;
+    }
+    for (unsigned int k = m_numSamples / 2; k < m_numSamples; k++) {
+      m_groupIDs[k] = 2;
+      m_numSamples2++;
+    }
+  }
+  else {
+    for (int i = 0; i < m_groupIDs.size(); i++) {
+      if (m_groupIDs[i] == 1) {
+        m_numSamples1++;
+      }
+      else {
+        m_numSamples2++;
+      }
+    }
+  }
+
+  std::cerr << "m_numSamples1 = " << m_numSamples1 << "\n";
+  std::cerr << "m_numSamples2 = " << m_numSamples2 << "\n";
+
+  m_pointsMinusMean.set_size(m_numDimensions, m_numSamples);
+  m_shapes.set_size(m_numDimensions, m_numSamples);
+  m_mean.set_size(m_numDimensions);
+  m_mean.fill(0);
+
+  m_mean1.set_size(m_numDimensions);
+  m_mean1.fill(0);
+  m_mean2.set_size(m_numDimensions);
+  m_mean2.fill(0);
+
+  // Compile the "meta shapes"
+  for (unsigned int i = 0; i < m_numSamples; i++) {
+    for (unsigned int k = 0; k < m_domainsPerShape; k++) {
+      unsigned int q = points[i].size();
+      for (unsigned int j = 0; j < q; j++) {
+        m_pointsMinusMean(q * k * VDimension + j, i) = points[i][j];
+
+        m_mean(q * k * VDimension + j) += points[i][j];
+
+        if (m_groupIDs[i] == 1) {
+          m_mean1(q * k * VDimension + j) += points[i][j];
+        }
+        else {
+          m_mean2(q * k * VDimension + j) += points[i][j];
+        }
+
+        m_shapes(q * k * VDimension + j, i) = points[i][j];
+      }
+    }
+  }
+
+  for (unsigned int i = 0; i < m_numDimensions; i++) {
+    m_mean(i) /= (double)m_numSamples;
+    m_mean1(i) /= (double)m_numSamples1;
+    m_mean2(i) /= (double)m_numSamples2;
+  }
+
+  for (unsigned int j = 0; j < m_numDimensions; j++) {
+    for (unsigned int i = 0; i < m_numSamples; i++) {
+      m_pointsMinusMean(j, i) -= m_mean(j);
+    }
+  }
+
+  m_groupdiff = m_mean2 - m_mean1;
+  return 0;
+}
 
 template <unsigned int VDimension>
 int ParticleShapeStatistics<VDimension>::ComputeModes()
