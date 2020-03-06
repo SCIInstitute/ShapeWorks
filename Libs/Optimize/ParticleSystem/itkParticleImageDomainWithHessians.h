@@ -66,13 +66,41 @@ public:
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  typename openvdb::FloatGrid::Ptr vdbHessianGrids[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
+  typename openvdb::FloatGrid::Ptr m_VDBHessians[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
+
+#ifdef USE_OPENVDB
+    const auto LoadVDBHessian = [&](int i, typename ImageType::Pointer hess) {
+      m_VDBHessians[i] = openvdb::FloatGrid::create(0.0);
+      auto vdbAccessor = m_VDBHessians[i]->getAccessor();
+
+      ImageRegionIterator<ImageType> hessIt(hess, hess->GetRequestedRegion());
+      ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+      hessIt.GoToBegin();
+      while(!hessIt.IsAtEnd()) {
+        const auto idx = hessIt.GetIndex();
+        if(idx != it.GetIndex()) {
+          throw std::runtime_error("Bad index");
+        }
+        const auto hess = hessIt.Get();
+        const auto pixel = it.Get();
+        if(abs(pixel) > 3.0) {
+          ++hessIt; ++it;
+          continue;
+        }
+
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, hess);
+        ++hessIt; ++it;
+      }
+
+    };
+#endif
 
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
       gaussian = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
@@ -92,10 +120,9 @@ public:
       deriv->SetUseImageSpacingOn();
       deriv->Update();
 
-      m_PartialDerivatives[i] = deriv->GetOutput();
+      const auto hess = deriv->GetOutput();
+      LoadVDBHessian(i, hess);
 
-      m_Interpolators[i] = ScalarInterpolatorType::New();
-      m_Interpolators[i]->SetInputImage(m_PartialDerivatives[i]);
       }
 
     // Compute the cross derivatives and set up the interpolators
@@ -120,49 +147,22 @@ public:
         deriv2->SetOrder(1);
         
         deriv2->Update();
-        
-        m_PartialDerivatives[k] = deriv2->GetOutput();
-        m_Interpolators[k] = ScalarInterpolatorType::New();
-        m_Interpolators[k]->SetInputImage(m_PartialDerivatives[k]);
+
+        const auto hess = deriv2->GetOutput();
+        LoadVDBHessian(k, hess);
         }
       }
 
-#ifdef USE_OPENVDB
-    const int N = (VDimension + ((VDimension * VDimension) - VDimension) / 2);
-    for(int i=0; i<N; i++) {
-        vdbHessianGrids[i] = openvdb::FloatGrid::create(0.0);
-        auto vdbAccessor = vdbHessianGrids[i]->getAccessor();
-
-        ImageRegionIterator<ImageType> hessIt(m_PartialDerivatives[i], m_PartialDerivatives[i]->GetRequestedRegion());
-        ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
-        hessIt.GoToBegin();
-        while(!hessIt.IsAtEnd()) {
-            const auto idx = hessIt.GetIndex();
-            if(idx != it.GetIndex()) {
-                throw std::runtime_error("Bad index");
-            }
-            const auto hess = hessIt.Get();
-            const auto pixel = it.Get();
-            if(abs(pixel) > 3.0) {
-                ++hessIt; ++it;
-                continue;
-            }
-
-            const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-            vdbAccessor.setValue(coord, hess);
-            ++hessIt; ++it;
-        }
-    }
-#endif
 
   } // end setimage
 
+  //TODO: REMOVE
     unsigned long GetMemUsage() const {
         auto size = Superclass::GetMemUsage();
         for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++) {
 #ifdef USE_OPENVDB
-            if(vdbHessianGrids[i]) {
-                size += vdbHessianGrids[i]->memUsage();
+            if(m_VDBHessians[i]) {
+                size += m_VDBHessians[i]->memUsage();
             }
 #else
             if(m_PartialDerivatives[i]) {
@@ -188,7 +188,7 @@ public:
       VnlMatrixType vdbAns;
       for (unsigned int i = 0; i < VDimension; i++)
       {
-          vdbAns[i][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[i]->tree(), coord);
+          vdbAns[i][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[i]->tree(), coord);
       }
 
       // Cross derivatives
@@ -197,7 +197,7 @@ public:
       {
           for (unsigned int j = i+1; j < VDimension; j++, k++)
           {
-              vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(vdbHessianGrids[k]->tree(), coord);
+              vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[k]->tree(), coord);
           }
       }
       return vdbAns;
@@ -233,11 +233,11 @@ public:
     for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++)
       {
 #ifdef USE_OPENVDB
-      // vdbHessianGrids[i]->clear();
-      vdbHessianGrids[i]=0;
+      // m_VDBHessians[i]->clear();
+      m_VDBHessians[i]=0;
 #endif
-      m_PartialDerivatives[i]=0;
-      m_Interpolators[i]=0;
+      // m_PartialDerivatives[i]=0;
+      // m_Interpolators[i]=0;
       }
   }
 
@@ -249,10 +249,12 @@ public:
   }
 
   /** Access interpolators and partial derivative images. */
+  /*
   typename ScalarInterpolatorType::Pointer *GetInterpolators()
   { return m_Interpolators; }
   typename ImageType::Pointer *GetPartialDerivatives()
   { return m_PartialDerivatives; }
+   */
   
 
 
@@ -278,9 +280,8 @@ private:
   //                 1: dyy  5: dyz
   //                            2: dzz
   //
-  typename ImageType::Pointer  m_PartialDerivatives[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
-
-  typename ScalarInterpolatorType::Pointer m_Interpolators[VDimension + ((VDimension * VDimension) - VDimension) / 2];
+  // typename ImageType::Pointer  m_PartialDerivatives[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
+  // typename ScalarInterpolatorType::Pointer m_Interpolators[VDimension + ((VDimension * VDimension) - VDimension) / 2];
 };
 
 } // end namespace itk
