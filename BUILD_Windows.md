@@ -22,7 +22,7 @@ After installing Qt5, add the directory containing `qmake.exe` to your PATH. (Se
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
 ### VXL, VTK, ITK, and Eigen
-These three dependencies can be installed using the **build_dependencies.sh** script.  
+These four dependencies can be installed using the **build_dependencies.sh** script.  
 Use an msys shell (e.g. git bash) to do this on Windows.  
 
 Use `$ ./build_dependencies.sh --help` for more details on the available build_dependencies options.  
