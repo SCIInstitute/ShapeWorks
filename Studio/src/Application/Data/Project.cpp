@@ -605,8 +605,6 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
   QProgressDialog progress("Loading groomed images...", "Abort", 0,
                            file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  //progress.show();
-  //progress.setMinimumDuration(2000);
 
   for (int i = 0; i < file_names.size(); i++) {
     progress.setValue(i);

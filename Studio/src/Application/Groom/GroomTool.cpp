@@ -7,7 +7,7 @@
 #include <QThread>
 
 #include <Groom/GroomTool.h>
-#include <Visualization/ShapeworksWorker.h>
+#include <Visualization/ShapeWorksWorker.h>
 #include <Data/Project.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
@@ -145,9 +145,9 @@ void GroomTool::on_run_groom_button_clicked()
   this->update_preferences();
   emit message("Please wait: running groom step...");
   emit progress(5);
-  auto shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
-  for (auto s : shapes) {
+  for (QSharedPointer<Shape> s : shapes) {
     imgs.push_back(s->get_original_image());
   }
   this->groom_ = new QGroom(this, imgs, 0., 1.,
@@ -216,9 +216,9 @@ void GroomTool::set_project(QSharedPointer<Project> project)
 void GroomTool::on_skipButton_clicked()
 {
   this->update_preferences();
-  auto shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
-  for (auto s : shapes) {
+  for (QSharedPointer<Shape> s : shapes) {
     imgs.push_back(s->get_original_image());
   }
   this->project_->load_groomed_images(imgs, 0.);

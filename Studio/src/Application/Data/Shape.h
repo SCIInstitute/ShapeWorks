@@ -99,7 +99,7 @@ private:
   int group_id_ = 1;
 
   QString original_mesh_filename_;
-  QString groomed_mesh_filename_;
+  QString groomed_filename_;
   QString global_point_filename_;
   QString local_point_filename_;
 

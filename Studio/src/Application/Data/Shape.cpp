@@ -46,7 +46,7 @@ void Shape::import_groomed_file(QString filename, double iso)
 {
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = this->groomed_mesh_->create_from_file(filename.toStdString(), iso);
-  this->groomed_mesh_filename_ = filename;
+  this->groomed_filename_ = filename;
 }
 
 //---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso)
   this->groomed_mesh_->create_from_image(img, iso);
   auto name = this->original_mesh_filename_.toStdString();
   name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
-  this->groomed_mesh_filename_ = QString::fromStdString(name);
+  this->groomed_filename_ = QString::fromStdString(name);
 }
 
 //---------------------------------------------------------------------------
@@ -173,14 +173,14 @@ QString Shape::get_original_filename_with_path()
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
 {
-  QFileInfo qfi(this->groomed_mesh_filename_);
+  QFileInfo qfi(this->groomed_filename_);
   return qfi.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename_with_path()
 {
-  return this->groomed_mesh_filename_;
+  return this->groomed_filename_;
 }
 
 //---------------------------------------------------------------------------
