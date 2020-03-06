@@ -5,7 +5,7 @@
 #include <QProcess>
 #include <QMessageBox>
 
-#include <Visualization/ShapeworksWorker.h>
+#include <Visualization/ShapeWorksWorker.h>
 #include <Libs/Optimize/Optimize.h>
 
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
