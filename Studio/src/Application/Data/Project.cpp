@@ -117,7 +117,7 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   xml->writeStartDocument();
 
   xml->writeStartElement("project");
-  xml->writeAttribute("version", "1");
+  xml->writeAttribute("version", "2");
   xml->writeStartElement("settings");
   auto prefs = this->preferences_.get_project_preferences();
   for (auto &a : prefs) {
@@ -146,8 +146,17 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   progress.setValue(5);
   QApplication::processEvents();
 
+
+  if (this->original_present()) {
+    QString original_list = "\n";
+    for (int i = 0; i < this->shapes_.size(); i++) {
+      original_list = original_list + this->shapes_[i]->get_original_filename_with_path() + "\n";
+    }
+    xml->writeTextElement("original_files", original_list);
+  }
   // shapes
   xml->writeStartElement("shapes");
+
   for (int i = 0; i < this->shapes_.size(); i++) {
     xml->writeStartElement("shape");
     xml->writeAttribute("id", QString::number(i));
@@ -294,7 +303,6 @@ bool Project::load_project(QString filename, std::string& planesFile)
       }
     }
   }
-
 
   // load project settings
   TiXmlNode* settings_node = project_element->FirstChild("settings");

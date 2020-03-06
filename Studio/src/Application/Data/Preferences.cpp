@@ -21,7 +21,6 @@ std::map<std::string, QVariant> Preferences::get_project_preferences()
     QString key = a;
     if (a.toStdString().find("Project/") != std::string::npos) {
       ans.insert(std::make_pair(a.remove("Project/").toStdString(), this->settings_.value(key)));
-      std::cerr << "a = " << key.toStdString() << "\n";
     }
   }
   return ans;
