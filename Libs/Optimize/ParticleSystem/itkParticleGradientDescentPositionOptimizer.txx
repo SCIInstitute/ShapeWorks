@@ -23,6 +23,7 @@ const int global_iteration = 1;
 #endif /* SW_USE_OPENMP */
 
 #include <algorithm>
+#include <chrono>
 #include <ctime>
 #include <time.h>
 #include <string>
@@ -103,12 +104,14 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         mintime[q]  = 1.0;
     }
     time_t timerBefore, timerAfter;
+    std::chrono::steady_clock::time_point accTimerBegin, accTimerEnd;
 
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
         m_GradientFunction->SetParticleSystem(m_ParticleSystem);
         timerBefore = time(NULL);
+        accTimerBegin = std::chrono::steady_clock::now();
         if (counter % global_iteration == 0)
             m_GradientFunction->BeforeIteration();
         counter++;
@@ -247,9 +250,12 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         timerAfter = time(NULL);
         double seconds = difftime(timerAfter, timerBefore);
 
+        accTimerEnd = std::chrono::steady_clock::now();
+        double msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
+
         if (m_verbosity > 2)
         {
-            std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
+            std::cout << m_NumberOfIterations << ". " << msElapsed << " ms" << std::endl;
             std::cout.flush();
         }
 
