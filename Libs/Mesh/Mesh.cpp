@@ -7,44 +7,47 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkPointData.h>
 
-//#include <vtkVersion.h>
-//#include <vtkPointData.h>
-//#include <vtkPolyDataNormals.h>
-//#include <vtkSmoothPolyDataFilter.h>
-
 static bool compare_double(double a, double b)
 {
   const double EPSILON = 1e-1;
   return fabs(a - b) < EPSILON;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 namespace shapeworks {
 
-//<ctc> TODO: mesh
 
-///////////////////////////////////////////////////////////////////////////////
-bool Mesh::read(const std::string &inFilename)
+/// read
+///
+/// reads a mesh
+///
+/// \param filename
+bool Mesh::read(const std::string &filename)
 {
   vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
-  reader->SetFileName(inFilename.c_str());
+  reader->SetFileName(filename.c_str());
   reader->Update();
   this->poly_data_ = vtkSmartPointer<vtkPolyData>::New();
   this->poly_data_->DeepCopy(reader->GetOutput());
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-bool Mesh::write(const std::string &outFilename)
+/// write
+///
+/// writes the mesh
+///
+/// \param filename
+bool Mesh::write(const std::string &filename)
 {
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetFileName(outFilename.c_str());
+  writer->SetFileName(filename.c_str());
   writer->SetInputData(this->poly_data_);
   writer->Update();
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// coverage
+///
+/// \param mesh
 bool Mesh::coverage(const Mesh &other_mesh)
 {
   if (!this->poly_data_) {
@@ -77,13 +80,18 @@ bool Mesh::coverage(const Mesh &other_mesh)
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// smooth
+///
 bool Mesh::smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoothing*/)
 {
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// compare_points_equal
+///
+/// Compare if points in two meshes are equal
+///
+/// \param other_mesh
 bool Mesh::compare_points_equal(const Mesh &other_mesh)
 {
   if (!this->poly_data_ || !other_mesh.poly_data_) {
@@ -106,7 +114,11 @@ bool Mesh::compare_points_equal(const Mesh &other_mesh)
   return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/// compare_scalars_equal
+///
+/// Compare if scalars in two meshes are equal
+///
+/// \param other_mesh
 bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
 {
   if (!this->poly_data_ || !other_mesh.poly_data_) {
@@ -144,28 +156,4 @@ bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
   return true;
 }
 
-// bool Mesh::antialias(float maxRMSErr, int numIter)
-// {
-//   if (!this->mesh) return false;
-
-//   typedef itk::AntiAliasBinaryMeshFilter<MeshType, MeshType> FilterType;
-//   FilterType::Pointer antialiasFilter = FilterType::New();
-//   antialiasFilter->SetInput(this->mesh);
-//   antialiasFilter->SetMaximumRMSError(maxRMSErr);
-//   antialiasFilter->SetNumberOfIterations(numIter);
-//   //antialiasFilter->SetNumberOfLayers(numLayers);  // TODO: should we specify this parameters?
-//   try
-//   {
-//     antialiasFilter->Update();
-//   }
-//   catch (itk::ExceptionObject &exp)
-//   {
-//     std::cerr << "Antialias filter failed:" << std::endl;
-//     std::cerr << exp << std::endl;
-//     return false;
-//   }
-
-//   this->mesh = antialiasFilter->GetOutput();
-//   return true;
-// }
 } // shapeworks
