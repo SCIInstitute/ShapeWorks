@@ -49,22 +49,24 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-    filename = "leftatrium.zip"
+
+    datasetName = "left_atrium"
+    filename = datasetName + ".zip"
     # Check if the data is in the right place
     if not os.path.exists(filename):
         print("Can't find " + filename + " in the current directory.")
-        from DatasetUtils import datasets
-        datasets.downloadDataset(filename)
+        import DatasetUtils
+        DatasetUtils.downloadDataset(datasetName)
 
-    parentDir="TestLeftAtrium/"
+    parentDir = "TestLeftAtrium/"
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
     # extract the zipfile
     with ZipFile(filename, 'r') as zipObj:
         zipObj.extractall(path=parentDir)
-
+        parentDir = parentDir + datasetName + "/"
         fileList_img = sorted(glob.glob(parentDir + "LGE/*.nrrd"))
-        fileList_seg = sorted(glob.glob(parentDir +"segmentation_LGE/*.nrrd"))
+        fileList_seg = sorted(glob.glob(parentDir + "segmentation_LGE/*.nrrd"))
 
     if args.tiny_test:
         fileList_img = fileList_img[:3]

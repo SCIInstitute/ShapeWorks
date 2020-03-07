@@ -1,3 +1,6 @@
+enable_testing()
+find_package(GTest REQUIRED)
+
 # Set the test data location
 set(TEST_DATA_DIR "${CMAKE_SOURCE_DIR}/Testing/data")
 

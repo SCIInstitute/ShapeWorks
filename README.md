@@ -66,10 +66,7 @@ Binary Installation Documentation
 Developers
 ---------------------
 Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
-
-<!-- the below is not updated with dead linkes
-Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
--->
+Please see **[Datasets.md](Documentation/Datasets.md)** for dataset upload instructions and guidelines.
 
 **Bug report:** As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
 
@@ -89,7 +86,7 @@ If you use ShapeWorks in work that leads to published research, we humbly ask th
 National Institute of General Medical Sciences of the National Institutes of Health under 
 grant number P41GM103545."
 -->
->"This work was supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, and NIGMS-P41GM103545."
+>"This work was supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545."
 
 and add the following 'disclaimer':
 

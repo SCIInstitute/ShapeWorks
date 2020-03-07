@@ -8,6 +8,7 @@ add_executable(PythonTests
   )
 
 target_link_libraries(PythonTests
-  gtest_main )
+  GTest::Main
+  )
 
 add_test(NAME PythonTests COMMAND PythonTests)

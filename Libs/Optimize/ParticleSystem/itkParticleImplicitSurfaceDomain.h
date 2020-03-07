@@ -1,10 +1,4 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleImplicitSurfaceDomain.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
-
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
@@ -12,8 +6,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleImplicitSurfaceDomain_h
-#define __itkParticleImplicitSurfaceDomain_h
+#pragma once
 
 #include "itkParticleImageDomainWithCurvature.h"
 //Prateep
@@ -35,34 +28,33 @@ namespace itk
  *  as an image.
  */
 template <class T, unsigned int VDimension=3>
-class ITK_EXPORT ParticleImplicitSurfaceDomain
-  : public ParticleImageDomainWithCurvature<T, VDimension>
+class ParticleImplicitSurfaceDomain : public ParticleImageDomainWithCurvature<T, VDimension>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImplicitSurfaceDomain Self;
   typedef ParticleImageDomainWithCurvature<T, VDimension> Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef SmartPointer<ParticleImplicitSurfaceDomain>  Pointer;
+
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::PointType PointType;
 
   typedef vnl_matrix_fixed<double, VDimension +1, VDimension +1> TransformType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleImplicitSurfaceDomain, ParticleClipByRegionDomain);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  itkNewMacro(ParticleImplicitSurfaceDomain);
 
   /** Set/Get the precision of the projection operation.  The resulting projection
       will be within the specified tolerance. */
-  itkSetMacro(Tolerance, T);
-  itkGetMacro(Tolerance, T);
+  virtual void SetTolerance(const T _Tolerance) {
+    if (this->m_Tolerance != _Tolerance) 
+    {
+      this->m_Tolerance = _Tolerance;
+      this->Modified();
+    }
+  }
+  virtual T GetTolerance() {
+    return this->m_Tolerance;
+  }
   
   /** Apply any constraints to the given point location.  This method
       constrains points to lie within the given domain and on a given implicit
@@ -188,9 +180,9 @@ public:
 
 protected:
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
-    {
+  {
     m_mesh = NULL;
-    }
+  }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
@@ -215,22 +207,8 @@ private:
 
   std::vector< vnl_vector_fixed<double, VDimension> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;
-  
-  ParticleImplicitSurfaceDomain(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
 };
 
 } // end namespace itk
 
-
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleImplicitSurfaceDomain+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleImplicitSurfaceDomain.txx"
-#endif
-
 #include "itkParticleImplicitSurfaceDomain.txx"
-
-#endif
