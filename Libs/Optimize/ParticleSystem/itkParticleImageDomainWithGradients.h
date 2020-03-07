@@ -96,8 +96,7 @@ public:
       used to apply any constraints the resulting vector, such as a projection
       to the surface tangent plane. Returns true if the gradient was modified.*/
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos,
-                                      double maxtimestep) const
+                                      const PointType &pos) const
     
   {
     if (this->m_ConstraintsEnabled == true)

@@ -114,8 +114,6 @@ namespace itk
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == false)
           {
-            double maxdt;
-
             VectorType gradient;
             VectorType original_gradient;
             PointType newpoint;
@@ -142,77 +140,89 @@ namespace itk
             for (typename ParticleSystemType::PointContainerType::ConstIterator it
               = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
             {
-              bool done = false;
-
               // Compute gradient update.
               double energy = 0.0;
               localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
+              double maxdt;
               original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
 
               unsigned int idx = it.GetIndex();
               PointType pt = *it;
-              NormalType ptNormalOld = domain->SampleNormalVnl(pt);
 
+              // Step 1 Project the gradient vector onto the tangent plane
+              NormalType ptNormalOld = domain->SampleNormalVnl(pt);
               double dotPdt = original_gradient[0] * ptNormalOld[0] + original_gradient[1] * ptNormalOld[1] + original_gradient[2] * ptNormalOld[2];
               VectorType original_gradient_projectedOntoTangentSpace;
               original_gradient_projectedOntoTangentSpace[0] = original_gradient[0] - dotPdt * ptNormalOld[0];
               original_gradient_projectedOntoTangentSpace[1] = original_gradient[1] - dotPdt * ptNormalOld[1];
               original_gradient_projectedOntoTangentSpace[2] = original_gradient[2] - dotPdt * ptNormalOld[2];
 
+              // Step 2 scale the gradient by the time step
+              // Note that time step can only decrease while finding a good update so the gradient computed here is 
+              // the largest possible we can get during this update.
+              gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+
+              // Step 3 Constrain the gradient so that the resulting position will not violate any domain constraints
+              dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+              double maximumUpdateMagnitudeConstrained = gradient.magnitude();
+
               double newenergy, gradmag;
-              while (!done)
-              {
+              while (true)
+              { 
+                // Step A scale the projected gradient by the current time step
                 gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
-
-                dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom), maxdt);
-
                 gradmag = gradient.magnitude();
-
+                // Step B if the magnitude is larger than the Sampler allows, try again with smaller time step
                 if (gradmag > maxdt)
                 {
                   m_TimeSteps[dom][k] /= factor;
+                  continue;
                 }
-                else // Move is not too large
+                // Step C if the magnitude is so large that the resulting poitn position would violate domain constraints, 
+                // scale the gradient down to the point where it doesn't violate constraints. 
+                if (gradmag > maximumUpdateMagnitudeConstrained) 
                 {
-                  // Make a move and compute new energy
-                  for (unsigned int i = 0; i < VDimension; i++)
+                  for (unsigned int n = 0; n < VDimension; n++)
+                    gradient[n] *= maximumUpdateMagnitudeConstrained / gradmag;
+                  gradmag = gradient.magnitude();
+                }
+
+                // Step D compute the new point position
+                for (unsigned int i = 0; i < VDimension; i++)
+                  newpoint[i] = pt[i] - gradient[i];
+
+                // Step E have the domain snap the point to the surface and satisfy constraints
+                domain->ApplyConstraints(newpoint);
+
+                // Step F update the point position in the particle system
+                m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+
+                // Step G compute the new energy of the particle system 
+                newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
+
+                if (newenergy < energy) // good move, increase timestep for next time
+                {
+                  meantime[dom] += m_TimeSteps[dom][k];
+                  m_TimeSteps[dom][k] *= factor;
+                  if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
+                  if (gradmag > maxchange) maxchange = gradmag;
+                  break;
+                }
+                else
+                {// bad move, reset point position and back off on timestep
+                  if (m_TimeSteps[dom][k] > mintime[dom])
                   {
-                    newpoint[i] = pt[i] - gradient[i];
+                    domain->ApplyConstraints(pt);
+                    m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+
+                    m_TimeSteps[dom][k] /= factor;
                   }
-
-
-                  dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(newpoint);
-
-
-                  m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
-
-                  newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
-
-                  if (newenergy < energy) // good move, increase timestep for next time
+                  else // keep the move with timestep 1.0 anyway
                   {
-                    meantime[dom] += m_TimeSteps[dom][k];
-                    m_TimeSteps[dom][k] *= factor;
-                    if (m_TimeSteps[dom][k] > maxtime[dom]) m_TimeSteps[dom][k] = maxtime[dom];
-                    if (gradmag > maxchange) maxchange = gradmag;
-                    done = true;
+                    break;
                   }
-                  else
-                  {// bad move, reset point position and back off on timestep
-                    if (m_TimeSteps[dom][k] > mintime[dom])
-                    {
-                      dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyConstraints(pt);
-                      m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
-
-                      m_TimeSteps[dom][k] /= factor;
-                    }
-                    else // keep the move with timestep 1.0 anyway
-                    {
-                      done = true;
-                    }
-                  }
-                } //gradmag check
-              } // end while not done
-
+                }
+              } // end while(true)
             } // for each particle
 
             // Compute mean time step

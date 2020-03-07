@@ -71,8 +71,7 @@ public:
   /** Optionally add a repulsion from a planar boundar specified in
       m_CuttingPlane */
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos,
-                                      double maxtimestep) const;
+                                      const PointType &pos) const;
 
   /** Define a distance measure on the surface.  Note that this distance
       measure is NOT the geodesic distance, as one might expect, but is only a
