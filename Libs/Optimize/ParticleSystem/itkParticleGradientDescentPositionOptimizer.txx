@@ -145,12 +145,7 @@ namespace itk
               PointType pt = *it;
 
               // Step 1 Project the gradient vector onto the tangent plane
-              NormalType ptNormalOld = domain->SampleNormalVnl(pt);
-              double dotPdt = original_gradient[0] * ptNormalOld[0] + original_gradient[1] * ptNormalOld[1] + original_gradient[2] * ptNormalOld[2];
-              VectorType original_gradient_projectedOntoTangentSpace;
-              original_gradient_projectedOntoTangentSpace[0] = original_gradient[0] - dotPdt * ptNormalOld[0];
-              original_gradient_projectedOntoTangentSpace[1] = original_gradient[1] - dotPdt * ptNormalOld[1];
-              original_gradient_projectedOntoTangentSpace[2] = original_gradient[2] - dotPdt * ptNormalOld[2];
+              VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(original_gradient, pt);
 
               // Step 2 scale the gradient by the time step
               // Note that time step can only decrease while finding a good update so the gradient computed here is 

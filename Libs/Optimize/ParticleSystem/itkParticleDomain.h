@@ -11,6 +11,8 @@
 #include "itkDataObject.h"
 #include "itkPoint.h"
 
+#include "vnl/vnl_vector_fixed.h"
+
 namespace itk
 {
 template <unsigned int VDimension=3>
@@ -28,6 +30,8 @@ public:
       surface.  Default behavior does nothing.  Returns true if the value of
       the point was modified and false otherwise. */
   virtual bool ApplyConstraints(PointType& p) const = 0;
+  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const = 0;
 
   /** A Domain may define a distance calculation.  This is useful in cases
       such as geodesic distance, where distance depends on some information
