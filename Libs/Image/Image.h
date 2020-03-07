@@ -37,9 +37,12 @@ public:
 
 private:
   friend struct SharedCommandData;
-
   Image() {}
+
+  static bool is_directory(const std::string &pathname); // TODO: Move this function to Libs/Utils
+
+  bool read_image_dir(const std::string &pathname);
+
   ImageType::Pointer image;
 };
-
 } // shapeworks

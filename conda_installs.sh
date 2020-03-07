@@ -51,6 +51,7 @@ function install_conda() {
        pybind=2.4.3 \
        pytest=5.3.5 \
        cmake=3.15.5 \
+       gtest=1.10.0 \
        colorama=0.4.3 \
        requests=2.22.0 \
        geotiff=1.5.1 \

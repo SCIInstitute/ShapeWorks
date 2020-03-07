@@ -1,10 +1,4 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleImageDomainWithCurvature.h,v $
-  Date:      $Date: 2011/03/23 22:40:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
@@ -12,8 +6,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleImageDomainWithCurvature_h
-#define __itkParticleImageDomainWithCurvature_h
+#pragma once
 
 #include "itkParticleImageDomainWithHessians.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -34,30 +27,17 @@ namespace itk
  * \sa ParticleDomain
  */
 template <class T, unsigned int VDimension=3>
-class ITK_EXPORT ParticleImageDomainWithCurvature
-  : public ParticleImageDomainWithHessians<T, VDimension>
+class ParticleImageDomainWithCurvature : public ParticleImageDomainWithHessians<T, VDimension>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImageDomainWithCurvature Self;
   typedef ParticleImageDomainWithHessians<T, VDimension> Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef SmartPointer<ParticleImageDomainWithCurvature<T, VDimension>>  Pointer;
 
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
   typedef typename Superclass::VnlMatrixType VnlMatrixType;
-  
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleImageDomainWithCurvature, ParticleImageDomainWithHessians);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
@@ -66,8 +46,7 @@ public:
     // Computes partial derivatives in parent class
     Superclass::SetImage(I);
 
-    typedef itk::DiscreteGaussianImageFilter<ImageType, ImageType> DiscreteGaussianImageFilterType;
-    typename DiscreteGaussianImageFilterType::Pointer f = DiscreteGaussianImageFilterType::New();
+    typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer f = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
 
     double sig =  this->GetImage()->GetSpacing()[0] * 0.5;
     
@@ -109,19 +88,13 @@ public:
     return m_CurvatureInterpolator->Evaluate(pos);
   }
   
-  typename ImageType::Pointer *GetCurvatureImage()
-  { return m_CurvatureImage; }
+  typename ImageType::Pointer* GetCurvatureImage() { return m_CurvatureImage; }
 
 protected:
   ParticleImageDomainWithCurvature()
   {
     m_CurvatureInterpolator = ScalarInterpolatorType::New();
     m_CurvatureImage = ImageType::New();
-  }
-
-  void PrintSelf(std::ostream& os, Indent indent) const
-  {
-    Superclass::PrintSelf(os, indent);
   }
   virtual ~ParticleImageDomainWithCurvature() {};
 
@@ -174,23 +147,9 @@ protected:
   }
   
 private:
-  ParticleImageDomainWithCurvature(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
-  
   // Curvature values are stored in an image
   typename ImageType::Pointer m_CurvatureImage;
   typename ScalarInterpolatorType::Pointer m_CurvatureInterpolator;
 };
 
 } // end namespace itk
-
-
-#if ITK_TEMPLATE_EXPLICIT
-//# include "Templates/itkParticleImageDomainWithCurvature+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-//# include "itkParticleImageDomainWithCurvature.txx"
-#endif
-
-#endif

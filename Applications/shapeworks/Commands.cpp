@@ -40,6 +40,7 @@ void ReadImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("name of file to read");
+  parser.add_option("--dicom_dir").action("store").type("string").set_default("").help("name of dicom dir to read");
 
   Command::buildParser();
 }
@@ -47,7 +48,6 @@ void ReadImage::buildParser()
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
-
   return sharedData.image.read(filename);
 }
 
