@@ -118,7 +118,7 @@ TEST(ImageTests, dicom_read_test) {
   // read ground truth
   Image ground_truth(test_location + "dicom.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 //TEST(ImageTests, blah_test) {

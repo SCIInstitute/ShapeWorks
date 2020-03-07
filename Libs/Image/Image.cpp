@@ -36,9 +36,9 @@ bool Image::read(const std::string &filename)
     return false;
   }
 
-  if (Image::is_directory(inFilename))
+  if (Image::is_directory(filename))
   {
-    return this->read_image_dir(inFilename);
+    return this->read_image_dir(filename);
   }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
