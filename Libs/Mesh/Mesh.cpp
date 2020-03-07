@@ -47,6 +47,8 @@ bool Mesh::write(const std::string &filename)
 
 /// coverage
 ///
+/// Not really sure what this does... (TODO: add desc here and also add desc in ShapeworksPython.cpp)
+///
 /// \param mesh
 bool Mesh::coverage(const Mesh &other_mesh)
 {
