@@ -11,6 +11,9 @@ import itk
 import vtk
 import vtk.util.numpy_support
 
+USE_NATIVE_API = True    # use native API instead of external executable (just for testing; eventually only this API)
+
+from shapeworkspy import *
 from CommonUtils import *
 
 def rename(inname, outDir, extension_addition, extension_change=''):
@@ -42,21 +45,34 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         outname = rename(inname, outDir, 'isores')
         outDataList.append(outname)
 
-        cmd = ["shapeworks", "read-image", "--name", inname]
+        if USE_NATIVE_API:
+            img = Image(inname)
+            if isBinary:
+                img.antialias()
+            img.isoresample()
+            if isBinary:
+                img.threshold()  # re-binarize the image (defaults for threshold are (0,max) )
+            if recenter:
+                img.recenter()
+            img.write(outname)
+            
+        else:
+            cmd = ["shapeworks", "read-image", "--name", inname]
 
-        if isBinary:
-            cmd.extend(["antialias"])
+            if isBinary:
+                cmd.extend(["antialias"])
 
-        cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
-        
-        if isBinary:
-            cmd.extend(["threshold"])
-        if recenter:
-            cmd.extend(["recenter-image"])
+            cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
 
-        cmd.extend(["write-image", "--name", outname])
-        print("Calling cmd:\n"+" ".join(cmd))
-        subprocess.check_call(cmd)
+            if isBinary:
+                cmd.extend(["threshold"])
+            if recenter:
+                cmd.extend(["recenter-image"])
+
+            cmd.extend(["write-image", "--name", outname])
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
+
     return outDataList
 
 def getOrigin(inname):

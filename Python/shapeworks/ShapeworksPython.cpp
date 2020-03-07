@@ -19,13 +19,18 @@ PYBIND11_MODULE(shapeworkspy, m)
 {
   m.doc() = "ShapeWorks Python API";
 
+  py::class_<shapeworks::Dims>(m, "Dims")
+  .def(py::init<>())
+  .def(py::init<unsigned, unsigned, unsigned>())
+  ;
+
   py::class_<shapeworks::Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
   .def("write", &shapeworks::Image::write, "filename"_a, "compressed"_a=true)
   //.def_readonly_static("dims", &shapeworks::Image::dims, "number of dimensions, usually (always) 3")
   .def("antialias", &shapeworks::Image::antialias, "smooth the image", "numIterations"_a=50, "maxRMSErr"_a=0.01f, "numLayers"_a=3) //todo: want to use shapeworks::Image::dims, but it's not getting exported to python, even with def_readonly_static above
   .def("recenter", &shapeworks::Image::recenter)
-  .def("isoresample", &shapeworks::Image::isoresample)
+  .def("isoresample", &shapeworks::Image::isoresample, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
   .def("pad", &shapeworks::Image::pad, "padding"_a, "value"_a)
   .def("applyTransform", &shapeworks::Image::applyTransform, "transform"_a)
   .def("extractLabel", &shapeworks::Image::extractLabel, "label"_a=1)

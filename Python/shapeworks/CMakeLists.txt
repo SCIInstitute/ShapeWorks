@@ -15,3 +15,10 @@ target_link_libraries(shapeworkspy PUBLIC
 
   # tinyxml Mesh vgl vgl_algo Image Optimize Utils trimesh2
   # gtest_main ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+
+install(TARGETS shapeworkspy
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+  )
