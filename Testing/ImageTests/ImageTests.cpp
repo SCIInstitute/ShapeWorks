@@ -95,8 +95,7 @@ TEST(ImageTests, dicom_read_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
 
   // read dicom
-  Image image;
-  image.read(test_location + "dcm_files/");
+  Image image(test_location + "dcm_files");
 
   // read ground truth
   Image ground_truth(test_location + "dicom.nrrd");
