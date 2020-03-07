@@ -114,20 +114,13 @@ namespace itk
           // skip any flagged domains
           if (m_ParticleSystem->GetDomainFlag(dom) == false)
           {
-            VectorType gradient;
-            VectorType original_gradient;
-            PointType newpoint;
 
             const DomainType* domain = static_cast<const DomainType*>(m_ParticleSystem->GetDomain(dom));
 
-            typename GradientFunctionType::Pointer localGradientFunction;
-
-            localGradientFunction = m_GradientFunction;
-
+            typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 #ifdef SW_USE_OPENMP
             localGradientFunction = m_GradientFunction->Clone();
-#endif /* SW_USE_OPENMP */
-
+#endif
 
             // Tell function which domain we are working on.
             localGradientFunction->SetDomainNumber(dom);
@@ -140,11 +133,13 @@ namespace itk
             for (typename ParticleSystemType::PointContainerType::ConstIterator it
               = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
             {
+              VectorType gradient;
+              VectorType original_gradient;
               // Compute gradient update.
               double energy = 0.0;
               localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
-              double maxdt;
-              original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maxdt, energy);
+              double maximumDTUpdateAllowed;
+              original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumDTUpdateAllowed, energy);
 
               unsigned int idx = it.GetIndex();
               PointType pt = *it;
@@ -173,7 +168,7 @@ namespace itk
                 gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
                 gradmag = gradient.magnitude();
                 // Step B if the magnitude is larger than the Sampler allows, try again with smaller time step
-                if (gradmag > maxdt)
+                if (gradmag > maximumDTUpdateAllowed)
                 {
                   m_TimeSteps[dom][k] /= factor;
                   continue;
@@ -188,6 +183,7 @@ namespace itk
                 }
 
                 // Step D compute the new point position
+                PointType newpoint;
                 for (unsigned int i = 0; i < VDimension; i++)
                   newpoint[i] = pt[i] - gradient[i];
 
