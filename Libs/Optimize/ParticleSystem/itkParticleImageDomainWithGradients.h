@@ -98,7 +98,7 @@ public:
         }
         const vnl_vector_ref<float> grad = gradIt.Get().GetVnlVector();
         const auto pixel = it.Get();
-        if(abs(pixel) > 3.0) {
+        if(abs(pixel) > 4.0) {
             ++gradIt; ++it;
             continue;
         }
@@ -131,6 +131,7 @@ public:
 
       if(this->IsInsideBuffer(p)) {
 #ifdef USE_OPENVDB
+          //TODO: stop this GetOrigin stuff, use TransformIndexToPhysicalPoint when creating the grid
           auto o = this->GetOrigin();
           auto sp = p;
           for(int i=0; i<3; i++) { sp[i] -= o[i]; }

@@ -89,7 +89,7 @@ public:
         }
         const auto hess = hessIt.Get();
         const auto pixel = it.Get();
-        if(abs(pixel) > 3.0) {
+        if(abs(pixel) > 4.0) {
           ++hessIt; ++it;
           continue;
         }
