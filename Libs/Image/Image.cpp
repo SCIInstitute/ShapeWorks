@@ -450,6 +450,9 @@ bool Image::threshold(PixelType min, PixelType max)
   return true;
 }
 
+/// centerOfMass
+///
+/// returns average spatial coordinate of black pixels in a binary volume
 Point3 Image::centerOfMass() const
 {
   if (!this->image)
@@ -529,6 +532,24 @@ bool Image::applyTransform(const Transform &transform)
   std::cout << "Transform succeeded!\n";
 #endif
   return true;
+}
+
+/// size
+///
+/// return physical size of image
+Point3 Image::size() const
+{
+  Dims dims(image->GetLargestPossibleRegion().GetSize());
+  Point3 spacing(image->GetSpacing());
+  Point3 ret;
+  for (unsigned i = 0; i < 3; i++)
+    ret[i] = dims[i] * spacing[i];
+  return ret;
+}
+
+void Image::print() const
+{
+  std::cout << "this image is really pretty... (todo)\n";
 }
 
 } // Shapeworks

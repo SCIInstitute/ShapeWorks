@@ -10,16 +10,15 @@ namespace shapeworks {
 class Image
 {
 public:
-  static const unsigned dims = 3;
   using PixelType = float;
-  using ImageType = itk::Image<PixelType, dims>;
+  using ImageType = itk::Image<PixelType, 3>;
 
   Image(const std::string &filename) { read(filename); }
 
   bool read(const std::string &filename);
   bool write(const std::string &filename, bool compressed = true);
 
-  bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims); //todo: no need for a return value
+  bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
@@ -30,9 +29,12 @@ public:
 
   bool operator==(const Image &other) const;
 
-  Point3 centerOfMass() const;  // returns average spatial coordinate of black pixels in a binary volume
-  Point3 center() const;        // returns spatial coordinate of center of volume
-  Point3 size() const;          // returns spatial size of the volume
+  Point3 centerOfMass() const;  
+  Point3 origin() const { return image->GetOrigin(); }
+  Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
+  Point3 size() const;                                      // spatial size of image
+  Point3 center() const { return origin() + size() / 2.0; } // spatial coordinates of center of this image
+
   void print() const; //print center, size, and other stuff about the image; todo: operator<<
 
 private:
@@ -45,4 +47,5 @@ private:
 
   ImageType::Pointer image;
 };
+
 } // shapeworks

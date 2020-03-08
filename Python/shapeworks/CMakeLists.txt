@@ -8,12 +8,15 @@ pybind11_add_module(shapeworkspy ShapeworksPython.cpp)
 # - can we create a target simple named shapeworks so we can `import shapeworks` rather than shapeworkspy?
 
 target_link_libraries(shapeworkspy PUBLIC
+  Common
   Image
   Mesh
+  Optimize
+  Particles
   ${ITK_LIBRARIES}
   )
 
-  # tinyxml Mesh vgl vgl_algo Image Optimize Utils trimesh2
+  # tinyxml  vgl vgl_algo  Utils trimesh2
   # gtest_main ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 
 install(TARGETS shapeworkspy
