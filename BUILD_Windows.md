@@ -1,7 +1,7 @@
 # Building ShapeWorks from source on Windows
 
 ## Minimum Requirements
-* CMake 3.11
+* CMake 3.11 (provided by conda below if not already installed)
 * MSVC 2019
 * Qt 5.9.8 (optional for GUI components)
 
@@ -9,7 +9,7 @@
 
 ### CMake
 Download and install [[CMake]](https://cmake.org/)  
-Download and install [[Visual Studio]](https://visualstudio.microsoft.com/) or another CMake-compatible compiler  
+Download and install [[Visual Studio 2019]](https://visualstudio.microsoft.com/)
 
 ### Anaconda
 Download and install [[Anaconda]](https://www.anaconda.com/)  
@@ -22,7 +22,7 @@ After installing Qt5, add the directory containing `qmake.exe` to your PATH. (Se
 Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
 ### VXL, VTK, ITK, and Eigen
-These four dependencies can be installed using the **build_dependencies.sh** script.  
+These dependencies can be installed using the **build_dependencies.sh** script.  
 Use an msys shell (e.g. git bash) to do this on Windows.  
 
 Use `$ ./build_dependencies.sh --help` for more details on the available build_dependencies options.  
@@ -33,7 +33,7 @@ Make sure you added Qt to your path as explained in the [Install dependencies/Qt
 If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK  
 
 ## Configure and Build  
-Use the CMake-gui to configure and generate project files for your preferred build system. (e.g. Visual Studio 16 2019)  
+Use the cmake from the Anaconda Prompt with shapeworks env activated to configure and generate project files for your preferred build system. (e.g. Visual Studio 16 2019)  
 
 ### Options
 Required:  
@@ -51,8 +51,9 @@ Optional:
 ```
 
 ### Examples
-*Windows* example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
+Example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
 ```
+> conda activate shapeworks
 > ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
 > mkdir build
 > cd build
