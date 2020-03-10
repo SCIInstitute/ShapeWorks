@@ -53,6 +53,9 @@
 
 #include <Optimize.h>
 
+// constraint
+#include "Constraint.h"
+
 //---------------------------------------------------------------------------
 Optimize::Optimize()
 {

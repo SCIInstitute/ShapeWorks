@@ -15,7 +15,7 @@ public:
 	~PlanarConstraint();
 
 	// gneerate the plane normal
-	typedef itk::FixedArray<T, 3> VectorType;
+	//typedef itk::FixedArray<T, VDimension> VectorType;
 
 
 	// Apply constraint to satisfy constraint and update the point location 
@@ -23,5 +23,9 @@ public:
 		// project the point to the constraint plane
 	}
 private:
+	PointType point1, point2, point3;
+	VectorType planeNormal
+
+
 
 };
