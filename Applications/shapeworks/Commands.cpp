@@ -35,7 +35,7 @@ int Example::execute(const optparse::Values &options, SharedCommandData &sharedD
 ///////////////////////////////////////////////////////////////////////////////
 void ReadImage::buildParser()
 {
-  const std::string prog = "read-image";
+  const std::string prog = "readimage";
   const std::string desc = "reads an image";
   parser.prog(prog).description(desc);
 
@@ -56,7 +56,7 @@ int ReadImage::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void WriteImage::buildParser()
 {
-  const std::string prog = "write-image";
+  const std::string prog = "writeimage";
   const std::string desc = "writes the current image (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -79,7 +79,7 @@ int WriteImage::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 void ReadMesh::buildParser()
 {
-  const std::string prog = "read-mesh";
+  const std::string prog = "readmesh";
   const std::string desc = "reads a mesh";
   parser.prog(prog).description(desc);
 
@@ -100,7 +100,7 @@ int ReadMesh::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void WriteMesh::buildParser()
 {
-  const std::string prog = "write-mesh";
+  const std::string prog = "writemesh";
   const std::string desc = "writes the current mesh (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -173,7 +173,7 @@ int ResampleImage::execute(const optparse::Values &options, SharedCommandData &s
 ///////////////////////////////////////////////////////////////////////////////
 void RecenterImage::buildParser()
 {
-  const std::string prog = "recenter-image";
+  const std::string prog = "recenter";
   const std::string desc = "recenters an image by changing its origin in the image\n\t\t\theader to the physical coordinates of the center of the image";
   parser.prog(prog).description(desc);
 
@@ -213,23 +213,20 @@ int PadImage::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void SmoothMesh::buildParser()
 {
-  const std::string prog = "smooth-mesh";
+  const std::string prog = "smoothmesh";
   const std::string desc = "smooths meshes";
   parser.prog(prog).description(desc);
   
-  // TODO
-  // parser.add_option("--maxRMSError").action("store").type("float").set_default(0.01).help("The maximum RMS error allowed.");
-  // parser.add_option("--numIterations").action("store").type("int").set_default(50).help("Number of iterations.");
+  // todo
 
   Command::buildParser();
 }
 
 int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  // float maxRMSErr = static_cast<float>(options.get("maxRMSError"));
-  // int numIter = static_cast<int>(options.get("numIterations"));
+  //todo
 
-  return sharedData.mesh.smooth(/*maxRMSErr, numIter*/);
+  return sharedData.mesh.smooth();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
