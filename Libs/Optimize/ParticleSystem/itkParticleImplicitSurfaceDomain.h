@@ -73,6 +73,7 @@ public:
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
                                       const PointType &pos) const;
 
+
   /** Define a distance measure on the surface.  Note that this distance
       measure is NOT the geodesic distance, as one might expect, but is only a
       Euclidean distance which ignores points whose normals are not
@@ -206,6 +207,12 @@ private:
 
   std::vector< vnl_vector_fixed<double, VDimension> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;
+
+
+
+  // Praful
+  bool SphereVectorConstraintMayOrMayNotWork(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const;
 };
 
 } // end namespace itk
