@@ -152,29 +152,21 @@ namespace itk
               // the largest possible we can get during this update.
               gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
-              // Step 3 Constrain the gradient so that the resulting position will not violate any domain constraints
-              dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
-              double maximumUpdateMagnitudeConstrained = gradient.magnitude();
-
               double newenergy, gradmag;
               while (true)
               { 
                 // Step A scale the projected gradient by the current time step
                 gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+
+                // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
+                dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
                 gradmag = gradient.magnitude();
-                // Step B if the magnitude is larger than the Sampler allows, try again with smaller time step
+
+                // Step C if the magnitude is larger than the Sampler allows, try again with smaller time step
                 if (gradmag > maximumDTUpdateAllowed)
                 {
                   m_TimeSteps[dom][k] /= factor;
                   continue;
-                }
-                // Step C if the magnitude is so large that the resulting poitn position would violate domain constraints, 
-                // scale the gradient down to the point where it doesn't violate constraints. 
-                if (gradmag > maximumUpdateMagnitudeConstrained) 
-                {
-                  for (unsigned int n = 0; n < VDimension; n++)
-                    gradient[n] *= maximumUpdateMagnitudeConstrained / gradmag;
-                  gradmag = gradient.magnitude();
                 }
 
                 // Step D compute the new point position
