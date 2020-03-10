@@ -1,25 +1,24 @@
 #pragma once
 
-#include <Optimize/ShapeWorksOptimize.h>
+#include <Libs/Optimize/Optimize.h>
 #include <QObject>
 #include <QMutex>
 #include <QElapsedTimer>
 
-//! Wraps ShapeWorksOptimize as a QObject
-class QOptimize : public QObject, public ShapeWorksOptimize {
+//! Wraps Optimize as a QObject
+class QOptimize : public QObject, public Optimize {
   Q_OBJECT;
 
 public:
   QOptimize(QObject* parent = nullptr);
   virtual ~QOptimize();
 
-  std::vector<std::vector<itk::Point<double>>> localPoints() override;
-  std::vector<std::vector<itk::Point<double>>> globalPoints() override;
-
+  std::vector<std::vector<itk::Point<double>>> GetLocalPoints() override;
+  std::vector<std::vector<itk::Point<double>>> GetGlobalPoints() override;
 
 protected:
-  virtual void SetIterationCommand() override;
-  virtual void iterateCallback(itk::Object* caller, const itk::EventObject &) override;
+  virtual void SetIterationCallback() override;
+  virtual void IterateCallback(itk::Object* caller, const itk::EventObject &) override;
 
 signals:
   void progress(int);
@@ -32,5 +31,6 @@ private:
   QMutex qmutex;
 
   QElapsedTimer time_since_last_update_;
+
 
 };

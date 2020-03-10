@@ -30,6 +30,7 @@ public:
     std::string mean_path;
     std::string template_dense_mesh;
     std::string template_sparse_points;
+    std::string template_good_indices;
     bool use_template_mesh;
 
     // parameters for mesh QC via preview
@@ -267,6 +268,15 @@ public:
                         inputsBuffer.clear();
                         inputsBuffer.str("");
                         sparse_given = true;
+                    }
+
+                    elem = docHandle.FirstChild( "template_good_indices" ).Element();
+                    if (elem)
+                    {
+                        inputsBuffer.str(elem->GetText());
+                        inputsBuffer >> template_good_indices;
+                        inputsBuffer.clear();
+                        inputsBuffer.str("");
                     }
 
                     if(dense_given && sparse_given)

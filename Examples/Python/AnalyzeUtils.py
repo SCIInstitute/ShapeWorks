@@ -10,7 +10,7 @@ from termcolor import colored, cprint
 from CommonUtils import *
 
 
-def create_View2_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles):
+def create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles):
     root = ET.Element('sample')
     input_points = ET.SubElement(root, 'point_files')
     input_points.text = "\n"
@@ -47,8 +47,8 @@ def create_View2_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles):
 
 
 def launchShapeWorksStudio(parentDir, dtFiles, localPointFiles, worldPointFiles):
-    xmlfilename = parentDir + '/shapeworksview2.xml'
-    create_View2_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles)
+    xmlfilename = parentDir + '/analyze.xml'
+    create_analyze_xml(xmlfilename, dtFiles, localPointFiles, worldPointFiles)
     create_cpp_xml(xmlfilename, xmlfilename)
     execCommand = ["ShapeWorksStudio" , xmlfilename ]
     subprocess.check_call(execCommand )

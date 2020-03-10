@@ -24,26 +24,6 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Ins
 
 include(DefaultBuildType)
 
-# Google Test
-if (BUILD_TESTS)
-  message(STATUS "Building Google Test")
-  set( gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll" FORCE)
-  enable_testing()
-  include(FetchContent)
-  
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        release-1.10.0
-    )
-  
-  FetchContent_GetProperties(googletest)
-  if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-  endif()
-endif(BUILD_TESTS)
-
 project(ShapeWorks)
 
 # use ccache if available
@@ -67,14 +47,16 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # GUI
-find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
-if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
-  set(SHAPEWORKS_QT_FOUND 1)
-else()
-  set(SHAPEWORKS_QT_FOUND 0)
-endif()
 
 if (SHAPEWORKS_GUI)
+    
+  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
+  if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
+  set(SHAPEWORKS_QT_FOUND 1)
+  else()
+  set(SHAPEWORKS_QT_FOUND 0)
+  endif()
+
   # headers (TODO: move to shapeworks gui targets' includes)
   include_directories(${Qt5Widgets_INCLUDE_DIRS})
   include_directories(${Qt5OpenGL_INCLUDE_DIRS})
@@ -206,3 +188,4 @@ endif(BUILD_DOCUMENTATION)
 
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+

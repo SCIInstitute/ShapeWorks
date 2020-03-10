@@ -58,6 +58,8 @@ int DoIt(InputParams params)
         denseFilename      = params.template_dense_mesh;
         sparseFilename     = params.template_sparse_points;
         goodPointsFilename = ""; // assume that all are good points
+        if (!params.template_good_indices.empty())
+            goodPointsFilename = params.template_good_indices;
     }
     else
     {

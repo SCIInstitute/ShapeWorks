@@ -11,7 +11,15 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+<<<<<<< HEAD
 #include <itkReinitializeLevelSetImageFilter.h>
+=======
+#include <itkImageSeriesReader.h>
+#include <itkGDCMImageIO.h>
+#include <itkGDCMSeriesFileNames.h>
+
+#include <sys/stat.h>
+>>>>>>> origin/executable
 
 namespace shapeworks {
 
@@ -25,6 +33,11 @@ bool Image::read(const std::string &inFilename)
   {
     std::cerr << "Empty filename passed to read; returning false." << std::endl;
     return false;
+  }
+
+  if (Image::is_directory(inFilename))
+  {
+    return this->read_image_dir(inFilename);
   }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -45,6 +58,36 @@ bool Image::read(const std::string &inFilename)
 #if DEBUG_CONSOLIDATION
   std::cout << "Successfully read image " << inFilename << std::endl;
 #endif
+  this->image = reader->GetOutput();
+  return true;
+}
+
+/// read_image_dir
+/// \param pathname directory containing image series
+bool Image::read_image_dir(const std::string &pathname)
+{
+  using ReaderType = itk::ImageSeriesReader<ImageType>;
+  using ImageIOType = itk::GDCMImageIO;
+  using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
+
+  ImageIOType::Pointer gdcm_io = ImageIOType::New();
+  InputNamesGeneratorType::Pointer input_names = InputNamesGeneratorType::New();
+  input_names->SetInputDirectory(pathname);
+
+  const ReaderType::FileNamesContainer &filenames = input_names->GetInputFileNames();
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetImageIO(gdcm_io);
+  reader->SetFileNames(filenames);
+
+  try
+  {
+    reader->Update();
+  } catch (itk::ExceptionObject &exp) {
+    std::cerr << "Failed to read dicom dir: " << pathname << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
   this->image = reader->GetOutput();
   return true;
 }
@@ -99,7 +142,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
-  
+
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   filter->SetMaximumRMSError(maxRMSErr);
@@ -112,7 +155,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
 
   try
   {
-    filter->Update();  
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -122,7 +165,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   }
 
 #if DEBUG_CONSOLIDATION
- std::cout << "Antialias filter succeeded!\n";
+  std::cout << "Antialias filter succeeded!\n";
 #endif
   return true;
 }
@@ -150,7 +193,7 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 
   try
   {
-    filter->Update();  
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -184,7 +227,7 @@ bool Image::recenter()
 
   try
   {
-    filter->Update();  
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -221,7 +264,7 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   resampler->SetOutputSpacing(spacing);
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
-  
+
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
   {
     ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
@@ -298,6 +341,18 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
+bool Image::is_directory(const std::string &pathname)
+{
+  struct stat info;
+  if (stat(pathname.c_str(), &info) != 0) {
+    return false;
+  }
+  else if (info.st_mode & S_IFDIR) {
+    return true;
+  }
+  return false;
+}
+
 bool Image::pad(int padding, PixelType value)
 {
   if (!this->image)
@@ -327,7 +382,7 @@ bool Image::pad(int padding, PixelType value)
 
   try
   {
-    padFilter->Update();  
+    padFilter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -340,7 +395,6 @@ bool Image::pad(int padding, PixelType value)
   std::cout << "Pad image with constant succeeded!\n";
 #endif
   return true;
-
 }
 
 bool Image::fastMarch(float isoValue)
@@ -380,5 +434,3 @@ bool Image::fastMarch(float isoValue)
 }
 
 } // Shapeworks
-
-
