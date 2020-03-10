@@ -316,7 +316,7 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
 {
   float isovalue = static_cast<float>(options.get("isovalue"));
 
-  return sharedData.image.fastmarch(isovalue);
+  return sharedData.image.fastMarch(isovalue);
 }
 
 } // shapeworks

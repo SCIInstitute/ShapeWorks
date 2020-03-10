@@ -11,6 +11,7 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <itkReinitializeLevelSetImageFilter.h>
 
 namespace shapeworks {
 
@@ -29,6 +30,7 @@ bool Image::read(const std::string &inFilename)
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(inFilename);
+
   try
   {
     reader->Update();
@@ -349,10 +351,14 @@ bool Image::fastMarch(float isoValue)
     return false;
   }
 
-  using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
+  typedef itk::ReinitializeLevelSetImageFilter<ImageType> ReinitializeLevelSetImageFilterType;
 
-  FilterType::Pointer filter = FilterType::New();
-  filter->SetInput(reader->GetOutput());
+  typename ReinitializeLevelSetImageFilterType::Pointer filter = ReinitializeLevelSetImageFilterType::New();
+
+  // using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
+
+  // FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
   filter->NarrowBandingOff();
   filter->SetLevelSetValue(isoValue);
 
