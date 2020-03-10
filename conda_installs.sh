@@ -48,6 +48,8 @@ function install_conda() {
 
   #install shapeworks deps
   if ! conda install --yes \
+       pybind=2.4.3 \
+       pytest=5.3.5 \
        cmake=3.15.5 \
        gtest=1.10.0 \
        colorama=0.4.3 \

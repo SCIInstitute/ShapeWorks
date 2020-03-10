@@ -121,9 +121,10 @@ do
     foreground=1
     
     isoValue=0.0
-    ExtractGivenLabelImage --inFilename ${segfilename} --outFilename  ${segfilename} --labelVal $foreground
-    CloseHoles --inFilename ${segfilename} --outFilename  ${segfilename}
-    shapeworks readimage --name ${segfilename} antialias --numiterations $antialias_iterations writeimage --name ${dtnrrdfilename}
+    
+    shapeworks read-image --name ${segfilename} extract-label --label $foreground write-image --name ${segfilename}
+    shapeworks read-image --name ${segfilename} closeholes write-image --name ${segfilename}
+    shapeworks read-image --name ${segfilename} antialias --numiterations $antialias_iterations write-image --name ${dtnrrdfilename}
     FastMarching --inFilename ${dtnrrdfilename} --outFilename  ${dtnrrdfilename} --isoValue $isoValue
     
     #     xmlfilename=${basename}.genDT.xml

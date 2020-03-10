@@ -13,11 +13,11 @@ TEST(ImageTests, isoresample_binary_isotropic_test) {
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
   image.isoresample();
-  image.binarize();
+  image.threshold();
   image.recenter();
   Image ground_truth(test_location + "binary-isotropic-isoresampled.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, isoresample_binary_anisotropic_test) {
@@ -27,11 +27,11 @@ TEST(ImageTests, isoresample_binary_anisotropic_test) {
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
   image.isoresample();
-  image.binarize();
+  image.threshold();
   image.recenter();
   Image ground_truth(test_location + "binary-anisotropic-isoresampled.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, isoresample_smooth_isotropic_test) {
@@ -43,7 +43,7 @@ TEST(ImageTests, isoresample_smooth_isotropic_test) {
   image.recenter();
   Image ground_truth(test_location + "smooth-isotropic-isoresampled.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, isoresample_smooth_anisotropic_test) {
@@ -55,7 +55,7 @@ TEST(ImageTests, isoresample_smooth_anisotropic_test) {
   image.recenter();
   Image ground_truth(test_location + "smooth-anisotropic-isoresampled.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, isoresample_image_anisotropic_test) {
@@ -67,7 +67,7 @@ TEST(ImageTests, isoresample_image_anisotropic_test) {
   image.recenter();
   Image ground_truth(test_location + "image-anisotropic-isoresampled.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, pad_test) {
@@ -78,7 +78,7 @@ TEST(ImageTests, pad_test) {
  
   Image ground_truth(test_location + "pad_baseline.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, pad_identity_test) {
@@ -88,7 +88,25 @@ TEST(ImageTests, pad_identity_test) {
   image.pad(0, 0.0);
   Image ground_truth(test_location + "1x2x2.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, extractlabel_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.extractLabel(1.0);
+  Image ground_truth(test_location + "extractlabel_baseline.nrrd");
+}
+
+TEST(ImageTests, closeholes_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/closeholes/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.closeHoles();
+  Image ground_truth(test_location + "closeholes_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, dicom_read_test) {
@@ -100,7 +118,7 @@ TEST(ImageTests, dicom_read_test) {
   // read ground truth
   Image ground_truth(test_location + "dicom.nrrd");
 
-  ASSERT_TRUE(image.compare_equal(ground_truth));
+  ASSERT_TRUE(image == ground_truth);
 }
 
 //TEST(ImageTests, blah_test) {
