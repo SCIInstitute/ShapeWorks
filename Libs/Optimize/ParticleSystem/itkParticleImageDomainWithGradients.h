@@ -96,7 +96,7 @@ public:
       used to apply any constraints the resulting vector, such as a projection
       to the surface tangent plane. Returns true if the gradient was modified.*/
   vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos) const
+                                      const PointType &pos) const override
   {
     const double epsilon = 1.0e-10;
     double dotprod = 0.0;  

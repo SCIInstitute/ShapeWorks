@@ -66,12 +66,12 @@ public:
       bounding box domain, since movement off the surface will be very
       common.  Consider subclassing this method to add a check for significant
       differences in the input and output points. */
-  virtual bool ApplyConstraints(PointType &p) const;
+  virtual bool ApplyConstraints(PointType &p) const override;
 
   /** Optionally add a repulsion from a planar boundar specified in
       m_CuttingPlane */
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos) const;
+                                      const PointType &pos) const override;
 
 
   /** Define a distance measure on the surface.  Note that this distance
@@ -80,7 +80,7 @@ public:
       sufficiently aligned (method returns a negative number).  The assumption
       here is that points are sufficiently close to one another on the surface
       that they may be considered to lie in a tangent plane. */
-  virtual double Distance(const PointType &, const PointType &) const;
+  virtual double Distance(const PointType &, const PointType &) const override;
 
   void SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
                        const vnl_vector<double> &c);

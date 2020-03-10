@@ -171,7 +171,7 @@ template<class T, unsigned int VDimension>
 bool
 ParticleImplicitSurfaceDomain<T, VDimension>::
 ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                       const PointType &pos) const
+                       const PointType &pos) const 
 {
 
     bool flag = false;
