@@ -66,7 +66,7 @@ optparse::OptionParser buildParser()
 
     parser.add_option("--inFilename").action("store").type("string").set_default("").help("Input image file path .");
     parser.add_option("--outFilename").action("store").type("string").set_default("").help("The filename of the output threshold image.");
-    parser.add_option("--lowerThresholdLevel").action("store").type("float").set_default(-1 * std::numeric_limits<float>::max()).help("The lower threshold level (optional, default = FLT_MIN)");
+    parser.add_option("--lowerThresholdLevel").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("The lower threshold level (optional, default = FLT_MIN)");
     parser.add_option("--upperThresholdLevel").action("store").type("float").set_default(std::numeric_limits<float>::max()).help("The upper threshold level (optional, default = FLT_MAX)");
     parser.add_option("--insideValue").action("store").type("float").set_default(1).help("The inside pixel value after threshold");
     parser.add_option("--outsideValue").action("store").type("float").set_default(0).help("The outside pixel value after threshold");

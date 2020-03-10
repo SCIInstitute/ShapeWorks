@@ -92,7 +92,7 @@ TEST(ImageTests, pad_identity_test) {
 }
 
 TEST(ImageTests, extractlabel_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extractlabel/");
 
   Image image(test_location + "1x2x2.nrrd");
   image.extractLabel(1.0);
@@ -105,6 +105,28 @@ TEST(ImageTests, closeholes_test) {
   Image image(test_location + "1x2x2.nrrd");
   image.closeHoles();
   Image ground_truth(test_location + "closeholes_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, threshold_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/threshold/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.threshold();
+  Image ground_truth(test_location + "threshold_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, fastmarch_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fastmarch/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.fastMarch();
+  Image ground_truth(test_location + "fastmarch_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
