@@ -52,21 +52,13 @@ public:
   virtual const PointType& GetLowerBound() const = 0;
   virtual const PointType& GetUpperBound() const = 0;
 
- /** Enable/Disable constraints on particle positions imposed by a domain. */
-  void DisableConstraints()  { m_ConstraintsEnabled = false; }
-  void EnableConstraints()   { m_ConstraintsEnabled = true; }    
-  bool GetConstraintsEnabled() const  { return m_ConstraintsEnabled; }
-  void SetConstraintsEnabled( bool g )  { m_ConstraintsEnabled = g; }
-
 protected:
-  ParticleDomain() : m_ConstraintsEnabled(true) {}
+  ParticleDomain() {}
   virtual ~ParticleDomain() {}
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
-
-  bool m_ConstraintsEnabled;
   
 private:
   ParticleDomain(const ParticleDomain&); //purposely not implemented

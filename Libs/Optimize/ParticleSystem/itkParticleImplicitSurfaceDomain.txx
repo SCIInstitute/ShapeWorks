@@ -301,57 +301,36 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
   // First apply and constraints imposed by superclasses.  This will
   // guarantee the point starts in the correct image domain.
   bool flag = Superclass::ApplyConstraints(p);
-
-  if (this->m_ConstraintsEnabled == true)
-    {
   
-    unsigned int k = 0;
-    double mult = 1.0;
+  unsigned int k = 0;
+  double mult = 1.0;
     
-    const T epsilon = m_Tolerance * 0.001;
-    T f = this->Sample(p);
+  const T epsilon = m_Tolerance * 0.001;
+  T f = this->Sample(p);
     
-    T gradmag = 1.0;
-    while ( fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
-      //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
+  T gradmag = 1.0;
+  while ( fabs(f) > (m_Tolerance * mult) || gradmag < epsilon)
+    //  while ( fabs(f) > m_Tolerance || gradmag < epsilon)
+    {
+    vnl_vector_fixed<T, VDimension> grad = this->SampleGradientVnl(p);
+      
+    gradmag = grad.magnitude();
+    vnl_vector_fixed<T, VDimension> vec   =  grad  * ( f / (gradmag + epsilon) );
+    for (unsigned int i = 0; i < VDimension; i++)
       {
-      vnl_vector_fixed<T, VDimension> grad = this->SampleGradientVnl(p);
+      p[i] -= vec[i];
+      }
       
-      gradmag = grad.magnitude();
-      vnl_vector_fixed<T, VDimension> vec   =  grad  * ( f / (gradmag + epsilon) );
-      for (unsigned int i = 0; i < VDimension; i++)
-        {
-        p[i] -= vec[i];
-        }
+    f = this->Sample(p);
       
-      f = this->Sample(p);
-      
-      // Raise the tolerance if we have done too many iterations.
-      k++;
-      if (k > 10000)
-        {
-        mult *= 2.0;
-        k = 0;
-        }
-      } // end while
-
-//#ifdef  PARTICLE_DEBUG_FLAG
-//      if ( ! this->IsInsideBuffer(p) )
-//        {
-//          std::cout<<"A Point, " << p << ", was projected outside the given image domain." ;
-//        }
-//#endif
-//#ifdef  PARTICLE_DEBUG_FLAG
-//      if ( gradmag < epsilon && fabs(f) > m_Tolerance)
-//        {
-//          std::cout << "Newton-Raphson iteration failed to find the zero level-set.  Gradient is zero, but f = "  <<  f << std::endl;
-//        }
-//#endif
-
-    } // end if m_ConstraintsEnabled == true
-
-
-  return flag; 
+    // Raise the tolerance if we have done too many iterations.
+    k++;
+    if (k > 10000)
+      {
+      mult *= 2.0;
+      k = 0;
+      }
+    } // end while
 }
 
 template <class T, unsigned int VDimension>
