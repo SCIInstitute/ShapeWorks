@@ -12,6 +12,7 @@
 #include "itkPoint.h"
 
 #include "vnl/vnl_vector_fixed.h"
+#include "vnl/vnl_matrix_fixed.h"
 
 namespace itk
 {
@@ -58,8 +59,11 @@ public:
   virtual double GetSurfaceArea() const = 0;
   virtual double GetMaxDimRadius() const = 0;
 
+  // Cutting Plane constraint functionality
   virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
-  virtual void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double>& c) = 0;
+  virtual void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double> &c) = 0;
+  virtual void TransformCuttingPlane(const vnl_matrix_fixed<double, VDimension + 1, VDimension + 1> &Trans) = 0;
+
 
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;
