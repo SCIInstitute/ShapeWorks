@@ -11,6 +11,10 @@
 #include "itkImage.h"
 #include "itkParticleRegionDomain.h"
 #include "itkLinearInterpolateImageFunction.h"
+#include <itkZeroCrossingImageFilter.h>
+#include <vtkContourFilter.h>
+#include <vtkMassProperties.h>
+#include <debug-install/include/ITK-5.0/itkImageRegionConstIteratorWithIndex.h>
 
 namespace itk
 {
@@ -72,12 +76,46 @@ public:
     
     this->SetLowerBound(l);
     this->SetUpperBound(u);
+
+    // Precompute and save values that are used in parts of the optimizer
+    this->UpdateZeroCrossingPoint(I);
+    this->UpdateSurfaceArea(I);
+
+    m_Size = I->GetRequestedRegion().GetSize();
+    m_Spacing = I->GetSpacing();
+    m_Origin = I->GetOrigin();
+    m_Index = I->GetRequestedRegion().GetIndex();
   }
   virtual ImageType* GetImage() {
     return this->m_Image.GetPointer();
   }
   virtual const ImageType* GetImage() const {
     return this->m_Image.GetPointer();
+  }
+
+  inline double GetSurfaceArea() const {
+    throw std::runtime_error("Surface area is not computed currently.");
+    return m_SurfaceArea;
+  }
+
+  inline PointType GetOrigin() const {
+    return m_Origin;
+  }
+
+  inline typename ImageType::SizeType GetSize() const {
+    return m_Size;
+  }
+
+  inline typename ImageType::SpacingType GetSpacing() const {
+    return m_Spacing;
+  }
+
+  inline typename ImageType::RegionType::IndexType GetIndex() const {
+    return m_Index;
+  }
+
+  inline PointType GetZeroCrossingPoint() const {
+    return m_ZeroCrossingPoint;
   }
 
   /** Sample the image at a point.  This method performs no bounds checking.
@@ -123,6 +161,48 @@ protected:
 private:
   typename ImageType::Pointer m_Image;
   typename ScalarInterpolatorType::Pointer m_ScalarInterpolator;
+
+  typename ImageType::SizeType m_Size;
+  typename ImageType::SpacingType m_Spacing;
+  PointType m_Origin;
+  PointType m_ZeroCrossingPoint;
+  typename ImageType::RegionType::IndexType m_Index;
+  double m_SurfaceArea;
+
+  void UpdateZeroCrossingPoint(ImageType *I) {
+    typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+            itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
+    zc->SetInput(I);
+    zc->Update();
+    typename itk::ImageRegionConstIteratorWithIndex < ImageType > zcIt(zc->GetOutput(),
+                                                                       zc->GetOutput()->GetRequestedRegion());
+
+    for (zcIt.GoToReverseBegin(); !zcIt.IsAtReverseEnd(); --zcIt) {
+      if (zcIt.Get() == 1.0) {
+        PointType pos;
+        I->TransformIndexToPhysicalPoint(zcIt.GetIndex(), pos);
+        this->m_ZeroCrossingPoint = pos;
+        break;
+      }
+    }
+  }
+
+  void UpdateSurfaceArea(ImageType *I) {
+    //TODO: This code has been copied from Optimize.cpp. It does not work
+    /*
+    typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
+    itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
+    itk2vtkConnector->SetInput(I);
+    vtkSmartPointer < vtkContourFilter > ls = vtkSmartPointer < vtkContourFilter > ::New();
+    ls->SetInputData(itk2vtkConnector->GetOutput());
+    ls->SetValue(0, 0.0);
+    ls->Update();
+    vtkSmartPointer < vtkMassProperties > mp = vtkSmartPointer < vtkMassProperties > ::New();
+    mp->SetInputData(ls->GetOutput());
+    mp->Update();
+    m_SurfaceArea = mp->GetSurfaceArea();
+    */
+  }
 };
 
 } // end namespace itk
