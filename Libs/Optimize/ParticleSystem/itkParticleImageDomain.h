@@ -80,6 +80,27 @@ public:
     return this->m_Image.GetPointer();
   }
 
+  /** Returns position of first zero-crossing pixel */
+  virtual PointType GetPositionOnSurface() const override 
+  {
+    const ImageType *img = GetImage();
+
+    itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+      itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
+    zc->SetInput(img);
+    zc->Update();
+    itk::ImageRegionConstIteratorWithIndex < ImageType > it(zc->GetOutput(),
+      zc->GetOutput()->GetRequestedRegion());
+
+    for (it.GoToReverseBegin(); !it.IsAtReverseEnd(); --it) {
+      if (it.Get() == 1.0) {
+        PointType pos;
+        img->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
+        return pos;
+      }
+    }
+  }
+
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer. */
   inline T Sample(const PointType &p) const

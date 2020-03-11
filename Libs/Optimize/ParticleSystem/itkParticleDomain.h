@@ -40,6 +40,9 @@ public:
       {      sum += (b[i]-a[i]) * (b[i]-a[i]);      }
     return sqrt(sum);
   }
+
+  /** Return a position that is on the surface */
+  virtual PointType GetPositionOnSurface() const = 0;
   
   /** A Domain may optionally return a bounding box.  The lower bound method
       gives the upper-left-hand corner of the domain.  The upper bound method

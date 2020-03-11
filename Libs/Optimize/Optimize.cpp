@@ -519,32 +519,8 @@ void Optimize::AddSinglePoint()
     if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 0) {
       continue;
     }
-
-    bool done = false;
-
-    ImageType::Pointer img = dynamic_cast < itk::ParticleImageDomain < float, 3 >* > (
-      m_sampler->GetParticleSystem()->GetDomain(i))->GetImage();
-
-    itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
-      itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
-    zc->SetInput(img);
-    zc->Update();
-    itk::ImageRegionConstIteratorWithIndex < ImageType > it(zc->GetOutput(),
-                                                            zc->GetOutput()->GetRequestedRegion());
-
-    for (it.GoToReverseBegin(); !it.IsAtReverseEnd() && done == false; --it) {
-      if (it.Get() == 1.0) {
-        PointType pos;
-        img->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
-        done = true;
-        try
-        {
-          m_sampler->GetParticleSystem()->AddPosition(pos, i);
-        } catch (itk::ExceptionObject &) {
-          done = false;
-        }
-      }
-    }
+    PointType pos = m_sampler->GetParticleSystem()->GetDomain(i)->GetPositionOnSurface();
+    m_sampler->GetParticleSystem()->AddPosition(pos, i);
   }
 }
 
