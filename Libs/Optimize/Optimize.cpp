@@ -500,10 +500,7 @@ void Optimize::AddSinglePoint()
       continue;
     }
 
-    bool done = false;
-
-    const itk::ParticleImageDomain < float, 3 >* domain =
-            static_cast < const itk::ParticleImageDomain < float, 3 > * > (m_sampler->GetParticleSystem() ->GetDomain(i));
+    const itk::ParticleDomain<3> * domain = m_sampler->GetParticleSystem()->GetDomain(i);
     const auto zcPos = domain->GetZeroCrossingPoint();
     m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
   }

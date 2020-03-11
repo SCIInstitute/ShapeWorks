@@ -114,7 +114,7 @@ public:
     return m_Index;
   }
 
-  inline PointType GetZeroCrossingPoint() const {
+  inline PointType GetZeroCrossingPoint() const override {
     return m_ZeroCrossingPoint;
   }
 

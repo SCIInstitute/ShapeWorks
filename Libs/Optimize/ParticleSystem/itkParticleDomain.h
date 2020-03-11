@@ -54,6 +54,8 @@ public:
   virtual const PointType& GetLowerBound() const = 0;
   virtual const PointType& GetUpperBound() const = 0;
 
+  virtual PointType GetZeroCrossingPoint() const = 0;
+
 protected:
   ParticleDomain() {}
   virtual ~ParticleDomain() {}
