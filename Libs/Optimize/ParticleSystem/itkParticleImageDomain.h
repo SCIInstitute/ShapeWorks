@@ -85,11 +85,11 @@ public:
   {
     const ImageType *img = GetImage();
 
-    itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
-      itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
+    ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+      ZeroCrossingImageFilter < ImageType, ImageType > ::New();
     zc->SetInput(img);
     zc->Update();
-    itk::ImageRegionConstIteratorWithIndex < ImageType > it(zc->GetOutput(),
+    ImageRegionConstIteratorWithIndex < ImageType > it(zc->GetOutput(),
       zc->GetOutput()->GetRequestedRegion());
 
     for (it.GoToReverseBegin(); !it.IsAtReverseEnd(); --it) {
