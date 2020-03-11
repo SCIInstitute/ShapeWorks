@@ -1407,81 +1407,53 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
       throw 1;
     }
 
-    const itk::ParticleImplicitSurfaceDomain < float, 3 >* domain
-      = static_cast < const itk::ParticleImplicitSurfaceDomain < float,
-                                                                 3 >* > (m_sampler->
-                                                                         GetParticleSystem()->
-                                                                         GetDomain(i));
+    // Only run the following code if we are dealing with ImplicitSurfaceDomains
+    const itk::ParticleImplicitSurfaceDomain < float, 3 > *domain
+          = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float, 3 >*> (m_sampler->GetParticleSystem()->GetDomain(i));
+    if (domain) {
+      std::vector < float > fVals;
 
-    const itk::ParticleImageDomainWithGradients < float, 3 >* domainWithGrad
-      = static_cast < const itk::ParticleImageDomainWithGradients < float,
-                                                                    3 >* > (m_sampler->
-                                                                            GetParticleSystem()->
-                                                                            GetDomain(i));
+      for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
+        PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
+        PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
 
-    TriMesh* ptr;
-    std::vector < float > fVals;
-    if (m_mesh_based_attributes && m_attributes_per_domain.size() > 0) {
-      if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
-        ptr = domain->GetMesh();
-      }
-    }
-
-    for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
-      PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
-      PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
-
-      for (unsigned int k = 0; k < 3; k++) {
-        outw << wpos[k] << " ";
-      }
-
-      if (m_use_normals[i % m_domains_per_shape]) {
-//                if (m_Sampler->GetParticleSystem()->GetDomainFlag(i))
-//                {
-//                    outw << 0.0 << " " << 0.0 << " " << 0.0 << " ";
-//                }
-//                else
-//                {
-        typename itk::ParticleImageDomainWithGradients < float,
-                                                         3 > ::VnlVectorType pG =
-          domainWithGrad->SampleNormalVnl(pos);
-        VectorType pN;
-        pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
-        pN = m_sampler->GetParticleSystem()->TransformVector(pN,
-                                                             m_sampler->GetParticleSystem()->GetTransform(
-                                                               i) * m_sampler->GetParticleSystem()->GetPrefixTransform(
-                                                               i));
-        outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
-//                }
-      }
-
-      if (m_attributes_per_domain.size() > 0) {
-        if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
-//                    if (m_Sampler->GetParticleSystem()->GetDomainFlag(i))
-//                    {
-//                        for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++)
-//                            outw << 0.0 << " ";
-//                    }
-//                    else
-//                    {
-          point pt;
-          pt.clear();
-          pt[0] = pos[0];
-          pt[1] = pos[1];
-          pt[2] = pos[2];
-          fVals.clear();
-          ptr->GetFeatureValues(pt, fVals);
-          for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
-            outw << fVals[k] << " ";
-          }
-//                    }
+        for (unsigned int k = 0; k < 3; k++) {
+          outw << wpos[k] << " ";
         }
-      }
 
-      outw << std::endl;
+        if (m_use_normals[i % m_domains_per_shape]) {
+          typename itk::ParticleImageDomainWithGradients < float, 3 > ::VnlVectorType pG = domain->SampleNormalVnl(pos);
+          VectorType pN;
+          pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
+          pN = m_sampler->GetParticleSystem()->TransformVector(pN,
+            m_sampler->GetParticleSystem()->GetTransform(
+              i) * m_sampler->GetParticleSystem()->GetPrefixTransform(
+                i));
+          outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
+        }
 
-      counter++;
-    }      // end for points
+        if (m_attributes_per_domain.size() > 0) {
+          if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
+            point pt;
+            pt.clear();
+            pt[0] = pos[0];
+            pt[1] = pos[1];
+            pt[2] = pos[2];
+            fVals.clear();
+            if (m_mesh_based_attributes) {
+              domain->GetMesh()->GetFeatureValues(pt, fVals);
+            }
+            for (unsigned int k = 0; k < m_attributes_per_domain[i % m_domains_per_shape]; k++) {
+              outw << fVals[k] << " ";
+            }
+          }
+        }
+
+        outw << std::endl;
+
+        counter++;
+      }      // end for points
+    }
 
     outw.close();
     this->PrintDoneMessage(1);
