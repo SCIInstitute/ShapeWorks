@@ -129,14 +129,11 @@ public:
 
   /** Maintain a list of spheres within the domain.  These are used as 
       soft constraints by some particle forcing functions. */
-  void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r)
+  inline void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r) override
   {
-//    if (r > 0) -- Praful, sign will be used to determine inwards or outwards
-//    {
       m_SphereCenterList.push_back(v);
       m_SphereRadiusList.push_back(r);
       m_UseCuttingSphere = true;
-//    }
   }
   
   /** Returns the radius of sphere i, or 0.0 if sphere i does not exist */
