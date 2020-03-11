@@ -85,7 +85,7 @@ public:
   {
     const ImageType *img = GetImage();
 
-    ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+    typedef ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
       ZeroCrossingImageFilter < ImageType, ImageType > ::New();
     zc->SetInput(img);
     zc->Update();
