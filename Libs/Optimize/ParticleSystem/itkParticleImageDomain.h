@@ -11,6 +11,7 @@
 #include "itkImage.h"
 #include "itkParticleRegionDomain.h"
 #include "itkLinearInterpolateImageFunction.h"
+#include <itkZeroCrossingImageFilter.h>
 
 namespace itk
 {
@@ -85,7 +86,7 @@ public:
   {
     const ImageType *img = GetImage();
 
-    typedef ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+    typename ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
       ZeroCrossingImageFilter < ImageType, ImageType > ::New();
     zc->SetInput(img);
     zc->Update();
