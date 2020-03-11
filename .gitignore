@@ -37,8 +37,8 @@
 .idea/
 
 # Build directories
-build*
-install*
+build*/
+install*/
 
 # Log files
 *.log

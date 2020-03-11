@@ -30,7 +30,6 @@
 // itk
 #include <itkImageFileReader.h>
 #include <itkMultiThreaderBase.h>
-#include <itkZeroCrossingImageFilter.h>
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkMacro.h>
 
@@ -480,16 +479,7 @@ double Optimize::GetMinNeighborhoodRadius()
                                                                  * > (m_sampler->GetParticleSystem()
                                                                       ->GetDomain(i));
 
-    itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
-    itk2vtkConnector->SetInput(domain->GetImage());
-    vtkSmartPointer < vtkContourFilter > ls = vtkSmartPointer < vtkContourFilter > ::New();
-    ls->SetInputData(itk2vtkConnector->GetOutput());
-    ls->SetValue(0, 0.0);
-    ls->Update();
-    vtkSmartPointer < vtkMassProperties > mp = vtkSmartPointer < vtkMassProperties > ::New();
-    mp->SetInputData(ls->GetOutput());
-    mp->Update();
-    double area = mp->GetSurfaceArea();
+    double area = domain->GetSurfaceArea();
     double sigma =
       std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
     if (rad < sigma) {
@@ -512,29 +502,10 @@ void Optimize::AddSinglePoint()
 
     bool done = false;
 
-    ImageType::Pointer img = dynamic_cast < itk::ParticleImageDomain < float, 3 >* > (
-      m_sampler->GetParticleSystem()->GetDomain(i))->GetImage();
-
-    itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
-      itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
-    zc->SetInput(img);
-    zc->Update();
-    itk::ImageRegionConstIteratorWithIndex < ImageType > it(zc->GetOutput(),
-                                                            zc->GetOutput()->GetRequestedRegion());
-
-    for (it.GoToReverseBegin(); !it.IsAtReverseEnd() && done == false; --it) {
-      if (it.Get() == 1.0) {
-        PointType pos;
-        img->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
-        done = true;
-        try
-        {
-          m_sampler->GetParticleSystem()->AddPosition(pos, i);
-        } catch (itk::ExceptionObject &) {
-          done = false;
-        }
-      }
-    }
+    const itk::ParticleImageDomain < float, 3 >* domain =
+            static_cast < const itk::ParticleImageDomain < float, 3 > * > (m_sampler->GetParticleSystem() ->GetDomain(i));
+    const auto zcPos = domain->GetZeroCrossingPoint();
+    m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
   }
 }
 
@@ -1092,17 +1063,7 @@ void Optimize::SetCotanSigma()
     using DomainType = itk::ParticleImageDomain<float, 3>;
     const DomainType* domain =
       static_cast<const DomainType*> (m_sampler->GetParticleSystem()->GetDomain(i));
-
-    itk2vtkConnector = itk::ImageToVTKImageFilter<ImageType>::New();
-    itk2vtkConnector->SetInput(domain->GetImage());
-    vtkSmartPointer<vtkContourFilter> ls = vtkSmartPointer<vtkContourFilter>::New();
-    ls->SetInputData(itk2vtkConnector->GetOutput());
-    ls->SetValue(0, 0.0);
-    ls->Update();
-    vtkSmartPointer<vtkMassProperties> mp = vtkSmartPointer<vtkMassProperties>::New();
-    mp->SetInputData(ls->GetOutput());
-    mp->Update();
-    double area = mp->GetSurfaceArea();
+    double area = domain->GetSurfaceArea();
     double sigma = m_cotan_sigma_factor *
                    std::sqrt(area /
                              (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
