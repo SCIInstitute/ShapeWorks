@@ -59,6 +59,9 @@ public:
 
   virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
 
+  virtual void DeleteImages() = 0;
+  virtual void DeletePartialDerivativeImages() = 0;
+
 protected:
   ParticleDomain() {}
   virtual ~ParticleDomain() {}

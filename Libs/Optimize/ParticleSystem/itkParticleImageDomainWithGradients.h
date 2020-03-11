@@ -108,7 +108,7 @@ public:
   }
 
   /** Used when a domain is fixed. */
-  void DeleteImages()
+  void DeleteImages() override
   {
     ParticleImageDomain<T, VDimension>::DeleteImages();
     m_GradientImage = 0;

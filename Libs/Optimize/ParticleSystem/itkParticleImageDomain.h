@@ -133,7 +133,7 @@ public:
   { return m_ScalarInterpolator->IsInsideBuffer(p); }
 
   /** Used when a domain is fixed. */
-  void DeleteImages()
+  void DeleteImages() override
   {
     m_Image = 0;
     m_ScalarInterpolator = 0;

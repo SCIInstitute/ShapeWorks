@@ -156,42 +156,28 @@ void Optimize::SetParameters()
   this->PrintDoneMessage();
 
   if (m_use_normals.size() > 0) {
-    int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
-    for (int i = 0; i < numShapes; i++) {
+    for (int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
       if (m_use_normals[i % m_domains_per_shape]) {
         continue;
       }
-
-      itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
-        static_cast < itk::ParticleImageDomainWithHessians<float,
-                                                           3>*> (m_sampler->GetParticleSystem()
-                                                                 ->GetDomain(i));
-      domainWithHess->DeletePartialDerivativeImages();
+      m_sampler->GetParticleSystem()->GetDomain(i)->DeletePartialDerivativeImages();
     }
   }
   else {
     int numShapes = m_sampler->GetParticleSystem()->GetNumberOfDomains();
     for (int i = 0; i < numShapes; i++) {
-      itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
-        static_cast < itk::ParticleImageDomainWithHessians < float,
-                                                             3 >
-                      * > (m_sampler->GetParticleSystem()->GetDomain(i));
-      domainWithHess->DeletePartialDerivativeImages();
+      m_sampler->GetParticleSystem()->GetDomain(i)->DeletePartialDerivativeImages();
     }
   }
 
   if (m_domain_flags.size() > 0) {
     for (int i = 0; i < m_domain_flags.size(); i++) {
-      itk::ParticleImageDomainWithHessians<float, 3>* domainWithHess =
-        static_cast < itk::ParticleImageDomainWithHessians < float,
-                                                             3 >
-                      * > (m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i]));
       if (m_use_normals.size() > 0) {
         if (m_use_normals[i % m_domains_per_shape]) {
-          domainWithHess->DeletePartialDerivativeImages();
+          m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeletePartialDerivativeImages();
         }
         else {
-          domainWithHess->DeleteImages();
+          m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
         }
       }
     }
