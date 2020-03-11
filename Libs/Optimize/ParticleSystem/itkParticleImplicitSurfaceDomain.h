@@ -83,7 +83,7 @@ public:
   virtual double Distance(const PointType &, const PointType &) const override;
 
   void SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
-                       const vnl_vector<double> &c);
+                       const vnl_vector<double> &c) override;
 
   /** Transform cutting planes based on base index. Base plane coordinates passed as argument. */
   void TransformCuttingPlane(const TransformType &Trans, const vnl_vector<double> &base_a,

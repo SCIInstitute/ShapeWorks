@@ -59,6 +59,7 @@ public:
   virtual double GetMaxDimRadius() const = 0;
 
   virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
+  virtual void SetCuttingPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double>& c) = 0;
 
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;
