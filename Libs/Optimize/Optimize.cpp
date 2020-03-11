@@ -459,8 +459,7 @@ double Optimize::GetMinNeighborhoodRadius()
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
 
-    const itk::ParticleDomain<3> *domain = m_sampler->GetParticleSystem()->GetDomain(i);
-    double area = domain->GetSurfaceArea();
+    double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
     double sigma =
       std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
     if (rad < sigma) {
@@ -481,8 +480,7 @@ void Optimize::AddSinglePoint()
       continue;
     }
 
-    const itk::ParticleDomain<3> * domain = m_sampler->GetParticleSystem()->GetDomain(i);
-    const auto zcPos = domain->GetZeroCrossingPoint();
+    const auto zcPos = m_sampler->GetParticleSystem()->GetDomain(i)->GetZeroCrossingPoint();
     m_sampler->GetParticleSystem()->AddPosition(zcPos, i);
   }
 }
@@ -1038,10 +1036,8 @@ void Optimize::SetCotanSigma()
   itk::ImageToVTKImageFilter<ImageType>::Pointer itk2vtkConnector;
   m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    using DomainType = itk::ParticleImageDomain<float, 3>;
-    const DomainType* domain =
-      static_cast<const DomainType*> (m_sampler->GetParticleSystem()->GetDomain(i));
-    double area = domain->GetSurfaceArea();
+
+    double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
     double sigma = m_cotan_sigma_factor *
                    std::sqrt(area /
                              (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
@@ -1570,8 +1566,7 @@ void Optimize::WriteCuttingPlanePoints(int iter)
   this->PrintStartMessage(str, 1);
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    const itk::ParticleDomain<3> * domain = m_sampler->GetParticleSystem()->GetDomain(i);
-    domain->PrintCuttingPlaneConstraints(out);
+    m_sampler->GetParticleSystem()->GetDomain(i)->PrintCuttingPlaneConstraints(out);
   }
   out.close();
   this->PrintDoneMessage(1);
