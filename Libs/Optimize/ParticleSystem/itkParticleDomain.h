@@ -55,6 +55,7 @@ public:
   virtual const PointType& GetUpperBound() const = 0;
 
   virtual PointType GetZeroCrossingPoint() const = 0;
+  virtual double GetSurfaceArea() const = 0;
 
   virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
 

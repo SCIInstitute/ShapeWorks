@@ -93,7 +93,7 @@ public:
     return this->m_Image.GetPointer();
   }
 
-  inline double GetSurfaceArea() const {
+  inline double GetSurfaceArea() const override {
     throw std::runtime_error("Surface area is not computed currently.");
     return m_SurfaceArea;
   }

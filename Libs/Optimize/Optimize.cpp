@@ -473,12 +473,7 @@ double Optimize::GetMinNeighborhoodRadius()
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
 
-    const itk::ParticleImageDomain < float,
-                                     3 >* domain = static_cast < const itk::ParticleImageDomain < float,
-                                                                                                  3 >
-                                                                 * > (m_sampler->GetParticleSystem()
-                                                                      ->GetDomain(i));
-
+    const itk::ParticleDomain<3> *domain = m_sampler->GetParticleSystem()->GetDomain(i);
     double area = domain->GetSurfaceArea();
     double sigma =
       std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
