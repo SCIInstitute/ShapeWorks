@@ -14,7 +14,7 @@
 #include <itkZeroCrossingImageFilter.h>
 #include <vtkContourFilter.h>
 #include <vtkMassProperties.h>
-#include <debug-install/include/ITK-5.0/itkImageRegionConstIteratorWithIndex.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
 
 namespace itk
 {
