@@ -56,6 +56,8 @@ public:
 
   virtual PointType GetZeroCrossingPoint() const = 0;
 
+  virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
+
 protected:
   ParticleDomain() {}
   virtual ~ParticleDomain() {}
