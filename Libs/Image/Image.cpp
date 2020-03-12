@@ -14,10 +14,18 @@
 #include <itkTranslationTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
+#include <itkCurvatureFlowImageFilter.h>
+#include <itkGradientMagnitudeImageFilter.h>
+#include <itkSigmoidImageFilter.h>
+#include <itkTPGACLevelSetImageFilter.h>
+// #include <ExternalLibs/tinyxml/tinyxml.h>
+#include "tinyxml.h"
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
 
+#include <string>
+#include <iostream>
 #include <sys/stat.h>
 
 namespace shapeworks {
@@ -534,6 +542,161 @@ bool Image::fastMarch(float isoValue)
   std::cout << "Fast March succeeded!\n";
 #endif
   return true;
+}
+
+bool Image::smoothDT(const std::string &xmlfilename)
+{
+  typedef itk::CurvatureFlowImageFilter<ImageType, ImageType> SmoothingFilterType;
+  typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType> GradientFilterType;
+  typedef itk::SigmoidImageFilter<ImageType, ImageType> SigmoidFilterType;
+  typedef itk::TPGACLevelSetImageFilter<ImageType, ImageType> TPLevelSetImageFilterType;
+
+  // variables
+  std::vector<std::string> inFilenames;
+  inFilenames.clear();
+  std::vector<std::string> outFilenames;
+  outFilenames.clear();
+  std::vector<std::string> distFilenames;
+  distFilenames.clear();
+
+  // parameters
+  double propagationScaling = 0.0;
+  double alpha = 10.0;
+  double beta = 10.0;
+  double sigma = 2.0;
+  double isoValue = 255.0;
+  unsigned int smoothingIterations = 10;
+
+  // read parameters
+  // TiXmlDocument doc(&xmlfilename);
+  TiXmlDocument doc;
+  bool loadOkay = doc.LoadFile(&xmlfilename);
+
+  if (loadOkay)
+  {
+    TiXmlHandle docHandle(&doc);
+    TiXmlElement *elem;
+    std::istringstream inputsBuffer;
+    std::string filename("/dev/null\0");
+
+    // Compile the list of input files.
+    elem = docHandle.FirstChild("inputs").Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> filename)
+      {
+        inFilenames.push_back(filename);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+    else
+    {
+      std::cerr << "No inputs to process!" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    // Compile the list of input files.
+    elem = docHandle.FirstChild("dtFiles").Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> filename)
+      {
+        distFilenames.push_back(filename);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+    else
+    {
+      std::cerr << "No inputs to process!" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    // Compile the list of output files.
+    elem = docHandle.FirstChild("outputs").Element();
+    if (elem)
+    {
+      inputsBuffer.str(elem->GetText());
+      while (inputsBuffer >> filename)
+      {
+        outFilenames.push_back(filename);
+      }
+      inputsBuffer.clear();
+      inputsBuffer.str("");
+    }
+
+    // Make sure lists are the same size.
+    if (inFilenames.size() > outFilenames.size())
+    {
+      std::cerr << "Input list size does not match output list size!" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    elem = docHandle.FirstChild("propagationScaling").Element();
+    if (elem)
+      propagationScaling = atof(elem->GetText());
+
+    elem = docHandle.FirstChild("alpha").Element();
+    if (elem)
+      alpha = atof(elem->GetText());
+
+    elem = docHandle.FirstChild("beta").Element();
+    if (elem)
+      beta = atof(elem->GetText());
+
+    elem = docHandle.FirstChild("isoValue").Element();
+    if (elem)
+      isoValue = atof(elem->GetText());
+
+    elem = docHandle.FirstChild("smoothing_iterations").Element();
+    if (elem)
+      smoothingIterations = atoi(elem->GetText());
+  }
+
+  for (unsigned int dtNo = 0; dtNo < inFilenames.size(); dtNo++)
+  {
+    read(inFilenames[dtNo]);
+
+    SmoothingFilterType::Pointer smoothing = SmoothingFilterType::New();
+    GradientFilterType::Pointer gradientMag = GradientFilterType::New();
+    SigmoidFilterType::Pointer sigmoid = SigmoidFilterType::New();
+
+    smoothing->SetTimeStep(0.0625);
+    smoothing->SetNumberOfIterations(smoothingIterations);
+    smoothing->SetInput(this->image);
+    smoothing->Update();
+
+    this->image = smoothing->GetOutput();
+    write(distFilenames[dtNo]);
+
+    gradientMag->SetInput(this->image);
+    gradientMag->Update();
+
+    sigmoid->SetAlpha(alpha);
+    sigmoid->SetBeta(beta);
+    sigmoid->SetOutputMinimum(0.0);
+    sigmoid->SetOutputMaximum(1.0);
+    sigmoid->SetInput(gradientMag->GetOutput());
+    sigmoid->Update();
+
+    TPLevelSetImageFilterType::Pointer levelSetFilter = TPLevelSetImageFilterType::New();
+    const double propScale = propagationScaling;
+    levelSetFilter->SetPropagationScaling(propScale);
+    levelSetFilter->SetCurvatureScaling(1.0);
+    levelSetFilter->SetAdvectionScaling(1.0);
+    levelSetFilter->SetMaximumRMSError(0.0);
+    levelSetFilter->SetNumberOfIterations(20);
+    levelSetFilter->SetInput(this->image);
+    levelSetFilter->SetFeatureImage(sigmoid->GetOutput());
+    levelSetFilter->Update();
+
+    this->image = levelSetFilter->GetOutput();
+
+    write(outFilenames[dtNo]);
+  }
 }
 
 /// centerOfMass

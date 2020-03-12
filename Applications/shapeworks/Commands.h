@@ -223,4 +223,20 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class SmoothDT : public ImageCommand
+{
+public:
+  static SmoothDT &getCommand()
+  {
+    static SmoothDT instance;
+    return instance;
+  }
+
+private:
+  SmoothDT() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks

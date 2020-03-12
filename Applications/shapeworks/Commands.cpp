@@ -396,4 +396,25 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
   return sharedData.image.fastMarch(isovalue);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// SmoothDT
+///////////////////////////////////////////////////////////////////////////////
+void SmoothDT::buildParser()
+{
+  const std::string prog = "smoothdt";
+  const std::string desc = "brief description of command";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--xmlfilename").action("store").type("string").set_default("").help("name of xml file to read");
+
+  Command::buildParser();
+}
+
+int SmoothDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string xmlfilename = options["xmlfilename"];
+
+  return sharedData.image.smoothDT(xmlfilename);
+}
+
 } // shapeworks
