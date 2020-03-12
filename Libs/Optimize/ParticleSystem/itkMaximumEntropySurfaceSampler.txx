@@ -92,10 +92,9 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     int ctr = 0;
     for (unsigned int i = 0; i < this->m_Images.size(); i++)
     {
-        m_DomainList.push_back(ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension>::New());
-        typename ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension>* domain = m_DomainList[i];
-
-        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
+        int newDomainIndex = m_ParticleSystem->AddImageDomain<typename ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension>>();
+        ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension> *domain = static_cast<ParticleImplicitSurfaceDomain<typename ImageType::PixelType, Dimension>*> (
+                      m_ParticleSystem->GetDomain(newDomainIndex));
 
         typename TImage::Pointer img_temp = this->m_Images[i];
 
@@ -116,7 +115,6 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
               domain->AddSphere(m_Spheres[i][j].center,m_Spheres[i][j].radius);
             }
         }
-
 
         if (m_AttributesPerDomain.size() > 0)
         {
@@ -166,9 +164,9 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
                 }
             }
         }
+        m_ParticleSystem->FinishedSettingUpImageDomain(newDomainIndex);
 
-        // END TEST CUTTING PLANE
-        m_ParticleSystem->AddDomain(domain);
+        m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
         m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
     }
 }

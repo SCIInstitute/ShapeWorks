@@ -386,9 +386,6 @@ protected:
 
     typename ParticleSystem<Dimension>::Pointer m_ParticleSystem;
 
-    std::vector<typename ParticleImplicitSurfaceDomain<typename
-    ImageType::PixelType, Dimension>::Pointer> m_DomainList;
-
     std::vector<typename ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
     int m_pairwise_potential_type;

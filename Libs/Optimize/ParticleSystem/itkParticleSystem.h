@@ -214,7 +214,44 @@ public:
       for a list of positions that are contained within the domain, and a
       default neighborhood calculator.  The final, optional argument indicates
       the calling thread id.*/
-  void AddDomain( DomainType *, int threadId =0);
+  template <typename DomainType>
+  inline int AddImageDomain(int threadId =0)
+  {
+    this->Modified();
+
+    for (unsigned int idx = 0; idx < m_Domains.size(); ++idx)
+    {
+      if (!m_Domains[idx])
+      {
+        m_Domains[idx] = DomainType::New();
+        m_Positions[idx] = PointContainerType::New();
+        m_IndexCounters[idx] = 0;
+        return idx;
+      }
+    }
+    this->SetNumberOfDomains(static_cast<int>(m_Domains.size() + 1));
+    int newDomainIndex = static_cast<int>(m_Domains.size()) - 1;
+    m_Domains[newDomainIndex] = DomainType::New();
+    m_Positions[newDomainIndex] = PointContainerType::New();
+    m_IndexCounters[newDomainIndex] = 0;
+    m_Neighborhoods[newDomainIndex] = NeighborhoodType::New();
+    m_Transforms[newDomainIndex].set_identity();
+    m_InverseTransforms[newDomainIndex].set_identity();
+    m_PrefixTransforms[newDomainIndex].set_identity();
+    m_InversePrefixTransforms[newDomainIndex].set_identity();
+    m_DomainFlags[newDomainIndex] = false;
+    return newDomainIndex;
+  }
+
+  // This function must be called after a domain is initialized in MaximumEntropySurfaceSampler
+  inline void FinishedSettingUpImageDomain(int domainIndex, int threadId = 0) {
+    // Notify any observers.
+    ParticleDomainAddEvent e;
+    e.SetDomainIndex(domainIndex);
+    e.SetPositionIndex(0);
+    e.SetThreadID(threadId);
+    this->InvokeEvent(e);
+  }
   
   /** Return an iterator that points to the first element of the list of the
       domains. */

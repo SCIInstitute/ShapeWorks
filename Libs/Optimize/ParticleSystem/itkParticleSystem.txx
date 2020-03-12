@@ -50,42 +50,6 @@ ParticleSystem<VDimension>
 
 template <unsigned int VDimension>
 void ParticleSystem<VDimension>
-::AddDomain( DomainType *input, int threadId)
-{
-  this->Modified();
-  
-  for (unsigned int idx = 0; idx < m_Domains.size(); ++idx)
-    {
-    if (!m_Domains[idx])
-      {
-      m_Domains[idx] = input;
-      m_Positions[idx]  =  PointContainerType::New();
-      m_IndexCounters[idx] = 0;
-      return;
-      }
-    }
-
-  this->SetNumberOfDomains(static_cast<int>(m_Domains.size() + 1));
-  m_Domains[ static_cast<int>( m_Domains.size() ) - 1] = input;
-  m_Positions[static_cast<int>( m_Domains.size() ) - 1] = PointContainerType::New();
-  m_IndexCounters[static_cast<int>( m_Domains.size() -1)] = 0;
-  m_Neighborhoods[static_cast<int>( m_Domains.size() -1)] = NeighborhoodType::New();
-  m_Transforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_PrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_InversePrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_DomainFlags[static_cast<int>( m_Domains.size() -1)] = false;
-  
-  // Notify any observers.
-  ParticleDomainAddEvent e;
-  e.SetDomainIndex(m_Domains.size() - 1);
-  e.SetPositionIndex(0);
-  e.SetThreadID(threadId);
-  this->InvokeEvent(e);
-}
-
-template <unsigned int VDimension>
-void ParticleSystem<VDimension>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
