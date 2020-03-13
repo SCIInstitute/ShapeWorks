@@ -107,13 +107,13 @@ void MeshGenerator::setSmoothingAmount( float amount )
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape )
+vtkSmartPointer<vtkPolyData> MeshGenerator::buildMesh( const vnl_vector<double>& shape, int domain )
 {
   if (this->surface_reconstructor_ &&
       this->surface_reconstructor_->get_surface_reconstruction_available())
   {
 
-    vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape);
+    vtkSmartPointer<vtkPolyData> poly_data = this->surface_reconstructor_->build_mesh(shape, domain);
 
     if (this->smoothingEnabled)
     {

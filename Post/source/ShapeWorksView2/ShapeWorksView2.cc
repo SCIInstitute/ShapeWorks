@@ -102,11 +102,11 @@ ShapeWorksView2::ShapeWorksView2(int argc, char** argv)
   this->setPregenSteps();
   this->updateSliders();
 
-  if (!this->readReconstructionParams(argv[1])) {
+  if (!this->readParameterFile(argv[1])) {
     exit(-1);
   }
 
-  if (!this->readParameterFile(argv[1])) {
+  if (!this->readReconstructionParams(argv[1])) {
     exit(-1);
   }
 
@@ -121,8 +121,6 @@ ShapeWorksView2::ShapeWorksView2(int argc, char** argv)
     this->ui->spacing_label->hide();
     this->ui->spacingSpinBox->hide();
   }
-
-
 
   // set to mean
   this->ui->tabWidget->setCurrentIndex(0);
@@ -778,12 +776,10 @@ void ShapeWorksView2::updateAnalysisMode()
     if (this->ui->meanGroup1Button->isChecked()) {
       this->displayShape(this->stats.Group1Mean());
     }
-    else
-    if (this->ui->meanGroup2Button->isChecked()) {
+    else if (this->ui->meanGroup2Button->isChecked()) {
       this->displayShape(this->stats.Group2Mean());
     }
-    else
-    if (this->ui->meanDifferenceButton->isChecked()) {
+    else if (this->ui->meanDifferenceButton->isChecked()) {
       this->displayShape(this->stats.Mean());
       this->displayMeanDifference();
     }
@@ -791,8 +787,7 @@ void ShapeWorksView2::updateAnalysisMode()
       this->displayShape(this->stats.Mean());
     }
   }
-  else
-  if (this->ui->tabWidget->currentWidget() == this->ui->samplesTab) {
+  else if (this->ui->tabWidget->currentWidget() == this->ui->samplesTab) {
     int sampleNumber = this->ui->sampleSpinBox->value();
 
     // pre-generate
@@ -802,19 +797,17 @@ void ShapeWorksView2::updateAnalysisMode()
           pregenSample <= this->ui->sampleSpinBox->maximum()) {
         vnl_vector<double> shape = this->stats.ShapeMatrix().get_column(pregenSample);
         for (int i = 0; i < this->numDomains; i++) {
-          this->meshManager.generateMesh(this->getDomainShape(shape, i));
+          this->meshManager.generateMesh(this->getDomainShape(shape, i), i);
         }
       }
     }
 
     this->displayShape(this->stats.ShapeMatrix().get_column(sampleNumber));
   }
-  else
-  if (this->ui->tabWidget->currentWidget() == this->ui->pcaTab) {
+  else if (this->ui->tabWidget->currentWidget() == this->ui->pcaTab) {
     this->computeModeShape();
   }
-  else
-  if (this->ui->tabWidget->currentWidget() == this->ui->regressionTab) {
+  else if (this->ui->tabWidget->currentWidget() == this->ui->regressionTab) {
     this->computeRegressionShape();
   }
 
@@ -974,8 +967,8 @@ bool ShapeWorksView2::readParameterFile(char* filename)
   this->pointsPerDomain = this->stats.DomainSizes();
   this->domainShift.clear();
   this->domainShift.push_back(0);
-  for (int i=1;i<this->numDomains;i++) {
-    this->domainShift.push_back(this->pointsPerDomain[i-1]);
+  for (int i = 1; i < this->numDomains; i++) {
+    this->domainShift.push_back(this->pointsPerDomain[i - 1]);
   }
 
   this->numSamples = this->stats.ShapeMatrix().cols();
@@ -1163,7 +1156,7 @@ bool ShapeWorksView2::readReconstructionParams(char* filename)
   }
 
   if (this->distanceTransformsAvailable) {
-    this->prepareSurfaceReconstruction();  
+    this->prepareSurfaceReconstruction();
   }
 
   auto surfaceReconstructor = this->meshManager.getSurfaceReconstructor();
@@ -1181,7 +1174,8 @@ void ShapeWorksView2::prepareSurfaceReconstruction()
   auto surfaceReconstructor = this->meshManager.getSurfaceReconstructor();
 
   surfaceReconstructor->set_filenames(this->distanceTransformFilenames_,
-                                      this->localPointFilenames_, this->worldPointFilenames_);
+                                      this->localPointFilenames_, this->worldPointFilenames_,
+                                      this->numDomains);
 
   surfaceReconstructor->generate_mean_dense();
 }
@@ -1209,7 +1203,7 @@ void ShapeWorksView2::displayShape(const vnl_vector<double> &shape)
   if (this->surfaceActors[0] && this->ui->showSurface->isChecked()) {
     for (int i = 0; i < this->numDomains; i++) {
       vtkSmartPointer<vtkPolyData> polyData =
-        this->meshManager.getMesh(this->getDomainShape(shape, i));
+        this->meshManager.getMesh(this->getDomainShape(shape, i), i);
 
       // retrieve the mesh and set it for display
       this->surfaceMappers[i]->SetInputData(polyData);
@@ -1491,7 +1485,7 @@ void ShapeWorksView2::computeModeShape()
         shape = this->stats.Mean() + (e * (pcaValue * lambda));
       }
       for (int i = 0; i < this->numDomains; i++) {
-        this->meshManager.generateMesh(this->getDomainShape(shape, i));
+        this->meshManager.generateMesh(this->getDomainShape(shape, i), i);
       }
     }
   }
@@ -1518,7 +1512,7 @@ void ShapeWorksView2::computeRegressionShape()
 
       vnl_vector<double> shape;   //this->regression->ComputeMean( value ); - Praful
       for (int i = 0; i < this->numDomains; i++) {
-        this->meshManager.generateMesh(this->getDomainShape(shape, i));
+        this->meshManager.generateMesh(this->getDomainShape(shape, i), i);
       }
     }
   }
@@ -1640,7 +1634,8 @@ vnl_vector<double> ShapeWorksView2::getDomainShape(const vnl_vector<double> &sha
 
   vnl_vector<double> domainShape(numCoords);
 
-  std::cerr << "getDomainShape, domain = " << domain << ", shift = " << shift << ", numCoords = " << numCoords << "\n";
+  std::cerr << "getDomainShape, domain = " << domain << ", shift = " << shift << ", numCoords = " <<
+  numCoords << "\n";
 
   for (int j = 0; j < numCoords; j++) {
     domainShape[j] = shape[shift + j];
@@ -1686,13 +1681,11 @@ void ShapeWorksView2::setPregenSteps()
     animate = true;
     direction = this->pcaAnimateDirection;
   }
-  else
-  if (this->ui->regressionAnimateCheckBox->isChecked()) {
+  else if (this->ui->regressionAnimateCheckBox->isChecked()) {
     animate = true;
     direction = this->regressionAnimateDirection;
   }
-  else
-  if (this->ui->pcaGroupAnimateCheckBox->isChecked()) {
+  else if (this->ui->pcaGroupAnimateCheckBox->isChecked()) {
     animate = true;
     direction = this->groupAnimateDirection;
   }

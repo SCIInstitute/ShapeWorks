@@ -24,6 +24,7 @@ class MeshWorkItem
 {
 public:
   vnl_vector<double> shape;
+  int domain = -1;
 };
 
 class MeshWorkQueue
@@ -33,13 +34,13 @@ public:
   MeshWorkQueue();
   ~MeshWorkQueue();
 
-  void push( const vnl_vector<double> &item );
+  void push(const vnl_vector<double> &points, int domain);
 
-  MeshWorkItem* pop();
+  MeshWorkItem pop();
 
-  bool isInside( const vnl_vector<double> &item );
+  bool isInside(const vnl_vector<double> &item);
 
-  void remove( const vnl_vector<double> &item );
+  void remove(const vnl_vector<double> &item);
 
   bool isEmpty();
 
@@ -48,7 +49,7 @@ private:
   // for concurrent access
   QMutex mutex;
 
-  typedef std::list< vnl_vector<double> > WorkList;
+  typedef std::list< MeshWorkItem > WorkList;
 
   WorkList workList;
 };

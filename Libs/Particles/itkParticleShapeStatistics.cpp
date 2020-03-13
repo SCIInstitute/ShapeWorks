@@ -161,7 +161,7 @@ int ParticleShapeStatistics<VDimension>
   int sum_sizes = 0;
   this->m_domainSizes.clear();
   for (int i=0;i<this->m_domainsPerShape;i++) {
-    // Read as many point files as there are domainst to get a particle count for each
+    // Read as many point files as there are domains to get a particle count for each
     typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
     reader1->SetFileName( pointsfiles[i].c_str() );
     reader1->Update();

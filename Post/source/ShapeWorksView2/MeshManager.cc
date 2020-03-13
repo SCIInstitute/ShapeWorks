@@ -77,7 +77,7 @@ void MeshManager::setUsePowerCrust(bool enabled)
   this->meshGenerator.setUsePowerCrust(enabled);
 }
 
-void MeshManager::generateMesh(const vnl_vector<double>& shape)
+void MeshManager::generateMesh(const vnl_vector<double>& shape, int domain)
 {
   /// disable pre-generation for the moment
   //return;
@@ -95,7 +95,7 @@ void MeshManager::generateMesh(const vnl_vector<double>& shape)
   if (!this->meshCache.getMesh(shape)
       && !this->workingQueue.isInside(shape)
       && !this->workQueue.isInside(shape)) {
-    this->workQueue.push(shape);
+    this->workQueue.push(shape, domain);
 
     // wake up a thread
     static int threadId = 0;
@@ -108,7 +108,7 @@ void MeshManager::generateMesh(const vnl_vector<double>& shape)
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shape)
+vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shape, int domain)
 {
   vtkSmartPointer<vtkPolyData> polyData;
 
@@ -127,7 +127,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shap
     polyData = this->meshCache.getMesh(shape);
   }
   else {
-    polyData = this->meshGenerator.buildMesh(shape);
+    polyData = this->meshGenerator.buildMesh(shape,domain);
     this->meshCache.insertMesh(shape, polyData);
   }
 

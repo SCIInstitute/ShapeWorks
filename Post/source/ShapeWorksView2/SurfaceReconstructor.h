@@ -52,7 +52,8 @@ public:
 
   void set_filenames(std::vector< std::string > distance_transform_filenames,
                      std::vector< std::string > local_point_filenames,
-                     std::vector< std::string > world_point_filenames);
+                     std::vector< std::string > world_point_filenames,
+                     int num_domains);
 
   void set_number_of_clusters(int num_clusters);
   void set_normal_angle(double angle);
@@ -62,12 +63,13 @@ public:
 
   bool get_surface_reconstruction_available();
 
-  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape);
+  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape, int domain);
 
 private:
-  ReconstructionType reconstructor_;
+  std::vector<ReconstructionType> reconstructor_;
 
   bool surface_reconstruction_available_ = false;
+  int num_domains_ = 1;
 
   std::vector< std::string > distance_transform_filenames_;
   std::vector< std::string > world_point_filenames_;

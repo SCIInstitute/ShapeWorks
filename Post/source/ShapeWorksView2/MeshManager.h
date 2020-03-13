@@ -46,10 +46,10 @@ public:
   void setUsePowerCrust( bool enabled );
 
   // pre-generate and cache a mesh for this shape
-  void generateMesh( const vnl_vector<double>& shape );
+  void generateMesh(const vnl_vector<double>& shape , int domain);
 
   //! Create a mesh from a shape (set of points)
-  vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& shape );
+  vtkSmartPointer<vtkPolyData> getMesh(const vnl_vector<double>& shape , int domain);
 
   QSharedPointer<SurfaceReconstructor> getSurfaceReconstructor();
 

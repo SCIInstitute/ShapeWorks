@@ -9,25 +9,25 @@
 
 void MeshWorker::threadBegin()
 {
-  MeshWorkItem* workItem = this->workQueue->pop();
+  MeshWorkItem workItem = this->workQueue->pop();
 
   // check that the queue wasn't empty
-  if ( !workItem ) { return; }
+  if ( workItem.domain < 0 ) { return; }
 
   // make sure it's not already in the check the cache
-  if ( !this->meshCache->getMesh( workItem->shape ) )
+  if ( !this->meshCache->getMesh( workItem.shape ) )
   {
     // add to the list of meshes being worked on
-    this->workingQueue->push( workItem->shape );
+    this->workingQueue->push( workItem.shape, workItem.domain );
 
     // build the mesh using our MeshGenerator
-    vtkSmartPointer<vtkPolyData> mesh = this->meshGenerator.buildMesh( workItem->shape );
+    vtkSmartPointer<vtkPolyData> mesh = this->meshGenerator.buildMesh( workItem.shape, workItem.domain );
 
     // insert into the cache
-    this->meshCache->insertMesh( workItem->shape, mesh );
+    this->meshCache->insertMesh( workItem.shape, mesh );
 
     // remove from the list of meshes being worked on
-    this->workingQueue->remove( workItem->shape );
+    this->workingQueue->remove( workItem.shape );
  
     // wake up the main thread in case it was waiting for us to complete
     this->workDoneCondition->wakeAll();
