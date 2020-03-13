@@ -190,7 +190,9 @@ private:
   int numSamples;
   int numDomains;
   int numPoints;
-  int pointsPerDomain;
+  std::vector<int> pointsPerDomain;
+  std::vector<int> domainShift;
+
 
   bool groupsAvailable;
   bool distanceTransformsAvailable = false;

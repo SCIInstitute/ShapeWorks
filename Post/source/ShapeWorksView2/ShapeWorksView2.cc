@@ -971,7 +971,12 @@ bool ShapeWorksView2::readParameterFile(char* filename)
 
   this->numPoints = this->stats.Mean().size() / 3;
 
-  this->pointsPerDomain = numPoints / this->numDomains;
+  this->pointsPerDomain = this->stats.DomainSizes();
+  this->domainShift.clear();
+  this->domainShift.push_back(0);
+  for (int i=1;i<this->numDomains;i++) {
+    this->domainShift.push_back(this->pointsPerDomain[i-1]);
+  }
 
   this->numSamples = this->stats.ShapeMatrix().cols();
 
@@ -1629,12 +1634,16 @@ vnl_vector<double> ShapeWorksView2::getDomainShape(const vnl_vector<double> &sha
     return shape;
   }
 
-  int numCoords = this->pointsPerDomain * 3;
+  int numCoords = this->pointsPerDomain[domain] * 3;
+
+  int shift = this->domainShift[domain] * 3;
 
   vnl_vector<double> domainShape(numCoords);
 
+  std::cerr << "getDomainShape, domain = " << domain << ", shift = " << shift << ", numCoords = " << numCoords << "\n";
+
   for (int j = 0; j < numCoords; j++) {
-    domainShape[j] = shape[domain * numCoords + j];
+    domainShape[j] = shape[shift + j];
   }
 
   return domainShape;
@@ -1650,9 +1659,13 @@ vtkSmartPointer<vtkPolyData> ShapeWorksView2::getDomainPoints(int domain)
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   points->SetDataTypeToDouble();
 
-  for (int j = 0; j < this->pointsPerDomain; j++) {
+  int numCoords = this->pointsPerDomain[domain] * 3;
+
+  int shift = this->domainShift[domain] * 3;
+
+  for (int j = 0; j < numCoords; j++) {
     double p[3];
-    this->glyphPoints->GetPoint(domain * this->pointsPerDomain + j, p);
+    this->glyphPoints->GetPoint(shift + j, p);
     points->InsertNextPoint(p);
   }
 
