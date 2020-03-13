@@ -99,10 +99,11 @@ int main( int argc, char** argv )
   {
     std::cerr << excep << std::endl;
   }
+  /*
   catch ( std::exception e )
   {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << e.what() << "\n";
   }
-
+*/
 }
