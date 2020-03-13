@@ -153,14 +153,27 @@ int ParticleShapeStatistics<VDimension>
   elem = docHandle.FirstChild( "domains_per_shape" ).Element();
   if (elem) this->m_domainsPerShape = atoi(elem->GetText());
 
-  // Read the point files.  Assumes all the same size.
-  typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
-  reader1->SetFileName( pointsfiles[0].c_str() );
-  reader1->Update();
+
   m_numSamples1 = 0;
   m_numSamples2 = 0;
   m_numSamples = pointsfiles.size() / m_domainsPerShape;
-  m_numDimensions = reader1->GetOutput().size() * VDimension * m_domainsPerShape;
+
+  int sum_sizes = 0;
+  this->m_domainSizes.clear();
+  for (int i=0;i<this->m_domainsPerShape;i++) {
+    // Read as many point files as there are domainst to get a particle count for each
+    typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
+    reader1->SetFileName( pointsfiles[i].c_str() );
+    reader1->Update();
+    this->m_domainSizes.push_back(reader1->GetOutput().size());
+    sum_sizes += reader1->GetOutput().size();
+  }
+
+
+  m_numDimensions = sum_sizes * VDimension;
+
+  std::cerr << "m_numSamples = " << m_numSamples << "\n";
+
 
   // Read the group ids
   int tmpID;
@@ -222,8 +235,13 @@ int ParticleShapeStatistics<VDimension>
         = itk::ParticlePositionReader<VDimension>::New();
       reader->SetFileName( pointsfiles[i*m_domainsPerShape + k].c_str() );
       reader->Update();
-      unsigned int q = reader->GetOutput().size();  
-      for (unsigned int j = 0; j < q; j++)
+      //unsigned int q = reader->GetOutput().size();
+      unsigned int q = 0;
+      if (k > 0) {
+        q = this->m_domainSizes[k-1];
+      }
+
+      for (unsigned int j = 0; j < reader->GetOutput().size(); j++)
         {
         m_mean(q*k*VDimension +(VDimension*j)+0) += m_pointsMinusMean(q*k*VDimension +(VDimension*j)+0, i)
           = reader->GetOutput()[j][0];
@@ -597,6 +615,12 @@ int ParticleShapeStatistics<VDimension>::FisherLinearDiscriminant(unsigned int n
 
   out.close();
   return 0;
+}
+
+template<unsigned int VDimension>
+std::vector<int> ParticleShapeStatistics<VDimension>::DomainSizes()
+{
+  return this->m_domainSizes;
 }
 
 

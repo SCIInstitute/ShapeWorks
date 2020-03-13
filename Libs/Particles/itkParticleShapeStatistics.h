@@ -88,6 +88,9 @@ public:
   inline int NumberOfDimensions() const
   { return m_numDimensions; }
 
+
+  std::vector<int> DomainSizes();
+
   /** Returns the group ids */
   inline int GroupID(unsigned int i ) const
   { return m_groupIDs[i]; }
@@ -162,6 +165,7 @@ protected:
   unsigned int m_domainsPerShape;
   unsigned int m_numDimensions;
   std::vector<int> m_groupIDs;
+  std::vector<int> m_domainSizes;
 
   vnl_matrix<double> m_pooled_covariance;
   vnl_matrix<double> m_eigenvectors;
