@@ -113,10 +113,15 @@ void SurfaceReconstructor::generate_mean_dense()
       distance_transforms.push_back(reader->GetOutput());
     }
 
+    /*
     std::cout << "Computing mean sparse shape .... \n ";
     PointType commonCenter;
     global_pts = this->reconstructor_[domain].computeSparseMean(local_pts, commonCenter, false,
                                                                 false);
+    global_pts.clear(); // clear
+*/
+
+
     global_pts.clear(); // clear
 
     // read given world points
@@ -130,14 +135,114 @@ void SurfaceReconstructor::generate_mean_dense()
       Utils::readSparseShape(curShape,
                              const_cast<char*> (this->world_point_filenames_[file_index].c_str()));
 
-      for (unsigned int ii = 0; ii < curShape.size(); ii++) {
-        curShape[ii][0] -= commonCenter[0];
-        curShape[ii][1] -= commonCenter[1];
-        curShape[ii][2] -= commonCenter[2];
-      }
-
       global_pts.push_back(curShape);
     }
+
+
+
+    // finding image origin that is consistent with the given world coordinates and adjusted using the origin of images and point clouds in the local space
+    typename ImageType::PointType  origin_local;
+    typename ImageType::PointType  origin_global;
+
+    // the bounding box of the local points
+    double min_x_local, min_y_local, min_z_local;
+    double max_x_local, max_y_local, max_z_local;
+
+    // the bounding box of the global points
+    double min_x_global, min_y_global, min_z_global;
+    double max_x_global, max_y_global, max_z_global;
+
+    // compute the center of mass for both local and global points
+    Utils::computeCenterOfMassForShapeEnsemble(local_pts,  origin_local);
+    Utils::computeCenterOfMassForShapeEnsemble(global_pts, origin_global);
+
+    std::cout << "Center of mass of local points:" << std::endl;
+    std::cout << "origin_local(0) = " << origin_local[0] << ", "
+              << "origin_local(1) = " << origin_local[1] << ", "
+              << "origin_local(2) = " << origin_local[2] << std::endl;
+
+    std::cout << "Center of mass of global points:" << std::endl;
+    std::cout << "origin_global(0) = " << origin_global[0] << ", "
+              << "origin_global(1) = " << origin_global[1] << ", "
+              << "origin_global(2) = " << origin_global[2] << std::endl;
+
+    // find the bounding box of both local and global points
+    Utils::getBoundingBoxForShapeEnsemble(local_pts,
+                                          min_x_local, min_y_local, min_z_local,
+                                          max_x_local, max_y_local, max_z_local);
+
+    std::cout << "Local points bounding box:" << std::endl;
+    std::cout << "min_x_local = " << min_x_local << ", "
+              << "min_y_local = " << min_y_local << ", "
+              << "min_z_local = " << min_z_local << std::endl;
+
+    std::cout << "max_x_local = " << max_x_local << ", "
+              << "max_y_local = " << max_y_local << ", "
+              << "max_z_local = " << max_z_local << std::endl;
+
+    Utils::getBoundingBoxForShapeEnsemble(global_pts,
+                                          min_x_global, min_y_global, min_z_global,
+                                          max_x_global, max_y_global, max_z_global);
+
+    std::cout << "Global points bounding box:" << std::endl;
+    std::cout << "min_x_global = " << min_x_global << ", "
+              << "min_y_global = " << min_y_global << ", "
+              << "min_z_global = " << min_z_global << std::endl;
+
+    std::cout << "max_x_global = " << max_x_global << ", "
+              << "max_y_global = " << max_y_global << ", "
+              << "max_z_global = " << max_z_global << std::endl;
+
+    // compute the image origin (corner) based on the center of mass
+    double x_width_local = max_x_local - min_x_local;
+    double y_width_local = max_y_local - min_y_local;
+    double z_width_local = max_z_local - min_z_local;
+
+    double x_width_global = max_x_global - min_x_global;
+    double y_width_global = max_y_global - min_y_global;
+    double z_width_global = max_z_global - min_z_global;
+
+    origin_local[0] = origin_local[0] - (x_width_local/2.0);
+    origin_local[1] = origin_local[1] - (y_width_local/2.0);
+    origin_local[2] = origin_local[2] - (z_width_local/2.0);
+
+    origin_global[0] = origin_global[0] - (x_width_global/2.0);
+    origin_global[1] = origin_global[1] - (y_width_global/2.0);
+    origin_global[2] = origin_global[2] - (z_width_global/2.0);
+
+    std::cout << "Image origin (corner) for local points: " << std::endl;
+    std::cout << "origin_local(0) = " << origin_local[0] << ", "
+              << "origin_local(1) = " << origin_local[1] << ", "
+              << "origin_local(2) = " << origin_local[2] << std::endl;
+
+    std::cout << "Image origin (corner) for global points: " << std::endl;
+    std::cout << "origin_global(0) = " << origin_global[0] << ", "
+              << "origin_global(1) = " << origin_global[1] << ", "
+              << "origin_global(2) = " << origin_global[2] << std::endl;
+
+    // origin of the distance transforms (assume all dts are sharing the same origin)
+    typename ImageType::PointType  origin_dt = distance_transforms[0]->GetOrigin();
+
+    double offset_x = origin_dt[0] - origin_local[0];
+    double offset_y = origin_dt[1] - origin_local[1];
+    double offset_z = origin_dt[2] - origin_local[2];
+
+    // adjust global origin based on local offset
+    origin_global[0] = origin_global[0] + offset_x;
+    origin_global[1] = origin_global[1] + offset_y;
+    origin_global[2] = origin_global[2] + offset_z;
+
+    std::cout << "Image origin (corner) for global points - adjusted: " << std::endl;
+    std::cout << "origin_global(0) = " << origin_global[0] << ", "
+              << "origin_global(1) = " << origin_global[1] << ", "
+              << "origin_global(2) = " << origin_global[2] << std::endl;
+
+    this->reconstructor_[domain].setOrigin(origin_global);
+
+
+
+
+
 
     // compute the dense shape
     vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_[domain].getDenseMean(local_pts,
