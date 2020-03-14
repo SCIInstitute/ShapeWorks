@@ -233,6 +233,16 @@ int DoIt(InputParams params)
        Utils::writeSparseShape((char*)curfilename_local.c_str(), local_pts[shapeNo]);
     }
 
+    if (params.display)
+      {
+	std::cerr << "display enabled!\n";
+      }
+    else
+      {
+	std::cerr << "display disabled\n";
+      }
+	
+    
     if(params.display)
         Vis::visParticles(reconstructor.SparseMean(),params.glyph_radius,std::string("Mean Sparse Shape"));
 

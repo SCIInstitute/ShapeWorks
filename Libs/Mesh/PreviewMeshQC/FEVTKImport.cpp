@@ -29,6 +29,7 @@ void FEVTKimport::Close()
 
 FEMesh* FEVTKimport::errf(const char* szfmt, ...)
 {
+  std::cerr << szfmt << "\n";
   Close();
   return 0;
 }
@@ -55,6 +56,7 @@ FEMesh* FEVTKimport::Load(istream &stream)
        isScalar = false, isShellThickness = false;
   // read the header
   do {
+    std::cerr << "line: " << szline << "\n";
 
     stream.getline(szline, 256);
     if (!stream.good()) { return errf("An unexpected error occured while reading the file data.");}
@@ -65,6 +67,8 @@ FEMesh* FEVTKimport::Load(istream &stream)
   if (!isASCII) {
     return errf("Only ASCII files are read");
   }
+
+  std::cerr << "line here: " << szline << "\n";
 
   //get number of nodes
   int nodes = atoi(szline + 6);

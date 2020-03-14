@@ -34,7 +34,7 @@ template < template < typename TCoordRep, unsigned > class TTransformType,
            typename TCoordRep, typename PixelType, typename ImageType>
 Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageType>::Reconstruction(std::string out_prefix,
                                                                                                    float decimationPercent, double maxAngleDegrees,
-                                                                                                   size_t numClusters,
+                                                                                                   int numClusters,
                                                                                                    bool fixWinding,
                                                                                                    bool doLaplacianSmoothingBeforeDecimation,
                                                                                                    bool doLaplacianSmoothingAfterDecimation,
@@ -50,7 +50,10 @@ Reconstruction<TTransformType, TInterpolatorType, TCoordRep, PixelType, ImageTyp
     smoothingLambda_(smoothingLambda),
     smoothingIterations_(smoothingIterations),
     out_prefix_(out_prefix), use_origin(false), usePairwiseNormalsDifferencesForGoodBad_(usePairwiseNormalsDifferencesForGoodBad)
-{}
+{
+  std::cerr << "constructor, given numClusters = " << numClusters << "\n";
+  std::cerr << "numClusters_ = " << numClusters_ << "\n";
+}
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,
@@ -429,9 +432,33 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         std::vector< PointArrayType > local_pts,
         std::vector< PointArrayType > global_pts,
         std::vector<typename ImageType::Pointer> distance_transform) {
-    try {
+  //    try {
         //turn the sets of global points to one sparse global mean.
-        float init[] = { 0.f,0.f,0.f };
+
+  std::cerr << "Reconstruction::computeDenseMean()\n";
+
+  std::cerr << "* sparseDone = " << sparseDone_ << "\n";
+  std::cerr << "* denseDone = " << denseDone_ << "\n";
+  std::cerr << "* decimationPercent = " << decimationPercent_ << "\n";
+  std::cerr << "* maxAngleDegrees = " << maxAngleDegrees_ << "\n";
+  std::cerr << "* numClusters = " << numClusters_ << "\n";
+  std::cerr << "* use_origin = " << use_origin << "\n";
+
+  std::cerr << "local[0] = " << local_pts[0][0] << ", " << local_pts[0][1] << ", " << local_pts[0][2] << "\n";
+
+  std::cerr << "global[0] = " << global_pts[0][0] << ", " << global_pts[0][1] << ", " << global_pts[0][2] << "\n";
+
+  /*    fixWinding_(fixWinding),
+    doLaplacianSmoothingBeforeDecimation_(doLaplacianSmoothingBeforeDecimation),
+    smoothingLambda_(smoothingLambda),
+    smoothingIterations_(smoothingIterations),
+    out_prefix_(out_prefix), use_origin(false), usePairwiseNormalsDifferencesForGoodBad_(usePairwiseNormalsDifferencesForGoodBad)
+  */
+  
+  this->output_enabled_ = true;
+  
+
+  float init[] = { 0.f,0.f,0.f };
         PointArrayType sparseMean =
                 PointArrayType(global_pts[0].size(), itk::Point<float>(init));
         for (auto &a : global_pts) {
@@ -575,7 +602,18 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         typename ImageType::SizeType size = distance_transform[0]->GetLargestPossibleRegion().GetSize();
         typename ImageType::RegionType region = distance_transform[0]->GetBufferedRegion();
 
-        // define the mean dense shape (mean distance transform)
+
+        if(use_origin)
+	  {
+	    std::cerr << "use_origin is true, using origin of " << origin_[0] << ", " << origin_[1] << ", " << origin_[2] << "\n";
+	  }
+	else
+	  {
+	    std::cerr << "use_origin is false, using origin of " << origin[0] << ", " << origin[1] << ", " << origin[2] << "\n";
+	    
+	  }
+
+	// define the mean dense shape (mean distance transform)
         typename ImageType::Pointer meanDistanceTransform = ImageType::New();
         if(use_origin)
             meanDistanceTransform->SetOrigin(origin_);
@@ -637,6 +675,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         // Read input shapes from file list
         std::vector<int> centroidIndices;
         if (this->numClusters_ > 0 && this->numClusters_ < global_pts.size()) {
+	  std::cerr << "Performing K Means Clustering\n";
                 this->performKMeansClustering(global_pts, global_pts[0].size(), centroidIndices);
         } else {
             this->numClusters_ = distance_transform.size();
@@ -751,6 +790,10 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         std::string meanDT_filename           = out_prefix_ + "_meanDT.nrrd" ;;
         std::string meanDTBeforeWarp_filename = out_prefix_ + "_meanDT_beforeWarp.nrrd" ;;
 
+	std::cerr << "Reconstruction::computeDenseMean, about output\n";
+
+	this->output_enabled_ = true;
+	
         if (this->output_enabled_)
         {
             typename WriterType::Pointer writer = WriterType::New();
@@ -768,10 +811,12 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         typename ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
         itk2vtkConnector->SetInput(multiplyImageFilter->GetOutput());
         itk2vtkConnector->Update();
+	std::cerr << "about to call extractIsosurface\n";
         this->denseMean_ =
                 this->extractIsosurface(itk2vtkConnector->GetOutput());
+	std::cerr << "about to call MeshQC\n";
         this->denseMean_ = this->MeshQC(this->denseMean_);
-    } catch (std::runtime_error e) {
+	/*    } catch (std::runtime_error e) {
         if (this->denseMean_ != NULL) {
             this->denseDone_ = true;
             std::cerr << "Warning! MeshQC failed, but a dense mean was computed by VTK.\n";
@@ -781,7 +826,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
         throw e;
     } catch (...) {
         throw std::runtime_error("Optimize failed!");
-    }
+	}*/
     this->denseDone_ = true;
 }
 

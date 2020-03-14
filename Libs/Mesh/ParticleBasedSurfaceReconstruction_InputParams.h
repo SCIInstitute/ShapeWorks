@@ -102,7 +102,7 @@ public:
         qcSmoothingIterations = 1;
         qcDecimationPercentage = 0.5;
 
-        display                = true;
+        display                = false;
         glyph_radius           = 1;
 
         maximum_variance_captured  = 0.95;
@@ -431,6 +431,17 @@ public:
                 atoi(elem->GetText()) > 0 ? display = true : display = false;
             }
 
+    if (display)
+      {
+	std::cerr << "display enabled!\n";
+      }
+    else
+      {
+	std::cerr << "display disabled\n";
+      }
+
+
+	    
             elem = docHandle.FirstChild( "glyph_radius" ).Element();
             if (elem)
             {

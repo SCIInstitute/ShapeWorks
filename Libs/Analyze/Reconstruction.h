@@ -69,9 +69,9 @@ public:
     typedef typename PointSetType::PointIdentifier      PointIdType;
 
     Reconstruction(std::string out_prefix = "",
-                   float decimationPercent = 0.3f,
-                   double angleThresh = 45.0f,
-                   size_t numClusters = 5,
+                   float decimationPercent = 0.5f,
+                   double angleThresh = 90.0f,
+                   int numClusters = 5,
                    bool fixWinding = true,
                    bool doLaplacianSmoothingBeforeDecimation = true,
                    bool doLaplacianSmoothingAfterDecimation = true,
@@ -184,7 +184,7 @@ private:
     bool denseDone_;
     float decimationPercent_;
     double maxAngleDegrees_;
-    size_t numClusters_;
+    int numClusters_;
     int medianShapeIndex_;
 
     bool fixWinding_;
