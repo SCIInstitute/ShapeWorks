@@ -9,6 +9,8 @@
 #include "Data/MeshManager.h"
 #include <Groom/ShapeWorksGroom.h>
 
+#include <xlnt/xlnt.hpp>
+
 class Shape;
 
 class Project;
@@ -32,22 +34,22 @@ public:
   ~Project();
 
   /// set QWidget parent
-  void set_parent( QWidget* parent );
+  void set_parent(QWidget* parent);
 
   /// save project to file
-  bool save_project( std::string filename, std::string dataDir, std::string cutPlanesFile);
+  bool save_project(std::string filename, std::string dataDir, std::string cutPlanesFile);
 
   /// load project from file
-  bool load_project( QString filename, std::string& planesFile);
-  
+  bool load_project(QString filename, std::string& planesFile);
+
   /// read a lightweight project file
-  bool load_light_project( QString filename, std::string& planesFile );
+  bool load_light_project(QString filename, std::string& planesFile);
 
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();
 
   /// import files
-    void load_original_files( std::vector<std::string> file_names );
+  void load_original_files(std::vector<std::string> file_names);
 
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);
@@ -55,7 +57,7 @@ public:
 
   /// load point files
   bool load_point_files(std::vector<std::string> file_names, bool local);
-  bool update_points(std::vector<std::vector<itk::Point<double> > > points, bool local);
+  bool update_points(std::vector<std::vector<itk::Point<double>>> points, bool local);
 
   void set_reconstructed_present(bool b);
 
@@ -64,11 +66,11 @@ public:
   bool get_groomed_present();
 
   /// remove shapes
-  void remove_shapes( QList<int> list );
+  void remove_shapes(QList<int> list);
 
   /// return all shapes
-  QVector<QSharedPointer<Shape> > get_shapes();
-  
+  QVector<QSharedPointer<Shape>> get_shapes();
+
   void calculate_reconstructed_samples();
 
   /// reset the project
@@ -84,7 +86,6 @@ public:
   int get_num_shapes();
 
   QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
-
 
 public Q_SLOTS:
   void handle_clear_cache();
@@ -118,7 +119,7 @@ private:
   QString filename_;
 
   /// collection of shapes
-  QVector<QSharedPointer<Shape> > shapes_;
+  QVector<QSharedPointer<Shape>> shapes_;
 
   QSharedPointer<MeshManager> mesh_manager_;
 
@@ -127,7 +128,6 @@ private:
   bool reconstructed_present_;
   bool groups_available_ = false;
   bool is_light_project_ = false;
-
 };
 
 #endif /* STUDIO_DATA_PROJECT_H */
