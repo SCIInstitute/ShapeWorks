@@ -1,41 +1,52 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "ImageUtils.h"
+#include "Transform.h"
 #include <limits>
-#include <itkTranslationTransform.h>
+#include <itkImage.h>
 
 namespace shapeworks {
 
 class Image
 {
 public:
-  static const unsigned dims = 3;
   using PixelType = float;
-  using ImageType = itk::Image<PixelType, dims>;
+  using ImageType = itk::Image<PixelType, 3>;
 
-  Image() {}
-  Image(const std::string &inFilename) { read(inFilename); }
+  Image(const std::string &filename) { read(filename); }
 
-  bool read(const std::string &inFilename);
-  bool write(const std::string &outFilename, bool useCompression = true);
-  bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = dims);
-  bool binarize(PixelType threshold = std::numeric_limits<PixelType>::epsilon(),
-                PixelType inside = itk::NumericTraits<PixelType>::One,
-                PixelType outside = itk::NumericTraits<PixelType>::Zero);
+  bool read(const std::string &filename);
+  bool write(const std::string &filename, bool compressed = true);
+
+  bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  // bool nextfunction(...);
+  bool applyTransform(const Transform &transform);
+  bool extractLabel(PixelType label = 1.0);
+  bool closeHoles();
+  bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
+  bool fastMarch(float isoValue = 0.0);
+  bool smoothDT(const std::string &xmlfilename);
 
-  bool compare_equal(const Image &other);
+  bool operator==(const Image &other) const;
+
+  Point3 centerOfMass() const;  
+  Point3 origin() const { return image->GetOrigin(); }
+  Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
+  Point3 size() const;                                      // spatial size of image
+  Point3 center() const { return origin() + size() / 2.0; } // spatial coordinates of center of this image
+
+  void print() const; //print center, size, and other stuff about the image; todo: operator<<
 
 private:
+  friend struct SharedCommandData;
+  Image() {}
 
-  static bool is_directory(const std::string &pathname);
-
+  static bool is_directory(const std::string &pathname); // TODO: Move this function to Libs/Utils
   bool read_image_dir(const std::string &pathname);
 
   ImageType::Pointer image;
 };
+
 } // shapeworks
