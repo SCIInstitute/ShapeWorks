@@ -443,8 +443,9 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Image Filename : ", outnameImg), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["CropImages", "--inFilename", innameSeg, "--outFilename", outnameSeg, "--bbX", str(bb0), "--bbY", str(bb1), "--bbZ", str(bb2), "--startingIndexX", str(smI0), "--startingIndexY", str(smI1), "--startingIndexZ", str(smI2), "--MRIinFilename", innameImg, "--MRIoutFilename", outnameImg]
-            subprocess.check_call(execCommand )
+            cmd = ["shapeworks", "readimage", "--name", innameSeg, "cropimage", "--startx", str(smI0), "--starty", str(smI1), "--startz", str(smI2), "--sizex", str(bb0), "--sizey", str(bb1), "--sizez", str(bb2), "writeimage", "--name", outnameSeg]
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
         return [outDataListSeg, outDataListImg]
     else:
         outDataList = []
@@ -460,8 +461,9 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            execCommand = ["CropImages", "--inFilename", inname, "--outFilename", outname, "--bbX", str(bb0), "--bbY", str(bb1), "--bbZ", str(bb2), "--startingIndexX", str(smI0), "--startingIndexY", str(smI1), "--startingIndexZ", str(smI2)]
-            subprocess.check_call(execCommand )
+            cmd = ["shapeworks", "readimage", "--name", inname, "cropimage", "--startx", str(smI0), "--starty", str(smI1), "--startz", str(smI2), "--sizex", str(bb0), "--sizey", str(bb1), "--sizez", str(bb2), "writeimage", "--name", outname]
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
         return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
