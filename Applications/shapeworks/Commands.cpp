@@ -258,62 +258,6 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Translate
-///////////////////////////////////////////////////////////////////////////////
-void Translate::buildParser()
-{
-  const std::string prog = "translate";
-  const std::string desc = "translates images";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--tx").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--ty").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--tz").action("store").type("double").set_default(0.0).help("Description of optionName.");
-
-  Command::buildParser();
-}
-
-int Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  
-  if (centerofmass)
-  {
-    Point3 com = sharedData.image.centerOfMass();
-    sharedData.transform.translate(com.GetVectorFromOrigin());
-  }
-  else
-  {
-    double tx = static_cast<double>(options.get("tx"));
-    double ty = static_cast<double>(options.get("ty"));
-    double tz = static_cast<double>(options.get("tz"));
-
-    double v[3] = {tx, ty, tz};
-    sharedData.transform.translate(Vector3(v));
-  }
-
-  return 1;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ApplyTransform
-///////////////////////////////////////////////////////////////////////////////
-void ApplyTransform::buildParser()
-{
-  const std::string prog = "applytransform";
-  const std::string desc = "apply current transformation";
-  parser.prog(prog).description(desc);
-
-  Command::buildParser();
-}
-
-int ApplyTransform::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  return sharedData.image.applyTransform(sharedData.transform);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // ExtractLabel
 ///////////////////////////////////////////////////////////////////////////////
 void ExtractLabel::buildParser()
@@ -394,27 +338,6 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
   float isovalue = static_cast<float>(options.get("isovalue"));
 
   return sharedData.image.fastMarch(isovalue);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// SmoothDT
-///////////////////////////////////////////////////////////////////////////////
-void SmoothDT::buildParser()
-{
-  const std::string prog = "smoothdt";
-  const std::string desc = "brief description of command";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--xmlfilename").action("store").type("string").set_default("").help("name of xml file to read");
-
-  Command::buildParser();
-}
-
-int SmoothDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string xmlfilename = options["xmlfilename"];
-
-  return sharedData.image.smoothDT(xmlfilename);
 }
 
 } // shapeworks

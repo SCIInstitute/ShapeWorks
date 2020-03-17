@@ -23,10 +23,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
-  shapeworks.addCommand(Translate::getCommand());
-  shapeworks.addCommand(ApplyTransform::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
-  shapeworks.addCommand(SmoothDT::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
   shapeworks.addCommand(Threshold::getCommand());

@@ -22,12 +22,10 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  bool applyTransform(const Transform &transform);
   bool extractLabel(PixelType label = 1.0);
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
   bool fastMarch(float isoValue = 0.0);
-  bool smoothDT(const std::string &xmlfilename);
 
   bool operator==(const Image &other) const;
 
