@@ -191,4 +191,20 @@ private:
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class CropImage : public ImageCommand
+{
+public:
+  static CropImage &getCommand()
+  {
+    static CropImage instance;
+    return instance;
+  }
+
+private:
+  CropImage() { buildParser(); } 
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks

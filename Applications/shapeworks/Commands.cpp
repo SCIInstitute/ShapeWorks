@@ -340,4 +340,37 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
   return sharedData.image.fastMarch(isovalue);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// CropImage
+///////////////////////////////////////////////////////////////////////////////
+void CropImage::buildParser()
+{
+  const std::string prog = "cropimage";
+  const std::string desc = "performs translational alignment of shape image based on its center of mass or given 3D point";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--startx").action("store").type("float").set_default(0.0).help("starting index in X direction.");
+  parser.add_option("--starty").action("store").type("float").set_default(0.0).help("starting index in Y direction.");
+  parser.add_option("--startz").action("store").type("float").set_default(0.0).help("starting index in Z direction.");
+
+  parser.add_option("--sizex").action("store").type("int").set_default(0.0).help("bounding box value in X direction.");
+  parser.add_option("--sizey").action("store").type("float").set_default(0.0).help("bounding box value in Y direction.");
+  parser.add_option("--sizez").action("store").type("float").set_default(0.0).help("bounding box value in Z direction.");
+
+  Command::buildParser();
+}
+
+int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float startx = static_cast<float>(options.get("startx"));
+  float startx = static_cast<float>(options.get("starty"));
+  float startx = static_cast<float>(options.get("startz"));
+
+  float sizex = static_cast<float>(options.get("sizex"));
+  float sizey = static_cast<float>(options.get("sizey"));
+  float sizez = static_cast<float>(options.get("sizez"));
+
+  return sharedData.image.cropImage(Dims({startx, starty, startz}), Dims({sizex, sizey, sizez}));
+}
+
 } // shapeworks

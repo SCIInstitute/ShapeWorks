@@ -49,6 +49,7 @@ bool Image::read(const std::string &filename)
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename);
+
   try
   {
     reader->Update();
@@ -163,7 +164,6 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   filter->SetNumberOfIterations(numIterations);
   if (numLayers)
     filter->SetNumberOfLayers(numLayers);
-
   filter->SetInput(this->image);
   this->image = filter->GetOutput();
 
@@ -198,7 +198,6 @@ bool Image::recenter()
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
   filter->SetInput(this->image);
   filter->CenterImageOn();
   this->image = filter->GetOutput();
@@ -358,18 +357,17 @@ bool Image::pad(int padding, PixelType value)
   upperExtendRegion[1] = padding;
   upperExtendRegion[2] = padding;
 
-  using PadFilter = itk::ConstantPadImageFilter<ImageType, ImageType>;
-  PadFilter::Pointer padFilter = PadFilter::New();
-
-  padFilter->SetInput(this->image);
-  padFilter->SetPadLowerBound(lowerExtendRegion);
-  padFilter->SetPadUpperBound(upperExtendRegion);
-  padFilter->SetConstant(value);
-  this->image = padFilter->GetOutput();
+  using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetPadLowerBound(lowerExtendRegion);
+  filter->SetPadUpperBound(upperExtendRegion);
+  filter->SetConstant(value);
+  this->image = filter->GetOutput();
 
   try
   {
-    padFilter->Update();
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -469,7 +467,6 @@ bool Image::fastMarch(float isoValue)
 
   using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
   filter->SetInput(this->image);
   filter->NarrowBandingOff();
   filter->SetLevelSetValue(isoValue);
@@ -488,6 +485,40 @@ bool Image::fastMarch(float isoValue)
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Fast March succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::cropImage(Dims desiredStart, Dims desiredSize)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
+
+  using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetExtractionRegion(desiredRegion);
+  filter->SetInput(this->image);
+  filter->SetDirectionCollapseToIdentity();
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Crop Image failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Crop Image succeeded!\n";
 #endif
   return true;
 }
