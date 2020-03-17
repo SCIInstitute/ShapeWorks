@@ -1,36 +1,40 @@
+
 set(XLNT_DIR "$ENV{XLNT_DIR}" CACHE PATH "XLNT root directory.")
 message("Looking for XLNT in ${XLNT_DIR}")
 
-
 find_path(XLNT_INCLUDE_DIR
-	NAMES xlnt/xlnt.hpp 
-	HINTS /usr/local/include
-	HINTS ext_lib/xlnt-master/include/xlnt
-	HINTS ${XLNT_DIR}/include
-)
+  NAMES xlnt/xlnt.hpp 
+  HINTS /usr/local/include
+  HINTS ext_lib/xlnt-master/include/xlnt
+  HINTS ${XLNT_DIR}/include
+  )
 
 if(APPLE)
-find_library(XLNT_LIBRARY 
-	libxlnt.a
-	HINTS /usr/local/lib
-	HINTS ext_lib/xlnt-master/build/source
-	HINTS ${XLNT_DIR}/lib
-)
+  find_library(XLNT_LIBRARY 
+    libxlnt.a
+    HINTS /usr/local/lib
+    HINTS ${XLNT_DIR}/build/source
+    HINTS ${XLNT_DIR}/lib
+    )
 elseif(UNIX)
-find_library(XLNT_LIBRARY 
-	libxlnt.a 
-	HINTS /usr/local/lib
-	HINTS ext_lib/xlnt-master/build/source
-	HINTS ${XLNT_DIR}/build/source
-	HINTS ${XLNT_DIR}/lib
-)
+  find_library(XLNT_LIBRARY 
+    libxlnt.a 
+    HINTS /usr/local/lib
+    HINTS ${XLNT_DIR}/build/source
+    HINTS ${XLNT_DIR}/lib
+    )
+elseif(WIN32)
+  find_library(XLNT_LIBRARY 
+    xlnt.lib
+    HINTS ${XLNT_DIR}/lib
+    )
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(XLNT DEFAULT_MSG XLNT_LIBRARY XLNT_INCLUDE_DIR)
 
 if(XLNT_FOUND)
-  message("—- Found XLNT under ${XLNT_INCLUDE_DIR}")
+  message("-- Found XLNT under ${XLNT_INCLUDE_DIR}")
   set(XLNT_INCLUDE_DIRS ${XLNT_INCLUDE_DIR})
   set(XLNT_LIBRARIES ${XLNT_LIBRARY})
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
