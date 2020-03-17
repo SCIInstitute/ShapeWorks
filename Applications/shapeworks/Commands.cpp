@@ -21,7 +21,6 @@ void Example::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float optionName = static_cast<float>(options.get("optionName"));
@@ -36,7 +35,7 @@ int Example::execute(const optparse::Values &options, SharedCommandData &sharedD
 ///////////////////////////////////////////////////////////////////////////////
 void ReadImage::buildParser()
 {
-  const std::string prog = "read-image";
+  const std::string prog = "readimage";
   const std::string desc = "reads an image";
   parser.prog(prog).description(desc);
 
@@ -46,7 +45,6 @@ void ReadImage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -58,7 +56,7 @@ int ReadImage::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void WriteImage::buildParser()
 {
-  const std::string prog = "write-image";
+  const std::string prog = "writeimage";
   const std::string desc = "writes the current image (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -68,7 +66,6 @@ void WriteImage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int WriteImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -82,7 +79,7 @@ int WriteImage::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 void ReadMesh::buildParser()
 {
-  const std::string prog = "read-mesh";
+  const std::string prog = "readmesh";
   const std::string desc = "reads a mesh";
   parser.prog(prog).description(desc);
 
@@ -91,7 +88,6 @@ void ReadMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -104,7 +100,7 @@ int ReadMesh::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void WriteMesh::buildParser()
 {
-  const std::string prog = "write-mesh";
+  const std::string prog = "writemesh";
   const std::string desc = "writes the current mesh (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -113,7 +109,6 @@ void WriteMesh::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
@@ -137,7 +132,6 @@ void Antialias::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Antialias::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
@@ -179,7 +173,7 @@ int ResampleImage::execute(const optparse::Values &options, SharedCommandData &s
 ///////////////////////////////////////////////////////////////////////////////
 void RecenterImage::buildParser()
 {
-  const std::string prog = "recenter-image";
+  const std::string prog = "recenter";
   const std::string desc = "recenters an image by changing its origin in the image\n\t\t\theader to the physical coordinates of the center of the image";
   parser.prog(prog).description(desc);
 
@@ -192,36 +186,7 @@ int RecenterImage::execute(const optparse::Values &options, SharedCommandData &s
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Binarize
-///////////////////////////////////////////////////////////////////////////////
-void Binarize::buildParser()
-{
-  const std::string prog = "binarize";
-  const std::string desc = "binarizes an image at some given threshold";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--threshold").action("store").type("float").set_default(0.0f).help("Resulting image has two values for pixels: > threshold set to inside value, <= threshold set to outside value [default 0.0].");
-  parser.add_option("--inside").action("store").type("float").set_default(1.0f).help("Value of pixels > threshold [default 1.0].");
-  parser.add_option("--outside").action("store").type("float").set_default(0.0f).help("Value of pixels <= threshold [default 0.0].");
-
-  Command::buildParser();
-}
-
-int Binarize::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  float threshold = static_cast<float>(options.get("threshold"));
-  float inside = static_cast<float>(options.get("inside"));
-  float outside = static_cast<float>(options.get("outside"));
-
-  // For the command line version, we want binarize of an already binarized image to produce the same image, so we add
-  // the tiniest possible epsilon to the specified threshold if that threshold is set to zero. 
-  float eps = (threshold == 0.0f) ? std::numeric_limits<float>::epsilon() : 0.0f;
-
-  return sharedData.image.binarize(threshold + eps, inside, outside);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Padimage
+// PadImage
 ///////////////////////////////////////////////////////////////////////////////
 void PadImage::buildParser()
 {
@@ -248,24 +213,20 @@ int PadImage::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void SmoothMesh::buildParser()
 {
-  const std::string prog = "smooth-mesh";
+  const std::string prog = "smoothmesh";
   const std::string desc = "smooths meshes";
   parser.prog(prog).description(desc);
   
-  // TODO
-  // parser.add_option("--maxRMSError").action("store").type("float").set_default(0.01).help("The maximum RMS error allowed.");
-  // parser.add_option("--numIterations").action("store").type("int").set_default(50).help("Number of iterations.");
+  // todo
 
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  // float maxRMSErr = static_cast<float>(options.get("maxRMSError"));
-  // int numIter = static_cast<int>(options.get("numIterations"));
+  //todo
 
-  return sharedData.mesh.smooth(/*maxRMSErr, numIter*/);
+  return sharedData.mesh.smooth();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,7 +242,6 @@ void Coverage::buildParser()
   Command::buildParser();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 int Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
@@ -295,6 +255,89 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
   second_mesh.read(second_mesh_string);
 
   return sharedData.mesh.coverage(second_mesh);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ExtractLabel
+///////////////////////////////////////////////////////////////////////////////
+void ExtractLabel::buildParser()
+{
+  const std::string prog = "extractlabel";
+  const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted. [default 1.0].");
+
+  Command::buildParser();
+}
+
+int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float label = static_cast<float>(options.get("label"));
+
+  return sharedData.image.extractLabel(label);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CloseHoles
+///////////////////////////////////////////////////////////////////////////////
+void CloseHoles::buildParser()
+{
+  const std::string prog = "closeholes";
+  const std::string desc = "closes holes in a given binary volume";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+int CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  return sharedData.image.closeHoles();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Threshold
+///////////////////////////////////////////////////////////////////////////////
+void Threshold::buildParser()
+{
+  const std::string prog = "threshold";
+  const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("The lower threshold level (optional, default = epsilon)");
+  parser.add_option("--max").action("store").type("float").set_default(std::numeric_limits<float>::max()).help("The upper threshold level (optional, default = FLT_MAX)");
+  
+  Command::buildParser();
+}
+
+int Threshold::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float min = static_cast<float>(options.get("min"));
+  float max = static_cast<float>(options.get("max"));
+
+  return sharedData.image.threshold(min, max);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// FastMarch
+///////////////////////////////////////////////////////////////////////////////
+void FastMarch::buildParser()
+{
+  const std::string prog = "fastmarch";
+  const std::string desc = "computes distance transform volume from a binary (antialiased) image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("The level set value that defines the interface between foreground and background.");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int FastMarch::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  float isovalue = static_cast<float>(options.get("isovalue"));
+
+  return sharedData.image.fastMarch(isovalue);
 }
 
 } // shapeworks

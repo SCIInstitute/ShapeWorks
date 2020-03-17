@@ -1,3 +1,4 @@
+add_subdirectory(Common)
 add_subdirectory(Mesh)
 add_subdirectory(Image)
 add_subdirectory(Alignment)

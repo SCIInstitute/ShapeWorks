@@ -17,7 +17,7 @@ HOWTO start a new command:
  4) find all uses of the command (in .sh and .py files) and change them to use the new shapeworks subcommand:
   $ find Examples -name "*" -type f -exec grep -i "OldCommandName" {} \; -print
  5) test command as needed to ensure it works the same as before (unless there was already a bug :)
-  5b) add unit tests for new classes (follow Alan's example for a function in Image)
+  5a) add unit tests for new classes (follow Alan's example for a function in Image)
  6) remove the old command from its directory's CMakeLists.txt and `git rm OldCommandName.cxx`
  7) commit the results and make a pull request *to executable* (not to master)
  
@@ -43,36 +43,59 @@ Image commands:
 [x] writeimage
 [x] binarize (created new command by breaking down isoresample)
 [x] recenter (created new command by breaking down isoresample)
-[x] *AntiAliasing -> shapeworks antialias
+[x] *AntiAliasing -> antialias
  o ShapeWorksGroom class duplicates antialias functionality, has different defaults
- o Examples
- - shapeworks antialias readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 writeimage --name ./foobar.nrrd
+ o numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
+ o Examples:
 
- - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize isoresample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
-
- Note: numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
+ - shapeworks readimage --name ./test.nrrd antialias --numiterations 75 --maxrmserror 0.03 --numlayers 0 writeimage --name ./foobar.nrrd
 
 [] ClipVolume
-[] *CloseHoles
-[] *CropImages
-[] *ExtractGivenLabelImage
-[] *FastMarching
-[] *FindLargestBoundingBox
-[x] *PadVolumeWithConstant -> shapeworks pad
+[x] *CloseHoles -> closeholes
  o Examples:
- - ./shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd pad --padding 0 --value 0.0 writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/padvolume_seg.ellipsoid_0.nrrd
 
- - ./PadVolumeWithConstant --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/archanasrisubramanian/Desktop/shapeworks_results/oldpadvolume_seg.ellipsoid_0.nrrd --paddingSize=0 --paddingValue=0.0
+ - shapeworks readimage --name ./test.nrrd closeholes writeimage --name ./foobar.nrrd 
+
+ - CloseHoles --inFilename=./test.nrrd --outFilename=./foobar.nrrd
+
+[] *CropImages
+[x] *ExtractGivenLabelImage -> extractlabel 
+ o Examples:
+
+ - shapeworks readimage --name ./test.nrrd extractlabel --label 1.0 writeimage --name ./foobar.nrrd
+
+ - ExtractGivenLabelImage --inFilename=./test.nrrd --outFilename=./foobar.nrrd --labelVal 1
+
+[x] *FastMarching -> fastmarch
+ o Examples:
+
+ - shapeworks readimage --name ./test.nrrd fastmarch --isovalue 0.0 writeimage --name ./foobar.nrrd
+
+ - FastMarching --inFilename=./test.nrrd --outFilename=./foobar.nrrd --isoValue 0.0
+
+[] *FindLargestBoundingBox
+[x] *PadVolumeWithConstant -> pad
+ o Examples:
+
+ - shapeworks readimage --name ./test.nrrd pad --padding 0 --value 0.0 writeimage --name ./foobar.nrrd
+
+ - PadVolumeWithConstant --inFilename=./test.nrrd --outFilename=./foobar.nrrd --paddingSize=0 --paddingValue=0.0
 
 [] *ReflectVolumes
 
-[x] ResampleVolumesToBeIsotropic -> shapeworks isoresample
+[x] ResampleVolumesToBeIsotropic -> isoresample
  o Examples:
-  - ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_29.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
 
-  - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd antialias isoresample --isoSpacing 1.0 recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+  - shapeworks readimage --name ./test.nrrd antialias isoresample --isospacing 1.0 recenter binarize writeimage --name ./foobar.nrrd
 
-[] *ThresholdImages
+  - ResampleVolumesToBeIsotropic --inFilename=./test.nrrd --outFilename=./foobar.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
+
+[x] *ThresholdImages -> threshold 
+
+ - shapeworks readimage --name ./test.nrrd threshold writeimage --name ./foobar.nrrd
+
+ - ThresholdImages --inFilename=./test.nrrd --outFilename=./foobar.nrrd
+
 [] TopologyPreservingSmoothing
 [] *WriteImageInfoToText
 [] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
@@ -123,11 +146,10 @@ meshFIM.h
 Optimize commands:
 
 ShapeWorksRunApp.h (save this one till last or not at all)
-[] bring up during next meeting since this is a full-fledged application, not merely a utility.
-   It might constitute a class by itself.
-   It seems to only use vtk and ITK, not any of the rest of the ShapeWorks framework.
-    - ah! except ParticleSystem's files (in the Optimize/ParticleSystem) are misnamed as itkParticle*
-    - but ParticleSystem is already a class. It should probably be moved, but it already stands alone
+ - It might constitute a class by itself.
+ - It seems to only use vtk and ITK, not any of the rest of the ShapeWorks framework.
+ - ah! except ParticleSystem's files (in the Optimize/ParticleSystem) are misnamed as itkParticle*
+ - but ParticleSystem is already a class. It should probably be moved, but it already stands alone
 
 Alignment commands:
 
@@ -136,13 +158,26 @@ ICPRigid3DImageRegistration
 ICPRigid3DMeshRegistration
 Procrustes3D.cpp
 Procrustes3D.h
-[] ReflectMeshes
-[] ResampleVolumeToIsotropic -> see if it's used anywhere and convert those cases to use new resampleimage command
+ReflectMeshes
+ResampleVolumeToIsotropic -> see if it's used anywhere and convert those cases to use new resampleimage command
 ResizeOriginResampleVolumes
-Transforms/
 TranslateImages
-[] TranslateShapeToImageOrigin
-TranslationTransform
+[x] TranslateShapeToImageOrigin -> center-of-mass-align 
+o Examples:
+
+ - shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd center-of-mass-align --headerfile=/Users/archanasrisubramanian/Desktop/shapeworks_results/COM/data.txt writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/COM/com_seg.ellipsoid_0.nrrd
+
+ - TranslateShapeToImageOrigin --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd --outFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/old_com_seg.ellipsoid_0.nrrd --useCenterOfMass 1 --parameterFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/data.txt
+
+[x] TranslationTransform
+
+Alignment/Transform Commands:
+
+itkAdvancedTransform
+itkCompactlySupportedRBFSparseKernelTransform
+itkKernelTransform2
+itkSparseKernelTransform
+itkThinPlateSplineKernelTransform2
 
 Analyze commands:
 
@@ -165,6 +200,3 @@ ply2vtk
 stl2ply
 stl2vtk
 vtk2ply
-
-  
-
