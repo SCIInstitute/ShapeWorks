@@ -1233,22 +1233,6 @@ void Optimize::PrintParamInfo()
     std::cout << "cotan" << std::endl;
   }
 
-  std::cout << "optimizer_type = ";
-  if (m_optimizer_type == 0) {
-    std::cout << "jacobi";
-  }
-  else if (m_optimizer_type == 1) {
-    std::cout << "gauss seidel";
-  }
-  else if (m_optimizer_type == 2) {
-    std::cout << "adaptive gauss seidel (with bad moves)";
-  }
-  else {
-    std::cerr << "Incorrect option!!";
-    throw 1;
-  }
-  std::cout << std::endl;
-
   std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
   std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed <<
     std::endl;
@@ -1904,10 +1888,6 @@ void Optimize::UpdateExportablePoints()
 //---------------------------------------------------------------------------
 void Optimize::SetPairwisePotentialType(int pairwise_potential_type)
 { this->m_pairwise_potential_type = pairwise_potential_type;}
-
-//---------------------------------------------------------------------------
-void Optimize::SetOptimizerType(int optimizer_type)
-{ this->m_optimizer_type = optimizer_type;}
 
 //---------------------------------------------------------------------------
 void Optimize::SetTimePtsPerSubject(int time_pts_per_subject)
