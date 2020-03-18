@@ -15,7 +15,6 @@
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
-#include <itkGradientMagnitudeImageFilter.h>
 #include <itkSigmoidImageFilter.h>
 #include <itkTPGACLevelSetImageFilter.h>
 #include <ExternalLibs/tinyxml/tinyxml.h>
@@ -546,10 +545,9 @@ bool Image::fastMarch(float isoValue)
 
 bool Image::smoothTopology(const char *xmlfilename)
 {
-  typedef itk::CurvatureFlowImageFilter<ImageType, ImageType> SmoothingFilterType;
-  typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType> GradientFilterType;
-  typedef itk::SigmoidImageFilter<ImageType, ImageType> SigmoidFilterType;
-  typedef itk::TPGACLevelSetImageFilter<ImageType, ImageType> TPLevelSetImageFilterType;
+  using SmoothingFilter = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
+  using SigmoidFilter = itk::SigmoidImageFilter<ImageType, ImageType>;
+  using ImageFilter = itk::TPGACLevelSetImageFilter<ImageType, ImageType>;
 
   // variables
   std::vector<std::string> inFilenames;
@@ -563,7 +561,6 @@ bool Image::smoothTopology(const char *xmlfilename)
   double propagationScaling = 0.0;
   double alpha = 10.0;
   double beta = 10.0;
-  double sigma = 2.0;
   double isoValue = 255.0;
   unsigned int smoothingIterations = 10;
 
@@ -659,40 +656,39 @@ bool Image::smoothTopology(const char *xmlfilename)
   {
     read(inFilenames[dtNo]);
 
-    SmoothingFilterType::Pointer smoothing = SmoothingFilterType::New();
-    GradientFilterType::Pointer gradientMag = GradientFilterType::New();
-    SigmoidFilterType::Pointer sigmoid = SigmoidFilterType::New();
+    if (!this->image)
+    {
+      std::cerr << "No image loaded, so returning false." << std::endl;
+      return false;
+    }
+
+    SmoothingFilter::Pointer smoothing = SmoothingFilter::New();
+    SigmoidFilter::Pointer sigmoid = SigmoidFilter::New();
+    ImageFilter::Pointer levelSet = ImageFilter::New();
 
     smoothing->SetTimeStep(0.0625);
     smoothing->SetNumberOfIterations(smoothingIterations);
     smoothing->SetInput(this->image);
     smoothing->Update();
-
     this->image = smoothing->GetOutput();
     write(distFilenames[dtNo]);
-
-    gradientMag->SetInput(this->image);
-    gradientMag->Update();
 
     sigmoid->SetAlpha(alpha);
     sigmoid->SetBeta(beta);
     sigmoid->SetOutputMinimum(0.0);
     sigmoid->SetOutputMaximum(1.0);
-    sigmoid->SetInput(gradientMag->GetOutput());
+    sigmoid->SetInput(this->image);
     sigmoid->Update();
 
-    TPLevelSetImageFilterType::Pointer levelSetFilter = TPLevelSetImageFilterType::New();
-    const double propScale = propagationScaling;
-    levelSetFilter->SetPropagationScaling(propScale);
-    levelSetFilter->SetCurvatureScaling(1.0);
-    levelSetFilter->SetAdvectionScaling(1.0);
-    levelSetFilter->SetMaximumRMSError(0.0);
-    levelSetFilter->SetNumberOfIterations(20);
-    levelSetFilter->SetInput(this->image);
-    levelSetFilter->SetFeatureImage(sigmoid->GetOutput());
-    levelSetFilter->Update();
-
-    this->image = levelSetFilter->GetOutput();
+    levelSet->SetPropagationScaling(propagationScaling);
+    levelSet->SetCurvatureScaling(1.0);
+    levelSet->SetAdvectionScaling(1.0);
+    levelSet->SetMaximumRMSError(0.0);
+    levelSet->SetNumberOfIterations(20);
+    levelSet->SetInput(this->image);
+    levelSet->SetFeatureImage(sigmoid->GetOutput());
+    this->image = levelSet->GetOutput();
+    levelSet->Update();
 
     write(outFilenames[dtNo]);
   }

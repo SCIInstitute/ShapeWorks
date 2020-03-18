@@ -176,7 +176,7 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
             cmd.extend(["center-of-mass-align", "--headerfile", paramname])
             cmd.extend(["writeimage", "--name", outname])
             print("Calling cmd:\n"+" ".join(cmd))
-            subprocess.check_call(execCommand)
+            subprocess.check_call(cmd)
         return outDataListSeg
 
 def create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename):
@@ -271,10 +271,12 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
     xmlfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
     create_tpSmooth_xml(xmlfilename, smoothingIterations, ref_dtnrrdfilename, ref_isonrrdfilename, ref_tpdtnrrdfilename)
     create_cpp_xml(xmlfilename, xmlfilename)
-    execCommand = ["TopologyPreservingSmoothing", xmlfilename]
-    subprocess.check_call(execCommand)
-    execCommand = ["shapeworks", "readimage", "--name", ref_tpdtnrrdfilename, "threshold", "--min", str(-0.000001), "writeimage", "--name", ref_binnrrdfilename]
-    subprocess.check_call(execCommand)
+    cmd = ["shapeworks", "smoothdt", "--preservetopology", str("1"), "--xmlfilename", xmlfilename]
+    print("Calling cmd:\n"+" ".join(cmd))
+    subprocess.check_call(cmd)
+    cmd = ["shapeworks", "readimage", "--name", ref_tpdtnrrdfilename, "threshold", "--min", str(-0.000001), "writeimage", "--name", ref_binnrrdfilename]
+    print("Calling cmd:\n"+" ".join(cmd))
+    subprocess.check_call(cmd)
 
     if processRaw:
         rawoutDir = os.path.join(outDir, 'images')
@@ -335,8 +337,9 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             xmlfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
             create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
             create_cpp_xml(xmlfilename, xmlfilename)
-            execCommand = ["TopologyPreservingSmoothing", xmlfilename]
-            subprocess.check_call(execCommand )
+            cmd = ["shapeworks", "smoothdt", "--preservetopology", str("1"), "--xmlfilename", xmlfilename]
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
             execCommand = ["ICPRigid3DImageRegistration", "--targetDistanceMap", ref_tpdtnrrdfilename, "--sourceDistanceMap", tpdtnrrdfilename, "--sourceSegmentation", seginname, "--sourceRaw", rawinname, "--icpIterations", str(icpIterations), "--visualizeResult",  "0",  "--solutionSegmentation", segoutname, "--solutionRaw", rawoutname, "--solutionTransformation", transformation]
             subprocess.check_call(execCommand )
 
@@ -382,8 +385,9 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
             xmlfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.xml')
             create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
             create_cpp_xml(xmlfilename, xmlfilename)
-            execCommand = ["TopologyPreservingSmoothing", xmlfilename]
-            subprocess.check_call(execCommand )
+            cmd = ["shapeworks", "smoothdt", "--preservetopology", str("1"), "--xmlfilename", xmlfilename]
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
             execCommand = ["ICPRigid3DImageRegistration", "--targetDistanceMap", ref_tpdtnrrdfilename, "--sourceDistanceMap", tpdtnrrdfilename, "--sourceSegmentation", inname, "--icpIterations", str(icpIterations), "--visualizeResult",  "0",  "--solutionSegmentation", outname, "--solutionTransformation", transformation]
             subprocess.check_call(execCommand )
 
@@ -513,8 +517,9 @@ def applyDistanceTransforms(parentDir, inDataList,antialiasIterations=20, smooth
         xmlfilename=outname.replace('.nrrd', '.tpSmoothDT.xml')
         create_tpSmooth_xml(xmlfilename, smoothingIterations, dtnrrdfilename, isonrrdfilename, tpdtnrrdfilename)
         create_cpp_xml(xmlfilename, xmlfilename)
-        execCommand = ["TopologyPreservingSmoothing", xmlfilename]
-        subprocess.check_call(execCommand )
+        cmd = ["shapeworks", "smoothdt", "--preservetopology", str("1"), "--xmlfilename", xmlfilename]
+        print("Calling cmd:\n"+" ".join(cmd))
+        subprocess.check_call(cmd)
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 
