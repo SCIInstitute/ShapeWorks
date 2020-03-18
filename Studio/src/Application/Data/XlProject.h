@@ -7,7 +7,11 @@ class XlProject {
 
 public:
 
-  XlProject(std::string filename);
+  XlProject();
+
+  bool load(std::string filename);
+
+
 
   std::vector<std::string> get_original_files();
   std::vector<std::string> get_distance_transform_files();

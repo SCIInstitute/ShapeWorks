@@ -530,7 +530,8 @@ bool Project::load_xl_project(QString filename)
   this->reset();
   this->filename_ = filename;
 
-  XlProject xl(filename.toStdString());
+  XlProject xl;
+  xl.load(filename.toStdString());
 
   std::vector<std::string> original_files = xl.get_original_files();
   std::vector<std::string> groom_files = xl.get_distance_transform_files();

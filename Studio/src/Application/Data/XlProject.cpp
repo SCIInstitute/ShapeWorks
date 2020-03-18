@@ -1,9 +1,12 @@
 #include <Data/XlProject.h>
 
 //---------------------------------------------------------------------------
-XlProject::XlProject(std::string filename)
-{
+XlProject::XlProject()
+{}
 
+//---------------------------------------------------------------------------
+bool XlProject::load(std::string filename)
+{
   try
   {
     this->wb_.load(filename);
@@ -17,6 +20,7 @@ XlProject::XlProject(std::string filename)
   this->global_point_files_ = this->get_string_column("world_point_files");
 
   this->loaded_ = true;
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -77,7 +81,9 @@ std::vector<std::string> XlProject::get_string_column(std::string name)
   for (int i = 1; i < rows.length(); i++) {
     std::string value = rows[i][index].to_string();
     std::cerr << "value = " << value << "\n";
-    list.push_back(value);
+    if (value != "") {
+      list.push_back(value);
+    }
   }
 
   return list;
