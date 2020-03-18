@@ -49,6 +49,7 @@ function install_conda() {
   #install shapeworks deps
   if ! conda install --yes \
        cmake=3.15.5 \
+       gtest=1.10.0 \
        colorama=0.4.3 \
        requests=2.22.0 \
        geotiff=1.5.1 \

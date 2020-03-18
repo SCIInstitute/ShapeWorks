@@ -24,26 +24,6 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Ins
 
 include(DefaultBuildType)
 
-# Google Test
-if (BUILD_TESTS)
-  message(STATUS "Building Google Test")
-  set( gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll" FORCE)
-  enable_testing()
-  include(FetchContent)
-  
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        release-1.10.0
-    )
-  
-  FetchContent_GetProperties(googletest)
-  if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-  endif()
-endif(BUILD_TESTS)
-
 project(ShapeWorks)
 
 # use ccache if available
@@ -125,6 +105,9 @@ ENDIF()
 
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
+### XLNT
+find_package (XLNT REQUIRED)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)

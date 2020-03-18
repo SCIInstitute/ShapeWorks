@@ -8,6 +8,8 @@
 #include "Data/MeshManager.h"
 #include <Groom/ShapeWorksGroom.h>
 
+#include <xlnt/xlnt.hpp>
+
 class Shape;
 
 class Project;

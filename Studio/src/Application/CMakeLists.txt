@@ -8,6 +8,9 @@ find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 
+### Xlnt
+#find_package (XLNT REQUIRED)
+
 cmake_policy(SET CMP0020 NEW)
 
 #headers
@@ -190,6 +193,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Analyze
   Optimize
   Utils
+  xlnt::xlnt
   )
 
 INSTALL(TARGETS ShapeWorksStudio

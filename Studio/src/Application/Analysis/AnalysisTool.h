@@ -11,6 +11,7 @@
 #include <Data/Shape.h>
 #include <Data/Preferences.h>
 #include <Visualization/Visualizer.h>
+#include <itkParticleShapeStatistics.h>
 #include <Visualization/BarGraph.h>
 
 class Project;
