@@ -27,7 +27,9 @@ public:
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
   bool fastMarch(float isoValue = 0.0);
-  bool smoothDT(const std::string &xmlfilename);
+  bool smoothTopology(const char *xmlfilename);
+  bool gaussianBlur(double sigma);
+  bool smoothDT(bool blur, bool preserveTopology, double sigma, const char *xmlfilename);
 
   bool operator==(const Image &other) const;
 

@@ -18,11 +18,11 @@
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkSigmoidImageFilter.h>
 #include <itkTPGACLevelSetImageFilter.h>
-// #include <ExternalLibs/tinyxml/tinyxml.h>
-#include "tinyxml.h"
+#include <ExternalLibs/tinyxml/tinyxml.h>
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
+#include <itkDiscreteGaussianImageFilter.h>
 
 #include <string>
 #include <iostream>
@@ -544,7 +544,7 @@ bool Image::fastMarch(float isoValue)
   return true;
 }
 
-bool Image::smoothDT(const std::string &xmlfilename)
+bool Image::smoothTopology(const char *xmlfilename)
 {
   typedef itk::CurvatureFlowImageFilter<ImageType, ImageType> SmoothingFilterType;
   typedef itk::GradientMagnitudeImageFilter<ImageType, ImageType> GradientFilterType;
@@ -568,9 +568,8 @@ bool Image::smoothDT(const std::string &xmlfilename)
   unsigned int smoothingIterations = 10;
 
   // read parameters
-  // TiXmlDocument doc(&xmlfilename);
-  TiXmlDocument doc;
-  bool loadOkay = doc.LoadFile(&xmlfilename);
+  TiXmlDocument doc(xmlfilename);
+  bool loadOkay = doc.LoadFile();
 
   if (loadOkay)
   {
@@ -697,6 +696,46 @@ bool Image::smoothDT(const std::string &xmlfilename)
 
     write(outFilenames[dtNo]);
   }
+}
+
+bool Image::gaussianBlur(double sigma)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;
+  BlurType::Pointer blur = BlurType::New();
+  blur->SetInput(this->image);
+  blur->SetVariance(sigma * sigma);
+  this->image = blur->GetOutput();
+  
+  try
+  {
+    blur->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Gaussian Blur failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Gaussian Blur succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::smoothDT(bool blur, bool preserveTopology, double sigma, const char *xmlfilename)
+{
+  if (blur)
+    gaussianBlur(sigma);
+  
+  if (preserveTopology)
+    smoothTopology(xmlfilename);
 }
 
 /// centerOfMass

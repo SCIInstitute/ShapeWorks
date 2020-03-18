@@ -319,7 +319,7 @@ int ApplyTransform::execute(const optparse::Values &options, SharedCommandData &
 void ExtractLabel::buildParser()
 {
   const std::string prog = "extractlabel";
-  const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
+  const std::string desc = "extracts specific voxel label from given multilabel\n\t\t\tvolume and outputs corresponding binary image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted. [default 1.0].");
@@ -357,7 +357,7 @@ int CloseHoles::execute(const optparse::Values &options, SharedCommandData &shar
 void Threshold::buildParser()
 {
   const std::string prog = "threshold";
-  const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
+  const std::string desc = "threholds image into binary label based on upper and\n\t\t\tlower intensity bounds given by user";
   parser.prog(prog).description(desc);
 
   parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("The lower threshold level (optional, default = epsilon)");
@@ -380,7 +380,7 @@ int Threshold::execute(const optparse::Values &options, SharedCommandData &share
 void FastMarch::buildParser()
 {
   const std::string prog = "fastmarch";
-  const std::string desc = "computes distance transform volume from a binary (antialiased) image";
+  const std::string desc = "computes distance transform volume from a binary\n\t\t\t(antialiased) image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("The level set value that defines the interface between foreground and background.");
@@ -405,16 +405,24 @@ void SmoothDT::buildParser()
   const std::string desc = "brief description of command";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--blur").action("store").type("bool").set_default(false).help("Perform gaussian blur [default set to false].");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
+  parser.add_option("--sigma").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
   parser.add_option("--xmlfilename").action("store").type("string").set_default("").help("name of xml file to read");
-
+  
   Command::buildParser();
 }
 
 int SmoothDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  std::string xmlfilename = options["xmlfilename"];
+  bool blur = static_cast<bool>(options.get("blur"));
+  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
+  double sigma = static_cast<double>(options.get("sigma"));
+  const std::string xmlfilename = static_cast<std::string>(options.get("xmlfilename"));
+  // char *c = const_cast<char*>(xmlfilename.c_str());
 
-  return sharedData.image.smoothDT(xmlfilename);
+  // return sharedData.image.smoothDT(*c);
+  return sharedData.image.smoothDT(blur, preservetopology, sigma, xmlfilename.c_str());
 }
 
 } // shapeworks
