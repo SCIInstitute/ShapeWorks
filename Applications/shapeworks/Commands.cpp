@@ -363,14 +363,14 @@ void CropImage::buildParser()
 int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float startx = static_cast<float>(options.get("startx"));
-  float startx = static_cast<float>(options.get("starty"));
-  float startx = static_cast<float>(options.get("startz"));
+  float starty = static_cast<float>(options.get("starty"));
+  float startz = static_cast<float>(options.get("startz"));
 
   float sizex = static_cast<float>(options.get("sizex"));
   float sizey = static_cast<float>(options.get("sizey"));
   float sizez = static_cast<float>(options.get("sizez"));
 
-  return sharedData.image.cropImage(Dims({startx, starty, startz}), Dims({sizex, sizey, sizez}));
+  return sharedData.image.cropImage(FPoint3({startx, starty, startz}), FPoint3({sizex, sizey, sizez}));
 }
 
 } // shapeworks

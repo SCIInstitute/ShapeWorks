@@ -26,7 +26,7 @@ public:
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
   bool fastMarch(float isoValue = 0.0);
-  bool cropImage(Dims desiredStart = Dims(), Dims desiredSize = Dims());
+  bool cropImage(FPoint3 desiredStart = FPoint3(), FPoint3 desiredSize = FPoint3());
 
   bool operator==(const Image &other) const;
 

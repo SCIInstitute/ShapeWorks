@@ -21,6 +21,8 @@
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
+#include <itkExtractImageFilter.h>
+#include <itkImageRegion.h>
 
 #include <sys/stat.h>
 
@@ -489,7 +491,7 @@ bool Image::fastMarch(float isoValue)
   return true;
 }
 
-bool Image::cropImage(Dims desiredStart, Dims desiredSize)
+bool Image::cropImage(FPoint3 desiredStart, FPoint3 desiredSize)
 {
   if (!this->image)
   {
@@ -497,11 +499,13 @@ bool Image::cropImage(Dims desiredStart, Dims desiredSize)
     return false;
   }
 
-  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
+  // ImageType::RegionType desiredRegion(desiredStart, desiredSize);
+
+  ImageType::RegionType desiredRegion();
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-  filter->SetExtractionRegion(desiredRegion);
+  // filter->SetExtractionRegion(desiredRegion);
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   this->image = filter->GetOutput();

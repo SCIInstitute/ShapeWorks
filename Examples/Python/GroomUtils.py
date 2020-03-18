@@ -51,7 +51,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
                 img.antialias()
             img.isoresample()
             if isBinary:
-                img.threshold()  # re-binarize the image (defaults for threshold are (0,max) )
+                img.threshold()  # re-binarize the image (defaults for threshold are (0,max))
             if recenter:
                 img.recenter()
             img.write(outname)
