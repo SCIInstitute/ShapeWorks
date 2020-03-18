@@ -7,6 +7,8 @@
 
 #include <Visualization/Visualizer.h>
 
+#include <Data/XlProject.h>
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -19,8 +21,6 @@
 #include <tinyxml.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkPolyDataReader.h>
-
-
 
 const std::string Project::DATA_C("data");
 const std::string Project::GROOM_C("groom");
@@ -242,6 +242,10 @@ bool Project::load_project(QString filename, std::string& planesFile)
   // clear the project out first
   this->reset();
   this->filename_ = filename;
+
+  if (filename.toLower().endsWith(".xlsx")) {
+    return this->load_xl_project(filename);
+  }
 
   // open and parse XML
   TiXmlDocument doc(filename.toStdString().c_str());
@@ -516,6 +520,43 @@ bool Project::load_light_project(QString filename, string &planesFile)
   this->renumber_shapes();
 
   std::cerr << "light project loaded\n";
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Project::load_xl_project(QString filename)
+{
+  // clear the project out first
+  this->reset();
+  this->filename_ = filename;
+
+  XlProject xl(filename.toStdString());
+
+  std::vector<std::string> original_files = xl.get_original_files();
+  std::vector<std::string> groom_files = xl.get_distance_transform_files();
+  std::vector<std::string> local_point_files = xl.get_local_point_files();
+  std::vector<std::string> global_point_files = xl.get_global_point_files();
+
+  if (original_files.size() > 0) {
+    this->load_original_files(original_files);
+  }
+
+  if (groom_files.size() > 0) {
+    this->load_groomed_files(groom_files, 0.5);
+  }
+  this->load_point_files(local_point_files, true);
+  this->load_point_files(global_point_files, false);
+
+  /*
+  if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
+    this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile,
+                                                                 goodPtsFile);
+  }
+  */
+  this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
+                                 global_point_files.size() > 1;
+  //this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
+
   return true;
 }
 

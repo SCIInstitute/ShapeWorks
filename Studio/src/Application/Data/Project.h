@@ -44,6 +44,9 @@ public:
   /// read a lightweight project file
   bool load_light_project(QString filename, std::string& planesFile);
 
+  /// load an excel project
+  bool load_xl_project(QString filename);
+
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();
 
