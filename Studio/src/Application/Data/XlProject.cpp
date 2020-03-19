@@ -30,7 +30,7 @@ bool XlProject::save(std::string filename)
   this->save_string_column("original_files", this->original_files_);
   this->save_string_column("distance_transforms", this->distance_transform_files_);
   this->save_string_column("local_point_files", this->local_point_files_);
-  this->save_string_column("global_point_files", this->global_point_files_);
+  this->save_string_column("world_point_files", this->global_point_files_);
 
   this->wb_.save(filename);
 
