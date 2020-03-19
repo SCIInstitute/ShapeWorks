@@ -22,7 +22,6 @@ public:
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
-  bool applyTransform(const Transform &transform);
   bool extractLabel(PixelType label = 1.0);
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
@@ -30,6 +29,7 @@ public:
   bool smoothTopology(const char *xmlfilename);
   bool gaussianBlur(double sigma);
   bool smoothDT(bool blur, bool preserveTopology, double sigma, const char *xmlfilename);
+  bool cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez);
 
   bool operator==(const Image &other) const;
 

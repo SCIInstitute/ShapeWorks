@@ -17,14 +17,20 @@
 #include <itkCurvatureFlowImageFilter.h>
 #include <itkSigmoidImageFilter.h>
 #include <itkTPGACLevelSetImageFilter.h>
+<<<<<<< HEAD
 #include <ExternalLibs/tinyxml/tinyxml.h>
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
 #include <itkDiscreteGaussianImageFilter.h>
+=======
+#include <itkImageSeriesReader.h>
+#include <itkGDCMImageIO.h>
+#include <itkGDCMSeriesFileNames.h>
+#include <itkExtractImageFilter.h>
+#include <itkImageRegion.h>
+>>>>>>> origin/executable_cropimage
 
-#include <string>
-#include <iostream>
 #include <sys/stat.h>
 
 namespace shapeworks {
@@ -52,6 +58,7 @@ bool Image::read(const std::string &filename)
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename);
+
   try
   {
     reader->Update();
@@ -166,7 +173,6 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   filter->SetNumberOfIterations(numIterations);
   if (numLayers)
     filter->SetNumberOfLayers(numLayers);
-
   filter->SetInput(this->image);
   this->image = filter->GetOutput();
 
@@ -201,7 +207,6 @@ bool Image::recenter()
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
   filter->SetInput(this->image);
   filter->CenterImageOn();
   this->image = filter->GetOutput();
@@ -361,18 +366,17 @@ bool Image::pad(int padding, PixelType value)
   upperExtendRegion[1] = padding;
   upperExtendRegion[2] = padding;
 
-  using PadFilter = itk::ConstantPadImageFilter<ImageType, ImageType>;
-  PadFilter::Pointer padFilter = PadFilter::New();
-
-  padFilter->SetInput(this->image);
-  padFilter->SetPadLowerBound(lowerExtendRegion);
-  padFilter->SetPadUpperBound(upperExtendRegion);
-  padFilter->SetConstant(value);
-  this->image = padFilter->GetOutput();
+  using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetPadLowerBound(lowerExtendRegion);
+  filter->SetPadUpperBound(upperExtendRegion);
+  filter->SetConstant(value);
+  this->image = filter->GetOutput();
 
   try
   {
-    padFilter->Update();
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -383,50 +387,6 @@ bool Image::pad(int padding, PixelType value)
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Pad image succeeded!\n";
-#endif
-  return true;
-}
-
-//todo: ack! most of these should be void functions. Have confidence the operations work! Trust the worker!
-bool Image::applyTransform(const Transform &transform)
-{
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
-  FilterType::Pointer resampler = FilterType::New();
-
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-  resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(-1);
-
-  // transform->Translate(translation);
-  resampler->SetTransform(transform.get());
-
-  resampler->SetInput(this->image);
-  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
-  // resampler->SetOutputOrigin(image->GetOrigin());
-  // resampler->SetOutputDirection(image->GetDirection());
-  // resampler->SetOutputSpacing(image->GetSpacing());
-  this->image = resampler->GetOutput();
-
-  try
-  {
-    resampler->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Transform failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-#if DEBUG_CONSOLIDATION
-  std::cout << "Transform succeeded!\n";
 #endif
   return true;
 }
@@ -514,13 +474,8 @@ bool Image::fastMarch(float isoValue)
     return false;
   }
 
-  typedef itk::ReinitializeLevelSetImageFilter<ImageType> ReinitializeLevelSetImageFilterType;
-
-  typename ReinitializeLevelSetImageFilterType::Pointer filter = ReinitializeLevelSetImageFilterType::New();
-
-  // using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
-
-  // FilterType::Pointer filter = FilterType::New();
+  using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
   filter->SetInput(this->image);
   filter->NarrowBandingOff();
   filter->SetLevelSetValue(isoValue);
@@ -590,7 +545,7 @@ bool Image::smoothTopology(const char *xmlfilename)
     else
     {
       std::cerr << "No inputs to process!" << std::endl;
-      return EXIT_FAILURE;
+      return false;
     }
 
     // Compile the list of input files.
@@ -608,7 +563,7 @@ bool Image::smoothTopology(const char *xmlfilename)
     else
     {
       std::cerr << "No inputs to process!" << std::endl;
-      return EXIT_FAILURE;
+      return false;
     }
 
     // Compile the list of output files.
@@ -628,31 +583,27 @@ bool Image::smoothTopology(const char *xmlfilename)
     if (inFilenames.size() > outFilenames.size())
     {
       std::cerr << "Input list size does not match output list size!" << std::endl;
-      return EXIT_FAILURE;
+      return false;
     }
 
     elem = docHandle.FirstChild("propagationScaling").Element();
-    if (elem)
-      propagationScaling = atof(elem->GetText());
+    if(elem) propagationScaling = atof(elem->GetText());
 
     elem = docHandle.FirstChild("alpha").Element();
-    if (elem)
-      alpha = atof(elem->GetText());
+    if(elem) alpha = atof(elem->GetText() );
 
     elem = docHandle.FirstChild("beta").Element();
-    if (elem)
-      beta = atof(elem->GetText());
+    if(elem) beta = atof( elem->GetText() );
 
     elem = docHandle.FirstChild("isoValue").Element();
-    if (elem)
-      isoValue = atof(elem->GetText());
+    if(elem) isoValue = atof( elem->GetText() );
 
     elem = docHandle.FirstChild("smoothing_iterations").Element();
-    if (elem)
-      smoothingIterations = atoi(elem->GetText());
+    if(elem) smoothingIterations = atoi( elem->GetText() );
+
   }
 
-  for (unsigned int dtNo = 0; dtNo < inFilenames.size(); dtNo++)
+  for(unsigned int dtNo = 0; dtNo < inFilenames.size(); dtNo++)
   {
     read(inFilenames[dtNo]);
 
@@ -692,6 +643,11 @@ bool Image::smoothTopology(const char *xmlfilename)
 
     write(outFilenames[dtNo]);
   }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Preserve Topology succeeded!\n";
+#endif
+  return true;
 }
 
 bool Image::gaussianBlur(double sigma)
@@ -732,6 +688,50 @@ bool Image::smoothDT(bool blur, bool preserveTopology, double sigma, const char 
   
   if (preserveTopology)
     smoothTopology(xmlfilename);
+}
+
+bool Image::cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  ImageType::IndexType desiredStart;
+  desiredStart[0] = startx;
+  desiredStart[1] = starty;
+  desiredStart[2] = startz;
+
+  ImageType::SizeType desiredSize;
+  desiredSize[0] = sizex;
+  desiredSize[1] = sizey;
+  desiredSize[2] = sizez;
+
+  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
+
+  using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetExtractionRegion(desiredRegion);
+  filter->SetInput(this->image);
+  filter->SetDirectionCollapseToIdentity();
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch
+  {
+    std::cerr << "Crop Image failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Crop Image succeeded!\n";
+#endif
+  return true;
 }
 
 /// centerOfMass

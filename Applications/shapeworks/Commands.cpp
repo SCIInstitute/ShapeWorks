@@ -258,62 +258,6 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Translate
-///////////////////////////////////////////////////////////////////////////////
-void Translate::buildParser()
-{
-  const std::string prog = "translate";
-  const std::string desc = "translates images";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--tx").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--ty").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--tz").action("store").type("double").set_default(0.0).help("Description of optionName.");
-
-  Command::buildParser();
-}
-
-int Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  
-  if (centerofmass)
-  {
-    Point3 com = sharedData.image.centerOfMass();
-    sharedData.transform.translate(com.GetVectorFromOrigin());
-  }
-  else
-  {
-    double tx = static_cast<double>(options.get("tx"));
-    double ty = static_cast<double>(options.get("ty"));
-    double tz = static_cast<double>(options.get("tz"));
-
-    double v[3] = {tx, ty, tz};
-    sharedData.transform.translate(Vector3(v));
-  }
-
-  return 1;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ApplyTransform
-///////////////////////////////////////////////////////////////////////////////
-void ApplyTransform::buildParser()
-{
-  const std::string prog = "applytransform";
-  const std::string desc = "apply current transformation";
-  parser.prog(prog).description(desc);
-
-  Command::buildParser();
-}
-
-int ApplyTransform::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  return sharedData.image.applyTransform(sharedData.transform);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // ExtractLabel
 ///////////////////////////////////////////////////////////////////////////////
 void ExtractLabel::buildParser()
@@ -397,24 +341,36 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// SmoothDT
+// CropImage
 ///////////////////////////////////////////////////////////////////////////////
-void SmoothDT::buildParser()
+void CropImage::buildParser()
 {
-  const std::string prog = "smoothdt";
-  const std::string desc = "brief description of command";
+  const std::string prog = "cropimage";
+  const std::string desc = "performs translational alignment of shape image based on\n\t\t\tits center of mass or given 3D point";
   parser.prog(prog).description(desc);
 
+<<<<<<< HEAD
   parser.add_option("--blur").action("store").type("bool").set_default(false).help("Perform gaussian blur [default set to false].");
   parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
   parser.add_option("--sigma").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
   parser.add_option("--xmlfilename").action("store").type("string").set_default("").help("name of xml file to read");
   
+=======
+  parser.add_option("--startx").action("store").type("float").set_default(0.0).help("starting index in X direction.");
+  parser.add_option("--starty").action("store").type("float").set_default(0.0).help("starting index in Y direction.");
+  parser.add_option("--startz").action("store").type("float").set_default(0.0).help("starting index in Z direction.");
+
+  parser.add_option("--sizex").action("store").type("int").set_default(0.0).help("bounding box value in X direction.");
+  parser.add_option("--sizey").action("store").type("float").set_default(0.0).help("bounding box value in Y direction.");
+  parser.add_option("--sizez").action("store").type("float").set_default(0.0).help("bounding box value in Z direction.");
+
+>>>>>>> origin/executable_cropimage
   Command::buildParser();
 }
 
-int SmoothDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
+<<<<<<< HEAD
   bool blur = static_cast<bool>(options.get("blur"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
   double sigma = static_cast<double>(options.get("sigma"));
@@ -423,6 +379,17 @@ int SmoothDT::execute(const optparse::Values &options, SharedCommandData &shared
 
   // return sharedData.image.smoothDT(*c);
   return sharedData.image.smoothDT(blur, preservetopology, sigma, xmlfilename.c_str());
+=======
+  float startx = static_cast<float>(options.get("startx"));
+  float starty = static_cast<float>(options.get("starty"));
+  float startz = static_cast<float>(options.get("startz"));
+
+  float sizex = static_cast<float>(options.get("sizex"));
+  float sizey = static_cast<float>(options.get("sizey"));
+  float sizez = static_cast<float>(options.get("sizez"));
+
+  return sharedData.image.cropImage(startx, starty, startz, sizex, sizey, sizez);
+>>>>>>> origin/executable_cropimage
 }
 
 } // shapeworks

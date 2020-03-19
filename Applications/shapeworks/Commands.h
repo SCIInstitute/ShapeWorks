@@ -140,38 +140,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Translate : public TransformCommand
-{
-public:
-  static Translate &getCommand()
-  {
-    static Translate instance;
-    return instance;
-  }
-
-private:
-  Translate() { buildParser(); }
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class ApplyTransform : public ImageCommand
-{
-public:
-  static ApplyTransform &getCommand()
-  {
-    static ApplyTransform instance;
-    return instance;
-  }
-
-private:
-  ApplyTransform() { buildParser(); }
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
 class ExtractLabel : public ImageCommand
 {
 public:
@@ -224,17 +192,17 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class SmoothDT : public ImageCommand
+class CropImage : public ImageCommand
 {
 public:
-  static SmoothDT &getCommand()
+  static CropImage &getCommand()
   {
-    static SmoothDT instance;
+    static CropImage instance;
     return instance;
   }
 
 private:
-  SmoothDT() { buildParser(); }
+  CropImage() { buildParser(); } 
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
