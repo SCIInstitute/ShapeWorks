@@ -24,9 +24,29 @@ bool XlProject::load(std::string filename)
 }
 
 //---------------------------------------------------------------------------
+bool XlProject::save(std::string filename)
+{
+
+  this->save_string_column("original_files", this->original_files_);
+  this->save_string_column("distance_transforms", this->distance_transform_files_);
+  this->save_string_column("local_point_files", this->local_point_files_);
+  this->save_string_column("global_point_files", this->global_point_files_);
+
+  this->wb_.save(filename);
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::string> XlProject::get_original_files()
 {
   return this->original_files_;
+}
+
+//---------------------------------------------------------------------------
+void XlProject::set_original_files(std::vector<std::string> files)
+{
+  this->original_files_ = files;
 }
 
 //---------------------------------------------------------------------------
@@ -36,9 +56,21 @@ std::vector<std::string> XlProject::get_distance_transform_files()
 }
 
 //---------------------------------------------------------------------------
+void XlProject::set_distance_transform_files(std::vector<std::string> files)
+{
+  this->distance_transform_files_ = files;
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::string> XlProject::get_local_point_files()
 {
   return this->local_point_files_;
+}
+
+//---------------------------------------------------------------------------
+void XlProject::set_local_point_files(std::vector<std::string> files)
+{
+  this->local_point_files_ = files;
 }
 
 //---------------------------------------------------------------------------
@@ -48,16 +80,33 @@ std::vector<std::string> XlProject::get_global_point_files()
 }
 
 //---------------------------------------------------------------------------
-int XlProject::get_index_for_column(std::string name)
+void XlProject::set_global_point_files(std::vector<std::string> files)
+{
+  this->global_point_files_ = files;
+}
+
+//---------------------------------------------------------------------------
+int XlProject::get_index_for_column(std::string name, bool create_if_not_found)
 {
 
   xlnt::worksheet ws = this->wb_.sheet_by_index(0);
 
   auto headers = ws.rows(false)[0];
 
+  std::cerr << "headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
     if (headers[i].to_string() == name) {
       return i;
+    }
+  }
+
+  if (create_if_not_found) {
+    auto column = ws.highest_column();
+    if (ws.cell(xlnt::cell_reference(column, 1)).value<std::string>() == "") {
+      return column.index;
+    }
+    else {
+      return column.index + 1;
     }
   }
 
@@ -80,13 +129,26 @@ std::vector<std::string> XlProject::get_string_column(std::string name)
 
   for (int i = 1; i < rows.length(); i++) {
     std::string value = rows[i][index].to_string();
-    std::cerr << "value = " << value << "\n";
     if (value != "") {
       list.push_back(value);
     }
   }
 
   return list;
+}
+
+//---------------------------------------------------------------------------
+void XlProject::save_string_column(std::string name, std::vector<std::string> items)
+{
+  int index = this->get_index_for_column(name, true);
+
+  xlnt::worksheet ws = this->wb_.sheet_by_index(0);
+
+  ws.cell(xlnt::cell_reference(index, 1)).value(name);
+
+  for (int i = 0; i < items.size(); i++) {
+    ws.cell(xlnt::cell_reference(index, i + 2)).value(items[i]);
+  }
 }
 
 //---------------------------------------------------------------------------

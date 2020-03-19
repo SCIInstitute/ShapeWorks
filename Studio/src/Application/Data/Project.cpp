@@ -107,26 +107,31 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
     QMessageBox::warning(0, "Read only", "The file is in read only mode");
     return false;
   }
+
+  XlProject xl;
+
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   //progress.show();
   //progress.setMinimumDuration(2000);
 
-  // setup XML
-  QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
-  xml->setAutoFormatting(true);
-  xml->setDevice(&file);
-  xml->writeStartDocument();
+  /*
+     // setup XML
+     QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
+     xml->setAutoFormatting(true);
+     xml->setDevice(&file);
+     xml->writeStartDocument();
 
-  xml->writeStartElement("project");
-  xml->writeAttribute("version", "2");
-  xml->writeStartElement("settings");
-  auto prefs = this->preferences_.get_project_preferences();
-  for (auto &a : prefs) {
-    xml->writeTextElement(
+     xml->writeStartElement("project");
+     xml->writeAttribute("version", "2");
+     xml->writeStartElement("settings");
+     auto prefs = this->preferences_.get_project_preferences();
+     for (auto &a : prefs) {
+     xml->writeTextElement(
       QString::fromStdString(a.first), a.second.toString());
-  }
-  xml->writeEndElement(); // settings
+     }
+     xml->writeEndElement(); // settings
+   */
   this->preferences_.set_saved();
   //write out mean info
   auto prefix = this->shapes_[0]->get_original_filename().toStdString();
@@ -135,38 +140,43 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
   auto position = location.find_last_of("/");
   location = location.substr(0, position) + "/" + prefix;
   if (!defaultDir) {
+
     location = dataDir + "/";
   }
-  if (this->reconstructed_present() &&
+  /*
+     if (this->reconstructed_present() &&
       this->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean()) {
-    this->mesh_manager_->getSurfaceReconstructor()->writeMeanInfo(location);
-    xml->writeTextElement("denseMean_file", QString::fromStdString(location + ".dense.vtk"));
-    xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
-    xml->writeTextElement("goodPoints_file", QString::fromStdString(location + ".goodPoints.txt"));
-  }
-  xml->writeTextElement("cutPlanes_file", QString::fromStdString(cutPlanesFile));
+     this->mesh_manager_->getSurfaceReconstructor()->writeMeanInfo(location);
+     xml->writeTextElement("denseMean_file", QString::fromStdString(location + ".dense.vtk"));
+     xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
+     xml->writeTextElement("goodPoints_file", QString::fromStdString(location + ".goodPoints.txt"));
+     }
+     xml->writeTextElement("cutPlanes_file", QString::fromStdString(cutPlanesFile));
+   */
   progress.setValue(5);
   QApplication::processEvents();
 
   // original files
   if (this->original_present()) {
-    QString original_list = "\n";
+    std::vector<std::string> original_list;
     for (int i = 0; i < this->shapes_.size(); i++) {
-      original_list = original_list + this->shapes_[i]->get_original_filename_with_path() + "\n";
+      original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
-    xml->writeTextElement("original_files", original_list);
+    xl.set_original_files(original_list);
+    //xml->writeTextElement("original_files", original_list);
   }
 
   // distance transforms
   if (this->groomed_present()) {
-    QString groomed_list = "\n";
+    std::vector<std::string> groomed_list;
     for (int i = 0; i < this->shapes_.size(); i++) {
       QString loc = this->shapes_[i]->get_groomed_filename_with_path();
       if (!defaultDir) {
         loc = QString::fromStdString(dataDir) + "/" +
               this->shapes_[i]->get_groomed_filename();
       }
-      groomed_list = groomed_list + loc + "\n";
+      groomed_list.push_back(loc.toStdString());
+
       //try writing the groomed to file
       WriterType::Pointer writer = WriterType::New();
       writer->SetFileName(loc.toStdString());
@@ -180,13 +190,14 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
         break;
       }
     }
-    xml->writeTextElement("distance_transforms", groomed_list);
+    xl.set_distance_transform_files(groomed_list);
+    //xml->writeTextElement("distance_transforms", groomed_list);
   }
 
   // correspondence points
   if (this->reconstructed_present()) {
-    QStringList world_list;
-    QStringList local_list;
+    std::vector<std::string> world_list;
+    std::vector<std::string> local_list;
 
     for (int i = 0; i < this->shapes_.size(); i++) {
       auto base_name = this->shapes_[i]->get_original_filename().toStdString();
@@ -201,20 +212,25 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
         global_path = dataDir + "/" + global_name;
         local_path = dataDir + "/" + local_name;
       }
-      world_list << QString::fromStdString(global_path);
-      local_list << QString::fromStdString(local_path);
+      world_list.push_back(global_path);
+      local_list.push_back(local_path);
       this->save_particles_file(global_path, this->shapes_[i]->get_global_correspondence_points());
       this->save_particles_file(local_path, this->shapes_[i]->get_local_correspondence_points());
     }
-    xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
-    xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
+    //xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
+    //xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
+
+    xl.set_local_point_files(local_list);
+    xl.set_global_point_files(world_list);
   }
 
   /// Re-integrate progress after completing the above
   //progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. /
   //static_cast<double>(this->shapes_.size())));
 
-  xml->writeEndElement(); // project
+  //xml->writeEndElement(); // project
+
+  xl.save(filename.toStdString());
   progress.setValue(100);
   return true;
 }
@@ -549,11 +565,11 @@ bool Project::load_xl_project(QString filename)
   this->load_point_files(global_point_files, false);
 
   /*
-  if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
-    this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile,
+     if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
+     this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile,
                                                                  goodPtsFile);
-  }
-  */
+     }
+   */
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;
   //this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
