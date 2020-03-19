@@ -58,7 +58,7 @@ Image commands:
 
  - CloseHoles --inFilename=./test.nrrd --outFilename=./foobar.nrrd
 
-[] *CropImages
+[x] *CropImages -> cropimage
 [x] *ExtractGivenLabelImage -> extractlabel 
  o Examples:
 
@@ -97,8 +97,8 @@ Image commands:
  - ThresholdImages --inFilename=./test.nrrd --outFilename=./foobar.nrrd
 
 [] TopologyPreservingSmoothing
-[] *WriteImageInfoToText
-[] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
+[x] *WriteImageInfoToText -> deprecated
+[x] itkTBGACLevelSetImageFilter (also has .txx file) -> not a tool
 
 Mesh commands:  (some of these may not actually be executables)
 

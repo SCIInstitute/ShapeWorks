@@ -491,7 +491,7 @@ bool Image::fastMarch(float isoValue)
   return true;
 }
 
-bool Image::cropImage(FPoint3 desiredStart, FPoint3 desiredSize)
+bool Image::cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez)
 {
   if (!this->image)
   {
@@ -499,13 +499,21 @@ bool Image::cropImage(FPoint3 desiredStart, FPoint3 desiredSize)
     return false;
   }
 
-  // ImageType::RegionType desiredRegion(desiredStart, desiredSize);
+  ImageType::IndexType desiredStart;
+  desiredStart[0] = startx;
+  desiredStart[1] = starty;
+  desiredStart[2] = startz;
 
-  ImageType::RegionType desiredRegion();
+  ImageType::SizeType desiredSize;
+  desiredSize[0] = sizex;
+  desiredSize[1] = sizey;
+  desiredSize[2] = sizez;
+
+  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-  // filter->SetExtractionRegion(desiredRegion);
+  filter->SetExtractionRegion(desiredRegion);
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
   this->image = filter->GetOutput();

@@ -346,7 +346,7 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
 void CropImage::buildParser()
 {
   const std::string prog = "cropimage";
-  const std::string desc = "performs translational alignment of shape image based on its center of mass or given 3D point";
+  const std::string desc = "performs translational alignment of shape image based on\n\t\t\tits center of mass or given 3D point";
   parser.prog(prog).description(desc);
 
   parser.add_option("--startx").action("store").type("float").set_default(0.0).help("starting index in X direction.");
@@ -370,7 +370,7 @@ int CropImage::execute(const optparse::Values &options, SharedCommandData &share
   float sizey = static_cast<float>(options.get("sizey"));
   float sizez = static_cast<float>(options.get("sizez"));
 
-  return sharedData.image.cropImage(FPoint3({startx, starty, startz}), FPoint3({sizex, sizey, sizez}));
+  return sharedData.image.cropImage(startx, starty, startz, sizex, sizey, sizez);
 }
 
 } // shapeworks
