@@ -15,10 +15,13 @@ public:
 
   std::vector<std::string> get_original_files();
   void set_original_files(std::vector<std::string> files);
+
   std::vector<std::string> get_distance_transform_files();
   void set_distance_transform_files(std::vector<std::string> files);
+
   std::vector<std::string> get_local_point_files();
   void set_local_point_files(std::vector<std::string> files);
+
   std::vector<std::string> get_global_point_files();
   void set_global_point_files(std::vector<std::string> files);
 

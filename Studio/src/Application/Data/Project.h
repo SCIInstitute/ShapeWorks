@@ -4,11 +4,10 @@
 
 #include <QSharedPointer>
 #include <QVector>
-#include "Data/Preferences.h"
-#include "Data/MeshManager.h"
-#include <Groom/ShapeWorksGroom.h>
 
-#include <xlnt/xlnt.hpp>
+#include <Data/Preferences.h>
+#include <Data/MeshManager.h>
+#include <Groom/ShapeWorksGroom.h>
 
 class Shape;
 

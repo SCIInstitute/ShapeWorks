@@ -319,19 +319,19 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
-  QString fname("Untitled.xml");
+  QString fname("Untitled.xlsx");
   if (this->project_->get_shapes().size() > 0) {
     fname = this->project_->get_shapes()[0]->get_original_filename();
     std::string tmp = fname.toStdString();
     tmp = tmp.substr(0, tmp.size() - 5);
     fname = QString::fromStdString(tmp);
   }
-  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
-  auto dir = direct.toStdString();
+  QString last_directory = this->preferences_.get_preference("Main/last_directory", QString());
+  auto dir = last_directory.toStdString();
   dir = dir.substr(0, dir.find_last_of("/") + 1);
   QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
                                                   QString::fromStdString(dir) + fname,
-                                                  tr("XML files (*.xml)"));
+                                                  tr("XLSX files (*.xlsx)"));
   if (filename.isEmpty()) {
     return false;
   }
