@@ -425,7 +425,6 @@ void ShapeWorksStudioApp::disableAllActions()
   this->ui_->actionExport_PCA_Mesh->setEnabled(false);
   this->ui_->actionExport_Eigenvalues->setEnabled(false);
   this->ui_->actionExport_Eigenvectors->setEnabled(false);
-  this->ui_->actionExport_Parameter_XML->setEnabled(false);
   this->ui_->actionExport_PCA_Mode_Points->setEnabled(false);
   this->ui_->action_new_project->setEnabled(false);
   this->ui_->action_open_project->setEnabled(false);
@@ -455,7 +454,6 @@ void ShapeWorksStudioApp::enablePossibleActions()
   this->ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
   this->ui_->actionExport_Eigenvalues->setEnabled(reconstructed);
   this->ui_->actionExport_Eigenvectors->setEnabled(reconstructed);
-  this->ui_->actionExport_Parameter_XML->setEnabled(reconstructed);
   this->ui_->actionExport_PCA_Mode_Points->setEnabled(reconstructed);
   this->ui_->action_new_project->setEnabled(true);
   this->ui_->action_open_project->setEnabled(true);
@@ -1133,45 +1131,6 @@ void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered()
   this->handle_message("Data directory now set to " + this->data_dir_);
   this->preferences_.set_preference("Main/last_directory",
                                     QDir().absoluteFilePath(QString::fromStdString(this->data_dir_)));
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered()
-{
-  QString fname("Untitled.xml");
-  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
-  auto dir = direct.toStdString();
-  dir = dir.substr(0, dir.find_last_of("/") + 1);
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save XML Parameter file..."),
-                                                  QString::fromStdString(dir) + fname,
-                                                  tr("XML files (*.xml)"));
-  if (filename.isEmpty()) {
-    return;
-  }
-  preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
-  // open file
-  QFile file(filename);
-
-  if (!file.open(QIODevice::WriteOnly)) {
-    QMessageBox::warning(0, "Read only", "Failed to write XML file.");
-    return;
-  }
-  // setup XML
-  QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
-  xml->setAutoFormatting(true);
-  xml->setDevice(&file);
-  xml->writeStartElement("shapeworks_parameter_file");
-  xml->writeAttribute("version", "1");
-  auto prefs = this->preferences_.get_project_preferences();
-  for (auto &a : prefs) {
-    if (a.first.find("optimize") != std::string::npos ||
-        a.first.find("groom") != std::string::npos) {
-      xml->writeTextElement(
-        QString::fromStdString(a.first), a.second.toString());
-    }
-  }
-  xml->writeEndElement();
-  this->handle_message("Successfully exported XML parameter file: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------

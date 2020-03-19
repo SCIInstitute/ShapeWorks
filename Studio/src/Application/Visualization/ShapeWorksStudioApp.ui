@@ -248,7 +248,6 @@
     <addaction name="actionExport_Variance_Graph"/>
     <addaction name="actionExport_Eigenvectors"/>
     <addaction name="actionExport_PCA_Mode_Points"/>
-    <addaction name="actionExport_Parameter_XML"/>
     <addaction name="separator"/>
     <addaction name="action_recent1"/>
     <addaction name="action_recent2"/>
@@ -588,14 +587,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
-   </property>
-  </action>
-  <action name="actionExport_Parameter_XML">
-   <property name="text">
-    <string>Export Parameter XML...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionExport_Eigenvalues">
