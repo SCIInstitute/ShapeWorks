@@ -79,6 +79,10 @@ public:
     itkExceptionMacro("This Domain does not define an upper bound.");
   }
 
+  virtual unsigned long GetMemUsage() const {
+      itkExceptionMacro("GetMemUsage() not implemented!!");
+  }
+
  /** Enable/Disable constraints on particle positions imposed by a domain. */
   void DisableConstraints()  { m_ConstraintsEnabled = false; }
   void EnableConstraints()   { m_ConstraintsEnabled = true; }    

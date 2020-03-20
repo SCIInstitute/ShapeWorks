@@ -17,6 +17,8 @@
 
 #include "vnl/vnl_math.h"
 #include "vnl/vnl_cross.h"
+#include <itkZeroCrossingImageFilter.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
 #define PARTICLE_DEBUG_FLAG 1
 
 namespace itk
@@ -148,19 +150,19 @@ ParticleImplicitSurfaceDomain<T, VDimension>::
 SetFids(const char *fidsFile)
 {
     m_mesh->ReadFaceIndexMap(fidsFile);
-    const typename ImageType::PointType orgn = this->GetImage()->GetOrigin();
+    const typename ImageType::PointType orgn = this->GetOrigin();
     m_mesh->imageOrigin[0] = orgn[0];
     m_mesh->imageOrigin[1] = orgn[1];
     m_mesh->imageOrigin[2] = orgn[2];
-    typename ImageType::RegionType::SizeType sz = this->GetImage()->GetRequestedRegion().GetSize();
+    typename ImageType::RegionType::SizeType sz = this->GetSize();
     m_mesh->imageSize[0]   = sz[0];
     m_mesh->imageSize[1]   = sz[1];
     m_mesh->imageSize[2]   = sz[2];
-    typename ImageType::SpacingType sp = this->GetImage()->GetSpacing();
+    typename ImageType::SpacingType sp = this->GetSpacing();
     m_mesh->imageSpacing[0] = sp[0];
     m_mesh->imageSpacing[1] = sp[1];
     m_mesh->imageSpacing[2] = sp[2];
-    typename ImageType::RegionType::IndexType idx = this->GetImage()->GetRequestedRegion().GetIndex();
+    typename ImageType::RegionType::IndexType idx = this->GetIndex();
     m_mesh->imageIndex[0]   = idx[0];
     m_mesh->imageIndex[1]   = idx[1];
     m_mesh->imageIndex[2]   = idx[2];
@@ -373,6 +375,63 @@ ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const
 
     return ( m_mesh->GetGeodesicDistance(p1,p2) );
   }
+}
+
+
+//TODO: Make private, move to some other class
+template <class T, unsigned int VDimension>
+void
+ParticleImplicitSurfaceDomain<T, VDimension>::ComputeSurfaceStatistics(ImageType *I) {
+
+  // Loop through a zero crossing image, project all the zero crossing points
+  // to the surface, and use those points to comput curvature stats.
+  typedef itk::ZeroCrossingImageFilter<ImageType, ImageType> ZeroCrossingImageFilterType ;
+  typename ZeroCrossingImageFilterType::Pointer zc = ZeroCrossingImageFilterType::New() ;
+
+  zc->SetInput(I);
+  zc->Update();
+
+  itk::ImageRegionConstIteratorWithIndex<ImageType> it(zc->GetOutput(),
+                                                       zc->GetOutput()->GetRequestedRegion());
+  std::vector<double> datalist;
+  m_SurfaceMeanCurvature = 0.0;
+  m_SurfaceStdDevCurvature = 0.0;
+
+  for (; ! it.IsAtEnd(); ++it)
+  {
+    if (it.Get() == 1.0)
+    {
+      // Find closest pixel location to surface.
+      PointType pos;
+      //dynamic_cast<const DomainType
+      //*>(system->GetDomain(d))->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
+      I->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
+
+      // Project point to surface.
+      // Make sure constraints are enabled
+      //      bool c = domain->GetConstraintsEnabled();
+
+      //      domain->EnableConstraints();
+      this->ApplyConstraints(pos);
+
+      //      domain->SetConstraintsEnabled(c);
+
+      // Compute curvature at point.
+//      std::cout << "pos : " << pos[0] << ' ' << pos[1] << ' ' << pos[2] << std::endl;
+      double mc = this->GetCurvature(pos);
+      m_SurfaceMeanCurvature += mc;
+      datalist.push_back(mc);
+    }
+  }
+  double n = static_cast<double>(datalist.size());
+  m_SurfaceMeanCurvature /= n;
+
+  // Compute std deviation using point list
+  for (unsigned int i = 0; i < datalist.size(); i++)
+  {
+    m_SurfaceStdDevCurvature += (datalist[i] - m_SurfaceMeanCurvature) * (datalist[i] - m_SurfaceMeanCurvature);
+  }
+  m_SurfaceStdDevCurvature = sqrt(m_SurfaceStdDevCurvature / (n-1));
 }
 
 } // end namespace

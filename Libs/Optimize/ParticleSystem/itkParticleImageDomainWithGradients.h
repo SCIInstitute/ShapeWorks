@@ -15,6 +15,7 @@
 #ifndef __itkParticleImageDomainWithGradients_h
 #define __itkParticleImageDomainWithGradients_h
 
+#include <itkImageLinearIteratorWithIndex.h>
 #include "itkImage.h"
 #include "itkImageDuplicator.h"
 #include "itkParticleImageDomain.h"
@@ -57,7 +58,9 @@ public:
 
   typedef FixedArray<T, 3> VectorType;
   typedef vnl_vector_fixed<T, 3> VnlVectorType;
-  
+
+  openvdb::VectorGrid::Ptr m_VDBGradient;
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -72,18 +75,52 @@ public:
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
- 
+
     // Compute gradient image and set up gradient interpolation.
     typename GradientImageFilterType::Pointer filter = GradientImageFilterType::New();
     filter->SetInput(I);
     filter->SetUseImageSpacingOn();
     filter->Update();
-    m_GradientImage = filter->GetOutput();
-    
-    m_GradientInterpolator->SetInputImage(m_GradientImage);
-  }
-  itkGetObjectMacro(GradientImage, GradientImageType);
+    const auto gradI = filter->GetOutput();
 
+#ifdef USE_OPENVDB
+    m_VDBGradient = openvdb::VectorGrid::create();
+    auto vdbAccessor = m_VDBGradient->getAccessor();
+
+    ImageRegionIterator<GradientImageType> gradIt(gradI, gradI->GetRequestedRegion());
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    gradIt.GoToBegin();
+    it.GoToBegin();
+    while(!gradIt.IsAtEnd()) {
+        const auto idx = gradIt.GetIndex();
+        if(idx != it.GetIndex()) {
+            throw std::runtime_error("Bad index");
+        }
+        const vnl_vector_ref<float> grad = gradIt.Get().GetVnlVector();
+        const auto pixel = it.Get();
+        if(abs(pixel) > 4.0) {
+            ++gradIt; ++it;
+            continue;
+        }
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, openvdb::Vec3f(grad[0], grad[1], grad[2]));
+        ++gradIt; ++it;
+    }
+#endif
+
+  }
+  // itkGetObjectMacro(GradientImage, GradientImageType);
+
+    //TODO: Remove
+    unsigned long GetMemUsage() const {
+        const auto size = Superclass::GetMemUsage();
+#ifdef USE_OPENVDB
+        return size + m_VDBGradient->memUsage();
+#else
+        // return size + m_GradientImage->Capacity() * sizeof(T) * 3;
+        return 0;
+#endif
+    }
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleGradientsVnl returns a vnl
@@ -91,8 +128,23 @@ public:
       (itk::FixedArray). */
   inline VectorType SampleGradient(const PointType &p) const
   {
-      if(this->IsInsideBuffer(p))
-        return  m_GradientInterpolator->Evaluate(p);
+
+      if(this->IsInsideBuffer(p)) {
+#ifdef USE_OPENVDB
+          //TODO: stop this GetOrigin stuff, use TransformIndexToPhysicalPoint when creating the grid
+          auto o = this->GetOrigin();
+          auto sp = p;
+          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+
+          const auto _v2 = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
+          const VectorType v2(_v2.asPointer());
+          return v2;
+#else
+          const VectorType v1 =  m_GradientInterpolator->Evaluate(p);
+          return v1;
+#endif
+      }
       else {
           itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain." );
          VectorType g(1.0e-5);
@@ -113,9 +165,9 @@ public:
 //    }
     return grad;
   }
-  
+
   /** Allow public access to the scalar interpolator. */
-  itkGetObjectMacro(GradientInterpolator, GradientInterpolatorType);
+  // itkGetObjectMacro(GradientInterpolator, GradientInterpolatorType);
 
 
   /** This method is called by an optimizer after a call to Evaluate and may be
@@ -144,21 +196,22 @@ public:
   void DeleteImages()
   {
     Superclass::DeleteImages();
-    m_GradientImage = 0;
-    m_GradientInterpolator = 0;
+    m_VDBGradient = 0;
+    // m_GradientImage = 0;
+    // m_GradientInterpolator = 0;
   }
   
 protected:
   ParticleImageDomainWithGradients()
   {
-    m_GradientInterpolator = GradientInterpolatorType::New();
+    // m_GradientInterpolator = GradientInterpolatorType::New();
   }
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
-    os << indent << "m_GradientImage = " << m_GradientImage << std::endl;
-    os << indent << "m_GradientInterpolator = " << m_GradientInterpolator << std::endl;
+    // os << indent << "m_GradientImage = " << m_GradientImage << std::endl;
+    // os << indent << "m_GradientInterpolator = " << m_GradientInterpolator << std::endl;
   }
   virtual ~ParticleImageDomainWithGradients() {};
   
@@ -166,8 +219,8 @@ private:
   ParticleImageDomainWithGradients(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  typename GradientImageType::Pointer m_GradientImage;
-  typename GradientInterpolatorType::Pointer m_GradientInterpolator;
+  // typename GradientImageType::Pointer m_GradientImage;
+  // typename GradientInterpolatorType::Pointer m_GradientInterpolator;
 };
 
 } // end namespace itk

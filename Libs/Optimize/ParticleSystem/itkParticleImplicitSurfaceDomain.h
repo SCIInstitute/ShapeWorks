@@ -63,7 +63,13 @@ public:
       will be within the specified tolerance. */
   itkSetMacro(Tolerance, T);
   itkGetMacro(Tolerance, T);
-  
+
+  void SetImage(ImageType *I)
+  {
+    Superclass::SetImage(I);
+    ComputeSurfaceStatistics(I);
+  }
+
   /** Apply any constraints to the given point location.  This method
       constrains points to lie within the given domain and on a given implicit
       surface.  If the point is not already on the surface, it is projected
@@ -186,7 +192,25 @@ public:
       return m_CuttingPlanePoint.size();
   }
 
+
+  //TODO: REmove?
+  inline double GetSurfaceMeanCurvature() const {
+    return m_SurfaceMeanCurvature;
+  }
+
+  //TODO: REmove?
+  inline double GetSurfaceStdDevCurvature() const {
+    return m_SurfaceStdDevCurvature;
+  }
+
+  //TODO: Make private, move to some other class
+  void ComputeSurfaceStatistics(ImageType *I);
+
 protected:
+  //TODO: REMOVE?
+  double m_SurfaceMeanCurvature;
+  double m_SurfaceStdDevCurvature;
+
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
     {
     m_mesh = NULL;

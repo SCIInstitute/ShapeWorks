@@ -49,7 +49,9 @@ public:
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
   typedef typename Superclass::VnlMatrixType VnlMatrixType;
-  
+
+  openvdb::FloatGrid::Ptr m_VDBCurvature;
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -69,54 +71,66 @@ public:
     typedef itk::DiscreteGaussianImageFilter<ImageType, ImageType> DiscreteGaussianImageFilterType;
     typename DiscreteGaussianImageFilterType::Pointer f = DiscreteGaussianImageFilterType::New();
 
-    double sig =  this->GetImage()->GetSpacing()[0] * 0.5;
+    double sig =  this->GetSpacing()[0] * 0.5;
     
     f->SetVariance(sig);
-    f->SetInput(this->GetImage());
+    f->SetInput(I);
     f->SetUseImageSpacingOn();
     f->Update();
 
     // NOTE: Running the image through a filter seems to be the only way
     // to get all of the image information correct!  Set the variance to
     // positive value to smooth the curvature calculations.
-    m_CurvatureImage = f->GetOutput();
-    
-    // Loop through the image and compute all curvature values
-    itk::ImageRegionIteratorWithIndex<ImageType> it(f->GetOutput(),
+
+    m_VDBCurvature = openvdb::FloatGrid::create(1e-6f);
+    auto vdbAccessor = m_VDBCurvature->getAccessor();
+
+    itk::ImageRegionIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
+    itk::ImageRegionIteratorWithIndex<ImageType> curvIt(f->GetOutput(),
                                                     f->GetOutput()->GetRequestedRegion());
-    itk::ImageRegionIterator<ImageType> oit(m_CurvatureImage, f->GetOutput()->GetRequestedRegion());
-    
-    for (; !it.IsAtEnd(); ++it, ++oit)
-      {
-      // Only compute in a narrow band.
-      if (it.Get() < 4.0 && it.Get() > -4.0)
-        {      
-         PointType pos;
-         this->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
-         oit.Set(this->MeanCurvature(pos));
-        }
-      else oit.Set(1.0e-6);
+
+    for (; !curvIt.IsAtEnd(); ++curvIt, ++it) {
+      const auto idx = curvIt.GetIndex();
+      if (idx != it.GetIndex()) {
+        throw std::runtime_error("Bad index");
       }
-    
+      const auto pixel = it.Get();
+
+      if (abs(pixel) > 4.0) {
+        continue;
+      }
+
+      PointType pos;
+      I->TransformIndexToPhysicalPoint(idx, pos);
+
+      const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+      vdbAccessor.setValue(coord, this->MeanCurvature(pos));
+    }
+
     // Release the memory in the parent hessian images.
     //this->DeletePartialDerivativeImages();
     
-    m_CurvatureInterpolator->SetInputImage(m_CurvatureImage);
+
   } // end setimage
-  
-  double GetCurvature(const PointType &pos) const
+
+  double GetCurvature(const PointType &p) const
   {
-    return m_CurvatureInterpolator->Evaluate(pos);
+    auto o = this->GetOrigin();
+    auto sp = p;
+    for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+    const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+    const T v2 = openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
+    return v2;
   }
-  
+
+  /*
   typename ImageType::Pointer *GetCurvatureImage()
   { return m_CurvatureImage; }
+  */
 
 protected:
   ParticleImageDomainWithCurvature()
   {
-    m_CurvatureInterpolator = ScalarInterpolatorType::New();
-    m_CurvatureImage = ImageType::New();
   }
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -176,10 +190,6 @@ protected:
 private:
   ParticleImageDomainWithCurvature(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
-  // Curvature values are stored in an image
-  typename ImageType::Pointer m_CurvatureImage;
-  typename ScalarInterpolatorType::Pointer m_CurvatureInterpolator;
 };
 
 } // end namespace itk

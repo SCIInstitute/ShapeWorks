@@ -15,9 +15,25 @@
 #ifndef __itkParticleImageDomain_h
 #define __itkParticleImageDomain_h
 
-#include "itkImage.h"
-#include "itkParticleRegionDomain.h"
-#include "itkLinearInterpolateImageFunction.h"
+#define USE_OPENVDB
+
+#include <fstream>
+#include <vtkContourFilter.h>
+#include <vtkMassProperties.h>
+#include <itkImage.h>
+#include <itkParticleRegionDomain.h>
+#include <itkLinearInterpolateImageFunction.h>
+#include "itkImageToVTKImageFilter.h"
+#include <itkZeroCrossingImageFilter.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
+
+// we have to undef foreach here because both Qt and OpenVDB define foreach
+#undef foreach
+#ifndef Q_MOC_RUN
+#include "openvdb/openvdb.h"
+#include "openvdb/tools/SignedFloodFill.h"
+#include "openvdb/tools/Interpolation.h"
+#endif
 
 namespace itk
 {
@@ -45,6 +61,10 @@ public:
   /** Type of the ITK image used by this class. */
   typedef Image<T, VDimension> ImageType;
 
+#ifdef USE_OPENVDB
+  openvdb::FloatGrid::Ptr m_VDBImage;
+#endif
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -60,30 +80,100 @@ public:
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
+  typename ImageType::SizeType m_Size;
+  typename ImageType::SpacingType m_Spacing;
+
+  PointType m_Origin;
+  PointType m_ZeroCrossingPoint;
+  typename ImageType::RegionType::IndexType m_Index;
+
+  //TODO: Move into proper file(statistics?)
+  double m_SurfaceArea;
+
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
-    this->Modified();
-    m_Image= I;
+#ifdef USE_OPENVDB
+    openvdb::initialize();
+    std::cout << "Initialized OpenVDB" << std::endl;
+    m_VDBImage = openvdb::FloatGrid::create(500000.0);
+    m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = m_VDBImage->getAccessor();
+
+    m_Size = I->GetRequestedRegion().GetSize();
+    m_Spacing = I->GetSpacing();
+
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    it.GoToBegin();
+    while(!it.IsAtEnd()) {
+        const auto idx = it.GetIndex();
+        const auto pixel = it.Get();
+        if(abs(pixel) > 4.0) {
+            ++it;
+            continue;
+        }
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, pixel);
+        ++it;
+    }
+    m_Origin = I->GetOrigin();
+    m_Index = I->GetRequestedRegion().GetIndex();
+
+    // Compute surface area
+    //TODO: This doesn't work. Also, its probably not used.
+    //TODO: Refactor
+    /*
+    typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
+    itk2vtkConnector = itk::ImageToVTKImageFilter < ImageType > ::New();
+    itk2vtkConnector->SetInput(I);
+    vtkSmartPointer < vtkContourFilter > ls = vtkSmartPointer < vtkContourFilter > ::New();
+    ls->SetInputData(itk2vtkConnector->GetOutput());
+    ls->SetValue(0, 0.0);
+    ls->Update();
+    vtkSmartPointer < vtkMassProperties > mp = vtkSmartPointer < vtkMassProperties > ::New();
+    mp->SetInputData(ls->GetOutput());
+    mp->Update();
+    m_SurfaceArea = mp->GetSurfaceArea();
+    */
+
+
+    // Compute zero crossing point
+    //TODO: Refactor
+    typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
+            itk::ZeroCrossingImageFilter < ImageType, ImageType > ::New();
+    zc->SetInput(I);
+    zc->Update();
+    typename itk::ImageRegionConstIteratorWithIndex < ImageType > zcIt(zc->GetOutput(),
+                                                            zc->GetOutput()->GetRequestedRegion());
+
+    for (zcIt.GoToReverseBegin(); !zcIt.IsAtReverseEnd(); --zcIt) {
+      if (zcIt.Get() == 1.0) {
+        PointType pos;
+        I->TransformIndexToPhysicalPoint(zcIt.GetIndex(), pos);
+        this->m_ZeroCrossingPoint = pos;
+        break;
+      }
+    }
+
 
     // Set up the scalar image and interpolation.
-    m_ScalarInterpolator->SetInputImage(m_Image);
+    // m_ScalarInterpolator->SetInputImage(m_Image);
 
     // Grab the upper-left and lower-right corners of the bounding box.  Points
     // are always in physical coordinates, not image index coordinates.
     typename ImageType::RegionType::IndexType idx
-      = m_Image->GetRequestedRegion().GetIndex(); // upper lh corner
+      = I->GetRequestedRegion().GetIndex(); // upper lh corner
     typename ImageType::RegionType::SizeType sz
-      = m_Image->GetRequestedRegion().GetSize();  // upper lh corner
+      = I->GetRequestedRegion().GetSize();  // upper lh corner
 
     typename ImageType::PointType l0;
-    m_Image->TransformIndexToPhysicalPoint(idx, l0);
+    I->TransformIndexToPhysicalPoint(idx, l0);
     for (unsigned int i = 0; i < VDimension; i++)
         idx[i] += sz[i]-1;
 
     typename ImageType::PointType u0;
-    m_Image->TransformIndexToPhysicalPoint(idx, u0);
+    I->TransformIndexToPhysicalPoint(idx, u0);
 
     // Cast points to higher precision if needed.  Parent class uses doubles
     // because they are compared directly with points in the particle system,
@@ -99,55 +189,97 @@ public:
     
     this->SetLowerBound(l);
     this->SetUpperBound(u);
+#else
+#endif
   }
-  itkGetObjectMacro(Image, ImageType);
-  itkGetConstObjectMacro(Image, ImageType);
+
+  inline double GetSurfaceArea() const {
+    //TODO: Remove me
+    throw std::runtime_error("Surface area: Somebody wants it!");
+    return m_SurfaceArea;
+  }
+
+  inline PointType GetOrigin() const {
+      return m_Origin;
+  }
+
+  inline typename ImageType::SizeType GetSize() const {
+    return m_Size;
+  }
+
+  inline typename ImageType::SpacingType GetSpacing() const {
+    return m_Spacing;
+  }
+
+  inline typename ImageType::RegionType::IndexType GetIndex() const {
+    return m_Index;
+  }
+
+  inline PointType GetZeroCrossingPoint() const {
+    return m_ZeroCrossingPoint;
+  }
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer. */
   inline T Sample(const PointType &p) const
   {
-      if(IsInsideBuffer(p))
-        return  m_ScalarInterpolator->Evaluate(p);
-      else
-        return 0.0;
+      if(IsInsideBuffer(p)) {
+#ifdef USE_OPENVDB
+          auto o = GetOrigin();
+          auto sp = p;
+          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+          const T v2 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
+          return v2;
+#else
+          const T v1 =  m_ScalarInterpolator->Evaluate(p);
+          return v1;
+#endif
+      } else {
+          return 0.0;
+      }
+  }
+
+  //TODO: Remove, this is misleading
+  unsigned long GetMemUsage() const {
+#ifdef USE_OPENVDB
+      return m_VDBImage->memUsage();
+#else
+      return m_Image->Capacity() * sizeof(T);
+#endif
   }
 
   /** Check whether the point p may be sampled in this image domain. */
   inline bool IsInsideBuffer(const PointType &p) const
-  { return m_ScalarInterpolator->IsInsideBuffer(p); }
+  {
+#ifdef USE_OPENVDB
+      //TODO: Hack because we are deleting interpolator and images now...
+      return true;
+#else
+      return m_ScalarInterpolator->IsInsideBuffer(p);
+#endif
+  }
 
   /** Used when a domain is fixed. */
   void DeleteImages()
   {
-    m_Image = 0;
-    m_ScalarInterpolator = 0;
+    m_VDBImage = 0;
   }
 
-  /** Allow public access to the scalar interpolator. */
-  itkGetObjectMacro(ScalarInterpolator, ScalarInterpolatorType);
-  
 protected:
   ParticleImageDomain()
   {
-    m_ScalarInterpolator = ScalarInterpolatorType::New();
   }
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
-    
-    os << indent << "m_Image = " << m_Image << std::endl;
-    os << indent << "m_ScalarInterpolator = " << m_ScalarInterpolator << std::endl;
   }
   virtual ~ParticleImageDomain() {};
   
 private:
   ParticleImageDomain(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-
-  typename ImageType::Pointer m_Image;
-  typename ScalarInterpolatorType::Pointer m_ScalarInterpolator;
 };
 
 } // end namespace itk

@@ -22,8 +22,9 @@ const int global_iteration = 1;
 const int global_iteration = 1;
 #endif /* SW_USE_OPENMP */
 
-#include <algorithm>
 #include <chrono>
+
+#include <algorithm>
 #include <ctime>
 #include <time.h>
 #include <string>
@@ -31,6 +32,8 @@ const int global_iteration = 1;
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include "MemoryUsage.h"
+
 namespace itk
 {
 template <class TGradientNumericType, unsigned int VDimension>
@@ -253,9 +256,14 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
         accTimerEnd = std::chrono::steady_clock::now();
         double msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
 
+        double vmUsage, residentSet;
+        process_mem_usage(vmUsage, residentSet);
+
         if (m_verbosity > 2)
         {
-            std::cout << m_NumberOfIterations << ". " << msElapsed << " ms" << std::endl;
+            int dsUsage = m_ParticleSystem->GetMemUsage() / 1024;
+            // std::cout << m_NumberOfIterations << ". " << msElapsed << "ms | Mem=[" << vmUsage << "KB|" << residentSet << "KB]";
+            std::cout << m_NumberOfIterations << ". " << msElapsed << "ms | Mem=[" << dsUsage << "KB|" << residentSet << "KB]" << std::endl;
             std::cout.flush();
         }
 

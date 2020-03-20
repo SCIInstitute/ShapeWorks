@@ -77,8 +77,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
     this->GetOptimizer()->SetParticleSystem(this->GetParticleSystem());
     this->ReadTransforms();
     this->ReadPointsFiles();
-    this->InitializeOptimizationFunctions();    
-
+    this->InitializeOptimizationFunctions();
 
     this->SetInitialized(true);
     }
