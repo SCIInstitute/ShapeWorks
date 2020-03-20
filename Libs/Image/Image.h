@@ -30,6 +30,7 @@ public:
   bool gaussianBlur(double sigma);
   bool smoothDT(bool blur, bool preserveTopology, double sigma, const char *xmlfilename);
   bool cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez);
+  bool boundingBox();
 
   bool operator==(const Image &other) const;
 

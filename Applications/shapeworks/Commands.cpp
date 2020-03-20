@@ -341,36 +341,25 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// CropImage
+// SmoothDT
 ///////////////////////////////////////////////////////////////////////////////
-void CropImage::buildParser()
+void SmoothDT::buildParser()
 {
-  const std::string prog = "cropimage";
-  const std::string desc = "performs translational alignment of shape image based on\n\t\t\tits center of mass or given 3D point";
+  const std::string prog = "smoothdt";
+  const std::string desc = "brief description of command";
   parser.prog(prog).description(desc);
 
-<<<<<<< HEAD
   parser.add_option("--blur").action("store").type("bool").set_default(false).help("Perform gaussian blur [default set to false].");
   parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
   parser.add_option("--sigma").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
   parser.add_option("--xmlfilename").action("store").type("string").set_default("").help("name of xml file to read");
   
-=======
-  parser.add_option("--startx").action("store").type("float").set_default(0.0).help("starting index in X direction.");
-  parser.add_option("--starty").action("store").type("float").set_default(0.0).help("starting index in Y direction.");
-  parser.add_option("--startz").action("store").type("float").set_default(0.0).help("starting index in Z direction.");
-
-  parser.add_option("--sizex").action("store").type("int").set_default(0.0).help("bounding box value in X direction.");
-  parser.add_option("--sizey").action("store").type("float").set_default(0.0).help("bounding box value in Y direction.");
-  parser.add_option("--sizez").action("store").type("float").set_default(0.0).help("bounding box value in Z direction.");
-
->>>>>>> origin/executable_cropimage
   Command::buildParser();
 }
 
-int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+///////////////////////////////////////////////////////////////////////////////
+int SmoothDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-<<<<<<< HEAD
   bool blur = static_cast<bool>(options.get("blur"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
   double sigma = static_cast<double>(options.get("sigma"));
@@ -379,7 +368,32 @@ int CropImage::execute(const optparse::Values &options, SharedCommandData &share
 
   // return sharedData.image.smoothDT(*c);
   return sharedData.image.smoothDT(blur, preservetopology, sigma, xmlfilename.c_str());
-=======
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// CropImage
+///////////////////////////////////////////////////////////////////////////////
+void CropImage::buildParser()
+{
+  const std::string prog = "cropimage";
+  const std::string desc = "performs translational alignment of shape image based on\n\t\t\tits center of mass or given 3D point";
+  parser.prog(prog).description(desc);
+  
+  parser.add_option("--startx").action("store").type("float").set_default(0.0).help("starting index in X direction.");
+  parser.add_option("--starty").action("store").type("float").set_default(0.0).help("starting index in Y direction.");
+  parser.add_option("--startz").action("store").type("float").set_default(0.0).help("starting index in Z direction.");
+
+  parser.add_option("--sizex").action("store").type("int").set_default(0.0).help("bounding box value in X direction.");
+  parser.add_option("--sizey").action("store").type("float").set_default(0.0).help("bounding box value in Y direction.");
+  parser.add_option("--sizez").action("store").type("float").set_default(0.0).help("bounding box value in Z direction.");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
   float startx = static_cast<float>(options.get("startx"));
   float starty = static_cast<float>(options.get("starty"));
   float startz = static_cast<float>(options.get("startz"));
@@ -389,7 +403,31 @@ int CropImage::execute(const optparse::Values &options, SharedCommandData &share
   float sizez = static_cast<float>(options.get("sizez"));
 
   return sharedData.image.cropImage(startx, starty, startz, sizex, sizey, sizez);
->>>>>>> origin/executable_cropimage
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// BoundingBox
+///////////////////////////////////////////////////////////////////////////////
+void BoundingBox::buildParser()
+{
+  const std::string prog = "boundingbox";
+  const std::string desc = "compute largest bounding box size given set of images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to images");
+  parser.add_option("--outPrefix").action("store").type("string").set_default("").help("Output prefix to be used to save the parameters for the estimated bounding box.");
+  parser.add_option("--paddingSize").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box, checks agains min image size is performed to make sure that this padding won't get out of bounds for the smallest image in the file names provides");
+  
+  Command::buildParser();
+}
+
+int BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::vector<std::string> filenames = options.get("names");
+  std::string outPrefix   = (std::string) options.get("outPrefix");
+  int paddingSize   = (int) options.get("paddingSize");
+
+  return sharedData.image.boundingBox();
 }
 
 } // shapeworks

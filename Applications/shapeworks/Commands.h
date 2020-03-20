@@ -192,6 +192,22 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class SmoothDT : public ImageCommand
+{
+public:
+  static SmoothDT &getCommand()
+  {
+    static SmoothDT instance;
+    return instance;
+  }
+
+private:
+  SmoothDT() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class CropImage : public ImageCommand
 {
 public:
@@ -203,6 +219,18 @@ public:
 
 private:
   CropImage() { buildParser(); } 
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class BoundingBox : public ImageCommand
+{
+public:
+  static BoundingBox& getCommand() { static BoundingBox instance; return instance; }
+
+private:
+  BoundingBox() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
