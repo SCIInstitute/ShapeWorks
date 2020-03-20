@@ -438,16 +438,6 @@ void Optimize::InitializeSampler()
 
   m_sampler->GetOptimizer()->SetTimeStep(1.0);
 
-  if (m_optimizer_type == 0) {
-    m_sampler->GetOptimizer()->SetModeToJacobi();
-  }
-  else if (m_optimizer_type == 1) {
-    m_sampler->GetOptimizer()->SetModeToGaussSeidel();
-  }
-  else {
-    m_sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
-  }
-
   m_sampler->SetSamplingOn();
 
   m_sampler->SetCorrespondenceOn();
@@ -850,16 +840,6 @@ void Optimize::RunOptimize()
     }
   }
 
-  if (m_optimizer_type == 0) {
-    m_sampler->GetOptimizer()->SetModeToJacobi();
-  }
-  else if (m_optimizer_type == 1) {
-    m_sampler->GetOptimizer()->SetModeToGaussSeidel();
-  }
-  else {
-    m_sampler->GetOptimizer()->SetModeToAdaptiveGaussSeidel();
-  }
-
   // Set up the minimum variance decay
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                    m_ending_regularization,
@@ -1252,22 +1232,6 @@ void Optimize::PrintParamInfo()
   else {
     std::cout << "cotan" << std::endl;
   }
-
-  std::cout << "optimizer_type = ";
-  if (m_optimizer_type == 0) {
-    std::cout << "jacobi";
-  }
-  else if (m_optimizer_type == 1) {
-    std::cout << "gauss seidel";
-  }
-  else if (m_optimizer_type == 2) {
-    std::cout << "adaptive gauss seidel (with bad moves)";
-  }
-  else {
-    std::cerr << "Incorrect option!!";
-    throw 1;
-  }
-  std::cout << std::endl;
 
   std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
   std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed <<
@@ -1924,10 +1888,6 @@ void Optimize::UpdateExportablePoints()
 //---------------------------------------------------------------------------
 void Optimize::SetPairwisePotentialType(int pairwise_potential_type)
 { this->m_pairwise_potential_type = pairwise_potential_type;}
-
-//---------------------------------------------------------------------------
-void Optimize::SetOptimizerType(int optimizer_type)
-{ this->m_optimizer_type = optimizer_type;}
 
 //---------------------------------------------------------------------------
 void Optimize::SetTimePtsPerSubject(int time_pts_per_subject)

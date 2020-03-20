@@ -21,7 +21,7 @@ namespace itk
  *  Sample(Point) method.
  */
 template <class T, unsigned int VDimension=3>
-class ParticleImageDomain : public ParticleRegionDomain<VDimension>
+class ParticleImageDomain : public ParticleRegionDomain<T, VDimension>
 {
 public:
   /** Standard class typedefs */
@@ -31,7 +31,7 @@ public:
   typedef Image<T, VDimension> ImageType;
 
   /** Point type of the domain (not the image). */
-  typedef typename ParticleRegionDomain<VDimension>::PointType PointType;
+  typedef typename ParticleRegionDomain<T, VDimension>::PointType PointType;
 
   typedef LinearInterpolateImageFunction<ImageType, typename PointType::CoordRepType> ScalarInterpolatorType;
 
@@ -115,7 +115,7 @@ protected:
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
-    ParticleRegionDomain<VDimension>::PrintSelf(os, indent);
+    ParticleRegionDomain<T, VDimension>::PrintSelf(os, indent);
     os << indent << "m_Image = " << m_Image << std::endl;
     os << indent << "m_ScalarInterpolator = " << m_ScalarInterpolator << std::endl;
   }
