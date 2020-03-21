@@ -131,15 +131,6 @@ public:
   const vnl_vector_fixed<double, VDimension> &GetC() const
   { return m_c[0]; }
 
-  //Praful
-  const vnl_vector_fixed<double, VDimension> &GetA(int i) const
-  { return m_a[i]; }
-  const vnl_vector_fixed<double, VDimension> &GetB(int i) const
-  { return m_b[i]; }
-  const vnl_vector_fixed<double, VDimension> &GetC(int i) const
-  { return m_c[i]; }
-
-
   /** Maintain a list of spheres within the domain.  These are used as 
       soft constraints by some particle forcing functions. */
   void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r)
@@ -176,6 +167,24 @@ public:
   unsigned int GetNumberOfPlanes() const
   {
       return m_CuttingPlanePoint.size();
+  }
+
+  void PrintCuttingPlaneConstraints(std::ofstream &out) const override {
+    for (unsigned int j = 0; j < GetNumberOfPlanes(); j++) {
+      vnl_vector_fixed < double, 3 > a = m_a[j];
+      vnl_vector_fixed < double, 3 > b = m_b[j];
+      vnl_vector_fixed < double, 3 > c = m_c[j];
+      for (int d = 0; d < 3; d++) {
+        out << a[d] << " ";
+      }
+      for (int d = 0; d < 3; d++) {
+        out << b[d] << " ";
+      }
+      for (int d = 0; d < 3; d++) {
+        out << c[d] << " ";
+      }
+      out << std::endl;
+    }
   }
 
 protected:

@@ -54,6 +54,15 @@ public:
   virtual const PointType& GetLowerBound() const = 0;
   virtual const PointType& GetUpperBound() const = 0;
 
+  virtual PointType GetZeroCrossingPoint() const = 0;
+  virtual double GetSurfaceArea() const = 0;
+  virtual double GetMaxDimRadius() const = 0;
+
+  virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
+
+  virtual void DeleteImages() = 0;
+  virtual void DeletePartialDerivativeImages() = 0;
+
 protected:
   ParticleDomain() {}
   virtual ~ParticleDomain() {}

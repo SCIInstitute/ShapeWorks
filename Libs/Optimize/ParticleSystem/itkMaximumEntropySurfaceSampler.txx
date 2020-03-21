@@ -207,17 +207,8 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
 
     for (unsigned int d = 0; d < this->GetParticleSystem()->GetDomainsPerShape(); d++)
     {
-        double tempMax = 0.0;
-        const ParticleImageDomain<float, 3> * domain = static_cast<const ParticleImageDomain<float, 3> *> (this->GetParticleSystem()->GetDomain(d));
-        for (unsigned int i = 0; i < TImage::ImageDimension; i++)
-        {
-            if (domain->GetSize()[i] > maxdim)
-            {
-                maxdim = domain->GetSize()[i];
-                tempMax = maxdim * domain->GetSpacing()[i];
-            }
-        }
-        maxradius = tempMax > maxradius ? tempMax : maxradius;
+        double radius = GetParticleSystem()->GetDomain(d)->GetMaxDimRadius();
+        maxradius = radius > maxradius ? radius : maxradius;
     }
 
     m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);

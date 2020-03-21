@@ -93,7 +93,7 @@ public:
     return this->m_Image.GetPointer();
   }
 
-  inline double GetSurfaceArea() const {
+  inline double GetSurfaceArea() const override {
     throw std::runtime_error("Surface area is not computed currently.");
     return m_SurfaceArea;
   }
@@ -114,7 +114,7 @@ public:
     return m_Index;
   }
 
-  inline PointType GetZeroCrossingPoint() const {
+  inline PointType GetZeroCrossingPoint() const override {
     return m_ZeroCrossingPoint;
   }
 
@@ -128,12 +128,26 @@ public:
         return 0.0;
   }
 
+  inline double GetMaxDimRadius() const override {
+    double bestRadius = 0;
+    double maxdim = 0;
+    for (unsigned int i = 0; i < ImageType::ImageDimension; i++)
+    {
+      if (GetSize()[i] > maxdim)
+      {
+        maxdim = GetSize()[i];
+        bestRadius = maxdim * GetSpacing()[i];
+      }
+    }
+    return bestRadius;
+  }
+
   /** Check whether the point p may be sampled in this image domain. */
   inline bool IsInsideBuffer(const PointType &p) const
   { return m_ScalarInterpolator->IsInsideBuffer(p); }
 
   /** Used when a domain is fixed. */
-  void DeleteImages()
+  void DeleteImages() override
   {
     m_Image = 0;
     m_ScalarInterpolator = 0;
