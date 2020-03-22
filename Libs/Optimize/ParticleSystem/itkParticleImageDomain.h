@@ -35,6 +35,8 @@
 #include "openvdb/tools/Interpolation.h"
 #endif
 
+#include "H5Cpp.h"
+
 namespace itk
 {
 /** \class ParticleImageDomain
@@ -90,20 +92,31 @@ public:
   //TODO: Move into proper file(statistics?)
   double m_SurfaceArea;
 
+  H5::DataSet m_H5_dataset;
+
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
-#ifdef USE_OPENVDB
-    openvdb::initialize();
-    std::cout << "Initialized OpenVDB" << std::endl;
-    m_VDBImage = openvdb::FloatGrid::create(500000.0);
-    m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
-    auto vdbAccessor = m_VDBImage->getAccessor();
+    std::string h5_filename = std::tmpnam(nullptr);
+    h5_filename += ".h5";
+    std::string h5_datasetname = "DT";
+    H5::H5File file( h5_filename,H5F_ACC_TRUNC );
 
     m_Size = I->GetRequestedRegion().GetSize();
     m_Spacing = I->GetSpacing();
 
+    hsize_t h5_dims[3];
+    h5_dims[0] = m_Size[0];
+    h5_dims[1] = m_Size[1];
+    h5_dims[2] = m_Size[2];
+    H5::DataSpace dataspace(3, h5_dims);
+    H5::FloatType datatype( H5::PredType::NATIVE_FLOAT);
+    datatype.setOrder( H5T_ORDER_LE );
+    m_H5_dataset = file.createDataSet(h5_datasetname, datatype, dataspace );
+    m_H5_dataset.write(I->GetBufferPointer(), H5::PredType::NATIVE_FLOAT);
+
+    /*
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
     while(!it.IsAtEnd()) {
@@ -114,9 +127,9 @@ public:
             continue;
         }
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-        vdbAccessor.setValue(coord, pixel);
         ++it;
     }
+    */
     m_Origin = I->GetOrigin();
     m_Index = I->GetRequestedRegion().GetIndex();
 
@@ -189,8 +202,7 @@ public:
     
     this->SetLowerBound(l);
     this->SetUpperBound(u);
-#else
-#endif
+
   }
 
   inline double GetSurfaceArea() const {
@@ -223,21 +235,34 @@ public:
       To check bounds, use IsInsideBuffer. */
   inline T Sample(const PointType &p) const
   {
-      if(IsInsideBuffer(p)) {
-#ifdef USE_OPENVDB
-          auto o = GetOrigin();
-          auto sp = p;
-          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-          const T v2 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
-          return v2;
-#else
-          const T v1 =  m_ScalarInterpolator->Evaluate(p);
-          return v1;
-#endif
-      } else {
-          return 0.0;
-      }
+    if(IsInsideBuffer(p)) {
+      auto o = GetOrigin();
+      auto sp = p;
+      for (int i = 0; i < 3; i++) { sp[i] -= o[i]; }
+
+      hsize_t     dimsm[3];              /* memory space dimensions */
+      dimsm[0] = 1;
+      dimsm[1] = 1;
+      dimsm[2] = 1 ;
+      H5::DataSpace memspace(3, dimsm );
+      /*
+       * Define memory hyperslab.
+       */
+      hsize_t      offset_out[3];   // hyperslab offset in memory
+      hsize_t      count_out[3];    // size of the hyperslab in memory
+      offset_out[0] = int(sp[0]);
+      offset_out[1] = int(sp[1]);
+      offset_out[2] = int(sp[2]);
+      count_out[0]  = 1;
+      count_out[1]  = 1;
+      count_out[2]  = 1;
+      memspace.selectHyperslab( H5S_SELECT_SET, count_out, offset_out );
+      float v;
+      m_H5_dataset.read(&v, H5::PredType::NATIVE_FLOAT, memspace, m_H5_dataset.getSpace() );
+      return v;
+    } else {
+      return 0.0;
+    }
   }
 
   //TODO: Remove, this is misleading
