@@ -117,6 +117,8 @@ public:
       bool isEmpty_; // to allow empty horizon compartments to be added to the tree
 
       virtual std::string ToDebugString();
+      
+      void print_shape();
 
   protected:
 

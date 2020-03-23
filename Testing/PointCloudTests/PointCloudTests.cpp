@@ -7,6 +7,7 @@
 #include <cstring>
 #include <fstream>
 
+#include <Eigen/Core>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkReinitializeLevelSetImageFilter.h> // for distance transform computation
@@ -17,8 +18,6 @@
 #include "itkParticleShapeStatistics.h"
 
 #include "RBFShape.h"
-
-#include <Eigen/Core>
 
 double *ellipsoid_grid ( int n, double r[3], double c[3], int ng );
 
