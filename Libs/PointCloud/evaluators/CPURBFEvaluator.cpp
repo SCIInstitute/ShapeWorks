@@ -22,7 +22,7 @@ double CPURBFEvaluator::evaluate(const RBFKernel *kernel, const Eigen::Vector3d 
                                  double constant) {
 
   double result = 0;
-  for (int i = 0; i < rbfPoints.size(); i++) {
+  for (int i = 0; i < rbfPoints.rows(); i++) {
     const Eigen::Vector4d& point = rbfPoints.row(i);
     double d = sqrt(pow(point(0), 2) + pow(point(1), 2) + pow(point(2), 2));
     double kernelValue = kernel->compute(d);
@@ -47,7 +47,7 @@ std::vector<double> CPURBFEvaluator::batchEvaluate(const RBFKernel *kernel,
     const Eigen::Vector3d &linearCoefficients, double constant) {
 
   std::vector<double> results;
-  for (int i = 0; i < evalPoints.size(); i++) {
+  for (int i = 0; i < evalPoints.rows(); i++) {
     const Eigen::Vector4d& point = evalPoints.row(i);
     double result = this->evaluate(kernel, point.head<3>(), rbfPoints, coefficients,
       linearCoefficients, constant);

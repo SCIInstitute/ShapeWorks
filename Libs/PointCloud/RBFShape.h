@@ -2,8 +2,13 @@
 
 #include <stddef.h>
 #include "Shapeworks.h"
+#include <random>
 //#include "ImageUtils.h"
 #include <Eigen/Core>
+#include <Eigen/Dense>
+#include <fstream>
+#include <iomanip>
+
 #include <itkTranslationTransform.h>
 #include "evaluators/CPURBFEvaluator.h"
 #include "solvers/EigenRBFSolver.h"
@@ -51,6 +56,10 @@ public:
       /** This function retrieves the vector of 3D points that were used to construct the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s).*/
       virtual Eigen::MatrixXd getPoints(){return points_;}
+
+      virtual void set_raw_points(Eigen::MatrixXd raw_points){ this->raw_points_ = raw_points;}
+
+      virtual void set_raw_normals(Eigen::MatrixXd raw_normals){ this->raw_normals_ = raw_normals;}
 
       /*******************************************************************************************************************/
       /** Flag functions: This type of functions are used to perform boolean queries for specific characteristics of the class instance. */
@@ -116,7 +125,26 @@ public:
       /** A flag to indicate whether the implicit function is empty to allow empty horizon compartments to be added to the tree. */
       bool isEmpty_; // to allow empty horizon compartments to be added to the tree
 
+      /*******************************************************************************************************************/
+      /** Output functions: This type of functions write out the RBFShape*/
+      /*******************************************************************************************************************/
+      
+      //Writes RBFShape into a Eq file format
+      void writeToEqFile(const std::string& filename, int precision);
+      
+      //Writes RBFShape into a Raw file format
+      void writeToRawFile(const std::string& filename, int precision);
+
+      //Writes TPS Data to file
+      void writeTPSdata(std::ofstream& file);
+      
+      /*******************************************************************************************************************/
+      /** Debug functions: This type of functions write or print out debug information*/
+      /*******************************************************************************************************************/
+
       virtual std::string ToDebugString();
+
+      void write_csv(const std::string& filename, int precision);
 
   protected:
 
@@ -149,6 +177,10 @@ public:
           In the RBFImplicit derived class, rbf point values are the tps coefficients used to construct the rbf.
           These values are initialized by zeros (on surface) and +/- offsetScale/rbfOffset (for dipole points, if we move more cells off the surface, the initial rbf point coefficient is decreased). */
       Eigen::MatrixXd points_;
+
+      /** Raw points and their normals**/
+      Eigen::MatrixXd raw_points_;
+      Eigen::MatrixXd raw_normals_;
 
       RBFKernel * kernel;
 

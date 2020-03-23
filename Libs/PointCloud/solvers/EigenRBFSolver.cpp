@@ -10,7 +10,7 @@ std::vector<double> EigenRBFSolver::solveForCoefficients(
     const RBFKernel *kernel, const Eigen::MatrixXd &points) {
   std::cout << "\n***using solveForCoefficients for EigenRBFSolver.\n\n";
 
-  size_t dim = size_t(points.size());
+  size_t dim = size_t(points.rows());
   Eigen::MatrixXd A(dim, dim);
   Eigen::VectorXd b(dim);
   for (size_t i = 0; i < dim; i++) {
