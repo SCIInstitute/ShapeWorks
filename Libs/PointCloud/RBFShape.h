@@ -15,7 +15,8 @@ namespace shapeworks {
 
 class RBFShape
 {
-  RBFShape(Eigen::Vector4d coeff = Eigen::Vector4d(1.,1.,1.,1.),
+public:
+      RBFShape(Eigen::Vector4d coeff = Eigen::Vector4d(1.,1.,1.,1.),
                        Eigen::Vector3d pows = Eigen::Vector3d(1.,1.,1.),
                        Eigen::MatrixXd points = Eigen::MatrixXd());
 
@@ -29,7 +30,7 @@ class RBFShape
 
       /** This function retrieves the coefficient (x,y,z,value) of the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual Eigen::Vector3d coeff();
+      virtual Eigen::Vector4d coeff(){return coeff_;}
 
       /** This function sets the ID of the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s). */
@@ -41,15 +42,15 @@ class RBFShape
 
       /** This function sets the name of the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual void setName(std::string s);
+      virtual void setName(std::string s){name_ = s;}
 
       /** This function retrieves the name of the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual std::string name();
+      virtual std::string name(){return name_;}
 
       /** This function retrieves the vector of 3D points that were used to construct the implicit function.
           It is a virtual function and hence it can be redefined in the derived class(s).*/
-      virtual Eigen::MatrixXd getPoints();
+      virtual Eigen::MatrixXd getPoints(){return points_;}
 
       /*******************************************************************************************************************/
       /** Flag functions: This type of functions are used to perform boolean queries for specific characteristics of the class instance. */
@@ -58,15 +59,15 @@ class RBFShape
           In this base class, the default is retrieved which is false. That is by default an implicit function does not have any clips.
           This default complies with whatever basic operation that this base class defines. Hence, this class doesn't define any operations that allow for clippling.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual bool hasClip();
+      virtual bool hasClip(){return false;}
 
       /** This function returns a flag that indicate whether the implicit function is a fault.
           In this base class, the default is retrieved which is true. That is by default an implicit function is a fault.
           This default complies with whatever basic operation that this base class defines. Hence, this class doesn't define any operations for a horizon being split by a fault.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual bool isFault();
+      virtual bool isFault(){return isFault_;}
       //virtual bool isEmpty();
-      virtual bool isClip() { return false; };
+      virtual bool isClip() { return false; }
 
       /*******************************************************************************************************************/
       /** Processing functions: This type of functions define the functionality (i.e., the processing blocks) of the class. */
@@ -91,13 +92,13 @@ class RBFShape
 
       /** This function solves the RBF system*/
 
-      virtual void solve_system(Eigen::MatrixXd points);
+      virtual void solve_system(const Eigen::MatrixXd & points);
 
       /** This function applies a transformation matrix (4x4) to the implicit function.
           \param mtx A 4x4 transfromation matrix to be applied to the implicit function.
           This operation updates the coefficient (coeff_) and the points (points_) member variables based on the input transformation matrix.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual void applyMatrix(std::array<std::array<double, 4>, 4> mtx);
+      //virtual void applyMatrix(std::array<std::array<double, 4>, 4> mtx);
 
       /** This function returns a pointer to the implicit function that clips this implicit function.
           Since this is a base class for implicit functions, it doesn't provided any clippping operations and hence it returns a null pointer.

@@ -44,8 +44,9 @@ Eigen::Vector3d RBFShape::gradient(const Eigen::Vector3d &point){
     return Eigen::Vector3d(1.,1.,1.);
 }
 
-void RBFShape::solve_system(Eigen::MatrixXd points){
+void RBFShape::solve_system(const Eigen::MatrixXd & points){
     EigenRBFSolver solver = EigenRBFSolver();
+    this->points_ = points;
 
     this->TPSWeights = solver.solveForCoefficients(this->kernel, this->points_);
 }
