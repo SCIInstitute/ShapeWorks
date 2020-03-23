@@ -98,6 +98,10 @@ public:
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
+    m_Image = I;
+    m_ScalarInterpolator = ScalarInterpolatorType::New();
+    m_ScalarInterpolator->SetInputImage(m_Image);
+
     std::string h5_filename = std::tmpnam(nullptr);
     h5_filename += ".h5";
     std::string h5_datasetname = "DT";
@@ -203,6 +207,7 @@ public:
     this->SetLowerBound(l);
     this->SetUpperBound(u);
 
+    yolo();
   }
 
   inline double GetSurfaceArea() const {
@@ -230,15 +235,47 @@ public:
   inline PointType GetZeroCrossingPoint() const {
     return m_ZeroCrossingPoint;
   }
+    typename ImageType::Pointer m_Image;
+    typename ScalarInterpolatorType::Pointer m_ScalarInterpolator;
+
+  void yolo() {
+    auto o = GetOrigin();
+    for(int i=0; i<5; i++) {
+      for(int j=0; j<5; j++) {
+        for (int k = 0; k < 5; k++) {
+          PointType p;
+          p[0] = i; p[1] = j; p[2] = k;
+
+          float v = Sample(p);
+          std::cout << v << std::endl;
+        }
+      }
+    }
+  }
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer. */
   inline T Sample(const PointType &p) const
   {
     if(IsInsideBuffer(p)) {
+      PointType p2 = p;
+      for (int i = 0; i < 3; i++) { p2[i] = int(p[i]); }
+      float v0 = m_ScalarInterpolator->Evaluate(p);
+
       auto o = GetOrigin();
       auto sp = p;
       for (int i = 0; i < 3; i++) { sp[i] -= o[i]; }
+
+      H5::DataSpace dataspace = m_H5_dataset.getSpace();
+      hsize_t      offset[3];   // hyperslab offset in the file
+      hsize_t      count[3];    // size of the hyperslab in the file
+      offset[0] = sp[0];
+      offset[1] = sp[1];
+      offset[2] = sp[2];
+      count[0]  = 1;
+      count[1]  = 1;
+      count[2]  = 1;
+      dataspace.selectHyperslab( H5S_SELECT_SET, count, offset );
 
       hsize_t     dimsm[3];              /* memory space dimensions */
       dimsm[0] = 1;
@@ -250,15 +287,15 @@ public:
        */
       hsize_t      offset_out[3];   // hyperslab offset in memory
       hsize_t      count_out[3];    // size of the hyperslab in memory
-      offset_out[0] = int(sp[0]);
-      offset_out[1] = int(sp[1]);
-      offset_out[2] = int(sp[2]);
+      offset_out[0] = 0;
+      offset_out[1] = 0;
+      offset_out[2] = 0;
       count_out[0]  = 1;
       count_out[1]  = 1;
       count_out[2]  = 1;
       memspace.selectHyperslab( H5S_SELECT_SET, count_out, offset_out );
       float v;
-      m_H5_dataset.read(&v, H5::PredType::NATIVE_FLOAT, memspace, m_H5_dataset.getSpace() );
+      m_H5_dataset.read(&v, H5::PredType::NATIVE_FLOAT, memspace, dataspace );
       return v;
     } else {
       return 0.0;
