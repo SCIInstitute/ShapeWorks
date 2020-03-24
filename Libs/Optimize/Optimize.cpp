@@ -55,6 +55,7 @@
 
 // constraint
 #include "Constraint.h"
+#include "testclassfarshad1.h"
 
 //---------------------------------------------------------------------------
 Optimize::Optimize()

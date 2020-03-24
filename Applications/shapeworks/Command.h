@@ -69,6 +69,15 @@ private:
   // bool write(const std::string outFilename, SharedCommandData &sharedData) override;
 };
 
+// to check the status of the constraints active 
+class ConstraintCommand : public Command
+{
+public:
+    const std::string type() override { return "Constraint"; }
+
+private:
+};
+
 }; // Shapeworks
 
 

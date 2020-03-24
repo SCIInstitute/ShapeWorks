@@ -19,6 +19,8 @@
 #include "vnl/vnl_cross.h"
 #define PARTICLE_DEBUG_FLAG 1
 
+#include "Constraint.h"
+
 namespace itk
 {
 
@@ -202,6 +204,11 @@ ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
           }
       }
   }
+
+  feri a;
+  a.printFeri();
+  a.cppPrintFeri();
+
   return flag;
    gradMag = gradE.magnitude();
 
@@ -300,6 +307,10 @@ UpdatePointPosition(PointType& point, vnl_vector_fixed<double, VDimension>& grad
   this->ApplyVectorConstraints(gradient, point);
   for (int i = 0; i < VDimension; i++) { point[i] -= gradient[i]; }
   this->ApplyConstraints(point);
+  std::cout << "point constraint applied" << std::endl;
+  //feri a;
+  //Farshad b;
+  //a.
 }
 
 template<class T, unsigned int VDimension>
