@@ -32,9 +32,9 @@ TEST(PointCloudTests, sample_test) {
   Eigen::MatrixXd flat(1200, 4);
   Eigen::MatrixXd flat_normals(1200, 4);
 
-  size_t count = 0;
+  Eigen::Index count = 0;
 
-  double sep = 10;
+  double sep = 10.;
 
   for(size_t i = 0; i < 20; i++){
       for(size_t j = 0; j < 20; j++){
@@ -78,8 +78,10 @@ TEST(PointCloudTests, sample_test) {
   RBFflat.writeToEqFile("flat_1.Eq",5);
   RBFflat.writeToRawFile("flat_1.raw",5);
 
-  for(size_t i = 0; i < count*3; i++){
+  for(Eigen::Index i = 0; i < count; i++){
       Eigen::Vector3d pt = flat.row(i).head<3>();
+      //std::cout << "Point flat\n " << flat.row(i) << std::endl;
+      //std::cout << "Point\n " << pt << std::endl;
       double value = flat(i,3);
       double rbf_value = RBFflat.evaluate(pt);
       std::cout << "Point " << i << " value " << value << " predicted_value " << rbf_value << std::endl;

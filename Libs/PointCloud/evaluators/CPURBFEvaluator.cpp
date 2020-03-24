@@ -24,7 +24,7 @@ double CPURBFEvaluator::evaluate(const RBFKernel *kernel, const Eigen::Vector3d 
   double result = 0;
   for (int i = 0; i < rbfPoints.rows(); i++) {
     const Eigen::Vector4d& point = rbfPoints.row(i);
-    double d = sqrt(pow(point(0), 2) + pow(point(1), 2) + pow(point(2), 2));
+    double d = sqrt(pow(point(0)-evalPoint(0), 2) + pow(point(1)-evalPoint(1), 2) + pow(point(2)-evalPoint(2), 2));
     double kernelValue = kernel->compute(d);
     //std::cout << kernelValue << " ";
     double pointCoeff = coefficients[i];
