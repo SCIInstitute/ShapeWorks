@@ -35,7 +35,7 @@ int Example::execute(const optparse::Values &options, SharedCommandData &sharedD
 ///////////////////////////////////////////////////////////////////////////////
 void ReadImage::buildParser()
 {
-  const std::string prog = "readimage";
+  const std::string prog = "read-image";
   const std::string desc = "reads an image";
   parser.prog(prog).description(desc);
 
@@ -53,32 +53,11 @@ int ReadImage::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ReadImages
-///////////////////////////////////////////////////////////////////////////////
-// void ReadImages::buildParser()
-// {
-//   const std::string prog = "readimages";
-//   const std::string desc = "read multiple images";
-//   parser.prog(prog).description(desc);
-
-//   parser.add_option("--names").action("store").type("string").set_default("").help("name of file to read");
-  
-//   Command::buildParser();
-// }
-
-// int ReadImages::execute(const optparse::Values &options, SharedCommandData &sharedData)
-// {
-//   std::string filenames = options["names"];
-
-//   return sharedData.image.readimages(filenames);
-// }
-
-///////////////////////////////////////////////////////////////////////////////
 // WriteImage
 ///////////////////////////////////////////////////////////////////////////////
 void WriteImage::buildParser()
 {
-  const std::string prog = "writeimage";
+  const std::string prog = "write-image";
   const std::string desc = "writes the current image (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -101,7 +80,7 @@ int WriteImage::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 void ReadMesh::buildParser()
 {
-  const std::string prog = "readmesh";
+  const std::string prog = "read-mesh";
   const std::string desc = "reads a mesh";
   parser.prog(prog).description(desc);
 
@@ -122,7 +101,7 @@ int ReadMesh::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void WriteMesh::buildParser()
 {
-  const std::string prog = "writemesh";
+  const std::string prog = "write-mesh";
   const std::string desc = "writes the current mesh (determines type by its extension)";
   parser.prog(prog).description(desc);
 
@@ -196,8 +175,7 @@ int ResampleImage::execute(const optparse::Values &options, SharedCommandData &s
 void RecenterImage::buildParser()
 {
   const std::string prog = "recenter";
-  const std::string desc = "recenters an image by changing its origin in the image\n\t\t\theader to the physical coordinates of the center of the image";
-  parser.prog(prog).description(desc);
+  const std::string desc = "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image";
 
   Command::buildParser();
 }
@@ -235,7 +213,7 @@ int PadImage::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void SmoothMesh::buildParser()
 {
-  const std::string prog = "smoothmesh";
+  const std::string prog = "smooth-mesh";
   const std::string desc = "smooths meshes";
   parser.prog(prog).description(desc);
   
@@ -284,8 +262,8 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void ExtractLabel::buildParser()
 {
-  const std::string prog = "extractlabel";
-  const std::string desc = "extracts specific voxel label from given multilabel\n\t\t\tvolume and outputs corresponding binary image";
+  const std::string prog = "extract-label";
+  const std::string desc = "extracts/isolates a specific voxel label from a given multi-label\n\t\t\tvolume and outputs the corresponding binary image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted. [default 1.0].");
@@ -305,7 +283,7 @@ int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sh
 ///////////////////////////////////////////////////////////////////////////////
 void CloseHoles::buildParser()
 {
-  const std::string prog = "closeholes";
+  const std::string prog = "close-holes";
   const std::string desc = "closes holes in a given binary volume";
   parser.prog(prog).description(desc);
 
@@ -345,7 +323,7 @@ int Threshold::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void FastMarch::buildParser()
 {
-  const std::string prog = "fastmarch";
+  const std::string prog = "fast-march";
   const std::string desc = "computes distance transform volume from a binary\n\t\t\t(antialiased) image";
   parser.prog(prog).description(desc);
 

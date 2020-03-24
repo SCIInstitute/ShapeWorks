@@ -141,7 +141,7 @@ public:
     return m_Sigma;
   }
 
-  void DeletePartialDerivativeImages()
+  void DeletePartialDerivativeImages() override
   {
     for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++)
     {
@@ -151,7 +151,7 @@ public:
   }
 
   /** Used when a domain is fixed. */
-  void DeleteImages()
+  void DeleteImages() override
   {
     Superclass::DeleteImages();
     DeletePartialDerivativeImages();

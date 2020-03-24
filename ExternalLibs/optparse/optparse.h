@@ -1410,7 +1410,9 @@ namespace optparse
 
             if (not parser.epilog().empty())
             {
-                ss << std::endl << detail::str_format(parser.epilog(), 0, detail::cols());
+                //ss << std::endl << detail::str_format(parser.epilog(), 0, detail::cols());
+                //ShapeWorks-specific: don't format the epilog since we do it in shapeworks::Executable
+                ss << std::endl << parser.epilog();
             }
 
             return ss.str();

@@ -12,7 +12,7 @@
 
 namespace itk
 {
-template <unsigned int VDimension=3>
+template <class T, unsigned int VDimension=3>
 class ParticleRegionDomain : public ParticleDomain<VDimension>
 {
 public:

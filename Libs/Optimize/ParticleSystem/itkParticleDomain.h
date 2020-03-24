@@ -11,6 +11,8 @@
 #include "itkDataObject.h"
 #include "itkPoint.h"
 
+#include "vnl/vnl_vector_fixed.h"
+
 namespace itk
 {
 template <unsigned int VDimension=3>
@@ -28,6 +30,10 @@ public:
       surface.  Default behavior does nothing.  Returns true if the value of
       the point was modified and false otherwise. */
   virtual bool ApplyConstraints(PointType& p) const = 0;
+  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const = 0;
+  virtual vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const = 0;
 
   /** A Domain may define a distance calculation.  This is useful in cases
       such as geodesic distance, where distance depends on some information
@@ -48,21 +54,22 @@ public:
   virtual const PointType& GetLowerBound() const = 0;
   virtual const PointType& GetUpperBound() const = 0;
 
- /** Enable/Disable constraints on particle positions imposed by a domain. */
-  void DisableConstraints()  { m_ConstraintsEnabled = false; }
-  void EnableConstraints()   { m_ConstraintsEnabled = true; }    
-  bool GetConstraintsEnabled() const  { return m_ConstraintsEnabled; }
-  void SetConstraintsEnabled( bool g )  { m_ConstraintsEnabled = g; }
+  virtual PointType GetZeroCrossingPoint() const = 0;
+  virtual double GetSurfaceArea() const = 0;
+  virtual double GetMaxDimRadius() const = 0;
+
+  virtual void PrintCuttingPlaneConstraints(std::ofstream &out) const = 0;
+
+  virtual void DeleteImages() = 0;
+  virtual void DeletePartialDerivativeImages() = 0;
 
 protected:
-  ParticleDomain() : m_ConstraintsEnabled(true) {}
+  ParticleDomain() {}
   virtual ~ParticleDomain() {}
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
   }
-
-  bool m_ConstraintsEnabled;
   
 private:
   ParticleDomain(const ParticleDomain&); //purposely not implemented

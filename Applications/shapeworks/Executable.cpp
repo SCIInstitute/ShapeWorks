@@ -23,6 +23,30 @@ Executable::Executable()
   buildParser();
 }
 
+/// formatDesc
+///
+/// formats the description of this command, automatically padding the lines for clarity
+///
+/// \param desc command description
+/// \param indent the amount to indent if line breaks are needed
+/// \param desc_line_length line_len = indent + desc_line_length
+std::string formatDesc(std::string desc, const int indent = 24, const int desc_line_length = 67)
+{
+  std::string padded_desc;
+  while (desc.length() > desc_line_length)
+  {
+    int last_space_pos = desc.rfind(" ", desc_line_length);
+    if (last_space_pos == std::string::npos) last_space_pos = desc_line_length;
+    std::string line(desc.substr(0, last_space_pos));
+    desc.erase(0, last_space_pos + 1); // also erase the trailing space
+    padded_desc.append(line + "\n");
+    padded_desc += std::string(indent, ' ');
+  }
+  padded_desc.append(desc);
+  
+  return padded_desc;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void Executable::addCommand(Command &command)
 {
@@ -33,15 +57,19 @@ void Executable::addCommand(Command &command)
 #if DEBUG_CONSOLIDATION
   std::cout << "Adding " << command.name() << "...\n";
 #endif
-  commands.insert(std::pair<std::string, Command&>(command.name(),command));
+  commands.insert(std::pair<std::string, Command&>(command.name(), command));
+  auto nodashname = command.name();
+  nodashname.erase(std::remove(nodashname.begin(), nodashname.end(), '-'), nodashname.end());
+  commands.insert(std::pair<std::string, Command&>(nodashname, command));
 
   std::map<std::string, std::string> &command_type_descriptions = parser_epilog[command.type()];
   command_type_descriptions[command.name()] = command.desc();
 
   unsigned opt_width = 24;
+  unsigned desc_width = 80 - opt_width;
   unsigned indent = 2;
   std::stringstream ss;
-  ss << "Available commands:\n---------------------\n";
+  ss << "Available commands (dashes optional):\n---------------------\n";
   for (auto cmdtype: parser_epilog)
   {
     ss << "\n";
@@ -49,7 +77,7 @@ void Executable::addCommand(Command &command)
     for (auto cmd: cmdtype.second)
       ss << std::string(indent, ' ')
          << cmd.first << std::string(opt_width - indent - cmd.first.length(), ' ')
-         << cmd.second << "\n";
+         << formatDesc(cmd.second, opt_width, desc_width) << "\n";
   }
   parser.epilog(ss.str());
 }
