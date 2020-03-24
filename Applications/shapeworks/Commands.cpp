@@ -174,8 +174,7 @@ int ResampleImage::execute(const optparse::Values &options, SharedCommandData &s
 void RecenterImage::buildParser()
 {
   const std::string prog = "recenter";
-  const std::string desc = "recenters an image by changing its origin in the image\n\t\t\theader to the physical coordinates of the center of the image";
-  parser.prog(prog).description(desc);
+  const std::string desc = "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image";
 
   Command::buildParser();
 }
@@ -301,7 +300,7 @@ int CloseHoles::execute(const optparse::Values &options, SharedCommandData &shar
 void Threshold::buildParser()
 {
   const std::string prog = "threshold";
-  const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
+  const std::string desc = "thresholds image into binary label based on upper and lower intensity bounds given by user";
   parser.prog(prog).description(desc);
 
   parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("The lower threshold level (optional, default = epsilon)");
