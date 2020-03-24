@@ -57,7 +57,10 @@ void Executable::addCommand(Command &command)
 #if DEBUG_CONSOLIDATION
   std::cout << "Adding " << command.name() << "...\n";
 #endif
-  commands.insert(std::pair<std::string, Command&>(command.name(),command));
+  commands.insert(std::pair<std::string, Command&>(command.name(), command));
+  auto nodashname = command.name();
+  nodashname.erase(std::remove(nodashname.begin(), nodashname.end(), '-'), nodashname.end());
+  commands.insert(std::pair<std::string, Command&>(nodashname, command));
 
   std::map<std::string, std::string> &command_type_descriptions = parser_epilog[command.type()];
   command_type_descriptions[command.name()] = command.desc();
@@ -66,7 +69,7 @@ void Executable::addCommand(Command &command)
   unsigned desc_width = 80 - opt_width;
   unsigned indent = 2;
   std::stringstream ss;
-  ss << "Available commands:\n---------------------\n";
+  ss << "Available commands (dashes optional):\n---------------------\n";
   for (auto cmdtype: parser_epilog)
   {
     ss << "\n";
