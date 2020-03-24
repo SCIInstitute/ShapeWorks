@@ -48,8 +48,30 @@ void ReadImage::buildParser()
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
+
   return sharedData.image.read(filename);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// ReadImages
+///////////////////////////////////////////////////////////////////////////////
+// void ReadImages::buildParser()
+// {
+//   const std::string prog = "readimages";
+//   const std::string desc = "read multiple images";
+//   parser.prog(prog).description(desc);
+
+//   parser.add_option("--names").action("store").type("string").set_default("").help("name of file to read");
+  
+//   Command::buildParser();
+// }
+
+// int ReadImages::execute(const optparse::Values &options, SharedCommandData &sharedData)
+// {
+//   std::string filenames = options["names"];
+
+//   return sharedData.image.readimages(filenames);
+// }
 
 ///////////////////////////////////////////////////////////////////////////////
 // WriteImage
@@ -364,9 +386,7 @@ int SmoothDT::execute(const optparse::Values &options, SharedCommandData &shared
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
   double sigma = static_cast<double>(options.get("sigma"));
   const std::string xmlfilename = static_cast<std::string>(options.get("xmlfilename"));
-  // char *c = const_cast<char*>(xmlfilename.c_str());
 
-  // return sharedData.image.smoothDT(*c);
   return sharedData.image.smoothDT(blur, preservetopology, sigma, xmlfilename.c_str());
 }
 
@@ -414,20 +434,20 @@ void BoundingBox::buildParser()
   const std::string desc = "compute largest bounding box size given set of images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to images");
-  parser.add_option("--outPrefix").action("store").type("string").set_default("").help("Output prefix to be used to save the parameters for the estimated bounding box.");
-  parser.add_option("--paddingSize").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box, checks agains min image size is performed to make sure that this padding won't get out of bounds for the smallest image in the file names provides");
+  parser.add_option("--imagesdir").action("store").type("string").set_default("").help("paths to images");
+  // parser.add_option("--outPrefix").action("store").type("string").set_default("").help("Output prefix to be used to save the parameters for the estimated bounding box.");
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box");
   
   Command::buildParser();
 }
 
 int BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  std::vector<std::string> filenames = options.get("names");
-  std::string outPrefix   = (std::string) options.get("outPrefix");
-  int paddingSize   = (int) options.get("paddingSize");
+  const std::string imagesdir = static_cast<std::string>(options.get("imagesdir"));
+  // std::string outPrefix   = (std::string) options.get("outPrefix");
+  int padding = static_cast<int>(options.get("padding"));
 
-  return sharedData.image.boundingBox();
+  return sharedData.image.boundingBox(imagesdir, padding);
 }
 
 } // shapeworks

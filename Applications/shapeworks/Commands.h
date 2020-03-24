@@ -32,6 +32,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class ReadImages : public ImageCommand
+{
+public:
+  static ReadImages& getCommand() { static ReadImages instance; return instance; }
+
+private:
+  ReadImages() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class WriteImage : public ImageCommand
 {
 public:

@@ -16,6 +16,7 @@ public:
   Image(const std::string &filename) { read(filename); }
 
   bool read(const std::string &filename);
+  bool readimages(const std::string &filenames);
   bool write(const std::string &filename, bool compressed = true);
 
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
@@ -30,7 +31,7 @@ public:
   bool gaussianBlur(double sigma);
   bool smoothDT(bool blur, bool preserveTopology, double sigma, const char *xmlfilename);
   bool cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez);
-  bool boundingBox();
+  bool boundingBox(const std::string imagesDir, int padding);
 
   bool operator==(const Image &other) const;
 
