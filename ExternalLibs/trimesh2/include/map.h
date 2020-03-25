@@ -48,8 +48,8 @@ public:
         typedef MapFilter<FType,InType,OutType> MF;
         typename MF::Pointer mf = MF::New();
         mf->SetFunctor(&functor); // handles output
-        if(numThreads>0)
-            mf->SetNumberOfThreads(numThreads);
+        // if(numThreads>0)
+        //     mf->SetNumberOfThreads(numThreads);
         mf->SetInput(in);
         if(outRegion.GetSize()[0] > 0)
         {
@@ -96,8 +96,8 @@ public:
     typedef ReduceFilter<FType,InType,OutType> RF;
     typename RF::Pointer rf = RF::New();
     rf->SetFunctor(&functor);
-    if(numThreads>0)
-      rf->SetNumberOfThreads(numThreads);
+    // if(numThreads>0)
+    //   rf->SetNumberOfThreads(numThreads);
     rf->SetInput(in);
 
     rf->Update(); // throws

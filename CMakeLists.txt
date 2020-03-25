@@ -46,8 +46,10 @@ endif(LINUX)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# GUI
+# make it easier to see more important compiler warnings and errors (# TODO: fix the actual cause of the warnings)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
 
+# GUI
 if (SHAPEWORKS_GUI)
     
   find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
