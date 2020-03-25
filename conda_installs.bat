@@ -12,7 +12,7 @@ call conda install --yes -c conda-forge requests=2.22.0
 call conda install --yes -c conda-forge openblas=0.3.3
 call conda install --yes -c conda-forge numpy=1.17.4
 call conda install --yes -c conda-forge scikit-learn=0.22.1
-call conda install --yes -c gtest=1.10.0 cmake-3.15.5
+call conda install --yes -c conda-forge gtest=1.10.0 cmake-3.15.5
 
 REM reactivate shapeworks environment
 call conda activate base
