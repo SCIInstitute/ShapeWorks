@@ -195,7 +195,7 @@ void PadImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
-  parser.add_option("--value").action("store").type("float").set_default(0).help("Value to be used to fill padded voxels.");
+  parser.add_option("--value").action("store").type("float").set_default(0.0).help("Value to be used to fill padded voxels.");
   
   Command::buildParser();
 }
@@ -263,7 +263,7 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
 void ExtractLabel::buildParser()
 {
   const std::string prog = "extract-label";
-  const std::string desc = "extracts/isolates a specific voxel label from a given multi-label\n\t\t\tvolume and outputs the corresponding binary image";
+  const std::string desc = "extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--label").action("store").type("float").set_default(1.0).help("The label value which has to be extracted. [default 1.0].");
@@ -301,7 +301,7 @@ int CloseHoles::execute(const optparse::Values &options, SharedCommandData &shar
 void Threshold::buildParser()
 {
   const std::string prog = "threshold";
-  const std::string desc = "threholds image into binary label based on upper and\n\t\t\tlower intensity bounds given by user";
+  const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
   parser.prog(prog).description(desc);
 
   parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("The lower threshold level (optional, default = epsilon)");
@@ -323,8 +323,8 @@ int Threshold::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void FastMarch::buildParser()
 {
-  const std::string prog = "fast-march";
-  const std::string desc = "computes distance transform volume from a binary\n\t\t\t(antialiased) image";
+  const std::string prog = "compute-dt";
+  const std::string desc = "computes distance transform volume from a binary (antialiased) image";
   parser.prog(prog).description(desc);
 
   parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("The level set value that defines the interface between foreground and background.");
@@ -345,14 +345,21 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void SmoothDT::buildParser()
 {
-  const std::string prog = "smoothdt";
-  const std::string desc = "brief description of command";
+  const std::string prog = "smooth-dt";
+  const std::string desc = "performs gaussian blur or preserves topology smoothing";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--blur").action("store").type("bool").set_default(false).help("Perform gaussian blur [default set to false].");
   parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
-  parser.add_option("--sigma").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
-  parser.add_option("--xmlfilename").action("store").type("string").set_default("").help("name of xml file to read");
+  parser.add_option("--inputfile").action("store").type("string").set_default("").help("Name of input file");
+  parser.add_option("--outputfile").action("store").type("string").set_default("").help("Name of output file");
+  parser.add_option("--dtfile").action("store").type("string").set_default("").help("Name of distance tranform file");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("To perform curvature flow filtering");
+  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("To perform sigmoid filterting");
+  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("To perform sigmoid filtering");
+  parser.add_option("--scaling").action("store").type("double").set_default(0.0).help("To perform TPGA level set filtering");
+
+  parser.add_option("--blur").action("store").type("bool").set_default(false).help("Perform gaussian blur [default set to false].");
+  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("To perform gausian blur");
   
   Command::buildParser();
 }
@@ -360,12 +367,19 @@ void SmoothDT::buildParser()
 ///////////////////////////////////////////////////////////////////////////////
 int SmoothDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  bool blur = static_cast<bool>(options.get("blur"));
   bool preservetopology = static_cast<bool>(options.get("preservetopology"));
-  double sigma = static_cast<double>(options.get("sigma"));
-  const std::string xmlfilename = static_cast<std::string>(options.get("xmlfilename"));
+  const std::string inputfile = static_cast<std::string>(options.get("inputfile"));
+  const std::string outputfile = static_cast<std::string>(options.get("outputfile"));
+  const std::string dtfile = static_cast<std::string>(options.get("dtfile"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  double alpha = static_cast<double>(options.get("alpha"));
+  double beta = static_cast<double>(options.get("beta"));
+  double scaling = static_cast<double>(options.get("scaling"));
 
-  return sharedData.image.smoothDT(blur, preservetopology, sigma, xmlfilename.c_str());
+  bool blur = static_cast<bool>(options.get("blur"));
+  double sigma = static_cast<double>(options.get("sigma"));
+  
+  return sharedData.image.smoothDT(preservetopology, inputfile, outputfile, dtfile, iterations, alpha, beta, scaling, blur, sigma);
 }
 
 
@@ -374,8 +388,8 @@ int SmoothDT::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 void CropImage::buildParser()
 {
-  const std::string prog = "cropimage";
-  const std::string desc = "performs translational alignment of shape image based on\n\t\t\tits center of mass or given 3D point";
+  const std::string prog = "crop";
+  const std::string desc = "performs translational alignment of shape image based on its center of mass or given 3D point";
   parser.prog(prog).description(desc);
   
   parser.add_option("--startx").action("store").type("float").set_default(0.0).help("starting index in X direction.");
@@ -408,7 +422,7 @@ int CropImage::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void BoundingBox::buildParser()
 {
-  const std::string prog = "boundingbox";
+  const std::string prog = "bounding-box";
   const std::string desc = "compute largest bounding box size given set of images";
   parser.prog(prog).description(desc);
 

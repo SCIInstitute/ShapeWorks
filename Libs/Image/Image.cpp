@@ -14,10 +14,10 @@
 #include <itkTranslationTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
+#include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
 #include <itkSigmoidImageFilter.h>
 #include <itkTPGACLevelSetImageFilter.h>
-#include <ExternalLibs/tinyxml/tinyxml.h>
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
@@ -85,8 +85,8 @@ bool Image::read_image_dir(const std::string &pathname)
   for (int i = 0; i < N; i++)
   {
     ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName();
-    reader->Update();
+    // reader->SetFileName();
+    // reader->Update();
   }
 
   // using ReaderType = itk::ImageSeriesReader<ImageType>;
@@ -521,150 +521,60 @@ bool Image::fastMarch(float isoValue)
   return true;
 }
 
-bool Image::smoothTopology(const char *xmlfilename)
+bool Image::smoothTopology(const std::string &inputfile, const std::string &outputfile, const std::string &dtfile, unsigned iterations, double alpha, double beta, double scaling)
 {
-  using SmoothingFilter = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
+  using CurvatureFilter = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
+  CurvatureFilter::Pointer curvature = CurvatureFilter::New();
+
+  using GradientFilter = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
+  GradientFilter::Pointer gradient  = GradientFilter::New();
+
   using SigmoidFilter = itk::SigmoidImageFilter<ImageType, ImageType>;
+  SigmoidFilter::Pointer sigmoid = SigmoidFilter::New();
+
   using ImageFilter = itk::TPGACLevelSetImageFilter<ImageType, ImageType>;
+  ImageFilter::Pointer levelSet = ImageFilter::New();
 
-  // variables
-  std::vector<std::string> inFilenames;
-  inFilenames.clear();
-  std::vector<std::string> outFilenames;
-  outFilenames.clear();
-  std::vector<std::string> distFilenames;
-  distFilenames.clear();
+  read(inputfile);
 
-  // parameters
-  double propagationScaling = 0.0;
-  double alpha = 10.0;
-  double beta = 10.0;
-  double isoValue = 255.0;
-  unsigned int smoothingIterations = 10;
+  curvature->SetTimeStep(0.0625);
+  curvature->SetNumberOfIterations(iterations);
+  curvature->SetInput(this->image);
+  curvature->Update();
+  this->image = curvature->GetOutput();
+  write(dtfile);
 
-  // read parameters
-  TiXmlDocument doc(xmlfilename);
-  bool loadOkay = doc.LoadFile();
+  gradient->SetInput(this->image);
+  gradient->Update();
+  this->image = gradient->GetOutput();
 
-  if (loadOkay)
+  sigmoid->SetAlpha(alpha);
+  sigmoid->SetBeta(beta);
+  sigmoid->SetOutputMinimum(0.0);
+  sigmoid->SetOutputMaximum(1.0);
+  sigmoid->SetInput(this->image);
+  sigmoid->Update();
+  this->image = sigmoid->GetOutput();
+
+  levelSet->SetPropagationScaling(scaling);
+  levelSet->SetCurvatureScaling(1.0);
+  levelSet->SetAdvectionScaling(1.0);
+  levelSet->SetMaximumRMSError(0.0);
+  levelSet->SetNumberOfIterations(20);
+  levelSet->SetInput(curvature->GetOutput());
+  levelSet->SetFeatureImage(this->image);
+  this->image = levelSet->GetOutput();
+  levelSet->Update();
+
+  try
   {
-    TiXmlHandle docHandle(&doc);
-    TiXmlElement *elem;
-    std::istringstream inputsBuffer;
-    std::string filename("/dev/null\0");
-
-    // Compile the list of input files.
-    elem = docHandle.FirstChild("inputs").Element();
-    if (elem)
-    {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> filename)
-      {
-        inFilenames.push_back(filename);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-    }
-    else
-    {
-      std::cerr << "No inputs to process!" << std::endl;
-      return false;
-    }
-
-    // Compile the list of input files.
-    elem = docHandle.FirstChild("dtFiles").Element();
-    if (elem)
-    {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> filename)
-      {
-        distFilenames.push_back(filename);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-    }
-    else
-    {
-      std::cerr << "No inputs to process!" << std::endl;
-      return false;
-    }
-
-    // Compile the list of output files.
-    elem = docHandle.FirstChild("outputs").Element();
-    if (elem)
-    {
-      inputsBuffer.str(elem->GetText());
-      while (inputsBuffer >> filename)
-      {
-        outFilenames.push_back(filename);
-      }
-      inputsBuffer.clear();
-      inputsBuffer.str("");
-    }
-
-    // Make sure lists are the same size.
-    if (inFilenames.size() > outFilenames.size())
-    {
-      std::cerr << "Input list size does not match output list size!" << std::endl;
-      return false;
-    }
-
-    elem = docHandle.FirstChild("propagationScaling").Element();
-    if(elem) propagationScaling = atof(elem->GetText());
-
-    elem = docHandle.FirstChild("alpha").Element();
-    if(elem) alpha = atof(elem->GetText() );
-
-    elem = docHandle.FirstChild("beta").Element();
-    if(elem) beta = atof( elem->GetText() );
-
-    elem = docHandle.FirstChild("isoValue").Element();
-    if(elem) isoValue = atof( elem->GetText() );
-
-    elem = docHandle.FirstChild("smoothing_iterations").Element();
-    if(elem) smoothingIterations = atoi( elem->GetText() );
-
+    write(outputfile);
   }
-
-  for(unsigned int dtNo = 0; dtNo < inFilenames.size(); dtNo++)
+  catch (itk::ExceptionObject &exp)
   {
-    read(inFilenames[dtNo]);
-
-    if (!this->image)
-    {
-      std::cerr << "No image loaded, so returning false." << std::endl;
-      return false;
-    }
-
-    SmoothingFilter::Pointer smoothing = SmoothingFilter::New();
-    SigmoidFilter::Pointer sigmoid = SigmoidFilter::New();
-    ImageFilter::Pointer levelSet = ImageFilter::New();
-
-    smoothing->SetTimeStep(0.0625);
-    smoothing->SetNumberOfIterations(smoothingIterations);
-    smoothing->SetInput(this->image);
-    smoothing->Update();
-    this->image = smoothing->GetOutput();
-    write(distFilenames[dtNo]);
-
-    sigmoid->SetAlpha(alpha);
-    sigmoid->SetBeta(beta);
-    sigmoid->SetOutputMinimum(0.0);
-    sigmoid->SetOutputMaximum(1.0);
-    sigmoid->SetInput(this->image);
-    sigmoid->Update();
-
-    levelSet->SetPropagationScaling(propagationScaling);
-    levelSet->SetCurvatureScaling(1.0);
-    levelSet->SetAdvectionScaling(1.0);
-    levelSet->SetMaximumRMSError(0.0);
-    levelSet->SetNumberOfIterations(20);
-    levelSet->SetInput(this->image);
-    levelSet->SetFeatureImage(sigmoid->GetOutput());
-    this->image = levelSet->GetOutput();
-    levelSet->Update();
-
-    write(outFilenames[dtNo]);
+    std::cerr << "Preserve Topology failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
   }
 
 #if DEBUG_CONSOLIDATION
@@ -704,13 +614,14 @@ bool Image::gaussianBlur(double sigma)
   return true;
 }
 
-bool Image::smoothDT(bool blur, bool preserveTopology, double sigma, const char *xmlfilename)
+bool Image::smoothDT(bool preserveTopology, const std::string &inputfile, const std::string &outputfile, const std::string &dtfile, unsigned iterations, double alpha, double beta, double scaling, bool blur, double sigma)
 {
+  if (preserveTopology)
+    smoothTopology(inputfile, outputfile, dtfile, iterations, alpha, beta, scaling);
+
   if (blur)
     gaussianBlur(sigma);
   
-  if (preserveTopology)
-    smoothTopology(xmlfilename);
 }
 
 bool Image::cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez)

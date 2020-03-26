@@ -21,14 +21,14 @@ public:
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
-  bool pad(int padding, PixelType value);
+  bool pad(int padding = 0, PixelType value = 0.0);
   bool extractLabel(PixelType label = 1.0);
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
   bool fastMarch(float isoValue = 0.0);
-  bool smoothTopology(const char *xmlfilename);
-  bool gaussianBlur(double sigma);
-  bool smoothDT(bool blur, bool preserveTopology, double sigma, const char *xmlfilename);
+  bool smoothTopology(const std::string &inputfile, const std::string &outputfile, const std::string &dtfile, unsigned iterations = 10, double alpha = 10.0, double beta = 10.0, double scaling = 0.0);
+  bool gaussianBlur(double sigma = 0.0);
+  bool smoothDT(bool preserveTopology, const std::string &inputfile, const std::string &outputfile, const std::string &dtfile, unsigned iterations = 10, double alpha = 10.0, double beta = 10.0, double scaling = 0.0, bool blur = false, double sigma = 0.0);
   bool cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez);
   bool boundingBox(const std::string imagesDir, int padding);
 

@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(CloseHoles::getCommand());
   shapeworks.addCommand(Threshold::getCommand());
   shapeworks.addCommand(FastMarch::getCommand());
+  shapeworks.addCommand(SmoothDT::getCommand());
   shapeworks.addCommand(CropImage::getCommand());
   shapeworks.addCommand(BoundingBox::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
