@@ -521,50 +521,148 @@ bool Image::fastMarch(float isoValue)
   return true;
 }
 
+Image::ImageType::Pointer Image::applyCurvature(unsigned iterations)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+  }
+
+  using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetTimeStep(0.0625);
+  filter->SetNumberOfIterations(iterations);
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Curvature Flow failed:" << std::endl;
+    std::cerr << exp << std::endl;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Curvature Flow succeeded!\n";
+#endif
+  return image;
+}
+
+bool Image::applyGradient()
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter  = FilterType::New();
+
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Gradient Magnitude failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Gradient Magnitude succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::applySigmoid(double alpha, double beta)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::SigmoidImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetAlpha(alpha);
+  filter->SetBeta(beta);
+  filter->SetOutputMinimum(0.0);
+  filter->SetOutputMaximum(1.0);
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Sigmoid failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Sigmoid succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::applyLevel(const ImageType::Pointer other, double scaling)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetPropagationScaling(scaling);
+  filter->SetCurvatureScaling(1.0);
+  filter->SetAdvectionScaling(1.0);
+  filter->SetMaximumRMSError(0.0);
+  filter->SetNumberOfIterations(20);
+  filter->SetInput(other);
+  filter->SetFeatureImage(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Level Set failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Level Set succeeded!\n";
+#endif
+  return true;
+}
+
 bool Image::smoothTopology(const std::string &inputfile, const std::string &outputfile, const std::string &dtfile, unsigned iterations, double alpha, double beta, double scaling)
 {
-  using CurvatureFilter = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
-  CurvatureFilter::Pointer curvature = CurvatureFilter::New();
-
-  using GradientFilter = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
-  GradientFilter::Pointer gradient  = GradientFilter::New();
-
-  using SigmoidFilter = itk::SigmoidImageFilter<ImageType, ImageType>;
-  SigmoidFilter::Pointer sigmoid = SigmoidFilter::New();
-
-  using ImageFilter = itk::TPGACLevelSetImageFilter<ImageType, ImageType>;
-  ImageFilter::Pointer levelSet = ImageFilter::New();
-
   read(inputfile);
-
-  curvature->SetTimeStep(0.0625);
-  curvature->SetNumberOfIterations(iterations);
-  curvature->SetInput(this->image);
-  curvature->Update();
-  this->image = curvature->GetOutput();
+  const ImageType::Pointer other = applyCurvature(iterations);
   write(dtfile);
-
-  gradient->SetInput(this->image);
-  gradient->Update();
-  this->image = gradient->GetOutput();
-
-  sigmoid->SetAlpha(alpha);
-  sigmoid->SetBeta(beta);
-  sigmoid->SetOutputMinimum(0.0);
-  sigmoid->SetOutputMaximum(1.0);
-  sigmoid->SetInput(this->image);
-  sigmoid->Update();
-  this->image = sigmoid->GetOutput();
-
-  levelSet->SetPropagationScaling(scaling);
-  levelSet->SetCurvatureScaling(1.0);
-  levelSet->SetAdvectionScaling(1.0);
-  levelSet->SetMaximumRMSError(0.0);
-  levelSet->SetNumberOfIterations(20);
-  levelSet->SetInput(curvature->GetOutput());
-  levelSet->SetFeatureImage(this->image);
-  this->image = levelSet->GetOutput();
-  levelSet->Update();
+  applyGradient();
+  applySigmoid(alpha, beta);
+  applyLevel(other, scaling);
 
   try
   {
