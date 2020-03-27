@@ -14,7 +14,7 @@
 =========================================================================*/
 #ifndef __itkParticleImageDomain_h
 #define __itkParticleImageDomain_h
-
+#include <chrono>
 #define USE_OPENVDB
 
 #include <fstream>
@@ -115,10 +115,30 @@ public:
     h5_dims[1] = m_Size[1];
     h5_dims[2] = m_Size[2];
     H5::DataSpace dataspace(3, h5_dims);
-    H5::FloatType datatype( H5::PredType::NATIVE_FLOAT);
-    datatype.setOrder( H5T_ORDER_LE );
-    m_H5_dataset = file.createDataSet(h5_datasetname, datatype, dataspace );
+    // H5::FloatType datatype( H5::PredType::NATIVE_FLOAT);
+    // datatype.setOrder( H5T_ORDER_LE );
+    m_H5_dataset = file.createDataSet(h5_datasetname, H5::PredType::NATIVE_FLOAT, dataspace );
     m_H5_dataset.write(I->GetBufferPointer(), H5::PredType::NATIVE_FLOAT);
+
+    /*
+    std::vector<float> imagedata;
+    imagedata.reserve(m_Size[0] * m_Size[1] * m_Size[2]);
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    it.GoToBegin();
+    while(!it.IsAtEnd()) {
+      const auto idx = it.GetIndex();
+      const auto pixel = it.Get();
+
+      const int i = idx[0] + idx[1] * m_Size[0] + idx[2] * m_Size[0] * m_Size[1];
+      imagedata[i] = pixel;
+
+      ++it;
+    }
+    m_H5_dataset.write(imagedata.data(), H5::PredType::NATIVE_FLOAT);
+    */
+
+
+
 
     /*
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
@@ -207,7 +227,7 @@ public:
     this->SetLowerBound(l);
     this->SetUpperBound(u);
 
-    yolo();
+    benchmark(I->GetBufferPointer());
   }
 
   inline double GetSurfaceArea() const {
@@ -238,8 +258,24 @@ public:
     typename ImageType::Pointer m_Image;
     typename ScalarInterpolatorType::Pointer m_ScalarInterpolator;
 
-  void yolo() {
-    auto o = GetOrigin();
+  void benchmark(const float *imgPtr) {
+    float nx = 270;
+    float ny = 270;
+    float nz = 270;
+    auto start = std::chrono::high_resolution_clock::now();
+    for(int i=0; i<1000000; i++) {
+      PointType p;
+      p[0] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/nx)) - nx / 2;
+      p[1] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/ny)) - ny / 2;
+      p[2] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/nz)) - nz / 2;
+
+      Sample(p);
+    }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Took " << duration.count() << "us" << std::endl;
+
+    /*
     for(int i=0; i<5; i++) {
       for(int j=0; j<5; j++) {
         for (int k = 0; k < 5; k++) {
@@ -251,6 +287,7 @@ public:
         }
       }
     }
+     */
   }
 
   /** Sample the image at a point.  This method performs no bounds checking.
@@ -258,29 +295,31 @@ public:
   inline T Sample(const PointType &p) const
   {
     if(IsInsideBuffer(p)) {
-      PointType p2 = p;
-      for (int i = 0; i < 3; i++) { p2[i] = int(p[i]); }
-      float v0 = m_ScalarInterpolator->Evaluate(p);
+      // PointType p2 = p;
+      // for (int i = 0; i < 3; i++) { p2[i] = int(p[i]); }
+      // float v0 = m_ScalarInterpolator->Evaluate(p);
 
       auto o = GetOrigin();
       auto sp = p;
       for (int i = 0; i < 3; i++) { sp[i] -= o[i]; }
 
+      // auto testo = m_Image->TransformPhysicalPointToIndex(p);
+
       H5::DataSpace dataspace = m_H5_dataset.getSpace();
       hsize_t      offset[3];   // hyperslab offset in the file
       hsize_t      count[3];    // size of the hyperslab in the file
-      offset[0] = sp[0];
-      offset[1] = sp[1];
-      offset[2] = sp[2];
-      count[0]  = 1;
-      count[1]  = 1;
-      count[2]  = 1;
+      offset[0] = int(sp[0]); // Add one????
+      offset[1] = int(sp[1]);
+      offset[2] = int(sp[2]);
+      count[0]  = 3;
+      count[1]  = 3;
+      count[2]  = 3;
       dataspace.selectHyperslab( H5S_SELECT_SET, count, offset );
 
       hsize_t     dimsm[3];              /* memory space dimensions */
-      dimsm[0] = 1;
-      dimsm[1] = 1;
-      dimsm[2] = 1 ;
+      dimsm[0] = 3;
+      dimsm[1] = 3;
+      dimsm[2] = 3 ;
       H5::DataSpace memspace(3, dimsm );
       /*
        * Define memory hyperslab.
@@ -290,13 +329,14 @@ public:
       offset_out[0] = 0;
       offset_out[1] = 0;
       offset_out[2] = 0;
-      count_out[0]  = 1;
-      count_out[1]  = 1;
-      count_out[2]  = 1;
+      count_out[0]  = 3;
+      count_out[1]  = 3;
+      count_out[2]  = 3;
       memspace.selectHyperslab( H5S_SELECT_SET, count_out, offset_out );
-      float v;
-      m_H5_dataset.read(&v, H5::PredType::NATIVE_FLOAT, memspace, dataspace );
-      return v;
+      float v[27];
+      m_H5_dataset.read(v, H5::PredType::NATIVE_FLOAT, memspace, dataspace );
+
+      return v[13];
     } else {
       return 0.0;
     }
