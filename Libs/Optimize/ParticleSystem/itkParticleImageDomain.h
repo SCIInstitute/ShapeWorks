@@ -297,7 +297,8 @@ public:
     if(IsInsideBuffer(p)) {
       // PointType p2 = p;
       // for (int i = 0; i < 3; i++) { p2[i] = int(p[i]); }
-      // float v0 = m_ScalarInterpolator->Evaluate(p);
+      float v0 = m_ScalarInterpolator->Evaluate(p);
+      return v0;
 
       auto o = GetOrigin();
       auto sp = p;
