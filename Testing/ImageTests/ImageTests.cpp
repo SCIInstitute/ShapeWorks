@@ -92,19 +92,19 @@ TEST(ImageTests, pad_identity_test) {
 }
 
 TEST(ImageTests, extractlabel_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extractlabel/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
 
   Image image(test_location + "1x2x2.nrrd");
   image.extractLabel(1.0);
-  Image ground_truth(test_location + "extractlabel_baseline.nrrd");
+  Image ground_truth(test_location + "extract-label_baseline.nrrd");
 }
 
 TEST(ImageTests, closeholes_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/closeholes/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
 
   Image image(test_location + "1x2x2.nrrd");
   image.closeHoles();
-  Image ground_truth(test_location + "closeholes_baseline.nrrd");
+  Image ground_truth(test_location + "close-holes_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -120,25 +120,78 @@ TEST(ImageTests, threshold_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, fastmarch_test)
+TEST(ImageTests, computedt_test)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/fastmarch/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compute-dt/");
 
   Image image(test_location + "1x2x2.nrrd");
   image.fastMarch();
-  Image ground_truth(test_location + "fastmarch_baseline.nrrd");
+  Image ground_truth(test_location + "compute-dt_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, dicom_read_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
+// TEST(ImageTests, dicom_read_test) {
+//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
 
-  // read dicom
-  Image image(test_location + "dcm_files");
+//   Image image(test_location + "dcm_files");
+//   Image ground_truth(test_location + "dicom.nrrd");
 
-  // read ground truth
-  Image ground_truth(test_location + "dicom.nrrd");
+//   ASSERT_TRUE(image == ground_truth);
+// }
+
+TEST(ImageTests, curvature_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/curvature/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.applyCurvature();
+  Image ground_truth(test_location + "curvature_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, gradient_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/gradient/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.applyGradient();
+  Image ground_truth(test_location + "gradient_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, sigmoid_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sigmoid/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.applySigmoid();
+  Image ground_truth(test_location + "sigmoid_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, setlevel_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/set-level/");
+  std::string other_location = std::string(TEST_DATA_DIR) + std::string("/curvature/curvature_baseline.nrrd");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.applyLevel(other_location);
+  Image ground_truth(test_location + "set-level_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, blur_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/blur/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.gaussianBlur(2.0);
+  Image ground_truth(test_location + "blur_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
