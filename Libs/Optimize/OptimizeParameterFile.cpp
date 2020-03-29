@@ -320,7 +320,6 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
 
   // load input shapes
   std::vector < std::string > shapeFiles;
-  std::vector < Optimize::ImageType::Pointer > images;
 
   inputsBuffer.str(elem->GetText());
   while (inputsBuffer >> filename) {
@@ -332,7 +331,8 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
       Optimize::ImageType > ::New();
     reader->SetFileName(filename);
     reader->UpdateLargestPossibleRegion();
-    images.push_back(reader->GetOutput());
+    const auto image = reader->GetOutput();
+    optimize->AddImage(image);
 
     shapeFiles.push_back(filename);
   }
@@ -341,8 +341,6 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
   inputsBuffer.str("");
 
   numShapes = shapeFiles.size();
-
-  optimize->SetImages(images);
 
   std::vector < std::string > filenames;
 

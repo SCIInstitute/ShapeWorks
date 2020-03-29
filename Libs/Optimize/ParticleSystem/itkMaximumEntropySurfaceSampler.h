@@ -178,12 +178,23 @@ public:
         m_MeshFiles = s;
     }
 
-    void SetImages(const std::vector<typename TImage::Pointer> &images)
+    void AddImage(const typename TImage::Pointer image)
     {
-        m_Images = images;
+        const auto domain = ParticleImplicitSurfaceDomain<typename
+                              ImageType::PixelType, Dimension>::New();
+
+        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
+
+        domain->SetSigma(image->GetSpacing()[0] * 2.0);
+        domain->SetImage(image);
+        m_DomainList.push_back(domain);
     }
 
-    void SetFidsFiles(const std::vector<std::string> &s)
+    int NumDomains() const {
+      return m_DomainList.size();
+    }
+
+  void SetFidsFiles(const std::vector<std::string> &s)
     {
         m_FidsFiles = s;
     }
@@ -344,9 +355,8 @@ public:
     virtual void AllocateDomainsAndNeighborhoods();
     virtual void InitializeOptimizationFunctions();
     virtual void DeleteImages() {
-        for(int i=0; i<m_Images.size(); i++) {
+        for(int i=0; i<m_DomainList.size(); i++) {
             m_DomainList[i]->DeleteImages();
-            m_Images[i] = 0;
         }
     }
 
@@ -420,7 +430,6 @@ private:
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
 
-    std::vector<typename TImage::Pointer> m_Images;
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
     std::vector< std::vector< CuttingPlaneType> > m_CuttingPlanes;

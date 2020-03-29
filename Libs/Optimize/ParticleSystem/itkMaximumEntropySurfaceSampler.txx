@@ -90,18 +90,8 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     // *after* registering the attributes to the particle system since some of
     // them respond to AddDomain.
     int ctr = 0;
-    for (unsigned int i = 0; i < this->m_Images.size(); i++)
+    for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
-        m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
-                                ImageType::PixelType, Dimension>::New() );
-
-        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
-
-        typename TImage::Pointer img_temp = this->m_Images[i];
-
-        m_DomainList[i]->SetSigma(img_temp->GetSpacing()[0] * 2.0);
-
-        m_DomainList[i]->SetImage(img_temp);
 
         if (m_CuttingPlanes.size() > i)
         {

@@ -1971,6 +1971,7 @@ void Optimize::SetLogEnergy(bool log_energy)
 { this->m_log_energy = log_energy;}
 
 //---------------------------------------------------------------------------
+/*
 void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
 {
   this->m_images = images;
@@ -1980,11 +1981,18 @@ void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
   this->m_spacing = first_image->GetSpacing()[0];
   this->m_num_shapes = images.size();
 }
+ */
 
-//---------------------------------------------------------------------------
-std::vector<Optimize::ImageType::Pointer> Optimize::GetImages()
-{
-  return this->m_images;
+void Optimize::AddImage(ImageType::Pointer image) {
+  this->m_sampler->AddImage(image);
+  this->m_num_shapes++;
+  this->m_spacing = image->GetSpacing()[0];
+
+  if(this->m_sampler->NumDomains() == 1) {
+    this->m_sampler->SetInput(0, image);            // set the 0th input
+    // this->m_spacing = image->GetSpacing()[0];
+    // this->m_num_shapes = image.size();
+  }
 }
 
 //---------------------------------------------------------------------------
