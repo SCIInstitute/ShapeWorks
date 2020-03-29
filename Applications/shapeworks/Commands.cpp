@@ -341,47 +341,110 @@ int FastMarch::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// SmoothDT
+// Curvature
 ///////////////////////////////////////////////////////////////////////////////
-void SmoothDT::buildParser()
+void Curvature::buildParser()
 {
-  const std::string prog = "smooth-dt";
-  const std::string desc = "performs gaussian blur or preserves topology smoothing";
+  const std::string prog = "curvature";
+  const std::string desc = "performs curvature flow image filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(false).help("Perform topology preserving smoothing [default set to false].");
-  parser.add_option("--inputfile").action("store").type("string").set_default("").help("Name of input file");
-  parser.add_option("--outputfile").action("store").type("string").set_default("").help("Name of output file");
-  parser.add_option("--dtfile").action("store").type("string").set_default("").help("Name of distance tranform file");
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("To perform curvature flow filtering");
-  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("To perform sigmoid filterting");
-  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("To perform sigmoid filtering");
-  parser.add_option("--scaling").action("store").type("double").set_default(0.0).help("To perform TPGA level set filtering");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
+  
+  Command::buildParser();
+}
 
-  parser.add_option("--blur").action("store").type("bool").set_default(false).help("Perform gaussian blur [default set to false].");
-  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("To perform gausian blur");
+int Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+
+  return sharedData.image.applyCurvature(iterations);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Gradient
+///////////////////////////////////////////////////////////////////////////////
+void Gradient::buildParser()
+{
+  const std::string prog = "gradient";
+  const std::string desc = "performs gradient magnitude image filter";
+  parser.prog(prog).description(desc);
+  
+  Command::buildParser();
+}
+
+int Gradient::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  return sharedData.image.applyGradient();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Sigmoid
+///////////////////////////////////////////////////////////////////////////////
+void Sigmoid::buildParser()
+{
+  const std::string prog = "sigmoid";
+  const std::string desc = "performs sigmoid image filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha");
+  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta");
+  
+  Command::buildParser();
+}
+
+int Sigmoid::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double alpha = static_cast<double>(options.get("alpha"));
+  double beta = static_cast<double>(options.get("beta"));
+
+  return sharedData.image.applySigmoid(alpha, beta);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// LevelSet
+///////////////////////////////////////////////////////////////////////////////
+void LevelSet::buildParser()
+{
+  const std::string prog = "set-level";
+  const std::string desc = "performs TPGAC level set image filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--other").action("store").type("string").set_default("").help("path of image for input");
+  parser.add_option("--scaling").action("store").type("double").set_default(0.0).help("to perform TPGA level set filtering");
+  
+  Command::buildParser();
+}
+
+int LevelSet::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double scaling = static_cast<double>(options.get("scaling"));
+  std::string other = options["other"];
+
+  return sharedData.image.applyLevel(other, scaling);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Blur
+///////////////////////////////////////////////////////////////////////////////
+void Blur::buildParser()
+{
+  const std::string prog = "blur";
+  const std::string desc = "performs gaussian blur";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("value of sigma");
   
   Command::buildParser();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int SmoothDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int Blur::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  bool preservetopology = static_cast<bool>(options.get("preservetopology"));
-  const std::string inputfile = static_cast<std::string>(options.get("inputfile"));
-  const std::string outputfile = static_cast<std::string>(options.get("outputfile"));
-  const std::string dtfile = static_cast<std::string>(options.get("dtfile"));
-  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-  double alpha = static_cast<double>(options.get("alpha"));
-  double beta = static_cast<double>(options.get("beta"));
-  double scaling = static_cast<double>(options.get("scaling"));
-
-  bool blur = static_cast<bool>(options.get("blur"));
   double sigma = static_cast<double>(options.get("sigma"));
   
-  return sharedData.image.smoothDT(preservetopology, inputfile, outputfile, dtfile, iterations, alpha, beta, scaling, blur, sigma);
+  return sharedData.image.gaussianBlur(sigma);
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // CropImage

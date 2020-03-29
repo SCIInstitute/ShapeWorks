@@ -192,17 +192,61 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class SmoothDT : public ImageCommand
+class Curvature : public ImageCommand
 {
 public:
-  static SmoothDT &getCommand()
-  {
-    static SmoothDT instance;
-    return instance;
-  }
+  static Curvature& getCommand() { static Curvature instance; return instance; }
 
 private:
-  SmoothDT() { buildParser(); }
+  Curvature() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Gradient : public ImageCommand
+{
+public:
+  static Gradient& getCommand() { static Gradient instance; return instance; }
+
+private:
+  Gradient() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Sigmoid : public ImageCommand
+{
+public:
+  static Sigmoid& getCommand() { static Sigmoid instance; return instance; }
+
+private:
+  Sigmoid() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class LevelSet : public ImageCommand
+{
+public:
+  static LevelSet& getCommand() { static LevelSet instance; return instance; }
+
+private:
+  LevelSet() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Blur : public ImageCommand
+{
+public:
+  static Blur &getCommand() { static Blur instance; return instance; }
+
+private:
+  Blur() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -211,11 +255,7 @@ private:
 class CropImage : public ImageCommand
 {
 public:
-  static CropImage &getCommand()
-  {
-    static CropImage instance;
-    return instance;
-  }
+  static CropImage &getCommand() { static CropImage instance; return instance; }
 
 private:
   CropImage() { buildParser(); } 

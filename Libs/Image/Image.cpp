@@ -521,7 +521,7 @@ bool Image::fastMarch(float isoValue)
   return true;
 }
 
-Image::ImageType::Pointer Image::applyCurvature(unsigned iterations)
+bool Image::applyCurvature(unsigned iterations)
 {
   if (!this->image)
   {
@@ -549,7 +549,7 @@ Image::ImageType::Pointer Image::applyCurvature(unsigned iterations)
 #if DEBUG_CONSOLIDATION
   std::cout << "Curvature Flow succeeded!\n";
 #endif
-  return image;
+  return true;
 }
 
 bool Image::applyGradient()
@@ -618,7 +618,7 @@ bool Image::applySigmoid(double alpha, double beta)
   return true;
 }
 
-bool Image::applyLevel(const ImageType::Pointer other, double scaling)
+bool Image::applyLevel(const std::string other, double scaling)
 {
   if (!this->image)
   {
@@ -634,8 +634,10 @@ bool Image::applyLevel(const ImageType::Pointer other, double scaling)
   filter->SetAdvectionScaling(1.0);
   filter->SetMaximumRMSError(0.0);
   filter->SetNumberOfIterations(20);
-  filter->SetInput(other);
-  filter->SetFeatureImage(this->image);
+  const ImageType::Pointer currentImage = this->image;
+  read(other);
+  filter->SetInput(this->image);
+  filter->SetFeatureImage(currentImage);
   this->image = filter->GetOutput();
 
   try
@@ -651,32 +653,6 @@ bool Image::applyLevel(const ImageType::Pointer other, double scaling)
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Level Set succeeded!\n";
-#endif
-  return true;
-}
-
-bool Image::smoothTopology(const std::string &inputfile, const std::string &outputfile, const std::string &dtfile, unsigned iterations, double alpha, double beta, double scaling)
-{
-  read(inputfile);
-  const ImageType::Pointer other = applyCurvature(iterations);
-  write(dtfile);
-  applyGradient();
-  applySigmoid(alpha, beta);
-  applyLevel(other, scaling);
-
-  try
-  {
-    write(outputfile);
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Preserve Topology failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Preserve Topology succeeded!\n";
 #endif
   return true;
 }
@@ -710,16 +686,6 @@ bool Image::gaussianBlur(double sigma)
   std::cout << "Gaussian Blur succeeded!\n";
 #endif
   return true;
-}
-
-bool Image::smoothDT(bool preserveTopology, const std::string &inputfile, const std::string &outputfile, const std::string &dtfile, unsigned iterations, double alpha, double beta, double scaling, bool blur, double sigma)
-{
-  if (preserveTopology)
-    smoothTopology(inputfile, outputfile, dtfile, iterations, alpha, beta, scaling);
-
-  if (blur)
-    gaussianBlur(sigma);
-  
 }
 
 bool Image::cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez)
