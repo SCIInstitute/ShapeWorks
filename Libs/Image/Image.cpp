@@ -489,7 +489,7 @@ bool Image::threshold(PixelType min, PixelType max)
   return true;
 }
 
-bool Image::fastMarch(float isoValue)
+bool Image::computeDT(float isoValue)
 {
   if (!this->image)
   {

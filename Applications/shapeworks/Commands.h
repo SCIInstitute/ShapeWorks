@@ -176,17 +176,17 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class FastMarch : public ImageCommand
+class ComputeDT : public ImageCommand
 {
 public:
-  static FastMarch &getCommand()
+  static ComputeDT &getCommand()
   {
-    static FastMarch instance;
+    static ComputeDT instance;
     return instance;
   }
 
 private:
-  FastMarch() { buildParser(); } 
+  ComputeDT() { buildParser(); } 
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -228,13 +228,13 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class LevelSet : public ImageCommand
+class SetLevel : public ImageCommand
 {
 public:
-  static LevelSet& getCommand() { static LevelSet instance; return instance; }
+  static SetLevel& getCommand() { static SetLevel instance; return instance; }
 
 private:
-  LevelSet() { buildParser(); }
+  SetLevel() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

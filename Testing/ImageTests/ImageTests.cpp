@@ -125,7 +125,7 @@ TEST(ImageTests, computedt_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compute-dt/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.fastMarch();
+  image.computeDT();
   Image ground_truth(test_location + "compute-dt_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

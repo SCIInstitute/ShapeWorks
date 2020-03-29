@@ -25,7 +25,7 @@ public:
   bool extractLabel(PixelType label = 1.0);
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
-  bool fastMarch(float isoValue = 0.0);
+  bool computeDT(float isoValue = 0.0);
   bool applyCurvature(unsigned iterations = 10);
   bool applyGradient();
   bool applySigmoid(double alpha = 10.0, double beta = 10.0);

@@ -319,9 +319,9 @@ int Threshold::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FastMarch
+// ComputeDT
 ///////////////////////////////////////////////////////////////////////////////
-void FastMarch::buildParser()
+void ComputeDT::buildParser()
 {
   const std::string prog = "compute-dt";
   const std::string desc = "computes distance transform volume from a binary (antialiased) image";
@@ -333,11 +333,11 @@ void FastMarch::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int FastMarch::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int ComputeDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float isovalue = static_cast<float>(options.get("isovalue"));
 
-  return sharedData.image.fastMarch(isovalue);
+  return sharedData.image.computeDT(isovalue);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -402,9 +402,9 @@ int Sigmoid::execute(const optparse::Values &options, SharedCommandData &sharedD
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// LevelSet
+// SetLevel
 ///////////////////////////////////////////////////////////////////////////////
-void LevelSet::buildParser()
+void SetLevel::buildParser()
 {
   const std::string prog = "set-level";
   const std::string desc = "performs TPGAC level set image filter";
@@ -416,11 +416,11 @@ void LevelSet::buildParser()
   Command::buildParser();
 }
 
-int LevelSet::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int SetLevel::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  double scaling = static_cast<double>(options.get("scaling"));
   std::string other = options["other"];
-
+  double scaling = static_cast<double>(options.get("scaling"));
+  
   return sharedData.image.applyLevel(other, scaling);
 }
 
