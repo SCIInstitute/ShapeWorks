@@ -1,4 +1,8 @@
 REM update anaconda
+
+call conda config --add channels anaconda
+call conda config --add channels conda-forge
+
 call conda update --yes -n base -c defaults conda
 call conda update --yes --all
 
@@ -7,12 +11,12 @@ call conda create --yes --name shapeworks python=3.7
 call conda activate shapeworks
 
 REM install shapeworks deps
-call conda install --yes -c conda-forge colorama=0.4.3
-call conda install --yes -c conda-forge requests=2.22.0
-call conda install --yes -c conda-forge openblas=0.3.3
-call conda install --yes -c conda-forge numpy=1.17.4
-call conda install --yes -c conda-forge scikit-learn=0.22.1
-call conda install --yes -c gtest=1.10.0 cmake-3.15.5
+call conda install --yes colorama=0.4.3
+call conda install --yes requests=2.22.0
+call conda install --yes openblas=0.3.3
+call conda install --yes numpy=1.17.4
+call conda install --yes scikit-learn=0.22.1
+call conda install --yes gtest=1.10.0 cmake-3.15.5
 
 REM reactivate shapeworks environment
 call conda activate base
