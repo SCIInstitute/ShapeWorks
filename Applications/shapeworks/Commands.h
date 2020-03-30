@@ -252,6 +252,22 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class BoundingBox : public ImageCommand
+{
+public:
+  static BoundingBox &getCommand()
+  {
+    static BoundingBox instance;
+    return instance;
+  }
+
+private:
+  BoundingBox() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class CropImage : public ImageCommand
 {
 public:
@@ -259,18 +275,6 @@ public:
 
 private:
   CropImage() { buildParser(); } 
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class BoundingBox : public ImageCommand
-{
-public:
-  static BoundingBox& getCommand() { static BoundingBox instance; return instance; }
-
-private:
-  BoundingBox() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

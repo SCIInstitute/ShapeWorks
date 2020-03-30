@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Sigmoid::getCommand());
   shapeworks.addCommand(SetLevel::getCommand());
   shapeworks.addCommand(Blur::getCommand());
-  shapeworks.addCommand(CropImage::getCommand());
   shapeworks.addCommand(BoundingBox::getCommand());
+  shapeworks.addCommand(CropImage::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());

@@ -13,6 +13,13 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
+  struct Bounding
+  {
+    int boundingIndex[3] = {0, 0, 0};
+    int largestIndex[3] = {0, 0, 0};
+    int smallestIndex[3] = {static_cast<int>(1e6), static_cast<int>(1e6), static_cast<int>(1e6)};
+  };
+
   Image(const std::string &filename) { read(filename); }
 
   bool read(const std::string &filename);
@@ -31,8 +38,8 @@ public:
   bool applySigmoid(double alpha = 10.0, double beta = 10.0);
   bool applyLevel(const std::string other, double scaling = 0.0);
   bool gaussianBlur(double sigma = 0.0);
-  bool cropImage(float startx, float starty, float startz, float sizex, float sizey, float sizez);
-  bool boundingBox(const std::string imagesDir, int padding);
+  Bounding boundingBox(int padding);
+  bool crop();
 
   bool operator==(const Image &other) const;
 
@@ -52,6 +59,9 @@ private:
   bool read_image_dir(const std::string &pathname);
 
   ImageType::Pointer image;
+  std::vector<ImageType::Pointer> images;
+
+  Bounding imageBound;
 };
 
 } // shapeworks

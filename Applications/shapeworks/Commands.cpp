@@ -447,40 +447,6 @@ int Blur::execute(const optparse::Values &options, SharedCommandData &sharedData
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// CropImage
-///////////////////////////////////////////////////////////////////////////////
-void CropImage::buildParser()
-{
-  const std::string prog = "crop";
-  const std::string desc = "performs translational alignment of shape image based on its center of mass or given 3D point";
-  parser.prog(prog).description(desc);
-  
-  parser.add_option("--startx").action("store").type("float").set_default(0.0).help("starting index in X direction.");
-  parser.add_option("--starty").action("store").type("float").set_default(0.0).help("starting index in Y direction.");
-  parser.add_option("--startz").action("store").type("float").set_default(0.0).help("starting index in Z direction.");
-
-  parser.add_option("--sizex").action("store").type("int").set_default(0.0).help("bounding box value in X direction.");
-  parser.add_option("--sizey").action("store").type("float").set_default(0.0).help("bounding box value in Y direction.");
-  parser.add_option("--sizez").action("store").type("float").set_default(0.0).help("bounding box value in Z direction.");
-
-  Command::buildParser();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  float startx = static_cast<float>(options.get("startx"));
-  float starty = static_cast<float>(options.get("starty"));
-  float startz = static_cast<float>(options.get("startz"));
-
-  float sizex = static_cast<float>(options.get("sizex"));
-  float sizey = static_cast<float>(options.get("sizey"));
-  float sizez = static_cast<float>(options.get("sizez"));
-
-  return sharedData.image.cropImage(startx, starty, startz, sizex, sizey, sizez);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // BoundingBox
 ///////////////////////////////////////////////////////////////////////////////
 void BoundingBox::buildParser()
@@ -489,20 +455,36 @@ void BoundingBox::buildParser()
   const std::string desc = "compute largest bounding box size given set of images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--imagesdir").action("store").type("string").set_default("").help("paths to images");
-  // parser.add_option("--outPrefix").action("store").type("string").set_default("").help("Output prefix to be used to save the parameters for the estimated bounding box.");
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box");
-  
+
   Command::buildParser();
 }
 
 int BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  const std::string imagesdir = static_cast<std::string>(options.get("imagesdir"));
-  // std::string outPrefix   = (std::string) options.get("outPrefix");
   int padding = static_cast<int>(options.get("padding"));
 
-  return sharedData.image.boundingBox(imagesdir, padding);
+  sharedData.image.boundingBox(padding);
+
+  return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CropImage
+///////////////////////////////////////////////////////////////////////////////
+void CropImage::buildParser()
+{
+  const std::string prog = "crop";
+  const std::string desc = "performs translational alignment of shape image based on its center of mass or given 3D point";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  return sharedData.image.crop();
 }
 
 } // shapeworks
