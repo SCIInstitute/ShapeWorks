@@ -15,7 +15,7 @@ class Lightbox;
 class GroomTool;
 class OptimizeTool;
 class AnalysisTool;
-class Project;
+class Session;
 class Visualizer;
 
 // Forward Qt class declarations
@@ -136,7 +136,7 @@ private:
   //all the preferences
   Preferences preferences_;
 
-  QSharedPointer<Project> project_;
+  QSharedPointer<Session> project_;
 
   QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 

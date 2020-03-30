@@ -15,7 +15,7 @@ public:
   enum ThreadType { GroomType, OptimizeType, ReconstructType };
   ShapeworksWorker(ThreadType type, ShapeWorksGroom* groom,
                    Optimize* optimize,
-                   QSharedPointer<Project> project,
+                   QSharedPointer<Session> project,
                    std::vector<std::vector<itk::Point<double>>> local_pts =
                      std::vector<std::vector<itk::Point<double>>>(),
                    std::vector<std::vector<itk::Point<double>>> global_pts =
@@ -41,7 +41,7 @@ Q_SIGNALS:
 private:
   ShapeWorksGroom* groom_;
   Optimize* optimize_;
-  QSharedPointer<Project> project_;
+  QSharedPointer<Session> project_;
   ThreadType type_;
   std::vector<std::vector<itk::Point<double>>> local_pts_;
   std::vector<std::vector<itk::Point<double>>> global_pts_;

@@ -8,7 +8,7 @@
 
 #include <Data/Preferences.h>
 
-class Project;
+class Session;
 class Ui_OptimizeTool;
 class QOptimize;
 
@@ -21,7 +21,7 @@ public:
   ~OptimizeTool();
 
   /// set the pointer to the project
-  void set_project(QSharedPointer<Project> project);
+  void set_project(QSharedPointer<Session> project);
 
   void set_preferences(bool setScales = false);
 
@@ -74,6 +74,6 @@ private:
   QOptimize* optimize_ = nullptr;
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
-  QSharedPointer<Project> project_;
+  QSharedPointer<Session> project_;
   std::vector<std::array<itk::Point<double>, 3 >> cutPlanes_;
 };

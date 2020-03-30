@@ -217,7 +217,7 @@ AnalysisTool::~AnalysisTool()
 {}
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_project(QSharedPointer<Project> project)
+void AnalysisTool::set_project(QSharedPointer<Session> project)
 {
   this->project_ = project;
 }

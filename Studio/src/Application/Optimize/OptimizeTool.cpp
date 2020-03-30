@@ -300,7 +300,7 @@ void OptimizeTool::on_number_of_particles_valueChanged(int val)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::set_project(QSharedPointer<Project> project)
+void OptimizeTool::set_project(QSharedPointer<Session> project)
 {
   this->project_ = project;
 }

@@ -14,7 +14,7 @@
 #include <itkParticleShapeStatistics.h>
 #include <Visualization/BarGraph.h>
 
-class Project;
+class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class Ui_AnalysisTool;
@@ -29,7 +29,7 @@ public:
   ~AnalysisTool();
 
   /// set the pointer to the project
-  void set_project(QSharedPointer<Project> project);
+  void set_project(QSharedPointer<Session> project);
 
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
@@ -125,7 +125,7 @@ private:
   //private members
   Preferences & preferences_;
   Ui_AnalysisTool* ui_;
-  QSharedPointer<Project> project_;
+  QSharedPointer<Session> project_;
   ShapeWorksStudioApp* app_;
 
   VisualizerHandle visualizer_;

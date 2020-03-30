@@ -11,7 +11,7 @@
 ShapeworksWorker::ShapeworksWorker(ThreadType type,
                                    ShapeWorksGroom* groom,
                                    Optimize* optimize,
-                                   QSharedPointer<Project> project,
+                                   QSharedPointer<Session> project,
                                    std::vector<std::vector<itk::Point<double>>> local_pts,
                                    std::vector<std::vector<itk::Point<double>>> global_pts,
                                    std::vector<ImageType::Pointer> distance_transform,

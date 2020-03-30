@@ -10,7 +10,7 @@
 #include <Groom/QGroom.h>
 #include <string>
 
-class Project;
+class Session;
 class Ui_GroomTool;
 class ShapeWorksStudioApp;
 
@@ -25,7 +25,7 @@ public:
   ~GroomTool();
 
   /// set the pointer to the project
-  void set_project(QSharedPointer<Project> project);
+  void set_project(QSharedPointer<Session> project);
 
   void update_preferences();
   void set_preferences();
@@ -55,7 +55,7 @@ public Q_SLOTS:
 private:
 
   Ui_GroomTool* ui_;
-  QSharedPointer<Project> project_;
+  QSharedPointer<Session> project_;
   Preferences& preferences_;
   std::vector<std::string>& files_;
   QGroom* groom_;

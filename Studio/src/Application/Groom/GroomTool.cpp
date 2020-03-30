@@ -207,7 +207,7 @@ void GroomTool::handle_thread_complete()
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::set_project(QSharedPointer<Project> project)
+void GroomTool::set_project(QSharedPointer<Session> project)
 {
   this->project_ = project;
 }

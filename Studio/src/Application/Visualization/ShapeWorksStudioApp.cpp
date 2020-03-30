@@ -102,7 +102,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   menu->addAction(widget_action);
 
   //project initializations
-  this->project_ = QSharedPointer<Project>(new Project(this, preferences_));
+  this->project_ = QSharedPointer<Session>(new Session(this, preferences_));
   this->project_->set_parent(this);
   connect(this->project_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
   connect(this->project_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
@@ -271,7 +271,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->ui_->action_groom_mode->setChecked(false);
   this->ui_->action_optimize_mode->setChecked(false);
   this->ui_->action_analysis_mode->setChecked(false);
-  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::DATA_C));
   this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
   this->ui_->controlsDock->setWindowTitle("Data");
   this->preferences_.set_saved();
@@ -546,7 +546,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   if (this->project_->get_shapes().size() == 0) {
     this->project_->reset();
     this->analysis_tool_->reset_stats();
-    this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
+    this->preferences_.set_preference("tool_state", QString::fromStdString(Session::DATA_C));
     this->lightbox_->clear_renderers();
     this->update_display();
   }
@@ -660,7 +660,7 @@ void ShapeWorksStudioApp::set_view_combo_item_enabled(int item, bool value)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::GROOM_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::GROOM_C));
   this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Groom");
   this->on_actionShow_Tool_Window_triggered();
@@ -669,7 +669,7 @@ void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::DATA_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::DATA_C));
   this->ui_->stacked_widget->setCurrentIndex(0);
   this->ui_->controlsDock->setWindowTitle("Data");
   this->on_actionShow_Tool_Window_triggered();
@@ -678,7 +678,7 @@ void ShapeWorksStudioApp::on_action_import_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::OPTIMIZE_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::OPTIMIZE_C));
   this->ui_->stacked_widget->setCurrentWidget(this->optimize_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Optimize");
   this->on_actionShow_Tool_Window_triggered();
@@ -690,7 +690,7 @@ void ShapeWorksStudioApp::on_action_optimize_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 {
-  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::ANALYSIS_C));
   this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
   this->ui_->controlsDock->setWindowTitle("Analysis");
   this->on_actionShow_Tool_Window_triggered();
@@ -922,7 +922,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
   auto tool_state = this->preferences_.get_preference(
-    "tool_state", QString::fromStdString(Project::DATA_C)).toStdString();
+    "tool_state", QString::fromStdString(Session::DATA_C)).toStdString();
   this->groom_tool_->set_preferences();
   this->optimize_tool_->set_preferences();
   this->preferences_window_->set_values_from_preferences();
@@ -948,16 +948,16 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->optimize_tool_->setCutPlanesFile(planesFile);
   }
   // set UI state based on project
-  if (tool_state == Project::DATA_C) {
+  if (tool_state == Session::DATA_C) {
     this->ui_->action_import_mode->trigger();
   }
-  else if (tool_state == Project::GROOM_C) {
+  else if (tool_state == Session::GROOM_C) {
     this->ui_->action_groom_mode->trigger();
   }
-  else if (tool_state == Project::OPTIMIZE_C) {
+  else if (tool_state == Session::OPTIMIZE_C) {
     this->ui_->action_optimize_mode->trigger();
   }
-  else if (tool_state == Project::ANALYSIS_C) {
+  else if (tool_state == Session::ANALYSIS_C) {
     this->ui_->action_analysis_mode->trigger();
   }
 

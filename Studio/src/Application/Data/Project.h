@@ -11,25 +11,25 @@
 
 class Shape;
 
-class Project;
-typedef QSharedPointer< Project > ProjectHandle;
+class Session;
+typedef QSharedPointer< Session > ProjectHandle;
 
 //! Representation of a project.
 /*!
  * The Project class encapsulates everything about a project.
  *
  */
-class Project : public QObject
+class Session : public QObject
 {
   Q_OBJECT;
 
 public:
 
   /// constructor
-  Project(QWidget* parent, Preferences& prefs);
+  Session(QWidget* parent, Preferences& prefs);
 
   /// destructor
-  ~Project();
+  ~Session();
 
   /// set QWidget parent
   void set_parent(QWidget* parent);

@@ -22,13 +22,13 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkPolyDataReader.h>
 
-const std::string Project::DATA_C("data");
-const std::string Project::GROOM_C("groom");
-const std::string Project::OPTIMIZE_C("optimize");
-const std::string Project::ANALYSIS_C("analysis");
+const std::string Session::DATA_C("data");
+const std::string Session::GROOM_C("groom");
+const std::string Session::OPTIMIZE_C("optimize");
+const std::string Session::ANALYSIS_C("analysis");
 
 //---------------------------------------------------------------------------
-Project::Project(QWidget* parent, Preferences& prefs) : parent_(parent),
+Session::Session(QWidget* parent, Preferences& prefs) : parent_(parent),
   preferences_(prefs)
 {
   this->parent_ = NULL;
@@ -37,23 +37,23 @@ Project::Project(QWidget* parent, Preferences& prefs) : parent_(parent),
 }
 
 //---------------------------------------------------------------------------
-Project::~Project()
+Session::~Session()
 {}
 
 //---------------------------------------------------------------------------
-void Project::handle_new_mesh()
+void Session::handle_new_mesh()
 {
   emit update_display();
 }
 
 //---------------------------------------------------------------------------
-void Project::handle_message(std::string s)
+void Session::handle_message(std::string s)
 {
   emit message(s);
 }
 
 //---------------------------------------------------------------------------
-void Project::handle_thread_complete()
+void Session::handle_thread_complete()
 {
   emit message("Reconstruction initialization complete.");
   this->calculate_reconstructed_samples();
@@ -61,14 +61,14 @@ void Project::handle_thread_complete()
 }
 
 //---------------------------------------------------------------------------
-void Project::handle_clear_cache()
+void Session::handle_clear_cache()
 {
   this->mesh_manager_->clear_cache();
   this->calculate_reconstructed_samples();
 }
 
 //---------------------------------------------------------------------------
-void Project::calculate_reconstructed_samples()
+void Session::calculate_reconstructed_samples()
 {
   if (!this->reconstructed_present_) {
     return;
@@ -85,13 +85,13 @@ void Project::calculate_reconstructed_samples()
 }
 
 //---------------------------------------------------------------------------
-void Project::set_parent(QWidget* parent)
+void Session::set_parent(QWidget* parent)
 {
   this->parent_ = parent;
 }
 
 //---------------------------------------------------------------------------
-bool Project::save_project(std::string fname, std::string dataDir, std::string cutPlanesFile)
+bool Session::save_project(std::string fname, std::string dataDir, std::string cutPlanesFile)
 {
   QString filename = QString::fromStdString(fname);
   if (filename == "") {
@@ -236,7 +236,7 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
 }
 
 //---------------------------------------------------------------------------
-void Project::save_particles_file(std::string filename, const vnl_vector<double> &points)
+void Session::save_particles_file(std::string filename, const vnl_vector<double> &points)
 {
   std::ofstream out(filename);
   size_t newline = 1;
@@ -248,7 +248,7 @@ void Project::save_particles_file(std::string filename, const vnl_vector<double>
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_project(QString filename, std::string& planesFile)
+bool Session::load_project(QString filename, std::string& planesFile)
 {
   if (!QFile::exists(filename)) {
     QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
@@ -415,7 +415,7 @@ bool Project::load_project(QString filename, std::string& planesFile)
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_light_project(QString filename, string &planesFile)
+bool Session::load_light_project(QString filename, string &planesFile)
 {
   std::cerr << "Loading light project...\n";
   this->is_light_project_ = true;
@@ -532,7 +532,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
 
   this->preferences_.set_preference("display_state",
                                     QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
-  this->preferences_.set_preference("tool_state", QString::fromStdString(Project::ANALYSIS_C));
+  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::ANALYSIS_C));
   this->renumber_shapes();
 
   std::cerr << "light project loaded\n";
@@ -540,7 +540,7 @@ bool Project::load_light_project(QString filename, string &planesFile)
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_xl_project(QString filename)
+bool Session::load_xl_project(QString filename)
 {
   // clear the project out first
   this->reset();
@@ -578,7 +578,7 @@ bool Project::load_xl_project(QString filename)
 }
 
 //---------------------------------------------------------------------------
-void Project::load_original_files(std::vector<std::string> file_names)
+void Session::load_original_files(std::vector<std::string> file_names)
 {
   QProgressDialog progress("Loading images...", "Abort", 0, file_names.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -633,7 +633,7 @@ void Project::load_original_files(std::vector<std::string> file_names)
 }
 
 //---------------------------------------------------------------------------
-void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double iso)
+void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double iso)
 {
   QProgressDialog progress("Loading groomed images...", "Abort", 0, images.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -660,7 +660,7 @@ void Project::load_groomed_images(std::vector<ImageType::Pointer> images, double
 }
 
 //---------------------------------------------------------------------------
-void Project::load_groomed_files(std::vector<std::string> file_names, double iso)
+void Session::load_groomed_files(std::vector<std::string> file_names, double iso)
 {
   QProgressDialog progress("Loading groomed images...", "Abort", 0,
                            file_names.size(), this->parent_);
@@ -688,7 +688,7 @@ void Project::load_groomed_files(std::vector<std::string> file_names, double iso
 }
 
 //---------------------------------------------------------------------------
-bool Project::update_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
+bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points, bool local)
 {
   for (int i = 0; i < points.size(); i++) {
     QSharedPointer<Shape> shape;
@@ -711,25 +711,25 @@ bool Project::update_points(std::vector<std::vector<itk::Point<double>>> points,
 }
 
 //---------------------------------------------------------------------------
-void Project::set_reconstructed_present(bool value)
+void Session::set_reconstructed_present(bool value)
 {
   this->reconstructed_present_ = value;
 }
 
 //---------------------------------------------------------------------------
-bool Project::is_light_project()
+bool Session::is_light_project()
 {
   return this->is_light_project_;
 }
 
 //---------------------------------------------------------------------------
-bool Project::get_groomed_present()
+bool Session::get_groomed_present()
 {
   return this->groomed_present_;
 }
 
 //---------------------------------------------------------------------------
-bool Project::load_point_files(std::vector<std::string> list, bool local)
+bool Session::load_point_files(std::vector<std::string> list, bool local)
 {
   QProgressDialog progress("Loading point files...", "Abort", 0, list.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -780,13 +780,13 @@ bool Project::load_point_files(std::vector<std::string> list, bool local)
 }
 
 //---------------------------------------------------------------------------
-QVector<QSharedPointer<Shape>> Project::get_shapes()
+QVector<QSharedPointer<Shape>> Session::get_shapes()
 {
   return this->shapes_;
 }
 
 //---------------------------------------------------------------------------
-void Project::remove_shapes(QList<int> list)
+void Session::remove_shapes(QList<int> list)
 {
   foreach(int i, list) {
     this->shapes_.erase(this->shapes_.begin() + i);
@@ -797,7 +797,7 @@ void Project::remove_shapes(QList<int> list)
 }
 
 //---------------------------------------------------------------------------
-void Project::reset()
+void Session::reset()
 {
   this->is_light_project_ = false;
 
@@ -817,31 +817,31 @@ void Project::reset()
 }
 
 //---------------------------------------------------------------------------
-bool Project::original_present()
+bool Session::original_present()
 {
   return this->original_present_;
 }
 
 //---------------------------------------------------------------------------
-bool Project::groomed_present()
+bool Session::groomed_present()
 {
   return this->groomed_present_;
 }
 
 //---------------------------------------------------------------------------
-bool Project::reconstructed_present()
+bool Session::reconstructed_present()
 {
   return this->reconstructed_present_;
 }
 
 //---------------------------------------------------------------------------
-bool Project::groups_available()
+bool Session::groups_available()
 {
   return this->groups_available_;
 }
 
 //---------------------------------------------------------------------------
-void Project::renumber_shapes()
+void Session::renumber_shapes()
 {
   for (int i = 0; i < this->shapes_.size(); i++) {
     this->shapes_[i]->set_id(i + 1);
@@ -849,13 +849,13 @@ void Project::renumber_shapes()
 }
 
 //---------------------------------------------------------------------------
-QString Project::get_filename()
+QString Session::get_filename()
 {
   return this->filename_;
 }
 
 //---------------------------------------------------------------------------
-int Project::get_num_shapes()
+int Session::get_num_shapes()
 {
   return this->shapes_.size();
 }
