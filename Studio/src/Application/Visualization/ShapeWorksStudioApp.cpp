@@ -17,7 +17,7 @@
 #include <Groom/GroomTool.h>
 #include <Optimize/OptimizeTool.h>
 #include <Analysis/AnalysisTool.h>
-#include <Data/Project.h>
+#include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
 #include <Visualization/ShapeWorksStudioApp.h>

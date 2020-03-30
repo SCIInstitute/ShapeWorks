@@ -8,7 +8,7 @@
 
 #include <Groom/GroomTool.h>
 #include <Visualization/ShapeWorksWorker.h>
-#include <Data/Project.h>
+#include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 

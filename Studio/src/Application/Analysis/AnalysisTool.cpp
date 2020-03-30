@@ -12,7 +12,7 @@
 // shapeworks
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/ShapeworksWorker.h>
-#include <Data/Project.h>
+#include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
 #include <Analysis/AnalysisTool.h>

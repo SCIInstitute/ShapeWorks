@@ -3,7 +3,7 @@
 #include <QObject>
 
 #include <Groom/ShapeWorksGroom.h>
-#include <Data/Project.h>
+#include <Data/Session.h>
 
 class Optimize;
 

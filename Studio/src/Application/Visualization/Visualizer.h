@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include <Data/Project.h>
+#include <Data/Session.h>
 #include <Data/Preferences.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/DisplayObject.h>
