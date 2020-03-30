@@ -1,7 +1,11 @@
 #include <string>
 #include <vector>
 
-#include <xlnt/xlnt.hpp>
+
+namespace xlnt
+{
+  class workbook;
+}
 
 namespace shapeworks
 {
@@ -11,6 +15,7 @@ class Project {
 public:
 
   Project();
+  ~Project();
 
   bool load(std::string filename);
 
@@ -40,7 +45,7 @@ private:
   std::vector<std::string> get_string_column(std::string name);
   void save_string_column(std::string name, std::vector<std::string> items);
 
-  xlnt::workbook wb_;
+  std::unique_ptr<xlnt::workbook> wb_;
 
   bool loaded_ = false;
 };

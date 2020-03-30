@@ -1,18 +1,28 @@
-
 #include <Project.h>
+
+#include <xlnt/xlnt.hpp>
+#include <memory>
 
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
 Project::Project()
-{}
+{
+  this->wb_ = std::unique_ptr<xlnt::workbook>(new xlnt::workbook());
+}
+
+//---------------------------------------------------------------------------
+Project::~Project()
+{
+
+}
 
 //---------------------------------------------------------------------------
 bool Project::load(std::string filename)
 {
   try
   {
-    this->wb_.load(filename);
+    this->wb_->load(filename);
   } catch (xlnt::exception &e) {
     throw "Error reading xlsx";
   }
@@ -35,7 +45,7 @@ bool Project::save(std::string filename)
   this->save_string_column("local_point_files", this->local_point_files_);
   this->save_string_column("world_point_files", this->global_point_files_);
 
-  this->wb_.save(filename);
+  this->wb_->save(filename);
 
   return true;
 }
@@ -92,7 +102,7 @@ void Project::set_global_point_files(std::vector<std::string> files)
 int Project::get_index_for_column(std::string name, bool create_if_not_found)
 {
 
-  xlnt::worksheet ws = this->wb_.sheet_by_index(0);
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
   auto headers = ws.rows(false)[0];
 
@@ -126,7 +136,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
     return list;
   }
 
-  xlnt::worksheet ws = this->wb_.sheet_by_index(0);
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
   auto rows = ws.rows(false);
 
@@ -145,7 +155,7 @@ void Project::save_string_column(std::string name, std::vector<std::string> item
 {
   int index = this->get_index_for_column(name, true);
 
-  xlnt::worksheet ws = this->wb_.sheet_by_index(0);
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
   ws.cell(xlnt::cell_reference(index, 1)).value(name);
 
