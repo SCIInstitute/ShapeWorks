@@ -111,6 +111,7 @@ public:
     const auto slices = m_Size[2];
     std::vector<openvdb::FloatGrid::Ptr> vdbGrids(slices);
 
+    //TODO: check if openmp is available
 #pragma omp parallel for schedule(static)
     for(int i=0; i<slices; i++) {
       const auto vdbGrid = openvdb::FloatGrid::create(500000.0);
