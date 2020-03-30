@@ -7,7 +7,7 @@
 
 #include <Visualization/Visualizer.h>
 
-#include <Data/XlProject.h>
+#include <Libs/Project/Project.h>
 
 #include <QDir>
 #include <QFile>
@@ -108,7 +108,7 @@ bool Project::save_project(std::string fname, std::string dataDir, std::string c
     return false;
   }
 
-  XlProject xl;
+  shapeworks::Project xl;
 
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
   progress.setWindowModality(Qt::WindowModal);
@@ -546,7 +546,7 @@ bool Project::load_xl_project(QString filename)
   this->reset();
   this->filename_ = filename;
 
-  XlProject xl;
+  shapeworks::Project xl;
   xl.load(filename.toStdString());
 
   std::vector<std::string> original_files = xl.get_original_files();

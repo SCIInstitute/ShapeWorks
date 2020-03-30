@@ -3,11 +3,14 @@
 
 #include <xlnt/xlnt.hpp>
 
-class XlProject {
+namespace shapeworks
+{
+
+class Project {
 
 public:
 
-  XlProject();
+  Project();
 
   bool load(std::string filename);
 
@@ -41,3 +44,4 @@ private:
 
   bool loaded_ = false;
 };
+}

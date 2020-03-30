@@ -193,6 +193,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Analyze
   Optimize
   Utils
+  Project
   xlnt::xlnt
   )
 

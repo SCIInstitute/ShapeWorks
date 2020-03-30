@@ -1,11 +1,14 @@
-#include <Data/XlProject.h>
+
+#include <Project.h>
+
+using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-XlProject::XlProject()
+Project::Project()
 {}
 
 //---------------------------------------------------------------------------
-bool XlProject::load(std::string filename)
+bool Project::load(std::string filename)
 {
   try
   {
@@ -24,7 +27,7 @@ bool XlProject::load(std::string filename)
 }
 
 //---------------------------------------------------------------------------
-bool XlProject::save(std::string filename)
+bool Project::save(std::string filename)
 {
 
   this->save_string_column("original_files", this->original_files_);
@@ -38,55 +41,55 @@ bool XlProject::save(std::string filename)
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> XlProject::get_original_files()
+std::vector<std::string> Project::get_original_files()
 {
   return this->original_files_;
 }
 
 //---------------------------------------------------------------------------
-void XlProject::set_original_files(std::vector<std::string> files)
+void Project::set_original_files(std::vector<std::string> files)
 {
   this->original_files_ = files;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> XlProject::get_distance_transform_files()
+std::vector<std::string> Project::get_distance_transform_files()
 {
   return this->distance_transform_files_;
 }
 
 //---------------------------------------------------------------------------
-void XlProject::set_distance_transform_files(std::vector<std::string> files)
+void Project::set_distance_transform_files(std::vector<std::string> files)
 {
   this->distance_transform_files_ = files;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> XlProject::get_local_point_files()
+std::vector<std::string> Project::get_local_point_files()
 {
   return this->local_point_files_;
 }
 
 //---------------------------------------------------------------------------
-void XlProject::set_local_point_files(std::vector<std::string> files)
+void Project::set_local_point_files(std::vector<std::string> files)
 {
   this->local_point_files_ = files;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> XlProject::get_global_point_files()
+std::vector<std::string> Project::get_global_point_files()
 {
   return this->global_point_files_;
 }
 
 //---------------------------------------------------------------------------
-void XlProject::set_global_point_files(std::vector<std::string> files)
+void Project::set_global_point_files(std::vector<std::string> files)
 {
   this->global_point_files_ = files;
 }
 
 //---------------------------------------------------------------------------
-int XlProject::get_index_for_column(std::string name, bool create_if_not_found)
+int Project::get_index_for_column(std::string name, bool create_if_not_found)
 {
 
   xlnt::worksheet ws = this->wb_.sheet_by_index(0);
@@ -114,7 +117,7 @@ int XlProject::get_index_for_column(std::string name, bool create_if_not_found)
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> XlProject::get_string_column(std::string name)
+std::vector<std::string> Project::get_string_column(std::string name)
 {
   int index = this->get_index_for_column(name);
 
@@ -138,7 +141,7 @@ std::vector<std::string> XlProject::get_string_column(std::string name)
 }
 
 //---------------------------------------------------------------------------
-void XlProject::save_string_column(std::string name, std::vector<std::string> items)
+void Project::save_string_column(std::string name, std::vector<std::string> items)
 {
   int index = this->get_index_for_column(name, true);
 
