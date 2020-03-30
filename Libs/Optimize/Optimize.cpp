@@ -1989,9 +1989,9 @@ void Optimize::AddImage(ImageType::Pointer image) {
   this->m_spacing = image->GetSpacing()[0];
 
   if(this->m_sampler->NumDomains() == 1) {
-    this->m_sampler->SetInput(0, image);            // set the 0th input
-    // this->m_spacing = image->GetSpacing()[0];
-    // this->m_num_shapes = image.size();
+    //TODO: Not sure why this is required, but itkMaximumEntropySurfaceSampler
+    // doesn't work unless we do this.
+    this->m_sampler->SetInput(0, image);
   }
 }
 
