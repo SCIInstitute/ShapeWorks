@@ -13,9 +13,7 @@ Project::Project()
 
 //---------------------------------------------------------------------------
 Project::~Project()
-{
-
-}
+{}
 
 //---------------------------------------------------------------------------
 bool Project::load(std::string filename)
@@ -48,6 +46,21 @@ bool Project::save(std::string filename)
   this->wb_->save(filename);
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+int Project::get_number_of_subjects()
+{
+  if (this->original_files_.size() > 0) {
+    return this->original_files_.size();
+  }
+  if (this->distance_transform_files_.size() > 0) {
+    return this->distance_transform_files_.size();
+  }
+  if (this->local_point_files_.size() > 0) {
+    return this->local_point_files_.size();
+  }
+  return 0;
 }
 
 //---------------------------------------------------------------------------

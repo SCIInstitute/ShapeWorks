@@ -28,6 +28,9 @@ public:
 
   bool save(std::string filename);
 
+  //! Return the number of subjects in the project
+  int get_number_of_subjects();
+
   std::vector<std::string> get_original_files();
   void set_original_files(std::vector<std::string> files);
 
