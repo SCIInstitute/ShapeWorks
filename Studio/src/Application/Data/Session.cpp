@@ -113,23 +113,6 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
   //progress.show();
   //progress.setMinimumDuration(2000);
 
-  /*
-     // setup XML
-     QSharedPointer<QXmlStreamWriter> xml = QSharedPointer<QXmlStreamWriter>(new QXmlStreamWriter());
-     xml->setAutoFormatting(true);
-     xml->setDevice(&file);
-     xml->writeStartDocument();
-
-     xml->writeStartElement("project");
-     xml->writeAttribute("version", "2");
-     xml->writeStartElement("settings");
-     auto prefs = this->preferences_.get_project_preferences();
-     for (auto &a : prefs) {
-     xml->writeTextElement(
-      QString::fromStdString(a.first), a.second.toString());
-     }
-     xml->writeEndElement(); // settings
-   */
   this->preferences_.set_saved();
   //write out mean info
   auto prefix = this->shapes_[0]->get_original_filename().toStdString();
@@ -140,16 +123,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
   if (!defaultDir) {
     location = dataDir + "/";
   }
-  /*
-     if (this->reconstructed_present() &&
-      this->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean()) {
-     this->mesh_manager_->getSurfaceReconstructor()->writeMeanInfo(location);
-     xml->writeTextElement("denseMean_file", QString::fromStdString(location + ".dense.vtk"));
-     xml->writeTextElement("sparseMean_file", QString::fromStdString(location + ".sparse.txt"));
-     xml->writeTextElement("goodPoints_file", QString::fromStdString(location + ".goodPoints.txt"));
-     }
-     xml->writeTextElement("cutPlanes_file", QString::fromStdString(cutPlanesFile));
-   */
+
   progress.setValue(5);
   QApplication::processEvents();
 
@@ -160,7 +134,6 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
       original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
     this->project_.set_original_files(original_list);
-    //xml->writeTextElement("original_files", original_list);
   }
 
   // distance transforms
