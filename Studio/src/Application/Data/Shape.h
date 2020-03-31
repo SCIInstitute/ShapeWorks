@@ -23,6 +23,9 @@ public:
   Shape();
   ~Shape();
 
+  //! set the input segmentation filenames (1 per domain)
+  void set_input_segmentations(QStringList filenames);
+
   /// Import the original raw image file
   void import_original_image(std::string filename, float iso_value);
 
@@ -87,6 +90,8 @@ public:
   void set_group_id(int id);
 
 private:
+
+  QStringList input_segmentation_filenames_;
 
   static bool import_point_file(QString filename, vnl_vector<double> &points);
 

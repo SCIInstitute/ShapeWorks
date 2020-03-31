@@ -16,6 +16,12 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
+void Shape::set_input_segmentations(QStringList filenames)
+{
+  this->input_segmentation_filenames_ = filenames;
+}
+
+//---------------------------------------------------------------------------
 void Shape::import_original_image(std::string filename, float iso_value)
 {
   this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());

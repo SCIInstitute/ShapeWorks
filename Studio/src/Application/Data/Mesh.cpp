@@ -15,7 +15,6 @@
 
 #include <Data/Mesh.h>
 #include <Data/ItkToVtk.h>
-#include <Groom/ShapeWorksGroom.h>
 
 //---------------------------------------------------------------------------
 Mesh::Mesh()
@@ -48,7 +47,6 @@ vtkSmartPointer<vtkPolyData> Mesh::get_poly_data()
 //---------------------------------------------------------------------------
 ImageType::Pointer Mesh::create_from_file(std::string filename, double iso_value)
 {
-
 
   // read file using ITK
   ReaderType::Pointer reader = ReaderType::New();
@@ -102,6 +100,7 @@ void Mesh::create_from_image(ImageType::Pointer image, double iso_value)
     for (unsigned int i = 0; i < 3; i++) {
       this->center_transform_[i] = params[i] / count;
     }
+
     // connect to VTK
     vtkSmartPointer<vtkImageImport> vtk_image = vtkSmartPointer<vtkImageImport>::New();
     itk::VTKImageExport<ImageType>::Pointer itk_exporter = itk::VTKImageExport<ImageType>::New();
