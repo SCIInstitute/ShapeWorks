@@ -5,18 +5,23 @@
 #include <QSharedPointer>
 #include <QVector>
 
+#include <Libs/Project/Project.h>
+
 #include <Data/Preferences.h>
 #include <Data/MeshManager.h>
 #include <Groom/ShapeWorksGroom.h>
 
+using namespace shapeworks;
+
 class Shape;
+
 
 class Session;
 typedef QSharedPointer< Session > ProjectHandle;
 
-//! Representation of a project.
+//! Representation of a session.
 /*!
- * The Project class encapsulates everything about a project.
+ * The Session class encapsulates everything about a session/project.
  *
  */
 class Session : public QObject
@@ -38,13 +43,13 @@ public:
   bool save_project(std::string filename, std::string dataDir, std::string cutPlanesFile);
 
   /// load project from file
-  bool load_project(QString filename, std::string& planesFile);
+  bool load_xml_project(QString filename, std::string& planesFile);
 
   /// read a lightweight project file
   bool load_light_project(QString filename, std::string& planesFile);
 
-  /// load an excel project
-  bool load_xl_project(QString filename);
+  /// load a shapeworks project
+  bool load_project(QString filename);
 
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();
@@ -131,4 +136,6 @@ private:
   bool reconstructed_present_;
   bool groups_available_ = false;
   bool is_light_project_ = false;
+
+  Project project_;
 };

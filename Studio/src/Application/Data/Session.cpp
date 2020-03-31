@@ -248,7 +248,7 @@ void Session::save_particles_file(std::string filename, const vnl_vector<double>
 }
 
 //---------------------------------------------------------------------------
-bool Session::load_project(QString filename, std::string& planesFile)
+bool Session::load_xml_project(QString filename, std::string& planesFile)
 {
   if (!QFile::exists(filename)) {
     QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
@@ -260,7 +260,7 @@ bool Session::load_project(QString filename, std::string& planesFile)
   this->filename_ = filename;
 
   if (filename.toLower().endsWith(".xlsx")) {
-    return this->load_xl_project(filename);
+    return this->load_project(filename);
   }
 
   // open and parse XML
@@ -540,19 +540,18 @@ bool Session::load_light_project(QString filename, string &planesFile)
 }
 
 //---------------------------------------------------------------------------
-bool Session::load_xl_project(QString filename)
+bool Session::load_project(QString filename)
 {
   // clear the project out first
   this->reset();
   this->filename_ = filename;
 
-  shapeworks::Project xl;
-  xl.load(filename.toStdString());
+  this->project_.load(filename.toStdString());
 
-  std::vector<std::string> original_files = xl.get_original_files();
-  std::vector<std::string> groom_files = xl.get_distance_transform_files();
-  std::vector<std::string> local_point_files = xl.get_local_point_files();
-  std::vector<std::string> global_point_files = xl.get_global_point_files();
+  std::vector<std::string> original_files = this->project_.get_original_files();
+  std::vector<std::string> groom_files = this->project_.get_distance_transform_files();
+  std::vector<std::string> local_point_files = this->project_.get_local_point_files();
+  std::vector<std::string> global_point_files = this->project_.get_global_point_files();
 
   if (original_files.size() > 0) {
     this->load_original_files(original_files);

@@ -912,7 +912,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   std::string planesFile;
   try
   {
-    if (!this->project_->load_project(filename, planesFile)) {
+    if (!this->project_->load_xml_project(filename, planesFile)) {
       return;
     }
   } catch (std::runtime_error e) {

@@ -15,7 +15,7 @@ public:
   double x, y, z;
 };
 
-//! Representation of a single shape/patient.
+//! Representation of a single shape/patient/subject.
 class Shape
 {
 
