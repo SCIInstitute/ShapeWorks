@@ -13,6 +13,13 @@ public:
   using PixelType = float;
   using ImageType = itk::Image<PixelType, 3>;
 
+  struct Region
+  {
+    int min[3] = {static_cast<int>(1e6), static_cast<int>(1e6), static_cast<int>(1e6)};
+    int max[3] = {0, 0, 0};
+  };
+
+  Image() {}
   Image(const std::string &filename) { read(filename); }
 
   bool read(const std::string &filename);
@@ -21,11 +28,18 @@ public:
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
   bool recenter();
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
-  bool pad(int padding, PixelType value);
+  bool pad(int padding = 0, PixelType value = 0.0);
   bool extractLabel(PixelType label = 1.0);
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
-  bool fastMarch(float isoValue = 0.0);
+  bool computeDT(float isoValue = 0.0);
+  bool applyCurvature(unsigned iterations = 10);
+  bool applyGradient();
+  bool applySigmoid(double alpha = 10.0, double beta = 10.0);
+  bool applyLevel(const std::string other, double scaling = 0.0);
+  bool gaussianBlur(double sigma = 0.0);
+  Region boundingBox(std::vector<std::string> &filenames, Region &region, int padding = 0);
+  bool crop(const Region &region);
 
   bool operator==(const Image &other) const;
 
@@ -39,7 +53,6 @@ public:
 
 private:
   friend struct SharedCommandData;
-  Image() {}
 
   static bool is_directory(const std::string &pathname); // TODO: Move this function to Libs/Utils
   bool read_image_dir(const std::string &pathname);

@@ -48,6 +48,7 @@ void ReadImage::buildParser()
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
+
   return sharedData.image.read(filename);
 }
 
@@ -194,7 +195,7 @@ void PadImage::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of voxels to be padded in each direction.");
-  parser.add_option("--value").action("store").type("float").set_default(0).help("Value to be used to fill padded voxels.");
+  parser.add_option("--value").action("store").type("float").set_default(0.0).help("Value to be used to fill padded voxels.");
   
   Command::buildParser();
 }
@@ -300,7 +301,7 @@ int CloseHoles::execute(const optparse::Values &options, SharedCommandData &shar
 void Threshold::buildParser()
 {
   const std::string prog = "threshold";
-  const std::string desc = "thresholds image into binary label based on upper and lower intensity bounds given by user";
+  const std::string desc = "threholds image into binary label based on upper and lower intensity bounds given by user";
   parser.prog(prog).description(desc);
 
   parser.add_option("--min").action("store").type("float").set_default(std::numeric_limits<float>::epsilon()).help("The lower threshold level (optional, default = epsilon)");
@@ -318,11 +319,11 @@ int Threshold::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FastMarch
+// ComputeDT
 ///////////////////////////////////////////////////////////////////////////////
-void FastMarch::buildParser()
+void ComputeDT::buildParser()
 {
-  const std::string prog = "fast-march";
+  const std::string prog = "compute-dt";
   const std::string desc = "computes distance transform volume from a binary (antialiased) image";
   parser.prog(prog).description(desc);
 
@@ -332,11 +333,160 @@ void FastMarch::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int FastMarch::execute(const optparse::Values &options, SharedCommandData &sharedData)
+int ComputeDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float isovalue = static_cast<float>(options.get("isovalue"));
 
-  return sharedData.image.fastMarch(isovalue);
+  return sharedData.image.computeDT(isovalue);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Curvature
+///////////////////////////////////////////////////////////////////////////////
+void Curvature::buildParser()
+{
+  const std::string prog = "curvature";
+  const std::string desc = "performs curvature flow image filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
+  
+  Command::buildParser();
+}
+
+int Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+
+  return sharedData.image.applyCurvature(iterations);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Gradient
+///////////////////////////////////////////////////////////////////////////////
+void Gradient::buildParser()
+{
+  const std::string prog = "gradient";
+  const std::string desc = "performs gradient magnitude image filter";
+  parser.prog(prog).description(desc);
+  
+  Command::buildParser();
+}
+
+int Gradient::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  return sharedData.image.applyGradient();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Sigmoid
+///////////////////////////////////////////////////////////////////////////////
+void Sigmoid::buildParser()
+{
+  const std::string prog = "sigmoid";
+  const std::string desc = "performs sigmoid image filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha");
+  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta");
+  
+  Command::buildParser();
+}
+
+int Sigmoid::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double alpha = static_cast<double>(options.get("alpha"));
+  double beta = static_cast<double>(options.get("beta"));
+
+  return sharedData.image.applySigmoid(alpha, beta);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SetLevel
+///////////////////////////////////////////////////////////////////////////////
+void SetLevel::buildParser()
+{
+  const std::string prog = "set-level";
+  const std::string desc = "performs TPGAC level set image filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--other").action("store").type("string").set_default("").help("path of image for input");
+  parser.add_option("--scaling").action("store").type("double").set_default(0.0).help("to perform TPGA level set filtering");
+  
+  Command::buildParser();
+}
+
+int SetLevel::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string other = options["other"];
+  double scaling = static_cast<double>(options.get("scaling"));
+  
+  return sharedData.image.applyLevel(other, scaling);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Blur
+///////////////////////////////////////////////////////////////////////////////
+void Blur::buildParser()
+{
+  const std::string prog = "blur";
+  const std::string desc = "performs gaussian blur";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("value of sigma");
+  
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int Blur::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double sigma = static_cast<double>(options.get("sigma"));
+  
+  return sharedData.image.gaussianBlur(sigma);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// BoundingBox
+///////////////////////////////////////////////////////////////////////////////
+void BoundingBox::buildParser()
+{
+  const std::string prog = "bounding-box";
+  const std::string desc = "compute largest bounding box size given set of images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .nrrd files");
+  parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box");
+
+  Command::buildParser();
+}
+
+int BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::vector<std::string> filenames = options.get("names");
+  int padding = static_cast<int>(options.get("padding"));
+
+  sharedData.image.boundingBox(filenames, sharedData.region, padding);
+
+  return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CropImage
+///////////////////////////////////////////////////////////////////////////////
+void CropImage::buildParser()
+{
+  const std::string prog = "crop";
+  const std::string desc = "performs translational alignment of shape image based on its center of mass or given 3D point";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  return sharedData.image.crop(sharedData.region);
 }
 
 } // shapeworks

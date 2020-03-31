@@ -58,7 +58,7 @@ Image commands:
 
  - CloseHoles --inFilename=./test.nrrd --outFilename=./foobar.nrrd
 
-[] *CropImages
+[x] *CropImages -> crop
 [x] *ExtractGivenLabelImage -> extractlabel 
  o Examples:
 
@@ -96,9 +96,11 @@ Image commands:
 
  - ThresholdImages --inFilename=./test.nrrd --outFilename=./foobar.nrrd
 
-[] TopologyPreservingSmoothing
-[] *WriteImageInfoToText
-[] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
+[x] TopologyPreservingSmoothing
+./bin/shapeworks read-image --name ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.DT.nrrd curvature --iterations 1 write-image --name ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.tpSmoothDT.nrrd gradient sigmoid --alpha 10.5 set-level --other ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.tpSmoothDT.nrrd --scaling 0.0 write-image --name ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.ISO.nrrd 
+
+[x] *WriteImageInfoToText -> deprecated
+[x] itkTBGACLevelSetImageFilter (also has .txx file) -> not a tool
 
 Mesh commands:  (some of these may not actually be executables)
 

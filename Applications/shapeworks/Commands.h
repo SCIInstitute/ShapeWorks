@@ -176,17 +176,105 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class FastMarch : public ImageCommand
+class ComputeDT : public ImageCommand
 {
 public:
-  static FastMarch &getCommand()
+  static ComputeDT &getCommand()
   {
-    static FastMarch instance;
+    static ComputeDT instance;
     return instance;
   }
 
 private:
-  FastMarch() { buildParser(); } 
+  ComputeDT() { buildParser(); } 
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Curvature : public ImageCommand
+{
+public:
+  static Curvature& getCommand() { static Curvature instance; return instance; }
+
+private:
+  Curvature() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Gradient : public ImageCommand
+{
+public:
+  static Gradient& getCommand() { static Gradient instance; return instance; }
+
+private:
+  Gradient() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Sigmoid : public ImageCommand
+{
+public:
+  static Sigmoid& getCommand() { static Sigmoid instance; return instance; }
+
+private:
+  Sigmoid() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class SetLevel : public ImageCommand
+{
+public:
+  static SetLevel& getCommand() { static SetLevel instance; return instance; }
+
+private:
+  SetLevel() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Blur : public ImageCommand
+{
+public:
+  static Blur &getCommand() { static Blur instance; return instance; }
+
+private:
+  Blur() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class BoundingBox : public ImageCommand
+{
+public:
+  static BoundingBox &getCommand()
+  {
+    static BoundingBox instance;
+    return instance;
+  }
+
+private:
+  BoundingBox() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class CropImage : public ImageCommand
+{
+public:
+  static CropImage &getCommand() { static CropImage instance; return instance; }
+
+private:
+  CropImage() { buildParser(); } 
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

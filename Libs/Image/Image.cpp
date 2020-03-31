@@ -14,13 +14,15 @@
 #include <itkTranslationTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
-#include <itkCurvatureFlowImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
+#include <itkCurvatureFlowImageFilter.h>
 #include <itkSigmoidImageFilter.h>
 #include <itkTPGACLevelSetImageFilter.h>
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
+#include <itkDiscreteGaussianImageFilter.h>
+#include <itkExtractImageFilter.h>
 
 #include <sys/stat.h>
 
@@ -49,6 +51,7 @@ bool Image::read(const std::string &filename)
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename);
+
   try
   {
     reader->Update();
@@ -71,6 +74,11 @@ bool Image::read(const std::string &filename)
 /// \param pathname directory containing image series
 bool Image::read_image_dir(const std::string &pathname)
 {
+  if (pathname.empty()) {
+    std::cerr << "No filenames passed to read; returning false." << std::endl;
+    return false;
+  }
+
   using ReaderType = itk::ImageSeriesReader<ImageType>;
   using ImageIOType = itk::GDCMImageIO;
   using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
@@ -90,7 +98,7 @@ bool Image::read_image_dir(const std::string &pathname)
   } 
   catch (itk::ExceptionObject &exp) 
   {
-    std::cerr << "Failed to read dicom dir: " << pathname << std::endl;
+    std::cerr << "Failed to read dir: " << pathname << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
@@ -163,7 +171,6 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   filter->SetNumberOfIterations(numIterations);
   if (numLayers)
     filter->SetNumberOfLayers(numLayers);
-
   filter->SetInput(this->image);
   this->image = filter->GetOutput();
 
@@ -198,7 +205,6 @@ bool Image::recenter()
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
   filter->SetInput(this->image);
   filter->CenterImageOn();
   this->image = filter->GetOutput();
@@ -358,18 +364,17 @@ bool Image::pad(int padding, PixelType value)
   upperExtendRegion[1] = padding;
   upperExtendRegion[2] = padding;
 
-  using PadFilter = itk::ConstantPadImageFilter<ImageType, ImageType>;
-  PadFilter::Pointer padFilter = PadFilter::New();
-
-  padFilter->SetInput(this->image);
-  padFilter->SetPadLowerBound(lowerExtendRegion);
-  padFilter->SetPadUpperBound(upperExtendRegion);
-  padFilter->SetConstant(value);
-  this->image = padFilter->GetOutput();
+  using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetPadLowerBound(lowerExtendRegion);
+  filter->SetPadUpperBound(upperExtendRegion);
+  filter->SetConstant(value);
+  this->image = filter->GetOutput();
 
   try
   {
-    padFilter->Update();
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -459,7 +464,7 @@ bool Image::threshold(PixelType min, PixelType max)
   return true;
 }
 
-bool Image::fastMarch(float isoValue)
+bool Image::computeDT(float isoValue)
 {
   if (!this->image)
   {
@@ -469,7 +474,6 @@ bool Image::fastMarch(float isoValue)
 
   using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
   filter->SetInput(this->image);
   filter->NarrowBandingOff();
   filter->SetLevelSetValue(isoValue);
@@ -488,6 +492,293 @@ bool Image::fastMarch(float isoValue)
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Fast March succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::applyCurvature(unsigned iterations)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+  }
+
+  using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetTimeStep(0.0625);
+  filter->SetNumberOfIterations(iterations);
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Curvature Flow failed:" << std::endl;
+    std::cerr << exp << std::endl;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Curvature Flow succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::applyGradient()
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter  = FilterType::New();
+
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Gradient Magnitude failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Gradient Magnitude succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::applySigmoid(double alpha, double beta)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::SigmoidImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetAlpha(alpha);
+  filter->SetBeta(beta);
+  filter->SetOutputMinimum(0.0);
+  filter->SetOutputMaximum(1.0);
+  filter->SetInput(this->image);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Sigmoid failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Sigmoid succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::applyLevel(const std::string other, double scaling)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetPropagationScaling(scaling);
+  filter->SetCurvatureScaling(1.0);
+  filter->SetAdvectionScaling(1.0);
+  filter->SetMaximumRMSError(0.0);
+  filter->SetNumberOfIterations(20);
+  const ImageType::Pointer currentImage = this->image;
+  read(other);
+  filter->SetInput(this->image);
+  filter->SetFeatureImage(currentImage);
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Level Set failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Level Set succeeded!\n";
+#endif
+  return true;
+}
+
+bool Image::gaussianBlur(double sigma)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;
+  BlurType::Pointer blur = BlurType::New();
+  blur->SetInput(this->image);
+  blur->SetVariance(sigma * sigma);
+  this->image = blur->GetOutput();
+  
+  try
+  {
+    blur->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Gaussian Blur failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Gaussian Blur succeeded!\n";
+#endif
+  return true;
+}
+
+//todo: add that it does only for binary images
+
+Image::Region Image::boundingBox(std::vector<std::string> &filenames, Region &region, int padding)
+{
+  int minXsize = 1e6, minYsize = 1e6, minZsize = 1e6;
+  int largestIndex[3] = {0, 0, 0};
+
+  for (int i = 0; i < filenames.size(); i++)
+  {
+    read(filenames[i]);
+
+    int cur_bb[3] = {0, 0, 0};
+    int cur_smallestIndex[3];
+    cur_smallestIndex[0] = 1e6;
+    cur_smallestIndex[1] = 1e6;
+    cur_smallestIndex[2] = 1e6;
+    int cur_largestIndex[3] = {0, 0, 0};
+
+    int curXsize = image->GetLargestPossibleRegion().GetSize()[0];
+    int curYsize = image->GetLargestPossibleRegion().GetSize()[1];
+    int curZsize = image->GetLargestPossibleRegion().GetSize()[2];
+
+    minXsize = std::min(minXsize, curXsize);
+    minYsize = std::min(minYsize, curYsize);
+    minZsize = std::min(minZsize, curZsize);
+
+    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
+
+    while(!imageIterator.IsAtEnd())
+    {
+      PixelType val = imageIterator.Get();
+
+      if(val == 1)
+        {
+          cur_smallestIndex[0] = std::min(cur_smallestIndex[0], (int)imageIterator.GetIndex()[0]);
+          cur_smallestIndex[1] = std::min(cur_smallestIndex[1], (int)imageIterator.GetIndex()[1]);
+          cur_smallestIndex[2] = std::min(cur_smallestIndex[2], (int)imageIterator.GetIndex()[2]);
+
+          cur_largestIndex[0] = std::max(cur_largestIndex[0], (int)imageIterator.GetIndex()[0]);
+          cur_largestIndex[1] = std::max(cur_largestIndex[1], (int)imageIterator.GetIndex()[1]);
+          cur_largestIndex[2] = std::max(cur_largestIndex[2], (int)imageIterator.GetIndex()[2]);
+        }
+        ++imageIterator;
+    }
+
+    region.min[0] = std::min(region.min[0], cur_smallestIndex[0]);
+    region.min[1] = std::min(region.min[1], cur_smallestIndex[1]);
+    region.min[2] = std::min(region.min[2], cur_smallestIndex[2]);
+
+    largestIndex[0] = std::max(largestIndex[0], cur_largestIndex[0]);
+    largestIndex[1] = std::max(largestIndex[1], cur_largestIndex[1]);
+    largestIndex[2] = std::max(largestIndex[2], cur_largestIndex[2]);
+
+    cur_bb[0] = cur_largestIndex[0] - cur_smallestIndex[0];
+    cur_bb[1] = cur_largestIndex[1] - cur_smallestIndex[1];
+    cur_bb[2] = cur_largestIndex[2] - cur_smallestIndex[2];
+  }
+
+  region.min[0] = std::max(0, region.min[0] - padding);
+  region.min[1] = std::max(0, region.min[1] - padding);
+  region.min[2] = std::max(0, region.min[2] - padding);
+
+  largestIndex[0] = std::min(largestIndex[0] + padding, minXsize - 1);
+  largestIndex[1] = std::min(largestIndex[1] + padding, minYsize - 1);
+  largestIndex[2] = std::min(largestIndex[2] + padding, minZsize - 1);
+
+  region.max[0] = largestIndex[0] - region.min[0];
+  region.max[1] = largestIndex[1] - region.min[1];
+  region.max[2] = largestIndex[2] - region.min[2];
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Bounding Box succeeded!\n";
+#endif
+  return region;
+}
+
+bool Image::crop(const Region &region)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  ImageType::IndexType desiredStart;
+  desiredStart[0] = region.min[0];
+  desiredStart[1] = region.min[1];
+  desiredStart[2] = region.min[2];
+
+  ImageType::SizeType desiredSize;
+  desiredSize[0] = region.max[0];
+  desiredSize[1] = region.max[1];
+  desiredSize[2] = region.max[2];
+
+  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
+
+  using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetExtractionRegion(desiredRegion);
+  filter->SetInput(this->image);
+  filter->SetDirectionCollapseToIdentity();
+  this->image = filter->GetOutput();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Crop Image failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Crop Image succeeded!\n";
 #endif
   return true;
 }
