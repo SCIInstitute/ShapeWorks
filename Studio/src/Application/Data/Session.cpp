@@ -518,14 +518,21 @@ bool Session::load_project(QString filename)
 
   this->project_.load(filename.toStdString());
 
-  std::vector<std::string> original_files = this->project_.get_original_files();
-  std::vector<std::string> groom_files = this->project_.get_distance_transform_files();
-  std::vector<std::string> local_point_files = this->project_.get_local_point_files();
-  std::vector<std::string> global_point_files = this->project_.get_global_point_files();
+  int num_subjects = this->project_.get_number_of_subjects();
 
+  for (int i = 0; i < num_subjects; i++)
+  {
+    this->shapes_ << QSharedPointer<Shape>(new Shape());
+  }
+
+  std::vector<std::string> original_files = this->project_.get_original_files();
   if (original_files.size() > 0) {
     this->load_original_files(original_files);
   }
+
+  std::vector<std::string> groom_files = this->project_.get_distance_transform_files();
+  std::vector<std::string> local_point_files = this->project_.get_local_point_files();
+  std::vector<std::string> global_point_files = this->project_.get_global_point_files();
 
   if (groom_files.size() > 0) {
     this->load_groomed_files(groom_files, 0.5);
@@ -568,29 +575,7 @@ void Session::load_original_files(std::vector<std::string> file_names)
       return;
     }
 
-    QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
-    new_shape->import_original_image(file_names[i], 0.5);
-    if (!this->shapes_.empty()) {
-      auto spacing = this->shapes_[0]->get_original_image()->GetSpacing();
-      auto spacing_new = new_shape->get_original_image()->GetSpacing();
-      if (spacing != spacing_new) {
-        emit data_changed();
-        this->renumber_shapes();
-        this->original_present_ = true;
-        throw std::runtime_error(file_names[i] + " does not match spacing with " +
-                                 this->shapes_[0]->get_original_filename().toStdString() + "!!!");
-      }
-      auto sizing = this->shapes_[0]->get_original_image()->GetLargestPossibleRegion();
-      auto sizing_new = new_shape->get_original_image()->GetLargestPossibleRegion();
-      if (sizing != sizing_new) {
-        emit data_changed();
-        this->renumber_shapes();
-        this->original_present_ = true;
-        throw std::runtime_error(file_names[i] + " does not match voxel space with " +
-                                 this->shapes_[0]->get_original_filename().toStdString() + "!!!");
-      }
-    }
-    this->shapes_.push_back(new_shape);
+    this->shapes_[i]->import_original_image(file_names[i], 0.5);
   }
   progress.setValue(file_names.size());
   QApplication::processEvents();
