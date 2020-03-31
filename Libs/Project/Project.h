@@ -1,7 +1,9 @@
+#pragma once
+
 #include <string>
 #include <vector>
 
-
+// forward declaration
 namespace xlnt
 {
   class workbook;
@@ -10,6 +12,11 @@ namespace xlnt
 namespace shapeworks
 {
 
+//! Representation of a project.
+/*!
+ * The Project class encapsulates the spreadsheet based file format for storing project data.
+ *
+ */
 class Project {
 
 public:
