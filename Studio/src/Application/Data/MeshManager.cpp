@@ -73,13 +73,13 @@ vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shap
         this->generateMesh(shape);
       }
       else {
-        polyData = this->meshGenerator_.buildMesh(shape);
+        polyData = this->meshGenerator_.build_mesh(shape);
         this->meshCache_.insertMesh(shape, polyData);
       }
     }
   }
   else {
-    polyData = this->meshGenerator_.buildMesh(shape);
+    polyData = this->meshGenerator_.build_mesh(shape);
   }
   return polyData;
 }

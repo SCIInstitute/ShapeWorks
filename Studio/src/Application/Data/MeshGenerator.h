@@ -15,12 +15,19 @@
 #include <Data/SurfaceReconstructor.h>
 #include <Data/LegacyMeshGenerator.h>
 
+#include <Groom/ShapeWorksGroom.h>
+
 class MeshGenerator
 {
 public:
-  MeshGenerator(Preferences& prefs_);
+  MeshGenerator(Preferences& prefs);
   ~MeshGenerator();
-  vtkSmartPointer<vtkPolyData> buildMesh(const vnl_vector<double>& shape);
+
+  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape);
+
+  vtkSmartPointer<vtkPolyData> build_mesh(ImageType::Pointer image, float iso_value = 0.5);
+
+  vtkSmartPointer<vtkPolyData> build_mesh(QString filename, float iso_value = 0.5);
 
   void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 

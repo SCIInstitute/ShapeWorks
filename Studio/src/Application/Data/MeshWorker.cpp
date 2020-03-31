@@ -18,7 +18,7 @@ MeshWorker::~MeshWorker() {}
 void MeshWorker::process()
 {
   // build the mesh using our MeshGenerator
-  vtkSmartPointer<vtkPolyData> mesh = this->meshGenerator_.buildMesh(this->shape_);
+  vtkSmartPointer<vtkPolyData> mesh = this->meshGenerator_.build_mesh(this->shape_);
   this->queue_->remove(this->shape_);
   this->cache_->insertMesh(this->shape_, mesh);
   emit result_ready();

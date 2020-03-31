@@ -45,13 +45,15 @@ public:
   /// Get the center transform
   vnl_vector<double> get_center_transform();
 
+  //! Set the poly data directly
   void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
 
 private:
 
-  vtkSmartPointer<vtkPolyData> poly_data_;
-
+  // metadata
   int dimensions_[3];
-
   vnl_vector<double> center_transform_;
+
+  // the polydata
+  vtkSmartPointer<vtkPolyData> poly_data_;
 };
