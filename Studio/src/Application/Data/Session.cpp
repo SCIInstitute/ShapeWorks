@@ -108,8 +108,6 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
     return false;
   }
 
-  shapeworks::Project xl;
-
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   //progress.show();
@@ -140,7 +138,6 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
   auto position = location.find_last_of("/");
   location = location.substr(0, position) + "/" + prefix;
   if (!defaultDir) {
-
     location = dataDir + "/";
   }
   /*
@@ -162,7 +159,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
     for (int i = 0; i < this->shapes_.size(); i++) {
       original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
-    xl.set_original_files(original_list);
+    this->project_.set_original_files(original_list);
     //xml->writeTextElement("original_files", original_list);
   }
 
@@ -190,7 +187,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
         break;
       }
     }
-    xl.set_distance_transform_files(groomed_list);
+    this->project_.set_distance_transform_files(groomed_list);
     //xml->writeTextElement("distance_transforms", groomed_list);
   }
 
@@ -220,8 +217,8 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
     //xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
     //xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
 
-    xl.set_local_point_files(local_list);
-    xl.set_global_point_files(world_list);
+    this->project_.set_local_point_files(local_list);
+    this->project_.set_global_point_files(world_list);
   }
 
   /// Re-integrate progress after completing the above
@@ -230,7 +227,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
 
   //xml->writeEndElement(); // project
 
-  xl.save(filename.toStdString());
+  this->project_.save(filename.toStdString());
   progress.setValue(100);
   return true;
 }
