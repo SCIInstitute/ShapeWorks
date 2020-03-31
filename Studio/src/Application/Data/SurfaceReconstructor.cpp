@@ -16,7 +16,7 @@ SurfaceReconstructor::SurfaceReconstructor()
 void SurfaceReconstructor::initializeReconstruction(
   std::vector<std::vector<itk::Point<double>>> local_pts,
   std::vector<std::vector<itk::Point<double>>> global_pts,
-  std::vector<ImageType::Pointer> distance_transform,
+  std::vector<ImageType::Pointer> distance_transforms,
   double maxAngle, float decimationPercent, int numClusters)
 {
 
@@ -26,7 +26,7 @@ void SurfaceReconstructor::initializeReconstruction(
 
   // compute the dense shape
   vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_.getDenseMean(local_pts, global_pts,
-                                                                             distance_transform);
+                                                                             distance_transforms);
 
   this->surface_reconstruction_available_ = true;
 }
@@ -56,16 +56,6 @@ void SurfaceReconstructor::resetReconstruct()
 }
 
 //---------------------------------------------------------------------------
-void SurfaceReconstructor::set_filenames(std::vector<string> distance_transform_filenames,
-                                         std::vector<string> local_point_filenames,
-                                         std::vector<string> world_point_filenames)
-{
-  this->distance_transform_filenames_ = distance_transform_filenames;
-  this->local_point_filenames_ = local_point_filenames;
-  this->world_point_filenames_ = world_point_filenames;
-}
-
-//---------------------------------------------------------------------------
 void SurfaceReconstructor::set_number_of_clusters(int num_clusters)
 {
   this->num_clusters_ = num_clusters;
@@ -87,75 +77,6 @@ void SurfaceReconstructor::set_decimation_percent(double decimation)
   this->decimation_percent_ = decimation;
   this->reconstructor_.setDecimation(this->decimation_percent_);
   std::cerr << "Setting decimation percent to " << this->decimation_percent_ << "\n";
-}
-
-//---------------------------------------------------------------------------
-void SurfaceReconstructor::generate_mean_dense()
-{
-
-  std::cerr << "Generate Mean Dense!\n";
-
-  // read local points and world points if given
-  std::vector< PointArrayType > local_pts;  local_pts.clear();
-  std::vector< PointArrayType > global_pts; global_pts.clear();
-
-  // read local points
-  for (unsigned int shapeNo = 0; shapeNo < this->local_point_filenames_.size(); shapeNo++) {
-    std::cout << "Loading local points file: " << this->local_point_filenames_[shapeNo].c_str() <<
-      std::endl;
-
-    PointArrayType curShape;
-    Utils::readSparseShape(curShape,
-                           const_cast<char*> (this->local_point_filenames_[shapeNo].c_str()));
-
-    local_pts.push_back(curShape);
-  }
-
-  // read distance transforms
-  std::vector<typename ImageType::Pointer> distance_transforms;
-  for (unsigned int shapeNo = 0; shapeNo < this->distance_transform_filenames_.size(); shapeNo++) {
-    std::string filename = this->distance_transform_filenames_[shapeNo];
-
-    if (filename.find(".nrrd") != std::string::npos) {
-      itk::NrrdImageIOFactory::RegisterOneFactory();
-    }
-    else if (filename.find(".mha") != std::string::npos) {
-      itk::MetaImageIOFactory::RegisterOneFactory();
-    }
-    typename ReaderType::Pointer reader = ReaderType::New();
-    std::cout << "Reading distance transform file : " << filename << std::endl;
-    reader->SetFileName(filename.c_str());
-    reader->Update();
-    distance_transforms.push_back(reader->GetOutput());
-  }
-
-  std::cout << "Computing mean sparse shape .... \n ";
-  PointType commonCenter;
-  global_pts = this->reconstructor_.computeSparseMean(local_pts, commonCenter, false, false);
-  global_pts.clear(); // clear
-
-  // read given world points
-  for (unsigned int shapeNo = 0; shapeNo < this->world_point_filenames_.size(); shapeNo++) {
-    std::cout << "Loading world points file: " << this->world_point_filenames_[shapeNo].c_str() <<
-      std::endl;
-
-    PointArrayType curShape;
-    Utils::readSparseShape(curShape,
-                           const_cast<char*> (this->world_point_filenames_[shapeNo].c_str()));
-
-    for (unsigned int ii = 0; ii < curShape.size(); ii++) {
-      curShape[ii][0] -= commonCenter[0];
-      curShape[ii][1] -= commonCenter[1];
-      curShape[ii][2] -= commonCenter[2];
-    }
-
-    global_pts.push_back(curShape);
-  }
-
-  // compute the dense shape
-  vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_.getDenseMean(local_pts, global_pts,
-                                                                             distance_transforms);
-  this->surface_reconstruction_available_ = true;
 }
 
 //---------------------------------------------------------------------------
