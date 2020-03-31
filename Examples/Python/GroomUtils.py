@@ -384,24 +384,6 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
     outDir = os.path.join(parentDir, 'cropped')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    cropinfoDir = os.path.join(outDir, 'crop_info')
-    if not os.path.exists(cropinfoDir):
-        os.makedirs(cropinfoDir)
-    # first create a txtfile with all the scan names in it.
-    txtfile = os.path.join(cropinfoDir, "_dataList.txt")
-    with open(txtfile, 'w') as filehandle:
-        for listitem in inDataListSeg:
-            filehandle.write('%s\n' % listitem)
-    outPrefix = os.path.join(cropinfoDir, "largest_bounding_box")
-    execCommand = ["FindLargestBoundingBox", "--paddingSize", str(paddingSize), "--inFilename", txtfile, "--outPrefix", outPrefix]
-    subprocess.check_call(execCommand )
-    # read all the bounding box files for cropping
-    bb0 = np.loadtxt(outPrefix + "_bb0.txt")
-    bb1 = np.loadtxt(outPrefix + "_bb1.txt")
-    bb2 = np.loadtxt(outPrefix + "_bb2.txt")
-    smI0 = np.loadtxt(outPrefix + "_smallestIndex0.txt")
-    smI1 = np.loadtxt(outPrefix + "_smallestIndex1.txt")
-    smI2 = np.loadtxt(outPrefix + "_smallestIndex2.txt")
     if processRaw:
         rawoutDir = os.path.join(outDir, 'images')
         binaryoutDir = os.path.join(outDir, 'segmentations')
@@ -430,7 +412,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Image Filename : ", outnameImg), 'yellow')
             print("######################################")
             print(" ")
-            cmd = ["shapeworks", "read-image", "--name", innameSeg, "crop", "--startx", str(smI0), "--starty", str(smI1), "--startz", str(smI2), "--sizex", str(bb0), "--sizey", str(bb1), "--sizez", str(bb2), "write-image", "--name", outnameSeg]
+            cmd = ["shapeworks", "boundingbox", "--names", initPath + "/*.nrrd", "--", "--padding", str(paddingSize), "read-image", "--name", innameSeg, "crop", "write-image", "--name", outnameSeg]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
         return [outDataListSeg, outDataListImg]
@@ -448,7 +430,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             cprint(("Output Filename : ", outname), 'yellow')
             print("######################################")
             print(" ")
-            cmd = ["shapeworks", "read-image", "--name", inname, "crop", "--startx", str(smI0), "--starty", str(smI1), "--startz", str(smI2), "--sizex", str(bb0), "--sizey", str(bb1), "--sizez", str(bb2), "write-image", "--name", outname]
+            cmd = ["shapeworks", "boundingbox", "--names", initPath + "/*.nrrd", "--", "--padding", str(paddingSize), "read-image", "--name", inname, "crop", "write-image", "--name", outname]
             print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
         return outDataList
