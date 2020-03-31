@@ -213,10 +213,12 @@ TEST(ImageTests, crop_test)
   //   images_location + "seg.ellipsoid_10.nrrd"
   // };
 
-  // Image image(test_location + "1x2x2.nrrd");
-  // Image::Bounding bbox = image.boundingBox(images);
-  // image.crop(bbox);
-  // Image ground_truth(test_location + "blur_baseline.nrrd");
+  // Image image(test_location + "seg.ellipsoid_1.nrrd");
+  // Image::Region region;
+  // region = image.boundingBox(images, region);
+  // std::cout << region.min[0] << region.min[1] << region.min[2];
+  // image.crop(region);
+  // Image ground_truth(test_location + "crop_baseline.nrrd");
 
   // ASSERT_TRUE(image == ground_truth);
 }
