@@ -168,6 +168,7 @@ endif()
 
 #----------------------------------------------------------------------------
 if(BUILD_TESTS)
+  enable_testing()
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
