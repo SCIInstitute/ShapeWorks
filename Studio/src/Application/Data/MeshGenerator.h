@@ -23,7 +23,7 @@ public:
   MeshGenerator(Preferences& prefs);
   ~MeshGenerator();
 
-  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape);
+  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape, int domain);
 
   vtkSmartPointer<vtkPolyData> build_mesh(ImageType::Pointer image, float iso_value = 0.5);
 

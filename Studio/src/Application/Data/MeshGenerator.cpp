@@ -20,7 +20,7 @@ MeshGenerator::MeshGenerator(Preferences& prefs)
 MeshGenerator::~MeshGenerator() {}
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const vnl_vector<double>& shape)
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const vnl_vector<double>& shape, int domain)
 {
   if (this->surface_reconstructor_ &&
       this->surface_reconstructor_->get_surface_reconstruction_available()) {
