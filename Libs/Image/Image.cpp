@@ -79,37 +79,22 @@ bool Image::read_image_dir(const std::string &pathname)
     return false;
   }
 
-  std::vector<std::string> filenames;
-  filenames.clear();
+  using ReaderType = itk::ImageSeriesReader<ImageType>;
+  using ImageIOType = itk::GDCMImageIO;
+  using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
 
-  for (const auto &entry : std::__fs::filesystem::directory_iterator(pathname))
-  {
-    std::string file = entry.path();
-    filenames.push_back(file);
-  }
+  ImageIOType::Pointer gdcm_io = ImageIOType::New();
+  InputNamesGeneratorType::Pointer input_names = InputNamesGeneratorType::New();
+  input_names->SetInputDirectory(pathname);
 
-  const int N = filenames.size();
-  images.clear();
-
-  using ReaderType = itk::ImageFileReader<ImageType>;
+  const ReaderType::FileNamesContainer &filenames = input_names->GetInputFileNames();
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filenames[0]);
-  reader->Update();
-  this->image = reader->GetOutput();
-  images.push_back(image);
-
-  for (int i = 1; i < N; i++)
-  {
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(filenames[i]);
-    reader->Update();
-    this->image = reader->GetOutput();
-    images.push_back(image);
-  }
+  reader->SetImageIO(gdcm_io);
+  reader->SetFileNames(filenames);
 
   try
   {
-    // this->image = reader->GetOutput();
+    reader->Update();
   } 
   catch (itk::ExceptionObject &exp) 
   {
@@ -118,6 +103,7 @@ bool Image::read_image_dir(const std::string &pathname)
     return false;
   }
 
+  this->image = reader->GetOutput();
   return true;
 }
 
@@ -677,12 +663,17 @@ bool Image::gaussianBlur(double sigma)
   return true;
 }
 
-Image::Bounding Image::boundingBox(int padding)
+//todo: add that it does only for binary images
+
+Image::Region Image::boundingBox(std::vector<std::string> &filenames, Region &region, int padding)
 {
   int minXsize = 1e6, minYsize = 1e6, minZsize = 1e6;
+  int largestIndex[3] = {0, 0, 0};
 
-  for (int i = 0; i < images.size(); i++)
+  for (int i = 0; i < filenames.size(); i++)
   {
+    read(filenames[i]);
+
     int cur_bb[3] = {0, 0, 0};
     int cur_smallestIndex[3];
     cur_smallestIndex[0] = 1e6;
@@ -690,15 +681,15 @@ Image::Bounding Image::boundingBox(int padding)
     cur_smallestIndex[2] = 1e6;
     int cur_largestIndex[3] = {0, 0, 0};
 
-    int curXsize = images[i]->GetLargestPossibleRegion().GetSize()[0];
-    int curYsize = images[i]->GetLargestPossibleRegion().GetSize()[1];
-    int curZsize = images[i]->GetLargestPossibleRegion().GetSize()[2];
+    int curXsize = image->GetLargestPossibleRegion().GetSize()[0];
+    int curYsize = image->GetLargestPossibleRegion().GetSize()[1];
+    int curZsize = image->GetLargestPossibleRegion().GetSize()[2];
 
     minXsize = std::min(minXsize, curXsize);
     minYsize = std::min(minYsize, curYsize);
     minZsize = std::min(minZsize, curZsize);
 
-    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(images[i], images[i]->GetLargestPossibleRegion());
+    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
 
     while(!imageIterator.IsAtEnd())
     {
@@ -717,38 +708,38 @@ Image::Bounding Image::boundingBox(int padding)
         ++imageIterator;
     }
 
-    imageBound.smallestIndex[0] = std::min(imageBound.smallestIndex[0], cur_smallestIndex[0]);
-    imageBound.smallestIndex[1] = std::min(imageBound.smallestIndex[1], cur_smallestIndex[1]);
-    imageBound.smallestIndex[2] = std::min(imageBound.smallestIndex[2], cur_smallestIndex[2]);
+    region.min[0] = std::min(region.min[0], cur_smallestIndex[0]);
+    region.min[1] = std::min(region.min[1], cur_smallestIndex[1]);
+    region.min[2] = std::min(region.min[2], cur_smallestIndex[2]);
 
-    imageBound.largestIndex[0] = std::max(imageBound.largestIndex[0], cur_largestIndex[0]);
-    imageBound.largestIndex[1] = std::max(imageBound.largestIndex[1], cur_largestIndex[1]);
-    imageBound.largestIndex[2] = std::max(imageBound.largestIndex[2], cur_largestIndex[2]);
+    largestIndex[0] = std::max(largestIndex[0], cur_largestIndex[0]);
+    largestIndex[1] = std::max(largestIndex[1], cur_largestIndex[1]);
+    largestIndex[2] = std::max(largestIndex[2], cur_largestIndex[2]);
 
     cur_bb[0] = cur_largestIndex[0] - cur_smallestIndex[0];
     cur_bb[1] = cur_largestIndex[1] - cur_smallestIndex[1];
     cur_bb[2] = cur_largestIndex[2] - cur_smallestIndex[2];
   }
 
-  imageBound.smallestIndex[0] = std::max(0, imageBound.smallestIndex[0] - padding);
-  imageBound.smallestIndex[1] = std::max(0, imageBound.smallestIndex[1] - padding);
-  imageBound.smallestIndex[2] = std::max(0, imageBound.smallestIndex[2] - padding);
+  region.min[0] = std::max(0, region.min[0] - padding);
+  region.min[1] = std::max(0, region.min[1] - padding);
+  region.min[2] = std::max(0, region.min[2] - padding);
 
-  imageBound.largestIndex[0] = std::min(imageBound.largestIndex[0] + padding, minXsize - 1);
-  imageBound.largestIndex[1] = std::min(imageBound.largestIndex[1] + padding, minYsize - 1);
-  imageBound.largestIndex[2] = std::min(imageBound.largestIndex[2] + padding, minZsize - 1);
+  largestIndex[0] = std::min(largestIndex[0] + padding, minXsize - 1);
+  largestIndex[1] = std::min(largestIndex[1] + padding, minYsize - 1);
+  largestIndex[2] = std::min(largestIndex[2] + padding, minZsize - 1);
 
-  imageBound.boundingIndex[0] = imageBound.largestIndex[0] - imageBound.smallestIndex[0];
-  imageBound.boundingIndex[1] = imageBound.largestIndex[1] - imageBound.smallestIndex[1];
-  imageBound.boundingIndex[2] = imageBound.largestIndex[2] - imageBound.smallestIndex[2];
+  region.max[0] = largestIndex[0] - region.min[0];
+  region.max[1] = largestIndex[1] - region.min[1];
+  region.max[2] = largestIndex[2] - region.min[2];
 
 #if DEBUG_CONSOLIDATION
   std::cout << "Bounding Box succeeded!\n";
 #endif
-  return imageBound;
+  return region;
 }
 
-bool Image::crop()
+bool Image::crop(const Region &region)
 {
   if (!this->image)
   {
@@ -757,14 +748,14 @@ bool Image::crop()
   }
 
   ImageType::IndexType desiredStart;
-  desiredStart[0] = imageBound.smallestIndex[0];
-  desiredStart[1] = imageBound.smallestIndex[1];
-  desiredStart[2] = imageBound.smallestIndex[2];
+  desiredStart[0] = region.min[0];
+  desiredStart[1] = region.min[1];
+  desiredStart[2] = region.min[2];
 
   ImageType::SizeType desiredSize;
-  desiredSize[0] = imageBound.boundingIndex[0];
-  desiredSize[1] = imageBound.boundingIndex[1];
-  desiredSize[2] = imageBound.boundingIndex[2];
+  desiredSize[0] = region.max[0];
+  desiredSize[1] = region.max[1];
+  desiredSize[2] = region.max[2];
 
   ImageType::RegionType desiredRegion(desiredStart, desiredSize);
 

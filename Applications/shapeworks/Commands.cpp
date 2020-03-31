@@ -455,6 +455,7 @@ void BoundingBox::buildParser()
   const std::string desc = "compute largest bounding box size given set of images";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .nrrd files");
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box");
 
   Command::buildParser();
@@ -462,9 +463,10 @@ void BoundingBox::buildParser()
 
 int BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
+  std::vector<std::string> filenames = options.get("names");
   int padding = static_cast<int>(options.get("padding"));
 
-  sharedData.image.boundingBox(padding);
+  sharedData.image.boundingBox(filenames, sharedData.region, padding);
 
   return 1;
 }
@@ -484,7 +486,7 @@ void CropImage::buildParser()
 ///////////////////////////////////////////////////////////////////////////////
 int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.crop();
+  return sharedData.image.crop(sharedData.region);
 }
 
 } // shapeworks

@@ -32,10 +32,6 @@ add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
 target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
 
-add_executable(FindLargestBoundingBox FindLargestBoundingBox.cxx )
-target_link_libraries(FindLargestBoundingBox ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS FindLargestBoundingBox  RUNTIME DESTINATION bin)
-
 add_executable(ReflectVolumes ReflectVolumes.cxx)
 target_link_libraries(ReflectVolumes ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ReflectVolumes  RUNTIME DESTINATION bin)

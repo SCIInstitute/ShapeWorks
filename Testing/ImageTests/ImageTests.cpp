@@ -131,14 +131,14 @@ TEST(ImageTests, computedt_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, dicom_read_test) {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
+TEST(ImageTests, dicom_read_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
 
-//   Image image(test_location + "dcm_files");
-//   Image ground_truth(test_location + "dicom.nrrd");
+  Image image(test_location + "dcm_files");
+  Image ground_truth(test_location + "dicom.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
 TEST(ImageTests, curvature_test)
 {
@@ -194,6 +194,31 @@ TEST(ImageTests, blur_test)
   Image ground_truth(test_location + "blur_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, crop_test)
+{
+  // std::string test_location = std::string(TEST_DATA_DIR) + std::string("/crop/");
+  // std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
+  // std::vector<std::string> images = {
+  //   images_location + "seg.ellipsoid_1.nrrd",
+  //   images_location + "seg.ellipsoid_2.nrrd",
+  //   images_location + "seg.ellipsoid_3.nrrd",
+  //   images_location + "seg.ellipsoid_4.nrrd",
+  //   images_location + "seg.ellipsoid_5.nrrd",
+  //   images_location + "seg.ellipsoid_6.nrrd",
+  //   images_location + "seg.ellipsoid_7.nrrd",
+  //   images_location + "seg.ellipsoid_8.nrrd",
+  //   images_location + "seg.ellipsoid_9.nrrd",
+  //   images_location + "seg.ellipsoid_10.nrrd"
+  // };
+
+  // Image image(test_location + "1x2x2.nrrd");
+  // Image::Bounding bbox = image.boundingBox(images);
+  // image.crop(bbox);
+  // Image ground_truth(test_location + "blur_baseline.nrrd");
+
+  // ASSERT_TRUE(image == ground_truth);
 }
 
 //TEST(ImageTests, blah_test) {
