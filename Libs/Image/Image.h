@@ -19,6 +19,7 @@ public:
     int max[3] = {0, 0, 0};
   };
 
+  Image() {}
   Image(const std::string &filename) { read(filename); }
 
   bool read(const std::string &filename);
@@ -52,7 +53,7 @@ public:
 
 private:
   friend struct SharedCommandData;
-  Image() {}
+  // Image() {}
 
   static bool is_directory(const std::string &pathname); // TODO: Move this function to Libs/Utils
   bool read_image_dir(const std::string &pathname);

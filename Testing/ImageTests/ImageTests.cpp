@@ -198,29 +198,28 @@ TEST(ImageTests, blur_test)
 
 TEST(ImageTests, crop_test)
 {
-  // std::string test_location = std::string(TEST_DATA_DIR) + std::string("/crop/");
-  // std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
-  // std::vector<std::string> images = {
-  //   images_location + "seg.ellipsoid_1.nrrd",
-  //   images_location + "seg.ellipsoid_2.nrrd",
-  //   images_location + "seg.ellipsoid_3.nrrd",
-  //   images_location + "seg.ellipsoid_4.nrrd",
-  //   images_location + "seg.ellipsoid_5.nrrd",
-  //   images_location + "seg.ellipsoid_6.nrrd",
-  //   images_location + "seg.ellipsoid_7.nrrd",
-  //   images_location + "seg.ellipsoid_8.nrrd",
-  //   images_location + "seg.ellipsoid_9.nrrd",
-  //   images_location + "seg.ellipsoid_10.nrrd"
-  // };
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/crop/");
+  std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
+  std::vector<std::string> images = {
+    images_location + "seg.ellipsoid_1.nrrd",
+    images_location + "seg.ellipsoid_2.nrrd",
+    images_location + "seg.ellipsoid_3.nrrd",
+    images_location + "seg.ellipsoid_4.nrrd",
+    images_location + "seg.ellipsoid_5.nrrd",
+    images_location + "seg.ellipsoid_6.nrrd",
+    images_location + "seg.ellipsoid_7.nrrd",
+    images_location + "seg.ellipsoid_8.nrrd",
+    images_location + "seg.ellipsoid_9.nrrd",
+  };
 
-  // Image image(test_location + "seg.ellipsoid_1.nrrd");
-  // Image::Region region;
-  // region = image.boundingBox(images, region);
-  // std::cout << region.min[0] << region.min[1] << region.min[2];
-  // image.crop(region);
-  // Image ground_truth(test_location + "crop_baseline.nrrd");
+  Image image;
+  Image::Region region;
+  region = image.boundingBox(images, region);
+  image.read(test_location + "seg.ellipsoid_1.nrrd");
+  image.crop(region);
+  Image ground_truth(test_location + "crop_baseline.nrrd");
 
-  // ASSERT_TRUE(image == ground_truth);
+  ASSERT_TRUE(image == ground_truth);
 }
 
 //TEST(ImageTests, blah_test) {
