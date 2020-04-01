@@ -140,6 +140,30 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class Translate : public TransformCommand
+{
+public:
+  static Translate &getCommand() { static Translate instance; return instance; }
+
+private:
+  Translate() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ApplyTransform : public ImageCommand
+{
+public:
+  static ApplyTransform &getCommand() { static ApplyTransform instance; return instance; }
+
+private:
+  ApplyTransform() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class ExtractLabel : public ImageCommand
 {
 public:

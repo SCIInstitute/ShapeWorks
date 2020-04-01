@@ -2,18 +2,18 @@
 
 #include "Shapeworks.h"
  
-#include <itkFixedCenterOfRotationAffineTransform.h>
+#include <itkTranslationTransform.h>
 
 namespace shapeworks {
 
 class Transform
 {
 public:
-  using itkTransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
+  using TransformType = itk::TranslationTransform<double, 3>;
 
   Transform() : rotangle(0.0) { reset(); }
 
-  itkTransformType::Pointer get() const;
+  TransformType::Pointer get() const;
 
   void reset();
   void translate(const Vector3 &v); 

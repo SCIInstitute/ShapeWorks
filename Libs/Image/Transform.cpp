@@ -6,7 +6,7 @@ namespace shapeworks {
 
 void Transform::print() const
 {
-  itkTransformType::Pointer xform = this->get();
+  TransformType::Pointer xform = this->get();
   std::cout << xform << std::endl;
 }
 
@@ -23,6 +23,7 @@ void Transform::reset()
 
 void Transform::translate(const Vector3 &v)
 {
+  std::cout << v;
   translation += v;
 #if DEBUG_CONSOLIDATION
   std::cout << v << std::endl;
@@ -42,12 +43,12 @@ void Transform::scale(const Vector3 &s)
   scaling = scaling * s;
 }
 
-Transform::itkTransformType::Pointer Transform::get() const
+Transform::TransformType::Pointer Transform::get() const
 {
-  itkTransformType::Pointer transform = itkTransformType::New();
+  TransformType::Pointer transform = TransformType::New();
   transform->Translate(translation);
-  transform->Scale(scaling);
-  transform->Rotate3D(rotaxis, rotangle);
+  // transform->Scale(scaling);
+  // transform->Rotate3D(rotaxis, rotangle);
 
 #if DEBUG_CONSOLIDATION
   std::cout << *transform;

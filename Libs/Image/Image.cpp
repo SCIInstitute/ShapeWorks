@@ -389,6 +389,48 @@ bool Image::pad(int padding, PixelType value)
   return true;
 }
 
+bool Image::applyTransform(const Transform &transform)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  FilterType::Pointer resampler = FilterType::New();
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+  resampler->SetInterpolator(interpolator);
+  resampler->SetDefaultPixelValue(-1);
+
+  // transform->Translate(translation);
+  resampler->SetTransform(transform.get());
+
+  resampler->SetInput(this->image);
+  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetOutputSpacing(image->GetSpacing());
+
+  try
+  {
+    resampler->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Transform failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Transform succeeded!\n";
+#endif
+  return true;
+}
+
 bool Image::extractLabel(PixelType label)
 {
   threshold(label, label);
