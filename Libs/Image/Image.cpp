@@ -848,7 +848,7 @@ Point3 Image::centerOfMass() const
     return false;
   }
 
-  Point3 mean;
+  Point3 translation, mean;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -875,7 +875,54 @@ Point3 Image::centerOfMass() const
   mean[1] /= static_cast<double>(numPixels);
   mean[2] /= static_cast<double>(numPixels);
 
-  return mean;
+  ImageType::PointType origin = image->GetOrigin();
+  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
+
+  ImageType::IndexType index;
+  // ImageType::PointType point;
+  // ImageType::PointType center;
+  Point3 point, center;
+
+  index[0] = 0; index[1] = 0; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] = point[0]; center[1] = point[1]; center[2] = point[2];
+
+  index[0] = 0; index[1] = 0; index[2] = size[2] - 1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  // center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+  center += point;
+
+  index[0] = 0; index[1] = size[1] - 1; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = 0; index[1] = size[1] - 1; index[2] = size[2] - 1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0] - 1; index[1] = 0; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0] - 1; index[1] = 0; index[2] = size[2] - 1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0] - 1; index[1] = size[1] - 1; index[2] = 0;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  index[0] = size[0] - 1; index[1] = size[1] - 1; index[2] = size[2] - 1;
+  image->TransformIndexToPhysicalPoint(index, point);
+  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
+
+  center[0] /= 8.0; center[1] /= 8.0; center[2] /= 8.0;
+
+  translation[0] = -1 * (-mean[0] + center[0]);
+  translation[1] = -1 * (-mean[1] + center[1]);
+  translation[2] = -1 * (-mean[2] + center[2]);
+
+  return translation;
 }
 
 /// size

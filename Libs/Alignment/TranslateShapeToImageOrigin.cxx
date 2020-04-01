@@ -252,6 +252,8 @@ int main( int argc, char * argv[] )
     translation[1] = -1*(-imageCenterY + center[1]);
     translation[2] = -1*(-imageCenterZ + center[2]);
 
+    std::cout << translation;
+
     std::cout<<"Input file name:"<<inFilename<<std::endl;
     std::cout << "translation:"<< translation[0] << " " << translation[1] <<" "<< translation[2]<<"\n";
     std::cout <<"origin:"<<origin[0]<<" "<<origin[1]<<" "<<origin[2]<<"\n";

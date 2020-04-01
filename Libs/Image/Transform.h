@@ -1,15 +1,14 @@
 #pragma once
 
 #include "Shapeworks.h"
- 
-#include <itkTranslationTransform.h>
+#include <itkFixedCenterOfRotationAffineTransform.h>
 
 namespace shapeworks {
 
 class Transform
 {
 public:
-  using TransformType = itk::TranslationTransform<double, 3>;
+  using TransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
 
   Transform() : rotangle(0.0) { reset(); }
 

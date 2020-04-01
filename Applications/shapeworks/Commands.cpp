@@ -236,6 +236,7 @@ void Coverage::buildParser()
   const std::string prog = "coverage";
   const std::string desc = "coverage between two meshes";
   parser.prog(prog).description(desc);
+
   parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
 
   Command::buildParser();
@@ -250,6 +251,7 @@ int Coverage::execute(const optparse::Values &options, SharedCommandData &shared
     std::cerr << "Must specify second mesh\n";
     return -1;
   }
+
   Mesh second_mesh;
   second_mesh.read(second_mesh_string);
 
