@@ -23,7 +23,6 @@ void Transform::reset()
 
 void Transform::translate(const Vector3 &v)
 {
-  std::cout << v;
   translation += v;
 #if DEBUG_CONSOLIDATION
   std::cout << v << std::endl;
@@ -46,12 +45,12 @@ void Transform::scale(const Vector3 &s)
 Transform::TransformType::Pointer Transform::get() const
 {
   TransformType::Pointer transform = TransformType::New();
-  transform->Translate(translation);
-  // transform->Scale(scaling);
-  // transform->Rotate3D(rotaxis, rotangle);
+  transform->Translate(-translation);  // -translation b/c transformation will take place in output image space (an itk thing, and maybe this should be negated in the Image::applyTransform function, except the is the function to get the itk transformation, so maybe it's fine).
+  // transform->Scale(scaling);  // TODO
+  // transform->Rotate3D(rotaxis, rotangle); //TODO
 
 #if DEBUG_CONSOLIDATION
-  std::cout << *transform;
+  std::cout << *transform << std::endl;
 #endif
   return transform;
 }

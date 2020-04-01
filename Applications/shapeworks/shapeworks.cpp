@@ -25,7 +25,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(Translate::getCommand());
-  shapeworks.addCommand(ApplyTransform::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
   shapeworks.addCommand(Threshold::getCommand());

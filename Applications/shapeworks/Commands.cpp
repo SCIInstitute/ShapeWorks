@@ -266,9 +266,9 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--tx").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--ty").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--tz").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("Description of optionName.");
 
   Command::buildParser();
 }
@@ -292,23 +292,6 @@ int Translate::execute(const optparse::Values &options, SharedCommandData &share
     sharedData.transform.translate(Vector3(v));
   }
 
-  return 1;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ApplyTransform
-///////////////////////////////////////////////////////////////////////////////
-void ApplyTransform::buildParser()
-{
-  const std::string prog = "apply-transform";
-  const std::string desc = "apply current transformation";
-  parser.prog(prog).description(desc);
-
-  Command::buildParser();
-}
-
-int ApplyTransform::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
   return sharedData.image.applyTransform(sharedData.transform);
 }
 

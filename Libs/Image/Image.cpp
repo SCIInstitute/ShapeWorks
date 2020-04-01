@@ -66,6 +66,7 @@ bool Image::read(const std::string &filename)
 #if DEBUG_CONSOLIDATION
   std::cout << "Successfully read image " << filename << std::endl;
 #endif
+
   this->image = reader->GetOutput();
   return true;
 }
@@ -172,7 +173,6 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   if (numLayers)
     filter->SetNumberOfLayers(numLayers);
   filter->SetInput(this->image);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -188,6 +188,8 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
 #if DEBUG_CONSOLIDATION
   std::cout << "Antialias filter succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -207,7 +209,6 @@ bool Image::recenter()
   FilterType::Pointer filter = FilterType::New();
   filter->SetInput(this->image);
   filter->CenterImageOn();
-  this->image = filter->GetOutput();
 
   try
   {
@@ -223,6 +224,8 @@ bool Image::recenter()
 #if DEBUG_CONSOLIDATION
   std::cout << "Recenter image succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -258,7 +261,6 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   }
   resampler->SetSize(outputSize);
   resampler->SetInput(this->image);
-  this->image = resampler->GetOutput();
 
   try
   {
@@ -274,6 +276,8 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
 #if DEBUG_CONSOLIDATION
   std::cout << "Resample images to be isotropic succeeded!\n";
 #endif
+
+  this->image = resampler->GetOutput();
   return true;
 }
 
@@ -370,7 +374,6 @@ bool Image::pad(int padding, PixelType value)
   filter->SetPadLowerBound(lowerExtendRegion);
   filter->SetPadUpperBound(upperExtendRegion);
   filter->SetConstant(value);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -386,6 +389,8 @@ bool Image::pad(int padding, PixelType value)
 #if DEBUG_CONSOLIDATION
   std::cout << "Pad image succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -404,11 +409,7 @@ bool Image::applyTransform(const Transform &transform)
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(-1);
-
-  // transform->Translate(translation);
   resampler->SetTransform(transform.get());
-
   resampler->SetInput(this->image);
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(image->GetOrigin());
@@ -428,6 +429,8 @@ bool Image::applyTransform(const Transform &transform)
 #if DEBUG_CONSOLIDATION
   std::cout << "Transform succeeded!\n";
 #endif
+
+  this->image = resampler->GetOutput();
   return true;
 }
 
@@ -453,7 +456,6 @@ bool Image::closeHoles()
   FilterType::Pointer filter = FilterType::New();
   filter->SetInput(this->image);
   filter->SetForegroundValue(itk::NumericTraits<PixelType>::min());
-  this->image = filter->GetOutput();
 
   try
   {
@@ -469,6 +471,8 @@ bool Image::closeHoles()
 #if DEBUG_CONSOLIDATION
   std::cout << "Close Holes succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -487,7 +491,6 @@ bool Image::threshold(PixelType min, PixelType max)
   filter->SetUpperThreshold(max);
   filter->SetInsideValue(1.0);
   filter->SetOutsideValue(0.0);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -503,6 +506,8 @@ bool Image::threshold(PixelType min, PixelType max)
 #if DEBUG_CONSOLIDATION
   std::cout << "Threshold succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -519,7 +524,6 @@ bool Image::computeDT(float isoValue)
   filter->SetInput(this->image);
   filter->NarrowBandingOff();
   filter->SetLevelSetValue(isoValue);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -535,6 +539,8 @@ bool Image::computeDT(float isoValue)
 #if DEBUG_CONSOLIDATION
   std::cout << "Fast March succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -551,7 +557,6 @@ bool Image::applyCurvature(unsigned iterations)
   filter->SetTimeStep(0.0625);
   filter->SetNumberOfIterations(iterations);
   filter->SetInput(this->image);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -566,6 +571,8 @@ bool Image::applyCurvature(unsigned iterations)
 #if DEBUG_CONSOLIDATION
   std::cout << "Curvature Flow succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -581,7 +588,6 @@ bool Image::applyGradient()
   FilterType::Pointer filter  = FilterType::New();
 
   filter->SetInput(this->image);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -597,6 +603,8 @@ bool Image::applyGradient()
 #if DEBUG_CONSOLIDATION
   std::cout << "Gradient Magnitude succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -616,7 +624,6 @@ bool Image::applySigmoid(double alpha, double beta)
   filter->SetOutputMinimum(0.0);
   filter->SetOutputMaximum(1.0);
   filter->SetInput(this->image);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -632,6 +639,8 @@ bool Image::applySigmoid(double alpha, double beta)
 #if DEBUG_CONSOLIDATION
   std::cout << "Sigmoid succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -655,7 +664,6 @@ bool Image::applyLevel(const std::string other, double scaling)
   read(other);
   filter->SetInput(this->image);
   filter->SetFeatureImage(currentImage);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -671,6 +679,8 @@ bool Image::applyLevel(const std::string other, double scaling)
 #if DEBUG_CONSOLIDATION
   std::cout << "Level Set succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -686,7 +696,6 @@ bool Image::gaussianBlur(double sigma)
   BlurType::Pointer blur = BlurType::New();
   blur->SetInput(this->image);
   blur->SetVariance(sigma * sigma);
-  this->image = blur->GetOutput();
   
   try
   {
@@ -702,6 +711,8 @@ bool Image::gaussianBlur(double sigma)
 #if DEBUG_CONSOLIDATION
   std::cout << "Gaussian Blur succeeded!\n";
 #endif
+
+  this->image = blur->GetOutput();
   return true;
 }
 
@@ -806,7 +817,6 @@ bool Image::crop(const Region &region)
   filter->SetExtractionRegion(desiredRegion);
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
-  this->image = filter->GetOutput();
 
   try
   {
@@ -822,6 +832,8 @@ bool Image::crop(const Region &region)
 #if DEBUG_CONSOLIDATION
   std::cout << "Crop Image succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
