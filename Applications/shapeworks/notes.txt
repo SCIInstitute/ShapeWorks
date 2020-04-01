@@ -40,72 +40,75 @@ ShapeWorksToolsConsolidation -> https://docs.google.com/spreadsheets/d/17gevfSR-
 Image commands:
 
 [x] readimage
-[x] writeimage
-[x] binarize (created new command by breaking down isoresample)
-[x] recenter (created new command by breaking down isoresample)
-[x] *AntiAliasing -> antialias
- o ShapeWorksGroom class duplicates antialias functionality, has different defaults
- o numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
- o Examples:
+ - shapeworks readimage --name ./test.nrrd
 
+[x] writeimage
+ - shapeworks writeimage --name ./foobar.nrrd
+
+[x] binarize (created new command by breaking down ResampleVolumesToBeIsotropic)
+ - shapeworks readimage --name ./test.nrrd binarize writeimage --name ./foobar.nrrd
+
+[x] recenter (created new command by breaking down ResampleVolumesToBeIsotropic)
+ - shapeworks readimage --name ./test.nrrd recenter writeimage --name ./foobar.nrrd
+
+[x] *AntiAliasing -> antialias
  - shapeworks readimage --name ./test.nrrd antialias --numiterations 75 --maxrmserror 0.03 --numlayers 0 writeimage --name ./foobar.nrrd
 
 [] ClipVolume
-[x] *CloseHoles -> closeholes
- o Examples:
 
+[x] *CloseHoles -> closeholes
  - shapeworks readimage --name ./test.nrrd closeholes writeimage --name ./foobar.nrrd 
 
- - CloseHoles --inFilename=./test.nrrd --outFilename=./foobar.nrrd
-
 [x] *CropImages -> crop
-[x] *ExtractGivenLabelImage -> extractlabel 
- o Examples:
+ - shapeworks readimage --name ./test.nrrd crop writeimage --name ./foobar.nrrd 
 
+[x] *ExtractGivenLabelImage -> extractlabel 
  - shapeworks readimage --name ./test.nrrd extractlabel --label 1.0 writeimage --name ./foobar.nrrd
 
- - ExtractGivenLabelImage --inFilename=./test.nrrd --outFilename=./foobar.nrrd --labelVal 1
-
-[x] *FastMarching -> fastmarch
- o Examples:
-
+[x] *FastMarching -> computedt
  - shapeworks readimage --name ./test.nrrd fastmarch --isovalue 0.0 writeimage --name ./foobar.nrrd
 
- - FastMarching --inFilename=./test.nrrd --outFilename=./foobar.nrrd --isoValue 0.0
+[x] *FindLargestBoundingBox -> boundingbox 
+ - shapeworks boundingbox --names ./images/*.nrrd -- --padding 0
 
-[] *FindLargestBoundingBox
 [x] *PadVolumeWithConstant -> pad
- o Examples:
-
  - shapeworks readimage --name ./test.nrrd pad --padding 0 --value 0.0 writeimage --name ./foobar.nrrd
-
- - PadVolumeWithConstant --inFilename=./test.nrrd --outFilename=./foobar.nrrd --paddingSize=0 --paddingValue=0.0
 
 [] *ReflectVolumes
 
 [x] ResampleVolumesToBeIsotropic -> isoresample
- o Examples:
-
-  - shapeworks readimage --name ./test.nrrd antialias isoresample --isospacing 1.0 recenter binarize writeimage --name ./foobar.nrrd
-
-  - ResampleVolumesToBeIsotropic --inFilename=./test.nrrd --outFilename=./foobar.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
+ - shapeworks readimage --name ./test.nrrd antialias isoresample --isospacing 1.0 recenter binarize writeimage --name ./foobar.nrrd
 
 [x] *ThresholdImages -> threshold 
-
  - shapeworks readimage --name ./test.nrrd threshold writeimage --name ./foobar.nrrd
 
- - ThresholdImages --inFilename=./test.nrrd --outFilename=./foobar.nrrd
-
 [x] TopologyPreservingSmoothing
-./bin/shapeworks read-image --name ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.DT.nrrd curvature --iterations 1 write-image --name ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.tpSmoothDT.nrrd gradient sigmoid --alpha 10.5 set-level --other ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.tpSmoothDT.nrrd --scaling 0.0 write-image --name ./images/test_tp/seg.ellipsoid_1.isores.pad.com.aligned.ISO.nrrd 
+ - shapeworks readimage --name ./images/test.nrrd curvature --iterations 1 writeimage --name ./images/test.tpSmoothDT.nrrd gradient sigmoid --alpha 10.5 setlevel --other ./images/test.tpSmoothDT.nrrd --scaling 0.0 writeimage --name ./images/test.ISO.nrrd 
+
+[x] curvature (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd curvature --iterations 1 writeimage --name ./images/test.tpSmoothDT.nrrd
+
+[x] gradient (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd gradient writeimage --name ./images/foobar.nrrd
+
+[x] sigmoid (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd sigmoid --alpha 10.5 --beta 10.0 writeimage --name ./images/foobar.nrrd
+
+[x] setlevel (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd setlevel --other ./images/test.tpSmoothDT.nrrd --scaling 0.0 writeimage --name ./images/test.ISO.nrrd
+
+[x] blur
 
 [x] *WriteImageInfoToText -> deprecated
+
 [x] itkTBGACLevelSetImageFilter (also has .txx file) -> not a tool
 
 Mesh commands:  (some of these may not actually be executables)
 
 [] readmesh  (functions exist, they just don't do anything)
+
 [] writemesh (functions exist, they just don't do anything)
+
 ClipClosedSurface
 ComputeCurvatureAndCoordFiles
 ComputeGeodesicDistanceFromVerticesToPoints
@@ -137,9 +140,13 @@ ReconstructSamplesAlongPCAModes
 ReconstructSurface
 ReflectMesh
 RemoveFidsDTLeakage
+
 [] SmoothMesh -> shapeworks smoothmesh
+
 WriteFeatureGradientAsText
+
 [x] deprecated/  (git rm -r deprecated)
+
 fea2vtk
 itkMultiplyByConstantImageFilter.h
 meshFIM.cpp
@@ -156,22 +163,21 @@ ShapeWorksRunApp.h (save this one till last or not at all)
 Alignment commands:
 
 ApplyRigid3DTransformationToImage
-ICPRigid3DImageRegistration
-ICPRigid3DMeshRegistration
+[] ICPRigid3DImageRegistration
+[] ICPRigid3DMeshRegistration
 Procrustes3D.cpp
 Procrustes3D.h
 ReflectMeshes
-ResampleVolumeToIsotropic -> see if it's used anywhere and convert those cases to use new resampleimage command
+ResampleVolumeToIsotropic
 ResizeOriginResampleVolumes
-TranslateImages
-[x] TranslateShapeToImageOrigin -> center-of-mass-align 
-o Examples:
 
- - shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd center-of-mass-align --headerfile=/Users/archanasrisubramanian/Desktop/shapeworks_results/COM/data.txt writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/COM/com_seg.ellipsoid_0.nrrd
+[x] TranslateImages -> translate
+ - shapeworks readimage --name ./images/test.nrrd translate --tx 10 --ty 10 --tz 10 writeimage --name ./images/foobar.nrrd
 
- - TranslateShapeToImageOrigin --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_Prepped/seg.ellipsoid_0.nrrd --outFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/old_com_seg.ellipsoid_0.nrrd --useCenterOfMass 1 --parameterFilename=/Users/archanasrisubramanian/Desktop/shapeworks_results/data.txt
+[x] TranslateShapeToImageOrigin -> translate 
+ - shapeworks readimage --name ./images/test.nrrd translate --centerofmass 1 writeimage --name ./images/foobar.nrrd
 
-[x] TranslationTransform
+[x] TranslationTransform -> deprecated
 
 Alignment/Transform Commands:
 

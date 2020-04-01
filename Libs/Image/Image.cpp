@@ -912,57 +912,6 @@ Point3 Image::centerOfMass() const
   std::cout<<"val: "<<physicalToLogical(com)<<std::endl; //debug
   std::cout<<"...and back: "<<logicalToPhysical(physicalToLogical(com))<<std::endl; //debug
   return com;
-  
-#if 0
-  ImageType::PointType origin = image->GetOrigin();
-  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
-
-  ImageType::IndexType index;
-  // ImageType::PointType point;
-  // ImageType::PointType center;
-  Point3 point, center;
-
-  index[0] = 0; index[1] = 0; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] = point[0]; center[1] = point[1]; center[2] = point[2];
-
-  index[0] = 0; index[1] = 0; index[2] = size[2] - 1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  // center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-  center += point;
-
-  index[0] = 0; index[1] = size[1] - 1; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = 0; index[1] = size[1] - 1; index[2] = size[2] - 1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0] - 1; index[1] = 0; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0] - 1; index[1] = 0; index[2] = size[2] - 1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0] - 1; index[1] = size[1] - 1; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0] - 1; index[1] = size[1] - 1; index[2] = size[2] - 1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  center[0] /= 8.0; center[1] /= 8.0; center[2] /= 8.0;
-
-  translation[0] = -1 * (-mean[0] + center[0]);
-  translation[1] = -1 * (-mean[1] + center[1]);
-  translation[2] = -1 * (-mean[2] + center[2]);
-
-  return translation;
-#endif
 }
 
 /// size
