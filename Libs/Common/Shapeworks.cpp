@@ -1,6 +1,8 @@
 #include "Shapeworks.h"
 
-shapeworks::Point3 shapeworks::operator+(const shapeworks::Point3 &p, const shapeworks::Point3 &q)
+namespace shapeworks {
+
+Point3 operator+(const Point3 &p, const Point3 &q)
 {
   Point3 ret;
   for (unsigned i = 0; i < 3; i++)
@@ -8,14 +10,14 @@ shapeworks::Point3 shapeworks::operator+(const shapeworks::Point3 &p, const shap
   return ret;
 }
 
-shapeworks::Point3& shapeworks::operator+=(shapeworks::Point3 &p, const shapeworks::Point3 &q)
+Point3& operator+=(Point3 &p, const Point3 &q)
 {
   for (unsigned i = 0; i < 3; i++)
     p[i] += q[i];
   return p;
 }
 
-shapeworks::Point3 shapeworks::operator/(const shapeworks::Point3 &p, const double x)
+Point3 operator/(const Point3 &p, const double x)
 {
   Point3 ret;
   for (unsigned i = 0; i < 3; i++)
@@ -23,9 +25,11 @@ shapeworks::Point3 shapeworks::operator/(const shapeworks::Point3 &p, const doub
   return ret;
 }
 
-shapeworks::Point3& shapeworks::operator/=(shapeworks::Point3 &p, const double x)
+Point3& operator/=(Point3 &p, const double x)
 {
   for (unsigned i = 0; i < 3; i++)
     p[i] /= x;
   return p;
 }
+
+}; //shapeworks
