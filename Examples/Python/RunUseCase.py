@@ -38,17 +38,20 @@ if len(sys.argv)==1:
     parser.print_help(sys.stderr)
     sys.exit(1)
 
-module = __import__(args.use_case)
+# local path for imports, etc
+sys.path.insert(0, binpath + "/ShapeWorksStudio.app/Contents/MacOS")
+sys.path.insert(0, binpath)
 
-# Path final
+# paths for subprocesses (or could pass as env to each one)
 if platform.system() == "Darwin":
     items = binpath.split(os.pathsep)
     binpath = ""
     for item in items:
         binpath = binpath + os.pathsep + item \
             + os.pathsep + item + "/ShapeWorksStudio.app/Contents/MacOS"
-
 os.environ["PATH"] = binpath + os.pathsep + os.environ["PATH"]
+
+module = __import__(args.use_case)
 
 try:
     module.Run_Pipeline(args)

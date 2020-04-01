@@ -13,13 +13,13 @@ set(shapeworks_headers
   ParticleCommands.h
   SharedCommandData.h
   )
-add_executable(shapeworks
+add_executable(shapeworks_exe
   ${shapeworks_sources}
   ${shapeworks_headers})
-target_include_directories(shapeworks PUBLIC
+target_include_directories(shapeworks_exe PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(shapeworks
+target_link_libraries(shapeworks_exe
   Utils
   Image
   Mesh
@@ -29,9 +29,10 @@ target_link_libraries(shapeworks
   )
 
 # Install
-set_target_properties(shapeworks PROPERTIES PUBLIC_HEADER
-  "${shapeworks_headers}")
-install(TARGETS shapeworks
+set_target_properties(shapeworks_exe PROPERTIES
+  PUBLIC_HEADER "${shapeworks_headers}"
+  OUTPUT_NAME "shapeworks")
+install(TARGETS shapeworks_exe
   ARCHIVE DESTINATION bin
   RUNTIME DESTINATION bin
   PUBLIC_HEADER DESTINATION include

@@ -18,7 +18,7 @@ int add(int i, int j) {
     return i + j;
 }
 
-PYBIND11_MODULE(shapeworkspy, m)
+PYBIND11_MODULE(shapeworks, m)
 {
   m.doc() = "ShapeWorks Python API";
 
@@ -40,7 +40,7 @@ PYBIND11_MODULE(shapeworkspy, m)
 // >>> sz[0]
 // Traceback (most recent call last):
 //   File "<stdin>", line 1, in <module>
-// TypeError: 'shapeworkspy.Point3' object is not subscriptable
+// TypeError: 'shapeworks.Point3' object is not subscriptable
 
   // TODO: add Vector3 and Matrix (Matrix44) 
 
