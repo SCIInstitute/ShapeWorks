@@ -281,8 +281,11 @@ int Translate::execute(const optparse::Values &options, SharedCommandData &share
 
   if (centerofmass)
   {
-    Point3 com = sharedData.image.centerOfMass();
-    sharedData.transform.translate(com.GetVectorFromOrigin());
+    Point3 com(sharedData.image.centerOfMass());
+    Dims dims(sharedData.image.dims());
+    Point3 center{{dims[0]/2.0, dims[1]/2.0, dims[2]/2.0}};
+    center += sharedData.image.origin();
+    sharedData.transform.translate(com - center);
   }
   else
   {

@@ -25,6 +25,7 @@
 #include <itkExtractImageFilter.h>
 
 #include <sys/stat.h>
+#include <exception>
 
 namespace shapeworks {
 
@@ -837,6 +838,38 @@ bool Image::crop(const Region &region)
   return true;
 }
 
+/// logicalToPhysical
+///
+/// returns voxel coordinate of this physical location, throwing exception if it doesn't exist
+Point3 Image::logicalToPhysical(const IPoint3 &v) const
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, throwing an exception." << std::endl;
+    throw std::invalid_argument("this is an invalid Image");
+  }
+
+  itk::Index<3> index;
+  index.SetIndex(reinterpret_cast<const long*>(v.GetDataPointer()));
+  Point3 value;
+  image->TransformIndexToPhysicalPoint(index, value);
+  return value;
+}
+
+/// physicalToLogical
+///
+/// returns physical location of this voxel coordinate, throwing exception if it doesn't exist
+IPoint3 Image::physicalToLogical(const Point3 &p) const
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, throwing an exception." << std::endl;
+    throw std::invalid_argument("this is an invalid Image");
+  }
+
+  return IPoint3(reinterpret_cast<int*>(image->TransformPhysicalPointToIndex(p).data()));
+}
+
 /// centerOfMass
 ///
 /// returns average spatial coordinate of black pixels in a binary volume
@@ -848,7 +881,7 @@ Point3 Image::centerOfMass() const
     return false;
   }
 
-  Point3 translation, mean;
+  Point3 com;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -864,17 +897,23 @@ Point3 Image::centerOfMass() const
     {
       numPixels += 1;
       image->TransformIndexToPhysicalPoint(index, point);
-      mean[0] += point[0];
-      mean[1] += point[1];
-      mean[2] += point[2];
+      com[0] += point[0];
+      com[1] += point[1];
+      com[2] += point[2];
     }
     ++imageIt;
   }
 
-  mean[0] /= static_cast<double>(numPixels);
-  mean[1] /= static_cast<double>(numPixels);
-  mean[2] /= static_cast<double>(numPixels);
+  com[0] /= static_cast<double>(numPixels);
+  com[1] /= static_cast<double>(numPixels);
+  com[2] /= static_cast<double>(numPixels);
 
+  std::cout<<"com: "<<com<<std::endl; //debug
+  std::cout<<"val: "<<physicalToLogical(com)<<std::endl; //debug
+  std::cout<<"...and back: "<<logicalToPhysical(physicalToLogical(com))<<std::endl; //debug
+  return com;
+  
+#if 0
   ImageType::PointType origin = image->GetOrigin();
   ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
 
@@ -923,6 +962,7 @@ Point3 Image::centerOfMass() const
   translation[2] = -1 * (-mean[2] + center[2]);
 
   return translation;
+#endif
 }
 
 /// size

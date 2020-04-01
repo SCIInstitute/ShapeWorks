@@ -42,6 +42,9 @@ public:
   Region boundingBox(std::vector<std::string> &filenames, Region &region, int padding = 0);
   bool crop(const Region &region);
 
+  Point3 logicalToPhysical(const IPoint3 &v) const;
+  IPoint3 physicalToLogical(const Point3 &p) const;
+
   bool operator==(const Image &other) const;
 
   Point3 centerOfMass() const;  
