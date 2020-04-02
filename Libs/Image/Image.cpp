@@ -850,7 +850,9 @@ Point3 Image::logicalToPhysical(const IPoint3 &v) const
   }
 
   itk::Index<3> index;
-  index.SetIndex(reinterpret_cast<const long*>(v.GetDataPointer()));
+  index[0] = v[0];
+  index[1] = v[1];
+  index[2] = v[2];
   Point3 value;
   image->TransformIndexToPhysicalPoint(index, value);
   return value;
@@ -867,7 +869,12 @@ IPoint3 Image::physicalToLogical(const Point3 &p) const
     throw std::invalid_argument("this is an invalid Image");
   }
 
-  return IPoint3(reinterpret_cast<int*>(image->TransformPhysicalPointToIndex(p).data()));
+  itk::Index<3> coords = image->TransformPhysicalPointToIndex(p);
+  IPoint3 icoords;
+  icoords[0] = coords[0];
+  icoords[1] = coords[1];
+  icoords[2] = coords[2];
+  return icoords;
 }
 
 /// centerOfMass

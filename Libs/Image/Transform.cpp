@@ -53,10 +53,10 @@ Transform::itkTransformType::Pointer Transform::getItkTransform() const
 
 std::ostream& operator<<(std::ostream &os, const Transform &t)
 {
-  return os << "shapeworks::Transform {translate: "
-            << t.translation << ", scale: " << t.scaling
-            << ", rotation: " << t.rotangle << ", rot_axis: "
-            << t.rotaxis << "}";
+  return os << "shapeworks::Transform {\n\ttranslate: "
+            << t.translation << ",\n\tscale: " << t.scaling
+            << ",\n\trotation: " << t.rotangle << ",\n\trot_axis: "
+            << t.rotaxis << "\n}";
 }
 
 } // shapeworks

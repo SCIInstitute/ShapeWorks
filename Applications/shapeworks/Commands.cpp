@@ -268,9 +268,9 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("Description of optionName.");
-  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("Description of optionName.");
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (e.g., 3.14)");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (not logical coordinate)");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space (...but that could be added)");
 
   Command::buildParser();
 }
@@ -281,11 +281,9 @@ int Translate::execute(const optparse::Values &options, SharedCommandData &share
 
   if (centerofmass)
   {
-    Point3 com(sharedData.image.centerOfMass());
-    Dims dims(sharedData.image.dims());
-    Point3 center{{dims[0]/2.0, dims[1]/2.0, dims[2]/2.0}};
-    center += sharedData.image.origin();
-    sharedData.transform.translate(com - center);
+    Point3 com = sharedData.image.centerOfMass();
+    Point3 center = sharedData.image.size() / 2.0 + sharedData.image.origin();
+    sharedData.transform.translate(center - com);
   }
   else
   {
@@ -298,7 +296,7 @@ int Translate::execute(const optparse::Values &options, SharedCommandData &share
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Translating by: " << sharedData.transform << std::endl;
+  std::cout << "Translating " << (centerofmass ? "using center of mass " : " explicitly ") << "by: " << sharedData.transform << std::endl;
 #endif
   return sharedData.image.applyTransform(sharedData.transform);
 }
