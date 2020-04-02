@@ -46,9 +46,9 @@ void Transform::scale(const Vector3 &s)
 Transform::TransformType::Pointer Transform::get() const
 {
   TransformType::Pointer transform = TransformType::New();
-  transform->Translate(translation); 
-  // transform->Scale(scaling);  // TODO
-  // transform->Rotate3D(rotaxis, rotangle); //TODO
+  transform->Translate(-translation);       // -translation b/c itk transformations are based on output image space
+  // transform->Scale(scaling);             // TODO
+  // transform->Rotate3D(rotaxis, rotangle);//TODO
 
 #if DEBUG_CONSOLIDATION
   std::cout << *transform << std::endl;
