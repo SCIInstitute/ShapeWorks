@@ -297,6 +297,9 @@ int Translate::execute(const optparse::Values &options, SharedCommandData &share
     sharedData.transform.translate(Vector3(v));
   }
 
+#if DEBUG_CONSOLIDATION
+  std::cout << "Translating by: " << sharedData.transform << std::endl;
+#endif
   return sharedData.image.applyTransform(sharedData.transform);
 }
 

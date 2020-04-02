@@ -410,7 +410,7 @@ bool Image::applyTransform(const Transform &transform)
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   resampler->SetInterpolator(interpolator);
-  resampler->SetTransform(transform.get());
+  resampler->SetTransform(transform.getItkTransform());
   resampler->SetInput(this->image);
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(image->GetOrigin());

@@ -8,24 +8,27 @@ namespace shapeworks {
 class Transform
 {
 public:
-  using TransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
+  using itkTransformType = itk::FixedCenterOfRotationAffineTransform<double, 3>;
 
   Transform() : rotangle(0.0) { reset(); }
 
-  TransformType::Pointer get() const;
+  itkTransformType::Pointer getItkTransform() const;
 
   void reset();
   void translate(const Vector3 &v); 
-  void rotate(const Vector3 &axis, double angle);
+  void rotate(const Vector3 &axis, double angle); // must specify angle in radians
   void scale(const Vector3 &s);
-
-  void print() const; //todo: operator << and operator >>
 
 private:
   Vector3 scaling;
   Vector3 translation;
   Vector3 rotaxis;
   double rotangle;
+
+  friend std::ostream& operator<<(std::ostream &os, const Transform &t);
 };
 
+std::ostream& operator<<(std::ostream &os, const Transform &t);
+
 } // shapeworks
+

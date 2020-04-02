@@ -4,12 +4,6 @@
 
 namespace shapeworks {
 
-void Transform::print() const
-{
-  TransformType::Pointer xform = this->get();
-  std::cout << xform << std::endl;
-}
-
 void Transform::reset()
 {
   double translate[3] = {0.0, 0.0, 0.0};
@@ -43,17 +37,26 @@ void Transform::scale(const Vector3 &s)
   scaling = scaling * s;
 }
 
-Transform::TransformType::Pointer Transform::get() const
+Transform::itkTransformType::Pointer Transform::getItkTransform() const
 {
-  TransformType::Pointer transform = TransformType::New();
+  itkTransformType::Pointer transform = itkTransformType::New();
   transform->Translate(-translation);       // -translation b/c itk transformations are based on output image space
   // transform->Scale(scaling);             // TODO
   // transform->Rotate3D(rotaxis, rotangle);//TODO
 
 #if DEBUG_CONSOLIDATION
-  std::cout << *transform << std::endl;
+  std::cout << "rawTransform: " << *this << std::endl;
+  std::cout << "itkTransform: " << *transform << std::endl;
 #endif
   return transform;
+}
+
+std::ostream& operator<<(std::ostream &os, const Transform &t)
+{
+  return os << "shapeworks::Transform {translate: "
+            << t.translation << ", scale: " << t.scaling
+            << ", rotation: " << t.rotangle << ", rot_axis: "
+            << t.rotaxis << "}";
 }
 
 } // shapeworks
