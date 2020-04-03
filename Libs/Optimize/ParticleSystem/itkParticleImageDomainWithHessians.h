@@ -94,7 +94,9 @@ public:
           continue;
         }
 
-        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        typename ImageType::PointType itkPt;
+        I->TransformIndexToPhysicalPoint(idx, itkPt);
+        const auto coord = openvdb::Coord(itkPt[0], itkPt[1], itkPt[2]);
         vdbAccessor.setValue(coord, hess);
         ++hessIt; ++it;
       }
@@ -180,10 +182,7 @@ public:
   {
 #ifdef USE_OPENVDB
 
-      auto o = this->GetOrigin();
-      auto sp = p;
-      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-      const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+      const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
 
       VnlMatrixType vdbAns;
       for (unsigned int i = 0; i < VDimension; i++)

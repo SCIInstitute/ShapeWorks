@@ -102,8 +102,10 @@ public:
             ++gradIt; ++it;
             continue;
         }
-        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-        vdbAccessor.setValue(coord, openvdb::Vec3f(grad[0], grad[1], grad[2]));
+      typename ImageType::PointType itkPt;
+      I->TransformIndexToPhysicalPoint(idx, itkPt);
+      const auto coord = openvdb::Coord(itkPt[0], itkPt[1], itkPt[2]);
+      vdbAccessor.setValue(coord, openvdb::Vec3f(grad[0], grad[1], grad[2]));
         ++gradIt; ++it;
     }
 #endif
@@ -132,11 +134,7 @@ public:
       if(this->IsInsideBuffer(p)) {
 #ifdef USE_OPENVDB
           //TODO: stop this GetOrigin stuff, use TransformIndexToPhysicalPoint when creating the grid
-          auto o = this->GetOrigin();
-          auto sp = p;
-          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-
+          const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
           const auto _v2 = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
           const VectorType v2(_v2.asPointer());
           return v2;

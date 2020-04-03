@@ -100,11 +100,10 @@ public:
         continue;
       }
 
-      PointType pos;
-      I->TransformIndexToPhysicalPoint(idx, pos);
-
-      const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-      vdbAccessor.setValue(coord, this->MeanCurvature(pos));
+      typename ImageType::PointType itkPt;
+      I->TransformIndexToPhysicalPoint(idx, itkPt);
+      const auto coord = openvdb::Coord(itkPt[0], itkPt[1], itkPt[2]);
+      vdbAccessor.setValue(coord, this->MeanCurvature(itkPt));
     }
 
     // Release the memory in the parent hessian images.
@@ -115,10 +114,7 @@ public:
 
   double GetCurvature(const PointType &p) const
   {
-    auto o = this->GetOrigin();
-    auto sp = p;
-    for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-    const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+    const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
     const T v2 = openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
     return v2;
   }
