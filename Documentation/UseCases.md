@@ -199,27 +199,17 @@ The meanShapePath and shapemodelDir are specified in the example itself, but the
 
 
 ## Left Atrium Use Case
-
-The goal of this use case is using the ShapeWorks functionality to groom different type of input data (raw and segmentation images),
-and different methods to optimize the particles.
-ShapeWorks needs binary input images for grooming and running the optimization, in this use case we use the grooming 
-functionality of ShapeWorks to groom the raw input images alongside with binary segmentations.
-This example helps us to process the data (raw and binary images) with the same parameters for downstream tasks.
-For this use case, we have the raw images of the left atrium and their corresponding binary segmentations. 
-
 ##### Minimum of 32GB of RAM required to run full use case.
 
-## Left Atrium Use Case
-
-The goal of this use case is using the ShapeWorks functionality to groom different type of input data (MRI and segmentation images),
+The goal of this use case is using the ShapeWorks functionality to groom different types of input data (MRI and segmentation images),
 and test two methods to optimize the particles.
 ShapeWorks needs binary input images for grooming and prepares the data for optimization, in this use case we use the grooming 
 functionality of ShapeWorks to groom the raw input images(MRI/CT) alongside with binary segmentations.
-This example helps us to process the data (MRI and binary images) with the same parameters for downstream tasks.
+This example shows how to process the data (MRI and binary images) with the same parameters for downstream tasks.
 There are multiple steps in the grooming stage to have proper data for optimization, these steps change the origin, 
 voxel size, image size, orientation, etc. of input data. Although we don't need the raw images for the optimization, 
 we might need them for any downstream task or warping the optimized particle system. 
-In this purpose, we need to be consistent in term of changes between segmentation and raw files. 
+For this purpose, we need to be consistent in term of changes between segmentation and raw files. 
 In each step of grooming, we use the segmentation files to find the grooming parameters such as finding reference image 
 for alignment or the bounding box for cropping, then we save them in a TXT file and use the same set of parameters 
 to groom the raw images. At the end of this stage, we have groomed segmentations to convert to distance transforms 
@@ -227,7 +217,7 @@ and run the optimization and also, grooming parameters, and groomed raw files.
 For this use case, we have 58 MRI images and their corresponding binary segmentation of left atrium(more details of 
 [data](https://www.insight-journal.org/midas/collection/view/197))
 
-The other aspect of this use case is the evaluation of different methods for optimization. 
+This use case also demonstrates evaluation of different methods for optimization. 
 We optimized the particle system with two different optimization methods available in ShapeWorks,
  single scale and multi-scale optimization. 
 The single scale optimization takes a fixed number of particles (usually a power of 2 ) and performs the initialization step,
