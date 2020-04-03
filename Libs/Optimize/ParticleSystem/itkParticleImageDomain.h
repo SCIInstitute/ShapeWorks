@@ -26,7 +26,6 @@
 #include "itkImageToVTKImageFilter.h"
 #include <itkZeroCrossingImageFilter.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
-#include <itkImageSliceIteratorWithIndex.h>
 #include <chrono>
 
 // we have to undef foreach here because both Qt and OpenVDB define foreach
@@ -35,7 +34,6 @@
 #include "openvdb/openvdb.h"
 #include "openvdb/tools/SignedFloodFill.h"
 #include "openvdb/tools/Interpolation.h"
-#include "openvdb/tools/Composite.h"
 #endif
 
 namespace itk
@@ -97,55 +95,34 @@ public:
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
+#ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
     m_VDBImage = openvdb::FloatGrid::create(500000.0);
     m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = m_VDBImage->getAccessor();
 
     m_Size = I->GetRequestedRegion().GetSize();
     m_Spacing = I->GetSpacing();
 
-    const auto slices = m_Size[2];
-    std::vector<openvdb::FloatGrid::Ptr> vdbGrids(slices);
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    it.GoToBegin();
 
-    //TODO: check if openmp is available
-#pragma omp parallel for schedule(static)
-    for(int i=0; i<slices; i++) {
-      const auto vdbGrid = openvdb::FloatGrid::create(500000.0);
-      vdbGrids[i] = vdbGrid;
-      vdbGrid->setGridClass(openvdb::GRID_LEVEL_SET);
-      auto vdbAccessor = vdbGrid->getAccessor();
-
-      ImageSliceConstIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
-      it.SetFirstDirection(0);
-      it.SetSecondDirection(1);
-      typename ImageType::IndexType firstIdx;
-      firstIdx[0] = 0; firstIdx[1] = 0; firstIdx[2] = i;
-      it.SetIndex(firstIdx);
-      while(!it.IsAtEndOfSlice()) {
-        while(!it.IsAtEndOfLine()) {
-          const auto idx = it.GetIndex();
-          const auto pixel = it.Get();
-          if(abs(pixel) > 4.0) {
+    auto start = std::chrono::high_resolution_clock::now();
+    while(!it.IsAtEnd()) {
+        const auto idx = it.GetIndex();
+        const auto pixel = it.Get();
+        if(abs(pixel) > 4.0) {
             ++it;
             continue;
-          }
-          typename ImageType::PointType itkPt;
-          I->TransformIndexToPhysicalPoint(idx, itkPt);
-          const auto coord = openvdb::Coord(itkPt[0], itkPt[1], itkPt[2]);
-          vdbAccessor.setValue(coord, pixel);
-          ++it;
         }
-        it.NextLine();
-      }
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, pixel);
+        ++it;
     }
-
-    // Combine the grids
-    for(const auto vdbGrid : vdbGrids) {
-      // The OpenVDB cookbook uses `csgUnion`, but `merge` is 2x faster
-      // openvdb::tools::csgUnion(*m_VDBImage, *vdbGrid);
-      m_VDBImage->merge(*vdbGrid);
-    }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "VDB Load time: " << duration.count() << "us" << std::endl;
 
     m_Origin = I->GetOrigin();
     m_Index = I->GetRequestedRegion().GetIndex();
@@ -210,15 +187,17 @@ public:
     // which are always double precision.
     typename Superclass::PointType l;
     typename Superclass::PointType u;
-
+    
     for (unsigned int i = 0; i < VDimension; i++)
       {
       l[i] = static_cast<double>(l0[i]);
       u[i] = static_cast<double>(u0[i]);
       }
-
+    
     this->SetLowerBound(l);
     this->SetUpperBound(u);
+#else
+#endif
   }
 
   inline double GetSurfaceArea() const {
@@ -253,7 +232,10 @@ public:
   {
       if(IsInsideBuffer(p)) {
 #ifdef USE_OPENVDB
-          const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
+          auto o = GetOrigin();
+          auto sp = p;
+          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
           const T v2 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
           return v2;
 #else

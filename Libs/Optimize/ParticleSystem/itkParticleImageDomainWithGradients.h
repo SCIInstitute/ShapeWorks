@@ -83,59 +83,30 @@ public:
     filter->Update();
     const auto gradI = filter->GetOutput();
 
+#ifdef USE_OPENVDB
     m_VDBGradient = openvdb::VectorGrid::create();
-    m_VDBGradient->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = m_VDBGradient->getAccessor();
 
-    const auto slices = this->GetSize()[2];
-    std::vector<openvdb::VectorGrid::Ptr> vdbGrids(slices);
-
-    //TODO: check if openmp is available
-#pragma omp parallel for schedule(static)
-    for(int i=0; i<slices; i++) {
-      const auto vdbGrid = openvdb::VectorGrid::create();
-      vdbGrids[i] = vdbGrid;
-      vdbGrid->setGridClass(openvdb::GRID_LEVEL_SET);
-      auto vdbAccessor = vdbGrid->getAccessor();
-
-      ImageSliceConstIteratorWithIndex<GradientImageType> gradIt(gradI, gradI->GetRequestedRegion());
-      ImageSliceConstIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
-      it.SetFirstDirection(0); it.SetSecondDirection(1);
-      gradIt.SetFirstDirection(0); gradIt.SetSecondDirection(1);
-      typename ImageType::IndexType firstIdx;
-      firstIdx[0] = 0; firstIdx[1] = 0; firstIdx[2] = i;
-      it.SetIndex(firstIdx);
-      gradIt.SetIndex(firstIdx);
-      while(!it.IsAtEndOfSlice()) {
-        while(!it.IsAtEndOfLine()) {
-          const auto idx = it.GetIndex();
-          if(idx != it.GetIndex()) {
-            // This code relies on ITK iterating through the image and the
-            // gradient image in the same order. Currently this happens, but
-            // is not guaranteed by the ITK API. If this crashes, we'll have to find
-            // a more reliable way of iterating over two images simultaneously.
+    ImageRegionIterator<GradientImageType> gradIt(gradI, gradI->GetRequestedRegion());
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    gradIt.GoToBegin();
+    it.GoToBegin();
+    while(!gradIt.IsAtEnd()) {
+        const auto idx = gradIt.GetIndex();
+        if(idx != it.GetIndex()) {
             throw std::runtime_error("Bad index");
-          }
-          const vnl_vector_ref<float> grad = gradIt.Get().GetVnlVector();
-          const auto pixel = it.Get();
-          if(abs(pixel) > 4.0) {
+        }
+        const vnl_vector_ref<float> grad = gradIt.Get().GetVnlVector();
+        const auto pixel = it.Get();
+        if(abs(pixel) > 4.0) {
             ++gradIt; ++it;
             continue;
-          }
-          typename ImageType::PointType itkPt;
-          I->TransformIndexToPhysicalPoint(idx, itkPt);
-          const auto coord = openvdb::Coord(itkPt[0], itkPt[1], itkPt[2]);
-          vdbAccessor.setValue(coord, openvdb::Vec3f(grad[0], grad[1], grad[2]));
-          ++gradIt; ++it;
         }
-        it.NextLine();
-        gradIt.NextLine();
-      }
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, openvdb::Vec3f(grad[0], grad[1], grad[2]));
+        ++gradIt; ++it;
     }
-
-    // Combine the grids
-    for(const auto vdbGrid : vdbGrids) {
-      m_VDBGradient->merge(*vdbGrid);
-    }
+#endif
 
   }
   // itkGetObjectMacro(GradientImage, GradientImageType);
@@ -160,7 +131,11 @@ public:
 
       if(this->IsInsideBuffer(p)) {
 #ifdef USE_OPENVDB
-          const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
+          //TODO: stop this GetOrigin stuff, use TransformIndexToPhysicalPoint when creating the grid
+          auto o = this->GetOrigin();
+          auto sp = p;
+          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
 
           const auto _v2 = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
           const VectorType v2(_v2.asPointer());
