@@ -209,6 +209,40 @@ For this use case, we have the raw images of the left atrium and their correspon
 
 ##### Minimum of 32GB of RAM required to run full use case.
 
+## Left Atrium Use Case
+
+The goal of this use case is using the ShapeWorks functionality to groom different type of input data (MRI and segmentation images),
+and test two methods to optimize the particles.
+ShapeWorks needs binary input images for grooming and prepares the data for optimization, in this use case we use the grooming 
+functionality of ShapeWorks to groom the raw input images(MRI/CT) alongside with binary segmentations.
+This example helps us to process the data (MRI and binary images) with the same parameters for downstream tasks.
+There are multiple steps in the grooming stage to have proper data for optimization, these steps change the origin, 
+voxel size, image size, orientation, etc. of input data. Although we don't need the raw images for the optimization, 
+we might need them for any downstream task or warping the optimized particle system. 
+In this purpose, we need to be consistent in term of changes between segmentation and raw files. 
+In each step of grooming, we use the segmentation files to find the grooming parameters such as finding reference image 
+for alignment or the bounding box for cropping, then we save them in a TXT file and use the same set of parameters 
+to groom the raw images. At the end of this stage, we have groomed segmentations to convert to distance transforms 
+and run the optimization and also, grooming parameters, and groomed raw files.
+For this use case, we have 58 MRI images and their corresponding binary segmentation of left atrium(more details of 
+[data](https://www.insight-journal.org/midas/collection/view/197))
+
+The other aspect of this use case is the evaluation of different methods for optimization. 
+We optimized the particle system with two different optimization methods available in ShapeWorks,
+ single scale and multi-scale optimization. 
+The single scale optimization takes a fixed number of particles (usually a power of 2 ) and performs the initialization step,
+ then performs ShapeWorks optimization.  The multi-scale optimization runs the single scale optimization for different 
+ number of particles in a hierarchical manner. It starts with a low number of particles, runs the single scale optimization
+  until convergence, then uses optimum particles for the initialization of next level and increases particles by 
+  the power of two at each level to reach the desired number of particles.
+
+For the dataset like left atrium with lots of variation, it is hard  to tune parameters of single scale optimization. 
+The multi-scale optimization is providing the optimize particle system at each level, so we can use them to tune the parameters
+ and have more stable particle system for the desired number of particles.
+ 
+ 
+##### Minimum of 32GB of RAM required to run full use case.
+
 ### Running Left Atrium
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
 
@@ -222,7 +256,7 @@ This calls left_atrium.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Grooms the images and segmentations by calling methods in GroomUtils.py
 * Optimizes particle distribution by calling methods in OptimizeUtils.py
-* Opens View2  to visualize results by calling methods in AnalyzeUtils.py
+* Opens ShapeWorksStudio  to visualize results by calling methods in AnalyzeUtils.py
 
 ### Grooming
 For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
@@ -233,6 +267,8 @@ For a description of the grooming tools and parameters, see: [Groom.md](https://
 5. Rigid Alignment - All of the segmentations and images are now aligned to the reference using rigid alignment.
 6. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
+
+![left Atrium Groom](images/leftatrium_groom.png)
 ### Optimize
 For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
 
@@ -259,6 +295,9 @@ Below are the default optimization parameters for this use case.
             "verbosity" : 3,
             "use_statistics_in_init" : 0
 
+
+![left Atrium singleScale](images/leftatrium_singlescale.png)
+
 * Multiscale optimization uses use defined starting number of particles and number of optimization levels, 
 and the optimized particles of each level are used to initialize the next level particles. 
 This method runs single scale optimization for each level and generates robust particle system.
@@ -283,6 +322,10 @@ The default values of this use case are as below.
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3
+            
+![left Atrium multiScale](images/leftatrium_multiscale.png)
+
+
 ### Analyze
 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
@@ -391,6 +434,30 @@ Single scale optimization is used with procrustes scaling to factor out size as 
 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
 For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
+
+
+##  Right Ventricle Use Case
+
+The goal of this use case is, study the group difference of right ventricle between control and patients.
+ In this study, we have two sets of data, the control group with six subjects and patient group consists of 26 subjects.
+  For each group, we have diastole and systole segmentation. The goal is to study the variation of the systole and diastole in two groups.
+   For this purpose, we pre-process diastole and systole data with the groom utils of ShapeWorks and then optimize the particle system for them, independently.
+    Then using the group difference analysis tool of ShapeWorks we can study the difference of variation in control and patient group from diastole to systole stage of heart. 
+
+### Grooming
+For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
+1. Isotropic Resampling - Segmentations are resampled to have uniform voxel spacing. 
+2. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the segmentations to prevent this.
+3. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference.
+4. Reference Selection - The reference is selected by first getting the mean distance transform of the segmentations, then selecting the sample closest to that mean.
+5. Rigid Alignment - All of the segmentations are now aligned to the reference using rigid alignment.
+6. Crop - The segmentations are cropped so that all of the samples are within the same bounding box.
+7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
+
+
+![RV_groom](images/RV_groom.png) 
+
+
 
 ## Dataset Guidelines
 Check out [Datasets.md](Datasets.md) for dataset upload instructions and guidelines. 
