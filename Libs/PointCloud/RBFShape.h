@@ -97,7 +97,10 @@ public:
           where \f$ \mathbf{c} \f$ is the coefficient vector of the implicit function associated with \f$ c_v \f$ as a value
           and  \f$ \mathbf{p} \f$ is the exponent of each spatial coordinate. The operations here are element-wise.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual Eigen::Vector3d gradient(const Eigen::Vector3d &point);
+      virtual Eigen::Vector3d gradient(const Eigen::Vector3d & point);
+
+      /** Computes the magnitude of the gradient for a certain point */
+      virtual double mag_gradient(const Eigen::Vector3d & point);
 
       /** This function solves the RBF system*/
 

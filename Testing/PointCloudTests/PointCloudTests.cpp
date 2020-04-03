@@ -23,81 +23,80 @@ double *ellipsoid_grid ( int n, double r[3], double c[3], int ng );
 double* get_bounding_sphere(size_t num, size_t& ng, double radius);
 
 //Flat surface test
+std::vector<double> flat_test(int side_length, int sep){
 
-TEST(PointCloudTests, sample_test) {
+    Eigen::MatrixXd flat(side_length*side_length*3, 4);
+    Eigen::MatrixXd flat_normals(side_length*side_length*3, 4);
 
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/point_cloud_ellipsoid");
-  chdir(test_location.c_str());
+    Eigen::Index count = 0;
 
-  Eigen::MatrixXd flat(1200, 4);
-  Eigen::MatrixXd flat_normals(1200, 4);
+    for(size_t i = 0; i < side_length; i++){
+        for(size_t j = 0; j < side_length; j++){
+           flat(count,0) = i*sep;
+           flat(count,1) = j*sep;
+           flat(count,2) = 0.;
+           flat(count,3) = 0.;
+           flat_normals(count,2) = 1.;
+           count++;
 
-  Eigen::Index count = 0;
+           flat(count,0) = i*sep;
+           flat(count,1) = j*sep;
+           flat(count,2) = 1.;
+           flat(count,3) = 1.;
+           flat_normals(count,2) = 1.;
+           count++;
 
-  double sep = 10.;
+           flat(count,0) = i*sep;
+           flat(count,1) = j*sep;
+           flat(count,2) = -1.;
+           flat(count,3) = -1.;
+           flat_normals(count,2) = 1.;
+           count++;
+        }
+    }
 
-  for(size_t i = 0; i < 20; i++){
-      for(size_t j = 0; j < 20; j++){
-         flat(count,0) = i*sep;
-         flat(count,1) = j*sep;
-         flat(count,2) = 0.;
-         flat(count,3) = 0.;
-         flat_normals(count,2) = 1.;
-         count++;
+    std::cout << "Creating RBF..." << std::endl;
 
-         flat(count,0) = i*sep;
-         flat(count,1) = j*sep;
-         flat(count,2) = 1.;
-         flat(count,3) = 1.;
-         flat_normals(count,2) = 1.;
-         count++;
+    shapeworks::RBFShape RBFflat = shapeworks::RBFShape();
 
-         flat(count,0) = i*sep;
-         flat(count,1) = j*sep;
-         flat(count,2) = -1.;
-         flat(count,3) = -1.;
-         flat_normals(count,2) = 1.;
-         count++;
-      }
-  }
+    std::cout << "Solving system..." << std::endl;
 
-  std::cout << "Creating RBF..." << std::endl;
+    RBFflat.solve_system(flat);
 
-  shapeworks::RBFShape RBFflat = shapeworks::RBFShape();
+    std::cout << "Printing..." << std::endl;
 
-  std::cout << "Solving system..." << std::endl;
+    RBFflat.set_raw_points(flat);
+    RBFflat.set_raw_normals(flat_normals);
 
-  RBFflat.solve_system(flat);
+    RBFflat.write_csv("flat_1.csv",5);
+    RBFflat.writeToEqFile("flat_1.Eq",5);
+    RBFflat.writeToRawFile("flat_1.raw",5);
 
-  std::cout << "Printing..." << std::endl;
+    double sum_absolute_differences = 0.;
+    std::vector<double> absolute_differences;
 
-  RBFflat.set_raw_points(flat);
-  RBFflat.set_raw_normals(flat_normals);
+    for(Eigen::Index i = 0; i < flat.rows(); i++){
+        Eigen::Vector3d pt = flat.row(i).head<3>();
+        //std::cout << "Point flat\n " << flat.row(i) << std::endl;
+        //std::cout << "Point\n " << pt << std::endl;
+        double value = flat(i,3);
+        double rbf_value = RBFflat.evaluate(pt);
+        double mag_grad = RBFflat.mag_gradient(pt);
+        double value_over_mag = rbf_value/mag_grad;
+        //std::cout << "Point " << i << " value " << value << " predicted_value " << value_over_mag << std::endl;
+        sum_absolute_differences += abs(value_over_mag - value);
+        absolute_differences.push_back(value_over_mag - value);
+    }
 
-  RBFflat.write_csv("flat_1.csv",5);
-  RBFflat.writeToEqFile("flat_1.Eq",5);
-  RBFflat.writeToRawFile("flat_1.raw",5);
+    double mean_abs_differences = sum_absolute_differences/count;
 
-  for(Eigen::Index i = 0; i < count; i++){
-      Eigen::Vector3d pt = flat.row(i).head<3>();
-      //std::cout << "Point flat\n " << flat.row(i) << std::endl;
-      //std::cout << "Point\n " << pt << std::endl;
-      double value = flat(i,3);
-      double rbf_value = RBFflat.evaluate(pt);
-      std::cout << "Point " << i << " value " << value << " predicted_value " << rbf_value << std::endl;
-  }
+    std::cout << "Mean absolute differences: " << mean_abs_differences << std::endl;
 
-  double value = 99;
-  ASSERT_LT(value, 100);
+    return absolute_differences;
 }
 
-/*
-//---------------------------------------------------------------------------
-TEST(PointCloudTests, sample_test) {
-
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/point_cloud_ellipsoid");
-  chdir(test_location.c_str());
-
+//Ellipsoid test
+std::vector<double> sphere_test() {
   int n = 2;
   double r[3] = {1.,2.,3.};
   double c[3] = {0.,0.,0.};
@@ -129,7 +128,7 @@ TEST(PointCloudTests, sample_test) {
     double iy_out = ellipsoid_pts_out[i*3+1];
     double iz_out = ellipsoid_pts_out[i*3+2];
 
-    std::cout << ix << "," << iy << "," << iz << std::endl;
+    //std::cout << ix << "," << iy << "," << iz << std::endl;
 
     double norm[3] = {ix-ix_in, iy-iy_in, iz-iz_in};
     double magnitude = sqrt(norm[0]*norm[0] + norm[1]*norm[1] + norm[2]*norm[2]);
@@ -175,17 +174,63 @@ TEST(PointCloudTests, sample_test) {
   RBFEllipsoid.writeToEqFile("ellipsoid_1.Eq",5);
   RBFEllipsoid.writeToRawFile("ellipsoid_1.raw",5);
 
+  double sum_absolute_differences = 0.;
+  std::vector<double> absolute_differences;
+
   for(size_t i = 0; i < count*3; i++){
       Eigen::Vector3d pt = ellipsoid.row(i).head<3>();
       double value = ellipsoid(i,3);
       double rbf_value = RBFEllipsoid.evaluate(pt);
-      std::cout << "Point " << i << " value " << value << " predicted_value " << rbf_value << std::endl;
+      double mag_grad = RBFEllipsoid.mag_gradient(pt);
+      double value_over_mag = rbf_value/mag_grad;
+      //std::cout << "Point " << i << " value " << value << " predicted_value " << value_over_mag << std::endl;
+      sum_absolute_differences += abs(value_over_mag - value);
+      absolute_differences.push_back(value_over_mag - value);
   }
 
-  double value = 99;
-  ASSERT_LT(value, 100);
+  double mean_abs_differences = sum_absolute_differences/count/3;
+
+  std::cout << "Mean absolute differences: " << mean_abs_differences << std::endl;
+
+  return absolute_differences;
 }
-*/
+
+TEST(PointCloudTests, sample_test) {
+
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/point_cloud_ellipsoid");
+  chdir(test_location.c_str());
+
+  //Flat surface test
+  //Params: width and height of the flat surface, spacing between points
+  std::vector<double> flat_test_output = flat_test(20, 10);
+
+  double sum_absolute_differences = 0.;
+
+  for(size_t i = 0; i < flat_test_output.size(); i++){
+      sum_absolute_differences += abs(flat_test_output[i]);
+  }
+
+  double flat_mean_abs_differences = sum_absolute_differences/flat_test_output.size();
+
+  //Sphere test
+  std::vector<double> sphere_test_output = sphere_test();
+
+  double sph_sum_absolute_differences = 0.;
+
+  for(size_t i = 0; i < sphere_test_output.size(); i++){
+      sph_sum_absolute_differences += abs(sphere_test_output[i]);
+  }
+
+  double sph_mean_abs_differences = sph_sum_absolute_differences/sphere_test_output.size();
+
+  std::cout << "Flat Difference: " << flat_mean_abs_differences << std::endl;
+  std::cout << "Sphere Difference: " << sph_mean_abs_differences << std::endl;
+
+  ASSERT_LT(flat_mean_abs_differences, 0.2);
+  ASSERT_LT(sph_mean_abs_differences, 0.2);
+
+}
+
 double* get_bounding_sphere(size_t num, size_t& ng, double radius){
     size_t num2 = num*4;
 

@@ -30,18 +30,26 @@ double RBFShape::evaluate(const Eigen::Vector3d & point){
     return eval.evaluate(this->kernel, point, this->points_, this->TPSWeights, this->coeff_.head<3>(), this->coeff_(3));
 }
 
-Eigen::Vector3d RBFShape::gradient(const Eigen::Vector3d &point){
+Eigen::Vector3d RBFShape::gradient(const Eigen::Vector3d & point){
 
     Eigen::Vector3d grad = Eigen::Vector3d(0.,0.,0.);
 
-    for (size_t i = 0; i < this->points_.size(); i++) {
+    for (size_t i = 0; i < this->points_.rows(); i++) {
       Eigen::Vector3d p = this->points_.row(i).head<3>();
       Eigen::Vector3d s = (point - p);
-      double r = sqrt(pow(s(0), 2) + pow(s(1), 2) + pow(s(2), 2));
+      double r = s.norm();
       grad = grad + (s * (this->TPSWeights[i] * (this->kernel)->compute_gradient(r)));
     }
 
-    return Eigen::Vector3d(1.,1.,1.);
+    return grad;
+}
+
+double RBFShape::mag_gradient(const Eigen::Vector3d & point){
+    Eigen::Vector3d grad = gradient(point);
+
+    double mag_gradient = (grad + coeff_.head<3>()).norm();
+
+    return mag_gradient;
 }
 
 void RBFShape::solve_system(const Eigen::MatrixXd & points){
@@ -166,7 +174,7 @@ void RBFShape::writeToRawFile(const std::string& filename, int precision){
     for (int i = 0; i < RawPoints.rows(); i++)
     {
         Eigen::Vector4d pt = RawPoints.row(i);
-        Eigen::Vector3d ptn = RawNormals.row(i);
+        Eigen::Vector3d ptn = RawNormals.row(i).head<3>();
 
         file << pt(0) << " " << pt(1) << " " << pt(2) << " "
             << ptn(0) << " " << ptn(1) << " " << ptn(2) << " "
