@@ -108,6 +108,7 @@ public:
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
 
+    auto start = std::chrono::high_resolution_clock::now();
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const auto pixel = it.Get();
@@ -115,12 +116,13 @@ public:
             ++it;
             continue;
         }
-        typename ImageType::PointType itkPt;
-        I->TransformIndexToPhysicalPoint(idx, itkPt);
-        const auto coord = openvdb::Coord(itkPt[0], itkPt[1], itkPt[2]);
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, pixel);
         ++it;
     }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "VDB Load time: " << duration.count() << "us" << std::endl;
 
     m_Origin = I->GetOrigin();
     m_Index = I->GetRequestedRegion().GetIndex();
@@ -230,7 +232,10 @@ public:
   {
       if(IsInsideBuffer(p)) {
 #ifdef USE_OPENVDB
-          const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
+          auto o = GetOrigin();
+          auto sp = p;
+          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
+          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
           const T v2 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
           return v2;
 #else
