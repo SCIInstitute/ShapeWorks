@@ -2,11 +2,12 @@
 
 #include <string>
 #include <vector>
+#include <Subject.h>
 
 // forward declaration
 namespace xlnt
 {
-  class workbook;
+class workbook;
 }
 
 namespace shapeworks
@@ -24,12 +25,17 @@ public:
   Project();
   ~Project();
 
+  //! Load from XLSX file
   bool load(std::string filename);
 
+  //! Save to XLSX file
   bool save(std::string filename);
 
   //! Return the number of subjects in the project
   int get_number_of_subjects();
+
+  //! Return the segmentation columns
+  std::vector<std::string> get_segmentations();
 
   std::vector<std::string> get_original_files();
   void set_original_files(std::vector<std::string> files);
@@ -45,6 +51,10 @@ public:
 
 private:
 
+  std::vector<std::string> get_matching_columns(std::string prefix);
+
+  void load_subjects();
+
   std::vector<std::string> original_files_;
   std::vector<std::string> distance_transform_files_;
   std::vector<std::string> local_point_files_;
@@ -56,6 +66,8 @@ private:
   void save_string_column(std::string name, std::vector<std::string> items);
 
   std::unique_ptr<xlnt::workbook> wb_;
+
+  std::vector<Subject> subjects_;
 
   bool loaded_ = false;
 };
