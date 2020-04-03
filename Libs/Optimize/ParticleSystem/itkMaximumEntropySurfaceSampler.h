@@ -29,6 +29,7 @@
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
 #include "vnl/vnl_matrix_fixed.h"
+#include <chrono>
 
 
 #include "TriMesh.h"
@@ -186,7 +187,12 @@ public:
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
         domain->SetSigma(image->GetSpacing()[0] * 2.0);
+        auto start = std::chrono::high_resolution_clock::now();
         domain->SetImage(image);
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Image Load time: " << duration.count() << "us" << std::endl;
+
         m_DomainList.push_back(domain);
     }
 

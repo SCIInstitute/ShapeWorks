@@ -97,7 +97,6 @@ public:
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
-#ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
     m_VDBImage = openvdb::FloatGrid::create(500000.0);
@@ -105,8 +104,6 @@ public:
 
     m_Size = I->GetRequestedRegion().GetSize();
     m_Spacing = I->GetSpacing();
-
-    auto start = std::chrono::high_resolution_clock::now();
 
     const auto slices = m_Size[2];
     std::vector<openvdb::FloatGrid::Ptr> vdbGrids(slices);
@@ -133,7 +130,9 @@ public:
             ++it;
             continue;
           }
-          const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+          typename ImageType::PointType itkPt;
+          I->TransformIndexToPhysicalPoint(idx, itkPt);
+          const auto coord = openvdb::Coord(itkPt[0], itkPt[1], itkPt[2]);
           vdbAccessor.setValue(coord, pixel);
           ++it;
         }
@@ -147,10 +146,6 @@ public:
       // openvdb::tools::csgUnion(*m_VDBImage, *vdbGrid);
       m_VDBImage->merge(*vdbGrid);
     }
-
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "VDB Load time: " << duration.count() << "us" << std::endl;
 
     m_Origin = I->GetOrigin();
     m_Index = I->GetRequestedRegion().GetIndex();
@@ -215,17 +210,15 @@ public:
     // which are always double precision.
     typename Superclass::PointType l;
     typename Superclass::PointType u;
-    
+
     for (unsigned int i = 0; i < VDimension; i++)
       {
       l[i] = static_cast<double>(l0[i]);
       u[i] = static_cast<double>(u0[i]);
       }
-    
+
     this->SetLowerBound(l);
     this->SetUpperBound(u);
-#else
-#endif
   }
 
   inline double GetSurfaceArea() const {
@@ -260,10 +253,7 @@ public:
   {
       if(IsInsideBuffer(p)) {
 #ifdef USE_OPENVDB
-          auto o = GetOrigin();
-          auto sp = p;
-          for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-          const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+          const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
           const T v2 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
           return v2;
 #else
