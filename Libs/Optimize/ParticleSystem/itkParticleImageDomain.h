@@ -108,7 +108,6 @@ public:
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
 
-    auto start = std::chrono::high_resolution_clock::now();
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const auto pixel = it.Get();
@@ -120,9 +119,6 @@ public:
         vdbAccessor.setValue(coord, pixel);
         ++it;
     }
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "VDB Load time: " << duration.count() << "us" << std::endl;
 
     m_Origin = I->GetOrigin();
     m_Index = I->GetRequestedRegion().GetIndex();
