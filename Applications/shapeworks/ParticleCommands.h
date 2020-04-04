@@ -18,7 +18,7 @@ private:
 
   void buildParser() override;
 
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 class Compactness : public ParticleSystemCommand
@@ -35,7 +35,7 @@ private:
 
   void buildParser() override;
 
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 class Generalization : public ParticleSystemCommand
@@ -52,7 +52,7 @@ private:
 
   void buildParser() override;
 
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 class Specificity : public ParticleSystemCommand
@@ -69,6 +69,6 @@ private:
 
   void buildParser() override;
 
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 }

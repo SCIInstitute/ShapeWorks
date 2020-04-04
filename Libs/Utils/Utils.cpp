@@ -1,9 +1,11 @@
-
 #include "Utils.h"
 
 #include <vtkMath.h>
 #include <cmath>
-#include <sstream>      // std::istringstream
+#include <sstream>
+#include <sys/stat.h>
+
+// namespace shapeworks {  //todo (need to make sure everything that calls these functions uses namespace
 
 std::vector<int> Utils::randperm(int n)
 {
@@ -567,5 +569,4 @@ double Utils::averageThetaArc(std::vector<double> thetas)
     return mod2pi(bestTheta);
 }
 
-
-
+// } //shapeworks

@@ -1,4 +1,6 @@
 #include "Image.h"
+#include "Utils.h"
+#include "itkTPGACLevelSetImageFilter.h"
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -13,74 +15,110 @@
 #include <itkReinitializeLevelSetImageFilter.h>
 #include <itkTranslationTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
-#include <itkReinitializeLevelSetImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
 #include <itkSigmoidImageFilter.h>
-#include <itkTPGACLevelSetImageFilter.h>
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
 #include <itkDiscreteGaussianImageFilter.h>
 #include <itkExtractImageFilter.h>
 #include "vtkImageImport.h"
+#include <itkImageDuplicator.h>
 
-#include <sys/stat.h>
 #include <exception>
+
+// todo: finish converting these functions to throw exceptions when appropriate
+
+//TODO: move this to Utils class (in Libs/Utils) -> tried, but something wrong with getting the right include
+//TODO: in C++17 this is a standard function
+bool is_directory(const std::string &pathname)
+{
+  struct stat info;
+  if (stat(pathname.c_str(), &info) != 0) {
+    return false;
+  }
+  else if (info.st_mode & S_IFDIR) {
+    return true;
+  }
+  return false;
+}
 
 namespace shapeworks {
 
-//todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
+/// copy ctor
+///
+/// clones the input image
+///
+/// \param img const input image
+Image::Image(const Image &img)
+{
+  this->image = nullptr;
+  
+  using DuplicatorType = itk::ImageDuplicator<ImageType>;
+  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  duplicator->SetInputImage(img.image);
+  duplicator->Update();
+  this->image = duplicator->GetOutput();
+}
+
+/// operator=
+///
+/// assignment operator from const Image
+///
+/// \param img const input image
+Image& Image::operator=(const Image &img)
+{
+  this->image = nullptr;
+    
+  using DuplicatorType = itk::ImageDuplicator<ImageType>;
+  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  duplicator->SetInputImage(img.image);
+  duplicator->Update();
+  this->image = duplicator->GetOutput();
+
+  return *this;
+}
 
 /// read
 ///
-/// reads image
+/// reads image (private function only used by constructor)
 ///
-/// \param filename
-bool Image::read(const std::string &filename)
+/// \param pathname
+Image Image::read(const std::string &pathname)
 {
-  if (filename.empty())
-  {
-    std::cerr << "Empty filename passed to read; returning false." << std::endl;
-    return false;
-  }
+  if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
-  if (Image::is_directory(filename))
+  if (is_directory(pathname))
   {
-    return this->read_image_dir(filename);
+    return readDICOMImage(pathname);
   }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filename);
+  reader->SetFileName(pathname);
 
-  try
-  {
+  try {
     reader->Update();
   }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Failed to read image " << filename << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
+  catch (itk::ExceptionObject &exp) {
+    throw std::invalid_argument(pathname + " does not exist (" + std::string(exp.what()) + ")");
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Successfully read image " << filename << std::endl;
+  std::cout << "Successfully read image " << pathname << std::endl;
 #endif
-
-  this->image = reader->GetOutput();
-  return true;
+  return Image(reader->GetOutput());
 }
 
-/// read_image_dir
-/// \param pathname directory containing image series
-bool Image::read_image_dir(const std::string &pathname)
+/// readDICOMImage
+///
+/// reads a DICOM image (private function only used by constructor)
+///
+/// \param pathname directory containing a DICOM image stack
+Image Image::readDICOMImage(const std::string &pathname)
 {
-  if (pathname.empty()) {
-    std::cerr << "No filenames passed to read; returning false." << std::endl;
-    return false;
-  }
+  if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   using ReaderType = itk::ImageSeriesReader<ImageType>;
   using ImageIOType = itk::GDCMImageIO;
@@ -95,19 +133,14 @@ bool Image::read_image_dir(const std::string &pathname)
   reader->SetImageIO(gdcm_io);
   reader->SetFileNames(filenames);
 
-  try
-  {
+  try {
     reader->Update();
-  } 
-  catch (itk::ExceptionObject &exp) 
-  {
-    std::cerr << "Failed to read dir: " << pathname << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
+  }
+  catch (itk::ExceptionObject &exp) {
+    throw std::invalid_argument("Failed to read DICOM from " + pathname + "(" + std::string(exp.what()) + ")");
   }
 
-  this->image = reader->GetOutput();
-  return true;
+  return Image(reader->GetOutput());
 }
 
 /// write
@@ -118,17 +151,8 @@ bool Image::read_image_dir(const std::string &pathname)
 /// \param compressed
 bool Image::write(const std::string &filename, bool compressed)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image to write, so returning false." << std::endl;
-    //todo: just return
-    return false;
-  }
-  if (filename.empty())
-  {
-    std::cerr << "Empty filename passed to write; returning false." << std::endl;
-    return false;
-  }
+  if (!this->image) { throw std::invalid_argument("Image invalid"); }
+  if (filename.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
@@ -332,18 +356,6 @@ bool Image::operator==(const Image &other) const
   }
 
   return true;
-}
-
-bool Image::is_directory(const std::string &pathname)
-{
-  struct stat info;
-  if (stat(pathname.c_str(), &info) != 0) {
-    return false;
-  }
-  else if (info.st_mode & S_IFDIR) {
-    return true;
-  }
-  return false;
 }
 
 /// pad
@@ -609,7 +621,7 @@ bool Image::computeDT(float isoValue)
   return true;
 }
 
-bool Image::applyCurvature(unsigned iterations)
+bool Image::applyCurvatureFilter(unsigned iterations)
 {
   if (!this->image)
   {
@@ -641,7 +653,7 @@ bool Image::applyCurvature(unsigned iterations)
   return true;
 }
 
-bool Image::applyGradient()
+bool Image::applyGradientFilter()
 {
   if (!this->image)
   {
@@ -673,7 +685,7 @@ bool Image::applyGradient()
   return true;
 }
 
-bool Image::applySigmoid(double alpha, double beta)
+bool Image::applySigmoidFilter(double alpha, double beta)
 {
   if (!this->image)
   {
@@ -709,7 +721,7 @@ bool Image::applySigmoid(double alpha, double beta)
   return true;
 }
 
-bool Image::applyLevel(const std::string other, double scaling)
+bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
 {
   if (!this->image)
   {
@@ -717,7 +729,7 @@ bool Image::applyLevel(const std::string other, double scaling)
     return false;
   }
 
-  using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>;
+  using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>; // TODO: this is no longer part of ITK and should be updated
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetPropagationScaling(scaling);
@@ -725,10 +737,8 @@ bool Image::applyLevel(const std::string other, double scaling)
   filter->SetAdvectionScaling(1.0);
   filter->SetMaximumRMSError(0.0);
   filter->SetNumberOfIterations(20);
-  const ImageType::Pointer currentImage = this->image;
-  read(other);
   filter->SetInput(this->image);
-  filter->SetFeatureImage(currentImage);
+  filter->SetFeatureImage(featureImage.image);
 
   try
   {
@@ -781,87 +791,68 @@ bool Image::gaussianBlur(double sigma)
   return true;
 }
 
-//todo: add that it does only for binary images
-
-Image::Region Image::boundingBox(std::vector<std::string> &filenames, Region &region, int padding)
+/// binaryBoundingBox
+///
+/// computes the logical coordinates of the largest region of binary data within these images
+///
+/// \param filenames the set of images to load, all of which must have identical dimensions.
+/// \padding the amount of padding to add in all directions to this bounding box 
+Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int padding)
 {
-  int minXsize = 1e6, minYsize = 1e6, minZsize = 1e6;
-  int largestIndex[3] = {0, 0, 0};
+  Image::Region bbox;
+  
+  Dims dims = read(filenames[0]).dims(); // make sure all images are the same size
 
-  for (int i = 0; i < filenames.size(); i++)
+  for (auto filename : filenames)
   {
-    read(filenames[i]);
+    Image img(filename);
 
-    int cur_bb[3] = {0, 0, 0};
-    int cur_smallestIndex[3];
-    cur_smallestIndex[0] = 1e6;
-    cur_smallestIndex[1] = 1e6;
-    cur_smallestIndex[2] = 1e6;
-    int cur_largestIndex[3] = {0, 0, 0};
-
-    int curXsize = image->GetLargestPossibleRegion().GetSize()[0];
-    int curYsize = image->GetLargestPossibleRegion().GetSize()[1];
-    int curZsize = image->GetLargestPossibleRegion().GetSize()[2];
-
-    minXsize = std::min(minXsize, curXsize);
-    minYsize = std::min(minYsize, curYsize);
-    minZsize = std::min(minZsize, curZsize);
+    if (img.dims() != dims) { throw std::invalid_argument("image sizes do not match (" + filename + ")"); }
 
     itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
-
-    while(!imageIterator.IsAtEnd())
+    while (!imageIterator.IsAtEnd())
     {
       PixelType val = imageIterator.Get();
 
-      if(val == 1)
-        {
-          cur_smallestIndex[0] = std::min(cur_smallestIndex[0], (int)imageIterator.GetIndex()[0]);
-          cur_smallestIndex[1] = std::min(cur_smallestIndex[1], (int)imageIterator.GetIndex()[1]);
-          cur_smallestIndex[2] = std::min(cur_smallestIndex[2], (int)imageIterator.GetIndex()[2]);
+      if(val == 1.0)
+      {
+        bbox.min[0] = std::min(bbox.min[0], (int)imageIterator.GetIndex()[0]);
+        bbox.min[1] = std::min(bbox.min[1], (int)imageIterator.GetIndex()[1]);
+        bbox.min[2] = std::min(bbox.min[2], (int)imageIterator.GetIndex()[2]);
 
-          cur_largestIndex[0] = std::max(cur_largestIndex[0], (int)imageIterator.GetIndex()[0]);
-          cur_largestIndex[1] = std::max(cur_largestIndex[1], (int)imageIterator.GetIndex()[1]);
-          cur_largestIndex[2] = std::max(cur_largestIndex[2], (int)imageIterator.GetIndex()[2]);
-        }
-        ++imageIterator;
+        bbox.max[0] = std::max(bbox.max[0], (int)imageIterator.GetIndex()[0]);
+        bbox.max[1] = std::max(bbox.max[1], (int)imageIterator.GetIndex()[1]);
+        bbox.max[2] = std::max(bbox.max[2], (int)imageIterator.GetIndex()[2]);
+      }
+      ++imageIterator;
     }
-
-    region.min[0] = std::min(region.min[0], cur_smallestIndex[0]);
-    region.min[1] = std::min(region.min[1], cur_smallestIndex[1]);
-    region.min[2] = std::min(region.min[2], cur_smallestIndex[2]);
-
-    largestIndex[0] = std::max(largestIndex[0], cur_largestIndex[0]);
-    largestIndex[1] = std::max(largestIndex[1], cur_largestIndex[1]);
-    largestIndex[2] = std::max(largestIndex[2], cur_largestIndex[2]);
-
-    cur_bb[0] = cur_largestIndex[0] - cur_smallestIndex[0];
-    cur_bb[1] = cur_largestIndex[1] - cur_smallestIndex[1];
-    cur_bb[2] = cur_largestIndex[2] - cur_smallestIndex[2];
   }
 
-  region.min[0] = std::max(0, region.min[0] - padding);
-  region.min[1] = std::max(0, region.min[1] - padding);
-  region.min[2] = std::max(0, region.min[2] - padding);
-
-  largestIndex[0] = std::min(largestIndex[0] + padding, minXsize - 1);
-  largestIndex[1] = std::min(largestIndex[1] + padding, minYsize - 1);
-  largestIndex[2] = std::min(largestIndex[2] + padding, minZsize - 1);
-
-  region.max[0] = largestIndex[0] - region.min[0];
-  region.max[1] = largestIndex[1] - region.min[1];
-  region.max[2] = largestIndex[2] - region.min[2];
+  bbox.min[0] = std::max(0, bbox.min[0] - padding);
+  bbox.min[1] = std::max(0, bbox.min[1] - padding);
+  bbox.min[2] = std::max(0, bbox.min[2] - padding);
+  bbox.max[0] = std::min(bbox.max[0] + padding, (int)dims[0]);
+  bbox.max[1] = std::min(bbox.max[1] + padding, (int)dims[1]);
+  bbox.max[2] = std::min(bbox.max[2] + padding, (int)dims[2]);
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Bounding Box succeeded!\n";
+  std::cout << "binaryBoundingBox succeeded: " << bbox << "!\n";
 #endif
-  return region;
+  return bbox;
 }
 
+/// crop
 bool Image::crop(const Region &region)
 {
   if (!this->image)
   {
     std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  if (!region.valid())
+  {
+    std::cerr << "Invalid region specified." << std::endl;
     return false;
   }
 
@@ -907,11 +898,7 @@ bool Image::crop(const Region &region)
 /// returns voxel coordinate of this physical location, throwing exception if it doesn't exist
 Point3 Image::logicalToPhysical(const IPoint3 &v) const
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, throwing an exception." << std::endl;
-    throw std::invalid_argument("this is an invalid Image");
-  }
+  if (!this->image) { throw std::invalid_argument("Image invalid"); }
 
   itk::Index<3> index;
   index[0] = v[0];
@@ -998,9 +985,24 @@ Point3 Image::size() const
   return ret;
 }
 
-void Image::print() const
+/// operator<<
+///
+/// Stream insertion operator
+/// Prints region
+std::ostream& operator<<(std::ostream &os, const Image::Region &r)
 {
-  std::cout << "this image is really pretty... (todo)\n";
+  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
+            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
+}
+
+/// operator<<
+///
+/// Stream insertion operator
+/// Print dims, origin, and size of the image.
+std::ostream& operator<<(std::ostream &os, const Image &img)
+{
+  return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
+            << img.origin() << ",\n\tsize: " << img.size() << "\n}";
 }
 
 } // Shapeworks

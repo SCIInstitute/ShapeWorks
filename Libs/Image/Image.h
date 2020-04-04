@@ -15,14 +15,18 @@ public:
 
   struct Region
   {
-    int min[3] = {static_cast<int>(1e6), static_cast<int>(1e6), static_cast<int>(1e6)};
+    int min[3] = {0, 0, 0};
     int max[3] = {0, 0, 0};
+    bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
   };
 
-  Image() {}
-  Image(const std::string &filename) { read(filename); }
+  Image(const std::string &filename) { *this = read(filename); }
+  Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
+  Image(Image &img) { this->image.Swap(img.image); }
+  Image(const Image &img);
+  Image& operator=(Image &img) { this->image.Swap(img.image); return *this; }
+  Image& operator=(const Image &img);
 
-  bool read(const std::string &filename);
   bool write(const std::string &filename, bool compressed = true);
 
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
@@ -34,12 +38,12 @@ public:
   bool closeHoles();
   bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
   bool computeDT(float isoValue = 0.0);
-  bool applyCurvature(unsigned iterations = 10);
-  bool applyGradient();
-  bool applySigmoid(double alpha = 10.0, double beta = 10.0);
-  bool applyLevel(const std::string other, double scaling = 0.0);
+  bool applyCurvatureFilter(unsigned iterations = 10);
+  bool applyGradientFilter();
+  bool applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
+  bool applyTPLevelSetFilter(const Image &featureImage, double scaling = 20.0);
   bool gaussianBlur(double sigma = 0.0);
-  Region boundingBox(std::vector<std::string> &filenames, Region &region, int padding = 0);
+  Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   bool crop(const Region &region);
   bool icpRigid(std::string sourceDistanceMap);
   bool connect();
@@ -55,15 +59,18 @@ public:
   Point3 size() const;                                      // spatial size of image
   Point3 center() const { return origin() + size() / 2.0; } // spatial coordinates of center of this image
 
-  void print() const; //print center, size, and other stuff about the image; todo: operator<<
-
 private:
   friend struct SharedCommandData;
-
-  static bool is_directory(const std::string &pathname); // TODO: Move this function to Libs/Utils
-  bool read_image_dir(const std::string &pathname);
+  Image() {} // only for use by SharedCommandData since an Image should always be valid, never "empty"
+  static Image read(const std::string &filename);
+  static Image readDICOMImage(const std::string &pathname);
+  
+  friend std::ostream& operator<<(std::ostream &os, const Transform &t);
 
   ImageType::Pointer image;
 };
+
+std::ostream& operator<<(std::ostream &os, const Image &img);
+std::ostream& operator<<(std::ostream &os, const Image::Region &region);
 
 } // shapeworks

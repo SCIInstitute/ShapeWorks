@@ -1,10 +1,12 @@
 # Build
 set(Image_sources
   Image.cpp
+  ImageUtils.cpp
   Transform.cpp
   )
 set(Image_headers
   Image.h
+  ImageUtils.h
   Transform.h
   )
 add_library(Image STATIC
