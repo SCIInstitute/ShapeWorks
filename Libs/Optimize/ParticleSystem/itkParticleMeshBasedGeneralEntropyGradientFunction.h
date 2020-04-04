@@ -226,9 +226,9 @@ protected:
         m_UseXYZ.clear();
         num_dims = 0;
         num_samples = 0;
-        m_PointsUpdate = new vnl_matrix_type(10,10);
-        m_InverseCovMatrix = new vnl_matrix_type(10,10);
-        m_points_mean = new vnl_matrix_type(10,10);
+        m_PointsUpdate = vnl_matrix_type(10,10);
+        m_InverseCovMatrix = vnl_matrix_type(10,10);
+        m_points_mean = vnl_matrix_type(10,10);
     }
     virtual ~ParticleMeshBasedGeneralEntropyGradientFunction() {}
     void operator=(const ParticleMeshBasedGeneralEntropyGradientFunction &);
@@ -238,7 +238,7 @@ protected:
     typename ShapeGradientType::Pointer m_ShapeGradient;
 
     virtual void ComputeUpdates(const ParticleSystemType *c);
-    vnl_matrix_type * m_PointsUpdate;
+    vnl_matrix_type m_PointsUpdate;
 
     double m_MinimumVariance;
     double m_MinimumEigenValue;
@@ -254,8 +254,8 @@ protected:
     bool m_UseMeanEnergy;
     std::vector<bool> m_UseXYZ;
     std::vector<bool> m_UseNormals;
-    vnl_matrix_type * m_points_mean;
-    vnl_matrix_type * m_InverseCovMatrix;
+    vnl_matrix_type m_points_mean;
+    vnl_matrix_type m_InverseCovMatrix;
     int num_dims, num_samples;
 };
 } // end namespace
