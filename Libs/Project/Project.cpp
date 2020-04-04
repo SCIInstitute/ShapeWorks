@@ -241,7 +241,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
 {
   int index = this->get_index_for_column(name);
 
-  std::cerr << "index = " << index << "\n";
+  //std::cerr << "index = " << index << "\n";
   std::vector<std::string> list;
   if (index < 0) {
     return list;
@@ -251,11 +251,11 @@ std::vector<std::string> Project::get_string_column(std::string name)
 
   auto rows = ws.rows(false);
 
-  std::cerr << "rows.length = " << rows.length() << "\n";
+  //std::cerr << "rows.length = " << rows.length() << "\n";
 
   for (int i = 1; i < rows.length(); i++) {
     std::string value = rows[i][index].to_string();
-    std::cerr << "value = " << value << "\n";
+    //std::cerr << "value = " << value << "\n";
     if (value != "") {
       list.push_back(value);
     }

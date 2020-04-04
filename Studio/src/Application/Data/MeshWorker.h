@@ -21,7 +21,7 @@ class MeshWorker : public QObject
 
 public:
   MeshWorker(Preferences& prefs,
-             const vnl_vector<double> shape,
+             const MeshWorkItem &item,
              MeshWorkQueue* queue,
              MeshCache* cache);
   ~MeshWorker();
@@ -37,7 +37,7 @@ Q_SIGNALS:
 private:
   Preferences& prefs_;
   MeshGenerator mesh_generator_;
-  vnl_vector<double> shape_;
+  MeshWorkItem item_;
   MeshWorkQueue* queue_;
   MeshCache* cache_;
 };

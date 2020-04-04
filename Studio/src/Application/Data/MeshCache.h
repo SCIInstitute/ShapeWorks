@@ -21,30 +21,17 @@
 
 #include <vnl/vnl_vector.h>
 
-#include "Data/Preferences.h"
+#include <Data/MeshWorkQueue.h>
+
+#include <Data/Preferences.h>
 
 class vtkPolyData;
 
-class CacheListItem
-{
-public:
-  vnl_vector<double> key;
-  size_t memorySize;
-};
-
-// comparison class for vnl_vectors (for cache)
-class vnl_vector_compare
-{
-public:
-  bool operator()(const vnl_vector<double> &a, const vnl_vector<double> &b) const;
-};
-
 // mesh cache type
-typedef std::map< const vnl_vector<double>, vtkSmartPointer<vtkPolyData>,
-                  vnl_vector_compare > CacheMap;
+using CacheMap = std::map<MeshWorkItem, vtkSmartPointer<vtkPolyData>>;
 
 // LRC list
-typedef std::list< CacheListItem > CacheList;
+using CacheList = std::list<MeshWorkItem>;
 
 class MeshCache
 {
@@ -53,9 +40,9 @@ public:
 
   MeshCache(Preferences& prefs);
 
-  vtkSmartPointer<vtkPolyData> get_mesh(const vnl_vector<double>& vector);
+  vtkSmartPointer<vtkPolyData> get_mesh(const MeshWorkItem& vector);
 
-  void insert_mesh(const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh);
+  void insert_mesh(const MeshWorkItem& item, vtkSmartPointer<vtkPolyData> mesh);
 
   void clear();
 

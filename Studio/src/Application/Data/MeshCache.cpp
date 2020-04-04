@@ -27,24 +27,6 @@
 Preferences* MeshCache::pref_ref_ = nullptr;
 
 //-----------------------------------------------------------------------------
-bool vnl_vector_compare::operator()(const vnl_vector<double> &a, const vnl_vector<double> &b) const
-{
-  if (a.size() < b.size()) {
-    return true;
-  }
-  double eps = MeshCache::pref_ref_->get_preference("cache_epsilon", 1e-3f);
-  for (unsigned i = 0; i < a.size(); i++) {
-    if ((a[i] < b[i]) && ((b[i] - a[i]) > eps)) {
-      return true;
-    }
-    else if (b[i] < a[i] && ((a[i] - b[i]) > eps)) {
-      return false;
-    }
-  }
-  return false;
-}
-
-//-----------------------------------------------------------------------------
 long long MeshCache::getTotalPhysicalMemory()
 {
 #ifdef _WIN32
@@ -100,25 +82,27 @@ MeshCache::MeshCache(Preferences& prefs) : preferences_(prefs)
   this->pref_ref_ = &this->preferences_;
 }
 
-vtkSmartPointer<vtkPolyData> MeshCache::get_mesh(const vnl_vector<double>& shape)
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshCache::get_mesh(const MeshWorkItem &shape)
 {
   QMutexLocker locker(&mutex_);
 
   if (!preferences_.get_cache_enabled()) {
-    return NULL;
+    return nullptr;
   }
 
   // search the cache for this shape
   CacheMap::iterator it = this->mesh_cache_.find(shape);
   if (it == this->mesh_cache_.end()) {
-    return NULL;
+    return nullptr;
   }
 
-  return mesh_cache_[shape];
+  return this->mesh_cache_[shape];
 }
 
+
 //-----------------------------------------------------------------------------
-void MeshCache::insert_mesh(const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh)
+void MeshCache::insert_mesh(const MeshWorkItem& item, vtkSmartPointer<vtkPolyData> mesh)
 {
   if (!preferences_.get_cache_enabled()) {
     return;
@@ -127,20 +111,18 @@ void MeshCache::insert_mesh(const vnl_vector<double>& shape, vtkSmartPointer<vtk
   QMutexLocker locker(&mutex_);
 
   // compute the memory size of this shape
-  size_t shapeSize = shape.size() * sizeof(double);
+  size_t shapeSize = item.shape.size() * sizeof(double);
   size_t meshSize = mesh->GetActualMemorySize() * 1024; // given in kb
   size_t combinedSize = (shapeSize * 2) + meshSize;
 
-  this->freeSpaceForAmount(combinedSize);
+  this->freeSpaceForAmount(item.memory_size);
 
-  this->mesh_cache_[shape] = mesh;
+  this->mesh_cache_[item] = mesh;
+
   this->memory_size_ += combinedSize;
   //std::cerr << "Cache now holds " << this->meshCache.size() << " items\n";
 
   // add to LRC list
-  CacheListItem item;
-  item.key = shape;
-  item.memorySize = combinedSize;
   this->cache_list_.push_back(item);
 }
 
@@ -159,10 +141,10 @@ void MeshCache::freeSpaceForAmount(size_t allocation)
   size_t memoryLimit = (preferences_.get_memory_cache_percent() / 100.0) * this->max_memory_;
 
   while (!this->cache_list_.empty() && this->memory_size_ + allocation > memoryLimit) {
-    CacheListItem item = this->cache_list_.back();
-    this->memory_size_ -= item.memorySize;
+    auto item = this->cache_list_.back();
+    this->memory_size_ -= item.memory_size;
     this->cache_list_.pop_back();
-    std::cerr << "erasing item for " << item.memorySize / 1024 << " kb savings\n";
-    this->mesh_cache_.erase(item.key);
+    std::cerr << "erasing item for " << item.memory_size / 1024 << " kb savings\n";
+    this->mesh_cache_.erase(item);
   }
 }

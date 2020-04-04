@@ -27,11 +27,11 @@ public:
   MeshManager(Preferences& prefs);
   ~MeshManager();
 
-  //! pre-generate and cache a mesh for this shape
-  void generate_mesh(const vnl_vector<double>& shape);
+  //! generate and cache a mesh for this shape in a different thread
+  void generate_mesh(const MeshWorkItem item);
 
   //! get a mesh for a shape
-  vtkSmartPointer<vtkPolyData> get_mesh(const vnl_vector<double>& shape);
+  vtkSmartPointer<vtkPolyData> get_mesh(const MeshWorkItem& shape);
 
   //! return the surface reconstructor
   QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();

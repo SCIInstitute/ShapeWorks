@@ -28,15 +28,15 @@ void MeshManager::clear_cache()
 }
 
 //---------------------------------------------------------------------------
-void MeshManager::generate_mesh(const vnl_vector<double>& shape)
+void MeshManager::generate_mesh(const MeshWorkItem item)
 {
   // check cache first
-  if (!this->mesh_cache_.get_mesh(shape)
-      && !this->work_queue_.isInside(shape)) {
-    this->work_queue_.push(shape);
+  if (!this->mesh_cache_.get_mesh(item)
+      && !this->work_queue_.isInside(item)) {
+    this->work_queue_.push(item);
     //todo
     QThread* thread = new QThread;
-    MeshWorker* worker = new MeshWorker(this->prefs_, shape,
+    MeshWorker* worker = new MeshWorker(this->prefs_, item,
                                         &this->work_queue_, &this->mesh_cache_);
     worker->get_mesh_generator()->set_surface_reconstructor(this->surface_reconstructor_);
 
@@ -58,28 +58,26 @@ void MeshManager::generate_mesh(const vnl_vector<double>& shape)
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double>& shape)
+vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const MeshWorkItem &item)
 {
   vtkSmartPointer<vtkPolyData> poly_data;
-  if (shape.empty()) {
-    return poly_data;
-  }
+
   // check cache first
   if (this->prefs_.get_cache_enabled()) {
-    poly_data = this->mesh_cache_.get_mesh(shape);
+    poly_data = this->mesh_cache_.get_mesh(item);
     if (!poly_data) {
       if (prefs_.get_parallel_enabled() &&
           (this->prefs_.get_num_threads() > 0)) {
-        this->generate_mesh(shape);
+        this->generate_mesh(item);
       }
       else {
-        poly_data = this->mesh_generator_.build_mesh(shape, 0);
-        this->mesh_cache_.insert_mesh(shape, poly_data);
+        poly_data = this->mesh_generator_.build_mesh(item);
+        this->mesh_cache_.insert_mesh(item, poly_data);
       }
     }
   }
   else {
-    poly_data = this->mesh_generator_.build_mesh(shape, 0);
+    poly_data = this->mesh_generator_.build_mesh(item);
   }
   return poly_data;
 }

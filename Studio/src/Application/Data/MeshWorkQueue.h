@@ -18,8 +18,19 @@
 class MeshWorkItem
 {
 public:
+  std::string filename;
   vnl_vector<double> shape;
+  int domain;
+
+  size_t memory_size;
+
+  friend bool operator< (const MeshWorkItem &a, const MeshWorkItem &b);
+
+  friend bool operator== (const MeshWorkItem &a, const MeshWorkItem &b);
+
 };
+
+using WorkList = std::list<MeshWorkItem>;
 
 class MeshWorkQueue
 {
@@ -28,22 +39,20 @@ public:
   MeshWorkQueue();
   ~MeshWorkQueue();
 
-  void push(const vnl_vector<double> &item);
+  void push(const MeshWorkItem &item);
 
   MeshWorkItem* pop();
 
-  bool isInside(const vnl_vector<double> &item);
+  bool isInside(const MeshWorkItem &item);
 
-  void remove(const vnl_vector<double> &item);
+  void remove(const MeshWorkItem &item);
 
   bool isEmpty();
 
 private:
 
   // for concurrent access
-  QMutex mutex;
+  QMutex mutex_;
 
-  typedef std::list< vnl_vector<double>> WorkList;
-
-  WorkList workList;
+  WorkList work_list_;
 };

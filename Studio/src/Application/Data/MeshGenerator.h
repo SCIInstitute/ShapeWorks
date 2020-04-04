@@ -14,6 +14,7 @@
 #include <Data/Preferences.h>
 #include <Data/SurfaceReconstructor.h>
 #include <Data/LegacyMeshGenerator.h>
+#include <Data/MeshWorkQueue.h>
 
 #include <Groom/ShapeWorksGroom.h>
 
@@ -22,6 +23,10 @@ class MeshGenerator
 public:
   MeshGenerator(Preferences& prefs);
   ~MeshGenerator();
+
+
+  vtkSmartPointer<vtkPolyData> build_mesh(const MeshWorkItem &item);
+
 
   vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape, int domain);
 

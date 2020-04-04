@@ -22,9 +22,7 @@ Shape::Shape()
 
 //---------------------------------------------------------------------------
 Shape::~Shape()
-{
-
-}
+{}
 
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_mesh()
@@ -46,9 +44,9 @@ QStringList Shape::get_annotations()
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_mesh_generator(std::shared_ptr<MeshGenerator> mesh_generator)
+void Shape::set_mesh_manager(QSharedPointer<MeshManager> mesh_manager)
 {
-  this->mesh_generator_ = mesh_generator;
+  this->mesh_manager_ = mesh_manager;
 }
 
 //---------------------------------------------------------------------------
@@ -324,10 +322,13 @@ void Shape::generate_original_meshes()
   if (this->subject_.get_segmentation_filenames().size() > 0) {
     std::string filename = this->subject_.get_segmentation_filenames()[0];
 
-    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_generator_->build_mesh(filename);
-
-    this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
-    this->original_mesh_->set_poly_data(poly_data);
+    MeshWorkItem item;
+    item.filename = filename;
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(item);
+    if (poly_data) {
+      this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
+      this->original_mesh_->set_poly_data(poly_data);
+    }
   }
 }
 

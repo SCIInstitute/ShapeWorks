@@ -78,7 +78,8 @@ void Session::calculate_reconstructed_samples()
     auto shape = this->shapes_.at(i);
     auto pts = shape->get_local_correspondence_points();
     if (pts.size() > 0) {
-      shape->set_reconstructed_mesh(this->mesh_manager_->get_mesh(pts));
+      /// TODO: fix
+      //shape->set_reconstructed_mesh(this->mesh_manager_->get_mesh(pts));
     }
   }
   //this->preferences_.set_preference("Studio/cache_enabled", true);
@@ -523,11 +524,9 @@ bool Session::load_project(QString filename)
 
   std::vector<Subject> subjects = this->project_.get_subjects();
 
-  std::shared_ptr<MeshGenerator> mesh_generator = std::shared_ptr<MeshGenerator>(new MeshGenerator(this->preferences_));
-
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
-    shape->set_mesh_generator(mesh_generator);
+    shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subjects[i]);
     this->shapes_ << shape;
   }

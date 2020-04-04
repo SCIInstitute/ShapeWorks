@@ -1109,10 +1109,13 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
     return;
   }
   auto shape = this->visualizer_->getCurrentShape();
-  auto msh = this->project_->get_mesh_manager()->get_mesh(shape);
+  /// TODO: fix
+  //auto msh = this->project_->get_mesh_manager()->get_mesh(shape);
+
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());
-  writer->SetInputData(msh);
+  /// TODO: fix
+  //writer->SetInputData(msh);
   writer->Write();
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }

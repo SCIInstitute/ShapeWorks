@@ -5,7 +5,7 @@
 #include <Groom/ShapeWorksGroom.h>
 #include <Data/Mesh.h>
 #include <Libs/Project/Subject.h>
-#include <Data/MeshGenerator.h>
+#include <Data/MeshManager.h>
 
 class Shape;
 using ShapeHandle = QSharedPointer<Shape>;
@@ -32,7 +32,7 @@ public:
   void set_annotations(QStringList annotations);
   QStringList get_annotations();
 
-  void set_mesh_generator(std::shared_ptr<MeshGenerator> mesh_generator);
+  void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
 
   void set_subject(const shapeworks::Subject &subject);
 
@@ -137,10 +137,10 @@ private:
 
   shapeworks::Subject subject_;
 
-  std::shared_ptr<MeshGenerator> mesh_generator_;
-
   std::vector<Point> vectors_;
   vnl_vector<double> transform_;
 
   QStringList corner_annotations_;
+
+  QSharedPointer<MeshManager> mesh_manager_;
 };

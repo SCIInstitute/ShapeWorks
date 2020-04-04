@@ -5,11 +5,11 @@
 
 //---------------------------------------------------------------------------
 MeshWorker::MeshWorker(Preferences& prefs,
-                       const vnl_vector<double> shape,
+                       const MeshWorkItem &item,
                        MeshWorkQueue* queue,
                        MeshCache* cache)
   : prefs_(prefs), mesh_generator_(prefs),
-  shape_(shape), queue_(queue), cache_(cache) {}
+  item_(item), queue_(queue), cache_(cache) {}
 
 //---------------------------------------------------------------------------
 MeshWorker::~MeshWorker() {}
@@ -17,10 +17,11 @@ MeshWorker::~MeshWorker() {}
 //---------------------------------------------------------------------------
 void MeshWorker::process()
 {
+  std::cerr << "mesh worker here, working on item\n";
   // build the mesh using our MeshGenerator
-  vtkSmartPointer<vtkPolyData> mesh = this->mesh_generator_.build_mesh(this->shape_, 0);
-  this->queue_->remove(this->shape_);
-  this->cache_->insert_mesh(this->shape_, mesh);
+  vtkSmartPointer<vtkPolyData> mesh = this->mesh_generator_.build_mesh(this->item_);
+  this->queue_->remove(this->item_);
+  this->cache_->insert_mesh(this->item_, mesh);
   emit result_ready();
   emit finished();
 }

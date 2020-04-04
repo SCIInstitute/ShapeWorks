@@ -20,6 +20,17 @@ MeshGenerator::MeshGenerator(Preferences& prefs)
 MeshGenerator::~MeshGenerator() {}
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const MeshWorkItem &item)
+{
+  if (item.filename != "") {
+    return this->build_mesh(item.filename);
+  }
+  else {
+    return this->build_mesh(item.shape, item.domain);
+  }
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const vnl_vector<double>& shape, int domain)
 {
   if (this->surface_reconstructor_ &&
