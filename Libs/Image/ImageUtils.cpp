@@ -28,8 +28,8 @@ Image& ImageUtils::topologyPreservingSmooth(const Image &image, const Image &fea
                                             float scaling, float sigmoidAlpha, float sigmoidBeta,
                                             bool applyCurvatureFilter, unsigned curvatureIterations)
 {
-  Image smoothed(image);
-  return topologyPreservingSmooth(smoothed, featureImage, scaling, sigmoidAlpha, sigmoidBeta, applyCurvatureFilter, curvatureIterations);
+  Image *smoothed = new Image(image);
+  return topologyPreservingSmooth(*smoothed, featureImage, scaling, sigmoidAlpha, sigmoidBeta, applyCurvatureFilter, curvatureIterations);
 }
 
 /// topologyPreservingSmooth
