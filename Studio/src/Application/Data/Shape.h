@@ -22,15 +22,15 @@ class Shape
 {
 
 public:
-  Shape();
-  ~Shape();
 
+  Shape();
+
+  ~Shape();
 
   QSharedPointer<Mesh> get_mesh();
 
   void set_annotations(QStringList annotations);
   QStringList get_annotations();
-
 
   void set_mesh_generator(std::shared_ptr<MeshGenerator> mesh_generator);
 
@@ -102,7 +102,6 @@ public:
   int get_group_id();
   void set_group_id(int id);
 
-
   std::vector<Point> get_vectors();
   void set_vectors(std::vector<Point> vectors);
 
@@ -143,4 +142,5 @@ private:
   std::vector<Point> vectors_;
   vnl_vector<double> transform_;
 
+  QStringList corner_annotations_;
 };

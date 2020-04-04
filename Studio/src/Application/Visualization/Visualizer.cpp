@@ -41,9 +41,9 @@ void Visualizer::set_lightbox(LightboxHandle lightbox)
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_project(ProjectHandle project)
+void Visualizer::set_session(SessionHandle session)
 {
-  this->project_ = project;
+  this->session_ = session;
 }
 
 //-----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ void Visualizer::set_center(bool center)
 void Visualizer::display_samples()
 {
   this->update_viewer_properties();
-  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
   /*
 
   QVector<QSharedPointer<DisplayObject>> display_objects;
@@ -129,6 +129,7 @@ void Visualizer::display_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples()
 {
+  /*
   QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
 
   for (int i = 0; i < shapes.size(); i++) {
@@ -140,6 +141,7 @@ void Visualizer::update_samples()
     viewer->update_points();
   }
   this->lightbox_->redraw();
+  */
 }
 
 //-----------------------------------------------------------------------------

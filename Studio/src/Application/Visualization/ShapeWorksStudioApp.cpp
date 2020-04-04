@@ -144,7 +144,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   //visualizer initializations
   this->visualizer_ = QSharedPointer<Visualizer>(new Visualizer(preferences_));
   this->visualizer_->set_lightbox(this->lightbox_);
-  this->visualizer_->set_project(this->project_);
+  this->visualizer_->set_session(this->project_);
 
   //groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool(preferences_,

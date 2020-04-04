@@ -13,11 +13,18 @@ using namespace shapeworks;
 Shape::Shape()
 {
   this->id_ = 0;
+
+  this->corner_annotations_ << "";
+  this->corner_annotations_ << "";
+  this->corner_annotations_ << "";
+  this->corner_annotations_ << "";
 }
 
 //---------------------------------------------------------------------------
 Shape::~Shape()
-{}
+{
+
+}
 
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_mesh()
@@ -29,13 +36,13 @@ QSharedPointer<Mesh> Shape::get_mesh()
 //---------------------------------------------------------------------------
 void Shape::set_annotations(QStringList annotations)
 {
-
+  this->corner_annotations_ = annotations;
 }
 
 //---------------------------------------------------------------------------
 QStringList Shape::get_annotations()
 {
-
+  return this->corner_annotations_;
 }
 
 //---------------------------------------------------------------------------

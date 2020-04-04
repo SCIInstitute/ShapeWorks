@@ -17,7 +17,7 @@ class Shape;
 
 
 class Session;
-typedef QSharedPointer< Session > ProjectHandle;
+typedef QSharedPointer< Session > SessionHandle;
 
 //! Representation of a session.
 /*!
