@@ -24,15 +24,13 @@ public:
   MeshGenerator(Preferences& prefs);
   ~MeshGenerator();
 
-
   vtkSmartPointer<vtkPolyData> build_mesh(const MeshWorkItem &item);
 
+  vtkSmartPointer<vtkPolyData> build_mesh_from_points(const vnl_vector<double>& shape, int domain);
 
-  vtkSmartPointer<vtkPolyData> build_mesh(const vnl_vector<double>& shape, int domain);
+  vtkSmartPointer<vtkPolyData> build_mesh_from_image(ImageType::Pointer image, float iso_value = 0.5);
 
-  vtkSmartPointer<vtkPolyData> build_mesh(ImageType::Pointer image, float iso_value = 0.5);
-
-  vtkSmartPointer<vtkPolyData> build_mesh(string filename, float iso_value = 0.5);
+  vtkSmartPointer<vtkPolyData> build_mesh_from_file(string filename, float iso_value = 0.5);
 
   void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 

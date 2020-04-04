@@ -23,15 +23,15 @@ MeshGenerator::~MeshGenerator() {}
 vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const MeshWorkItem &item)
 {
   if (item.filename != "") {
-    return this->build_mesh(item.filename);
+    return this->build_mesh_from_file(item.filename);
   }
   else {
-    return this->build_mesh(item.shape, item.domain);
+    return this->build_mesh_from_points(item.shape, item.domain);
   }
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const vnl_vector<double>& shape, int domain)
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape, int domain)
 {
   if (this->surface_reconstructor_ &&
       this->surface_reconstructor_->get_surface_reconstruction_available()) {
@@ -53,7 +53,8 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const vnl_vector<double>&
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(ImageType::Pointer image, float iso_value)
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_image(ImageType::Pointer image,
+                                                                 float iso_value)
 {
   vtkSmartPointer<vtkPolyData> poly_data;
   try {
@@ -81,7 +82,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(ImageType::Pointer image,
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(std::string filename, float iso_value)
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_file(std::string filename, float iso_value)
 {
   std::cerr << "build_mesh from " << filename << "\n";
 
@@ -104,7 +105,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(std::string filename, flo
     orienter->Update();
     image = orienter->GetOutput();
 
-    poly_data = this->build_mesh(image, iso_value);
+    poly_data = this->build_mesh_from_image(image, iso_value);
   } catch (itk::ExceptionObject & excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
