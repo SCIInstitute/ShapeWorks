@@ -23,6 +23,7 @@
 #include <itkGDCMSeriesFileNames.h>
 #include <itkDiscreteGaussianImageFilter.h>
 #include <itkExtractImageFilter.h>
+#include "vtkImageImport.h"
 
 #include <sys/stat.h>
 #include <exception>
@@ -406,12 +407,14 @@ bool Image::applyTransform(const Transform &transform)
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
 
+  // using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double> InterpolatorType;
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   resampler->SetInterpolator(interpolator);
   resampler->SetTransform(transform.getItkTransform());
   resampler->SetInput(this->image);
+  // resampler->SetSize(image->GetBufferedRegion().GetSize());
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
@@ -432,6 +435,67 @@ bool Image::applyTransform(const Transform &transform)
 #endif
 
   this->image = resampler->GetOutput();
+  return true;
+}
+
+bool Image::icpRigid(std::string sourceDistanceMap)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+  
+  using ExportFilterType = itk::VTKImageExport<ImageType>;
+  ExportFilterType::Pointer itkTargetExporter = ExportFilterType::New();
+  itkTargetExporter->SetInput(this->image);
+
+  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
+  ConnectPipelines(itkTargetExporter, vtkTargetImporter);
+  vtkTargetImporter->Update();
+
+  vtkContourFilter *targetContour = vtkContourFilter::New();
+  targetContour->SetInputData(vtkTargetImporter->GetOutput());
+  targetContour->SetValue(0, isovalue);
+  targetContour->Update();
+
+  read(sourceDistanceMap);
+
+  ExportFilterType::Pointer itkMovingExporter = ExportFilterType::New();
+  itkMovingExporter->SetInput(this->image);
+
+  vtkImageImport *vtkMovingImporter = vtkImageImport::New();
+  ConnectPipelines(itkMovingExporter, vtkMovingImporter);
+  vtkMovingImporter->Update();
+
+  vtkContourFilter *movingContour = vtkContourFilter::New();
+  movingContour->SetInputData(vtkMovingImporter->GetOutput());
+  movingContour->SetValue(0, isovalue);
+  movingContour->Update();
+
+  vtkSmartPointer<vtkPolyData> target = targetContour->GetOutput();
+  vtkSmartPointer<vtkPolyData> moving = movingContour->GetOutput();
+
+  using icpTransform = vtkSmartPointer<vtkIterativeClosestPointTransform>;
+  icpTransform icp = icpTransform::New();
+  icp->SetSource(moving);
+  icp->SetTarget(target);
+  icp->GetLandmarkTransform()->SetModeToRigidBody();
+  icp->SetMaximumNumberOfIterations(icpIterations);
+  icp->Modified();
+  icp->Update();
+
+  using TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>;
+  TransformFilter icpTransformFilter = TransformFilter::New();
+  icpTransformFilter->SetInputData(moving);
+  icpTransformFilter->SetTransform(icp);
+  icpTransformFilter->Update();
+
+  applyTransform();
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "ICP Rigid succeeded!\n";
+#endif
   return true;
 }
 
