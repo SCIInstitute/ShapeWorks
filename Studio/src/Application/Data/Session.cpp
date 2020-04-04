@@ -519,6 +519,7 @@ bool Session::load_project(QString filename)
   this->project_.load(filename.toStdString());
 
   int num_subjects = this->project_.get_number_of_subjects();
+  std::cerr << "num_subjects = " << num_subjects << "\n";
 
   for (int i = 0; i < num_subjects; i++)
   {

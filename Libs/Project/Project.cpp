@@ -75,7 +75,21 @@ int Project::get_number_of_subjects()
 //---------------------------------------------------------------------------
 int Project::get_number_of_domains()
 {
+  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  if (seg_columns.size() > 0) {
+    return seg_columns.size();
+  }
 
+  auto mesh_columns = this->get_matching_columns("mesh_");
+  if (mesh_columns.size() > 0) {
+    return mesh_columns.size();
+  }
+
+  /// TODO: DT's?
+
+  /// TODO: when only point files are specified, the user has to specify somewhere how many domains there are (if more than one)
+
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -150,19 +164,39 @@ std::vector<std::string> Project::get_matching_columns(std::string prefix)
 }
 
 //---------------------------------------------------------------------------
+std::string Project::get_value(int column, int subject_id)
+{
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+
+  return ws.cell(xlnt::cell_reference(column + 1, subject_id + 1)).value<std::string>();
+}
+
+//---------------------------------------------------------------------------
 void Project::load_subjects()
 {
   int num_subjects = this->get_number_of_subjects();
 
   this->subjects_.clear();
 
-  for (int i=0;i<num_subjects;i++)
-  {
+  this->num_domains_ = this->get_number_of_domains();
+
+  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+
+  for (int i = 0; i < num_subjects; i++) {
     Subject subject;
-    subject.set_number_of_domains();
+    subject.set_number_of_domains(this->num_domains_);
 
+    std::vector<std::string> list;
+
+    for (int s = 0; s < seg_columns.size(); s++) {
+      auto column = seg_columns[s];
+      int column_index = get_index_for_column(column);
+
+      list.push_back(get_value(column_index, s));
+    }
+
+    subject.set_segmentation_filenames(list);
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -175,6 +209,7 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
 
   std::cerr << "headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
+    std::cerr << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
       return i;
     }
@@ -198,6 +233,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
 {
   int index = this->get_index_for_column(name);
 
+  std::cerr << "index = " << index << "\n";
   std::vector<std::string> list;
   if (index < 0) {
     return list;
@@ -207,8 +243,11 @@ std::vector<std::string> Project::get_string_column(std::string name)
 
   auto rows = ws.rows(false);
 
+  std::cerr << "rows.length = " << rows.length() << "\n";
+
   for (int i = 1; i < rows.length(); i++) {
     std::string value = rows[i][index].to_string();
+    std::cerr << "value = " << value << "\n";
     if (value != "") {
       list.push_back(value);
     }
@@ -224,10 +263,10 @@ void Project::save_string_column(std::string name, std::vector<std::string> item
 
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
-  ws.cell(xlnt::cell_reference(index, 1)).value(name);
+  ws.cell(xlnt::cell_reference(index + 1, 1)).value(name);
 
   for (int i = 0; i < items.size(); i++) {
-    ws.cell(xlnt::cell_reference(index, i + 2)).value(items[i]);
+    ws.cell(xlnt::cell_reference(index + 1, i + 2)).value(items[i]);
   }
 }
 

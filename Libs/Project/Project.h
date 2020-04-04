@@ -34,6 +34,9 @@ public:
   //! Return the number of subjects in the project
   int get_number_of_subjects();
 
+  //! Return the number of domains
+  int get_number_of_domains();
+
   //! Return the segmentation columns
   std::vector<std::string> get_segmentations();
 
@@ -51,9 +54,15 @@ public:
 
 private:
 
+  static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
+
   std::vector<std::string> get_matching_columns(std::string prefix);
 
+  std::string get_value(int column, int subject_id);
+
   void load_subjects();
+
+  int num_domains_ = 0;
 
   std::vector<std::string> original_files_;
   std::vector<std::string> distance_transform_files_;
