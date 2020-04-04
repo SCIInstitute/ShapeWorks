@@ -95,36 +95,36 @@ long long MeshCache::getTotalAddressiblePhysicalMemory()
 //-----------------------------------------------------------------------------
 MeshCache::MeshCache(Preferences& prefs) : preferences_(prefs)
 {
-  this->maxMemory = MeshCache::getTotalAddressiblePhysicalMemory();
-  this->memorySize = 0;
+  this->max_memory_ = MeshCache::getTotalAddressiblePhysicalMemory();
+  this->memory_size_ = 0;
   this->pref_ref_ = &this->preferences_;
 }
 
-vtkSmartPointer<vtkPolyData> MeshCache::getMesh(const vnl_vector<double>& shape)
+vtkSmartPointer<vtkPolyData> MeshCache::get_mesh(const vnl_vector<double>& shape)
 {
-  QMutexLocker locker(&mutex);
+  QMutexLocker locker(&mutex_);
 
   if (!preferences_.get_cache_enabled()) {
     return NULL;
   }
 
   // search the cache for this shape
-  CacheMap::iterator it = this->meshCache.find(shape);
-  if (it == this->meshCache.end()) {
+  CacheMap::iterator it = this->mesh_cache_.find(shape);
+  if (it == this->mesh_cache_.end()) {
     return NULL;
   }
 
-  return meshCache[shape];
+  return mesh_cache_[shape];
 }
 
 //-----------------------------------------------------------------------------
-void MeshCache::insertMesh(const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh)
+void MeshCache::insert_mesh(const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh)
 {
   if (!preferences_.get_cache_enabled()) {
     return;
   }
 
-  QMutexLocker locker(&mutex);
+  QMutexLocker locker(&mutex_);
 
   // compute the memory size of this shape
   size_t shapeSize = shape.size() * sizeof(double);
@@ -133,36 +133,36 @@ void MeshCache::insertMesh(const vnl_vector<double>& shape, vtkSmartPointer<vtkP
 
   this->freeSpaceForAmount(combinedSize);
 
-  this->meshCache[shape] = mesh;
-  this->memorySize += combinedSize;
+  this->mesh_cache_[shape] = mesh;
+  this->memory_size_ += combinedSize;
   //std::cerr << "Cache now holds " << this->meshCache.size() << " items\n";
 
   // add to LRC list
   CacheListItem item;
   item.key = shape;
   item.memorySize = combinedSize;
-  this->cacheList.push_back(item);
+  this->cache_list_.push_back(item);
 }
 
 //-----------------------------------------------------------------------------
 void MeshCache::clear()
 {
-  QMutexLocker locker(&mutex);
+  QMutexLocker locker(&mutex_);
 
-  this->meshCache.clear();
-  this->memorySize = 0;
+  this->mesh_cache_.clear();
+  this->memory_size_ = 0;
 }
 
 //-----------------------------------------------------------------------------
 void MeshCache::freeSpaceForAmount(size_t allocation)
 {
-  size_t memoryLimit = (preferences_.get_memory_cache_percent() / 100.0) * this->maxMemory;
+  size_t memoryLimit = (preferences_.get_memory_cache_percent() / 100.0) * this->max_memory_;
 
-  while (!this->cacheList.empty() && this->memorySize + allocation > memoryLimit) {
-    CacheListItem item = this->cacheList.back();
-    this->memorySize -= item.memorySize;
-    this->cacheList.pop_back();
+  while (!this->cache_list_.empty() && this->memory_size_ + allocation > memoryLimit) {
+    CacheListItem item = this->cache_list_.back();
+    this->memory_size_ -= item.memorySize;
+    this->cache_list_.pop_back();
     std::cerr << "erasing item for " << item.memorySize / 1024 << " kb savings\n";
-    this->meshCache.erase(item.key);
+    this->mesh_cache_.erase(item.key);
   }
 }

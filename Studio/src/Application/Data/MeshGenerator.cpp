@@ -70,14 +70,14 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(ImageType::Pointer image,
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(QString filename, float iso_value)
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(std::string filename, float iso_value)
 {
   vtkSmartPointer<vtkPolyData> poly_data;
   try {
 
     // read file using ITK
     ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(filename.toStdString());
+    reader->SetFileName(filename);
     reader->Update();
     ImageType::Pointer image = reader->GetOutput();
 

@@ -25,7 +25,7 @@ public:
              MeshWorkQueue* queue,
              MeshCache* cache);
   ~MeshWorker();
-  MeshGenerator* getMeshGenerator();
+  MeshGenerator* get_mesh_generator();
 
 public Q_SLOTS:
   void process();
@@ -36,7 +36,7 @@ Q_SIGNALS:
 
 private:
   Preferences& prefs_;
-  MeshGenerator meshGenerator_;
+  MeshGenerator mesh_generator_;
   vnl_vector<double> shape_;
   MeshWorkQueue* queue_;
   MeshCache* cache_;

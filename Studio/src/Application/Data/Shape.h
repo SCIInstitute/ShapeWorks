@@ -5,6 +5,7 @@
 #include <Groom/ShapeWorksGroom.h>
 #include <Data/Mesh.h>
 #include <Libs/Project/Subject.h>
+#include <Data/MeshGenerator.h>
 
 class Shape;
 typedef QSharedPointer< Shape > ShapeHandle;
@@ -23,6 +24,8 @@ class Shape
 public:
   Shape();
   ~Shape();
+
+  void set_mesh_generator(std::shared_ptr<MeshGenerator> mesh_generator);
 
   void set_subject(const shapeworks::Subject &subject);
 
@@ -121,4 +124,6 @@ private:
   QList<double> exclusion_sphere_radii_;
 
   shapeworks::Subject subject_;
+
+  std::shared_ptr<MeshGenerator> mesh_generator_;
 };

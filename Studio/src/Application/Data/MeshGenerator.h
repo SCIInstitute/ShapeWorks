@@ -27,7 +27,7 @@ public:
 
   vtkSmartPointer<vtkPolyData> build_mesh(ImageType::Pointer image, float iso_value = 0.5);
 
-  vtkSmartPointer<vtkPolyData> build_mesh(QString filename, float iso_value = 0.5);
+  vtkSmartPointer<vtkPolyData> build_mesh(string filename, float iso_value = 0.5);
 
   void set_surface_reconstructor(QSharedPointer<SurfaceReconstructor> reconstructor);
 

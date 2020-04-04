@@ -1,3 +1,5 @@
+#pragma once
+
 /*
  * Shapeworks license
  */
@@ -10,9 +12,6 @@
  * It is thread-safe and can be used from any thread.
  */
 
-#ifndef MESH_CACHE_H
-#define MESH_CACHE_H
-
 #include <list>
 #include <map>
 
@@ -23,8 +22,6 @@
 #include <vnl/vnl_vector.h>
 
 #include "Data/Preferences.h"
-
-//#include "itkParticleShapeStatistics.h"
 
 class vtkPolyData;
 
@@ -39,11 +36,12 @@ public:
 class vnl_vector_compare
 {
 public:
-  bool operator()( const vnl_vector<double> &a, const vnl_vector<double> &b) const;
+  bool operator()(const vnl_vector<double> &a, const vnl_vector<double> &b) const;
 };
 
 // mesh cache type
-typedef std::map< const vnl_vector<double>, vtkSmartPointer<vtkPolyData>, vnl_vector_compare > CacheMap;
+typedef std::map< const vnl_vector<double>, vtkSmartPointer<vtkPolyData>,
+                  vnl_vector_compare > CacheMap;
 
 // LRC list
 typedef std::list< CacheListItem > CacheList;
@@ -55,37 +53,36 @@ public:
 
   MeshCache(Preferences& prefs);
 
-  vtkSmartPointer<vtkPolyData> getMesh( const vnl_vector<double>& vector );
+  vtkSmartPointer<vtkPolyData> get_mesh(const vnl_vector<double>& vector);
 
-  void insertMesh( const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh );
+  void insert_mesh(const vnl_vector<double>& shape, vtkSmartPointer<vtkPolyData> mesh);
 
   void clear();
 
-  static Preferences * pref_ref_;
+  static Preferences* pref_ref_;
 
 private:
 
-  void freeSpaceForAmount( size_t allocation );
+  void freeSpaceForAmount(size_t allocation);
 
   static long long getTotalPhysicalMemory();
   static long long getTotalAddressibleMemory();
   static long long getTotalAddressiblePhysicalMemory();
 
   Preferences &preferences_;
+
   // mesh cache
-  CacheMap meshCache;
+  CacheMap mesh_cache_;
 
   // lrc list
-  CacheList cacheList;
+  CacheList cache_list_;
 
   // size of memory in use by the cache
-  size_t memorySize;
+  size_t memory_size_;
 
   // maximum memory
-  long long maxMemory;
+  long long max_memory_;
 
   // for concurrent access
-  QMutex mutex;
+  QMutex mutex_;
 };
-
-#endif // ifndef MESH_CACHE_H

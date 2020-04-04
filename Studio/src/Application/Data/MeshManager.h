@@ -61,7 +61,7 @@ private:
   // the workers
   std::vector<QThread*> threads_;
 
-  size_t thread_count_;
+  int thread_count_;
 
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
 };

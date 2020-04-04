@@ -197,11 +197,13 @@ void Project::load_subjects()
     for (int s = 0; s < seg_columns.size(); s++) {
       auto column = seg_columns[s];
       int column_index = get_index_for_column(column);
-
-      list.push_back(get_value(column_index, s));
+      auto value = get_value(column_index, i + 1);
+      std::cerr << "## value = " << value << "\n";
+      list.push_back(value);
     }
 
     subject.set_segmentation_filenames(list);
+    this->subjects_.push_back(subject);
   }
 }
 

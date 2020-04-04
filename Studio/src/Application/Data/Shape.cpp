@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 
+#include <Data/MeshGenerator.h>
+
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -16,6 +18,12 @@ Shape::Shape()
 //---------------------------------------------------------------------------
 Shape::~Shape()
 {}
+
+//---------------------------------------------------------------------------
+void Shape::set_mesh_generator(std::shared_ptr<MeshGenerator> mesh_generator)
+{
+  this->mesh_generator_ = mesh_generator;
+}
 
 //---------------------------------------------------------------------------
 void Shape::set_subject(const Subject &subject)
@@ -40,8 +48,8 @@ void Shape::import_original_image(std::string filename, float iso_value)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_original_mesh()
 {
-  if (!this->original_mesh_)
-  {
+  std::cerr << "get_original_mesh!\n";
+  if (!this->original_mesh_) {
     this->generate_original_meshes();
   }
   return this->original_mesh_;
@@ -264,7 +272,14 @@ void Shape::set_group_id(int id)
 //---------------------------------------------------------------------------
 void Shape::generate_original_meshes()
 {
+  if (this->subject_.get_segmentation_filenames().size() > 0) {
+    std::string filename = this->subject_.get_segmentation_filenames()[0];
 
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_generator_->build_mesh(filename);
+
+    this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
+    this->original_mesh_->set_poly_data(poly_data);
+  }
 }
 
 //---------------------------------------------------------------------------

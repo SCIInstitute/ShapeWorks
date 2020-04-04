@@ -31,14 +31,14 @@ void MeshManager::clear_cache()
 void MeshManager::generate_mesh(const vnl_vector<double>& shape)
 {
   // check cache first
-  if (!this->mesh_cache_.getMesh(shape)
+  if (!this->mesh_cache_.get_mesh(shape)
       && !this->work_queue_.isInside(shape)) {
     this->work_queue_.push(shape);
     //todo
     QThread* thread = new QThread;
     MeshWorker* worker = new MeshWorker(this->prefs_, shape,
                                         &this->work_queue_, &this->mesh_cache_);
-    worker->getMeshGenerator()->set_surface_reconstructor(this->surface_reconstructor_);
+    worker->get_mesh_generator()->set_surface_reconstructor(this->surface_reconstructor_);
 
     worker->moveToThread(thread);
     connect(thread, SIGNAL(started()), worker, SLOT(process()));
@@ -66,7 +66,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double>& sha
   }
   // check cache first
   if (this->prefs_.get_cache_enabled()) {
-    poly_data = this->mesh_cache_.getMesh(shape);
+    poly_data = this->mesh_cache_.get_mesh(shape);
     if (!poly_data) {
       if (prefs_.get_parallel_enabled() &&
           (this->prefs_.get_num_threads() > 0)) {
@@ -74,7 +74,7 @@ vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double>& sha
       }
       else {
         poly_data = this->mesh_generator_.build_mesh(shape, 0);
-        this->mesh_cache_.insertMesh(shape, poly_data);
+        this->mesh_cache_.insert_mesh(shape, poly_data);
       }
     }
   }
@@ -88,8 +88,8 @@ vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double>& sha
 void MeshManager::handle_thread_complete()
 {
   this->thread_count_--;
-  size_t tmp_max = this->prefs_.get_num_threads();
-  while (!this->threads_.empty() && this->thread_count_ < tmp_max) {
+  int max_threads = this->prefs_.get_num_threads();
+  while (!this->threads_.empty() && this->thread_count_ < max_threads) {
     QThread* thread = this->threads_.back();
     this->threads_.pop_back();
     thread->start();

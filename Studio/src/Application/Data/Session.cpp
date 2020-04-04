@@ -523,8 +523,11 @@ bool Session::load_project(QString filename)
 
   std::vector<Subject> subjects = this->project_.get_subjects();
 
+  std::shared_ptr<MeshGenerator> mesh_generator = std::shared_ptr<MeshGenerator>(new MeshGenerator(this->preferences_));
+
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+    shape->set_mesh_generator(mesh_generator);
     shape->set_subject(subjects[i]);
     this->shapes_ << shape;
   }
