@@ -106,10 +106,12 @@ void Lightbox::display_objects()
   // skip based on scrollbar
   int start_object = this->start_row_ * this->tile_layout_width_;
 
+  int end_object = std::min<int>(start_object + this->viewers_.size(), this->objects_.size());
+
   int position = 0;
 
   bool need_loading_screen = false;
-  for (int i = start_object; i < this->objects_.size(); i++) {
+  for (int i = start_object; i < end_object; i++) {
     if (!this->objects_[i]->get_mesh()) {
       need_loading_screen = true;
     }
@@ -119,7 +121,7 @@ void Lightbox::display_objects()
     this->loading_timer_.start();
   }
   else {
-    for (int i = start_object; i < this->objects_.size(); i++) {
+    for (int i = start_object; i < end_object; i++) {
       this->insert_object_into_viewer(this->objects_[i], position);
       position++;
     }

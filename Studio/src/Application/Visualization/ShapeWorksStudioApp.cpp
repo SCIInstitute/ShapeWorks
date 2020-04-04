@@ -514,7 +514,7 @@ void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 {
   int value = this->ui_->vertical_scroll_bar->value();
 
-  std::cerr << "vertical scrollbar value = " << value << "\n";
+  //std::cerr << "vertical scrollbar value = " << value << "\n";
   this->lightbox_->set_start_row(value);
 }
 

@@ -253,7 +253,7 @@ ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
   object->set_annotations(annotations);
   return object;
   */
-  ShapeHandle shape;
+  ShapeHandle shape = ShapeHandle(new Shape());
   return shape;
 }
 
