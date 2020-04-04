@@ -48,7 +48,6 @@ void Shape::import_original_image(std::string filename, float iso_value)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_original_mesh()
 {
-  std::cerr << "get_original_mesh!\n";
   if (!this->original_mesh_) {
     this->generate_original_meshes();
   }

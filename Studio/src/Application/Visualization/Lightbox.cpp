@@ -76,8 +76,7 @@ void Lightbox::insert_object_into_viewer(QSharedPointer<DisplayObject> object, i
     auto pos = viewer->get_renderer()->GetActiveCamera()->GetPosition();
     this->initPos_ = { { pos[0], pos[1], pos[2] } };
   }
-  else
-  {
+  else {
     viewer->get_renderer()->SetActiveCamera(this->camera_);
   }
 }
@@ -248,7 +247,7 @@ void Lightbox::set_start_row(int row)
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_display_objects(QVector < QSharedPointer < DisplayObject >> objects)
+void Lightbox::set_display_objects(QVector<QSharedPointer<DisplayObject>> objects)
 {
   this->objects_ = objects;
   this->display_objects();

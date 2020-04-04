@@ -165,15 +165,15 @@ vnl_vector<double> Visualizer::getCurrentShape()
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_sample(size_t i)
+void Visualizer::display_sample(int i)
 {
-  size_t sample_count = this->project_->get_shapes().size();
-  if (sample_count == 0) { return;}
+  int sample_count = this->project_->get_shapes().size();
+  if (sample_count == 0) { return; }
   i = std::min(sample_count - 1, i);
 
   this->update_viewer_properties();
 
-  QVector < QSharedPointer < DisplayObject >> list_ptr;
+  QVector<QSharedPointer<DisplayObject>> list_ptr;
 
   QSharedPointer < Shape > shape = this->project_->get_shapes().at(i);
 

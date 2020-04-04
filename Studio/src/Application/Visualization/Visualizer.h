@@ -47,7 +47,7 @@ public:
 
   void update_samples();
 
-  void display_sample(size_t i);
+  void display_sample(int i);
 
   void display_shape(const vnl_vector<double> &points);
 
