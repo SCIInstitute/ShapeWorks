@@ -71,7 +71,7 @@ void ShapeworksWorker::process()
   case ShapeworksWorker::ReconstructType:
     try {
       emit message(std::string("Warping optimizations to mean space..."));
-      this->project_->get_mesh_manager()->getSurfaceReconstructor()->initializeReconstruction(
+      this->project_->get_mesh_manager()->get_surface_reconstructor()->initializeReconstruction(
         this->local_pts_, this->global_pts_, this->distance_transform_,
         this->maxAngle_, this->decimationPercent_,
         this->numClusters_);

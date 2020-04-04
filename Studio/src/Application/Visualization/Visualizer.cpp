@@ -230,7 +230,7 @@ DisplayObjectHandle Visualizer::create_display_object(const vnl_vector<double> &
 {
 
   MeshHandle mesh = MeshHandle(new Mesh());
-  mesh->set_poly_data(this->project_->get_mesh_manager()->getMesh(points));
+  mesh->set_poly_data(this->project_->get_mesh_manager()->get_mesh(points));
 
   DisplayObjectHandle object = DisplayObjectHandle(new DisplayObject());
 

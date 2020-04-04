@@ -725,7 +725,7 @@ void ShapeWorksStudioApp::handle_points_changed()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_optimize_complete()
 {
-  this->project_->get_mesh_manager()->getSurfaceReconstructor()->resetReconstruct();
+  this->project_->get_mesh_manager()->get_surface_reconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
   this->project_->handle_clear_cache();
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
@@ -804,7 +804,7 @@ void ShapeWorksStudioApp::update_display()
                                     this->ui_->view_mode_combobox->currentText());
 
   bool reconstruct_ready =
-    this->project_->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean();
+    this->project_->get_mesh_manager()->get_surface_reconstructor()->hasDenseMean();
 
   if (!this->project_->groomed_present() && this->project_->reconstructed_present()) {
     // legacy will be used
@@ -1110,7 +1110,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
     return;
   }
   auto shape = this->visualizer_->getCurrentShape();
-  auto msh = this->project_->get_mesh_manager()->getMesh(shape);
+  auto msh = this->project_->get_mesh_manager()->get_mesh(shape);
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());
   writer->SetInputData(msh);

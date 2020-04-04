@@ -4,6 +4,7 @@
 #include <QString>
 #include <Groom/ShapeWorksGroom.h>
 #include <Data/Mesh.h>
+#include <Libs/Project/Subject.h>
 
 class Shape;
 typedef QSharedPointer< Shape > ShapeHandle;
@@ -22,6 +23,8 @@ class Shape
 public:
   Shape();
   ~Shape();
+
+  void set_subject(const shapeworks::Subject &subject);
 
   //! set the input segmentation filenames (1 per domain)
   void set_input_segmentations(QStringList filenames);
@@ -89,7 +92,10 @@ public:
   int get_group_id();
   void set_group_id(int id);
 
+
 private:
+
+  void generate_original_meshes();
 
   QStringList input_segmentation_filenames_;
 
@@ -113,4 +119,6 @@ private:
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
+
+  shapeworks::Subject subject_;
 };

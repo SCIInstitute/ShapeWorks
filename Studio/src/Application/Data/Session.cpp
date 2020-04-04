@@ -78,7 +78,7 @@ void Session::calculate_reconstructed_samples()
     auto shape = this->shapes_.at(i);
     auto pts = shape->get_local_correspondence_points();
     if (pts.size() > 0) {
-      shape->set_reconstructed_mesh(this->mesh_manager_->getMesh(pts));
+      shape->set_reconstructed_mesh(this->mesh_manager_->get_mesh(pts));
     }
   }
   //this->preferences_.set_preference("Studio/cache_enabled", true);
@@ -375,7 +375,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
   if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
-    this->mesh_manager_->getSurfaceReconstructor()->readMeanInfo(denseFile, sparseFile,
+    this->mesh_manager_->get_surface_reconstructor()->readMeanInfo(denseFile, sparseFile,
                                                                  goodPtsFile);
   }
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
@@ -521,9 +521,12 @@ bool Session::load_project(QString filename)
   int num_subjects = this->project_.get_number_of_subjects();
   std::cerr << "num_subjects = " << num_subjects << "\n";
 
-  for (int i = 0; i < num_subjects; i++)
-  {
-    this->shapes_ << QSharedPointer<Shape>(new Shape());
+  std::vector<Subject> subjects = this->project_.get_subjects();
+
+  for (int i = 0; i < num_subjects; i++) {
+    QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+    shape->set_subject(subjects[i]);
+    this->shapes_ << shape;
   }
 
   std::vector<std::string> original_files = this->project_.get_original_files();

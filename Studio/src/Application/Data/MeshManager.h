@@ -28,13 +28,13 @@ public:
   ~MeshManager();
 
   //! pre-generate and cache a mesh for this shape
-  void generateMesh(const vnl_vector<double>& shape);
+  void generate_mesh(const vnl_vector<double>& shape);
 
   //! get a mesh for a shape
-  vtkSmartPointer<vtkPolyData> getMesh(const vnl_vector<double>& shape);
+  vtkSmartPointer<vtkPolyData> get_mesh(const vnl_vector<double>& shape);
 
   //! return the surface reconstructor
-  QSharedPointer<SurfaceReconstructor> getSurfaceReconstructor();
+  QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();
 
   //! clear the cache
   void clear_cache();
@@ -50,18 +50,18 @@ private:
   Preferences& prefs_;
 
   // cache of shape meshes
-  MeshCache meshCache_;
+  MeshCache mesh_cache_;
 
   // our own mesh generator
-  MeshGenerator meshGenerator_;
+  MeshGenerator mesh_generator_;
 
   // queue of meshes to build
-  MeshWorkQueue workQueue_;
+  MeshWorkQueue work_queue_;
 
   // the workers
   std::vector<QThread*> threads_;
 
   size_t thread_count_;
 
-  QSharedPointer<SurfaceReconstructor> surfaceReconstructor_;
+  QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
 };

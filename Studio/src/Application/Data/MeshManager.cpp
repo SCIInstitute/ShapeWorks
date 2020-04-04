@@ -9,13 +9,13 @@
 //---------------------------------------------------------------------------
 MeshManager::MeshManager(Preferences& prefs) :
   prefs_(prefs),
-  meshCache_(prefs),
-  meshGenerator_(prefs),
-  surfaceReconstructor_(new SurfaceReconstructor())
+  mesh_cache_(prefs),
+  mesh_generator_(prefs),
+  surface_reconstructor_(new SurfaceReconstructor())
 {
   this->thread_count_ = 0;
 
-  this->meshGenerator_.set_surface_reconstructor(this->surfaceReconstructor_);
+  this->mesh_generator_.set_surface_reconstructor(this->surface_reconstructor_);
 }
 
 //---------------------------------------------------------------------------
@@ -24,21 +24,21 @@ MeshManager::~MeshManager() {}
 //---------------------------------------------------------------------------
 void MeshManager::clear_cache()
 {
-  this->meshCache_.clear();
+  this->mesh_cache_.clear();
 }
 
 //---------------------------------------------------------------------------
-void MeshManager::generateMesh(const vnl_vector<double>& shape)
+void MeshManager::generate_mesh(const vnl_vector<double>& shape)
 {
   // check cache first
-  if (!this->meshCache_.getMesh(shape)
-      && !this->workQueue_.isInside(shape)) {
-    this->workQueue_.push(shape);
+  if (!this->mesh_cache_.getMesh(shape)
+      && !this->work_queue_.isInside(shape)) {
+    this->work_queue_.push(shape);
     //todo
     QThread* thread = new QThread;
     MeshWorker* worker = new MeshWorker(this->prefs_, shape,
-                                        &this->workQueue_, &this->meshCache_);
-    worker->getMeshGenerator()->set_surface_reconstructor(this->surfaceReconstructor_);
+                                        &this->work_queue_, &this->mesh_cache_);
+    worker->getMeshGenerator()->set_surface_reconstructor(this->surface_reconstructor_);
 
     worker->moveToThread(thread);
     connect(thread, SIGNAL(started()), worker, SLOT(process()));
@@ -58,30 +58,30 @@ void MeshManager::generateMesh(const vnl_vector<double>& shape)
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshManager::getMesh(const vnl_vector<double>& shape)
+vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double>& shape)
 {
-  vtkSmartPointer<vtkPolyData> polyData;
+  vtkSmartPointer<vtkPolyData> poly_data;
   if (shape.empty()) {
-    return polyData;
+    return poly_data;
   }
   // check cache first
   if (this->prefs_.get_cache_enabled()) {
-    polyData = this->meshCache_.getMesh(shape);
-    if (!polyData) {
+    poly_data = this->mesh_cache_.getMesh(shape);
+    if (!poly_data) {
       if (prefs_.get_parallel_enabled() &&
           (this->prefs_.get_num_threads() > 0)) {
-        this->generateMesh(shape);
+        this->generate_mesh(shape);
       }
       else {
-        polyData = this->meshGenerator_.build_mesh(shape, 0);
-        this->meshCache_.insertMesh(shape, polyData);
+        poly_data = this->mesh_generator_.build_mesh(shape, 0);
+        this->mesh_cache_.insertMesh(shape, poly_data);
       }
     }
   }
   else {
-    polyData = this->meshGenerator_.build_mesh(shape, 0);
+    poly_data = this->mesh_generator_.build_mesh(shape, 0);
   }
-  return polyData;
+  return poly_data;
 }
 
 //---------------------------------------------------------------------------
@@ -99,7 +99,7 @@ void MeshManager::handle_thread_complete()
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<SurfaceReconstructor> MeshManager::getSurfaceReconstructor()
+QSharedPointer<SurfaceReconstructor> MeshManager::get_surface_reconstructor()
 {
-  return this->surfaceReconstructor_;
+  return this->surface_reconstructor_;
 }

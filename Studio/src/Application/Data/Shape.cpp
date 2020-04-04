@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include <QTextStream>
 
+using namespace shapeworks;
+
 //---------------------------------------------------------------------------
 Shape::Shape()
 {
@@ -14,6 +16,12 @@ Shape::Shape()
 //---------------------------------------------------------------------------
 Shape::~Shape()
 {}
+
+//---------------------------------------------------------------------------
+void Shape::set_subject(const Subject &subject)
+{
+  this->subject_ = subject;
+}
 
 //---------------------------------------------------------------------------
 void Shape::set_input_segmentations(QStringList filenames)
@@ -32,6 +40,10 @@ void Shape::import_original_image(std::string filename, float iso_value)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_original_mesh()
 {
+  if (!this->original_mesh_)
+  {
+    this->generate_original_meshes();
+  }
   return this->original_mesh_;
 }
 
@@ -247,6 +259,12 @@ int Shape::get_group_id()
 void Shape::set_group_id(int id)
 {
   this->group_id_ = id;
+}
+
+//---------------------------------------------------------------------------
+void Shape::generate_original_meshes()
+{
+
 }
 
 //---------------------------------------------------------------------------
