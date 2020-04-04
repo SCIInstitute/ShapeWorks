@@ -147,6 +147,12 @@ void Project::set_global_point_files(std::vector<std::string> files)
 }
 
 //---------------------------------------------------------------------------
+std::vector<Subject> Project::get_subjects()
+{
+  return this->subjects_;
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::string> Project::get_matching_columns(std::string prefix)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);

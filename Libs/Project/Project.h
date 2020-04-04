@@ -52,6 +52,8 @@ public:
   std::vector<std::string> get_global_point_files();
   void set_global_point_files(std::vector<std::string> files);
 
+  std::vector<Subject> get_subjects();
+
 private:
 
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
