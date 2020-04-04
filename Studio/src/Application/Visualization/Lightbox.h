@@ -14,7 +14,6 @@
 
 class Mesh;
 class Shape;
-class DisplayObject;
 class StudioInteractorStyle;
 class Visualizer;
 
@@ -32,7 +31,7 @@ public:
   Lightbox();
   ~Lightbox();
 
-  void set_display_objects(QVector < QSharedPointer < DisplayObject >> objects);
+  void set_display_objects(QVector<QSharedPointer<Shape>> objects);
 
   void set_interactor(vtkRenderWindowInteractor* interactor);
 
@@ -48,6 +47,7 @@ public:
   void set_start_row(int row);
 
   ViewerList get_viewers();
+
   void redraw();
 
   void handle_pick(int* click_pos, bool one);
@@ -69,11 +69,11 @@ private:
 
   void display_objects();
 
-  void insert_object_into_viewer(QSharedPointer<DisplayObject> object, int position);
+  void insert_object_into_viewer(QSharedPointer<Shape> object, int position);
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  QVector < QSharedPointer < DisplayObject >> objects_;
+  QVector<QSharedPointer<Shape>> objects_;
 
   // there is one viewer for every tile in the lightbox display
   ViewerList viewers_;

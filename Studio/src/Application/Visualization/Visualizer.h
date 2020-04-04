@@ -74,9 +74,8 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
-  DisplayObjectHandle create_display_object(const vnl_vector<double> &points,
+  ShapeHandle create_display_object(const vnl_vector<double> &points,
                                             const std::vector<Point> &vectors);
-  std::map<double, QVector<DisplayObjectHandle>> disp_handles_;
   Preferences &preferences_;
 
   void compute_measurements();

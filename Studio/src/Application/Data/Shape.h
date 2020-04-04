@@ -8,8 +8,8 @@
 #include <Data/MeshGenerator.h>
 
 class Shape;
-typedef QSharedPointer< Shape > ShapeHandle;
-typedef QVector< ShapeHandle > ShapeList;
+using ShapeHandle = QSharedPointer<Shape>;
+using ShapeList = QVector<ShapeHandle>;
 
 class Point
 {
@@ -24,6 +24,13 @@ class Shape
 public:
   Shape();
   ~Shape();
+
+
+  QSharedPointer<Mesh> get_mesh();
+
+  void set_annotations(QStringList annotations);
+  QStringList get_annotations();
+
 
   void set_mesh_generator(std::shared_ptr<MeshGenerator> mesh_generator);
 
@@ -96,6 +103,12 @@ public:
   void set_group_id(int id);
 
 
+  std::vector<Point> get_vectors();
+  void set_vectors(std::vector<Point> vectors);
+
+  void set_transform(const vnl_vector<double>& transform);
+  vnl_vector<double> get_transform();
+
 private:
 
   void generate_original_meshes();
@@ -126,4 +139,8 @@ private:
   shapeworks::Subject subject_;
 
   std::shared_ptr<MeshGenerator> mesh_generator_;
+
+  std::vector<Point> vectors_;
+  vnl_vector<double> transform_;
+
 };

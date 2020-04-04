@@ -20,6 +20,25 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
+QSharedPointer<Mesh> Shape::get_mesh()
+{
+  /// TODO differ based on settings
+  return this->get_original_mesh();
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_annotations(QStringList annotations)
+{
+
+}
+
+//---------------------------------------------------------------------------
+QStringList Shape::get_annotations()
+{
+
+}
+
+//---------------------------------------------------------------------------
 void Shape::set_mesh_generator(std::shared_ptr<MeshGenerator> mesh_generator)
 {
   this->mesh_generator_ = mesh_generator;
@@ -266,6 +285,30 @@ int Shape::get_group_id()
 void Shape::set_group_id(int id)
 {
   this->group_id_ = id;
+}
+
+//---------------------------------------------------------------------------
+std::vector<Point> Shape::get_vectors()
+{
+  return this->vectors_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_vectors(std::vector<Point> vectors)
+{
+  this->vectors_ = vectors;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_transform(const vnl_vector<double> &transform)
+{
+  this->transform_ = transform;
+}
+
+//---------------------------------------------------------------------------
+vnl_vector<double> Shape::get_transform()
+{
+  return this->transform_;
 }
 
 //---------------------------------------------------------------------------

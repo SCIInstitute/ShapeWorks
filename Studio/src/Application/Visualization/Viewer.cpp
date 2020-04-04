@@ -35,7 +35,6 @@
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
-#include <Visualization/DisplayObject.h>
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
@@ -408,7 +407,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::display_object(QSharedPointer<DisplayObject> object)
+void Viewer::display_object(QSharedPointer<Shape> object)
 {
   this->visible_ = true;
 
@@ -565,7 +564,7 @@ void Viewer::update_points()
   if (!this->object_) {
     return;
   }
-  vnl_vector<double> correspondence_points = this->object_->get_correspondence_points();
+  vnl_vector<double> correspondence_points = this->object_->get_global_correspondence_points();
 
   int num_points = correspondence_points.size() / 3;
 
@@ -693,7 +692,7 @@ void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen)
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::draw_exclusion_spheres(QSharedPointer<DisplayObject> object)
+void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object)
 {
   QList<Point> centers = object->get_exclusion_sphere_centers();
   QList<double> radii = object->get_exclusion_sphere_radii();

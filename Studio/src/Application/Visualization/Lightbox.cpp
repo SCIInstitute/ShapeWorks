@@ -9,7 +9,6 @@
 #include <vtkImageData.h>
 
 #include <Visualization/Lightbox.h>
-#include <Visualization/DisplayObject.h>
 #include <Visualization/StudioInteractorStyle.h>
 #include <Visualization/Visualizer.h>
 #include <Data/Mesh.h>
@@ -60,7 +59,7 @@ void Lightbox::set_interactor(vtkRenderWindowInteractor* interactor)
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::insert_object_into_viewer(QSharedPointer<DisplayObject> object, int position)
+void Lightbox::insert_object_into_viewer(QSharedPointer<Shape> object, int position)
 {
   if (position >= this->viewers_.size()) {
     return;
@@ -247,7 +246,7 @@ void Lightbox::set_start_row(int row)
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_display_objects(QVector<QSharedPointer<DisplayObject>> objects)
+void Lightbox::set_display_objects(QVector<QSharedPointer<Shape>> objects)
 {
   this->objects_ = objects;
   this->display_objects();

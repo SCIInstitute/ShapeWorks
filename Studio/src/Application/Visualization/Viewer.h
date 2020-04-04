@@ -18,7 +18,7 @@ class vtkArrowSource;
 class vtkTransformPolyDataFilter;
 class vtkScalarBarActor;
 
-class DisplayObject;
+class Shape;
 
 class Viewer;
 
@@ -43,7 +43,7 @@ public:
   void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
   vtkSmartPointer<vtkRenderer> get_renderer();
 
-  void display_object(QSharedPointer<DisplayObject> object);
+  void display_object(QSharedPointer<Shape> object);
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
@@ -76,13 +76,13 @@ private:
   void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                    vtkSmartPointer<vtkFloatArray> vectors);
 
-  void draw_exclusion_spheres(QSharedPointer<DisplayObject> object);
+  void draw_exclusion_spheres(QSharedPointer<Shape> object);
 
   void updateDifferenceLUT(float r0, float r1);
 
   bool visible_;
 
-  QSharedPointer<DisplayObject> object_;
+  QSharedPointer<Shape> object_;
 
   void update_actors();
 

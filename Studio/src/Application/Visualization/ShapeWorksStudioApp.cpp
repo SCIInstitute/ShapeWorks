@@ -22,7 +22,6 @@
 #include <Data/Mesh.h>
 #include <Visualization/ShapeWorksStudioApp.h>
 #include <Visualization/Lightbox.h>
-#include <Visualization/DisplayObject.h>
 #include <Visualization/Visualizer.h>
 #include <Visualization/WheelEventForwarder.h>
 

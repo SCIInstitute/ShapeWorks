@@ -62,9 +62,10 @@ void Visualizer::set_center(bool center)
 void Visualizer::display_samples()
 {
   this->update_viewer_properties();
+  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
+  /*
 
   QVector<QSharedPointer<DisplayObject>> display_objects;
-  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
 
   for (int i = 0; i < shapes.size(); i++) {
     QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>(new DisplayObject());
@@ -120,7 +121,8 @@ void Visualizer::display_samples()
   }
 
   this->display_objects_ = display_objects;
-  this->lightbox_->set_display_objects(display_objects);
+*/
+  this->lightbox_->set_display_objects(shapes);
   this->update_viewer_properties();
 }
 
@@ -150,7 +152,7 @@ void Visualizer::display_shape(const vnl_vector<double> &points)
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double> &points, const std::vector<Point> &vectors)
 {
-  QVector<DisplayObjectHandle> objects;
+  QVector<ShapeHandle> objects;
   objects.push_back(this->create_display_object(points, vectors));
   this->lightbox_->set_display_objects(objects);
   this->update_viewer_properties();
@@ -167,6 +169,7 @@ vnl_vector<double> Visualizer::getCurrentShape()
 //-----------------------------------------------------------------------------
 void Visualizer::display_sample(int i)
 {
+  /*
   int sample_count = this->project_->get_shapes().size();
   if (sample_count == 0) { return; }
   i = std::min(sample_count - 1, i);
@@ -222,13 +225,14 @@ void Visualizer::display_sample(int i)
   this->lightbox_->set_display_objects(list_ptr);
   this->lightbox_->redraw();
   this->currentShape_ = shape->get_local_correspondence_points();
+  */
 }
 
 //-----------------------------------------------------------------------------
-DisplayObjectHandle Visualizer::create_display_object(const vnl_vector<double> &points,
+ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
                                                       const std::vector<Point> &vectors)
 {
-
+/*
   MeshHandle mesh = MeshHandle(new Mesh());
   mesh->set_poly_data(this->project_->get_mesh_manager()->get_mesh(points));
 
@@ -246,6 +250,9 @@ DisplayObjectHandle Visualizer::create_display_object(const vnl_vector<double> &
   annotations << "";
   object->set_annotations(annotations);
   return object;
+  */
+  ShapeHandle shape;
+  return shape;
 }
 
 //-----------------------------------------------------------------------------
