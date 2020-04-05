@@ -69,6 +69,8 @@ public Q_SLOTS:
 
 private:
 
+  void check_for_first_draw();
+
   void display_objects();
 
   void insert_object_into_viewer(QSharedPointer<Shape> object, int position);

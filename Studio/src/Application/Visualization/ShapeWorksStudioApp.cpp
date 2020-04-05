@@ -293,7 +293,7 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
   QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."),
                                                   this->preferences_.get_preference(
                                                     "Main/last_directory", QString()),
-                                                  tr("XML files (*.xml)"));
+                                                  tr("XLSX files (*.xlsx)"));
   if (filename.isEmpty()) {
     return;
   }

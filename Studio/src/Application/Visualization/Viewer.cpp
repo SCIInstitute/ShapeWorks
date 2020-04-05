@@ -39,7 +39,7 @@
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
-  this->image_actor_ = vtkSmartPointer<vtkImageActor>::New();
+  //this->image_actor_ = vtkSmartPointer<vtkImageActor>::New();
 
   this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
   this->surface_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -194,9 +194,15 @@ void Viewer::set_color_scheme(int scheme)
 //-----------------------------------------------------------------------------
 void Viewer::handle_new_mesh()
 {
-  if (!this->mesh_ready_ && this->object_) {
+  if (!this->mesh_ready_ && this->object_ && this->object_->get_mesh()) {
     this->display_object(this->object_);
   }
+}
+
+//-----------------------------------------------------------------------------
+bool Viewer::is_mesh_ready()
+{
+  return this->mesh_ready_;
 }
 
 //-----------------------------------------------------------------------------
@@ -421,6 +427,7 @@ void Viewer::display_object(QSharedPointer<Shape> object)
 
   this->object_ = object;
 
+  std::cerr << "asking for mesh\n";
   QSharedPointer<Mesh> mesh = object->get_mesh();
 
   //QSharedPointer<Mesh> mesh;
@@ -450,7 +457,7 @@ void Viewer::display_object(QSharedPointer<Shape> object)
     std::cerr << "displaying loading...\n";
     corner_annotation->SetText(0, "Loading...");
 
-    ren->AddViewProp(this->image_actor_);
+    //ren->AddViewProp(this->image_actor_);
 
     //ren->ResetCamera();
     //this->renderer_->ResetCameraClippingRange();
@@ -458,7 +465,7 @@ void Viewer::display_object(QSharedPointer<Shape> object)
   }
   else {
     this->mesh_ready_ = true;
-    std::cerr << "mesh is ready!\n";
+    //std::cerr << "mesh is ready!\n";
 
     vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
     vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
@@ -509,6 +516,7 @@ void Viewer::clear_viewer()
 {
   this->renderer_->RemoveAllViewProps();
   this->visible_ = false;
+  this->mesh_ready_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -702,7 +710,7 @@ void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut)
 //-----------------------------------------------------------------------------
 void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen)
 {
-  this->image_actor_->SetInputData(loading_screen);
+  //this->image_actor_->SetInputData(loading_screen);
 }
 
 //-----------------------------------------------------------------------------

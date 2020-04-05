@@ -69,15 +69,7 @@ void Lightbox::insert_object_into_viewer(QSharedPointer<Shape> object, int posit
 
   viewer->display_object(object);
 
-  if (this->first_draw_) {
-    this->first_draw_ = false;
-    viewer->get_renderer()->ResetCamera();
-    auto pos = viewer->get_renderer()->GetActiveCamera()->GetPosition();
-    this->initPos_ = { { pos[0], pos[1], pos[2] } };
-  }
-  else {
-    viewer->get_renderer()->SetActiveCamera(this->camera_);
-  }
+  this->check_for_first_draw();
 }
 
 //-----------------------------------------------------------------------------
@@ -92,6 +84,8 @@ void Lightbox::handle_new_mesh()
   for (int i = 0; i < this->viewers_.size(); i++) {
     this->viewers_[i]->handle_new_mesh();
   }
+  this->redraw();
+  this->check_for_first_draw();
 }
 
 //-----------------------------------------------------------------------------
@@ -120,21 +114,23 @@ void Lightbox::display_objects()
 
   bool need_loading_screen = false;
   for (int i = start_object; i < end_object; i++) {
-    if (!this->objects_[i]->get_mesh()) {
+    this->insert_object_into_viewer(this->objects_[i], position);
+    if (!this->viewers_[position]->is_mesh_ready()) {
       need_loading_screen = true;
     }
+    position++;
   }
 
-  if (need_loading_screen) {
-    this->loading_timer_.start();
-  }
-  else {
-    for (int i = start_object; i < end_object; i++) {
-      this->insert_object_into_viewer(this->objects_[i], position);
-      position++;
-    }
-    this->loading_timer_.stop();
-  }
+  /*
+     /// disabled for now
+     ///
+     if (need_loading_screen) {
+     this->loading_timer_.start();
+     }
+     else {
+     this->loading_timer_.stop();
+     }
+   */
 }
 
 //-----------------------------------------------------------------------------
@@ -315,9 +311,41 @@ void Lightbox::handle_timer_callback()
 {
   this->timer_callback_count_ = (this->timer_callback_count_ + 1) % 19;
 
+  //std::cerr << "timer!\n";
   foreach(ViewerHandle viewer, this->get_viewers()) {
     viewer->set_loading_screen(this->spinner_images_[this->timer_callback_count_]);
   }
   //this->renderer_->ResetCameraClippingRange();
   this->renderer_->GetRenderWindow()->Render();
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::check_for_first_draw()
+{
+  if (this->first_draw_) {
+    int ready_viewer = -1;
+    for (int i = 0; i < this->viewers_.size(); i++) {
+      if (this->viewers_[i]->is_mesh_ready()) {
+        ready_viewer = i;
+      }
+    }
+    if (ready_viewer >= 0) {
+      std::cerr << "First draw!\n";
+      this->first_draw_ = false;
+      this->redraw();
+      this->viewers_[ready_viewer]->get_renderer()->Render();
+      this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
+      this->viewers_[ready_viewer]->get_renderer()->Render();
+      this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
+      //this->viewers_[ready_viewer]->get_renderer()->ResetCamera();
+      auto pos = this->viewers_[ready_viewer]->get_renderer()->GetActiveCamera()->GetPosition();
+      this->initPos_ = { { pos[0], pos[1], pos[2] } };
+/*
+      for (int i = 0; i < this->viewers_.size(); i++) {
+
+        this->viewers_[i]->get_renderer()->SetActiveCamera(this->camera_);
+      }
+      */
+    }
+  }
 }

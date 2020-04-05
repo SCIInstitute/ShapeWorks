@@ -67,6 +67,8 @@ public:
 
   void handle_new_mesh();
 
+  bool is_mesh_ready();
+
 private:
 
   void display_vector_field();
@@ -117,7 +119,7 @@ private:
 
   vtkSmartPointer<StudioInteractorStyle>   style_;
 
-  vtkSmartPointer<vtkImageActor>           image_actor_;
+  //vtkSmartPointer<vtkImageActor>           image_actor_;
 
   vtkSmartPointer<vtkColorTransferFunction>   difference_lut_;
   vtkSmartPointer<vtkArrowSource>             arrow_source_;

@@ -123,6 +123,7 @@ void Visualizer::display_samples()
   this->display_objects_ = display_objects;
 */
   this->lightbox_->set_display_objects(shapes);
+  this->lightbox_->redraw();
   this->update_viewer_properties();
 }
 
