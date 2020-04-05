@@ -404,11 +404,13 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
 {
+  std::cerr << "*** zoom slider changed, value is now: " <<
+    this->ui_->thumbnail_size_slider->value() << "\n";
+
   if (!this->lightbox_->render_window_ready()) {return;}
   this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 
-  int value = this->ui_->thumbnail_size_slider->maximum() -
-              this->ui_->thumbnail_size_slider->value() + 1;
+  int value = this->ui_->thumbnail_size_slider->value();
 
   this->lightbox_->set_tile_layout(value, value);
   this->visualizer_->update_viewer_properties();
@@ -840,8 +842,15 @@ void ShapeWorksStudioApp::update_display()
       root += 1.;
     }
 
-    size_t value = static_cast<size_t>(root);
-    size_t zoom_val = this->ui_->thumbnail_size_slider->maximum() + 1 - value;
+    std::cerr << "root = " << root << "\n";
+
+    if (root > 4) {
+      // don't default to more than 4x4
+      root = 4;
+    }
+
+    int zoom_val = static_cast<int>(root);
+    std::cerr << "zoom_val = " << zoom_val << "\n";
     if (zoom_val != this->ui_->thumbnail_size_slider->value()) {
       this->ui_->thumbnail_size_slider->setValue(zoom_val);
     }
@@ -894,14 +903,11 @@ void ShapeWorksStudioApp::update_display()
                                         reconstruct_ready);
     } //TODO regression?
 
-    if (this->ui_->thumbnail_size_slider->maximum() !=
-        this->ui_->thumbnail_size_slider->value()) {
-      this->ui_->thumbnail_size_slider->setValue(this->ui_->thumbnail_size_slider->maximum());
+    if (1 != this->ui_->thumbnail_size_slider->value()) {
+      this->ui_->thumbnail_size_slider->setValue(1);
     }
   }
-  this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
-
-
+  //this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
 
 //---------------------------------------------------------------------------
@@ -983,8 +989,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   // set the zoom state
-  this->ui_->thumbnail_size_slider->setValue(
-    this->preferences_.get_preference("zoom_state", 1));
+  //this->ui_->thumbnail_size_slider->setValue(
+  //  this->preferences_.get_preference("zoom_state", 1));
+
   this->analysis_tool_->reset_stats();
 
   if (this->session_->is_light_project()) {

@@ -427,7 +427,7 @@ void Viewer::display_object(QSharedPointer<Shape> object)
 
   this->object_ = object;
 
-  std::cerr << "asking for mesh\n";
+  //std::cerr << "asking for mesh\n";
   QSharedPointer<Mesh> mesh = object->get_mesh();
 
   //QSharedPointer<Mesh> mesh;
@@ -439,12 +439,10 @@ void Viewer::display_object(QSharedPointer<Shape> object)
   corner_annotation->SetMaximumFontSize(16);
 
   QStringList annotations = object->get_annotations();
-
   corner_annotation->SetText(0, (annotations[0]).toStdString().c_str());
   corner_annotation->SetText(1, (annotations[1]).toStdString().c_str());
   corner_annotation->SetText(2, (annotations[2]).toStdString().c_str());
   corner_annotation->SetText(3, (annotations[3]).toStdString().c_str());
-
   corner_annotation->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
 
   vtkSmartPointer<vtkRenderer> ren = this->renderer_;
@@ -454,7 +452,6 @@ void Viewer::display_object(QSharedPointer<Shape> object)
   if (!mesh) {
     this->mesh_ready_ = false;
     // display loading message
-    std::cerr << "displaying loading...\n";
     corner_annotation->SetText(0, "Loading...");
 
     //ren->AddViewProp(this->image_actor_);
