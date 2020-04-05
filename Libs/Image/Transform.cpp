@@ -4,6 +4,9 @@
 
 namespace shapeworks {
 
+/// reset
+///
+/// resets values of translate, scale and rotate
 void Transform::reset()
 {
   double translate[3] = {0.0, 0.0, 0.0};
@@ -15,9 +18,13 @@ void Transform::reset()
   rotangle = 0.0;
 }
 
+/// translate
+///
+/// updates translate
+///
+/// \param v      translation
 void Transform::translate(const Vector3 &v)
 {
-  std::cout << v;
   translation += v;
 #if DEBUG_CONSOLIDATION
   std::cout << v << std::endl;
@@ -25,6 +32,12 @@ void Transform::translate(const Vector3 &v)
 #endif
 }
 
+/// rotate
+///
+/// updates rotate
+///
+/// \param axis      axis of rotation
+/// \param angle     angle of rotation
 void Transform::rotate(const Vector3 &axis, double angle)
 {
   //note: this should be accumulative like scale and translate, but it's tricker for rotation
@@ -32,11 +45,19 @@ void Transform::rotate(const Vector3 &axis, double angle)
   rotangle = angle;
 }
 
+/// scale
+///
+/// updates translate
+///
+/// \param s      scaling factor
 void Transform::scale(const Vector3 &s)
 {
   scaling = scaling * s;
 }
 
+/// getItkTransform
+///
+/// performs translation, scaling and rotation
 Transform::itkTransformType::Pointer Transform::getItkTransform() const
 {
   itkTransformType::Pointer transform = itkTransformType::New();
@@ -51,6 +72,10 @@ Transform::itkTransformType::Pointer Transform::getItkTransform() const
   return transform;
 }
 
+/// operator<<
+///
+/// Stream insertion operator
+/// Prints translation, scaling, axis of rotation and angle of rotation.
 std::ostream& operator<<(std::ostream &os, const Transform &t)
 {
   return os << "shapeworks::Transform {\n\ttranslate: "

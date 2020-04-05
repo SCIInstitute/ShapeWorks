@@ -145,7 +145,7 @@ TEST(ImageTests, curvature_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/curvature/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applyCurvature();
+  image.applyCurvatureFilter();
   Image ground_truth(test_location + "curvature_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -156,7 +156,7 @@ TEST(ImageTests, gradient_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/gradient/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applyGradient();
+  image.applyGradientFilter();
   Image ground_truth(test_location + "gradient_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -167,7 +167,7 @@ TEST(ImageTests, sigmoid_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sigmoid/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applySigmoid();
+  image.applySigmoidFilter();
   Image ground_truth(test_location + "sigmoid_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -179,7 +179,7 @@ TEST(ImageTests, setlevel_test)
   std::string other_location = std::string(TEST_DATA_DIR) + std::string("/curvature/curvature_baseline.nrrd");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applyLevel(other_location);
+  image.applyTPLevelSetFilter(other_location);
   Image ground_truth(test_location + "set-level_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -212,10 +212,10 @@ TEST(ImageTests, crop_test)
     images_location + "seg.ellipsoid_9.nrrd",
   };
 
-  Image image;
+  Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
-  region = image.boundingBox(images, region);
-  image.read(test_location + "seg.ellipsoid_1.nrrd");
+  region = image.binaryBoundingBox(images);
+  // image.read(test_location + "seg.ellipsoid_1.nrrd");
   image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 

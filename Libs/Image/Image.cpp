@@ -457,65 +457,68 @@ bool Image::applyTransform(const Transform &transform)
   return true;
 }
 
+/// icpRigid
+///
+/// performs iterative closed point (ICP) 3D rigid registration on a pair of images
 bool Image::icpRigid(std::string sourceDistanceMap)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
+//   if (!this->image)
+//   {
+//     std::cerr << "No image loaded, so returning false." << std::endl;
+//     return false;
+//   }
   
-  using ExportFilterType = itk::VTKImageExport<ImageType>;
-  ExportFilterType::Pointer itkTargetExporter = ExportFilterType::New();
-  itkTargetExporter->SetInput(this->image);
+//   using ExportFilterType = itk::VTKImageExport<ImageType>;
+//   ExportFilterType::Pointer itkTargetExporter = ExportFilterType::New();
+//   itkTargetExporter->SetInput(this->image);
 
-  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
-  ConnectPipelines(itkTargetExporter, vtkTargetImporter);
-  vtkTargetImporter->Update();
+//   vtkImageImport *vtkTargetImporter = vtkImageImport::New();
+//   ConnectPipelines(itkTargetExporter, vtkTargetImporter);
+//   vtkTargetImporter->Update();
 
-  vtkContourFilter *targetContour = vtkContourFilter::New();
-  targetContour->SetInputData(vtkTargetImporter->GetOutput());
-  targetContour->SetValue(0, isovalue);
-  targetContour->Update();
+//   vtkContourFilter *targetContour = vtkContourFilter::New();
+//   targetContour->SetInputData(vtkTargetImporter->GetOutput());
+//   targetContour->SetValue(0, isovalue);
+//   targetContour->Update();
 
-  read(sourceDistanceMap);
+//   read(sourceDistanceMap);
 
-  ExportFilterType::Pointer itkMovingExporter = ExportFilterType::New();
-  itkMovingExporter->SetInput(this->image);
+//   ExportFilterType::Pointer itkMovingExporter = ExportFilterType::New();
+//   itkMovingExporter->SetInput(this->image);
 
-  vtkImageImport *vtkMovingImporter = vtkImageImport::New();
-  ConnectPipelines(itkMovingExporter, vtkMovingImporter);
-  vtkMovingImporter->Update();
+//   vtkImageImport *vtkMovingImporter = vtkImageImport::New();
+//   ConnectPipelines(itkMovingExporter, vtkMovingImporter);
+//   vtkMovingImporter->Update();
 
-  vtkContourFilter *movingContour = vtkContourFilter::New();
-  movingContour->SetInputData(vtkMovingImporter->GetOutput());
-  movingContour->SetValue(0, isovalue);
-  movingContour->Update();
+//   vtkContourFilter *movingContour = vtkContourFilter::New();
+//   movingContour->SetInputData(vtkMovingImporter->GetOutput());
+//   movingContour->SetValue(0, isovalue);
+//   movingContour->Update();
 
-  vtkSmartPointer<vtkPolyData> target = targetContour->GetOutput();
-  vtkSmartPointer<vtkPolyData> moving = movingContour->GetOutput();
+//   vtkSmartPointer<vtkPolyData> target = targetContour->GetOutput();
+//   vtkSmartPointer<vtkPolyData> moving = movingContour->GetOutput();
 
-  using icpTransform = vtkSmartPointer<vtkIterativeClosestPointTransform>;
-  icpTransform icp = icpTransform::New();
-  icp->SetSource(moving);
-  icp->SetTarget(target);
-  icp->GetLandmarkTransform()->SetModeToRigidBody();
-  icp->SetMaximumNumberOfIterations(icpIterations);
-  icp->Modified();
-  icp->Update();
+//   using icpTransform = vtkSmartPointer<vtkIterativeClosestPointTransform>;
+//   icpTransform icp = icpTransform::New();
+//   icp->SetSource(moving);
+//   icp->SetTarget(target);
+//   icp->GetLandmarkTransform()->SetModeToRigidBody();
+//   icp->SetMaximumNumberOfIterations(icpIterations);
+//   icp->Modified();
+//   icp->Update();
 
-  using TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>;
-  TransformFilter icpTransformFilter = TransformFilter::New();
-  icpTransformFilter->SetInputData(moving);
-  icpTransformFilter->SetTransform(icp);
-  icpTransformFilter->Update();
+//   using TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>;
+//   TransformFilter icpTransformFilter = TransformFilter::New();
+//   icpTransformFilter->SetInputData(moving);
+//   icpTransformFilter->SetTransform(icp);
+//   icpTransformFilter->Update();
 
-  applyTransform();
+//   applyTransform();
 
-#if DEBUG_CONSOLIDATION
-  std::cout << "ICP Rigid succeeded!\n";
-#endif
-  return true;
+// #if DEBUG_CONSOLIDATION
+//   std::cout << "ICP Rigid succeeded!\n";
+// #endif
+//   return true;
 }
 
 /// extractLabel
@@ -1053,7 +1056,7 @@ std::ostream& operator<<(std::ostream &os, const Image::Region &r)
 /// operator<<
 ///
 /// Stream insertion operator
-/// Print dims, origin, and size of the image.
+/// Prints dims, origin, and size of the image
 std::ostream& operator<<(std::ostream &os, const Image &img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
