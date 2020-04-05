@@ -75,7 +75,7 @@ Transform::itkTransformType::Pointer Transform::getItkTransform() const
 /// operator<<
 ///
 /// Stream insertion operator
-/// Prints translation, scaling, axis of rotation and angle of rotation.
+/// Prints translation, scaling, axis of rotation and angle of rotation
 std::ostream& operator<<(std::ostream &os, const Transform &t)
 {
   return os << "shapeworks::Transform {\n\ttranslate: "

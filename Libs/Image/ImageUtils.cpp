@@ -24,39 +24,12 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
 /// topologyPreservingSmooth
 ///
 /// const input version of topologyPreservingSmooth
-Image& ImageUtils::topologyPreservingSmooth(const Image &image, const Image &featureImage,
-                                            float scaling, float sigmoidAlpha, float sigmoidBeta,
-                                            bool applyCurvatureFilter, unsigned curvatureIterations)
-{
-  Image smoothed(image);
-  return topologyPreservingSmooth(smoothed, featureImage, scaling, sigmoidAlpha, sigmoidBeta, applyCurvatureFilter, curvatureIterations);
-}
-
-/// topologyPreservingSmooth
-///
-/// Applies topology preserving smooth then returns the image. Smoothing is four filter steps:
-///   curvature flow filter
-///   gradient filter
-///   sigmoid filter
-///   TPLevelSet filter (formerly part of ITK but now only included in ShapeWorks)
-///
-/// \param image the image to be smoothed
-/// \param featureImage the other image to use for the TPLevelSet filter
-/// \param scaling
-/// \param sigmoidAlpha
-/// \param sigmoidBeta
-/// \param curvatureIterations number of iterations to use for curvature smoothing
-/// \param applyCurvatureFilter default it true, but in some cases it has already been applied
-Image& ImageUtils::topologyPreservingSmooth(Image &image, const Image &featureImage,
-                                            float scaling, float sigmoidAlpha, float sigmoidBeta,
-                                            bool applyCurvatureFilter, unsigned curvatureIterations)
-{
-  if (applyCurvatureFilter)
-    image.applyCurvatureFilter(curvatureIterations);
-  image.applyGradientFilter();
-  image.applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
-  image.applyTPLevelSetFilter(featureImage, scaling);
-  return image;
-}
+// Image& ImageUtils::topologyPreservingSmooth(const Image &image, const Image &featureImage,
+//                                             float scaling, float sigmoidAlpha, float sigmoidBeta,
+//                                             bool applyCurvatureFilter, unsigned curvatureIterations)
+// {
+//   Image *smoothed = new Image(image);
+//   return topologyPreservingSmooth(*smoothed, featureImage, scaling, sigmoidAlpha, sigmoidBeta, applyCurvatureFilter, curvatureIterations);
+// }
 
 } //shapeworks
