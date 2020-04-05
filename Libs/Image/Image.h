@@ -45,8 +45,6 @@ public:
   bool gaussianBlur(double sigma = 0.0);
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   bool crop(const Region &region);
-  bool icpRigid(std::string sourceDistanceMap);
-  bool connect();
 
   Point3 logicalToPhysical(const IPoint3 &v) const;
   IPoint3 physicalToLogical(const Point3 &p) const;
