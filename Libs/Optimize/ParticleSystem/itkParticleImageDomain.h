@@ -93,6 +93,7 @@ public:
   double m_SurfaceArea;
 
   H5::DataSet m_H5_dataset;
+
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
@@ -139,10 +140,7 @@ public:
 
 
 
-    std::cout << "Initialized OpenVDB" << std::endl;
-    m_VDBImage = openvdb::FloatGrid::create(500000.0);
-    m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
-    auto vdbAccessor = m_VDBImage->getAccessor();
+    /*
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
     while(!it.IsAtEnd()) {
@@ -153,9 +151,9 @@ public:
             continue;
         }
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-        vdbAccessor.setValue(coord, pixel);
         ++it;
     }
+    */
     m_Origin = I->GetOrigin();
     m_Index = I->GetRequestedRegion().GetIndex();
 
@@ -299,19 +297,12 @@ public:
     if(IsInsideBuffer(p)) {
       // PointType p2 = p;
       // for (int i = 0; i < 3; i++) { p2[i] = int(p[i]); }
-
-      /*
       float v0 = m_ScalarInterpolator->Evaluate(p);
       return v0;
-       */
-
 
       auto o = GetOrigin();
       auto sp = p;
       for (int i = 0; i < 3; i++) { sp[i] -= o[i]; }
-      const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-      const T v2 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
-      return v2;
 
       // auto testo = m_Image->TransformPhysicalPointToIndex(p);
 
