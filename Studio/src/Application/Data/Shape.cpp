@@ -7,6 +7,8 @@
 
 #include <Data/MeshGenerator.h>
 
+#include <vtkCenterOfMass.h>
+
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -55,18 +57,15 @@ void Shape::set_subject(const Subject &subject)
   this->subject_ = subject;
 
   if (this->subject_.get_segmentation_filenames().size() > 0) {
-      std::string filename = this->subject_.get_segmentation_filenames()[0];
-   this->corner_annotations_[0] = QString::fromStdString(filename);
+    std::string filename = this->subject_.get_segmentation_filenames()[0];
+    this->corner_annotations_[0] = QString::fromStdString(filename);
   }
-
 }
 
 //---------------------------------------------------------------------------
 void Shape::set_input_segmentations(QStringList filenames)
 {
   this->input_segmentation_filenames_ = filenames;
-
-
 }
 
 //---------------------------------------------------------------------------
@@ -337,9 +336,22 @@ void Shape::generate_original_meshes()
       //std::cerr << "mesh was ready from manager!\n";
       this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
       this->original_mesh_->set_poly_data(poly_data);
+
+      /// Temporarily calculate it here
+      auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+      com->SetInputData(poly_data);
+      com->Update();
+      double center[3];
+      com->GetCenter(center);
+
+      this->transform_.set_size(3);
+      for (unsigned int i = 0; i < 3; i++) {
+        this->transform_[i] = center[i];
+      }
+
+//      this->set_transform(this->original_mesh_->get_center_transform());
     }
-    else
-    {
+    else {
       //std::cerr << "no mesh yet from manager!\n";
     }
   }

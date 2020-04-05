@@ -24,6 +24,7 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {}
 
+//---------------------------------------------------------------------------
 void Mesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
 {
   this->poly_data_ = poly_data;
