@@ -17,6 +17,7 @@ class vtkColorTransferFunction;
 class vtkArrowSource;
 class vtkTransformPolyDataFilter;
 class vtkScalarBarActor;
+class vtkCornerAnnotation;
 
 class Shape;
 
@@ -130,6 +131,8 @@ private:
   vtkSmartPointer<vtkTransform>               transform_180_;
 
   vtkSmartPointer<vtkScalarBarActor> scalar_bar_actor_;
+
+  vtkSmartPointer<vtkCornerAnnotation> corner_annotation_;
 
   bool arrows_visible_ = false;
 

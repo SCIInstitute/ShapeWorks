@@ -53,12 +53,20 @@ void Shape::set_mesh_manager(QSharedPointer<MeshManager> mesh_manager)
 void Shape::set_subject(const Subject &subject)
 {
   this->subject_ = subject;
+
+  if (this->subject_.get_segmentation_filenames().size() > 0) {
+      std::string filename = this->subject_.get_segmentation_filenames()[0];
+   this->corner_annotations_[0] = QString::fromStdString(filename);
+  }
+
 }
 
 //---------------------------------------------------------------------------
 void Shape::set_input_segmentations(QStringList filenames)
 {
   this->input_segmentation_filenames_ = filenames;
+
+
 }
 
 //---------------------------------------------------------------------------

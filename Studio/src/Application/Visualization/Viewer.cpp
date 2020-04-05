@@ -173,6 +173,11 @@ Viewer::Viewer()
   this->scalar_bar_actor_->GetLabelTextProperty()->SetFontSize(10);
   this->scalar_bar_actor_->GetLabelTextProperty()->SetJustificationToCentered();
   this->scalar_bar_actor_->GetLabelTextProperty()->SetColor(1, 1, 1);
+
+  this->corner_annotation_ = vtkSmartPointer<vtkCornerAnnotation>::New();
+  corner_annotation_->SetLinearFontScaleFactor(2);
+  corner_annotation_->SetNonlinearFontScaleFactor(1);
+  corner_annotation_->SetMaximumFontSize(16);
 }
 
 //-----------------------------------------------------------------------------
@@ -430,26 +435,19 @@ void Viewer::display_object(QSharedPointer<Shape> object)
   //std::cerr << "asking for mesh\n";
   QSharedPointer<Mesh> mesh = object->get_mesh();
 
-  if (!mesh && this->loading_displayed_)
-  {
+  if (!mesh && this->loading_displayed_) {
     // no need to proceed
     return;
   }
 
   //QSharedPointer<Mesh> mesh;
 
-  vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
-    vtkSmartPointer<vtkCornerAnnotation>::New();
-  corner_annotation->SetLinearFontScaleFactor(2);
-  corner_annotation->SetNonlinearFontScaleFactor(1);
-  corner_annotation->SetMaximumFontSize(16);
-
   QStringList annotations = object->get_annotations();
-  corner_annotation->SetText(0, (annotations[0]).toStdString().c_str());
-  corner_annotation->SetText(1, (annotations[1]).toStdString().c_str());
-  corner_annotation->SetText(2, (annotations[2]).toStdString().c_str());
-  corner_annotation->SetText(3, (annotations[3]).toStdString().c_str());
-  corner_annotation->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
+  this->corner_annotation_->SetText(0, (annotations[0]).toStdString().c_str());
+  this->corner_annotation_->SetText(1, (annotations[1]).toStdString().c_str());
+  this->corner_annotation_->SetText(2, (annotations[2]).toStdString().c_str());
+  this->corner_annotation_->SetText(3, (annotations[3]).toStdString().c_str());
+  this->corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
 
   vtkSmartPointer<vtkRenderer> ren = this->renderer_;
 
@@ -458,16 +456,22 @@ void Viewer::display_object(QSharedPointer<Shape> object)
   if (!mesh) {
     this->mesh_ready_ = false;
     // display loading message
-    corner_annotation->SetText(0, "Loading...");
+    //corner_annotation->SetText(0, "Loading...");
+    this->corner_annotation_->SetText(2, "Loading...");
+    //corner_annotation->SetText(2, "Loading...");
 
     //ren->AddViewProp(this->image_actor_);
 
     //ren->ResetCamera();
     //this->renderer_->ResetCameraClippingRange();
-    ren->AddViewProp(corner_annotation);
     this->loading_displayed_ = true;
   }
   else {
+    //this->corner_annotation_->SetText(3, "Ready...");
+    //corner_annotation->SetText(0, "Ready...");
+    //corner_annotation->SetText(2, "Ready...");
+    //corner_annotation->SetText(2, "Ready...");
+    //corner_annotation->SetText(3, "Ready...");
     this->loading_displayed_ = false;
     this->mesh_ready_ = true;
     //std::cerr << "mesh is ready!\n";
@@ -509,11 +513,16 @@ void Viewer::display_object(QSharedPointer<Shape> object)
 
     //ren->AddActor( actor );
     //ren->AddActor( this->glyph_actor_ );
+
+    this->display_vector_field();
+    this->update_actors();
+    this->update_glyph_properties();
+
   }
 
-  this->display_vector_field();
-  this->update_actors();
-  this->update_glyph_properties();
+  ren->AddViewProp(this->corner_annotation_);
+
+
 }
 
 //-----------------------------------------------------------------------------
