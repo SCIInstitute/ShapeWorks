@@ -31,7 +31,8 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const MeshWorkItem &item)
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape, int domain)
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_points(const vnl_vector<double>& shape,
+                                                                   int domain)
 {
   if (this->surface_reconstructor_ &&
       this->surface_reconstructor_->get_surface_reconstruction_available()) {
@@ -54,7 +55,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_points(const vnl_vec
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_image(ImageType::Pointer image,
-                                                                 float iso_value)
+                                                                  float iso_value)
 {
   vtkSmartPointer<vtkPolyData> poly_data;
   try {
@@ -82,7 +83,8 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_image(ImageType::Poi
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_file(std::string filename, float iso_value)
+vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_file(std::string filename,
+                                                                 float iso_value)
 {
   std::cerr << "build_mesh from " << filename << "\n";
 

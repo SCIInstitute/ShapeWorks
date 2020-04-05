@@ -67,6 +67,8 @@ public:
 
   vnl_vector<double> getCurrentShape();
 
+  void handle_new_mesh();
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)

@@ -326,8 +326,13 @@ void Shape::generate_original_meshes()
     item.filename = filename;
     vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(item);
     if (poly_data) {
+      std::cerr << "mesh was ready from manager!\n";
       this->original_mesh_ = QSharedPointer<Mesh>(new Mesh());
       this->original_mesh_->set_poly_data(poly_data);
+    }
+    else
+    {
+      std::cerr << "no mesh yet from manager!\n";
     }
   }
 }

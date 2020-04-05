@@ -104,6 +104,7 @@ signals:
   void data_changed();
   void points_changed();
   void update_display();
+  void new_mesh();
   void message(std::string s);
 
 public:

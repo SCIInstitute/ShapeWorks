@@ -65,6 +65,8 @@ public:
 
   void set_color_scheme(int i);
 
+  void handle_new_mesh();
+
 private:
 
   void display_vector_field();
@@ -131,4 +133,6 @@ private:
 
   ColorSchemes color_schemes_;
   int scheme_;
+
+  bool mesh_ready_ = false;
 };

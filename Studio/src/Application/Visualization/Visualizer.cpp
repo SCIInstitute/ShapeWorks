@@ -169,6 +169,12 @@ vnl_vector<double> Visualizer::getCurrentShape()
 }
 
 //-----------------------------------------------------------------------------
+void Visualizer::handle_new_mesh()
+{
+  this->lightbox_->handle_new_mesh();
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::display_sample(int i)
 {
   /*

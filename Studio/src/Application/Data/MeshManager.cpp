@@ -1,8 +1,10 @@
 // qt
 #include <QThread>
+#include <QApplication>
 
 // vtk
 #include <vtkPolyData.h>
+
 
 #include <Data/MeshManager.h>
 

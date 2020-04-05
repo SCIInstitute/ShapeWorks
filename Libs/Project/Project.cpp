@@ -198,7 +198,7 @@ void Project::load_subjects()
       auto column = seg_columns[s];
       int column_index = get_index_for_column(column);
       auto value = get_value(column_index, i + 1);
-      std::cerr << "## value = " << value << "\n";
+      //std::cerr << "## value = " << value << "\n";
       list.push_back(value);
     }
 
@@ -215,9 +215,9 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
 
   auto headers = ws.rows(false)[0];
 
-  std::cerr << "headers = " << headers.length() << "\n";
+  //std::cerr << "headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
-    std::cerr << headers[i].to_string() << "\n";
+    //std::cerr << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
       return i;
     }

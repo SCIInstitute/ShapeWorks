@@ -192,6 +192,14 @@ void Viewer::set_color_scheme(int scheme)
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::handle_new_mesh()
+{
+  if (!this->mesh_ready_ && this->object_) {
+    this->display_object(this->object_);
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::display_vector_field()
 {
   std::vector<Point> vecs = this->object_->get_vectors();
@@ -415,6 +423,8 @@ void Viewer::display_object(QSharedPointer<Shape> object)
 
   QSharedPointer<Mesh> mesh = object->get_mesh();
 
+  //QSharedPointer<Mesh> mesh;
+
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
     vtkSmartPointer<vtkCornerAnnotation>::New();
   corner_annotation->SetLinearFontScaleFactor(2);
@@ -435,7 +445,9 @@ void Viewer::display_object(QSharedPointer<Shape> object)
   ren->RemoveAllViewProps();
 
   if (!mesh) {
+    this->mesh_ready_ = false;
     // display loading message
+    std::cerr << "displaying loading...\n";
     corner_annotation->SetText(0, "Loading...");
 
     ren->AddViewProp(this->image_actor_);
@@ -445,6 +457,8 @@ void Viewer::display_object(QSharedPointer<Shape> object)
     ren->AddViewProp(corner_annotation);
   }
   else {
+    this->mesh_ready_ = true;
+    std::cerr << "mesh is ready!\n";
 
     vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
     vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;

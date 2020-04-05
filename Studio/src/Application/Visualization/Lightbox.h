@@ -62,6 +62,8 @@ public:
 
   std::array<double, 3> initPos();
 
+  void handle_new_mesh();
+
 public Q_SLOTS:
   void handle_timer_callback();
 

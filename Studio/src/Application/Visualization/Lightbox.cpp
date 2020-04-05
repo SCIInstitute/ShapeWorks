@@ -87,6 +87,14 @@ std::array<double, 3> Lightbox::initPos()
 }
 
 //-----------------------------------------------------------------------------
+void Lightbox::handle_new_mesh()
+{
+  for (int i = 0; i < this->viewers_.size(); i++) {
+    this->viewers_[i]->handle_new_mesh();
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Lightbox::clear_renderers()
 {
   for (int i = 0; i < this->viewers_.size(); i++) {
@@ -250,6 +258,7 @@ void Lightbox::set_start_row(int row)
 //-----------------------------------------------------------------------------
 void Lightbox::set_display_objects(QVector<QSharedPointer<Shape>> objects)
 {
+  std::cerr << "set_display_objects\n";
   this->objects_ = objects;
   this->display_objects();
 }
