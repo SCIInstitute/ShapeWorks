@@ -69,7 +69,7 @@ public Q_SLOTS:
   void on_action_preferences_triggered();
 
   void on_center_checkbox_stateChanged();
-  void on_thumbnail_size_slider_valueChanged();
+  void on_zoom_slider_valueChanged();
   void on_view_mode_combobox_currentIndexChanged(QString disp_mode);
   void on_auto_view_button_clicked();
 
@@ -152,4 +152,6 @@ private:
   std::vector<std::string> originalFilenames_;
   QProgressBar* progressBar_;
   std::string data_dir_, currentMessage_;
+
+  std::string current_display_mode_;
 };

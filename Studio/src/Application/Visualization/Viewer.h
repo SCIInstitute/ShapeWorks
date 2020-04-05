@@ -137,4 +137,5 @@ private:
   int scheme_;
 
   bool mesh_ready_ = false;
+  bool loading_displayed_ = false;
 };

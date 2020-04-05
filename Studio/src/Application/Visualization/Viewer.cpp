@@ -430,6 +430,12 @@ void Viewer::display_object(QSharedPointer<Shape> object)
   //std::cerr << "asking for mesh\n";
   QSharedPointer<Mesh> mesh = object->get_mesh();
 
+  if (!mesh && this->loading_displayed_)
+  {
+    // no need to proceed
+    return;
+  }
+
   //QSharedPointer<Mesh> mesh;
 
   vtkSmartPointer<vtkCornerAnnotation> corner_annotation =
@@ -459,8 +465,10 @@ void Viewer::display_object(QSharedPointer<Shape> object)
     //ren->ResetCamera();
     //this->renderer_->ResetCameraClippingRange();
     ren->AddViewProp(corner_annotation);
+    this->loading_displayed_ = true;
   }
   else {
+    this->loading_displayed_ = false;
     this->mesh_ready_ = true;
     //std::cerr << "mesh is ready!\n";
 
@@ -514,6 +522,7 @@ void Viewer::clear_viewer()
   this->renderer_->RemoveAllViewProps();
   this->visible_ = false;
   this->mesh_ready_ = false;
+  this->loading_displayed_ = false;
 }
 
 //-----------------------------------------------------------------------------

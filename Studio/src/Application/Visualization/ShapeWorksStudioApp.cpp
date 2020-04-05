@@ -402,15 +402,15 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_thumbnail_size_slider_valueChanged()
+void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 {
   std::cerr << "*** zoom slider changed, value is now: " <<
-    this->ui_->thumbnail_size_slider->value() << "\n";
+    this->ui_->zoom_slider->value() << "\n";
 
   if (!this->lightbox_->render_window_ready()) {return;}
-  this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
+  this->preferences_.set_preference("zoom_state", this->ui_->zoom_slider->value());
 
-  int value = this->ui_->thumbnail_size_slider->value();
+  int value = this->ui_->zoom_slider->value();
 
   this->lightbox_->set_tile_layout(value, value);
   this->visualizer_->update_viewer_properties();
@@ -823,9 +823,20 @@ void ShapeWorksStudioApp::update_display()
 
   std::string mode = "all samples";
 
+  std::cerr << "analysis mode checked = " << this->ui_->action_analysis_mode->isChecked() << "\n";
   if (this->ui_->action_analysis_mode->isChecked()) {
     mode = this->analysis_tool_->getAnalysisMode();
   }
+
+  std::cerr << "displaying mode : " << mode << "\n";
+
+
+  if (this->current_display_mode_ == mode)
+  {
+    return;
+  }
+
+  this->current_display_mode_ = mode;
 
   if (mode == "all samples") {
 
@@ -851,8 +862,8 @@ void ShapeWorksStudioApp::update_display()
 
     int zoom_val = static_cast<int>(root);
     std::cerr << "zoom_val = " << zoom_val << "\n";
-    if (zoom_val != this->ui_->thumbnail_size_slider->value()) {
-      this->ui_->thumbnail_size_slider->setValue(zoom_val);
+    if (zoom_val != this->ui_->zoom_slider->value()) {
+      this->ui_->zoom_slider->setValue(zoom_val);
     }
 
     this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
@@ -903,10 +914,13 @@ void ShapeWorksStudioApp::update_display()
                                         reconstruct_ready);
     } //TODO regression?
 
-    if (1 != this->ui_->thumbnail_size_slider->value()) {
-      this->ui_->thumbnail_size_slider->setValue(1);
+    if (1 != this->ui_->zoom_slider->value()) {
+      this->ui_->zoom_slider->setValue(1);
     }
   }
+
+  this->update_scrollbar();
+
   //this->preferences_.set_preference("zoom_state", this->ui_->thumbnail_size_slider->value());
 }
 
@@ -937,8 +951,14 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
-  auto tool_state = this->preferences_.get_preference(
-    "tool_state", QString::fromStdString(Session::DATA_C)).toStdString();
+
+
+  /// TODO: this is just wrong, it can cause us to load in analysis mode even on a new project
+  //auto tool_state = this->preferences_.get_preference(
+//    "tool_state", QString::fromStdString(Session::DATA_C)).toStdString();
+
+  auto tool_state = Session::DATA_C;
+
   this->groom_tool_->set_preferences();
   this->optimize_tool_->set_preferences();
   this->preferences_window_->set_values_from_preferences();

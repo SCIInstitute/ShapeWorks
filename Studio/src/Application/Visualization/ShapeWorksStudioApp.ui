@@ -183,7 +183,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSlider" name="thumbnail_size_slider">
+          <widget class="QSlider" name="zoom_slider">
            <property name="maximumSize">
             <size>
              <width>100</width>
@@ -635,7 +635,7 @@
   <tabstop>surface_visible_button</tabstop>
   <tabstop>view_mode_combobox</tabstop>
   <tabstop>center_checkbox</tabstop>
-  <tabstop>thumbnail_size_slider</tabstop>
+  <tabstop>zoom_slider</tabstop>
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>
