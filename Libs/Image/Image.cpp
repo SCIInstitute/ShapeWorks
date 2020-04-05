@@ -343,7 +343,9 @@ bool Image::operator==(const Image &other) const
   try
   {
     diff->UpdateLargestPossibleRegion();
-  } catch (itk::ExceptionObject &exp) {
+  } 
+  catch (itk::ExceptionObject &exp) 
+  {
     std::cerr << "Comparison failed" << std::endl;
     std::cerr << exp << std::endl;
     return false;
@@ -408,6 +410,11 @@ bool Image::pad(int padding, PixelType value)
   return true;
 }
 
+/// applyTransform
+///
+/// applies the computed transformation to the image by using resampling filter
+///
+/// \param transform      computed transformation    
 bool Image::applyTransform(const Transform &transform)
 {
   if (!this->image)
@@ -511,6 +518,11 @@ bool Image::icpRigid(std::string sourceDistanceMap)
   return true;
 }
 
+/// extractLabel
+///
+/// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
+///
+/// \param label      label value which has to be extracted. [default 1.0]
 bool Image::extractLabel(PixelType label)
 {
   threshold(label, label);
@@ -521,6 +533,9 @@ bool Image::extractLabel(PixelType label)
   return true;
 }
 
+/// closeHoles
+///
+/// closes holes in a given binary volume
 bool Image::closeHoles()
 {
   if (!this->image)
@@ -553,6 +568,12 @@ bool Image::closeHoles()
   return true;
 }
 
+/// threshold
+///
+/// threholds image into binary label based on upper and lower intensity bounds given by user
+///
+/// \param min      lower threshold level (optional, default = epsilon)
+/// \param max      upper threshold level (optional, default = FLT_MAX)
 bool Image::threshold(PixelType min, PixelType max)
 {
   if (!this->image)
@@ -588,6 +609,11 @@ bool Image::threshold(PixelType min, PixelType max)
   return true;
 }
 
+/// computeDT
+///
+/// computes distance transform volume from a binary (antialiased) image
+///
+/// \param isoValue     level set value that defines the interface between foreground and background
 bool Image::computeDT(float isoValue)
 {
   if (!this->image)
@@ -621,6 +647,11 @@ bool Image::computeDT(float isoValue)
   return true;
 }
 
+/// applyCurvatureFilter
+///
+/// applies curvature flow image filter
+///
+/// \param iterations     number of iterations
 bool Image::applyCurvatureFilter(unsigned iterations)
 {
   if (!this->image)
@@ -653,6 +684,9 @@ bool Image::applyCurvatureFilter(unsigned iterations)
   return true;
 }
 
+/// applyGradientFilter
+///
+/// applies gradient magnitude image filter
 bool Image::applyGradientFilter()
 {
   if (!this->image)
@@ -685,6 +719,12 @@ bool Image::applyGradientFilter()
   return true;
 }
 
+/// applySigmoidFilter
+///
+/// applies sigmoid image filter
+///
+/// \param alpha     value of alpha
+/// \param beta      value of beta
 bool Image::applySigmoidFilter(double alpha, double beta)
 {
   if (!this->image)
@@ -721,6 +761,12 @@ bool Image::applySigmoidFilter(double alpha, double beta)
   return true;
 }
 
+/// applyTPLevelSetFilter
+///
+/// applies TPLevelSet level set image filter
+///
+/// \param featureImage     path of feature image for filter
+/// \param scaling          value of scale [default: 20]
 bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
 {
   if (!this->image)
@@ -759,6 +805,11 @@ bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
   return true;
 }
 
+/// gaussianBlur
+///
+/// applies gaussian blur
+///
+/// \param sigma      value of sigma
 bool Image::gaussianBlur(double sigma)
 {
   if (!this->image)
@@ -795,8 +846,8 @@ bool Image::gaussianBlur(double sigma)
 ///
 /// computes the logical coordinates of the largest region of binary data within these images
 ///
-/// \param filenames the set of images to load, all of which must have identical dimensions.
-/// \padding the amount of padding to add in all directions to this bounding box 
+/// \param filenames      the set of images to load, all of which must have identical dimensions.
+/// \param padding      the amount of padding to add in all directions to this bounding box 
 Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int padding)
 {
   Image::Region bbox;
@@ -842,6 +893,10 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
 }
 
 /// crop
+///
+/// performs translational alignment of shape image based on its center of mass or given 3D point
+///
+/// \param region     computed region to perform crop
 bool Image::crop(const Region &region)
 {
   if (!this->image)

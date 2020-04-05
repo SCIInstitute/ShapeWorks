@@ -403,7 +403,7 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
 void CurvatureFilter::buildParser()
 {
   const std::string prog = "curvature";
-  const std::string desc = "performs curvature flow image filter";
+  const std::string desc = "applies curvature flow image filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
@@ -424,7 +424,7 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 void GradientFilter::buildParser()
 {
   const std::string prog = "gradient";
-  const std::string desc = "performs gradient magnitude image filter";
+  const std::string desc = "applies gradient magnitude image filter";
   parser.prog(prog).description(desc);
   
   Command::buildParser();
@@ -468,7 +468,7 @@ void TPLevelSetFilter::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--featureimage").action("store").type("string").set_default("").help("path of feature image for filter");
-  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("scale (default: 20)");
+  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("value of scale [default: 20]");
   
   Command::buildParser();
 }
@@ -519,7 +519,7 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
 void Blur::buildParser()
 {
   const std::string prog = "blur";
-  const std::string desc = "performs gaussian blur";
+  const std::string desc = "applies gaussian blur";
   parser.prog(prog).description(desc);
 
   parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("value of sigma");
