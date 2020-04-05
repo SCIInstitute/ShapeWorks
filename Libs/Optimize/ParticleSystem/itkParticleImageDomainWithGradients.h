@@ -95,27 +95,20 @@ public:
   /** This method is called by an optimizer after a call to Evaluate and may be
       used to apply any constraints the resulting vector, such as a projection
       to the surface tangent plane. Returns true if the gradient was modified.*/
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos,
-                                      double maxtimestep) const
-    
+  vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension> &gradE,
+                                      const PointType &pos) const override
   {
-    if (this->m_ConstraintsEnabled == true)
-      {
-      const double epsilon = 1.0e-10;
-      
-      double dotprod = 0.0;  
-      VnlVectorType normal =  this->SampleNormalVnl(pos, epsilon);
-      for (unsigned int i = 0; i < VDimension; i++) {   dotprod  += normal[i] * gradE[i]; }
-      for (unsigned int i = 0; i < VDimension; i++) {   gradE[i] -= normal[i] * dotprod; }
-     
-      return true;
-      }
-    else return false;
+    const double epsilon = 1.0e-10;
+    double dotprod = 0.0;  
+    VnlVectorType normal =  this->SampleNormalVnl(pos, epsilon);
+    for (unsigned int i = 0; i < VDimension; i++) {   dotprod  += normal[i] * gradE[i]; }
+    vnl_vector_fixed<double, VDimension> result;
+    for (unsigned int i = 0; i < VDimension; i++) { result[i] = gradE[i] - normal[i] * dotprod; }
+    return result;
   }
 
   /** Used when a domain is fixed. */
-  void DeleteImages()
+  void DeleteImages() override
   {
     ParticleImageDomain<T, VDimension>::DeleteImages();
     m_GradientImage = 0;

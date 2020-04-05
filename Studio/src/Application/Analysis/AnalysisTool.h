@@ -5,7 +5,7 @@
 #include <Visualization/Visualizer.h>
 #include <Data/Shape.h>
 #include "Data/Preferences.h"
-#include <Data/itkParticleShapeStatistics.h>
+#include <itkParticleShapeStatistics.h>
 #include <Visualization/BarGraph.h>
 
 class Project;

@@ -1,4 +1,6 @@
 #include "Image.h"
+#include "Utils.h"
+#include "itkTPGACLevelSetImageFilter.h"
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -10,62 +12,113 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <itkReinitializeLevelSetImageFilter.h>
 #include <itkTranslationTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
-#include <itkReinitializeLevelSetImageFilter.h>
+#include <itkGradientMagnitudeImageFilter.h>
+#include <itkCurvatureFlowImageFilter.h>
+#include <itkSigmoidImageFilter.h>
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
+#include <itkDiscreteGaussianImageFilter.h>
+#include <itkExtractImageFilter.h>
+#include <itkImageDuplicator.h>
 
-#include <sys/stat.h>
+#include <exception>
+
+// todo: finish converting these functions to throw exceptions when appropriate
+
+//TODO: move this to Utils class (in Libs/Utils) -> tried, but something wrong with getting the right include
+//TODO: in C++17 this is a standard function
+bool is_directory(const std::string &pathname)
+{
+  struct stat info;
+  if (stat(pathname.c_str(), &info) != 0) {
+    return false;
+  }
+  else if (info.st_mode & S_IFDIR) {
+    return true;
+  }
+  return false;
+}
 
 namespace shapeworks {
 
-//todo: these filters are starting to feel homogeneous enough to wrap into a common try/catch function
+/// copy ctor
+///
+/// clones the input image
+///
+/// \param img const input image
+Image::Image(const Image &img)
+{
+  this->image = nullptr;
+  
+  using DuplicatorType = itk::ImageDuplicator<ImageType>;
+  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  duplicator->SetInputImage(img.image);
+  duplicator->Update();
+  this->image = duplicator->GetOutput();
+}
+
+/// operator=
+///
+/// assignment operator from const Image
+///
+/// \param img const input image
+Image& Image::operator=(const Image &img)
+{
+  this->image = nullptr;
+    
+  using DuplicatorType = itk::ImageDuplicator<ImageType>;
+  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  duplicator->SetInputImage(img.image);
+  duplicator->Update();
+  this->image = duplicator->GetOutput();
+
+  return *this;
+}
 
 /// read
 ///
-/// reads image
+/// reads image (private function only used by constructor)
 ///
-/// \param filename
-bool Image::read(const std::string &filename)
+/// \param pathname
+Image Image::read(const std::string &pathname)
 {
-  if (filename.empty())
-  {
-    std::cerr << "Empty filename passed to read; returning false." << std::endl;
-    return false;
-  }
+  if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
-  if (Image::is_directory(filename))
+  if (is_directory(pathname))
   {
-    return this->read_image_dir(filename);
+    return readDICOMImage(pathname);
   }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filename);
-  try
-  {
+  reader->SetFileName(pathname);
+
+  try {
     reader->Update();
   }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Failed to read image " << filename << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
+  catch (itk::ExceptionObject &exp) {
+    throw std::invalid_argument(pathname + " does not exist (" + std::string(exp.what()) + ")");
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Successfully read image " << filename << std::endl;
+  std::cout << "Successfully read image " << pathname << std::endl;
 #endif
-  this->image = reader->GetOutput();
-  return true;
+  return Image(reader->GetOutput());
 }
 
-/// read_image_dir
-/// \param pathname directory containing image series
-bool Image::read_image_dir(const std::string &pathname)
+/// readDICOMImage
+///
+/// reads a DICOM image (private function only used by constructor)
+///
+/// \param pathname directory containing a DICOM image stack
+Image Image::readDICOMImage(const std::string &pathname)
 {
+  if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
+
   using ReaderType = itk::ImageSeriesReader<ImageType>;
   using ImageIOType = itk::GDCMImageIO;
   using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
@@ -79,17 +132,14 @@ bool Image::read_image_dir(const std::string &pathname)
   reader->SetImageIO(gdcm_io);
   reader->SetFileNames(filenames);
 
-  try
-  {
+  try {
     reader->Update();
-  } catch (itk::ExceptionObject &exp) {
-    std::cerr << "Failed to read dicom dir: " << pathname << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
+  }
+  catch (itk::ExceptionObject &exp) {
+    throw std::invalid_argument("Failed to read DICOM from " + pathname + "(" + std::string(exp.what()) + ")");
   }
 
-  this->image = reader->GetOutput();
-  return true;
+  return Image(reader->GetOutput());
 }
 
 /// write
@@ -100,18 +150,8 @@ bool Image::read_image_dir(const std::string &pathname)
 /// \param compressed
 bool Image::write(const std::string &filename, bool compressed)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image to write, so returning false." << std::endl;
-    
-    //todo: just return
-    return false;
-  }
-  if (filename.empty())
-  {
-    std::cerr << "Empty filename passed to write; returning false." << std::endl;
-    return false;
-  }
+  if (!this->image) { throw std::invalid_argument("Image invalid"); }
+  if (filename.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer writer = WriterType::New();
@@ -157,9 +197,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   filter->SetNumberOfIterations(numIterations);
   if (numLayers)
     filter->SetNumberOfLayers(numLayers);
-
   filter->SetInput(this->image);
-  this->image = filter->GetOutput();
 
   try
   {
@@ -175,6 +213,8 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
 #if DEBUG_CONSOLIDATION
   std::cout << "Antialias filter succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -192,10 +232,8 @@ bool Image::recenter()
 
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
-
   filter->SetInput(this->image);
   filter->CenterImageOn();
-  this->image = filter->GetOutput();
 
   try
   {
@@ -211,6 +249,8 @@ bool Image::recenter()
 #if DEBUG_CONSOLIDATION
   std::cout << "Recenter image succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -246,7 +286,6 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   }
   resampler->SetSize(outputSize);
   resampler->SetInput(this->image);
-  this->image = resampler->GetOutput();
 
   try
   {
@@ -262,6 +301,8 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
 #if DEBUG_CONSOLIDATION
   std::cout << "Resample images to be isotropic succeeded!\n";
 #endif
+
+  this->image = resampler->GetOutput();
   return true;
 }
 
@@ -316,18 +357,6 @@ bool Image::operator==(const Image &other) const
   return true;
 }
 
-bool Image::is_directory(const std::string &pathname)
-{
-  struct stat info;
-  if (stat(pathname.c_str(), &info) != 0) {
-    return false;
-  }
-  else if (info.st_mode & S_IFDIR) {
-    return true;
-  }
-  return false;
-}
-
 /// pad
 ///
 /// pads an image with constant value
@@ -352,29 +381,69 @@ bool Image::pad(int padding, PixelType value)
   upperExtendRegion[1] = padding;
   upperExtendRegion[2] = padding;
 
-  using PadFilter = itk::ConstantPadImageFilter<ImageType, ImageType>;
-  PadFilter::Pointer padFilter = PadFilter::New();
-
-  padFilter->SetInput(this->image);
-  padFilter->SetPadLowerBound(lowerExtendRegion);
-  padFilter->SetPadUpperBound(upperExtendRegion);
-  padFilter->SetConstant(value);
-  this->image = padFilter->GetOutput();
+  using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetPadLowerBound(lowerExtendRegion);
+  filter->SetPadUpperBound(upperExtendRegion);
+  filter->SetConstant(value);
 
   try
   {
-    padFilter->Update();
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Pad image with constant failed:" << std::endl;
+    std::cerr << "Pad image failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Pad image with constant succeeded!\n";
+  std::cout << "Pad image succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
+  return true;
+}
+
+bool Image::applyTransform(const Transform &transform)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  FilterType::Pointer resampler = FilterType::New();
+
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+
+  resampler->SetInterpolator(interpolator);
+  resampler->SetTransform(transform.getItkTransform());
+  resampler->SetInput(this->image);
+  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
+  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetOutputSpacing(image->GetSpacing());
+
+  try
+  {
+    resampler->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Transform failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+#if DEBUG_CONSOLIDATION
+  std::cout << "Transform succeeded!\n";
+#endif
+
+  this->image = resampler->GetOutput();
   return true;
 }
 
@@ -411,9 +480,12 @@ bool Image::closeHoles()
     std::cerr << exp << std::endl;
     return false;
   }
+
 #if DEBUG_CONSOLIDATION
   std::cout << "Close Holes succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
@@ -447,7 +519,349 @@ bool Image::threshold(PixelType min, PixelType max)
 #if DEBUG_CONSOLIDATION
   std::cout << "Threshold succeeded!\n";
 #endif
+
+  this->image = filter->GetOutput();
   return true;
+}
+
+bool Image::computeDT(float isoValue)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->NarrowBandingOff();
+  filter->SetLevelSetValue(isoValue);
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Fast March failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Fast March succeeded!\n";
+#endif
+
+  this->image = filter->GetOutput();
+  return true;
+}
+
+bool Image::applyCurvatureFilter(unsigned iterations)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+  }
+
+  using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetTimeStep(0.0625);
+  filter->SetNumberOfIterations(iterations);
+  filter->SetInput(this->image);
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Curvature Flow failed:" << std::endl;
+    std::cerr << exp << std::endl;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Curvature Flow succeeded!\n";
+#endif
+
+  this->image = filter->GetOutput();
+  return true;
+}
+
+bool Image::applyGradientFilter()
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter  = FilterType::New();
+
+  filter->SetInput(this->image);
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Gradient Magnitude failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Gradient Magnitude succeeded!\n";
+#endif
+
+  this->image = filter->GetOutput();
+  return true;
+}
+
+bool Image::applySigmoidFilter(double alpha, double beta)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::SigmoidImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetAlpha(alpha);
+  filter->SetBeta(beta);
+  filter->SetOutputMinimum(0.0);
+  filter->SetOutputMaximum(1.0);
+  filter->SetInput(this->image);
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Sigmoid failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Sigmoid succeeded!\n";
+#endif
+
+  this->image = filter->GetOutput();
+  return true;
+}
+
+bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>; // TODO: this is no longer part of ITK and should be updated
+  FilterType::Pointer filter = FilterType::New();
+
+  filter->SetPropagationScaling(scaling);
+  filter->SetCurvatureScaling(1.0);
+  filter->SetAdvectionScaling(1.0);
+  filter->SetMaximumRMSError(0.0);
+  filter->SetNumberOfIterations(20);
+  filter->SetInput(this->image);
+  filter->SetFeatureImage(featureImage.image);
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Level Set failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Level Set succeeded!\n";
+#endif
+
+  this->image = filter->GetOutput();
+  return true;
+}
+
+bool Image::gaussianBlur(double sigma)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;
+  BlurType::Pointer blur = BlurType::New();
+  blur->SetInput(this->image);
+  blur->SetVariance(sigma * sigma);
+  
+  try
+  {
+    blur->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Gaussian Blur failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Gaussian Blur succeeded!\n";
+#endif
+
+  this->image = blur->GetOutput();
+  return true;
+}
+
+/// binaryBoundingBox
+///
+/// computes the logical coordinates of the largest region of binary data within these images
+///
+/// \param filenames the set of images to load, all of which must have identical dimensions.
+/// \padding the amount of padding to add in all directions to this bounding box 
+Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int padding)
+{
+  Image::Region bbox;
+  
+  Dims dims = read(filenames[0]).dims(); // make sure all images are the same size
+
+  for (auto filename : filenames)
+  {
+    Image img(filename);
+
+    if (img.dims() != dims) { throw std::invalid_argument("image sizes do not match (" + filename + ")"); }
+
+    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
+    while (!imageIterator.IsAtEnd())
+    {
+      PixelType val = imageIterator.Get();
+
+      if(val == 1.0)
+      {
+        bbox.min[0] = std::min(bbox.min[0], (int)imageIterator.GetIndex()[0]);
+        bbox.min[1] = std::min(bbox.min[1], (int)imageIterator.GetIndex()[1]);
+        bbox.min[2] = std::min(bbox.min[2], (int)imageIterator.GetIndex()[2]);
+
+        bbox.max[0] = std::max(bbox.max[0], (int)imageIterator.GetIndex()[0]);
+        bbox.max[1] = std::max(bbox.max[1], (int)imageIterator.GetIndex()[1]);
+        bbox.max[2] = std::max(bbox.max[2], (int)imageIterator.GetIndex()[2]);
+      }
+      ++imageIterator;
+    }
+  }
+
+  bbox.min[0] = std::max(0, bbox.min[0] - padding);
+  bbox.min[1] = std::max(0, bbox.min[1] - padding);
+  bbox.min[2] = std::max(0, bbox.min[2] - padding);
+  bbox.max[0] = std::min(bbox.max[0] + padding, (int)dims[0]);
+  bbox.max[1] = std::min(bbox.max[1] + padding, (int)dims[1]);
+  bbox.max[2] = std::min(bbox.max[2] + padding, (int)dims[2]);
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "binaryBoundingBox succeeded: " << bbox << "!\n";
+#endif
+  return bbox;
+}
+
+/// crop
+bool Image::crop(const Region &region)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  if (!region.valid())
+  {
+    std::cerr << "Invalid region specified." << std::endl;
+    return false;
+  }
+
+  ImageType::IndexType desiredStart;
+  desiredStart[0] = region.min[0];
+  desiredStart[1] = region.min[1];
+  desiredStart[2] = region.min[2];
+
+  ImageType::SizeType desiredSize;
+  desiredSize[0] = region.max[0];
+  desiredSize[1] = region.max[1];
+  desiredSize[2] = region.max[2];
+
+  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
+
+  using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetExtractionRegion(desiredRegion);
+  filter->SetInput(this->image);
+  filter->SetDirectionCollapseToIdentity();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Crop Image failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Crop Image succeeded!\n";
+#endif
+
+  this->image = filter->GetOutput();
+  return true;
+}
+
+/// logicalToPhysical
+///
+/// returns voxel coordinate of this physical location, throwing exception if it doesn't exist
+Point3 Image::logicalToPhysical(const IPoint3 &v) const
+{
+  if (!this->image) { throw std::invalid_argument("Image invalid"); }
+
+  itk::Index<3> index;
+  index[0] = v[0];
+  index[1] = v[1];
+  index[2] = v[2];
+  Point3 value;
+  image->TransformIndexToPhysicalPoint(index, value);
+  return value;
+}
+
+/// physicalToLogical
+///
+/// returns physical location of this voxel coordinate, throwing exception if it doesn't exist
+IPoint3 Image::physicalToLogical(const Point3 &p) const
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, throwing an exception." << std::endl;
+    throw std::invalid_argument("this is an invalid Image");
+  }
+
+  itk::Index<3> coords = image->TransformPhysicalPointToIndex(p);
+  IPoint3 icoords;
+  icoords[0] = coords[0];
+  icoords[1] = coords[1];
+  icoords[2] = coords[2];
+  return icoords;
 }
 
 /// centerOfMass
@@ -461,7 +875,7 @@ Point3 Image::centerOfMass() const
     return false;
   }
 
-  Point3 mean;
+  Point3 com;
 
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
@@ -477,61 +891,21 @@ Point3 Image::centerOfMass() const
     {
       numPixels += 1;
       image->TransformIndexToPhysicalPoint(index, point);
-      mean[0] += point[0];
-      mean[1] += point[1];
-      mean[2] += point[2];
+      com[0] += point[0];
+      com[1] += point[1];
+      com[2] += point[2];
     }
     ++imageIt;
   }
 
-  mean[0] /= static_cast<double>(numPixels);
-  mean[1] /= static_cast<double>(numPixels);
-  mean[2] /= static_cast<double>(numPixels);
+  com[0] /= static_cast<double>(numPixels);
+  com[1] /= static_cast<double>(numPixels);
+  com[2] /= static_cast<double>(numPixels);
 
-  return mean;
-}
-
-//todo: ack! most of these should be void functions. Have confidence the operations work! Trust the worker! 
-bool Image::applyTransform(const Transform &transform)
-{
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
-  FilterType::Pointer resampler = FilterType::New();
-
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-  resampler->SetInterpolator(interpolator);
-  resampler->SetDefaultPixelValue(-1);
-
-  // transform->Translate(translation);
-  resampler->SetTransform(transform.get());
-
-  resampler->SetInput(this->image);
-  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
-  // resampler->SetOutputOrigin(image->GetOrigin());
-  // resampler->SetOutputDirection(image->GetDirection());
-  // resampler->SetOutputSpacing(image->GetSpacing());
-
-  try
-  {
-    resampler->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Transform failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-#if DEBUG_CONSOLIDATION
-  std::cout << "Transform succeeded!\n";
-#endif
-  return true;
+  std::cout<<"com: "<<com<<std::endl; //debug
+  std::cout<<"val: "<<physicalToLogical(com)<<std::endl; //debug
+  std::cout<<"...and back: "<<logicalToPhysical(physicalToLogical(com))<<std::endl; //debug
+  return com;
 }
 
 /// size
@@ -547,9 +921,24 @@ Point3 Image::size() const
   return ret;
 }
 
-void Image::print() const
+/// operator<<
+///
+/// Stream insertion operator
+/// Prints region
+std::ostream& operator<<(std::ostream &os, const Image::Region &r)
 {
-  std::cout << "this image is really pretty... (todo)\n";
+  return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
+            << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
+}
+
+/// operator<<
+///
+/// Stream insertion operator
+/// Print dims, origin, and size of the image.
+std::ostream& operator<<(std::ostream &os, const Image &img)
+{
+  return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "
+            << img.origin() << ",\n\tsize: " << img.size() << "\n}";
 }
 
 } // Shapeworks

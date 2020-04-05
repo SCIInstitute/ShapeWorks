@@ -23,6 +23,7 @@ namespace shapeworks {
 struct SharedCommandData
 {
   Image image;
+  Image::Region region;
   Mesh mesh;
   ParticleSystem particleSystem;
   Transform transform;

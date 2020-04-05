@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Shapeworks.h"
- 
 #include <itkFixedCenterOfRotationAffineTransform.h>
 
 namespace shapeworks {
@@ -13,20 +12,23 @@ public:
 
   Transform() : rotangle(0.0) { reset(); }
 
-  itkTransformType::Pointer get() const;
+  itkTransformType::Pointer getItkTransform() const;
 
   void reset();
   void translate(const Vector3 &v); 
-  void rotate(const Vector3 &axis, double angle);
+  void rotate(const Vector3 &axis, double angle); // must specify angle in radians
   void scale(const Vector3 &s);
-
-  void print() const; //todo: operator << and operator >>
 
 private:
   Vector3 scaling;
   Vector3 translation;
   Vector3 rotaxis;
   double rotangle;
+
+  friend std::ostream& operator<<(std::ostream &os, const Transform &t);
 };
 
+std::ostream& operator<<(std::ostream &os, const Transform &t);
+
 } // shapeworks
+

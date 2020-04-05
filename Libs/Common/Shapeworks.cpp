@@ -32,5 +32,4 @@ Point3& operator/=(Point3 &p, const double x)
   return p;
 }
 
-
-}; // shapeworks
+}; //shapeworks

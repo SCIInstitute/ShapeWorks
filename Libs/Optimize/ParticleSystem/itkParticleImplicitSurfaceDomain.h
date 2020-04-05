@@ -66,13 +66,13 @@ public:
       bounding box domain, since movement off the surface will be very
       common.  Consider subclassing this method to add a check for significant
       differences in the input and output points. */
-  virtual bool ApplyConstraints(PointType &p) const;
+  virtual bool ApplyConstraints(PointType &p) const override;
 
   /** Optionally add a repulsion from a planar boundar specified in
       m_CuttingPlane */
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos,
-                                      double maxtimestep) const;
+                                      const PointType &pos) const override;
+
 
   /** Define a distance measure on the surface.  Note that this distance
       measure is NOT the geodesic distance, as one might expect, but is only a
@@ -80,7 +80,7 @@ public:
       sufficiently aligned (method returns a negative number).  The assumption
       here is that points are sufficiently close to one another on the surface
       that they may be considered to lie in a tangent plane. */
-  virtual double Distance(const PointType &, const PointType &) const;
+  virtual double Distance(const PointType &, const PointType &) const override;
 
   void SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
                        const vnl_vector<double> &c);
@@ -131,15 +131,6 @@ public:
   const vnl_vector_fixed<double, VDimension> &GetC() const
   { return m_c[0]; }
 
-  //Praful
-  const vnl_vector_fixed<double, VDimension> &GetA(int i) const
-  { return m_a[i]; }
-  const vnl_vector_fixed<double, VDimension> &GetB(int i) const
-  { return m_b[i]; }
-  const vnl_vector_fixed<double, VDimension> &GetC(int i) const
-  { return m_c[i]; }
-
-
   /** Maintain a list of spheres within the domain.  These are used as 
       soft constraints by some particle forcing functions. */
   void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r)
@@ -178,6 +169,24 @@ public:
       return m_CuttingPlanePoint.size();
   }
 
+  void PrintCuttingPlaneConstraints(std::ofstream &out) const override {
+    for (unsigned int j = 0; j < GetNumberOfPlanes(); j++) {
+      vnl_vector_fixed < double, 3 > a = m_a[j];
+      vnl_vector_fixed < double, 3 > b = m_b[j];
+      vnl_vector_fixed < double, 3 > c = m_c[j];
+      for (int d = 0; d < 3; d++) {
+        out << a[d] << " ";
+      }
+      for (int d = 0; d < 3; d++) {
+        out << b[d] << " ";
+      }
+      for (int d = 0; d < 3; d++) {
+        out << c[d] << " ";
+      }
+      out << std::endl;
+    }
+  }
+
 protected:
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
   {
@@ -207,6 +216,12 @@ private:
 
   std::vector< vnl_vector_fixed<double, VDimension> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;
+
+
+
+  // Praful
+  bool SphereVectorConstraintMayOrMayNotWork(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const;
 };
 
 } // end namespace itk

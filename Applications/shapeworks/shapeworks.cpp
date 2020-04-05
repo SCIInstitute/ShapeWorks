@@ -23,15 +23,23 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
-  shapeworks.addCommand(Translate::getCommand());
-  shapeworks.addCommand(ApplyTransform::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
-  shapeworks.addCommand(ReadParticleSystem::getCommand());
-  shapeworks.addCommand(Compactness::getCommand());
-  shapeworks.addCommand(Generalization::getCommand());
+  shapeworks.addCommand(Translate::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
   shapeworks.addCommand(Threshold::getCommand());
+  shapeworks.addCommand(ComputeDT::getCommand());
+  shapeworks.addCommand(CurvatureFilter::getCommand());
+  shapeworks.addCommand(GradientFilter::getCommand());
+  shapeworks.addCommand(SigmoidFilter::getCommand());
+  shapeworks.addCommand(TPLevelSetFilter::getCommand());
+  shapeworks.addCommand(TopologyPreservingFilter::getCommand());
+  shapeworks.addCommand(Blur::getCommand());
+  shapeworks.addCommand(BoundingBox::getCommand());
+  shapeworks.addCommand(CropImage::getCommand());
+  shapeworks.addCommand(ReadParticleSystem::getCommand());
+  shapeworks.addCommand(Compactness::getCommand());
+  shapeworks.addCommand(Generalization::getCommand());
 
   try {
     shapeworks.run(argc, argv);

@@ -183,6 +183,10 @@ Vol. 31, No. 10, pp. 1620--1626. 2013.
 </p>
 
 <p align="justify">
+M. Datar, I. Lyu, S. Kim, J. Cates, M. Styner, R. Whitaker. "Geodesic distances to landmarks for dense correspondence on ensembles of complex shapes," In International Conference on Medical Image Computing and Computer-Assisted Intervention, Springer, Berlin, Heidelberg, pp. 19-26, 2013.
+</p>
+
+<p align="justify">
 J. Cates, E. Bieging, A. Morris, G. Gardner, N. Akoum, E. Kholmovski, N. Marrouche, C. McGann, and R. S. MacLeod. "Computational shape models characterize shape change of the left atrium in atrial fibrillation," Clinical Medicine Insights. Cardiology, 8(Suppl 1):99, 2015.
 </p>
 

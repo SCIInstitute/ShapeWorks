@@ -50,6 +50,9 @@ public:
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
   
   /** Loads a set of point files and pre-computes some statistics. */
+  int ImportPoints( std::vector<vnl_vector<double> > points, std::vector<int> group_ids );
+
+  /** Loads a set of point files and pre-computes some statistics. */
   int ReadPointFiles(const char *fname);
 
   /** Reloads a set of point files and recomputes some statistics. */

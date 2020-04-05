@@ -15,7 +15,7 @@ public:
 private:
   Example() { buildParser(); } // purposely private ctor so only the single instance can be retrieved
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 #endif // if 0
 
@@ -28,7 +28,7 @@ public:
 private:
   ReadImage() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
 private:
   WriteImage() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ public:
 private:
   ReadMesh() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
 private:
   WriteMesh() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ public:
 private:
   Antialias() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ public:
 private:
   ResampleImage() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ public:
 private:
   PadImage() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public:
 private:
   SmoothMesh() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -124,7 +124,7 @@ public:
 private:
   RecenterImage() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,39 +136,19 @@ public:
 private:
   Coverage() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 class Translate : public TransformCommand
 {
 public:
-  static Translate &getCommand()
-  {
-    static Translate instance;
-    return instance;
-  }
+  static Translate &getCommand() { static Translate instance; return instance; }
 
 private:
   Translate() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class ApplyTransform : public ImageCommand
-{
-public:
-  static ApplyTransform &getCommand()
-  {
-    static ApplyTransform instance;
-    return instance;
-  }
-
-private:
-  ApplyTransform() { buildParser(); }
-  void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -180,7 +160,7 @@ public:
 private:
   ExtractLabel() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -192,7 +172,7 @@ public:
 private:
   CloseHoles() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -204,7 +184,123 @@ public:
 private:
   Threshold() { buildParser(); }
   void buildParser() override;
-  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ComputeDT : public ImageCommand
+{
+public:
+  static ComputeDT &getCommand()
+  {
+    static ComputeDT instance;
+    return instance;
+  }
+
+private:
+  ComputeDT() { buildParser(); } 
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class CurvatureFilter : public ImageCommand
+{
+public:
+  static CurvatureFilter& getCommand() { static CurvatureFilter instance; return instance; }
+
+private:
+  CurvatureFilter() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class GradientFilter : public ImageCommand
+{
+public:
+  static GradientFilter& getCommand() { static GradientFilter instance; return instance; }
+
+private:
+  GradientFilter() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class SigmoidFilter : public ImageCommand
+{
+public:
+  static SigmoidFilter& getCommand() { static SigmoidFilter instance; return instance; }
+
+private:
+  SigmoidFilter() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class TPLevelSetFilter : public ImageCommand
+{
+public:
+  static TPLevelSetFilter& getCommand() { static TPLevelSetFilter instance; return instance; }
+
+private:
+  TPLevelSetFilter() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class TopologyPreservingFilter : public ImageCommand
+{
+public:
+  static TopologyPreservingFilter& getCommand() { static TopologyPreservingFilter instance; return instance; }
+
+private:
+  TopologyPreservingFilter() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Blur : public ImageCommand
+{
+public:
+  static Blur &getCommand() { static Blur instance; return instance; }
+
+private:
+  Blur() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class BoundingBox : public ImageCommand
+{
+public:
+  static BoundingBox &getCommand()
+  {
+    static BoundingBox instance;
+    return instance;
+  }
+
+private:
+  BoundingBox() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class CropImage : public ImageCommand
+{
+public:
+  static CropImage &getCommand() { static CropImage instance; return instance; }
+
+private:
+  CropImage() { buildParser(); } 
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
 } // shapeworks

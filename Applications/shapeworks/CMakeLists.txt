@@ -22,6 +22,7 @@ target_include_directories(shapeworks_exe PUBLIC
 target_link_libraries(shapeworks_exe
   Utils
   Image
+  Common
   Mesh
   Analyze
   Particles

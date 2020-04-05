@@ -17,7 +17,7 @@ using IPoint3 = itk::Point<int, 3>;
 using FPoint3 = itk::Point<float, 3>;
 
 Point3 operator+(const Point3 &p, const Point3 &q);
-Point3& operator+=(const Point3 &p, const Point3 &q);
+Point3& operator+=(Point3 &p, const Point3 &q);
 Point3 operator/(const Point3 &p, const double x);
 Point3& operator/=(Point3 &p, const double x);
 

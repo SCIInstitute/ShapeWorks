@@ -134,10 +134,6 @@ add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
 add_subdirectory(Applications)
 
-if(Build_PythonAPI)
-  add_subdirectory(Python/shapeworks)
-endif()
-
 if(Build_Post)
   add_subdirectory(Post/source/ShapeWorksPost-V1)
 endif(Build_Post)
@@ -173,6 +169,7 @@ endif()
 
 #----------------------------------------------------------------------------
 if(BUILD_TESTS)
+  enable_testing()
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 

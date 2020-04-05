@@ -3,24 +3,24 @@
 ## Minimum Requirements
 
 ### Linux
-* CMake 3.11
+* CMake 3.11 (provided by conda below if not already installed)
 * GCC 7.5.0
 * Qt 5.9.8 (optional for GUI components)
 
 ### Mac
-* CMake 3.11
+* CMake 3.11 (provided by conda below if not already installed)
 * Clang 10.0.0
 * Qt 5.9.8 (optional for GUI components)
 
 ### Windows
-* CMake 3.11
-* MSVC 2019
-* Qt 5.9.8 (optional for GUI components)
+See [BUILD_Windows.md]
 
 ## Clone source
 
 ShapeWorks uses *git-lfs* to store image data for testing.  
-Please install and setup **[git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)** before cloning.  
+Please install and setup **[git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)** before cloning.
+Alternatively, conda instructions below will install git-lfs.
+
 If you have already cloned ShapeWorks before installing *git-lfs*, you can get the test image data using:  
 ```
 $ git lfs fetch
@@ -34,26 +34,19 @@ See [GettingStarted.md](GettingStarted.md#source-and-branches) for more details 
 
 ## Install dependencies
 
-### CMake
-Download and install [[CMake]](https://cmake.org/)  
-Download and install [[Visual Studio]](https://visualstudio.microsoft.com/) or another CMake-compatible compiler  
-
-### Anaconda
-Download and install [[Anaconda]](https://www.anaconda.com/)  
-It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
-Using the *Anaconda Prompt*, run `conda_installs.sh` on OSX or Linux and run `conda_installs.bat` on Windows  
-
-You can also install these [dependencies](deps.txt) manually if you prefer not to use Anaconda  
+### Conda dependencies
+To install conda based dependencies, run:
+```
+$ source conda_install.sh
+```
 
 ### Qt5  
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)  
 After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](GettingStarted.md#PATH-environment-variable) for help with this)  
 Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
-Example qmake directory Windows: `C:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
 
 ### VXL, VTK, ITK, and Eigen
 These dependencies can be installed using the **build_dependencies.sh** script.  
-On Windows, use an msys shell (e.g. git bash) to do this.  
 
 Use `$ ./build_dependencies.sh --help` for more details on the available options.  
 
@@ -77,7 +70,6 @@ cmake <options> ..
 ```
 CMake GUI to see and change any of the options:
 - On OSX/Linux, you can use a GUI by running `ccmake` instead of `cmake`.  
-- On Windows, you can use the CMake application.  
 
 ### Options
 Required:  
@@ -102,12 +94,10 @@ Optional:
 - Makefiles: `make -j<num_procs>` where num_procs is the number of parallel processes, say 8.  
     - (maybe need to build using `cmake --build . -j 16` in order to pass parallel flags to dependent projects (e.g., vtk))  
 - XCode project: `open ShapeWorks.xcodeproj` and build from there  
-- Microsoft Visual Studio: Open ShapeWorks.sln and build from there  
 
 ### Before running Example Python scripts
 Add the ShapeWorks and dependency binaries to the path:  
 - *OSX/Linux:* `$ export PATH=/path/to/shapeworks/build/bin;/path/to/dependencies/bin:$PATH`  
-- *Windows*: `> set PATH=\path\to\shapeworks\build\bin;\path\to\dependency\bin;%PATH%`  
 
 ### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
@@ -117,12 +107,4 @@ mkdir build
 cd build
 cmake -DCMAKE_PREFIX_PATH="${PWD}/../dependencies/install" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
-```
-
-*Windows* example that builds dependencies separately, then generates a Visual Studio project for ShapeWorks:  
-```
-$ ./build_dependencies.sh
-mkdir build
-cd build
-cmake -G"Visual Studio 16 2019" -Ax64 -DCMAKE_PREFIX_PATH=D:/ProgramFiles/Qt5.14.0/5.14.0/msvc2017_64/lib/cmake -DVXL_DIR=../dependencies/vxl/build -DVTK_DIR=../dependencies/install/lib/cmake/vtk-8.2 -DITK_DIR=../dependencies/install/lib/cmake/ITK-5.0 -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
 ```
