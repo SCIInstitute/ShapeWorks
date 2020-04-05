@@ -44,21 +44,34 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         outname = rename(inname, outDir, 'isores')
         outDataList.append(outname)
 
-        cmd = ["shapeworks", "read-image", "--name", inname]
+        if USE_NATIVE_API:
+            img = Image(inname)
+            if isBinary:
+                img.antialias()
+            img.isoresample()
+            if isBinary:
+                img.threshold()  # re-binarize the image (defaults for threshold are (0,max) )
+            if recenter:
+                img.recenter()
+            img.write(outname)
+            
+        else:
+            cmd = ["shapeworks", "read-image", "--name", inname]
 
-        if isBinary:
-            cmd.extend(["antialias"])
+            if isBinary:
+                cmd.extend(["antialias"])
 
-        cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
+            cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
 
-        if isBinary:
-            cmd.extend(["threshold"])
-        if recenter:
-            cmd.extend(["recenter"])
+            if isBinary:
+                cmd.extend(["threshold"])
+            if recenter:
+                cmd.extend(["recenter"])
 
-        cmd.extend(["write-image", "--name", outname])
-        print("Calling cmd:\n"+" ".join(cmd))
-        subprocess.check_call(cmd)
+            cmd.extend(["write-image", "--name", outname])
+            print("Calling cmd:\n"+" ".join(cmd))
+            subprocess.check_call(cmd)
+ 
     return outDataList
 
 def getOrigin(inname):

@@ -1,5 +1,6 @@
-#include "PythonAPI.h"
+#include <pybind11/pybind11.h>
 
+namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include "Shapeworks.h"
@@ -44,14 +45,15 @@ PYBIND11_MODULE(shapeworks, m)
 
   // TODO: add Vector3 and Matrix (Matrix44) 
 
-  py::class_<shapeworks::Transform>(m, "Transform")
-  .def(py::init<>())
-  .def("reset",                 &shapeworks::Transform::reset)
-  .def("translate",             &shapeworks::Transform::translate, "v"_a)
-  .def("rotate",                &shapeworks::Transform::rotate, "axis"_a, "angle"_a)
-  .def("scale",                 &shapeworks::Transform::scale, "s"_a)
-  .def("__repr__",              &shapeworks::Transform::print)
-  ;
+  //<ctc> broken because Transform changed since pre-japan
+  // py::class_<shapeworks::Transform>(m, "Transform")
+  // .def(py::init<>())
+  // .def("reset",                 &shapeworks::Transform::reset)
+  // .def("translate",             &shapeworks::Transform::translate, "v"_a)
+  // .def("rotate",                &shapeworks::Transform::rotate, "axis"_a, "angle"_a)
+  // .def("scale",                 &shapeworks::Transform::scale, "s"_a)
+  // //  .def("__repr__",              &shapeworks::Transform::print)
+  // ;
 
   py::class_<shapeworks::Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
@@ -68,7 +70,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("dims",                  &shapeworks::Image::dims)
   .def("size",                  &shapeworks::Image::size)
   .def("center",                &shapeworks::Image::center)
-  .def("__repr__",              &shapeworks::Image::print)
+  //.def("__repr__",              &shapeworks::Image::print)
   //.def("__set__",             &shapeworks::Image::operator=) //todo
   ;
   
