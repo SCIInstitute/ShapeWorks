@@ -32,42 +32,4 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
 //   return topologyPreservingSmooth(*smoothed, featureImage, scaling, sigmoidAlpha, sigmoidBeta, applyCurvatureFilter, curvatureIterations);
 // }
 
-/// topologyPreservingSmooth
-///
-/// Applies topology preserving smooth then returns the image. Smoothing is four filter steps:
-///   curvature flow filter
-///   gradient filter
-///   sigmoid filter
-///   TPLevelSet filter (formerly part of ITK but now only included in ShapeWorks)
-///
-/// \param image the image to be smoothed
-/// \param featureImage the other image to use for the TPLevelSet filter
-/// \param scaling
-/// \param sigmoidAlpha
-/// \param sigmoidBeta
-/// \param curvatureIterations number of iterations to use for curvature smoothing
-/// \param applyCurvatureFilter default it true, but in some cases it has already been applied
-template<typename IMAGE>
-Image& ImageUtils::topologyPreservingSmooth(IMAGE &image, const Image &featureImage,
-                                            float scaling, float sigmoidAlpha, float sigmoidBeta,
-                                            bool applyCurvatureFilter, unsigned curvatureIterations)
-{
-  // works but requires a const_cast in case foo is const, even though when it is a new object is created (same with a longer if/else)
-  // since when foo is a const ref it can't be assigned to the non-const ref, ret.
-  Image &img = std::is_const<std::remove_reference_t<decltype(image)>>::value ? *new Image(image) : const_cast<Image&>(image);
-
-  // <ctc> just print it to feel good that it's currect.
-  if (std::is_const<std::remove_reference_t<decltype(image)>>::value) // consider that a reference to a const is not itself const
-    std::cout << "argument is const ref\n";
-  else
-    std::cout << "argument is non-const ref\n";
-
-  if (applyCurvatureFilter)
-    image.applyCurvatureFilter(curvatureIterations);
-  image.applyGradientFilter();
-  image.applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
-  image.applyTPLevelSetFilter(featureImage, scaling);
-  return image;
-}
-
 } //shapeworks

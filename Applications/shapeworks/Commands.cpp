@@ -495,6 +495,7 @@ void TopologyPreservingFilter::buildParser()
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha for sigmoid fitler");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta for sigmoid fitler");  
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations for curvature filter");
+  //todo: I think the curvature is always used for this, so when applying it might mean featureimage is okay to be unspecified
   parser.add_option("--applycurvature").action("store").type("bool").set_default(true).help("default it true, but in some cases it has already been applied");
   
   Command::buildParser();
@@ -502,14 +503,14 @@ void TopologyPreservingFilter::buildParser()
 
 bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  Image featureImage(options["featureimage"]);
+  const Image featureImage(options["featureimage"]);
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   double scaling = static_cast<double>(options.get("scaling"));
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
   bool applycurvature = static_cast<bool>(options.get("applycurvature"));
 
-  ImageUtils::topologyPreservingSmooth(sharedData.image, featureImage, scaling, alpha, beta, applycurvature, iterations);
+  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, featureImage, scaling, alpha, beta, applycurvature, iterations);
   return true;
 }
 
