@@ -1,4 +1,5 @@
 #include "Executable.h"
+#include <sstream>
 
 namespace shapeworks {
 
@@ -112,6 +113,13 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 int Executable::run(int argc, char const *const *argv)
 {
+#if DEBUG_CONSOLIDATION
+  std::stringstream cmd;
+  for (int i=0; i<argc; i++)
+    cmd << argv[i] << " ";
+  std::cout << cmd.str() << std::endl;
+#endif
+  
   const optparse::Values options = parser.parse_args(argc, argv);
   
   // shapeworks global options
