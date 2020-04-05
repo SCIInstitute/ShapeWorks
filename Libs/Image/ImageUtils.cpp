@@ -21,15 +21,4 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-/// topologyPreservingSmooth
-///
-/// const input version of topologyPreservingSmooth
-// Image& ImageUtils::topologyPreservingSmooth(const Image &image, const Image &featureImage,
-//                                             float scaling, float sigmoidAlpha, float sigmoidBeta,
-//                                             bool applyCurvatureFilter, unsigned curvatureIterations)
-// {
-//   Image *smoothed = new Image(image);
-//   return topologyPreservingSmooth(*smoothed, featureImage, scaling, sigmoidAlpha, sigmoidBeta, applyCurvatureFilter, curvatureIterations);
-// }
-
 } //shapeworks

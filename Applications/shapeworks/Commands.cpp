@@ -306,7 +306,6 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
       sharedData.transform.translate(Vector3(v));
     }
   }
-  std::cout << "image: " << sharedData.image << std::endl;  //<Ctc> just testing, remove this
   
 #if DEBUG_CONSOLIDATION
   std::cout << "Translating " << (centerofmass ? "using center of mass " : " explicitly ") << "by: " << sharedData.transform << std::endl;
