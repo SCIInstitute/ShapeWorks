@@ -940,14 +940,12 @@ Point3 Image::centerOfMass() const
   {
     PixelType val = imageIt.Get();
     ImageType::IndexType index;
-    ImageType::PointType point;
     index = imageIt.GetIndex();
 
     if (val == 1)
     {
-      numPixels += 1;
-      image->TransformIndexToPhysicalPoint(index, point);
-      com += point;
+      numPixels++;
+      com += image->TransformIndexToPhysicalPoint<double>(index);
     }
     ++imageIt;
   }
