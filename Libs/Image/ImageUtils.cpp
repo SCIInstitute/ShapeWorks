@@ -13,11 +13,10 @@ namespace shapeworks {
 Transform ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   Point3 com = image.centerOfMass();
-  Point3 center = image.size() / 2.0 + image.origin();
+  Point3 center = image.center();
 
   Transform xform;
   xform.translate(center - com);
-
   return xform;
 }
 

@@ -37,7 +37,3 @@ INSTALL(TARGETS ICPRigid3DMeshRegistration  RUNTIME DESTINATION bin)
 ADD_EXECUTABLE(ReflectMeshes ReflectMeshes.cxx )
 TARGET_LINK_LIBRARIES(ReflectMeshes ${VTK_LIBRARIES} tinyxml)
 INSTALL(TARGETS ReflectMeshes  RUNTIME DESTINATION bin)
-
-add_executable(TranslateShapeToImageOrigin TranslateShapeToImageOrigin.cxx)
-target_link_libraries(TranslateShapeToImageOrigin ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS TranslateShapeToImageOrigin  RUNTIME DESTINATION bin)
