@@ -949,7 +949,7 @@ Point3 Image::centerOfMass() const
     }
     ++imageIt;
   }
-  com /= static_cast<float>(numPixels);
+  com /= static_cast<double>(numPixels);
 
 #if DEBUG_CONSOLIDATION
   std::cout<<"com: "<<com<<std::endl; //debug
