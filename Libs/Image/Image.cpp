@@ -425,14 +425,12 @@ bool Image::applyTransform(const Transform &transform)
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
 
-  // using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double> InterpolatorType;
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   resampler->SetInterpolator(interpolator);
   resampler->SetTransform(transform.getItkTransform());
   resampler->SetInput(this->image);
-  // resampler->SetSize(image->GetBufferedRegion().GetSize());
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());

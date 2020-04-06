@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <Libs/Image/Image.h>
+#include <Libs/Image/ImageUtils.h>
+#include <Libs/Image/Transform.h>
 
 #include "TestConfiguration.h"
 
@@ -185,6 +187,17 @@ TEST(ImageTests, setlevel_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, topopreservingsmooth_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/topo-preserving-smooth/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10, 1, true);
+  Image ground_truth(test_location + "topo-preserving-smooth_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, blur_test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/blur/");
@@ -215,9 +228,34 @@ TEST(ImageTests, crop_test)
   Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
   region = image.binaryBoundingBox(images);
-  // image.read(test_location + "seg.ellipsoid_1.nrrd");
   image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, com_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Transform xform = ImageUtils::createCenterOfMassTransform(image);
+  image.applyTransform(xform);
+  Image ground_truth(test_location + "com_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, translate_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Transform xform;
+  double v[3] = {10, 10, 10};
+  xform.translate(Vector3 (v));
+  image.applyTransform(xform);
+  Image ground_truth(test_location + "translate_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
