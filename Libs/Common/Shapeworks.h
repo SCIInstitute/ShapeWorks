@@ -16,9 +16,38 @@ using Matrix = Matrix44;
 using IPoint3 = itk::Point<int, 3>;
 using FPoint3 = itk::Point<float, 3>;
 
-Point3 operator+(const Point3 &p, const Point3 &q);
-Point3& operator+=(Point3 &p, const Point3 &q);
-Point3 operator/(const Point3 &p, const double x);
-Point3& operator/=(Point3 &p, const double x);
+template<typename P>
+P operator+(const P &p, const P &q)
+{
+  P ret;
+  for (unsigned i = 0; i < 3; i++)
+    ret[i] = p[i] + q[i];
+  return ret;
+}
+
+template<typename P>
+P& operator+=(P &p, const P &q)
+{
+  for (unsigned i = 0; i < 3; i++)
+    p[i] += q[i];
+  return p;
+}
+
+template<typename P>
+P operator/(const P &p, const double x)
+{
+  P ret;
+  for (unsigned i = 0; i < 3; i++)
+    ret[i] = p[i] / x;
+  return ret;
+}
+
+template<typename P>
+P& operator/=(P &p, const double x)
+{
+  for (unsigned i = 0; i < 3; i++)
+    p[i] /= x;
+  return p;
+}
 
 } // shapeworks

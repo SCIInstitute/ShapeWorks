@@ -932,10 +932,9 @@ Point3 Image::centerOfMass() const
     return false;
   }
 
-  Point3 com;
-
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
+  Point3 com;
 
   while (!imageIt.IsAtEnd())
   {
@@ -948,20 +947,18 @@ Point3 Image::centerOfMass() const
     {
       numPixels += 1;
       image->TransformIndexToPhysicalPoint(index, point);
-      com[0] += point[0];
-      com[1] += point[1];
-      com[2] += point[2];
+      com += point;
     }
     ++imageIt;
   }
+  com /= static_cast<float>(numPixels);
 
-  com[0] /= static_cast<double>(numPixels);
-  com[1] /= static_cast<double>(numPixels);
-  com[2] /= static_cast<double>(numPixels);
-
+#if DEBUG_CONSOLIDATION
   std::cout<<"com: "<<com<<std::endl; //debug
   std::cout<<"val: "<<physicalToLogical(com)<<std::endl; //debug
-  std::cout<<"...and back: "<<logicalToPhysical(physicalToLogical(com))<<std::endl; //debug
+  std::cout<<"...and back: "<<logicalToPhysical(physicalToLogical(com))<<std::endl;
+#endif
+  
   return com;
 }
 

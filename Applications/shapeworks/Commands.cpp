@@ -486,10 +486,9 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 void TopologyPreservingFilter::buildParser()
 {
   const std::string prog = "topo-preserving-smooth";
-  const std::string desc = "helper command that applies curvature, gradient, sigmoid, and TPLevelSet filters in that order";
+  const std::string desc = "helper command that applies curvature, gradient, sigmoid, uses them for the TPLevelSet filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--featureimage").action("store").type("string").set_default("").help("path of feature image for TPLevelSet filter");
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("scale for TPLevelSet level set filter");
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha for sigmoid fitler");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta for sigmoid fitler");  
@@ -502,14 +501,13 @@ void TopologyPreservingFilter::buildParser()
 
 bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  const Image featureImage(options["featureimage"]);
-  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   double scaling = static_cast<double>(options.get("scaling"));
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   bool applycurvature = static_cast<bool>(options.get("applycurvature"));
 
-  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, featureImage, scaling, alpha, beta, applycurvature, iterations);
+  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
   return true;
 }
 

@@ -332,17 +332,27 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
                    "write-image", "--name", tpdtnrrdfilename,
                    "gradient",
                    "sigmoid", "--alpha", str(alpha), "--beta", str(beta),
-                   "tp-levelset", "--other", ref_tpdtnrrdfilename, "--scaling", str(scaling),
+                   "write-image", "--name", "test_sigmoid"+isonrrdfilename]
+            cmd = ["shapeworks", "read-image", "--name", tpdtnrrdfilename,
+                   "tp-levelset", "--featureimage", "test_sigmoid"+dtnrrdfilename, "--scaling", str(scaling), "--applycurvature", false,
                    "write-image", "--name", "test"+isonrrdfilename]
             subprocess.check_call(cmd)
+            # end test, just verify its output is the same as the next part
 
             cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
                    "curvature", "--iterations", str(smoothingIterations),
                    "write-image", "--name", tpdtnrrdfilename,
                    "topology-preserving-smooth", "--featureimage", ref_tpdtnrrdfilename,
-                   "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+                   "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta), "--applyCurvatureFilter", false,
                    "write-image", "--name", isonrrdfilename]
             subprocess.check_call(cmd)
+
+           # what the actual API will do (and already does in C++):
+           # img = Image("pathname")
+           # smoothed = img.curvature()
+           # smoothed.write(tpdtnrrdfilename)
+           # ImageUtils.topologyPreservingSmooth(smoothed, applyCurvatureFilter = False)
+           # smoothed.write(isonrrdfilename)
 
             execCommand = ["ICPRigid3DImageRegistration", "--targetDistanceMap", ref_tpdtnrrdfilename, "--sourceDistanceMap", tpdtnrrdfilename, "--sourceSegmentation", seginname, "--sourceRaw", rawinname, "--icpIterations", str(icpIterations), "--visualizeResult",  "0",  "--solutionSegmentation", segoutname, "--solutionRaw", rawoutname, "--solutionTransformation", transformation]
             subprocess.check_call(execCommand)
