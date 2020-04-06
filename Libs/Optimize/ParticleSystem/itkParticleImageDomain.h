@@ -114,10 +114,13 @@ public:
     h5_dims[0] = m_Size[0];
     h5_dims[1] = m_Size[1];
     h5_dims[2] = m_Size[2];
+    hsize_t chunk_dims[3] = {4, 4, 4};
     H5::DataSpace dataspace(3, h5_dims);
+    H5::DSetCreatPropList props;
+    props.setChunk(3, chunk_dims);
     // H5::FloatType datatype( H5::PredType::NATIVE_FLOAT);
     // datatype.setOrder( H5T_ORDER_LE );
-    m_H5_dataset = file.createDataSet(h5_datasetname, H5::PredType::NATIVE_FLOAT, dataspace );
+    m_H5_dataset = file.createDataSet(h5_datasetname, H5::PredType::NATIVE_FLOAT, dataspace /*, props*/);
     m_H5_dataset.write(I->GetBufferPointer(), H5::PredType::NATIVE_FLOAT);
 
     /*
@@ -297,8 +300,6 @@ public:
     if(IsInsideBuffer(p)) {
       // PointType p2 = p;
       // for (int i = 0; i < 3; i++) { p2[i] = int(p[i]); }
-      float v0 = m_ScalarInterpolator->Evaluate(p);
-      return v0;
 
       auto o = GetOrigin();
       auto sp = p;
