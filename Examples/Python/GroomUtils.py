@@ -249,7 +249,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile, antial
 
     xmlfilename = newRefFile.replace('.nrrd', '.tpSmoothDT.xml')
     create_cpp_xml(xmlfilename, xmlfilename)
-    cmd = ["shapeworks", "read-image", "--name", ref_dtnrrdfilename,
+    cmd = ["shapeworks", "read-image", "--name", ref_dtnrrdfilename]
     cmd.extend(["curvature", "--iterations", str(smoothingIterations)])
     cmd.extend(["write-image", "--name", ref_tpdtnrrdfilename])
     cmd.extend(["gradient", "sigmoid", "--alpha", str(alpha), "--beta", str(beta)])
@@ -497,7 +497,7 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
     file.close()
 
-def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.isoValue=0, percentage=50):
+def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10, isoValue=0, percentage=50):
     outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)

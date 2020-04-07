@@ -45,6 +45,24 @@ public:
   bool gaussianBlur(double sigma = 0.0);
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   bool crop(const Region &region);
+  bool icpRigid(std::string sourceDistanceMap, float isoValue, unsigned iterations);
+
+  template <typename Exporter, typename Importer>
+  void connectPipelines(Exporter exporter, Importer *importer)
+  {
+    importer->SetUpdateInformationCallback(exporter->GetUpdateInformationCallback());
+    importer->SetPipelineModifiedCallback(exporter->GetPipelineModifiedCallback());
+    importer->SetWholeExtentCallback(exporter->GetWholeExtentCallback());
+    importer->SetSpacingCallback(exporter->GetSpacingCallback());
+    importer->SetOriginCallback(exporter->GetOriginCallback());
+    importer->SetScalarTypeCallback(exporter->GetScalarTypeCallback());
+    importer->SetNumberOfComponentsCallback(exporter->GetNumberOfComponentsCallback());
+    importer->SetPropagateUpdateExtentCallback(exporter->GetPropagateUpdateExtentCallback());
+    importer->SetUpdateDataCallback(exporter->GetUpdateDataCallback());
+    importer->SetDataExtentCallback(exporter->GetDataExtentCallback());
+    importer->SetBufferPointerCallback(exporter->GetBufferPointerCallback());
+    importer->SetCallbackUserData(exporter->GetCallbackUserData());
+  }
 
   Point3 logicalToPhysical(const IPoint3 &v) const;
   IPoint3 physicalToLogical(const Point3 &p) const;
