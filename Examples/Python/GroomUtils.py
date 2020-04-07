@@ -430,7 +430,7 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             print("######################################")
             print(" ")
             cmd = ["shapeworks",
-                   "binaryboundingbox", "--names", initPath + "/*.nrrd", "--", "--padding", str(paddingSize),
+                   "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
                    "read-image", "--name", innameSeg,
                    "crop",
                    "write-image", "--name", outnameSeg]
@@ -452,8 +452,8 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
             print("######################################")
             print(" ")
             cmd = ["shapeworks",
-                   "binaryboundingbox", "--names", initPath + "/*.nrrd", "--", "--padding", str(paddingSize),
-                   "read-image", "--name", inname, 
+                   "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
+                   "read-image", "--name", inname,
                    "crop",
                    "write-image", "--name", outname]
             subprocess.check_call(cmd)

@@ -787,7 +787,6 @@ bool Image::gaussianBlur(double sigma)
 Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int padding)
 {
   Image::Region bbox;
-  
   Dims dims = read(filenames[0]).dims(); // make sure all images are the same size
 
   for (auto filename : filenames)
@@ -796,7 +795,7 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
 
     if (img.dims() != dims) { throw std::invalid_argument("image sizes do not match (" + filename + ")"); }
 
-    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
+    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(img.image, img.image->GetLargestPossibleRegion());
     while (!imageIterator.IsAtEnd())
     {
       PixelType val = imageIterator.Get();

@@ -20,7 +20,7 @@ public:
     bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
   };
 
-  Image(const std::string &filename) { *this = read(filename); }
+  Image(const std::string &pathname) { *this = read(pathname); }
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
   Image(Image &img) { this->image.Swap(img.image); }
   Image(const Image &img);
