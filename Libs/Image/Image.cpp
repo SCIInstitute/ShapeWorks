@@ -14,6 +14,8 @@
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
+#include "itkThinPlateSplineKernelTransform.h"
+#include "itkPointSet.h"
 
 #include <sys/stat.h>
 
@@ -390,5 +392,89 @@ bool Image::pad(int padding, PixelType value)
   std::cout << "Pad image with constant succeeded!\n";
 #endif
   return true;
+}
+
+bool Image::warp(std::string &source_file, std::string &target_file, int pointFactor)
+{ 
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+  // typedef double CoordinateRepType;
+  // typedef itk::ThinPlateSplineKernelTransform< CoordinateRepType, ImageDimension> TransformType;
+  // typedef   itk::Point< CoordinateRepType, ImageDimension >  PointType;
+  // typedef   std::vector< PointType > PointArrayType;
+  // typedef   TransformType::PointSetType PointSetType;
+  // typedef   PointSetType::Pointer  PointSetPointer;
+  // typedef   PointSetType::PointIdentifier PointIdType;
+  using ResamplerType = itk::ResampleImageFilter< ImageType, ImageType>;
+  typedef   itk::LinearInterpolateImageFunction< ImageType, double > InterpolatorType;
+  // first need to read the source and target container
+  PointSetType::Pointer sourceLandMarks = PointSetType::New();
+  PointSetType::Pointer targetLandMarks = PointSetType::New();
+  PointType p1;     
+  PointType p2;
+  PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
+  PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
+  PointIdType id = itk::NumericTraits< PointIdType >::Zero;
+  std::ifstream insourcefile;
+  std::ifstream intargetfile;
+  insourcefile.open( source_file.c_str());
+  intargetfile.open( target_file.c_str());
+  int count = 0;
+
+  while (!insourcefile.eof() && !intargetfile.eof()){
+      insourcefile >>  p1[0] >> p1[1] >> p1[2];
+      intargetfile >> p2[0] >> p2[1] >>p2[2];
+      if(count % pointFactor == 0){
+      targetLandMarkContainer->InsertElement( id, p2 );
+      sourceLandMarkContainer->InsertElement( id, p1 );
+      id++;
+      }
+      count++;
+  }
+  insourcefile.close();
+  intargetfile.close();
+
+  // now perform the warping
+  TransformType::Pointer tps = TransformType::New();
+  tps->SetSourceLandmarks(sourceLandMarks);
+  tps->SetTargetLandmarks(targetLandMarks);
+  tps->ComputeWMatrix();
+  // Set the resampler params
+  ResamplerType::Pointer resampler = ResamplerType::New();
+  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  resampler->SetInterpolator( interpolator );
+  ImageType::SpacingType spacing = image->GetSpacing();
+  ImageType::PointType   origin  = image->GetOrigin();
+  ImageType::DirectionType direction  = image->GetDirection();
+  ImageType::RegionType region = image->GetBufferedRegion();
+  ImageType::SizeType   size =  region.GetSize();
+  resampler->SetOutputSpacing( spacing );
+  resampler->SetOutputDirection( direction );
+  resampler->SetOutputOrigin(  origin  );
+  resampler->SetSize( size );
+  resampler->SetTransform( tps );
+  resampler->SetOutputStartIndex(  region.GetIndex() );
+  resampler->SetInput( this->image );
+  this->image = resampler->GetOutput();
+
+  try
+  {
+    resampler->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Pad image with constant failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Pad image with constant succeeded!\n";
+#endif
+  return true;
+
 }
 } // Shapeworks

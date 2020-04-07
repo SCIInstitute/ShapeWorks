@@ -14,6 +14,7 @@ target_include_directories(Image PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 
+
 # Install
 set_target_properties(Image PROPERTIES PUBLIC_HEADER
   "${Image_headers}")

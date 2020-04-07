@@ -4,6 +4,10 @@
 #include "ImageUtils.h"
 #include <limits>
 #include <itkTranslationTransform.h>
+#include "itkThinPlateSplineKernelTransform.h"
+// Software Guide : EndCodeSnippet
+
+#include "itkPointSet.h"
 
 namespace shapeworks {
 
@@ -13,6 +17,13 @@ public:
   static const unsigned dims = 3;
   using PixelType = float;
   using ImageType = itk::Image<PixelType, dims>;
+  typedef double CoordinateRepType;
+  typedef itk::ThinPlateSplineKernelTransform< CoordinateRepType, dims> TransformType;
+  using PointType = itk::Point< CoordinateRepType, dims>;
+  typedef std::vector< PointType > PointArrayType;
+  typedef TransformType::PointSetType PointSetType;
+  typedef PointSetType::Pointer  PointSetPointer;
+  typedef PointSetType::PointIdentifier PointIdType;
 
   Image() {}
   Image(const std::string &inFilename) { read(inFilename); }
@@ -27,8 +38,8 @@ public:
   bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
   bool pad(int padding, PixelType value);
   // bool nextfunction(...);
-
   bool compare_equal(const Image &other);
+  bool warp(std::string &source_file, std::string &target_file, int pointFactor);
 
 private:
 
