@@ -55,7 +55,6 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
             cmd.extend(["recenter"])
 
         cmd.extend(["write-image", "--name", outname])
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
 
@@ -85,7 +84,6 @@ def center(outDir, inDataList):
         cmd = ["shapeworks", "read-image", "--name", inname,
                "recenter",
                "write-image", "--name", outname]
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
         # Get translation
         original_origin = getOrigin(inname)
@@ -115,7 +113,6 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
         cmd = ["shapeworks", "read-image", "--name", inname]
         cmd.extend(["pad" , "--padding" , str(padSize) , "--value" , str(padValue)])
         cmd.extend(["write-image", "--name", outname])
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
 
@@ -153,7 +150,6 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
                    "read-image", "--name", innameImg,
                    "translate", "--useprev", str(True),
                    "write-image", "--name", outnameImg]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
         return [outDataListSeg, outDataListImg]
     else:
@@ -167,7 +163,6 @@ def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
                    "read-image", "--name", inname,
                    "translate", "--centerofmass", str(True),
                    "write-image", "--name", outname]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
         return outDataListSeg
 
@@ -233,21 +228,18 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
            "extract-label", "--label", str(1.0),
            "close-holes",
            "write-image", "--name", refFile]
-    print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
 
     cmd = ["shapeworks",
            "read-image", "--name", refFile,
            "antialias", "--numiterations", str(antialiasIterations),
            "write-image", "--name", ref_dtnrrdfilename]
-    print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
 
     cmd = ["shapeworks",
            "read-image", "--name", ref_dtnrrdfilename,
            "compute-dt", "--isovalue", str(isoValue),
            "write-image", "--name", ref_dtnrrdfilename]
-    print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
 
     cmd = ["shapeworks", "read-image", "--name", ref_dtnrrdfilename,
@@ -256,13 +248,11 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
            "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
            "--applycurvature", str(False),             # b/c starting with the results of curvature (smoothed)
            "write-image", "--name", ref_isonrrdfilename]
-    print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
 
     cmd = ["shapeworks", "read-image", "--name", ref_tpdtnrrdfilename,
            "threshold", "--min", str(-0.000001),
            "write-image", "--name", ref_binnrrdfilename]
-    print("Calling cmd:\n"+" ".join(cmd))
     subprocess.check_call(cmd)
 
     if processRaw:
@@ -314,13 +304,11 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "write-image", "--name", seginname,
                    "antialias", "--numiterations", str(antialiasIterations),
                    "write-image", "--name", dtnrrdfilename]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
 
             cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
                    "compute-dt", "--isovlaue", str(isoValue),
                    "write-image", "--name", dtnrrdfilename]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)            
 
             cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
@@ -380,19 +368,16 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "extract-label", "--label", str(1.0),
                    "close-holes",
                    "write-image", "--name", inname]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
 
             cmd = ["shapeworks", "read-image", "--name", inname,
                    "antialias", "--numiterations", str(antialiasIterations),
                    "write-image", "--name", dtnrrdfilename]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
 
             cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
                    "compute-dt", "--isovalue", str(isoValue),
                    "write-image", "--name", dtnrrdfilename]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
 
             cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
@@ -449,7 +434,6 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
                    "read-image", "--name", innameSeg,
                    "crop",
                    "write-image", "--name", outnameSeg]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
 
         return [outDataListSeg, outDataListImg]
@@ -472,7 +456,6 @@ def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, proce
                    "read-image", "--name", inname, 
                    "crop",
                    "write-image", "--name", outname]
-            print("Calling cmd:\n"+" ".join(cmd))
             subprocess.check_call(cmd)
 
         return outDataList
@@ -514,19 +497,16 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
                "extract-label", "--label", str(1.0),
                "close-holes",
                "write-image", "--name", inname]
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
 
         cmd = ["shapeworks", "read-image", "--name", inname,
                "antialias", "--numiterations", str(antialiasIterations),
                "write-image", "--name", dtnrrdfilename]
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
 
         cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
                "compute-dt", "--isovalue", str(isoValue),
                "write-image", "--name", dtnrrdfilename]
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
         
         cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
@@ -535,7 +515,6 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
                "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
                "--applycurvature", str(False),             # b/c starting with the results of curvature (smoothed)
                "write-image", "--name", isonrrdfilename]
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
         
         shutil.copy(tpdtnrrdfilename, finalDTDir)
@@ -717,15 +696,12 @@ def SelectCuttingPlane(input_file):
         create_meshfromDT_xml(xml_filename, input_file, input_vtk)
         execCommand = ["MeshFromDistanceTransforms", xml_filename]
         subprocess.check_call(execCommand)
-        print("Calling cmd:\n"+" ".join(execCommand))
     elif file_format == "ply":
         execCommand = ["ply2vtk", input_file, input_vtk]
         subprocess.check_call(execCommand)
-        print("Calling cmd:\n"+" ".join(execCommand))
     elif file_format == "stl":
         execCommand = ["stl2vtk", input_file, input_vtk]
         subprocess.check_call(execCommand)
-        print("Calling cmd:\n"+" ".join(execCommand))
     elif file_format == "vtk":
         pass
     else:
