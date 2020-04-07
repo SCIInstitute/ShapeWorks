@@ -421,8 +421,9 @@ bool Image::warp(std::string &source_file, std::string &target_file, int pointFa
       insourcefile >>  p1[0] >> p1[1] >> p1[2];
       intargetfile >> p2[0] >> p2[1] >>p2[2];
       if(count % pointFactor == 0){
-      targetLandMarkContainer->InsertElement( id, p2 );
-      sourceLandMarkContainer->InsertElement( id, p1 );
+        // reverse warp thats why reverse order of p1 p2
+      targetLandMarkContainer->InsertElement( id, p1 );
+      sourceLandMarkContainer->InsertElement( id, p2 );
       id++;
       }
       count++;
