@@ -322,8 +322,6 @@ int WarpImage::execute(const optparse::Values &options, SharedCommandData &share
     std::cerr << "Must specify both source and target landmarks\n";
     return -1;
   }
-  // Mesh second_mesh;
-  // second_mesh.read(second_mesh_string);
 
   return sharedData.image.warp(source_landmarks, target_landmarks, factor);
 }
