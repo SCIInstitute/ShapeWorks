@@ -12,15 +12,12 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
-<<<<<<< HEAD
 #include <itkReinitializeLevelSetImageFilter.h>
 #include <itkTranslationTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>
 #include <itkSigmoidImageFilter.h>
-=======
->>>>>>> origin/shapeworks_doc
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
@@ -28,7 +25,6 @@
 #include <itkExtractImageFilter.h>
 #include <itkImageDuplicator.h>
 
-<<<<<<< HEAD
 #include <exception>
 
 // todo: finish converting these functions to throw exceptions when appropriate
@@ -46,9 +42,6 @@ bool is_directory(const std::string &pathname)
   }
   return false;
 }
-=======
-#include <sys/stat.h>
->>>>>>> origin/shapeworks_doc
 
 namespace shapeworks {
 
