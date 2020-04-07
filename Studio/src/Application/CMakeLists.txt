@@ -147,7 +147,6 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   ${OPENGL_LIBRARIES}
   tinyxml
   ShapeWorksGroom
-  ShapeWorksOptimize
   Alignment
   Analyze
   Optimize

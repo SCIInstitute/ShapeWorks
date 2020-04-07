@@ -51,7 +51,7 @@ TEST(PythonTests, tiny_test) {
   std::remove(check_file.c_str());
 
   // run python
-  std::string command = "python RunUseCase.py --use_case ellipse --tiny_test " + bin_dir;
+  std::string command = "python RunUseCase.py --use_case ellipsoid --tiny_test " + bin_dir;
   std::cerr << "Running command: " << command << "\n";
   system(command.c_str());
 

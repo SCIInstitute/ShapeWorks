@@ -23,7 +23,7 @@ if platform.system() == "Darwin":
     binpath = binpath + ":/Applications/ShapeWorks/bin"
 
 parser = argparse.ArgumentParser(description='Example ShapeWorks Pipeline')
-parser.add_argument("--use_case", help="Specify which use case to run, either: ellipse, ellipse_fd, left_atrium, or femur.")
+parser.add_argument("--use_case", help="Specify which use case to run, either: ellipsoid, ellipsoid_fd, left_atrium, or femur.")
 parser.add_argument("--use_subsample", help="Set number of samples to run the pipeline for a subset of data.")
 parser.add_argument("--interactive", help="Run in interactive mode", action="store_true")
 parser.add_argument("--start_with_prepped_data", help="Start with already prepped data", action="store_true")
@@ -33,6 +33,10 @@ parser.add_argument("--tiny_test", help="Run as a short test", action="store_tru
 parser.add_argument("shapeworks_path", help="Path to ShapeWorks executables (default: "+binpath+")", nargs='?', type=str, default=binpath)
 args = parser.parse_args()
 binpath = args.shapeworks_path
+
+if len(sys.argv)==1:
+    parser.print_help(sys.stderr)
+    sys.exit(1)
 
 module = __import__(args.use_case)
 

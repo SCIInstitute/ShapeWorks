@@ -1,6 +1,13 @@
 
 # Use Cases
 
+- [Downloading Datasets](#Downloading-Datasets)
+- [Running Use Cases](#Running-the-Use-Cases)
+  - [Ellipsoid](#Ellipsoid-Use-Case)
+  - [Fixed Domains Ellipsoid](#Fixed-Domains-Ellipsoid-Use-Case)
+  - [Left Atrium](#Left-Atrium-Use-Case)
+  - [Femur](#Femur-Use-Case)
+- [Dataset Guidelines](#Dataset-Guidelines)
 
 ## Downloading Datasets
 
@@ -8,13 +15,13 @@ Use Case datasets such as the ellipsoid and left atrium datasets will be downloa
 automatically from the ShapeWorks Data Portal.  
 When running one of the use case example scripts, you will see something like this:
 ```
-Can't find Ellipsoids.zip in the current directory.
+Can't find ellipsoid.zip in the current directory.
 .___________________________.
 |                           |
 |     ShapeWorks Portal     |
 |___________________________|
 
-Downloading Ellipsoids.zip from the ShapeWorks Portal
+Downloading the ellipsoid dataset from the ShapeWorks Portal
 Login info not found in current directory.
 New ShapeWorks Portal users: Register an account at http://cibc1.sci.utah.edu:8080/#?dialog=register
 Returning ShapeWorks Portal users: Enter your username and password
@@ -31,7 +38,7 @@ After registering a free account, you can log in from within the script
 Username: joeshmoe
 Password:
 [1/1 MB]
-joeshmoe downloaded Ellipsoids.zip from the ShapeWorks Portal.
+joeshmoe downloaded the ellipsoid dataset from the ShapeWorks Portal.
 ```
 
 ## Running the Use Cases
@@ -44,8 +51,8 @@ To run a use case, run the following command from the [/Examples/Python](https:/
             
         
 The following use case names are currently supported:
-* ellipse
-* ellipse_fd
+* ellipsoid
+* ellipsoid_fd
 * left_atrium
 * femur
 
@@ -61,19 +68,19 @@ To run on a subset of the data in the use case, add the --use_subsample tag foll
 
 This will select a representative sample of the specified size to run through the pipeline so that it runs faster and uses less memory. The sample is selected by running k-mean clustering, then picking one sample from each cluster so that the resulting sample is representative of all the data.
 
-## Ellipse Use Case
+## Ellipsoid Use Case
 
-This dataset comprises of axis-aligned ellipsoids which are varying along a singular axis. This examples is a steeping stone for the user to get familiar with the workfolw of ShapeWorks. The ellipse.py use case represent the standard use version of shapeworks, it includes the full pipeline for processed as well as unprocessed data. 
+This dataset comprises of axis-aligned ellipsoids which are varying along a singular axis. This examples is a steeping stone for the user to get familiar with the workfolw of ShapeWorks. The ellipsoid.py use case represent the standard use version of shapeworks, it includes the full pipeline for processed as well as unprocessed data. 
 
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
 
-To run the use case, run ellipse.py with proper tags. The tags control the type of input data and the optimization method.
+To run the use case, run ellipsoid.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_prepped_data: just does the optimization on previously processed data
 * --use_single_scale: to use the single scale optimization, the default is multiscale optimization
             
-              python RunUseCase.py --use_case ellipse 
+              python RunUseCase.py --use_case ellipsoid 
 
-This calls ellipse.py which:
+This calls ellipsoid.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Grooms the images and segmentations by calling methods in GroomUtils.py
 * Optimizes particle distribution by calling methods in OptimizeUtils.py
@@ -143,15 +150,15 @@ The default values of this use case are as below.
             "verbosity" : 3
             
             
-## Fixed Domains Ellipse
+## Fixed Domains Ellipsoid Use Case
 
-This use case is designed for the fixed domains functionality of ShapeWorks. The fixed domains are used for the cases where we need to place correspondences over new shapes using a pre-existing shape model. In this example we use the example dataset in Ellipsoids_FD.zip which contains a previously generated shape model on ellipses, plus prepped segmentations of two new ellipsoids scans.
+This use case is designed for the fixed domains functionality of ShapeWorks. The fixed domains are used for the cases where we need to place correspondences over new shapes using a pre-existing shape model. In this example we use the example dataset in Ellipsoids_FD.zip which contains a previously generated shape model on ellipsoids, plus prepped segmentations of two new ellipsoids scans.
 
-To run the use case, run ellipse_fd.py with proper tags. This optimization is done only with asingle scale support.
+To run the use case, run ellipsoid_fd.py with proper tags. This optimization is done only with asingle scale support.
             
-              python RunUseCase.py --use_case ellipse_fd
+              python RunUseCase.py --use_case ellipsoid_fd
 
-This calls ellipse_fd.py which:
+This calls ellipsoid_fd.py which:
 * Loads data (uses local data if it exists, otherwise data is automatically downloaded from SCI servers)
 * Loads the exisitng shape model and converts the new segmentations into distance transforms.
 * Optimizes particle distribution by calling in OptimizeUtils.py
@@ -353,7 +360,7 @@ The steps are described below and the results of each step are shown for the mes
 9. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 10. Distance Transform - Finally the distance transform it taken and the data is ready for ShapeWorks optimize.
 
-![Grooming steps](images/FemurGroomPipeline.png)
+![Grooming steps](images/FemurGroomPipeline.PNG)
 
 ### Optimize
 For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
@@ -385,3 +392,5 @@ Single scale optimization is used with procrustes scaling to factor out size as 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
 For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
 
+## Dataset Guidelines
+Check out [Datasets.md](Datasets.md) for dataset upload instructions and guidelines. 

@@ -1,10 +1,4 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleImageDomainWithGradients.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
-
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
@@ -12,8 +6,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleImageDomainWithGradients_h
-#define __itkParticleImageDomainWithGradients_h
+#pragma once
 
 #include "itkImage.h"
 #include "itkImageDuplicator.h"
@@ -35,43 +28,28 @@ namespace itk
  * \sa ParticleDomain
  */
 template <class T, unsigned int VDimension=3>
-class ITK_EXPORT ParticleImageDomainWithGradients : public ParticleImageDomain<T, VDimension>
+class ParticleImageDomainWithGradients : public ParticleImageDomain<T, VDimension>
 {
 public:
-  /** Standard class typedefs */
-  typedef ParticleImageDomainWithGradients Self;
-  typedef ParticleImageDomain<T, VDimension> Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef SmartPointer<ParticleImageDomainWithGradients<T, VDimension>>  Pointer;
 
-    /** Point type of the domain (not necessarily of the image). */
-  typedef typename Superclass::PointType PointType;
-  
-  typedef typename Superclass::ImageType ImageType;
-  typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
+  /** Point type of the domain (not necessarily of the image). */
+  typedef typename ParticleImageDomain<T, VDimension>::PointType PointType;
+  typedef typename ParticleImageDomain<T, VDimension>::ImageType ImageType;
+  typedef typename ParticleImageDomain<T, VDimension>::ScalarInterpolatorType ScalarInterpolatorType;
+
   typedef GradientImageFilter<ImageType> GradientImageFilterType;
   typedef typename GradientImageFilterType::OutputImageType GradientImageType;
-  typedef VectorLinearInterpolateImageFunction<GradientImageType, typename PointType::CoordRepType>
-  GradientInterpolatorType;
+  typedef VectorLinearInterpolateImageFunction<GradientImageType, typename PointType::CoordRepType> GradientInterpolatorType;
 
   typedef FixedArray<T, 3> VectorType;
   typedef vnl_vector_fixed<T, 3> VnlVectorType;
-  
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleImageDomainWithGradients, ParticleImageDomain);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
-    Superclass::SetImage(I);
+    ParticleImageDomain<T, VDimension>::SetImage(I);
  
     // Compute gradient image and set up gradient interpolation.
     typename GradientImageFilterType::Pointer filter = GradientImageFilterType::New();
@@ -82,8 +60,9 @@ public:
     
     m_GradientInterpolator->SetInputImage(m_GradientImage);
   }
-  itkGetObjectMacro(GradientImage, GradientImageType);
-
+  virtual GradientImageType* GetGradientImage() {
+    return this->m_GradientImage.GetPointer();
+  }
 
   /** Sample the image at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleGradientsVnl returns a vnl
@@ -100,50 +79,38 @@ public:
       }
   }
   inline VnlVectorType SampleGradientVnl(const PointType &p) const
-  { return VnlVectorType( this->SampleGradient(p).GetDataPointer() ); }
+  { 
+    return VnlVectorType( this->SampleGradient(p).GetDataPointer() ); 
+  }
   inline VnlVectorType SampleNormalVnl(const PointType &p, T epsilon = 1.0e-5) const
   {
     VnlVectorType grad = this->SampleGradientVnl(p);
-    grad = grad.normalize();
-//    double q = 1.0 / (grad.magnitude() + epsilon);
-//    for (unsigned int i = 0; i < VDimension; i++) { grad[i] *= q;
-        /* PRATEEP */
-        // reverse normal directions
-//        grad[i] *= -1.0;
-//    }
-    return grad;
+    return grad.normalize();
   }
-  
-  /** Allow public access to the scalar interpolator. */
-  itkGetObjectMacro(GradientInterpolator, GradientInterpolatorType);
 
+  virtual GradientInterpolatorType* GetGradientInterpolator() {
+    return this->m_GradientInterpolator.GetPointer();
+  }
 
   /** This method is called by an optimizer after a call to Evaluate and may be
       used to apply any constraints the resulting vector, such as a projection
       to the surface tangent plane. Returns true if the gradient was modified.*/
-  virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos,
-                                      double maxtimestep) const
-    
+  vnl_vector_fixed<double, VDimension> ProjectVectorToSurfaceTangent(vnl_vector_fixed<double, VDimension> &gradE,
+                                      const PointType &pos) const override
   {
-    if (this->m_ConstraintsEnabled == true)
-      {
-      const double epsilon = 1.0e-10;
-      
-      double dotprod = 0.0;  
-      VnlVectorType normal =  this->SampleNormalVnl(pos, epsilon);
-      for (unsigned int i = 0; i < VDimension; i++) {   dotprod  += normal[i] * gradE[i]; }
-      for (unsigned int i = 0; i < VDimension; i++) {   gradE[i] -= normal[i] * dotprod; }
-     
-      return true;
-      }
-    else return false;
+    const double epsilon = 1.0e-10;
+    double dotprod = 0.0;  
+    VnlVectorType normal =  this->SampleNormalVnl(pos, epsilon);
+    for (unsigned int i = 0; i < VDimension; i++) {   dotprod  += normal[i] * gradE[i]; }
+    vnl_vector_fixed<double, VDimension> result;
+    for (unsigned int i = 0; i < VDimension; i++) { result[i] = gradE[i] - normal[i] * dotprod; }
+    return result;
   }
 
   /** Used when a domain is fixed. */
-  void DeleteImages()
+  void DeleteImages() override
   {
-    Superclass::DeleteImages();
+    ParticleImageDomain<T, VDimension>::DeleteImages();
     m_GradientImage = 0;
     m_GradientInterpolator = 0;
   }
@@ -153,32 +120,18 @@ protected:
   {
     m_GradientInterpolator = GradientInterpolatorType::New();
   }
+  virtual ~ParticleImageDomainWithGradients() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
-    Superclass::PrintSelf(os, indent);
+    ParticleImageDomain<T, VDimension>::PrintSelf(os, indent);
     os << indent << "m_GradientImage = " << m_GradientImage << std::endl;
     os << indent << "m_GradientInterpolator = " << m_GradientInterpolator << std::endl;
   }
-  virtual ~ParticleImageDomainWithGradients() {};
   
 private:
-  ParticleImageDomainWithGradients(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
-
   typename GradientImageType::Pointer m_GradientImage;
   typename GradientInterpolatorType::Pointer m_GradientInterpolator;
 };
 
 } // end namespace itk
-
-
-#if ITK_TEMPLATE_EXPLICIT
-//# include "Templates/itkParticleImageDomainWithGradients+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-//# include "itkParticleImageDomainWithGradients.txx"
-#endif
-
-#endif

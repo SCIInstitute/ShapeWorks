@@ -52,30 +52,30 @@ Users
 
 The latest shapeworks release can be downloaded here:
 
-https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.1
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.3.1
+
+Features added across releases can be seen at [ChangeLog](ChangeLog).
+
+Binary Installation Documentation
+--------------------------------
+[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)
+[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)
+[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/PACKAGE_README.txt)
+
 
 Developers
 ---------------------
 Please see **[BUILD.md](BUILD.md)** for the current build instructions.  
-
-<!-- the below is not updated with dead linkes
-Documentation is generated from [the gh-pages branch in GitHub.](https://github.com/SCIInstitute/ShapeWorks/tree/gh-pages)
--->
+Please see **[Datasets.md](Documentation/Datasets.md)** for dataset upload instructions and guidelines.
 
 **Bug report:** As a developer, if you encounter any problems or bugs, please report them using [the issue tracker on GitHub](https://github.com/SCIInstitute/ShapeWorks/issues). This includes feature requests. Feel free to add improvements using git pull requests.
 
 Getting Started
 =====================
 
-See the [ellipsoid example](http://sciinstitute.github.io/ShapeWorks/ellipsoidMain.html) for a python-scripted standard shape modeling workflow using ShapeWorks tools. More use cases will be released in future.
+See the [use cases](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/UseCases.md) for python-scripted standard shape modeling workflow using ShapeWorks tools. 
 
-<!-- the below page had dead links and 
-[ShapeWorks user documentation.](http://sciinstitute.github.io/ShapeWorks/)
--->
-
-<!--
-Desired: https://shapeworks.sci.utah.edu/docs
--->
+See documentation for the [groom](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md), [optimize](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md), and  [analyze](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md) tools for more detail.
 
 Acknowledgements
 =====================
@@ -86,7 +86,7 @@ If you use ShapeWorks in work that leads to published research, we humbly ask th
 National Institute of General Medical Sciences of the National Institutes of Health under 
 grant number P41GM103545."
 -->
->"This work was supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, and NIGMS-P41GM103545."
+>"This work was supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545."
 
 and add the following 'disclaimer':
 
@@ -134,6 +134,7 @@ Researchers
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
 - [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
+- [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
 
 Past Contributors
 ---------------------
@@ -179,6 +180,10 @@ In Journal of Orthopaedic Research, Vol. 31, No. 4, pp. 651--657. 2013.
 M.D. Harris, M. Datar, R.T. Whitaker, E.R. Jurrus, C.L. Peters, A.E. Anderson. 
 "Statistical Shape Modeling of Cam Femoroacetabular Impingement," In Journal of Orthopaedic Research, 
 Vol. 31, No. 10, pp. 1620--1626. 2013.
+</p>
+
+<p align="justify">
+M. Datar, I. Lyu, S. Kim, J. Cates, M. Styner, R. Whitaker. "Geodesic distances to landmarks for dense correspondence on ensembles of complex shapes," In International Conference on Medical Image Computing and Computer-Assisted Intervention, Springer, Berlin, Heidelberg, pp. 19-26, 2013.
 </p>
 
 <p align="justify">

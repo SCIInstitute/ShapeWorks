@@ -32,7 +32,11 @@ public:
   bool compare_equal(const Image &other);
 
 private:
+
+  static bool is_directory(const std::string &pathname);
+
+  bool read_image_dir(const std::string &pathname);
+
   ImageType::Pointer image;
 };
-
 } // shapeworks

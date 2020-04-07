@@ -11,7 +11,11 @@
 #include <itkConstantPadImageFilter.h>
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
-// #include <itkTranslationTransform.h>
+#include <itkImageSeriesReader.h>
+#include <itkGDCMImageIO.h>
+#include <itkGDCMSeriesFileNames.h>
+
+#include <sys/stat.h>
 
 namespace shapeworks {
 
@@ -25,6 +29,11 @@ bool Image::read(const std::string &inFilename)
   {
     std::cerr << "Empty filename passed to read; returning false." << std::endl;
     return false;
+  }
+
+  if (Image::is_directory(inFilename))
+  {
+    return this->read_image_dir(inFilename);
   }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -44,6 +53,36 @@ bool Image::read(const std::string &inFilename)
 #if DEBUG_CONSOLIDATION
   std::cout << "Successfully read image " << inFilename << std::endl;
 #endif
+  this->image = reader->GetOutput();
+  return true;
+}
+
+/// read_image_dir
+/// \param pathname directory containing image series
+bool Image::read_image_dir(const std::string &pathname)
+{
+  using ReaderType = itk::ImageSeriesReader<ImageType>;
+  using ImageIOType = itk::GDCMImageIO;
+  using InputNamesGeneratorType = itk::GDCMSeriesFileNames;
+
+  ImageIOType::Pointer gdcm_io = ImageIOType::New();
+  InputNamesGeneratorType::Pointer input_names = InputNamesGeneratorType::New();
+  input_names->SetInputDirectory(pathname);
+
+  const ReaderType::FileNamesContainer &filenames = input_names->GetInputFileNames();
+  ReaderType::Pointer reader = ReaderType::New();
+  reader->SetImageIO(gdcm_io);
+  reader->SetFileNames(filenames);
+
+  try
+  {
+    reader->Update();
+  } catch (itk::ExceptionObject &exp) {
+    std::cerr << "Failed to read dicom dir: " << pathname << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
   this->image = reader->GetOutput();
   return true;
 }
@@ -98,7 +137,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
-  
+
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
   filter->SetMaximumRMSError(maxRMSErr);
@@ -111,7 +150,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
 
   try
   {
-    filter->Update();  
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -121,7 +160,7 @@ bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayer
   }
 
 #if DEBUG_CONSOLIDATION
- std::cout << "Antialias filter succeeded!\n";
+  std::cout << "Antialias filter succeeded!\n";
 #endif
   return true;
 }
@@ -149,7 +188,7 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 
   try
   {
-    filter->Update();  
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -165,7 +204,7 @@ bool Image::binarize(PixelType threshold, PixelType inside, PixelType outside)
 }
 
 /// recenter
-/// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
+/// recenters by changing origin (in the image header) to the physical coordinates of the center of the image
 bool Image::recenter()
 {
   if (!this->image)
@@ -183,7 +222,7 @@ bool Image::recenter()
 
   try
   {
-    filter->Update();  
+    filter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -220,7 +259,7 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   resampler->SetOutputSpacing(spacing);
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
-  
+
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
   {
     ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
@@ -297,6 +336,18 @@ bool Image::compare_equal(const Image &other)
   return true;
 }
 
+bool Image::is_directory(const std::string &pathname)
+{
+  struct stat info;
+  if (stat(pathname.c_str(), &info) != 0) {
+    return false;
+  }
+  else if (info.st_mode & S_IFDIR) {
+    return true;
+  }
+  return false;
+}
+
 bool Image::pad(int padding, PixelType value)
 {
   if (!this->image)
@@ -326,7 +377,7 @@ bool Image::pad(int padding, PixelType value)
 
   try
   {
-    padFilter->Update();  
+    padFilter->Update();
   }
   catch (itk::ExceptionObject &exp)
   {
@@ -339,144 +390,5 @@ bool Image::pad(int padding, PixelType value)
   std::cout << "Pad image with constant succeeded!\n";
 #endif
   return true;
-
 }
-
-//need to call antialias before and isoresample after for binary images
-bool Image::centerofmassalign(bool useCenterOfMass, float centerX, float centerY, float centerZ, const std::string &dataFilename)
-{
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
-  double imageCenterX, imageCenterY, imageCenterZ;
-  const unsigned int Dimension = 3;
-
-  using TransformType = itk::TranslationTransform<double, Dimension>;
-  TransformType::Pointer transform = TransformType::New();
-  TransformType::OutputVectorType translation;
-
-  if(useCenterOfMass == true)
-  {
-    // getting the origin of the shape
-    itk::ImageRegionIteratorWithIndex <ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
-    float numPixels = 0.0, meanX = 0.0, meanY = 0.0, meanZ = 0.0;
-    while(!imageIt.IsAtEnd())
-    {
-        PixelType val = imageIt.Get();
-        ImageType::IndexType index;
-        ImageType::PointType point;
-        index = imageIt.GetIndex();
-
-        if(val == 1)
-        {
-            numPixels = numPixels+1;
-            image->TransformIndexToPhysicalPoint(index, point);
-            meanX = meanX + point[0];
-            meanY = meanY + point[1];
-            meanZ = meanZ + point[2];
-        }
-        ++imageIt;
-    }
-
-    meanX = meanX/numPixels;
-    meanY = meanY/numPixels;
-    meanZ = meanZ/numPixels;
-
-    imageCenterX = meanX;
-    imageCenterY = meanY;
-    imageCenterZ = meanZ;
-  }
-  else  /*using center of ostium coordinates*/
-  {
-    imageCenterX = centerX;
-    imageCenterY = centerY;
-    imageCenterZ = centerZ;
-  }
-
-  ImageType::PointType origin = image->GetOrigin();
-  ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
-
-  ImageType::IndexType index;
-  ImageType::PointType point;
-  ImageType::PointType center;
-
-  index[0] = 0; index[1] = 0; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] = point[0]; center[1] = point[1]; center[2] = point[2];
-
-  index[0] = 0; index[1] = 0; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = 0; index[1] = size[1]-1; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = 0; index[1] = size[1]-1; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = 0; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = 0; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = 0;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  index[0] = size[0]-1; index[1] = size[1]-1; index[2] = size[2]-1;
-  image->TransformIndexToPhysicalPoint(index, point);
-  center[0] += point[0]; center[1] += point[1]; center[2] += point[2];
-
-  center[0] /= 8.0; center[1] /= 8.0; center[2] /= 8.0;
-
-  // move object's origin to zero then move to the region center
-  translation[0] = -1*(-imageCenterX + center[0]);
-  translation[1] = -1*(-imageCenterY + center[1]);
-  translation[2] = -1*(-imageCenterZ + center[2]);
-
-  // transform->Translate(translation);
-
-  if (dataFilename.empty())
-  {
-    std::cerr << "Empty filename passed to write data; returning false." << std::endl;
-    return false;
-  }
-
-  std::ofstream ofs;
-  std::string fname = dataFilename;
-  const char *filename = fname.c_str();
-  ofs.open(filename);
-
-  ofs << "translation:" << translation[0] << " " << translation[1] << " " << translation[2] << "\n";
-  ofs << "origin:" << origin[0] << " " << origin[1] << " " << origin[2] << "\n";
-  ofs << "object center:" << imageCenterX << " " << imageCenterY << " " << imageCenterZ << "\n";
-  ofs << "image center:" << center[0] << " " << center[1] << " " << center[2] << "\n";
-
-  ofs.close();
-
-  try
-  {
-    // transform->Update();
-    transform->Translate(translation);
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Center of mass alignment failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-  std::cout << "Center of mass alignment succeeded!\n";
-  return true;
-
-}
-
 } // Shapeworks

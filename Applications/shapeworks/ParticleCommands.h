@@ -1,68 +1,74 @@
-#ifndef SHAPEWORKS_PARTICLECOMMANDS_H
-#define SHAPEWORKS_PARTICLECOMMANDS_H
+#pragma once
 
 #include "Command.h"
 
 namespace shapeworks {
 ///////////////////////////////////////////////////////////////////////////////
-class ReadParticleSystem : public ParticleSystemCommand {
+class ReadParticleSystem : public ParticleSystemCommand
+{
 public:
-    static ReadParticleSystem &getCommand() {
-        static ReadParticleSystem instance;
-        return instance;
-    }
+  static ReadParticleSystem &getCommand()
+  {
+    static ReadParticleSystem instance;
+    return instance;
+  }
 
 private:
-    ReadParticleSystem() { buildParser(); }
+  ReadParticleSystem() { buildParser(); }
 
-    void buildParser() override;
+  void buildParser() override;
 
-    int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-class Compactness : public ParticleSystemCommand {
+class Compactness : public ParticleSystemCommand
+{
 public:
-    static Compactness &getCommand() {
-        static Compactness instance;
-        return instance;
-    }
+  static Compactness &getCommand()
+  {
+    static Compactness instance;
+    return instance;
+  }
 
 private:
-    Compactness() { buildParser(); }
+  Compactness() { buildParser(); }
 
-    void buildParser() override;
+  void buildParser() override;
 
-    int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-class Generalization : public ParticleSystemCommand {
+class Generalization : public ParticleSystemCommand
+{
 public:
-    static Generalization &getCommand() {
-        static Generalization instance;
-        return instance;
-    }
+  static Generalization &getCommand()
+  {
+    static Generalization instance;
+    return instance;
+  }
 
 private:
-    Generalization() { buildParser(); }
+  Generalization() { buildParser(); }
 
-    void buildParser() override;
+  void buildParser() override;
 
-    int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-class Specificity : public ParticleSystemCommand {
+class Specificity : public ParticleSystemCommand
+{
 public:
-    static Specificity &getCommand() {
-        static Specificity instance;
-        return instance;
-    }
+  static Specificity &getCommand()
+  {
+    static Specificity instance;
+    return instance;
+  }
 
 private:
-    Specificity() { buildParser(); }
+  Specificity() { buildParser(); }
 
-    void buildParser() override;
+  void buildParser() override;
 
-    int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 }
-#endif //SHAPEWORKS_PARTICLECOMMANDS_H

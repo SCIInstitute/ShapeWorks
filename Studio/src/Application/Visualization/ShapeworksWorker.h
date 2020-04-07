@@ -5,16 +5,16 @@
 #include <Groom/ShapeWorksGroom.h>
 #include <Data/Project.h>
 
-class ShapeWorksOptimize;
+class Optimize;
 
 class ShapeworksWorker : public QObject
 {
   Q_OBJECT
 
 public:
-  enum ThreadType { Groom, Optimize, Reconstruct };
+  enum ThreadType { GroomType, OptimizeType, ReconstructType };
   ShapeworksWorker(ThreadType type, ShapeWorksGroom* groom,
-                   ShapeWorksOptimize* optimize,
+                   Optimize* optimize,
                    QSharedPointer<Project> project,
                    std::vector<std::vector<itk::Point<double>>> local_pts =
                      std::vector<std::vector<itk::Point<double>>>(),
@@ -40,7 +40,7 @@ Q_SIGNALS:
 
 private:
   ShapeWorksGroom* groom_;
-  ShapeWorksOptimize* optimize_;
+  Optimize* optimize_;
   QSharedPointer<Project> project_;
   ThreadType type_;
   std::vector<std::vector<itk::Point<double>>> local_pts_;
