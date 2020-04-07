@@ -55,7 +55,7 @@ void Executable::addCommand(Command &command)
   if (cmdkey != commands.end()) {
     throw std::runtime_error(cmdkey->first + " already exists!");
   }
-#if DEBUG_CONSOLIDATION
+#if 0 && DEBUG_CONSOLIDATION
   std::cout << "Adding " << command.name() << "...\n";
 #endif
   commands.insert(std::pair<std::string, Command&>(command.name(), command));
@@ -91,7 +91,7 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
   {
     auto cmd = commands.find(arguments[0]);
     if (cmd != commands.end()) {
-#if DEBUG_CONSOLIDATION
+#if 0 && DEBUG_CONSOLIDATION
       std::cout << "Executing " << cmd->first << "...\n";
 #endif
       auto args = std::vector<std::string>(arguments.begin() + 1, arguments.end());

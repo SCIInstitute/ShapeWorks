@@ -6,6 +6,7 @@
 namespace shapeworks {
 
 // boilerplate for a command. Copy this to start a new command
+// Next, be sure to add the command to shapeworks.cpp!
 #if 0
 ///////////////////////////////////////////////////////////////////////////////
 // Example
@@ -182,6 +183,7 @@ void RecenterImage::buildParser()
 {
   const std::string prog = "recenter";
   const std::string desc = "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image";
+  parser.prog(prog).description(desc);
 
   Command::buildParser();
 }
@@ -486,7 +488,7 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 void TopologyPreservingFilter::buildParser()
 {
   const std::string prog = "topo-preserving-smooth";
-  const std::string desc = "helper command that applies curvature, gradient, sigmoid, uses them for the TPLevelSet filter";
+  const std::string desc = "helper command that applies curvature, gradient, sigmoid, and uses them for the TPLevelSet filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("scale for TPLevelSet level set filter");
