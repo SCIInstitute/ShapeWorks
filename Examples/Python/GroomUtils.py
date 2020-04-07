@@ -55,6 +55,10 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
             cmd.extend(["recenter"])
 
         cmd.extend(["write-image", "--name", outname])
+<<<<<<< HEAD
+=======
+        print("Calling cmd:\n"+" ".join(cmd))
+>>>>>>> origin/shapeworks_doc
         subprocess.check_call(cmd)
     return outDataList
 
