@@ -401,13 +401,6 @@ bool Image::warp(std::string &source_file, std::string &target_file, int pointFa
     std::cerr << "No image loaded, so returning false." << std::endl;
     return false;
   }
-  // typedef double CoordinateRepType;
-  // typedef itk::ThinPlateSplineKernelTransform< CoordinateRepType, ImageDimension> TransformType;
-  // typedef   itk::Point< CoordinateRepType, ImageDimension >  PointType;
-  // typedef   std::vector< PointType > PointArrayType;
-  // typedef   TransformType::PointSetType PointSetType;
-  // typedef   PointSetType::Pointer  PointSetPointer;
-  // typedef   PointSetType::PointIdentifier PointIdType;
   using ResamplerType = itk::ResampleImageFilter< ImageType, ImageType>;
   typedef   itk::LinearInterpolateImageFunction< ImageType, double > InterpolatorType;
   // first need to read the source and target container
@@ -466,13 +459,13 @@ bool Image::warp(std::string &source_file, std::string &target_file, int pointFa
   }
   catch (itk::ExceptionObject &exp)
   {
-    std::cerr << "Pad image with constant failed:" << std::endl;
+    std::cerr << "Warp image failed:" << std::endl;
     std::cerr << exp << std::endl;
     return false;
   }
 
 #if DEBUG_CONSOLIDATION
-  std::cout << "Pad image with constant succeeded!\n";
+  std::cout << "Image warp succeeded!\n";
 #endif
   return true;
 
