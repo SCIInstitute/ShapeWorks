@@ -56,10 +56,14 @@ void RBFShape::solve_system(const Eigen::MatrixXd & points){
     EigenRBFSolver solver = EigenRBFSolver();
     this->points_ = points;
 
-    this->TPSWeights = solver.solveForCoefficients(this->kernel, this->points_);
+    this->PointSolutions = solver.solveForCoefficients(this->kernel, this->points_);
 
-    size_t n = this->TPSWeights.size();
-    this->coeff_ = {this->TPSWeights[n - 3], this->TPSWeights[n - 2], this->TPSWeights[n - 1], this->TPSWeights[n - 4]};
+    size_t n = this->PointSolutions.size();
+    auto first = this->PointSolutions.begin();
+    auto last = this->PointSolutions.begin() + n - 4;
+    this->TPSWeights = std::vector<double>(first, last);
+
+    this->coeff_ = {this->PointSolutions[n - 3], this->PointSolutions[n - 2], this->PointSolutions[n - 1], this->PointSolutions[n - 4]};
 }
 
 //Writes RBFShape into a Eq file format

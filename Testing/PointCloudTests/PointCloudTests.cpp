@@ -30,6 +30,11 @@ std::vector<double> flat_test(int side_length, int sep){
 
     Eigen::Index count = 0;
 
+    std::ofstream file;
+    file.open("flat_surface.ev");
+    file << std::fixed;
+    file << std::setprecision(5);
+
     for(size_t i = 0; i < side_length; i++){
         for(size_t j = 0; j < side_length; j++){
            flat(count,0) = i*sep;
@@ -39,21 +44,25 @@ std::vector<double> flat_test(int side_length, int sep){
            flat_normals(count,2) = 1.;
            count++;
 
+           file << float(i*sep) << " " << float(j*sep) << " " << 0.0 << " " << i+1 << " " << j+1 << "\n";
+
            flat(count,0) = i*sep;
            flat(count,1) = j*sep;
-           flat(count,2) = 1.;
-           flat(count,3) = 1.;
+           flat(count,2) = 10.;
+           flat(count,3) = 10.;
            flat_normals(count,2) = 1.;
            count++;
 
            flat(count,0) = i*sep;
            flat(count,1) = j*sep;
-           flat(count,2) = -1.;
-           flat(count,3) = -1.;
+           flat(count,2) = -10.;
+           flat(count,3) = -10.;
            flat_normals(count,2) = 1.;
            count++;
         }
     }
+
+    file.close();
 
     std::cout << "Creating RBF..." << std::endl;
 
@@ -97,13 +106,15 @@ std::vector<double> flat_test(int side_length, int sep){
 
 //Ellipsoid test
 std::vector<double> sphere_test() {
-  int n = 2;
+  int n = 5;
+  double radius = 100;
+  double true_mag = 1.;
   double r[3] = {1.,2.,3.};
   double c[3] = {0.,0.,0.};
   size_t ng;
-  double* ellipsoid_pts = get_bounding_sphere(n, ng, 5);
-  double* ellipsoid_pts_in = get_bounding_sphere(n, ng, 4);
-  double* ellipsoid_pts_out = get_bounding_sphere(n, ng, 6);
+  double* ellipsoid_pts = get_bounding_sphere(n, ng, radius);
+  double* ellipsoid_pts_in = get_bounding_sphere(n, ng, radius - true_mag);
+  double* ellipsoid_pts_out = get_bounding_sphere(n, ng, radius + true_mag);
 
   int count = ng;
 
@@ -133,6 +144,15 @@ std::vector<double> sphere_test() {
     double norm[3] = {ix-ix_in, iy-iy_in, iz-iz_in};
     double magnitude = sqrt(norm[0]*norm[0] + norm[1]*norm[1] + norm[2]*norm[2]);
 
+    if(abs(magnitude - true_mag) > 1e-5)
+        std::cout << magnitude << std::endl;
+
+    double norm2[3] = {ix-ix_out, iy-iy_out, iz-iz_out};
+    double magnitude2 = sqrt(norm2[0]*norm2[0] + norm2[1]*norm2[1] + norm2[2]*norm2[2]);
+
+    if(abs(magnitude2 - true_mag) > 1e-5)
+        std::cout << magnitude2 << std::endl;
+
     ellipsoid(i, 0) = ix;
     ellipsoid(i, 1) = iy;
     ellipsoid(i, 2) = iz;
@@ -140,11 +160,11 @@ std::vector<double> sphere_test() {
     ellipsoid(i+count,0) = ix_in;
     ellipsoid(i+count,1) = iy_in;
     ellipsoid(i+count,2) = iz_in;
-    ellipsoid(i+count,3) = -1.;
+    ellipsoid(i+count,3) = -true_mag;
     ellipsoid(i+count*2,0) = ix_out;
     ellipsoid(i+count*2,1) = iy_out;
     ellipsoid(i+count*2,2) = iz_out;
-    ellipsoid(i+count*2,3) = 1.;
+    ellipsoid(i+count*2,3) = true_mag;
 
     ellipsoid_normals(i,0) = norm[0]/magnitude;
     ellipsoid_normals(i,1) = norm[1]/magnitude;
