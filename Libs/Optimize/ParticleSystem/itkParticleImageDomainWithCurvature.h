@@ -50,7 +50,6 @@ public:
   typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
   typedef typename Superclass::VnlMatrixType VnlMatrixType;
 
-  openvdb::FloatGrid::Ptr m_VDBCurvature;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -67,50 +66,7 @@ public:
   {
     // Computes partial derivatives in parent class
     Superclass::SetImage(I);
-
-    typedef itk::DiscreteGaussianImageFilter<ImageType, ImageType> DiscreteGaussianImageFilterType;
-    typename DiscreteGaussianImageFilterType::Pointer f = DiscreteGaussianImageFilterType::New();
-
-    double sig =  this->GetSpacing()[0] * 0.5;
-    
-    f->SetVariance(sig);
-    f->SetInput(I);
-    f->SetUseImageSpacingOn();
-    f->Update();
-
-    // NOTE: Running the image through a filter seems to be the only way
-    // to get all of the image information correct!  Set the variance to
-    // positive value to smooth the curvature calculations.
-
-    m_VDBCurvature = openvdb::FloatGrid::create(1e-6f);
-    auto vdbAccessor = m_VDBCurvature->getAccessor();
-
-    itk::ImageRegionIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
-    itk::ImageRegionIteratorWithIndex<ImageType> curvIt(f->GetOutput(),
-                                                    f->GetOutput()->GetRequestedRegion());
-
-    for (; !curvIt.IsAtEnd(); ++curvIt, ++it) {
-      const auto idx = curvIt.GetIndex();
-      if (idx != it.GetIndex()) {
-        throw std::runtime_error("Bad index");
-      }
-      const auto pixel = it.Get();
-
-      if (abs(pixel) > 4.0) {
-        continue;
-      }
-
-      PointType pos;
-      I->TransformIndexToPhysicalPoint(idx, pos);
-
-      const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-      vdbAccessor.setValue(coord, this->MeanCurvature(pos));
-    }
-
-    // Release the memory in the parent hessian images.
-    //this->DeletePartialDerivativeImages();
-    
-
+    m_VDBCurvature = openvdb::tools::meanCurvature(*this->GetVDBImage());
   } // end setimage
 
   double GetCurvature(const PointType &p) const
@@ -123,11 +79,6 @@ public:
     return v2;
   }
 
-  /*
-  typename ImageType::Pointer *GetCurvatureImage()
-  { return m_CurvatureImage; }
-  */
-
 protected:
   ParticleImageDomainWithCurvature()
   {
@@ -139,43 +90,7 @@ protected:
   }
   virtual ~ParticleImageDomainWithCurvature() {};
 
-  double MeanCurvature(const PointType& pos)
-  {
-    // See Kindlmann paper "Curvature-Based Transfer Functions for Direct Volume
-    // Rendering..." for detailss
-    
-    // Get the normal vector associated with this position.
-    //VnlVectorType posnormal = this->SampleNormalVnl(pos, 1.0e-10);
-    typename Superclass::VnlVectorType posnormal = this->SampleNormalVnl(pos, 1.0e-6);
-
-    // Sample the Hessian for this point and compute gradient of the normal.
-    typename Superclass::VnlMatrixType I;
-    I.set_identity();
-    
-    typename Superclass::VnlMatrixType H = this->SampleHessianVnl(pos);
-    typename Superclass::VnlMatrixType P = I - outer_product(posnormal, posnormal);
-    typename Superclass::VnlMatrixType G = P.transpose() * H * P;
-  
-    // Compute the principal curvatures k1 and k2
-    double frobnorm = sqrt(fabs(this->vnl_trace(G * G.transpose())) + 1.0e-10);
-    double trace = this->vnl_trace(G);
-    //    std::cout << "trace = " << trace << std::endl;
-    //    std::cout << "G =  " << G << std::endl;
-    //        std::cout << "frobnorm = " << frobnorm << std::endl;
-    double diff1 = frobnorm * frobnorm *2.0;
-    double diff2 = trace * trace;
-    double frobnorm2;
-
-    if (frobnorm <= trace) frobnorm2 = 0.0;
-	else  frobnorm2 = sqrt((diff1 - diff2 < 0.0) ? 0.0 : diff1 - diff2);
-    double k1 = (trace + frobnorm2) * 0.5;
-    double k2 = (trace - frobnorm2) * 0.5;
-    //        std::cout << "k1 = " << k1 << std::endl;
-    //        std::cout << "k2= " << k2 << std::endl;
-    // Compute the mean curvature.
-    //  double mc = fabs((k1 + k2) / 2.0);
-    return sqrt(k1 * k1 + k2 * k2);  
-  }
+  openvdb::FloatGrid::Ptr m_VDBCurvature;
 
   inline double vnl_trace(const VnlMatrixType &m) const
   {

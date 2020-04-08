@@ -23,6 +23,7 @@
 #include "itkGradientImageFilter.h"
 #include "itkFixedArray.h"
 
+
 namespace itk
 {
 /** \class ParticleImageDomainWithGradients
@@ -75,39 +76,7 @@ public:
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
-
-    // Compute gradient image and set up gradient interpolation.
-    typename GradientImageFilterType::Pointer filter = GradientImageFilterType::New();
-    filter->SetInput(I);
-    filter->SetUseImageSpacingOn();
-    filter->Update();
-    const auto gradI = filter->GetOutput();
-
-#ifdef USE_OPENVDB
-    m_VDBGradient = openvdb::VectorGrid::create();
-    auto vdbAccessor = m_VDBGradient->getAccessor();
-
-    ImageRegionIterator<GradientImageType> gradIt(gradI, gradI->GetRequestedRegion());
-    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
-    gradIt.GoToBegin();
-    it.GoToBegin();
-    while(!gradIt.IsAtEnd()) {
-        const auto idx = gradIt.GetIndex();
-        if(idx != it.GetIndex()) {
-            throw std::runtime_error("Bad index");
-        }
-        const vnl_vector_ref<float> grad = gradIt.Get().GetVnlVector();
-        const auto pixel = it.Get();
-        if(abs(pixel) > 4.0) {
-            ++gradIt; ++it;
-            continue;
-        }
-        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-        vdbAccessor.setValue(coord, openvdb::Vec3f(grad[0], grad[1], grad[2]));
-        ++gradIt; ++it;
-    }
-#endif
-
+    m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
   }
   // itkGetObjectMacro(GradientImage, GradientImageType);
 

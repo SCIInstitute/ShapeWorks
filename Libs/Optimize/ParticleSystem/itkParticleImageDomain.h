@@ -23,7 +23,7 @@
 #include <itkImage.h>
 #include <itkParticleRegionDomain.h>
 #include <itkLinearInterpolateImageFunction.h>
-#include "itkImageToVTKImageFilter.h"
+#include <itkImageToVTKImageFilter.h>
 #include <itkZeroCrossingImageFilter.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
 #include <chrono>
@@ -34,6 +34,7 @@
 #include "openvdb/openvdb.h"
 #include "openvdb/tools/SignedFloodFill.h"
 #include "openvdb/tools/Interpolation.h"
+#include <openvdb/tools/GridOperators.h>
 #endif
 
 namespace itk
@@ -61,10 +62,6 @@ public:
 
   /** Type of the ITK image used by this class. */
   typedef Image<T, VDimension> ImageType;
-
-#ifdef USE_OPENVDB
-  openvdb::FloatGrid::Ptr m_VDBImage;
-#endif
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -95,10 +92,9 @@ public:
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I)
   {
-#ifdef USE_OPENVDB
     openvdb::initialize();
     std::cout << "Initialized OpenVDB" << std::endl;
-    m_VDBImage = openvdb::FloatGrid::create(500000.0);
+    m_VDBImage = openvdb::FloatGrid::create();
     m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
     auto vdbAccessor = m_VDBImage->getAccessor();
 
@@ -192,8 +188,6 @@ public:
     
     this->SetLowerBound(l);
     this->SetUpperBound(u);
-#else
-#endif
   }
 
   inline double GetSurfaceArea() const {
@@ -270,6 +264,12 @@ public:
   }
 
 protected:
+
+  openvdb::FloatGrid::Ptr m_VDBImage;
+  openvdb::FloatGrid::Ptr GetVDBImage() const {
+    return m_VDBImage;
+  }
+
   ParticleImageDomain()
   {
   }
