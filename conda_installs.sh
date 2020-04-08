@@ -43,7 +43,7 @@ function install_conda() {
   if ! conda activate $CONDAENV; then return 1; fi
   
   # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip; then return 1; fi
+  if ! conda install --yes pip=20.0.2; then return 1; fi
   if ! pip install --upgrade pip; then return 1; fi
 
   #install shapeworks deps
