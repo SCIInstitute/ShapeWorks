@@ -55,11 +55,7 @@ public:
   inline VectorType SampleGradient(const PointType &p) const
   {
     if(this->IsInsideBuffer(p)) {
-      //TODO: Make this neater
-      auto o = this->GetOrigin();
-      auto sp = p;
-      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-      const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+      const auto coord = this->ToVDBCoord(p);
 
       const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
       const VectorType v(_v.asPointer()); // This copies 3 floats from a VDB vector to a vnl vector

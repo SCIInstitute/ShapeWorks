@@ -49,13 +49,8 @@ public:
 
   double GetCurvature(const PointType &p) const
   {
-    //TODO: Make neater
-    auto o = this->GetOrigin();
-    auto sp = p;
-    for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-    const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-    const T v = openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
-    return v;
+    const auto coord = this->ToVDBCoord(p);
+    return openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
   }
 
 protected:

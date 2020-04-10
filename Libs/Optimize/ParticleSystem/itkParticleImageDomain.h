@@ -143,13 +143,8 @@ public:
   inline T Sample(const PointType &p) const
   {
     if(IsInsideBuffer(p)) {
-      //TODO: Improve this code
-      auto o = GetOrigin();
-      auto sp = p;
-      for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-      const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
-      const T v = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
-      return v;
+      const auto coord = this->ToVDBCoord(p);
+      return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
       return 0.0;
     }
@@ -195,6 +190,14 @@ protected:
   {
     ParticleRegionDomain<T, VDimension>::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBImage->activeVoxelCount() << std::endl;
+  }
+
+  // Converts a coordinate from an ITK Image point to the corresponding
+  // coordinate in OpenVDB
+  inline openvdb::Vec3R ToVDBCoord(const PointType &p) const {
+    auto o = GetOrigin();
+    auto sp = p - o;
+    return openvdb::Vec3R(sp[0], sp[1], sp[2]);
   }
 
 private:

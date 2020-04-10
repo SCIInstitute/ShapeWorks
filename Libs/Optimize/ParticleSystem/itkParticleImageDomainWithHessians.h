@@ -138,11 +138,7 @@ public:
       matrix of size VDimension x VDimension. */
   inline VnlMatrixType SampleHessianVnl(const PointType &p) const
   {
-    //TODO: Make this neater
-    auto o = this->GetOrigin();
-    auto sp = p;
-    for(int i=0; i<3; i++) { sp[i] -= o[i]; }
-    const auto coord = openvdb::Vec3R(sp[0], sp[1], sp[2]);
+    const auto coord = this->ToVDBCoord(p);
 
     VnlMatrixType vdbAns;
     for (unsigned int i = 0; i < VDimension; i++)
