@@ -206,7 +206,6 @@ public:
   }
 
 protected:
-  //TODO: REMOVE?
   double m_SurfaceMeanCurvature;
   double m_SurfaceStdDevCurvature;
 
