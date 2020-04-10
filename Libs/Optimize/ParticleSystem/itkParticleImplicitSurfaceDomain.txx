@@ -17,8 +17,6 @@
 
 #include "vnl/vnl_math.h"
 #include "vnl/vnl_cross.h"
-#include <itkZeroCrossingImageFilter.h>
-#include <itkImageRegionConstIteratorWithIndex.h>
 #define PARTICLE_DEBUG_FLAG 1
 
 namespace itk
@@ -269,61 +267,6 @@ ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const
 }
 
 
-template <class T, unsigned int VDimension>
-void
-ParticleImplicitSurfaceDomain<T, VDimension>::ComputeSurfaceStatistics(ImageType *I)
-{
-  // TODO: This computation is copied from itkParticleMeanCurvatureAttribute
-  // Since the entire Image is not available after the initial load, its simplest
-  // to calculate it now. But it should be a part of itkParticleMeanCurvatureAttribute
-
-  // Loop through a zero crossing image, project all the zero crossing points
-  // to the surface, and use those points to comput curvature stats.
-  typedef itk::ZeroCrossingImageFilter<ImageType, ImageType> ZeroCrossingImageFilterType;
-  typename ZeroCrossingImageFilterType::Pointer zc = ZeroCrossingImageFilterType::New();
-
-  zc->SetInput(I);
-  zc->Update();
-
-  itk::ImageRegionConstIteratorWithIndex<ImageType> it(zc->GetOutput(),
-                                                       zc->GetOutput()->GetRequestedRegion());
-  std::vector<double> datalist;
-  m_SurfaceMeanCurvature = 0.0;
-  m_SurfaceStdDevCurvature = 0.0;
-
-  for (; !it.IsAtEnd(); ++it) {
-    if (it.Get() == 1.0) {
-      // Find closest pixel location to surface.
-      PointType pos;
-      //dynamic_cast<const DomainType
-      //*>(system->GetDomain(d))->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
-      I->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
-
-      // Project point to surface.
-      // Make sure constraints are enabled
-      //      bool c = domain->GetConstraintsEnabled();
-
-      //      domain->EnableConstraints();
-      this->ApplyConstraints(pos);
-
-      //      domain->SetConstraintsEnabled(c);
-
-      // Compute curvature at point.
-//      std::cout << "pos : " << pos[0] << ' ' << pos[1] << ' ' << pos[2] << std::endl;
-      double mc = this->GetCurvature(pos);
-      m_SurfaceMeanCurvature += mc;
-      datalist.push_back(mc);
-    }
-  }
-  double n = static_cast<double>(datalist.size());
-  m_SurfaceMeanCurvature /= n;
-
-  // Compute std deviation using point list
-  for (unsigned int i = 0; i < datalist.size(); i++) {
-    m_SurfaceStdDevCurvature += (datalist[i] - m_SurfaceMeanCurvature) * (datalist[i] - m_SurfaceMeanCurvature);
-  }
-  m_SurfaceStdDevCurvature = sqrt(m_SurfaceStdDevCurvature / (n - 1));
-}
 
 template<class T, unsigned int VDimension>
 bool

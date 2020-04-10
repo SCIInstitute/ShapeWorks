@@ -43,12 +43,6 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(ParticleImplicitSurfaceDomain);
 
-  void SetImage(ImageType *I)
-  {
-    Superclass::SetImage(I);
-    ComputeSurfaceStatistics(I);
-  }
-
   /** Set/Get the precision of the projection operation.  The resulting projection
       will be within the specified tolerance. */
   virtual void SetTolerance(const T _Tolerance) {
@@ -61,7 +55,7 @@ public:
   virtual T GetTolerance() {
     return this->m_Tolerance;
   }
-
+  
   /** Apply any constraints to the given point location.  This method
       constrains points to lie within the given domain and on a given implicit
       surface.  If the point is not already on the surface, it is projected
@@ -175,18 +169,6 @@ public:
       return m_CuttingPlanePoint.size();
   }
 
-  inline double GetSurfaceMeanCurvature() const
-  {
-    return m_SurfaceMeanCurvature;
-  }
-
-  inline double GetSurfaceStdDevCurvature() const
-  {
-    return m_SurfaceStdDevCurvature;
-  }
-
-  void ComputeSurfaceStatistics(ImageType *I);
-
   void PrintCuttingPlaneConstraints(std::ofstream &out) const override {
     for (unsigned int j = 0; j < GetNumberOfPlanes(); j++) {
       vnl_vector_fixed < double, 3 > a = m_a[j];
@@ -206,9 +188,6 @@ public:
   }
 
 protected:
-  double m_SurfaceMeanCurvature;
-  double m_SurfaceStdDevCurvature;
-
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
   {
     m_mesh = NULL;
