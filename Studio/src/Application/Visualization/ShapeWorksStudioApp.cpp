@@ -124,7 +124,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
 
   // resize from preferences
   if (!this->preferences_.get_window_geometry().isEmpty()) {
-    std::cerr << "set geom from prefs\n";
     this->restoreGeometry(this->preferences_.get_window_geometry());
   }
   if (!this->preferences_.get_window_state().isEmpty()) {
