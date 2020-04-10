@@ -269,10 +269,12 @@ ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const
 }
 
 
-//TODO: Remove?
 template <class T, unsigned int VDimension>
 void
 ParticleImplicitSurfaceDomain<T, VDimension>::ComputeSurfaceStatistics(ImageType *I) {
+  // TODO: This computation is copied from itkParticleMeanCurvatureAttribute
+  // Since the entire Image is not available after the initial load, its simplest
+  // to calculate it now. But it should be a part of itkParticleMeanCurvatureAttribute
 
   // Loop through a zero crossing image, project all the zero crossing points
   // to the surface, and use those points to comput curvature stats.

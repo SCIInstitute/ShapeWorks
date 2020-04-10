@@ -175,17 +175,14 @@ public:
       return m_CuttingPlanePoint.size();
   }
 
-  //TODO: Remove?
   inline double GetSurfaceMeanCurvature() const {
     return m_SurfaceMeanCurvature;
   }
 
-  //TODO: Remove?
   inline double GetSurfaceStdDevCurvature() const {
     return m_SurfaceStdDevCurvature;
   }
 
-  //TODO: Remove?
   void ComputeSurfaceStatistics(ImageType *I);
 
   void PrintCuttingPlaneConstraints(std::ofstream &out) const override {
