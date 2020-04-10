@@ -7,6 +7,7 @@
 // size and resident set size, and return the results in KB.
 //
 // On failure, returns 0.0, 0.0
+// Source: https://stackoverflow.com/a/671389
 
 void process_mem_usage(double& vm_usage, double& resident_set)
 {

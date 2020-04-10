@@ -1,5 +1,4 @@
-#ifndef SHAPEWORKS_MEMORYUSAGE_H
-#define SHAPEWORKS_MEMORYUSAGE_H
+#pragma once
 
 #include <unistd.h>
 #include <ios>
@@ -8,5 +7,3 @@
 #include <string>
 
 void process_mem_usage(double& vm_usage, double& resident_set);
-
-#endif //SHAPEWORKS_MEMORYUSAGE_H
