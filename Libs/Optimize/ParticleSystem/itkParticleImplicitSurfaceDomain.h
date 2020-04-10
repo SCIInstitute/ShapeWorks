@@ -175,11 +175,13 @@ public:
       return m_CuttingPlanePoint.size();
   }
 
-  inline double GetSurfaceMeanCurvature() const {
+  inline double GetSurfaceMeanCurvature() const
+  {
     return m_SurfaceMeanCurvature;
   }
 
-  inline double GetSurfaceStdDevCurvature() const {
+  inline double GetSurfaceStdDevCurvature() const
+  {
     return m_SurfaceStdDevCurvature;
   }
 

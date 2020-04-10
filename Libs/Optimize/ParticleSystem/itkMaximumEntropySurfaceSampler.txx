@@ -163,7 +163,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     }
 }
 
-    template <class TImage>
+template <class TImage>
 void
 MaximumEntropySurfaceSampler<TImage>::ReadPointsFiles()
 {
