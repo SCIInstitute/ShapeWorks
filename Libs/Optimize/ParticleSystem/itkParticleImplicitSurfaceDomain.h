@@ -1,10 +1,4 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleImplicitSurfaceDomain.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
-
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
@@ -12,8 +6,7 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkParticleImplicitSurfaceDomain_h
-#define __itkParticleImplicitSurfaceDomain_h
+#pragma once
 
 #include "itkParticleImageDomainWithCurvature.h"
 //Prateep
@@ -35,39 +28,38 @@ namespace itk
  *  as an image.
  */
 template <class T, unsigned int VDimension=3>
-class ITK_EXPORT ParticleImplicitSurfaceDomain
-  : public ParticleImageDomainWithCurvature<T, VDimension>
+class ParticleImplicitSurfaceDomain : public ParticleImageDomainWithCurvature<T, VDimension>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImplicitSurfaceDomain Self;
   typedef ParticleImageDomainWithCurvature<T, VDimension> Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef SmartPointer<ParticleImplicitSurfaceDomain>  Pointer;
+
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::PointType PointType;
 
   typedef vnl_matrix_fixed<double, VDimension +1, VDimension +1> TransformType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleImplicitSurfaceDomain, ParticleClipByRegionDomain);
-
-  /** Dimensionality of the domain of the particle system. */
-  itkStaticConstMacro(Dimension, unsigned int, VDimension);
-
-  /** Set/Get the precision of the projection operation.  The resulting projection
-      will be within the specified tolerance. */
-  itkSetMacro(Tolerance, T);
-  itkGetMacro(Tolerance, T);
+  itkNewMacro(ParticleImplicitSurfaceDomain);
 
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
     ComputeSurfaceStatistics(I);
+  }
+
+  /** Set/Get the precision of the projection operation.  The resulting projection
+      will be within the specified tolerance. */
+  virtual void SetTolerance(const T _Tolerance) {
+    if (this->m_Tolerance != _Tolerance) 
+    {
+      this->m_Tolerance = _Tolerance;
+      this->Modified();
+    }
+  }
+  virtual T GetTolerance() {
+    return this->m_Tolerance;
   }
 
   /** Apply any constraints to the given point location.  This method
@@ -80,13 +72,13 @@ public:
       bounding box domain, since movement off the surface will be very
       common.  Consider subclassing this method to add a check for significant
       differences in the input and output points. */
-  virtual bool ApplyConstraints(PointType &p) const;
+  virtual bool ApplyConstraints(PointType &p) const override;
 
   /** Optionally add a repulsion from a planar boundar specified in
       m_CuttingPlane */
   virtual bool ApplyVectorConstraints(vnl_vector_fixed<double, VDimension> &gradE,
-                                      const PointType &pos,
-                                      double maxtimestep) const;
+                                      const PointType &pos) const override;
+
 
   /** Define a distance measure on the surface.  Note that this distance
       measure is NOT the geodesic distance, as one might expect, but is only a
@@ -94,7 +86,7 @@ public:
       sufficiently aligned (method returns a negative number).  The assumption
       here is that points are sufficiently close to one another on the surface
       that they may be considered to lie in a tangent plane. */
-  virtual double Distance(const PointType &, const PointType &) const;
+  virtual double Distance(const PointType &, const PointType &) const override;
 
   void SetCuttingPlane(const vnl_vector<double> &a, const vnl_vector<double> &b,
                        const vnl_vector<double> &c);
@@ -145,15 +137,6 @@ public:
   const vnl_vector_fixed<double, VDimension> &GetC() const
   { return m_c[0]; }
 
-  //Praful
-  const vnl_vector_fixed<double, VDimension> &GetA(int i) const
-  { return m_a[i]; }
-  const vnl_vector_fixed<double, VDimension> &GetB(int i) const
-  { return m_b[i]; }
-  const vnl_vector_fixed<double, VDimension> &GetC(int i) const
-  { return m_c[i]; }
-
-
   /** Maintain a list of spheres within the domain.  These are used as 
       soft constraints by some particle forcing functions. */
   void AddSphere(const vnl_vector_fixed<double,VDimension> &v, double r)
@@ -192,19 +175,36 @@ public:
       return m_CuttingPlanePoint.size();
   }
 
-
-  //TODO: REmove?
+  //TODO: Remove?
   inline double GetSurfaceMeanCurvature() const {
     return m_SurfaceMeanCurvature;
   }
 
-  //TODO: REmove?
+  //TODO: Remove?
   inline double GetSurfaceStdDevCurvature() const {
     return m_SurfaceStdDevCurvature;
   }
 
-  //TODO: Make private, move to some other class
+  //TODO: Remove?
   void ComputeSurfaceStatistics(ImageType *I);
+
+  void PrintCuttingPlaneConstraints(std::ofstream &out) const override {
+    for (unsigned int j = 0; j < GetNumberOfPlanes(); j++) {
+      vnl_vector_fixed < double, 3 > a = m_a[j];
+      vnl_vector_fixed < double, 3 > b = m_b[j];
+      vnl_vector_fixed < double, 3 > c = m_c[j];
+      for (int d = 0; d < 3; d++) {
+        out << a[d] << " ";
+      }
+      for (int d = 0; d < 3; d++) {
+        out << b[d] << " ";
+      }
+      for (int d = 0; d < 3; d++) {
+        out << c[d] << " ";
+      }
+      out << std::endl;
+    }
+  }
 
 protected:
   //TODO: REMOVE?
@@ -212,9 +212,9 @@ protected:
   double m_SurfaceStdDevCurvature;
 
   ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4), m_UseCuttingPlane(false), m_UseCuttingSphere(false)
-    {
+  {
     m_mesh = NULL;
-    }
+  }
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
@@ -239,22 +239,14 @@ private:
 
   std::vector< vnl_vector_fixed<double, VDimension> > m_SphereCenterList;
   std::vector< double > m_SphereRadiusList;
-  
-  ParticleImplicitSurfaceDomain(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+
+
+
+  // Praful
+  bool SphereVectorConstraintMayOrMayNotWork(vnl_vector_fixed<double, VDimension>& gradE,
+    const PointType& pos) const;
 };
 
 } // end namespace itk
 
-
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleImplicitSurfaceDomain+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleImplicitSurfaceDomain.txx"
-#endif
-
 #include "itkParticleImplicitSurfaceDomain.txx"
-
-#endif

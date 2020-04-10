@@ -225,9 +225,6 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("pairwise_potential_type").Element();
   if (elem) { optimize->SetPairwisePotentialType(atoi(elem->GetText()));}
 
-  elem = docHandle->FirstChild("optimizer_type").Element();
-  if (elem) { optimize->SetOptimizerType(atoi(elem->GetText()));}
-
   elem = docHandle->FirstChild("timepts_per_subject").Element();
   if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText()));}
 

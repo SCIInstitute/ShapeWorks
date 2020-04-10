@@ -24,26 +24,6 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Ins
 
 include(DefaultBuildType)
 
-# Google Test
-if (BUILD_TESTS)
-  message(STATUS "Building Google Test")
-  set( gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll" FORCE)
-  enable_testing()
-  include(FetchContent)
-  
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        release-1.10.0
-    )
-  
-  FetchContent_GetProperties(googletest)
-  if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-  endif()
-endif(BUILD_TESTS)
-
 project(ShapeWorks)
 
 #TODO: Move this to a proper place. For some reason TBB is not linking if this part is in Libs/Optimize/CMakeLists.txt
@@ -188,6 +168,7 @@ endif()
 
 #----------------------------------------------------------------------------
 if(BUILD_TESTS)
+  enable_testing()
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 

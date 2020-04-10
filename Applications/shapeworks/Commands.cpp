@@ -49,7 +49,6 @@ void ReadImage::buildParser()
 int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
-
   return sharedData.image.read(filename);
 }
 

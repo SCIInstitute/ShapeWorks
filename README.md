@@ -86,7 +86,7 @@ If you use ShapeWorks in work that leads to published research, we humbly ask th
 National Institute of General Medical Sciences of the National Institutes of Health under 
 grant number P41GM103545."
 -->
->"This work was supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, and NIGMS-P41GM103545."
+>"This work was supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545."
 
 and add the following 'disclaimer':
 
@@ -180,6 +180,10 @@ In Journal of Orthopaedic Research, Vol. 31, No. 4, pp. 651--657. 2013.
 M.D. Harris, M. Datar, R.T. Whitaker, E.R. Jurrus, C.L. Peters, A.E. Anderson. 
 "Statistical Shape Modeling of Cam Femoroacetabular Impingement," In Journal of Orthopaedic Research, 
 Vol. 31, No. 10, pp. 1620--1626. 2013.
+</p>
+
+<p align="justify">
+M. Datar, I. Lyu, S. Kim, J. Cates, M. Styner, R. Whitaker. "Geodesic distances to landmarks for dense correspondence on ensembles of complex shapes," In International Conference on Medical Image Computing and Computer-Assisted Intervention, Springer, Berlin, Heidelberg, pp. 19-26, 2013.
 </p>
 
 <p align="justify">

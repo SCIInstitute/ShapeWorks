@@ -91,6 +91,18 @@ TEST(ImageTests, pad_identity_test) {
   ASSERT_TRUE(image.compare_equal(ground_truth));
 }
 
+TEST(ImageTests, dicom_read_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
+
+  // read dicom
+  Image image(test_location + "dcm_files");
+
+  // read ground truth
+  Image ground_truth(test_location + "dicom.nrrd");
+
+  ASSERT_TRUE(image.compare_equal(ground_truth));
+}
+
 //TEST(ImageTests, blah_test) {
 
 // ...

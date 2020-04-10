@@ -10,6 +10,9 @@ add_executable(MeshTests
 
 target_link_libraries(MeshTests
   tinyxml Mesh vgl vgl_algo Mesh Optimize Utils trimesh2
-  gtest_main ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+  GTest::Main
+  )
+
 
 add_test(NAME MeshTests COMMAND MeshTests)
