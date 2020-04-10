@@ -1875,8 +1875,9 @@ void Optimize::AddImage(ImageType::Pointer image) {
   this->m_spacing = image->GetSpacing()[0];
 
   if(this->m_sampler->NumDomains() == 1) {
-    // Not sure why this is required, but itkMaximumEntropySurfaceSampler
-    // doesn't work unless we do this.
+    // TODO: Not sure why this is required, but itkMaximumEntropySurfaceSampler
+    // doesn't work unless we do this. This causes holding on to the first
+    // image in memory
     this->m_sampler->SetInput(0, image);
   }
 }
