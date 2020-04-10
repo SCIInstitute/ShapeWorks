@@ -57,11 +57,14 @@ public:
 
       ImageRegionIterator<ImageType> hessIt(hess, hess->GetRequestedRegion());
       ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
-      hessIt.GoToBegin();
+      hessIt.GoToBegin(); it.GoToBegin();
       while(!hessIt.IsAtEnd()) {
         const auto idx = hessIt.GetIndex();
         if(idx != it.GetIndex()) {
-          throw std::runtime_error("Bad index");
+          // We are relying on the assumption that the iteration over the
+          // distance transform and its hessian proceed in the same order.
+          // If this assumption is violated, throw an error.
+          throw std::runtime_error("Bad index: iterators for Image and Hessian out of sync");
         }
         const auto hess = hessIt.Get();
         const auto pixel = it.Get();
