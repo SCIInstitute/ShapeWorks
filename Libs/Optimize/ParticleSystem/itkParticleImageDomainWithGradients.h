@@ -60,11 +60,8 @@ public:
       const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
       const VectorType v(_v.asPointer()); // This copies 3 floats from a VDB vector to a vnl vector
       return v;
-    }
-    else {
+    } else {
       itkExceptionMacro("Gradient queried for a Point, " << p << ", outside the given image domain." );
-      VectorType g(1.0e-5);
-      return g;
     }
   }
   inline VnlVectorType SampleGradientVnl(const PointType &p) const

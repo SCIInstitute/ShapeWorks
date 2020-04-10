@@ -138,15 +138,14 @@ public:
     return m_ZeroCrossingPoint;
   }
 
-  /** Sample the image at a point.  This method performs no bounds checking.
-      To check bounds, use IsInsideBuffer. */
+  /** Sample the image at a point.  This method performs bounds checking. */
   inline T Sample(const PointType &p) const
   {
-    if(IsInsideBuffer(p)) {
+    if(this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);
       return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
-      return 0.0;
+      itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain." );
     }
   }
 
@@ -163,12 +162,6 @@ public:
       }
     }
     return bestRadius;
-  }
-
-  /** Check whether the point p may be sampled in this image domain. */
-  inline bool IsInsideBuffer(const PointType &p) const
-  {
-    return true; //TODO: Implement this
   }
 
   /** Used when a domain is fixed. */
