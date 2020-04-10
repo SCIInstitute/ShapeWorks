@@ -242,16 +242,6 @@ public:
   const DomainType *GetDomain() const
   {return m_Domains[0].GetPointer(); }
 
-  const unsigned long GetMemUsage() const
-  {
-      unsigned long size = 0;
-      for(const auto &domain: m_Domains) {
-          size += domain->GetMemUsage();
-      }
-
-      return size;
-  }
-
   /** Returns the number of domains contained in the particle system. */
   unsigned int GetNumberOfDomains() const
   { return m_Domains.size(); }

@@ -269,7 +269,7 @@ ParticleImplicitSurfaceDomain<T, VDimension>::Distance(const PointType &a, const
 }
 
 
-//TODO: Make private, move to some other class
+//TODO: Remove?
 template <class T, unsigned int VDimension>
 void
 ParticleImplicitSurfaceDomain<T, VDimension>::ComputeSurfaceStatistics(ImageType *I) {

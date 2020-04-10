@@ -8,7 +8,6 @@
 =========================================================================*/
 #pragma once
 
-#include <itkImageLinearIteratorWithIndex.h>
 #include "itkImage.h"
 #include "itkImageDuplicator.h"
 #include "itkParticleImageDomain.h"

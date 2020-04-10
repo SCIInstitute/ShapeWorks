@@ -50,7 +50,8 @@ public:
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
-    const auto LoadVDBHessian = [&](int i, typename ImageType::Pointer hess) {
+    // Load the i-th hessian from an itk Image
+    const auto LoadVDBHessian = [&](const int i, const typename ImageType::Pointer hess) {
       m_VDBHessians[i] = openvdb::FloatGrid::create(0.0);
       auto vdbAccessor = m_VDBHessians[i]->getAccessor();
 
@@ -73,7 +74,6 @@ public:
         vdbAccessor.setValue(coord, hess);
         ++hessIt; ++it;
       }
-
     };
 
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
@@ -83,7 +83,7 @@ public:
     gaussian->SetUseImageSpacingOn();
     gaussian->Update();
     
-    // Compute the second derivatives and set up the interpolators
+    // Compute the second derivatives
     for (unsigned int i = 0; i < VDimension; i++)
       {
       typename DerivativeImageFilter<ImageType, ImageType>::Pointer
@@ -199,16 +199,12 @@ protected:
   
 private:
   double m_Sigma;
-  typename openvdb::FloatGrid::Ptr m_VDBHessians[
-          VDimension + ((VDimension * VDimension) - VDimension) / 2];
-
   // Partials are stored:
   //     0: dxx  3: dxy  4: dxz
   //             1: dyy  5: dyz
   //                     2: dzz
-  //
-  // typename ImageType::Pointer  m_PartialDerivatives[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
-  // typename ScalarInterpolatorType::Pointer m_Interpolators[VDimension + ((VDimension * VDimension) - VDimension) / 2];
+  typename openvdb::FloatGrid::Ptr m_VDBHessians[
+          VDimension + ((VDimension * VDimension) - VDimension) / 2];
 };
 
 } // end namespace itk

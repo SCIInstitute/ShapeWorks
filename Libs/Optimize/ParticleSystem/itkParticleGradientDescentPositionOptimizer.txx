@@ -100,7 +100,7 @@ namespace itk
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
-      auto accTimerBegin = std::chrono::steady_clock::now();
+      const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
         if (counter % global_iteration == 0)
             m_GradientFunction->BeforeIteration();
@@ -224,8 +224,8 @@ namespace itk
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();
 
-      auto accTimerEnd = std::chrono::steady_clock::now();
-      double msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
+      const auto accTimerEnd = std::chrono::steady_clock::now();
+      const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
 
       double vmUsage, residentSet;
       process_mem_usage(vmUsage, residentSet);
