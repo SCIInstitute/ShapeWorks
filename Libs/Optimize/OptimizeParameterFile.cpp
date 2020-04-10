@@ -279,6 +279,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("cotan_sigma_factor").Element();
   if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText()));}
 
+  elem = docHandle->FirstChild("narrow_band").Element();
+  if (elem) { optimize->SetNarrowBand(atof(elem->GetText()));}
+
   return true;
 }
 

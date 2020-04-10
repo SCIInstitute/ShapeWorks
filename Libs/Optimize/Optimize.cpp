@@ -1961,6 +1961,12 @@ std::vector<bool> Optimize::GetUseNormals()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetNarrowBand(double v)
+{
+  this->m_sampler->SetNarrowBand(v);
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetIterationCallback()
 {
   this->m_iterate_command = itk::MemberCommand<Optimize>::New();

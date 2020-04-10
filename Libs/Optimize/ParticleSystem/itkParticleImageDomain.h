@@ -68,10 +68,12 @@ public:
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
 
+    const auto band = m_Spacing.GetVnlVector().max_value() * this->GetNarrowBand();
+    std::cout << "BAND: " << band << std::endl;
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const auto pixel = it.Get();
-        if(abs(pixel) > 4.0) { //TODO: put 4.0 somewhere else
+        if(abs(pixel) > band) {
             ++it;
             continue;
         }
@@ -164,6 +166,16 @@ public:
     return bestRadius;
   }
 
+  void SetNarrowBand(double narrow_band)
+  {
+    m_NarrowBand = narrow_band;
+  }
+
+  double GetNarrowBand() const
+  {
+    return m_NarrowBand;
+  }
+
   /** Used when a domain is fixed. */
   void DeleteImages() override
   {
@@ -176,7 +188,13 @@ protected:
     return m_VDBImage;
   }
 
-  ParticleImageDomain() { }
+  ParticleImageDomain()
+  {
+    // Why 4? The ITK version of the Optimizer already used a narrow band of +/- 4 in the
+    // curvature computation. This will allow existing use cases to work as before. This
+    // value can be set in the XML file for ShapeWorksRun.
+    m_NarrowBand = 4.0;
+  }
   virtual ~ParticleImageDomain() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -202,6 +220,7 @@ private:
   PointType m_ZeroCrossingPoint;
   typename ImageType::RegionType::IndexType m_Index; // Index defining the corner of the region
   double m_SurfaceArea;
+  double m_NarrowBand;
 
   void UpdateZeroCrossingPoint(ImageType *I) {
     typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =

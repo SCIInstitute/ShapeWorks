@@ -228,6 +228,9 @@ public:
   //! Return if Normals are used, per shape
   std::vector<bool> GetUseNormals();
 
+  //! Set the narrow band used to be +/- the given value as a multiple of the spacing
+  void SetNarrowBand(double v);
+
   //! Print parameter info to stdout
   void PrintParamInfo();
 

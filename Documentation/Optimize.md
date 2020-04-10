@@ -90,6 +90,7 @@ Here is the list of parameters and their descriptions.
 * verbosity: (default: '2') '0' : almost zero verbosity(error massage only), '1': minimal verbosity( notification of important steps,
  '2': additional details about parameters read from xml and files written, '3': full verbosity.
 * debug_projection: (default: 0) A boolean to run in debug mode or not.
+* narrow_band: (default: 4.0) Specifies the range of distance transforms on which the optimizer runs. The band kept is +/- narrow_band * spacing, where spacing is the distance between cells in the distance transform.
 
 #### Fixed Domains 
 
