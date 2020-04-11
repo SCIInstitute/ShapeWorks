@@ -33,8 +33,7 @@ namespace itk
  * \sa ParticleDomain
  */
 template <class T, unsigned int VDimension=3>
-class ITK_EXPORT ParticleImageDomainWithCurvature
-  : public ParticleImageDomainWithHessians<T, VDimension>
+class ParticleImageDomainWithCurvature : public ParticleImageDomainWithHessians<T, VDimension>
 {
 public:
   /** Standard class typedefs */
@@ -51,8 +50,7 @@ public:
     // Computes partial derivatives in parent class
     Superclass::SetImage(I);
 
-    typedef itk::DiscreteGaussianImageFilter<ImageType, ImageType> DiscreteGaussianImageFilterType;
-    typename DiscreteGaussianImageFilterType::Pointer f = DiscreteGaussianImageFilterType::New();
+    typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer f = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
 
     double sig =  this->GetSpacing()[0] * 0.5;
     

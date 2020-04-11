@@ -59,8 +59,7 @@ public:
 
       ImageRegionIterator<ImageType> hessIt(hess, hess->GetRequestedRegion());
       ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
-      hessIt.GoToBegin(); it.GoToBegin();
-      while(!hessIt.IsAtEnd()) {
+      for (; !hessIt.IsAtEnd(); ++hessIt, ++it) {
         const auto idx = hessIt.GetIndex();
         if(idx != it.GetIndex()) {
           // We are relying on the assumption that the iteration over the
@@ -71,13 +70,11 @@ public:
         const auto hess = hessIt.Get();
         const auto pixel = it.Get();
         if(abs(pixel) > band) {
-          ++hessIt; ++it;
           continue;
         }
 
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, hess);
-        ++hessIt; ++it;
       }
     };
 
