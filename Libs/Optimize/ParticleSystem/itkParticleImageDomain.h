@@ -69,7 +69,6 @@ public:
     it.GoToBegin();
 
     const auto band = m_Spacing.GetVnlVector().max_value() * this->GetNarrowBand();
-    std::cout << "BAND: " << band << std::endl;
     while(!it.IsAtEnd()) {
         const auto idx = it.GetIndex();
         const auto pixel = it.Get();
