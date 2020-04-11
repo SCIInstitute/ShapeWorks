@@ -1,4 +1,10 @@
 /*=========================================================================
+  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
+  Module:    $RCSfile: itkParticleImageDomainWithCurvature.h,v $
+  Date:      $Date: 2011/03/23 22:40:10 $
+  Version:   $Revision: 1.2 $
+  Author:    $Author: wmartin $
+
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
@@ -27,12 +33,12 @@ namespace itk
  * \sa ParticleDomain
  */
 template <class T, unsigned int VDimension=3>
-class ParticleImageDomainWithCurvature : public ParticleImageDomainWithHessians<T, VDimension>
+class ITK_EXPORT ParticleImageDomainWithCurvature
+  : public ParticleImageDomainWithHessians<T, VDimension>
 {
 public:
   /** Standard class typedefs */
   typedef ParticleImageDomainWithHessians<T, VDimension> Superclass;
-  typedef SmartPointer<ParticleImageDomainWithCurvature<T, VDimension>>  Pointer;
 
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;
@@ -44,7 +50,47 @@ public:
   {
     // Computes partial derivatives in parent class
     Superclass::SetImage(I);
-    m_VDBCurvature = openvdb::tools::meanCurvature(*this->GetVDBImage());
+
+    typedef itk::DiscreteGaussianImageFilter<ImageType, ImageType> DiscreteGaussianImageFilterType;
+    typename DiscreteGaussianImageFilterType::Pointer f = DiscreteGaussianImageFilterType::New();
+
+    double sig =  this->GetSpacing()[0] * 0.5;
+    
+    f->SetVariance(sig);
+    f->SetInput(I);
+    f->SetUseImageSpacingOn();
+    f->Update();
+
+    // NOTE: Running the image through a filter seems to be the only way
+    // to get all of the image information correct!  Set the variance to
+    // positive value to smooth the curvature calculations.
+
+    m_VDBCurvature = openvdb::FloatGrid::create();
+    auto vdbAccessor = m_VDBCurvature->getAccessor();
+    const auto band = this->GetSpacing().GetVnlVector().max_value() * this->GetNarrowBand();
+
+    itk::ImageRegionIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
+    itk::ImageRegionIteratorWithIndex<ImageType> curvIt(f->GetOutput(),
+                                                    f->GetOutput()->GetRequestedRegion());
+
+    for (; !curvIt.IsAtEnd(); ++curvIt, ++it) {
+      const auto idx = curvIt.GetIndex();
+      if (idx != it.GetIndex()) {
+        throw std::runtime_error("Bad index");
+      }
+      const auto pixel = it.Get();
+
+      if (abs(pixel) > band) {
+        continue;
+      }
+
+      PointType pos;
+      I->TransformIndexToPhysicalPoint(idx, pos);
+
+      const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+      vdbAccessor.setValue(coord, this->MeanCurvature(pos));
+    }
+
     this->ComputeSurfaceStatistics(I);
   } // end setimage
 
@@ -66,7 +112,68 @@ public:
 
 protected:
   ParticleImageDomainWithCurvature() {}
-  virtual ~ParticleImageDomainWithCurvature() {}
+
+  void PrintSelf(std::ostream& os, Indent indent) const
+  {
+    Superclass::PrintSelf(os, indent);
+    os << indent << "VDB Active Voxels = " << m_VDBCurvature->activeVoxelCount() << std::endl;
+  }
+  virtual ~ParticleImageDomainWithCurvature() {};
+
+  double MeanCurvature(const PointType& pos)
+  {
+    // See Kindlmann paper "Curvature-Based Transfer Functions for Direct Volume
+    // Rendering..." for detailss
+    
+    // Get the normal vector associated with this position.
+    //VnlVectorType posnormal = this->SampleNormalVnl(pos, 1.0e-10);
+    typename Superclass::VnlVectorType posnormal = this->SampleNormalVnl(pos, 1.0e-6);
+
+    // Sample the Hessian for this point and compute gradient of the normal.
+    typename Superclass::VnlMatrixType I;
+    I.set_identity();
+    
+    typename Superclass::VnlMatrixType H = this->SampleHessianVnl(pos);
+    typename Superclass::VnlMatrixType P = I - outer_product(posnormal, posnormal);
+    typename Superclass::VnlMatrixType G = P.transpose() * H * P;
+  
+    // Compute the principal curvatures k1 and k2
+    double frobnorm = sqrt(fabs(this->vnl_trace(G * G.transpose())) + 1.0e-10);
+    double trace = this->vnl_trace(G);
+    //    std::cout << "trace = " << trace << std::endl;
+    //    std::cout << "G =  " << G << std::endl;
+    //        std::cout << "frobnorm = " << frobnorm << std::endl;
+    double diff1 = frobnorm * frobnorm *2.0;
+    double diff2 = trace * trace;
+    double frobnorm2;
+
+    if (frobnorm <= trace) frobnorm2 = 0.0;
+	else  frobnorm2 = sqrt((diff1 - diff2 < 0.0) ? 0.0 : diff1 - diff2);
+    double k1 = (trace + frobnorm2) * 0.5;
+    double k2 = (trace - frobnorm2) * 0.5;
+    //        std::cout << "k1 = " << k1 << std::endl;
+    //        std::cout << "k2= " << k2 << std::endl;
+    // Compute the mean curvature.
+    //  double mc = fabs((k1 + k2) / 2.0);
+    return sqrt(k1 * k1 + k2 * k2);  
+  }
+
+  inline double vnl_trace(const VnlMatrixType &m) const
+  {
+    double sum = 0.0;
+    for (unsigned int i = 0; i < VDimension; i++)
+      {
+      sum += m[i][i];
+      }
+    return sum;
+  }
+  
+private:
+  openvdb::FloatGrid::Ptr m_VDBCurvature;
+
+  // Cache surface statistics
+  double m_SurfaceMeanCurvature;
+  double m_SurfaceStdDevCurvature;
 
   void ComputeSurfaceStatistics(ImageType *I)
   {
@@ -122,12 +229,6 @@ protected:
     m_SurfaceStdDevCurvature = sqrt(m_SurfaceStdDevCurvature / (n - 1));
   }
 
-private:
-  openvdb::FloatGrid::Ptr m_VDBCurvature;
-
-  // Cache surface statistics
-  double m_SurfaceMeanCurvature;
-  double m_SurfaceStdDevCurvature;
 };
 
 } // end namespace itk
