@@ -1,5 +1,5 @@
 #include "Image.h"
-#include "Utils.h"
+#include "utils.h"
 #include "itkTPGACLevelSetImageFilter.h"
 
 #include <itkImageFileReader.h>
@@ -719,10 +719,8 @@ bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
   filter->SetAdvectionScaling(1.0);
   filter->SetMaximumRMSError(0.0);
   filter->SetNumberOfIterations(20);
-  // filter->SetInput(this->image);
-  // filter->SetFeatureImage(featureImage.image);
-  filter->SetInput(featureImage.image);
-  filter->SetFeatureImage(this->image);
+  filter->SetInput(this->image);
+  filter->SetFeatureImage(featureImage.image);
 
   try
   {
