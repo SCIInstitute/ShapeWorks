@@ -40,7 +40,7 @@ public:
 
     if (applyCurvatureFilter)
       image.applyCurvatureFilter(curvatureIterations);
-    Image &featureImage(image);
+    Image featureImage(image);
 
     featureImage.applyGradientFilter();
     featureImage.applySigmoidFilter(sigmoidAlpha, sigmoidBeta);

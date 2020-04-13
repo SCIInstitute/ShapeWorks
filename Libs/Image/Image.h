@@ -27,7 +27,7 @@ public:
 
   Image(const std::string &pathname) { *this = read(pathname); }
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
-  Image(Image &img) { this->image.Swap(img.image); }
+  Image(Image &&img) { this->image.Swap(img.image); }
   Image(const Image &img);
   Image& operator=(Image &img) { this->image.Swap(img.image); return *this; }
   Image& operator=(const Image &img);

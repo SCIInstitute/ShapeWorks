@@ -246,9 +246,25 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
            "curvature", "--iterations", str(smoothingIterations),
            "write-image", "--name", ref_tpdtnrrdfilename,
            "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-           "--applycurvature", str(False),             # b/c starting with the results of curvature (smoothed)
+           "--applycurvature", str(False),  # b/c starting with the results of curvature (smoothed)
            "write-image", "--name", ref_isonrrdfilename]
     subprocess.check_call(cmd)
+
+    ###############################################################################
+    # <ctc> test to ensure results are the same as for topo-preserving-smooth command
+    cmd = ["shapeworks", "read-image", "--name", ref_dtnrrdfilename,
+            "curvature", "--iterations", str(smoothingIterations),
+            "write-image", "--name", ref_tpdtnrrdfilename+"test_curvature.nrrd",
+            "gradient",
+            "sigmoid", "--alpha", str(alpha), "--beta", str(beta),
+            "write-image", "--name", ref_isonrrdfilename+"test_sigmoid.nrrd",
+            "read-image", "--name", ref_tpdtnrrdfilename+"test_curvature.nrrd", 
+            "tp-levelset", "--featureimage", ref_isonrrdfilename+"test_sigmoid.nrrd",
+            "--scaling", str(scaling),
+            "write-image", "--name", ref_isonrrdfilename+"test.nrrd"]
+    subprocess.check_call(cmd)
+    # end test, just verify its output is the same
+    ###############################################################################
 
     cmd = ["shapeworks", "read-image", "--name", ref_tpdtnrrdfilename,
            "threshold", "--min", str(-0.000001),
@@ -318,22 +334,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "--applycurvature", str(False),             # b/c starting with the results of curvature (smoothed)
                    "write-image", "--name", isonrrdfilename]
             subprocess.check_call(cmd)
-
-            ###############################################################################
-            # <ctc> test to ensure results are the same as for topo-preserving-smooth command
-            cmd = ["shapeworks", "read-image", "--name", dtnrrdfilename,
-                   "curvature", "--iterations", str(smoothingIterations),
-                   "write-image", "--name", tpdtnrrdfilename,
-                   "gradient",
-                   "sigmoid", "--alpha", str(alpha), "--beta", str(beta),
-                   "write-image", "--name", "test_sigmoid"+isonrrdfilename,
-                   "read-image", "--name", dtnrrdfilename,   # start from original and let the function apply curvature this time
-                   "tp-levelset", "--featureimage", "test_sigmoid"+dtnrrdfilename,
-                   "--scaling", str(scaling), "--iterations", str(smoothingIterations),
-                   "write-image", "--name", "test"+isonrrdfilename]
-            subprocess.check_call(cmd)
-            # end test, just verify its output is the same
-            ###############################################################################
 
             execCommand = ["ICPRigid3DImageRegistration", "--targetDistanceMap", ref_tpdtnrrdfilename, "--sourceDistanceMap", tpdtnrrdfilename, "--sourceSegmentation", seginname, "--sourceRaw", rawinname, "--icpIterations", str(icpIterations), "--visualizeResult",  "0",  "--solutionSegmentation", segoutname, "--solutionRaw", rawoutname, "--solutionTransformation", transformation]
             subprocess.check_call(execCommand)
