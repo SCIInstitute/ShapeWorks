@@ -525,7 +525,7 @@ bool Image::threshold(PixelType min, PixelType max)
   filter->SetUpperThreshold(max);
   filter->SetInsideValue(1.0);
   filter->SetOutsideValue(0.0);
-
+  
   try
   {
     filter->Update();
@@ -719,8 +719,10 @@ bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
   filter->SetAdvectionScaling(1.0);
   filter->SetMaximumRMSError(0.0);
   filter->SetNumberOfIterations(20);
-  filter->SetInput(this->image);
-  filter->SetFeatureImage(featureImage.image);
+  // filter->SetInput(this->image);
+  // filter->SetFeatureImage(featureImage.image);
+  filter->SetInput(featureImage.image);
+  filter->SetFeatureImage(this->image);
 
   try
   {
@@ -820,6 +822,10 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
   bbox.max[0] = std::min(bbox.max[0] + padding, (int)dims[0]);
   bbox.max[1] = std::min(bbox.max[1] + padding, (int)dims[1]);
   bbox.max[2] = std::min(bbox.max[2] + padding, (int)dims[2]);
+
+  bbox.max[0] = bbox.max[0] - bbox.min[0];
+  bbox.max[1] = bbox.max[1] - bbox.min[1];
+  bbox.max[2] = bbox.max[2] - bbox.min[2];
 
 #if DEBUG_CONSOLIDATION
   std::cout << "binaryBoundingBox succeeded: " << bbox << "!\n";
