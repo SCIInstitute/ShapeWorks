@@ -41,6 +41,10 @@ std::vector<double> flat_test(int side_length, int sep){
     file << std::fixed;
     file << std::setprecision(5);
 
+    std::ofstream file2;
+    file2.open("sample_flat_surface.ptnrms");
+    file2 << std::fixed;
+    file2 << std::setprecision(5);
 
     for(size_t i = 0; i < side_length; i++){
         for(size_t j = 0; j < side_length; j++){
@@ -52,6 +56,8 @@ std::vector<double> flat_test(int side_length, int sep){
            count++;
 
            file << float(i*sep) << " " << float(j*sep) << " " << 0.0 << " " << i+1 << " " << j+1 << "\n";
+
+           file2 << float(i*sep) << " " << float(j*sep) << " " << 0.0 << " " << 0. << " " << 0. <<  " " << 1. << "\n";
 
            flat(count,0) = i*sep;
            flat(count,1) = j*sep;
@@ -70,6 +76,7 @@ std::vector<double> flat_test(int side_length, int sep){
     }
 
     file.close();
+    file2.close();
 
     std::cout << "Points: " << count/3 << std::endl;
 
@@ -140,6 +147,11 @@ std::vector<double> sphere_test() {
 
   std::cout << "Points + dipoles: " << count*3 << std::endl;
 
+  std::ofstream file;
+  file.open("sample_sphere.ptnrms");
+  file << std::fixed;
+  file << std::setprecision(5);
+
   for(size_t i = 0; i < count; i++){
 
     double ix = sphere_pts[i*3];
@@ -166,6 +178,8 @@ std::vector<double> sphere_test() {
     if(abs(magnitude2 - true_mag) > 1e-5)
         std::cout << magnitude2 << std::endl;
 
+    file << ix << " " << iy << " " << iz << " " << norm[0] << " " << norm[1] <<  " " << norm[2] << "\n";
+
     sphere(i, 0) = ix;
     sphere(i, 1) = iy;
     sphere(i, 2) = iz;
@@ -189,6 +203,8 @@ std::vector<double> sphere_test() {
     sphere_normals(i+count*2,1) = norm[1]/magnitude;
     sphere_normals(i+count*2,2) = norm[2]/magnitude;
   }
+
+  file.close();
 
   std::cout << "Creating RBF..." << std::endl;
 
