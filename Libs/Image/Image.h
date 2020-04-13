@@ -15,10 +15,14 @@ public:
 
   struct Region
   {
-    int min[3] = {static_cast<int>(1e6), static_cast<int>(1e6), static_cast<int>(1e6)};
-    ;
-    int max[3] = {0, 0, 0};
+    int min[3] = {std::numeric_limits<int>::max(), std::numeric_limits<int>::max(), std::numeric_limits<int>::max()};
+    int max[3] = {std::numeric_limits<int>::min(), std::numeric_limits<int>::min(), std::numeric_limits<int>::min()};
     bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
+
+    IPoint3 origin() const { return IPoint3(min); }
+    IPoint3 size() const { return IPoint3({max[0]-min[0], max[1]-min[1], max[2]-min[2]}); }
+
+    operator ImageType::RegionType() const { return ImageType::RegionType(toIndex(origin()), toSize(size())); }
   };
 
   Image(const std::string &pathname) { *this = read(pathname); }

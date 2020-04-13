@@ -4,6 +4,7 @@
 #include <itkVector.h>
 #include <itkMatrix.h>
 #include <itkSize.h>
+#include <itkIndex.h>
 
 namespace shapeworks {
 
@@ -15,6 +16,9 @@ using Matrix = Matrix44;
 
 using IPoint3 = itk::Point<int, 3>;
 using FPoint3 = itk::Point<float, 3>;
+
+itk::Index<3> toIndex(const IPoint3 &pt);
+itk::Size<3> toSize(const IPoint3 &pt);
 
 template<typename P>
 P operator+(const P &p, const P &q)
