@@ -823,10 +823,6 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
   bbox.max[1] = std::min(bbox.max[1] + padding, (int)dims[1]);
   bbox.max[2] = std::min(bbox.max[2] + padding, (int)dims[2]);
 
-  bbox.max[0] = bbox.max[0] - bbox.min[0];
-  bbox.max[1] = bbox.max[1] - bbox.min[1];
-  bbox.max[2] = bbox.max[2] - bbox.min[2];
-
 #if DEBUG_CONSOLIDATION
   std::cout << "binaryBoundingBox succeeded: " << bbox << "!\n";
 #endif
@@ -852,21 +848,9 @@ bool Image::crop(const Region &region)
     return false;
   }
 
-  ImageType::IndexType desiredStart;
-  desiredStart[0] = region.min[0];
-  desiredStart[1] = region.min[1];
-  desiredStart[2] = region.min[2];
-
-  ImageType::SizeType desiredSize;
-  desiredSize[0] = region.max[0];
-  desiredSize[1] = region.max[1];
-  desiredSize[2] = region.max[2];
-
-  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
-
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-  filter->SetExtractionRegion(desiredRegion);
+  filter->SetExtractionRegion(region);
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
 
