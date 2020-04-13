@@ -37,5 +37,7 @@ install(TARGETS PointCloud
   PUBLIC_HEADER DESTINATION include
   )
 
-
+ADD_EXECUTABLE(BuildRBFShape BuildRBFShape.cxx)
+TARGET_LINK_LIBRARIES(BuildRBFShape PointCloudEvaluators PointCloudSolvers Eigen3::Eigen ${VTK_LIBRARIES}  ${ITK_LIBRARIES} tinyxml)
+INSTALL(TARGETS BuildRBFShape  RUNTIME DESTINATION bin)
 
