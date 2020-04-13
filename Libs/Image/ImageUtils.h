@@ -32,7 +32,8 @@ public:
     Image& image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image&>(img);
 
     // debug: just print it to feel good that it's what we think it is
-    if (std::is_const<std::remove_reference<decltype(image)>>::value) // consider that a reference to a const is not itself const
+    // consider that a reference to a const is not itself const
+    if (std::is_const<std::remove_reference<decltype(image)>>::value) 
       std::cout << "argument is const ref\n";
     else
       std::cout << "argument is non-const ref\n";

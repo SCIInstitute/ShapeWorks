@@ -15,7 +15,8 @@ public:
 
   struct Region
   {
-    int min[3] = {0, 0, 0};
+    int min[3] = {static_cast<int>(1e6), static_cast<int>(1e6), static_cast<int>(1e6)};
+    ;
     int max[3] = {0, 0, 0};
     bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
   };
