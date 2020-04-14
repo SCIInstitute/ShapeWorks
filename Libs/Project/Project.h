@@ -31,6 +31,9 @@ public:
   //! Save to XLSX file
   bool save(std::string filename);
 
+  //! Return the headers of the subject sheet
+  std::vector<std::string> get_headers();
+
   //! Return the number of subjects in the project
   int get_number_of_subjects();
 

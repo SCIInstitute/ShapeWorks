@@ -39,6 +39,8 @@ public:
   //! clear the cache
   void clear_cache();
 
+  void shutdown_threads();
+
 public Q_SLOTS:
   void handle_thread_complete();
 

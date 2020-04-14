@@ -51,6 +51,12 @@ bool Project::save(std::string filename)
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::string> Project::get_headers()
+{
+  return this->get_matching_columns("");
+}
+
+//---------------------------------------------------------------------------
 int Project::get_number_of_subjects()
 {
   auto seg_columns = this->get_matching_columns("segmentation_");
@@ -156,9 +162,7 @@ std::vector<Subject> Project::get_subjects()
 std::vector<std::string> Project::get_matching_columns(std::string prefix)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
-
   auto headers = ws.rows(false)[0];
-
   std::vector<std::string> list;
 
   for (int i = 0; i < headers.length(); i++) {

@@ -134,7 +134,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
     for (int i = 0; i < this->shapes_.size(); i++) {
       original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
-    this->project_.set_original_files(original_list);
+    this->project_->set_original_files(original_list);
   }
 
   // distance transforms
@@ -161,7 +161,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
         break;
       }
     }
-    this->project_.set_distance_transform_files(groomed_list);
+    this->project_->set_distance_transform_files(groomed_list);
     //xml->writeTextElement("distance_transforms", groomed_list);
   }
 
@@ -191,8 +191,8 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
     //xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
     //xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
 
-    this->project_.set_local_point_files(local_list);
-    this->project_.set_global_point_files(world_list);
+    this->project_->set_local_point_files(local_list);
+    this->project_->set_global_point_files(world_list);
   }
 
   /// Re-integrate progress after completing the above
@@ -201,7 +201,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
 
   //xml->writeEndElement(); // project
 
-  this->project_.save(filename.toStdString());
+  this->project_->save(filename.toStdString());
   progress.setValue(100);
   return true;
 }
@@ -517,12 +517,12 @@ bool Session::load_project(QString filename)
   this->reset();
   this->filename_ = filename;
 
-  this->project_.load(filename.toStdString());
+  this->project_->load(filename.toStdString());
 
-  int num_subjects = this->project_.get_number_of_subjects();
+  int num_subjects = this->project_->get_number_of_subjects();
   std::cerr << "num_subjects = " << num_subjects << "\n";
 
-  std::vector<Subject> subjects = this->project_.get_subjects();
+  std::vector<Subject> subjects = this->project_->get_subjects();
 
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
@@ -531,14 +531,14 @@ bool Session::load_project(QString filename)
     this->shapes_ << shape;
   }
 
-  std::vector<std::string> original_files = this->project_.get_original_files();
+  std::vector<std::string> original_files = this->project_->get_original_files();
   if (original_files.size() > 0) {
     this->load_original_files(original_files);
   }
 
-  std::vector<std::string> groom_files = this->project_.get_distance_transform_files();
-  std::vector<std::string> local_point_files = this->project_.get_local_point_files();
-  std::vector<std::string> global_point_files = this->project_.get_global_point_files();
+  std::vector<std::string> groom_files = this->project_->get_distance_transform_files();
+  std::vector<std::string> local_point_files = this->project_->get_local_point_files();
+  std::vector<std::string> global_point_files = this->project_->get_global_point_files();
 
   if (groom_files.size() > 0) {
     this->load_groomed_files(groom_files, 0.5);
@@ -557,6 +557,12 @@ bool Session::load_project(QString filename)
   //this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
 
   return true;
+}
+
+//---------------------------------------------------------------------------
+std::shared_ptr<Project> Session::get_project()
+{
+  return this->project_;
 }
 
 //---------------------------------------------------------------------------

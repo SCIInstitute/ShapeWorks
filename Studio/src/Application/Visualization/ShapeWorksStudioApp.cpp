@@ -562,16 +562,22 @@ void ShapeWorksStudioApp::update_table()
 
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
 
-  this->ui_->table_widget->clear();
+  auto headers = this->session_->get_project()->get_headers();
 
+  this->ui_->table_widget->clear();
   this->ui_->table_widget->setRowCount(shapes.size());
   this->ui_->table_widget->setColumnCount(3);
 
-  QStringList table_header;
-  table_header << "#" << "Name" << "Size";
-  this->ui_->table_widget->setHorizontalHeaderLabels(table_header);
 
-  this->ui_->table_widget->verticalHeader()->setVisible(false);
+  QStringList table_header;
+  for (const std::string& header : headers)
+  {
+    std::cerr << "header: " << header << "\n";
+    table_header << QString::fromStdString(header);
+  }
+
+  this->ui_->table_widget->setHorizontalHeaderLabels(table_header);
+  this->ui_->table_widget->verticalHeader()->setVisible(true);
 
   for (int i = 0; i < shapes.size(); i++) {
     QSharedPointer<Mesh> original_mesh = shapes[i]->get_original_mesh();
@@ -1024,6 +1030,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_.set_saved();
   this->enablePossibleActions();
   this->visualizer_->reset_camera();
+
+  this->update_table();
 }
 
 //---------------------------------------------------------------------------
@@ -1062,6 +1070,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 
   this->hide();
   this->optimize_tool_->shutdown_threads();
+  this->session_->get_mesh_manager()->shutdown_threads();
   QCoreApplication::processEvents();
 }
 

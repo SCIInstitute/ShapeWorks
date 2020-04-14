@@ -30,6 +30,32 @@ void MeshManager::clear_cache()
 }
 
 //---------------------------------------------------------------------------
+void MeshManager::shutdown_threads()
+{
+  std::cerr << "Shut Down MeshManager Threads";
+
+  for (size_t i = 0; i < this->threads_.size(); i++) {
+    if (this->threads_[i]->isRunning()) {
+      this->threads_[i]->quit();
+      this->threads_[i]->terminate();
+      std::cerr << "waiting...\n";
+      //this->threads_[i]->wait(1000);
+      std::cerr << "done waiting...\n";
+    }
+    //this->threads_[i]->exit();
+
+    //std::cerr << "Terminate!\n";
+    //this->threads_[i]->terminate();
+    //this->threads_[i]->wait(1000);
+    //  }
+  }
+  for (size_t i = 0; i < this->threads_.size(); i++) {
+    //delete this->threads_[i];
+  }
+
+}
+
+//---------------------------------------------------------------------------
 void MeshManager::generate_mesh(const MeshWorkItem item)
 {
   // check cache first
@@ -41,6 +67,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
     MeshWorker* worker = new MeshWorker(this->prefs_, item,
                                         &this->work_queue_, &this->mesh_cache_);
     worker->get_mesh_generator()->set_surface_reconstructor(this->surface_reconstructor_);
+
 
     worker->moveToThread(thread);
     connect(thread, SIGNAL(started()), worker, SLOT(process()));

@@ -2,6 +2,7 @@
 #include <vtkPolyData.h>
 
 #include <Data/MeshWorker.h>
+#include <QThread>
 
 //---------------------------------------------------------------------------
 MeshWorker::MeshWorker(Preferences& prefs,
@@ -17,6 +18,7 @@ MeshWorker::~MeshWorker() {}
 //---------------------------------------------------------------------------
 void MeshWorker::process()
 {
+
   std::cerr << "mesh worker here, working on item\n";
   // build the mesh using our MeshGenerator
   vtkSmartPointer<vtkPolyData> mesh = this->mesh_generator_.build_mesh(this->item_);

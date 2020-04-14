@@ -54,6 +54,8 @@ public:
   /// get the pointer to the data manager
   //QSharedPointer<DataManager> get_data_manager();
 
+  std::shared_ptr<Project> get_project();
+
   /// import files
   void load_original_files(std::vector<std::string> file_names);
 
@@ -138,5 +140,5 @@ private:
   bool groups_available_ = false;
   bool is_light_project_ = false;
 
-  Project project_;
+  std::shared_ptr<Project> project_{new Project()};
 };
