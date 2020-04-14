@@ -73,9 +73,29 @@ MeshWorkItem* MeshWorkQueue::pop()
     return NULL;
   }
 
-  *item = this->work_list_.front();
-  this->work_list_.pop_front();
+  *item = this->work_list_.back();
+  this->work_list_.pop_back();
   return item;
+}
+
+//---------------------------------------------------------------------------
+MeshWorkItem* MeshWorkQueue::get_next_work_item()
+{
+  QMutexLocker locker(&this->mutex_);
+
+  if (this->work_list_.empty()) {
+    return NULL;
+  }
+
+  MeshWorkItem item = this->work_list_.back();
+  this->work_list_.pop_back();
+
+  this->processing_list_.push_back(item);
+
+  MeshWorkItem* mesh_item = new MeshWorkItem;
+  *mesh_item = item;
+
+  return mesh_item;
 }
 
 //---------------------------------------------------------------------------
@@ -83,7 +103,30 @@ bool MeshWorkQueue::isInside(const MeshWorkItem &item)
 {
   QMutexLocker locker(&this->mutex_);
 
-  for (WorkList::iterator it = this->work_list_.begin(); it != this->work_list_.end(); ++it) {
+  return this->in_inside_list(item, this->work_list_) || this->in_inside_list(item,
+                                                                              this->processing_list_);
+}
+
+//---------------------------------------------------------------------------
+void MeshWorkQueue::remove(const MeshWorkItem &item)
+{
+  QMutexLocker locker(&this->mutex_);
+
+  this->work_list_.remove(item);
+  this->processing_list_.remove(item);
+}
+
+//---------------------------------------------------------------------------
+bool MeshWorkQueue::isEmpty()
+{
+  QMutexLocker locker(&this->mutex_);
+  return this->work_list_.empty();
+}
+
+//---------------------------------------------------------------------------
+bool MeshWorkQueue::in_inside_list(const MeshWorkItem &item, const WorkList &list)
+{
+  for (WorkList::const_iterator it = list.begin(); it != list.end(); ++it) {
     if (it->filename != "") {
       if (it->filename == item.filename) {
         return true;
@@ -96,19 +139,4 @@ bool MeshWorkQueue::isInside(const MeshWorkItem &item)
     }
   }
   return false;
-}
-
-//---------------------------------------------------------------------------
-void MeshWorkQueue::remove(const MeshWorkItem &item)
-{
-  QMutexLocker locker(&this->mutex_);
-
-  this->work_list_.remove(item);
-}
-
-//---------------------------------------------------------------------------
-bool MeshWorkQueue::isEmpty()
-{
-  QMutexLocker locker(&this->mutex_);
-  return this->work_list_.empty();
 }

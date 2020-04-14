@@ -16,7 +16,6 @@
 // vnl
 #include "vnl/vnl_vector.h"
 
-
 class MeshWorkItem
 {
 public:
@@ -26,14 +25,12 @@ public:
 
   size_t memory_size;
 
-  friend bool operator< (const MeshWorkItem &a, const MeshWorkItem &b);
+  friend bool operator<(const MeshWorkItem &a, const MeshWorkItem &b);
 
-  friend bool operator== (const MeshWorkItem &a, const MeshWorkItem &b);
-
+  friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
 
 Q_DECLARE_METATYPE(MeshWorkItem);
-
 
 using WorkList = std::list<MeshWorkItem>;
 
@@ -48,6 +45,9 @@ public:
 
   MeshWorkItem* pop();
 
+  MeshWorkItem* get_next_work_item();
+
+
   bool isInside(const MeshWorkItem &item);
 
   void remove(const MeshWorkItem &item);
@@ -56,8 +56,12 @@ public:
 
 private:
 
+  bool in_inside_list(const MeshWorkItem &item, const WorkList& list);
+
   // for concurrent access
   QMutex mutex_;
 
   WorkList work_list_;
+
+  WorkList processing_list_;
 };

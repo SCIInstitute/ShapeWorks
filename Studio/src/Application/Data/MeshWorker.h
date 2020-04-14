@@ -7,10 +7,10 @@
  * The MeshWorker implements each thread's mesh construction management
  */
 
-
 #include <QObject>
 #include <QWaitCondition>
 #include <QMetaType>
+#include <QRunnable>
 
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshCache.h>
@@ -18,8 +18,7 @@
 
 Q_DECLARE_METATYPE(vtkSmartPointer<vtkPolyData>);
 
-
-class MeshWorker : public QObject
+class MeshWorker : public QObject, public QRunnable
 {
   Q_OBJECT
 
@@ -31,8 +30,7 @@ public:
   ~MeshWorker();
   MeshGenerator* get_mesh_generator();
 
-public Q_SLOTS:
-  void process();
+  void run();
 
 Q_SIGNALS:
   void result_ready(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh);

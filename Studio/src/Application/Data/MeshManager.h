@@ -11,6 +11,7 @@
 #include <vtkSmartPointer.h>
 
 #include <QWaitCondition>
+#include <QThreadPool>
 
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
@@ -49,6 +50,8 @@ Q_SIGNALS:
 
 private:
 
+  void do_work();
+
   Preferences& prefs_;
 
   // cache of shape meshes
@@ -66,4 +69,6 @@ private:
   int thread_count_;
 
   QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
+
+  QThreadPool thread_pool_;
 };
