@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     if( argc < 2 )
     {
         std::cerr << "-------------------------------" << std::endl;
-        std::cerr << "BuildRBFShape " << std::endl;
+        std::cerr << "RBFShapeBuild " << std::endl;
         std::cerr << "-------------------------------" << std::endl;
 
         std::cerr << "Given an set of points and their normals, this tool builds an RBFShape, which is solved and stored in the output file. " << std::endl;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
     if(debug){
         std::cout << "-------------------------------" << std::endl;
-        std::cout << "BuildRBFShape " << std::endl;
+        std::cout << "RBFShapeBuild " << std::endl;
         std::cout << "-------------------------------" << std::endl;
         std::cout << "Parameters: " << std::endl;
         std::cout << "\t Input file: " << infile << std::endl;
@@ -127,7 +127,17 @@ int main(int argc, char *argv[])
 
     shape.solve_system(pts);
 
-    shape.writeToEqFile(outfile, 5);
+    /*
+    if(debug){
+        std::vector<double> evaluations = shape.batch_evaluate(pts.block(0,0,temp_vec.size()*3,3));
+
+        for(size_t i = 0; i < evaluations.size(); i++){
+            cout << pts.row(i) << " " << evaluations[i] << endl;
+        }
+    }
+    */
+
+    shape.writeToEqFile(outfile, 25);
 
     cout << "Written to file <" << outfile << ">." << endl;
 

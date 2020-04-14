@@ -30,6 +30,12 @@ double RBFShape::evaluate(const Eigen::Vector3d & point){
     return eval.evaluate(this->kernel, point, this->points_, this->TPSWeights, this->coeff_.head<3>(), this->coeff_(3));
 }
 
+std::vector<double> RBFShape::batch_evaluate(const Eigen::MatrixXd & points){
+    CPURBFEvaluator eval = CPURBFEvaluator();
+
+    return eval.batchEvaluate(this->kernel, points, this->points_, this->TPSWeights, this->coeff_.head<3>(), this->coeff_(3));
+}
+
 Eigen::Vector3d RBFShape::gradient(const Eigen::Vector3d & point){
 
     Eigen::Vector3d grad = Eigen::Vector3d(0.,0.,0.);
@@ -193,7 +199,7 @@ void RBFShape::writeTPSdata(std::ofstream& file)
     const auto& TPSPoints = getPoints();
     int TPSPointCount = TPSPoints.rows();
     const auto& TPSWeights = this->TPSWeights;
-    Eigen::Vector4d TPSCoeff = coeff();
+    Eigen::Vector4d TPSCoeff = this->coeff_;
 
     file << "KernelType ThinPlateSpline \n";
 
@@ -229,6 +235,64 @@ void RBFShape::write_csv(const std::string& filename, int precision){
     }
 
     file.close();
+}
+
+//TODO? Handle a more complete loading
+bool RBFShape::loadFromEqFile(const std::string& filename){
+    std::cout << "Reading file..." << std::endl;
+    //Reading infile
+    std::string line;
+    std::ifstream in(filename);
+    std::vector<std::vector<double> > temp_vec;
+
+    while (std::getline(in, line))  // this does the checking!
+    {
+        std::istringstream iss(line);
+        std::vector<std::string> words{std::istream_iterator<std::string>{iss},
+                          std::istream_iterator<std::string>{}};
+
+        this->pows_ = Eigen::Vector3d(1.,1.,1.);
+        if(words.size() == 4){
+            std::vector<double> temp;
+            for(size_t i = 0; i < words.size(); i++){temp.push_back(stod(words[i]));}
+            temp_vec.push_back(temp);
+        }
+        else if (words.size() > 0 && words[0] == "Coeff" ){
+            this->coeff_(0) = stod(words[1]);
+            this->coeff_(1) = stod(words[2]);
+            this->coeff_(2) = stod(words[3]);
+            this->coeff_(3) = stod(words[4]);
+            //std::cout << "Coeffs: " << this->coeff_ << std::endl;
+        }
+        else if (words.size() > 0 && words[0] == "KernelType" ){
+            std::cout << "Kernel type: " << words[1] << std::endl;
+            if (words[1] == "ThinPlateSpline "){
+                this->kernel = new ThinPlateKernel();
+            }
+        }
+        else if (words.size() > 0 && words[0] == "NumberOfPoints" ){
+            std::cout << "Number of Points: " << words[1] << std::endl;
+        }
+        else{
+            std::cerr << "Line did not comform the format; line <" << line << std::endl;
+        }
+    }
+
+    in.close();
+
+    this->points_ = Eigen::MatrixXd(temp_vec.size(), 4);
+
+    for(size_t i = 0; i < temp_vec.size(); i++){
+
+        this->points_(i, 0) = temp_vec[i][0];
+        this->points_(i, 1) = temp_vec[i][1];
+        this->points_(i, 2) = temp_vec[i][2];
+        this->points_(i, 3) = 0.;
+
+        this->TPSWeights.push_back(temp_vec[i][3]);
+    }
+
+    return true;
 }
 
 } // shapeworks

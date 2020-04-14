@@ -7,7 +7,11 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <fstream>
+#include <string>
+#include <sstream>
 #include <iomanip>
+#include <iterator>
+#include <algorithm>
 
 #include <itkTranslationTransform.h>
 #include "evaluators/CPURBFEvaluator.h"
@@ -90,6 +94,8 @@ public:
           It is a virtual function and hence it can be redefined in the derived class(s). */
       virtual double evaluate(const Eigen::Vector3d & point);
 
+      virtual std::vector<double> batch_evaluate(const Eigen::MatrixXd & points);
+
       /** This function evaluates the gradient vector of the implicit function at a given 3D point.
           \param point A 3D spatial point that is defined by xyz coordinates.
           The gradient of the implicit function \f$f(\mathbf{x})\f$ at the point \f$\mathbf{x}\f$ is evaluated as
@@ -140,7 +146,14 @@ public:
 
       //Writes TPS Data to file
       void writeTPSdata(std::ofstream& file);
+
+      /*******************************************************************************************************************/
+      /** Load functions: This type of functions reads in a previously written out RBFShape*/
+      /*******************************************************************************************************************/
       
+      //Loads from .rbfshape file
+      bool loadFromEqFile(const std::string& filename);
+
       /*******************************************************************************************************************/
       /** Debug functions: This type of functions write or print out debug information*/
       /*******************************************************************************************************************/

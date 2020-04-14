@@ -48,7 +48,7 @@ std::vector<double> CPURBFEvaluator::batchEvaluate(const RBFKernel *kernel,
 
   std::vector<double> results;
   for (int i = 0; i < evalPoints.rows(); i++) {
-    const Eigen::Vector4d& point = evalPoints.row(i);
+    const Eigen::Vector3d& point = evalPoints.row(i);
     double result = this->evaluate(kernel, point.head<3>(), rbfPoints, coefficients,
       linearCoefficients, constant);
     results.push_back(result);
