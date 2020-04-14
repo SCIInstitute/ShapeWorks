@@ -7,6 +7,15 @@ namespace shapeworks {
 class ImageUtils
 {
 public:
+
+  /// createCenterOfMassTransform
+  ///
+  /// Generates the Transform necessary to move the contents of this binary image to the center.
+  /// Example:
+  ///   Transform xform = ImageUtils::createCenterOfMassTransform(image);
+  ///   image.applyTransform(xform);
+  ///
+  /// \param image the binary image from which to generate the transform
   static Transform createCenterOfMassTransform(const Image &image);
 
   /// topologyPreservingSmooth
@@ -27,24 +36,34 @@ public:
   static Image& topologyPreservingSmooth(T& img, float scaling = 20.0, float sigmoidAlpha = 10.5, float sigmoidBeta = 10.0,
                                          unsigned curvatureIterations = 10, bool applyCurvatureFilter = true)
   {
-    // Works but requires a const_cast in case foo is const, even though when it is const a new
-    // object is created because when foo is a const ref it can't be assigned to a non-const.
+    // When img is const, create new Image to return. Otherwise apply directly to [const_cast'd non-const] img.
     Image& image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image&>(img);
-
-    // debug: just print it to feel good that it's what we think it is
-    if (std::is_const<std::remove_reference<decltype(image)>>::value) // consider that a reference to a const is not itself const
-      std::cout << "argument is const ref\n";
-    else
-      std::cout << "argument is non-const ref\n";
 
     if (applyCurvatureFilter)
       image.applyCurvatureFilter(curvatureIterations);
-    Image &featureImage(image);
+    Image featureImage(image);
 
     featureImage.applyGradientFilter();
     featureImage.applySigmoidFilter(sigmoidAlpha, sigmoidBeta);
 
     image.applyTPLevelSetFilter(featureImage, scaling);
+    return image;
+  }
+
+  /// isoresample
+  ///
+  /// create an isotropic resampling of the given image volume
+  ///
+  /// \param isoSpacing     size of an [isotropic (n x n x n)] output voxel [default n=1]
+  /// \param outputSize     image size can be changed [default stays the same]
+  template<typename T>
+  static Image& isoresample(T& img, double isoSpacing = 1.0, Dims outputSize = Dims())
+  {
+    // When img is const, create new Image to return. Otherwise apply directly to [const_cast'd non-const] img.
+    Image& image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image&>(img);
+
+    Point3 spacing({isoSpacing, isoSpacing, isoSpacing});
+    image.resample(spacing, outputSize);
     return image;
   }
 

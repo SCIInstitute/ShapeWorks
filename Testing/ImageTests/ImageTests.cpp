@@ -14,7 +14,7 @@ TEST(ImageTests, isoresample_binary_isotropic_test) {
 
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.threshold();
   image.recenter();
   Image ground_truth(test_location + "binary-isotropic-isoresampled.nrrd");
@@ -28,7 +28,7 @@ TEST(ImageTests, isoresample_binary_anisotropic_test) {
 
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.threshold();
   image.recenter();
   Image ground_truth(test_location + "binary-anisotropic-isoresampled.nrrd");
@@ -41,7 +41,7 @@ TEST(ImageTests, isoresample_smooth_isotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-isotropic-input.nrrd");
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.recenter();
   Image ground_truth(test_location + "smooth-isotropic-isoresampled.nrrd");
 
@@ -53,7 +53,7 @@ TEST(ImageTests, isoresample_smooth_anisotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-anisotropic-input.nrrd");
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.recenter();
   Image ground_truth(test_location + "smooth-anisotropic-isoresampled.nrrd");
 
@@ -65,7 +65,7 @@ TEST(ImageTests, isoresample_image_anisotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "image-anisotropic-input.nrrd");
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.recenter();
   Image ground_truth(test_location + "image-anisotropic-isoresampled.nrrd");
 
@@ -259,9 +259,3 @@ TEST(ImageTests, translate_test)
 
   ASSERT_TRUE(image == ground_truth);
 }
-
-//TEST(ImageTests, blah_test) {
-
-// ...
-
-// }

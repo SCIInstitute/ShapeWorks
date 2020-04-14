@@ -32,4 +32,14 @@ Point3& operator/=(Point3 &p, const double x)
   return p;
 }
 
+itk::Index<3> toIndex(const IPoint3 &pt) 
+{ 
+  return itk::Index<3>({pt[0], pt[1], pt[2]}); 
+}
+
+itk::Size<3> toSize(const IPoint3 &pt) 
+{ 
+  return itk::Size<3>({static_cast<itk::SizeValueType>(pt[0]), static_cast<itk::SizeValueType>(pt[1]), static_cast<itk::SizeValueType>(pt[2])}); 
+}
+
 }; //shapeworks

@@ -92,6 +92,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class IsoResampleImage : public ImageCommand
+{
+public:
+  static IsoResampleImage& getCommand() { static IsoResampleImage instance; return instance; }
+
+private:
+  IsoResampleImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class PadImage : public ImageCommand
 {
 public:

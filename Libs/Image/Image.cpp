@@ -1,5 +1,5 @@
 #include "Image.h"
-#include "Utils.h"
+#include "utils.h"
 #include "itkTPGACLevelSetImageFilter.h"
 
 #include <itkImageFileReader.h>
@@ -259,25 +259,12 @@ bool Image::recenter()
   return true;
 }
 
-/// isoresample
-///
-/// create an isotropic resampling of the given volume (resample accepts only continuous images, so probably antialias binary images first)
-///
-/// \param isoSpacing     size of an output voxel [default 1.0)
-/// \param outputSize     image size can be changed [default stays the same]
-bool Image::isoresample(double isoSpacing, Dims outputSize)
+Image& Image::resample(const Point3& spacing, Dims outputSize)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
   ResampleFilter::Pointer resampler = ResampleFilter::New();
 
-  double spacing[] = { isoSpacing, isoSpacing, isoSpacing };
-  resampler->SetOutputSpacing(spacing);
+  resampler->SetOutputSpacing(spacing.GetDataPointer());
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
 
@@ -285,30 +272,17 @@ bool Image::isoresample(double isoSpacing, Dims outputSize)
   {
     ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
     ImageType::SpacingType inputSpacing = image->GetSpacing();
-    outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / isoSpacing);
-    outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / isoSpacing);
-    outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / isoSpacing);
+    outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / spacing[0]);
+    outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / spacing[1]);
+    outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / spacing[2]);
   }
   resampler->SetSize(outputSize);
   resampler->SetInput(this->image);
 
-  try
-  {
-    resampler->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Resample images to be isotropic failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Resample images to be isotropic succeeded!\n";
-#endif
+  resampler->Update();
 
   this->image = resampler->GetOutput();
-  return true;
+  return *this;
 }
 
 /// operator ==
@@ -532,7 +506,7 @@ bool Image::threshold(PixelType min, PixelType max)
   filter->SetUpperThreshold(max);
   filter->SetInsideValue(1.0);
   filter->SetOutsideValue(0.0);
-
+  
   try
   {
     filter->Update();
@@ -794,7 +768,6 @@ bool Image::gaussianBlur(double sigma)
 Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int padding)
 {
   Image::Region bbox;
-  
   Dims dims = read(filenames[0]).dims(); // make sure all images are the same size
 
   for (auto filename : filenames)
@@ -803,7 +776,7 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
 
     if (img.dims() != dims) { throw std::invalid_argument("image sizes do not match (" + filename + ")"); }
 
-    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
+    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(img.image, img.image->GetLargestPossibleRegion());
     while (!imageIterator.IsAtEnd())
     {
       PixelType val = imageIterator.Get();
@@ -822,6 +795,7 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
     }
   }
 
+  // ensure bounding box is not larger than the images themselves
   bbox.min[0] = std::max(0, bbox.min[0] - padding);
   bbox.min[1] = std::max(0, bbox.min[1] - padding);
   bbox.min[2] = std::max(0, bbox.min[2] - padding);
@@ -854,21 +828,9 @@ bool Image::crop(const Region &region)
     return false;
   }
 
-  ImageType::IndexType desiredStart;
-  desiredStart[0] = region.min[0];
-  desiredStart[1] = region.min[1];
-  desiredStart[2] = region.min[2];
-
-  ImageType::SizeType desiredSize;
-  desiredSize[0] = region.max[0];
-  desiredSize[1] = region.max[1];
-  desiredSize[2] = region.max[2];
-
-  ImageType::RegionType desiredRegion(desiredStart, desiredSize);
-
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-  filter->SetExtractionRegion(desiredRegion);
+  filter->SetExtractionRegion(region);
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
 

@@ -154,6 +154,38 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
 {
+  const std::string prog = "resample";
+  const std::string desc = "resamples an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default 1.0].");
+  parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default 1.0].");
+  parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default 1.0].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
+
+  Command::buildParser();
+}
+
+bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double spaceX = static_cast<double>(options.get("spacex"));
+  double spaceY = static_cast<double>(options.get("spacey"));
+  double spaceZ = static_cast<double>(options.get("spacez"));
+  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+
+  sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}), Dims({sizeX, sizeY, sizeZ}));
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// IsoResampleImage
+///////////////////////////////////////////////////////////////////////////////
+void IsoResampleImage::buildParser()
+{
   const std::string prog = "isoresample";
   const std::string desc = "resamples images to be isotropic";
   parser.prog(prog).description(desc);
@@ -166,14 +198,15 @@ void ResampleImage::buildParser()
   Command::buildParser();
 }
 
-bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool IsoResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   double isoSpacing = static_cast<double>(options.get("isospacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  return true; //<ctc> todo: remove return values from commands since they will throw exceptions upon failure
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -495,7 +528,6 @@ void TopologyPreservingFilter::buildParser()
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha for sigmoid fitler");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta for sigmoid fitler");  
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations for curvature filter");
-  //todo: I think the curvature is always used for this, so when applying it might mean featureimage is okay to be unspecified
   parser.add_option("--applycurvature").action("store").type("bool").set_default(true).help("default it true, but in some cases it has already been applied");
   
   Command::buildParser();

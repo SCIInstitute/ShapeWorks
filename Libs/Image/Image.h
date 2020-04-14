@@ -15,14 +15,19 @@ public:
 
   struct Region
   {
-    int min[3] = {0, 0, 0};
-    int max[3] = {0, 0, 0};
+    int min[3] = {std::numeric_limits<int>::max(), std::numeric_limits<int>::max(), std::numeric_limits<int>::max()};
+    int max[3] = {std::numeric_limits<int>::min(), std::numeric_limits<int>::min(), std::numeric_limits<int>::min()};
     bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
+
+    IPoint3 origin() const { return IPoint3(min); }
+    IPoint3 size() const { return IPoint3({max[0]-min[0], max[1]-min[1], max[2]-min[2]}); }
+
+    operator ImageType::RegionType() const { return ImageType::RegionType(toIndex(origin()), toSize(size())); }
   };
 
-  Image(const std::string &filename) { *this = read(filename); }
+  Image(const std::string &pathname) { *this = read(pathname); }
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
-  Image(Image &img) { this->image.Swap(img.image); }
+  Image(Image &&img) { this->image.Swap(img.image); }
   Image(const Image &img);
   Image& operator=(Image &img) { this->image.Swap(img.image); return *this; }
   Image& operator=(const Image &img);
@@ -31,7 +36,10 @@ public:
 
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
   bool recenter();
-  bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
+
+  /// Resamples image with new voxel spacing and output size [same size if unspecified]
+  Image& resample(const Point3& spacing, Dims outputSize = Dims());
+
   bool pad(int padding = 0, PixelType value = 0.0);
   bool applyTransform(const Transform &transform);
   bool extractLabel(PixelType label = 1.0);

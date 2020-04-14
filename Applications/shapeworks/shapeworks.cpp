@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(SmoothMesh::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
+  shapeworks.addCommand(IsoResampleImage::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
