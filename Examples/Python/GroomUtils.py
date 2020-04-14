@@ -333,7 +333,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             outname = inname.replace(initPath, outDir)
             outname = outname.replace('.nrrd', '.aligned.nrrd')
             transoutname = inname.replace(initPath, transoutDir)
-            transformation = transoutname.replace('.nrrd', '.tarnsormationMatrix.txt')
+            transformation = transoutname.replace('.nrrd', '.transformationMatrix.txt')
             outDataList.append(outname)
 
             dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
@@ -371,7 +371,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "--applycurvature", str(False),             # b/c starting with the results of curvature (smoothed)
                    "write-image", "--name", isonrrdfilename]
             subprocess.check_call(cmd)
-
+            
             execCommand = ["ICPRigid3DImageRegistration", "--targetDistanceMap", ref_tpdtnrrdfilename, "--sourceDistanceMap", tpdtnrrdfilename, "--sourceSegmentation", inname, "--icpIterations", str(icpIterations), "--visualizeResult",  "0",  "--solutionSegmentation", outname, "--solutionTransformation", transformation]
             subprocess.check_call(execCommand)
 

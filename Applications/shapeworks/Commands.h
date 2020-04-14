@@ -203,11 +203,7 @@ private:
 class ComputeDT : public ImageCommand
 {
 public:
-  static ComputeDT &getCommand()
-  {
-    static ComputeDT instance;
-    return instance;
-  }
+  static ComputeDT &getCommand() { static ComputeDT instance; return instance; }
 
 private:
   ComputeDT() { buildParser(); } 
@@ -291,11 +287,7 @@ private:
 class BoundingBox : public ImageCommand
 {
 public:
-  static BoundingBox &getCommand()
-  {
-    static BoundingBox instance;
-    return instance;
-  }
+  static BoundingBox &getCommand() { static BoundingBox instance; return instance; }
 
 private:
   BoundingBox() { buildParser(); }
@@ -311,6 +303,17 @@ public:
 
 private:
   CropImage() { buildParser(); } 
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+class ICPRigid : public ImageCommand
+{
+public:
+  static ICPRigid &getCommand() { static ICPRigid instance; return instance; }
+
+private:
+  ICPRigid() { buildParser(); } 
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

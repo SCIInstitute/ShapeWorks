@@ -53,7 +53,7 @@ public:
   bool gaussianBlur(double sigma = 0.0);
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   bool crop(const Region &region);
-  bool icpRigid(std::string sourceDistanceMap, float isoValue, unsigned iterations);
+  bool icpRigid(const Image &source, const Image &target, unsigned iterations, float isoValue);
 
   template <typename Exporter, typename Importer>
   void connectPipelines(Exporter exporter, Importer *importer)

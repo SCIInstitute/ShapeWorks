@@ -610,4 +610,31 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
   return sharedData.image.crop(sharedData.region);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// ICPRigid
+///////////////////////////////////////////////////////////////////////////////
+void ICPRigid::buildParser()
+{
+  const std::string prog = "icp";
+  const std::string desc = "performs iterative closed point (ICP) 3D rigid registration on pair of images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--source").action("store").type("string").set_default("").help("distance map of source image.");
+  parser.add_option("--target").action("store").type("string").set_default("").help("distance map of target image.");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("number of iterations run ICP registration.");
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("");
+
+  Command::buildParser();
+}
+
+bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  Image source(options["source"]);
+  Image target(options["target"]);
+  unsigned iterations = static_cast<unsigned>(options.get("iteration"));
+  float isovalue = static_cast<float>(options.get("isovalue"));
+
+  return sharedData.image.icpRigid(source, target, iterations, isovalue);
+}
+
 } // shapeworks

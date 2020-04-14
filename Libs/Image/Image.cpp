@@ -27,8 +27,11 @@
 #include <itkVTKImageExport.h>
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
+#include <vtkImageData.h>
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkLandmarkTransform.h>
+#include <vtkTransform.h>
 
 #include <exception>
 
@@ -856,7 +859,7 @@ bool Image::crop(const Region &region)
 /// icpRigid
 ///
 /// performs iterative closed point (ICP) 3D rigid registration on a pair of images
-bool Image::icpRigid(std::string sourceDistanceMap, float isoValue, unsigned iterations)
+bool Image::icpRigid(const Image &source, const Image &target, unsigned iterations, float isoValue)
 {
   if (!this->image)
   {
@@ -866,39 +869,37 @@ bool Image::icpRigid(std::string sourceDistanceMap, float isoValue, unsigned ite
 
   using ExportFilterType = itk::VTKImageExport<ImageType>;
   ExportFilterType::Pointer itkTargetExporter = ExportFilterType::New();
-  itkTargetExporter->SetInput(this->image);
+  itkTargetExporter->SetInput(target.image);
 
   vtkImageImport *vtkTargetImporter = vtkImageImport::New();
   connectPipelines(itkTargetExporter, vtkTargetImporter);
   vtkTargetImporter->Update();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();
-  // targetContour->SetInputData(vtkTargetImporter->GetOutput());
+  targetContour->SetInputData(vtkTargetImporter->GetOutput());
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
-  read(sourceDistanceMap); // todo: fix this. no i/o in functions
-
   ExportFilterType::Pointer itkMovingExporter = ExportFilterType::New();
-  itkMovingExporter->SetInput(this->image);
+  itkMovingExporter->SetInput(source.image);
 
   vtkImageImport *vtkMovingImporter = vtkImageImport::New();
   connectPipelines(itkMovingExporter, vtkMovingImporter);
   vtkMovingImporter->Update();
 
   vtkContourFilter *movingContour = vtkContourFilter::New();
-  // movingContour->SetInputData(vtkMovingImporter->GetOutput());
+  movingContour->SetInputData(vtkMovingImporter->GetOutput());
   movingContour->SetValue(0, isoValue);
   movingContour->Update();
 
-  vtkSmartPointer<vtkPolyData> target = targetContour->GetOutput();
+  vtkSmartPointer<vtkPolyData> targetc = targetContour->GetOutput();
   vtkSmartPointer<vtkPolyData> moving = movingContour->GetOutput();
 
   using icpTransform = vtkSmartPointer<vtkIterativeClosestPointTransform>;
   icpTransform icp = icpTransform::New();
   icp->SetSource(moving);
-  icp->SetTarget(target);
-  // icp->GetLandmarkTransform()->SetModeToRigidBody();
+  icp->SetTarget(targetc);
+  icp->GetLandmarkTransform()->SetModeToRigidBody();
   icp->SetMaximumNumberOfIterations(iterations);
   icp->Modified();
   icp->Update();
@@ -908,6 +909,11 @@ bool Image::icpRigid(std::string sourceDistanceMap, float isoValue, unsigned ite
   icpTransformFilter->SetInputData(moving);
   icpTransformFilter->SetTransform(icp);
   icpTransformFilter->Update();
+
+  vtkSmartPointer<vtkMatrix4x4> m1 = icp->GetMatrix();
+  vtkSmartPointer<vtkMatrix4x4> m = vtkMatrix4x4::New();
+  vtkMatrix4x4::Invert(m1, m);
+  std::cout << "The resulting matrix is: " << *m << std::endl;
 
   // applyTransform();
 

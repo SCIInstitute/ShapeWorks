@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Blur::getCommand());
   shapeworks.addCommand(BoundingBox::getCommand());
   shapeworks.addCommand(CropImage::getCommand());
+  shapeworks.addCommand(ICPRigid::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
