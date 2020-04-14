@@ -36,7 +36,10 @@ public:
 
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
   bool recenter();
-  bool isoresample(double isoSpacing = 1.0f, Dims outputSize = Dims());
+
+  /// Resamples image with new voxel spacing and output size [same size if unspecified]
+  Image& resample(const Point3& spacing, Dims outputSize = Dims());
+
   bool pad(int padding = 0, PixelType value = 0.0);
   bool applyTransform(const Transform &transform);
   bool extractLabel(PixelType label = 1.0);

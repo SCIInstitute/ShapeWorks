@@ -1,4 +1,3 @@
-
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
   Date:      $Date: 2014/03/24 01:17:40 $

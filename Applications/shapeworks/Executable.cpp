@@ -96,7 +96,11 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
 #endif
       auto args = std::vector<std::string>(arguments.begin() + 1, arguments.end());
       arguments = cmd->second.parse_args(args);
-      retval = cmd->second.run(sharedData);
+      try {
+        retval = cmd->second.run(sharedData);
+      } catch(std::exception &e) {
+        throw std::runtime_error("'" + cmd->first + "' FAILED: " + e.what());
+      }
     }
     else {
       std::stringstream ss;
