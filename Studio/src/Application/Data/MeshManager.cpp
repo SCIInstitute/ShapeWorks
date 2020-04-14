@@ -18,6 +18,9 @@ MeshManager::MeshManager(Preferences& prefs) :
   this->thread_count_ = 0;
 
   this->mesh_generator_.set_surface_reconstructor(this->surface_reconstructor_);
+
+  qRegisterMetaType<MeshWorkItem>("MeshWorkItem");
+  qRegisterMetaType<vtkSmartPointer<vtkPolyData>>("vtkSmartPointer<vtkPolyData>");
 }
 
 //---------------------------------------------------------------------------
@@ -33,7 +36,7 @@ void MeshManager::clear_cache()
 void MeshManager::shutdown_threads()
 {
   std::cerr << "Shut Down MeshManager Threads";
-
+/*
   for (size_t i = 0; i < this->threads_.size(); i++) {
     if (this->threads_[i]->isRunning()) {
       this->threads_[i]->quit();
@@ -52,6 +55,7 @@ void MeshManager::shutdown_threads()
   for (size_t i = 0; i < this->threads_.size(); i++) {
     //delete this->threads_[i];
   }
+  */
 
 }
 
@@ -71,7 +75,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
 
     worker->moveToThread(thread);
     connect(thread, SIGNAL(started()), worker, SLOT(process()));
-    connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
+    connect(worker, &MeshWorker::result_ready, this, &MeshManager::handle_thread_complete);
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
     connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -81,7 +85,7 @@ void MeshManager::generate_mesh(const MeshWorkItem item)
       this->thread_count_++;
     }
     else {
-      this->threads_.push_back(thread);
+      this->threads_.push(thread);
     }
   }
 }
@@ -112,13 +116,17 @@ vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const MeshWorkItem &item)
 }
 
 //---------------------------------------------------------------------------
-void MeshManager::handle_thread_complete()
+void MeshManager::handle_thread_complete(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh)
 {
+  this->work_queue_.remove(item);
+  this->mesh_cache_.insert_mesh(item, mesh);
+
   this->thread_count_--;
   int max_threads = this->prefs_.get_num_threads();
   while (!this->threads_.empty() && this->thread_count_ < max_threads) {
-    QThread* thread = this->threads_.back();
-    this->threads_.pop_back();
+    QThread* thread = this->threads_.front();
+    std::cerr << "starting next thread\n";
+    this->threads_.pop();
     thread->start();
     this->thread_count_++;
   }

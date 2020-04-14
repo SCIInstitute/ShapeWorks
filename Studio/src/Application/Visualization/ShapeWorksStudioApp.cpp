@@ -580,6 +580,7 @@ void ShapeWorksStudioApp::update_table()
   this->ui_->table_widget->verticalHeader()->setVisible(true);
 
   for (int i = 0; i < shapes.size(); i++) {
+    /*
     QSharedPointer<Mesh> original_mesh = shapes[i]->get_original_mesh();
 
     QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(i + 1));
@@ -592,6 +593,7 @@ void ShapeWorksStudioApp::update_table()
       new_item = new QTableWidgetItem(original_mesh->get_dimension_string());
       this->ui_->table_widget->setItem(i, 2, new_item);
     }
+    */
   }
 
   this->ui_->table_widget->resizeColumnsToContents();

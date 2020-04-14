@@ -29,9 +29,7 @@ void MeshWorker::process()
   size_t combined_size = (shape_size * 2) + mesh_size;
   this->item_.memory_size = combined_size;
 
-  this->queue_->remove(this->item_);
-  this->cache_->insert_mesh(this->item_, mesh);
-  emit result_ready();
+  emit result_ready(this->item_, mesh);
   emit finished();
 }
 

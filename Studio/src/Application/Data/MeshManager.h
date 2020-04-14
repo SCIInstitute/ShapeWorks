@@ -42,9 +42,9 @@ public:
   void shutdown_threads();
 
 public Q_SLOTS:
-  void handle_thread_complete();
+  void handle_thread_complete(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh);
 
-signals:
+Q_SIGNALS:
   void new_mesh();
 
 private:
@@ -61,7 +61,7 @@ private:
   MeshWorkQueue work_queue_;
 
   // the workers
-  std::vector<QThread*> threads_;
+  std::queue<QThread*> threads_;
 
   int thread_count_;
 

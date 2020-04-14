@@ -10,10 +10,14 @@
 
 #include <QObject>
 #include <QWaitCondition>
+#include <QMetaType>
 
 #include <Data/MeshWorkQueue.h>
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
+
+Q_DECLARE_METATYPE(vtkSmartPointer<vtkPolyData>);
+
 
 class MeshWorker : public QObject
 {
@@ -31,7 +35,7 @@ public Q_SLOTS:
   void process();
 
 Q_SIGNALS:
-  void result_ready();
+  void result_ready(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh);
   void finished();
 
 private:

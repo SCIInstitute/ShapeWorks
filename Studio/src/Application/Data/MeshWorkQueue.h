@@ -11,9 +11,11 @@
 
 // qt
 #include <QMutex>
+#include <QMetaType>
 
 // vnl
 #include "vnl/vnl_vector.h"
+
 
 class MeshWorkItem
 {
@@ -29,6 +31,9 @@ public:
   friend bool operator== (const MeshWorkItem &a, const MeshWorkItem &b);
 
 };
+
+Q_DECLARE_METATYPE(MeshWorkItem);
+
 
 using WorkList = std::list<MeshWorkItem>;
 
