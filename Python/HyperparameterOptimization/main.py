@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import random
+import subprocess
 
 import numpy as np
 
@@ -42,14 +43,15 @@ class MyTrainableClass(Trainable):
             self.timestep = json.loads(f.read())["timestep"]
 
 
-ray.init(num_cpus=6, num_gpus=0)
-search_space = {
-    "x": tune.uniform(-1, 1),
-    "y": tune.uniform(-1, 1)
-}
-analysis = tune.run(MyTrainableClass,
-                    config=search_space,
-                    num_samples=100,
-                    scheduler=ASHAScheduler(metric="loss", mode="min"))
+if __name__ == '__main__':
+    ray.init(num_cpus=6, num_gpus=0)
+    search_space = {
+        "x": tune.uniform(-1, 1),
+        "y": tune.uniform(-1, 1)
+    }
+    analysis = tune.run(MyTrainableClass,
+                        config=search_space,
+                        num_samples=100,
+                        scheduler=ASHAScheduler(metric="loss", mode="min"))
 
-print('best: {}', analysis.get_best_config('loss'))
+    print('best: {}', analysis.get_best_config('loss'))
