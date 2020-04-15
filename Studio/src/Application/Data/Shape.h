@@ -1,5 +1,4 @@
-#ifndef STUDIO_DATA_SHAPE_H
-#define STUDIO_DATA_SHAPE_H
+#pragma once
 
 #include <QSharedPointer>
 #include <QString>
@@ -10,11 +9,10 @@ class Shape;
 typedef QSharedPointer< Shape > ShapeHandle;
 typedef QVector< ShapeHandle > ShapeList;
 
-
 class Point
 {
 public:
-  double x,y,z;
+  double x, y, z;
 };
 
 //! Representation of a single shape/patient.
@@ -26,7 +24,7 @@ public:
   ~Shape();
 
   /// Import the original raw image file
-  void import_original_image( std::string filename, float iso_value );
+  void import_original_image(std::string filename, float iso_value);
 
   /// Retrieve the original mesh
   QSharedPointer<Mesh> get_original_mesh();
@@ -48,7 +46,7 @@ public:
   /// Import local correspondence point file
   bool import_local_point_file(QString filename);
   /// Import local correspondence point data
-  bool import_points(std::vector<itk::Point<double> > points, bool local);
+  bool import_points(std::vector<itk::Point<double>> points, bool local);
 
   /// Retrieve the reconstructed mesh
   QSharedPointer<Mesh> get_reconstructed_mesh();
@@ -59,13 +57,13 @@ public:
   /// Get the local correspondence points
   vnl_vector<double> get_local_correspondence_points();
 
-  void set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data );
+  void set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data);
 
   /// Get the id of this shape
   int get_id();
 
   /// Set the id of this shape
-  void set_id( int id );
+  void set_id(int id);
 
   QString get_original_filename();
   QString get_original_filename_with_path();
@@ -85,10 +83,12 @@ public:
   QList<double> get_exclusion_sphere_radii();
   void set_exclusion_sphere_radii(QList<double> radii);
 
+  int get_group_id();
+  void set_group_id(int id);
 
 private:
 
-  static bool import_point_file( QString filename, vnl_vector<double> &points );
+  static bool import_point_file(QString filename, vnl_vector<double> &points);
 
   int id_;
 
@@ -96,6 +96,7 @@ private:
   QSharedPointer<Mesh> groomed_mesh_;
   QSharedPointer<Mesh> reconstructed_mesh_;
   ImageType::Pointer original_image_, groomed_image_;
+  int group_id_ = 1;
 
   QString original_mesh_filename_;
   QString groomed_mesh_filename_;
@@ -107,8 +108,4 @@ private:
 
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
-
-
 };
-
-#endif /* STUDIO_DATA_SHAPE_H */

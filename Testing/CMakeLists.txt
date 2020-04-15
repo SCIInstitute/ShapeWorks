@@ -1,3 +1,6 @@
+find_package(GTest REQUIRED)
+# NOTE: must call enable_testing() before this in the top-level CMakeLists.txt
+
 # Set the test data location
 set(TEST_DATA_DIR "${CMAKE_SOURCE_DIR}/Testing/data")
 
@@ -10,6 +13,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestConfiguration.h.in
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(ImageTests)
+add_subdirectory(MeshTests)
 add_subdirectory(OptimizeTests)
 add_subdirectory(PythonTests)
 add_subdirectory(PointCloudTests)
+add_subdirectory(ParticlesTests)

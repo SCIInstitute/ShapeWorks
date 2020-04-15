@@ -24,27 +24,6 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Ins
 
 include(DefaultBuildType)
 
-# Google Test
-if (BUILD_TESTS)
-  message(STATUS "Building Google Test")
-  set( gtest_force_shared_crt ON CACHE BOOL "Always use msvcrt.dll" FORCE)
-  enable_testing()
-  include(FetchContent)
-  
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        release-1.10.0
-    )
-  
-  FetchContent_GetProperties(googletest)
-  if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-  endif()
-endif(BUILD_TESTS)
-
-
 project(ShapeWorks)
 
 # use ccache if available
@@ -68,14 +47,16 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_BUNDLE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # GUI
-find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
-if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
-  set(SHAPEWORKS_QT_FOUND 1)
-else()
-  set(SHAPEWORKS_QT_FOUND 0)
-endif()
 
 if (SHAPEWORKS_GUI)
+    
+  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql ${SHAPEWORKS_QT_REQUIRED})
+  if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
+  set(SHAPEWORKS_QT_FOUND 1)
+  else()
+  set(SHAPEWORKS_QT_FOUND 0)
+  endif()
+
   # headers (TODO: move to shapeworks gui targets' includes)
   include_directories(${Qt5Widgets_INCLUDE_DIRS})
   include_directories(${Qt5OpenGL_INCLUDE_DIRS})
@@ -123,7 +104,7 @@ ELSE()
 ENDIF()
 
 ### Eigen
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
@@ -143,7 +124,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
 
 # For consolidating the independent executables. Remove when done (TODO)
-add_definitions(-DDEBUG_CONSOLIDATION=1)
+add_definitions(-DDEBUG_CONSOLIDATION=0)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
@@ -169,10 +150,8 @@ if (SHAPEWORKS_GUI)
   get_filename_component(Qt_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
   get_filename_component(Qt_PREFIX_DIR "${Qt_BIN_DIR}" PATH)
   get_filename_component(QT_LOC Qt5::Widgets DIRECTORY)
-  MESSAGE(STATUS "QT libs: ${QT_LOC}")
   
   set(qtlib "Widgets")
-  MESSAGE(STATUS "QT libs: ${QT_LIB_DIR_tmp}")
   
   get_filename_component(qt_dlls_dir "${QtWidgets_location}" PATH)
   get_filename_component(qt_dlls_dir "${qt_dlls_dir}" PATH)
@@ -184,9 +163,30 @@ if (SHAPEWORKS_GUI)
   list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 endif()
 
+#----------------------------------------------------------------------------
 if(BUILD_TESTS)
+  enable_testing()
   add_subdirectory(Testing)
 endif(BUILD_TESTS)
 
+#----------------------------------------------------------------------------
+# Add an option to toggle the generation of the API documentation
+option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
+if(BUILD_DOCUMENTATION)
+
+  # for doxygen
+  SET(ShapeWorks_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  SET(ShapeWorks_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+  find_package(Doxygen)
+  if(NOT DOXYGEN_FOUND)
+    message(FATAL_ERROR
+      "Doxygen is needed to build the documentation. Please install it correctly")
+  endif(NOT DOXYGEN_FOUND)
+
+  add_subdirectory(Documentation/Doxygen)
+endif(BUILD_DOCUMENTATION)
+
 MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+

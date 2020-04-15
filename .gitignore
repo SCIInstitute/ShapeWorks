@@ -35,10 +35,11 @@ dependencies*/
 #Others
 .DS_*
 .directory
+.idea/
 
 # Build directories
-build*
-install*
+build*/
+install*/
 
 # Log files
 *.log
@@ -49,3 +50,5 @@ CMakeLists.txt.user
 # Python package meta info
 Python/DatasetUtilsPackage/DatasetUtils.egg-info
 Examples/Python/shapeworksPortalLogin.txt
+
+__pycache__/

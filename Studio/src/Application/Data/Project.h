@@ -80,6 +80,7 @@ public:
   bool original_present();
   bool groomed_present();
   bool reconstructed_present();
+  bool groups_available();
   int get_num_shapes();
 
   QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
@@ -124,6 +125,7 @@ private:
   bool original_present_;
   bool groomed_present_;
   bool reconstructed_present_;
+  bool groups_available_ = false;
   bool is_light_project_ = false;
 
 };

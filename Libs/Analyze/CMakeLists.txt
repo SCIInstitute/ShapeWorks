@@ -1,10 +1,8 @@
 # Build
 set(Vis_sources
-  Vis.cpp
-  )
+  Vis.cpp)
 set(Vis_headers
-  Vis.h
-  )
+  Vis.h)
 add_library(Analyze STATIC
   ${Vis_sources}
   ${Vis_headers})
@@ -14,7 +12,8 @@ target_include_directories(Analyze PUBLIC
 target_link_libraries(Analyze PUBLIC
   Mesh
   Alignment
-  Utils)
+  Utils
+  Optimize)
 
 # set
 set_target_properties(Analyze PROPERTIES PUBLIC_HEADER

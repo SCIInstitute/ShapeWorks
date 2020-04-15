@@ -10,7 +10,8 @@ add_executable(OptimizeTests
 
 target_link_libraries(OptimizeTests
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
-  tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2
-  gtest_main)
+  tinyxml Mesh vgl vgl_algo Optimize Utils trimesh2 Particles
+  GTest::Main
+  )
 
 add_test(NAME OptimizeTests COMMAND OptimizeTests)

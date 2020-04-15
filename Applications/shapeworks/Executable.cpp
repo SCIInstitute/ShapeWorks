@@ -44,6 +44,7 @@ void Executable::addCommand(Command &command)
   ss << "Available commands:\n---------------------\n";
   for (auto cmdtype: parser_epilog)
   {
+    ss << "\n";
     ss << cmdtype.first << "\n";
     for (auto cmd: cmdtype.second)
       ss << std::string(indent, ' ')

@@ -4,12 +4,10 @@
 
 namespace shapeworks {
 
-
-
 // boilerplate for a command. Copy this to start a new command
 #if 0
 ///////////////////////////////////////////////////////////////////////////////
-class Example : public ImageCommand  <-- be sure to derive from the appropriate type
+class Example : public ImageCommand < --be sure to derive from the appropriate type
 {
 public:
   static Example& getCommand() { static Example instance; return instance; }
@@ -19,9 +17,7 @@ private:
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
-#endif
-
-
+#endif // if 0
 
 ///////////////////////////////////////////////////////////////////////////////
 class ReadImage : public ImageCommand
@@ -96,6 +92,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class PadImage : public ImageCommand
+{
+public:
+  static PadImage& getCommand() { static PadImage instance; return instance; }
+
+private:
+  PadImage() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class SmoothMesh : public MeshCommand
 {
 public:
@@ -105,7 +113,6 @@ private:
   SmoothMesh() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -128,6 +135,18 @@ public:
 
 private:
   Binarize() { buildParser(); }
+  void buildParser() override;
+  int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Coverage : public MeshCommand
+{
+public:
+  static Coverage& getCommand() { static Coverage instance; return instance; }
+
+private:
+  Coverage() { buildParser(); }
   void buildParser() override;
   int execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

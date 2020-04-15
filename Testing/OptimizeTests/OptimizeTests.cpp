@@ -8,7 +8,8 @@
 
 #include "TestConfiguration.h"
 
-#include "ShapeWorksRunApp.h"
+#include "Optimize.h"
+#include "OptimizeParameterFile.h"
 #include "itkParticleShapeStatistics.h"
 
 //---------------------------------------------------------------------------
@@ -41,6 +42,7 @@ static void prep_distance_transform(std::string input, std::string output)
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(output.c_str());
   writer->SetInput(dt_filter->GetOutput());
+  writer->SetUseCompression(true);
   writer->Update();
 }
 
@@ -61,7 +63,9 @@ TEST(OptimizeTests, sample_test) {
 
   // run with parameter file
   std::string paramfile = std::string("sphere.xml");
-  ShapeWorksRunApp<> app(paramfile.c_str());
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
   app.Run();
 
   // compute stats

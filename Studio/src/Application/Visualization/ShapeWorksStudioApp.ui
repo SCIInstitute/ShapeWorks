@@ -245,6 +245,7 @@
     <addaction name="action_import"/>
     <addaction name="actionExport_PCA_Mesh"/>
     <addaction name="actionExport_Eigenvalues"/>
+    <addaction name="actionExport_Variance_Graph"/>
     <addaction name="actionExport_Eigenvectors"/>
     <addaction name="actionExport_PCA_Mode_Points"/>
     <addaction name="actionExport_Parameter_XML"/>
@@ -619,6 +620,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionExport_Variance_Graph">
+   <property name="text">
+    <string>Export Variance Graph</string>
    </property>
   </action>
  </widget>

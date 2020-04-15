@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <iterator>
 
 namespace optparse
 {
@@ -39,6 +40,13 @@ namespace optparse
         Value() : str(), valid(false) {}
 
         explicit Value(const std::string &v) : str(v), valid(true) {}
+
+        operator std::vector<std::string>() {
+            std::istringstream iss(str);
+            std::vector<std::string> v((std::istream_iterator<std::string>(iss)),
+                                       std::istream_iterator<std::string>());
+            return v;
+        }
 
         operator const char *()
         {
@@ -594,8 +602,14 @@ namespace optparse
                     mvar = type();
                     std::transform(mvar.begin(), mvar.end(), mvar.begin(), ::toupper);
                 }
-                mvar_short = " " + mvar;
-                mvar_long = "=" + mvar;
+
+                // We cannot use the --option=value notation for multistring
+                if(mvar == "MULTISTRING") {
+                    mvar_long = mvar_short = " <list of strings>";
+                } else {
+                    mvar_short = " " + mvar;
+                    mvar_long = "=" + mvar;
+                }
             }
 
             std::stringstream ss;
@@ -1018,7 +1032,11 @@ namespace optparse
             std::string value;
 
             const Option &option = lookup_short_opt(opt);
-            if (option._nargs == 1)
+            if(option.type() == "multistring")
+            {
+                value = parse_multistring();
+            }
+            else if (option._nargs == 1)
             {
                 value = arg.substr(2);
                 if (value.empty())
@@ -1060,7 +1078,11 @@ namespace optparse
             }
 
             const Option &option = lookup_long_opt(opt);
-            if (option._nargs == 1 and delim == std::string::npos)
+            if(option.type() == "multistring")
+            {
+                value = parse_multistring();
+            }
+            else if (option._nargs == 1 and delim == std::string::npos)
             {
                 if (not _remaining.empty())
                 {
@@ -1075,6 +1097,21 @@ namespace optparse
             }
 
             process_opt(option, std::string("--") + opt, value);
+        }
+
+        std::string parse_multistring() {
+            std::stringstream ss;
+            while(!_remaining.empty()) {
+                const auto front = _remaining.front();
+                _remaining.pop_front();
+                if(front == "--") {
+                    break;
+                } else {
+                    ss << ' ' << front;
+                }
+            }
+
+            return ss.str();
         }
 
         void process_opt(const Option &o, const std::string &opt, const std::string &value)

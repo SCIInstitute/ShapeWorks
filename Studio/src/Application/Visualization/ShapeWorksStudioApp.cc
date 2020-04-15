@@ -28,6 +28,10 @@
 // ui
 #include <ui_ShapeWorksStudioApp.h>
 
+static QVariant ITEM_DISABLE(0);
+static QVariant ITEM_ENABLE(1 | 32);
+static int ITEM_ROLE = Qt::UserRole - 1;
+
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
 {
@@ -110,9 +114,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_GROOMED_C.c_str());
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_RECONSTRUCTION_C.c_str());
-  this->ui_->view_mode_combobox->setCurrentIndex(0);
-  this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
   // resize from preferences
   if (this->preferences_.has_entry("StudioWindow/geometry")) {
@@ -230,7 +235,7 @@ void ShapeWorksStudioApp::initialize_vtk()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered()
 {
-  if (this->preferences_.not_saved()) {
+  if (this->preferences_.not_saved() && this->ui_->action_save_project->isEnabled()) {
     // save the size of the window to preferences
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
@@ -365,9 +370,12 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 
   preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filenames[0]));
   //need to re-run everything if something new is added.
-  this->ui_->view_mode_combobox->setCurrentIndex(0);
-  this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
+
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
+
   this->preferences_.set_preference("display_state", this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->import_files(filenames);
@@ -644,6 +652,12 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::set_view_combo_item_enabled(int item, bool value)
+{
+  this->ui_->view_mode_combobox->setItemData(item, value ? ITEM_ENABLE : ITEM_DISABLE, ITEM_ROLE);
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 {
   this->preferences_.set_preference("tool_state", QString::fromStdString(Project::GROOM_C));
@@ -686,28 +700,13 @@ void ShapeWorksStudioApp::on_action_analysis_mode_triggered()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_project_changed()
 {
-  if (this->project_->original_present()) {
-    this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-  }
-  else {
-    this->ui_->view_mode_combobox->setCurrentIndex(1);
-    this->visualizer_->set_display_mode(Visualizer::MODE_GROOMED_C.c_str());
-    this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-  }
-
-  if (this->project_->groomed_present()) {
-    this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-  }
-  else {
-    this->ui_->view_mode_combobox->setItemData(1, 0, Qt::UserRole - 1);
-  }
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->project_->original_present());
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                    this->project_->reconstructed_present());
 
   if (this->project_->reconstructed_present()) {
-    this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
     this->project_->handle_clear_cache();
-  }
-  else {
-    this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
   }
   this->update_table();
   this->update_scrollbar();
@@ -729,12 +728,12 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->project_->get_mesh_manager()->getSurfaceReconstructor()->resetReconstruct();
   this->analysis_tool_->reset_stats();
   this->project_->handle_clear_cache();
-  this->ui_->view_mode_combobox->setItemData(2, 0, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setCurrentIndex(1);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   this->preferences_.set_preference("display_state",
                                     this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
   this->visualizer_->update_lut();
   this->update_display();
 }
@@ -743,12 +742,12 @@ void ShapeWorksStudioApp::handle_optimize_complete()
 void ShapeWorksStudioApp::handle_reconstruction_complete()
 {
   this->project_->handle_clear_cache();
-  this->ui_->view_mode_combobox->setItemData(2, 33, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setCurrentIndex(2);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
   this->preferences_.set_preference("display_state",
                                     this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
-  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
   this->visualizer_->update_lut();
   this->update_display();
 }
@@ -756,8 +755,8 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_complete()
 {
-  this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-  this->ui_->view_mode_combobox->setCurrentIndex(1);
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
 }
 
 //---------------------------------------------------------------------------
@@ -807,6 +806,11 @@ void ShapeWorksStudioApp::update_display()
   bool reconstruct_ready =
     this->project_->get_mesh_manager()->getSurfaceReconstructor()->hasDenseMean();
 
+  if (!this->project_->groomed_present() && this->project_->reconstructed_present()) {
+    // legacy will be used
+    reconstruct_ready = true;
+  }
+
   std::string mode = "all samples";
 
   if (this->ui_->action_analysis_mode->isChecked()) {
@@ -833,48 +837,53 @@ void ShapeWorksStudioApp::update_display()
     if (zoom_val != this->ui_->thumbnail_size_slider->value()) {
       this->ui_->thumbnail_size_slider->setValue(zoom_val);
     }
-    this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-    this->ui_->view_mode_combobox->setItemData(1,
-                                               this->project_->groomed_present() ? 33 : 0,
-                                               Qt::UserRole - 1);
-    this->ui_->view_mode_combobox->setItemData(2,
-                                               (this->project_->reconstructed_present() &&
-                                                reconstruct_ready) ?
-                                               33 : 0, Qt::UserRole - 1);
+
+    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+    this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                      this->project_->reconstructed_present() &&
+                                      reconstruct_ready);
   }
   else {
     if (mode == "mean") {
-      this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, reconstruct_ready ? 0 : 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
-      this->visualizer_->display_shape(this->analysis_tool_->getMean());
-      this->visualizer_->reset_camera();
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+      this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
+
+      if (this->analysis_tool_->get_group_difference_mode()) {
+        this->visualizer_->display_shape(
+          this->analysis_tool_->get_mean_shape(),
+          this->analysis_tool_->get_group_difference_vectors());
+      }
+      else {
+        this->visualizer_->display_shape(this->analysis_tool_->get_mean_shape());
+      }
     }
     else if (mode == "pca") {
-      this->ui_->view_mode_combobox->setItemData(0, 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, reconstruct_ready ? 0 : 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setCurrentIndex(reconstruct_ready ? 2 : 1);
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+      this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
       this->compute_mode_shape();
       this->visualizer_->reset_camera();
     }
     else if (mode == "single sample") {
-      this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1, 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2, reconstruct_ready ? 33 : 0, Qt::UserRole - 1);
+
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->project_->original_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                        this->project_->reconstructed_present() &&
+                                        reconstruct_ready);
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
       this->visualizer_->reset_camera();
     }
     else {
-      this->ui_->view_mode_combobox->setItemData(0, 33, Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(1,
-                                                 this->project_->groomed_present() ? 33 : 0,
-                                                 Qt::UserRole - 1);
-      this->ui_->view_mode_combobox->setItemData(2,
-                                                 (this->project_->reconstructed_present() &&
-                                                  reconstruct_ready) ?
-                                                 33 : 0, Qt::UserRole - 1);
+      this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->project_->original_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->project_->groomed_present());
+      this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                        this->project_->reconstructed_present() &&
+                                        reconstruct_ready);
     } //TODO regression?
 
     if (this->ui_->thumbnail_size_slider->maximum() !=
@@ -919,7 +928,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
   //this->project_->calculate_reconstructed_samples();
-  this->visualizer_->setMean(this->analysis_tool_->getMean());
+  this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
+  this->analysis_tool_->activate();
 
   /*
      this->analysis_tool_->reset_stats();
@@ -991,7 +1001,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 {
   // close the preferences window in case it is open
   this->preferences_window_->close();
-  if (this->preferences_.not_saved()) {
+  if (this->preferences_.not_saved() && this->ui_->action_save_project->isEnabled()) {
     // save the size of the window to preferences
     QMessageBox msgBox;
     msgBox.setText("Do you want to save your changes as a project file?");
@@ -1022,9 +1032,12 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mode_shape()
 {
-  int mode = this->analysis_tool_->getPCAMode();
-  double value = this->analysis_tool_->get_pca_value();
-  this->visualizer_->display_shape(this->analysis_tool_->getShape(mode, value));
+  int pca_mode = this->analysis_tool_->getPCAMode();
+  double pca_value = this->analysis_tool_->get_pca_value();
+  double group_value = this->analysis_tool_->get_group_value();
+
+  this->visualizer_->display_shape(this->analysis_tool_->get_shape(pca_mode, pca_value,
+                                                                   group_value));
 }
 
 //---------------------------------------------------------------------------
@@ -1105,6 +1118,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered()
 {
 
@@ -1119,6 +1133,7 @@ void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered()
                                     QDir().absoluteFilePath(QString::fromStdString(this->data_dir_)));
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered()
 {
   QString fname("Untitled.xml");
@@ -1157,9 +1172,10 @@ void ShapeWorksStudioApp::on_actionExport_Parameter_XML_triggered()
   this->handle_message("Successfully exported XML parameter file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
 {
-  auto stats = this->analysis_tool_->getStats();
+  auto stats = this->analysis_tool_->get_stats();
   auto values = stats.Eigenvalues();
   QString fname("Untitled.eval");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
@@ -1180,9 +1196,10 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
   this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
 {
-  auto stats = this->analysis_tool_->getStats();
+  auto stats = this->analysis_tool_->get_stats();
   auto values = stats.Eigenvectors();
   QString fname("Untitled.eval");
   QString direct = this->preferences_.get_preference("Main/last_directory", QString());
@@ -1210,6 +1227,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
   this->handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
 {
   QString fname("Untitled.pts");
@@ -1229,7 +1247,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   auto increment = range * 2.f / steps;
   size_t i = 0;
   for (float pca = -range; pca <= range; pca += increment, i++) {
-    auto pts = this->analysis_tool_->getShape(mode, pca);
+    auto pts = this->analysis_tool_->get_shape(mode, pca);
     std::ofstream out(basename + std::to_string(mode) + "-" + std::to_string(i) + ".pts");
     size_t newline = 1;
     for (auto &a : pts) {
@@ -1239,4 +1257,26 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
     out.close();
   }
   this->handle_message("Successfully exported PCA Mode PTS files: " + filename.toStdString());
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
+{
+  QString fname("Untitled.png");
+  QString direct = this->preferences_.get_preference("Main/last_directory", QString());
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Variance Graph..."),
+                                                  QString::fromStdString(dir) + fname,
+                                                  tr("PNG files (*.png)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+
+  if (!this->analysis_tool_->export_variance_graph(filename)) {
+    this->handle_error("Error writing variance graph");
+  }
+  else {
+    this->handle_message("Successfully exported Variance Graph: " + filename.toStdString());
+  }
 }

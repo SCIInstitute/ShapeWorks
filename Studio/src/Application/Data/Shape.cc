@@ -232,6 +232,18 @@ void Shape::set_exclusion_sphere_radii(QList<double> radii)
 }
 
 //---------------------------------------------------------------------------
+int Shape::get_group_id()
+{
+  return this->group_id_;
+}
+
+//---------------------------------------------------------------------------
+void Shape::set_group_id(int id)
+{
+  this->group_id_ = id;
+}
+
+//---------------------------------------------------------------------------
 bool Shape::import_point_file(QString filename, vnl_vector<double> &points)
 {
   std::ifstream in(filename.toStdString().c_str());
