@@ -867,27 +867,27 @@ bool Image::icpRigid(const Image &source, const Image &target, unsigned iteratio
     return false;
   }
 
-  using ExportFilterType = itk::VTKImageExport<ImageType>;
-  ExportFilterType::Pointer itkTargetExporter = ExportFilterType::New();
+  using FilterType = itk::VTKImageExport<ImageType>;
+  FilterType::Pointer itkTargetExporter = FilterType::New();
   itkTargetExporter->SetInput(target.image);
 
-  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
+  vtkImageImport* vtkTargetImporter = vtkImageImport::New();
   connectPipelines(itkTargetExporter, vtkTargetImporter);
   vtkTargetImporter->Update();
 
-  vtkContourFilter *targetContour = vtkContourFilter::New();
+  vtkContourFilter* targetContour = vtkContourFilter::New();
   targetContour->SetInputData(vtkTargetImporter->GetOutput());
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
-  ExportFilterType::Pointer itkMovingExporter = ExportFilterType::New();
+  FilterType::Pointer itkMovingExporter = FilterType::New();
   itkMovingExporter->SetInput(source.image);
 
-  vtkImageImport *vtkMovingImporter = vtkImageImport::New();
+  vtkImageImport* vtkMovingImporter = vtkImageImport::New();
   connectPipelines(itkMovingExporter, vtkMovingImporter);
   vtkMovingImporter->Update();
 
-  vtkContourFilter *movingContour = vtkContourFilter::New();
+  vtkContourFilter* movingContour = vtkContourFilter::New();
   movingContour->SetInputData(vtkMovingImporter->GetOutput());
   movingContour->SetValue(0, isoValue);
   movingContour->Update();

@@ -195,7 +195,7 @@ def FindReferenceImage(inDataList):
 
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                         antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0,
-                        scaling=20.0, isoValue=0, icpIterations=10, processRaw = False):
+                        scaling=0.0, isoValue=0, icpIterations=10, processRaw = False):
     """
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,
