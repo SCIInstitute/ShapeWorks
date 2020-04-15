@@ -2,6 +2,9 @@
  * Copyright (c) 2013 University of Utah
  */
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #ifndef __map_H
 #define __map_H
 
@@ -48,7 +51,7 @@ public:
         typedef MapFilter<FType,InType,OutType> MF;
         typename MF::Pointer mf = MF::New();
         mf->SetFunctor(&functor); // handles output
-        if(numThreads>0)
+	if(numThreads>0)
             mf->SetNumberOfThreads(numThreads);
         mf->SetInput(in);
         if(outRegion.GetSize()[0] > 0)
@@ -110,3 +113,5 @@ public:
 
 
 #endif
+
+#pragma clang diagnostic pop
