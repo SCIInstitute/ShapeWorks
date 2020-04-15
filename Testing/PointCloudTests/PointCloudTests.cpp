@@ -16,7 +16,7 @@
 
 #include "TestConfiguration.h"
 
-#include "ShapeWorksRunApp.h"
+//#include "ShapeWorksRunApp.h"
 #include "itkParticleShapeStatistics.h"
 
 #include "RBFShape.h"
