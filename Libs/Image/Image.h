@@ -59,7 +59,9 @@ public:
 
   bool operator==(const Image &other) const;
 
-  Point3 centerOfMass() const;  
+  /// returns average spatial coordinate of pixels in range (minval, maxval]
+  Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
+
   Point3 origin() const { return image->GetOrigin(); }
   Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
   Point3 size() const;                                      // spatial size of image

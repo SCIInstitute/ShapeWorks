@@ -310,7 +310,7 @@ bool Image::operator==(const Image &other) const
   DiffType::Pointer diff = DiffType::New();
   diff->SetValidInput(other_itk_image);
   diff->SetTestInput(itk_image);
-  diff->SetDifferenceThreshold(0);
+  diff->SetDifferenceThreshold(0.0);
   diff->SetToleranceRadius(0);
 
   try
@@ -326,7 +326,7 @@ bool Image::operator==(const Image &other) const
 
   const unsigned long numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
 
-  if (numberOfPixelsWithDifferences > 0.0) {
+  if (numberOfPixelsWithDifferences > 0) {
     return false;
   }
 
@@ -881,42 +881,24 @@ IPoint3 Image::physicalToLogical(const Point3 &p) const
   return icoords;
 }
 
-/// centerOfMass
-///
-/// returns average spatial coordinate of black pixels in a binary volume
-Point3 Image::centerOfMass() const
+Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   itk::ImageRegionIteratorWithIndex<ImageType> imageIt(this->image, image->GetLargestPossibleRegion());
   int numPixels = 0;
-  Point3 com;
+  Point3 com({0.0, 0.0, 0.0});
 
   while (!imageIt.IsAtEnd())
   {
     PixelType val = imageIt.Get();
-    ImageType::IndexType index;
-    index = imageIt.GetIndex();
-
-    if (val == 1)
+    if (val > minval && val <= maxval)
     {
       numPixels++;
-      com += image->TransformIndexToPhysicalPoint<double>(index);
+      com += image->TransformIndexToPhysicalPoint<double>(imageIt.GetIndex());
     }
     ++imageIt;
   }
   com /= static_cast<double>(numPixels);
 
-#if DEBUG_CONSOLIDATION
-  std::cout<<"com: "<<com<<std::endl; //debug
-  std::cout<<"val: "<<physicalToLogical(com)<<std::endl; //debug
-  std::cout<<"...and back: "<<logicalToPhysical(physicalToLogical(com))<<std::endl;
-#endif
-  
   return com;
 }
 

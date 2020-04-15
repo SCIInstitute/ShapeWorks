@@ -68,6 +68,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class CompareImage : public ImageCommand
+{
+public:
+  static CompareImage& getCommand() { static CompareImage instance; return instance; }
+
+private:
+  CompareImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class Antialias : public ImageCommand
 {
 public:
