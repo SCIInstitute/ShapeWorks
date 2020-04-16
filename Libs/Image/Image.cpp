@@ -268,7 +268,7 @@ Image& Image::resample(const Point3& spacing, Dims outputSize)
   ResampleFilter::Pointer resampler = ResampleFilter::New();
 
   resampler->SetOutputSpacing(spacing.GetDataPointer());
-  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputOrigin(origin());
   resampler->SetOutputDirection(image->GetDirection());
 
   if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
@@ -416,7 +416,7 @@ bool Image::applyTransform(const Transform &transform)
   resampler->SetInput(this->image);
   // resampler->SetSize(image->GetBufferedRegion().GetSize());
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
-  resampler->SetOutputOrigin(image->GetOrigin());
+  resampler->SetOutputOrigin(origin());
   resampler->SetOutputDirection(image->GetDirection());
   resampler->SetOutputSpacing(image->GetSpacing());
 
@@ -923,9 +923,62 @@ bool Image::icpRigid(const Image &source, const Image &target, unsigned iteratio
   return true;
 }
 
-bool Image::clipVolume()
+bool Image::clipVolume(Matrix33 cuttingPlane)
 {
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
 
+  Point3 spacing = image->GetSpacing();
+  Point3 curOrigin = origin();
+  double o[] = {0.0, 0.0, 0.0};
+  double p1[] = {0.0, 0.0, 0.0};
+  double p2[] = {0.0, 0.0, 0.0};
+  double res[] = {0.0, 0.0, 0.0};
+  double temp = 0.0;
+
+  o[0] = (cuttingPlane[0][0] - curOrigin[0]) / spacing[0];
+  o[1] = (cuttingPlane[0][1] - curOrigin[1]) / spacing[1];
+  o[2] = (cuttingPlane[0][2] - curOrigin[2]) / spacing[2];
+  p1[0] = (cuttingPlane[1][0] - curOrigin[0]) / spacing[0];
+  p1[1] = (cuttingPlane[1][1] - curOrigin[1]) / spacing[1];
+  p1[2] = (cuttingPlane[1][2] - curOrigin[2]) / spacing[2];
+  p2[0] = (cuttingPlane[2][0] - curOrigin[0]) / spacing[0];
+  p2[1] = (cuttingPlane[2][1] - curOrigin[1]) / spacing[1];
+  p2[2] = (cuttingPlane[2][2] - curOrigin[2]) / spacing[2];
+
+  // find the cross product vector
+  // res = (p1 - o) * (p2 - o) - (p1 - o) * (p2 - o);
+  res[0] = (p1[1] - o[1]) * (p2[2] - o[2]) - (p1[2] - o[2]) * (p2[1] - o[1]);
+  res[1] = (p1[2] - o[2]) * (p2[0] - o[0]) - (p1[0] - o[0]) * (p2[2] - o[2]);
+  res[2] = (p1[0] - o[0]) * (p2[1] - o[1]) - (p1[1] - o[1]) * (p2[0] - o[0]);
+  
+  // normalize
+  res[0] = res[0] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
+  res[1] = res[1] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
+  res[2] = res[2] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
+
+  itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
+  while (!imageIterator.IsAtEnd())
+  {
+    temp = (double(imageIterator.GetIndex()[0]) - o[0]) * res[0] +
+           (double(imageIterator.GetIndex()[1]) - o[1]) * res[1] +
+           (double(imageIterator.GetIndex()[2]) - o[2]) * res[2];
+
+    if (temp < 0.0)
+    {
+      imageIterator.Set(0);
+    }
+    ++imageIterator;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Clip Volume succeeded!\n";
+#endif
+
+  return true;
 }
 
 bool Image::changeOrigin(Point3 origin)

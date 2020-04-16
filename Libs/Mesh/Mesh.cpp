@@ -4,7 +4,9 @@
 #include <PreviewMeshQC/FEVTKExport.h>
 
 #include <vtkPolyDataReader.h>
+#include <vtkPLYReader.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkPLYWriter.h>
 #include <vtkPointData.h>
 
 static bool compare_double(double a, double b)
@@ -22,25 +24,59 @@ namespace shapeworks {
 /// \param filename
 bool Mesh::read(const std::string &pathname)
 {
-  vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
+  if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
+
+  // if (pref == "ply")
+  //   using ReaderType = vtkSmartPointer<vtkPLYReader>;
+  // else 
+  //   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
+
+  using ReaderType = vtkSmartPointer<vtkPLYReader>;
+  ReaderType reader = ReaderType::New();
   reader->SetFileName(pathname.c_str());
-  reader->Update();
   this->mesh = vtkSmartPointer<vtkPolyData>::New();
-  this->mesh->DeepCopy(reader->GetOutput());
+
+  try {
+    reader->Update();
+  }
+  catch (const std::exception &exp)
+  {
+    throw std::invalid_argument(pathname + " does not exist");
+    return false;
+  }
+
+  mesh->DeepCopy(reader->GetOutput());
+  // this->mesh = reader->GetOutput();
   return true;
-}
+  }
 
 /// write
 ///
 /// writes the mesh
 ///
 /// \param filename
-bool Mesh::write(const std::string &filename)
+bool Mesh::write(const std::string &pathname)
 {
-  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
-  writer->SetFileName(filename.c_str());
+  if (!this->mesh) { throw std::invalid_argument("Mesh invalid"); }
+  if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
+
+  // if (pref == "ply")
+  //   using WriterType = vtkSmartPointer<vtkPLYWriter>;
+  // else
+  //   using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
+
+  using WriterType = vtkSmartPointer<vtkPLYWriter>;
+  WriterType writer = WriterType::New();
   writer->SetInputData(this->mesh);
-  writer->Update();
+  writer->SetFileName(pathname.c_str());
+
+  try {
+    writer->Update();
+  }
+  catch (const std::exception &exp) {
+    std::cerr << "Failed to write mesh to " << pathname << std::endl;
+    return false;
+  }
   return true;
 }
 
@@ -78,13 +114,6 @@ bool Mesh::coverage(const Mesh &other_mesh)
 
   this->mesh = vtkout.ExportToVTK(*surf1);
 
-  return true;
-}
-
-/// smooth
-///
-bool Mesh::smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoothing*/)
-{
   return true;
 }
 

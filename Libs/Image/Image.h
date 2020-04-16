@@ -52,7 +52,7 @@ public:
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   bool crop(const Region &region);
   bool icpRigid(const Image &source, const Image &target, unsigned iterations, float isoValue);
-  bool clipVolume();
+  bool clipVolume(Matrix33 cuttingPlane);
   bool changeOrigin(Point3 origin = Point3({0, 0, 0}));
 
   template <typename ITK_Exporter, typename VTK_Importer>

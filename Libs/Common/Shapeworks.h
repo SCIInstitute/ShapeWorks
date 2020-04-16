@@ -30,6 +30,15 @@ P operator+(const P &p, const P &q)
   return ret;
 }
 
+template <typename P>
+P operator-(const P &p, const P &q)
+{
+  P ret;
+  for (unsigned i = 0; i < 3; i++)
+    ret[i] = p[i] - q[i];
+  return ret;
+}
+
 template<typename P>
 P& operator+=(P &p, const P &q)
 {

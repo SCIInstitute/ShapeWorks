@@ -92,18 +92,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class SmoothMesh : public MeshCommand
-{
-public:
-  static SmoothMesh& getCommand() { static SmoothMesh instance; return instance; }
-
-private:
-  SmoothMesh() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
 class RecenterImage : public ImageCommand
 {
 public:
@@ -115,17 +103,7 @@ private:
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-class Coverage : public MeshCommand
-{
-public:
-  static Coverage& getCommand() { static Coverage instance; return instance; }
 
-private:
-  Coverage() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 class Translate : public TransformCommand
@@ -398,6 +376,22 @@ public:
 
 private:
   WriteMesh() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Coverage : public MeshCommand
+{
+public:
+  static Coverage &getCommand()
+  {
+    static Coverage instance;
+    return instance;
+  }
+
+private:
+  Coverage() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

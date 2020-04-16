@@ -556,8 +556,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             img_out = rename(img, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
-            img_out, "--centerFilename", centerFilename, "--inputDirection", "0"]
-            cmd = ["shapeworks", "read-image", "--name", img],
+            cmd = ["shapeworks", "read-image", "--name", img,
                    "reflect-volume", "--axis", str(0),
                    "write-image", "--name", img_out]
             subprocess.check_call(cmd)
@@ -595,10 +594,10 @@ def MeshesToVolumes(outDir, meshList, imgList):
                 image = image_file
          # write origin, size, and spacing info to text file
         infoPrefix = os.path.join(outDir, prefix)
-        execCommand = ["WriteImageInfoToText","--inFilename",image, "--outPrefix", infoPrefix]
+        execCommand = ["WriteImageInfoToText","--inFilename", image, "--outPrefix", infoPrefix]
         subprocess.check_call(execCommand)
         # get origin, size, and spacing data
-        data ={}
+        data = {}
         origin_file = open(infoPrefix + "_origin.txt", "r")
         text = origin_file.read()
         data["origin"] = text.split("\n")

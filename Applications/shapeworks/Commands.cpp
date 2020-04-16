@@ -209,57 +209,6 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// SmoothMesh
-///////////////////////////////////////////////////////////////////////////////
-void SmoothMesh::buildParser()
-{
-  const std::string prog = "smooth-mesh";
-  const std::string desc = "smooths meshes";
-  parser.prog(prog).description(desc);
-  
-  // todo
-
-  Command::buildParser();
-}
-
-bool SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  //todo
-
-  return sharedData.mesh.smooth();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Coverage
-///////////////////////////////////////////////////////////////////////////////
-void Coverage::buildParser()
-{
-  const std::string prog = "coverage";
-  const std::string desc = "coverage between two meshes";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
-
-  Command::buildParser();
-}
-
-bool Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
-
-  if (second_mesh_string == "")
-  {
-    std::cerr << "Must specify second mesh\n";
-    return -1;
-  }
-
-  Mesh second_mesh;
-  second_mesh.read(second_mesh_string);
-
-  return sharedData.mesh.coverage(second_mesh);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // Translate
 ///////////////////////////////////////////////////////////////////////////////
 void Translate::buildParser()
@@ -602,19 +551,46 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 void ClipVolume::buildParser()
 {
   const std::string prog = "clip-volume";
-  const std::string desc = "takes set of .nrrd volumes and corresponding cutting planes, and chops the volume accordingly";
+  const std::string desc = "chops volume with corresponding cutting planes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--optionName").action("store").type("float").set_default(0.01).help("Description of optionName.");
+  parser.add_option("--x1").action("store").type("double").set_default(0.01).help("value of cuttingplane [0][0]");
+  parser.add_option("--x2").action("store").type("double").set_default(0.01).help("value of cuttingplane [0][1]");
+  parser.add_option("--x3").action("store").type("double").set_default(0.01).help("value of cuttingplane [0][2]");
+  parser.add_option("--y1").action("store").type("double").set_default(0.01).help("value of cuttingplane [1][0]");
+  parser.add_option("--y2").action("store").type("double").set_default(0.01).help("value of cuttingplane [1][1]");
+  parser.add_option("--y3").action("store").type("double").set_default(0.01).help("value of cuttingplane [1][2]");
+  parser.add_option("--z1").action("store").type("double").set_default(0.01).help("value of cuttingplane [2][0]");
+  parser.add_option("--z2").action("store").type("double").set_default(0.01).help("value of cuttingplane [2][1]");
+  parser.add_option("--z3").action("store").type("double").set_default(0.01).help("value of cuttingplane [2][2]");
 
   Command::buildParser();
 }
 
 bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  float optionName = static_cast<float>(options.get("optionName"));
+  double x1 = static_cast<double>(options.get("x1"));
+  double x2 = static_cast<double>(options.get("x2"));
+  double x3 = static_cast<double>(options.get("x3"));
+  double y1 = static_cast<double>(options.get("y1"));
+  double y2 = static_cast<double>(options.get("y2"));
+  double y3 = static_cast<double>(options.get("y3"));
+  double z1 = static_cast<double>(options.get("z1"));
+  double z2 = static_cast<double>(options.get("z2"));
+  double z3 = static_cast<double>(options.get("z3"));
 
-  return sharedData.image.clipVolume();
+  Matrix33 cuttingplane;
+  cuttingplane[0][0] = x1;
+  cuttingplane[0][1] = x2;
+  cuttingplane[0][2] = x3;
+  cuttingplane[1][0] = y1;
+  cuttingplane[1][1] = y2;
+  cuttingplane[1][2] = y3;
+  cuttingplane[2][0] = z1;
+  cuttingplane[2][1] = z2;
+  cuttingplane[2][2] = z3;
+
+  return sharedData.image.clipVolume(cuttingplane);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -803,6 +779,36 @@ bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &shar
   std::string filename = options["name"];
 
   return sharedData.mesh.write(filename);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Coverage
+///////////////////////////////////////////////////////////////////////////////
+void Coverage::buildParser()
+{
+  const std::string prog = "coverage";
+  const std::string desc = "coverage between two meshes";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
+
+  Command::buildParser();
+}
+
+bool Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
+
+  if (second_mesh_string == "")
+  {
+    std::cerr << "Must specify second mesh\n";
+    return -1;
+  }
+
+  Mesh second_mesh;
+  second_mesh.read(second_mesh_string);
+
+  return sharedData.mesh.coverage(second_mesh);
 }
 
 } // shapeworks
