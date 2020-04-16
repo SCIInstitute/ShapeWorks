@@ -18,12 +18,14 @@ public:
   void translate(const Vector3 &v); 
   void rotate(const Vector3 &axis, double angle); // must specify angle in radians
   void scale(const Vector3 &s);
+  void setMatrix(const Matrix33 mat);
 
 private:
   Vector3 scaling;
   Vector3 translation;
   Vector3 rotaxis;
   double rotangle;
+  itkTransformType::MatrixType matrix;
 
   friend std::ostream& operator<<(std::ostream &os, const Transform &t);
 };

@@ -17,7 +17,7 @@ private:
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
-#endif // if 0
+#endif 
 
 ///////////////////////////////////////////////////////////////////////////////
 class ReadImage : public ImageCommand
@@ -39,30 +39,6 @@ public:
 
 private:
   WriteImage() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class ReadMesh : public MeshCommand
-{
-public:
-  static ReadMesh& getCommand() { static ReadMesh instance; return instance; }
-
-private:
-  ReadMesh() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class WriteMesh : public MeshCommand
-{
-public:
-  static WriteMesh& getCommand() { static WriteMesh instance; return instance; }
-
-private:
-  WriteMesh() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -314,6 +290,114 @@ public:
 
 private:
   ICPRigid() { buildParser(); } 
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ClipVolume : public ImageCommand 
+{
+public:
+  static ClipVolume &getCommand() { static ClipVolume instance; return instance; }
+
+private:
+  ClipVolume() { buildParser(); } 
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ReflectVolume : public ImageCommand
+{
+public:
+  static ReflectVolume &getCommand() { static ReflectVolume instance; return instance; }
+
+private:
+  ReflectVolume() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ChangeOrigin : public ImageCommand 
+{
+public:
+  static ChangeOrigin &getCommand() { static ChangeOrigin instance; return instance; }
+
+private:
+  ChangeOrigin() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ReadParticleSystem : public ParticleSystemCommand
+{
+public:
+  static ReadParticleSystem &getCommand() { static ReadParticleSystem instance; return instance; }
+
+private:
+  ReadParticleSystem() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Compactness : public ParticleSystemCommand
+{
+public:
+  static Compactness &getCommand() { static Compactness instance; return instance; }
+
+private:
+  Compactness() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Generalization : public ParticleSystemCommand
+{
+public:
+  static Generalization &getCommand() { static Generalization instance; return instance; }
+
+private:
+  Generalization() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Specificity : public ParticleSystemCommand
+{
+public:
+  static Specificity &getCommand() { static Specificity instance; return instance; }
+
+private:
+  Specificity() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class ReadMesh : public MeshCommand
+{
+public:
+  static ReadMesh &getCommand() { static ReadMesh instance; return instance; }
+
+private:
+  ReadMesh() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class WriteMesh : public MeshCommand
+{
+public:
+  static WriteMesh &getCommand() { static WriteMesh instance; return instance; }
+
+private:
+  WriteMesh() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

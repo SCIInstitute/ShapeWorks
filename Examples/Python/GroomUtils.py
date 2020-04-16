@@ -556,8 +556,11 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             img_out = rename(img, outImgDir, 'reflect').replace(prefix, flip_prefix)
             imageList.append(img_out)
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
-            execCommand = ["ReflectVolumes", "--inFilename", img, "--outFilename", img_out, "--centerFilename", centerFilename, "--inputDirection", "0"]
-            subprocess.check_call(execCommand)
+            img_out, "--centerFilename", centerFilename, "--inputDirection", "0"]
+            cmd = ["shapeworks", "read-image", "--name", img],
+                   "reflect-volume", "--axis", str(0),
+                   "write-image", "--name", img_out]
+            subprocess.check_call(cmd)
             print("\n############## Reflecting ###############")
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)

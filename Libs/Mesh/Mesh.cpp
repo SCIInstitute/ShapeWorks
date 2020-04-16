@@ -15,19 +15,18 @@ static bool compare_double(double a, double b)
 
 namespace shapeworks {
 
-
 /// read
 ///
 /// reads a mesh
 ///
 /// \param filename
-bool Mesh::read(const std::string &filename)
+bool Mesh::read(const std::string &pathname)
 {
   vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
-  reader->SetFileName(filename.c_str());
+  reader->SetFileName(pathname.c_str());
   reader->Update();
-  this->poly_data_ = vtkSmartPointer<vtkPolyData>::New();
-  this->poly_data_->DeepCopy(reader->GetOutput());
+  this->mesh = vtkSmartPointer<vtkPolyData>::New();
+  this->mesh->DeepCopy(reader->GetOutput());
   return true;
 }
 
@@ -40,7 +39,7 @@ bool Mesh::write(const std::string &filename)
 {
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
   writer->SetFileName(filename.c_str());
-  writer->SetInputData(this->poly_data_);
+  writer->SetInputData(this->mesh);
   writer->Update();
   return true;
 }
@@ -52,14 +51,14 @@ bool Mesh::write(const std::string &filename)
 /// \param mesh
 bool Mesh::coverage(const Mesh &other_mesh)
 {
-  if (!this->poly_data_) {
+  if (!this->mesh) {
     std::cerr << "No mesh loaded, so returning false." << std::endl;
     return false;
   }
 
   FEVTKimport importer;
-  FEMesh* surf1 = importer.Load(this->poly_data_);
-  FEMesh* surf2 = importer.Load(other_mesh.poly_data_);
+  FEMesh* surf1 = importer.Load(this->mesh);
+  FEMesh* surf2 = importer.Load(other_mesh.mesh);
   if (surf1 == nullptr || surf2 == nullptr) {
     std::cerr << "Error reading mesh\n";
     return false;
@@ -77,7 +76,7 @@ bool Mesh::coverage(const Mesh &other_mesh)
   VTKEXPORT ops = { false, true };
   vtkout.SetOptions(ops);
 
-  this->poly_data_ = vtkout.ExportToVTK(*surf1);
+  this->mesh = vtkout.ExportToVTK(*surf1);
 
   return true;
 }
@@ -96,17 +95,17 @@ bool Mesh::smooth(/*iterations, relaxation_factor, edge_smoothing, boundary_smoo
 /// \param other_mesh
 bool Mesh::compare_points_equal(const Mesh &other_mesh)
 {
-  if (!this->poly_data_ || !other_mesh.poly_data_) {
+  if (!this->mesh || !other_mesh.mesh) {
     return false;
   }
 
-  if (this->poly_data_->GetNumberOfPoints() != other_mesh.poly_data_->GetNumberOfPoints()) {
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
     return false;
   }
 
-  for (int i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
-    double* point1 = this->poly_data_->GetPoint(i);
-    double* point2 = other_mesh.poly_data_->GetPoint(i);
+  for (int i = 0; i < this->mesh->GetNumberOfPoints(); i++) {
+    double* point1 = this->mesh->GetPoint(i);
+    double* point2 = other_mesh.mesh->GetPoint(i);
     if (!compare_double(point1[0], point2[0])
         || !compare_double(point1[1], point2[1])
         || !compare_double(point1[2], point2[2])) {
@@ -123,18 +122,18 @@ bool Mesh::compare_points_equal(const Mesh &other_mesh)
 /// \param other_mesh
 bool Mesh::compare_scalars_equal(const Mesh &other_mesh)
 {
-  if (!this->poly_data_ || !other_mesh.poly_data_) {
+  if (!this->mesh || !other_mesh.mesh) {
     std::cout << "Mesh Compare: both polydata don't exist";
     return false;
   }
 
-  if (this->poly_data_->GetNumberOfPoints() != other_mesh.poly_data_->GetNumberOfPoints()) {
+  if (this->mesh->GetNumberOfPoints() != other_mesh.mesh->GetNumberOfPoints()) {
     std::cout << "Mesh Compare: both polydata differ in number of points";
     return false;
   }
 
-  vtkDataArray* scalars1 = this->poly_data_->GetPointData()->GetScalars();
-  vtkDataArray* scalars2 = other_mesh.poly_data_->GetPointData()->GetScalars();
+  vtkDataArray* scalars1 = this->mesh->GetPointData()->GetScalars();
+  vtkDataArray* scalars2 = other_mesh.mesh->GetPointData()->GetScalars();
 
   if (!scalars1 || !scalars2) {
     std::cout << "Mesh Compare: no scalars";

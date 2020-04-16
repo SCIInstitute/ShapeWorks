@@ -67,6 +67,36 @@ public:
     return image;
   }
 
+  template <typename T>
+  static Image &reflect(T &img, double axis)
+  {
+    Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
+
+    double x = 1, y = 1, z = 1;
+    if (axis == 0)
+      x = -1;
+    if (axis == 1)
+      y = -1;
+    if (axis == 2)
+      z = -1;
+
+    Matrix33 reflection;
+    reflection[0][0] = x;
+    reflection[0][1] = reflection[0][2] = 0;
+    reflection[1][1] = y;
+    reflection[1][0] = reflection[1][2] = 0;
+    reflection[2][2] = z;
+    reflection[2][0] = reflection[2][1] = 0;
+
+    Point3 origin = image.origin();
+    image.recenter();
+    Transform xform;
+    xform.setMatrix(reflection);
+    image.applyTransform(xform);
+    image.changeOrigin();
+    return image;
+  }
+
 };
 
 } // shapeworks

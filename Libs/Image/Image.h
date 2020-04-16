@@ -36,10 +36,8 @@ public:
 
   bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
   bool recenter();
-
   /// Resamples image with new voxel spacing and output size [same size if unspecified]
   Image& resample(const Point3& spacing, Dims outputSize = Dims());
-
   bool pad(int padding = 0, PixelType value = 0.0);
   bool applyTransform(const Transform &transform);
   bool extractLabel(PixelType label = 1.0);
@@ -54,6 +52,8 @@ public:
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   bool crop(const Region &region);
   bool icpRigid(const Image &source, const Image &target, unsigned iterations, float isoValue);
+  bool clipVolume();
+  bool changeOrigin(Point3 origin = Point3({0, 0, 0}));
 
   template <typename ITK_Exporter, typename VTK_Importer>
   void connectPipelines(ITK_Exporter exporter, VTK_Importer *importer)

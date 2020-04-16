@@ -12,6 +12,7 @@ void Transform::reset()
   double translate[3] = {0.0, 0.0, 0.0};
   double scale[3] = {1.0, 1.0, 1.0};
   double rotate[3] = {0.0, 0.0, 1.0};
+  Matrix33 matrix {};
   scaling = Vector3(scale);
   translation = Vector3(translate);
   rotaxis = Vector3(rotate);
@@ -55,6 +56,11 @@ void Transform::scale(const Vector3 &s)
   scaling = scaling * s;
 }
 
+void Transform::setMatrix(const Matrix33 mat)
+{
+  matrix = mat;
+}
+
 /// getItkTransform
 ///
 /// performs translation, scaling and rotation
@@ -64,6 +70,7 @@ Transform::itkTransformType::Pointer Transform::getItkTransform() const
   transform->Translate(-translation);       // -translation b/c itk transformations are based on output image space
   // transform->Scale(scaling);             // TODO
   // transform->Rotate3D(rotaxis, rotangle);//TODO
+  transform->SetMatrix(matrix);
 
 #if DEBUG_CONSOLIDATION
   std::cout << "rawTransform: " << *this << std::endl;
@@ -81,7 +88,7 @@ std::ostream& operator<<(std::ostream &os, const Transform &t)
   return os << "shapeworks::Transform {\n\ttranslate: "
             << t.translation << ",\n\tscale: " << t.scaling
             << ",\n\trotation: " << t.rotangle << ",\n\trot_axis: "
-            << t.rotaxis << "\n}";
+            << t.rotaxis << "\nMatrix: " << t.matrix << "}";
 }
 
 } // shapeworks

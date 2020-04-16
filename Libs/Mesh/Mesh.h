@@ -9,6 +9,8 @@ namespace shapeworks {
 class Mesh
 {
 public:
+  using MeshType = vtkSmartPointer<vtkPolyData>;
+
   Mesh() {}
   Mesh(const std::string &inFilename) { read(inFilename); }
 
@@ -21,7 +23,7 @@ public:
   bool compare_scalars_equal(const Mesh& other_mesh);
 
 private:
-  vtkSmartPointer<vtkPolyData> poly_data_;
+  MeshType mesh;
 };
 
 } // shapeworks

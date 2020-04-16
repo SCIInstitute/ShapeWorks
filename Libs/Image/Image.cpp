@@ -279,9 +279,9 @@ Image& Image::resample(const Point3& spacing, Dims outputSize)
     outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / spacing[1]);
     outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / spacing[2]);
   }
+
   resampler->SetSize(outputSize);
   resampler->SetInput(this->image);
-
   resampler->Update();
 
   this->image = resampler->GetOutput();
@@ -920,6 +920,44 @@ bool Image::icpRigid(const Image &source, const Image &target, unsigned iteratio
 #if DEBUG_CONSOLIDATION
   std::cout << "ICP Rigid succeeded!\n";
 #endif
+  return true;
+}
+
+bool Image::clipVolume()
+{
+
+}
+
+bool Image::changeOrigin(Point3 origin)
+{
+  if (!this->image)
+  {
+    std::cerr << "No image loaded, so returning false." << std::endl;
+    return false;
+  }
+
+  using FilterType = itk::ChangeInformationImageFilter<ImageType>;
+  FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(this->image);
+  filter->SetOutputOrigin(origin);
+  filter->ChangeOriginOn();
+
+  try
+  {
+    filter->Update();
+  }
+  catch (itk::ExceptionObject &exp)
+  {
+    std::cerr << "Change Origin failed:" << std::endl;
+    std::cerr << exp << std::endl;
+    return false;
+  }
+
+#if DEBUG_CONSOLIDATION
+  std::cout << "Change Origin succeeded!\n";
+#endif
+
+  this->image = filter->GetOutput();
   return true;
 }
 
