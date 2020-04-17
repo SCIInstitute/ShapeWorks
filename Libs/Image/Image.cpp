@@ -28,10 +28,6 @@
 #include <vtkImageImport.h>
 #include <vtkContourFilter.h>
 #include <vtkImageData.h>
-#include <vtkIterativeClosestPointTransform.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkLandmarkTransform.h>
-#include <vtkTransform.h>
 
 #include <exception>
 
@@ -895,26 +891,6 @@ bool Image::icpRigid(const Image &source, const Image &target, unsigned iteratio
   vtkSmartPointer<vtkPolyData> targetc = targetContour->GetOutput();
   vtkSmartPointer<vtkPolyData> moving = movingContour->GetOutput();
 
-  using icpTransform = vtkSmartPointer<vtkIterativeClosestPointTransform>;
-  icpTransform icp = icpTransform::New();
-  icp->SetSource(moving);
-  icp->SetTarget(targetc);
-  icp->GetLandmarkTransform()->SetModeToRigidBody();
-  icp->SetMaximumNumberOfIterations(iterations);
-  icp->Modified();
-  icp->Update();
-
-  using TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>;
-  TransformFilter icpTransformFilter = TransformFilter::New();
-  icpTransformFilter->SetInputData(moving);
-  icpTransformFilter->SetTransform(icp);
-  icpTransformFilter->Update();
-
-  vtkSmartPointer<vtkMatrix4x4> m1 = icp->GetMatrix();
-  vtkSmartPointer<vtkMatrix4x4> m = vtkMatrix4x4::New();
-  vtkMatrix4x4::Invert(m1, m);
-  std::cout << "The resulting matrix is: " << *m << std::endl;
-
   // applyTransform();
 
 #if DEBUG_CONSOLIDATION
@@ -933,11 +909,11 @@ bool Image::clipVolume(Matrix33 cuttingPlane)
 
   Point3 spacing = image->GetSpacing();
   Point3 curOrigin = origin();
-  double o[] = {0.0, 0.0, 0.0};
-  double p1[] = {0.0, 0.0, 0.0};
-  double p2[] = {0.0, 0.0, 0.0};
-  double res[] = {0.0, 0.0, 0.0};
-  double temp = 0.0;
+  Point3 o[] = {0.0, 0.0, 0.0};
+  Point3 p1[] = {0.0, 0.0, 0.0};
+  Point3 p2[] = {0.0, 0.0, 0.0};
+  Point3 res[] = {0.0, 0.0, 0.0};
+  PixelType temp = 0.0;
 
   o[0] = (cuttingPlane[0][0] - curOrigin[0]) / spacing[0];
   o[1] = (cuttingPlane[0][1] - curOrigin[1]) / spacing[1];
@@ -950,7 +926,6 @@ bool Image::clipVolume(Matrix33 cuttingPlane)
   p2[2] = (cuttingPlane[2][2] - curOrigin[2]) / spacing[2];
 
   // find the cross product vector
-  // res = (p1 - o) * (p2 - o) - (p1 - o) * (p2 - o);
   res[0] = (p1[1] - o[1]) * (p2[2] - o[2]) - (p1[2] - o[2]) * (p2[1] - o[1]);
   res[1] = (p1[2] - o[2]) * (p2[0] - o[0]) - (p1[0] - o[0]) * (p2[2] - o[2]);
   res[2] = (p1[0] - o[0]) * (p2[1] - o[1]) - (p1[1] - o[1]) * (p2[0] - o[0]);
@@ -963,14 +938,13 @@ bool Image::clipVolume(Matrix33 cuttingPlane)
   itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
   while (!imageIterator.IsAtEnd())
   {
-    temp = (double(imageIterator.GetIndex()[0]) - o[0]) * res[0] +
-           (double(imageIterator.GetIndex()[1]) - o[1]) * res[1] +
-           (double(imageIterator.GetIndex()[2]) - o[2]) * res[2];
+    temp = (PixelType(imageIterator.GetIndex()[0]) - o[0]) * res[0] +
+           (PixelType(imageIterator.GetIndex()[1]) - o[1]) * res[1] +
+           (PixelType(imageIterator.GetIndex()[2]) - o[2]) * res[2];
 
     if (temp < 0.0)
-    {
       imageIterator.Set(0);
-    }
+      
     ++imageIterator;
   }
 

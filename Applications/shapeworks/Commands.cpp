@@ -554,15 +554,15 @@ void ClipVolume::buildParser()
   const std::string desc = "chops volume with corresponding cutting planes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x1").action("store").type("double").set_default(0.01).help("value of cuttingplane [0][0]");
-  parser.add_option("--x2").action("store").type("double").set_default(0.01).help("value of cuttingplane [0][1]");
-  parser.add_option("--x3").action("store").type("double").set_default(0.01).help("value of cuttingplane [0][2]");
-  parser.add_option("--y1").action("store").type("double").set_default(0.01).help("value of cuttingplane [1][0]");
-  parser.add_option("--y2").action("store").type("double").set_default(0.01).help("value of cuttingplane [1][1]");
-  parser.add_option("--y3").action("store").type("double").set_default(0.01).help("value of cuttingplane [1][2]");
-  parser.add_option("--z1").action("store").type("double").set_default(0.01).help("value of cuttingplane [2][0]");
-  parser.add_option("--z2").action("store").type("double").set_default(0.01).help("value of cuttingplane [2][1]");
-  parser.add_option("--z3").action("store").type("double").set_default(0.01).help("value of cuttingplane [2][2]");
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("value of cuttingplane [0][0]");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("value of cuttingplane [0][1]");
+  parser.add_option("--x3").action("store").type("double").set_default(0.0).help("value of cuttingplane [0][2]");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("value of cuttingplane [1][0]");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("value of cuttingplane [1][1]");
+  parser.add_option("--y3").action("store").type("double").set_default(0.0).help("value of cuttingplane [1][2]");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][0]");
+  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][1]");
+  parser.add_option("--z3").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][2]");
 
   Command::buildParser();
 }

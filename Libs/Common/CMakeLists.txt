@@ -1,9 +1,11 @@
 # Build
 set(Common_sources
   Shapeworks.cpp
+  ShapeworksUtils.cpp
   )
 set(Common_headers
   Shapeworks.h
+  ShapeworksUtils.h
   )
 add_library(Common STATIC
   ${Common_sources}
