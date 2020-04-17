@@ -40,16 +40,17 @@
 #include <vtkPolyData.h>
 #include <vtkMassProperties.h>
 
-// particle system
+// shapeworks particle system
 #include "TriMesh.h"
-#include "itkParticleImageDomain.h"
-#include "itkParticleImageDomainWithGradients.h"
-#include "itkParticleImplicitSurfaceDomain.h"
-#include "itkParticleImageDomainWithHessians.h"
-#include "object_reader.h"
-#include "object_writer.h"
+#include "itkImageToVTKImageFilter.h"
+#include "ParticleSystem/itkParticleImageDomain.h"
+#include "ParticleSystem/itkParticleImageDomainWithGradients.h"
+#include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
+#include "ParticleSystem/itkParticleImageDomainWithHessians.h"
+#include "ParticleSystem/object_reader.h"
+#include "ParticleSystem/object_writer.h"
 
-#include <Optimize.h>
+#include "Optimize.h"
 
 //---------------------------------------------------------------------------
 Optimize::Optimize()
