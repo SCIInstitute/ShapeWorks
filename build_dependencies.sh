@@ -18,6 +18,7 @@ ITK_VER_STR="5.0"
 EIGEN_VER="3.3.7"
 ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
+OpenVDB_VER="v7.0.0"
 
 usage()
 {
@@ -201,6 +202,30 @@ build_eigen()
   EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
+built_openvdb()
+{
+  echo ""
+  echo "## Building OpenVDB..."
+  cd ${BUILD_DIR}
+  git clone https://github.com/AcademySoftwareFoundation/openvdb.git
+  cd openvdb
+  git checkout ${OpenVDB_VER}
+
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      cmake --build . --config Release || exit 1
+      cmake --build . --config Release --target install
+  else
+      cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      make -j${NUM_PROCS} install || exit 1
+  fi
+
+  OpenVDB_DIR=${INSTALL_DIR}/lib64/cmake/OpenVDB/
+}
+
 show_shapeworks_build()
 {
   echo ""
@@ -212,7 +237,7 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  echo "cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
+  echo "cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} -DOpenVDB_DIR=${OpenVDB_DIR} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
 
 }
 
@@ -254,6 +279,10 @@ build_all()
   mkdir -p ${INSTALL_DIR}
 
   ## build dependencies if their locations were not specified
+  if [[ -z $OpenVDB_DIR ]]; then
+    built_openvdb
+  fi
+
   if [[ -z $VXL_DIR ]]; then
     build_vxl
   fi
@@ -269,6 +298,7 @@ build_all()
   if [[ -z $EIGEN_DIR ]]; then
     build_eigen
   fi
+
 
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks
   echo ""

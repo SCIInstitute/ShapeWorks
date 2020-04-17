@@ -26,8 +26,10 @@ include(DefaultBuildType)
 
 project(ShapeWorks)
 
-#TODO: Move this to a proper place. For some reason TBB is not linking if this part is in Libs/Optimize/CMakeLists.txt
-list(APPEND CMAKE_MODULE_PATH "/home/sci/karthik/Documents/playground/openvdb/openvdb-7.0.0/build/install/lib64/cmake/OpenVDB")
+# OpenVDB doesn't provide a config file currently
+# https://www.openvdb.org/documentation/doxygen/build.html#buildUsingOpenVDB
+list(APPEND CMAKE_MODULE_PATH ${OpenVDB_DIR})
+find_package(OpenVDB REQUIRED)
 
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
