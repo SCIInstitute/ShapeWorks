@@ -6,37 +6,45 @@
 Each dataset must have a **License.txt** which descibes the terms of use and citation requirements for the data.  
 You can see an example in the Left Atrium dataset [License](http://cibc1.sci.utah.edu:8080/api/v1/file/5e5600298886bab730d72cf6/download).
 
+Data should be organized into appropriately named directories: **images**, **segmentations**, **meshes**, **landmarks**, **distance_transforms**, **shape_models**.  
+
+*Note that each dataset will likely only have a subset of these directories. For example, the ellipsoid dataset only has a segmentations directory.*  
+
 ## Uploading a Dataset (developers only)
 
 1. Create an account on the [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/#?dialog=register)
 2. Ask Oleks to add you to the list of developers. (oleks@sci.utah.edu)
-3. Prepare dataset folder with License.txt
+3. Prepare dataset directory with License.txt
 4. Use `DatasetUtils.uploadNewDataset(datasetName, datasetPath)` to upload.
-5. Name the dataset all lowercase with underscores separating words similar to: 'ellipsoid', 'ellipsoid_fd', 'left_atrium', 'femur'
+5. Name the dataset all lowercase with underscores separating words. For example: 'ellipsoid', 'ellipsoid_fd', 'left_atrium', 'femur'
 
 Example file structure:
-- TestEllipsoids/
-  - ellipsoid/
+- TestFolder/
+  - dataset_name/
     - License.txt
-    - Ellipsoids_Prepped/
-      - bunch of \*.nrrd
-    - Ellipsoids_UnPrepped/
-      - bunch of \*.nrrd
+    - images/
+    - segmentations/
+    - meshes/
+    - landmarks/
+    - distance_transforms/
+    - shape_models/
 
 Example python upload usage:
 ```
 import DatasetUtils
-DatasetUtils.uploadNewDataset('ellipsoid', 'TestEllipsoids/ellipsoid/')
+DatasetUtils.uploadNewDataset('dataset_name', 'TestFolder/dataset_name/')
 ```
 
-When calling `DatasetUtils.downloadDataset('ellipsoid')`, you will get a zip file with the following structure:  
-- ellipsoid.zip
-  - ellipsoid/
+When calling `DatasetUtils.downloadDataset('dataset_name')`, you will get a zip file with the following structure:  
+- dataset_name.zip
+  - dataset_name/
     - License.txt
-    - Ellipsoids_Prepped/
-      - bunch of \*.nrrd
-    - Ellipsoids_UnPrepped/
-      - bunch of \*.nrrd
+    - images/
+    - segmentations/
+    - meshes/
+    - landmarks/
+    - distance_transforms/
+    - shape_models/
 
 ## API
 
