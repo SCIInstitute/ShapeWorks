@@ -84,7 +84,7 @@ jobs:
     - name: Build dependencies
       shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build conda activate shapeworks && ./build_dependencies.sh
+      run: conda activate shapeworks && INSTALL_DIR=$HOME/install BUILD_DIR=$HOME/build ./build_dependencies.sh
 
     - name: cmake
       shell: bash -l {0}
