@@ -425,6 +425,16 @@ Single scale optimization is used with procrustes scaling to factor out size as 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
 For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
 
+#### Mean Shape
+![Alt Text](images/mean_femur.gif)
+
+#### Samples
+![Zoom Femur Samples](images/femur_samples_zoom.png)
+![Femur Samples](images/femur_samples.png)
+
+#### PCA
+![Alt Text](images/femur_PCA.gif)
+
 
 ##  Right Ventricle Use Case
 
