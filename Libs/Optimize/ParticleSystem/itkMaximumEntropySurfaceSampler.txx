@@ -52,6 +52,10 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
     // Allocate some optimization code.
     m_Optimizer = OptimizerType::New();
 
+    // Default narrow band that works for existing ShapeWorks models. Can be set
+    // via XML parameter file
+    m_NarrowBand = 4.0;
+
     m_Initialized = false;
     m_PointsFiles.push_back("");
     m_MeshFiles.push_back("");
