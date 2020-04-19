@@ -67,7 +67,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/build_dependencies.sh') }}
 
     - name: Build dependencies
-      shell: bash
+      shell: bash -l {0}
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: conda activate shapeworks && ./build_dependencies.sh --install-dir="${{runner.workspace}}\deps" --build-dir="/d/a/bdeps"
 
