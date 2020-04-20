@@ -244,6 +244,7 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
       k = 0;
       }
     } // end while
+    return flag;
 }
 
 template <class T, unsigned int VDimension>
