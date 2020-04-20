@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <Libs/Image/Image.h>
+#include <Libs/Image/ImageUtils.h>
+#include <Libs/Image/Transform.h>
 
 #include "TestConfiguration.h"
 
@@ -12,9 +14,8 @@ TEST(ImageTests, isoresample_binary_isotropic_test) {
 
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
-  image.isoresample();
-  image.threshold();
-  image.recenter();
+  ImageUtils::isoresample(image);
+  image.threshold().recenter();
   Image ground_truth(test_location + "binary-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -26,9 +27,8 @@ TEST(ImageTests, isoresample_binary_anisotropic_test) {
 
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
-  image.isoresample();
-  image.threshold();
-  image.recenter();
+  ImageUtils::isoresample(image);
+  image.threshold().recenter();
   Image ground_truth(test_location + "binary-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -39,7 +39,7 @@ TEST(ImageTests, isoresample_smooth_isotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-isotropic-input.nrrd");
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.recenter();
   Image ground_truth(test_location + "smooth-isotropic-isoresampled.nrrd");
 
@@ -51,7 +51,7 @@ TEST(ImageTests, isoresample_smooth_anisotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-anisotropic-input.nrrd");
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.recenter();
   Image ground_truth(test_location + "smooth-anisotropic-isoresampled.nrrd");
 
@@ -63,7 +63,7 @@ TEST(ImageTests, isoresample_image_anisotropic_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "image-anisotropic-input.nrrd");
-  image.isoresample();
+  ImageUtils::isoresample(image);
   image.recenter();
   Image ground_truth(test_location + "image-anisotropic-isoresampled.nrrd");
 
@@ -75,7 +75,6 @@ TEST(ImageTests, pad_test) {
 
   Image image(test_location + "1x2x2.nrrd");
   image.pad(30, 0.0);
- 
   Image ground_truth(test_location + "pad_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -97,6 +96,8 @@ TEST(ImageTests, extractlabel_test) {
   Image image(test_location + "1x2x2.nrrd");
   image.extractLabel(1.0);
   Image ground_truth(test_location + "extract-label_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, closeholes_test) {
@@ -145,7 +146,7 @@ TEST(ImageTests, curvature_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/curvature/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applyCurvature();
+  image.applyCurvatureFilter();
   Image ground_truth(test_location + "curvature_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -156,7 +157,7 @@ TEST(ImageTests, gradient_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/gradient/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applyGradient();
+  image.applyGradientFilter();
   Image ground_truth(test_location + "gradient_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -167,7 +168,7 @@ TEST(ImageTests, sigmoid_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sigmoid/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applySigmoid();
+  image.applySigmoidFilter();
   Image ground_truth(test_location + "sigmoid_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -179,8 +180,19 @@ TEST(ImageTests, setlevel_test)
   std::string other_location = std::string(TEST_DATA_DIR) + std::string("/curvature/curvature_baseline.nrrd");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applyLevel(other_location);
+  image.applyTPLevelSetFilter(other_location);
   Image ground_truth(test_location + "set-level_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, topopreservingsmooth_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/topo-preserving-smooth/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  ImageUtils::topologyPreservingSmooth(image, 10, 10.5, 10, 1, true);
+  Image ground_truth(test_location + "topo-preserving-smooth_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -212,18 +224,48 @@ TEST(ImageTests, crop_test)
     images_location + "seg.ellipsoid_9.nrrd",
   };
 
-  Image image;
+  Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
-  region = image.boundingBox(images, region);
-  image.read(test_location + "seg.ellipsoid_1.nrrd");
+  region = image.binaryBoundingBox(images);
   image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-//TEST(ImageTests, blah_test) {
+TEST(ImageTests, com_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
 
-// ...
+  Image image(test_location + "1x2x2.nrrd");
+  Transform xform = ImageUtils::createCenterOfMassTransform(image);
+  image.applyTransform(xform);
+  Image ground_truth(test_location + "com_baseline.nrrd");
 
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, translate_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Transform xform;
+  double v[3] = {10, 10, 10};
+  xform.translate(Vector3 (v));
+  image.applyTransform(xform);
+  Image ground_truth(test_location + "translate_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, multicommand_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multicommand/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.applyCurvatureFilter().applyGradientFilter().applySigmoidFilter();
+  Image ground_truth(test_location + "multicommand_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}

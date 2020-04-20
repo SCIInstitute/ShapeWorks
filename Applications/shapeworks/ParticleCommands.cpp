@@ -17,7 +17,7 @@ void ReadParticleSystem::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int ReadParticleSystem::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ReadParticleSystem::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
   return sharedData.particleSystem.LoadParticles(filenames);
@@ -40,14 +40,14 @@ void Compactness::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int Compactness::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Compactness::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
   const double r = ShapeEvaluation<3>::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
   std::cout << r << std::endl;
 
-  return 0;
+  return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ void Generalization::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int Generalization::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Generalization::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));
@@ -94,7 +94,7 @@ void Specificity::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int Specificity::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Specificity::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   const int nModes = static_cast<int>(options.get("nmodes"));
   const std::string saveTo = static_cast<std::string>(options.get("saveto"));

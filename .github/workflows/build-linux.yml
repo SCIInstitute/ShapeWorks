@@ -68,9 +68,10 @@ jobs:
         key: QtCache-linux
 
     - name: Install Qt
-      uses: akenmorris/install-qt-action@v5
+      uses: jurplel/install-qt-action@v2
       with:
         version: "5.9.9"
+        mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Cache dependencies

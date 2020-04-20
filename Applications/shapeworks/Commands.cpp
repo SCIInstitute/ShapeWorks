@@ -1,10 +1,12 @@
 #include "Commands.h"
 #include "Image.h"
+#include "ImageUtils.h"
 #include <limits>
 
 namespace shapeworks {
 
 // boilerplate for a command. Copy this to start a new command
+// Next, be sure to add the command to shapeworks.cpp!
 #if 0
 ///////////////////////////////////////////////////////////////////////////////
 // Example
@@ -21,7 +23,7 @@ void Example::buildParser()
   Command::buildParser();
 }
 
-int Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Example::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float optionName = static_cast<float>(options.get("optionName"));
   //read additional options... 
@@ -44,11 +46,17 @@ void ReadImage::buildParser()
   Command::buildParser();
 }
 
-int ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ReadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
 
-  return sharedData.image.read(filename);
+  try {
+    sharedData.image = Image(filename);
+    return true;
+  } catch(...) {
+    std::cerr << "exception while reading " << filename;
+    return false;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,12 +74,13 @@ void WriteImage::buildParser()
   Command::buildParser();
 }
 
-int WriteImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
   bool compressed = static_cast<bool>(options.get("compressed"));
   
-  return sharedData.image.write(filename, compressed);
+  sharedData.image.write(filename, compressed);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -88,7 +97,7 @@ void ReadMesh::buildParser()
   Command::buildParser();
 }
 
-int ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
 
@@ -109,7 +118,7 @@ void WriteMesh::buildParser()
   Command::buildParser();
 }
 
-int WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
   
@@ -132,19 +141,52 @@ void Antialias::buildParser()
   Command::buildParser();
 }
 
-int Antialias::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Antialias::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
   int numIterations = static_cast<int>(options.get("numiterations"));
   int numLayers = static_cast<int>(options.get("numlayers"));
 
-  return sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
+  sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ResampleImage
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
+{
+  const std::string prog = "resample";
+  const std::string desc = "resamples an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default 1.0].");
+  parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default 1.0].");
+  parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default 1.0].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
+
+  Command::buildParser();
+}
+
+bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double spaceX = static_cast<double>(options.get("spacex"));
+  double spaceY = static_cast<double>(options.get("spacey"));
+  double spaceZ = static_cast<double>(options.get("spacez"));
+  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+
+  sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}), Dims({sizeX, sizeY, sizeZ}));
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// IsoResampleImage
+///////////////////////////////////////////////////////////////////////////////
+void IsoResampleImage::buildParser()
 {
   const std::string prog = "isoresample";
   const std::string desc = "resamples images to be isotropic";
@@ -158,14 +200,15 @@ void ResampleImage::buildParser()
   Command::buildParser();
 }
 
-int ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool IsoResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   double isoSpacing = static_cast<double>(options.get("isospacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  return true; //<ctc> todo: remove return values from commands since they will throw exceptions upon failure
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -175,13 +218,15 @@ void RecenterImage::buildParser()
 {
   const std::string prog = "recenter";
   const std::string desc = "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image";
+  parser.prog(prog).description(desc);
 
   Command::buildParser();
 }
 
-int RecenterImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool RecenterImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.recenter();
+  sharedData.image.recenter();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -199,12 +244,13 @@ void PadImage::buildParser()
   Command::buildParser();
 }
 
-int PadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool PadImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   int padding = static_cast<int>(options.get("padding"));
   float value = static_cast<float>(options.get("value"));
 
-  return sharedData.image.pad(padding, value);
+  sharedData.image.pad(padding, value);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -221,7 +267,7 @@ void SmoothMesh::buildParser()
   Command::buildParser();
 }
 
-int SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   //todo
 
@@ -242,7 +288,7 @@ void Coverage::buildParser()
   Command::buildParser();
 }
 
-int Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
 
@@ -271,34 +317,37 @@ void Translate::buildParser()
   parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (e.g., 3.14)");
   parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (not logical coordinate)");
   parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space (...but that could be added)");
+  parser.add_option("--useprev").action("store").type("bool").set_default(false).help("same amount as previous translate (in this command)");
 
   Command::buildParser();
 }
 
-int Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
+  bool useprev = static_cast<bool>(options.get("useprev"));
 
-  if (centerofmass)
+  if (!useprev)
   {
-    Point3 com = sharedData.image.centerOfMass();
-    Point3 center = sharedData.image.size() / 2.0 + sharedData.image.origin();
-    sharedData.transform.translate(center - com);
-  }
-  else
-  {
-    double tx = static_cast<double>(options.get("tx"));
-    double ty = static_cast<double>(options.get("ty"));
-    double tz = static_cast<double>(options.get("tz"));
+    sharedData.transform.reset();
 
-    double v[3] = {tx, ty, tz};
-    sharedData.transform.translate(Vector3(v));
-  }
+    if (centerofmass)
+    {
+      sharedData.transform = ImageUtils::createCenterOfMassTransform(sharedData.image);
+    }
+    else
+    {
+      double tx = static_cast<double>(options.get("tx"));
+      double ty = static_cast<double>(options.get("ty"));
+      double tz = static_cast<double>(options.get("tz"));
 
-#if DEBUG_CONSOLIDATION
-  std::cout << "Translating " << (centerofmass ? "using center of mass " : " explicitly ") << "by: " << sharedData.transform << std::endl;
-#endif
-  return sharedData.image.applyTransform(sharedData.transform);
+      double v[3] = {tx, ty, tz};
+      sharedData.transform.translate(Vector3(v));
+    }
+  }
+  
+  sharedData.image.applyTransform(sharedData.transform);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -315,11 +364,12 @@ void ExtractLabel::buildParser()
   Command::buildParser();
 }
 
-int ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ExtractLabel::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float label = static_cast<float>(options.get("label"));
 
-  return sharedData.image.extractLabel(label);
+  sharedData.image.extractLabel(label);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -334,9 +384,10 @@ void CloseHoles::buildParser()
   Command::buildParser();
 }
 
-int CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.closeHoles();
+  sharedData.image.closeHoles();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -354,12 +405,13 @@ void Threshold::buildParser()
   Command::buildParser();
 }
 
-int Threshold::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Threshold::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float min = static_cast<float>(options.get("min"));
   float max = static_cast<float>(options.get("max"));
 
-  return sharedData.image.threshold(min, max);
+  sharedData.image.threshold(min, max);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -377,20 +429,21 @@ void ComputeDT::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int ComputeDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float isovalue = static_cast<float>(options.get("isovalue"));
 
-  return sharedData.image.computeDT(isovalue);
+  sharedData.image.computeDT(isovalue);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Curvature
+// CurvatureFilter
 ///////////////////////////////////////////////////////////////////////////////
-void Curvature::buildParser()
+void CurvatureFilter::buildParser()
 {
   const std::string prog = "curvature";
-  const std::string desc = "performs curvature flow image filter";
+  const std::string desc = "applies curvature flow image filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
@@ -398,37 +451,39 @@ void Curvature::buildParser()
   Command::buildParser();
 }
 
-int Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  return sharedData.image.applyCurvature(iterations);
+  sharedData.image.applyCurvatureFilter(iterations);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Gradient
+// GradientFilter
 ///////////////////////////////////////////////////////////////////////////////
-void Gradient::buildParser()
+void GradientFilter::buildParser()
 {
   const std::string prog = "gradient";
-  const std::string desc = "performs gradient magnitude image filter";
+  const std::string desc = "applies gradient magnitude image filter";
   parser.prog(prog).description(desc);
   
   Command::buildParser();
 }
 
-int Gradient::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool GradientFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.applyGradient();
+  sharedData.image.applyGradientFilter();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Sigmoid
+// SigmoidFilter
 ///////////////////////////////////////////////////////////////////////////////
-void Sigmoid::buildParser()
+void SigmoidFilter::buildParser()
 {
   const std::string prog = "sigmoid";
-  const std::string desc = "performs sigmoid image filter";
+  const std::string desc = "applies sigmoid image filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha");
@@ -437,35 +492,67 @@ void Sigmoid::buildParser()
   Command::buildParser();
 }
 
-int Sigmoid::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool SigmoidFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
 
-  return sharedData.image.applySigmoid(alpha, beta);
+  sharedData.image.applySigmoidFilter(alpha, beta);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// SetLevel
+// TPLevelSetFilter
 ///////////////////////////////////////////////////////////////////////////////
-void SetLevel::buildParser()
+void TPLevelSetFilter::buildParser()
 {
-  const std::string prog = "set-level";
-  const std::string desc = "performs TPGAC level set image filter";
+  const std::string prog = "tp-levelset";
+  const std::string desc = "applies TPLevelSet level set image filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--other").action("store").type("string").set_default("").help("path of image for input");
-  parser.add_option("--scaling").action("store").type("double").set_default(0.0).help("to perform TPGA level set filtering");
+  parser.add_option("--featureimage").action("store").type("string").set_default("").help("path of feature image for filter");
+  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("value of scale [default: 20]");
   
   Command::buildParser();
 }
 
-int SetLevel::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  std::string other = options["other"];
+  Image featureImage(options["featureimage"]);
   double scaling = static_cast<double>(options.get("scaling"));
   
-  return sharedData.image.applyLevel(other, scaling);
+  sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// TopologyPreservingFilter
+///////////////////////////////////////////////////////////////////////////////
+void TopologyPreservingFilter::buildParser()
+{
+  const std::string prog = "topo-preserving-smooth";
+  const std::string desc = "helper command that applies curvature, gradient, sigmoid, and uses them for the TPLevelSet filter";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("scale for TPLevelSet level set filter");
+  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha for sigmoid fitler");
+  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta for sigmoid fitler");  
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations for curvature filter");
+  parser.add_option("--applycurvature").action("store").type("bool").set_default(true).help("default it true, but in some cases it has already been applied");
+  
+  Command::buildParser();
+}
+
+bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double scaling = static_cast<double>(options.get("scaling"));
+  double alpha = static_cast<double>(options.get("alpha"));
+  double beta = static_cast<double>(options.get("beta"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  bool applycurvature = static_cast<bool>(options.get("applycurvature"));
+
+  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -474,7 +561,7 @@ int SetLevel::execute(const optparse::Values &options, SharedCommandData &shared
 void Blur::buildParser()
 {
   const std::string prog = "blur";
-  const std::string desc = "performs gaussian blur";
+  const std::string desc = "applies gaussian blur";
   parser.prog(prog).description(desc);
 
   parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("value of sigma");
@@ -483,11 +570,12 @@ void Blur::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int Blur::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   double sigma = static_cast<double>(options.get("sigma"));
   
-  return sharedData.image.gaussianBlur(sigma);
+  sharedData.image.gaussianBlur(sigma);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -495,24 +583,23 @@ int Blur::execute(const optparse::Values &options, SharedCommandData &sharedData
 ///////////////////////////////////////////////////////////////////////////////
 void BoundingBox::buildParser()
 {
-  const std::string prog = "bounding-box";
-  const std::string desc = "compute largest bounding box size given set of images";
+  const std::string prog = "binary-bounding-box";
+  const std::string desc = "compute largest bounding box size of the given set of binary images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .nrrd files");
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to images");
   parser.add_option("--padding").action("store").type("int").set_default(0).help("Number of extra voxels in each direction to pad the largest bounding box");
 
   Command::buildParser();
 }
 
-int BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::vector<std::string> filenames = options.get("names");
   int padding = static_cast<int>(options.get("padding"));
 
-  sharedData.image.boundingBox(filenames, sharedData.region, padding);
-
-  return 1;
+  sharedData.region = sharedData.image.binaryBoundingBox(filenames, padding);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -528,9 +615,10 @@ void CropImage::buildParser()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.crop(sharedData.region);
+  sharedData.image.crop(sharedData.region);
+  return true;
 }
 
 } // shapeworks

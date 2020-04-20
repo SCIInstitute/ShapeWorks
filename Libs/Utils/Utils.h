@@ -1,4 +1,3 @@
-
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
   Date:      $Date: 2014/03/24 01:17:40 $
@@ -34,7 +33,7 @@
 #include <itkImage.h>
 #include <itkPoint.h>
 
-namespace utils
+namespace utils //TODO: -> namespace shapeworks (need to change everywhere it's used
 {
 #define twopi_inv 0.5/M_PI
 #define twopi  2.0*M_PI
@@ -254,6 +253,7 @@ private:
 
     /* For a given theta, compute the MSE. A simple O(N) method used for testing. */
     static double computeMSE(std::vector<double> thetas, double theta);
+
 };
 
 #endif // UTILS_H

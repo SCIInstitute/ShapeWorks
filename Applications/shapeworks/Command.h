@@ -25,7 +25,7 @@ public:
   int run(SharedCommandData &sharedData);
 
 private:
-  virtual int execute(const optparse::Values &options, SharedCommandData &sharedData) = 0;
+  virtual bool execute(const optparse::Values &options, SharedCommandData &sharedData) = 0;
 
 protected:
   virtual void buildParser(); // derived classes should specialize and call this as well
