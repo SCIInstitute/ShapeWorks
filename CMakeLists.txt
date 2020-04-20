@@ -28,6 +28,7 @@ project(ShapeWorks)
 
 # OpenVDB doesn't provide a config file currently
 # https://www.openvdb.org/documentation/doxygen/build.html#buildUsingOpenVDB
+file(TO_NATIVE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # use forward slashes on windows
 list(APPEND CMAKE_MODULE_PATH ${OpenVDB_DIR})
 find_package(OpenVDB REQUIRED)
 
