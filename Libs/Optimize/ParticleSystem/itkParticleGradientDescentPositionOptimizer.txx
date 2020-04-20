@@ -227,12 +227,15 @@ namespace itk
       const auto accTimerEnd = std::chrono::steady_clock::now();
       const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
 
-      double vmUsage, residentSet;
-      process_mem_usage(vmUsage, residentSet);
       if (m_verbosity > 2)
       {
-        std::cout << m_NumberOfIterations << ". " << msElapsed << "ms | Mem=" << residentSet << "KB" << std::endl;
-        std::cout.flush();
+        std::cout << m_NumberOfIterations << ". " << msElapsed << "ms";
+#ifdef LOG_MEMORY_USAGE
+        double vmUsage, residentSet;
+        process_mem_usage(vmUsage, residentSet);
+        std::cout << " | Mem=" << residentSet << "KB";
+#endif
+        std::cout << std::endl;
       }
 
       this->InvokeEvent(itk::IterationEvent());
