@@ -9,7 +9,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-#include "RBFShape.h"
+#include "PointCloud.h"
 
 using namespace std;
 
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         ev_pts(i, 2) = temp_vec[i][2];
     }
 
-    shapeworks::RBFShape shape = shapeworks::RBFShape();
+    shapeworks::PointCloud shape = shapeworks::PointCloud();
 
     shape.loadFromEqFile(rbfshape_file);
 

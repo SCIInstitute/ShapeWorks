@@ -22,16 +22,16 @@
 
 namespace shapeworks {
 
-class RBFShape
+class PointCloud
 {
 public:
-      RBFShape(Eigen::Vector4d coeff = Eigen::Vector4d(1.,1.,1.,1.),
+      PointCloud(Eigen::Vector4d coeff = Eigen::Vector4d(1.,1.,1.,1.),
                        Eigen::Vector3d pows = Eigen::Vector3d(1.,1.,1.),
                        Eigen::MatrixXd points = Eigen::MatrixXd());
 
       /** This function is the deconstructor of the class. It does nothing in this base class.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual ~RBFShape();
+      virtual ~PointCloud();
 
       /*******************************************************************************************************************/
       /** Access functions: This type of functions are used to provide set/get access to the class member variables. */
@@ -129,7 +129,7 @@ public:
       void setEmpty(bool isEmpty) { isEmpty_ = isEmpty; }
       std::string getName() const { return name_; }
 
-      RBFShape* func_;
+      PointCloud* func_;
 
       /** A flag to indicate whether the implicit function is empty to allow empty horizon compartments to be added to the tree. */
       bool isEmpty_; // to allow empty horizon compartments to be added to the tree

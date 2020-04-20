@@ -1,0 +1,3 @@
+input: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/input/flat_surface_evals.txt
+output: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/output/sample_flat_surface_gradients.txt
+input_rbfshape: /home/hxu/Documents/ShapeWorks/Testing/PointCloudTests/output/sample_flat_surface.rbfshape

@@ -7,11 +7,11 @@ add_subdirectory(solvers)
 FILE(GLOB KERNELS_SOURCE "kernels/*")
 
 set(PointCloud_sources
-  RBFShape.cpp
+  PointCloud.cpp
   ${KERNELS_SOURCE}
   )
 set(PointCloud_headers
-  RBFShape.h
+  PointCloud.h
   )
 
 add_library(PointCloud STATIC

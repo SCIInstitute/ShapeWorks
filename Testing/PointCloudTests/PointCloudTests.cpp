@@ -19,7 +19,7 @@
 //#include "ShapeWorksRunApp.h"
 #include "itkParticleShapeStatistics.h"
 
-#include "RBFShape.h"
+#include "PointCloud.h"
 
 double *sphere_grid ( int n, double r[3], double c[3], int ng );
 double* get_bounding_sphere(size_t num, size_t& ng, double radius);
@@ -84,7 +84,7 @@ std::vector<double> flat_test(int side_length, int sep){
 
     std::cout << "Creating RBF..." << std::endl;
 
-    shapeworks::RBFShape RBFflat = shapeworks::RBFShape();
+    shapeworks::PointCloud RBFflat = shapeworks::PointCloud();
 
     std::cout << "Solving system..." << std::endl;
 
@@ -208,7 +208,7 @@ std::vector<double> sphere_test() {
 
   std::cout << "Creating RBF..." << std::endl;
 
-  shapeworks::RBFShape RBFsphere = shapeworks::RBFShape();
+  shapeworks::PointCloud RBFsphere = shapeworks::PointCloud();
 
   std::cout << "Solving system..." << std::endl;
 
