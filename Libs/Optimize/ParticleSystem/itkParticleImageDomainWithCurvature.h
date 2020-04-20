@@ -1,10 +1,4 @@
 /*=========================================================================
-  Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkParticleImageDomainWithCurvature.h,v $
-  Date:      $Date: 2011/03/23 22:40:10 $
-  Version:   $Revision: 1.2 $
-  Author:    $Author: wmartin $
-
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
 
