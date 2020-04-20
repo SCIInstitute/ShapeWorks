@@ -6,7 +6,6 @@
 #include <itkImageFileWriter.h>
 #include <itkAntiAliasBinaryImageFilter.h>
 #include <itkResampleImageFilter.h>
-#include <itkBSplineInterpolateImageFunction.h>
 #include <itkChangeInformationImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
 #include <itkConstantPadImageFilter.h>
@@ -53,7 +52,7 @@ namespace shapeworks {
 Image::Image(const Image &img)
 {
   this->image = nullptr;
-  
+
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
   DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(img.image);
@@ -89,9 +88,7 @@ Image Image::read(const std::string &pathname)
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
   if (is_directory(pathname))
-  {
     return readDICOMImage(pathname);
-  }
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
@@ -148,7 +145,7 @@ Image Image::readDICOMImage(const std::string &pathname)
 ///
 /// \param filename
 /// \param compressed
-bool Image::write(const std::string &filename, bool compressed)
+Image& Image::write(const std::string &filename, bool compressed)
 {
   if (!this->image) { throw std::invalid_argument("Image invalid"); }
   if (filename.empty()) { throw std::invalid_argument("Empty pathname"); }
@@ -158,22 +155,9 @@ bool Image::write(const std::string &filename, bool compressed)
   writer->SetInput(this->image);
   writer->SetFileName(filename);
   writer->SetUseCompression(compressed);
+  writer->Update();
 
-  try
-  {
-    writer->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Failed to write image to " << filename << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Successfully wrote image " << filename << std::endl;
-#endif
-  return true;
+  return *this;
 }
 
 /// antialias
@@ -183,75 +167,37 @@ bool Image::write(const std::string &filename, bool compressed)
 /// \param numIterations
 /// \param maxRMSErr      range [0.0, 1.0], determines how fast the solver converges (larger is faster)
 /// \param numLayers      size of region around a pixel to sample
-bool Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayers)
+Image& Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayers)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetMaximumRMSError(maxRMSErr);
   filter->SetNumberOfIterations(numIterations);
   if (numLayers)
     filter->SetNumberOfLayers(numLayers);
   filter->SetInput(this->image);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Antialias filter failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Antialias filter succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// recenter
 ///
 /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
 ///
-bool Image::recenter()
+Image& Image::recenter()
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetInput(this->image);
   filter->CenterImageOn();
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Recenter image failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Recenter image succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+  
+  return *this;
 }
 
 Image& Image::resample(const Point3& spacing, Dims outputSize)
@@ -271,12 +217,12 @@ Image& Image::resample(const Point3& spacing, Dims outputSize)
     outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / spacing[1]);
     outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / spacing[2]);
   }
+
   resampler->SetSize(outputSize);
   resampler->SetInput(this->image);
-
   resampler->Update();
-
   this->image = resampler->GetOutput();
+
   return *this;
 }
 
@@ -339,14 +285,8 @@ bool Image::operator==(const Image &other) const
 ///
 /// \param padding  Number of voxels to be padded in each direction
 /// \param value    Value to be used to fill padded voxels
-bool Image::pad(int padding, PixelType value)
+Image& Image::pad(int padding, PixelType value)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   ImageType::SizeType lowerExtendRegion;
   lowerExtendRegion[0] = padding;
   lowerExtendRegion[1] = padding;
@@ -359,28 +299,15 @@ bool Image::pad(int padding, PixelType value)
 
   using FilterType = itk::ConstantPadImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetInput(this->image);
   filter->SetPadLowerBound(lowerExtendRegion);
   filter->SetPadUpperBound(upperExtendRegion);
   filter->SetConstant(value);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Pad image failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Pad image succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// applyTransform
@@ -388,14 +315,8 @@ bool Image::pad(int padding, PixelType value)
 /// applies the computed transformation to the image by using resampling filter
 ///
 /// \param transform      computed transformation    
-bool Image::applyTransform(const Transform &transform)
+Image& Image::applyTransform(const Transform &transform)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
 
@@ -409,23 +330,10 @@ bool Image::applyTransform(const Transform &transform)
   resampler->SetOutputOrigin(image->GetOrigin());
   resampler->SetOutputDirection(image->GetDirection());
   resampler->SetOutputSpacing(image->GetSpacing());
-
-  try
-  {
-    resampler->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Transform failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-#if DEBUG_CONSOLIDATION
-  std::cout << "Transform succeeded!\n";
-#endif
-
+  resampler->Update();
   this->image = resampler->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// extractLabel
@@ -433,49 +341,27 @@ bool Image::applyTransform(const Transform &transform)
 /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
 ///
 /// \param label      label value which has to be extracted. [default 1.0]
-bool Image::extractLabel(PixelType label)
+Image& Image::extractLabel(PixelType label)
 {
   threshold(label, label);
 
-#if DEBUG_CONSOLIDATION
-  std::cout << "Extract Label from Image succeeded!\n";
-#endif
-  return true;
+  return *this;
 }
 
 /// closeHoles
 ///
 /// closes holes in a given binary volume
-bool Image::closeHoles()
+Image& Image::closeHoles()
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::BinaryFillholeImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetInput(this->image);
   filter->SetForegroundValue(itk::NumericTraits<PixelType>::min());
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Close Holes failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Close Holes succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// threshold
@@ -484,39 +370,20 @@ bool Image::closeHoles()
 ///
 /// \param min      lower threshold level (optional, default = epsilon)
 /// \param max      upper threshold level (optional, default = FLT_MAX)
-bool Image::threshold(PixelType min, PixelType max)
+Image& Image::threshold(PixelType min, PixelType max)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetInput(this->image);
   filter->SetLowerThreshold(min);
   filter->SetUpperThreshold(max);
   filter->SetInsideValue(1.0);
   filter->SetOutsideValue(0.0);
-  
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Threshold failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Threshold succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// computeDT
@@ -524,37 +391,18 @@ bool Image::threshold(PixelType min, PixelType max)
 /// computes distance transform volume from a binary (antialiased) image
 ///
 /// \param isoValue     level set value that defines the interface between foreground and background
-bool Image::computeDT(float isoValue)
+Image& Image::computeDT(float isoValue)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetInput(this->image);
   filter->NarrowBandingOff();
   filter->SetLevelSetValue(isoValue);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Fast March failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Fast March succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// applyCurvatureFilter
@@ -562,71 +410,33 @@ bool Image::computeDT(float isoValue)
 /// applies curvature flow image filter
 ///
 /// \param iterations     number of iterations
-bool Image::applyCurvatureFilter(unsigned iterations)
+Image& Image::applyCurvatureFilter(unsigned iterations)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-  }
-
   using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetTimeStep(0.0625);
   filter->SetNumberOfIterations(iterations);
   filter->SetInput(this->image);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Curvature Flow failed:" << std::endl;
-    std::cerr << exp << std::endl;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Curvature Flow succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// applyGradientFilter
 ///
 /// applies gradient magnitude image filter
-bool Image::applyGradientFilter()
+Image& Image::applyGradientFilter()
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter  = FilterType::New();
 
   filter->SetInput(this->image);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Gradient Magnitude failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Gradient Magnitude succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+  
+  return *this;
 }
 
 /// applySigmoidFilter
@@ -635,14 +445,8 @@ bool Image::applyGradientFilter()
 ///
 /// \param alpha     value of alpha
 /// \param beta      value of beta
-bool Image::applySigmoidFilter(double alpha, double beta)
+Image& Image::applySigmoidFilter(double alpha, double beta)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::SigmoidImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
@@ -651,24 +455,10 @@ bool Image::applySigmoidFilter(double alpha, double beta)
   filter->SetOutputMinimum(0.0);
   filter->SetOutputMaximum(1.0);
   filter->SetInput(this->image);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Sigmoid failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Sigmoid succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// applyTPLevelSetFilter
@@ -677,14 +467,8 @@ bool Image::applySigmoidFilter(double alpha, double beta)
 ///
 /// \param featureImage     path of feature image for filter
 /// \param scaling          value of scale [default: 20]
-bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
+Image& Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>; // TODO: this is no longer part of ITK and should be updated
   FilterType::Pointer filter = FilterType::New();
 
@@ -695,24 +479,10 @@ bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
   filter->SetNumberOfIterations(20);
   filter->SetInput(this->image);
   filter->SetFeatureImage(featureImage.image);
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Level Set failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Level Set succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// gaussianBlur
@@ -720,36 +490,17 @@ bool Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
 /// applies gaussian blur
 ///
 /// \param sigma      value of sigma
-bool Image::gaussianBlur(double sigma)
+Image& Image::gaussianBlur(double sigma)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;
   BlurType::Pointer blur = BlurType::New();
+
   blur->SetInput(this->image);
   blur->SetVariance(sigma * sigma);
-  
-  try
-  {
-    blur->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Gaussian Blur failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Gaussian Blur succeeded!\n";
-#endif
-
+  blur->Update();
   this->image = blur->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// binaryBoundingBox
@@ -757,7 +508,7 @@ bool Image::gaussianBlur(double sigma)
 /// computes the logical coordinates of the largest region of binary data within these images
 ///
 /// \param filenames      the set of images to load, all of which must have identical dimensions.
-/// \param padding      the amount of padding to add in all directions to this bounding box 
+/// \param padding      the amount of padding to add in all directions to this bounding box
 Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int padding)
 {
   Image::Region bbox;
@@ -774,7 +525,7 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
     {
       PixelType val = imageIterator.Get();
 
-      if(val == 1.0)
+      if (val == 1.0)
       {
         bbox.min[0] = std::min(bbox.min[0], (int)imageIterator.GetIndex()[0]);
         bbox.min[1] = std::min(bbox.min[1], (int)imageIterator.GetIndex()[1]);
@@ -796,9 +547,6 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
   bbox.max[1] = std::min(bbox.max[1] + padding, (int)dims[1]);
   bbox.max[2] = std::min(bbox.max[2] + padding, (int)dims[2]);
 
-#if DEBUG_CONSOLIDATION
-  std::cout << "binaryBoundingBox succeeded: " << bbox << "!\n";
-#endif
   return bbox;
 }
 
@@ -807,43 +555,21 @@ Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int 
 /// performs translational alignment of shape image based on its center of mass or given 3D point
 ///
 /// \param region     computed region to perform crop
-bool Image::crop(const Region &region)
+Image& Image::crop(const Region &region)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   if (!region.valid())
-  {
     std::cerr << "Invalid region specified." << std::endl;
-    return false;
-  }
 
   using FilterType = itk::ExtractImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetExtractionRegion(region);
   filter->SetInput(this->image);
   filter->SetDirectionCollapseToIdentity();
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Crop Image failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Crop Image succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// logicalToPhysical

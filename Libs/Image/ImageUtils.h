@@ -7,15 +7,6 @@ namespace shapeworks {
 class ImageUtils
 {
 public:
-
-  /// createCenterOfMassTransform
-  ///
-  /// Generates the Transform necessary to move the contents of this binary image to the center.
-  /// Example:
-  ///   Transform xform = ImageUtils::createCenterOfMassTransform(image);
-  ///   image.applyTransform(xform);
-  ///
-  /// \param image the binary image from which to generate the transform
   static Transform createCenterOfMassTransform(const Image &image);
 
   /// topologyPreservingSmooth
