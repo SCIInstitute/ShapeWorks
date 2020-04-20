@@ -80,7 +80,8 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
   std::string filename = options["name"];
   bool compressed = static_cast<bool>(options.get("compressed"));
   
-  return sharedData.image.write(filename, compressed);
+  sharedData.image.write(filename, compressed);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,7 +106,8 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
   int numIterations = static_cast<int>(options.get("numiterations"));
   int numLayers = static_cast<int>(options.get("numlayers"));
 
-  return sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
+  sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -182,7 +184,8 @@ void RecenterImage::buildParser()
 
 bool RecenterImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.recenter();
+  sharedData.image.recenter();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -205,7 +208,8 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
   int padding = static_cast<int>(options.get("padding"));
   float value = static_cast<float>(options.get("value"));
 
-  return sharedData.image.pad(padding, value);
+  sharedData.image.pad(padding, value);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -250,10 +254,8 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
     }
   }
   
-#if DEBUG_CONSOLIDATION
-  std::cout << "Translating " << (centerofmass ? "using center of mass " : " explicitly ") << "by: " << sharedData.transform << std::endl;
-#endif
-  return sharedData.image.applyTransform(sharedData.transform);
+  sharedData.image.applyTransform(sharedData.transform);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -274,7 +276,8 @@ bool ExtractLabel::execute(const optparse::Values &options, SharedCommandData &s
 {
   float label = static_cast<float>(options.get("label"));
 
-  return sharedData.image.extractLabel(label);
+  sharedData.image.extractLabel(label);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -291,7 +294,8 @@ void CloseHoles::buildParser()
 
 bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.closeHoles();
+  sharedData.image.closeHoles();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -314,7 +318,8 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
   float min = static_cast<float>(options.get("min"));
   float max = static_cast<float>(options.get("max"));
 
-  return sharedData.image.threshold(min, max);
+  sharedData.image.threshold(min, max);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -336,7 +341,8 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
 {
   float isovalue = static_cast<float>(options.get("isovalue"));
 
-  return sharedData.image.computeDT(isovalue);
+  sharedData.image.computeDT(isovalue);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -357,7 +363,8 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 {
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  return sharedData.image.applyCurvatureFilter(iterations);
+  sharedData.image.applyCurvatureFilter(iterations);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -374,7 +381,8 @@ void GradientFilter::buildParser()
 
 bool GradientFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.applyGradientFilter();
+  sharedData.image.applyGradientFilter();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -397,7 +405,8 @@ bool SigmoidFilter::execute(const optparse::Values &options, SharedCommandData &
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
 
-  return sharedData.image.applySigmoidFilter(alpha, beta);
+  sharedData.image.applySigmoidFilter(alpha, beta);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -420,7 +429,8 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
   Image featureImage(options["featureimage"]);
   double scaling = static_cast<double>(options.get("scaling"));
   
-  return sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+  sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -472,7 +482,8 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 {
   double sigma = static_cast<double>(options.get("sigma"));
   
-  return sharedData.image.gaussianBlur(sigma);
+  sharedData.image.gaussianBlur(sigma);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -496,7 +507,6 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
   int padding = static_cast<int>(options.get("padding"));
 
   sharedData.region = sharedData.image.binaryBoundingBox(filenames, padding);
-
   return true;
 }
 
@@ -515,7 +525,8 @@ void CropImage::buildParser()
 ///////////////////////////////////////////////////////////////////////////////
 bool CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.crop(sharedData.region);
+  sharedData.image.crop(sharedData.region);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

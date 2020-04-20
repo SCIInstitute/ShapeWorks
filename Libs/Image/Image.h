@@ -32,25 +32,24 @@ public:
   Image& operator=(Image &img) { this->image.Swap(img.image); return *this; }
   Image& operator=(const Image &img);
 
-  bool write(const std::string &filename, bool compressed = true);
+  Image &write(const std::string &filename, bool compressed = true);
 
-  bool antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3); //todo: no need for a return value
-  bool recenter();
-  /// Resamples image with new voxel spacing and output size [same size if unspecified]
-  Image& resample(const Point3& spacing, Dims outputSize = Dims());
-  bool pad(int padding = 0, PixelType value = 0.0);
-  bool applyTransform(const Transform &transform);
-  bool extractLabel(PixelType label = 1.0);
-  bool closeHoles();
-  bool threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
-  bool computeDT(float isoValue = 0.0);
-  bool applyCurvatureFilter(unsigned iterations = 10);
-  bool applyGradientFilter();
-  bool applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
-  bool applyTPLevelSetFilter(const Image &featureImage, double scaling = 20.0);
-  bool gaussianBlur(double sigma = 0.0);
+  Image &antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3);
+  Image &recenter();
+  Image &resample(const Point3 &spacing, Dims outputSize = Dims()); // Resamples image with new voxel spacing and output size [same size if unspecified]
+  Image &pad(int padding = 0, PixelType value = 0.0);
+  Image &applyTransform(const Transform &transform);
+  Image &extractLabel(PixelType label = 1.0);
+  Image &closeHoles();
+  Image &threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
+  Image &computeDT(float isoValue = 0.0);
+  Image &applyCurvatureFilter(unsigned iterations = 10);
+  Image &applyGradientFilter();
+  Image &applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
+  Image &applyTPLevelSetFilter(const Image &featureImage, double scaling = 20.0);
+  Image &gaussianBlur(double sigma = 0.0);
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
-  bool crop(const Region &region);
+  Image &crop(const Region &region);
   bool icpRigid(const Image &source, const Image &target, unsigned iterations, float isoValue);
   bool clipVolume(Matrix33 cuttingPlane);
   bool changeOrigin(Point3 origin = Point3({0, 0, 0}));
@@ -94,7 +93,9 @@ public:
 
   bool operator==(const Image &other) const;
 
-  Point3 centerOfMass() const;  
+  /// returns average spatial coordinate of pixels in range (minval, maxval]
+  Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
+
   Point3 origin() const { return image->GetOrigin(); }
   Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
   Point3 size() const;                                      // spatial size of image

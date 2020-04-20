@@ -15,8 +15,7 @@ TEST(ImageTests, isoresample_binary_isotropic_test) {
   Image image(test_location + "binary-isotropic-input.nrrd");
   image.antialias();
   ImageUtils::isoresample(image);
-  image.threshold();
-  image.recenter();
+  image.threshold().recenter();
   Image ground_truth(test_location + "binary-isotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -29,8 +28,7 @@ TEST(ImageTests, isoresample_binary_anisotropic_test) {
   Image image(test_location + "binary-anisotropic-input.nrrd");
   image.antialias();
   ImageUtils::isoresample(image);
-  image.threshold();
-  image.recenter();
+  image.threshold().recenter();
   Image ground_truth(test_location + "binary-anisotropic-isoresampled.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -77,7 +75,6 @@ TEST(ImageTests, pad_test) {
 
   Image image(test_location + "1x2x2.nrrd");
   image.pad(30, 0.0);
- 
   Image ground_truth(test_location + "pad_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -99,6 +96,8 @@ TEST(ImageTests, extractlabel_test) {
   Image image(test_location + "1x2x2.nrrd");
   image.extractLabel(1.0);
   Image ground_truth(test_location + "extract-label_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, closeholes_test) {
@@ -256,6 +255,17 @@ TEST(ImageTests, translate_test)
   xform.translate(Vector3 (v));
   image.applyTransform(xform);
   Image ground_truth(test_location + "translate_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, multicommand_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multicommand/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.applyCurvatureFilter().applyGradientFilter().applySigmoidFilter();
+  Image ground_truth(test_location + "multicommand_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }

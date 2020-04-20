@@ -15,6 +15,8 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
   Point3 com = image.centerOfMass();
   Point3 center = image.center();
 
+  std::cout << "ImageUtils::createCenterOfMassTransform\n\tcom: " << com << "\n\tctr: " << center << std::endl;
+
   Transform xform;
   xform.translate(center - com);
   return xform;
