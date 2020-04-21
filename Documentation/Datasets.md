@@ -4,11 +4,42 @@
 ## Requirements
 
 Each dataset must have a **License.txt** which descibes the terms of use and citation requirements for the data.  
-You can see an example in the Left Atrium dataset [License](http://cibc1.sci.utah.edu:8080/api/v1/file/5e5600298886bab730d72cf6/download).
+You can see an example in the Left Atrium dataset [License](http://cibc1.sci.utah.edu:8080/#item/5e5600298886bab730d72cf5).
 
 Data should be organized into appropriately named directories: **images**, **segmentations**, **meshes**, **landmarks**, **distance_transforms**, **shape_models**.  
 
 *Note that each dataset will likely only have a subset of these directories. For example, the ellipsoid dataset only has a segmentations directory.*  
+
+### images/ 
+contents: 3D images of the data  
+file types: nrrd  
+
+### segmentations/
+contents: 3D segmentations of the data  
+file types: nrrd  
+
+### meshes/
+contents: meshes  
+file types: ply  
+
+### landmarks/
+contents:  
+file types:  
+
+### distance_transforms/
+contents: 3D distance transform volumes  
+file types: nrrd  
+
+### shape_models/
+contents: example shape models and parameters used to generate them  
+file types: xml  
+
+One subfolder per model stores all of the particles files  
+For example:  
+- shape_models/
+  - example_64.xml
+  - example_64/
+    - \*.particles
 
 ## Uploading a Dataset (developers only)
 
