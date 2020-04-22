@@ -12,23 +12,23 @@ Data should be organized into appropriately named directories: **images**, **seg
 
 ### images/ 
 contents: 3D images of the data  
-file types: nrrd  
+file types: [itk supported image formats](https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html)  
 
 ### segmentations/
 contents: 3D segmentations of the data  
-file types: nrrd  
+file types: [itk supported image formats](https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html)  
 
 ### meshes/
 contents: meshes  
-file types: ply  
+file types: ply, vtk, stl  
 
 ### landmarks/
-contents:  
-file types:  
+contents: sample specific files containing anatomical landmarks noted by the user  
+file types: csv with 4 columns: *x*, *y*, *z*, *label*  
 
 ### distance_transforms/
 contents: 3D distance transform volumes  
-file types: nrrd  
+file types: [itk supported image formats](https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html)  
 
 ### shape_models/
 contents: example shape models and parameters used to generate them  
