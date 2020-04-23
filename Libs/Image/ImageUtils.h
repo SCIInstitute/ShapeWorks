@@ -10,7 +10,7 @@ class ImageUtils
 public:
   static Transform createCenterOfMassTransform(const Image &image);
   static Image reflect(Image &img, double axis);
-  static Image rigidRegisteration(Image &img);
+  static Image rigidRegisteration(Image &img, Image &target, Image &source, float isoValue = 0.0, unsigned iterations = 20);
 
   /// topologyPreservingSmooth
   ///

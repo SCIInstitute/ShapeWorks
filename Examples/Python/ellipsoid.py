@@ -29,9 +29,6 @@ from GroomUtils import *
 from OptimizeUtils import *
 from AnalyzeUtils import *
 
-
-
-
 def Run_Pipeline(args):
 
     """
@@ -42,11 +39,11 @@ def Run_Pipeline(args):
     newly created Directory TestEllipsoids.
     This data both prepped and unprepped are binary images of ellipsoids varying
     one of the axes while the other two are kept fixed. 
-    """
-    """
+
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
+
     print("\nStep 1. Extract Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
@@ -76,9 +73,7 @@ def Run_Pipeline(args):
         args.use_single_scale = 1
         fileList = fileList[:2]
 
-
     """
-
     ## GROOM : Data Pre-processing 
     For the unprepped data the first few steps are 
     -- Isotropic resampling
@@ -92,38 +87,21 @@ def Run_Pipeline(args):
     if int(args.interactive) != 0:
         input("Press Enter to continue")
 
-
     parentDir = 'TestEllipsoids/PrepOutput/'
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
     if int(args.start_with_prepped_data) == 0:
-        """
-        Apply isotropic resampling
-
-        For detailed explainations of parameters for resampling volumes, go to
-        ... link
-        """
+        """Apply isotropic resampling"""
         resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
 
-        """
-        Apply padding
-
-        For detailed explainations of parameters for padding volumes, go to
-        ... link
-        """
-
+        """Apply padding"""
         paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
 
-        """
-        Apply center of mass alignment
-
-        For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
-        ... link
-        """
+        """Apply center of mass alignment"""
         comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
-        """Apply rigid alignment"""
 
+        """Apply rigid alignment"""
         rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
@@ -148,8 +126,8 @@ def Run_Pipeline(args):
 
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
-    For more details on the plethora of parameters for shapeworks please refer to
-    ...[link to documentation]
+    For more details on the plethora of parameters for shapeworks please refer to 
+    [link to documentation]
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine
@@ -189,9 +167,7 @@ def Run_Pipeline(args):
             parameterDictionary["number_of_particles"] = 32
             parameterDictionary["optimization_iterations"] = 25
 
-        """
-        Now we execute a single scale particle optimization function.
-        """
+        """Now we execute a single scale particle optimization function"""
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
     else:
@@ -217,9 +193,7 @@ def Run_Pipeline(args):
             "verbosity" : 3
             }
 
-        """
-        Now we execute a multi-scale particle optimization function.
-        """
+        """Now we execute a multi-scale particle optimization function"""
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
 
     if args.tiny_test:
@@ -245,12 +219,10 @@ def Run_Pipeline(args):
     In order to recover a sample-specific surface mesh, a warping function is constructed using the 
     sample-level particle system and the mean/template particle system as control points. 
     This warping function is then used to deform the template dense mesh to the sample space.
-
     """
-
+    
     print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
     if args.interactive != 0:
         input("Press Enter to continue")
 
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
-

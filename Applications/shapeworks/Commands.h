@@ -103,8 +103,6 @@ private:
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 class Translate : public TransformCommand
 {
@@ -384,14 +382,22 @@ private:
 class Coverage : public MeshCommand
 {
 public:
-  static Coverage &getCommand()
-  {
-    static Coverage instance;
-    return instance;
-  }
+  static Coverage &getCommand() { static Coverage instance; return instance; }
 
 private:
   Coverage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class MeshFromDT : public MeshCommand 
+{
+public:
+  static MeshFromDT &getCommand() { static MeshFromDT instance; return instance; }
+
+private:
+  MeshFromDT() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

@@ -269,3 +269,14 @@ TEST(ImageTests, multicommand_test)
 
   ASSERT_TRUE(image == ground_truth);
 }
+
+TEST(ImageTests, reflect_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  ImageUtils::reflect(image, 1);
+  Image ground_truth(test_location + "reflect_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}

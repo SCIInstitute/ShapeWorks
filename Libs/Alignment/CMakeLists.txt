@@ -22,10 +22,6 @@ ADD_EXECUTABLE(ResampleVolumeToIsotropic ResampleVolumeToIsotropic.cxx )
 TARGET_LINK_LIBRARIES(ResampleVolumeToIsotropic ${ITK_LIBRARIES} tinyxml)
 INSTALL(TARGETS ResampleVolumeToIsotropic  RUNTIME DESTINATION bin)
 
-ADD_EXECUTABLE(ICPRigid3DImageRegistration ICPRigid3DImageRegistration.cxx)
-TARGET_LINK_LIBRARIES(ICPRigid3DImageRegistration ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ICPRigid3DImageRegistration  RUNTIME DESTINATION bin)
-
 ADD_EXECUTABLE(ApplyRigid3DTransformationToImage ApplyRigid3DTransformationToImage.cxx)
 TARGET_LINK_LIBRARIES(ApplyRigid3DTransformationToImage ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS ApplyRigid3DTransformationToImage  RUNTIME DESTINATION bin)

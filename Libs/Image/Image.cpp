@@ -29,8 +29,7 @@
 #include <vtkImageData.h>
 
 #include <exception>
-
-// todo: finish converting these functions to throw exceptions when appropriate
+#include <cmath>
 
 //TODO: move this to Utils class (in Libs/Utils) -> tried, but something wrong with getting the right include
 //TODO: in C++17 this is a standard function
@@ -105,9 +104,6 @@ Image Image::read(const std::string &pathname)
     throw std::invalid_argument(pathname + " does not exist (" + std::string(exp.what()) + ")");
   }
 
-#if DEBUG_CONSOLIDATION
-  std::cout << "Successfully read image " << pathname << std::endl;
-#endif
   return Image(reader->GetOutput());
 }
 
@@ -324,14 +320,12 @@ Image& Image::applyTransform(const Transform &transform)
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
 
-  // using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double> InterpolatorType;
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   resampler->SetInterpolator(interpolator);
   resampler->SetTransform(transform.getItkTransform());
   resampler->SetInput(this->image);
-  // resampler->SetSize(image->GetBufferedRegion().GetSize());
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(origin());
   resampler->SetOutputDirection(image->GetDirection());
@@ -578,68 +572,33 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-/// icpRigid
-///
-/// performs iterative closed point (ICP) 3D rigid registration on a pair of images
-bool Image::icpRigid(const Image &source, const Image &target, unsigned iterations, float isoValue)
+vtkSmartPointer<vtkPolyData> Image::convert(const Image &img, float isoValue)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
-  itkTargetExporter->SetInput(target.image);
+  itkTargetExporter->SetInput(img.image);
 
-  vtkImageImport* vtkTargetImporter = vtkImageImport::New();
+  vtkImageImport *vtkTargetImporter = vtkImageImport::New();
   connectPipelines(itkTargetExporter, vtkTargetImporter);
   vtkTargetImporter->Update();
 
-  vtkContourFilter* targetContour = vtkContourFilter::New();
+  vtkContourFilter *targetContour = vtkContourFilter::New();
   targetContour->SetInputData(vtkTargetImporter->GetOutput());
   targetContour->SetValue(0, isoValue);
   targetContour->Update();
 
-  FilterType::Pointer itkMovingExporter = FilterType::New();
-  itkMovingExporter->SetInput(source.image);
-
-  vtkImageImport* vtkMovingImporter = vtkImageImport::New();
-  connectPipelines(itkMovingExporter, vtkMovingImporter);
-  vtkMovingImporter->Update();
-
-  vtkContourFilter* movingContour = vtkContourFilter::New();
-  movingContour->SetInputData(vtkMovingImporter->GetOutput());
-  movingContour->SetValue(0, isoValue);
-  movingContour->Update();
-
-  vtkSmartPointer<vtkPolyData> targetc = targetContour->GetOutput();
-  vtkSmartPointer<vtkPolyData> moving = movingContour->GetOutput();
-
-  // applyTransform();
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "ICP Rigid succeeded!\n";
-#endif
-  return true;
+  return targetContour->GetOutput();
 }
 
-bool Image::clipVolume(Matrix33 cuttingPlane)
+Image& Image::clipVolume(Matrix cuttingPlane)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   Point3 spacing = image->GetSpacing();
   Point3 curOrigin = origin();
-  Point3 o[] = {0.0, 0.0, 0.0};
-  Point3 p1[] = {0.0, 0.0, 0.0};
-  Point3 p2[] = {0.0, 0.0, 0.0};
-  Point3 res[] = {0.0, 0.0, 0.0};
-  PixelType temp = 0.0;
+  double o[] = {0.0, 0.0, 0.0};
+  double p1[] = {0.0, 0.0, 0.0};
+  double p2[] = {0.0, 0.0, 0.0};
+  double res[] = {0.0, 0.0, 0.0};
+  double temp = 0.0;
 
   o[0] = (cuttingPlane[0][0] - curOrigin[0]) / spacing[0];
   o[1] = (cuttingPlane[0][1] - curOrigin[1]) / spacing[1];
@@ -655,7 +614,7 @@ bool Image::clipVolume(Matrix33 cuttingPlane)
   res[0] = (p1[1] - o[1]) * (p2[2] - o[2]) - (p1[2] - o[2]) * (p2[1] - o[1]);
   res[1] = (p1[2] - o[2]) * (p2[0] - o[0]) - (p1[0] - o[0]) * (p2[2] - o[2]);
   res[2] = (p1[0] - o[0]) * (p2[1] - o[1]) - (p1[1] - o[1]) * (p2[0] - o[0]);
-  
+
   // normalize
   res[0] = res[0] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
   res[1] = res[1] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
@@ -664,9 +623,9 @@ bool Image::clipVolume(Matrix33 cuttingPlane)
   itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
   while (!imageIterator.IsAtEnd())
   {
-    temp = (PixelType(imageIterator.GetIndex()[0]) - o[0]) * res[0] +
-           (PixelType(imageIterator.GetIndex()[1]) - o[1]) * res[1] +
-           (PixelType(imageIterator.GetIndex()[2]) - o[2]) * res[2];
+    temp = (double(imageIterator.GetIndex()[0]) - o[0]) * res[0] +
+           (double(imageIterator.GetIndex()[1]) - o[1]) * res[1] +
+           (double(imageIterator.GetIndex()[2]) - o[2]) * res[2];
 
     if (temp < 0.0)
       imageIterator.Set(0);
@@ -674,44 +633,21 @@ bool Image::clipVolume(Matrix33 cuttingPlane)
     ++imageIterator;
   }
 
-#if DEBUG_CONSOLIDATION
-  std::cout << "Clip Volume succeeded!\n";
-#endif
-
-  return true;
+  return *this;
 }
 
-bool Image::changeOrigin(Point3 origin)
+Image& Image::changeOrigin(Point3 origin)
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, so returning false." << std::endl;
-    return false;
-  }
-
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
+
   filter->SetInput(this->image);
   filter->SetOutputOrigin(origin);
   filter->ChangeOriginOn();
-
-  try
-  {
-    filter->Update();
-  }
-  catch (itk::ExceptionObject &exp)
-  {
-    std::cerr << "Change Origin failed:" << std::endl;
-    std::cerr << exp << std::endl;
-    return false;
-  }
-
-#if DEBUG_CONSOLIDATION
-  std::cout << "Change Origin succeeded!\n";
-#endif
-
+  filter->Update();
   this->image = filter->GetOutput();
-  return true;
+
+  return *this;
 }
 
 /// logicalToPhysical
@@ -806,4 +742,4 @@ std::ostream& operator<<(std::ostream &os, const Image &img)
             << img.origin() << ",\n\tsize: " << img.size() << "\n}";
 }
 
-} // Shapeworks
+} // shapeworks

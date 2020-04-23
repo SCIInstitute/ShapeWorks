@@ -31,7 +31,7 @@ bool Mesh::read(const std::string &pathname)
   // else 
   //   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
 
-  using ReaderType = vtkSmartPointer<vtkPLYReader>;
+  using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
   ReaderType reader = ReaderType::New();
   reader->SetFileName(pathname.c_str());
   this->mesh = vtkSmartPointer<vtkPolyData>::New();
@@ -65,7 +65,7 @@ bool Mesh::write(const std::string &pathname)
   // else
   //   using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
 
-  using WriterType = vtkSmartPointer<vtkPLYWriter>;
+  using WriterType = vtkSmartPointer<vtkPolyDataWriter>;
   WriterType writer = WriterType::New();
   writer->SetInputData(this->mesh);
   writer->SetFileName(pathname.c_str());

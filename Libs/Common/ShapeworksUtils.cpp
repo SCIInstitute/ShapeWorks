@@ -7,10 +7,9 @@
 
 namespace shapeworks {
 
-bool ShapeworksUtils::icp(vtkSmartPointer<vtkPolyData> target, vtkSmartPointer<vtkPolyData> moving, unsigned iterations)
+Matrix ShapeworksUtils::icp(vtkSmartPointer<vtkPolyData> target, vtkSmartPointer<vtkPolyData> moving, unsigned iterations)
 {
-  using icpTransform = vtkSmartPointer<vtkIterativeClosestPointTransform>;
-  icpTransform icp = icpTransform::New();
+  vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
   icp->SetSource(moving);
   icp->SetTarget(target);
   icp->GetLandmarkTransform()->SetModeToRigidBody();
@@ -18,16 +17,29 @@ bool ShapeworksUtils::icp(vtkSmartPointer<vtkPolyData> target, vtkSmartPointer<v
   icp->Modified();
   icp->Update();
 
-  using TransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>;
-  TransformFilter icpTransformFilter = TransformFilter::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> icpTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   icpTransformFilter->SetInputData(moving);
   icpTransformFilter->SetTransform(icp);
   icpTransformFilter->Update();
 
-  vtkSmartPointer<vtkMatrix4x4> m1 = icp->GetMatrix();
-  vtkSmartPointer<vtkMatrix4x4> m = vtkMatrix4x4::New();
-  vtkMatrix4x4::Invert(m1, m);
-  std::cout << "The resulting matrix is: " << *m << std::endl;
+  Matrix xmat = convert(icp->GetMatrix());
+
+  return xmat;
+}
+
+Matrix ShapeworksUtils::convert(vtkSmartPointer<vtkMatrix4x4> mat)
+{
+  Matrix m;
+
+  for (int i = 0; i < 3; i++)
+  {
+    for (int j = 0; j < 3; j++)
+    {
+      m[i][j] = mat->GetElement(i, j);
+    }
+  }
+
+  return m;
 }
 
 } // shapeworks

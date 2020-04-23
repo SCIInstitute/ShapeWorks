@@ -167,7 +167,7 @@ bool IsoResampleImage::execute(const optparse::Values &options, SharedCommandDat
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
   ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
-  return true; //<ctc> todo: remove return values from commands since they will throw exceptions upon failure
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -538,22 +538,23 @@ void ICPRigid::buildParser()
   const std::string desc = "performs iterative closed point (ICP) 3D rigid registration on pair of images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--source").action("store").type("string").set_default("").help("distance map of source image.");
   parser.add_option("--target").action("store").type("string").set_default("").help("distance map of target image.");
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("number of iterations run ICP registration.");
+  parser.add_option("--source").action("store").type("string").set_default("").help("distance map of source image.");
   parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("number of iterations run ICP registration.");
 
   Command::buildParser();
 }
 
 bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  Image source(options["source"]);
   Image target(options["target"]);
-  unsigned iterations = static_cast<unsigned>(options.get("iteration"));
+  Image source(options["source"]);
   float isovalue = static_cast<float>(options.get("isovalue"));
-
-  return sharedData.image.icpRigid(source, target, iterations, isovalue);
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  
+  ImageUtils::rigidRegisteration(sharedData.image, target, source, isovalue, iterations);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -590,7 +591,7 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
   double z2 = static_cast<double>(options.get("z2"));
   double z3 = static_cast<double>(options.get("z3"));
 
-  Matrix33 cuttingplane;
+  Matrix cuttingplane;
   cuttingplane[0][0] = x1;
   cuttingplane[0][1] = x2;
   cuttingplane[0][2] = x3;
@@ -601,7 +602,8 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
   cuttingplane[2][1] = z2;
   cuttingplane[2][2] = z3;
 
-  return sharedData.image.clipVolume(cuttingplane);
+  sharedData.image.clipVolume(cuttingplane);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -648,7 +650,8 @@ bool ChangeOrigin::execute(const optparse::Values &options, SharedCommandData &s
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
 
-  return sharedData.image.changeOrigin(Point3({x, y, z}));
+  sharedData.image.changeOrigin(Point3({x, y, z}));
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -820,6 +823,30 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   second_mesh.read(second_mesh_string);
 
   return sharedData.mesh.coverage(second_mesh);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// MeshFromDT
+///////////////////////////////////////////////////////////////////////////////
+void MeshFromDT::buildParser()
+{
+  const std::string prog = "mesh-from-dt";
+  const std::string desc = "brief description of command";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(1).help("Description of optionName.");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(1).help("Description of optionName.");
+  parser.add_option("--angle").action("store").type("float").set_default(30).help("angle in degrees");
+  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Description of optionName.");
+
+  Command::buildParser();
+}
+
+bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  // float optionName = static_cast<float>(options.get("optionName"));
+
+  // return sharedData.image.meshFromDT(optionName, ...);
 }
 
 } // shapeworks

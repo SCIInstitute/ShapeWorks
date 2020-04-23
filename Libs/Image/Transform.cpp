@@ -12,11 +12,12 @@ void Transform::reset()
   double translate[3] = {0.0, 0.0, 0.0};
   double scale[3] = {1.0, 1.0, 1.0};
   double rotate[3] = {0.0, 0.0, 1.0};
-  Matrix33 matrix {};
+  Matrix matrix;
   scaling = Vector3(scale);
   translation = Vector3(translate);
   rotaxis = Vector3(rotate);
   rotangle = 0.0;
+  matrix.Fill(0);
 }
 
 /// translate
@@ -27,10 +28,6 @@ void Transform::reset()
 void Transform::translate(const Vector3 &v)
 {
   translation += v;
-#if DEBUG_CONSOLIDATION
-  std::cout << v << std::endl;
-  std::cout << "Translate succeeded!\n";
-#endif
 }
 
 /// rotate
@@ -56,7 +53,7 @@ void Transform::scale(const Vector3 &s)
   scaling = scaling * s;
 }
 
-void Transform::setMatrix(const Matrix33 mat)
+void Transform::setMatrix(const Matrix mat)
 {
   matrix = mat;
 }
@@ -68,14 +65,10 @@ Transform::itkTransformType::Pointer Transform::getItkTransform() const
 {
   itkTransformType::Pointer transform = itkTransformType::New();
   transform->Translate(-translation);       // -translation b/c itk transformations are based on output image space
-  // transform->Scale(scaling);             // TODO
-  // transform->Rotate3D(rotaxis, rotangle);//TODO
+  transform->Scale(scaling);
+  transform->Rotate3D(rotaxis, rotangle);
   transform->SetMatrix(matrix);
 
-#if DEBUG_CONSOLIDATION
-  std::cout << "rawTransform: " << *this << std::endl;
-  std::cout << "itkTransform: " << *transform << std::endl;
-#endif
   return transform;
 }
 

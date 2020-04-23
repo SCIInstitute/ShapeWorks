@@ -18,7 +18,7 @@ public:
   void translate(const Vector3 &v); 
   void rotate(const Vector3 &axis, double angle); // must specify angle in radians
   void scale(const Vector3 &s);
-  void setMatrix(const Matrix33 mat);
+  void setMatrix(const Matrix mat);
 
 private:
   Vector3 scaling;
@@ -33,4 +33,3 @@ private:
 std::ostream& operator<<(std::ostream &os, const Transform &t);
 
 } // shapeworks
-

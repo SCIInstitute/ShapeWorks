@@ -1,5 +1,8 @@
 #include "ImageUtils.h"
 
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+
 namespace shapeworks {
 
 /// createCenterOfMassTransform
@@ -34,30 +37,30 @@ Image ImageUtils::reflect(Image &img, double axis)
   if (axis == 2)
     z = -1;
 
-  Matrix33 reflection;
+  Matrix reflection;
+  reflection.Fill(0);
   reflection[0][0] = x;
-  reflection[0][1] = reflection[0][2] = 0;
   reflection[1][1] = y;
-  reflection[1][0] = reflection[1][2] = 0;
   reflection[2][2] = z;
-  reflection[2][0] = reflection[2][1] = 0;
 
-  Point3 origin = image.origin();
-  image.recenter();
   Transform xform;
   xform.setMatrix(reflection);
-  image.applyTransform(xform);
-  image.changeOrigin();
+  Point3 origin = image.origin();
+  image.recenter().applyTransform(xform).changeOrigin();
   return image;
 }
 
-Image ImageUtils::rigidRegisteration(Image &img)
+Image ImageUtils::rigidRegisteration(Image &img, Image &target, Image &source, float isoValue, unsigned iterations)
 {
   Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
 
-  // ShapeworksUtils::icp();
-
-  return image;
+  vtkSmartPointer<vtkPolyData> targetContour = image.convert(target, isoValue);
+  vtkSmartPointer<vtkPolyData> movingContour = image.convert(source, isoValue);
+  Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
+  Transform xform;
+  xform.setMatrix(mat);
+  target.applyTransform(xform);
+  return target;
 }
 
 } //shapeworks

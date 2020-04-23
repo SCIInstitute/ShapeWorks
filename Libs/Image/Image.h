@@ -4,6 +4,8 @@
 #include "Transform.h"
 #include <limits>
 #include <itkImage.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
 
 namespace shapeworks {
 
@@ -50,29 +52,12 @@ public:
   Image &gaussianBlur(double sigma = 0.0);
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   Image &crop(const Region &region);
-  bool icpRigid(const Image &source, const Image &target, unsigned iterations, float isoValue);
-  bool clipVolume(Matrix33 cuttingPlane);
-  bool changeOrigin(Point3 origin = Point3({0, 0, 0}));
+  vtkSmartPointer<vtkPolyData> convert(const Image &img, float isoValue = 0.0);
+  Image &clipVolume(Matrix cuttingPlane);
+  Image &changeOrigin(Point3 origin = Point3({0, 0, 0}));
 
   template <typename ITK_Exporter, typename VTK_Importer>
   void connectPipelines(ITK_Exporter exporter, VTK_Importer *importer)
-  {
-    importer->SetUpdateInformationCallback(exporter->GetUpdateInformationCallback());
-    importer->SetPipelineModifiedCallback(exporter->GetPipelineModifiedCallback());
-    importer->SetWholeExtentCallback(exporter->GetWholeExtentCallback());
-    importer->SetSpacingCallback(exporter->GetSpacingCallback());
-    importer->SetOriginCallback(exporter->GetOriginCallback());
-    importer->SetScalarTypeCallback(exporter->GetScalarTypeCallback());
-    importer->SetNumberOfComponentsCallback(exporter->GetNumberOfComponentsCallback());
-    importer->SetPropagateUpdateExtentCallback(exporter->GetPropagateUpdateExtentCallback());
-    importer->SetUpdateDataCallback(exporter->GetUpdateDataCallback());
-    importer->SetDataExtentCallback(exporter->GetDataExtentCallback());
-    importer->SetBufferPointerCallback(exporter->GetBufferPointerCallback());
-    importer->SetCallbackUserData(exporter->GetCallbackUserData());
-  }
-
-  template <typename VTK_Exporter, typename ITK_Importer>
-  void connectPipelines(VTK_Exporter *exporter, ITK_Importer importer)
   {
     importer->SetUpdateInformationCallback(exporter->GetUpdateInformationCallback());
     importer->SetPipelineModifiedCallback(exporter->GetPipelineModifiedCallback());
