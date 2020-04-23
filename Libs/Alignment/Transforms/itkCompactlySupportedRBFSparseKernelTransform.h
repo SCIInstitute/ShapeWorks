@@ -79,12 +79,12 @@ protected:
    * are not inherited. */
     typedef typename Superclass::GMatrixType GMatrixType;
 
-    const GMatrixType & ComputeG(const InputVectorType & x) const;
+    const GMatrixType & ComputeG(const InputVectorType & x) const override;
 
     /** Compute the contribution of the landmarks weighted by the kernel funcion
       to the global deformation of the space  */
     virtual void ComputeDeformationContribution( const InputPointType & inputPoint,
-                                                 OutputPointType & result ) const;
+                                                 OutputPointType & result ) const override;
 
 private:
     CompactlySupportedRBFSparseKernelTransform(const Self&); //purposely not implemented
