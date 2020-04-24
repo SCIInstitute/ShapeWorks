@@ -278,15 +278,18 @@ Below are the default optimization parameters for this use case.
             "domains_per_shape" : 1,
             "relative_weighting" : 50,
             "initial_relative_weighting" : 1,
-            "procrustes_interval" : 1,
+            "procrustes_interval" : 0,
             "procrustes_scaling" : 1,
             "save_init_splits" : 1,
             "debug_projection" : 0,
             "verbosity" : 3,
             "use_statistics_in_init" : 0
 
-
+#### Mean Shape
 ![left Atrium singleScale](images/leftatrium_singlescale.png)
+
+#### PCA
+![left Atrium singleScale PCA mode](images/leftatrium_singlescale_pca.gif)
 
 * Multiscale optimization uses use defined starting number of particles and number of optimization levels, 
 and the optimized particles of each level are used to initialize the next level particles. 
@@ -312,8 +315,12 @@ The default values of this use case are as below.
             "save_init_splits" : 0,
             "debug_projection" : 0,
             "verbosity" : 3
-            
+
+#### Mean Shape          
 ![left Atrium multiScale](images/leftatrium_multiscale.png)
+
+#### PCA
+![left Atrium singleScale PCA mode](images/leftatrium_multiScale_pca.gif)
 
 
 ### Analyze
