@@ -1,5 +1,5 @@
-#include <OptimizeParameterFile.h>
-#include <Optimize.h>
+#include "OptimizeParameterFile.h"
+#include "Optimize.h"
 
 #include <itkImageFileReader.h>
 
