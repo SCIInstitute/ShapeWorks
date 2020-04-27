@@ -122,7 +122,7 @@ void Visualizer::display_samples()
 
   this->display_objects_ = display_objects;
 */
-  this->lightbox_->set_display_objects(shapes);
+  this->lightbox_->set_shapes(shapes);
   this->lightbox_->redraw();
   this->update_viewer_properties();
 }
@@ -157,7 +157,7 @@ void Visualizer::display_shape(const vnl_vector<double> &points, const std::vect
 {
   QVector<ShapeHandle> objects;
   objects.push_back(this->create_display_object(points, vectors));
-  this->lightbox_->set_display_objects(objects);
+  this->lightbox_->set_shapes(objects);
   this->update_viewer_properties();
   //this->reset_camera();
   this->lightbox_->redraw();

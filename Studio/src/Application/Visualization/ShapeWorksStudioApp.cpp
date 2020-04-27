@@ -952,7 +952,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
 
-  //in/t display_state = VIEW_MODE::ORIGINAL;
   display_state = Visualizer::MODE_ORIGINAL_C;
 
 

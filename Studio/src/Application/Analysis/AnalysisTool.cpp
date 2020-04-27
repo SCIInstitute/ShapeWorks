@@ -11,7 +11,7 @@
 
 // shapeworks
 #include <Visualization/ShapeWorksStudioApp.h>
-#include <Visualization/ShapeworksWorker.h>
+#include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>

@@ -59,7 +59,7 @@ void Lightbox::set_interactor(vtkRenderWindowInteractor* interactor)
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::insert_object_into_viewer(QSharedPointer<Shape> object, int position)
+void Lightbox::insert_shape_into_viewer(QSharedPointer<Shape> shape, int position)
 {
   if (position >= this->viewers_.size()) {
     return;
@@ -67,7 +67,7 @@ void Lightbox::insert_object_into_viewer(QSharedPointer<Shape> object, int posit
 
   QSharedPointer<Viewer> viewer = this->viewers_[position];
 
-  viewer->display_object(object);
+  viewer->display_object(shape);
 
   this->check_for_first_draw();
 }
@@ -97,7 +97,7 @@ void Lightbox::clear_renderers()
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::display_objects()
+void Lightbox::display_shapes()
 {
   //this->clear_renderers();
 
@@ -108,13 +108,13 @@ void Lightbox::display_objects()
   // skip based on scrollbar
   int start_object = this->start_row_ * this->tile_layout_width_;
 
-  int end_object = std::min<int>(start_object + this->viewers_.size(), this->objects_.size());
+  int end_object = std::min<int>(start_object + this->viewers_.size(), this->shapes_.size());
 
   int position = 0;
 
   bool need_loading_screen = false;
   for (int i = start_object; i < end_object; i++) {
-    this->insert_object_into_viewer(this->objects_[i], position);
+    this->insert_shape_into_viewer(this->shapes_[i], position);
     if (!this->viewers_[position]->is_mesh_ready()) {
       need_loading_screen = true;
     }
@@ -228,13 +228,13 @@ void Lightbox::set_tile_layout(int width, int height)
   this->tile_layout_height_ = height;
 
   this->setup_renderers();
-  this->display_objects();
+  this->display_shapes();
 }
 
 //-----------------------------------------------------------------------------
 int Lightbox::get_num_rows()
 {
-  return std::ceil((float)this->objects_.size() / (float)this->tile_layout_width_);
+  return std::ceil((float)this->shapes_.size() / (float)this->tile_layout_width_);
 }
 
 //-----------------------------------------------------------------------------
@@ -247,16 +247,15 @@ int Lightbox::get_num_rows_visible()
 void Lightbox::set_start_row(int row)
 {
   this->start_row_ = row;
-  this->display_objects();
+  this->display_shapes();
   this->render_window_->Render();
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_display_objects(QVector<QSharedPointer<Shape>> objects)
+void Lightbox::set_shapes(QVector<QSharedPointer<Shape>> shapes)
 {
-  std::cerr << "set_display_objects\n";
-  this->objects_ = objects;
-  this->display_objects();
+  this->shapes_ = shapes;
+  this->display_shapes();
 }
 
 //-----------------------------------------------------------------------------

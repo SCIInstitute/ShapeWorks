@@ -199,8 +199,8 @@ void Viewer::set_color_scheme(int scheme)
 //-----------------------------------------------------------------------------
 void Viewer::handle_new_mesh()
 {
-  if (!this->mesh_ready_ && this->object_ && this->object_->get_mesh()) {
-    this->display_object(this->object_);
+  if (!this->mesh_ready_ && this->shape_ && this->shape_->get_mesh()) {
+    this->display_object(this->shape_);
   }
 }
 
@@ -213,7 +213,7 @@ bool Viewer::is_mesh_ready()
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field()
 {
-  std::vector<Point> vecs = this->object_->get_vectors();
+  std::vector<Point> vecs = this->shape_->get_vectors();
   if (vecs.empty()) {
     // restore things to normal
     this->glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
@@ -304,11 +304,11 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 
   vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
 
-  if (!this->object_->get_mesh()) {
+  if (!this->shape_->get_mesh()) {
     return;
   }
 
-  vtkSmartPointer<vtkPolyData> poly_data = this->object_->get_mesh()->get_poly_data();
+  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_mesh()->get_poly_data();
   if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
     return;
   }
@@ -426,14 +426,14 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::display_object(QSharedPointer<Shape> object)
+void Viewer::display_object(QSharedPointer<Shape> shape)
 {
   this->visible_ = true;
 
-  this->object_ = object;
+  this->shape_ = shape;
 
   //std::cerr << "asking for mesh\n";
-  QSharedPointer<Mesh> mesh = object->get_mesh();
+  QSharedPointer<Mesh> mesh = shape->get_mesh();
 
   if (!mesh && this->loading_displayed_) {
     // no need to proceed
@@ -442,7 +442,7 @@ void Viewer::display_object(QSharedPointer<Shape> object)
 
   //QSharedPointer<Mesh> mesh;
 
-  QStringList annotations = object->get_annotations();
+  QStringList annotations = shape->get_annotations();
   this->corner_annotation_->SetText(0, (annotations[0]).toStdString().c_str());
   this->corner_annotation_->SetText(1, (annotations[1]).toStdString().c_str());
   this->corner_annotation_->SetText(2, (annotations[2]).toStdString().c_str());
@@ -482,9 +482,9 @@ void Viewer::display_object(QSharedPointer<Shape> object)
 
     this->update_points();
 
-    this->draw_exclusion_spheres(object);
+    this->draw_exclusion_spheres(shape);
 
-    vnl_vector<double> transform = object->get_transform();
+    vnl_vector<double> transform = shape->get_transform();
 
     if (transform.size() == 3) {
       double tx = -transform[0];
@@ -517,12 +517,9 @@ void Viewer::display_object(QSharedPointer<Shape> object)
     this->display_vector_field();
     this->update_actors();
     this->update_glyph_properties();
-
   }
 
   ren->AddViewProp(this->corner_annotation_);
-
-
 }
 
 //-----------------------------------------------------------------------------
@@ -598,10 +595,10 @@ void Viewer::set_show_surface(bool show)
 //-----------------------------------------------------------------------------
 void Viewer::update_points()
 {
-  if (!this->object_) {
+  if (!this->shape_) {
     return;
   }
-  vnl_vector<double> correspondence_points = this->object_->get_global_correspondence_points();
+  vnl_vector<double> correspondence_points = this->shape_->get_global_correspondence_points();
 
   int num_points = correspondence_points.size() / 3;
 

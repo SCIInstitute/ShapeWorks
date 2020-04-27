@@ -31,7 +31,7 @@ public:
   Lightbox();
   ~Lightbox();
 
-  void set_display_objects(QVector<QSharedPointer<Shape>> objects);
+  void set_shapes(QVector<QSharedPointer<Shape>> objects);
 
   void set_interactor(vtkRenderWindowInteractor* interactor);
 
@@ -71,13 +71,13 @@ private:
 
   void check_for_first_draw();
 
-  void display_objects();
+  void display_shapes();
 
   void insert_object_into_viewer(QSharedPointer<Shape> object, int position);
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  QVector<QSharedPointer<Shape>> objects_;
+  QVector<QSharedPointer<Shape>> shapes_;
 
   // there is one viewer for every tile in the lightbox display
   ViewerList viewers_;
