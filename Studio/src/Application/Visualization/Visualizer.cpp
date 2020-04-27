@@ -53,6 +53,12 @@ void Visualizer::set_display_mode(std::string mode)
 }
 
 //-----------------------------------------------------------------------------
+std::string Visualizer::get_display_mode()
+{
+  return this->display_mode_;
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::set_center(bool center)
 {
   this->center_ = center;
@@ -61,28 +67,29 @@ void Visualizer::set_center(bool center)
 //-----------------------------------------------------------------------------
 void Visualizer::display_samples()
 {
+
   this->update_viewer_properties();
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
   /*
 
-  QVector<QSharedPointer<DisplayObject>> display_objects;
+     QVector<QSharedPointer<DisplayObject>> display_objects;
 
-  for (int i = 0; i < shapes.size(); i++) {
-    QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>(new DisplayObject());
+     for (int i = 0; i < shapes.size(); i++) {
+     QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>(new DisplayObject());
 
-    QSharedPointer<Mesh> mesh;
-    QString filename;
-    object->set_correspondence_points(shapes[i]->get_local_correspondence_points());
-    //load respective mesh
-    if (this->display_mode_ == Visualizer::MODE_ORIGINAL_C) {
+     QSharedPointer<Mesh> mesh;
+     QString filename;
+     object->set_correspondence_points(shapes[i]->get_local_correspondence_points());
+     //load respective mesh
+     if (this->display_mode_ == Visualizer::MODE_ORIGINAL_C) {
       mesh = shapes[i]->get_original_mesh();
       filename = shapes[i]->get_original_filename();
-    }
-    else if (this->display_mode_ == Visualizer::MODE_GROOMED_C) {
+     }
+     else if (this->display_mode_ == Visualizer::MODE_GROOMED_C) {
       mesh = shapes[i]->get_groomed_mesh();
       filename = shapes[i]->get_groomed_filename();
-    }
-    else if (this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
+     }
+     else if (this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
       mesh = shapes[i]->get_reconstructed_mesh();
       if (shapes[i]->get_original_filename() == "") {
         filename = shapes[i]->get_global_point_filename();
@@ -90,38 +97,38 @@ void Visualizer::display_samples()
       else {
         filename = shapes[i]->get_original_filename() + "-RE";
       }
-    }
-    if (this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C) {
+     }
+     if (this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C) {
       object->set_exclusion_sphere_centers(shapes[i]->get_exclusion_sphere_centers());
       object->set_exclusion_sphere_radii(shapes[i]->get_exclusion_sphere_radii());
-    }
-    if (!mesh) {
+     }
+     if (!mesh) {
       mesh = shapes[i]->get_original_mesh();
       filename = shapes[i]->get_original_filename();
-    }
+     }
 
-    if (!mesh) {
+     if (!mesh) {
       mesh = shapes[i]->get_reconstructed_mesh();
       filename = shapes[i]->get_global_point_filename();
-    }
+     }
 
-    object->set_mesh(mesh);
-    QStringList annotations;
-    annotations << filename;
-    annotations << "";
-    annotations << QString::number(shapes[i]->get_id());
-    annotations << "";
-    object->set_annotations(annotations);
+     object->set_mesh(mesh);
+     QStringList annotations;
+     annotations << filename;
+     annotations << "";
+     annotations << QString::number(shapes[i]->get_id());
+     annotations << "";
+     object->set_annotations(annotations);
 
-    if (this->center_ && mesh && this->display_mode_ == Visualizer::MODE_ORIGINAL_C) {
+     if (this->center_ && mesh && this->display_mode_ == Visualizer::MODE_ORIGINAL_C) {
       object->set_transform(mesh->get_center_transform());
-    }
+     }
 
-    display_objects << object;
-  }
+     display_objects << object;
+     }
 
-  this->display_objects_ = display_objects;
-*/
+     this->display_objects_ = display_objects;
+   */
   this->lightbox_->set_shapes(shapes);
   this->lightbox_->redraw();
   this->update_viewer_properties();
@@ -131,18 +138,18 @@ void Visualizer::display_samples()
 void Visualizer::update_samples()
 {
   /*
-  QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
+     QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
 
-  for (int i = 0; i < shapes.size(); i++) {
-    this->display_objects_[i]->set_correspondence_points(
+     for (int i = 0; i < shapes.size(); i++) {
+     this->display_objects_[i]->set_correspondence_points(
       shapes[i]->get_local_correspondence_points());
-  }
+     }
 
-  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-    viewer->update_points();
-  }
-  this->lightbox_->redraw();
-  */
+     foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+     viewer->update_points();
+     }
+     this->lightbox_->redraw();
+   */
 }
 
 //-----------------------------------------------------------------------------
@@ -161,12 +168,12 @@ void Visualizer::display_shape(const vnl_vector<double> &points, const std::vect
   this->update_viewer_properties();
   //this->reset_camera();
   this->lightbox_->redraw();
-  this->currentShape_ = points;
+  this->current_shape_ = points;
 }
 //-----------------------------------------------------------------------------
 vnl_vector<double> Visualizer::getCurrentShape()
 {
-  return this->currentShape_;
+  return this->current_shape_;
 }
 
 //-----------------------------------------------------------------------------
@@ -179,87 +186,87 @@ void Visualizer::handle_new_mesh()
 void Visualizer::display_sample(int i)
 {
   /*
-  int sample_count = this->project_->get_shapes().size();
-  if (sample_count == 0) { return; }
-  i = std::min(sample_count - 1, i);
+     int sample_count = this->project_->get_shapes().size();
+     if (sample_count == 0) { return; }
+     i = std::min(sample_count - 1, i);
 
-  this->update_viewer_properties();
+     this->update_viewer_properties();
 
-  QVector<QSharedPointer<DisplayObject>> list_ptr;
+     QVector<QSharedPointer<DisplayObject>> list_ptr;
 
-  QSharedPointer < Shape > shape = this->project_->get_shapes().at(i);
+     QSharedPointer < Shape > shape = this->project_->get_shapes().at(i);
 
-  QSharedPointer<Mesh> mesh;
-  QString filename;
+     QSharedPointer<Mesh> mesh;
+     QString filename;
 
-  //load based on preference, but always load something
+     //load based on preference, but always load something
 
-  mesh = shape->get_original_mesh();
-  filename = shape->get_original_filename();
-  QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>(new DisplayObject());
-  object->set_correspondence_points(shape->get_local_correspondence_points());
+     mesh = shape->get_original_mesh();
+     filename = shape->get_original_filename();
+     QSharedPointer<DisplayObject> object = QSharedPointer<DisplayObject>(new DisplayObject());
+     object->set_correspondence_points(shape->get_local_correspondence_points());
 
-  if (!mesh || this->display_mode_ == Visualizer::MODE_GROOMED_C) {
-    mesh = shape->get_groomed_mesh();
-    filename = shape->get_groomed_filename();
-  }
+     if (!mesh || this->display_mode_ == Visualizer::MODE_GROOMED_C) {
+     mesh = shape->get_groomed_mesh();
+     filename = shape->get_groomed_filename();
+     }
 
-  if (!mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
-    mesh = shape->get_reconstructed_mesh();
-    filename = shape->get_original_filename() + "(RE)";
+     if (!mesh || this->display_mode_ == Visualizer::MODE_RECONSTRUCTION_C) {
+     mesh = shape->get_reconstructed_mesh();
+     filename = shape->get_original_filename() + "(RE)";
 
-    // use local correspondence points for reconstructed mesh
-    object->set_correspondence_points(shape->get_local_correspondence_points());
-  }
-  object->set_mesh(mesh);
+     // use local correspondence points for reconstructed mesh
+     object->set_correspondence_points(shape->get_local_correspondence_points());
+     }
+     object->set_mesh(mesh);
 
-  if (this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C) {
-    object->set_exclusion_sphere_centers(shape->get_exclusion_sphere_centers());
-    object->set_exclusion_sphere_radii(shape->get_exclusion_sphere_radii());
-  }
+     if (this->display_mode_ != Visualizer::MODE_RECONSTRUCTION_C) {
+     object->set_exclusion_sphere_centers(shape->get_exclusion_sphere_centers());
+     object->set_exclusion_sphere_radii(shape->get_exclusion_sphere_radii());
+     }
 
-  QStringList annotations;
-  annotations << filename;
-  annotations << "";
-  annotations << QString::number(shape->get_id());
-  annotations << "";
-  object->set_annotations(annotations);
+     QStringList annotations;
+     annotations << filename;
+     annotations << "";
+     annotations << QString::number(shape->get_id());
+     annotations << "";
+     object->set_annotations(annotations);
 
-  if (this->center_) {
-    object->set_transform(mesh->get_center_transform());
-  }
-  list_ptr << object;
+     if (this->center_) {
+     object->set_transform(mesh->get_center_transform());
+     }
+     list_ptr << object;
 
-  this->update_viewer_properties();
-  this->lightbox_->set_display_objects(list_ptr);
-  this->lightbox_->redraw();
-  this->currentShape_ = shape->get_local_correspondence_points();
-  */
+     this->update_viewer_properties();
+     this->lightbox_->set_display_objects(list_ptr);
+     this->lightbox_->redraw();
+     this->currentShape_ = shape->get_local_correspondence_points();
+   */
 }
 
 //-----------------------------------------------------------------------------
 ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
-                                                      const std::vector<Point> &vectors)
+                                              const std::vector<Point> &vectors)
 {
 /*
-  MeshHandle mesh = MeshHandle(new Mesh());
-  mesh->set_poly_data(this->project_->get_mesh_manager()->get_mesh(points));
+   MeshHandle mesh = MeshHandle(new Mesh());
+   mesh->set_poly_data(this->project_->get_mesh_manager()->get_mesh(points));
 
-  DisplayObjectHandle object = DisplayObjectHandle(new DisplayObject());
+   DisplayObjectHandle object = DisplayObjectHandle(new DisplayObject());
 
-  object->set_mesh(mesh);
-  object->set_correspondence_points(points);
-  object->set_vectors(vectors);
+   object->set_mesh(mesh);
+   object->set_correspondence_points(points);
+   object->set_vectors(vectors);
 
-  QStringList annotations;
-  //annotations for the 4 corners of the view box
-  annotations << "computed shape";
-  annotations << "";
-  annotations << "";
-  annotations << "";
-  object->set_annotations(annotations);
-  return object;
-  */
+   QStringList annotations;
+   //annotations for the 4 corners of the view box
+   annotations << "computed shape";
+   annotations << "";
+   annotations << "";
+   annotations << "";
+   object->set_annotations(annotations);
+   return object;
+ */
   ShapeHandle shape = ShapeHandle(new Shape());
   return shape;
 }

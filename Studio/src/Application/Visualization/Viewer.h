@@ -22,6 +22,7 @@ class vtkCornerAnnotation;
 class Shape;
 
 class Viewer;
+class Visualizer;
 
 class StudioInteractorStyle;
 
@@ -44,7 +45,7 @@ public:
   void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
   vtkSmartPointer<vtkRenderer> get_renderer();
 
-  void display_object(QSharedPointer<Shape> object);
+  void display_object(QSharedPointer<Shape> shape);
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
@@ -70,6 +71,8 @@ public:
 
   bool is_mesh_ready();
 
+  void set_visualizer(Visualizer* visualizer);
+
 private:
 
   void display_vector_field();
@@ -87,7 +90,7 @@ private:
 
   bool visible_;
 
-  QSharedPointer<Shape> object_;
+  QSharedPointer<Shape> shape_;
 
   void update_actors();
 
@@ -141,4 +144,6 @@ private:
 
   bool mesh_ready_ = false;
   bool loading_displayed_ = false;
+
+  Visualizer* visualizer_{nullptr};
 };

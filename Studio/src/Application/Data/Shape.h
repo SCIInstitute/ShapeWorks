@@ -27,7 +27,7 @@ public:
 
   ~Shape();
 
-  QSharedPointer<Mesh> get_mesh();
+  QSharedPointer<Mesh> get_mesh(string display_mode);
 
   void set_annotations(QStringList annotations);
   QStringList get_annotations();

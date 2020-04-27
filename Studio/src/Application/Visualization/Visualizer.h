@@ -32,6 +32,8 @@ public:
   /// set display mode (original, groomed, reconstructed)
   void set_display_mode(std::string mode);
 
+  std::string get_display_mode();
+
   /// turn automatic centering on/off
   void set_center(bool center);
 
@@ -95,7 +97,7 @@ private:
   int selected_point_two_;
 
   vnl_vector<double> cached_mean_;
-  vnl_vector<double> currentShape_;
+  vnl_vector<double> current_shape_;
 
   ShapeList display_objects_;
 };

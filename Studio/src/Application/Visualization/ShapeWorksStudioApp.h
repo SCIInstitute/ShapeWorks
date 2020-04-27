@@ -116,7 +116,7 @@ private:
 
   void update_table();
 
-  void update_display();
+  void update_display(bool force = false);
 
   void compute_mode_shape();
 

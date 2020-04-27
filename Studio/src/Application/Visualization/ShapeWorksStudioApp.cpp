@@ -802,7 +802,7 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_display()
+void ShapeWorksStudioApp::update_display(bool force)
 {
   if (!this->visualizer_ || this->session_->get_num_shapes() <= 0) {
     return;
@@ -829,7 +829,7 @@ void ShapeWorksStudioApp::update_display()
 
   std::cerr << "displaying mode : " << mode << "\n";
 
-  if (this->current_display_mode_ == mode) {
+  if (this->current_display_mode_ == mode && !force) {
     return;
   }
 
@@ -927,7 +927,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
   if (this->visualizer_) {
     this->preferences_.set_preference("display_state", disp_mode);
     this->visualizer_->set_display_mode(disp_mode.toStdString());
-    this->update_display();
+    this->update_display(true);
   }
 }
 
@@ -953,7 +953,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
 
   display_state = Visualizer::MODE_ORIGINAL_C;
-
 
   /// TODO: this is just wrong, it can cause us to load in analysis mode even on a new project
   //auto tool_state = this->preferences_.get_preference(

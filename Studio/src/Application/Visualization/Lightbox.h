@@ -31,7 +31,7 @@ public:
   Lightbox();
   ~Lightbox();
 
-  void set_shapes(QVector<QSharedPointer<Shape>> objects);
+  void set_shapes(QVector<QSharedPointer<Shape>> shapes);
 
   void set_interactor(vtkRenderWindowInteractor* interactor);
 
@@ -73,7 +73,7 @@ private:
 
   void display_shapes();
 
-  void insert_object_into_viewer(QSharedPointer<Shape> object, int position);
+  void insert_shape_into_viewer(QSharedPointer<Shape> shape, int position);
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
@@ -97,7 +97,7 @@ private:
 
   vtkSmartPointer<StudioInteractorStyle> style_;
 
-  Visualizer* visualizer_ = nullptr;
+  Visualizer* visualizer_{nullptr};
 
   std::vector<vtkSmartPointer<vtkImageData>> spinner_images_;
 

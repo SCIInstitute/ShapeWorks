@@ -10,6 +10,7 @@
 #include <vtkCenterOfMass.h>
 
 #include <Data/MeshGenerator.h>
+#include <Visualization/Visualizer.h>
 
 using namespace shapeworks;
 
@@ -29,10 +30,16 @@ Shape::~Shape()
 {}
 
 //---------------------------------------------------------------------------
-QSharedPointer<Mesh> Shape::get_mesh()
+QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
 {
-  /// TODO differ based on settings
-  return this->get_original_mesh();
+  std::cerr << "get_mesh(" << display_mode << ")\n";
+  if (display_mode == Visualizer::MODE_ORIGINAL_C) {
+    return this->get_original_mesh();
+  }
+  else if (display_mode == Visualizer::MODE_GROOMED_C) {
+    return this->get_groomed_mesh();
+  }
+  return this->get_reconstructed_mesh();
 }
 
 //---------------------------------------------------------------------------
@@ -131,6 +138,7 @@ void Shape::import_groomed_file(QString filename, double iso)
 //---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso)
 {
+  std::cerr << "Importing groomed image\n";
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
@@ -142,6 +150,8 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_groomed_mesh()
 {
+  std::cerr << "returning groomed mesh\n";
+
   return this->groomed_mesh_;
 }
 

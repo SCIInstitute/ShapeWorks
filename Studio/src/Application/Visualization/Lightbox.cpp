@@ -186,6 +186,7 @@ void Lightbox::setup_renderers()
       QSharedPointer<Viewer> viewer;
       if (i >= this->viewers_.size()) {
         viewer = QSharedPointer<Viewer>(new Viewer());
+        viewer->set_visualizer(this->visualizer_);
         viewer->set_renderer(renderer);
         this->viewers_.push_back(viewer);
       }

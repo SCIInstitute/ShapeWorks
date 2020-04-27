@@ -35,6 +35,7 @@
 #include <Data/Shape.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Viewer.h>
+#include <Visualization/Visualizer.h>
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
@@ -199,7 +200,8 @@ void Viewer::set_color_scheme(int scheme)
 //-----------------------------------------------------------------------------
 void Viewer::handle_new_mesh()
 {
-  if (!this->mesh_ready_ && this->shape_ && this->shape_->get_mesh()) {
+  if (!this->mesh_ready_ && this->shape_ &&
+      this->shape_->get_mesh(this->visualizer_->get_display_mode())) {
     this->display_object(this->shape_);
   }
 }
@@ -208,6 +210,12 @@ void Viewer::handle_new_mesh()
 bool Viewer::is_mesh_ready()
 {
   return this->mesh_ready_;
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_visualizer(Visualizer* visualizer)
+{
+  this->visualizer_ = visualizer;
 }
 
 //-----------------------------------------------------------------------------
@@ -304,11 +312,11 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
 
   vtkSmartPointer<vtkPolyData> pointSet = this->glyph_point_set_;
 
-  if (!this->shape_->get_mesh()) {
+  if (!this->shape_->get_mesh(this->visualizer_->get_display_mode())) {
     return;
   }
 
-  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_mesh()->get_poly_data();
+  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_mesh(this->visualizer_->get_display_mode())->get_poly_data();
   if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
     return;
   }
@@ -433,7 +441,7 @@ void Viewer::display_object(QSharedPointer<Shape> shape)
   this->shape_ = shape;
 
   //std::cerr << "asking for mesh\n";
-  QSharedPointer<Mesh> mesh = shape->get_mesh();
+  QSharedPointer<Mesh> mesh = shape->get_mesh(this->visualizer_->get_display_mode());
 
   if (!mesh && this->loading_displayed_) {
     // no need to proceed
