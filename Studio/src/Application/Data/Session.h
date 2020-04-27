@@ -124,7 +124,7 @@ private:
 
   void renumber_shapes();
 
-  QWidget* parent_;
+  QWidget* parent_{nullptr};
 
   /// project filename
   QString filename_;
@@ -134,11 +134,11 @@ private:
 
   QSharedPointer<MeshManager> mesh_manager_;
 
-  bool original_present_;
-  bool groomed_present_;
-  bool reconstructed_present_;
-  bool groups_available_ = false;
-  bool is_light_project_ = false;
+  bool original_present_{false};
+  bool groomed_present_{false};
+  bool reconstructed_present_{false};
+  bool groups_available_{false};
+  bool is_light_project_{false};
 
   std::shared_ptr<Project> project_{new Project()};
 };

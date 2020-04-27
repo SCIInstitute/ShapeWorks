@@ -132,7 +132,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 
   // set to import
   this->ui_->action_import_mode->setChecked(true);
-  this->ui_->stacked_widget->setCurrentIndex(0);
+  this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
 
   this->action_group_ = new QActionGroup(this);
   this->action_group_->addAction(this->ui_->action_import_mode);
@@ -679,7 +679,7 @@ void ShapeWorksStudioApp::on_action_groom_mode_triggered()
 void ShapeWorksStudioApp::on_action_import_mode_triggered()
 {
   this->preferences_.set_preference("tool_state", QString::fromStdString(Session::DATA_C));
-  this->ui_->stacked_widget->setCurrentIndex(0);
+  this->ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
   this->ui_->controlsDock->setWindowTitle("Data");
   this->on_actionShow_Tool_Window_triggered();
 }
@@ -940,6 +940,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   try
   {
     if (!this->session_->load_xml_project(filename, planesFile)) {
+
       this->enable_possible_actions();
 
       return;
@@ -950,6 +951,10 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
+
+  //in/t display_state = VIEW_MODE::ORIGINAL;
+  display_state = Visualizer::MODE_ORIGINAL_C;
+
 
   /// TODO: this is just wrong, it can cause us to load in analysis mode even on a new project
   //auto tool_state = this->preferences_.get_preference(
@@ -997,13 +1002,13 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   // load display mode
   if (display_state == Visualizer::MODE_ORIGINAL_C) {
-    this->ui_->view_mode_combobox->setCurrentIndex(0);
+    this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
   }
   else if (display_state == Visualizer::MODE_GROOMED_C) {
-    this->ui_->view_mode_combobox->setCurrentIndex(1);
+    this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   }
   else if (display_state == Visualizer::MODE_RECONSTRUCTION_C) {
-    this->ui_->view_mode_combobox->setCurrentIndex(2);
+    this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
   }
 
   // set the zoom state

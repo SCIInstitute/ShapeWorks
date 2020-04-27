@@ -2,7 +2,7 @@
 #include <Data/Shape.h>
 #include <Data/Mesh.h>
 #include <Data/MeshManager.h>
-#include <Visualization/ShapeworksWorker.h>
+#include <Visualization/ShapeWorksWorker.h>
 #include <QThread>
 
 #include <Visualization/Visualizer.h>
@@ -786,7 +786,8 @@ void Session::reset()
 //---------------------------------------------------------------------------
 bool Session::original_present()
 {
-  return this->original_present_;
+  return this->project_->get_segmentations_present();
+  //return this->original_present_;
 }
 
 //---------------------------------------------------------------------------

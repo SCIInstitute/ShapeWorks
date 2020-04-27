@@ -96,8 +96,6 @@ public Q_SLOTS:
   void handle_progress(size_t amt);
   void handle_new_mesh();
 
-
-
 private:
 
   enum VIEW_MODE {
