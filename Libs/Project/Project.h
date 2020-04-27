@@ -57,6 +57,8 @@ public:
 
   std::vector<Subject> get_subjects();
 
+  std::vector<std::string> get_string_column(std::string name);
+
 private:
 
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
@@ -76,7 +78,6 @@ private:
 
   int get_index_for_column(std::string name, bool create_if_not_found = false);
 
-  std::vector<std::string> get_string_column(std::string name);
   void save_string_column(std::string name, std::vector<std::string> items);
 
   std::unique_ptr<xlnt::workbook> wb_;

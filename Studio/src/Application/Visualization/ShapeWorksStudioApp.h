@@ -33,7 +33,7 @@ class ShapeWorksStudioApp : public QMainWindow
   Q_OBJECT
 public:
 
-  ShapeWorksStudioApp(int argc, char** argv);
+  ShapeWorksStudioApp();
   ~ShapeWorksStudioApp();
 
   void closeEvent(QCloseEvent* event) override;

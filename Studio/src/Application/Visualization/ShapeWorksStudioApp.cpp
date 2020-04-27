@@ -33,7 +33,7 @@ static QVariant ITEM_ENABLE(1 | 32);
 static int ITEM_ROLE = Qt::UserRole - 1;
 
 //---------------------------------------------------------------------------
-ShapeWorksStudioApp::ShapeWorksStudioApp(int argc, char** argv)
+ShapeWorksStudioApp::ShapeWorksStudioApp()
 {
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi(this);
@@ -367,6 +367,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   if (filenames.size() == 0) {
     return;
   }
+
   for (size_t i = 0; i < filenames.size(); i++) {
     this->originalFilenames_.push_back(filenames.at(i).toStdString());
   }
@@ -531,7 +532,7 @@ void ShapeWorksStudioApp::on_add_button_clicked()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_delete_button_clicked()
 {
-  QModelIndexList list = this->ui_->table_widget->selectionModel()->selectedRows();
+  QModelIndexList list = this->ui_->table->selectionModel()->selectedRows();
 
   QList<int> index_list;
   for (int i = list.size() - 1; i >= 0; i--) {
@@ -562,45 +563,35 @@ void ShapeWorksStudioApp::update_table()
 
   QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
 
-  auto headers = this->session_->get_project()->get_headers();
+  auto project = this->session_->get_project();
+  auto headers = project->get_headers();
 
-  this->ui_->table_widget->clear();
-  this->ui_->table_widget->setRowCount(shapes.size());
-  this->ui_->table_widget->setColumnCount(3);
-
-
-  QStringList table_header;
-  for (const std::string& header : headers)
-  {
+  QStringList table_headers;
+  for (const std::string& header : headers) {
     std::cerr << "header: " << header << "\n";
-    table_header << QString::fromStdString(header);
+    table_headers << QString::fromStdString(header);
   }
 
-  this->ui_->table_widget->setHorizontalHeaderLabels(table_header);
-  this->ui_->table_widget->verticalHeader()->setVisible(true);
+  this->ui_->table->clear();
+  this->ui_->table->setRowCount(shapes.size());
+  this->ui_->table->setColumnCount(table_headers.size());
 
-  for (int i = 0; i < shapes.size(); i++) {
-    /*
-    QSharedPointer<Mesh> original_mesh = shapes[i]->get_original_mesh();
+  this->ui_->table->setHorizontalHeaderLabels(table_headers);
+  this->ui_->table->verticalHeader()->setVisible(true);
 
-    QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(i + 1));
-    this->ui_->table_widget->setItem(i, 0, new_item);
-
-    new_item = new QTableWidgetItem(shapes[i]->get_original_filename());
-    this->ui_->table_widget->setItem(i, 1, new_item);
-
-    if (original_mesh) {
-      new_item = new QTableWidgetItem(original_mesh->get_dimension_string());
-      this->ui_->table_widget->setItem(i, 2, new_item);
+  for (int h = 0; h < table_headers.size(); h++) {
+    auto rows = project->get_string_column(table_headers[h].toStdString());
+    for (int row = 0; row < shapes.size() && row < rows.size(); row++) {
+      QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(rows[row]));
+      this->ui_->table->setItem(row, h, new_item);
     }
-    */
   }
 
-  this->ui_->table_widget->resizeColumnsToContents();
-  //this->ui_->table_widget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-  this->ui_->table_widget->horizontalHeader()->setStretchLastSection(true);
+  this->ui_->table->resizeColumnsToContents();
+  //this->ui_->table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+  this->ui_->table->horizontalHeader()->setStretchLastSection(false);
 
-  this->ui_->table_widget->setSelectionBehavior(QAbstractItemView::SelectRows);
+  this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
 //---------------------------------------------------------------------------
@@ -837,9 +828,7 @@ void ShapeWorksStudioApp::update_display()
 
   std::cerr << "displaying mode : " << mode << "\n";
 
-
-  if (this->current_display_mode_ == mode)
-  {
+  if (this->current_display_mode_ == mode) {
     return;
   }
 
@@ -958,7 +947,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   auto display_state = this->preferences_.get_preference(
     "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
-
 
   /// TODO: this is just wrong, it can cause us to load in analysis mode even on a new project
   //auto tool_state = this->preferences_.get_preference(
