@@ -26,12 +26,12 @@ bool Project::load(std::string filename)
   }
 
   this->load_subjects();
-
+/*
   this->original_files_ = this->get_string_column("original_files");
   this->distance_transform_files_ = this->get_string_column("distance_transforms");
   this->local_point_files_ = this->get_string_column("local_point_files");
   this->global_point_files_ = this->get_string_column("world_point_files");
-
+*/
   this->loaded_ = true;
   return true;
 }
@@ -207,6 +207,7 @@ void Project::load_subjects()
     }
 
     subject.set_segmentation_filenames(list);
+    this->segmentations_present_ = true;
     this->subjects_.push_back(subject);
   }
 }
@@ -266,6 +267,12 @@ std::vector<std::string> Project::get_string_column(std::string name)
   }
 
   return list;
+}
+
+//---------------------------------------------------------------------------
+bool Project::get_segmentations_present()
+{
+  return this->segmentations_present_;
 }
 
 //---------------------------------------------------------------------------

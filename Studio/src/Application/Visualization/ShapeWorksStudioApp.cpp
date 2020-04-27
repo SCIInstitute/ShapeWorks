@@ -37,9 +37,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 {
   this->ui_ = new Ui_ShapeWorksStudioApp;
   this->ui_->setupUi(this);
-  this->progressBar_ = new QProgressBar(this);
-  this->ui_->statusbar->addPermanentWidget(this->progressBar_);
-  this->progressBar_->setVisible(false);
+  this->progress_bar_ = new QProgressBar(this);
+  this->ui_->statusbar->addPermanentWidget(this->progress_bar_);
+  this->progress_bar_->setVisible(false);
 
   this->recent_file_actions_.append(this->ui_->action_recent1);
   this->recent_file_actions_.append(this->ui_->action_recent2);
@@ -222,7 +222,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->glyph_quality_slider_, SIGNAL(valueChanged(int)), this,
           SLOT(handle_glyph_changed()));
   this->preferences_.set_saved();
-  this->enablePossibleActions();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -276,7 +276,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->ui_->stacked_widget->setCurrentWidget(this->ui_->import_page);
   this->ui_->controlsDock->setWindowTitle("Data");
   this->preferences_.set_saved();
-  this->enablePossibleActions();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -298,7 +298,7 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
   }
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
   this->open_project(filename);
-  this->enablePossibleActions();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -384,7 +384,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->import_files(filenames);
   this->visualizer_->update_lut();
-  this->enablePossibleActions();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -448,13 +448,17 @@ void ShapeWorksStudioApp::disableAllActions()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::enablePossibleActions()
+void ShapeWorksStudioApp::enable_possible_actions()
 {
+
   // export / save / new / open
   bool reconstructed = this->session_->reconstructed_present();
-  bool original = this->session_->original_present();
-  this->ui_->action_save_project->setEnabled(original);
-  this->ui_->action_save_project_as->setEnabled(original);
+  bool original_present = this->session_->get_project()->get_segmentations_present();
+
+  std::cerr << "original = " << original_present << "\n";
+
+  this->ui_->action_save_project->setEnabled(original_present);
+  this->ui_->action_save_project_as->setEnabled(original_present);
   this->ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
   this->ui_->actionExport_Eigenvalues->setEnabled(reconstructed);
   this->ui_->actionExport_Eigenvectors->setEnabled(reconstructed);
@@ -467,7 +471,7 @@ void ShapeWorksStudioApp::enablePossibleActions()
   this->ui_->actionSet_Data_Directory->setEnabled(true);
   //available modes
   this->ui_->action_import_mode->setEnabled(true);
-  this->ui_->action_groom_mode->setEnabled(original);
+  this->ui_->action_groom_mode->setEnabled(original_present);
   this->ui_->action_optimize_mode->setEnabled(this->session_->groomed_present());
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   //subtools
@@ -554,7 +558,7 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
     this->lightbox_->clear_renderers();
     this->update_display();
   }
-  this->enablePossibleActions();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -640,14 +644,14 @@ void ShapeWorksStudioApp::handle_warning(std::string str)
 void ShapeWorksStudioApp::handle_progress(size_t value)
 {
   if (value < 100) {
-    this->progressBar_->setVisible(true);
-    this->progressBar_->setValue(static_cast<int>(value));
+    this->progress_bar_->setVisible(true);
+    this->progress_bar_->setValue(static_cast<int>(value));
     this->disableAllActions();
   }
   else {
-    this->progressBar_->setValue(100);
-    this->progressBar_->setVisible(false);
-    this->enablePossibleActions();
+    this->progress_bar_->setValue(100);
+    this->progress_bar_->setVisible(false);
+    this->enable_possible_actions();
   }
   this->handle_message(this->currentMessage_);
   qApp->processEvents();
@@ -721,7 +725,7 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->update_display();
   this->visualizer_->update_lut();
 
-  this->enablePossibleActions();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -939,6 +943,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   try
   {
     if (!this->session_->load_xml_project(filename, planesFile)) {
+      this->enable_possible_actions();
+
       return;
     }
   } catch (std::runtime_error e) {
@@ -1018,7 +1024,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->visualizer_->update_lut();
   this->preferences_.set_saved();
-  this->enablePossibleActions();
+  this->enable_possible_actions();
   this->visualizer_->reset_camera();
 
   this->update_table();

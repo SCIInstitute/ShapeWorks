@@ -110,7 +110,7 @@ private:
 
   void disableAllActions();
 
-  void enablePossibleActions();
+  void enable_possible_actions();
 
   void update_from_preferences();
 
@@ -150,7 +150,7 @@ private:
   QLabel* glyph_quality_label_;
   QList<QAction*> recent_file_actions_;
   std::vector<std::string> originalFilenames_;
-  QProgressBar* progressBar_;
+  QProgressBar* progress_bar_;
   std::string data_dir_, currentMessage_;
 
   std::string current_display_mode_;

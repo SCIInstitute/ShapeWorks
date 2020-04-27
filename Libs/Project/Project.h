@@ -59,6 +59,8 @@ public:
 
   std::vector<std::string> get_string_column(std::string name);
 
+  bool get_segmentations_present();
+
 private:
 
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
@@ -84,6 +86,8 @@ private:
 
   std::vector<Subject> subjects_;
 
-  bool loaded_ = false;
+  bool loaded_{false};
+
+  bool segmentations_present_{false};
 };
 }
