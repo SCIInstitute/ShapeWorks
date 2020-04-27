@@ -15,8 +15,8 @@
 #include <ui_GroomTool.h>
 
 //---------------------------------------------------------------------------
-GroomTool::GroomTool(Preferences& prefs, std::vector<std::string>& files)
-  : preferences_(prefs), files_(files)
+GroomTool::GroomTool(Preferences& prefs)
+  : preferences_(prefs)
 {
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi(this);

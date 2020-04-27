@@ -21,7 +21,7 @@ class GroomTool : public QWidget
   Q_OBJECT;
 public:
 
-  GroomTool(Preferences& prefs, std::vector<std::string>& files);
+  GroomTool(Preferences& prefs);
   ~GroomTool();
 
   /// set the pointer to the project
@@ -57,6 +57,5 @@ private:
   Ui_GroomTool* ui_;
   QSharedPointer<Session> project_;
   Preferences& preferences_;
-  std::vector<std::string>& files_;
   QGroom* groom_;
 };

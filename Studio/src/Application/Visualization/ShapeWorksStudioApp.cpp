@@ -100,7 +100,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
 
-  //project initializations
+  // project initializations
   this->session_ = QSharedPointer<Session>(new Session(this, preferences_));
   this->session_->set_parent(this);
   connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
@@ -143,14 +143,13 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->ui_->statusbar->showMessage("ShapeWorksStudio");
   this->lightbox_ = LightboxHandle(new Lightbox());
 
-  //visualizer initializations
+  // visualizer initializations
   this->visualizer_ = QSharedPointer<Visualizer>(new Visualizer(preferences_));
   this->visualizer_->set_lightbox(this->lightbox_);
   this->visualizer_->set_session(this->session_);
 
-  //groom tool initializations
-  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool(preferences_,
-                                                              this->originalFilenames_));
+  // groom tool initializations
+  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool(preferences_));
   this->groom_tool_->set_project(this->session_);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
   connect(this->groom_tool_.data(), SIGNAL(groom_complete()), this, SLOT(handle_groom_complete()));
@@ -161,7 +160,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->groom_tool_.data(), SIGNAL(progress(size_t)),
           this, SLOT(handle_progress(size_t)));
 
-  //optimize tool initializations
+  // optimize tool initializations
   this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool(preferences_));
   this->optimize_tool_->set_project(this->session_);
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
@@ -180,7 +179,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->optimize_tool_.data(), SIGNAL(progress(size_t)),
           this, SLOT(handle_progress(size_t)));
 
-  //set up preferences window
+  // set up preferences window
   this->preferences_window_ =
     QSharedPointer<PreferencesWindow>(new PreferencesWindow(this, preferences_));
   this->preferences_window_->set_values_from_preferences();
@@ -454,8 +453,6 @@ void ShapeWorksStudioApp::enable_possible_actions()
   // export / save / new / open
   bool reconstructed = this->session_->reconstructed_present();
   bool original_present = this->session_->get_project()->get_segmentations_present();
-
-  std::cerr << "original = " << original_present << "\n";
 
   this->ui_->action_save_project->setEnabled(original_present);
   this->ui_->action_save_project_as->setEnabled(original_present);

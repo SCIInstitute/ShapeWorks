@@ -5,9 +5,11 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include <Data/MeshGenerator.h>
+#include <itkOrientImageFilter.h>
 
 #include <vtkCenterOfMass.h>
+
+#include <Data/MeshGenerator.h>
 
 using namespace shapeworks;
 
@@ -88,7 +90,28 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
 //---------------------------------------------------------------------------
 ImageType::Pointer Shape::get_original_image()
 {
-  return this->original_image_;
+  ImageType::Pointer image;
+  std::string filename = this->subject_.get_segmentation_filenames()[0];
+  if (filename != "") {
+    // read file using ITK
+    ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName(filename);
+    reader->Update();
+    image = reader->GetOutput();
+
+    // set orientation to RAI
+    itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
+      itk::OrientImageFilter<ImageType, ImageType>::New();
+    orienter->UseImageDirectionOn();
+    orienter->SetDesiredCoordinateOrientation(
+      itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+    orienter->SetInput(image);
+    orienter->Update();
+    image = orienter->GetOutput();
+  }
+  return image;
+
+  //return this->original_image_;
 }
 
 //---------------------------------------------------------------------------
