@@ -303,106 +303,49 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
             tpdtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
             isonrrdfilename = outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
+            print(" ")
             print("############# Rigid Alignment #############")
             cprint(("Input Segmentation Filename : ", inname), 'cyan')
             cprint(("Input Reference Filename : ", refFile), 'cyan')
             cprint(("Output Segmentation Filename : ", outname), 'yellow')
             print("###########################################")
             print(" ")
-        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-                "read-image", "--name", inname,
-                "extract-label", "--label", str(1.0),
-                "close-holes",
-                "write-image", "--name", inname]
-        subprocess.check_call(cmd)
+                   "read-image", "--name", inname,
+                   "extract-label", "--label", str(1.0),
+                   "close-holes",
+                   "write-image", "--name", inname]
+            subprocess.check_call(cmd)
 
-        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-                "read-image", "--name", inname,
-                "antialias", "--numiterations", str(antialiasIterations),
-                "write-image", "--name", dtnrrdfilename]
-        subprocess.check_call(cmd)
+                   "read-image", "--name", inname,
+                   "antialias", "--numiterations", str(antialiasIterations),
+                   "write-image", "--name", dtnrrdfilename]
+            subprocess.check_call(cmd)
 
-        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-                "read-image", "--name", dtnrrdfilename,
-                "compute-dt", "--isovalue", str(isoValue),
-                "write-image", "--name", dtnrrdfilename]
-        subprocess.check_call(cmd)
+                   "read-image", "--name", dtnrrdfilename,
+                   "compute-dt", "--isovalue", str(isoValue),
+                   "write-image", "--name", dtnrrdfilename]
+            subprocess.check_call(cmd)
 
-        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-                "read-image", "--name", dtnrrdfilename,
-                "curvature", "--iterations", str(smoothingIterations),
-                "write-image", "--name", tpdtnrrdfilename,
-                "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-                "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
-                "write-image", "--name", isonrrdfilename]
-        subprocess.check_call(cmd)
+                   "read-image", "--name", dtnrrdfilename,
+                   "curvature", "--iterations", str(smoothingIterations),
+                   "write-image", "--name", tpdtnrrdfilename,
+                   "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+                   "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
+                   "write-image", "--name", isonrrdfilename]
+            subprocess.check_call(cmd)
 
-        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-            cmd = ["shapeworks", 
-        cmd = ["shapeworks", 
-                "read-image", "--name", inname,
-                "icp",
-                "--source", tpdtnrrdfilename,
-                "--target", ref_tpdtnrrdfilename,
-                "--iterations", str(icpIterations),
-                "write-image", "--name", outname]
-        subprocess.check_call(cmd)
-    return outDataList
-    return  [outSegDataList, outRawDataList]
+                   "read-image", "--name", inname,
+                   "--source", tpdtnrrdfilename,
+                   "--target", ref_tpdtnrrdfilename,
+                   "--iterations", str(icpIterations),
+                   "write-image", "--name", outname]
+            subprocess.check_call(cmd)
+        return outDataList
 
 def applyCropping(outDir, inDataList, paddingSize=10):
     """
