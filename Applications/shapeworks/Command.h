@@ -10,7 +10,6 @@
 #include <iostream>
 #include <stdexcept>
 
-
 namespace shapeworks {
 
 class Command {
@@ -57,14 +56,6 @@ public:
 private:
 };
 
-class TransformCommand : public Command
-{
-public:
-  const std::string type() override { return "Transform"; }
-
-private:
-};
-
-}; // Shapeworks
+}; // shapeworks
 
 std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);

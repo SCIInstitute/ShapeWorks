@@ -54,7 +54,7 @@ Image commands:
 [x] *AntiAliasing -> antialias
  - shapeworks readimage --name ./test.nrrd antialias --numiterations 75 --maxrmserror 0.03 --numlayers 0 writeimage --name ./foobar.nrrd
 
-[] ClipVolume -> clipvolume
+[x] ClipVolume -> clip
  - shapeworks readimage --name ./test.nrrd clip-volume --x1 --x2 --x3 --y1 --y2 --y3 --z1 --z2 --z3 writeimage --name ./foobar.nrrd
 
 [x] *CloseHoles -> closeholes
@@ -105,11 +105,11 @@ Image commands:
 
 [x] itkTBGACLevelSetImageFilter (also has .txx file) -> not a tool
 
-Mesh commands:  (some of these may not actually be executables)
+Mesh commands:
 
-[] readmesh  (functions exist, they just don't do anything)
+[] readmesh
 
-[] writemesh (functions exist, they just don't do anything)
+[] writemesh
 
 ClipClosedSurface
 ComputeCurvatureAndCoordFiles
@@ -164,14 +164,18 @@ ShapeWorksRunApp.h (save this one till last or not at all)
 
 Alignment commands:
 
-ApplyRigid3DTransformationToImage
-[] ICPRigid3DImageRegistration
+[] ApplyRigid3DTransformationToImage
+
+[x] ICPRigid3DImageRegistration -> icp 
+
 [] ICPRigid3DMeshRegistration
+
 Procrustes3D.cpp
 Procrustes3D.h
-ReflectMeshes
-ResampleVolumeToIsotropic
-ResizeOriginResampleVolumes
+
+[] ReflectMeshes
+[] ResampleVolumeToIsotropic
+[] ResizeOriginResampleVolumes
 
 [x] TranslateImages -> translate
  - shapeworks readimage --name ./images/test.nrrd translate --tx 10 --ty 10 --tz 10 writeimage --name ./images/foobar.nrrd

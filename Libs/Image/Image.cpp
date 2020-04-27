@@ -324,7 +324,7 @@ Image& Image::applyTransform(const Transform &transform)
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   resampler->SetInterpolator(interpolator);
-  resampler->SetTransform(transform.getItkTransform());
+  resampler->SetTransform(&transform);
   resampler->SetInput(this->image);
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(origin());
@@ -590,7 +590,7 @@ vtkSmartPointer<vtkPolyData> Image::convert(const Image &img, float isoValue)
   return targetContour->GetOutput();
 }
 
-Image& Image::clipVolume(Matrix cuttingPlane)
+Image& Image::clip(Matrix cuttingPlane)
 {
   Point3 spacing = image->GetSpacing();
   Point3 curOrigin = origin();

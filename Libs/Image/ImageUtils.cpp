@@ -20,12 +20,12 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
 
   std::cout << "ImageUtils::createCenterOfMassTransform\n\tcom: " << com << "\n\tctr: " << center << std::endl;
 
-  Transform xform;
-  xform.translate(center - com);
-  return xform;
+  Transform::Pointer xform = Transform::New();
+  xform->Translate(center - com);
+  return *xform;
 }
 
-Image ImageUtils::reflect(Image &img, double axis)
+Image& ImageUtils::reflect(Image &img, double axis)
 {
   Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
 
@@ -43,22 +43,22 @@ Image ImageUtils::reflect(Image &img, double axis)
   reflection[1][1] = y;
   reflection[2][2] = z;
 
-  Transform xform;
-  xform.setMatrix(reflection);
+  Transform::Pointer xform = Transform::New();
+  xform->SetMatrix(reflection);
   Point3 origin = image.origin();
-  image.recenter().applyTransform(xform).changeOrigin();
+  image.recenter().applyTransform(*xform).changeOrigin();
   return image;
 }
 
-Image ImageUtils::rigidRegisteration(Image &img, Image &target, Image &source, float isoValue, unsigned iterations)
+Image ImageUtils::rigidRegistration(const Image &img, Image &target, Image &source, float isoValue, unsigned iterations)
 {
   Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
 
   vtkSmartPointer<vtkPolyData> targetContour = image.convert(target, isoValue);
   vtkSmartPointer<vtkPolyData> movingContour = image.convert(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
-  Transform xform;
-  xform.setMatrix(mat);
+  Transform::Pointer xform = Transform::New();
+  xform->SetMatrix(mat);
   target.applyTransform(xform);
   return target;
 }

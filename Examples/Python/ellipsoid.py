@@ -30,7 +30,6 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 def Run_Pipeline(args):
-
     """
     Unzip the data for this tutorial.
 
@@ -80,7 +79,11 @@ def Run_Pipeline(args):
     -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
-    -- Largest Bounding Box and Cropping 
+    -- Largest Bounding Box and Cropping
+
+    For detailed explainations of parameters for each tool, go to
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")
@@ -127,7 +130,7 @@ def Run_Pipeline(args):
     Now that we have the distance transform representation of data we create 
     the parameter files for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer to 
-    [link to documentation]
+    'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ParameterDescription.pdf'
 
     First we need to create a dictionary for all the parameters required by this
     optimization routine

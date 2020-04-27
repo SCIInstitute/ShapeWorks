@@ -8,6 +8,7 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkPLYWriter.h>
 #include <vtkPointData.h>
+#include <itkImageToVTKImageFilter.h>
 
 static bool compare_double(double a, double b)
 {
@@ -34,7 +35,7 @@ bool Mesh::read(const std::string &pathname)
   using ReaderType = vtkSmartPointer<vtkPolyDataReader>;
   ReaderType reader = ReaderType::New();
   reader->SetFileName(pathname.c_str());
-  this->mesh = vtkSmartPointer<vtkPolyData>::New();
+  // this->mesh = vtkSmartPointer<vtkPolyData>::New();
 
   try {
     reader->Update();
@@ -42,13 +43,11 @@ bool Mesh::read(const std::string &pathname)
   catch (const std::exception &exp)
   {
     throw std::invalid_argument(pathname + " does not exist");
-    return false;
   }
 
-  mesh->DeepCopy(reader->GetOutput());
   // this->mesh = reader->GetOutput();
   return true;
-  }
+}
 
 /// write
 ///

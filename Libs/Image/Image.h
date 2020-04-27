@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "Transform.h"
 #include <limits>
 #include <itkImage.h>
 #include <vtkSmartPointer.h>
@@ -53,7 +52,7 @@ public:
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
   Image &crop(const Region &region);
   vtkSmartPointer<vtkPolyData> convert(const Image &img, float isoValue = 0.0);
-  Image &clipVolume(Matrix cuttingPlane);
+  Image &clip(Matrix cuttingPlane);
   Image &changeOrigin(Point3 origin = Point3({0, 0, 0}));
 
   template <typename ITK_Exporter, typename VTK_Importer>

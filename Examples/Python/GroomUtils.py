@@ -115,54 +115,25 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
         subprocess.check_call(cmd)
     return outDataList
 
-def applyCOMAlignment(outDir, inDataListSeg, raw=[]):
+def applyCOMAlignment(outDir, inDataList):
     """
     This function takes in a filelist and produces the center of mass aligned
-    files in the appropriate directory. If inDataListImg is provided,
-    then it also applys the same transformation on the corresponding list of
-    raw files (MRI/CT ...)
+    files in the appropriate directory.
     """
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    outDataListSeg = []
-    if raw:
-        inDataListImg=raw
-        rawoutDir = os.path.join(outDir, 'images')
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-        binaryoutDir = os.path.join(outDir, 'segmentations')
-        if not os.path.exists(binaryoutDir):
-            os.makedirs(binaryoutDir)
-        outDataListImg = []
-        for i in range(len(inDataListSeg)):
-            print("\n############# COM Alignment ###############")
-            innameSeg = inDataListSeg[i]
-            outnameSeg = rename(innameSeg, binaryoutDir, 'com')
-            outDataListSeg.append(outnameSeg)
-            innameImg = inDataListImg[i]
-            outnameImg = rename(innameImg, rawoutDir, 'com')
-            outDataListImg.append(outnameImg)
-            cmd = ["shapeworks",
-                   "read-image", "--name", innameSeg,
-                   "translate", "--centerofmass", str(True),
-                   "write-image", "--name", outnameSeg,
-                   "read-image", "--name", innameImg,
-                   "translate", "--useprev", str(True),
-                   "write-image", "--name", outnameImg]
-            subprocess.check_call(cmd)
-        return [outDataListSeg, outDataListImg]
-    else:
-        for i in range(len(inDataListSeg)):
-            print("\n############# COM Alignment ###############")
-            inname = inDataListSeg[i]
-            outname = rename(inname, outDir, 'com')
-            outDataListSeg.append(outname)
-            cmd = ["shapeworks",
-                   "read-image", "--name", inname,
-                   "translate", "--centerofmass", str(True),
-                   "write-image", "--name", outname]
-            subprocess.check_call(cmd)
-        return outDataListSeg
+    outDataList = []
+    for i in range(len(inDataList)):
+        print("\n############# COM Alignment ###############")
+        inname = inDataList[i]
+        outname = rename(inname, outDir, 'com')
+        outDataList.append(outname)
+        cmd = ["shapeworks",
+               "read-image", "--name", inname,
+               "translate", "--centerofmass", str(True),
+              "write-image", "--name", outname]
+        subprocess.check_call(cmd)
+    return outDataList
 
 def FindReferenceImage(inDataList):
     """
@@ -199,11 +170,9 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
     raw files (MRI/CT ...)
     """
     outDir = os.path.join(parentDir, 'aligned')
-    transoutDir = os.path.join(outDir, 'transformations')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    if not os.path.exists(transoutDir):
-        os.makedirs(transoutDir)
+
     # identify the reference scan
     refDir = os.path.join(outDir, 'reference')
     if not os.path.exists(refDir):
@@ -334,117 +303,130 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
             tpdtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
             isonrrdfilename = outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-            print(" ")
             print("############# Rigid Alignment #############")
             cprint(("Input Segmentation Filename : ", inname), 'cyan')
             cprint(("Input Reference Filename : ", refFile), 'cyan')
             cprint(("Output Segmentation Filename : ", outname), 'yellow')
             print("###########################################")
             print(" ")
+        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-                   "read-image", "--name", inname,
-                   "extract-label", "--label", str(1.0),
-                   "close-holes",
-                   "write-image", "--name", inname]
-            subprocess.check_call(cmd)
+        cmd = ["shapeworks", 
+                "read-image", "--name", inname,
+                "extract-label", "--label", str(1.0),
+                "close-holes",
+                "write-image", "--name", inname]
+        subprocess.check_call(cmd)
 
+        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-                   "read-image", "--name", inname,
-                   "antialias", "--numiterations", str(antialiasIterations),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)
-
+        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
-                   "compute-dt", "--isovalue", str(isoValue),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)
-
+        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
-                   "curvature", "--iterations", str(smoothingIterations),
-                   "write-image", "--name", tpdtnrrdfilename,
-                   "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-                   "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
-                   "write-image", "--name", isonrrdfilename]
-            subprocess.check_call(cmd)
-
+        cmd = ["shapeworks", 
             cmd = ["shapeworks", 
-                   "read-image", "--name", inname,
-                   "--source", tpdtnrrdfilename,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
-                   "write-image", "--name", outname]
-            subprocess.check_call(cmd)
-        return outDataList
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+                "read-image", "--name", inname,
+                "antialias", "--numiterations", str(antialiasIterations),
+                "write-image", "--name", dtnrrdfilename]
+        subprocess.check_call(cmd)
 
-def applyCropping(parentDir, inDataListSeg, inDataListImg, paddingSize=10, processRaw=False):
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+                "read-image", "--name", dtnrrdfilename,
+                "compute-dt", "--isovalue", str(isoValue),
+                "write-image", "--name", dtnrrdfilename]
+        subprocess.check_call(cmd)
+
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+                "read-image", "--name", dtnrrdfilename,
+                "curvature", "--iterations", str(smoothingIterations),
+                "write-image", "--name", tpdtnrrdfilename,
+                "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
+                "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
+                "write-image", "--name", isonrrdfilename]
+        subprocess.check_call(cmd)
+
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+            cmd = ["shapeworks", 
+        cmd = ["shapeworks", 
+                "read-image", "--name", inname,
+                "icp",
+                "--source", tpdtnrrdfilename,
+                "--target", ref_tpdtnrrdfilename,
+                "--iterations", str(icpIterations),
+                "write-image", "--name", outname]
+        subprocess.check_call(cmd)
+    return outDataList
+    return  [outSegDataList, outRawDataList]
+
+def applyCropping(outDir, inDataList, paddingSize=10):
     """
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
     """
-    outDir = os.path.join(parentDir, 'cropped')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    if processRaw:
-        rawoutDir = os.path.join(outDir, 'images')
-        binaryoutDir = os.path.join(outDir, 'segmentations')
-        if not os.path.exists(rawoutDir):
-            os.makedirs(rawoutDir)
-        if not os.path.exists(binaryoutDir):
-            os.makedirs(binaryoutDir)
-        outDataListSeg = []
-        outDataListImg = []
-        for i in range(len(inDataListSeg)):
-            innameSeg = inDataListSeg[i]
-            innameImg = inDataListImg[i]
-            initPath = os.path.dirname(innameSeg)
-            outnameSeg = innameSeg.replace(initPath, binaryoutDir)
-            outnameSeg = outnameSeg.replace('.nrrd', '.cropped.nrrd')
-            outDataListSeg.append(outnameSeg)
-            initPath = os.path.dirname(innameImg)
-            outnameImg = innameImg.replace(initPath, rawoutDir)
-            outnameImg = outnameImg.replace('.nrrd', '.cropped.nrrd')
-            outDataListImg.append(outnameImg)
-            print(" ")
-            print("############## Cropping ##############")
-            cprint(("Input Segmentation Filename : ", innameSeg), 'cyan')
-            cprint(("Input Image Filename : ", innameImg), 'cyan')
-            cprint(("Output Segmentation Filename : ", outnameSeg), 'yellow')
-            cprint(("Output Image Filename : ", outnameImg), 'yellow')
-            print("######################################")
-            print(" ")
-            cmd = ["shapeworks",
-                   "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
-                   "read-image", "--name", innameImg,
-                   "crop",
-                   "write-image", "--name", outnameImg,
-                   "read-image", "--name", innameSeg,
-                   "crop",
-                   "write-image", "--name", outnameSeg]
-            subprocess.check_call(cmd)
-        return [outDataListSeg, outDataListImg]
-    else:
-        outDataList = []
-        for i in range(len(inDataListSeg)):
-            inname = inDataListSeg[i]
-            initPath = os.path.dirname(inname)
-            outname = inname.replace(initPath, outDir)
-            outname = outname.replace('.nrrd', '.cropped.nrrd')
-            outDataList.append(outname)
-            print(" ")
-            print("############## Cropping ##############")
-            cprint(("Input Filename : ", inname), 'cyan')
-            cprint(("Output Filename : ", outname), 'yellow')
-            print("######################################")
-            print(" ")
-            cmd = ["shapeworks",
-                   "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
-                   "read-image", "--name", inname,
-                   "crop",
-                   "write-image", "--name", outname]
-            subprocess.check_call(cmd)
-        return outDataList
+    outDataList = []
+    for i in range(len(inDataList)):
+        inname = inDataList[i]
+        initPath = os.path.dirname(inname)
+        outname = inname.replace(initPath, outDir)
+        outname = outname.replace('.nrrd', '.cropped.nrrd')
+        outDataList.append(outname)
+        print(" ")
+        print("############## Cropping ##############")
+        cmd = ["shapeworks",
+                "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
+                "read-image", "--name", inname,
+                "crop",
+                "write-image", "--name", outname]
+        subprocess.check_call(cmd)
+    return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file = open(xmlfilename, "w+")

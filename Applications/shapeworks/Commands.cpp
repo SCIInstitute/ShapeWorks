@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include "Image.h"
 #include "ImageUtils.h"
+#include "MeshUtils.h"
 #include "ShapeEvaluation.h"
 #include <limits>
 
@@ -237,7 +238,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (!useprev)
   {
-    sharedData.transform.reset();
+    sharedData.transform->SetIdentity();
 
     if (centerofmass)
     {
@@ -250,7 +251,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
       double tz = static_cast<double>(options.get("tz"));
 
       double v[3] = {tx, ty, tz};
-      sharedData.transform.translate(Vector3(v));
+      sharedData.transform->Translate(Vector3(v));
     }
   }
   
@@ -553,7 +554,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   
-  ImageUtils::rigidRegisteration(sharedData.image, target, source, isovalue, iterations);
+  ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
   return true;
 }
 
@@ -562,7 +563,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 void ClipVolume::buildParser()
 {
-  const std::string prog = "clip-volume";
+  const std::string prog = "clip";
   const std::string desc = "chops volume with corresponding cutting planes";
   parser.prog(prog).description(desc);
 
@@ -602,7 +603,7 @@ bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sha
   cuttingplane[2][1] = z2;
   cuttingplane[2][2] = z3;
 
-  sharedData.image.clipVolume(cuttingplane);
+  sharedData.image.clip(cuttingplane);
   return true;
 }
 
@@ -846,7 +847,8 @@ bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sha
 {
   // float optionName = static_cast<float>(options.get("optionName"));
 
-  // return sharedData.image.meshFromDT(optionName, ...);
+  MeshUtils::MeshFromDT(sharedData.image);
+  return true;
 }
 
 } // shapeworks

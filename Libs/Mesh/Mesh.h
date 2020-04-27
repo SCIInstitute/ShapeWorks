@@ -14,7 +14,6 @@ public:
   Mesh() {}
   Mesh(const std::string &inFilename) { read(inFilename); }
 
-  bool read(const std::string &pathname);
   bool write(const std::string &pathname);
 
   bool coverage(const Mesh& other_mesh);
@@ -26,6 +25,8 @@ public:
 
 private:
   MeshType mesh;
+
+  static bool read(const std::string &pathname);
 };
 
 } // shapeworks
