@@ -27,11 +27,11 @@ bool Project::load(std::string filename)
 
   this->load_subjects();
 /*
-  this->original_files_ = this->get_string_column("original_files");
-  this->distance_transform_files_ = this->get_string_column("distance_transforms");
-  this->local_point_files_ = this->get_string_column("local_point_files");
-  this->global_point_files_ = this->get_string_column("world_point_files");
-*/
+   this->original_files_ = this->get_string_column("original_files");
+   this->distance_transform_files_ = this->get_string_column("distance_transforms");
+   this->local_point_files_ = this->get_string_column("local_point_files");
+   this->global_point_files_ = this->get_string_column("world_point_files");
+ */
   this->loaded_ = true;
   return true;
 }
@@ -191,22 +191,15 @@ void Project::load_subjects()
   this->num_domains_ = this->get_number_of_domains();
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
 
   for (int i = 0; i < num_subjects; i++) {
     Subject subject;
     subject.set_number_of_domains(this->num_domains_);
 
-    std::vector<std::string> list;
+    subject.set_segmentation_filenames(this->get_list(seg_columns, i));
+    subject.set_groomed_filenames(this->get_list(groomed_columns, i));
 
-    for (int s = 0; s < seg_columns.size(); s++) {
-      auto column = seg_columns[s];
-      int column_index = get_index_for_column(column);
-      auto value = get_value(column_index, i + 1);
-      //std::cerr << "## value = " << value << "\n";
-      list.push_back(value);
-    }
-
-    subject.set_segmentation_filenames(list);
     this->segmentations_present_ = true;
     this->subjects_.push_back(subject);
   }
@@ -262,7 +255,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
     std::string value = rows[i][index].to_string();
     //std::cerr << "value = " << value << "\n";
     //if (value != "") {
-      list.push_back(value);
+    list.push_back(value);
     //}
   }
 
@@ -273,6 +266,19 @@ std::vector<std::string> Project::get_string_column(std::string name)
 bool Project::get_segmentations_present()
 {
   return this->segmentations_present_;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_list(std::vector<std::string> columns, int subject)
+{
+  std::vector<std::string> list;
+  for (int s = 0; s < columns.size(); s++) {
+    auto column = columns[s];
+    int column_index = get_index_for_column(column);
+    auto value = get_value(column_index, subject + 1);
+    list.push_back(value);
+  }
+  return list;
 }
 
 //---------------------------------------------------------------------------

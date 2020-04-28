@@ -63,7 +63,10 @@ public:
 
 private:
 
+  std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
+
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
+  static constexpr const char* GROOMED_PREFIX = "groomed_";
 
   std::vector<std::string> get_matching_columns(std::string prefix);
 
