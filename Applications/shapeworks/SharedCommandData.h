@@ -3,7 +3,6 @@
 #include "Image.h"
 #include "Mesh.h"
 #include "ParticleSystem.h"
-#include "Transform.h"
 #include <string>
 
 namespace shapeworks {

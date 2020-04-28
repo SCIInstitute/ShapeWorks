@@ -71,5 +71,4 @@ do
     echo $segfilename >> $txtfilename
 done
 
-FindLargestBoundingBox --paddingSize $padding_size --inFilename $txtfilename --outPrefix $out_prefix
-
+shapeworks binary-bounding-box --name $data_dir/*.nrrd -- --padding $padding_size 

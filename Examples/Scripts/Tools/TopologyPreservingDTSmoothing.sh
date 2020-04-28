@@ -11,10 +11,8 @@
 ##################################################################################
 
 scriptHome=../
-
 dt_prefix=""
 dt_suffix=""
-
 smoothing_iterations=1
 
 # input parameters
@@ -83,29 +81,7 @@ do
     EchoWithColor "tpdtfilename $tpdtfilename" "yellow"
     EchoWithColor "isofilename $isofilename" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
-    
-    
-    xmlfilename=${out_dir}/paramfiles/${prefix}_tpSmoothDT.xml
-    rm -rf $xmlfilename
-    echo "<propagationScale> 20.0 </propagationScale>" >> "$xmlfilename"
-    echo "<alpha> 10.5 </alpha>" >> "$xmlfilename"
-    echo "<beta> 10.0 </beta>" >> "$xmlfilename"
-    echo "<isoValue> 0 </isoValue>" >> "$xmlfilename"
-    echo "<smoothing_iterations> $smoothing_iterations </smoothing_iterations>" >> "$xmlfilename"
-    echo "<verbose> 1 </verbose>" >> "$xmlfilename"
-    echo "<inputs>" >> "$xmlfilename"
-    echo "${dtfilename}" >> "$xmlfilename"
-    echo "</inputs>" >> "$xmlfilename"
-    echo "<outputs>" >> "$xmlfilename"
-    echo "${isofilename}" >> "$xmlfilename"
-    echo "</outputs>" >> "$xmlfilename"
-    echo "<dtFiles>" >> "$xmlfilename"
-    echo "${tpdtfilename}" >> "$xmlfilename"
-    echo "</dtFiles>" >> "$xmlfilename"
 
-    TopologyPreservingSmoothing $xmlfilename 
+    shapeworks read-image --name $dtfilename curvature --iterations $smoothing_iterations write-image --name $tpdtfilename topo-preserving-smooth --scaling 20.0  --alpha 10.5 --beta 10.0 --applycurvature 0 write-image --name $isofilename
     
 done
-
-
-

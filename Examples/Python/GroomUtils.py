@@ -33,12 +33,12 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
     """
     This function takes in a filelist and produces the resampled files in the appropriate directory.
     """
+    print("\n########### Resampling ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        print("\n########### Resampling ###############")
         outname = rename(inname, outDir, 'isores')
         outDataList.append(outname)
         cmd = ["shapeworks", 
@@ -54,28 +54,13 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         subprocess.check_call(cmd)
     return outDataList
 
-# todo: clean this function 
-def getOrigin(inname):
-    infoPrefix = "_".join(inname.split("_")[:3])
-    cmd = ["WriteImageInfoToText","--inFilename", inname, "--outPrefix", infoPrefix]
-    subprocess.check_call(cmd)
-    origin_file = open(infoPrefix + "_origin.txt", "r")
-    text = origin_file.read()
-    origin = text.split("\n")
-    origin_file.close()
-    os.remove(infoPrefix + "_origin.txt")
-    os.remove(infoPrefix + "_spacing.txt")
-    os.remove(infoPrefix + "_size.txt")
-    return origin
-
 def center(outDir, inDataList):
+    print("\n########### Centering ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
     for i in range(len(inDataList)):
-        # center
         inname = inDataList[i]
-        print("\n########### Centering ###############")
         outname = rename(inname, outDir, 'center')
         outDataList.append(outname)
         cmd = ["shapeworks", 
@@ -83,29 +68,18 @@ def center(outDir, inDataList):
                "recenter",
                "write-image", "--name", outname]
         subprocess.check_call(cmd)
-        # Get translation
-        original_origin = getOrigin(inname)
-        new_origin = getOrigin(outname)
-        translation = []
-        for dim in range(0,3):
-            translation.append(float(original_origin[dim]) - float(new_origin[dim]))
-        # Write translation
-        translation_file = outname[:-4] + "translation.txt"
-        out_trans = open(translation_file, "w+")
-        out_trans.write(str(translation).replace('[','').replace(']','').replace(',',''))
-        out_trans.close()
     return outDataList
 
 def applyPadding(outDir, inDataList, padSize, padValue=0):
     """
     This function takes in a filelist and produces the padded files in the appropriate directory.
     """
+    print("\n########### Padding ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        print("\n########### Padding ###############")
         outname = rename(inname, outDir, 'pad')
         outDataList.append(outname)
         cmd = ["shapeworks", 
@@ -120,18 +94,18 @@ def applyCOMAlignment(outDir, inDataList):
     This function takes in a filelist and produces the center of mass aligned
     files in the appropriate directory.
     """
+    print("\n############# COM Alignment ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
     for i in range(len(inDataList)):
-        print("\n############# COM Alignment ###############")
         inname = inDataList[i]
         outname = rename(inname, outDir, 'com')
         outDataList.append(outname)
         cmd = ["shapeworks",
                "read-image", "--name", inname,
                "translate", "--centerofmass", str(True),
-              "write-image", "--name", outname]
+               "write-image", "--name", outname]
         subprocess.check_call(cmd)
     return outDataList
 
@@ -139,6 +113,7 @@ def FindReferenceImage(inDataList):
     """
     This find the median file between all the input files
     """
+    print("\n############# Reference File #############")
     IMG = []
     DIM = []
     for i in range(len(inDataList)):
@@ -152,12 +127,6 @@ def FindReferenceImage(inDataList):
 
     COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
     idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
-    print(" ")
-    print("############# Reference File #############")
-    cprint(("The reference file for rigid alignment is found"), 'green')
-    cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
-    print("###########################################")
-    print(" ")
     return inDataList[idx]
 
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
@@ -169,6 +138,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
     then it also applys the same transformation on the corresponding list of
     raw files (MRI/CT ...)
     """
+    print("\n############# Rigid Alignment #############")
     outDir = os.path.join(parentDir, 'aligned')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -242,15 +212,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
             tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
             isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-            print(" ")
-            print("############# Rigid Alignment #############")
-            cprint(("Input Segmentation Filename : ", seginname), 'cyan')
-            cprint(("Input Reference Filename : ", refFile), 'cyan')
-            cprint(("Input Raw Filename : ", rawinname), 'cyan')
-            cprint(("Output Segmentation Filename : ", segoutname), 'yellow')
-            cprint(("Output Raw Filename : ", rawoutname), 'yellow')
-            print("###########################################")
-            print(" ")
             cmd = ["shapeworks", 
                    "read-image", "--name", seginname, 
                    "extract-label", "--label", str(1.0),
@@ -303,13 +264,6 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
             tpdtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
             isonrrdfilename = outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-            print(" ")
-            print("############# Rigid Alignment #############")
-            cprint(("Input Segmentation Filename : ", inname), 'cyan')
-            cprint(("Input Reference Filename : ", refFile), 'cyan')
-            cprint(("Output Segmentation Filename : ", outname), 'yellow')
-            print("###########################################")
-            print(" ")
             cmd = ["shapeworks", 
                    "read-image", "--name", inname,
                    "extract-label", "--label", str(1.0),
@@ -352,6 +306,7 @@ def applyCropping(outDir, inDataList, paddingSize=10):
     This function takes in a filelist and crops them according to the largest
     bounding box which it discovers
     """
+    print("\n############## Cropping ##############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
@@ -361,13 +316,11 @@ def applyCropping(outDir, inDataList, paddingSize=10):
         outname = inname.replace(initPath, outDir)
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
-        print(" ")
-        print("############## Cropping ##############")
         cmd = ["shapeworks",
-                "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
-                "read-image", "--name", inname,
-                "crop",
-                "write-image", "--name", outname]
+               "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
+               "read-image", "--name", inname,
+               "crop",
+               "write-image", "--name", outname]
         subprocess.check_call(cmd)
     return outDataList
 
@@ -400,7 +353,6 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
         isonrrdfilename = outname.replace('.nrrd', '.ISO.nrrd')
         finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
         outDataList.append(finalnm)
-
         cmd = ["shapeworks", 
                "read-image", "--name", inname,
                "extract-label", "--label", str(1.0),
@@ -486,7 +438,6 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
                    "reflect-volume", "--axis", str(0),
                    "write-image", "--name", img_out]
             subprocess.check_call(cmd)
-            print("\n############## Reflecting ###############")
             seg_out = rename(flip_seg, outSegDir, 'reflect')
             meshList.append(seg_out)
             execCommand = ["ReflectMesh", "--inFilename", flip_seg, "--outFilename", seg_out, "--reflectCenterFilename", centerFilename, "--inputDirection", "0", "--meshFormat", flip_seg.split(".")[-1]]

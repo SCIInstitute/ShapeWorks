@@ -1,7 +1,6 @@
 #include "Commands.h"
 #include "Image.h"
 #include "ImageUtils.h"
-#include "MeshUtils.h"
 #include "ShapeEvaluation.h"
 #include <limits>
 
@@ -554,7 +553,8 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   
-  ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
+  sharedData.transform = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
+  sharedData.image.applyTransform(sharedData.transform);
   return true;
 }
 
@@ -824,31 +824,6 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   second_mesh.read(second_mesh_string);
 
   return sharedData.mesh.coverage(second_mesh);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MeshFromDT
-///////////////////////////////////////////////////////////////////////////////
-void MeshFromDT::buildParser()
-{
-  const std::string prog = "mesh-from-dt";
-  const std::string desc = "brief description of command";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(1).help("Description of optionName.");
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(1).help("Description of optionName.");
-  parser.add_option("--angle").action("store").type("float").set_default(30).help("angle in degrees");
-  parser.add_option("--preservetopology").action("store").type("bool").set_default(true).help("Description of optionName.");
-
-  Command::buildParser();
-}
-
-bool MeshFromDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  // float optionName = static_cast<float>(options.get("optionName"));
-
-  MeshUtils::MeshFromDT(sharedData.image);
-  return true;
 }
 
 } // shapeworks

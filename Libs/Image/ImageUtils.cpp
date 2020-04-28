@@ -13,7 +13,7 @@ namespace shapeworks {
 ///   image.applyTransform(xform);
 ///
 /// \param image      the binary image from which to generate the transform
-Transform ImageUtils::createCenterOfMassTransform(const Image &image)
+Transform::Pointer ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   Point3 com = image.centerOfMass();
   Point3 center = image.center();
@@ -22,7 +22,7 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
 
   Transform::Pointer xform = Transform::New();
   xform->Translate(center - com);
-  return *xform;
+  return xform;
 }
 
 Image& ImageUtils::reflect(Image &img, double axis)
@@ -46,11 +46,11 @@ Image& ImageUtils::reflect(Image &img, double axis)
   Transform::Pointer xform = Transform::New();
   xform->SetMatrix(reflection);
   Point3 origin = image.origin();
-  image.recenter().applyTransform(*xform).changeOrigin();
+  image.recenter().applyTransform(xform).changeOrigin();
   return image;
 }
 
-Image ImageUtils::rigidRegistration(const Image &img, Image &target, Image &source, float isoValue, unsigned iterations)
+Transform::Pointer ImageUtils::rigidRegistration(const Image &img, Image &target, Image &source, float isoValue, unsigned iterations)
 {
   Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
 
@@ -59,8 +59,7 @@ Image ImageUtils::rigidRegistration(const Image &img, Image &target, Image &sour
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
   Transform::Pointer xform = Transform::New();
   xform->SetMatrix(mat);
-  target.applyTransform(xform);
-  return target;
+  return xform;
 }
 
 } //shapeworks

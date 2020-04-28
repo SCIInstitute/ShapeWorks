@@ -7,7 +7,7 @@ namespace shapeworks {
 // boilerplate for a command. Copy this to start a new command
 #if 0
 ///////////////////////////////////////////////////////////////////////////////
-class Example : public ImageCommand < --be sure to derive from the appropriate type
+class Example : public ImageCommand <--be sure to derive from the appropriate type
 {
 public:
   static Example& getCommand() { static Example instance; return instance; }
@@ -104,7 +104,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class Translate : public TransformCommand
+class Translate : public ImageCommand
 {
 public:
   static Translate &getCommand() { static Translate instance; return instance; }
@@ -386,18 +386,6 @@ public:
 
 private:
   Coverage() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class MeshFromDT : public MeshCommand 
-{
-public:
-  static MeshFromDT &getCommand() { static MeshFromDT instance; return instance; }
-
-private:
-  MeshFromDT() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

@@ -39,7 +39,7 @@ public:
   Image &recenter();
   Image &resample(const Point3 &spacing, Dims outputSize = Dims()); // Resamples image with new voxel spacing and output size [same size if unspecified]
   Image &pad(int padding = 0, PixelType value = 0.0);
-  Image &applyTransform(const Transform &transform);
+  Image &applyTransform(const Transform::Pointer &transform);
   Image &extractLabel(PixelType label = 1.0);
   Image &closeHoles();
   Image &threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());

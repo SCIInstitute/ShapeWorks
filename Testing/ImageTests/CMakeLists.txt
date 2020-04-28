@@ -1,5 +1,3 @@
-
-
 set(TEST_SRCS
   ImageTests.cpp
   )

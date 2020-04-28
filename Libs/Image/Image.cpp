@@ -315,7 +315,7 @@ Image& Image::pad(int padding, PixelType value)
 /// applies the computed transformation to the image by using resampling filter
 ///
 /// \param transform      computed transformation    
-Image& Image::applyTransform(const Transform &transform)
+Image& Image::applyTransform(const Transform::Pointer &transform)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
@@ -324,7 +324,7 @@ Image& Image::applyTransform(const Transform &transform)
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
 
   resampler->SetInterpolator(interpolator);
-  resampler->SetTransform(&transform);
+  resampler->SetTransform(transform);
   resampler->SetInput(this->image);
   resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
   resampler->SetOutputOrigin(origin());
