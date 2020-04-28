@@ -138,31 +138,35 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
   }
 
   // distance transforms
-  if (this->groomed_present()) {
-    std::vector<std::string> groomed_list;
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
-      if (!defaultDir) {
-        loc = QString::fromStdString(dataDir) + "/" +
-              this->shapes_[i]->get_groomed_filename();
-      }
-      groomed_list.push_back(loc.toStdString());
+  if (this->unsaved_groomed_files_) {
+    std::cerr << "unsaved groomed files detected, saving...\n";
+    if (this->groomed_present()) {
+      std::vector<std::string> groomed_list;
+      for (int i = 0; i < this->shapes_.size(); i++) {
+        QString loc = this->shapes_[i]->get_groomed_filename_with_path();
+        if (!defaultDir) {
+          loc = QString::fromStdString(dataDir) + "/" +
+                this->shapes_[i]->get_groomed_filename();
+        }
+        groomed_list.push_back(loc.toStdString());
 
-      //try writing the groomed to file
-      WriterType::Pointer writer = WriterType::New();
-      writer->SetFileName(loc.toStdString());
-      writer->SetInput(this->shapes_[i]->get_groomed_image());
-      writer->SetUseCompression(true);
-      std::cerr << "Writing distance transform: " << loc.toStdString() << "\n";
-      writer->Update();
+        //try writing the groomed to file
+        WriterType::Pointer writer = WriterType::New();
+        writer->SetFileName(loc.toStdString());
+        writer->SetInput(this->shapes_[i]->get_groomed_image());
+        writer->SetUseCompression(true);
+        std::cerr << "Writing distance transform: " << loc.toStdString() << "\n";
+        writer->Update();
 
-      QApplication::processEvents();
-      if (progress.wasCanceled()) {
-        break;
+        QApplication::processEvents();
+        if (progress.wasCanceled()) {
+          break;
+        }
       }
+      this->project_->set_distance_transform_files(groomed_list);
+      //xml->writeTextElement("distance_transforms", groomed_list);
     }
-    this->project_->set_distance_transform_files(groomed_list);
-    //xml->writeTextElement("distance_transforms", groomed_list);
+    this->unsaved_groomed_files_ = false;
   }
 
   // correspondence points
@@ -377,7 +381,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
   this->load_point_files(global_point_files, false);
   if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
     this->mesh_manager_->get_surface_reconstructor()->readMeanInfo(denseFile, sparseFile,
-                                                                 goodPtsFile);
+                                                                   goodPtsFile);
   }
   this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
                                  global_point_files.size() > 1;
@@ -556,7 +560,6 @@ bool Session::load_project(QString filename)
                                  global_point_files.size() > 1;
   //this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
 
-
   return true;
 }
 
@@ -621,6 +624,7 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double
   progress.setValue(images.size());
   QApplication::processEvents();
   if (images.size() > 0) {
+    this->unsaved_groomed_files_ = true;
     this->groomed_present_ = true;
     emit data_changed();
   }

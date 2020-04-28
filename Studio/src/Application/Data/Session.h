@@ -140,5 +140,7 @@ private:
   bool groups_available_{false};
   bool is_light_project_{false};
 
+  bool unsaved_groomed_files_{false};
+
   std::shared_ptr<Project> project_{new Project()};
 };

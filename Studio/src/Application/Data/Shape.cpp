@@ -142,7 +142,7 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso)
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
-  auto name = this->original_mesh_filename_.toStdString();
+  auto name = this->get_original_filename_with_path().toStdString();
   name = name.substr(0, name.find_last_of(".")) + "_DT.nrrd";
   this->groomed_filename_ = QString::fromStdString(name);
 }
@@ -250,14 +250,16 @@ void Shape::set_id(int id)
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename()
 {
-  QFileInfo qfi(this->original_mesh_filename_);
-  return qfi.fileName();
+  auto string = QString::fromStdString(this->subject_.get_segmentation_filenames()[0]);
+  std::cerr << "original filename is " << string.toStdString() << "\n";
+  QFileInfo info(string);
+  return info.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename_with_path()
 {
-  return this->original_mesh_filename_;
+  return QString::fromStdString(this->subject_.get_segmentation_filenames()[0]);
 }
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
