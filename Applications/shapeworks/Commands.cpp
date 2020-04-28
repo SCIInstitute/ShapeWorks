@@ -6,6 +6,7 @@
 namespace shapeworks {
 
 // boilerplate for a command. Copy this to start a new command
+// Next, be sure to add the command to shapeworks.cpp!
 #if 0
 ///////////////////////////////////////////////////////////////////////////////
 // Example
@@ -78,7 +79,8 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
   std::string filename = options["name"];
   bool compressed = static_cast<bool>(options.get("compressed"));
   
-  return sharedData.image.write(filename, compressed);
+  sharedData.image.write(filename, compressed);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -145,13 +147,46 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
   int numIterations = static_cast<int>(options.get("numiterations"));
   int numLayers = static_cast<int>(options.get("numlayers"));
 
-  return sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
+  sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ResampleImage
 ///////////////////////////////////////////////////////////////////////////////
 void ResampleImage::buildParser()
+{
+  const std::string prog = "resample";
+  const std::string desc = "resamples an image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default 1.0].");
+  parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default 1.0].");
+  parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default 1.0].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
+
+  Command::buildParser();
+}
+
+bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double spaceX = static_cast<double>(options.get("spacex"));
+  double spaceY = static_cast<double>(options.get("spacey"));
+  double spaceZ = static_cast<double>(options.get("spacez"));
+  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
+  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
+  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
+
+  sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}), Dims({sizeX, sizeY, sizeZ}));
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// IsoResampleImage
+///////////////////////////////////////////////////////////////////////////////
+void IsoResampleImage::buildParser()
 {
   const std::string prog = "isoresample";
   const std::string desc = "resamples images to be isotropic";
@@ -165,14 +200,15 @@ void ResampleImage::buildParser()
   Command::buildParser();
 }
 
-bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool IsoResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   double isoSpacing = static_cast<double>(options.get("isospacing"));
   unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  return sharedData.image.isoresample(isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  return true; //<ctc> todo: remove return values from commands since they will throw exceptions upon failure
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -182,13 +218,15 @@ void RecenterImage::buildParser()
 {
   const std::string prog = "recenter";
   const std::string desc = "recenters an image by changing its origin in the image header to the physical coordinates of the center of the image";
+  parser.prog(prog).description(desc);
 
   Command::buildParser();
 }
 
 bool RecenterImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.recenter();
+  sharedData.image.recenter();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -211,7 +249,8 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
   int padding = static_cast<int>(options.get("padding"));
   float value = static_cast<float>(options.get("value"));
 
-  return sharedData.image.pad(padding, value);
+  sharedData.image.pad(padding, value);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -306,12 +345,9 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
       sharedData.transform.translate(Vector3(v));
     }
   }
-  std::cout << "image: " << sharedData.image << std::endl;  //<Ctc> just testing, remove this
   
-#if DEBUG_CONSOLIDATION
-  std::cout << "Translating " << (centerofmass ? "using center of mass " : " explicitly ") << "by: " << sharedData.transform << std::endl;
-#endif
-  return sharedData.image.applyTransform(sharedData.transform);
+  sharedData.image.applyTransform(sharedData.transform);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -332,7 +368,8 @@ bool ExtractLabel::execute(const optparse::Values &options, SharedCommandData &s
 {
   float label = static_cast<float>(options.get("label"));
 
-  return sharedData.image.extractLabel(label);
+  sharedData.image.extractLabel(label);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -349,7 +386,8 @@ void CloseHoles::buildParser()
 
 bool CloseHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.closeHoles();
+  sharedData.image.closeHoles();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -372,7 +410,8 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
   float min = static_cast<float>(options.get("min"));
   float max = static_cast<float>(options.get("max"));
 
-  return sharedData.image.threshold(min, max);
+  sharedData.image.threshold(min, max);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -394,7 +433,8 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
 {
   float isovalue = static_cast<float>(options.get("isovalue"));
 
-  return sharedData.image.computeDT(isovalue);
+  sharedData.image.computeDT(isovalue);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -403,7 +443,7 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
 void CurvatureFilter::buildParser()
 {
   const std::string prog = "curvature";
-  const std::string desc = "performs curvature flow image filter";
+  const std::string desc = "applies curvature flow image filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
@@ -415,7 +455,8 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 {
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  return sharedData.image.applyCurvatureFilter(iterations);
+  sharedData.image.applyCurvatureFilter(iterations);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -424,7 +465,7 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 void GradientFilter::buildParser()
 {
   const std::string prog = "gradient";
-  const std::string desc = "performs gradient magnitude image filter";
+  const std::string desc = "applies gradient magnitude image filter";
   parser.prog(prog).description(desc);
   
   Command::buildParser();
@@ -432,7 +473,8 @@ void GradientFilter::buildParser()
 
 bool GradientFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.applyGradientFilter();
+  sharedData.image.applyGradientFilter();
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -455,7 +497,8 @@ bool SigmoidFilter::execute(const optparse::Values &options, SharedCommandData &
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
 
-  return sharedData.image.applySigmoidFilter(alpha, beta);
+  sharedData.image.applySigmoidFilter(alpha, beta);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -468,7 +511,7 @@ void TPLevelSetFilter::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--featureimage").action("store").type("string").set_default("").help("path of feature image for filter");
-  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("scale (default: 20)");
+  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("value of scale [default: 20]");
   
   Command::buildParser();
 }
@@ -478,7 +521,8 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
   Image featureImage(options["featureimage"]);
   double scaling = static_cast<double>(options.get("scaling"));
   
-  return sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+  sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -487,15 +531,13 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
 void TopologyPreservingFilter::buildParser()
 {
   const std::string prog = "topo-preserving-smooth";
-  const std::string desc = "helper command that applies curvature, gradient, sigmoid, and TPLevelSet filters in that order";
+  const std::string desc = "helper command that applies curvature, gradient, sigmoid, and uses them for the TPLevelSet filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--featureimage").action("store").type("string").set_default("").help("path of feature image for TPLevelSet filter");
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("scale for TPLevelSet level set filter");
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha for sigmoid fitler");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta for sigmoid fitler");  
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations for curvature filter");
-  //todo: I think the curvature is always used for this, so when applying it might mean featureimage is okay to be unspecified
   parser.add_option("--applycurvature").action("store").type("bool").set_default(true).help("default it true, but in some cases it has already been applied");
   
   Command::buildParser();
@@ -503,14 +545,13 @@ void TopologyPreservingFilter::buildParser()
 
 bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  const Image featureImage(options["featureimage"]);
-  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   double scaling = static_cast<double>(options.get("scaling"));
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   bool applycurvature = static_cast<bool>(options.get("applycurvature"));
 
-  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, featureImage, scaling, alpha, beta, applycurvature, iterations);
+  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
   return true;
 }
 
@@ -520,7 +561,7 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
 void Blur::buildParser()
 {
   const std::string prog = "blur";
-  const std::string desc = "performs gaussian blur";
+  const std::string desc = "applies gaussian blur";
   parser.prog(prog).description(desc);
 
   parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("value of sigma");
@@ -533,7 +574,8 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 {
   double sigma = static_cast<double>(options.get("sigma"));
   
-  return sharedData.image.gaussianBlur(sigma);
+  sharedData.image.gaussianBlur(sigma);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -557,7 +599,6 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
   int padding = static_cast<int>(options.get("padding"));
 
   sharedData.region = sharedData.image.binaryBoundingBox(filenames, padding);
-
   return true;
 }
 
@@ -576,7 +617,8 @@ void CropImage::buildParser()
 ///////////////////////////////////////////////////////////////////////////////
 bool CropImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  return sharedData.image.crop(sharedData.region);
+  sharedData.image.crop(sharedData.region);
+  return true;
 }
 
 } // shapeworks

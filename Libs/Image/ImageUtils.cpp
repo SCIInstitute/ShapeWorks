@@ -13,23 +13,13 @@ namespace shapeworks {
 Transform ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   Point3 com = image.centerOfMass();
-  Point3 center = image.size() / 2.0 + image.origin();
+  Point3 center = image.center();
+
+  std::cout << "ImageUtils::createCenterOfMassTransform\n\tcom: " << com << "\n\tctr: " << center << std::endl;
 
   Transform xform;
   xform.translate(center - com);
-
   return xform;
 }
-
-/// topologyPreservingSmooth
-///
-/// const input version of topologyPreservingSmooth
-// Image& ImageUtils::topologyPreservingSmooth(const Image &image, const Image &featureImage,
-//                                             float scaling, float sigmoidAlpha, float sigmoidBeta,
-//                                             bool applyCurvatureFilter, unsigned curvatureIterations)
-// {
-//   Image *smoothed = new Image(image);
-//   return topologyPreservingSmooth(*smoothed, featureImage, scaling, sigmoidAlpha, sigmoidBeta, applyCurvatureFilter, curvatureIterations);
-// }
 
 } //shapeworks
