@@ -5,6 +5,7 @@ using namespace pybind11::literals;
 
 #include "Shapeworks.h"
 #include "Image.h"
+#include "ImageUtils.h"
 #include "Mesh.h"
 #include "Transform.h"
 #include "Optimize.h"
@@ -60,7 +61,7 @@ PYBIND11_MODULE(shapeworks, m)
   .def("write",                 &shapeworks::Image::write, "filename"_a, "compressed"_a=true)
   .def("antialias",             &shapeworks::Image::antialias, "smooth the image", "numIterations"_a=50, "maxRMSErr"_a=0.01f, "numLayers"_a=3)
   .def("recenter",              &shapeworks::Image::recenter)
-  .def("isoresample",           &shapeworks::Image::isoresample, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
+  .def("resample",              &shapeworks::Image::resample, "spacing"_a, "outputSize"_a=shapeworks::Dims())
   .def("pad",                   &shapeworks::Image::pad, "padding"_a, "value"_a)
   .def("applyTransform",        &shapeworks::Image::applyTransform, "transform"_a)
   .def("extractLabel",          &shapeworks::Image::extractLabel, "label"_a=1)
@@ -73,7 +74,12 @@ PYBIND11_MODULE(shapeworks, m)
   //.def("__repr__",              &shapeworks::Image::print)
   //.def("__set__",             &shapeworks::Image::operator=) //todo
   ;
-  
+
+  py::class_<shapeworks::ImageUtils>(m, "ImageUtils")
+  //.def_static("isoresample",           py::overload_cast<shapeworks::Image>(&shapeworks::ImageUtils::isoresample), "image"_a, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
+  .def_static("isoresample",           &shapeworks::ImageUtils::isoresample, "image"_a, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
+  ;
+
   py::class_<shapeworks::Mesh>(m, "Mesh")
   .def(py::init<>())
   .def("read",                  &shapeworks::Mesh::read, "filename"_a)

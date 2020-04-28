@@ -47,6 +47,7 @@ public:
   ///
   /// \param isoSpacing     size of an [isotropic (n x n x n)] output voxel [default n=1]
   /// \param outputSize     image size can be changed [default stays the same]
+#if 0 // <ctc> currently disabled due to trickiness in creating Python binding (maybe not impossible, just no time right now)
   template<typename T>
   static Image& isoresample(T& img, double isoSpacing = 1.0, Dims outputSize = Dims())
   {
@@ -57,7 +58,14 @@ public:
     image.resample(spacing, outputSize);
     return image;
   }
-
+#else
+  static Image& isoresample(Image& image, double isoSpacing = 1.0, Dims outputSize = Dims())
+  {
+    Point3 spacing({isoSpacing, isoSpacing, isoSpacing});
+    image.resample(spacing, outputSize);
+    return image;
+  }
+#endif
 };
 
 } // shapeworks
