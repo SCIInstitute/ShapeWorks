@@ -551,7 +551,8 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   bool applycurvature = static_cast<bool>(options.get("applycurvature"));
 
-  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
+  // ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
+  ImageUtils::topologyPreservingSmooth(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
   return true;
 }
 

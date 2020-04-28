@@ -53,7 +53,7 @@ PYBIND11_MODULE(shapeworks, m)
   // .def("translate",             &shapeworks::Transform::translate, "v"_a)
   // .def("rotate",                &shapeworks::Transform::rotate, "axis"_a, "angle"_a)
   // .def("scale",                 &shapeworks::Transform::scale, "s"_a)
-  // //  .def("__repr__",              &shapeworks::Transform::print)
+  // .def("__repr__",              &shapeworks::Transform::print)
   // ;
 
   py::class_<shapeworks::Image>(m, "Image")
@@ -67,18 +67,27 @@ PYBIND11_MODULE(shapeworks, m)
   .def("extractLabel",          &shapeworks::Image::extractLabel, "label"_a=1)
   .def("closeHoles",            &shapeworks::Image::closeHoles)
   .def("threshold",             &shapeworks::Image::threshold, "min"_a = std::numeric_limits<shapeworks::Image::PixelType>::epsilon(), "max"_a = std::numeric_limits<shapeworks::Image::PixelType>::max())
+  .def("computeDT",             &shapeworks::Image::computeDT, "isovalue"_a=0.0)
+  .def("applyCurvatureFilter",  &shapeworks::Image::applyCurvatureFilter, "iterations"_a=10)
+  .def("applyGradientFilter",   &shapeworks::Image::applyGradientFilter)
+  .def("applySigmoidFilter",    &shapeworks::Image::applySigmoidFilter, "alpha"_a=10.0, "beta"_a=10.0)
+  .def("applyTPLevelSetFilter", &shapeworks::Image::applyTPLevelSetFilter, "featureimage"_a, "scaling"_a=20.0)
+  .def("gaussianBlur",          &shapeworks::Image::gaussianBlur, "sigma"_a)
+  .def("binaryBoundingBox",     &shapeworks::Image::binaryBoundingBox, "filenames"_a, "padding"_a=0)
+  .def("crop",                  &shapeworks::Image::crop, "region"_a)
   .def("centerOfMass",          &shapeworks::Image::centerOfMass)
+  .def("origin",                &shapeworks::Image::origin)
   .def("dims",                  &shapeworks::Image::dims)
   .def("size",                  &shapeworks::Image::size)
   .def("center",                &shapeworks::Image::center)
-  //.def("__repr__",              &shapeworks::Image::print)
+  //.def("__repr__",            &shapeworks::Image::print)
   //.def("__set__",             &shapeworks::Image::operator=) //todo
   ;
 
   py::class_<shapeworks::ImageUtils>(m, "ImageUtils")
-  //.def_static("isoresample",           py::overload_cast<shapeworks::Image>(&shapeworks::ImageUtils::isoresample), "image"_a, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
-  .def_static("isoresample",           &shapeworks::ImageUtils::isoresample, "image"_a, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
-  ;
+  //.def_static("isoresample",  py::overload_cast<shapeworks::Image>(&shapeworks::ImageUtils::isoresample), "image"_a, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
+  .def_static("isoresample", &shapeworks::ImageUtils::isoresample, "image"_a, "isoSpacing"_a=1.0, "outputSize"_a=shapeworks::Dims())
+  .def_static("topologyPreservingSmooth", &shapeworks::ImageUtils::topologyPreservingSmooth, "image"_a, "scaling"_a=20.0, "sigmoidAlpha"_a=10.5, "sigmoidBeta"_a=10.0, "curvatureIterations"_a=10, "applycurvaturefilter"_a=true);
 
   py::class_<shapeworks::Mesh>(m, "Mesh")
   .def(py::init<>())
@@ -108,4 +117,3 @@ PYBIND11_MODULE(shapeworks, m)
   py::module sub_module = m.def_submodule("submodule", "ShapeWorks submodule classes and functions");
   sub_module.def("add", &add, "adds two numbers", "i"_a=1, "j"_a=2);
 }
-
