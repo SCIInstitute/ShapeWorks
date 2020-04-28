@@ -1,0 +1,2 @@
+/usr/bin/ar qc libAlignment.a  CMakeFiles/Alignment.dir/Procrustes3D.cpp.o CMakeFiles/Alignment.dir/Transforms/itkAdvancedTransform.cpp.o CMakeFiles/Alignment.dir/Transforms/itkSparseKernelTransform.cpp.o CMakeFiles/Alignment.dir/Transforms/itkCompactlySupportedRBFSparseKernelTransform.cpp.o CMakeFiles/Alignment.dir/Transforms/itkThinPlateSplineKernelTransform2.cpp.o CMakeFiles/Alignment.dir/Transforms/itkKernelTransform2.cpp.o
+/usr/bin/ranlib libAlignment.a

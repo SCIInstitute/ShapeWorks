@@ -1,0 +1,2 @@
+/usr/bin/ar qc libParticles.a  CMakeFiles/Particles.dir/ParticleSystem.cpp.o CMakeFiles/Particles.dir/itkParticleShapeStatistics.cpp.o CMakeFiles/Particles.dir/itkParticlePositionReader.cpp.o CMakeFiles/Particles.dir/itkParticlePositionWriter.cpp.o CMakeFiles/Particles.dir/ShapeEvaluation.cpp.o
+/usr/bin/ranlib libParticles.a

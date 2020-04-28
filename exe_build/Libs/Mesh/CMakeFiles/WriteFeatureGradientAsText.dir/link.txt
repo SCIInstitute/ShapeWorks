@@ -1,0 +1,1 @@
+/usr/bin/c++   -Wno-inconsistent-missing-override   -fopenmp -g  -Wl,--disable-new-dtags   CMakeFiles/WriteFeatureGradientAsText.dir/WriteFeatureGradientAsText.cxx.o  -o ../../bin/WriteFeatureGradientAsText   -L/home/hxu/Documents/ShapeWorks/dependencies/install/lib  -Wl,-rpath,:::::::::::::: 

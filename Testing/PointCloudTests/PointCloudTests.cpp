@@ -8,20 +8,12 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include "PointCloud.h"
 
 #include <Eigen/Core>
-#include <itkImageFileReader.h>
-#include <itkImageFileWriter.h>
-#include <itkReinitializeLevelSetImageFilter.h> // for distance transform computation
 
 #include "TestConfiguration.h"
 
-//#include "ShapeWorksRunApp.h"
-#include "itkParticleShapeStatistics.h"
-
-#include "PointCloud.h"
-
-double *sphere_grid ( int n, double r[3], double c[3], int ng );
 double* get_bounding_sphere(size_t num, size_t& ng, double radius);
 
 bool print_files = true;
@@ -246,7 +238,7 @@ std::vector<double> sphere_test() {
   return absolute_differences;
 }
 
-TEST(PointCloudTests, sample_test) {
+TEST(PointCloudTests, point_cloud_functions_test) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/point_cloud_tests");
   chdir(test_location.c_str());

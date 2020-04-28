@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -Wno-inconsistent-missing-override   -fopenmp -g    -shared -Wl,-soname,libPointCloudEvaluators.so -o libPointCloudEvaluators.so CMakeFiles/PointCloudEvaluators.dir/CPURBFEvaluator.cpp.o   -L/home/hxu/Documents/ShapeWorks/dependencies/install/lib  -Wl,-rpath,/home/hxu/Documents/ShapeWorks/dependencies/install/lib 

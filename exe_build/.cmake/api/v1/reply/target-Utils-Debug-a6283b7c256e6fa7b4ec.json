@@ -1,0 +1,289 @@
+{
+	"archive" : {},
+	"artifacts" : 
+	[
+		{
+			"path" : "Libs/Utils/libUtils.a"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"install",
+			"add_definitions",
+			"set_property",
+			"INCLUDE",
+			"include",
+			"include_directories",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"Libs/Utils/CMakeLists.txt",
+			"CMakeLists.txt",
+			"dependencies/install/lib/cmake/ITK-5.0/UseITK.cmake",
+			"dependencies/install/lib/cmake/vtk-8.2/UseVTK.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 18,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 131,
+				"parent" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 105,
+				"parent" : 3
+			},
+			{
+				"file" : 2,
+				"parent" : 5
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 231,
+				"parent" : 6
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 115,
+				"parent" : 3
+			},
+			{
+				"command" : 5,
+				"file" : 1,
+				"line" : 91,
+				"parent" : 3
+			},
+			{
+				"file" : 3,
+				"parent" : 9
+			},
+			{
+				"command" : 3,
+				"file" : 3,
+				"line" : 23,
+				"parent" : 10
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 232,
+				"parent" : 6
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 27,
+				"parent" : 6
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 126,
+				"parent" : 3
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 127,
+				"parent" : 3
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 128,
+				"parent" : 3
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 11,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -Wno-inconsistent-missing-override   -fopenmp -g  "
+				},
+				{
+					"fragment" : "-std=gnu++14"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 4,
+					"define" : "DEBUG_CONSOLIDATION=0"
+				},
+				{
+					"backtrace" : 7,
+					"define" : "ITK_IO_FACTORY_REGISTER_MANAGER"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "SW_USE_OPENMP"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "vtkDomainsChemistry_AUTOINIT=1(vtkDomainsChemistryOpenGL2)"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "vtkIOExport_AUTOINIT=2(vtkIOExportOpenGL2,vtkIOExportPDF)"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "vtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL2)"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "vtkRenderingCore_AUTOINIT=3(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingOpenGL2)"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "vtkRenderingOpenGL2_AUTOINIT=1(vtkRenderingGL2PSOpenGL2)"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "vtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL2)"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 12,
+					"path" : "/home/hxu/Documents/ShapeWorks/exe_build/ITKFactoryRegistration"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vtk-8.2"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vxl/v3p/netlib"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/ITK-5.0"
+				},
+				{
+					"backtrace" : 14,
+					"path" : "/home/hxu/Documents/ShapeWorks"
+				},
+				{
+					"backtrace" : 15,
+					"path" : "/home/hxu/Documents/ShapeWorks/Libs/Common"
+				},
+				{
+					"backtrace" : 16,
+					"path" : "/home/hxu/Documents/ShapeWorks/ExternalLibs/optparse"
+				},
+				{
+					"backtrace" : 17,
+					"path" : "/home/hxu/Documents/ShapeWorks/Libs/Utils"
+				},
+				{
+					"backtrace" : 13,
+					"isSystem" : true,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vxl/core"
+				},
+				{
+					"backtrace" : 13,
+					"isSystem" : true,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vxl/vcl"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"id" : "Utils::@4a1c08a1c525d5112d73",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 2,
+				"path" : "lib"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "/home/hxu/Documents/ShapeWorks/exe_build/install"
+		}
+	},
+	"name" : "Utils",
+	"nameOnDisk" : "libUtils.a",
+	"paths" : 
+	{
+		"build" : "Libs/Utils",
+		"source" : "Libs/Utils"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Libs/Utils/Utils.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libs/Utils/Utils.h",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

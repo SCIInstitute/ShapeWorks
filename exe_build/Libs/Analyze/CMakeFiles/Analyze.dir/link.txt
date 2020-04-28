@@ -1,0 +1,2 @@
+/usr/bin/ar qc libAnalyze.a  CMakeFiles/Analyze.dir/Vis.cpp.o
+/usr/bin/ranlib libAnalyze.a

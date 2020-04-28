@@ -1,0 +1,2 @@
+/usr/bin/ar qc libPointCloud.a  CMakeFiles/PointCloud.dir/PointCloud.cpp.o
+/usr/bin/ranlib libPointCloud.a

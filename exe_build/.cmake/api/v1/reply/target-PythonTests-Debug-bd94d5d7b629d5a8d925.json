@@ -1,0 +1,316 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "bin/PythonTests"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"link_directories",
+			"INCLUDE",
+			"target_link_libraries",
+			"add_definitions",
+			"set_property",
+			"include",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"Testing/PythonTests/CMakeLists.txt",
+			"dependencies/install/share/vxl/cmake/UseVXL.cmake",
+			"CMakeLists.txt",
+			"dependencies/install/lib/cmake/ITK-5.0/UseITK.cmake",
+			"dependencies/install/lib/cmake/vtk-8.2/UseVTK.cmake",
+			"Testing/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 6,
+				"parent" : 0
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 97,
+				"parent" : 2
+			},
+			{
+				"file" : 1,
+				"parent" : 3
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 80,
+				"parent" : 4
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 10,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 131,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 105,
+				"parent" : 2
+			},
+			{
+				"file" : 3,
+				"parent" : 8
+			},
+			{
+				"command" : 5,
+				"file" : 3,
+				"line" : 231,
+				"parent" : 9
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 115,
+				"parent" : 2
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 91,
+				"parent" : 2
+			},
+			{
+				"file" : 4,
+				"parent" : 12
+			},
+			{
+				"command" : 5,
+				"file" : 4,
+				"line" : 23,
+				"parent" : 13
+			},
+			{
+				"file" : 5
+			},
+			{
+				"command" : 7,
+				"file" : 5,
+				"line" : 13,
+				"parent" : 15
+			},
+			{
+				"command" : 7,
+				"file" : 3,
+				"line" : 232,
+				"parent" : 9
+			},
+			{
+				"command" : 7,
+				"file" : 3,
+				"line" : 27,
+				"parent" : 9
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 126,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 127,
+				"parent" : 2
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 128,
+				"parent" : 2
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -Wno-inconsistent-missing-override   -fopenmp -g  "
+				},
+				{
+					"fragment" : "-std=gnu++14"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 7,
+					"define" : "DEBUG_CONSOLIDATION=0"
+				},
+				{
+					"backtrace" : 10,
+					"define" : "ITK_IO_FACTORY_REGISTER_MANAGER"
+				},
+				{
+					"backtrace" : 11,
+					"define" : "SW_USE_OPENMP"
+				},
+				{
+					"backtrace" : 14,
+					"define" : "vtkDomainsChemistry_AUTOINIT=1(vtkDomainsChemistryOpenGL2)"
+				},
+				{
+					"backtrace" : 14,
+					"define" : "vtkIOExport_AUTOINIT=2(vtkIOExportOpenGL2,vtkIOExportPDF)"
+				},
+				{
+					"backtrace" : 14,
+					"define" : "vtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL2)"
+				},
+				{
+					"backtrace" : 14,
+					"define" : "vtkRenderingCore_AUTOINIT=3(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingOpenGL2)"
+				},
+				{
+					"backtrace" : 14,
+					"define" : "vtkRenderingOpenGL2_AUTOINIT=1(vtkRenderingGL2PSOpenGL2)"
+				},
+				{
+					"backtrace" : 14,
+					"define" : "vtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL2)"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 16,
+					"path" : "/home/hxu/Documents/ShapeWorks/exe_build/Testing"
+				},
+				{
+					"backtrace" : 17,
+					"path" : "/home/hxu/Documents/ShapeWorks/exe_build/ITKFactoryRegistration"
+				},
+				{
+					"backtrace" : 18,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vtk-8.2"
+				},
+				{
+					"backtrace" : 18,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vxl/v3p/netlib"
+				},
+				{
+					"backtrace" : 18,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/ITK-5.0"
+				},
+				{
+					"backtrace" : 19,
+					"path" : "/home/hxu/Documents/ShapeWorks"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "/home/hxu/Documents/ShapeWorks/Libs/Common"
+				},
+				{
+					"backtrace" : 21,
+					"path" : "/home/hxu/Documents/ShapeWorks/ExternalLibs/optparse"
+				},
+				{
+					"backtrace" : 18,
+					"isSystem" : true,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vxl/core"
+				},
+				{
+					"backtrace" : 18,
+					"isSystem" : true,
+					"path" : "/home/hxu/Documents/ShapeWorks/dependencies/install/include/vxl/vcl"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"id" : "PythonTests::@86f4da1ce7a3acf56640",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wno-inconsistent-missing-override   -fopenmp -g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-Wl,--disable-new-dtags",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "-L/home/hxu/Documents/ShapeWorks/dependencies/install/lib",
+				"role" : "libraryPath"
+			},
+			{
+				"fragment" : "-Wl,-rpath,/home/hxu/Documents/ShapeWorks/dependencies/install/lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libgtest_main.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libgtest.a",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "PythonTests",
+	"nameOnDisk" : "PythonTests",
+	"paths" : 
+	{
+		"build" : "Testing/PythonTests",
+		"source" : "Testing/PythonTests"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Testing/PythonTests/PythonTests.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

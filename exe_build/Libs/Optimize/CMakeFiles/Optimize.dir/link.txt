@@ -1,0 +1,2 @@
+/usr/bin/ar qc libOptimize.a  CMakeFiles/Optimize.dir/ParticleSystem/itkParticleProcrustesRegistration.cxx.o CMakeFiles/Optimize.dir/ParticleSystem/itkParticleSystem.cxx.o CMakeFiles/Optimize.dir/Optimize.cpp.o CMakeFiles/Optimize.dir/OptimizeParameterFile.cpp.o
+/usr/bin/ranlib libOptimize.a
