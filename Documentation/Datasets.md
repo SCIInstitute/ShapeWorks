@@ -40,18 +40,12 @@ When calling `DatasetUtils.downloadDataset('ellipsoid')`, you will get a zip fil
 
 ## API
 
-### DatasetUtils.downloadDataset(datasetName, destinationPath='.', asZip = True)  
+### DatasetUtils.downloadDataset(datasetName, destinationPath='.', asZip = True, fileList = None)  
 - Parameters:   
   - **datasetName** is one of the names returned by `DatasetUtils.getDatasetList()`  
   - **destinationPath** is where the zip file or folder will go once it is downloaded  
-  - **asZip** toggles whether to download as zip or download individual files   
-- Returns: True on success and False on failure  
-
-### DatasetUtils.downloadDatasetFiles(datasetName, fileList, destinationPath='.')  
-- Parameters:   
-  - **datasetName** is one of the names returned by `DatasetUtils.getDatasetList()`  
+  - **asZip** toggles whether to download as zip or download individual files. (providing a fileList disables this functionality)   
   - **fileList** is a list of files to download. Example for femur: `['images/m03_1x_hip.nrrd', 'distance_transforms/m03_L_femur.ply']`   
-  - **destinationPath** is where the files will go once they are downloaded  
 - Returns: True on success and False on failure  
 
 ### DatasetUtils.uploadNewDataset(datasetName, datasetPath)
