@@ -12,7 +12,6 @@
 #include <itkTestingComparisonImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <itkReinitializeLevelSetImageFilter.h>
-#include <itkTranslationTransform.h>
 #include <itkBinaryFillholeImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkCurvatureFlowImageFilter.h>

@@ -7,7 +7,6 @@ using namespace pybind11::literals;
 #include "Image.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
-#include "Transform.h"
 #include "Optimize.h"
 #include "ParticleSystem.h"
 
@@ -45,16 +44,6 @@ PYBIND11_MODULE(shapeworks, m)
 // TypeError: 'shapeworks.Point3' object is not subscriptable
 
   // TODO: add Vector3 and Matrix (Matrix44) 
-
-  //<ctc> broken because Transform changed since pre-japan
-  // py::class_<shapeworks::Transform>(m, "Transform")
-  // .def(py::init<>())
-  // .def("reset",                 &shapeworks::Transform::reset)
-  // .def("translate",             &shapeworks::Transform::translate, "v"_a)
-  // .def("rotate",                &shapeworks::Transform::rotate, "axis"_a, "angle"_a)
-  // .def("scale",                 &shapeworks::Transform::scale, "s"_a)
-  // .def("__repr__",              &shapeworks::Transform::print)
-  // ;
 
   py::class_<shapeworks::Image>(m, "Image")
   .def(py::init<const std::string &>()) // can the argument for init be named (it's filename in this case)
@@ -94,7 +83,6 @@ PYBIND11_MODULE(shapeworks, m)
   .def("read",                  &shapeworks::Mesh::read, "filename"_a)
   .def("write",                 &shapeworks::Mesh::write, "filename"_a)
   .def("coverage",              &shapeworks::Mesh::coverage, "Not sure what this computes. Maybe spatial overlap", "other_mesh"_a)
-  .def("smooth",                &shapeworks::Mesh::smooth)
   .def("compare_points_equal",  &shapeworks::Mesh::compare_points_equal, "other_mesh"_a)
   .def("compare_scalars_equal", &shapeworks::Mesh::compare_scalars_equal, "other_mesh"_a)
   ;

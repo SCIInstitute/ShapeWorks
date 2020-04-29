@@ -108,7 +108,7 @@ def Run_Pipeline(args):
         rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
 
         """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(parentDir, rigidFiles, None)
+        croppedFiles = applyCropping(parentDir, rigidFiles)
 
     """
     We convert the scans to distance transforms, this step is common for both the 

@@ -11,7 +11,7 @@ import itk
 import vtk
 import vtk.util.numpy_support
 
-USE_NATIVE_API = True    # use native API instead of external executable (just for testing; eventually only this API)
+USE_NATIVE_API = True  # use native API instead of external executable (just for testing; eventually only this API)
 from shapeworks import *
 from CommonUtils import *
 
@@ -45,16 +45,15 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         outDataList.append(outname)
         # <ctc> as an example, keep in mind that if it's binary and needs recentering, the command can be written:
         # img.threshold().recenter().write(outname)
-        if USE_NATIVE_API:
-            img = Image(inname)
-            if isBinary:
-                img.antialias()
-            ImageUtils.isoresample(img, isoSpacing)
-            if isBinary:
-                img.threshold()  # re-binarize the image (defaults for threshold are (0,max) )
-            if recenter:
-                img.recenter()
-            img.write(outname)
+        img = Image(inname)
+        if isBinary:
+            img.antialias()
+        ImageUtils.isoresample(img, isoSpacing)
+        if isBinary:
+            img.threshold() # re-binarize the image (defaults for threshold are (0,max) )
+        if recenter:
+            img.recenter()
+        img.write(outname)
     return outDataList
 
 def center(outDir, inDataList):
@@ -66,11 +65,8 @@ def center(outDir, inDataList):
         inname = inDataList[i]
         outname = rename(inname, outDir, 'center')
         outDataList.append(outname)
-        cmd = ["shapeworks", 
-               "read-image", "--name", inname,
-               "recenter",
-               "write-image", "--name", outname]
-        subprocess.check_call(cmd)
+        img = Image(inname)
+        img.recenter().write(outname)
     return outDataList
 
 def applyPadding(outDir, inDataList, padSize, padValue=0):
@@ -85,11 +81,8 @@ def applyPadding(outDir, inDataList, padSize, padValue=0):
         inname = inDataList[i]
         outname = rename(inname, outDir, 'pad')
         outDataList.append(outname)
-        cmd = ["shapeworks", 
-               "read-image", "--name", inname,
-               "pad", "--padding", str(padSize), "--value", str(padValue),
-               "write-image", "--name", outname]
-        subprocess.check_call(cmd)
+        img = Image(inname)
+        img.pad(padSize, padValue).write(outname)
     return outDataList
 
 def applyCOMAlignment(outDir, inDataList):
@@ -241,17 +234,13 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", seginname,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--source", tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
+                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", segoutname]
             subprocess.check_call(cmd)
 
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--source", tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
+                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", rawoutname]
             subprocess.check_call(cmd)
         return  [outSegDataList, outRawDataList]
@@ -297,9 +286,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", inname,
-                   "--source", tpdtnrrdfilename,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
+                   "icp", "--source", tpdtnrrdfilename, "--target", ref_tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", outname]
             subprocess.check_call(cmd)
         return outDataList
