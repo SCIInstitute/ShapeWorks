@@ -4,13 +4,11 @@ set(shapeworks_sources
   Executable.cpp
   Command.cpp
   Commands.cpp
-  ParticleCommands.cpp
   )
 set(shapeworks_headers
   Executable.h
   Command.h
   Commands.h
-  ParticleCommands.h
   SharedCommandData.h
   )
 add_executable(shapeworks_exe

@@ -60,7 +60,7 @@ do
       shift
       ;;
       *)
-        # unknown option
+      # unknown option
       ;;
   esac
   shift
@@ -137,11 +137,10 @@ do
 
     if [ $process_raw -eq 1 ]
     then
-      CropImages --inFilename $segfilename --outFilename $segfilename_cropped --bbX $bb0 --bbY $bb1 --bbZ $bb2 \
-                 --startingIndexX $smallestIndex0 --startingIndexY $smallestIndex1 --startingIndexZ $smallestIndex2 \
-                 --MRIinFilename $imgfilename --MRIoutFilename $imgfilename_cropped
+      shapeworks binary-bounding-box --name $data_dir/*.nrrd -- --padding $padding_size read-image --name $segfilename crop write-image --name $segfilename_cropped read-image --name $imgfilename crop write-image --name $imgfilename_cropped
+
     else
-      CropImages --inFilename $segfilename --outFilename $segfilename_cropped --bbX $bb0 --bbY $bb1 --bbZ $bb2 \
-                 --startingIndexX $smallestIndex0 --startingIndexY $smallestIndex1 --startingIndexZ $smallestIndex2
+      shapeworks binary-bounding-box --name $data_dir/*.nrrd -- --padding $padding_size read-image --name $segfilename crop write-image --name $segfilename_cropped
+      
     fi
 done

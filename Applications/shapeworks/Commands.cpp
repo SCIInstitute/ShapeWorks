@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include "Image.h"
 #include "ImageUtils.h"
+#include "ShapeEvaluation.h"
 #include <limits>
 
 namespace shapeworks {
@@ -81,48 +82,6 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
   
   sharedData.image.write(filename, compressed);
   return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// ReadMesh
-///////////////////////////////////////////////////////////////////////////////
-void ReadMesh::buildParser()
-{
-  const std::string prog = "read-mesh";
-  const std::string desc = "reads a mesh";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to read");
-
-  Command::buildParser();
-}
-
-bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string filename = options["name"];
-
-  return sharedData.mesh.read(filename);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// WriteMesh
-///////////////////////////////////////////////////////////////////////////////
-void WriteMesh::buildParser()
-{
-  const std::string prog = "write-mesh";
-  const std::string desc = "writes the current mesh (determines type by its extension)";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to write");
-
-  Command::buildParser();
-}
-
-bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string filename = options["name"];
-  
-  return sharedData.mesh.write(filename);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -208,7 +167,7 @@ bool IsoResampleImage::execute(const optparse::Values &options, SharedCommandDat
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
   ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
-  return true; //<ctc> todo: remove return values from commands since they will throw exceptions upon failure
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -254,57 +213,6 @@ bool PadImage::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// SmoothMesh
-///////////////////////////////////////////////////////////////////////////////
-void SmoothMesh::buildParser()
-{
-  const std::string prog = "smooth-mesh";
-  const std::string desc = "smooths meshes";
-  parser.prog(prog).description(desc);
-  
-  // todo
-
-  Command::buildParser();
-}
-
-bool SmoothMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  //todo
-
-  return sharedData.mesh.smooth();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Coverage
-///////////////////////////////////////////////////////////////////////////////
-void Coverage::buildParser()
-{
-  const std::string prog = "coverage";
-  const std::string desc = "coverage between two meshes";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
-
-  Command::buildParser();
-}
-
-bool Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
-
-  if (second_mesh_string == "")
-  {
-    std::cerr << "Must specify second mesh\n";
-    return -1;
-  }
-
-  Mesh second_mesh;
-  second_mesh.read(second_mesh_string);
-
-  return sharedData.mesh.coverage(second_mesh);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // Translate
 ///////////////////////////////////////////////////////////////////////////////
 void Translate::buildParser()
@@ -329,7 +237,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (!useprev)
   {
-    sharedData.transform.reset();
+    sharedData.transform->SetIdentity();
 
     if (centerofmass)
     {
@@ -342,7 +250,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
       double tz = static_cast<double>(options.get("tz"));
 
       double v[3] = {tx, ty, tz};
-      sharedData.transform.translate(Vector3(v));
+      sharedData.transform->Translate(Vector3(v));
     }
   }
   
@@ -620,6 +528,303 @@ bool CropImage::execute(const optparse::Values &options, SharedCommandData &shar
 {
   sharedData.image.crop(sharedData.region);
   return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ICPRigid
+///////////////////////////////////////////////////////////////////////////////
+void ICPRigid::buildParser()
+{
+  const std::string prog = "icp";
+  const std::string desc = "performs iterative closed point (ICP) 3D rigid registration on pair of images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--target").action("store").type("string").set_default("").help("distance map of target image.");
+  parser.add_option("--source").action("store").type("string").set_default("").help("distance map of source image.");
+  parser.add_option("--isovalue").action("store").type("float").set_default(0.0).help("");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(20).help("number of iterations run ICP registration.");
+
+  Command::buildParser();
+}
+
+bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  Image target(options["target"]);
+  Image source(options["source"]);
+  float isovalue = static_cast<float>(options.get("isovalue"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  
+  sharedData.transform = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
+  sharedData.image.applyTransform(sharedData.transform);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ClipVolume
+///////////////////////////////////////////////////////////////////////////////
+void ClipVolume::buildParser()
+{
+  const std::string prog = "clip";
+  const std::string desc = "chops volume with corresponding cutting planes";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x1").action("store").type("double").set_default(0.0).help("value of cuttingplane [0][0]");
+  parser.add_option("--x2").action("store").type("double").set_default(0.0).help("value of cuttingplane [0][1]");
+  parser.add_option("--x3").action("store").type("double").set_default(0.0).help("value of cuttingplane [0][2]");
+  parser.add_option("--y1").action("store").type("double").set_default(0.0).help("value of cuttingplane [1][0]");
+  parser.add_option("--y2").action("store").type("double").set_default(0.0).help("value of cuttingplane [1][1]");
+  parser.add_option("--y3").action("store").type("double").set_default(0.0).help("value of cuttingplane [1][2]");
+  parser.add_option("--z1").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][0]");
+  parser.add_option("--z2").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][1]");
+  parser.add_option("--z3").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][2]");
+
+  Command::buildParser();
+}
+
+bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double x1 = static_cast<double>(options.get("x1"));
+  double x2 = static_cast<double>(options.get("x2"));
+  double x3 = static_cast<double>(options.get("x3"));
+  double y1 = static_cast<double>(options.get("y1"));
+  double y2 = static_cast<double>(options.get("y2"));
+  double y3 = static_cast<double>(options.get("y3"));
+  double z1 = static_cast<double>(options.get("z1"));
+  double z2 = static_cast<double>(options.get("z2"));
+  double z3 = static_cast<double>(options.get("z3"));
+
+  Matrix cuttingplane;
+  cuttingplane[0][0] = x1;
+  cuttingplane[0][1] = x2;
+  cuttingplane[0][2] = x3;
+  cuttingplane[1][0] = y1;
+  cuttingplane[1][1] = y2;
+  cuttingplane[1][2] = y3;
+  cuttingplane[2][0] = z1;
+  cuttingplane[2][1] = z2;
+  cuttingplane[2][2] = z3;
+
+  sharedData.image.clip(cuttingplane);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ReflectVolume
+///////////////////////////////////////////////////////////////////////////////
+void ReflectVolume::buildParser()
+{
+  const std::string prog = "reflect-volume";
+  const std::string desc = "reflect images with respect to image center and specific axis";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--axis").action("store").type("double").set_default(0).help("axis along which it needs to be reflected");
+
+  Command::buildParser();
+}
+
+bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double axis = static_cast<double>(options.get("axis"));
+
+  ImageUtils::reflect(sharedData.image, axis);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ChangeOrigin
+///////////////////////////////////////////////////////////////////////////////
+void ChangeOrigin::buildParser()
+{
+  const std::string prog = "change-orign";
+  const std::string desc = "change origin";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--x").action("store").type("double").set_default(0).help("x value of origin");
+  parser.add_option("--y").action("store").type("double").set_default(0).help("y value of origin");
+  parser.add_option("--z").action("store").type("double").set_default(0).help("z value of origin");
+
+  Command::buildParser();
+}
+
+bool ChangeOrigin::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double x = static_cast<double>(options.get("x"));
+  double y = static_cast<double>(options.get("y"));
+  double z = static_cast<double>(options.get("z"));
+
+  sharedData.image.changeOrigin(Point3({x, y, z}));
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ReadParticleSystem
+///////////////////////////////////////////////////////////////////////////////
+void ReadParticleSystem::buildParser()
+{
+  const std::string prog = "read-particle-system";
+  const std::string desc = "reads a particle system";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--names").action("store").type("multistring").set_default("").help("paths to .particle files");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool ReadParticleSystem::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::vector<std::string> filenames = options.get("names");
+  return sharedData.particleSystem.LoadParticles(filenames);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Compactness
+///////////////////////////////////////////////////////////////////////////////
+void Compactness::buildParser()
+{
+  const std::string prog = "compactness";
+  const std::string desc = "Compute compactness of a loaded particle system";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
+  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the scree plots for all modes to a file");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Compactness::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  const int nModes = static_cast<int>(options.get("nmodes"));
+  const std::string saveTo = static_cast<std::string>(options.get("saveto"));
+  const double r = ShapeEvaluation<3>::ComputeCompactness(sharedData.particleSystem, nModes, saveTo);
+  std::cout << r << std::endl;
+
+  return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Generalization
+///////////////////////////////////////////////////////////////////////////////
+void Generalization::buildParser()
+{
+  const std::string prog = "generalization";
+  const std::string desc = "compute generalization of a loaded particle system";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
+  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by generalization along with the mapping to the original shape");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Generalization::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  const int nModes = static_cast<int>(options.get("nmodes"));
+  const std::string saveTo = static_cast<std::string>(options.get("saveto"));
+  const double r = ShapeEvaluation<3>::ComputeGeneralization(sharedData.particleSystem, nModes, saveTo);
+  std::cout << r << std::endl;
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Specificity
+///////////////////////////////////////////////////////////////////////////////
+void Specificity::buildParser()
+{
+  const std::string prog = "specificity";
+  const std::string desc = "compute specificity of a loaded particle system";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--nmodes").action("store").type("int").set_default("1").help("Number of modes to use");
+  parser.add_option("--saveto").action("store").type("string").set_default("").help("Save the reconstructions sorted by generalization along with the mapping to the original shape");
+
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Specificity::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  const int nModes = static_cast<int>(options.get("nmodes"));
+  const std::string saveTo = static_cast<std::string>(options.get("saveto"));
+  const double r = ShapeEvaluation<3>::ComputeSpecificity(sharedData.particleSystem, nModes, saveTo);
+  std::cout << r << std::endl;
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ReadMesh
+///////////////////////////////////////////////////////////////////////////////
+void ReadMesh::buildParser()
+{
+  const std::string prog = "read-mesh";
+  const std::string desc = "reads a mesh";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to read");
+
+  Command::buildParser();
+}
+
+bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+
+  return sharedData.mesh.read(filename);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// WriteMesh
+///////////////////////////////////////////////////////////////////////////////
+void WriteMesh::buildParser()
+{
+  const std::string prog = "write-mesh";
+  const std::string desc = "writes the current mesh (determines type by its extension)";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of file to write");
+
+  Command::buildParser();
+}
+
+bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+
+  return sharedData.mesh.write(filename);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Coverage
+///////////////////////////////////////////////////////////////////////////////
+void Coverage::buildParser()
+{
+  const std::string prog = "coverage";
+  const std::string desc = "coverage between two meshes";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--second_mesh").action("store").type("string").set_default("").help("Second mesh to apply coverage.");
+
+  Command::buildParser();
+}
+
+bool Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string second_mesh_string = static_cast<std::string>(options.get("second_mesh"));
+
+  if (second_mesh_string == "")
+  {
+    std::cerr << "Must specify second mesh\n";
+    return -1;
+  }
+
+  Mesh second_mesh;
+  second_mesh.read(second_mesh_string);
+
+  return sharedData.mesh.coverage(second_mesh);
 }
 
 } // shapeworks

@@ -141,6 +141,4 @@ int Executable::run(int argc, char const *const *argv)
   return run(parser.args(), sharedData);
 }
 
-
 } // shapeworks
-

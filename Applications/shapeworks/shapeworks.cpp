@@ -5,7 +5,6 @@
 #include <exception>
 #include "Executable.h"
 #include "Commands.h"
-#include "ParticleCommands.h"
 
 using namespace shapeworks;
 
@@ -15,15 +14,11 @@ int main(int argc, char *argv[])
 
   shapeworks.addCommand(ReadImage::getCommand());
   shapeworks.addCommand(WriteImage::getCommand());
-  shapeworks.addCommand(ReadMesh::getCommand());
-  shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
-  shapeworks.addCommand(SmoothMesh::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
   shapeworks.addCommand(IsoResampleImage::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
-  shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(Translate::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
@@ -38,9 +33,16 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Blur::getCommand());
   shapeworks.addCommand(BoundingBox::getCommand());
   shapeworks.addCommand(CropImage::getCommand());
+  shapeworks.addCommand(ICPRigid::getCommand());
+  shapeworks.addCommand(ClipVolume::getCommand());
+  shapeworks.addCommand(ReflectVolume::getCommand());
+  shapeworks.addCommand(ChangeOrigin::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
+  shapeworks.addCommand(ReadMesh::getCommand());
+  shapeworks.addCommand(WriteMesh::getCommand());
+  shapeworks.addCommand(Coverage::getCommand());
 
   try {
     shapeworks.run(argc, argv);

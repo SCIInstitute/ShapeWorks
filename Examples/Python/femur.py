@@ -10,7 +10,6 @@ The first step in grooming is to turn the meshes into the binary volume format s
 The full mages and segmentations must be carried through every stop of grooming. 
 Optimization uses single scale.
 
-
 First import the necessary modules
 """
 
@@ -28,7 +27,6 @@ from OptimizeUtils import *
 from AnalyzeUtils import *
 
 def Run_Pipeline(args):
-
     """
     Unzip the data for this tutorial.
 
@@ -36,15 +34,14 @@ def Run_Pipeline(args):
     data and create necessary supporting files. The files will be Extracted in a
     newly created Directory TestEllipsoids.
     This data is LGE segmentation of left atrium.
-    """
-    """
+
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
+
     print("\nStep 1. Get Data\n")
     if int(args.interactive) != 0:
         input("Press Enter to continue")
-
 
     datasetName = "femur"
     filename = datasetName + ".zip"
@@ -83,13 +80,17 @@ def Run_Pipeline(args):
         -- if interactive tag - define cutting plane
         -- clip segementations with cutting plane
         -- Largest Bounding Box and Cropping
+
+        For detailed explainations of parameters for each tool, go to
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/AlgnmentTools.pdf'
         """
 
         # Directory where grooming output folders will be added
         parentDir = 'TestFemur/PrepOutput/'
         if not os.path.exists(parentDir):
             os.mkdir(parentDir)
-                # set name specific variables
+        # set name specific variables
         img_suffix = "1x_hip"
         reference_side = "left" # somewhat arbitrary
 
@@ -149,40 +150,40 @@ def Run_Pipeline(args):
         fileList_seg = MeshesToVolumes(parentDir + "volumes", reflectedFiles_mesh, reflectedFile_img)
 
         """
-        Apply isotropic resampling - The segmentation and images are resampled independently to have uniform spacing.
+        Apply isotropic resampling
+        The segmentation and images are resampled independently to have uniform spacing.
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
         """
-        Apply padding - Both the segmentation and raw images are padded in case the seg lies on the image boundary.
+        Apply padding
+        Both the segmentation and raw images are padded in case the seg lies on the image boundary.
         """
         paddedFiles_segmentations = applyPadding(parentDir + "padded/segementations/", resampledFiles_segmentations, 10)
         paddedFiles_images = applyPadding(parentDir + "padded/images/", resampledFiles_images, 10)
 
         """
-        Apply center of mass alignment - This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-        If raw=the list of image files, it will process both. If the raw parameter is left out it will process the segmentations only.
+        Apply center of mass alignment
+        This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         """
-        [comFiles_segmentations, comFiles_images] = applyCOMAlignment( parentDir + "com_aligned", paddedFiles_segmentations, raw=paddedFiles_images)
+        comFiles_segmentations = applyCOMAlignment(parentDir + "com_aligned/segmentations", paddedFiles_segmentations)
+        comFiles_images = applyCOMAlignment(parentDir + "com_aligned/images", paddedFiles_images)
 
         centerFiles_segmentations = center(parentDir + "centered/segmentations/", comFiles_segmentations)
         centerFiles_images = center(parentDir + "centered/images/", comFiles_images)
 
         """
         Apply rigid alignment
-        This function can handle both cases(processing only segmentation data or raw and segmentation data at the same time).
-        There is parameter that you can change to switch between cases. processRaw = True, processes raw and binary images with shared parameters.
-        processRaw = False, applies the center of mass alignment only on segemnattion data.
+        This function can handle both cases (processing only segmentation data or raw and segmentation data at the same time).
         This function uses the same transfrmation matrix for alignment of raw and segmentation files.
         Rigid alignment needs a reference file to align all the input files, FindMedianImage function defines the median file as the reference.
         """
         medianFile = FindReferenceImage(centerFiles_segmentations)
-
-        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images , medianFile, processRaw = True)
+        [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images, medianFile, processRaw = True)
 
         # Define cutting plane on median sample
         if args.interactive:
-           input_file = medianFile.replace("centered","aligned").replace(".nrrd", ".aligned.DT.nrrd")
+           input_file = medianFile.replace("centered", "aligned").replace(".nrrd", ".aligned.DT.nrrd")
            cutting_plane_points = SelectCuttingPlane(input_file)
         # Fix cutting plane points previously selected
         else:
@@ -259,11 +260,9 @@ def Run_Pipeline(args):
         """
         clippedFiles_segmentations = ClipBinaryVolumes(parentDir + 'clipped_segmentations', rigidFiles_segmentations, cutting_plane_points.flatten())
 
-        """
-        Compute largest bounding box and apply cropping - 
-        """
+        """Compute largest bounding box and apply cropping"""
+        croppedFiles_segmentations = applyCropping(parentDir + "cropped/segmentations", clippedFiles_segmentations,  rigidFiles_images, processRaw=True)
         [croppedFiles_segmentations, croppedFiles_images] = applyCropping(parentDir, clippedFiles_segmentations,  rigidFiles_images, processRaw=True)
-
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
@@ -273,7 +272,6 @@ def Run_Pipeline(args):
         We convert the scans to distance transforms, this step is common for both the
         prepped as well as unprepped data, just provide correct filenames.
         """
-
         dtFiles = applyDistanceTransforms(parentDir, croppedFiles_segmentations)
 
     else:
@@ -284,7 +282,6 @@ def Run_Pipeline(args):
             input("Press Enter to continue")
     
     """
-
     ## OPTIMIZE : Particle Based Optimization
 
     Now that we have the distance transform representation of data we create
@@ -335,9 +332,6 @@ def Run_Pipeline(args):
             "use_statistics_in_init" : 0
         }
 
-        """
-        Now we execute the particle optimization function.
-        """
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_SingleScale(pointDir, dtFiles, parameterDictionary)
 
     else:
@@ -364,10 +358,7 @@ def Run_Pipeline(args):
             "use_statistics_in_init" : 0
         }
 
-
         [localPointFiles, worldPointFiles] = runShapeWorksOptimize_MultiScale(pointDir, dtFiles, parameterDictionary)
-
-
 
     """
     ## ANALYZE : Shape Analysis and Visualization
@@ -389,15 +380,9 @@ def Run_Pipeline(args):
     sample-level particle system and the mean/template particle system as control points.
     This warping function is then used to deform the template dense mesh to the sample space.
 
-    """
-
-
-    """
     Reconstruct the dense mean surface given the sparse correspondence model.
     """
-
     print("\nStep 5. Analysis - Reconstruct the dense mean surface given the sparse correspodence model.\n")
     if args.interactive:
         input("Press Enter to continue")
     launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
-

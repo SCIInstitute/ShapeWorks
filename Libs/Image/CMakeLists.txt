@@ -2,12 +2,10 @@
 set(Image_sources
   Image.cpp
   ImageUtils.cpp
-  Transform.cpp
   )
 set(Image_headers
   Image.h
   ImageUtils.h
-  Transform.h
   )
 add_library(Image STATIC
   ${Image_sources}
@@ -26,17 +24,9 @@ install(TARGETS Image
   PUBLIC_HEADER DESTINATION include
   )
 
-add_executable(ClipVolume ClipVolume.cxx)
-target_link_libraries(ClipVolume ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)
-INSTALL(TARGETS ClipVolume RUNTIME DESTINATION bin)
-
 add_executable(WriteImageInfoToText WriteImageInfoToText.cxx )
 target_link_libraries(WriteImageInfoToText ${ITK_LIBRARIES} Utils)
 INSTALL(TARGETS WriteImageInfoToText RUNTIME DESTINATION bin)
-
-add_executable(ReflectVolumes ReflectVolumes.cxx)
-target_link_libraries(ReflectVolumes ${ITK_LIBRARIES} Utils)
-INSTALL(TARGETS ReflectVolumes  RUNTIME DESTINATION bin)
 
 add_executable(MeshFromDistanceTransforms MeshFromDistanceTransforms.cxx)
 target_link_libraries(MeshFromDistanceTransforms ${ITK_LIBRARIES} ${VTK_LIBRARIES} tinyxml)

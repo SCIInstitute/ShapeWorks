@@ -115,7 +115,6 @@ do
     segfilename_padded=${out_dir}${seg_prefix}.${subject_id}${seg_suffix}.padded.nrrd
     imgfilename_padded=${out_dir}${img_prefix}.${subject_id}${seg_suffix}.padded.nrrd
     
-    
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     EchoWithColor "segfilename $segfilename" "yellow"
     EchoWithColor  "imgfilename $imgfilename" "yellow"

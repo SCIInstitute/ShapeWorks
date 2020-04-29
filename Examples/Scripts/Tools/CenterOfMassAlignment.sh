@@ -68,7 +68,6 @@ done
 source ${scriptHome}/setup.txt # works for server as well
 source ${scriptHome}/Utils/Utils.sh # common utility functions
 
-
 mkdir -p $out_dir
 
 segPrefixLength=${#seg_prefix}
@@ -118,11 +117,10 @@ do
     
     if [ $process_raw -eq 1 ]
     then
-    TranslateShapeToImageOrigin --inFilename $segfilename  --outFilename $segfilename_com \
-                                --MRIinFilename $imgfilename --MRIoutFilename $imgfilename_com \
-                                --useCenterOfMass 1 --parameterFilename $paramfilename_com
+    shapeworks read-image --name $segfilename translate --centerofmass 1 writeimage --name $segfilename_com
+    shapeworks read-image --name $imgfilename translate --centerofmass 1 writeimage --name $imgfilename_com
+    
     else
-    TranslateShapeToImageOrigin --inFilename $segfilename  --outFilename $segfilename_com \
-                                --useCenterOfMass 1 --parameterFilename $paramfilename_com
+    shapeworks read-image --name $segfilename translate --centerofmass 1 writeimage --name $segfilename_com
     fi
 done

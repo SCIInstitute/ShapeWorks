@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Shapeworks.h"
-#include "Transform.h"
 #include <limits>
 #include <itkImage.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
 
 namespace shapeworks {
 
@@ -32,24 +33,44 @@ public:
   Image& operator=(Image &img) { this->image.Swap(img.image); return *this; }
   Image& operator=(const Image &img);
 
-  Image& write(const std::string &filename, bool compressed = true);
+  Image &write(const std::string &filename, bool compressed = true);
 
-  Image& antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3);
-  Image& recenter();
-  Image& resample(const Point3 &spacing, Dims outputSize = Dims()); // Resamples image with new voxel spacing and output size [same size if unspecified]
-  Image& pad(int padding = 0, PixelType value = 0.0);
-  Image& applyTransform(const Transform &transform);
-  Image& extractLabel(PixelType label = 1.0);
-  Image& closeHoles();
-  Image& threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
-  Image& computeDT(float isoValue = 0.0);
-  Image& applyCurvatureFilter(unsigned iterations = 10);
-  Image& applyGradientFilter();
-  Image& applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
-  Image& applyTPLevelSetFilter(const Image &featureImage, double scaling = 20.0);
-  Image& gaussianBlur(double sigma = 0.0);
+  Image &antialias(unsigned numIterations = 50, float maxRMSErr = 0.01f, unsigned numLayers = 3);
+  Image &recenter();
+  Image &resample(const Point3 &spacing, Dims outputSize = Dims()); // Resamples image with new voxel spacing and output size [same size if unspecified]
+  Image &pad(int padding = 0, PixelType value = 0.0);
+  Image &applyTransform(const Transform::Pointer &transform);
+  Image &extractLabel(PixelType label = 1.0);
+  Image &closeHoles();
+  Image &threshold(PixelType min = std::numeric_limits<PixelType>::epsilon(), PixelType max = std::numeric_limits<PixelType>::max());
+  Image &computeDT(float isoValue = 0.0);
+  Image &applyCurvatureFilter(unsigned iterations = 10);
+  Image &applyGradientFilter();
+  Image &applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
+  Image &applyTPLevelSetFilter(const Image &featureImage, double scaling = 20.0);
+  Image &gaussianBlur(double sigma = 0.0);
   Region binaryBoundingBox(std::vector<std::string> &filenames, int padding = 0);
-  Image& crop(const Region &region);
+  Image &crop(const Region &region);
+  vtkSmartPointer<vtkPolyData> convert(const Image &img, float isoValue = 0.0);
+  Image &clip(Matrix cuttingPlane);
+  Image &changeOrigin(Point3 origin = Point3({0, 0, 0}));
+
+  template <typename ITK_Exporter, typename VTK_Importer>
+  void connectPipelines(ITK_Exporter exporter, VTK_Importer *importer)
+  {
+    importer->SetUpdateInformationCallback(exporter->GetUpdateInformationCallback());
+    importer->SetPipelineModifiedCallback(exporter->GetPipelineModifiedCallback());
+    importer->SetWholeExtentCallback(exporter->GetWholeExtentCallback());
+    importer->SetSpacingCallback(exporter->GetSpacingCallback());
+    importer->SetOriginCallback(exporter->GetOriginCallback());
+    importer->SetScalarTypeCallback(exporter->GetScalarTypeCallback());
+    importer->SetNumberOfComponentsCallback(exporter->GetNumberOfComponentsCallback());
+    importer->SetPropagateUpdateExtentCallback(exporter->GetPropagateUpdateExtentCallback());
+    importer->SetUpdateDataCallback(exporter->GetUpdateDataCallback());
+    importer->SetDataExtentCallback(exporter->GetDataExtentCallback());
+    importer->SetBufferPointerCallback(exporter->GetBufferPointerCallback());
+    importer->SetCallbackUserData(exporter->GetCallbackUserData());
+  }
 
   Point3 logicalToPhysical(const IPoint3 &v) const;
   IPoint3 physicalToLogical(const Point3 &p) const;

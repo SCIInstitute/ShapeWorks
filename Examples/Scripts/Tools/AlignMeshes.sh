@@ -10,14 +10,10 @@
 # Notes:
 ##################################################################################
 
-
 scriptHome=../
-
 mesh_prefix=""
 mesh_suffix=""
-
 mesh_extension="vtk"
-
 registration_mode=similarity
 
 # input parameters
@@ -153,5 +149,3 @@ do
     fi   
     
 done
-
-

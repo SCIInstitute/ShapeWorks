@@ -54,7 +54,8 @@ Image commands:
 [x] *AntiAliasing -> antialias
  - shapeworks readimage --name ./test.nrrd antialias --numiterations 75 --maxrmserror 0.03 --numlayers 0 writeimage --name ./foobar.nrrd
 
-[] ClipVolume
+[x] ClipVolume -> clip
+ - shapeworks readimage --name ./test.nrrd clip-volume --x1 --x2 --x3 --y1 --y2 --y3 --z1 --z2 --z3 writeimage --name ./foobar.nrrd
 
 [x] *CloseHoles -> closeholes
  - shapeworks readimage --name ./test.nrrd closeholes writeimage --name ./foobar.nrrd 
@@ -68,13 +69,14 @@ Image commands:
 [x] *FastMarching -> computedt
  - shapeworks readimage --name ./test.nrrd fastmarch --isovalue 0.0 writeimage --name ./foobar.nrrd
 
-[x] *FindLargestBoundingBox -> boundingbox 
+[x] *FindLargestBoundingBox -> binaryboundingbox 
  - shapeworks boundingbox --names ./images/*.nrrd -- --padding 0
 
 [x] *PadVolumeWithConstant -> pad
  - shapeworks readimage --name ./test.nrrd pad --padding 0 --value 0.0 writeimage --name ./foobar.nrrd
 
-[] *ReflectVolumes
+[x] *ReflectVolumes -> reflectvolume
+ - shapeworks readimage --name ./test.nrrd reflectvolume --axis 1 writeimage --name ./foobar.nrrd
 
 [x] ResampleVolumesToBeIsotropic -> isoresample
  - shapeworks readimage --name ./test.nrrd antialias isoresample --isospacing 1.0 recenter binarize writeimage --name ./foobar.nrrd
@@ -83,7 +85,7 @@ Image commands:
  - shapeworks readimage --name ./test.nrrd threshold writeimage --name ./foobar.nrrd
 
 [x] TopologyPreservingSmoothing
- - shapeworks readimage --name ./images/test.nrrd curvature --iterations 1 writeimage --name ./images/test.tpSmoothDT.nrrd gradient sigmoid --alpha 10.5 setlevel --other ./images/test.tpSmoothDT.nrrd --scaling 0.0 writeimage --name ./images/test.ISO.nrrd 
+ - shapeworks readimage --name ./images/test.nrrd curvature --iterations 1 writeimage --name ./images/test.tpSmoothDT.nrrd topo-preserving-smooth --alpha 10.5 --beta 10.0 --scaling 0.0 --applycurvature 0 writeimage --name ./images/test.ISO.nrrd 
 
 [x] curvature (created new command by breaking down TopologyPreservingSmoothing)
  - shapeworks readimage --name ./images/test.nrrd curvature --iterations 1 writeimage --name ./images/test.tpSmoothDT.nrrd
@@ -94,7 +96,7 @@ Image commands:
 [x] sigmoid (created new command by breaking down TopologyPreservingSmoothing)
  - shapeworks readimage --name ./images/test.nrrd sigmoid --alpha 10.5 --beta 10.0 writeimage --name ./images/foobar.nrrd
 
-[x] setlevel (created new command by breaking down TopologyPreservingSmoothing)
+[x] tplevelset (created new command by breaking down TopologyPreservingSmoothing)
  - shapeworks readimage --name ./images/test.nrrd setlevel --other ./images/test.tpSmoothDT.nrrd --scaling 0.0 writeimage --name ./images/test.ISO.nrrd
 
 [x] blur
@@ -103,11 +105,11 @@ Image commands:
 
 [x] itkTBGACLevelSetImageFilter (also has .txx file) -> not a tool
 
-Mesh commands:  (some of these may not actually be executables)
+Mesh commands:
 
-[] readmesh  (functions exist, they just don't do anything)
+[] readmesh
 
-[] writemesh (functions exist, they just don't do anything)
+[] writemesh
 
 ClipClosedSurface
 ComputeCurvatureAndCoordFiles
@@ -141,7 +143,7 @@ ReconstructSurface
 ReflectMesh
 RemoveFidsDTLeakage
 
-[] SmoothMesh -> shapeworks smoothmesh
+[] SmoothMesh -> smoothmesh
 
 WriteFeatureGradientAsText
 
@@ -162,14 +164,18 @@ ShapeWorksRunApp.h (save this one till last or not at all)
 
 Alignment commands:
 
-ApplyRigid3DTransformationToImage
-[] ICPRigid3DImageRegistration
+[] ApplyRigid3DTransformationToImage
+
+[x] ICPRigid3DImageRegistration -> icp 
+
 [] ICPRigid3DMeshRegistration
+
 Procrustes3D.cpp
 Procrustes3D.h
-ReflectMeshes
-ResampleVolumeToIsotropic
-ResizeOriginResampleVolumes
+
+[] ReflectMeshes
+[] ResampleVolumeToIsotropic
+[] ResizeOriginResampleVolumes
 
 [x] TranslateImages -> translate
  - shapeworks readimage --name ./images/test.nrrd translate --tx 10 --ty 10 --tz 10 writeimage --name ./images/foobar.nrrd

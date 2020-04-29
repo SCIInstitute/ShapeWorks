@@ -53,7 +53,7 @@ do
       shift
       ;;
       *)
-        # unknown option
+      # unknown option
       ;;
   esac
   shift
@@ -97,4 +97,3 @@ do
     shapeworks read-image --name $nrrdfilename extract-label --label 1.0 write-image --name $seg_label
     
 done
-
