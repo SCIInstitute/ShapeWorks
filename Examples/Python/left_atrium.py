@@ -190,7 +190,7 @@ def Run_Pipeline(args):
             rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
 
             """Compute largest bounding box and apply cropping"""
-            croppedFiles = applyCropping(parentDir "cropped", rigidFiles, None )
+            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles)
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:
