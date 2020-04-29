@@ -286,7 +286,10 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", inname,
-                   "icp", "--source", tpdtnrrdfilename, "--target", ref_tpdtnrrdfilename, "--iterations", str(icpIterations),
+                   "icp",
+                   "--source", tpdtnrrdfilename,
+                   "--target", ref_tpdtnrrdfilename,
+                   "--iterations", str(icpIterations),
                    "write-image", "--name", outname]
             subprocess.check_call(cmd)
         return outDataList
@@ -306,12 +309,10 @@ def applyCropping(outDir, inDataList, paddingSize=10):
         outname = inname.replace(initPath, outDir)
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
-        cmd = ["shapeworks",
-               "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
-               "read-image", "--name", inname,
-               "crop",
-               "write-image", "--name", outname]
-        subprocess.check_call(cmd)
+        if USE_NATIVE_API:
+            img = Image(inname)
+            region = img.binaryBoundingBox(glob.glob(initPath+"/*.nrrd"), paddingSize)
+            img.crop(region).write(outname)
     return outDataList
 
 def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):

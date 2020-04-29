@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -71,6 +72,11 @@ PYBIND11_MODULE(shapeworks, m)
   .def("center",                &shapeworks::Image::center)
   //.def("__repr__",            &shapeworks::Image::print)
   //.def("__set__",             &shapeworks::Image::operator=) //todo
+  ;
+
+  py::class_<shapeworks::Image::Region>(m, "Region")
+  .def("origin",                &shapeworks::Image::Region::origin)
+  .def("size",                  &shapeworks::Image::Region::size)
   ;
 
   py::class_<shapeworks::ImageUtils>(m, "ImageUtils")
