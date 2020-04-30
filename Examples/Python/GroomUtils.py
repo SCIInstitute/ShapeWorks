@@ -150,13 +150,12 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
     ref_isonrrdfilename = newRefFile.replace('.nrrd', '.ISO.nrrd')
 
     # reference image processing
-    if USE_NATIVE_API:
-        img = Image(refFile)
-        img.extractLabel(1.0).closeHoles().antialias(antialiasIterations).computeDT(isoValue).write(ref_dtnrrdfilename)
-        dtimg = Image(ref_dtnrrdfilename)
-        dtimg.applyCurvatureFilter(smoothingIterations).write(ref_tpdtnrrdfilename)
-        isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
-        isoimg.write(ref_isonrrdfilename)
+    img = Image(refFile)
+    img.extractLabel(1.0).closeHoles().antialias(antialiasIterations).computeDT(isoValue).write(ref_dtnrrdfilename)
+    dtimg = Image(ref_dtnrrdfilename)
+    dtimg.applyCurvatureFilter(smoothingIterations).write(ref_tpdtnrrdfilename)
+    isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
+    isoimg.write(ref_isonrrdfilename)
 
     if processRaw:
         rawoutDir = os.path.join(outDir, 'images')
@@ -181,29 +180,13 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             dtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
             tpdtnrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
             isonrrdfilename = segoutname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-            cmd = ["shapeworks", 
-                   "read-image", "--name", seginname, 
-                   "extract-label", "--label", str(1.0),
-                   "close-holes",
-                   "write-image", "--name", seginname,
-                   "antialias", "--numiterations", str(antialiasIterations),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
-                   "compute-dt", "--isovlaue", str(isoValue),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)            
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
-                   "curvature", "--iterations", str(smoothingIterations),
-                   "write-image", "--name", tpdtnrrdfilename,
-                   "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-                   "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
-                   "write-image", "--name", isonrrdfilename]
-            subprocess.check_call(cmd)
+            img = Image(seginname)
+            img.extractLabel(1.0).closeHoles().write(seginname)
+            img.antialias(antialiasIterations).computeDT(isoValue).write(dtnrrdfilename)
+            dtimg = Image(dtnrrdfilename)
+            dtimg.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
+            isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
+            isoimg.write(isonrrdfilename)
 
             cmd = ["shapeworks", 
                    "read-image", "--name", seginname,
@@ -229,34 +212,14 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
             dtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.DT.nrrd')
             tpdtnrrdfilename = outname.replace('.aligned.nrrd', '.aligned.tpSmoothDT.nrrd')
             isonrrdfilename = outname.replace('.aligned.nrrd', '.aligned.ISO.nrrd')
-            cmd = ["shapeworks", 
-                   "read-image", "--name", inname,
-                   "extract-label", "--label", str(1.0),
-                   "close-holes",
-                   "write-image", "--name", inname]
-            subprocess.check_call(cmd)
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", inname,
-                   "antialias", "--numiterations", str(antialiasIterations),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
-                   "compute-dt", "--isovalue", str(isoValue),
-                   "write-image", "--name", dtnrrdfilename]
-            subprocess.check_call(cmd)
-
-            cmd = ["shapeworks", 
-                   "read-image", "--name", dtnrrdfilename,
-                   "curvature", "--iterations", str(smoothingIterations),
-                   "write-image", "--name", tpdtnrrdfilename,
-                   "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-                   "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
-                   "write-image", "--name", isonrrdfilename]
-            subprocess.check_call(cmd)
-
+            img = Image(inname)
+            img.extractLabel(1.0).closeHoles().write(inname)
+            img.antialias(antialiasIterations).computeDT(isoValue).write(dtnrrdfilename)
+            dtimg = Image(dtnrrdfilename)
+            dtimg.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
+            isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
+            isoimg.write(isonrrdfilename)
+            
             cmd = ["shapeworks", 
                    "read-image", "--name", inname,
                    "icp",
@@ -298,6 +261,7 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.close()
 
 def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0, percentage=50):
+    print("\n############# Apply Distance Transforms #############")
     outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -316,44 +280,14 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
         isonrrdfilename = outname.replace('.nrrd', '.ISO.nrrd')
         finalnm = tpdtnrrdfilename.replace(outDir, finalDTDir)
         outDataList.append(finalnm)
-        if USE_NATIVE_API:
-            img = Image(inname)
-            img.extractLabel(1.0).closeHoles().antialias(antialiasIterations).write(dtnrrdfilename)
-            img = Image(dtnrrdfilename)
-            img.computeDT(isoValue).write(dtnrrdfilename)
-            img = Image(dtnrrdfilename)
-            img.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
-            img = Image(dtnrrdfilename)
-            ImageUtils.topologyPreservingSmooth(img, scaling, alpha, beta, False)
-            img.write(isonrrdfilename)
-
-        cmd = ["shapeworks", 
-               "read-image", "--name", inname,
-               "extract-label", "--label", str(1.0),
-               "close-holes",
-               "write-image", "--name", inname]
-        subprocess.check_call(cmd)
-
-        cmd = ["shapeworks", 
-               "read-image", "--name", inname,
-               "antialias", "--numiterations", str(antialiasIterations),
-               "write-image", "--name", dtnrrdfilename]
-        subprocess.check_call(cmd)
-
-        cmd = ["shapeworks", 
-               "read-image", "--name", dtnrrdfilename,
-               "compute-dt", "--isovalue", str(isoValue),
-               "write-image", "--name", dtnrrdfilename]
-        subprocess.check_call(cmd)
-        
-        cmd = ["shapeworks", 
-               "read-image", "--name", dtnrrdfilename,
-               "curvature", "--iterations", str(smoothingIterations),
-               "write-image", "--name", tpdtnrrdfilename,
-               "topo-preserving-smooth", "--scaling", str(scaling), "--alpha", str(alpha), "--beta", str(beta),
-               "--applycurvature", str(False), # b/c starting with the results of curvature (smoothed)
-               "write-image", "--name", isonrrdfilename]
-        subprocess.check_call(cmd)
+        img = Image(inname)
+        img.extractLabel(1.0).closeHoles().write(inname)
+        img.antialias(antialiasIterations).write(dtnrrdfilename)
+        dtimg = Image(dtnrrdfilename)
+        dtimg.computeDT(isoValue).write(dtnrrdfilename)
+        dtimg.applyCurvatureFilter(smoothingIterations).write(tpdtnrrdfilename)
+        isoimg = ImageUtils.topologyPreservingSmooth(dtimg, scaling, alpha, beta, False)
+        isoimg.write(isonrrdfilename)
         shutil.copy(tpdtnrrdfilename, finalDTDir)
     return outDataList
 
