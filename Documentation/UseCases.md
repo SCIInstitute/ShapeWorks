@@ -72,7 +72,7 @@ This will select a representative sample of the specified size to run through th
 
 This dataset comprises of axis-aligned ellipsoids which are varying along a singular axis. This examples is a steeping stone for the user to get familiar with the workfolw of ShapeWorks. The ellipsoid.py use case represent the standard use version of shapeworks, it includes the full pipeline for processed as well as unprocessed data. 
 
-The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/Examples/Python)
+The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
 
 To run the use case, run ellipsoid.py with proper tags. The tags control the type of input data and the optimization method.
 * --start_with_prepped_data: just does the optimization on previously processed data
