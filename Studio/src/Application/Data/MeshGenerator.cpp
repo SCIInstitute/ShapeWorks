@@ -86,7 +86,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_image(ImageType::Poi
 vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh_from_file(std::string filename,
                                                                  float iso_value)
 {
-  std::cerr << "build_mesh from " << filename << "\n";
+  //std::cerr << "build_mesh from " << filename << "\n";
 
   vtkSmartPointer<vtkPolyData> poly_data;
   try {

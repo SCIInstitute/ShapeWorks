@@ -32,7 +32,7 @@ Shape::~Shape()
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_mesh(std::string display_mode)
 {
-  std::cerr << "get_mesh(" << display_mode << ")\n";
+  //std::cerr << "get_mesh(" << display_mode << ")\n";
   if (display_mode == Visualizer::MODE_ORIGINAL_C) {
     return this->get_original_mesh();
   }

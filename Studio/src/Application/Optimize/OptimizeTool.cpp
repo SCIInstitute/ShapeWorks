@@ -141,13 +141,13 @@ void OptimizeTool::on_run_optimize_button_clicked()
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::on_meshDecimation_valueChanged(double v)
+void OptimizeTool::meshDecimation_valueChanged(double v)
 {
   this->preferences_.set_preference("optimize_decimation", v);
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::on_numClusters_valueChanged(int v)
+void OptimizeTool::numClusters_valueChanged(int v)
 {
   this->preferences_.set_preference("optimize_clusters", v);
 }
@@ -159,7 +159,7 @@ void OptimizeTool::on_weight_valueChanged(double v)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::on_maxAngle_valueChanged(double v)
+void OptimizeTool::maxAngle_valueChanged(double v)
 {
   this->preferences_.set_preference("optimize_maxAngle", v);
 }
@@ -183,7 +183,7 @@ void OptimizeTool::on_iterations_valueChanged(int v)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::on_decay_span_valueChanged(int v)
+void OptimizeTool::decay_span_valueChanged(int v)
 {
   this->preferences_.set_preference("optimize_decay_span",
                                     static_cast<double>(v));

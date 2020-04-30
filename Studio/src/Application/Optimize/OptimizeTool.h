@@ -45,14 +45,14 @@ public Q_SLOTS:
   void handle_progress(int val);
   void handle_error(std::string);
   void handle_warning(std::string);
-  void on_meshDecimation_valueChanged(double v);
-  void on_numClusters_valueChanged(int v);
+  void meshDecimation_valueChanged(double v);
+  void numClusters_valueChanged(int v);
   void on_weight_valueChanged(double v);
-  void on_maxAngle_valueChanged(double v);
+  void maxAngle_valueChanged(double v);
   void on_starting_regularization_valueChanged(double v);
   void on_ending_regularization_valueChanged(double v);
   void on_iterations_valueChanged(int v);
-  void on_decay_span_valueChanged(int v);
+  void decay_span_valueChanged(int v);
   void on_procrustes_interval_valueChanged(int v);
   void handle_message(std::string);
 

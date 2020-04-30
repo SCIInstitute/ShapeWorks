@@ -239,7 +239,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
 {
   int index = this->get_index_for_column(name);
 
-  std::cerr << "index for '" << name << "' = " << index << "\n";
+  //std::cerr << "index for '" << name << "' = " << index << "\n";
   std::vector<std::string> list;
   if (index < 0) {
     return list;

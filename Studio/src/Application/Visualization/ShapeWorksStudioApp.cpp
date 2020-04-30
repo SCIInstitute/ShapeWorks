@@ -569,7 +569,7 @@ void ShapeWorksStudioApp::update_table()
 
   QStringList table_headers;
   for (const std::string& header : headers) {
-    std::cerr << "header: " << header << "\n";
+    //std::cerr << "header: " << header << "\n";
     table_headers << QString::fromStdString(header);
   }
 

@@ -751,7 +751,7 @@ QToolButton:pressed{
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>275</height>
+              <height>50</height>
              </size>
             </property>
             <property name="frameShape">
@@ -781,7 +781,7 @@ QToolButton:pressed{
                <x>0</x>
                <y>0</y>
                <width>289</width>
-               <height>263</height>
+               <height>240</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -793,7 +793,7 @@ QToolButton:pressed{
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>250</height>
+               <height>50</height>
               </size>
              </property>
              <layout class="QGridLayout" name="gridLayout_6">
@@ -823,7 +823,7 @@ QToolButton:pressed{
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>250</height>
+                  <height>50</height>
                  </size>
                 </property>
                </widget>

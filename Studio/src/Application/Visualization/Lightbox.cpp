@@ -330,7 +330,7 @@ void Lightbox::check_for_first_draw()
       }
     }
     if (ready_viewer >= 0) {
-      std::cerr << "First draw!\n";
+      //std::cerr << "First draw!\n";
       this->first_draw_ = false;
       this->redraw();
       this->viewers_[ready_viewer]->get_renderer()->Render();
