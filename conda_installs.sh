@@ -12,12 +12,12 @@ fi
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "installing anaconda..."
-    if [ "$(uname)" == "Darwin" ]; then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+    if [[ "$(uname)" == "Darwin" ]]; then
+      curl -o ./Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
       bash ./Miniconda3-latest-MacOSX-x86_64.sh
       rm ./Miniconda3-latest-MacOSX-x86_64.sh
-    elif [ "$(uname)" == "Linux" ]; then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    elif [[ "$(uname)" == "Linux" ]]; then
+      curl -o ./Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
       bash ./Miniconda3-latest-Linux-x86_64.sh
       rm ./Miniconda3-latest-Linux-x86_64.sh
     else
@@ -29,10 +29,11 @@ function install_conda() {
     conda config --set auto_activate_base false
   fi
 
-  #update anaconda
+  # add default channels
   conda config --add channels anaconda
   conda config --add channels conda-forge
   
+  # update anaconda
   if ! conda update --yes -n base conda; then return 1; fi
   if ! conda update --yes --all; then return 1; fi
 
@@ -41,7 +42,7 @@ function install_conda() {
   if ! conda create --yes --name $CONDAENV python=3.7; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
-  
+
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=20.0.2; then return 1; fi
   if ! pip install --upgrade pip; then return 1; fi
@@ -54,6 +55,7 @@ function install_conda() {
        requests=2.22.0 \
        geotiff=1.5.1 \
        numpy=1.17.4 \
+       eigen=3.3.7 \
        git-lfs=2.6.1 \
        openblas=0.3.3 \
        doxygen=1.8.16 \
@@ -61,7 +63,7 @@ function install_conda() {
        vtk=8.2.0 \
        itk=5.1.0 \
        scikit-learn=0.22.1 \
-       pybind=2.4.3 \
+       pybind11=2.5.0 \
        notebook=6.0.3 \
        matplotlib=3.2.1 \
        itkwidgets=0.26.1
@@ -84,15 +86,10 @@ function install_conda() {
      termcolor==1.1.0
       then return 1; fi
   fi
-
   
-  # pip packages (only install packages using pip when they aren't available in conda)
-  if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
-
-  # install any additional Linux dependencies
-  if [[ "$(uname)" == "Linux" ]]; then
-    echo "nothing additional to install for Linux"
-  fi
+  # pip installs (none currently needed, but here are two examples:)
+  #if ! pip install matplotlib==3.1.2; then return 1; fi
+  #if ! pip install -e Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
 
   conda info
   return 0
@@ -105,4 +102,3 @@ else
   echo "Problem encountered creating/updating $CONDAENV conda environment."
   return 1;
 fi
-
