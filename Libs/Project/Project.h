@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <Subject.h>
 
 // forward declaration
@@ -60,6 +61,9 @@ public:
   std::vector<std::string> get_string_column(std::string name);
 
   bool get_segmentations_present();
+
+  std::map<std::string, std::string> get_settings(std::string name);
+  void set_settings(std::string name, std::map<std::string, std::string> settings);
 
 private:
 

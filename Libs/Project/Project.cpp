@@ -274,7 +274,7 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
   for (int i = 0; i < headers.length(); i++) {
     std::cerr << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
-      return i+1;
+      return i + 1;
     }
   }
 
@@ -313,7 +313,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
   std::cerr << "rows.length = " << rows.length() << "\n";
 
   for (int i = 1; i < rows.length(); i++) {
-    std::string value = rows[i][index-1].to_string();
+    std::string value = rows[i][index - 1].to_string();
     std::cerr << "value = " << value << "\n";
     //if (value != "") {
     list.push_back(value);
@@ -327,6 +327,49 @@ std::vector<std::string> Project::get_string_column(std::string name)
 bool Project::get_segmentations_present()
 {
   return this->segmentations_present_;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> Project::get_settings(std::string name)
+{
+  std::map<std::string, std::string> map;
+  if (!this->wb_->contains(name)) {
+    return map;
+  }
+  xlnt::worksheet ws = this->wb_->sheet_by_title(name);
+
+  if (ws.highest_column().index < 2) {
+    return map;
+  }
+
+  auto rows = ws.rows(false);
+
+  for (int i = 1; i < rows.length(); i++) {
+    std::string key = rows[i][0].to_string();
+    std::string value = rows[i][1].to_string();
+
+    map[key] = value;
+  }
+  return map;
+}
+
+//---------------------------------------------------------------------------
+void Project::set_settings(std::string name, std::map<std::string, std::string> settings)
+{
+  if (!this->wb_->contains(name)) {
+    auto ws = this->wb_->create_sheet();
+    ws.title("name");
+  }
+
+  auto ws = this->wb_->sheet_by_title(name);
+  ws.cell(xlnt::cell_reference(1, 1)).value("key");
+  ws.cell(xlnt::cell_reference(2, 1)).value("value");
+  int row = 2; // skip header
+  for (const auto& kv : settings) {
+    std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
+    ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
+    ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
+  }
 }
 
 //---------------------------------------------------------------------------
