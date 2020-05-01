@@ -59,32 +59,34 @@ function install_conda() {
        doxygen=1.8.16 \
        graphviz=2.38.0 \
        vtk=8.2.0 \
+       itk=5.1.0 \
        scikit-learn=0.22.1 \
        pybind=2.4.3 \
-       notebook=6.0.3
+       notebook=6.0.3 \
+       matplotlib=3.2.1 \
+       itkwidgets=0.26.1
   then return 1; fi
 
 
   # linux and mac (only) deps
   if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
       if ! conda install --yes \
-	   xorg-libx11=1.6.9 \
-	   xorg-libsm=1.2.3 \
-	   libxrandr-devel-cos6-x86_64=1.5.1 \
-	   libxinerama-devel-cos6-x86_64=1.1.3 \
-	   libxcursor-devel-cos6-x86_64=1.1.14 \
-	   libxi-devel-cos6-x86_64=1.7.8 \
-	   git-lfs=2.6.1 \
-	   openmp=8.0.1 \
-	   ncurses=6.1 \
-	   libuuid=2.32.1
+     xorg-libx11=1.6.9 \
+     xorg-libsm=1.2.3 \
+     libxrandr-devel-cos6-x86_64=1.5.1 \
+     libxinerama-devel-cos6-x86_64=1.1.3 \
+     libxcursor-devel-cos6-x86_64=1.1.14 \
+     libxi-devel-cos6-x86_64=1.7.8 \
+     git-lfs=2.6.1 \
+     openmp=8.0.1 \
+     ncurses=6.1 \
+     libuuid=2.32.1 \
+     termcolor==1.1.0
       then return 1; fi
   fi
 
   
-  if ! pip install termcolor==1.1.0; then return 1; fi
-  if ! pip install matplotlib==3.1.2; then return 1; fi
-  if ! pip install itk==5.0.1; then return 1; fi
+  # pip packages (only install packages using pip when they aren't available in conda)
   if ! pip install Python/DatasetUtilsPackage; then return 1; fi   # install the local GirderConnector code as a package
 
   # install any additional Linux dependencies
