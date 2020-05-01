@@ -34,7 +34,8 @@ public:
 
   void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
 
-  void set_subject(const shapeworks::Subject &subject);
+  void set_subject(std::shared_ptr<shapeworks::Subject> subject);
+  std::shared_ptr<shapeworks::Subject> get_subject();
 
   //! set the input segmentation filenames (1 per domain)
   void set_input_segmentations(QStringList filenames);
@@ -135,7 +136,7 @@ private:
   QList<Point> exclusion_sphere_centers_;
   QList<double> exclusion_sphere_radii_;
 
-  shapeworks::Subject subject_;
+  std::shared_ptr<shapeworks::Subject> subject_;
 
   std::vector<Point> vectors_;
   vnl_vector<double> transform_;

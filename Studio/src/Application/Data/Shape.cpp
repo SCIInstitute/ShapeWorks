@@ -61,14 +61,20 @@ void Shape::set_mesh_manager(QSharedPointer<MeshManager> mesh_manager)
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_subject(const Subject &subject)
+void Shape::set_subject(std::shared_ptr<Subject> subject)
 {
   this->subject_ = subject;
 
-  if (this->subject_.get_segmentation_filenames().size() > 0) {
-    std::string filename = this->subject_.get_segmentation_filenames()[0];
+  if (this->subject_->get_segmentation_filenames().size() > 0) {
+    std::string filename = this->subject_->get_segmentation_filenames()[0];
     this->corner_annotations_[0] = QString::fromStdString(filename);
   }
+}
+
+//---------------------------------------------------------------------------
+std::shared_ptr<Subject> Shape::get_subject()
+{
+  return this->subject_;
 }
 
 //---------------------------------------------------------------------------
@@ -98,7 +104,7 @@ QSharedPointer<Mesh> Shape::get_original_mesh()
 ImageType::Pointer Shape::get_original_image()
 {
   ImageType::Pointer image;
-  std::string filename = this->subject_.get_segmentation_filenames()[0];
+  std::string filename = this->subject_->get_segmentation_filenames()[0];
   if (filename != "") {
     // read file using ITK
     ReaderType::Pointer reader = ReaderType::New();
@@ -250,7 +256,7 @@ void Shape::set_id(int id)
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename()
 {
-  auto string = QString::fromStdString(this->subject_.get_segmentation_filenames()[0]);
+  auto string = QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
   std::cerr << "original filename is " << string.toStdString() << "\n";
   QFileInfo info(string);
   return info.fileName();
@@ -259,7 +265,7 @@ QString Shape::get_original_filename()
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename_with_path()
 {
-  return QString::fromStdString(this->subject_.get_segmentation_filenames()[0]);
+  return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
 }
 //---------------------------------------------------------------------------
 QString Shape::get_groomed_filename()
@@ -361,8 +367,8 @@ vnl_vector<double> Shape::get_transform()
 //---------------------------------------------------------------------------
 void Shape::generate_original_meshes()
 {
-  if (this->subject_.get_segmentation_filenames().size() > 0) {
-    std::string filename = this->subject_.get_segmentation_filenames()[0];
+  if (this->subject_->get_segmentation_filenames().size() > 0) {
+    std::string filename = this->subject_->get_segmentation_filenames()[0];
 
     MeshWorkItem item;
     item.filename = filename;

@@ -5,6 +5,17 @@
 
 using namespace shapeworks;
 
+std::string ReplaceString(std::string subject, const std::string& search,
+                          const std::string& replace)
+{
+  size_t pos = 0;
+  while ((pos = subject.find(search, pos)) != std::string::npos) {
+    subject.replace(pos, search.length(), replace);
+    pos += replace.length();
+  }
+  return subject;
+}
+
 //---------------------------------------------------------------------------
 Project::Project()
 {
@@ -40,12 +51,21 @@ bool Project::load(std::string filename)
 bool Project::save(std::string filename)
 {
 
-  this->save_string_column("original_files", this->original_files_);
-  this->save_string_column("distance_transforms", this->distance_transform_files_);
-  this->save_string_column("local_point_files", this->local_point_files_);
-  this->save_string_column("world_point_files", this->global_point_files_);
+  //this->save_string_column("original_files", this->original_files_);
+  //this->save_string_column("distance_transforms", this->distance_transform_files_);
+  //this->save_string_column("local_point_files", this->local_point_files_);
+  //this->save_string_column("world_point_files", this->global_point_files_);
 
-  this->wb_->save(filename);
+  try {
+    this->save_subjects();
+    this->wb_->save(filename);
+  } catch (xlnt::exception &e) {
+
+    std::cerr << std::string("Error writing xlsx: ")
+              << std::string(e.what()) << ", " << "\n";
+
+    throw "Error writing xlsx";
+  }
 
   return true;
 }
@@ -153,7 +173,7 @@ void Project::set_global_point_files(std::vector<std::string> files)
 }
 
 //---------------------------------------------------------------------------
-std::vector<Subject> Project::get_subjects()
+std::vector<std::shared_ptr<Subject>> Project::get_subjects()
 {
   return this->subjects_;
 }
@@ -178,7 +198,18 @@ std::string Project::get_value(int column, int subject_id)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
-  return ws.cell(xlnt::cell_reference(column + 1, subject_id + 1)).value<std::string>();
+  return ws.cell(xlnt::cell_reference(column, subject_id)).value<std::string>();
+}
+
+//---------------------------------------------------------------------------
+void Project::set_value(int column, int subject_id, std::string value)
+{
+  xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+
+  std::cerr << "setting value for column = " << column << ", subject = " << subject_id << " to " <<
+    value << "\n";
+
+  ws.cell(xlnt::cell_reference(column, subject_id)).value(value);
 }
 
 //---------------------------------------------------------------------------
@@ -194,14 +225,40 @@ void Project::load_subjects()
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
 
   for (int i = 0; i < num_subjects; i++) {
-    Subject subject;
-    subject.set_number_of_domains(this->num_domains_);
+    std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
-    subject.set_segmentation_filenames(this->get_list(seg_columns, i));
-    subject.set_groomed_filenames(this->get_list(groomed_columns, i));
+    subject->set_number_of_domains(this->num_domains_);
+
+    subject->set_segmentation_filenames(this->get_list(seg_columns, i));
+    subject->set_groomed_filenames(this->get_list(groomed_columns, i));
 
     this->segmentations_present_ = true;
     this->subjects_.push_back(subject);
+  }
+}
+
+//---------------------------------------------------------------------------
+void Project::save_subjects()
+{
+  int num_subjects = this->get_number_of_subjects();
+
+  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+
+  //auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
+  std::vector<std::string> groomed_columns;
+
+  for (int i = 0; i < seg_columns.size(); i++) {
+    std::string groom_column_name = ReplaceString(seg_columns[i], SEGMENTATION_PREFIX,
+                                                  GROOMED_PREFIX);
+    groomed_columns.push_back(groom_column_name);
+  }
+
+  //std::string
+
+  for (int i = 0; i < num_subjects; i++) {
+    auto subject = this->subjects_[i];
+    auto groomed_files = subject->get_groomed_filenames();
+    this->set_list(groomed_columns, i, groomed_files);
   }
 }
 
@@ -213,20 +270,24 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
 
   auto headers = ws.rows(false)[0];
 
-  //std::cerr << "headers = " << headers.length() << "\n";
+  std::cerr << "number of headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
-    //std::cerr << headers[i].to_string() << "\n";
+    std::cerr << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
-      return i;
+      return i+1;
     }
   }
 
   if (create_if_not_found) {
+    std::cerr << "couldn't find: " << name << "\n";
     auto column = ws.highest_column();
-    if (ws.cell(xlnt::cell_reference(column, 1)).value<std::string>() == "") {
+    std::cerr << "highest column is " << column.index << "\n";
+    if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>() == "") {
+      ws.cell(xlnt::cell_reference(column.index, 1)).value(name);
       return column.index;
     }
     else {
+      ws.cell(xlnt::cell_reference(column.index + 1, 1)).value(name);
       return column.index + 1;
     }
   }
@@ -239,7 +300,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
 {
   int index = this->get_index_for_column(name);
 
-  //std::cerr << "index for '" << name << "' = " << index << "\n";
+  std::cerr << "index for '" << name << "' = " << index << "\n";
   std::vector<std::string> list;
   if (index < 0) {
     return list;
@@ -249,11 +310,11 @@ std::vector<std::string> Project::get_string_column(std::string name)
 
   auto rows = ws.rows(false);
 
-  //std::cerr << "rows.length = " << rows.length() << "\n";
+  std::cerr << "rows.length = " << rows.length() << "\n";
 
   for (int i = 1; i < rows.length(); i++) {
-    std::string value = rows[i][index].to_string();
-    //std::cerr << "value = " << value << "\n";
+    std::string value = rows[i][index-1].to_string();
+    std::cerr << "value = " << value << "\n";
     //if (value != "") {
     list.push_back(value);
     //}
@@ -274,11 +335,24 @@ std::vector<std::string> Project::get_list(std::vector<std::string> columns, int
   std::vector<std::string> list;
   for (int s = 0; s < columns.size(); s++) {
     auto column = columns[s];
-    int column_index = get_index_for_column(column);
-    auto value = get_value(column_index, subject + 1);
+    int column_index = this->get_index_for_column(column);
+    auto value = this->get_value(column_index, subject + 2); // +1 for header, +1 for 1-indexed
     list.push_back(value);
   }
   return list;
+}
+
+//---------------------------------------------------------------------------
+void Project::set_list(std::vector<std::string> columns, int subject,
+                       std::vector<std::string> values)
+{
+
+  for (int s = 0; s < columns.size(); s++) {
+    auto column = columns[s];
+    int column_index = get_index_for_column(column, true);
+    std::cerr << "get_index_for_column(" << column << " returned " << column_index << "\n";
+    this->set_value(column_index, subject + 2, values[s]); // +1 for header, +1 for 1-indexed
+  }
 }
 
 //---------------------------------------------------------------------------

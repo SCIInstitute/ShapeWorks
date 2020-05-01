@@ -92,14 +92,14 @@ void Session::set_parent(QWidget* parent)
 }
 
 //---------------------------------------------------------------------------
-bool Session::save_project(std::string fname, std::string dataDir, std::string cutPlanesFile)
+bool Session::save_project(std::string fname, std::string data_dir, std::string cutPlanesFile)
 {
   QString filename = QString::fromStdString(fname);
   if (filename == "") {
     filename = this->filename_;
   }
   this->filename_ = filename;
-  bool defaultDir = dataDir == "";
+  bool defaultDir = data_dir == "";
 
   // open file
   QFile file(filename);
@@ -122,7 +122,7 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
   auto position = location.find_last_of("/");
   location = location.substr(0, position) + "/" + prefix;
   if (!defaultDir) {
-    location = dataDir + "/";
+    location = data_dir + "/";
   }
 
   progress.setValue(5);
@@ -145,18 +145,23 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
       for (int i = 0; i < this->shapes_.size(); i++) {
         QString loc = this->shapes_[i]->get_groomed_filename_with_path();
         if (!defaultDir) {
-          loc = QString::fromStdString(dataDir) + "/" +
+          loc = QString::fromStdString(data_dir) + "/" +
                 this->shapes_[i]->get_groomed_filename();
         }
-        groomed_list.push_back(loc.toStdString());
+
+        std::string location = loc.toStdString();
+
+        groomed_list.push_back(location);
 
         //try writing the groomed to file
         WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName(loc.toStdString());
+        writer->SetFileName(location);
         writer->SetInput(this->shapes_[i]->get_groomed_image());
         writer->SetUseCompression(true);
-        std::cerr << "Writing distance transform: " << loc.toStdString() << "\n";
+        std::cerr << "Writing distance transform: " << location << "\n";
         writer->Update();
+        std::vector<std::string> groomed_filenames {location}; // only single domain supported so far
+        this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
 
         QApplication::processEvents();
         if (progress.wasCanceled()) {
@@ -184,8 +189,8 @@ bool Session::save_project(std::string fname, std::string dataDir, std::string c
       auto global_path = loc + global_name;
       auto local_path = loc + local_name;
       if (!defaultDir) {
-        global_path = dataDir + "/" + global_name;
-        local_path = dataDir + "/" + local_name;
+        global_path = data_dir + "/" + global_name;
+        local_path = data_dir + "/" + local_name;
       }
       world_list.push_back(global_path);
       local_list.push_back(local_path);
@@ -526,7 +531,7 @@ bool Session::load_project(QString filename)
   int num_subjects = this->project_->get_number_of_subjects();
   std::cerr << "num_subjects = " << num_subjects << "\n";
 
-  std::vector<Subject> subjects = this->project_->get_subjects();
+  auto subjects = this->project_->get_subjects();
 
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());

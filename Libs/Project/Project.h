@@ -55,7 +55,7 @@ public:
   std::vector<std::string> get_global_point_files();
   void set_global_point_files(std::vector<std::string> files);
 
-  std::vector<Subject> get_subjects();
+  std::vector<std::shared_ptr<Subject>> get_subjects();
 
   std::vector<std::string> get_string_column(std::string name);
 
@@ -64,6 +64,7 @@ public:
 private:
 
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
+  void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
@@ -71,8 +72,11 @@ private:
   std::vector<std::string> get_matching_columns(std::string prefix);
 
   std::string get_value(int column, int subject_id);
+  void set_value(int column, int subject_id, std::string value);
 
   void load_subjects();
+
+  void save_subjects();
 
   int num_domains_ = 0;
 
@@ -87,7 +91,7 @@ private:
 
   std::unique_ptr<xlnt::workbook> wb_;
 
-  std::vector<Subject> subjects_;
+  std::vector<std::shared_ptr<Subject>> subjects_;
 
   bool loaded_{false};
 
