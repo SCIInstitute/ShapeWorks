@@ -696,6 +696,19 @@ void ShapeWorksStudioApp::update_tool_mode()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_view_mode()
+{
+  auto display_mode =
+    this->session_->settings().get("view_state", Visualizer::MODE_ORIGINAL_C).as_string();
+  this->ui_->view_mode_combobox->setCurrentText(QString::fromStdString(display_mode));
+
+  if (this->visualizer_) {
+    this->visualizer_->set_display_mode(display_mode);
+    this->update_display(true);
+  }
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_view_combo_item_enabled(int item, bool value)
 {
   this->ui_->view_mode_combobox->setItemData(item, value ? ITEM_ENABLE : ITEM_DISABLE, ITEM_ROLE);
@@ -947,11 +960,8 @@ void ShapeWorksStudioApp::update_display(bool force)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp_mode)
 {
-  if (this->visualizer_) {
-    this->preferences_.set_preference("display_state", disp_mode);
-    this->visualizer_->set_display_mode(disp_mode.toStdString());
-    this->update_display(true);
-  }
+  this->session_->settings().set("view_state", disp_mode.toStdString());
+  this->update_view_mode();
 }
 
 //---------------------------------------------------------------------------
@@ -1021,6 +1031,14 @@ void ShapeWorksStudioApp::open_project(QString filename)
   else if (display_state == Visualizer::MODE_RECONSTRUCTION_C) {
     this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
   }
+
+  // enable the types of display
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
+                                    this->session_->reconstructed_present());
+
+  this->update_view_mode();
 
   // set the zoom state
   //this->ui_->thumbnail_size_slider->setValue(

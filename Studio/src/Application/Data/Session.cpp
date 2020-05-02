@@ -811,7 +811,8 @@ bool Session::original_present()
 //---------------------------------------------------------------------------
 bool Session::groomed_present()
 {
-  return this->groomed_present_;
+  return this->project_->get_groomed_present();
+  //return this->groomed_present_;
 }
 
 //---------------------------------------------------------------------------

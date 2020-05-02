@@ -62,6 +62,7 @@ public:
   std::vector<std::string> get_string_column(std::string name);
 
   bool get_segmentations_present();
+  bool get_groomed_present();
 
   Settings get_settings(std::string name);
   void set_settings(std::string name, Settings);
@@ -104,5 +105,6 @@ private:
   bool loaded_{false};
 
   bool segmentations_present_{false};
+  bool groomed_present_{false};
 };
 }

@@ -236,7 +236,8 @@ void Project::load_subjects()
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
 
-    this->segmentations_present_ = true;
+    this->segmentations_present_ = seg_columns.size() >= 1;
+    this->groomed_present_ = groomed_columns.size() >= 1;
     this->subjects_.push_back(subject);
   }
 }
@@ -336,6 +337,12 @@ bool Project::get_segmentations_present()
 }
 
 //---------------------------------------------------------------------------
+bool Project::get_groomed_present()
+{
+  return this->groomed_present_;
+}
+
+//---------------------------------------------------------------------------
 Settings Project::get_settings(std::string name)
 {
   Settings settings;
@@ -381,6 +388,7 @@ void Project::set_settings(std::string name, Settings settings)
       std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
       ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
       ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
+      row++;
     }
   } catch (xlnt::exception &e) {
 

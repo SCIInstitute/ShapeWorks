@@ -144,7 +144,6 @@ void Shape::import_groomed_file(QString filename, double iso)
 //---------------------------------------------------------------------------
 void Shape::import_groomed_image(ImageType::Pointer img, double iso)
 {
-  std::cerr << "Importing groomed image\n";
   this->groomed_mesh_ = QSharedPointer<Mesh>(new Mesh());
   this->groomed_image_ = img;
   this->groomed_mesh_->create_from_image(img, iso);
@@ -159,8 +158,6 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
   if (!this->groomed_mesh_) {
     this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
   }
-
-  std::cerr << "returning groomed mesh\n";
 
   return this->groomed_mesh_;
 }

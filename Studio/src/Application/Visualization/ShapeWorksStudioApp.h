@@ -99,6 +99,7 @@ public Q_SLOTS:
 private:
 
   void update_tool_mode();
+  void update_view_mode();
 
   enum VIEW_MODE {
     ORIGINAL = 0,
