@@ -258,8 +258,6 @@ void Project::store_subjects()
     groomed_columns.push_back(groom_column_name);
   }
 
-  //std::string
-
   for (int i = 0; i < num_subjects; i++) {
     auto subject = this->subjects_[i];
     auto seg_files = subject->get_segmentation_filenames();

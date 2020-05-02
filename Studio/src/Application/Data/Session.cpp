@@ -140,7 +140,7 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
   // distance transforms
   if (this->unsaved_groomed_files_) {
     std::cerr << "unsaved groomed files detected, saving...\n";
-    if (this->groomed_present()) {
+    //if (this->groomed_present()) {
       std::vector<std::string> groomed_list;
       for (int i = 0; i < this->shapes_.size(); i++) {
         QString loc = this->shapes_[i]->get_groomed_filename_with_path();
@@ -170,7 +170,7 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
       }
       this->project_->set_distance_transform_files(groomed_list);
       //xml->writeTextElement("distance_transforms", groomed_list);
-    }
+    //}
     this->unsaved_groomed_files_ = false;
   }
 
