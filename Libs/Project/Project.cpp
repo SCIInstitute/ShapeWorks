@@ -272,6 +272,9 @@ void Project::store_subjects()
       this->set_list(groomed_columns, i, groomed_files);
     }
   }
+
+  this->segmentations_present_ = seg_columns.size() >= 1;
+  this->groomed_present_ = groomed_columns.size() >= 1;
 }
 
 //---------------------------------------------------------------------------

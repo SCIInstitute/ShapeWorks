@@ -400,6 +400,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
     this->session_->get_project()->store_subjects();
 
     this->update_table();
+    this->enable_possible_actions();
 
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
