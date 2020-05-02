@@ -225,7 +225,7 @@ TEST(ImageTests, crop_test)
 
   Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
-  region = image.binaryBoundingBox(images);
+  region = ImageUtils::boundingBox(images);
   image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 
@@ -274,7 +274,11 @@ TEST(ImageTests, reflect_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
 
   Image image(test_location + "1x2x2.nrrd");
-  ImageUtils::reflect(image, 1);
+
+  // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
+  image.reflect(makeVector3({0.0, 1.0, 0.0}));
+  image.write("/Users/cam/data/sw/tmp/reflect_test.nrrd");
+
   Image ground_truth(test_location + "reflect_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

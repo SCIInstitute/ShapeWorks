@@ -2,6 +2,8 @@
 
 namespace shapeworks {
 
+Vector3 makeVector3(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
+
 Point3 operator+(const Point3 &p, const Point3 &q)
 {
   Point3 ret;

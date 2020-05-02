@@ -47,46 +47,29 @@ bool is_directory(const std::string &pathname)
 
 namespace shapeworks {
 
-/// copy ctor
-///
-/// clones the input image
-///
-/// \param img const input image
-Image::Image(const Image &img)
+Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image)
 {
-  this->image = nullptr;
-
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
   DuplicatorType::Pointer duplicator = DuplicatorType::New();
-  duplicator->SetInputImage(img.image);
+  duplicator->SetInputImage(image);
   duplicator->Update();
-  this->image = duplicator->GetOutput();
+  return duplicator->GetOutput();
 }
 
-/// operator=
-///
-/// assignment operator from const Image
-///
-/// \param img const input image
 Image& Image::operator=(const Image &img)
 {
-  this->image = nullptr;
-    
-  using DuplicatorType = itk::ImageDuplicator<ImageType>;
-  DuplicatorType::Pointer duplicator = DuplicatorType::New();
-  duplicator->SetInputImage(img.image);
-  duplicator->Update();
-  this->image = duplicator->GetOutput();
-
+  this->image = Image::cloneData(image);
   return *this;
 }
 
-/// read
-///
-/// reads image (private function only used by constructor)
-///
-/// \param pathname
-Image Image::read(const std::string &pathname)
+Image& Image::operator=(Image &&img)
+{
+  this->image = nullptr;        // make sure to free existing image by setting it to nullptr (works b/c it's a smart ptr)
+  this->image.Swap(img.image);
+  return *this;
+}
+
+Image::ImageType::Pointer Image::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
@@ -104,15 +87,10 @@ Image Image::read(const std::string &pathname)
     throw std::invalid_argument(pathname + " does not exist (" + std::string(exp.what()) + ")");
   }
 
-  return Image(reader->GetOutput());
+  return reader->GetOutput();
 }
 
-/// readDICOMImage
-///
-/// reads a DICOM image (private function only used by constructor)
-///
-/// \param pathname directory containing a DICOM image stack
-Image Image::readDICOMImage(const std::string &pathname)
+Image::ImageType::Pointer Image::readDICOMImage(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
@@ -136,15 +114,9 @@ Image Image::readDICOMImage(const std::string &pathname)
     throw std::invalid_argument("Failed to read DICOM from " + pathname + "(" + std::string(exp.what()) + ")");
   }
 
-  return Image(reader->GetOutput());
+  return reader->GetOutput();
 }
 
-/// write
-///
-/// writes image
-///
-/// \param filename
-/// \param compressed
 Image& Image::write(const std::string &filename, bool compressed)
 {
   if (!this->image) { throw std::invalid_argument("Image invalid"); }
@@ -167,7 +139,7 @@ Image& Image::write(const std::string &filename, bool compressed)
 /// \param numIterations
 /// \param maxRMSErr      range [0.0, 1.0], determines how fast the solver converges (larger is faster)
 /// \param numLayers      size of region around a pixel to sample
-Image& Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLayers)
+Image& Image::antialias(unsigned numIterations, double maxRMSErr, unsigned numLayers)
 {
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -183,10 +155,6 @@ Image& Image::antialias(unsigned numIterations, float maxRMSErr, unsigned numLay
   return *this;
 }
 
-/// recenter
-///
-/// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
-///
 Image& Image::recenter()
 {
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
@@ -226,11 +194,6 @@ Image& Image::resample(const Point3& spacing, Dims outputSize)
   return *this;
 }
 
-/// operator ==
-///
-/// compares two images to see if they are identical
-///
-/// \param  Image   other image to compare
 bool Image::operator==(const Image &other) const
 {
   // we use the region of interest filter here with the full region because our
@@ -279,12 +242,6 @@ bool Image::operator==(const Image &other) const
   return true;
 }
 
-/// pad
-///
-/// pads an image with constant value
-///
-/// \param padding  Number of voxels to be padded in each direction
-/// \param value    Value to be used to fill padded voxels
 Image& Image::pad(int padding, PixelType value)
 {
   ImageType::SizeType lowerExtendRegion;
@@ -310,11 +267,6 @@ Image& Image::pad(int padding, PixelType value)
   return *this;
 }
 
-/// applyTransform
-///
-/// applies the computed transformation to the image by using resampling filter
-///
-/// \param transform      computed transformation    
 Image& Image::applyTransform(const Transform::Pointer &transform)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
@@ -336,11 +288,6 @@ Image& Image::applyTransform(const Transform::Pointer &transform)
   return *this;
 }
 
-/// extractLabel
-///
-/// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
-///
-/// \param label      label value which has to be extracted. [default 1.0]
 Image& Image::extractLabel(PixelType label)
 {
   threshold(label, label);
@@ -348,9 +295,6 @@ Image& Image::extractLabel(PixelType label)
   return *this;
 }
 
-/// closeHoles
-///
-/// closes holes in a given binary volume
 Image& Image::closeHoles()
 {
   using FilterType = itk::BinaryFillholeImageFilter<ImageType>;
@@ -364,20 +308,14 @@ Image& Image::closeHoles()
   return *this;
 }
 
-/// threshold
-///
-/// threholds image into binary label based on upper and lower intensity bounds given by user
-///
-/// \param min      lower threshold level (optional, default = epsilon)
-/// \param max      upper threshold level (optional, default = FLT_MAX)
-Image& Image::threshold(PixelType min, PixelType max)
+Image& Image::threshold(PixelType minval, PixelType maxval)
 {
   using FilterType = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetInput(this->image);
-  filter->SetLowerThreshold(min);
-  filter->SetUpperThreshold(max);
+  filter->SetLowerThreshold(minval);
+  filter->SetUpperThreshold(maxval);
   filter->SetInsideValue(1.0);
   filter->SetOutsideValue(0.0);
   filter->Update();
@@ -386,12 +324,7 @@ Image& Image::threshold(PixelType min, PixelType max)
   return *this;
 }
 
-/// computeDT
-///
-/// computes distance transform volume from a binary (antialiased) image
-///
-/// \param isoValue     level set value that defines the interface between foreground and background
-Image& Image::computeDT(float isoValue)
+Image& Image::computeDT(PixelType isoValue)
 {
   using FilterType = itk::ReinitializeLevelSetImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -405,11 +338,6 @@ Image& Image::computeDT(float isoValue)
   return *this;
 }
 
-/// applyCurvatureFilter
-///
-/// applies curvature flow image filter
-///
-/// \param iterations     number of iterations
 Image& Image::applyCurvatureFilter(unsigned iterations)
 {
   using FilterType = itk::CurvatureFlowImageFilter<ImageType, ImageType>;
@@ -424,9 +352,6 @@ Image& Image::applyCurvatureFilter(unsigned iterations)
   return *this;
 }
 
-/// applyGradientFilter
-///
-/// applies gradient magnitude image filter
 Image& Image::applyGradientFilter()
 {
   using FilterType = itk::GradientMagnitudeImageFilter<ImageType, ImageType>;
@@ -439,12 +364,6 @@ Image& Image::applyGradientFilter()
   return *this;
 }
 
-/// applySigmoidFilter
-///
-/// applies sigmoid image filter
-///
-/// \param alpha     value of alpha
-/// \param beta      value of beta
 Image& Image::applySigmoidFilter(double alpha, double beta)
 {
   using FilterType = itk::SigmoidImageFilter<ImageType, ImageType>;
@@ -485,11 +404,6 @@ Image& Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
   return *this;
 }
 
-/// gaussianBlur
-///
-/// applies gaussian blur
-///
-/// \param sigma      value of sigma
 Image& Image::gaussianBlur(double sigma)
 {
   using BlurType = itk::DiscreteGaussianImageFilter<ImageType, ImageType>;
@@ -503,58 +417,24 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-/// binaryBoundingBox
-///
-/// computes the logical coordinates of the largest region of binary data within these images
-///
-/// \param filenames      the set of images to load, all of which must have identical dimensions.
-/// \param padding      the amount of padding to add in all directions to this bounding box
-Image::Region Image::binaryBoundingBox(std::vector<std::string> &filenames, int padding)
+Image::Region Image::boundingBox(PixelType isoValue) const
 {
   Image::Region bbox;
-  Dims dims = read(filenames[0]).dims(); // make sure all images are the same size
 
-  for (auto filename : filenames)
+  itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(image, image->GetLargestPossibleRegion());
+  while (!imageIterator.IsAtEnd())
   {
-    Image img(filename);
+    PixelType val = imageIterator.Get();
 
-    if (img.dims() != dims) { throw std::invalid_argument("image sizes do not match (" + filename + ")"); }
+    if (val <= isoValue)
+      bbox.expand(imageIterator.GetIndex());
 
-    itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(img.image, img.image->GetLargestPossibleRegion());
-    while (!imageIterator.IsAtEnd())
-    {
-      PixelType val = imageIterator.Get();
-
-      if (val == 1.0)
-      {
-        bbox.min[0] = std::min(bbox.min[0], (int)imageIterator.GetIndex()[0]);
-        bbox.min[1] = std::min(bbox.min[1], (int)imageIterator.GetIndex()[1]);
-        bbox.min[2] = std::min(bbox.min[2], (int)imageIterator.GetIndex()[2]);
-
-        bbox.max[0] = std::max(bbox.max[0], (int)imageIterator.GetIndex()[0]);
-        bbox.max[1] = std::max(bbox.max[1], (int)imageIterator.GetIndex()[1]);
-        bbox.max[2] = std::max(bbox.max[2], (int)imageIterator.GetIndex()[2]);
-      }
-      ++imageIterator;
-    }
+    ++imageIterator;
   }
-
-  // ensure bounding box is not larger than the images themselves
-  bbox.min[0] = std::max(0, bbox.min[0] - padding);
-  bbox.min[1] = std::max(0, bbox.min[1] - padding);
-  bbox.min[2] = std::max(0, bbox.min[2] - padding);
-  bbox.max[0] = std::min(bbox.max[0] + padding, (int)dims[0]);
-  bbox.max[1] = std::min(bbox.max[1] + padding, (int)dims[1]);
-  bbox.max[2] = std::min(bbox.max[2] + padding, (int)dims[2]);
 
   return bbox;
 }
 
-/// crop
-///
-/// performs translational alignment of shape image based on its center of mass or given 3D point
-///
-/// \param region     computed region to perform crop
 Image& Image::crop(const Region &region)
 {
   if (!region.valid())
@@ -572,7 +452,7 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::convert(const Image &img, float isoValue)
+vtkSmartPointer<vtkPolyData> Image::convert(const Image &img, PixelType isoValue) const
 {
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
@@ -590,7 +470,7 @@ vtkSmartPointer<vtkPolyData> Image::convert(const Image &img, float isoValue)
   return targetContour->GetOutput();
 }
 
-Image& Image::clip(Matrix cuttingPlane)
+Image& Image::clip(Matrix cuttingPlane, const PixelType val)
 {
   Point3 spacing = image->GetSpacing();
   Point3 curOrigin = origin();
@@ -628,7 +508,7 @@ Image& Image::clip(Matrix cuttingPlane)
            (double(imageIterator.GetIndex()[2]) - o[2]) * res[2];
 
     if (temp < 0.0)
-      imageIterator.Set(0);
+      imageIterator.Set(val);
       
     ++imageIterator;
   }
@@ -636,7 +516,23 @@ Image& Image::clip(Matrix cuttingPlane)
   return *this;
 }
 
-Image& Image::changeOrigin(Point3 origin)
+Image& Image::reflect(const Vector3 &normal)
+{
+  Matrix reflection;
+  reflection.Fill(0);
+  reflection[0][0] = -normal[0];
+  reflection[1][1] = -normal[1];
+  reflection[2][2] = -normal[2];
+
+  Transform::Pointer xform = Transform::New();
+  xform->SetMatrix(reflection);
+  Point3 currentOrigin(origin());
+  recenter().applyTransform(xform).setOrigin(currentOrigin);
+
+  return *this;
+}
+
+Image& Image::setOrigin(Point3 origin)
 {
   using FilterType = itk::ChangeInformationImageFilter<ImageType>;
   FilterType::Pointer filter = FilterType::New();
@@ -650,9 +546,6 @@ Image& Image::changeOrigin(Point3 origin)
   return *this;
 }
 
-/// logicalToPhysical
-///
-/// returns voxel coordinate of this physical location, throwing exception if it doesn't exist
 Point3 Image::logicalToPhysical(const IPoint3 &v) const
 {
   if (!this->image)
@@ -669,9 +562,6 @@ Point3 Image::logicalToPhysical(const IPoint3 &v) const
   return value;
 }
 
-/// physicalToLogical
-///
-/// returns physical location of this voxel coordinate, throwing exception if it doesn't exist
 IPoint3 Image::physicalToLogical(const Point3 &p) const
 {
   if (!this->image)
@@ -709,9 +599,6 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
   return com;
 }
 
-/// size
-///
-/// return physical size of image
 Point3 Image::size() const
 {
   Dims dims(image->GetLargestPossibleRegion().GetSize());
@@ -722,20 +609,12 @@ Point3 Image::size() const
   return ret;
 }
 
-/// operator<<
-///
-/// Stream insertion operator
-/// Prints region
 std::ostream& operator<<(std::ostream &os, const Image::Region &r)
 {
   return os << "{\n\tmin: [" << r.min[0] << ", " << r.min[1] << ", " << r.min[2] << "]"
             << ",\n\tmax: [" << r.max[0] << ", " << r.max[1] << ", " << r.max[2] << "]\n}";
 }
 
-/// operator<<
-///
-/// Stream insertion operator
-/// Prints dims, origin, and size of the image
 std::ostream& operator<<(std::ostream &os, const Image &img)
 {
   return os << "{\n\tdims: " << img.dims() << ",\n\torigin: "

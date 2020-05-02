@@ -295,13 +295,13 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class ChangeOrigin : public ImageCommand 
+class SetOrigin : public ImageCommand 
 {
 public:
-  static ChangeOrigin &getCommand() { static ChangeOrigin instance; return instance; }
+  static SetOrigin &getCommand() { static SetOrigin instance; return instance; }
 
 private:
-  ChangeOrigin() { buildParser(); }
+  SetOrigin() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

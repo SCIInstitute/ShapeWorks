@@ -8,8 +8,13 @@ namespace shapeworks {
 class ImageUtils
 {
 public:
+  /// calculate bounding box incrementally for images using the region of data <= the given isoValue
+  static Image::Region boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue = 1.0);
+
+  /// Generates the Transform necessary to move the contents of this binary image to the center.
   static Transform::Pointer createCenterOfMassTransform(const Image &image);
-  static Image& reflect(Image &img, double axis);
+
+  /// Return Transform necessary to align this image with target.
   static Transform::Pointer rigidRegistration(const Image &img, Image &target, Image &source, float isoValue = 0.0, unsigned iterations = 20);
 
   /// topologyPreservingSmooth

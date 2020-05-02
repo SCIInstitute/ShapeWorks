@@ -5,6 +5,29 @@
 
 namespace shapeworks {
 
+Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue)
+{
+  if (filenames.empty())
+    throw std::invalid_argument("no filenames provided from which to compute a bounding box"); 
+
+  Image img(filenames[0]);
+  Image::Region bbox(img.boundingBox(isoValue));
+  Dims dims(img.dims()); // images must all be the same size
+
+	auto filename = filenames.begin();
+	while (++filename != filenames.end())
+  {
+    Image img(*filename);
+    if (img.dims() != dims) { throw std::invalid_argument("image sizes do not match (" + *filename + ")"); }
+
+    bbox.grow(img.boundingBox(isoValue));
+
+		++filename;
+  }
+
+  return bbox;
+}
+
 /// createCenterOfMassTransform
 ///
 /// Generates the Transform necessary to move the contents of this binary image to the center.
@@ -25,35 +48,8 @@ Transform::Pointer ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Image& ImageUtils::reflect(Image &img, double axis)
+Transform::Pointer ImageUtils::rigidRegistration(const Image &image, Image &target, Image &source, float isoValue, unsigned iterations)
 {
-  Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
-
-  double x = 1, y = 1, z = 1;
-  if (axis == 0)
-    x = -1;
-  if (axis == 1)
-    y = -1;
-  if (axis == 2)
-    z = -1;
-
-  Matrix reflection;
-  reflection.Fill(0);
-  reflection[0][0] = x;
-  reflection[1][1] = y;
-  reflection[2][2] = z;
-
-  Transform::Pointer xform = Transform::New();
-  xform->SetMatrix(reflection);
-  Point3 origin = image.origin();
-  image.recenter().applyTransform(xform).changeOrigin();
-  return image;
-}
-
-Transform::Pointer ImageUtils::rigidRegistration(const Image &img, Image &target, Image &source, float isoValue, unsigned iterations)
-{
-  Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
-
   vtkSmartPointer<vtkPolyData> targetContour = image.convert(target, isoValue);
   vtkSmartPointer<vtkPolyData> movingContour = image.convert(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);

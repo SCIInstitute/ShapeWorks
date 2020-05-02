@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ICPRigid::getCommand());
   shapeworks.addCommand(ClipVolume::getCommand());
   shapeworks.addCommand(ReflectVolume::getCommand());
-  shapeworks.addCommand(ChangeOrigin::getCommand());
+  shapeworks.addCommand(SetOrigin::getCommand());
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());

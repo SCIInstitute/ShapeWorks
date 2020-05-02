@@ -506,7 +506,8 @@ bool BoundingBox::execute(const optparse::Values &options, SharedCommandData &sh
   std::vector<std::string> filenames = options.get("names");
   int padding = static_cast<int>(options.get("padding"));
 
-  sharedData.region = sharedData.image.binaryBoundingBox(filenames, padding);
+  sharedData.region = ImageUtils::boundingBox(filenames);
+  sharedData.region.pad(padding);
   return true;
 }
 
@@ -630,12 +631,12 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// ChangeOrigin
+// SetOrigin
 ///////////////////////////////////////////////////////////////////////////////
-void ChangeOrigin::buildParser()
+void SetOrigin::buildParser()
 {
-  const std::string prog = "change-orign";
-  const std::string desc = "change origin";
+  const std::string prog = "set-origin";
+  const std::string desc = "set origin";
   parser.prog(prog).description(desc);
 
   parser.add_option("--x").action("store").type("double").set_default(0).help("x value of origin");
@@ -645,13 +646,12 @@ void ChangeOrigin::buildParser()
   Command::buildParser();
 }
 
-bool ChangeOrigin::execute(const optparse::Values &options, SharedCommandData &sharedData)
+bool SetOrigin::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   double x = static_cast<double>(options.get("x"));
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
-
-  sharedData.image.changeOrigin(Point3({x, y, z}));
+  sharedData.image.setOrigin(Point3({x, y, z}));
   return true;
 }
 
