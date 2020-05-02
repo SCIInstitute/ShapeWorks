@@ -204,6 +204,9 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
     this->project_->set_global_point_files(world_list);
   }
 
+
+  this->project_->set_settings(Settings::STUDIO_SETTINGS, this->settings_);
+
   /// Re-integrate progress after completing the above
   //progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. /
   //static_cast<double>(this->shapes_.size())));
@@ -565,8 +568,9 @@ bool Session::load_project(QString filename)
                                  global_point_files.size() > 1;
   //this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
 
-
   this->settings_ = this->project_->get_settings("studio");
+
+  //if (this->settings)
 
 //  if ()
 
@@ -840,4 +844,10 @@ QString Session::get_filename()
 int Session::get_num_shapes()
 {
   return this->shapes_.size();
+}
+
+//---------------------------------------------------------------------------
+Settings &Session::settings()
+{
+  return this->settings_;
 }

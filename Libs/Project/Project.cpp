@@ -33,7 +33,11 @@ bool Project::load(std::string filename)
   {
     this->wb_->load(filename);
   } catch (xlnt::exception &e) {
-    throw "Error reading xlsx";
+
+    std::cerr << std::string("Error reading xlsx: ")
+              << std::string(e.what()) << ", " << "\n";
+
+    return false;
   }
 
   this->load_subjects();
@@ -258,7 +262,9 @@ void Project::save_subjects()
   for (int i = 0; i < num_subjects; i++) {
     auto subject = this->subjects_[i];
     auto groomed_files = subject->get_groomed_filenames();
-    this->set_list(groomed_columns, i, groomed_files);
+    if (groomed_files.size() == groomed_columns.size()) {
+      this->set_list(groomed_columns, i, groomed_files);
+    }
   }
 }
 
@@ -359,19 +365,27 @@ Settings Project::get_settings(std::string name)
 //---------------------------------------------------------------------------
 void Project::set_settings(std::string name, Settings settings)
 {
-  if (!this->wb_->contains(name)) {
-    auto ws = this->wb_->create_sheet();
-    ws.title("name");
-  }
 
-  auto ws = this->wb_->sheet_by_title(name);
-  ws.cell(xlnt::cell_reference(1, 1)).value("key");
-  ws.cell(xlnt::cell_reference(2, 1)).value("value");
-  int row = 2; // skip header
-  for (const auto& kv : settings.get_map()) {
-    std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
-    ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
-    ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
+  try {
+
+    if (!this->wb_->contains(name)) {
+      auto ws = this->wb_->create_sheet();
+      ws.title(name);
+    }
+
+    auto ws = this->wb_->sheet_by_title(name);
+    ws.cell(xlnt::cell_reference(1, 1)).value("key");
+    ws.cell(xlnt::cell_reference(2, 1)).value("value");
+    int row = 2; // skip header
+    for (const auto& kv : settings.get_map()) {
+      std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
+      ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
+      ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
+    }
+  } catch (xlnt::exception &e) {
+
+    std::cerr << std::string("Error storing settings: ")
+              << std::string(e.what()) << ", " << "\n";
   }
 }
 

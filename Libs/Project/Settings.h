@@ -6,7 +6,7 @@
 namespace shapeworks
 {
 
-// Class for automatic conversion from string -> anytype.
+// Class for automatic conversion from string -> anytype. (from optparse)
 class Value
 {
 public:
@@ -20,6 +20,11 @@ public:
     std::vector<std::string> v((std::istream_iterator<std::string>(iss)),
                                std::istream_iterator<std::string>());
     return v;
+  }
+
+  std::string as_string()
+  {
+    return this->str;
   }
 
   operator const char*() {
@@ -88,13 +93,14 @@ private:
   bool valid;
 };
 
-static constexpr const char* GROOM_SETTINGS = "groom";
-static constexpr const char* STUDIO_SETTINGS = "studio";
-static constexpr const char* GROOM_CENTER_OPTION = "center";
 
 class Settings {
 
 public:
+
+  static constexpr const char* GROOM_SETTINGS = "groom";
+  static constexpr const char* STUDIO_SETTINGS = "studio";
+  static constexpr const char* GROOM_CENTER_OPTION = "center";
 
   void set_map(std::map<std::string, std::string> map);
   std::map<std::string, std::string> get_map();

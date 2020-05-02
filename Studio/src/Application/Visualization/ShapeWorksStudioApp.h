@@ -98,6 +98,8 @@ public Q_SLOTS:
 
 private:
 
+  void update_tool_mode();
+
   enum VIEW_MODE {
     ORIGINAL = 0,
     GROOMED = 1,
