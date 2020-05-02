@@ -605,7 +605,15 @@ void Session::load_original_files(std::vector<std::string> filenames)
     }
 
     if (i >= this->shapes_.size()) {
-      this->shapes_.push_back(QSharedPointer<Shape>(new Shape()));
+      QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+
+      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+
+      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_subject(subject);
+      this->project_->get_subjects().push_back(subject);
+
+      this->shapes_.push_back(shape);
     }
     this->shapes_[i]->import_original_image(filenames[i], 0.5);
   }

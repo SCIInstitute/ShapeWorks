@@ -382,6 +382,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
   this->preferences_.set_preference("display_state", this->ui_->view_mode_combobox->currentText());
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->import_files(filenames);
+
   this->visualizer_->update_lut();
   this->enable_possible_actions();
 }
@@ -395,6 +396,11 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
   }
   try {
     this->session_->load_original_files(list);
+
+    this->session_->get_project()->store_subjects();
+
+    this->update_table();
+
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
   }

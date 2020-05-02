@@ -57,7 +57,7 @@ public:
   std::vector<std::string> get_global_point_files();
   void set_global_point_files(std::vector<std::string> files);
 
-  std::vector<std::shared_ptr<Subject>> get_subjects();
+  std::vector<std::shared_ptr<Subject>> &get_subjects();
 
   std::vector<std::string> get_string_column(std::string name);
 
@@ -66,6 +66,8 @@ public:
 
   Settings get_settings(std::string name);
   void set_settings(std::string name, Settings);
+
+  void store_subjects();
 
 private:
 
@@ -85,7 +87,6 @@ private:
 
   void load_subjects();
 
-  void save_subjects();
 
   int num_domains_ = 0;
 

@@ -61,7 +61,7 @@ bool Project::save(std::string filename)
   //this->save_string_column("world_point_files", this->global_point_files_);
 
   try {
-    this->save_subjects();
+    this->store_subjects();
     this->wb_->save(filename);
   } catch (xlnt::exception &e) {
 
@@ -177,7 +177,7 @@ void Project::set_global_point_files(std::vector<std::string> files)
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<Subject>> Project::get_subjects()
+std::vector<std::shared_ptr<Subject>> &Project::get_subjects()
 {
   return this->subjects_;
 }
@@ -243,9 +243,9 @@ void Project::load_subjects()
 }
 
 //---------------------------------------------------------------------------
-void Project::save_subjects()
+void Project::store_subjects()
 {
-  int num_subjects = this->get_number_of_subjects();
+  int num_subjects = this->subjects_.size();
 
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
 
@@ -262,6 +262,11 @@ void Project::save_subjects()
 
   for (int i = 0; i < num_subjects; i++) {
     auto subject = this->subjects_[i];
+    auto seg_files = subject->get_segmentation_filenames();
+    if (seg_files.size() > seg_columns.size()) {
+      seg_columns.push_back(std::string(SEGMENTATION_PREFIX) + "file");
+    }
+    this->set_list(seg_columns, i, seg_files);
     auto groomed_files = subject->get_groomed_filenames();
     if (groomed_files.size() == groomed_columns.size()) {
       this->set_list(groomed_columns, i, groomed_files);
