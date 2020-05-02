@@ -316,7 +316,8 @@ void Viewer::compute_point_differences(const std::vector<Point> &vecs,
     return;
   }
 
-  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_mesh(this->visualizer_->get_display_mode())->get_poly_data();
+  vtkSmartPointer<vtkPolyData> poly_data = this->shape_->get_mesh(
+    this->visualizer_->get_display_mode())->get_poly_data();
   if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
     return;
   }
@@ -492,7 +493,10 @@ void Viewer::display_object(QSharedPointer<Shape> shape)
 
     this->draw_exclusion_spheres(shape);
 
-    vnl_vector<double> transform = shape->get_transform();
+    vnl_vector<double> transform;
+    if (this->visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C) {
+      transform = shape->get_transform();
+    }
 
     if (transform.size() == 3) {
       double tx = -transform[0];
