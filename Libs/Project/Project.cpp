@@ -330,16 +330,18 @@ bool Project::get_segmentations_present()
 }
 
 //---------------------------------------------------------------------------
-std::map<std::string, std::string> Project::get_settings(std::string name)
+Settings Project::get_settings(std::string name)
 {
+  Settings settings;
   std::map<std::string, std::string> map;
+
   if (!this->wb_->contains(name)) {
-    return map;
+    return settings;
   }
   xlnt::worksheet ws = this->wb_->sheet_by_title(name);
 
   if (ws.highest_column().index < 2) {
-    return map;
+    return settings;
   }
 
   auto rows = ws.rows(false);
@@ -350,11 +352,12 @@ std::map<std::string, std::string> Project::get_settings(std::string name)
 
     map[key] = value;
   }
-  return map;
+  settings.set_map(map);
+  return settings;
 }
 
 //---------------------------------------------------------------------------
-void Project::set_settings(std::string name, std::map<std::string, std::string> settings)
+void Project::set_settings(std::string name, Settings settings)
 {
   if (!this->wb_->contains(name)) {
     auto ws = this->wb_->create_sheet();
@@ -365,7 +368,7 @@ void Project::set_settings(std::string name, std::map<std::string, std::string> 
   ws.cell(xlnt::cell_reference(1, 1)).value("key");
   ws.cell(xlnt::cell_reference(2, 1)).value("value");
   int row = 2; // skip header
-  for (const auto& kv : settings) {
+  for (const auto& kv : settings.get_map()) {
     std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
     ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
     ws.cell(xlnt::cell_reference(2, row)).value(kv.second);

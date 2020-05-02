@@ -1,11 +1,13 @@
 set(SOURCES
   Project.cpp
   Subject.cpp
+  Settings.cpp
   )
 
 set(HEADERS
   Project.h
   Subject.h
+  Settings.h
   )
 
 add_library(Project STATIC

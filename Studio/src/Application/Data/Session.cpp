@@ -565,6 +565,11 @@ bool Session::load_project(QString filename)
                                  global_point_files.size() > 1;
   //this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
 
+
+  this->settings_ = this->project_->get_settings("studio");
+
+//  if ()
+
   return true;
 }
 

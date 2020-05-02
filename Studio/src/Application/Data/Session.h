@@ -142,5 +142,7 @@ private:
 
   bool unsaved_groomed_files_{false};
 
+  Settings settings_;
+
   std::shared_ptr<Project> project_{new Project()};
 };

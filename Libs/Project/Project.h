@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <Subject.h>
+#include <Settings.h>
 
 // forward declaration
 namespace xlnt
@@ -62,8 +63,8 @@ public:
 
   bool get_segmentations_present();
 
-  std::map<std::string, std::string> get_settings(std::string name);
-  void set_settings(std::string name, std::map<std::string, std::string> settings);
+  Settings get_settings(std::string name);
+  void set_settings(std::string name, Settings);
 
 private:
 
