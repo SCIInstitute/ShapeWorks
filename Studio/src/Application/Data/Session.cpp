@@ -204,7 +204,6 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
     this->project_->set_global_point_files(world_list);
   }
 
-
   this->project_->set_settings(Settings::STUDIO_SETTINGS, this->settings_);
 
   /// Re-integrate progress after completing the above
@@ -584,33 +583,36 @@ std::shared_ptr<Project> Session::get_project()
 }
 
 //---------------------------------------------------------------------------
-void Session::load_original_files(std::vector<std::string> file_names)
+void Session::load_original_files(std::vector<std::string> filenames)
 {
-  QProgressDialog progress("Loading images...", "Abort", 0, file_names.size(), this->parent_);
+  QProgressDialog progress("Loading images...", "Abort", 0, filenames.size(), this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   //progress.show();
   //progress.setMinimumDuration(2000);
 
-  for (int i = 0; i < file_names.size(); i++) {
+  for (int i = 0; i < filenames.size(); i++) {
     progress.setValue(i);
     QApplication::processEvents();
     if (progress.wasCanceled()) {
       break;
     }
 
-    QString filename = QString::fromStdString(file_names[i]);
+    QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
       QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
                             QMessageBox::Ok);
       return;
     }
 
-    this->shapes_[i]->import_original_image(file_names[i], 0.5);
+    if (i >= this->shapes_.size()) {
+      this->shapes_.push_back(QSharedPointer<Shape>(new Shape()));
+    }
+    this->shapes_[i]->import_original_image(filenames[i], 0.5);
   }
-  progress.setValue(file_names.size());
+  progress.setValue(filenames.size());
   QApplication::processEvents();
   this->renumber_shapes();
-  if (file_names.size() > 0) {
+  if (filenames.size() > 0) {
     this->original_present_ = true;
     emit data_changed();
   }

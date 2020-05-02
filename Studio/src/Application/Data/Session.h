@@ -57,7 +57,7 @@ public:
   std::shared_ptr<Project> get_project();
 
   /// import files
-  void load_original_files(std::vector<std::string> file_names);
+  void load_original_files(std::vector<std::string> filenames);
 
   /// load groomed files
   void load_groomed_files(std::vector<std::string> file_names, double iso);
