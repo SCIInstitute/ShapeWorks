@@ -83,10 +83,10 @@ std::vector<std::string> Project::get_headers()
 //---------------------------------------------------------------------------
 int Project::get_number_of_subjects()
 {
-  auto seg_columns = this->get_matching_columns("segmentation_");
-  auto mesh_columns = this->get_matching_columns("mesh_");
-  auto dt_columns = this->get_matching_columns("distance_transform_");
-  auto local_particle_files = this->get_matching_columns("local_particles");
+  auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
+  auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
+  auto dt_columns = this->get_matching_columns(GROOMED_PREFIX);
+  auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES_PREFIX);
   if (seg_columns.size() > 0) {
     return this->get_string_column(seg_columns[0]).size();
   }

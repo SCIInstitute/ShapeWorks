@@ -95,7 +95,7 @@ void Shape::import_original_image(std::string filename, float iso_value)
 QSharedPointer<Mesh> Shape::get_original_mesh()
 {
   if (!this->original_mesh_) {
-    this->generate_original_meshes();
+    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_mesh_);
   }
   return this->original_mesh_;
 }
@@ -156,6 +156,10 @@ void Shape::import_groomed_image(ImageType::Pointer img, double iso)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_groomed_mesh()
 {
+  if (!this->groomed_mesh_) {
+    this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
+  }
+
   std::cerr << "returning groomed mesh\n";
 
   return this->groomed_mesh_;
@@ -394,6 +398,38 @@ void Shape::generate_original_meshes()
     }
     else {
       //std::cerr << "no mesh yet from manager!\n";
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void Shape::generate_meshes(std::vector<string> filenames, QSharedPointer<Mesh> &mesh)
+{
+  if (filenames.size() < 1) {
+    return;
+  }
+
+  // single domain supported right now
+  std::string filename = filenames[0];
+
+  MeshWorkItem item;
+  item.filename = filename;
+  vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(item);
+  if (poly_data) {
+    //std::cerr << "mesh was ready from manager!\n";
+    mesh = QSharedPointer<Mesh>(new Mesh());
+    mesh->set_poly_data(poly_data);
+
+    /// Temporarily calculate it here
+    auto com = vtkSmartPointer<vtkCenterOfMass>::New();
+    com->SetInputData(poly_data);
+    com->Update();
+    double center[3];
+    com->GetCenter(center);
+
+    this->transform_.set_size(3);
+    for (unsigned int i = 0; i < 3; i++) {
+      this->transform_[i] = center[i];
     }
   }
 }

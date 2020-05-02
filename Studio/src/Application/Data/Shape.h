@@ -113,6 +113,8 @@ private:
 
   void generate_original_meshes();
 
+  void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh> &mesh);
+
   QStringList input_segmentation_filenames_;
 
   static bool import_point_file(QString filename, vnl_vector<double> &points);
