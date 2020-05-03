@@ -45,7 +45,7 @@ public:
   void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
   vtkSmartPointer<vtkRenderer> get_renderer();
 
-  void display_object(QSharedPointer<Shape> shape);
+  void display_shape(QSharedPointer<Shape> shape);
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);

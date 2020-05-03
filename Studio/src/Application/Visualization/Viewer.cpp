@@ -202,7 +202,7 @@ void Viewer::handle_new_mesh()
 {
   if (!this->mesh_ready_ && this->shape_ &&
       this->shape_->get_mesh(this->visualizer_->get_display_mode())) {
-    this->display_object(this->shape_);
+    this->display_shape(this->shape_);
   }
 }
 
@@ -435,7 +435,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::display_object(QSharedPointer<Shape> shape)
+void Viewer::display_shape(QSharedPointer<Shape> shape)
 {
   this->visible_ = true;
 
@@ -506,12 +506,12 @@ void Viewer::display_object(QSharedPointer<Shape> shape)
       vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
       translation->Translate(tx, ty, tz);
 
-      vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter =
+      vtkSmartPointer<vtkTransformPolyDataFilter> transform_filter =
         vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-      transformFilter->SetInputData(poly_data);
-      transformFilter->SetTransform(translation);
-      transformFilter->Update();
-      poly_data = transformFilter->GetOutput();
+      transform_filter->SetInputData(poly_data);
+      transform_filter->SetTransform(translation);
+      transform_filter->Update();
+      poly_data = transform_filter->GetOutput();
     }
 
     mapper->SetInputData(poly_data);
@@ -530,6 +530,8 @@ void Viewer::display_object(QSharedPointer<Shape> shape)
     this->update_actors();
     this->update_glyph_properties();
   }
+
+  this->renderer_->ResetCameraClippingRange();
 
   ren->AddViewProp(this->corner_annotation_);
 }

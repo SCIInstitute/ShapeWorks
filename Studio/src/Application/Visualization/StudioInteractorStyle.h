@@ -26,7 +26,14 @@ public:
   void OnMouseWheelBackward() override;
 
   void OnKeyDown() override;
+  void Dolly() override;
 
+  void Rotate() override;
+
+
+protected:
+
+   void Dolly(double factor) override;
 private:
 
   Lightbox* lightbox_;

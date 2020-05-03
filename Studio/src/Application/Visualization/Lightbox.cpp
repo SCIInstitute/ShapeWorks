@@ -7,6 +7,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkQImageToImageSource.h>
 #include <vtkImageData.h>
+#include <vtkBoundingBox.h>
 
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
@@ -21,6 +22,7 @@ Lightbox::Lightbox()
   this->camera_ = this->renderer_->GetActiveCamera();
 
   this->style_ = vtkSmartPointer<StudioInteractorStyle>::New();
+  /// here
   this->style_->AutoAdjustCameraClippingRangeOn();
   this->style_->set_lightbox(this);
 
@@ -67,7 +69,7 @@ void Lightbox::insert_shape_into_viewer(QSharedPointer<Shape> shape, int positio
 
   QSharedPointer<Viewer> viewer = this->viewers_[position];
 
-  viewer->display_object(shape);
+  viewer->display_shape(shape);
 
   this->check_for_first_draw();
 }
@@ -86,6 +88,32 @@ void Lightbox::handle_new_mesh()
   }
   this->redraw();
   this->check_for_first_draw();
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::reset_camera()
+{
+
+  this->viewers_[0]->get_renderer()->ResetCameraClippingRange();
+  this->viewers_[0]->get_renderer()->ResetCamera();
+
+  //this->renderer_->ResetCamera();
+//  this->get_re
+//  for (int i = 0; i < this->viewers_.size(); i++) {
+//    this->viewers_[i]->get_renderer()->RemoveAllViewProps();
+//  }
+}
+
+//-----------------------------------------------------------------------------
+void Lightbox::reset_camera_clipping_range()
+{
+  vtkBoundingBox bbox;
+  for (int i = 0; i < this->viewers_.size(); i++) {
+    bbox.AddBox(this->viewers_[i]->get_renderer()->ComputeVisiblePropBounds());
+  }
+  double bounds[6];
+  bbox.GetBounds(bounds);
+  this->renderer_->ResetCameraClippingRange(bounds);
 }
 
 //-----------------------------------------------------------------------------
@@ -345,7 +373,7 @@ void Lightbox::check_for_first_draw()
 
         this->viewers_[i]->get_renderer()->SetActiveCamera(this->camera_);
       }
-      */
+ */
     }
   }
 }

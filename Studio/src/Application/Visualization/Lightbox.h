@@ -64,6 +64,10 @@ public:
 
   void handle_new_mesh();
 
+  void reset_camera();
+
+  void reset_camera_clipping_range();
+
 public Q_SLOTS:
   void handle_timer_callback();
 
