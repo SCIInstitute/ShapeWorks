@@ -1,5 +1,9 @@
 #ifndef TRIMESH_H
 #define TRIMESH_H
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmacro-redefined"
+
 /*
 Szymon Rusinkiewicz
 Princeton University
@@ -4214,6 +4218,8 @@ inline const TriMesh::BBox operator + (const TriMesh::BBox &b1, const TriMesh::B
 {
     return TriMesh::BBox(b1) += b2;
 }
+
+#pragma clang diagnostic pop
 
 #endif
 
