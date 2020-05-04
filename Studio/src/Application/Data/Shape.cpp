@@ -128,6 +128,17 @@ ImageType::Pointer Shape::get_original_image()
 //---------------------------------------------------------------------------
 ImageType::Pointer Shape::get_groomed_image()
 {
+  if (!this->groomed_image_) {
+    ImageType::Pointer image;
+    std::string filename = this->subject_->get_groomed_filenames()[0]; // single domain supported
+    if (filename != "") {
+      // read file using ITK
+      ReaderType::Pointer reader = ReaderType::New();
+      reader->SetFileName(filename);
+      reader->Update();
+      this->groomed_image_ = reader->GetOutput();
+    }
+  }
   return this->groomed_image_;
 }
 
