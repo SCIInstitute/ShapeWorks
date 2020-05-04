@@ -12,7 +12,7 @@ class ShapeworksUtils
 {
 public:
   static Matrix icp(vtkSmartPointer<vtkPolyData> target, vtkSmartPointer<vtkPolyData> moving, unsigned iterations = 20);
-  static Matrix convert(vtkSmartPointer<vtkMatrix4x4> mat);
+  static Matrix getMatrix(vtkSmartPointer<vtkMatrix4x4> mat);
 
 };
 

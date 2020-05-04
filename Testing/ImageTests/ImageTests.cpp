@@ -225,7 +225,7 @@ TEST(ImageTests, crop_test)
 
   Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
-  region = ImageUtils::binaryBoundingBox(images);
+  region = ImageUtils::boundingBox(images);
   image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 
@@ -244,19 +244,19 @@ TEST(ImageTests, com_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, translate_test)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
+TEST(ImageTests, translate_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   Transform xform;
-//   double v[3] = {10, 10, 10};
-//   xform->Translate(Vector3(v));
-//   image.applyTransform(xform);
-//   Image ground_truth(test_location + "translate_baseline.nrrd");
+  Image image(test_location + "1x2x2.nrrd");
+  Transform xform;
+  double v[3] = {10, 10, 10};
+  xform->Translate(Vector3(v));
+  image.applyTransform(xform);
+  Image ground_truth(test_location + "translate_baseline.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
 
 TEST(ImageTests, multicommand_test)
 {

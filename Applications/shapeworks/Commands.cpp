@@ -250,10 +250,70 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
       double tz = static_cast<double>(options.get("tz"));
 
       double v[3] = {tx, ty, tz};
-      sharedData.transform->Translate(Vector3(v));
+      sharedData.transform = sharedData.image.translate(Vector3(v));
     }
   }
   
+  sharedData.image.applyTransform(sharedData.transform);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Scale
+///////////////////////////////////////////////////////////////////////////////
+void Scale::buildParser()
+{
+  const std::string prog = "scale";
+  const std::string desc = "scales images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (e.g., 3.14)");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (not logical coordinate)");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space (...but that could be added)");
+
+  Command::buildParser();
+}
+
+bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double tx = static_cast<double>(options.get("tx"));
+  double ty = static_cast<double>(options.get("ty"));
+  double tz = static_cast<double>(options.get("tz"));
+
+  double v[3] = {tx, ty, tz};
+
+  sharedData.transform = sharedData.image.scale(Vector3(v));
+  sharedData.image.applyTransform(sharedData.transform);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Rotate
+///////////////////////////////////////////////////////////////////////////////
+void Rotate::buildParser()
+{
+  const std::string prog = "rotate";
+  const std::string desc = "rotates images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (e.g., 3.14)");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (not logical coordinate)");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space (...but that could be added)");
+  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("explicit angle");
+
+  Command::buildParser();
+}
+
+bool Rotate::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  double tx = static_cast<double>(options.get("tx"));
+  double ty = static_cast<double>(options.get("ty"));
+  double tz = static_cast<double>(options.get("tz"));
+  double angle = static_cast<double>(options.get("angle"));
+
+  double v[3] = {tx, ty, tz};
+
+  sharedData.transform = sharedData.image.rotate(Vector3(v), angle);
   sharedData.image.applyTransform(sharedData.transform);
   return true;
 }
@@ -555,7 +615,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   
   sharedData.transform = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
-  sharedData.image.applyTransform(sharedData.transform, target);
+  sharedData.image.applyTransform(sharedData.transform);
   return true;
 }
 
@@ -626,7 +686,7 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
 {
   double axis = static_cast<double>(options.get("axis"));
 
-  ImageUtils::reflect(sharedData.image, axis);
+  sharedData.image.reflect(axis);
   return true;
 }
 

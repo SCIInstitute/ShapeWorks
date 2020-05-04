@@ -267,7 +267,31 @@ Image& Image::pad(int padding, PixelType value)
   return *this;
 }
 
-Image& Image::applyTransform(const Transform::Pointer &transform)
+Transform Image::translate(Vector3 v)
+{
+  Transform xform;
+  xform->Translate(v);
+
+  return xform;
+}
+
+Transform Image::scale(Vector3 v)
+{
+  Transform xform;
+  xform->Scale(v);
+
+  return xform;
+}
+
+Transform Image::rotate(Vector3 v, double angle)
+{
+  Transform xform;
+  xform->Rotate3D(v, angle);
+
+  return xform;
+}
+
+Image& Image::applyTransform(const Transform &transform)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
@@ -278,10 +302,10 @@ Image& Image::applyTransform(const Transform::Pointer &transform)
   resampler->SetInterpolator(interpolator);
   resampler->SetTransform(transform);
   resampler->SetInput(this->image);
-  resampler->SetSize(img.dims());
-  resampler->SetOutputOrigin(img.origin());
-  resampler->SetOutputDirection(img.image->GetDirection());
-  resampler->SetOutputSpacing(img.image->GetSpacing());
+  resampler->SetSize(dims());
+  resampler->SetOutputOrigin(origin());
+  resampler->SetOutputDirection(image->GetDirection());
+  resampler->SetOutputSpacing(image->GetSpacing());
   resampler->Update();
   this->image = resampler->GetOutput();
 
@@ -452,7 +476,7 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::convert(const Image &img, PixelType isoValue) const
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image &img, PixelType isoValue) const
 {
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
@@ -524,7 +548,7 @@ Image& Image::reflect(const Vector3 &normal)
   reflection[1][1] = -normal[1];
   reflection[2][2] = -normal[2];
 
-  Transform::Pointer xform = Transform::New();
+  Transform xform;
   xform->SetMatrix(reflection);
   Point3 currentOrigin(origin());
   recenter().applyTransform(xform).setOrigin(currentOrigin);

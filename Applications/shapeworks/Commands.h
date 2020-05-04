@@ -116,6 +116,38 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class Scale : public ImageCommand
+{
+public:
+  static Scale &getCommand()
+  {
+    static Scale instance;
+    return instance;
+  }
+
+private:
+  Scale() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Rotate : public ImageCommand
+{
+public:
+  static Rotate &getCommand()
+  {
+    static Rotate instance;
+    return instance;
+  }
+
+private:
+  Rotate() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class ExtractLabel : public ImageCommand
 {
 public:

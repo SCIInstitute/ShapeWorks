@@ -2,7 +2,6 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
-#include <itkImageRegionIteratorWithIndex.h>
 
 namespace shapeworks {
 
@@ -47,10 +46,10 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Transform::Pointer ImageUtils::rigidRegistration(const Image &image, Image &target, Image &source, float isoValue, unsigned iterations)
+Transform ImageUtils::rigidRegistration(const Image &image, Image &target, Image &source, float isoValue, unsigned iterations)
 {
-  vtkSmartPointer<vtkPolyData> targetContour = image.convert(target, isoValue);
-  vtkSmartPointer<vtkPolyData> movingContour = image.convert(source, isoValue);
+  vtkSmartPointer<vtkPolyData> targetContour = image.getPolyData(target, isoValue);
+  vtkSmartPointer<vtkPolyData> movingContour = image.getPolyData(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
   Transform xform;
   xform->SetMatrix(mat);

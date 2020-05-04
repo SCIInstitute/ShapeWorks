@@ -12,10 +12,10 @@ public:
   static Image::Region boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue = 1.0);
 
   /// Generates the Transform necessary to move the contents of this binary image to the center.
-  static Transform::Pointer createCenterOfMassTransform(const Image &image);
+  static Transform createCenterOfMassTransform(const Image &image);
 
   /// Return Transform necessary to align this image with target.
-  static Transform::Pointer rigidRegistration(const Image &img, Image &target, Image &source, float isoValue = 0.0, unsigned iterations = 20);
+  static Transform rigidRegistration(const Image &img, Image &target, Image &source, float isoValue = 0.0, unsigned iterations = 20);
 
   /// topologyPreservingSmooth
   ///

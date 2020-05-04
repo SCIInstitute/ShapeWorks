@@ -67,7 +67,6 @@ public:
     operator ImageType::RegionType() const { return ImageType::RegionType(origin(), size()); }
   };
 
-
   // constructors and assignment operators //
   Image(const std::string &pathname) : image(read(pathname)) {}
   Image(ImageType::Pointer imagePtr) : image(imagePtr) { if (!image) throw std::invalid_argument("null imagePtr"); }
@@ -75,7 +74,6 @@ public:
   Image(const Image &img) : image(cloneData(img.image)) {}
   Image& operator=(const Image &img); /// lvalue assignment operator
   Image& operator=(Image &&img);      /// rvalue assignment operator
-
 
   // modification functions //
 
@@ -91,8 +89,17 @@ public:
   /// pads an image by desired number of voxels in each direction with constant value
   Image &pad(int padding = 0, PixelType value = 0.0);
 
+  /// computes translation
+  Transform translate(Vector3 v);
+
+  /// computes scaling
+  Transform scale(Vector3 v);
+
+  /// computes rotation
+  Transform rotate(Vector3 v, double angle);
+
   /// applies the computed transformation to the image by using resampling filter
-  Image &applyTransform(const Transform::Pointer &transform);
+  Image &applyTransform(const Transform &transform);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
   Image &extractLabel(PixelType label = 1.0);
@@ -168,7 +175,7 @@ public:
   Image &write(const std::string &filename, bool compressed = true);
 
   /// creates a vtkPolyData from this image
-  vtkSmartPointer<vtkPolyData> convert(const Image &img, PixelType isoValue = 0.0) const;
+  vtkSmartPointer<vtkPolyData> getPolyData(const Image &img, PixelType isoValue = 0.0) const;
 
 private:
   friend struct SharedCommandData;

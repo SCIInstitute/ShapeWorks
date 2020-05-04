@@ -22,12 +22,12 @@ Matrix ShapeworksUtils::icp(vtkSmartPointer<vtkPolyData> target, vtkSmartPointer
   icpTransformFilter->SetTransform(icp);
   icpTransformFilter->Update();
 
-  Matrix xmat = convert(icp->GetMatrix());
+  Matrix xmat = getMatrix(icp->GetMatrix());
 
   return xmat;
 }
 
-Matrix ShapeworksUtils::convert(vtkSmartPointer<vtkMatrix4x4> mat)
+Matrix ShapeworksUtils::getMatrix(vtkSmartPointer<vtkMatrix4x4> mat)
 {
   Matrix m;
 
