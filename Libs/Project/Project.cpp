@@ -5,6 +5,7 @@
 
 using namespace shapeworks;
 
+//---------------------------------------------------------------------------
 std::string ReplaceString(std::string subject, const std::string& search,
                           const std::string& replace)
 {
@@ -217,6 +218,13 @@ void Project::set_value(int column, int subject_id, std::string value)
 }
 
 //---------------------------------------------------------------------------
+void Project::set_value(std::string column_name, int subject_id, std::string value)
+{
+  int column_index = get_index_for_column(column_name, true);
+  this->set_value(column_index, subject_id + 2, value); // +1 for header, +1 for 1-indexed
+}
+
+//---------------------------------------------------------------------------
 void Project::load_subjects()
 {
   int num_subjects = this->get_number_of_subjects();
@@ -259,7 +267,7 @@ void Project::store_subjects()
   }
 
   for (int i = 0; i < num_subjects; i++) {
-    auto subject = this->subjects_[i];
+    std::shared_ptr<Subject> subject = this->subjects_[i];
     auto seg_files = subject->get_segmentation_filenames();
     if (seg_files.size() > seg_columns.size()) {
       seg_columns.push_back(std::string(SEGMENTATION_PREFIX) + "file");
@@ -268,6 +276,15 @@ void Project::store_subjects()
     auto groomed_files = subject->get_groomed_filenames();
     if (groomed_files.size() == groomed_columns.size()) {
       this->set_list(groomed_columns, i, groomed_files);
+    }
+
+    std::string local_filename = subject->get_local_particle_filename();
+    if (local_filename != "") {
+      this->set_value("local_particles", i, local_filename);
+    }
+    std::string global_filename = subject->get_global_particle_filename();
+    if (global_filename != "") {
+      this->set_value("world_particles", i, global_filename);
     }
   }
 

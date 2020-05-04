@@ -143,6 +143,7 @@ private:
   bool is_light_project_{false};
 
   bool unsaved_groomed_files_{false};
+  bool unsaved_particle_files_{false};
 
   Settings settings_;
 

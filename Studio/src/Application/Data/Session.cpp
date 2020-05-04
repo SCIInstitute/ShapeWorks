@@ -141,41 +141,41 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
   if (this->unsaved_groomed_files_) {
     std::cerr << "unsaved groomed files detected, saving...\n";
     //if (this->groomed_present()) {
-      std::vector<std::string> groomed_list;
-      for (int i = 0; i < this->shapes_.size(); i++) {
-        QString loc = this->shapes_[i]->get_groomed_filename_with_path();
-        if (!defaultDir) {
-          loc = QString::fromStdString(data_dir) + "/" +
-                this->shapes_[i]->get_groomed_filename();
-        }
-
-        std::string location = loc.toStdString();
-
-        groomed_list.push_back(location);
-
-        //try writing the groomed to file
-        WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName(location);
-        writer->SetInput(this->shapes_[i]->get_groomed_image());
-        writer->SetUseCompression(true);
-        std::cerr << "Writing distance transform: " << location << "\n";
-        writer->Update();
-        std::vector<std::string> groomed_filenames {location}; // only single domain supported so far
-        this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
-
-        QApplication::processEvents();
-        if (progress.wasCanceled()) {
-          break;
-        }
+    std::vector<std::string> groomed_list;
+    for (int i = 0; i < this->shapes_.size(); i++) {
+      QString loc = this->shapes_[i]->get_groomed_filename_with_path();
+      if (!defaultDir) {
+        loc = QString::fromStdString(data_dir) + "/" +
+              this->shapes_[i]->get_groomed_filename();
       }
-      this->project_->set_distance_transform_files(groomed_list);
-      //xml->writeTextElement("distance_transforms", groomed_list);
+
+      std::string location = loc.toStdString();
+
+      groomed_list.push_back(location);
+
+      //try writing the groomed to file
+      WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName(location);
+      writer->SetInput(this->shapes_[i]->get_groomed_image());
+      writer->SetUseCompression(true);
+      std::cerr << "Writing distance transform: " << location << "\n";
+      writer->Update();
+      std::vector<std::string> groomed_filenames {location};   // only single domain supported so far
+      this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
+
+      QApplication::processEvents();
+      if (progress.wasCanceled()) {
+        break;
+      }
+    }
+    this->project_->set_distance_transform_files(groomed_list);
+    //xml->writeTextElement("distance_transforms", groomed_list);
     //}
     this->unsaved_groomed_files_ = false;
   }
 
   // correspondence points
-  if (this->reconstructed_present()) {
+  if (this->unsaved_particle_files_) {
     std::vector<std::string> world_list;
     std::vector<std::string> local_list;
 
@@ -196,12 +196,15 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
       local_list.push_back(local_path);
       this->save_particles_file(global_path, this->shapes_[i]->get_global_correspondence_points());
       this->save_particles_file(local_path, this->shapes_[i]->get_local_correspondence_points());
+      this->shapes_[i]->get_subject()->set_global_particle_filename(global_path);
+      this->shapes_[i]->get_subject()->set_local_particle_filename(local_path);
     }
     //xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
     //xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
 
     this->project_->set_local_point_files(local_list);
     this->project_->set_global_point_files(world_list);
+    this->unsaved_particle_files_ = false;
   }
 
   this->project_->set_settings(Settings::STUDIO_SETTINGS, this->settings_);
@@ -700,6 +703,7 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
   }
 
   if (points.size() > 0) {
+    this->unsaved_particle_files_ = true;
     emit points_changed();
   }
   return true;

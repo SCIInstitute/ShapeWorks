@@ -19,6 +19,12 @@ public:
   void set_groomed_filenames(std::vector<std::string> filenames);
   std::vector<std::string> get_groomed_filenames();
 
+  void set_local_particle_filename(std::string filename);
+  std::string get_local_particle_filename();
+
+  void set_global_particle_filename(std::string filename);
+  std::string get_global_particle_filename();
+
   void set_number_of_domains(int number_of_domains);
 
 private:
@@ -28,7 +34,7 @@ private:
   std::vector<std::string> segmentation_filenames_;
   std::vector<std::string> mesh_filenames_;
   std::vector<std::string> groomed_filenames_;
-  std::string local_particle_filenames_;
-  std::string world_particle_filenames_;
+  std::string local_particle_filename_;
+  std::string global_particle_filename_;
 };
 }

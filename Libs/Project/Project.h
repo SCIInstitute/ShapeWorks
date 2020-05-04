@@ -85,6 +85,8 @@ private:
   std::string get_value(int column, int subject_id);
   void set_value(int column, int subject_id, std::string value);
 
+  void set_value(std::string column_name, int subject_id, std::string value);
+
   void load_subjects();
 
 
