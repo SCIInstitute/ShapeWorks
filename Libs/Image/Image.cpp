@@ -132,13 +132,6 @@ Image& Image::write(const std::string &filename, bool compressed)
   return *this;
 }
 
-/// antialias
-///
-/// antialiases binary volumes
-///
-/// \param numIterations
-/// \param maxRMSErr      range [0.0, 1.0], determines how fast the solver converges (larger is faster)
-/// \param numLayers      size of region around a pixel to sample
 Image& Image::antialias(unsigned numIterations, double maxRMSErr, unsigned numLayers)
 {
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
@@ -404,12 +397,6 @@ Image& Image::applySigmoidFilter(double alpha, double beta)
   return *this;
 }
 
-/// applyTPLevelSetFilter
-///
-/// applies TPLevelSet level set image filter
-///
-/// \param featureImage     path of feature image for filter
-/// \param scaling          value of scale [default: 20]
 Image& Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
 {
   using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>; // TODO: this is no longer part of ITK and should be updated

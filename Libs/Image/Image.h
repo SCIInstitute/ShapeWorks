@@ -90,13 +90,13 @@ public:
   Image &pad(int padding = 0, PixelType value = 0.0);
 
   /// computes translation
-  Transform translate(Vector3 v);
+  Transform translate(Vector3 v = makeVector3({0.0, 0.0, 0.0}));
 
   /// computes scaling
-  Transform scale(Vector3 v);
+  Transform scale(Vector3 v = makeVector3({1.0, 1.0, 1.0}));
 
   /// computes rotation
-  Transform rotate(Vector3 v, double angle);
+  Transform rotate(Vector3 v = makeVector3({0.0, 0.0, 1.0}), double angle = 0.0);
 
   /// applies the computed transformation to the image by using resampling filter
   Image &applyTransform(const Transform &transform);
