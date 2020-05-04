@@ -137,19 +137,18 @@ void Visualizer::display_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples()
 {
-  /*
-     QVector < QSharedPointer < Shape >> shapes = this->project_->get_shapes();
-
-     for (int i = 0; i < shapes.size(); i++) {
-     this->display_objects_[i]->set_correspondence_points(
+  std::cerr << "update samples\n";
+  QVector < QSharedPointer < Shape >> shapes = this->session_->get_shapes();
+/*
+  for (int i = 0; i < shapes.size(); i++) {
+    this->display_objects_[i]->set_correspondence_points(
       shapes[i]->get_local_correspondence_points());
-     }
-
-     foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
-     viewer->update_points();
-     }
-     this->lightbox_->redraw();
-   */
+  }
+*/
+  foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
+    viewer->update_points();
+  }
+  this->lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
