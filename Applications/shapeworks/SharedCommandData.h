@@ -13,9 +13,9 @@ struct SharedCommandData
   Image::Region region;
   Mesh mesh;
   ParticleSystem particleSystem;
-  Transform::Pointer transform;
+  Transform transform;
 
-  SharedCommandData() { transform = Transform::New(); }
+  SharedCommandData() { transform = TransformType::New(); }
 
 };
 

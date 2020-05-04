@@ -2,6 +2,7 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <itkImageRegionIteratorWithIndex.h>
 
 namespace shapeworks {
 
@@ -36,14 +37,12 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
 ///   image.applyTransform(xform);
 ///
 /// \param image      the binary image from which to generate the transform
-Transform::Pointer ImageUtils::createCenterOfMassTransform(const Image &image)
+Transform ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   Point3 com = image.centerOfMass();
   Point3 center = image.center();
 
-  std::cout << "ImageUtils::createCenterOfMassTransform\n\tcom: " << com << "\n\tctr: " << center << std::endl;
-
-  Transform::Pointer xform = Transform::New();
+  Transform xform;
   xform->Translate(center - com);
   return xform;
 }
@@ -53,7 +52,7 @@ Transform::Pointer ImageUtils::rigidRegistration(const Image &image, Image &targ
   vtkSmartPointer<vtkPolyData> targetContour = image.convert(target, isoValue);
   vtkSmartPointer<vtkPolyData> movingContour = image.convert(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
-  Transform::Pointer xform = Transform::New();
+  Transform xform;
   xform->SetMatrix(mat);
   return xform;
 }

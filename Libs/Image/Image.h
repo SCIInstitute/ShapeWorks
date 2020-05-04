@@ -133,7 +133,6 @@ public:
   /// Reflect image on the plane specified by center of image and given normal (ex: <1,0,0> to reflect "vertically" across YZ-plane).
   Image& reflect(const Vector3 &normal);
 
-
   // query functions //
 
   /// logical dimensions of the image
@@ -162,7 +161,6 @@ public:
 
   // compares this with another image using the region of interest filter
   bool operator==(const Image &other) const;
-
 
   // export functions //
 

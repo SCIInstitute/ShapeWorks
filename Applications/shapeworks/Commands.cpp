@@ -555,7 +555,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   
   sharedData.transform = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
-  sharedData.image.applyTransform(sharedData.transform);
+  sharedData.image.applyTransform(sharedData.transform, target);
   return true;
 }
 

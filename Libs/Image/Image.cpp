@@ -278,10 +278,10 @@ Image& Image::applyTransform(const Transform::Pointer &transform)
   resampler->SetInterpolator(interpolator);
   resampler->SetTransform(transform);
   resampler->SetInput(this->image);
-  resampler->SetSize(image->GetLargestPossibleRegion().GetSize());
-  resampler->SetOutputOrigin(origin());
-  resampler->SetOutputDirection(image->GetDirection());
-  resampler->SetOutputSpacing(image->GetSpacing());
+  resampler->SetSize(img.dims());
+  resampler->SetOutputOrigin(img.origin());
+  resampler->SetOutputDirection(img.image->GetDirection());
+  resampler->SetOutputSpacing(img.image->GetSpacing());
   resampler->Update();
   this->image = resampler->GetOutput();
 

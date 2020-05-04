@@ -225,7 +225,7 @@ TEST(ImageTests, crop_test)
 
   Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
-  region = ImageUtils::boundingBox(images);
+  region = ImageUtils::binaryBoundingBox(images);
   image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 
@@ -237,7 +237,7 @@ TEST(ImageTests, com_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Transform::Pointer xform = ImageUtils::createCenterOfMassTransform(image);
+  Transform xform = ImageUtils::createCenterOfMassTransform(image);
   image.applyTransform(xform);
   Image ground_truth(test_location + "com_baseline.nrrd");
 
@@ -249,7 +249,7 @@ TEST(ImageTests, com_test)
 //   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
 
 //   Image image(test_location + "1x2x2.nrrd");
-//   Transform::Pointer xform;
+//   Transform xform;
 //   double v[3] = {10, 10, 10};
 //   xform->Translate(Vector3(v));
 //   image.applyTransform(xform);
