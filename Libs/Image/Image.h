@@ -131,8 +131,13 @@ public:
   /// crops the image down to the given region
   Image &crop(const Region &region);
 
+  Image& clip(Matrix cuttingPlane, const PixelType val); // TODO: finish by eliminating the matrix version in favor of the other two
+
   /// sets values on the back side of the cutting plane to val (default 0.0)
-  Image &clip(Matrix cuttingPlane, const PixelType val = 0.0);
+  Image &clip(const Point3& o, const Point3& p1, const Point3& p2, const PixelType val = 0.0);
+
+  /// sets values on the back side of the cutting plane to val (default 0.0)
+  Image &clip(const Vector3& n, const Point3 &p, const PixelType val = 0.0);
 
   /// sets the iamge origin in physical space to the given value
   Image &setOrigin(Point3 origin = Point3({0, 0, 0}));
@@ -160,13 +165,13 @@ public:
   /// computes the logical coordinates of the largest region of data <= the given isoValue
   Image::Region boundingBox(PixelType isoValue = 1.0) const;
 
-  // converts from pixel coordinates to physical space
+  /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const IPoint3 &v) const;
 
-  // converts from a physical coordinate to a logical coordinate
+  /// converts from a physical coordinate to a logical coordinate
   IPoint3 physicalToLogical(const Point3 &p) const;
 
-  // compares this with another image using the region of interest filter
+  /// compares this with another image using the region of interest filter
   bool operator==(const Image &other) const;
 
   // export functions //
@@ -174,8 +179,8 @@ public:
   /// writes image, format specified by filename extension
   Image &write(const std::string &filename, bool compressed = true);
 
-  /// creates a vtkPolyData from this image
-  vtkSmartPointer<vtkPolyData> getPolyData(const Image &img, PixelType isoValue = 0.0) const;
+  /// creates a vtkPolyData for the given image
+  static vtkSmartPointer<vtkPolyData> getPolyData(const Image &img, PixelType isoValue = 0.0);
 
 private:
   friend struct SharedCommandData;

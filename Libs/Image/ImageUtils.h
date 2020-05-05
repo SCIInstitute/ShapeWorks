@@ -11,11 +11,15 @@ public:
   /// calculate bounding box incrementally for images using the region of data <= the given isoValue
   static Image::Region boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue = 1.0);
 
+  /// clips in image's real (physical) space
+  static Image& clipReal(Image &image, const Point3& o, const Point3& p1, const Point3& p2, const Image::PixelType val = 0.0);
+  static Image& clipReal(Image &image, const Vector3& n, const Point3 &p, const Image::PixelType val = 0.0);
+
   /// Generates the Transform necessary to move the contents of this binary image to the center.
   static Transform createCenterOfMassTransform(const Image &image);
 
   /// Return Transform necessary to align this image with target.
-  static Transform rigidRegistration(const Image &img, Image &target, Image &source, float isoValue = 0.0, unsigned iterations = 20);
+  static Transform rigidRegistration(const Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
 
   /// topologyPreservingSmooth
   ///

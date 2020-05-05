@@ -46,14 +46,24 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-Transform ImageUtils::rigidRegistration(const Image &image, Image &target, Image &source, float isoValue, unsigned iterations)
+Transform ImageUtils::rigidRegistration(const Image &target, const Image &source, float isoValue, unsigned iterations)
 {
-  vtkSmartPointer<vtkPolyData> targetContour = image.getPolyData(target, isoValue);
-  vtkSmartPointer<vtkPolyData> movingContour = image.getPolyData(source, isoValue);
+  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
+  vtkSmartPointer<vtkPolyData> movingContour = Image::getPolyData(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
   Transform xform;
   xform->SetMatrix(mat);
   return xform;
+}
+
+Image& ImageUtils::clipReal(Image &image, const Point3& o, const Point3& p1, const Point3& p2, const Image::PixelType val)
+{
+  return image.clip(image.physicalToLogical(o), image.physicalToLogical(p1), image.physicalToLogical(p2), val);
+}
+
+Image& ImageUtils::clipReal(Image &image, const Vector3& n, const Point3 &p, const Image::PixelType val)
+{
+  return image.clip(image.physicalToLogical(Point3(n)), image.physicalToLogical(p), val);
 }
 
 } //shapeworks

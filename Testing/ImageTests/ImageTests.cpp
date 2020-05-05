@@ -322,7 +322,7 @@ TEST(ImageTests, icp_test)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  Transform xform = ImageUtils::rigidRegistration(image, target, source);
+  Transform xform = ImageUtils::rigidRegistration(target, source);
   image.applyTransform(xform);
   Image ground_truth(test_location + "icp_baseline.nrrd");
 

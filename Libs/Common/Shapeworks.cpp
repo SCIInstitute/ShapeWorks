@@ -2,7 +2,19 @@
 
 namespace shapeworks {
 
+/// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
+//itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector3(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
+
+Vector3 cross(const Vector3 &a, const Vector3 &b)
+{
+  return makeVector3({a[1]*b[2] - a[2]*b[1], -(a[0]*b[2] - a[2]*b[0]), a[0]*b[1] - a[1]*b[0]});
+}
+
+Vector3 dot(const Vector3 &a, const Vector3 &b)
+{
+  return makeVector3({a[0]*b[0], a[1]*b[1], a[2]*b[2]});
+}
 
 Point3 operator+(const Point3 &p, const Point3 &q)
 {

@@ -463,7 +463,7 @@ Image& Image::crop(const Region &region)
   return *this;
 }
 
-vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image &img, PixelType isoValue) const
+vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image &img, PixelType isoValue)
 {
   using FilterType = itk::VTKImageExport<ImageType>;
   FilterType::Pointer itkTargetExporter = FilterType::New();
@@ -525,6 +525,16 @@ Image& Image::clip(Matrix cuttingPlane, const PixelType val)
   }
 
   return *this;
+}
+
+Image& Image::clip(const Point3& o, const Point3& p1, const Point3& p2, const PixelType val)
+{
+  //todo
+}
+
+Image& Image::clip(const Vector3& n, const Point3 &p, const PixelType val)
+{
+  //todo
 }
 
 Image& Image::reflect(const Vector3 &normal)
