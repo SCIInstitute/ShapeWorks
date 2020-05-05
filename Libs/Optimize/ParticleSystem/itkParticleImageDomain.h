@@ -16,6 +16,7 @@
 #include <itkImageToVTKImageFilter.h>
 #include <itkZeroCrossingImageFilter.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
+#include "itkLinearInterpolateImageFunction.h"
 #include <chrono>
 
 // we have to undef foreach here because both Qt and OpenVDB define foreach
@@ -25,6 +26,8 @@
 #include <openvdb/tools/SignedFloodFill.h>
 #include <openvdb/tools/Interpolation.h>
 #include <openvdb/tools/GridOperators.h>
+#include <openvdb/math/Math.h>
+#include <openvdb/math/Transform.h>
 #endif
 
 namespace itk
@@ -64,6 +67,14 @@ public:
     m_Spacing = I->GetSpacing();
     m_Origin = I->GetOrigin();
     m_Index = I->GetRequestedRegion().GetIndex();
+
+    // Transformation from index space to world space
+    openvdb::math::Mat4f mat;
+    mat.setIdentity();
+    mat.postScale(openvdb::Vec3f(m_Spacing[0], m_Spacing[1], m_Spacing[2]));
+    mat.postTranslate(openvdb::Vec3f(m_Origin[0], m_Origin[1], m_Origin[2]));
+    const auto xform = openvdb::math::Transform::createLinearTransform(mat);
+    m_VDBImage->setTransform(xform);
 
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
@@ -107,7 +118,15 @@ public:
     // Precompute and save values that are used in parts of the optimizer
     this->UpdateZeroCrossingPoint(I);
     this->UpdateSurfaceArea(I);
+
+    tempI = I;
+    tempInterp = ScalarInterpolatorType::New();
+    tempInterp->SetInputImage(tempI);
   }
+
+  typedef LinearInterpolateImageFunction<ImageType, typename PointType::CoordRepType> ScalarInterpolatorType;
+  typename ImageType::Pointer tempI;
+  typename ScalarInterpolatorType::Pointer tempInterp;
 
   inline double GetSurfaceArea() const override
   {
@@ -144,7 +163,17 @@ public:
   {
     if(this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);
-      return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
+
+      const auto v1 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
+      const auto v2 = tempInterp->Evaluate(p);
+      if(abs(v1-v2) > 1e-6) {
+        std::cout << "Origin:  " << m_Origin << std::endl;
+        std::cout << "Spacing: " << m_Spacing << std::endl;
+        std::cout << "Values: " << v1 << "(vdb) vs " << v2 << "(itk)" << std::endl;
+        throw std::runtime_error("ParticleImageDomain: Bad sampling!");
+      }
+      return v1;
+
     } else {
       itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain." );
     }
@@ -199,12 +228,15 @@ protected:
     os << indent << "VDB Active Voxels = " << m_VDBImage->activeVoxelCount() << std::endl;
   }
 
-  // Converts a coordinate from an ITK Image point to the corresponding
-  // coordinate in OpenVDB
+  inline openvdb::math::Transform::Ptr transform() const {
+    return this->m_VDBImage->transformPtr();
+  }
+
+  // Converts a coordinate from an ITK Image point in world space to the corresponding
+  // coordinate in OpenVDB Index space
   inline openvdb::Vec3R ToVDBCoord(const PointType &p) const {
-    auto o = GetOrigin();
-    auto sp = p - o;
-    return openvdb::Vec3R(sp[0], sp[1], sp[2]);
+    const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
+    return this->transform()->worldToIndex(coord);
   }
 
 private:

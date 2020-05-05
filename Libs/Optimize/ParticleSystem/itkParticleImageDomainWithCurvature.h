@@ -36,6 +36,7 @@ public:
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::VnlMatrixType VnlMatrixType;
+  typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
@@ -52,10 +53,7 @@ public:
     f->SetInput(I);
     f->SetUseImageSpacingOn();
     f->Update();
-
-    // NOTE: Running the image through a filter seems to be the only way
-    // to get all of the image information correct!  Set the variance to
-    // positive value to smooth the curvature calculations.
+    tempCurv = f->GetOutput();
 
     m_VDBCurvature = openvdb::FloatGrid::create();
     auto vdbAccessor = m_VDBCurvature->getAccessor();
@@ -73,6 +71,7 @@ public:
       const auto pixel = it.Get();
 
       if (abs(pixel) > band) {
+        curvIt.Set(1e-6);
         continue;
       }
 
@@ -81,7 +80,12 @@ public:
 
       const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
       vdbAccessor.setValue(coord, this->MeanCurvature(pos));
+
+      curvIt.Set(this->MeanCurvature(pos));
     }
+
+    tempCurvInterp = ScalarInterpolatorType::New();
+    tempCurvInterp->SetInputImage(tempCurv);
 
     this->ComputeSurfaceStatistics(I);
   } // end setimage
@@ -89,7 +93,13 @@ public:
   double GetCurvature(const PointType &p) const
   {
     const auto coord = this->ToVDBCoord(p);
-    return openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
+    const auto v1 = openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
+    const auto v2 = tempCurvInterp->Evaluate(p);
+    if(abs(v1 - v2) > 1e-6) {
+      std::cout << v1 << "(vdb) vs " << v2 << "(itk)" << std::endl;
+      throw std::runtime_error("Bad curvature!");
+    }
+    return v1;
   }
 
   inline double GetSurfaceMeanCurvature() const
@@ -162,6 +172,9 @@ protected:
   
 private:
   openvdb::FloatGrid::Ptr m_VDBCurvature;
+
+  typename ImageType::Pointer tempCurv;
+  typename ScalarInterpolatorType::Pointer tempCurvInterp;
 
   // Cache surface statistics
   double m_SurfaceMeanCurvature;

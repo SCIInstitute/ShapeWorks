@@ -13,7 +13,7 @@
 #include "itkParticleImageDomain.h"
 #include "itkGradientImageFilter.h"
 #include "itkFixedArray.h"
-
+#include "itkVectorLinearInterpolateImageFunction.h"
 
 namespace itk
 {
@@ -40,12 +40,26 @@ public:
   typedef FixedArray<T, 3> VectorType;
   typedef vnl_vector_fixed<T, 3> VnlVectorType;
 
+  typedef GradientImageFilter<ImageType> GradientImageFilterType;
+  typedef typename GradientImageFilterType::OutputImageType GradientImageType;
+  typedef VectorLinearInterpolateImageFunction<GradientImageType, typename PointType::CoordRepType> GradientInterpolatorType;
+
+  typename GradientImageType::Pointer tempGrad;
+  typename GradientInterpolatorType::Pointer tempGradInterp;
+
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
-  {
+  void SetImage(ImageType *I) {
     ParticleImageDomain<T, VDimension>::SetImage(I);
     m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
+
+    tempGradInterp = GradientInterpolatorType::New();
+    typename GradientImageFilterType::Pointer filter = GradientImageFilterType::New();
+    filter->SetInput(I);
+    filter->SetUseImageSpacingOn();
+    filter->Update();
+    tempGrad = filter->GetOutput();
+    tempGradInterp->SetInputImage(tempGrad);
   }
 
   /** Sample the image at a point.  This method performs no bounds checking.
@@ -56,8 +70,17 @@ public:
   {
     if(this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);
+      // std::cout << "Gradient: " << p << " -> " << coord << std::endl;
 
       const auto _v = openvdb::tools::BoxSampler::sample(m_VDBGradient->tree(), coord);
+      const auto v2 = tempGradInterp->Evaluate(p);
+      if(abs(_v[0] - v2[0]) + abs(_v[1] - v2[1]) + abs(_v[2] - v2[2]) > 1e-6f) {
+        std::cout << _v << "(vdb) vs " << v2 << "(itk)" << std::endl;
+        std::cout << "Sample: " << this->Sample(p) << std::endl;
+        std::cout << "^^BAD SAMPLING!" << std::endl;
+        // throw std::runtime_error("Gradients: Bad sampling!");
+      }
+
       const VectorType v(_v.asPointer()); // This copies 3 floats from a VDB vector to a vnl vector
       return v;
     } else {
