@@ -2,6 +2,7 @@ import os
 import numpy as np
 import nrrd #@TODO not in conda installs (python -m pip install pynrrd)
 import random
+import torch
 
 # @TODO
 # reads .particles file and returns numpy array
@@ -10,6 +11,7 @@ def readModel(filename):
 
 # gets numpy data from image dir and model dir
 def getNumpyData(image_dir, model_dir, output_dir):
+	print(torch.rand(2,3).cuda())
 	print("Getting data in numpy format...")
 	if not os.path.exists(output_dir):
 		os.mkdir(output_dir)
