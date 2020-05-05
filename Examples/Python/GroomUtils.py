@@ -29,7 +29,7 @@ def rename(inname, outDir, extension_addition, extension_change=''):
     print("######################################\n")
     return outname
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, isBinary=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
     """
     This function takes in a filelist and produces the resampled files in the appropriate directory.
     """
@@ -51,8 +51,6 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
         
         if isBinary:
             cmd.extend(["binarize"])
-        if recenter:
-            cmd.extend(["recenter-image"])
 
         cmd.extend(["write-image", "--name", outname])
         print("Calling cmd:\n"+" ".join(cmd))
