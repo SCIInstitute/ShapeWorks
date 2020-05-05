@@ -70,7 +70,7 @@ void Session::handle_clear_cache()
 //---------------------------------------------------------------------------
 void Session::calculate_reconstructed_samples()
 {
-  if (!this->reconstructed_present_) {
+  if (!this->particles_present_) {
     return;
   }
   //this->preferences_.set_preference("Studio/cache_enabled", false);
@@ -134,7 +134,7 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
     for (int i = 0; i < this->shapes_.size(); i++) {
       original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
     }
-    this->project_->set_original_files(original_list);
+    //this->project_->set_original_files(original_list);
   }
 
   // distance transforms
@@ -168,7 +168,7 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
         break;
       }
     }
-    this->project_->set_distance_transform_files(groomed_list);
+    //this->project_->set_distance_transform_files(groomed_list);
     //xml->writeTextElement("distance_transforms", groomed_list);
     //}
     this->unsaved_groomed_files_ = false;
@@ -202,8 +202,8 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
     //xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
     //xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
 
-    this->project_->set_local_point_files(local_list);
-    this->project_->set_global_point_files(world_list);
+    //this->project_->set_local_point_files(local_list);
+    //this->project_->set_global_point_files(world_list);
     this->unsaved_particle_files_ = false;
   }
 
@@ -393,8 +393,8 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
     this->mesh_manager_->get_surface_reconstructor()->readMeanInfo(denseFile, sparseFile,
                                                                    goodPtsFile);
   }
-  this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
-                                 global_point_files.size() > 1;
+  this->particles_present_ = local_point_files.size() == global_point_files.size() &&
+                             global_point_files.size() > 1;
   this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
   return true;
 }
@@ -510,8 +510,8 @@ bool Session::load_light_project(QString filename, string &planesFile)
     }
   }
 
-  this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
-                                 global_point_files.size() > 1;
+  this->particles_present_ = local_point_files.size() == global_point_files.size() &&
+                             global_point_files.size() > 1;
 
   //this->calculate_reconstructed_samples();
 
@@ -538,25 +538,20 @@ bool Session::load_project(QString filename)
 
   auto subjects = this->project_->get_subjects();
 
+  std::vector<std::string> local_point_files;
+  std::vector<std::string> global_point_files;
+
   for (int i = 0; i < num_subjects; i++) {
     QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subjects[i]);
+    if (subjects[i]->get_local_particle_filename() != "") {
+      local_point_files.push_back(subjects[i]->get_local_particle_filename());
+      global_point_files.push_back(subjects[i]->get_global_particle_filename());
+    }
     this->shapes_ << shape;
   }
 
-  std::vector<std::string> original_files = this->project_->get_original_files();
-  if (original_files.size() > 0) {
-    this->load_original_files(original_files);
-  }
-
-  std::vector<std::string> groom_files = this->project_->get_distance_transform_files();
-  std::vector<std::string> local_point_files = this->project_->get_local_point_files();
-  std::vector<std::string> global_point_files = this->project_->get_global_point_files();
-
-  if (groom_files.size() > 0) {
-    this->load_groomed_files(groom_files, 0.5);
-  }
   this->load_point_files(local_point_files, true);
   this->load_point_files(global_point_files, false);
 
@@ -566,15 +561,11 @@ bool Session::load_project(QString filename)
                                                                  goodPtsFile);
      }
    */
-  this->reconstructed_present_ = local_point_files.size() == global_point_files.size() &&
-                                 global_point_files.size() > 1;
-  //this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
+  this->particles_present_ = local_point_files.size() == global_point_files.size() &&
+                             global_point_files.size() > 1;
 
   this->settings_ = this->project_->get_settings("studio");
 
-  //if (this->settings)
-
-//  if ()
 
   return true;
 }
@@ -712,7 +703,7 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
 //---------------------------------------------------------------------------
 void Session::set_reconstructed_present(bool value)
 {
-  this->reconstructed_present_ = value;
+  this->particles_present_ = value;
 }
 
 //---------------------------------------------------------------------------
@@ -806,7 +797,7 @@ void Session::reset()
 
   this->original_present_ = false;
   this->groomed_present_ = false;
-  this->reconstructed_present_ = false;
+  this->particles_present_ = false;
 
   this->mesh_manager_ = QSharedPointer<MeshManager>(new MeshManager(preferences_));
 
@@ -832,7 +823,7 @@ bool Session::groomed_present()
 //---------------------------------------------------------------------------
 bool Session::reconstructed_present()
 {
-  return this->reconstructed_present_;
+  return this->particles_present_;
 }
 
 //---------------------------------------------------------------------------

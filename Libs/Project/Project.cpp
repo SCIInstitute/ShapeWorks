@@ -1,6 +1,7 @@
 #include <Project.h>
 
 #include <xlnt/xlnt.hpp>
+
 #include <memory>
 
 using namespace shapeworks;
@@ -42,12 +43,7 @@ bool Project::load(std::string filename)
   }
 
   this->load_subjects();
-/*
-   this->original_files_ = this->get_string_column("original_files");
-   this->distance_transform_files_ = this->get_string_column("distance_transforms");
-   this->local_point_files_ = this->get_string_column("local_point_files");
-   this->global_point_files_ = this->get_string_column("world_point_files");
- */
+
   this->loaded_ = true;
   return true;
 }
@@ -55,11 +51,6 @@ bool Project::load(std::string filename)
 //---------------------------------------------------------------------------
 bool Project::save(std::string filename)
 {
-
-  //this->save_string_column("original_files", this->original_files_);
-  //this->save_string_column("distance_transforms", this->distance_transform_files_);
-  //this->save_string_column("local_point_files", this->local_point_files_);
-  //this->save_string_column("world_point_files", this->global_point_files_);
 
   try {
     this->store_subjects();
@@ -87,7 +78,7 @@ int Project::get_number_of_subjects()
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto mesh_columns = this->get_matching_columns(MESH_PREFIX);
   auto dt_columns = this->get_matching_columns(GROOMED_PREFIX);
-  auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES_PREFIX);
+  auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES);
   if (seg_columns.size() > 0) {
     return this->get_string_column(seg_columns[0]).size();
   }
@@ -123,59 +114,6 @@ int Project::get_number_of_domains()
   return 0;
 }
 
-//---------------------------------------------------------------------------
-std::vector<std::string> Project::get_segmentations()
-{
-  return this->get_matching_columns("segmentation_");
-}
-
-//---------------------------------------------------------------------------
-std::vector<std::string> Project::get_original_files()
-{
-  return this->original_files_;
-}
-
-//---------------------------------------------------------------------------
-void Project::set_original_files(std::vector<std::string> files)
-{
-  this->original_files_ = files;
-}
-
-//---------------------------------------------------------------------------
-std::vector<std::string> Project::get_distance_transform_files()
-{
-  return this->distance_transform_files_;
-}
-
-//---------------------------------------------------------------------------
-void Project::set_distance_transform_files(std::vector<std::string> files)
-{
-  this->distance_transform_files_ = files;
-}
-
-//---------------------------------------------------------------------------
-std::vector<std::string> Project::get_local_point_files()
-{
-  return this->local_point_files_;
-}
-
-//---------------------------------------------------------------------------
-void Project::set_local_point_files(std::vector<std::string> files)
-{
-  this->local_point_files_ = files;
-}
-
-//---------------------------------------------------------------------------
-std::vector<std::string> Project::get_global_point_files()
-{
-  return this->global_point_files_;
-}
-
-//---------------------------------------------------------------------------
-void Project::set_global_point_files(std::vector<std::string> files)
-{
-  this->global_point_files_ = files;
-}
 
 //---------------------------------------------------------------------------
 std::vector<std::shared_ptr<Subject>> &Project::get_subjects()
@@ -190,7 +128,9 @@ std::vector<std::string> Project::get_matching_columns(std::string prefix)
   auto headers = ws.rows(false)[0];
   std::vector<std::string> list;
 
-  for (int i = 0; i < headers.length(); i++) {
+  std::cerr << "headers.length() = " << headers.length() << "\n";
+
+  for (int i = 0; i <= headers.length(); i++) {
     if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
       list.push_back(headers[i].to_string());
     }
@@ -202,7 +142,6 @@ std::vector<std::string> Project::get_matching_columns(std::string prefix)
 std::string Project::get_value(int column, int subject_id)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
-
   return ws.cell(xlnt::cell_reference(column, subject_id)).value<std::string>();
 }
 
@@ -225,6 +164,12 @@ void Project::set_value(std::string column_name, int subject_id, std::string val
 }
 
 //---------------------------------------------------------------------------
+std::string Project::get_subject_value(int column, int subject_id)
+{
+  return this->get_value(column, subject_id + 2); // 1-based and skip header
+}
+
+//---------------------------------------------------------------------------
 void Project::load_subjects()
 {
   int num_subjects = this->get_number_of_subjects();
@@ -236,6 +181,9 @@ void Project::load_subjects()
   auto seg_columns = this->get_matching_columns(SEGMENTATION_PREFIX);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
 
+  int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
+  int global_particle_column = this->get_index_for_column(GLOBAL_PARTICLES);
+
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
@@ -243,6 +191,16 @@ void Project::load_subjects()
 
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
+
+    if (local_particle_column > 0)
+    {
+      subject->set_local_particle_filename(this->get_subject_value(local_particle_column, i));
+    }
+
+    if (global_particle_column > 0)
+    {
+      subject->set_global_particle_filename(this->get_subject_value(global_particle_column, i));
+    }
 
     this->segmentations_present_ = seg_columns.size() >= 1;
     this->groomed_present_ = groomed_columns.size() >= 1;

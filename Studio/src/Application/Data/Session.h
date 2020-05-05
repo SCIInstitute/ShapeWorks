@@ -15,7 +15,6 @@ using namespace shapeworks;
 
 class Shape;
 
-
 class Session;
 typedef QSharedPointer< Session > SessionHandle;
 
@@ -95,7 +94,7 @@ public:
 
   QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
-  Settings &settings();
+  Settings & settings();
 
 public Q_SLOTS:
   void handle_clear_cache();
@@ -138,7 +137,8 @@ private:
 
   bool original_present_{false};
   bool groomed_present_{false};
-  bool reconstructed_present_{false};
+  bool particles_present_{false};
+
   bool groups_available_{false};
   bool is_light_project_{false};
 
