@@ -266,10 +266,10 @@ For a description of the optimize tools and parameters, see: [Optimize.md](https
 Below are the default optimization parameters for this use case. 
 
             "number_of_particles" : 1024, 
-            "use_normals": 0,
+            "use_normals": 1,
             "normal_weight": 10.0,
             "checkpointing_interval" : 200,
-            "keep_checkpoints" : 1,
+            "keep_checkpoints" : 0,
             "iterations_per_split" : 4000,
             "optimization_iterations" : 4000,
             "starting_regularization" : 50000,
