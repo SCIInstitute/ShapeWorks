@@ -20,6 +20,7 @@ using FPoint3       = itk::Point<float, 3>;
 using TransformType = itk::AffineTransform<double, 3>;
 using Transform     = TransformType::Pointer;
 using Vector        = Vector3;
+using Point         = Point3;
 using Matrix        = Matrix33;
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list.

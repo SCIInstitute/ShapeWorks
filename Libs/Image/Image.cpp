@@ -1,6 +1,6 @@
 #include "Image.h"
-#include "utils.h"
-#include "itkTPGACLevelSetImageFilter.h"
+#include "ShapeworksUtils.h"
+#include "itkTPGACLevelSetImageFilter.h"  // actually a shapeworks class, not itk
 
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
@@ -31,20 +31,6 @@
 #include <exception>
 #include <cmath>
 
-//TODO: move this to Utils class (in Libs/Utils) -> tried, but something wrong with getting the right include
-//TODO: in C++17 this is a standard function
-bool is_directory(const std::string &pathname)
-{
-  struct stat info;
-  if (stat(pathname.c_str(), &info) != 0) {
-    return false;
-  }
-  else if (info.st_mode & S_IFDIR) {
-    return true;
-  }
-  return false;
-}
-
 namespace shapeworks {
 
 Image::ImageType::Pointer Image::cloneData(const Image::ImageType::Pointer image)
@@ -73,7 +59,7 @@ Image::ImageType::Pointer Image::read(const std::string &pathname)
 {
   if (pathname.empty()) { throw std::invalid_argument("Empty pathname"); }
 
-  if (is_directory(pathname))
+  if (ShapeworksUtils::is_directory(pathname))
     return readDICOMImage(pathname);
 
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -470,7 +456,7 @@ vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image &img, PixelType isoV
   itkTargetExporter->SetInput(img.image);
 
   vtkImageImport *vtkTargetImporter = vtkImageImport::New();
-  connectPipelines(itkTargetExporter, vtkTargetImporter);
+  ShapeworksUtils::connectPipelines(itkTargetExporter, vtkTargetImporter);
   vtkTargetImporter->Update();
 
   vtkContourFilter *targetContour = vtkContourFilter::New();

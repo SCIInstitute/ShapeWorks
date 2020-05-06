@@ -615,7 +615,7 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
   
-  sharedData.transform = ImageUtils::rigidRegistration(sharedData.image, target, source, isovalue, iterations);
+  sharedData.transform = ImageUtils::rigidRegistration(target, source, isovalue, iterations);
   sharedData.image.applyTransform(sharedData.transform);
   return true;
 }
@@ -638,34 +638,18 @@ void ClipVolume::buildParser()
   parser.add_option("--z1").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][0]");
   parser.add_option("--z2").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][1]");
   parser.add_option("--z3").action("store").type("double").set_default(0.0).help("value of cuttingplane [2][2]");
+  parser.add_option("--val").action("store").type("double").set_default(0.0).help("value of clipped pixels (default: 0.0)");
 
   Command::buildParser();
 }
 
 bool ClipVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  double x1 = static_cast<double>(options.get("x1"));
-  double x2 = static_cast<double>(options.get("x2"));
-  double x3 = static_cast<double>(options.get("x3"));
-  double y1 = static_cast<double>(options.get("y1"));
-  double y2 = static_cast<double>(options.get("y2"));
-  double y3 = static_cast<double>(options.get("y3"));
-  double z1 = static_cast<double>(options.get("z1"));
-  double z2 = static_cast<double>(options.get("z2"));
-  double z3 = static_cast<double>(options.get("z3"));
+  Point p1({static_cast<double>(options.get("x1")), static_cast<double>(options.get("x2")), static_cast<double>(options.get("x3"))});
+  Point p2({static_cast<double>(options.get("y1")), static_cast<double>(options.get("y2")), static_cast<double>(options.get("y3"))});
+  Point p3({static_cast<double>(options.get("z1")), static_cast<double>(options.get("z2")), static_cast<double>(options.get("z3"))});
 
-  Matrix cuttingplane;
-  cuttingplane[0][0] = x1;
-  cuttingplane[0][1] = x2;
-  cuttingplane[0][2] = x3;
-  cuttingplane[1][0] = y1;
-  cuttingplane[1][1] = y2;
-  cuttingplane[1][2] = y3;
-  cuttingplane[2][0] = z1;
-  cuttingplane[2][1] = z2;
-  cuttingplane[2][2] = z3;
-
-  sharedData.image.clip(cuttingplane);
+  sharedData.image.clip(p1, p2, p3, static_cast<double>(options.get("val")));
   return true;
 }
 

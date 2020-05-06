@@ -13,6 +13,10 @@ add_library(Image STATIC
 target_include_directories(Image PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
+target_link_libraries(Image
+  Common
+  ${ITK_LIBRARIES}
+  )
 
 # Install
 set_target_properties(Image PROPERTIES PUBLIC_HEADER
