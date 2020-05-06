@@ -1,8 +1,9 @@
 #pragma once
 
+//#include <array>
+
 #include <QSharedPointer>
 #include <Visualization/ColorSchemes.h>
-#include <array>
 #include <Application/Data/Shape.h>
 
 class vtkRenderer;
@@ -18,6 +19,9 @@ class vtkArrowSource;
 class vtkTransformPolyDataFilter;
 class vtkScalarBarActor;
 class vtkCornerAnnotation;
+class vtkPolyDataMapper;
+class vtkActor;
+class vtkTransform;
 
 class Shape;
 
@@ -69,7 +73,7 @@ public:
 
   void handle_new_mesh();
 
-  bool is_mesh_ready();
+  bool is_viewer_ready();
 
   void set_visualizer(Visualizer* visualizer);
 
@@ -143,7 +147,10 @@ private:
   int scheme_;
 
   bool mesh_ready_ = false;
+  bool viewer_ready_ = false;
   bool loading_displayed_ = false;
+
+  QSharedPointer<Mesh> mesh_;
 
   Visualizer* visualizer_{nullptr};
 };

@@ -140,12 +140,12 @@ void Lightbox::display_shapes()
 
   int position = 0;
 
-  bool need_loading_screen = false;
+  //bool need_loading_screen = false;
   for (int i = start_object; i < end_object; i++) {
     this->insert_shape_into_viewer(this->shapes_[i], position);
-    if (!this->viewers_[position]->is_mesh_ready()) {
-      need_loading_screen = true;
-    }
+    //if (!this->viewers_[position]->is_viewer_ready()) {
+      //need_loading_screen = true;
+    //}
     position++;
   }
 
@@ -353,7 +353,7 @@ void Lightbox::check_for_first_draw()
   if (this->first_draw_) {
     int ready_viewer = -1;
     for (int i = 0; i < this->viewers_.size(); i++) {
-      if (this->viewers_[i]->is_mesh_ready()) {
+      if (this->viewers_[i]->is_viewer_ready()) {
         ready_viewer = i;
       }
     }

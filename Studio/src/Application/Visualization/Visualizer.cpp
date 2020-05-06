@@ -253,14 +253,14 @@ ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
 
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(this->session_->get_mesh_manager());
-
   shape->set_reconstructed_mesh(mesh);
   shape->set_global_particles(points);
   shape->set_vectors(vectors);
 
   QStringList annotations;
   //annotations for the 4 corners of the view box
-  annotations << "computed shape";
+  ///annotations << "computed shape";
+  annotations << "";
   annotations << "";
   annotations << "";
   annotations << "";

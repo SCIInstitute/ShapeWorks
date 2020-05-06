@@ -40,6 +40,7 @@
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
+  std::cerr << "<<< new viewer\n";
   //this->image_actor_ = vtkSmartPointer<vtkImageActor>::New();
 
   this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
@@ -207,9 +208,9 @@ void Viewer::handle_new_mesh()
 }
 
 //-----------------------------------------------------------------------------
-bool Viewer::is_mesh_ready()
+bool Viewer::is_viewer_ready()
 {
-  return this->mesh_ready_;
+  return this->viewer_ready_;
 }
 
 //-----------------------------------------------------------------------------
@@ -365,13 +366,13 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
     return;
   }
 
-  vtkSmartPointer<vtkPolyData> pointData = vtkSmartPointer<vtkPolyData>::New();
-  pointData->SetPoints(this->glyph_points_);
+  vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
+  point_data->SetPoints(this->glyph_points_);
 
-  vtkPointLocator* pointLocator = vtkPointLocator::New();
-  pointLocator->SetDataSet(pointData);
-  pointLocator->SetDivisions(100, 100, 100);
-  pointLocator->BuildLocator();
+  vtkPointLocator* point_locator = vtkPointLocator::New();
+  point_locator->SetDataSet(point_data);
+  point_locator->SetDivisions(100, 100, 100);
+  point_locator->BuildLocator();
 
   /// TODO: multi-domain support
   //for (int domain = 0; domain < this->numDomains; domain++) {
@@ -388,7 +389,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
   for (unsigned int i = 0; i < surfaceMagnitudes->GetNumberOfTuples(); i++) {
     // find the 8 closest correspondence points the to current point
     vtkSmartPointer<vtkIdList> closestPoints = vtkSmartPointer<vtkIdList>::New();
-    pointLocator->FindClosestNPoints(8, polyData->GetPoint(i), closestPoints);
+    point_locator->FindClosestNPoints(8, polyData->GetPoint(i), closestPoints);
 
     // assign scalar value based on a weighted scheme
     float weightedScalar = 0.0f;
@@ -399,9 +400,9 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
       vtkIdType id = closestPoints->GetId(p);
 
       // compute distance to current particle
-      double x = polyData->GetPoint(i)[0] - pointData->GetPoint(id)[0];
-      double y = polyData->GetPoint(i)[1] - pointData->GetPoint(id)[1];
-      double z = polyData->GetPoint(i)[2] - pointData->GetPoint(id)[2];
+      double x = polyData->GetPoint(i)[0] - point_data->GetPoint(id)[0];
+      double y = polyData->GetPoint(i)[1] - point_data->GetPoint(id)[1];
+      double z = polyData->GetPoint(i)[2] - point_data->GetPoint(id)[2];
       distance[p] = 1.0f / (x * x + y * y + z * z);
 
       // multiply scalar value by weight and add to running sum
@@ -442,11 +443,12 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
   this->shape_ = shape;
 
   //std::cerr << "asking for mesh\n";
-  QSharedPointer<Mesh> mesh = shape->get_mesh(this->visualizer_->get_display_mode());
+  this->mesh_ = shape->get_mesh(this->visualizer_->get_display_mode());
 
-  if (!mesh && this->loading_displayed_) {
+  if (!this->mesh_ && this->loading_displayed_) {
     // no need to proceed
-    return;
+    this->mesh_ready_ = false;
+    //return;
   }
 
   //QSharedPointer<Mesh> mesh;
@@ -462,11 +464,12 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
 
   ren->RemoveAllViewProps();
 
-  if (!mesh) {
+  if (!this->mesh_) {
     this->mesh_ready_ = false;
+    this->viewer_ready_ = false;
     // display loading message
     //corner_annotation->SetText(0, "Loading...");
-    this->corner_annotation_->SetText(2, "Loading...");
+    ///this->corner_annotation_->SetText(2, "Loading...");
     //corner_annotation->SetText(2, "Loading...");
 
     //ren->AddViewProp(this->image_actor_);
@@ -474,6 +477,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     //ren->ResetCamera();
     //this->renderer_->ResetCameraClippingRange();
     this->loading_displayed_ = true;
+
+    this->update_points();
+
   }
   else {
     //this->corner_annotation_->SetText(3, "Ready...");
@@ -482,10 +488,10 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     //corner_annotation->SetText(2, "Ready...");
     //corner_annotation->SetText(3, "Ready...");
     this->loading_displayed_ = false;
-    this->mesh_ready_ = true;
+    this->viewer_ready_ = true;
     //std::cerr << "mesh is ready!\n";
 
-    vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_->get_poly_data();
     vtkSmartPointer<vtkPolyDataMapper> mapper = this->surface_mapper_;
     vtkSmartPointer<vtkActor> actor = this->surface_actor_;
 
@@ -527,11 +533,17 @@ void Viewer::display_shape(QSharedPointer<Shape> shape)
     //ren->AddActor( this->glyph_actor_ );
 
     this->display_vector_field();
-    this->update_actors();
-    this->update_glyph_properties();
+
+
   }
 
-  this->renderer_->ResetCameraClippingRange();
+  this->update_actors();
+  this->update_glyph_properties();
+
+  ///this->update_actors();
+  ///this->update_glyph_properties();
+
+  //this->renderer_->ResetCameraClippingRange();
 
   ren->AddViewProp(this->corner_annotation_);
 }
@@ -541,6 +553,7 @@ void Viewer::clear_viewer()
 {
   this->renderer_->RemoveAllViewProps();
   this->visible_ = false;
+  this->viewer_ready_ = false;
   this->mesh_ready_ = false;
   this->loading_displayed_ = false;
 }
@@ -620,6 +633,7 @@ void Viewer::update_points()
     (vtkUnsignedLongArray*)(this->glyph_point_set_->GetPointData()->GetScalars());
 
   if (num_points > 0) {
+    this->viewer_ready_ = true;
     this->glyphs_->SetRange(0.0, (double)num_points + 1);
     this->glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
@@ -675,7 +689,7 @@ void Viewer::update_actors()
     }
   }
 
-  if (this->show_surface_) {
+  if (this->show_surface_ && this->mesh_) {
     /*    for ( int i = 0; i < this->numDomains; i++ )
         {
         this->renderer->AddActor( this->surfaceActors[i] );

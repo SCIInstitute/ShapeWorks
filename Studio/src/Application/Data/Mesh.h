@@ -32,8 +32,10 @@ public:
   /// Destructor
   ~Mesh();
 
-  /// Create a mesh from an image
+  /// Create a mesh from a file
   ImageType::Pointer create_from_file(std::string filename, double iso_value);
+
+  /// Create a mesh from an image
   void create_from_image(ImageType::Pointer img, double iso_value);
 
   /// Get the dimensions as a string for display (if loaded from an image)
