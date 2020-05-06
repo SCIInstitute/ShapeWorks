@@ -78,6 +78,12 @@ public:
 
   bool export_variance_graph(QString filename);
 
+  static const std::string MODE_ALL_SAMPLES_C;
+  static const std::string MODE_MEAN_C;
+  static const std::string MODE_PCA_C;
+  static const std::string MODE_SINGLE_SAMPLE_C;
+  static const std::string MODE_REGRESSION_C;
+
 public Q_SLOTS:
 
   // analysis mode

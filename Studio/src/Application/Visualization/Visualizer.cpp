@@ -49,6 +49,7 @@ void Visualizer::set_session(SessionHandle session)
 //-----------------------------------------------------------------------------
 void Visualizer::set_display_mode(std::string mode)
 {
+  std::cerr << "Visualizer::set_display_mode(" << mode << ")\n";
   this->display_mode_ = mode;
 }
 

@@ -21,6 +21,14 @@
 
 #include <ui_AnalysisTool.h>
 
+
+const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
+const std::string AnalysisTool::MODE_MEAN_C("mean");
+const std::string AnalysisTool::MODE_PCA_C("pca");
+const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
+const std::string AnalysisTool::MODE_REGRESSION_C("regression");
+
+
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 {
@@ -56,13 +64,13 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 std::string AnalysisTool::getAnalysisMode()
 {
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
-    if (this->ui_->allSamplesRadio->isChecked()) { return "all samples";}
-    if (this->ui_->singleSamplesRadio->isChecked()) { return "single sample";}
+    if (this->ui_->allSamplesRadio->isChecked()) { return AnalysisTool::MODE_ALL_SAMPLES_C;}
+    if (this->ui_->singleSamplesRadio->isChecked()) { return AnalysisTool::MODE_SINGLE_SAMPLE_C;}
   }
 
-  if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) { return "mean";}
-  if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) { return "pca";}
-  if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) { return "regression";}
+  if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) { return AnalysisTool::MODE_MEAN_C;}
+  if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) { return AnalysisTool::MODE_PCA_C;}
+  if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) { return AnalysisTool::MODE_REGRESSION_C;}
   return "";
 }
 

@@ -96,6 +96,7 @@ public Q_SLOTS:
   void handle_progress(size_t amt);
   void handle_new_mesh();
 
+
 private:
 
   void update_tool_mode();
@@ -106,6 +107,20 @@ private:
     GROOMED = 1,
     RECONSTRUCTED = 2
   };
+
+
+  enum DISPLAY_MODE {
+    ALL_SAMPLES = 0,
+    MEAN = 1,
+    PCA = 2,
+    SINGLE_SAMPLE = 3
+  };
+
+  static const std::string MODE_ORIGINAL_C;
+  static const std::string MODE_GROOMED_C;
+  static const std::string MODE_RECONSTRUCTION_C;
+
+  std::string get_view_mode();
 
   void set_view_combo_item_enabled(int item, bool value);
 
@@ -121,7 +136,10 @@ private:
 
   void update_display(bool force = false);
 
+
   void compute_mode_shape();
+
+  bool set_view_mode(std::string view_mode);
 
   void update_recent_files();
 
@@ -155,4 +173,6 @@ private:
   std::string data_dir_, currentMessage_;
 
   std::string current_display_mode_;
+
+  bool block_update_{false};
 };
