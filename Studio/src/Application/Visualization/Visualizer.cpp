@@ -252,6 +252,7 @@ ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
   vtkSmartPointer<vtkPolyData> mesh = this->session_->get_mesh_manager()->get_mesh(points);
 
   ShapeHandle shape = ShapeHandle(new Shape());
+  shape->set_mesh_manager(this->session_->get_mesh_manager());
 
   shape->set_reconstructed_mesh(mesh);
   shape->set_global_particles(points);

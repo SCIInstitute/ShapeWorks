@@ -458,7 +458,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
 {
 
   // export / save / new / open
-  bool reconstructed = this->session_->reconstructed_present();
+  bool reconstructed = this->session_->particles_present();
   bool original_present = this->session_->get_project()->get_segmentations_present();
 
   this->ui_->action_save_project->setEnabled(original_present);
@@ -605,7 +605,7 @@ void ShapeWorksStudioApp::update_table()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_changed()
 {
-  if (!this->session_->reconstructed_present()) {return;}
+  if (!this->session_->particles_present()) {return;}
   this->session_->handle_clear_cache();
   this->visualizer_->update_lut();
   this->compute_mode_shape();
@@ -755,9 +755,9 @@ void ShapeWorksStudioApp::handle_project_changed()
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                    this->session_->reconstructed_present());
+                                    this->session_->particles_present());
 
-  if (this->session_->reconstructed_present()) {
+  if (this->session_->particles_present()) {
     this->session_->handle_clear_cache();
   }
   this->update_table();
@@ -858,10 +858,21 @@ void ShapeWorksStudioApp::update_display(bool force)
   bool reconstruct_ready =
     this->session_->get_mesh_manager()->get_surface_reconstructor()->hasDenseMean();
 
-  if (!this->session_->groomed_present() && this->session_->reconstructed_present()) {
+  if (!this->session_->groomed_present() && this->session_->particles_present()) {
     // legacy will be used
+    std::cerr << "reconstruct ready\n";
     reconstruct_ready = true;
   }
+  else
+  {
+    std::cerr << "reconstruct not ready\n";
+  }
+
+  if (this->session_->particles_present())
+  {
+    reconstruct_ready = true;
+  }
+
 
   std::string mode = "all samples";
 
@@ -906,11 +917,9 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->ui_->zoom_slider->setValue(zoom_val);
     }
 
-    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+    this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
     this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
-    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                      this->session_->reconstructed_present() &&
-                                      reconstruct_ready);
+    this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, this->session_->particles_present());
   }
   else {
     if (mode == "mean") {
@@ -941,7 +950,7 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
       this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                        this->session_->reconstructed_present() &&
+                                        this->session_->particles_present() &&
                                         reconstruct_ready);
       this->visualizer_->display_sample(this->analysis_tool_->getSampleNumber());
       this->visualizer_->reset_camera();
@@ -950,7 +959,7 @@ void ShapeWorksStudioApp::update_display(bool force)
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
       this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                        this->session_->reconstructed_present() &&
+                                        this->session_->particles_present() &&
                                         reconstruct_ready);
     } //TODO regression?
 
@@ -1043,7 +1052,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
   this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
   this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                    this->session_->reconstructed_present());
+                                    this->session_->particles_present());
 
   this->update_view_mode();
 

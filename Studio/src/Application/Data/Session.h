@@ -88,7 +88,7 @@ public:
 
   bool original_present();
   bool groomed_present();
-  bool reconstructed_present();
+  bool particles_present();
   bool groups_available();
   int get_num_shapes();
 

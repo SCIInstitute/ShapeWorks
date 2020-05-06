@@ -48,6 +48,7 @@ public:
 
   bool get_segmentations_present();
   bool get_groomed_present();
+  bool get_particles_present();
 
   Settings get_settings(std::string name);
   void set_settings(std::string name, Settings);
@@ -89,5 +90,6 @@ private:
 
   bool segmentations_present_{false};
   bool groomed_present_{false};
+  bool particles_present_{false};
 };
 }

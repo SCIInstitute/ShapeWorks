@@ -343,7 +343,7 @@ bool AnalysisTool::compute_stats()
     return true;
   }
 
-  if (this->project_->get_shapes().size() == 0 || !this->project_->reconstructed_present()) {
+  if (this->project_->get_shapes().size() == 0 || !this->project_->particles_present()) {
     return false;
   }
 
@@ -606,7 +606,7 @@ void AnalysisTool::reset_stats()
 void AnalysisTool::enableActions()
 {
   this->ui_->reconstructionButton->setEnabled(
-    this->project_->reconstructed_present() && this->project_->get_groomed_present());
+    this->project_->particles_present() && this->project_->get_groomed_present());
 }
 
 //---------------------------------------------------------------------------

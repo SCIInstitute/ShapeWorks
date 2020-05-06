@@ -128,7 +128,7 @@ std::vector<std::string> Project::get_matching_columns(std::string prefix)
   auto headers = ws.rows(false)[0];
   std::vector<std::string> list;
 
-  std::cerr << "headers.length() = " << headers.length() << "\n";
+  //std::cerr << "headers.length() = " << headers.length() << "\n";
 
   for (int i = 0; i <= headers.length(); i++) {
     if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
@@ -150,8 +150,8 @@ void Project::set_value(int column, int subject_id, std::string value)
 {
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
-  std::cerr << "setting value for column = " << column << ", subject = " << subject_id << " to " <<
-    value << "\n";
+  //std::cerr << "setting value for column = " << column << ", subject = " << subject_id << " to " <<
+    //value << "\n";
 
   ws.cell(xlnt::cell_reference(column, subject_id)).value(value);
 }
@@ -194,11 +194,13 @@ void Project::load_subjects()
 
     if (local_particle_column > 0)
     {
+      this->particles_present_ = true;
       subject->set_local_particle_filename(this->get_subject_value(local_particle_column, i));
     }
 
     if (global_particle_column > 0)
     {
+      this->particles_present_ = true;
       subject->set_global_particle_filename(this->get_subject_value(global_particle_column, i));
     }
 
@@ -239,10 +241,12 @@ void Project::store_subjects()
     std::string local_filename = subject->get_local_particle_filename();
     if (local_filename != "") {
       this->set_value("local_particles", i, local_filename);
+      this->particles_present_ = true;
     }
     std::string global_filename = subject->get_global_particle_filename();
     if (global_filename != "") {
       this->set_value("world_particles", i, global_filename);
+      this->particles_present_ = true;
     }
   }
 
@@ -258,18 +262,18 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
 
   auto headers = ws.rows(false)[0];
 
-  std::cerr << "number of headers = " << headers.length() << "\n";
+  //std::cerr << "number of headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
-    std::cerr << headers[i].to_string() << "\n";
+    //std::cerr << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
       return i + 1;
     }
   }
 
   if (create_if_not_found) {
-    std::cerr << "couldn't find: " << name << "\n";
+//    std::cerr << "couldn't find: " << name << "\n";
     auto column = ws.highest_column();
-    std::cerr << "highest column is " << column.index << "\n";
+  //  std::cerr << "highest column is " << column.index << "\n";
     if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>() == "") {
       ws.cell(xlnt::cell_reference(column.index, 1)).value(name);
       return column.index;
@@ -288,7 +292,7 @@ std::vector<std::string> Project::get_string_column(std::string name)
 {
   int index = this->get_index_for_column(name);
 
-  std::cerr << "index for '" << name << "' = " << index << "\n";
+  //std::cerr << "index for '" << name << "' = " << index << "\n";
   std::vector<std::string> list;
   if (index < 0) {
     return list;
@@ -298,11 +302,11 @@ std::vector<std::string> Project::get_string_column(std::string name)
 
   auto rows = ws.rows(false);
 
-  std::cerr << "rows.length = " << rows.length() << "\n";
+  //std::cerr << "rows.length = " << rows.length() << "\n";
 
   for (int i = 1; i < rows.length(); i++) {
     std::string value = rows[i][index - 1].to_string();
-    std::cerr << "value = " << value << "\n";
+    //std::cerr << "value = " << value << "\n";
     //if (value != "") {
     list.push_back(value);
     //}
@@ -321,6 +325,12 @@ bool Project::get_segmentations_present()
 bool Project::get_groomed_present()
 {
   return this->groomed_present_;
+}
+
+//---------------------------------------------------------------------------
+bool Project::get_particles_present()
+{
+  return this->particles_present_;
 }
 
 //---------------------------------------------------------------------------

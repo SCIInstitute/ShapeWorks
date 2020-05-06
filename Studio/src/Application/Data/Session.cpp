@@ -566,7 +566,6 @@ bool Session::load_project(QString filename)
 
   this->settings_ = this->project_->get_settings("studio");
 
-
   return true;
 }
 
@@ -635,6 +634,8 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double
     }
     if (this->shapes_.size() <= i) {
       QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
+      new_shape->set_mesh_manager(this->mesh_manager_);
+
       this->shapes_.push_back(new_shape);
     }
     this->shapes_[i]->import_groomed_image(images[i], iso);
@@ -663,6 +664,8 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     }
     if (this->shapes_.size() <= i) {
       QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
+      new_shape->set_mesh_manager(this->mesh_manager_);
+
       this->shapes_.push_back(new_shape);
     }
     this->shapes_[i]->import_groomed_file(QString::fromStdString(file_names[i]), iso);
@@ -821,9 +824,9 @@ bool Session::groomed_present()
 }
 
 //---------------------------------------------------------------------------
-bool Session::reconstructed_present()
+bool Session::particles_present()
 {
-  return this->particles_present_;
+  return this->project_->get_particles_present();
 }
 
 //---------------------------------------------------------------------------

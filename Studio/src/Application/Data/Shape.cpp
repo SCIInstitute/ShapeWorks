@@ -242,6 +242,16 @@ bool Shape::import_local_point_file(QString filename)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 {
+  if (!this->reconstructed_mesh_) {
+    vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(
+      this->global_correspondence_points_);
+    if (poly_data) {
+      //std::cerr << "mesh was ready from manager!\n";
+      this->reconstructed_mesh_ = QSharedPointer<Mesh>(new Mesh());
+      this->reconstructed_mesh_->set_poly_data(poly_data);
+    }
+  }
+
   return this->reconstructed_mesh_;
 }
 
