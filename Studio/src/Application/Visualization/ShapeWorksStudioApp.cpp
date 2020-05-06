@@ -409,10 +409,8 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 {
-  std::cerr << "*** zoom slider changed, value is now: " <<
-    this->ui_->zoom_slider->value() << "\n";
-
   if (!this->lightbox_->render_window_ready()) {return;}
+
   this->preferences_.set_preference("zoom_state", this->ui_->zoom_slider->value());
 
   int value = this->ui_->zoom_slider->value();
@@ -525,8 +523,6 @@ void ShapeWorksStudioApp::update_scrollbar()
 void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged()
 {
   int value = this->ui_->vertical_scroll_bar->value();
-
-  //std::cerr << "vertical scrollbar value = " << value << "\n";
   this->lightbox_->set_start_row(value);
 }
 
@@ -595,9 +591,7 @@ void ShapeWorksStudioApp::update_table()
   }
 
   this->ui_->table->resizeColumnsToContents();
-  //this->ui_->table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
   this->ui_->table->horizontalHeader()->setStretchLastSection(false);
-
   this->ui_->table->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
@@ -675,6 +669,7 @@ void ShapeWorksStudioApp::update_tool_mode()
   if (tool_state == Session::ANALYSIS_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
     this->ui_->controlsDock->setWindowTitle("Analysis");
+    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
     this->on_actionShow_Tool_Window_triggered();
     this->update_display();
     this->ui_->action_analysis_mode->setChecked(true);
@@ -682,6 +677,7 @@ void ShapeWorksStudioApp::update_tool_mode()
   else if (tool_state == Session::GROOM_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->groom_tool_.data());
     this->ui_->controlsDock->setWindowTitle("Groom");
+    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
     this->ui_->action_groom_mode->setChecked(true);
   }
   else if (tool_state == Session::OPTIMIZE_C) {
@@ -708,7 +704,7 @@ void ShapeWorksStudioApp::update_view_mode()
   this->ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
 
   if (this->visualizer_) {
-    std::cerr << "Setting viewy mode to: " << view_mode << "\n";
+    //std::cerr << "Setting view mode to: " << view_mode << "\n";
     this->visualizer_->set_display_mode(view_mode);
     this->update_display(true);
   }
@@ -856,13 +852,11 @@ void ShapeWorksStudioApp::update_display(bool force)
     return;
   }
 
-  if (this->block_update_)
-  {
+  if (this->block_update_) {
     return;
   }
 
   this->block_update_ = true;
-  std::cerr << "Studio: update_display\n";
 
   this->visualizer_->set_center(this->ui_->center_checkbox->isChecked());
   this->preferences_.set_preference("display_state",
@@ -886,22 +880,20 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-  std::cerr << "analysis mode checked = " << this->ui_->action_analysis_mode->isChecked() << "\n";
   if (this->ui_->action_analysis_mode->isChecked()) {
     mode = this->analysis_tool_->getAnalysisMode();
   }
-
-  std::cerr << "displaying mode : " << mode << "\n";
 
   if (this->current_display_mode_ == mode && !force) {
     this->block_update_ = false;
     return;
   }
 
+  std::cerr << "**************** Studio: update_display\n";
+
   this->current_display_mode_ = mode;
 
   if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
-
 
     size_t num_samples = this->session_->get_shapes().size();
     if (num_samples == 0) {
@@ -913,15 +905,12 @@ void ShapeWorksStudioApp::update_display(bool force)
       root += 1.;
     }
 
-    std::cerr << "root = " << root << "\n";
-
     if (root > 4) {
       // don't default to more than 4x4
       root = 4;
     }
 
     int zoom_val = static_cast<int>(root);
-    std::cerr << "zoom_val = " << zoom_val << "\n";
     if (zoom_val != this->ui_->zoom_slider->value()) {
       this->ui_->zoom_slider->setValue(zoom_val);
     }
@@ -933,14 +922,13 @@ void ShapeWorksStudioApp::update_display(bool force)
 
     this->session_->calculate_reconstructed_samples();
     this->visualizer_->display_samples();
-
   }
   else {
     if (mode == AnalysisTool::MODE_MEAN_C) {
       this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
       this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
       this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-      std::cerr << "Setting view mode to reconstructed...\n";
+
       this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
 
       if (this->analysis_tool_->get_group_difference_mode()) {
@@ -1147,8 +1135,7 @@ void ShapeWorksStudioApp::compute_mode_shape()
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 {
-  if (view_mode != this->get_view_mode())
-  {
+  if (view_mode != this->get_view_mode()) {
     this->session_->settings().set("view_state", view_mode);
     this->update_view_mode();
     return true;

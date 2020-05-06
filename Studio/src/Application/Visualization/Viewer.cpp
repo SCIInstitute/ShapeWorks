@@ -40,7 +40,6 @@
 //-----------------------------------------------------------------------------
 Viewer::Viewer()
 {
-  std::cerr << "<<< new viewer\n";
   //this->image_actor_ = vtkSmartPointer<vtkImageActor>::New();
 
   this->surface_actor_ = vtkSmartPointer<vtkActor>::New();
