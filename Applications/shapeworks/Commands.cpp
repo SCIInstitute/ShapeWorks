@@ -251,7 +251,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
 
       // double v[3] = {tx, ty, tz};
       // sharedData.transform->Translate(Vector3(v));
-      sharedData.transform = sharedData.image.translate(makeVector3({tx, ty, tz}));
+      sharedData.transform = sharedData.image.translate(makeVector({tx, ty, tz}));
     }
   }
   

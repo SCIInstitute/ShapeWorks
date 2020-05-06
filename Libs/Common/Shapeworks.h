@@ -24,7 +24,7 @@ using Point         = Point3;
 using Matrix        = Matrix33;
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list.
-Vector3 makeVector3(std::array<double, 3>&& arr);
+Vector3 makeVector(std::array<double, 3>&& arr);
 
 /// Vector cross product
 Vector3 cross(const Vector3 &a, const Vector3 &b);

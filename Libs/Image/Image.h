@@ -92,13 +92,13 @@ public:
   Image &pad(int padding = 0, PixelType value = 0.0);
 
   /// computes translation
-  Transform translate(Vector3 v = makeVector3({0.0, 0.0, 0.0}));
+  Transform translate(const Vector3 &v = makeVector({0.0, 0.0, 0.0}));
 
   /// computes scaling
-  Transform scale(Vector3 v = makeVector3({1.0, 1.0, 1.0}));
+  Transform scale(const Vector3 &v = makeVector({1.0, 1.0, 1.0}));
 
   /// computes rotation
-  Transform rotate(Vector3 v = makeVector3({0.0, 0.0, 1.0}), double angle = 0.0);
+  Transform rotate(const Vector3 &v = makeVector({0.0, 0.0, 1.0}), const double angle = 0.0);
 
   /// applies the computed transformation to the image by using resampling filter
   Image &applyTransform(const Transform &transform);
@@ -133,13 +133,11 @@ public:
   /// crops the image down to the given region
   Image &crop(const Region &region);
 
-  Image& clip(Matrix cuttingPlane, const PixelType val); // TODO: finish by eliminating the matrix version in favor of the other two
+  /// sets values on the back side of cutting plane (containing three non-colinear points) to val (default 0.0)
+  Image &clip(const Point &o, const Point &p1, const Point &p2, const PixelType val = 0.0);
 
-  /// sets values on the back side of the cutting plane to val (default 0.0)
-  Image &clip(const Point3& o, const Point3& p1, const Point3& p2, const PixelType val = 0.0);
-
-  /// sets values on the back side of the cutting plane to val (default 0.0)
-  Image &clip(const Vector3& n, const Point3 &p, const PixelType val = 0.0);
+  /// sets values on the back side of cutting plane (normal n containing point p) to val (default 0.0)
+  Image &clip(const Vector &n, const Point &q, const PixelType val = 0.0);
 
   /// sets the iamge origin in physical space to the given value
   Image &setOrigin(Point3 origin = Point3({0, 0, 0}));

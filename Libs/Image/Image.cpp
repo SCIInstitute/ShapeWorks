@@ -246,7 +246,7 @@ Image& Image::pad(int padding, PixelType value)
   return *this;
 }
 
-Transform Image::translate(Vector3 v)
+Transform Image::translate(const Vector3 &v)
 {
   Transform xform;
   xform->Translate(v);
@@ -254,7 +254,7 @@ Transform Image::translate(Vector3 v)
   return xform;
 }
 
-Transform Image::scale(Vector3 v)
+Transform Image::scale(const Vector3 &v)
 {
   Transform xform;
   xform->Scale(v);
@@ -262,7 +262,7 @@ Transform Image::scale(Vector3 v)
   return xform;
 }
 
-Transform Image::rotate(Vector3 v, double angle)
+Transform Image::rotate(const Vector3 &v, const double angle)
 {
   Transform xform;
   xform->Rotate3D(v, angle);
@@ -467,60 +467,34 @@ vtkSmartPointer<vtkPolyData> Image::getPolyData(const Image &img, PixelType isoV
   return targetContour->GetOutput();
 }
 
-Image& Image::clip(Matrix cuttingPlane, const PixelType val)
+Image& Image::clip(const Point &o, const Point &p1, const Point &p2, const PixelType val)
 {
-  Point3 spacing = image->GetSpacing();
-  Point3 curOrigin = origin();
-  double o[] = {0.0, 0.0, 0.0};
-  double p1[] = {0.0, 0.0, 0.0};
-  double p2[] = {0.0, 0.0, 0.0};
-  double res[] = {0.0, 0.0, 0.0};
-  double temp = 0.0;
+  // clipping plane normal n = (p1-o) x (p2-o)
+  Vector v1(makeVector({p1[0] - o[0], p1[1] - o[1], p1[2] - o[2]}));
+  Vector v2(makeVector({p2[0] - o[0], p2[1] - o[1], p2[2] - o[2]}));
 
-  o[0] = (cuttingPlane[0][0] - curOrigin[0]) / spacing[0];
-  o[1] = (cuttingPlane[0][1] - curOrigin[1]) / spacing[1];
-  o[2] = (cuttingPlane[0][2] - curOrigin[2]) / spacing[2];
-  p1[0] = (cuttingPlane[1][0] - curOrigin[0]) / spacing[0];
-  p1[1] = (cuttingPlane[1][1] - curOrigin[1]) / spacing[1];
-  p1[2] = (cuttingPlane[1][2] - curOrigin[2]) / spacing[2];
-  p2[0] = (cuttingPlane[2][0] - curOrigin[0]) / spacing[0];
-  p2[1] = (cuttingPlane[2][1] - curOrigin[1]) / spacing[1];
-  p2[2] = (cuttingPlane[2][2] - curOrigin[2]) / spacing[2];
+  return clip(cross(v1, v2), o, val);
+}
 
-  // find the cross product vector
-  res[0] = (p1[1] - o[1]) * (p2[2] - o[2]) - (p1[2] - o[2]) * (p2[1] - o[1]);
-  res[1] = (p1[2] - o[2]) * (p2[0] - o[0]) - (p1[0] - o[0]) * (p2[2] - o[2]);
-  res[2] = (p1[0] - o[0]) * (p2[1] - o[1]) - (p1[1] - o[1]) * (p2[0] - o[0]);
+Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
+{
+  const double eps = 1E-6;
+  if (n.GetSquaredNorm() < eps) { throw std::invalid_argument("invalid clipping plane (zero length normal)"); }
 
-  // normalize
-  res[0] = res[0] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
-  res[1] = res[1] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
-  res[2] = res[2] / (sqrt(res[0] * res[0] + res[1] * res[1] + res[2] * res[2]));
-
-  itk::ImageRegionIteratorWithIndex<ImageType> imageIterator(this->image, image->GetLargestPossibleRegion());
-  while (!imageIterator.IsAtEnd())
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd())
   {
-    temp = (double(imageIterator.GetIndex()[0]) - o[0]) * res[0] +
-           (double(imageIterator.GetIndex()[1]) - o[1]) * res[1] +
-           (double(imageIterator.GetIndex()[2]) - o[2]) * res[2];
+    Point p({static_cast<double>(iter.GetIndex()[0]), static_cast<double>(iter.GetIndex()[1]), static_cast<double>(iter.GetIndex()[2])});
+    Vector pq(p - q);
 
-    if (temp < 0.0)
-      imageIterator.Set(val);
+    // if n dot pq is < 0, point q is on the back side of the plane.
+    if (n * pq < 0.0)
+      iter.Set(val);
       
-    ++imageIterator;
+    ++iter;
   }
 
   return *this;
-}
-
-Image& Image::clip(const Point3& o, const Point3& p1, const Point3& p2, const PixelType val)
-{
-  //todo
-}
-
-Image& Image::clip(const Vector3& n, const Point3 &p, const PixelType val)
-{
-  //todo
 }
 
 Image& Image::reflect(const Vector3 &normal)

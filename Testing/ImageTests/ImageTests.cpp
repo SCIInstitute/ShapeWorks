@@ -106,7 +106,7 @@ TEST(ImageTests, translate_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Transform xform = image.translate(makeVector3({10, 10, 10}));
+  Transform xform = image.translate(makeVector({10, 10, 10}));
   image.applyTransform(xform);
   Image ground_truth(test_location + "translate_baseline.nrrd");
 
@@ -292,16 +292,96 @@ TEST(ImageTests, crop_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, clip_test)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
+// clip1: good normal and point on plane, sets clipped values to pi
+TEST(ImageTests, clip1_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
-//   Image image(test_location + "1x2x2.nrrd");
-//   image.clip();
-//   Image ground_truth(test_location + "clip_baseline.nrrd");
+  Image image(test_location + "1x2x2.nrrd");
+  image.clip(makeVector({1,1,1}), Point({2,3,4}), 3.14);
+  image.write("/Users/cam/data/sw/tmp/clip1_test.nrrd");
+  Image ground_truth(test_location + "clip1_baseline.nrrd");
 
-//   ASSERT_TRUE(image == ground_truth);
-// }
+  ASSERT_TRUE(image == ground_truth);
+}
+
+// clip1x: clips YZ plane at x=2
+TEST(ImageTests, clip1x_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.clip(makeVector({1,0,0}), Point({2,0,0}));
+  image.write("/Users/cam/data/sw/tmp/clip1x_test.nrrd");
+  Image ground_truth(test_location + "clip1x_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+// clip1y: clips XZ plane at y=0
+TEST(ImageTests, clip1y_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.clip(makeVector({0,1,0}), Point({0,0,0}));
+  image.write("/Users/cam/data/sw/tmp/clip1y_test.nrrd");
+  Image ground_truth(test_location + "clip1y_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+// clip1z: clips XY plane using a far away p
+TEST(ImageTests, clip1z_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.clip(makeVector({0,0,-1}), Point({10000,100000,0}));
+  image.write("/Users/cam/data/sw/tmp/clip1z_test.nrrd");
+  Image ground_truth(test_location + "clip1z_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+/// clip2: clips using a zero length normal
+TEST(ImageTests, clip2_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  try { image.clip(makeVector({0,0,0}), Point({0,0,0})); }
+  catch(std::invalid_argument) { ASSERT_TRUE(true); }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
+
+/// clip3: clips using three non-colinear points for the plane, setting value to -pi
+TEST(ImageTests, clip3_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.clip(Point({0,0,0}), Point({1,0,0}), Point({-10,0,0}), -3.14);
+  image.write("/Users/cam/data/sw/tmp/clip3_test.nrrd");
+  Image ground_truth(test_location + "clip3_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+/// clip4: clips using three colinear points for the plane
+TEST(ImageTests, clip4_test)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  try { image.clip(Point({0,0,0}), Point({1,0,0}), Point({-10,0,0})); }
+  catch(std::invalid_argument) { ASSERT_TRUE(true); }
+
+  // fails if an exception is not thrown
+  ASSERT_TRUE(false);
+}
 
 TEST(ImageTests, reflect_test)
 {
@@ -309,7 +389,8 @@ TEST(ImageTests, reflect_test)
 
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
-  image.reflect(makeVector3({0.0, 1.0, 0.0}));
+  image.reflect(makeVector({0.0, 1.0, 0.0}));
+  image.write("/Users/cam/data/sw/tmp/reflect_test.nrrd");
   Image ground_truth(test_location + "reflect_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
