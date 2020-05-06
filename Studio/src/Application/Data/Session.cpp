@@ -757,7 +757,7 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
       }
     }
     else {
-      QMessageBox::critical(0, "Error", "Unable to open file:" + fname);
+      QMessageBox::critical(0, "Error", "Unable to open particle file:" + fname);
       return false;
     }
   }

@@ -24,7 +24,7 @@ void MeshWorker::run()
   vtkSmartPointer<vtkPolyData> mesh = this->mesh_generator_.build_mesh(*item);
 
   // compute the memory size of this shape
-  size_t shape_size = item->shape.size() * sizeof(double);
+  size_t shape_size = item->points.size() * sizeof(double);
   size_t mesh_size = mesh->GetActualMemorySize() * 1024; // given in kb
   size_t combined_size = (shape_size * 2) + mesh_size;
   item->memory_size = combined_size;

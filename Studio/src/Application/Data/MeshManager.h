@@ -31,8 +31,11 @@ public:
   //! generate and cache a mesh for this shape in a different thread
   void generate_mesh(const MeshWorkItem item);
 
-  //! get a mesh for a shape
-  vtkSmartPointer<vtkPolyData> get_mesh(const MeshWorkItem& shape);
+  //! get a mesh for a MeshWorkItem
+  vtkSmartPointer<vtkPolyData> get_mesh(const MeshWorkItem& item);
+
+  //! get a mesh for a set of points
+  vtkSmartPointer<vtkPolyData> get_mesh(const vnl_vector<double> &points);
 
   //! return the surface reconstructor
   QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();

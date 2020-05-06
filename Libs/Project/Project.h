@@ -63,7 +63,7 @@ private:
   static constexpr const char* GROOMED_PREFIX = "groomed_";
   static constexpr const char* MESH_PREFIX = "mesh_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
-  static constexpr const char* GLOBAL_PARTICLES = "global_particles";
+  static constexpr const char* WORLD_PARTICLES = "world_particles";
 
   std::vector<std::string> get_matching_columns(std::string prefix);
 

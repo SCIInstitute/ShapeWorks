@@ -20,7 +20,7 @@ class MeshWorkItem
 {
 public:
   std::string filename;
-  vnl_vector<double> shape;
+  vnl_vector<double> points;
   int domain;
 
   size_t memory_size;

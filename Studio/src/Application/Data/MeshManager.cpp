@@ -104,6 +104,14 @@ vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const MeshWorkItem &item)
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshManager::get_mesh(const vnl_vector<double> &points)
+{
+  MeshWorkItem item;
+  item.points = points;
+  return this->get_mesh(item);
+}
+
+//---------------------------------------------------------------------------
 void MeshManager::handle_thread_complete(const MeshWorkItem &item,
                                          vtkSmartPointer<vtkPolyData> mesh)
 {

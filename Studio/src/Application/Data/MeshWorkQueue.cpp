@@ -11,16 +11,16 @@ bool operator<(const MeshWorkItem &a, const MeshWorkItem &b)
         return a.domain < b.domain;
       }
 
-      if (a.shape.size() < b.shape.size()) {
+      if (a.points.size() < b.points.size()) {
         return true;
       }
       double eps = 1e-3f;
       //double eps = MeshCache::pref_ref_->get_preference("cache_epsilon", 1e-3f);
-      for (unsigned i = 0; i < a.shape.size(); i++) {
-        if ((a.shape[i] < b.shape[i]) && ((b.shape[i] - a.shape[i]) > eps)) {
+      for (unsigned i = 0; i < a.points.size(); i++) {
+        if ((a.points[i] < b.points[i]) && ((b.points[i] - a.points[i]) > eps)) {
           return true;
         }
-        else if (b.shape[i] < a.shape[i] && ((a.shape[i] - b.shape[i]) > eps)) {
+        else if (b.points[i] < a.points[i] && ((a.points[i] - b.points[i]) > eps)) {
           return false;
         }
       }
@@ -133,7 +133,7 @@ bool MeshWorkQueue::in_inside_list(const MeshWorkItem &item, const WorkList &lis
       }
     }
     else {
-      if (it->domain == item.domain && it->shape == item.shape) {
+      if (it->domain == item.domain && it->points == item.points) {
         return true;
       }
     }

@@ -62,6 +62,7 @@ public:
 
   /// Import local correspondence point file
   bool import_local_point_file(QString filename);
+
   /// Import local correspondence point data
   bool import_points(std::vector<itk::Point<double>> points, bool local);
 
@@ -75,6 +76,9 @@ public:
   vnl_vector<double> get_local_correspondence_points();
 
   void set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data);
+
+  void set_global_particles(const vnl_vector<double> &points);
+
 
   /// Get the id of this shape
   int get_id();

@@ -181,6 +181,12 @@ void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data)
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_global_particles(const vnl_vector<double> &points)
+{
+  this->global_correspondence_points_ = points;
+}
+
+//---------------------------------------------------------------------------
 bool Shape::import_global_point_file(QString filename)
 {
 

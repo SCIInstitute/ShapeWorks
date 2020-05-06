@@ -140,11 +140,11 @@ void Visualizer::update_samples()
   std::cerr << "update samples\n";
   QVector < QSharedPointer < Shape >> shapes = this->session_->get_shapes();
 /*
-  for (int i = 0; i < shapes.size(); i++) {
+   for (int i = 0; i < shapes.size(); i++) {
     this->display_objects_[i]->set_correspondence_points(
       shapes[i]->get_local_correspondence_points());
-  }
-*/
+   }
+ */
   foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
     viewer->update_points();
   }
@@ -161,9 +161,9 @@ void Visualizer::display_shape(const vnl_vector<double> &points)
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(const vnl_vector<double> &points, const std::vector<Point> &vectors)
 {
-  QVector<ShapeHandle> objects;
-  objects.push_back(this->create_display_object(points, vectors));
-  this->lightbox_->set_shapes(objects);
+  QVector<ShapeHandle> shapes;
+  shapes.push_back(this->create_display_object(points, vectors));
+  this->lightbox_->set_shapes(shapes);
   this->update_viewer_properties();
   //this->reset_camera();
   this->lightbox_->redraw();
@@ -247,26 +247,24 @@ void Visualizer::display_sample(int i)
 ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
                                               const std::vector<Point> &vectors)
 {
-/*
-   MeshHandle mesh = MeshHandle(new Mesh());
-   mesh->set_poly_data(this->project_->get_mesh_manager()->get_mesh(points));
 
-   DisplayObjectHandle object = DisplayObjectHandle(new DisplayObject());
 
-   object->set_mesh(mesh);
-   object->set_correspondence_points(points);
-   object->set_vectors(vectors);
+  vtkSmartPointer<vtkPolyData> mesh = this->session_->get_mesh_manager()->get_mesh(points);
 
-   QStringList annotations;
-   //annotations for the 4 corners of the view box
-   annotations << "computed shape";
-   annotations << "";
-   annotations << "";
-   annotations << "";
-   object->set_annotations(annotations);
-   return object;
- */
   ShapeHandle shape = ShapeHandle(new Shape());
+
+  shape->set_reconstructed_mesh(mesh);
+  shape->set_global_particles(points);
+  shape->set_vectors(vectors);
+
+  QStringList annotations;
+  //annotations for the 4 corners of the view box
+  annotations << "computed shape";
+  annotations << "";
+  annotations << "";
+  annotations << "";
+  shape->set_annotations(annotations);
+
   return shape;
 }
 

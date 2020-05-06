@@ -111,7 +111,7 @@ void MeshCache::insert_mesh(const MeshWorkItem& item, vtkSmartPointer<vtkPolyDat
   QMutexLocker locker(&mutex_);
 
   // compute the memory size of this shape
-  size_t shapeSize = item.shape.size() * sizeof(double);
+  size_t shapeSize = item.points.size() * sizeof(double);
   size_t meshSize = mesh->GetActualMemorySize() * 1024; // given in kb
   size_t combinedSize = (shapeSize * 2) + meshSize;
 

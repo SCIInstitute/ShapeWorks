@@ -182,7 +182,7 @@ void Project::load_subjects()
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
 
   int local_particle_column = this->get_index_for_column(LOCAL_PARTICLES);
-  int global_particle_column = this->get_index_for_column(GLOBAL_PARTICLES);
+  int global_particle_column = this->get_index_for_column(WORLD_PARTICLES);
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();

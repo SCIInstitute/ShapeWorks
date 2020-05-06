@@ -26,7 +26,7 @@ vtkSmartPointer<vtkPolyData> MeshGenerator::build_mesh(const MeshWorkItem &item)
     return this->build_mesh_from_file(item.filename);
   }
   else {
-    return this->build_mesh_from_points(item.shape, item.domain);
+    return this->build_mesh_from_points(item.points, item.domain);
   }
 }
 
