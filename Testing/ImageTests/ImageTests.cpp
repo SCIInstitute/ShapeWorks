@@ -298,7 +298,7 @@ TEST(ImageTests, clip1_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(makeVector({1,1,1}), Point({2,3,4}), 3.14);
+  image.clip(makeVector({1,1,1}), Point({20,35,45}), 3.14);
   image.write("/Users/cam/data/sw/tmp/clip1_test.nrrd");
   Image ground_truth(test_location + "clip1_baseline.nrrd");
 
@@ -311,7 +311,7 @@ TEST(ImageTests, clip1x_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(makeVector({1,0,0}), Point({2,0,0}));
+  image.clip(makeVector({1,0,0}), image.origin() + Point({12.75,0,0}));
   image.write("/Users/cam/data/sw/tmp/clip1x_test.nrrd");
   Image ground_truth(test_location + "clip1x_baseline.nrrd");
 
@@ -324,7 +324,7 @@ TEST(ImageTests, clip1y_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(makeVector({0,1,0}), Point({0,0,0}));
+  image.clip(makeVector({0,1,0}), image.origin());
   image.write("/Users/cam/data/sw/tmp/clip1y_test.nrrd");
   Image ground_truth(test_location + "clip1y_baseline.nrrd");
 
@@ -350,7 +350,7 @@ TEST(ImageTests, clip2_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  try { image.clip(makeVector({0,0,0}), Point({0,0,0})); }
+  try { image.clip(makeVector({0,0,0}), image.origin()); }
   catch(std::invalid_argument) { ASSERT_TRUE(true); }
 
   // fails if an exception is not thrown
@@ -363,7 +363,7 @@ TEST(ImageTests, clip3_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(Point({0,0,0}), Point({1,0,0}), Point({-10,0,0}), -3.14);
+  image.clip(image.origin(), Point({75,0,0}), Point({-10,0,0}), -3.14);
   image.write("/Users/cam/data/sw/tmp/clip3_test.nrrd");
   Image ground_truth(test_location + "clip3_baseline.nrrd");
 
