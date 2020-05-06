@@ -246,7 +246,7 @@ Image& Image::pad(int padding, PixelType value)
   return *this;
 }
 
-Transform Image::translate(const Vector3 &v)
+Transform Image::translate(const Vector3 &v) const
 {
   Transform xform;
   xform->Translate(v);
@@ -282,6 +282,7 @@ Image& Image::applyTransform(const Transform &transform)
   resampler->SetTransform(transform);
   resampler->SetInput(this->image);
   resampler->SetSize(dims());
+  std::cout << dims();
   resampler->SetOutputOrigin(origin());
   resampler->SetOutputDirection(image->GetDirection());
   resampler->SetOutputSpacing(image->GetSpacing());

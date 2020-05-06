@@ -92,7 +92,7 @@ public:
   Image &pad(int padding = 0, PixelType value = 0.0);
 
   /// computes translation
-  Transform translate(const Vector3 &v = makeVector({0.0, 0.0, 0.0}));
+  Transform translate(const Vector3 &v = makeVector({0.0, 0.0, 0.0})) const;
 
   /// computes scaling
   Transform scale(const Vector3 &v = makeVector({1.0, 1.0, 1.0}));
