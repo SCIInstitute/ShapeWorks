@@ -10,7 +10,6 @@
 
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkImage.h"
-#include "itkLinearInterpolateImageFunction.h"
 #include "itkGradientImageFilter.h"
 #include "itkFixedArray.h"
 #include "itkImageDuplicator.h"
@@ -42,7 +41,6 @@ public:
     /** Point type of the domain (not necessarily of the image). */
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::ImageType ImageType;
-  typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
 
   typedef vnl_matrix_fixed<T, VDimension, VDimension> VnlMatrixType;
 
@@ -78,10 +76,6 @@ public:
         const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
         vdbAccessor.setValue(coord, hess);
       }
-
-      tempHess[i] = hess;
-      tempHessInterp[i] = ScalarInterpolatorType::New();
-      tempHessInterp[i]->SetInputImage(tempHess[i]);
     };
 
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
@@ -152,11 +146,6 @@ public:
     for (unsigned int i = 0; i < VDimension; i++)
     {
       vdbAns[i][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[i]->tree(), coord);
-      const auto x = tempHessInterp[i]->Evaluate(p);
-      if(abs(x - vdbAns[i][i]) > 1e-6) {
-        // throw std::runtime_error("Bad hessian!");
-        std::cout << "Bad hessian(" << i << "," << i << "): "  << vdbAns[i][i] << "(vdb) vs " << x << "(itk)" << std::endl;
-      }
     }
 
     // Cross derivatives
@@ -166,11 +155,6 @@ public:
       for (unsigned int j = i+1; j < VDimension; j++, k++)
       {
         vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[k]->tree(), coord);
-        const auto x = tempHessInterp[k]->Evaluate(p);
-        if(abs(x - vdbAns[i][j]) > 1e-6) {
-          // throw std::runtime_error("Bad hessian!");
-          std::cout << "Bad hessian(" << i << "," << j << "): "  << vdbAns[i][j] << "(vdb) vs " << x << "(itk)" << std::endl;
-        }
       }
     }
     return vdbAns;
@@ -222,9 +206,6 @@ private:
   //                     2: dzz
   typename openvdb::FloatGrid::Ptr m_VDBHessians[
           VDimension + ((VDimension * VDimension) - VDimension) / 2];
-
-  typename ImageType::Pointer tempHess[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
-  typename ScalarInterpolatorType::Pointer tempHessInterp[VDimension + ((VDimension * VDimension) - VDimension) / 2];
 };
 
 } // end namespace itk

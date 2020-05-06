@@ -36,7 +36,6 @@ public:
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::VnlMatrixType VnlMatrixType;
-  typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
@@ -45,6 +44,10 @@ public:
     // Computes partial derivatives in parent class
     Superclass::SetImage(I);
 
+    // Because of this filter, the proportion of the image we are considering for the narrow band
+    // is extended. The curvature is computed outside the narrow band of the original image, where
+    // we don't have the gradient stored. At these points, there is incorrect curvature. This is
+    // not a problem in practice since we don't have particles far away from the surface.
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer f = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
 
     double sig =  this->GetSpacing()[0] * 0.5;
@@ -53,7 +56,6 @@ public:
     f->SetInput(I);
     f->SetUseImageSpacingOn();
     f->Update();
-    tempCurv = f->GetOutput();
 
     m_VDBCurvature = openvdb::FloatGrid::create();
     auto vdbAccessor = m_VDBCurvature->getAccessor();
@@ -71,7 +73,6 @@ public:
       const auto pixel = it.Get();
 
       if (abs(pixel) > band) {
-        curvIt.Set(1e-6);
         continue;
       }
 
@@ -80,12 +81,7 @@ public:
 
       const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
       vdbAccessor.setValue(coord, this->MeanCurvature(pos));
-
-      curvIt.Set(this->MeanCurvature(pos));
     }
-
-    tempCurvInterp = ScalarInterpolatorType::New();
-    tempCurvInterp->SetInputImage(tempCurv);
 
     this->ComputeSurfaceStatistics(I);
   } // end setimage
@@ -93,13 +89,7 @@ public:
   double GetCurvature(const PointType &p) const
   {
     const auto coord = this->ToVDBCoord(p);
-    const auto v1 = openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
-    const auto v2 = tempCurvInterp->Evaluate(p);
-    if(abs(v1 - v2) > 1e-6) {
-      std::cout << v1 << "(vdb) vs " << v2 << "(itk)" << std::endl;
-      throw std::runtime_error("Bad curvature!");
-    }
-    return v1;
+    return openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
   }
 
   inline double GetSurfaceMeanCurvature() const
@@ -172,9 +162,6 @@ protected:
   
 private:
   openvdb::FloatGrid::Ptr m_VDBCurvature;
-
-  typename ImageType::Pointer tempCurv;
-  typename ScalarInterpolatorType::Pointer tempCurvInterp;
 
   // Cache surface statistics
   double m_SurfaceMeanCurvature;

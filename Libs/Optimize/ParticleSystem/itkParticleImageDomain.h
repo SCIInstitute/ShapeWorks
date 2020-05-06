@@ -16,7 +16,6 @@
 #include <itkImageToVTKImageFilter.h>
 #include <itkZeroCrossingImageFilter.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
-#include "itkLinearInterpolateImageFunction.h"
 #include <chrono>
 
 // we have to undef foreach here because both Qt and OpenVDB define foreach
@@ -118,15 +117,7 @@ public:
     // Precompute and save values that are used in parts of the optimizer
     this->UpdateZeroCrossingPoint(I);
     this->UpdateSurfaceArea(I);
-
-    tempI = I;
-    tempInterp = ScalarInterpolatorType::New();
-    tempInterp->SetInputImage(tempI);
   }
-
-  typedef LinearInterpolateImageFunction<ImageType, typename PointType::CoordRepType> ScalarInterpolatorType;
-  typename ImageType::Pointer tempI;
-  typename ScalarInterpolatorType::Pointer tempInterp;
 
   inline double GetSurfaceArea() const override
   {
@@ -163,17 +154,7 @@ public:
   {
     if(this->IsInsideBuffer(p)) {
       const auto coord = this->ToVDBCoord(p);
-
-      const auto v1 = openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
-      const auto v2 = tempInterp->Evaluate(p);
-      if(abs(v1-v2) > 1e-6) {
-        std::cout << "Origin:  " << m_Origin << std::endl;
-        std::cout << "Spacing: " << m_Spacing << std::endl;
-        std::cout << "Values: " << v1 << "(vdb) vs " << v2 << "(itk)" << std::endl;
-        throw std::runtime_error("ParticleImageDomain: Bad sampling!");
-      }
-      return v1;
-
+      return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
       itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain." );
     }
