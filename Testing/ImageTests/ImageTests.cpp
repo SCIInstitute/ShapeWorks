@@ -106,8 +106,7 @@ TEST(ImageTests, translate_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Transform xform = image.translate(makeVector({10, 10, 10}));
-  image.applyTransform(xform);
+  image.translate(makeVector({10, 10, 10}));
   Image ground_truth(test_location + "translate_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -118,8 +117,9 @@ TEST(ImageTests, com_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Transform xform = ImageUtils::createCenterOfMassTransform(image);
+  TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
   image.applyTransform(xform);
+  image.write("/Users/cam/data/sw/tmp/com_test.nrrd");
   Image ground_truth(test_location + "com_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -130,8 +130,8 @@ TEST(ImageTests, scale_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/scale/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Transform xform = image.scale();
-  image.applyTransform(xform);
+  image.scale(makeVector({2.0,0.75,3.14159}));
+  image.write("/Users/cam/data/sw/tmp/scale_test.nrrd");
   Image ground_truth(test_location + "scale_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -142,8 +142,8 @@ TEST(ImageTests, rotate_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Transform xform = image.rotate();
-  image.applyTransform(xform);
+  image.rotate(M_PI / 2.0, makeVector({1,1,1}));
+  image.write("/Users/cam/data/sw/tmp/rotate_test.nrrd");
   Image ground_truth(test_location + "rotate_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -298,34 +298,31 @@ TEST(ImageTests, clip1_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(makeVector({1,1,1}), Point({20,35,45}), 3.14);
-  image.write("/Users/cam/data/sw/tmp/clip1_test.nrrd");
+  image.clip(makeVector({1,1,1}), Point({20,55,75}), 3.14);
   Image ground_truth(test_location + "clip1_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-// clip1x: clips YZ plane at x=2
+// clip1x: clips YZ plane at x=center+2.75
 TEST(ImageTests, clip1x_test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(makeVector({1,0,0}), image.origin() + Point({12.75,0,0}));
-  image.write("/Users/cam/data/sw/tmp/clip1x_test.nrrd");
+  image.clip(makeVector({1,0,0}), image.center() + Point({2.75,0,0}));
   Image ground_truth(test_location + "clip1x_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-// clip1y: clips XZ plane at y=0
+// clip1y: clips XZ plane at y=center and uses return value of function
 TEST(ImageTests, clip1y_test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(makeVector({0,1,0}), image.origin());
-  image.write("/Users/cam/data/sw/tmp/clip1y_test.nrrd");
+  image = image.clip(makeVector({0,1,0}), image.center());
   Image ground_truth(test_location + "clip1y_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -337,8 +334,7 @@ TEST(ImageTests, clip1z_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.clip(makeVector({0,0,-1}), Point({10000,100000,0}));
-  image.write("/Users/cam/data/sw/tmp/clip1z_test.nrrd");
+  image.clip(makeVector({0,0,-1}), image.center() + Point({10000,100000,0}));
   Image ground_truth(test_location + "clip1z_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -350,8 +346,8 @@ TEST(ImageTests, clip2_test)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
   Image image(test_location + "1x2x2.nrrd");
-  try { image.clip(makeVector({0,0,0}), image.origin()); }
-  catch(std::invalid_argument) { ASSERT_TRUE(true); }
+  try { image.clip(makeVector({0,0,0}), image.center()); }
+  catch(std::invalid_argument) { return; }
 
   // fails if an exception is not thrown
   ASSERT_TRUE(false);
@@ -364,7 +360,6 @@ TEST(ImageTests, clip3_test)
 
   Image image(test_location + "1x2x2.nrrd");
   image.clip(image.origin(), Point({75,0,0}), Point({-10,0,0}), -3.14);
-  image.write("/Users/cam/data/sw/tmp/clip3_test.nrrd");
   Image ground_truth(test_location + "clip3_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -377,7 +372,7 @@ TEST(ImageTests, clip4_test)
 
   Image image(test_location + "1x2x2.nrrd");
   try { image.clip(Point({0,0,0}), Point({1,0,0}), Point({-10,0,0})); }
-  catch(std::invalid_argument) { ASSERT_TRUE(true); }
+  catch(std::invalid_argument) { return; }
 
   // fails if an exception is not thrown
   ASSERT_TRUE(false);
@@ -390,7 +385,7 @@ TEST(ImageTests, reflect_test)
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
   image.reflect(makeVector({0.0, 1.0, 0.0}));
-  image.write("/Users/cam/data/sw/tmp/reflect_test.nrrd");
+  image.write("/Users/cam/data/sw/tmp/reflect_test.nrrd"); //<ctc> write so once it's working we'll have a baseline (todo/fixme)
   Image ground_truth(test_location + "reflect_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -403,8 +398,9 @@ TEST(ImageTests, icp_test)
   Image image(test_location + "1x2x2.nrrd");
   Image target(test_location + "target.nrrd");
   Image source(test_location + "source.nrrd");
-  Transform xform = ImageUtils::rigidRegistration(target, source);
+  TransformPtr xform(ImageUtils::rigidRegistration(target, source));
   image.applyTransform(xform);
+  image.write("/Users/cam/data/sw/tmp/icp_test.nrrd");
   Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

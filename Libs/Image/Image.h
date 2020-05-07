@@ -91,17 +91,17 @@ public:
   /// pads an image by desired number of voxels in each direction with constant value
   Image &pad(int padding = 0, PixelType value = 0.0);
 
-  /// computes translation
-  Transform translate(const Vector3 &v = makeVector({0.0, 0.0, 0.0})) const;
+  /// translate image
+  Image& translate(const Vector3 &v);
 
-  /// computes scaling
-  Transform scale(const Vector3 &v = makeVector({1.0, 1.0, 1.0}));
+  /// scale image
+  Image& scale(const Vector3 &v);
 
-  /// computes rotation
-  Transform rotate(const Vector3 &v = makeVector({0.0, 0.0, 1.0}), const double angle = 0.0);
+  /// rotate image by the given angle (in radians) around the given axis (around the z-axis if unspecified)
+  Image& rotate(const double angle, const Vector3 &v = makeVector({0.0, 0.0, 1.0}));
 
-  /// applies the computed transformation to the image by using resampling filter
-  Image &applyTransform(const Transform &transform);
+  /// applies the given transformation to the image by using resampling filter
+  Image &applyTransform(const TransformPtr transform);
 
   /// extracts/isolates a specific voxel label from a given multi-label volume and outputs the corresponding binary image
   Image &extractLabel(PixelType label = 1.0);
@@ -150,7 +150,7 @@ public:
   /// logical dimensions of the image
   Dims dims() const { return image->GetLargestPossibleRegion().GetSize(); }
 
-  /// physical dimensions of the image
+  /// physical dimensions of the image (dims * spacing)
   Point3 size() const;
 
   /// physical spacing of the image
@@ -172,10 +172,10 @@ public:
   Image::Region boundingBox(PixelType isoValue = 1.0) const;
 
   /// converts from pixel coordinates to physical space
-  Point3 logicalToPhysical(const IPoint3 &v) const;
+  Point3 logicalToPhysical(const Coord &v) const;
 
   /// converts from a physical coordinate to a logical coordinate
-  IPoint3 physicalToLogical(const Point3 &p) const;
+  Coord physicalToLogical(const Point3 &p) const;
 
   /// compares this with another image using the region of interest filter
   bool operator==(const Image &other) const;

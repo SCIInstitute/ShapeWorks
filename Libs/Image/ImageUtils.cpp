@@ -32,37 +32,25 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
 ///
 /// Generates the Transform necessary to move the contents of this binary image to the center.
 /// Example:
-///   Transform xform = ImageUtils::createCenterOfMassTransform(image);
+///   TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
 ///   image.applyTransform(xform);
 ///
 /// \param image      the binary image from which to generate the transform
-Transform ImageUtils::createCenterOfMassTransform(const Image &image)
+TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
 {
-  Point3 com = image.centerOfMass();
-  Point3 center = image.center();
-
-  Transform xform = image.translate(center - com);
+  TransformPtr xform(TransformType::New());
+  xform->Translate(image.center() - image.centerOfMass());
   return xform;
 }
 
-Transform ImageUtils::rigidRegistration(const Image &target, const Image &source, float isoValue, unsigned iterations)
+TransformPtr ImageUtils::rigidRegistration(const Image &target, const Image &source, float isoValue, unsigned iterations)
 {
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> movingContour = Image::getPolyData(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
-  Transform xform = TransformType::New();
+  TransformPtr xform(TransformType::New());
   xform->SetMatrix(mat);
   return xform;
-}
-
-Image& ImageUtils::clipReal(Image &image, const Point3& o, const Point3& p1, const Point3& p2, const Image::PixelType val)
-{
-  return image.clip(image.physicalToLogical(o), image.physicalToLogical(p1), image.physicalToLogical(p2), val);
-}
-
-Image& ImageUtils::clipReal(Image &image, const Vector3& n, const Point3 &p, const Image::PixelType val)
-{
-  return image.clip(image.physicalToLogical(Point3(n)), image.physicalToLogical(p), val);
 }
 
 } //shapeworks

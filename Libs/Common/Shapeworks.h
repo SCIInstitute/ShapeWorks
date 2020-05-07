@@ -18,10 +18,14 @@ using Matrix33      = itk::Matrix<double, 3, 3>;
 using IPoint3       = itk::Point<int, 3>;
 using FPoint3       = itk::Point<float, 3>;
 using TransformType = itk::AffineTransform<double, 3>;
-using Transform     = TransformType::Pointer;
+using TransformPtr  = TransformType::Pointer;
 using Vector        = Vector3;
 using Point         = Point3;
 using Matrix        = Matrix33;
+
+Point toPoint(const Dims &d);
+Point toPoint(const Coord &c);
+Vector toVector(const Dims &d);
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list.
 Vector3 makeVector(std::array<double, 3>&& arr);

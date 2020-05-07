@@ -246,46 +246,40 @@ Image& Image::pad(int padding, PixelType value)
   return *this;
 }
 
-Transform Image::translate(const Vector3 &v) const
+Image& Image::translate(const Vector3 &v)
 {
-  Transform xform;
+  TransformPtr xform(TransformType::New());
   xform->Translate(v);
-
-  return xform;
+  return applyTransform(xform);
 }
 
-Transform Image::scale(const Vector3 &v)
+Image& Image::scale(const Vector3 &v)
 {
-  Transform xform;
+  TransformPtr xform(TransformType::New());
   xform->Scale(v);
-
-  return xform;
+  return applyTransform(xform);
 }
 
-Transform Image::rotate(const Vector3 &v, const double angle)
+Image& Image::rotate(const double angle, const Vector3 &v)
 {
-  Transform xform;
+  TransformPtr xform(TransformType::New());
   xform->Rotate3D(v, angle);
-
-  return xform;
+  return applyTransform(xform);
 }
 
-Image& Image::applyTransform(const Transform &transform)
+Image& Image::applyTransform(const TransformPtr transform)
 {
   using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
   FilterType::Pointer resampler = FilterType::New();
 
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
-
-  resampler->SetInterpolator(interpolator);
-  resampler->SetTransform(transform);
   resampler->SetInput(this->image);
+  resampler->SetTransform(transform);
+
   resampler->SetSize(dims());
-  std::cout << dims();
   resampler->SetOutputOrigin(origin());
-  resampler->SetOutputDirection(image->GetDirection());
-  resampler->SetOutputSpacing(image->GetSpacing());
+  resampler->SetOutputDirection(coordsys());
+  resampler->SetOutputSpacing(spacing().GetDataPointer());
+
   resampler->Update();
   this->image = resampler->GetOutput();
 
@@ -485,8 +479,7 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
   itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd())
   {
-    Point p({static_cast<double>(iter.GetIndex()[0]), static_cast<double>(iter.GetIndex()[1]), static_cast<double>(iter.GetIndex()[2])});
-    Vector pq(p - q);
+    Vector pq(logicalToPhysical(iter.GetIndex()) - q);
 
     // if n dot pq is < 0, point q is on the back side of the plane.
     if (n * pq < 0.0)
@@ -506,7 +499,7 @@ Image& Image::reflect(const Vector3 &normal)
   reflection[1][1] = -normal[1];
   reflection[2][2] = -normal[2];
 
-  Transform xform;
+  TransformPtr xform(TransformType::New());
   xform->SetMatrix(reflection);
   Point3 currentOrigin(origin());
   recenter().applyTransform(xform).setOrigin(currentOrigin);
@@ -528,36 +521,19 @@ Image& Image::setOrigin(Point3 origin)
   return *this;
 }
 
-Point3 Image::logicalToPhysical(const IPoint3 &v) const
+Point3 Image::size() const
 {
-  if (!this->image)
-  {
-    throw std::invalid_argument("Image invalid");
-  }
-
-  itk::Index<3> index;
-  index[0] = v[0];
-  index[1] = v[1];
-  index[2] = v[2];
-  Point3 value;
-  image->TransformIndexToPhysicalPoint(index, value);
-  return value;
+  return spacing() * toPoint(dims());
 }
 
-IPoint3 Image::physicalToLogical(const Point3 &p) const
+Point3 Image::spacing() const
 {
-  if (!this->image)
-  {
-    std::cerr << "No image loaded, throwing an exception." << std::endl;
-    throw std::invalid_argument("this is an invalid Image");
-  }
+  return image->GetSpacing();
+}
 
-  itk::Index<3> coords = image->TransformPhysicalPointToIndex(p);
-  IPoint3 icoords;
-  icoords[0] = coords[0];
-  icoords[1] = coords[1];
-  icoords[2] = coords[2];
-  return icoords;
+const Image::ImageType::DirectionType& Image::coordsys() const
+{
+  return image->GetDirection();
 }
 
 Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
@@ -581,21 +557,17 @@ Point3 Image::centerOfMass(PixelType minval, PixelType maxval) const
   return com;
 }
 
-Point3 Image::size() const
+Point3 Image::logicalToPhysical(const Coord &v) const
 {
-  Dims dims(image->GetLargestPossibleRegion().GetSize());
-  Point3 spacing(image->GetSpacing());
-  return Point3({dims[0] * spacing[0], dims[1] * spacing[1], dims[2] * spacing[2]});
+  // return image->TransformIndexToPhysicalPoint(v); // not sure why this call won't work directly
+  Point3 value;
+  image->TransformIndexToPhysicalPoint(v, value);
+  return value;
 }
 
-Point3 Image::spacing() const
+Coord Image::physicalToLogical(const Point3 &p) const
 {
-  return image->GetSpacing();
-}
-
-const Image::ImageType::DirectionType& Image::coordsys() const
-{
-  return image->GetDirection();
+  return image->TransformPhysicalPointToIndex(p);
 }
 
 std::ostream& operator<<(std::ostream &os, const Image::Region &r)

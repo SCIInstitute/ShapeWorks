@@ -2,6 +2,10 @@
 
 namespace shapeworks {
 
+Point toPoint(const Dims &d) { return Point({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])}); }
+Point toPoint(const Coord &c) { return Point({static_cast<double>(c[0]), static_cast<double>(c[1]), static_cast<double>(c[2])}); }
+Vector toVector(const Dims &d) { return makeVector({static_cast<double>(d[0]), static_cast<double>(d[1]), static_cast<double>(d[2])}); }
+
 /// Enables construction using an initializer list: `Vector3 f() { return makeVector({1,2,3}); }`
 //itkVector doesn't have this handy ctor like itkPoint; `Point p({a,b,c})` works, but `Vector3 v({1,2,3})` doesn't.
 Vector3 makeVector(std::array<double, 3>&& arr) { return Vector3(arr.data()); }
