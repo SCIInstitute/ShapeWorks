@@ -41,8 +41,7 @@ Transform ImageUtils::createCenterOfMassTransform(const Image &image)
   Point3 com = image.centerOfMass();
   Point3 center = image.center();
 
-  Transform xform;
-  xform->Translate(center - com);
+  Transform xform = image.translate(center - com);
   return xform;
 }
 
@@ -51,7 +50,7 @@ Transform ImageUtils::rigidRegistration(const Image &target, const Image &source
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> movingContour = Image::getPolyData(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
-  Transform xform;
+  Transform xform = TransformType::New();
   xform->SetMatrix(mat);
   return xform;
 }
