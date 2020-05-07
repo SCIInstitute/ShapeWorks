@@ -859,8 +859,6 @@ void ShapeWorksStudioApp::update_display(bool force)
   this->block_update_ = true;
 
   this->visualizer_->set_center(this->ui_->center_checkbox->isChecked());
-  this->preferences_.set_preference("display_state",
-                                    this->ui_->view_mode_combobox->currentText());
 
   bool reconstruct_ready =
     this->session_->get_mesh_manager()->get_surface_reconstructor()->hasDenseMean();
@@ -1002,11 +1000,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->handle_error(e.what());
   }
 
-  auto display_state = this->preferences_.get_preference(
-    "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
-
-  display_state = Visualizer::MODE_ORIGINAL_C;
-
   /// TODO: this is just wrong, it can cause us to load in analysis mode even on a new project
   //auto tool_state = this->preferences_.get_preference(
 //    "tool_state", QString::fromStdString(Session::DATA_C)).toStdString();
@@ -1019,8 +1012,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
   //this->project_->calculate_reconstructed_samples();
-  this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
-  this->analysis_tool_->activate();
+  //this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
+  //this->analysis_tool_->activate();
 
   /*
      this->analysis_tool_->reset_stats();
@@ -1039,24 +1032,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->optimize_tool_->setCutPlanesFile(planesFile);
   }
 
+  this->block_update_ = true;
+
   this->update_tool_mode();
-
-  // load display mode
-  if (display_state == Visualizer::MODE_ORIGINAL_C) {
-    this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
-  }
-  else if (display_state == Visualizer::MODE_GROOMED_C) {
-    this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
-  }
-  else if (display_state == Visualizer::MODE_RECONSTRUCTION_C) {
-    this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::RECONSTRUCTED);
-  }
-
-  // enable the types of display
-  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
-  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
-  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
-                                    this->session_->particles_present());
 
   this->update_view_mode();
 
@@ -1079,6 +1057,9 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->visualizer_->reset_camera();
 
   this->update_table();
+
+  this->block_update_ = false;
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------
