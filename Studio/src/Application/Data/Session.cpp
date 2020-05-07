@@ -264,7 +264,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
   bool is_project = project_element != nullptr;
 
   if (!is_project) {
-    return this->load_light_project(filename, planesFile);
+    return this->load_light_project(filename);
   }
 
   if (QString(project_element->Attribute("version")) != "2") {
@@ -486,7 +486,8 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  this->load_groomed_files(groom_files, 0.5);
+  //this->load_groomed_files(groom_files, 0.5);
+
   if (!this->load_point_files(local_point_files, true)) {
     return false;
   }
@@ -515,10 +516,15 @@ bool Session::load_light_project(QString filename)
 
   //this->calculate_reconstructed_samples();
 
-  this->preferences_.set_preference("display_state",
-                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
-  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::ANALYSIS_C));
+  this->settings().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
+  this->settings().set("tool_state", Session::ANALYSIS_C);
+
+  //this->preferences_.set_preference("display_state",
+//                                    QString::fromStdString(Visualizer::MODE_RECONSTRUCTION_C));
+//  this->preferences_.set_preference("tool_state", QString::fromStdString(Session::ANALYSIS_C));
   this->renumber_shapes();
+
+  this->project_->store_subjects();
 
   std::cerr << "light project loaded\n";
   return true;
@@ -689,6 +695,13 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
     }
     else {
       shape = QSharedPointer<Shape>(new Shape);
+
+      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+
+      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_subject(subject);
+      this->project_->get_subjects().push_back(subject);
+
       this->shapes_.push_back(shape);
     }
     if (!shape->import_points(points[i], local)) {
@@ -740,6 +753,13 @@ bool Session::load_point_files(std::vector<std::string> list, bool local)
     }
     else {
       shape = QSharedPointer<Shape>(new Shape);
+
+      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+
+      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_subject(subject);
+      this->project_->get_subjects().push_back(subject);
+
       this->shapes_.push_back(shape);
     }
     auto fname = QString::fromStdString(list[i]);

@@ -202,6 +202,10 @@ bool Shape::import_global_point_file(QString filename)
 
   this->global_point_filename_ = filename;
 
+
+  this->subject_->set_global_particle_filename(filename.toStdString());
+
+
   return true;
 }
 
@@ -242,6 +246,9 @@ bool Shape::import_local_point_file(QString filename)
   }
 
   this->local_point_filename_ = filename;
+
+  this->subject_->set_local_particle_filename(filename.toStdString());
+
   return true;
 }
 
