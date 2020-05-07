@@ -85,6 +85,31 @@ bool WriteImage::execute(const optparse::Values &options, SharedCommandData &sha
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// ImageInfo
+///////////////////////////////////////////////////////////////////////////////
+void ImageInfo::buildParser()
+{
+  const std::string prog = "info";
+  const std::string desc = "prints logical dims and physical origin, spacing, and coordinate system (direction)";
+  parser.prog(prog).description(desc);
+
+  Command::buildParser();
+}
+
+bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+  bool compressed = static_cast<bool>(options.get("compressed"));
+  
+  std::cout << "logical dims:          " << sharedData.image.dims() << std::endl;
+  std::cout << "physical spacing:      " << sharedData.image.spacing() << std::endl;
+  std::cout << "size (spacing * dims): " << sharedData.image.size() << std::endl;
+  std::cout << "physical origin:       " << sharedData.image.origin() << std::endl;
+  std::cout << "direction (coordsys):  " << std::endl << sharedData.image.coordsys();
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // Antialias
 ///////////////////////////////////////////////////////////////////////////////
 void Antialias::buildParser()

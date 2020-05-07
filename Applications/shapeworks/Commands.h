@@ -44,6 +44,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class ImageInfo : public ImageCommand
+{
+public:
+  static ImageInfo& getCommand() { static ImageInfo instance; return instance; }
+
+private:
+  ImageInfo() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class Antialias : public ImageCommand
 {
 public:

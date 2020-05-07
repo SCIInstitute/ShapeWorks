@@ -147,25 +147,25 @@ Image& Image::recenter()
   return *this;
 }
 
-Image& Image::resample(const Point3& spacing, Dims outputSize)
+Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
 {
   using ResampleFilter = itk::ResampleImageFilter<ImageType, ImageType>;
   ResampleFilter::Pointer resampler = ResampleFilter::New();
 
-  resampler->SetOutputSpacing(spacing.GetDataPointer());
+  resampler->SetOutputSpacing(physicalSpacing.GetDataPointer());
   resampler->SetOutputOrigin(origin());
   resampler->SetOutputDirection(image->GetDirection());
 
-  if (outputSize[0] == 0 || outputSize[1] == 0 || outputSize[2] == 0)
+  if (logicalDims[0] == 0 || logicalDims[1] == 0 || logicalDims[2] == 0)
   {
     ImageType::SizeType inputSize = image->GetLargestPossibleRegion().GetSize();
     ImageType::SpacingType inputSpacing = image->GetSpacing();
-    outputSize[0] = std::floor(inputSize[0] * inputSpacing[0] / spacing[0]);
-    outputSize[1] = std::floor(inputSize[1] * inputSpacing[1] / spacing[1]);
-    outputSize[2] = std::floor(inputSize[2] * inputSpacing[2] / spacing[2]);
+    logicalDims[0] = std::floor(inputSize[0] * inputSpacing[0] / physicalSpacing[0]);
+    logicalDims[1] = std::floor(inputSize[1] * inputSpacing[1] / physicalSpacing[1]);
+    logicalDims[2] = std::floor(inputSize[2] * inputSpacing[2] / physicalSpacing[2]);
   }
 
-  resampler->SetSize(outputSize);
+  resampler->SetSize(logicalDims);
   resampler->SetInput(this->image);
   resampler->Update();
   this->image = resampler->GetOutput();
@@ -584,10 +584,17 @@ Point3 Image::size() const
 {
   Dims dims(image->GetLargestPossibleRegion().GetSize());
   Point3 spacing(image->GetSpacing());
-  Point3 ret;
-  for (unsigned i = 0; i < 3; i++)
-    ret[i] = dims[i] * spacing[i];
-  return ret;
+  return Point3({dims[0] * spacing[0], dims[1] * spacing[1], dims[2] * spacing[2]});
+}
+
+Point3 Image::spacing() const
+{
+  return image->GetSpacing();
+}
+
+const Image::ImageType::DirectionType& Image::coordsys() const
+{
+  return image->GetDirection();
 }
 
 std::ostream& operator<<(std::ostream &os, const Image::Region &r)

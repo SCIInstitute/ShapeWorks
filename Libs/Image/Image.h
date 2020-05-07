@@ -85,8 +85,8 @@ public:
   /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
   Image &recenter();
 
-  /// Resamples image with new voxel spacing and output size [same size if unspecified]
-  Image &resample(const Point3 &spacing, Dims outputSize = Dims());
+  /// Resamples image with new physical spacing and logical size [same size if unspecified]
+  Image &resample(const Point3& physicalSpacing, Dims logicalDims);
 
   /// pads an image by desired number of voxels in each direction with constant value
   Image &pad(int padding = 0, PixelType value = 0.0);
@@ -153,11 +153,17 @@ public:
   /// physical dimensions of the image
   Point3 size() const;
 
+  /// physical spacing of the image
+  Point3 spacing() const;
+
   /// physical coordinates of image origin
   Point3 origin() const { return image->GetOrigin(); }
 
   /// physical coordinates of center of this image
   Point3 center() const { return origin() + size() / 2.0; }
+
+  /// return coordinate system in which this image lives in physical space
+  const ImageType::DirectionType& coordsys() const;
 
   /// returns average physical coordinate of pixels in range (minval, maxval]
   Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
