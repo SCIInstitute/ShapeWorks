@@ -329,10 +329,13 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 {
   QString fname("Untitled.xlsx");
   if (this->session_->get_shapes().size() > 0) {
-    fname = this->session_->get_shapes()[0]->get_original_filename();
-    std::string tmp = fname.toStdString();
-    tmp = tmp.substr(0, tmp.size() - 5);
-    fname = QString::fromStdString(tmp);
+    QString original_filename = this->session_->get_shapes()[0]->get_original_filename();
+    if (original_filename != "")
+    {
+      std::string tmp = original_filename.toStdString();
+      tmp = tmp.substr(0, tmp.size() - 5);
+      fname = QString::fromStdString(tmp);
+    }
   }
   QString last_directory = this->preferences_.get_preference("Main/last_directory", QString());
   auto dir = last_directory.toStdString();
@@ -466,8 +469,9 @@ void ShapeWorksStudioApp::enable_possible_actions()
   bool reconstructed = this->session_->particles_present();
   bool original_present = this->session_->get_project()->get_segmentations_present();
 
-  this->ui_->action_save_project->setEnabled(original_present);
-  this->ui_->action_save_project_as->setEnabled(original_present);
+  this->ui_->action_save_project->setEnabled(this->session_->get_filename().endsWith(".xlsx"));
+  //this->ui_->action_save_project_as->setEnabled(original_present);
+  this->ui_->action_save_project_as->setEnabled(true);
   this->ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
   this->ui_->actionExport_Eigenvalues->setEnabled(reconstructed);
   this->ui_->actionExport_Eigenvectors->setEnabled(reconstructed);

@@ -295,6 +295,10 @@ void Shape::set_id(int id)
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename()
 {
+  if (this->subject_->get_segmentation_filenames().size() < 1)
+  {
+    return "";
+  }
   auto string = QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
   std::cerr << "original filename is " << string.toStdString() << "\n";
   QFileInfo info(string);
@@ -304,6 +308,10 @@ QString Shape::get_original_filename()
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename_with_path()
 {
+  if (this->subject_->get_segmentation_filenames().size() < 1)
+  {
+    return "";
+  }
   return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
 }
 //---------------------------------------------------------------------------
