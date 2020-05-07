@@ -38,13 +38,12 @@ public:
 
   void activate();
 
-  std::string getAnalysisMode();
-
   bool get_group_difference_mode();
 
   std::vector<Point> get_group_difference_vectors();
 
-  void setAnalysisMode(std::string mode);
+  std::string get_analysis_mode();
+  void set_analysis_mode(std::string mode);
 
   void setLabels(QString which, QString value);
 
@@ -131,7 +130,7 @@ private:
   //private members
   Preferences & preferences_;
   Ui_AnalysisTool* ui_;
-  QSharedPointer<Session> project_;
+  QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
 
   VisualizerHandle visualizer_;

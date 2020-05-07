@@ -61,7 +61,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
 }
 
 //---------------------------------------------------------------------------
-std::string AnalysisTool::getAnalysisMode()
+std::string AnalysisTool::get_analysis_mode()
 {
   if (this->ui_->tabWidget->currentWidget() == this->ui_->samples_tab) {
     if (this->ui_->allSamplesRadio->isChecked()) { return AnalysisTool::MODE_ALL_SAMPLES_C;}
@@ -112,9 +112,9 @@ void AnalysisTool::on_linear_radio_toggled(bool b)
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_reconstruction_complete()
 {
-  this->project_->handle_clear_cache();
+  this->session_->handle_clear_cache();
 
-  this->project_->calculate_reconstructed_samples();
+  this->session_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Reconstruction Complete");
   emit reconstruction_complete();
@@ -135,7 +135,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
   QThread* thread = new QThread;
   std::vector<std::vector<itk::Point<double>>> local, global;
   std::vector<ImageType::Pointer> images;
-  auto shapes = this->project_->get_shapes();
+  auto shapes = this->session_->get_shapes();
   local.resize(shapes.size());
   global.resize(shapes.size());
   images.resize(shapes.size());
@@ -158,7 +158,7 @@ void AnalysisTool::on_reconstructionButton_clicked()
     ii++;
   }
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::ReconstructType, NULL, NULL, this->project_,
+    ShapeworksWorker::ReconstructType, NULL, NULL, this->session_,
     local, global, images,
     this->ui_->maxAngle->value(),
     this->ui_->meshDecimation->value(),
@@ -227,7 +227,7 @@ AnalysisTool::~AnalysisTool()
 //---------------------------------------------------------------------------
 void AnalysisTool::set_project(QSharedPointer<Session> project)
 {
-  this->project_ = project;
+  this->session_ = project;
 }
 
 //---------------------------------------------------------------------------
@@ -304,10 +304,10 @@ void AnalysisTool::handle_analysis_options()
     this->ui_->pcaModeSpinBox->setEnabled(false);
   }
 
-  this->ui_->group1_button->setEnabled(this->project_->groups_available());
-  this->ui_->group2_button->setEnabled(this->project_->groups_available());
-  this->ui_->difference_button->setEnabled(this->project_->groups_available());
-  this->ui_->group_slider_widget->setEnabled(this->project_->groups_available());
+  this->ui_->group1_button->setEnabled(this->session_->groups_available());
+  this->ui_->group2_button->setEnabled(this->session_->groups_available());
+  this->ui_->difference_button->setEnabled(this->session_->groups_available());
+  this->ui_->group_slider_widget->setEnabled(this->session_->groups_available());
 
   emit update_view();
 }
@@ -351,13 +351,13 @@ bool AnalysisTool::compute_stats()
     return true;
   }
 
-  if (this->project_->get_shapes().size() == 0 || !this->project_->particles_present()) {
+  if (this->session_->get_shapes().size() == 0 || !this->session_->particles_present()) {
     return false;
   }
 
   std::vector < vnl_vector < double >> points;
   std::vector<int> group_ids;
-  foreach(ShapeHandle shape, this->project_->get_shapes()) {
+  foreach(ShapeHandle shape, this->session_->get_shapes()) {
     points.push_back(shape->get_global_correspondence_points());
     group_ids.push_back(shape->get_group_id());
   }
@@ -375,7 +375,7 @@ bool AnalysisTool::compute_stats()
   this->ui_->graph_->repaint();
 
   // set widget enable state for groups
-  bool groups_available = this->project_->groups_available();
+  bool groups_available = this->session_->groups_available();
   this->ui_->group_slider->setEnabled(groups_available);
   this->ui_->group_animate_checkbox->setEnabled(groups_available);
   this->ui_->group_radio_button->setEnabled(groups_available);
@@ -614,11 +614,11 @@ void AnalysisTool::reset_stats()
 void AnalysisTool::enableActions()
 {
   this->ui_->reconstructionButton->setEnabled(
-    this->project_->particles_present() && this->project_->get_groomed_present());
+    this->session_->particles_present() && this->session_->get_groomed_present());
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::setAnalysisMode(std::string mode)
+void AnalysisTool::set_analysis_mode(std::string mode)
 {
   if (mode == "all samples" || mode == "single sample") {
     this->ui_->allSamplesRadio->setChecked(mode == "all samples");

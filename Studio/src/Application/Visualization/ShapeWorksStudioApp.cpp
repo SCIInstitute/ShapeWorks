@@ -307,6 +307,9 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
     return this->on_action_save_project_as_triggered();
   }
   else {
+
+    this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
+
     if (this->session_->save_project(
           this->session_->get_filename().toStdString(), this->data_dir_,
           this->optimize_tool_->getCutPlanesFile())) {
@@ -669,7 +672,7 @@ void ShapeWorksStudioApp::update_tool_mode()
   if (tool_state == Session::ANALYSIS_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
     this->ui_->controlsDock->setWindowTitle("Analysis");
-    this->set_view_mode(Visualizer::MODE_ORIGINAL_C);
+    this->set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
     this->on_actionShow_Tool_Window_triggered();
     this->update_display();
     this->ui_->action_analysis_mode->setChecked(true);
@@ -879,7 +882,7 @@ void ShapeWorksStudioApp::update_display(bool force)
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
   if (this->ui_->action_analysis_mode->isChecked()) {
-    mode = this->analysis_tool_->getAnalysisMode();
+    mode = this->analysis_tool_->get_analysis_mode();
   }
 
   if (this->current_display_mode_ == mode && !force) {
@@ -1038,18 +1041,15 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->update_view_mode();
 
+  this->analysis_tool_->reset_stats();
+
+  // load analysis state
+  std::string analysis_mode = this->session_->settings().get("analysis_mode", "mean").as_string();
+  this->analysis_tool_->set_analysis_mode(analysis_mode);
+
   // set the zoom state
   //this->ui_->thumbnail_size_slider->setValue(
   //  this->preferences_.get_preference("zoom_state", 1));
-
-  this->analysis_tool_->reset_stats();
-
-  if (this->session_->is_light_project()) {
-    this->analysis_tool_->setAnalysisMode(AnalysisTool::MODE_MEAN_C);
-  }
-  else {
-    this->analysis_tool_->setAnalysisMode(AnalysisTool::MODE_ALL_SAMPLES_C);
-  }
 
   this->visualizer_->update_lut();
   this->preferences_.set_saved();
@@ -1179,7 +1179,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
     return;
   }
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
-  if (this->analysis_tool_->getAnalysisMode() == "all samples") {
+  if (this->analysis_tool_->get_analysis_mode() == "all samples") {
     auto shapes = this->session_->get_shapes();
     for (size_t i = 0; i < shapes.size(); i++) {
       auto msh = shapes[i]->get_reconstructed_mesh()->get_poly_data();

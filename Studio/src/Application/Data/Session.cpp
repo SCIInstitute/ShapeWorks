@@ -400,7 +400,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
 }
 
 //---------------------------------------------------------------------------
-bool Session::load_light_project(QString filename, string &planesFile)
+bool Session::load_light_project(QString filename)
 {
   std::cerr << "Loading light project...\n";
   this->is_light_project_ = true;

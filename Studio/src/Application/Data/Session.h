@@ -45,7 +45,7 @@ public:
   bool load_xml_project(QString filename, std::string& planesFile);
 
   /// read a lightweight project file
-  bool load_light_project(QString filename, std::string& planesFile);
+  bool load_light_project(QString filename);
 
   /// load a shapeworks project
   bool load_project(QString filename);
