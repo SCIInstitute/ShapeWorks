@@ -80,15 +80,15 @@ public:
 
     const auto band = m_Spacing.GetVnlVector().max_value() * this->GetNarrowBand();
     while(!it.IsAtEnd()) {
-        const auto idx = it.GetIndex();
-        const auto pixel = it.Get();
-        if(abs(pixel) > band) {
-            ++it;
-            continue;
-        }
-        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
-        vdbAccessor.setValue(coord, pixel);
+      const auto idx = it.GetIndex();
+      const auto pixel = it.Get();
+      if(abs(pixel) > band) {
         ++it;
+        continue;
+      }
+      const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+      vdbAccessor.setValue(coord, pixel);
+      ++it;
     }
 
     typename ImageType::PointType l0;
