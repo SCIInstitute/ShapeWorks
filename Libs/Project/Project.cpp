@@ -130,7 +130,7 @@ std::vector<std::string> Project::get_matching_columns(std::string prefix)
 
   //std::cerr << "headers.length() = " << headers.length() << "\n";
 
-  for (int i = 0; i <= headers.length(); i++) {
+  for (int i = 0; i < headers.length(); i++) {
     if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
       list.push_back(headers[i].to_string());
     }
@@ -228,6 +228,7 @@ void Project::store_subjects()
 
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Subject> subject = this->subjects_[i];
+
     auto seg_files = subject->get_segmentation_filenames();
     if (seg_files.size() > seg_columns.size()) {
       seg_columns.push_back(std::string(SEGMENTATION_PREFIX) + "file");
