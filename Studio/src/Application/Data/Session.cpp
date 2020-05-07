@@ -140,7 +140,6 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
   // distance transforms
   if (this->unsaved_groomed_files_) {
     std::cerr << "unsaved groomed files detected, saving...\n";
-    //if (this->groomed_present()) {
     std::vector<std::string> groomed_list;
     for (int i = 0; i < this->shapes_.size(); i++) {
       QString loc = this->shapes_[i]->get_groomed_filename_with_path();
@@ -168,9 +167,7 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
         break;
       }
     }
-    //this->project_->set_distance_transform_files(groomed_list);
-    //xml->writeTextElement("distance_transforms", groomed_list);
-    //}
+
     this->unsaved_groomed_files_ = false;
   }
 
@@ -199,21 +196,10 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
       this->shapes_[i]->get_subject()->set_global_particle_filename(global_path);
       this->shapes_[i]->get_subject()->set_local_particle_filename(local_path);
     }
-    //xml->writeTextElement("local_point_files", "\n" + local_list.join("\n") + "\n");
-    //xml->writeTextElement("world_point_files", "\n" + world_list.join("\n") + "\n");
-
-    //this->project_->set_local_point_files(local_list);
-    //this->project_->set_global_point_files(world_list);
     this->unsaved_particle_files_ = false;
   }
 
   this->project_->set_settings(Settings::STUDIO_SETTINGS, this->settings_);
-
-  /// Re-integrate progress after completing the above
-  //progress.setValue(5 + static_cast<int>(static_cast<double>(i) * 95. /
-  //static_cast<double>(this->shapes_.size())));
-
-  //xml->writeEndElement(); // project
 
   this->project_->save(filename.toStdString());
   progress.setValue(100);

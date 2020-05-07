@@ -32,6 +32,8 @@ static QVariant ITEM_DISABLE(0);
 static QVariant ITEM_ENABLE(1 | 32);
 static int ITEM_ROLE = Qt::UserRole - 1;
 
+const std::string ShapeWorksStudioApp::SETTING_ZOOM_C("zoom_state");
+
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::ShapeWorksStudioApp()
 {
@@ -308,6 +310,9 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
   }
   else {
 
+    this->session_->settings().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
+                                   std::to_string(this->ui_->zoom_slider->value()));
+
     this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
     if (this->session_->save_project(
@@ -414,9 +419,9 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged()
 {
   if (!this->lightbox_->render_window_ready()) {return;}
 
-  this->preferences_.set_preference("zoom_state", this->ui_->zoom_slider->value());
-
   int value = this->ui_->zoom_slider->value();
+
+  std::cerr << "zoom value set to: " << value << "\n";
 
   this->lightbox_->set_tile_layout(value, value);
   this->visualizer_->update_viewer_properties();
@@ -896,26 +901,6 @@ void ShapeWorksStudioApp::update_display(bool force)
 
   if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
 
-    size_t num_samples = this->session_->get_shapes().size();
-    if (num_samples == 0) {
-      num_samples = 9;
-    }
-
-    double root = std::sqrt(static_cast<double>(num_samples));
-    if (std::fmod(root, 1.0) > 1e-6) {
-      root += 1.;
-    }
-
-    if (root > 4) {
-      // don't default to more than 4x4
-      root = 4;
-    }
-
-    int zoom_val = static_cast<int>(root);
-    if (zoom_val != this->ui_->zoom_slider->value()) {
-      this->ui_->zoom_slider->setValue(zoom_val);
-    }
-
     this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, this->session_->original_present());
     this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, this->session_->groomed_present());
     this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED,
@@ -923,6 +908,28 @@ void ShapeWorksStudioApp::update_display(bool force)
 
     this->session_->calculate_reconstructed_samples();
     this->visualizer_->display_samples();
+
+    if (!this->is_loading_) { // do not override if loading
+      size_t num_samples = this->session_->get_shapes().size();
+      if (num_samples == 0) {
+        num_samples = 9;
+      }
+
+      double root = std::sqrt(static_cast<double>(num_samples));
+      if (std::fmod(root, 1.0) > 1e-6) {
+        root += 1.;
+      }
+
+      if (root > 4) {
+        // don't default to more than 4x4
+        root = 4;
+      }
+
+      int zoom_val = static_cast<int>(root);
+      if (zoom_val != this->ui_->zoom_slider->value()) {
+        this->ui_->zoom_slider->setValue(zoom_val);
+      }
+    }
   }
   else {
     if (mode == AnalysisTool::MODE_MEAN_C) {
@@ -1003,6 +1010,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
     this->handle_error(e.what());
   }
 
+  this->is_loading_ = true;
   /// TODO: this is just wrong, it can cause us to load in analysis mode even on a new project
   //auto tool_state = this->preferences_.get_preference(
 //    "tool_state", QString::fromStdString(Session::DATA_C)).toStdString();
@@ -1043,10 +1051,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->analysis_tool_->reset_stats();
 
-  // load analysis state
-  std::string analysis_mode = this->session_->settings().get("analysis_mode", "mean").as_string();
-  this->analysis_tool_->set_analysis_mode(analysis_mode);
-
   // set the zoom state
   //this->ui_->thumbnail_size_slider->setValue(
   //  this->preferences_.get_preference("zoom_state", 1));
@@ -1058,8 +1062,18 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->update_table();
 
+  // load analysis state
+  std::string analysis_mode = this->session_->settings().get("analysis_mode", "mean").as_string();
+  this->analysis_tool_->set_analysis_mode(analysis_mode);
+
+  int zoom_value = this->session_->settings().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
+  std::cerr << "setting zoom value to :" << zoom_value << "\n";
+  this->ui_->zoom_slider->setValue(zoom_value);
+
   this->block_update_ = false;
   this->update_display(true);
+
+  this->is_loading_ = false;
 }
 
 //---------------------------------------------------------------------------

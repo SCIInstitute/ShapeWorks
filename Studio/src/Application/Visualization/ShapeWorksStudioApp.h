@@ -120,6 +120,11 @@ private:
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
 
+
+
+  static const std::string SETTING_ZOOM_C;
+
+
   std::string get_view_mode();
 
   void set_view_combo_item_enabled(int item, bool value);
@@ -175,4 +180,5 @@ private:
   std::string current_display_mode_;
 
   bool block_update_{false};
+  bool is_loading_{false};
 };
