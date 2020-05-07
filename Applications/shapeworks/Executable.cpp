@@ -87,7 +87,7 @@ void Executable::addCommand(Command &command)
 int Executable::run(std::vector<std::string> arguments, SharedCommandData &sharedData)
 {
   bool retval = 0;
-  while (!retval && !arguments.empty())
+  while (retval == EXIT_SUCCESS && !arguments.empty())
   {
     auto cmd = commands.find(arguments[0]);
     if (cmd != commands.end()) {

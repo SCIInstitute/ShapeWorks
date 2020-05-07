@@ -144,18 +144,20 @@ void ResampleImage::buildParser()
   const std::string desc = "resamples an image";
   parser.prog(prog).description(desc);
 
+  parser.add_option("--isospacing").action("store").type("double").set_default(0.0f).help("Use this spacing in all dimensions.");
   parser.add_option("--spacex").action("store").type("double").set_default(1.0f).help("Pixel spacing in x-direction [default 1.0].");
   parser.add_option("--spacey").action("store").type("double").set_default(1.0f).help("Pixel spacing in y-direction [default 1.0].");
   parser.add_option("--spacez").action("store").type("double").set_default(1.0f).help("Pixel spacing in z-direction [default 1.0].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
+  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default estimated from the image].");
+  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default estimated from the image].");
+  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default estimated from the image].");
 
   Command::buildParser();
 }
 
 bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
+  double isoSpacing = static_cast<double>(options.get("isospacing"));
   double spaceX = static_cast<double>(options.get("spacex"));
   double spaceY = static_cast<double>(options.get("spacey"));
   double spaceZ = static_cast<double>(options.get("spacez"));
@@ -163,35 +165,11 @@ bool ResampleImage::execute(const optparse::Values &options, SharedCommandData &
   unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
   unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
 
-  sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}), Dims({sizeX, sizeY, sizeZ}));
-  return true;
-}
+  if (isoSpacing > 0.0)
+    ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
+  else
+    sharedData.image.resample(Point3({spaceX, spaceY, spaceZ}), Dims({sizeX, sizeY, sizeZ}));
 
-///////////////////////////////////////////////////////////////////////////////
-// IsoResampleImage
-///////////////////////////////////////////////////////////////////////////////
-void IsoResampleImage::buildParser()
-{
-  const std::string prog = "isoresample";
-  const std::string desc = "resamples images to be isotropic";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--isospacing").action("store").type("double").set_default(1.0f).help("The isotropic spacing in all dimensions [default 1.0].");
-  parser.add_option("--sizex").action("store").type("unsigned").set_default(0).help("Image size in x-direction [default autmatically estimated from the input image].");
-  parser.add_option("--sizey").action("store").type("unsigned").set_default(0).help("Image size in y-direction [default autmatically estimated from the input image].");
-  parser.add_option("--sizez").action("store").type("unsigned").set_default(0).help("Image size in z-direction [default autmatically estimated from the input image].");
-
-  Command::buildParser();
-}
-
-bool IsoResampleImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  double isoSpacing = static_cast<double>(options.get("isospacing"));
-  unsigned sizeX = static_cast<unsigned>(options.get("sizex"));
-  unsigned sizeY = static_cast<unsigned>(options.get("sizey"));
-  unsigned sizeZ = static_cast<unsigned>(options.get("sizez"));
-
-  ImageUtils::isoresample(sharedData.image, isoSpacing, Dims({sizeX, sizeY, sizeZ}));
   return true;
 }
 
@@ -247,10 +225,9 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (e.g., 3.14)");
-  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (not logical coordinate)");
-  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space (...but that could be added)");
-  parser.add_option("--useprev").action("store").type("bool").set_default(false).help("same amount as previous translate (in this command)");
+  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (physical coordinates)");
+  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (e.g., 3.14)");
+  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space");
 
   Command::buildParser();
 }
@@ -258,29 +235,20 @@ void Translate::buildParser()
 bool Translate::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   bool centerofmass = static_cast<bool>(options.get("centerofmass"));
-  bool useprev = static_cast<bool>(options.get("useprev"));
 
-  if (!useprev)
+  if (centerofmass)
   {
-    sharedData.transform->SetIdentity();
-
-    if (centerofmass)
-    {
-      sharedData.transform = ImageUtils::createCenterOfMassTransform(sharedData.image);
-    }
-    else
-    {
-      double tx = static_cast<double>(options.get("tx"));
-      double ty = static_cast<double>(options.get("ty"));
-      double tz = static_cast<double>(options.get("tz"));
-
-      // double v[3] = {tx, ty, tz};
-      // sharedData.transform->Translate(Vector3(v));
-      sharedData.transform = sharedData.image.translate(makeVector({tx, ty, tz}));
-    }
+    sharedData.image.applyTransform(ImageUtils::createCenterOfMassTransform(sharedData.image));
   }
-  
-  sharedData.image.applyTransform(sharedData.transform);
+  else
+  {
+    double tx = static_cast<double>(options.get("tx"));
+    double ty = static_cast<double>(options.get("ty"));
+    double tz = static_cast<double>(options.get("tz"));
+
+    sharedData.image.translate(makeVector({tx, ty, tz}));
+  }
+
   return true;
 }
 
@@ -293,23 +261,20 @@ void Scale::buildParser()
   const std::string desc = "scales images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (e.g., 3.14)");
-  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (not logical coordinate)");
-  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space (...but that could be added)");
+  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("x scale");
+  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("y scale");
+  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("z scale");
 
   Command::buildParser();
 }
 
 bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  double tx = static_cast<double>(options.get("tx"));
-  double ty = static_cast<double>(options.get("ty"));
-  double tz = static_cast<double>(options.get("tz"));
+  double sx = static_cast<double>(options.get("sx"));
+  double sy = static_cast<double>(options.get("sy"));
+  double sz = static_cast<double>(options.get("sz"));
 
-  double v[3] = {tx, ty, tz};
-
-  sharedData.transform = sharedData.image.scale(Vector3(v));
-  sharedData.image.applyTransform(sharedData.transform);
+  sharedData.image.scale(makeVector({sx, sy, sz}));
   return true;
 }
 
@@ -322,25 +287,22 @@ void Rotate::buildParser()
   const std::string desc = "rotates images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (e.g., 3.14)");
-  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (not logical coordinate)");
-  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space (...but that could be added)");
-  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("explicit angle");
+  parser.add_option("--rx", "-x").action("store").type("double").set_default(0.0).help("physical axis around which to rotate (z-axis if unspecified)");
+  parser.add_option("--ry", "-y").action("store").type("double").set_default(0.0).help("physical axis around which to rotate (z-axis if unspecified)");
+  parser.add_option("--rz", "-z").action("store").type("double").set_default(1.0).help("physical axis around which to rotate (z-axis if unspecified)");
+  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("angle in radians");
 
   Command::buildParser();
 }
 
 bool Rotate::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  double tx = static_cast<double>(options.get("tx"));
-  double ty = static_cast<double>(options.get("ty"));
-  double tz = static_cast<double>(options.get("tz"));
+  double rx = static_cast<double>(options.get("rx"));
+  double ry = static_cast<double>(options.get("ry"));
+  double rz = static_cast<double>(options.get("rz"));
   double angle = static_cast<double>(options.get("angle"));
 
-  double v[3] = {tx, ty, tz};
-
-  sharedData.transform = sharedData.image.rotate(Vector3(v), angle);
-  sharedData.image.applyTransform(sharedData.transform);
+  sharedData.image.rotate(angle, makeVector({rx, ry, rz}));
   return true;
 }
 

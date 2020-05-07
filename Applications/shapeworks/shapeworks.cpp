@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(WriteImage::getCommand());
   shapeworks.addCommand(Antialias::getCommand());
   shapeworks.addCommand(ResampleImage::getCommand());
-  shapeworks.addCommand(IsoResampleImage::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
