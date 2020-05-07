@@ -277,13 +277,12 @@ Below are the default optimization parameters for this use case.
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
             "relative_weighting" : 50,
-            "initial_relative_weighting" : 1,
+            "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
             "procrustes_scaling" : 1,
-            "save_init_splits" : 1,
+            "save_init_splits" : 0,
             "debug_projection" : 0,
-            "verbosity" : 3,
-            "use_statistics_in_init" : 0
+            "verbosity" : 3
 
 #### Mean Shape
 ![left Atrium singleScale](images/leftatrium_singlescale.png)

@@ -298,7 +298,7 @@ def Run_Pipeline(args):
             "keep_checkpoints": 0,
             "iterations_per_split": 4000,
             "optimization_iterations": 4000,
-            "starting_regularization": 1000,
+            "starting_regularization": 50000,
             "ending_regularization": 0.1,
             "recompute_regularization_interval": 2,
             "domains_per_shape": 1,
