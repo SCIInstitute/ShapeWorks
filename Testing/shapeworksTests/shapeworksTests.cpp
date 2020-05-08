@@ -37,3 +37,17 @@ TEST(shapeworksTests, comparefail) {
   shapeworksEnvSetup();
   ASSERT_TRUE(system("./comparefail.sh"));
 }
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, antialias)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./antialias.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, recenter)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./recenter.sh"));
+}

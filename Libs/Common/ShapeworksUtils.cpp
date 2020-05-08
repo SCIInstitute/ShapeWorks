@@ -22,10 +22,10 @@ bool ShapeworksUtils::is_directory(const std::string &pathname)
   return false;
 }
 
-Matrix ShapeworksUtils::icp(const vtkSmartPointer<vtkPolyData> target, const vtkSmartPointer<vtkPolyData> moving, const unsigned iterations)
+Matrix ShapeworksUtils::icp(const vtkSmartPointer<vtkPolyData> target, const vtkSmartPointer<vtkPolyData> source, const unsigned iterations)
 {
   vtkSmartPointer<vtkIterativeClosestPointTransform> icp = vtkSmartPointer<vtkIterativeClosestPointTransform>::New();
-  icp->SetSource(moving);
+  icp->SetSource(source);
   icp->SetTarget(target);
   icp->GetLandmarkTransform()->SetModeToRigidBody();
   icp->SetMaximumNumberOfIterations(iterations);
@@ -33,7 +33,7 @@ Matrix ShapeworksUtils::icp(const vtkSmartPointer<vtkPolyData> target, const vtk
   icp->Update();
 
   vtkSmartPointer<vtkTransformPolyDataFilter> icpTransformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-  icpTransformFilter->SetInputData(moving);
+  icpTransformFilter->SetInputData(source);
   icpTransformFilter->SetTransform(icp);
   icpTransformFilter->Update();
 

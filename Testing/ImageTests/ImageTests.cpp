@@ -119,7 +119,6 @@ TEST(ImageTests, com_test)
   Image image(test_location + "1x2x2.nrrd");
   TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
   image.applyTransform(xform);
-  image.write("/Users/cam/data/sw/tmp/com_test.nrrd");
   Image ground_truth(test_location + "com_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -131,7 +130,6 @@ TEST(ImageTests, scale_test)
 
   Image image(test_location + "1x2x2.nrrd");
   image.scale(makeVector({2.0,0.75,3.14159}));
-  image.write("/Users/cam/data/sw/tmp/scale_test.nrrd");
   Image ground_truth(test_location + "scale_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -143,7 +141,6 @@ TEST(ImageTests, rotate_test)
 
   Image image(test_location + "1x2x2.nrrd");
   image.rotate(M_PI / 2.0, makeVector({1,1,1}));
-  image.write("/Users/cam/data/sw/tmp/rotate_test.nrrd");
   Image ground_truth(test_location + "rotate_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
