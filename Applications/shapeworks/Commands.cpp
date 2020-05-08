@@ -93,6 +93,9 @@ void ImageInfo::buildParser()
   const std::string desc = "prints logical dims and physical origin, spacing, and coordinate system (direction)";
   parser.prog(prog).description(desc);
 
+  //<ctc> todo: add options for --size, --origin, --spacing, --csys to print only these various bits (will help with the WriteImageInfoToFiles exe)
+  // ...make it possible to specify bools directly, cuz ugh!
+
   Command::buildParser();
 }
 
@@ -849,13 +852,34 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   if (second_mesh_string == "")
   {
     std::cerr << "Must specify second mesh\n";
-    return -1;
+    return false;
   }
 
   Mesh second_mesh;
   second_mesh.read(second_mesh_string);
 
   return sharedData.mesh.coverage(second_mesh);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Compare
+///////////////////////////////////////////////////////////////////////////////
+void Compare::buildParser()
+{
+  const std::string prog = "compare";
+  const std::string desc = "compare two images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of image with which to compare");
+
+  Command::buildParser();
+}
+
+bool Compare::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+
+  return sharedData.image == Image(filename);
 }
 
 } // shapeworks

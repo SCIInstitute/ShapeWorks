@@ -416,3 +416,64 @@ TEST(ImageTests, multicommand_test)
 
   ASSERT_TRUE(image == ground_truth);
 }
+
+TEST(ImageTests, comparetest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "la.nrrd");
+  Image image2(test_location + "la.nrrd");
+
+  ASSERT_TRUE(image1 == image2);
+}
+
+TEST(ImageTests, comparetest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
+
+  Image image1(test_location + "1x2x2.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
+
+  ASSERT_FALSE(image1 == image2);
+}
+
+//<ctc> todo: finish the next four tests
+TEST(ImageTests, dimstest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Dims dims({1,2,3}); //todo
+  
+  ASSERT_TRUE(image.dims() == dims);
+}
+
+TEST(ImageTests, sizetest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Point size({1,2,3}); //todo
+  
+  ASSERT_TRUE(image.size() == size);
+}
+
+TEST(ImageTests, spacingtest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Point spacing({1,2,3}); //todo
+  
+  ASSERT_TRUE(image.spacing() == spacing);
+}
+
+TEST(ImageTests, coordsystest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Image::ImageType::DirectionType coordsys; //todo
+  
+  ASSERT_TRUE(image.coordsys() == coordsys);
+}

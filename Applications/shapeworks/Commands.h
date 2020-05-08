@@ -119,11 +119,7 @@ private:
 class Scale : public ImageCommand
 {
 public:
-  static Scale &getCommand()
-  {
-    static Scale instance;
-    return instance;
-  }
+  static Scale &getCommand() { static Scale instance; return instance; }
 
 private:
   Scale() { buildParser(); }
@@ -135,11 +131,7 @@ private:
 class Rotate : public ImageCommand
 {
 public:
-  static Rotate &getCommand()
-  {
-    static Rotate instance;
-    return instance;
-  }
+  static Rotate &getCommand() { static Rotate instance; return instance; }
 
 private:
   Rotate() { buildParser(); }
@@ -339,6 +331,27 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class Compare : public ImageCommand
+{
+public:
+  static Compare &getCommand() { static Compare instance; return instance; }
+
+private:
+  Compare() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
 class ReadParticleSystem : public ParticleSystemCommand
 {
 public:
@@ -385,6 +398,16 @@ private:
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
+
+
+
+
+
+
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 class ReadMesh : public MeshCommand

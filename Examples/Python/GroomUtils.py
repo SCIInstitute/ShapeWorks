@@ -45,7 +45,7 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, 
                "read-image", "--name", inname]
         if isBinary:
             cmd.extend(["antialias"])
-        cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
+        cmd.extend(["resample", "--isospacing", str(isoSpacing)])  
         if isBinary:
             cmd.extend(["threshold"])
         if recenter:

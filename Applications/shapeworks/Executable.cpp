@@ -86,7 +86,7 @@ void Executable::addCommand(Command &command)
 ///////////////////////////////////////////////////////////////////////////////
 int Executable::run(std::vector<std::string> arguments, SharedCommandData &sharedData)
 {
-  bool retval = 0;
+  bool retval = EXIT_SUCCESS;
   while (retval == EXIT_SUCCESS && !arguments.empty())
   {
     auto cmd = commands.find(arguments[0]);
@@ -133,7 +133,7 @@ int Executable::run(int argc, char const *const *argv)
   {
     std::cerr << "no command specified \n";
     parser.print_help(); // prints available commands
-    return 1;
+    return EXIT_FAILURE;
   }
 
   // items used for successive operations by commands

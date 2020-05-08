@@ -43,13 +43,12 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Coverage::getCommand());
   shapeworks.addCommand(ImageInfo::getCommand());
+  shapeworks.addCommand(Compare::getCommand());
 
   try {
-    shapeworks.run(argc, argv);
+    return shapeworks.run(argc, argv);
   } catch (const std::exception &e) {
     std::cout << e.what() << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
-
-  return 0;
 }
