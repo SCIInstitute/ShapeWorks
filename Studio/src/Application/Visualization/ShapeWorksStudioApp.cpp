@@ -847,7 +847,7 @@ void ShapeWorksStudioApp::handle_glyph_changed()
   this->glyph_quality_label_->setText(QString::number(preferences_.get_preference("glyph_quality",
                                                                                   5.)));
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
-  this->update_display();
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------
