@@ -315,6 +315,9 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
 
     this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
+
+    this->groom_tool_->store_settings();
+
     if (this->session_->save_project(
           this->session_->get_filename().toStdString(), this->data_dir_,
           this->optimize_tool_->getCutPlanesFile())) {
@@ -451,7 +454,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->ui_->delete_button->setEnabled(false);
   this->ui_->actionSet_Data_Directory->setEnabled(false);
   //subtools
-  this->groom_tool_->disableActions();
+  this->groom_tool_->disable_actions();
   this->optimize_tool_->disableActions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
@@ -488,7 +491,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_optimize_mode->setEnabled(this->session_->groomed_present());
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   //subtools
-  this->groom_tool_->enableActions();
+  this->groom_tool_->enable_actions();
   this->optimize_tool_->enableActions();
   this->analysis_tool_->enableActions();
   //recent

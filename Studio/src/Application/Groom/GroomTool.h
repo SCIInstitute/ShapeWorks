@@ -1,14 +1,15 @@
 #pragma once
 
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
-
-#include <QSharedPointer>
-#include <QWidget>
-#include <QProgressDialog>
-#include "Data/Preferences.h"
-#include <Groom/QGroom.h>
 #include <string>
+
+#include <QWidget>
+#include <QSharedPointer>
+#include <QProgressDialog>
+
+#include <Libs/Project/Settings.h>
+
+#include <Data/Preferences.h>
+#include <Groom/QGroom.h>
 
 class Session;
 class Ui_GroomTool;
@@ -27,10 +28,10 @@ public:
   /// set the pointer to the project
   void set_project(QSharedPointer<Session> project);
 
-  void update_preferences();
+  void store_settings();
   void set_preferences();
-  void disableActions();
-  void enableActions();
+  void disable_actions();
+  void enable_actions();
 
 Q_SIGNALS:
   void groom_complete();
@@ -44,18 +45,20 @@ public Q_SLOTS:
   void on_blur_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
   void on_skipButton_clicked();
-  void handle_thread_complete();
-  void handle_progress(int val);
   void on_restoreDefaults_clicked();
-  void handle_error(std::string msg);
 
   /// Run groom tool
   void on_run_groom_button_clicked();
 
+  void handle_thread_complete();
+  void handle_progress(int val);
+  void handle_error(std::string msg);
+
 private:
 
   Ui_GroomTool* ui_;
-  QSharedPointer<Session> project_;
+  QSharedPointer<Session> session_;
+  shapeworks::Settings settings_;
   Preferences& preferences_;
   QGroom* groom_;
 };

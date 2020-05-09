@@ -1,3 +1,5 @@
+#pragma once
+
 #include <map>
 #include <string>
 #include <vector>
@@ -107,6 +109,8 @@ public:
 
   Value get(std::string key, std::string default_value);
   void set(std::string key, std::string value);
+
+  void set(std::string key, bool value);
 
 private:
 

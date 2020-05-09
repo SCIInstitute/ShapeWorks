@@ -28,3 +28,10 @@ void Settings::set(std::string key, std::string value)
 {
   this->map_[key] = value;
 }
+
+//---------------------------------------------------------------------------
+void Settings::set(std::string key, bool value)
+{
+  std::string string_value = value ? "true" : "false";
+  this->set(key, string_value);
+}

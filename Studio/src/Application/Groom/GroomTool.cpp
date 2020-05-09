@@ -81,8 +81,11 @@ void GroomTool::on_restoreDefaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::set_preferences()
 {
-  this->ui_->center_checkbox->setChecked(
-    this->preferences_.get_preference("groom_center", this->ui_->center_checkbox->isChecked()));
+
+  this->settings_ = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
+
+  this->ui_->center_checkbox->setChecked(this->settings_.get("center", "true"));
+
   this->ui_->antialias_checkbox->setChecked(
     this->preferences_.get_preference("groom_antialias",
                                       this->ui_->antialias_checkbox->isChecked()));
@@ -108,23 +111,27 @@ void GroomTool::set_preferences()
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::disableActions()
+void GroomTool::disable_actions()
 {
   this->ui_->skipButton->setEnabled(false);
   this->ui_->run_groom_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::enableActions()
+void GroomTool::enable_actions()
 {
   this->ui_->skipButton->setEnabled(true);
   this->ui_->run_groom_button->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::update_preferences()
+void GroomTool::store_settings()
 {
-  this->preferences_.set_preference("groom_center", this->ui_->center_checkbox->isChecked());
+
+  Settings settings = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
+
+  settings.set("center", this->ui_->center_checkbox->isChecked());
+
   this->preferences_.set_preference("groom_antialias", this->ui_->antialias_checkbox->isChecked());
   this->preferences_.set_preference("groom_pad", this->ui_->autopad_checkbox->isChecked());
   this->preferences_.set_preference("groom_fastmarching",
@@ -137,15 +144,17 @@ void GroomTool::update_preferences()
                                     this->ui_->antialias_iterations->value());
   this->preferences_.set_preference("groom_blur_sigma", this->ui_->blur_sigma->value());
   this->preferences_.set_preference("groom_pad_value", this->ui_->padding_amount->value());
+
+  this->session_->get_project()->set_settings(Settings::GROOM_SETTINGS, settings);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked()
 {
-  this->update_preferences();
+  this->store_settings();
   emit message("Please wait: running groom step...");
   emit progress(5);
-  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
+  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   for (QSharedPointer<Shape> s : shapes) {
     imgs.push_back(s->get_original_image());
@@ -183,7 +192,7 @@ void GroomTool::on_run_groom_button_clicked()
   this->ui_->skipButton->setEnabled(false);
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::GroomType, this->groom_, nullptr, this->project_);
+    ShapeworksWorker::GroomType, this->groom_, nullptr, this->session_);
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_thread_complete()));
@@ -197,7 +206,7 @@ void GroomTool::on_run_groom_button_clicked()
 void GroomTool::handle_thread_complete()
 {
   emit progress(95);
-  this->project_->load_groomed_images(this->groom_->getImages(),
+  this->session_->load_groomed_images(this->groom_->getImages(),
                                       this->ui_->fastmarching_checkbox->isChecked() ? 0. : 0.5);
   emit progress(100);
   emit message("Groom Complete");
@@ -209,19 +218,19 @@ void GroomTool::handle_thread_complete()
 //---------------------------------------------------------------------------
 void GroomTool::set_project(QSharedPointer<Session> project)
 {
-  this->project_ = project;
+  this->session_ = project;
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_skipButton_clicked()
 {
-  this->update_preferences();
-  QVector<QSharedPointer<Shape>> shapes = this->project_->get_shapes();
+  this->store_settings();
+  QVector<QSharedPointer<Shape>> shapes = this->session_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   for (QSharedPointer<Shape> s : shapes) {
     imgs.push_back(s->get_original_image());
   }
-  this->project_->load_groomed_images(imgs, 0.);
+  this->session_->load_groomed_images(imgs, 0.);
   emit message("Skipped groom.");
   emit groom_complete();
 }
