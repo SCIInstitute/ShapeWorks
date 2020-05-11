@@ -92,13 +92,13 @@ public:
   Image &pad(int padding = 0, PixelType value = 0.0);
 
   /// translate image
-  Image& translate(const Vector3 &v);
+  Image &translate(const Vector3 &v = makeVector({0.0, 0.0, 0.0}));
 
   /// scale image
-  Image& scale(const Vector3 &v);
+  Image &scale(const Vector3 &v = makeVector({1.0, 1.0, 1.0}));
 
   /// rotate image by the given angle (in radians) around the given axis (around the z-axis if unspecified)
-  Image& rotate(const double angle, const Vector3 &v = makeVector({0.0, 0.0, 1.0}));
+  Image& rotate(const double angle = 0.0, const Vector3 &v = makeVector({0.0, 0.0, 1.0}));
 
   /// applies the given transformation to the image by using resampling filter
   Image &applyTransform(const TransformPtr transform);
