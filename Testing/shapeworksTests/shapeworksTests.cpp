@@ -45,11 +45,11 @@ TEST(shapeworksTests, antialias)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, antialiasfail)
-{
-  shapeworksEnvSetup();
-  ASSERT_TRUE(system("./antialiasfail.sh"));
-}
+// TEST(shapeworksTests, antialiasfail)
+// {
+//   shapeworksEnvSetup();
+//   ASSERT_TRUE(system("./antialiasfail.sh"));
+// }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, recenter)
@@ -59,11 +59,11 @@ TEST(shapeworksTests, recenter)
 }
 
 //---------------------------------------------------------------------------
-// TEST(shapeworksTests, isoresample)
-// {
-//   shapeworksEnvSetup();
-//   ASSERT_FALSE(system("./isoresample.sh"));
-// }
+TEST(shapeworksTests, resample)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("./resample.sh"));
+}
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, centerofmass)

@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(PadImage::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(Translate::getCommand());
+  shapeworks.addCommand(Scale::getCommand());
+  shapeworks.addCommand(Rotate::getCommand());
   shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
   shapeworks.addCommand(Threshold::getCommand());
