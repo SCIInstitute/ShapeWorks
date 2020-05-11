@@ -37,7 +37,6 @@ def Run_Pipeline(args):
     data and create necessary supporting files. The files will be Extracted in a
     newly created Directory TestEllipsoids.
     This data is LGE segmentation of left atrium.
-
     Extract the zipfile into proper directory and create necessary supporting
     files
     """
@@ -78,6 +77,7 @@ def Run_Pipeline(args):
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
         -- Isotropic resampling
+        -- Center
         -- Padding
         -- Center of Mass Alignment
         -- Rigid Alignment
@@ -101,11 +101,17 @@ def Run_Pipeline(args):
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
 
         """
+        Centering
+        """
+        centeredFiles_segmentations = center(parentDir + "centered/segmentations", resampledFiles_segmentations)
+        centeredFiles_images = center(parentDir + "centered/images", resampledFiles_images)
+
+        """
         Apply padding
         Both the segmentation and raw images are padded.
         """
-        paddedFiles_segmentations = applyPadding(parentDir + "padded/segmentations", resampledFiles_segmentations, 10)
-        paddedFiles_images = applyPadding(parentDir+ "padded/images", resampledFiles_images, 10)
+        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', centeredFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir+ 'padded/images', centeredFiles_images, 10)
 
         """
         Apply center of mass alignment
@@ -176,8 +182,15 @@ def Run_Pipeline(args):
             """Apply isotropic resampling"""
             resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
 
-            """Apply padding"""
-            paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
+            """Apply Centering"""
+            centeredFiles = center(parentDir + "centered", resampledFiles)
+
+            """
+            Apply padding
+            For detailed explainations of parameters for padding volumes, go to
+            'https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/ImagePrepTools.pdf'
+            """
+            paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
             """Apply center of mass alignment"""
             comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
@@ -190,7 +203,7 @@ def Run_Pipeline(args):
             rigidFiles = applyRigidAlignment(parentDir, comFiles, None, medianFile)
 
             """Compute largest bounding box and apply cropping"""
-            croppedFiles = applyCropping(parentDir "cropped", rigidFiles, None )
+            croppedFiles = applyCropping(parentDir + "cropped", rigidFiles, None )
 
         print("\nStep 3. Groom - Convert to distance transforms\n")
         if args.interactive:

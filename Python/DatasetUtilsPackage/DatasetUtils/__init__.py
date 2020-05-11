@@ -1,6 +1,5 @@
 from DatasetUtils import GirderConnector
 
-
 ## Returns None if failed to get list, otherwise returns list of dataset names: ['ellipsoid', 'left_atrium', ...]
 def getDatasetList(loginState = None):
     GirderConnector._printDataPortalWelcome()
@@ -27,6 +26,22 @@ def downloadDataset(datasetName, destinationPath='.', asZip = True, loginState =
         return True
     else:
         print('FAILED to download the', datasetName, 'dataset from the ShapeWorks Portal.')
+        return False
+
+## fileList is list of strings 
+def downloadDatasetFiles(datasetName, fileList, destinationPath='.', loginState = None):
+    GirderConnector._printDataPortalWelcome()
+    print('Downloading', len(fileList), 'specified files from the', datasetName, 'dataset from the ShapeWorks Portal')
+    accessToken = GirderConnector._login(loginState)
+    if not accessToken:
+        return False
+
+    success = GirderConnector._downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath)
+    if success:
+        print('Downloaded', len(fileList), 'specified files from the', datasetName, 'dataset from the ShapeWorks Portal')
+        return True
+    else:
+        print('FAILED to download', len(fileList), 'specified files from the', datasetName, 'dataset from the ShapeWorks Portal')
         return False
 
 
