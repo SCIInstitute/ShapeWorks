@@ -1,8 +1,12 @@
 import os
 import numpy as np
 import nrrd #@TODO not in conda installs (python -m pip install pynrrd)
+from collections import OrderedDict
 import random
+import time
 import torch
+from torch import nn
+from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 ######################## Data loading functions ####################################
@@ -101,7 +105,7 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 			exit()
 		# add image
 		[img,f] = nrrd.read(image_path)
-		images.append(img)
+		images.append([img])
 		# add score
 		score = PCAdict[prefix]
 		scores.append(score)
@@ -122,15 +126,16 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 	test_data = DeepSSMdataset(images[cut2:], scores[cut2:], models[cut2:])
 
 	print("Creating and saving dataloaders...")
+	# pin_memory=torch.cuda.is_available()
 	loader_dir = parent_dir + "TorchDataLoaders/"
 	if not os.path.exists(loader_dir):
 		os.makedirs(loader_dir)
 	trainloader = DataLoader(
 			train_data,
-			batch_size=4,
+			batch_size=1,
 			shuffle=True,
-			num_workers=2,
-			pin_memory=torch.cuda.is_available()
+			num_workers=8,
+			pin_memory=False
 		)
 	train_path = loader_dir + 'train'
 	torch.save(trainloader, train_path)
@@ -138,8 +143,8 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 			val_data,
 			batch_size=1,
 			shuffle=True,
-			num_workers=2,
-			pin_memory=torch.cuda.is_available()
+			num_workers=8,
+			pin_memory=False
 		)
 	val_path = loader_dir + 'validation'
 	torch.save(trainloader, val_path)
@@ -147,16 +152,142 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 			test_data,
 			batch_size=1,
 			shuffle=True,
-			num_workers=2,
-			pin_memory=torch.cuda.is_available()
+			num_workers=8,
+			pin_memory=False
 		)
 	test_path = loader_dir + 'test'
 	torch.save(trainloader, test_path)
 	print("Done.")
 	return train_path, val_path, test_path
 
-##################### #################################
-	def train(train_loader, val_loader):
-		pass
+########################## Model ####################################
 
-	
+class DeepSSMNet(nn.Module):
+	def __init__(self):
+		super(DeepSSMNet, self).__init__()
+		if torch.cuda.is_available():
+			device = 'cuda:0'
+		else:
+			device = 'cpu'
+		self.device = device
+		self.features = nn.Sequential(OrderedDict([
+			('conv1', nn.Conv3d(1, 12, 5)),
+			('bn1', nn.BatchNorm3d(12)),
+			('relu1', nn.PReLU()),
+			('mp1', nn.MaxPool3d(2)),
+
+			('conv2', nn.Conv3d(12, 24, 5)),
+			('bn2', nn.BatchNorm3d(24)),
+			('relu2', nn.PReLU()),
+			('conv3', nn.Conv3d(24, 48, 5)),
+			('bn3', nn.BatchNorm3d(48)),
+			('relu3', nn.PReLU()),
+			('mp2', nn.MaxPool3d(2)),
+
+			('conv4', nn.Conv3d(48, 96, 5)),
+			('bn4', nn.BatchNorm3d(96)),
+			('relu4', nn.PReLU()),
+			('conv5', nn.Conv3d(96, 192, 5)),
+			('bn5', nn.BatchNorm3d(192)),
+			('relu5', nn.PReLU()),
+			('mp3', nn.MaxPool3d(2)),
+
+			('flatten', Flatten()),
+			
+			('fc1', nn.Linear(76800, 384)),
+			('relu6', nn.PReLU()),
+			('fc2', nn.Linear(384,96)),
+			('relu7', nn.PReLU()),
+		]))
+		self.pca_pred = nn.Sequential(OrderedDict([
+			('linear', nn.Linear(96, 6))
+		]))
+	def forward(self, x):
+		x = self.features(x)
+		return self.pca_pred(x)
+
+class Flatten(nn.Module):
+    def forward(self, x):
+        return x.view(x.size(0), -1)
+
+def weight_init(module, initf):
+    def foo(m):
+        classname = m.__class__.__name__.lower()
+        if isinstance(m, module):
+            initf(m.weight)
+    return foo
+#####################################
+
+def train(model, train_loader_path, validation_loader_path, parent_dir):
+	# initalizations
+	num_epochs = 10
+	learning_rate = 0.001
+	eval_freq = 1
+	device = model.device
+	model.cuda()
+	# load le loaders
+	print("Loading data loaders...")
+	train_loader = torch.load(train_loader_path)
+	val_loader = torch.load(validation_loader_path)
+	print("Done.")
+	# intialize model weights
+	model.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
+	model.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
+	# define optimizer
+	train_params = model.parameters()
+	opt = torch.optim.Adam(train_params, learning_rate)
+	opt.zero_grad()
+	# train
+	print("Beginning training on device = " + device)
+	logger = open(parent_dir + "train_log.csv", "w+")
+	logger.write("epoch,train_mean_root_MSE,train_relative_error,val_mean_root_MSE,val_relative_error,sec\n")
+	print("Epoch, train_mean_root_MSE, train_relative_error, val_mean_root_MSE, val_relative_error, sec")
+	t0 = time.time()
+	for e in range(1, num_epochs + 1):
+		torch.cuda.empty_cache()
+		# train
+		model.train()
+		train_losses = []
+		train_rel_losses = []
+		for img, pca, mdl in train_loader:
+			opt.zero_grad()
+			img = img.to(device)
+			pca = pca.to(device)
+			pred = model(img)
+			loss = torch.mean((pred - pca)**2)
+			loss.backward()
+			opt.step()
+			train_losses.append(loss.item())
+			train_rel_loss = F.mse_loss(pred, pca) / F.mse_loss(pred*0, pca)
+			train_rel_losses.append(train_rel_loss.item())
+		# test validation
+		if ((e % eval_freq) == 0 or e == 1):
+			model.eval()
+			val_losses = []
+			val_rel_losses = []
+			for img, pca, mdl in val_loader:
+				opt.zero_grad()
+				img = img.to(device)
+				pca = pca.to(device)
+				pred = model(img)
+				v_loss = torch.mean((pred - pca)**2)
+				val_losses.append(v_loss.item())
+				val_rel_loss = F.mse_loss(pred, pca) / F.mse_loss(pred*0, pca)
+				val_rel_losses.append(val_rel_loss.item())
+			# log
+			train_mr_MSE = np.mean(np.sqrt(train_losses))
+			val_mr_MSE = np.mean(np.sqrt(val_losses))
+			train_rel_err = np.mean(train_rel_losses)
+			val_rel_err =  np.mean(val_rel_losses)
+			log_string = str(e)+','+ str(train_mr_MSE)+','+str(train_rel_err)+','+ str(val_mr_MSE)+','+str(val_rel_err)+','+str(time.time() - t0)
+			logger.write(log_string+'\n')
+			print(log_string)
+			# save
+			torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
+			torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
+			t0 = time.time()
+	# save
+	logger.close()
+	torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
+	torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
+	print("Training complete, model saved.")

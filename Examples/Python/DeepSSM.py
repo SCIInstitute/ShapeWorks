@@ -26,11 +26,11 @@ from AnalyzeUtils import *
 from DeepSSMUtils import *
 
 # set parent dir
-parentDir="TestDeepSSM/"
-if not os.path.exists(parentDir):
-	os.makedirs(parentDir)
+parent_dir="TestDeepSSM/"
+if not os.path.exists(parent_dir):
+	os.makedirs(parent_dir)
 
-print("\nStep 1. Download Data\n")
+# print("\nStep 1. Download Data\n")
 
 datasetName = "deepssm_femur"
 
@@ -44,23 +44,31 @@ datasetName = "deepssm_femur"
 # # extract the zipfile  
 # print("Extracting data from " + filename + "...")
 # with ZipFile(filename, 'r') as zipObj:
-# 	zipObj.extractall(path=parentDir)
+# 	zipObj.extractall(path=parent_dir)
 
 print("\nStep 2. Reformat Data for Pytorch\n")
 
-img_dir = parentDir + datasetName + '/images/'
-model_dir = parentDir + datasetName + '/model/'
-pca_path = parentDir + datasetName + '/PCA_scores.csv'
+img_dir = parent_dir + datasetName + '/images/'
+model_dir = parent_dir + datasetName + '/model/'
+pca_path = parent_dir + datasetName + '/PCA_scores.csv'
 
-train_loader, val_loader, test_loader = getTorchDataLoaders(img_dir, model_dir, pca_path, parentDir)
+train_loader, val_loader, test_loader = getTorchDataLoaders(img_dir, model_dir, pca_path, parent_dir)
 
-# print("\nStep 3. Train DeepSSM\n") 
-# deep_model = train(train_loader, val_loader)
+# #debug
+# train_loader = "TestDeepSSM/TorchDataLoaders/train"
+# val_loader = "TestDeepSSM/TorchDataLoaders/validation"
+# test_loader = "TestDeepSSM/TorchDataLoaders/test"
 
-# print("\nStep 4. Test DeepSSM\n") 
+print("\nStep 3. Define model.\n")
+model = DeepSSMNet()
+
+print("\nStep 4. Train model.\n")
+model_path = train(model, train_loader, val_loader, parent_dir)
+
+# print("\nStep 5. Test DeepSSM\n") 
 
 # # Test DeepSSM
-# test_predictions = test(test_loader)
+# error = test(model, test_loader)
 
 # error = getError(test_labels, test_predictions)
 
