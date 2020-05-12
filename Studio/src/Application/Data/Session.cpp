@@ -627,13 +627,14 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double
     if (this->shapes_.size() <= i) {
       QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
       new_shape->set_mesh_manager(this->mesh_manager_);
-
       this->shapes_.push_back(new_shape);
     }
     this->shapes_[i]->import_groomed_image(images[i], iso);
   }
   progress.setValue(images.size());
   QApplication::processEvents();
+
+  this->project_->store_subjects();
   if (images.size() > 0) {
     this->unsaved_groomed_files_ = true;
     this->groomed_present_ = true;
