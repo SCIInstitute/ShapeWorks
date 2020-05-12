@@ -52,7 +52,8 @@ img_dir = parent_dir + datasetName + '/images/'
 model_dir = parent_dir + datasetName + '/model/'
 pca_path = parent_dir + datasetName + '/PCA_scores.csv'
 
-train_loader, val_loader, test_loader = getTorchDataLoaders(img_dir, model_dir, pca_path, parent_dir)
+train_loader, val_loader, test_loader, test_sample_names = getTorchDataLoaders(img_dir, model_dir, pca_path, parent_dir)
+input(test_sample_names)
 
 # #debug
 # train_loader = "TestDeepSSM/TorchDataLoaders/train"
@@ -65,12 +66,10 @@ model = DeepSSMNet()
 print("\nStep 4. Train model.\n")
 model_path = train(model, train_loader, val_loader, parent_dir)
 
-# print("\nStep 5. Test DeepSSM\n") 
+print("\nStep 5. Test DeepSSM\n") 
 
-# # Test DeepSSM
-# error = test(model, test_loader)
-
-# error = getError(test_labels, test_predictions)
+# Test DeepSSM
+avg_error = test(model, test_loader)
 
 
 

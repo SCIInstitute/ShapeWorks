@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import nrrd #@TODO not in conda installs (python -m pip install pynrrd)
+import itk
 from collections import OrderedDict
 import random
 import time
@@ -36,6 +36,19 @@ def getPrefix(path):
 	prefix = '_'.join(file_name.split('_')[0:3])
 	prefix.replace('.particles','')
 	return prefix
+
+'''
+getTorchData helper
+reads .nrrd file and retunrs data
+the except is for the generated files, it forces the .nrrd to be in a format itk can read
+'''
+def getImage(path):
+	try:
+		image = itk.imread(path)
+	except:
+		image = itk.imread(path, itk.F)
+	img = itk.GetArrayFromImage(image)
+	return [list(img)]
 
 '''
 getTorchData helper
@@ -88,8 +101,9 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 	images = []
 	scores = []
 	models = []
+	prefixes = []
 	# for index in range(len(imglist)):
-	for index in range(10):
+	for index in range(8,40):
 		if index%200 == 0:
 			print(str((index/len(imglist))*100)+'%')
 		image_path = imglist[index]
@@ -103,9 +117,10 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 			print("Error: Images and models mismatched")
 			print(prefix)
 			exit()
+		prefixes.append(prefix)
 		# add image
-		[img,f] = nrrd.read(image_path)
-		images.append([img])
+		img = getImage(image_path)
+		images.append(img)
 		# add score
 		score = PCAdict[prefix]
 		scores.append(score)
@@ -115,15 +130,16 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 
 	print("Shuffling and turning to tensors...")
 	# shuffle
-	c = list(zip(images, scores, models))
+	c = list(zip(images, scores, models, prefixes))
 	random.shuffle(c)
-	images, scores, models = zip(*c)
+	images, scores, models, prefixes = zip(*c)
 	# split into train (80%), validation(10%), and test(10%) datsets
 	cut1 = int(len(images)*.8) 
 	cut2 = cut1 + int(len(images)*.1)
 	train_data = DeepSSMdataset(images[:cut1], scores[:cut1], models[:cut1])
 	val_data = DeepSSMdataset(images[cut1:cut2], scores[cut1:cut2], models[cut1:cut2])
 	test_data = DeepSSMdataset(images[cut2:], scores[cut2:], models[cut2:])
+	test_names = prefixes[cut2:]
 
 	print("Creating and saving dataloaders...")
 	# pin_memory=torch.cuda.is_available()
@@ -151,14 +167,14 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 	testloader = DataLoader(
 			test_data,
 			batch_size=1,
-			shuffle=True,
+			shuffle=False,
 			num_workers=8,
 			pin_memory=False
 		)
 	test_path = loader_dir + 'test'
 	torch.save(trainloader, test_path)
 	print("Done.")
-	return train_path, val_path, test_path
+	return train_path, val_path, test_path, test_names
 
 ########################## Model ####################################
 
@@ -291,3 +307,26 @@ def train(model, train_loader_path, validation_loader_path, parent_dir):
 	torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
 	torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
 	print("Training complete, model saved.")
+
+
+def test(model, test_loader_path):
+	# initalizations
+	device = model.device
+	model.cuda()
+	# load le loaders
+	print("Loading test data loader...")
+	test_loader = torch.load(test_loader_path)
+	print("Done.")
+	model.eval()
+	test_losses = []
+	test_rel_losses = []
+	for img, pca, mdl in test_loader:
+		img = img.to(device)
+		pca = pca.to(device)
+		pred = model(img)
+		loss = torch.mean((pred - pca)**2)
+		test_losses.append(loss.item())
+		test_rel_loss = F.mse_loss(pred, pca) / F.mse_loss(pred*0, pca)
+		test_rel_losses.append(test_rel_loss.item())
+	test_mr_MSE = np.mean(np.sqrt(test_losses))
+	test_rel_err =  np.mean(test_rel_losses)
