@@ -82,7 +82,7 @@ def getParticles(model_path):
 Gets pytorch data from image dir, model dir, and pca scores
 Returns dir where train, validation, and test data loader are saved
 '''
-def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
+def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir, batch_size=1):
 	print("Reading in data... \nPercent complete:")
 	# get lists of file paths for images and models
 	imglist = []
@@ -142,16 +142,15 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 	test_names = prefixes[cut2:]
 
 	print("Creating and saving dataloaders...")
-	# pin_memory=torch.cuda.is_available()
 	loader_dir = parent_dir + "TorchDataLoaders/"
 	if not os.path.exists(loader_dir):
 		os.makedirs(loader_dir)
 	trainloader = DataLoader(
 			train_data,
-			batch_size=1,
+			batch_size=batch_size,
 			shuffle=True,
 			num_workers=8,
-			pin_memory=False
+			pin_memory=torch.cuda.is_available()
 		)
 	train_path = loader_dir + 'train'
 	torch.save(trainloader, train_path)
@@ -160,19 +159,19 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir):
 			batch_size=1,
 			shuffle=True,
 			num_workers=8,
-			pin_memory=False
+			pin_memory=torch.cuda.is_available()
 		)
 	val_path = loader_dir + 'validation'
-	torch.save(trainloader, val_path)
+	torch.save(validationloader, val_path)
 	testloader = DataLoader(
 			test_data,
 			batch_size=1,
 			shuffle=False,
 			num_workers=8,
-			pin_memory=False
+			pin_memory=torch.cuda.is_available()
 		)
 	test_path = loader_dir + 'test'
-	torch.save(trainloader, test_path)
+	torch.save(testloader, test_path)
 	print("Done.")
 	return train_path, val_path, test_path, test_names
 
@@ -234,11 +233,23 @@ def weight_init(module, initf):
     return foo
 #####################################
 
-def train(model, train_loader_path, validation_loader_path, parent_dir):
+def log_print(logger, values):
+	# print values
+	if isinstance(values[0], str):
+		print('	  '.join(values))
+	else:
+		format_values = ['%.4f' % i for i in values]
+		print('	  '.join(format_values))
+	# csv format
+	string_values = [str(i) for i in values]
+	log_string = ','.join(string_values)
+	logger.write(log_string + '\n')
+
+def train(model, train_loader_path, validation_loader_path, parameters, parent_dir):
 	# initalizations
-	num_epochs = 10
-	learning_rate = 0.001
-	eval_freq = 1
+	num_epochs = parameters['epochs']
+	learning_rate = parameters['learning_rate']
+	eval_freq = parameters['val_freq']
 	device = model.device
 	model.cuda()
 	# load le loaders
@@ -256,8 +267,7 @@ def train(model, train_loader_path, validation_loader_path, parent_dir):
 	# train
 	print("Beginning training on device = " + device)
 	logger = open(parent_dir + "train_log.csv", "w+")
-	logger.write("epoch,train_mean_root_MSE,train_relative_error,val_mean_root_MSE,val_relative_error,sec\n")
-	print("Epoch, train_mean_root_MSE, train_relative_error, val_mean_root_MSE, val_relative_error, sec")
+	log_print(logger, ["Epoch", "Train_Err", "Train_Rel_Err", "Val_Err", "Val_Rel_Err", "Sec"])
 	t0 = time.time()
 	for e in range(1, num_epochs + 1):
 		torch.cuda.empty_cache()
@@ -295,9 +305,7 @@ def train(model, train_loader_path, validation_loader_path, parent_dir):
 			val_mr_MSE = np.mean(np.sqrt(val_losses))
 			train_rel_err = np.mean(train_rel_losses)
 			val_rel_err =  np.mean(val_rel_losses)
-			log_string = str(e)+','+ str(train_mr_MSE)+','+str(train_rel_err)+','+ str(val_mr_MSE)+','+str(val_rel_err)+','+str(time.time() - t0)
-			logger.write(log_string+'\n')
-			print(log_string)
+			log_print(logger, [e, train_mr_MSE, train_rel_err, val_mr_MSE, val_rel_err, time.time()-t0])
 			# save
 			torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
 			torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
@@ -309,17 +317,18 @@ def train(model, train_loader_path, validation_loader_path, parent_dir):
 	print("Training complete, model saved.")
 
 
-def test(model, test_loader_path):
+def test(model, test_loader_path, test_names):
 	# initalizations
 	device = model.device
 	model.cuda()
 	# load le loaders
 	print("Loading test data loader...")
 	test_loader = torch.load(test_loader_path)
-	print("Done.")
+	print("Done.\n")
 	model.eval()
 	test_losses = []
 	test_rel_losses = []
+	index = 0
 	for img, pca, mdl in test_loader:
 		img = img.to(device)
 		pca = pca.to(device)
@@ -328,5 +337,7 @@ def test(model, test_loader_path):
 		test_losses.append(loss.item())
 		test_rel_loss = F.mse_loss(pred, pca) / F.mse_loss(pred*0, pca)
 		test_rel_losses.append(test_rel_loss.item())
+		index += 1
 	test_mr_MSE = np.mean(np.sqrt(test_losses))
 	test_rel_err =  np.mean(test_rel_losses)
+	return test_mr_MSE, test_rel_err

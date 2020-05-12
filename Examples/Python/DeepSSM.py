@@ -52,8 +52,12 @@ img_dir = parent_dir + datasetName + '/images/'
 model_dir = parent_dir + datasetName + '/model/'
 pca_path = parent_dir + datasetName + '/PCA_scores.csv'
 
-train_loader, val_loader, test_loader, test_sample_names = getTorchDataLoaders(img_dir, model_dir, pca_path, parent_dir)
-input(test_sample_names)
+# Hyper-paramter batch_size for training
+# Higher batch size will help speed up training but uses more cuda memory
+# If you get a memory error try reducing the batch size
+batch_size = 2
+
+train_loader, val_loader, test_loader, test_sample_names = getTorchDataLoaders(img_dir, model_dir, pca_path, parent_dir, batch_size)
 
 # #debug
 # train_loader = "TestDeepSSM/TorchDataLoaders/train"
@@ -64,17 +68,17 @@ print("\nStep 3. Define model.\n")
 model = DeepSSMNet()
 
 print("\nStep 4. Train model.\n")
-model_path = train(model, train_loader, val_loader, parent_dir)
+# Training parameters dict
+# val_freq sets how often too test on validation set and log
+# for example val_freq=1 is every epoch and val_freq=2 is every other
+parameters = {"epochs":10, "learning_rate":0.001, "val_freq":1}
+model_path = train(model, train_loader, val_loader, parameters, parent_dir)
 
 print("\nStep 5. Test DeepSSM\n") 
 
 # Test DeepSSM
-avg_error = test(model, test_loader)
-
-
-
-
-
-
-
-
+mr_error, rel_error = test(model, test_loader, test_sample_names)
+print("Average mean root MSE on test set:")
+print(mr_error)
+print("Average relative error on test set:")
+print(rel_error)
