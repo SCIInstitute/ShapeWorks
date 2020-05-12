@@ -37,7 +37,7 @@ public:
   template<typename T>
   void set_preference(std::string name, T value)
   {
-    this->settings_.setValue("Project/" + QString::fromStdString(name), QVariant(value));
+    this->settings_.setValue(QString::fromStdString(name), QVariant(value));
     this->saved_ = false;
   }
 
