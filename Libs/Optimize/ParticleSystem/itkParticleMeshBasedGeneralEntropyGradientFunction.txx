@@ -97,7 +97,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
         vnl_matrix_type projMat = points_minus_mean * UG;
         const auto lhs = projMat * invLambda;
-        const auto rhs = invLambda * projMat.transpose();
+        const auto rhs = invLambda * projMat.transpose(); // invLambda doesn't need to be transposed since its a diagonal matrix
         m_InverseCovMatrix->set_size(num_dims, num_dims);
         Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
     }
