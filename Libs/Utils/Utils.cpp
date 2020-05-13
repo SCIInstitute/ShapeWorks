@@ -431,6 +431,36 @@ std::string Utils::int2str(int n, int number_of_zeros)
     return s;
 }
 
+//--------------- linear algebra -------------------------------------------
+// Copied version of https://github.com/vxl/vxl/blob/5df3b4a335d921bb4f25031e31b08d8f3c557641/core/vnl/vnl_matrix.h#L376
+// but avoids allocating a new buffer for the output. Assumes `out` has sufficient size.
+// Tracked by issue: https://github.com/vxl/vxl/issues/778
+template<typename T>
+void Utils::multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs) {
+#ifndef NDEBUG
+  if (lhs.num_cols != rhs.num_rows)
+      vnl_error_matrix_dimension("vnl_matrix<T>::operator*", lhs.num_rows, lhs.num_cols,
+                                 rhs.num_rows, rhs.num_cols);
+#endif
+
+  const unsigned int l = lhs.rows();
+  const unsigned int m = lhs.cols();
+  const unsigned int n = rhs.cols();
+
+  for (unsigned int i = 0; i < l; ++i) {
+    for (unsigned int k = 0; k < n; ++k) {
+      T sum{0};
+      for (unsigned int j = 0; j < m; ++j)
+        sum += T(lhs[i][j] * rhs[j][k]);
+      out[i][k] = sum;
+    }
+  }
+}
+
+// Explicitly instantiate this function templatized over double
+template void
+Utils::multiply_into(vnl_matrix<double> &, const vnl_matrix<double> &, const vnl_matrix<double> &);
+
 
 //--------------- average normal directions --------------------------------
 

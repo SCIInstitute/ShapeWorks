@@ -12,6 +12,7 @@ target_link_libraries(Optimize
   trimesh2
   Mesh
   tinyxml
+  Utils
   Particles)
 
 target_include_directories(Optimize PUBLIC
