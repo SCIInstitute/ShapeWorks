@@ -82,10 +82,12 @@ def Run_Pipeline(args):
     ## GROOM : Data Pre-processing 
     For the unprepped data the first few steps are 
     -- Isotropic resampling
+    -- Center
     -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
     -- Largest Bounding Box and Cropping 
+    For a detailed explanation of grooming steps see: https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md
     """
 
     print("\nStep 2. Groom - Data Pre-processing\n")
@@ -98,35 +100,23 @@ def Run_Pipeline(args):
         os.makedirs(parentDir)
 
     if int(args.start_with_prepped_data) == 0:
-        """
-        Apply isotropic resampling
 
-        For detailed explainations of parameters for resampling volumes, go to
-        ... link
-        """
+        """ Apply isotropic resampling """
         resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
 
-        """
-        Apply padding
+        """ Center """
+        centeredFiles = center(parentDir + "centered", resampledFiles)
 
-        For detailed explainations of parameters for padding volumes, go to
-        ... link
-        """
+        """ Apply padding"""
+        paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
-        paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
-
-        """
-        Apply center of mass alignment
-
-        For detailed explainations of parameters for center of mass (COM) alignment of volumes, go to
-        ... link
-        """
+        """ Apply center of mass alignment """
         comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)
-        """Apply rigid alignment"""
 
+        """ Apply rigid alignment """
         rigidFiles = applyRigidAlignment(parentDir, comFiles, None, comFiles[0])
 
-        """Compute largest bounding box and apply cropping"""
+        """ Compute largest bounding box and apply cropping """
         croppedFiles = applyCropping(parentDir, rigidFiles, None)
 
     """
