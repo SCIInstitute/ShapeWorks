@@ -52,7 +52,7 @@ def Run_Pipeline(args):
         DatasetUtils.downloadDataset(datasetName)
 
     parentDir="TestFemur/"
-    inputDir = 'TestFemur/' + datasetName + 'data/'
+    inputDir = 'TestFemur/' + datasetName + '/'
 
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
