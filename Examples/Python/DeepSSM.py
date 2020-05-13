@@ -20,9 +20,9 @@ import glob
 import re
 import numpy as np
 
-from GroomUtils import *
-from OptimizeUtils import *
-from AnalyzeUtils import *
+# from GroomUtils import *
+# from OptimizeUtils import *
+# from AnalyzeUtils import *
 from DeepSSMUtils import *
 
 # set parent dir
@@ -51,7 +51,6 @@ print("\nStep 2. Reformat Data for Pytorch\n")
 img_dir = parent_dir + datasetName + '/images/'
 model_dir = parent_dir + datasetName + '/model/'
 pca_path = parent_dir + datasetName + '/PCA_scores.csv'
-
 # Hyper-paramter batch_size for training
 # Higher batch size will help speed up training but uses more cuda memory
 # If you get a memory error try reducing the batch size
