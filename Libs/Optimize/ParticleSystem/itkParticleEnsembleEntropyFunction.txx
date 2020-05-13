@@ -147,7 +147,7 @@ ParticleEnsembleEntropyFunction<VDimension>
         m_InverseCovMatrix->set_size(num_dims, num_dims);
         Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
     }
-  m_PointsUpdate->update(points_minus_mean * pinvMat);
+    m_PointsUpdate->update(points_minus_mean * pinvMat);
 
 //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 
