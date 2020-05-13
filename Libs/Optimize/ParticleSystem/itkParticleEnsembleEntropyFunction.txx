@@ -18,6 +18,7 @@
 #include "itkParticleImageDomainWithGradients.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "itkParticleGaussianModeWriter.h"
+#include "Utils.h"
 #include <string>
 
 namespace itk
@@ -101,15 +102,13 @@ ParticleEnsembleEntropyFunction<VDimension>
 
     vnl_diag_matrix<double> W;
 
-    m_InverseCovMatrix->set_size(num_dims, num_dims);
-    m_InverseCovMatrix->fill(0.0);
     vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
     vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
 
     if (this->m_UseMeanEnergy)
     {
         pinvMat.set_identity();
-        m_InverseCovMatrix->clear(); //set_identity();
+        m_InverseCovMatrix->clear();
     }
     else
     {
@@ -143,11 +142,12 @@ ParticleEnsembleEntropyFunction<VDimension>
         pinvMat = (UG * invLambda) * UG.transpose();
 
         vnl_matrix_type projMat = points_minus_mean * UG;
-        vnl_matrix_type projMat2 = projMat * invLambda;
-        projMat2 = projMat2 * projMat2.transpose();
-        m_InverseCovMatrix->update(projMat2);
+        const auto lhs = projMat * invLambda;
+        const auto rhs = invLambda * projMat.transpose();
+        m_InverseCovMatrix->set_size(num_dims, num_dims);
+        Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
     }
-    m_PointsUpdate->update(points_minus_mean * pinvMat);
+  m_PointsUpdate->update(points_minus_mean * pinvMat);
 
 //     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
 
