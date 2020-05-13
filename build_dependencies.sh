@@ -111,9 +111,10 @@ build_vxl()
   git clone https://github.com/vxl/vxl.git
   cd vxl
   # They fixed the VS compilation problem the day after the v2.0.2 release.
+  # Also, move constructors were added in 2019,
   # There hasn't been a release since
   # git checkout -f tags/${VXL_VER}
-  git checkout -f c3fd27959f51e0469a7a6075e975f245ac306f3d
+  git checkout -f 5df3b4a335d921bb4f25031e31b08d8f3c557641
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
