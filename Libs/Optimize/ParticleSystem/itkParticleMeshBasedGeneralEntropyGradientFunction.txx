@@ -56,7 +56,6 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     vnl_diag_matrix<double> W;
 
-    m_InverseCovMatrix->set_size(num_dims, num_dims);
     m_InverseCovMatrix->fill(0.0);
     vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
     vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
@@ -64,7 +63,8 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
     if (this->m_UseMeanEnergy)
     {
         pinvMat.set_identity();
-        m_InverseCovMatrix->clear(); //set_identity();
+        m_InverseCovMatrix->set_size(num_dims, num_dims);
+        m_InverseCovMatrix->clear(); //set_identity(); //TODO: this line might be unnecessary
     }
     else
     {
@@ -98,9 +98,7 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         pinvMat = (UG * invLambda) * UG.transpose();
 
         vnl_matrix_type projMat = points_minus_mean * UG;
-        vnl_matrix_type projMat2 = projMat * invLambda;
-        projMat2 = projMat2 * projMat2.transpose();
-        m_InverseCovMatrix->update(projMat2);
+        *m_InverseCovMatrix = (projMat * invLambda) * (invLambda * projMat.transpose());
     }
 
     vnl_matrix_type Q = points_minus_mean * pinvMat;
