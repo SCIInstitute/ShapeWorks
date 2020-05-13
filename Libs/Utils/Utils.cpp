@@ -438,9 +438,9 @@ std::string Utils::int2str(int n, int number_of_zeros)
 template<typename T>
 void Utils::multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs) {
 #ifndef NDEBUG
-  if (lhs.num_cols != rhs.num_rows)
-      vnl_error_matrix_dimension("vnl_matrix<T>::operator*", lhs.num_rows, lhs.num_cols,
-                                 rhs.num_rows, rhs.num_cols);
+  if (lhs.cols() != rhs.rows())
+      vnl_error_matrix_dimension("Utils::multiply_into", lhs.rows(), lhs.cols(),
+                                 rhs.rows(), rhs.cols());
 #endif
 
   const unsigned int l = lhs.rows();

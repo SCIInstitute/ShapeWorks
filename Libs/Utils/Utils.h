@@ -33,6 +33,7 @@
 #include <vtkPoints.h>
 #include <itkImage.h>
 #include <itkPoint.h>
+#include <vnl/vnl_matrix.h>
 
 namespace utils
 {
