@@ -66,6 +66,13 @@ TEST(shapeworksTests, resample)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, pad)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("./pad.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, centerofmass)
 {
   shapeworksEnvSetup();
@@ -127,6 +134,13 @@ TEST(shapeworksTests, curvature)
   shapeworksEnvSetup();
   ASSERT_FALSE(system("./curvature.sh"));
 }
+
+// //---------------------------------------------------------------------------
+// TEST(shapeworksTests, curvaturefail)
+// {
+//   shapeworksEnvSetup();
+//   ASSERT_TRUE(system("./curvaturefail.sh"));
+// }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, gradient)

@@ -264,9 +264,9 @@ void Scale::buildParser()
   const std::string desc = "scales images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("x scale");
-  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("y scale");
-  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("z scale");
+  parser.add_option("--sx", "-x").action("store").type("double").help("x scale");
+  parser.add_option("--sy", "-y").action("store").type("double").help("y scale");
+  parser.add_option("--sz", "-z").action("store").type("double").help("z scale");
 
   Command::buildParser();
 }
@@ -277,8 +277,16 @@ bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedDa
   double sy = static_cast<double>(options.get("sy"));
   double sz = static_cast<double>(options.get("sz"));
 
-  sharedData.image.scale(makeVector({sx, sy, sz}));
-  return true;
+  if (sx == 0 || sy == 0 || sz == 0)
+  {
+    std::cout << "Must specify a valid scale arguemnt";
+    return false;
+  }
+  else
+  {
+    sharedData.image.scale(makeVector({sx, sy, sz}));
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -402,7 +410,7 @@ bool ComputeDT::execute(const optparse::Values &options, SharedCommandData &shar
 void CurvatureFilter::buildParser()
 {
   const std::string prog = "curvature";
-  const std::string desc = "applies curvature flow image filter";
+  const std::string desc = "denoises an image using curvature driven flow using curvature flow image filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
@@ -424,7 +432,7 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 void GradientFilter::buildParser()
 {
   const std::string prog = "gradient";
-  const std::string desc = "applies gradient magnitude image filter";
+  const std::string desc = "computes gradient magnitude of an image region at each pixel using gradient magnitude filter";
   parser.prog(prog).description(desc);
   
   Command::buildParser();
@@ -442,7 +450,7 @@ bool GradientFilter::execute(const optparse::Values &options, SharedCommandData 
 void SigmoidFilter::buildParser()
 {
   const std::string prog = "sigmoid";
-  const std::string desc = "applies sigmoid image filter";
+  const std::string desc = "computes sigmoid function pixel-wise using sigmoid image filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha");
@@ -466,7 +474,7 @@ bool SigmoidFilter::execute(const optparse::Values &options, SharedCommandData &
 void TPLevelSetFilter::buildParser()
 {
   const std::string prog = "tp-levelset";
-  const std::string desc = "applies TPLevelSet level set image filter";
+  const std::string desc = "segemnts structures in images using topology preserving geodesic active contour level set filter";
   parser.prog(prog).description(desc);
 
   parser.add_option("--featureimage").action("store").type("string").set_default("").help("path of feature image for filter");
@@ -604,9 +612,8 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   Image source(options["source"]);
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-  
-  sharedData.transform = ImageUtils::rigidRegistration(target, source, isovalue, iterations);
-  sharedData.image.applyTransform(sharedData.transform);
+
+  ImageUtils::rigidRegistration(target, source, isovalue, iterations);
   return true;
 }
 
@@ -674,9 +681,9 @@ void SetOrigin::buildParser()
   const std::string desc = "set origin";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x").action("store").type("double").set_default(0).help("x value of origin");
-  parser.add_option("--y").action("store").type("double").set_default(0).help("y value of origin");
-  parser.add_option("--z").action("store").type("double").set_default(0).help("z value of origin");
+  parser.add_option("--x", "-x").action("store").type("double").set_default(0).help("x value of origin");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(0).help("y value of origin");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(0).help("z value of origin");
 
   Command::buildParser();
 }
@@ -686,7 +693,85 @@ bool SetOrigin::execute(const optparse::Values &options, SharedCommandData &shar
   double x = static_cast<double>(options.get("x"));
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
+
   sharedData.image.setOrigin(Point3({x, y, z}));
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Compare
+///////////////////////////////////////////////////////////////////////////////
+void Compare::buildParser()
+{
+  const std::string prog = "compare";
+  const std::string desc = "compare two images";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("name of image with which to compare");
+  parser.add_option("--x", "-x").action("store").type("double").set_default(0.0).help("explicit x in image space (physical coordinates)");
+  parser.add_option("--y", "-y").action("store").type("double").set_default(0.0).help("explicit y in image space (e.g., 3.14)");
+  parser.add_option("--z", "-z").action("store").type("double").set_default(0.0).help("explicit z in image space");
+
+  Command::buildParser();
+}
+
+bool Compare::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string filename = options["name"];
+
+  return sharedData.image == Image(filename);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Filter
+///////////////////////////////////////////////////////////////////////////////
+void Filter::buildParser()
+{
+  const std::string prog = "filter";
+  const std::string desc = "perform given filter on image";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--type").action("store").type("string").set_default("").help("type of filter");
+  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
+  parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha");
+  parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta");
+  parser.add_option("--featureimage").action("store").type("string").set_default("").help("path of feature image for filter");
+  parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("value of scale [default: 20]");
+  parser.add_option("--sigma").action("store").type("double").set_default(0.0).help("value of sigma");
+  parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("The maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
+  parser.add_option("--numlayers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
+
+  Command::buildParser();
+}
+
+bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string type = static_cast<std::string>(options.get("type"));
+  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  double alpha = static_cast<double>(options.get("alpha"));
+  double beta = static_cast<double>(options.get("beta"));
+  std::string featureimage = static_cast<std::string>(options.get("featureimage"));
+  Image featureImage(sharedData.image);
+  if (featureimage != "")
+    Image featureImage(featureimage);
+  double scaling = static_cast<double>(options.get("scaling"));
+  double sigma = static_cast<double>(options.get("sigma"));
+  float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
+  int numLayers = static_cast<int>(options.get("numlayers"));
+
+  if (!type.compare("curvature"))
+    sharedData.image.applyCurvatureFilter(iterations);
+  if (!type.compare("gradient"))
+    sharedData.image.applyGradientFilter();
+  if (!type.compare("sigmoid"))
+    sharedData.image.applySigmoidFilter(alpha, beta);
+  if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
+    sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+  if (!type.compare("gaussian"))
+    sharedData.image.gaussianBlur(sigma);
+  if (!type.compare("antialias"))
+    sharedData.image.antialias(iterations, maxRMSErr, numLayers);
+
   return true;
 }
 
@@ -859,27 +944,6 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   second_mesh.read(second_mesh_string);
 
   return sharedData.mesh.coverage(second_mesh);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Compare
-///////////////////////////////////////////////////////////////////////////////
-void Compare::buildParser()
-{
-  const std::string prog = "compare";
-  const std::string desc = "compare two images";
-  parser.prog(prog).description(desc);
-
-  parser.add_option("--name").action("store").type("string").set_default("").help("name of image with which to compare");
-
-  Command::buildParser();
-}
-
-bool Compare::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string filename = options["name"];
-
-  return sharedData.image == Image(filename);
 }
 
 } // shapeworks

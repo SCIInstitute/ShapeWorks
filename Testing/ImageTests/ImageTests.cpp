@@ -388,20 +388,20 @@ TEST(ImageTests, reflect_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, icp_test)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/icp/");
+// TEST(ImageTests, icp_test)
+// {
+//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/icp/");
 
-  Image image(test_location + "1x2x2.nrrd");
-  Image target(test_location + "target.nrrd");
-  Image source(test_location + "source.nrrd");
-  TransformPtr xform(ImageUtils::rigidRegistration(target, source));
-  image.applyTransform(xform);
-  image.write("/Users/cam/data/sw/tmp/icp_test.nrrd");
-  Image ground_truth(test_location + "icp_baseline.nrrd");
+//   Image image(test_location + "1x2x2.nrrd");
+//   Image target(test_location + "target.nrrd");
+//   Image source(test_location + "source.nrrd");
+//   TransformPtr xform(ImageUtils::rigidRegistration(target, source));
+//   image.applyTransform(xform);
+//   image.write("/Users/cam/data/sw/tmp/icp_test.nrrd");
+//   Image ground_truth(test_location + "icp_baseline.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
-}
+//   ASSERT_TRUE(image == ground_truth);
+// }
 
 TEST(ImageTests, multicommand_test)
 {

@@ -43,14 +43,15 @@ TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
   return xform;
 }
 
-TransformPtr ImageUtils::rigidRegistration(const Image &target, const Image &source, float isoValue, unsigned iterations)
+Image ImageUtils::rigidRegistration(Image &target, const Image &source, float isoValue, unsigned iterations)
 {
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, sourceContour, iterations);
   TransformPtr xform(TransformType::New());
   xform->SetMatrix(mat);
-  return xform;
+  target.applyTransform(xform);
+  return target;
 }
 
 } //shapeworks

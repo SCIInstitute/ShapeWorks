@@ -115,16 +115,16 @@ public:
   /// computes distance transform volume from an antialiased binary image using the specified isovalue
   Image &computeDT(PixelType isoValue = 0.0);
 
-  /// applies curvature flow image filter
+  /// denoises an image using curvature driven flow using curvature flow image filter
   Image &applyCurvatureFilter(unsigned iterations = 10);
 
-  /// applies gradient magnitude image filter
+  /// computes gradient magnitude of an image region at each pixel using gradient magnitude filter
   Image &applyGradientFilter();
 
-  /// applies sigmoid image filter with given alpha and beta, whatever that means
+  /// computes sigmoid function pixel-wise using sigmoid image filter
   Image &applySigmoidFilter(double alpha = 10.0, double beta = 10.0);
 
-  /// applies TPLevelSet level set image filter using given 
+  /// segemnts structures in images using topology preserving geodesic active contour level set filter
   Image &applyTPLevelSetFilter(const Image &featureImage, double scaling = 20.0);
 
   /// applies gaussian blur with given sigma

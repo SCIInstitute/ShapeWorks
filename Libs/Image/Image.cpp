@@ -278,7 +278,7 @@ Image& Image::applyTransform(const TransformPtr transform)
   resampler->SetSize(dims());
   resampler->SetOutputOrigin(origin());
   resampler->SetOutputDirection(coordsys());
-  resampler->SetOutputSpacing(spacing().GetDataPointer());
+  resampler->SetOutputSpacing(image->GetSpacing());
 
   resampler->Update();
   this->image = resampler->GetOutput();

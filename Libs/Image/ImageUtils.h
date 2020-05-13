@@ -15,7 +15,7 @@ public:
   static TransformPtr createCenterOfMassTransform(const Image &image);
 
   /// Return Transform necessary to align this image with target.
-  static TransformPtr rigidRegistration(const Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
+  static Image rigidRegistration(Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
 
   /// topologyPreservingSmooth
   ///

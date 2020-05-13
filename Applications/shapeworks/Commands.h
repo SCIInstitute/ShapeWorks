@@ -342,14 +342,17 @@ private:
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class Filter : public ImageCommand
+{
+public:
+  static Filter &getCommand() { static Filter instance; return instance; }
 
-
-
-
-
-
-
-
+private:
+  Filter() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 class ReadParticleSystem : public ParticleSystemCommand
