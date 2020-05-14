@@ -152,6 +152,7 @@ void Visualizer::display_shape(const vnl_vector<double> &points, const std::vect
 {
   QVector<DisplayObjectHandle> objects;
   objects.push_back(this->create_display_object(points, vectors));
+  this->display_objects_ = objects;
   this->lightbox_->set_display_objects(objects);
   this->update_viewer_properties();
   //this->reset_camera();
@@ -162,6 +163,16 @@ void Visualizer::display_shape(const vnl_vector<double> &points, const std::vect
 vnl_vector<double> Visualizer::getCurrentShape()
 {
   return this->currentShape_;
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
+{
+  std::cerr << "number of objects: " << this->display_objects_.size() << "\n";
+  if (this->display_objects_.size() > 0) {
+    return this->display_objects_[0]->get_mesh()->get_poly_data();
+  }
+  return nullptr;
 }
 
 //-----------------------------------------------------------------------------
