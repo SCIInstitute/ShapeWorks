@@ -118,15 +118,15 @@ Image& Image::write(const std::string &filename, bool compressed)
   return *this;
 }
 
-Image& Image::antialias(unsigned numIterations, double maxRMSErr, unsigned numLayers)
+Image& Image::antialias(unsigned iterations, double maxRMSErr, unsigned layers)
 {
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetMaximumRMSError(maxRMSErr);
-  filter->SetNumberOfIterations(numIterations);
-  if (numLayers)
-    filter->SetNumberOfLayers(numLayers);
+  filter->SetNumberOfIterations(iterations);
+  if (layers)
+    filter->SetNumberOfLayers(layers);
   filter->SetInput(this->image);
   filter->Update();
   this->image = filter->GetOutput();

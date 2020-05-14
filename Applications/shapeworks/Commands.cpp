@@ -122,8 +122,8 @@ void Antialias::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("The maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
-  parser.add_option("--numiterations").action("store").type("int").set_default(50).help("Number of iterations [default 50].");
-  parser.add_option("--numlayers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
+  parser.add_option("--iterations").action("store").type("int").set_default(50).help("Number of iterations [default 50].");
+  parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
 
   Command::buildParser();
 }
@@ -131,11 +131,19 @@ void Antialias::buildParser()
 bool Antialias::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
-  int numIterations = static_cast<int>(options.get("numiterations"));
-  int numLayers = static_cast<int>(options.get("numlayers"));
+  int iterations = static_cast<int>(options.get("iterations"));
+  int layers = static_cast<int>(options.get("layers"));
 
-  sharedData.image.antialias(numIterations, maxRMSErr, numLayers);
-  return true;
+  if (layers < 0)
+  {
+    std::cout << "Must specify a valid layers argument";
+    return false;
+  }
+  else
+  {
+    sharedData.image.antialias(iterations, maxRMSErr, layers);
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -228,9 +236,9 @@ void Translate::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--centerofmass").action("store").type("bool").set_default(false).help("Use center of mass [default set to false].");
-  parser.add_option("--tx", "-x").action("store").type("double").set_default(0.0).help("explicit tx in image space (physical coordinates)");
-  parser.add_option("--ty", "-y").action("store").type("double").set_default(0.0).help("explicit ty in image space (e.g., 3.14)");
-  parser.add_option("--tz", "-z").action("store").type("double").set_default(0.0).help("explicit tz in image space");
+  parser.add_option("--tx", "-x").action("store").type("double").help("explicit tx in image space (physical coordinates)");
+  parser.add_option("--ty", "-y").action("store").type("double").help("explicit ty in image space (e.g., 3.14)");
+  parser.add_option("--tz", "-z").action("store").type("double").help("explicit tz in image space");
 
   Command::buildParser();
 }
@@ -242,6 +250,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
   if (centerofmass)
   {
     sharedData.image.applyTransform(ImageUtils::createCenterOfMassTransform(sharedData.image));
+    return true;
   }
   else
   {
@@ -249,10 +258,17 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
     double ty = static_cast<double>(options.get("ty"));
     double tz = static_cast<double>(options.get("tz"));
 
-    sharedData.image.translate(makeVector({tx, ty, tz}));
+    if (tx == 0 || ty == 0 || tz == 0)
+    {
+      std::cout << "Must specify a valid translate arguemnt";
+      return false;
+    }
+    else
+    {
+      sharedData.image.translate(makeVector({tx, ty, tz}));
+      return true;
+    }
   }
-
-  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -298,10 +314,10 @@ void Rotate::buildParser()
   const std::string desc = "rotates images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--rx", "-x").action("store").type("double").set_default(0.0).help("physical axis around which to rotate (z-axis if unspecified)");
-  parser.add_option("--ry", "-y").action("store").type("double").set_default(0.0).help("physical axis around which to rotate (z-axis if unspecified)");
-  parser.add_option("--rz", "-z").action("store").type("double").set_default(1.0).help("physical axis around which to rotate (z-axis if unspecified)");
-  parser.add_option("--angle").action("store").type("double").set_default(0.0).help("angle in radians");
+  parser.add_option("--rx", "-x").action("store").type("double").help("physical axis around which to rotate (z-axis if unspecified)");
+  parser.add_option("--ry", "-y").action("store").type("double").help("physical axis around which to rotate (z-axis if unspecified)");
+  parser.add_option("--rz", "-z").action("store").type("double").help("physical axis around which to rotate (z-axis if unspecified)");
+  parser.add_option("--angle").action("store").type("double").help("angle in radians");
 
   Command::buildParser();
 }
@@ -313,8 +329,21 @@ bool Rotate::execute(const optparse::Values &options, SharedCommandData &sharedD
   double rz = static_cast<double>(options.get("rz"));
   double angle = static_cast<double>(options.get("angle"));
 
-  sharedData.image.rotate(angle, makeVector({rx, ry, rz}));
-  return true;
+  if (
+      (rx == 0 && ry != 0 && rz != 0) ||
+      (rx != 0 && ry == 0 && rz != 0) ||
+      (rx != 0 && ry != 0 && rz == 0) ||
+      angle == 0
+     )
+  {
+    std::cout << "Must specify a valid rotate arguemnt";
+    return false;
+  }
+  else
+  {
+    sharedData.image.rotate(angle, makeVector({rx, ry, rz}));
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -422,8 +451,16 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 {
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  sharedData.image.applyCurvatureFilter(iterations);
-  return true;
+  if (iterations < 0)
+  {
+    std::cout << "Must specify a valid iterations argument";
+    return false;
+  }
+  else
+  {
+    sharedData.image.applyCurvatureFilter(iterations);
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -485,11 +522,20 @@ void TPLevelSetFilter::buildParser()
 
 bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  Image featureImage(options["featureimage"]);
-  double scaling = static_cast<double>(options.get("scaling"));
-  
-  sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
-  return true;
+  std::string featureimage = static_cast<std::string>(options.get("featureimage"));
+  if (featureimage == "")
+  {
+    std::cout << "Must specify a valid feature image value";
+    return false;
+  }
+  else
+  {
+    Image featureImage(featureimage);
+    double scaling = static_cast<double>(options.get("scaling"));
+
+    sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -747,32 +793,71 @@ void Filter::buildParser()
 bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string type = static_cast<std::string>(options.get("type"));
-  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
-  double alpha = static_cast<double>(options.get("alpha"));
-  double beta = static_cast<double>(options.get("beta"));
-  std::string featureimage = static_cast<std::string>(options.get("featureimage"));
-  Image featureImage(sharedData.image);
-  if (featureimage != "")
-    Image featureImage(featureimage);
-  double scaling = static_cast<double>(options.get("scaling"));
-  double sigma = static_cast<double>(options.get("sigma"));
-  float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
-  int numLayers = static_cast<int>(options.get("numlayers"));
+
+  if (type == "")
+  {
+    std::cout << "Must specify valid filter type value";
+    return false;
+  }
 
   if (!type.compare("curvature"))
-    sharedData.image.applyCurvatureFilter(iterations);
-  if (!type.compare("gradient"))
-    sharedData.image.applyGradientFilter();
-  if (!type.compare("sigmoid"))
-    sharedData.image.applySigmoidFilter(alpha, beta);
-  if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
-    sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
-  if (!type.compare("gaussian"))
-    sharedData.image.gaussianBlur(sigma);
-  if (!type.compare("antialias"))
-    sharedData.image.antialias(iterations, maxRMSErr, numLayers);
+  {
+    unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  return true;
+    sharedData.image.applyCurvatureFilter(iterations);
+    return true;
+  }
+
+  if (!type.compare("gradient"))
+  {
+    sharedData.image.applyGradientFilter();
+    return true;
+  }
+
+  if (!type.compare("sigmoid"))
+  {
+    double alpha = static_cast<double>(options.get("alpha"));
+    double beta = static_cast<double>(options.get("beta"));
+
+    sharedData.image.applySigmoidFilter(alpha, beta);
+    return true;
+  }
+
+  if (!type.compare("tplevelset") || !type.compare("tp-levelset") || !type.compare("tplevel-set"))
+  {
+    std::string featureimage = static_cast<std::string>(options.get("featureimage"));
+    if (featureimage == "")
+    {
+      std::cout << "Must specify a valid feature image value";
+      return false;
+    }
+    else
+    {
+      Image featureImage(featureimage);
+      double scaling = static_cast<double>(options.get("scaling"));
+
+      sharedData.image.applyTPLevelSetFilter(featureImage, scaling);
+      return true;
+    }
+  }
+
+  if (!type.compare("gaussian"))
+  {
+    double sigma = static_cast<double>(options.get("sigma"));
+
+    sharedData.image.gaussianBlur(sigma);
+    return true;
+  }
+
+  if (!type.compare("antialias"))
+  {
+    unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+    float maxRMSErr = static_cast<float>(options.get("maxrmserror"));
+    int numLayers = static_cast<int>(options.get("numlayers"));
+
+    sharedData.image.antialias(iterations, maxRMSErr, numLayers);
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
