@@ -4,6 +4,7 @@
 #include <vtkMath.h>
 #include <cmath>
 #include <sstream>      // std::istringstream
+#include <Eigen/Dense>
 
 std::vector<int> Utils::randperm(int n)
 {
@@ -432,29 +433,18 @@ std::string Utils::int2str(int n, int number_of_zeros)
 }
 
 //--------------- linear algebra -------------------------------------------
-// Copied version of https://github.com/vxl/vxl/blob/5df3b4a335d921bb4f25031e31b08d8f3c557641/core/vnl/vnl_matrix.h#L376
-// but avoids allocating a new buffer for the output. Assumes `out` has sufficient size.
-// Tracked by issue: https://github.com/vxl/vxl/issues/778
+
+// Perform the operation A = B * C, but place the output in A's buffer directly, avoiding an
+// allocation and a copy. We use Eigen because it supports writing the resultant directly into
+// A, VXL does an extra allocation and copy. This could be many GB large. Additionally Eigen
+// is slightly faster.
 template<typename T>
 void Utils::multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs) {
-#ifndef NDEBUG
-  if (lhs.cols() != rhs.rows())
-      vnl_error_matrix_dimension("Utils::multiply_into", lhs.rows(), lhs.cols(),
-                                 rhs.rows(), rhs.cols());
-#endif
-
-  const unsigned int l = lhs.rows();
-  const unsigned int m = lhs.cols();
-  const unsigned int n = rhs.cols();
-
-  for (unsigned int i = 0; i < l; ++i) {
-    for (unsigned int k = 0; k < n; ++k) {
-      T sum{0};
-      for (unsigned int j = 0; j < m; ++j)
-        sum += T(lhs[i][j] * rhs[j][k]);
-      out[i][k] = sum;
-    }
-  }
+  typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
+  Eigen::Map<RowMajorMatrix> eig_out(out.data_block(), out.rows(), out.cols());
+  Eigen::Map<const RowMajorMatrix> eig_lhs(lhs.data_block(), lhs.rows(), lhs.cols());
+  Eigen::Map<const RowMajorMatrix> eig_rhs(rhs.data_block(), rhs.rows(), rhs.cols());
+  eig_out.noalias() = eig_lhs * eig_rhs;
 }
 
 // Explicitly instantiate this function templatized over double
