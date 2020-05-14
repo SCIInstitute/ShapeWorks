@@ -74,6 +74,6 @@ private:
   QOptimize* optimize_ = nullptr;
   Preferences& preferences_;
   Ui_OptimizeTool* ui_;
-  QSharedPointer<Session> project_;
+  QSharedPointer<Session> session_;
   std::vector<std::array<itk::Point<double>, 3 >> cutPlanes_;
 };

@@ -408,7 +408,7 @@ void Visualizer::compute_measurements()
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::setMean(const vnl_vector<double> & mean)
+void Visualizer::set_mean(const vnl_vector<double> & mean)
 {
   this->cached_mean_ = mean;
 }

@@ -50,8 +50,8 @@ void OptimizeTool::handle_progress(int val)
   auto global = this->optimize_->GetGlobalPoints();
 
   if (local.size() > 1 && global.size() > 1) {
-    this->project_->update_points(local, true);
-    this->project_->update_points(global, false);
+    this->session_->update_points(local, true);
+    this->session_->update_points(global, false);
   }
 
   QApplication::processEvents();
@@ -64,11 +64,12 @@ void OptimizeTool::handle_optimize_complete()
 
   auto local = this->optimize_->GetLocalPoints();
   auto global = this->optimize_->GetGlobalPoints();
-  this->project_->update_points(local, true);
-  this->project_->update_points(global, false);
-  this->project_->set_reconstructed_present(
+  this->session_->update_points(local, true);
+  this->session_->update_points(global, false);
+  this->session_->set_reconstructed_present(
     local.size() == global.size() && global.size() > 1);
-  this->project_->calculate_reconstructed_samples();
+  this->session_->calculate_reconstructed_samples();
+  this->session_->get_project()->store_subjects();
   emit progress(100);
   emit message("Optimize Complete");
   emit optimize_complete();
@@ -98,7 +99,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   //this->ui_->run_optimize_button->setEnabled(false);
   /// TODO: studio
   ///this->ui_->reconstructionButton->setEnabled(false);
-  auto shapes = this->project_->get_shapes();
+  auto shapes = this->session_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   std::vector<std::string> groomed_filenames;
   for (auto s : shapes) {
@@ -124,7 +125,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
-    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->project_,
+    ShapeworksWorker::OptimizeType, NULL, this->optimize_, this->session_,
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<std::vector<itk::Point<double>>>(),
     std::vector<ImageType::Pointer>());
@@ -226,7 +227,7 @@ void OptimizeTool::loadCutPlanesFile(std::string file)
   }
   planes.close();
   if (cutPlanes.empty() || (cutPlanes.size() > 1 &&
-                            cutPlanes.size() != this->project_->get_shapes().size())) {
+                            cutPlanes.size() != this->session_->get_shapes().size())) {
     emit error_message(std::string("Error reading cutting plane file. Must have 1 ") +
                        "set of 3 points, or X set of 3 points, where X is number of samples.");
     this->ui_->cutPlanesFile->setText("None Selected");
@@ -302,7 +303,7 @@ void OptimizeTool::on_number_of_particles_valueChanged(int val)
 //---------------------------------------------------------------------------
 void OptimizeTool::set_project(QSharedPointer<Session> project)
 {
-  this->project_ = project;
+  this->session_ = project;
 }
 
 //---------------------------------------------------------------------------

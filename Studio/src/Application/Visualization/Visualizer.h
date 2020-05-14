@@ -61,7 +61,7 @@ public:
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
 
-  void setMean(const vnl_vector<double> &mean);
+  void set_mean(const vnl_vector<double> &mean);
 
   void reset_camera();
 
