@@ -776,6 +776,39 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// Warp Image
+///////////////////////////////////////////////////////////////////////////////
+void WarpImage::buildParser()
+{
+  const std::string prog = "warp-image";
+  const std::string desc = "warps an image from source to target based on landmark guidence";
+  parser.prog(prog).description(desc);
+  parser.add_option("--source_landmarks").action("store").type("string").set_default("").help("Path to source landmarks.");
+  parser.add_option("--target_landmarks").action("store").type("string").set_default("").help("Path to target landmarks.");
+  parser.add_option("--factor").action("store").type("int").set_default(1).help("Every Nth(factor) point used for warping.");
+  Command::buildParser();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool WarpImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
+{
+  std::string source_landmarks = static_cast<std::string>(options.get("source_landmarks"));
+  std::string target_landmarks = static_cast<std::string>(options.get("target_landmarks"));
+  int factor = static_cast<int>(options.get("factor"));
+
+  if (source_landmarks == "" || target_landmarks == "")
+  {
+    std::cerr << "Must specify both source and target landmarks\n";
+    return false;
+  }
+
+  TransformPtr transform(ImageUtils::computeWarp(source_landmarks, target_landmarks, factor));
+  sharedData.image.applyTransform(transform);
+
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // ReadParticleSystem
 ///////////////////////////////////////////////////////////////////////////////
 void ReadParticleSystem::buildParser()
@@ -944,37 +977,6 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   second_mesh.read(second_mesh_string);
 
   return sharedData.mesh.coverage(second_mesh);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Warp Image
-///////////////////////////////////////////////////////////////////////////////
-void WarpImage::buildParser()
-{
-  const std::string prog = "warp-image";
-  const std::string desc = "warps an image based on landmark guidence";
-  parser.prog(prog).description(desc);
-  parser.add_option("--source_landmarks").action("store").type("string").set_default("").help("Path to source landmarks.");
-  parser.add_option("--target_landmarks").action("store").type("string").set_default("").help("Path to target landmarks.");
-  parser.add_option("--factor").action("store").type("int").set_default(1).help("Every Nth(factor) point used for warping.");
-  Command::buildParser();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-bool WarpImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  std::string source_landmarks = static_cast<std::string>(options.get("source_landmarks"));
-  std::string target_landmarks = static_cast<std::string>(options.get("target_landmarks"));
-  int factor = static_cast<int>(options.get("factor"));
-
-  if (source_landmarks == "" || target_landmarks == "")
-  {
-    std::cerr << "Must specify both source and target landmarks\n";
-    return -1;
-  }
-
-  //return sharedData.image.warp(source_landmarks, target_landmarks, factor);
-  return false;
 }
 
 } // shapeworks
