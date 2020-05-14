@@ -80,7 +80,7 @@ public:
   // modification functions //
 
   /// antialiases image
-  Image &antialias(unsigned numIterations = 50, double maxRMSErr = 0.01f, unsigned numLayers = 3);
+  Image &antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, unsigned layers = 3);
   
   /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
   Image &recenter();
