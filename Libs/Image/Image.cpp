@@ -248,28 +248,28 @@ Image& Image::pad(int padding, PixelType value)
 
 Image& Image::translate(const Vector3 &v)
 {
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(v);
   return applyTransform(xform);
 }
 
 Image& Image::scale(const Vector3 &v)
 {
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   xform->Scale(v);
   return applyTransform(xform);
 }
 
 Image& Image::rotate(const double angle, const Vector3 &v)
 {
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   xform->Rotate3D(v, angle);
   return applyTransform(xform);
 }
 
 Image& Image::applyTransform(const TransformPtr transform)
 {
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
 
   resampler->SetInput(this->image);
@@ -499,7 +499,7 @@ Image& Image::reflect(const Vector3 &normal)
   reflection[1][1] = -normal[1];
   reflection[2][2] = -normal[2];
 
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   xform->SetMatrix(reflection);
   Point3 currentOrigin(origin());
   recenter().applyTransform(xform).setOrigin(currentOrigin);
