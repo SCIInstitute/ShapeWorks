@@ -440,7 +440,7 @@ std::string Utils::int2str(int n, int number_of_zeros)
 // is slightly faster.
 template<typename T>
 void Utils::multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs) {
-  typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
+  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
   Eigen::Map<RowMajorMatrix> eig_out(out.data_block(), out.rows(), out.cols());
   Eigen::Map<const RowMajorMatrix> eig_lhs(lhs.data_block(), lhs.rows(), lhs.cols());
   Eigen::Map<const RowMajorMatrix> eig_rhs(rhs.data_block(), rhs.rows(), rhs.cols());
