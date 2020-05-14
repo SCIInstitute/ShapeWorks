@@ -1091,6 +1091,88 @@ void ShapeWorksStudioApp::on_action_preferences_triggered()
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
+{
+  QString direct = preferences_.get_preference("Main/last_directory", QString());
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+                                                  QString::fromStdString(dir) + "newMesh",
+                                                  tr("VTK files (*.vtk)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
+
+  auto poly_data = this->visualizer_->get_current_mesh();
+  vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
+  writer->SetFileName(filename.toStdString().c_str());
+  writer->SetInputData(poly_data);
+  writer->Write();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
+{
+  QString direct = preferences_.get_preference("Main/last_directory", QString());
+  auto dir = direct.toStdString();
+  dir = dir.substr(0, dir.find_last_of("/") + 1);
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Project As..."),
+                                                  QString::fromStdString(dir) + "scalars",
+                                                  tr("CSV files (*.csv)"));
+  if (filename.isEmpty()) {
+    return;
+  }
+  this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
+
+  auto poly_data = this->visualizer_->get_current_mesh();
+
+  std::ofstream output;
+  output.open(filename.toStdString().c_str());
+  output << "point,x,y,z";
+
+  auto scalars = poly_data->GetPointData()->GetScalars();
+  scalars->SetName("scalar_values");
+
+  //poly_data->GetPointData()->AddArray(scalars);
+  int num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+
+  for (int i = 0; i < num_arrays; i++) {
+    if (!poly_data->GetPointData()->GetArrayName(i))
+    {
+      output << "," << "scalars";
+    }
+    else
+    {
+      output << "," << poly_data->GetPointData()->GetArrayName(i);
+      std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
+    }
+  }
+
+  output << "\n";
+
+  // iterate over vertices
+  vtkPoints* points = poly_data->GetPoints();
+  int num_points = points->GetNumberOfPoints();
+
+  for (int i = 0; i < num_points; i++) {
+    output << i;
+    output << "," << poly_data->GetPoint(i)[0];
+    output << "," << poly_data->GetPoint(i)[1];
+    output << "," << poly_data->GetPoint(i)[2];
+
+    for (int j = 0; j < num_arrays; j++) {
+      output << "," << poly_data->GetPointData()->GetArray(j)->GetTuple(i)[0];
+      //std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
+    }
+
+    output << "\n";
+  }
+
+  output.close();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event)
 {
   // close the preferences window in case it is open

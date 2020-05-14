@@ -67,6 +67,8 @@ public Q_SLOTS:
   void on_actionExport_PCA_Mode_Points_triggered();
   void on_actionExport_Variance_Graph_triggered();
   void on_action_preferences_triggered();
+  void on_action_export_current_mesh_triggered();
+  void on_action_export_mesh_scalars_triggered();
 
   void on_center_checkbox_stateChanged();
   void on_zoom_slider_valueChanged();

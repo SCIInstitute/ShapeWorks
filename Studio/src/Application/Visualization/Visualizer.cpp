@@ -183,6 +183,16 @@ void Visualizer::handle_new_mesh()
 }
 
 //-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh()
+{
+  std::cerr << "number of objects: " << this->display_objects_.size() << "\n";
+  if (this->display_objects_.size() > 0) {
+    return this->display_objects_[0]->get_mesh(this->display_mode_)->get_poly_data();
+  }
+  return nullptr;
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::display_sample(int i)
 {
   /*

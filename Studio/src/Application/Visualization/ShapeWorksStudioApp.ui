@@ -243,6 +243,8 @@
     <addaction name="actionSet_Data_Directory"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
+    <addaction name="action_export_current_mesh"/>
+    <addaction name="action_export_mesh_scalars"/>
     <addaction name="actionExport_PCA_Mesh"/>
     <addaction name="actionExport_Eigenvalues"/>
     <addaction name="actionExport_Variance_Graph"/>
@@ -616,6 +618,16 @@
   <action name="actionExport_Variance_Graph">
    <property name="text">
     <string>Export Variance Graph</string>
+   </property>
+  </action>
+  <action name="action_export_current_mesh">
+   <property name="text">
+    <string>Export Current Mesh...</string>
+   </property>
+  </action>
+  <action name="action_export_mesh_scalars">
+   <property name="text">
+    <string>Export Mesh Scalars...</string>
    </property>
   </action>
  </widget>

@@ -70,6 +70,7 @@ public:
   vnl_vector<double> getCurrentShape();
 
   void handle_new_mesh();
+  vtkSmartPointer<vtkPolyData> get_current_mesh();
 
 public Q_SLOTS:
 
