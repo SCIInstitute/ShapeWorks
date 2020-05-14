@@ -21,14 +21,14 @@
 
 // itk
 #include <itkImage.h>
-#include <itkMaximumEntropyCorrespondenceSampler.h>
 #include <itkCommand.h>
-#include <itkParticleProcrustesRegistration.h>
-#include <itkParticleGoodBadAssessment.h>
-#include <itkParticleVectorFunction.h>
 
 // shapeworks particle system
-#include <itkParticleSystem.h>
+#include "ParticleSystem/itkParticleSystem.h"
+#include "ParticleSystem/itkMaximumEntropyCorrespondenceSampler.h"
+#include "ParticleSystem/itkParticleProcrustesRegistration.h"
+#include "ParticleSystem/itkParticleGoodBadAssessment.h"
+#include "ParticleSystem/itkParticleVectorFunction.h"
 
 /**
  * \class Optimize

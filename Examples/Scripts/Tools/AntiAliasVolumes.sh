@@ -23,7 +23,6 @@ do
       shift
       ;;
       
-      
       -s|--seg_prefix) # prefix of the segmentation (binary image) 
       seg_prefix="$2"
       shift
@@ -88,7 +87,6 @@ do
     
     # # remove all occurences of underscore
     # suffix=$( RemoveAllOccurrenceOf $suffix "_" )
-    
 
     # if [[ $( StringContainsOnlyNumbers $suffix ) -eq 1 ]]; 
     # then
@@ -109,8 +107,6 @@ do
     EchoWithColor  "imgfilename_cropped $imgfilename_cropped" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
-    shapeworks readimage --name $segfilename antialias writeimage --name $segfilename_cropped 
+    shapeworks read-image --name $segfilename antialias write-image --name $segfilename_cropped 
   
 done
-
-

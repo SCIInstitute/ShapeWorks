@@ -53,7 +53,7 @@ do
       shift
       ;;
       *)
-        # unknown option
+      # unknown option
       ;;
   esac
   shift
@@ -94,7 +94,6 @@ do
     EchoWithColor  "outfilename: $outfilename" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
-    ExtractGivenLabelImage -inFilename $nrrdfilename -outFilename $outfilename -labelVal $seg_label
+    shapeworks read-image --name $nrrdfilename extract-label --label 1.0 write-image --name $seg_label
     
 done
-

@@ -29,7 +29,7 @@ target_link_libraries(Particles PUBLIC
 # set
 set_target_properties(Particles PROPERTIES PUBLIC_HEADER
   "${Particles_headers}")
-install(TARGETS Analyze
+install(TARGETS Particles
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib
   LIBRARY DESTINATION lib
