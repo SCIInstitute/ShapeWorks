@@ -20,8 +20,15 @@ public:
   {
     Coord min = {0,0,0};
     Coord max = {0,0,0};
-    Region(const Dims &dims) : min({0, 0, 0}), max({static_cast<long>(dims[0]), static_cast<long>(dims[1]), static_cast<long>(dims[2])}) {}
+    Region(const Dims &dims) : min({0, 0, 0}) {
+      if (0 != (dims[0] + dims[1] + dims[2])) 
+        max = Coord({static_cast<long>(dims[0])-1,
+                     static_cast<long>(dims[1])-1,
+                     static_cast<long>(dims[2])-1});
+    }
+    Region(const Coord &_min, const Coord &_max) : min(_min), max(_max) {}
     Region() = default;
+    bool operator==(const Region &other) const { return min == other.min && max == other.max; }
 
     /// verified min/max do not create an inverted or an empty region
     bool valid() const { return max[0] > min[0] && max[1] > min[1] && max[2] > min[2]; }
@@ -80,9 +87,9 @@ public:
   // modification functions //
 
   /// antialiases image
-  Image &antialias(unsigned numIterations = 50, double maxRMSErr = 0.01f, unsigned numLayers = 3);
+  Image &antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, unsigned layers = 3);
   
-  /// recenters by changing origin (in the image header) to the physcial coordinates of the center of the image
+  /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image &recenter();
 
   /// Resamples image with new physical spacing and logical size [same size if unspecified]
@@ -91,14 +98,14 @@ public:
   /// pads an image by desired number of voxels in each direction with constant value
   Image &pad(int padding = 0, PixelType value = 0.0);
 
-  /// translate image
+  /// helper to simply translate image
   Image &translate(const Vector3 &v);
 
-  /// scale image
+  /// helper to simply scale image around center (not origin)
   Image &scale(const Vector3 &v);
 
-  /// rotate image by the given angle (in radians) around the given axis (around the z-axis if unspecified)
-  Image& rotate(const double angle, const Vector3 &v);
+  /// helper to simply rotate around center (not origin) using axis (default z-axis) by angle (in radians) 
+  Image& rotate(const double angle, const Vector3 &axis);
 
   /// applies the given transformation to the image by using resampling filter
   Image &applyTransform(const TransformPtr transform);

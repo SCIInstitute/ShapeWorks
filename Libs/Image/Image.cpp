@@ -118,15 +118,15 @@ Image& Image::write(const std::string &filename, bool compressed)
   return *this;
 }
 
-Image& Image::antialias(unsigned numIterations, double maxRMSErr, unsigned numLayers)
+Image& Image::antialias(unsigned iterations, double maxRMSErr, unsigned layers)
 {
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetMaximumRMSError(maxRMSErr);
-  filter->SetNumberOfIterations(numIterations);
-  if (numLayers)
-    filter->SetNumberOfLayers(numLayers);
+  filter->SetNumberOfIterations(iterations);
+  if (layers)
+    filter->SetNumberOfLayers(layers);
   filter->SetInput(this->image);
   filter->Update();
   this->image = filter->GetOutput();
@@ -249,22 +249,34 @@ Image& Image::pad(int padding, PixelType value)
 Image& Image::translate(const Vector3 &v)
 {
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Translate(v);
+  xform->Translate(-v);            // negate v because ITK applies transformations backwards.
   return applyTransform(xform);
 }
 
-Image& Image::scale(const Vector3 &v)
+Image& Image::scale(const Vector3 &s)
 {
+  auto origOrigin(origin());       // scale centered at origin, so temporarily set origin to be the center
+  setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
+
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Scale(v);
-  return applyTransform(xform);
+  xform->Scale(invert(std::move(const_cast<Vector3&>(s))));   // invert scale ratio because ITK applies transformations backwards.  
+  applyTransform(xform);
+
+  setOrigin(origOrigin);           // restore origin
+  return *this;
 }
 
-Image& Image::rotate(const double angle, const Vector3 &v)
+Image& Image::rotate(const double angle, const Vector3 &axis)
 {
+  auto origOrigin(origin());       // rotation is around origin, so temporarily set origin to be the center
+  setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
+
   AffineTransformPtr xform(AffineTransform::New());
-  xform->Rotate3D(v, angle);
-  return applyTransform(xform);
+  xform->Rotate3D(axis, -angle);   // negate angle because ITK applies transformations backwards.  
+  applyTransform(xform);
+
+  setOrigin(origOrigin);           // restore origin
+  return *this;
 }
 
 Image& Image::applyTransform(const TransformPtr transform)
@@ -473,8 +485,7 @@ Image& Image::clip(const Point &o, const Point &p1, const Point &p2, const Pixel
 
 Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
 {
-  const double eps = 1E-6;
-  if (n.GetSquaredNorm() < eps) { throw std::invalid_argument("invalid clipping plane (zero length normal)"); }
+  if (!axis_is_valid(n)) { throw std::invalid_argument("invalid clipping plane (zero length normal)"); }
 
   itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd())
@@ -491,6 +502,7 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
   return *this;
 }
 
+// todo: fixme
 Image& Image::reflect(const Vector3 &normal)
 {
   Matrix reflection;
@@ -500,9 +512,13 @@ Image& Image::reflect(const Vector3 &normal)
   reflection[2][2] = -normal[2];
 
   AffineTransformPtr xform(AffineTransform::New());
+  Vector3 ctr(toVector(center()));
+  xform->Translate(ctr);
   xform->SetMatrix(reflection);
-  Point3 currentOrigin(origin());
-  recenter().applyTransform(xform).setOrigin(currentOrigin);
+  xform->Translate(-ctr);
+  // Point3 currentOrigin(origin());
+  //recenter().applyTransform(xform).setOrigin(currentOrigin);
+  applyTransform(xform);
 
   return *this;
 }

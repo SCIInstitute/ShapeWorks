@@ -45,11 +45,11 @@ TEST(shapeworksTests, antialias)
 }
 
 //---------------------------------------------------------------------------
-// TEST(shapeworksTests, antialiasfail)
-// {
-//   shapeworksEnvSetup();
-//   ASSERT_TRUE(system("./antialiasfail.sh"));
-// }
+TEST(shapeworksTests, antialiasfail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./antialiasfail.sh"));
+}
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, recenter)
@@ -87,6 +87,13 @@ TEST(shapeworksTests, translate)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, translatefail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./translatefail.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, scale)
 {
   shapeworksEnvSetup();
@@ -94,10 +101,24 @@ TEST(shapeworksTests, scale)
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, scalefail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./scalefail.sh"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, rotate)
 {
   shapeworksEnvSetup();
   ASSERT_FALSE(system("./rotate.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, rotatefail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./rotatefail.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -134,13 +155,6 @@ TEST(shapeworksTests, curvature)
   shapeworksEnvSetup();
   ASSERT_FALSE(system("./curvature.sh"));
 }
-
-// //---------------------------------------------------------------------------
-// TEST(shapeworksTests, curvaturefail)
-// {
-//   shapeworksEnvSetup();
-//   ASSERT_TRUE(system("./curvaturefail.sh"));
-// }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, gradient)
