@@ -7,7 +7,7 @@
 
 using namespace shapeworks;
 
-TEST(ImageTests, antialias_test)
+TEST(ImageTests, antialiasTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/antialias/");
 
@@ -18,18 +18,29 @@ TEST(ImageTests, antialias_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, recenter_test)
+TEST(ImageTests, recentertest1)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/recenter/");
+ std::string test_location = std::string(TEST_DATA_DIR) + std::string("/recenter/");
 
-  Image image(test_location + "1x2x2.nrrd");
-  image.recenter();
-  Image ground_truth(test_location + "recenter_baseline.nrrd");
+ Image image(test_location + "1x2x2.nrrd");
+ image.recenter();
+ Image ground_truth(test_location + "recenter_baseline.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
+ ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresample_binary_isotropic_test) {
+TEST(ImageTests, recentertest2)
+{
+ std::string test_location = std::string(TEST_DATA_DIR) + std::string("/recenter/");
+
+ Image image(test_location + "1x2x2.nrrd");
+ image.setOrigin(image.center()); // should be identical to recenter
+ Image ground_truth(test_location + "recenter_baseline.nrrd");
+
+ ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, isoresampleBinaryIsotropicTest) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
@@ -42,7 +53,7 @@ TEST(ImageTests, isoresample_binary_isotropic_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresample_binary_anisotropic_test) {
+TEST(ImageTests, isoresampleBinaryAnisotropicTest) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
@@ -55,7 +66,7 @@ TEST(ImageTests, isoresample_binary_anisotropic_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresample_smooth_isotropic_test) {
+TEST(ImageTests, isoresampleSmoothIsotropicTest) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
@@ -67,7 +78,7 @@ TEST(ImageTests, isoresample_smooth_isotropic_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresample_smooth_anisotropic_test) {
+TEST(ImageTests, isoresampleSmoothAnisotropicTest) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
@@ -79,7 +90,7 @@ TEST(ImageTests, isoresample_smooth_anisotropic_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresample_image_anisotropic_test) {
+TEST(ImageTests, isoresampleImageAnisotropicTest) {
 
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
@@ -91,7 +102,7 @@ TEST(ImageTests, isoresample_image_anisotropic_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, pad_test) {
+TEST(ImageTests, padTest) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/pad/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -101,18 +112,29 @@ TEST(ImageTests, pad_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, translate_test)
+TEST(ImageTests, translateTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
 
   Image image(test_location + "1x2x2.nrrd");
   image.translate(makeVector({10, 10, 10}));
-  Image ground_truth(test_location + "translate_baseline.nrrd");
+  Image ground_truth(test_location + "translate1_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, com_test)
+TEST(ImageTests, translateTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/translate/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.translate(makeVector({-10, -10, -10}));
+  Image ground_truth(test_location + "translate2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, comTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
 
@@ -124,29 +146,62 @@ TEST(ImageTests, com_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, scale_test)
+TEST(ImageTests, scaleTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/scale/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.scale(makeVector({2.0,0.75,3.14159}));
-  Image ground_truth(test_location + "scale_baseline.nrrd");
+  image.scale(makeVector({2.0, 0.75, Pi})); // flying saucer filled with Pi
+  Image ground_truth(test_location + "scale1_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, rotate_test)
+TEST(ImageTests, scaleTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/scale/");
+
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.scale(makeVector({-1.0, 1.5, 1.0})); // inverted in x
+  Image ground_truth(test_location + "scale2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, rotateTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
 
-  Image image(test_location + "1x2x2.nrrd");
-  image.rotate(M_PI / 2.0, makeVector({1,1,1}));
-  Image ground_truth(test_location + "rotate_baseline.nrrd");
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.rotate(Pi / 2.0, makeVector({0,0,1})); // 90 degrees around the z axis
+  Image ground_truth(test_location + "rotate1_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, extractlabel_test) {
+TEST(ImageTests, rotateTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.rotate(Pi / 4.0, makeVector({0.1,0.1,0.1})); // 45 degrees around (unnormalized) diagonal axis
+  Image ground_truth(test_location + "rotate2_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, rotateTest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.rotate(Pi / 3.0, makeVector({-1,10,-3})); // Pi/3 radians around a weird axis
+  Image ground_truth(test_location + "rotate3_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, extractlabelTest) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -156,7 +211,7 @@ TEST(ImageTests, extractlabel_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, closeholes_test) {
+TEST(ImageTests, closeholesTest) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -166,7 +221,7 @@ TEST(ImageTests, closeholes_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, threshold_test)
+TEST(ImageTests, thresholdTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/threshold/");
 
@@ -177,7 +232,7 @@ TEST(ImageTests, threshold_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, computedt_test)
+TEST(ImageTests, computedtTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compute-dt/");
 
@@ -188,7 +243,7 @@ TEST(ImageTests, computedt_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, dicom_read_test) {
+TEST(ImageTests, dicomReadTest) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
 
   Image image(test_location + "dcm_files");
@@ -197,7 +252,7 @@ TEST(ImageTests, dicom_read_test) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, curvature_test)
+TEST(ImageTests, curvatureTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/curvature/");
 
@@ -208,7 +263,7 @@ TEST(ImageTests, curvature_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, gradient_test)
+TEST(ImageTests, gradientTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/gradient/");
 
@@ -219,7 +274,7 @@ TEST(ImageTests, gradient_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, sigmoid_test)
+TEST(ImageTests, sigmoidTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/sigmoid/");
 
@@ -230,7 +285,7 @@ TEST(ImageTests, sigmoid_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, setlevel_test)
+TEST(ImageTests, setlevelTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/set-level/");
   std::string other_location = std::string(TEST_DATA_DIR) + std::string("/curvature/curvature_baseline.nrrd");
@@ -242,7 +297,7 @@ TEST(ImageTests, setlevel_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, topopreservingsmooth_test)
+TEST(ImageTests, topopreservingsmoothTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/topo-preserving-smooth/");
 
@@ -253,7 +308,7 @@ TEST(ImageTests, topopreservingsmooth_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, blur_test)
+TEST(ImageTests, blurTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/blur/");
 
@@ -264,7 +319,7 @@ TEST(ImageTests, blur_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, crop_test)
+TEST(ImageTests, cropTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/crop/");
   std::string images_location = std::string(TEST_DATA_DIR) + std::string("/images/");
@@ -290,7 +345,7 @@ TEST(ImageTests, crop_test)
 }
 
 // clip1: good normal and point on plane, sets clipped values to pi
-TEST(ImageTests, clip1_test)
+TEST(ImageTests, clip1Test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
@@ -302,7 +357,7 @@ TEST(ImageTests, clip1_test)
 }
 
 // clip1x: clips YZ plane at x=center+2.75
-TEST(ImageTests, clip1x_test)
+TEST(ImageTests, clip1xTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
@@ -314,7 +369,7 @@ TEST(ImageTests, clip1x_test)
 }
 
 // clip1y: clips XZ plane at y=center and uses return value of function
-TEST(ImageTests, clip1y_test)
+TEST(ImageTests, clip1yTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
@@ -326,7 +381,7 @@ TEST(ImageTests, clip1y_test)
 }
 
 // clip1z: clips XY plane using a far away p
-TEST(ImageTests, clip1z_test)
+TEST(ImageTests, clip1zTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
@@ -338,7 +393,7 @@ TEST(ImageTests, clip1z_test)
 }
 
 /// clip2: clips using a zero length normal
-TEST(ImageTests, clip2_test)
+TEST(ImageTests, clip2Test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
@@ -351,7 +406,7 @@ TEST(ImageTests, clip2_test)
 }
 
 /// clip3: clips using three non-colinear points for the plane, setting value to -pi
-TEST(ImageTests, clip3_test)
+TEST(ImageTests, clip3Test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
@@ -363,7 +418,7 @@ TEST(ImageTests, clip3_test)
 }
 
 /// clip4: clips using three colinear points for the plane
-TEST(ImageTests, clip4_test)
+TEST(ImageTests, clip4Test)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/clip/");
 
@@ -375,7 +430,7 @@ TEST(ImageTests, clip4_test)
   ASSERT_TRUE(false);
 }
 
-TEST(ImageTests, reflect_test)
+TEST(ImageTests, reflectTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/reflect/");
 
@@ -388,7 +443,7 @@ TEST(ImageTests, reflect_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, icp_test)
+// TEST(ImageTests, icpTest)
 // {
 //   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/icp/");
 
@@ -403,7 +458,7 @@ TEST(ImageTests, reflect_test)
 //   ASSERT_TRUE(image == ground_truth);
 // }
 
-TEST(ImageTests, multicommand_test)
+TEST(ImageTests, multicommandTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multicommand/");
 
@@ -414,7 +469,7 @@ TEST(ImageTests, multicommand_test)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, comparetest1)
+TEST(ImageTests, compareTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
 
@@ -424,7 +479,7 @@ TEST(ImageTests, comparetest1)
   ASSERT_TRUE(image1 == image2);
 }
 
-TEST(ImageTests, comparetest2)
+TEST(ImageTests, compareTest2)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
 
@@ -434,43 +489,85 @@ TEST(ImageTests, comparetest2)
   ASSERT_FALSE(image1 == image2);
 }
 
-//<ctc> todo: finish the next four tests
-TEST(ImageTests, dimstest)
+TEST(ImageTests, dimsTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
-  Image image(test_location + "1x2x2.nrrd");
-  Dims dims({1,2,3}); //todo
+  Image image(test_location + "la-bin.nrrd");
+  Dims dims({289, 329, 182});
   
   ASSERT_TRUE(image.dims() == dims);
 }
 
-TEST(ImageTests, sizetest)
+TEST(ImageTests, sizeTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Point size({1,2,3}); //todo
+  Point size({100,100,100});
   
   ASSERT_TRUE(image.size() == size);
 }
 
-TEST(ImageTests, spacingtest)
+TEST(ImageTests, spacingTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Point spacing({1,2,3}); //todo
+  Point spacing({1,2,2});
   
   ASSERT_TRUE(image.spacing() == spacing);
 }
 
-TEST(ImageTests, coordsystest)
+TEST(ImageTests, originTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "1x2x2.nrrd");
-  Image::ImageType::DirectionType coordsys; //todo
+  Point origin({0, 0.5, 0.5});
+  
+  ASSERT_TRUE(image.origin() == origin);
+}
+
+TEST(ImageTests, centerTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Point ctr({50, 50.5, 50.5});
+  
+  ASSERT_TRUE(image.center() == ctr);
+}
+
+TEST(ImageTests, coordsysTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Image::ImageType::DirectionType coordsys;
+  coordsys.SetIdentity();
   
   ASSERT_TRUE(image.coordsys() == coordsys);
 }
+
+TEST(ImageTests, centerOfMassTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Point com({79.2113, 117.8811, 46.4797});
+  
+  const double eps = 1E-4;
+  ASSERT_TRUE(epsEqual(image.centerOfMass(), com, eps));
+}
+
+TEST(ImageTests, boundingBoxTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Image::Region bbox(Dims({100, 50, 50}));
+  
+  ASSERT_TRUE(image.boundingBox() == bbox);
+}
+

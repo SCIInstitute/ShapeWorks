@@ -109,6 +109,9 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
   std::cout << "size (spacing * dims): " << sharedData.image.size() << std::endl;
   std::cout << "physical origin:       " << sharedData.image.origin() << std::endl;
   std::cout << "direction (coordsys):  " << std::endl << sharedData.image.coordsys();
+  std::cout << "center:                " << sharedData.image.center() << std::endl;
+  std::cout << "center of mass (0,1]:  " << sharedData.image.centerOfMass() << std::endl;
+  std::cout << "bounding box:          " << sharedData.image.boundingBox();
   return true;
 }
 
@@ -136,7 +139,7 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (layers < 0)
   {
-    std::cout << "Must specify a valid layers argument";
+    std::cerr << "Must specify a valid layers argument\n";
     return false;
   }
   else
@@ -260,7 +263,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
 
     if (tx == 0 || ty == 0 || tz == 0)
     {
-      std::cout << "Must specify a valid translate arguemnt";
+      std::cerr << "Must specify a valid translate arguemnt\n";
       return false;
     }
     else
@@ -280,9 +283,9 @@ void Scale::buildParser()
   const std::string desc = "scales images";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sx", "-x").action("store").type("double").help("x scale");
-  parser.add_option("--sy", "-y").action("store").type("double").help("y scale");
-  parser.add_option("--sz", "-z").action("store").type("double").help("z scale");
+  parser.add_option("--sx", "-x").action("store").type("double").set_default(1.0).help("x scale");
+  parser.add_option("--sy", "-y").action("store").type("double").set_default(1.0).help("y scale");
+  parser.add_option("--sz", "-z").action("store").type("double").set_default(1.0).help("z scale");
 
   Command::buildParser();
 }
@@ -295,7 +298,7 @@ bool Scale::execute(const optparse::Values &options, SharedCommandData &sharedDa
 
   if (sx == 0 || sy == 0 || sz == 0)
   {
-    std::cout << "Must specify a valid scale arguemnt";
+    std::cerr << "Must specify a valid scale arguemnt\n";
     return false;
   }
   else
@@ -316,8 +319,9 @@ void Rotate::buildParser()
 
   parser.add_option("--rx", "-x").action("store").type("double").help("physical axis around which to rotate (z-axis if unspecified)");
   parser.add_option("--ry", "-y").action("store").type("double").help("physical axis around which to rotate (z-axis if unspecified)");
-  parser.add_option("--rz", "-z").action("store").type("double").help("physical axis around which to rotate (z-axis if unspecified)");
-  parser.add_option("--angle").action("store").type("double").help("angle in radians");
+  parser.add_option("--rz", "-z").action("store").type("double").set_default(1.0).help("physical axis around which to rotate (z-axis if unspecified)");
+  parser.add_option("--radians").action("store").type("double").help("angle in radians");
+  parser.add_option("--degrees").action("store").type("double").help("angle in degrees");
 
   Command::buildParser();
 }
@@ -327,21 +331,26 @@ bool Rotate::execute(const optparse::Values &options, SharedCommandData &sharedD
   double rx = static_cast<double>(options.get("rx"));
   double ry = static_cast<double>(options.get("ry"));
   double rz = static_cast<double>(options.get("rz"));
-  double angle = static_cast<double>(options.get("angle"));
+  double radians = static_cast<double>(options.get("radians"));
+  double degrees = static_cast<double>(options.get("degrees"));
 
-  if (
-      (rx == 0 && ry != 0 && rz != 0) ||
-      (rx != 0 && ry == 0 && rz != 0) ||
-      (rx != 0 && ry != 0 && rz == 0) ||
-      angle == 0
-     )
+  Vector3 axis(makeVector({rx, ry, rz}));
+  if (!axis_is_valid(axis))
   {
-    std::cout << "Must specify a valid rotate arguemnt";
+    std::cerr << "Must specify a valid axis\n";
     return false;
   }
-  else
+  else if (radians == 0.0 && degrees == 0.0)
   {
-    sharedData.image.rotate(angle, makeVector({rx, ry, rz}));
+    std::cerr << "Must specify a rotation angle\n";
+    return false;
+  }
+  {
+    // if degrees is specified, use it
+    if (degrees != 0.0)
+      radians = degToRad(degrees);
+
+    sharedData.image.rotate(radians, makeVector({rx, ry, rz}));
     return true;
   }
 }
@@ -453,7 +462,7 @@ bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData
 
   if (iterations < 0)
   {
-    std::cout << "Must specify a valid iterations argument";
+    std::cerr << "Must specify a valid iterations argument\n";
     return false;
   }
   else
@@ -525,7 +534,7 @@ bool TPLevelSetFilter::execute(const optparse::Values &options, SharedCommandDat
   std::string featureimage = static_cast<std::string>(options.get("featureimage"));
   if (featureimage == "")
   {
-    std::cout << "Must specify a valid feature image value";
+    std::cerr << "Must specify a valid feature image value\n";
     return false;
   }
   else
@@ -796,7 +805,7 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
 
   if (type == "")
   {
-    std::cout << "Must specify valid filter type value";
+    std::cerr << "Must specify valid filter type value\n";
     return false;
   }
 
@@ -828,7 +837,7 @@ bool Filter::execute(const optparse::Values &options, SharedCommandData &sharedD
     std::string featureimage = static_cast<std::string>(options.get("featureimage"));
     if (featureimage == "")
     {
-      std::cout << "Must specify a valid feature image value";
+      std::cerr << "Must specify a valid feature image value\n";
       return false;
     }
     else

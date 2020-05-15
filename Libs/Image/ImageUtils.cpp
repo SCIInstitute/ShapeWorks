@@ -39,7 +39,7 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
 TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
 {
   TransformPtr xform(TransformType::New());
-  xform->Translate(image.center() - image.centerOfMass());
+  xform->Translate(-(image.center() - image.centerOfMass())); // ITK translations go in a counterintuitive direction
   return xform;
 }
 
