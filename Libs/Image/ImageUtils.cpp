@@ -86,8 +86,9 @@ TransformPtr ImageUtils::computeWarp(const std::string &source_file, const std::
 
     if (count % pointFactor == 0)
     {
-      sourceLandMarkContainer->InsertElement( id, src );
-      targetLandMarkContainer->InsertElement( id, tgt );
+      // swap src and tgt b/c ITK transforms go backwards (must be inverted on creation since some do not provide an invert function)
+      sourceLandMarkContainer->InsertElement( id, tgt );
+      targetLandMarkContainer->InsertElement( id, src );
       id++;
     }
     count++;
