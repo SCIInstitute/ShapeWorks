@@ -448,4 +448,16 @@ private:
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+class WarpImage : public ImageCommand 
+{
+public:
+  static WarpImage& getCommand() { static WarpImage instance; return instance; }
+
+private:
+  WarpImage() { buildParser(); } 
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
 } // shapeworks

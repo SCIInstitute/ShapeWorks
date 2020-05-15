@@ -14,10 +14,6 @@ struct SharedCommandData
   Image::Region region;
   Mesh mesh;
   ParticleSystem particleSystem;
-  TransformPtr transform;
-
-  SharedCommandData() { transform = TransformType::New(); }
-
 };
 
 } // shapeworks

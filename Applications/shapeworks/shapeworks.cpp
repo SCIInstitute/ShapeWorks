@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ResampleImage::getCommand());
   shapeworks.addCommand(RecenterImage::getCommand());
   shapeworks.addCommand(PadImage::getCommand());
+  shapeworks.addCommand(WarpImage::getCommand());
   shapeworks.addCommand(ExtractLabel::getCommand());
   shapeworks.addCommand(Translate::getCommand());
   shapeworks.addCommand(Scale::getCommand());

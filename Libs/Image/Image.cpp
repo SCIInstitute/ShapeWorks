@@ -248,7 +248,7 @@ Image& Image::pad(int padding, PixelType value)
 
 Image& Image::translate(const Vector3 &v)
 {
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-v);            // negate v because ITK applies transformations backwards.
   return applyTransform(xform);
 }
@@ -258,7 +258,7 @@ Image& Image::scale(const Vector3 &s)
   auto origOrigin(origin());       // scale centered at origin, so temporarily set origin to be the center
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   xform->Scale(invert(std::move(const_cast<Vector3&>(s))));   // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
 
@@ -271,7 +271,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   auto origOrigin(origin());       // rotation is around origin, so temporarily set origin to be the center
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   xform->Rotate3D(axis, -angle);   // negate angle because ITK applies transformations backwards.  
   applyTransform(xform);
 
@@ -281,7 +281,7 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
 
 Image& Image::applyTransform(const TransformPtr transform)
 {
-  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;
+  using FilterType = itk::ResampleImageFilter<ImageType, ImageType>;  // linear interpolation by default
   FilterType::Pointer resampler = FilterType::New();
 
   resampler->SetInput(this->image);
@@ -511,7 +511,7 @@ Image& Image::reflect(const Vector3 &normal)
   reflection[1][1] = -normal[1];
   reflection[2][2] = -normal[2];
 
-  TransformPtr xform(TransformType::New());
+  AffineTransformPtr xform(AffineTransform::New());
   Vector3 ctr(toVector(center()));
   xform->Translate(ctr);
   xform->SetMatrix(reflection);
