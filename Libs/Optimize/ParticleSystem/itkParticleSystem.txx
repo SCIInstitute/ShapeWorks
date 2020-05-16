@@ -228,7 +228,6 @@ ParticleSystem<VDimension>
 ::AddPositionList(const std::vector<PointType> &p,
                                             unsigned int d, int threadId )
 {
-  std::cerr << "AddPositionList\n";
   // Traverse the list and add each point to the domain.
   for (typename std::vector<PointType>::const_iterator it= p.begin();
        it != p.end(); it++)
