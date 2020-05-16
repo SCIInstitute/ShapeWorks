@@ -1885,7 +1885,6 @@ void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
   this->m_sampler->SetInput(0, first_image);                // set the 0th input
   this->m_spacing = first_image->GetSpacing()[0];
   this->m_num_shapes = images.size();
-  break;
 }
 
 //---------------------------------------------------------------------------
