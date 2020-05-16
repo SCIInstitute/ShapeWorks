@@ -392,6 +392,7 @@ void Optimize::InitializeSampler()
   float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
   float flat_cutoff = 0.3;   // 0.3 -> 0.85
 
+
   m_sampler->SetPairwisePotentialType(m_pairwise_potential_type);
 
   m_sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
@@ -438,15 +439,17 @@ void Optimize::InitializeSampler()
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()
   ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
 
+
+  // These flags must be set before Initialize, since Initialize need to know which domains are fixed ahead of time
+  for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
+    this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
+  }
+
   m_sampler->Initialize();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
 
   // These flags have to be set after Initialize, since Initialize will set them all to zero
-  for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
-    this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
-  }
-
   for (unsigned int i = 0; i < this->m_particle_flags.size() / 2; i++) {
     this->GetSampler()->GetParticleSystem()
     ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);

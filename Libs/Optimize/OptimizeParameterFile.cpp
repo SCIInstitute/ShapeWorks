@@ -303,8 +303,6 @@ bool OptimizeParameterFile::set_debug_parameters(TiXmlHandle* docHandle, Optimiz
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimize)
 {
-  std::cerr << "read_inputs\n";
-
   TiXmlElement* elem = nullptr;
 
   elem = docHandle->FirstChild("inputs").Element();
