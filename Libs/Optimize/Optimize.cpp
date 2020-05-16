@@ -174,7 +174,8 @@ void Optimize::SetParameters()
     for (int i = 0; i < m_domain_flags.size(); i++) {
       if (m_use_normals.size() > 0) {
         if (m_use_normals[i % m_domains_per_shape]) {
-          m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeletePartialDerivativeImages();
+          m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->
+          DeletePartialDerivativeImages();
         }
         else {
           m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
@@ -1392,8 +1393,10 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     }
 
     // Only run the following code if we are dealing with ImplicitSurfaceDomains
-    const itk::ParticleImplicitSurfaceDomain < float, 3 > *domain
-          = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float, 3 >*> (m_sampler->GetParticleSystem()->GetDomain(i));
+    const itk::ParticleImplicitSurfaceDomain < float, 3 >* domain
+      = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float,
+                                                                 3 >*> (m_sampler->GetParticleSystem()
+                                                                        ->GetDomain(i));
     if (domain) {
       std::vector < float > fVals;
 
@@ -1406,13 +1409,15 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         }
 
         if (m_use_normals[i % m_domains_per_shape]) {
-          typename itk::ParticleImageDomainWithGradients < float, 3 > ::VnlVectorType pG = domain->SampleNormalVnl(pos);
+          typename itk::ParticleImageDomainWithGradients < float,
+                                                           3 > ::VnlVectorType pG =
+            domain->SampleNormalVnl(pos);
           VectorType pN;
           pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
           pN = m_sampler->GetParticleSystem()->TransformVector(pN,
-            m_sampler->GetParticleSystem()->GetTransform(
-              i) * m_sampler->GetParticleSystem()->GetPrefixTransform(
-                i));
+                                                               m_sampler->GetParticleSystem()->GetTransform(
+                                                                 i) * m_sampler->GetParticleSystem()->GetPrefixTransform(
+                                                                 i));
           outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
         }
 
@@ -1876,10 +1881,11 @@ void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
 {
   this->m_images = images;
   this->m_sampler->SetImages(images);
-  ImageType::Pointer first_image = images[0];
-  this->m_sampler->SetInput(0, first_image);            // set the 0th input
+  ImageType::Pointer first_image = images[i];
+  this->m_sampler->SetInput(0, first_image);                // set the 0th input
   this->m_spacing = first_image->GetSpacing()[0];
   this->m_num_shapes = images.size();
+  break;
 }
 
 //---------------------------------------------------------------------------
@@ -1946,6 +1952,12 @@ void Optimize::SetParticleFlags(std::vector<int> flags)
 void Optimize::SetDomainFlags(std::vector<int> flags)
 {
   this->m_domain_flags = flags;
+}
+
+//---------------------------------------------------------------------------
+std::vector<int> Optimize::GetDomainFlags()
+{
+  return this->m_domain_flags;
 }
 
 //---------------------------------------------------------------------------
