@@ -103,6 +103,7 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
 
 
         bool minimal_load = m_ParticleSystem->GetDomainFlag(i);
+
         m_DomainList[i]->SetImage(img_temp, minimal_load);
 
         if (m_CuttingPlanes.size() > i)

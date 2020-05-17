@@ -181,6 +181,10 @@ void Optimize::SetParameters()
           m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
         }
       }
+      else
+      {
+        m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
+      }
     }
   }
 
