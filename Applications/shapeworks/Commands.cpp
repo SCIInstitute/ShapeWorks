@@ -415,8 +415,16 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
   float min = static_cast<float>(options.get("min"));
   float max = static_cast<float>(options.get("max"));
 
-  sharedData.image.threshold(min, max);
-  return true;
+  if (min > max)
+  {
+    std::cout << "Min value should be lesser than max value";
+    return false;
+  }
+  else
+  {
+    sharedData.image.threshold(min, max);
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -451,14 +459,14 @@ void CurvatureFilter::buildParser()
   const std::string desc = "denoises an image using curvature driven flow using curvature flow image filter";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations");
+  parser.add_option("--iterations").action("store").type("int").set_default(10).help("number of iterations");
   
   Command::buildParser();
 }
 
 bool CurvatureFilter::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  int iterations = static_cast<int>(options.get("iterations"));
 
   if (iterations < 0)
   {
@@ -559,7 +567,7 @@ void TopologyPreservingFilter::buildParser()
   parser.add_option("--scaling").action("store").type("double").set_default(20.0).help("scale for TPLevelSet level set filter");
   parser.add_option("--alpha").action("store").type("double").set_default(10.0).help("value of alpha for sigmoid fitler");
   parser.add_option("--beta").action("store").type("double").set_default(10.0).help("value of beta for sigmoid fitler");  
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("number of iterations for curvature filter");
+  parser.add_option("--iterations").action("store").type("int").set_default(10).help("number of iterations for curvature filter");
   parser.add_option("--applycurvature").action("store").type("bool").set_default(true).help("default it true, but in some cases it has already been applied");
   
   Command::buildParser();
@@ -570,11 +578,19 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
   double scaling = static_cast<double>(options.get("scaling"));
   double alpha = static_cast<double>(options.get("alpha"));
   double beta = static_cast<double>(options.get("beta"));
-  unsigned iterations = static_cast<unsigned>(options.get("iterations"));
+  int iterations = static_cast<int>(options.get("iterations"));
   bool applycurvature = static_cast<bool>(options.get("applycurvature"));
 
-  ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
-  return true;
+  if (iterations < 0)
+  {
+    std::cout << "Must specify a valid iterations argument";
+    return false;
+  }
+  else
+  {
+    ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -663,13 +679,26 @@ void ICPRigid::buildParser()
 
 bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
-  Image target(options["target"]);
-  Image source(options["source"]);
+  std::string target = static_cast<std::string>(options.get("target"));
+  std::string source = static_cast<std::string>(options.get("source"));
   float isovalue = static_cast<float>(options.get("isovalue"));
   unsigned iterations = static_cast<unsigned>(options.get("iterations"));
 
-  ImageUtils::rigidRegistration(target, source, isovalue, iterations);
-  return true;
+  if (target == "")
+  {
+    std::cerr << "Must specify a valid target value\n";
+    return false;
+  }
+  else if (source == "")
+  {
+    std::cerr << "Must specify a valid source value\n";
+    return false;
+  }
+  else
+  {
+    ImageUtils::rigidRegistration(target, source, isovalue, iterations);
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
