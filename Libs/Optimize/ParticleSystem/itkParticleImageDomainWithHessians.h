@@ -48,9 +48,14 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, bool minimal)
   {
-    Superclass::SetImage(I);
+    Superclass::SetImage(I, minimal);
+
+    if (minimal)
+    {
+      return;
+    }
     
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
       gaussian = DiscreteGaussianImageFilter<ImageType, ImageType>::New();

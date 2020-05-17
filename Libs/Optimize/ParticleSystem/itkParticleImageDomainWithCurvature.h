@@ -41,10 +41,14 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, bool minimal)
   {
     // Computes partial derivatives in parent class
-    Superclass::SetImage(I);
+    Superclass::SetImage(I, minimal);
+
+    if (minimal) {
+      return;
+    }
 
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer f = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
 
@@ -80,12 +84,18 @@ public:
     // Release the memory in the parent hessian images.
     //this->DeletePartialDerivativeImages();
     
+    m_CurvatureInterpolator = ScalarInterpolatorType::New();
     m_CurvatureInterpolator->SetInputImage(m_CurvatureImage);
   } // end setimage
   
   double GetCurvature(const PointType &pos) const
   {
-    return m_CurvatureInterpolator->Evaluate(pos);
+    if (m_CurvatureInterpolator) {
+      return m_CurvatureInterpolator->Evaluate(pos);
+    }
+    else {
+      return 0;
+    }
   }
   
   typename ImageType::Pointer* GetCurvatureImage() { return m_CurvatureImage; }
@@ -93,8 +103,6 @@ public:
 protected:
   ParticleImageDomainWithCurvature()
   {
-    m_CurvatureInterpolator = ScalarInterpolatorType::New();
-    m_CurvatureImage = ImageType::New();
   }
   virtual ~ParticleImageDomainWithCurvature() {};
 

@@ -47,9 +47,9 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, bool minimal)
   {
-    ParticleImageDomain<T, VDimension>::SetImage(I);
+    ParticleImageDomain<T, VDimension>::SetImage(I, minimal);
  
     // Compute gradient image and set up gradient interpolation.
     typename GradientImageFilterType::Pointer filter = GradientImageFilterType::New();

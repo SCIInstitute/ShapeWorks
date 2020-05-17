@@ -132,6 +132,7 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   bool use_mesh_based_attributes = false;
   std::vector<bool> use_xyz;
   std::vector<bool> use_normals;
+  std::cerr << "use_normals...\n";
 
   elem = docHandle->FirstChild("mesh_based_attributes").Element();
   if (elem) { use_mesh_based_attributes = (bool) atoi(elem->GetText());}
@@ -154,6 +155,7 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 
     elem = docHandle->FirstChild("use_normals").Element();
     if (elem) {
+      std::cerr << "use_normals...yes\n";
       std::istringstream inputsBuffer;
       std::string num;
       inputsBuffer.str(elem->GetText());
@@ -168,7 +170,12 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
         return false;
       }
     }
+    else
+    {
+      std::cerr << "use_normals...no\n";
+    }
   }
+  std::cerr << "use_normals size = " << use_normals.size() << "\n";
 
   optimize->SetUseMeshBasedAttributes(use_mesh_based_attributes);
   optimize->SetUseXYZ(use_xyz);

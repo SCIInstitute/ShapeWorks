@@ -41,7 +41,7 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, bool minimal)
   {
     this->Modified();
     m_Image = I;
