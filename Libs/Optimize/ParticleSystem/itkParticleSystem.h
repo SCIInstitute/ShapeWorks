@@ -373,7 +373,13 @@ public:
   void UnflagDomain(unsigned int i)
   { m_DomainFlags[i] = false; }
   bool GetDomainFlag(unsigned int i) const
-  { return m_DomainFlags[i]; }
+  {
+    if (i >= m_DomainFlags.size()) {
+      // not set
+      return false;
+    }
+    return m_DomainFlags[i];
+  }
   const std::vector<bool> &GetDomainFlags() const
   { return m_DomainFlags; }
   void SetDomainFlags()
