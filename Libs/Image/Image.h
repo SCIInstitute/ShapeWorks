@@ -150,7 +150,7 @@ public:
   Image &setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   /// Reflect image on the plane specified by center of image and given normal (ex: <1,0,0> to reflect "vertically" across YZ-plane).
-  Image& reflect(const Vector3 &normal);
+  Image &reflect(const Vector3 &normal = makeVector({1.0, 0.0, 0.0}));
 
   // query functions //
 

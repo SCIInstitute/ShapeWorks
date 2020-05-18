@@ -223,7 +223,14 @@ TEST(shapeworksTests, blur)
 TEST(shapeworksTests, icp)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./icp.sh"));
+  ASSERT_FALSE(system("./icp.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, icpfail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./icpfail.sh"));
 }
 
 //---------------------------------------------------------------------------

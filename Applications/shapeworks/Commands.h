@@ -80,6 +80,22 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class RecenterImage : public ImageCommand
+{
+public:
+  static RecenterImage &getCommand()
+  {
+    static RecenterImage instance;
+    return instance;
+  }
+
+private:
+  RecenterImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class PadImage : public ImageCommand
 {
 public:
@@ -87,18 +103,6 @@ public:
 
 private:
   PadImage() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class RecenterImage : public ImageCommand
-{
-public:
-  static RecenterImage& getCommand() { static RecenterImage instance; return instance; }
-
-private:
-  RecenterImage() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -283,6 +287,7 @@ private:
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 class ICPRigid : public ImageCommand
 {
 public:
@@ -326,6 +331,22 @@ public:
 
 private:
   SetOrigin() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class WarpImage : public ImageCommand
+{
+public:
+  static WarpImage &getCommand()
+  {
+    static WarpImage instance;
+    return instance;
+  }
+
+private:
+  WarpImage() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -402,16 +423,6 @@ private:
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
-
-
-
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 class ReadMesh : public MeshCommand
 {
@@ -444,18 +455,6 @@ public:
 
 private:
   Coverage() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-class WarpImage : public ImageCommand 
-{
-public:
-  static WarpImage& getCommand() { static WarpImage instance; return instance; }
-
-private:
-  WarpImage() { buildParser(); } 
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };

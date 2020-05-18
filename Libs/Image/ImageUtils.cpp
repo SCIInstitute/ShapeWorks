@@ -52,9 +52,9 @@ Image ImageUtils::rigidRegistration(Image &target, const Image &source, float is
   vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
   vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
   Matrix mat = ShapeworksUtils::icp(targetContour, sourceContour, iterations);
-  // AffineTransformPtr xform(AffineTransform::New());
-  // xform->SetMatrix(mat);
-  // target.applyTransform(xform);
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->SetMatrix(mat);
+  target.applyTransform(xform);
   return target;
 }
 

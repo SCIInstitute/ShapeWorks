@@ -7,6 +7,16 @@
 
 using namespace shapeworks;
 
+TEST(ImageTests, dicomReadTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
+
+  Image image(test_location + "dcm_files");
+  Image ground_truth(test_location + "dicom.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
 TEST(ImageTests, antialiasTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/antialias/");
@@ -16,28 +26,6 @@ TEST(ImageTests, antialiasTest)
   Image ground_truth(test_location + "antialias_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
-}
-
-TEST(ImageTests, recentertest1)
-{
- std::string test_location = std::string(TEST_DATA_DIR) + std::string("/recenter/");
-
- Image image(test_location + "1x2x2.nrrd");
- image.recenter();
- Image ground_truth(test_location + "recenter_baseline.nrrd");
-
- ASSERT_TRUE(image == ground_truth);
-}
-
-TEST(ImageTests, recentertest2)
-{
- std::string test_location = std::string(TEST_DATA_DIR) + std::string("/recenter/");
-
- Image image(test_location + "1x2x2.nrrd");
- image.setOrigin(image.center()); // should be identical to recenter
- Image ground_truth(test_location + "recenter_baseline.nrrd");
-
- ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, isoresampleBinaryIsotropicTest) {
@@ -102,6 +90,28 @@ TEST(ImageTests, isoresampleImageAnisotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, recentertest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/recenter/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.recenter();
+  Image ground_truth(test_location + "recenter_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, recentertest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/recenter/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.setOrigin(image.center()); // should be identical to recenter
+  Image ground_truth(test_location + "recenter_baseline.nrrd");
+
+  ASSERT_FALSE(image == ground_truth);
+}
+
 TEST(ImageTests, padTest) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/pad/");
 
@@ -134,7 +144,7 @@ TEST(ImageTests, translateTest2)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, comTest)
+TEST(ImageTests, comTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/com/");
 
@@ -144,6 +154,17 @@ TEST(ImageTests, comTest)
   Image ground_truth(test_location + "com_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, comTest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "la-bin.nrrd");
+  Point com({79.2113, 117.8811, 46.4797});
+  const double eps = 1E-4;
+
+  ASSERT_TRUE(epsEqual(image.centerOfMass(), com, eps));
 }
 
 TEST(ImageTests, scaleTest1)
@@ -243,15 +264,6 @@ TEST(ImageTests, computedtTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, dicomReadTest) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/dicom/");
-
-  Image image(test_location + "dcm_files");
-  Image ground_truth(test_location + "dicom.nrrd");
-
-  ASSERT_TRUE(image == ground_truth);
-}
-
 TEST(ImageTests, curvatureTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/curvature/");
@@ -319,6 +331,16 @@ TEST(ImageTests, blurTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, boundingBoxTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Image::Region bbox(Dims({100, 50, 50}));
+
+  ASSERT_TRUE(image.boundingBox() == bbox);
+}
+
 TEST(ImageTests, cropTest)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/crop/");
@@ -340,6 +362,19 @@ TEST(ImageTests, cropTest)
   region = ImageUtils::boundingBox(images);
   image.crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, icpTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/icp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  Image target(test_location + "target.nrrd");
+  Image source(test_location + "source.nrrd");
+  ImageUtils::rigidRegistration(target, source);
+  Image ground_truth(test_location + "icp_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -437,34 +472,65 @@ TEST(ImageTests, reflectTest)
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
   image.reflect(makeVector({0.0, 1.0, 0.0}));
-  image.write("/Users/cam/data/sw/tmp/reflect_test.nrrd"); //<ctc> write so once it's working we'll have a baseline (todo/fixme)
   Image ground_truth(test_location + "reflect_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
 
-// TEST(ImageTests, icpTest)
-// {
-//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/icp/");
-
-//   Image image(test_location + "1x2x2.nrrd");
-//   Image target(test_location + "target.nrrd");
-//   Image source(test_location + "source.nrrd");
-//   TransformPtr xform(ImageUtils::rigidRegistration(target, source));
-//   image.applyTransform(xform);
-//   image.write("/Users/cam/data/sw/tmp/icp_test.nrrd");
-//   Image ground_truth(test_location + "icp_baseline.nrrd");
-
-//   ASSERT_TRUE(image == ground_truth);
-// }
-
-TEST(ImageTests, multicommandTest)
+TEST(ImageTests, setoriginTest)
 {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multicommand/");
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/setorigin/");
 
   Image image(test_location + "1x2x2.nrrd");
-  image.applyCurvatureFilter().applyGradientFilter().applySigmoidFilter();
-  Image ground_truth(test_location + "multicommand_baseline.nrrd");
+  image.setOrigin();
+  Image ground_truth(test_location + "setorigin_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, warptest1)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
+  std::string dst_filename(test_location + "dst.pts");
+
+  TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline1.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, warptest2)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
+  std::string dst_filename(test_location + "dst.pts");
+
+  // only use every 3rd landmark point
+  TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename, 3));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "warp_baseline2.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
+}
+
+TEST(ImageTests, warptest3)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  std::string src_filename(test_location + "bogus_src.pts");
+  std::string dst_filename(test_location + "bogus_dst.pts");
+
+  // empty files should just produce identity transform
+  TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
+  image.applyTransform(transform);
+  Image ground_truth(test_location + "1x2x2.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -473,8 +539,8 @@ TEST(ImageTests, compareTest1)
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/compare/");
 
-  Image image1(test_location + "la.nrrd");
-  Image image2(test_location + "la.nrrd");
+  Image image1(test_location + "la-bin.nrrd");
+  Image image2(test_location + "la-bin.nrrd");
 
   ASSERT_TRUE(image1 == image2);
 }
@@ -487,6 +553,17 @@ TEST(ImageTests, compareTest2)
   Image image2(test_location + "la-bin.nrrd");
 
   ASSERT_FALSE(image1 == image2);
+}
+
+TEST(ImageTests, multicommandTest)
+{
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/multicommand/");
+
+  Image image(test_location + "1x2x2.nrrd");
+  image.applyCurvatureFilter().applyGradientFilter().applySigmoidFilter();
+  Image ground_truth(test_location + "multicommand_baseline.nrrd");
+
+  ASSERT_TRUE(image == ground_truth);
 }
 
 TEST(ImageTests, dimsTest)
@@ -549,72 +626,3 @@ TEST(ImageTests, coordsysTest)
   
   ASSERT_TRUE(image.coordsys() == coordsys);
 }
-
-TEST(ImageTests, warptest1)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
-
-  Image image(test_location + "1x2x2.nrrd");
-  std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-  std::string dst_filename(test_location + "dst.pts");
-
-  TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-  image.applyTransform(transform);
-
-  Image ground_truth(test_location + "warp_baseline1.nrrd");
-  ASSERT_TRUE(image == ground_truth);
-}
-
-TEST(ImageTests, warptest2)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
-
-  Image image(test_location + "1x2x2.nrrd");
-  std::string src_filename(test_location + "src.pts"); // todo: create sets of landmarks for source and target
-  std::string dst_filename(test_location + "dst.pts");
-
-  // only use every 3rd landmark point
-  TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename, 3));
-  image.applyTransform(transform);
-
-  Image ground_truth(test_location + "warp_baseline2.nrrd");
-  ASSERT_TRUE(image == ground_truth);
-}
-
-TEST(ImageTests, warptest3)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
-
-  Image image(test_location + "1x2x2.nrrd");
-  std::string src_filename(test_location + "bogus_src.pts");
-  std::string dst_filename(test_location + "bogus_dst.pts");
-
-  // empty files should just produce identity transform
-  TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-  image.applyTransform(transform);
-
-  Image ground_truth(test_location + "1x2x2.nrrd");
-  ASSERT_TRUE(image == ground_truth);
-}
-
-TEST(ImageTests, centerOfMassTest)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
-
-  Image image(test_location + "la-bin.nrrd");
-  Point com({79.2113, 117.8811, 46.4797});
-  
-  const double eps = 1E-4;
-  ASSERT_TRUE(epsEqual(image.centerOfMass(), com, eps));
-}
-
-TEST(ImageTests, boundingBoxTest)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
-
-  Image image(test_location + "1x2x2.nrrd");
-  Image::Region bbox(Dims({100, 50, 50}));
-  
-  ASSERT_TRUE(image.boundingBox() == bbox);
-}
-
