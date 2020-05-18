@@ -696,6 +696,8 @@ bool ICPRigid::execute(const optparse::Values &options, SharedCommandData &share
   }
   else
   {
+    Image target(target);
+    Image source(source);
     ImageUtils::rigidRegistration(target, source, isovalue, iterations);
     return true;
   }

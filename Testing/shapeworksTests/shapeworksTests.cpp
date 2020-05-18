@@ -52,17 +52,17 @@ TEST(shapeworksTests, antialiasfail)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, recenter)
-{
-  shapeworksEnvSetup();
-  ASSERT_FALSE(system("./recenter.sh"));
-}
-
-//---------------------------------------------------------------------------
 TEST(shapeworksTests, resample)
 {
   shapeworksEnvSetup();
   ASSERT_TRUE(system("./resample.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, recenter)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("./recenter.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -217,6 +217,27 @@ TEST(shapeworksTests, blur)
 {
   shapeworksEnvSetup();
   ASSERT_TRUE(system("./blur.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, icp)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./icp.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, clip)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./clip.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, clipfail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./clipfail.sh"));
 }
 
 //---------------------------------------------------------------------------
