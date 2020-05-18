@@ -9,7 +9,7 @@ class ParticleSystem
 public:
   ParticleSystem();
 
-  bool LoadParticles(const std::vector<std::string> &paths);
+  void LoadParticles(const std::vector<std::string> &paths);
 
   const Eigen::MatrixXd &Particles() const
   {
