@@ -52,8 +52,7 @@ public:
   {
     Superclass::SetImage(I, minimal);
 
-    if (minimal)
-    {
+    if (minimal) {
       return;
     }
     

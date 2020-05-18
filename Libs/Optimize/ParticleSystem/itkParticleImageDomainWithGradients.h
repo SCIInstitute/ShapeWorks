@@ -51,6 +51,10 @@ public:
   {
     ParticleImageDomain<T, VDimension>::SetImage(I, minimal);
  
+    if (minimal) {
+      return;
+    }
+
     // Compute gradient image and set up gradient interpolation.
     typename GradientImageFilterType::Pointer filter = GradientImageFilterType::New();
     filter->SetInput(I);
