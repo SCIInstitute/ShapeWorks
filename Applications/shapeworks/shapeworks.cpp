@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Translate::getCommand());
   shapeworks.addCommand(Scale::getCommand());
   shapeworks.addCommand(Rotate::getCommand());
-  shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(CloseHoles::getCommand());
   shapeworks.addCommand(Threshold::getCommand());
   shapeworks.addCommand(ComputeDT::getCommand());
@@ -43,6 +42,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(ReadParticleSystem::getCommand());
   shapeworks.addCommand(Compactness::getCommand());
   shapeworks.addCommand(Generalization::getCommand());
+  shapeworks.addCommand(Specificity::getCommand());
   shapeworks.addCommand(ReadMesh::getCommand());
   shapeworks.addCommand(WriteMesh::getCommand());
   shapeworks.addCommand(Coverage::getCommand());

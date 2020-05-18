@@ -5,12 +5,10 @@ ParticleSystem::ParticleSystem()
 
 }
 
-bool ParticleSystem::LoadParticles(const std::vector<std::string> &_paths)
+void ParticleSystem::LoadParticles(const std::vector<std::string> &_paths)
 {
-
   if (_paths.empty()) {
-    std::cerr << "No filenames passed to readparticlesystem; returning false." << std::endl;
-    return false;
+    throw std::runtime_error("No filenames passed to readparticlesystem");
   }
 
   this->paths = _paths;
@@ -42,5 +40,4 @@ bool ParticleSystem::LoadParticles(const std::vector<std::string> &_paths)
   }
 
   isLoaded = true;
-  return true;
 }
