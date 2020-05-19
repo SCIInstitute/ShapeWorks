@@ -312,7 +312,7 @@ def applyCropping(outDir, inDataList, paddingSize=10):
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
         cmd = ["shapeworks",
-               "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
+               "boundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
                "read-image", "--name", inname,
                "crop",
                "write-image", "--name", outname]
@@ -357,7 +357,7 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
 
         cmd = ["shapeworks", 
                "read-image", "--name", inname,
-               "antialias", "--numiterations", str(antialiasIterations),
+               "antialias", "--iterations", str(antialiasIterations),
                "write-image", "--name", dtnrrdfilename]
         subprocess.check_call(cmd)
 

@@ -531,21 +531,21 @@ TEST(ImageTests, setoriginTest)
 //   ASSERT_TRUE(image == ground_truth);
 // }
 
-TEST(ImageTests, warptest3)
-{
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
+// TEST(ImageTests, warptest3)
+// {
+//   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/warp/");
 
-  Image image(test_location + "1x2x2.nrrd");
-  std::string src_filename(test_location + "bogus_src.pts");
-  std::string dst_filename(test_location + "bogus_dst.pts");
+//   Image image(test_location + "1x2x2.nrrd");
+//   std::string src_filename(test_location + "bogus_src.pts");
+//   std::string dst_filename(test_location + "bogus_dst.pts");
 
-  // empty files should just produce identity transform
-  TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
-  image.applyTransform(transform);
-  Image ground_truth(test_location + "1x2x2.nrrd");
+//   // empty files should just produce identity transform
+//   TransformPtr transform(ImageUtils::computeWarp(src_filename, dst_filename));
+//   image.applyTransform(transform);
+//   Image ground_truth(test_location + "1x2x2.nrrd");
 
-  ASSERT_TRUE(image == ground_truth);
-}
+//   ASSERT_TRUE(image == ground_truth);
+// }
 
 TEST(ImageTests, compareTest1)
 {

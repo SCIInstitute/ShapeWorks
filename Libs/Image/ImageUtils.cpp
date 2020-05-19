@@ -18,15 +18,15 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames)
   Image::Region bbox(img.boundingBox());
   Dims dims(img.dims()); // images must all be the same size
 
-	auto filename = filenames.begin();
-	while (++filename != filenames.end())
+  for (auto filename : filenames)
   {
-    Image img(*filename);
-    if (img.dims() != dims) { throw std::invalid_argument("Image sizes do not match (" + *filename + ")"); }
+    Image img(filename);
+    if (img.dims() != dims)
+    {
+      throw std::invalid_argument("Image sizes do not match (" + filename + ")");
+    }
 
     bbox.grow(img.boundingBox());
-
-		++filename;
   }
 
   return bbox;
