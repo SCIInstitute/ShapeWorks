@@ -68,6 +68,8 @@ public:
 
   vnl_vector<double> getCurrentShape();
 
+  vtkSmartPointer<vtkPolyData> get_current_mesh();
+
 public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
