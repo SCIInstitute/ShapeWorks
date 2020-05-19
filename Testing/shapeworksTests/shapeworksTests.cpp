@@ -23,6 +23,15 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
   std::string shapeworksTestsDir(TEST_DATA_DIR);
   shapeworksTestsDir += "/../shapeworksTests";
   chdir(shapeworksTestsDir.c_str());
+
+#ifdef _WIN32
+  bin_dir = bin_dir + "/Release";
+  std::replace(bin_dir.begin(), bin_dir.end(), '/', '\\');
+  std::string path = getenv("PATH");
+  path = path + ";" + std::string(INSTALL_DIR) + "\\bin";
+  std::cerr << "Setting PATH to " << path << "\n";
+  _putenv_s("PATH", path.c_str());
+#endif
 }
 
 //---------------------------------------------------------------------------
