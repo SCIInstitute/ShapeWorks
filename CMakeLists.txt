@@ -83,6 +83,9 @@ if (SHAPEWORKS_GUI)
   endif()
 endif()
 
+### Find PCL
+find_package( PCL REQUIRED )
+
 ### vtk
 find_package(VTK ${SHAPEWORKS_VTK_VERSION_MIN})
 if (NOT VTK_FOUND)

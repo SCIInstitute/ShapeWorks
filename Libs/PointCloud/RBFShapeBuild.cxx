@@ -9,7 +9,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-#include "PointCloud.h"
+#include "RBFShape.h"
 
 using namespace std;
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         pts.row(3*i+2) = neg_dipole;
     }
 
-    shapeworks::PointCloud shape = shapeworks::PointCloud();
+    shapeworks::RBFShape shape = shapeworks::RBFShape();
 
     cout << "Solving RBF system..." << endl;
 

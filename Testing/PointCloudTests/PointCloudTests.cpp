@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
-#include "PointCloud.h"
+#include "RBFShape.h"
 
 #include <Eigen/Core>
 
@@ -76,7 +76,7 @@ std::vector<double> flat_test(int side_length, int sep){
 
     std::cout << "Creating RBF..." << std::endl;
 
-    shapeworks::PointCloud RBFflat = shapeworks::PointCloud();
+    shapeworks::RBFShape RBFflat = shapeworks::RBFShape();
 
     std::cout << "Solving system..." << std::endl;
 
@@ -87,6 +87,7 @@ std::vector<double> flat_test(int side_length, int sep){
     if(print_files){
         RBFflat.set_raw_points(flat);
         RBFflat.set_raw_normals(flat_normals);
+        RBFflat.compute_normals();
 
         RBFflat.write_csv("flat_1.csv",5);
         RBFflat.writeToEqFile("flat_1.Eq",5);
@@ -200,7 +201,7 @@ std::vector<double> sphere_test() {
 
   std::cout << "Creating RBF..." << std::endl;
 
-  shapeworks::PointCloud RBFsphere = shapeworks::PointCloud();
+  shapeworks::RBFShape RBFsphere = shapeworks::RBFShape();
 
   std::cout << "Solving system..." << std::endl;
 
@@ -299,7 +300,3 @@ double* get_bounding_sphere(size_t num, size_t& ng, double radius){
 
     return sphere_pts;
 }
-
-
-
-

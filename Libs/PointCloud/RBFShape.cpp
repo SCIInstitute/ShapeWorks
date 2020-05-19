@@ -1,8 +1,8 @@
-#include <PointCloud.h>
+#include <RBFShape.h>
 
 namespace shapeworks {
 
-PointCloud::PointCloud(Eigen::Vector4d coeff,
+RBFShape::RBFShape(Eigen::Vector4d coeff,
                    Eigen::Vector3d pows,
                    Eigen::MatrixXd points)
 : coeff_(coeff), pows_(pows),
@@ -14,29 +14,29 @@ id_(0), material_(0), points_(points) {
     this->kernel = new ThinPlateKernel();
 }
 
-PointCloud::~PointCloud(){}
+RBFShape::~RBFShape(){}
 
-std::string PointCloud::ToDebugString() {
+std::string RBFShape::ToDebugString() {
     return "name() = " + name() + ", id = " + std::to_string(getID()) + ", isEmtpy = " + std::to_string(isEmpty());
 }
 
-void PointCloud::setID(size_t id) { this->id_ = id; }
+void RBFShape::setID(size_t id) { this->id_ = id; }
 
-size_t PointCloud::getID() { return this->id_; }
+size_t RBFShape::getID() { return this->id_; }
 
-double PointCloud::evaluate(const Eigen::Vector3d & point){
+double RBFShape::evaluate(const Eigen::Vector3d & point){
     CPURBFEvaluator eval = CPURBFEvaluator();
 
     return eval.evaluate(this->kernel, point, this->points_, this->TPSWeights, this->coeff_.head<3>(), this->coeff_(3));
 }
 
-std::vector<double> PointCloud::batch_evaluate(const Eigen::MatrixXd & points){
+std::vector<double> RBFShape::batch_evaluate(const Eigen::MatrixXd & points){
     CPURBFEvaluator eval = CPURBFEvaluator();
 
     return eval.batchEvaluate(this->kernel, points, this->points_, this->TPSWeights, this->coeff_.head<3>(), this->coeff_(3));
 }
 
-Eigen::Vector3d PointCloud::gradient(const Eigen::Vector3d & point){
+Eigen::Vector3d RBFShape::gradient(const Eigen::Vector3d & point){
 
     Eigen::Vector3d grad = Eigen::Vector3d(0.,0.,0.);
 
@@ -50,7 +50,7 @@ Eigen::Vector3d PointCloud::gradient(const Eigen::Vector3d & point){
     return grad;
 }
 
-double PointCloud::mag_gradient(const Eigen::Vector3d & point){
+double RBFShape::mag_gradient(const Eigen::Vector3d & point){
     Eigen::Vector3d grad = gradient(point);
 
     double mag_gradient = (grad + coeff_.head<3>()).norm();
@@ -58,7 +58,7 @@ double PointCloud::mag_gradient(const Eigen::Vector3d & point){
     return mag_gradient;
 }
 
-void PointCloud::solve_system(const Eigen::MatrixXd & points){
+void RBFShape::solve_system(const Eigen::MatrixXd & points){
     EigenRBFSolver solver = EigenRBFSolver();
     this->points_ = points;
 
@@ -73,7 +73,7 @@ void PointCloud::solve_system(const Eigen::MatrixXd & points){
 }
 
 //Writes RBFShape into a Eq file format
-void PointCloud::writeToEqFile(const std::string& filename, int precision){
+void RBFShape::writeToEqFile(const std::string& filename, int precision){
 
     //Create a file and set decimal point precision
     std::ofstream file;
@@ -157,7 +157,7 @@ void PointCloud::writeToEqFile(const std::string& filename, int precision){
 }
 
 //Writes RBFShape into a Raw file format
-void PointCloud::writeToRawFile(const std::string& filename, int precision){
+void RBFShape::writeToRawFile(const std::string& filename, int precision){
     //Create a file and set decimal point precision
     std::ofstream file;
     file.open(filename);
@@ -194,7 +194,7 @@ void PointCloud::writeToRawFile(const std::string& filename, int precision){
     file.close();
 }
 
-void PointCloud::writeTPSdata(std::ofstream& file)
+void RBFShape::writeTPSdata(std::ofstream& file)
 {
     const auto& TPSPoints = getPoints();
     int TPSPointCount = TPSPoints.rows();
@@ -216,7 +216,7 @@ void PointCloud::writeTPSdata(std::ofstream& file)
     }
 }
 
-void PointCloud::write_csv(const std::string& filename, int precision){
+void RBFShape::write_csv(const std::string& filename, int precision){
     //Create a file and set decimal point precision
     std::ofstream file;
     file.open(filename);
@@ -238,7 +238,7 @@ void PointCloud::write_csv(const std::string& filename, int precision){
 }
 
 //TODO? Handle a more complete loading
-bool PointCloud::loadFromEqFile(const std::string& filename){
+bool RBFShape::loadFromEqFile(const std::string& filename){
     std::cout << "Reading file..." << std::endl;
     //Reading infile
     std::string line;
@@ -293,6 +293,77 @@ bool PointCloud::loadFromEqFile(const std::string& filename){
     }
 
     return true;
+}
+
+double RBFShape::compute_normals(){
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
+
+    cloud->points.resize(this->points_.rows() * 3);
+
+    for(size_t i = 0; i < this->points_.rows(); i++){
+        cloud->points[i].x = float(this->points_(i,0));
+        cloud->points[i].y = float(this->points_(i,1));
+        cloud->points[i].z = float(this->points_(i,2));
+    }
+
+    // Create the normal estimation class, and pass the input dataset to it
+    pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
+    ne.setInputCloud (cloud);
+
+    // Create a KD-Tree
+    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+
+    // Output datasets
+    pcl::PointCloud<pcl::Normal>::Ptr cloud_normals (new pcl::PointCloud<pcl::Normal>);
+
+    // Use all neighbors in a sphere of radius 3cm
+    ne.setRadiusSearch (0.03);
+
+    // Compute the features
+    ne.compute (*cloud_normals);
+
+    /*
+    // Output has the PointNormal type in order to store the normals calculated by MLS
+    pcl::PointCloud<pcl::PointNormal> mls_points;
+
+    // Init object (second point type is for the normals, even if unused)
+    pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointNormal> mls;
+
+    mls.setComputeNormals (true);
+
+    // Set parameters
+    mls.setInputCloud (cloud);
+    mls.setPolynomialOrder (2);
+    mls.setSearchMethod (tree);
+    mls.setSearchRadius (0.03);
+
+    // Reconstruct
+    mls.process (mls_points);
+    */
+
+    Eigen::MatrixXd norms = Eigen::MatrixXd(this->points_.rows(), 3);
+
+    for(size_t i = 0; i < this->points_.rows(); i++){
+        norms(i,0) = double(cloud_normals->points[i]._Normal::normal_x);
+        norms(i,1) = double(cloud_normals->points[i]._Normal::normal_y);
+        norms(i,2) = double(cloud_normals->points[i]._Normal::normal_z);
+    }
+
+    std::cout << norms << std::endl;
+    /*
+    // visualize normals
+    pcl::visualization::PCLVisualizer viewer("PCL Viewer");
+    viewer.setBackgroundColor (0.0, 0.0, 0.5);
+    viewer.addPointCloudNormals<pcl::PointXYZ,pcl::Normal>(cloud, &mls);
+
+    while (!viewer.wasStopped ())
+    {
+        viewer.spinOnce ();
+    }
+    */
+
+    return 0.;
 }
 
 } // shapeworks

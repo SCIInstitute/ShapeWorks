@@ -7,11 +7,11 @@ add_subdirectory(solvers)
 FILE(GLOB KERNELS_SOURCE "kernels/*")
 
 set(PointCloud_sources
-  PointCloud.cpp
+  RBFShape.cpp
   ${KERNELS_SOURCE}
   )
 set(PointCloud_headers
-  PointCloud.h
+  RBFShape.h
   )
 
 add_library(PointCloud STATIC
@@ -25,7 +25,7 @@ add_dependencies(PointCloudEvaluators PointCloudSolvers)
 target_link_libraries (PointCloud PUBLIC
     PointCloudEvaluators
     PointCloudSolvers
-    Eigen3::Eigen)
+    Eigen3::Eigen ${PCL_LIBRARIES})
 
 # Install
 set_target_properties(PointCloud PROPERTIES PUBLIC_HEADER

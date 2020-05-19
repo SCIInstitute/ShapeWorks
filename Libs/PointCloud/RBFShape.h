@@ -13,6 +13,17 @@
 #include <iterator>
 #include <algorithm>
 
+#include <pcl/io/io.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/features/integral_image_normal.h>
+#include <pcl/visualization/cloud_viewer.h>
+
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/surface/mls.h>
+#include <pcl/features/normal_3d.h>
+
 #include <itkTranslationTransform.h>
 #include "evaluators/CPURBFEvaluator.h"
 #include "solvers/EigenRBFSolver.h"
@@ -22,16 +33,16 @@
 
 namespace shapeworks {
 
-class PointCloud
+class RBFShape
 {
 public:
-      PointCloud(Eigen::Vector4d coeff = Eigen::Vector4d(1.,1.,1.,1.),
+      RBFShape(Eigen::Vector4d coeff = Eigen::Vector4d(1.,1.,1.,1.),
                        Eigen::Vector3d pows = Eigen::Vector3d(1.,1.,1.),
                        Eigen::MatrixXd points = Eigen::MatrixXd());
 
       /** This function is the deconstructor of the class. It does nothing in this base class.
           It is a virtual function and hence it can be redefined in the derived class(s). */
-      virtual ~PointCloud();
+      virtual ~RBFShape();
 
       /*******************************************************************************************************************/
       /** Access functions: This type of functions are used to provide set/get access to the class member variables. */
@@ -86,6 +97,10 @@ public:
       /** Processing functions: This type of functions define the functionality (i.e., the processing blocks) of the class. */
       /*******************************************************************************************************************/
 
+
+      /** This functions computes the normals from a point could */
+      virtual double compute_normals();
+
       /** This function evaluates the implicit function value (i.e. scalar) at a given 3D point.
           \param point A 3D spatial point that is defined by xyz coordinates.
           The implicit function \f$f(\mathbf{x})\f$ at the point \f$\mathbf{x}\f$ is evaluated as \f$ f(\mathbf{x}) = \mathbf{c}^T\mathbf{x}^\mathbf{p} + c_v \f$
@@ -129,7 +144,7 @@ public:
       void setEmpty(bool isEmpty) { isEmpty_ = isEmpty; }
       std::string getName() const { return name_; }
 
-      PointCloud* func_;
+      RBFShape* func_;
 
       /** A flag to indicate whether the implicit function is empty to allow empty horizon compartments to be added to the tree. */
       bool isEmpty_; // to allow empty horizon compartments to be added to the tree
