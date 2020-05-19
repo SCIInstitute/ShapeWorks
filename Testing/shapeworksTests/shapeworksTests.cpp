@@ -73,13 +73,6 @@ TEST(shapeworksTests, pad)
 }
 
 //---------------------------------------------------------------------------
-TEST(shapeworksTests, centerofmass)
-{
-  shapeworksEnvSetup();
-  ASSERT_TRUE(system("./centerofmass.sh"));
-}
-
-//---------------------------------------------------------------------------
 TEST(shapeworksTests, translate)
 {
   shapeworksEnvSetup();
@@ -91,6 +84,13 @@ TEST(shapeworksTests, translatefail)
 {
   shapeworksEnvSetup();
   ASSERT_TRUE(system("./translatefail.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, centerofmass)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./centerofmass.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -245,6 +245,20 @@ TEST(shapeworksTests, clipfail)
 {
   shapeworksEnvSetup();
   ASSERT_TRUE(system("./clipfail.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, reflect)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./reflect.sh"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, reflectfail)
+{
+  shapeworksEnvSetup();
+  ASSERT_TRUE(system("./reflectfail.sh"));
 }
 
 //---------------------------------------------------------------------------

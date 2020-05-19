@@ -89,7 +89,7 @@ public:
   // modification functions //
 
   /// antialiases image
-  Image &antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, unsigned layers = 3);
+  Image &antialias(unsigned iterations = 50, double maxRMSErr = 0.01f, int layers = 3);
   
   /// helper identical to setOrigin(image.center()) changing origin (in the image header) to physcial center of the image
   Image &recenter();
@@ -152,7 +152,7 @@ public:
   Image &setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   /// Reflect image on the plane specified by center of image and given normal (ex: <1,0,0> to reflect "vertically" across YZ-plane).
-  Image &reflect(const Vector3 &normal = makeVector({1, -1, -1}));
+  Image &reflect(const Vector3 &normal = makeVector({-1, 1, 1}));
 
   // query functions //
 

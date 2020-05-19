@@ -118,15 +118,14 @@ Image& Image::write(const std::string &filename, bool compressed)
   return *this;
 }
 
-Image& Image::antialias(unsigned iterations, double maxRMSErr, unsigned layers)
+Image& Image::antialias(unsigned iterations, double maxRMSErr, int layers)
 {
   using FilterType = itk::AntiAliasBinaryImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
 
   filter->SetMaximumRMSError(maxRMSErr);
   filter->SetNumberOfIterations(iterations);
-  if (layers)
-    filter->SetNumberOfLayers(layers);
+  filter->SetNumberOfLayers(layers);
   filter->SetInput(this->image);
   filter->Update();
   this->image = filter->GetOutput();
@@ -248,6 +247,9 @@ Image& Image::pad(int padding, PixelType value)
 
 Image& Image::translate(const Vector3 &v)
 {
+  if (v[0] == 0 || v[1] == 0 || v[2] == 0)
+    throw std::invalid_argument("Invalid translate point");
+
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-v);            // negate v because ITK applies transformations backwards.
 
@@ -256,6 +258,9 @@ Image& Image::translate(const Vector3 &v)
 
 Image& Image::scale(const Vector3 &s)
 {
+  if (s[0] == 0 || s[1] == 0 || s[2] == 0)
+    throw std::invalid_argument("Invalid scale point");
+
   auto origOrigin(origin());       // scale centered at origin, so temporarily set origin to be the center
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
@@ -269,6 +274,9 @@ Image& Image::scale(const Vector3 &s)
 
 Image& Image::rotate(const double angle, const Vector3 &axis)
 {
+  if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
+  if (angle == 0.0) { throw std::invalid_argument("Invalid angle. Must specify angle in radians"); }
+
   auto origOrigin(origin());       // rotation is around origin, so temporarily set origin to be the center
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
 
@@ -393,6 +401,8 @@ Image& Image::applySigmoidFilter(double alpha, double beta)
 
 Image& Image::applyTPLevelSetFilter(const Image &featureImage, double scaling)
 {
+  if (!featureImage.image) { throw std::invalid_argument("Invalid feature image"); }
+
   using FilterType = itk::TPGACLevelSetImageFilter<ImageType, ImageType>; // TODO: this is no longer part of ITK and should be updated
   FilterType::Pointer filter = FilterType::New();
 
@@ -486,7 +496,7 @@ Image& Image::clip(const Point &o, const Point &p1, const Point &p2, const Pixel
 
 Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
 {
-  if (!axis_is_valid(n)) { throw std::invalid_argument("invalid clipping plane (zero length normal)"); }
+  if (!axis_is_valid(n)) { throw std::invalid_argument("Invalid clipping plane (zero length normal)"); }
 
   itk::ImageRegionIteratorWithIndex<ImageType> iter(this->image, image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd())
@@ -505,11 +515,16 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
 
 Image& Image::reflect(const Vector3 &normal)
 {
+  if ((normal[0] == -1 && (normal[1] == -1 || normal[2] == -1)) ||
+      (normal[1] == -1 && (normal[0] == -1 || normal[2] == -1)) ||
+      (normal[2] == -1 && (normal[0] == -1 || normal[1] == -1))) 
+    throw std::invalid_argument("Invalid normal");
+
   Matrix reflection;
   reflection.Fill(0);
-  reflection[0][0] = -normal[0];
-  reflection[1][1] = -normal[1];
-  reflection[2][2] = -normal[2];
+  reflection[0][0] = normal[0];
+  reflection[1][1] = normal[1];
+  reflection[2][2] = normal[2];
 
   AffineTransformPtr xform(AffineTransform::New());
   xform->SetMatrix(reflection);

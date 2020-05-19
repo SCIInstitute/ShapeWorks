@@ -128,7 +128,7 @@ bool ImageInfo::execute(const optparse::Values &options, SharedCommandData &shar
     std::cout << "physical origin:       " << sharedData.image.origin() << std::endl;
   if (direction)
     std::cout << "direction (coordsys):  " << std::endl
-              << sharedData.image.coordsys();
+              << sharedData.image.coordsys() << std::endl;
   if (center)
     std::cout << "center:                " << sharedData.image.center() << std::endl;
   if (centerofmass)
@@ -299,7 +299,7 @@ bool Translate::execute(const optparse::Values &options, SharedCommandData &shar
 
     if (tx == 0 || ty == 0 || tz == 0)
     {
-      std::cerr << "Must specify a valid translate arguemnt\n";
+      std::cerr << "Must specify a valid translate argument\n";
       return false;
     }
     else
@@ -381,14 +381,12 @@ bool Rotate::execute(const optparse::Values &options, SharedCommandData &sharedD
     std::cerr << "Must specify a rotation angle\n";
     return false;
   }
-  {
-    // if degrees is specified, use it
-    if (degrees != 0.0)
-      radians = degToRad(degrees);
+  // if degrees is specified, use it
+  if (degrees != 0.0)
+    radians = degToRad(degrees);
 
-    sharedData.image.rotate(radians, makeVector({rx, ry, rz}));
-    return true;
-  }
+  sharedData.image.rotate(radians, makeVector({rx, ry, rz}));
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -451,16 +449,8 @@ bool Threshold::execute(const optparse::Values &options, SharedCommandData &shar
   float min = static_cast<float>(options.get("min"));
   float max = static_cast<float>(options.get("max"));
 
-  if (min > max)
-  {
-    std::cout << "Min value should be lesser than max value\n";
-    return false;
-  }
-  else
-  {
-    sharedData.image.threshold(min, max);
-    return true;
-  }
+  sharedData.image.threshold(min, max);
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -782,9 +772,9 @@ void ReflectVolume::buildParser()
   const std::string desc = "reflect images with respect to image center and specific axis";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x").action("store").type("double").set_default(1).help("Value of x in normal [default 1].");
-  parser.add_option("--y").action("store").type("double").set_default(-1).help("Value of x in normal [default -1].");
-  parser.add_option("--z").action("store").type("double").set_default(-1).help("Value of x in normal [default -1].");
+  parser.add_option("--x").action("store").type("double").set_default(-1).help("Value of x in normal [default -1].");
+  parser.add_option("--y").action("store").type("double").set_default(1).help("Value of y in normal [default 1].");
+  parser.add_option("--z").action("store").type("double").set_default(1).help("Value of z in normal [default 1].");
 
   Command::buildParser();
 }
@@ -795,8 +785,18 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
   double y = static_cast<double>(options.get("y"));
   double z = static_cast<double>(options.get("z"));
 
-  sharedData.image.reflect(makeVector({x, y, z}));
-  return true;
+  if ((x == -1 && (y == -1 || z == -1)) ||
+      (y == -1 && (x == -1 || z == -1)) ||
+      (z == -1 && (x == -1 || z == -1)))
+  {
+    std::cerr << "Must specify a valid normal argument\n";
+    return false;
+  }
+  else
+  {
+    sharedData.image.reflect(makeVector({x, y, z}));
+    return true;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
