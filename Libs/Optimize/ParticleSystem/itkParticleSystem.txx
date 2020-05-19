@@ -44,7 +44,6 @@ ParticleSystem<VDimension>
   m_Positions.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
-  //m_DomainFlags.resize(num);
   while(num >= this->m_DomainFlags.size()) {
     m_DomainFlags.push_back(false);
   }
@@ -77,7 +76,6 @@ void ParticleSystem<VDimension>
   m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_PrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_InversePrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  //m_DomainFlags[static_cast<int>( m_Domains.size() -1)] = false;
   
   // Notify any observers.
   ParticleDomainAddEvent e;

@@ -301,7 +301,6 @@ void Optimize::SetUseXYZ(std::vector<bool> use_xyz)
 //---------------------------------------------------------------------------
 void Optimize::SetUseNormals(std::vector<bool> use_normals)
 {
-  std::cerr << "size = " << use_normals.size() << "\n";
   this->m_use_normals = use_normals;
 }
 
