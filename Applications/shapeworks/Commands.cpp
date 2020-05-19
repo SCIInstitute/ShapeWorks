@@ -658,7 +658,7 @@ bool Blur::execute(const optparse::Values &options, SharedCommandData &sharedDat
 ///////////////////////////////////////////////////////////////////////////////
 void BoundingBox::buildParser()
 {
-  const std::string prog = "binary-bounding-box";
+  const std::string prog = "bounding-box";
   const std::string desc = "compute largest bounding box size of the given set of binary images";
   parser.prog(prog).description(desc);
 
@@ -782,9 +782,9 @@ void ReflectVolume::buildParser()
   const std::string desc = "reflect images with respect to image center and specific axis";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--x").action("store").type("double").set_default(1.0).help("Value of x in normal [default 0].");
-  parser.add_option("--y").action("store").type("double").set_default(0.0).help("Value of x in normal [default 0].");
-  parser.add_option("--z").action("store").type("double").set_default(0.0).help("Value of x in normal [default 0].");
+  parser.add_option("--x").action("store").type("double").set_default(1).help("Value of x in normal [default 1].");
+  parser.add_option("--y").action("store").type("double").set_default(-1).help("Value of x in normal [default -1].");
+  parser.add_option("--z").action("store").type("double").set_default(-1).help("Value of x in normal [default -1].");
 
   Command::buildParser();
 }
@@ -793,7 +793,7 @@ bool ReflectVolume::execute(const optparse::Values &options, SharedCommandData &
 {
   double x = static_cast<double>(options.get("x"));
   double y = static_cast<double>(options.get("y"));
-  double z = static_cast<double>(options.get("x"));
+  double z = static_cast<double>(options.get("z"));
 
   sharedData.image.reflect(makeVector({x, y, z}));
   return true;

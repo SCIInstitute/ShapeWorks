@@ -250,6 +250,7 @@ Image& Image::translate(const Vector3 &v)
 {
   AffineTransformPtr xform(AffineTransform::New());
   xform->Translate(-v);            // negate v because ITK applies transformations backwards.
+
   return applyTransform(xform);
 }
 
@@ -261,8 +262,8 @@ Image& Image::scale(const Vector3 &s)
   AffineTransformPtr xform(AffineTransform::New());
   xform->Scale(invert(std::move(const_cast<Vector3&>(s))));   // invert scale ratio because ITK applies transformations backwards.  
   applyTransform(xform);
-
   setOrigin(origOrigin);           // restore origin
+  
   return *this;
 }
 
@@ -274,8 +275,8 @@ Image& Image::rotate(const double angle, const Vector3 &axis)
   AffineTransformPtr xform(AffineTransform::New());
   xform->Rotate3D(axis, -angle);   // negate angle because ITK applies transformations backwards.  
   applyTransform(xform);
-
   setOrigin(origOrigin);           // restore origin
+  
   return *this;
 }
 
@@ -421,7 +422,7 @@ Image& Image::gaussianBlur(double sigma)
   return *this;
 }
 
-Image::Region Image::boundingBox(PixelType isoValue) const
+Image::Region Image::boundingBox() const
 {
   Image::Region bbox;
 
@@ -430,7 +431,7 @@ Image::Region Image::boundingBox(PixelType isoValue) const
   {
     PixelType val = imageIterator.Get();
 
-    if (val <= isoValue)
+    if (val == 1)
       bbox.expand(imageIterator.GetIndex());
 
     ++imageIterator;
@@ -502,7 +503,6 @@ Image& Image::clip(const Vector &n, const Point &q, const PixelType val)
   return *this;
 }
 
-// todo: fixme
 Image& Image::reflect(const Vector3 &normal)
 {
   Matrix reflection;
@@ -512,13 +512,9 @@ Image& Image::reflect(const Vector3 &normal)
   reflection[2][2] = -normal[2];
 
   AffineTransformPtr xform(AffineTransform::New());
-  Vector3 ctr(toVector(center()));
-  xform->Translate(ctr);
   xform->SetMatrix(reflection);
-  xform->Translate(-ctr);
-  // Point3 currentOrigin(origin());
-  //recenter().applyTransform(xform).setOrigin(currentOrigin);
-  applyTransform(xform);
+  Point3 currentOrigin(origin());
+  recenter().applyTransform(xform).setOrigin(currentOrigin);
 
   return *this;
 }

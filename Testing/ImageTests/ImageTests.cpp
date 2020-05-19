@@ -360,7 +360,7 @@ TEST(ImageTests, cropTest)
   Image image(test_location + "seg.ellipsoid_1.nrrd");
   Image::Region region;
   region = ImageUtils::boundingBox(images);
-  image.crop(region);
+  image.pad().crop(region);
   Image ground_truth(test_location + "crop_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
@@ -471,7 +471,7 @@ TEST(ImageTests, reflectTest)
 
   // reflect across XZ plane (looks like vertical direction facing "front" of volume, X-axis pointing right, Y-axis pointing up)
   Image image(test_location + "1x2x2.nrrd");
-  image.reflect(makeVector({0.0, 1.0, 0.0}));
+  image.reflect();
   Image ground_truth(test_location + "reflect_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);

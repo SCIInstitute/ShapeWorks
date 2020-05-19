@@ -9,13 +9,13 @@
 
 namespace shapeworks {
 
-Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image::PixelType isoValue)
+Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames)
 {
   if (filenames.empty())
     throw std::invalid_argument("no filenames provided from which to compute a bounding box"); 
 
   Image img(filenames[0]);
-  Image::Region bbox(img.boundingBox(isoValue));
+  Image::Region bbox(img.boundingBox());
   Dims dims(img.dims()); // images must all be the same size
 
 	auto filename = filenames.begin();
@@ -24,7 +24,7 @@ Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames, Image
     Image img(*filename);
     if (img.dims() != dims) { throw std::invalid_argument("image sizes do not match (" + *filename + ")"); }
 
-    bbox.grow(img.boundingBox(isoValue));
+    bbox.grow(img.boundingBox());
 
 		++filename;
   }

@@ -18,7 +18,9 @@ public:
 
   struct Region
   {
-    Coord min = {0,0,0};
+    Coord min = {static_cast<itk::IndexValueType>(1e6),
+                 static_cast<itk::IndexValueType>(1e6),
+                 static_cast<itk::IndexValueType>(1e6)};
     Coord max = {0,0,0};
     Region(const Dims &dims) : min({0, 0, 0}) {
       if (0 != (dims[0] + dims[1] + dims[2])) 
@@ -150,7 +152,7 @@ public:
   Image &setOrigin(Point3 origin = Point3({0, 0, 0}));
 
   /// Reflect image on the plane specified by center of image and given normal (ex: <1,0,0> to reflect "vertically" across YZ-plane).
-  Image &reflect(const Vector3 &normal = makeVector({1.0, 0.0, 0.0}));
+  Image &reflect(const Vector3 &normal = makeVector({1, -1, -1}));
 
   // query functions //
 
@@ -176,7 +178,7 @@ public:
   Point3 centerOfMass(PixelType minval = 0.0, PixelType maxval = 1.0) const;  
 
   /// computes the logical coordinates of the largest region of data <= the given isoValue
-  Image::Region boundingBox(PixelType isoValue = 1.0) const;
+  Image::Region boundingBox() const;
 
   /// converts from pixel coordinates to physical space
   Point3 logicalToPhysical(const Coord &v) const;
