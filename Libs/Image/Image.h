@@ -18,10 +18,10 @@ public:
 
   struct Region
   {
-    Coord min = {static_cast<itk::IndexValueType>(1e6),
-                 static_cast<itk::IndexValueType>(1e6),
-                 static_cast<itk::IndexValueType>(1e6)};
-    Coord max = {0,0,0};
+    Coord min = Coord({static_cast<itk::IndexValueType>(1e6),static_cast<itk::IndexValueType>(1e6), static_cast<itk::IndexValueType>(1e6)});
+    // Coord min = Coord({0, 0, 0});
+    // Coord max({0, 0, 0});
+    Coord max = Coord({0,0,0});
     Region(const Dims &dims) : min({0, 0, 0}) {
       if (0 != (dims[0] + dims[1] + dims[2])) 
         max = Coord({static_cast<long>(dims[0])-1,
