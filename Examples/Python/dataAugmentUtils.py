@@ -130,17 +130,14 @@ def get_data(path):
 	return file_list
 
 
-def pca_mode_loading_computation(file_path, M, N, d, parent_dir, k_pt):
-
+def pca_mode_loading_computation(file_path, M, N, d, parent_dir, cutoff):
 	pca_matrix = create_data_matrix(file_path,M*d,N,0)	
 	trick_cov_matrix, mean_shape, meanNor_data_matrix = get_mean_cov(pca_matrix,N)	
 	eigen_values, eigen_vectors = compute_eigen_vectors(trick_cov_matrix,pca_matrix,N) 
-	if k_pt == 0:
-		cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
-		newKpt = np.where(cumDst > 0.95)[0][0]
-		k_pt = newKpt + 1
+	cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
+	newKpt = np.where(cumDst > cutoff)[0][0]
+	k_pt = newKpt + 1
 	save_pca_information(mean_shape, eigen_values, eigen_vectors, parent_dir, M, d, N)
-
 	# now compute the PCA loadings
 	W = eigen_vectors[:, :k_pt]
 	X_loadings = np.matmul(meanNor_data_matrix.T, W)
@@ -194,7 +191,7 @@ def create_python_xml(input_points_list, input_images_list, parent_dir):
 	data = ET.tostring(root, encoding='unicode')
 	# ET.dump(root)
 	# print(data)
-	file = open("XML_convert_to_tilde_python.xml", "w+")
+	file = open(parent_dir + "/XML_convert_to_tilde_python.xml", "w+")
 	file.write(data)
 	return output_images_list
 
@@ -222,16 +219,15 @@ def warp_image_to_space(filename):
 	subprocess.call(['./ShapeWarp', filename])
 
 
-def pca_mode_loadings_computation_images(output_images_list, N, imgDims, parent_dir, k, f):
+def pca_mode_loadings_computation_images(output_images_list, N, imgDims, parent_dir, cutoff, f):
 	# data, header,x,y,z = read_data_from_nrrd(output_images_path)
 	M = imgDims[0]*imgDims[1]*imgDims[2]
 	pca_matrix = create_data_matrix(output_images_list,M,N,1)
 	trick_cov_matrix, mean_shape, meanNor_data_matrix = get_mean_cov(pca_matrix,N)
 	eigen_values, eigen_vectors = compute_eigen_vectors(trick_cov_matrix,pca_matrix,N) 
-	if k == 0:
-		cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
-		newKpt = np.where(cumDst > 0.95)[0][0]
-		k = newKpt + 1
+	cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
+	newKpt = np.where(cumDst > cutoff)[0][0]
+	k = newKpt + 1
 	# eigen_values, new_eigen_vectors = compute_eigen_vectors(trick_cov_matrix,pca_matrix,N)	#Get the eigen values and normalized eigen vectors respectively
 	save_pca_information_images(mean_shape, eigen_values, eigen_vectors, parent_dir, imgDims, N, f)
 	W = eigen_vectors[:, :k]
@@ -273,7 +269,7 @@ def nearestImg(X, data):
 	diffMat = np.sum((data - np.matlib.repmat(X, data.shape[0], 1))**2, axis = 1)
 	return np.min(diffMat)
 
-def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_particles, mean_shape, num_samples, K_pt, M, d, N, thresh, parent_dir):
+def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_particles, mean_shape, num_samples, K_pt, M, d, N, parent_dir):
 	use_eigvals = eigvals_particles[:K_pt]
 	use_sd = np.sqrt(use_eigvals)
 	use_eigvecs = eigvecs_particles[:, :K_pt]
@@ -283,25 +279,24 @@ def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_partic
 	count = 0
 	AllLoadings = np.zeros([num_samples, K_pt])
 	while count < num_samples:
-		print("Generated Image : ", count)
+		print("Generated Patricles : ", count)
 		rv = 0.2*np.random.randn(1, K_pt)
 		mulp = rv*use_sd
-		# print(rv.shape, sd.shape, mulp.shape, use_eigvecs.sh)
 		projDist = mahalDist(mulp, pca_loadings_particles)
-		# print(projDist)
-		if projDist <= thresh:
-			mulp = numpy.matlib.repmat(mulp, d*M, 1)
-			Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
-			Ygen = Y.reshape(M, d)
-			nm = newDir + '/Generated_sample_' + str(count) + '.particles'
-			np.savetxt(nm, Ygen)
-			count += 1
+		# if projDist <= thresh:
+		mulp = numpy.matlib.repmat(mulp, d*M, 1)
+		Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
+		Ygen = Y.reshape(M, d)
+		nm = newDir + '/Generated_sample_' + str(count) + '.particles'
+		np.savetxt(nm, Ygen)
+		count += 1
 
 def nearbyLoading(data):
 	rdidx = np.random.randint(0, data.shape[0])
 	newLoading = data[rdidx, ...] + np.random.randn(data.shape[1],)
 	return newLoading
-def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_shape, num_samples, K_img, imgDims, N, thresh, parent_dir, f):
+
+def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_shape, num_samples, K_img, imgDims, N, parent_dir, f):
 	use_eigvals = eigvals_images[:K_img]
 	use_sd = np.sqrt(use_eigvals)
 	use_eigvecs = eigvecs_images[:, :K_img]
@@ -312,28 +307,17 @@ def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_sh
 	count = 0
 	AllLoadings = np.zeros([num_samples, K_img])
 	while count < num_samples:
-		
-		if thresh == 0:
-			mulp = nearbyLoading(pca_loadings_images)
-			print("Generated Image : ", count)
-			mulp = numpy.matlib.repmat(mulp, imgSize, 1)
-			Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
-			Ygen = Y.reshape(imgDims[0], imgDims[1], imgDims[2])
-			nm = newDir + '/Generated_sample_' + str(count) + '.nrrd'
-			nrrd.write(nm, Ygen, f)
-			count += 1
-		else:
-			rv = np.random.randn(1, K_img)
-			mulp = rv*use_sd
-			projDist = nearestImg(mulp, pca_loadings_images)
-			if projDist <= thresh:
-				print("Generated Image : ", count)
-				mulp = numpy.matlib.repmat(mulp, imgSize, 1)
-				Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
-				Ygen = Y.reshape(imgDims[0], imgDims[1], imgDims[2])
-				nm = newDir + '/Generated_sample_' + str(count) + '.nrrd'
-				nrrd.write(nm, Ygen, f)
-				count += 1
+		rv = np.random.randn(1, K_img)
+		mulp = rv*use_sd
+		projDist = nearestImg(mulp, pca_loadings_images)
+		# if projDist <= thresh:
+		print("Generated Image : ", count)
+		mulp = numpy.matlib.repmat(mulp, imgSize, 1)
+		Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
+		Ygen = Y.reshape(imgDims[0], imgDims[1], imgDims[2])
+		nm = newDir + '/Generated_sample_' + str(count) + '.nrrd'
+		nrrd.write(nm, Ygen, f)
+		count += 1
 
 def findClosest(nm, pointList):
 	print("find Closest")
@@ -450,6 +434,6 @@ def create_final_xml(num_samples, parent_dir):
 	data = ET.tostring(root, encoding='unicode')
 	# ET.dump(root)
 	# print(data)
-	file = open("XML_get_final_images_python.xml", "w+")
+	file = open(parent_dir + "/XML_get_final_images_python.xml", "w+")
 	file.write(data)
 	return output_images_list

@@ -14,38 +14,34 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
-######################## Data Augmentation Functions ###############################
+######################## Data Augmentation  ###############################
 
-# def dataAugment(data_list, point_list, out_dir, num_samples, K_pt, K_img, th_pt, th_img, aug_type):
-def dataAugment(data_list, point_list, out_dir, num_samples=100, K_pt=0, K_img=0, th_pt=1, th_img=0):
+def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 	N_images, M_particles, pt_dim, imgDims, f = ut.read_necessarry_metadata(data_list, point_list)
-	K_pt, pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles = ut.pca_mode_loading_computation(point_list, M_particles, N_images, pt_dim, out_dir, K_pt)
+	K_pt, pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles = ut.pca_mode_loading_computation(point_list, M_particles, N_images, pt_dim, out_dir, PCA_var_cutoff)
 	np.save(os.path.join(out_dir, 'original_loadings_particles.npy'), pca_particle_loadings)
 	print("The PCA modes of particles being retained : ", K_pt)
 		
 	tilde_images_list = ut.create_python_xml(point_list, data_list, out_dir)
-	ut.create_cpp_xml("XML_convert_to_tilde_python.xml", "XML_convert_to_tilde_cpp.xml")
-	print("Done")
-	ut.warp_image_to_space("XML_convert_to_tilde_cpp.xml")
+	ut.create_cpp_xml(out_dir + "/XML_convert_to_tilde_python.xml", out_dir + "/XML_convert_to_tilde_cpp.xml")
+	ut.warp_image_to_space(out_dir + "/XML_convert_to_tilde_cpp.xml")
 	
-	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = ut.pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir, K_img, f)
+	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = ut.pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir,PCA_var_cutoff, f)
 	np.save(os.path.join(out_dir, 'original_loadings_images.npy'), pca_images_loadings)
 	print("The PCA modes of images being retained : ", K_img)
 
-	ut.generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, th_pt, out_dir)
+	ut.generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, out_dir)
 
-	ut.generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, th_img, out_dir, f)
+	ut.generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, out_dir, f)
 	ut.create_final_xml(num_samples, out_dir)
-	ut.create_cpp_xml("XML_get_final_images_python.xml", "XML_get_final_images_cpp.xml")
-	ut.warp_image_to_space("XML_get_final_images_cpp.xml")
+	ut.create_cpp_xml(out_dir + "/XML_get_final_images_python.xml", out_dir + "/XML_get_final_images_cpp.xml")
+	ut.warp_image_to_space( out_dir + "/XML_get_final_images_cpp.xml")
 
-	# if aug_type == "shape":
-	# 	ut.generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, th_pt, parent_dir)
-	# 	ut.create_final_xml_shape(num_samples, parent_dir, point_list_array, data_list_array)
-	# 	ut.create_cpp_xml("XML_get_final_images_python.xml", "XML_get_final_images_cpp.xml")
-	# 	ut.warp_image_to_space("XML_get_final_images_cpp.xml")
+	print("Done.")
+	print(str(K_pt) +' modes for particles.')
+	print(str(K_img) + ' modes for images.')
 	return [], [], ''
 
 ######################## Data loading functions ####################################
