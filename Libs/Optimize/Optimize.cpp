@@ -1961,7 +1961,7 @@ void Optimize::SetDomainFlags(std::vector<int> flags)
 }
 
 //---------------------------------------------------------------------------
-std::vector<int> Optimize::GetDomainFlags()
+const std::vector<int> &Optimize::GetDomainFlags()
 {
   return this->m_domain_flags;
 }

@@ -222,7 +222,7 @@ public:
   //! Set Domain Flags (TODO: details)
   void SetDomainFlags(std::vector<int> flags);
 
-  std::vector<int> GetDomainFlags();
+  const std::vector<int>& GetDomainFlags();
 
   //! Set if file output is enabled
   void SetFileOutputEnabled(bool enabled);
