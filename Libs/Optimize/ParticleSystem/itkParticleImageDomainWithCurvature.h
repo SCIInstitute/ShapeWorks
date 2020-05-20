@@ -59,7 +59,7 @@ public:
 
     m_VDBCurvature = openvdb::FloatGrid::create();
     auto vdbAccessor = m_VDBCurvature->getAccessor();
-    const auto band = this->GetSpacing().GetVnlVector().max_value() * this->GetNarrowBand();
+    const auto narrow_band = this->GetNarrowBand();
 
     itk::ImageRegionIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
     itk::ImageRegionIteratorWithIndex<ImageType> curvIt(f->GetOutput(),
@@ -72,7 +72,7 @@ public:
       }
       const auto pixel = it.Get();
 
-      if (abs(pixel) > band) {
+      if (abs(pixel) > narrow_band) {
         continue;
       }
 

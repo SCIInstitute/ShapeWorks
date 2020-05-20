@@ -78,11 +78,11 @@ public:
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
 
-    const auto band = m_Spacing.GetVnlVector().max_value() * this->GetNarrowBand();
+    const auto narrow_band = this->GetNarrowBand();
     while(!it.IsAtEnd()) {
       const auto idx = it.GetIndex();
       const auto pixel = it.Get();
-      if(abs(pixel) > band) {
+      if(abs(pixel) > narrow_band) {
         ++it;
         continue;
       }

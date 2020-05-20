@@ -49,7 +49,7 @@ public:
   void SetImage(ImageType *I)
   {
     Superclass::SetImage(I);
-    const auto band = this->GetSpacing().GetVnlVector().max_value() * this->GetNarrowBand();
+    const auto narrow_band = this->GetNarrowBand();
 
     // Load the i-th hessian from an itk Image
     const auto LoadVDBHessian = [&](const int i, const typename ImageType::Pointer hess) {
@@ -69,7 +69,7 @@ public:
         }
         const auto hess = hessIt.Get();
         const auto pixel = it.Get();
-        if(abs(pixel) > band) {
+        if(abs(pixel) > narrow_band) {
           continue;
         }
 
