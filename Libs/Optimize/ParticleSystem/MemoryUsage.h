@@ -6,4 +6,4 @@
 
 #ifdef LOG_MEMORY_USAGE
 void process_mem_usage(double& vm_usage, double& resident_set);
-#endif LOG_MEMORY_USAGE
+#endif
