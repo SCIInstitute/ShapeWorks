@@ -1,13 +1,52 @@
 import os
 import numpy as np
+from numpy import matlib
 import itk
+import dataAugmentUtils as ut
 from collections import OrderedDict
 import random
 import time
+import shutil
+import subprocess
+import nrrd
 import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
+
+######################## Data Augmentation Functions ###############################
+
+# def dataAugment(data_list, point_list, out_dir, num_samples, K_pt, K_img, th_pt, th_img, aug_type):
+def dataAugment(data_list, point_list, out_dir, num_samples=100, K_pt=0, K_img=0, th_pt=1, th_img=0):
+	if not os.path.exists(out_dir):
+		os.makedirs(out_dir)
+	N_images, M_particles, pt_dim, imgDims, f = ut.read_necessarry_metadata(data_list, point_list)
+	K_pt, pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles = ut.pca_mode_loading_computation(point_list, M_particles, N_images, pt_dim, out_dir, K_pt)
+	np.save(os.path.join(out_dir, 'original_loadings_particles.npy'), pca_particle_loadings)
+	print("The PCA modes of particles being retained : ", K_pt)
+		
+	tilde_images_list = ut.create_python_xml(point_list, data_list, out_dir)
+	ut.create_cpp_xml("XML_convert_to_tilde_python.xml", "XML_convert_to_tilde_cpp.xml")
+	print("Done")
+	ut.warp_image_to_space("XML_convert_to_tilde_cpp.xml")
+	
+	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = ut.pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir, K_img, f)
+	np.save(os.path.join(out_dir, 'original_loadings_images.npy'), pca_images_loadings)
+	print("The PCA modes of images being retained : ", K_img)
+
+	ut.generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, th_pt, out_dir)
+
+	ut.generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, th_img, out_dir, f)
+	ut.create_final_xml(num_samples, out_dir)
+	ut.create_cpp_xml("XML_get_final_images_python.xml", "XML_get_final_images_cpp.xml")
+	ut.warp_image_to_space("XML_get_final_images_cpp.xml")
+
+	# if aug_type == "shape":
+	# 	ut.generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, th_pt, parent_dir)
+	# 	ut.create_final_xml_shape(num_samples, parent_dir, point_list_array, data_list_array)
+	# 	ut.create_cpp_xml("XML_get_final_images_python.xml", "XML_get_final_images_cpp.xml")
+	# 	ut.warp_image_to_space("XML_get_final_images_cpp.xml")
+	return [], [], ''
 
 ######################## Data loading functions ####################################
 
@@ -43,11 +82,16 @@ reads .nrrd file and retunrs data
 the except is for the generated files, it forces the .nrrd to be in a format itk can read
 '''
 def getImage(path):
+	print(path)
 	try:
 		image = itk.imread(path)
 	except:
 		image = itk.imread(path, itk.F)
 	img = itk.GetArrayFromImage(image)
+	return [list(img)]
+
+def getImage2(path):
+	img, f = nrrd.read(path)
 	return [list(img)]
 
 '''
@@ -102,8 +146,8 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir, batch_size=1
 	scores = []
 	models = []
 	prefixes = []
-	# for index in range(len(imglist)):
-	for index in range(8,40):
+	for index in range(len(imglist)):
+	# for index in range(8,40):
 		if index%200 == 0:
 			print(str((index/len(imglist))*100)+'%')
 		image_path = imglist[index]
@@ -217,20 +261,23 @@ class DeepSSMNet(nn.Module):
 		self.pca_pred = nn.Sequential(OrderedDict([
 			('linear', nn.Linear(96, 6))
 		]))
+		# self.particles_pred = nn.Sequential(OrderedDict([
+		# 	('linear', nn.Linear(6, 10000))
+		# ]))
 	def forward(self, x):
 		x = self.features(x)
 		return self.pca_pred(x)
 
 class Flatten(nn.Module):
-    def forward(self, x):
-        return x.view(x.size(0), -1)
+	def forward(self, x):
+		return x.view(x.size(0), -1)
 
 def weight_init(module, initf):
-    def foo(m):
-        classname = m.__class__.__name__.lower()
-        if isinstance(m, module):
-            initf(m.weight)
-    return foo
+	def foo(m):
+		classname = m.__class__.__name__.lower()
+		if isinstance(m, module):
+			initf(m.weight)
+	return foo
 #####################################
 
 def log_print(logger, values):

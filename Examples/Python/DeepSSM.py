@@ -4,11 +4,6 @@
 Full Example Pipeline for Statistical Shape Modeling with ShapeWorks DeepSSM
 ====================================================================
 Jadie Adams
-
-Data: Unsegmented Femur CT scans
-
-
-First import the necessary modules
 """
 
 from zipfile import ZipFile
@@ -29,11 +24,10 @@ from DeepSSMUtils import *
 parent_dir="TestDeepSSM/"
 if not os.path.exists(parent_dir):
 	os.makedirs(parent_dir)
+datasetName = "femur"
+input_dir = parent_dir + datasetName + '/'
 
-# print("\nStep 1. Download Data\n")
-
-datasetName = "deepssm_femur"
-
+# print("\nStep 1. Get Data\n")
 # # get zipfile if not there
 # filename = datasetName + ".zip"
 # if not os.path.exists(filename):
@@ -41,43 +35,69 @@ datasetName = "deepssm_femur"
 # 	import DatasetUtils
 # 	DatasetUtils.downloadDataset(datasetName)
 
-# # extract the zipfile  
+# # extract the zipfile
 # print("Extracting data from " + filename + "...")
 # with ZipFile(filename, 'r') as zipObj:
 # 	zipObj.extractall(path=parent_dir)
 
-print("\nStep 2. Reformat Data for Pytorch\n")
 
-img_dir = parent_dir + datasetName + '/images/'
-model_dir = parent_dir + datasetName + '/model/'
-pca_path = parent_dir + datasetName + '/PCA_scores.csv'
+
+print("\nStep 2. Augment data\n")
+
+img_dir = input_dir + "groomed_images/"
+img_list = []
+for file in os.listdir(img_dir):
+	img_list.append(img_dir + file)
+img_list = sorted(img_list)
+
+model_dir =  input_dir + "model/"
+particle_list = []
+for file in os.listdir(model_dir):
+	if "local" in file:
+		particle_list.append(model_dir + file)
+particle_list = sorted(particle_list)
+
+# Data Augmentation
+img_dir, model_dir, pca_path = dataAugment(img_list, particle_list, parent_dir + "augmentation")
+
+
+
+
+# print("\nStep 3. Reformat Data for Pytorch\n")
+# img_dir = parent_dir  + datasetName + '/images/'
+# model_dir = parent_dir + datasetName + '/model/'
+# pca_path = parent_dir + datasetName + '/PCA_scores.csv'
+
+# img_dir = 'TestDeepSSM_old/deepssm_femur/images/'
+# model_dir = 'TestDeepSSM_old/deepssm_femur/model/'
+# pca_path = 'TestDeepSSM_old/deepssm_femur/PCA_scores.csv'
 # Hyper-paramter batch_size for training
 # Higher batch size will help speed up training but uses more cuda memory
 # If you get a memory error try reducing the batch size
-batch_size = 2
+# batch_size = 2
 
-train_loader, val_loader, test_loader, test_sample_names = getTorchDataLoaders(img_dir, model_dir, pca_path, parent_dir, batch_size)
+# train_loader, val_loader, test_loader, test_sample_names = getTorchDataLoaders(img_dir, model_dir, pca_path, parent_dir, batch_size)
 
-# #debug
-# train_loader = "TestDeepSSM/TorchDataLoaders/train"
-# val_loader = "TestDeepSSM/TorchDataLoaders/validation"
-# test_loader = "TestDeepSSM/TorchDataLoaders/test"
+# # #debug
+# # train_loader = "TestDeepSSM/TorchDataLoaders/train"
+# # val_loader = "TestDeepSSM/TorchDataLoaders/validation"
+# # test_loader = "TestDeepSSM/TorchDataLoaders/test"
 
-print("\nStep 3. Define model.\n")
-model = DeepSSMNet()
+# print("\nStep 4. Define model.\n")
+# model = DeepSSMNet()
 
-print("\nStep 4. Train model.\n")
-# Training parameters dict
-# val_freq sets how often too test on validation set and log
-# for example val_freq=1 is every epoch and val_freq=2 is every other
-parameters = {"epochs":10, "learning_rate":0.001, "val_freq":1}
-model_path = train(model, train_loader, val_loader, parameters, parent_dir)
+# print("\nStep 5. Train model.\n")
+# # Training parameters dict
+# # val_freq sets how often too test on validation set and log
+# # for example val_freq=1 is every epoch and val_freq=2 is every other
+# parameters = {"epochs":10, "learning_rate":0.001, "val_freq":1}
+# model_path = train(model, train_loader, val_loader, parameters, parent_dir)
 
-print("\nStep 5. Test DeepSSM\n") 
+# print("\nStep 6. Test DeepSSM\n") 
 
-# Test DeepSSM
-mr_error, rel_error = test(model, test_loader, test_sample_names)
-print("Average mean root MSE on test set:")
-print(mr_error)
-print("Average relative error on test set:")
-print(rel_error)
+# # Test DeepSSM
+# mr_error, rel_error = test(model, test_loader, test_sample_names)
+# print("Average mean root MSE on test set:")
+# print(mr_error)
+# print("Average relative error on test set:")
+# print(rel_error)
