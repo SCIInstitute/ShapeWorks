@@ -114,7 +114,6 @@ int Project::get_number_of_domains()
   return 0;
 }
 
-
 //---------------------------------------------------------------------------
 std::vector<std::shared_ptr<Subject>> &Project::get_subjects()
 {
@@ -151,7 +150,7 @@ void Project::set_value(int column, int subject_id, std::string value)
   xlnt::worksheet ws = this->wb_->sheet_by_index(0);
 
   //std::cerr << "setting value for column = " << column << ", subject = " << subject_id << " to " <<
-    //value << "\n";
+  //value << "\n";
 
   ws.cell(xlnt::cell_reference(column, subject_id)).value(value);
 }
@@ -192,14 +191,12 @@ void Project::load_subjects()
     subject->set_segmentation_filenames(this->get_list(seg_columns, i));
     subject->set_groomed_filenames(this->get_list(groomed_columns, i));
 
-    if (local_particle_column > 0)
-    {
+    if (local_particle_column > 0) {
       this->particles_present_ = true;
       subject->set_local_particle_filename(this->get_subject_value(local_particle_column, i));
     }
 
-    if (global_particle_column > 0)
-    {
+    if (global_particle_column > 0) {
       this->particles_present_ = true;
       subject->set_global_particle_filename(this->get_subject_value(global_particle_column, i));
     }
@@ -274,7 +271,7 @@ int Project::get_index_for_column(std::string name, bool create_if_not_found)
   if (create_if_not_found) {
 //    std::cerr << "couldn't find: " << name << "\n";
     auto column = ws.highest_column();
-  //  std::cerr << "highest column is " << column.index << "\n";
+    //  std::cerr << "highest column is " << column.index << "\n";
     if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>() == "") {
       ws.cell(xlnt::cell_reference(column.index, 1)).value(name);
       return column.index;
@@ -364,15 +361,18 @@ Settings Project::get_settings(std::string name)
 //---------------------------------------------------------------------------
 void Project::set_settings(std::string name, Settings settings)
 {
-
   try {
-
-    if (!this->wb_->contains(name)) {
-      auto ws = this->wb_->create_sheet();
-      ws.title(name);
+    // remove the old sheet
+    // we do this because otherwise keys that were removed, we would have to search
+    // for and remove these keys
+    if (this->wb_->contains(name)) {
+      auto ws = this->wb_->sheet_by_title(name);
+      this->wb_->remove_sheet(ws);
     }
 
-    auto ws = this->wb_->sheet_by_title(name);
+    auto ws = this->wb_->create_sheet();
+    ws.title(name);
+
     ws.cell(xlnt::cell_reference(1, 1)).value("key");
     ws.cell(xlnt::cell_reference(2, 1)).value("value");
     int row = 2; // skip header
@@ -410,7 +410,7 @@ void Project::set_list(std::vector<std::string> columns, int subject,
   for (int s = 0; s < columns.size(); s++) {
     auto column = columns[s];
     int column_index = get_index_for_column(column, true);
-    std::cerr << "get_index_for_column(" << column << " returned " << column_index << "\n";
+    //std::cerr << "get_index_for_column(" << column << ") returned " << column_index << "\n";
     this->set_value(column_index, subject + 2, values[s]); // +1 for header, +1 for 1-indexed
   }
 }
