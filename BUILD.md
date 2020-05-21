@@ -35,7 +35,7 @@ See [GettingStarted.md](GettingStarted.md#source-and-branches) for more details 
 ## Install dependencies
 
 ### Conda dependencies
-To install conda based dependencies, run:
+To install conda based dependencies (currently requires either bash or zsh shell), run:
 ```
 $ source conda_installs.sh
 ```
