@@ -16,6 +16,12 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
+######################## Data Augmentation  ###############################
+
+'''
+Data augmentation helper
+	Pads image by pad_amount
+'''
 def padImage(filename, pad_amount):
 	[d, f] = nrrd.read(filename)
 	dim = d.shape
@@ -27,14 +33,30 @@ def padImage(filename, pad_amount):
 	dd = np.pad(d, ((x[0], y[0]), (x[1], y[1]), (x[2], y[2])), 'constant')
 	return [dd, f]
 
+'''
+Data augmentation helper
+	Down samples image by factor
+'''
 def downsampleNrrd(filename, factor):
 	[inpt, f] = nrrd.read(filename)
 	output = ndimage.interpolation.zoom(inpt, factor, prefilter=True)
 	return [np.array(output), f]
 
-######################## Data Augmentation  ###############################
-
-def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doResample=0, doPad=0):
+'''
+Creates augmented images and particle models from provided list using PCA
+Inputs:
+	data_list - list of image paths
+	point_list - list of corresponding .particles paths
+	out_dir - folder to save data augmentation output
+	num_samples - number of examples to generate
+	PCA_var_cutoff - percent of variability used to decied how many PCA modes to retain (95-97% is usually a good range)
+	doResample - if 1 generated and original images will be reampled to half their size for faster training
+	doPad - if 1 a layer of padding will be added around generated and original images
+Output:
+	out_csv - a csv file with row containing: Path to image, path to particles, PCA modes
+	(Note this contains both original and generated smaples in a shuffled order)
+'''
+def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doResample=0, doPad=0):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
 	N_images, M_particles, pt_dim, imgDims, f = ut.read_necessarry_metadata(data_list, point_list)
@@ -60,8 +82,10 @@ def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doR
 	print("\nWarping generated images to space:")
 	ut.warp_image_to_space( out_dir + "/XML_get_final_images_cpp.xml")
 
-	# Paths to all images
-	pathlist = data_list + generated_images_list
+	# Paths lists
+	image_path_list = data_list + generated_images_list
+	particle_path_list = point_list + generated_particles_list
+
 	# Get original loadings
 	origLoadings = out_dir + 'original_loadings_particles.npy'
 	K = np.load(origLoadings)
@@ -75,7 +99,6 @@ def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doR
 	for i in range(K_pt):
 		pmd = np.loadtxt(pcaDir + 'pcamode' + str(i) + '.particles')
 		W[..., i] = pmd.flatten()
-
 	X = np.zeros([num_samples + num_orig, K_pt])
 	particleDir = out_dir + 'Generated-Particles/'
 	for i in range(num_samples):
@@ -83,13 +106,12 @@ def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doR
 		normed = newScan - mshp
 		normed = normed.reshape([1, N*3])
 		X[i, ...] = np.matmul(normed, W)
-
 	X[num_samples:, ...] = K
 
-	# if need for resampling and padding arises
+	# Padding and resmapling
+	print("\nResampling and padding if neccesary:")
 	resmpleFactor = 0.5
 	pad_amount = 4
-	# make appropriate directories
 	if doPad == 1:
 		padDir = out_dir + 'paddedOut/'
 		if not os.path.exists(padDir):
@@ -98,24 +120,23 @@ def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doR
 		resampleDir = out_dir + 'resampleOut/'
 		if not os.path.exists(resampleDir):
 			os.makedirs(resampleDir)
-
-	print("\nResampling and padding if neccesary:")
-	for i in range(len(pathlist)):
-		print("Image " + str(i) + " out of " + str(len(pathlist)))
+	for i in range(len(image_path_list)):
+		print("Image " + str(i) + " out of " + str(len(image_path_list)))
 		if doPad == 1:
-			[padout,f] = padImage(pathlist[i], pad_amount)
-			newnm = pathlist[i].rsplit('/', 1)[1]
-			newnm = newnm.replace('.nrrd', '_padded.nrrd')
+			[padout,f] = padImage(image_path_list[i], pad_amount)
+			newnm = image_path_list[i].rsplit('/', 1)[1]
+			newnm = newnm.replace('.nrrd', '.padded.nrrd')
 			newnm = padDir + newnm
 			nrrd.write(newnm, padout, f)
-			pathlist[i] = newnm
+			image_path_list[i] = newnm
 		if doResample == 1:
-			[resampleout,f] = downsampleNrrd(pathlist[i], resmpleFactor)
-			newnm = pathlist[i].rsplit('/', 1)[1]
-			newnm = newnm.replace('.nrrd', 'resampled_.nrrd')
+			[resampleout,f] = downsampleNrrd(image_path_list[i], resmpleFactor)
+			newnm = image_path_list[i].rsplit('/', 1)[1]
+			newnm = newnm.replace('.nrrd', '.resampled.nrrd')
 			newnm = resampleDir + newnm
 			nrrd.write(newnm, resampleout, f)
-			pathlist[i] = newnm
+			image_path_list[i] = newnm
+
 	# Write csv in shuffled order
 	idx = np.arange(num_samples+num_orig)
 	np.random.shuffle(idx)
@@ -123,7 +144,8 @@ def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doR
 	with open(out_csv, 'w') as csvfile:
 		spamwriter = csv.writer(csvfile, delimiter=",")
 		for i in range(num_samples+num_orig):
-			l = [pathlist[idx[i]]]
+			l = [image_path_list[idx[i]]]
+			l.append(particle_path_list[idx[i]])
 			for j in range(K_pt):
 				l.append(X[idx[i], j])
 			spamwriter.writerow(l)
@@ -158,8 +180,8 @@ returns sample prefix from path string
 '''
 def getPrefix(path):
 	file_name = os.path.basename(path)
-	prefix = '_'.join(file_name.split('_')[0:3])
-	prefix.replace('.particles','')
+	prefix = file_name.split(".")[0]
+	prefix = prefix.replace("_1x_hip", "").replace("_femur", "")
 	return prefix
 
 '''
@@ -168,7 +190,6 @@ reads .nrrd file and retunrs data
 the except is for the generated files, it forces the .nrrd to be in a format itk can read
 '''
 def getImage(path):
-	print(path)
 	try:
 		image = itk.imread(path)
 	except:
@@ -179,21 +200,6 @@ def getImage(path):
 def getImage2(path):
 	img, f = nrrd.read(path)
 	return [list(img)]
-
-'''
-getTorchData helper
-returns a dictionary of PCA scores from csv
-{prefix:[pca scores]}
-'''
-def getPCAdictionary(pca_file):
-	PCAdict = {}
-	f = open(pca_file, "r")
-	for line in f.readlines():
-		line_array = line.replace('\n','').split(',')
-		prefix = getPrefix(line_array[0])
-		scores = [float(i) for i in line_array[1:]]
-		PCAdict[prefix] = scores
-	return PCAdict
 
 '''
 getTorchData helper
@@ -209,56 +215,57 @@ def getParticles(model_path):
 	return(data)
 
 '''
-Gets pytorch data from image dir, model dir, and pca scores
-Returns dir where train, validation, and test data loader are saved
+Gets pytorch data loaders from data csv
+Inputs:
+	loader_dir - where to save data loaders
+	data_csv - csv from data augmentation with rows or: image path, particles pat, pca scores
+	batch_size - training batch size (memory dependent)
+Output:
+	train_path - path to train loader
+	val_path - path to validation loader
+	test_path - path to test loader
+	test_names - list of names of files in test set
 '''
-def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir, batch_size=1):
-	print("Reading in data... \nPercent complete:")
-	# get lists of file paths for images and models
-	imglist = []
-	for file in sorted(os.listdir(image_dir)):
-		imglist.append(image_dir + file)
-	modelList = []
-	for file in sorted(os.listdir(model_dir)):
-		modelList.append(model_dir + file)
-	# get dictionary of PCA scores
-	PCAdict = getPCAdictionary(pca_file)
-	# data error check
-	if len(imglist) != len(modelList) or len(imglist) != len(PCAdict.keys()):
-		print("Error: inconstent number of images, models, and PCA scores.")
-		exit()
+def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
+	if not os.path.exists(loader_dir):
+		os.makedirs(loader_dir)
 	# get all data and targets
+	print("Reading all data.")
 	images = []
 	scores = []
 	models = []
 	prefixes = []
-	for index in range(len(imglist)):
-	# for index in range(8,40):
-		if index%200 == 0:
-			print(str((index/len(imglist))*100)+'%')
-		image_path = imglist[index]
-		prefix = getPrefix(image_path)
-		model_path = ''
-		for modelPath in modelList:
-			if prefix in modelPath:
-				model_path = modelPath
-		# data error check
-		if prefix not in getPrefix(model_path):
-			print("Error: Images and models mismatched")
-			print(prefix)
-			exit()
-		prefixes.append(prefix)
-		# add image
-		img = getImage(image_path)
-		images.append(img)
-		# add score
-		score = PCAdict[prefix]
-		scores.append(score)
-		# add model
-		mdl = getParticles(model_path)
-		models.append(mdl)
+	with open(data_csv) as f:
+		total = sum(1 for line in f)
+	with open(data_csv, newline='') as csvfile:
+		datareader = csv.reader(csvfile)
+		index = 0
+		for row in datareader:
+			print(str(index)+ '/' + str(total))
+			image_path = row[0]
+			model_path = row[1]
+			pca_scores = row[2:]
+			# add name
+			prefix = getPrefix(image_path)
+			# data error check
+			if prefix not in getPrefix(model_path):
+				print("Error: Images and models mismatched in csv.")
+				print(prefix)
+				print(getPrefix(model_path))
+				exit()
+			prefixes.append(prefix)
+			# add image
+			img = getImage(image_path)
+			images.append(img)
+			# add score
+			pca_scores = [float(i) for i in pca_scores]
+			scores.append(pca_scores)
+			# add model
+			mdl = getParticles(model_path)
+			models.append(mdl)
+			index += 1
 
-	print("Shuffling and turning to tensors...")
+	print("\nShuffling and turning to tensors...")
 	# shuffle
 	c = list(zip(images, scores, models, prefixes))
 	random.shuffle(c)
@@ -271,10 +278,11 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir, batch_size=1
 	test_data = DeepSSMdataset(images[cut2:], scores[cut2:], models[cut2:])
 	test_names = prefixes[cut2:]
 
-	print("Creating and saving dataloaders...")
-	loader_dir = parent_dir + "TorchDataLoaders/"
-	if not os.path.exists(loader_dir):
-		os.makedirs(loader_dir)
+	print(str(len(train_data)) + ' in training set.')
+	print(str(len(val_data)) + ' in validation set.')
+	print(str(len(test_data)) + ' in testing set.')
+
+	print("\nCreating and saving dataloaders...")
 	trainloader = DataLoader(
 			train_data,
 			batch_size=batch_size,
@@ -284,6 +292,7 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir, batch_size=1
 		)
 	train_path = loader_dir + 'train'
 	torch.save(trainloader, train_path)
+	print("Train loader done.")
 	validationloader = DataLoader(
 			val_data,
 			batch_size=1,
@@ -293,6 +302,7 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir, batch_size=1
 		)
 	val_path = loader_dir + 'validation'
 	torch.save(validationloader, val_path)
+	print("Val loader done.")
 	testloader = DataLoader(
 			test_data,
 			batch_size=1,
@@ -302,19 +312,20 @@ def getTorchDataLoaders(image_dir, model_dir, pca_file, parent_dir, batch_size=1
 		)
 	test_path = loader_dir + 'test'
 	torch.save(testloader, test_path)
-	print("Done.")
-	return train_path, val_path, test_path, test_names
+	print("Test loader done.")
+	return train_path, val_path, test_path, list(test_names)
 
 ########################## Model ####################################
 
 class DeepSSMNet(nn.Module):
-	def __init__(self):
+	def __init__(self, num_pca):
 		super(DeepSSMNet, self).__init__()
 		if torch.cuda.is_available():
 			device = 'cuda:0'
 		else:
 			device = 'cpu'
 		self.device = device
+		self.num_pca = num_pca
 		self.features = nn.Sequential(OrderedDict([
 			('conv1', nn.Conv3d(1, 12, 5)),
 			('bn1', nn.BatchNorm3d(12)),
@@ -339,13 +350,13 @@ class DeepSSMNet(nn.Module):
 
 			('flatten', Flatten()),
 			
-			('fc1', nn.Linear(76800, 384)),
+			('fc1', nn.Linear(103680, 384)),
 			('relu6', nn.PReLU()),
 			('fc2', nn.Linear(384,96)),
 			('relu7', nn.PReLU()),
 		]))
 		self.pca_pred = nn.Sequential(OrderedDict([
-			('linear', nn.Linear(96, 6))
+			('linear', nn.Linear(96, self.num_pca))
 		]))
 		# self.particles_pred = nn.Sequential(OrderedDict([
 		# 	('linear', nn.Linear(6, 10000))
@@ -378,18 +389,21 @@ def log_print(logger, values):
 	log_string = ','.join(string_values)
 	logger.write(log_string + '\n')
 
-def train(model, train_loader_path, validation_loader_path, parameters, parent_dir):
-	# initalizations
-	num_epochs = parameters['epochs']
-	learning_rate = parameters['learning_rate']
-	eval_freq = parameters['val_freq']
-	device = model.device
-	model.cuda()
+def train(train_loader_path, validation_loader_path, parameters, parent_dir):
 	# load le loaders
 	print("Loading data loaders...")
 	train_loader = torch.load(train_loader_path)
 	val_loader = torch.load(validation_loader_path)
 	print("Done.")
+	# initalizations
+	num_pca = train_loader.dataset.pca_target[0].shape[0]
+	print("Defining model.")
+	model = DeepSSMNet(num_pca)
+	device = model.device
+	model.cuda()
+	num_epochs = parameters['epochs']
+	learning_rate = parameters['learning_rate']
+	eval_freq = parameters['val_freq']
 	# intialize model weights
 	model.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
 	model.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
@@ -448,16 +462,20 @@ def train(model, train_loader_path, validation_loader_path, parameters, parent_d
 	torch.save(model.state_dict(), os.path.join(parent_dir, 'model.torch'))
 	torch.save(opt.state_dict(), os.path.join(parent_dir, 'opt.torch'))
 	print("Training complete, model saved.")
+	return os.path.join(parent_dir, 'model.torch')
 
 
-def test(model, test_loader_path, test_names):
-	# initalizations
-	device = model.device
-	model.cuda()
+def test(model_path, test_loader_path, test_names):
 	# load le loaders
 	print("Loading test data loader...")
 	test_loader = torch.load(test_loader_path)
 	print("Done.\n")
+	# initalizations
+	num_pca = test_loader.dataset.pca_target[0].shape[0]
+	model = DeepSSMNet(num_pca)
+	model.load_state_dict(torch.load(model_path))
+	device = model.device
+	model.cuda()
 	model.eval()
 	test_losses = []
 	test_rel_losses = []

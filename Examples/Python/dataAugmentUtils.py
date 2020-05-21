@@ -280,7 +280,7 @@ def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_partic
 	count = 0
 	AllLoadings = np.zeros([num_samples, K_pt])
 	while count < num_samples:
-		print("Generated Patricles " +str(count)+ " out of " + str(num_samples))
+		print("Generated Patricles " +str(count+1)+ " out of " + str(num_samples))
 		rv = 0.2*np.random.randn(1, K_pt)
 		mulp = rv*use_sd
 		projDist = mahalDist(mulp, pca_loadings_particles)
@@ -315,7 +315,7 @@ def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_sh
 		mulp = rv*use_sd
 		projDist = nearestImg(mulp, pca_loadings_images)
 		# if projDist <= thresh:
-		print("Generated Image "+str(count) + " out of " + str(num_samples))
+		print("Generated Image "+str(count+1) + " out of " + str(num_samples))
 		mulp = numpy.matlib.repmat(mulp, imgSize, 1)
 		Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
 		Ygen = Y.reshape(imgDims[0], imgDims[1], imgDims[2])
