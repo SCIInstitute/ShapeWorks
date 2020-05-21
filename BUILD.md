@@ -37,7 +37,7 @@ See [GettingStarted.md](GettingStarted.md#source-and-branches) for more details 
 ### Conda dependencies
 To install conda based dependencies, run:
 ```
-$ source conda_install.sh
+$ source conda_installs.sh
 ```
 
 ### Qt5  
