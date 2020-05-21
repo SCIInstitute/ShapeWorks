@@ -97,7 +97,7 @@ Optional:
 
 ### Before running Example Python scripts
 Add the ShapeWorks and dependency binaries to the path:  
-- *OSX/Linux:* `$ export PATH=/path/to/shapeworks/build/bin;/path/to/dependencies/bin:$PATH`  
+- *OSX/Linux:* `$ export PATH=/path/to/shapeworks/build/bin:/path/to/dependencies/bin:$PATH`  
 
 ### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
