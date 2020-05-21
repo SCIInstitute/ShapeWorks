@@ -270,6 +270,7 @@ def nearestImg(X, data):
 	return np.min(diffMat)
 
 def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_particles, mean_shape, num_samples, K_pt, M, d, N, parent_dir):
+	path_list = []
 	use_eigvals = eigvals_particles[:K_pt]
 	use_sd = np.sqrt(use_eigvals)
 	use_eigvecs = eigvecs_particles[:, :K_pt]
@@ -279,7 +280,7 @@ def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_partic
 	count = 0
 	AllLoadings = np.zeros([num_samples, K_pt])
 	while count < num_samples:
-		print("Generated Patricles : ", count)
+		print("Generated Patricles " +str(count)+ " out of " + str(num_samples))
 		rv = 0.2*np.random.randn(1, K_pt)
 		mulp = rv*use_sd
 		projDist = mahalDist(mulp, pca_loadings_particles)
@@ -289,7 +290,9 @@ def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_partic
 		Ygen = Y.reshape(M, d)
 		nm = newDir + '/Generated_sample_' + str(count) + '.particles'
 		np.savetxt(nm, Ygen)
+		path_list.append(nm)
 		count += 1
+	return path_list
 
 def nearbyLoading(data):
 	rdidx = np.random.randint(0, data.shape[0])
@@ -297,6 +300,7 @@ def nearbyLoading(data):
 	return newLoading
 
 def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_shape, num_samples, K_img, imgDims, N, parent_dir, f):
+	path_list = []
 	use_eigvals = eigvals_images[:K_img]
 	use_sd = np.sqrt(use_eigvals)
 	use_eigvecs = eigvecs_images[:, :K_img]
@@ -311,13 +315,15 @@ def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_sh
 		mulp = rv*use_sd
 		projDist = nearestImg(mulp, pca_loadings_images)
 		# if projDist <= thresh:
-		print("Generated Image : ", count)
+		print("Generated Image "+str(count) + " out of " + str(num_samples))
 		mulp = numpy.matlib.repmat(mulp, imgSize, 1)
 		Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
 		Ygen = Y.reshape(imgDims[0], imgDims[1], imgDims[2])
 		nm = newDir + '/Generated_sample_' + str(count) + '.nrrd'
 		nrrd.write(nm, Ygen, f)
+		path_list.append(nm)
 		count += 1
+	return path_list
 
 def findClosest(nm, pointList):
 	print("find Closest")

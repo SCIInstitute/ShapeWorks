@@ -45,14 +45,14 @@ input_dir = parent_dir + datasetName + '/'
 print("\nStep 2. Augment data\n")
 
 # get image path list
-img_dir = input_dir + "groomed_images/"
+img_dir = input_dir + "groomed_images_small/" #todo remove small
 img_list = []
 for file in os.listdir(img_dir):
 	img_list.append(img_dir + file)
 img_list = sorted(img_list)
 
 # get particles path list
-model_dir =  input_dir + "model/"
+model_dir =  input_dir + "model_small/" #todo remove small
 particle_list = []
 for file in os.listdir(model_dir):
 	if "local" in file:
@@ -60,14 +60,14 @@ for file in os.listdir(model_dir):
 particle_list = sorted(particle_list)
 
 # Data Augmentation
-# How many samples to generate 
-num_samples = 10
-# PCA_var_cutoff dictates how many modes of variation are preserved for points and images
-# a smaller value will result in fewer PCA modes, 1 will use all of them
+
+# num_samples is how many samples to generate 
+num_samples = 5
+# PCA_var_cutoff dictates how many modes of variation are preserved for points and images (a smaller value will result in fewer PCA modes, setting to 1 will use all of them)
 PCA_var_cutoff = 0.97
-img_dir, model_dir, pca_path = dataAugment(img_list, particle_list, parent_dir + "augmentation", num_samples, PCA_var_cutoff)
-
-
+# If doResample is 1 it will resample the image to be half the size for faster training
+# If doPad is 1 it will add padding around the image in case the anatomy lies on the image boundary 
+aug_data_csv = dataAugment(img_list, particle_list, parent_dir + "augmentation/", num_samples, PCA_var_cutoff, doResample=0, doPad=0)
 
 
 # print("\nStep 3. Reformat Data for Pytorch\n")
