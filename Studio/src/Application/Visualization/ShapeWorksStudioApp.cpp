@@ -315,7 +315,6 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
 
     this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
-
     this->groom_tool_->store_settings();
 
     if (this->session_->save_project(
@@ -333,8 +332,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
   QString fname("Untitled.xlsx");
   if (this->session_->get_shapes().size() > 0) {
     QString original_filename = this->session_->get_shapes()[0]->get_original_filename();
-    if (original_filename != "")
-    {
+    if (original_filename != "") {
       std::string tmp = original_filename.toStdString();
       tmp = tmp.substr(0, tmp.size() - 5);
       fname = QString::fromStdString(tmp);
@@ -467,9 +465,9 @@ void ShapeWorksStudioApp::disableAllActions()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::enable_possible_actions()
 {
-
   // export / save / new / open
   bool reconstructed = this->session_->particles_present();
+
   bool original_present = this->session_->get_project()->get_segmentations_present();
 
   this->ui_->action_save_project->setEnabled(this->session_->get_filename().endsWith(".xlsx"));
@@ -804,6 +802,7 @@ void ShapeWorksStudioApp::handle_optimize_complete()
   this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape());
   this->visualizer_->update_lut();
   this->update_display();
+  this->enable_possible_actions();
 }
 
 //---------------------------------------------------------------------------
@@ -1138,12 +1137,10 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
   int num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
 
   for (int i = 0; i < num_arrays; i++) {
-    if (!poly_data->GetPointData()->GetArrayName(i))
-    {
+    if (!poly_data->GetPointData()->GetArrayName(i)) {
       output << "," << "scalars";
     }
-    else
-    {
+    else {
       output << "," << poly_data->GetPointData()->GetArrayName(i);
       std::cout << "array: " << poly_data->GetPointData()->GetArrayName(i) << "\n";
     }

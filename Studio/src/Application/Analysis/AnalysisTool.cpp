@@ -351,10 +351,6 @@ bool AnalysisTool::compute_stats()
     return true;
   }
 
-std::cerr << "^^ num shapes = " << this->session_->get_shapes().size() << "\n";
-std::cerr << "^^ particles present = " << this->session_->particles_present() << "\n";
-
-
   if (this->session_->get_shapes().size() == 0 || !this->session_->particles_present()) {
     return false;
   }

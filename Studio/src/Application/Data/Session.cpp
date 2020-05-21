@@ -173,28 +173,11 @@ bool Session::save_project(std::string fname, std::string data_dir, std::string 
 
   // correspondence points
   if (this->unsaved_particle_files_) {
-    std::vector<std::string> world_list;
-    std::vector<std::string> local_list;
-
     for (int i = 0; i < this->shapes_.size(); i++) {
-      auto base_name = this->shapes_[i]->get_original_filename().toStdString();
-      auto global_name = base_name.substr(0, base_name.find_last_of(".")) + ".world.particles";
-      auto local_name = base_name.substr(0, base_name.find_last_of(".")) + ".local.particles";
-      auto loc = this->shapes_[i]->get_original_filename_with_path().toStdString();
-      auto pos = loc.find_last_of("/");
-      loc = loc.substr(0, pos) + "/";
-      auto global_path = loc + global_name;
-      auto local_path = loc + local_name;
-      if (!defaultDir) {
-        global_path = data_dir + "/" + global_name;
-        local_path = data_dir + "/" + local_name;
-      }
-      world_list.push_back(global_path);
-      local_list.push_back(local_path);
+      auto global_path = this->shapes_[i]->get_subject()->get_global_particle_filename();
+      auto local_path = this->shapes_[i]->get_subject()->get_local_particle_filename();
       this->save_particles_file(global_path, this->shapes_[i]->get_global_correspondence_points());
       this->save_particles_file(local_path, this->shapes_[i]->get_local_correspondence_points());
-      this->shapes_[i]->get_subject()->set_global_particle_filename(global_path);
-      this->shapes_[i]->get_subject()->set_local_particle_filename(local_path);
     }
     this->unsaved_particle_files_ = false;
   }
@@ -684,17 +667,36 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
       shape = QSharedPointer<Shape>(new Shape);
 
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-
       shape->set_mesh_manager(this->mesh_manager_);
       shape->set_subject(subject);
       this->project_->get_subjects().push_back(subject);
-
       this->shapes_.push_back(shape);
     }
+
     if (!shape->import_points(points[i], local)) {
       return false;
     }
+
+    // now update the Subject's filename
+    // this needs to be done here so that the Project knows there are particle files
+    std::string suffix = local ? "local" : "world";
+    auto base_name = this->shapes_[i]->get_original_filename().toStdString();
+    auto name =
+      base_name.substr(0, base_name.find_last_of(".")) + "." + suffix + ".particles";
+    std::string loc = shape->get_original_filename_with_path().toStdString();
+    auto pos = loc.find_last_of("/");
+    loc = loc.substr(0, pos) + "/";
+    auto path = loc + name;
+    if (local) {
+      shape->get_subject()->set_local_particle_filename(path);
+    }
+    else {
+      shape->get_subject()->set_global_particle_filename(path);
+    }
   }
+
+  // update the project now that we have particles
+  this->project_->store_subjects();
 
   if (points.size() > 0) {
     this->unsaved_particle_files_ = true;
