@@ -162,7 +162,7 @@ void Antialias::buildParser()
 
   parser.add_option("--maxrmserror").action("store").type("float").set_default(0.01).help("Maximum RMS error determines how fast the solver converges. Range [0.0, 1.0], larger is faster [default 0.01].");
   parser.add_option("--iterations").action("store").type("int").set_default(50).help("Number of iterations [default 50].");
-  parser.add_option("--layers").action("store").type("int").set_default(0).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
+  parser.add_option("--layers").action("store").type("int").set_default(1).help("Number of layers around a 3d pixel to use for this computation [default image dims].");
 
   Command::buildParser();
 }
@@ -173,7 +173,7 @@ bool Antialias::execute(const optparse::Values &options, SharedCommandData &shar
   int iterations = static_cast<int>(options.get("iterations"));
   int layers = static_cast<int>(options.get("layers"));
 
-  if (layers < 0)
+  if (layers < 1)
   {
     std::cerr << "Must specify a valid layers argument\n";
     return false;

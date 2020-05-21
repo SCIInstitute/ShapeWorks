@@ -47,9 +47,8 @@ def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
             cmd.extend(["antialias"])
         cmd.extend(["resample", "--isospacing", str(isoSpacing)])  
         if isBinary:
-            cmd.extend(["threshold"])
-        if recenter:
-            cmd.extend(["recenter"])
+            cmd.extend(["threshold",
+                        "recenter"])
         cmd.extend(["write-image", "--name", outname])
         subprocess.check_call(cmd)
     return outDataList
@@ -164,7 +163,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
     cmd = ["shapeworks",
            "read-image", "--name", refFile,
-           "antialias", "--numiterations", str(antialiasIterations),
+           "antialias", "--iterations", str(antialiasIterations),
            "write-image", "--name", ref_dtnrrdfilename]
     subprocess.check_call(cmd)
 
@@ -217,7 +216,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                    "extract-label", "--label", str(1.0),
                    "close-holes",
                    "write-image", "--name", seginname,
-                   "antialias", "--numiterations", str(antialiasIterations),
+                   "antialias", "--iterations", str(antialiasIterations),
                    "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(cmd)
 
@@ -246,9 +245,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", rawinname,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--source", tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
+                   "icp", "--target", ref_tpdtnrrdfilename, "--source", tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", rawoutname]
             subprocess.check_call(cmd)
         return  [outSegDataList, outRawDataList]
@@ -273,7 +270,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", inname,
-                   "antialias", "--numiterations", str(antialiasIterations),
+                   "antialias", "--iterations", str(antialiasIterations),
                    "write-image", "--name", dtnrrdfilename]
             subprocess.check_call(cmd)
 
@@ -294,9 +291,7 @@ def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
 
             cmd = ["shapeworks", 
                    "read-image", "--name", inname,
-                   "--source", tpdtnrrdfilename,
-                   "--target", ref_tpdtnrrdfilename,
-                   "--iterations", str(icpIterations),
+                   "icp", "--source", tpdtnrrdfilename, "--target", ref_tpdtnrrdfilename, "--iterations", str(icpIterations),
                    "write-image", "--name", outname]
             subprocess.check_call(cmd)
         return outDataList
@@ -317,7 +312,7 @@ def applyCropping(outDir, inDataList, paddingSize=10):
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
         cmd = ["shapeworks",
-               "binaryboundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
+               "boundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
                "read-image", "--name", inname,
                "crop",
                "write-image", "--name", outname]
@@ -362,7 +357,7 @@ def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoot
 
         cmd = ["shapeworks", 
                "read-image", "--name", inname,
-               "antialias", "--numiterations", str(antialiasIterations),
+               "antialias", "--iterations", str(antialiasIterations),
                "write-image", "--name", dtnrrdfilename]
         subprocess.check_call(cmd)
 
