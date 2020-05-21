@@ -40,6 +40,12 @@ To install conda based dependencies (currently requires either bash or zsh shell
 $ source conda_installs.sh
 ```
 
+This will activate the shapeworks conda env into the current environment.  For subsequent later usage, (e.g. on new shells/terminals), please make sure to run:
+
+```
+$ conda activate shapeworks
+```
+
 ### Qt5  
 Download and install the latest version of [[Qt5]](https://download.qt.io/archive/qt/), selecting the LGPL (free) license. (at least version 5.10 required)  
 After installing Qt5, add the directory containing `qmake.exe` to your PATH. (See [Adding to PATH](GettingStarted.md#PATH-environment-variable) for help with this)  
