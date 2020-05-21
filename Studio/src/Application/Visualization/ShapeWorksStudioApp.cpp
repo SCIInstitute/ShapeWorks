@@ -151,8 +151,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->visualizer_->set_session(this->session_);
 
   // groom tool initializations
-  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool(preferences_));
-  this->groom_tool_->set_project(this->session_);
+  this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool());
+  this->groom_tool_->set_session(this->session_);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
   connect(this->groom_tool_.data(), SIGNAL(groom_complete()), this, SLOT(handle_groom_complete()));
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
@@ -163,8 +163,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_progress(size_t)));
 
   // optimize tool initializations
-  this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool(preferences_));
-  this->optimize_tool_->set_project(this->session_);
+  this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool());
+  this->optimize_tool_->set_session(this->session_);
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()),
           this, SLOT(handle_optimize_complete()));
@@ -310,18 +310,7 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered()
   }
   else {
 
-    this->session_->settings().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
-                                   std::to_string(this->ui_->zoom_slider->value()));
-
-    this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
-
-    this->groom_tool_->store_settings();
-
-    if (this->session_->save_project(
-          this->session_->get_filename().toStdString(), this->data_dir_,
-          this->optimize_tool_->getCutPlanesFile())) {
-      this->handle_message("Project Saved");
-    }
+    this->save_project(this->session_->get_filename().toStdString());
   }
   return true;
 }
@@ -352,11 +341,8 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
 
   this->preferences_.set_preference("Main/last_directory", QDir().absoluteFilePath(filename));
 
-  if (this->session_->save_project(filename.toStdString(), this->data_dir_,
-                                   this->optimize_tool_->getCutPlanesFile())) {
-    this->handle_message("Project Saved");
-    return true;
-  }
+  this->save_project(filename.toStdString());
+
   return false;
 }
 
@@ -453,7 +439,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->ui_->actionSet_Data_Directory->setEnabled(false);
   //subtools
   this->groom_tool_->disable_actions();
-  this->optimize_tool_->disableActions();
+  this->optimize_tool_->disable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
   int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
@@ -490,7 +476,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_analysis_mode->setEnabled(reconstructed);
   //subtools
   this->groom_tool_->enable_actions();
-  this->optimize_tool_->enableActions();
+  this->optimize_tool_->enable_actions();
   this->analysis_tool_->enableActions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
@@ -511,8 +497,8 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   this->ui_->center_checkbox->setChecked(preferences_.get_preference("center_option", true));
-  this->groom_tool_->set_preferences();
-  this->optimize_tool_->set_preferences();
+  this->groom_tool_->load_settings();
+  this->optimize_tool_->load_settings();
   this->analysis_tool_->load_from_preferences();
 }
 
@@ -677,7 +663,7 @@ void ShapeWorksStudioApp::handle_new_mesh()
 void ShapeWorksStudioApp::update_tool_mode()
 {
   std::string tool_state =
-    this->session_->settings().get("tool_state", Session::DATA_C).as_string();
+    this->session_->settings().get("tool_state", Session::DATA_C);
 
   if (tool_state == Session::ANALYSIS_C) {
     this->ui_->stacked_widget->setCurrentWidget(this->analysis_tool_.data());
@@ -726,7 +712,7 @@ void ShapeWorksStudioApp::update_view_mode()
 //---------------------------------------------------------------------------
 std::string ShapeWorksStudioApp::get_view_mode()
 {
-  return this->session_->settings().get("view_state", Visualizer::MODE_ORIGINAL_C).as_string();
+  return this->session_->settings().get("view_state", Visualizer::MODE_ORIGINAL_C);
 }
 
 //---------------------------------------------------------------------------
@@ -1025,8 +1011,8 @@ void ShapeWorksStudioApp::open_project(QString filename)
   //std::string tool_state =
 //    this->session_->settings().get("tool_state", Session::DATA_C).as_string();
 
-  this->groom_tool_->set_preferences();
-  this->optimize_tool_->set_preferences();
+  this->groom_tool_->load_settings();
+  this->optimize_tool_->load_settings();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
   //this->project_->calculate_reconstructed_samples();
@@ -1046,9 +1032,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   preferences_.add_recent_file(filename);
   this->update_recent_files();
-  if (!planesFile.empty() && planesFile != "None Selected") {
-    this->optimize_tool_->setCutPlanesFile(planesFile);
-  }
 
   this->block_update_ = true;
 
@@ -1070,7 +1053,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->update_table();
 
   // load analysis state
-  std::string analysis_mode = this->session_->settings().get("analysis_mode", "mean").as_string();
+  std::string analysis_mode = this->session_->settings().get("analysis_mode", "mean");
   this->analysis_tool_->set_analysis_mode(analysis_mode);
 
   int zoom_value = this->session_->settings().get(ShapeWorksStudioApp::SETTING_ZOOM_C, "4");
@@ -1218,7 +1201,9 @@ void ShapeWorksStudioApp::compute_mode_shape()
 bool ShapeWorksStudioApp::set_view_mode(std::string view_mode)
 {
   if (view_mode != this->get_view_mode()) {
-    this->session_->settings().set("view_state", view_mode);
+    if (!this->is_loading_) {
+      this->session_->settings().set("view_state", view_mode);
+    }
     this->update_view_mode();
     return true;
   }
@@ -1242,6 +1227,23 @@ void ShapeWorksStudioApp::update_recent_files()
 
   for (int j = num_recent_files; j < Preferences::MAX_RECENT_FILES; ++j) {
     this->recent_file_actions_[j]->setVisible(false);
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::save_project(string filename)
+{
+  this->session_->settings().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
+                                 std::to_string(this->ui_->zoom_slider->value()));
+
+  this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
+
+  this->groom_tool_->store_settings();
+  this->optimize_tool_->store_settings();
+
+  if (this->session_->save_project(
+        filename, this->data_dir_)) {
+    this->handle_message("Project Saved");
   }
 }
 

@@ -150,6 +150,9 @@ private:
 
   void update_recent_files();
 
+
+  void save_project(std::string filename);
+
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
