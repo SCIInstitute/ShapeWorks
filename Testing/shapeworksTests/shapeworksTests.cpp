@@ -7,7 +7,7 @@
 void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://github.com/google/googletest/blob/master/googletest/docs/advanced.md
 {
 #ifdef _WIN32
-  bin_dir = bin_dir + "/Release";
+  std::string bin_dir = std::string(BUILD_DIR) + "/Release";
   std::replace(bin_dir.begin(), bin_dir.end(), '/', '\\');
   std::string path = getenv("PATH");
   path = path + ";" + std::string(INSTALL_DIR) + "\\bin";
