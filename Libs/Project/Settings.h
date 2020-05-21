@@ -9,7 +9,7 @@
 namespace shapeworks
 {
 
-// Class for automatic conversion from string -> anytype. (from optparse)
+// class for automatic conversion from string -> anytype. (adapted from optparse)
 class Value
 {
 public:
@@ -20,7 +20,7 @@ public:
   Value(int v) : str(std::to_string(v)), valid(true) {}
   Value(double v) : str(std::to_string(v)), valid(true) {}
   Value(const char* v) : str(v), valid(true) {}
-  Value(bool v) : str(v ? "true" : "false"), valid(true) {std::cerr << "using bool\n";}
+  Value(bool v) : str(v ? "true" : "false"), valid(true) {}
 
   operator std::vector<std::string>() {
     std::istringstream iss(str);
@@ -29,19 +29,8 @@ public:
     return v;
   }
 
-  std::string as_string()
-  {
-    return this->str;
-  }
-
-  int as_int()
-  {
-    int t;
-    return (valid && (std::istringstream(str) >> t)) ? t : 0;
-  }
-
-  operator const char*() {
-    return str.c_str();
+  operator std::string() {
+    return str;
   }
 
   operator bool() {
@@ -111,14 +100,17 @@ class Settings {
 public:
 
   static constexpr const char* GROOM_SETTINGS = "groom";
+  static constexpr const char* OPTIMIZE_SETTINGS = "optimize";
   static constexpr const char* STUDIO_SETTINGS = "studio";
-  static constexpr const char* GROOM_CENTER_OPTION = "center";
+
 
   void set_map(std::map<std::string, std::string> map);
   std::map<std::string, std::string> get_map();
 
   Value get(std::string key, Value default_value);
   void set(std::string key, Value value);
+
+  void remove_entry(std::string key);
 
 private:
 
