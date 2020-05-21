@@ -92,7 +92,7 @@ void Session::set_parent(QWidget* parent)
 }
 
 //---------------------------------------------------------------------------
-bool Session::save_project(std::string fname, std::string data_dir, std::string cutPlanesFile)
+bool Session::save_project(std::string fname, std::string data_dir)
 {
   QString filename = QString::fromStdString(fname);
   if (filename == "") {
