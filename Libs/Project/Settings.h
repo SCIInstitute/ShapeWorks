@@ -10,17 +10,17 @@ namespace shapeworks
 {
 
 // class for automatic conversion from string -> anytype. (adapted from optparse)
-class Value
+class Variant
 {
 public:
 
-  Value() : str(), valid(false) {}
+  Variant() : str(), valid(false) {}
 
-  Value(const std::string &v) : str(v), valid(true) {}
-  Value(int v) : str(std::to_string(v)), valid(true) {}
-  Value(double v) : str(std::to_string(v)), valid(true) {}
-  Value(const char* v) : str(v), valid(true) {}
-  Value(bool v) : str(v ? "true" : "false"), valid(true) {}
+  Variant(const std::string &v) : str(v), valid(true) {}
+  Variant(int v) : str(std::to_string(v)), valid(true) {}
+  Variant(double v) : str(std::to_string(v)), valid(true) {}
+  Variant(const char* v) : str(v), valid(true) {}
+  Variant(bool v) : str(v ? "true" : "false"), valid(true) {}
 
   operator std::vector<std::string>() {
     std::istringstream iss(str);
@@ -107,8 +107,8 @@ public:
   void set_map(std::map<std::string, std::string> map);
   std::map<std::string, std::string> get_map();
 
-  Value get(std::string key, Value default_value);
-  void set(std::string key, Value value);
+  Variant get(std::string key, Variant default_value);
+  void set(std::string key, Variant value);
 
   void remove_entry(std::string key);
 

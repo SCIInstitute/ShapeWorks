@@ -15,19 +15,16 @@ std::map<std::string, std::string> Settings::get_map()
 }
 
 //---------------------------------------------------------------------------
-Value Settings::get(std::string key, Value default_value)
+Variant Settings::get(std::string key, Variant default_value)
 {
-  std::cerr << "searching for key: " << key << "\n";
   if (this->map_.find(key) == this->map_.end()) {
-    std::cerr << "did not find, returning default: " << default_value.operator std::string() << "\n";
-    return Value(default_value);
+    return Variant(default_value);
   }
-  std::cerr << "found: " << this->map_[key] << "\n";
-  return Value(this->map_[key]);
+  return Variant(this->map_[key]);
 }
 
 //---------------------------------------------------------------------------
-void Settings::set(std::string key, Value value)
+void Settings::set(std::string key, Variant value)
 {
   this->map_[key] = static_cast<std::string>(value);
 }
