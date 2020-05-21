@@ -6,13 +6,21 @@
 //---------------------------------------------------------------------------
 void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://github.com/google/googletest/blob/master/googletest/docs/advanced.md
 {
+#ifdef _WIN32
+  bin_dir = bin_dir + "/Release";
+  std::replace(bin_dir.begin(), bin_dir.end(), '/', '\\');
+  std::string path = getenv("PATH");
+  path = path + ";" + std::string(INSTALL_DIR) + "\\bin";
+  std::cerr << "Setting PATH to " << path << "\n";
+  _putenv_s("PATH", path.c_str());
+#else
   // set PATH to shapeworks executable called by shell scripts
-  const char* env_p = std::getenv("PATH");
+  const char *env_p = std::getenv("PATH");
   std::string path(env_p);
   // fixme: /bin/Release or /bin/Debug for some build systems (Xcode, VS, etc)
   // fixme: need windows PATH separator (;).  there's some handy function for this
-  path = std::string(BUILD_DIR) + "/bin/" + ":" + path;     // might be /bin/Debug or /bin/Release (ex: if using Xcode)
-  setenv("PATH", path.c_str(), true);           // fixme: setenv may not exist
+  path = std::string(BUILD_DIR) + "/bin/" + ":" + path; // might be /bin/Debug or /bin/Release (ex: if using Xcode)
+  setenv("PATH", path.c_str(), true);                   // fixme: setenv may not exist
 
   // set path to test data for shell scripts to use
   std::string data(TEST_DATA_DIR);
@@ -23,14 +31,6 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
   std::string shapeworksTestsDir(TEST_DATA_DIR);
   shapeworksTestsDir += "/../shapeworksTests";
   chdir(shapeworksTestsDir.c_str());
-
-#ifdef _WIN32
-  bin_dir = bin_dir + "/Release";
-  std::replace(bin_dir.begin(), bin_dir.end(), '/', '\\');
-  std::string path = getenv("PATH");
-  path = path + ";" + std::string(INSTALL_DIR) + "\\bin";
-  std::cerr << "Setting PATH to " << path << "\n";
-  _putenv_s("PATH", path.c_str());
 #endif
 }
 
