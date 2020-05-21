@@ -39,7 +39,7 @@ Data augmentation helper
 '''
 def downsampleNrrd(filename, factor):
 	[inpt, f] = nrrd.read(filename)
-	output = ndimage.interpolation.zoom(inpt, factor, prefilter=True)
+	output = ndimage.interpolation.zoom(inpt, factor, prefilter=orig)
 	return [np.array(output), f]
 
 '''
@@ -154,7 +154,7 @@ def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doR
 	print(str(K_pt) +' PCA modes retained for particles.')
 	print(str(K_img) + ' PCA modes retained for images.')
 	print(str(num_samples) + ' samples generated from ' + str(num_orig) + " real examples.")
-	return out_csv
+	return out_csv, pcaDir
 
 ######################## Data loading functions ####################################
 
@@ -241,7 +241,7 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 		datareader = csv.reader(csvfile)
 		index = 0
 		for row in datareader:
-			print(str(index)+ '/' + str(total))
+			print("Processed " + str(index+1)+ '/' + str(total))
 			image_path = row[0]
 			model_path = row[1]
 			pca_scores = row[2:]
@@ -464,8 +464,42 @@ def train(train_loader_path, validation_loader_path, parameters, parent_dir):
 	print("Training complete, model saved.")
 	return os.path.join(parent_dir, 'model.torch')
 
+############################## Test Model #################################
+'''
+Test helper
+'''
+def getPoints(out_dir, orig_scores, pred_scores, pca_score_path, test_names):
+	if not os.path.exists(out_dir):
+		os.makedirs(out_dir)
+	predPath = out_dir + 'predictedPoints/'
+	if not os.path.exists(predPath):
+		os.makedirs(predPath)
+	origPath = out_dir + 'originalPoints/'
+	if not os.path.exists(origPath):
+		os.makedirs(origPath)
+	N = orig_scores.shape[0]
+	K = orig_scores.shape[1]
+	# now create the PCA matrix
+	meanshape = np.loadtxt(pca_score_path + '/meanshape.particles')
+	M = meanshape.shape[0]
+	W = np.zeros([K, 3*M])
+	for i in range(K):
+		nm = pca_score_path + '/pcamode' + str(i) + '.particles'
+		prt = np.loadtxt(nm)
+		W[i, ...] = prt.flatten()
+	pointsPred = np.matmul(pred_scores,W) + np.matlib.repmat(meanshape.reshape(1, 3*M), N, 1)
+	pointsOrig = np.matmul(orig_scores,W) + np.matlib.repmat(meanshape.reshape(1, 3*M), N, 1)
 
-def test(model_path, test_loader_path, test_names):
+	for i in range(N):
+		print("Data Point : ", i)
+		nmpred = predPath + 'predicted_' + test_names[i] + '.particles'
+		nmorig = origPath + 'original_' + test_names[i] + '.particles'
+		tmpPred = pointsPred[i, ...].reshape(M, 3)
+		tmpOrig = pointsOrig[i, ...].reshape(M, 3)
+		np.savetxt(nmpred, tmpPred)
+		np.savetxt(nmorig, tmpOrig)
+
+def test(out_dir, model_path, test_loader_path, test_names, pca_scores_path):
 	# load le loaders
 	print("Loading test data loader...")
 	test_loader = torch.load(test_loader_path)
@@ -480,10 +514,14 @@ def test(model_path, test_loader_path, test_names):
 	test_losses = []
 	test_rel_losses = []
 	index = 0
+	orig_scores = []
+	pred_scores = []
 	for img, pca, mdl in test_loader:
 		img = img.to(device)
 		pca = pca.to(device)
 		pred = model(img)
+		orig_scores.append(pca.cpu().data.numpy()[0])
+		pred_scores.append(pred.cpu().data.numpy()[0])
 		loss = torch.mean((pred - pca)**2)
 		test_losses.append(loss.item())
 		test_rel_loss = F.mse_loss(pred, pca) / F.mse_loss(pred*0, pca)
@@ -491,4 +529,11 @@ def test(model_path, test_loader_path, test_names):
 		index += 1
 	test_mr_MSE = np.mean(np.sqrt(test_losses))
 	test_rel_err =  np.mean(test_rel_losses)
+	orig_scores = np.array(orig_scores)
+	# orig_scores = orig_scores.reshape((orig_scores.shape[0], orig_scores.shape[1]))
+	pred_scores = np.array(pred_scores)
+	# pred_scores = pred_scores.reshape((pred_scores.shape[0], pred_scores.shape[1]))
+	print(pred_scores)
+	getPoints(out_dir, orig_scores, pred_scores, pca_scores_path, test_names)
 	return test_mr_MSE, test_rel_err
+
