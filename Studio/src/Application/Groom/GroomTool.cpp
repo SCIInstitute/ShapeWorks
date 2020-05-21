@@ -84,30 +84,16 @@ void GroomTool::set_preferences()
 
   this->settings_ = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
 
-  this->ui_->center_checkbox->setChecked(this->settings_.get("center", "true"));
-
-  this->ui_->antialias_checkbox->setChecked(
-    this->preferences_.get_preference("groom_antialias",
-                                      this->ui_->antialias_checkbox->isChecked()));
-  this->ui_->autopad_checkbox->setChecked(
-    this->preferences_.get_preference("groom_pad", this->ui_->autopad_checkbox->isChecked()));
-  this->ui_->fastmarching_checkbox->setChecked(
-    this->preferences_.get_preference("groom_fastmarching",
-                                      this->ui_->fastmarching_checkbox->isChecked()));
-  this->ui_->blur_checkbox->setChecked(
-    this->preferences_.get_preference("groom_blur", this->ui_->blur_checkbox->isChecked()));
-  this->ui_->isolate_checkbox->setChecked(
-    this->preferences_.get_preference("groom_isolate", this->ui_->isolate_checkbox->isChecked()));
-  this->ui_->fill_holes_checkbox->setChecked(
-    this->preferences_.get_preference("groom_fill_holes",
-                                      this->ui_->fill_holes_checkbox->isChecked()));
-  this->ui_->antialias_iterations->setValue(
-    this->preferences_.get_preference("groom_antialias_amount",
-                                      this->ui_->antialias_iterations->value()));
-  this->ui_->blur_sigma->setValue(
-    this->preferences_.get_preference("groom_blur_sigma", this->ui_->blur_sigma->value()));
-  this->ui_->padding_amount->setValue(
-    this->preferences_.get_preference("groom_pad_value", this->ui_->padding_amount->value()));
+  this->ui_->center_checkbox->setChecked(this->settings_.get("center", true));
+  this->ui_->antialias_checkbox->setChecked(this->settings_.get("antialias", true));
+  this->ui_->autopad_checkbox->setChecked(this->settings_.get("pad", true));
+  this->ui_->fastmarching_checkbox->setChecked(this->settings_.get("fastmarching", true));
+  this->ui_->blur_checkbox->setChecked(this->settings_.get("blur", true));
+  this->ui_->isolate_checkbox->setChecked(this->settings_.get("isolate", true));
+  this->ui_->fill_holes_checkbox->setChecked(this->settings_.get("fill_holes", true));
+  this->ui_->antialias_iterations->setValue(this->settings_.get("antialias_amount", 10));
+  this->ui_->blur_sigma->setValue(this->settings_.get("blur_sigma", 2.0));
+  this->ui_->padding_amount->setValue(this->settings_.get("pad_value", 10));
 }
 
 //---------------------------------------------------------------------------
@@ -131,19 +117,15 @@ void GroomTool::store_settings()
   Settings settings = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
 
   settings.set("center", this->ui_->center_checkbox->isChecked());
-
-  this->preferences_.set_preference("groom_antialias", this->ui_->antialias_checkbox->isChecked());
-  this->preferences_.set_preference("groom_pad", this->ui_->autopad_checkbox->isChecked());
-  this->preferences_.set_preference("groom_fastmarching",
-                                    this->ui_->fastmarching_checkbox->isChecked());
-  this->preferences_.set_preference("groom_blur", this->ui_->blur_checkbox->isChecked());
-  this->preferences_.set_preference("groom_isolate", this->ui_->isolate_checkbox->isChecked());
-  this->preferences_.set_preference("groom_fill_holes",
-                                    this->ui_->fill_holes_checkbox->isChecked());
-  this->preferences_.set_preference("groom_antialias_amount",
-                                    this->ui_->antialias_iterations->value());
-  this->preferences_.set_preference("groom_blur_sigma", this->ui_->blur_sigma->value());
-  this->preferences_.set_preference("groom_pad_value", this->ui_->padding_amount->value());
+  settings.set("antialias", this->ui_->antialias_checkbox->isChecked());
+  settings.set("pad", this->ui_->autopad_checkbox->isChecked());
+  settings.set("fastmarching", this->ui_->fastmarching_checkbox->isChecked());
+  settings.set("blur", this->ui_->blur_checkbox->isChecked());
+  settings.set("isolate", this->ui_->isolate_checkbox->isChecked());
+  settings.set("fill_holes", this->ui_->fill_holes_checkbox->isChecked());
+  settings.set("antialias_amount", this->ui_->antialias_iterations->value());
+  settings.set("blur_sigma", this->ui_->blur_sigma->value());
+  settings.set("pad_value", this->ui_->padding_amount->value());
 
   this->session_->get_project()->set_settings(Settings::GROOM_SETTINGS, settings);
 }
