@@ -211,9 +211,9 @@ bool Image::operator==(const Image &other) const
     return false;
   }
 
-  const unsigned long numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
-
-  if (numberOfPixelsWithDifferences > 0) {
+  auto numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
+  if (numberOfPixelsWithDifferences > 0)
+  {
     return false;
   }
 

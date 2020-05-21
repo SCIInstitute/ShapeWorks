@@ -50,7 +50,7 @@ TEST(shapeworksTests, comparefail) {
 TEST(shapeworksTests, antialias)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./antialias.sh"));
+  ASSERT_FALSE(system("./antialias.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -64,7 +64,7 @@ TEST(shapeworksTests, antialiasfail)
 TEST(shapeworksTests, resample)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./resample.sh"));
+  ASSERT_FALSE(system("./resample.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -78,14 +78,14 @@ TEST(shapeworksTests, recenter)
 TEST(shapeworksTests, pad)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./pad.sh"));
+  ASSERT_FALSE(system("./pad.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, translate)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./translate.sh"));
+  ASSERT_FALSE(system("./translate.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -99,14 +99,14 @@ TEST(shapeworksTests, translatefail)
 TEST(shapeworksTests, centerofmass)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./centerofmass.sh"));
+  ASSERT_FALSE(system("./centerofmass.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, scale)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./scale.sh"));
+  ASSERT_FALSE(system("./scale.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ TEST(shapeworksTests, scalefail)
 TEST(shapeworksTests, rotate)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./rotate.sh"));
+  ASSERT_FALSE(system("./rotate.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ TEST(shapeworksTests, rotatefail)
 TEST(shapeworksTests, extractlabel)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./extractlabel.sh"));
+  ASSERT_FALSE(system("./extractlabel.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -148,7 +148,7 @@ TEST(shapeworksTests, closeholes)
 TEST(shapeworksTests, threshold)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./threshold.sh"));
+  ASSERT_FALSE(system("./threshold.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -162,14 +162,14 @@ TEST(shapeworksTests, thresholdfail)
 TEST(shapeworksTests, computedt)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./computedt.sh"));
+  ASSERT_FALSE(system("./computedt.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, curvature)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./curvature.sh"));
+  ASSERT_FALSE(system("./curvature.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -190,14 +190,14 @@ TEST(shapeworksTests, gradient)
 TEST(shapeworksTests, sigmoid)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./sigmoid.sh"));
+  ASSERT_FALSE(system("./sigmoid.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, tplevelset)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./tplevelset.sh"));
+  ASSERT_FALSE(system("./tplevelset.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -211,7 +211,7 @@ TEST(shapeworksTests, tplevelsetfail)
 TEST(shapeworksTests, topo)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./topo.sh"));
+  ASSERT_FALSE(system("./topo.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -225,7 +225,7 @@ TEST(shapeworksTests, topofail)
 TEST(shapeworksTests, blur)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./blur.sh"));
+  ASSERT_FALSE(system("./blur.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -246,7 +246,7 @@ TEST(shapeworksTests, icpfail)
 TEST(shapeworksTests, clip)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./clip.sh"));
+  ASSERT_FALSE(system("./clip.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -260,7 +260,7 @@ TEST(shapeworksTests, clipfail)
 TEST(shapeworksTests, reflect)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./reflect.sh"));
+  ASSERT_FALSE(system("./reflect.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -274,5 +274,5 @@ TEST(shapeworksTests, reflectfail)
 TEST(shapeworksTests, setorigin)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./setorigin.sh"));
+  ASSERT_FALSE(system("./setorigin.sh"));
 }
