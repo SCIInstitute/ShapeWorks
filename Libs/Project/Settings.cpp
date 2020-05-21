@@ -15,7 +15,7 @@ std::map<std::string, std::string> Settings::get_map()
 }
 
 //---------------------------------------------------------------------------
-Value Settings::get(std::string key, std::string default_value)
+Value Settings::get(std::string key, Value default_value)
 {
   if (this->map_.find(key) == this->map_.end()) {
     return Value(default_value);
@@ -24,14 +24,7 @@ Value Settings::get(std::string key, std::string default_value)
 }
 
 //---------------------------------------------------------------------------
-void Settings::set(std::string key, std::string value)
+void Settings::set(std::string key, Value value)
 {
-  this->map_[key] = value;
-}
-
-//---------------------------------------------------------------------------
-void Settings::set(std::string key, bool value)
-{
-  std::string string_value = value ? "true" : "false";
-  this->set(key, string_value);
+  this->map_[key] = value.as_string();
 }

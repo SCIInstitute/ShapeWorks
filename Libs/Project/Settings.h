@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <iostream>
 
 namespace shapeworks
 {
@@ -15,7 +16,11 @@ public:
 
   Value() : str(), valid(false) {}
 
-  explicit Value(const std::string &v) : str(v), valid(true) {}
+  Value(const std::string &v) : str(v), valid(true) {}
+  Value(int v) : str(std::to_string(v)), valid(true) {}
+  Value(double v) : str(std::to_string(v)), valid(true) {}
+  Value(const char* v) : str(v), valid(true) {}
+  Value(bool v) : str(v ? "true" : "false"), valid(true) {std::cerr << "using bool\n";}
 
   operator std::vector<std::string>() {
     std::istringstream iss(str);
@@ -27,6 +32,12 @@ public:
   std::string as_string()
   {
     return this->str;
+  }
+
+  int as_int()
+  {
+    int t;
+    return (valid && (std::istringstream(str) >> t)) ? t : 0;
   }
 
   operator const char*() {
@@ -95,7 +106,6 @@ private:
   bool valid;
 };
 
-
 class Settings {
 
 public:
@@ -107,10 +117,8 @@ public:
   void set_map(std::map<std::string, std::string> map);
   std::map<std::string, std::string> get_map();
 
-  Value get(std::string key, std::string default_value);
-  void set(std::string key, std::string value);
-
-  void set(std::string key, bool value);
+  Value get(std::string key, Value default_value);
+  void set(std::string key, Value value);
 
 private:
 
