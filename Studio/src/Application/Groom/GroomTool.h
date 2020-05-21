@@ -8,7 +8,6 @@
 
 #include <Libs/Project/Settings.h>
 
-#include <Data/Preferences.h>
 #include <Groom/QGroom.h>
 
 class Session;
@@ -22,15 +21,22 @@ class GroomTool : public QWidget
   Q_OBJECT;
 public:
 
-  GroomTool(Preferences& prefs);
+  GroomTool();
   ~GroomTool();
 
   /// set the pointer to the project
-  void set_project(QSharedPointer<Session> project);
+  void set_session(QSharedPointer<Session> session);
 
+  //! Store settings to session
   void store_settings();
-  void set_preferences();
+
+  //! Load settings from session
+  void load_settings();
+
+  //! Disable action buttons
   void disable_actions();
+
+  //! Enable action buttons
   void enable_actions();
 
 Q_SIGNALS:
@@ -47,7 +53,7 @@ public Q_SLOTS:
   void on_skipButton_clicked();
   void on_restoreDefaults_clicked();
 
-  /// Run groom tool
+  //! Run groom tool
   void on_run_groom_button_clicked();
 
   void handle_thread_complete();
@@ -58,7 +64,6 @@ private:
 
   Ui_GroomTool* ui_;
   QSharedPointer<Session> session_;
-  shapeworks::Settings settings_;
-  Preferences& preferences_;
+
   QGroom* groom_;
 };

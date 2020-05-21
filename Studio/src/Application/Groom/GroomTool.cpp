@@ -1,22 +1,18 @@
 #include <iostream>
 
-#include <QXmlStreamWriter>
-#include <QTemporaryFile>
-#include <QFileDialog>
 #include <QMessageBox>
 #include <QThread>
 
-#include <Groom/GroomTool.h>
-#include <Visualization/ShapeWorksWorker.h>
 #include <Data/Session.h>
 #include <Data/Mesh.h>
 #include <Data/Shape.h>
+#include <Groom/GroomTool.h>
+#include <Visualization/ShapeWorksWorker.h>
 
 #include <ui_GroomTool.h>
 
 //---------------------------------------------------------------------------
-GroomTool::GroomTool(Preferences& prefs)
-  : preferences_(prefs)
+GroomTool::GroomTool()
 {
   this->ui_ = new Ui_GroomTool;
   this->ui_->setupUi(this);
@@ -62,38 +58,27 @@ void GroomTool::handle_progress(int val)
 //---------------------------------------------------------------------------
 void GroomTool::on_restoreDefaults_clicked()
 {
-  this->preferences_.delete_entry("groom_center");
-  this->preferences_.delete_entry("groom_antialias");
-  this->preferences_.delete_entry("groom_pad");
-  this->preferences_.delete_entry("groom_fastmarching");
-  this->preferences_.delete_entry("groom_blur");
-  this->preferences_.delete_entry("groom_isolate");
-  this->preferences_.delete_entry("groom_antialias_amount");
-  this->preferences_.delete_entry("groom_fill_holes");
-  this->preferences_.delete_entry("groom_blur_sigma");
-  this->preferences_.delete_entry("groom_pad_value");
-  this->preferences_.restore_defaults();
-  this->set_preferences();
-  qApp->processEvents();
-  this->preferences_.set_saved(false);
+  // store a set of blank settings
+  Settings settings;
+  this->session_->get_project()->set_settings(Settings::GROOM_SETTINGS, settings);
+  // now load those settings
+  this->load_settings();
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::set_preferences()
+void GroomTool::load_settings()
 {
-
-  this->settings_ = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
-
-  this->ui_->center_checkbox->setChecked(this->settings_.get("center", true));
-  this->ui_->antialias_checkbox->setChecked(this->settings_.get("antialias", true));
-  this->ui_->autopad_checkbox->setChecked(this->settings_.get("pad", true));
-  this->ui_->fastmarching_checkbox->setChecked(this->settings_.get("fastmarching", true));
-  this->ui_->blur_checkbox->setChecked(this->settings_.get("blur", true));
-  this->ui_->isolate_checkbox->setChecked(this->settings_.get("isolate", true));
-  this->ui_->fill_holes_checkbox->setChecked(this->settings_.get("fill_holes", true));
-  this->ui_->antialias_iterations->setValue(this->settings_.get("antialias_amount", 10));
-  this->ui_->blur_sigma->setValue(this->settings_.get("blur_sigma", 2.0));
-  this->ui_->padding_amount->setValue(this->settings_.get("pad_value", 10));
+  Settings settings = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
+  this->ui_->center_checkbox->setChecked(settings.get("center", true));
+  this->ui_->antialias_checkbox->setChecked(settings.get("antialias", true));
+  this->ui_->autopad_checkbox->setChecked(settings.get("pad", true));
+  this->ui_->fastmarching_checkbox->setChecked(settings.get("fastmarching", true));
+  this->ui_->blur_checkbox->setChecked(settings.get("blur", true));
+  this->ui_->isolate_checkbox->setChecked(settings.get("isolate", true));
+  this->ui_->fill_holes_checkbox->setChecked(settings.get("fill_holes", true));
+  this->ui_->antialias_iterations->setValue(settings.get("antialias_amount", 10));
+  this->ui_->blur_sigma->setValue(settings.get("blur_sigma", 2.0));
+  this->ui_->padding_amount->setValue(settings.get("pad_value", 10));
 }
 
 //---------------------------------------------------------------------------
@@ -113,7 +98,6 @@ void GroomTool::enable_actions()
 //---------------------------------------------------------------------------
 void GroomTool::store_settings()
 {
-
   Settings settings = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
 
   settings.set("center", this->ui_->center_checkbox->isChecked());
@@ -198,9 +182,9 @@ void GroomTool::handle_thread_complete()
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::set_project(QSharedPointer<Session> project)
+void GroomTool::set_session(QSharedPointer<Session> session)
 {
-  this->session_ = project;
+  this->session_ = session;
 }
 
 //---------------------------------------------------------------------------
