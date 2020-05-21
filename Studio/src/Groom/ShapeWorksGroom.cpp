@@ -1,5 +1,4 @@
 #include <ShapeWorksGroom.h>
-#include <tinyxml.h>
 
 #include <sstream>
 #include <iostream>

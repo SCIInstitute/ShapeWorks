@@ -1,8 +1,5 @@
 #include <iostream>
 
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
-
 #include <QFileDialog>
 #include <QThread>
 #include <QMessageBox>
