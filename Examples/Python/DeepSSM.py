@@ -62,12 +62,12 @@ particle_list = sorted(particle_list)
 # Data Augmentation
 
 # num_samples is how many samples to generate 
-num_samples = 5
+num_samples = 2
 # PCA_var_cutoff dictates how many modes of variation are preserved for points and images (a smaller value will result in fewer PCA modes, setting to 1 will use all of them)
 PCA_var_cutoff = 0.97
 # If doResample is 1 it will resample the image to be half the size for faster training
 # If doPad is 1 it will add padding around the image in case the anatomy lies on the image boundary 
-aug_data_csv = dataAugment(img_list, particle_list, parent_dir + "augmentation/", num_samples, PCA_var_cutoff, doResample=0, doPad=0)
+aug_data_csv = dataAugment(img_list, particle_list, parent_dir + "augmentation/", num_samples, PCA_var_cutoff, doResample=1, doPad=1)
 
 
 # print("\nStep 3. Reformat Data for Pytorch\n")

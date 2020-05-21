@@ -16,11 +16,10 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
-def padImage(filename, padDims):
+def padImage(filename, pad_amount):
 	[d, f] = nrrd.read(filename)
 	dim = d.shape
-	print(dim)
-	padamt = np.array([padDims[0], padDims[1], padDims[2]]) - dim
+	padamt = np.array([dim[0]+ pad_amount, dim[1] + pad_amount, dim[2] + pad_amount]) - dim
 	x = np.floor(padamt/2)
 	x = x.astype(np.int8)
 	y = padamt - x
@@ -89,7 +88,7 @@ def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doR
 
 	# if need for resampling and padding arises
 	resmpleFactor = 0.5
-	padDims = [48, 64, 56]
+	pad_amount = 4
 	# make appropriate directories
 	if doPad == 1:
 		padDir = out_dir + 'paddedOut/'
@@ -104,7 +103,7 @@ def dataAugment(data_list, point_list, out_dir, num_samples, PCA_var_cutoff, doR
 	for i in range(len(pathlist)):
 		print("Image " + str(i) + " out of " + str(len(pathlist)))
 		if doPad == 1:
-			[padout,f] = padImage(pathlist[i], padDims)
+			[padout,f] = padImage(pathlist[i], pad_amount)
 			newnm = pathlist[i].rsplit('/', 1)[1]
 			newnm = newnm.replace('.nrrd', '_padded.nrrd')
 			newnm = padDir + newnm
