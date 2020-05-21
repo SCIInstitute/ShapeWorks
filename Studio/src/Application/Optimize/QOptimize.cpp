@@ -25,6 +25,13 @@ std::vector<std::vector<itk::Point<double>>> QOptimize::GetGlobalPoints()
 }
 
 //---------------------------------------------------------------------------
+void QOptimize::UpdateExportablePoints()
+{
+  QMutexLocker locker(&qmutex);
+  Optimize::UpdateExportablePoints();
+}
+
+//---------------------------------------------------------------------------
 void QOptimize::SetIterationCallback()
 {
   this->iterate_command_ = itk::MemberCommand<QOptimize>::New();
