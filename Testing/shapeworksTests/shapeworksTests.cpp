@@ -6,32 +6,27 @@
 //---------------------------------------------------------------------------
 void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://github.com/google/googletest/blob/master/googletest/docs/advanced.md
 {
+  // set PATH to shapeworks executable called by shell scripts
 #ifdef _WIN32
-  std::string bin_dir = std::string(BUILD_DIR) + "/Release";
-  std::replace(bin_dir.begin(), bin_dir.end(), '/', '\\');
-  std::string path = getenv("PATH");
-  path = path + ";" + std::string(INSTALL_DIR) + "\\bin";
-  std::cerr << "Setting PATH to " << path << "\n";
+  auto path(std::string(BUILD_DIR) + "\\Release\\bin" + ";" + std::getenv("PATH"));
   _putenv_s("PATH", path.c_str());
 #else
-  // set PATH to shapeworks executable called by shell scripts
-  const char *env_p = std::getenv("PATH");
-  std::string path(env_p);
-  // fixme: /bin/Release or /bin/Debug for some build systems (Xcode, VS, etc)
-  // fixme: need windows PATH separator (;).  there's some handy function for this
-  path = std::string(BUILD_DIR) + "/bin/" + ":" + path; // might be /bin/Debug or /bin/Release (ex: if using Xcode)
-  setenv("PATH", path.c_str(), true);                   // fixme: setenv may not exist
+  auto path(std::string(BUILD_DIR) + "/bin/" + ":" + std::getenv("PATH")); // might be /bin/Debug or /bin/Release for systems such as Xcode
+  setenv("PATH", path.c_str(), true);
+#endif
 
-  // set path to test data for shell scripts to use
+  // set location of shapeworks DATA used by shell scripts
   std::string data(TEST_DATA_DIR);
   data += "/shapeworks";
+#ifdef _WIN32
+  _putenv_s("DATA", data.c_str(), true);
+#else
   setenv("DATA", data.c_str(), true);
+#endif
 
   // change to the shapeworksTest directory
-  std::string shapeworksTestsDir(TEST_DATA_DIR);
-  shapeworksTestsDir += "/../shapeworksTests";
+  auto shapeworksTestsDir(std::string(TEST_DATA_DIR) + "/../shapeworksTests");
   chdir(shapeworksTestsDir.c_str());
-#endif
 }
 
 //---------------------------------------------------------------------------
