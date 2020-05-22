@@ -30,9 +30,22 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
 }
 
 //---------------------------------------------------------------------------
+TEST(shapeworksTests, test1)
+{
+  ASSERT_FALSE(system("bash"));
+}
+
+//---------------------------------------------------------------------------
+TEST(shapeworksTests, test2)
+{
+  shapeworksEnvSetup();
+  ASSERT_FALSE(system("bash"));
+}
+
+//---------------------------------------------------------------------------
 TEST(shapeworksTests, compare) {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("./compare.sh"));
+  ASSERT_FALSE(system("C:\Program Files\Git\bin\bash .\compare.sh"));
 }
 
 //---------------------------------------------------------------------------
@@ -52,7 +65,7 @@ TEST(shapeworksTests, antialias)
 TEST(shapeworksTests, antialiasfail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("./antialiasfail.sh"));
+  ASSERT_TRUE(system(" ./antialiasfail.sh"));
 }
 
 //---------------------------------------------------------------------------
