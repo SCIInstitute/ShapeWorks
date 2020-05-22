@@ -68,6 +68,7 @@ public:
     for (; !curvIt.IsAtEnd(); ++curvIt, ++it) {
       const auto idx = curvIt.GetIndex();
       if (idx != it.GetIndex()) {
+        // This code assumes that the two iterators proceed with the same index
         throw std::runtime_error("Bad index");
       }
       const auto pixel = it.Get();
@@ -118,7 +119,6 @@ protected:
     // Rendering..." for detailss
     
     // Get the normal vector associated with this position.
-    //VnlVectorType posnormal = this->SampleNormalVnl(pos, 1.0e-10);
     typename Superclass::VnlVectorType posnormal = this->SampleNormalVnl(pos, 1.0e-6);
 
     // Sample the Hessian for this point and compute gradient of the normal.

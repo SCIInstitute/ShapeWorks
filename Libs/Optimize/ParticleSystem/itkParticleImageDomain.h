@@ -57,7 +57,10 @@ public:
     this->Modified();
 
     openvdb::initialize(); // It is safe to initialize multiple times.
-    m_VDBImage = openvdb::FloatGrid::create();
+
+    // Set a large background value, so that we quickly catch particles outside or on the edge the narrow band.
+    // (Downside: its more difficult to display the correct location of the point of failure.)
+    m_VDBImage = openvdb::FloatGrid::create(1e8);
     m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
     auto vdbAccessor = m_VDBImage->getAccessor();
 
@@ -156,7 +159,7 @@ public:
       const auto coord = this->ToVDBCoord(p);
       return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
     } else {
-      itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain." );
+      itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
     }
   }
 
@@ -214,10 +217,21 @@ protected:
   }
 
   // Converts a coordinate from an ITK Image point in world space to the corresponding
-  // coordinate in OpenVDB Index space
+  // coordinate in OpenVDB Index space. Raises an exception if the narrow band is not
+  // sufficiently large to sample the point.
   inline openvdb::Vec3R ToVDBCoord(const PointType &p) const {
-    const auto coord = openvdb::Vec3R(p[0], p[1], p[2]);
-    return this->transform()->worldToIndex(coord);
+    const auto worldCoord = openvdb::Vec3R(p[0], p[1], p[2]);
+    const auto idxCoord = this->transform()->worldToIndex(worldCoord);
+
+    // Make sure the coordinate is part of the narrow band
+    if(m_VDBImage->tree().isValueOff(openvdb::Coord::round(idxCoord))) { // `isValueOff` requires an integer coordinate
+      // If multiple threads crash here at the same time, the error message displayed is just "terminate called recursively",
+      // which isn't helpful. So we std::cerr the error to make sure its printed to the console.
+      std::cerr << "Sampled point outside the narrow band: " << p << std::endl;
+      itkExceptionMacro("Attempt to sample at a point outside the narrow band: " << p << ". Consider increasing the narrow band")
+    }
+
+    return idxCoord;
   }
 
 private:

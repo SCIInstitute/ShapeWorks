@@ -139,9 +139,6 @@ public:
   {
     const auto coord = this->ToVDBCoord(p);
 
-    // std::cout << "Hessian: " << p << "\nSample: " << this->Sample(p) << std::endl;
-    // std::cout << "VDB coord: " << coord << std::endl;
-
     VnlMatrixType vdbAns;
     for (unsigned int i = 0; i < VDimension; i++)
     {
