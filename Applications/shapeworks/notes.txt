@@ -17,7 +17,7 @@ HOWTO start a new command:
  4) find all uses of the command (in .sh and .py files) and change them to use the new shapeworks subcommand:
   $ find Examples -name "*" -type f -exec grep -i "OldCommandName" {} \; -print
  5) test command as needed to ensure it works the same as before (unless there was already a bug :)
-  5b) add unit tests for new classes (follow Alan's example for a function in Image)
+  5a) add unit tests for new classes (follow Alan's example for a function in Image)
  6) remove the old command from its directory's CMakeLists.txt and `git rm OldCommandName.cxx`
  7) commit the results and make a pull request *to executable* (not to master)
  
@@ -40,47 +40,77 @@ ShapeWorksToolsConsolidation -> https://docs.google.com/spreadsheets/d/17gevfSR-
 Image commands:
 
 [x] readimage
+ - shapeworks readimage --name ./test.nrrd
+
 [x] writeimage
-[x] binarize (created new command by breaking down isoresample)
-[x] recenter (created new command by breaking down isoresample)
-[x] *AntiAliasing -> shapeworks antialias
- o ShapeWorksGroom class duplicates antialias functionality, has different defaults
- o Examples
- - shapeworks antialias readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd antialias --numIterations 75 --maxRMSError 0.03 writeimage --name ./foobar.nrrd
+ - shapeworks writeimage --name ./foobar.nrrd
 
- - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd binarize isoresample --isoSpacing 1.0 --bSplineInterp True recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+[x] binarize (created new command by breaking down ResampleVolumesToBeIsotropic)
+ - shapeworks readimage --name ./test.nrrd binarize writeimage --name ./foobar.nrrd
 
- Note: numLayers expands in all dimensions, a sample size for a region distance n around an n-d image
+[x] recenter (created new command by breaking down ResampleVolumesToBeIsotropic)
+ - shapeworks readimage --name ./test.nrrd recenter writeimage --name ./foobar.nrrd
 
-[] ClipVolume
-[] *CloseHoles
-[] *CropImages
-[] *ExtractGivenLabelImage
-[] *FastMarching
-[] *FindLargestBoundingBox
-[x] *PadVolumeWithConstant -> shapeworks pad
- o Examples:
- - ./shapeworks readimage --name /Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd pad --padding 0 --value 0.0 writeimage --name /Users/archanasrisubramanian/Desktop/shapeworks_results/padvolume_seg.ellipsoid_0.nrrd
+[x] *AntiAliasing -> antialias
+ - shapeworks readimage --name ./test.nrrd antialias --numiterations 75 --maxrmserror 0.03 --numlayers 0 writeimage --name ./foobar.nrrd
 
- - ./PadVolumeWithConstant --inFilename=/Users/archanasrisubramanian/code/ShapeWorks/Examples/Python/Ellipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd --outFilename /Users/archanasrisubramanian/Desktop/shapeworks_results/oldpadvolume_seg.ellipsoid_0.nrrd --paddingSize=0 --paddingValue=0.0
+[x] ClipVolume -> clip
+ - shapeworks readimage --name ./test.nrrd clip-volume --x1 --x2 --x3 --y1 --y2 --y3 --z1 --z2 --z3 writeimage --name ./foobar.nrrd
 
-[] *ReflectVolumes
+[x] *CloseHoles -> closeholes
+ - shapeworks readimage --name ./test.nrrd closeholes writeimage --name ./foobar.nrrd 
 
-[x] ResampleVolumesToBeIsotropic -> shapeworks isoresample
- o Examples:
-  - ResampleVolumesToBeIsotropic --inFilename=/Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_29.nrrd --outFilename /Users/cam/Desktop/tmp/ResampleVolumesOldVersion-ellipsoid_29.nrrd --isBinary 1 --isoSpacing 1.0 --isCenterImageOn 1
+[x] *CropImages -> crop
+ - shapeworks readimage --name ./test.nrrd crop writeimage --name ./foobar.nrrd 
 
-  - shapeworks readimage --name /Users/cam/code/ShapeWorks/ShapeWorks/Examples/Python/TestEllipsoids/Ellipsoids_UnPrepped/seg.ellipsoid_0.nrrd antialias isoresample --isoSpacing 1.0 recenterimage binarize writeimage --name /Users/cam/Desktop/tmp/resample_image_test_bools.nrrd
+[x] *ExtractGivenLabelImage -> extractlabel 
+ - shapeworks readimage --name ./test.nrrd extractlabel --label 1.0 writeimage --name ./foobar.nrrd
 
-[] *ThresholdImages
-[] TopologyPreservingSmoothing
-[] *WriteImageInfoToText
-[] itkTBGACLevelSetImageFilter (also has .txx file, ugh)
+[x] *FastMarching -> computedt
+ - shapeworks readimage --name ./test.nrrd fastmarch --isovalue 0.0 writeimage --name ./foobar.nrrd
 
-Mesh commands:  (some of these may not actually be executables)
+[x] *FindLargestBoundingBox -> binaryboundingbox 
+ - shapeworks boundingbox --names ./images/*.nrrd -- --padding 0
 
-[] readmesh  (functions exist, they just don't do anything)
-[] writemesh (functions exist, they just don't do anything)
+[x] *PadVolumeWithConstant -> pad
+ - shapeworks readimage --name ./test.nrrd pad --padding 0 --value 0.0 writeimage --name ./foobar.nrrd
+
+[x] *ReflectVolumes -> reflectvolume
+ - shapeworks readimage --name ./test.nrrd reflectvolume --axis 1 writeimage --name ./foobar.nrrd
+
+[x] ResampleVolumesToBeIsotropic -> isoresample
+ - shapeworks readimage --name ./test.nrrd antialias isoresample --isospacing 1.0 recenter binarize writeimage --name ./foobar.nrrd
+
+[x] *ThresholdImages -> threshold 
+ - shapeworks readimage --name ./test.nrrd threshold writeimage --name ./foobar.nrrd
+
+[x] TopologyPreservingSmoothing
+ - shapeworks readimage --name ./images/test.nrrd curvature --iterations 1 writeimage --name ./images/test.tpSmoothDT.nrrd topo-preserving-smooth --alpha 10.5 --beta 10.0 --scaling 0.0 --applycurvature 0 writeimage --name ./images/test.ISO.nrrd 
+
+[x] curvature (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd curvature --iterations 1 writeimage --name ./images/test.tpSmoothDT.nrrd
+
+[x] gradient (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd gradient writeimage --name ./images/foobar.nrrd
+
+[x] sigmoid (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd sigmoid --alpha 10.5 --beta 10.0 writeimage --name ./images/foobar.nrrd
+
+[x] tplevelset (created new command by breaking down TopologyPreservingSmoothing)
+ - shapeworks readimage --name ./images/test.nrrd setlevel --other ./images/test.tpSmoothDT.nrrd --scaling 0.0 writeimage --name ./images/test.ISO.nrrd
+
+[x] blur
+
+[x] *WriteImageInfoToText -> deprecated
+
+[x] itkTBGACLevelSetImageFilter (also has .txx file) -> not a tool
+
+Mesh commands:
+
+[] readmesh
+
+[] writemesh
+
 ClipClosedSurface
 ComputeCurvatureAndCoordFiles
 ComputeGeodesicDistanceFromVerticesToPoints
@@ -112,9 +142,13 @@ ReconstructSamplesAlongPCAModes
 ReconstructSurface
 ReflectMesh
 RemoveFidsDTLeakage
-[] SmoothMesh -> shapeworks smoothmesh
+
+[] SmoothMesh -> smoothmesh
+
 WriteFeatureGradientAsText
+
 [x] deprecated/  (git rm -r deprecated)
+
 fea2vtk
 itkMultiplyByConstantImageFilter.h
 meshFIM.cpp
@@ -123,26 +157,41 @@ meshFIM.h
 Optimize commands:
 
 ShapeWorksRunApp.h (save this one till last or not at all)
-[] bring up during next meeting since this is a full-fledged application, not merely a utility.
-   It might constitute a class by itself.
-   It seems to only use vtk and ITK, not any of the rest of the ShapeWorks framework.
-    - ah! except ParticleSystem's files (in the Optimize/ParticleSystem) are misnamed as itkParticle*
-    - but ParticleSystem is already a class. It should probably be moved, but it already stands alone
+ - It might constitute a class by itself.
+ - It seems to only use vtk and ITK, not any of the rest of the ShapeWorks framework.
+ - ah! except ParticleSystem's files (in the Optimize/ParticleSystem) are misnamed as itkParticle*
+ - but ParticleSystem is already a class. It should probably be moved, but it already stands alone
 
 Alignment commands:
 
-ApplyRigid3DTransformationToImage
-ICPRigid3DImageRegistration
-ICPRigid3DMeshRegistration
+[] ApplyRigid3DTransformationToImage
+
+[x] ICPRigid3DImageRegistration -> icp 
+
+[] ICPRigid3DMeshRegistration
+
 Procrustes3D.cpp
 Procrustes3D.h
+
 [] ReflectMeshes
-[] ResampleVolumeToIsotropic -> see if it's used anywhere and convert those cases to use new resampleimage command
-ResizeOriginResampleVolumes
-Transforms/
-TranslateImages
-[] TranslateShapeToImageOrigin
-TranslationTransform
+[] ResampleVolumeToIsotropic
+[] ResizeOriginResampleVolumes
+
+[x] TranslateImages -> translate
+ - shapeworks readimage --name ./images/test.nrrd translate --tx 10 --ty 10 --tz 10 writeimage --name ./images/foobar.nrrd
+
+[x] TranslateShapeToImageOrigin -> translate 
+ - shapeworks readimage --name ./images/test.nrrd translate --centerofmass 1 writeimage --name ./images/foobar.nrrd
+
+[x] TranslationTransform -> deprecated
+
+Alignment/Transform Commands:
+
+itkAdvancedTransform
+itkCompactlySupportedRBFSparseKernelTransform
+itkKernelTransform2
+itkSparseKernelTransform
+itkThinPlateSplineKernelTransform2
 
 Analyze commands:
 
@@ -165,6 +214,3 @@ ply2vtk
 stl2ply
 stl2vtk
 vtk2ply
-
-  
-

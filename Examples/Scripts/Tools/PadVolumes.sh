@@ -115,7 +115,6 @@ do
     segfilename_padded=${out_dir}${seg_prefix}.${subject_id}${seg_suffix}.padded.nrrd
     imgfilename_padded=${out_dir}${img_prefix}.${subject_id}${seg_suffix}.padded.nrrd
     
-    
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     EchoWithColor "segfilename $segfilename" "yellow"
     EchoWithColor  "imgfilename $imgfilename" "yellow"
@@ -124,9 +123,9 @@ do
     EchoWithColor  "imgfilename_padded $imgfilename_padded" "yellow"
     EchoWithColor "-------------------------------------------------------------------------------------------------" "yellow"
     
-    shapeworks readimage --name $segfilename pad --padding $padding_size --value $padVal writeimage --name $segfilename_padded
+    shapeworks read-image --name $segfilename pad --padding $padding_size --value $padVal write-image --name $segfilename_padded
     if [ $process_raw -eq 1 ]
     then
-      shapeworks readimage --name $imgfilename pad --padding $padding_size --value $padVal writeimage --name $imgfilename_padded
+      shapeworks read-image --name $imgfilename pad --padding $padding_size --value $padVal write-image --name $imgfilename_padded
     fi
 done
