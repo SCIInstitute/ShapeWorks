@@ -21,13 +21,11 @@
 
 #include <ui_AnalysisTool.h>
 
-
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
 const std::string AnalysisTool::MODE_MEAN_C("mean");
 const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
-
 
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs)
@@ -68,9 +66,15 @@ std::string AnalysisTool::get_analysis_mode()
     if (this->ui_->singleSamplesRadio->isChecked()) { return AnalysisTool::MODE_SINGLE_SAMPLE_C;}
   }
 
-  if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) { return AnalysisTool::MODE_MEAN_C;}
-  if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) { return AnalysisTool::MODE_PCA_C;}
-  if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) { return AnalysisTool::MODE_REGRESSION_C;}
+  if (this->ui_->tabWidget->currentWidget() == this->ui_->mean_tab) {
+    return AnalysisTool::MODE_MEAN_C;
+  }
+  if (this->ui_->tabWidget->currentWidget() == this->ui_->pca_tab) {
+    return AnalysisTool::MODE_PCA_C;
+  }
+  if (this->ui_->tabWidget->currentWidget() == this->ui_->regression_tab) {
+    return AnalysisTool::MODE_REGRESSION_C;
+  }
   return "";
 }
 
@@ -121,13 +125,13 @@ void AnalysisTool::handle_reconstruction_complete()
   ///TODO: Studio
   ///this->ui_->run_optimize_button->setEnabled(true);
 
-  this->enableActions();
+  this->enable_actions();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_reconstructionButton_clicked()
 {
-  this->save_to_preferences();
+  this->store_settings();
   emit message("Please wait: running reconstruction step...");
   emit progress(5);
   //this->ui_->run_optimize_button->setEnabled(false);
@@ -225,9 +229,9 @@ AnalysisTool::~AnalysisTool()
 {}
 
 //---------------------------------------------------------------------------
-void AnalysisTool::set_project(QSharedPointer<Session> project)
+void AnalysisTool::set_session(QSharedPointer<Session> session)
 {
-  this->session_ = project;
+  this->session_ = session;
 }
 
 //---------------------------------------------------------------------------
@@ -437,28 +441,22 @@ ParticleShapeStatistics<3> AnalysisTool::get_stats()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::load_from_preferences()
+void AnalysisTool::load_settings()
 {
-  this->ui_->numClusters->setValue(
-    this->preferences_.get_preference("reconstruction_clusters",
-                                      this->ui_->numClusters->value()));
-  this->ui_->meshDecimation->setValue(
-    this->preferences_.get_preference("reconstruction_decimation",
-                                      this->ui_->meshDecimation->value()));
-  this->ui_->maxAngle->setValue(
-    this->preferences_.get_preference("reconstruction_maxAngle",
-                                      this->ui_->maxAngle->value()));
+  Settings settings = this->session_->get_project()->get_settings(Settings::ANALYSIS_SETTINGS);
+  this->ui_->numClusters->setValue(settings.get("reconstruction_clusters", 3));
+  this->ui_->meshDecimation->setValue(settings.get("reconstruction_decimation", 0.30));
+  this->ui_->maxAngle->setValue(settings.get("reconstruction_max_angle", 60));
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::save_to_preferences()
+void AnalysisTool::store_settings()
 {
-  this->preferences_.set_preference("reconstruction_clusters",
-                                    this->ui_->numClusters->value());
-  this->preferences_.set_preference("reconstruction_decimation",
-                                    this->ui_->meshDecimation->value());
-  this->preferences_.set_preference("reconstruction_maxAngle",
-                                    this->ui_->maxAngle->value());
+  Settings settings = this->session_->get_project()->get_settings(Settings::ANALYSIS_SETTINGS);
+  settings.set("reconstruction_clusters", this->ui_->numClusters->value());
+  settings.set("reconstruction_decimation", this->ui_->meshDecimation->value());
+  settings.set("reconstruction_max_angle", this->ui_->maxAngle->value());
+  this->session_->get_project()->set_settings(Settings::ANALYSIS_SETTINGS, settings);
 }
 
 //---------------------------------------------------------------------------
@@ -612,8 +610,11 @@ void AnalysisTool::reset_stats()
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::enableActions()
+void AnalysisTool::enable_actions()
 {
+  std::cerr << "particles present = " << this->session_->particles_present() << "\n";
+  std::cerr << "groomed present = " << this->session_->get_groomed_present() << "\n";
+
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 }

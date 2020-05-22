@@ -115,6 +115,21 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           SLOT(handle_display_setting_changed()));
   connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
 
+  //analysis tool initializations
+  this->analysis_tool_ = QSharedPointer<AnalysisTool>(new AnalysisTool(preferences_));
+  this->analysis_tool_->set_session(this->session_);
+  this->analysis_tool_->set_app(this);
+  this->ui_->stacked_widget->addWidget(this->analysis_tool_.data());
+  connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
+          SLOT(handle_display_setting_changed()));
+  connect(this->analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
+  connect(this->analysis_tool_.data(), SIGNAL(progress(size_t)),
+          this, SLOT(handle_progress(size_t)));
+  connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
+          this, SLOT(handle_reconstruction_complete()));
+
+
+
   // setup modes
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
   this->ui_->view_mode_combobox->addItem(Visualizer::MODE_GROOMED_C.c_str());
@@ -194,18 +209,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   connect(this->preferences_window_.data(), SIGNAL(slider_update()), this,
           SLOT(handle_slider_update()));
 
-  //analysis tool initializations
-  this->analysis_tool_ = QSharedPointer<AnalysisTool>(new AnalysisTool(preferences_));
-  this->analysis_tool_->set_project(this->session_);
-  this->analysis_tool_->set_app(this);
-  this->ui_->stacked_widget->addWidget(this->analysis_tool_.data());
-  connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
-          SLOT(handle_display_setting_changed()));
-  connect(this->analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
-  connect(this->analysis_tool_.data(), SIGNAL(progress(size_t)),
-          this, SLOT(handle_progress(size_t)));
-  connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
-          this, SLOT(handle_reconstruction_complete()));
 
   //regression tool TODO
   /*this->analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
@@ -477,7 +480,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   //subtools
   this->groom_tool_->enable_actions();
   this->optimize_tool_->enable_actions();
-  this->analysis_tool_->enableActions();
+  this->analysis_tool_->enable_actions();
   //recent
   QStringList recent_files = preferences_.get_recent_files();
   int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
@@ -499,7 +502,7 @@ void ShapeWorksStudioApp::update_from_preferences()
   this->ui_->center_checkbox->setChecked(preferences_.get_preference("center_option", true));
   this->groom_tool_->load_settings();
   this->optimize_tool_->load_settings();
-  this->analysis_tool_->load_from_preferences();
+  this->analysis_tool_->load_settings();
 }
 
 //---------------------------------------------------------------------------
@@ -1240,6 +1243,7 @@ void ShapeWorksStudioApp::save_project(string filename)
 
   this->groom_tool_->store_settings();
   this->optimize_tool_->store_settings();
+  this->analysis_tool_->store_settings();
 
   if (this->session_->save_project(
         filename, this->data_dir_)) {

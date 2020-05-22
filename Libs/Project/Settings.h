@@ -99,6 +99,7 @@ class Settings {
 
 public:
 
+  static constexpr const char* ANALYSIS_SETTINGS = "analysis";
   static constexpr const char* GROOM_SETTINGS = "groom";
   static constexpr const char* OPTIMIZE_SETTINGS = "optimize";
   static constexpr const char* STUDIO_SETTINGS = "studio";

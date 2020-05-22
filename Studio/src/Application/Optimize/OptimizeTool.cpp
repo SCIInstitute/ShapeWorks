@@ -71,9 +71,6 @@ void OptimizeTool::handle_optimize_complete()
   emit message("Optimize Complete");
   emit optimize_complete();
   this->ui_->run_optimize_button->setEnabled(true);
-
-  /// TODO: studio
-  ///this->ui_->reconstructionButton->setEnabled(this->project_->reconstructed_present());
 }
 
 //---------------------------------------------------------------------------
@@ -93,9 +90,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->store_settings();
   emit message("Please wait: running optimize step...");
   emit progress(1);
-  //this->ui_->run_optimize_button->setEnabled(false);
-  /// TODO: studio
-  ///this->ui_->reconstructionButton->setEnabled(false);
+
   auto shapes = this->session_->get_shapes();
   std::vector<ImageType::Pointer> imgs;
   std::vector<std::string> groomed_filenames;

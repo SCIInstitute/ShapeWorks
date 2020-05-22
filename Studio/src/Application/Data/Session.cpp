@@ -455,7 +455,9 @@ bool Session::load_light_project(QString filename)
     inputsBuffer.str("");
   }
 
-  //this->load_groomed_files(groom_files, 0.5);
+  this->load_groomed_files(groom_files, 0.5);
+
+  //this->project_->
 
   if (!this->load_point_files(local_point_files, true)) {
     return false;
@@ -628,26 +630,23 @@ void Session::load_groomed_images(std::vector<ImageType::Pointer> images, double
 //---------------------------------------------------------------------------
 void Session::load_groomed_files(std::vector<std::string> file_names, double iso)
 {
-  QProgressDialog progress("Loading groomed images...", "Abort", 0,
-                           file_names.size(), this->parent_);
-  progress.setWindowModality(Qt::WindowModal);
+  //QProgressDialog progress("Loading groomed images...", "Abort", 0,
+  //                         file_names.size(), this->parent_);
+  //progress.setWindowModality(Qt::WindowModal);
 
   for (int i = 0; i < file_names.size(); i++) {
-    progress.setValue(i);
-    QApplication::processEvents();
-    if (progress.wasCanceled()) {
-      break;
-    }
     if (this->shapes_.size() <= i) {
-      QSharedPointer<Shape> new_shape = QSharedPointer<Shape>(new Shape);
-      new_shape->set_mesh_manager(this->mesh_manager_);
-
-      this->shapes_.push_back(new_shape);
+      auto shape = QSharedPointer<Shape>(new Shape);
+      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_subject(subject);
+      this->project_->get_subjects().push_back(subject);
+      this->shapes_.push_back(shape);
     }
-    this->shapes_[i]->import_groomed_file(QString::fromStdString(file_names[i]), iso);
+
+    std::vector<std::string> groomed_filenames {file_names[i]};   // only single domain supported so far
+    this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
-  progress.setValue(file_names.size());
-  QApplication::processEvents();
 
   if (file_names.size() > 0) {
     this->groomed_present_ = true;
@@ -665,7 +664,6 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
     }
     else {
       shape = QSharedPointer<Shape>(new Shape);
-
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
       shape->set_mesh_manager(this->mesh_manager_);
       shape->set_subject(subject);

@@ -28,8 +28,8 @@ public:
   AnalysisTool(Preferences& prefs);
   ~AnalysisTool();
 
-  /// set the pointer to the project
-  void set_project(QSharedPointer<Session> project);
+  /// set the pointer to the session
+  void set_session(QSharedPointer<Session> session);
 
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
@@ -63,15 +63,15 @@ public:
   void updateSlider();
 
   void reset_stats();
-  void enableActions();
+  void enable_actions();
 
   const vnl_vector<double>& get_mean_shape();
 
   const vnl_vector<double>& get_shape(int mode, double value, double group_value = 0.5);
 
   ParticleShapeStatistics<3> get_stats();
-  void load_from_preferences();
-  void save_to_preferences();
+  void load_settings();
+  void store_settings();
 
   void shutdown();
 
@@ -127,8 +127,9 @@ private:
   void compute_mode_shape();
   void update_analysis_mode();
 
-  //private members
   Preferences & preferences_;
+  //private members
+
   Ui_AnalysisTool* ui_;
   QSharedPointer<Session> session_;
   ShapeWorksStudioApp* app_;
