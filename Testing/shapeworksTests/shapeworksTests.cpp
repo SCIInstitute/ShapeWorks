@@ -37,242 +37,242 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, compare) {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./compare.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./compare.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, comparefail) {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./comparefail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./comparefail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, antialias)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./antialias.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./antialias.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, antialiasfail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./antialiasfail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./antialiasfail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, resample)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./resample.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./resample.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, recenter)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./recenter.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./recenter.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, pad)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./pad.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./pad.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, translate)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./translate.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./translate.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, translatefail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./translatefail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./translatefail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, centerofmass)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./centerofmass.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./centerofmass.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, scale)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./scale.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./scale.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, scalefail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./scalefail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./scalefail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, rotate)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./rotate.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./rotate.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, rotatefail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./rotatefail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./rotatefail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, extractlabel)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./extractlabel.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./extractlabel.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, closeholes)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./closeholes.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./closeholes.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, threshold)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./threshold.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./threshold.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, thresholdfail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./thresholdfail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./thresholdfail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, computedt)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./computedt.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./computedt.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, curvature)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./curvature.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./curvature.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, curvaturefail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./curvaturefail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./curvaturefail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, gradient)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./gradient.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./gradient.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, sigmoid)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./sigmoid.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./sigmoid.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, tplevelset)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./tplevelset.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./tplevelset.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, tplevelsetfail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./tplevelsetfail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./tplevelsetfail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, topo)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./topo.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./topo.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, topofail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./topofail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./topofail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, blur)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./blur.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./blur.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, icp)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./icp.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./icp.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, icpfail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./icpfail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./icpfail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, clip)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./clip.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./clip.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, clipfail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./clipfail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./clipfail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, reflect)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./reflect.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./reflect.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, reflectfail)
 {
   shapeworksEnvSetup();
-  ASSERT_TRUE(system("bash ./reflectfail.sh"));
+  ASSERT_TRUE(system("C:\msys64\usr\bin\bash.exe ./reflectfail.sh"));
 }
 
 //---------------------------------------------------------------------------
 TEST(shapeworksTests, setorigin)
 {
   shapeworksEnvSetup();
-  ASSERT_FALSE(system("bash ./setorigin.sh"));
+  ASSERT_FALSE(system("C:\msys64\usr\bin\bash.exe ./setorigin.sh"));
 }
