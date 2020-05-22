@@ -230,6 +230,10 @@ P. R. Atkins, Y. Shin, P. Agrawal, S. Y. Elhabian, R. T. Whitaker, J. A. Weiss, 
 M. Jacxsens, S. Elhabian, S. Brady, P. Chalmers, R. Tashjian, and H. Henninger. "Coracoacromial morphology: a contributor to recurrent traumatic anterior glenohumeral instability," Journal of Shoulder and Elbow Surgery, 1:1316-1325, 2019.
 </p>
 
+<p align="justify">
+Ken Museth. "VDB: High-resolution sparse volumes with dynamic topology" ACM Transactions on Graphics, July 2013, Article No.: 27
+</p>
+
 <!--
 Requirements
 =====================
