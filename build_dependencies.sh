@@ -47,7 +47,8 @@ usage()
 
 # full names of relative paths are needed to specify locations of dependencies
 function fullpath {
-  if [[ $1 = /* ]]; then
+  # unix full paths start with `/`; second character of windows full paths is `:`
+  if [[ $1 = /* || ${1:1:1} = \: ]]; then
     echo $1
   else
     echo `pwd`/$1
