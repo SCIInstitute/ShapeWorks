@@ -259,7 +259,6 @@ ShapeHandle Visualizer::create_display_object(const vnl_vector<double> &points,
                                               const std::vector<Point> &vectors)
 {
 
-
   vtkSmartPointer<vtkPolyData> mesh = this->session_->get_mesh_manager()->get_mesh(points);
 
   ShapeHandle shape = ShapeHandle(new Shape());
@@ -296,14 +295,14 @@ void Visualizer::set_show_surface(bool show)
 void Visualizer::update_viewer_properties()
 {
   double size = preferences_.get_glyph_size();
-  double quality = preferences_.get_preference("glyph_quality", 5.f);
+  double quality = preferences_.get_glyph_quality();
 
   if (this->lightbox_) {
     foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {
       viewer->set_glyph_size_and_quality(size, quality);
       viewer->set_show_glyphs(this->show_glyphs_);
       viewer->set_show_surface(this->show_surface_);
-      viewer->set_color_scheme(this->preferences_.get_preference("color_scheme", 0));
+      viewer->set_color_scheme(this->preferences_.get_color_scheme());
     }
 
     this->update_lut();

@@ -310,18 +310,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
     inputsBuffer.str("");
   }
 
-  // load project settings
-  TiXmlNode* settings_node = project_element->FirstChild("settings");
 
-  for (auto item = settings_node->FirstChildElement(); item != nullptr;
-       item = item->NextSiblingElement()) {
-    QString name = item->Value();
-    QString value = item->GetText();
-    std::cerr << "setting: " << name.toStdString() << " to " << value.toStdString() << "\n";
-    this->preferences_.set_preference(name.toStdString(), QVariant(value));
-  }
-
-  // now read the preferences and other elements
   for (auto item = project_element->FirstChildElement(); item != nullptr;
        item = item->NextSiblingElement()) {
     if (QString(item->Value()) != "shapes") {
@@ -349,8 +338,6 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
     }
   }
 
-  auto display_state = this->preferences_.get_preference(
-    "display_state", QString::fromStdString(Visualizer::MODE_ORIGINAL_C)).toStdString();
 
   this->load_original_files(original_files);
   if (groom_files.size() > 0) {
@@ -364,7 +351,6 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
   }
   this->particles_present_ = local_point_files.size() == global_point_files.size() &&
                              global_point_files.size() > 1;
-  this->preferences_.set_preference("display_state", QString::fromStdString(display_state));
   return true;
 }
 

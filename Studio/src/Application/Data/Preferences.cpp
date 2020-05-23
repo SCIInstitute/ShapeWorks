@@ -37,6 +37,18 @@ void Preferences::set_window_state(QByteArray state)
 }
 
 //-----------------------------------------------------------------------------
+QString Preferences::get_last_directory()
+{
+  return this->settings_.value("Studio/last_directory", "").toString();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_last_directory(QString value)
+{
+  this->settings_.setValue("Studio/last_directory", value);
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::get_cache_enabled()
 {
   return this->settings_.value("Studio/cache_enabled", true).toBool();
@@ -85,6 +97,18 @@ void Preferences::set_num_threads(int num_threads)
 }
 
 //-----------------------------------------------------------------------------
+float Preferences::get_cache_epsilon()
+{
+  return this->settings_.value("Studio/cache_epsilon", 1e-3f).toFloat();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_cache_epsilon(float value)
+{
+  this->settings_.setValue("Studio/cache_epsilon", value);
+}
+
+//-----------------------------------------------------------------------------
 float Preferences::get_glyph_size()
 {
   return this->settings_.value("Project/glyph_size", 5.0).toFloat();
@@ -94,6 +118,66 @@ float Preferences::get_glyph_size()
 void Preferences::set_glyph_size(float value)
 {
   this->settings_.setValue("Project/glyph_size", value);
+}
+
+//-----------------------------------------------------------------------------
+float Preferences::get_glyph_quality()
+{
+  return this->settings_.value("Project/glyph_quality", 5.0).toFloat();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_glyph_quality(float value)
+{
+  this->settings_.setValue("Project/glyph_quality", value);
+}
+
+//-----------------------------------------------------------------------------
+float Preferences::get_pca_range()
+{
+  return this->settings_.value("Analysis/pca_range", 2.0).toFloat();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_pca_range(float value)
+{
+  this->settings_.setValue("Analysis/pca_range", value);
+}
+
+//-----------------------------------------------------------------------------
+int Preferences::get_pca_steps()
+{
+  return this->settings_.value("Analysis/pca_steps", 20).toInt();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_pca_steps(int value)
+{
+  this->settings_.setValue("Analysis/pca_steps", value);
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_color_scheme(int value)
+{
+  this->settings_.setValue("Studio/color_scheme", value);
+}
+
+//-----------------------------------------------------------------------------
+int Preferences::get_color_scheme()
+{
+  return this->settings_.value("Studio/color_scheme", 0).toInt();
+}
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_center_checked()
+{
+  return this->settings_.value("Studio/center_checked", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_center_checked(bool value)
+{
+  this->settings_.setValue("Studio/center_checked", value);
 }
 
 //-----------------------------------------------------------------------------

@@ -569,7 +569,7 @@ void AnalysisTool::handle_group_timer()
 double AnalysisTool::get_pca_value()
 {
   int slider_value = this->ui_->pcaSlider->value();
-  float range = preferences_.get_preference("pca_range", 2.f);
+  float range = preferences_.get_pca_range();
   int halfRange = this->ui_->pcaSlider->maximum();
 
   double value = (double)slider_value / (double)halfRange * range;
@@ -587,8 +587,7 @@ void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lamb
 //---------------------------------------------------------------------------
 void AnalysisTool::updateSlider()
 {
-  auto steps = std::max(this->preferences_.get_preference("pca_steps", 20), 3);
-  auto max = this->preferences_.get_preference("pca_range", 20.);
+  auto steps = this->preferences_.get_pca_steps();
   auto sliderRange = this->ui_->pcaSlider->maximum() - this->ui_->pcaSlider->minimum();
   this->ui_->pcaSlider->setSingleStep(sliderRange / steps);
 }

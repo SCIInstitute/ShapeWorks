@@ -24,25 +24,15 @@ public:
   void set_saved(bool saved = true);
 
 
-  template<typename T>
-  T get_preference(std::string name, T default_val)
-  {
-    return this->settings_.value(QString::fromStdString(name),
-                                 QVariant(default_val)).template value<T>();
-  }
-
-  template<typename T>
-  void set_preference(std::string name, T value)
-  {
-    this->settings_.setValue(QString::fromStdString(name), QVariant(value));
-    this->saved_ = false;
-  }
 
   QByteArray get_window_geometry();
   void set_window_geometry(QByteArray geometry);
 
   QByteArray get_window_state();
   void set_window_state(QByteArray state);
+
+  QString get_last_directory();
+  void set_last_directory(QString value);
 
   bool get_cache_enabled();
   void set_cache_enabled(bool value);
@@ -58,10 +48,31 @@ public:
   int get_num_threads();
   void set_num_threads(int num_threads);
 
+  float get_cache_epsilon();
+  void set_cache_epsilon(float value);
+
+
   float get_glyph_size();
   void set_glyph_size(float value);
 
+  float get_glyph_quality();
+  void set_glyph_quality(float value);
+
+  float get_pca_range();
+  void set_pca_range(float value);
+
+  int get_pca_steps();
+  void set_pca_steps(int value);
+
+
+  void set_color_scheme(int value);
+  int get_color_scheme();
+
+  bool get_center_checked();
+  void set_center_checked(bool value);
+
 Q_SIGNALS:
+
   void color_scheme_changed(int newIndex);
   void glyph_properties_changed();
   void threading_changed_signal();
