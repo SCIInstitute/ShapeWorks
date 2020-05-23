@@ -19,7 +19,7 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
   std::string data(TEST_DATA_DIR);
   data += "/shapeworks";
 #ifdef _WIN32
-  _putenv_s("DATA", data.c_str(), true);
+  _putenv_s("DATA", data.c_str());
 #else
   setenv("DATA", data.c_str(), true);
 #endif
