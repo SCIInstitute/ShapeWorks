@@ -92,17 +92,17 @@ Required (otherwise):
   -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
-  -Eigen3_DIR=<eigen3 cmake path>           (contains Eigen3Config.cmake)
+  -Eigen3_DIR=<eigen3 cmake path>      (contains Eigen3Config.cmake)
 ```
 
 Optional:
 ```
-  -G<generator> (For example: -GXCode or -G"Visual Studio 16 2019" -Ax64)    default: make
+  -G<generator>                       default: Unix Makefiles (ex: -GXCode or -G"Visual Studio 16 2019" -Ax64)  
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DBuild_View2=[OFF|ON]              default: OFF
   -DBuild_Post=[OFF|ON]               default: OFF
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
-  -DCMAKE_BUILD_TYPE=[Debug|Release]    (only required is default generator is used)
+  -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)
 ```
 **See [examples](#Examples) below for common values of the variables**  
 
