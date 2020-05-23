@@ -775,10 +775,12 @@ QVector<QSharedPointer<Shape>> Session::get_shapes()
 void Session::remove_shapes(QList<int> list)
 {
   foreach(int i, list) {
+    auto subjects = this->project_->get_subjects();
+    subjects.erase(subjects.begin() + i);
     this->shapes_.erase(this->shapes_.begin() + i);
   }
   this->renumber_shapes();
-
+  this->project_->store_subjects();
   emit data_changed();
 }
 

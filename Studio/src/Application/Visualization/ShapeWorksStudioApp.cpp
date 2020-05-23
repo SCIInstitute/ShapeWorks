@@ -244,16 +244,9 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
 
   this->new_session();
 
+  this->update_table();
   this->update_from_preferences();
 
-  QList<int> index_list;
-
-  for (int i = this->session_->get_num_shapes() - 1; i >= 0; i--) {
-    index_list << i;
-  }
-
-  this->session_->remove_shapes(index_list);
-  this->session_->reset();
   this->lightbox_->clear_renderers();
   this->analysis_tool_->reset_stats();
   this->update_display(true);
@@ -527,8 +520,8 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
     this->session_->reset();
     this->analysis_tool_->reset_stats();
     this->lightbox_->clear_renderers();
-    this->update_display();
   }
+  this->update_display(true);
   this->enable_possible_actions();
 }
 
