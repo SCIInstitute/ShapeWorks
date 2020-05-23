@@ -1,6 +1,9 @@
 #
 # Installs conda environment for building ShapeWorks
 #
+echo ""
+echo "Note: this script only supports bash and zsh shells"
+echo ""
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
