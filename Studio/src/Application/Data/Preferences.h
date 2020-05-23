@@ -17,15 +17,12 @@ public:
   enum { MAX_RECENT_FILES = 4 };
   Preferences();
   void restore_defaults(bool force = false);
-  void delete_entry(std::string entry);
+
   void add_recent_file(QString file);
   QStringList get_recent_files();
   bool not_saved();
   void set_saved(bool saved = true);
 
-  bool has_entry(QString name);
-
-  std::map<std::string, QVariant> get_project_preferences();
 
   template<typename T>
   T get_preference(std::string name, T default_val)
