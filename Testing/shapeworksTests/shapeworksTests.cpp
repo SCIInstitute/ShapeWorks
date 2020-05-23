@@ -8,7 +8,7 @@ void shapeworksEnvSetup() // fixme: use googletest's setup/teardown: https://git
 {
   // set PATH to shapeworks executable called by shell scripts
 #ifdef _WIN32
-  auto path(std::string(BUILD_DIR) + "\\Release\\bin" + ";" + std::getenv("PATH"));
+  auto path(std::string(BUILD_DIR) + "\\bin\\Release" + ";" + std::getenv("PATH"));
   _putenv_s("PATH", path.c_str());
 #else
   auto path(std::string(BUILD_DIR) + "/bin/" + ":" + std::getenv("PATH")); // might be /bin/Debug or /bin/Release for systems such as Xcode
