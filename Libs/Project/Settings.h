@@ -4,7 +4,10 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <iterator>
+#include <algorithm>
 #include <iostream>
+#include <memory>
 
 namespace shapeworks
 {
