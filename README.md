@@ -50,18 +50,21 @@ Installation
 Users
 ---------------------
 
-The latest shapeworks release can be downloaded here:
+ShapeWorks provides official user releases, the features of which can be seen at [ChangeLog](ChangeLog).
 
-https://github.com/SCIInstitute/ShapeWorks/releases/tag/v5.3.1
+First, download the latest ShapeWorks binary release:  
+https://github.com/SCIInstitute/ShapeWorks/releases/latest
 
-Features added across releases can be seen at [ChangeLog](ChangeLog).
+Then follow the appropriate instructions for their platform:  
+[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)  
+[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)  
+[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/PACKAGE_README.txt)  
 
-Binary Installation Documentation
---------------------------------
-[Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)
-[Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)
-[Linux](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/PACKAGE_README.txt)
-
+_<b>Important</b>_  
+Each time you use ShapeWorks from the command line you must first activate its environment:
+```
+$ conda activate shapeworks
+```
 
 Developers
 ---------------------
@@ -73,9 +76,7 @@ Please see **[Datasets.md](Documentation/Datasets.md)** for dataset upload instr
 Getting Started
 =====================
 
-See the [use cases](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/UseCases.md) for python-scripted standard shape modeling workflow using ShapeWorks tools. 
-
-See documentation for the [groom](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md), [optimize](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md), and  [analyze](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md) tools for more detail.
+[Documentation/GettingStarted.md](Documentation/GettingStarted.md) provides overviews of dataset grooming, optimization, and analysis, ShapeWorks Studio and command line instructions, and practical use cases.
 
 Acknowledgements
 =====================
@@ -127,6 +128,7 @@ Software Developers
 ---------------------
 - [Alan Morris](https://www.sci.utah.edu/people/amorris.html)
 - [Cameron Christensen](https://www.sci.utah.edu/people/cam.html)
+- [Archansri Subramanian](https://www.sci.utah.edu/people/archanasri.html)
 
 Researchers
 ---------------------
