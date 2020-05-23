@@ -474,7 +474,7 @@ void ShapeWorksStudioApp::update_from_preferences()
 
   this->ui_->center_checkbox->setChecked(preferences_.get_center_checked());
   this->groom_tool_->load_settings();
-  this->optimize_tool_->load_settings();
+  this->optimize_tool_->load_params();
   this->analysis_tool_->load_settings();
 }
 
@@ -995,7 +995,7 @@ void ShapeWorksStudioApp::open_project(QString filename)
 //    this->session_->settings().get("tool_state", Session::DATA_C).as_string();
 
   this->groom_tool_->load_settings();
-  this->optimize_tool_->load_settings();
+  this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
   //this->project_->calculate_reconstructed_samples();
@@ -1220,7 +1220,7 @@ void ShapeWorksStudioApp::save_project(string filename)
   this->session_->settings().set("analysis_mode", this->analysis_tool_->get_analysis_mode());
 
   this->groom_tool_->store_settings();
-  this->optimize_tool_->store_settings();
+  this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();
 
   if (this->session_->save_project(

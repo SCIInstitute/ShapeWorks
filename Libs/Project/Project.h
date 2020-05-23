@@ -59,11 +59,11 @@ public:
   //! Return if particle files are present
   bool get_particles_present();
 
-  //! Retrieve settings based on key
-  Parameters get_settings(std::string name);
+  //! Retrieve parameters based on key
+  Parameters get_parameters(std::string name);
 
-  //! Store settings base on key
-  void set_settings(std::string name, Parameters);
+  //! Store parameters base on key
+  void set_parameters(std::string name, Parameters params);
 
   //! Store from subject list to spreadsheet
   void store_subjects();

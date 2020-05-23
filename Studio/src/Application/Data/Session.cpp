@@ -182,7 +182,7 @@ bool Session::save_project(std::string fname, std::string data_dir)
     this->unsaved_particle_files_ = false;
   }
 
-  this->project_->set_settings(Parameters::STUDIO_PARAMS, this->settings_);
+  this->project_->set_parameters(Parameters::STUDIO_PARAMS, this->params_);
 
   this->project_->save(filename.toStdString());
   progress.setValue(100);
@@ -310,7 +310,6 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
     inputsBuffer.str("");
   }
 
-
   for (auto item = project_element->FirstChildElement(); item != nullptr;
        item = item->NextSiblingElement()) {
     if (QString(item->Value()) != "shapes") {
@@ -337,7 +336,6 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
       }
     }
   }
-
 
   this->load_original_files(original_files);
   if (groom_files.size() > 0) {
@@ -527,7 +525,7 @@ bool Session::load_project(QString filename)
   this->particles_present_ = local_point_files.size() == global_point_files.size() &&
                              global_point_files.size() > 1;
 
-  this->settings_ = this->project_->get_settings("studio");
+  this->params_ = this->project_->get_parameters(Parameters::STUDIO_PARAMS);
 
   return true;
 }
@@ -852,5 +850,5 @@ int Session::get_num_shapes()
 //---------------------------------------------------------------------------
 Parameters &Session::settings()
 {
-  return this->settings_;
+  return this->params_;
 }

@@ -59,8 +59,8 @@ void GroomTool::handle_progress(int val)
 void GroomTool::on_restoreDefaults_clicked()
 {
   // store a set of blank settings
-  Parameters settings;
-  this->session_->get_project()->set_settings(Parameters::GROOM_PARAMS, settings);
+  Parameters params;
+  this->session_->get_project()->set_parameters(Parameters::GROOM_PARAMS, params);
   // now load those settings
   this->load_settings();
 }
@@ -68,17 +68,17 @@ void GroomTool::on_restoreDefaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::load_settings()
 {
-  Parameters settings = this->session_->get_project()->get_settings(Parameters::GROOM_PARAMS);
-  this->ui_->center_checkbox->setChecked(settings.get("center", true));
-  this->ui_->antialias_checkbox->setChecked(settings.get("antialias", true));
-  this->ui_->autopad_checkbox->setChecked(settings.get("pad", true));
-  this->ui_->fastmarching_checkbox->setChecked(settings.get("fastmarching", true));
-  this->ui_->blur_checkbox->setChecked(settings.get("blur", true));
-  this->ui_->isolate_checkbox->setChecked(settings.get("isolate", true));
-  this->ui_->fill_holes_checkbox->setChecked(settings.get("fill_holes", true));
-  this->ui_->antialias_iterations->setValue(settings.get("antialias_amount", 10));
-  this->ui_->blur_sigma->setValue(settings.get("blur_sigma", 2.0));
-  this->ui_->padding_amount->setValue(settings.get("pad_value", 10));
+  Parameters params = this->session_->get_project()->get_parameters(Parameters::GROOM_PARAMS);
+  this->ui_->center_checkbox->setChecked(params.get("center", true));
+  this->ui_->antialias_checkbox->setChecked(params.get("antialias", true));
+  this->ui_->autopad_checkbox->setChecked(params.get("pad", true));
+  this->ui_->fastmarching_checkbox->setChecked(params.get("fastmarching", true));
+  this->ui_->blur_checkbox->setChecked(params.get("blur", true));
+  this->ui_->isolate_checkbox->setChecked(params.get("isolate", true));
+  this->ui_->fill_holes_checkbox->setChecked(params.get("fill_holes", true));
+  this->ui_->antialias_iterations->setValue(params.get("antialias_amount", 10));
+  this->ui_->blur_sigma->setValue(params.get("blur_sigma", 2.0));
+  this->ui_->padding_amount->setValue(params.get("pad_value", 10));
 }
 
 //---------------------------------------------------------------------------
@@ -98,20 +98,20 @@ void GroomTool::enable_actions()
 //---------------------------------------------------------------------------
 void GroomTool::store_settings()
 {
-  Parameters settings = this->session_->get_project()->get_settings(Parameters::GROOM_PARAMS);
+  Parameters params = this->session_->get_project()->get_parameters(Parameters::GROOM_PARAMS);
 
-  settings.set("center", this->ui_->center_checkbox->isChecked());
-  settings.set("antialias", this->ui_->antialias_checkbox->isChecked());
-  settings.set("pad", this->ui_->autopad_checkbox->isChecked());
-  settings.set("fastmarching", this->ui_->fastmarching_checkbox->isChecked());
-  settings.set("blur", this->ui_->blur_checkbox->isChecked());
-  settings.set("isolate", this->ui_->isolate_checkbox->isChecked());
-  settings.set("fill_holes", this->ui_->fill_holes_checkbox->isChecked());
-  settings.set("antialias_amount", this->ui_->antialias_iterations->value());
-  settings.set("blur_sigma", this->ui_->blur_sigma->value());
-  settings.set("pad_value", this->ui_->padding_amount->value());
+  params.set("center", this->ui_->center_checkbox->isChecked());
+  params.set("antialias", this->ui_->antialias_checkbox->isChecked());
+  params.set("pad", this->ui_->autopad_checkbox->isChecked());
+  params.set("fastmarching", this->ui_->fastmarching_checkbox->isChecked());
+  params.set("blur", this->ui_->blur_checkbox->isChecked());
+  params.set("isolate", this->ui_->isolate_checkbox->isChecked());
+  params.set("fill_holes", this->ui_->fill_holes_checkbox->isChecked());
+  params.set("antialias_amount", this->ui_->antialias_iterations->value());
+  params.set("blur_sigma", this->ui_->blur_sigma->value());
+  params.set("pad_value", this->ui_->padding_amount->value());
 
-  this->session_->get_project()->set_settings(Parameters::GROOM_PARAMS, settings);
+  this->session_->get_project()->set_parameters(Parameters::GROOM_PARAMS, params);
 }
 
 //---------------------------------------------------------------------------

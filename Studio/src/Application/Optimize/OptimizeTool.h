@@ -23,8 +23,8 @@ public:
   /// set the pointer to the project
   void set_session(QSharedPointer<Session> session);
 
-  void load_settings();
-  void store_settings();
+  void load_params();
+  void store_params();
 
   void enable_actions();
   void disable_actions();

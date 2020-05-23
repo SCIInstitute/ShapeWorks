@@ -332,18 +332,18 @@ bool Project::get_particles_present()
 }
 
 //---------------------------------------------------------------------------
-Parameters Project::get_settings(std::string name)
+Parameters Project::get_parameters(std::string name)
 {
-  Parameters settings;
+  Parameters params;
   std::map<std::string, std::string> map;
 
   if (!this->wb_->contains(name)) {
-    return settings;
+    return params;
   }
   xlnt::worksheet ws = this->wb_->sheet_by_title(name);
 
   if (ws.highest_column().index < 2) {
-    return settings;
+    return params;
   }
 
   auto rows = ws.rows(false);
@@ -351,15 +351,14 @@ Parameters Project::get_settings(std::string name)
   for (int i = 1; i < rows.length(); i++) {
     std::string key = rows[i][0].to_string();
     std::string value = rows[i][1].to_string();
-
     map[key] = value;
   }
-  settings.set_map(map);
-  return settings;
+  params.set_map(map);
+  return params;
 }
 
 //---------------------------------------------------------------------------
-void Project::set_settings(std::string name, Parameters settings)
+void Project::set_parameters(std::string name, Parameters params)
 {
   try {
     // remove the old sheet
@@ -376,7 +375,7 @@ void Project::set_settings(std::string name, Parameters settings)
     ws.cell(xlnt::cell_reference(1, 1)).value("key");
     ws.cell(xlnt::cell_reference(2, 1)).value("value");
     int row = 2; // skip header
-    for (const auto& kv : settings.get_map()) {
+    for (const auto& kv : params.get_map()) {
       std::cout << "Storing " << kv.first << " with value " << kv.second << std::endl;
       ws.cell(xlnt::cell_reference(1, row)).value(kv.first);
       ws.cell(xlnt::cell_reference(2, row)).value(kv.second);
@@ -384,7 +383,7 @@ void Project::set_settings(std::string name, Parameters settings)
     }
   } catch (xlnt::exception &e) {
 
-    std::cerr << std::string("Error storing settings: ")
+    std::cerr << std::string("Error storing parameters: ")
               << std::string(e.what()) << ", " << "\n";
   }
 }

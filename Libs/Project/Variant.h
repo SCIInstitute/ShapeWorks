@@ -14,12 +14,12 @@ class Variant
 {
 public:
 
-  Variant() : str(), valid(false) {}
-  Variant(const std::string &v) : str(v), valid(true) {}
-  Variant(int v) : str(std::to_string(v)), valid(true) {}
-  Variant(double v) : str(std::to_string(v)), valid(true) {}
-  Variant(const char* v) : str(v), valid(true) {}
-  Variant(bool v) : str(v ? "true" : "false"), valid(true) {}
+  Variant() : str_(), valid_(false) {}
+  Variant(const std::string &v) : str_(v), valid_(true) {}
+  Variant(int v) : str_(std::to_string(v)), valid_(true) {}
+  Variant(double v) : str_(std::to_string(v)), valid_(true) {}
+  Variant(const char* v) : str_(v), valid_(true) {}
+  Variant(bool v) : str_(v ? "true" : "false"), valid_(true) {}
 
   operator std::string();
   operator bool();
@@ -32,7 +32,7 @@ public:
 
 private:
 
-  const std::string str;
-  bool valid;
+  const std::string str_;
+  bool valid_;
 };
 }

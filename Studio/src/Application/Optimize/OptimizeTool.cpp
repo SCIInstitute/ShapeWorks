@@ -87,7 +87,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
 
   this->enable_actions();
 
-  this->store_settings();
+  this->store_params();
   emit message("Please wait: running optimize step...");
   emit progress(1);
 
@@ -143,9 +143,9 @@ void OptimizeTool::on_restoreDefaults_clicked()
 {
   // store a set of blank settings
   Parameters settings;
-  this->session_->get_project()->set_settings(Parameters::OPTIMIZE_PARAMS, settings);
+  this->session_->get_project()->set_parameters(Parameters::OPTIMIZE_PARAMS, settings);
   // now load those settings
-  this->load_settings();
+  this->load_params();
 }
 
 //---------------------------------------------------------------------------
@@ -155,32 +155,32 @@ void OptimizeTool::set_session(QSharedPointer<Session> session)
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::load_settings()
+void OptimizeTool::load_params()
 {
-  Parameters settings = this->session_->get_project()->get_settings(Parameters::OPTIMIZE_PARAMS);
+  Parameters params = this->session_->get_project()->get_parameters(Parameters::OPTIMIZE_PARAMS);
 
-  this->ui_->weight->setValue(settings.get("relative_weighting", 1.0));
-  this->ui_->number_of_particles->setValue(settings.get("number_of_particles", 128));
-  this->ui_->starting_regularization->setValue(settings.get("starting_regularization", 10.0));
-  this->ui_->ending_regularization->setValue(settings.get("ending_regularization", 1.0));
-  this->ui_->iterations->setValue(settings.get("iterations_per_split", 1000));
-  this->ui_->optimization_iterations->setValue(settings.get("optimization_iterations", 1000));
-  this->ui_->procrustes_interval->setValue(settings.get("procrustes_interval", 0));
+  this->ui_->weight->setValue(params.get("relative_weighting", 1.0));
+  this->ui_->number_of_particles->setValue(params.get("number_of_particles", 128));
+  this->ui_->starting_regularization->setValue(params.get("starting_regularization", 10.0));
+  this->ui_->ending_regularization->setValue(params.get("ending_regularization", 1.0));
+  this->ui_->iterations->setValue(params.get("iterations_per_split", 1000));
+  this->ui_->optimization_iterations->setValue(params.get("optimization_iterations", 1000));
+  this->ui_->procrustes_interval->setValue(params.get("procrustes_interval", 0));
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::store_settings()
+void OptimizeTool::store_params()
 {
-  Parameters settings = this->session_->get_project()->get_settings(Parameters::OPTIMIZE_PARAMS);
-  settings.set("relative_weighting", this->ui_->weight->value());
-  settings.set("number_of_particles", this->ui_->number_of_particles->value());
-  settings.set("starting_regularization", this->ui_->starting_regularization->value());
-  settings.set("ending_regularization", this->ui_->ending_regularization->value());
-  settings.set("iterations_per_split", this->ui_->iterations->value());
-  settings.set("optimization_iterations", this->ui_->optimization_iterations->value());
-  settings.set("procrustes_interval", this->ui_->procrustes_interval->value());
+  Parameters params = this->session_->get_project()->get_parameters(Parameters::OPTIMIZE_PARAMS);
+  params.set("relative_weighting", this->ui_->weight->value());
+  params.set("number_of_particles", this->ui_->number_of_particles->value());
+  params.set("starting_regularization", this->ui_->starting_regularization->value());
+  params.set("ending_regularization", this->ui_->ending_regularization->value());
+  params.set("iterations_per_split", this->ui_->iterations->value());
+  params.set("optimization_iterations", this->ui_->optimization_iterations->value());
+  params.set("procrustes_interval", this->ui_->procrustes_interval->value());
 
-  this->session_->get_project()->set_settings(Parameters::OPTIMIZE_PARAMS, settings);
+  this->session_->get_project()->set_parameters(Parameters::OPTIMIZE_PARAMS, params);
 }
 
 //---------------------------------------------------------------------------

@@ -442,20 +442,20 @@ ParticleShapeStatistics<3> AnalysisTool::get_stats()
 //---------------------------------------------------------------------------
 void AnalysisTool::load_settings()
 {
-  Parameters settings = this->session_->get_project()->get_settings(Parameters::ANALYSIS_PARAMS);
-  this->ui_->numClusters->setValue(settings.get("reconstruction_clusters", 3));
-  this->ui_->meshDecimation->setValue(settings.get("reconstruction_decimation", 0.30));
-  this->ui_->maxAngle->setValue(settings.get("reconstruction_max_angle", 60));
+  Parameters params = this->session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
+  this->ui_->numClusters->setValue(params.get("reconstruction_clusters", 3));
+  this->ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
+  this->ui_->maxAngle->setValue(params.get("reconstruction_max_angle", 60));
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::store_settings()
 {
-  Parameters settings = this->session_->get_project()->get_settings(Parameters::ANALYSIS_PARAMS);
-  settings.set("reconstruction_clusters", this->ui_->numClusters->value());
-  settings.set("reconstruction_decimation", this->ui_->meshDecimation->value());
-  settings.set("reconstruction_max_angle", this->ui_->maxAngle->value());
-  this->session_->get_project()->set_settings(Parameters::ANALYSIS_PARAMS, settings);
+  Parameters params = this->session_->get_project()->get_parameters(Parameters::ANALYSIS_PARAMS);
+  params.set("reconstruction_clusters", this->ui_->numClusters->value());
+  params.set("reconstruction_decimation", this->ui_->meshDecimation->value());
+  params.set("reconstruction_max_angle", this->ui_->maxAngle->value());
+  this->session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
 }
 
 //---------------------------------------------------------------------------

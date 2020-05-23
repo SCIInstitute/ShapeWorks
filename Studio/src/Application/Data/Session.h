@@ -142,7 +142,7 @@ private:
   bool unsaved_groomed_files_{false};
   bool unsaved_particle_files_{false};
 
-  Parameters settings_;
+  Parameters params_;
 
   std::shared_ptr<Project> project_{new Project()};
 };
