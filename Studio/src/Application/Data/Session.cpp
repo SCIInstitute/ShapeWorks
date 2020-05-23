@@ -272,7 +272,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
     std::string filename;
     std::istringstream inputsBuffer(elem->GetText());
     while (inputsBuffer >> filename) {
-      std::cerr << "Found distance transform: " << filename << "\n";
+      //std::cerr << "Found distance transform: " << filename << "\n";
 
       if (!QFile::exists(QString::fromStdString(filename))) {
         QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " +
@@ -389,7 +389,7 @@ bool Session::load_light_project(QString filename)
     std::string distance_transform_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
-      std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
+      //std::cerr << "Found distance transform: " << distance_transform_filename << "\n";
 
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
         QMessageBox::critical(NULL, "ShapeWorksStudio",

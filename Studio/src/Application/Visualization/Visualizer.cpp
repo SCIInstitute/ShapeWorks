@@ -294,8 +294,8 @@ void Visualizer::set_show_surface(bool show)
 //-----------------------------------------------------------------------------
 void Visualizer::update_viewer_properties()
 {
-  double size = preferences_.get_glyph_size();
-  double quality = preferences_.get_glyph_quality();
+  double size = this->preferences_.get_glyph_size();
+  double quality = this->preferences_.get_glyph_quality();
 
   if (this->lightbox_) {
     foreach(ViewerHandle viewer, this->lightbox_->get_viewers()) {

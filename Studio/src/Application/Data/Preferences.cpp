@@ -212,41 +212,8 @@ void Preferences::add_recent_file(QString file)
 }
 
 //-----------------------------------------------------------------------------
-void Preferences::restore_defaults(bool force)
+void Preferences::restore_defaults()
 {
-  this->set_cache_enabled(true);
-  this->set_parallel_enabled(true);
-  this->set_memory_cache_percent(25);
-  this->set_num_threads(QThread::idealThreadCount());
-
-  this->set_glyph_size(5.0);
-  if (!this->settings_.contains("glyph_quality") || force) {
-    this->settings_.setValue("glyph_quality", 5.);
-  }
-  if (!this->settings_.contains("pca_range") || force) {
-    this->settings_.setValue("pca_range", 2.f);
-  }
-  if (!this->settings_.contains("pca_steps") || force) {
-    this->settings_.setValue("pca_steps", 20);
-  }
-  if (!this->settings_.contains("regression_steps") || force) {
-    this->settings_.setValue("regression_steps", 50);
-  }
-  if (!this->settings_.contains("smoothing_amount") || force) {
-    this->settings_.setValue("smoothing_amount", 0.);
-  }
-  if (!this->settings_.contains("cache_epsilon") || force) {
-    this->settings_.setValue("cache_epsilon", 1e-3f);
-  }
-  if (!this->settings_.contains("spacing") || force) {
-    this->settings_.setValue("spacing", 9.f);
-  }
-  if (!this->settings_.contains("neighborhood") || force) {
-    this->settings_.setValue("neighborhood", 9);
-  }
-  if (!this->settings_.contains("color_scheme") || force) {
-    this->settings_.setValue("color_scheme", 0);
-  }
-
-  this->saved_ = true;
+  this->settings_.clear();
+  return;
 }

@@ -14,16 +14,17 @@ class Preferences : public QObject
 
 public:
 
-  enum { MAX_RECENT_FILES = 4 };
   Preferences();
-  void restore_defaults(bool force = false);
+
+  enum { MAX_RECENT_FILES = 4 };
+
+  void restore_defaults();
 
   void add_recent_file(QString file);
   QStringList get_recent_files();
+
   bool not_saved();
   void set_saved(bool saved = true);
-
-
 
   QByteArray get_window_geometry();
   void set_window_geometry(QByteArray geometry);
@@ -40,9 +41,7 @@ public:
   bool get_parallel_enabled();
   void set_parallel_enabled(bool value);
 
-  //! default 25 percent
   int get_memory_cache_percent();
-  //! 0-100
   void set_memory_cache_percent(int value);
 
   int get_num_threads();
@@ -50,7 +49,6 @@ public:
 
   float get_cache_epsilon();
   void set_cache_epsilon(float value);
-
 
   float get_glyph_size();
   void set_glyph_size(float value);
@@ -63,7 +61,6 @@ public:
 
   int get_pca_steps();
   void set_pca_steps(int value);
-
 
   void set_color_scheme(int value);
   int get_color_scheme();

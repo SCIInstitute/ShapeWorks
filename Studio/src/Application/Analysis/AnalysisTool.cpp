@@ -390,7 +390,6 @@ bool AnalysisTool::compute_stats()
 //-----------------------------------------------------------------------------
 const vnl_vector<double>& AnalysisTool::get_mean_shape()
 {
-  std::cerr << "*** get_mean_shape\n";
   if (!this->compute_stats()) {
     return this->empty_shape_;
   }

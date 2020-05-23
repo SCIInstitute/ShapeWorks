@@ -98,7 +98,6 @@ public Q_SLOTS:
   void handle_progress(size_t amt);
   void handle_new_mesh();
 
-
 private:
 
   void update_tool_mode();
@@ -109,7 +108,6 @@ private:
     GROOMED = 1,
     RECONSTRUCTED = 2
   };
-
 
   enum DISPLAY_MODE {
     ALL_SAMPLES = 0,
@@ -122,10 +120,7 @@ private:
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
 
-
-
   static const std::string SETTING_ZOOM_C;
-
 
   std::string get_view_mode();
 
@@ -143,13 +138,11 @@ private:
 
   void update_display(bool force = false);
 
-
   void compute_mode_shape();
 
   bool set_view_mode(std::string view_mode);
 
   void update_recent_files();
-
 
   void save_project(std::string filename);
 
