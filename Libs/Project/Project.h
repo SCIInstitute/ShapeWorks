@@ -3,8 +3,10 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <Subject.h>
-#include <Settings.h>
+#include <memory>
+
+#include "Subject.h"
+#include "Parameters.h"
 
 // forward declaration
 namespace xlnt

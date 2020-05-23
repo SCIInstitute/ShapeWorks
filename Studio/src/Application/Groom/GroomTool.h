@@ -6,8 +6,6 @@
 #include <QSharedPointer>
 #include <QProgressDialog>
 
-#include <Libs/Project/Settings.h>
-
 #include <Groom/QGroom.h>
 
 class Session;

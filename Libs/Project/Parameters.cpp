@@ -1,4 +1,4 @@
-#include "Settings.h"
+#include "Parameters.h"
 
 using namespace shapeworks;
 
