@@ -91,7 +91,7 @@ public:
 
   QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
-  Settings & settings();
+  Parameters & settings();
 
 public Q_SLOTS:
   void handle_clear_cache();
@@ -142,7 +142,7 @@ private:
   bool unsaved_groomed_files_{false};
   bool unsaved_particle_files_{false};
 
-  Settings settings_;
+  Parameters settings_;
 
   std::shared_ptr<Project> project_{new Project()};
 };

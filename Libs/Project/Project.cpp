@@ -332,9 +332,9 @@ bool Project::get_particles_present()
 }
 
 //---------------------------------------------------------------------------
-Settings Project::get_settings(std::string name)
+Parameters Project::get_settings(std::string name)
 {
-  Settings settings;
+  Parameters settings;
   std::map<std::string, std::string> map;
 
   if (!this->wb_->contains(name)) {
@@ -359,7 +359,7 @@ Settings Project::get_settings(std::string name)
 }
 
 //---------------------------------------------------------------------------
-void Project::set_settings(std::string name, Settings settings)
+void Project::set_settings(std::string name, Parameters settings)
 {
   try {
     // remove the old sheet

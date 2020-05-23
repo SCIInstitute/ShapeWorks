@@ -182,7 +182,7 @@ bool Session::save_project(std::string fname, std::string data_dir)
     this->unsaved_particle_files_ = false;
   }
 
-  this->project_->set_settings(Settings::STUDIO_SETTINGS, this->settings_);
+  this->project_->set_settings(Parameters::STUDIO_PARAMS, this->settings_);
 
   this->project_->save(filename.toStdString());
   progress.setValue(100);
@@ -850,7 +850,7 @@ int Session::get_num_shapes()
 }
 
 //---------------------------------------------------------------------------
-Settings &Session::settings()
+Parameters &Session::settings()
 {
   return this->settings_;
 }

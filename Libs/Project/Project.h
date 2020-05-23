@@ -58,10 +58,10 @@ public:
   bool get_particles_present();
 
   //! Retrieve settings based on key
-  Settings get_settings(std::string name);
+  Parameters get_settings(std::string name);
 
   //! Store settings base on key
-  void set_settings(std::string name, Settings);
+  void set_settings(std::string name, Parameters);
 
   //! Store from subject list to spreadsheet
   void store_subjects();

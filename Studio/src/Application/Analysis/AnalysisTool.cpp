@@ -442,7 +442,7 @@ ParticleShapeStatistics<3> AnalysisTool::get_stats()
 //---------------------------------------------------------------------------
 void AnalysisTool::load_settings()
 {
-  Settings settings = this->session_->get_project()->get_settings(Settings::ANALYSIS_SETTINGS);
+  Parameters settings = this->session_->get_project()->get_settings(Parameters::ANALYSIS_PARAMS);
   this->ui_->numClusters->setValue(settings.get("reconstruction_clusters", 3));
   this->ui_->meshDecimation->setValue(settings.get("reconstruction_decimation", 0.30));
   this->ui_->maxAngle->setValue(settings.get("reconstruction_max_angle", 60));
@@ -451,11 +451,11 @@ void AnalysisTool::load_settings()
 //---------------------------------------------------------------------------
 void AnalysisTool::store_settings()
 {
-  Settings settings = this->session_->get_project()->get_settings(Settings::ANALYSIS_SETTINGS);
+  Parameters settings = this->session_->get_project()->get_settings(Parameters::ANALYSIS_PARAMS);
   settings.set("reconstruction_clusters", this->ui_->numClusters->value());
   settings.set("reconstruction_decimation", this->ui_->meshDecimation->value());
   settings.set("reconstruction_max_angle", this->ui_->maxAngle->value());
-  this->session_->get_project()->set_settings(Settings::ANALYSIS_SETTINGS, settings);
+  this->session_->get_project()->set_settings(Parameters::ANALYSIS_PARAMS, settings);
 }
 
 //---------------------------------------------------------------------------

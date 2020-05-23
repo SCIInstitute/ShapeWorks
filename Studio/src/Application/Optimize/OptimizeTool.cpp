@@ -142,8 +142,8 @@ void OptimizeTool::handle_message(std::string s)
 void OptimizeTool::on_restoreDefaults_clicked()
 {
   // store a set of blank settings
-  Settings settings;
-  this->session_->get_project()->set_settings(Settings::OPTIMIZE_SETTINGS, settings);
+  Parameters settings;
+  this->session_->get_project()->set_settings(Parameters::OPTIMIZE_PARAMS, settings);
   // now load those settings
   this->load_settings();
 }
@@ -157,7 +157,7 @@ void OptimizeTool::set_session(QSharedPointer<Session> session)
 //---------------------------------------------------------------------------
 void OptimizeTool::load_settings()
 {
-  Settings settings = this->session_->get_project()->get_settings(Settings::OPTIMIZE_SETTINGS);
+  Parameters settings = this->session_->get_project()->get_settings(Parameters::OPTIMIZE_PARAMS);
 
   this->ui_->weight->setValue(settings.get("relative_weighting", 1.0));
   this->ui_->number_of_particles->setValue(settings.get("number_of_particles", 128));
@@ -171,7 +171,7 @@ void OptimizeTool::load_settings()
 //---------------------------------------------------------------------------
 void OptimizeTool::store_settings()
 {
-  Settings settings = this->session_->get_project()->get_settings(Settings::OPTIMIZE_SETTINGS);
+  Parameters settings = this->session_->get_project()->get_settings(Parameters::OPTIMIZE_PARAMS);
   settings.set("relative_weighting", this->ui_->weight->value());
   settings.set("number_of_particles", this->ui_->number_of_particles->value());
   settings.set("starting_regularization", this->ui_->starting_regularization->value());
@@ -180,7 +180,7 @@ void OptimizeTool::store_settings()
   settings.set("optimization_iterations", this->ui_->optimization_iterations->value());
   settings.set("procrustes_interval", this->ui_->procrustes_interval->value());
 
-  this->session_->get_project()->set_settings(Settings::OPTIMIZE_SETTINGS, settings);
+  this->session_->get_project()->set_settings(Parameters::OPTIMIZE_PARAMS, settings);
 }
 
 //---------------------------------------------------------------------------

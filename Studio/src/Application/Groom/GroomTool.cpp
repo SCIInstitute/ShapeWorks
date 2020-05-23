@@ -59,8 +59,8 @@ void GroomTool::handle_progress(int val)
 void GroomTool::on_restoreDefaults_clicked()
 {
   // store a set of blank settings
-  Settings settings;
-  this->session_->get_project()->set_settings(Settings::GROOM_SETTINGS, settings);
+  Parameters settings;
+  this->session_->get_project()->set_settings(Parameters::GROOM_PARAMS, settings);
   // now load those settings
   this->load_settings();
 }
@@ -68,7 +68,7 @@ void GroomTool::on_restoreDefaults_clicked()
 //---------------------------------------------------------------------------
 void GroomTool::load_settings()
 {
-  Settings settings = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
+  Parameters settings = this->session_->get_project()->get_settings(Parameters::GROOM_PARAMS);
   this->ui_->center_checkbox->setChecked(settings.get("center", true));
   this->ui_->antialias_checkbox->setChecked(settings.get("antialias", true));
   this->ui_->autopad_checkbox->setChecked(settings.get("pad", true));
@@ -98,7 +98,7 @@ void GroomTool::enable_actions()
 //---------------------------------------------------------------------------
 void GroomTool::store_settings()
 {
-  Settings settings = this->session_->get_project()->get_settings(Settings::GROOM_SETTINGS);
+  Parameters settings = this->session_->get_project()->get_settings(Parameters::GROOM_PARAMS);
 
   settings.set("center", this->ui_->center_checkbox->isChecked());
   settings.set("antialias", this->ui_->antialias_checkbox->isChecked());
@@ -111,7 +111,7 @@ void GroomTool::store_settings()
   settings.set("blur_sigma", this->ui_->blur_sigma->value());
   settings.set("pad_value", this->ui_->padding_amount->value());
 
-  this->session_->get_project()->set_settings(Settings::GROOM_SETTINGS, settings);
+  this->session_->get_project()->set_settings(Parameters::GROOM_PARAMS, settings);
 }
 
 //---------------------------------------------------------------------------
