@@ -891,8 +891,6 @@ void ShapeWorksStudioApp::update_display(bool force)
     return;
   }
 
-  std::cerr << "**************** Studio: update_display\n";
-
   this->current_display_mode_ = mode;
 
   if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
