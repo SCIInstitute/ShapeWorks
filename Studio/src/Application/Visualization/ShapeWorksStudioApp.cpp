@@ -249,7 +249,6 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
 
   this->lightbox_->clear_renderers();
   this->analysis_tool_->reset_stats();
-  this->update_display(true);
   this->ui_->action_import_mode->setChecked(true);
   this->ui_->action_groom_mode->setChecked(false);
   this->ui_->action_optimize_mode->setChecked(false);
@@ -258,7 +257,10 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->ui_->controlsDock->setWindowTitle("Data");
   this->preferences_.set_saved();
   this->enable_possible_actions();
+  this->update_display(true);
   this->visualizer_->update_viewer_properties();
+
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
 }
 
 //---------------------------------------------------------------------------

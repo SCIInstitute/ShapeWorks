@@ -808,7 +808,6 @@ void Session::reset()
 bool Session::original_present()
 {
   return this->project_->get_segmentations_present();
-  //return this->original_present_;
 }
 
 //---------------------------------------------------------------------------
