@@ -277,8 +277,8 @@ ParticleSystem<VDimension>
   // at an epsilon distance and random direction. Since we are going to add
   // positions to the list, we need to first copy the list.
   std::vector<PointType> list;
-  typename PointContainerType::ConstIterator endIt = GetPositions(domain)->GetEnd();     
-  for (typename PointContainerType::ConstIterator it = GetPositions(domain)->GetBegin();
+  const auto endIt = GetPositions(domain)->m_Map.end();
+  for (auto it = GetPositions(domain)->m_Map.begin();
        it != endIt; it++)
     {    list.push_back(*it);    }
 

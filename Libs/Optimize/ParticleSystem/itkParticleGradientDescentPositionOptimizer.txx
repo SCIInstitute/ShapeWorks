@@ -22,6 +22,7 @@ const int global_iteration = 1;
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 namespace itk
 {
   template <class TGradientNumericType, unsigned int VDimension>
@@ -100,6 +101,7 @@ namespace itk
     {
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
       timerBefore = time(NULL);
+      const auto accTimerBegin = std::chrono::steady_clock::now();
       if (counter % global_iteration == 0)
         m_GradientFunction->BeforeIteration();
       counter++;
@@ -128,20 +130,20 @@ namespace itk
             // Iterate over each particle position
             unsigned int k = 0;
             maxchange = 0.0;
-            typename ParticleSystemType::PointContainerType::ConstIterator endit =
-              m_ParticleSystem->GetPositions(dom)->GetEnd();
-            for (typename ParticleSystemType::PointContainerType::ConstIterator it
-              = m_ParticleSystem->GetPositions(dom)->GetBegin(); it != endit; it++, k++)
+            const auto endit =
+              m_ParticleSystem->GetPositions(dom)->m_Map.end();
+            unsigned int idx=0;
+            for (auto it
+              = m_ParticleSystem->GetPositions(dom)->m_Map.begin(); it != endit; it++, k++, idx++)
             {
               VectorType gradient;
               VectorType original_gradient;
               // Compute gradient update.
               double energy = 0.0;
-              localGradientFunction->BeforeEvaluate(it.GetIndex(), dom, m_ParticleSystem);
+              localGradientFunction->BeforeEvaluate(idx, dom, m_ParticleSystem);
               double maximumDTUpdateAllowed;
-              original_gradient = localGradientFunction->Evaluate(it.GetIndex(), dom, m_ParticleSystem, maximumDTUpdateAllowed, energy);
+              original_gradient = localGradientFunction->Evaluate(idx, dom, m_ParticleSystem, maximumDTUpdateAllowed, energy);
 
-              unsigned int idx = it.GetIndex();
               PointType pt = *it;
 
               // Step 1 Project the gradient vector onto the tangent plane
@@ -159,7 +161,7 @@ namespace itk
                 gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
                 // Step B Constrain the gradient so that the resulting position will not violate any domain constraints
-                dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(it.GetIndex(), dom));
+                dynamic_cast<DomainType*>(m_ParticleSystem->GetDomain(dom))->ApplyVectorConstraints(gradient, m_ParticleSystem->GetPosition(idx, dom));
                 gradmag = gradient.magnitude();
 
                 // Step C if the magnitude is larger than the Sampler allows, try again with smaller time step
@@ -178,10 +180,10 @@ namespace itk
                 domain->ApplyConstraints(newpoint);
 
                 // Step F update the point position in the particle system
-                m_ParticleSystem->SetPosition(newpoint, it.GetIndex(), dom);
+                m_ParticleSystem->SetPosition(newpoint, idx, dom);
 
                 // Step G compute the new energy of the particle system 
-                newenergy = localGradientFunction->Energy(it.GetIndex(), dom, m_ParticleSystem);
+                newenergy = localGradientFunction->Energy(idx, dom, m_ParticleSystem);
 
                 if (newenergy < energy) // good move, increase timestep for next time
                 {
@@ -196,7 +198,7 @@ namespace itk
                   if (m_TimeSteps[dom][k] > mintime[dom])
                   {
                     domain->ApplyConstraints(pt);
-                    m_ParticleSystem->SetPosition(pt, it.GetIndex(), dom);
+                    m_ParticleSystem->SetPosition(pt, idx, dom);
 
                     m_TimeSteps[dom][k] /= factor;
                   }
@@ -223,12 +225,13 @@ namespace itk
       m_GradientFunction->AfterIteration();
 
       timerAfter = time(NULL);
+      const auto accTimerEnd = std::chrono::steady_clock::now();
+      const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
       double seconds = difftime(timerAfter, timerBefore);
 
       if (m_verbosity > 2)
       {
-        std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
-        std::cout.flush();
+        std::cout << m_NumberOfIterations << ". " << msElapsed << "ms" << std::endl;
       }
 
       this->InvokeEvent(itk::IterationEvent());
