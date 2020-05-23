@@ -10,17 +10,21 @@ def getDatasetList(loginState = None):
     return GirderConnector._getDatasetList(accessToken)
 
 
-def downloadDataset(datasetName, destinationPath='.', asZip = True, loginState = None):
+def downloadDataset(datasetName, destinationPath='.', fileList = None, asZip = True, loginState = None):
     GirderConnector._printDataPortalWelcome()
     print('Downloading the', datasetName, 'dataset from the ShapeWorks Portal')
     accessToken = GirderConnector._login(loginState)
     if not accessToken:
         return False
     
-    if asZip:
+    if fileList is not None:
+        print('Downloading', len(fileList), 'specified files')
+        success = GirderConnector._downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath)
+    elif asZip:
         success = GirderConnector._downloadDatasetZip(accessToken, datasetName, destinationPath)
     else:
         success = GirderConnector._downloadDataset(accessToken, datasetName, destinationPath)
+
     if success:
         print('Downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
         return True

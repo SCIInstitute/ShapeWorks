@@ -26,3 +26,7 @@ Then, to run the example:
 
 cd Examples/Python
 python3 RunUseCase.py --use_case ellipse
+
+For subsequent usage, the shapeworks conda environment must be activated using:
+
+conda activate shapeworks

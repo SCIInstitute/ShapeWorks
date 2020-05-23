@@ -127,37 +127,6 @@ def _downloadDatasetZip(accessToken, datasetName, destinationPath):
     return success
 
 
-    apicall = serverAddress + "api/v1/item"
-    response = requests.get(url = apicall, params = {'folderId': '5e15245f0a02fb02ba24268a', 'name': filename}, headers = {'Girder-Token': accessToken}) 
-    data = response.json()
-    if(len(data) == 0):
-        print('ERROR finding', filename)
-        return
-    data = data[0]
-    id = data['_id']
-    apicall = serverAddress + 'api/v1/item/' + id + '/download'
-    response = requests.get(url = apicall, headers = {'Girder-Token': accessToken}, stream=True)
-    if response.status_code == 200:
-        chunkSize = 1048576 # Download 1 MB at a time
-        totalNumChunks = ceil(int(response.headers['Content-Length']) / chunkSize)
-        chunkIndex = 0
-
-        handle = open(filename, "wb")
-        for chunk in response.iter_content(chunk_size=chunkSize):
-            if not chunk:  # filter out keep-alive new chunks
-                continue
-            handle.write(chunk)
-
-            chunkIndex += 1
-            stdout.write('\r[%d/%d MB]' % (chunkIndex, totalNumChunks))
-        stdout.write('\n')
-        handle.close()
-        return True
-    else:
-        print('ERROR Downloading', filename, '! Response code', response.status_code, _CONTACT_SUPPORT_STRING)
-        return False
-
-
 # returns True if success
 def _downloadFolder(accessToken, path, folder):
     # 1 download items in this folder
@@ -199,7 +168,6 @@ def _parseFileList(fileList):
 
 # returns True if success
 def _downloadFolderFiles(accessToken, path, folder, parsedFileList):
-    print(parsedFileList)
     # 1 download items in this folder
     items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
     failure = False
