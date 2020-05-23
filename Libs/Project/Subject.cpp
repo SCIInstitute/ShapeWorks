@@ -62,3 +62,9 @@ void Subject::set_number_of_domains(int number_of_domains)
 {
   this->number_of_domains_ = number_of_domains;
 }
+
+//---------------------------------------------------------------------------
+int Subject::get_number_of_domains()
+{
+  return this->number_of_domains_;
+}

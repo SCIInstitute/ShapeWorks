@@ -36,35 +36,47 @@ public:
   //! Return the headers of the subject sheet
   std::vector<std::string> get_headers();
 
+  //! Return a column by name
+  std::vector<std::string> get_string_column(std::string name);
+
   //! Return the number of subjects in the project
   int get_number_of_subjects();
 
   //! Return the number of domains
   int get_number_of_domains();
 
+  //! Return the list of Subjects
   std::vector<std::shared_ptr<Subject>> & get_subjects();
 
-  std::vector<std::string> get_string_column(std::string name);
-
+  //! Return if segmentations are present
   bool get_segmentations_present();
+
+  //! Return if groomed files are present
   bool get_groomed_present();
+
+  //! Return if particle files are present
   bool get_particles_present();
 
+  //! Retrieve settings based on key
   Settings get_settings(std::string name);
+
+  //! Store settings base on key
   void set_settings(std::string name, Settings);
 
+  //! Store from subject list to spreadsheet
   void store_subjects();
 
 private:
 
-  std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
-  void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
-
+  // known prefixes
   static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
   static constexpr const char* GROOMED_PREFIX = "groomed_";
   static constexpr const char* MESH_PREFIX = "mesh_";
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
+
+  std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
+  void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
   std::vector<std::string> get_matching_columns(std::string prefix);
 
