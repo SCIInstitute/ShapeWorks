@@ -276,7 +276,6 @@ Image& Image::scale(const Vector3 &s)
 Image& Image::rotate(const double angle, const Vector3 &axis)
 {
   if (!axis_is_valid(axis)) { throw std::invalid_argument("Invalid axis"); }
-  if (angle == 0.0) { throw std::invalid_argument("Invalid angle. Must specify angle in radians"); }
 
   auto origOrigin(origin());       // rotation is around origin, so temporarily set origin to be the center
   setOrigin(negate(center()));     // move center _away_ from origin since ITK applies transformations backwards.
