@@ -214,6 +214,7 @@ bool Image::operator==(const Image &other) const
   auto numberOfPixelsWithDifferences = diff->GetNumberOfPixelsWithDifferences();
   if (numberOfPixelsWithDifferences > 0)
   {
+    std::cerr << "Comparison failed: " << numberOfPixelsWithDifferences << " pixels differ\n";
     return false;
   }
 
