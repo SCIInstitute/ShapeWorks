@@ -195,10 +195,8 @@ public:
     m_VDBImage = 0;
   }
 
-protected:
 
-  // is this a fixed domain or not?  We start as fixed and if an image is set, we set this to true
-  bool m_FixedDomain{true};
+protected:
 
   openvdb::FloatGrid::Ptr GetVDBImage() const {
     return m_VDBImage;

@@ -63,7 +63,16 @@ public:
   virtual void DeleteImages() = 0;
   virtual void DeletePartialDerivativeImages() = 0;
 
+  bool IsDomainFixed() const {
+    return m_FixedDomain;
+  }
+
 protected:
+
+  // is this a fixed domain or not?  We start as fixed and if an image is set, we set this to true
+  bool m_FixedDomain{true};
+
+
   ParticleDomain() {}
   virtual ~ParticleDomain() {}
   void PrintSelf(std::ostream& os, Indent indent) const
