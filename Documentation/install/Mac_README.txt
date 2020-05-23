@@ -30,3 +30,7 @@ To use the installer version of ShapeWorks (.pkg):
 
 6. Run "python3 RunUseCase.py --use_case ellipse"
 
+
+Note: For subsequent usage, the shapeworks conda environment must be activated using:
+
+conda activate shapeworks
