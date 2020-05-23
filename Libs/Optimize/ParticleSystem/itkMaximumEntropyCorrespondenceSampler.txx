@@ -59,7 +59,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::AllocateDataCaches()
 
 template <class TImage>
 void
-MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
+MaximumEntropyCorrespondenceSampler<TImage>::Execute()
 {    
   this->SetInPlace(false); // this is required so that we don't release our inputs
   if (this->GetInitialized() == false)
@@ -77,8 +77,7 @@ MaximumEntropyCorrespondenceSampler<TImage>::GenerateData()
     this->GetOptimizer()->SetParticleSystem(this->GetParticleSystem());
     this->ReadTransforms();
     this->ReadPointsFiles();
-    this->InitializeOptimizationFunctions();    
-
+    this->InitializeOptimizationFunctions();
 
     this->SetInitialized(true);
     }

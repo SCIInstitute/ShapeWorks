@@ -178,9 +178,25 @@ public:
         m_MeshFiles = s;
     }
 
-    void SetImages(const std::vector<typename TImage::Pointer> &images)
+    void AddImage(const typename TImage::Pointer image)
     {
-        m_Images = images;
+        const auto domain = ParticleImplicitSurfaceDomain<typename
+                              ImageType::PixelType, Dimension>::New();
+        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
+
+        domain->SetNarrowBand(m_NarrowBand);
+        if (image)
+        {
+          domain->SetSigma(image->GetSpacing()[0] * 2.0);
+          domain->SetImage(image);
+        }
+
+        m_DomainList.push_back(domain);
+    }
+
+    int NumDomains() const
+    {
+      return m_DomainList.size();
     }
 
     void SetFidsFiles(const std::vector<std::string> &s)
@@ -326,6 +342,12 @@ public:
     int GetPairwisePotentialType()
     {return m_pairwise_potential_type;}
 
+    void SetNarrowBand(double narrow_band)
+    { m_NarrowBand = narrow_band; }
+
+    double GetNarrowBand() const
+    { return m_NarrowBand; }
+
     void SetVerbosity(unsigned int val)
     {
         m_verbosity = val;
@@ -343,14 +365,22 @@ public:
     virtual void AllocateDataCaches();
     virtual void AllocateDomainsAndNeighborhoods();
     virtual void InitializeOptimizationFunctions();
+    virtual void DeleteImages() {
+        for(int i=0; i<m_DomainList.size(); i++) {
+            m_DomainList[i]->DeleteImages();
+        }
+    }
 
     /** */
     virtual void Initialize()
     {
         this->m_Initializing = true;
-        this->Update();
+        this->Execute();
         this->m_Initializing = false;
     }
+
+    virtual void Execute();
+
 
 protected:
     MaximumEntropySurfaceSampler();
@@ -413,8 +443,8 @@ private:
     std::vector<std::string> m_FidsFiles;
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
+    double m_NarrowBand;
 
-    std::vector<typename TImage::Pointer> m_Images;
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
     std::vector< std::vector< CuttingPlaneType> > m_CuttingPlanes;
@@ -426,13 +456,6 @@ private:
 
 } // end namespace itk
 
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/itkMaximumEntropySurfaceSampler+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-#include "itkMaximumEntropySurfaceSampler.txx"
-#endif
 
 #include "itkMaximumEntropySurfaceSampler.txx"
 

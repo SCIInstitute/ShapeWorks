@@ -194,10 +194,7 @@ public:
   void SetLogEnergy(bool log_energy);
 
   //! Set the shape input images
-  void SetImages(const std::vector<ImageType::Pointer> &images);
-
-  //! Return the shape input images
-  std::vector<ImageType::Pointer> GetImages();
+  void AddImage(ImageType::Pointer image);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);
@@ -232,6 +229,9 @@ public:
 
   //! Return if Normals are used, per shape
   std::vector<bool> GetUseNormals();
+
+  //! Set the narrow band used to be +/- the given value as a multiple of the spacing
+  void SetNarrowBand(double v);
 
   //! Print parameter info to stdout
   void PrintParamInfo();
@@ -368,7 +368,6 @@ protected:
 
   bool m_file_output_enabled = true;
   bool m_aborted = false;
-  std::vector<ImageType::Pointer> m_images;
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;

@@ -52,6 +52,10 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
     // Allocate some optimization code.
     m_Optimizer = OptimizerType::New();
 
+    // Default narrow band that works for existing ShapeWorks models. Can be set
+    // via XML parameter file
+    m_NarrowBand = 4.0;
+
     m_Initialized = false;
     m_PointsFiles.push_back("");
     m_MeshFiles.push_back("");
@@ -90,22 +94,8 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     // *after* registering the attributes to the particle system since some of
     // them respond to AddDomain.
     int ctr = 0;
-    for (unsigned int i = 0; i < this->m_Images.size(); i++)
+    for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
-        m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
-                                ImageType::PixelType, Dimension>::New() );
-
-        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
-
-        typename TImage::Pointer img_temp = this->m_Images[i];
-
-        m_DomainList[i]->SetSigma(img_temp->GetSpacing()[0] * 2.0);
-
-
-        bool minimal_load = m_ParticleSystem->GetDomainFlag(i);
-
-        m_DomainList[i]->SetImage(img_temp, minimal_load);
-
         if (m_CuttingPlanes.size() > i)
         {
             for (unsigned int j = 0; j< m_CuttingPlanes[i].size(); j++)
@@ -238,9 +228,17 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     m_OmegaGradientFunction->SetDomainNumber(0);
 }
 
+
 template <class TImage>
 void
 MaximumEntropySurfaceSampler<TImage>::GenerateData()
+{
+}
+
+
+template <class TImage>
+void
+MaximumEntropySurfaceSampler<TImage>::Execute()
 {
     this->SetInPlace(false); // this is required so that we don't release our inputs
     if (m_Initialized == false)

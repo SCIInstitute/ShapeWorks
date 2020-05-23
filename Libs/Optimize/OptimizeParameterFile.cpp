@@ -281,6 +281,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("cotan_sigma_factor").Element();
   if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText()));}
 
+  elem = docHandle->FirstChild("narrow_band").Element();
+  if (elem) { optimize->SetNarrowBand(atof(elem->GetText()));}
+
   return true;
 }
 
@@ -317,17 +320,13 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
   int numShapes = 0;
 
   // load input shapes
-  std::vector < std::string > shape_files;
-  std::vector < Optimize::ImageType::Pointer > images;
+  std::vector < std::string > shapeFiles;
 
   inputsBuffer.str(elem->GetText());
-
   auto flags = optimize->GetDomainFlags();
 
   int index = 0;
   while (inputsBuffer >> filename) {
-
-    shape_files.push_back(filename);
 
     bool fixed_domain = false;
     for (int i = 0; i < flags.size(); i++) {
@@ -344,41 +343,27 @@ bool OptimizeParameterFile::read_inputs(TiXmlHandle* docHandle, Optimize* optimi
         Optimize::ImageType > ::New();
       reader->SetFileName(filename);
       reader->UpdateLargestPossibleRegion();
-      images.push_back(reader->GetOutput());
+      const auto image = reader->GetOutput();
+      optimize->AddImage(image);
     }
     else {
-      images.push_back(nullptr);
+      optimize->AddImage(nullptr);
     }
+
+    shapeFiles.push_back(filename);
     index++;
   }
-
-  // now fill in null pointers with the first valid image
-  Optimize::ImageType::Pointer first_image;
-
-  for (int i = 0; i < images.size(); i++) {
-    if (images[i]) {
-      first_image = images[i];
-    }
-  }
-  for (int i = 0; i < images.size(); i++) {
-    if (!images[i]) {
-      images[i] = first_image;
-    }
-  }
-
 
   inputsBuffer.clear();
   inputsBuffer.str("");
 
-  numShapes = shape_files.size();
-
-  optimize->SetImages(images);
+  numShapes = shapeFiles.size();
 
   std::vector < std::string > filenames;
 
   for (int i = 0; i < numShapes; i++) {
-    char* str = new char[shape_files[i].length() + 1];
-    strcpy(str, shape_files[i].c_str());
+    char* str = new char[shapeFiles[i].length() + 1];
+    strcpy(str, shapeFiles[i].c_str());
 
     char* fname;
     char* pch;

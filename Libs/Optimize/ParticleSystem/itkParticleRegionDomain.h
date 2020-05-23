@@ -62,7 +62,18 @@ protected:
     os << "LowerBound = " << GetLowerBound() << std::endl;
     os << "UpperBound = " << GetUpperBound() << std::endl;
   }
-  
+
+  /** Check whether the point p may be sampled in this domain. */
+  inline bool IsInsideBuffer(const PointType &p) const
+  {
+    for(int i=0; i<VDimension; i++) {
+      if(p[i] < m_LowerBound[i] || p[i] > m_UpperBound[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 private:
   PointType m_LowerBound;
   PointType m_UpperBound;

@@ -466,7 +466,6 @@ double Optimize::GetMinNeighborhoodRadius()
   double rad = 0.0;
   typename itk::ImageToVTKImageFilter < ImageType > ::Pointer itk2vtkConnector;
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-
     double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
     double sigma =
       std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
@@ -669,7 +668,7 @@ void Optimize::Initialize()
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
     m_sampler->Modified();
-    m_sampler->Update();
+    m_sampler->Execute();
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
@@ -744,7 +743,8 @@ void Optimize::AddAdaptivity()
   m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->Modified();
-  m_sampler->Update();
+  m_sampler->Execute();
+
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
@@ -861,7 +861,8 @@ void Optimize::RunOptimize()
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
   m_sampler->Modified();
-  m_sampler->Update();
+  m_sampler->Execute();
+
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
@@ -1044,7 +1045,6 @@ void Optimize::SetCotanSigma()
   itk::ImageToVTKImageFilter<ImageType>::Pointer itk2vtkConnector;
   m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-
     double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
     double sigma = m_cotan_sigma_factor *
                    std::sqrt(area /
@@ -1884,20 +1884,20 @@ void Optimize::SetLogEnergy(bool log_energy)
 { this->m_log_energy = log_energy;}
 
 //---------------------------------------------------------------------------
-void Optimize::SetImages(const std::vector<ImageType::Pointer> &images)
-{
-  this->m_images = images;
-  this->m_sampler->SetImages(images);
-  ImageType::Pointer first_image = images[0];
-  this->m_sampler->SetInput(0, first_image);                // set the 0th input
-  this->m_spacing = first_image->GetSpacing()[0];
-  this->m_num_shapes = images.size();
-}
+void Optimize::AddImage(ImageType::Pointer image) {
+  this->m_sampler->AddImage(image);
+  this->m_num_shapes++;
+  if (image) {
 
-//---------------------------------------------------------------------------
-std::vector<Optimize::ImageType::Pointer> Optimize::GetImages()
-{
-  return this->m_images;
+    this->m_spacing = image->GetSpacing()[0];
+
+    if (!this->m_sampler->GetInput()) {
+      // TODO: Not sure why this is required, but itkMaximumEntropySurfaceSampler
+      // doesn't work unless we do this. This causes holding on to the first
+      // image in memory
+      this->m_sampler->SetInput(0, image);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1982,6 +1982,12 @@ std::vector<bool> Optimize::GetUseXYZ()
 std::vector<bool> Optimize::GetUseNormals()
 {
   return this->m_use_normals;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetNarrowBand(double v)
+{
+  this->m_sampler->SetNarrowBand(v);
 }
 
 //---------------------------------------------------------------------------
