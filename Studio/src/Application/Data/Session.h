@@ -77,7 +77,7 @@ public:
 
   void calculate_reconstructed_samples();
 
-  /// reset the project
+  /// reset the session
   void reset();
 
   /// get the filename

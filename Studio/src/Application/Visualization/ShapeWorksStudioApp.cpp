@@ -102,22 +102,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
 
-  // project initializations
-  this->session_ = QSharedPointer<Session>(new Session(this, preferences_));
-  this->session_->set_parent(this);
-  connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
-  connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
-  connect(this->session_.data(), SIGNAL(update_display()), this,
-          SLOT(handle_display_setting_changed()));
-  connect(this->session_.data(), SIGNAL(message(std::string)), this,
-          SLOT(handle_message(std::string)));
-  connect(this->session_.data(), SIGNAL(update_display()), this,
-          SLOT(handle_display_setting_changed()));
-  connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
-
   //analysis tool initializations
   this->analysis_tool_ = QSharedPointer<AnalysisTool>(new AnalysisTool(preferences_));
-  this->analysis_tool_->set_session(this->session_);
   this->analysis_tool_->set_app(this);
   this->ui_->stacked_widget->addWidget(this->analysis_tool_.data());
   connect(this->analysis_tool_.data(), SIGNAL(update_view()), this,
@@ -127,15 +113,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
           this, SLOT(handle_progress(size_t)));
   connect(this->analysis_tool_.data(), SIGNAL(reconstruction_complete()),
           this, SLOT(handle_reconstruction_complete()));
-
-  // setup modes
-  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
-  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_GROOMED_C.c_str());
-  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_RECONSTRUCTION_C.c_str());
-  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
-  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
-  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
   // resize from preferences
   if (!this->preferences_.get_window_geometry().isEmpty()) {
@@ -161,11 +138,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   // visualizer initializations
   this->visualizer_ = QSharedPointer<Visualizer>(new Visualizer(preferences_));
   this->visualizer_->set_lightbox(this->lightbox_);
-  this->visualizer_->set_session(this->session_);
 
   // groom tool initializations
   this->groom_tool_ = QSharedPointer<GroomTool>(new GroomTool());
-  this->groom_tool_->set_session(this->session_);
   this->ui_->stacked_widget->addWidget(this->groom_tool_.data());
   connect(this->groom_tool_.data(), SIGNAL(groom_complete()), this, SLOT(handle_groom_complete()));
   connect(this->groom_tool_.data(), SIGNAL(error_message(std::string)),
@@ -177,7 +152,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
 
   // optimize tool initializations
   this->optimize_tool_ = QSharedPointer<OptimizeTool>(new OptimizeTool());
-  this->optimize_tool_->set_session(this->session_);
   this->ui_->stacked_widget->addWidget(this->optimize_tool_.data());
   connect(this->optimize_tool_.data(), SIGNAL(optimize_complete()),
           this, SLOT(handle_optimize_complete()));
@@ -213,8 +187,19 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
      this->analysis_tool_->set_app( this );
      this->ui_->lower_stacked_widget->addWidget( this->analysis_tool_.data() );*/
 
+  this->new_session();
+
   this->update_from_preferences();
   this->update_display();
+
+  // setup modes
+  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_ORIGINAL_C.c_str());
+  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_GROOMED_C.c_str());
+  this->ui_->view_mode_combobox->addItem(Visualizer::MODE_RECONSTRUCTION_C.c_str());
+  this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  this->set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  this->set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  this->set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
 
   //glyph options signals/slots
   connect(this->ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
@@ -256,8 +241,11 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
       return;
     }
   }
+
+  this->new_session();
+
   this->update_from_preferences();
-  this->originalFilenames_.clear();
+
   QList<int> index_list;
 
   for (int i = this->session_->get_num_shapes() - 1; i >= 0; i--) {
@@ -268,7 +256,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->session_->reset();
   this->lightbox_->clear_renderers();
   this->analysis_tool_->reset_stats();
-  this->update_display();
+  this->update_display(true);
   this->ui_->action_import_mode->setChecked(true);
   this->ui_->action_groom_mode->setChecked(false);
   this->ui_->action_optimize_mode->setChecked(false);
@@ -277,6 +265,7 @@ void ShapeWorksStudioApp::on_action_new_project_triggered()
   this->ui_->controlsDock->setWindowTitle("Data");
   this->preferences_.set_saved();
   this->enable_possible_actions();
+  this->visualizer_->update_viewer_properties();
 }
 
 //---------------------------------------------------------------------------
@@ -355,18 +344,14 @@ void ShapeWorksStudioApp::on_action_import_triggered()
 {
   QStringList filenames;
   filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
-                                            preferences_.get_last_directory(),
+                                            this->preferences_.get_last_directory(),
                                             tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
 
   if (filenames.size() == 0) {
     return;
   }
 
-  for (size_t i = 0; i < filenames.size(); i++) {
-    this->originalFilenames_.push_back(filenames.at(i).toStdString());
-  }
-
-  preferences_.set_last_directory(QDir().absoluteFilePath(filenames[0]));
+  this->preferences_.set_last_directory(QDir().absoluteFilePath(filenames[0]));
   //need to re-run everything if something new is added.
 
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
@@ -395,6 +380,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
 
     this->update_table();
     this->enable_possible_actions();
+    this->update_display(true);
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
   }
@@ -535,13 +521,6 @@ void ShapeWorksStudioApp::on_delete_button_clicked()
   for (int i = list.size() - 1; i >= 0; i--) {
     index_list << list[i].row();
   }
-  std::vector<std::string> newList;
-  for (size_t i = 0; i < this->originalFilenames_.size(); i++) {
-    if (!index_list.contains(i)) {
-      newList.push_back(this->originalFilenames_[i]);
-    }
-  }
-  this->originalFilenames_ = newList;
 
   this->session_->remove_shapes(index_list);
   if (this->session_->get_shapes().size() == 0) {
@@ -651,6 +630,28 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
 void ShapeWorksStudioApp::handle_new_mesh()
 {
   this->visualizer_->handle_new_mesh();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::new_session()
+{
+  // project initializations
+  this->session_ = QSharedPointer<Session>(new Session(this, preferences_));
+  this->session_->set_parent(this);
+  connect(this->session_.data(), SIGNAL(data_changed()), this, SLOT(handle_project_changed()));
+  connect(this->session_.data(), SIGNAL(points_changed()), this, SLOT(handle_points_changed()));
+  connect(this->session_.data(), SIGNAL(update_display()), this,
+          SLOT(handle_display_setting_changed()));
+  connect(this->session_.data(), SIGNAL(message(std::string)), this,
+          SLOT(handle_message(std::string)));
+  connect(this->session_.data(), SIGNAL(update_display()), this,
+          SLOT(handle_display_setting_changed()));
+  connect(this->session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
+
+  this->analysis_tool_->set_session(this->session_);
+  this->visualizer_->set_session(this->session_);
+  this->groom_tool_->set_session(this->session_);
+  this->optimize_tool_->set_session(this->session_);
 }
 
 //---------------------------------------------------------------------------
@@ -837,7 +838,8 @@ void ShapeWorksStudioApp::on_center_checkbox_stateChanged()
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_display(bool force)
 {
-  if (!this->visualizer_ || this->session_->get_num_shapes() <= 0) {
+  //if (!this->visualizer_ || this->session_->get_num_shapes() <= 0) {
+  if (!this->visualizer_) {
     return;
   }
 

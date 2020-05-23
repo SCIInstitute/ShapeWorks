@@ -100,6 +100,7 @@ public Q_SLOTS:
 
 private:
 
+  void new_session();
   void update_tool_mode();
   void update_view_mode();
 
@@ -171,7 +172,7 @@ private:
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QList<QAction*> recent_file_actions_;
-  std::vector<std::string> originalFilenames_;
+
   QProgressBar* progress_bar_;
   std::string data_dir_, currentMessage_;
 
@@ -179,4 +180,5 @@ private:
 
   bool block_update_{false};
   bool is_loading_{false};
+
 };
