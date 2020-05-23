@@ -9,6 +9,27 @@ if [[ "$sourced" == "0" ]]; then
   exit 1
 fi
 
+# PyTorch installation
+function install_pytorch() {
+  echo "installing pytorch"
+  PYTORCH="cpuonly"
+  if ! [ -x "$(command -v nvidia-smi)" ]; then
+    echo 'Could not find nvidia-smi, using cpu-only PyTorch'
+  else
+    CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
+    echo "Found CUDA Version: ${CUDA}"
+
+    if [[ "$CUDA" == "9.2" || "$CUDA" == "10.1" || "$CUDA" == "10.2" ]]; then
+        PYTORCH="cudatoolkit=${CUDA}"
+    else
+        echo "CUDA version not compatible, using cpu-only"
+    fi
+  fi
+
+  conda install --yes pytorch torchvision $PYTORCH -c pytorch
+}
+
+
 function install_conda() {
   if ! command -v conda 2>/dev/null 1>&2; then
     echo "installing anaconda..."
@@ -87,6 +108,8 @@ function install_conda() {
   if [[ "$(uname)" == "Linux" ]]; then
     echo "nothing additional to install for Linux"
   fi
+
+  install_pytorch
 
   conda info
   return 0
