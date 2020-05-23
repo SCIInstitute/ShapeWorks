@@ -40,7 +40,9 @@ def Run_Pipeline(args):
     data and create necessary supporting files. The files will be Extracted in a
     newly created Directory TestEllipsoids.
     This data is LGE segmentation of left atrium.
+    For a detailed explanation of grooming steps see: https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md
     """
+
     """
     Extract the zipfile into proper directory and create necessary supporting
     files
@@ -82,6 +84,7 @@ def Run_Pipeline(args):
         ## GROOM : Data Pre-processing
         For the unprepped data the first few steps are
         -- Isotropic resampling
+        -- Center
         -- Padding
         -- Center of Mass Alignment
         -- Rigid Alignment
@@ -97,14 +100,16 @@ def Run_Pipeline(args):
 
         """
         Apply isotropic resampling
-
-        For detailed explainations of parameters for resampling volumes, go to
-        'https://github.com/SCIInstitute/ShapeWorks/blob/master/Prep/Documentation/ImagePrepTools.pdf'
-
         the segmentation and images are resampled independently and the result files are saved in two different directories.
         """
         resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
         resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", fileList_img, isBinary=False)
+
+        """
+        Centering
+        """
+        centeredFiles_segmentations = center(parentDir + "centered/segmentations", resampledFiles_segmentations)
+        centeredFiles_images = center(parentDir + "centered/images", resampledFiles_images)
 
         """
         Apply padding
@@ -114,8 +119,8 @@ def Run_Pipeline(args):
 
         Both the segmentation and raw images are padded.
         """
-        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', resampledFiles_segmentations, 10)
-        paddedFiles_images = applyPadding(parentDir+ 'padded/images', resampledFiles_images, 10)
+        paddedFiles_segmentations = applyPadding(parentDir + 'padded/segmentations', centeredFiles_segmentations, 10)
+        paddedFiles_images = applyPadding(parentDir+ 'padded/images', centeredFiles_images, 10)
 
         """
         Apply center of mass alignment
@@ -205,6 +210,11 @@ def Run_Pipeline(args):
             resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList_seg)
 
             """
+            Centering
+            """
+            centeredFiles = center(parentDir + "centered", resampledFiles)
+
+            """
             Apply padding
 
             For detailed explainations of parameters for padding volumes, go to
@@ -212,7 +222,7 @@ def Run_Pipeline(args):
 
             """
 
-            paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
+            paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
             """
             Apply center of mass alignment
@@ -298,11 +308,11 @@ def Run_Pipeline(args):
             "keep_checkpoints": 0,
             "iterations_per_split": 4000,
             "optimization_iterations": 4000,
-            "starting_regularization": 1000,
+            "starting_regularization": 50000,
             "ending_regularization": 0.1,
             "recompute_regularization_interval": 2,
             "domains_per_shape": 1,
-            "relative_weighting": 5,
+            "relative_weighting": 50,
             "initial_relative_weighting": 0.1,
             "procrustes_interval": 0,
             "procrustes_scaling": 1,
@@ -331,7 +341,7 @@ def Run_Pipeline(args):
             "ending_regularization" : 0.1,
             "recompute_regularization_interval" : 2,
             "domains_per_shape" : 1,
-            "relative_weighting" : 10,
+            "relative_weighting" : 50,
             "initial_relative_weighting" : 0.1,
             "procrustes_interval" : 0,
             "procrustes_scaling" : 1,

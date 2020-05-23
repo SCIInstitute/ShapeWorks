@@ -191,9 +191,9 @@ protected:
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_UseMeanEnergy = true;
-    m_PointsUpdate = new vnl_matrix_type(10,10);
-    m_InverseCovMatrix = new vnl_matrix_type(10,10);
-    m_points_mean = new vnl_matrix_type(10,10);
+    m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
+    m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
+    m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
   virtual ~ParticleEnsembleEntropyFunction() {}
   void operator=(const ParticleEnsembleEntropyFunction &);
@@ -201,7 +201,7 @@ protected:
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
   virtual void ComputeCovarianceMatrix();
-  vnl_matrix_type * m_PointsUpdate;
+  std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
   double m_MinimumVariance;
   double m_MinimumEigenValue;
   double m_CurrentEnergy;
@@ -211,8 +211,8 @@ protected:
   int m_Counter;
   bool m_UseMeanEnergy;
 
-  vnl_matrix_type * m_InverseCovMatrix; // 3Nx3N - used for energy computation
-  vnl_matrix_type * m_points_mean; //3NxM - used for energy computation
+  std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation
+  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation
 
 };
 

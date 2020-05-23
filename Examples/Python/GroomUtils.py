@@ -29,33 +29,26 @@ def rename(inname, outDir, extension_addition, extension_change=''):
     print("######################################\n")
     return outname
 
-def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, recenter=True, isBinary=True):
+def applyIsotropicResampling(outDir, inDataList, isoSpacing=1.0, isBinary=True):
     """
     This function takes in a filelist and produces the resampled files in the appropriate directory.
     """
+    print("\n########### Resampling ###############")
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     outDataList = []
     for i in range(len(inDataList)):
         inname = inDataList[i]
-        print("\n########### Resampling ###############")
         outname = rename(inname, outDir, 'isores')
         outDataList.append(outname)
-
-        cmd = ["shapeworks", "read-image", "--name", inname]
-
+        cmd = ["shapeworks", 
+               "read-image", "--name", inname]
         if isBinary:
             cmd.extend(["antialias"])
-
         cmd.extend(["isoresample", "--isospacing", str(isoSpacing)])  
-        
         if isBinary:
             cmd.extend(["binarize"])
-        if recenter:
-            cmd.extend(["recenter-image"])
-
         cmd.extend(["write-image", "--name", outname])
-        print("Calling cmd:\n"+" ".join(cmd))
         subprocess.check_call(cmd)
     return outDataList
 

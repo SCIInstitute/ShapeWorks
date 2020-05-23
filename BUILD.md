@@ -13,31 +13,38 @@
 * Qt 5.9.8 (optional for GUI components)
 
 ### Windows
-See [BUILD_Windows.md]
+See **[BUILD_Windows.md](BUILD_Windows.md)**
 
 ## Clone source
 
-ShapeWorks uses *git-lfs* to store image data for testing.  
-Please install and setup **[git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)** before cloning.
-Alternatively, conda instructions below will install git-lfs.
+To clone the ShapeWorks source:  
+```
+$ git clone https://github.com/SCIInstitute/ShapeWorks
+```
+See **[GIT.md](GIT.md)** for more details on git commands.  
 
-If you have already cloned ShapeWorks before installing *git-lfs*, you can get the test image data using:  
+
+## Install dependencies
+
+### Anaconda
+We use Anaconda (conda) to install many dependencies required for both building and running ShapeWorks. Conda [sub]environments do not affect a machine's global setup in any way, do not require sudo to install, and are only available at the user level when activated.
+
+To install conda and the dependencies it provides (currently requires either bash or zsh shell), run:
+```
+$ source conda_installs.sh
+```
+
+ShapeWorks uses *[git-lfs](https://github.com/git-lfs/git-lfs/* to store image data for testing.  
+If git-lfs was not already installed before cloning ShapeWorks, please use the following commands to get this data:  
 ```
 $ git lfs fetch
 $ git lfs checkout
 ```
 
-To clone the ShapeWorks source:  
-`$ git clone https://github.com/SCIInstitute/ShapeWorks`  
-See [GettingStarted.md](GettingStarted.md#source-and-branches) for more details on git commands.  
-
-
-## Install dependencies
-
-### Conda dependencies
-To install conda based dependencies, run:
+_<b>Important</b>_  
+Each time you build or use ShapeWorks you must first activate its environment:
 ```
-$ source conda_install.sh
+$ conda activate shapeworks
 ```
 
 ### Qt5  
@@ -58,7 +65,7 @@ which: no qmake in (...)
 ```
 Make sure you added Qt to your path as explained in the [Install dependencies/Qt5](#Qt5) step.  
 
-If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, make sure you build it with VTK  
+If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, __it must be built with VTK__  
 
 
 ## Configure and Build  
@@ -68,27 +75,35 @@ mkdir build
 cd build
 cmake <options> ..
 ```
-CMake GUI to see and change any of the options:
-- On OSX/Linux, you can use a GUI by running `ccmake` instead of `cmake`.  
+There is a CMake GUI to see and change any of the options:
+- On OSX/Linux, you can use the GUI by running `ccmake` instead of `cmake`.  
 
 ### Options
-Required:  
+If you used the `build_dependencies.sh` script above, the prefix for all dependencie is the same.
+Otherwise, the specific paths to VTK, VXL, ITK, and Eigen3 are all required.
+
+Required (if you used build_dependencies.sh):  
 ```
-  -G<generator> (For example: -GXCode or -G"Visual Studio 16 2019" -Ax64)
-  -DCMAKE_PREFIX_PATH=<qt cmake path>  (This is different from qmake path in the Install Qt5 step
+  -DCMAKE_PREFIX_PATH=<dependencies install path>
+```
+
+Required (otherwise):  
+```
   -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
-  -DEigen3_DIR=<eigen cmake path>      (contains Eigen3Config.cmake)
+  -DEigen3_DIR=<eigen3 cmake path>     (contains Eigen3Config.cmake)
   -DOpenVDB_DIR=<openvdb cmake path>   (contains FindOpenVDB.cmake)
 ```
+
 Optional:
 ```
+  -G<generator>                       default: Unix Makefiles (ex: -GXCode or -G"Visual Studio 16 2019" -Ax64)  
   -DBuild_Studio=[OFF|ON]             default: OFF
   -DBuild_View2=[OFF|ON]              default: OFF
   -DBuild_Post=[OFF|ON]               default: OFF
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
-  -DCMAKE_BUILD_TYPE=[Debug|Release]  
+  -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)
 ```
 **See [examples](#Examples) below for common values of the variables**  
 
@@ -99,7 +114,7 @@ Optional:
 
 ### Before running Example Python scripts
 Add the ShapeWorks and dependency binaries to the path:  
-- *OSX/Linux:* `$ export PATH=/path/to/shapeworks/build/bin;/path/to/dependencies/bin:$PATH`  
+- *OSX/Linux:* `$ export PATH=/path/to/shapeworks/build/bin:/path/to/dependencies/bin:$PATH`  
 
 ### Examples
 *OSX* example that builds dependencies separately, then generates an XCode project for ShapeWorks:  
