@@ -154,7 +154,6 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
 
     elem = docHandle->FirstChild("use_normals").Element();
     if (elem) {
-      std::cerr << "use_normals...yes\n";
       std::istringstream inputsBuffer;
       std::string num;
       inputsBuffer.str(elem->GetText());
