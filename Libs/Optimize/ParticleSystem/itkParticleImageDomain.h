@@ -195,7 +195,6 @@ public:
     m_VDBImage = 0;
   }
 
-
 protected:
 
   openvdb::FloatGrid::Ptr GetVDBImage() const {
