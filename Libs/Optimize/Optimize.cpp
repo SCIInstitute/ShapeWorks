@@ -1957,6 +1957,13 @@ void Optimize::SetParticleFlags(std::vector<int> flags)
 //---------------------------------------------------------------------------
 void Optimize::SetDomainFlags(std::vector<int> flags)
 {
+  if (flags.size() > 0) {
+    // Fixed domains are in use.  Unless the narrow band was explicitly set
+    // change the default to 1e10.
+    if (this->m_narrow_band < 0) {
+      this->SetNarrowBand(1e10);
+    }
+  }
   this->m_domain_flags = flags;
 }
 
@@ -1987,6 +1994,7 @@ std::vector<bool> Optimize::GetUseNormals()
 //---------------------------------------------------------------------------
 void Optimize::SetNarrowBand(double v)
 {
+  this->m_narrow_band = v;
   this->m_sampler->SetNarrowBand(v);
 }
 

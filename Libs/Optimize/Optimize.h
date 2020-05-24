@@ -344,6 +344,7 @@ protected:
   double m_cotan_sigma_factor = 5.0;
   std::vector <int> m_particle_flags;
   std::vector <int> m_domain_flags;
+  double m_narrow_band{-1};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
