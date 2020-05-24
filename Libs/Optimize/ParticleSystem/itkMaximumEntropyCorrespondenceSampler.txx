@@ -61,7 +61,6 @@ template <class TImage>
 void
 MaximumEntropyCorrespondenceSampler<TImage>::Execute()
 {    
-  this->SetInPlace(false); // this is required so that we don't release our inputs
   if (this->GetInitialized() == false)
     {
     this->AllocateDataCaches();

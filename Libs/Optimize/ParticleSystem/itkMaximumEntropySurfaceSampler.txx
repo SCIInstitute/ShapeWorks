@@ -196,7 +196,7 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     // domain of the 1st input image.
     unsigned int maxdim = 0;
     double maxradius = -1.0;
-    double spacing = this->GetInput()->GetSpacing()[0];
+    double spacing = this->m_Spacing;
 
     for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
     {
@@ -242,7 +242,6 @@ template <class TImage>
 void
 MaximumEntropySurfaceSampler<TImage>::Execute()
 {
-    this->SetInPlace(false); // this is required so that we don't release our inputs
     if (m_Initialized == false)
     {
         this->AllocateDataCaches();
