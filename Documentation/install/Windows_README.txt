@@ -46,3 +46,8 @@ Note: If you have installed ShapeWorks in a different location than
 "C:\Program Files\ShapeWorks", please add the path to the "bin"
 directory as the final argument to RunUseCase.py so that the path will
 be set correctly.
+
+Note: Running conda_installs.bat will activate the conda shapeworks environment
+into your current anaconda prompt.  For later usage, to activate it, you must only run:
+
+"conda activate shapeworks"

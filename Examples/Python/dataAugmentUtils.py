@@ -216,7 +216,10 @@ def create_cpp_xml(filename, outputfilename):
 	file.close()
 
 def warp_image_to_space(filename):
-	subprocess.call(['./ShapeWarp', filename])
+	execCommand = ["shapeworks", 
+    	"warp-image"]
+	subprocess.check_call(execCommand)
+	# subprocess.call(['./ShapeWarp', filename])
 
 
 def pca_mode_loadings_computation_images(output_images_list, N, imgDims, parent_dir, cutoff, f):

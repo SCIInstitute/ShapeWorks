@@ -45,18 +45,25 @@ usage()
   echo "Build results are saved in ${BUILD_LOG}."
 }
 
-# print full names of relative paths, which are needed to specify location of dependencies
-function realpath { echo $(cd $(dirname $1); pwd)/$(basename $1); }
+# full names of relative paths are needed to specify locations of dependencies
+function fullpath {
+  # unix full paths start with `/`; second character of windows full paths is `:`
+  if [[ $1 = /* || ${1:1:1} = \: ]]; then
+    echo $1
+  else
+    echo `pwd`/$1
+  fi
+}
 
 parse_command_line()
 {
   while [ "$1" != "" ]; do
     case $1 in
       -i=*|--install-dir=*)   INSTALL_DIR="${1#*=}"
-                              INSTALL_DIR=`realpath "${INSTALL_DIR}"`
+                              INSTALL_DIR=`fullpath "${INSTALL_DIR}"`
                               ;;
       -b=*|--build-dir=*)     BUILD_DIR="${1#*=}"
-                              BUILD_DIR=`realpath "${BUILD_DIR}"`
+                              BUILD_DIR=`fullpath "${BUILD_DIR}"`
                               ;;
       -n=*|--num-procs=*)     NUM_PROCS="${1#*=}"
                               ;;
@@ -77,6 +84,7 @@ parse_command_line()
     shift
   done
 }
+
 # test for required version of something (versions with dots are okay):
 # usage:
 #   at_least_required_version "name" $curr $required
@@ -204,7 +212,7 @@ build_eigen()
 show_shapeworks_build()
 {
   echo ""
-  echo "## To build ShapeWorks, please use..."
+  echo "## To configure ShapeWorks, create a build directory and from there run..."
   echo ""
 
   OPENMP_FLAG="-DUSE_OPENMP=ON"
@@ -212,8 +220,7 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  echo "cmake -DITK_DIR=${ITK_DIR} -DVXL_DIR=${VXL_DIR} -DVTK_DIR=${VTK_DIR} -DEigen3_DIR=${EIGEN_DIR} ${OPENMP_FLAG} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
-
+  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio={BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
 }
 
 # determine if we can build using specified or discovered version of Qt
