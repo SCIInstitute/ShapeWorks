@@ -216,10 +216,14 @@ def create_cpp_xml(filename, outputfilename):
 	file.close()
 
 def warp_image_to_space(filename):
-	execCommand = ["shapeworks", 
-    	"warp-image"]
-	subprocess.check_call(execCommand)
-	# subprocess.call(['./ShapeWarp', filename])
+	# print(filename)
+	# execCommand = ["shapeworks", 
+ #    	"warp-image", 
+ #    	"--source_landmarks", "TestDeepSSM/femur/model_small/m03_L_femur.isores.pad.com.center.aligned.clipped.cropped.tpSmoothDT_local.particles",
+ #    	"--target_landmarks", "TestDeepSSM/Augmentation/PCA-Info-Particles/meanshape.particles"]
+	# subprocess.check_call(execCommand)
+	# input("warp complete")
+	subprocess.call(['./ShapeWarp', filename])
 
 
 def pca_mode_loadings_computation_images(output_images_list, N, imgDims, parent_dir, cutoff, f):
