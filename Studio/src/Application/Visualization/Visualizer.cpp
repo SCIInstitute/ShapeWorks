@@ -138,7 +138,6 @@ void Visualizer::display_samples()
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples()
 {
-  std::cerr << "update samples\n";
   QVector < QSharedPointer < Shape >> shapes = this->session_->get_shapes();
 /*
    for (int i = 0; i < shapes.size(); i++) {

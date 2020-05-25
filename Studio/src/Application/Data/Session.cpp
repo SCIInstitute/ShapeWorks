@@ -772,6 +772,7 @@ QVector<QSharedPointer<Shape>> Session::get_shapes()
 //---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list)
 {
+  std::sort(list.begin(), list.end(), std::greater <>());
   foreach(int i, list) {
     auto subjects = this->project_->get_subjects();
     subjects.erase(subjects.begin() + i);

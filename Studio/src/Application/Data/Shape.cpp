@@ -300,7 +300,6 @@ QString Shape::get_original_filename()
     return "";
   }
   auto string = QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
-  std::cerr << "original filename is " << string.toStdString() << "\n";
   QFileInfo info(string);
   return info.fileName();
 }
