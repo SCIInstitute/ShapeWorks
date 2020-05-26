@@ -43,6 +43,7 @@ def downsampleNrrd(filename, factor):
 
 '''
 Creates augmented images and particle models from provided list using PCA
+Makes use of functions in DataAugmentUtils.py
 Inputs:
 	data_list - list of image paths
 	point_list - list of corresponding .particles paths
@@ -308,8 +309,11 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 	print("Test loader done.")
 	return train_path, val_path, test_path, list(test_names)
 
-########################## Model ####################################
+########################## Model Class ####################################
 
+'''
+Vanilla DeepSSM Model
+'''
 class DeepSSMNet(nn.Module):
 	def __init__(self, num_pca):
 		super(DeepSSMNet, self).__init__()
@@ -351,9 +355,6 @@ class DeepSSMNet(nn.Module):
 		self.pca_pred = nn.Sequential(OrderedDict([
 			('linear', nn.Linear(96, self.num_pca))
 		]))
-		# self.particles_pred = nn.Sequential(OrderedDict([
-		# 	('linear', nn.Linear(6, 10000))
-		# ]))
 	def forward(self, x):
 		x = self.features(x)
 		return self.pca_pred(x)
@@ -362,14 +363,23 @@ class Flatten(nn.Module):
 	def forward(self, x):
 		return x.view(x.size(0), -1)
 
+##################################### Train Functions ###########################
+
+'''
+Train helper
+	Initilaizes all weights using initialization function specified by initf
+'''
 def weight_init(module, initf):
 	def foo(m):
 		classname = m.__class__.__name__.lower()
 		if isinstance(m, module):
 			initf(m.weight)
 	return foo
-#####################################
 
+'''
+Train helper
+	prints and logs values during training
+'''
 def log_print(logger, values):
 	# print values
 	if isinstance(values[0], str):
@@ -382,6 +392,12 @@ def log_print(logger, values):
 	log_string = ','.join(string_values)
 	logger.write(log_string + '\n')
 
+'''
+Network training method
+	defines, initializes, and trains the models
+	logs training and validation errors
+	saves the model and returns the path it is saved to
+'''
 def train(train_loader_path, validation_loader_path, parameters, parent_dir):
 	# load le loaders
 	print("Loading data loaders...")
@@ -460,6 +476,8 @@ def train(train_loader_path, validation_loader_path, parameters, parent_dir):
 ############################## Test Model #################################
 '''
 Test helper
+	gets the original and predicted paricle coordinates from the pca scores
+	saves them in out_dir
 '''
 def getPoints(out_dir, orig_scores, pred_scores, pca_score_path, test_names):
 	if not os.path.exists(out_dir):
@@ -492,6 +510,11 @@ def getPoints(out_dir, orig_scores, pred_scores, pca_score_path, test_names):
 		np.savetxt(nmpred, tmpPred)
 		np.savetxt(nmorig, tmpOrig)
 
+'''
+Network Test Function
+	predicts the PCA scores using the trained networks
+	returns the error measures and saves the predicted and poriginal particles for comparison
+'''
 def test(out_dir, model_path, test_loader_path, test_names, pca_scores_path):
 	# load le loaders
 	print("Loading test data loader...")
@@ -504,6 +527,7 @@ def test(out_dir, model_path, test_loader_path, test_names, pca_scores_path):
 	device = model.device
 	model.cuda()
 	model.eval()
+	# Get predicted PCA scores and errors
 	test_losses = []
 	test_rel_losses = []
 	index = 0
@@ -522,11 +546,10 @@ def test(out_dir, model_path, test_loader_path, test_names, pca_scores_path):
 		index += 1
 	test_mr_MSE = np.mean(np.sqrt(test_losses))
 	test_rel_err =  np.mean(test_rel_losses)
+	# Get paricles 
 	orig_scores = np.array(orig_scores)
-	# orig_scores = orig_scores.reshape((orig_scores.shape[0], orig_scores.shape[1]))
 	pred_scores = np.array(pred_scores)
-	# pred_scores = pred_scores.reshape((pred_scores.shape[0], pred_scores.shape[1]))
-	print(pred_scores)
 	getPoints(out_dir, orig_scores, pred_scores, pca_scores_path, test_names)
+
 	return test_mr_MSE, test_rel_err
 
