@@ -4,7 +4,6 @@
 #include <cmath>
 #include <sstream>      // std::istringstream
 #include <Eigen/Dense>
-//#include <sys/stat.h>
 
 // namespace shapeworks {  //todo (need to make sure everything that calls these functions uses namespace
 
