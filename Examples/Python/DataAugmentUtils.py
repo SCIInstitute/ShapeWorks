@@ -1,32 +1,23 @@
 ###########################################################################
-# Description : Fully Automated Pipeline for Data data-augmentation
+# Description : Functions for Data data-augmentation
 # Author: Riddhish Bhalodia, Shalin Parikh
 # Institution : Scientific Computing and Imaging Institute
 # Date : 6th May 2019
-# Updates for ShapeWorks by Jadie Adams May 2020
+# Updated for ShapeWorks by Jadie Adams May 2020
 ###########################################################################
-
 import numpy as np
-from numpy import matlib as mb
-import scipy as sp
+import numpy.matlib
+import subprocess
+import itk
 import csv
 import sys
 import os
-import xml.etree.ElementTree as ET
 import re
-import subprocess
-import math
-import itk
-import numpy.matlib
 
 '''
-This file contains all the functions which are needed for the data augmentation process.
+Extracts essential metadata for the rest of the algorithm
 '''
-
 def read_necessarry_metadata(img_list, point_list):
-	'''
-	Extract essential metadata for the rest of the algorithm
-	'''
 	N = len(img_list)
 	pt = np.loadtxt(point_list[0])
 	M = pt.shape[0]
@@ -35,11 +26,13 @@ def read_necessarry_metadata(img_list, point_list):
 	nrdImg = itk.array_from_image(itk_image)
 	return [N, M, d, nrdImg.shape]
 
-def create_data_matrix(file_path,M,N,tag):
+########################### PCA code ########################################
 
-	'''
-		create the pca matrix 
-	'''
+'''
+pca_mode_loading_computation and pca_mode_loadings_computation_images helper
+	create the pca matrix 
+'''
+def create_data_matrix(file_path,M,N,tag):
 	if tag == 0:
 		data_matrix = np.zeros([M, N])
 		for i in range(len(file_path)):
@@ -54,21 +47,22 @@ def create_data_matrix(file_path,M,N,tag):
 			data_matrix[..., i] = d.reshape(1, M)
 	return data_matrix
 
+'''
+pca_mode_loading_computation and pca_mode_loadings_computation_images helper
+	This returns the covariance matrix and the mean shape for PCA mode computation of the particles, pca_matrix is the created pca matrix; N is the number of inputs
+'''
 def get_mean_cov(pca_matrix,N):
-	'''
-		This returns the covariance matrix and the mean shape for PCA mode computation of the particles, pca_matrix is the created pca matrix; N is the number of inputs
-	'''
 	mean_shape = np.mean(pca_matrix, axis = 1)
 	pca_matrix = pca_matrix - numpy.matlib.repmat(mean_shape.reshape(mean_shape.shape[0], 1), 1, N)
 	trick_cov_mat  = np.dot(pca_matrix.T,pca_matrix) * 1.0/np.sqrt(N-1)
-	
 	return trick_cov_mat, mean_shape, pca_matrix
 
-
+'''
+pca_mode_loading_computation and pca_mode_loadings_computation_images helper
+	Returns the eigen values and the normalized eigen vectors for PCA mode computation, 
+	trick_cov_matrix is the covariance matrix; pca_matrix is the created pca matrix; N is the number of inputs
+'''
 def compute_eigen_vectors(trick_cov_mat,pca_matrix,N):
-	'''
-		Returns the eigen values and the normalized eigen vectors for PCA mode computation, trick_cov_matrix is the covariance matrix; pca_matrix is the created pca matrix; N is the number of inputs
-	'''
 	eigen_values, eigen_vectors = np.linalg.eigh(trick_cov_mat)
 	new_eigen_vectors = np.dot(pca_matrix, eigen_vectors)
 	for i in range(N):
@@ -77,12 +71,11 @@ def compute_eigen_vectors(trick_cov_mat,pca_matrix,N):
 	new_eigen_vectors = np.flip(new_eigen_vectors, 1)
 	return eigen_values, new_eigen_vectors
 
-
-def save_pca_information(mean_shape, eigen_values, eigen_vectors, parent_dir, M, d, N):
-
-	'''
+'''
+pca_mode_loading_computation helper
 	Saves the PCA information in the appropriate directory
-	'''
+'''
+def save_pca_information(mean_shape, eigen_values, eigen_vectors, parent_dir, M, d, N):
 	newDir = os.path.join(parent_dir, 'PCA-Info-Particles')
 	if not os.path.exists(newDir):
 		os.makedirs(newDir)
@@ -97,10 +90,11 @@ def save_pca_information(mean_shape, eigen_values, eigen_vectors, parent_dir, M,
 		data = data.reshape(M, d)
 		np.savetxt(nm, data)
 
-def save_pca_information_images(mean_shape, eigen_values, eigen_vectors, parent_dir, imgDims, N):
-	'''
+'''
+pca_mode_loadings_computation_images helper
 	Saves the PCA information in the appropriate directory
-	'''
+'''
+def save_pca_information_images(mean_shape, eigen_values, eigen_vectors, parent_dir, imgDims, N):
 	newDir = os.path.join(parent_dir, 'PCA-Info-Images')
 	if not os.path.exists(newDir):
 		os.makedirs(newDir)
@@ -121,17 +115,9 @@ def save_pca_information_images(mean_shape, eigen_values, eigen_vectors, parent_
 		itk_np_copy = itk.image_from_array(data)
 		itk.imwrite(itk_np_view, nm)
 
-def get_data(path):
-	'''
-		Generic function to get all the files in a directory as a list
-	'''
-	file_list = []
-	folder = os.listdir(path)
-	for file in folder:
-		file_list.append(file)
-	return file_list
-
-
+'''
+	Computes eigenvualues, eigenvectors, and mean shape for particles
+'''
 def pca_mode_loading_computation(file_path, M, N, d, parent_dir, cutoff):
 	pca_matrix = create_data_matrix(file_path,M*d,N,0)	
 	trick_cov_matrix, mean_shape, meanNor_data_matrix = get_mean_cov(pca_matrix,N)	
@@ -145,84 +131,29 @@ def pca_mode_loading_computation(file_path, M, N, d, parent_dir, cutoff):
 	X_loadings = np.matmul(meanNor_data_matrix.T, W)
 	return k_pt, X_loadings, eigen_values, eigen_vectors, mean_shape
 
+'''
+	Computes eigenvualues, eigenvectors, and mean shape for images
+'''
+def pca_mode_loadings_computation_images(output_images_list, N, imgDims, parent_dir, cutoff):
+	M = imgDims[0]*imgDims[1]*imgDims[2]
+	pca_matrix = create_data_matrix(output_images_list,M,N,1)
+	trick_cov_matrix, mean_shape, meanNor_data_matrix = get_mean_cov(pca_matrix,N)
+	eigen_values, eigen_vectors = compute_eigen_vectors(trick_cov_matrix,pca_matrix,N) 
+	cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
+	newKpt = np.where(cumDst > cutoff)[0][0]
+	k = newKpt + 1
+	save_pca_information_images(mean_shape, eigen_values, eigen_vectors, parent_dir, imgDims, N)
+	W = eigen_vectors[:, :k]
+	X_loadings = np.matmul(meanNor_data_matrix.T, W)
+	return k, X_loadings, eigen_values, eigen_vectors, mean_shape
 
-def create_python_xml(input_points_list, input_images_list, parent_dir):
-	'''
-		This creates a xml for the python code with <sample tags>
-	'''
-	root = ET.Element('sample')
-	input_images = ET.SubElement(root, 'input_images')
-	input_images.text = "\n"
-	output_images = ET.SubElement(root, 'output_images')
-	output_images.text = "\n"
-	input_points = ET.SubElement(root, 'input_points')
-	input_points.text = "\n"
-	output_points = ET.SubElement(root, 'output_points')
-	output_points.text = "\n"
+################################### Warp Code ###############################################
 
-	newDir = os.path.join(parent_dir, 'PCA-Info-Particles')
-	meanNM = newDir + '/' + 'meanshape.particles'
-	outputDir = os.path.join(parent_dir, 'TildeImages')
-	if not os.path.exists(outputDir):
-		os.makedirs(outputDir)
-
-	output_images_list = []
-	output_points_list = []
-	for i in range(len(input_images_list)):
-		temp = input_images_list[i]
-		initPath = temp.rsplit('/', 1)[0]
-		temp = temp.replace(initPath, outputDir)
-		temp = temp.replace('.nrrd', '.tilde.nrrd')
-		output_images_list.append(temp)
-		output_points_list.append(meanNM)
-
-	for i in range(len(input_points_list)):
-		t1 = input_images.text
-		t1 = t1 + input_images_list[i] + '\n'
-		input_images.text = t1
-		t2 = output_images.text
-		t2 = t2 + output_images_list[i] + '\n'
-		output_images.text = t2
-		t3 = input_points.text
-		t3 = t3 + input_points_list[i] + '\n'
-		input_points.text = t3
-		t4 = output_points.text
-		t4 = t4 + output_points_list[i] + '\n'
-		output_points.text = t4
-
-	data = ET.tostring(root, encoding='unicode')
-	# ET.dump(root)
-	# print(data)
-	file = open(parent_dir + "/XML_convert_to_tilde_python.xml", "w+")
-	file.write(data)
-	return output_images_list
-
-def create_cpp_xml(filename, outputfilename):
-	'''
-		This creates a xml for cpp Shape warp binary
-	'''
-	opening_tag = "<"
-	ending_tag = "</"
-	closing_tag = ">"
-	tree = ET.parse(filename)
-	root = tree.getroot()
-	children = {}
-	for child in root:
-		children[child.tag] = child.text
-	tags = children.keys()
-	xml_text = ""
-	for tag in tags:
-		xml_text += opening_tag+tag+closing_tag+children[tag]+ending_tag+tag+closing_tag
-	file = open(outputfilename,"w")
-	file.write(xml_text)
-	file.close()
-
-def warp_image_to_space(filename):
-	subprocess.call(['./ShapeWarp', filename])
-
+'''
+	Warps input image by transform from input points to mean
+'''
 def warp_image_to_mean(input_points_list, input_images_list, parent_dir):
-	newDir = os.path.join(parent_dir, 'PCA-Info-Particles')
-	meanNM = newDir + '/' + 'meanshape.particles'
+	meanNM = os.path.join(parent_dir, 'PCA-Info-Particles') + '/meanshape.particles'
 	outputDir = os.path.join(parent_dir, 'TildeImages')
 	if not os.path.exists(outputDir):
 		os.makedirs(outputDir)
@@ -239,45 +170,40 @@ def warp_image_to_mean(input_points_list, input_images_list, parent_dir):
 		cmd = ["shapeworks", 
 			"read-image", "--name", input_image]
 		cmd.extend(["warp-image", "--source_landmarks", input_particles, "--target_landmarks", meanNM])
-		cmd.extend(["write-image", "--name", output_image_name, "'--compressed", "0"])
+		cmd.extend(["write-image", "--name", output_image_name])
 		subprocess.check_call(cmd)
 	return output_images_list
 
-def pca_mode_loadings_computation_images(output_images_list, N, imgDims, parent_dir, cutoff):
-	# data, header,x,y,z = read_data_from_nrrd(output_images_path)
-	M = imgDims[0]*imgDims[1]*imgDims[2]
-	pca_matrix = create_data_matrix(output_images_list,M,N,1)
-	trick_cov_matrix, mean_shape, meanNor_data_matrix = get_mean_cov(pca_matrix,N)
-	eigen_values, eigen_vectors = compute_eigen_vectors(trick_cov_matrix,pca_matrix,N) 
-	cumDst = np.cumsum(eigen_values) / np.sum(eigen_values)
-	newKpt = np.where(cumDst > cutoff)[0][0]
-	k = newKpt + 1
-	save_pca_information_images(mean_shape, eigen_values, eigen_vectors, parent_dir, imgDims, N)
-	W = eigen_vectors[:, :k]
-	X_loadings = np.matmul(meanNor_data_matrix.T, W)
-	return k, X_loadings, eigen_values, eigen_vectors, mean_shape
+'''
+	Warps input image by transform from mean to output points
+'''
+def warp_mean_to_image(output_points_list, input_images_list, parent_dir):
+	meanNM = os.path.join(parent_dir, 'PCA-Info-Particles') + '/meanshape.particles'
+	outputDir = os.path.join(parent_dir, 'Generated-Images')
+	if not os.path.exists(outputDir):
+		os.makedirs(outputDir)
+	output_images_list = []
+	for i in range(len(input_images_list)):
+		print("Warping " + str( i+1) + " out of " + str(len(input_images_list)))
+		input_image = input_images_list[i]
+		output_particles = output_points_list[i]
+		temp = input_images_list[i]
+		initPath = temp.rsplit('/', 1)[0]
+		temp = temp.replace(initPath, outputDir)
+		output_image_name = temp.replace('.tilde.nrrd', '.nrrd')
+		output_images_list.append(output_image_name)
+		cmd = ["shapeworks", 
+			"read-image", "--name", input_image]
+		cmd.extend(["warp-image", "--source_landmarks", meanNM, "--target_landmarks", output_particles])
+		cmd.extend(["write-image", "--name", output_image_name])
+		subprocess.check_call(cmd)
+	return output_images_list
 
+########################################## Generate Code #################################################
 
-def compute_mahalanobis_distance(pca_loadings, path_to_eigen_values, num_modes):
-	m,n = pca_loadings.shape
-	md = []
-	mean = np.mean(pca_loadings, axis = 0)
-	std = np.std(pca_loadings, axis = 0)
-	eigen_values = np.loadtxt(path_to_eigen_values+'eigen_values.txt')
-	temp = pca_loadings - mean
-	cov = np.zeros((num_modes,num_modes))
-	for i in xrange(num_modes):
-		for j in xrange(num_modes):
-			if i == j:
-				cov[i][j] = eigen_values[i]
-	inv_cov = np.linalg.inv(cov)
-	for i in xrange(m):
-		temp2 = np.dot(np.dot(temp[i][:], inv_cov), temp[i][:].T)
-		temp2 = math.sqrt(temp2)
-		md.append(temp2)
-
-	return md, cov, mean, std
-
+'''
+	generate_particles helper - gets mahal dist
+'''
 def mahalDist(X, Data):
 	mean = np.mean(Data, axis = 0)
 	temp = X - mean
@@ -285,6 +211,9 @@ def mahalDist(X, Data):
 	dist = np.dot(np.dot(temp, np.linalg.inv(cov)), temp.T)
 	return np.sqrt(dist)
 
+'''
+	generate_particles helper - gets nearest image
+'''
 def nearestImg(X, data):
 	X = X / np.linalg.norm(X)
 	for i in range(data.shape[0]):
@@ -292,6 +221,9 @@ def nearestImg(X, data):
 	diffMat = np.sum((data - np.matlib.repmat(X, data.shape[0], 1))**2, axis = 1)
 	return np.min(diffMat)
 
+'''
+	Gets particles from PCA
+'''
 def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_particles, mean_shape, num_samples, K_pt, M, d, N, parent_dir):
 	path_list = []
 	use_eigvals = eigvals_particles[:K_pt]
@@ -307,7 +239,6 @@ def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_partic
 		rv = 0.2*np.random.randn(1, K_pt)
 		mulp = rv*use_sd
 		projDist = mahalDist(mulp, pca_loadings_particles)
-		# if projDist <= thresh:
 		mulp = numpy.matlib.repmat(mulp, d*M, 1)
 		Y = mean_shape + np.sum(mulp*use_eigvecs, 1)
 		Ygen = Y.reshape(M, d)
@@ -317,11 +248,9 @@ def generate_particles(pca_loadings_particles, eigvals_particles, eigvecs_partic
 		count += 1
 	return path_list
 
-def nearbyLoading(data):
-	rdidx = np.random.randint(0, data.shape[0])
-	newLoading = data[rdidx, ...] + np.random.randn(data.shape[1],)
-	return newLoading
-
+''' 
+	Gets image from PCA 
+'''
 def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_shape, num_samples, K_img, imgDims, N, parent_dir):
 	path_list = []
 	use_eigvals = eigvals_images[:K_img]
@@ -349,122 +278,3 @@ def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_sh
 		path_list.append(nm)
 		count += 1
 	return path_list
-
-def findClosest(nm, pointList):
-	print("find Closest")
-	newPt = np.loadtxt(nm)
-	minDst = 100000000000000000000000000000
-	outIDX = 0
-	for i in range(len(pointList)):
-		ptTmp = np.loadtxt(pointList[i])
-		dst = np.sum((ptTmp - newPt)**2)
-		if dst < minDst:
-			minDst = dst
-			outIDX = i
-	return outIDX
-
-def create_final_xml_shape(num_samples, parent_dir, pointList, dataList):
-	root = ET.Element('sample')
-	input_images = ET.SubElement(root, 'input_images')
-	input_images.text = "\n"
-	output_images = ET.SubElement(root, 'output_images')
-	output_images.text = "\n"
-	input_points = ET.SubElement(root, 'input_points')
-	input_points.text = "\n"
-	output_points = ET.SubElement(root, 'output_points')
-	output_points.text = "\n"
-
-	newDirImages = os.path.join(parent_dir, 'Generated-Images')
-	if not os.path.exists(newDirImages):
-		os.makedirs(newDirImages)
-	newDirParticles = os.path.join(parent_dir, 'Generated-Particles')
-	
-	output_images_list = []
-	input_points_list = []
-	output_points_list = []
-	input_images_list = []
-	print("Now compiling the xml file")
-	for i in range(num_samples):
-		nm = newDirParticles + '/Generated_sample_' + str(i) + '.particles'
-		output_points_list.append(nm)
-		idx = findClosest(nm, pointList)
-		nm = newDirImages + '/Generated_sample_' + str(i) + '.nrrd'
-		output_images_list.append(nm)
-		input_points_list.append(pointList[idx])
-		input_images_list.append(dataList[idx])
-
-	for i in range(len(input_points_list)):
-		t1 = input_images.text
-		t1 = t1 + input_images_list[i] + '\n'
-		input_images.text = t1
-		t2 = output_images.text
-		t2 = t2 + output_images_list[i] + '\n'
-		output_images.text = t2
-		t3 = input_points.text
-		t3 = t3 + input_points_list[i] + '\n'
-		input_points.text = t3
-		t4 = output_points.text
-		t4 = t4 + output_points_list[i] + '\n'
-		output_points.text = t4
-
-	data = ET.tostring(root, encoding='unicode')
-	# ET.dump(root)
-	# print(data)
-	file = open("XML_get_final_images_python.xml", "w+")
-	file.write(data)
-	return output_images_list
-
-def create_final_xml(num_samples, parent_dir):
-
-	root = ET.Element('sample')
-	input_images = ET.SubElement(root, 'input_images')
-	input_images.text = "\n"
-	output_images = ET.SubElement(root, 'output_images')
-	output_images.text = "\n"
-	input_points = ET.SubElement(root, 'input_points')
-	input_points.text = "\n"
-	output_points = ET.SubElement(root, 'output_points')
-	output_points.text = "\n"
-
-	newDirImagesTilde = os.path.join(parent_dir, 'Generated-Tilde-Images')
-	newDirImages = os.path.join(parent_dir, 'Generated-Images')
-	if not os.path.exists(newDirImages):
-		os.makedirs(newDirImages)
-	newDirParticles = os.path.join(parent_dir, 'Generated-Particles')
-
-	newDir = os.path.join(parent_dir, 'PCA-Info-Particles')
-	meanNM = newDir + '/' + 'meanshape.particles'
-	
-	output_images_list = []
-	input_points_list = []
-	output_points_list = []
-	input_images_list = []
-	for i in range(num_samples):
-		input_points_list.append(meanNM)
-		nm = newDirParticles + '/Generated_sample_' + str(i) + '.particles'
-		output_points_list.append(nm)
-		nm = newDirImagesTilde + '/Generated_sample_' + str(i) + '.nrrd'
-		input_images_list.append(nm)
-		nm = newDirImages + '/Generated_sample_' + str(i) + '.nrrd'
-		output_images_list.append(nm)
-
-	for i in range(len(input_points_list)):
-		t1 = input_images.text
-		t1 = t1 + input_images_list[i] + '\n'
-		input_images.text = t1
-		t2 = output_images.text
-		t2 = t2 + output_images_list[i] + '\n'
-		output_images.text = t2
-		t3 = input_points.text
-		t3 = t3 + input_points_list[i] + '\n'
-		input_points.text = t3
-		t4 = output_points.text
-		t4 = t4 + output_points_list[i] + '\n'
-		output_points.text = t4
-
-	data = ET.tostring(root, encoding='unicode')
-	# ET.dump(root)
-	# print(data)
-	file = open(parent_dir + "/XML_get_final_images_python.xml", "w+")
-	file.write(data)
-	return output_images_list

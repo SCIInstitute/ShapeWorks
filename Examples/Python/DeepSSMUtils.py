@@ -63,14 +63,9 @@ def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doR
 	K_pt, pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles = ut.pca_mode_loading_computation(point_list, M_particles, N_images, pt_dim, out_dir, PCA_var_cutoff)
 	np.save(os.path.join(out_dir, 'original_loadings_particles.npy'), pca_particle_loadings)
 	print("The PCA modes of particles being retained : ", K_pt)
-	
-	# tilde_images_list = ut.create_python_xml(point_list, data_list, out_dir)
-	# ut.create_cpp_xml(out_dir + "/XML_convert_to_tilde_python.xml", out_dir + "/XML_convert_to_tilde_cpp.xml")
-	# print("\nWarping original images to space:")
-	# ut.warp_image_to_space(out_dir + "/XML_convert_to_tilde_cpp.xml")
 
+	print("\nWarping original images:")
 	tilde_images_list = ut.warp_image_to_mean(point_list, data_list, out_dir)
-
 
 	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = ut.pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir,PCA_var_cutoff)
 	np.save(os.path.join(out_dir, 'original_loadings_images.npy'), pca_images_loadings)
@@ -78,17 +73,18 @@ def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doR
 
 	print("\nGenerating particles:")
 	generated_particles_list = ut.generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, out_dir)
+	
 	print("\nGenerating images:")
-	generated_images_list = ut.generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, out_dir)
-	ut.create_final_xml(num_samples, out_dir)
-	ut.create_cpp_xml(out_dir + "/XML_get_final_images_python.xml", out_dir + "/XML_get_final_images_cpp.xml")
-	print("\nWarping generated images to space:")
-	ut.warp_image_to_space( out_dir + "/XML_get_final_images_cpp.xml")
+	generated_tilde_images_list = ut.generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, out_dir)
+
+	print("\nWarping generated images:")
+	generated_images_list = ut.warp_mean_to_image(generated_particles_list, generated_tilde_images_list, out_dir)
 
 	# Paths lists
 	image_path_list = data_list + generated_images_list
 	particle_path_list = point_list + generated_particles_list
 
+	# Get PCA loadings for csv
 	# Get original loadings
 	origLoadings = out_dir + 'original_loadings_particles.npy'
 	K = np.load(origLoadings)
@@ -111,7 +107,7 @@ def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doR
 		X[i, ...] = np.matmul(normed, W)
 	X[num_samples:, ...] = K
 
-	# Padding and resmapling
+	# Padding and resmapling for images
 	print("\nResampling and padding if neccesary:")
 	resmpleFactor = 0.5
 	pad_amount = 4
