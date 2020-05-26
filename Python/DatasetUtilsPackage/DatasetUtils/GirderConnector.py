@@ -8,7 +8,7 @@ from DatasetUtils import GirderAPI
 
 _API_KEY_NAME = 'python_script'
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin.txt'
-_CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-users@sci.utah.edu'
+_CONTACT_SUPPORT_STRING = 'Please contact support: shapeworks-dev@sci.utah.edu'
 _VERSION = 'v0'
 _USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 
@@ -31,12 +31,13 @@ def _login(loginState):
         # login using provided credentials
         if not _verifyLoginState(loginState):
             raise ValueError('Invalid login state')
-        accessToken = GirderAPI._getAccessToken(loginState['key'])
+        accessToken = GirderAPI.getAccessToken(loginState['key'])
     if accessToken is None:
-        raise ValueError('Unable to get access token')
+        raise ValueError('Unable to get access token. %' % _CONTACT_SUPPORT_STRING)
     return accessToken
     
 
+## Interactively prompts the user to log in
 def _loginAndGetAccessToken():
 
     loginState = _loadLogin()
@@ -48,7 +49,7 @@ def _loginAndGetAccessToken():
             print('Login failed!')
             return (None, None)
 
-    accessToken = GirderAPI._getAccessToken(serverAddress, loginState['key'])
+    accessToken = GirderAPI.getAccessToken(serverAddress, loginState['key'])
     if accessToken is None:
         # Retry login once
         print('Login info in current directory is invalid.')
@@ -56,10 +57,7 @@ def _loginAndGetAccessToken():
         if loginState is None:
             print('Login failed!')
             return (None, None)
-        accessToken = GirderAPI._getAccessToken(serverAddress, loginState['key'])
-        if accessToken is None:
-            print('ERROR! Login info is invalid again.', _CONTACT_SUPPORT_STRING)
-            return (loginState, None)
+        accessToken = GirderAPI.getAccessToken(serverAddress, loginState['key'])
     return (loginState, accessToken)
 
 
@@ -74,16 +72,15 @@ def _promptLogin():
         password = getpass.getpass("Password: ")
         combined = username + ':' + password
         usernamePasswordHash = base64.b64encode(combined.encode()).decode("ascii")
-        basicAuthToken = GirderAPI._authenticateBasicAuth(serverAddress, usernamePasswordHash)
-        if basicAuthToken is None:
-            print('Incorrect username or password')
-
-    apiKey = GirderAPI._getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
-    if apiKey is None:
+        try:
+            basicAuthToken = GirderAPI.authenticateBasicAuth(serverAddress, usernamePasswordHash)
+        except ValueError as e:
+            print('Incorrect username or password.')
+    try:
+        apiKey = GirderAPI._getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
+    except ValueError as e:
         apiKey = GirderAPI._createApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
-    if apiKey is None:
-        print('Failed to create api key.', _CONTACT_SUPPORT_STRING)
-        return None
+
     loginState = {'username': username, 'key': apiKey}
     _saveLogin(loginState)
     return loginState

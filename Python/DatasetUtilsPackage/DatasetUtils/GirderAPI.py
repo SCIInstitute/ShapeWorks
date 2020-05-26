@@ -15,13 +15,13 @@ _CHUNK_SIZE = _MB_PER_CHUNK * 1048576 # Download 128 MB at a time
 ## Utility function to write to the error log file
 def _writeToErrorLog(infoDict):
     with open(_ERROR_LOG_FILE, 'a') as filehandle:
-        json.dump(thing, filehandle)
+        json.dump(infoDict, filehandle)
         filehandle.write("\n")
     print('Please send %s to the developers for debugging' % _ERROR_LOG_FILE)
 
 
 ## Returns response or writes details to log file and raises ValueError
-def _makeRequest(requestFunction, url, params, headers, actionMessage, data):
+def _makeRequest(requestFunction, url, params, headers, actionMessage, data, printError=True):
     if data:
         response = requestFunction(url = url, params = params, headers = headers, data = data, stream = True) 
     else:
@@ -30,31 +30,32 @@ def _makeRequest(requestFunction, url, params, headers, actionMessage, data):
     if response.status_code == 200:
         return response
 
-    # Write debug info to file since return code was error
-    print(response.status_code, 'ERROR while', actionMessage)
-    _writeToErrorLog({
-            'function': 'POST' if requestFunction is requests.post else 'GET' if requestFunction is requests.get else 'OTHER',
-            'url': url, 
-            'params': params, 
-            'headers': headers, 
-            'response code': response.status_code, 
-            'response text': response.text,
-            'action message': actionMessage, 
-            'datetime': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
+    if printError:
+        # Write debug info to file since return code was error
+        print(response.status_code, 'ERROR while', actionMessage)
+        _writeToErrorLog({
+                'function': 'POST' if requestFunction is requests.post else 'GET' if requestFunction is requests.get else 'OTHER',
+                'url': url, 
+                'params': params, 
+                'headers': headers, 
+                'response code': response.status_code, 
+                'response text': response.text,
+                'action message': actionMessage, 
+                'datetime': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
     raise ValueError('Response code %s while %s', str(response.status_code), actionMessage)
 
 
 ## Returns response or writes details to log file and raises ValueError
-def _makeGetRequest(url, params, headers, actionMessage):
-    return _makeRequest(requestFunction = requests.get, url = url, params = params, headers = headers, actionMessage = actionMessage, data = None)
+def _makeGetRequest(url, params, headers, actionMessage, printError=True):
+    return _makeRequest(requestFunction = requests.get, url = url, params = params, headers = headers, actionMessage = actionMessage, data = None, printError = printError)
 
 
 ## Returns response or writes details to log file and raises ValueError
-def _makePostRequest(url, params, headers, actionMessage, data = None):
-    return _makeRequest(requestFunction = requests.post, url = url, params = params, headers = headers, actionMessage = actionMessage, data = data)
+def _makePostRequest(url, params, headers, actionMessage, data = None, printError=True):
+    return _makeRequest(requestFunction = requests.post, url = url, params = params, headers = headers, actionMessage = actionMessage, data = data, printError = printError)
 
 
-def _getAccessToken(serverAddress, apiKey):
+def getAccessToken(serverAddress, apiKey):
     response = _makePostRequest(
         url = serverAddress + 'api/v1/api_key/token', 
         params = {'key': apiKey}, 
@@ -64,12 +65,13 @@ def _getAccessToken(serverAddress, apiKey):
     return response.json()['authToken']['token']
 
 
-def _authenticateBasicAuth(serverAddress, usernamePasswordHash):
+def authenticateBasicAuth(serverAddress, usernamePasswordHash):
     response = _makeGetRequest(
         url = serverAddress + 'api/v1/user/authentication', 
         params = None, 
         headers = {'Authorization': 'Basic ' + usernamePasswordHash}, 
-        actionMessage = 'authenticating using basic auth')
+        actionMessage = 'authenticating using basic auth',
+        printError=False)
     
     return response.json()['authToken']['token']
 
