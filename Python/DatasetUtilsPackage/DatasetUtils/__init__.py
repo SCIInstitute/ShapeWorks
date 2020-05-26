@@ -1,5 +1,9 @@
 from DatasetUtils import GirderConnector
 
+# Note that the loginState parameter is there for easy testing in the future.
+# The testing library can just use a login state rather than having to simulate user input to log in.
+# login state is a dictionary containing {username, key} where key is the api key to use for getting an access token
+
 ## Returns None if failed to get list, otherwise returns list of dataset names: ['ellipsoid', 'left_atrium', ...]
 def getDatasetList(loginState = None):
     GirderConnector.printDataPortalWelcome()
