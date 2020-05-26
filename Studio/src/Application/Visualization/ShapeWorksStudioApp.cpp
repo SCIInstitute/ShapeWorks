@@ -1196,10 +1196,19 @@ void ShapeWorksStudioApp::update_recent_files()
 {
   QStringList recent_files = preferences_.get_recent_files();
 
+
+  QStringList existing_files;
+  for (int i = 0; i < recent_files.size(); i++) {
+    if (QFile::exists(recent_files[i])){
+      existing_files << recent_files[i];
+    }
+  }
+
+  recent_files = existing_files;
+
   int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
 
   for (int i = 0; i < num_recent_files; i++) {
-
     QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(recent_files[i]).fileName());
     this->recent_file_actions_[i]->setText(text);
     this->recent_file_actions_[i]->setData(recent_files[i]);
