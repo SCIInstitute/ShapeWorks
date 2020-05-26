@@ -702,7 +702,7 @@ bool Session::is_light_project()
 //---------------------------------------------------------------------------
 bool Session::get_groomed_present()
 {
-  return this->groomed_present_;
+  return this->project_->get_groomed_present();
 }
 
 //---------------------------------------------------------------------------

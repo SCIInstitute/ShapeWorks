@@ -610,9 +610,6 @@ void AnalysisTool::reset_stats()
 //---------------------------------------------------------------------------
 void AnalysisTool::enable_actions()
 {
-  std::cerr << "particles present = " << this->session_->particles_present() << "\n";
-  std::cerr << "groomed present = " << this->session_->get_groomed_present() << "\n";
-
   this->ui_->reconstructionButton->setEnabled(
     this->session_->particles_present() && this->session_->get_groomed_present());
 }
