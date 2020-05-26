@@ -39,10 +39,10 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, double narrow_band)
   {
     // Computes partial derivatives in parent class
-    Superclass::SetImage(I);
+    Superclass::SetImage(I, narrow_band);
 
     // Because of this filter, the proportion of the image we are considering for the narrow band
     // is extended. The curvature is computed outside the narrow band of the original image, where
@@ -59,7 +59,6 @@ public:
 
     m_VDBCurvature = openvdb::FloatGrid::create();
     auto vdbAccessor = m_VDBCurvature->getAccessor();
-    const auto narrow_band = this->GetNarrowBand();
 
     itk::ImageRegionIteratorWithIndex<ImageType> it(I, I->GetRequestedRegion());
     itk::ImageRegionIteratorWithIndex<ImageType> curvIt(f->GetOutput(),

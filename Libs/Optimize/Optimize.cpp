@@ -1885,7 +1885,10 @@ void Optimize::SetLogEnergy(bool log_energy)
 
 //---------------------------------------------------------------------------
 void Optimize::AddImage(ImageType::Pointer image) {
-  this->m_sampler->AddImage(image);
+  if (this->m_narrow_band < 0) { // narrow band was not set, use default of 4.0
+    this->m_narrow_band = 4.0;
+  }
+  this->m_sampler->AddImage(image, this->m_narrow_band);
   this->m_num_shapes++;
   if (image) {
     this->m_spacing = image->GetSpacing()[0];
@@ -1987,7 +1990,6 @@ std::vector<bool> Optimize::GetUseNormals()
 void Optimize::SetNarrowBand(double v)
 {
   this->m_narrow_band = v;
-  this->m_sampler->SetNarrowBand(v);
 }
 
 //---------------------------------------------------------------------------

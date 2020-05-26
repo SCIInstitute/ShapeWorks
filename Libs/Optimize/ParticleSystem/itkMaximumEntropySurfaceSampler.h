@@ -150,18 +150,17 @@ public:
         m_MeshFiles = s;
     }
 
-    void AddImage(const typename TImage::Pointer image)
+    void AddImage(const typename TImage::Pointer image, double narrow_band)
     {
         const auto domain = ParticleImplicitSurfaceDomain<typename
                               ImageType::PixelType, Dimension>::New();
         m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
 
-        domain->SetNarrowBand(m_NarrowBand);
         if (image)
         {
           this->m_Spacing = image->GetSpacing()[0];
           domain->SetSigma(this->m_Spacing * 2.0);
-          domain->SetImage(image);
+          domain->SetImage(image, narrow_band);
         }
 
         m_DomainList.push_back(domain);
@@ -315,11 +314,6 @@ public:
     int GetPairwisePotentialType()
     {return m_pairwise_potential_type;}
 
-    void SetNarrowBand(double narrow_band)
-    { m_NarrowBand = narrow_band; }
-
-    double GetNarrowBand() const
-    { return m_NarrowBand; }
 
     void SetVerbosity(unsigned int val)
     {
@@ -411,7 +405,6 @@ private:
     std::vector<std::string> m_FidsFiles;
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
-    double m_NarrowBand;
     double m_Spacing{0};
 
     std::string m_TransformFile;

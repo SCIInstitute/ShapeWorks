@@ -52,7 +52,7 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, double narrow_band)
   {
     this->m_FixedDomain = false;
     this->Modified();
@@ -82,7 +82,6 @@ public:
     ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
     it.GoToBegin();
 
-    const auto narrow_band = this->GetNarrowBand();
     while(!it.IsAtEnd()) {
       const auto idx = it.GetIndex();
       const auto pixel = it.Get();
@@ -177,16 +176,6 @@ public:
       }
     }
     return bestRadius;
-  }
-
-  void SetNarrowBand(double narrow_band)
-  {
-    m_NarrowBand = narrow_band;
-  }
-
-  double GetNarrowBand() const
-  {
-    return m_NarrowBand;
   }
 
   /** Used when a domain is fixed. */

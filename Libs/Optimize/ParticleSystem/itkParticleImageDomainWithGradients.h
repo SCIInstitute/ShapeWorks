@@ -41,8 +41,8 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I) {
-    ParticleImageDomain<T, VDimension>::SetImage(I);
+  void SetImage(ImageType *I, double narrow_band) {
+    ParticleImageDomain<T, VDimension>::SetImage(I, narrow_band);
     m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
   }
 
