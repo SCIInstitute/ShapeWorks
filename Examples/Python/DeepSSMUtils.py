@@ -1,16 +1,15 @@
+import DataAugmentUtils as ut
 import os
 import numpy as np
 from numpy import matlib
 import itk
 import csv
 from scipy import ndimage
-import dataAugmentUtils as ut
 from collections import OrderedDict
 import random
 import time
 import shutil
 import subprocess
-import nrrd
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -59,24 +58,25 @@ Output:
 def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doResample=0, doPad=0):
 	if not os.path.exists(out_dir):
 		os.makedirs(out_dir)
-	N_images, M_particles, pt_dim, imgDims, f = ut.read_necessarry_metadata(data_list, point_list)
+	N_images, M_particles, pt_dim, imgDims = ut.read_necessarry_metadata(data_list, point_list)
 	K_pt, pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles = ut.pca_mode_loading_computation(point_list, M_particles, N_images, pt_dim, out_dir, PCA_var_cutoff)
 	np.save(os.path.join(out_dir, 'original_loadings_particles.npy'), pca_particle_loadings)
 	print("The PCA modes of particles being retained : ", K_pt)
-		
+	
 	tilde_images_list = ut.create_python_xml(point_list, data_list, out_dir)
 	ut.create_cpp_xml(out_dir + "/XML_convert_to_tilde_python.xml", out_dir + "/XML_convert_to_tilde_cpp.xml")
 	print("\nWarping original images to space:")
 	ut.warp_image_to_space(out_dir + "/XML_convert_to_tilde_cpp.xml")
-	
-	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = ut.pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir,PCA_var_cutoff, f)
+
+
+	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = ut.pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir,PCA_var_cutoff)
 	np.save(os.path.join(out_dir, 'original_loadings_images.npy'), pca_images_loadings)
 	print("\nThe PCA modes of images being retained : ", K_img)
 
 	print("\nGenerating particles:")
 	generated_particles_list = ut.generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, out_dir)
 	print("\nGenerating images:")
-	generated_images_list = ut.generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, out_dir, f)
+	generated_images_list = ut.generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, out_dir)
 	ut.create_final_xml(num_samples, out_dir)
 	ut.create_cpp_xml(out_dir + "/XML_get_final_images_python.xml", out_dir + "/XML_get_final_images_cpp.xml")
 	print("\nWarping generated images to space:")
@@ -190,15 +190,8 @@ reads .nrrd file and retunrs data
 the except is for the generated files, it forces the .nrrd to be in a format itk can read
 '''
 def getImage(path):
-	try:
-		image = itk.imread(path)
-	except:
-		image = itk.imread(path, itk.F)
+	image = itk.imread(path, itk.F)
 	img = itk.GetArrayFromImage(image)
-	return [list(img)]
-
-def getImage2(path):
-	img, f = nrrd.read(path)
 	return [list(img)]
 
 '''

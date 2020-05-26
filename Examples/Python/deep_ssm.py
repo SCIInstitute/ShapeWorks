@@ -18,6 +18,9 @@ import numpy as np
 from DeepSSMUtils import *
 
 def Run_Pipeline(args):
+	if args.tiny_test:
+		print("\nRunning a tiny test.")
+
 	# set parent dir
 	parent_dir="TestDeepSSM/"
 	if not os.path.exists(parent_dir):
@@ -25,28 +28,28 @@ def Run_Pipeline(args):
 	datasetName = "femur"
 	input_dir = parent_dir + datasetName + '/'
 
-	# print("\n\n\nStep 1. Get Data\n")
-	# # get zipfile if not there
-	# filename = datasetName + ".zip"
-	# if not os.path.exists(filename):
-	# 	print("Can't find " + filename + " in the current directory.")
-	# 	import DatasetUtils
-	# 	DatasetUtils.downloadDataset(datasetName)
+	print("\nStep 1. Get Data")
+	# get zipfile if not there
+	filename = datasetName + ".zip"
+	if not os.path.exists(filename):
+		print("Can't find " + filename + " in the current directory.")
+		import DatasetUtils
+		DatasetUtils.downloadDataset(datasetName)
 
-	# # extract the zipfile
-	# print("Extracting data from " + filename + "...")
-	# with ZipFile(filename, 'r') as zipObj:
-	# 	zipObj.extractall(path=parent_dir)
+	# extract the zipfile
+	print("Extracting data from " + filename + "...")
+	with ZipFile(filename, 'r') as zipObj:
+		zipObj.extractall(path=parent_dir)
 
 	# Get lists of paths
 	# image path list
-	img_dir = input_dir + "groomed_images/" #todo remove small
+	img_dir = input_dir + "groomed/images/"
 	img_list = []
 	for file in os.listdir(img_dir):
 		img_list.append(img_dir + file)
 	img_list = sorted(img_list)
 	# get particles path list
-	model_dir =  input_dir + "model/" #todo remove small
+	model_dir =  input_dir + "model/" 
 	particle_list = []
 	for file in os.listdir(model_dir):
 		if "local" in file:
@@ -66,11 +69,7 @@ def Run_Pipeline(args):
 	PCA_var_cutoff = 0.99
 	# If doResample is 1 it will resample the image to be half the size for faster training (default is 0)
 	# If doPad is 1 it will add padding around the image in case the anatomy lies on the image boundary (default is 0)
-	aug_data_csv, PCA_scores_path = dataAugment(parent_dir + "Augmentation/", img_list, particle_list, num_samples, PCA_var_cutoff, doResample=0, doPad=0)
-
-	# debug
-	aug_data_csv = '/home/sci/jadie/NewShapeworks/ShapeWorks/Examples/Python/TestDeepSSM/Augmentation/totalData.csv'
-	PCA_scores_path = '/home/sci/jadie/NewShapeworks/ShapeWorks/Examples/Python/TestDeepSSM/Augmentation/PCA-Info-Particles/'
+	aug_data_csv, PCA_scores_path = dataAugment(parent_dir + "augmentation/", img_list, particle_list, num_samples, PCA_var_cutoff, doResample=0, doPad=0)
 
 	print("\n\n\nStep 3. Reformat Data for Pytorch\n")
 	# Hyper-paramter batch_size for training
@@ -79,17 +78,14 @@ def Run_Pipeline(args):
 	batch_size = 1
 	train_loader, val_loader, test_loader, test_sample_names = getTorchDataLoaders(parent_dir + 'TorchDataLoaders/', aug_data_csv, batch_size)
 
-	# #debug
-	# train_loader = "TestDeepSSM/TorchDataLoaders/train"
-	# val_loader = "TestDeepSSM/TorchDataLoaders/validation"
-	# test_loader = "TestDeepSSM/TorchDataLoaders/test"
-	# test_sample_names = ['Generated_sample_4']
 
 	print("\n\n\nStep 4. Train model.\n")
 	# Training parameters dict
 	# val_freq sets how often too test on validation set and log
 	# for example val_freq=1 is every epoch and val_freq=2 is every other
-	parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
+	parameters = {"epochs":300, "learning_rate":0.001, "val_freq":1}
+	if args.tiny_test:
+		parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
 	model_path = train(train_loader, val_loader, parameters, parent_dir)
 
 
