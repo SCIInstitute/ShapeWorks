@@ -124,6 +124,12 @@ bool MeshWorkQueue::isEmpty()
 }
 
 //---------------------------------------------------------------------------
+int MeshWorkQueue::size()
+{
+  return this->work_list_.size();
+}
+
+//---------------------------------------------------------------------------
 bool MeshWorkQueue::in_inside_list(const MeshWorkItem &item, const WorkList &list)
 {
   for (WorkList::const_iterator it = list.begin(); it != list.end(); ++it) {

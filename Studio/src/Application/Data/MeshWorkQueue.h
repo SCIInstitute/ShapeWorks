@@ -21,9 +21,9 @@ class MeshWorkItem
 public:
   std::string filename;
   vnl_vector<double> points;
-  int domain;
+  int domain{0};
 
-  size_t memory_size;
+  size_t memory_size{0};
 
   friend bool operator<(const MeshWorkItem &a, const MeshWorkItem &b);
 
@@ -47,12 +47,13 @@ public:
 
   MeshWorkItem* get_next_work_item();
 
-
   bool isInside(const MeshWorkItem &item);
 
   void remove(const MeshWorkItem &item);
 
   bool isEmpty();
+
+  int size();
 
 private:
 
