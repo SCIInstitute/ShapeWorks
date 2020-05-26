@@ -1196,15 +1196,28 @@ void ShapeWorksStudioApp::update_recent_files()
 {
   QStringList recent_files = preferences_.get_recent_files();
 
-
   QStringList existing_files;
   for (int i = 0; i < recent_files.size(); i++) {
-    if (QFile::exists(recent_files[i])){
+    if (QFile::exists(recent_files[i])) {
       existing_files << recent_files[i];
     }
   }
-
   recent_files = existing_files;
+
+  QStringList no_dupes;
+  for (int i = 0; i < recent_files.size(); i++) {
+    bool found_dupe = false;
+    for (int j = i + 1; j < recent_files.size(); j++) {
+      if (QFileInfo(recent_files[i]).canonicalFilePath() ==
+          QFileInfo(recent_files[j]).canonicalFilePath()) {
+        found_dupe = true;
+      }
+    }
+    if (!found_dupe) {
+      no_dupes << recent_files[i];
+    }
+  }
+  recent_files = no_dupes;
 
   int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
 
