@@ -164,7 +164,10 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
       std::cerr << "Error: asked for groom mesh when none as present!\n";
       //return this->groomed_mesh_;
     }
-    this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
+    else
+    {
+      this->generate_meshes(this->subject_->get_groomed_filenames(), this->groomed_mesh_);
+    }
   }
 
   return this->groomed_mesh_;
