@@ -127,6 +127,8 @@ private:
   /// project filename
   QString filename_;
 
+  QString project_path_;
+
   /// collection of shapes
   QVector<QSharedPointer<Shape>> shapes_;
 

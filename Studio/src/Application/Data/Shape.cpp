@@ -77,11 +77,6 @@ std::shared_ptr<Subject> Shape::get_subject()
   return this->subject_;
 }
 
-//---------------------------------------------------------------------------
-void Shape::set_input_segmentations(QStringList filenames)
-{
-  this->input_segmentation_filenames_ = filenames;
-}
 
 //---------------------------------------------------------------------------
 void Shape::import_original_image(std::string filename, float iso_value)

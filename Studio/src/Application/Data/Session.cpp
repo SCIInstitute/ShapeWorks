@@ -492,6 +492,9 @@ bool Session::load_project(QString filename)
   this->reset();
   this->filename_ = filename;
 
+
+  this->project_path_ = QFileInfo(filename).canonicalPath();
+
   this->project_->load(filename.toStdString());
 
   int num_subjects = this->project_->get_number_of_subjects();

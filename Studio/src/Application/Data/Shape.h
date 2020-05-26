@@ -35,10 +35,8 @@ public:
   void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
 
   void set_subject(std::shared_ptr<shapeworks::Subject> subject);
-  std::shared_ptr<shapeworks::Subject> get_subject();
 
-  //! set the input segmentation filenames (1 per domain)
-  void set_input_segmentations(QStringList filenames);
+  std::shared_ptr<shapeworks::Subject> get_subject();
 
   /// Import the original raw image file
   void import_original_image(std::string filename, float iso_value);
@@ -118,8 +116,6 @@ private:
   void generate_original_meshes();
 
   void generate_meshes(std::vector<std::string> filenames, QSharedPointer<Mesh> &mesh);
-
-  QStringList input_segmentation_filenames_;
 
   static bool import_point_file(QString filename, vnl_vector<double> &points);
 
