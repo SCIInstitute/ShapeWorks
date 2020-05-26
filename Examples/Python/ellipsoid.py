@@ -76,6 +76,7 @@ def Run_Pipeline(args):
     ## GROOM : Data Pre-processing 
     For the unprepped data the first few steps are 
     -- Isotropic resampling
+    -- Center
     -- Padding
     -- Center of Mass Alignment
     -- Rigid Alignment
@@ -98,8 +99,11 @@ def Run_Pipeline(args):
         """Apply isotropic resampling"""
         resampledFiles = applyIsotropicResampling(parentDir + "resampled", fileList)
 
+        """Apply centering"""
+        centeredFiles = center(parentDir + "centered", resampledFiles)
+
         """Apply padding"""
-        paddedFiles = applyPadding(parentDir + "padded", resampledFiles, 10)
+        paddedFiles = applyPadding(parentDir + "padded", centeredFiles, 10)
 
         """Apply center of mass alignment"""
         comFiles = applyCOMAlignment(parentDir + "com_aligned", paddedFiles)

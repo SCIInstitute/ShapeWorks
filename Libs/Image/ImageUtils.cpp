@@ -3,63 +3,106 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 
+#include <itkTranslationTransform.h>
+#include <itkThinPlateSplineKernelTransform.h>
+#include <itkPointSet.h>
+
 namespace shapeworks {
+
+Image::Region ImageUtils::boundingBox(std::vector<std::string> &filenames)
+{
+  if (filenames.empty())
+    throw std::invalid_argument("No filenames provided from which to compute a bounding box"); 
+
+  Image img(filenames[0]);
+  Image::Region bbox(img.boundingBox());
+  Dims dims(img.dims()); // images must all be the same size
+
+  for (auto filename : filenames)
+  {
+    Image img(filename);
+    if (img.dims() != dims)
+    {
+      throw std::invalid_argument("Image sizes do not match (" + filename + ")");
+    }
+
+    bbox.grow(img.boundingBox());
+  }
+
+  return bbox;
+}
 
 /// createCenterOfMassTransform
 ///
 /// Generates the Transform necessary to move the contents of this binary image to the center.
 /// Example:
-///   Transform xform = ImageUtils::createCenterOfMassTransform(image);
+///   TransformPtr xform = ImageUtils::createCenterOfMassTransform(image);
 ///   image.applyTransform(xform);
 ///
 /// \param image      the binary image from which to generate the transform
-Transform::Pointer ImageUtils::createCenterOfMassTransform(const Image &image)
+TransformPtr ImageUtils::createCenterOfMassTransform(const Image &image)
 {
-  Point3 com = image.centerOfMass();
-  Point3 center = image.center();
-
-  std::cout << "ImageUtils::createCenterOfMassTransform\n\tcom: " << com << "\n\tctr: " << center << std::endl;
-
-  Transform::Pointer xform = Transform::New();
-  xform->Translate(center - com);
+  AffineTransformPtr xform(AffineTransform::New());
+  xform->Translate(-(image.center() - image.centerOfMass())); // ITK translations go in a counterintuitive direction
   return xform;
 }
 
-Image& ImageUtils::reflect(Image &img, double axis)
+Image ImageUtils::rigidRegistration(Image &target, const Image &source, float isoValue, unsigned iterations)
 {
-  Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
-
-  double x = 1, y = 1, z = 1;
-  if (axis == 0)
-    x = -1;
-  if (axis == 1)
-    y = -1;
-  if (axis == 2)
-    z = -1;
-
-  Matrix reflection;
-  reflection.Fill(0);
-  reflection[0][0] = x;
-  reflection[1][1] = y;
-  reflection[2][2] = z;
-
-  Transform::Pointer xform = Transform::New();
-  xform->SetMatrix(reflection);
-  Point3 origin = image.origin();
-  image.recenter().applyTransform(xform).changeOrigin();
-  return image;
-}
-
-Transform::Pointer ImageUtils::rigidRegistration(const Image &img, Image &target, Image &source, float isoValue, unsigned iterations)
-{
-  Image &image = std::is_const<std::remove_reference<decltype(image)>>::value ? *new Image(img) : const_cast<Image &>(img);
-
-  vtkSmartPointer<vtkPolyData> targetContour = image.convert(target, isoValue);
-  vtkSmartPointer<vtkPolyData> movingContour = image.convert(source, isoValue);
-  Matrix mat = ShapeworksUtils::icp(targetContour, movingContour, iterations);
-  Transform::Pointer xform = Transform::New();
+  vtkSmartPointer<vtkPolyData> targetContour = Image::getPolyData(target, isoValue);
+  vtkSmartPointer<vtkPolyData> sourceContour = Image::getPolyData(source, isoValue);
+  Matrix mat = ShapeworksUtils::icp(targetContour, sourceContour, iterations);
+  AffineTransformPtr xform(AffineTransform::New());
   xform->SetMatrix(mat);
-  return xform;
+  target.applyTransform(xform);
+  return target;
+}
+
+TransformPtr ImageUtils::computeWarp(const std::string &source_file, const std::string &target_file, const int pointFactor)
+{ 
+  typedef itk::ThinPlateSplineKernelTransform<double, 3> TPSTransform;
+  typedef TPSTransform::PointSetType PointSet;
+
+  // Read the source and target sets of landmark points
+  PointSet::Pointer sourceLandMarks = PointSet::New();
+  PointSet::Pointer targetLandMarks = PointSet::New();
+  PointSet::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
+  PointSet::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
+
+  std::ifstream insourcefile;
+  std::ifstream intargetfile;
+  insourcefile.open(source_file.c_str());
+  intargetfile.open(target_file.c_str());
+  if (!insourcefile.is_open() || !intargetfile.is_open()) return TPSTransform::New();
+
+  PointSet::PointIdentifier id{itk::NumericTraits<PointSet::PointIdentifier>::Zero};
+  Point3 src, tgt;
+  int count{0};
+
+  while (!insourcefile.eof() && !intargetfile.eof())
+  {
+    insourcefile >> src[0] >> src[1] >> src[2];
+    intargetfile >> tgt[0] >> tgt[1] >> tgt[2];
+
+    if (count % pointFactor == 0)
+    {
+      // swap src and tgt b/c ITK transforms go backwards (must be inverted on creation since some do not provide an invert function)
+      sourceLandMarkContainer->InsertElement( id, tgt );
+      targetLandMarkContainer->InsertElement( id, src );
+      id++;
+    }
+    count++;
+  }
+  insourcefile.close();
+  intargetfile.close();
+
+  // Create and return warp transform
+  TPSTransform::Pointer tps(TPSTransform::New());
+  tps->SetSourceLandmarks(sourceLandMarks);
+  tps->SetTargetLandmarks(targetLandMarks);
+  tps->ComputeWMatrix();
+
+  return tps;
 }
 
 } //shapeworks

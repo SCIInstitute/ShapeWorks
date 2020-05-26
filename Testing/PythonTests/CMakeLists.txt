@@ -8,6 +8,7 @@ add_executable(PythonTests
   )
 
 target_link_libraries(PythonTests
+  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   GTest::Main
   )
 

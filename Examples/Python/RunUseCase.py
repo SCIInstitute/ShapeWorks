@@ -15,6 +15,18 @@ import argparse
 import subprocess
 import sys
 
+
+# check that required modules are found
+try:
+    import termcolor
+    import DatasetUtils
+except ImportError as error:
+    print("\nError: Unable to import ShapeWorks Python dependencies\n")
+    print("Please make sure you have run \"source conda_installs.sh\" (once) and \"conda activate shapeworks\" (each time)")
+    print("See https://github.com/SCIInstitute/ShapeWorks for more information")
+    sys.exit(1)
+
+
 # Path pre-setup
 binpath = "../build/shapeworks/src/ShapeWorks-build/bin:../../bin"
 if platform.system() == "Windows":

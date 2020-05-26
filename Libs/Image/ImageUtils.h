@@ -8,9 +8,17 @@ namespace shapeworks {
 class ImageUtils
 {
 public:
-  static Transform::Pointer createCenterOfMassTransform(const Image &image);
-  static Image& reflect(Image &img, double axis);
-  static Transform::Pointer rigidRegistration(const Image &img, Image &target, Image &source, float isoValue = 0.0, unsigned iterations = 20);
+  /// calculate bounding box incrementally for images using the region of data <= the given isoValue
+  static Image::Region boundingBox(std::vector<std::string> &filenames);
+
+  /// Generates the Transform necessary to move the contents of this binary image to the center.
+  static TransformPtr createCenterOfMassTransform(const Image &image);
+
+  /// Return Transform necessary to align this image with target.
+  static Image rigidRegistration(Image &target, const Image &source, float isoValue = 0.0, unsigned iterations = 20);
+
+  /// Computes a warp transform from source to target
+  static TransformPtr computeWarp(const std::string &source_file, const std::string &target_file, const int pointFactor = 1);
 
   /// topologyPreservingSmooth
   ///

@@ -27,7 +27,7 @@ TEST(PythonTests, tiny_test) {
   // locations
   std::string python_examples_location = std::string(TEST_DATA_DIR) + std::string(
     "/../../Examples/Python");
-  std::string bin_dir = std::string(BUILD_DIR) + "/bin";
+  std::string bin_dir = std::string(BUILD_DIR) + "/bin"; // fixme: /bin/Release or /bin/Debug for some build systems (Xcode, VS, etc)
 #ifdef _WIN32
   bin_dir = bin_dir + "/Release";
   std::replace( bin_dir.begin(), bin_dir.end(), '/', '\\'); 
@@ -42,7 +42,7 @@ TEST(PythonTests, tiny_test) {
 
   // check that one of the resulting files exists
   std::string check_file = python_examples_location +
-                           "/TestEllipsoids/PointFiles/32/seg.ellipsoid_0.isores.pad.com.aligned.cropped.tpSmoothDT_local.particles";
+                           "/TestEllipsoids/PointFiles/32/seg.ellipsoid_0.isores.center.pad.com.aligned.cropped.tpSmoothDT_local.particles";
 
   // change to the python examples directory
   chdir(python_examples_location.c_str());

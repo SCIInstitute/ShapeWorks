@@ -153,8 +153,8 @@ def Run_Pipeline(args):
         Apply isotropic resampling
         The segmentation and images are resampled independently to have uniform spacing.
         """
-        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, recenter=False, isBinary=True)
-        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, recenter=False, isBinary=False)
+        resampledFiles_segmentations = applyIsotropicResampling(parentDir + "resampled/segmentations", fileList_seg, isBinary=True)
+        resampledFiles_images = applyIsotropicResampling(parentDir + "resampled/images", reflectedFile_img, isBinary=False)
         """
         Apply padding
         Both the segmentation and raw images are padded in case the seg lies on the image boundary.

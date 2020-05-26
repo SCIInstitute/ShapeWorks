@@ -44,6 +44,18 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+class ImageInfo : public ImageCommand
+{
+public:
+  static ImageInfo& getCommand() { static ImageInfo instance; return instance; }
+
+private:
+  ImageInfo() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 class Antialias : public ImageCommand
 {
 public:
@@ -68,13 +80,17 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class IsoResampleImage : public ImageCommand
+class RecenterImage : public ImageCommand
 {
 public:
-  static IsoResampleImage& getCommand() { static IsoResampleImage instance; return instance; }
+  static RecenterImage &getCommand()
+  {
+    static RecenterImage instance;
+    return instance;
+  }
 
 private:
-  IsoResampleImage() { buildParser(); }
+  RecenterImage() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -92,18 +108,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class RecenterImage : public ImageCommand
-{
-public:
-  static RecenterImage& getCommand() { static RecenterImage instance; return instance; }
-
-private:
-  RecenterImage() { buildParser(); }
-  void buildParser() override;
-  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
-};
-
-///////////////////////////////////////////////////////////////////////////////
 class Translate : public ImageCommand
 {
 public:
@@ -111,6 +115,30 @@ public:
 
 private:
   Translate() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Scale : public ImageCommand
+{
+public:
+  static Scale &getCommand() { static Scale instance; return instance; }
+
+private:
+  Scale() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Rotate : public ImageCommand
+{
+public:
+  static Rotate &getCommand() { static Rotate instance; return instance; }
+
+private:
+  Rotate() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
@@ -259,6 +287,7 @@ private:
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 class ICPRigid : public ImageCommand
 {
 public:
@@ -295,13 +324,53 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class ChangeOrigin : public ImageCommand 
+class SetOrigin : public ImageCommand 
 {
 public:
-  static ChangeOrigin &getCommand() { static ChangeOrigin instance; return instance; }
+  static SetOrigin &getCommand() { static SetOrigin instance; return instance; }
 
 private:
-  ChangeOrigin() { buildParser(); }
+  SetOrigin() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class WarpImage : public ImageCommand
+{
+public:
+  static WarpImage &getCommand()
+  {
+    static WarpImage instance;
+    return instance;
+  }
+
+private:
+  WarpImage() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Compare : public ImageCommand
+{
+public:
+  static Compare &getCommand() { static Compare instance; return instance; }
+
+private:
+  Compare() { buildParser(); }
+  void buildParser() override;
+  bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class Filter : public ImageCommand
+{
+public:
+  static Filter &getCommand() { static Filter instance; return instance; }
+
+private:
+  Filter() { buildParser(); }
   void buildParser() override;
   bool execute(const optparse::Values &options, SharedCommandData &sharedData) override;
 };
