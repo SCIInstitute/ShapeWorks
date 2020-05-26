@@ -971,6 +971,8 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename)
 {
+  this->new_session();
+
   this->analysis_tool_->reset_stats();
 
   std::string planesFile;
@@ -987,33 +989,14 @@ void ShapeWorksStudioApp::open_project(QString filename)
   }
 
   this->is_loading_ = true;
-  /// TODO: this is just wrong, it can cause us to load in analysis mode even on a new project
-  //auto tool_state = this->preferences_.get_preference(
-//    "tool_state", QString::fromStdString(Session::DATA_C)).toStdString();
-
-  //std::string tool_state =
-//    this->session_->settings().get("tool_state", Session::DATA_C).as_string();
 
   this->groom_tool_->load_settings();
   this->optimize_tool_->load_params();
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
-  //this->project_->calculate_reconstructed_samples();
-  //this->visualizer_->setMean(this->analysis_tool_->get_mean_shape());
-  //this->analysis_tool_->activate();
 
-  /*
-     this->analysis_tool_->reset_stats();
 
-     if (this->project_->is_light_project()) {
-     this->analysis_tool_->setAnalysisMode("mean");
-     }
-     else {
-     this->analysis_tool_->setAnalysisMode("all samples");
-     }
-   */
-
-  preferences_.add_recent_file(filename);
+  this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
   this->block_update_ = true;
