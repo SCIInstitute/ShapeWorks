@@ -14,13 +14,13 @@ def downloadDataset(datasetName, destinationPath='.', fileList = None, asZip = T
     print('Downloading the', datasetName, 'dataset from the ShapeWorks Portal')
     accessToken = GirderConnector.login(loginState)
     
-    if fileList is not None:
-        print('Downloading', len(fileList), 'specified files')
-        GirderConnector.downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath)
-    elif asZip:
+    # specifying fileList overrides asZip
+    if asZip and not fileList:
         GirderConnector.downloadDatasetZip(accessToken, datasetName, destinationPath)
     else:
-        GirderConnector.downloadDataset(accessToken, datasetName, destinationPath)
+        if fileList is not None:
+            print('Downloading', len(fileList), 'specified files')
+        GirderConnector.downloadDataset(accessToken, datasetName, destinationPath, fileList)
 
     print('Downloaded the', datasetName, 'dataset from the ShapeWorks Portal.')
 

@@ -106,37 +106,21 @@ def _verifyLoginState(loginState):
     return 'key' in loginState and 'username' in loginState
 
 
-def _downloadFolder(accessToken, path, folder):
+def _downloadFolder(accessToken, path, folder, parsedFileList = None):
     if not os.path.exists(path):
         os.makedirs(path)
     # 1 download items in this folder
     items = GirderAPI.listItemsInFolder(serverAddress, accessToken, folder['_id'])
     for item in items:
-        GirderAPI.downloadItem(serverAddress, accessToken, path, item)
+        subset = None if not parsedFileList else [elem for elem in parsedFileList if len(elem) == 1 and elem[0] == item['name']]
+        if subset is None or len(subset) > 0:
+            GirderAPI.downloadItem(serverAddress, accessToken, path, item)
         
     # 2 for each subfolder, create directory in the file system and download every item in the subfolder
     for subfolder in GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id']):
-        _downloadFolder(accessToken, path + '/' + subfolder['name'], subfolder)
-
-
-def _downloadFolderFiles(accessToken, path, folder, parsedFileList):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    # 1 download items in this folder
-    items = GirderAPI.listItemsInFolder(serverAddress, accessToken, folder['_id'])
-    for item in items:
-        subset = [elem for elem in parsedFileList if len(elem) == 1 and elem[0] == item['name']]
-        if len(subset) > 0:
-            GirderAPI.downloadItem(serverAddress, accessToken, path, item)
-        
-    # 2 check for subfolders
-    subfolders = GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
-    if subfolders:
-        # 3 for each subfolder, create directory in the file system and download every item in the subfolder
-        for subfolder in subfolders:
-            subset = [elem[1:] for elem in parsedFileList if len(elem) > 1 and elem[0] == subfolder['name']]
-            if len(subset) > 0:
-                _downloadFolderFiles(accessToken, path + '/' + subfolder['name'], subfolder, subset)
+        subset = None if not parsedFileList else [elem[1:] for elem in parsedFileList if len(elem) > 1 and elem[0] == subfolder['name']]
+        if subset is None or len(subset) > 0:
+            _downloadFolder(accessToken, path + '/' + subfolder['name'], subfolder, subset)
 
 
 def _splitPathIntoParts(path):
@@ -155,22 +139,17 @@ def _splitPathIntoParts(path):
     return allparts
 
 
-def downloadDataset(accessToken, datasetName, destinationPath):
+def downloadDataset(accessToken, datasetName, destinationPath, fileList = None):
     # 1 get info of the use case collection
     useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     # 2 get info of the dataset folder in that collection
     datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
     # 3 download every item in the base dataset folder
-    _downloadFolder(accessToken, destinationPath, datasetFolder)
+    if fileList:
+        _downloadFolder(accessToken, destinationPath, datasetFolder, [_splitPathIntoParts(path) for path in fileList])
+    else:
+        _downloadFolder(accessToken, destinationPath, datasetFolder)
 
-
-def downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath):
-    # 1 get info of the use case collection
-    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
-    # 2 get info of the dataset folder in that collection
-    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
-    # 3 download every item in the base dataset folder
-    _downloadFolderFiles(accessToken, destinationPath, datasetFolder, [_splitPathIntoParts(path) for path in fileList])
 
 def downloadDatasetZip(accessToken, datasetName, destinationPath):
     # 1 get info of the use case collection
