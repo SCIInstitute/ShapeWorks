@@ -314,6 +314,7 @@ build_all()
   echo "  VTK_DIR: ${VTK_DIR}"
   echo "  ITK_DIR: ${ITK_DIR}"
   echo "  EIGEN_DIR: ${EIGEN_DIR}"
+  echo "  OpenVDB_DIR: ${OpenVDB_DIR}"
   echo ""
   
   show_shapeworks_build
