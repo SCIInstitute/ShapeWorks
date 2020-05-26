@@ -136,7 +136,7 @@ def _downloadFolder(accessToken, path, folder):
         failure = not GirderAPI._downloadItem(serverAddress, accessToken, path, item) or failure
         
     # 2 check for subfolders
-    subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
+    subfolders = GirderAPI._getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
     if subfolders:
         # 3 for each subfolder, create directory in the file system and download every item in the subfolder
         for subfolder in subfolders:
@@ -177,7 +177,7 @@ def _downloadFolderFiles(accessToken, path, folder, parsedFileList):
             failure = not GirderAPI._downloadItem(serverAddress, accessToken, path, item) or failure
         
     # 2 check for subfolders
-    subfolders = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
+    subfolders = GirderAPI._getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
     if subfolders:
         # 3 for each subfolder, create directory in the file system and download every item in the subfolder
         for subfolder in subfolders:
@@ -264,7 +264,7 @@ def _getDatasetList(accessToken):
     useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     if useCaseCollection is None:
         return None
-    jsonList = GirderAPI._listFolders(serverAddress, accessToken, useCaseCollection['_id'], 'collection')
+    jsonList = GirderAPI._getFolderList(serverAddress, accessToken, 'collection', useCaseCollection['_id'])
     if jsonList is None:
         return None
     datasetList = [element['name'] for element in jsonList]

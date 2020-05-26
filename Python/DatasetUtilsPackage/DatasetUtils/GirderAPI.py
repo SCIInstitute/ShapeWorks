@@ -3,11 +3,25 @@ import json
 
 from sys import stdout
 from math import ceil
+from datetime import datetime
 
 import os
 
 
-def _makeRequest(requestFunction, url, params, headers, actionMessage, printError, data):
+_ERROR_LOG_FILE = 'portal_error_log.txt'
+_MB_PER_CHUNK = 128
+_CHUNK_SIZE = _MB_PER_CHUNK * 1048576 # Download 128 MB at a time
+
+## Utility function to write to the error log file
+def _writeToErrorLog(infoDict):
+    with open(_ERROR_LOG_FILE, 'a') as filehandle:
+        json.dump(thing, filehandle)
+        filehandle.write("\n")
+    print('Please send %s to the developers for debugging' % _ERROR_LOG_FILE)
+
+
+## Returns response or writes details to log file and raises ValueError
+def _makeRequest(requestFunction, url, params, headers, actionMessage, data):
     if data:
         response = requestFunction(url = url, params = params, headers = headers, data = data, stream = True) 
     else:
@@ -15,32 +29,29 @@ def _makeRequest(requestFunction, url, params, headers, actionMessage, printErro
 
     if response.status_code == 200:
         return response
-    if printError:
-        print(response.status_code, 'ERROR while', actionMessage)
-        from datetime import datetime
-        errorLogFile = 'portal_error_log.txt'
-        with open(errorLogFile, 'a') as filehandle:
-            json.dump({
-                'function': 'POST' if requestFunction is requests.post else 'GET' if requestFunction is requests.get else 'OTHER',
-                'url': url, 
-                'params': params, 
-                'headers': headers, 
-                'response code': response.status_code, 
-                'response text': response.text,
-                'action message': actionMessage, 
-                'datetime': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}
-                , filehandle)
-            filehandle.write("\n")
-        print('Please send %s to the developers for debugging' % errorLogFile)
-    return None
+
+    # Write debug info to file since return code was error
+    print(response.status_code, 'ERROR while', actionMessage)
+    _writeToErrorLog({
+            'function': 'POST' if requestFunction is requests.post else 'GET' if requestFunction is requests.get else 'OTHER',
+            'url': url, 
+            'params': params, 
+            'headers': headers, 
+            'response code': response.status_code, 
+            'response text': response.text,
+            'action message': actionMessage, 
+            'datetime': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
+    raise ValueError('Response code %s while %s', str(response.status_code), actionMessage)
 
 
-def _makeGetRequest(url, params, headers, actionMessage, printError=True):
-    return _makeRequest(requestFunction = requests.get, url = url, params = params, headers = headers, actionMessage = actionMessage, printError = printError, data = None)
+## Returns response or writes details to log file and raises ValueError
+def _makeGetRequest(url, params, headers, actionMessage):
+    return _makeRequest(requestFunction = requests.get, url = url, params = params, headers = headers, actionMessage = actionMessage, data = None)
 
 
-def _makePostRequest(url, params, headers, actionMessage, data = None, printError=True):
-    return _makeRequest(requestFunction = requests.post, url = url, params = params, headers = headers, actionMessage = actionMessage, printError = printError, data = data)
+## Returns response or writes details to log file and raises ValueError
+def _makePostRequest(url, params, headers, actionMessage, data = None):
+    return _makeRequest(requestFunction = requests.post, url = url, params = params, headers = headers, actionMessage = actionMessage, data = data)
 
 
 def _getAccessToken(serverAddress, apiKey):
@@ -48,10 +59,9 @@ def _getAccessToken(serverAddress, apiKey):
         url = serverAddress + 'api/v1/api_key/token', 
         params = {'key': apiKey}, 
         headers = None, 
-        actionMessage = 'getting access token',
-        printError=False)
+        actionMessage = 'getting access token')
 
-    return None if response is None else response.json()['authToken']['token']
+    return response.json()['authToken']['token']
 
 
 def _authenticateBasicAuth(serverAddress, usernamePasswordHash):
@@ -59,10 +69,9 @@ def _authenticateBasicAuth(serverAddress, usernamePasswordHash):
         url = serverAddress + 'api/v1/user/authentication', 
         params = None, 
         headers = {'Authorization': 'Basic ' + usernamePasswordHash}, 
-        actionMessage = 'authenticating using basic auth',
-        printError=False)
+        actionMessage = 'authenticating using basic auth')
     
-    return None if response is None else response.json()['authToken']['token']
+    return response.json()['authToken']['token']
 
 
 def _createApiKey(serverAddress, basicAuthToken, apiKeyName):
@@ -72,7 +81,7 @@ def _createApiKey(serverAddress, basicAuthToken, apiKeyName):
         headers = {'Girder-Token': basicAuthToken}, 
         actionMessage = 'creating api key: %s' % apiKeyName)
 
-    return None if response is None else response.json()['key']
+    return response.json()['key']
 
 
 def _getApiKey(serverAddress, basicAuthToken, apiKeyName):
@@ -80,16 +89,15 @@ def _getApiKey(serverAddress, basicAuthToken, apiKeyName):
         url = serverAddress + 'api/v1/api_key', 
         params = None, 
         headers = {'Girder-Token': basicAuthToken}, 
-        actionMessage = 'finding api key: %s' % apiKeyName)
+        actionMessage = 'getting api key: %s' % apiKeyName)
     
-    if response is None:
-        return None
-    
-    for key in response.json():
+    keyDict = response.json()
+    for key in keyDict:
         if key['name'] == apiKeyName:
             return key['key']
 
-    return None
+    _writeToErrorLog(keyDict)
+    raise ValueError('Failed to find %s in list of api keys.' % apiKeyName)
 
 
 def _getCollectionInfo(serverAddress, accessToken, collectionName):
@@ -99,23 +107,20 @@ def _getCollectionInfo(serverAddress, accessToken, collectionName):
         params = {'text': collectionName}, 
         headers = {'Girder-Token': accessToken}, 
         actionMessage = actionMessage)
-    if response is None:
-        return None
     collectionList = response.json()
     if len(collectionList) == 0:
-        print('ERROR', actionMessage)
-        print('Found 0 collections with name = %s' % collectionName)
-        return None
+        raise ValueError('ERROR %s. Found 0 collections.' % actionMessage)
     collection = collectionList[0]
     if len(collectionList) > 1:
         print('WARNING', actionMessage)
-        print('Found %d collections with name = %s.' % (len(collectionList), collectionName))
+        print('Found %d collections.' % len(collectionList))
         print('Using collection with id = %s' % collection['_id'])
     return collection
 
 
-def _getFolderInfo(serverAddress, accessToken, parentType, parentId, folderName = None):
-    actionMessage = 'finding folder: %s' % folderName
+## Returns list of folders that are children of the parent
+#  The optional folderName parameter filters the results to folders with matching names
+def _getFolderList(serverAddress, accessToken, parentType, parentId, folderName = None):
     params = {'parentType': parentType, 'parentId': parentId}
     # Optional folder name parameter
     if folderName is not None:
@@ -124,21 +129,21 @@ def _getFolderInfo(serverAddress, accessToken, parentType, parentId, folderName 
         url = serverAddress + "api/v1/folder", 
         params = params, 
         headers = {'Girder-Token': accessToken}, 
-        actionMessage = actionMessage)
-    if response is None:
-        return None
-    folderList = response.json()
-    # if folder name was not specified, return entire list of folders
-    if folderName is None:
-        return folderList
+        actionMessage = 'getting folder list for: %s, %s, %s' % (parentType, parentId, folderName))
+    return response.json()
+
+
+## Get info for the specified folder
+def _getFolderInfo(serverAddress, accessToken, parentType, parentId, folderName):
+    folderList = _getFolderList(serverAddress, accessToken, parentType, parentId, folderName)
+
+    actionMessage = 'finding folder: %s' % folderName
     if len(folderList) == 0:
-        print('ERROR', actionMessage)
-        print('Found 0 folders with name = %s' % folderName)
-        return None
+        raise ValueError('ERROR %s. Found 0 folders' % actionMessage)
     folder = folderList[0]
     if len(folderList) > 1:
         print('WARNING', actionMessage)
-        print('Found %d folders with name = %s.' % (len(folderList), folderName))
+        print('Found %d folders.' % len(folderList))
         print('Using folder with id = %s' % folder['_id'])
     return folder
 
@@ -150,22 +155,10 @@ def _listItemsInFolder(serverAddress, accessToken, folderId):
         params = {'folderId': folderId}, 
         headers = {'Girder-Token': accessToken}, 
         actionMessage = actionMessage)
-
-    return None if response is None else response.json()
+    return response.json()
     
 
-def _listFolders(serverAddress, accessToken, folderId, parentType):
-    actionMessage = 'listing items in folder'
-    response = _makeGetRequest(
-        url = serverAddress + "api/v1/folder", 
-        params = {'parentId': folderId, 'parentType': parentType}, 
-        headers = {'Girder-Token': accessToken}, 
-        actionMessage = actionMessage)
-
-    return None if response is None else response.json()
-    
-    
-# returns true if success
+## Downloads a file to path/
 def _downloadItem(serverAddress, accessToken, path, item):
     response = _makeGetRequest(
         url = serverAddress + 'api/v1/item/' + item['_id'] + '/download', 
@@ -174,26 +167,20 @@ def _downloadItem(serverAddress, accessToken, path, item):
         actionMessage = 'downloading item %s' % item['name']
     )
     filename = path + '/' + item['name']
-    if response is None:
-        return False
-
-    NUM_MEGS = 32
-    chunkSize = NUM_MEGS * 1048576 # Download 32 MB at a time
     fileSize = int(response.headers['Content-Length'])
     chunkIndex = 0
 
     with open(filename, "wb") as filehandle:
-        for chunk in response.iter_content(chunk_size=chunkSize):
+        for chunk in response.iter_content(chunk_size=_CHUNK_SIZE):
             if not chunk:  # filter out keep-alive new chunks
                 continue
             filehandle.write(chunk)
-
             chunkIndex += 1
-            stdout.write('\r%s [%d/%d MB]' % (filename, chunkIndex*NUM_MEGS, ceil(fileSize / chunkSize * NUM_MEGS)))
+            stdout.write('\r%s [%d/%d MB]' % (filename, chunkIndex*_MB_PER_CHUNK, ceil(fileSize / _CHUNK_SIZE * _MB_PER_CHUNK)))
         stdout.write('\n')
-    return True
 
-# returns true if success
+
+## Downloads a folder to path/ as a .zip
 def _downloadFolder(serverAddress, accessToken, path, folderInfo):
     response = _makeGetRequest(
         url = serverAddress + 'api/v1/folder/' + folderInfo['_id'] + '/download', 
@@ -202,23 +189,18 @@ def _downloadFolder(serverAddress, accessToken, path, folderInfo):
         actionMessage = 'downloading folder %s' % folderInfo['name']
     )
     filename = path + '/' + folderInfo['name'] + '.zip'
-    if response is None:
-        return False
-
-    NUM_MEGS = 64
-    chunkSize = NUM_MEGS * 1048576 # Download 64 MB at a time
     chunkIndex = 0
 
     with open(filename, "wb") as filehandle:
-        for chunk in response.iter_content(chunk_size=chunkSize):
+        for chunk in response.iter_content(chunk_size=_CHUNK_SIZE):
             if not chunk:  # filter out keep-alive new chunks
                 continue
             filehandle.write(chunk)
 
             chunkIndex += 1
-            stdout.write('\r%s [%d MB]' % (filename, chunkIndex*NUM_MEGS))
+            stdout.write('\r%s [%d MB]' % (filename, chunkIndex*_MB_PER_CHUNK))
         stdout.write('\n')
-    return True
+
 
 def _createFolder(serverAddress, accessToken, parentId, name, parentType='folder'):
     actionMessage = 'creating folder %s' % name
@@ -228,15 +210,10 @@ def _createFolder(serverAddress, accessToken, parentId, name, parentType='folder
         headers = {'Girder-Token': accessToken},
         actionMessage = actionMessage
     )
-    if response is None:
-        return False
-    return True
 
 
 def _uploadFile(serverAddress, accessToken, parentId, name, path, parentType='folder'):
     filesize = os.stat(path).st_size
-    NUM_MEGS = 32
-    chunkSize = NUM_MEGS * 1048576 # Upload 32 MB at a time
 
     # Create an upload-in-progress
     response = _makePostRequest(
@@ -245,16 +222,15 @@ def _uploadFile(serverAddress, accessToken, parentId, name, path, parentType='fo
         headers = {'Girder-Token': accessToken},
         actionMessage = 'Creating upload-in-progress for %s' % name
     )
-    if response is None:
-        return False
     uploadid = response.json()['_id']
     offset = 0
     chunkIndex = 0
 
     with open(path, 'rb') as filehandle:
-        stdout.write('\r%s [%d/%d MB]' % (path, chunkIndex*NUM_MEGS, ceil(filesize / chunkSize * NUM_MEGS)))
+        stdout.write('\r%s [%d/%d MB]' % (path, chunkIndex*_MB_PER_CHUNK, ceil(filesize / _CHUNK_SIZE * _MB_PER_CHUNK)))
+        # TODO clean up this while loop
         while(True):
-            chunk = filehandle.read(chunkSize)
+            chunk = filehandle.read(_CHUNK_SIZE)
             if chunk:
                 response = _makePostRequest(
                         url = serverAddress + 'api/v1/file/chunk', 
@@ -263,13 +239,9 @@ def _uploadFile(serverAddress, accessToken, parentId, name, path, parentType='fo
                         actionMessage = 'Uploading chunk %d for %s' % (chunkIndex, name),
                         data = chunk
                     )
-                if response is None:
-                    return False
-                offset += chunkSize
+                offset += _CHUNK_SIZE
                 chunkIndex += 1
-                stdout.write('\r%s [%d/%d MB]' % (path, chunkIndex*NUM_MEGS, ceil(filesize / chunkSize * NUM_MEGS)))
+                stdout.write('\r%s [%d/%d MB]' % (path, chunkIndex*_MB_PER_CHUNK, ceil(filesize / _CHUNK_SIZE * _MB_PER_CHUNK)))
             else:
                 break
         stdout.write('\n')
-
-    return True
