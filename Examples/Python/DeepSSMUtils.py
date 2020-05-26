@@ -64,10 +64,12 @@ def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doR
 	np.save(os.path.join(out_dir, 'original_loadings_particles.npy'), pca_particle_loadings)
 	print("The PCA modes of particles being retained : ", K_pt)
 	
-	tilde_images_list = ut.create_python_xml(point_list, data_list, out_dir)
-	ut.create_cpp_xml(out_dir + "/XML_convert_to_tilde_python.xml", out_dir + "/XML_convert_to_tilde_cpp.xml")
-	print("\nWarping original images to space:")
-	ut.warp_image_to_space(out_dir + "/XML_convert_to_tilde_cpp.xml")
+	# tilde_images_list = ut.create_python_xml(point_list, data_list, out_dir)
+	# ut.create_cpp_xml(out_dir + "/XML_convert_to_tilde_python.xml", out_dir + "/XML_convert_to_tilde_cpp.xml")
+	# print("\nWarping original images to space:")
+	# ut.warp_image_to_space(out_dir + "/XML_convert_to_tilde_cpp.xml")
+
+	tilde_images_list = ut.warp_image_to_mean(point_list, data_list, out_dir)
 
 
 	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = ut.pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir,PCA_var_cutoff)
@@ -224,7 +226,7 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 	if not os.path.exists(loader_dir):
 		os.makedirs(loader_dir)
 	# get all data and targets
-	print("Reading all data.")
+	print("Reading all data...")
 	images = []
 	scores = []
 	models = []
@@ -235,7 +237,9 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 		datareader = csv.reader(csvfile)
 		index = 0
 		for row in datareader:
-			print("Processed " + str(index+1)+ '/' + str(total))
+			percent = ((index+1)/total) * 100
+			if percent % 5 == 0:
+				print(str(percent)+ '% processed')
 			image_path = row[0]
 			model_path = row[1]
 			pca_scores = row[2:]
@@ -259,7 +263,7 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 			models.append(mdl)
 			index += 1
 
-	print("\nShuffling and turning to tensors...")
+	print("\nShuffling and splitting into train, val, and test...")
 	# shuffle
 	c = list(zip(images, scores, models, prefixes))
 	random.shuffle(c)
@@ -267,14 +271,21 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 	# split into train (80%), validation(10%), and test(10%) datsets
 	cut1 = int(len(images)*.8) 
 	cut2 = cut1 + int(len(images)*.1)
-	train_data = DeepSSMdataset(images[:cut1], scores[:cut1], models[:cut1])
-	val_data = DeepSSMdataset(images[cut1:cut2], scores[cut1:cut2], models[cut1:cut2])
-	test_data = DeepSSMdataset(images[cut2:], scores[cut2:], models[cut2:])
-	test_names = prefixes[cut2:]
 
-	print(str(len(train_data)) + ' in training set.')
-	print(str(len(val_data)) + ' in validation set.')
-	print(str(len(test_data)) + ' in testing set.')
+	# Write test names to file so they are saved somewhere
+	test_names = list(prefixes[cut2:])
+	name_file = open(loader_dir + 'test_names.txt', 'w+')
+	name_file.write(str(test_names))
+	name_file.close()
+	print("Test names saved to: " + loader_dir + "test_names.txt")
+
+	print("\nTurning to tensors...")
+	train_data = DeepSSMdataset(images[:cut1], scores[:cut1], models[:cut1])
+	print(str(len(train_data)) + ' in training set')
+	val_data = DeepSSMdataset(images[cut1:cut2], scores[cut1:cut2], models[cut1:cut2])
+	print(str(len(val_data)) + ' in validation set')
+	test_data = DeepSSMdataset(images[cut2:], scores[cut2:], models[cut2:])
+	print(str(len(test_data)) + ' in testing set')
 
 	print("\nCreating and saving dataloaders...")
 	trainloader = DataLoader(
@@ -307,7 +318,7 @@ def getTorchDataLoaders(loader_dir, data_csv, batch_size=1):
 	test_path = loader_dir + 'test'
 	torch.save(testloader, test_path)
 	print("Test loader done.")
-	return train_path, val_path, test_path, list(test_names)
+	return train_path, val_path, test_path, test_names
 
 ########################## Model Class ####################################
 

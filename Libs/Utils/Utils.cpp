@@ -1,9 +1,12 @@
+
 #include "Utils.h"
 
 #include <vtkMath.h>
 #include <cmath>
 #include <sstream>      // std::istringstream
 #include <Eigen/Dense>
+
+// namespace shapeworks {  //todo (need to make sure everything that calls these functions uses namespace
 
 std::vector<int> Utils::randperm(int n)
 {
