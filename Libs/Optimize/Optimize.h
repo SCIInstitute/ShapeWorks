@@ -233,6 +233,9 @@ public:
   //! Set the narrow band used to be +/- the given value as a multiple of the spacing
   void SetNarrowBand(double v);
 
+  //! Return the narrow band to be used
+  double GetNarrowBand();
+
   //! Print parameter info to stdout
   void PrintParamInfo();
 
@@ -344,7 +347,9 @@ protected:
   double m_cotan_sigma_factor = 5.0;
   std::vector <int> m_particle_flags;
   std::vector <int> m_domain_flags;
-  double m_narrow_band{-1};
+  double m_narrow_band{4};
+  bool m_narrow_band_set{false};
+  bool m_fixed_domains_present{false};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;

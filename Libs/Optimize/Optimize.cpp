@@ -1885,10 +1885,7 @@ void Optimize::SetLogEnergy(bool log_energy)
 
 //---------------------------------------------------------------------------
 void Optimize::AddImage(ImageType::Pointer image) {
-  if (this->m_narrow_band < 0) { // narrow band was not set, use default of 4.0
-    this->m_narrow_band = 4.0;
-  }
-  this->m_sampler->AddImage(image, this->m_narrow_band);
+  this->m_sampler->AddImage(image, this->GetNarrowBand());
   this->m_num_shapes++;
   if (image) {
     this->m_spacing = image->GetSpacing()[0];
@@ -1953,11 +1950,8 @@ void Optimize::SetParticleFlags(std::vector<int> flags)
 void Optimize::SetDomainFlags(std::vector<int> flags)
 {
   if (flags.size() > 0) {
-    // Fixed domains are in use.  Unless the narrow band was explicitly set
-    // change the default to 1e10.
-    if (this->m_narrow_band < 0) {
-      this->SetNarrowBand(1e10);
-    }
+    // Fixed domains are in use.
+    this->m_fixed_domains_present = true;
   }
   this->m_domain_flags = flags;
 }
@@ -1989,7 +1983,23 @@ std::vector<bool> Optimize::GetUseNormals()
 //---------------------------------------------------------------------------
 void Optimize::SetNarrowBand(double v)
 {
+  this->m_narrow_band_set = true;
   this->m_narrow_band = v;
+}
+
+//---------------------------------------------------------------------------
+double Optimize::GetNarrowBand()
+{
+  if (this->m_narrow_band_set) {
+    return this->m_narrow_band;
+  }
+
+  if (this->m_fixed_domains_present) {
+    return 1e10;
+  }
+  else {
+    return 4.0;
+  }
 }
 
 //---------------------------------------------------------------------------
