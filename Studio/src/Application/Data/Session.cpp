@@ -494,6 +494,7 @@ bool Session::load_project(QString filename)
 
 
   this->project_path_ = QFileInfo(filename).canonicalPath();
+  chdir(this->project_path_.toStdString().c_str());
 
   this->project_->load(filename.toStdString());
 
