@@ -15,15 +15,15 @@ _USE_CASE_DATA_COLLECTION = 'use-case-data-%s' % _VERSION
 serverAddress = 'http://cibc1.sci.utah.edu:8080/'
 
 
-def _printDataPortalWelcome():
+def printDataPortalWelcome():
     print('.___________________________.')
     print('|                           |')
-    print('|    ShapeWorks Portal %s   |' % _VERSION)
+    print('|   ShapeWorks Portal %s    |' % _VERSION)
     print('|___________________________|')
     print()
 
 
-def _login(loginState):
+def login(loginState):
     if loginState is None:
         # interactive login mode
         loginState, accessToken = _loginAndGetAccessToken()
@@ -77,9 +77,9 @@ def _promptLogin():
         except ValueError as e:
             print('Incorrect username or password.')
     try:
-        apiKey = GirderAPI._getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
+        apiKey = GirderAPI.getApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
     except ValueError as e:
-        apiKey = GirderAPI._createApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
+        apiKey = GirderAPI.createApiKey(serverAddress, basicAuthToken, _API_KEY_NAME)
 
     loginState = {'username': username, 'key': apiKey}
     _saveLogin(loginState)
@@ -106,25 +106,16 @@ def _verifyLoginState(loginState):
     return 'key' in loginState and 'username' in loginState
 
 
-def _downloadDatasetZip(accessToken, datasetName, destinationPath):
-    # 1 get info of the use case collection
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
-    # 2 get info of the dataset folder in that collection
-    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
-    # 3 download the dataset folder
-    GirderAPI._downloadFolder(serverAddress, accessToken, path=destinationPath, folderInfo=datasetFolder)
-
-
 def _downloadFolder(accessToken, path, folder):
     if not os.path.exists(path):
         os.makedirs(path)
     # 1 download items in this folder
-    items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
+    items = GirderAPI.listItemsInFolder(serverAddress, accessToken, folder['_id'])
     for item in items:
-        GirderAPI._downloadItem(serverAddress, accessToken, path, item)
+        GirderAPI.downloadItem(serverAddress, accessToken, path, item)
         
     # 2 for each subfolder, create directory in the file system and download every item in the subfolder
-    for subfolder in GirderAPI._getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id']):
+    for subfolder in GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id']):
         _downloadFolder(accessToken, path + '/' + subfolder['name'], subfolder)
 
 
@@ -132,14 +123,14 @@ def _downloadFolderFiles(accessToken, path, folder, parsedFileList):
     if not os.path.exists(path):
         os.makedirs(path)
     # 1 download items in this folder
-    items = GirderAPI._listItemsInFolder(serverAddress, accessToken, folder['_id'])
+    items = GirderAPI.listItemsInFolder(serverAddress, accessToken, folder['_id'])
     for item in items:
         subset = [elem for elem in parsedFileList if len(elem) == 1 and elem[0] == item['name']]
         if len(subset) > 0:
-            GirderAPI._downloadItem(serverAddress, accessToken, path, item)
+            GirderAPI.downloadItem(serverAddress, accessToken, path, item)
         
     # 2 check for subfolders
-    subfolders = GirderAPI._getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
+    subfolders = GirderAPI.getFolderList(serverAddress, accessToken, parentType='folder', parentId=folder['_id'])
     if subfolders:
         # 3 for each subfolder, create directory in the file system and download every item in the subfolder
         for subfolder in subfolders:
@@ -164,43 +155,51 @@ def _splitPathIntoParts(path):
     return allparts
 
 
-def _downloadDataset(accessToken, datasetName, destinationPath):
+def downloadDataset(accessToken, datasetName, destinationPath):
     # 1 get info of the use case collection
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     # 2 get info of the dataset folder in that collection
-    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
     # 3 download every item in the base dataset folder
     _downloadFolder(accessToken, destinationPath, datasetFolder)
 
 
-def _downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath):
+def downloadDatasetFiles(accessToken, datasetName, fileList, destinationPath):
     # 1 get info of the use case collection
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     # 2 get info of the dataset folder in that collection
-    datasetFolder = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
     # 3 download every item in the base dataset folder
     _downloadFolderFiles(accessToken, destinationPath, datasetFolder, [_splitPathIntoParts(path) for path in fileList])
 
+def downloadDatasetZip(accessToken, datasetName, destinationPath):
+    # 1 get info of the use case collection
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    # 2 get info of the dataset folder in that collection
+    datasetFolder = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType='collection', parentId=useCaseCollection['_id'], folderName=datasetName)
+    # 3 download the dataset folder
+    GirderAPI.downloadFolder(serverAddress, accessToken, path=destinationPath, folderInfo=datasetFolder)
+
 
 def _uploadFolder(accessToken, folderName, folderPath, parentId, parentType):
-    GirderAPI._createFolder(serverAddress, accessToken, parentId, folderName, parentType=parentType)
-    folderInfo = GirderAPI._getFolderInfo(serverAddress, accessToken, parentType=parentType, parentId=parentId, folderName=folderName)
+    GirderAPI.createFolder(serverAddress, accessToken, parentId, folderName, parentType=parentType)
+    folderInfo = GirderAPI.getFolderInfo(serverAddress, accessToken, parentType=parentType, parentId=parentId, folderName=folderName)
     for item in os.listdir(folderPath):
         itempath = os.path.join(folderPath, item)
         if os.path.isfile(itempath):
-            GirderAPI._uploadFile(serverAddress, accessToken, folderInfo['_id'], item, itempath, parentType='folder')
+            GirderAPI.uploadFile(serverAddress, accessToken, folderInfo['_id'], item, itempath, parentType='folder')
         else:
             _uploadFolder(accessToken, item, itempath, folderInfo['_id'], 'folder')
 
 
-def _uploadNewDataset(accessToken, datasetName, datasetPath):
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+def uploadNewDataset(accessToken, datasetName, datasetPath):
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
     if useCaseCollection is None:
         return False
     return _uploadFolder(accessToken, datasetName, datasetPath, useCaseCollection['_id'], parentType='collection')
 
 
-def _getDatasetList(accessToken):
-    useCaseCollection = GirderAPI._getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
-    jsonList = GirderAPI._getFolderList(serverAddress, accessToken, 'collection', useCaseCollection['_id'])
+def getDatasetList(accessToken):
+    useCaseCollection = GirderAPI.getCollectionInfo(serverAddress, accessToken, _USE_CASE_DATA_COLLECTION)
+    jsonList = GirderAPI.getFolderList(serverAddress, accessToken, 'collection', useCaseCollection['_id'])
     return [element['name'] for element in jsonList]

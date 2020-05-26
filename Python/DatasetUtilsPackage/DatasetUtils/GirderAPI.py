@@ -76,7 +76,7 @@ def authenticateBasicAuth(serverAddress, usernamePasswordHash):
     return response.json()['authToken']['token']
 
 
-def _createApiKey(serverAddress, basicAuthToken, apiKeyName):
+def createApiKey(serverAddress, basicAuthToken, apiKeyName):
     response = _makePostRequest(
         url = serverAddress + 'api/v1/api_key', 
         params = {'name': apiKeyName, 'scope': '[\"core.data.read\", \"core.data.write\"]', 'tokenDuration': '1'}, 
@@ -86,7 +86,7 @@ def _createApiKey(serverAddress, basicAuthToken, apiKeyName):
     return response.json()['key']
 
 
-def _getApiKey(serverAddress, basicAuthToken, apiKeyName):
+def getApiKey(serverAddress, basicAuthToken, apiKeyName):
     response = _makeGetRequest(
         url = serverAddress + 'api/v1/api_key', 
         params = None, 
@@ -102,7 +102,7 @@ def _getApiKey(serverAddress, basicAuthToken, apiKeyName):
     raise ValueError('Failed to find %s in list of api keys.' % apiKeyName)
 
 
-def _getCollectionInfo(serverAddress, accessToken, collectionName):
+def getCollectionInfo(serverAddress, accessToken, collectionName):
     actionMessage = 'finding collection: %s' % collectionName
     response = _makeGetRequest(
         url = serverAddress + "api/v1/collection", 
@@ -122,7 +122,7 @@ def _getCollectionInfo(serverAddress, accessToken, collectionName):
 
 ## Returns list of folders that are children of the parent
 #  The optional folderName parameter filters the results to folders with matching names
-def _getFolderList(serverAddress, accessToken, parentType, parentId, folderName = None):
+def getFolderList(serverAddress, accessToken, parentType, parentId, folderName = None):
     params = {'parentType': parentType, 'parentId': parentId}
     # Optional folder name parameter
     if folderName is not None:
@@ -136,8 +136,8 @@ def _getFolderList(serverAddress, accessToken, parentType, parentId, folderName 
 
 
 ## Get info for the specified folder
-def _getFolderInfo(serverAddress, accessToken, parentType, parentId, folderName):
-    folderList = _getFolderList(serverAddress, accessToken, parentType, parentId, folderName)
+def getFolderInfo(serverAddress, accessToken, parentType, parentId, folderName):
+    folderList = getFolderList(serverAddress, accessToken, parentType, parentId, folderName)
 
     actionMessage = 'finding folder: %s' % folderName
     if len(folderList) == 0:
@@ -150,7 +150,7 @@ def _getFolderInfo(serverAddress, accessToken, parentType, parentId, folderName)
     return folder
 
 
-def _listItemsInFolder(serverAddress, accessToken, folderId):
+def listItemsInFolder(serverAddress, accessToken, folderId):
     actionMessage = 'listing items in folder'
     response = _makeGetRequest(
         url = serverAddress + "api/v1/item", 
@@ -161,7 +161,7 @@ def _listItemsInFolder(serverAddress, accessToken, folderId):
     
 
 ## Downloads a file to path/
-def _downloadItem(serverAddress, accessToken, path, item):
+def downloadItem(serverAddress, accessToken, path, item):
     response = _makeGetRequest(
         url = serverAddress + 'api/v1/item/' + item['_id'] + '/download', 
         params = None,
@@ -183,7 +183,7 @@ def _downloadItem(serverAddress, accessToken, path, item):
 
 
 ## Downloads a folder to path/ as a .zip
-def _downloadFolder(serverAddress, accessToken, path, folderInfo):
+def downloadFolder(serverAddress, accessToken, path, folderInfo):
     response = _makeGetRequest(
         url = serverAddress + 'api/v1/folder/' + folderInfo['_id'] + '/download', 
         params = None,
@@ -204,7 +204,7 @@ def _downloadFolder(serverAddress, accessToken, path, folderInfo):
         stdout.write('\n')
 
 
-def _createFolder(serverAddress, accessToken, parentId, name, parentType='folder'):
+def createFolder(serverAddress, accessToken, parentId, name, parentType='folder'):
     actionMessage = 'creating folder %s' % name
     response = _makePostRequest(
         url = serverAddress + 'api/v1/folder', 
@@ -214,7 +214,7 @@ def _createFolder(serverAddress, accessToken, parentId, name, parentType='folder
     )
 
 
-def _uploadFile(serverAddress, accessToken, parentId, name, path, parentType='folder'):
+def uploadFile(serverAddress, accessToken, parentId, name, path, parentType='folder'):
     filesize = os.stat(path).st_size
 
     # Create an upload-in-progress
