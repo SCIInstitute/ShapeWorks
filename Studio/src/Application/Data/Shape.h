@@ -75,6 +75,8 @@ public:
 
   void set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data);
 
+  void clear_reconstructed_mesh();
+
   void set_global_particles(const vnl_vector<double> &points);
 
 

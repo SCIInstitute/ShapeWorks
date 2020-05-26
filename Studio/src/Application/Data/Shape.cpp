@@ -77,7 +77,6 @@ std::shared_ptr<Subject> Shape::get_subject()
   return this->subject_;
 }
 
-
 //---------------------------------------------------------------------------
 void Shape::import_original_image(std::string filename, float iso_value)
 {
@@ -161,8 +160,7 @@ QSharedPointer<Mesh> Shape::get_groomed_mesh()
 {
   if (!this->groomed_mesh_) {
 
-    if (!this->subject_)
-    {
+    if (!this->subject_) {
       std::cerr << "Error: asked for groom mesh when none as present!\n";
       //return this->groomed_mesh_;
     }
@@ -182,6 +180,12 @@ void Shape::set_reconstructed_mesh(vtkSmartPointer<vtkPolyData> poly_data)
 }
 
 //---------------------------------------------------------------------------
+void Shape::clear_reconstructed_mesh()
+{
+  this->reconstructed_mesh_ = nullptr;
+}
+
+//---------------------------------------------------------------------------
 void Shape::set_global_particles(const vnl_vector<double> &points)
 {
   this->global_correspondence_points_ = points;
@@ -197,9 +201,7 @@ bool Shape::import_global_point_file(QString filename)
 
   this->global_point_filename_ = filename;
 
-
   this->subject_->set_global_particle_filename(filename.toStdString());
-
 
   return true;
 }
@@ -250,6 +252,7 @@ bool Shape::import_local_point_file(QString filename)
 //---------------------------------------------------------------------------
 QSharedPointer<Mesh> Shape::get_reconstructed_mesh()
 {
+  //std::cerr << "get_reconstructed_mesh\n";
   if (!this->reconstructed_mesh_) {
     vtkSmartPointer<vtkPolyData> poly_data = this->mesh_manager_->get_mesh(
       this->global_correspondence_points_);
@@ -290,8 +293,7 @@ void Shape::set_id(int id)
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename()
 {
-  if (this->subject_->get_segmentation_filenames().size() < 1)
-  {
+  if (this->subject_->get_segmentation_filenames().size() < 1) {
     return "";
   }
   auto string = QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
@@ -302,8 +304,7 @@ QString Shape::get_original_filename()
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename_with_path()
 {
-  if (this->subject_->get_segmentation_filenames().size() < 1)
-  {
+  if (this->subject_->get_segmentation_filenames().size() < 1) {
     return "";
   }
   return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);

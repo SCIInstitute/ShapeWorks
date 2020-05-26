@@ -64,6 +64,11 @@ void Session::handle_thread_complete()
 void Session::handle_clear_cache()
 {
   this->mesh_manager_->clear_cache();
+
+  for (auto &s : this->shapes_) {
+    s->clear_reconstructed_mesh();
+  }
+
   this->calculate_reconstructed_samples();
 }
 
@@ -491,7 +496,6 @@ bool Session::load_project(QString filename)
   // clear the project out first
   this->reset();
   this->filename_ = filename;
-
 
   this->project_path_ = QFileInfo(filename).canonicalPath();
   chdir(this->project_path_.toStdString().c_str());

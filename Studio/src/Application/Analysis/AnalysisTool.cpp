@@ -118,6 +118,7 @@ void AnalysisTool::handle_reconstruction_complete()
 {
   this->session_->handle_clear_cache();
 
+
   this->session_->calculate_reconstructed_samples();
   emit progress(100);
   emit message("Reconstruction Complete");

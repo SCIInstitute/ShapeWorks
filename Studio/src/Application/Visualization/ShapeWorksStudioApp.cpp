@@ -787,7 +787,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete()
   this->visualizer_->set_display_mode(this->ui_->view_mode_combobox->currentText().toStdString());
   this->visualizer_->set_mean(this->analysis_tool_->get_mean_shape());
   this->visualizer_->update_lut();
-  this->update_display();
+  this->update_display(true);
 }
 
 //---------------------------------------------------------------------------
