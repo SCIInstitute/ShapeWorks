@@ -46,10 +46,9 @@ public:
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, double narrow_band)
   {
-    Superclass::SetImage(I);
-    const auto narrow_band = this->GetNarrowBand();
+    Superclass::SetImage(I, narrow_band);
 
     // Load the i-th hessian from an itk Image
     const auto LoadVDBHessian = [&](const int i, const typename ImageType::Pointer hess) {

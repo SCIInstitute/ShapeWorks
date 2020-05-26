@@ -174,11 +174,16 @@ void Optimize::SetParameters()
     for (int i = 0; i < m_domain_flags.size(); i++) {
       if (m_use_normals.size() > 0) {
         if (m_use_normals[i % m_domains_per_shape]) {
-          m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeletePartialDerivativeImages();
+          m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->
+          DeletePartialDerivativeImages();
         }
         else {
           m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
         }
+      }
+      else
+      {
+        m_sampler->GetParticleSystem()->GetDomain(m_domain_flags[i])->DeleteImages();
       }
     }
   }
@@ -391,6 +396,7 @@ void Optimize::InitializeSampler()
   float nbhd_to_sigma = 3.0;   // 3.0 -> 1.0
   float flat_cutoff = 0.3;   // 0.3 -> 0.85
 
+
   m_sampler->SetPairwisePotentialType(m_pairwise_potential_type);
 
   m_sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
@@ -437,15 +443,17 @@ void Optimize::InitializeSampler()
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()
   ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
 
+
+  // These flags must be set before Initialize, since Initialize need to know which domains are fixed ahead of time
+  for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
+    this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
+  }
+
   m_sampler->Initialize();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
 
   // These flags have to be set after Initialize, since Initialize will set them all to zero
-  for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
-    this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
-  }
-
   for (unsigned int i = 0; i < this->m_particle_flags.size() / 2; i++) {
     this->GetSampler()->GetParticleSystem()
     ->SetFixedParticleFlag(this->m_particle_flags[2 * i], this->m_particle_flags[2 * i + 1]);
@@ -660,7 +668,7 @@ void Optimize::Initialize()
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
     m_sampler->Modified();
-    m_sampler->Update();
+    m_sampler->Execute();
 
     if (m_save_init_splits == true) {
       std::stringstream ss;
@@ -735,7 +743,8 @@ void Optimize::AddAdaptivity()
   m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->Modified();
-  m_sampler->Update();
+  m_sampler->Execute();
+
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
@@ -852,7 +861,8 @@ void Optimize::RunOptimize()
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
   m_sampler->Modified();
-  m_sampler->Update();
+  m_sampler->Execute();
+
 
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
@@ -1390,8 +1400,10 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
     }
 
     // Only run the following code if we are dealing with ImplicitSurfaceDomains
-    const itk::ParticleImplicitSurfaceDomain < float, 3 > *domain
-          = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float, 3 >*> (m_sampler->GetParticleSystem()->GetDomain(i));
+    const itk::ParticleImplicitSurfaceDomain < float, 3 >* domain
+      = dynamic_cast <const itk::ParticleImplicitSurfaceDomain < float,
+                                                                 3 >*> (m_sampler->GetParticleSystem()
+                                                                        ->GetDomain(i));
     if (domain) {
       std::vector < float > fVals;
 
@@ -1404,13 +1416,15 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
         }
 
         if (m_use_normals[i % m_domains_per_shape]) {
-          typename itk::ParticleImageDomainWithGradients < float, 3 > ::VnlVectorType pG = domain->SampleNormalVnl(pos);
+          typename itk::ParticleImageDomainWithGradients < float,
+                                                           3 > ::VnlVectorType pG =
+            domain->SampleNormalVnl(pos);
           VectorType pN;
           pN[0] = pG[0]; pN[1] = pG[1]; pN[2] = pG[2];
           pN = m_sampler->GetParticleSystem()->TransformVector(pN,
-            m_sampler->GetParticleSystem()->GetTransform(
-              i) * m_sampler->GetParticleSystem()->GetPrefixTransform(
-                i));
+                                                               m_sampler->GetParticleSystem()->GetTransform(
+                                                                 i) * m_sampler->GetParticleSystem()->GetPrefixTransform(
+                                                                 i));
           outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
         }
 
@@ -1871,15 +1885,10 @@ void Optimize::SetLogEnergy(bool log_energy)
 
 //---------------------------------------------------------------------------
 void Optimize::AddImage(ImageType::Pointer image) {
-  this->m_sampler->AddImage(image);
+  this->m_sampler->AddImage(image, this->GetNarrowBand());
   this->m_num_shapes++;
-  this->m_spacing = image->GetSpacing()[0];
-
-  if(this->m_sampler->NumDomains() == 1) {
-    // TODO: Not sure why this is required, but itkMaximumEntropySurfaceSampler
-    // doesn't work unless we do this. This causes holding on to the first
-    // image in memory
-    this->m_sampler->SetInput(0, image);
+  if (image) {
+    this->m_spacing = image->GetSpacing()[0];
   }
 }
 
@@ -1940,7 +1949,17 @@ void Optimize::SetParticleFlags(std::vector<int> flags)
 //---------------------------------------------------------------------------
 void Optimize::SetDomainFlags(std::vector<int> flags)
 {
+  if (flags.size() > 0) {
+    // Fixed domains are in use.
+    this->m_fixed_domains_present = true;
+  }
   this->m_domain_flags = flags;
+}
+
+//---------------------------------------------------------------------------
+const std::vector<int> &Optimize::GetDomainFlags()
+{
+  return this->m_domain_flags;
 }
 
 //---------------------------------------------------------------------------
@@ -1964,7 +1983,23 @@ std::vector<bool> Optimize::GetUseNormals()
 //---------------------------------------------------------------------------
 void Optimize::SetNarrowBand(double v)
 {
-  this->m_sampler->SetNarrowBand(v);
+  this->m_narrow_band_set = true;
+  this->m_narrow_band = v;
+}
+
+//---------------------------------------------------------------------------
+double Optimize::GetNarrowBand()
+{
+  if (this->m_narrow_band_set) {
+    return this->m_narrow_band;
+  }
+
+  if (this->m_fixed_domains_present) {
+    return 1e10;
+  }
+  else {
+    return 4.0;
+  }
 }
 
 //---------------------------------------------------------------------------

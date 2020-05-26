@@ -52,10 +52,6 @@ MaximumEntropySurfaceSampler<TImage>::MaximumEntropySurfaceSampler()
     // Allocate some optimization code.
     m_Optimizer = OptimizerType::New();
 
-    // Default narrow band that works for existing ShapeWorks models. Can be set
-    // via XML parameter file
-    m_NarrowBand = 4.0;
-
     m_Initialized = false;
     m_PointsFiles.push_back("");
     m_MeshFiles.push_back("");
@@ -96,7 +92,6 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     int ctr = 0;
     for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
-
         if (m_CuttingPlanes.size() > i)
         {
             for (unsigned int j = 0; j< m_CuttingPlanes[i].size(); j++)
@@ -197,12 +192,14 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     // domain of the 1st input image.
     unsigned int maxdim = 0;
     double maxradius = -1.0;
-    double spacing = this->GetInput()->GetSpacing()[0];
+    double spacing = this->m_Spacing;
 
-    for (unsigned int d = 0; d < this->GetParticleSystem()->GetDomainsPerShape(); d++)
+    for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
     {
+      if (!GetParticleSystem()->GetDomain(d)->IsDomainFixed()) {
         double radius = GetParticleSystem()->GetDomain(d)->GetMaxDimRadius();
         maxradius = radius > maxradius ? radius : maxradius;
+      }
     }
 
     m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
@@ -229,11 +226,18 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     m_OmegaGradientFunction->SetDomainNumber(0);
 }
 
+
 template <class TImage>
 void
 MaximumEntropySurfaceSampler<TImage>::GenerateData()
 {
-    this->SetInPlace(false); // this is required so that we don't release our inputs
+}
+
+
+template <class TImage>
+void
+MaximumEntropySurfaceSampler<TImage>::Execute()
+{
     if (m_Initialized == false)
     {
         this->AllocateDataCaches();
