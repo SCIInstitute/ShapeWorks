@@ -1,5 +1,7 @@
 # Building ShapeWorks from source
 
+If you encounter problems, have questions, or need help, please contact shapeworks-dev@sci.utah.edu
+
 ## Minimum Requirements
 
 ### Linux
