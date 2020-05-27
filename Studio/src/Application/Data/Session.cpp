@@ -1,6 +1,6 @@
 #ifdef _WIN32
-   #include <io.h>
-   #define access _access_s
+  #include <direct.h>
+  #define chdir _chdir
 #else
    #include <unistd.h>
 #endif
