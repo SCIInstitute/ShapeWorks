@@ -194,10 +194,7 @@ public:
   void SetLogEnergy(bool log_energy);
 
   //! Set the shape input images
-  void SetImages(const std::vector<ImageType::Pointer> &images);
-
-  //! Return the shape input images
-  std::vector<ImageType::Pointer> GetImages();
+  void AddImage(ImageType::Pointer image);
 
   //! Set the shape filenames (TODO: details)
   void SetFilenames(const std::vector<std::string> &filenames);
@@ -222,6 +219,8 @@ public:
   //! Set Domain Flags (TODO: details)
   void SetDomainFlags(std::vector<int> flags);
 
+  const std::vector<int>& GetDomainFlags();
+
   //! Set if file output is enabled
   void SetFileOutputEnabled(bool enabled);
 
@@ -230,6 +229,12 @@ public:
 
   //! Return if Normals are used, per shape
   std::vector<bool> GetUseNormals();
+
+  //! Set the narrow band used to be +/- the given value as a multiple of the spacing
+  void SetNarrowBand(double v);
+
+  //! Return the narrow band to be used
+  double GetNarrowBand();
 
   //! Print parameter info to stdout
   void PrintParamInfo();
@@ -342,6 +347,9 @@ protected:
   double m_cotan_sigma_factor = 5.0;
   std::vector <int> m_particle_flags;
   std::vector <int> m_domain_flags;
+  double m_narrow_band{4};
+  bool m_narrow_band_set{false};
+  bool m_fixed_domains_present{false};
 
   // Keeps track of which state the optimization is in.
   unsigned int m_mode = 0;
@@ -366,7 +374,6 @@ protected:
 
   bool m_file_output_enabled = true;
   bool m_aborted = false;
-  std::vector<ImageType::Pointer> m_images;
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
   itk::MemberCommand<Optimize>::Pointer m_iterate_command;

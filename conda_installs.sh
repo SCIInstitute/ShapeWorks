@@ -70,6 +70,10 @@ function install_conda() {
        notebook=6.0.3 \
        matplotlib=3.2.1 \
        itkwidgets=0.26.1
+       tbb=2019.9 \
+       tbb-devel=2019.9 \
+       boost=1.72.0 \
+       openexr=2.4.1
   then return 1; fi
 
 

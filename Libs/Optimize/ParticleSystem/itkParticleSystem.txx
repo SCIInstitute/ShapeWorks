@@ -44,7 +44,9 @@ ParticleSystem<VDimension>
   m_Positions.resize(num);
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
-  m_DomainFlags.resize(num);
+  while(num >= this->m_DomainFlags.size()) {
+    m_DomainFlags.push_back(false);
+  }
   this->Modified();
 }
 
@@ -74,7 +76,6 @@ void ParticleSystem<VDimension>
   m_InverseTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_PrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
   m_InversePrefixTransforms[static_cast<int>( m_Domains.size() -1)].set_identity();
-  m_DomainFlags[static_cast<int>( m_Domains.size() -1)] = false;
   
   // Notify any observers.
   ParticleDomainAddEvent e;
@@ -147,20 +148,17 @@ ParticleSystem<VDimension>
 {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
 
-  // Potentially modifes position!
-  if (m_DomainFlags[d] == false)
-  {
-      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
-
-      m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);
+  // Potentially modifies position!
+  if (m_DomainFlags[d] == false) {
+    m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](m_IndexCounters[d]));
+    m_Neighborhoods[d]->AddPosition( m_Positions[d]->operator[](m_IndexCounters[d]), m_IndexCounters[d], threadId);
   }
 
   // Increase the FixedParticleFlag list size if necessary.
   if (m_IndexCounters[d] >= m_FixedParticleFlags[d % m_DomainsPerShape].size())
-    {
-        m_FixedParticleFlags[d % m_DomainsPerShape].push_back(false);
-    }
-
+  {
+    m_FixedParticleFlags[d % m_DomainsPerShape].push_back(false);
+  }
 
   // Notify any observers.
   ParticlePositionAddEvent e;
@@ -180,19 +178,17 @@ ParticleSystem<VDimension>
                                         unsigned int d,  int threadId)
 {
   if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false)
-    {
-  
-    m_Positions[d]->operator[](k) = p;
-    
-    // Potentially modifes position!
-    if (m_DomainFlags[d] == false)
-    {
-        m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
-    
-        m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k, threadId);
-     }
+  {
+    // Potentially modifies position!
+    if (m_DomainFlags[d] == false) {
+      m_Positions[d]->operator[](k) = p;
 
-     }
+      m_Domains[d]->ApplyConstraints( m_Positions[d]->operator[](k));
+
+      m_Neighborhoods[d]->SetPosition( m_Positions[d]->operator[](k), k, threadId);
+    }
+
+  }
 
   // Notify any observers.
   ParticlePositionSetEvent e;
