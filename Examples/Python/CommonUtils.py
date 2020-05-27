@@ -9,6 +9,7 @@ Created on Tue Sep 10 14:32:27 2019
 import numpy as np
 import itk
 from sklearn.cluster import KMeans
+from sklearn.cluster import SpectralClustering
 import io
 import glob
 import os
@@ -64,3 +65,34 @@ def sampledata(inDataList, num_sample):
     print("###########################################\n")
     return samples_idx
 
+def sampledataSpectralClustring(inDataList, num_sample):
+    D = np.zeros((len(inDataList), len(inDataList)))
+    for i in range(len(inDataList)):
+        image_1 = itk.GetArrayFromImage(itk.imread(inDataList[i], itk.F))
+        x, y, z = image_1.shape
+        for j in range(i, len(inDataList)):
+            image_2 = itk.GetArrayFromImage(itk.imread(inDataList[j], itk.F))
+            x, y, z = max(x, image_2.shape[0]), max(y, image_2.shape[1]), max(z, image_2.shape[2])
+            image_1 = np.pad(image_1, (((x - image_1.shape[0]) // 2, (x - image_1.shape[0]) - (x - image_1.shape[0]) // 2),
+                         ((y - image_1.shape[1]) // 2, (y - image_1.shape[1]) - (y - image_1.shape[1]) // 2),
+                         ((z - image_1.shape[2]) // 2, (z - image_1.shape[2]) - (z - image_1.shape[2]) // 2)))
+            image_2 = np.pad(image_2, (((x - image_2.shape[0]) // 2, (x - image_2.shape[0]) - (x - image_2.shape[0]) // 2),
+                         ((y - image_2.shape[1]) // 2, (y - image_2.shape[1]) - (y - image_2.shape[1]) // 2),
+                         ((z - image_2.shape[2]) // 2, (z - image_2.shape[2]) - (z - image_2.shape[2]) // 2)))
+            D[i, j] = np.linalg.norm(image_1-image_2)
+
+    D += D.T
+    A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))
+    print("########## Sample subset of data #########")
+    print("Run Spectral Clustering for {} clusters ...".format(num_sample))
+    model = SpectralClustering(n_clusters=num_sample,
+                                    assign_labels="discretize",
+                                    random_state=0, affinity='precomputed').fit(A)
+    labels = list(model.labels_)
+    samples_idx = []
+    print("sample one data per cluster to have diverse samples!")
+    for i in range(num_sample):
+        samples_idx.append(labels.index(i))
+
+    print("###########################################\n")
+    return samples_idx
