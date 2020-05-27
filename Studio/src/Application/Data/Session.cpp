@@ -1,14 +1,12 @@
-#include <Data/Session.h>
-#include <Data/Shape.h>
-#include <Data/Mesh.h>
-#include <Data/MeshManager.h>
-#include <Visualization/ShapeWorksWorker.h>
+#ifdef _WIN32
+   #include <io.h>
+   #define access _access_s
+#else
+   #include <unistd.h>
+#endif
+
+// qt
 #include <QThread>
-
-#include <Visualization/Visualizer.h>
-
-#include <Libs/Project/Project.h>
-
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -19,8 +17,18 @@
 #include <QProgressDialog>
 
 #include <tinyxml.h>
+
 #include <vtkPolyDataWriter.h>
 #include <vtkPolyDataReader.h>
+
+#include <Libs/Project/Project.h>
+
+#include <Data/Session.h>
+#include <Data/Shape.h>
+#include <Data/Mesh.h>
+#include <Data/MeshManager.h>
+#include <Visualization/ShapeWorksWorker.h>
+#include <Visualization/Visualizer.h>
 
 const std::string Session::DATA_C("data");
 const std::string Session::GROOM_C("groom");
