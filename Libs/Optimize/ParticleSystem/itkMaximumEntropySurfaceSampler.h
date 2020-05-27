@@ -1,9 +1,6 @@
+#pragma once
 /*=========================================================================
   Program:   ShapeWorks: Particle-based Shape Correspondence & Visualization
-  Module:    $RCSfile: itkMaximumEntropySurfaceSampler.h,v $
-  Date:      $Date: 2011/03/24 01:17:33 $
-  Version:   $Revision: 1.3 $
-  Author:    $Author: wmartin $
 
   Copyright (c) 2009 Scientific Computing and Imaging Institute.
   See ShapeWorksLicense.txt for details.
@@ -12,14 +9,11 @@
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
-#ifndef __itkMaximumEntropySurfaceSampler_h
-#define __itkMaximumEntropySurfaceSampler_h
 
 #include "itkParticleSystem.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleEntropyGradientFunction.h"
 #include "itkParticleImplicitSurfaceDomain.h"
-#include "itkInPlaceImageFilter.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleCurvatureEntropyGradientFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"
@@ -43,12 +37,11 @@ namespace itk
  */
 template <class TImage>
 class ITK_EXPORT MaximumEntropySurfaceSampler
-        : public InPlaceImageFilter<TImage,TImage>
+        : public DataObject
 {
 public:
     /** Standard class typedefs. */
     typedef MaximumEntropySurfaceSampler  Self;
-    typedef InPlaceImageFilter<TImage,TImage>  Superclass;
     typedef SmartPointer<Self>   Pointer;
     typedef SmartPointer<const Self>  ConstPointer;
 
@@ -84,27 +77,6 @@ public:
     /** Type of the input/output image. */
     typedef TImage ImageType;
     typedef ParticleGradientDescentPositionOptimizer<typename ImageType::PixelType, Dimension> OptimizerType;
-
-    /**
-   * THIS IS A HACK UNTIL I CAN FIGURE OUT HOW TO ALLOCATE THE APPROPRIATE
-   * NUMBER OF OUTPUTS AND GRAFT THEM TO THE INPUTS.
-   */
-    void SetInput(const TImage *image)
-    { this->SetInput(0, image);  }
-
-
-    /**
-   * Override parent classes to expand input list on new inputs.
-   */
-    void SetInput( unsigned int index, const TImage * image )
-    {
-        if (this->GetNumberOfInputs() < index+1)
-        {
-            this->SetNumberOfRequiredInputs(index+1);
-        }
-
-        this->ProcessObject::SetNthInput(index, const_cast< TImage *>( image ) );
-    }
 
     /** Returns the particle system used in the surface sampling. */
     itkGetObjectMacro(ParticleSystem, ParticleSystem<Dimension>);
@@ -178,9 +150,25 @@ public:
         m_MeshFiles = s;
     }
 
-    void SetImages(const std::vector<typename TImage::Pointer> &images)
+    void AddImage(const typename TImage::Pointer image, double narrow_band)
     {
-        m_Images = images;
+        const auto domain = ParticleImplicitSurfaceDomain<typename
+                              ImageType::PixelType, Dimension>::New();
+        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
+
+        if (image)
+        {
+          this->m_Spacing = image->GetSpacing()[0];
+          domain->SetSigma(this->m_Spacing * 2.0);
+          domain->SetImage(image, narrow_band);
+        }
+
+        m_DomainList.push_back(domain);
+    }
+
+    int NumDomains() const
+    {
+      return m_DomainList.size();
     }
 
     void SetFidsFiles(const std::vector<std::string> &s)
@@ -326,6 +314,7 @@ public:
     int GetPairwisePotentialType()
     {return m_pairwise_potential_type;}
 
+
     void SetVerbosity(unsigned int val)
     {
         m_verbosity = val;
@@ -343,23 +332,26 @@ public:
     virtual void AllocateDataCaches();
     virtual void AllocateDomainsAndNeighborhoods();
     virtual void InitializeOptimizationFunctions();
+    virtual void DeleteImages() {
+        for(int i=0; i<m_DomainList.size(); i++) {
+            m_DomainList[i]->DeleteImages();
+        }
+    }
 
     /** */
     virtual void Initialize()
     {
         this->m_Initializing = true;
-        this->Update();
+        this->Execute();
         this->m_Initializing = false;
     }
+
+    virtual void Execute();
+
 
 protected:
     MaximumEntropySurfaceSampler();
     virtual ~MaximumEntropySurfaceSampler() {};
-
-    void PrintSelf(std::ostream& os, Indent indent) const
-    {
-        Superclass::PrintSelf(os, indent);
-    }
 
     void GenerateData();
 
@@ -413,8 +405,8 @@ private:
     std::vector<std::string> m_FidsFiles;
     std::vector<int> m_AttributesPerDomain;
     int m_DomainsPerShape;
+    double m_Spacing{0};
 
-    std::vector<typename TImage::Pointer> m_Images;
     std::string m_TransformFile;
     std::string m_PrefixTransformFile;
     std::vector< std::vector< CuttingPlaneType> > m_CuttingPlanes;
@@ -422,20 +414,12 @@ private:
 
     unsigned int m_verbosity;
 
+
 };
 
 } // end namespace itk
 
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/itkMaximumEntropySurfaceSampler+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-#include "itkMaximumEntropySurfaceSampler.txx"
-#endif
-
 #include "itkMaximumEntropySurfaceSampler.txx"
 
-#endif
 
 

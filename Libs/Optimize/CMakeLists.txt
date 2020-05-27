@@ -1,4 +1,3 @@
-
 FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx)
 
 add_library(Optimize STATIC
@@ -8,6 +7,7 @@ add_library(Optimize STATIC
   )
 
 target_link_libraries(Optimize
+  OpenVDB::openvdb
   Alignment
   trimesh2
   Mesh

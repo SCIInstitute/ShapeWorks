@@ -90,19 +90,8 @@ MaximumEntropySurfaceSampler<TImage>::AllocateDomainsAndNeighborhoods()
     // *after* registering the attributes to the particle system since some of
     // them respond to AddDomain.
     int ctr = 0;
-    for (unsigned int i = 0; i < this->m_Images.size(); i++)
+    for (unsigned int i = 0; i < this->m_DomainList.size(); i++)
     {
-        m_DomainList.push_back( ParticleImplicitSurfaceDomain<typename
-                                ImageType::PixelType, Dimension>::New() );
-
-        m_NeighborhoodList.push_back( ParticleSurfaceNeighborhood<ImageType>::New() );
-
-        typename TImage::Pointer img_temp = this->m_Images[i];
-
-        m_DomainList[i]->SetSigma(img_temp->GetSpacing()[0] * 2.0);
-
-        m_DomainList[i]->SetImage(img_temp);
-
         if (m_CuttingPlanes.size() > i)
         {
             for (unsigned int j = 0; j< m_CuttingPlanes[i].size(); j++)
@@ -203,12 +192,14 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     // domain of the 1st input image.
     unsigned int maxdim = 0;
     double maxradius = -1.0;
-    double spacing = this->GetInput()->GetSpacing()[0];
+    double spacing = this->m_Spacing;
 
-    for (unsigned int d = 0; d < this->GetParticleSystem()->GetDomainsPerShape(); d++)
+    for (unsigned int d = 0; d < this->GetParticleSystem()->GetNumberOfDomains(); d++)
     {
+      if (!GetParticleSystem()->GetDomain(d)->IsDomainFixed()) {
         double radius = GetParticleSystem()->GetDomain(d)->GetMaxDimRadius();
         maxradius = radius > maxradius ? radius : maxradius;
+      }
     }
 
     m_GradientFunction->SetMinimumNeighborhoodRadius(spacing * 5.0);
@@ -235,11 +226,18 @@ MaximumEntropySurfaceSampler<TImage>::InitializeOptimizationFunctions()
     m_OmegaGradientFunction->SetDomainNumber(0);
 }
 
+
 template <class TImage>
 void
 MaximumEntropySurfaceSampler<TImage>::GenerateData()
 {
-    this->SetInPlace(false); // this is required so that we don't release our inputs
+}
+
+
+template <class TImage>
+void
+MaximumEntropySurfaceSampler<TImage>::Execute()
+{
     if (m_Initialized == false)
     {
         this->AllocateDataCaches();
