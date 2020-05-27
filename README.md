@@ -23,16 +23,6 @@ The underlying scientific premise of ShapeWorks, particle-based shape modeling, 
     
 ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
 
-Latest Updates
-=====================
-
-ShapeWorks vXXX
-----------
-
-* **Upgraded project file format:** TODO: Insert improvements to ShapeWorks Studio
-* **Lower memory footprint and faster optimization:** ShapeWorks is now using [OpenVDB](https://www.openvdb.org/), a more memory-efficient data structure, for signed distance transforms. Along with other refactoring and code optimizations, ShapeWorks now uses *85% less memory* (from 57.09GB to 9.67GB in one use case). Additionally, the particles optimizer is now *2X faster*.
-* **Lower memory footprint for estimating correspondences on new shape samples :** TODO
-
 Contact Us
 =====================
 
