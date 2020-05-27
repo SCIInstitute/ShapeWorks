@@ -5,7 +5,6 @@
 In this use case we start with full unsegmented images (CT scans) of the hip and segmented meshes of each femur.
 ShapeWorks requires a binary volume format for input segmentations so these meshes must first be converted into binary volumes. Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes so that they can be used for analysis.
 
-
 The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane defined by the user. There are two ways to do so as explained below and they are differentiated by using the "--interactive" tag or not. 
 
 ![Femur Lengths](images/femurLengths.png)

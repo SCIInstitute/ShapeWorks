@@ -30,7 +30,7 @@ The single scale optimization takes a fixed number of particles (usually a power
 For the dataset like left atrium with lots of variation, it is hard  to tune parameters of single scale optimization. 
 The multi-scale optimization is providing the optimize particle system at each level, so we can use them to tune the parameters
  and have more stable particle system for the desired number of particles.
- 
+
 
 ### Running Left Atrium
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)

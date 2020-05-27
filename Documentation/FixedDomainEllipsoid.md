@@ -45,4 +45,3 @@ Below are the default optimization parameters for this use case.
 
 The meanShapePath and shapemodelDir are specified in the example itself, but they correspond to points which we initialize the new shape and the directory path to the new shape model.
 
-
