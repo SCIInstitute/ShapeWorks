@@ -193,7 +193,7 @@ protected:
   // Why 4? The ITK version of the Optimizer already used a narrow band of +/- 4 in the
   // curvature computation. This will allow existing use cases to work as before. This
   // value can be set in the XML file for ShapeWorksRun.
-  ParticleImageDomain() : m_NarrowBand(4.0) { }
+  ParticleImageDomain() { }
   virtual ~ParticleImageDomain() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -233,7 +233,6 @@ private:
   PointType m_ZeroCrossingPoint;
   typename ImageType::RegionType::IndexType m_Index; // Index defining the corner of the region
   double m_SurfaceArea;
-  double m_NarrowBand;
 
   void UpdateZeroCrossingPoint(ImageType *I) {
     typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
