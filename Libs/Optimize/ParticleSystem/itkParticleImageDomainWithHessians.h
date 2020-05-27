@@ -10,7 +10,6 @@
 
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkImage.h"
-#include "itkLinearInterpolateImageFunction.h"
 #include "itkGradientImageFilter.h"
 #include "itkFixedArray.h"
 #include "itkImageDuplicator.h"
@@ -42,24 +41,50 @@ public:
     /** Point type of the domain (not necessarily of the image). */
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::ImageType ImageType;
-  typedef typename Superclass::ScalarInterpolatorType ScalarInterpolatorType;
 
   typedef vnl_matrix_fixed<T, VDimension, VDimension> VnlMatrixType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, double narrow_band)
   {
-    Superclass::SetImage(I);
-    
+    Superclass::SetImage(I, narrow_band);
+
+    // Load the i-th hessian from an itk Image
+    const auto LoadVDBHessian = [&](const int i, const typename ImageType::Pointer hess) {
+      m_VDBHessians[i] = openvdb::FloatGrid::create(0.0);
+      m_VDBHessians[i]->setTransform(this->transform());
+      auto vdbAccessor = m_VDBHessians[i]->getAccessor();
+
+      ImageRegionIterator<ImageType> hessIt(hess, hess->GetRequestedRegion());
+      ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+      for (; !hessIt.IsAtEnd(); ++hessIt, ++it) {
+        const auto idx = hessIt.GetIndex();
+        if(idx != it.GetIndex()) {
+          // We are relying on the assumption that the iteration over the
+          // distance transform and its hessian proceed in the same order.
+          // If this assumption is violated, throw an error.
+          throw std::runtime_error("Bad index: iterators for Image and Hessian out of sync");
+        }
+        const auto hess = hessIt.Get();
+        const auto pixel = it.Get();
+        if(abs(pixel) > narrow_band) {
+          continue;
+        }
+
+        const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+        vdbAccessor.setValue(coord, hess);
+      }
+    };
+
     typename DiscreteGaussianImageFilter<ImageType, ImageType>::Pointer
       gaussian = DiscreteGaussianImageFilter<ImageType, ImageType>::New();
     gaussian->SetVariance(m_Sigma * m_Sigma);
-    gaussian->SetInput(this->GetImage());
+    gaussian->SetInput(I);
     gaussian->SetUseImageSpacingOn();
     gaussian->Update();
     
-    // Compute the second derivatives and set up the interpolators
+    // Compute the second derivatives
     for (unsigned int i = 0; i < VDimension; i++)
       {
       typename DerivativeImageFilter<ImageType, ImageType>::Pointer
@@ -70,10 +95,9 @@ public:
       deriv->SetUseImageSpacingOn();
       deriv->Update();
 
-      m_PartialDerivatives[i] = deriv->GetOutput();
+      const auto hess = deriv->GetOutput();
+      LoadVDBHessian(i, hess);
 
-      m_Interpolators[i] = ScalarInterpolatorType::New();
-      m_Interpolators[i]->SetInputImage(m_PartialDerivatives[i]);
       }
 
     // Compute the cross derivatives and set up the interpolators
@@ -98,33 +122,38 @@ public:
         deriv2->SetOrder(1);
         
         deriv2->Update();
-        
-        m_PartialDerivatives[k] = deriv2->GetOutput();
-        m_Interpolators[k] = ScalarInterpolatorType::New();
-        m_Interpolators[k]->SetInputImage(m_PartialDerivatives[k]);
+
+        const auto hess = deriv2->GetOutput();
+        LoadVDBHessian(k, hess);
         }
       }
+
+
   } // end setimage
-  
+
   /** Sample the Hessian at a point.  This method performs no bounds checking.
       To check bounds, use IsInsideBuffer.  SampleHessiansVnl returns a vnl
       matrix of size VDimension x VDimension. */
   inline VnlMatrixType SampleHessianVnl(const PointType &p) const
   {
-    VnlMatrixType ans;
+    const auto coord = this->ToVDBCoord(p);
+
+    VnlMatrixType vdbAns;
     for (unsigned int i = 0; i < VDimension; i++)
-      {      ans[i][i] = m_Interpolators[i]->Evaluate(p);      }
-    
+    {
+      vdbAns[i][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[i]->tree(), coord);
+    }
+
     // Cross derivatives
     unsigned int k = VDimension;
     for (unsigned int i =0; i < VDimension; i++)
-      {
+    {
       for (unsigned int j = i+1; j < VDimension; j++, k++)
-        {
-        ans[i][j] = ans[j][i] = m_Interpolators[k]->Evaluate(p);
-        }
+      {
+        vdbAns[i][j] = vdbAns[j][i] = openvdb::tools::BoxSampler::sample(m_VDBHessians[k]->tree(), coord);
       }
-    return ans;
+    }
+    return vdbAns;
   }
   
   /** Set /Get the standard deviation for blurring the image prior to
@@ -143,10 +172,8 @@ public:
 
   void DeletePartialDerivativeImages() override
   {
-    for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++)
-    {
-      m_PartialDerivatives[i] = 0;
-      m_Interpolators[i] = 0;
+    for (unsigned int i = 0; i < VDimension + ((VDimension * VDimension) - VDimension) / 2; i++) {
+      m_VDBHessians[i] = 0;
     }
   }
 
@@ -156,10 +183,6 @@ public:
     Superclass::DeleteImages();
     DeletePartialDerivativeImages();
   }
-
-  /** Access interpolators and partial derivative images. */
-  typename ScalarInterpolatorType::Pointer *GetInterpolators() { return m_Interpolators; }
-  typename ImageType::Pointer *GetPartialDerivatives() { return m_PartialDerivatives; }
 
 protected:
   ParticleImageDomainWithHessians() : m_Sigma(0.0) {}
@@ -173,15 +196,12 @@ protected:
   
 private:
   double m_Sigma;
-
   // Partials are stored:
   //     0: dxx  3: dxy  4: dxz
   //             1: dyy  5: dyz
   //                     2: dzz
-  //
-  typename ImageType::Pointer  m_PartialDerivatives[ VDimension + ((VDimension * VDimension) - VDimension) / 2];
-
-  typename ScalarInterpolatorType::Pointer m_Interpolators[VDimension + ((VDimension * VDimension) - VDimension) / 2];
+  typename openvdb::FloatGrid::Ptr m_VDBHessians[
+          VDimension + ((VDimension * VDimension) - VDimension) / 2];
 };
 
 } // end namespace itk

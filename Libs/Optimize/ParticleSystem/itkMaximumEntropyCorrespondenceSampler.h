@@ -257,7 +257,9 @@ public:
   { return m_CorrespondenceMode; }
 
   virtual void InitializeOptimizationFunctions();
-  
+
+  void Execute() override;
+
 protected:
   MaximumEntropyCorrespondenceSampler();
   virtual ~MaximumEntropyCorrespondenceSampler() {};
@@ -267,7 +269,6 @@ protected:
     Superclass::PrintSelf(os, indent);
   }
 
-  void GenerateData();
   
 private:
   MaximumEntropyCorrespondenceSampler(const Self&); //purposely not implemented
@@ -293,13 +294,6 @@ private:
 
 } // end namespace itk
 
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/itkMaximumEntropyCorrespondenceSampler+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-#include "itkMaximumEntropyCorrespondenceSampler.txx"
-#endif
 
 #include "itkMaximumEntropyCorrespondenceSampler.txx"
 
