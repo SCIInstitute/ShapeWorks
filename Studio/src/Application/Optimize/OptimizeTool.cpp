@@ -91,17 +91,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   emit message("Please wait: running optimize step...");
   emit progress(1);
 
-  auto shapes = this->session_->get_shapes();
-  std::vector<ImageType::Pointer> imgs;
-  std::vector<std::string> groomed_filenames;
-  for (auto s : shapes) {
-    imgs.push_back(s->get_groomed_image());
-    groomed_filenames.push_back(s->get_groomed_filename_with_path().toStdString());
-    this->optimize_->AddImage(img);
-  }
-
   this->optimize_ = new QOptimize(this);
-
   std::vector<unsigned int> numbers_of_particles;
   numbers_of_particles.push_back(this->ui_->number_of_particles->value());
   this->optimize_->SetFileOutputEnabled(false);
@@ -113,6 +103,12 @@ void OptimizeTool::on_run_optimize_button_clicked()
   this->optimize_->SetProcrustesInterval(this->ui_->procrustes_interval->value());
   this->optimize_->SetRelativeWeighting(this->ui_->weight->value());
   this->optimize_->SetVerbosity(5);
+
+  // should add the images last
+  auto shapes = this->session_->get_shapes();
+  for (auto s : shapes) {
+    this->optimize_->AddImage(s->get_groomed_image());
+  }
 
   QThread* thread = new QThread;
   ShapeworksWorker* worker = new ShapeworksWorker(
