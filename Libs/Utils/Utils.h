@@ -33,6 +33,7 @@
 #include <vtkPoints.h>
 #include <itkImage.h>
 #include <itkPoint.h>
+#include <vnl/vnl_matrix.h>
 
 namespace utils
 {
@@ -114,7 +115,13 @@ public:
     static std::vector<double> linspace(double a, double b, size_t N);
     static std::string int2str(int n, int number_of_zeros);
 
-    //--------------- average normal directions --------------------------------
+    //--------------- linear algebra -------------------------------------------
+
+    // matrix multiplication without an allocation for the output
+    template<typename T>
+    static void multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs);
+
+  //--------------- average normal directions --------------------------------
     /**
      * Given a set of theta measurements, pick the "average" (approximately).
      *

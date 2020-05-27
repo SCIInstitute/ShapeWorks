@@ -132,6 +132,10 @@ ParticleCurvatureEntropyGradientFunction<TGradientNumericType, VDimension>
   // Compute the neighborhood size and the optimal sigma.
   const double epsilon = 1.0e-6;
   
+  if (system->GetDomain(d)->IsDomainFixed()) {
+    return;
+  }
+
   // Grab a pointer to the domain.  We need a Domain that has surface normal information.
   //  const ParticleImageDomainWithGradients<TGradientNumericType, VDimension> * domain
   //   = static_cast<const ParticleImageDomainWithGradients<TGradientNumericType,

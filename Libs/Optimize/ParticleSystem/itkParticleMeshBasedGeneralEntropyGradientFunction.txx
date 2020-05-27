@@ -15,6 +15,7 @@
 #include <time.h>
 #include "itkParticleImageDomainWithGradients.h"
 #include "itkParticleImageDomainWithHessians.h"
+#include "Libs/Utils/Utils.h"
 
 namespace itk
 {
@@ -56,15 +57,13 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
     vnl_diag_matrix<double> W;
 
-    m_InverseCovMatrix->set_size(num_dims, num_dims);
-    m_InverseCovMatrix->fill(0.0);
     vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
     vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
 
     if (this->m_UseMeanEnergy)
     {
         pinvMat.set_identity();
-        m_InverseCovMatrix->clear(); //set_identity();
+        m_InverseCovMatrix->clear();
     }
     else
     {
@@ -91,16 +90,16 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
         W = svd.W();
 
         vnl_diag_matrix<double> invLambda = svd.W();
-
         invLambda.set_diagonal(invLambda.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance);
         invLambda.invert_in_place();
 
         pinvMat = (UG * invLambda) * UG.transpose();
 
         vnl_matrix_type projMat = points_minus_mean * UG;
-        vnl_matrix_type projMat2 = projMat * invLambda;
-        projMat2 = projMat2 * projMat2.transpose();
-        m_InverseCovMatrix->update(projMat2);
+        const auto lhs = projMat * invLambda;
+        const auto rhs = invLambda * projMat.transpose(); // invLambda doesn't need to be transposed since its a diagonal matrix
+        m_InverseCovMatrix->set_size(num_dims, num_dims);
+        Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
     }
 
     vnl_matrix_type Q = points_minus_mean * pinvMat;

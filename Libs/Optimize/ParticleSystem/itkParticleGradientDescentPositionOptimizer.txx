@@ -22,6 +22,9 @@ const int global_iteration = 1;
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include "MemoryUsage.h"
+#include <chrono>
+
 namespace itk
 {
   template <class TGradientNumericType, unsigned int VDimension>
@@ -93,16 +96,15 @@ namespace itk
       maxtime[q] = 1.0e30;
       mintime[q] = 1.0;
     }
-    time_t timerBefore, timerAfter;
 
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
+      const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
-      timerBefore = time(NULL);
-      if (counter % global_iteration == 0)
-        m_GradientFunction->BeforeIteration();
-      counter++;
+        if (counter % global_iteration == 0)
+            m_GradientFunction->BeforeIteration();
+        counter++;
 
 #pragma omp parallel
       {
@@ -222,13 +224,18 @@ namespace itk
       m_NumberOfIterations++;
       m_GradientFunction->AfterIteration();
 
-      timerAfter = time(NULL);
-      double seconds = difftime(timerAfter, timerBefore);
+      const auto accTimerEnd = std::chrono::steady_clock::now();
+      const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
 
       if (m_verbosity > 2)
       {
-        std::cout << m_NumberOfIterations << ". " << seconds << " seconds.. ";
-        std::cout.flush();
+        std::cout << m_NumberOfIterations << ". " << msElapsed << "ms";
+#ifdef LOG_MEMORY_USAGE
+        double vmUsage, residentSet;
+        process_mem_usage(vmUsage, residentSet);
+        std::cout << " | Mem=" << residentSet << "KB";
+#endif
+        std::cout << std::endl;
       }
 
       this->InvokeEvent(itk::IterationEvent());

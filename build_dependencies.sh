@@ -19,6 +19,7 @@ EIGEN_VER="3.3.7"
 ITK_VER_STR="5.0"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.4.0"
+OpenVDB_VER="v7.0.0"
 
 usage()
 {
@@ -210,7 +211,6 @@ build_eigen()
   EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake/
 }
 
-
 build_xlnt()
 {
   echo ""
@@ -234,7 +234,31 @@ build_xlnt()
 
   XLNT_DIR=${INSTALL_DIR}
 }
-    
+
+build_openvdb()
+{
+  echo ""
+  echo "## Building OpenVDB..."
+  cd ${BUILD_DIR}
+  git clone https://github.com/AcademySoftwareFoundation/openvdb.git
+  cd openvdb
+  git checkout ${OpenVDB_VER}
+
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
+
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      cmake --build . --config Release || exit 1
+      cmake --build . --config Release --target install
+  else
+      cmake -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      make -j${NUM_PROCS} install || exit 1
+  fi
+
+  OpenVDB_DIR=${INSTALL_DIR}/lib64/cmake/OpenVDB/
+}
+
 
 show_shapeworks_build()
 {
@@ -288,6 +312,10 @@ build_all()
   mkdir -p ${INSTALL_DIR}
 
   ## build dependencies if their locations were not specified
+  if [[ -z $OpenVDB_DIR ]]; then
+    build_openvdb
+  fi
+
   if [[ -z $VXL_DIR ]]; then
     build_vxl
   fi
@@ -315,6 +343,7 @@ build_all()
   echo "  VTK_DIR: ${VTK_DIR}"
   echo "  ITK_DIR: ${ITK_DIR}"
   echo "  EIGEN_DIR: ${EIGEN_DIR}"
+  echo "  OpenVDB_DIR: ${OpenVDB_DIR}"
   echo ""
   
   show_shapeworks_build

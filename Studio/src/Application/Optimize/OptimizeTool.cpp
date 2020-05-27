@@ -97,6 +97,7 @@ void OptimizeTool::on_run_optimize_button_clicked()
   for (auto s : shapes) {
     imgs.push_back(s->get_groomed_image());
     groomed_filenames.push_back(s->get_groomed_filename_with_path().toStdString());
+    this->optimize_->AddImage(img);
   }
 
   this->optimize_ = new QOptimize(this);
@@ -104,7 +105,6 @@ void OptimizeTool::on_run_optimize_button_clicked()
   std::vector<unsigned int> numbers_of_particles;
   numbers_of_particles.push_back(this->ui_->number_of_particles->value());
   this->optimize_->SetFileOutputEnabled(false);
-  this->optimize_->SetImages(imgs);
   this->optimize_->SetStartingRegularization(this->ui_->starting_regularization->value());
   this->optimize_->SetEndingRegularization(this->ui_->ending_regularization->value());
   this->optimize_->SetIterationsPerSplit(this->ui_->iterations->value());

@@ -8,13 +8,26 @@
 =========================================================================*/
 #pragma once
 
-#include "itkImage.h"
-#include "itkParticleRegionDomain.h"
-#include "itkLinearInterpolateImageFunction.h"
-#include <itkZeroCrossingImageFilter.h>
+#include <fstream>
 #include <vtkContourFilter.h>
 #include <vtkMassProperties.h>
+#include <itkImage.h>
+#include <itkParticleRegionDomain.h>
+#include <itkImageToVTKImageFilter.h>
+#include <itkZeroCrossingImageFilter.h>
 #include <itkImageRegionConstIteratorWithIndex.h>
+#include <chrono>
+
+// we have to undef foreach here because both Qt and OpenVDB define foreach
+#undef foreach
+#ifndef Q_MOC_RUN
+#include <openvdb/openvdb.h>
+#include <openvdb/tools/SignedFloodFill.h>
+#include <openvdb/tools/Interpolation.h>
+#include <openvdb/tools/GridOperators.h>
+#include <openvdb/math/Math.h>
+#include <openvdb/math/Transform.h>
+#endif
 
 namespace itk
 {
@@ -37,30 +50,57 @@ public:
   /** Point type of the domain (not the image). */
   typedef typename ParticleRegionDomain<T, VDimension>::PointType PointType;
 
-  typedef LinearInterpolateImageFunction<ImageType, typename PointType::CoordRepType> ScalarInterpolatorType;
-
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I)
+  void SetImage(ImageType *I, double narrow_band)
   {
+    this->m_FixedDomain = false;
     this->Modified();
-    m_Image = I;
 
-    // Set up the scalar image and interpolation.
-    m_ScalarInterpolator->SetInputImage(m_Image);
+    openvdb::initialize(); // It is safe to initialize multiple times.
 
-    // Grab the upper-left and lower-right corners of the bounding box.  Points
-    // are always in physical coordinates, not image index coordinates.
-    typename ImageType::RegionType::IndexType idx = m_Image->GetRequestedRegion().GetIndex(); // upper lh corner
-    typename ImageType::RegionType::SizeType sz = m_Image->GetRequestedRegion().GetSize();  // upper lh corner
+    // Set a large background value, so that we quickly catch particles outside or on the edge the narrow band.
+    // (Downside: its more difficult to display the correct location of the point of failure.)
+    m_VDBImage = openvdb::FloatGrid::create(1e8);
+    m_VDBImage->setGridClass(openvdb::GRID_LEVEL_SET);
+    auto vdbAccessor = m_VDBImage->getAccessor();
+
+    // Save properties of the Image needed for the optimizer
+    m_Size = I->GetRequestedRegion().GetSize();
+    m_Spacing = I->GetSpacing();
+    m_Origin = I->GetOrigin();
+    m_Index = I->GetRequestedRegion().GetIndex();
+
+    // Transformation from index space to world space
+    openvdb::math::Mat4f mat;
+    mat.setIdentity();
+    mat.postScale(openvdb::Vec3f(m_Spacing[0], m_Spacing[1], m_Spacing[2]));
+    mat.postTranslate(openvdb::Vec3f(m_Origin[0], m_Origin[1], m_Origin[2]));
+    const auto xform = openvdb::math::Transform::createLinearTransform(mat);
+    m_VDBImage->setTransform(xform);
+
+    ImageRegionIterator<ImageType> it(I, I->GetRequestedRegion());
+    it.GoToBegin();
+
+    while(!it.IsAtEnd()) {
+      const auto idx = it.GetIndex();
+      const auto pixel = it.Get();
+      if(abs(pixel) > narrow_band) {
+        ++it;
+        continue;
+      }
+      const auto coord = openvdb::Coord(idx[0], idx[1], idx[2]);
+      vdbAccessor.setValue(coord, pixel);
+      ++it;
+    }
 
     typename ImageType::PointType l0;
-    m_Image->TransformIndexToPhysicalPoint(idx, l0);
+    I->TransformIndexToPhysicalPoint(m_Index, l0);
     for (unsigned int i = 0; i < VDimension; i++)
-        idx[i] += sz[i]-1;
+        m_Index[i] += m_Size[i]-1;
 
     typename ImageType::PointType u0;
-    m_Image->TransformIndexToPhysicalPoint(idx, u0);
+    I->TransformIndexToPhysicalPoint(m_Index, u0);
 
     // Cast points to higher precision if needed.  Parent class uses doubles
     // because they are compared directly with points in the particle system,
@@ -80,20 +120,10 @@ public:
     // Precompute and save values that are used in parts of the optimizer
     this->UpdateZeroCrossingPoint(I);
     this->UpdateSurfaceArea(I);
-
-    m_Size = I->GetRequestedRegion().GetSize();
-    m_Spacing = I->GetSpacing();
-    m_Origin = I->GetOrigin();
-    m_Index = I->GetRequestedRegion().GetIndex();
-  }
-  virtual ImageType* GetImage() {
-    return this->m_Image.GetPointer();
-  }
-  virtual const ImageType* GetImage() const {
-    return this->m_Image.GetPointer();
   }
 
-  inline double GetSurfaceArea() const override {
+  inline double GetSurfaceArea() const override
+  {
     throw std::runtime_error("Surface area is not computed currently.");
     return m_SurfaceArea;
   }
@@ -102,33 +132,39 @@ public:
     return m_Origin;
   }
 
-  inline typename ImageType::SizeType GetSize() const {
+  inline typename ImageType::SizeType GetSize() const
+  {
     return m_Size;
   }
 
-  inline typename ImageType::SpacingType GetSpacing() const {
+  inline typename ImageType::SpacingType GetSpacing() const
+  {
     return m_Spacing;
   }
 
-  inline typename ImageType::RegionType::IndexType GetIndex() const {
+  inline typename ImageType::RegionType::IndexType GetIndex() const
+  {
     return m_Index;
   }
 
-  inline PointType GetZeroCrossingPoint() const override {
+  inline PointType GetZeroCrossingPoint() const override
+  {
     return m_ZeroCrossingPoint;
   }
 
-  /** Sample the image at a point.  This method performs no bounds checking.
-      To check bounds, use IsInsideBuffer. */
+  /** Sample the image at a point.  This method performs bounds checking. */
   inline T Sample(const PointType &p) const
   {
-      if(IsInsideBuffer(p))
-        return  m_ScalarInterpolator->Evaluate(p);
-      else
-        return 0.0;
+    if(this->IsInsideBuffer(p)) {
+      const auto coord = this->ToVDBCoord(p);
+      return openvdb::tools::BoxSampler::sample(m_VDBImage->tree(), coord);
+    } else {
+      itkExceptionMacro("Distance transform queried for a Point, " << p << ", outside the given image domain. Consider increasing the narrow band" );
+    }
   }
 
-  inline double GetMaxDimRadius() const override {
+  inline double GetMaxDimRadius() const override
+  {
     double bestRadius = 0;
     double maxdim = 0;
     for (unsigned int i = 0; i < ImageType::ImageDimension; i++)
@@ -142,46 +178,62 @@ public:
     return bestRadius;
   }
 
-  /** Check whether the point p may be sampled in this image domain. */
-  inline bool IsInsideBuffer(const PointType &p) const
-  { return m_ScalarInterpolator->IsInsideBuffer(p); }
-
   /** Used when a domain is fixed. */
   void DeleteImages() override
   {
-    m_Image = 0;
-    m_ScalarInterpolator = 0;
+    m_VDBImage = 0;
   }
 
-  /** Allow public access to the scalar interpolator. */
-  virtual ScalarInterpolatorType* GetScalarInterpolator() {
-    return this->m_ScalarInterpolator.GetPointer();
-  }
-  
 protected:
-  ParticleImageDomain()
-  {
-    m_ScalarInterpolator = ScalarInterpolatorType::New();
+
+  openvdb::FloatGrid::Ptr GetVDBImage() const {
+    return m_VDBImage;
   }
+
+  // Why 4? The ITK version of the Optimizer already used a narrow band of +/- 4 in the
+  // curvature computation. This will allow existing use cases to work as before. This
+  // value can be set in the XML file for ShapeWorksRun.
+  ParticleImageDomain() : m_NarrowBand(4.0) { }
   virtual ~ParticleImageDomain() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
   {
     ParticleRegionDomain<T, VDimension>::PrintSelf(os, indent);
-    os << indent << "m_Image = " << m_Image << std::endl;
-    os << indent << "m_ScalarInterpolator = " << m_ScalarInterpolator << std::endl;
+    os << indent << "VDB Active Voxels = " << m_VDBImage->activeVoxelCount() << std::endl;
   }
-  
-private:
-  typename ImageType::Pointer m_Image;
-  typename ScalarInterpolatorType::Pointer m_ScalarInterpolator;
 
+  inline openvdb::math::Transform::Ptr transform() const {
+    return this->m_VDBImage->transformPtr();
+  }
+
+  // Converts a coordinate from an ITK Image point in world space to the corresponding
+  // coordinate in OpenVDB Index space. Raises an exception if the narrow band is not
+  // sufficiently large to sample the point.
+  inline openvdb::Vec3R ToVDBCoord(const PointType &p) const {
+    const auto worldCoord = openvdb::Vec3R(p[0], p[1], p[2]);
+    const auto idxCoord = this->transform()->worldToIndex(worldCoord);
+
+    // Make sure the coordinate is part of the narrow band
+    if(m_VDBImage->tree().isValueOff(openvdb::Coord::round(idxCoord))) { // `isValueOff` requires an integer coordinate
+      // If multiple threads crash here at the same time, the error message displayed is just "terminate called recursively",
+      // which isn't helpful. So we std::cerr the error to make sure its printed to the console.
+      std::cerr << "Sampled point outside the narrow band: " << p << std::endl;
+      itkExceptionMacro("Attempt to sample at a point outside the narrow band: " << p << ". Consider increasing the narrow band")
+    }
+
+    return idxCoord;
+  }
+
+private:
+
+  openvdb::FloatGrid::Ptr m_VDBImage;
   typename ImageType::SizeType m_Size;
   typename ImageType::SpacingType m_Spacing;
   PointType m_Origin;
   PointType m_ZeroCrossingPoint;
-  typename ImageType::RegionType::IndexType m_Index;
+  typename ImageType::RegionType::IndexType m_Index; // Index defining the corner of the region
   double m_SurfaceArea;
+  double m_NarrowBand;
 
   void UpdateZeroCrossingPoint(ImageType *I) {
     typename itk::ZeroCrossingImageFilter < ImageType, ImageType > ::Pointer zc =
