@@ -81,7 +81,10 @@ public:
     m_CurvatureStandardDeviationList.push_back(0.0);
     const ParticleDomainAddEvent &event = dynamic_cast<const ParticleDomainAddEvent &>(e);
     const ParticleSystemType *ps= dynamic_cast<const ParticleSystemType *>(o);
-    this->ComputeCurvatureStatistics(ps, event.GetDomainIndex());
+
+    if (!ps->GetDomainFlag(event.GetDomainIndex())) {
+      this->ComputeCurvatureStatistics(ps, event.GetDomainIndex());
+    }
   }
 
   /** */

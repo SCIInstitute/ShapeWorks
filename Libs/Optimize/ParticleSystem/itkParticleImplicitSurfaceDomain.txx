@@ -148,19 +148,19 @@ ParticleImplicitSurfaceDomain<T, VDimension>::
 SetFids(const char *fidsFile)
 {
     m_mesh->ReadFaceIndexMap(fidsFile);
-    const typename ImageType::PointType orgn = this->GetImage()->GetOrigin();
+    const typename ImageType::PointType orgn = this->GetOrigin();
     m_mesh->imageOrigin[0] = orgn[0];
     m_mesh->imageOrigin[1] = orgn[1];
     m_mesh->imageOrigin[2] = orgn[2];
-    typename ImageType::RegionType::SizeType sz = this->GetImage()->GetRequestedRegion().GetSize();
+    typename ImageType::RegionType::SizeType sz = this->GetSize();
     m_mesh->imageSize[0]   = sz[0];
     m_mesh->imageSize[1]   = sz[1];
     m_mesh->imageSize[2]   = sz[2];
-    typename ImageType::SpacingType sp = this->GetImage()->GetSpacing();
+    typename ImageType::SpacingType sp = this->GetSpacing();
     m_mesh->imageSpacing[0] = sp[0];
     m_mesh->imageSpacing[1] = sp[1];
     m_mesh->imageSpacing[2] = sp[2];
-    typename ImageType::RegionType::IndexType idx = this->GetImage()->GetRequestedRegion().GetIndex();
+    typename ImageType::RegionType::IndexType idx = this->GetIndex();
     m_mesh->imageIndex[0]   = idx[0];
     m_mesh->imageIndex[1]   = idx[1];
     m_mesh->imageIndex[2]   = idx[2];
@@ -244,6 +244,7 @@ ParticleImplicitSurfaceDomain<T, VDimension>::ApplyConstraints(PointType &p) con
       k = 0;
       }
     } // end while
+    return flag;
 }
 
 template <class T, unsigned int VDimension>
