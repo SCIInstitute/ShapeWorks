@@ -122,10 +122,12 @@ bool Session::save_project(std::string fname, std::string data_dir)
     return false;
   }
 
+  this->set_project_path(QFileInfo(filename).absolutePath());
+
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
   progress.setWindowModality(Qt::WindowModal);
-  //progress.show();
-  //progress.setMinimumDuration(2000);
+  progress.setMinimumDuration(2000);
+  progress.show();
 
   this->preferences_.set_saved();
   //write out mean info
@@ -507,7 +509,7 @@ bool Session::load_project(QString filename)
 
   this->set_project_path(QFileInfo(filename).absolutePath());
 
-  this->project_->load(filename.toStdString());
+  this->project_->load(QFileInfo(filename).fileName().toStdString());
 
   int num_subjects = this->project_->get_number_of_subjects();
   std::cerr << "num_subjects = " << num_subjects << "\n";
@@ -548,6 +550,47 @@ bool Session::load_project(QString filename)
 //---------------------------------------------------------------------------
 void Session::set_project_path(QString relative_path)
 {
+  std::cerr << "Setting project path to " << relative_path.toStdString() << "\n";
+
+  QDir old_path = QDir(this->project_path_);
+  QDir new_path = QDir(relative_path);
+
+  auto subjects = this->project_->get_subjects();
+  for (auto subject: subjects) {
+
+    // segmentations
+    auto paths = subject->get_segmentation_filenames();
+    std::vector<std::string> new_paths;
+    for (auto path: paths) {
+      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
+      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
+    }
+    subject->set_segmentation_filenames(new_paths);
+
+    // groomed
+    paths = subject->get_groomed_filenames();
+    new_paths.clear();
+    for (auto path: paths) {
+      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
+      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
+    }
+    subject->set_groomed_filenames(new_paths);
+
+    // local particles
+    auto path = subject->get_local_particle_filename();
+    if (path != "") {
+      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
+      subject->set_local_particle_filename(new_path.relativeFilePath(full_path).toStdString());
+    }
+
+    // global particles
+    path = subject->get_global_particle_filename();
+    if (path != "") {
+      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
+      subject->set_global_particle_filename(new_path.relativeFilePath(full_path).toStdString());
+    }
+  }
+
   this->project_path_ = relative_path;
   chdir(this->project_path_.toStdString().c_str());
 }
@@ -572,11 +615,6 @@ void Session::load_original_files(std::vector<std::string> filenames)
   filenames = new_filenames;
 
   for (int i = 0; i < filenames.size(); i++) {
-
-    QApplication::processEvents();
-    if (progress.wasCanceled()) {
-      break;
-    }
 
     QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
@@ -688,18 +726,19 @@ bool Session::update_points(std::vector<std::vector<itk::Point<double>>> points,
     // now update the Subject's filename
     // this needs to be done here so that the Project knows there are particle files
     std::string suffix = local ? "local" : "world";
-    auto base_name = this->shapes_[i]->get_original_filename().toStdString();
-    auto name =
-      base_name.substr(0, base_name.find_last_of(".")) + "." + suffix + ".particles";
-    std::string loc = shape->get_original_filename_with_path().toStdString();
-    auto pos = loc.find_last_of("/");
-    loc = loc.substr(0, pos) + "/";
-    auto path = loc + name;
+
+    auto name = this->shapes_[i]->get_original_filename();
+
+    int lastPoint = name.lastIndexOf(".");
+    QString fileNameNoExt = name.left(lastPoint);
+
+    name = fileNameNoExt + "." + QString::fromStdString(suffix) + ".particles";
+
     if (local) {
-      shape->get_subject()->set_local_particle_filename(path);
+      shape->get_subject()->set_local_particle_filename(name.toStdString());
     }
     else {
-      shape->get_subject()->set_global_particle_filename(path);
+      shape->get_subject()->set_global_particle_filename(name.toStdString());
     }
   }
 

@@ -172,10 +172,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp()
   this->preferences_window_ =
     QSharedPointer<PreferencesWindow>(new PreferencesWindow(this, preferences_));
   this->preferences_window_->set_values_from_preferences();
-  connect(this->preferences_window_.data(), SIGNAL(clear_cache()), this->session_.data(),
-          SLOT(handle_clear_cache()));
+
   connect(this->preferences_window_.data(), SIGNAL(clear_cache()), this,
-          SLOT(handle_pca_changed()));
+          SLOT(handle_clear_cache()));
   connect(this->preferences_window_.data(), SIGNAL(update_view()), this,
           SLOT(handle_color_scheme()));
   connect(this->preferences_window_.data(), SIGNAL(slider_update()), this,
@@ -631,6 +630,14 @@ void ShapeWorksStudioApp::handle_progress(size_t value)
 void ShapeWorksStudioApp::handle_new_mesh()
 {
   this->visualizer_->handle_new_mesh();
+}
+
+void ShapeWorksStudioApp::handle_clear_cache()
+{
+  this->handle_pca_changed();
+  if (this->session_) {
+    this->session_->handle_clear_cache();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -1236,6 +1243,8 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   if (this->session_->save_project(filename, this->data_dir_)) {
     this->handle_message("Project Saved");
   }
+
+  this->update_table();
 }
 
 //---------------------------------------------------------------------------
