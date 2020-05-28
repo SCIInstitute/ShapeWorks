@@ -222,6 +222,30 @@ TEST(ImageTests, rotateTest3)
   ASSERT_TRUE(image == ground_truth);
 }
 
+TEST(ImageTests, rotateTestOrderMatters) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
+  double angle = Pi / 2.0;
+  shapeworks::Vector3 axis = makeVector({1, 0, 0});
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.rotate(angle, axis);
+  image.rotate(-angle, axis);
+
+  Image image2(test_location + "la-bin-centered.nrrd");
+  image2.rotate(-angle, axis);
+  image2.rotate(angle, axis);
+
+  ASSERT_TRUE(image == image2);
+}
+
+TEST(ImageTests, rotateTestIdentity) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+  Image image(test_location + "la-bin-centered.nrrd");
+  image.rotate(0, makeVector({0,0,1}));
+  Image original(test_location + "la-bin-centered.nrrd");
+  ASSERT_TRUE(image == original);
+}
+
 TEST(ImageTests, extractlabelTest) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
 
