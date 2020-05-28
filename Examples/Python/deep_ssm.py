@@ -92,14 +92,12 @@ def Run_Pipeline(args):
 	# Training parameters dict
 	# val_freq sets how often too test on validation set and log
 	# for example val_freq=1 is every epoch and val_freq=2 is every other
-	parameters = {"epochs":300, "learning_rate":0.001, "val_freq":1}
+	parameters = {"epochs":10, "learning_rate":0.001, "val_freq":1}
 	if args.tiny_test:
 		parameters = {"epochs":5, "learning_rate":0.001, "val_freq":1}
 	model_path = train(train_loader, val_loader, parameters, parent_dir)
 
-
 	print("\n\n\nStep 5. Test DeepSSM\n") 
-
 	# Test DeepSSM
 	mr_error, rel_error = test(parent_dir + 'test/', model_path, test_loader, test_sample_names, PCA_scores_path)
 	print("Average mean root MSE on test set:")
