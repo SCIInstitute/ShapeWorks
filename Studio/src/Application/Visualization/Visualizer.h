@@ -3,10 +3,9 @@
 #include <map>
 #include <string>
 
-#include <Data/Project.h>
+#include <Data/Session.h>
 #include <Data/Preferences.h>
 #include <Visualization/Lightbox.h>
-#include <Visualization/DisplayObject.h>
 
 class Visualizer;
 typedef QSharedPointer< Visualizer > VisualizerHandle;
@@ -27,11 +26,13 @@ public:
   /// set the lightbox
   void set_lightbox(LightboxHandle lightbox);
 
-  /// set the project
-  void set_project(ProjectHandle project);
+  /// set the session
+  void set_session(SessionHandle session);
 
   /// set display mode (original, groomed, reconstructed)
   void set_display_mode(std::string mode);
+
+  std::string get_display_mode();
 
   /// turn automatic centering on/off
   void set_center(bool center);
@@ -47,7 +48,7 @@ public:
 
   void update_samples();
 
-  void display_sample(size_t i);
+  void display_sample(int i);
 
   void display_shape(const vnl_vector<double> &points);
 
@@ -60,7 +61,7 @@ public:
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
 
-  void setMean(const vnl_vector<double> &mean);
+  void set_mean(const vnl_vector<double> &mean);
 
   void reset_camera();
 
@@ -68,6 +69,7 @@ public:
 
   vnl_vector<double> getCurrentShape();
 
+  void handle_new_mesh();
   vtkSmartPointer<vtkPolyData> get_current_mesh();
 
 public Q_SLOTS:
@@ -76,9 +78,8 @@ public Q_SLOTS:
   void update_viewer_properties();
 
 private:
-  DisplayObjectHandle create_display_object(const vnl_vector<double> &points,
-                                            const std::vector<Point> &vectors);
-  std::map<double, QVector<DisplayObjectHandle>> disp_handles_;
+  ShapeHandle create_display_object(const vnl_vector<double> &points,
+                                    const std::vector<Point> &vectors);
   Preferences &preferences_;
 
   void compute_measurements();
@@ -90,14 +91,14 @@ private:
   bool show_surface_;
 
   LightboxHandle lightbox_;
-  ProjectHandle project_;
+  SessionHandle session_;
 
   vtkSmartPointer<vtkLookupTable> glyph_lut_;
   int selected_point_one_;
   int selected_point_two_;
 
   vnl_vector<double> cached_mean_;
-  vnl_vector<double> currentShape_;
+  vnl_vector<double> current_shape_;
 
-  QVector < QSharedPointer < DisplayObject >> display_objects_;
+  ShapeList display_objects_;
 };

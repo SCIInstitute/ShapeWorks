@@ -1,17 +1,14 @@
-#ifndef STUDIO_GROOM_GROOMTOOL_H
-#define STUDIO_GROOM_GROOMTOOL_H
+#pragma once
 
-#include <itkeigen/Eigen/Dense>
-#include <itkeigen/Eigen/Sparse>
-
-#include <QSharedPointer>
-#include <QWidget>
-#include <QProgressDialog>
-#include "Data/Preferences.h"
-#include <Groom/QGroom.h>
 #include <string>
 
-class Project;
+#include <QWidget>
+#include <QSharedPointer>
+#include <QProgressDialog>
+
+#include <Groom/QGroom.h>
+
+class Session;
 class Ui_GroomTool;
 class ShapeWorksStudioApp;
 
@@ -22,16 +19,23 @@ class GroomTool : public QWidget
   Q_OBJECT;
 public:
 
-  GroomTool(Preferences& prefs, std::vector<std::string>& files);
+  GroomTool();
   ~GroomTool();
 
   /// set the pointer to the project
-  void set_project(QSharedPointer<Project> project);
+  void set_session(QSharedPointer<Session> session);
 
-  void update_preferences();
-  void set_preferences();
-  void disableActions();
-  void enableActions();
+  //! Store settings to session
+  void store_settings();
+
+  //! Load settings from session
+  void load_settings();
+
+  //! Disable action buttons
+  void disable_actions();
+
+  //! Enable action buttons
+  void enable_actions();
 
 Q_SIGNALS:
   void groom_complete();
@@ -45,21 +49,19 @@ public Q_SLOTS:
   void on_blur_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
   void on_skipButton_clicked();
+  void on_restoreDefaults_clicked();
+
+  //! Run groom tool
+  void on_run_groom_button_clicked();
+
   void handle_thread_complete();
   void handle_progress(int val);
-  void on_restoreDefaults_clicked();
   void handle_error(std::string msg);
-
-  /// Run groom tool
-  void on_run_groom_button_clicked();
 
 private:
 
   Ui_GroomTool* ui_;
-  QSharedPointer<Project> project_;
-  Preferences& preferences_;
-  std::vector<std::string>& files_;
+  QSharedPointer<Session> session_;
+
   QGroom* groom_;
 };
-
-#endif /* STUDIO_GROOM_GROOMTOOL_H */

@@ -1,7 +1,4 @@
-/*
- * Shapeworks license
- */
-
+#pragma once
 /**
  * @file MeshManager.h
  * @brief Class to manage meshes
@@ -11,12 +8,10 @@
  * in the background.
  */
 
-#ifndef MESH_MANAGER_H
-#define MESH_MANAGER_H
-
 #include <vtkSmartPointer.h>
 
 #include <QWaitCondition>
+#include <QThreadPool>
 
 #include <Data/MeshCache.h>
 #include <Data/MeshGenerator.h>
@@ -33,43 +28,50 @@ public:
   MeshManager(Preferences& prefs);
   ~MeshManager();
 
-  //! pre-generate and cache a mesh for this shape
-  void generateMesh(const vnl_vector<double>& shape);
+  //! generate and cache a mesh for this shape in a different thread
+  void generate_mesh(const MeshWorkItem item);
 
-  //! get a mesh for a shape
-  vtkSmartPointer<vtkPolyData> getMesh(const vnl_vector<double>& shape);
+  //! get a mesh for a MeshWorkItem
+  vtkSmartPointer<vtkPolyData> get_mesh(const MeshWorkItem& item);
+
+  //! get a mesh for a set of points
+  vtkSmartPointer<vtkPolyData> get_mesh(const vnl_vector<double> &points);
 
   //! return the surface reconstructor
-  QSharedPointer<SurfaceReconstructor> getSurfaceReconstructor();
+  QSharedPointer<SurfaceReconstructor> get_surface_reconstructor();
 
   //! clear the cache
   void clear_cache();
 
-public Q_SLOTS:
-  void handle_thread_complete();
+  void shutdown_threads();
 
-signals:
+public Q_SLOTS:
+  void handle_thread_complete(const MeshWorkItem &item, vtkSmartPointer<vtkPolyData> mesh);
+
+Q_SIGNALS:
   void new_mesh();
 
 private:
 
+  void do_work();
+
   Preferences& prefs_;
 
   // cache of shape meshes
-  MeshCache meshCache_;
+  MeshCache mesh_cache_;
 
   // our own mesh generator
-  MeshGenerator meshGenerator_;
+  MeshGenerator mesh_generator_;
 
   // queue of meshes to build
-  MeshWorkQueue workQueue_;
+  MeshWorkQueue work_queue_;
 
   // the workers
-  std::vector<QThread*> threads_;
+  std::queue<QThread*> threads_;
 
-  size_t thread_count_;
+  int thread_count_;
 
-  QSharedPointer<SurfaceReconstructor> surfaceReconstructor_;
+  QSharedPointer<SurfaceReconstructor> surface_reconstructor_;
+
+  QThreadPool thread_pool_;
 };
-
-#endif // ifndef MESH_Manager_H

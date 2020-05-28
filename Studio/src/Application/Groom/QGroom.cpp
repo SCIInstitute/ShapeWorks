@@ -1,15 +1,16 @@
 #include "QGroom.h"
 
-QGroom::QGroom(QObject * parent,
-  std::vector<ImageType::Pointer> inputs,
-  double background, double foreground,
-  double sigma, size_t padding,
-  size_t iterations, bool verbose)
+QGroom::QGroom(QObject* parent,
+               std::vector<ImageType::Pointer> inputs,
+               double background, double foreground,
+               double sigma, size_t padding,
+               size_t iterations, bool verbose)
   : QObject(parent), ShapeWorksGroom(inputs,
-    background, foreground, sigma,
-     padding, iterations, verbose) {}
+                                     background, foreground, sigma,
+                                     padding, iterations, verbose) {}
 
-void QGroom::run() {
+void QGroom::run()
+{
   this->seed_.Fill(0);
   size_t ran = 0, total = this->runTools_.size() * this->images_.size();
   if (this->runTools_.count("center")) {
