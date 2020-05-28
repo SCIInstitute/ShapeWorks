@@ -615,7 +615,7 @@ bool TopologyPreservingFilter::execute(const optparse::Values &options, SharedCo
   }
   else
   {
-    ImageUtils::topologyPreservingSmooth<Image>(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
+    ImageUtils::topologyPreservingSmooth(sharedData.image, scaling, alpha, beta, iterations, applycurvature);
     return true;
   }
 }
