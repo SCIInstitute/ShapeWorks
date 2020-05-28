@@ -135,8 +135,10 @@ Researchers
 - [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
-- [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
 - [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
+- [Hong Xu](http://www.sci.utah.edu/people/hxu.html)
+- [Oleks Korshak](http://www.sci.utah.edu/people/oleks.html)
+- [Karthik Karanth](http://www.sci.utah.edu/people/karthik.html)
 
 Past Contributors
 ---------------------
