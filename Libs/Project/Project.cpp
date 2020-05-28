@@ -56,6 +56,10 @@ bool Project::save(std::string filename)
     xlnt::worksheet ws = this->wb_->sheet_by_index(0);
     ws.title("data");
 
+    Parameters project_parameters;
+    project_parameters.set("version", 1);
+    this->set_parameters("project", project_parameters);
+
     this->store_subjects();
     this->wb_->save(filename);
   } catch (xlnt::exception &e) {
