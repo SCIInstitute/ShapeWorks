@@ -607,7 +607,9 @@ TEST(ImageTests, dimsTest)
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/info/");
 
   Image image(test_location + "la-bin.nrrd");
-  Dims dims({289, 329, 182});
+  //Dims dims({289, 329, 182}); // This was causing compile error on Windows
+  Dims dims;
+  dims[0] = 289; dims[1] = 329; dims[2] = 182;
   
   ASSERT_TRUE(image.dims() == dims);
 }
