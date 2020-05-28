@@ -29,8 +29,8 @@ project(ShapeWorks)
 # OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
 if (NOT DEFINED OpenVDB_DIR)
   set(OpenVDB_DIR ${CMAKE_PREFIX_PATH}/lib/cmake/OpenVDB)
-  message(STATUS "OpenVDB_DIR set to ${OpenVDB_DIR}; if any problem finding OpenVDB, manually set it to path containing FindOpenVDB.cmake.")
 endif()
+message(STATUS "OpenVDB_DIR set to ${OpenVDB_DIR} (must contain FindOpenVDB.cmake)")
 file(TO_CMAKE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # fixes path to use forward slashes on Windows
 list(APPEND CMAKE_MODULE_PATH ${OpenVDB_DIR})
 find_package(OpenVDB MODULE REQUIRED)
