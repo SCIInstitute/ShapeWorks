@@ -277,7 +277,7 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio={BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
+  echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
 }
 
 # determine if we can build using specified or discovered version of Qt
