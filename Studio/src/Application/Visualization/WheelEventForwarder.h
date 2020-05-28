@@ -1,5 +1,4 @@
-#ifndef WHEELEVENTFORWARDER_H
-#define WHEELEVENTFORWARDER_H
+#pragma once
 
 #include <QtCore/QObject>
 
@@ -9,13 +8,11 @@ class WheelEventForwarder : public QObject
 {
   Q_OBJECT
 public:
-  explicit WheelEventForwarder( QScrollBar* target );
+  explicit WheelEventForwarder(QScrollBar* target);
   ~WheelEventForwarder();
 
-  bool eventFilter( QObject* obj, QEvent* event );
+  bool eventFilter(QObject* obj, QEvent* event);
 
 private:
   QScrollBar* target_;
 };
-
-#endif // WHEELEVENTFORWARDER_H

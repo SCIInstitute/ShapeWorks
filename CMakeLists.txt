@@ -125,6 +125,9 @@ ENDIF()
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
+### XLNT
+find_package (XLNT REQUIRED)
+
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
   add_definitions(-DSW_USE_OPENMP) # used in ExternalLibs/trimesh2/include/TriMesh.h

@@ -1,5 +1,4 @@
-#ifndef STUDIO_DATA_MESHSETTINGS_H
-#define STUDIO_DATA_MESHSETTINGS_H
+#pragma once
 
 #include <QString>
 #include <QSharedPointer>
@@ -30,5 +29,3 @@ public:
 
 private:
 };
-
-#endif /* STUDIO_DATA_MESHSETTINGS_H */

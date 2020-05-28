@@ -1,5 +1,4 @@
-#ifndef STUDIO_VISUALIZATION_STUDIOINTERACTORSTYLE_H
-#define STUDIO_VISUALIZATION_STUDIOINTERACTORSTYLE_H
+#pragma once
 
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkRenderWindowInteractor.h>
@@ -12,25 +11,30 @@ class StudioInteractorStyle : public vtkInteractorStyleTrackballCamera
 {
 public:
   static StudioInteractorStyle* New();
-  vtkTypeMacro( StudioInteractorStyle, vtkInteractorStyleTrackballCamera );
+  vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
 
-  void set_lightbox( Lightbox* lightbox );
+  void set_lightbox(Lightbox* lightbox);
 
   StudioInteractorStyle();
 
   virtual ~StudioInteractorStyle();
 
-  virtual void OnLeftButtonDown();
-  virtual void OnRightButtonDown();
+  void OnLeftButtonDown() override;
+  void OnRightButtonDown() override;
 
-  virtual void OnMouseWheelForward();
-  virtual void OnMouseWheelBackward();
+  void OnMouseWheelForward() override;
+  void OnMouseWheelBackward() override;
 
-  virtual void OnKeyDown();
+  void OnKeyDown() override;
+  void Dolly() override;
 
+  void Rotate() override;
+
+
+protected:
+
+   void Dolly(double factor) override;
 private:
 
   Lightbox* lightbox_;
 };
-
-#endif /* STUDIO_VISUALIZATION_STUDIOINTERACTORSTYLE_H */

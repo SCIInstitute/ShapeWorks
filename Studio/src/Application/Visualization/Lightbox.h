@@ -1,5 +1,4 @@
-#ifndef STUDIO_VISUALIZATION_LIGHTBOX_H
-#define STUDIO_VISUALIZATION_LIGHTBOX_H
+#pragma once
 
 #include <QSharedPointer>
 #include <QVector>
@@ -15,7 +14,6 @@
 
 class Mesh;
 class Shape;
-class DisplayObject;
 class StudioInteractorStyle;
 class Visualizer;
 
@@ -33,48 +31,57 @@ public:
   Lightbox();
   ~Lightbox();
 
-  void set_display_objects( QVector < QSharedPointer < DisplayObject > > objects );
+  void set_shapes(QVector<QSharedPointer<Shape>> shapes);
 
-  void set_interactor( vtkRenderWindowInteractor* interactor );
+  void set_interactor(vtkRenderWindowInteractor* interactor);
 
-  void set_render_window( vtkRenderWindow* render_window );
+  void set_render_window(vtkRenderWindow* render_window);
 
-  void set_tile_layout( int width, int height );
+  void set_tile_layout(int width, int height);
 
   void setup_renderers();
 
   int get_num_rows();
   int get_num_rows_visible();
 
-  void set_start_row( int row );
+  void set_start_row(int row);
 
   ViewerList get_viewers();
+
   void redraw();
 
-  void handle_pick( int* click_pos, bool one );
+  void handle_pick(int* click_pos, bool one);
 
-  void set_glyph_lut( vtkSmartPointer<vtkLookupTable> lut );
+  void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
 
-  void set_visualizer( Visualizer* visualizer );
+  void set_visualizer(Visualizer* visualizer);
 
   bool render_window_ready() { return render_window_ != NULL; }
-  
+
   void clear_renderers();
 
   std::array<double, 3> initPos();
+
+  void handle_new_mesh();
+
+  void reset_camera();
+
+  void reset_camera_clipping_range();
 
 public Q_SLOTS:
   void handle_timer_callback();
 
 private:
 
-  void display_objects();
+  void check_for_first_draw();
 
-  void insert_object_into_viewer( QSharedPointer<DisplayObject> object, int position );
+  void display_shapes();
+
+  void insert_shape_into_viewer(QSharedPointer<Shape> shape, int position);
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  QVector < QSharedPointer < DisplayObject > > objects_;
+  QVector<QSharedPointer<Shape>> shapes_;
 
   // there is one viewer for every tile in the lightbox display
   ViewerList viewers_;
@@ -94,9 +101,9 @@ private:
 
   vtkSmartPointer<StudioInteractorStyle> style_;
 
-  Visualizer* visualizer_ = nullptr;
+  Visualizer* visualizer_{nullptr};
 
-  std::vector<vtkSmartPointer<vtkImageData> > spinner_images_;
+  std::vector<vtkSmartPointer<vtkImageData>> spinner_images_;
 
   QTimer loading_timer_;
 
@@ -104,5 +111,3 @@ private:
 
   std::array<double, 3> initPos_;
 };
-
-#endif /* STUDIO_VISUALIZATION_LIGHTBOX_H */

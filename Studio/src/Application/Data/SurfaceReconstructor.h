@@ -1,6 +1,4 @@
-/*
- * Shapeworks license
- */
+#pragma once
 
 /**
  * @file SurfaceReconstructor.h
@@ -8,8 +6,6 @@
  *
  * The SurfaceReconstructor wraps the surface reconstruction method
  */
-
-#pragma once
 
 #include <vector>
 #include <string>
@@ -53,9 +49,9 @@ public:
   //**********************************************//
   //************Imported From Studio *************//
 
-  void initializeReconstruction(std::vector<std::vector<itk::Point<double> > > local_pts,
-                                std::vector<std::vector<itk::Point<double> > > global_pts,
-                                std::vector<ImageType::Pointer> distance_transform,
+  void initializeReconstruction(std::vector<std::vector<itk::Point<double>>> local_pts,
+                                std::vector<std::vector<itk::Point<double>>> global_pts,
+                                std::vector<ImageType::Pointer> distance_transforms,
                                 double maxAngle,
                                 float decimationPercent,
                                 int numClusters);
@@ -70,15 +66,9 @@ public:
   void resetReconstruct();
   //**********************************************//
 
-  void set_filenames(std::vector< std::string > distance_transform_filenames,
-                     std::vector< std::string > local_point_filenames,
-                     std::vector< std::string > world_point_filenames);
-
   void set_number_of_clusters(int num_clusters);
   void set_normal_angle(double angle);
   void set_decimation_percent(double decimation);
-
-  void generate_mean_dense();
 
   bool get_surface_reconstruction_available();
 
@@ -88,10 +78,6 @@ private:
   ReconstructionType reconstructor_;
 
   bool surface_reconstruction_available_ = false;
-
-  std::vector< std::string > distance_transform_filenames_;
-  std::vector< std::string > world_point_filenames_;
-  std::vector< std::string > local_point_filenames_;
 
   int num_clusters_ = -1;
   double decimation_percent_ = 0.3f;

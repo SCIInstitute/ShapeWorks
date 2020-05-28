@@ -502,7 +502,7 @@ int ParticleShapeStatistics<VDimension>
   m_groupdiff = m_mean2 - m_mean1;
   
   return 0;
-} // end ReloadPointFiles
+}
 
 
 template <unsigned int VDimension>
