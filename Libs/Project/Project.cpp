@@ -53,6 +53,9 @@ bool Project::save(std::string filename)
 {
 
   try {
+    xlnt::worksheet ws = this->wb_->sheet_by_index(0);
+    ws.title("data");
+
     this->store_subjects();
     this->wb_->save(filename);
   } catch (xlnt::exception &e) {
