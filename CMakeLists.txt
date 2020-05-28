@@ -32,11 +32,14 @@ include(DefaultBuildType)
 
 project(ShapeWorks)
 
-# OpenVDB doesn't provide a config file currently
-# https://www.openvdb.org/documentation/doxygen/build.html#buildUsingOpenVDB
-file(TO_CMAKE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # use forward slashes on windows
+# OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
+if (NOT DEFINED OpenVDB_DIR)
+  set(OpenVDB_DIR ${CMAKE_PREFIX_PATH}/lib/cmake/OpenVDB)
+  message(STATUS "OpenVDB_DIR set to ${OpenVDB_DIR}; if any problem finding OpenVDB, manually set it to path containing FindOpenVDB.cmake.")
+endif()
+file(TO_CMAKE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # fixes path to use forward slashes on Windows
 list(APPEND CMAKE_MODULE_PATH ${OpenVDB_DIR})
-find_package(OpenVDB REQUIRED)
+find_package(OpenVDB MODULE REQUIRED)
 
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
