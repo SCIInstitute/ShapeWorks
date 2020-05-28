@@ -7,7 +7,7 @@ ShapeWorks requires a binary volume format for input segmentations so these mesh
 
 The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane defined by the user. There are two ways to do so as explained below and they are differentiated by using the "--interactive" tag or not. 
 
-![Femur Lengths](images/femurLengths.png)
+![Femur Lengths](../images/femurLengths.png)
 
 ### Running the Use Case
 The use case is located at: [/Examples/Python](https://github.com/SCIInstitute/ShapeWorks/tree/master/Examples/Python)
@@ -28,7 +28,7 @@ If the --interactive tag is not used, the user will select the cutting plane in 
 
 The user will be prompted with “Type the prefix of the sample you wish to use to select the cutting plane from listed options and press enter.” and the options are listed. After they've typed the chosen sample prefix, an interactive window will pop up in which they can select the cutting plane. When the user is content with their selection, they simply close this window and the grooming process will continue. This process can be seen below.
 
-![Alt Text](images/notInteractiveFemur.gif)
+![Alt Text](../images/notInteractiveFemur.gif)
 
 Note that internally, whatever transformations are done to the sample the user has defined the cutting plane on will be done to the cutting plane as well, so that when it is time to clip the samples the cutting plane is still well defined. 
 
@@ -39,7 +39,7 @@ To run the use case interactively, either run:
 
 If the --interactive tag is used, the user will be asked to select a cutting plane for the femur shaft in the middle of the grooming process. Once the reference sample for alignment has been selected, an interactive window will pop up with the reference sample and the user can define the cutting plane. Closing the window will continue the grooming process. 
 
-![Alt Text](images/interactiveFemur.gif)
+![Alt Text](../images/interactiveFemur.gif)
 
 ### Grooming
 For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
@@ -103,11 +103,11 @@ The particle based model for the mean shape and samples and the primary modes of
 For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
 
 #### Mean Shape
-![Alt Text](images/mean_femur.gif)
+![Alt Text](../images/mean_femur.gif)
 
 #### Samples
-![Zoom Femur Samples](images/femur_samples_zoom.png)
-![Femur Samples](images/femur_samples.png)
+![Zoom Femur Samples](../images/femur_samples_zoom.png)
+![Femur Samples](../images/femur_samples.png)
 
 #### PCA
-![Alt Text](images/femur_PCA.gif)
+![Alt Text](../images/femur_PCA.gif)

@@ -57,7 +57,7 @@ For a description of the grooming tools and parameters, see: [Groom.md](https://
 6. Crop - The images and segmentations are cropped so that all of the samples are within the same bounding box.
 7. Distance Transform - Finally, the distance transform is taken and the data is ready for ShapeWorks optimize.
 
-![left Atrium Groom](images/leftatrium_groom.png)
+![left Atrium Groom](../images/leftatrium_groom.png)
 ### Optimize
 For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
 
@@ -84,10 +84,10 @@ Below are the default optimization parameters for this use case.
             "verbosity" : 3
 
 #### Mean Shape
-![left Atrium singleScale](images/leftatrium_singlescale.png)
+![left Atrium singleScale](../images/leftatrium_singlescale.png)
 
 #### PCA
-![left Atrium singleScale PCA mode](images/leftatrium_singlescale_pca.gif)
+![left Atrium singleScale PCA mode](../images/leftatrium_singlescale_pca.gif)
 
 * Multiscale optimization uses use defined starting number of particles and number of optimization levels, 
 and the optimized particles of each level are used to initialize the next level particles. 
@@ -115,10 +115,10 @@ The default values of this use case are as below.
             "verbosity" : 3
 
 #### Mean Shape          
-![left Atrium multiScale](images/leftatrium_multiscale.png)
+![left Atrium multiScale](../images/leftatrium_multiscale.png)
 
 #### PCA
-![left Atrium singleScale PCA mode](images/leftatrium_multiScale_pca.gif)
+![left Atrium singleScale PCA mode](../images/leftatrium_multiScale_pca.gif)
 
 
 ### Analyze

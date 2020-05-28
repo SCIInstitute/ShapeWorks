@@ -3,10 +3,10 @@
 
 - [Downloading Datasets](#Downloading-Datasets)
 - [Running Use Cases](#Running-the-Use-Cases)
-  - [Ellipsoid](use cases/Ellipsoid.md)
-  - [Fixed Domains Ellipsoid](use cases/FixedDomainEllipsoid.md)
-  - [Left Atrium](use cases/LeftAtrium.md)
-  - [Femur](use cases/Femur.md)
+  - [Ellipsoid](use%20cases/Ellipsoid.md)
+  - [Fixed Domains Ellipsoid](use%20cases/FixedDomainEllipsoid.md)
+  - [Left Atrium](use%20cases/LeftAtrium.md)
+  - [Femur](use%20cases/Femur.md)
 - [Dataset Guidelines](#Dataset-Guidelines)
 
 ## Downloading Datasets from [ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/)
