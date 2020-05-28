@@ -236,120 +236,11 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
     return this->load_light_project(filename);
   }
 
-  if (QString(project_element->Attribute("version")) != "2") {
-    QString message =
-      "Error: This version of ShapeWorksStudio only reads version 2 project files: " +
-      filename;
-    QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
-    return false;
-  }
-
-  // setup XML
-  std::vector<std::string> original_files, groom_files, local_point_files, global_point_files;
-  std::string sparseFile, denseFile, goodPtsFile;
-
-  TiXmlElement* elem = project_element->FirstChildElement("original_files");
-  if (elem) {
-    std::string filename;
-    std::istringstream inputsBuffer(elem->GetText());
-    while (inputsBuffer >> filename) {
-      std::cerr << "Found original file: " << filename << "\n";
-
-      if (!QFile::exists(QString::fromStdString(filename))) {
-        QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " +
-                              QString::fromStdString(filename), QMessageBox::Ok);
-        return false;
-      }
-
-      original_files.push_back(filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-
-  elem = project_element->FirstChildElement("distance_transforms");
-  if (elem) {
-    std::string filename;
-    std::istringstream inputsBuffer(elem->GetText());
-    while (inputsBuffer >> filename) {
-      //std::cerr << "Found distance transform: " << filename << "\n";
-
-      if (!QFile::exists(QString::fromStdString(filename))) {
-        QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " +
-                              QString::fromStdString(filename), QMessageBox::Ok);
-        return false;
-      }
-
-      groom_files.push_back(filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-
-  elem = project_element->FirstChildElement("local_point_files");
-  if (elem) {
-    local_point_files.clear();
-    std::string point_filename;
-    std::istringstream inputsBuffer(elem->GetText());
-    while (inputsBuffer >> point_filename) {
-      local_point_files.push_back(point_filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-
-  elem = project_element->FirstChildElement("world_point_files");
-  if (elem) {
-    global_point_files.clear();
-    std::string point_filename;
-    std::istringstream inputsBuffer(elem->GetText());
-    while (inputsBuffer >> point_filename) {
-      global_point_files.push_back(point_filename);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-  }
-
-  for (auto item = project_element->FirstChildElement(); item != nullptr;
-       item = item->NextSiblingElement()) {
-    if (QString(item->Value()) != "shapes") {
-
-      QString name = item->Value();
-      QString value = item->GetText();
-
-      if (name == "denseMean_file") {
-        denseFile = value.toStdString();
-      }
-      else if (name == "sparseMean_file") {
-        sparseFile = value.toStdString();
-      }
-      else if (name == "goodPoints_file") {
-        goodPtsFile = value.toStdString();
-      }
-      else if (name == "cutPlanes_file") {
-        if (value.toStdString().find_last_of(".txt") != std::string::npos) {
-          planesFile = value.toStdString();
-        }
-      }
-      else {
-        //    this->preferences_.set_preference(name.toStdString(), QVariant(value));
-      }
-    }
-  }
-
-  this->load_original_files(original_files);
-  if (groom_files.size() > 0) {
-    this->load_groomed_files(groom_files, 0.5);
-  }
-  this->load_point_files(local_point_files, true);
-  this->load_point_files(global_point_files, false);
-  if (!denseFile.empty() && !sparseFile.empty() && !goodPtsFile.empty()) {
-    this->mesh_manager_->get_surface_reconstructor()->readMeanInfo(denseFile, sparseFile,
-                                                                   goodPtsFile);
-  }
-  this->particles_present_ = local_point_files.size() == global_point_files.size() &&
-                             global_point_files.size() > 1;
-  return true;
+  QString message =
+    "Error: This version of ShapeWorksStudio only reads XLSX files: " +
+    filename;
+  QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -608,18 +499,16 @@ void Session::load_original_files(std::vector<std::string> filenames)
       return;
     }
 
-    if (i >= this->shapes_.size()) {
-      QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+    QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
 
-      std::shared_ptr<Subject> subject = std::make_shared<Subject>();
+    std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
-      shape->set_mesh_manager(this->mesh_manager_);
-      shape->set_subject(subject);
-      this->project_->get_subjects().push_back(subject);
+    shape->set_mesh_manager(this->mesh_manager_);
+    shape->set_subject(subject);
+    this->project_->get_subjects().push_back(subject);
+    shape->import_original_image(filenames[i], 0.5);
 
-      this->shapes_.push_back(shape);
-    }
-    this->shapes_[i]->import_original_image(filenames[i], 0.5);
+    this->shapes_.push_back(shape);
   }
 
   this->renumber_shapes();

@@ -278,7 +278,7 @@ void ShapeWorksStudioApp::on_action_open_project_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   this->open_project(filename);
   this->enable_possible_actions();
 }
@@ -320,7 +320,7 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered()
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   this->save_project(filename.toStdString());
 
@@ -337,6 +337,7 @@ void ShapeWorksStudioApp::on_action_quit_triggered()
 void ShapeWorksStudioApp::on_action_import_triggered()
 {
   QStringList filenames;
+  std::cerr << "getOpenFileNames, last_dir = " << this->preferences_.get_last_directory().toStdString() << "\n";
   filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                             this->preferences_.get_last_directory(),
                                             tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
@@ -345,7 +346,7 @@ void ShapeWorksStudioApp::on_action_import_triggered()
     return;
   }
 
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filenames[0]));
+  this->preferences_.set_last_directory(QFileInfo(filenames[0]).absolutePath());
   //need to re-run everything if something new is added.
 
   this->ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
@@ -1061,7 +1062,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   auto poly_data = this->visualizer_->get_current_mesh();
   vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
@@ -1081,7 +1082,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   auto poly_data = this->visualizer_->get_current_mesh();
 
@@ -1280,7 +1281,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   if (this->analysis_tool_->get_analysis_mode() == "all samples") {
     auto shapes = this->session_->get_shapes();
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -1322,7 +1323,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   std::ofstream out(filename.toStdString().c_str());
   for (size_t i = values.size() - 1; i > 0; i--) {
     out << values[i] << std::endl;
@@ -1345,7 +1346,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   auto basename =
     filename.toStdString().substr(0, filename.toStdString().find_last_of(".eval") - 4);
   for (size_t i = values.columns() - 1, ii = 0; i > 0; i--, ii++) {
@@ -1374,7 +1375,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   float range = this->preferences_.get_pca_range();
   float steps = static_cast<float>(this->preferences_.get_pca_steps());
@@ -1407,7 +1408,7 @@ void ShapeWorksStudioApp::on_actionExport_Variance_Graph_triggered()
   if (filename.isEmpty()) {
     return;
   }
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(filename));
+  this->preferences_.set_last_directory(QFileInfo(filename).absolutePath());
 
   if (!this->analysis_tool_->export_variance_graph(filename)) {
     this->handle_error("Error writing variance graph");
