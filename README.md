@@ -135,8 +135,10 @@ Researchers
 - [Praful Agrawal](https://www.sci.utah.edu/people/prafulag.html)
 - [Riddhish Bhalodia](https://www.sci.utah.edu/people/riddhishb.html)
 - [Atefeh Ghanaatikashani](https://www.sci.utah.edu/people/atefeh.gk.html)
-- [Iain Lee](https://www.sci.utah.edu/people/iclee.html)
 - [Jadie Adams](https://www.sci.utah.edu/people/jadie.html)
+- [Hong Xu](http://www.sci.utah.edu/people/hxu.html)
+- [Oleks Korshak](http://www.sci.utah.edu/people/oleks.html)
+- [Karthik Karanth](http://www.sci.utah.edu/people/karthik.html)
 
 Past Contributors
 ---------------------
@@ -230,6 +232,10 @@ P. R. Atkins, Y. Shin, P. Agrawal, S. Y. Elhabian, R. T. Whitaker, J. A. Weiss, 
 
 <p align="justify">
 M. Jacxsens, S. Elhabian, S. Brady, P. Chalmers, R. Tashjian, and H. Henninger. "Coracoacromial morphology: a contributor to recurrent traumatic anterior glenohumeral instability," Journal of Shoulder and Elbow Surgery, 1:1316-1325, 2019.
+</p>
+
+<p align="justify">
+Ken Museth. "VDB: High-resolution sparse volumes with dynamic topology" ACM Transactions on Graphics, July 2013, Article No.: 27
 </p>
 
 <!--
