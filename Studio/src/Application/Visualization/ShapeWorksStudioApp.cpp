@@ -369,6 +369,12 @@ void ShapeWorksStudioApp::import_files(QStringList file_names)
     list.push_back(a.toStdString());
   }
   try {
+
+    if (this->session_->get_num_shapes() == 0 && file_names.size() > 0) {
+      // if nothing is loaded, take the path of the first one as the relative path
+      this->session_->set_project_path(QFileInfo(file_names[0]).absolutePath());
+    }
+
     this->session_->load_original_files(list);
 
     this->session_->get_project()->store_subjects();
@@ -995,7 +1001,6 @@ void ShapeWorksStudioApp::open_project(QString filename)
   this->preferences_window_->set_values_from_preferences();
   this->update_from_preferences();
 
-
   this->preferences_.add_recent_file(filename);
   this->update_recent_files();
 
@@ -1217,7 +1222,7 @@ void ShapeWorksStudioApp::update_recent_files()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::save_project(string filename)
+void ShapeWorksStudioApp::save_project(std::string filename)
 {
   this->session_->settings().set(ShapeWorksStudioApp::SETTING_ZOOM_C,
                                  std::to_string(this->ui_->zoom_slider->value()));
@@ -1228,8 +1233,7 @@ void ShapeWorksStudioApp::save_project(string filename)
   this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();
 
-  if (this->session_->save_project(
-        filename, this->data_dir_)) {
+  if (this->session_->save_project(filename, this->data_dir_)) {
     this->handle_message("Project Saved");
   }
 }

@@ -50,6 +50,8 @@ public:
   /// load a shapeworks project
   bool load_project(QString filename);
 
+  void set_project_path(QString relative_path);
+
   std::shared_ptr<Project> get_project();
 
   /// import files

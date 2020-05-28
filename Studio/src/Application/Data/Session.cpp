@@ -505,8 +505,7 @@ bool Session::load_project(QString filename)
   this->reset();
   this->filename_ = filename;
 
-  this->project_path_ = QFileInfo(filename).canonicalPath();
-  chdir(this->project_path_.toStdString().c_str());
+  this->set_project_path(QFileInfo(filename).absolutePath());
 
   this->project_->load(filename.toStdString());
 
@@ -547,6 +546,13 @@ bool Session::load_project(QString filename)
 }
 
 //---------------------------------------------------------------------------
+void Session::set_project_path(QString relative_path)
+{
+  this->project_path_ = relative_path;
+  chdir(this->project_path_.toStdString().c_str());
+}
+
+//---------------------------------------------------------------------------
 std::shared_ptr<Project> Session::get_project()
 {
   return this->project_;
@@ -555,13 +561,18 @@ std::shared_ptr<Project> Session::get_project()
 //---------------------------------------------------------------------------
 void Session::load_original_files(std::vector<std::string> filenames)
 {
-  QProgressDialog progress("Loading images...", "Abort", 0, filenames.size(), this->parent_);
-  progress.setWindowModality(Qt::WindowModal);
-  //progress.show();
-  //progress.setMinimumDuration(2000);
+  // rewrite the paths based on the project path
+  std::vector<std::string> new_filenames;
+  for (int i = 0; i < filenames.size(); i++) {
+    QDir dir(".");
+    QString new_filename = dir.relativeFilePath(QString::fromStdString(filenames[i]));
+    std::cerr << filenames[i] << " -> " << new_filename.toStdString() << "\n";
+    new_filenames.push_back(new_filename.toStdString());
+  }
+  filenames = new_filenames;
 
   for (int i = 0; i < filenames.size(); i++) {
-    progress.setValue(i);
+
     QApplication::processEvents();
     if (progress.wasCanceled()) {
       break;
@@ -587,8 +598,7 @@ void Session::load_original_files(std::vector<std::string> filenames)
     }
     this->shapes_[i]->import_original_image(filenames[i], 0.5);
   }
-  progress.setValue(filenames.size());
-  QApplication::processEvents();
+
   this->renumber_shapes();
   if (filenames.size() > 0) {
     this->original_present_ = true;
