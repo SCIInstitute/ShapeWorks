@@ -418,7 +418,7 @@ void ShapeWorksStudioApp::disableAllActions()
   this->ui_->action_import->setEnabled(false);
   this->ui_->add_button->setEnabled(false);
   this->ui_->delete_button->setEnabled(false);
-  this->ui_->actionSet_Data_Directory->setEnabled(false);
+
   //subtools
   this->groom_tool_->disable_actions();
   this->optimize_tool_->disable_actions();
@@ -450,7 +450,7 @@ void ShapeWorksStudioApp::enable_possible_actions()
   this->ui_->action_import->setEnabled(true);
   this->ui_->add_button->setEnabled(true);
   this->ui_->delete_button->setEnabled(true);
-  this->ui_->actionSet_Data_Directory->setEnabled(true);
+
   //available modes
   this->ui_->action_import_mode->setEnabled(true);
   this->ui_->action_groom_mode->setEnabled(original_present);
@@ -1240,7 +1240,7 @@ void ShapeWorksStudioApp::save_project(std::string filename)
   this->optimize_tool_->store_params();
   this->analysis_tool_->store_settings();
 
-  if (this->session_->save_project(filename, this->data_dir_)) {
+  if (this->session_->save_project(filename)) {
     this->handle_message("Project Saved");
   }
 
@@ -1305,20 +1305,6 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered()
   //writer->SetInputData(msh);
   writer->Write();
   this->handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_actionSet_Data_Directory_triggered()
-{
-
-  this->data_dir_ = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                      preferences_.get_last_directory(),
-                                                      QFileDialog::ShowDirsOnly
-                                                      | QFileDialog::DontResolveSymlinks).
-                    toStdString();
-  this->handle_message("Data directory now set to " + this->data_dir_);
-  this->preferences_.set_last_directory(QDir().absoluteFilePath(QString::fromStdString(this->
-                                                                                       data_dir_)));
 }
 
 //---------------------------------------------------------------------------

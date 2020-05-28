@@ -240,7 +240,6 @@
     <addaction name="action_open_project"/>
     <addaction name="action_save_project"/>
     <addaction name="action_save_project_as"/>
-    <addaction name="actionSet_Data_Directory"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="action_export_current_mesh"/>

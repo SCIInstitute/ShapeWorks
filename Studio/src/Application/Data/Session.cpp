@@ -105,14 +105,13 @@ void Session::set_parent(QWidget* parent)
 }
 
 //---------------------------------------------------------------------------
-bool Session::save_project(std::string fname, std::string data_dir)
+bool Session::save_project(std::string fname)
 {
   QString filename = QString::fromStdString(fname);
   if (filename == "") {
     filename = this->filename_;
   }
   this->filename_ = filename;
-  bool defaultDir = data_dir == "";
 
   // open file
   QFile file(filename);
@@ -130,15 +129,6 @@ bool Session::save_project(std::string fname, std::string data_dir)
   progress.show();
 
   this->preferences_.set_saved();
-  //write out mean info
-  auto prefix = this->shapes_[0]->get_original_filename().toStdString();
-  prefix = prefix.substr(0, prefix.find_last_of("."));
-  auto location = this->shapes_[0]->get_original_filename_with_path().toStdString();
-  auto position = location.find_last_of("/");
-  location = location.substr(0, position) + "/" + prefix;
-  if (!defaultDir) {
-    location = data_dir + "/";
-  }
 
   progress.setValue(5);
   QApplication::processEvents();
@@ -158,11 +148,6 @@ bool Session::save_project(std::string fname, std::string data_dir)
     std::vector<std::string> groomed_list;
     for (int i = 0; i < this->shapes_.size(); i++) {
       QString loc = this->shapes_[i]->get_groomed_filename_with_path();
-      if (!defaultDir) {
-        loc = QString::fromStdString(data_dir) + "/" +
-              this->shapes_[i]->get_groomed_filename();
-      }
-
       std::string location = loc.toStdString();
 
       groomed_list.push_back(location);

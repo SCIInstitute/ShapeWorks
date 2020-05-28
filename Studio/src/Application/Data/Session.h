@@ -39,7 +39,7 @@ public:
   void set_parent(QWidget* parent);
 
   /// save project to file
-  bool save_project(std::string filename, std::string dataDir);
+  bool save_project(std::string filename);
 
   /// load project from file
   bool load_xml_project(QString filename, std::string& planesFile);

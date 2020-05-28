@@ -61,7 +61,6 @@ public Q_SLOTS:
   void on_action_analysis_mode_triggered();
   void on_actionShow_Tool_Window_triggered();
   void on_actionExport_PCA_Mesh_triggered();
-  void on_actionSet_Data_Directory_triggered();
   void on_actionExport_Eigenvalues_triggered();
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
@@ -175,7 +174,7 @@ private:
   QList<QAction*> recent_file_actions_;
 
   QProgressBar* progress_bar_;
-  std::string data_dir_, currentMessage_;
+  std::string currentMessage_;
 
   std::string current_display_mode_;
 
