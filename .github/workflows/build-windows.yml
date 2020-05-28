@@ -99,7 +99,7 @@ jobs:
     - name: Copy Anaconda Libraries
       working-directory: ${{runner.workspace}}/build
       shell: bash -l {0}
-      run: cp /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll C:/Miniconda3/envs/shapeworks/Library/half.dll ${{runner.workspace}}\build\bin\Release
+      run: cp /c/Miniconda3/envs/shapeworks/Library/bin/zlib.dll /c/Miniconda3/envs/shapeworks/Library/bin/tbb.dll /c/Miniconda3/envs/shapeworks/Library/half.dll bin/Release
 
     - name: Build Binary Package
       shell: bash
