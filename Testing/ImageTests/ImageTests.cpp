@@ -28,8 +28,8 @@ TEST(ImageTests, antialiasTest)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleBinaryIsotropicTest) {
-
+TEST(ImageTests, isoresampleBinaryIsotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "binary-isotropic-input.nrrd");
@@ -41,8 +41,8 @@ TEST(ImageTests, isoresampleBinaryIsotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleBinaryAnisotropicTest) {
-
+TEST(ImageTests, isoresampleBinaryAnisotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "binary-anisotropic-input.nrrd");
@@ -54,8 +54,8 @@ TEST(ImageTests, isoresampleBinaryAnisotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleSmoothIsotropicTest) {
-
+TEST(ImageTests, isoresampleSmoothIsotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-isotropic-input.nrrd");
@@ -66,8 +66,8 @@ TEST(ImageTests, isoresampleSmoothIsotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleSmoothAnisotropicTest) {
-
+TEST(ImageTests, isoresampleSmoothAnisotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "smooth-anisotropic-input.nrrd");
@@ -78,8 +78,8 @@ TEST(ImageTests, isoresampleSmoothAnisotropicTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, isoresampleImageAnisotropicTest) {
-
+TEST(ImageTests, isoresampleImageAnisotropicTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/isoresample/");
 
   Image image(test_location + "image-anisotropic-input.nrrd");
@@ -112,7 +112,8 @@ TEST(ImageTests, recentertest2)
   ASSERT_FALSE(image == ground_truth);
 }
 
-TEST(ImageTests, padTest) {
+TEST(ImageTests, padTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/pad/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -222,7 +223,8 @@ TEST(ImageTests, rotateTest3)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, rotateTestOrderMatters) {
+TEST(ImageTests, rotateTest4) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
 
   double angle = Pi / 2.0;
@@ -238,7 +240,8 @@ TEST(ImageTests, rotateTestOrderMatters) {
   ASSERT_TRUE(image == image2);
 }
 
-TEST(ImageTests, rotateTestIdentity) {
+TEST(ImageTests, rotateTest5) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
   Image image(test_location + "la-bin-centered.nrrd");
   image.rotate(0, makeVector({0,0,1}));
@@ -246,7 +249,8 @@ TEST(ImageTests, rotateTestIdentity) {
   ASSERT_TRUE(image == original);
 }
 
-TEST(ImageTests, extractlabelTest) {
+TEST(ImageTests, extractlabelTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/extract-label/");
 
   Image image(test_location + "1x2x2.nrrd");
@@ -256,7 +260,8 @@ TEST(ImageTests, extractlabelTest) {
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(ImageTests, closeholesTest) {
+TEST(ImageTests, closeholesTest) 
+{
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/close-holes/");
 
   Image image(test_location + "1x2x2.nrrd");
