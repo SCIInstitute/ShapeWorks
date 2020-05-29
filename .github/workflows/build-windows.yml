@@ -129,5 +129,5 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-             ${{runner.workspace}}/ShapeWorks/artifacts/*.exe
+             ${{runner.workspace}}\ShapeWorks\artifacts\*.exe
         
