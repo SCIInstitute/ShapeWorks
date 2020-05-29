@@ -19,8 +19,7 @@ jobs:
     steps:
 
     - name: Choose gcc 7
-      run: |
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+      run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
     - name: Prepare ccache timestamp
       id: ccache_cache_timestamp
