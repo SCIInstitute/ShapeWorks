@@ -27,7 +27,7 @@ include(DefaultBuildType)
 project(ShapeWorks)
 
 # OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
-if (NOT DEFINED OpenVDB_DIR)
+if (NOT DEFINED OpenVDB_DIR OR "${OpenVDB_DIR}" STREQUAL "OpenVDB_DIR-NOTFOUND")
   set(OpenVDB_DIR ${CMAKE_PREFIX_PATH}/lib/cmake/OpenVDB)
 endif()
 message(STATUS "OpenVDB_DIR set to ${OpenVDB_DIR} (must contain FindOpenVDB.cmake)")
