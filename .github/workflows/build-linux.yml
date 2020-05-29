@@ -105,6 +105,7 @@ jobs:
       run: mv /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so /tmp
 
     - name: Build Binary Package
+      shell: bash -l {0}
       run: conda activate shapeworks && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test
