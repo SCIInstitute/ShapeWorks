@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - auto_deploy
     tags:
     - '*'
   pull_request:
@@ -119,7 +120,7 @@ jobs:
 
     - name: Deploy
       id: deploy
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/auto_deploy'
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -127,5 +128,5 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.exe
         
