@@ -868,9 +868,7 @@ void Compare::buildParser()
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of image with which to compare");
-  parser.add_option("--x", "-x").action("store").type("double").set_default(0.0).help("Explicit x in image space (physical coordinates)");
-  parser.add_option("--y", "-y").action("store").type("double").set_default(0.0).help("Explicit y in image space (e.g., 3.14)");
-  parser.add_option("--z", "-z").action("store").type("double").set_default(0.0).help("Explicit z in image space");
+  parser.add_option("--precision").action("store").type("double").set_default(1e-12).help("Amount of precision for difference threshold");
 
   Command::buildParser();
 }
@@ -878,8 +876,9 @@ void Compare::buildParser()
 bool Compare::execute(const optparse::Values &options, SharedCommandData &sharedData)
 {
   std::string filename = options["name"];
+  double precision = static_cast<double>(options.get("precision"));
 
-  return sharedData.image == Image(filename);
+  return sharedData.image.compare(Image(filename), precision);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

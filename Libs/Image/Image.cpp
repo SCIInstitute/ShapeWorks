@@ -172,7 +172,7 @@ Image& Image::resample(const Point3& physicalSpacing, Dims logicalDims)
   return *this;
 }
 
-bool Image::operator==(const Image &other) const
+bool Image::compare(const Image &other, double precision) const
 {
   // we use the region of interest filter here with the full region because our
   // incoming image may be the output of an ExtractImageFilter or PadImageFilter
@@ -197,14 +197,14 @@ bool Image::operator==(const Image &other) const
   DiffType::Pointer diff = DiffType::New();
   diff->SetValidInput(other_itk_image);
   diff->SetTestInput(itk_image);
-  diff->SetDifferenceThreshold(0.0);
+  diff->SetDifferenceThreshold(precision);
   diff->SetToleranceRadius(0);
 
   try
   {
     diff->UpdateLargestPossibleRegion();
-  } 
-  catch (itk::ExceptionObject &exp) 
+  }
+  catch (itk::ExceptionObject &exp)
   {
     std::cerr << "Comparison failed" << std::endl;
     std::cerr << exp << std::endl;

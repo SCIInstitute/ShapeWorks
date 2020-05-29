@@ -329,7 +329,7 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
     file.close()
 
-def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0, percentage=50):
+def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=0.0, isoValue=0):
     outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
@@ -430,7 +430,7 @@ def anatomyPairsToSingles(outDir, seg_list, img_list, reference_side):
             centerFilename = os.path.join(outDir, prefix + "_origin.txt")
             cmd = ["shapeworks", 
                    "read-image", "--name", img,
-                   "reflect-volume", "--axis", str(0),
+                   "reflect", "--x", str(-1), "--y", str(1), "--z", str(1),
                    "write-image", "--name", img_out]
             subprocess.check_call(cmd)
             seg_out = rename(flip_seg, outSegDir, 'reflect')
@@ -521,24 +521,12 @@ def ClipBinaryVolumes(outDir, segList, cutting_plane_points):
         print("\n############## Clipping ##############")
         seg_out = rename(seg, outDir, "clipped")
         outListSeg.append(seg_out)
-        # write xml file
-        xmlfilename= seg_out.replace(".nrrd",".xml")
-        if os.path.exists(xmlfilename):
-            os.remove(xmlfilename)
-        xml = open(xmlfilename, "a")
-        xml.write("<?xml version=\"1.0\" ?>\n")
-        xml.write("<num_shapes>1</num_shapes>\n")
-        xml.write("<inputs>\n")
-        xml.write(seg+"\n")
-        xml.write("</inputs>\n")
-        xml.write("<outputs>\n")
-        xml.write(seg_out+"\n")
-        xml.write("</outputs>\n")
-        points = str(cutting_plane_points)[1:-1].replace(",","")
-        xml.write("<cutting_planes> " + points +" </cutting_planes>")
-        xml.close()
-        execCommand = ["ClipVolume", xmlfilename]
-        subprocess.check_call(execCommand)
+        cmd = ["shapeworks", "read-image", "--name", seg,
+               "clip", "--x1", str(cutting_plane_points[0]), "--y1", str(cutting_plane_points[1]), "--z1", str(cutting_plane_points[2]),
+                       "--x2", str(cutting_plane_points[3]), "--y2", str(cutting_plane_points[4]), "--z2", str(cutting_plane_points[5]),
+                       "--x3", str(cutting_plane_points[6]), "--y3", str(cutting_plane_points[7]), "--z3", str(cutting_plane_points[8]),
+               "write-image", "--name", seg_out]
+        subprocess.check_call(cmd)
     return outListSeg
 
 def SelectCuttingPlane(input_file):
