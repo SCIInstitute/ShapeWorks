@@ -120,8 +120,6 @@ jobs:
 
         
     - name: Deploy
-      working-directory: ${{runner.workspace}}/ShapeWorks/artifacts
-      id: deploy
       if: github.ref == 'refs/heads/auto_deploy'
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
@@ -130,5 +128,4 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-             *.exe
-        
+             d:\a\ShapeWorks\ShapeWorks\artifacts\*.exe
