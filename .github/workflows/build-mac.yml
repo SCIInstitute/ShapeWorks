@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - auto_deploy
     tags:
     - '*'
   pull_request:
@@ -102,7 +103,6 @@ jobs:
 
     - name: Build Binary Package
       run: pwd ; ls ; ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
-      
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
@@ -111,3 +111,15 @@ jobs:
       with:
         name: artifact-${{github.sha}}-mac
         path: ${{runner.workspace}}/ShapeWorks/artifacts
+
+    - name: Deploy
+      shell: bash -l {0}
+      if: github.ref == 'refs/heads/auto_deploy'
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-mac"
+        prerelease: true
+        title: "Development Build"
+        files: |
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
