@@ -113,7 +113,7 @@ jobs:
         path: ${{runner.workspace}}/ShapeWorks/artifacts
 
     - name: Deploy
-      shell: bash -l {0}
+      id: deploy
       if: github.ref == 'refs/heads/auto_deploy'
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
