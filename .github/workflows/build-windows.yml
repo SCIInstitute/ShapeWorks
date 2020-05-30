@@ -118,18 +118,58 @@ jobs:
         name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
 
-    - name: Deploy
+    - name: Deploy1
       if: github.ref == 'refs/heads/auto_deploy'
       uses: marvinpinto/action-automatic-releases@v1.0.0
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest-windows"
+        automatic_release_tag: "latest-windows1"
         prerelease: true
-        title: "Development Build"
+        title: "Development Build1"
         files: |
              d:\a\ShapeWorks\ShapeWorks\artifacts\*.exe
+
+    - name: Deploy2
+      if: github.ref == 'refs/heads/auto_deploy'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-windows2"
+        prerelease: true
+        title: "Development Build2"
+        files: |
              d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe
+
+    - name: Deploy3
+      if: github.ref == 'refs/heads/auto_deploy'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-windows3"
+        prerelease: true
+        title: "Development Build3"
+        files: |
              ${{runner.workspace}}/ShapeWorks/artifacts/*.exe
+
+    - name: Deploy4
+      if: github.ref == 'refs/heads/auto_deploy'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-windows4"
+        prerelease: true
+        title: "Development Build4"
+        files: |
              \ShapeWorks\artifacts\*.exe
+
+    - name: Deploy5
+      if: github.ref == 'refs/heads/auto_deploy'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-windows5"
+        prerelease: true
+        title: "Development Build5"
+        files: |
              /ShapeWorks/artifacts/*.exe
              
