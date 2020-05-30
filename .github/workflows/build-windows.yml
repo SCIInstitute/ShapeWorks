@@ -116,3 +116,14 @@ jobs:
       with:
         name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
+
+    - name: Deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-windows"
+        prerelease: true
+        title: "Development Build for Windows"
+        files: |
+             d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe

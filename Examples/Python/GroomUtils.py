@@ -185,24 +185,38 @@ def FindReferenceImage(inDataList):
     """
         This find the median file between all the input files
     """
-    IMG = []
-    DIM = []
+    x = y = z = 0
+    for i in range(len(inDataList)):
+        dim = itk.GetArrayFromImage(itk.imread(inDataList[i])).shape
+        if dim[0] > x:
+            x = dim[0]
+        if dim[1] > y:
+            y = dim[1]
+        if dim[2] > z:
+            z = dim[2]
+
+    COM = np.zeros((x, y, z))
     for i in range(len(inDataList)):
         tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
-        IMG.append(tmp)
-        DIM.append(tmp.shape)
-
-    ref_dim = np.max(DIM, axis =0)
-
+        COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                            ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                            ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2)))
+    COM /= len(inDataList)
+    dist = np.inf
+    idx = 0
     for i in range(len(inDataList)):
-        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]), (0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant' , constant_values = 0)
+        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
+        tmp_dist = np.linalg.norm(
+            COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                               ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                               ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2))))
+        if tmp_dist < dist:
+            idx = i
+            dist = tmp_dist
 
-    COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
-
-    idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
     print(" ")
     print("############# Reference File #############")
-    cprint(("The reference file for rigid alignment is found"), 'green')
+    cprint(("The reference file for rigid alignment is found"), 'cyan')
     cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
     print("###########################################")
     print(" ")

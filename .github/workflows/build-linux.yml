@@ -120,3 +120,14 @@ jobs:
         name: artifact-${{github.sha}}-linux
         path: ${{runner.workspace}}/ShapeWorks/artifacts
 
+    - name: Deploy
+      id: deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-linux"
+        prerelease: true
+        title: "Development Build for Linux"
+        files: |
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
