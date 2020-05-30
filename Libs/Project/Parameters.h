@@ -20,6 +20,7 @@ public:
   static constexpr const char* GROOM_PARAMS = "groom";
   static constexpr const char* OPTIMIZE_PARAMS = "optimize";
   static constexpr const char* STUDIO_PARAMS = "studio";
+  static constexpr const char* PROJECT_PARAMS = "project";
 
   //! get a parameter based on a key
   Variant get(std::string key, Variant default_value);

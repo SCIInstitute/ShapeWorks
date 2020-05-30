@@ -337,7 +337,8 @@ void ShapeWorksStudioApp::on_action_quit_triggered()
 void ShapeWorksStudioApp::on_action_import_triggered()
 {
   QStringList filenames;
-  std::cerr << "getOpenFileNames, last_dir = " << this->preferences_.get_last_directory().toStdString() << "\n";
+  std::cerr << "getOpenFileNames, last_dir = " <<
+  this->preferences_.get_last_directory().toStdString() << "\n";
   filenames = QFileDialog::getOpenFileNames(this, tr("Import Files..."),
                                             this->preferences_.get_last_directory(),
                                             tr("NRRD files (*.nrrd);;MHA files (*.mha)"));
@@ -989,17 +990,20 @@ void ShapeWorksStudioApp::open_project(QString filename)
 
   this->analysis_tool_->reset_stats();
 
-  std::string planesFile;
   try
   {
-    if (!this->session_->load_xml_project(filename, planesFile)) {
-
+    if (!this->session_->load_project(filename)) {
       this->enable_possible_actions();
-
       return;
     }
   } catch (std::runtime_error e) {
     this->handle_error(e.what());
+  }
+
+  auto project = this->session_->get_project();
+  if (project->get_version() > project->get_supported_version()) {
+    this->handle_warning("Warning: The project you have opened was created in a newer version of ShapeWorks\n\n"
+                         "Some features may not work and some settings may be incorrect or missing");
   }
 
   this->is_loading_ = true;
