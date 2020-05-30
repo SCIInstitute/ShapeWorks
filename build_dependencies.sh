@@ -258,7 +258,7 @@ build_openvdb()
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
   else
-      cmake -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      cmake -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
