@@ -102,7 +102,6 @@ jobs:
 
     - name: Build Binary Package
       run: pwd ; ls ; ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
-      
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && ctest -VV
@@ -111,3 +110,15 @@ jobs:
       with:
         name: artifact-${{github.sha}}-mac
         path: ${{runner.workspace}}/ShapeWorks/artifacts
+
+    - name: Deploy
+      id: deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-mac"
+        prerelease: true
+        title: "Development Build for Mac"
+        files: |
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip

@@ -62,6 +62,14 @@ ShapeWorks provides official user releases, the features of which can be seen at
 First, download the latest ShapeWorks binary release:  
 https://github.com/SCIInstitute/ShapeWorks/releases/latest
 
+We also provide up-to-date development builds from the master branch for Windows, Mac, and Linux:
+
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac
+https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux
+
+Please understand that these are in-progress development builds, not official releases.
+
 Then follow the appropriate instructions for their platform:  
 [Windows](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Windows_README.txt)  
 [Mac](https://raw.githubusercontent.com/SCIInstitute/ShapeWorks/master/Documentation/install/Mac_README.txt)  
