@@ -9,8 +9,9 @@ import os
 
 
 _ERROR_LOG_FILE = 'portal_error_log.txt'
-_MB_PER_CHUNK = 128
-_CHUNK_SIZE = _MB_PER_CHUNK * 1048576 # Download 128 MB at a time
+_MB_PER_CHUNK = 64
+_B_PER_MB = 1048576
+_CHUNK_SIZE = _MB_PER_CHUNK * _B_PER_MB # Download 128 MB at a time
 
 ## Utility function to write to the error log file
 def _writeToErrorLog(infoDict):
@@ -41,7 +42,7 @@ def _makeRequest(requestFunction, url, params, headers, actionMessage, data, pri
                 'response code': response.status_code, 
                 'response text': response.text,
                 'action message': actionMessage, 
-                'datetime': datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
+                'datetime': datetime.now().strftime("%Y/%m/%d, %H:%M:%S")})
     raise ValueError('Response code %s while %s', str(response.status_code), actionMessage)
 
 
@@ -170,15 +171,15 @@ def downloadItem(serverAddress, accessToken, path, item):
     )
     filename = path + '/' + item['name']
     fileSize = int(response.headers['Content-Length'])
-    chunkIndex = 0
+    bytesDownloaded = 0
 
     with open(filename, "wb") as filehandle:
         for chunk in response.iter_content(chunk_size=_CHUNK_SIZE):
             if not chunk:  # filter out keep-alive new chunks
                 continue
             filehandle.write(chunk)
-            chunkIndex += 1
-            stdout.write('\r%s [%d/%d MB]' % (filename, chunkIndex*_MB_PER_CHUNK, ceil(fileSize / _CHUNK_SIZE * _MB_PER_CHUNK)))
+            bytesDownloaded += len(chunk)
+            _printProgress(filename, bytesDownloaded)
         stdout.write('\n')
 
 
@@ -191,17 +192,26 @@ def downloadFolder(serverAddress, accessToken, path, folderInfo):
         actionMessage = 'downloading folder %s' % folderInfo['name']
     )
     filename = path + '/' + folderInfo['name'] + '.zip'
-    chunkIndex = 0
+    bytesDownloaded = 0
 
     with open(filename, "wb") as filehandle:
         for chunk in response.iter_content(chunk_size=_CHUNK_SIZE):
             if not chunk:  # filter out keep-alive new chunks
                 continue
             filehandle.write(chunk)
-
-            chunkIndex += 1
-            stdout.write('\r%s [%d MB]' % (filename, chunkIndex*_MB_PER_CHUNK))
+            bytesDownloaded += len(chunk)
+            _printProgress(filename, bytesDownloaded)
         stdout.write('\n')
+
+
+def _printProgress(fileName, progressBytes, totalBytes = None):
+    divider = 1024 if progressBytes < _B_PER_MB else _B_PER_MB
+    unit = 'KB' if progressBytes < _B_PER_MB else 'MB'
+
+    if totalBytes is None:
+        stdout.write('\r%s [%d %s]' % (fileName, progressBytes/divider, unit))
+    else:
+        stdout.write('\r%s [%d/%d %s]' % (fileName, progressBytes/divider, totalBytes/divider, unit))
 
 
 def createFolder(serverAddress, accessToken, parentId, name, parentType='folder'):
@@ -241,9 +251,9 @@ def uploadFile(serverAddress, accessToken, parentId, name, path, parentType='fol
                         actionMessage = 'Uploading chunk %d for %s' % (chunkIndex, name),
                         data = chunk
                     )
-                offset += _CHUNK_SIZE
+                offset += len(chunk)
                 chunkIndex += 1
-                stdout.write('\r%s [%d/%d MB]' % (path, chunkIndex*_MB_PER_CHUNK, ceil(filesize / _CHUNK_SIZE * _MB_PER_CHUNK)))
+                _printProgress(path, offset, filesize)
             else:
                 break
         stdout.write('\n')
