@@ -64,9 +64,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cd ..
 else
     # Copy libraries from anaconda
-    cp /usr/share/miniconda3/envs/shapeworks/lib/libtbb* lib
-    cp /usr/share/miniconda3/envs/shapeworks/lib/libHalf* lib
-    cp /usr/share/miniconda3/envs/shapeworks/lib/libboost_iostreams* lib
+    cp /usr/share/miniconda3/envs/shapeworks/lib/lib* lib
 
     cd bin
     linuxdeployqt ShapeWorksView2 -verbose=2
