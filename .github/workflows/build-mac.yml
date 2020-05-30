@@ -117,7 +117,7 @@ jobs:
       uses: marvinpinto/action-automatic-releases@v1.0.0
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest-mac"
+        automatic_release_tag: "dev-mac"
         prerelease: true
         title: "Development Build for Mac"
         files: |
