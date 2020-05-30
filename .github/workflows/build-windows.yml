@@ -120,7 +120,7 @@ jobs:
 
     - name: Deploy
       if: github.ref == 'refs/heads/auto_deploy'
-      uses: "marvinpinto/action-automatic-releases@1.0.0"
+      uses: marvinpinto/action-automatic-releases@v1.0.0
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest-windows"
