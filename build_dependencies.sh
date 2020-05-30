@@ -228,7 +228,7 @@ build_xlnt()
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
   else
-      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=ON -DCMAKE_INSTALL_LIBDIR=lib -DXLNT_LIB_DEST_DIR=lib -DXLNT_CMAKE_CFG_DEST_DIR="lib/cmake/xlnt" ..
+      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=ON ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
