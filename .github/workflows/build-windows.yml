@@ -118,10 +118,9 @@ jobs:
         name: artifact-${{github.sha}}-windows
         path: ${{runner.workspace}}\ShapeWorks\artifacts
 
-        
     - name: Deploy
       if: github.ref == 'refs/heads/auto_deploy'
-      uses: "marvinpinto/action-automatic-releases@latest"
+      uses: "marvinpinto/action-automatic-releases@1.0.0"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest-windows"
@@ -129,3 +128,8 @@ jobs:
         title: "Development Build"
         files: |
              d:\a\ShapeWorks\ShapeWorks\artifacts\*.exe
+             d:/a/ShapeWorks/ShapeWorks/artifacts/*.exe
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.exe
+             \ShapeWorks\artifacts\*.exe
+             /ShapeWorks/artifacts/*.exe
+             
