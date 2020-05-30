@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - auto_deploy
     tags:
     - '*'
   pull_request:
@@ -119,7 +118,7 @@ jobs:
         path: ${{runner.workspace}}\ShapeWorks\artifacts
 
     - name: Deploy
-      if: github.ref == 'refs/heads/auto_deploy'
+      if: github.ref == 'refs/heads/master'
       uses: marvinpinto/action-automatic-releases@v1.0.0
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
