@@ -64,7 +64,9 @@ https://github.com/SCIInstitute/ShapeWorks/releases/latest
 We also provide up-to-date development builds from the master branch for Windows, Mac, and Linux:
 
 https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-windows
+
 https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-mac
+
 https://github.com/SCIInstitute/ShapeWorks/releases/tag/dev-linux
 
 Please understand that these are in-progress development builds, not official releases.
