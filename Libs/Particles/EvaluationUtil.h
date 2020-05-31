@@ -4,6 +4,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
+namespace shapeworks {
 struct MultiVariateNormalRandom
 {
   Eigen::VectorXd mean;
@@ -72,4 +73,5 @@ void SaveReconstructions(std::vector<Reconstruction> &reconstructions, const std
           << "</group_ids>";
     xmlOF.close();
   }
+}
 }

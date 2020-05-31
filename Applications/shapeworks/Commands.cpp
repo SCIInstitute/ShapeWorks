@@ -992,7 +992,7 @@ bool ReadParticleSystem::execute(const optparse::Values &options, SharedCommandD
 {
   std::vector<std::string> filenames = options.get("names");
   try {
-    sharedData.particleSystem.LoadParticles(filenames);
+    sharedData.particleSystem = ParticleSystem(filenames);
     return true;
   } catch(...) {
     std::cerr << "exception while reading particle system" << std::endl;

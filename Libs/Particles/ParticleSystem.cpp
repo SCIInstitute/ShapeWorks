@@ -1,11 +1,8 @@
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem()
-{
+namespace shapeworks {
 
-}
-
-void ParticleSystem::LoadParticles(const std::vector<std::string> &_paths)
+ParticleSystem::ParticleSystem(const std::vector<std::string> &_paths)
 {
   if (_paths.empty()) {
     throw std::runtime_error("No filenames passed to readparticlesystem");
@@ -38,6 +35,5 @@ void ParticleSystem::LoadParticles(const std::vector<std::string> &_paths)
     reader->Update();
     P.col(i) = Eigen::Map<const Eigen::VectorXd>((double *) reader->GetOutput().data(), D);
   }
-
-  isLoaded = true;
+}
 }
