@@ -10,19 +10,23 @@ class ParticleSystem {
 public:
   ParticleSystem(const std::vector<std::string> &paths);
 
-  const Eigen::MatrixXd &Particles() const {
+  const Eigen::MatrixXd &Particles() const
+  {
     return P;
   };
 
-  const std::vector<std::string> &Paths() const {
+  const std::vector<std::string> &Paths() const
+  {
     return paths;
   }
 
-  int N() const {
+  int N() const
+  {
     return P.cols();
   }
 
-  int D() const {
+  int D() const
+  {
     return P.rows();
   }
 
