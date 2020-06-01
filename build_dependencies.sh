@@ -258,7 +258,7 @@ build_openvdb()
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
   else
-      cmake -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      cmake -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -280,10 +280,10 @@ show_shapeworks_build()
   echo "cmake -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=Release ${SRC}"
 }
 
-# determine if we can build using specified or discovered version of Qt
+# determine if we can build using the specified or discovered version of Qt
 verify_qt()
 {
-  # If BUILD_GUI is true, verify sufficient version of Qt is installed using the qmake that's in the path.
+  # If BUILD_GUI is true, verify that a sufficient version of Qt is installed using the qmake that's in the path.
   # If not, inform the user of where to go to download and install Qt.
 
   if [[ $BUILD_GUI = 1 ]]; then
