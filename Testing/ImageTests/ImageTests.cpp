@@ -237,15 +237,17 @@ TEST(ImageTests, rotateTest4)
   image2.rotate(-angle, axis);
   image2.rotate(angle, axis);
 
-  ASSERT_TRUE(image == image2);
+  ASSERT_FALSE(image == image2);
 }
 
 TEST(ImageTests, rotateTest5) 
 {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/rotate/");
+
   Image image(test_location + "la-bin-centered.nrrd");
   image.rotate(0, makeVector({0,0,1}));
   Image original(test_location + "la-bin-centered.nrrd");
+
   ASSERT_TRUE(image == original);
 }
 

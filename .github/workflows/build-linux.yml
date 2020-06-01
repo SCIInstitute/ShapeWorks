@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - release_v5.4
     tags:
     - '*'
   pull_request:
@@ -14,9 +15,12 @@ env:
 jobs:
   build:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-16.04
     
     steps:
+
+    - name: Choose gcc 7
+      run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
     - name: Prepare ccache timestamp
       id: ccache_cache_timestamp
@@ -102,7 +106,8 @@ jobs:
       run: mv /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlmysql.so /home/runner/work/ShapeWorks/Qt/5.9.9/gcc_64/plugins/sqldrivers/libqsqlpsql.so /tmp
 
     - name: Build Binary Package
-      run: pwd ; ls ; PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install ; ls /home/runner/work/ShapeWorks/ShapeWorks/package
+      shell: bash -l {0}
+      run: conda activate shapeworks && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test
       shell: bash -l {0}
@@ -120,3 +125,14 @@ jobs:
         name: artifact-${{github.sha}}-linux
         path: ${{runner.workspace}}/ShapeWorks/artifacts
 
+    - name: Deploy
+      id: deploy
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@v1.0.0
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "dev-linux"
+        prerelease: true
+        title: "Development Build for Linux"
+        files: |
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip

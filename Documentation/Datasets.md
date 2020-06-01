@@ -1,6 +1,8 @@
 
 # Datasets
 
+[ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/)
+
 ## Requirements
 
 Each dataset must have a **License.txt** which descibes the terms of use and citation requirements for the data.  
