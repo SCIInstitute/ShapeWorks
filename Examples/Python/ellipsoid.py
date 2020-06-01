@@ -167,7 +167,7 @@ def Run_Pipeline(args):
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "verbosity" : 3
+            "verbosity" : 3,
           }
 
         if args.tiny_test:
@@ -197,7 +197,7 @@ def Run_Pipeline(args):
             "procrustes_scaling" : 0,
             "save_init_splits" : 0,
             "debug_projection" : 0,
-            "verbosity" : 3
+            "verbosity" : 3,
             }
 
         """Now we execute a multi-scale particle optimization function"""

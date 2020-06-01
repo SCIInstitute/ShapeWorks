@@ -43,7 +43,7 @@ public:
     /// grows or shrinks the region by the specified amount
     void pad(int padding) {
       for (auto i=0; i<3; i++) {
-        min[i] += padding;
+        min[i] -= padding;
         max[i] += padding;
       }
     }

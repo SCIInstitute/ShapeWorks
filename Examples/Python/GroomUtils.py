@@ -112,25 +112,46 @@ def FindReferenceImage(inDataList):
     """
     This find the median file between all the input files
     """
-    print("\n############# Reference File #############")
-    IMG = []
-    DIM = []
+    x = y = z = 0
+    for i in range(len(inDataList)):
+        dim = itk.GetArrayFromImage(itk.imread(inDataList[i])).shape
+        if dim[0] > x:
+            x = dim[0]
+        if dim[1] > y:
+            y = dim[1]
+        if dim[2] > z:
+            z = dim[2]
+
+    COM = np.zeros((x, y, z))
     for i in range(len(inDataList)):
         tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
-        IMG.append(tmp)
-        DIM.append(tmp.shape)
-
-    ref_dim = np.max(DIM, axis =0)
+        COM += np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                            ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                            ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2)))
+    COM /= len(inDataList)
+    dist = np.inf
+    idx = 0
     for i in range(len(inDataList)):
-        IMG[i] = np.pad(IMG[i], ((0,ref_dim[0]-DIM[i][0]), (0,ref_dim[1]-DIM[i][1]), (0,ref_dim[2]-DIM[i][2])), mode ='constant', constant_values=0)
+        tmp = itk.GetArrayFromImage(itk.imread(inDataList[i]))
+        tmp_dist = np.linalg.norm(
+            COM - np.pad(tmp, (((x - tmp.shape[0]) // 2, (x - tmp.shape[0]) - (x - tmp.shape[0]) // 2),
+                               ((y - tmp.shape[1]) // 2, (y - tmp.shape[1]) - (y - tmp.shape[1]) // 2),
+                               ((z - tmp.shape[2]) // 2, (z - tmp.shape[2]) - (z - tmp.shape[2]) // 2))))
+        if tmp_dist < dist:
+            idx = i
+            dist = tmp_dist
 
-    COM = np.sum(np.asarray(IMG), axis=0) / len(inDataList)
-    idx = np.argmin(np.sqrt(np.sum((np.asarray(IMG) - COM) ** 2, axis=(1, 2, 3))))
+    print(" ")
+    print("############# Reference File #############")
+    cprint(("The reference file for rigid alignment is found"), 'cyan')
+    cprint(("Output Median Filename : ", inDataList[idx]), 'yellow')
+    print("###########################################")
+    print(" ")
     return inDataList[idx]
 
 def applyRigidAlignment(parentDir, inDataListSeg, inDataListImg, refFile,
                         antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0,
-                        scaling=0.0, isoValue=0, icpIterations=10, processRaw=False):
+                        scaling=20.0, isoValue=0, icpIterations=10, processRaw=False):
     """
     This function takes in a filelists(binary and raw) and produces rigid aligned
     files in the appropriate directory. If the process_raw flag is set True,
@@ -312,7 +333,7 @@ def applyCropping(outDir, inDataList, paddingSize=10):
         outname = outname.replace('.nrrd', '.cropped.nrrd')
         outDataList.append(outname)
         cmd = ["shapeworks",
-               "boundingbox", "--names"] + glob.glob(initPath + "/*.nrrd") + ["--", "--padding", str(paddingSize),
+               "boundingbox", "--names"] + glob.glob(initPath + "/*.aligned.nrrd") + ["--", "--padding", str(paddingSize),
                "read-image", "--name", inname,
                "crop",
                "write-image", "--name", outname]
@@ -329,7 +350,7 @@ def create_meshfromDT_xml(xmlfilename, tpdtnrrdfilename, vtkfilename):
     file.write("<outputs>\n"+str(vtkfilename) + "\n</outputs>")
     file.close()
 
-def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=0.0, isoValue=0):
+def applyDistanceTransforms(parentDir, inDataList, antialiasIterations=20, smoothingIterations=1, alpha=10.5, beta=10.0, scaling=20.0, isoValue=0):
     outDir = os.path.join(parentDir, 'groom_and_meshes')
     if not os.path.exists(outDir):
         os.makedirs(outDir)
