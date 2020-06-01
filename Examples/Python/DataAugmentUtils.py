@@ -278,3 +278,143 @@ def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_sh
 		path_list.append(nm)
 		count += 1
 	return path_list
+
+############################# Data Augmentation Code #################################################
+
+'''
+Data augmentation helper
+	Pads image by pad_amount
+'''
+def padImage(filename, pad_amount):
+	[d, f] = nrrd.read(filename)
+	dim = d.shape
+	padamt = np.array([dim[0]+ pad_amount, dim[1] + pad_amount, dim[2] + pad_amount]) - dim
+	x = np.floor(padamt/2)
+	x = x.astype(np.int8)
+	y = padamt - x
+	y = y.astype(np.int8)
+	dd = np.pad(d, ((x[0], y[0]), (x[1], y[1]), (x[2], y[2])), 'constant')
+	return [dd, f]
+
+'''
+Data augmentation helper
+	Down samples image by factor
+'''
+def downsampleNrrd(filename, factor):
+	[inpt, f] = nrrd.read(filename)
+	output = ndimage.interpolation.zoom(inpt, factor, prefilter=orig)
+	return [np.array(output), f]
+
+'''
+Creates augmented images and particle models from provided list using PCA
+Makes use of functions in DataAugmentUtils.py
+Inputs:
+	data_list - list of image paths
+	point_list - list of corresponding .particles paths
+	out_dir - folder to save data augmentation output
+	num_samples - number of examples to generate
+	PCA_var_cutoff - percent of variability used to decied how many PCA modes to retain (95-97% is usually a good range)
+	doResample - if 1 generated and original images will be reampled to half their size for faster training
+	doPad - if 1 a layer of padding will be added around generated and original images
+Output:
+	out_csv - a csv file with row containing: Path to image, path to particles, PCA modes
+	(Note this contains both original and generated smaples in a shuffled order)
+'''
+def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doResample=0, doPad=0):
+	if not os.path.exists(out_dir):
+		os.makedirs(out_dir)
+	N_images, M_particles, pt_dim, imgDims = read_necessarry_metadata(data_list, point_list)
+	K_pt, pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles = pca_mode_loading_computation(point_list, M_particles, N_images, pt_dim, out_dir, PCA_var_cutoff)
+	np.save(os.path.join(out_dir, 'original_loadings_particles.npy'), pca_particle_loadings)
+	print("The PCA modes of particles being retained : ", K_pt)
+
+	print("\nWarping original images:")
+	tilde_images_list = warp_image_to_mean(point_list, data_list, out_dir)
+
+	K_img, pca_images_loadings, eigvals_images, eigvecs_images, mean_image = pca_mode_loadings_computation_images(tilde_images_list, N_images, imgDims, out_dir,PCA_var_cutoff)
+	np.save(os.path.join(out_dir, 'original_loadings_images.npy'), pca_images_loadings)
+	print("\nThe PCA modes of images being retained : ", K_img)
+
+	print("\nGenerating particles:")
+	generated_particles_list = generate_particles(pca_particle_loadings, eigvals_particles, eigvecs_particles, mean_particles, num_samples, K_pt, M_particles, pt_dim, N_images, out_dir)
+	
+	print("\nGenerating images:")
+	generated_tilde_images_list = generate_images(pca_images_loadings, eigvals_images, eigvecs_images, mean_image, num_samples, K_img, imgDims, N_images, out_dir)
+
+	print("\nWarping generated images:")
+	generated_images_list = warp_mean_to_image(generated_particles_list, generated_tilde_images_list, out_dir)
+
+	# Paths lists
+	image_path_list = data_list + generated_images_list
+	particle_path_list = point_list + generated_particles_list
+
+	# Get PCA loadings for csv
+	# Get original loadings
+	origLoadings = out_dir + 'original_loadings_particles.npy'
+	K = np.load(origLoadings)
+	num_orig = K.shape[0]
+	K_pt = K.shape[1]
+	# load the PCA stuff
+	pcaDir = out_dir + 'PCA-Info-Particles/'
+	mshp = np.loadtxt(pcaDir + 'meanshape.particles')
+	N = mshp.shape[0]
+	W = np.zeros([N*3, K_pt])
+	for i in range(K_pt):
+		pmd = np.loadtxt(pcaDir + 'pcamode' + str(i) + '.particles')
+		W[..., i] = pmd.flatten()
+	X = np.zeros([num_samples + num_orig, K_pt])
+	particleDir = out_dir + 'Generated-Particles/'
+	for i in range(num_samples):
+		newScan = np.loadtxt(particleDir + 'Generated_sample_' + str(i) + '.particles')
+		normed = newScan - mshp
+		normed = normed.reshape([1, N*3])
+		X[i, ...] = np.matmul(normed, W)
+	X[num_samples:, ...] = K
+
+	# Padding and resmapling for images
+	print("\nResampling and padding if neccesary:")
+	resmpleFactor = 0.5
+	pad_amount = 4
+	if doPad == 1:
+		padDir = out_dir + 'paddedOut/'
+		if not os.path.exists(padDir):
+			os.makedirs(padDir)
+	if doResample == 1:
+		resampleDir = out_dir + 'resampleOut/'
+		if not os.path.exists(resampleDir):
+			os.makedirs(resampleDir)
+	for i in range(len(image_path_list)):
+		print("Image " + str(i) + " out of " + str(len(image_path_list)))
+		if doPad == 1:
+			[padout,f] = padImage(image_path_list[i], pad_amount)
+			newnm = image_path_list[i].rsplit('/', 1)[1]
+			newnm = newnm.replace('.nrrd', '.padded.nrrd')
+			newnm = padDir + newnm
+			nrrd.write(newnm, padout, f)
+			image_path_list[i] = newnm
+		if doResample == 1:
+			[resampleout,f] = downsampleNrrd(image_path_list[i], resmpleFactor)
+			newnm = image_path_list[i].rsplit('/', 1)[1]
+			newnm = newnm.replace('.nrrd', '.resampled.nrrd')
+			newnm = resampleDir + newnm
+			nrrd.write(newnm, resampleout, f)
+			image_path_list[i] = newnm
+
+	# Write csv in shuffled order
+	idx = np.arange(num_samples+num_orig)
+	np.random.shuffle(idx)
+	out_csv = out_dir + 'totalData.csv'
+	with open(out_csv, 'w') as csvfile:
+		spamwriter = csv.writer(csvfile, delimiter=",")
+		for i in range(num_samples+num_orig):
+			l = [image_path_list[idx[i]]]
+			l.append(particle_path_list[idx[i]])
+			for j in range(K_pt):
+				l.append(X[idx[i], j])
+			spamwriter.writerow(l)
+
+	print("\nDone!")
+	print(str(K_pt) +' PCA modes retained for particles.')
+	print(str(K_img) + ' PCA modes retained for images.')
+	print(str(num_samples) + ' samples generated from ' + str(num_orig) + " real examples.")
+	return out_csv, pcaDir
