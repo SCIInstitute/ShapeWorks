@@ -44,6 +44,10 @@ bool Project::load(std::string filename)
 
   this->load_subjects();
 
+  Parameters project_parameters = this->get_parameters(Parameters::PROJECT_PARAMS);
+
+  this->version_ = project_parameters.get("version", -1);
+
   this->loaded_ = true;
   return true;
 }
@@ -57,8 +61,8 @@ bool Project::save(std::string filename)
     ws.title("data");
 
     Parameters project_parameters;
-    project_parameters.set("version", 1);
-    this->set_parameters("project", project_parameters);
+    project_parameters.set("version", this->supported_version_);
+    this->set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
 
     this->store_subjects();
     this->wb_->save(filename);
@@ -257,6 +261,18 @@ void Project::store_subjects()
 
   this->segmentations_present_ = seg_columns.size() >= 1;
   this->groomed_present_ = groomed_columns.size() >= 1;
+}
+
+//---------------------------------------------------------------------------
+int Project::get_supported_version()
+{
+  return this->supported_version_;
+}
+
+//---------------------------------------------------------------------------
+int Project::get_version()
+{
+  return this->version_;
 }
 
 //---------------------------------------------------------------------------
