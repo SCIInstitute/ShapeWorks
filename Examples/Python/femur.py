@@ -61,9 +61,9 @@ def Run_Pipeline(args):
         os.makedirs(parentDir)
 
     # extract the zipfile
-    print("Extracting data from " + filename + "...")
-    with ZipFile(filename, 'r') as zipObj:
-        zipObj.extractall(path=parentDir)
+    # print("Extracting data from " + filename + "...")
+    # with ZipFile(filename, 'r') as zipObj:
+    #     zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -112,8 +112,25 @@ def Run_Pipeline(args):
             files_img = [files_img[i] for i in sample_idx]
             files_mesh = [files_mesh[i] for i in sample_idx]
 
+        cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
+        cp_prefix = 'm03_L'
+
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
+            cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
+            cp_prefix = 'm03_L'
+            choice = 0
+        else:
+            choice_made = False
+            while not choice_made:
+                print("\nOption 1: Define cutting plane on sample of your choice now.")
+                print("Option 2: Define cutting plane on median sample once it has been selected.")
+                choice = input("Type 1 or 2 and press enter: ")
+                choice = int(choice)
+                if choice==1 or choice==2:
+                    choice_made = True
+
+        if choice == 1:
             options = []
             for file in files_mesh:
                 file = file.split('/')[-1]
@@ -181,7 +198,7 @@ def Run_Pipeline(args):
         [rigidFiles_segmentations, rigidFiles_images] = applyRigidAlignment(parentDir, centerFiles_segmentations, centerFiles_images , medianFile, processRaw = True)
 
         # Define cutting plane on median sample
-        if args.interactive:
+        if choice == 2:
            input_file = medianFile.replace("centered","aligned").replace(".nrrd", ".aligned.DT.nrrd")
            cutting_plane_points = SelectCuttingPlane(input_file)
         # Fix cutting plane points previously selected
