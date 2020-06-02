@@ -9,10 +9,9 @@
   - [Femur](#Femur-Use-Case)
 - [Dataset Guidelines](#Dataset-Guidelines)
 
-## Downloading Datasets
-
+## Downloading Datasets  
 Use Case datasets such as the ellipsoid and left atrium datasets will be downloaded
-automatically from the ShapeWorks Data Portal.  
+automatically from the *[ShapeWorks Data Portal](http://cibc1.sci.utah.edu:8080/)*.
 When running one of the use case example scripts, you will see something like this:
 ```
 Can't find ellipsoid.zip in the current directory.

@@ -23,7 +23,6 @@ The underlying scientific premise of ShapeWorks, particle-based shape modeling, 
     
 ShapeWorks has been effective in a range of applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](#relevant-papers). 
 
-
 Contact Us
 =====================
 
