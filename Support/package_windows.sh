@@ -18,6 +18,10 @@ ROOT=`pwd`
 
 cp -r ../build/bin/Release bin
 rm -rf Post
+
+# Remove tests, they won't work for users anyway
+rm bin/*Tests.exe
+
 windeployqt "bin/ShapeWorksStudio.exe"
 windeployqt "bin/ShapeWorksView2.exe"
 ../NSISPortable/App/NSIS/makensis.exe shapeworks.nsi
