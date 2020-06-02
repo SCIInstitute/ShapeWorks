@@ -60,10 +60,10 @@ def Run_Pipeline(args):
     if not os.path.exists(parentDir):
         os.makedirs(parentDir)
 
-    # extract the zipfile
-    # print("Extracting data from " + filename + "...")
-    # with ZipFile(filename, 'r') as zipObj:
-    #     zipObj.extractall(path=parentDir)
+    extract the zipfile
+    print("Extracting data from " + filename + "...")
+    with ZipFile(filename, 'r') as zipObj:
+        zipObj.extractall(path=parentDir)
 
     print("\nStep 2. Groom - Data Pre-processing\n")
     if args.interactive:
@@ -112,20 +112,18 @@ def Run_Pipeline(args):
             files_img = [files_img[i] for i in sample_idx]
             files_mesh = [files_mesh[i] for i in sample_idx]
 
-        cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
-        cp_prefix = 'm03_L'
-
         # If not interactive, get cutting plane on a mesh user specifies
         if not args.interactive:
             cutting_plane_points = np.array([[68.5970168,-128.34930979,-709.84309115],[1.0,-1.0,-709.84309115],[-1.0,1.0,-709.84309115]])
             cp_prefix = 'm03_L'
             choice = 0
+        # If interactive ask whether to define on chosen sample or median
         else:
             choice_made = False
             while not choice_made:
-                print("\nOption 1: Define cutting plane on sample of your choice now.")
+                print("\nOption 1: Define cutting plane now on a sample of your choice.")
                 print("Option 2: Define cutting plane on median sample once it has been selected.")
-                choice = input("Type 1 or 2 and press enter: ")
+                choice = input("Please input 1 or 2 and press enter: ")
                 choice = int(choice)
                 if choice==1 or choice==2:
                     choice_made = True
