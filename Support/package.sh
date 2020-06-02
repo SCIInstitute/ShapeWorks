@@ -20,6 +20,12 @@ if [[ "$VERSION" == "tag" ]]; then
     VERSION="ShapeWorks-$(git describe --tags)-$PLATFORM"
 fi
 
+# Special case for when we are on the master branch (dev releases)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" == "master" ]]; then
+    VERSION="ShapeWorks-dev-$PLATFORM"
+fi
+
 echo "Version: $VERSION"
 
 rm -rf "package/$VERSION"
