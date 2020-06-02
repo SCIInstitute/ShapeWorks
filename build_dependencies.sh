@@ -155,11 +155,13 @@ build_vtk()
       cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ..
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
+      VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
+      VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
       cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DVTK_PYTHON_VERSION=3 -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
+      VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
-  VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
 }
 
 build_itk()
@@ -175,7 +177,7 @@ build_itk()
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="d:/a/ShapeWorks/deps/lib/cmake/vtk-8.2" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
+      cmake -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=Release -Wno-dev ..
       
       cmake --build . --config Release || exit 1
       cmake --build . --config Release --target install
