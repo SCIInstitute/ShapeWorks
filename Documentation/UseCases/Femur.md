@@ -5,7 +5,7 @@
 In this use case we start with full unsegmented images (CT scans) of the hip and segmented meshes of each femur.
 ShapeWorks requires a binary volume format for input segmentations so these meshes must first be converted into binary volumes. Additionally, the corresponding unsegmented images need to be carried through each grooming step with the meshes so that they can be used for analysis.
 
-The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a predefined cutting plane but the user can also chose to define the cuttingplane interactively by running the use case with the "--interactive" tag. There are two ways to ddefine the cutting plane interactively as explained below.
+The femur meshes in this data set have been segmented with various shaft lengths as can be seen below. In order to remove this variablity so that it is not captured in the shape model, the femurs are clipped using a cutting plane. The use case has a predefined cutting plane but the user can chose to overwrite it and define the cutting plane interactively by running the use case with the "--interactive" tag. There are two ways to define the cutting plane interactively as explained below.
 ![Femur Lengths](../images/femurLengths.png)
 
 ### Running the Use Case
@@ -26,12 +26,11 @@ This calls femur.py which:
 If the --interactive tag is not used, the pre-defined cutting plane is used to clip the segmenations.
 
 #### Running with the --interactive tag
-To run the use case interactively, either run:
+To run the use case interactively, run:
             
               python RunUseCase.py --use_case femur --interactive
 
-In interactive mode, the user is presented with two options for defining the cutting plane and they indicate which.
-
+In interactive mode, the user is presented with two options to chose between for defining the cutting plane interactively.
 ##### Option 1
               
 The first option is to select the cutting plane in the beggining of the grooming steps on a sample of the users choice.
