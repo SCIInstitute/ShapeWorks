@@ -202,7 +202,7 @@ void Session::save_particles_file(std::string filename, const vnl_vector<double>
 }
 
 //---------------------------------------------------------------------------
-bool Session::load_xml_project(QString filename, std::string& planesFile)
+bool Session::load_project(QString filename)
 {
   if (!QFile::exists(filename)) {
     QMessageBox::critical(NULL, "ShapeWorksStudio", "File does not exist: " + filename,
@@ -214,7 +214,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
   this->filename_ = filename;
 
   if (filename.toLower().endsWith(".xlsx")) {
-    return this->load_project(filename);
+    return this->load_xl_project(filename);
   }
 
   // open and parse XML
@@ -236,9 +236,7 @@ bool Session::load_xml_project(QString filename, std::string& planesFile)
     return this->load_light_project(filename);
   }
 
-  QString message =
-    "Error: This version of ShapeWorksStudio only reads XLSX files: " +
-    filename;
+  QString message = "Error: This version of ShapeWorksStudio only reads XLSX and legacy XML files: " + filename;
   QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
   return false;
 }
@@ -377,7 +375,7 @@ bool Session::load_light_project(QString filename)
 }
 
 //---------------------------------------------------------------------------
-bool Session::load_project(QString filename)
+bool Session::load_xl_project(QString filename)
 {
   // clear the project out first
   this->reset();
