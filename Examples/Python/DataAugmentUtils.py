@@ -13,6 +13,7 @@ import csv
 import sys
 import os
 import re
+import GroomUtils
 
 '''
 Extracts essential metadata for the rest of the algorithm
@@ -281,20 +282,6 @@ def generate_images(pca_loadings_images, eigvals_images, eigvecs_images, mean_sh
 
 ############################# Data Augmentation Code #################################################
 
-'''
-Data augmentation helper
-	Pads image by pad_amount
-'''
-def padImage(filename, pad_amount):
-	[d, f] = nrrd.read(filename)
-	dim = d.shape
-	padamt = np.array([dim[0]+ pad_amount, dim[1] + pad_amount, dim[2] + pad_amount]) - dim
-	x = np.floor(padamt/2)
-	x = x.astype(np.int8)
-	y = padamt - x
-	y = y.astype(np.int8)
-	dd = np.pad(d, ((x[0], y[0]), (x[1], y[1]), (x[2], y[2])), 'constant')
-	return [dd, f]
 
 '''
 Data augmentation helper
@@ -373,32 +360,14 @@ def dataAugment(out_dir, data_list, point_list, num_samples, PCA_var_cutoff, doR
 
 	# Padding and resmapling for images
 	print("\nResampling and padding if neccesary:")
-	resmpleFactor = 0.5
-	pad_amount = 4
+	padDir = out_dir + 'paddedOut/'
 	if doPad == 1:
-		padDir = out_dir + 'paddedOut/'
-		if not os.path.exists(padDir):
-			os.makedirs(padDir)
+		paddedFiles_images = GroomUtils.applyPadding(padDir, image_path_list, 4, padValue=0)
+		image_path_list = paddedFiles_images
+	resampleDir = out_dir + 'resampleOut/'
 	if doResample == 1:
-		resampleDir = out_dir + 'resampleOut/'
-		if not os.path.exists(resampleDir):
-			os.makedirs(resampleDir)
-	for i in range(len(image_path_list)):
-		print("Image " + str(i) + " out of " + str(len(image_path_list)))
-		if doPad == 1:
-			[padout,f] = padImage(image_path_list[i], pad_amount)
-			newnm = image_path_list[i].rsplit('/', 1)[1]
-			newnm = newnm.replace('.nrrd', '.padded.nrrd')
-			newnm = padDir + newnm
-			nrrd.write(newnm, padout, f)
-			image_path_list[i] = newnm
-		if doResample == 1:
-			[resampleout,f] = downsampleNrrd(image_path_list[i], resmpleFactor)
-			newnm = image_path_list[i].rsplit('/', 1)[1]
-			newnm = newnm.replace('.nrrd', '.resampled.nrrd')
-			newnm = resampleDir + newnm
-			nrrd.write(newnm, resampleout, f)
-			image_path_list[i] = newnm
+		downsampled_images = GroomUtils.applyDownSample(resampleDir, image_path_list, factor=0.5)
+		image_path_list = downsampled_images
 
 	# Write csv in shuffled order
 	idx = np.arange(num_samples+num_orig)

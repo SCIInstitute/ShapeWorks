@@ -632,3 +632,40 @@ def SelectCuttingPlane(input_file):
         o1 = -1
         o2 = -1
     return np.array([[o1, o2, o3], [1, -1, pt1_z], [-1, 1, pt2_z]])
+
+def applyDownSample(outDir, inDataList, factor=0.5):
+    """
+    This function takes in a filelist and produces the resampled files in the appropriate directory.
+    """
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+    outDataList = []
+    for i in range(len(inDataList)):
+        inname = inDataList[i]
+        print("\n########### Downsampling ###############")
+        outname = rename(inname, outDir, 'resample')
+        outDataList.append(outname)
+        # Get size
+        out_name = outDir + "temp"
+        execCommand = ["WriteImageInfoToText","--inFilename", inname, "--outPrefix", out_name]
+        subprocess.check_call(execCommand)
+        size_file = open(out_name + "_size.txt", "r")
+        text = size_file.read()
+        size = text.split("\n")
+        size_file.close()
+        # Get new size
+        x_size = str(int(float(size[0])*factor))
+        y_size = str(int(float(size[1])*factor))
+        z_size = str(int(float(size[2])*factor))
+        print("outSize  = ["+x_size+", "+y_size+", "+z_size+"]")
+        # Downsample
+        cmd = ["shapeworks", 
+               "read-image", "--name", inname]
+        cmd.extend(["resample", 
+            "--sizex", x_size,
+            "--sizey", y_size,
+            "--sizez", z_size
+        ])  
+        cmd.extend(["write-image", "--name", outname])
+        subprocess.check_call(cmd)
+    return outDataList
