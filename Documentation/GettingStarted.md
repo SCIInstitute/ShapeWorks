@@ -47,7 +47,7 @@ The documents contained in this repo are written using [Markdown](#markdown-basi
 
 ## Building ShapeWorks
 
-Please see **[BUILD.md](BUILD.md)** for the current build instructions.
+Please see **[BUILD.md](Build/BUILD.md)** for the current build instructions.
 
 
 ## Markdown Basics

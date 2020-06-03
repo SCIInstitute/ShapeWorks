@@ -11,7 +11,7 @@ ShapeWorks 5.3.0 - 2020-02-20
 	* Studio: Replaced bar chart with explained variance chart
 	* New commands: Added commands to the `shapeworks` executable to quantitatively evaluate shape models: read-particle-system, compactness, generalization, specificity
 	* New shapeworks executables commands: read-image, write-image, antialias, isoresample, binarize, recenter-image, pad.
-	* New build method: Separate build_dependencies script (see Documentation/build/BUILD.md)
+	* New build method: Separate build_dependencies script (see Documentation/Build/BUILD.md)
 
 ShapeWorks 5.2.2 - 2020-01-09
 	* Returned to superbuild.sh build process
