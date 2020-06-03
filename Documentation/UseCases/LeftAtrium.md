@@ -48,7 +48,7 @@ This calls left_atrium.py which:
 * Opens ShapeWorksStudio  to visualize results by calling methods in AnalyzeUtils.py
 
 ### Grooming
-For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
+For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Groom.md)
 1. Isotropic Resampling - Both the image and mesh are resampled to have uniform voxel spacing. 
 2. Apply Padding- Segmentations which lie on the image boundary will have a hole on that intersection. Padding is added to the images and segmentations prevent this.
 3. Center of Mass Alignment - Center of mass alignment is performed before aligning the samples to a reference. This factors out translations reducing the risk of misalignment and allows for a median sample to be selected as the reference.
@@ -59,7 +59,7 @@ For a description of the grooming tools and parameters, see: [Groom.md](https://
 
 ![left Atrium Groom](../images/leftatrium_groom.png)
 ### Optimize
-For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
+For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Optimize.md)
 
 * Single scale optimization uses the user defined number of particles for optimization and uses procrustes scaling to factor out size as a mode of variation. 
 Below are the default optimization parameters for this use case. 
@@ -124,4 +124,4 @@ The default values of this use case are as below.
 ### Analyze
 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
-For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)            
+For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Analyze.md)            

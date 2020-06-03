@@ -42,7 +42,7 @@ If the --interactive tag is used, the user will be asked to select a cutting pla
 ![Alt Text](../images/interactiveFemur.gif)
 
 ### Grooming
-For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Groom.md)
+For a description of the grooming tools and parameters, see: [Groom.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Groom.md)
 
 The steps are described below and the results of each step are shown for the meshes (note every step is perfmored on both the meshes the images although the resulting images are not shown here).
 
@@ -73,7 +73,7 @@ The steps are described below and the results of each step are shown for the mes
 ![Grooming steps](images/FemurGroomPipeline.PNG)
 
 ### Optimize
-For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Optimize.md)
+For a description of the optimize tools and parameters, see: [Optimize.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Optimize.md)
 
 Single scale optimization is used with procrustes scaling to factor out size as a mode of variation. Below are the default optimization parameters for this use case. 
 
@@ -100,7 +100,7 @@ Single scale optimization is used with procrustes scaling to factor out size as 
 ### Analyze
 
 The particle based model for the mean shape and samples and the primary modes of variation are visualized using ShapeWorksStudio.
-For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Analyze.md)
+For more information see: [Analyze.md](https://github.com/SCIInstitute/ShapeWorks/blob/master/Documentation/Workflow/Analyze.md)
 
 #### Mean Shape
 ![Alt Text](../images/mean_femur.gif)
